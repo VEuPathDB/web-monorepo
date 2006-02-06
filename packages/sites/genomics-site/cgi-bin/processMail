@@ -1,0 +1,10 @@
+#!/usr/bin/perl 
+
+use strict;
+
+use lib "@targetDir@/lib/perl";
+$ENV{GUS_HOME} = '@targetDir@';
+
+use ApiCommonWebsite::View::CgiApp::MailProcessor;
+
+ApiCommonWebsite::View::CgiApp::MailProcessor::go();
