@@ -12,9 +12,11 @@
 <c:if test="${dsCol == null}"><c:set var="dsCol" value="Find..."/></c:if>
 <c:if test="${dsColVal == null}"><c:set var="dsColVal" value="orthologs"/></c:if>
 
-<site:header title="PlasmoDB.org :: Query History"
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
+<site:header title="${wdkModel.displayName} : Query History"
                  banner="My Query History"
-                 parentDivision="PlasmoDB"
+                 parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Query History"
                  division="query_history"/>

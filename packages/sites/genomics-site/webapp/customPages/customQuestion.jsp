@@ -11,7 +11,9 @@
 <c:set value="${sessionScope.questionForm}" var="qForm"/>
 
 <!-- display page header with wdkQuestion displayName as banner -->
-<site:header title="PlasmoDB : Queries"
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
+<site:header title="${wdkModel.displayName} : Queries"
                  banner="${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"

@@ -11,9 +11,11 @@
 
 <c:set var="banner" value="${xmlAnswer.question.displayName}"/>
 
-<site:header title="PlasmoDB : FAQ"
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
+<site:header title="${wdkModel.displayName} : FAQ"
                  banner="${banner}"
-                 parentDivision="PlasmoDB"
+                 parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="FAQ"
                  division="about"/>

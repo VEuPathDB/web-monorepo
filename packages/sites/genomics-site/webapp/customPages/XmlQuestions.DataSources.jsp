@@ -12,7 +12,7 @@
 <c:choose>
 
 <c:when test="${param['idx'] != null}">
-  <c:set var="banner" value="PlasmoDB Featured Dataset"/>
+  <c:set var="banner" value="Featured Dataset"/>
 </c:when>
 
 <c:when test="${param['datasets'] != null}">
@@ -24,9 +24,11 @@
 </c:otherwise>
 </c:choose>
 
-<site:header title="PlasmoDB : Data Sources"
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
+<site:header title="${wdkModel.displayName} : Data Sources"
                  banner="${banner}"
-                 parentDivision="PlasmoDB"
+                 parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Data Sources"
                  division="data_sources"/>
