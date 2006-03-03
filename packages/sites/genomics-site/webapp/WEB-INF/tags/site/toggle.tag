@@ -97,7 +97,7 @@
 
     <c:if test='${attribution != null && attribution != ""}'>
       <td align="right">
-         [<a href="showXmlDataContent.do?name=XmlQuestions.DataSourcesQuestion&datasets=${attribution}&title=${displayNameParam}">Data Sources</a>]
+         [<a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attribution}&title=${displayNameParam}">Data Sources</a>]
       </td>
     </c:if>
   </tr>
