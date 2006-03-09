@@ -164,9 +164,9 @@ function calctext () {
     document.forms[0]['${pNam}_include_visible'].value = includeClause.join(", ");
     document.forms[0]['${pNam}_exclude_visible'].value = excludeClause.join(", ");
     document.forms[0]['${pNam}_include_sql'].value =
-	includeClauseSQL.length ? "%" + includeClauseSQL.join("%") + "%" : "%";
+	includeClauseSQL.length ? "%" + includeClauseSQL.sort().join("%") + "%" : "%";
     document.forms[0]['${pNam}_exclude_sql'].value =
-	excludeClauseSQL.length ? "%" + excludeClauseSQL.join("%") + "%" : "NOOP";
+	excludeClauseSQL.length ? excludeClauseSQL.join("|") : "NOOP";
 }
 
 function countchildren (parent) {
