@@ -8,8 +8,15 @@
 <c:set value="${sessionScope.wdkQuestion}" var="wdkQuestion"/>
 
 <c:set var="qParams" value="${wdkQuestion.paramsMap}"/>
-<c:set var="ppf" value="${qParams['ortholog_pattern']}"/>
-<c:set var="pNam" value="${ppf.name}"/>
+
+<c:set var="profilePattern" value="${qParams['profile_pattern']}"/>
+<c:set var="profilePatternName" value="${profilePattern.name}"/>
+
+<c:set var="includedSpecies" value="${qParams['included_species']}"/>
+<c:set var="includedSpeciesName" value="${includedSpecies.name}"/>
+
+<c:set var="excludedSpecies" value="${qParams['excluded_species']}"/>
+<c:set var="excludedSpeciesName" value="${excludedSpecies.name}"/>
 
 <c:set var="ind" value="${qParams['phyletic_indent_map']}"/>
 <c:set var="trm" value="${qParams['phyletic_term_map']}"/>
@@ -167,11 +174,11 @@ function calctext () {
      // }
 
     }
-    document.forms[0]['${pNam}_include_visible'].value = includeClause.join(", ");
-    document.forms[0]['${pNam}_exclude_visible'].value = excludeClause.join(", ");
+    document.forms[0]['myProp(${includedSpeciesName})'].value = includeClause.join(", ");
+    document.forms[0]['myProp(${excludedSpeciesName})'].value = excludeClause.join(", ");
 
     var bothClauseSQL = includeClauseSQL.concat(excludeClauseSQL);
-    document.forms[0]['${pNam}_sql'].value =
+    document.forms[0]['myProp(${profilePatternName})'].value =
 	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%";
 }
 
@@ -256,10 +263,8 @@ Ack, this form won't work at all without JavaScript support!
   <td align="right"><b><jsp:getProperty name="ppf" property="prompt"/></b>
   </td>
   <td>
-    <!-- <html:text property="myProp(${pNam})"/> -->
-    include: <input type="text" name="ortholog_pattern_include_visible" value="" size=20><br>
-    exclude: <input type="text" name="ortholog_pattern_exclude_visible" value="" size=20>
-
+    include: <html:text property="myProp(${includedSpeciesName})" size="20"/><br>
+    exclude: <html:text property="myProp(${excludedSpeciesName})" size="20"/>
   </td>
 </tr>
 
@@ -267,8 +272,7 @@ Ack, this form won't work at all without JavaScript support!
   <td align="right"><b>computable SQL strings:</b>
   </td>
   <td>
-    <!-- <html:text property="myProp(${pNam})"/> -->
-    SQL: <input type="text" name="ortholog_pattern_sql" value="%" size=20>
+    SQL: <html:text property="myProp(${profilePatternName})" value="%" size="20"/>
   </td>
 </tr>
 
