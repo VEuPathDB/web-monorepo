@@ -140,16 +140,22 @@ function calctext () {
 	} else if (state[parent] == 1) {
 	    includeClause.push(leafabbrev);
 	    if(children[parent].length) {
-		includeClauseSQL = includeClauseSQL.concat(listchildren(parent));
+		var childlist = listchildren(parent);
+		for (var i = 0 ; i < childlist.length ; i++) {
+		    includeClauseSQL.push(childlist[i] + ":Y");
+		}
 	    } else {
-		includeClauseSQL.push(leafabbrev);
+		includeClauseSQL.push(leafabbrev + ":Y");
 	    }
 	} else if (state[parent] == 2) {
 	    excludeClause.push(leafabbrev);
 	    if(children[parent].length) {
-		excludeClauseSQL = excludeClauseSQL.concat(listchildren(parent));
+		var childlist = listchildren(parent);
+		for (var i = 0 ; i < childlist.length ; i++) {
+		    excludeClauseSQL.push(childlist[i] + ":N");
+		}
 	    } else {
-		excludeClauseSQL.push(leafabbrev);
+		excludeClauseSQL.push(leafabbrev + ":N");
 	    }
 	}
 
@@ -163,10 +169,10 @@ function calctext () {
     }
     document.forms[0]['${pNam}_include_visible'].value = includeClause.join(", ");
     document.forms[0]['${pNam}_exclude_visible'].value = excludeClause.join(", ");
-    document.forms[0]['${pNam}_include_sql'].value =
-	includeClauseSQL.length ? "%" + includeClauseSQL.sort().join("%") + "%" : "%";
-    document.forms[0]['${pNam}_exclude_sql'].value =
-	excludeClauseSQL.length ? excludeClauseSQL.join("|") : "NOOP";
+
+    var bothClauseSQL = includeClauseSQL.concat(excludeClauseSQL);
+    document.forms[0]['${pNam}_sql'].value =
+	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%";
 }
 
 function countchildren (parent) {
@@ -262,9 +268,7 @@ Ack, this form won't work at all without JavaScript support!
   </td>
   <td>
     <!-- <html:text property="myProp(${pNam})"/> -->
-    include: <input type="text" name="ortholog_pattern_include_sql" value="%" size=20><br>
-    exclude: <input type="text" name="ortholog_pattern_exclude_sql" value="NOOP" size=20>
-
+    SQL: <input type="text" name="ortholog_pattern_sql" value="%" size=20>
   </td>
 </tr>
 
