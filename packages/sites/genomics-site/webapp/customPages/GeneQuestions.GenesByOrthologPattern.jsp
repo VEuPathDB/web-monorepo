@@ -6,6 +6,16 @@
 
 <!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->  
 <c:set value="${sessionScope.wdkQuestion}" var="wdkQuestion"/>
+<jsp:useBean scope="request" id="helps" class="java.util.HashMap"/>
+
+<!-- display page header with wdkQuestion displayName as banner -->
+<site:header title="Queries & Tools :: BLAST Question"
+                 banner="${wdkQuestion.displayName}"
+                 parentDivision="Queries & Tools"
+                 parentUrl="/showQuestionSetsFlat.do"
+                 divisionName="BLAST Question"
+                 division="queries_tools"/>
+
 
 <c:set var="qParams" value="${wdkQuestion.paramsMap}"/>
 
@@ -293,3 +303,5 @@ Ack, this form won't work at all without JavaScript support!
 </table>
 
 </html:form>
+<hr>
+<site:footer/>
