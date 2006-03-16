@@ -233,6 +233,8 @@ Ack, this form won't work at all without JavaScript support!
 <hr>
 
 <html:form method="post" action="/processQuestion.do">
+<input type="hidden" name="myMultiProp(phyletic_indent_map)" value="Other">
+<input type="hidden" name="myMultiProp(phyletic_term_map)" value="rno">
 
 <table>
 <tr><td colspan="2">
