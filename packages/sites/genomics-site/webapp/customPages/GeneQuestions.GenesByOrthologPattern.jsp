@@ -225,7 +225,6 @@ Ack, this form won't work at all without JavaScript support!
 <html:form method="post" action="/processQuestion.do">
 
 <table>
-
 <tr><td colspan="2">
 
 <table border="0" cellpadding="2">
@@ -258,16 +257,24 @@ Ack, this form won't work at all without JavaScript support!
 </table>
 
     </td></tr>
-
 <tr>
-  <td align="right"><b><jsp:getProperty name="ppf" property="prompt"/></b>
+<%--  <td align="right"><b><jsp:getProperty name="profilePattern" property="prompt"/></b>
+ </td> --%>
+  <td align="right">
+    Include:
   </td>
   <td>
-    include: <html:text property="myProp(${includedSpeciesName})" size="20"/><br>
-    exclude: <html:text property="myProp(${excludedSpeciesName})" size="20"/>
+    <html:text property="myProp(${includedSpeciesName})" size="20"/>
+  </td>
+ </tr>
+ <tr>
+  <td align="right">
+    Exclude:
+  </td>
+  <td>
+    <html:text property="myProp(${excludedSpeciesName})" size="20"/>
   </td>
 </tr>
-
 <tr>
   <td align="right"><b>computable SQL strings:</b>
   </td>
