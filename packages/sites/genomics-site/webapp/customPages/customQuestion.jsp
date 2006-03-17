@@ -25,12 +25,7 @@
  <tr>
   <td bgcolor=white valign=top>
 
-
-<!-- display description for wdkQuestion -->
 <p><b>${wdkQuestion.displayName}</b></p>
-<p><jsp:getProperty name="wdkQuestion" property="description"/></p>
-
-<hr>
 
 <!-- show all params of question, collect help info along the way -->
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
@@ -119,6 +114,9 @@
 </table>
 </html:form>
 
+<hr>
+<!-- display description for wdkQuestion -->
+<p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 

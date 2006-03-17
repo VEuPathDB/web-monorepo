@@ -16,6 +16,10 @@
                  divisionName="BLAST Question"
                  division="queries_tools"/>
 
+<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+
+ <tr>
+  <td bgcolor=white valign=top>
 
 <c:set var="qParams" value="${wdkQuestion.paramsMap}"/>
 
@@ -231,10 +235,6 @@ Ack, this form won't work at all without JavaScript support!
 
 <h3>${wdkQuestion.displayName}</h3>
 
-<p><b><jsp:getProperty name="wdkQuestion" property="description"/></b></p>
-
-<hr>
-
 <html:form method="post" action="/processQuestion.do">
 <input type="hidden" name="myMultiProp(phyletic_indent_map)" value="Other">
 <input type="hidden" name="myMultiProp(phyletic_term_map)" value="rno">
@@ -318,5 +318,14 @@ Ack, this form won't work at all without JavaScript support!
 </table>
 
 </html:form>
+
 <hr>
+<!-- display description for wdkQuestion -->
+<p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
+
+  </td>
+  <td valign=top class=dottedLeftBorder></td> 
+</tr>
+</table> 
+
 <site:footer/>
