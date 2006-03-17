@@ -291,10 +291,8 @@ Ack, this form won't work at all without JavaScript support!
   </td>
 </tr>
 <tr>
-  <td align="right"><b>computable SQL strings:</b>
-  </td>
-  <td>
-    SQL: <html:text property="myProp(${profilePatternName})" value="%" size="20"/>
+  <td colspan="2">
+    <html:hidden property="myProp(${profilePatternName})" value="%"/>
   </td>
 </tr>
 <tr>
