@@ -9,7 +9,7 @@
 <jsp:useBean scope="request" id="helps" class="java.util.HashMap"/>
 
 <!-- display page header with wdkQuestion displayName as banner -->
-<site:header title="Queries & Tools :: BLAST Question"
+<site:header title="Queries & Tools :: Ortholog Pattern Question"
                  banner="${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
@@ -27,6 +27,9 @@
 
 <c:set var="excludedSpecies" value="${qParams['excluded_species']}"/>
 <c:set var="excludedSpeciesName" value="${excludedSpecies.name}"/>
+
+<c:set var="resultSpecies" value="${qParams['organism']}"/>
+<c:set var="resultSpeciesName" value="${resultSpecies.name}"/>
 
 <c:set var="ind" value="${qParams['phyletic_indent_map']}"/>
 <c:set var="trm" value="${qParams['phyletic_term_map']}"/>
@@ -273,7 +276,7 @@ Ack, this form won't work at all without JavaScript support!
 <%--  <td align="right"><b><jsp:getProperty name="profilePattern" property="prompt"/></b>
  </td> --%>
   <td align="right">
-    Include:
+    <b>Include:</b>
   </td>
   <td>
     <html:text property="myProp(${includedSpeciesName})" size="20"/>
@@ -281,7 +284,7 @@ Ack, this form won't work at all without JavaScript support!
  </tr>
  <tr>
   <td align="right">
-    Exclude:
+    <b>Exclude:</b>
   </td>
   <td>
     <html:text property="myProp(${excludedSpeciesName})" size="20"/>
@@ -294,7 +297,19 @@ Ack, this form won't work at all without JavaScript support!
     SQL: <html:text property="myProp(${profilePatternName})" value="%" size="20"/>
   </td>
 </tr>
-
+<tr>
+  <td align="right"><b>Show results from species:</b>
+  </td>
+  <td>
+     <c:set var="opt" value="0"/>
+     <html:select  property="myMultiProp(${resultSpeciesName})">
+       <c:set var="opt" value="${opt+1}"/>
+       <c:set var="sel" value=""/>
+       <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
+       <html:options property="values(${resultSpeciesName})" labelProperty="labels(${resultSpeciesName})"/>
+     </html:select>
+  </td>
+</tr>
 <tr>
   <td>&nbsp;</td>
   <td>
