@@ -1,10 +1,10 @@
 =head1 NAME
 
-ApiComplexa::DAS::GUS::Segment - DAS-style access to a GUS database
+DAS::GUS::Segment - DAS-style access to a GUS database
 
 =head1 SYNOPSIS
 
-  # Get a Bio::Das::SegmentI object from a ApiComplexa::DAS::GUS database
+  # Get a Bio::Das::SegmentI object from a DAS::GUS database
   
   $segment = $das->segment( -name  => 'Landmark',
    						    -start => $start,
@@ -19,12 +19,12 @@ Email:	hwang@uga.edu
 
 =cut
 
-package ApiComplexa::DAS::GUS::Segment;
+package DAS::GUS::Segment;
 
 use strict;
 use Bio::Root::Root;
 use Bio::Das::SegmentI;
-use ApiComplexa::DAS::GUS::Segment::Feature;
+use DAS::GUS::Segment::Feature;
 
 use constant DEBUG => 1;
 
@@ -43,16 +43,16 @@ our $dlm = ";;"; 	     # separate attributes $tag=$value pairs
 									  -start => $start,
 									  -stop  => $stop );
 	Function: Create a segment object 
-	Returns	: a new ApiComplexa::DAS::GUS::Segment object 
+	Returns	: a new DAS::GUS::Segment object 
 	Args	: see below
 
-This method creates a new ApiComplexa::DAS::GUS::Segment object 
+This method creates a new DAS::GUS::Segment object 
 accoring to a segment name, such as contig 'AAEL0100015'. Generally 
-this is called automatically by the ApiComplexa::DAS::GUS module.
+this is called automatically by the DAS::GUS module.
 
 There are five positional arguments:
 
-  $factory		a ApiComplexa::DAS::GUS adaptor to use for database access
+  $factory		a DAS::GUS adaptor to use for database access
   $start		start of the desired segment relative to source sequence
   $stop			stop of the desired segment relative to source sequence
   $srcfeature_id 	ID of the source sequence
@@ -377,7 +377,7 @@ sub features {
   }
 
   if($iterator) {
-    return ApiComplexa::DAS::GUSIterator->new(\@features);
+    return DAS::GUSIterator->new(\@features);
   } elsif ( wantarray ) {
     return @features;
   } else {
@@ -432,7 +432,7 @@ sub _makeFeature() {
 	my $unique_name = "$type.$feature_id";
 	$type .= ":$source";
 
-	my $feat = ApiComplexa::DAS::GUS::Segment::Feature->new(
+	my $feat = DAS::GUS::Segment::Feature->new(
 					$factory,
 					$self,  					# parent 
 					$self->seq_id,
@@ -656,12 +656,12 @@ sub get_feature_stream {
 	my @args = @_;
 
 	my $features = $self->features(@args);
-	return ApiComplexa::DAS::GUSIterator->new($features); 
+	return DAS::GUSIterator->new($features); 
 }
 
 sub get_seq_stream {
 	my @features = shift->features(@_);
-	return ApiComplexa::DAS::GUSIterator->new(\@features); 
+	return DAS::GUSIterator->new(\@features); 
 }
 
 =head2 clone

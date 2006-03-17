@@ -1,12 +1,12 @@
-package ApiComplexa::DAS::Util::SqlParser;
+package DAS::Util::SqlParser;
 
 =head1 NAME
 
-ApiComplexa::DAS::Util - A simple XML sql parser
+DAS::Util - A simple XML sql parser
 
 =head1 SYNOPSIS
 
-		my $parser = ApiComplexa::DAS::Util::SqlParser->new(SQLFILE);
+		my $parser = DAS::Util::SqlParser->new(SQLFILE);
 		my $query = $parser->getSQL("GUS.pm", "get_feature_by_name");
 		$query =~ s/(\$\w+)/eval $1/eg;
 =cut

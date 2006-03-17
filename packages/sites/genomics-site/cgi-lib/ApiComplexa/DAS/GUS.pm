@@ -2,12 +2,12 @@
 
 =head1 NAME
 
-ApiComplexa::DAS::GUS - DAS-style accession to a gus database
+DAS::GUS - DAS-style accession to a gus database
 
 =head1 SYNOPSIS
 
 	# Open up a feature database
-	$db = ApiComplexa::DAS::GUS->new(
+	$db = DAS::GUS->new(
 			-dsn  => 'dbi:Oracle:sid=GUSDEV;host=localhost;port=1521',
 						-user => 'user',
 						-pass => 'pass', );
@@ -51,11 +51,11 @@ Email: hwang@uga.edu
 
 #'
 
-package ApiComplexa::DAS::GUS;
+package DAS::GUS;
 
 use strict;
-use ApiComplexa::DAS::GUS::Segment;
-use ApiComplexa::DAS::Util::SqlParser;
+use DAS::GUS::Segment;
+use DAS::Util::SqlParser;
 use Bio::Root::Root;
 use Bio::DasI;
 use Bio::PrimarySeq;
@@ -71,12 +71,12 @@ $VERSION = 0.11;
 =head2 new
 
   Title		: new
-  Usage		: $db = ApiComplexa::DAS::GUS->new (
+  Usage		: $db = DAS::GUS->new (
 						-dsn  => 'dbi:Oracle:sid=GUSDEV;host=localhost;port=1521',
 						-user => 'user',
 						-pass => 'pass', );
   Function	: Open up a Bio::DB::DasI interface to a GUS database
-  Returns	: a new ApiComlexa::DAS::GUS object
+  Returns	: a new DAS::GUS object
 
 =cut
 
@@ -97,7 +97,7 @@ sub new {
 	$dbh->{LongReadLen} = 10000000;
 
 	$self->dbh($dbh);
-	$self->parser(ApiComplexa::DAS::Util::SqlParser->new($sqlfile));
+	$self->parser(DAS::Util::SqlParser->new($sqlfile));
 	return $self;
 }
 
@@ -196,7 +196,7 @@ sub segment {
 
   $end ||= $stop;
 
-  return ApiComplexa::DAS::GUS::Segment->new($name,
+  return DAS::GUS::Segment->new($name,
 					     $self,
 					     $base_start,
 					     $end,
@@ -208,7 +208,7 @@ sub segment {
   Title		: fetures
   Usage		: $db->features(@args)
   Function	: get all features, possibly filtered by type
-  Returns	: a list of ApiComplexa::DAS::GUS::Segment::Feature objects
+  Returns	: a list of DAS::GUS::Segment::Feature objects
   Args		: see below
   Status	: public
 
@@ -260,7 +260,7 @@ sub features {
 				
 	$type ||= $types;
 
-	my @features = ApiComplexa::DAS::GUS::Segment->features(
+	my @features = DAS::GUS::Segment->features(
 											-type	   => $type, 
 											-attributes => $attributes,
 											-callback   => $callback, 
@@ -274,7 +274,7 @@ sub features {
 	Title	: get_feature_by_name
 	Usage	: $db->get_feature_by_name($class => $name)
 	Function: fetch features by their name
-	Returns : a list of ApiComplexa::DAS::GUS::Segment::Feature objects
+	Returns : a list of DAS::GUS::Segment::Feature objects
 	Args	: the class and the name of the desired feature
 	Status  : public
 
@@ -315,7 +315,7 @@ sub get_feature_by_name {
 			
 			$segment = $self->segment($seg_name);
 
-			my $feat = ApiComplexa::DAS::GUS::Segment::Feature->new(
+			my $feat = DAS::GUS::Segment::Feature->new(
 							$self,
 							$segment,					# parent
 							$seg_name, 		            # the source sequence
@@ -344,7 +344,7 @@ sub aggregators { return }
 
 sub absolute { return }
 
-package ApiComplexa::DAS::GUSIterator;
+package DAS::GUSIterator;
 
 sub new {
 
