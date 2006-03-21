@@ -236,7 +236,7 @@ Ack, this form won't work at all without JavaScript support!
 <h3>${wdkQuestion.displayName}</h3>
 
 <html:form method="post" action="/processQuestion.do">
-<input type="hidden" name="myMultiProp(phyletic_indent_map)" value="Other">
+<input type="hidden" name="myMultiProp(phyletic_indent_map)" value="Archaea">
 <input type="hidden" name="myMultiProp(phyletic_term_map)" value="rno">
 
 <table>
@@ -273,22 +273,8 @@ Ack, this form won't work at all without JavaScript support!
 
     </td></tr>
 <tr>
-<%--  <td align="right"><b><jsp:getProperty name="profilePattern" property="prompt"/></b>
- </td> --%>
-  <td align="right">
-    <b>Include:</b>
-  </td>
-  <td>
-    <html:text property="myProp(${includedSpeciesName})" size="20"/>
-  </td>
- </tr>
- <tr>
-  <td align="right">
-    <b>Exclude:</b>
-  </td>
-  <td>
-    <html:text property="myProp(${excludedSpeciesName})" size="20"/>
-  </td>
+  <td><html:hidden property="myProp(${includedSpeciesName})" /></td>
+  <td><html:hidden property="myProp(${excludedSpeciesName})" /></td>
 </tr>
 <tr>
   <td colspan="2">

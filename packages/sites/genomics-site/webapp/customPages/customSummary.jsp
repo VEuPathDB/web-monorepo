@@ -61,16 +61,9 @@
                        <c:forEach items="${params}" var="p">
                          <c:set var="pNam" value="${p.key}"/>
                          <c:set var="qP" value="${qParamsMap[pNam]}"/>
-                         <c:choose>
-                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
-                                 <tr><td align="right">${qP.prompt}:</td><td><i>${p.value}</i></td></tr>
-                             </c:when>
-                             <c:otherwise>
-                                 <c:if test="${qP.isVisible}">
+                         <c:if test="${qP.isVisible}">
                                      <tr><td align="right">${qP.prompt}:</td><td><i>${p.value}</i></td></tr>
-                                 </c:if>
-                             </c:otherwise>
-                         </c:choose>
+                         </c:if>
                        </c:forEach>
                      </table></td></tr>
       </c:otherwise>
