@@ -235,6 +235,11 @@ Ack, this form won't work at all without JavaScript support!
 
 <h3>${wdkQuestion.displayName}</h3>
 
+<!-- display description for wdkQuestion -->
+<p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
+
+<hr>
+
 <html:form method="post" action="/processQuestion.do">
 <input type="hidden" name="myMultiProp(phyletic_indent_map)" value="Archaea">
 <input type="hidden" name="myMultiProp(phyletic_term_map)" value="rno">
@@ -304,10 +309,6 @@ Ack, this form won't work at all without JavaScript support!
 </table>
 
 </html:form>
-
-<hr>
-<!-- display description for wdkQuestion -->
-<p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 
