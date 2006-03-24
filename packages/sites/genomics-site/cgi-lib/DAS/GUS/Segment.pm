@@ -75,8 +75,7 @@ sub new {
     my $sth = $factory->dbh->prepare($query);
     $sth->execute(uc $name);
     my $hashref = $sth->fetchrow_hashref;
-
-    die "END or STARTM could not be determined by sql: $query\n" 
+    die "END or STARTM of $name could not be determined by sql: $query\n" 
       unless exists $$hashref{'END'} && exists $$hashref{'STARTM'};
     my $length  = $$hashref{'END'} - $$hashref{'STARTM'} + 1;
 
