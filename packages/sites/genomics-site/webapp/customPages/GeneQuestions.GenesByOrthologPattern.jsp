@@ -191,8 +191,10 @@ function calctext () {
      // }
 
     }
-    document.forms[0]['myProp(${includedSpeciesName})'].value = includeClause.join(", ");
-    document.forms[0]['myProp(${excludedSpeciesName})'].value = excludeClause.join(", ");
+    var includedStr = 'n/a'; if (includeClause.length > 0) includedStr = includeClause.join(", ");
+    document.forms[0]['myProp(${includedSpeciesName})'].value = includedStr;
+    var excludedStr = 'n/a'; if (excludeClause.length > 0) excludedStr = excludeClause.join(", ");
+    document.forms[0]['myProp(${excludedSpeciesName})'].value = excludedStr;
 
     var bothClauseSQL = includeClauseSQL.concat(excludeClauseSQL);
     document.forms[0]['myProp(${profilePatternName})'].value =
