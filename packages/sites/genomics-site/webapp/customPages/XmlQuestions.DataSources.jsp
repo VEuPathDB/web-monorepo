@@ -80,7 +80,6 @@
 
 <b>${resource}</b> (${version})<br>
 <font size="-1">
-${category}
 
 <a href="${publicUrl}">${publicUrl}</a>
 
