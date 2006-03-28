@@ -69,7 +69,7 @@
   <tr>
     <c:choose>
       <c:when test="${noData}">
-        <td><b>${displayName}</b> <i>None</i></td>
+        <td><b>${displayName}</b> <i>none</i></td>
       </c:when>
       <c:otherwise>
         <td><!-- /td -->
