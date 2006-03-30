@@ -74,18 +74,18 @@
       <c:otherwise>
         <td><!-- /td -->
         <!-- td -->
-        <c:set var="showOnFocus" value=""/>
+        <c:set var="showOnClick" value=""/>
         <c:if test="${imageId != null}">
-            <c:set var="showOnFocus" value="updateImage('${imageId}', '${imageSource}');"/>
+            <c:set var="showOnClick" value="updateImage('${imageId}', '${imageSource}');"/>
         </c:if>
         <c:if test="${imageMapDivId != null}">
-            <c:set var="showOnFocus" value="${showOnFocus}updateImageMapDiv('${imageMapDivId}', '${imageMapSource}');"/>
+            <c:set var="showOnClick" value="${showOnClick}updateImageMapDiv('${imageMapDivId}', '${imageMapSource}');"/>
         </c:if>
-        <c:if test="${showOnFocus != ''}">
-            <c:set var="showOnFocus" value="onFocus=\"${showOnFocus}\""/>
+        <c:if test="${showOnClick != ''}">
+            <c:set var="showOnClick" value="onClick=\"${showOnClick}\""/>
         </c:if>
         <div id="showToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
-          <a href="javascript:showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')&&storeIntelligentCookie('show${name}',1);" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true" ${showOnFocus}>Show</a>
+          <a href="javascript:showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')&&storeIntelligentCookie('show${name}',1);" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true" ${showOnClick}>Show</a>
         </div><!-- /td -->
 
         <!-- td -->

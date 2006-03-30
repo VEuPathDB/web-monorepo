@@ -159,7 +159,7 @@ function handleHttpResponseImage(imgId, imgSrc) {
             + "imgSrc = " + imgSrc;
 
     // no need to wait till readyState == 4 'cuz we do not need responseText
-    if (http.readyState == 1) {
+    if (http.readyState == 1 || http.readyState == 0) {
         var img = document.getElementById(imgId);
         msg += "\nimg before='" + img + "'\n";
         if(img.src != null && img.src != imgSrc) {
@@ -174,7 +174,6 @@ function handleHttpResponseImage(imgId, imgSrc) {
 function updateImage(imgId, imgSrc) {
     var http = getHTTPObject();
     httpObjects[imgId] = http;
-
     var isWorking = false;
     workStates[imgId] = isWorking;
 
