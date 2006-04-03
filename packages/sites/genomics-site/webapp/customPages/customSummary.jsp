@@ -88,7 +88,8 @@
                        <a href="downloadHistoryAnswer.do?user_answer_id=${uaId}">
                    </c:otherwise>
                </c:choose>
-               Download a report of this result</a>
+               Download</a>&nbsp;|&nbsp;
+               <a href="<c:url value="/showQueryHistory.do"/>">Combine with other results</a> 
            </td></tr>
 </table>
 
