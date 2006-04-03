@@ -314,9 +314,9 @@ Ack, this form won't work at all without JavaScript support!
 
 <script type="text/javascript" lang="JavaScript 1.2">
 <!-- //
+toggle(6);
+toggle(6);
 toggle(31);
-toggle(64);
-toggle(64);
 // -->
 </script>
 
