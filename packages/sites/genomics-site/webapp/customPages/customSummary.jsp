@@ -58,11 +58,12 @@
                <tr><td valign="top" align="left"><b>Parameters:</b></td>
                    <td valign="top" align="left">
                      <table>
-                       <c:forEach items="${params}" var="p">
+                       <c:forEach items="${qParamsMap}" var="p">
                          <c:set var="pNam" value="${p.key}"/>
-                         <c:set var="qP" value="${qParamsMap[pNam]}"/>
+                         <c:set var="qP" value="${p.value}"/>
+                         <c:set var="aP" value="${params[pNam]}"/>
                          <c:if test="${qP.isVisible}">
-                                     <tr><td align="right">${qP.prompt}:</td><td><i>${p.value}</i></td></tr>
+                           <tr><td align="right">${qP.prompt}:</td><td><i>${aP}</i></td></tr>
                          </c:if>
                        </c:forEach>
                      </table></td></tr>
