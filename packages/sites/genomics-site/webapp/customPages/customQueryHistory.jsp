@@ -85,7 +85,7 @@
             </td>
             <td>${ua.answer.resultSize}</td>
             <c:if test="${isGeneRec}">
-                <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${ua.answerID}&dataset=${ua.answer.datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
+                <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${ua.answerID}&plasmodb_dataset=${ua.answer.datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
                 <td><a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a></td>
             </c:if>
             <td><a href="showSummary.do?user_answer_id=${ua.answerID}">view</a></td>
