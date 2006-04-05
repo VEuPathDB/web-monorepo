@@ -3,6 +3,7 @@
 use strict;
 
 use lib "@targetDir@/lib/perl";
+use lib "@targetDir@/../cgi-lib";
 $ENV{GUS_HOME} = '@targetDir@';
 
 use ApiCommonWebsite::View::CgiApp::MailProcessor;
