@@ -73,7 +73,9 @@ sub new {
     $query =~ s/(\$\w+)/eval $1/eg;
 
     my $sth = $factory->dbh->prepare($query);
-    $sth->execute(uc $name);
+	#$sth->execute(uc $name);
+	$sth->execute();
+
     my $hashref = $sth->fetchrow_hashref;
     die "END or STARTM of $name could not be determined by sql: $query\n" 
       unless exists $$hashref{'END'} && exists $$hashref{'STARTM'};
@@ -106,6 +108,7 @@ sub new {
 
 sub name { 
 	my $self = shift; 
+    return $self->{'name'} = shift if @_;
 	return $self->{'name'};
 }
 
@@ -371,9 +374,10 @@ sub features {
 	push @tempfeats, $self->_makeFeature($featureRow, $factory);
     }
 
-    # if($_ = ~/blastx/i) {
-    #   @tempfeats = _blastx_filter(\@tempfeats);
-    # }
+	# filter out blastx. it is used by cryptodb
+    if($_ = ~/blastx/i) { 
+       @tempfeats = _blastx_filter(\@tempfeats);
+    }
 
     push(@features, @tempfeats);
   }
@@ -527,11 +531,13 @@ sub _blastx_filter {
 =cut
 
 sub seq {
+
   my $self = shift;
-  my %arg = @_;
+  return $self->{'seq'} = shift if @_;
+  return $self->{'seq'} if( $self->{'seq'});
+
   my ($ref, $class, $base_start, $stop, $strand)
     = @{$self}{qw(sourceseq class start end strand)};
-
 
   my $srcfeature_id = $self->{srcfeature_id};
   my $has_start = defined $base_start;
@@ -604,12 +610,11 @@ sub factory { shift->{factory} }
 =cut
 
 sub srcfeature_id {
+
 	my $self = shift;
-
-	my $refself = ref $self;
-
 	return $self->{'srcfeature_id'} = shift if @_;
 	return $self->{'srcfeature_id'};
+
 }
 
 =head2 alphabet
