@@ -302,17 +302,16 @@ sub get_feature_by_name {
 		my $query = $self->parser->getSQL("GUS.pm", "get_feature_by_name");
 		$query =~ s/(\$\w+)/eval $1/eg;
 		$query =~ s/\*/\%/g;
-
+		my $un = uc($name);
+		$query =~ s/\?/\'\%$un\%\'/g;
 		$sth = $self->dbh->prepare($query);
 		$sth->execute();
 
-		while(my $hashref = $sth->fetchrow_hashref) { 
-			
-			$seg_name = $$hashref{'CTG_NAME'}; 
-			
+		while(my $hashref = $sth->fetchrow_hashref) {
+			$seg_name = $$hashref{'CTG_NAME'};
+
 			# if this is a segment, return a segment object
-			return $self->segment($seg_name) if($seg_name =~ /$name/i); 
-			
+			return $self->segment($seg_name) if($seg_name =~ /$name/i);
 			$segment = $self->segment($seg_name);
 
 			my $feat = DAS::GUS::Segment::Feature->new(
@@ -334,7 +333,7 @@ sub get_feature_by_name {
 			push @features, $feat;
 		}
 	}
-	@features;
+	if (@features) { @features; } else { (); }
 }
 
 sub default_class { return 'Sequence' }

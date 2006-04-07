@@ -1062,7 +1062,8 @@ sub attributes {
   my $atts = $self->{'atts'};
 
   # attribute delimiter $name=$value;$name=$value
-  my @pairs = split(/$dlm/, $atts);
+  my @pairs = ();
+  if ($atts) { @pairs = split(/$dlm/, $atts); }
 
   if (wantarray && !$tag) {
     my @result;

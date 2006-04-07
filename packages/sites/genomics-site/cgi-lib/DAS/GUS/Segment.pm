@@ -77,7 +77,7 @@ sub new {
 	$sth->execute();
 
     my $hashref = $sth->fetchrow_hashref;
-    die "END or STARTM of $name could not be determined by sql: $query\n" 
+    warn "END or STARTM of $name could not be determined by sql: $query\n" 
       unless exists $$hashref{'END'} && exists $$hashref{'STARTM'};
     my $length  = $$hashref{'END'} - $$hashref{'STARTM'} + 1;
 
