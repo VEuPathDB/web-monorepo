@@ -2,6 +2,7 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
@@ -13,6 +14,7 @@
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
+
 <site:header title="Queries & Tools :: Summary Result"
                  banner="${wdkAnswerType} Results"
                  parentDivision="Queries & Tools"
@@ -89,7 +91,27 @@
                    </c:otherwise>
                </c:choose>
                Download</a>&nbsp;|&nbsp;
-               <a href="<c:url value="/showQueryHistory.do"/>">Combine with other results</a> 
+               <a href="<c:url value="/showQueryHistory.do"/>">Combine with other results</a>
+	       
+
+               <c:set value="${wdkAnswer.recordClass.fullName}" var="rsName"/>
+               <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
+	       <c:if test="${isGeneRec}">
+	           &nbsp;|&nbsp;
+                   <c:set var="datasetId" value="${wdkAnswer.datasetId}"/>
+                   <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${uaId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
+                   <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
+               </c:if>
+	       
+               <c:set value="${wdkAnswer.question.fullName}" var="qName" />
+               <c:set var="isBooleanQuestion" value="${fn:containsIgnoreCase(qName, 'BooleanQuestion')}"/>
+	       <c:if test="${isBooleanQuestion == false}">
+	           &nbsp;|&nbsp;
+                   <c:set value="${wdkAnswer.questionUrlParams}" var="qurlParams"/>
+	           <c:set var="questionUrl" value="" />
+                   <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
+	           Refine parameters</a>
+	       </c:if>
            </td></tr>
 </table>
 

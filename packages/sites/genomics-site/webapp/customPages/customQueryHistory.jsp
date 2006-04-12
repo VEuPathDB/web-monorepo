@@ -64,7 +64,7 @@
       <tr class="headerRow">
           <th>ID</th> <th>Query</th><th>Size</th>
           <c:if test="${isGeneRec}"><th>${dsCol}</th></c:if>
-          <th></th> <th></th><th>&nbsp;</th></tr>
+          <th></th> <th></th><th>&nbsp;</th><th>Refine</th></tr>
 
       <c:set var="i" value="0"/>
       <c:forEach items="${recAns}" var="ua">
@@ -91,11 +91,22 @@
             <td><a href="showSummary.do?user_answer_id=${ua.answerID}">view</a></td>
             <td><a href="downloadHistoryAnswer.do?user_answer_id=${ua.answerID}">download</a></td>
             <td><a href="deleteHistoryAnswer.do?user_answer_id=${ua.answerID}">delete</a></td>
+
+            <c:set value="${ua.answer.question.fullName}" var="qName" />
+            <c:set var="isBooleanQuestion" value="${fn:containsIgnoreCase(qName, 'BooleanQuestion')}"/>
+            <c:if test="${isBooleanQuestion == false}">
+                <td>
+		    <c:set value="${ua.answer.questionUrlParams}" var="qurlParams"/>
+	            <c:set var="questionUrl" value="" />
+                    <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
+	            Back</a>
+                </td>
+	    </c:if>
         </tr>
       <c:set var="i" value="${i+1}"/>
       </c:forEach>
 
-      <tr><td colspan="6" align="left">
+      <tr><td colspan="7" align="left">
             <br>
             <html:form method="get" action="/processBooleanExpression.do">
               Combine results:
