@@ -17,7 +17,7 @@
               description="Text to go below the table"
 %>
 
-<c:set value="${sessionScope.wdkRecord}" var="wdkRecord"/>
+<c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
 <c:set var="noData" value="false"/>
 
