@@ -1,6 +1,24 @@
---- gbrowse_img	2005-12-06 16:03:55.000000000 -0500
-+++ cgi-bin/gbrowse_img	2006-02-01 10:59:44.000000000 -0500
-@@ -185,20 +185,24 @@
+--- cgi-bin/gbrowse_img	2006-04-11 14:20:23.000000000 -0400
++++ customCgi-bin/gbrowse_img	2006-04-12 17:38:15.022433271 -0400
+@@ -78,6 +78,7 @@
+   exit 0;
+ }
+ 
++
+ ## dgg here; cache of all this so dont regen slow images for each browser-back 
+ my ($pagecache,$newpagecache)= checkCachedPage('cachedir', CGI::query_string());
+ if ($pagecache) {
+@@ -177,28 +178,33 @@
+ 			     flip          => $flip,
+ 			     $feature_hilighting ? (hilite_callback => $feature_hilighting) : (),
+ 			     $region_hilighting  ? (postgrid        => $region_hilighting)  : (),
+-                             -truecolor    => $CONFIG->setting('truecolor'),
++                             -truecolor    => $CONFIG->setting('truecolor') || 0,
+ 			    );
+   $detailed_view++;
+ }
+ 
++
  if ($embed) {
    my $url             = $CONFIG->generate_image($img);
    my ($width,$height) = $img->getBounds;
@@ -10,15 +28,16 @@
  			     -height=>$height,-border=>0,-name=>'detailedView',-alt=>'detailed view'});
    my $source          = $CONFIG->source;
    my $map;
-+  my $base            = param("base") || "../../gbrowse";
++  my $base            = param("base");
  
    if ($detailed_view) {
      my $ruler           = shift @$boxes;
      $map                = $CONFIG->make_map($boxes,0,$panel,$tracks);
      my $coords          = join ',',@{$ruler}[1,2,3,4];
 -    my $gbrowse         = "../../gbrowse/$source/?name=$segments[0]"; # dgg; was  "../gbrowse/$source?"
-+    my $gbrowse         = "${base}/$source/?name=$segments[0]"; # dgg; was  "../gbrowse/$source?"
-     my $rect            = qq(<area shape="rect" coords="$coords" href="$gbrowse" title="Browse Region" />);
+-    my $rect            = qq(<area shape="rect" coords="$coords" href="$gbrowse" title="Browse Region" />);
++    my $href         = $base ? "href=\"${base}/$source/?name=$segments[0]\"" : "";
++    my $rect            = qq(<area shape="rect" coords="$coords" $href title="Browse Region" />);
      $map                =~ s!</map>!$rect</map>!;
 +    $map                =~ s!name="hmap"!name="$hmap"!;
 +    $map                =~ s!id="hmap"!id="$hmap"!;
@@ -28,7 +47,15 @@
    }
  
    $map =~ s/href/target="_top" href/g;  # add appropriate target tags
-@@ -447,9 +451,9 @@
+@@ -207,6 +213,7 @@
+ 		$newpagecache,
+ 		header('text/html'),start_html(''),$img,$map,end_html()
+ 	       );
++
+ }
+ 
+ #elsif ($image_class eq 'GD::SVG') {
+@@ -447,20 +454,23 @@
  }
  
  sub my_make_map {
@@ -36,8 +63,26 @@
 -  my $url = "../../gbrowse/$source/";  # dgg; was"../gbrowse/$source";
 -  my $html = qq(<map name="hmap" alt="imagemap" />\n);
 +  my ($boxes,$source,$add_features,$hmap,$base) = @_;
-+  my $url = "$base/$source/";  # dgg; was"../gbrowse/$source";
++  my $url = $base ? "$base/$source/" : "";
 +  my $html = qq(<map name="$hmap" alt="imagemap" />\n);
    foreach (@$boxes){
      my $feature = $_->[0];
      my $ref     = $_->[6];  # consolidate_images() sets this slot
+     my ($refname, $version) = split /\sversion\s/i, $ref;
+     my ($name,$start,$stop) = ($feature->display_id,$feature->start,$feature->end);
+-    my $href               = $url . "?ref=$refname;start=$start;stop=$stop";
+-    $href                 .= ";version=$version" if defined $version;
+-    $href                 .= ";add=".join "+",($refname,$feature->type,$feature->name,
++    my $href = "";
++    if ($url) {
++      $href = $url . "?ref=$refname;start=$start;stop=$stop";
++      $href                 .= ";version=$version" if defined $version;
++      $href                 .= ";add=".join "+",($refname,$feature->type,$feature->name,
+ 					       $feature->can('location_string') ? $feature->location_string
+                                                                                 : $feature->to_FTstring)
+-      if $add_features && $feature->isa('Bio::Graphics::Feature');
++	if $add_features && $feature->isa('Bio::Graphics::Feature');
++    }
+     $html .= qq(<area shape="rect" coords="$_->[1],$_->[2],$_->[3],$_->[4]" href="$href"/>\n);
+   }
+   $html .= "</map>\n";
