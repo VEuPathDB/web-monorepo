@@ -361,11 +361,14 @@ sub features {
   #
   ###########################################################
 
-  foreach ( _getUniqueTypes($types) ) {
+  foreach my $typeHash ( _getUniqueTypes($types) ) {
+    my @types = keys(%$typeHash);
+    my $type = shift @types;
+    my $typeString = $typeHash->{$type};
 
-    $sql = $factory->parser->getSQL("Segment.pm", $_);
+    $sql = $factory->parser->getSQL("Segment.pm", $type);
 
-    warn "Couldn't find Segment.pm sql for $_\n" unless $sql;
+    warn "Couldn't find Segment.pm sql for $type\n" unless $sql;
     next unless $sql;
 
     $sql =~ s/(\$\w+)/eval $1/eg;
@@ -380,8 +383,9 @@ sub features {
     }
 
 	# filter out blastx. it is used by cryptodb
-    if($_ = ~/blastx/i) { 
-       @tempfeats = _blastx_filter(\@tempfeats);
+    if($typeString =~ /blastx/i) { 
+        warn "filtering blastx results for feature type: $type";
+        @tempfeats = _blastx_filter(\@tempfeats);
     }
 
     push(@features, @tempfeats);
@@ -427,7 +431,7 @@ sub _getUniqueTypes() {
 
     my %seen;
     for my $type (@{$types || []}) {
-	push(@uniqtypes, $type) unless $seen{$type}++;
+	push(@uniqtypes, { $type => $type }) unless $seen{$type}++;
     }
 
     return @uniqtypes;
