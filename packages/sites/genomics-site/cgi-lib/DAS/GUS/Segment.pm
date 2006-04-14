@@ -73,17 +73,8 @@ sub new {
     $sth->execute();
 
     my $hashref = $sth->fetchrow_hashref;
-    unless (exists $$hashref{'END'} && exists $$hashref{'STARTM'}) {
-      warn "END or STARTM of $name could not be determined by sql: $query\n";
-      $query = $factory->parser->getSQL("Segment.pm", "new:SegmentUpper");
-      die "Couldn't find Segment.pm sql for new:SegmentUpper\n" unless $query;
-      $query =~ s/(\$\w+)/eval $1/eg;
-      $sth = $factory->dbh->prepare($query);
-      $sth->execute();
-      $hashref = $sth->fetchrow_hashref;
-      warn "END or STARTM of $name could not be determined by sql: $query\n" 
-	unless exists $$hashref{'END'} && exists $$hashref{'STARTM'};
-    }
+    warn "END or STARTM of $name could not be determined by sql: $query\n" 
+      unless exists $$hashref{'END'} && exists $$hashref{'STARTM'};
     my $length  = $$hashref{'END'} - $$hashref{'STARTM'} + 1;
 
     $stop = ($stop && ($stop < $length)) ? int($stop) : $length;
