@@ -8,9 +8,10 @@
 
 <!-- get wdkAnswer from requestScope -->
 <c:set value="${sessionScope.wdkAnswer}" var="wdkAnswer"/>
-
+<c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set value="${param['user_answer_id']}" var="uaId"/>
 <c:set value="${requestScore.userAnswerId}" var="altUaId"/>
+<c:if test="${applicationScope.wdkModel.name eq 'plasmoDbModel'}"><c:set var="showOrthoLink" value="true" /></c:if>
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
@@ -96,7 +97,7 @@
 
                <c:set value="${wdkAnswer.recordClass.fullName}" var="rsName"/>
                <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
-	       <c:if test="${isGeneRec}">
+	       <c:if test="${isGeneRec && showOrthoLink}">
 	           &nbsp;|&nbsp;
                    <c:set var="datasetId" value="${wdkAnswer.datasetId}"/>
                    <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${uaId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
