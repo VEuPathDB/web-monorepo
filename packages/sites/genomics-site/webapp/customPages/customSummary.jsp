@@ -11,7 +11,7 @@
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set value="${param['user_answer_id']}" var="uaId"/>
 <c:set value="${requestScore.userAnswerId}" var="altUaId"/>
-<c:if test="${applicationScope.wdkModel.name eq 'plasmoDbModel'}"><c:set var="showOrthoLink" value="true" /></c:if>
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
@@ -94,7 +94,6 @@
                Download</a>&nbsp;|&nbsp;
                <a href="<c:url value="/showQueryHistory.do"/>">Combine with other results</a>
 	       
-
                <c:set value="${wdkAnswer.recordClass.fullName}" var="rsName"/>
                <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
 	       <c:if test="${isGeneRec && showOrthoLink}">
@@ -111,7 +110,7 @@
                    <c:set value="${wdkAnswer.questionUrlParams}" var="qurlParams"/>
 	           <c:set var="questionUrl" value="" />
                    <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
-	           Refine parameters</a>
+	           Refine query</a>
 	       </c:if>
            </td></tr>
 </table>

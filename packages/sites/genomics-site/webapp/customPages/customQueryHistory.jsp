@@ -13,6 +13,8 @@
 <c:if test="${dsColVal == null}"><c:set var="dsColVal" value="orthologs"/></c:if>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="modelName" value="${wdkModel.name}"/>
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
 
 <site:header title="${wdkModel.displayName} : Query History"
                  banner="My Query History"
@@ -64,7 +66,7 @@
       <tr class="headerRow">
           <th>ID</th> <th>Query</th><th>Size</th>
           <c:if test="${isGeneRec}"><th>${dsCol}</th></c:if>
-          <th></th> <th></th><th>&nbsp;</th><th>Refine</th></tr>
+          <th></th> <th></th><th>&nbsp;</th><th>&nbsp;</th></tr>
 
       <c:set var="i" value="0"/>
       <c:forEach items="${recAns}" var="ua">
@@ -84,13 +86,14 @@
                ${dispNam}
             </td>
             <td>${ua.answer.resultSize}</td>
-            <c:if test="${isGeneRec}">
+ 
+           <c:if test="${isGeneRec && showOrthoLink}">
                 <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${ua.answerID}&plasmodb_dataset=${ua.answer.datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
                 <td><a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a></td>
             </c:if>
+	    
             <td><a href="showSummary.do?user_answer_id=${ua.answerID}">view</a></td>
             <td><a href="downloadHistoryAnswer.do?user_answer_id=${ua.answerID}">download</a></td>
-            <td><a href="deleteHistoryAnswer.do?user_answer_id=${ua.answerID}">delete</a></td>
 
             <c:set value="${ua.answer.question.fullName}" var="qName" />
             <c:set var="isBooleanQuestion" value="${fn:containsIgnoreCase(qName, 'BooleanQuestion')}"/>
@@ -99,14 +102,20 @@
 		    <c:set value="${ua.answer.questionUrlParams}" var="qurlParams"/>
 	            <c:set var="questionUrl" value="" />
                     <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
-	            Back</a>
+	            Refine</a>
                 </td>
 	    </c:if>
+
+            <td><a href="deleteHistoryAnswer.do?user_answer_id=${ua.answerID}">delete</a></td>
         </tr>
       <c:set var="i" value="${i+1}"/>
       </c:forEach>
 
-      <tr><td colspan="7" align="left">
+      <tr>
+        <c:choose>
+          <c:when test="${isGeneRec && showOrthoLink}"><td colspan="7" align="left"></c:when>
+          <c:otherwise><td colspan="6" align="left"></c:otherwise>
+	</c:choose>
             <br>
             <html:form method="get" action="/processBooleanExpression.do">
               Combine results:
