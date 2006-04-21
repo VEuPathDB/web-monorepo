@@ -9,7 +9,7 @@
 <c:set var="userAnswers" value="${wdkUser.recordAnswerMap}"/>
 <c:set var="dsCol" value="${param.dataset_column}"/>
 <c:set var="dsColVal" value="${param.dataset_column_label}"/>
-<c:if test="${dsCol == null}"><c:set var="dsCol" value="Find..."/></c:if>
+<c:if test="${dsCol == null}"><c:set var="dsCol" value=""/></c:if>
 <c:if test="${dsColVal == null}"><c:set var="dsColVal" value="orthologs"/></c:if>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -102,7 +102,7 @@
 		    <c:set value="${ua.answer.questionUrlParams}" var="qurlParams"/>
 	            <c:set var="questionUrl" value="" />
                     <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
-	            Refine</a>
+	            refine</a>
                 </td>
 	    </c:if>
 
