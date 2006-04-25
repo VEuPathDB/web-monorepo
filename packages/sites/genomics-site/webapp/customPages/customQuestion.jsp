@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->  
 <c:set value="${sessionScope.wdkQuestion}" var="wdkQuestion"/>
@@ -62,13 +63,28 @@
 
         <c:choose>
           <c:when test="${qP.multiPick}">
-            <!-- multiPick is true, use scroll pane -->
+            <!-- multiPick is true, use checkboxes or scroll pane -->
+            <c:choose>
+              <c:when test="${fn:length(qP.vocab) < 10}">
+                 <c:set var="i" value="0"/>
+                 <c:forEach items="${qP.vocab}" var="flatVoc">
+                    <c:if test="${i == 0}"><c:set var="checked" value="checked"/></c:if>
+                    <input type="checkbox" name="myMultiProp(${pNam})" 
+                           value="${flatVoc}" ${checked}>${flatVoc}&nbsp;
+                     <c:if test="${i >= 4}"><br></c:if>
+                     <c:set var="i" value="${i+1}"/>
+                     <c:set var="checked" value=""/>
+                 </c:forEach>
+              </c:when>
+              <c:otherwise>
             <html:select  property="myMultiProp(${pNam})" multiple="1">
               <c:set var="opt" value="${opt+1}"/>
               <c:set var="sel" value=""/>
               <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
               <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
             </html:select>
+              </c:otherwise>
+            </c:choose>
           </c:when>
           <c:otherwise>
             <!-- multiPick is false, use pull down menu -->
