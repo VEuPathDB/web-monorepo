@@ -73,6 +73,7 @@
 
   <c:set var="resource" value="${record.attributesMap['resource']}"/>
   <c:set var="publicUrl" value="${record.attributesMap['publicUrl']}"/>
+  <c:set var="organisms" value="${record.attributesMap['organisms']}"/>
   <c:set var="description" value="${record.attributesMap['description']}"/>
   <c:set var="category" value="Category: ${record.attributesMap['category']}<br>"/>
   <c:set var="version" value="${record.attributesMap['version']}"/>
@@ -80,11 +81,14 @@
 
 <b>${resource}</b> (${version})<br>
 <font size="-1">
+<c:if test="${publicUrl != ''}"><a href="${publicUrl}">${publicUrl}</a><br></c:if>
 
-<a href="${publicUrl}">${publicUrl}</a>
+<c:if test="${organisms != ''}">Organisms: ${organisms}<br></c:if>
+
+<br>${description}<br><br>
 
 
-  <c:set var="pubMedPrefix" value="<br>PubMed:"/>
+  <c:set var="pubMedPrefix" value="PubMed:"/>
   <c:forEach items="${record.tables}" var="tblEntry">
     <c:set var="rows" value="${tblEntry.rows}"/>
       <c:forEach items="${rows}" var="row">
@@ -99,7 +103,6 @@ ${pubMedPrefix}
       </c:forEach>
   </c:forEach>
 
-<br><br>${description}<br>
 </font>
   </td>
 </tr>
