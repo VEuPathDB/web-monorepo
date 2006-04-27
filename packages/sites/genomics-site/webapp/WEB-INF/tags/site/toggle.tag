@@ -17,6 +17,11 @@
               description="text appearing inside toggle block in 'show' mode"
 %>
 
+<%@ attribute name="anchorName"
+              required="false"
+              description="An anchor for the toggle to land on after toggling. Without this we will lose page scrolling in Firefox/Netscape browsers"
+%>
+
 <%@ attribute name="imageId"
               required="false"
               description="the id of a image in the content"
@@ -76,21 +81,27 @@
         <!-- td -->
         <c:set var="showOnClick" value=""/>
         <c:if test="${imageId != null}">
-            <c:set var="showOnClick" value="updateImage('${imageId}', '${imageSource}');"/>
+            <c:set var="showOnClick" value="updateImage('${imageId}', '${imageSource}')"/>
         </c:if>
         <c:if test="${imageMapDivId != null}">
-            <c:set var="showOnClick" value="${showOnClick}updateImageMapDiv('${imageMapDivId}', '${imageMapSource}');"/>
+            <c:set var="showOnClick" value="updateImageMapDiv('${imageMapDivId}', '${imageMapSource}')"/>
         </c:if>
         <c:if test="${showOnClick != ''}">
-            <c:set var="showOnClick" value="onClick=\"${showOnClick}\""/>
+            <c:set var="showOnClick" value="&&${showOnClick}"/>
         </c:if>
+
+        <c:if test="${ anchorName == null}">
+            <c:set var="anchorName" value="${name}ShowHide"/>
+            <a name="${anchorName}"></a>   
+        </c:if>
+
         <div id="showToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
-          <a href="javascript:showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')&&storeIntelligentCookie('show${name}',1);" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true" ${showOnClick}>Show</a>
+          <a href="#${anchorName}" onClick="javascript:showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')${showOnClick}&&storeIntelligentCookie('show${name}',1)" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
         </div><!-- /td -->
 
         <!-- td -->
         <div id="hideToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
-          <a href="javascript:hideLayer('${name}')&&showLayer('showToggle${name}')&&hideLayer('hideToggle${name}')&&storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onMouseOver="status='Hide ${displayName}';return true" onMouseOut="status='';return true">Hide</a>
+          <a href="#${anchorName}" onClick="javascript:hideLayer('${name}')&&showLayer('showToggle${name}')&&hideLayer('hideToggle${name}')&&storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onMouseOver="status='Hide ${displayName}';return true" onMouseOut="status='';return true">Hide</a>
         </div></td>
       </c:otherwise>
     </c:choose>

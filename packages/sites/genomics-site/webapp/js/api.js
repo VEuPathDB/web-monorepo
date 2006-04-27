@@ -197,6 +197,7 @@ function updateImage(imgId, imgSrc) {
         }
     }
     workStates[imgId] = false;
+    return true;
 }
 
 function handle_dnaContextDiv() {
@@ -265,6 +266,7 @@ function updateImageMapDiv(imgMapDivId, imgMapSrc) {
         }
     }
     workStates[imgMapDivId] = false;
+    return true;
 }
 
 function getHTTPObject() {
