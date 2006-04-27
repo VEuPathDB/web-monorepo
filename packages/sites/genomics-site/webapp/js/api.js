@@ -212,11 +212,25 @@ function handleHttpResponseImageMapDiv(imgMapDivId) {
     if (http.readyState == 4) {
         var div = document.getElementById(imgMapDivId);
         if (document.getElementById(imgMapDivId).lastChild == null) {
-            document.getElementById(imgMapDivId).innerHTML = http.responseText;
+            //document.getElementById(imgMapDivId).innerHTML = http.responseText;
+            //TRICKY: this only works on Firefox/Netscape
+            dynamiccontent(imgMapDivId, http.responseText);
         }
         workStates[imgMapDivId] = false;
     }
     //alert(imgMapDivId + ": state=" + http.readyState);
+}
+
+function dynamiccontent(elementid,content){
+    if (document.getElementById && !document.all){
+        rng = document.createRange();
+        el = document.getElementById(elementid);
+        rng.setStartBefore(el);
+        htmlFrag = rng.createContextualFragment(content);
+        while (el.hasChildNodes())
+            el.removeChild(el.lastChild);
+        el.appendChild(htmlFrag);
+    }
 }
 
 function updateImageMapDiv(imgMapDivId, imgMapSrc) {
