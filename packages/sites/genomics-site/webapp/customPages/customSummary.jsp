@@ -7,7 +7,7 @@
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
 <!-- get wdkAnswer from requestScope -->
-<c:set value="${sessionScope.wdkAnswer}" var="wdkAnswer"/>
+<c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set value="${param['user_answer_id']}" var="uaId"/>
 <c:set value="${requestScore.userAnswerId}" var="altUaId"/>
