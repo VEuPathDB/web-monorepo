@@ -4,7 +4,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
 <!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->  
-<c:set value="${sessionScope.wdkQuestion}" var="wdkQuestion"/>
+<c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
 <jsp:useBean scope="request" id="helps" class="java.util.HashMap"/>
 
 <!-- display page header with wdkQuestion displayName as banner -->
