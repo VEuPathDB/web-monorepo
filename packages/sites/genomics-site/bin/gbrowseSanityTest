@@ -1,0 +1,81 @@
+#!/usr/bin/perl -w
+
+=pod
+
+=head1 NAME
+
+gbrowseSanityTest <gbrowse.xml> <sanity_file> 
+
+=head1 SYNOPSIS
+
+  gbrowseSanityTest [options] 
+
+  Options:
+        --conf_dir   -d path to a gbrowse configuration 
+        --chromosome -n  name of a chromosome or contig
+        --start      -s  start position
+        --end        -e  end position
+        --help       -h  display this message
+        --verbose    -v  verbose
+
+	Example: 
+	%> gbrowseSanityTest \
+	     --conf_dir=/var/www/test.cryptodb.org/conf/gbrowse.conf/ \
+			 --chromosome=AAEE01000001 \
+			 --start=1 \
+			 --end=10000 \
+			 --help \
+			 --verbose
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Haiming Wang (hwang@uga.edu)
+
+=cut
+
+use strict;
+use lib "/var/www/test.cryptodb.org/cgi-lib";
+use Bio::Graphics::Browser::Util;
+use Getopt::Long;
+use Pod::Usage;
+
+use vars qw/$conf_dir $chromosome $start $end $help $verbose/;
+
+GetOptions( "d|conf_dir=s"   => \$conf_dir,
+            "n|chromosome=s" => \$chromosome,
+            "s|start=i"      => \$start,
+            "e|end=i"        => \$end,
+						"h|help"         => \$help,
+            "v|verbose"      => \$verbose ); 
+	
+pod2usage(2) unless $conf_dir;
+
+my $config = open_config($conf_dir);
+my ($adaptor, @argv) = $config->db_settings;
+
+my $db = eval {$adaptor->new(@argv)} or warn $@;
+
+my $segment = $db->segment( -name  => $chromosome, 
+	                          -start => $start, 
+                            -stop  => $end );
+
+my @types = grep { chomp } grep { !/^#/ } <DATA>;
+
+my @features = $segment->features( -types => \@types, 
+                                   -start => $segment->start, 
+                                   -stop  => $segment->stop );
+
+foreach(@features) {
+	warn $_->gff_string if $verbose;
+	foreach($_->sub_SeqFeature) {
+		warn $_->gff_string if $verbose;
+	}
+}
+
+__DATA__
+gene:Genbank
+#match:WU_BLASTX
+alignment:BLAT
+match:WU_BLASTN
