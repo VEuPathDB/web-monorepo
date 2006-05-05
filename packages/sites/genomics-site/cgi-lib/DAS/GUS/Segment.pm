@@ -369,17 +369,24 @@ sub features {
       or $self->throw("getting feature query failed");
 
     my @tempfeats = ();
+
     while (my $featureRow = $sth->fetchrow_hashref) {
-	push @tempfeats, $self->_makeFeature($featureRow, $factory);
+			push @tempfeats, $self->_makeFeature($featureRow, $factory);
     }
 
-	# filter out blastx. it is used by cryptodb
+	  # filter out blastx. it is used by cryptodb
     if($typeString =~ /blastx/i) { 
         warn "filtering blastx results for feature type: $type";
         @tempfeats = _blastx_filter(\@tempfeats);
     }
 
     push(@features, @tempfeats);
+
+		my $bulkSubFeatureSql = $factory->parser->getSQL("Feature.pm", "$type:bulksubfeatures");
+		next unless $bulkSubFeatureSql;
+		$bulkSubFeatureSql =~ s/(\$\w+)/eval $1/eg;
+  	$self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory) 
+
   }
 
   if($iterator) {
@@ -388,6 +395,22 @@ sub features {
     return @features;
   } else {
     return \@features;
+  }
+}
+
+sub _addBulkSubFeatures {
+  my ($self, $features, $subFeatureSql, $factory) = @_;
+
+  my %featuresById;
+  map { $featuresById{$_->feature_id} = $_ } @$features;
+
+  my $sth = $factory->dbh->prepare($subFeatureSql);
+  $sth->execute()
+    or $self->throw("getting bulk subfeature query failed");
+
+  while (my $featureRow = $sth->fetchrow_hashref) {
+    my $feature = $featuresById{$$featureRow{'PARENT_ID'}};
+		$feature->_addSubFeatureFromRow($featureRow);
   }
 }
 
