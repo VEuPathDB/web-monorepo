@@ -403,14 +403,19 @@ sub _addBulkSubFeatures {
 
   my %featuresById;
   map { $featuresById{$_->feature_id} = $_ } @$features;
-
   my $sth = $factory->dbh->prepare($subFeatureSql);
   $sth->execute()
     or $self->throw("getting bulk subfeature query failed");
 
   while (my $featureRow = $sth->fetchrow_hashref) {
     my $feature = $featuresById{$$featureRow{'PARENT_ID'}};
-		$feature->_addSubFeatureFromRow($featureRow);
+    if ($feature) {
+      $feature->_addSubFeatureFromRow($featureRow);
+    } else {
+      $self->warn("sub feature [" . $$featureRow{'FEATURE_ID'} . "]'s parent feature ["
+		  . $$featureRow{'PARENT_ID'} . "] could not be found. bulk subfeature query is:\n"
+		  . $subFeatureSql);
+    }
   }
 }
 
