@@ -735,6 +735,11 @@ sub sub_SeqFeature {
 
   $type ||= $self->type;
 
+	if ($self->{acquiredSubFeaturesByBulk}) {
+		my $subfeats = $self->subfeatures or return;
+		return @{$subfeats};
+	}
+
   my $query = $self->factory->parser->getSQL("Feature.pm", "$type:subfeatures");
   return unless $query;
 
@@ -748,38 +753,8 @@ sub sub_SeqFeature {
     }
     # $query =~ s/(\$\w+)/eval "$1"/eg;
     $query = eval qq{"$query"};
-  }
 
-  my $sth = $self->factory->dbh->prepare($query);
-  $sth->execute or $self->throw("subfeature query failed");
-
-  my $counter = 0;
-  while (my $hashref = $sth->fetchrow_hashref) {
-
-    my $source = $$hashref{'SOURCE'};
-    my $feature_id = $$hashref{'FEATURE_ID'};
-    my $name = $$hashref{'NAME'};
-    my $type = $$hashref{'TYPE'};
-    my $unique_name = "$type.$feature_id";
-    $type = $type. ":$source";
-
-    my $feat = DAS::GUS::Segment::Feature->new($self->factory, 
-							    $self,
-							    $self->ref,
-							    $$hashref{'STARTM'},# start
-							    $$hashref{'END'},	# stop
-							    $type,
-							    $$hashref{'SCORE'},	# score
-							    $$hashref{'STRAND'},# strand
-							    $$hashref{'PHASE'},	# phase
-							    $$hashref{'NAME'},	# group
-							    $$hashref{'ATTS'},	# attributes
-							    $unique_name,
-							    $feature_id
-							   );
-    $counter++;
-    $self->add_subfeature($feat);
-    $feat->source($source);
+		print "<pre>subquery: $query</pre>";
   }
 
   my $subfeats = $self->subfeatures or return;
@@ -1145,6 +1120,36 @@ sub protein {
 	     $$hashref{'SEQUENCE'}
 	   ];
   }
+}
+
+sub _addSubFeatureFromRow {
+  my ($self, $rowHashref) = @_;
+
+  my $source = $$rowHashref{'SOURCE'};
+  my $feature_id = $$rowHashref{'FEATURE_ID'};
+  my $name = $$rowHashref{'NAME'};
+  my $type = $$rowHashref{'TYPE'};
+  my $unique_name = "$type.$feature_id";
+  $type = $type. ":$source";
+
+  my $subfeat = DAS::GUS::Segment::Feature->new($self->factory,
+				    $self,
+				    $self->ref,
+				    $$rowHashref{'STARTM'}, # start
+				    $$rowHashref{'END'}, # stop
+				    $type,
+				    $$rowHashref{'SCORE'}, # score
+				    $$rowHashref{'STRAND'}, # strand
+				    $$rowHashref{'PHASE'}, # phase
+				    $$rowHashref{'NAME'}, # group
+				    $$rowHashref{'ATTS'}, # attributes
+				    $unique_name,
+				    $feature_id
+				   );
+
+  $self->add_subfeature($subfeat);
+  $subfeat->source($source);
+  $self->{acquiredSubFeaturesByBulk} = 1;
 }
 
 1;
