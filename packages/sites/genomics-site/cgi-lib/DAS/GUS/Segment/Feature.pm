@@ -754,7 +754,7 @@ sub sub_SeqFeature {
     # $query =~ s/(\$\w+)/eval "$1"/eg;
     $query = eval qq{"$query"};
 
-		print "<pre>subquery: $query</pre>";
+		#print "<pre>subquery: $query</pre>";
   }
 
   my $subfeats = $self->subfeatures or return;
