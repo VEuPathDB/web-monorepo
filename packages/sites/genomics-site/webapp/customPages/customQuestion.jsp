@@ -69,6 +69,7 @@
                  <c:set var="i" value="0"/>
                  <c:forEach items="${qP.vocab}" var="flatVoc">
                     <c:if test="${i == 0}"><c:set var="checked" value="checked"/></c:if>
+                    <c:if test="${i > 0}"><br></c:if>
                     <input type="checkbox" name="myMultiProp(${pNam})" 
                            value="${flatVoc}" ${checked}>${flatVoc}&nbsp;
                      <c:if test="${i >= 4}"><br></c:if>
