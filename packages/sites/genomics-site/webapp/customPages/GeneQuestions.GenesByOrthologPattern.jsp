@@ -242,7 +242,8 @@ Ack, this form won't work at all without JavaScript support!
 
 <hr>
 
-<html:form method="post" action="/processQuestion.do">
+<html:form method="get" action="/processQuestion.do">
+<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByOrthologPattern">    
 <input type="hidden" name="myMultiProp(phyletic_indent_map)" value="Archaea">
 <input type="hidden" name="myMultiProp(phyletic_term_map)" value="rno">
 
