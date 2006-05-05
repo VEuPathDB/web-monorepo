@@ -84,12 +84,10 @@
   <c:otherwise>
 
 <!-- content of blast result -->
-<c:set var="wdkAnswer1" value="${wdkAnswer.clonedAnswer}"/>
-<c:set var="wdkAnswer2" value="${wdkAnswer.clonedAnswer}"/>
 <table width="100%" border="0" cellpadding="8" cellspacing="0">
 
 <tr><td>
-<c:forEach items="${wdkAnswer1.records}" var="record">
+<c:forEach items="${wdkAnswer.records}" var="record">
   <c:set var="headerI" value="${record.summaryAttributes['Header'].value}"/>
   <c:set var="footerI" value="${record.summaryAttributes['Footer'].value}"/>
   <c:if test="${ headerI != '' }">
@@ -100,8 +98,10 @@
   </c:if>
 </c:forEach>
 
+<c:set var="junk" value="${wdkAnswer.resetAnswerRowCursor}"/>
+
 <c:set var="sumSect" value=""/>
-<c:forEach items="${wdkAnswer2.records}" var="record">
+<c:forEach items="${wdkAnswer.records}" var="record">
   <c:set var="tabRow" value="${record.summaryAttributes['TabularRow'].value}"/>
   <c:set var="tabRow" value="${fn:trim(tabRow)}"/>
 
@@ -119,6 +119,8 @@
   <c:set var="sumSect" value="${sumSect}<br>${tabRow}"/>
 </c:forEach>
 <PRE>${headerStr}${sumSect}</PRE>
+
+<c:set var="junk" value="${wdkAnswer.resetAnswerRowCursor}"/>
 
 <c:set var="algnSect" value=""/>
 <c:forEach items="${wdkAnswer.records}" var="record">
