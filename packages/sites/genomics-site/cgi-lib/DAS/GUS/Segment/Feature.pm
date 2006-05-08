@@ -754,7 +754,38 @@ sub sub_SeqFeature {
     # $query =~ s/(\$\w+)/eval "$1"/eg;
     $query = eval qq{"$query"};
 
-		#print "<pre>subquery: $query</pre>";
+  }
+
+  my $sth = $self->factory->dbh->prepare($query);
+  $sth->execute or $self->throw("subfeature query failed");
+
+  my $counter = 0;
+  while (my $hashref = $sth->fetchrow_hashref) {
+    my $source = $$hashref{'SOURCE'};
+    my $feature_id = $$hashref{'FEATURE_ID'};
+    my $name = $$hashref{'NAME'};
+    my $type = $$hashref{'TYPE'};
+    my $unique_name = "$type.$feature_id";
+    $type = $type. ":$source";
+
+    my $feat = DAS::GUS::Segment::Feature->new($self->factory, 
+							    $self,
+							    $self->ref,
+							    $$hashref{'STARTM'},# start
+							    $$hashref{'END'},	# stop
+							    $type,
+							    $$hashref{'SCORE'},	# score
+							    $$hashref{'STRAND'},# strand
+							    $$hashref{'PHASE'},	# phase
+							    $$hashref{'NAME'},	# group
+							    $$hashref{'ATTS'},	# attributes
+							    $unique_name,
+							    $feature_id
+							   );
+    $counter++;
+    $self->add_subfeature($feat);
+    $feat->source($source);
+    #print "<pre>subquery: $query</pre>";
   }
 
   my $subfeats = $self->subfeatures or return;
