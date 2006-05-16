@@ -14,7 +14,7 @@
 <!-- display page header with wdkQuestion displayName as banner -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="${wdkModel.displayName} : Queries"
+<site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
