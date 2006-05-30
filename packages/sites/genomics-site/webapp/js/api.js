@@ -260,9 +260,24 @@ function updateImageMapDiv(imgMapDivId, imgMapSrc) {
             workStates[imgMapDivId] = true;
             http.send(null);
         } catch (e) {
-            document.getElementById(imgMapDivId).innerHTML
-                = '<font color="red">Could not request the following url because it is on a different domain:<br>'
-                + imgMapSrc + '<br>Error: ' + e +'</font>';
+            var altImgMapSrc = imgMapSrc.replace('http://www.', 'http://');
+
+            try {
+                http.open("GET", altImgMapSrc, true);
+                if (imgMapDivId == 'dnaContextDiv') {
+                    http.onreadystatechange = handle_dnaContextDiv; 
+                } else if (imgMapDivId == 'proteinFeaturesDiv') {
+                    http.onreadystatechange = handle_proteinFeaturesDiv;
+                } else {
+                    //alert("unexpected image map div ID" + imgMapDivId);
+                }
+                workStates[imgMapDivId] = true;
+                http.send(null);
+            } catch (e2) {
+                document.getElementById(imgMapDivId).innerHTML
+                    = '<font color="red">Could not request the following url because it is on a different domain:<br>'
+                    + altImgMapSrc + '<br>Error: ' + e2 +'</font>';
+            }
         }
     }
     workStates[imgMapDivId] = false;
