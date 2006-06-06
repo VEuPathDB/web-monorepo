@@ -125,9 +125,7 @@
 <hr>
 <!-- display description for wdkQuestion -->
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
-As a guide, the list of Pfam families predicted in the annotated protein set is
-available below. By expanding the full list you will be able to use your web browser's Find function to 
-search for a term that can be entered into the term field above.
+The list below shows the subset of Pfam families found in ${model.displayName}. To search it, Expand All and use your web browser's Find function.
   </td>
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
