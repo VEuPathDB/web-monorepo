@@ -15,8 +15,8 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <c:set var="headElement">
-  <script src="/js/mktree.js" type="text/javascript"></script>
-  <link rel="stylesheet" type="text/css" href="/misc/mktree.css">
+  <script src="js/mktree.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="misc/mktree.css">
 </c:set>
 <site:header title="${wdkModel.displayName} : Queries"
                  banner="${wdkQuestion.displayName}"
@@ -125,7 +125,7 @@
 <hr>
 <!-- display description for wdkQuestion -->
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
-The list below shows the subset of Pfam families found in ${model.displayName}. To search it, Expand All and use your web browser's Find function.
+The list below shows the subset of Pfam families found in ${wdkModel.displayName}. To search it, Expand All and use your web browser's Find function.
   </td>
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
@@ -135,24 +135,17 @@ The list below shows the subset of Pfam families found in ${model.displayName}. 
 <%-- ---- PFAM TERM LIST ------------------------------------------------ --%>
 <c:set var="pfamParam" value="${wdkQuestion.paramsMap['pfam_list']}" />
 <c:set var="alpha" value="" />
-<button type="button" onClick="expandTree('tree0');expandTree('tree1'); return false;">Expand All</button>
-<button type="button" onClick="collapseTree('tree0');collapseTree('tree1'); return false;">Collapse All</button>
+<button type="button" onClick="expandTree('tree0'); return false;">Expand All</button>
+<button type="button" onClick="collapseTree('tree0'); return false;">Collapse All</button>
 <table border="0" width='80%'><tr><td valign="top">
 <ul class="mktree" id="tree0">
-<c:set var="i" value="1"/>
 <c:set var="liOpened" value="<li class='liOpen'>"/>
 <c:set var="liClosed" value="<li>"/>
 <c:forEach var="term" items="${pfamParam.vocab}">
     <c:if test="${alpha ne fn:toUpperCase(fn:substring(fn:replace(term, '\\'', ''), 0, 1))}">
         <c:set var="alpha">${fn:toUpperCase(fn:substring(fn:replace(term, '\'', ''), 0, 1))}</c:set>
         <c:if test="${tagIsOpen}"></ul></li>
-        <c:set var="i" value="${i+1}" />
     </c:if>
-<c:if test="${i>18}">
-</td><td valign="top">
-<ul class="mktree" id="tree1">
-<c:set var="i" value="0" />
-</c:if>
 <c:choose><c:when test="${alpha eq '3'}">
 ${liOpened}${alpha}
 </c:when><c:otherwise>
