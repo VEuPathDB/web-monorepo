@@ -610,6 +610,50 @@ sub seq {
 
 *protein = *dna = \&seq;
 
+
+=head2 secondary_structure_encodings
+
+	Title	: secondary_structure_encodings
+	Usage	: $s->secondary_structure_encodings
+	Function: get the secondary structure prediction scores for segment
+	Returns	: hash ref { secondary_structure_type => string of 0-9 one digit per base }
+	Args	: none
+	Status	: Public
+
+=cut
+
+sub secondary_structure_encodings {
+
+  my $self = shift;
+
+  my $srcfeature_id = $self->{srcfeature_id};
+
+  my $strucQuery = $self->factory->parser->getSQL("Segment.pm", "get_2d_struc");
+
+  warn "Couldn't find Segment.pm sql for get_2d_struc\n" unless $strucQuery;
+  return unless $strucQuery;
+
+  $strucQuery =~ s/(\$\w+)/eval $1/eg;
+
+  my $sth = $self->factory->dbh->prepare($strucQuery);
+  $sth->execute();
+
+  my $encodings = undef;
+  while (my ($type, $encoding) = $sth->fetchrow_array()) {
+    $encodings = {} unless defined($encodings);
+    $type = 'helix' if $type =~ /^h$/i;
+    $type = 'coil' if $type =~ /^c$/i;
+    $type = 'strand' if $type =~ /^e$/i;
+    $encodings->{$type} = $encoding;
+  }
+
+  unless ($encodings && $encodings->{helix}) {
+    warn "no structure encodings retrieved by sql: $strucQuery\n";
+  }
+
+  return $encodings;
+}
+
 =head2 factory
 	
 	Title	: factory
