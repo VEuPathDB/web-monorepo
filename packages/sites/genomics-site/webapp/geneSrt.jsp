@@ -2,9 +2,12 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
-<site:header title="PlasmoDB.org :: Retrieve Gene Sequences"
+<c:set var="$siteName" value="ApiDB"/>
+<c:if test="${param.siteName != null}"><c:set var="siteName" value="${param.siteName}"/></c:if>
+
+<site:header title="${siteName}.org :: Retrieve Gene Sequences"
                  banner="Retrieve Gene Sequences"
-                 parentDivision="PlasmoDB"
+                 parentDivision="${siteName}"
                  parentUrl="/home.jsp"
                  divisionName="Retrieve Gene Sequences"
                  division="queries_tools"/>
@@ -22,7 +25,7 @@
     <table border="0" width="100%" cellpadding="4">
     <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
-            <textarea name="ids" rows="4" cols="60">PFL0275w PF11_0344 MAL13P1.221</textarea>
+            <textarea name="ids" rows="4" cols="60">${param.defaultGeneIds}</textarea>
     </td></tr>
 
     <tr><td colspan="2">
