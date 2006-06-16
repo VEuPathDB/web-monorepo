@@ -66,15 +66,20 @@
                          <tr><td align="right">${p.key}:</td><td><i>${paramVal}</i></td></tr> 
                        </c:forEach>
                      </table></td></tr>
+
       </c:otherwise>
     </c:choose>
 
   </c:otherwise>
 </c:choose>
 
+
+<tr><td valign="top" align="left"><font face="Arial,Helvetica"><b>Results:</b></font></td>
+     <td valign="top" align="left">${wdkAnswer.resultSize}</td>
+</tr>
+<tr><td colspan=3><hr></td</tr>
 </table>
 
-<hr>
 
 <!-- handle empty result set situation -->
 <c:choose>
