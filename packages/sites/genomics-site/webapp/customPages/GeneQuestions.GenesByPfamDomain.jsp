@@ -115,7 +115,6 @@
 
   <tr><td></td>
       <td><html:submit property="questionSubmit" value="Get Answer"/></td>
-      <td><html:submit property="questionSubmit" value="Expand Question"/></td>
 </table>
  <html:hidden property="myMultiProp(pfam_list)" value="Actin"/><%-- something valid needs to be passed --%>
 
