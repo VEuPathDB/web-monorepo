@@ -54,7 +54,16 @@
 
   <!-- hide invisible params -->
   <c:choose>
-  <c:when test="${isHidden}"><html:hidden property="myProp(${pNam})"/></c:when>
+  <c:when test="${isHidden}">
+     <c:choose>
+        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
+
+        </c:when>
+        <c:otherwise>
+            <html:hidden property="myProp(${pNam})"/>
+        </c:otherwise>
+     </c:choose>
+  </c:when>
   <c:otherwise>
 
   <!-- an individual param (can not use fullName, w/ '.', for mapped props) -->
