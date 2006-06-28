@@ -87,20 +87,44 @@
 
 <br>${description}<br><br>
 
-
-  <c:set var="pubMedPrefix" value="PubMed:"/>
+  <c:set var="pubMedPrefix" value="PubMed: "/>
+  <c:set var="pubmedReferences" value="References:"/>
+  <c:set var="pubmedFirstTime" value="true"/>
   <c:forEach items="${record.tables}" var="tblEntry">
     <c:set var="rows" value="${tblEntry.rows}"/>
       <c:forEach items="${rows}" var="row">
- 
-        <c:forEach var="rCol" items="${row}">
-          <c:set var="pmid" value="${rCol.value}"/>
-${pubMedPrefix}
-<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=${pmid}"> ${pmid}</a>
+	    <c:choose>
+		<c:when test="${!empty row[1].value}">
+	  	    <c:if test="${pubmedFirstTime}">
+		      ${pubmedReferences}
+		      <c:set var="pubmedFirstTime" value="false"/>
+			  <ul>
+		    </c:if>
+
+		    <c:set var="pmid" value="${row[0].value}"/>
+		    <c:set var="pmdetails" value="${row[1].value}"/>
+		    <c:set var="pmauthors" value="${row[2].value}"/>
+		    <c:set var="pmtitle" value="${row[3].value}"/>
+            <li><a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=${pmid}">
+   		    ${pmauthors}
+		    ${pmtitle}
+		    ${pmdetails}
+		    </a>
+		    </li>
+	  </c:when>
+	  <c:otherwise>
+          <c:set var="pmid" value="${row[0].value}"/>
+          ${pubMedPrefix}
+          <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=${pmid}"> ${pmid}</a>
           <c:set var="pubMedPrefix" value=" | "/>
 
-        </c:forEach>
+	  </c:otherwise>
+	  </c:choose>
+
       </c:forEach>
+	  <c:if test="false(${pubmedFirstTime})">
+	  </ul>
+	  </c:if>
   </c:forEach>
 
 </font>
