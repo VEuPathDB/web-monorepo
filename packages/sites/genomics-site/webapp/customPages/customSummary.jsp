@@ -175,8 +175,8 @@
 
         <!-- need to know if fieldVal should be hot linked -->
         <c:choose>
-          <c:when test="${fieldVal.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
-            <a href="${fieldVal.url}">${fieldVal.visible}</a>
+          <c:when test="${recAttr.value.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
+            <a href="${recAttr.value.url}">${recAttr.value.visible}</a>
           </c:when>
           <c:otherwise>
             ${fieldVal}
