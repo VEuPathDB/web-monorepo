@@ -78,11 +78,11 @@ Types of sequences:
  </tr>
  <tr>
        <td><i><b>CDS</b></i>
-       <td>the coding sequence, including UTRs (introns spliced out)
+       <td>the coding sequence, excluding UTRs (introns spliced out)
  </tr>
  <tr>
         <td><i><b>transcript</b></i>
-        <td>the processed transcript, excluding UTRs (introns spliced out)
+        <td>the processed transcript, including UTRs (introns spliced out)
  </tr>
  <tr>
         <td><i><b>genomic</b></i>
