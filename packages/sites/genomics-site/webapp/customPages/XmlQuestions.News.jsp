@@ -12,10 +12,11 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
+<c:set var="rssUrl" value="showXmlDataContent.do?name=XmlQuestions.NewsRss"/>
 <c:set var="headElement">
 <link rel="alternate" type="application/rss+xml" 
   title="RSS Feed for ${wdkModel.displayName}" 
-  href="news.rss.jsp" />
+  href="${rssUrl}" />
 </c:set>
 
 <site:header title="${wdkModel.displayName} : News"
@@ -48,14 +49,14 @@
   <c:set var="item" value="${record.attributesMap['item']}"/>
 
   <c:if test="${param.tag == null or param.tag eq tag or param.tag == ''}">
-  <a name="newsItem${i}"/>
-  <a name="${tag}"/>
-  <table border="0" cellpadding="2" cellspacing="0" width="100%">
-
-  <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
-  <tr class="rowLight"><td>
-    <b>${headline}</b> (${date})<br><br>${item}</td></tr></table>
-  <c:set var="i" value="${i+1}"/>
+    <a name="newsItem${i}"/>
+    <a name="${tag}"/>
+    <table border="0" cellpadding="2" cellspacing="0" width="100%">
+  
+    <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
+    <tr class="rowLight"><td>
+      <b>${headline}</b> (${date})<br><br>${item}</td></tr></table>
+    <c:set var="i" value="${i+1}"/>
   </c:if>
 </c:forEach>
 
@@ -67,9 +68,9 @@
  <a href="showXmlDataContent.do?name=XmlQuestions.News" id='allnews'>All ${xmlAnswer.question.displayName}</a>
 </c:if>
 </td><td align="right">
-<a href="news.rss.jsp">
-  <img src="/images/feed-icon16x16.png">
-<font size='-2' color='black'>RSS</font></a> 
+<a href="${rssUrl}">
+  <img src="/images/feed-icon16x16.png" border='0'>
+<font size='-2' color='black'>RSS</font></a>
 </td></tr>
 </table>
 
