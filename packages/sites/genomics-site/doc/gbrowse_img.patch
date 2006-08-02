@@ -1,14 +1,9 @@
---- cgi-bin/gbrowse_img	2006-04-11 14:20:23.000000000 -0400
-+++ customCgi-bin/gbrowse_img	2006-04-12 17:38:15.022433271 -0400
-@@ -78,6 +78,7 @@
-   exit 0;
- }
- 
-+
+--- /www/plasmodb-dev/project_home/ApiCommonWebsite/Site/cgi-bin/gbrowse_img	2006-04-26 16:37:38.000000000 -0400
++++ /www/plasmodb-dev/cgi-bin/gbrowse_img	2006-08-01 14:45:25.000000000 -0400
  ## dgg here; cache of all this so dont regen slow images for each browser-back 
  my ($pagecache,$newpagecache)= checkCachedPage('cachedir', CGI::query_string());
  if ($pagecache) {
-@@ -177,28 +178,33 @@
+@@ -177,36 +178,42 @@
  			     flip          => $flip,
  			     $feature_hilighting ? (hilite_callback => $feature_hilighting) : (),
  			     $region_hilighting  ? (postgrid        => $region_hilighting)  : (),
@@ -46,8 +41,10 @@
 +    $map                = my_make_map($boxes,$source,scalar(@add_features),$hmap,$base);
    }
  
-   $map =~ s/href/target="_top" href/g;  # add appropriate target tags
-@@ -207,6 +213,7 @@
+-  $map =~ s/href/target="_top" href/g;  # add appropriate target tags
++  # $map =~ s/href/target="_top" href/g;  # add appropriate target tags
+ 
+   print_cached (
  		$newpagecache,
  		header('text/html'),start_html(''),$img,$map,end_html()
  	       );
