@@ -67,7 +67,7 @@
 	<strong>Add a comment to ${commentTarget.displayName} ${stableId}</strong>
 	
 	<p align=justify>
-	Please add only scientific comments to be displayed on the Gene page for ${stableId}. 
+	Please add only scientific comments to be displayed on the ${commentTarget.displayName} page for ${stableId}. 
 	If you want to report a problem, use the <a href="http://www.plasmodb.org/plasmo/help.jsp">support page.</a>
 	</td></tr></table>
 	
