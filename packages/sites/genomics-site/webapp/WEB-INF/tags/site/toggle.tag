@@ -96,12 +96,12 @@
         </c:if>
 
         <div id="showToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
-          <a href="#${anchorName}" onClick="javascript:showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')${showOnClick}&&storeIntelligentCookie('show${name}',1)" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
+          <a href="#${anchorName}XXX" onClick="javascript:showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')${showOnClick}&&storeIntelligentCookie('show${name}',1)" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
         </div><!-- /td -->
 
         <!-- td -->
         <div id="hideToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
-          <a href="#${anchorName}" onClick="javascript:hideLayer('${name}')&&showLayer('showToggle${name}')&&hideLayer('hideToggle${name}')&&storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onMouseOver="status='Hide ${displayName}';return true" onMouseOut="status='';return true">Hide</a>
+          <a href="#${anchorName}XXX" onClick="javascript:hideLayer('${name}')&&showLayer('showToggle${name}')&&hideLayer('hideToggle${name}')&&storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onMouseOver="status='Hide ${displayName}';return true" onMouseOut="status='';return true">Hide</a>
         </div></td>
       </c:otherwise>
     </c:choose>
