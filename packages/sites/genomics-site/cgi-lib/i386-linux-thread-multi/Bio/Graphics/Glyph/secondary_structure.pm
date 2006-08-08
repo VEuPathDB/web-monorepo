@@ -342,7 +342,7 @@ L<GD>
 
 =head1 AUTHOR
 
-Aaron J. Mackey, based on the "dna" glyphy by Lincoln Stein
+Y. Thomas Gan, based on the "dna" glyphy by Lincoln Stein
 E<lt>lstein@cshl.orgE<gt> and Peter Ashton E<lt>pda@sanger.ac.ukE<gt>.
 
 This library is free software; you can redistribute it and/or modify
