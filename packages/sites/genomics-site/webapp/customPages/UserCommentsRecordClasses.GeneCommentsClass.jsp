@@ -30,16 +30,17 @@
 		<div class=medium>
 		<strong>By: </strong>${username}, ${organization} <br/>
 		<strong>When:</strong> ${projectVersion} (${commentDate})<br>
-                <c:if test="${reviewStatus == 'accepted'}">
-                    <strong>Status: </strong><i>included in the Annotation Center's official annotation</i>
-                </c:if>
+		<c:if test="${reviewStatus == 'accepted'}">
+			<strong>Status: </strong>
+			<em>included in the Annotation Center's official annotation</em>
+		</c:if>
+		<c:if test="${! empty fn:trim(locations)}">
+			<strong>Locations:</strong>
+			${locations}
+		</c:if>
 		</div>
 		<p align=justify>
 		${content}
-		<br/>
-		<c:if test="${! empty fn:trim(locations)}">
-			<i>Refers to Locations: ${locations}</i>
-		</c:if>
 		</p>
 		</td></tr>
 		
