@@ -1,19 +1,43 @@
-function toggleLayer(whichLayer) {
-    //alert("toggleLayer: " + whichLayer);
-    if (document.getElementById) {
-        // this is the way the standards work
-        var style2 = document.getElementById(whichLayer).style;
-        style2.display = style2.display? "":"block";
+
+/*
+we support two types of toggling, one compatible with Safari the other for the rest of the 
+browsers. 
+
+the version that works on Safari causes Netscape to lose focus on a click.
+
+the version that works on Netscape doesn't work at all on Safari, as it seems the DOM tricks
+in sayShowOrHide don't work
+
+*/
+
+function toggleLayer(controllingLayerName, textLayerName) {
+    //alert("toggleLayer: " + controllingLayerName);
+    var controllingLayer ; 
+    if (document.getElementById) {    // this is the way the standards work
+        controllingLayer = document.getElementById(controllingLayerName);
+    } else if (document.all) {  // this is the way old msie versions work
+        controllingLayer = document.all[controllingLayerName];
+    } else if (document.layers) {   // this is the way nn4 works
+       controllingLayer  = document.layers[controllingLayerName];
     }
-    else if (document.all) {
-        // this is the way old msie versions work
-        var style2 = document.all[whichLayer].style;
-        style2.display = style2.display? "":"block";
-    } else if (document.layers) {
-        // this is the way nn4 works
-        var style2 = document.layers[whichLayer].style;
-        style2.display = style2.display? "":"block";
+    var style = controllingLayer.style;
+    style.display = style.display? "":"block";   // toggle it
+    sayShowOrHide(controllingLayerName, textLayerName, style);
+    storeIntelligentCookie("show" + controllingLayerName, style.display == "block"? 1:0);
+}
+
+// use DOM tricks to force Hide and Show text down the throat of the anchor
+function sayShowOrHide(controllingLayerName, textLayerName, style) {
+    var textLayer = document.getElementById(textLayerName);
+    var child = textLayer.firstChild;
+    var count = 0;
+    while (child != null) {
+     child = child.nextSibling;
+     if (count++ == 1) {
+	child.textContent = style.display == "block"? "Hide" : "Show";
+      }
     }
+
     return true;
 }
 
@@ -21,8 +45,8 @@ function showLayer(whichLayer) {
     //alert("showLayer: " + whichLayer);
     if (document.getElementById) {
         // this is the way the standards work
-        var style2 = document.getElementById(whichLayer).style;
-        style2.display = "block";
+           var style2 = document.getElementById(whichLayer).style;
+           style2.display = "block";
     }
     else if (document.all) {
         // this is the way old msie versions work
@@ -40,7 +64,7 @@ function hideLayer(whichLayer) {
     //alert("hideLayer: " + whichLayer);
     if (document.getElementById) {
         // this is the way the standards work
-        var style2 = document.getElementById(whichLayer).style;
+       	var style2 = document.getElementById(whichLayer).style;
         style2.display = "";
     }
     else if (document.all) {

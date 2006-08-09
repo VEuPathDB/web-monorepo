@@ -57,6 +57,8 @@
               description="Dataset ID (from Data Sources) for attribution"
 %>
 
+<c:set var="userAgent" value="${header['User-Agent']}"/>
+
 <!-- allow user's previous settings to override defaults -->
 <c:set var="cookieKey" value="show${name}"/>
 <c:set var="userPref" value="${cookie[cookieKey].value}"/>
@@ -95,14 +97,27 @@
             <a name="${anchorName}"></a>   
         </c:if>
 
-        <div id="showToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
-          <a href="#${anchorName}XXX" onClick="javascript:showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')${showOnClick}&&storeIntelligentCookie('show${name}',1)" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
-        </div><!-- /td -->
+        <%--  Safari can't handle this way of doing it  --%>
+        <c:choose>
+        <c:when test="${!fn:contains(userAgent, 'Safari')}">
+           <div id="toggle${name}" align="left"><b><font size="+0">${displayName}</font></b>
+             <a href="javascript:toggleLayer('${name}', 'toggle${name}')${showOnClick}" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
+           </div>
+        </c:when>
 
-        <!-- td -->
-        <div id="hideToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
-          <a href="#${anchorName}XXX" onClick="javascript:hideLayer('${name}')&&showLayer('showToggle${name}')&&hideLayer('hideToggle${name}')&&storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onMouseOver="status='Hide ${displayName}';return true" onMouseOut="status='';return true">Hide</a>
-        </div></td>
+        <%--  Netscape can't handle this way of doing it  --%>
+        <c:otherwise>
+
+           <div id="showToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
+             <a href="javascript:showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')${showOnClick}&&storeIntelligentCookie('show${name}',1)" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
+           </div>
+
+           <div id="hideToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
+              <a href="javascript:hideLayer('${name}')&&showLayer('showToggle${name}')&&hideLayer('hideToggle${name}')&&storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onMouseOver="status='Hide ${displayName}';return true" onMouseOut="status='';return true">Hide</a>
+            </div>
+        </c:otherwise>
+        </c:choose>
+
       </c:otherwise>
     </c:choose>
 
@@ -122,6 +137,19 @@
     </table>
   </div>
 
+     
+     <%--  Safari can't handle this way of doing it  --%>
+     <c:choose>
+     <c:when test="${!fn:contains(userAgent, 'Safari')}">
+        <c:if test="${isOpen}"> 
+           <SCRIPT TYPE="text/javascript" LANG="JavaScript">
+              toggleLayer('${name}', 'toggle${name}');
+            </SCRIPT>
+        </c:if>
+     </c:when> 
+
+     <%--  Netscape/Firefox can't handle this way of doing it  --%>
+     <c:otherwise>
         <c:choose>
           <c:when test="${isOpen}">
           <SCRIPT TYPE="text/javascript" LANG="JavaScript">
@@ -142,6 +170,8 @@
           </SCRIPT>
          </c:otherwise>
         </c:choose>
+     </c:otherwise>
+     </c:choose>
 
         <c:if test="${imageId != null && isOpen}">
           <SCRIPT TYPE="text/javascript" LANG="JavaScript">
