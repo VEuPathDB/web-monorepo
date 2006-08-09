@@ -26,11 +26,13 @@
 		<a name=${commentId}>
 		<tr><td>
 		<hr/>
-		<strong>${headline}</strong></a><br/>
+		<strong>Headline:</strong> ${headline}</a><br/>
 		<div class=medium>
-		${username}, ${organization} on ${commentDate}<br/>
-		<strong>Refers to:</strong> ${projectVersion} 
-		<strong>Review Status:</strong> ${reviewStatus}
+		<strong>By: </strong>${username}, ${organization} <br/>
+		<strong>When:</strong> ${projectVersion} (${commentDate})<br>
+                <c:if test="${reviewStatus == 'accepted'}">
+                    <strong>Status: </strong><i>included in the Annotation Center's official annotation</i>
+                </c:if>
 		</div>
 		<p align=justify>
 		${content}
