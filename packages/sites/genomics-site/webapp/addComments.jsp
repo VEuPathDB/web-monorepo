@@ -28,7 +28,7 @@
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:choose>
-	<c:when test="${wdkUser.guest}">
+	<c:when test="${empty wdkUser || wdkUser.guest}">
 		<p align=center>Please login to post a comment.</p>
 	</c:when>
 	
