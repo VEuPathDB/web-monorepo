@@ -570,11 +570,13 @@ sub seq {
   my $srcfeature_id = $self->{srcfeature_id};
   my $has_start = defined $base_start;
   my $has_stop = defined $stop;
+	$strand ||= 0;
   
   my $reversed;
-  if($has_start && $has_stop && $base_start > $stop) {
+  if($has_start && $has_stop && ($base_start > $stop)) {
     $reversed++;
     ($base_start, $stop) = ($stop, $base_start);
+
   } elsif( $strand < 0) {
     $reversed++;
   }
