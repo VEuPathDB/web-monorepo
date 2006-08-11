@@ -11,10 +11,13 @@ gbrowseSanityTest <gbrowse.xml> <sanity_file>
   gbrowseSanityTest [options] 
 
   Options:
-        --conf_dir   -d path to a gbrowse configuration 
+        --conf_dir   -d  path to a gbrowse configuration 
         --chromosome -n  name of a chromosome or contig
         --start      -s  start position
         --end        -e  end position
+        --types      -t  feature type, such as gene:Genbank
+        --output     -o  gff3 output location 
+				--showChrSeq -c  display chromosome/contig fasta sequence
         --help       -h  display this message
         --verbose    -v  verbose
 
@@ -24,6 +27,9 @@ gbrowseSanityTest <gbrowse.xml> <sanity_file>
 			 --chromosome=AAEE01000001 \
 			 --start=1 \
 			 --end=10000 \
+			 --types=gene:Genbank \ 
+			 --output=dump.gff3 \
+			 --showChrSeq \
 			 --help \
 			 --verbose
 
@@ -36,17 +42,20 @@ Haiming Wang (hwang@uga.edu)
 =cut
 
 use strict;
-use lib "/var/www/test.cryptodb.org/cgi-lib";
+use lib "$ENV{PROJECT_HOME}/ApiCommonWebsite/Site/cgi-lib"; 
 use Bio::Graphics::Browser::Util;
 use Getopt::Long;
 use Pod::Usage;
 
-use vars qw/$conf_dir $chromosome $start $end $help $verbose/;
+use vars qw/$conf_dir $chromosome $start $end $types $showChrSeq $output $help $verbose/;
 
 GetOptions( "d|conf_dir=s"   => \$conf_dir,
             "n|chromosome=s" => \$chromosome,
             "s|start=i"      => \$start,
             "e|end=i"        => \$end,
+						"t|types=s"      => \$types,
+						"o|output=s"     => \$output,
+						"c|showChrSeq"   => \$showChrSeq, 
 						"h|help"         => \$help,
             "v|verbose"      => \$verbose ); 
 	
@@ -61,21 +70,66 @@ my $segment = $db->segment( -name  => $chromosome,
 	                          -start => $start, 
                             -stop  => $end );
 
-my @types = grep { chomp } grep { !/^#/ } <DATA>;
+my @proteins;
+my %seen;
+
+my $segattr = $segment->attributes; 
+$output ||= "dump.gff3";
+open(FILE, ">$output") or die "Cannot open the file. $!\n";
+
+my $GFF3_header = <<EOL;
+##gff-version 3
+##feature-ontology so.obo
+##attribute-ontology gff3_attributes.obo
+##sequence-region $chromosome $start $end
+EOL
+
+warn "$GFF3_header";
+print FILE "$GFF3_header";
+
+warn join("\t", $chromosome ,'ApiDB', 'contig', $start, $end, '.', '+', '.', $segattr). "\n";
+print FILE join("\t", $chromosome ,'ApiDB', 'contig', $start, $end, '.', '+', '.', $segattr). "\n";
+
+#my @types = grep { chomp } grep { !/^#/ } <DATA>;
+my @types = split/\+/, $types;
 
 my @features = $segment->features( -types => \@types, 
                                    -start => $segment->start, 
                                    -stop  => $segment->stop );
 
-foreach(@features) {
-	warn $_->gff_string if $verbose;
-	foreach($_->sub_SeqFeature) {
-		warn $_->gff_string if $verbose;
+foreach my $f (@features) {
+	warn $f->gff_string(1);
+	print FILE $f->gff_string(1); 
+	foreach my $subf ($f->sub_SeqFeature) {
+	  if($subf->type eq 'mRNA:ApiDB') {
+			my $fid = $subf->feature_id;
+			my $protein = $subf->protein($f->name);
+
+			my ($pid, $sid, $seq) = @$protein;
+			$seq =~ s/(\S{60})/$1\n/g;
+			if(!exists $seen{$fid}) {
+				$seen{$fid} = $fid;
+				push @proteins, ">CDS.$fid\n$seq\n";
+			}
+		}
+	} # end foreach
+}
+
+if($showChrSeq) {
+
+	foreach(@proteins) {
+		warn $_;
+		print FILE $_;
 	}
+
+	my $seq = $segment->seq;
+	$seq =~ s/(\S{60})/$1\n/g;
+	warn ">$chromosome\n$seq\n";
+	print FILE ">$chromosome\n$seq\n";
 }
 
 __DATA__
-gene:Genbank
+gene:ApiDB
 #match:WU_BLASTX
-alignment:BLAT
-match:WU_BLASTN
+#alignment:BLAT
+#match:WU_BLASTN
