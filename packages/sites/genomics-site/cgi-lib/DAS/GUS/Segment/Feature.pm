@@ -339,6 +339,7 @@ sub get_tagset_values {
 =cut
 
 sub gff_string { 
+
 	my $self = shift; 
 	my ($recurse,$parent) = @_; 
 	my ($start,$stop) = ($self->start,$self->stop); 
@@ -346,7 +347,7 @@ sub gff_string {
 	# the defined() tests prevent uninitialized variable warnings, 
 	# when dealing with clone objects whose endpoints may be undefined 
 	($start,$stop) = ($stop,$start) 
-				if defined($start) && defined($stop) && $start > $stop;
+		if defined($start) && defined($stop) && $start > $stop;
 
 	my $strand = ('-','.','+')[$self->strand+1]; 
 	my $ref = $self->refseq; 
@@ -357,66 +358,38 @@ sub gff_string {
 	my ($class,$name) = ('',''); 
 	my @group; 
 	if (my $g = $self->group) { 
-		#$class = $g->can('class') && $g->class ? $g->class : '';
-		#$name  = $g->can('name')  && $g->name  ? $g->name  : '';
-		#$name  = "$class:$name" if length($class) and length($name);
-	  	#print " $g | $name  ............................\n";
-
-		#$name = $g;
 		$name = $self->id;
-    	push @group,[ID => $name] if !defined($parent) || $name ne $parent;
+    push @group,[ID => $name] if !defined($parent) || $name ne $parent;
 
 		my $display_name = $self->name;
-		#push @group,[Name => $display_name] if !defined($parent) || $name ne $parent;
 		push @group,[Name => $display_name] if $name !~ /$display_name$/;
 	}
 
-  	# Haiming Wang 3/21/2005
-	#my $parent = $self->parent;
-	#my $refp = ref $parent;
-	#if($refp eq 'DAS::GUS::Segment::Feature') {
-		#	my $name = $parent->name;
-		#push @group,[Parent => $name]; 
-	#	}
-  	# Haiming Wang 3/21/2005
-
 	push @group,[Parent => $parent] if defined $parent && $parent ne '';
 
-	#if (my $t = $self->target) { 
-		#	$strand = '-' if $t->stop < $t->start; 
-		#push @group, $self->flatten_target($t,3); 
-		#}
-
 	my @attributes = $self->attributes;
-
-	#print "@attributes\n";
-
 
 	while (@attributes) { 
 		push @group,[shift(@attributes),shift(@attributes)] 
 	}
 
-
-	#my $group_field = join ';',map {join '=',uri_escape($_->[0]),uri_escape($_->[1])} grep {$_->[0] =~ /\S/ and $_->[1] =~ /\S/} @group;
-
-	my $pattern = "^a-zA-Z0-9. :^*!+_?-";
+	my $pattern = "^a-zA-Z0-9,. :^*!+_?-";
 
 	my $group_field = join ';',map {join '=', uri_escape($_->[0], $pattern), uri_escape($_->[1], $pattern)} grep {$_->[0] =~ /\S/ and $_->[1] =~ /\S/} @group;
-	#my $group_field = join ';',map {join '=', $_->[0], $_->[1]} grep {$_->[0] =~ /\S/ and $_->[1] =~ /\S/} @group;
 
 	my $type = $self->method;
 	$type =~ s/:\S+//;
 
-  	my $string = join("\t",$n,$self->source||'.',$type||'.',$start||'.',$stop||'.', $self->score||'.',$strand||'.',$phase||'.',$group_field);
+  my $string = join("\t",$n,$self->source||'.',$type||'.',$start||'.',$stop||'.', $self->score||'.',$strand||'.',$phase||'.',$group_field);
 
 	$string .= "\n";
 
-  	if ($recurse) { 
+  if ($recurse) { 
 		foreach ($self->sub_SeqFeature) {
-      		$string .= $_->gff_string(1,$name);
-    	}
+      $string .= $_->gff_string(1,$name);
+    }
 	}
-  	$string;
+  $string;
 }
 
 =head2 has_tag()
@@ -767,6 +740,64 @@ sub sub_SeqFeature {
     my $type = $$hashref{'TYPE'};
     my $unique_name = "$type.$feature_id";
     $type = $type. ":$source";
+
+
+
+		# note: this is a temporary solution for EST. later this 
+		# should be handled by GUS. Current there is no proper plugin to 
+		# load data into proper tables 
+
+		my($ts, $bs);
+		my(@tstarts, @blocksizes);
+
+		if( $type =~ /^block/i ) { # if this is an EST feature (blat) 
+
+			$ts = $$hashref{'TSTARTS'}; 
+			$bs = $$hashref{'BLOCKSIZES'}; 
+			$ts =~ s/,/ /g; 
+			$bs =~ s/,/ /g; 
+
+			@tstarts = split /\s+/, $ts; 
+			@blocksizes = split /\s+/, $bs;
+
+			my $counter = 0; 
+			foreach my $t (@tstarts) { 
+				$feature_id = $$hashref{'FEATURE_ID'}; 
+				$feature_id = $feature_id . ".$counter"; 
+				$unique_name = "block.$feature_id"; 
+				my $end = $t + $blocksizes[$counter]; 
+				my $feat = DAS::GUS::Segment::Feature->new( $self->factory, 
+																																 $self, 
+																																 $self->ref, 
+																																 $t, # start 
+																																 $end, #end 
+																																 $type, 
+																																 $$hashref{'SCORE'},   # score 
+																																 $$hashref{'STRAND'},  # strand 
+																																 $$hashref{'PHASE'},   # phase 
+																																 $$hashref{'NAME'},    # group 
+																																 $$hashref{'ATTS'},    # attributes 
+																																 $unique_name, 
+																																 $feature_id); 
+
+
+        #warn "5 tstart $t | $end | $feature_id \n" if DEBUG;
+				$self->add_subfeature($feat); 
+				$feat->source($source); 
+				$counter = $counter + 1; 
+			} 
+			if($counter <= 1 ) { 
+				return; 
+			} 
+
+			my $subfeats = $self->subfeatures or return; 
+			return @{$subfeats}; 
+		} 
+		# end temporary solution for EST features
+
+
+
+
 
     my $feat = DAS::GUS::Segment::Feature->new($self->factory, 
 							    $self,
