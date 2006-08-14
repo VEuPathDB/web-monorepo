@@ -97,15 +97,15 @@
             <a name="${anchorName}"></a>   
         </c:if>
 
-        <%--  Safari can't handle this way of doing it  --%>
+        <%--  Safari/IE can't handle this way of doing it  --%>
         <c:choose>
-        <c:when test="${!fn:contains(userAgent, 'Safari')}">
+        <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
            <div id="toggle${name}" align="left"><b><font size="+0">${displayName}</font></b>
              <a href="javascript:toggleLayer('${name}', 'toggle${name}')${showOnClick}" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
            </div>
         </c:when>
 
-        <%--  Netscape can't handle this way of doing it  --%>
+        <%--  Netscape/Firefox can't handle this way of doing it  --%>
         <c:otherwise>
 
            <div id="showToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
@@ -138,9 +138,9 @@
   </div>
 
      
-     <%--  Safari can't handle this way of doing it  --%>
+     <%--  IE/Safari can't handle this way of doing it  --%>
      <c:choose>
-     <c:when test="${!fn:contains(userAgent, 'Safari')}">
+      <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
         <c:if test="${isOpen}"> 
            <SCRIPT TYPE="text/javascript" LANG="JavaScript">
               toggleLayer('${name}', 'toggle${name}');
