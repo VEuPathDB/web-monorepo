@@ -1,0 +1,13 @@
+# This hints file contains configuration information used by the generic browser
+
+# To reconfigure, run perl Makefile.PL `cat GGB.def`
+
+SELINUX=1
+LIB=/tmp/gbrowse_fake_install/cgi-lib
+CGIBIN=/tmp/gbrowse_fake_install/cgi-bin
+APACHE=/usr/local/apache
+DO_XS=1
+CONF=/tmp/gbrowse_fake_install/config
+HTDOCS=/tmp/gbrowse_fake_install/html
+VERSION=1.64
+BIOGRAPHICS_VERSION=0
