@@ -76,8 +76,12 @@
 			<p align=justify>
 			Please add only scientific comments to be displayed on the ${commentTarget.displayName} page for ${stableId}. 
 			If you want to report a problem, use the <a href="http://www.plasmodb.org/plasmo/help.jsp">support page.</a>
-			</td></tr></table>
 			
+			<p>
+			Your comments are appreciated. They will be forwarded to the Annotation Center for review and possibly 
+			included in future releases of the genome.</p>
+			</td></tr></table>
+			<br/>
 			<form method=post action="processAddComment.do">
 			<input type="hidden" name="commentTargetId" value="${commentTarget.commentTargetId}"/>
 			<input type="hidden" name="stableId" value="${stableId}"/>
@@ -96,7 +100,7 @@
 				
 			<tr>
 				<td valign=top><div class="medium">Comment</div></td>
-				</td><td><textarea name="content"></textarea></td>
+				<td><textarea name="content"></textarea></td>
 				</tr>
 				
 			<tr>
@@ -133,12 +137,70 @@
 				<br/>
 				<input type=submit value="Add Comment"/></td>
 				</tr>
+			
 			</table>
 			</form>
-			                 
+			
+<c:set var="formatHelp" value="
+				<div class=medium>
+				Use the formatting commands exemplified below to add bold, italics, underline, superscript, subscript 
+				and lists to your comment:
+				<p/>
+				Your comment can contain [i]italicized text[/i], some [b]bold words[/b] and a few [u]underlined words[/u]. 
+				Subscripts such as A[sub]min[/sub] or superscripts such as B[sup]max[/sup] are allowed. You can also
+				use numbered lists such as:
+				<br/>
+				[ol]<br/>
+				[li] One Apple[/li]<br/>
+				[li] Two Oranges[/li]<br/>
+				[li] Three bananas[/li]<br/>
+				[/ol]<br/>
+				<br/>
+				using the [OL] tag, or bulleted lists using the [UL] tag:<br/>
+				[ul]<br/>
+				[li] One Apple[/li]<br/>
+				[li] Two Oranges[/li]<br/>
+				[li] Three bananas[/li]<br/>
+				[/ul]<br/>
+				<br/>
+				Shown below is how the above comment appears to everyone:
+				</div>
+				<table class=mybox>
+				<tr><td>
+				<div class=medium>
+				Your comment can contain <i>italicized text</i>, some <b>bold words</b> and a few <u>underlined words</u>. 
+				Subscripts such as A<sub>min</sub> or superscripts such as Z<sup>max</sup> are allowed. You can also
+				use numbered lists such as:
+
+				<ol>
+				<li>One Apple</li>
+				<li>Two Oranges</li>
+				<li>Three bananas</li>
+				</ol>
+
+				using the [OL] tag, or bulleted lists using the [UL] tag:
+				
+				<ul>
+				<li> Apples</li>
+				<li> Oranges</li>
+				<li> Bananas</li>
+				</ul>
+				</div>
+				
+				</td></tr></table>"/>
+		
+		<table width=60% align=center>
+		<tr><td>
+		${formatHelp}
+		</td></tr>
+		</table>
+		
+
+
+			
 		</c:otherwise>
 		</c:choose>  
 	</c:otherwise>
 </c:choose> 
-              
+<br/><br/>              
 <site:footer/>
