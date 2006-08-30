@@ -17,11 +17,17 @@
               description="Text to go below the table"
 %>
 
+<%@ attribute name="suppressColumnHeaders"
+              description="Should the display of column headers be skipped?"
+%>
+
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
 <c:set var="noData" value="false"/>
 
 <c:set var="tblContent">
+
+<c:if test="${suppressColumnHeaders == null || !suppressColumnHeaders}">
     <c:set var="h" value="0"/>
     <tr class="headerRow">
         <c:forEach var="hCol" items="${tbl.visibleAttributeFields}">
@@ -29,6 +35,7 @@
            <th align="left">${hCol.displayName}</th>
         </c:forEach>
     </tr>
+</c:if>
 
     <%-- table rows --%>
     <c:set var="i" value="0"/>
