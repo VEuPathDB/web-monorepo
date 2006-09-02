@@ -69,7 +69,7 @@
 </c:if>
 </td><td align="right">
 <a href="${rssUrl}">
-  <img src="/images/feed-icon16x16.png" border='0'>
+  <img src="${pageContext.request.contextPath}/images/feed-icon16x16.png" border='0'>
 <font size='-2' color='black'>RSS</font></a>
 </td></tr>
 </table>
