@@ -1126,7 +1126,8 @@ sub attributes {
     my $sql = $self->factory->parser->getSQL("Feature.pm", "$type:attribute:$tag");
     return unless $sql;
     $sql =~ s/(\$\w+)/eval "$1"/eg;
-    return @{$self->factory->dbh->selectcol_arrayref($sql)};
+	#return @{$self->factory->dbh->selectcol_arrayref($sql)};
+	return @{$self->factory->dbh->selectall_arrayref($sql)};
   }
 
   return \%result;
