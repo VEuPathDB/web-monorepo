@@ -382,10 +382,16 @@ sub features {
 
     push(@features, @tempfeats);
 
-		my $bulkSubFeatureSql = $factory->parser->getSQL("Feature.pm", "$type:bulksubfeatures");
-		next unless $bulkSubFeatureSql;
-		$bulkSubFeatureSql =~ s/(\$\w+)/eval $1/eg;
-  	$self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory) 
+	my $bulkSubFeatureSql = $factory->parser->getSQL("Feature.pm", "$type:bulksubfeatures");
+	if($bulkSubFeatureSql) {
+	  $bulkSubFeatureSql =~ s/(\$\w+)/eval $1/eg;
+  	  $self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory) 
+	} 
+	
+	my $bulkAttributeSql = $factory->parser->getSQL("Feature.pm", "$type:bulkAttribute");
+    next unless $bulkAttributeSql;
+	$bulkAttributeSql =~ s/(\$\w+)/eval $1/eg;
+	$self->_addBulkAttribute(\@features, $bulkAttributeSql, $factory);
 
   }
 
@@ -396,6 +402,27 @@ sub features {
   } else {
     return \@features;
   }
+}
+
+sub _addBulkAttribute {
+
+  my($self, $features, $bulkAttributeSql, $factory) = @_;
+  my %featuresById;
+  map { $featuresById{$_->feature_id} = $_ } @$features;
+  my $sth = $factory->dbh->prepare($bulkAttributeSql);
+  $sth->execute()
+    or $self->throw("getting bulk attribute query failed");
+
+  my @bulkAtts;
+  #while (my $featureRow = $sth->fetchrow_hashref) {
+  foreach(@{$sth->fetchall_arrayref}) {
+    #my $feature = $featuresById{$$featureRow{'FEATURE_ID'}};
+	my $feature = $featuresById{$_->[0]};
+    if ($feature) { 
+	  #$feature->bulkAttributes($featureRow);
+	  $feature->bulkAttributes($_); 
+    } 
+  } 
 }
 
 sub _addBulkSubFeatures {
