@@ -414,13 +414,10 @@ sub _addBulkAttribute {
     or $self->throw("getting bulk attribute query failed");
 
   my @bulkAtts;
-  #while (my $featureRow = $sth->fetchrow_hashref) {
-  foreach(@{$sth->fetchall_arrayref}) {
-    #my $feature = $featuresById{$$featureRow{'FEATURE_ID'}};
-	my $feature = $featuresById{$_->[0]};
+  while (my $featureRow = $sth->fetchrow_hashref) {
+    my $feature = $featuresById{$$featureRow{'FEATURE_ID'}};
     if ($feature) { 
-	  #$feature->bulkAttributes($featureRow);
-	  $feature->bulkAttributes($_); 
+	  $feature->bulkAttributes($featureRow);
     } 
   } 
 }
