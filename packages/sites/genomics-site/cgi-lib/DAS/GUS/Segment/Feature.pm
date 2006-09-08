@@ -1136,16 +1136,11 @@ sub attributes {
 sub bulkAttributes { 
   my $self = shift; 
   my $atts = shift; 
-  if($atts) { 
-    if($self->{'bulkAtts'}) { 
-      my $array = $self->{'bulkAtts'}; 
-      push @$array, $atts; 
-      return $self->{'bulkAtts'} = $array; 
-    } else { 
-      return $self->{'bulkAtts'} = [$atts]; 
-    } 
-  } 
-  return $self->{'bulkAtts'}; 
+  if ($atts) {
+    $self->{bulkAtts} = [] unless $self->{bulkAtts};
+    push @{$self->{bulkAtts}}, $atts;
+  }
+  return $self->{bulkAtts};
 }
 
 =head2 notes
