@@ -1,13 +1,13 @@
---- /www/plasmodb-dev/project_home/ApiCommonWebsite/Site/cgi-bin/gbrowse_img	2006-04-26 16:37:38.000000000 -0400
-+++ /www/plasmodb-dev/cgi-bin/gbrowse_img	2006-08-01 14:45:25.000000000 -0400
- ## dgg here; cache of all this so dont regen slow images for each browser-back 
- my ($pagecache,$newpagecache)= checkCachedPage('cachedir', CGI::query_string());
- if ($pagecache) {
-@@ -177,36 +178,42 @@
+--- ../src/Generic-Genome-Browser-1.64/cgi-bin/gbrowse_img	2006-09-15 13:49:48.445551000 -0400
++++ gbrowse_img	2006-09-15 16:11:46.562156000 -0400
+@@ -176,37 +176,44 @@
+ 			     do_map        => 1,
  			     flip          => $flip,
  			     $feature_hilighting ? (hilite_callback => $feature_hilighting) : (),
- 			     $region_hilighting  ? (postgrid        => $region_hilighting)  : (),
+-			     $region_hilighting  ? (postgrid        => $region_hilighting)  : (),
 -                             -truecolor    => $CONFIG->setting('truecolor'),
++			     $region_hilighting  ? (postgrid => $region_hilighting) : 
++			                           (postgrid => $CONFIG->setting('postgrid')),
 +                             -truecolor    => $CONFIG->setting('truecolor') || 0,
  			    );
    $detailed_view++;
@@ -52,7 +52,15 @@
  }
  
  #elsif ($image_class eq 'GD::SVG') {
-@@ -447,20 +454,23 @@
+@@ -399,6 +406,7 @@
+       $gd->filledRectangle($left+$start,$top,$left+$end,$bottom,
+ 			   $panel->translate_color($h_color));
+     }
++    &{$CONFIG->setting('postgrid')}($gd, $panel);
+   }
+ }
+ 
+@@ -447,20 +455,23 @@
  }
  
  sub my_make_map {
