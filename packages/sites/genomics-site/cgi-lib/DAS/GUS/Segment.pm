@@ -376,7 +376,6 @@ sub features {
 
 	  # filter out blastx. it is used by cryptodb
     if($typeString =~ /blastx/i) { 
-        warn "filtering blastx results for feature type: $type";
         @tempfeats = _blastx_filter(\@tempfeats);
     }
 
