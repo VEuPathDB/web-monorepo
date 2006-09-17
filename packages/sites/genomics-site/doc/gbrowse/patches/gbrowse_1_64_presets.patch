@@ -1,6 +1,6 @@
---- gbrowse_1.64	2006-07-20 12:18:11.000000000 -0400
-+++ gbrowse	2006-07-20 12:17:59.000000000 -0400
-@@ -29,6 +29,8 @@
+--- ../src/Generic-Genome-Browser-1.64/cgi-bin/gbrowse	2006-09-15 16:32:00.167636000 -0400
++++ gbrowse	2006-09-17 14:58:36.392622000 -0400
+@@ -32,6 +32,8 @@
  use CGI qw(:standard unescape escape escapeHTML center *table *dl *TR *td);
  use CGI::Toggle;
  use CGI::Cookie;
@@ -9,7 +9,7 @@
  use vars qw($CONFIG $MAX_SEGMENT $DEFAULT_SEGMENT
  	    $HEADER $HTML $UA $VERSION $BIOGRAPHICS_VERSION $CONF_DIR
  	    $PLUGINS $UPLOADED_SOURCES $REMOTE_SOURCES
-@@ -68,7 +70,7 @@
+@@ -71,7 +73,7 @@
  use constant DEBUG_EXTERNAL => 0;
  use constant DEBUG_PLUGINS  => 0;
  
@@ -18,7 +18,7 @@
  
  local $CGI::USE_PARAM_SEMICOLONS = 1;
  $HAVE_SVG = eval {require GD::SVG; 1};
-@@ -252,7 +254,15 @@
+@@ -255,7 +257,15 @@
  my $cookies;
  if (param('reset')) {
    $cookies = reset_cookies($page_settings);
@@ -35,7 +35,25 @@
    $cookies = [$cookie];
  }
  
-@@ -411,6 +421,11 @@
+@@ -319,7 +329,7 @@
+ else {
+   my $header = $CONFIG->header;
+   print $header || h1($description) if $page_settings->{head};
+-  main_display($segments,$features,$page_settings);
++  main_display($segments,$features,$page_settings,$session);
+ }
+ 
+ print_bottom($VERSION);
+@@ -332,7 +342,7 @@
+ #################################################################################
+ 
+ sub main_display {
+-  my ($segments,$features,$page_settings) = @_;
++  my ($segments,$features,$page_settings,$session) = @_;
+   my ($segment);
+ 
+   # first of all, if there are no segments, then try a keyword search and store the results
+@@ -414,6 +424,11 @@
  		TR(td({-align=>'left'},
  		      a({-href=>"?name=$page_settings->{name};h_feat=_clear_;h_region=_clear_"},
  			font({-size=>-2},$CONFIG->tr('Clear_highlighting')))),
@@ -47,7 +65,7 @@
  		   td({-align=>'right'},
  		      b(submit(-name => $CONFIG->tr('Update'))))));
  
-@@ -425,11 +440,17 @@
+@@ -428,11 +443,17 @@
    print html_frag('html4',$segment,$page_settings);
    print hr();
    print tracks_table($page_settings,$feature_files);
@@ -65,7 +83,7 @@
    unless ($CONFIG->section_setting('upload_tracks') eq 'off') {
      print start_multipart_form(-name=>'externalform');
      print external_table($page_settings,$feature_files);
-@@ -1134,6 +1155,202 @@
+@@ -1137,6 +1158,202 @@
  }
  
  
@@ -84,7 +102,7 @@
 +			$tracks = $1;
 +			$name = $2;
 +			$track_lists .= qq(<tr>
-+			<td width=30%>&nbsp;&nbsp;&nbsp;<a href="?name=$page_settings->{name};label=$tracks">$name</a></td>
++			<td width=30%>&nbsp;&nbsp;&nbsp;<a href="?name=$settings->{name};label=$tracks">$name</a></td>
 +			<td width=70% align=left><a href="?delete=$_"><font color=red>Delete</font></a></td>
 +			</tr>); 
 +		} else {
@@ -190,7 +208,7 @@
 +			$str .= $_. "-"; 
 +		} 
 +		$str =~ s/\-$//ig; 
-+		$str = qq|&nbsp;&nbsp;&nbsp;<a href="?name=$page_settings->{name};label=$str">$k</a><br />|; 
++		$str = qq|&nbsp;&nbsp;&nbsp;<a href="?name=$  settings->{name};label=$str">$k</a><br />|; 
 +		push @preset_lists, $str; 
 +	}
 +
@@ -268,7 +286,7 @@
  sub settings_table {
    my $settings = shift;
  
-@@ -1238,7 +1455,8 @@
+@@ -1241,7 +1458,8 @@
    my $upload_table = upload_table($settings,$feature_files);
    my $das_table    = das_table($settings,$feature_files);
    toggle('Upload_tracks',
