@@ -5,8 +5,12 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
 <!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->  
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
+<c:set var="gidqpMap" value="${wdkQuestion.paramsMap}"/>
+<c:set var="pfamTermParam" value="${gidqpMap['pfam_term']}"/>
+
 <jsp:useBean scope="request" id="helps" class="java.util.HashMap"/>
 
 <c:set value="${requestScope.questionForm}" var="qForm"/>
@@ -14,9 +18,13 @@
 <!-- display page header with wdkQuestion displayName as banner -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
+
 <c:set var="headElement">
-  <script src="js/mktree.js" type="text/javascript"></script>
-  <link rel="stylesheet" type="text/css" href="misc/mktree.css">
+  <script src="js/pfamTypeahead.js" type="text/javascript"></script>
+</c:set>
+
+<c:set var="bodyElement">
+	onLoad="loadData();"
 </c:set>
 <site:header title="${wdkModel.displayName} : Queries"
                  banner="${wdkQuestion.displayName}"
@@ -24,7 +32,10 @@
                  parentUrl="/showQuestionSetsFlat.do"
                  divisionName="Question"
                  division="queries_tools"
-                 headElement="${headElement}" />
+		 headElement="${headElement}"
+		 bodyElement="${bodyElement}"/>
+
+
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -46,6 +57,33 @@
 <!-- show error messages, if any -->
 <wdk:errors/>
 
+
+<tr>		
+	<td>
+		<b>${pfamTermParam.prompt}</b>
+	</td>
+	<td>
+			<input class="form_box" 
+			id="searchBox" 
+			value="${pfamTermParam.default}" 
+			type="text" 
+			name="myProp(${pfamTermParam.name})" 
+			size="26" 
+			maxlength="90"
+			onClick="this.value=''" 
+			onKeyUp="check_typeahead_list();">
+	</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pfamTermParam.name}"/>
+          <c:set target="${helpQ}" property="${anchorQp}" value="${pfamTermParam}"/>
+          <a href="#${anchorQp}">
+          <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
+         </td>
+
+</tr>
+
+
 <c:set value="${wdkQuestion.params}" var="qParams"/>
 <c:forEach items="${qParams}" var="qP">
   <c:set var="isHidden" value="${qP.isVisible == false}"/>
@@ -55,14 +93,6 @@
   <!-- hide invisible params -->
   <c:choose>
   <c:when test="${isHidden}">
-     <c:choose>
-        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
-
-        </c:when>
-        <c:otherwise>
-            <html:hidden property="myProp(${pNam})"/>
-        </c:otherwise>
-     </c:choose>
   </c:when>
   <c:otherwise>
 
@@ -125,12 +155,15 @@
   <tr><td></td>
       <td><html:submit property="questionSubmit" value="Get Answer"/></td>
 </table>
- <html:hidden property="myMultiProp(pfam_list)" value="Actin"/><%-- something valid needs to be passed --%>
 
 
 </html:form>
 
 <hr>
+
+			<div align="left" id="dataArea"></div>
+
+
 <!-- display description for wdkQuestion -->
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 The list below shows the subset of Pfam families found in ${wdkModel.displayName}. To search it, Expand All and use your web browser's Find function.
@@ -140,34 +173,8 @@ The list below shows the subset of Pfam families found in ${wdkModel.displayName
 </table> 
 
 
-<%-- ---- PFAM TERM LIST ------------------------------------------------ --%>
-<c:set var="pfamParam" value="${wdkQuestion.paramsMap['pfam_list']}" />
-<c:set var="alpha" value="" />
-<button type="button" onClick="expandTree('tree0'); return false;">Expand All</button>
-<button type="button" onClick="collapseTree('tree0'); return false;">Collapse All</button>
-<table border="0" width='80%'><tr><td valign="top">
-<ul class="mktree" id="tree0">
-<c:set var="liOpened" value="<li class='liOpen'>"/>
-<c:set var="liClosed" value="<li>"/>
-<c:forEach var="term" items="${pfamParam.vocab}">
-    <c:if test="${alpha ne fn:toUpperCase(fn:substring(fn:replace(term, '\\'', ''), 0, 1))}">
-        <c:set var="alpha">${fn:toUpperCase(fn:substring(fn:replace(term, '\'', ''), 0, 1))}</c:set>
-        <c:if test="${tagIsOpen}"></ul></li>
-    </c:if>
-<c:choose><c:when test="${alpha eq '3'}">
-${liOpened}${alpha}
-</c:when><c:otherwise>
-${liClosed}${alpha}
-</c:otherwise></c:choose>
-    <ul>
-    <c:set var="tagIsOpen" value="true" />
-    </c:if>
-    <li>${term}</li>
-</c:forEach>
-<c:if test="${tagIsOpen}"></ul></li></c:if>
-</ul>
+	<!-- Pfam Typeahead Area -->
+	  <div id="storageArea" style="display:none"></div>
 
-</td></tr></table>
-<%-- -------------------------------------------------------------------- --%>
 
 <site:footer/>
