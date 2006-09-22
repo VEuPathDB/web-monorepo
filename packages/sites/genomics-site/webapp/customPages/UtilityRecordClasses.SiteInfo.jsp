@@ -7,6 +7,7 @@ Required query:
             <column name="address" />
             <column name="version" />
             <column name="system_date" />
+            <column name="login" />
            <sql> 
             <![CDATA[           
             select 
@@ -14,7 +15,8 @@ Required query:
                 ver.banner version,
                 UTL_INADDR.get_host_name as host_name,
                 UTL_INADDR.get_host_address as address,
-                to_char(sysdate, 'Dy DD-Mon-YYYY HH24:MI:SS') as system_date
+                to_char(sysdate, 'Dy DD-Mon-YYYY HH24:MI:SS') as system_date,
+                sys_context('USERENV', 'SESSION_USER') as login
             from global_name, v$version ver
             where lower(ver.banner) like '%oracle%'
              ]]>
@@ -56,7 +58,8 @@ cryptolink, plasmolink, toxolink
 
 <body>
 <p>
-<b>Oracle instance</b>: ${wdkRecord.attributes['global_name'].value}</b><br>
+<b>Oracle instance</b>: ${fn:toLowerCase(wdkRecord.attributes['global_name'].value)}</b><br>
+<b>Login name</b>: ${fn:toLowerCase(wdkRecord.attributes['login'].value)}</b><br>
 <b>Hosted on</b>: ${wdkRecord.attributes['host_name'].value} (${wdkRecord.attributes['address'].value})<br>
 <b>Oracle Version</b>: ${wdkRecord.attributes['version'].value}<br>
 <b>Date</b>: ${wdkRecord.attributes['system_date'].value}
