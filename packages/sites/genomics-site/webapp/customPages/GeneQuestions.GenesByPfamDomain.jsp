@@ -92,7 +92,7 @@
 
   <!-- hide invisible params -->
   <c:choose>
-  <c:when test="${isHidden}">
+  <c:when test="${isHidden or qP.name eq pfamTermParam.name }">
   </c:when>
   <c:otherwise>
 
