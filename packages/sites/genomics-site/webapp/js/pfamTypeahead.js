@@ -1,4 +1,11 @@
+    String.prototype.repeat = function(l){
+        return new Array(l+1).join(this);
+    };
 
+
+    var selectBoxWidth = 120;    
+    var selectBoxSpacer = "&nbsp;".repeat(selectBoxWidth);
+    
 	/* -------------------------------------------
 		Style Setter Functions
 	------------------------------------------- */
@@ -25,7 +32,6 @@
 	------------------------------------------- */
 	function loadData(){
 		var sendReq = 'showRecord.do?name=UtilityRecordClasses.PfamTermList.jsp&id=%20';
-		//var sendReq = 'misc/ajaxPfamTypeahead.jsp';
 		ajaxRead( sendReq );
 	}
 
@@ -89,7 +95,7 @@
 
 			}
 			
-			insertData += '<option>_________________________________________________________________</option>';
+			insertData += '<option value=\'\'>' + selectBoxSpacer + '</option>';
 			insertData += '</select></div>';
 			document.getElementById ( 'dataArea' ).innerHTML = insertData;
 		
@@ -121,7 +127,7 @@
 			counter++;
 		}
 		
-		insertData += '<option>_________________________________________________________________</option>';
+		insertData += '<option value=\'\'>' + selectBoxSpacer + '</option>';
 		insertData += '</select></div>';
 		document.getElementById ( 'dataArea' ).innerHTML = insertData;
 	}
@@ -146,7 +152,7 @@
 		var result;
 		var insertData = '<div align="center"><select name="select" size="5" onChange="insertAndClear(this.value);">';
 		var counter = 0;
-
+        var matches = 0;
 		while( counter < storageArray.length - 1 ){
 
 			result = storageArray[ counter ].match( reg_exp );
@@ -156,15 +162,19 @@
 				if( result.length > 0 ){
 
 					insertData += '<option onClick="insertAndClear(this.value);" value="'+storageArray[ counter ]+'" >' + storageArray[ counter ] + '</option>';
-
+                    matches++;
 				}
 
 			}
 
 			counter++;
 		}
-
-		insertData += '<option>_________________________________________________________________</option>';
+		
+		if(matches == 0) {
+            insertData += '<option value="" >' + '** no matches **' + '</option>';
+        }
+        
+		insertData += '<option value=\'\'>' + selectBoxSpacer + '</option>';
 		insertData += '</select></div>';
 		document.getElementById ( 'dataArea' ).innerHTML = insertData;
 		
@@ -217,7 +227,7 @@
 	------------------------------------------- */
 	function insertAndClear( pfam_data ){
 		
-		if( pfam_data == '_________________________________________________________________' ){
+		if( pfam_data == '' ){
 			//do nothing
 		}else{
 			//remove_typeahead_list();
