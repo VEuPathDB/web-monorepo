@@ -192,12 +192,12 @@ function calctext () {
 
     }
     var includedStr = 'n/a'; if (includeClause.length > 0) includedStr = includeClause.join(", ");
-    document.forms[0]['myProp(${includedSpeciesName})'].value = includedStr;
+    document.forms['questionForm']['myProp(${includedSpeciesName})'].value = includedStr;
     var excludedStr = 'n/a'; if (excludeClause.length > 0) excludedStr = excludeClause.join(", ");
-    document.forms[0]['myProp(${excludedSpeciesName})'].value = excludedStr;
+    document.forms['questionForm']['myProp(${excludedSpeciesName})'].value = excludedStr;
 
     var bothClauseSQL = includeClauseSQL.concat(excludeClauseSQL);
-    document.forms[0]['myProp(${profilePatternName})'].value =
+    document.forms['questionForm']['myProp(${profilePatternName})'].value =
 	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%";
 }
 
@@ -242,7 +242,7 @@ Ack, this form won't work at all without JavaScript support!
 
 <hr>
 
-<html:form method="get" action="/processQuestion.do">
+<html:form method="post" action="/processQuestion.do">
 <input type="hidden" name="questionFullName" value="GeneQuestions.GenesByOrthologPattern">    
 <input type="hidden" name="myMultiProp(phyletic_indent_map)" value="Archaea">
 <input type="hidden" name="myMultiProp(phyletic_term_map)" value="rno">
