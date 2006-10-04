@@ -20,11 +20,12 @@
 
 
 <c:set var="headElement">
-  <script src="js/pfamTypeahead.js" type="text/javascript"></script>
+ 
+  <script src="js/ApidbAjax.js" type="text/javascript"></script>
 </c:set>
 
 <c:set var="bodyElement">
-	onLoad="loadData();"
+	onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermList.jsp&id=%20', 'searchBox', 'dataArea' ); ac.loadData();"
 </c:set>
 <site:header title="${wdkModel.displayName} : Queries"
                  banner="${wdkQuestion.displayName}"
@@ -57,6 +58,31 @@
 <!-- show error messages, if any -->
 <wdk:errors/>
 
+
+<tr>		
+	<td>
+		<b>${pfamTermParam.prompt}</b>
+	</td>
+	<td>
+			<input class="form_box" 
+			id="searchBox" 
+			value="${pfamTermParam.default}" 
+			type="text" 
+			name="myProp(${pfamTermParam.name})" 
+			size="26" 
+			maxlength="90"
+			onClick="this.value=''" 
+			onKeyUp="ac.check_typeahead_list();">
+	</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pfamTermParam.name}"/>
+          <c:set target="${helpQ}" property="${anchorQp}" value="${pfamTermParam}"/>
+          <a href="#${anchorQp}">
+          <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
+         </td>
+
+</tr>
 
 <c:set value="${wdkQuestion.params}" var="qParams"/>
 <c:forEach items="${qParams}" var="qP">
@@ -122,31 +148,6 @@
       </td>
   </tr>
 
-<tr>		
-	<td>
-		<b>${pfamTermParam.prompt}</b>
-	</td>
-	<td>
-			<input class="form_box" 
-			id="searchBox" 
-			value="${pfamTermParam.default}" 
-			type="text" 
-			name="myProp(${pfamTermParam.name})" 
-			size="60" 
-			maxlength="120"
-			onKeyUp="check_typeahead_list();">
-	</td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>
-          <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pfamTermParam.name}"/>
-          <c:set target="${helpQ}" property="${anchorQp}" value="${pfamTermParam}"/>
-          <a href="#${anchorQp}">
-          <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
-         </td>
-
-</tr>
-<tr><td></td><td><div align="left" id="dataArea"></div></td></tr>
-
   </c:otherwise></c:choose>
 </c:forEach>
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
@@ -160,14 +161,13 @@
 
 <hr>
 
-
+			<div align="left" id="dataArea"></div>
+<br>
+			<div align="left" id="dataArea2"></div>
 
 <!-- display description for wdkQuestion -->
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
-As a guide, the list above shows the subset of Pfam families found in ${wdkModel.displayName}. 
-By typing a few letters in the Pfam Term field the list will update to show terms 
-that contain those letters. You may click an item in the list to enter it into the term field.
-
+The list below shows the subset of Pfam families found in ${wdkModel.displayName}. To search it, Expand All and use your web browser's Find function.
   </td>
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
