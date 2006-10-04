@@ -69,7 +69,7 @@
 	
 				var dataArray = obj.getElementsByTagName('term');
 				var dataArrayLen = dataArray.length;
-				var insertData = '<div align="center" ><select name="select" size="5" onChange="insertAndClear( this.innerHTML, this.value, \''+typebox+'\' );">';
+				var insertData = '<div align="center" ><select name="select" size="5" onChange="insertAndClear( this.options[this.selectedIndex].innerHTML, this.options[this.selectedIndex].value, \''+typebox+'\' );">';
 				var term;
 				var id;
 								 
@@ -112,7 +112,7 @@
 			var result;
 			var counting = 0;
 			var reg_exp = new RegExp( request , "i");
-			var insertData = '<div align="center"><select name="select" size="5"  onChange="insertAndClear( this.innerHTML, this.value, \''+typebox+'\' );">';
+			var insertData = '<div align="center"><select name="select" size="5" onChange="insertAndClear( this.options[this.selectedIndex].innerHTML, this.options[this.selectedIndex].value, \''+typebox+'\' );">';
 	
 			for( var x = 0; x < counter; x++ ){
 				
@@ -180,7 +180,7 @@
 		------------------------------------------- */
 		function show_typeahead_list(){
 		
-			var insertData = '<div align="center"><select name="select" size="5" onChange="insertAndClear( this.innerHTML, this.value, \''+typebox+'\' );">';
+			var insertData = '<div align="center"><select name="select" size="5" onChange="insertAndClear( this.options[this.selectedIndex].innerHTML, this.options[this.selectedIndex].value, \''+typebox+'\' );">';
 			
 			for( var x = 0; x < counter; x++ ){
 				
@@ -218,12 +218,12 @@
 				and clears the selection field
 		------------------------------------------- */
 		function insertAndClear( data, id, area ){
-			
+
 			if( data == '_________________________________________________________________' ){
 				//do nothing
 			}else{
 				//remove_typeahead_list();
 				document.getElementById( area ).value = data;
 			}
-		
+			
 		}
