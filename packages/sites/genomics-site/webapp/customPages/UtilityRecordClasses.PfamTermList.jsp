@@ -19,9 +19,9 @@ JSTL below is formatted to prevent blank lines
     var="wdkRecord"
 /><c:set 
     var="tbl" value="${wdkRecord.tables['PfamTerms']}"
-/><data><pfams>
+/><data><terms>
 <c:forEach 
     var="row" items="${tbl.visibleRows}"
-><pfam pfam_id="${row['accession'].value}" pfam_term="${row['name'].value}">${row['description'].value}</pfam>
-</c:forEach></pfams></data>
+><term id="${row['accession'].value}">${row['description'].value}</term>
+</c:forEach></terms></data>
 <c:set var="junk" value="${tbl.close}"/>
