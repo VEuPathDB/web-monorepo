@@ -144,10 +144,10 @@ onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermLi
          </td>
 
 </tr>
-<tr><td></td><td><div align="left" id="dataArea"></div></td></tr>
 
   </c:otherwise></c:choose>
 </c:forEach>
+<tr><td colspan='4' align="center"><div align="left" id="dataArea"></div></td></tr>
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
   <tr><td></td>
