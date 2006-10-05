@@ -24,7 +24,7 @@
 </c:set>
 
 <c:set var="bodyElement">
-onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermList.jsp&id=%20', 'searchBox', 'dataArea' ); ac.loadData();"
+onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermList.jsp&id=%20', 'searchBox', 'dataArea', '100' ); ac.loadData();"
 </c:set>
 <site:header title="${wdkModel.displayName} : Queries"
              banner="${wdkQuestion.displayName}"

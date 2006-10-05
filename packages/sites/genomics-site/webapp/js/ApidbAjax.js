@@ -1,3 +1,9 @@
+    String.prototype.repeat = function(l){
+        return new Array(l+1).join(this);
+    };
+
+
+ 
 	/* -------------------------------------------
 		Style Setter Functions
 	------------------------------------------- */
@@ -13,12 +19,14 @@
 		obj.style.backgroundColor="#CCCCCC";
 	}  
 		
-	function ajaxControl( reqType, pullFrom, pushTo ){
+	function ajaxControl( reqType, pullFrom, pushTo, listWidth){
 		
 		/* Variable Declaration */
  		this.sendReqUrl = reqType;
 		var typebox = pullFrom;
 		var dataarea = pushTo;
+        listSpacer = "_".repeat(parseInt(listWidth));
+
 		var counter = 0;
 		var storage = new Array(2000);
 		
@@ -87,7 +95,7 @@
 		
 					}
 					
-					insertData += '<option>_________________________________________________________________</option>';
+					insertData += '<option value=\'\'>' + listSpacer + '</option>';
 					insertData += '</select></div>';
 					
 					document.getElementById ( dataarea ).innerHTML = insertData;
@@ -132,10 +140,10 @@
 			}
 			
 			if( counting == 0 ){
-				insertData += '<option>_________________________** No Matches Found **____________________</option>';
+				insertData += '<option value=\'\'>** No Matches Found **</option>';
 			}
 	
-			insertData += '<option>_________________________________________________________________</option>';
+			insertData += '<option value=\'\'>' + listSpacer + '</option>';
 			insertData += '</select></div>';
 			document.getElementById ( dataarea ).innerHTML = insertData;
 	
@@ -188,7 +196,7 @@
 				
 			}
 			
-			insertData += '<option>_________________________________________________________________</option>';
+			insertData += '<option value=\'\'>' + listSpacer + '</option>';
 			insertData += '</select></div>';
 			document.getElementById ( dataarea ).innerHTML = insertData;
 
@@ -219,7 +227,7 @@
 		------------------------------------------- */
 		function insertAndClear( data, id, area ){
 
-			if( data == '_________________________________________________________________' ){
+		    if( id == '' ){
 				//do nothing
 			}else{
 				//remove_typeahead_list();
