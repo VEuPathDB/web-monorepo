@@ -8,7 +8,7 @@
 
 <table border='0'>
   <tr>
-    <td colspan="3" align="center">Items in query history</td>
+    <td colspan="3" align="center">Items in your query history</td>
   </tr>
 
   <tr align='center' valign="bottom">
