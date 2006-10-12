@@ -92,7 +92,16 @@
     <tr>
        <td colspan="2" align="center"><input type="submit" value="Change"></td>
     </tr>
-
+    <tr>
+       <td colspan="2"'>
+       <div class='small'>
+       <font color="red">
+       The password you use here may be intercepted by others during transmission. 
+       Choose a different password from any you use for sensitive accounts such as online banking or your university account. 
+       </font>
+       </div>
+       </td>
+    </tr>
   </c:otherwise>
 
 </c:choose>
