@@ -89,8 +89,18 @@ onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermLi
                  <c:forEach items="${qP.vocab}" var="flatVoc">
                     <c:if test="${i == 0}"><c:set var="checked" value="checked"/></c:if>
                     <c:if test="${i > 0}"><br></c:if>
-                    <html:multibox property="myMultiProp(${pNam})"
-                                   value="${flatVoc}"/>${flatVoc}&nbsp;
+
+                    <c:choose>
+                    <c:when test="${pNam == 'organism' or pNam == 'ecorganism'}">
+                        <html:multibox property="myMultiProp(${pNam})" value="${flatVoc}"/>
+                            <i>${flatVoc}</i>&nbsp;
+                    </c:when>
+                    <c:otherwise>
+                        <html:multibox property="myMultiProp(${pNam})" value="${flatVoc}"/>
+                            ${flatVoc}&nbsp;
+                    </c:otherwise>
+                    </c:choose>
+
                      <c:set var="i" value="${i+1}"/>
                      <c:set var="checked" value=""/>
                  </c:forEach>
