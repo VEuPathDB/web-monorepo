@@ -163,7 +163,7 @@
 			var query = document.getElementById( typebox ).value;
 			var querySend = query.replace(/\*/gi,"");
 			
-			if( querySend.length < 3 ){
+			if( querySend.length < 1 ){
 				
 				remove_typeahead_list()
 				show_typeahead_list();

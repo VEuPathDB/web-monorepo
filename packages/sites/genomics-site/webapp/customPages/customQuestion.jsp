@@ -100,13 +100,13 @@
         </c:choose>
       </td>
     </c:when>
-    <c:otherwise>
+    <c:otherwise>  <%-- not flatvocab --%>
       <td><c:choose>
               <c:when test="${isReadonly}">
                   <bean:write name="qForm" property="myProp(${pNam})"/>
                   <html:hidden property="myProp(${pNam})"/>
               </c:when>
-              <c:otherwise><html:text property="myProp(${pNam})"/></c:otherwise>
+              <c:otherwise><html:text property="myProp(${pNam})" size="35" /></c:otherwise>
           </c:choose>
       </td>
     </c:otherwise>
