@@ -80,6 +80,34 @@ onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermLi
 
         <c:choose>
           <c:when test="${qP.multiPick}">
+
+<%-- multiPick is true, use checkboxes or scroll pane --%>
+            <c:choose>
+              <c:when test="${fn:length(qP.vocab) < 15}">
+                 <c:set var="i" value="0"/>
+                 <table border="1" cellspacing="0"><tr><td>
+                 <c:forEach items="${qP.vocab}" var="flatVoc">
+                    <c:if test="${i == 0}"><c:set var="checked" value="checked"/></c:if>
+                    <c:if test="${i > 0}"><br></c:if>
+                    <html:multibox property="myMultiProp(${pNam})"
+                                   value="${flatVoc}"/>${flatVoc}&nbsp;
+                     <c:set var="i" value="${i+1}"/>
+                     <c:set var="checked" value=""/>
+                 </c:forEach>
+                 </td></tr></table>
+              </c:when>
+              <c:otherwise>
+            <html:select  property="myMultiProp(${pNam})" multiple="1">
+              <c:set var="opt" value="${opt+1}"/>
+              <c:set var="sel" value=""/>
+              <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>
+              <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
+            </html:select>
+              </c:otherwise>
+            </c:choose>
+          </c:when>
+
+<%--
             <!-- multiPick is true, use scroll pane -->
             <html:select  property="myMultiProp(${pNam})" multiple="1">
               <c:set var="opt" value="${opt+1}"/>
@@ -88,6 +116,8 @@ onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermLi
               <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
             </html:select>
           </c:when>
+--%>
+
           <c:otherwise>
             <!-- multiPick is false, use pull down menu -->
             <html:select  property="myMultiProp(${pNam})">
@@ -163,10 +193,7 @@ onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermLi
 
 <!-- display description for wdkQuestion -->
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
-As a guide, the list above shows the subset of Pfam families found in ${wdkModel.displayName}. 
-By typing a few letters in the Pfam Term field the list will update to show terms 
-that contain those letters. You may click an item in the list to enter it into the term field.
-
+As a guide, the list above shows the subset of Pfam families found in ${wdkModel.displayName} (CryptoDB, PlasmoDB or ToxoDB).By typing a few letters in the Pfam Term field the list will update to show Pfam Descriptions that contain those letters. You may click an item in the list to enter it into the term field.
   </td>
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
