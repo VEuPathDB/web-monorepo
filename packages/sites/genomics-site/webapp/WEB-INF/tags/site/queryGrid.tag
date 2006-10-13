@@ -4,20 +4,15 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <link rel="stylesheet" href="<c:url value='misc/style.css' />" type="text/css">
 
-<table width="426" border="0" cellspacing="2" cellpadding="0" style="border-style:outset; border-color:black;border-width:1px;">
+<table width="426" border="0" cellspacing="2" cellpadding="2" style="border-style:outset; border-color:black;border-width:1px;">
     <tr>
-        <td width="20" rowspan="6">
-            &nbsp;&nbsp;
-        </td>
         <td colspan="2"><h7><i>Identify Genes Based On:</i></h7></td>
-        <td></td>
-        <td></td>
         <td></td>
     </tr>
     <tr>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Genomic Position" qtype="Gene"/>  
                 </tr>
                 <tr>
@@ -35,8 +30,8 @@
             </table>
         </td>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Gene Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -48,8 +43,8 @@
             </table>
         </td>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Predicted Proteins" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -72,18 +67,18 @@
     </tr>
     <tr>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Putative Function" qtype="Gene"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByGoTerm" linktext="GO annotation"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC number"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC number" />
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByMetabolicPathway" linktext="metabolic pathway"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByMetabolicPathway" linktext="metabolic pathway" />
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByProteinProteinInteraction" linktext="Y2H interaction"/>
@@ -94,24 +89,24 @@
             </table>
         </td>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Similarity/Pattern" qtype="Gene"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByMotifSearch" linktext="protein motif"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByPfamDomain" linktext="Pfam domain"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByPfamDomain" linktext="Pfam domain" />
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesBySimilarity" linktext="BLAST against genes"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesBySimilarity" linktext="BLAST against genes" />
                 </tr>
             </table>
         </td>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Transcript Expression" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -127,15 +122,15 @@
                     <site:makeURL qset="GeneQuestions" qname="NA" linktext="transcript timing"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="tanscript abundance"/>
+                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="transcript abundance"/>
                 </tr>
             </table>
         </td>
     </tr>
     <tr>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Protein Expression" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -144,8 +139,8 @@
             </table>
         </td>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Cellular Location" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -163,8 +158,8 @@
             </table>
         </td>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Evolution" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -181,8 +176,8 @@
     </tr>
     <tr>
         <td valign="top">
-            <table width="165" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+            <table width="170" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Population Biology" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -195,14 +190,14 @@
         </td>
         <td colspan="2">
             <table width="350" border="0" cellspacing="2" cellpadding="0">
-                <tr class="headerRow">
+                <tr class="rowDark">
                     <site:makeTitle qcat="Other Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByAnnotatedKeyword" linktext="text term"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="text term in BLAST results"/>
+                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="Text in product descriptions, notes..."/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="identifier (e.g. ApiDB ID, GenBank ID, SwissProt ID, etd)"/>
@@ -222,7 +217,7 @@
                 <tr>
                     <td colspan="4"><h7><i>Identify Genomic Sequences Based On:</i></h7></td>
                 </tr>
-                <tr class="headerRow">
+                <tr class="rowDark">
                         <td  colspan="2" width="100%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -239,37 +234,5 @@
                 </tr>
             </table>
         </td>
-        <td colspan="2">
-            <table width="175" border="0" cellspacing="2" cellpadding="0">
-                <tr>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-            </table>
-        </td>
     </tr>
 </table>
-
-
-
-
-
-
-
