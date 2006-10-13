@@ -64,9 +64,15 @@
   <c:set var="NAME_TRUNC" value="80"/>
   <table border="0" cellpadding="2">
       <tr class="headerRow">
-          <th>ID</th> <th>Query</th><th>Size</th>
+          <th>ID</th> 
+          <th>Query</th>
+          <th>Size</th>
           <c:if test="${isGeneRec}"><th>${dsCol}</th></c:if>
-          <th></th> <th></th><th>&nbsp;</th><th>&nbsp;</th></tr>
+          <th></th>
+          <th></th>
+          <th>&nbsp;</th>
+          <th>&nbsp;</th>
+       </tr>
 
       <c:set var="i" value="0"/>
       <c:forEach items="${recAns}" var="ua">
@@ -78,14 +84,14 @@
         </c:choose>
 
         <td>${ua.answerID}</td>
-            <td>
+        <td>
                <c:set var="dispNam" value="${ua.name}"/>
                <c:if test="${fn:length(dispNam) > 53}">
-                  <c:set var="dispNam" value="${fn:substring(dispNam, 0, 50)}..."/>
+                  <c:set var="dispNam" value="${fn:substring(dispNam, 0, 125)}..."/>
                </c:if>
                ${dispNam}
-            </td>
-            <td>${ua.answer.resultSize}</td>
+        </td>
+        <td>${ua.answer.resultSize}</td>
  
            <c:if test="${isGeneRec && showOrthoLink}">
                 <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${ua.answerID}&plasmodb_dataset=${ua.answer.datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
@@ -127,12 +133,28 @@
             </html:form>
           </td>
           <td colspan="1"></td></tr>
+
   </table>
 
     </c:otherwise>
   </c:choose> <!-- end of deciding sections to show -->
 
 </c:forEach>
+
+<table>
+<tr><td><br></td></tr>
+<tr><td><font face="Arial,Helvetica" size="-1">
+The boolean operators AND, OR and NOT are defined as in <a href="http://www.ncbi.nlm.nih.gov/entrez/query/static/help/helpdoc.html#Boolean_Operators">NCBI Entrez</a>.
+<ul>
+<li>(1 AND 2) finds all genes that appear in BOTH 1 and 2 results (i.e., the intersection of 1 and 2)
+
+<li>(1&nbsp;&nbsp;  OR 2) finds all genes that appear in EITHER 1 or 2 (i.e., the union of 1 and 2).
+
+<li>(1 NOT 2) finds all genes that appear in result 1 BUT NOT in result 2 (i.e., the difference 1 - 2).
+</ul>
+</font></td></tr>
+</table>
+
 
   </c:otherwise>
 </c:choose> <!-- end of deciding history emptiness -->
