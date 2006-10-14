@@ -63,6 +63,9 @@
     </table>
   </form>
 
+<br>
+(<b>Note</b>: to retrieve sequence for a chromosome or contig <a href="showQuestion.do?questionFullName=SequenceQuestions.SequenceBySourceId">go to its page</a>)
+<br>
   <hr>
   <br>
 
