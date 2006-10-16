@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
-<site:header title="PlasmoDB.org :: Add A Comment"
+<site:header title="${wdkModel.displayName}.org :: Add A Comment"
                  banner="Add A Comment"/>
 <head>
 <style type="text/css">
@@ -75,7 +75,7 @@
 			
 			<p align=justify>
 			Please add only scientific comments to be displayed on the ${commentTarget.displayName} page for ${stableId}. 
-			If you want to report a problem, use the <a href="http://www.plasmodb.org/plasmo/help.jsp">support page.</a>
+			If you want to report a problem, use the <a href="<c:url value='/help.jsp'/>">support page.</a>
 			
 			<p>
 			Your comments are appreciated. They will be forwarded to the Annotation Center for review and possibly 
