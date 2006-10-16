@@ -71,7 +71,7 @@
                     <site:makeTitle qcat="Putative Function" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByGoTerm" linktext="GO annotation"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByGoTerm" linktext="GO term"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC number" />
@@ -112,16 +112,10 @@
                     <site:makeURL qset="GeneQuestions" qname="GenesByESTClusterOverlap" linktext="EST evidence"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="EstQuestions" qname="EstsByLibrary" linktext="EST by library"/>
-                </tr>
-                <tr>
                     <site:makeURL qset="GeneQuestions" qname="NA" linktext="SAGE tag evidence"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="transcript timing"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="transcript abundance"/>
+                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="microarray evidence"/>
                 </tr>
             </table>
         </td>
@@ -133,7 +127,7 @@
                     <site:makeTitle qcat="Protein Expression" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByMassSpec" linktext="protein expression"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByMassSpec" linktext="mass spec. expression"/>
                 </tr>
             </table>
         </td>
@@ -165,10 +159,10 @@
                     <site:makeURL qset="GeneQuestions" qname="GenesOrthologousToAGivenGene" linktext="find orthologs/paralogs"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByOrthologPattern" linktext="genes by orthology profile"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByOrthologPattern" linktext="orthology profile"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByPhyleticProfile" linktext="genes by homology profile"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByPhyleticProfile" linktext="homology profile"/>
                 </tr>
             </table>
         </td>
@@ -196,13 +190,13 @@
                     <site:makeURL qset="GeneQuestions" qname="GenesByAnnotatedKeyword" linktext="text term"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="Text in product descriptions, notes..."/>
+                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="text in product descriptions, notes..."/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="identifier (e.g. ApiDB ID, GenBank ID, SwissProt ID, etd)"/>
+                    <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="identifier (e.g. ApiDB ID, GenBank ID, SwissProt ID, etc.)"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByTaxon" linktext="genes from a single spieces (e.g. <i>P. falciparum</i>)"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByTaxon" linktext="spieces"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="reagents available (e.g. antibodies from MR4)"/>
@@ -223,7 +217,7 @@
                     <site:makeURL qset="GeneQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="SequencesByTaxon" linktext="sequences from a single species (e.g. P. falciparum) "/>
+                    <site:makeURL qset="GeneQuestions" qname="SequencesByTaxon" linktext="species"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs"/>
