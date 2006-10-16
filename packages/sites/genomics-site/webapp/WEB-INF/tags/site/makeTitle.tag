@@ -25,7 +25,7 @@
 </c:forEach>
 
 <c:if test="${found eq 'true'}">
-	<td colspan="2"><a href="queries_tools.jsp?cat=${qcat}&type=${qtype}">${qcat}</a></td>
+	<td colspan="2"><a href="queries_tools.jsp?cat=${qcat}&type=${qtype}" class='queryGridCat'>${qcat}</a></td>
 </c:if>
 
 <c:if test="${found eq 'false'}">

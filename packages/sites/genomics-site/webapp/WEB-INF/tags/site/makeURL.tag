@@ -64,10 +64,10 @@
 </c:if>
 
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-	<td valign="middle">&#8226;</td> <td valign=middle><queryGridItem><a href="${link}" onmouseover="this.T_WIDTH=164;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> ${P} ${T} ${C}</queryGridItem></td>
+	<td valign="middle">&#8226;</td> <td valign=middle><a href="${link}" class='queryGridActive' onmouseover="this.T_WIDTH=164;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> ${P} ${T} ${C}</td>
 </c:if>
 
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-        <td valign="middle">&#8226;</td> <td valign=middle><a href="javascript:void(0);" onmouseover="this.T_WIDTH=164;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('Sorry, but this data type is not yet available for <i>${orgnismName}</i> (or is not yet supported by ${modelName}).  For questions, write to: <a href=&quot help.jsp &quot><u>see User Support</u></a>')"><queryGridItem>${linktext}</queryGridItem></a> ${P} ${T} ${C}</td>
+        <td valign="middle">&#8226;</td> <td valign=middle><a href="javascript:void(0);" class='queryGridInactive' onmouseover="this.T_WIDTH=164;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('Sorry, but this data type is not yet available for <i>${orgnismName}</i> (or is not yet supported by ${modelName}).  For questions, write to: <a href=&quot help.jsp &quot><u>see User Support</u></a>')">${linktext}</a> ${P} ${T} ${C}</td>
 
 </c:if>
