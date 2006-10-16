@@ -11,7 +11,7 @@
     <tr>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Genomic Position" qtype="Gene"/>  
                 </tr>
                 <tr>
@@ -30,7 +30,7 @@
         </td>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Gene Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -43,7 +43,7 @@
         </td>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Predicted Proteins" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -67,7 +67,7 @@
     <tr>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Putative Function" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -89,7 +89,7 @@
         </td>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Similarity/Pattern" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -105,7 +105,7 @@
         </td>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Transcript Expression" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -123,7 +123,7 @@
     <tr>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Protein Expression" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -133,7 +133,7 @@
         </td>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Cellular Location" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -152,7 +152,7 @@
         </td>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Evolution" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -170,7 +170,7 @@
     <tr>
         <td valign="top">
             <table width="170" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Population Biology" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -183,7 +183,7 @@
         </td>
         <td colspan="2">
             <table width="350" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDark">
+                <tr class="rowDarkBold">
                     <site:makeTitle qcat="Other Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -196,7 +196,7 @@
                     <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="identifier (e.g. ApiDB ID, GenBank ID, SwissProt ID, etc.)"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByTaxon" linktext="spieces"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByTaxon" linktext="species"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="reagents available (e.g. antibodies from MR4)"/>
@@ -210,20 +210,68 @@
                 <tr>
                     <td colspan="4"><h7><i>Identify Genomic Sequences Based On:</i></h7></td>
                 </tr>
-                <tr class="rowDark">
-                        <td  colspan="2" width="100%">&nbsp;</td>
+                <tr class="rowDarkBold">
+                        <td  colspan="2" width="100%">Other Attributes</td>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"/>
+                    <site:makeURL qset="SequenceQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="SequencesByTaxon" linktext="species"/>
+                    <site:makeURL qset="SequenceQuestions" qname="SequencesByTaxon" linktext="species"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs"/>
+                    <site:makeURL qset="SequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="DNA sequence motif"/>
+                    <site:makeURL qset="SequenceQuestions" qname="NA" linktext="DNA sequence motif"/>
+                </tr>
+            </table>
+        </td>
+    </tr>
+ <tr>
+        <td colspan="2">
+            <table width="360" border="0" cellspacing="2" cellpadding="0">
+                <tr>
+                    <td colspan="4"><h7><i>Identify EST Sequences Based On:</i></h7></td>
+                </tr>
+                <tr class="rowDarkBold">
+                        <td  colspan="2" width="100%">Other Attributes</td>
+                </tr>
+                <tr>
+                    <site:makeURL qset="ESTQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="ESTQuestions" qname="SequencesByTaxon" linktext="species"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="ESTQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="ESTQuestions" qname="NA" linktext="DNA sequence motif"/>
+                </tr>
+            </table>
+        </td>
+    </tr>
+ <tr>
+        <td colspan="2">
+            <table width="360" border="0" cellspacing="2" cellpadding="0">
+                <tr>
+                    <td colspan="4"><h7><i>Identify ORF Sequences Based On:</i></h7></td>
+                </tr>
+                <tr class="rowDarkBold">
+                        <td  colspan="2" width="100%">Other Attributes</td>
+                </tr>
+                <tr>
+                    <site:makeURL qset="ORFQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="ORFQuestions" qname="SequencesByTaxon" linktext="species"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="ORFQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="ORFQuestions" qname="NA" linktext="DNA sequence motif"/>
                 </tr>
             </table>
         </td>
