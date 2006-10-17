@@ -127,7 +127,7 @@
                     <site:makeTitle qcat="Protein Expression" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByMassSpec" linktext="mass spec. expression"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByMassSpec" linktext="mass spec. evidence"/>
                 </tr>
             </table>
         </td>
