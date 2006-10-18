@@ -198,6 +198,8 @@
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="reagents available (e.g. antibodies from MR4)"/>
                 </tr>
+
+              
             </table>
         </td>
     </tr>
@@ -208,7 +210,19 @@
                     <td colspan="4"><h7><i>Identify Genomic Sequences Based On:</i></h7></td>
                 </tr>
                 <tr class="rowDarkBold">
-                        <td  colspan="2" width="100%">Other Attributes</td>
+                        <site:makeTitle qcat="Similarity/Pattern" qtype="Contig"/>
+
+                </tr>
+               
+                <tr>
+                    <site:makeURL qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs" existsOn="A C P T"  />
+                </tr>
+                <tr>
+                    <site:makeURL qset="GenomicSequenceQuestions" qname="NA" linktext="DNA sequence motif"/>
+                </tr>
+               <tr class="rowDarkBold">
+                         <site:makeTitle qcat="Other Attributes" qtype="Contig"/>
+                        
                 </tr>
                 <tr>
                     <site:makeURL qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"  existsOn="A C P T"/>
@@ -216,53 +230,55 @@
                 <tr>
                     <site:makeURL qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="species"/>
                 </tr>
-                <tr>
-                    <site:makeURL qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs" existsOn="A C P T"  />
-                </tr>
-                <tr>
-                    <site:makeURL qset="GenomicSequenceQuestions" qname="NA" linktext="DNA sequence motif"/>
-                </tr>
             </table>
         </td>
     </tr>
  <tr>
         <td colspan="1">
-            <table width="200" border="0" cellspacing="2" cellpadding="0">
+            <table width="220" border="0" cellspacing="2" cellpadding="0">
                 <tr>
                     <td colspan="4"><h7><i>Identify ESTs Based On:</i></h7></td>
                 </tr>
                 <tr class="rowDarkBold">
-                        <td  colspan="2" width="100%">Other Attributes</td>
+                     <site:makeTitle qcat="Similarity/Pattern" qtype="EST"/>
                 </tr>
-                <tr>
-                    <site:makeURL qset="EstQuestions" qname="EstsByTaxon" linktext="species"/>
-                </tr>
+                
                 <tr>
                     <site:makeURL qset="EstQuestions" qname="EstsBySimilarity" linktext="BLAST against contigs" existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="EstQuestions" qname="NA" linktext="EST sequence motif"/>
                 </tr>
+                <tr class="rowDarkBold">
+                       <site:makeTitle qcat="Other Attributes" qtype="EST"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="EstQuestions" qname="EstsByTaxon" linktext="species"/>
+                </tr>
             </table>
         </td>
  
  
         <td colspan="1">
-            <table width="200" border="0" cellspacing="2" cellpadding="0">
+            <table width="220" border="0" cellspacing="2" cellpadding="0">
                 <tr>
                     <td colspan="4"><h7><i>Identify ORFs Based On:</i></h7></td>
                 </tr>
                 <tr class="rowDarkBold">
-                        <td  colspan="2" width="100%">Other Attributes</td>
+                     <site:makeTitle qcat="Similarity/Pattern" qtype="ORF"/>
                 </tr>
-                <tr>
-                    <site:makeURL qset="OrfQuestions" qname="OrfsByTaxon" linktext="species"/>
-                </tr>
+                
                 <tr>
                     <site:makeURL qset="OrfQuestions" qname="OrfsBySimilarity" linktext="BLAST against contigs" existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF sequence motif" existsOn="A C P T"/>
+                </tr>
+                <tr class="rowDarkBold">
+                         <site:makeTitle qcat="Other Attributes" qtype="ORF"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="OrfQuestions" qname="OrfsByTaxon" linktext="species"/>
                 </tr>
             </table>
         </td>
