@@ -15,7 +15,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
-                 banner="Search for ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
+                 banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
                  divisionName="Question"

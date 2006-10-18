@@ -9,7 +9,7 @@
 
 <!-- display page header with wdkQuestion displayName as banner -->
 <site:header title="Queries & Tools :: BLAST Question"
-                 banner="Search for ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
+                 banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
                  divisionName="BLAST Question"

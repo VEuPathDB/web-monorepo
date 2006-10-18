@@ -27,7 +27,7 @@
 onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermList.jsp&id=%20', 'searchBox', 'dataArea', '100' ); ac.loadData();"
 </c:set>
 <site:header title="${wdkModel.displayName} : Queries"
-             banner="Search for ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
+             banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
              parentDivision="Queries & Tools"
              parentUrl="/showQuestionSetsFlat.do"
              divisionName="Question"
