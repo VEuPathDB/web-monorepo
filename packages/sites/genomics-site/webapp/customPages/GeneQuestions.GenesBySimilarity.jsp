@@ -9,7 +9,7 @@
 
 <!-- display page header with wdkQuestion displayName as banner -->
 <site:header title="Queries & Tools :: BLAST Question"
-                 banner="${wdkQuestion.displayName}"
+                 banner="Search for ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
                  divisionName="BLAST Question"
@@ -19,8 +19,6 @@
 
  <tr>
   <td bgcolor=white valign=top>
-
-<p><b>${wdkQuestion.displayName}</b></p>
 
 <!-- show all params of question, collect help info along the way -->
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
