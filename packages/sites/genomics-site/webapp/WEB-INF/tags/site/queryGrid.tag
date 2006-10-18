@@ -156,7 +156,7 @@
                     <site:makeTitle qcat="Evolution" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesOrthologousToAGivenGene" linktext="find orthologs/paralogs"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesOrthologousToAGivenGene" linktext="orthologs/paralogs"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByOrthologPattern" linktext="orthology profile"/>
@@ -187,10 +187,7 @@
                     <site:makeTitle qcat="Other Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByAnnotatedKeyword" linktext="text term"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="text in product descriptions, notes..."/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByTextSearch" linktext="text (search product name, notes, etc.)"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="identifier (e.g. ApiDB ID, GenBank ID, SwissProt ID, etc.)"/>
