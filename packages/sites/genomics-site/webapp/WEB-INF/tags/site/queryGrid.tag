@@ -244,7 +244,7 @@
                     <td colspan="4"><h7><b><i>Identify ESTs Based On:</i></b></h7></td>
                 </tr>
                 <tr class="rowDarkBold">
-                     <site:makeTitle qcat="Similarity/Pattern" qtype="EST" existsOn=""/>
+                     <site:makeTitle qcat="Similarity/Pattern" qtype="EST" />
                 </tr>
                 
                 <tr>
