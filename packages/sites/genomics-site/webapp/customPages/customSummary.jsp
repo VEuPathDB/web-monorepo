@@ -9,8 +9,8 @@
 <!-- get wdkAnswer from requestScope -->
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
-<c:set value="${param['user_answer_id']}" var="uaId"/>
-<c:set value="${requestScore.userAnswerId}" var="altUaId"/>
+<c:set value="${param['wdk_history_id']}" var="historyId"/>
+<c:set value="${requestScope.wdk_history_id}" var="altHistoryId"/>
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
@@ -84,11 +84,11 @@
        <tr><td>&nbsp;</td>
            <td align="left">
                <c:choose>
-                   <c:when test="${uaId == null}">
-                       <a href="downloadConfig.jsp?user_answer_id=${altUaId}">
+                   <c:when test="${historyId == null}">
+                       <a href="downloadConfig.jsp?wdk_history_id=${altHistoryId}">
                    </c:when>
                    <c:otherwise>
-                       <a href="downloadHistoryAnswer.do?user_answer_id=${uaId}">
+                       <a href="downloadHistoryAnswer.do?wdk_history_id=${historyId}">
                    </c:otherwise>
                </c:choose>
                Download</a>&nbsp;|&nbsp;
@@ -99,7 +99,7 @@
 	       <c:if test="${isGeneRec && showOrthoLink}">
 	           &nbsp;|&nbsp;
                    <c:set var="datasetId" value="${wdkAnswer.datasetId}"/>
-                   <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${uaId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
+                   <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
                    <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
                </c:if>
 	       

@@ -9,8 +9,6 @@
 <!-- get wdkAnswer from requestScope -->
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 
-<c:set value="${param['user_answer_id']}" var="uaId"/>
-
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
 
