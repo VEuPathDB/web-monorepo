@@ -34,7 +34,7 @@
                     <site:makeTitle qcat="Gene Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByGeneType" linktext="type (e.g. rRNA, tRNA)" />
+                    <site:makeURL qset="GeneQuestions" qname="GenesByGeneType" linktext="type (e.g. rRNA, tRNA)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByExonCount" linktext="exon/intron stucture" />
@@ -71,10 +71,10 @@
                     <site:makeTitle qcat="Putative Function" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByGoTerm" linktext="GO term"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByGoTerm" linktext="GO term" existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC number" />
+                    <site:makeURL qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC number" existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByMetabolicPathway" linktext="metabolic pathway" />
@@ -93,13 +93,13 @@
                     <site:makeTitle qcat="Similarity/Pattern" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByMotifSearch" linktext="protein motif"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByMotifSearch" linktext="protein motif" existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByPfamDomain" linktext="Pfam domain" />
+                    <site:makeURL qset="GeneQuestions" qname="GenesByPfamDomain" linktext="Pfam domain" existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesBySimilarity" linktext="BLAST against genes" />
+                    <site:makeURL qset="GeneQuestions" qname="GenesBySimilarity" linktext="BLAST similarity" existsOn="A C P T"/>
                 </tr>
             </table>
         </td>
@@ -137,7 +137,7 @@
                     <site:makeTitle qcat="Cellular Location" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesWithSignalPeptide" linktext="signal peptide"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesWithSignalPeptide" linktext="signal peptide"  existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByTransmembraneDomains" linktext="transmembrane domain"/>
@@ -187,10 +187,10 @@
                     <site:makeTitle qcat="Other Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByTextSearch" linktext="text (search product name, notes, etc.)"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByTextSearch" linktext="text (search product name, notes, etc.)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="identifier (e.g. ApiDB ID, GenBank ID, SwissProt ID, etc.)"/>
+                    <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="identifier (e.g. ApiDB ID, GenBank ID, SwissProt ID, etc.)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByTaxon" linktext="species"/>
@@ -211,64 +211,58 @@
                         <td  colspan="2" width="100%">Other Attributes</td>
                 </tr>
                 <tr>
-                    <site:makeURL qset="SequenceQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"/>
+                    <site:makeURL qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="SequenceQuestions" qname="SequencesByTaxon" linktext="species"/>
+                    <site:makeURL qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="species"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="SequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs"/>
+                    <site:makeURL qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs" existsOn="A C P T"  />
                 </tr>
                 <tr>
-                    <site:makeURL qset="SequenceQuestions" qname="NA" linktext="DNA sequence motif"/>
+                    <site:makeURL qset="GenomicSequenceQuestions" qname="NA" linktext="DNA sequence motif"/>
                 </tr>
             </table>
         </td>
     </tr>
  <tr>
-        <td colspan="2">
-            <table width="360" border="0" cellspacing="2" cellpadding="0">
+        <td colspan="1">
+            <table width="200" border="0" cellspacing="2" cellpadding="0">
                 <tr>
-                    <td colspan="4"><h7><i>Identify EST Sequences Based On:</i></h7></td>
+                    <td colspan="4"><h7><i>Identify ESTs Based On:</i></h7></td>
                 </tr>
                 <tr class="rowDarkBold">
                         <td  colspan="2" width="100%">Other Attributes</td>
                 </tr>
                 <tr>
-                    <site:makeURL qset="ESTQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"/>
+                    <site:makeURL qset="EstQuestions" qname="EstsByTaxon" linktext="species"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="ESTQuestions" qname="SequencesByTaxon" linktext="species"/>
+                    <site:makeURL qset="EstQuestions" qname="EstsBySimilarity" linktext="BLAST against contigs" existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="ESTQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="ESTQuestions" qname="NA" linktext="DNA sequence motif"/>
+                    <site:makeURL qset="EstQuestions" qname="NA" linktext="EST sequence motif"/>
                 </tr>
             </table>
         </td>
-    </tr>
- <tr>
-        <td colspan="2">
-            <table width="360" border="0" cellspacing="2" cellpadding="0">
+ 
+ 
+        <td colspan="1">
+            <table width="200" border="0" cellspacing="2" cellpadding="0">
                 <tr>
-                    <td colspan="4"><h7><i>Identify ORF Sequences Based On:</i></h7></td>
+                    <td colspan="4"><h7><i>Identify ORFs Based On:</i></h7></td>
                 </tr>
                 <tr class="rowDarkBold">
                         <td  colspan="2" width="100%">Other Attributes</td>
                 </tr>
                 <tr>
-                    <site:makeURL qset="ORFQuestions" qname="SequenceBySourceId" linktext="identifier (e.g. ApiDB ID, GenBank ID, etc)"/>
+                    <site:makeURL qset="OrfQuestions" qname="OrfsByTaxon" linktext="species"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="ORFQuestions" qname="SequencesByTaxon" linktext="species"/>
+                    <site:makeURL qset="OrfQuestions" qname="OrfsBySimilarity" linktext="BLAST against contigs" existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="ORFQuestions" qname="SequencesBySimilarity" linktext="BLAST against contigs"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="ORFQuestions" qname="NA" linktext="DNA sequence motif"/>
+                    <site:makeURL qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF sequence motif" existsOn="A C P T"/>
                 </tr>
             </table>
         </td>
