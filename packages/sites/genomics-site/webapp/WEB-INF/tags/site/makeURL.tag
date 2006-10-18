@@ -28,21 +28,26 @@
 <c:set var="C" value="" />
 <c:set var="A" value="" />
 
+<c:set var="plasmoRoot" value="http://plasmodb.org/plasmo/" />
+<c:set var="toxoRoot" value="http://toxodb.org/toxo/" />
+<c:set var="cryptoRoot" value="http://cryptodb.org/cryptodb/" />
+<c:set var="apiRoot" value="http://apidb.org/apidb/" />
+
 <c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}&go.x=13&go.y=9&go=go" />
 
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
   <c:if test="${token eq 'P'}">
-		<c:set var="P" value="<a href=${link}><img src=/images/plasmodb_letter.jpg border=0 /></a>" />
+		<c:set var="P" value="<a href=${plasmoRoot}${link}><img src=/images/plasmodb_letter.jpg border=0 /></a>" />
   </c:if>
   <c:if test="${token eq 'T'}">
-		<c:set var="T" value="<a href=${link}><img src=/images/toxodb_letter.jpg border=0 /></a>" />
+		<c:set var="T" value="<a href=${toxoRoot}${link}><img src=/images/toxodb_letter.jpg border=0 /></a>" />
   </c:if>
   <c:if test="${token eq 'C'}">
-		<c:set var="C" value="<a href=${link}><img src=/images/cryptodb_letter.jpg border=0 /></a>" />
+		<c:set var="C" value="<a href=${cryptoRoot}${link}><img src=/images/cryptodb_letter.jpg border=0 /></a>" />
   </c:if>
   <c:if test="${token eq 'A'}">
-		<c:set var="A" value="<a href=${link}><img src=/images/apidb_letter.jpg border=0 /></a>" />
+		<c:set var="A" value="<a href=${apiRoot}${link}><img src=/images/apidb_letter.jpg border=0 /></a>" />
   </c:if>
 </c:forEach>
 
