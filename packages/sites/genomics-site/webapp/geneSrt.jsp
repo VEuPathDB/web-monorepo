@@ -64,7 +64,7 @@
   </form>
 
 <br>
-(<b>Note</b>: to retrieve sequence for a chromosome or contig <a href="showQuestion.do?questionFullName=SequenceQuestions.SequenceBySourceId">go to its page</a>)
+(<b>Note</b>: to retrieve sequence for a chromosome or contig <a href="showQuestion.do?questionFullName=GenomicSequenceQuestions.SequenceBySourceId">go to its page</a>)
 <br>
   <hr>
   <br>
