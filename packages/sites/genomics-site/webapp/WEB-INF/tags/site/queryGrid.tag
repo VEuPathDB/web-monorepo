@@ -16,7 +16,7 @@
                     <site:makeTitle qcat="Genomic Position" qtype="Gene"/>  
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByLocation" linktext="Chromosomal Location" existsOn="P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByLocation" linktext="Chromosomal Location" existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByCentromereProximity" linktext="Proximity to Centromeres" existsOn="P"/>
@@ -38,7 +38,7 @@
                     <site:makeURL qset="GeneQuestions" qname="GenesByGeneType" linktext="Type (e.g. rRNA, tRNA)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByExonCount" linktext="Exon/Intron Structure" existsOn="P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByExonCount" linktext="Exon/Intron Structure" existsOn="C P T"/>
                 </tr>
             </table>
         </td>
@@ -48,7 +48,7 @@
                     <site:makeTitle qcat="Predicted Proteins" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByMolecularWeight" linktext="Molecular Weight" existsOn="P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByMolecularWeight" linktext="Molecular Weight" existsOn="C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByIsoelectricPoint" linktext="Isoelectric Point" existsOn="P T"/>
@@ -141,7 +141,7 @@
                     <site:makeURL qset="GeneQuestions" qname="GenesWithSignalPeptide" linktext="Signal Peptide"  existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByTransmembraneDomains" linktext="Transmembrane Domain" existsOn="P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByTransmembraneDomains" linktext="Transmembrane Domain" existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesBySubcellularLocalization" linktext="Organellar Compartment" existsOn="P"/>
@@ -160,7 +160,7 @@
                     <site:makeURL qset="GeneQuestions" qname="GenesOrthologousToAGivenGene" linktext="Orthologs/Paralogs" existsOn="P"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByOrthologPattern" linktext="Orthology Profile" existsOn="P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByOrthologPattern" linktext="Orthology Profile" existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByPhyleticProfile" linktext="Homology Profile" existsOn="P"/>
@@ -215,7 +215,7 @@
                     <td colspan="4"><h7><i><b>Identify Genomic Sequences Based On:</b></i></h7></td>
                 </tr>
                 <tr class="rowDarkBold">
-                        <site:makeTitle qcat="Similarity/Pattern" qtype="Contig"/>
+                        <site:makeTitle qcat="Similarity/Pattern" qtype="Genomic"/>
 
                 </tr>
                
@@ -226,7 +226,7 @@
                     <site:makeURL qset="GenomicSequenceQuestions" qname="NA" linktext="DNA Sequence Motif" existsOn=""/>
                 </tr>
                <tr class="rowDarkBold">
-                         <site:makeTitle qcat="Other Attributes" qtype="Contig"/>
+                         <site:makeTitle qcat="Other Attributes" qtype="Genomic"/>
                         
                 </tr>
                 <tr>
@@ -276,7 +276,7 @@
                     <site:makeURL qset="OrfQuestions" qname="OrfsBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="OrfQuestions" qname="NA" linktext="ORF Sequence Motif" existsOn=""/>
+                    <site:makeURL qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF Sequence Motif" existsOn="A C"/>
                 </tr>
                 <tr class="rowDarkBold">
                          <site:makeTitle qcat="Other Attributes" qtype="ORF"/>
