@@ -22,6 +22,54 @@
                  parentUrl="/home.jsp"
                  divisionName="Query History"
                  division="query_history"/>
+                 
+
+
+<script type="text/javascript" lang="JavaScript 1.2">
+<!-- //
+var IE = document.all?true:false
+var mouseX = 0;
+var mouseY = 0;
+
+document.onmousemove = getMousePos;
+
+//alert(IE);
+
+// If NS -- that is, !IE -- then set up for mouse capture
+if (!IE) {
+   document.captureEvents(Event.MOUSEMOVE);
+   document.captureEvents(Event.MOUSEOVER);
+   document.captureEvents(Event.MOUSEOUT);
+}
+
+function getMousePos(e) {
+   if (!e)
+      var e = window.event||window.Event;
+      
+   if('undefined'!=typeof e.pageX){
+      mouseX = e.pageX;
+      mouseY = e.pageY;
+   } else {
+      mouseX = e.clientX + document.body.scrollLeft;
+      mouseY = e.clientY + document.body.scrollTop;
+   }
+}
+
+function displayName(historyId) {
+   // alert(mouseX);
+   var name = document.getElementById(historyId);
+   name.style.position = 'absolute';
+   name.style.left = mouseX;
+   name.style.top = mouseY;
+   name.style.display = 'block';
+}
+
+function hideName(historyId) {
+   var name = document.getElementById(historyId);
+   name.style.display = 'none';
+}
+// -->
+</script>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -60,6 +108,8 @@
 
 <h3>${recDispName} query history</h3>
 
+  <html:form method="get" action="/processRenameHistory.do">
+
   <!-- show user answers one per line -->
   <c:set var="NAME_TRUNC" value="80"/>
   <table border="0" cellpadding="2">
@@ -76,6 +126,7 @@
 
       <c:set var="i" value="0"/>
       <c:forEach items="${histList}" var="history">
+        
         <jsp:setProperty name="history" property="nameTruncateTo" value="${NAME_TRUNC}"/>
 
         <c:choose>
@@ -84,7 +135,10 @@
         </c:choose>
 
         <td>${history.historyId}</td>
-        <td>
+        <td onmouseover="displayName('hist_${history.historyId}')"
+            onmouseout="hideName('hist_${history.historyId}')">
+               <div id="hist_${history.historyId}" 
+                  style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffff99;">${history.customName}</div>
                <c:set var="dispNam" value="${history.truncatedName}"/>
                ${dispNam}
         </td>
@@ -116,6 +170,7 @@
                   <a href="deleteHistoryAnswer.do?wdk_history_id=${history.historyId}">delete</a>
                </c:if>
             </td>
+      
         </tr>
       <c:set var="i" value="${i+1}"/>
       </c:forEach>
