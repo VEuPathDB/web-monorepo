@@ -107,9 +107,6 @@ function hideName(historyId) {
 <c:choose><c:when test="${typeC != 1}"><hr></c:when></c:choose>
 
 <h3>${recDispName} query history</h3>
-
-  <html:form method="get" action="/processRenameHistory.do">
-
   <!-- show user answers one per line -->
   <c:set var="NAME_TRUNC" value="80"/>
   <table border="0" cellpadding="2">
