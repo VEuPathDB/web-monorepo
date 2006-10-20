@@ -55,19 +55,30 @@ function getMousePos(e) {
    }
 }
 
-function displayName(historyId) {
+function displayName(divId) {
    // alert(mouseX);
-   var name = document.getElementById(historyId);
+   var name = document.getElementById(divId);
    name.style.position = 'absolute';
    name.style.left = mouseX;
    name.style.top = mouseY;
    name.style.display = 'block';
 }
 
-function hideName(historyId) {
-   var name = document.getElementById(historyId);
+function hideName(divId) {
+   var name = document.getElementById(divId);
    name.style.display = 'none';
 }
+
+function enableRename(historyId, customName) {
+   document.getElementById('historyId').value = historyId;
+   var span = document.getElementById('span' + historyId);
+   span.style.display = 'none';
+   var input = document.getElementById('customName');
+   input.value = customName;
+   input.style.left = span.style.left;
+   input.style.top = span.style.top;
+}
+
 // -->
 </script>
 
@@ -107,9 +118,19 @@ function hideName(historyId) {
 <c:choose><c:when test="${typeC != 1}"><hr></c:when></c:choose>
 
 <h3>${recDispName} query history</h3>
+
+  <div id="renameDiv" style="display:none;position:absolute;left:0;top:0;width:500">
+      <html:form method="get" action="/processRenameHistory.do">
+          <html:text property="customName" value=""/>
+          <html:hidden property="historyId" value=""/>
+          <html:submit property="submit" value="Get Combined Result"/>
+      </html:form>
+  </div>
+
   <!-- show user answers one per line -->
   <c:set var="NAME_TRUNC" value="80"/>
   <table border="0" cellpadding="2">
+
       <tr class="headerRow">
           <th>ID</th> 
           <th>Query</th>
@@ -132,10 +153,14 @@ function hideName(historyId) {
         </c:choose>
 
         <td>${history.historyId}</td>
-        <td onmouseover="displayName('hist_${history.historyId}')"
-            onmouseout="hideName('hist_${history.historyId}')">
-               <div id="hist_${history.historyId}" 
-                  style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffff99;">${history.customName}</div>
+        <td>
+            <span id="span_${history.historyId}"
+                  onmouseover="displayName('div_${history.historyId}')"
+                  onmouseout="hideName('div_${history.historyId}')"
+                  onmousedown="enableRename('${history.historyId}', '${history.customName}')">
+               <div id="div_${history.historyId}" 
+                  style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffff99;">
+                  ${history.customName}</div>
                <c:set var="dispNam" value="${history.truncatedName}"/>
                ${dispNam}
         </td>
@@ -190,7 +215,6 @@ function hideName(historyId) {
           <td colspan="1"></td></tr>
 
   </table>
-
     </c:otherwise>
   </c:choose> <!-- end of deciding sections to show -->
 
