@@ -4,7 +4,6 @@
 
 <!-- get wdkUser saved in session scope -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-<c:set var="userAnswers" value="${wdkUser.recordAnswerMap}"/>
 
 <table border='0'>
   <tr>
@@ -17,8 +16,8 @@
        <a href='/showQueryHistory.do'>
        <font size='+2'><b>
        <c:choose>
-         <c:when test="${wdkUser.answerCount == null}">0</c:when>
-         <c:otherwise>${wdkUser.answerCount}</c:otherwise> 
+         <c:when test="${wdkUser.historyCount == null}">0</c:when>
+         <c:otherwise>${wdkUser.historyCount}</c:otherwise> 
        </c:choose>
       </b></font>
       </a>
