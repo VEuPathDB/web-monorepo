@@ -67,7 +67,7 @@ cryptolink, plasmolink, toxolink
 <p>
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['cryptolink']}">
     <br>
-    CryptoDB dblink:
+    <b>CryptoDB dblink:</b>
     <c:catch var="e">
         ${wdkRecord.attributes['cryptolink'].value}
     </c:catch>
@@ -76,9 +76,37 @@ cryptolink, plasmolink, toxolink
     </c:if>
 </c:if>
 
+<br>
+
+<c:if test="${!empty wdkRecord.recordClass.attributeFields['plasmolink']}">
+    <br>
+    <b>PlasmoDB dblink:</b>
+    <c:catch var="e">
+        ${wdkRecord.attributes['plasmolink'].value}
+    </c:catch>
+    <c:if test="${e!=null}">
+        <font color="#CC0033">not responding</font>
+    </c:if>
+</c:if>
+
+<c:if test="${!empty wdkRecord.recordClass.attributeFields['plasmolink2']}">
+    <br>
+    
+    <c:catch var="e">
+
+        ${wdkRecord.attributes['plasmolink2'].value}
+    </c:catch>
+    <c:if test="${e!=null}">
+${e}<br>
+        <font color="#CC0033">not responding</font>
+    </c:if>
+</c:if>
+
+<br>
+
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['toxolink']}">
     <br>
-    ToxoDB dblink:
+    <b>ToxoDB dblink:</b>
     <c:catch var="e">
         ${wdkRecord.attributes['toxolink'].value}
     </c:catch>
@@ -87,16 +115,39 @@ cryptolink, plasmolink, toxolink
     </c:if>
 </c:if>
 
-<c:if test="${!empty wdkRecord.recordClass.attributeFields['plasmolink']}">
+<c:if test="${!empty wdkRecord.recordClass.attributeFields['toxolink2']}">
     <br>
-    PlasmoDB dblink:
+    
     <c:catch var="e">
-        ${wdkRecord.attributes['plasmolink'].value}
+
+        ${wdkRecord.attributes['toxolink2'].value}
     </c:catch>
     <c:if test="${e!=null}">
+${e}<br>
         <font color="#CC0033">not responding</font>
     </c:if>
 </c:if>
+
+<br><br>
+(TEST1 --> DBC2<br>
+TEST2 --> THEMIS<br>
+TEST3 --> DBC1)<br>
+
+<br>
+
+<c:if test="${!empty wdkRecord.recordClass.attributeFields['userlink']}">
+<b>DB Link to User login, registration and comments Database:</b><br>   
+<c:catch var="e">
+        ${wdkRecord.attributes['userlink'].value}
+    </c:catch>
+    <c:if test="${e!=null}">
+${e}<br>
+        <font color="#CC0033">not responding</font>
+    </c:if>
+</c:if>
+
+
+
 
 </body>
 </html>
