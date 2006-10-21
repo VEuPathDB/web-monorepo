@@ -3,8 +3,18 @@
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
+<c:set var="modelName" value="${wdkModel.displayName}"/>
+
+
 <table width="100%" border="0" cellspacing="2" cellpadding="2" style="border-style:outset; border-color:black;border-width:1px;">
+
 <tr><td width="34%"></td><td width="33%"></td><td width="33%"></td></tr>
+
+<tr><td colspan="3">
+This query grid summarizes all the queries we are working to provide you. The letter symbols indicate if the query is available in apidb.org (<b>A</b>), cryptodb.org (<b>C</b>), plasmodb.org (<b>P</b>) and/or toxodb.org (<b>T</b>). By clicking on it you are taken to the query page in the corresponding website.  By clicking on a category name we take you below on this page where a summary for each query is provided.  The query names greyed out are not currently available in this site (${modelName}).<br><br></td></tr>
+
+
     <tr>
         <td colspan="2"><h7><b><i>Identify Genes Based On:</i></b></h7></td>
         <td></td>
