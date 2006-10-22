@@ -1,7 +1,7 @@
 function loadSelectedData(){
 
-	var datatype =  document.getElementById( 'dataDropdownBox' ).value; //use this to select database
-	var sendReqUrl = 'showRecord.do?name=UtilityRecordClasses.InterproTermList.jsp&id='+datatype;
+	var datatype =  document.getElementById( 'myMultiProp(domain_database)' ).value; //use this to select database
+	var sendReqUrl = 'showRecord.do?name=InterproTermClasses.InterproTermClass&primary_key='+datatype;
 	var xmlObj = null;
 
 	if(window.XMLHttpRequest){
@@ -55,7 +55,7 @@ function createAutoComplete( obj ){
 		// No Panther data returned from server
 	}
 	
-	new Autocompleter.Local('searchBox','searchBoxupdate', def,
+	new Autocompleter.Local('myProp(domain_accession)','searchBoxupdate', def,
 	{ tokens: new Array(',','\n'), fullSearch: true, partialSearch: true, partialChars: 0 });
 	
 }
