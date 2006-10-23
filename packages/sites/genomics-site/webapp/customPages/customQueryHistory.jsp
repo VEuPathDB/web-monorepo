@@ -69,16 +69,6 @@ function hideName(divId) {
    name.style.display = 'none';
 }
 
-function enableRename(historyId, customName) {
-   document.getElementById('historyId').value = historyId;
-   var span = document.getElementById('span' + historyId);
-   span.style.display = 'none';
-   var input = document.getElementById('customName');
-   input.value = customName;
-   input.style.left = span.style.left;
-   input.style.top = span.style.top;
-}
-
 // -->
 </script>
 
@@ -119,14 +109,6 @@ function enableRename(historyId, customName) {
 
 <h3>${recDispName} query history</h3>
 
-  <div id="renameDiv" style="display:none;position:absolute;left:0;top:0;width:500">
-      <html:form method="get" action="/processRenameHistory.do">
-          <html:text property="customName" value=""/>
-          <html:hidden property="historyId" value=""/>
-          <html:submit property="submit" value="Get Combined Result"/>
-      </html:form>
-  </div>
-
   <!-- show user answers one per line -->
   <c:set var="NAME_TRUNC" value="80"/>
   <table border="0" cellpadding="2">
@@ -156,8 +138,7 @@ function enableRename(historyId, customName) {
         <td>
             <span id="span_${history.historyId}"
                   onmouseover="displayName('div_${history.historyId}')"
-                  onmouseout="hideName('div_${history.historyId}')"
-                  onmousedown="enableRename('${history.historyId}', '${history.customName}')">
+                  onmouseout="hideName('div_${history.historyId}')">
                <div id="div_${history.historyId}" 
                   style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffff99;">
                   ${history.customName}</div>
