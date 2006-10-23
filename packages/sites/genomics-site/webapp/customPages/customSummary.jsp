@@ -13,6 +13,8 @@
 <c:set value="${requestScope.wdk_history_id}" var="altHistoryId"/>
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
 
+<c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
+
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
 
@@ -80,7 +82,25 @@
            <td valign="top" align="left">
                ${wdkAnswer.resultSize}
                <c:if test="${wdkAnswer.resultSize > 0}">
-               (showing ${wdk_paging_start} to ${wdk_paging_end})</c:if></td></tr>
+               (showing ${wdk_paging_start} to ${wdk_paging_end})
+
+<c:if test="${dispModelName eq 'ApiDB'}">
+<c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
+<c:choose>
+<c:when test="${rSBP.key == 'cryptodb'}">
+    &nbsp;&nbsp; CryptoDB: ${rSBP.value}
+</c:when>
+<c:when test="${rSBP.key == 'plasmodb'}">
+    &nbsp;&nbsp; PlasmoDB: ${rSBP.value}
+</c:when>
+<c:when test="${rSBP.key == 'toxodb'}">
+    &nbsp;&nbsp; ToxoDB: ${rSBP.value}
+</c:when>
+</c:choose>
+</c:forEach>
+</c:if>
+
+</c:if></td></tr>
        <tr><td>&nbsp;</td>
            <td align="left">
                <c:choose>
@@ -166,11 +186,36 @@
     <c:choose>
       <c:when test="${j == 0}">
 
+<c:choose>
+<c:when test="${dispModelName eq 'ApiDB'}">
+
+    <c:set value="${record.primaryKey}" var="primaryKey"/>
+        <c:choose>
+        <c:when test = "${primaryKey.projectId == 'cryptodb'}">
+           <a href="http://cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
+        </c:when>
+        <c:when test = "${primaryKey.projectId=='plasmodb'}" >
+           <a href="http://www.plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="plasmodb">PlasmoDB:${primaryKey.recordId}</a>
+        </c:when>
+        <c:when test = "${primaryKey.projectId=='toxodb'}" >
+            <a href="http://toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
+        </c:when>
+        </c:choose>
+
+
+</c:when>
+<c:otherwise>
+
 	<!-- modified by Jerric -->
       <!-- <a href="showRecord.do?name=${recNam}&id=${record.primaryKey}">${fieldVal}</a> -->
 	<c:set value="${record.primaryKey}" var="primaryKey"/>
         <a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a>
-      </c:when>
+
+</c:otherwise>
+</c:choose>
+
+
+      </c:when>   <%-- when j=0 --%>
       <c:otherwise>
 
         <!-- need to know if fieldVal should be hot linked -->
