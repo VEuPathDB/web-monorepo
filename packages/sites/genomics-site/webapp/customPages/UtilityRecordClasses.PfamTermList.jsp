@@ -3,10 +3,10 @@
 Pfam List for Ajax Typeahead
 Returns format:
 
-<data><pfams>
-<pfam pfam_id="PF00244" pfam_term="14-3-3">14-3-3 protein</pfam>
-<pfam pfam_id="PF00111" pfam_term="Fer2">2Fe-2S iron-sulfur cluster binding domain</pfam>
-</pfams></data>
+<data><terms>
+<term id="PF00244">14-3-3 protein</term>
+<term id="PF01138">3' exoribonuclease family, domain 1</term>
+</terms></data>
 
 JSTL below is formatted to prevent blank lines
 --%>
