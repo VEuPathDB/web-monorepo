@@ -30,8 +30,10 @@
 var IE = document.all?true:false
 var mouseX = 0;
 var mouseY = 0;
+var currentHistoryId = 0;
 
 document.onmousemove = getMousePos;
+document.onmouseout = getMousePos;
 
 //alert(IE);
 
@@ -55,9 +57,11 @@ function getMousePos(e) {
    }
 }
 
-function displayName(divId) {
+function displayName(histId) {
    // alert(mouseX);
-   var name = document.getElementById(divId);
+   if (currentHistoryId == histId) return;
+   
+   var name = document.getElementById('div_' + histId);
    name.style.position = 'absolute';
    name.style.left = mouseX;
    name.style.top = mouseY;
@@ -67,6 +71,26 @@ function displayName(divId) {
 function hideName(divId) {
    var name = document.getElementById(divId);
    name.style.display = 'none';
+}
+
+function enableRename(histId, customName) {
+   // close the previous one
+   if (currentHistoryId != '0') {
+      var input = document.getElementById('input_' + currentHistoryId);
+      input.innerText = "";
+      input.style.display = 'none';
+      var text = document.getElementById('text_' + currentHistoryId);
+      text.style.display = 'block';
+   }
+   
+   currentHistoryId = histId;
+   var text = document.getElementById('text_' + histId);
+   text.style.display = 'none';
+   var input = document.getElementById('input_' + histId);
+   input.innerHTML = "<input name='wdk_history_id' type='hidden' value='" + histId + "'>"
+                   + "<input name='wdk_custom_name' type='text' size='57' value='" + customName + "'>" 
+                   + "<input type='submit' value='Rename'>";
+   input.style.display='block';
 }
 
 // -->
@@ -111,8 +135,13 @@ function hideName(divId) {
 
   <!-- show user answers one per line -->
   <c:set var="NAME_TRUNC" value="80"/>
-  <table border="0" cellpadding="2">
+  <table border="0" cellpadding="0">
 
+    <tr>
+      <td>
+        <html:form method="get" action="/renameHistory.do">
+        
+      <table border="0" cellpadding="2">
       <tr class="headerRow">
           <th>ID</th> 
           <th>Query</th>
@@ -134,30 +163,33 @@ function hideName(divId) {
           <c:otherwise><tr class="rowMedium"></c:otherwise>
         </c:choose>
 
-        <td>${history.historyId}</td>
-        <td>
-            <span id="span_${history.historyId}"
-                  onmouseover="displayName('div_${history.historyId}')"
-                  onmouseout="hideName('div_${history.historyId}')">
-               <div id="div_${history.historyId}" 
+        <td>${history.historyId}
+            <div id="div_${history.historyId}" 
                   style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffff99;">
                   ${history.customName}</div>
-               <c:set var="dispNam" value="${history.truncatedName}"/>
-               ${dispNam}
         </td>
-        <td>${history.estimateSize}</td>
- 
+        <c:set var="dispNam" value="${history.truncatedName}"/>
+        <td width=500
+            onmouseover="displayName('${history.historyId}')"
+            onmouseout="hideName('div_${history.historyId}')">
+            <div id="text_${history.historyId}"
+                 onmousedown="enableRename('${history.historyId}', '${history.customName}')">
+                 ${dispNam}</div>
+            <div id="input_${history.historyId}" style="display:none"></div>
+        </td>
+        <td nowrap>${history.estimateSize}</td>
+        <td nowrap>
            <c:if test="${isGeneRec && showOrthoLink}">
                 <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${history.historyId}&plasmodb_dataset=${history.answer.datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
-                <td><a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a></td>
+                <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
             </c:if>
-	    
-            <td><a href="showSummary.do?wdk_history_id=${history.historyId}">view</a></td>
-            <td><a href="downloadHistoryAnswer.do?wdk_history_id=${history.historyId}">download</a></td>
+         </td>	    
+         <td nowrap><a href="showSummary.do?wdk_history_id=${history.historyId}">view</a></td>
+         <td nowrap><a href="downloadHistoryAnswer.do?wdk_history_id=${history.historyId}">download</a></td>
 
             <c:set value="${history.answer.question.fullName}" var="qName" />
             <c:set var="isBooleanQuestion" value="${fn:containsIgnoreCase(qName, 'BooleanQuestion')}"/>
-            <td>
+         <td nowrap>
                <c:if test="${isBooleanQuestion == false}">
 		          <c:set value="${history.answer.questionUrlParams}" var="qurlParams"/>
 	              <c:set var="questionUrl" value="" />
@@ -165,19 +197,22 @@ function hideName(divId) {
 	                 refine</a>
 	           </c:if>
 	           &nbsp;
-             </td>
+         </td>
 
-            <td>
+         <td nowrap>
                <c:set var="isDepended" value="${history.depended}"/>
                <c:if test="${isDepended == false}">
-                  <a href="deleteHistoryAnswer.do?wdk_history_id=${history.historyId}">delete</a>
+                  <a href="deleteHistory.do?wdk_history_id=${history.historyId}">delete</a>
                </c:if>
-            </td>
+         </td>
       
         </tr>
       <c:set var="i" value="${i+1}"/>
       </c:forEach>
-
+      </table>
+        </html:form>
+      </td>
+      </tr>
       <tr>
         <c:choose>
           <c:when test="${isGeneRec && showOrthoLink}"><td colspan="7" align="left"></c:when>
