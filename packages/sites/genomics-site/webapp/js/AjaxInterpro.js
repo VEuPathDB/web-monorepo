@@ -1,6 +1,6 @@
 function loadSelectedData(){
 
-	var datatype =  document.getElementById( 'myMultiProp(domain_database)' ).value; //use this to select database
+	var datatype =  document.getElementById( 'domain_database_list)' ).value; //use this to select database
 	var sendReqUrl = 'showRecord.do?name=InterproTermClasses.InterproTermClass&primary_key='+datatype;
 	var xmlObj = null;
 
@@ -55,7 +55,7 @@ function createAutoComplete( obj ){
 		// No Panther data returned from server
 	}
 	
-	new Autocompleter.Local('myProp(domain_accession)','searchBoxupdate', def,
+	new Autocompleter.Local('searchBox','searchBoxupdate', def,
 	{ tokens: new Array(',','\n'), fullSearch: true, partialSearch: true, partialChars: 0 });
 	
 }

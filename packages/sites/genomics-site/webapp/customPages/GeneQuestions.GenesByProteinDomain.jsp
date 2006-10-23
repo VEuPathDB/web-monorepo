@@ -106,7 +106,7 @@
           <c:otherwise>
             <%-- multiPick is false, use pull down menu --%>
             <%-- use HTML "select" instead of JSP "html:select" so we can add onChange() call --%>
-            <select name="myMultiProp(domain_database)" onChange="loadSelectedData();">
+            <select name="myMultiProp(domain_database)" id="domain_database_list" onChange="loadSelectedData();">
                 <c:forEach items="${qP.vocab}" var="flatVoc">
                     <option value="${flatVoc}">${flatVoc}</option>
                 </c:forEach>
@@ -123,7 +123,7 @@
               </c:when>
               <c:otherwise>
 <%--<html:text property="myProp(${pNam})" size="35" class="form_box"/> --%>
-                  <input type="text" id="myProp(${pNam})" name="myProp(${pNam})" size="35" class="form_box"/>
+                  <input type="text" id="searchBox" name="myProp(${pNam})" size="35" class="form_box"/>
               </c:otherwise>
           </c:choose>
       </td>
