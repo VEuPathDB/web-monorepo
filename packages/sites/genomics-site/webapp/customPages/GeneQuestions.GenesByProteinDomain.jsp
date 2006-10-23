@@ -16,7 +16,7 @@
 
 <c:set var="headElement">
   <script src="js/AjaxInterpro.js" type="text/javascript"></script>
-  <script src="js/prototype.js.js" type="text/javascript"></script>
+  <script src="js/prototype.js" type="text/javascript"></script>
   <script src="js/scriptaculous.js" type="text/javascript"></script>
 </c:set>
 
@@ -121,7 +121,10 @@
                   <bean:write name="qForm" property="myProp(${pNam})"/>
                   <html:hidden property="myProp(${pNam})"/>
               </c:when>
-              <c:otherwise><html:text property="myProp(${pNam})" size="35" /></c:otherwise>
+              <c:otherwise>
+<%--<html:text property="myProp(${pNam})" size="35" class="form_box"/> --%>
+                  <input type="text" id="myProp(${pNam})" name="myProp(${pNam})" size="35" class="form_box"/>
+              </c:otherwise>
           </c:choose>
       </td>
     </c:otherwise>
