@@ -123,7 +123,7 @@
               </c:when>
               <c:otherwise>
 <%--<html:text property="myProp(${pNam})" size="35" class="form_box"/> --%>
-                  <input type="text" id="searchBox" name="myProp(${pNam})" size="35" class="form_box"/>
+                  <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box"/>
               </c:otherwise>
           </c:choose>
       </td>
