@@ -33,13 +33,12 @@ var mouseY = 0;
 var currentHistoryId = 0;
 
 document.onmousemove = getMousePos;
-document.onmouseout = getMousePos;
 
 //alert(IE);
 
 // If NS -- that is, !IE -- then set up for mouse capture
 if (!IE) {
-   document.captureEvents(Event.MOUSEMOVE);
+   document.captureEvents(Event.CLICK);
    document.captureEvents(Event.MOUSEOVER);
    document.captureEvents(Event.MOUSEOUT);
 }
@@ -87,9 +86,10 @@ function enableRename(histId, customName) {
    var text = document.getElementById('text_' + histId);
    text.style.display = 'none';
    var input = document.getElementById('input_' + histId);
-   input.innerHTML = "<input name='wdk_history_id' type='hidden' value='" + histId + "'>"
-                   + "<input name='wdk_custom_name' type='text' size='57' value='" + customName + "'>" 
-                   + "<input type='submit' value='Rename'>";
+   input.innerHTML = "<table border='0' cellspacing='0' cellpadding='0'><tr>"
+                   + "<td><input name='wdk_history_id' type='hidden' value='" + histId + "'>"
+                   + "<input name='wdk_custom_name' type='text' size='55' value='" + customName + "'></td>" 
+                   + "<td><input type='submit' value='Save'></td></tr></table>";
    input.style.display='block';
 }
 
@@ -146,9 +146,10 @@ function enableRename(histId, customName) {
           <th>ID</th> 
           <th>Query</th>
           <th>Size</th>
+          <th>&nbsp;</th>
           <c:if test="${isGeneRec}"><th>${dsCol}</th></c:if>
-          <th></th>
-          <th></th>
+          <th>&nbsp;</th>
+          <th>&nbsp;</th>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
        </tr>
@@ -169,15 +170,19 @@ function enableRename(histId, customName) {
                   ${history.customName}</div>
         </td>
         <c:set var="dispNam" value="${history.truncatedName}"/>
-        <td width=500
+        <td width=450
             onmouseover="displayName('${history.historyId}')"
             onmouseout="hideName('div_${history.historyId}')">
             <div id="text_${history.historyId}"
-                 onmousedown="enableRename('${history.historyId}', '${history.customName}')">
+                 onclick="enableRename('${history.historyId}', '${history.customName}')" nowrap>
                  ${dispNam}</div>
-            <div id="input_${history.historyId}" style="display:none"></div>
+            <div id="input_${history.historyId}" style="display:none" nowrap></div>
         </td>
         <td nowrap>${history.estimateSize}</td>
+        <td nowrap>
+           <input type='button' value='Rename'
+                  onclick="enableRename('${history.historyId}', '${history.customName}')">
+        </td>
         <td nowrap>
            <c:if test="${isGeneRec && showOrthoLink}">
                 <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${history.historyId}&plasmodb_dataset=${history.answer.datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
@@ -201,9 +206,14 @@ function enableRename(histId, customName) {
 
          <td nowrap>
                <c:set var="isDepended" value="${history.depended}"/>
-               <c:if test="${isDepended == false}">
-                  <a href="deleteHistory.do?wdk_history_id=${history.historyId}">delete</a>
-               </c:if>
+               <c:choose>
+                  <c:when test="${isDepended == false}">
+                     <a href="deleteHistory.do?wdk_history_id=${history.historyId}">delete</a>
+                  </c:when>
+                  <c:otherwise>
+                     no delete <a href='#nodelete'>?</a>
+                  </c:otherwise>
+               </c:choose>
          </td>
       
         </tr>
@@ -248,6 +258,14 @@ The boolean operators AND, OR and NOT are defined as in <a href="http://www.ncbi
 <li>(1 NOT 2) finds all genes that appear in result 1 BUT NOT in result 2 (i.e., the difference 1 - 2).
 </ul>
 </font></td></tr>
+<tr><td>
+  <b>NOTE: </b>
+  <ul>
+    <li>
+      <a name='nodelete'>'no delete'</a> - You cannot delete a history if other history/histories depend on it.
+    </li>
+  </ul>
+</td></tr>
 </table>
 
 
