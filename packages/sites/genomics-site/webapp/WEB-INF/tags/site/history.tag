@@ -43,7 +43,7 @@
   <tr align='center' valign="bottom">
     <td width='30'>&nbsp;</td>
     <td width='30' bgcolor="yellow" fgcolor="#660000" valign="middle">
-       <a href='/showQueryHistory.do'>
+       <a href='<c:url value="/showQueryHistory.do"/>'>
        <font size='+2'><b>
        <c:choose>
          <c:when test="${wdkUser.historyCount == null}">0</c:when>
