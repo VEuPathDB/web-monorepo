@@ -59,6 +59,7 @@ function getMousePos(e) {
 function displayName(histId) {
    // alert(mouseX);
    if (currentHistoryId == histId) return;
+   if (mouseX == 0 && mouseY == 0) return;
    
    var name = document.getElementById('div_' + histId);
    name.style.position = 'absolute';
@@ -80,9 +81,9 @@ function enableRename(histId, customName) {
    var text = document.getElementById('text_' + histId);
    text.style.display = 'none';
    var input = document.getElementById('input_' + histId);
-   input.innerHTML = "<table border='0' cellspacing='0' cellpadding='0'><tr>"
+   input.innerHTML = "<table border='0' cellspacing='2' cellpadding='0'><tr>"
                    + "<td><input name='wdk_history_id' type='hidden' value='" + histId + "'>"
-                   + "<input name='wdk_custom_name' type='text' size='44' value='" + customName + "'></td>" 
+                   + "<input name='wdk_custom_name' type='text' size='42' maxLength='2000' value='" + customName + "'></td>" 
                    + "<td><input type='submit' value='Update'></td>"
                    + "<td><input type='reset' value='Cancel' onclick='disableRename()'>"
                    + "</td></tr></table>";
@@ -136,7 +137,7 @@ function disableRename() {
 <h3>${recDispName} query history</h3>
 
   <!-- show user answers one per line -->
-  <c:set var="NAME_TRUNC" value="70"/>
+  <c:set var="NAME_TRUNC" value="65"/>
   <table width="100%" border="0" cellpadding="0">
 
     <tr>
@@ -169,7 +170,7 @@ function disableRename() {
         <td>${history.historyId}
             <div id="div_${history.historyId}" 
                   style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffffCC;">
-                  ${history.defaultName}</div>
+                  ${history.description}</div>
         </td>
         <td nowrap>
            <input type='button' value='Name'
@@ -179,9 +180,10 @@ function disableRename() {
         <td width=450
             onmouseover="displayName('${history.historyId}')"
             onmouseout="hideName('div_${history.historyId}')">
-            <div id="text_${history.historyId}" nowrap>
+            <div id="text_${history.historyId}"
+                 onclick="enableRename('${history.historyId}', '${history.customName}')">
                  ${dispNam}</div>
-            <div id="input_${history.historyId}" style="display:none" nowrap></div>
+            <div id="input_${history.historyId}" style="display:none"></div>
         </td>
         <td align='right' nowrap>${history.estimateSize}</td>
         <c:if test="${isGeneRec && showOrthoLink}">
@@ -216,7 +218,7 @@ function disableRename() {
                      <a href="#" 
                         style="color:gray" 
                         title="Cannot delete Query #${history.historyId} because it is used by other queries: ${history.dependencyString}"
-                        onclick="alert('Cannot delete Query #${history.historyId} because it is used by other queries:\n${history.dependencyString}');">
+                        onclick="alert('Cannot delete Query #${history.historyId} because it is used by \nother queries: ${history.dependencyString}');">
                        delete</a> 
                   </c:otherwise>
                </c:choose>
