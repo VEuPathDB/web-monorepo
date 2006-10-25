@@ -74,13 +74,7 @@ function hideName(divId) {
 
 function enableRename(histId, customName) {
    // close the previous one
-   if (currentHistoryId != '0') {
-      var input = document.getElementById('input_' + currentHistoryId);
-      input.innerText = "";
-      input.style.display = 'none';
-      var text = document.getElementById('text_' + currentHistoryId);
-      text.style.display = 'block';
-   }
+   disableRename();
    
    currentHistoryId = histId;
    var text = document.getElementById('text_' + histId);
@@ -88,10 +82,24 @@ function enableRename(histId, customName) {
    var input = document.getElementById('input_' + histId);
    input.innerHTML = "<table border='0' cellspacing='0' cellpadding='0'><tr>"
                    + "<td><input name='wdk_history_id' type='hidden' value='" + histId + "'>"
-                   + "<input name='wdk_custom_name' type='text' size='55' value='" + customName + "'></td>" 
-                   + "<td><input type='submit' value='Save'></td></tr></table>";
+                   + "<input name='wdk_custom_name' type='text' size='44' value='" + customName + "'></td>" 
+                   + "<td><input type='submit' value='Update'></td>"
+                   + "<td><input type='reset' value='Cancel' onclick='disableRename()'>"
+                   + "</td></tr></table>";
    input.style.display='block';
 }
+
+function disableRename() {
+   if (currentHistoryId != '0') {
+      var input = document.getElementById('input_' + currentHistoryId);
+      input.innerText = "";
+      input.style.display = 'none';
+      var text = document.getElementById('text_' + currentHistoryId);
+      text.style.display = 'block';
+      currentHistoryId = 0;
+   }
+}
+
 
 // -->
 </script>
@@ -122,20 +130,14 @@ function enableRename(histId, customName) {
   <c:set var="histList" value="${historyEntry.value}"/>
   <c:set var="recDispName" value="${histList[0].answer.question.recordClass.type}"/>
 
-  <!-- deciding whether to show only selected sections of history -->
-  <c:choose>
-    <c:when test="${param.historySectionId != null && param.historySectionId != type}">
-    </c:when>
-    <c:otherwise>
-
 <c:set var="typeC" value="${typeC+1}"/>
-<c:choose><c:when test="${typeC != 1}"><hr></c:when></c:choose>
+<c:if test="${typeC != 1}"><hr></c:if>
 
 <h3>${recDispName} query history</h3>
 
   <!-- show user answers one per line -->
-  <c:set var="NAME_TRUNC" value="80"/>
-  <table border="0" cellpadding="0">
+  <c:set var="NAME_TRUNC" value="70"/>
+  <table width="100%" border="0" cellpadding="0">
 
     <tr>
       <td>
@@ -144,9 +146,9 @@ function enableRename(histId, customName) {
       <table border="0" cellpadding="2">
       <tr class="headerRow">
           <th>ID</th> 
+          <th>&nbsp;</th>
           <th>Query</th>
           <th>Size</th>
-          <th>&nbsp;</th>
           <c:if test="${isGeneRec}"><th>${dsCol}</th></c:if>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
@@ -166,31 +168,31 @@ function enableRename(histId, customName) {
 
         <td>${history.historyId}
             <div id="div_${history.historyId}" 
-                  style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffff99;">
-                  ${history.customName}</div>
+                  style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffffCC;">
+                  ${history.defaultName}</div>
+        </td>
+        <td nowrap>
+           <input type='button' value='Name'
+                  onclick="enableRename('${history.historyId}', '${history.customName}')">
         </td>
         <c:set var="dispNam" value="${history.truncatedName}"/>
         <td width=450
             onmouseover="displayName('${history.historyId}')"
             onmouseout="hideName('div_${history.historyId}')">
-            <div id="text_${history.historyId}"
-                 onclick="enableRename('${history.historyId}', '${history.customName}')" nowrap>
+            <div id="text_${history.historyId}" nowrap>
                  ${dispNam}</div>
             <div id="input_${history.historyId}" style="display:none" nowrap></div>
         </td>
-        <td nowrap>${history.estimateSize}</td>
-        <td nowrap>
-           <input type='button' value='Rename'
-                  onclick="enableRename('${history.historyId}', '${history.customName}')">
-        </td>
-        <td nowrap>
-           <c:if test="${isGeneRec && showOrthoLink}">
+        <td align='right' nowrap>${history.estimateSize}</td>
+        <c:if test="${isGeneRec && showOrthoLink}">
+           
+           <td nowrap>
                 <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${history.historyId}&plasmodb_dataset=${history.answer.datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
                 <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
-            </c:if>
-         </td>	    
-         <td nowrap><a href="showSummary.do?wdk_history_id=${history.historyId}">view</a></td>
-         <td nowrap><a href="downloadHistoryAnswer.do?wdk_history_id=${history.historyId}">download</a></td>
+           </td>	    
+        </c:if>
+        <td nowrap><a href="showSummary.do?wdk_history_id=${history.historyId}">view</a></td>
+        <td nowrap><a href="downloadHistoryAnswer.do?wdk_history_id=${history.historyId}">download</a></td>
 
             <c:set value="${history.answer.question.fullName}" var="qName" />
             <c:set var="isBooleanQuestion" value="${fn:containsIgnoreCase(qName, 'BooleanQuestion')}"/>
@@ -199,7 +201,7 @@ function enableRename(histId, customName) {
 		          <c:set value="${history.answer.questionUrlParams}" var="qurlParams"/>
 	              <c:set var="questionUrl" value="" />
                   <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
-	                 refine</a>
+	                 revise</a>
 	           </c:if>
 	           &nbsp;
          </td>
@@ -211,7 +213,11 @@ function enableRename(histId, customName) {
                      <a href="deleteHistory.do?wdk_history_id=${history.historyId}">delete</a>
                   </c:when>
                   <c:otherwise>
-                     no delete <a href='#nodelete'>?</a>
+                     <a href="#" 
+                        style="color:gray" 
+                        title="Cannot delete Query #${history.historyId} because it is used by other queries: ${history.dependencyString}"
+                        onclick="alert('Cannot delete Query #${history.historyId} because it is used by other queries:\n${history.dependencyString}');">
+                       delete</a> 
                   </c:otherwise>
                </c:choose>
          </td>
@@ -220,7 +226,7 @@ function enableRename(histId, customName) {
       <c:set var="i" value="${i+1}"/>
       </c:forEach>
       </table>
-        </html:form>
+     </html:form> <!-- end of the html:form for rename query -->
       </td>
       </tr>
       <tr>
@@ -228,43 +234,42 @@ function enableRename(histId, customName) {
           <c:when test="${isGeneRec && showOrthoLink}"><td colspan="7" align="left"></c:when>
           <c:otherwise><td colspan="6" align="left"></c:otherwise>
 	</c:choose>
-            <br>
             <html:form method="get" action="/processBooleanExpression.do">
               Combine results:
               <html:text property="booleanExpression" value=""/>
-                <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font><br>
               <html:hidden property="historySectionId" value="${type}"/>
-              <html:reset property="reset" value="Clear"/>
               <html:submit property="submit" value="Get Combined Result"/>
+              <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>
             </html:form>
           </td>
           <td colspan="1"></td></tr>
 
   </table>
-    </c:otherwise>
-  </c:choose> <!-- end of deciding sections to show -->
 
 </c:forEach>
 
 <table>
-<tr><td><br></td></tr>
 <tr><td><font face="Arial,Helvetica" size="-1">
-The boolean operators AND, OR and NOT are defined as in <a href="http://www.ncbi.nlm.nih.gov/entrez/query/static/help/helpdoc.html#Boolean_Operators">NCBI Entrez</a>.
-<ul>
-<li>(1 AND 2) finds all genes that appear in BOTH 1 and 2 results (i.e., the intersection of 1 and 2)
-
-<li>(1&nbsp;&nbsp;  OR 2) finds all genes that appear in EITHER 1 or 2 (i.e., the union of 1 and 2).
-
-<li>(1 NOT 2) finds all genes that appear in result 1 BUT NOT in result 2 (i.e., the difference 1 - 2).
-</ul>
-</font></td></tr>
+<b>Understanding AND, OR and NOT</b>:</font>
+<table border='0' cellspacing='3' cellpadding='0'>
+  <tr>
+    <td width='100'><font face="Arial,Helvetica" size="-1"><b>1 and 2</b></font></td>
+    <td><font face="Arial,Helvetica" size="-1">Genes that 1 and 2 have in common. You can also use "1 intersect 2".</font></td>
+  </tr>
+  <tr>
+    <td width='100'><font face="Arial,Helvetica" size="-1"><b>1 or 2</b></font></td>
+    <td><font face="Arial,Helvetica" size="-1">Genes present in 1 or 2, or both. You can also use "1 union 2".</font></td>
+  </tr>
+  <tr>
+    <td width='100'><font face="Arial,Helvetica" size="-1"><b>1 not 2</b></font></td>
+    <td><font face="Arial,Helvetica" size="-1">Genes in 1 but not in 2. You can also use "1 minus 2".</font></td>
+  </tr>
+</table>
+</td></tr>
 <tr><td>
-  <b>NOTE: </b>
-  <ul>
-    <li>
-      <a name='nodelete'>'no delete'</a> - You cannot delete a history if other history/histories depend on it.
-    </li>
-  </ul>
+  <font face="Arial,Helvetica" size="-1">
+  <a name='nodelete'><b>*</b></a> If you want to delete a query, you must first delete all other boolean queries that uses this one as a component.
+  </font>
 </td></tr>
 </table>
 

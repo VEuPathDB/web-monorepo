@@ -130,7 +130,7 @@
                    <c:set value="${wdkAnswer.questionUrlParams}" var="qurlParams"/>
 	           <c:set var="questionUrl" value="" />
                    <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
-	           Refine query</a>
+	           Revise query</a>
 	       </c:if>
            </td></tr>
 </table>
