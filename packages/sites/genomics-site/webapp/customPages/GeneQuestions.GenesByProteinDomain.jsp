@@ -141,6 +141,7 @@
           </td>
         </c:otherwise>
       </c:choose>
+      </c:otherwise></c:choose>
     
           <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>
@@ -151,7 +152,6 @@
           </td>
       </tr>
     
-      </c:otherwise></c:choose>
     </c:otherwise></c:choose>
 
 </c:forEach>
