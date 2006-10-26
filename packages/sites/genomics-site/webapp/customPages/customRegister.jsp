@@ -94,6 +94,8 @@ function validateFields(e)
 
   <div align="left">
 
+<p> IMPORTANT: If you already registered in another site (ApiDB, CryptoDB ,PlasmoDB or ToxoDB) you do NOT need to register again.
+
 <p><b>Why register/subscribe</b>? So you can:
 <ul>
 <li><i>optionally</i> receive infrequent alerts (at most monthly)
