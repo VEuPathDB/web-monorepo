@@ -56,6 +56,6 @@ function createAutoComplete( obj ){
 	}
 	
 	new Autocompleter.Local('searchBox','searchBoxupdate', def,
-	{ tokens: new Array(',','\n'), fullSearch: true, partialSearch: true, partialChars: 0 });
+	{ tokens: new Array(',','\n'), fullSearch: true, partialSearch: true, partialChars: 0, choices: 9999 });
 	
 }
