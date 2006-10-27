@@ -174,6 +174,22 @@ function check(all) {
     }
 }
 
+function checkAll(bool, cb) {
+    cb[0].checked = (bool ? null : 'checked');
+    for (var i=0; i<cb.length; i++) {
+        cb[i].checked = (bool ? 'checked' : null);
+    }
+}
+
+function multiSelectAll(bool, opt) {
+    opt[0].selected = (bool ? null : 'selected');
+    for (var i=0; i<opt.length; i++) {
+        opt[i].selected = (bool ? 'selected' : null);
+    }
+}
+
+
+
 function handleHttpResponseImage(imgId, imgSrc) {
     var http = httpObjects[imgId];
     var msg = "in handleHttpResponseImage\n"
