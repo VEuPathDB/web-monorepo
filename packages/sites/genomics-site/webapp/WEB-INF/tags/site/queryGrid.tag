@@ -32,13 +32,14 @@ This query grid summarizes all the queries we are working to provide you. The le
                     <site:makeURL qset="GeneQuestions" qname="GenesByCentromereProximity" linktext="Proximity to Centromeres" existsOn="P"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="Proximity to Telomeres" existsOn=""/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByTelomereProximity" linktext="Proximity to Telomeres" existsOn="P"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="NA" linktext="Non-nuclear Genomes" existsOn=""/>
                 </tr>
             </table>
         </td>
+
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="rowDarkBold">
@@ -52,6 +53,71 @@ This query grid summarizes all the queries we are working to provide you. The le
                 </tr>
             </table>
         </td>
+
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDarkBold">
+                    <site:makeTitle qcat="Population Biology" qtype="Gene"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="InternalQuestions" qname="GenesBySNPs" linktext="SNPs" existsOn=""/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="Microsatellites" existsOn=""/>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDarkBold">
+                    <site:makeTitle qcat="Transcript Expression" qtype="Gene"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByESTClusterOverlap" linktext="EST Evidence" existsOn=""/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="SAGE Tag Evidence" existsOn=""/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="P"/>
+                </tr>
+            </table>
+        </td>
+
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDarkBold">
+                    <site:makeTitle qcat="Similarity/Pattern" qtype="Gene"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByMotifSearch" linktext="Protein Motif" existsOn="A C P T"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByInterproDomain" linktext="Interpro/Pfam Domain" existsOn="A C P T"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="GeneQuestions" qname="GenesBySimilarity" linktext="BLAST similarity" existsOn="A C P T"/>
+                </tr>
+            </table>
+        </td>
+
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="rowDarkBold">
+                    <site:makeTitle qcat="Protein Expression" qtype="Gene"/>
+                </tr>
+                <tr>
+                    <site:makeURL qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="P"/>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+
+    <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="rowDarkBold">
@@ -74,8 +140,7 @@ This query grid summarizes all the queries we are working to provide you. The le
                 </tr>
             </table>
         </td>
-    </tr>
-    <tr>
+
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="rowDarkBold">
@@ -98,50 +163,7 @@ This query grid summarizes all the queries we are working to provide you. The le
                 </tr>
             </table>
         </td>
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
-                    <site:makeTitle qcat="Similarity/Pattern" qtype="Gene"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByMotifSearch" linktext="Protein Motif" existsOn="A C P T"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByPfamDomain" linktext="Pfam Domain" existsOn="A C P T"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesBySimilarity" linktext="BLAST similarity" existsOn="A C P T"/>
-                </tr>
-            </table>
-        </td>
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
-                    <site:makeTitle qcat="Transcript Expression" qtype="Gene"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByESTClusterOverlap" linktext="EST Evidence" existsOn=""/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="SAGE Tag Evidence" existsOn=""/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="Microarray Evidence" existsOn="P"/>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
-                    <site:makeTitle qcat="Protein Expression" qtype="Gene"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByMassSpec" linktext="Mass Spec. Evidence" existsOn="P"/>
-                </tr>
-            </table>
-        </td>
+
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="rowDarkBold">
@@ -161,6 +183,10 @@ This query grid summarizes all the queries we are working to provide you. The le
                 </tr>
             </table>
         </td>
+    </tr>
+
+
+    <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="rowDarkBold">
@@ -174,21 +200,6 @@ This query grid summarizes all the queries we are working to provide you. The le
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByPhyleticProfile" linktext="Homology Profile" existsOn="P"/>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
-                    <site:makeTitle qcat="Population Biology" qtype="Gene"/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="SNPs" existsOn=""/>
-                </tr>
-                <tr>
-                    <site:makeURL qset="GeneQuestions" qname="NA" linktext="Microsatellites" existsOn=""/>
                 </tr>
             </table>
         </td>
