@@ -270,7 +270,7 @@ function disableRename() {
 </td></tr>
 <tr><td>
   <font face="Arial,Helvetica" size="-1">
-  <a name='nodelete'><b>*</b></a> If you want to delete a query, you must first delete all other boolean queries that uses this one as a component.
+  <a name='nodelete'><b>*</b></a> If you want to delete a query, you must first delete all other boolean queries that use this one as a component.
   </font>
 </td></tr>
 </table>
