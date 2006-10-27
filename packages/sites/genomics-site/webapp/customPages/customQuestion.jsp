@@ -44,7 +44,8 @@
   <c:set var="isHidden" value="${qP.isVisible == false}"/>
   <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
   <c:set var="pNam" value="${qP.name}"/>
-
+  <c:set var="styleIdNum" value="0"/>
+  
   <%-- hide invisible params --%>
   <c:choose>
   <c:when test="${isHidden}"><html:hidden property="myProp(${pNam})"/></c:when>
@@ -72,27 +73,44 @@
 
                     <c:choose>
                     <c:when test="${pNam == 'organism' or pNam == 'ecorganism'}">
-                        <html:multibox property="myMultiProp(${pNam})" value="${flatVoc}"/>
-			    <i>${flatVoc}</i>&nbsp;
-		    </c:when>
+                        <%-- knowingly violating standards for unique id attr value, not knowing how to specify a name attr --%>
+                        <html:multibox property="myMultiProp(${pNam})" styleId='multiselect${styleIdNum}' value="${flatVoc}"/>
+                        <i>${flatVoc}</i>&nbsp;
+                   </c:when>
                     <c:otherwise>
-                        <html:multibox property="myMultiProp(${pNam})" value="${flatVoc}"/>
-			    ${flatVoc}&nbsp;
-		    </c:otherwise>
-                    </c:choose>	
+                        <html:multibox property="myMultiProp(${pNam})" styleId='multiselect${styleIdNum}' value="${flatVoc}"/>
+                       ${flatVoc}&nbsp;
+                    </c:otherwise>
+                    </c:choose> 
 
                      <c:set var="i" value="${i+1}"/>
                      <c:set var="checked" value=""/>
                  </c:forEach>
-                 </td></tr></table>
+                 
+                    <%-- <select,unselect all> --%>
+                    <br>
+                    <input type="button" value="select all" onclick="checkAll(1, multiselect${styleIdNum})">
+                    <input type="button" value="clear all"  onclick="checkAll(0, multiselect${styleIdNum})">
+                    <%-- </select,unselect all> --%>
+
+                  </td>
+                </tr>
+                 </table>
               </c:when>
               <c:otherwise>
-            <html:select  property="myMultiProp(${pNam})" multiple="1">
+            <html:select  property="myMultiProp(${pNam})" styleId='multiselect${styleIdNum}' multiple="1">
               <c:set var="opt" value="${opt+1}"/>
               <c:set var="sel" value=""/>
               <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
               <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
             </html:select>
+            
+                    <%-- <select,unselect all> --%>
+                    <br>
+                    <input type="button" value="select all" onclick="multiSelectAll(1, multiselect${styleIdNum})">
+                    <input type="button" value="clear all"  onclick="multiSelectAll(0, multiselect${styleIdNum})">
+                    <%-- <select,unselect all> --%>
+
               </c:otherwise>
             </c:choose>
           </c:when>
@@ -131,6 +149,7 @@
 
   </c:otherwise></c:choose>
 
+<c:set var="styleIdNum" value="${styleIdNum +1}"/>
 </c:forEach>
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
