@@ -9,6 +9,11 @@
 %>
 
       <c:set var="questionFullNamesArray" value="${fn:split(questions, ',')}" />
+
+      <c:if test="${fn:length(questionFullNamesArray) == 1}">
+        <jsp:forward page="/showQuestion.do?questionFullName=${questionFullNamesArray[0]}"/>
+      </c:if>
+
       <c:forEach items="${questionFullNamesArray}" var="qFullName">
         <c:set var="i" value="${i+1}"/>
         <c:set var="questionFullNameArray" 
