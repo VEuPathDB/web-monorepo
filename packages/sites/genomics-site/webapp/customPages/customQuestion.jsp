@@ -40,11 +40,11 @@
 <wdk:errors/>
 
 <c:set value="${wdkQuestion.params}" var="qParams"/>
+<c:set var="styleIdNum" value="0"/>
 <c:forEach items="${qParams}" var="qP">
   <c:set var="isHidden" value="${qP.isVisible == false}"/>
   <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
   <c:set var="pNam" value="${qP.name}"/>
-  <c:set var="styleIdNum" value="0"/>
   
   <%-- hide invisible params --%>
   <c:choose>
