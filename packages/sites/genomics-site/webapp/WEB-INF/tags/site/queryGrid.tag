@@ -110,7 +110,7 @@ This query grid summarizes all the queries we are working to provide you. The le
                     <site:makeTitle qcat="Protein Expression" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="P"/>
+                    <site:makeURL qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="C P"/>
                 </tr>
             </table>
         </td>
