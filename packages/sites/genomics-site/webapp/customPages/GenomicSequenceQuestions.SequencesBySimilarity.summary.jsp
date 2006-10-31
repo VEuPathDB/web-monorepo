@@ -9,6 +9,9 @@
 <!-- get wdkAnswer from requestScope -->
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 
+<%-- if apidb, we will display results per project --%>
+<c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
+
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
 
@@ -70,9 +73,33 @@
   </c:otherwise>
 </c:choose>
 
+
+<tr><td valign="top" align="left"><font face="Arial,Helvetica"><b>Results:</b></font></td>
+     <td valign="top" align="left">${wdkAnswer.resultSize}
+
+<c:if test="${dispModelName eq 'ApiDB'}">
+<c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
+<c:choose>
+<c:when test="${rSBP.key == 'cryptodb'}">
+    &nbsp;&nbsp; CryptoDB: ${rSBP.value}
+</c:when>
+<c:when test="${rSBP.key == 'plasmodb'}">
+    &nbsp;&nbsp; PlasmoDB: ${rSBP.value}
+</c:when>
+<c:when test="${rSBP.key == 'toxodb'}">
+    &nbsp;&nbsp; ToxoDB: ${rSBP.value}
+</c:when>
+</c:choose>
+</c:forEach>
+</c:if>
+
+</td>
+</tr>
+<tr><td colspan=3><hr></td</tr>
+
+
 </table>
 
-<hr>
 
 <!-- handle empty result set situation -->
 <c:choose>
