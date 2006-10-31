@@ -65,7 +65,7 @@ Availability:
                     <site:makeTitle qcat="Population Biology" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="InternalQuestions" qname="GenesBySNPs" linktext="SNPs" existsOn=""/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesBySnpDnDsRatios" linktext="SNPs" existsOn=""/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="NA" linktext="Microsatellites" existsOn=""/>
@@ -81,7 +81,7 @@ Availability:
                     <site:makeTitle qcat="Transcript Expression" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByESTClusterOverlap" linktext="EST Evidence" existsOn=""/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn=""/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="NA" linktext="SAGE Tag Evidence" existsOn=""/>
