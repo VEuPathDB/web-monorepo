@@ -12,8 +12,13 @@
 <tr><td width="34%"></td><td width="33%"></td><td width="33%"></td></tr>
 
 <tr><td colspan="3">
-This query grid summarizes all the queries we are working to provide you. The letter symbols indicate if the query is available in apidb.org (<b>A</b>), cryptodb.org (<b>C</b>), plasmodb.org (<b>P</b>) and/or toxodb.org (<b>T</b>). By clicking on it you are taken to the query page in the corresponding website.  By clicking on a category name we take you below on this page where a summary for each query is provided.  The query names greyed out are not currently available in this site (${modelName}).<br><br></td></tr>
-
+<div class="smallBlack" align="right">
+Availability: 
+<img src=/images/apidb_letter.jpg border=0 />-ApiDB 
+<img src=/images/cryptodb_letter.jpg border=0 />-CryptoDB 
+<img src=/images/plasmodb_letter.jpg border=0 />-PlasmoDB 
+<img src=/images/toxodb_letter.jpg border=0 />-ToxoDB 
+</div>
 
     <tr>
         <td colspan="2"><h7><b><i>Identify Genes Based On:</i></b></h7></td>
