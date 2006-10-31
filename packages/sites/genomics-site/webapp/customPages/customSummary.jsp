@@ -32,21 +32,13 @@
 
 
 <!-- display question and param values and result size for wdkAnswer -->
-<table>
+<table border="0" cellspacing="5">
 
-<c:choose>
-  <c:when test="${wdkAnswer.isCombinedAnswer}">
-    <!-- combined answer from history boolean expression -->
-    <tr><td valign="top" align="left"><b>Combined Answer:</b></td>
-        <td valign="top" align="left">${wdkAnswer.userAnswerName}</td></tr>
-  </c:when>
-  <c:otherwise>
-
-    <c:choose>
+  <c:choose>
       <c:when test="${wdkAnswer.isBoolean}">
-      <!-- boolean question -->
+        <!-- boolean question -->
 
-        <tr><td valign="top" align="left"><b>Expanded Question:</b></td>
+        <tr><td valign="top" align="right" width="10" nowrap><b>Query:</b></td>
             <td valign="top" align="left">
               <nested:root name="wdkAnswer">
                 <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
@@ -58,51 +50,58 @@
         <c:set value="${wdkAnswer.internalParams}" var="params"/>
         <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
         <c:set value="${wdkAnswer.question.displayName}" var="wdkQuestionName"/>
-        <tr><td valign="top" align="left"><b>Query:</b></td>
-                   <td colspan="3" valign="top" align="left">${wdkQuestionName}</td></tr>
-               <tr><td valign="top" align="left"><b>Parameters:</b></td>
-                   <td valign="top" align="left">
-                     <table>
-                       <c:forEach items="${qParamsMap}" var="p">
-                         <c:set var="pNam" value="${p.key}"/>
-                         <c:set var="qP" value="${p.value}"/>
-                         <c:set var="aP" value="${params[pNam]}"/>
-                         <c:if test="${qP.isVisible}">
-                           <tr><td align="right">${qP.prompt}:</td><td><i>${aP}</i></td></tr>
-                         </c:if>
-                       </c:forEach>
-                     </table></td></tr>
+        <tr>
+           <td valign="top" align="right" width="10" nowrap><b>Query:</b></td>
+           <td colspan="3" valign="top" align="left" style="padding-left:40px;"><b>${wdkQuestionName}</b></td>
+        </tr>
+        <tr>
+           <td valign="top" align="right" width="10" nowrap><b>Parameters:</b></td>
+           <td valign="top" align="left" style="padding-left:40px;">
+              <table>
+                 <c:forEach items="${qParamsMap}" var="p">
+                    <c:set var="pNam" value="${p.key}"/>
+                    <c:set var="qP" value="${p.value}"/>
+                    <c:set var="aP" value="${params[pNam]}"/>
+                    <c:if test="${qP.isVisible}">
+                       <tr>
+                          <td align="right"><i>${qP.prompt}</i>&nbsp;=&nbsp;</td>
+                          <td>${aP}</td>
+                       </tr>
+                    </c:if>
+                 </c:forEach>
+              </table>
+           </td>
+        </tr>
       </c:otherwise>
     </c:choose>
 
-  </c:otherwise>
-</c:choose>
+    <tr>
+       <td valign="top" align="right" width="10" nowrap><b>Results:</b></td>
+       <td valign="top" align="left" style="padding-left:40px;">
+          ${wdkAnswer.resultSize}
+          <c:if test="${wdkAnswer.resultSize > 0}">
+             (showing ${wdk_paging_start} to ${wdk_paging_end})
 
-       <tr><td valign="top" align="left"><b>Results:</b></td>
-           <td valign="top" align="left">
-               ${wdkAnswer.resultSize}
-               <c:if test="${wdkAnswer.resultSize > 0}">
-               (showing ${wdk_paging_start} to ${wdk_paging_end})
-
-<c:if test="${dispModelName eq 'ApiDB'}">
-<c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
-<c:choose>
-<c:when test="${rSBP.key == 'cryptodb'}">
-    &nbsp;&nbsp; CryptoDB: ${rSBP.value}
-</c:when>
-<c:when test="${rSBP.key == 'plasmodb'}">
-    &nbsp;&nbsp; PlasmoDB: ${rSBP.value}
-</c:when>
-<c:when test="${rSBP.key == 'toxodb'}">
-    &nbsp;&nbsp; ToxoDB: ${rSBP.value}
-</c:when>
-</c:choose>
-</c:forEach>
-</c:if>
-
-</c:if></td></tr>
-       <tr><td>&nbsp;</td>
-           <td align="left">
+             <c:if test="${dispModelName eq 'ApiDB'}">
+                <c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
+                   <c:choose>
+                      <c:when test="${rSBP.key == 'cryptodb'}">
+                         &nbsp;&nbsp; CryptoDB: ${rSBP.value}
+                      </c:when>
+                      <c:when test="${rSBP.key == 'plasmodb'}">
+                         &nbsp;&nbsp; PlasmoDB: ${rSBP.value}
+                      </c:when>
+                      <c:when test="${rSBP.key == 'toxodb'}">
+                         &nbsp;&nbsp; ToxoDB: ${rSBP.value}
+                      </c:when>
+                   </c:choose>
+                </c:forEach>
+             </c:if>
+          </c:if>
+       </td>
+    </tr>
+    <tr>
+       <td colspan="2" align="left">
                <c:choose>
                    <c:when test="${historyId == null}">
                        <a href="downloadConfig.jsp?wdk_history_id=${altHistoryId}">
