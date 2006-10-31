@@ -237,19 +237,52 @@ Ack, this form won't work at all without JavaScript support!
 
 <h3>${wdkQuestion.displayName}</h3>
 
+
+
 <!-- display description for wdkQuestion -->
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
 <hr>
 
 <html:form method="post" action="/processQuestion.do">
+
 <input type="hidden" name="questionFullName" value="GeneQuestions.GenesByOrthologPattern">    
 <input type="hidden" name="myMultiProp(phyletic_indent_map)" value="Archaea">
 <input type="hidden" name="myMultiProp(phyletic_term_map)" value="rno">
 
-<table>
-<tr><td colspan="2">
 
+
+<%--  get answer button on top in the middle
+<tr align>
+  <td colspan="2" align="center">
+    <html:submit property="questionSubmit" value="Get Answer"/>
+  </td>
+</tr>
+--%>
+
+<table border ="0" width="100%">
+
+
+<tr>
+  <td width="230" align="left"><b>Show results from species:</b>
+  </td>
+  <td align="left">
+     <c:set var="opt" value="0"/>
+     <html:select  property="myMultiProp(${resultSpeciesName})">
+       <c:set var="opt" value="${opt+1}"/>
+       <c:set var="sel" value=""/>
+       <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
+       <html:options property="values(${resultSpeciesName})" labelProperty="labels(${resultSpeciesName})"/>
+     </html:select>
+  </td>
+ <td  align="right">
+    <html:submit property="questionSubmit" value="Get Answer"/>
+  </td>
+</tr>
+<tr><td><br></td></tr>
+
+
+<tr><td colspan="3">
 <table border="0" cellpadding="2">
     <c:set var="idx" value="1"/>
     <tr>
@@ -280,31 +313,20 @@ Ack, this form won't work at all without JavaScript support!
 </table>
 
     </td></tr>
+
 <tr>
+ <td></td>
   <td><html:hidden property="myProp(${includedSpeciesName})" /></td>
   <td><html:hidden property="myProp(${excludedSpeciesName})" /></td>
 </tr>
 <tr>
-  <td colspan="2">
+  <td colspan="3">
     <html:hidden property="myProp(${profilePatternName})" value="%"/>
   </td>
 </tr>
-<tr>
-  <td align="right"><b>Show results from species:</b>
-  </td>
-  <td>
-     <c:set var="opt" value="0"/>
-     <html:select  property="myMultiProp(${resultSpeciesName})">
-       <c:set var="opt" value="${opt+1}"/>
-       <c:set var="sel" value=""/>
-       <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
-       <html:options property="values(${resultSpeciesName})" labelProperty="labels(${resultSpeciesName})"/>
-     </html:select>
-  </td>
-</tr>
-<tr>
-  <td>&nbsp;</td>
-  <td>
+
+<tr align>
+  <td colspan="3" align="center">
     <html:submit property="questionSubmit" value="Get Answer"/>
   </td>
 </tr>
