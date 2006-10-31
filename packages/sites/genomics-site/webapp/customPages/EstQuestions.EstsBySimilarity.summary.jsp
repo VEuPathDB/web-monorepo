@@ -83,6 +83,7 @@
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>
     No results for your query
+<pre>${wdkAnswer.resultMessage}</pre> 
   </c:when>
   <c:otherwise>
 
