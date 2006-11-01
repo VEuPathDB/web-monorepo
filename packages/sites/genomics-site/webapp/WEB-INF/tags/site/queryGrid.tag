@@ -14,12 +14,13 @@
 <tr><td colspan="3">        
 <div class="smallBlack" align="right">
 Availability: 
-<img src=/images/apidb_letter.jpg border=0 />-ApiDB 
-<img src=/images/cryptodb_letter.jpg border=0 />-CryptoDB 
-<img src=/images/plasmodb_letter.jpg border=0 />-PlasmoDB 
-<img src=/images/toxodb_letter.jpg border=0 />-ToxoDB 
+<img src=/images/apidb_letter.jpg border=0 />= ApiDB 
+<img src=/images/cryptodb_letter.jpg border=0 />= CryptoDB 
+<img src=/images/plasmodb_letter.jpg border=0 />= PlasmoDB 
+<img src=/images/toxodb_letter.jpg border=0 />= ToxoDB 
 </div>
-
+</td>
+</tr>
     <tr>
         <td colspan="2"><h7><b><i>Identify Genes Based On:</i></b></h7></td>
         <td></td>
@@ -65,7 +66,7 @@ Availability:
                     <site:makeTitle qcat="Population Biology" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesBySNPs" linktext="SNPs" existsOn="P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="NA" linktext="Microsatellites" existsOn=""/>
@@ -81,7 +82,7 @@ Availability:
                     <site:makeTitle qcat="Transcript Expression" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn=""/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn="C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="NA" linktext="SAGE Tag Evidence" existsOn=""/>
@@ -115,7 +116,7 @@ Availability:
                     <site:makeTitle qcat="Protein Expression" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="C P"/>
+                    <site:makeURL qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="P"/>
                 </tr>
             </table>
         </td>
