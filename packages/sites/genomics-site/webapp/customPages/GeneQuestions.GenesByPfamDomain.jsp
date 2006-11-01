@@ -11,7 +11,7 @@
 <c:set var="gidqpMap" value="${wdkQuestion.paramsMap}"/>
 <c:set var="pfamTermParam" value="${gidqpMap['pfam_term']}"/>
 
-<jsp:useBean scope="request" id="helps" class="java.util.HashMap"/>
+<jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
 <c:set value="${requestScope.questionForm}" var="qForm"/>
 
@@ -43,7 +43,7 @@ onLoad="ac = new ajaxControl('showRecord.do?name=UtilityRecordClasses.PfamTermLi
 
 <!-- show all params of question, collect help info along the way -->
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
-<jsp:useBean id="helpQ" class="java.util.HashMap"/>
+<jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 
 <!-- put an anchor here for linking back from help sections -->
 <A name="${fromAnchorQ}"></A>

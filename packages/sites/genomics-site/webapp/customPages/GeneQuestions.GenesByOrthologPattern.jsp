@@ -6,7 +6,7 @@
 
 <!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->  
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
-<jsp:useBean scope="request" id="helps" class="java.util.HashMap"/>
+<jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
 <!-- display page header with wdkQuestion displayName as banner -->
 <site:header title="Queries & Tools :: Ortholog Pattern Question"

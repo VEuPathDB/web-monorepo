@@ -7,7 +7,7 @@
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
-<jsp:useBean scope="request" id="helps" class="java.util.HashMap"/>
+<jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
 <c:set value="${requestScope.questionForm}" var="qForm"/>
 
@@ -28,7 +28,7 @@
 
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
-<jsp:useBean id="helpQ" class="java.util.HashMap"/>
+<jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 
 <%-- put an anchor here for linking back from help sections --%>
 <A name="${fromAnchorQ}"></A>
