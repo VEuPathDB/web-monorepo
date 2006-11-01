@@ -11,7 +11,7 @@
 
 <tr><td width="34%"></td><td width="33%"></td><td width="33%"></td></tr>
 
-<tr><td colspan="3">
+<tr><td colspan="3">        
 <div class="smallBlack" align="right">
 Availability: 
 <img src=/images/apidb_letter.jpg border=0 />-ApiDB 
@@ -27,7 +27,7 @@ Availability:
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Genomic Position" qtype="Gene"/>  
                 </tr>
                 <tr>
@@ -47,7 +47,7 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Gene Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -61,7 +61,7 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Population Biology" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -77,7 +77,7 @@ Availability:
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Transcript Expression" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -94,7 +94,7 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Similarity/Pattern" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -111,7 +111,7 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Protein Expression" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -125,7 +125,7 @@ Availability:
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Predicted Proteins" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -148,7 +148,7 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Putative Function" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -171,7 +171,7 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Cellular Location" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -194,7 +194,7 @@ Availability:
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Evolution" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -211,7 +211,7 @@ Availability:
 
         <td colspan="2" valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                     <site:makeTitle qcat="Other Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
@@ -238,9 +238,9 @@ Availability:
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr>
-                    <td colspan="4"><h7><i><b>Identify Genomic Sequences Based On:</b></i></h7></td>
+                    <td colspan="4"><h7><i><b>Identify Genomic Seqs Based On:</b></i></h7></td>
                 </tr>
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                         <site:makeTitle qcat="Similarity/Pattern" qtype="Genomic"/>
 
                 </tr>
@@ -251,7 +251,7 @@ Availability:
                 <tr>
                     <site:makeURL qset="GenomicSequenceQuestions" qname="NA" linktext="DNA Sequence Motif" existsOn=""/>
                 </tr>
-               <tr class="rowDarkBold">
+               <tr class="queryGridTitle">
                          <site:makeTitle qcat="Other Attributes" qtype="Genomic"/>
                         
                 </tr>
@@ -269,7 +269,7 @@ Availability:
                 <tr>
                     <td colspan="4"><h7><b><i>Identify ESTs Based On:</i></b></h7></td>
                 </tr>
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                      <site:makeTitle qcat="Similarity/Pattern" qtype="EST" />
                 </tr>
                 
@@ -279,7 +279,7 @@ Availability:
                 <tr>
                     <site:makeURL qset="EstQuestions" qname="NA" linktext="EST Sequence Motif" existsOn=""/>
                 </tr>
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                        <site:makeTitle qcat="Other Attributes" qtype="EST"/>
                 </tr>
                 <tr>
@@ -294,7 +294,7 @@ Availability:
                 <tr>
                     <td colspan="4"><h7><b><i>Identify ORFs Based On:</i></b></h7></td>
                 </tr>
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                      <site:makeTitle qcat="Similarity/Pattern" qtype="ORF"/>
                 </tr>
                 
@@ -304,7 +304,7 @@ Availability:
                 <tr>
                     <site:makeURL qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF Sequence Motif" existsOn="A C"/>
                 </tr>
-                <tr class="rowDarkBold">
+                <tr class="queryGridTitle">
                          <site:makeTitle qcat="Other Attributes" qtype="ORF"/>
                 </tr>
                 <tr>
