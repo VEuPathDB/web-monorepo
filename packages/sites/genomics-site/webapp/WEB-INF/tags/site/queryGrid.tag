@@ -256,7 +256,7 @@ Availability:
                         
                 </tr>
                 <tr>
-                    <site:makeURL qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="ID (e.g. Sequence ID, GenBank ID, etc)"  existsOn="A C P T"/>
+                    <site:makeURL qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="ID (Seq ID, GenBank ID, etc)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="P"/>
