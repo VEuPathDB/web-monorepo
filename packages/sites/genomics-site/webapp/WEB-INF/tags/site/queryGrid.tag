@@ -218,7 +218,7 @@ Availability:
                     <site:makeURL qset="GeneQuestions" qname="GenesByTextSearch" linktext="Text (search product name, notes, etc.)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="ID (e.g. Gene ID, GenBank ID, SwissProt ID, etc.)"  existsOn="A C P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="ID (Gene ID, GenBank ID, SwissProt ID, etc.)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByTaxon" linktext="Species" existsOn="P"/>
