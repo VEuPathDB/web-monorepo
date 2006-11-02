@@ -5,13 +5,16 @@
 
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
-
+<table><tr><td align="left">
+This query grid summarizes all queries. The symbols <img src=/images/apidb_letter.jpg border=0 />, <img src=/images/cryptodb_letter.jpg border=0 />, <img src=/images/plasmodb_letter.jpg border=0 />, <img src=/images/toxodb_letter.jpg border=0 /> will take you to the query page in the corresponding website. Names greyed out are not currently available on this site.
+</td></tr></table>
 
 <table width="100%" border="0" cellspacing="2" cellpadding="2" style="border-style:outset; border-color:black;border-width:1px;">
 
 <tr><td width="34%"></td><td width="33%"></td><td width="33%"></td></tr>
 
-<tr><td colspan="3">        
+<tr><td colspan="3">  
+   
 <div class="smallBlack" align="right">
 Availability: 
 <img src=/images/apidb_letter.jpg border=0 />= ApiDB 
@@ -29,7 +32,7 @@ Availability:
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="queryGridTitle">
-                    <site:makeTitle qcat="Genomic Position" qtype="Gene"/>  
+                    <site:makeTitle qcat="Genomic Position" qtype="Gene"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByLocation" linktext="Chromosomal Location" existsOn="A C P T"/>
@@ -55,7 +58,7 @@ Availability:
                     <site:makeURL qset="GeneQuestions" qname="GenesByGeneType" linktext="Type (e.g. rRNA, tRNA)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByExonCount" linktext="Exon/Intron Structure" existsOn="C P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByExonCount" linktext="Exon/Intron Structure" existsOn="A C P T"/>
                 </tr>
             </table>
         </td>
@@ -130,7 +133,7 @@ Availability:
                     <site:makeTitle qcat="Predicted Proteins" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByMolecularWeight" linktext="Molecular Weight" existsOn="C P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByMolecularWeight" linktext="Molecular Weight" existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByIsoelectricPoint" linktext="Isoelectric Point" existsOn="P T"/>
@@ -199,7 +202,7 @@ Availability:
                     <site:makeTitle qcat="Evolution" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesOrthologousToAGivenGene" linktext="Orthologs/Paralogs" existsOn="P"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesOrthologousToAGivenGene" linktext="Orthologs/Paralogs" existsOn="A P"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByOrthologPattern" linktext="Orthology Profile" existsOn="A C P T"/>
@@ -222,7 +225,7 @@ Availability:
                     <site:makeURL qset="GeneQuestions" qname="GeneByLocusTag" linktext="ID (Gene ID, GenBank ID, SwissProt ID, etc.)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesByTaxon" linktext="Species" existsOn="P"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesByTaxon" linktext="Species" existsOn="A C P"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="Reagents Available (e.g. antibodies from MR4)" existsOn="P"/>
@@ -260,7 +263,7 @@ Availability:
                     <site:makeURL qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="ID (Seq ID, GenBank ID, etc)"  existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="P"/>
+                    <site:makeURL qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A P"/>
                 </tr>
             </table>
         </td>
