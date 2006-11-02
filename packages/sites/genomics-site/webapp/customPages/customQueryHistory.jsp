@@ -30,6 +30,7 @@
 var IE = document.all?true:false
 var mouseX = 0;
 var mouseY = 0;
+var overHistoryId = 0;
 var currentHistoryId = 0;
 
 document.onmousemove = getMousePos;
@@ -40,7 +41,6 @@ document.onmousemove = getMousePos;
 if (!IE) {
    document.captureEvents(Event.CLICK);
    document.captureEvents(Event.MOUSEOVER);
-   document.captureEvents(Event.MOUSEOUT);
 }
 
 function getMousePos(e) {
@@ -58,24 +58,36 @@ function getMousePos(e) {
 
 function displayName(histId) {
    // alert(mouseX);
+   if (overHistoryId != histId) hideAnyName();
+   overHistoryId = histId;
+
    if (currentHistoryId == histId) return;
    if (mouseX == 0 && mouseY == 0) return;
    
    var name = document.getElementById('div_' + histId);
    name.style.position = 'absolute';
-   name.style.left = mouseX;
-   name.style.top = mouseY;
+   name.style.left = mouseX+3;
+   name.style.top = mouseY+3;
    name.style.display = 'block';
 }
 
-function hideName(divId) {
-   var name = document.getElementById(divId);
+function hideName(histId) {
+   if (overHistoryId == 0) return;
+   
+   //alert(mouseX);
+
+   var name = document.getElementById('div_' + histId);
    name.style.display = 'none';
+}
+
+function hideAnyName() {
+    hideName(overHistoryId);
 }
 
 function enableRename(histId, customName) {
    // close the previous one
    disableRename();
+   hideAnyName();
    
    currentHistoryId = histId;
    var text = document.getElementById('text_' + histId);
@@ -143,13 +155,13 @@ function disableRename() {
     <tr>
       <td>
         <html:form method="get" action="/renameHistory.do">
-        
-      <table border="0" cellpadding="2">
+
+      <table border="0" cellpadding="5" cellspacing="0">
       <tr class="headerRow">
           <th>ID</th> 
-          <th>&nbsp;</th>
-          <th>Query</th>
-          <th>Size</th>
+          <th onmouseover="hideAnyName()">&nbsp;</th>
+          <th onmouseover="hideAnyName()">Query</th>
+          <th onmouseover="hideAnyName()">Size</th>
           <c:if test="${isGeneRec}"><th>${dsCol}</th></c:if>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
@@ -169,23 +181,22 @@ function disableRename() {
 
         <td>${history.historyId}
             <div id="div_${history.historyId}" 
-                  style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffffCC;">
+                  style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffffCC;"
+                  onmouseover="hideAnyName()">
                   ${history.description}</div>
         </td>
-        <td nowrap>
+        <td onmouseover="hideAnyName()" nowrap>
            <input type='button' value='Name'
                   onclick="enableRename('${history.historyId}', '${history.customName}')">
         </td>
         <c:set var="dispNam" value="${history.truncatedName}"/>
-        <td width=450
-            onmouseover="displayName('${history.historyId}')"
-            onmouseout="hideName('div_${history.historyId}')">
+        <td width=450 onmouseover="displayName('${history.historyId}')">
             <div id="text_${history.historyId}"
                  onclick="enableRename('${history.historyId}', '${history.customName}')">
                  ${dispNam}</div>
             <div id="input_${history.historyId}" style="display:none"></div>
         </td>
-        <td align='right' nowrap>${history.estimateSize}</td>
+        <td align='right' onmouseover="hideAnyName()" nowrap>${history.estimateSize}</td>
         <c:if test="${isGeneRec && showOrthoLink}">
            
            <td nowrap>
@@ -225,17 +236,27 @@ function disableRename() {
          </td>
       
         </tr>
-      <c:set var="i" value="${i+1}"/>
-      </c:forEach>
-      </table>
-     </html:form> <!-- end of the html:form for rename query -->
+        <c:set var="i" value="${i+1}"/>
+       </c:forEach>
+         <tr>
+           <c:choose>
+             <c:when test="${isGeneRec}">
+               <td colspan="9" onmouseover="hideAnyName()">&nbsp;</td>
+             </c:when>
+             <c:otherwise>
+               <td colspan="8" onmouseover="hideAnyName()">&nbsp;</td>
+             </c:otherwise>  
+           </c:choose>
+         <tr>
+       </table>
+       </html:form> <!-- end of the html:form for rename query -->
       </td>
       </tr>
       <tr>
         <c:choose>
-          <c:when test="${isGeneRec && showOrthoLink}"><td colspan="7" align="left"></c:when>
-          <c:otherwise><td colspan="6" align="left"></c:otherwise>
-	</c:choose>
+          <c:when test="${isGeneRec && showOrthoLink}"><td colspan="9" align="left"></c:when>
+          <c:otherwise><td colspan="8" align="left"></c:otherwise>
+	    </c:choose>
             <html:form method="get" action="/processBooleanExpression.do">
               Combine results:
               <html:text property="booleanExpression" value=""/>
@@ -244,7 +265,7 @@ function disableRename() {
               <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>
             </html:form>
           </td>
-          <td colspan="1"></td></tr>
+          <td></td></tr>
 
   </table>
 
