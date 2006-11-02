@@ -38,7 +38,7 @@ Sample usage:
 <c:set var="to" value="${props['SITE_ADMIN_EMAIL']}" />
 <c:set var="from" value="tomcat@${wdkModel.displayName}.org" />
 <%-- including remote host in subject to aid filtering in email --%>
-<c:set var="subject" value="Embedded error on ${wdkRecord.recordClass.fullName} - ${pageContext.request.remoteHost}" />
+<c:set var="subject" value="Embedded error - ${pageContext.request.remoteHost}" />
 
 <c:set var="scheme" value="${pageContext.request.scheme}" />
 <c:set var="serverName" value="${pageContext.request.serverName}" />
