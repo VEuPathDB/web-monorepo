@@ -69,7 +69,7 @@ Availability:
                     <site:makeTitle qcat="Population Biology" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:makeURL qset="GeneQuestions" qname="GenesBySNPs" linktext="SNPs" existsOn="P T"/>
+                    <site:makeURL qset="GeneQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="P T"/>
                 </tr>
                 <tr>
                     <site:makeURL qset="GeneQuestions" qname="NA" linktext="Microsatellites" existsOn=""/>
