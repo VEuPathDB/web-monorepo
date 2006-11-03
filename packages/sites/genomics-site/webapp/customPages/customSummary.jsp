@@ -64,7 +64,8 @@
                     <c:set var="aP" value="${params[pNam]}"/>
                     <c:if test="${qP.isVisible}">
                        <tr>
-                          <td align="right"><i>${qP.prompt}</i>&nbsp;=&nbsp;</td>
+                          <td align="right"><i>${qP.prompt}</i></td>
+                          <td>&nbsp;=&nbsp;</td>
                           <td>${aP}</td>
                        </tr>
                     </c:if>

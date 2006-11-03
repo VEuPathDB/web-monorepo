@@ -14,6 +14,44 @@
                  divisionName="Change Password"
                  division="profile"/>
 
+
+<script language="JavaScript" type="text/javascript">
+<!--
+function validateFields(e)
+{
+    if (typeof e != 'undefined' && !enter_key_trap(e)) {
+        return false;
+    }
+    
+    var newPassword = document.passwordForm.newPassword.value;
+    var confirmPassword = document.passwordForm.confirmPassword.value;
+
+    if (newPassword == "") {
+        alert('The new password cannot be empty.');
+        document.passwordForm.newPassword.focus();
+        return false;
+    } else if (newPassword != confirmPassword) {
+        alert('The confirm password does not match with the new password.\nPlease verify your input.');
+        document.passwordForm.newPassword.focus();
+        return false;
+    } else {
+        document.passwordForm.changeButton.disabled = true;
+        document.passwordForm.submit();
+        return true;
+    }
+}
+//-->
+</script>
+
+
+<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+
+ <tr>
+  <td bgcolor=white valign=top>
+
+<!-- show error messages, if any -->
+<wdk:errors/>
+
 <!-- get user object from session scope -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
@@ -90,7 +128,9 @@
       <td align="left"><input type="password" name="confirmPassword"></td>
     </tr>
     <tr>
-       <td colspan="2" align="center"><input type="submit" value="Change"></td>
+       <td colspan="2" align="center">
+         <input type="submit" name="changeButton" value="Change"  onclick="return validateFields();" />
+       </td>
     </tr>
     <tr>
        <td colspan="2"'>
@@ -115,4 +155,10 @@
 </c:choose>
 
 </div>
+
+  </td>
+  <td valign=top class=dottedLeftBorder></td> 
+</tr>
+</table> 
+
 <site:footer/>

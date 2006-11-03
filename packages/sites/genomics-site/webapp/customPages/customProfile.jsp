@@ -44,6 +44,15 @@ function validateFields(e)
 //-->
 </script>
 
+<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+
+ <tr>
+  <td bgcolor=white valign=top>
+
+<!-- show error messages, if any -->
+<wdk:errors/>
+
+
 <!-- get user object from session scope -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
@@ -163,4 +172,10 @@ function validateFields(e)
 </html:form>
 
 </div>
+
+  </td>
+  <td valign=top class=dottedLeftBorder></td> 
+</tr>
+</table> 
+
 <site:footer/>
