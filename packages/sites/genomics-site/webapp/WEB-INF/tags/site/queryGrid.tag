@@ -5,13 +5,10 @@
 
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
-<table><tr><td align="left">
-This query grid summarizes all queries. The symbols <img src=/images/apidb_letter.jpg border=0 />, <img src=/images/cryptodb_letter.jpg border=0 />, <img src=/images/plasmodb_letter.jpg border=0 />, <img src=/images/toxodb_letter.jpg border=0 /> will take you to the query page in the corresponding website. Names greyed out are not currently available on this site.
-</td></tr></table>
 
 <table width="100%" border="0" cellspacing="2" cellpadding="2" style="border-style:outset; border-color:black;border-width:1px;">
 
-<tr><td width="34%"></td><td width="33%"></td><td width="33%"></td></tr>
+<tr class="headerRow"><td colspan="4" align="center"><b>Queries</b></td></tr>
 
 <tr><td colspan="3">  
    
@@ -213,22 +210,22 @@ Availability:
             </table>
         </td>
 
-        <td colspan="2" valign="top">
+        <td colspan="1" valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="queryGridTitle">
                     <site:queryGridMakeTitle qcat="Other Attributes" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTextSearch" linktext="Text (search product name, notes, etc.)"  existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTextSearch" linktext="Keyword"  existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GeneByLocusTag" linktext="ID (Gene ID, GenBank ID, SwissProt ID, etc.)"  existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GeneByLocusTag" linktext="ID"  existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTaxon" linktext="Species" existsOn="A C P"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="Reagents Available (e.g. antibodies from MR4)" existsOn="P"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="Available Reagents" existsOn="P"/>
                 </tr>
 
               
