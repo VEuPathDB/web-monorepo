@@ -6,7 +6,7 @@
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
-<table width="100%" border="0" cellspacing="2" cellpadding="2" style="border-style:outset; border-color:black;border-width:1px;">
+<table width="100%" border="0" cellspacing="2" cellpadding="2" style="border-style:outset; border-color:black;border-width:0px;">
 
 <tr class="headerRow"><td colspan="4" align="center"><b>Queries</b></td></tr>
 
