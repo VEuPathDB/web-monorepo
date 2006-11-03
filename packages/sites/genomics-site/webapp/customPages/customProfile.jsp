@@ -36,7 +36,6 @@ function validateFields(e)
         document.profileForm.organization.focus();
         return false;
     } else {
-        document.profileForm.saveButton.disabled = true;
         document.profileForm.submit();
         return true;
     }
@@ -100,7 +99,7 @@ function validateFields(e)
     </tr>
     <tr>
       <td align="center" colspan="2" align="center">
-         <a href="<c:url value='/showPassword.do'/>">Change Password</a>
+         <a href="<c:url value='/showPassword.do'/>"><img border="0" src="<c:url value='/images/change_pwd.gif'/>"></a>
       </td>
     </tr>
     <tr>
@@ -160,7 +159,9 @@ function validateFields(e)
     </tr>
     <tr>
        <td colspan="2" align="center">
-           <input type="submit" name="saveButton" value="Save"  onclick="return validateFields();" />
+           <a href="#" onclick="return validateFields();">
+             <img  border="0" src="<c:url value='/images/update_profile.gif'/>"/>
+           </a>
        </td>
     </tr>
 

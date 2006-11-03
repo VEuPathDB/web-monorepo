@@ -162,7 +162,7 @@ function disableRename() {
           <th onmouseover="hideAnyName()">&nbsp;</th>
           <th onmouseover="hideAnyName()">Query</th>
           <th onmouseover="hideAnyName()">Size</th>
-          <c:if test="${isGeneRec}"><th>${dsCol}</th></c:if>
+          <c:if test="${isGeneRec}"><th>&nbsp;${dsCol}</th></c:if>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
