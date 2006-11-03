@@ -84,19 +84,7 @@
              (showing ${wdk_paging_start} to ${wdk_paging_end})
 
              <c:if test="${dispModelName eq 'ApiDB'}">
-                <c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
-                   <c:choose>
-                      <c:when test="${rSBP.key == 'cryptodb'}">
-                         &nbsp;&nbsp; CryptoDB: ${rSBP.value}
-                      </c:when>
-                      <c:when test="${rSBP.key == 'plasmodb'}">
-                         &nbsp;&nbsp; PlasmoDB: ${rSBP.value}
-                      </c:when>
-                      <c:when test="${rSBP.key == 'toxodb'}">
-                         &nbsp;&nbsp; ToxoDB: ${rSBP.value}
-                      </c:when>
-                   </c:choose>
-                </c:forEach>
+                 <site:apidbSummary/>
              </c:if>
           </c:if>
        </td>
