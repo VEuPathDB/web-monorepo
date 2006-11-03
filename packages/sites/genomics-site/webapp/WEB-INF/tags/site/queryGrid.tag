@@ -18,12 +18,19 @@ Availability:
 <img src=/images/cryptodb_letter.jpg border=0 />= CryptoDB 
 <img src=/images/plasmodb_letter.jpg border=0 />= PlasmoDB 
 <img src=/images/toxodb_letter.jpg border=0 />= ToxoDB 
+&nbsp; &nbsp;
 </div>
 </td>
 </tr>
-    <tr>
-        <td colspan="2"><h7><b><i>Identify Genes Based On:</i></b></h7></td>
-        <td></td>
+
+     <tr>	
+        <td valign="top" colspan="3">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="headerRow">
+                    <td colspan="4"><h7><b><i>Identify Genes Based On:</i></b></h7></td>
+                </tr>
+            </table>
+        </td>
     </tr>
     <tr>
         <td valign="top">
@@ -210,7 +217,7 @@ Availability:
             </table>
         </td>
 
-        <td colspan="1" valign="top">
+        <td  valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="queryGridTitle">
                     <site:queryGridMakeTitle qcat="Other Attributes" qtype="Gene"/>
@@ -236,11 +243,22 @@ Availability:
 <tr><br></td></tr>
 
     <tr>
+        <td valign="top" colspan="3">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+
+                <tr class="headerRow">
+                    <td><h7><i><b>Identify Genomic Sequences Based On:</b></i></h7></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+<tr><br></td></tr>
+
+    <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr>
-                    <td colspan="4"><h7><i><b>Identify Genomic Seqs Based On:</b></i></h7></td>
-                </tr>
+
                 <tr class="queryGridTitle">
                         <site:queryGridMakeTitle qcat="Similarity/Pattern" qtype="Genomic"/>
 
@@ -252,24 +270,55 @@ Availability:
                 <tr>
                     <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="NA" linktext="DNA Sequence Motif" existsOn=""/>
                 </tr>
+            </table>
+        </td>
+
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
                <tr class="queryGridTitle">
                          <site:queryGridMakeTitle qcat="Other Attributes" qtype="Genomic"/>
                         
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="ID (Seq ID, GenBank ID, etc)"  existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="ID"  existsOn="A C P T"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A P"/>
                 </tr>
             </table>
         </td>
+     </tr>
+
+     <tr>	
+        <td valign="top" colspan="3">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="headerRow">
+                    <td colspan="4"><h7><b><i>Identify ESTs Based On:</i></b></h7></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+<tr><br></td></tr>
+
+    <tr>
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="queryGridTitle">
+                     <site:queryGridMakeTitle qcat="Genomic Position" qtype="EST" />
+                </tr>
+                
+                <tr>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
+                </tr>
+                <tr>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="P T"/>
+                </tr>
+            </table>
+        </td>
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr>
-                    <td colspan="4"><h7><b><i>Identify ESTs Based On:</i></b></h7></td>
-                </tr>
                 <tr class="queryGridTitle">
                      <site:queryGridMakeTitle qcat="Similarity/Pattern" qtype="EST" />
                 </tr>
@@ -280,6 +329,11 @@ Availability:
                 <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="NA" linktext="EST Sequence Motif" existsOn=""/>
                 </tr>
+            </table>
+        </td>
+
+        <td colspan="2" valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="queryGridTitle">
                        <site:queryGridMakeTitle qcat="Other Attributes" qtype="EST"/>
                 </tr>
@@ -288,13 +342,23 @@ Availability:
                 </tr>
             </table>
         </td>
- 
- 
-        <td valign="top">
+      </tr>
+
+     <tr>	
+        <td valign="top" colspan="3">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr>
+                <tr class="headerRow">
                     <td colspan="4"><h7><b><i>Identify ORFs Based On:</i></b></h7></td>
                 </tr>
+            </table>
+        </td>
+    </tr>
+
+<tr><br></td></tr>
+
+    <tr>
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="queryGridTitle">
                      <site:queryGridMakeTitle qcat="Similarity/Pattern" qtype="ORF"/>
                 </tr>
@@ -305,6 +369,12 @@ Availability:
                 <tr>
                     <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF Sequence Motif" existsOn="A C"/>
                 </tr>
+            </table>
+        </td>
+
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="queryGridTitle">
                 <tr class="queryGridTitle">
                          <site:queryGridMakeTitle qcat="Other Attributes" qtype="ORF"/>
                 </tr>
