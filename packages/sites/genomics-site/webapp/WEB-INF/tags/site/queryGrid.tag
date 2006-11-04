@@ -338,6 +338,9 @@ Availability:
                        <site:queryGridMakeTitle qcat="Other Attributes" qtype="EST"/>
                 </tr>
                 <tr>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLibrary" linktext="Library" existsOn="P T"/>
+                </tr>
+                <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByTaxon" linktext="Species" existsOn=""/>
                 </tr>
             </table>
