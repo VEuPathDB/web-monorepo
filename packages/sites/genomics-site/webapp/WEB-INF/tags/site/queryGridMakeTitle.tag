@@ -19,15 +19,15 @@
 
 <c:set var="found" value="false"/>
 <c:forEach items="${catList}" var="cat">
-		<c:if test="${qcat eq cat.key}">
-			<c:set var="found" value="true"/>
-		</c:if>
+        <c:if test="${qcat eq cat.key}">
+            <c:set var="found" value="true"/>
+        </c:if>
 </c:forEach>
 
 <c:if test="${found eq 'true'}">
-	<td colspan="2"><a href="#${qcat}">${qcat}</a></td>
+    <td colspan="2"><a href="#${fn:replace(qcat, ' ', '%20')}">${qcat}</a></td>
 </c:if>
 
 <c:if test="${found eq 'false'}">
-        <td colspan="2">${qcat}</a></td>
+        <td colspan="2">${qcat}</td>
 </c:if>

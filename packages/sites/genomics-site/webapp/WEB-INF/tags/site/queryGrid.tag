@@ -6,7 +6,7 @@
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
-<table width="100%" border="0" cellspacing="2" cellpadding="2" style="border-style:outset; border-color:black;border-width:0px;">
+<table width="100%" border="0" cellspacing="2" cellpadding="2" class="queryGrid">
 
 <tr class="headerRow"><td colspan="4" align="center"><b>Queries</b></td></tr>
 
@@ -14,20 +14,20 @@
    
 <div class="smallBlack" align="right">
 Availability: 
-<img src=/images/apidb_letter.jpg border=0 />= ApiDB 
-<img src=/images/cryptodb_letter.jpg border=0 />= CryptoDB 
-<img src=/images/plasmodb_letter.jpg border=0 />= PlasmoDB 
-<img src=/images/toxodb_letter.jpg border=0 />= ToxoDB 
+<img src='/images/apidb_letter.jpg' border='0' alt='apidb'/> = ApiDB 
+<img src='/images/cryptodb_letter.jpg' border='0' alt='cryptodb' /> = CryptoDB 
+<img src='/images/plasmodb_letter.jpg' border='0' alt='plasmodb' /> = PlasmoDB 
+<img src='/images/toxodb_letter.jpg' border='0' alt='toxodb' /> = ToxoDB 
 &nbsp; &nbsp;
 </div>
 </td>
 </tr>
 
-     <tr>	
+     <tr>   
         <td valign="top" colspan="3">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="headerRow">
-                    <td colspan="4"><h7><b><i>Identify Genes Based On:</i></b></h7></td>
+                    <td colspan="4"><b><i>Identify Genes Based On:</i></b></td>
                 </tr>
             </table>
         </td>
@@ -240,20 +240,20 @@ Availability:
         </td>
     </tr>
 
-<tr><br></td></tr>
+<tr><td></td></tr>
 
     <tr>
         <td valign="top" colspan="3">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
 
                 <tr class="headerRow">
-                    <td><h7><i><b>Identify Genomic Sequences Based On:</b></i></h7></td>
+                    <td><i><b>Identify Genomic Sequences Based On:</b></i></td>
                 </tr>
             </table>
         </td>
     </tr>
 
-<tr><br></td></tr>
+<tr><td></td></tr>
 
     <tr>
         <td valign="top">
@@ -289,17 +289,17 @@ Availability:
         </td>
      </tr>
 
-     <tr>	
+     <tr>   
         <td valign="top" colspan="3">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="headerRow">
-                    <td colspan="4"><h7><b><i>Identify ESTs Based On:</i></b></h7></td>
+                    <td colspan="4"><b><i>Identify ESTs Based On:</i></b></td>
                 </tr>
             </table>
         </td>
     </tr>
 
-<tr><br></td></tr>
+<tr><td></td></tr>
 
     <tr>
         <td valign="top">
@@ -347,17 +347,17 @@ Availability:
         </td>
       </tr>
 
-     <tr>	
+     <tr>   
         <td valign="top" colspan="3">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr class="headerRow">
-                    <td colspan="4"><h7><b><i>Identify ORFs Based On:</i></b></h7></td>
+                    <td colspan="4"><b><i>Identify ORFs Based On:</i></b></td>
                 </tr>
             </table>
         </td>
     </tr>
 
-<tr><br></td></tr>
+<tr><td></td></tr>
 
     <tr>
         <td valign="top">
@@ -377,7 +377,6 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="queryGridTitle">
                 <tr class="queryGridTitle">
                          <site:queryGridMakeTitle qcat="Other Attributes" qtype="ORF"/>
                 </tr>

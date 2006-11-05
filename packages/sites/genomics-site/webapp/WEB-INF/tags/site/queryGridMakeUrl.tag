@@ -33,27 +33,27 @@
 <c:set var="cryptoRoot" value="http://qa.cryptodb.org/cryptodb/" />
 <c:set var="apiRoot" value="http://qa.apidb.org/apidb/" />
 
-<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}&go.x=13&go.y=9&go=go" />
+<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
 
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
   <c:if test="${token eq 'P'}">
-		<c:set var="P" value="<a href=${plasmoRoot}${link}><img src=/images/plasmodb_letter.jpg border=0 /></a>" />
+        <c:set var="P" value="<a href='${plasmoRoot}${link}'><img src='/images/plasmodb_letter.jpg' border='0' alt='plasmodb' /></a>" />
   </c:if>
   <c:if test="${token eq 'T'}">
-		<c:set var="T" value="<a href=${toxoRoot}${link}><img src=/images/toxodb_letter.jpg border=0 /></a>" />
+        <c:set var="T" value="<a href='${toxoRoot}${link}'><img src='/images/toxodb_letter.jpg' border='0' alt='toxodb' /></a>" />
   </c:if>
   <c:if test="${token eq 'C'}">
-		<c:set var="C" value="<a href=${cryptoRoot}${link}><img src=/images/cryptodb_letter.jpg border=0 /></a>" />
+        <c:set var="C" value="<a href='${cryptoRoot}${link}'><img src='/images/cryptodb_letter.jpg' border='0' alt='cryptodb' /></a>" />
   </c:if>
   <c:if test="${token eq 'A'}">
-		<c:set var="A" value="<a href=${apiRoot}${link}><img src=/images/apidb_letter.jpg border=0 /></a>" />
+        <c:set var="A" value="<a href='${apiRoot}${link}'><img src='/images/apidb_letter.jpg' border='0' alt='apidb' /></a>" />
   </c:if>
 </c:forEach>
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 <c:if test="${modelName eq 'CryptoDB'}">
-	<c:set var="orgnismName" value="Cryptosporidium"/>
+    <c:set var="orgnismName" value="Cryptosporidium"/>
 </c:if>
 
 <c:if test="${modelName eq 'PlasmoDB'}">
@@ -65,7 +65,7 @@
 </c:if>
 
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname].summary}">
-	<c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
+    <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
 </c:if>
 
 <c:if test="${empty wdkModel.questionSetsMap[qset].questionsMap[qname].summary}">
@@ -73,10 +73,10 @@
 </c:if>
 
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-	<td valign="middle">&nbsp;&nbsp;&#8226;&nbsp;<a href="${link}" class='queryGridActive' onmouseover="this.T_WIDTH=164;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> ${A} ${C} ${P} ${T}</td>
+    <td nowrap valign="middle">&nbsp;&nbsp;&#8226;&nbsp;<a href='${link}' class='queryGridActive' onmouseover="this.T_WIDTH=164;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> ${A}&nbsp;${C}&nbsp;${P}&nbsp;${T}</td>
 </c:if>
 
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-        <td valign="middle">&nbsp;&nbsp;&#8226;&nbsp;<a href="javascript:void(0);" class='queryGridInactive' onmouseover="this.T_WIDTH=164;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).  For questions contact <a href=&quot help.jsp &quot><u>${modelName} Support</u></a>')">${linktext}</a>   ${A} ${C} ${P} ${T}</td>
+    <td nowrap valign="middle">&nbsp;&nbsp;&#8226;&nbsp;<a href="javascript:void(0);" class='queryGridInactive' onmouseover="this.T_WIDTH=164;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).  For questions contact <a href=&quot;help.jsp&quot;><u>${modelName} Support</u></a>')">${linktext}</a> ${A}&nbsp;${C}&nbsp;${P}&nbsp;${T}</td>
 
 </c:if>
