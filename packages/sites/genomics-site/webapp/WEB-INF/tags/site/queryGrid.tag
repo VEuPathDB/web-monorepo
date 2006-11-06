@@ -431,7 +431,7 @@ Availability:
                        <site:queryGridMakeTitle qcat="Other Attributes" qtype="SNP"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByAlleleFrequency" linktext="AlleleFrequency" existsOn="P T"/>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByAlleleFrequency" linktext="AlleleFrequency" existsOn="P"/>
                 </tr>
             </table>
         </td>
