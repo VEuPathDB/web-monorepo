@@ -113,7 +113,15 @@ function disableRename() {
    }
 }
 
-
+function deleteAllHistories() {
+    var agree=confirm("Are you sure you want to delete all your query histories?");
+    if (agree) {
+       window.location.href = "<c:url value='/deleteAllHistories.do'/>";
+	   //return true ;
+    } else {
+	   return false ;
+    }
+}
 // -->
 </script>
 
@@ -241,12 +249,16 @@ function disableRename() {
          <tr>
            <c:choose>
              <c:when test="${isGeneRec}">
-               <td colspan="9" onmouseover="hideAnyName()">&nbsp;</td>
+               <td colspan="9" onmouseover="hideAnyName()" align="left">
              </c:when>
              <c:otherwise>
-               <td colspan="8" onmouseover="hideAnyName()">&nbsp;</td>
-             </c:otherwise>  
+               <td colspan="8" onmouseover="hideAnyName()" align="left">
+             </c:otherwise>
            </c:choose>
+                  <input type="button"
+                         value="Delete All Histories" 
+                         onclick="deleteAllHistories()"/>
+               </td>
          <tr>
        </table>
        </html:form> <!-- end of the html:form for rename query -->
