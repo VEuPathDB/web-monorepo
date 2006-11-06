@@ -6,7 +6,33 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
+
+<script type="text/javascript" lang="JavaScript 1.2">
+<!-- //
+
+
+function enableRename() {
+   var nameText = document.getElementById('nameText');
+   nameText.style.display = 'none';
+   
+   var nameInput = document.getElementById('nameInput');
+   nameInput.value = nameText.value;
+   nameInput.style.display='block';
+}
+
+function disableRename() {
+   var nameInput = document.getElementById('nameInput');
+   nameInput.style.display='none';
+   
+   var nameText = document.getElementById('nameText');
+   nameText.style.display = 'block';
+}
+
+// -->
+</script>
+
 <!-- get wdkAnswer from requestScope -->
+<c:set value="${requestScope.wdkHistory}" var="history"/>
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set value="${param['wdk_history_id']}" var="historyId"/>
@@ -34,55 +60,41 @@
 <!-- display question and param values and result size for wdkAnswer -->
 <table border="0" cellspacing="5">
 
-  <c:choose>
-      <c:when test="${wdkAnswer.isBoolean}">
-        <!-- boolean question -->
-
-        <tr><td valign="top" align="right" width="10" nowrap><b>Query:</b></td>
-            <td valign="top" align="left">
-              <nested:root name="wdkAnswer">
-                <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
-              </nested:root>
-            </td></tr>
-      </c:when>
-      <c:otherwise>
-        <!-- simple question -->
-        <c:set value="${wdkAnswer.internalParams}" var="params"/>
-        <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
-        <c:set value="${wdkAnswer.question.displayName}" var="wdkQuestionName"/>
-        <tr>
-           <td valign="top" align="right" width="10" nowrap><b>Query:</b></td>
-           <td colspan="3" valign="top" align="left" style="padding-left:40px;"><b>${wdkQuestionName}</b></td>
-        </tr>
-        <tr>
-           <td valign="top" align="right" width="10" nowrap><b>Parameters:</b></td>
-           <td valign="top" align="left" style="padding-left:40px;">
-              <table>
-                 <c:forEach items="${qParamsMap}" var="p">
-                    <c:set var="pNam" value="${p.key}"/>
-                    <c:set var="qP" value="${p.value}"/>
-                    <c:set var="aP" value="${params[pNam]}"/>
-                    <c:if test="${qP.isVisible}">
-                       <tr>
-                          <td align="right"><i>${qP.prompt}</i></td>
-                          <td>&nbsp;=&nbsp;</td>
-                          <td>${aP}</td>
-                       </tr>
-                    </c:if>
-                 </c:forEach>
-              </table>
-           </td>
-        </tr>
-      </c:otherwise>
-    </c:choose>
-
+    <!-- display query name -->
+    <tr>
+       <td valign="top" align="right" width="10" nowrap><b>Query:</b></td>
+       <td valign="top" align="left">
+          <html:form method="get" action="/renameHistory.do">
+             <div id="nameText" onclick="enableRename()">
+                <table border='0' cellspacing='2' cellpadding='0'>
+                   <tr>
+                      <td align="right"><input type="button" value="Rename" onclick="enableRename()" /></td>
+                      <td align="left">${history.customName}</td>
+                   </tr>
+                </table>
+             </div>
+             <div id="nameInput" style="display:none">
+                <table border='0' cellspacing='2' cellpadding='0'>
+                   <tr>
+                      <td><input name='wdk_history_id' type='hidden' value="${history.historyId}"/></td>
+                      <td><input name='wdk_custom_name' type='text' size='90' 
+                                maxLength='2000' value="${history.customName}"/></td>
+                      <td><input type='submit' value='Update'></td>
+                      <td><input type='reset' value='Cancel' onclick="disableRename()"/></td>
+                   </tr>
+                </table>
+             </div>
+          </html:form>
+       </td>
+    </tr>
+    
+    <!-- display result size -->
     <tr>
        <td valign="top" align="right" width="10" nowrap><b>Results:</b></td>
-       <td valign="top" align="left" style="padding-left:40px;">
+       <td valign="top" align="left">
           ${wdkAnswer.resultSize}
           <c:if test="${wdkAnswer.resultSize > 0}">
              (showing ${wdk_paging_start} to ${wdk_paging_end})
-
              <c:if test="${dispModelName eq 'ApiDB'}">
                  <site:apidbSummary/>
              </c:if>
@@ -91,6 +103,8 @@
     </tr>
     <tr>
        <td colspan="2" align="left">
+               <a href="#view_params" title="View the parameters and values for this query">View parameters</a>
+               &nbsp;|&nbsp;
                <c:choose>
                    <c:when test="${historyId == null}">
                        <a href="downloadConfig.jsp?wdk_history_id=${altHistoryId}">
@@ -120,7 +134,8 @@
                    <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
 	           Revise query</a>
 	       </c:if>
-           </td></tr>
+       </td>
+    </tr>
 </table>
 
 
@@ -145,7 +160,7 @@
     <pg:param name="${paramName}" id="pager" />
   </c:forEach>
   <!-- pager on top -->
-  <wdk:pager /> 
+  <wdk:pager pager_id="top"/> 
 
 <!-- content of current page -->
 <table width="100%" border="0" cellpadding="8" cellspacing="0">
@@ -232,12 +247,58 @@
 <br>
 
   <!-- pager at bottom -->
-  <wdk:pager />
+  <wdk:pager pager_id="bottom"/>
 </pg:pager>
 
   </c:otherwise>
 </c:choose>
 
+
+<!-- display parameters for the question -->
+<hr>
+<a name="view_params"></a>
+<table border="0" cellspacing="5">
+
+  <c:choose>
+      <c:when test="${wdkAnswer.isBoolean}">
+        <!-- boolean question -->
+
+        <tr>
+            <td valign="top" align="left">
+              <nested:root name="wdkAnswer">
+                <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
+              </nested:root>
+            </td></tr>
+      </c:when>
+      <c:otherwise>
+        <!-- simple question -->
+        <c:set value="${wdkAnswer.internalParams}" var="params"/>
+        <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
+        <c:set value="${wdkAnswer.question.displayName}" var="wdkQuestionName"/>
+        <tr>
+           <td valign="top" align="left" width="10" nowrap><b>Parameters:</b></td>
+        </tr>
+        <tr>
+           <td valign="top" align="left">
+              <table>
+                 <c:forEach items="${qParamsMap}" var="p">
+                    <c:set var="pNam" value="${p.key}"/>
+                    <c:set var="qP" value="${p.value}"/>
+                    <c:set var="aP" value="${params[pNam]}"/>
+                    <c:if test="${qP.isVisible}">
+                       <tr>
+                          <td align="right"><i>${qP.prompt}</i></td>
+                          <td>&nbsp;:&nbsp;</td>
+                          <td>${aP}</td>
+                       </tr>
+                    </c:if>
+                 </c:forEach>
+              </table>
+           </td>
+        </tr>
+      </c:otherwise>
+    </c:choose>
+</table>
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 
