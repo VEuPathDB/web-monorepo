@@ -386,6 +386,57 @@ Availability:
             </table>
         </td>
     </tr>
+<tr><td></td></tr>
+
+     <tr>   
+        <td valign="top" colspan="3">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="headerRow">
+                    <td colspan="4"><b><i>Identify SNPs Based On:</i></b></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+<tr><td></td></tr>
+
+    <tr>
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="queryGridTitle">
+                     <site:queryGridMakeTitle qcat="Genomic Position" qtype="SNP" />
+                </tr>
+                
+                <tr>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
+                </tr>
+            </table>
+        </td>
+
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="queryGridTitle">
+                     <site:queryGridMakeTitle qcat="Gene" qtype="SNP" />
+                </tr>
+                
+                <tr>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="P T"/>
+                </tr>
+            </table>
+        </td>
+
+        <td colspan="2" valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+                <tr class="queryGridTitle">
+                       <site:queryGridMakeTitle qcat="Other Attributes" qtype="SNP"/>
+                </tr>
+                <tr>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByAlleleFrequency" linktext="AlleleFrequency" existsOn="P T"/>
+                </tr>
+            </table>
+        </td>
+      </tr>
+
 <tr><td><br></td></tr>
 
 </table>
