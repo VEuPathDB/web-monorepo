@@ -95,11 +95,14 @@ function enableRename(histId, customName) {
    var input = document.getElementById('input_' + histId);
    input.innerHTML = "<table border='0' cellspacing='2' cellpadding='0'><tr>"
                    + "<td><input name='wdk_history_id' type='hidden' value='" + histId + "'>"
-                   + "<input name='wdk_custom_name' type='text' size='42' maxLength='2000' value='" + customName + "'></td>" 
+                   + "<input id='wdk_custom_name' name='wdk_custom_name' type='text' size='42' maxLength='2000' value='" + customName + "'></td>" 
                    + "<td><input type='submit' value='Update'></td>"
                    + "<td><input type='reset' value='Cancel' onclick='disableRename()'>"
                    + "</td></tr></table>";
    input.style.display='block';
+   var nameBox = document.getElementById('wdk_custom_name');
+   nameBox.select();
+   nameBox.focus();
 }
 
 function disableRename() {
@@ -122,6 +125,17 @@ function deleteAllHistories() {
 	   return false ;
     }
 }
+
+
+function reviseBooleanQuery(type, expression) {
+    var span = document.getElementById('span_' + type);
+    var input = span.getElementsByTagName('input')[0];
+    input.value = expression;
+    input.focus();
+    input.select();
+    return false;
+}
+
 // -->
 </script>
 
@@ -218,13 +232,19 @@ function deleteAllHistories() {
             <c:set value="${history.answer.question.fullName}" var="qName" />
             <c:set var="isBooleanQuestion" value="${fn:containsIgnoreCase(qName, 'BooleanQuestion')}"/>
          <td nowrap>
-               <c:if test="${isBooleanQuestion == false}">
+            <c:choose>
+               <c:when test="${isBooleanQuestion == false}">
 		          <c:set value="${history.answer.questionUrlParams}" var="qurlParams"/>
 	              <c:set var="questionUrl" value="" />
                   <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
 	                 revise</a>
-	           </c:if>
-	           &nbsp;
+	       </c:when>
+	       <c:otherwise>
+	          <c:set value="${history.booleanExpression}" var="expression"/>
+	          <a href="#" onclick="return reviseBooleanQuery('${type}', '${expression}')">
+	             revise</a>
+	       </c:otherwise>
+	    </c:choose>
          </td>
 
          <td nowrap>
@@ -268,16 +288,18 @@ function deleteAllHistories() {
         <c:choose>
           <c:when test="${isGeneRec && showOrthoLink}"><td colspan="9" align="left"></c:when>
           <c:otherwise><td colspan="8" align="left"></c:otherwise>
-	    </c:choose>
-            <html:form method="get" action="/processBooleanExpression.do">
+	</c:choose>
+          <html:form method="get" action="/processBooleanExpression.do">
               Combine results:
-              <html:text property="booleanExpression" value=""/>
+               <span id="span_${type}">
+                 <html:text property="booleanExpression" value=""/>
+               </span>
               <html:hidden property="historySectionId" value="${type}"/>
               <html:submit property="submit" value="Get Combined Result"/>
               <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>
-            </html:form>
-          </td>
-          <td></td></tr>
+          </html:form>
+        </td>
+      </tr>
 
   </table>
 

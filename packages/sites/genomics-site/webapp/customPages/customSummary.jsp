@@ -7,6 +7,21 @@
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
 
+<!-- get wdkAnswer from requestScope -->
+<c:set value="${requestScope.wdkHistory}" var="history"/>
+<c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
+<c:set var="modelName" value="${applicationScope.wdkModel.name}" />
+<c:set value="${param['wdk_history_id']}" var="historyId"/>
+<c:set value="${requestScope.wdk_history_id}" var="altHistoryId"/>
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
+
+<c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
+
+<!-- display page header with wdkAnswer's recordClass's type as banner -->
+<c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
+
+
+
 <script type="text/javascript" lang="JavaScript 1.2">
 <!-- //
 
@@ -16,8 +31,12 @@ function enableRename() {
    nameText.style.display = 'none';
    
    var nameInput = document.getElementById('nameInput');
-   nameInput.value = nameText.value;
    nameInput.style.display='block';
+   
+   var nameBox = document.getElementById('wdk_custom_name');
+   nameBox.value = '${history.customName}';
+   nameBox.select();
+   nameBox.focus();
 }
 
 function disableRename() {
@@ -31,18 +50,6 @@ function disableRename() {
 // -->
 </script>
 
-<!-- get wdkAnswer from requestScope -->
-<c:set value="${requestScope.wdkHistory}" var="history"/>
-<c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
-<c:set var="modelName" value="${applicationScope.wdkModel.name}" />
-<c:set value="${param['wdk_history_id']}" var="historyId"/>
-<c:set value="${requestScope.wdk_history_id}" var="altHistoryId"/>
-<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
-
-<c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
-
-<!-- display page header with wdkAnswer's recordClass's type as banner -->
-<c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
 
 <site:header title="Queries & Tools :: Summary Result"
                  banner="${wdkAnswerType} Results"
@@ -77,7 +84,7 @@ function disableRename() {
                 <table border='0' cellspacing='2' cellpadding='0'>
                    <tr>
                       <td><input name='wdk_history_id' type='hidden' value="${history.historyId}"/></td>
-                      <td><input name='wdk_custom_name' type='text' size='90' 
+                      <td><input id='wdk_custom_name' name='wdk_custom_name' type='text' size='90' 
                                 maxLength='2000' value="${history.customName}"/></td>
                       <td><input type='submit' value='Update'></td>
                       <td><input type='reset' value='Cancel' onclick="disableRename()"/></td>
