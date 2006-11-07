@@ -51,7 +51,7 @@
         <c:choose>
           <c:when test="${qP.multiPick}">
             <!-- multiPick is true, use scroll pane -->
-            <html:select  property="myMultiProp(${pNam})" multiple="1">
+            <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}" multiple="1">
               <c:set var="opt" value="${opt+1}"/>
               <c:set var="sel" value=""/>
               <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
@@ -60,7 +60,7 @@
           </c:when>
           <c:otherwise>
             <!-- multiPick is false, use pull down menu -->
-            <html:select  property="myMultiProp(${pNam})">
+            <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}">
               <c:set var="opt" value="${opt+1}"/>
               <c:set var="sel" value=""/>
               <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
@@ -74,10 +74,10 @@
       <td>
         <c:choose>
           <c:when test="${pNam == 'BlastQuerySequence'}">
-            <html:textarea property="myProp(${pNam})" cols="50" rows="4"/>
+            <html:textarea property="myProp(${pNam})" styleId="${qP.id}" cols="50" rows="4"/>
           </c:when>
           <c:otherwise>
-            <html:text property="myProp(${pNam})"/>
+            <html:text property="myProp(${pNam})" styleId="${qP.id}" />
           </c:otherwise>
         </c:choose>
       </td>
