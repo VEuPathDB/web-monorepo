@@ -32,44 +32,33 @@
 <table>
 
 <c:choose>
-  <c:when test="${wdkAnswer.isCombinedAnswer}">
-    <!-- combined answer from history boolean expression -->
-    <tr><td valign="top" align="left"><b>Combined Answer:</b></td>
-        <td valign="top" align="left">${wdkAnswer.userAnswerName}</td></tr>
+  <c:when test="${wdkAnswer.isBoolean}">
+  <!-- boolean question -->
+
+    <tr><td valign="top" align="left"><b>Expanded Question:</b></td>
+        <td valign="top" align="left">
+          <nested:root name="wdkAnswer">
+            <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
+          </nested:root>
+        </td></tr>
   </c:when>
   <c:otherwise>
-
-    <c:choose>
-      <c:when test="${wdkAnswer.isBoolean}">
-      <!-- boolean question -->
-
-        <tr><td valign="top" align="left"><b>Expanded Question:</b></td>
-            <td valign="top" align="left">
-              <nested:root name="wdkAnswer">
-                <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
-              </nested:root>
-            </td></tr>
-      </c:when>
-      <c:otherwise>
-        <!-- simple question -->
-        <c:set value="${wdkAnswer.params}" var="params"/>
-        <c:set value="${wdkAnswer.question.displayName}" var="wdkQuestionName"/>
-        <tr><td valign="top" align="left"><b>Query:</b></td>
-                   <td colspan="3" valign="top" align="left">${wdkQuestionName}</td></tr>
-               <tr><td valign="top" align="left"><b>Parameters:</b></td>
-                   <td valign="top" align="left">
-                     <table>
-                       <c:forEach items="${params}" var="p">
-                         <c:set var="paramVal" value="${p.value}"/>
-                         <c:if test="${fn:length(paramVal) > 43}">
-                           <c:set var="paramVal" value="${fn:substring(paramVal, 0, 40)}..."/>
-                         </c:if>
-                         <tr><td align="right">${p.key}:</td><td><i>${paramVal}</i></td></tr> 
-                       </c:forEach>
-                     </table></td></tr>
-
-      </c:otherwise>
-    </c:choose>
+    <!-- simple question -->
+    <c:set value="${wdkAnswer.params}" var="params"/>
+    <c:set value="${wdkAnswer.question.displayName}" var="wdkQuestionName"/>
+    <tr><td valign="top" align="left"><b>Query:</b></td>
+               <td colspan="3" valign="top" align="left">${wdkQuestionName}</td></tr>
+           <tr><td valign="top" align="left"><b>Parameters:</b></td>
+               <td valign="top" align="left">
+                 <table>
+                   <c:forEach items="${params}" var="p">
+                     <c:set var="paramVal" value="${p.value}"/>
+                     <c:if test="${fn:length(paramVal) > 43}">
+                       <c:set var="paramVal" value="${fn:substring(paramVal, 0, 40)}..."/>
+                     </c:if>
+                     <tr><td align="right">${p.key}:</td><td><i>${paramVal}</i></td></tr> 
+                   </c:forEach>
+                 </table></td></tr>
 
   </c:otherwise>
 </c:choose>
@@ -103,7 +92,6 @@
 <!-- handle empty result set situation -->
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>
-    No results for your query
 <pre>${wdkAnswer.resultMessage}</pre> 
   </c:when>
   <c:otherwise>
