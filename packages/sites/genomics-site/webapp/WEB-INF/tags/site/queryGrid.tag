@@ -258,11 +258,12 @@ Availability:
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-
+<%--
                 <tr class="queryGridTitle">
-                        <site:queryGridMakeTitle qcat="Similarity/Pattern" qtype="Genomic"/>
+                        <site:queryGridMakeTitle qcat="Similarity/Pattern" qtype="Genomic"/> 
 
                 </tr>
+--%>
                
                 <tr>
                     <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"  />
@@ -275,10 +276,12 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
+<%-- 
                <tr class="queryGridTitle">
-                         <site:queryGridMakeTitle qcat="Other Attributes" qtype="Genomic"/>
+                        <site:queryGridMakeTitle qcat="Other Attributes" qtype="Genomic"/>
                         
                 </tr>
+--%>
                 <tr>
                     <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="ID"  existsOn="A C P T"/>
                 </tr>
@@ -304,24 +307,27 @@ Availability:
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
-                <tr class="queryGridTitle">
-                     <site:queryGridMakeTitle qcat="Genomic Position" qtype="EST" />
+<%--                
+                 <tr class="queryGridTitle">
+                       <site:queryGridMakeTitle qcat="Genomic Position" qtype="EST" />
                 </tr>
-                
+--%>                
                 <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="P T"/>
+                   <site:queryGridMakeUrl qset="EstQuestions" qname="EstsWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="P T"/> 
                 </tr>
             </table>
         </td>
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
+<%--                
                 <tr class="queryGridTitle">
                      <site:queryGridMakeTitle qcat="Similarity/Pattern" qtype="EST" />
                 </tr>
+--%>
                 
                 <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstsBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"/>
@@ -334,9 +340,11 @@ Availability:
 
         <td colspan="2" valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
+<%--                
                 <tr class="queryGridTitle">
                        <site:queryGridMakeTitle qcat="Other Attributes" qtype="EST"/>
                 </tr>
+--%>
                 <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLibrary" linktext="Library" existsOn="P T"/>
                 </tr>
@@ -362,10 +370,11 @@ Availability:
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
+<%--                
                 <tr class="queryGridTitle">
                      <site:queryGridMakeTitle qcat="Similarity/Pattern" qtype="ORF"/>
                 </tr>
-                
+--%>                
                 <tr>
                     <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"/>
                 </tr>
@@ -377,9 +386,11 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
+<%--                
                 <tr class="queryGridTitle">
                          <site:queryGridMakeTitle qcat="Other Attributes" qtype="ORF"/>
                 </tr>
+--%>
                 <tr>
                     <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByTaxon" linktext="Species" existsOn=""/>
                 </tr>
@@ -403,9 +414,11 @@ Availability:
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
+<%--                
                 <tr class="queryGridTitle">
                      <site:queryGridMakeTitle qcat="Genomic Position" qtype="SNP" />
                 </tr>
+--%>
                 
                 <tr>
                     <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
@@ -415,9 +428,11 @@ Availability:
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
+<%--                
                 <tr class="queryGridTitle">
                      <site:queryGridMakeTitle qcat="Gene" qtype="SNP" />
                 </tr>
+--%>
                 
                 <tr>
                     <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="P T"/>
@@ -427,9 +442,11 @@ Availability:
 
         <td colspan="2" valign="top">
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
+<%--                
                 <tr class="queryGridTitle">
                        <site:queryGridMakeTitle qcat="Other Attributes" qtype="SNP"/>
                 </tr>
+--%>
                 <tr>
                     <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByAlleleFrequency" linktext="AlleleFrequency" existsOn="P"/>
                 </tr>
