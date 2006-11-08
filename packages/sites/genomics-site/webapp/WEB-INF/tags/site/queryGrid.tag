@@ -378,6 +378,12 @@ Availability:
                 <tr>
                     <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"/>
                 </tr>
+
+            </table>
+        </td>
+
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
                 <tr>
                     <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF Sequence Motif" existsOn="A C"/>
                 </tr>
