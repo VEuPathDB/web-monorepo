@@ -90,6 +90,8 @@ function enableRename(histId, customName) {
    hideAnyName();
    
    currentHistoryId = histId;
+   var button = document.getElementById('btn_' + histId);
+   button.disabled = true;
    var text = document.getElementById('text_' + histId);
    text.style.display = 'none';
    var input = document.getElementById('input_' + histId);
@@ -107,6 +109,8 @@ function enableRename(histId, customName) {
 
 function disableRename() {
    if (currentHistoryId != '0') {
+      var button = document.getElementById('btn_' + currentHistoryId);
+      button.disabled = false;
       var input = document.getElementById('input_' + currentHistoryId);
       input.innerText = "";
       input.style.display = 'none';
@@ -128,8 +132,10 @@ function deleteAllHistories() {
 
 
 function reviseBooleanQuery(type, expression) {
-    var span = document.getElementById('span_' + type);
-    var input = span.getElementsByTagName('input')[0];
+    var spanTitle = document.getElementById('comb_title_' + type);
+    spanTitle.innerHTML = 'Revise combined query';
+    var spanInput = document.getElementById('comb_input_' + type);
+    var input = spanInput.getElementsByTagName('input')[0];
     input.value = expression;
     input.focus();
     input.select();
@@ -192,23 +198,63 @@ function reviseBooleanQuery(type, expression) {
        </tr>
 
       <c:set var="i" value="0"/>
+      
+      <!-- begin of forEach history in the category -->
       <c:forEach items="${histList}" var="history">
-        
-        <jsp:setProperty name="history" property="nameTruncateTo" value="${NAME_TRUNC}"/>
+         <jsp:setProperty name="history" property="nameTruncateTo" value="${NAME_TRUNC}"/>
 
-        <c:choose>
-          <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
-          <c:otherwise><tr class="rowMedium"></c:otherwise>
-        </c:choose>
+         <c:choose>
+            <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
+            <c:otherwise><tr class="rowMedium"></c:otherwise>
+         </c:choose>
 
-        <td>${history.historyId}
+         <td>${history.historyId}
+	    <!-- begin of floating info box -->
             <div id="div_${history.historyId}" 
-                  style="display:none;position:absolute;left:0;top:0;width:300;background-color:#ffffCC;"
-                  onmouseover="hideAnyName()">
-                  ${history.description}</div>
-        </td>
+	         class="small"
+                 style="display:none;font-size:8pt;position:absolute;left:0;top:0;background-color:#ffffCC;"
+                 onmouseover="hideAnyName()">
+               <c:set var="wdkAnswer" value="${history.answer}"/>
+               <table border="0" cellspacing="5">
+                  <tr>
+                     <td valign="top" align="right" width="10" class="small" nowrap><b>Query:</b></td>
+                     <td valign="top" align="left" class="small">${wdkAnswer.question.displayName}</td>
+                  </tr>
+                  <tr>
+                     <td valign="top" align="right" width="10" class="small" nowrap><b>Parameters:</b></td>
+		     <td valign="top" align="left" class="small">
+                        <c:choose>
+                           <c:when test="${history.boolean}">
+                              <!-- boolean question -->
+                              ${history.booleanExpression}
+                           </c:when>
+                           <c:otherwise>
+                              <!-- simple question -->
+                              <c:set value="${wdkAnswer.internalParams}" var="params"/>
+                              <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
+                              <table cellpadding="2" cellspacing="0" border="1">
+                                 <c:forEach items="${qParamsMap}" var="p">
+                                    <c:set var="pNam" value="${p.key}"/>
+                                    <c:set var="qP" value="${p.value}"/>
+                                    <c:set var="aP" value="${params[pNam]}"/>
+                                    <c:if test="${qP.isVisible}">
+                                       <tr>
+                                          <td align="right" class="small"><i>${qP.prompt}</i></td>
+                                          <td class="small">${aP}</td>
+                                       </tr>
+                                    </c:if>
+                                 </c:forEach>
+                              </table>
+                           </c:otherwise>
+                        </c:choose>
+		     </td>
+	          </tr>
+               </table>
+            </div> 
+	    <!-- end of floating info box -->
+         </td>
         <td onmouseover="hideAnyName()" nowrap>
-           <input type='button' value='Name'
+           <input type='button' id="btn_${history.historyId}" value='Rename'
                   onclick="enableRename('${history.historyId}', '${history.customName}')">
         </td>
         <c:set var="dispNam" value="${history.truncatedName}"/>
@@ -230,12 +276,11 @@ function reviseBooleanQuery(type, expression) {
         <td nowrap><a href="downloadHistoryAnswer.do?wdk_history_id=${history.historyId}">download</a></td>
 
             <c:set value="${history.answer.question.fullName}" var="qName" />
-            <c:set var="isBooleanQuestion" value="${fn:containsIgnoreCase(qName, 'BooleanQuestion')}"/>
          <td nowrap>
             <c:choose>
-               <c:when test="${isBooleanQuestion == false}">
-		          <c:set value="${history.answer.questionUrlParams}" var="qurlParams"/>
-	              <c:set var="questionUrl" value="" />
+               <c:when test="${history.boolean == false}">
+		  <c:set value="${history.answer.questionUrlParams}" var="qurlParams"/>
+	          <c:set var="questionUrl" value="" />
                   <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
 	                 revise</a>
 	       </c:when>
@@ -266,6 +311,8 @@ function reviseBooleanQuery(type, expression) {
         </tr>
         <c:set var="i" value="${i+1}"/>
        </c:forEach>
+       <!-- end of forEach history in the category -->
+       
          <tr>
            <c:choose>
              <c:when test="${isGeneRec}">
@@ -290,10 +337,10 @@ function reviseBooleanQuery(type, expression) {
           <c:otherwise><td colspan="8" align="left"></c:otherwise>
 	</c:choose>
           <html:form method="get" action="/processBooleanExpression.do">
-              Combine results:
-               <span id="span_${type}">
+              <span id="comb_title_${type}">Combine results</span>:
+              <span id="comb_input_${type}">
                  <html:text property="booleanExpression" value=""/>
-               </span>
+              </span>
               <html:hidden property="historySectionId" value="${type}"/>
               <html:submit property="submit" value="Get Combined Result"/>
               <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>
