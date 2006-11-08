@@ -34,7 +34,7 @@
 <!-- put an anchor here for linking back from help sections -->
 <A name="${fromAnchorQ}"></A>
 <html:form method="post" action="/processQuestion.do">
-<input type="hidden" name="questionFullName" id="questionFullName" value="${wdkQuestion.fullName}"/>
+<input type="hidden" name="questionFullName" id="questionFullName" value="EstQuestions.EstsBySimilarity"/>
 <table>
 
 <!-- show error messages, if any -->
