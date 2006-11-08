@@ -8,12 +8,17 @@
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
 <%-- display page header with wdkQuestion displayName as banner --%>
+<c:set var="headElement">
+  <script src="js/blast.js" type="text/javascript"></script>
+</c:set>
+
 <site:header title="${wdkModel.displayName} : BLAST"
                  banner="${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
                  divisionName="BLAST"
-                 division="queries_tools"/>
+                 division="queries_tools"
+                 headElement="${headElement}"/>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -29,7 +34,7 @@
 <!-- put an anchor here for linking back from help sections -->
 <A name="${fromAnchorQ}"></A>
 <html:form method="post" action="/processQuestion.do">
-<input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
+<input type="hidden" name="questionFullName" id="questionFullName" value="${wdkQuestion.fullName}"/>
 <table>
 
 <!-- show error messages, if any -->
@@ -41,47 +46,65 @@
   <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
   <c:set value="${qP.name}" var="pNam"/>
   <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td>
-    
-  <%-- choose between flatVocabParam and straight text or number param --%>
-  <c:choose>
-    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
-      <td>
-        <c:set var="opt" value="0"/>
 
-        <c:choose>
-          <c:when test="${qP.multiPick}">
-            <%-- multiPick is true, use scroll pane --%>
-            <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}" multiple="1">
-              <c:set var="opt" value="${opt+1}"/>
-              <c:set var="sel" value=""/>
-              <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
-              <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
-            </html:select>
-          </c:when>
-          <c:otherwise>
-            <%-- multiPick is false, use pull down menu --%>
-            <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}">
-              <c:set var="opt" value="${opt+1}"/>
-              <c:set var="sel" value=""/>
-              <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
-              <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
-            </html:select>
-          </c:otherwise>
-        </c:choose>
+  <%-- Handle database-type parm in HTML, so it can set questionFullName --%>
+  <c:choose>
+
+    <c:when test="${pNam eq 'BlastDatabaseType'}">
+      <td>
+      <select name="myMultiProp(BlastDatabaseType)" id="BlastDatabaseType" onChange="changeQuestion();">
+          <c:forEach items="${qP.vocab}" var="flatVoc">
+              <option value="${flatVoc}">${flatVoc}</option>
+          </c:forEach>
+      </select>
       </td>
     </c:when>
-    <c:otherwise>
-      <td>
-        <c:choose>
-          <c:when test="${pNam == 'BlastQuerySequence'}">
-            <html:textarea property="myProp(${pNam})" styleId="${qP.id}" cols="50" rows="4"/>
-          </c:when>
-          <c:otherwise>
-            <html:text property="myProp(${pNam})" styleId="${qP.id}" />
-          </c:otherwise>
-        </c:choose>
-      </td>
-    </c:otherwise>
+
+    <c:otherwise> <%-- not BlastDatabaseType --%>
+    
+      <%-- choose between flatVocabParam and straight text or number param --%>
+      <c:choose>
+        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
+          <td>
+            <c:set var="opt" value="0"/>
+
+            <c:choose>
+              <c:when test="${qP.multiPick}">
+                <%-- multiPick is true, use scroll pane --%>
+                <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}" multiple="1">
+                  <c:set var="opt" value="${opt+1}"/>
+                  <c:set var="sel" value=""/>
+                  <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
+                  <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
+                </html:select>
+              </c:when>
+              <c:otherwise>
+                <%-- multiPick is false, use pull down menu --%>
+                <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}">
+                  <c:set var="opt" value="${opt+1}"/>
+                  <c:set var="sel" value=""/>
+                  <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
+                  <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
+                </html:select>
+              </c:otherwise>
+            </c:choose>
+          </td>
+        </c:when>
+        <c:otherwise>
+          <td>
+            <c:choose>
+              <c:when test="${pNam == 'BlastQuerySequence'}">
+                <html:textarea property="myProp(${pNam})" styleId="${qP.id}" cols="50" rows="4"/>
+              </c:when>
+              <c:otherwise>
+                <html:text property="myProp(${pNam})" styleId="${qP.id}" />
+              </c:otherwise>
+            </c:choose>
+          </td>
+        </c:otherwise>
+      </c:choose>
+
+    </c:otherwise> <%-- not BlastDatabaseType --%>
   </c:choose>
 
       <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
