@@ -3,16 +3,16 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
-<!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->  
+<%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
-<!-- display page header with wdkQuestion displayName as banner -->
-<site:header title="Queries & Tools :: BLAST Question"
+<%-- display page header with wdkQuestion displayName as banner --%>
+<site:header title="${wdkModel.displayName} : BLAST"
                  banner="${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
-                 divisionName="BLAST Question"
+                 divisionName="BLAST"
                  division="queries_tools"/>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
@@ -22,7 +22,7 @@
 
 <p><b>${wdkQuestion.displayName}</b></p>
 
-<!-- show all params of question, collect help info along the way -->
+<%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
 <jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 
@@ -38,11 +38,11 @@
 <c:set value="${wdkQuestion.params}" var="qParams"/>
 <c:forEach items="${qParams}" var="qP">
 
-  <!-- an individual param (can not use fullName, w/ '.', for mapped props) -->
+  <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
   <c:set value="${qP.name}" var="pNam"/>
   <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td>
-
-  <!-- choose between flatVocabParam and straight text or number param -->
+    
+  <%-- choose between flatVocabParam and straight text or number param --%>
   <c:choose>
     <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
       <td>
@@ -50,7 +50,7 @@
 
         <c:choose>
           <c:when test="${qP.multiPick}">
-            <!-- multiPick is true, use scroll pane -->
+            <%-- multiPick is true, use scroll pane --%>
             <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}" multiple="1">
               <c:set var="opt" value="${opt+1}"/>
               <c:set var="sel" value=""/>
@@ -59,7 +59,7 @@
             </html:select>
           </c:when>
           <c:otherwise>
-            <!-- multiPick is false, use pull down menu -->
+            <%-- multiPick is false, use pull down menu --%>
             <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}">
               <c:set var="opt" value="${opt+1}"/>
               <c:set var="sel" value=""/>
@@ -102,7 +102,7 @@
 
 <hr>
 
-<!-- display description for wdkQuestion -->
+<%-- display description for wdkQuestion --%>
 <p><b>Query description:</b> <jsp:getProperty name="wdkQuestion" property="description"/></p>
 
   </td>
