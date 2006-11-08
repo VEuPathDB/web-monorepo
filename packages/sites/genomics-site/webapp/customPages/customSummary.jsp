@@ -114,7 +114,7 @@ function disableRename() {
                &nbsp;|&nbsp;
                <c:choose>
                    <c:when test="${historyId == null}">
-                       <a href="downloadConfig.jsp?wdk_history_id=${altHistoryId}">
+                       <a href="downloadHistoryAnswer.do?wdk_history_id=${altHistoryId}">
                    </c:when>
                    <c:otherwise>
                        <a href="downloadHistoryAnswer.do?wdk_history_id=${historyId}">
