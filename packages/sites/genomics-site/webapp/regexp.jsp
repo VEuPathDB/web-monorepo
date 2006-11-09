@@ -6,9 +6,9 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <!-- get wdkModel name to display as page header -->
-<site:header title="PlasmoDB : Search patterns"
+<site:header title="${wdkModel.displayName} : Search patterns"
                  banner="How to construct a search pattern"
-                 parentDivision="PlasmoDB"
+                 parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Queries & Tools"
                  division="queries"/>
