@@ -103,6 +103,9 @@ function validateFields(e)
       </td>
     </tr>
     <tr>
+       <td colspan="2" align="left"><hr><b>User Information:</b></td>
+    </tr>
+    <tr>
       <td align="right" width="50%" nowrap><font color="red">*</font> First Name: </td>
       <td align="left"><input type="text" name="firstName" value="${wdkUser.firstName}" size="20"></td>
     </tr>
@@ -118,10 +121,13 @@ function validateFields(e)
       <td align="left"><input type="text" name="organization" value="${wdkUser.organization}" size="50"></td>
     </tr>
     <tr>
-    <td align="right" width="50%" nowrap>
+       <td colspan="2" align="left"><hr><b>Preferences:</b></td>
+    </tr>
+    <tr>
+      <td align="right" width="50%" nowrap>
           Send me email alerts about: 
-    </td>
-    <td nowrap>
+      </td>
+      <td nowrap>
         <c:set var="global" value="${wdkUser.globalPreferences}"/>
         <c:choose>
            <c:when test="${global['preference_global_email_apidb'] == 'on'}">
@@ -155,7 +161,19 @@ function validateFields(e)
               <input type="checkbox" name="preference_global_email_toxodb">ToxoDB</input>
            </c:otherwise>
         </c:choose>
-    </td>
+      </td>
+    </tr>
+    <tr>
+       <td align="right">Items per page:</td>
+       <td>
+          <select name="preference_global_items_per_page">
+             <option value="5" ${(global['preference_global_items_per_page'] == 5)? 'SELECTED' : ''}>5</option>
+             <option value="10" ${(global['preference_global_items_per_page'] == 10)? 'SELECTED' : ''}>10</option>
+             <option value="20" ${(global['preference_global_items_per_page'] == 20)? 'SELECTED' : ''}>20</option>
+             <option value="50" ${(global['preference_global_items_per_page'] == 50)? 'SELECTED' : ''}>50</option>
+             <option value="100" ${(global['preference_global_items_per_page']== 100)? 'SELECTED' : ''}>100</option>
+           </select>
+       </td>
     </tr>
     <tr>
        <td colspan="2" align="center">

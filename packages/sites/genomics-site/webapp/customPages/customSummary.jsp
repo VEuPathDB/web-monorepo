@@ -133,8 +133,7 @@ function disableRename() {
                </c:if>
 	       
                <c:set value="${wdkAnswer.question.fullName}" var="qName" />
-               <c:set var="isBooleanQuestion" value="${fn:containsIgnoreCase(qName, 'BooleanQuestion')}"/>
-	       <c:if test="${isBooleanQuestion == false}">
+	       <c:if test="${history.boolean == false}">
 	           &nbsp;|&nbsp;
                    <c:set value="${wdkAnswer.questionUrlParams}" var="qurlParams"/>
 	           <c:set var="questionUrl" value="" />
@@ -267,7 +266,7 @@ function disableRename() {
 <table border="0" cellspacing="5">
 
   <c:choose>
-      <c:when test="${wdkAnswer.isBoolean}">
+      <c:when test="${history.boolean}">
         <!-- boolean question -->
 
         <tr>
