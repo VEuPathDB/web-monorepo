@@ -54,6 +54,8 @@ function validateFields(e)
 
 <!-- get user object from session scope -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+<c:set var="global" value="${wdkUser.globalPreferences}"/>
+
 
 <!-- display the success information, if the user registered successfully -->
 <c:if test="${requestScope.profileSucceed != null}">
@@ -68,7 +70,7 @@ function validateFields(e)
      <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
   </c:if>
 
-  <table width="650">
+  <table width="650" border="0">
     <tr>
       <th colspan="2"> User Profile </th>
     </tr>
@@ -98,7 +100,7 @@ function validateFields(e)
       <td align="left">${wdkUser.email}</td>
     </tr>
     <tr>
-      <td align="center" colspan="2" align="center">
+      <td colspan="2" align="right">
          <a href="<c:url value='/showPassword.do'/>"><img border="0" src="<c:url value='/images/change_pwd.gif'/>"></a>
       </td>
     </tr>
@@ -124,47 +126,30 @@ function validateFields(e)
        <td colspan="2" align="left"><hr><b>Preferences:</b></td>
     </tr>
     <tr>
-      <td align="right" width="50%" nowrap>
+      <td align="right" valign="top" width="50%" nowrap>
           Send me email alerts about: 
       </td>
       <td nowrap>
-        <c:set var="global" value="${wdkUser.globalPreferences}"/>
-        <c:choose>
-           <c:when test="${global['preference_global_email_apidb'] == 'on'}">
-              <input type="checkbox" name="preference_global_email_apidb" checked>ApiDB</input>
-           </c:when>
-           <c:otherwise>
-              <input type="checkbox" name="preference_global_email_apidb">ApiDB</input>
-           </c:otherwise>
-        </c:choose>
-        <c:choose>
-           <c:when test="${global['preference_global_email_cryptodb'] == 'on'}">
-              <input type="checkbox" name="preference_global_email_cryptodb" checked>CryptoDB</input>
-           </c:when>
-           <c:otherwise>
-              <input type="checkbox" name="preference_global_email_cryptodb">CryptoDB</input>
-           </c:otherwise>
-        </c:choose>
-        <c:choose>
-           <c:when test="${global['preference_global_email_plasmodb'] == 'on'}">
-              <input type="checkbox" name="preference_global_email_plasmodb" checked>PlasmoDB</input>
-           </c:when>
-           <c:otherwise>
-              <input type="checkbox" name="preference_global_email_plasmodb">PlasmoDB</input>
-           </c:otherwise>
-        </c:choose>
-        <c:choose>
-           <c:when test="${global['preference_global_email_toxodb'] == 'on'}">
-              <input type="checkbox" name="preference_global_email_toxodb" checked>ToxoDB</input>
-           </c:when>
-           <c:otherwise>
-              <input type="checkbox" name="preference_global_email_toxodb">ToxoDB</input>
-           </c:otherwise>
-        </c:choose>
+         <input type="checkbox" name="preference_global_email_apidb" 
+	        ${(global['preference_global_email_apidb'] == 'on')? 'checked' : ''}>
+	    ApiDB
+	 </input>
+         <input type="checkbox" name="preference_global_email_cryptodb" 
+	        ${(global['preference_global_email_cryptodb'] == 'on')? 'checked' : ''}>
+	    CryptoDB
+	 </input>
+         <input type="checkbox" name="preference_global_email_plasmodb" 
+	        ${(global['preference_global_email_plasmodb'] == 'on')? 'checked' : ''}>
+	    PlasmoDB
+	 </input>
+         <input type="checkbox" name="preference_global_email_toxodb" 
+	        ${(global['preference_global_email_toxodb'] == 'on')? 'checked' : ''}>
+	    ToxoDB
+	 </input>
       </td>
     </tr>
     <tr>
-       <td align="right">Items per page:</td>
+       <td align="right">Items in the query result page:</td>
        <td>
           <select name="preference_global_items_per_page">
              <option value="5" ${(global['preference_global_items_per_page'] == 5)? 'SELECTED' : ''}>5</option>
@@ -176,7 +161,7 @@ function validateFields(e)
        </td>
     </tr>
     <tr>
-       <td colspan="2" align="center">
+       <td colspan="2" align="right">
            <a href="#" onclick="return validateFields();">
              <img  border="0" src="<c:url value='/images/update_profile.gif'/>"/>
            </a>
