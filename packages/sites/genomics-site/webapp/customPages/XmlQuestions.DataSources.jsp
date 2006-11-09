@@ -83,7 +83,7 @@
 <font size="-1">
 <c:if test="${publicUrl != ''}"><a href="${publicUrl}">${publicUrl}</a><br></c:if>
 
-<c:if test="${organisms != ''}">Organisms: ${organisms}<br></c:if>
+<c:if test="${organisms != ''} || ${organisms != null}">Organisms: ${organisms}<br></c:if>
 
 <br>${description}<br><br>
 
