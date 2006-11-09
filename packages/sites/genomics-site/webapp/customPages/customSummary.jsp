@@ -39,7 +39,7 @@
     <!-- display query name -->
     <tr>
        <td valign="top" align="right" width="10" nowrap><b>Query:</b></td>
-       <td valign="top" align="left" style="padding-left: 40px;">${history.customName}</td>
+       <td valign="top" align="left" style="padding-left: 40px;">${wdkAnswer.question.displayName}</td>
     </tr>
 
     <!-- display parameters -->
