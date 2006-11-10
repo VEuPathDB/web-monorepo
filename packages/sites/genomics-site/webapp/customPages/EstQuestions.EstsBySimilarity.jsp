@@ -116,7 +116,7 @@
 </c:forEach>
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-  <tr><td><html:hidden property="pageSize" value="1000000"/></td>
+  <tr><td><html:hidden property="altPageSize" value="1000000"/></td>
       <td><html:submit property="questionSubmit" value="Get Answer"/></td></tr>
 </table>
 </html:form>
