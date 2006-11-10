@@ -43,7 +43,7 @@
         <tr class="rowLight">
           <td>
             <b>${title}</b> <a href="<c:url value="/tutorials/${fileName}"/>">view</a>
-            <br>Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${fileSize}
+            <br><font size="-1">Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${fileSize}</font>
             <br>${description}
           </td>
         </tr>
