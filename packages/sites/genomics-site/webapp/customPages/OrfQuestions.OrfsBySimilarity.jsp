@@ -25,8 +25,6 @@
  <tr>
   <td bgcolor=white valign=top>
 
-<p><b>${wdkQuestion.displayName}</b></p>
-
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
 <jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
