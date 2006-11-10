@@ -54,7 +54,17 @@
 
   <%-- hide invisible params --%>
   <c:choose>
-  <c:when test="${isHidden}"><html:hidden property="myProp(${pNam})"/></c:when>
+  <c:when test="${isHidden}">
+     <c:choose>
+       <c:when test="${pNam eq 'domain_database'}">
+          <input type="hidden" name="myProp(${pNam})" id="domain_database_list" value="${qP.default}" />
+          <script type="text/javascript">loadSelectedData();</script>
+       </c:when>
+       <c:otherwise>
+         <html:hidden property="myProp(${pNam})"/>
+       </c:otherwise>
+     </c:choose>
+  </c:when>
   <c:otherwise>
     
   <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
@@ -122,7 +132,12 @@
               </c:when>
               <c:otherwise>
                 <%-- multiPick is false, use pull down menu --%>
-                ERROR: can't handle multpick for "${pNam}" in "GenesByProteinDomain!"
+                <html:select  property="myMultiProp(${pNam})">
+                  <c:set var="opt" value="${opt+1}"/>
+                  <c:set var="sel" value=""/>
+                  <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
+                  <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
+                </html:select>
               </c:otherwise>
             </c:choose>
           </td>
