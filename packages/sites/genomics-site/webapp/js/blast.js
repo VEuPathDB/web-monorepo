@@ -17,13 +17,13 @@ function changeQuestion(){
 		questionName = "OrfQuestions.OrfsBySimilarity";
 	} else if (blastDb == "Sequences: Genome"){
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
-	} else if (blastDb == "ESTs (Pf Pv Py Pb only)"){
+	} else if (blastDb == "ESTs (Pb Pf Pv Py only)"){
 		questionName = "EstQuestions.EstsBySimilarity";
-	} else if (blastDb == "Genes: Proteins (Pf Pv Py Pb Pc only)"){
+	} else if (blastDb == "Genes: Proteins (Pb Pc Pf Pv Py only)"){
 		questionName = "GeneQuestions.GenesBySimilarity";
-	} else if (blastDb == "Genes: Six frame translated CDSs (Pf Pv Py Pb Pc only)"){
+	} else if (blastDb == "Genes: Six frame translated CDSs (Pb Pc Pf Pv Py only)"){
 		questionName = "GeneQuestions.GenesBySimilarity";
-	} else if (blastDb == "Genes: Transcripts (Pf Pv Py Pb Pc only)"){
+	} else if (blastDb == "Genes: Transcripts (Pb Pc Pf Pv Py only)"){
 		questionName = "GeneQuestions.GenesBySimilarity";
 	} else if (blastDb == "ORFs (all species)"){
 		questionName = "OrfQuestions.OrfsBySimilarity";
