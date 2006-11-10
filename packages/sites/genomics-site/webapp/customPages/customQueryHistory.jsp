@@ -162,9 +162,9 @@ function reviseBooleanQuery(type, expression) {
   </c:when>
   <c:otherwise>
 
-<!-- show user answers grouped by RecordTypes -->
 
 <c:set var="typeC" value="0"/>
+<!-- begin of showing user answers grouped by RecordTypes -->
 <c:forEach items="${histories}" var="historyEntry">
   <c:set var="type" value="${historyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
@@ -182,6 +182,7 @@ function reviseBooleanQuery(type, expression) {
 
     <tr>
       <td>
+        <!-- begin of the html:form for rename query -->
         <html:form method="get" action="/renameHistory.do">
 
       <table border="0" cellpadding="5" cellspacing="0">
@@ -209,7 +210,7 @@ function reviseBooleanQuery(type, expression) {
          </c:choose>
 
          <td>${history.historyId}
-	    <!-- begin of floating info box -->
+	        <!-- begin of floating info box -->
             <div id="div_${history.historyId}" 
 	         class="small"
                  style="display:none;font-size:8pt;position:absolute;left:0;top:0;background-color:#ffffCC;"
@@ -222,7 +223,7 @@ function reviseBooleanQuery(type, expression) {
                   </tr>
                   <tr>
                      <td valign="top" align="right" width="10" class="small" nowrap><b>Parameters:</b></td>
-		     <td valign="top" align="left" class="small">
+		             <td valign="top" align="left" class="small">
                         <c:choose>
                            <c:when test="${history.boolean}">
                               <!-- boolean question -->
@@ -247,11 +248,11 @@ function reviseBooleanQuery(type, expression) {
                               </table>
                            </c:otherwise>
                         </c:choose>
-		     </td>
-	          </tr>
+		             </td>
+	              </tr>
                </table>
             </div> 
-	    <!-- end of floating info box -->
+	        <!-- end of floating info box -->
          </td>
         <td onmouseover="hideAnyName()" nowrap>
            <input type='button' id="btn_${history.historyId}" value='Rename'
@@ -313,7 +314,7 @@ function reviseBooleanQuery(type, expression) {
        </c:forEach>
        <!-- end of forEach history in the category -->
        
-         <tr>
+       <tr>
            <c:choose>
              <c:when test="${isGeneRec}">
                <td colspan="9" onmouseover="hideAnyName()" align="left">
@@ -322,64 +323,81 @@ function reviseBooleanQuery(type, expression) {
                <td colspan="8" onmouseover="hideAnyName()" align="left">
              </c:otherwise>
            </c:choose>
-                  <input type="button"
-                         value="Delete All Histories" 
-                         onclick="deleteAllHistories()"/>
-               </td>
-         <tr>
+           </td>
+        <tr>
        </table>
-       </html:form> <!-- end of the html:form for rename query -->
+       </html:form> 
+       <!-- end of the html:form for rename query -->
+       
       </td>
       </tr>
       <tr>
-        <c:choose>
-          <c:when test="${isGeneRec && showOrthoLink}"><td colspan="9" align="left"></c:when>
-          <c:otherwise><td colspan="8" align="left"></c:otherwise>
-	</c:choose>
-          <html:form method="get" action="/processBooleanExpression.do">
-              <span id="comb_title_${type}">Combine results</span>:
-              <span id="comb_input_${type}">
-                 <html:text property="booleanExpression" value=""/>
-              </span>
-              <html:hidden property="historySectionId" value="${type}"/>
-              <html:submit property="submit" value="Get Combined Result"/>
-              <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>
-          </html:form>
-        </td>
+         <td>
+            <html:form method="get" action="/processBooleanExpression.do">
+               <span id="comb_title_${type}">Combine results</span>:
+               <span id="comb_input_${type}">
+                  <html:text property="booleanExpression" value=""/>
+               </span>
+               <html:hidden property="historySectionId" value="${type}"/>
+               <html:submit property="submit" value="Get Combined Result"/>
+               <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>
+            </html:form>
+         </td>
       </tr>
 
   </table>
 
 </c:forEach>
+<!-- end of showing user answers grouped by RecordTypes -->
+
+<c:if test="${typeC != 1}"><hr></c:if>
 
 <table>
-<tr><td><font face="Arial,Helvetica" size="-1">
-<b>Understanding AND, OR and NOT</b>:</font>
-<table border='0' cellspacing='3' cellpadding='0'>
-  <tr>
-    <td width='100'><font face="Arial,Helvetica" size="-1"><b>1 and 2</b></font></td>
-    <td><font face="Arial,Helvetica" size="-1">Genes that 1 and 2 have in common. You can also use "1 intersect 2".</font></td>
-  </tr>
-  <tr>
-    <td width='100'><font face="Arial,Helvetica" size="-1"><b>1 or 2</b></font></td>
-    <td><font face="Arial,Helvetica" size="-1">Genes present in 1 or 2, or both. You can also use "1 union 2".</font></td>
-  </tr>
-  <tr>
-    <td width='100'><font face="Arial,Helvetica" size="-1"><b>1 not 2</b></font></td>
-    <td><font face="Arial,Helvetica" size="-1">Genes in 1 but not in 2. You can also use "1 minus 2".</font></td>
-  </tr>
-</table>
-</td></tr>
-<tr><td>
-  <font face="Arial,Helvetica" size="-1">
-  <a name='nodelete'><b>*</b></a> If you want to delete a query, you must first delete all other boolean queries that uses this one as a component.
-  </font>
-</td></tr>
+   <tr>
+      <td class="medium">
+         <div>&nbsp;</div>
+         <!-- display "delete all button" -->
+         <input type="button" value="Delete All Queries" onclick="deleteAllHistories()"/><br>
+         <div style="padding-left: 20px">
+            <i>Be careful: This will delete all your queries on ${wdkModel.displayName}.</i>
+         </div>
+         &nbsp;
+      </td>
+   </tr>
+   <tr>
+      <td>
+         <!-- display helper information -->
+         <font class="medium"><b>Understanding AND, OR and NOT</b>:</font>
+         <table border='0' cellspacing='3' cellpadding='0'>
+            <tr>
+               <td width='100'><font class="medium"><b>1 and 2</b></font></td>
+               <td><font class="medium">Genes that 1 and 2 have in common. You can also use "1 intersect 2".</font></td>
+            </tr>
+            <tr>
+               <td width='100'><font class="medium"><b>1 or 2</b></font></td>
+               <td><font class="medium">Genes present in 1 or 2, or both. You can also use "1 union 2".</font></td>
+            </tr>
+            <tr>
+               <td width='100'><font class="medium"><b>1 not 2</b></font></td>
+               <td><font class="medium">Genes in 1 but not in 2. You can also use "1 minus 2".</font></td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+   <tr>
+      <td>
+         <font class="medium">
+            <a name='nodelete'><b>*</b></a> 
+            If you want to delete a query, you must first delete all other boolean queries that uses this one as a component.
+         </font>
+      </td>
+   </tr>
 </table>
 
 
   </c:otherwise>
-</c:choose> <!-- end of deciding history emptiness -->
+</c:choose> 
+<!-- end of deciding history emptiness -->
 
 
   </td>
