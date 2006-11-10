@@ -51,8 +51,8 @@
           <tr><td colspan="2"><hr></td></tr>
         </c:if>
         <tr class="rowLight"><td>
-        <b>${title}</b><br> 
-        <br>${item}</td></tr>
+        <b>${title}</b> (duration: ${duration} size<br> 
+        <br>${description}</td></tr>
       </table>
       <c:set var="i" value="${i+1}"/>
     </c:forEach>
