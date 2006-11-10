@@ -166,7 +166,7 @@ Availability:
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC Number" existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMetabolicPathway" linktext="Metabolic Pathway" existsOn="P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMetabolicPathway" linktext="Metabolic Pathway" existsOn="C P T"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByProteinProteinInteraction" linktext="Y2H Interaction" existsOn="P"/>
@@ -316,7 +316,7 @@ Availability:
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
                 </tr>
                 <tr>
-                   <site:queryGridMakeUrl qset="EstQuestions" qname="EstsWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="P T"/> 
+                   <site:queryGridMakeUrl qset="EstQuestions" qname="EstsWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="C P T"/> 
                 </tr>
             </table>
         </td>
@@ -346,7 +346,7 @@ Availability:
                 </tr>
 --%>
                 <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLibrary" linktext="Library" existsOn="P T"/>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLibrary" linktext="Library" existsOn="C P T"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByTaxon" linktext="Species" existsOn=""/>
@@ -402,6 +402,15 @@ Availability:
                 </tr>
             </table>
         </td>
+    </tr>
+    <tr>
+        <td valign="top">
+        <table width="100%" border="0" cellspacing="2" cellpadding="0">
+            <tr>
+                <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMassSpec" linktext="Mass Spec. Evidence" existsOn="C"/>
+            </tr>
+        </table>
+    </td>
     </tr>
 <tr><td></td></tr>
 
