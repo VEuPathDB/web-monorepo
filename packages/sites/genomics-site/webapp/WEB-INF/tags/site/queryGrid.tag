@@ -123,7 +123,7 @@ Availability:
                     <site:queryGridMakeTitle qcat="Protein Expression" qtype="Gene"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="P"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="C P"/>
                 </tr>
             </table>
         </td>
