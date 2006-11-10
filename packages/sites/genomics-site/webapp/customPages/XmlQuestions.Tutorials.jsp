@@ -22,17 +22,8 @@
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
- <tr>
-  <td bgcolor=white valign=top>
-
-  <%-- handle empty result set situation --%>
-  <c:choose>
-    <c:when test='${xmlAnswer.resultSize == 0}'>
-      Not available.
-    </c:when>
-  <c:otherwise>
-
-    <!-- main body start -->
+  <tr>
+    <td bgcolor=white valign=top>
 
     <c:set var="i" value="1"/>
     <c:forEach items="${xmlAnswer.recordInstances}" var="record">
@@ -41,8 +32,7 @@
       <c:set var="fileName" value="${record.attributesMap['fileName']}"/>
       <c:set var="projects" value="${record.attributesMap['projects']}"/>
       <c:set var="duration" value="${record.attributesMap['duration']}"/>
-      <c:set var="fileSize" value="${record.attributesMap['fileSize']}"/>
-
+      <c:set var="fileSize" value="${record.attributesMap['size']}"/>
 
       <a name="${fileName}"/>
       <table border="0" cellpadding="2" cellspacing="0" width="100%">
@@ -50,16 +40,20 @@
         <c:if test="${i > 1}">
           <tr><td colspan="2"><hr></td></tr>
         </c:if>
-        <tr class="rowLight"><td>
-        <b>${title}</b> (duration: ${duration} size<br> 
-        <br>${description}</td></tr>
+        <tr class="rowLight">
+          <td>
+            <b>${title}</b> <a href="<c:url value="/tutorials/${fileName}"/>">view</a>
+            <br>Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${fileSize}
+            <br>${description}
+          </td>
+        </tr>
       </table>
       <c:set var="i" value="${i+1}"/>
     </c:forEach>
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 
-</tr>
+  </tr>
 </table> 
 
 <site:footer/>
