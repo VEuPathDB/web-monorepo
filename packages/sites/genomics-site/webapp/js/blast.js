@@ -11,6 +11,8 @@ function changeQuestion(){
 		questionName = "GeneQuestions.GenesBySimilarity";
 	} else if (blastDb == "Genes: Six frame translated CDSs"){
 		questionName = "GeneQuestions.GenesBySimilarity";
+	} else if (blastDb == "Genes: Translated CDS"){
+		questionName = "GeneQuestions.GenesBySimilarity";
 	} else if (blastDb == "Genes: Transcripts"){
 		questionName = "GeneQuestions.GenesBySimilarity";
 	} else if (blastDb == "ORFs"){
