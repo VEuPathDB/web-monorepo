@@ -212,11 +212,11 @@ function reviseBooleanQuery(type, expression) {
          <td>${history.historyId}
 	        <!-- begin of floating info box -->
             <div id="div_${history.historyId}" 
-	         class="small"
-                 style="display:none;font-size:8pt;position:absolute;left:0;top:0;background-color:#ffffCC;"
+	             class="small"
+                 style="display:none;font-size:8pt;width:610px;position:absolute;left:0;top:0;"
                  onmouseover="hideAnyName()">
                <c:set var="wdkAnswer" value="${history.answer}"/>
-               <table border="0" cellspacing="5">
+               <table border="0" cellspacing="5" style="background-color:#ffffCC;">
                   <tr>
                      <td valign="top" align="right" width="10" class="small" nowrap><b>Query:</b></td>
                      <td valign="top" align="left" class="small">${wdkAnswer.question.displayName}</td>
@@ -227,21 +227,31 @@ function reviseBooleanQuery(type, expression) {
                         <c:choose>
                            <c:when test="${history.boolean}">
                               <!-- boolean question -->
-                              ${history.booleanExpression}
+                              <table cellpadding="2" cellspacing="0" border="0">
+                                 <tr>
+                                    <td align="right" valign="top" class="small" nowrap><i>Expression</i> : </td>
+                                    <td class="small">${history.booleanExpression}</td>
+                                 </tr>
+                              </table>
                            </c:when>
                            <c:otherwise>
                               <!-- simple question -->
                               <c:set value="${wdkAnswer.internalParams}" var="params"/>
                               <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
-                              <table cellpadding="2" cellspacing="0" border="1">
+                              <table cellpadding="2" cellspacing="0" border="0">
                                  <c:forEach items="${qParamsMap}" var="p">
                                     <c:set var="pNam" value="${p.key}"/>
                                     <c:set var="qP" value="${p.value}"/>
                                     <c:set var="aP" value="${params[pNam]}"/>
                                     <c:if test="${qP.isVisible}">
                                        <tr>
-                                          <td align="right" class="small"><i>${qP.prompt}</i></td>
-                                          <td class="small">${aP}</td>
+                                          <td align="right" valign="top" class="small" nowrap><i>${qP.prompt}</i> : </td>
+                                          <td class="small">
+                                             <c:if test="${fn:length(aP) > 200}">
+                                                <c:set var="aP" value="${fn:substring(aP, 0, 200)}..." />
+                                             </c:if>
+                                             ${aP}
+                                          </td>
                                        </tr>
                                     </c:if>
                                  </c:forEach>
