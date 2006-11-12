@@ -16,6 +16,7 @@
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
 
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'apiModel')}" />
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
@@ -180,19 +181,18 @@
 <c:choose>
 <c:when test="${dispModelName eq 'ApiDB'}">
 
-    <c:set value="${record.primaryKey}" var="primaryKey"/>
-        <c:choose>
+  <c:set value="${record.primaryKey}" var="primaryKey"/>
+<c:choose>
         <c:when test = "${primaryKey.projectId == 'cryptodb'}">
-           <a href="http://cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
+           <a href="http://qa.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
         </c:when>
         <c:when test = "${primaryKey.projectId=='plasmodb'}" >
-           <a href="http://www.plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="plasmodb">PlasmoDB:${primaryKey.recordId}</a>
+           <a href="http://qa.plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="plasmodb">PlasmoDB:${primaryKey.recordId}</a>
         </c:when>
         <c:when test = "${primaryKey.projectId=='toxodb'}" >
-            <a href="http://toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
-        </c:when>
-        </c:choose>
-
+            <a href="http://qa.toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
+ </c:when>
+</c:choose>
 
 </c:when>
 <c:otherwise>
