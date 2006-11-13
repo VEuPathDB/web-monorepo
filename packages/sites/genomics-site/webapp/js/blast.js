@@ -31,7 +31,9 @@ function changeQuestion(){
 		questionName = "OrfQuestions.OrfsBySimilarity";
 	} else if (blastDb == "Genomic Sequences (all species)"){
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
-	} else {		
+	} else if (blastDb == "Genomic Sequences"){
+		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
+	} else if (blastDb != " Choose one"){
 		alert("unknown blast database: " + blastDb);
 	}
 
