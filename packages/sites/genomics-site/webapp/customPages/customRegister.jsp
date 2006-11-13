@@ -100,8 +100,8 @@ function validateFields(e)
 <ul>
 <li><i>optionally</i> receive infrequent alerts (at most monthly)
 <li>comment on genes and sequences
-<li>have your query history remembered from session to session
-<li>set site preferences
+<li>have your query history saved in database, and reuse them any time when you log in.
+<li>set site preferences, such as items per page displayed in the query result
   </div>
 <hr>
   <div align="center">
