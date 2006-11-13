@@ -14,7 +14,7 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.name}"/>
-<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apiModel')}" />
 
 <site:header title="${wdkModel.displayName} : Query History"
                  banner="My Query History"
@@ -41,6 +41,7 @@ document.onmousemove = getMousePos;
 if (!IE) {
    document.captureEvents(Event.CLICK);
    document.captureEvents(Event.MOUSEOVER);
+   document.captureEvents(Event.MOUSEOUT);
 }
 
 function getMousePos(e) {
@@ -269,7 +270,7 @@ function reviseBooleanQuery(type, expression) {
                   onclick="enableRename('${history.historyId}', '${history.customName}')">
         </td>
         <c:set var="dispNam" value="${history.truncatedName}"/>
-        <td width=450 onmouseover="displayName('${history.historyId}')">
+        <td width=450 onmouseover="displayName('${history.historyId}')" onmouseout="hideAnyName()">
             <div id="text_${history.historyId}"
                  onclick="enableRename('${history.historyId}', '${history.customName}')">
                  ${dispNam}</div>
