@@ -83,7 +83,7 @@
     </c:when>
     <c:when test="${pNam eq 'domain_accession'}">
           <td>
-          <input type="text" id="searchBox" name="myMultiProp(${pNam})" size="50" class="form_box"/>
+          <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box"/>
           </td>
     </c:when>
     <c:otherwise>
