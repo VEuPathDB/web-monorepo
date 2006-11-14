@@ -121,6 +121,12 @@ function disableRename() {
    }
 }
 
+function deleteHistory(historyId, customName) {
+    var agree=confirm("Are you sure you want to delete the query history:\n[#"
+                      + historyId + "] \"" + customName + "\"?");
+    return (agree)? true : false ;
+}
+
 function deleteAllHistories() {
     var agree=confirm("Are you sure you want to delete all your query histories?");
     if (agree) {
@@ -305,19 +311,9 @@ function reviseBooleanQuery(type, expression) {
          </td>
 
          <td nowrap>
-               <c:set var="isDepended" value="${history.depended}"/>
-               <c:choose>
-                  <c:when test="${isDepended == false}">
-                     <a href="deleteHistory.do?wdk_history_id=${history.historyId}">delete</a>
-                  </c:when>
-                  <c:otherwise>
-                     <a href="#" 
-                        style="color:gray" 
-                        title="Cannot delete Query #${history.historyId} because it is used by other queries: ${history.dependencyString}"
-                        onclick="alert('Cannot delete Query #${history.historyId} because it is used by \nother queries: ${history.dependencyString}');">
-                       delete</a> 
-                  </c:otherwise>
-               </c:choose>
+             <a href="deleteHistory.do?wdk_history_id=${history.historyId}"
+                title="delete saved query #${history.historyId}"
+                onclick="return deleteHistory('${history.historyId}', '${history.customName}');">delete</a>
          </td>
       
         </tr>
