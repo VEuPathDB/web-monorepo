@@ -372,11 +372,11 @@ Availability:
             <table width="100%" border="0" cellspacing="2" cellpadding="0">
 <%--                
                 <tr class="queryGridTitle">
-                     <site:queryGridMakeTitle qcat="Similarity/Pattern" qtype="ORF"/>
+                     <site:queryGridMakeTitle qcat="Genomic Position" qtype="ORF"/>
                 </tr>
 --%>                
                 <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
                 </tr>
 
             </table>
@@ -404,6 +404,19 @@ Availability:
         </td>
     </tr>
     <tr>
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="2" cellpadding="0">
+<%--                
+                <tr class="queryGridTitle">
+                     <site:queryGridMakeTitle qcat="Similarity/Pattern" qtype="ORF"/>
+                </tr>
+--%>                
+                <tr>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"/>
+                </tr>
+
+            </table>
+        </td>
         <td valign="top">
         <table width="100%" border="0" cellspacing="2" cellpadding="0">
             <tr>
