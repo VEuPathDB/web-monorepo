@@ -286,7 +286,9 @@ function reviseBooleanQuery(type, expression) {
         <c:if test="${isGeneRec && showOrthoLink}">
            
            <td nowrap>
-                <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${history.historyId}&plasmodb_dataset=${history.answer.datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
+                <c:set var="dsColUrl"
+               
+value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${history.historyId}&wdk_history_id=plasmodb_dataset:${history.historyId}&questionSubmit=Get+Answer&goto_summary=0"/>
                 <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
            </td>	    
         </c:if>

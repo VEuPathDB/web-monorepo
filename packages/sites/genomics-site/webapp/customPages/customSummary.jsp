@@ -11,8 +11,10 @@
 <c:set value="${requestScope.wdkHistory}" var="history"/>
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
-<c:set value="${param['wdk_history_id']}" var="historyId"/>
-<c:set value="${requestScope.wdk_history_id}" var="altHistoryId"/>
+<c:set var="historyId" value="${param['wdk_history_id']}"/>
+<c:if test="${historyId == null}">
+    <c:set var="historyId" value="${requestScope.wdk_history_id}"/>
+</c:if>
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
 
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
@@ -95,25 +97,18 @@
     </tr>
     <tr>
        <td colspan="2" align="left">
-               <c:choose>
-                   <c:when test="${historyId == null}">
-                       <a href="downloadHistoryAnswer.do?wdk_history_id=${altHistoryId}">
-                   </c:when>
-                   <c:otherwise>
-                       <a href="downloadHistoryAnswer.do?wdk_history_id=${historyId}">
-                   </c:otherwise>
-               </c:choose>
+           <a href="downloadHistoryAnswer.do?wdk_history_id=${historyId}">
                Download</a>&nbsp;|&nbsp;
-               <a href="<c:url value="/showQueryHistory.do"/>">Combine with other results</a>
+           <a href="<c:url value="/showQueryHistory.do"/>">Combine with other results</a>
 	       
-               <c:set value="${wdkAnswer.recordClass.fullName}" var="rsName"/>
-               <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
+           <c:set value="${wdkAnswer.recordClass.fullName}" var="rsName"/>
+           <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
 	       <c:if test="${isGeneRec && showOrthoLink}">
 	           &nbsp;|&nbsp;
-                   <c:set var="datasetId" value="${wdkAnswer.datasetId}"/>
-                   <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
-                   <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
-               </c:if>
+               <c:set var="datasetId" value="${wdkAnswer.datasetId}"/>
+               <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
+               <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
+           </c:if>
 	       
                <c:set value="${wdkAnswer.question.fullName}" var="qName" />
 	       <c:if test="${history.boolean == false}">
