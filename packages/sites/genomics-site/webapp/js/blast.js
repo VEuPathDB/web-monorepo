@@ -1,40 +1,18 @@
 function changeQuestion(){
 
         // stores mapping from blast databases to questions
-	var blastDb =  document.getElementById( 'BlastDatabaseType' ).value;
+	var blastDb =  document.getElementById( 'BlastDatabaseType' ).value.toLowerCase();
 
 	var questionName;
 
-	if (blastDb == "ESTs"){
+	if (blastDb.indexOf("est") >= 0){
 		questionName = "EstQuestions.EstsBySimilarity";
-	} else if (blastDb == "Genes: Proteins"){
-		questionName = "GeneQuestions.GenesBySimilarity";
-	} else if (blastDb == "Genes: Six frame translated CDSs"){
-		questionName = "GeneQuestions.GenesBySimilarity";
-	} else if (blastDb == "Genes: Translated CDS"){
-		questionName = "GeneQuestions.GenesBySimilarity";
-	} else if (blastDb == "Genes: Transcripts"){
-		questionName = "GeneQuestions.GenesBySimilarity";
-	} else if (blastDb == "ORFs"){
+	} else 	if (blastDb.indexOf("orf") >= 0){
 		questionName = "OrfQuestions.OrfsBySimilarity";
-	} else if (blastDb == "Sequences: Genome"){
+	} else 	if (blastDb.indexOf("sequence") >= 0){
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
-	} else if (blastDb == "ESTs (Pb Pf Pv Py only)"){
-		questionName = "EstQuestions.EstsBySimilarity";
-	} else if (blastDb == "Genes: Proteins (Pb Pc Pf Pv Py only)"){
+	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
-	} else if (blastDb == "Genes: Six frame translated CDSs (Pb Pc Pf Pv Py only)"){
-		questionName = "GeneQuestions.GenesBySimilarity";
-	} else if (blastDb == "Genes: Transcripts (Pb Pc Pf Pv Py only)"){
-		questionName = "GeneQuestions.GenesBySimilarity";
-	} else if (blastDb == "ORFs (all species)"){
-		questionName = "OrfQuestions.OrfsBySimilarity";
-	} else if (blastDb == "Genomic Sequences (all species)"){
-		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
-	} else if (blastDb == "Genomic Sequences"){
-		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
-	} else if (blastDb != " Choose one"){
-		alert("unknown blast database: " + blastDb);
 	}
 
 	document.getElementById( 'questionFullName' ).value = questionName;
