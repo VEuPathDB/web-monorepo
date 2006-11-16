@@ -8,6 +8,7 @@
 
 
 <!-- get wdkAnswer from requestScope -->
+<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set value="${requestScope.wdkHistory}" var="history"/>
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
@@ -106,7 +107,7 @@
 	       <c:if test="${isGeneRec && showOrthoLink}">
 	           &nbsp;|&nbsp;
                <c:set var="datasetId" value="${wdkAnswer.datasetId}"/>
-               <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
+               <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${wdkUser.signature}:${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
                <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
            </c:if>
 	       

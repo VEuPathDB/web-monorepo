@@ -209,6 +209,7 @@ function reviseBooleanQuery(type, expression) {
       
       <!-- begin of forEach history in the category -->
       <c:forEach items="${histList}" var="history">
+         <c:set var="historyId" value="${history.historyId}"/>
          <jsp:setProperty name="history" property="nameTruncateTo" value="${NAME_TRUNC}"/>
 
          <c:choose>
@@ -216,9 +217,9 @@ function reviseBooleanQuery(type, expression) {
             <c:otherwise><tr class="rowMedium"></c:otherwise>
          </c:choose>
 
-         <td>${history.historyId}
+         <td>${historyId}
 	        <!-- begin of floating info box -->
-            <div id="div_${history.historyId}" 
+            <div id="div_${historyId}" 
 	             class="small"
                  style="display:none;font-size:8pt;width:610px;position:absolute;left:0;top:0;"
                  onmouseover="hideAnyName()">
@@ -272,28 +273,27 @@ function reviseBooleanQuery(type, expression) {
 	        <!-- end of floating info box -->
          </td>
         <td onmouseover="hideAnyName()" nowrap>
-           <input type='button' id="btn_${history.historyId}" value='Rename'
-                  onclick="enableRename('${history.historyId}', '${history.customName}')">
+           <input type='button' id="btn_${historyId}" value='Rename'
+                  onclick="enableRename('${historyId}', '${history.customName}')">
         </td>
         <c:set var="dispNam" value="${history.truncatedName}"/>
-        <td width=450 onmouseover="displayName('${history.historyId}')" onmouseout="hideAnyName()">
-            <div id="text_${history.historyId}"
-                 onclick="enableRename('${history.historyId}', '${history.customName}')">
+        <td width=450 onmouseover="displayName('${historyId}')" onmouseout="hideAnyName()">
+            <div id="text_${historyId}"
+                 onclick="enableRename('${historyId}', '${history.customName}')">
                  ${dispNam}</div>
-            <div id="input_${history.historyId}" style="display:none"></div>
+            <div id="input_${historyId}" style="display:none"></div>
         </td>
         <td align='right' onmouseover="hideAnyName()" nowrap>${history.estimateSize}</td>
         <c:if test="${isGeneRec && showOrthoLink}">
            
            <td nowrap>
-                <c:set var="dsColUrl"
-               
-value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${history.historyId}&wdk_history_id=plasmodb_dataset:${history.historyId}&questionSubmit=Get+Answer&goto_summary=0"/>
+                <c:set var="dsColUrl" 
+                       value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${wdkUser.signature}:${historyId}&questionSubmit=Get+Answer&goto_summary=0"/>
                 <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
            </td>	    
         </c:if>
-        <td nowrap><a href="showSummary.do?wdk_history_id=${history.historyId}">view</a></td>
-        <td nowrap><a href="downloadHistoryAnswer.do?wdk_history_id=${history.historyId}">download</a></td>
+        <td nowrap><a href="showSummary.do?wdk_history_id=${historyId}">view</a></td>
+        <td nowrap><a href="downloadHistoryAnswer.do?wdk_history_id=${historyId}">download</a></td>
 
             <c:set value="${history.answer.question.fullName}" var="qName" />
          <td nowrap>
@@ -313,9 +313,9 @@ value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&histo
          </td>
 
          <td nowrap>
-             <a href="deleteHistory.do?wdk_history_id=${history.historyId}"
-                title="delete saved query #${history.historyId}"
-                onclick="return deleteHistory('${history.historyId}', '${history.customName}');">delete</a>
+             <a href="deleteHistory.do?wdk_history_id=${historyId}"
+                title="delete saved query #${historyId}"
+                onclick="return deleteHistory('${historyId}', '${history.customName}');">delete</a>
          </td>
       
         </tr>
