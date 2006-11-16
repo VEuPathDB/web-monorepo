@@ -28,10 +28,10 @@
 <c:set var="C" value="" />
 <c:set var="A" value="" />
 
-<c:set var="plasmoRoot" value="http://qa.plasmodb.org/plasmo/" />
-<c:set var="toxoRoot" value="http://qa.toxodb.org/toxo/" />
-<c:set var="cryptoRoot" value="http://qa.cryptodb.org/cryptodb/" />
-<c:set var="apiRoot" value="http://qa.apidb.org/apidb/" />
+<c:set var="plasmoRoot" value="http://www.plasmodb.org/plasmo/" />
+<c:set var="toxoRoot" value="http://www.toxodb.org/toxo/" />
+<c:set var="cryptoRoot" value="http://www.cryptodb.org/cryptodb/" />
+<c:set var="apiRoot" value="http://www.apidb.org/apidb/" />
 
 <c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
 
