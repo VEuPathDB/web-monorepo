@@ -21,6 +21,9 @@
 <%-- commented out until internal question works in apidb
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apiModel')}" />
 --%>
+<c:set var="global" value="${wdkUser.globalPreferences}"/>
+<c:set var="showParam" value="${global['preference_global_show_param']}"/>
+
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
 
@@ -30,6 +33,82 @@
                  parentUrl="/showQuestionSetsFlat.do"
                   divisionName="Summary Result"
                  division="queries_tools"/>
+                 
+
+<script language="JavaScript" type="text/javascript">
+<!--
+
+var showParam = "${showParam}";
+
+
+function enableRename() {
+   var nameText = document.getElementById('nameText');
+   nameText.style.display = 'none';
+   
+   var nameInput = document.getElementById('nameInput');
+   nameInput.style.display='block';
+   
+   var nameBox = document.getElementById('wdk_custom_name');
+   nameBox.value = '${history.customName}';
+   nameBox.select();
+   nameBox.focus();
+}
+
+function disableRename() {
+   var nameInput = document.getElementById('nameInput');
+   nameInput.style.display='none';
+   
+   var nameText = document.getElementById('nameText');
+   nameText.style.display = 'block';
+}
+
+function savePreference()
+{
+    // construct url
+    var url = "<c:url value='/savePreference.do'/>";
+    url = url + "?preference_global_show_param=" + showParam;
+    
+    // commit the preference
+    var xmlObj = null;
+
+	if(window.XMLHttpRequest){
+		xmlObj = new XMLHttpRequest();
+	} else if(window.ActiveXObject){
+		xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
+	} else {
+        // ajax is not supported??
+		return;
+	}
+	
+	xmlObj.open( 'GET', url, true );
+	xmlObj.send('');
+
+}
+
+function showParameter(isShow) 
+{
+    var showLink = document.getElementById("showParamLink");
+    var showArea = document.getElementById("showParamArea");
+
+    showParam = isShow;
+      
+    if (isShow == "yes") {
+        showLink.innerHTML = "<a href=\"#\" onclick=\"return showParameter('no');\">Hide</a>";
+        showArea.style.display = "block";
+    } else {
+        showLink.innerHTML = "<a href=\"#\" onclick=\"return showParameter('yes');\">Show</a>";
+        showArea.style.display = "none";
+    }
+    
+    // save preference via ajax
+    savePreference();
+    
+    return false;
+}
+
+//-->
+</script>
+
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -38,55 +117,113 @@
 
 
 <!-- display question and param values and result size for wdkAnswer -->
-<table border="0" cellspacing="5">
-
+<table border="0" cellspacing="1" cellpadding="1">
+    <c:set var="paddingStyle" value="" />
+    <c:if test="${history.boolean}">
+       <c:set var="paddingStyle" value="style='padding-left:40px;'" />
+    </c:if>
+    
     <!-- display query name -->
     <tr>
-       <td valign="top" align="right" width="10" nowrap><b>Query:</b></td>
-       <td valign="top" align="left" style="padding-left: 40px;">${wdkAnswer.question.displayName}</td>
+       <td valign="top" align="right" width="10" nowrap><b>Query:&nbsp; </b></td>
+          <html:form method="get" action="/renameHistory.do">
+       <td valign="top" align="left" ${paddingStyle}>
+             <div id="nameText" onclick="enableRename()">
+                <table border='0' cellspacing='2' cellpadding='0'>
+                   <tr>
+                      <td align="left">${history.customName}</td>
+                      <td align="right"><input type="button" value="Rename" onclick="enableRename()" /></td>
+                   </tr>
+                </table>
+             </div>
+             <div id="nameInput" style="display:none">
+                <table border='0' cellspacing='2' cellpadding='0'>
+                   <tr>
+                      <td><input name='wdk_history_id' type='hidden' value="${history.historyId}"/></td>
+                      <td><input id='wdk_custom_name' name='wdk_custom_name' type='text' size='50' 
+                                maxLength='2000' value="${history.customName}"/></td>
+                      <td><input type='submit' value='Update'></td>
+                      <td><input type='reset' value='Cancel' onclick="disableRename()"/></td>
+                   </tr>
+                </table>
+             </div>
+       </td>
+          </html:form>
     </tr>
 
     <!-- display parameters -->
     <tr>
-       <td valign="top" align="left" width="10" nowrap><b>Parameters:</b></td>
-       <c:choose>
-       <c:when test="${history.boolean}">
-          <td>
-              <!-- boolean question -->
-              <nested:root name="wdkAnswer">
-                 <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
-              </nested:root>
-	   </td>
-        </c:when>
-        <c:otherwise>
-	   <td style="padding-left: 40px;">
-              <!-- simple question -->
-              <c:set value="${wdkAnswer.internalParams}" var="params"/>
-              <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
-              <c:set value="${wdkAnswer.question.displayName}" var="wdkQuestionName"/>
-              <table>
-                 <c:forEach items="${qParamsMap}" var="p">
-                    <c:set var="pNam" value="${p.key}"/>
-                    <c:set var="qP" value="${p.value}"/>
-                    <c:set var="aP" value="${params[pNam]}"/>
-                    <c:if test="${qP.isVisible}">
-                       <tr>
-                          <td align="right"><i>${qP.prompt}</i></td>
-                          <td>&nbsp;:&nbsp;</td>
-                          <td>${aP}</td>
-                       </tr>
-                    </c:if>
-                 </c:forEach>
-              </table>
-           </td>
-         </c:otherwise>
-       </c:choose>
+       <td valign="top" align="right" width="10" nowrap><b>Details:&nbsp; </b></td>
+       <td align="left" valign="bottom">
+          <div ${paddingStyle} id="showParamLink">
+                <c:choose>
+                   <c:when test="${showParam == 'yes'}">
+                      <a href="#" onclick="return showParameter('no');">Hide</a>
+                   </c:when>
+                   <c:otherwise>
+                      <a href="#" onclick="return showParameter('yes');">Show</a>
+                   </c:otherwise>
+                </c:choose>
+            </div
+       </td>
+    </tr>
+    <tr>
+       <td></td>
+       <td ${paddingStyle}>
+          <!-- a section to display/hide params -->
+          <c:choose>
+             <c:when test="${showParam == 'yes'}">
+                <div id="showParamArea" style="background:#EEEEEE;">
+             </c:when>
+             <c:otherwise>
+                <div id="showParamArea" style="display:none; background:#EEEEEE;">
+             </c:otherwise>
+          </c:choose>
+             <c:choose>
+                <c:when test="${history.boolean}">
+                   <div>
+                      <!-- boolean question -->
+                      <nested:root name="wdkAnswer">
+                         <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
+                      </nested:root>
+	               </div>
+                </c:when>
+                <c:otherwise>
+	            <div ${paddingStyle}>
+                   <!-- simple question -->
+                   <c:set value="${wdkAnswer.internalParams}" var="params"/>
+                   <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
+                   <c:set value="${wdkAnswer.question.displayName}" var="wdkQuestionName"/>
+                   <table border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                         <td align="right" valign="top"><i>Query</i></td>
+                         <td>&nbsp;:&nbsp;</td>
+                         <td>${wdkQuestionName}</td>
+                      </tr>
+                      <c:forEach items="${qParamsMap}" var="p">
+                         <c:set var="pNam" value="${p.key}"/>
+                         <c:set var="qP" value="${p.value}"/>
+                         <c:set var="aP" value="${params[pNam]}"/>
+                         <c:if test="${qP.isVisible}">
+                            <tr>
+                               <td align="right" valign="top"><i>${qP.prompt}</i></td>
+                               <td>&nbsp;:&nbsp;</td>
+                               <td>${aP}</td>
+                            </tr>
+                         </c:if>
+                      </c:forEach>
+                   </table>
+                </div>
+                </c:otherwise>
+             </c:choose>
+         </div>
+       </td>
     </tr>
     
     <!-- display result size -->
     <tr>
-       <td valign="top" align="right" width="10" nowrap><b>Results:</b></td>
-       <td valign="top" align="left" style="padding-left: 40px;">
+       <td valign="top" align="right" width="10" nowrap><b>Results:&nbsp; </b></td>
+       <td valign="top" align="left" ${paddingStyle}>
           ${wdkAnswer.resultSize}
           <c:if test="${wdkAnswer.resultSize > 0}">
              (showing ${wdk_paging_start} to ${wdk_paging_end})
