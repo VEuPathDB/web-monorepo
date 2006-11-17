@@ -17,10 +17,10 @@
     <c:set var="historyId" value="${requestScope.wdk_history_id}"/>
 </c:if>
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
-
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
+<%-- commented out until internal question works in apidb
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apiModel')}" />
-
+--%>
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
 
