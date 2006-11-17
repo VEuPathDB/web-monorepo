@@ -79,7 +79,7 @@
   <c:set var="version" value="${record.attributesMap['version']}"/>
 
 
-<b>${resource}</b> (${version})<br>
+<b>${resource}</b> (version: ${version})<br>
 <font size="-1">
 <c:if test="${publicUrl != ''}"><a href="${publicUrl}">${publicUrl}</a><br></c:if>
 
