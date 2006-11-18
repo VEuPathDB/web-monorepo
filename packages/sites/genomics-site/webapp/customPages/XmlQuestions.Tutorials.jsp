@@ -42,7 +42,7 @@
         </c:if>
         <tr class="rowLight">
           <td>
-            <b>${title}</b> <a href="<c:url value="/tutorials/${fileName}"/>">view</a>
+            <b>${title}</b> <a href="<c:url value="/tutorials/${fileName}"/>" target="tutorial">view</a>
             <br><font size="-1">Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${fileSize}</font>
             <br>${description}
           </td>
