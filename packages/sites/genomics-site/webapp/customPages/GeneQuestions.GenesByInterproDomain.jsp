@@ -18,6 +18,21 @@
   <script src="js/AjaxInterpro.js" type="text/javascript"></script>
   <script src="js/prototype.js" type="text/javascript"></script>
   <script src="js/scriptaculous.js" type="text/javascript"></script>
+  <style type="text/css">
+      div.searchBoxupdate ul {
+      margin:0px;
+      padding:0px;
+    }
+    div.searchBoxupdate ul li {
+      display:block;
+      margin:0;
+      padding:2px;
+      cursor:pointer;
+    }
+    div.searchBoxupdate ul li.selected { 
+      background-color: #666; 
+      color:#FFFFFF}
+  </style>
 </c:set>
 
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
@@ -177,7 +192,9 @@
 </table>
 
  <div id="searchBoxupdate"
-      style="display:none;border:1px solid black;background-color:white;height:125px;overflow:auto;"></div>
+      class="searchBoxupdate"
+      style="display:none;border:1px solid black;background-color:white;height:125px;overflow:auto;">
+ </div>
 
 </html:form>
 
