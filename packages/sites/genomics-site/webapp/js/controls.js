@@ -268,7 +268,11 @@ Autocompleter.Base.prototype = {
         }
       }
     }
-    setTimeout(this.hide.bind(this), 250);
+    
+    /* commented out setTimeout to workaround issue with Safari 
+       where menu closes on mouseup after scrolling */ 
+    //setTimeout(this.hide.bind(this), 250);
+    
     this.hasFocus = false;
     this.active = false;
   },
