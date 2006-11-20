@@ -162,7 +162,7 @@ function reviseBooleanQuery(type, expression) {
 
 <!-- decide whether history is empty -->
 <c:choose>
-  <c:when test="${wdkUser.historyCount == 0}">
+  <c:when test="${wdkUser == null || wdkUser.historyCount == 0}">
 
 <table align="center"><tr><td> *** Your history is empty *** </td></tr></table>
 
