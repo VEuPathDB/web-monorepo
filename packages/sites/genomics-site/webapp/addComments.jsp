@@ -34,30 +34,45 @@
 	</c:when>
 	
 	<c:otherwise>
+
 		<c:choose>
-		<c:when test="${showThanks}">
+		<c:when test="${submitStatus eq 'success'}">
+		
 			<c:choose>
-				<c:when test="${commentTarget.commentTargetId eq 'gene'}">
-					<c:set var="returnUrl" 
-						value="${pageContext.request.contextPath}/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=&primary_key=${stableId}"/>
-				</c:when>
-				<c:otherwise>
-					<c:set var="returnUrl" 
-						value="${pageContext.request.contextPath}/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=&primary_key=${stableId}"/>
-				</c:otherwise>
+			<c:when test="${commentTarget.commentTargetId eq 'gene'}">
+				<c:set var="returnUrl" 
+					value="${pageContext.request.contextPath}/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=&primary_key=${stableId}"/>
+			</c:when>
+			<c:otherwise>
+				<c:set var="returnUrl" 
+				value="${pageContext.request.contextPath}/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=&primary_key=${stableId}"/>
+			</c:otherwise>
 			</c:choose>
+						
 			<p align=center>Thank you for the comment.
 			<br/><br/>
+			
 			<a href="${returnUrl}">Return to ${commentTarget.displayName} ${stableId} page</a>
 			</p>
-		</c:when>
-		
-		<c:otherwise>
-			<!-- <c:set var="locationHelp" value="Expected format: start-end.
-						Multiple locations, if applicable, should be of the form:
-						<i>start1-end1, start2-end2, ...</i> and so on. Leave this
-						blank if location information is not applicable or unavailable."/> -->
+		</c:when>		
+
+		<c:when test="${fn:containsIgnoreCase (submitStatus, 'error')}">
+			<p align=center>
+			<font color=red>${submitStatus}<br/><br/></font>
+
+			<c:url var="commentsUrl" value="showAddComment.do">
+		    	<c:param name="stableId" value="${stableId}"/>
+			    <c:param name="commentTargetId" value="${commentTarget.commentTargetId}"/>
+			    <c:param name="externalDbName" value="${externalDbName}" />
+			    <c:param name="externalDbVersion" value="${externalDbVersion}"/>
+			</c:url>
 			
+			<a href="${commentsUrl}">Return to Add Comment on ${commentTarget.displayName} ${stableId} page</a>
+			</p>
+			
+		</c:when>
+
+		<c:otherwise>
 			<c:choose>
 				<c:when test="${commentTarget.requireLocation}">
 					<c:set var="locationStr" value="(Required)"/> 
@@ -198,9 +213,6 @@
 		</td></tr>
 		</table>
 		
-
-
-			
 		</c:otherwise>
 		</c:choose>  
 	</c:otherwise>
