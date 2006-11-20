@@ -27,7 +27,7 @@
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
 
-<site:header title="Queries & Tools :: Summary Result"
+<site:header title="${wdkModel.displayName} : Query Result"
                  banner="${wdkAnswerType} Results"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
