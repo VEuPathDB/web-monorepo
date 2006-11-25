@@ -48,7 +48,7 @@ Availability:
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTelomereProximity" linktext="Proximity to Telomeres" existsOn="P"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="NA" linktext="Non-nuclear Genomes" existsOn=""/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByNonnuclearLocation" linktext="Non-nuclear Genomes" existsOn="P"/>
                 </tr>
             </table>
         </td>
