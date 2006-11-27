@@ -50,28 +50,7 @@
   <c:choose>
     <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
       <td>
-        <c:set var="opt" value="0"/>
-
-        <c:choose>
-          <c:when test="${qP.multiPick}">
-            <!-- multiPick is true, use scroll pane -->
-            <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}" multiple="1">
-              <c:set var="opt" value="${opt+1}"/>
-              <c:set var="sel" value=""/>
-              <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
-              <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
-            </html:select>
-          </c:when>
-          <c:otherwise>
-            <!-- multiPick is false, use pull down menu -->
-            <html:select  property="myMultiProp(${pNam})" styleId="${qP.id}">
-              <c:set var="opt" value="${opt+1}"/>
-              <c:set var="sel" value=""/>
-              <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
-              <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
-            </html:select>
-          </c:otherwise>
-        </c:choose>
+        <site:flatVocabParamInput qp="${qP}" />
       </td>
     </c:when>
     <c:otherwise>

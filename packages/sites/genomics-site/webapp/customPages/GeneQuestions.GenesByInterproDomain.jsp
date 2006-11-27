@@ -106,55 +106,7 @@
       <c:choose>
         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
           <td>
-            <c:set var="opt" value="0"/>
-    
-            <c:choose>
-              <c:when test="${qP.multiPick}">
-                <%-- multiPick is true, use checkboxes or scroll pane --%>
-                <c:choose>
-                  <c:when test="${fn:length(qP.vocab) < 15}">
-                     <c:set var="i" value="0"/>
-                     <table border="1" cellspacing="0"><tr><td>
-                     <c:forEach items="${qP.vocab}" var="flatVoc">
-                        <c:if test="${i == 0}"><c:set var="checked" value="checked"/></c:if>
-                        <c:if test="${i > 0}"><br></c:if>
-    
-                        <c:choose>
-                        <c:when test="${pNam == 'organism' or pNam == 'ecorganism'}">
-                            <html:multibox property="myMultiProp(${pNam})" value="${flatVoc}"/>
-    			    <i>${flatVoc}</i>&nbsp;
-    		    </c:when>
-                        <c:otherwise>
-                            <html:multibox property="myMultiProp(${pNam})" value="${flatVoc}"/>
-    			    ${flatVoc}&nbsp;
-    		    </c:otherwise>
-                        </c:choose>	
-    
-                         <c:set var="i" value="${i+1}"/>
-                         <c:set var="checked" value=""/>
-                     </c:forEach>
-                     </td></tr></table>
-                  </c:when>
-                  <c:otherwise>
-                <html:select  property="myMultiProp(${pNam})" multiple="1">
-                  <c:set var="opt" value="${opt+1}"/>
-                  <c:set var="sel" value=""/>
-                  <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
-                  <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
-                </html:select>
-                  </c:otherwise>
-                </c:choose>
-              </c:when>
-              <c:otherwise>
-                <%-- multiPick is false, use pull down menu --%>
-                <html:select  property="myMultiProp(${pNam})">
-                  <c:set var="opt" value="${opt+1}"/>
-                  <c:set var="sel" value=""/>
-                  <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
-                  <html:options property="values(${pNam})" labelProperty="labels(${pNam})"/>
-                </html:select>
-              </c:otherwise>
-            </c:choose>
+            <site:flatVocabParamInput qp="${qP}" />
           </td>
         </c:when>
         <c:otherwise>  <%-- not flatvocab --%>
@@ -191,6 +143,7 @@
       <td><html:submit property="questionSubmit" value="Get Answer"/></td>
 </table>
 
+				<!-- onKeyDown="safariDownFix( event, 'searchBoxupdate');" -->
  <div id="searchBoxupdate"
       class="searchBoxupdate"
       style="display:none;border:1px solid black;background-color:white;height:125px;overflow:auto;">
