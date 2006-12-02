@@ -95,6 +95,12 @@
           </c:forEach>
       </select>
       </td>
+
+      <%-- reload term list on back button --%>
+      <script type="text/javascript">
+      if ( document.getElementById('domain_database_list').selectedIndex != 0 ) loadSelectedData();
+      </script>
+
     </c:when>
     <c:when test="${pNam eq 'domain_accession'}">
           <td>
