@@ -32,7 +32,10 @@
                       <c:set value="${rSBP.value}" var="CR"/>
                   </c:when>
                   <c:when test="${rSBP.key == 'plasmodb'}">
-                      <c:set value="${CR+rSBP.value}" var="CRplusPR"/>
+                      <c:set value="${rSBP.value}" var="PR"/>
+                  </c:when>
+                  <c:when test="${rSBP.key == 'toxodb'}">
+                      <c:set value="${rSBP.value}" var="TR"/>
                   </c:when>
                 </c:choose>
              </c:forEach>
@@ -43,7 +46,6 @@
 <a href="showSummary.do?wdk_history_id=${histID}&pager.offset=0">
 CryptoDB: ${rSBP.value}</a>
                   </c:when>
-
 
                   <c:when test="${rSBP.key == 'plasmodb'}">&nbsp;&nbsp; 
 <c:set value="${CR / pageSize}" var="Poffset"/>
@@ -61,7 +63,7 @@ PlasmoDB: ${rSBP.value}</a>
                   </c:when>
 
                   <c:when test="${rSBP.key == 'toxodb'}">&nbsp;&nbsp; 
-<c:set value="${CRplusPR / pageSize}" var="Toffset"/>
+<c:set value="${(CR + PR) / pageSize}" var="Toffset"/>
 <c:set value='${fn:substringAfter(Toffset, ".")}' var="dec"/>
 <c:set value="${fn:length(dec)}" var="length"/>
 <c:if test="${length == 1}">
@@ -69,7 +71,7 @@ PlasmoDB: ${rSBP.value}</a>
 <c:if test="${length == 2}">
     <c:set value="${pageSize * dec / 100}" var="extraP"/></c:if>
 <c:set value='${fn:substringBefore(extraP, ".")}' var="extraP"/>
-<c:set value="${CRplusPR - extraP}" var="Toffset"/>
+<c:set value="${CR + PR - extraP}" var="Toffset"/>
                     
 <a href="showSummary.do?wdk_history_id=${histID}&pager.offset=${Toffset}">
 ToxoDB: ${rSBP.value}</a>
