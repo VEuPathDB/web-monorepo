@@ -16,11 +16,14 @@
 <c:if test="${historyId == null}">
     <c:set var="historyId" value="${requestScope.wdk_history_id}"/>
 </c:if>
+
+<%--
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
-<c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
-<%-- commented out until internal question works in apidb
-<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apiModel')}" />
 --%>
+
+<c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apiModel')}" />
+
 <c:set var="global" value="${wdkUser.globalPreferences}"/>
 <c:set var="showParam" value="${global['preference_global_show_param']}"/>
 
