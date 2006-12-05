@@ -13,8 +13,10 @@
 <c:set value="${param['wdk_history_id']}" var="historyId"/>
 <c:set value="${requestScope.wdk_history_id}" var="altHistoryId"/>
 
-
-<c:set value="${wdk_paging_end - wdk_paging_start + 1}" var="pageSize"/>
+<%--
+<c:set value="${wdk_paging_end - wdk_paging_start + 1}" var="numResultsPage"/>
+--%>
+<c:set value="${wdk_paging_pageSize}" var="pageSize"/>
 
 <c:choose>
                    <c:when test="${historyId == null}">
@@ -47,10 +49,16 @@
 CryptoDB: ${rSBP.value}</a>
                   </c:when>
 
+<%--
+length > 2 is not going to happen while pagesize is 20, but just in case
+--%>
+
                   <c:when test="${rSBP.key == 'plasmodb'}">&nbsp;&nbsp; 
 <c:set value="${CR / pageSize}" var="Poffset"/>
 <c:set value='${fn:substringAfter(Poffset, ".")}' var="dec"/>
 <c:set value="${fn:length(dec)}" var="length"/>
+<c:if test="${length > 2}">
+    <c:set value='${fn:substring(dec,0,2)}' var="dec"/></c:if>
 <c:if test="${length == 1}">
     <c:set value="${pageSize * dec / 10}" var="extraC"/></c:if>
 <c:if test="${length == 2}">
@@ -66,6 +74,8 @@ PlasmoDB: ${rSBP.value}</a>
 <c:set value="${(CR + PR) / pageSize}" var="Toffset"/>
 <c:set value='${fn:substringAfter(Toffset, ".")}' var="dec"/>
 <c:set value="${fn:length(dec)}" var="length"/>
+<c:if test="${length > 2}">
+    <c:set value='${fn:substring(dec,0,2)}' var="dec"/></c:if>
 <c:if test="${length == 1}">
     <c:set value="${pageSize * dec / 10}" var="extraP"/></c:if>
 <c:if test="${length == 2}">
