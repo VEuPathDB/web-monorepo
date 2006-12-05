@@ -98,12 +98,12 @@ function enableRename(histId, customName) {
    var input = document.getElementById('input_' + histId);
    input.innerHTML = "<table border='0' cellspacing='2' cellpadding='0'><tr>"
                    + "<td><input name='wdk_history_id' type='hidden' value='" + histId + "'>"
-                   + "<input id='wdk_custom_name' name='wdk_custom_name' type='text' size='42' maxLength='2000' value='" + customName + "'></td>" 
+                   + "<input id='customHistoryName' name='customHistoryName' type='text' size='42' maxLength='2000' value='" + customName + "'></td>" 
                    + "<td><input type='submit' value='Update'></td>"
                    + "<td><input type='reset' value='Cancel' onclick='disableRename()'>"
                    + "</td></tr></table>";
    input.style.display='block';
-   var nameBox = document.getElementById('wdk_custom_name');
+   var nameBox = document.getElementById('customHistoryName');
    nameBox.select();
    nameBox.focus();
 }

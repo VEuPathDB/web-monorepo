@@ -51,7 +51,7 @@ function enableRename() {
    var nameInput = document.getElementById('nameInput');
    nameInput.style.display='block';
    
-   var nameBox = document.getElementById('wdk_custom_name');
+   var nameBox = document.getElementById('customHistoryName');
    nameBox.value = '${history.customName}';
    nameBox.select();
    nameBox.focus();
@@ -143,7 +143,7 @@ function showParameter(isShow)
                 <table border='0' cellspacing='2' cellpadding='0'>
                    <tr>
                       <td><input name='wdk_history_id' type='hidden' value="${history.historyId}"/></td>
-                      <td><input id='wdk_custom_name' name='wdk_custom_name' type='text' size='50' 
+                      <td><input id='customHistoryName' name='customHistoryName' type='text' size='50' 
                                 maxLength='2000' value="${history.customName}"/></td>
                       <td><input type='submit' value='Update'></td>
                       <td><input type='reset' value='Cancel' onclick="disableRename()"/></td>
