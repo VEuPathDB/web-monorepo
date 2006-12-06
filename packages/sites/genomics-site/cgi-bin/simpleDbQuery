@@ -1,0 +1,39 @@
+#!/usr/bin/perl
+
+# trivial cgi script for testing cgi or mod-perl Apache::Registry configurations
+# and ApiCommonWebsite::Model::ModelConfig
+
+use lib $ENV{GUS_HOME};
+use DBI;
+use CGI qw/:standard/;
+use ApiCommonWebsite::Model::ModelConfig;
+
+my $c = new ApiCommonWebsite::Model::ModelConfig('cryptoModel');
+
+my $dbh = DBI->connect(
+    $c->{dbiDsn},
+    $c->{login},
+    $c->{password},
+    { PrintError => 1,
+      RaiseError => 0
+    }
+) or die "Can't connect to the database: $DBI::errstr\n";;
+
+my $sql = q(select sysdate from dual);
+
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+
+
+my $q = new CGI;
+
+print $q->header();
+
+print "DSN: ", $c->{dbiDsn}, "<p>";
+
+while (my @row = $sth->fetchrow_array) {
+    print $row[0] . "<br>\n";
+}
+
+$sth->finish();
+
