@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 
-# trivial cgi script for testing cgi or mod-perl Apache::Registry configurations
-# and ApiCommonWebsite::Model::ModelConfig
+# Simple cgi script for testing cgi or mod-perl Apache::Registry configurations
+# and ApiCommonWebsite::Model::ModelConfig. 
+# Returns SYSDATE from dual.
+# Requires WDK model-config file for DBI connection strings.
 
 use strict;
 use lib $ENV{GUS_HOME};
@@ -14,15 +16,24 @@ BEGIN {
 
     # Carp callback for sending fatal messages to browser
     sub handle_errors {
-        my $msg = shift;
+        my ($msg) = @_;
         print "<h3>Oops</h3>";
         print "<p>Got an error: <pre>$msg</pre>";
     }
     set_message(\&handle_errors);
 }
 
+my $q = new CGI;
 
-my $c = new ApiCommonWebsite::Model::ModelConfig('cryptoModel');
+my $model = $q->param('model') or die <<"EOF";
+WDK model file not specified. Try one of the following:
+@{[$q->url]}?model=apiModel
+@{[$q->url]}?model=cryptoModel
+@{[$q->url]}?model=plasmoDbModel
+@{[$q->url]}?model=toxoDbModel
+EOF
+
+my $c = new ApiCommonWebsite::Model::ModelConfig($model);
 
 
 my $dbh = DBI->connect(
@@ -38,9 +49,6 @@ my $sql = q(select sysdate from dual);
 
 my $sth = $dbh->prepare($sql);
 $sth->execute();
-
-
-my $q = new CGI;
 
 print $q->header();
 
