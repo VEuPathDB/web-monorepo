@@ -14,10 +14,10 @@
    
 <div class="smallBlack" align="right">
 Availability: 
-<img src='/images/apidb_letter.jpg' border='0' alt='apidb'/> = ApiDB 
-<img src='/images/cryptodb_letter.jpg' border='0' alt='cryptodb' /> = CryptoDB 
-<img src='/images/plasmodb_letter.jpg' border='0' alt='plasmodb' /> = PlasmoDB 
-<img src='/images/toxodb_letter.jpg' border='0' alt='toxodb' /> = ToxoDB 
+<img src='/images/apidb_letter.gif' border='0' alt='apidb'/> = ApiDB 
+<img src='/images/cryptodb_letter.gif' border='0' alt='cryptodb' /> = CryptoDB 
+<img src='/images/plasmodb_letter.gif' border='0' alt='plasmodb' /> = PlasmoDB 
+<img src='/images/toxodb_letter.gif' border='0' alt='toxodb' /> = ToxoDB 
 &nbsp; &nbsp;
 </div>
 </td>
