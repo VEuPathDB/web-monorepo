@@ -12,12 +12,12 @@
 
 <tr><td colspan="3">  
    
-<div class="smallBlack" align="right">
-Availability: 
-<img src='/images/apidb_letter.gif' border='0' alt='apidb'/> = ApiDB 
-<img src='/images/cryptodb_letter.gif' border='0' alt='cryptodb' /> = CryptoDB 
-<img src='/images/plasmodb_letter.gif' border='0' alt='plasmodb' /> = PlasmoDB 
-<img src='/images/toxodb_letter.gif' border='0' alt='toxodb' /> = ToxoDB 
+<div class="smallBlack" align="middle">
+<b>Query Availability:</b> &nbsp;&nbsp; &nbsp;
+<img src='/images/apidb_letter.gif' border='0' alt='apidb'/> = ApiDB &nbsp;&nbsp;
+<img src='/images/cryptodb_letter.gif' border='0' alt='cryptodb' /> = CryptoDB &nbsp;&nbsp;
+<img src='/images/plasmodb_letter.gif' border='0' alt='plasmodb' /> = PlasmoDB &nbsp;&nbsp;
+<img src='/images/toxodb_letter.gif' border='0' alt='toxodb' /> = ToxoDB
 &nbsp; &nbsp;
 </div>
 </td>
