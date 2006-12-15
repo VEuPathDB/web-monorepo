@@ -47,10 +47,38 @@
 
 <!-- main body start -->
 
+<c:set var="tocBegin" value="true"/>
+<c:forEach items="${xmlAnswer.recordInstances}" var="pass1record">
+	<c:set var="currentCat" value="${pass1record.attributesMap['category']}"/>
+	<c:set var="showCat" value="false"/>
+	<c:choose>
+	<c:when test="${tocBegin}">
+		<c:set var="showCat" value="true"/>
+	</c:when>
+	<c:otherwise>
+		<c:if test="${prevCat ne currentCat}">
+			<c:set var="showCat" value="true"/>
+		</c:if>
+	</c:otherwise>
+	</c:choose>
+	<c:if test="${tocBegin}">
+		<b>DataSources Categories</b>
+		<ol>
+	</c:if>
+	<c:if test="${showCat}">
+		<li><a href="#${currentCat}">${currentCat}</a></li>
+	</c:if>
+	<c:set var="tocBegin" value="false"/>
+	<c:set var="prevCat" value="${currentCat}"/>
+</c:forEach>
+</ol>
+
 <table border="0" cellpadding="2" cellspacing="0" width="100%">
 
 <c:set var="i" value="0"/>
 <c:set var="alreadyPrintedSomething" value="false"/>
+<c:set var="prevCat" value="null"/>
+
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
 <c:set var="datasetList" value=",${param['datasets']},"/>
@@ -65,19 +93,31 @@
 </c:when>
 
 <c:otherwise>
-<tr class="rowLight">
-  <td>
-
-  <c:if test="${alreadyPrintedSomething}"><hr></c:if>
-  <c:set var="alreadyPrintedSomething" value="true"/>
 
   <c:set var="resource" value="${record.attributesMap['resource']}"/>
   <c:set var="publicUrl" value="${record.attributesMap['publicUrl']}"/>
   <c:set var="organisms" value="${record.attributesMap['organisms']}"/>
   <c:set var="description" value="${record.attributesMap['description']}"/>
-  <c:set var="category" value="Category: ${record.attributesMap['category']}<br>"/>
+  <c:set var="currentCat" value="${record.attributesMap['category']}"/>
   <c:set var="version" value="${record.attributesMap['version']}"/>
+  
+  	<c:set var="printedHeader" value="false"/>
+    <c:if test="${prevCat == null || prevCat ne currentCat}">
+      	<tr><td><br/></td></tr>
+  		<tr class="headerRow">
+	  	<td><b><i><a name="${currentCat}">${currentCat}</a></i></b></td>
+  		</tr>
+  		<tr><td><br/></td></tr>
+  		<c:set var="printedHeader" value="true"/>
+  </c:if>
+  
+  <c:set var="prevCat" value="${currentCat}"/>
+  
+<tr class="rowLight">
+  <td>
 
+  <c:if test="${alreadyPrintedSomething && !printedHeader}"><hr/></c:if>
+  <c:set var="alreadyPrintedSomething" value="true"/>
 
 <b>${resource}</b> (version: ${version})<br>
 <font size="-1">
