@@ -46,7 +46,7 @@
   <c:otherwise>
 
 <!-- main body start -->
-
+<c:if test="${param['datasets'] == null}">
 <c:set var="tocBegin" value="true"/>
 <c:forEach items="${xmlAnswer.recordInstances}" var="pass1record">
 	<c:set var="currentCat" value="${pass1record.attributesMap['category']}"/>
@@ -62,16 +62,17 @@
 	</c:otherwise>
 	</c:choose>
 	<c:if test="${tocBegin}">
-		<b>DataSources Categories</b>
-		<ol>
+		<b><a name="toc">DataSources Categories</a></b>
+		<ul>
 	</c:if>
 	<c:if test="${showCat}">
 		<li><a href="#${currentCat}">${currentCat}</a></li>
 	</c:if>
 	<c:set var="tocBegin" value="false"/>
 	<c:set var="prevCat" value="${currentCat}"/>
-</c:forEach>
-</ol>
+	</c:forEach>
+		</ul>
+</c:if>
 
 <table border="0" cellpadding="2" cellspacing="0" width="100%">
 
@@ -93,7 +94,8 @@
 </c:when>
 
 <c:otherwise>
-
+  <c:set var="display" value="${record.attributesMap['display']}"/>
+  <c:if test="${display}">
   <c:set var="resource" value="${record.attributesMap['resource']}"/>
   <c:set var="publicUrl" value="${record.attributesMap['publicUrl']}"/>
   <c:set var="organisms" value="${record.attributesMap['organisms']}"/>
@@ -102,10 +104,11 @@
   <c:set var="version" value="${record.attributesMap['version']}"/>
   
   	<c:set var="printedHeader" value="false"/>
-    <c:if test="${prevCat == null || prevCat ne currentCat}">
+    <c:if test="${param['datasets'] == null && (prevCat == null || prevCat ne currentCat)}">
       	<tr><td><br/></td></tr>
   		<tr class="headerRow">
 	  	<td><b><i><a name="${currentCat}">${currentCat}</a></i></b></td>
+	  	<td><font size="-1">[&nbsp;<a href="#toc">Top</a>&nbsp;]</font></td>
   		</tr>
   		<tr><td><br/></td></tr>
   		<c:set var="printedHeader" value="true"/>
@@ -157,7 +160,7 @@
           ${pubMedPrefix}
           <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=${pmid}"> ${pmid}</a>
           <c:set var="pubMedPrefix" value=" | "/>
-
+	  
 	  </c:otherwise>
 	  </c:choose>
 
@@ -170,6 +173,7 @@
 </font>
   </td>
 </tr>
+</c:if> <!-- end display=true -->
 </c:otherwise>
 </c:choose>
 
@@ -189,5 +193,7 @@
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table> 
+<br/>
 
+<p align=center><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>">See All Data Sources</a></p><br/>
 <site:footer/>
