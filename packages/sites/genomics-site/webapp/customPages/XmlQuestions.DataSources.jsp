@@ -194,6 +194,7 @@
 </tr>
 </table> 
 <br/>
-
-<p align=center><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>">See All Data Sources</a></p><br/>
+<c:if test="${param['datasets'] != null}">
+<a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>"><font size="-1">Click here to see the complete list of Data Sources</font></a><br/>
+</c:if>
 <site:footer/>
