@@ -870,4 +870,14 @@ sub primary_seq {
     my $self = shift;
 }
 
+# implement Bio::PrimarySeqI::is_circular
+# required by BatchDumper plugin. 
+sub is_circular {
+    my $self = shift;
+}   
+
+sub version {
+    my $self = shift;
+}
+
 1;
