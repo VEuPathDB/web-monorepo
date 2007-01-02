@@ -874,6 +874,7 @@ sub primary_seq {
 # required by BatchDumper plugin. 
 sub is_circular {
     my $self = shift;
+	return 0;
 }   
 
 sub version {
