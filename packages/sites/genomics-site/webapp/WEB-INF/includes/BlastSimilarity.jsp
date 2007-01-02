@@ -26,12 +26,13 @@
 
 <!-- put an anchor here for linking back from help sections -->
 <A name="${fromAnchorQ}"></A>
-<html:form method="post" action="/processQuestion.do">
+<html:form method="post" action="/processQuestion.do"> 
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 <table>
 
 <!-- show error messages, if any -->
 <wdk:errors/>
+
 
 <c:set value="${wdkQuestion.params}" var="qParams"/>
 <c:forEach items="${qParams}" var="qP">
@@ -73,7 +74,13 @@
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
   <tr><td><html:hidden property="altPageSize" value="1000000"/></td>
-      <td><html:submit property="questionSubmit" value="Get Answer"/></td></tr>
+  		<td>
+  		<table><tr>
+  		<td><html:submit property="questionSubmit" value="Get Answer"/></td>
+		<td><input type="button" value="Clear Sequence" onClick="this.form.elements[7].value='';"/></td>
+		<td><html:reset>Reset All</html:reset></td>
+        </tr></table>
+        </td></tr>
 </table>
 </html:form>
 
