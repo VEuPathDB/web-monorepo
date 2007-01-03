@@ -96,7 +96,13 @@
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
   <tr><td><html:hidden property="altPageSize" value="1000000"/></td>
-      <td><html:submit property="questionSubmit" value="Get Answer"/></td></tr>
+      <td>
+        <table><tr>
+  		<td><html:submit property="questionSubmit" value="Get Answer"/></td>
+		<td><input type="button" value="Clear Sequence" onClick="this.form.elements[7].value='';"/></td>
+		<td><html:reset>Reset All</html:reset></td>
+        </tr></table>
+      </td></tr>
 </table>
 </html:form>
 
