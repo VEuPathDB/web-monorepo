@@ -253,7 +253,7 @@ function reviseBooleanQuery(type, expression) {
                                     <c:set var="aP" value="${params[pNam]}"/>
                                     <c:if test="${qP.isVisible}">
                                        <tr>
-                                          <td align="right" valign="top" class="small" nowrap><i>${qP.prompt}</i> : </td>
+                                          <td align="right" valign="top" class="small" nowrap><i>${qP.prompt}</i>&nbsp;:&nbsp;</td>
                                           <td class="small">
                                              <c:if test="${fn:length(aP) > 200}">
                                                 <c:set var="aP" value="${fn:substring(aP, 0, 200)}..." />
@@ -288,7 +288,7 @@ function reviseBooleanQuery(type, expression) {
            
            <td nowrap>
                 <c:set var="dsColUrl" 
-                       value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${wdkUser.signature}:${historyId}&questionSubmit=Get+Answer&goto_summary=0"/>
+                       value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${historyId}&historyCombinedId=${wdkUser.signature}:${historyId}&questionSubmit=Get+Answer&goto_summary=0"/>
                 <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
            </td>	    
         </c:if>

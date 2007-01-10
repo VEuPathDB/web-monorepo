@@ -200,7 +200,7 @@ function showParameter(isShow)
                    <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
                          <td align="right" valign="top"><i>Query</i></td>
-                         <td>&nbsp;:&nbsp;</td>
+                         <td valign="top">&nbsp;:&nbsp;</td>
                          <td>${wdkQuestionName}</td>
                       </tr>
                       <c:forEach items="${qParamsMap}" var="p">
@@ -230,7 +230,7 @@ function showParameter(isShow)
           ${wdkAnswer.resultSize}
           <c:if test="${wdkAnswer.resultSize > 0}">
              (showing ${wdk_paging_start} to ${wdk_paging_end})
-             <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+             <c:if test="${dispModelName eq 'ApiDB'}">
                  <site:apidbSummary/>
              </c:if>
           </c:if>
@@ -248,7 +248,7 @@ function showParameter(isShow)
 	       <c:if test="${isGeneRec && showOrthoLink}">
 	           &nbsp;|&nbsp;
                <c:set var="datasetId" value="${wdkAnswer.datasetId}"/>
-               <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${wdkUser.signature}:${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
+               <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${historyId}&historyCombinedId=${wdkUser.signature}:${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
                <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
            </c:if>
 	       
@@ -316,25 +316,24 @@ function showParameter(isShow)
       <c:when test="${j == 0}">
 
 <c:choose>
-
-<c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+<c:when test="${dispModelName eq 'ApiDB'}">
 
   <c:set value="${record.primaryKey}" var="primaryKey"/>
 <c:choose>
         <c:when test = "${primaryKey.projectId == 'cryptodb'}">
-           <a href="http://cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
+           <a href="http://www.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
         </c:when>
         <c:when test = "${primaryKey.projectId=='plasmodb'}" >
            <c:if test="${isContigRec}">
                  <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
            </c:if>
-           <a href="http://plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="plasmodb">PlasmoDB:${primaryKey.recordId}</a>
+           <a href="http://www.plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="plasmodb">PlasmoDB:${primaryKey.recordId}</a>
         </c:when>
         <c:when test = "${primaryKey.projectId=='toxodb'}" >
             <c:if test="${isContigRec}">
                  <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
             </c:if>
-            <a href="http://toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
+            <a href="http://www.toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
  </c:when>
 </c:choose>
 
