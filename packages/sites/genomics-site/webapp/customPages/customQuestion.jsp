@@ -60,6 +60,11 @@
             <site:flatVocabParamInput qp="${qP}" />
       </td>
     </c:when>
+    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
+      <td>
+            <wdk:historyParamInput qp="${qP}" />
+      </td>
+    </c:when>
     <c:otherwise>  <%-- not flatvocab --%>
       <td><c:choose>
               <c:when test="${isReadonly}">
