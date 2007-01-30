@@ -60,3 +60,9 @@ while (my @row = $sth->fetchrow_array) {
 
 $sth->finish();
 
+print "<p>$0 running under @{[ 
+    ($ENV{MOD_PERL}) ? 
+        'mod_perl' :
+        'cgi'
+]}";
+
