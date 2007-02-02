@@ -55,7 +55,7 @@
   
     <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
     <tr class="rowLight"><td>
-      <b>${headline}</b> (${date})<br><br>${item}</td></tr></table>
+      <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${tag}"><font color='black'><b>${headline}</b></font></a> (${date})<br><br>${item}</td></tr></table>
     <c:set var="i" value="${i+1}"/>
   </c:if>
 </c:forEach>
