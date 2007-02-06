@@ -211,7 +211,21 @@ function showParameter(isShow)
                             <tr>
                                <td align="right" valign="top"><i>${qP.prompt}</i></td>
                                <td>&nbsp;:&nbsp;</td>
-                               <td>${aP}</td>
+                               <td>
+                                  <c:choose>
+                                     <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
+                                        <jsp:setProperty name="qP" property="combinedId" value="${aP}" />
+                                        <c:set var="dataset" value="${qP.dataset}" />  
+                                        "${dataset.summary}"
+                                        <c:if test='${dataset.uploadFile != null && dataset.uploadFile != ""}'>
+                                           from file &lt;${dataset.uploadFile}&gt;
+                                        </c:if>
+                                     </c:when>
+                                     <c:otherwise>
+                                        ${aP}
+                                     </c:otherwise>
+                                  </c:choose>
+                               </td>
                             </tr>
                          </c:if>
                       </c:forEach>

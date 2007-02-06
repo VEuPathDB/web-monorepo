@@ -32,7 +32,8 @@
 
 <%-- put an anchor here for linking back from help sections --%>
 <A name="${fromAnchorQ}"></A>
-<html:form method="get" action="/processQuestion.do">
+<!--html:form method="get" action="/processQuestion.do" -->
+<html:form method="post" enctype='multipart/form-data' action="/processQuestion.do">
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 <table>
 
@@ -51,7 +52,7 @@
   <c:otherwise>
 
   <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
-  <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td>
+  <tr><td align="right" valign="top"><b><jsp:getProperty name="qP" property="prompt"/></b></td>
 
   <%-- choose between flatVocabParam and straight text or number param --%>
   <c:choose>
@@ -63,6 +64,11 @@
     <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
       <td>
             <wdk:historyParamInput qp="${qP}" />
+      </td>
+    </c:when>
+    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
+      <td>
+            <wdk:datasetParamInput qp="${qP}" />
       </td>
     </c:when>
     <c:otherwise>  <%-- not flatvocab --%>
@@ -78,7 +84,7 @@
   </c:choose>
 
       <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-      <td>
+      <td valign="top">
           <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
           <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
           <a href="#${anchorQp}">
