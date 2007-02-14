@@ -244,7 +244,7 @@ function showParameter(isShow)
           ${wdkAnswer.resultSize}
           <c:if test="${wdkAnswer.resultSize > 0}">
              (showing ${wdk_paging_start} to ${wdk_paging_end})
-             <c:if test="${dispModelName eq 'ApiDB'}">
+              <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
                  <site:apidbSummary/>
              </c:if>
           </c:if>
