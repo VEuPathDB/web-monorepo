@@ -304,9 +304,46 @@ function showParameter(isShow)
 <table width="100%" border="0" cellpadding="8" cellspacing="0">
 <tr class="headerRow">
 
+<c:set var="qName" value="${wdkAnswer.question.fullName}" />
+<c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
+<c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
+
 <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
-    <th align="left">${sumAttrib.displayName}</th>
+    <th align="left" nowrap>
+        ${sumAttrib.displayName}
+        <c:set var="attrName" value="${sumAttrib.name}" />
+        <c:choose>
+            <c:when test="${attrName == sortingAttrNames[0]}">
+                <c:choose>
+                    <c:when test="${sortingAttrOrders[0]}">
+                        <img src="<c:url value='images/sort_up_h.gif' />" 
+                             title="Result is sorted by '${sumAttrib}' in ascending order" />
+                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=desc' />" 
+                           title="Sort result by '${sumAttrib}' in descending order">
+                            <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=asc' />" 
+                           title="Sort result by '${sumAttrib}' in descending order">
+                            <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
+                        <img src="<c:url value='images/sort_down_h.gif' />" 
+                             title="Result is sorted by '${sumAttrib}' in descending order" />
+                    </c:otherwise>
+                </c:choose>
+            </c:when>
+            <c:otherwise>
+                <!-- display sorting buttons -->
+                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=asc' />" 
+                   title="Sort result by '${sumAttrib}' in ascending order">
+                    <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
+                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=desc' />" 
+                   title="Sort result by '${sumAttrib}' in descending order">
+                    <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
+            </c:otherwise>
+        </c:choose>
+    </th>
  </c:forEach>
+</tr>
 
 <c:set var="i" value="0"/>
 <c:forEach items="${wdkAnswer.records}" var="record">
