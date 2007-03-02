@@ -40,61 +40,100 @@
 <!-- show error messages, if any -->
 <wdk:errors/>
 
-<c:set value="${wdkQuestion.params}" var="qParams"/>
-<c:forEach items="${qParams}" var="qP">
-  <c:set var="isHidden" value="${qP.isVisible == false}"/>
-  <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
-  <c:set var="pNam" value="${qP.name}"/>
+<c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
+<c:forEach items="${paramGroups}" var="paramGroupItem">
+    <c:set var="group" value="${paramGroupItem.key}" />
+    <c:set var="paramGroup" value="${paramGroupItem.value}" />
+    
+    <%-- detemine starting display style by displayType of the group --%>
+    <c:set var="groupName" value="${group.displayName}" />
+    <c:set var="displayType" value="${group.displayType}" />
+    <c:choose>
+        <c:when test="${group.name eq 'empty'}">
+            <%-- empty/no group, do nothing --%>
+        </c:when>
+        <c:when test="${displayType eq 'ShowHide'}">
+    
+        </c:when>
+        <c:otherwise>
+            <tr><td colspan="4">
+                <hr><b>${groupName}</b><br>
+                <div>${group.description}</div>
+            </td><tr>
+        </c:otherwise>
+    </c:choose>
+    
+    <%-- display parameter list --%>
+    <c:forEach items="${paramGroup}" var="paramItem">
+        <c:set var="pNam" value="${paramItem.key}" />
+        <c:set var="qP" value="${paramItem.value}" />
+        
+        <c:set var="isHidden" value="${qP.isVisible == false}"/>
+        <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
   
-  <%-- hide invisible params --%>
-  <c:choose>
-  <c:when test="${isHidden}"><html:hidden property="myProp(${pNam})"/></c:when>
-  <c:otherwise>
+        <%-- hide invisible params --%>
+        <c:choose>
+            <c:when test="${isHidden}"><html:hidden property="myProp(${qP.class.name})"/></c:when>
+            <c:otherwise> <%-- visible param --%>
 
-  <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
-  <tr><td align="right" valign="top"><b><jsp:getProperty name="qP" property="prompt"/></b></td>
+                <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
+                <tr>
+                    <td align="right" valign="top"><b>${qP.prompt}</b> (${pNam})</td>
+                    <td>
+                        <%-- choose between flatVocabParam and straight text or number param --%>
+                        <c:choose>
+                            <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
+                                <site:flatVocabParamInput qp="${qP}" />
+                            </c:when>
+                            <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
+                                <wdk:historyParamInput qp="${qP}" />
+                            </c:when>
+                            <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
+                                <wdk:datasetParamInput qp="${qP}" />
+                            </c:when>
+                            <c:otherwise>  <%-- not flatvocab --%>
+                                <c:choose>
+                                    <c:when test="${isReadonly}">
+                                        <bean:write name="qForm" property="myProp(${pNam})"/>
+                                        <html:hidden property="myProp(${pNam})"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <html:text property="myProp(${pNam})" size="35" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
 
-  <%-- choose between flatVocabParam and straight text or number param --%>
-  <c:choose>
-    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
-      <td>
-            <site:flatVocabParamInput qp="${qP}" />
-      </td>
-    </c:when>
-    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
-      <td>
-            <wdk:historyParamInput qp="${qP}" />
-      </td>
-    </c:when>
-    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
-      <td>
-            <wdk:datasetParamInput qp="${qP}" />
-      </td>
-    </c:when>
-    <c:otherwise>  <%-- not flatvocab --%>
-      <td><c:choose>
-              <c:when test="${isReadonly}">
-                  <bean:write name="qForm" property="myProp(${pNam})"/>
-                  <html:hidden property="myProp(${pNam})"/>
-              </c:when>
-              <c:otherwise><html:text property="myProp(${pNam})" size="35" /></c:otherwise>
-          </c:choose>
-      </td>
-    </c:otherwise>
-  </c:choose>
-
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-      <td valign="top">
-          <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
-          <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-          <a href="#${anchorQp}">
-          <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
-      </td>
-  </tr>
-
-  </c:otherwise></c:choose>
-
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td valign="top">
+                        <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
+                        <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
+                        <a href="#${anchorQp}">
+                        <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
+                    </td>
+                </tr>
+ 
+            </c:otherwise> <%-- end visible param --%>
+        </c:choose>
+        
+    </c:forEach>
+    
+    <%-- detemine ending display style by displayType of the group --%>
+    <c:choose>
+        <c:when test="${group.name eq 'empty'}">
+            <%-- empty/no group, do nothing --%>
+        </c:when>
+        <c:when test="${displayType eq 'ShowHide'}">
+    
+        </c:when>
+        <c:otherwise>
+            <tr><td colspan="4"><hr></td><tr>
+        </c:otherwise>
+    </c:choose>
+    
 </c:forEach>
+
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
   <tr><td></td>
