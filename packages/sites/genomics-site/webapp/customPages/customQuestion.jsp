@@ -78,7 +78,7 @@
 
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
-                    <td align="right" valign="top"><b>${qP.prompt}</b> (${pNam})</td>
+                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
                     <td>
                         <%-- choose between flatVocabParam and straight text or number param --%>
                         <c:choose>
