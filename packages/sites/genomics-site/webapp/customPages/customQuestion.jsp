@@ -21,6 +21,34 @@
                  divisionName="Question"
                  division="queries_tools"/>
 
+
+
+<script language="JavaScript" type="text/javascript">
+<!--
+
+function showParamGroup(group, isShow) 
+{
+    var groupLink = document.getElementById(group + "_link");
+    var groupArea = document.getElementById(group + "_area");
+
+    if (isShow == "yes") {
+        groupLink.innerHTML = "<a href=\"#\" onclick=\"return showParamGroup('" + group + "', 'no');\">Hide</a>";
+        groupArea.style.display = "block";
+    } else {
+        groupLink.innerHTML = "<a href=\"#\" onclick=\"return showParamGroup('" + group + "', 'yes');\">Show</a>";
+        groupArea.style.display = "none";
+    }
+    
+    // save preference via ajax
+    savePreference();
+    
+    return false;
+}
+
+//-->
+</script>
+
+
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
  <tr>
@@ -35,7 +63,8 @@
 <!--html:form method="get" action="/processQuestion.do" -->
 <html:form method="post" enctype='multipart/form-data' action="/processQuestion.do">
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
-<table>
+
+<table border="0" width="100%">
 
 <!-- show error messages, if any -->
 <wdk:errors/>
@@ -49,11 +78,19 @@
     <c:set var="groupName" value="${group.displayName}" />
     <c:set var="displayType" value="${group.displayType}" />
     <c:choose>
-        <c:when test="${group.name eq 'empty'}">
+        <c:when test="${displayType eq 'empty'}">
             <%-- empty/no group, do nothing --%>
         </c:when>
         <c:when test="${displayType eq 'ShowHide'}">
-    
+            <tr><td colspan="4" bgcolor="#DEDEDE" width="100%">
+                <div>
+                    <b>${groupName}</b>
+                    <span id="${group.name}_link">
+                        <a href="#" onclick="return showParamGroup('${group.name}', 'yes');">Show</a>
+                    </span>
+                </div>
+                <table id="${group.name}_area" style="display:none" border="0" width="100%">
+                    <tr><td colspan="4" width="100%">${group.description}</td></tr>
         </c:when>
         <c:otherwise>
             <tr><td colspan="4">
@@ -106,7 +143,7 @@
                     </td>
 
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                    <td valign="top">
+                    <td valign="top" width="50" nowrap>
                         <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                         <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
                         <a href="#${anchorQp}">
@@ -125,7 +162,8 @@
             <%-- empty/no group, do nothing --%>
         </c:when>
         <c:when test="${displayType eq 'ShowHide'}">
-    
+                </table>  <%-- ending of show/hide area --%>
+           </td></tr>
         </c:when>
         <c:otherwise>
             <tr><td colspan="4"><hr></td><tr>
@@ -136,8 +174,8 @@
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-  <tr><td></td>
-      <td><html:submit property="questionSubmit" value="Get Answer"/></td>
+  <tr>
+      <td colspan="4" align="center"><html:submit property="questionSubmit" value="Get Answer"/></td>
 </table>
 </html:form>
 
