@@ -309,8 +309,10 @@ function showParameter(isShow)
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
 
 <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
-    <th align="left" nowrap>
-        ${sumAttrib.displayName}
+    <th align="left">
+        <table border="0" cellspacing="1" cellpadding="0">
+        <tr style="border-width: 0px"><th>${sumAttrib.displayName}</th>
+        <th nowrap>
         <c:set var="attrName" value="${sumAttrib.name}" />
         <c:choose>
             <c:when test="${attrName == sortingAttrNames[0]}">
@@ -341,6 +343,9 @@ function showParameter(isShow)
                     <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
             </c:otherwise>
         </c:choose>
+        </th>
+        </tr>
+        </table>
     </th>
  </c:forEach>
 </tr>
