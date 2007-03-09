@@ -370,7 +370,7 @@ function showParameter(isShow)
       <c:when test="${j == 0}">
 
 <c:choose>
-<c:when test="${dispModelName eq 'ApiDB'}">
+<c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
 
   <c:set value="${record.primaryKey}" var="primaryKey"/>
 <c:choose>
