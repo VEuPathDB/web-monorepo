@@ -39,9 +39,6 @@ function showParamGroup(group, isShow)
         groupArea.style.display = "none";
     }
     
-    // save preference via ajax
-    savePreference();
-    
     return false;
 }
 
@@ -67,8 +64,6 @@ function showParamGroup(group, isShow)
 <html:form method="post" enctype='multipart/form-data' action="/processQuestion.do">
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
-<table border="0" width="100%">
-
 <!-- show error messages, if any -->
 <wdk:errors/>
 
@@ -76,30 +71,28 @@ function showParamGroup(group, isShow)
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
     <c:set var="paramGroup" value="${paramGroupItem.value}" />
-    
+  
     <%-- detemine starting display style by displayType of the group --%>
     <c:set var="groupName" value="${group.displayName}" />
     <c:set var="displayType" value="${group.displayType}" />
     <c:choose>
-        <c:when test="${displayType eq 'empty'}">
-            <%-- empty/no group, do nothing --%>
+        <c:when test="${displayType eq 'empty'}">    
+            <table border="0">
         </c:when>
         <c:when test="${displayType eq 'ShowHide'}">
-            <tr><td colspan="4" bgcolor="#DEDEDE" width="100%">
-                <div>
-                    <b>${groupName}</b>
-                    <span id="${group.name}_link">
-                        <a href="#" onclick="return showParamGroup('${group.name}', 'yes');">Show</a>
-                    </span>
-                </div>
-                <table id="${group.name}_area" style="display:none" border="0" width="100%">
-                    <tr><td colspan="4" width="100%">${group.description}</td></tr>
+            <div style="background: #DEDEDE">
+                <hr><b>${groupName}</b>
+                <span id="${group.name}_link">
+                    <a href="#" onclick="return showParamGroup('${group.name}', 'yes');">Show</a>
+                </span>
+                <div id="${group.name}_area" style="display:none">
+                <table border="0">
+                    <tr><td colspan="4">${group.description}</td></tr>
         </c:when>
         <c:otherwise>
-            <tr><td colspan="4">
-                <hr><b>${groupName}</b><br>
-                <div>${group.description}</div>
-            </td><tr>
+            <hr><b>${groupName}</b><br>
+            <div>${group.description}</div>
+            <table border="0">
         </c:otherwise>
     </c:choose>
     
@@ -162,14 +155,16 @@ function showParamGroup(group, isShow)
     <%-- detemine ending display style by displayType of the group --%>
     <c:choose>
         <c:when test="${group.name eq 'empty'}">
-            <%-- empty/no group, do nothing --%>
+            </table>
         </c:when>
         <c:when test="${displayType eq 'ShowHide'}">
-                </table>  <%-- ending of show/hide area --%>
-           </td></tr>
+                </table>
+                </div> <%-- show/hide div --%>
+            <hr>
+            </div>  <%-- group background div --%>
         </c:when>
         <c:otherwise>
-            <tr><td colspan="4"><hr></td><tr>
+            </table>
         </c:otherwise>
     </c:choose>
     
@@ -177,9 +172,7 @@ function showParamGroup(group, isShow)
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-  <tr>
-      <td colspan="4" align="center"><html:submit property="questionSubmit" value="Get Answer"/></td>
-</table>
+  <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
 </html:form>
 
 <hr>

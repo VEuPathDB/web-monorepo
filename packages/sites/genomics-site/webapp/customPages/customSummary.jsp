@@ -167,7 +167,7 @@ function showParameter(isShow)
                       <a href="#" onclick="return showParameter('yes');">Show</a>
                    </c:otherwise>
                 </c:choose>
-            </div
+            </div>
        </td>
     </tr>
     <tr>
@@ -311,39 +311,40 @@ function showParameter(isShow)
 <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
     <th align="left">
         <table border="0" cellspacing="1" cellpadding="0">
-        <tr style="border-width: 0px"><th>${sumAttrib.displayName}</th>
-        <th nowrap>
-        <c:set var="attrName" value="${sumAttrib.name}" />
-        <c:choose>
-            <c:when test="${attrName == sortingAttrNames[0]}">
+        <tr class="headerCleanRow">
+            <th>${sumAttrib.displayName}</th>
+            <th nowrap>
+                <c:set var="attrName" value="${sumAttrib.name}" />
                 <c:choose>
-                    <c:when test="${sortingAttrOrders[0]}">
-                        <img src="<c:url value='images/sort_up_h.gif' />" 
-                             title="Result is sorted by '${sumAttrib}' in ascending order" />
+                    <c:when test="${attrName == sortingAttrNames[0]}">
+                        <c:choose>
+                            <c:when test="${sortingAttrOrders[0]}">
+                                <img src="<c:url value='images/sort_up_h.gif' />" 
+                                     title="Result is sorted by '${sumAttrib}' in ascending order" />
+                                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=desc' />" 
+                                   title="Sort result by '${sumAttrib}' in descending order">
+                                   <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=asc' />" 
+                                   title="Sort result by '${sumAttrib}' in descending order">
+                                    <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
+                                <img src="<c:url value='images/sort_down_h.gif' />" 
+                                    title="Result is sorted by '${sumAttrib}' in descending order" />
+                            </c:otherwise>
+                        </c:choose>
+                    </c:when>
+                    <c:otherwise>
+                        <!-- display sorting buttons -->
+                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=asc' />" 
+                           title="Sort result by '${sumAttrib}' in ascending order">
+                            <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
                         <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=desc' />" 
                            title="Sort result by '${sumAttrib}' in descending order">
                             <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=asc' />" 
-                           title="Sort result by '${sumAttrib}' in descending order">
-                            <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
-                        <img src="<c:url value='images/sort_down_h.gif' />" 
-                             title="Result is sorted by '${sumAttrib}' in descending order" />
                     </c:otherwise>
                 </c:choose>
-            </c:when>
-            <c:otherwise>
-                <!-- display sorting buttons -->
-                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=asc' />" 
-                   title="Sort result by '${sumAttrib}' in ascending order">
-                    <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
-                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=desc' />" 
-                   title="Sort result by '${sumAttrib}' in descending order">
-                    <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
-            </c:otherwise>
-        </c:choose>
-        </th>
+            </th>
         </tr>
         </table>
     </th>
@@ -361,9 +362,9 @@ function showParameter(isShow)
   <c:set var="j" value="0"/>
 
   <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
-  <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
- 
-    <td>
+    <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
+    <c:set var="align" value="align='${recAttr.alignment}'" />
+    <td ${align}>
     <c:set var="recNam" value="${record.recordClass.fullName}"/>
     <c:set var="fieldVal" value="${recAttr.briefValue}"/>
     <c:choose>
@@ -373,7 +374,7 @@ function showParameter(isShow)
 <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
 
   <c:set value="${record.primaryKey}" var="primaryKey"/>
-<c:choose>
+    <c:choose>
         <c:when test = "${primaryKey.projectId == 'cryptodb'}">
            <a href="http://www.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
         </c:when>
@@ -388,8 +389,8 @@ function showParameter(isShow)
                  <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
             </c:if>
             <a href="http://www.toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
- </c:when>
-</c:choose>
+        </c:when>
+    </c:choose>
 
 </c:when>
 <c:otherwise>
