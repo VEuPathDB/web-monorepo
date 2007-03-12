@@ -310,10 +310,10 @@ function showParameter(isShow)
 
 <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
     <th align="left">
-        <table border="0" cellspacing="0" cellpadding="0">
+        <table border="0" cellspacing="2" cellpadding="0">
         <tr class="headerCleanRow">
-            <th rowspan="2">${sumAttrib.displayName}&nbsp;</th>
-            <th>
+            <th rowspan="2">${sumAttrib.displayName}</th>
+            <th valign="bottom">
                 <c:set var="attrName" value="${sumAttrib.name}" />
                 <c:choose>
                     <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
@@ -330,7 +330,7 @@ function showParameter(isShow)
             </th>
         </tr>
         <tr>
-            <th>
+            <th valign="top">
                 <c:set var="attrName" value="${sumAttrib.name}" />
                 <c:choose>
                     <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
