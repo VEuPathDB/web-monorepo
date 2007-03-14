@@ -313,7 +313,7 @@ function showParameter(isShow)
         <table border="0" cellspacing="2" cellpadding="0">
         <tr class="headerCleanRow">
             <th rowspan="2">${sumAttrib.displayName}</th>
-            <th valign="bottom">
+            <th height="50%" valign="bottom">
                 <c:set var="attrName" value="${sumAttrib.name}" />
                 <c:choose>
                     <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
@@ -330,7 +330,7 @@ function showParameter(isShow)
             </th>
         </tr>
         <tr>
-            <th valign="top">
+            <th height="50%" valign="top">
                 <c:set var="attrName" value="${sumAttrib.name}" />
                 <c:choose>
                     <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
@@ -364,7 +364,14 @@ function showParameter(isShow)
   <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
     <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
     <c:set var="align" value="align='${recAttr.alignment}'" />
-    <td ${align}>
+    <c:set var="nowrap">
+        <c:choose>
+            <c:when test="${recAttr.nowrap}">nowrap</c:when>
+            <c:otherwise></c:otherwise>
+        </c:choose>
+    </c:set>
+    
+    <td ${align} ${nowrap}>
     <c:set var="recNam" value="${record.recordClass.fullName}"/>
     <c:set var="fieldVal" value="${recAttr.briefValue}"/>
     <c:choose>
