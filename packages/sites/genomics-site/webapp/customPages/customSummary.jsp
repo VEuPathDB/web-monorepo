@@ -312,9 +312,10 @@ function showParameter(isShow)
     <th align="left">
         <table border="0" cellspacing="2" cellpadding="0">
         <tr class="headerCleanRow">
-            <th rowspan="2">${sumAttrib.displayName}</th>
-            <th height="50%" valign="bottom">
+            <th valign="middle">${sumAttrib.displayName}</th>
+            <th valign="middle">
                 <c:set var="attrName" value="${sumAttrib.name}" />
+                <div>
                 <c:choose>
                     <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
                         <img src="<c:url value='images/sort_up_h.gif' />" 
@@ -327,11 +328,8 @@ function showParameter(isShow)
                             <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
                     </c:otherwise>
                 </c:choose>
-            </th>
-        </tr>
-        <tr>
-            <th height="50%" valign="top">
-                <c:set var="attrName" value="${sumAttrib.name}" />
+                </div>
+                <div>
                 <c:choose>
                     <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
                         <img src="<c:url value='images/sort_down_h.gif' />" 
@@ -344,6 +342,7 @@ function showParameter(isShow)
                             <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
                     </c:otherwise>
                 </c:choose>
+                </div>
             </th>
         </tr>
         </table>
