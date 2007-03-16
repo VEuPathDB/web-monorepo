@@ -29,6 +29,8 @@
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
+<c:set var="qName" value="${wdkAnswer.question.fullName}" />
+
 
 <site:header title="${wdkModel.displayName} : Query Result"
                  banner="${wdkAnswerType} Results"
@@ -107,6 +109,20 @@ function showParameter(isShow)
     savePreference();
     
     return false;
+}
+
+
+function addAttribute() {
+    var attributeSelect = document.getElementById("sortableAttributes");
+    var index = attributeSelect.selectedIndex;
+    var attribute = attributeSelect.options[index].value;
+    
+    if (attribute.length == 0) return;
+    
+    var pageUrl = "<c:url value='showSummary.do?wdk_history_id=${historyId}"
+        + "&summaryQuestion=${qName}&addAttr=" + attribute + "' />";
+        
+    window.location.href = pageUrl;
 }
 
 //-->
@@ -300,15 +316,29 @@ function showParameter(isShow)
   <!-- pager on top -->
   <wdk:pager pager_id="top"/> 
 
+  <table width="100%" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+       <td align="right" width="100%">
+           <%-- display a list of sortable attributes --%>
+           <c:set var="sortableAttributes" value="${wdkAnswer.sortableAttributes}" />
+             <select id="sortableAttributes" onChange="addAttribute()">
+               <option value="">--- Add Column ---</option>
+               <c:forEach items="${sortableAttributes}" var="sortableAttribute">
+                 <option value="${sortableAttribute.name}">${sortableAttribute.displayName}</option>
+               </c:forEach>
+             </select>
+        </td>
+    </tr>
+  </table>
+
 <!-- content of current page -->
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
 <tr class="headerRow">
 
-<c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
 
-<c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
+  <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
     <th align="left">
         <table border="0" cellspacing="2" cellpadding="0">
         <tr class="headerCleanRow">
@@ -322,7 +352,7 @@ function showParameter(isShow)
                              title="Result is sorted by '${sumAttrib}' in ascending order" />
                     </c:when>
                     <c:otherwise>
-                        <!-- display sorting buttons -->
+                        <%-- display sorting buttons --%>
                         <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=asc' />" 
                            title="Sort result by '${sumAttrib}' in ascending order">
                             <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
@@ -336,7 +366,7 @@ function showParameter(isShow)
                              title="Result is sorted by '${sumAttrib}' in descending order" />
                     </c:when>
                     <c:otherwise>
-                        <!-- display sorting buttons -->
+                        <%-- display sorting buttons --%>
                         <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=desc' />" 
                            title="Sort result by '${sumAttrib}' in descending order">
                             <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
@@ -344,10 +374,16 @@ function showParameter(isShow)
                 </c:choose>
                 </div>
             </th>
+            <th valign="middle">
+                <%-- display remove attribute buttons --%>
+                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&removeAttr=${attrName}' />" 
+                   title="Remove '${sumAttrib}' from summary page">
+                    <img src="<c:url value='/images/remove.gif' />" border="0" /></a>
+            </th>
         </tr>
         </table>
     </th>
- </c:forEach>
+  </c:forEach>
 </tr>
 
 <c:set var="i" value="0"/>
