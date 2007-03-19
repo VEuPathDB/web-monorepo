@@ -388,11 +388,27 @@ function resetAttr() {
 
   <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
     <th align="left">
-        <table border="0" cellspacing="2" cellpadding="0">
+      <c:set var="attrName" value="${sumAttrib.name}" />
+      <table border="0" cellspacing="0" cellpadding="0">
         <tr class="headerCleanRow">
-            <th valign="middle">${sumAttrib.displayName}</th>
-            <th valign="middle">
-                <c:set var="attrName" value="${sumAttrib.name}" />
+            <th align="center" valign="middle" colspan="3">${sumAttrib.displayName}</th>
+        </tr>
+        <tr class="headerCleanRow">
+            <th align="right" valign="middle" width="40%" nowrap>
+                <%-- display arrange attribute buttons --%>
+                <c:if test="${j != 0 && j != 1}">
+                    <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=arrange&attribute=${attrName}&left=true' />" 
+                       title="Move ${sumAttrib} left">
+                        <img src="<c:url value='/images/move_left.gif' />" border="0" /></a>
+                </c:if>
+                <c:if test="${j != 0 && j != fn:length(wdkAnswer.summaryAttributes) - 1}">
+                    <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=arrange&attribute=${attrName}&left=false' />" 
+                       title="Move ${sumAttrib} right">
+                        <img src="<c:url value='/images/move_right.gif' />" border="0" /></a>
+                </c:if>
+                &nbsp;
+            </th>
+            <th align="center" valign="middle" width="10%">
                 <div>
                 <c:choose>
                     <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
@@ -422,16 +438,17 @@ function resetAttr() {
                 </c:choose>
                 </div>
             </th>
-            <c:if test="${j != 0}">
-                <th valign="middle">
+            <th align="left" valign="middle" width="40%">
+                &nbsp;
+                <c:if test="${j != 0}">
                     <%-- display remove attribute buttons --%>
                     <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=remove&attribute=${attrName}' />" 
                        title="Remove ${sumAttrib} column">
                         <img src="<c:url value='/images/remove.gif' />" border="0" /></a>
-                </th>
-            </c:if>
+                </c:if>
+            </th>
         </tr>
-        </table>
+      </table>
     </th>
     <c:set var="j" value="${j+1}"/>
   </c:forEach>
