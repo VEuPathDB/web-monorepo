@@ -112,18 +112,43 @@ function showParameter(isShow)
 }
 
 
-function addAttribute() {
-    var attributeSelect = document.getElementById("sortableAttributes");
+function removeAttr() {
+    var attributeSelect = document.getElementById("removeAttributes");
     var index = attributeSelect.selectedIndex;
     var attribute = attributeSelect.options[index].value;
     
     if (attribute.length == 0) return;
     
     var pageUrl = "<c:url value='showSummary.do?wdk_history_id=${historyId}"
-        + "&summaryQuestion=${qName}&addAttr=" + attribute + "' />";
+        + "&summaryQuestion=${qName}&command=remove&attribute=" + attribute + "' />";
         
     window.location.href = pageUrl;
 }
+
+
+function addAttr() {
+    var attributeSelect = document.getElementById("addAttributes");
+    var index = attributeSelect.selectedIndex;
+    var attribute = attributeSelect.options[index].value;
+    
+    if (attribute.length == 0) return;
+    
+    var pageUrl = "<c:url value='showSummary.do?wdk_history_id=${historyId}"
+        + "&summaryQuestion=${qName}&command=add&attribute=" + attribute + "' />";
+        
+    window.location.href = pageUrl;
+}
+
+
+function resetAttr() {
+    if (confirm("Are you sure to reset the column layout?")) {
+        var pageUrl = "<c:url value='showSummary.do?wdk_history_id=${historyId}"
+            + "&summaryQuestion=${qName}&command=reset' />";
+        
+        window.location.href = pageUrl;
+    }
+}
+
 
 //-->
 </script>
@@ -316,27 +341,50 @@ function addAttribute() {
   <!-- pager on top -->
   <wdk:pager pager_id="top"/> 
 
-  <table width="100%" cellspacing="0" cellpadding="0" border="0">
+<div align="right">
+  <table cellspacing="0" cellpadding="0" border="0">
     <tr>
-       <td align="right" width="100%">
-           <%-- display a list of sortable attributes --%>
-           <c:set var="sortableAttributes" value="${wdkAnswer.sortableAttributes}" />
-             <select id="sortableAttributes" onChange="addAttribute()">
-               <option value="">--- Add Column ---</option>
-               <c:forEach items="${sortableAttributes}" var="sortableAttribute">
-                 <option value="${sortableAttribute.name}">${sortableAttribute.displayName}</option>
+       <td nowrap>
+           <%-- display a list of displaying attributes to be removed --%>
+           <c:set var="removeAttributes" value="${wdkAnswer.summaryAttributes}" />
+           &nbsp;
+           <select id="removeAttributes" name="removeAttributes" onChange="removeAttr();">
+               <option value="">--- Remove Column ---</option>
+               <c:set var="j" value="0"/>
+               <c:forEach items="${removeAttributes}" var="attribute">
+                 <c:if test="${j != 0}">
+                   <option value="${attribute.name}">${attribute.displayName}</option>
+                 </c:if>
+                 <c:set var="j" value="${j+1}"/>
                </c:forEach>
-             </select>
-        </td>
+           </select>
+       </td>
+       <td nowrap>
+           <%-- display a list of sortable attributes --%>
+           <c:set var="addAttributes" value="${wdkAnswer.sortableAttributes}" />
+           &nbsp;
+           <select id="addAttributes" onChange="addAttr()">
+               <option value="">--- Add Column ---</option>
+               <c:forEach items="${addAttributes}" var="attribute">
+                 <option value="${attribute.name}">${attribute.displayName}</option>
+               </c:forEach>
+           </select>
+       </td>
+       <td nowrap>
+          <input type="button" value="Reset Columns" onClick="resetAttr()" />
+       </td>
     </tr>
   </table>
+</div>
 
 <!-- content of current page -->
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="1" cellpadding="6" cellspacing="0">
 <tr class="headerRow">
 
 <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
+
+  <c:set var="j" value="0"/>
 
   <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
     <th align="left">
@@ -349,12 +397,12 @@ function addAttribute() {
                 <c:choose>
                     <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
                         <img src="<c:url value='images/sort_up_h.gif' />" 
-                             title="Result is sorted by '${sumAttrib}' in ascending order" />
+                             title="Result is sorted by ${sumAttrib}" />
                     </c:when>
                     <c:otherwise>
                         <%-- display sorting buttons --%>
-                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=asc' />" 
-                           title="Sort result by '${sumAttrib}' in ascending order">
+                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=sort&attribute=${attrName}&sortOrder=asc' />" 
+                           title="Sort by ${sumAttrib}">
                             <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
                     </c:otherwise>
                 </c:choose>
@@ -363,26 +411,29 @@ function addAttribute() {
                 <c:choose>
                     <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
                         <img src="<c:url value='images/sort_down_h.gif' />" 
-                             title="Result is sorted by '${sumAttrib}' in descending order" />
+                             title="Result is reverse sorted by ${sumAttrib}" />
                     </c:when>
                     <c:otherwise>
                         <%-- display sorting buttons --%>
-                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&sortQuestion=${qName}&sortAttr=${attrName}&sortOrder=desc' />" 
-                           title="Sort result by '${sumAttrib}' in descending order">
+                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=sort&attribute=${attrName}&sortOrder=desc' />" 
+                           title="Reverse sort by ${sumAttrib}">
                             <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
                     </c:otherwise>
                 </c:choose>
                 </div>
             </th>
-            <th valign="middle">
-                <%-- display remove attribute buttons --%>
-                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&removeAttr=${attrName}' />" 
-                   title="Remove '${sumAttrib}' from summary page">
-                    <img src="<c:url value='/images/remove.gif' />" border="0" /></a>
-            </th>
+            <c:if test="${j != 0}">
+                <th valign="middle">
+                    <%-- display remove attribute buttons --%>
+                    <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=remove&attribute=${attrName}' />" 
+                       title="Remove ${sumAttrib} column">
+                        <img src="<c:url value='/images/remove.gif' />" border="0" /></a>
+                </th>
+            </c:if>
         </tr>
         </table>
     </th>
+    <c:set var="j" value="${j+1}"/>
   </c:forEach>
 </tr>
 
@@ -400,67 +451,63 @@ function addAttribute() {
     <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
     <c:set var="align" value="align='${recAttr.alignment}'" />
     <c:set var="nowrap">
-        <c:choose>
-            <c:when test="${recAttr.nowrap}">nowrap</c:when>
-            <c:otherwise></c:otherwise>
-        </c:choose>
+        <c:if test="${recAttr.nowrap}">nowrap</c:if>
     </c:set>
-    
     <td ${align} ${nowrap}>
-    <c:set var="recNam" value="${record.recordClass.fullName}"/>
-    <c:set var="fieldVal" value="${recAttr.briefValue}"/>
-    <c:choose>
-      <c:when test="${j == 0}">
+      <c:set var="recNam" value="${record.recordClass.fullName}"/>
+      <c:set var="fieldVal" value="${recAttr.briefValue}"/>
+      <c:choose>
+        <c:when test="${j == 0}">
 
-<c:choose>
-<c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+          <c:choose>
+            <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+               
+              <c:set value="${record.primaryKey}" var="primaryKey"/>
+              <c:choose>
+                <c:when test = "${primaryKey.projectId == 'cryptodb'}">
+                  <a href="http://www.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" 
+                     target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
+                </c:when>
+                <c:when test = "${primaryKey.projectId=='plasmodb'}" >
+                  <c:if test="${isContigRec}">
+                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
+                  </c:if>
+                  <a href="http://www.plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  
+                     target="plasmodb">PlasmoDB:${primaryKey.recordId}</a>
+                </c:when>
+                <c:when test = "${primaryKey.projectId=='toxodb'}" >
+                  <c:if test="${isContigRec}">
+                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
+                  </c:if>
+                  <a href="http://www.toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
+                </c:when>
+              </c:choose>
+            
+            </c:when>
+            <c:otherwise>
 
-  <c:set value="${record.primaryKey}" var="primaryKey"/>
-    <c:choose>
-        <c:when test = "${primaryKey.projectId == 'cryptodb'}">
-           <a href="http://www.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
-        </c:when>
-        <c:when test = "${primaryKey.projectId=='plasmodb'}" >
-           <c:if test="${isContigRec}">
-                 <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
-           </c:if>
-           <a href="http://www.plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="plasmodb">PlasmoDB:${primaryKey.recordId}</a>
-        </c:when>
-        <c:when test = "${primaryKey.projectId=='toxodb'}" >
-            <c:if test="${isContigRec}">
-                 <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
-            </c:if>
-            <a href="http://www.toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
-        </c:when>
-    </c:choose>
+              <%-- display a link to record page --%>
+              <c:set value="${record.primaryKey}" var="primaryKey"/>
+              <a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a>
 
-</c:when>
-<c:otherwise>
+            </c:otherwise>
+          </c:choose>
 
-	<!-- modified by Jerric -->
-      <!-- <a href="showRecord.do?name=${recNam}&id=${record.primaryKey}">${fieldVal}</a> -->
-	<c:set value="${record.primaryKey}" var="primaryKey"/>
-        <a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a>
+        </c:when>   <%-- when j=0 --%>
+        <c:otherwise>
 
-</c:otherwise>
-</c:choose>
+          <!-- need to know if fieldVal should be hot linked -->
+          <c:choose>
+            <c:when test="${recAttr.value.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
+              <a href="${recAttr.value.url}">${recAttr.value.visible}</a>
+            </c:when>
+            <c:otherwise>
+              ${fieldVal}
+            </c:otherwise>
+          </c:choose>
 
-
-      </c:when>   <%-- when j=0 --%>
-      <c:otherwise>
-
-        <!-- need to know if fieldVal should be hot linked -->
-        <c:choose>
-          <c:when test="${recAttr.value.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
-            <a href="${recAttr.value.url}">${recAttr.value.visible}</a>
-          </c:when>
-          <c:otherwise>
-            ${fieldVal}
-          </c:otherwise>
-        </c:choose>
-
-      </c:otherwise>
-    </c:choose>
+        </c:otherwise>
+      </c:choose>
     </td>
     <c:set var="j" value="${j+1}"/>
 
