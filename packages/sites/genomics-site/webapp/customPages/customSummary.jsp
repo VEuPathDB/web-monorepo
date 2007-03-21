@@ -361,7 +361,7 @@ function resetAttr() {
        </td>
        <td nowrap>
            <%-- display a list of sortable attributes --%>
-           <c:set var="addAttributes" value="${wdkAnswer.sortableAttributes}" />
+           <c:set var="addAttributes" value="${wdkAnswer.displayableAttributes}" />
            &nbsp;
            <select id="addAttributes" onChange="addAttr()">
                <option value="">--- Add Column ---</option>
@@ -378,75 +378,82 @@ function resetAttr() {
 </div>
 
 <!-- content of current page -->
-<table width="100%" border="1" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="3" cellspacing="0">
 <tr class="headerRow">
+  <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
+    <th align="center" valign="bottom">
+      ${sumAttrib.displayName}
+    </th>
+  </c:forEach>
+</tr>
 
-<c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
-<c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
+<tr class="headerButtonRow">
+
+  <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
+  <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
 
   <c:set var="j" value="0"/>
 
   <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
-    <th align="left">
+    <th align="center" valign="bottom">
       <c:set var="attrName" value="${sumAttrib.name}" />
-      <table border="0" cellspacing="0" cellpadding="0">
-        <tr class="headerCleanRow">
-            <th align="center" valign="middle" colspan="3">${sumAttrib.displayName}</th>
-        </tr>
-        <tr class="headerCleanRow">
-            <th align="right" valign="middle" width="40%" nowrap>
+      <table border="0" cellspacing="0" cellpadding="2" height="100%">
+        <tr class="headerInternalRow">
+            <c:if test="${j != 0 && j != 1}">
+                <td align="right" valign="middle" nowrap>
                 <%-- display arrange attribute buttons --%>
-                <c:if test="${j != 0 && j != 1}">
                     <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=arrange&attribute=${attrName}&left=true' />" 
                        title="Move ${sumAttrib} left">
                         <img src="<c:url value='/images/move_left.gif' />" border="0" /></a>
-                </c:if>
-                <c:if test="${j != 0 && j != fn:length(wdkAnswer.summaryAttributes) - 1}">
-                    <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=arrange&attribute=${attrName}&left=false' />" 
-                       title="Move ${sumAttrib} right">
-                        <img src="<c:url value='/images/move_right.gif' />" border="0" /></a>
-                </c:if>
-                &nbsp;
-            </th>
-            <th align="center" valign="middle" width="10%">
-                <div>
-                <c:choose>
-                    <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
-                        <img src="<c:url value='images/sort_up_h.gif' />" 
-                             title="Result is sorted by ${sumAttrib}" />
-                    </c:when>
-                    <c:otherwise>
-                        <%-- display sorting buttons --%>
-                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=sort&attribute=${attrName}&sortOrder=asc' />" 
-                           title="Sort by ${sumAttrib}">
-                            <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
-                    </c:otherwise>
-                </c:choose>
-                </div>
-                <div>
-                <c:choose>
-                    <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
-                        <img src="<c:url value='images/sort_down_h.gif' />" 
-                             title="Result is reverse sorted by ${sumAttrib}" />
-                    </c:when>
-                    <c:otherwise>
-                        <%-- display sorting buttons --%>
-                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=sort&attribute=${attrName}&sortOrder=desc' />" 
-                           title="Reverse sort by ${sumAttrib}">
-                            <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
-                    </c:otherwise>
-                </c:choose>
-                </div>
-            </th>
-            <th align="left" valign="middle" width="40%">
-                &nbsp;
-                <c:if test="${j != 0}">
+                </td>
+            </c:if>
+            <c:if test="${j != 0}">
+                <td align="left" valign="middle" nowrap>
                     <%-- display remove attribute buttons --%>
                     <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=remove&attribute=${attrName}' />" 
                        title="Remove ${sumAttrib} column">
                         <img src="<c:url value='/images/remove.gif' />" border="0" /></a>
-                </c:if>
-            </th>
+                </td>
+            </c:if>
+            <c:if test="${j != 0 && j != fn:length(wdkAnswer.summaryAttributes) - 1}">
+                <td>
+                    <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=arrange&attribute=${attrName}&left=false' />" 
+                       title="Move ${sumAttrib} right">
+                        <img src="<c:url value='/images/move_right.gif' />" border="0" /></a>
+                </td>
+            </c:if>
+            <c:if test="${sumAttrib.sortable}">
+                <td align="center" valign="middle" width="10">
+                  <div>
+                    <c:choose>
+                      <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
+                        <img src="<c:url value='images/sort_up_h.gif' />" 
+                             title="Result is sorted by ${sumAttrib}" />
+                      </c:when>
+                      <c:otherwise>
+                        <%-- display sorting buttons --%>
+                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=sort&attribute=${attrName}&sortOrder=asc' />" 
+                           title="Sort by ${sumAttrib}">
+                            <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
+                      </c:otherwise>
+                    </c:choose>
+                  </div>
+                  <div>
+                    <c:choose>
+                      <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
+                        <img src="<c:url value='images/sort_down_h.gif' />" 
+                             title="Result is reverse sorted by ${sumAttrib}" />
+                      </c:when>
+                      <c:otherwise>
+                        <%-- display sorting buttons --%>
+                        <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=sort&attribute=${attrName}&sortOrder=desc' />" 
+                           title="Reverse sort by ${sumAttrib}">
+                            <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
+                      </c:otherwise>
+                    </c:choose>
+                  </div>
+                </td>
+            </c:if>
         </tr>
       </table>
     </th>
