@@ -338,48 +338,41 @@ function resetAttr() {
           maxPageItems="${wdk_paging_pageSize}"
           export="currentPageNumber=pageNumber">
   <pg:param name="wdk_history_id" id="pager" value="${historyId}" />
-  <!-- pager on top -->
-  <wdk:pager pager_id="top"/> 
 
-<div align="right">
   <table cellspacing="0" cellpadding="0" border="0" width="100%">
-    <tr class="headerButtonRow">
-       <%-- display a list of displaying attributes to be removed --%>
-       <%-- td nowrap>
-           <c:set var="removeAttributes" value="${wdkAnswer.summaryAttributes}" />
-           &nbsp;
-           <select id="removeAttributes" name="removeAttributes" onChange="removeAttr();">
-               <option value="">--- Remove Column ---</option>
-               <c:set var="j" value="0"/>
-               <c:forEach items="${removeAttributes}" var="attribute">
-                 <c:if test="${j != 0}">
-                   <option value="${attribute.name}">${attribute.displayName}</option>
-                 </c:if>
-                 <c:set var="j" value="${j+1}"/>
-               </c:forEach>
-           </select>
-       </td --%>
-       <td nowrap align="right">
+    <tr>
+      <td nowrap> 
+        <!-- pager on top -->
+        <wdk:pager pager_id="top"/> 
+      </td>
+      <td nowrap align="right">
            <%-- display a list of sortable attributes --%>
            <c:set var="addAttributes" value="${wdkAnswer.displayableAttributes}" />
-           &nbsp;
            <select id="addAttributes" onChange="addAttr()">
                <option value="">--- Add Column ---</option>
                <c:forEach items="${addAttributes}" var="attribute">
                  <option value="${attribute.name}">${attribute.displayName}</option>
                </c:forEach>
            </select>
-       </td>
-       <td nowrap width="10">
-          <input type="button" value="Reset Columns" onClick="resetAttr()" />
-       </td>
+      </td>
+      <td nowrap align="right" width="5%">
+         &nbsp;
+         <input type="button" value="Reset Columns" onClick="resetAttr()" />
+      </td>
     </tr>
   </table>
-</div>
 
 <!-- content of current page -->
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
 
+
+<tr class="headerRow">
+  <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
+    <th align="center" valign="middle">
+      ${sumAttrib.displayName}
+    </th>
+  </c:forEach>
+</tr>
 
 <tr class="headerButtonRow">
 
@@ -473,14 +466,6 @@ function resetAttr() {
         </th>
         <c:set var="j" value="${j+1}"/>
     </c:forEach>
-</tr>
-
-<tr class="headerRow">
-  <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
-    <th align="center" valign="middle">
-      ${sumAttrib.displayName}
-    </th>
-  </c:forEach>
 </tr>
 
 <c:set var="i" value="0"/>
