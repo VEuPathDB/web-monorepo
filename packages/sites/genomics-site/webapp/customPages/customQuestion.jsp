@@ -106,7 +106,8 @@ function showParamGroup(group, isShow)
   
         <%-- hide invisible params --%>
         <c:choose>
-            <c:when test="${isHidden}"><html:hidden property="myProp(${qP.class.name})"/></c:when>
+            <%--<c:when test="${isHidden}"><html:hidden property="myProp(${qP.class.name})"/></c:when>--%>
+            <c:when test="${isHidden}"><html:hidden property="myProp(${pNam})"/></c:when>
             <c:otherwise> <%-- visible param --%>
 
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
