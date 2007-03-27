@@ -32,7 +32,28 @@
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />">
         <input type="hidden" name="wdk_history_id" value="${history_id}"/>
         <input type="hidden" name="wdkReportFormat" value="${format}"/>
-        <html:submit property="downloadConfigSubmit" value="Get Report"/>
+    <table>
+        <tr>
+            <td>
+                <input type="checkbox" name="hasTranscript" value="true">Include Predicted RNA/mRNA Sequence (introns spliced out)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" name="hasProtein" value="true">Include Predicted Protein Sequence
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" name="hasCodingSequence" value="true">Include coding sequence
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <html:submit property="downloadConfigSubmit" value="Get Report"/>
+            </td>
+        </tr>
+    </table>
 </form>
 
   </c:otherwise>
