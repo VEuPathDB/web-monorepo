@@ -85,17 +85,57 @@
 </c:if>
 
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-    <td nowrap valign="middle">&nbsp;&nbsp;&#8226;&nbsp;<a href='${link}' class='queryGridActive' onmouseover="this.T_WIDTH=164;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> 
+
+    <td align="left" valign="top">&nbsp;&#8226;&nbsp;</td>
+
+    <td  align="left" valign="bottom"><a href='${link}' class='queryGridActive' onmouseover="this.T_WIDTH=200;this.T_PADDING=6;this.T_BGCOLOR='white'; this.T_FONTCOLOR='#003366';  this.T_BORDERCOLOR='#003366'; this.T_FONTSIZE='12px'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> 
     </td>
-    <td align="right">
-        ${A}${C}${P}${T}
+
+    <td  width="56" nowrap align="right"  valign="bottom">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr nowrap>
+    <td width="14">
+        ${A}
     </td>
+ <td width="14">
+        ${C}
+    </td>
+ <td width="14">
+        ${P}
+    </td>
+ <td width="14">
+        ${T}
+    </td>
+</tr></table>
+
+    </td>
+
 </c:if>
 
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-    <td nowrap valign="middle">&nbsp;&nbsp;&#8226;&nbsp;<a href="javascript:void(0);" class='queryGridInactive' onmouseover="this.T_WIDTH=164;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).  For questions contact <a href=&quot;help.jsp&quot;><u>${modelName} Support</u></a>')">${linktext}</a>
+
+    <td  align="left"  valign="top">&nbsp;&#8226;&nbsp; </td>
+
+    <td   align="left" valign="bottom"><a href="javascript:void(0);" class='queryGridInactive' onmouseover="this.T_WIDTH=200;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='white'; this.T_FONTCOLOR='#003366'; this.T_BORDERCOLOR='#003366';  this.T_FONTSIZE='12px';  return escape('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).  For questions contact <a href=&quot;help.jsp&quot;><u>${modelName} Support</u></a>')">${linktext}</a>
     </td>
-    <td align="right">
-        ${A}${C}${P}${T}
+
+    <td  width="56" nowrap align="right"  valign="bottom">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr nowrap>
+    <td width="14">
+        ${A}
     </td>
+ <td width="14">
+        ${C}
+    </td>
+ <td width="14">
+        ${P}
+    </td>
+ <td width="14">
+        ${T}
+    </td>
+</tr></table>
+
+    </td>
+
 </c:if>
