@@ -38,16 +38,28 @@
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
   <c:if test="${token eq 'P'}">
-        <c:set var="P" value="<a href='${plasmoRoot}${link}'>&nbsp;<img src='/images/plasmodb_letter.gif' border='0' alt='plasmodb' /></a>" />
+        <c:set var="P_image">
+            <c:url value="/images/plasmodb_letter.gif" />
+        </c:set>
+        <c:set var="P" value="<a href='${plasmoRoot}${link}'>&nbsp;<img src='${P_image}' border='0' alt='plasmodb' /></a>" />
   </c:if>
   <c:if test="${token eq 'T'}">
-        <c:set var="T" value="<a href='${toxoRoot}${link}'>&nbsp;<img src='/images/toxodb_letter.gif' border='0' alt='toxodb' /></a>" />
+        <c:set var="T_image">
+            <c:url value="/images/toxodb_letter.gif" />
+        </c:set>
+        <c:set var="T" value="<a href='${toxoRoot}${link}'>&nbsp;<img src='${T_image}' border='0' alt='toxodb' /></a>" />
   </c:if>
   <c:if test="${token eq 'C'}">
-        <c:set var="C" value="<a href='${cryptoRoot}${link}'>&nbsp;<img src='/images/cryptodb_letter.gif' border='0' alt='cryptodb' /></a>" />
+        <c:set var="C_image">
+            <c:url value="/images/cryptodb_letter.gif" />
+        </c:set>
+        <c:set var="C" value="<a href='${cryptoRoot}${link}'>&nbsp;<img src='${C_image}' border='0' alt='cryptodb' /></a>" />
   </c:if>
   <c:if test="${token eq 'A'}">
-        <c:set var="A" value="<a href='${apiRoot}${link}'>&nbsp;<img src='/images/apidb_letter.gif' border='0' alt='apidb' /></a>" />
+        <c:set var="A_image">
+            <c:url value="/images/apidb_letter.gif" />
+        </c:set>
+        <c:set var="A" value="<a href='${apiRoot}${link}'>&nbsp;<img src='${A_image}' border='0' alt='apidb' /></a>" />
   </c:if>
 </c:forEach>
 
@@ -73,57 +85,17 @@
 </c:if>
 
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-
-    <td align="left" valign="top">&nbsp;&#8226;&nbsp;</td>
-
-    <td  align="left" valign="bottom"><a href='${link}' class='queryGridActive' onmouseover="this.T_WIDTH=200;this.T_PADDING=6;this.T_BGCOLOR='white'; this.T_FONTCOLOR='#003366';  this.T_BORDERCOLOR='#003366'; this.T_FONTSIZE='12px'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> 
+    <td nowrap valign="middle">&nbsp;&nbsp;&#8226;&nbsp;<a href='${link}' class='queryGridActive' onmouseover="this.T_WIDTH=164;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> 
     </td>
-
-    <td  width="56" nowrap align="right"  valign="bottom">
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr nowrap>
-    <td width="14">
-        ${A}
+    <td align="right">
+        ${A}${C}${P}${T}
     </td>
- <td width="14">
-        ${C}
-    </td>
- <td width="14">
-        ${P}
-    </td>
- <td width="14">
-        ${T}
-    </td>
-</tr></table>
-
-    </td>
-
 </c:if>
 
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-
-    <td  align="left"  valign="top">&nbsp;&#8226;&nbsp; </td>
-
-    <td   align="left" valign="bottom"><a href="javascript:void(0);" class='queryGridInactive' onmouseover="this.T_WIDTH=200;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='white'; this.T_FONTCOLOR='#003366'; this.T_BORDERCOLOR='#003366';  this.T_FONTSIZE='12px';  return escape('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).  For questions contact <a href=&quot;help.jsp&quot;><u>${modelName} Support</u></a>')">${linktext}</a>
+    <td nowrap valign="middle">&nbsp;&nbsp;&#8226;&nbsp;<a href="javascript:void(0);" class='queryGridInactive' onmouseover="this.T_WIDTH=164;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='#d3e3f6'; return escape('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).  For questions contact <a href=&quot;help.jsp&quot;><u>${modelName} Support</u></a>')">${linktext}</a>
     </td>
-
-    <td  width="56" nowrap align="right"  valign="bottom">
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr nowrap>
-    <td width="14">
-        ${A}
+    <td align="right">
+        ${A}${C}${P}${T}
     </td>
- <td width="14">
-        ${C}
-    </td>
- <td width="14">
-        ${P}
-    </td>
- <td width="14">
-        ${T}
-    </td>
-</tr></table>
-
-    </td>
-
 </c:if>
