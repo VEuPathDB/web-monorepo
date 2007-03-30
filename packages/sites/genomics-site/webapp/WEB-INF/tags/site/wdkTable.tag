@@ -30,7 +30,7 @@
 <c:if test="${suppressColumnHeaders == null || !suppressColumnHeaders}">
     <c:set var="h" value="0"/>
     <tr class="headerRow">
-        <c:forEach var="hCol" items="${tbl.visibleAttributeFields}">
+        <c:forEach var="hCol" items="${tbl.displayableFields}">
            <c:set var="h" value="${h+1}"/>
            <th align="left">${hCol.displayName}</th>
         </c:forEach>
