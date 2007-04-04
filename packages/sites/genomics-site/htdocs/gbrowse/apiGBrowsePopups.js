@@ -56,18 +56,18 @@ function pst (tip, paramsString) {
   revArray['T'] = 'A';
   revArray['G'] = 'C';
 
-  const IS_CODING     = 0;
-  const POS_IN_CDS     = IS_CODING + 1;
+  const POS_IN_CDS     = 0;
   const POS_IN_PROTEIN = POS_IN_CDS + 1; 
   const REF_STRAIN    = POS_IN_PROTEIN + 1; 
   const REF_AA        = REF_STRAIN + 1; 
-  const GENE         = REF_AA + 1; 
-  const REVERSED     = GENE + 1; 
+  const REVERSED     = REF_AA + 1; 
   const REF_NA        = REVERSED + 1; 
-  const NON_SYN       = REF_NA + 1; 
-  const SOURCE_ID     = NON_SYN + 1; 
+  const SOURCE_ID     = REF_NA + 1; 
   const VARIANTS     = SOURCE_ID + 1; 
   const START        = VARIANTS + 1;
+  const GENE         = START + 1; 
+  const IS_CODING    = GENE + 1;
+  const NON_SYN    = IS_CODING + 1;
 
   // expand minimalist input data
   var link = "<a href=/plasmo/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
