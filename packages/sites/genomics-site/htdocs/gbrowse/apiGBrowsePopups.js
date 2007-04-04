@@ -26,7 +26,7 @@ function pgt (tip, paramsString) {
   var proteinLink = "<a href=../../../cgi-bin/geneSrt?ids=" + v[SOURCE_ID]
         + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>protein</a>"
 
-  var type = v[IS_PSEUDO] == '1'? v[SO_TERM] : v[SO_TERM] + " (pseudogene)";	
+  var type = (v[IS_PSEUDO] == '1')? v[SO_TERM] : v[SO_TERM] + " (pseudogene)";	
   var download = cdsLink + " | " + proteinLink;
 
   // format into html table rows
@@ -73,10 +73,10 @@ function pst (tip, paramsString) {
   var link = "<a href=/plasmo/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
  
   var type = 'Non-coding';
-  var refNA = v[REVERSED]? revArray[v[REF_NA]] : v[REF_NA];
+  var refNA = (v[REVERSED] == '1')? revArray[v[REF_NA]] : v[REF_NA];
   var refAAString = '';
   if (v[IS_CODING] == '1') {
-    var non = v[NON_SYN]? 'non-' : '';
+    var non = (v[NON_SYN] == '1')? 'non-' : '';
     type = 'Coding (' + non + 'synonymous)';
     refAAString = '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + v[REF_AA];
   }
@@ -86,7 +86,7 @@ function pst (tip, paramsString) {
   rows.push(twoColRow('SNP', link));
   rows.push(twoColRow('Location', v[START]));
   if (v[GENE] != '') rows.push(twoColRow('Gene', v[GENE]));
-  if (v[IS_CODING]] == '1') {
+  if (v[IS_CODING] == '1') {
     rows.push(twoColRow('Position in CDS', v[POS_IN_CDS]));
     rows.push(twoColRow('Position in Protein', v[POS_IN_PROTEIN]));
   }
@@ -104,7 +104,7 @@ function pst (tip, paramsString) {
     if (v[REVERSED] == '1') na = revArray[na]; 
     var aa = variant[2];
     var info = 
-     'NA=' + na + (v[IS_CODING]? '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + aa : '');
+     'NA=' + na + ((v[IS_CODING] == '1')? '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + aa : '');
     rows.push(twoColRow(strain, info));    
   }
 
