@@ -87,11 +87,11 @@ function pst (tip, paramsString) {
   rows.push(twoColRow('Location', v[START]));
   if (v[GENE] != '') rows.push(twoColRow('Gene', v[GENE]));
   if (v[IS_CODING] == '1') {
-    rows.push(twoColRow('Position in CDS', v[POS_IN_CDS]));
-    rows.push(twoColRow('Position in Protein', v[POS_IN_PROTEIN]));
+    rows.push(twoColRow('Position&nbsp;in&nbsp;CDS', v[POS_IN_CDS]));
+    rows.push(twoColRow('Position&nbsp;in&nbsp;protein', v[POS_IN_PROTEIN]));
   }
   rows.push(twoColRow('Type', type));
-  rows.push(twoColRow(v[REF_STRAIN] + ' (reference)', 'NA=' + refNA + refAAString));  
+  rows.push(twoColRow(v[REF_STRAIN] + '&nbsp;(reference)', 'NA=' + refNA + refAAString));  
 
   // make one row per SNP allele
   var variants = new Array();
