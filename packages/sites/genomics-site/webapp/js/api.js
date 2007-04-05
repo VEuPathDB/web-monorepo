@@ -182,11 +182,19 @@ function chooseAll(bool, form, node) {
     }
 }
 
+//function checkAll(bool, form, node) {
+//    var cb = form[node];
+//    cb[0].checked = (bool ? null : 'checked');
+//    for (var i=0; i<cb.length; i++) {
+//        cb[i].checked = (bool ? 'checked' : null);
+//   }
+//}
+
 function checkAll(bool, form, node) {
     var cb = form[node];
-    cb[0].checked = (bool ? null : 'checked');
     for (var i=0; i<cb.length; i++) {
-        cb[i].checked = (bool ? 'checked' : null);
+	 if(bool && cb[i].checked == false) cb[i].click();
+         if(!bool && cb[i].checked == true) cb[i].click();
     }
 }
 
