@@ -45,7 +45,7 @@
   </c:if>
   <c:if test="${token eq 'T'}">
         <c:set var="T_image">
-            <c:url value="/images/toxodb_letter.gif" />
+            <c:url value="/images/toxodb_letter.jpg" />
         </c:set>
         <c:set var="T" value="<a href='${toxoRoot}${link}'>&nbsp;<img src='${T_image}' border='0' alt='toxodb' /></a>" />
   </c:if>
