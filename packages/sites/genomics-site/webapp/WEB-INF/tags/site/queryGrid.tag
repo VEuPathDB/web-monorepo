@@ -12,12 +12,11 @@
 <c:set var="version" value="${wdkModel.version}"/>
 <c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
 
-
 <%-- GENE  --%>
 <c:set var="gqSet" value="${qSetMap['GeneQuestions']}"/>
 <c:set var="gqMap" value="${gqSet.questionsMap}"/>
 
-<c:set var="geneByIdQuestion" value="${gqMap['GeneByLocusTag']}"/>
+<c:set var="geneByIdQuestion" value="${gqMap['GeneBySingleLocusTag']}"/>
 <c:set var="gidqpMap" value="${geneByIdQuestion.paramsMap}"/>
 <c:set var="geneIdParam" value="${gidqpMap['locus_tag']}"/>
 
@@ -30,7 +29,6 @@
 <c:set var="textParam" value="${gkwqpMap['keyword']}"/>
 <c:set var="orgParam" value="${gkwqpMap['organism']}"/>
 
-
 <%-- CONTIG/GENOMIC SEQUENCE  --%>
 <c:set var="cqSet" value="${qSetMap['GenomicSequenceQuestions']}"/>
 <c:set var="cqMap" value="${cqSet.questionsMap}"/>
@@ -39,63 +37,99 @@
 <c:set var="cidqpMap" value="${contigByIdQuestion.paramsMap}"/>
 <c:set var="contigIdParam" value="${cidqpMap['contig']}"/>
 
-<c:set var="gowidth" value="10%"/>
+<c:set var="gowidth" value="5%"/>
 
-<%-- end of adding fast queries --%>
 
+
+
+<%-- END of ADDING fast queries --%>
+
+
+<%-- FAST QUERIES --%>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
+
 
 <table width="100%" border="0" cellspacing="2" cellpadding="0">
 <tr class="headerRow"><td align="center"><b>Fast Gene Queries</b></td></tr>
 
 <tr><td align="center">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">  <%-- FAST queries table --%>
 
-	<table width="45%" border="0" cellspacing="2" cellpadding="1">
-
-<%-- GENES BY GENE ID --%>
+<%-- GENES BY FEATURE ID --%>
 
 <html:form method="get" action="/processQuestionSetsFlat.do">
 <tr>
+<td  valign="top" align="left" width="15%"><font size="-1"><b>Genes by Feature ID</b></td>
 
-<td  valign="top" align="left" width="40%"><font size="-1"><b>Genes by Feature ID</b></td>
-
-<td width="35%" align="right">
-	<input type="hidden" name="questionFullName" value="GeneQuestions.GeneByLocusTag">
-	<html:text property="myProp(GeneQuestions_GeneByLocusTag_${geneIdParam.name})" value="${geneIdParam.default}" size="14"/>&nbsp;
+<td width="15%" align="left">
+	<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag">
+	<html:text property="myProp(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})" value="${geneIdParam.default}" size="23"/>&nbsp;
 </td>
 
-<td  valign="top" align="right" width="${gowidth}">
+<td  valign="top" align="left" width="${gowidth}">
 	<input type="hidden" name="questionSubmit" value="Get Answer">
 	<input name="go" value="go" type="image" src="<c:url value="/images/go.gif"/>" border="0" onmouseover="return true;">
 </td>
 
-</tr>
 </html:form>
 
 
 <%-- GENES BY KEYWORD --%>
-
 <html:form method="get" action="/processQuestionSetsFlat.do">
-<tr>
+<td  valign="top" width="18%" align="right"><font size="-1"><b>Genes by Keyword</b></td>
+<td width="18%" align="right">
 
-<td  valign="top" align="left"><font size="-1"><b>Genes by Keyword</b></td>
-
-<td align="right">
+<c:choose>
+<%-- CRYPTO: only two parameters: organism and keyword --%>
+<c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
-	<input type="hidden" name="myMultiProp(organism)" value="Cryptosporidium hominis">
+	<input type="hidden" name="myMultiProp(organism)" value="C. hominis,C. parvum">
+	<html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="23"/>&nbsp;
+</c:when>
 
-	<html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="14"/>&nbsp;
+<%-- TOXO:  no organism parameter, different values for datasets parameter --%>
+<c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
+	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
+        <input type="hidden" name="myMultiProp(datasets)"
+               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,Similar
+proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
+        <input type="hidden" name="myMultiProp(case_independent)" value="yes">
+        <input type="hidden" name="myMultiProp(whole_words)" value="yes">
+        <input type="hidden" name="myProp(max_pvalue)" value="-30">
+        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="23"/>&nbsp;
+</c:when>
+
+<%-- PLASMO OR API --%>
+<c:otherwise>
+	<c:choose>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'ApiDB')}">
+		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii"/>
+	</c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
+		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii"/>
+	</c:when>
+	</c:choose> 
+	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
+        <input type="hidden" name="myMultiProp(organism)" value="${listOrganisms}">
+        <input type="hidden" name="myMultiProp(datasets)"
+               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,Similar proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
+        <input type="hidden" name="myMultiProp(case_independent)" value="yes">
+        <input type="hidden" name="myMultiProp(whole_words)" value="yes">
+        <input type="hidden" name="myProp(max_pvalue)" value="-30">
+        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="23"/>&nbsp;
+</c:otherwise>
+
+</c:choose> <%-- Crypto, Toxo or the others --%>
+
 </td>
-
 <td  valign="top" align="right" width="${gowidth}">
-               <input type="hidden" name="questionSubmit" value="Get Answer">
-               <input name="go" value="go" type="image" src="<c:url value="/images/go.gif"/>" border="0" onmouseover="return true;">
+	<input type="hidden" name="questionSubmit" value="Get Answer">
+        <input name="go" value="go" type="image" src="<c:url value="/images/go.gif"/>" border="0" onmouseover="return true;">
 </td>
-
 </tr>
 </html:form>
-
-	</table>
+	
+	</table>  <%-- END OF FAST queries table --%>
 
 </td>
 </tr>
