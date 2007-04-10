@@ -9,6 +9,7 @@
 
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="modelName" value="${wdkModel.displayName}"/>
 <c:set var="version" value="${wdkModel.version}"/>
 <c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
 
@@ -26,7 +27,17 @@
 
 <c:set var="geneByTextQuestion" value="${gqMap['GenesByTextSearch']}"/>
 <c:set var="gkwqpMap" value="${geneByTextQuestion.paramsMap}"/>
+
+<c:set var="PorT" value="${fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo')}" />
+<c:choose>
+<c:when test="${PorT}">
+<c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
+</c:when>
+<c:otherwise>
 <c:set var="textParam" value="${gkwqpMap['keyword']}"/>
+</c:otherwise>
+</c:choose>
+
 <c:set var="orgParam" value="${gkwqpMap['organism']}"/>
 
 <%-- CONTIG/GENOMIC SEQUENCE  --%>
@@ -46,7 +57,7 @@
 
 
 <%-- FAST QUERIES --%>
-<c:set var="modelName" value="${wdkModel.displayName}"/>
+
 
 
 <table width="100%" border="0" cellspacing="2" cellpadding="0">
