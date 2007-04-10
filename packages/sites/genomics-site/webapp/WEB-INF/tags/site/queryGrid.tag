@@ -32,21 +32,14 @@
 <c:choose>
 <c:when test="${PorT}">
 <c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
-</c:when>
-<c:otherwise>
-<c:set var="textParam" value="${gkwqpMap['keyword']}"/>
-</c:otherwise>
-</c:choose>
-
-<c:set var="PorT" value="${fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo')}" />
-<c:choose>
-<c:when test="${PorT}">
 <c:set var="orgParam" value="${gkwqpMap['species_name']}"/>
 </c:when>
 <c:otherwise>
+<c:set var="textParam" value="${gkwqpMap['keyword']}"/>
 <c:set var="orgParam" value="${gkwqpMap['organism']}"/>
 </c:otherwise>
 </c:choose>
+
 
 <%-- CONTIG/GENOMIC SEQUENCE  --%>
 <c:set var="cqSet" value="${qSetMap['GenomicSequenceQuestions']}"/>
