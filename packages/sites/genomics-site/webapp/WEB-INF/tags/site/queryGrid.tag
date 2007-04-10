@@ -50,7 +50,6 @@
 
 
 <table width="100%" border="0" cellspacing="2" cellpadding="0">
-<tr class="headerRow"><td align="center"><b>Fast Gene Queries</b></td></tr>
 
 <tr><td align="center">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">  <%-- FAST queries table --%>
@@ -59,11 +58,11 @@
 
 <html:form method="get" action="/processQuestionSetsFlat.do">
 <tr>
-<td  valign="top" align="left" width="15%"><font size="-1"><b>Genes by Feature ID</b></td>
+<td  valign="top" align="left" width="10%"><font size="-1"><b>Genes by ID</b></td>
 
-<td width="15%" align="left">
+<td width="10%" align="left">
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag">
-	<html:text property="myProp(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})" value="${geneIdParam.default}" size="23"/>&nbsp;
+	<html:text property="myProp(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})" value="${geneIdParam.default}" size="15"/>&nbsp;
 </td>
 
 <td  valign="top" align="left" width="${gowidth}">
@@ -76,15 +75,15 @@
 
 <%-- GENES BY KEYWORD --%>
 <html:form method="get" action="/processQuestionSetsFlat.do">
-<td  valign="top" width="18%" align="right"><font size="-1"><b>Genes by Keyword</b></td>
-<td width="18%" align="right">
+<td  valign="top" width="20%" align="right"><font size="-1"><b>Genes by Keyword</b></td>
+<td width="20%" align="right">
 
 <c:choose>
 <%-- CRYPTO: only two parameters: organism and keyword --%>
 <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
 	<input type="hidden" name="myMultiProp(organism)" value="C. hominis,C. parvum">
-	<html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="23"/>&nbsp;
+	<html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
 </c:when>
 
 <%-- TOXO:  no organism parameter, different values for datasets parameter --%>
