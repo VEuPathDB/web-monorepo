@@ -52,7 +52,7 @@
 <table width="100%" border="0" cellspacing="2" cellpadding="0">
 
 <tr><td align="center">
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">  <%-- FAST queries table --%>
+	<table width="100%" border="0" cellspacing="2" cellpadding="2">  <%-- FAST queries table --%>
 
 <%-- GENES BY FEATURE ID --%>
 
