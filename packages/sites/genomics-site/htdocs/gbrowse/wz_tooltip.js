@@ -9,7 +9,7 @@ or http://www.walterzorn.de
 
 Copyright (c) 2002-2005 Walter Zorn. All rights reserved.
 Created 1. 12. 2002 by Walter Zorn (Web: http://www.walterzorn.com )
-Last modified: 22. 1. 2007
+Last modified: 17. 2. 2007
 
 Cross-browser tooltips working even in Opera 5 and 6,
 as well as in NN 4, Gecko-Browsers, IE4+, Opera 7+ and Konqueror.
@@ -35,12 +35,12 @@ see http://www.gnu.org/copyleft/lesser.html
 
 
 ////////////////  GLOBAL TOOPTIP CONFIGURATION  /////////////////////
-var ttAbove       = "true";        // tooltip above mousepointer? Alternative: true
+var ttAbove       = false;        // tooltip above mousepointer? Alternative: true
 var ttBgColor     = "#e6ecff";
 var ttBgImg       = "";           // path to background image;
 var ttBorderColor = "#003399";
 var ttBorderWidth = 1;
-var ttClickClose  = false;
+var ttClickClose  = true;
 var ttDelay       = 500;          // time span until tooltip shows up [milliseconds]
 var ttFontColor   = "#000066";
 var ttFontFace    = "arial,helvetica,sans-serif";
@@ -54,7 +54,7 @@ var ttPadding     = 3;            // spacing between border and content
 var ttShadowColor = "";
 var ttShadowWidth = 0;
 var ttStatic      = false;        // tooltip NOT move with the mouse? Alternative: true
-var ttSticky      = false;        // do NOT hide tooltip on mouseout? Alternative: true
+var ttSticky      = true;        // do NOT hide tooltip on mouseout? Alternative: true
 var ttTemp        = 0;            // time span after which the tooltip disappears; 0 (zero) means "infinite timespan"
 var ttTextAlign   = "left";
 var ttTitleColor  = "#ffffff";    // color of caption text
@@ -211,9 +211,8 @@ function tt_EvY(t_e)
 		t_y -= (tt_objH + tt_offY - 15);
 	else if(t_y > ylim || !tt_sub && t_y > ylim-24)
 	{
-		//t_y -= (tt_objH + 5);
-		t_y += tt_offY;
-		tt_sub = true;
+		t_y -= (tt_objH + 5);
+		tt_sub = false;
 	}
 	else
 	{
@@ -253,14 +252,14 @@ function tt_GetDivW()
 {
 	return tt_Int(
 		tt_n4? tt_obj.clip.width
-		: (tt_obj.style.pixelWidth || tt_obj.offsetWidth)
+		: (tt_obj.offsetWidth || tt_obj.style.pixelWidth)
 	);
 }
 function tt_GetDivH()
 {
 	return tt_Int(
 		tt_n4? tt_obj.clip.height
-		: (tt_obj.style.pixelHeight || tt_obj.offsetHeight)
+		: (tt_obj.offsetHeight || tt_obj.style.pixelHeight)
 	);
 }
 
