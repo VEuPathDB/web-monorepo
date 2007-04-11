@@ -529,6 +529,9 @@ function resetAttr() {
 
           <!-- need to know if fieldVal should be hot linked -->
           <c:choose>
+            <c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
+               <span style="color:gray;">N/A</span>
+            </c:when>
             <c:when test="${recAttr.value.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
               <a href="${recAttr.value.url}">${recAttr.value.visible}</a>
             </c:when>
