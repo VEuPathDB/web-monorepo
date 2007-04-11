@@ -67,75 +67,46 @@
 <c:if test="${modelName eq 'CryptoDB'}">
     <c:set var="orgnismName" value="Cryptosporidium"/>
 </c:if>
-
 <c:if test="${modelName eq 'PlasmoDB'}">
         <c:set var="orgnismName" value="Plasmodium"/>
 </c:if>
-
 <c:if test="${modelName eq 'ToxoDB'}">
         <c:set var="orgnismName" value="Toxoplasma"/>
 </c:if>
-
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname].summary}">
     <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
 </c:if>
-
 <c:if test="${empty wdkModel.questionSetsMap[qset].questionsMap[qname].summary}">
         <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].description}"/>
 </c:if>
 
-<c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
-    <td align="left" valign="top">&nbsp;&#8226;&nbsp;</td>
+
+    <td width="5" align="left"  valign="top">&nbsp;&#8226;&nbsp; </td>
+
+<%-- LINK ACTIVE --%>
+<c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
     <td  align="left" valign="bottom"><a href='${link}' class='queryGridActive' onmouseover="this.T_WIDTH=200;this.T_PADDING=6;this.T_BGCOLOR='white'; this.T_FONTCOLOR='#003366';  this.T_BORDERCOLOR='#003366'; this.T_FONTSIZE='12px'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> 
     </td>
 
-    <td  width="56" nowrap align="right"  valign="bottom">
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr nowrap>
-    <td width="14">
-        ${A}
-    </td>
- <td width="14">
-        ${C}
-    </td>
- <td width="14">
-        ${P}
-    </td>
- <td width="14">
-        ${T}
-    </td>
-</tr></table>
-
-    </td>
-
 </c:if>
 
+<%-- LINK INACTIVE --%>
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-
-    <td  align="left"  valign="top">&nbsp;&#8226;&nbsp; </td>
 
     <td   align="left" valign="bottom"><a href="javascript:void(0);" class='queryGridInactive' onmouseover="this.T_WIDTH=200;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='white'; this.T_FONTCOLOR='#003366'; this.T_BORDERCOLOR='#003366';  this.T_FONTSIZE='12px';  return escape('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).  For questions contact <a href=&quot;help.jsp&quot;><u>${modelName} Support</u></a>')">${linktext}</a>
     </td>
 
-    <td  width="56" nowrap align="right"  valign="bottom">
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr nowrap>
-    <td width="14">
-        ${A}
-    </td>
- <td width="14">
-        ${C}
-    </td>
- <td width="14">
-        ${P}
-    </td>
- <td width="14">
-        ${T}
-    </td>
-</tr></table>
-
-    </td>
-
 </c:if>
+
+    <td  width="56" nowrap align="right"  valign="bottom">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr nowrap>
+	<td width="14">${A}</td>
+	<td width="14">${C}</td>
+	<td width="14">${P}</td>	
+	<td width="14">${T}</td>
+</tr>
+</table>
+    </td>
