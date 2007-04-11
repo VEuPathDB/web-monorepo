@@ -153,7 +153,7 @@
 <%--------------------------------------------------------------------%>
 
 <%-- the cellspacing is what allows for separation between Genomic and SNP (EST and ORF) titles --%>
-<table width="100%" border="0" cellspacing="2" cellpadding="0">
+<table width="100%" border="0" cellspacing="3" cellpadding="0">
 
 <%--  All Gene Queries  --%>
 <tr class="headerRow"><td colspan="3" align="center"><b>All Gene Queries</b></td></tr>

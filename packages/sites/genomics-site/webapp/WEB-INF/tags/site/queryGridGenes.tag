@@ -6,7 +6,7 @@
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
-<table width="100%" border="0" cellspacing="1" cellpadding="1">
+<table width="100%" border="0" cellspacing="2" cellpadding="2">
 
     <tr>
         <td width="33%" valign="top">
