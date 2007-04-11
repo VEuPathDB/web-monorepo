@@ -91,6 +91,8 @@
 <td width="20%" align="right">
 
 <c:choose>
+
+
 <%-- CRYPTO: only two parameters: organism and keyword --%>
 <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
@@ -98,19 +100,20 @@
 	<html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
 </c:when>
 
+
 <%-- TOXO:  no organism parameter, different values for datasets parameter --%>
 <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
         <input type="hidden" name="myMultiProp(datasets)"
-               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,Similar
-proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
+               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,Similar proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
         <input type="hidden" name="myMultiProp(case_independent)" value="yes">
         <input type="hidden" name="myMultiProp(whole_words)" value="yes">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
         <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="23"/>&nbsp;
 </c:when>
 
-<%-- PLASMO OR API --%>
+
+<%-- PLASMO OR API using same interface --%>
 <c:otherwise>
 	<c:choose>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'ApiDB')}">
@@ -120,8 +123,9 @@ proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic
 		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii"/>
 	</c:when>
 	</c:choose> 
+
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
-        <input type="hidden" name="myMultiProp(organism)" value="${listOrganisms}">
+        <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}">
         <input type="hidden" name="myMultiProp(datasets)"
                value="Gene product,Gene notes,User comments,Protein domain names and descriptions,Similar proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
         <input type="hidden" name="myMultiProp(case_independent)" value="yes">
