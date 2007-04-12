@@ -27,16 +27,15 @@
 
 <c:set var="geneByTextQuestion" value="${gqMap['GenesByTextSearch']}"/>
 <c:set var="gkwqpMap" value="${geneByTextQuestion.paramsMap}"/>
+<c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
 
 <c:set var="PorT" value="${fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo')}" />
 <c:choose>
 <c:when test="${PorT}">
-<c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
-<c:set var="orgParam" value="${gkwqpMap['species_name']}"/>
+	<c:set var="orgParam" value="${gkwqpMap['species_name']}"/>
 </c:when>
 <c:otherwise>
-<c:set var="textParam" value="${gkwqpMap['keyword']}"/>
-<c:set var="orgParam" value="${gkwqpMap['organism']}"/>
+	<c:set var="orgParam" value="${gkwqpMap['organism']}"/>
 </c:otherwise>
 </c:choose>
 
@@ -92,32 +91,26 @@
 
 <c:choose>
 
-
-<%-- CRYPTO: only two parameters: organism and keyword --%>
-<c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
-	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
-	<input type="hidden" name="myMultiProp(organism)" value="C. hominis,C. parvum">
-	<html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
-</c:when>
-
-
-<%-- TOXO:  no organism parameter, different values for datasets parameter --%>
+<%-- TOXO:  no organism parameter, different values for datasets parameter? --%>
 <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
         <input type="hidden" name="myMultiProp(datasets)"
-               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,Similar proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
+               value="Gene product,Gene notes,User comments,Similar proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
         <input type="hidden" name="myMultiProp(case_independent)" value="yes">
-        <input type="hidden" name="myMultiProp(whole_words)" value="yes">
+        <input type="hidden" name="myMultiProp(whole_words)" value="no">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
         <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="23"/>&nbsp;
 </c:when>
 
 
-<%-- PLASMO OR API using same interface --%>
+<%-- PLASMO OR API or CRYPTO using same interface --%>
 <c:otherwise>
 	<c:choose>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'ApiDB')}">
 		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii"/>
+	</c:when>
+<c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
+		<c:set var="listOrganisms" value="C. hominis,C. parvum"/>
 	</c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
 		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii"/>
@@ -129,7 +122,7 @@
         <input type="hidden" name="myMultiProp(datasets)"
                value="Gene product,Gene notes,User comments,Protein domain names and descriptions,Similar proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
         <input type="hidden" name="myMultiProp(case_independent)" value="yes">
-        <input type="hidden" name="myMultiProp(whole_words)" value="yes">
+        <input type="hidden" name="myMultiProp(whole_words)" value="no">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
         <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="23"/>&nbsp;
 </c:otherwise>
