@@ -99,7 +99,7 @@
         <input type="hidden" name="myMultiProp(case_independent)" value="yes">
         <input type="hidden" name="myMultiProp(whole_words)" value="no">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
-        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="23"/>&nbsp;
+        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
 </c:when>
 
 
@@ -124,7 +124,7 @@
         <input type="hidden" name="myMultiProp(case_independent)" value="yes">
         <input type="hidden" name="myMultiProp(whole_words)" value="no">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
-        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="23"/>&nbsp;
+        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
 </c:otherwise>
 
 </c:choose> <%-- Crypto, Toxo or the others --%>
