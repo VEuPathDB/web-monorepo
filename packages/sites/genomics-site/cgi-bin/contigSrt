@@ -1,0 +1,16 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use lib "@targetDir@/lib/perl";
+$ENV{GUS_HOME} = '@targetDir@';
+
+use ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolContigs;
+
+my $app =
+  ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolContigs->new(ConfigFile => "$ENV{GUS_HOME}/config/gus.config");
+
+$app->go();
+
+
+
