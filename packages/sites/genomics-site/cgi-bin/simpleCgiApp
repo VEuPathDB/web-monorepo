@@ -1,0 +1,20 @@
+#!/usr/bin/perl 
+
+# Test module for CgiApp and mod-perl
+# returns SYSDATE from dual and reports if 
+# running in  cgi or Apache::Registry environment
+
+use strict;
+
+use lib "@targetDir@/lib/perl";
+$ENV{GUS_HOME} = '@targetDir@';
+
+use ApiCommonWebsite::View::CgiApp::SimpleDbQuery;
+
+my $app =
+  ApiCommonWebsite::View::CgiApp::SimpleDbQuery->new();
+
+$app->go();
+
+
+

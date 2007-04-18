@@ -5,11 +5,10 @@ use strict;
 use lib "@targetDir@/lib/perl";
 $ENV{GUS_HOME} = '@targetDir@';
 
-use CryptoDBWebsite::View::CgiApp::SequenceRetrievalToolOrfs;
+use ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolOrfs;
 
 my $app =
-  CryptoDBWebsite::View::CgiApp::SequenceRetrievalToolOrfs->
-    new(ConfigFile => "cryptoModel");
+  ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolOrfs->new();
 
 $app->go();
 

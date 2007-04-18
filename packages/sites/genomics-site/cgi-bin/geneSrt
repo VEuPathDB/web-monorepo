@@ -8,7 +8,7 @@ $ENV{GUS_HOME} = '@targetDir@';
 use ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolGenes;
 
 my $app =
-  ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolGenes->new(ConfigFile => "$ENV{GUS_HOME}/config/gus.config");
+  ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolGenes->new();
 
 $app->go();
 
