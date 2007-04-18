@@ -149,7 +149,7 @@
 <table width="100%" border="0" cellspacing="3" cellpadding="0">
 
 <%--  All Gene Queries  --%>
-<tr class="headerRow"><td colspan="3" align="center"><b>All Gene Queries</b></td></tr>
+<tr class="headerRow"><td colspan="3" align="center"><b>Identify Genes by:</b></td></tr>
 
 <tr><td colspan="3">  
 	<div class="smallBlack" align="middle">
@@ -171,7 +171,7 @@
     <td valign="top">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerRow">
-			<td  valign="top" align="center"><b>All Genomic Sequences Queries</b></td>
+			<td  valign="top" align="center"><b>Identify Genomic Sequences by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridContigs/>
@@ -183,7 +183,7 @@
     <td valign="top">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerRow">
-			<td  valign="top" align="center"><b>All SNP Queries</b></td>
+			<td  valign="top" align="center"><b>Identify SNPs by</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridSNPs/>
@@ -198,7 +198,7 @@
     <td valign="top">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerRow">
-			<td  valign="top" align="center"><b>All EST Queries</b></td>
+			<td  valign="top" align="center"><b>Identify ESTs by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridESTs/>
@@ -210,7 +210,7 @@
     <td valign="top">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerRow">
-			<td  valign="top" align="center"><b>All ORF Queries</b></td>
+			<td  valign="top" align="center"><b>Identify ORFs by:/b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridORFs/>
