@@ -1,0 +1,17 @@
+#!/usr/bin/perl 
+
+use strict;
+
+use lib "@targetDir@/lib/perl";
+$ENV{GUS_HOME} = '@targetDir@';
+
+use CryptoDBWebsite::View::CgiApp::SequenceRetrievalToolOrfs;
+
+my $app =
+  CryptoDBWebsite::View::CgiApp::SequenceRetrievalToolOrfs->
+    new(ConfigFile => "cryptoModel");
+
+$app->go();
+
+
+
