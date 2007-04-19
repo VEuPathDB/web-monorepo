@@ -183,7 +183,7 @@
     <td valign="top">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerRow">
-			<td  valign="top" align="center"><b>Identify SNPs by</b></td>
+			<td  valign="top" align="center"><b>Identify SNPs by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridSNPs/>
@@ -210,7 +210,7 @@
     <td valign="top">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerRow">
-			<td  valign="top" align="center"><b>Identify ORFs by:/b></td>
+			<td  valign="top" align="center"><b>Identify ORFs by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridORFs/>
