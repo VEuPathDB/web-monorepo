@@ -2,12 +2,25 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
-<site:header title="PlasmoDB.org :: Retrieve Sequences"
+<!-- get wdkModel saved in application scope -->
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
+<site:header title="${wdkModel.displayName} :: Retrieve Sequences"
                  banner="Retrieve Sequences"
                  parentDivision="PlasmoDB"
                  parentUrl="/home.jsp"
                  divisionName="Retrieve Sequences"
                  division="queries_tools"/>
+<c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
+
+<c:set var="gqSet" value="${qSetMap['InternalQuestions']}"/>
+<c:set var="gqMap" value="${gqSet.questionsMap}"/>
+
+<c:set var="geneByIdQuestion" value="${gqMap['SRT']}"/>
+<c:set var="gidqpMap" value="${geneByIdQuestion.paramsMap}"/>
+<c:set var="genesIds" value="${gidqpMap['genes_ids']}"/>
+<c:set var="contigsIds" value="${gidqpMap['contigs_ids']}"/>
+<c:set var="orfsIds" value="${gidqpMap['orfs_ids']}"/>
 
 <c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
 
@@ -33,7 +46,7 @@
     <table border="0" width="100%" cellpadding="4">
     <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
-            <textarea name="ids" rows="4" cols="60">PFL0275w PF11_0344 MAL13P1.221</textarea>
+            <textarea name="ids" rows="4" cols="60">${genesIds.default}</textarea>
     </td></tr>
 
     <tr><td colspan="2">
@@ -78,7 +91,7 @@
     <table border="0" width="100%" cellpadding="4">
     <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
-            <textarea name="ids" rows="4" cols="60">MAL4</textarea>
+            <textarea name="ids" rows="4" cols="60">${contigsIds.default}</textarea>
     </td></tr>
 
     <tr><td colspan="2">
@@ -102,6 +115,49 @@
     </table>
   </form>
 
+<hr>
+
+<h3><a name="orf">Retrieve Sequences By Open Reading Frame IDs</a></h3>
+
+  <form action="${CGI_URL}/orfSrt" method="post">
+    <table border="0" width="100%" cellpadding="4">
+    <tr><td colspan="2" valign="top"><b>Enter a list of ORF IDs (white space or new line delimited):</b></td><tr>
+    <tr><td colspan="2">
+            <textarea name="ids" rows="4" cols="60">${orfsIds.default}</textarea>
+    </td></tr>
+
+    <tr><td colspan="2">
+    <b>Choose the type of sequence:</b>
+        <input type="radio" name="type" value="protein" checked>protein
+        <input type="radio" name="type" value="genomic">genomic
+    </td></tr>
+
+    <tr><td colspan="2">
+    <b>Choose the region of the sequence(s):</b>
+    </td></tr>
+    <tr><td colspan="2">
+    <table cellpadding="4">
+        <tr><td>begin at</td>
+            <td align="left">
+                <input type="radio" name="upstreamAnchor" value="Start" checked> start<br>
+                <input type="radio" name="upstreamAnchor" value="End"> stop<br>
+            </td>
+            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+/-&nbsp;&nbsp;
+                             <input name="upstreamOffset" value="0" size="6">residues</td></tr>
+
+        <tr><td>end at</td>
+            <td align="left">
+                <input type="radio" name="downstreamAnchor" value="Start"> start<br>
+                <input type="radio" name="downstreamAnchor" value="End" checked> stop<br>
+            </td>
+            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+/-&nbsp;&nbsp;
+                             <input name="downstreamOffset" value="0" size="6"> residues</td></tr>
+         <tr><td><a href="#help"><img src="/images/toHelp.jpg" align="top" border='0'>&nbsp;&nbsp;Help</a></td></tr>
+   </table></td></tr>
+
+        <td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
+
+    </table>
 <hr>
 
 <b><a name="help">Help</a></b>
