@@ -59,26 +59,26 @@ function getComboElement()
       <c:if test="${fn:length(questionFullNamesArray) == 1}">
         <jsp:forward page="/showQuestion.do?questionFullName=${questionFullNamesArray[0]}"/>
       </c:if>
-
+      <tr>
       <c:forEach items="${questionFullNamesArray}" var="qFullName">
-        <c:set var="i" value="${i+1}"/>
+       <c:set var="i" value="${i+1}"/>
         <c:set var="questionFullNameArray" 
                value="${fn:split(qFullName, '.')}" />
         <c:set var="qSetName" value="${questionFullNameArray[0]}"/>
         <c:set var="qName" value="${questionFullNameArray[1]}"/>
         <c:set var="qSet" value="${wdkModel.questionSetsMap[qSetName]}"/>
         <c:set var="q" value="${qSet.questionsMap[qName]}"/>
+        
+        <td align="center">
+            <a href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>', 'des')">
+            <font color="#000066" size="2"><b>${q.displayName}</b>${url}</font></a>
+        </td> 
         <c:choose>
           <c:when test="${i % 4 == 0}"></tr><tr></c:when>
         </c:choose>
-  
-        <td>
-            <a href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>', 'des')">
-            <font color="#000066"><b>${q.displayName}</b>${url}</font></a>
-        </td>
       </c:forEach> <%-- forEach items=questions --%>
 	
-       </tr><tr><td colspan="3"><hr/><td></tr>
+       </tr><tr><td colspan="4"><hr/><td></tr>
         <tr>
         <td colspan="3" align="center">
            <div id="des"></div>
