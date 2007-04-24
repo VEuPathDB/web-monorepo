@@ -59,7 +59,7 @@ my $dbh = getDbHandle();
 
 sub usage {
   die
-qq{
+q{
 Test all sql in a gbrowse XML file
 
 Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --gbrowseFile gbrowseXmlFile [--indexOnly | --failuresOnly | --suggestOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS]
