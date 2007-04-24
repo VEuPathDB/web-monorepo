@@ -1,0 +1,342 @@
+#!/usr/bin/perl
+
+use strict;
+
+#!/usr/bin/perl -w
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Data::Dumper;
+use XML::Simple;
+use Time::HiRes qw(gettimeofday);
+
+use DBI;
+use List::Util qw(min max);
+use Getopt::Long qw(GetOptions);
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+my ($sanityFile, $gbrowseFile, $indexOnly, $failuresOnly, $suggestOnly, $skipTo, $stopAfter, $showParseG, $showParseS);
+my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+
+GetOptions("sanityFile=s" => \$sanityFile,
+	   "gbrowseFile=s" => \$gbrowseFile,
+           "indexOnly!" => \$indexOnly,
+           "failuresOnly!" => \$failuresOnly,
+           "suggestOnly!" => \$suggestOnly,
+           "skipTo!" => \$skipTo,
+           "stopAfter!" => \$stopAfter,
+           "showParseG!" => \$showParseG,
+           "showParseS!" => \$showParseS,
+	  );
+
+&usage unless ($sanityFile && $gbrowseFile);
+
+&usage if ($indexOnly && $suggestOnly);
+
+my ($sanityConfig, $defaultParams, $sqlValues) =
+  &parseSanityFile($sanityFile, $showParseS);
+
+my $gbrowseConfig = &parseGbrowseFile($gbrowseFile, $showParseG);
+
+if ($indexOnly) {
+  &showIndex($sanityConfig);
+  exit(0);
+}
+
+my $queryNameHash = &getQueryNameHash($gbrowseConfig);
+
+&validateTests($queryNameHash, $sanityConfig, $suggestOnly, $defaultParams);
+
+exit(0) if ($suggestOnly);
+
+my $dbh = getDbHandle();
+
+&runTest($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo,
+	 $stopAfter, $defaultParams, $sqlValues);
+
+###################################################################
+
+sub usage {
+  die
+qq{
+Test all sql in a gbrowse XML file
+
+Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --gbrowseFile gbrowseXmlFile [--indexOnly | --failuresOnly | --suggestOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS]
+
+where:
+  sanityFile     an xml file containing the configuration for the test
+  gbrowseFile    the xml file that contains the queries used by gbrowse
+  indexOnly      don't run the tess, just print them out, along with their test number
+  failuresOnly   run the test but only report the failures
+  suggestOnly    printed templates for missing tests
+  skipTo         the index of the first test to run
+  stopAfter      the index of the last test to run
+  showParseG     show the data structure resulting from the parse of gbrowseFile
+  showParseS     show the data structure resulting from the parse of sanityFile
+  
+
+Format of the sanity file XML:
+<gbrowseSanity>
+  <defaultParamValue name="rend" value="1000000"/>
+  <defaultParamValue name="base_start" value="10000"/>
+
+  <test queryName="Gene:density:subfeatures"
+        min="100"
+        max="200">
+    <param name="name" value="MAL1"/>
+    <param name="parent_id" sql="select na_feature_id from dots.genefeature where source_id = 'PF11_0344'"/>
+  </test>
+</gbrowseSanity>
+};
+}
+
+sub parseSanityFile {
+  my($sanityFile, $showParse) = @_;
+
+  open(FILE, $sanityFile) || die "can't open sanity file '$sanityFile' for reading\n";
+  my $simple = XML::Simple->new();
+
+  # use forcearray so elements with one child are still arrays
+  # and, use keyattr so that handlers are given as an ordered list
+  # rather than a hash with name as key.  the ordering is needed
+  # so that undo operations are ordered.  also, the qualifiers retain
+  # the ordering found in the xml file.
+  my $data = $simple->XMLin($sanityFile,
+			    forcearray => 1,
+			    KeyAttr => {});
+  if ($showParse) {
+    print Dumper($data);
+    print "\n\n\n";
+  }
+  my $defaultParams = {};
+  foreach my $defaultParamValue (@{$data->{defaultParamValue}}) {
+    $defaultParams->{$defaultParamValue->{name}} =
+      {value=> $defaultParamValue->{value}, sql => $defaultParamValue->{value}};
+  }
+
+  return ($data, $defaultParams);
+}
+
+sub showIndex {
+  my ($sanityConfig) = @_;
+
+  my $count = 0;
+  foreach my $test (@{$sanityConfig->{test}}) {
+    $count++;
+    my $testString = &test2string($test);
+    print "$testString [test: $count]\n\n";
+  }
+}
+
+sub test2string {
+  my ($test) = @_;
+
+
+  my @paramStrings;
+  foreach my $param (@{$test->{param}}) {
+    my $paramString = "-$param->{name} '";
+    $paramString .= $param->{value}? $param->{value} : $param->{sql};
+    $paramString .= "'";
+    push(@paramStrings, $paramString);
+  }
+  my $paramsString = join(" ", @paramStrings);
+  return "$test->{name} $paramsString";
+}
+
+sub parseGbrowseFile {
+  my($gbrowseFile, $showParse) = @_;
+
+  open(FILE, $gbrowseFile) || die "can't open gbrowse file '$gbrowseFile' for reading\n";
+  my $simple = XML::Simple->new();
+
+  # use forcearray so elements with one child are still arrays
+  # and, use keyattr so that handlers are given as an ordered list
+  # rather than a hash with name as key.  the ordering is needed
+  # so that undo operations are ordered.  also, the qualifiers retain
+  # the ordering found in the xml file.
+  my $data = $simple->XMLin($gbrowseFile,
+			    forcearray => 1,
+	      	    KeyAttr => {});
+  if ($showParse) {
+    print Dumper($data);
+    print  "\n\n\n";
+  }
+  return $data;
+}
+
+sub validateTests {
+  my ($queryNameHash, $sanityConfig, $suggestOnly, $defaultParams) = @_;
+
+  my %testedQueryNames = &getTestedQueryNames($sanityConfig);
+
+  foreach my $queryName (keys %$queryNameHash) {
+    my $query = $queryNameHash->{$queryName};
+    if (!$testedQueryNames{$queryName}) {
+      if ($suggestOnly) {
+	my @paramNames = &getQueryParamNames($query->{sql}->[0]);
+	print qq{    <test name="$query->{name}->[0]" min="FIX_default_min" max="FIX_default_max">\n};
+	foreach my $paramName (@paramNames) {
+	  next if ($defaultParams->{$paramName});
+	  print qq{      <param name="$paramName" value=""/>\n};
+	}
+	print "    </test>\n\n";
+      } else {
+	print "NO TEST FOR: $queryName\n\n";
+      }
+    }
+  }
+
+  foreach my $testedQueryName (keys %testedQueryNames) {
+    print "TEST OF NON-EXISTENT QUERY: '$testedQueryName'\n\n"
+      unless $queryNameHash->{$testedQueryName};
+    ## make sure we have a name and value for the param
+  }
+}
+
+sub getQueryNameHash {
+  my ($gbrowseConfig) = @_;
+
+  my $qnh = {};
+  foreach my $module (@{$gbrowseConfig->{module}}) {
+    foreach my $sqlQuery (@{$module->{sqlQuery}}) {
+      $qnh->{$sqlQuery->{name}->[0]} = $sqlQuery;
+    }
+  }
+  return $qnh;
+}
+
+sub getTestedQueryNames {
+  my ($sanityConfig) = @_;
+
+  my %testedNames;
+  my $count=0;
+  foreach my $test (@{$sanityConfig->{test}}) {
+    $count++;
+    $test->{min} && $test->{max} || die "test $count ($test->{name}) missing either min or max\n";
+    $testedNames{$test->{name}} = 1;
+  }
+  return %testedNames;
+}
+
+sub getQueryParamNames {
+  my ($sqlString) = @_;
+
+  my %paramNames;
+  while ($sqlString =~ /\$(\w+)/g){
+    $paramNames{$1} = 1;
+  }
+  return keys %paramNames;
+}
+
+sub getDbHandle {
+  my $gusconfig = GUS::Supported::GusConfig->new();
+
+  my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+					  $gusconfig->getDatabaseLogin(),
+					  $gusconfig->getDatabasePassword(),
+					  0,0,1,
+					  $gusconfig->getCoreSchemaName()
+					 );
+  my $dbh = $db->getQueryHandle();
+  return $dbh;
+}
+
+
+
+sub runTest {
+  my ($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo, $stopAfter, $defaultParams) = @_;
+
+  my $sqlValues = &getSqlValues($dbh, $sanityConfig->{sqlValue});
+
+  my $count = 0;
+  my $passed = 0;
+  my $failed = 0;
+  foreach my $test (@{$sanityConfig->{test}}) {
+    $count++;
+    next if ($count < $skipTo);
+    last if ($count > $stopAfter);
+
+    my $testString = &test2string($test);
+
+    my $rawSqlString = $queryNameHash->{$test->{name}}->{sql}->[0];
+    my $sqlString = &interpolateParams($rawSqlString, $defaultParams,
+				       $test->{param}, $sqlValues);
+    my $stmt = $dbh->prepare($sqlString);
+    my $time = gettimeofday();
+    $stmt->execute();
+    my $rowCount;
+    while ($stmt->fetchrow_array()) {$rowCount++;}
+    my $totTime = gettimeofday() - $time;
+    $totTime = int($totTime * 100)/100;
+    if ($rowCount >= $test->{min} && $rowCount <= $test->{max}) {
+      print "$totTime PASSED $testString [test: $count]\n\n";
+      $passed++;
+    } else {
+      print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n";
+      print "FAILED $testString [test: $count] expected $test->{min} to $test->{max}.  got: $rowCount
+
+sql:
+$sqlString
+";
+      print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
+    }
+
+  }
+}
+
+sub getSqlValues {
+  my ($dbh, $sqlValueElements) = @_;
+
+  my $answer = {};
+  foreach my $sqlValue (@$sqlValueElements) {
+    my $sql = $sqlValue->{sql}->[0];
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+    my $rowCount;
+    while (my @result = $stmt->fetchrow_array()) {
+      $rowCount++;
+      die ("sqlValue $sqlValue->{name} does not return 1 row ($rowCount)") unless $rowCount == 1;
+      my $columnCount = scalar(@result);
+      die ("sqlValue $sqlValue->{name} does not return 1 column ($columnCount)")
+	unless $columnCount == 1;
+      $answer->{$sqlValue->{name}} = $result[0];
+    }
+  }
+  return $answer;
+}
+
+sub interpolateParams {
+  my ($rawSqlString, $defaultParams, $params, $sqlValues) = @_;
+
+  my $sqlString = $rawSqlString;
+  foreach my $paramName (keys %$defaultParams) {
+    my $macro = '\$' . $paramName;
+    my $val = $defaultParams->{$paramName}->{value};
+    $val = &substituteSqlValue($val, $sqlValues);
+    $sqlString =~ s/$macro/$val/g;
+  }
+
+  foreach my $param (@$params) {
+    my $macro = '\$' . $param->{name};
+    my $val = $param->{value};
+    $val = &substituteSqlValue($val, $sqlValues);
+    $sqlString =~ s/$macro/$val/g;
+  }
+  return $sqlString;
+}
+
+sub substituteSqlValue {
+  my ($macroMaybe, $sqlValues) = @_;
+
+  my $val = $macroMaybe;
+
+  if ($macroMaybe =~ /\$\$(\S+)\$\$/) {
+    $val = $sqlValues->{$1};
+    die ("couldn't find sqlValue for macro '$macroMaybe'") unless $val;
+  }
+
+  return $val;
+}
+
+
