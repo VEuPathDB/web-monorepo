@@ -24,8 +24,8 @@ GetOptions("sanityFile=s" => \$sanityFile,
            "indexOnly!" => \$indexOnly,
            "failuresOnly!" => \$failuresOnly,
            "suggestOnly!" => \$suggestOnly,
-           "skipTo!" => \$skipTo,
-           "stopAfter!" => \$stopAfter,
+           "skipTo=i" => \$skipTo,
+           "stopAfter=i" => \$stopAfter,
            "showParseG!" => \$showParseG,
            "showParseS!" => \$showParseS,
 	  );
@@ -44,9 +44,9 @@ if ($indexOnly) {
   exit(0);
 }
 
-my $queryNameHash = &getQueryNameHash($gbrowseConfig);
+my ($queryNameHash, $queryNameArray) = &getQueryNameHash($gbrowseConfig);
 
-&validateTests($queryNameHash, $sanityConfig, $suggestOnly, $defaultParams);
+&validateTests($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams);
 
 exit(0) if ($suggestOnly);
 
@@ -64,29 +64,48 @@ Test all sql in a gbrowse XML file
 
 Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --gbrowseFile gbrowseXmlFile [--indexOnly | --failuresOnly | --suggestOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS]
 
-where:
+Where:
   sanityFile     an xml file containing the configuration for the test
   gbrowseFile    the xml file that contains the queries used by gbrowse
-  indexOnly      don't run the tess, just print them out, along with their test number
+  indexOnly      don't run the test. only print tests and their test number
   failuresOnly   run the test but only report the failures
-  suggestOnly    printed templates for missing tests
+  suggestOnly    don't run test. only print templates for missing tests
   skipTo         the index of the first test to run
   stopAfter      the index of the last test to run
   showParseG     show the data structure resulting from the parse of gbrowseFile
   showParseS     show the data structure resulting from the parse of sanityFile
-  
 
-Format of the sanity file XML:
+
+
+Sample sanity file XML:
 <gbrowseSanity>
-  <defaultParamValue name="rend" value="1000000"/>
-  <defaultParamValue name="base_start" value="10000"/>
+    <defaultParamValue name="rend" value="500000"/>
+    <defaultParamValue name="base_start" value="1000"/>
+    <defaultParamValue name="dlm" value=","/>
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_MAL3$$"/>
 
-  <test queryName="Gene:density:subfeatures"
-        min="100"
-        max="200">
-    <param name="name" value="MAL1"/>
-    <param name="parent_id" sql="select na_feature_id from dots.genefeature where source_id = 'PF11_0344'"/>
-  </test>
+    <sqlValue name="na_seq_id_MAL3">
+      <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'MAL3'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="na_feat_id_PF11_0344">
+      <sql>
+      select na_feature_id from dots.genefeature where source_id = 'PF11_0344'
+      </sql>
+    </sqlValue>
+
+    <test name="get_feature_by_name" min="1" max="2000">
+      <param name="name" value="MAL1"/>
+    </test>
+
+    <test name="get_sequence" min="1" max="2000">
+    </test>
+
+    <test name="annotation:density:subfeatures" min="1" max="2000">
+      <param name="parent_id" value="$$na_feat_id_PF11_0344$$"/>
+    </test>
 </gbrowseSanity>
 };
 }
@@ -166,11 +185,11 @@ sub parseGbrowseFile {
 }
 
 sub validateTests {
-  my ($queryNameHash, $sanityConfig, $suggestOnly, $defaultParams) = @_;
+  my ($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams) = @_;
 
   my %testedQueryNames = &getTestedQueryNames($sanityConfig);
 
-  foreach my $queryName (keys %$queryNameHash) {
+  foreach my $queryName (@$queryNameArray) {
     my $query = $queryNameHash->{$queryName};
     if (!$testedQueryNames{$queryName}) {
       if ($suggestOnly) {
@@ -198,12 +217,14 @@ sub getQueryNameHash {
   my ($gbrowseConfig) = @_;
 
   my $qnh = {};
+  my @qna;
   foreach my $module (@{$gbrowseConfig->{module}}) {
     foreach my $sqlQuery (@{$module->{sqlQuery}}) {
+      push(@qna, $sqlQuery->{name}->[0]);
       $qnh->{$sqlQuery->{name}->[0]} = $sqlQuery;
     }
   }
-  return $qnh;
+  return ($qnh,\@qna);
 }
 
 sub getTestedQueryNames {
@@ -252,11 +273,13 @@ sub runTest {
   my $count = 0;
   my $passed = 0;
   my $failed = 0;
+  my $runCount = 0;
+
   foreach my $test (@{$sanityConfig->{test}}) {
     $count++;
     next if ($count < $skipTo);
     last if ($count > $stopAfter);
-
+    $runCount++;
     my $testString = &test2string($test);
 
     my $rawSqlString = $queryNameHash->{$test->{name}}->{sql}->[0];
@@ -268,13 +291,13 @@ sub runTest {
     my $rowCount;
     while ($stmt->fetchrow_array()) {$rowCount++;}
     my $totTime = gettimeofday() - $time;
-    $totTime = int($totTime * 100)/100;
+    $totTime = int($totTime * 10000)/10000;
     if ($rowCount >= $test->{min} && $rowCount <= $test->{max}) {
       print "$totTime PASSED $testString [test: $count]\n\n";
       $passed++;
     } else {
       print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n";
-      print "FAILED $testString [test: $count] expected $test->{min} to $test->{max}.  got: $rowCount
+      print "$totTime FAILED $testString [test: $count] expected $test->{min} to $test->{max}.  got: $rowCount
 
 sql:
 $sqlString
@@ -283,6 +306,11 @@ $sqlString
     }
 
   }
+  print "
+Ran $runCount tests
+  $passed passed
+  $failed failed
+";
 }
 
 sub getSqlValues {
