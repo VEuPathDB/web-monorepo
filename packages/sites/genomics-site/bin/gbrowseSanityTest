@@ -68,8 +68,8 @@ Where:
   sanityFile     an xml file containing the configuration for the test
   gbrowseFile    the xml file that contains the queries used by gbrowse
   indexOnly      don't run the test. only print tests and their test number
-  failuresOnly   run the test but only report the failures
   suggestOnly    don't run test. only print templates for missing tests
+  failuresOnly   run the test but only report the failures
   skipTo         the index of the first test to run
   stopAfter      the index of the last test to run
   showParseG     show the data structure resulting from the parse of gbrowseFile
