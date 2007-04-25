@@ -9,19 +9,31 @@
 %>
 <SCRIPT type="text/javascript" >
 
-function writeData(page, div){
+function writeData(page, div, quesName){
         if(page=="") {$(div).innerHTML = ""; return;}
 	var xhr = createXMLHttpRequest();
         xhr.onreadystatechange = function() {
 		if(xhr.readyState==4) {
 			if(xhr.status==200){
-			//	 $(div).innerHTML = xhr.responseText;
+		              // $(div).innerHTML = xhr.responseText;
                                var questionPage = xhr.responseText;
                                var index1 = questionPage.indexOf("<div id=\"question_Form\">") + 24;
 			       var index2 = questionPage.indexOf("</div>", index1);
 			       var ques = questionPage.substring(index1,index2);
-                        //       $(div).innerHTML = "This is index1 = "+index1+" and index 2 "+index2;
-                               $(div).innerHTML = ques;
+
+                               var desc1 = questionPage.indexOf("<p><b>Query description");
+ 			       var desc2 = questionPage.substring(desc1).indexOf("</p>");
+                               var desc = questionPage.substring(desc1, desc2+desc1);
+
+ 			       var help1 = questionPage.indexOf("<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>");
+ 			       var help2 = questionPage.substring(help1).indexOf("</div>");
+                               var help = questionPage.substring(help1, help2+help1);
+
+
+			       $(div).innerHTML = "<font size='5' align='center'><b>" + quesName + "</b></font><br/><br/>";
+                               $(div).innerHTML += ques;
+			       $(div).innerHTML += "<hr/>" + desc;
+			       $(div).innerHTML += help;
                               
 			}else{
 				alert("Message returned, but with an error status");
@@ -69,19 +81,32 @@ function getComboElement()
         <c:set var="qSet" value="${wdkModel.questionSetsMap[qSetName]}"/>
         <c:set var="q" value="${qSet.questionsMap[qName]}"/>
         
-        <td align="center">
-            <a href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>', 'des')">
-            <font color="#000066" size="2"><b>${q.displayName}</b>${url}</font></a>
+        <td align="left">
+            <a href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>', 'des','${q.displayName}' )"
+
+           onmouseover = "return overlib('${q.summary}',
+		FGCOLOR, 'white',
+		BGCOLOR, '#003366',
+		TEXTCOLOR, '#003366',
+		TEXTSIZE, '12px',
+		WIDTH, 350,
+		DELAY, 150,
+		CELLPAD, 5)"
+        onmouseout = "return nd();"
+
+      >
+            <font color="#000066" size="3"><b>${q.displayName}</b>${url}</font></a><br/>
         </td> 
         <c:choose>
-          <c:when test="${i % 4 == 0}"></tr><tr></c:when>
+          <c:when test="${i % 2 == 0}"></tr><tr></c:when>
         </c:choose>
       </c:forEach> <%-- forEach items=questions --%>
 	
        </tr><tr><td colspan="4"><hr/><td></tr>
         <tr>
-        <td colspan="3" align="center">
+        <td colspan="4" align="left">
            <div id="des"></div>
         </td>
         </tr>
+        
      
