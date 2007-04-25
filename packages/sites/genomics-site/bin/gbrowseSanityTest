@@ -418,7 +418,7 @@ sub interpolateParams {
     my $val = $param->{value};
     if ($param->{parentFeatureTest}) {
       $val = $parentFeatureId;
-      die("Can't find parent test '$param->{parentFeatureTest}'") unless $val;
+      die("Can't find feature_id from parent test '$param->{parentFeatureTest}'") unless $val;
    }
     die("Can't find value for param '$param->{name}' of test '$testName'") unless $val;
     $val = &substituteSqlValue($val, $sqlValues);
