@@ -19,6 +19,7 @@ use GUS::ObjRelP::DbiDatabase;
 my ($sanityFile, $gbrowseFile, $indexOnly, $failuresOnly, $suggestOnly, $skipTo, $stopAfter, $showParseG, $showParseS);
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
+$stopAfter = 1000;
 GetOptions("sanityFile=s" => \$sanityFile,
 	   "gbrowseFile=s" => \$gbrowseFile,
            "indexOnly!" => \$indexOnly,
@@ -46,14 +47,16 @@ if ($indexOnly) {
 
 my ($queryNameHash, $queryNameArray) = &getQueryNameHash($gbrowseConfig);
 
-&validateTests($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams);
+my $parentFeatureTests = {};   # tests that subfeature queries refer to
+
+&validateTests($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams, $parentFeatureTests);
 
 exit(0) if ($suggestOnly);
 
 my $dbh = getDbHandle();
 
-&runTest($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo,
-	 $stopAfter, $defaultParams, $sqlValues);
+&runTests($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo,
+	  $stopAfter, $defaultParams, $parentFeatureTests);
 
 ###################################################################
 
@@ -62,7 +65,7 @@ sub usage {
 q{
 Test all sql in a gbrowse XML file
 
-Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --gbrowseFile gbrowseXmlFile [--indexOnly | --failuresOnly | --suggestOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS]
+Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --gbrowseFile gbrowseXmlFile [--indexOnly | --suggestOnly | --failuresOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS]
 
 Where:
   sanityFile     an xml file containing the configuration for the test
@@ -155,7 +158,8 @@ sub test2string {
   my @paramStrings;
   foreach my $param (@{$test->{param}}) {
     my $paramString = "-$param->{name} '";
-    $paramString .= $param->{value}? $param->{value} : $param->{sql};
+    $paramString .= $param->{parentFeatureTest}?
+      $param->{parentFeatureTest} : $param->{value};
     $paramString .= "'";
     push(@paramStrings, $paramString);
   }
@@ -185,9 +189,10 @@ sub parseGbrowseFile {
 }
 
 sub validateTests {
-  my ($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams) = @_;
+  my ($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams, $parentFeatureTests) = @_;
 
-  my %testedQueryNames = &getTestedQueryNames($sanityConfig);
+  my %testedQueryNames =
+    &getTestedQueryNames($sanityConfig, $parentFeatureTests);
 
   foreach my $queryName (@$queryNameArray) {
     my $query = $queryNameHash->{$queryName};
@@ -228,7 +233,7 @@ sub getQueryNameHash {
 }
 
 sub getTestedQueryNames {
-  my ($sanityConfig) = @_;
+  my ($sanityConfig, $parentFeatureTests) = @_;
 
   my %testedNames;
   my $count=0;
@@ -236,6 +241,16 @@ sub getTestedQueryNames {
     $count++;
     $test->{min} && $test->{max} || die "test $count ($test->{name}) missing either min or max\n";
     $testedNames{$test->{name}} = 1;
+    foreach my $param (@{$test->{param}}) {
+      if ($param->{parentFeatureTest}) {
+	$parentFeatureTests->{$param->{parentFeatureTest}} = 1;
+      }
+    }
+  }
+  foreach my $test (@{$sanityConfig->{test}}) {
+    if ($parentFeatureTests->{$test->{name}}) {
+      $parentFeatureTests->{$test->{name}} = {test => $test};
+    }
   }
   return %testedNames;
 }
@@ -265,8 +280,8 @@ sub getDbHandle {
 
 
 
-sub runTest {
-  my ($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo, $stopAfter, $defaultParams) = @_;
+sub runTests {
+  my ($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests) = @_;
 
   my $sqlValues = &getSqlValues($dbh, $sanityConfig->{sqlValue});
 
@@ -282,20 +297,18 @@ sub runTest {
     $runCount++;
     my $testString = &test2string($test);
 
-    my $rawSqlString = $queryNameHash->{$test->{name}}->{sql}->[0];
-    my $sqlString = &interpolateParams($rawSqlString, $defaultParams,
-				       $test->{param}, $sqlValues);
-    my $stmt = $dbh->prepare($sqlString);
     my $time = gettimeofday();
-    $stmt->execute();
-    my $rowCount;
-    while ($stmt->fetchrow_array()) {$rowCount++;}
+    my ($rowCount, $sqlString) = 
+      &runSingleTest($dbh, $test, $defaultParams,
+		     $sqlValues, $parentFeatureTests);
     my $totTime = gettimeofday() - $time;
     $totTime = int($totTime * 10000)/10000;
     if ($rowCount >= $test->{min} && $rowCount <= $test->{max}) {
-      print "$totTime PASSED $testString [test: $count]\n\n";
+      print "$totTime PASSED $testString (returned $rowCount) [test: $count]\n\n"
+	unless $failuresOnly;
       $passed++;
     } else {
+      $failed++;
       print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n";
       print "$totTime FAILED $testString [test: $count] expected $test->{min} to $test->{max}.  got: $rowCount
 
@@ -311,6 +324,51 @@ Ran $runCount tests
   $passed passed
   $failed failed
 ";
+}
+sub runSingleTest {
+  my ($dbh, $test, $defaultParams, $sqlValues, $parentFeatureTests) = @_;
+  my $rawSqlString = $queryNameHash->{$test->{name}}->{sql}->[0];
+
+  my $parentFeatureId = 
+    &findParentFeatureId($dbh, $test->{param}, $defaultParams, $sqlValues, $parentFeatureTests);
+
+  my $sqlString = &interpolateParams($rawSqlString, $defaultParams,
+				     $test->{name},
+				     $test->{param}, $sqlValues,
+				     $parentFeatureId);
+  my $stmt = $dbh->prepare($sqlString);
+  $stmt->execute();
+  my $rowCount = 0;
+  my $parentFeatureTest = $parentFeatureTests->{$test->{name}};
+  my $parentFeatureId;
+
+  while (my $row = $stmt->fetchrow_hashref()) {
+    $rowCount++;
+    # if we have a feature_id, remember it in case there is a subfeature query
+    # that might need it.
+    $parentFeatureId = $row->{FEATURE_ID} if $rowCount == 1;
+  }
+  if ($parentFeatureTest) {
+    $parentFeatureTest->{featureId} = $parentFeatureId;
+    $parentFeatureTest->{rowCount} = $rowCount;
+  }
+
+  return ($rowCount, $sqlString);
+}
+
+sub findParentFeatureId {
+  my ($dbh, $params, $defaultParams, $sqlValues, $parentFeatureTests) = @_;
+  my $parentFeatureId;
+
+  foreach my $param (@$params) {
+    next unless $param->{parentFeatureTest};
+    my $parentTestStuff = $parentFeatureTests->{$param->{parentFeatureTest}};
+    &runSingleTest($dbh, $parentTestStuff->{test}, $defaultParams, $sqlValues, 
+		   $parentFeatureTests)
+      unless $parentTestStuff->{featureId};
+    $parentFeatureId = $parentTestStuff->{featureId};
+  }
+  return $parentFeatureId;
 }
 
 sub getSqlValues {
@@ -335,7 +393,7 @@ sub getSqlValues {
 }
 
 sub interpolateParams {
-  my ($rawSqlString, $defaultParams, $params, $sqlValues) = @_;
+  my ($rawSqlString, $defaultParams, $testName, $params, $sqlValues,$parentFeatureId) = @_;
 
   my $sqlString = $rawSqlString;
   foreach my $paramName (keys %$defaultParams) {
@@ -348,6 +406,11 @@ sub interpolateParams {
   foreach my $param (@$params) {
     my $macro = '\$' . $param->{name};
     my $val = $param->{value};
+    if ($param->{parentFeatureTest}) {
+      $val = $parentFeatureId;
+      die("Can't find parent test '$param->{parentFeatureTest}'") unless $val;
+   }
+    die("Can't find value for param '$param->{name}' of test '$testName'") unless $val;
     $val = &substituteSqlValue($val, $sqlValues);
     $sqlString =~ s/$macro/$val/g;
   }
