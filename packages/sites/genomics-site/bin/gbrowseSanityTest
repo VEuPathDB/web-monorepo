@@ -297,14 +297,23 @@ sub runTests {
     $runCount++;
     my $testString = &test2string($test);
 
+    my ($parentFeatureId, $parentFeatureRowCount) =
+      &findParentFeatureId($dbh, $test->{param}, $defaultParams, $sqlValues,
+			   $parentFeatureTests);
+
     my $time = gettimeofday();
     my ($rowCount, $sqlString) = 
       &runSingleTest($dbh, $test, $defaultParams,
-		     $sqlValues, $parentFeatureTests);
+		     $sqlValues, $parentFeatureTests, $parentFeatureId);
     my $totTime = gettimeofday() - $time;
     $totTime = int($totTime * 10000)/10000;
+    my $multiplier = "";
+    if ($parentFeatureId) {
+      $multiplier = " ($totTime multiplied by $parentFeatureRowCount parent feature rows)";
+      $totTime *= $parentFeatureRowCount;
+    }
     if ($rowCount >= $test->{min} && $rowCount <= $test->{max}) {
-      print "$totTime PASSED $testString (returned $rowCount) [test: $count]\n\n"
+      print "$totTime$multiplier PASSED $testString (returned $rowCount) [test: $count]\n\n"
 	unless $failuresOnly;
       $passed++;
     } else {
@@ -326,11 +335,8 @@ Ran $runCount tests
 ";
 }
 sub runSingleTest {
-  my ($dbh, $test, $defaultParams, $sqlValues, $parentFeatureTests) = @_;
+  my ($dbh, $test, $defaultParams, $sqlValues, $parentFeatureTests, $parentFeatureId) = @_;
   my $rawSqlString = $queryNameHash->{$test->{name}}->{sql}->[0];
-
-  my $parentFeatureId = 
-    &findParentFeatureId($dbh, $test->{param}, $defaultParams, $sqlValues, $parentFeatureTests);
 
   my $sqlString = &interpolateParams($rawSqlString, $defaultParams,
 				     $test->{name},
@@ -359,16 +365,20 @@ sub runSingleTest {
 sub findParentFeatureId {
   my ($dbh, $params, $defaultParams, $sqlValues, $parentFeatureTests) = @_;
   my $parentFeatureId;
+  my $parentFeatureRowCount;
 
   foreach my $param (@$params) {
     next unless $param->{parentFeatureTest};
     my $parentTestStuff = $parentFeatureTests->{$param->{parentFeatureTest}};
-    &runSingleTest($dbh, $parentTestStuff->{test}, $defaultParams, $sqlValues, 
-		   $parentFeatureTests)
-      unless $parentTestStuff->{featureId};
+    if (!$parentTestStuff->{featureId}) {
+      print STDERR "(running test '$parentTestStuff->{test}->{name}' to get parent feature id)\n";
+      &runSingleTest($dbh, $parentTestStuff->{test}, $defaultParams,
+		     $sqlValues, $parentFeatureTests);
+    }
     $parentFeatureId = $parentTestStuff->{featureId};
+    $parentFeatureRowCount = $parentTestStuff->{rowCount};
   }
-  return $parentFeatureId;
+  return ($parentFeatureId, $parentFeatureRowCount);
 }
 
 sub getSqlValues {
