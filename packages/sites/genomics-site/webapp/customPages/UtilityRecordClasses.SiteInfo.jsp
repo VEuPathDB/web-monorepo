@@ -76,8 +76,6 @@ cryptolink, plasmolink, toxolink
     </c:if>
 </c:if>
 
-<br>
-
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['plasmolink']}">
     <br>
     <b>PlasmoDB dblink:</b>
@@ -102,8 +100,6 @@ ${e}<br>
     </c:if>
 </c:if>
 
-<br>
-
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['toxolink']}">
     <br>
     <b>ToxoDB dblink:</b>
@@ -119,21 +115,20 @@ ${e}<br>
     <br>
     
     <c:catch var="e">
-
         ${wdkRecord.attributes['toxolink2'].value}
     </c:catch>
     <c:if test="${e!=null}">
 ${e}<br>
         <font color="#CC0033">not responding</font>
     </c:if>
-</c:if>
 
 <br><br>
 (TEST1 --> DBC2<br>
 TEST2 --> THEMIS<br>
 TEST3 --> DBC1)<br>
 
-<br>
+</c:if>
+
 
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['userlink']}">
 <b>DB Link to User login, registration and comments Database:</b><br>   
@@ -147,7 +142,9 @@ ${e}<br>
 </c:if>
 
 
-
+<c:if test="${!empty wdkRecord.recordClass.attributeFields['cache_count']}">
+ <b>Cache Tables:</b> ${wdkRecord.attributes['cache_count'].value}
+</c:if>
 
 </body>
 </html>
