@@ -109,6 +109,14 @@ Sample sanity file XML:
     <test name="annotation:density:subfeatures" min="1" max="2000">
       <param name="parent_id" value="$$na_feat_id_PF11_0344$$"/>
     </test>
+
+    <test name="match:TGI" min="1" max="2000">
+    </test>
+
+    <test name="match:TGI:subfeatures" min="1" max="20">
+      <param name="parent_id" parentFeatureTest="match:TGI"/>
+    </test>
+
 </gbrowseSanity>
 };
 }
