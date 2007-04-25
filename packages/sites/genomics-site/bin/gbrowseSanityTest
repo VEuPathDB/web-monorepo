@@ -118,6 +118,43 @@ Sample sanity file XML:
     </test>
 
 </gbrowseSanity>
+
+
+Strategy for Making a Sanity Test File
+
+Step 1: create an "empty" sanity test file with only the <gbrowseSanity> and
+        <defaultParamValue> tags filled in. The more <defaultParamValue> tags
+        you include, the easier it will be in following steps.
+
+Step 2: run the test in --suggestOnly mode (and write the output to a temp file).
+        The file will contain templates for suggested tests to include in your
+        sanity test file.  Notice that tests do not include template <param> tags
+        if you have supplied a default for that type of param.
+
+Step 3: paste the suggested tests into your empty sanity test file.  Now it isn't
+        "empty" any more.
+
+Step 4: create <sqlValue> tags.  Use one of these when there is a <param> or 
+        <defaultParamValue> that expects an internal ID (eg, an na_sequence_id)
+        as a value.  Because your sanity test file will go into SVN, you do not
+        want to pollute it with hard-coded internal IDs.  Instead, use an
+        <sqlValue> tag to write sql that will produce an internal ID from a 
+        stable ID.  Give the <sqlValue> a unique name.  You can now refer to it
+        in any <param> or <defaultParamValue> by using the $$ macro syntax (see
+        the sample sanity file above).
+
+Step 5: for any <param> that still has a missing value, provide that value in
+        the <param> tag.
+
+Step 6: some subfeature queries are parameterized by a $parent_id which is
+        the ID of the parent feature. In those <param> tags, use the 
+        parentFeatureTest attribute to point to a parent test that can provide
+        the value for $parent_id.  (See the match:TGI example in the sample
+        sanity file above)
+
+Step 7: now you can run the test
+
+
 };
 }
 
