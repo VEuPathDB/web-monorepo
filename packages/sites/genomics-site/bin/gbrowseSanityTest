@@ -406,6 +406,20 @@ sub interpolateParams {
   my ($rawSqlString, $defaultParams, $testName, $params, $sqlValues,$parentFeatureId) = @_;
 
   my $sqlString = $rawSqlString;
+
+  # first do explicit values
+  foreach my $param (@$params) {
+    my $macro = '\$' . $param->{name};
+    my $val = $param->{value};
+    if ($param->{parentFeatureTest}) {
+      $val = $parentFeatureId;
+      die("Can't find feature_id from parent test '$param->{parentFeatureTest}'") unless $val;
+   }
+    $val = &substituteSqlValue($val, $sqlValues);
+    $sqlString =~ s/$macro/$val/g if $val;
+  }
+
+  # then defaults
   foreach my $paramName (keys %$defaultParams) {
     my $macro = '\$' . $paramName;
     my $val = $defaultParams->{$paramName}->{value};
@@ -415,15 +429,10 @@ sub interpolateParams {
 
   foreach my $param (@$params) {
     my $macro = '\$' . $param->{name};
-    my $val = $param->{value};
-    if ($param->{parentFeatureTest}) {
-      $val = $parentFeatureId;
-      die("Can't find feature_id from parent test '$param->{parentFeatureTest}'") unless $val;
-   }
-    die("Can't find value for param '$param->{name}' of test '$testName'") unless $val;
-    $val = &substituteSqlValue($val, $sqlValues);
-    $sqlString =~ s/$macro/$val/g;
+    die("Can't find value for param '$param->{name}' of test '$testName'") 
+       if $sqlString =~ /$macro/;
   }
+
   return $sqlString;
 }
 
