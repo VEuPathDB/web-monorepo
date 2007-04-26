@@ -29,11 +29,20 @@
                        <c:set value="${historyId}" var="histID"/>
                    </c:otherwise>
 </c:choose>
-
+<%-- in genes by location ,when choosing mal4, crypto is not in rSBP, while toxo does return 0....
+this is an attempt to show 0 when that happens.... (when is that? why is that?)
+--%>
+<c:set value="NOTFOUND" var="CRYPTO_FOUND"/>
+<c:set value="NOTFOUND" var="PlASMO_FOUND"/>
+<c:set value="NOTFOUND" var="TOXO_FOUND"/>
 
              <c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
                 <c:choose>
+
                   <c:when test="${rSBP.key == 'cryptodb'}">
+
+		      <c:set value="FOUND" var="CRYPTO_FOUND"/>
+
                       <c:set value="${rSBP.value}" var="CR"/>
 		      <c:if test="${CR == -1}">
 			  <c:set value="0" var="CR"/>
@@ -45,6 +54,9 @@
 		      </c:if>
                   </c:when>
                   <c:when test="${rSBP.key == 'plasmodb'}">
+
+		      <c:set value="FOUND" var="PLASMO_FOUND"/>
+
                       <c:set value="${rSBP.value}" var="PR"/>
 		      <c:if test="${PR == -1}">
 			  <c:set value="0" var="PR"/>
@@ -56,6 +68,9 @@
 		      </c:if>
                   </c:when>
                   <c:when test="${rSBP.key == 'toxodb'}">
+
+		      <c:set value="FOUND" var="TOXO_FOUND"/>
+
                       <c:set value="${rSBP.value}" var="TR"/>
 		      <c:if test="${TR == -1}">
 			  <c:set value="0" var="TR"/>
@@ -71,21 +86,30 @@
 
              <c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
                 <c:choose>
+
+
+
+
                   <c:when test="${rSBP.key == 'cryptodb'}">
-			<c:if test="${rSBP.value>=0}">
+	<c:if test="${rSBP.value>0}">
 &nbsp;&nbsp;<a href="showSummary.do?wdk_history_id=${histID}&pager.offset=0">
 CryptoDB: ${rSBP.value}</a>
-			</c:if>
-			<c:if test="${rSBP.value < 0}">
-			&nbsp;&nbsp;CryptoDB: ${CERROR}
-			</c:if>
+	</c:if>
+	<c:if test="${rSBP.value==0}">
+		&nbsp;&nbsp;CryptoDB: 0	
+        </c:if>
+	<c:if test="${rSBP.value < 0}">
+		&nbsp;&nbsp;CryptoDB: ${CERROR}
+	</c:if>
                   </c:when>
 
 <%--
-length > 2 is not going to happen while pagesize is 20, but just in case
+length (used below) > 2 is not going to happen while pagesize is 20, but just in case
 --%>
 
-                  <c:when test="${rSBP.key == 'plasmodb'}"><c:if test="${rSBP.value>=0}">
+
+                  <c:when test="${rSBP.key == 'plasmodb'}">
+	<c:if test="${rSBP.value>0}">
 &nbsp;&nbsp; 
 <c:set value="${CR / pageSize}" var="Poffset"/>
 <c:set value='${fn:substringAfter(Poffset, ".")}' var="dec"/>
@@ -101,13 +125,18 @@ length > 2 is not going to happen while pagesize is 20, but just in case
 
 <a href="showSummary.do?wdk_history_id=${histID}&pager.offset=${Poffset}">
 PlasmoDB: ${rSBP.value}</a>
-                  </c:if>
-			<c:if test="${rSBP.value < 0}">
-				&nbsp;&nbsp;PlasmoDB: ${PERROR}
-			</c:if>
+        </c:if>
+	<c:if test="${rSBP.value==0}">
+		&nbsp;&nbsp;PlasmoDB: 0	
+        </c:if>
+	<c:if test="${rSBP.value < 0}">
+		&nbsp;&nbsp;PlasmoDB: ${PERROR}
+	</c:if>
                  </c:when>
 
-                  <c:when test="${rSBP.key == 'toxodb'}"><c:if test="${rSBP.value>=0}">
+                  <c:when test="${rSBP.key == 'toxodb'}">
+	<c:if test="${rSBP.value>0}">
+
 &nbsp;&nbsp; 
 <c:set value="${(CR + PR) / pageSize}" var="Toffset"/>
 <c:set value='${fn:substringAfter(Toffset, ".")}' var="dec"/>
@@ -123,14 +152,30 @@ PlasmoDB: ${rSBP.value}</a>
                     
 <a href="showSummary.do?wdk_history_id=${histID}&pager.offset=${Toffset}">
 ToxoDB: ${rSBP.value}</a>
-                 </c:if>
-			<c:if test="${rSBP.value < 0}">
-				&nbsp;&nbsp;ToxoDB: ${TERROR}
-			</c:if>
-                  </c:when>
+        </c:if>
+
+	<c:if test="${rSBP.value==0}">
+		&nbsp;&nbsp;ToxoDB: 0	
+        </c:if>
+
+	<c:if test="${rSBP.value < 0}">
+		&nbsp;&nbsp;ToxoDB: ${TERROR}
+	</c:if>
+                 </c:when>
+
                 </c:choose>
              </c:forEach>
 
+
+<c:if test="${CRYPTO_FOUND == 'NOTFOUND'}">
+	&nbsp;&nbsp;CryptoDB: 0	
+</c:if>
+<c:if test="${PLASMO_FOUND == 'NOTFOUND'}">
+	&nbsp;&nbsp;PlasmoDB: 0	
+</c:if>
+<c:if test="${TOXO_FOUND == 'NOTFOUND'}">
+	&nbsp;&nbsp;ToxoDB: 0	
+</c:if>
 
 <font size="-2"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(links to pages only make sense when results are sorted by organism).</font><br>
 
