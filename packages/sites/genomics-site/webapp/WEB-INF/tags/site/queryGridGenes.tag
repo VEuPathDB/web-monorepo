@@ -126,14 +126,9 @@
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByIsoelectricPoint" linktext="Isoelectric Point" existsOn="A P T"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySecondaryStructure" linktext="Secondary Structure" existsOn="A P"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByProteinStructure" linktext="Protein Structure" existsOn="A P"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByPdbSimilarity" linktext="Crystal Structure" existsOn="A P"/>
-                </tr>
-                <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithStructurePrediction" linktext="Predicted 3D Structure" existsOn="A P"/>
-                </tr>
             </table>
         </td>
 
