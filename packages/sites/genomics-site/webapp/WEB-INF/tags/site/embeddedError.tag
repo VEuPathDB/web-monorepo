@@ -33,6 +33,12 @@ Sample usage:
               description="Text message to display in situ"
 %>
 
+<c:set var="publicHosts">
+        ${wdkModel.displayName}.org
+     qa.${wdkModel.displayName}.org
+    www.${wdkModel.displayName}.org
+</c:set>
+
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 
 <c:set var="to" value="${props['SITE_ADMIN_EMAIL']}" />
@@ -46,11 +52,14 @@ Sample usage:
 <c:set var="query_string" value="${requestScope['javax.servlet.forward.query_string']}" />
 <c:set var="errorOn" value="${scheme}://${serverName}${request_uri}?${query_string}" />
 
-
+<c:choose>
+<c:when test="${ ! fn:containsIgnoreCase(publicHosts, serverName)}">
 ${msg} 
-                   
-<%-- do not send email from dev or v5-0 sites --%>
-<c:if test="${!fn:contains(serverName, 'v')}">
+</c:when>
+<c:otherwise>
+
+<i>Error: Currently Not Available</i>
+
     <c:set var="body">
 
 Error on ${errorOn} : 
@@ -73,4 +82,6 @@ Time: <fmt:formatDate type="both" pattern="dd/MMM/yyyy:H:mm:ss" value="<%=new ja
         body="${body}" 
     />
     
-</c:if>
+</c:otherwise>
+</c:choose>
+
