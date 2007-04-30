@@ -54,11 +54,12 @@ Sample usage:
 
 <c:choose>
 <c:when test="${ ! fn:containsIgnoreCase(publicHosts, serverName)}">
-${msg} 
+${msg}<hr>
+<font size='-2'>${e}</font>
 </c:when>
 <c:otherwise>
 
-<i>Error: Currently Not Available</i>
+${msg}
 
     <c:set var="body">
 
