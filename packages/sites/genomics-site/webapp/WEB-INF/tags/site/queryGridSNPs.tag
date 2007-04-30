@@ -14,11 +14,11 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 
                 <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByLocation" linktext="Chromosomal Location" existsOn="A P T"/>
                 </tr>
                 
                 <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="P T"/>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="A P T"/>
                 </tr>
             </table>
         </td>
@@ -32,7 +32,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
                 <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByAlleleFrequency" linktext="AlleleFrequency" existsOn="P"/>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByAlleleFrequency" linktext="AlleleFrequency" existsOn="A P"/>
                 </tr>
             </table>
         </td>
