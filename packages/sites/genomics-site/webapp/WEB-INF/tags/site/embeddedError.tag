@@ -54,14 +54,18 @@ Sample usage:
 
 <c:choose>
 <c:when test="${ ! fn:containsIgnoreCase(publicHosts, serverName)}">
+<%-- Display for Developer site --%>
+
 ${msg}<hr>
 <font size='-2'>${e}</font>
+
 </c:when>
 <c:otherwise>
+<%-- Display for Public site and send email --%>
 
 ${msg}
 
-    <c:set var="body">
+<c:set var="body">
 
 Error on ${errorOn} : 
 
@@ -74,14 +78,14 @@ Client IP: ${pageContext.request.remoteHost}
 Referer URL: ${header['referer']}
 Time: <fmt:formatDate type="both" pattern="dd/MMM/yyyy:H:mm:ss" value="<%=new java.util.Date()%>" />
 
-    </c:set>
+</c:set>
     
-    <site:email 
-        to="${to}"
-        from="${from}"
-        subject="${subject}" 
-        body="${body}" 
-    />
+<site:email 
+    to="${to}"
+    from="${from}"
+    subject="${subject}" 
+    body="${body}" 
+/>
     
 </c:otherwise>
 </c:choose>
