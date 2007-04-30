@@ -31,15 +31,17 @@
 </c:choose>
 <%-- in genes by location ,when choosing mal4, crypto is not in rSBP, while toxo does return 0....
 this is an attempt to show 0 when that happens.... (when is that? why is that?)
---%>
+
 <c:set value="NOTFOUND" var="CRYPTO_FOUND"/>
 <c:set value="NOTFOUND" var="PlASMO_FOUND"/>
 <c:set value="NOTFOUND" var="TOXO_FOUND"/>
+--%>
 
              <c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
                 <c:choose>
 
                   <c:when test="${rSBP.key == 'cryptodb'}">
+
 
 		      <c:set value="FOUND" var="CRYPTO_FOUND"/>
 
@@ -166,6 +168,7 @@ ToxoDB: ${rSBP.value}</a>
                 </c:choose>
              </c:forEach>
 
+<%--
 
 <c:if test="${CRYPTO_FOUND == 'NOTFOUND'}">
 	&nbsp;&nbsp;CryptoDB: 0	
@@ -176,6 +179,7 @@ ToxoDB: ${rSBP.value}</a>
 <c:if test="${TOXO_FOUND == 'NOTFOUND'}">
 	&nbsp;&nbsp;ToxoDB: 0	
 </c:if>
+--%>
 
 <font size="-2"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(links to pages only make sense when results are sorted by organism).</font><br>
 
