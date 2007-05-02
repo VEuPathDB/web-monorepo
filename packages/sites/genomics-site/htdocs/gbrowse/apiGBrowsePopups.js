@@ -12,13 +12,13 @@ function pgt (tip, paramsString) {
   var v = new Array();
   v = paramsString.split(',');
 
-  const SOURCE_ID = 0;
-  const CHR = SOURCE_ID + 1;
-  const LOC = CHR + 1;
-  const SO_TERM =  LOC + 1;
-  const PRODUCT = SO_TERM + 1;
-  const TAXON = PRODUCT + 1;
-  const IS_PSEUDO =  TAXON + 1;
+  var SOURCE_ID = 0;
+  var CHR = SOURCE_ID + 1;
+  var LOC = CHR + 1;
+  var SO_TERM =  LOC + 1;
+  var PRODUCT = SO_TERM + 1;
+  var TAXON = PRODUCT + 1;
+  var IS_PSEUDO =  TAXON + 1;
 
   // expand minimalist input data
   var cdsLink = "<a href=../../../cgi-bin/geneSrt?ids=" + v[SOURCE_ID]
@@ -56,18 +56,18 @@ function pst (tip, paramsString) {
   revArray['T'] = 'A';
   revArray['G'] = 'C';
 
-  const POS_IN_CDS     = 0;
-  const POS_IN_PROTEIN = POS_IN_CDS + 1; 
-  const REF_STRAIN    = POS_IN_PROTEIN + 1; 
-  const REF_AA        = REF_STRAIN + 1; 
-  const REVERSED     = REF_AA + 1; 
-  const REF_NA        = REVERSED + 1; 
-  const SOURCE_ID     = REF_NA + 1; 
-  const VARIANTS     = SOURCE_ID + 1; 
-  const START        = VARIANTS + 1;
-  const GENE         = START + 1; 
-  const IS_CODING    = GENE + 1;
-  const NON_SYN    = IS_CODING + 1;
+  var POS_IN_CDS     = 0;
+  var POS_IN_PROTEIN = POS_IN_CDS + 1; 
+  var REF_STRAIN    = POS_IN_PROTEIN + 1; 
+  var REF_AA        = REF_STRAIN + 1; 
+  var REVERSED     = REF_AA + 1; 
+  var REF_NA        = REVERSED + 1; 
+  var SOURCE_ID     = REF_NA + 1; 
+  var VARIANTS     = SOURCE_ID + 1; 
+  var START        = VARIANTS + 1;
+  var GENE         = START + 1; 
+  var IS_CODING    = GENE + 1;
+  var NON_SYN    = IS_CODING + 1;
 
   // expand minimalist input data
   var link = "<a href=/plasmo/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
@@ -121,13 +121,13 @@ function tgt (tip, paramsString) {
   var v = new Array();
   v = paramsString.split(';');
 
-  const SOURCE_ID = 0;
-  const CHR = SOURCE_ID + 1;
-  const LOC = CHR + 1;
-  const SO_TERM =  LOC + 1;
-  const PRODUCT = SO_TERM + 1;
-  const TAXON = PRODUCT + 1;
-  const IS_PSEUDO =  TAXON + 1;
+  var SOURCE_ID = 0;
+  var CHR = SOURCE_ID + 1;
+  var LOC = CHR + 1;
+  var SO_TERM =  LOC + 1;
+  var PRODUCT = SO_TERM + 1;
+  var TAXON = PRODUCT + 1;
+  var IS_PSEUDO =  TAXON + 1;
 
   // expand minimalist input data
   var cdsLink = "<a href=../../../cgi-bin/geneSrt?ids=" + v[SOURCE_ID]
