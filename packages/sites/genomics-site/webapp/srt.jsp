@@ -152,7 +152,7 @@
             </td>
             <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+/-&nbsp;&nbsp;
                              <input name="downstreamOffset" value="0" size="6"> residues</td></tr>
-         <tr><td><a href="#help"><img src="/images/toHelp.jpg" align="top" border='0'>&nbsp;&nbsp;Help</a></td></tr>
+         <tr><td><a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a></td></tr>
    </table></td></tr>
 
         <td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
