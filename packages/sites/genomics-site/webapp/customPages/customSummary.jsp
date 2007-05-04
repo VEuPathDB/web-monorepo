@@ -9,13 +9,16 @@
 
 <!-- get wdkAnswer from requestScope -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-<c:set value="${requestScope.wdkHistory}" var="history"/>
-<c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
+<c:set var="history" value="${requestScope.wdkHistory}"/>
+<c:set var="historyId" value="${history.historyId}"/>
+<c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
+<c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
-<c:set var="historyId" value="${param['wdk_history_id']}"/>
-<c:if test="${historyId == null}">
-    <c:set var="historyId" value="${requestScope.wdk_history_id}"/>
-</c:if>
+<c:set var="summaryUrl" value="${wdk_summary_url}" />
+<c:set var="commandUrl">
+    <c:url value="/processSummary.do?${wdk_query_string}" />
+</c:set>
+
 
 <%--
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
@@ -29,7 +32,6 @@
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
-<c:set var="qName" value="${wdkAnswer.question.fullName}" />
 
 
 <site:header title="${wdkModel.displayName} : Query Result"
@@ -44,7 +46,6 @@
 <!--
 
 var showParam = "${showParam}";
-
 
 function enableRename() {
    var nameText = document.getElementById('nameText');
@@ -112,40 +113,23 @@ function showParameter(isShow)
 }
 
 
-function removeAttr() {
-    var attributeSelect = document.getElementById("removeAttributes");
-    var index = attributeSelect.selectedIndex;
-    var attribute = attributeSelect.options[index].value;
-    
-    if (attribute.length == 0) return;
-    
-    var pageUrl = "<c:url value='showSummary.do?wdk_history_id=${historyId}"
-        + "&summaryQuestion=${qName}&command=remove&attribute=" + attribute + "' />";
-        
-    window.location.href = pageUrl;
-}
-
-
 function addAttr() {
     var attributeSelect = document.getElementById("addAttributes");
     var index = attributeSelect.selectedIndex;
     var attribute = attributeSelect.options[index].value;
     
     if (attribute.length == 0) return;
-    
-    var pageUrl = "<c:url value='showSummary.do?wdk_history_id=${historyId}"
-        + "&summaryQuestion=${qName}&command=add&attribute=" + attribute + "' />";
-        
-    window.location.href = pageUrl;
+
+    var url = "${commandUrl}&command=add&attribute=" + attribute;
+    window.location.href = url;
 }
 
 
 function resetAttr() {
     if (confirm("Are you sure to reset the column layout?")) {
-        var pageUrl = "<c:url value='showSummary.do?wdk_history_id=${historyId}"
-            + "&summaryQuestion=${qName}&command=reset' />";
-        
-        window.location.href = pageUrl;
+        var url = "${commandUrl}&command=add&attribute=" + attribute;
+        invokeAction(url, false, summaryCallback);
+        window.location.href = url;
     }
 }
 
@@ -337,7 +321,15 @@ function resetAttr() {
           url="${wdk_paging_url}"
           maxPageItems="${wdk_paging_pageSize}"
           export="currentPageNumber=pageNumber">
-  <pg:param name="wdk_history_id" id="pager" value="${historyId}" />
+  <c:forEach var="paramName" items="${wdk_paging_params}">
+    <pg:param name="${paramName}" id="pager" />
+  </c:forEach>
+  <c:if test="${wdk_summary_checksum != null}">
+    <pg:param name="summary" id="pager" />
+  </c:if>
+  <c:if test="${wdk_sorting_checksum != null}">
+    <pg:param name="sort" id="pager" />
+  </c:if>
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%">
     <tr>
@@ -391,8 +383,8 @@ function resetAttr() {
                         <c:choose>
                             <c:when test="${j != 0 && j != 1}">
                                 <%-- display arrange attribute buttons --%>
-                                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=arrange&attribute=${attrName}&left=true' />" 
-                                    title="Move ${sumAttrib} left">
+                                <a href="${commandUrl}&command=arrange&attribute=${attrName}&left=true" 
+                                   title="Move ${sumAttrib} left">
                                     <img src="<c:url value='/images/move_left.gif' />" border="0" /></a>
                             </c:when>
                             <c:otherwise>
@@ -412,7 +404,7 @@ function resetAttr() {
                             </c:when>
                             <c:otherwise>
                                 <%-- display sorting buttons --%>
-                                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=sort&attribute=${attrName}&sortOrder=asc' />" 
+                                <a href="${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc"
                                     title="Sort by ${sumAttrib}">
                                     <img src="<c:url value='/images/sort_up.gif' />" border="0" /></a>
                             </c:otherwise>
@@ -429,7 +421,7 @@ function resetAttr() {
                             </c:when>
                             <c:otherwise>
                                 <%-- display sorting buttons --%>
-                                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=sort&attribute=${attrName}&sortOrder=desc' />" 
+                                <a href="${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc"
                                     title="Reverse sort by ${sumAttrib}">
                                     <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
                             </c:otherwise>
@@ -439,8 +431,8 @@ function resetAttr() {
                     <td valign="middle">
                         <c:choose>
                             <c:when test="${j != 0 && j != fn:length(wdkAnswer.summaryAttributes) - 1}">
-                                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=arrange&attribute=${attrName}&left=false' />" 
-                                    title="Move ${sumAttrib} right">
+                                <a href="${commandUrl}&command=arrange&attribute=${attrName}&left=false"
+                                   title="Move ${sumAttrib} right">
                                     <img src="<c:url value='/images/move_right.gif' />" border="0" /></a>
                             </c:when>
                             <c:otherwise>
@@ -452,7 +444,7 @@ function resetAttr() {
                         <c:choose>
                             <c:when test="${j != 0}">
                                 <%-- display remove attribute buttons --%>
-                                <a href="<c:url value='/showSummary.do?wdk_history_id=${historyId}&summaryQuestion=${qName}&command=remove&attribute=${attrName}' />" 
+                                <a href="${commandUrl}&command=remove&attribute=${attrName}"
                                     title="Remove ${sumAttrib} column">
                                     <img src="<c:url value='/images/remove.gif' />" border="0" /></a>
                             </c:when>

@@ -292,24 +292,26 @@ function reviseBooleanQuery(type, expression) {
                 <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
            </td>	    
         </c:if>
-        <td nowrap><a href="showSummary.do?wdk_history_id=${historyId}">view</a></td>
+		
+        <c:set value="${history.answer.question.fullName}" var="qName" />
+        
+        <td nowrap>
+            <c:set var="surlParams" value="${history.answer.summaryUrlParams}"/>
+            <a href="showSummary.do?questionFullName=${qName}${surlParams}">view</a>
+        </td>
         <td nowrap><a href="downloadHistoryAnswer.do?wdk_history_id=${historyId}">download</a></td>
 
-            <c:set value="${history.answer.question.fullName}" var="qName" />
          <td nowrap>
             <c:choose>
                <c:when test="${history.boolean == false}">
-		  <c:set value="${history.answer.questionUrlParams}" var="qurlParams"/>
-	          <c:set var="questionUrl" value="" />
-                  <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
-	                 revise</a>
-	       </c:when>
-	       <c:otherwise>
+		          <c:set var="qurlParams" value="${history.answer.questionUrlParams}"/>
+                  <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">revise</a>
+	           </c:when>
+	           <c:otherwise>
 	          <c:set value="${history.booleanExpression}" var="expression"/>
-	          <a href="#" onclick="return reviseBooleanQuery('${type}', '${expression}')">
-	             revise</a>
-	       </c:otherwise>
-	    </c:choose>
+	             <a href="#" onclick="return reviseBooleanQuery('${type}', '${expression}')">revise</a>
+	          </c:otherwise>
+	        </c:choose>
          </td>
 
          <td nowrap>
