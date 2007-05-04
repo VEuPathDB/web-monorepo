@@ -5,10 +5,10 @@ use strict;
 use lib "@targetDir@/lib/perl";
 $ENV{GUS_HOME} = '@targetDir@';
 
-use ApiDBWebsite::View::CgiApp::Api_SequenceRetrievalToolContigs;
+use ApiCommonWebsite::View::CgiApp::Api_SequenceRetrievalToolContigs;
 
 my $app =
-  ApiDBWebsite::View::CgiApp::Api_SequenceRetrievalToolContigs->new();
+  ApiCommonWebsite::View::CgiApp::Api_SequenceRetrievalToolContigs->new();
 
 $app->go();
 
