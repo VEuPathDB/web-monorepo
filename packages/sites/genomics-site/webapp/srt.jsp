@@ -42,7 +42,7 @@
 <table border=0 width=100% cellpadding=10>
  <tr>
   <td bgcolor="white" valign="top">
-<b><center>Download Sequences By <br><a href="#gene">Gene IDs</a> | <a href="#contig">Contig IDs </center></b><hr>
+<b><center>Download Sequences By <br><a href="#gene">Gene IDs</a> | <a href="#contig">Contig IDs</a> |  <a href="#orf">Orf IDs</a> </center></b><hr>
   </td>
   <td valign="top" class="dottedLeftBorder"></td> 
 </tr>
