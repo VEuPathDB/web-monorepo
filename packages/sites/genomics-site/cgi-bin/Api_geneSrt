@@ -1,0 +1,16 @@
+#!/usr/bin/perl 
+
+use strict;
+
+use lib "@targetDir@/lib/perl";
+$ENV{GUS_HOME} = '@targetDir@';
+
+use ApiDBWebsite::View::CgiApp::Api_SequenceRetrievalToolGenes;
+
+my $app =
+  ApiDBWebsite::View::CgiApp::Api_SequenceRetrievalToolGenes->new();
+
+$app->go();
+
+
+
