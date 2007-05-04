@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -23,7 +24,14 @@
 <c:set var="orfsIds" value="${gidqpMap['orfs_ids']}"/>
 
 <c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
-
+<c:set var="gSrt" value="geneSrt"/>
+<c:set var="cSrt" value="contigSrt"/>
+<c:set var="oSrt" value="orfSrt"/>
+<c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
+    <c:set var="gSrt" value="Api_geneSrt"/>
+    <c:set var="cSrt" value="Api_contigSrt"/>
+    <c:set var="oSrt" value="Api_orfSrt"/>
+</c:if>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
  <tr>
@@ -42,7 +50,7 @@
 
 <h3><a name="gene">Retrieve Sequences By Gene IDs</a></h3>
 
-  <form action="${CGI_URL}/geneSrt" method="post">
+  <form action="${CGI_URL}/${gSrt}" method="post">
     <table border="0" width="100%" cellpadding="4">
     <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
@@ -87,7 +95,7 @@
 
 <hr>
 <h3><a name="contig">Retrieve Sequences By Contig IDs</a></h3>
-  <form action="${CGI_URL}/contigSrt" method="post">
+  <form action="${CGI_URL}/${cSrt}" method="post">
     <table border="0" width="100%" cellpadding="4">
     <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
@@ -119,7 +127,7 @@
 
 <h3><a name="orf">Retrieve Sequences By Open Reading Frame IDs</a></h3>
 
-  <form action="${CGI_URL}/orfSrt" method="post">
+  <form action="${CGI_URL}/${oSrt}" method="post">
     <table border="0" width="100%" cellpadding="4">
     <tr><td colspan="2" valign="top"><b>Enter a list of ORF IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
