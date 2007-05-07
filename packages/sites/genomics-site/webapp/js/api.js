@@ -371,3 +371,41 @@ function getHTTPObject() {
 
 var httpObjects = new Object(); // a hash of XMLHttpObjects
 var workStates = new Object();  // a hash of XMLHttpObjects working status
+
+
+/* ==========================================================================
+ * The following ajax methods are defined to fetch sub-pages
+ * ========================================================================== */
+
+function requestAsyncContent(url, contentTag) {
+    // construct request
+    var request;
+    if (window.XMLHttpRequest) {    // firefox, mozilla, IE7
+        request = new XMLHttpRequest();
+    } else if (window.ActiveXObject) {    // IE6 or before
+        request = new ActiveXObject("Microsoft.XMLHTTP");
+    } else {
+        return null;
+    }
+     
+    request.open("GET", url, true);
+    
+    // construct callback wrapper
+    function callbackWrapper() {
+        if (request.readyState == 4) {
+            receiveAsyncContent(request, contentTag);
+        }
+    }
+    request.onreadystatechange = callbackWrapper;
+    
+    request.send(null);
+}
+
+function receiveAsyncContent(request, contentTag) {
+    var content = document.getElementById(contentTag);
+    if (request.status == 200) {    // success
+        content.innerHTML = request.responseText;
+    } else {    // http failure
+        content.innerHTML = "Failed. Cannot retrieve the content.";
+    }
+}
