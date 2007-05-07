@@ -296,8 +296,17 @@ function reviseBooleanQuery(type, expression) {
         <c:set value="${history.answer.question.fullName}" var="qName" />
         
         <td nowrap>
-            <c:set var="surlParams" value="${history.answer.summaryUrlParams}"/>
-            <a href="showSummary.do?questionFullName=${qName}${surlParams}">view</a>
+            <c:set var="surlParams">
+                <c:choose>
+                    <c:when test="${history.boolean == false}">
+                        showSummary.do?questionFullName=${qName}${history.answer.summaryUrlParams}
+                    </c:when>
+                    <c:otherwise>
+                        showSummary.do?wdk_history_id=${historyId}
+                    </c:otherwise>
+                </c:choose>
+            </c:set>
+            <a href="${surlParams}">view</a>
         </td>
         <td nowrap><a href="downloadHistoryAnswer.do?wdk_history_id=${historyId}">download</a></td>
 
