@@ -46,6 +46,8 @@ cryptolink, plasmolink, toxolink
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<%@ page import="java.util.*, java.io.*, java.lang.*" %>
+ 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
@@ -98,9 +100,7 @@ p {
 
 <h3 align='center'><a href='/'>${pageContext.request.serverName}</a></h3>
 
-<fmt:formatDate type="both" pattern="${dateFormatStr}" value="<%=new java.util.Date()%>" />
-
-
+<fmt:formatDate type="both" pattern="${dateFormatStr}" value="<%=new Date()%>" />
 
 <h2>Database</h2>
 
@@ -141,7 +141,7 @@ p {
         ${wdkRecord.attributes['plasmolink2'].value}
     </c:catch>
     <c:if test="${e!=null}">
-${e}<br>
+        ${e}<br>
         <font color="#CC0033">not responding</font>
     </c:if>
 </c:if>
@@ -164,26 +164,39 @@ ${e}<br>
         ${wdkRecord.attributes['toxolink2'].value}
     </c:catch>
     <c:if test="${e!=null}">
-${e}<br>
+        ${e}<br>
         <font color="#CC0033">not responding</font>
     </c:if>
 
-<br><br>
-(TEST1 --> DBC2<br>
-TEST2 --> THEMIS<br>
-TEST3 --> DBC1)<br>
+    <br><br>
+    (TEST1 --> DBC2<br>
+    TEST2 --> THEMIS<br>
+    TEST3 --> DBC1)<br>
 
 </c:if>
 
-<h2>WDK</h2>
+<h2>Tomcat</h2>
+<p>
+<b>Instance:</b> <%= System.getProperty("instance.name") %></br>
+<b>Instance Uptime:</b> <%= uptime() %><br> 
+<b>Web App:</b> ${pageContext.request.contextPath}<br>
+<b>Last webapp reload:</b> <%= lastReload(application, pageContext ) %>
+<br>
+<b><a href="#" onclick="Effect.toggle('element-blind','blind'); return false">JSP Classpath &#8593;&#8595;</a></b>
+<div id="element-blind" style="padding: 5px; display: none"><div>
+${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')}
+</div></div>
+</p>
 
+<h2>WDK</h2>
+<p>
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['userlink']}">
 <b>DB Link to User login, registration and comments Database:</b><br>   
 <c:catch var="e">
         ${wdkRecord.attributes['userlink'].value}
     </c:catch>
     <c:if test="${e!=null}">
-${e}<br>
+        ${e}<br>
         <font color="#CC0033">not responding</font>
     </c:if>
 </c:if>
@@ -193,29 +206,56 @@ ${e}<br>
  <b>Cache Tables:</b> ${wdkRecord.attributes['cache_count'].value}
 </c:if>
 
-<h2>Tomcat</h2>
-<p>
-<b>Web App</b>: ${pageContext.request.contextPath}<br>
-<b>Last webapp reload</b>:
-
-<%
-try {
-java.io.File jspFile = (java.io.File)application.getAttribute("javax.servlet.context.tempdir");
-java.text.DateFormat formatter = new java.text.SimpleDateFormat( (String)pageContext.getAttribute("dateFormatStr")  );
-
-out.println(formatter.format(new java.util.Date(jspFile.lastModified())));
-} catch (Exception e) {
-    out.println("Error: " + e);
-}
-%>
-
-<p>
-<b><a href="#" onclick="Effect.toggle('element-blind','blind'); return false">JSP Classpath</a></b>
-<div id="element-blind" style="padding: 5px; display: none"><div>
-${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')}
-</div></div>
-</p>
-
 </body>
 </html>
 
+
+<%-- #####################################################################  --%>
+<%-- #####################################################################  --%>
+
+
+<%!
+public String uptime() {
+  try {
+    String result;
+    Vector commands=new Vector();
+    commands.add("/bin/bash");
+    commands.add("-c");
+    commands.add("ps -o etime $PPID | grep -v ELAPSED | sed 's/\\s*//g' | sed 's/\\(.*\\)-\\(.*\\):\\(.*\\):\\(.*\\)/\\1d \\2h/; s/\\(.*\\):\\(.*\\):\\(.*\\)/\\1h \\2m/; s/\\(.*\\):\\(.*\\)/\\1m \\2s/'");
+    
+    ProcessBuilder pb=new ProcessBuilder(commands);  
+    Process pr=pb.start();
+    pr.waitFor();
+    
+    if (pr.exitValue()==0) {
+        BufferedReader output = new BufferedReader(
+                        new InputStreamReader(pr.getInputStream()));
+        result = output.readLine().trim();
+        output.close();
+    } else {
+        BufferedReader error = new BufferedReader(
+                        new InputStreamReader(pr.getErrorStream()));        
+        result = "Error: " + error.readLine(); 
+    }
+    return result;
+    } catch (Exception e) {
+    return "Error: " + e;
+  }
+}
+%>
+
+
+
+<%!
+public String lastReload(ServletContext application, PageContext pageContext) {
+  try {
+   File jspFile = (File)application.getAttribute("javax.servlet.context.tempdir");
+   java.text.DateFormat formatter = new java.text.SimpleDateFormat( 
+                        (String)pageContext.getAttribute("dateFormatStr") );
+
+   return (String)formatter.format(new Date(jspFile.lastModified()));
+  } catch (Exception e) {
+    return "Error: " + e;
+  }
+}
+%>
