@@ -62,7 +62,7 @@
 	</c:otherwise>
 	</c:choose>
 	<c:if test="${tocBegin}">
-		<b><a name="toc">DataSources Categories</a></b>
+		<b><a name="toc"></a>DataSources Categories</b>
 		<ul>
 	</c:if>
 	<c:if test="${showCat}">
