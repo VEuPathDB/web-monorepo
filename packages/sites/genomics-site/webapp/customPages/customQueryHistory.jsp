@@ -243,27 +243,8 @@ function reviseBooleanQuery(type, expression) {
                               </table>
                            </c:when>
                            <c:otherwise>
-                              <!-- simple question -->
-                              <c:set value="${wdkAnswer.internalParams}" var="params"/>
-                              <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
-                              <table cellpadding="2" cellspacing="0" border="0">
-                                 <c:forEach items="${qParamsMap}" var="p">
-                                    <c:set var="pNam" value="${p.key}"/>
-                                    <c:set var="qP" value="${p.value}"/>
-                                    <c:set var="aP" value="${params[pNam]}"/>
-                                    <c:if test="${qP.isVisible}">
-                                       <tr>
-                                          <td align="right" valign="top" class="small" nowrap><i>${qP.prompt}</i>&nbsp;:&nbsp;</td>
-                                          <td class="small">
-                                             <c:if test="${fn:length(aP) > 200}">
-                                                <c:set var="aP" value="${fn:substring(aP, 0, 200)}..." />
-                                             </c:if>
-                                             ${aP}
-                                          </td>
-                                       </tr>
-                                    </c:if>
-                                 </c:forEach>
-                              </table>
+                              <%-- simple question --%>
+                              <wdk:showParams wdkAnswer="${wdkAnswer}" />
                            </c:otherwise>
                         </c:choose>
 		             </td>
