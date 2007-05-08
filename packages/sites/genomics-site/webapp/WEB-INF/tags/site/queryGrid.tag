@@ -154,10 +154,10 @@
 <tr><td colspan="3">  
 	<div class="smallBlack" align="middle">
 		<b>Query Availability:</b> &nbsp;&nbsp; &nbsp;
-		<img src='/images/apidb_letter.gif' border='0' alt='apidb'/> = ApiDB &nbsp;&nbsp;
-		<img src='/images/cryptodb_letter.gif' border='0' alt='cryptodb' /> = CryptoDB &nbsp;&nbsp;
-		<img src='/images/plasmodb_letter.gif' border='0' alt='plasmodb' /> = PlasmoDB &nbsp;&nbsp;
-		<img src='/images/toxodb_letter.jpg' border='0' alt='toxodb' /> = ToxoDB &nbsp; &nbsp;
+		<img src='<c:url value="/images/apidb_letter.gif" />' border='0' alt='apidb'/> = ApiDB &nbsp;&nbsp;
+		<img src='<c:url value="/images/cryptodb_letter.gif" />' border='0' alt='cryptodb' /> = CryptoDB &nbsp;&nbsp;
+		<img src='<c:url value="/images/plasmodb_letter.gif" />' border='0' alt='plasmodb' /> = PlasmoDB &nbsp;&nbsp;
+		<img src='<c:url value="/images/toxodb_letter.jpg" />' border='0' alt='toxodb' /> = ToxoDB &nbsp; &nbsp;
 	</div>
 </td></tr>
 
