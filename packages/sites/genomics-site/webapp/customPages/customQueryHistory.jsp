@@ -220,36 +220,33 @@ function reviseBooleanQuery(type, expression) {
          <td>${historyId}
 	        <!-- begin of floating info box -->
             <div id="div_${historyId}" 
-	             class="small"
+	             class="medium"
                  style="display:none;font-size:8pt;width:610px;position:absolute;left:0;top:0;"
                  onmouseover="hideAnyName()">
-               <c:set var="wdkAnswer" value="${history.answer}"/>
-               <table border="0" cellspacing="5" style="background-color:#ffffCC;">
-                  <tr>
-                     <td valign="top" align="right" width="10" class="small" nowrap><b>Query:</b></td>
-                     <td valign="top" align="left" class="small">${wdkAnswer.question.displayName}</td>
-                  </tr>
-                  <tr>
-                     <td valign="top" align="right" width="10" class="small" nowrap><b>Parameters:</b></td>
-		             <td valign="top" align="left" class="small">
-                        <c:choose>
-                           <c:when test="${history.boolean}">
-                              <!-- boolean question -->
-                              <table cellpadding="2" cellspacing="0" border="0">
-                                 <tr>
-                                    <td align="right" valign="top" class="small" nowrap><i>Expression</i> : </td>
-                                    <td class="small">${history.booleanExpression}</td>
-                                 </tr>
-                              </table>
-                           </c:when>
-                           <c:otherwise>
-                              <%-- simple question --%>
-                              <wdk:showParams wdkAnswer="${wdkAnswer}" />
-                           </c:otherwise>
-                        </c:choose>
-		             </td>
-	              </tr>
-               </table>
+                <table cellpadding="2" cellspacing="0" border="0"bgcolor="#ffffCC">
+                    <c:set var="wdkAnswer" value="${history.answer}"/>
+                    <c:choose>
+                        <c:when test="${history.boolean}">
+                            <!-- boolean question -->
+                            <tr>
+                               <td valign="top" align="right" width="10" class="medium" nowrap><b>Query&nbsp;:</b></td>
+                               <td valign="top" align="left" class="medium">${wdkAnswer.question.displayName}</td>
+                            </tr>
+                            <tr>
+                               <td align="right" valign="top" class="medium" nowrap><i>Expression</i> : </td>
+                               <td class="medium">${history.booleanExpression}</td>
+                            </tr>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td>
+                                    <%-- simple question --%>
+                                    <wdk:showParams wdkAnswer="${wdkAnswer}" />
+                                </td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
+              </table>
             </div> 
 	        <!-- end of floating info box -->
          </td>
