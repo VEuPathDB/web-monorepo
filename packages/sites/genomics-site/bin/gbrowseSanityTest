@@ -16,7 +16,7 @@ use Getopt::Long qw(GetOptions);
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($sanityFile, $gbrowseFile, $indexOnly, $failuresOnly, $suggestOnly, $skipTo, $stopAfter, $showParseG, $showParseS);
+my ($sanityFile, $gbrowseFile, $indexOnly, $failuresOnly, $suggestOnly, $skipTo, $stopAfter, $showParseG, $showParseS, $showSql);
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
 $stopAfter = 1000;
@@ -29,6 +29,7 @@ GetOptions("sanityFile=s" => \$sanityFile,
            "stopAfter=i" => \$stopAfter,
            "showParseG!" => \$showParseG,
            "showParseS!" => \$showParseS,
+           "showSql!" => \$showSql,
 	  );
 
 &usage unless ($sanityFile && $gbrowseFile);
@@ -56,7 +57,7 @@ exit(0) if ($suggestOnly);
 my $dbh = getDbHandle();
 
 &runTests($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo,
-	  $stopAfter, $defaultParams, $parentFeatureTests);
+	  $stopAfter, $defaultParams, $parentFeatureTests, $showSql);
 
 ###################################################################
 
@@ -65,7 +66,7 @@ sub usage {
 q{
 Test all sql in a gbrowse XML file
 
-Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --gbrowseFile gbrowseXmlFile [--indexOnly | --suggestOnly | --failuresOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS]
+Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --gbrowseFile gbrowseXmlFile [--indexOnly | --suggestOnly | --failuresOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS] [--showSql]
 
 Where:
   sanityFile     an xml file containing the configuration for the test
@@ -77,6 +78,7 @@ Where:
   stopAfter      the index of the last test to run
   showParseG     show the data structure resulting from the parse of gbrowseFile
   showParseS     show the data structure resulting from the parse of sanityFile
+  showSql        show the SQL even if the test passes
 
 
 
@@ -326,7 +328,7 @@ sub getDbHandle {
 
 
 sub runTests {
-  my ($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests) = @_;
+  my ($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $showSql) = @_;
 
   my $sqlValues = &getSqlValues($dbh, $sanityConfig->{sqlValue});
 
@@ -360,6 +362,7 @@ sub runTests {
     if ($rowCount >= $test->{min} && $rowCount <= $test->{max}) {
       print "$totTime$multiplier PASSED $testString (returned $rowCount) [test: $count]\n\n"
 	unless $failuresOnly;
+      print "sql:\n$sqlString\n\n" if $showSql;
       $passed++;
     } else {
       $failed++;
