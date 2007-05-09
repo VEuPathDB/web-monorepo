@@ -33,6 +33,20 @@
     <c:set var="oSrt" value="Api_orfSrt"/>
 </c:if>
 
+
+<script type="text/javascript" lang="JavaScript 1.2">
+<!-- //
+
+function setEnable(flag) {
+    var offsetOptions = document.getElementById("offsetOptions");
+    if (flag) offsetOptions.style.display = "block";
+    else offsetOptions.style.display = "none";   
+}
+
+// -->
+</script>
+
+
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
  <tr>
   <td bgcolor=white valign=top>
@@ -59,34 +73,46 @@
 
     <tr><td colspan="2">
     <b>Choose the type of sequence:</b>
-        <input type="radio" name="type" value="protein">protein
-        <input type="radio" name="type" value="CDS">CDS
-        <input type="radio" name="type" value="processed_transcript" checked>transcript
-        <input type="radio" name="type" value="genomic">genomic
+        <input type="radio" name="type" value="genomic" checked onclick="setEnable(true)">genomic
+        <input type="radio" name="type" value="protein" onclick="setEnable(false)">protein
+        <input type="radio" name="type" value="CDS" onclick="setEnable(false)">CDS
+        <input type="radio" name="type" value="processed_transcript" onclick="setEnable(false)">transcript
     </td></tr>
 
-    <tr><td colspan="2">
-    <b>Choose the region of the sequence(s):</b>
-    </td></tr>
-    <tr><td colspan="2">
-    <table cellpadding="4">
-        <tr><td>begin at</td>
+    <tr>
+        <td colspan="2">
+    <table id="offsetOptions" cellpadding="4">
+        <tr><td colspan="3">
+                <b>Choose the region of the sequence(s):</b>
+            </td>
+        </tr>
+        <tr>
+            <td>begin at</td>
             <td align="left">
                 <input type="radio" name="upstreamAnchor" value="Start" checked> start<br>
                 <input type="radio" name="upstreamAnchor" value="End"> stop<br>
             </td>
             <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+/-&nbsp;&nbsp;
-                             <input name="upstreamOffset" value="0" size="6">residues</td></tr>
+                             <input id="upstreamOffset" name="upstreamOffset" value="0" size="6">residues
+            </td>
+        </tr>
 
-        <tr><td>end at</td>
+        <tr>
+            <td>end at</td>
             <td align="left">
                 <input type="radio" name="downstreamAnchor" value="Start"> start<br>
                 <input type="radio" name="downstreamAnchor" value="End" checked> stop<br>
             </td>
             <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+/-&nbsp;&nbsp;
-                             <input name="downstreamOffset" value="0" size="6"> residues</td></tr>
-        <tr><td><a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a></td></tr>
-    </table></td></tr>
+                             <input id="downstreamOffset" name="downstreamOffset" value="0" size="6"> residues
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"><a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a></td>
+        </tr>
+    </table>
+        </td>
+    </tr>
 
         <td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
 
