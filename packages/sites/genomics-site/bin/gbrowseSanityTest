@@ -458,7 +458,7 @@ sub interpolateParams {
     my $val = $param->{value};
     if ($param->{parentFeatureTest}) {
       $val = $parentFeatureId;
-      die("Can't find feature_id from parent test '$param->{parentFeatureTest}'") unless $val;
+      die("Can't find feature_id from parent test '$param->{parentFeatureTest}'\n") unless $val;
    }
     $val = &substituteSqlValue($val, $sqlValues);
     $sqlString =~ s/$macro/$val/g if $val;
@@ -474,7 +474,7 @@ sub interpolateParams {
 
   foreach my $param (@$params) {
     my $macro = '\$' . $param->{name};
-    die("Can't find value for param '$param->{name}' of test '$testName'") 
+    die("Can't find value for param '$param->{name}' of test '$testName'\n") 
        if $sqlString =~ /$macro/;
   }
 
