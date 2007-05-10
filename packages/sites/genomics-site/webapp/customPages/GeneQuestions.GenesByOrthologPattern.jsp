@@ -5,7 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->  
-<c:set value="${requestScope.wdkModel}" var="wdkModel"/>
+<c:set value="${applicationScope.wdkModel}" var="wdkModel"/>
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
@@ -344,6 +344,16 @@ Ack, this form won't work at all without JavaScript support!
 </table>
 
 </html:form>
+
+<script type="text/javascript" lang="JavaScript 1.2">
+<!-- //
+toggle(6);
+toggle(6);
+toggle(31);
+// -->
+</script>
+
+
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 
