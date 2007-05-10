@@ -5,6 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->  
+<c:set value="${requestScope.wdkModel}" var="wdkModel"/>
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
@@ -35,7 +36,7 @@
 <c:set var="resultSpecies" value="${qParams['organism']}"/>
 <c:set var="resultSpeciesName" value="${resultSpecies.name}"/>
 
-<c:set var="ind" value="${qParams['phyletic_indent_map']}"/>
+<c:set var="ind" value="${qParams['internal_phyletic_indent_map']}"/>
 <c:set var="trm" value="${qParams['phyletic_term_map']}"/>
 
 <c:set var="indentMap" value="${ind.vocabMap}"/>
@@ -62,6 +63,9 @@ var abbrev =
             <c:forEach var="sp" items="${ind.vocab}">, "${sp}"</c:forEach>
   );
 
+
+
+
 var parents = new Array();
 parents.push(0);
 <c:set var="idx" value="1" />
@@ -69,7 +73,7 @@ parents.push(0);
 <c:forEach var="sp" items="${ind.vocab}">
   <c:set var="indent" value="${indentMap[sp]}" />
   <c:choose>
-    <c:when test="${indent > lastindent}">
+   <c:when test="${indent > lastindent}">
 parents.push(${idx-1});
     </c:when>
     <c:when test="${indent < lastindent}">
@@ -79,11 +83,10 @@ parents.pop();
     </c:when>
     <c:otherwise>
     </c:otherwise>
-  </c:choose>
-
+  </c:choose>  
 parent[${idx}] = parents[parents.length-1];
 
-  <c:set var="idx" value="${idx+1}" />
+<c:set var="idx" value="${idx+1}" />
   <c:set var="lastindent" value="${indent}" />
 </c:forEach>
 
@@ -281,6 +284,11 @@ Ack, this form won't work at all without JavaScript support!
 </tr>
 <tr><td><br></td></tr>
 
+<c:choose>
+<c:when test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
+<site:apidbOrthologPattern/>
+</c:when>
+<c:otherwise>
 
 <tr><td colspan="3">
 <table border="0" cellpadding="2">
@@ -308,11 +316,13 @@ Ack, this form won't work at all without JavaScript support!
         </td>
         </tr>
 
-      <c:set var="idx" value="${idx+1}"/>
+      <c:set var="idx" value="${idx+1}"/>	
     </c:forEach>
 </table>
 
     </td></tr>
+</c:otherwise>
+</c:choose>
 
 <tr>
  <td></td>
