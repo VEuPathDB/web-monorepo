@@ -14,7 +14,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfByOrfId" linktext="ORF ID" existsOn="A P T"/>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfByOrfId" linktext="ORF ID" existsOn="A C P T"/>
                 </tr>
 
 <tr>
