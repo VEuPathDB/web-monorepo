@@ -11,13 +11,13 @@
 
         <td width="50%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-               
-                <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"  />
+                 <tr>
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="Sequence ID"  existsOn="A C P T"/>
                 </tr>
-                <tr>
-                     <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="NA" linktext="DNA Motif" existsOn=""/>
-                </tr>   
+
+                 <tr>
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A P T"/>
+                </tr>
             </table>
         </td>
 
@@ -27,12 +27,12 @@
         <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="ID"  existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"  />
                 </tr>
 
-             
-                <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A P T"/>
+
+                 <tr>
+                     <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="NA" linktext="DNA Motif" existsOn=""/>
                 </tr>
             </table>
         </td>

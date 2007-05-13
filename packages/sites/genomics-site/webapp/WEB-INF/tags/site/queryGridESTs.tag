@@ -11,10 +11,10 @@
 
         <td width="50%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
-                <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Chromosomal Location" existsOn="A P T"/>
+ <tr>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstBySourceId" linktext="EST ID" existsOn="A P T"/>
                 </tr>
+
                 <tr>
                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="A C P T"/> 
                 </tr>
@@ -32,15 +32,13 @@
                  <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstsBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"/>
                 </tr>
-                <tr>
+                 <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="NA" linktext="EST Motif" existsOn=""/>
+                </tr>           
+<tr>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Chromosomal Location" existsOn="A P T"/>
                 </tr>
 
-               
-
-                <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByTaxon" linktext="Species" existsOn=""/>
-                </tr>
             </table>
         </td>
 

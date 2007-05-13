@@ -13,9 +13,10 @@
         <td width="50%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-                <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Chromosomal Location" existsOn="A P T"/>
+<tr>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfByOrfId" linktext="ORF ID" existsOn="A P T"/>
                 </tr>
+
 <tr>
 	             <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMassSpec" linktext="Mass Spec. Evidence" existsOn="A C T"/>
             	</tr>
@@ -40,11 +41,11 @@
  <tr>
                     <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF Motif" existsOn="A C P T"/>
                 </tr>
-
-        	
-<tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByTaxon" linktext="Species" existsOn=""/>
+ <tr>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Chromosomal Location" existsOn="A P T"/>
                 </tr>
+        	
+
             </table>
     	</td>
 
