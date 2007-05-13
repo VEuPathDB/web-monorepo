@@ -8,9 +8,12 @@
 
 <!-- get wdkAnswer from requestScope -->
 <c:set value="${requestScope.wdkHistory}" var="history"/>
+<c:set var="historyId" value="${history.historyId}"/>
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
+<%--
 <c:set value="${param['wdk_history_id']}" var="historyId"/>
+--%>
 <c:set value="${requestScope.wdk_history_id}" var="altHistoryId"/>
 
 <c:set value="Error" var="QUERY_ERROR"/>
