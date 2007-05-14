@@ -35,8 +35,11 @@
 
 <c:set var="resultSpecies" value="${qParams['organism']}"/>
 <c:set var="resultSpeciesName" value="${resultSpecies.name}"/>
+<c:set var="ind" value="${qParams['phyletic_indent_map']}"/>
 
-<c:set var="ind" value="${qParams['internal_phyletic_indent_map']}"/>
+<c:if test="${fn:containsIgnoreCase(wdkModel.displayName,'ApiDB')}">
+	<c:set var="ind" value="${qParams['internal_phyletic_indent_map']}"/>
+</c:if>
 <c:set var="trm" value="${qParams['phyletic_term_map']}"/>
 
 <c:set var="indentMap" value="${ind.vocabMap}"/>
@@ -283,7 +286,7 @@ Ack, this form won't work at all without JavaScript support!
   </td>
 </tr>
 <tr><td><br></td></tr>
-
+${wdkModel.displayName}
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
 <site:apidbOrthologPattern/>
