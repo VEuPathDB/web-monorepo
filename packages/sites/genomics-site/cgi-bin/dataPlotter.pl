@@ -10,10 +10,10 @@ $ENV{R_LIBS} = '@cgilibTargetDir@/R';
 
 use constant DEBUG => 1;
 
-use PlasmoDBWebsite::View::CgiApp::DataPlotter;
+use ApiCommonWebsite::View::CgiApp::DataPlotter;
 
 
 DEBUG && print STDERR "# $0 --------------------------------------------------------\n";
 
-PlasmoDBWebsite::View::CgiApp::DataPlotter->new()->go();
+ApiCommonWebsite::View::CgiApp::DataPlotter->new()->go();
 
