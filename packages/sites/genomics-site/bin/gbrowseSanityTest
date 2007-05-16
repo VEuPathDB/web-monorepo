@@ -336,6 +336,7 @@ sub runTests {
   my $passed = 0;
   my $failed = 0;
   my $runCount = 0;
+  my $totalTime = 0;
 
   foreach my $test (@{$sanityConfig->{test}}) {
     $count++;
@@ -348,26 +349,27 @@ sub runTests {
       &findParentFeatureId($dbh, $test->{param}, $defaultParams, $sqlValues,
 			   $parentFeatureTests);
 
-    my $time = gettimeofday();
+    my $startTime = gettimeofday();
     my ($rowCount, $sqlString) = 
       &runSingleTest($dbh, $test, $defaultParams,
 		     $sqlValues, $parentFeatureTests, $parentFeatureId);
-    my $totTime = gettimeofday() - $time;
-    $totTime = int($totTime * 10000)/10000;
+    my $time = gettimeofday() - $startTime;
+    $time = int($time * 10000)/10000;
+    $totalTime += $time;
     my $multiplier = "";
     if ($parentFeatureId) {
-      $multiplier = " ($totTime multiplied by $parentFeatureRowCount parent feature rows)";
-      $totTime *= $parentFeatureRowCount;
+      $multiplier = " ($time multiplied by $parentFeatureRowCount parent feature rows)";
+      $time *= $parentFeatureRowCount;
     }
     if ($rowCount >= $test->{min} && $rowCount <= $test->{max}) {
-      print "$totTime$multiplier PASSED $testString (returned $rowCount) [test: $count]\n\n"
+      print "$time$multiplier PASSED $testString (returned $rowCount) [test: $count]\n\n"
 	unless $failuresOnly;
       print "sql:\n$sqlString\n\n" if $showSql;
       $passed++;
     } else {
       $failed++;
       print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n";
-      print "$totTime FAILED $testString [test: $count] expected $test->{min} to $test->{max}.  got: $rowCount
+      print "$time FAILED $testString [test: $count] expected $test->{min} to $test->{max}.  got: $rowCount
 
 sql:
 $sqlString
@@ -380,6 +382,7 @@ $sqlString
 Ran $runCount tests
   $passed passed
   $failed failed
+Total time: $totalTime
 ";
 }
 sub runSingleTest {
