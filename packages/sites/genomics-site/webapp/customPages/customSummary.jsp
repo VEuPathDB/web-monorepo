@@ -229,6 +229,13 @@ function resetAttr() {
        <td valign="top" align="right" width="10" nowrap><b>Results:&nbsp; </b></td>
        <td valign="top" align="left" ${paddingStyle}>
           ${wdkAnswer.resultSize}
+
+ <c:if test="${wdkAnswer.resultSize == 0}">
+              <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+                 <site:apidbSummary/>
+             </c:if>
+   </c:if>
+
           <c:if test="${wdkAnswer.resultSize > 0}">
              (showing ${wdk_paging_start} to ${wdk_paging_end})
               <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
