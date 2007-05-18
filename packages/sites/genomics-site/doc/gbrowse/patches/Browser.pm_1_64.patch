@@ -1,0 +1,74 @@
+--- Browser.pm.plum.CryptoDB.v3.4	2007-05-18 10:29:41.000000000 -0400
++++ Browser.pm	2007-05-18 10:35:14.000000000 -0400
+@@ -957,6 +957,9 @@
+   foreach (@$boxes){
+     next unless $_->[0]->can('primary_tag');
+ 
++    my $do_map_check = $_->[5]->{factory}->{options}->{do_map_check};
++    next unless $do_map_check;
++
+     # use the scale as a centering mechanism
+     # potential fragility here: we are depending on the arrow being
+     # the very first box that is returned to us.
+@@ -1073,6 +1076,7 @@
+   my $conf  = $self->config;
+   my $max_labels     = $self->label_density;
+   my $max_bump       = $self->bump_density;
++  my $max_map        = $self->map_density;
+   my $length         = $segment->length;
+ 
+   my @feature_types = map { $conf->label2type($_,$length) } @$tracks;
+@@ -1214,13 +1218,16 @@
+       my $count = $feature_count{$label};
+       $count    = $limit->{$label} if $limit->{$label} && $limit->{$label} < $count;
+ 
++
+       my $do_bump  = $self->do_bump($label, $options->{$label},$count,$max_bump,$length);
+       my $do_label = $self->do_label($label,$options->{$label},$count,$max_labels,$length);
+       my $do_description = $self->do_description($label,$options->{$label},$count,$max_labels,$length);
++      my $do_map = $self->do_map($label,$options->{$label},$count,$max_map,$length);
+ 
+-      $tracks{$label}->configure(-bump  => $do_bump,
+-				 -label => $do_label,
+-				 -description => $do_description,
++      $tracks{$label}->configure(-bump         => $do_bump,
++				                         -label        => $do_label,
++				                         -description  => $do_description,
++				                         -do_map_check => $do_map,
+ 				);
+       $tracks{$label}->configure(-connector  => 'none') if !$do_bump;
+       $tracks{$label}->configure(-bump_limit => $limit->{$label}) 
+@@ -1627,6 +1634,15 @@
+       || 50;
+ }
+ 
++sub map_density {
++  my $self = shift;
++  my $conf = $self->config;
++  return $conf->setting(general=>'map density')
++      || $conf->setting('TRACK DEFAULTS' =>'map density')
++      || 1000;
++}
++
++
+ sub label_density {
+   my $self = shift;
+   my $conf = $self->config;
+@@ -1695,6 +1711,17 @@
+         : 0;
+ }
+ 
++sub do_map {
++  my $self = shift;
++  my ($track_name,$option,$count,$max_maps,$length) = @_;
++
++  my $conf              = $self->config;
++  my $maxl              = $conf->code_setting($track_name => 'map density');
++  $maxl                 = $max_maps unless defined $maxl;
++
++  return  $count <= $maxl;
++}
++
+ # fetch a list of Segment objects given a name or range
+ # (this used to be in gbrowse executable itself)
+ sub name2segments {
