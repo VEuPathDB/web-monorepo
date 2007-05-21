@@ -126,9 +126,8 @@ function addAttr() {
 
 
 function resetAttr() {
-    if (confirm("Are you sure to reset the column layout?")) {
-        var url = "${commandUrl}&command=add&attribute=" + attribute;
-        invokeAction(url, false, summaryCallback);
+    if (confirm("Are you sure you want to reset the column configuration back to the default?")) {
+        var url = "${commandUrl}&command=reset";
         window.location.href = url;
     }
 }

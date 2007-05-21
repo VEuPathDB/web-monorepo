@@ -137,6 +137,16 @@ function deleteAllHistories() {
     }
 }
 
+function deleteAllInvHists() {
+    var agree=confirm("Are you sure you want to delete all your query histories?");
+    if (agree) {
+       window.location.href = "<c:url value='/deleteAllHistories.do?invalid=true'/>";
+	   //return true ;
+    } else {
+	   return false ;
+    }
+}
+
 
 function reviseBooleanQuery(type, expression) {
     var spanTitle = document.getElementById('comb_title_' + type);
@@ -396,6 +406,96 @@ function reviseBooleanQuery(type, expression) {
   </c:otherwise>
 </c:choose> 
 <!-- end of deciding history emptiness -->
+
+
+<!-- display invalid history list -->
+<c:set var="invalidHistories" value="${wdkUser.invalidHistories}" />
+<c:if test="${fn:length(invalidHistories) > 0}">
+    <table>
+
+        <tr class="headerRow">
+            <th>ID</th> 
+            <th onmouseover="hideAnyName()">Query</th>
+            <th onmouseover="hideAnyName()">Size</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>
+
+        <c:forEach items="${invalidHistories}" var="history">
+            <tr>
+                <c:set var="historyId" value="${history.historyId}"/>
+                <jsp:setProperty name="history" property="nameTruncateTo" value="${NAME_TRUNC}"/>
+
+                <c:choose>
+                    <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
+                    <c:otherwise><tr class="rowMedium"></c:otherwise>
+                </c:choose>
+
+                <td>${historyId}
+	               <!-- begin of floating info box -->
+                   <div id="div_${historyId}" 
+	                    class="medium"
+                        style="display:none;font-size:8pt;width:610px;position:absolute;left:0;top:0;"
+                        onmouseover="hideAnyName()">
+                       <table cellpadding="2" cellspacing="0" border="0"bgcolor="#ffffCC">
+                           <tr>
+                              <td valign="top" align="right" width="10" class="medium" nowrap><b>Query&nbsp;:</b></td>
+                              <td valign="top" align="left" class="medium">${history.customName}</td>
+                           </tr>
+
+                           <c:set var="params" value="${history.params}"/>
+                           <c:set var="paramNames" value="${history.paramNames}"/>
+                           <c:forEach items="${params}" var="param">
+                               <c:set var="pName" value="${param.key}"/>
+                               <tr>
+                                  <td align="right" valign="top" class="medium" nowrap><i>${paramNames[pName]}</i> : </td>
+                                  <td class="medium">${param.value}</td>
+                               </tr>
+                           </c:forEach>
+                     </table>
+                   </div> 
+	               <!-- end of floating info box -->
+                </td>
+                <c:set var="dispNam" value="${history.truncatedName}"/>
+                <td width=450 onmouseover="displayName('${historyId}')" onmouseout="hideAnyName()">
+                    <div id="text_${historyId}">${dispNam}</div>
+                    <div id="input_${historyId}" style="display:none"></div>
+                </td>
+                <td align='right' onmouseover="hideAnyName()" nowrap>${history.estimateSize}</td>
+
+                <td nowrap>
+                    <c:set var="surlParams" value="showSummary.do?wdk_history_id=${historyId}" />
+                    <a href="${surlParams}">view</a>
+                </td>
+
+                <td nowrap>
+                    <a href="deleteHistory.do?wdk_history_id=${historyId}"
+                       title="delete saved query #${historyId}"
+                       onclick="return deleteHistory('${historyId}', '${history.customName}');">delete</a>
+                </td>
+
+            </tr>
+            <c:set var="i" value="${i+1}"/>
+        </c:forEach>
+
+        <!-- delete all invalid histories -->
+        <tr>
+          <td class="medium">
+             <div>&nbsp;</div>
+             <%-- display delete all invalid histories button --%>
+             <input type="button" value="Delete All Invalid Queries" onclick="deleteAllInvHists()"/><br>
+             <div style="padding-left: 20px">
+                <i>Be careful: This will delete all your invalid queries on ${wdkModel.displayName}.</i>
+             </div>
+             &nbsp;
+          </td>
+       </tr>
+    </table>
+</c:if>
+<!-- end of forEach history in the category -->
+
+
+<!-- end of display invalid history list -->
 
 
   </td>
