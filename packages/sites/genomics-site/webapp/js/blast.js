@@ -9,7 +9,7 @@ function changeQuestion(){
 		questionName = "EstQuestions.EstsBySimilarity";
 	} else 	if (blastDb.indexOf("orf") >= 0){
 		questionName = "OrfQuestions.OrfsBySimilarity";
-	} else 	if (blastDb.indexOf("sequence") >= 0){
+	} else 	if (blastDb.indexOf("genom") >= 0){
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
