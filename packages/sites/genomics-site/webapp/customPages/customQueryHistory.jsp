@@ -15,6 +15,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.name}"/>
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apiModel') || fn:containsIgnoreCase(modelName, 'cryptodb')}" />
+<c:set var="invalidHistories" value="${wdkUser.invalidHistories}" />
 
 <site:header title="${wdkModel.displayName} : Query History"
                  banner="My Query History"
@@ -169,6 +170,12 @@ function reviseBooleanQuery(type, expression) {
 
 <!-- show error messages, if any -->
 <wdk:errors/>
+
+<!-- display a link to incompatible histories -->
+<c:if test="${fn:length(invalidHistories) > 0}">
+    <p><i>Note</i>: some of your saved queries are not compatible with the current
+        version of PlasmoDB.  See <a href="#incompatible">Incompatible Queries</a>.</p>
+</c:if>
 
 <!-- decide whether history is empty -->
 <c:choose>
@@ -407,10 +414,21 @@ function reviseBooleanQuery(type, expression) {
 </c:choose> 
 <!-- end of deciding history emptiness -->
 
-
 <!-- display invalid history list -->
 <c:set var="invalidHistories" value="${wdkUser.invalidHistories}" />
 <c:if test="${fn:length(invalidHistories) > 0}">
+
+    <hr>
+
+    <a name="incompatible"></a><h3>Incompatible Queries</h3>
+
+    <p>This section lists your queries from previous versions of PlasmoDB that
+        are no longer compatible with the current version of PlasmoDB.  In most
+        cases, you will be able to work around the incompatibility by finding an
+        equivalent query in this version, and running it with similar parameter
+        values.</p>
+    <p>If you have problems. <a href="<c:url value="help.jsp" />">drop us a line</a>.</p>
+
     <table>
 
         <tr class="headerRow">
@@ -431,7 +449,7 @@ function reviseBooleanQuery(type, expression) {
                     <c:otherwise><tr class="rowMedium"></c:otherwise>
                 </c:choose>
 
-                <td>${historyId}
+                <td class="medium">${historyId}
 	               <!-- begin of floating info box -->
                    <div id="div_${historyId}" 
 	                    class="medium"
@@ -445,11 +463,11 @@ function reviseBooleanQuery(type, expression) {
 
                            <c:set var="params" value="${history.params}"/>
                            <c:set var="paramNames" value="${history.paramNames}"/>
-                           <c:forEach items="${params}" var="param">
-                               <c:set var="pName" value="${param.key}"/>
+                           <c:forEach items="${params}" var="item">
+                               <c:set var="pName" value="${item.key}"/>
                                <tr>
                                   <td align="right" valign="top" class="medium" nowrap><i>${paramNames[pName]}</i> : </td>
-                                  <td class="medium">${param.value}</td>
+                                  <td class="medium">${item.value}</td>
                                </tr>
                            </c:forEach>
                      </table>
@@ -457,7 +475,7 @@ function reviseBooleanQuery(type, expression) {
 	               <!-- end of floating info box -->
                 </td>
                 <c:set var="dispNam" value="${history.truncatedName}"/>
-                <td width=450 onmouseover="displayName('${historyId}')" onmouseout="hideAnyName()">
+                <td onmouseover="displayName('${historyId}')" onmouseout="hideAnyName()">
                     <div id="text_${historyId}">${dispNam}</div>
                     <div id="input_${historyId}" style="display:none"></div>
                 </td>
@@ -465,7 +483,7 @@ function reviseBooleanQuery(type, expression) {
 
                 <td nowrap>
                     <c:set var="surlParams" value="showSummary.do?wdk_history_id=${historyId}" />
-                    <a href="${surlParams}">view</a>
+                    <a href="${surlParams}">show</a>
                 </td>
 
                 <td nowrap>
@@ -480,7 +498,7 @@ function reviseBooleanQuery(type, expression) {
 
         <!-- delete all invalid histories -->
         <tr>
-          <td class="medium">
+          <td colspan="5" class="medium">
              <div>&nbsp;</div>
              <%-- display delete all invalid histories button --%>
              <input type="button" value="Delete All Invalid Queries" onclick="deleteAllInvHists()"/><br>
@@ -492,8 +510,6 @@ function reviseBooleanQuery(type, expression) {
        </tr>
     </table>
 </c:if>
-<!-- end of forEach history in the category -->
-
 
 <!-- end of display invalid history list -->
 
