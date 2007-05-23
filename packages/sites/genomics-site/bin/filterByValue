@@ -1,4 +1,4 @@
-#!@perl@
+#!/usr/bin/perl
 
 ## This filter transforms its input to output according to its command-line
 ## arguments.  The input format is tab-delimited.  The first field is used to
