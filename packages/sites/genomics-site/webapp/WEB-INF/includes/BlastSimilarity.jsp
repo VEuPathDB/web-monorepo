@@ -77,7 +77,7 @@
   		<td>
   		<table><tr>
   		<td><html:submit property="questionSubmit" value="Get Answer"/></td>
-		<td><input type="button" value="Clear Sequence" onClick="this.form.elements[8].value='';"/></td>
+		<td><input type="button" value="Clear Sequence" onClick="this.form.elements[4].value='';"/></td>
 		<td><html:reset>Reset All</html:reset></td>
         </tr></table>
         </td></tr>
