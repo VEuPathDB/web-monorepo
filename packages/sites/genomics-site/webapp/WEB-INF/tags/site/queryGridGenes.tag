@@ -6,6 +6,11 @@
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
+<%-- qname is question name
+     linktext should be read from the model (e.g., question displayName)
+     this probably should be a loop reading from the model all questions under a specific category
+--%>
+
 <table width="100%" border="0" cellspacing="2" cellpadding="2">
 
     <tr>

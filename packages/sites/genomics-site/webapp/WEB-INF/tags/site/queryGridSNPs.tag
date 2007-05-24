@@ -13,7 +13,7 @@
         <td  width="50%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsBySourceId" linktext="SNP ID" existsOn="A P T"/>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpBySourceId" linktext="SNP ID" existsOn="A P T"/>
                 </tr>
 
                 
