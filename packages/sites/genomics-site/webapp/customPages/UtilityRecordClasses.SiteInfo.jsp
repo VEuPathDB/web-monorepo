@@ -90,7 +90,41 @@ p {
 	margin: 12px 8px;
 }
 
+tr.rowMedium {
+    background-color: #DDDDDD;
+    color: black;
+    font-family: arial;
+	font-size: 10pt;
+}
+tr.rowMedium td {
+    padding-left:   5px;
+    padding-top:    5px;
+    padding-bottom: 5px;
+}
+tr.rowLight {
+    background-color: #FFFFFF;
+    color: black;
+    font-family: arial;
+	font-size: 10pt;
+}
 
+tr.rowLight td {
+    padding-left:   5px;
+    padding-top:    5px;
+    padding-bottom: 5px;
+}
+
+
+tr.headerRow {
+	background: #EFEFEF;
+}
+
+tr.headerRow  td,th {
+   border-width:2px 0;
+   border-style:solid;
+   border-color:#336699;
+   padding-left: 5px;
+}
 -->
 </style>
 
@@ -110,6 +144,7 @@ p {
 <b>Hosted on</b>: ${wdkRecord.attributes['host_name'].value} (${wdkRecord.attributes['address'].value})<br>
 <b>Oracle Version</b>: ${wdkRecord.attributes['version'].value}<br>
 
+<b>Available DBLinks</b>: <site:dataTable tblName="AllDbLinks"/>
 <p>
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['cryptolink']}">
     <br>
@@ -200,6 +235,16 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
         <font color="#CC0033">not responding</font>
     </c:if>
 </c:if>
+<p>
+<b>ApiComm Macro</b>: ${wdkRecord.attributes['apicommMacro'].value}<br>
+<c:if test="${!empty wdkRecord.recordClass.attributeFields['apicomm_global_name']}">
+    <c:catch var="e">
+   <b>ApiComm dblink global_name</b>:  ${wdkRecord.attributes['apicomm_global_name'].value}<br>
+    </c:catch>
+    <c:if test="${e!=null}">
+        <font color="#CC0033">${e}</font>
+    </c:if>
+</c:if><br>
 
 
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['cache_count']}">
