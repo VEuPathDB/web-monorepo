@@ -91,15 +91,15 @@ p {
 }
 
 tr.rowMedium {
-    background-color: #DDDDDD;
+    background-color: #FFFFFF;
     color: black;
     font-family: arial;
 	font-size: 10pt;
 }
 tr.rowMedium td {
     padding-left:   5px;
-    padding-top:    5px;
-    padding-bottom: 5px;
+    padding-top:    1px;
+    padding-bottom: 1px;
 }
 tr.rowLight {
     background-color: #FFFFFF;
@@ -110,8 +110,8 @@ tr.rowLight {
 
 tr.rowLight td {
     padding-left:   5px;
-    padding-top:    5px;
-    padding-bottom: 5px;
+    padding-top:    1px;
+    padding-bottom: 1px;
 }
 
 
@@ -226,7 +226,7 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 <h2>WDK</h2>
 <p>
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['userlink']}">
-<b>DB Link to User login, registration and comments Database:</b><br>   
+<b>DB Link to User login, registration and comments Database:</b> 
 <c:catch var="e">
         ${wdkRecord.attributes['userlink'].value}
     </c:catch>
@@ -235,8 +235,12 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
         <font color="#CC0033">not responding</font>
     </c:if>
 </c:if>
+
+<c:if test="${!empty wdkRecord.recordClass.attributeFields['apicommMacro']}">
 <p>
 <b>ApiComm Macro</b>: ${wdkRecord.attributes['apicommMacro'].value}<br>
+</c:if>
+
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['apicomm_global_name']}">
     <c:catch var="e">
    <b>ApiComm dblink global_name</b>:  ${wdkRecord.attributes['apicomm_global_name'].value}<br>
