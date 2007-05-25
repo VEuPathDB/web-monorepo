@@ -174,7 +174,7 @@ function reviseBooleanQuery(type, expression) {
 <!-- display a link to incompatible histories -->
 <c:if test="${fn:length(invalidHistories) > 0}">
     <p><i>Note</i>: some of your saved queries are not compatible with the current
-        version of PlasmoDB.  See <a href="#incompatible">Incompatible Queries</a>.</p>
+        version of ${wdkModel.displayName}.  See <a href="#incompatible">Incompatible Queries</a>.</p>
 </c:if>
 
 <!-- decide whether history is empty -->
@@ -422,8 +422,8 @@ function reviseBooleanQuery(type, expression) {
 
     <a name="incompatible"></a><h3>Incompatible Queries</h3>
 
-    <p>This section lists your queries from previous versions of PlasmoDB that
-        are no longer compatible with the current version of PlasmoDB.  In most
+    <p>This section lists your queries from previous versions of ${wdkModel.displayName} that
+        are no longer compatible with the current version of ${wdkModel.displayName}.  In most
         cases, you will be able to work around the incompatibility by finding an
         equivalent query in this version, and running it with similar parameter
         values.</p>
