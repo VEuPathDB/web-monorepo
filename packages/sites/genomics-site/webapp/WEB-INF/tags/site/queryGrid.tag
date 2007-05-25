@@ -95,7 +95,7 @@
 <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
         <input type="hidden" name="myMultiProp(datasets)"
-               value="Gene product,Gene notes,User comments,Similar proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
+               value="Gene product,Gene notes,User comments,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
         <input type="hidden" name="myMultiProp(case_independent)" value="yes">
         <input type="hidden" name="myMultiProp(whole_words)" value="no">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
@@ -120,7 +120,7 @@
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
         <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}">
         <input type="hidden" name="myMultiProp(datasets)"
-               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,Similar proteins (BLAST hits v. NRDB),EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
+               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
         <input type="hidden" name="myMultiProp(case_independent)" value="yes">
         <input type="hidden" name="myMultiProp(whole_words)" value="no">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
