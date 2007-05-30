@@ -95,8 +95,7 @@
 <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
         <input type="hidden" name="myMultiProp(datasets)"
-               value="Gene product,Gene notes,User comments,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
-        <input type="hidden" name="myMultiProp(case_independent)" value="yes">
+               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
         <input type="hidden" name="myMultiProp(whole_words)" value="no">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
         <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
@@ -109,7 +108,7 @@
 	<c:when test="${fn:containsIgnoreCase(modelName, 'ApiDB')}">
 		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii"/>
 	</c:when>
-<c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
+        <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
 		<c:set var="listOrganisms" value="C. hominis,C. parvum"/>
 	</c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
@@ -121,13 +120,12 @@
         <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}">
         <input type="hidden" name="myMultiProp(datasets)"
                value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
-        <input type="hidden" name="myMultiProp(case_independent)" value="yes">
         <input type="hidden" name="myMultiProp(whole_words)" value="no">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
         <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
 </c:otherwise>
 
-</c:choose> <%-- Crypto, Toxo or the others --%>
+</c:choose> <%-- Toxo or the others --%>
 
 </td>
 <td  valign="top" align="right" width="${gowidth}">
