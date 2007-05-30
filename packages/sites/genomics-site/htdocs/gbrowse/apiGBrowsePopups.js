@@ -6,9 +6,9 @@ function twoColRow(left, right) {
   return '<tr><td>' + left + '</td><td>' + right + '</td></tr>';
 }
 
-// plasmodb Gene title
-function pgt (tip, paramsString) {
-  // split paramsString on comma
+// Gene title
+function gene_title (tip, paramsString) {
+  // split paramsString on semicolon
   var v = new Array();
   v = paramsString.split(';');
 
@@ -113,42 +113,4 @@ function pst (tip, paramsString) {
   return table(rows);
 }
 
-
-// toxodb Gene title
-function tgt (tip, paramsString) {
-
-  // split paramsString on comma
-  var v = new Array();
-  v = paramsString.split(';');
-
-  var SOURCE_ID = 0;
-  var CHR = SOURCE_ID + 1;
-  var LOC = CHR + 1;
-  var SO_TERM =  LOC + 1;
-  var PRODUCT = SO_TERM + 1;
-  var TAXON = PRODUCT + 1;
-  var IS_PSEUDO =  TAXON + 1;
-
-  // expand minimalist input data
-  var cdsLink = "<a href=../../../cgi-bin/geneSrt?ids=" + v[SOURCE_ID]
-        + "&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>CDS</a>"
-  var proteinLink = "<a href=../../../cgi-bin/geneSrt?ids=" + v[SOURCE_ID]
-        + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>protein</a>"
-
-  var type = (v[IS_PSEUDO] == '1')? v[SO_TERM] : v[SO_TERM] + " (pseudogene)";	
-  var download = cdsLink + " | " + proteinLink;
-
-  // format into html table rows
-  var rows = new Array();
-  rows.push(twoColRow('Species:', v[TAXON]));
-  rows.push(twoColRow('ID', v[SOURCE_ID]));
-  rows.push(twoColRow('Gene Type', type));
-  rows.push(twoColRow('Description', v[PRODUCT]));
-  rows.push(twoColRow('Location', v[LOC]));
-  rows.push(twoColRow('Download', download)); 
-
-//  tip.T_BGCOLOR = 'lightskyblue';
-  tip.T_TITLE = 'Annotated Gene ' + v[SOURCE_ID];
-  return table(rows);
-}
 
