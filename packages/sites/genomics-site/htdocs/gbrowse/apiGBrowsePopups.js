@@ -10,7 +10,7 @@ function twoColRow(left, right) {
 function pgt (tip, paramsString) {
   // split paramsString on comma
   var v = new Array();
-  v = paramsString.split(',');
+  v = paramsString.split(';');
 
   var SOURCE_ID = 0;
   var CHR = SOURCE_ID + 1;
@@ -38,13 +38,13 @@ function pgt (tip, paramsString) {
   rows.push(twoColRow('Location', v[LOC]));
   rows.push(twoColRow('Download', download)); 
 
-  tip.T_BGCOLOR = 'lightskyblue';
+//  tip.T_BGCOLOR = 'lightskyblue';
   tip.T_TITLE = 'Annotated Gene ' + v[SOURCE_ID];
   return table(rows);
 }
 
 
-// PlasmoDB SNP Title
+// SNP Title
 function pst (tip, paramsString) {
   // split paramsString on comma
   var v = new Array();
@@ -108,7 +108,7 @@ function pst (tip, paramsString) {
     rows.push(twoColRow(strain, info));    
   }
 
-  tip.T_BGCOLOR = 'lightskyblue';
+//  tip.T_BGCOLOR = 'lightskyblue';
   tip.T_TITLE = 'SNP';
   return table(rows);
 }
@@ -147,7 +147,8 @@ function tgt (tip, paramsString) {
   rows.push(twoColRow('Location', v[LOC]));
   rows.push(twoColRow('Download', download)); 
 
-  tip.T_BGCOLOR = 'thistle';
+//  tip.T_BGCOLOR = 'lightskyblue';
   tip.T_TITLE = 'Annotated Gene ' + v[SOURCE_ID];
   return table(rows);
 }
+
