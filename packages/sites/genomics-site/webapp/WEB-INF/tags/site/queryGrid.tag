@@ -96,7 +96,7 @@
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
         <input type="hidden" name="myMultiProp(datasets)"
                value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
-        <input type="hidden" name="myMultiProp(whole_words)" value="no">
+        <input type="hidden" name="myMultiProp(whole_words)" value="yes">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
         <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
 </c:when>
