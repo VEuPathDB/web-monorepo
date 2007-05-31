@@ -16,7 +16,7 @@
     <tr>
         <td width="33%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Genomic Position</td>
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Genomic%20Position">Genomic Position</a></td>
                 
                 </tr>
                 <tr>
@@ -36,7 +36,7 @@
 
         <td width="34%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Gene Attributes</td>
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Gene%20Attributes">Gene Attributes</a></td>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByGeneType" linktext="Type (e.g. rRNA, tRNA)"  existsOn="A C P T"/>
@@ -49,7 +49,7 @@
 
        <td  valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Other Attributes
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Other%20Attributes">Other Attributes</a>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTextSearch" linktext="Keyword"  existsOn="A C P T"/>
@@ -73,7 +73,7 @@
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Transcript Expression
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Transcript%20Expression">Transcript Expression</a>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn="A C P T"/>
@@ -91,7 +91,7 @@
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Protein Expression
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Protein%20Expression">Protein Expression</a>
 
                 </tr>
                 <tr>
@@ -101,7 +101,7 @@
         </td>
 <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Similarity/Pattern
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Similarity/Pattern">Similarity/Pattern</a>
 
                 </tr>
                 <tr>
@@ -121,7 +121,7 @@
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Predicted Proteins
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Predicted%20Proteins">Predicted Proteins</a>
 
                 </tr>
                 <tr>
@@ -142,7 +142,7 @@
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Putative Function
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Putative%20Function">Putative Function</a>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByGoTerm" linktext="GO Term" existsOn="A C P T"/>
@@ -164,7 +164,7 @@
 
         <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Cellular Location
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Cellular%20Location">Cellular Location</a>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithSignalPeptide" linktext="Signal Peptide"  existsOn="A C P T"/>
@@ -186,7 +186,7 @@
     <tr>
         <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Evolution
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Evolution">Evolution</a>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesOrthologousToAGivenGene" linktext="Orthologs/Paralogs" existsOn="A P"/>
@@ -202,7 +202,7 @@
 
  <td width="33%"  valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="queryCategory"><td colspan="3">Population Biology
+                <tr class="queryGridTitle"><td colspan="3"><a href="#Population%20Biology">Population Biology</a>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A P T"/>
