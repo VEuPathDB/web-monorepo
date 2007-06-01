@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!-- get wdkAnswer from requestScope -->
 <jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
@@ -11,6 +12,10 @@
 <c:set var="history_id" value="${requestScope.wdk_history_id}"/>
 <c:set var="format" value="${requestScope.wdkReportFormat}"/>
 <c:set var="allRecordIds" value="${wdkAnswer.allIdList}"/>
+
+<c:set var="site" value="${wdkModel.displayName}"/>
+
+
 
 
 <c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
@@ -37,8 +42,16 @@ function setEnable(flag) {
 // -->
 </script>
 
-
+<c:choose>
+<c:when test="${fn:containsIgnoreCase(site, 'ApiDB')}">
+  <form action="${CGI_URL}/Api_geneSrt" method="post">
+</c:when>
+<c:otherwise>
   <form action="${CGI_URL}/geneSrt" method="post">
+</c:otherwise>
+</c:choose>
+
+
     <input type="hidden" name="ids" value="${allRecordIds}">
     
     <table border="0" width="100%" cellpadding="4">
