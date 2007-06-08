@@ -350,9 +350,9 @@ ${wdkModel.displayName}
 
 <script type="text/javascript" lang="JavaScript 1.2">
 <!-- //
-//toggle(6);
-//toggle(6);
-//toggle(31);
+toggle(7);
+toggle(7);
+toggle(7);
 // -->
 </script>
 
