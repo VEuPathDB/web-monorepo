@@ -5,10 +5,13 @@ use strict;
 use lib "@targetDir@/lib/perl";
 $ENV{GUS_HOME} = '@targetDir@';
 
-use ApiCommonWebsite::View::CgiApp::Api_SequenceRetrievalToolGenes;
+use ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolGeneOrf;
 
 my $app =
-  ApiCommonWebsite::View::CgiApp::Api_SequenceRetrievalToolGenes->new();
+  ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolGeneOrf->new();
+
+$app->{geneOrOrf} = 'gene';
+$app->{isApiDB} = 1;
 
 $app->go();
 
