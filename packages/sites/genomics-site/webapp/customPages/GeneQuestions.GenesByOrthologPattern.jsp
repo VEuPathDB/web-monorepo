@@ -36,11 +36,12 @@
 <c:set var="resultSpecies" value="${qParams['organism']}"/>
 <c:set var="resultSpeciesName" value="${resultSpecies.name}"/>
 <c:set var="ind" value="${qParams['phyletic_indent_map']}"/>
+<c:set var="trm" value="${qParams['phyletic_term_map']}"/>
 
 <c:if test="${fn:containsIgnoreCase(wdkModel.displayName,'ApiDB')}">
 	<c:set var="ind" value="${qParams['internal_phyletic_indent_map']}"/>
+	<c:set var="trm" value="${qParams['internal_phyletic_term_map']}"/>
 </c:if>
-<c:set var="trm" value="${qParams['phyletic_term_map']}"/>
 
 <c:set var="indentMap" value="${ind.vocabMap}"/>
 <c:set var="termMap" value="${trm.vocabMap}"/>
@@ -64,7 +65,7 @@ for (var i = 0 ; i < ${taxaCount} ; i++) {
 var abbrev =
   new Array("All Organisms"
             <c:forEach var="sp" items="${ind.vocab}">, "${sp}"</c:forEach>
-  );
+   );
 
 
 
@@ -252,10 +253,14 @@ Ack, this form won't work at all without JavaScript support!
 
 <html:form method="post" action="/processQuestion.do">
 
-<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByOrthologPattern">    
-<input type="hidden" name="myMultiProp(phyletic_indent_map)" value="Archaea">
-<input type="hidden" name="myMultiProp(phyletic_term_map)" value="rno">
+<input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
+<input name="myMultiProp(phyletic_indent_map)" value="Archaea" type="hidden"/>
+<input name="myMultiProp(phyletic_term_map)" value="rno" type="hidden"/>
 
+<c:if test="${fn:containsIgnoreCase(wdkModel.displayName,'ApiDB')}">
+	<input name="myMultiProp(internal_phyletic_indent_map)" value="Archaea" type="hidden"/>
+	<input name="myMultiProp(internal_phyletic_term_map)" value="rno" type="hidden"/>
+</c:if>
 
 
 <%--  get answer button on top in the middle
@@ -286,12 +291,13 @@ Ack, this form won't work at all without JavaScript support!
   </td>
 </tr>
 <tr><td><br></td></tr>
-${wdkModel.displayName}
+
+<%--${wdkModel.displayName}
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
 <site:apidbOrthologPattern/>
 </c:when>
-<c:otherwise>
+<c:otherwise>--%>
 
 <tr><td colspan="3">
 <table border="0" cellpadding="2">
@@ -324,9 +330,10 @@ ${wdkModel.displayName}
 </table>
 
     </td></tr>
-</c:otherwise>
-</c:choose>
 
+<%--</c:otherwise>
+</c:choose>
+--%>
 <tr>
  <td></td>
   <td><html:hidden property="myProp(${includedSpeciesName})" /></td>
