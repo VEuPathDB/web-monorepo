@@ -92,7 +92,7 @@ function setEnable(flag) {
                 <input type="radio" name="upstreamAnchor" value="Start" checked> start<br>
                 <input type="radio" name="upstreamAnchor" value="End"> stop<br>
             </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+/-&nbsp;&nbsp;
+            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
                              <input id="upstreamOffset" name="upstreamOffset" value="0" size="6">residues
             </td>
         </tr>
@@ -103,7 +103,7 @@ function setEnable(flag) {
                 <input type="radio" name="downstreamAnchor" value="Start"> start<br>
                 <input type="radio" name="downstreamAnchor" value="End" checked> stop<br>
             </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+/-&nbsp;&nbsp;
+            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
                              <input id="downstreamOffset" name="downstreamOffset" value="0" size="6"> residues
             </td>
         </tr>
@@ -176,7 +176,7 @@ function setEnable(flag) {
                 <input type="radio" name="upstreamAnchor" value="Start" checked> start<br>
                 <input type="radio" name="upstreamAnchor" value="End"> stop<br>
             </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+/-&nbsp;&nbsp;
+            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
                              <input name="upstreamOffset" value="0" size="6">residues</td></tr>
 
         <tr><td>end at</td>
@@ -184,7 +184,7 @@ function setEnable(flag) {
                 <input type="radio" name="downstreamAnchor" value="Start"> start<br>
                 <input type="radio" name="downstreamAnchor" value="End" checked> stop<br>
             </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+/-&nbsp;&nbsp;
+            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
                              <input name="downstreamOffset" value="0" size="6"> residues</td></tr>
          <tr><td><a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a></td></tr>
    </table></td></tr>
