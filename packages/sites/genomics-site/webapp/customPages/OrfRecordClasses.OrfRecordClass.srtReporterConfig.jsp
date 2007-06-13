@@ -22,10 +22,10 @@
 
 
 <!-- display page header -->
-<site:header banner="Retrieve Gene Sequences" />
+<site:header banner="Retrieve Orf Sequences" />
 
 <!-- display description for page -->
-<p><b>This reporter will retrieve the sequences of the genes in your result.</b></p>
+<p><b>This reporter will retrieve the sequences of the open reading frames in your result.</b></p>
 
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
@@ -44,10 +44,10 @@ function setEnable(flag) {
 
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(site, 'ApiDB')}">
-  <form action="${CGI_URL}/Api_geneSrt" method="post">
+  <form action="${CGI_URL}/Api_orfSrt" method="post">
 </c:when>
 <c:otherwise>
-  <form action="${CGI_URL}/geneSrt" method="post">
+  <form action="${CGI_URL}/orfSrt" method="post">
 </c:otherwise>
 </c:choose>
 
@@ -60,8 +60,6 @@ function setEnable(flag) {
     <b>Choose the type of sequence:</b>
         <input type="radio" name="type" value="genomic" checked onclick="setEnable(true)">genomic
         <input type="radio" name="type" value="protein" onclick="setEnable(false)">protein
-        <input type="radio" name="type" value="CDS" onclick="setEnable(false)">CDS
-        <input type="radio" name="type" value="processed_transcript" onclick="setEnable(false)">transcript
     </td></tr>
 
     <tr>
@@ -117,14 +115,6 @@ Types of sequences:
  <tr>
       <td><i><b>protein</b></i>
       <td>the predicted translation of the gene
- </tr>
- <tr>
-       <td><i><b>CDS</b></i>
-       <td>the coding sequence, excluding UTRs (introns spliced out)
- </tr>
- <tr>
-        <td><i><b>transcript</b></i>
-        <td>the processed transcript, including UTRs (introns spliced out)
  </tr>
  <tr>
         <td><i><b>genomic</b></i>
