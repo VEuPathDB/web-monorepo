@@ -43,11 +43,13 @@
                 <input type="checkbox" name="hasProtein" value="true">Include Predicted Protein Sequence
             </td>
         </tr>
+<!--        
         <tr>
             <td>
                 <input type="checkbox" name="hasCodingSequence" value="true">Include coding sequence
             </td>
         </tr>
+-->
         <tr>
             <td valign="top" nowrap><b>Download Type</b>: 
                 <input type="radio" name="downloadType" value="text">GFF File
