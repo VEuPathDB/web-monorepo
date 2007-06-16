@@ -51,7 +51,6 @@
               <hr>
             </c:if>
  
-            <a name="${fileName}"/>
                   <b>${title}</b>
                   <br>${description}<br>
           </c:if>
