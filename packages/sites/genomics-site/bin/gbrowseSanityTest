@@ -13,11 +13,10 @@ use Time::HiRes qw(gettimeofday);
 use DBI;
 use List::Util qw(min max);
 use Getopt::Long qw(GetOptions);
-use GUS::Supported::GusConfig;
-use GUS::ObjRelP::DbiDatabase;
+use ApiCommonWebsite::Model::ModelConfig;
+use ApiCommonWebsite::Model::WebXmlConfig;
 
 my ($sanityFile, $gbrowseFile, $indexOnly, $failuresOnly, $suggestOnly, $skipTo, $stopAfter, $showParseG, $showParseS, $showSql);
-my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
 $stopAfter = 1000;
 GetOptions("sanityFile=s" => \$sanityFile,
@@ -313,15 +312,15 @@ sub getQueryParamNames {
 }
 
 sub getDbHandle {
-  my $gusconfig = GUS::Supported::GusConfig->new();
+  my $webxml = ApiCommonWebsite::Model::WebXmlConfig->new("$ENV{GUS_HOME}/config/web.xml");
+  my $c = new ApiCommonWebsite::Model::ModelConfig($webxml->getModelName);
 
-  my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
-					  $gusconfig->getDatabaseLogin(),
-					  $gusconfig->getDatabasePassword(),
-					  0,0,1,
-					  $gusconfig->getCoreSchemaName()
-					 );
-  my $dbh = $db->getQueryHandle();
+  my $dbh = DBI->connect(
+                $c->getDbiDsn, 
+                $c->getLogin, 
+                $c->getPassword,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
   return $dbh;
 }
 
