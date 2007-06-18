@@ -59,7 +59,14 @@
             <br>
           </c:if>
 
-          <a href="<c:url value="/tutorials/${fileName}"/>" target="tutorial">${fileName}</a>
+          <c:set var="splitFile" value='${fn:split(fileName, ".")}'/>
+          <c:set var="fileFormat"
+                 value="${fn:toUpperCase(splitFile[fn:length(splitFile)-1])}"/>
+          <c:if test='${fileFormat eq "MOV"}'>
+            <c:set var="fileFormat" value="QuickTime"/>
+          </c:if>
+
+          <a href="<c:url value="/tutorials/${fileName}"/>" target="tutorial">view in ${fileFormat} format</a>
           <font size="-1">Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${size}</font>
 
           <c:set var="fileNumber" value="${fileNumber+1}"/>
