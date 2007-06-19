@@ -427,7 +427,7 @@ function reviseBooleanQuery(type, expression) {
         cases, you will be able to work around the incompatibility by finding an
         equivalent query in this version, and running it with similar parameter
         values.</p>
-    <p>If you have problems. <a href="<c:url value="help.jsp" />">drop us a line</a>.</p>
+    <p>If you have problems <a href="<c:url value="help.jsp" />">drop us a line</a>.</p>
 
     <table>
 
@@ -501,9 +501,9 @@ function reviseBooleanQuery(type, expression) {
           <td colspan="5" class="medium">
              <div>&nbsp;</div>
              <%-- display delete all invalid histories button --%>
-             <input type="button" value="Delete All Invalid Queries" onclick="deleteAllInvHists()"/><br>
+             <input type="button" value="Delete All Incompatible Queries" onclick="deleteAllInvHists()"/><br>
              <div style="padding-left: 20px">
-                <i>Be careful: This will delete all your invalid queries on ${wdkModel.displayName}.</i>
+                <i>Be careful: This will delete all your incompatible queries on ${wdkModel.displayName}.</i>
              </div>
              &nbsp;
           </td>
