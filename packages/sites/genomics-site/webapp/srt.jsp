@@ -27,12 +27,17 @@
 <c:set var="gSrt" value="geneSrt"/>
 <c:set var="cSrt" value="contigSrt"/>
 <c:set var="oSrt" value="orfSrt"/>
+
+<c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
+    <c:set var="cSrt" value="Api_contigSrt"/>
+</c:if>
+<%--
 <c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
     <c:set var="gSrt" value="Api_geneSrt"/>
     <c:set var="cSrt" value="Api_contigSrt"/>
     <c:set var="oSrt" value="Api_orfSrt"/>
 </c:if>
-
+--%>
 
 <script type="text/javascript" lang="JavaScript 1.2">
 <!-- //
