@@ -42,14 +42,18 @@ function setEnable(flag) {
 // -->
 </script>
 
+<%--
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(site, 'ApiDB')}">
   <form action="${CGI_URL}/Api_geneSrt" method="post">
 </c:when>
 <c:otherwise>
+--%>
   <form action="${CGI_URL}/geneSrt" method="post">
+<%--
 </c:otherwise>
 </c:choose>
+--%>
 
 
     <input type="hidden" name="ids" value="${allRecordIds}">
