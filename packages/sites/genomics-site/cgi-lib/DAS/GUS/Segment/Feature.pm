@@ -742,53 +742,37 @@ sub sub_SeqFeature {
     $type = $type. ":$source";
 
 
-
-		# note: this is a temporary solution for EST. later this 
-		# should be handled by GUS. Current there is no proper plugin to 
-		# load data into proper tables 
-
-		my($ts, $bs);
-		my(@tstarts, @blocksizes);
+		# Note: This is a temporary solution for EST BLAT alignment. 
 
 		if( $type =~ /^block/i ) { # if this is an EST feature (blat) 
 
-			$ts = $$hashref{'TSTARTS'}; 
-			$bs = $$hashref{'BLOCKSIZES'}; 
-			$ts =~ s/,/ /g; 
-			$bs =~ s/,/ /g; 
-
-			@tstarts = split /\s+/, $ts; 
-			@blocksizes = split /\s+/, $bs;
+      # BLAT uses in-between coordnate system, so plus 1 for start position
+      my @tstarts = map { s/\s+//g; $_+1 } split /,/, $$hashref{'TSTARTS'};
+      my @blocksizes = map { s/\s+//g; $_ } split /,/, $$hashref{'BLOCKSIZES'};
 
 			my $counter = 0; 
-			foreach my $t (@tstarts) { 
-				$feature_id = $$hashref{'FEATURE_ID'}; 
-				$feature_id = $feature_id . ".$counter"; 
-				$unique_name = "block.$feature_id"; 
-				my $end = $t + $blocksizes[$counter]; 
-				my $feat = DAS::GUS::Segment::Feature->new( $self->factory, 
-																																 $self, 
-																																 $self->ref, 
-																																 $t, # start 
-																																 $end, #end 
-																																 $type, 
-																																 $$hashref{'SCORE'},   # score 
-																																 $$hashref{'STRAND'},  # strand 
-																																 $$hashref{'PHASE'},   # phase 
-																																 $$hashref{'NAME'},    # group 
-																																 $$hashref{'ATTS'},    # attributes 
-																																 $unique_name, 
-																																 $feature_id); 
+			foreach my $start (@tstarts) { 
+				$feature_id = $$hashref{'FEATURE_ID'} . ".$counter"; 
+				my $end = $start + $blocksizes[$counter] - 1; 
+				my $feat = DAS::GUS::Segment::Feature->new( $self->factory,
+																										$self,
+																										$self->ref,
+																										$start, 
+																										$end,
+																										$type,
+																										$$hashref{'SCORE'}, 
+																										$$hashref{'STRAND'}, 
+																										$$hashref{'PHASE'},
+																										$$hashref{'NAME'},
+																										$$hashref{'ATTS'},
+																										"block.$feature_id", 
+																										$feature_id); 
 
-
-        #warn "5 tstart $t | $end | $feature_id \n" if DEBUG;
 				$self->add_subfeature($feat); 
 				$feat->source($source); 
 				$counter = $counter + 1; 
 			} 
-			if($counter <= 1 ) { 
-				return; 
-			} 
+			return if($counter <= 1 ); 
 
 			my $subfeats = $self->subfeatures or return; 
 			return @{$subfeats}; 
@@ -1192,6 +1176,22 @@ sub protein {
 	     $$hashref{'PROTEIN_ID'},
 	     $$hashref{'SEQUENCE'}
 	   ];
+  }
+}
+
+# test - get a feature's sequence from GUS
+sub seq {
+  my $self = shift;
+  my $type = $self->type;
+  my $id   = $self->feature_id;
+  my $name = $self->name;
+
+  my $query = $self->factory->parser->getSQL("Feature.pm", "$type:seq");
+  $query =~ s/(\$\w+)/eval $1/eg;
+  my $sth = $self->factory->dbh->prepare($query);
+  $sth->execute or $self->throw("feature $type:seq sequence query failed");
+  while (my $hashref = $sth->fetchrow_hashref) {
+    return [ $$hashref{'SOURCE_ID'}, $$hashref{'SEQUENCE'} ];
   }
 }
 
