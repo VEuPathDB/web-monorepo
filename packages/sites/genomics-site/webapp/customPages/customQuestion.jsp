@@ -135,6 +135,9 @@ function showParamGroup(group, isShow)
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
                                 <site:flatVocabParamInput qp="${qP}" />
                             </c:when>
+                            <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
+                                <site:enumParamInput qp="${qP}" />
+                            </c:when>
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
                                 <wdk:historyParamInput qp="${qP}" />
                             </c:when>
