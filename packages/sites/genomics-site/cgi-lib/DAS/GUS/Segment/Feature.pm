@@ -1181,10 +1181,10 @@ sub protein {
 sub seq {
   my $self = shift;
   my $type = $self->type;
-  my $id   = $self->feature_id;
-  my $name = $self->name;
 
   my $query = $self->factory->parser->getSQL("Feature.pm", "$type:seq");
+	return unless $query;
+
   $query =~ s/(\$\w+)/eval $1/eg;
   my $sth = $self->factory->dbh->prepare($query);
   $sth->execute or $self->throw("feature $type:seq sequence query failed");
