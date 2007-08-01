@@ -19,7 +19,7 @@
 
 <c:set var="geneByIdQuestion" value="${gqMap['GeneBySingleLocusTag']}"/>
 <c:set var="gidqpMap" value="${geneByIdQuestion.paramsMap}"/>
-<c:set var="geneIdParam" value="${gidqpMap['locus_tag']}"/>
+<c:set var="geneIdParam" value="${gidqpMap['single_gene_id']}"/>
 
 <c:set var="geneByGeneTypeQuestion" value="${gqMap['GenesByGeneType']}"/>
 <c:set var="grtqpMap" value="${geneByGeneTypeQuestion.paramsMap}"/>
