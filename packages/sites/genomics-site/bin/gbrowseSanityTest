@@ -313,7 +313,7 @@ sub getQueryParamNames {
 
 sub getDbHandle {
   my $webxml = ApiCommonWebsite::Model::WebXmlConfig->new("$ENV{GUS_HOME}/config/web.xml");
-  my $c = new ApiCommonWebsite::Model::ModelConfig($webxml->getModelName);
+  my $c = new ApiCommonWebsite::Model::ModelConfig($webxml->getModel);
 
   my $dbh = DBI->connect(
                 $c->getDbiDsn, 
