@@ -16,7 +16,7 @@ use Getopt::Long qw(GetOptions);
 use ApiCommonWebsite::Model::ModelConfig;
 use ApiCommonWebsite::Model::WebXmlConfig;
 
-my ($sanityFile, $gbrowseFile, $indexOnly, $failuresOnly, $suggestOnly, $skipTo, $stopAfter, $showParseG, $showParseS, $showSql);
+my ($sanityFile, $gbrowseFile, $indexOnly, $failuresOnly, $suggestOnly, $skipTo, $stopAfter, $showParseG, $showParseS, $showSql, $showDbInfo);
 
 $stopAfter = 1000;
 GetOptions("sanityFile=s" => \$sanityFile,
@@ -29,6 +29,7 @@ GetOptions("sanityFile=s" => \$sanityFile,
            "showParseG!" => \$showParseG,
            "showParseS!" => \$showParseS,
            "showSql!" => \$showSql,
+           "showDbInfo!" => \$showDbInfo,
 	  );
 
 &usage unless ($sanityFile && $gbrowseFile);
@@ -53,7 +54,7 @@ my $parentFeatureTests = {};   # tests that subfeature queries refer to
 
 exit(0) if ($suggestOnly);
 
-my $dbh = getDbHandle();
+my $dbh = getDbHandle($showDbInfo);
 
 &runTests($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo,
 	  $stopAfter, $defaultParams, $parentFeatureTests, $showSql);
@@ -65,7 +66,7 @@ sub usage {
 q{
 Test all sql in a gbrowse XML file
 
-Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --gbrowseFile gbrowseXmlFile [--indexOnly | --suggestOnly | --failuresOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS] [--showSql]
+Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --gbrowseFile gbrowseXmlFile [--indexOnly | --suggestOnly | --failuresOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS] [--showSql] [--showDbInfo]
 
 Where:
   sanityFile     an xml file containing the configuration for the test
@@ -78,7 +79,7 @@ Where:
   showParseG     show the data structure resulting from the parse of gbrowseFile
   showParseS     show the data structure resulting from the parse of sanityFile
   showSql        show the SQL even if the test passes
-
+  showDbInfo     show the database connection info (dsn and login)
 
 
 Sample sanity file XML:
@@ -312,8 +313,13 @@ sub getQueryParamNames {
 }
 
 sub getDbHandle {
+  my ($showDbInfo) = @_;
+
   my $webxml = ApiCommonWebsite::Model::WebXmlConfig->new("$ENV{GUS_HOME}/config/web.xml");
   my $c = new ApiCommonWebsite::Model::ModelConfig($webxml->getModel);
+
+  my $dsn = $c->getDbiDsn();
+  my $login = $c->getLogin();
 
   my $dbh = DBI->connect(
                 $c->getDbiDsn, 
@@ -323,6 +329,7 @@ sub getDbHandle {
                 ) or die "Can't connect to the database: $DBI::errstr\n";
   $dbh->{LongReadLen} = 1000;
   $dbh->{LongTruncOk} = 1;
+  print "db info:\n  dsn=$dsn\n  login=$login\n\n" if $showDbInfo;
   return $dbh;
 }
 
