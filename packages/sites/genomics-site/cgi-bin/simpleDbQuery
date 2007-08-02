@@ -26,11 +26,11 @@ BEGIN {
 my $q = new CGI;
 
 my $model = $q->param('model') or die <<"EOF";
-WDK model file not specified. Try one of the following:
-@{[$q->url]}?model=apiModel
-@{[$q->url]}?model=cryptoModel
-@{[$q->url]}?model=plasmoDbModel
-@{[$q->url]}?model=toxoDbModel
+WDK model file not specified. Example expectations:
+@{[$q->url]}?model=ApiDB
+@{[$q->url]}?model=CryptoDB
+@{[$q->url]}?model=PlasmoDB
+@{[$q->url]}?model=ToxoDB
 EOF
 
 my $c = new ApiCommonWebsite::Model::ModelConfig($model);
