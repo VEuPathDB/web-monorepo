@@ -65,14 +65,7 @@ public String authrecord(ServletContext application,HttpServletRequest request) 
   
       UserFactoryBean factory = wdkModel.getUserFactory();
   
-      UserBean guest = (UserBean) request.getSession().getAttribute(
-                  CConstants.WDK_USER_KEY);
-  
-      if (guest == null) {
-          guest = factory.getGuestUser();
-          request.getSession().setAttribute(CConstants.WDK_USER_KEY, guest);
-      }
-  
+      UserBean guest  = factory.getGuestUser();
       String email    = request.getParameter(CConstants.WDK_EMAIL_KEY);
       String password = request.getParameter(CConstants.WDK_PASSWORD_KEY);
   
