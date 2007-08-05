@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+# Example login script to demonstrate the use of SimpleAuthN.
+# SimpleAuthN is itself a demonstration of the use of wdkAuth.jsp for
+# wrapping the WDK's authentication system.
+
+use CGI qw/:standard/;
+use ApiCommonWebsite::Model::SimpleAuthN;
+use XML::Simple;
+
+use Data::Dumper;
+
+my $cgi = new CGI;
+
+my $user = $cgi->param('user');
+my $pass = $cgi->param('password');
+
+print $cgi->header;
+
+if (!$user or !$pass) {
+    print <<"EOF";
+<html>
+<head><title>Login</title></head>
+<form action="/cgi-bin/simpleLogin" method="post">
+Email: <input name="user" type="text"><br>
+Password: <input name="password" type="password"><br>
+<input name="submit" type="submit">
+</form>
+</html>
+EOF
+
+    exit;
+}
+
+
+my $auth = new ApiCommonWebsite::Model::SimpleAuthN($user, $pass);
+
+my $response = XMLin($auth->authenticate);
+
+if ($response->{status} eq 'OK') {
+    print "Welcome $response->{message}->{firstname} $response->{message}->{lastname}<br>";
+    print $response->{message}->{email};    
+} elsif ($response->{status} eq 'FAIL') {
+    print $response->{message};    
+} elsif ($response->{status} eq 'ERROR') {
+    print $response->{message};    
+} else {
+    print "No response from authentication server";
+}
