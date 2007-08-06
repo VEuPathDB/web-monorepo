@@ -77,6 +77,7 @@ public String authrecord(ServletContext application,HttpServletRequest request) 
         "    <email>"+user.getEmail()+"</email>\n" +
         "    <firstname>"+user.getFirstName()+"</firstname>\n" +
         "    <lastname>"+user.getLastName()+"</lastname>\n" +
+        "    <userid>"+user.getUserId()+"</userid>\n" +
         "  </message>\n";
 
   } catch (WdkUserException ex) {
