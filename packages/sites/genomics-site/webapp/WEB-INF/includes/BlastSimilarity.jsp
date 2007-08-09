@@ -48,6 +48,11 @@
         <site:flatVocabParamInput qp="${qP}" />
       </td>
     </c:when>
+    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
+      <td>
+        <site:enumParamInput qp="${qP}" />
+      </td>
+    </c:when>
     <c:otherwise>
       <td>
         <c:choose>
