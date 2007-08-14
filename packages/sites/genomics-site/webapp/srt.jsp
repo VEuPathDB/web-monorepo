@@ -70,6 +70,7 @@ function setEnable(flag) {
 <h3><a name="gene">Retrieve Sequences By Gene IDs</a></h3>
 
   <form action="${CGI_URL}/${gSrt}" method="post">
+    <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="4">
     <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
@@ -127,6 +128,7 @@ function setEnable(flag) {
 <hr>
 <h3><a name="contig">Retrieve Sequences By Contig IDs</a></h3>
   <form action="${CGI_URL}/${cSrt}" method="post">
+    <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="4">
     <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
@@ -159,6 +161,7 @@ function setEnable(flag) {
 <h3><a name="orf">Retrieve Sequences By Open Reading Frame IDs</a></h3>
 
   <form action="${CGI_URL}/${oSrt}" method="post">
+    <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="4">
     <tr><td colspan="2" valign="top"><b>Enter a list of ORF IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">

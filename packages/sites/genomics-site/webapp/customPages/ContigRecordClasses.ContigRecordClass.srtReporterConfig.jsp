@@ -38,6 +38,7 @@
 
 
     <input type="hidden" name="ids" value="${allRecordIds}">
+    <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     
     <table border="0" width="100%" cellpadding="4">
 
