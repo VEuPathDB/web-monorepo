@@ -11,8 +11,9 @@ function gene_title (tip, paramsString) {
   // split paramsString on semicolon
   var v = new Array();
   v = paramsString.split(';');
-
-  var SOURCE_ID = 0;
+  
+  var PROJECT_ID = 0;
+  var SOURCE_ID = PROJECT_ID + 1;
   var CHR = SOURCE_ID + 1;
   var LOC = CHR + 1;
   var SO_TERM =  LOC + 1;
@@ -21,7 +22,8 @@ function gene_title (tip, paramsString) {
   var IS_PSEUDO =  TAXON + 1;
 
   // expand minimalist input data
-  var cdsLink = "<a href=../../../cgi-bin/geneSrt?ids=" + v[SOURCE_ID]
+  var cdsLink = "<a href=../../../cgi-bin/geneSrt?project_id=" + v[PROJECT_ID]
+        + "&ids=" + v[SOURCE_ID]
         + "&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>CDS</a>"
   var proteinLink = "<a href=../../../cgi-bin/geneSrt?ids=" + v[SOURCE_ID]
         + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>protein</a>"
