@@ -13,24 +13,29 @@ use DBI;
 use CGI qw/:standard/;
 use CGI::Carp qw(fatalsToBrowser set_message);
 use ApiCommonWebsite::Model::ModelConfig;
-use ApiCommonWebsite::Model::WebXmlConfig;
 
 BEGIN {
-
     # Carp callback for sending fatal messages to browser
     sub handle_errors {
         my ($msg) = @_;
         print "<h3>Oops</h3>";
-        print "<p>Got an error: <pre>$msg</pre>";
+        my $isPublicSite = $ENV{'SERVER_NAME'} =~ 
+           m/
+             ^(qa|www|.*patch.*\.)?  # optional hostname
+             [^\.]+                  # single subdomain
+             \.org/x;
+       ($isPublicSite) ?
+           print "<p>There was a problem running this service." :
+           print "<p>Got an error: <pre>$msg</pre>";
     }
     set_message(\&handle_errors);
 }
 
 my $q = new CGI;
 
-my $cfg = ApiCommonWebsite::Model::WebXmlConfig->new(
-    "$ENV{GUS_HOME}/config/web.xml");
-my $c = new ApiCommonWebsite::Model::ModelConfig($cfg->getModel);
+($q->param('project_id')) or die "parameter 'project_id' is required";
+
+my $c = new ApiCommonWebsite::Model::ModelConfig($q->param('project_id'));
 
 my $dbh = DBI->connect(
     $c->{dbiDsn},
