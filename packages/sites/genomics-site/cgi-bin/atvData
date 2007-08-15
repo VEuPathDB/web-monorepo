@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -wT
 
 # Simple cgi script for retrieving ATV phylogenetic tree data
 # for ATV applet.
@@ -8,7 +8,7 @@
 # /cgi-bin/atvData?id=16879 
 
 use strict;
-use lib $ENV{GUS_HOME};
+use lib map { /(.*)/ } split /:/, $ENV{PERL5LIB}; # untaint PERL5LIB
 use DBI;
 use CGI qw/:standard/;
 use CGI::Carp qw(fatalsToBrowser set_message);
@@ -19,11 +19,14 @@ BEGIN {
     sub handle_errors {
         my ($msg) = @_;
         print "<h3>Oops</h3>";
-        my $isPublicSite = $ENV{'SERVER_NAME'} =~ 
+
+        my $server = $ENV{'SERVER_NAME'} || '';
+        my $isPublicSite = $server =~ 
            m/
              ^(qa|www|.*patch.*\.)?  # optional hostname
              [^\.]+                  # single subdomain
              \.org/x;
+
        ($isPublicSite) ?
            print "<p>There was a problem running this service." :
            print "<p>Got an error: <pre>$msg</pre>";
@@ -33,9 +36,13 @@ BEGIN {
 
 my $q = new CGI;
 
-($q->param('project_id')) or die "parameter 'project_id' is required";
+my ($project_id) = $q->param('project_id') =~ m/^([a-zA-Z]+)$/ if $q->param('project_id');
+my ($source_id)  = $q->param('id') =~ m/(^\w+$)/               if $q->param('id');
 
-my $c = new ApiCommonWebsite::Model::ModelConfig($q->param('project_id'));
+($project_id) or die "valid 'project_id' is required";
+($source_id)  or die "valid 'source_id' is required";
+
+my $c = new ApiCommonWebsite::Model::ModelConfig($project_id);
 
 my $dbh = DBI->connect(
     $c->{dbiDsn},
@@ -49,9 +56,8 @@ my $dbh = DBI->connect(
 my $sql = qq(select to_char(atv) from apidb.phylogenetictree where source_id = ?);
 
 my $sth = $dbh->prepare($sql);
-#$sth->execute($q->path_info() =~ m|/([^/]+)|);
-$sth->execute($q->param('id'));
 
+$sth->execute($source_id);
 
 print $q->header('text/plain');
 
