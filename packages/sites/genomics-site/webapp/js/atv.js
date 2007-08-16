@@ -1,7 +1,16 @@
 <!-- ATV applet (phylogenetic tree viewer) launchpad -->
 function openATVWin( dataurl ) {
-  atv_window = open("", "atv_window", 
+  var atv_window = open("", "atv_window", 
     "width=300,height=150,status=no,toolbar=no,menubar=no,resizable=no");
+  
+  var fullurl = /^http/;
+  var datasource;
+  
+  if (dataurl.match(fullurl)) {
+    datasource = dataurl;
+  } else {
+    datasource = "http://" + location.host + "/" + dataurl;
+  }
   
   atv_window.document.open();
   atv_window.document.writeln( "<HTML>" );
@@ -18,7 +27,7 @@ function openATVWin( dataurl ) {
   atv_window.document.write( " NAME=\"ATV" );
   atv_window.document.write( " WIDTH=\"220\" HEIGHT=\"60\"" );
   atv_window.document.writeln( " ALT=\"ATV Applet is not working on your system (requires at least Sun Java 1.5)!\">" );
-  atv_window.document.writeln( "<PARAM NAME=\"url_of_tree_to_load\" VALUE=\"" + dataurl + "\">" );
+  atv_window.document.writeln( "<PARAM NAME=\"url_of_tree_to_load\" VALUE=\"" + datasource + "\">" );
   atv_window.document.writeln( "Your browser is completely ignoring the &lt;APPLET&gt; tag!" );
   atv_window.document.writeln( "</APPLET>" );
   atv_window.document.writeln( "</CENTER>" );
