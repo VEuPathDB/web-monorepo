@@ -1,7 +1,7 @@
 function loadSelectedData(){
 
 	var datatype =  document.getElementById( 'domain_database_list' ).value; //use this to select database
-	var sendReqUrl = 'showRecord.do?name=InterproTermClasses.InterproTermClass&primary_key='+datatype;
+	var sendReqUrl = 'showRecord.do?name=AjaxRecordClasses.InterproTermClass&primary_key='+datatype;
 	var xmlObj = null;
 
 	if(window.XMLHttpRequest){
