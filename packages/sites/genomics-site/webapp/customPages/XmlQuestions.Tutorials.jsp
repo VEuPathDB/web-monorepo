@@ -66,7 +66,7 @@
             <c:set var="fileFormat" value="QuickTime"/>
           </c:if>
 
-          <a href="<c:url value="/tutorials/${fileName}"/>" target="tutorial">view in ${fileFormat} format</a>
+          <a href="http://apidb.org/apidb/tutorials/${fileName}" target="tutorial">view in ${fileFormat} format</a>
           <font size="-1">Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${size}</font>
 
           <c:set var="fileNumber" value="${fileNumber+1}"/>
