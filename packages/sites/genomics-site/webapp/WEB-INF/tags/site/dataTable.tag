@@ -46,7 +46,7 @@
     <c:forEach var="rCol" items="${row}">
         <c:set var="colVal" value="${rCol.value}"/>
         <c:choose>
-            <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.AttributeFieldValue' && rCol.value.name eq 'pval'}">
+            <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.AttributeFieldValue' && colVal.name eq 'pval'}">
                 <td nowrap="nowrap">
             </c:when>
             <c:when test="${colVal eq 'pval'}">
@@ -62,8 +62,11 @@
             <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
                 <a href="${colVal.url}">${colVal.visible}</a>
             </c:when>
-            <c:otherwise>
+            <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.AttributeFieldValue'}">
                 ${colVal.value}
+            </c:when>
+            <c:otherwise>
+                ${colVal}
             </c:otherwise>
         </c:choose>
         </td>
