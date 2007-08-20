@@ -44,26 +44,27 @@
     </c:choose>
     
     <c:forEach var="rCol" items="${row}">
-    
+        <c:set var="colVal" value="${rCol.value}"/>
         <c:choose>
-        <c:when test="${rCol.value.name eq 'pval'}">
-        <td nowrap="nowrap">
-        </c:when>
-        <c:otherwise>
-        <td>
-        </c:otherwise>
+            <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.AttributeFieldValue' && rCol.value.name eq 'pval'}">
+                <td nowrap="nowrap">
+            </c:when>
+            <c:when test="${colVal eq 'pval'}">
+                <td nowrap="nowrap">
+            </c:when>
+            <c:otherwise>
+                <td>
+            </c:otherwise>
         </c:choose>
         
         <%/* need to know if value should be hot linked */%>
-        <c:set var="colVal" value="${rCol.value}"/>
         <c:choose>
-        <c:when test=
-        "${colVal.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
-        <a href="${colVal.url}">${colVal.visible}</a>
-        </c:when>
-        <c:otherwise>
-        ${colVal.value}
-        </c:otherwise>
+            <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
+                <a href="${colVal.url}">${colVal.visible}</a>
+            </c:when>
+            <c:otherwise>
+                ${colVal.value}
+            </c:otherwise>
         </c:choose>
         </td>
     
