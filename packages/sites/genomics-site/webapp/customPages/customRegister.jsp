@@ -94,7 +94,7 @@ function validateFields(e)
 
   <div align="left">
 
-<p> IMPORTANT: If you already registered in another site (ApiDB, CryptoDB ,PlasmoDB or ToxoDB) you do NOT need to register again.
+<p> IMPORTANT: If you already registered in another site (ApiDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.
 
 <p><b>Why register/subscribe</b>? So you can:
 <ul>
@@ -175,6 +175,14 @@ function validateFields(e)
               <input type="checkbox" name="preference_global_email_cryptodb">CryptoDB</input>
            </c:otherwise>
         </c:choose>
+<c:choose>
+           <c:when test="${requestScope.preference_global_email_giardiadb != null}">
+              <input type="checkbox" name="preference_global_email_giardiadb" checked>GiardiaDB</input>
+           </c:when>
+           <c:otherwise>
+              <input type="checkbox" name="preference_global_email_giardiadb">GiardiaDB</input>
+           </c:otherwise>
+        </c:choose>
         <c:choose>
            <c:when test="${requestScope.preference_global_email_plasmodb != null}">
               <input type="checkbox" name="preference_global_email_plasmodb" checked>PlasmoDB</input>
@@ -189,6 +197,15 @@ function validateFields(e)
            </c:when>
            <c:otherwise>
               <input type="checkbox" name="preference_global_email_toxodb">ToxoDB</input>
+           </c:otherwise>
+        </c:choose>
+
+<c:choose>
+           <c:when test="${requestScope.preference_global_email_trichdb != null}">
+              <input type="checkbox" name="preference_global_email_trichdb" checked>TrichDB</input>
+           </c:when>
+           <c:otherwise>
+              <input type="checkbox" name="preference_global_email_trichdb">TrichDB</input>
            </c:otherwise>
         </c:choose>
     </td>

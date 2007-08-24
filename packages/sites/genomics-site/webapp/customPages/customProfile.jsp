@@ -138,6 +138,10 @@ function validateFields(e)
 	        ${(global['preference_global_email_cryptodb'] == 'on')? 'checked' : ''}>
 	    CryptoDB
 	 </input>
+<input type="checkbox" name="preference_global_email_giardiadb" 
+	        ${(global['preference_global_email_giardiadb'] == 'on')? 'checked' : ''}>
+	    GiardiaDB
+	 </input>
          <input type="checkbox" name="preference_global_email_plasmodb" 
 	        ${(global['preference_global_email_plasmodb'] == 'on')? 'checked' : ''}>
 	    PlasmoDB
@@ -145,6 +149,10 @@ function validateFields(e)
          <input type="checkbox" name="preference_global_email_toxodb" 
 	        ${(global['preference_global_email_toxodb'] == 'on')? 'checked' : ''}>
 	    ToxoDB
+	 </input>
+ <input type="checkbox" name="preference_global_email_trichdb" 
+	        ${(global['preference_global_email_trichdb'] == 'on')? 'checked' : ''}>
+	    TrichDB
 	 </input>
       </td>
     </tr>
