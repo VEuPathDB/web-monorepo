@@ -42,9 +42,12 @@
       <c:forEach items="${rows}" var="row"> <%-- loop through files --%>
         <c:set var="projects" value="${row[0].value}"/>
         <c:if test="${fn:containsIgnoreCase(projects, wdkModel.displayName)}">
-          <c:set var="fileName" value="${row[1].value}"/>
-          <c:set var="duration" value="${row[2].value}"/>
-          <c:set var="size" value="${row[3].value}"/>
+
+          <c:set var="fileNameMov" value="${row[1].value}"/>
+          <c:set var="fileNameAvi" value="${row[2].value}"/>
+          <c:set var="fileNameFlv" value="${row[3].value}"/>
+          <c:set var="duration" value="${row[4].value}"/>
+          <c:set var="size" value="${row[5].value}"/>
 
           <c:if test="${fileNumber == 0}">
             <c:if test="${tutorialNumber > 1}">
@@ -58,16 +61,21 @@
           <c:if test="${fileNumber > 0}">
             <br>
           </c:if>
-
+<%--
           <c:set var="splitFile" value='${fn:split(fileName, ".")}'/>
           <c:set var="fileFormat"
                  value="${fn:toUpperCase(splitFile[fn:length(splitFile)-1])}"/>
           <c:if test='${fileFormat eq "MOV"}'>
             <c:set var="fileFormat" value="QuickTime"/>
           </c:if>
-
-          <a href="http://apidb.org/apidb/tutorials/${fileName}" target="tutorial">view in ${fileFormat} format</a>
-          <font size="-1">Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${size}</font>
+--%>
+ <font size="-1">View in
+          <a href="<c:url value="/tutorials/${fileNameMov}"/>" target="tutorial"> QuickTime format (.mov)</a> ---&nbsp;
+          <a href="<c:url value="/tutorials/${fileNameAvi}"/>" target="tutorial"> Ms Windows format (.avi)</a> ---&nbsp;
+          <a href="<c:url value="/flv_player/flvplayer.swf?file=/tutorials/${fileNameFlv}&autostart=true"/>" 
+			target="tutorial"> Flash Video format (.flv)</a> ---&nbsp;
+          Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${size}
+ </font>
 
           <c:set var="fileNumber" value="${fileNumber+1}"/>
         </c:if>
