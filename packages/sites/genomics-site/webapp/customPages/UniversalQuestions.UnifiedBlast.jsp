@@ -63,11 +63,11 @@
     <%--<c:forEach items="${qP.vocab}" var="flatVoc">
               <input type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" onClick="getOrganismTerms()" disabled>${flatVoc}</input>
 	      <c:set var="counter" value="${counter+1}"/>	--%>
-	      <input type="radio" name="type" value="Genome" id="BlastType_Genome" onClick="getOrganismTerms(); changeQuestion('genome'); updateOrganism()" disabled>Genome</input>
-	      <input type="radio" name="type" value="EST" id="BlastType_EST" onClick="getOrganismTerms(); changeQuestion('est'); updateOrganism()" disabled>EST</input>
-	      <input type="radio" name="type" value="ORF" id="BlastType_ORF" onClick="getOrganismTerms(); changeQuestion('orf'); updateOrganism()" disabled>ORF</input>
-	      <input type="radio" name="type" value="Transcripts" id="BlastType_Transcripts" onClick="getOrganismTerms(); changeQuestion('transcripts'); updateOrganism()" disabled>Transcripts</input>
-	      <input type="radio" name="type" value="Proteins" id="BlastType_Proteins" onClick="getOrganismTerms(); changeQuestion('genome'); updateOrganism()" disabled>Proteins</input>
+	      <input type="radio" name="type" value="Genome" id="BlastType_Genome" onClick="getOrganismTerms(); changeQuestion('genome')" disabled>Genome</input>
+	      <input type="radio" name="type" value="EST" id="BlastType_EST" onClick="getOrganismTerms(); changeQuestion('est');" disabled>EST</input>
+	      <input type="radio" name="type" value="ORF" id="BlastType_ORF" onClick="getOrganismTerms(); changeQuestion('orf');" disabled>ORF</input>
+	      <input type="radio" name="type" value="Transcripts" id="BlastType_Transcripts" onClick="getOrganismTerms(); changeQuestion('transcripts');" disabled>Transcripts</input>
+	      <input type="radio" name="type" value="Proteins" id="BlastType_Proteins" onClick="getOrganismTerms(); changeQuestion('genome');" disabled>Proteins</input>
       <%--  </c:forEach>--%>
         <input type="hidden" name="myMultiProp(${pNam})" id="blastType"/>
       </div>
@@ -82,7 +82,7 @@
 	<select name="blastOrganism" id="BlastOrganism" multiple="multiple" onChange="updateOrganism()">
       
         </select>
-        <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
+        <input name="myMultiProp(${pNam})" type="text" id="blastOrg"/> 
       </td>
     </c:when>
     <c:when test="${pNam eq 'BlastAlgorithm'}">
