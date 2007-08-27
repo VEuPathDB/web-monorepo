@@ -140,7 +140,10 @@ function getAndWrite(sendReqUrl, elementId){
 		if(xmlObj.readyState == 4 ){
 			if(xmlObj.status == 200){
 				if(elementId == 'BlastDatabaseType'){ fillDivFromXML( xmlObj.responseXML, elementId, selectedArray);}
-				else{fillSelectFromXML( xmlObj.responseXML, elementId, selectedArray);}
+				else{
+					fillSelectFromXML( xmlObj.responseXML, elementId, selectedArray);
+					updateOrganism();	
+				}
 			}else{
 				alert("Message returned, but with an error status");
 			}
@@ -206,7 +209,9 @@ function fillDivFromXML(obj, id, index)
 			for( var x = 0; x < ArrayLength; x++ ){
 				term = new String( defArray[x].firstChild.data );
 				if(radioArray[y].id == 'BlastType_'+term){
-					radioArray[y].disabled = false;break;
+					radioArray[y].disabled = false;
+					
+					break;
 				}else{radioArray[y].disabled = true;}
 			}
 		}
