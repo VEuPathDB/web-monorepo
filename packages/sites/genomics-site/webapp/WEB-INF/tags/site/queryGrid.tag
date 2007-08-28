@@ -29,15 +29,7 @@
 <c:set var="gkwqpMap" value="${geneByTextQuestion.paramsMap}"/>
 <c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
 
-<c:set var="PorT" value="${fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo')}" />
-<c:choose>
-<c:when test="${PorT}">
-	<c:set var="orgParam" value="${gkwqpMap['species_name']}"/>
-</c:when>
-<c:otherwise>
-	<c:set var="orgParam" value="${gkwqpMap['organism']}"/>
-</c:otherwise>
-</c:choose>
+<c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
 
 
 <%-- CONTIG/GENOMIC SEQUENCE  --%>
@@ -85,25 +77,13 @@
 
 
 <%-- GENES BY KEYWORD --%>
+
+
 <html:form method="get" action="/processQuestionSetsFlat.do">
 <td  valign="top" width="20%" align="right"><font size="-1"><b>Genes by Keyword</b></td>
 <td width="20%" align="right">
 
-<c:choose>
 
-<%-- TOXO:  no organism parameter, different values for datasets parameter? --%>
-<c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
-	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
-        <input type="hidden" name="myMultiProp(datasets)"
-               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
-        <input type="hidden" name="myMultiProp(whole_words)" value="yes">
-        <input type="hidden" name="myProp(max_pvalue)" value="-30">
-        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
-</c:when>
-
-
-<%-- PLASMO OR API or CRYPTO using same interface --%>
-<c:otherwise>
 	<c:choose>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'ApiDB')}">
 		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii"/>
@@ -114,18 +94,24 @@
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
 		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii"/>
 	</c:when>
+ <c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
+		<c:set var="listOrganisms" value="Giardia lamblia"/>
+	</c:when>
+ <c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
+		<c:set var="listOrganisms" value="Trichomonas vaginalis"/>
+	</c:when>
+
+
 	</c:choose> 
 
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
         <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}">
-        <input type="hidden" name="myMultiProp(datasets)"
-               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
+        <input type="hidden" name="myMultiProp(text_fields)"
+               value="Gene product,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions">
         <input type="hidden" name="myMultiProp(whole_words)" value="yes">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
         <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
-</c:otherwise>
 
-</c:choose> <%-- Toxo or the others --%>
 
 </td>
 <td  valign="top" align="right" width="${gowidth}">
@@ -135,6 +121,7 @@
 </tr>
 </html:form>
 	
+
 	</table>  <%-- END OF FAST queries table --%>
 
 </td>
