@@ -58,19 +58,17 @@
     <c:when test="${pNam eq 'BlastDatabaseType'}">
       <td>
 
-      <div name="type_div" id="BlastDatabaseType">
 	<c:set var="counter" value="0"/>
-    <%--<c:forEach items="${qP.vocab}" var="flatVoc">
-              <input type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" onClick="getOrganismTerms()" disabled>${flatVoc}</input>
-	      <c:set var="counter" value="${counter+1}"/>	--%>
-	      <input type="radio" name="type" value="Genome" id="BlastType_Genome" onClick="getOrganismTerms(); changeQuestion('genome')" disabled>Genome</input>
+        <c:forEach items="${qP.vocab}" var="flatVoc">
+              <input type="radio" name="type" value="${flatVoc}" id="BlastType_${flatVoc}" onClick="getOrganismTerms(); changeQuestion()" disabled><font id="${flatVoc}_font" color="grey">${flatVoc}</font></input>
+	      <c:set var="counter" value="${counter+1}"/>
+<%--	      <input type="radio" name="type" value="Genome" id="BlastType_Genome" onClick="getOrganismTerms(); changeQuestion('genome')" disabled>Genome</input>
 	      <input type="radio" name="type" value="EST" id="BlastType_EST" onClick="getOrganismTerms(); changeQuestion('est');" disabled>EST</input>
 	      <input type="radio" name="type" value="ORF" id="BlastType_ORF" onClick="getOrganismTerms(); changeQuestion('orf');" disabled>ORF</input>
 	      <input type="radio" name="type" value="Transcripts" id="BlastType_Transcripts" onClick="getOrganismTerms(); changeQuestion('transcripts');" disabled>Transcripts</input>
-	      <input type="radio" name="type" value="Proteins" id="BlastType_Proteins" onClick="getOrganismTerms(); changeQuestion('genome');" disabled>Proteins</input>
-      <%--  </c:forEach>--%>
+	      <input type="radio" name="type" value="Proteins" id="BlastType_Proteins" onClick="getOrganismTerms(); changeQuestion('genome');" disabled>Proteins</input>--%>
+       </c:forEach>
         <input type="hidden" name="myMultiProp(${pNam})" id="blastType"/>
-      </div>
 <%--
       <select name="myMultiProp(BlastDatabaseType)" id="BlastDatabaseType" onChange="getOrganismTerm()">
       </select>
