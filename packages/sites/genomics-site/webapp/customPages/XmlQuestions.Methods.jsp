@@ -20,6 +20,7 @@
                  division="methods"/>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+These are the methods we used to generate/analyze the data in our queries.<br><hr>
 
  <tr>
   <td bgcolor=white valign=top>
@@ -37,6 +38,7 @@
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
   <table border="0" cellpadding="2" cellspacing="0" width="100%">
+
 
   <c:if test="${i > 1}">
     <tr><td colspan="2"><hr></td></tr>
