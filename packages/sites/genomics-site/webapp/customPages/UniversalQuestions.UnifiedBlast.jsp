@@ -82,7 +82,7 @@
 	<select name="blastOrganism" id="BlastOrganism" multiple="multiple" onChange="updateOrganism()">
       
         </select>
-        <input name="myMultiProp(${pNam})" type="text" id="blastOrg"/> 
+        <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
       </td>
     </c:when>
     <c:when test="${pNam eq 'BlastAlgorithm'}">
