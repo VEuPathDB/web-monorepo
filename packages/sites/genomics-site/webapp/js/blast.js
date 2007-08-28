@@ -1,7 +1,13 @@
 
-function changeQuestion(blastDb){
-        // stores mapping from blast databases to questions
-	//var blastDb =  document.getElementById( 'BlastDatabaseType' ).value.toLowerCase();
+function changeQuestion(){
+        // stores mapping from blast databases to questions	
+	var blastDb = "";
+	var types = document.getElementsByName('type');
+	for(var x = 0; x < types.length; x++){
+		if(types[x].checked)
+			blastDb = types[x].value.toLowerCase();
+	}
+//	var blastDb =  document.getElementById( 'BlastDatabaseType' ).value.toLowerCase();
 
 	var questionName;
 
@@ -203,17 +209,20 @@ function fillDivFromXML(obj, id, index)
 	}
 	var ArrayLength = defArray.length;
 	var term;
+	initRadioArray();
 	if( ArrayLength != 0 ){
-		var radioArray = document.getElementsByName('type');
-		for(var y = 0; y < radioArray.length; y++){
-			for( var x = 0; x < ArrayLength; x++ ){
-				term = new String( defArray[x].firstChild.data );
-				if(radioArray[y].id == 'BlastType_'+term){
-					radioArray[y].disabled = false;
-					
-					break;
-				}else{radioArray[y].disabled = true;}
-			}
+		for(var i=0; i<ArrayLength;i++){
+			term = new String( defArray[i].firstChild.data );
+			var radio = getArrayElement(term);
+			if(radio.id == 'BlastType_'+term){
+				radio.disabled = false;
+				document.getElementById(term+'_font').style.color="black";
+				document.getElementById(term+'_font').style.fontWeight="bold";
+			}//else{
+				//radio.disabled = true;
+				//document.getElementById(term+'_font').style.color="grey";
+				//document.getElementById(term+'_font').style.fontWeight="200";
+			//}
 		}
 	}else{
 		alert("No Data Returned From the Server!!");
@@ -239,5 +248,23 @@ function setArray(index, arr){
 	if(index == 'EST') ESTArray = arr;
 	if(index == 'Transcripts') GeneArray = arr;
 	if(index == 'ORF') ORFArray = arr;
+}
+function getArrayElement(term){	
+	var radioArray = document.getElementsByName('type');
+	for(var y = 0; y < radioArray.length; y++){
+			if(radioArray[y].id == 'BlastType_'+term) return radioArray[y];
+	}
+}
+
+function initRadioArray(){
+	var radioArray = document.getElementsByName('type');
+	for(var y = 0; y < radioArray.length; y++){
+		radioArray[y].disabled = true;
+		radioArray[y].checked = false;
+		document.getElementById(radioArray[y].value+'_font').style.color="grey";
+		document.getElementById(radioArray[y].value+'_font').style.fontWeight="200";
+	}
+	document.getElementById('blastType').value = "";
+	document.getElementById('blastOrg').value = "";
 }
 
