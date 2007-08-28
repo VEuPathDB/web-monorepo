@@ -39,7 +39,7 @@ print "options: --outputDir=\"$outDir\" "
       . "justComments=\"$justComments\""
       . "verbose=\$verbose\""
       . "debug=\"$debug\""
-      . "gusConfigFile=\"$gusConfigFile\"" if verbose;
+      . "gusConfigFile=\"$gusConfigFile\"" if $verbose;
 
 print "Establishing dbi login\n" if $verbose;
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
