@@ -25,8 +25,15 @@ function changeQuestion(){
 }
 
 function updateOrganism(){
-	var orgValue = document.getElementById('BlastOrganism').value;
-	document.getElementById('blastOrg').value = orgValue;
+	var orgValue = "";
+	var orgSelect = document.getElementById('BlastOrganism');
+	for(var i=0;i<orgSelect.length;i++){
+		var op = orgSelect[i];
+		if(op.selected){
+			orgValue = orgValue + "," + op.value;
+		}
+	}
+	document.getElementById('blastOrg').value = orgValue.substring(1);
 }
 
 var is_Done = false;
@@ -49,7 +56,7 @@ var SequenceArray = new Array();
 var ORFArray = new Array();
 
 var selectedArray = "";
-
+ 
 function getOrganismTerms(){
 //        var type = document.getElementById('BlastDatabaseType').value;
 	var type = "";
