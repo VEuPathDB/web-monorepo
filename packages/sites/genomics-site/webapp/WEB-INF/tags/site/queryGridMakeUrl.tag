@@ -103,6 +103,9 @@
 </c:if>
 
     <td  width="56" nowrap align="right"  valign="bottom">
+
+<c:if test="${ACPT}">
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr nowrap>
 	<td width="14">${A}</td>
@@ -111,4 +114,6 @@
 	<td width="14">${T}</td>
 </tr>
 </table>
+</c:if>
+
     </td>
