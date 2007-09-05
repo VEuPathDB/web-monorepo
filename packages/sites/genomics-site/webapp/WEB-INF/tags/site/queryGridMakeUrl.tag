@@ -23,6 +23,11 @@
               description="check site existence"
 %>
 
+<%@ attribute name="type"
+              required="false"
+              description="GENE,SEQ,ORF or EST"
+%>
+
 <c:set var="P" value="" />
 <c:set var="T" value="" />
 <c:set var="C" value="" />
@@ -33,7 +38,18 @@
 <c:set var="cryptoRoot" value="http://www.cryptodb.org/cryptodb/" />
 <c:set var="apiRoot" value="http://www.apidb.org/apidb/" />
 
+
+
+<c:choose>
+<c:when test="${qname == 'UnifiedBlast'}">
+<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}&target=${type}" />
+</c:when>
+<c:otherwise>
 <c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
+</c:otherwise>
+</c:choose>
+
+
 
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
