@@ -1,4 +1,33 @@
 
+window.onload = function(){
+	var target = parseUrl('target');
+	if(target == 'GENE') clickDefault('Transcripts');
+	else if(target == 'ORF') clickDefault('ORF');
+	else if(target == 'EST') clickDefault('EST');
+	else if(target == 'SEQ') clickDefault('Genome');
+}
+
+function clickDefault(id){
+	var type = "";
+	var types = document.getElementsByName('type');
+	for(var x = 0; x < types.length; x++){
+		if(types[x].value == id)
+			types[x].click();
+	}	
+}
+
+function parseUrl(name){
+	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+ 	var regexS = "[\\?&]"+name+"=([^&#]*)";
+	var regex = new RegExp( regexS );
+	var results = regex.exec( window.location.href );
+	if( results == null )
+		return "";
+	else
+		return results[1];
+}
+
+
 function changeQuestion(){
         // stores mapping from blast databases to questions	
 	var blastDb = "";
@@ -37,6 +66,7 @@ function updateOrganism(){
 }
 
 var is_Done = false;
+
 // Type Variables
 var blastNUrl = "showRecord.do?name=AjaxRecordClasses.BlastNTermClass&primary_key=fill";
 var blastPXUrl = "showRecord.do?name=AjaxRecordClasses.BlastPXTermClass&primary_key=fill";
@@ -55,8 +85,14 @@ var ESTArray = new Array();
 var SequenceArray = new Array();
 var ORFArray = new Array();
 
+//Program varaiables
+var tgeUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass&primary_key=fill";
+var poUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Protein_Orf_TermClass&primary_key=fill";
+var tgeArray = new Array();
+var poArray = new Array();
+
 var selectedArray = "";
- 
+
 function getOrganismTerms(){
 //        var type = document.getElementById('BlastDatabaseType').value;
 	var type = "";
@@ -66,6 +102,14 @@ function getOrganismTerms(){
 			type = types[x].value;
 	}
 	document.getElementById('blastType').value = type;
+
+//	var algo = "";
+//	var algos = document.getElementsByName('algorithm');
+//	for(var y = 0; y < algos.length; y++){
+//		if(algos[y].checked)
+//			algo = algos[y].value;
+//	}
+//	document.getElementById('blastAlgo').value = algo;
     
 	if(type == 'EST') {
 		sendReqUrl = ESTUrl; 
@@ -90,6 +134,38 @@ function getOrganismTerms(){
 	}
         getAndWrite(sendReqUrl, 'BlastOrganism');	
 }
+
+
+function getBlastAlgorithm() {
+	var label = "";
+        var type = "";
+	for(var x = 0; x < document.getElementsByName('type').length; x++){
+		if(document.getElementById('BlastType_'+x).checked)
+			type = document.getElementById('BlastType_'+x).value;
+	}
+	document.getElementById('blastType').value = type;
+
+	if(type == 'EST' || type == 'Transcripts' || type == 'Genome') {
+		sendReqUrl = tgeUrl; 
+		selectedArray = 'tge';
+	}
+	else if(type == 'ORF' || type == 'Proteins'){
+		sendReqUrl = poUrl; 
+		selectedArray = 'po';
+	}
+
+        if(getArray(selectedArray).length > 0){
+		fillDivFromXML(null, 'BlastAlgorithm', selectedArray);
+		clearList('BlastOrganism');
+		getOrganismTerms();
+		return;
+	}
+  
+        getAndWrite(sendReqUrl, 'BlastAlgorithm');
+        clearList('BlastOrganism');
+}
+
+
 
 function getBlastTerms() {
 	var label = "";
@@ -152,7 +228,10 @@ function getAndWrite(sendReqUrl, elementId){
 	xmlObj.onreadystatechange = function(){
 		if(xmlObj.readyState == 4 ){
 			if(xmlObj.status == 200){
-				if(elementId == 'BlastDatabaseType'){ fillDivFromXML( xmlObj.responseXML, elementId, selectedArray);}
+				if(elementId == 'BlastDatabaseType' || elementId == 'BlastAlgorithm'){ 
+					fillDivFromXML( xmlObj.responseXML, elementId, selectedArray);
+					getOrganismTerms();
+				}
 				else{
 					fillSelectFromXML( xmlObj.responseXML, elementId, selectedArray);
 					updateOrganism();	
@@ -216,18 +295,18 @@ function fillDivFromXML(obj, id, index)
 	}
 	var ArrayLength = defArray.length;
 	var term;
-	initRadioArray();
+	initRadioArray('algorithm');
 	if( ArrayLength != 0 ){
 		for(var i=0; i<ArrayLength;i++){
 			term = new String( defArray[i].firstChild.data );
-			var radio = getArrayElement(term);
-			if(radio.id == 'BlastType_'+term){
+			var radio = getArrayElement(term,'algorithm');
+			if(radio.id == 'BlastAlgorithm_'+term){
 				radio.disabled = false;
 				document.getElementById(term+'_font').style.color="black";
 				document.getElementById(term+'_font').style.fontWeight="bold";
 			}//else{
 				//radio.disabled = true;
-				//document.getElementById(term+'_font').style.color="grey";
+				//document.getElementById(term+'_font').style.color="gray";
 				//document.getElementById(term+'_font').style.fontWeight="200";
 			//}
 		}
@@ -246,6 +325,8 @@ function getArray(index){
 	if(index == 'EST') return ESTArray;
 	if(index == 'Transcripts') return GeneArray;
 	if(index == 'ORF') return ORFArray;
+	if(index == 'tge') return tgeArray;
+	if(index == 'po') return poArray;
 }
 function setArray(index, arr){
 	if(index == 'N') blastNArray = arr;
@@ -255,16 +336,18 @@ function setArray(index, arr){
 	if(index == 'EST') ESTArray = arr;
 	if(index == 'Transcripts') GeneArray = arr;
 	if(index == 'ORF') ORFArray = arr;
+	if(index == 'tge') tgeArray = arr;
+	if(index == 'po') poArray = arr;
 }
-function getArrayElement(term){	
-	var radioArray = document.getElementsByName('type');
+function getArrayElement(term,name){	
+	var radioArray = document.getElementsByName(name);
 	for(var y = 0; y < radioArray.length; y++){
-			if(radioArray[y].id == 'BlastType_'+term) return radioArray[y];
+			if(radioArray[y].id == 'BlastAlgorithm_'+term) return radioArray[y];
 	}
 }
 
-function initRadioArray(){
-	var radioArray = document.getElementsByName('type');
+function initRadioArray(name){
+	var radioArray = document.getElementsByName(name);
 	for(var y = 0; y < radioArray.length; y++){
 		radioArray[y].disabled = true;
 		radioArray[y].checked = false;
@@ -275,3 +358,25 @@ function initRadioArray(){
 	document.getElementById('blastOrg').value = "";
 }
 
+function changeLabel(){	
+	var algorithm = "";
+	var algos = document.getElementsByName('algorithm');
+	for(var y = 0; y < algos.length; y++){
+		if(algos[y].checked)
+			algorithm = algos[y].value;
+	}
+	document.getElementById('blastAlgo').value = algorithm;
+
+	if(algorithm.indexOf('t') < 2) {
+		if(algorithm.indexOf('n') == algorithm.length-1) {label = "Protein Sequence";}
+		else if(algorithm.indexOf('x') == algorithm.length-1) {label = "Nucleotide Sequence";}
+	}
+	else if(algorithm.indexOf('p') == algorithm.length-1 || algorithm.indexOf('x') == algorithm.length-1 ){
+		if(algorithm.indexOf('x') == algorithm.length-1) {label = "Nucleotide Sequence";}
+		else if(algorithm.indexOf('p') == algorithm.length-1) {label = "Protein Sequence";}
+	}
+	else if(algorithm.indexOf('n') == algorithm.length-1){
+		label = "Nucleotide Sequence";
+	}
+	document.getElementById('parameter_label').innerHTML = "<b>"+label+"</b>";
+}
