@@ -55,24 +55,16 @@
   <%-- Handle database-type parm in HTML, so it can set questionFullName --%>
   <c:choose>
 
-    <c:when test="${pNam eq 'BlastDatabaseType'}">
+<%--    <c:when test="${pNam eq 'BlastDatabaseType'}"> --%>
+    <c:when test="${pNam eq 'BlastAlgorithm'}">
       <td>
 
 	<c:set var="counter" value="0"/>
         <c:forEach items="${qP.vocab}" var="flatVoc">
-              <input type="radio" name="type" value="${flatVoc}" id="BlastType_${flatVoc}" onClick="getOrganismTerms(); changeQuestion()" disabled><font id="${flatVoc}_font" color="grey">${flatVoc}</font></input>
+              <input type="radio" name="algorithm" value="${flatVoc}" id="BlastAlgorithm_${flatVoc}" onClick="changeLabel()" disabled><font id="${flatVoc}_font" color="gray">${flatVoc}</font></input>
 	      <c:set var="counter" value="${counter+1}"/>
-<%--	      <input type="radio" name="type" value="Genome" id="BlastType_Genome" onClick="getOrganismTerms(); changeQuestion('genome')" disabled>Genome</input>
-	      <input type="radio" name="type" value="EST" id="BlastType_EST" onClick="getOrganismTerms(); changeQuestion('est');" disabled>EST</input>
-	      <input type="radio" name="type" value="ORF" id="BlastType_ORF" onClick="getOrganismTerms(); changeQuestion('orf');" disabled>ORF</input>
-	      <input type="radio" name="type" value="Transcripts" id="BlastType_Transcripts" onClick="getOrganismTerms(); changeQuestion('transcripts');" disabled>Transcripts</input>
-	      <input type="radio" name="type" value="Proteins" id="BlastType_Proteins" onClick="getOrganismTerms(); changeQuestion('genome');" disabled>Proteins</input>--%>
        </c:forEach>
-        <input type="hidden" name="myMultiProp(${pNam})" id="blastType"/>
-<%--
-      <select name="myMultiProp(BlastDatabaseType)" id="BlastDatabaseType" onChange="getOrganismTerm()">
-      </select>
---%>
+        <input type="hidden" name="myMultiProp(${pNam})" id="blastAlgo"/>
       </td>
     </c:when>
     <c:when test="${pNam eq 'BlastDatabaseOrganism'}">
@@ -83,20 +75,16 @@
         <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
       </td>
     </c:when>
-    <c:when test="${pNam eq 'BlastAlgorithm'}">
+<%--  <c:when test="${pNam eq 'BlastAlgorithm'}"> --%>
+    <c:when test="${pNam eq 'BlastDatabaseType'}">
      <td>
 
        <c:set var="counter" value="0"/>
        <c:forEach items="${qP.vocab}" var="flatVoc">
-              <input type="radio" name="algorithm" value="${flatVoc}" id="BlastAlgorithm_${counter}" onClick="getBlastTerms()">${flatVoc}</input>
+              <input type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" onClick="getBlastAlgorithm();changeQuestion()">${flatVoc}</input>
 	      <c:set var="counter" value="${counter+1}"/>	
        </c:forEach>
-       <input type="hidden" name="myMultiProp(${pNam})" id="blastAlgo"/>
-   <%--  <select  name="myMultiProp(${pNam})" id="BlastAlgorithm" onChange="getBlastTerms()" styleId="${qP.id}">
-       <c:forEach items="${qP.vocab}" var="flatVoc">
-              <option value="${flatVoc}">${flatVoc}</option>
-       </c:forEach>
-     </select>--%>
+       <input type="hidden" name="myMultiProp(${pNam})" id="blastType"/>
 
      </td>
 
