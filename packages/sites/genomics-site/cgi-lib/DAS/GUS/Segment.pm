@@ -375,8 +375,11 @@ sub features {
     }
 
 	  # filter out blastx. it is used by cryptodb
-    if($typeString =~ /[blastx|blat]/i) { 
+    if($typeString =~ /blastx/i) { 
         @tempfeats = _blastx_filter(\@tempfeats);
+    }
+    elsif($typeString =~ /blat/i) { 
+        @tempfeats = _blastx_filter(\@tempfeats, 10);
     }
 
     push(@features, @tempfeats);
@@ -520,16 +523,14 @@ sub _makeFeature() {
 sub _blastx_filter {
 
 	my $feats = shift;
+	my $depth = shift || 5; # default is 5 level in depth
 	my $counter = 0;
-	#my $idx = -1;
 	my $old_end = 2000000;
-
 
 	my @newfeats = ();
 	foreach my $f(@$feats) {
 	my $name = $f->name;
 
-		#$idx = $idx + 1;
 		my $start = $f->start;
 		my $end = $f->end;
 
@@ -542,14 +543,10 @@ sub _blastx_filter {
 			next;
 		}
 
-		if($counter >= 5) {
-			#splice(@$feats, $idx, 1);
-			#$idx = $idx - 1; 	# reset index
-		} else {
+		if($counter < $depth) {
 			push(@newfeats, $f);
 			$old_end = $end;
 		}
-			
 	}
 
 	return @newfeats;
