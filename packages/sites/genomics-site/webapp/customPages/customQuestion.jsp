@@ -230,7 +230,7 @@ function showParamGroup(group, isShow)
         <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
     </c:forEach>
     <tr>
-        <td align="right">Data Sources:</td>
+        <td align="right" valign="top"><em>Data Sources:</em></td>
         <td>
             <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
                 ${attributionDisplay}
@@ -262,7 +262,7 @@ function showParamGroup(group, isShow)
             <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
         </c:forEach>
         <tr>
-            <td align="right">${organism} Data Sources:</td>
+            <td align="right" valign="top"><em>${organism} Data Sources:</em></td>
             <td>
                 <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
                     ${attributionDisplay}
