@@ -214,11 +214,11 @@ function showParamGroup(group, isShow)
     <%-- display the default attribution list --%>
     <c:set var="attributionKey" value="" />
     <c:set var="attributionDisplay" value="" />
-    <c:set var="firstItem" value="true" />
+    <c:set var="hasItem" value="${false}" />
     <c:forEach var="attribution" items="${defaultAttributionList}">
         <c:choose>
-            <c:when test="${firstItem == true}">
-                <c:set var="firstItem" value="false" />
+            <c:when test="${hasItem == false}">
+                <c:set var="hasItem" value="${true}" />
             </c:when>
             <c:otherwise>
                 <c:set var="attributionKey" value="${attributionKey}," />
@@ -229,28 +229,30 @@ function showParamGroup(group, isShow)
         <c:set var="attributionKey" value="${attributionKey}${attribution}" />
         <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
     </c:forEach>
-    <tr>
-        <td align="right" valign="top"><em>Data Sources:</em></td>
-        <td>
-            <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
-                ${attributionDisplay}
-            </a>
-        </td>
-    </tr> 
+    <c:if test="${hasItem}">
+        <tr>
+            <td align="right" valign="top"><b>Data Sources:</b></td>
+            <td>
+                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
+                    ${attributionDisplay}
+                </a>
+            </td>
+        </tr> 
+    </c:if>
 
     <%-- display organism specific attributions --%>
     <c:forEach var="organism" items="${organismList}">
         <c:set var="attributionListName" value="${organism}_attributions"/>
-        <c:set var="attributionList" value="${attributionListName}"/>
+        <c:set var="attributionList" value="${propertyLists[attributionListName]}"/>
 
         <%-- display the attribution list for each organism--%>
         <c:set var="attributionKey" value="" />
         <c:set var="attributionDisplay" value="" />
-        <c:set var="firstItem" value="true" />
+        <c:set var="hasItem" value="${false}" />
         <c:forEach var="attribution" items="${attributionList}">
             <c:choose>
-                <c:when test="${firstItem == true}">
-                    <c:set var="firstItem" value="false" />
+                <c:when test="${hasItem == false}">
+                    <c:set var="hasItem" value="${true}" />
                 </c:when>
                 <c:otherwise>
                     <c:set var="attributionKey" value="${attributionKey}," />
@@ -261,14 +263,16 @@ function showParamGroup(group, isShow)
             <c:set var="attributionKey" value="${attributionKey}${attribution}" />
             <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
         </c:forEach>
-        <tr>
-            <td align="right" valign="top"><em>${organism} Data Sources:</em></td>
-            <td>
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
-                    ${attributionDisplay}
-                </a>
-            </td>
-        </tr> 
+        <c:if test="${hasItem}">
+            <tr>
+                <td align="right" valign="top"><b>${organism} Data Sources:</b></td>
+                <td>
+                    <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
+                        ${attributionDisplay}
+                    </a>
+                </td>
+            </tr> 
+        </c:if>
 
     </c:forEach>
 </table>
