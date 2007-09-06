@@ -6,13 +6,18 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
-<c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
+<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
-<c:set value="${requestScope.questionForm}" var="qForm"/>
+<c:set var="qForm" value="${requestScope.questionForm}"/>
 
 <%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
+<%-- get the property list map of the question --%>
+<c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
+<c:set var="organismList" value="${propertyLists['organisms']}"/>
+<c:set var="defaultAttributionList" value="${propertyLists['attributions']}"/>
 
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
@@ -198,6 +203,75 @@ function showParamGroup(group, isShow)
 <hr>
 <%-- display description for wdkQuestion --%>
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
+
+<%-- get the attributions of the question --%>
+<c:set var="xqSet" value="${wdkModel.xmlQuestionSetsMap['XmlQuestions']}"/>
+<c:set var="dataSourcesQuestion" value="${xqSet.questionsMap['DataSources']}"/>
+<c:set var="dsRecords" value="${dataSourcesQuestion.fullAnswer.recordInstanceMap}"/>
+<hr>
+<table border="0">
+
+    <%-- display the default attribution list --%>
+    <c:set var="attributionKey" value="" />
+    <c:set var="attributionDisplay" value="" />
+    <c:set var="firstItem" value="true" />
+    <c:forEach var="attribution" items="${defaultAttributionList}">
+        <c:choose>
+            <c:when test="${firstItem == true}">
+                <c:set var="firstItem" value="false" />
+            </c:when>
+            <c:otherwise>
+                <c:set var="attributionKey" value="${attributionKey}," />
+                <c:set var="attributionDisplay" value="${attributionDisplay}, " />
+            </c:otherwise>
+        </c:choose>
+        <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+        <c:set var="attributionKey" value="${attributionKey}${attribution}" />
+        <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
+    </c:forEach>
+    <tr>
+        <td align="right">Data Sources:</td>
+        <td>
+            <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
+                ${attributionDisplay}
+            </a>
+        </td>
+    </tr> 
+
+    <%-- display organism specific attributions --%>
+    <c:forEach var="organism" items="${organismList}">
+        <c:set var="attributionListName" value="${organism}_attributions"/>
+        <c:set var="attributionList" value="${attributionListName}"/>
+
+        <%-- display the attribution list for each organism--%>
+        <c:set var="attributionKey" value="" />
+        <c:set var="attributionDisplay" value="" />
+        <c:set var="firstItem" value="true" />
+        <c:forEach var="attribution" items="${attributionList}">
+            <c:choose>
+                <c:when test="${firstItem == true}">
+                    <c:set var="firstItem" value="false" />
+                </c:when>
+                <c:otherwise>
+                    <c:set var="attributionKey" value="${attributionKey}," />
+                    <c:set var="attributionDisplay" value="${attributionDisplay}, " />
+                </c:otherwise>
+            </c:choose>
+            <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+            <c:set var="attributionKey" value="${attributionKey}${attribution}" />
+            <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
+        </c:forEach>
+        <tr>
+            <td align="right">${organism} Data Sources:</td>
+            <td>
+                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
+                    ${attributionDisplay}
+                </a>
+            </td>
+        </tr> 
+
+    </c:forEach>
+</table>
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 
