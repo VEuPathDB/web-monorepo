@@ -351,7 +351,7 @@ function initRadioArray(name){
 	for(var y = 0; y < radioArray.length; y++){
 		radioArray[y].disabled = true;
 		radioArray[y].checked = false;
-		document.getElementById(radioArray[y].value+'_font').style.color="grey";
+		document.getElementById(radioArray[y].value+'_font').style.color="gray";
 		document.getElementById(radioArray[y].value+'_font').style.fontWeight="200";
 	}
 	document.getElementById('blastType').value = "";
