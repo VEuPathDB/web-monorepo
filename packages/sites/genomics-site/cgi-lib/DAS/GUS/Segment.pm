@@ -66,6 +66,8 @@ sub new {
     my $self = shift;
     my ( $name, $factory, $start, $stop, $atts ) = @_;
 
+    return unless $name;
+
     my $query = $factory->parser->getSQL("Segment.pm", "new:Segment");
     die "Couldn't find Segment.pm sql for new:Segment\n" unless $query;
     $query =~ s/(\$\w+)/eval $1/eg;
