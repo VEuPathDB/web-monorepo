@@ -24,7 +24,7 @@
 
   <!-- begin bottom left content -->
 
-	<font color="red">Attention: we opened a new window for your convenience, so you can copy/paste from your previous screen.</font><br>
+	<font color="red">Attention: this is a new window (or tab, depending on your browser) for your convenience, so you can copy/paste from your previous screen.</font><br>
  
 	We are available to help with <b>Questions</b>, <b>Error reports</b>, <b>Feature requests</b>, <b>Dataset proposals</b>, etc.
     <hr class=brown>
