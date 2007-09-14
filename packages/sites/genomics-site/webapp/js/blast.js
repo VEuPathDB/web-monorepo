@@ -6,7 +6,7 @@ var Rorganism = "";
 window.onload = function(){
 	revise = false;
 	var target = parseUrl('target');
-	if(target == 'GENE') clickDefault('Transcripts');
+	if(target == 'GENE') clickDefault('Transcripts','type');
 	else if(target == 'ORF') clickDefault('ORF','type');
 	else if(target == 'EST') clickDefault('EST','type');
 	else if(target == 'SEQ') clickDefault('Genome','type');
