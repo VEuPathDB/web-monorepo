@@ -252,7 +252,8 @@ function resetAttr() {
 	           &nbsp;|&nbsp;
                    <c:set value="${wdkAnswer.questionUrlParams}" var="qurlParams"/>
 	           <c:set var="questionUrl" value="" />
-                   <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
+                   <a href="showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
+                   <%--<a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">--%>
 	           Revise query</a>
 	       </c:if>
        </td>
