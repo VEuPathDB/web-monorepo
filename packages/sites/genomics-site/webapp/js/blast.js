@@ -383,7 +383,7 @@ function initRadioArray(name){
 		document.getElementById(radioArray[y].value+'_font').style.color="gray";
 		document.getElementById(radioArray[y].value+'_font').style.fontWeight="200";
 	}
-	document.getElementById('blastType').value = "";
+	document.getElementById('blastAlgo').value = "";
 	document.getElementById('blastOrg').value = "";
 }
 
