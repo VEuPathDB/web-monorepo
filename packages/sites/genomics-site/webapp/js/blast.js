@@ -1,18 +1,45 @@
+var revise = false;
+var Rtype = "";
+var Rprogram = "";
+var Rorganism = "";
 
 window.onload = function(){
+	revise = false;
 	var target = parseUrl('target');
 	if(target == 'GENE') clickDefault('Transcripts');
-	else if(target == 'ORF') clickDefault('ORF');
-	else if(target == 'EST') clickDefault('EST');
-	else if(target == 'SEQ') clickDefault('Genome');
+	else if(target == 'ORF') clickDefault('ORF','type');
+	else if(target == 'EST') clickDefault('EST','type');
+	else if(target == 'SEQ') clickDefault('Genome','type');
+
+	if(parseUrl('-filter') != ""){
+           revise = true;
+	   Rtype = parseUrl('BlastDatabaseType');
+	   Rorganism = parseUrl('BlastDatabaseOrganism');
+	   Rprogram = parseUrl('BlastAlgorithm');   
+	   
+	   clickDefault(Rtype, 'type'); 
+	   enableRadioArray('algorithm', Rprogram);
+	}
 }
 
-function clickDefault(id){
+function clickDefault(id, name){
 	var type = "";
-	var types = document.getElementsByName('type');
+	var types = document.getElementsByName(name);
 	for(var x = 0; x < types.length; x++){
 		if(types[x].value == id)
 			types[x].click();
+	}	
+}
+
+function enableRadioArray(name,id){
+	var type = "";
+	document.getElementById('blastAlgo').value = id;
+	var types = document.getElementsByName(name);
+	for(var x = 0; x < types.length; x++){
+		if(types[x].value == id){
+			types[x].disabled = false;
+			types[x].checked = true;
+		}
 	}	
 }
 
@@ -130,6 +157,7 @@ function getOrganismTerms(){
 
         if(getArray(selectedArray).length > 0){
 		fillSelectFromXML(null, 'BlastOrganism', selectedArray);
+		updateOrganism();	
 		return;
 	}
         getAndWrite(sendReqUrl, 'BlastOrganism');	
@@ -295,7 +323,8 @@ function fillDivFromXML(obj, id, index)
 	}
 	var ArrayLength = defArray.length;
 	var term;
-	initRadioArray('algorithm');
+	if(!revise) initRadioArray('algorithm'); 
+	else revise = false;
 	if( ArrayLength != 0 ){
 		for(var i=0; i<ArrayLength;i++){
 			term = new String( defArray[i].firstChild.data );
