@@ -95,13 +95,9 @@
 <c:if test="${modelName eq 'TrichDB'}">
         <c:set var="orgnismName" value="Trichomonas"/>
 </c:if>
-<c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname].summary}">
-    <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
-</c:if>
-<c:if test="${empty wdkModel.questionSetsMap[qset].questionsMap[qname].summary}">
-        <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].description}"/>
-</c:if>
 
+
+<c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
 
 
     <td width="5" align="left"  valign="top">&nbsp;&#8226;&nbsp; </td>
