@@ -89,6 +89,12 @@
 <c:if test="${modelName eq 'ToxoDB'}">
         <c:set var="orgnismName" value="Toxoplasma"/>
 </c:if>
+<c:if test="${modelName eq 'GiardiaDB'}">
+        <c:set var="orgnismName" value="Giardia"/>
+</c:if>
+<c:if test="${modelName eq 'TrichDB'}">
+        <c:set var="orgnismName" value="Trichomonas"/>
+</c:if>
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname].summary}">
     <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
 </c:if>
@@ -104,7 +110,15 @@
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
     <td align="left" valign="bottom"><a href='${link}' class='queryGridActive' 
-        onmouseover="this.T_WIDTH=200;this.T_PADDING=6;this.T_BGCOLOR='white'; this.T_FONTCOLOR='#003366';  this.T_BORDERCOLOR='#003366'; this.T_FONTSIZE='12px'; return escape('${fn:escapeXml(fn:replace(popup, "'", "\\'"))}')">${linktext}</a> 
+        onmouseover="return overlib('${popup}',
+                FGCOLOR, 'white',
+                BGCOLOR, '#003366',
+                TEXTCOLOR, '#003366',
+                TEXTSIZE, '11px',
+                WIDTH, 300,
+                CELLPAD, 5)"
+        onmouseout = "return nd();">
+        ${linktext}</a> 
     </td>
 
 </c:if>
@@ -113,7 +127,15 @@
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
     <td align="left" valign="bottom"><a href="javascript:void(0);" class='queryGridInactive' 
-        onmouseover="this.T_WIDTH=200;this.T_STICKY=1;this.T_PADDING=6;this.T_BGCOLOR='white'; this.T_FONTCOLOR='#003366'; this.T_BORDERCOLOR='#003366';  this.T_FONTSIZE='12px';  return escape('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).  For questions contact <a href=&quot;help.jsp&quot;><u>${modelName} Support</u></a>')">${linktext}</a>
+        onmouseover="return overlib('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).',
+                FGCOLOR, 'white',
+                BGCOLOR, '#003366',
+                TEXTCOLOR, '#003366',
+                TEXTSIZE, '11px',
+                WIDTH, 200,
+                CELLPAD, 5)"
+        onmouseout = "return nd();">
+        ${linktext}</a>
     </td>
 
 </c:if>
