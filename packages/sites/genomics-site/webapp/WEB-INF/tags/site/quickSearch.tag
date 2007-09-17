@@ -61,7 +61,7 @@
 
 <html:form method="get" action="/processQuestionSetsFlat.do">
 <tr>
-<td  valign="top" align="left" width="10%"><font size="-1"><b>Genes by ID</b></td>
+<td  valign="top" align="center" width="10%"><font size="-1"><b>ID</b></td>
 
 <td width="10%" align="left">
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag">
@@ -80,7 +80,7 @@
 
 
 <html:form method="get" action="/processQuestionSetsFlat.do">
-<td  valign="top" width="20%" align="right"><font size="-1"><b>Genes by Keyword</b></td>
+<td  valign="top" width="20%" align="right"><font size="-1"><b>Keyword</b></td>
 <td width="20%" align="right">
 
 
@@ -110,7 +110,7 @@
                value="Gene product,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions">
         <input type="hidden" name="myMultiProp(whole_words)" value="yes">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
-        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="40"/>&nbsp;
+        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="35"/>&nbsp;
 
 
 </td>
