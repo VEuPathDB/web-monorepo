@@ -2,6 +2,10 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
+
+<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
 <site:header title="${wdkModel.displayName}.org :: Add A Comment"
                  banner="Add A Comment"/>
 <head>
@@ -25,8 +29,6 @@
 	}
 </style>
 </head>
-
-<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:choose>
 	<c:when test="${empty wdkUser || wdkUser.guest}">
 		<p align=center>Please login to post a comment.</p>
@@ -40,12 +42,14 @@
 		
 			<c:choose>
 			<c:when test="${commentTarget.commentTargetId eq 'gene'}">
-				<c:set var="returnUrl" 
-					value="${pageContext.request.contextPath}/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=&primary_key=${stableId}"/>
+				<c:set var="returnUrl">
+					<c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${stableId}"/>
+				</c:set>
 			</c:when>
 			<c:otherwise>
-				<c:set var="returnUrl" 
-				value="${pageContext.request.contextPath}/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=&primary_key=${stableId}"/>
+				<c:set var="returnUrl"> 
+				    <c:url value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=${wdkModel.projectId}&primary_key=${stableId}"/>
+				</c:set>
 			</c:otherwise>
 			</c:choose>
 						
