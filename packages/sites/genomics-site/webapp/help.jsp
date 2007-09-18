@@ -10,7 +10,7 @@
                  banner="${site} Support"
                  parentDivision="${site}"
                  parentUrl="/home.jsp"
-                 divisionName="Support"
+                 divisionName="Generic"
                  division="help"/>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
@@ -21,26 +21,21 @@
 <!-- begin page table -->
 
 <table border=0 width=100% cellpadding=10><tr><td valign=top>
-
-  <!-- begin bottom left content -->
-
-	<font color="red">Attention: this is a new window (or tab, depending on your browser) for your convenience, so you can copy/paste from your previous screen.</font><br>
- 
-	We are available to help with <b>Questions</b>, <b>Error reports</b>, <b>Feature requests</b>, <b>Dataset proposals</b>, etc.
+<font size ="-1">
+ <hr class=brown>
+    <center><a href="javascript:window.close()">Close this window.</a></center>  
     <hr class=brown>
-        To contact us, you may either use the form below (preferred) or email us at <a href="mailto:help%40${site}%2Eorg">help@${site}.org</a>
-        <br>
-        In either case, please include:
+    We are available to help with <b>Questions</b>, <b>Error reports</b>, <b>Feature requests</b>, <b>Dataset proposals</b>, etc. &nbsp;&nbsp;Please include (but all are optional):
         <ul>
         <li>Your email, so we can respond.
-        <li><i>Details</i> of how a problem occured, including:
+        <li>If you are describing a problem, <i>details</i> of how the problem occured, including:
           <ul>
           <li>The URL of the offending page
           <li><i>Exact</i> steps to recreate the problem. If possible, please try to recreate the problem yourself so you can give us an exact recipe.
           <li>The full error message, if any.
           </ul>
         </ul>
-
+</font>
               <table width="100%"><tr><td align="center">
 
               <table cellspacing="2" cellpadding="4" border="0" bgcolor="#cccccc">
