@@ -59,8 +59,8 @@ cryptolink, plasmolink, toxolink
 <html>
 <head>
 <title>${pageContext.request.serverName} Site Info</title>
-<script type='text/javascript' src='/js/prototype.js'></script>
-<script type='text/javascript' src='/js/scriptaculous.js'></script>
+<script type='text/javascript' src='/a/js/prototype.js'></script>
+<script type='text/javascript' src='/a/js/scriptaculous.js'></script>
 <%-- http://wiki.script.aculo.us/scriptaculous/show/Effect.toggle --%>
 
 <script type="text/javascript">
