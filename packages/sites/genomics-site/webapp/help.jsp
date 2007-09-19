@@ -21,10 +21,11 @@
 <!-- begin page table -->
 
 <table border=0 width=100% cellpadding=10><tr><td valign=top>
-<font size ="-1">
+
  <hr class=brown>
     <center><a href="javascript:window.close()">Close this window.</a></center>  
     <hr class=brown>
+<font size ="-1">
     We are available to help with <b>Questions</b>, <b>Error reports</b>, <b>Feature requests</b>, <b>Dataset proposals</b>, etc. &nbsp;&nbsp;Please include (but all are optional):
         <ul>
         <li>Your email, so we can respond.
