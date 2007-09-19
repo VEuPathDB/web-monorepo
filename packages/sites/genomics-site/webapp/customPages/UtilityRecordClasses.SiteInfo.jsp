@@ -46,6 +46,16 @@ cryptolink, plasmolink, toxolink
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<c:choose> 
+<%-- this choose block is a crude effort to prevent data display
+     when apache is not restricting with authentication --%>
+<c:when test="${IS_ALLOWED_SITEINFO != 1}">
+Content Not Displayed.<p>
+This page must be proxied through Apache with proper configuration,
+including authentication.
+</c:when>
+<c:otherwise>
+
 <%@ page import="java.util.*, java.io.*, java.lang.*" %>
  
 <%/* get wdkRecord from proper scope */%>
@@ -308,3 +318,6 @@ public String lastReload(ServletContext application, PageContext pageContext) {
   }
 }
 %>
+
+</c:otherwise>
+</c:choose>
