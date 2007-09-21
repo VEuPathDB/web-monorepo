@@ -6,7 +6,7 @@
 <c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
 
 <!-- get wdkModel name to display as page header -->
-<site:header title="${site}.org :: Support Feddback"
+<site:header title="${site}.org :: Support Feedback"
                  banner="${site} Support Feedback"
                  parentDivision="${site}"
                  parentUrl="/home.jsp"
