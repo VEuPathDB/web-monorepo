@@ -23,20 +23,24 @@ garbage_collect() {
     local age=$1
     local config=$2
     local cachedir=cachedir
+    local imgdir=img
     
     cd "$config"
     
     test -d "$cachedir" || return
 
-    images=( $(find img -mtime $age -type f | xargs -i basename '{}' 2>&- ) )
+    images=( $(find $imgdir -mtime $age -type f | xargs -i basename '{}' 2>&- ) )
     
     for image in ${images[@]}; do
         cachefile="$(grep -rl "$image" "$cachedir")"
        if [ -z "$cachefile" ]; then
-         test $DEBUG && echo removing "$image"
-         test $DEBUG || rm -f "$image"
+         if test $DEBUG; then
+            echo removing "$imgdir/$image"
+         else
+            rm -f "$imgdir/$image"
+         fi
        else
-         test $DEBUG && echo "$image" in use by "$cachefile"
+         test $DEBUG && echo "$cachedir/$image" in use by "$cachefile"
        fi
     done
 }
