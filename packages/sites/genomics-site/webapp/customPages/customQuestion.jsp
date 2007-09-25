@@ -17,7 +17,8 @@
 <%-- get the property list map of the question --%>
 <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
 <c:set var="organismList" value="${propertyLists['organisms']}"/>
-<c:set var="defaultAttributionList" value="${propertyLists['attributions']}"/>
+<c:set var="specificAttributionList" value="${propertyLists['specificAttribution']}"/>
+<c:set var="genomeAttributionList" value="${propertyLists['genomeAttribution']}"/>
 
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
@@ -211,18 +212,16 @@ function showParamGroup(group, isShow)
 <hr>
 <table border="0">
 
-    <%-- display the default attribution list --%>
+    <%-- display the question specific attribution list --%>
     <c:set var="attributionKey" value="" />
-    <c:set var="attributionDisplay" value="" />
     <c:set var="hasItem" value="${false}" />
-    <c:forEach var="attribution" items="${defaultAttributionList}">
+    <c:forEach var="attribution" items="${specificAttributionList}">
         <c:choose>
             <c:when test="${hasItem == false}">
                 <c:set var="hasItem" value="${true}" />
             </c:when>
             <c:otherwise>
                 <c:set var="attributionKey" value="${attributionKey}," />
-                <c:set var="attributionDisplay" value="${attributionDisplay}, " />
             </c:otherwise>
         </c:choose>
         <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
@@ -231,50 +230,64 @@ function showParamGroup(group, isShow)
     </c:forEach>
     <c:if test="${hasItem}">
         <tr>
-            <td align="right" valign="top"><b>Data Sources:</b></td>
+            <c:set var="dataSourceTitle" value="Question-Specific Data Sources" />
+            <td align="right" valign="top"><b>${dataSourceTitle}:</b></td>
             <td>
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
-                    ${attributionDisplay}
-                </a>
+                <ul>
+                    <c:forEach var="attribution" items="${specificAttributionList}">
+                        <li>
+                            <c:set var="dataSourceUrl">
+                                <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}&dataset_id=${attribution}" />
+                            </c:set>
+                            <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+                            <a href="${dataSourceUrl}">
+                                ${dsRecord.attributesMap['resource']}
+                            </a>
+                        </li>
+                    </c:forEach>
+                </ul>
             </td>
         </tr> 
     </c:if>
 
-    <%-- display organism specific attributions --%>
-    <c:forEach var="organism" items="${organismList}">
-        <c:set var="attributionListName" value="${organism}_attributions"/>
-        <c:set var="attributionList" value="${propertyLists[attributionListName]}"/>
-
-        <%-- display the attribution list for each organism--%>
-        <c:set var="attributionKey" value="" />
-        <c:set var="attributionDisplay" value="" />
-        <c:set var="hasItem" value="${false}" />
-        <c:forEach var="attribution" items="${attributionList}">
-            <c:choose>
-                <c:when test="${hasItem == false}">
-                    <c:set var="hasItem" value="${true}" />
-                </c:when>
-                <c:otherwise>
-                    <c:set var="attributionKey" value="${attributionKey}," />
-                    <c:set var="attributionDisplay" value="${attributionDisplay}, " />
-                </c:otherwise>
-            </c:choose>
-            <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-            <c:set var="attributionKey" value="${attributionKey}${attribution}" />
-            <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
-        </c:forEach>
-        <c:if test="${hasItem}">
-            <tr>
-                <td align="right" valign="top"><b>${organism} Data Sources:</b></td>
-                <td>
-                    <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${attributionDisplay}" />">
-                        ${attributionDisplay}
-                    </a>
-                </td>
-            </tr> 
-        </c:if>
-
+    <%-- display the default attribution list --%>
+    <c:set var="attributionKey" value="" />
+    <c:set var="hasItem" value="${false}" />
+    <c:forEach var="attribution" items="${genomeAttributionList}">
+        <c:choose>
+            <c:when test="${hasItem == false}">
+                <c:set var="hasItem" value="${true}" />
+            </c:when>
+            <c:otherwise>
+                <c:set var="attributionKey" value="${attributionKey}," />
+            </c:otherwise>
+        </c:choose>
+        <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+        <c:set var="attributionKey" value="${attributionKey}${attribution}" />
+        <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
     </c:forEach>
+    <c:if test="${hasItem}">
+        <tr>
+            <c:set var="dataSourceTitle" value="Genome Data Sources" />
+            <td align="right" valign="top"><b>${dataSourceTitle}:</b></td>
+            <td>
+                <ul>
+                    <c:forEach var="attribution" items="${genomeAttributionList}">
+                        <li>
+                            <c:set var="dataSourceUrl">
+                                <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}&dataset_id=${attribution}" />
+                            </c:set>
+                            <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+                            <a href="${dataSourceUrl}">
+                                ${dsRecord.attributesMap['resource']}
+                            </a>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </td>
+        </tr> 
+    </c:if>
+
 </table>
 
   </td>
