@@ -230,7 +230,7 @@ function showParamGroup(group, isShow)
     </c:forEach>
     <c:if test="${hasItem}">
         <tr>
-            <c:set var="dataSourceTitle" value="Query-Specific Data" />
+            <c:set var="dataSourceTitle" value="Query data sources" />
             <td align="right" valign="top"><b>${dataSourceTitle}:</b></td>
             <td>
                 <ul>
@@ -268,7 +268,7 @@ function showParamGroup(group, isShow)
     </c:forEach>
     <c:if test="${hasItem}">
         <tr>
-            <c:set var="dataSourceTitle" value="Genome Data" />
+            <c:set var="dataSourceTitle" value="Genome data sources" />
             <td align="right" valign="top"><b>${dataSourceTitle}:</b></td>
             <td>
                 <ul>
