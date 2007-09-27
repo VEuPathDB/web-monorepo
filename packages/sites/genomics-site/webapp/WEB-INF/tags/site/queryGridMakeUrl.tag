@@ -38,6 +38,10 @@
 <c:set var="cryptoRoot" value="http://www.cryptodb.org/cryptodb/" />
 <c:set var="apiRoot" value="http://www.apidb.org/apidb/" />
 
+<%-- get wdkModel saved in application scope --%>
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="modelName" value="${wdkModel.displayName}"/>
+<c:set var="ACPT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'api')    }"     />
 
 
 <c:choose>
