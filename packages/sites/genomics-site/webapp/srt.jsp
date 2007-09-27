@@ -14,7 +14,7 @@
                  division="queries_tools"/>
 <c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
 
-<c:set var="gqSet" value="${qSetMap['InternalQuestions']}"/>
+<c:set var="gqSet" value="${qSetMap['InternalQuestions2']}"/>
 <c:set var="gqMap" value="${gqSet.questionsMap}"/>
 
 <c:set var="geneByIdQuestion" value="${gqMap['SRT']}"/>
