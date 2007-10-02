@@ -210,8 +210,6 @@ function showParamGroup(group, isShow)
 <c:set var="dataSourcesQuestion" value="${xqSet.questionsMap['DataSources']}"/>
 <c:set var="dsRecords" value="${dataSourcesQuestion.fullAnswer.recordInstanceMap}"/>
 <hr>
-<table border="0">
-
     <%-- display the question specific attribution list --%>
     <c:set var="attributionKey" value="" />
     <c:set var="hasItem" value="${false}" />
@@ -229,25 +227,23 @@ function showParamGroup(group, isShow)
         <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
     </c:forEach>
     <c:if test="${hasItem}">
-        <tr>
-            <c:set var="dataSourceTitle" value="Query data sources" />
-            <td align="right" valign="top"><b>${dataSourceTitle}:</b></td>
-            <td>
-                <ul>
-                    <c:forEach var="attribution" items="${specificAttributionList}">
-                        <li>
-                            <c:set var="dataSourceUrl">
-                                <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}&dataset_id=${attribution}" />
-                            </c:set>
-                            <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-                            <a href="${dataSourceUrl}">
-                                ${dsRecord.attributesMap['resource']}
-                            </a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </td>
-        </tr> 
+        <c:set var="dataSourceTitle" value="Query data sources" />
+        <div><b>${dataSourceTitle}:</b></div>
+        <div>
+            <ul>
+                <c:forEach var="attribution" items="${specificAttributionList}">
+                    <li>
+                        <c:set var="dataSourceUrl">
+                            <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}&dataset_id=${attribution}" />
+                        </c:set>
+                        <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+                        <a href="${dataSourceUrl}">
+                            ${dsRecord.attributesMap['resource']}
+                        </a>
+                    </li>
+                </c:forEach>
+            </ul>
+        </div>
     </c:if>
 
     <%-- display the default attribution list --%>
@@ -267,28 +263,24 @@ function showParamGroup(group, isShow)
         <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
     </c:forEach>
     <c:if test="${hasItem}">
-        <tr>
-            <c:set var="dataSourceTitle" value="Genome data sources" />
-            <td align="right" valign="top"><b>${dataSourceTitle}:</b></td>
-            <td>
-                <ul>
-                    <c:forEach var="attribution" items="${genomeAttributionList}">
-                        <li>
-                            <c:set var="dataSourceUrl">
-                                <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}&dataset_id=${attribution}" />
-                            </c:set>
-                            <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-                            <a href="${dataSourceUrl}">
-                                ${dsRecord.attributesMap['resource']}
-                            </a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </td>
-        </tr> 
+        <c:set var="dataSourceTitle" value="Genome data sources" />
+        <div><b>${dataSourceTitle}:</b></div>
+        <div>
+            <ul>
+                <c:forEach var="attribution" items="${genomeAttributionList}">
+                    <li>
+                        <c:set var="dataSourceUrl">
+                            <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}&dataset_id=${attribution}" />
+                        </c:set>
+                        <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+                        <a href="${dataSourceUrl}">
+                            ${dsRecord.attributesMap['resource']}
+                        </a>
+                    </li>
+                </c:forEach>
+            </ul>
+        </div>
     </c:if>
-
-</table>
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 
