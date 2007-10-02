@@ -25,24 +25,23 @@
 
 <c:if test="${ACPT}">
 <tr><td colspan="3">  
-	<div class="smallBlack" align="middle">
-		<b>Query Availability:</b> &nbsp;&nbsp; &nbsp;
-		<img src='<c:url value="/images/apidb_letter.gif" />' border='0' alt='apidb'/> = ApiDB &nbsp;&nbsp;
-		<img src='<c:url value="/images/cryptodb_letter.gif" />' border='0' alt='cryptodb' /> = CryptoDB &nbsp;&nbsp;
-		<img src='<c:url value="/images/plasmodb_letter.gif" />' border='0' alt='plasmodb' /> = PlasmoDB &nbsp;&nbsp;
-		<img src='<c:url value="/images/toxodb_letter.jpg" />' border='0' alt='toxodb' /> = ToxoDB &nbsp; &nbsp;
+    <div class="smallBlack" align="middle">
+	<b>Query Availability:</b> &nbsp;&nbsp; &nbsp;
+	<img src='<c:url value="/images/apidb_letter.gif" />' border='0' alt='apidb'/> = ApiDB &nbsp;&nbsp;
+	<img src='<c:url value="/images/cryptodb_letter.gif" />' border='0' alt='cryptodb' /> = CryptoDB &nbsp;&nbsp;
+	<img src='<c:url value="/images/plasmodb_letter.gif" />' border='0' alt='plasmodb' /> = PlasmoDB &nbsp;&nbsp;
+	<img src='<c:url value="/images/toxodb_letter.jpg" />' border='0' alt='toxodb' /> = ToxoDB &nbsp; &nbsp;
 	</div>
 </td></tr>
-
 </c:if>
 
 
 <%--  All Gene Queries  --%>
 <tr class="headerRow"><td colspan="4" align="center"><b>Identify Genes by:</b></td></tr>
 
-<site:quickSearch/>
-
-
+<tr><td colspan="3" align="center">
+ 	<site:quickSearch/>
+</td></tr>
 
 <tr><td colspan="3" align="center">
 	<site:queryGridGenes/>

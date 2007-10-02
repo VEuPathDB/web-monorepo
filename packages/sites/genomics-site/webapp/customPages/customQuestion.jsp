@@ -55,7 +55,7 @@ function showParamGroup(group, isShow)
      <div id="question_Form">
 </c:if>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 
  <tr>
   <td bgcolor=white valign=top>
