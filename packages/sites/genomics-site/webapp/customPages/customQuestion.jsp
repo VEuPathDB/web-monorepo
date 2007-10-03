@@ -14,12 +14,6 @@
 <%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<%-- get the property list map of the question --%>
-<c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
-<c:set var="organismList" value="${propertyLists['organisms']}"/>
-<c:set var="specificAttributionList" value="${propertyLists['specificAttribution']}"/>
-<c:set var="genomeAttributionList" value="${propertyLists['genomeAttribution']}"/>
-
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
@@ -206,81 +200,15 @@ function showParamGroup(group, isShow)
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
 <%-- get the attributions of the question --%>
-<c:set var="xqSet" value="${wdkModel.xmlQuestionSetsMap['XmlQuestions']}"/>
-<c:set var="dataSourcesQuestion" value="${xqSet.questionsMap['DataSources']}"/>
-<c:set var="dsRecords" value="${dataSourcesQuestion.fullAnswer.recordInstanceMap}"/>
 <hr>
-    <%-- display the question specific attribution list --%>
-    <c:set var="attributionKey" value="" />
-    <c:set var="hasItem" value="${false}" />
-    <c:forEach var="attribution" items="${specificAttributionList}">
-        <c:choose>
-            <c:when test="${hasItem == false}">
-                <c:set var="hasItem" value="${true}" />
-            </c:when>
-            <c:otherwise>
-                <c:set var="attributionKey" value="${attributionKey}," />
-            </c:otherwise>
-        </c:choose>
-        <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-        <c:set var="attributionKey" value="${attributionKey}${attribution}" />
-        <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
-    </c:forEach>
-    <c:if test="${hasItem}">
-        <c:set var="dataSourceTitle" value="Query data sources" />
-        <div><b>${dataSourceTitle}:</b></div>
-        <div>
-            <ul>
-                <c:forEach var="attribution" items="${specificAttributionList}">
-                    <li>
-                        <c:set var="dataSourceUrl">
-                            <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}#" />
-                        </c:set>
-                        <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-                        <a href="${dataSourceUrl}${attribution}">
-                            ${dsRecord.attributesMap['resource']}
-                        </a>
-                    </li>
-                </c:forEach>
-            </ul>
-        </div>
-    </c:if>
+<%-- get the property list map of the question --%>
+<c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
 
-    <%-- display the default attribution list --%>
-    <c:set var="attributionKey" value="" />
-    <c:set var="hasItem" value="${false}" />
-    <c:forEach var="attribution" items="${genomeAttributionList}">
-        <c:choose>
-            <c:when test="${hasItem == false}">
-                <c:set var="hasItem" value="${true}" />
-            </c:when>
-            <c:otherwise>
-                <c:set var="attributionKey" value="${attributionKey}," />
-            </c:otherwise>
-        </c:choose>
-        <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-        <c:set var="attributionKey" value="${attributionKey}${attribution}" />
-        <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
-    </c:forEach>
-    <c:if test="${hasItem}">
-        <c:set var="dataSourceTitle" value="Genome data sources" />
-        <div><b>${dataSourceTitle}:</b></div>
-        <div>
-            <ul>
-                <c:forEach var="attribution" items="${genomeAttributionList}">
-                    <li>
-                        <c:set var="dataSourceUrl">
-                            <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}#" />
-                        </c:set>
-                        <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-                        <a href="${dataSourceUrl}${attribution}">
-                            ${dsRecord.attributesMap['resource']}
-                        </a>
-                    </li>
-                </c:forEach>
-            </ul>
-        </div>
-    </c:if>
+<%-- display the question specific attribution list --%>
+<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Query data sources" />
+
+<%-- display the default attribution list --%>
+<site:attributions attributions="${propertyLists['genomeAttribution']}" caption="Genome data sources" />
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 

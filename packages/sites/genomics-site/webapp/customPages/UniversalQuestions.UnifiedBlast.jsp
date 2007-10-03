@@ -147,6 +147,17 @@
 <%-- display description for wdkQuestion --%>
 <p><b>Query description:</b> <jsp:getProperty name="wdkQuestion" property="description"/></p>
 
+<%-- get the attributions of the question --%>
+<hr>
+<%-- get the property list map of the question --%>
+<c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
+
+<%-- display the question specific attribution list --%>
+<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Query data sources" />
+
+<%-- display the default attribution list --%>
+<site:attributions attributions="${propertyLists['genomeAttribution']}" caption="Genome data sources" />
+
   </td>
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
