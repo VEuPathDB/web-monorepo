@@ -122,7 +122,7 @@
   <c:if test="${alreadyPrintedSomething && !printedHeader}"><hr/></c:if>
   <c:set var="alreadyPrintedSomething" value="true"/>
 
-<b>${resource}</b> (version: ${version})<br>
+<a name="${record.id}"><b>${resource}</b></a> (version: ${version})<br>
 <font size="-1">
 <c:if test="${publicUrl != ''}"><a href="${publicUrl}">${publicUrl}</a><br></c:if>
 

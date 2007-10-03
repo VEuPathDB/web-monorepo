@@ -234,10 +234,10 @@ function showParamGroup(group, isShow)
                 <c:forEach var="attribution" items="${specificAttributionList}">
                     <li>
                         <c:set var="dataSourceUrl">
-                            <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}&dataset_id=${attribution}" />
+                            <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}#" />
                         </c:set>
                         <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-                        <a href="${dataSourceUrl}">
+                        <a href="${dataSourceUrl}${attribution}">
                             ${dsRecord.attributesMap['resource']}
                         </a>
                     </li>
@@ -270,10 +270,10 @@ function showParamGroup(group, isShow)
                 <c:forEach var="attribution" items="${genomeAttributionList}">
                     <li>
                         <c:set var="dataSourceUrl">
-                            <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}&dataset_id=${attribution}" />
+                            <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${dataSourceTitle}#" />
                         </c:set>
                         <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-                        <a href="${dataSourceUrl}">
+                        <a href="${dataSourceUrl}${attribution}">
                             ${dsRecord.attributesMap['resource']}
                         </a>
                     </li>
