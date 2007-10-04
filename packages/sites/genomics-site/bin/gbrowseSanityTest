@@ -489,8 +489,11 @@ sub interpolateParams {
     my $macro = '\$' . $paramName;
     my $val = $defaultParams->{$paramName}->{value};
     $val = &substituteSqlValue($val, $sqlValues);
-    $sqlString =~ s/$macro/$val \/\* P_A_R_A_M$paramName \*\//g
-      if ($sqlMode = 'commented');
+    if ($sqlMode eq 'commented') {
+      $sqlString =~ s/$macro/$val \/\* P_A_R_A_M$paramName \*\//g
+    } else {
+      $sqlString =~ s/$macro/$val/g
+    }
   }
 
   foreach my $param (@$params) {
