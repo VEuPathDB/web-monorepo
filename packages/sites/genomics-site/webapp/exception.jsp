@@ -54,7 +54,9 @@ Parameter Value: <c:out value='${p.value}'/>
 
 <c:choose>
 <c:when test="${ ! fn:containsIgnoreCase(publicHosts, serverName)}">
-  ${error}
+  <pre>
+${error}
+  </pre>
 </c:when>
 <c:otherwise>
   <c:if test="${header['Referer'] != null or param.debug == 1}">
