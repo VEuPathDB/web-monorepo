@@ -46,6 +46,30 @@ function gene_title (tip, paramsString) {
 }
 
 
+// EST title
+function est (tip, paramsString) {
+  // split paramsString on asterisk (to avoid library name characters)
+  var v = new Array();
+  v = paramsString.split('*');
+  
+  var ACCESSION = 0;
+  var START = ACCESSION + 1;
+  var STOP = START + 1;
+  var PERC_IDENT = STOP + 1;
+  var LIB =  PERC_IDENT + 1;
+
+  // format into html table rows
+  var rows = new Array();
+  rows.push(twoColRow('Accession:', v[ACCESSION]));
+  rows.push(twoColRow('Location', v[START] + "-" + v[STOP]));
+  rows.push(twoColRow('Identity', v[PERC_IDENT] + "%"));
+  rows.push(twoColRow('Library', v[LIB]));
+
+  tip.T_TITLE = 'EST ' + v[ACCESSION];
+  return table(rows);
+}
+
+
 // SNP Title
 function pst (tip, paramsString) {
   // split paramsString on comma
