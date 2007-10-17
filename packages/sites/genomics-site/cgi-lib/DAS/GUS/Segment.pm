@@ -376,12 +376,8 @@ sub features {
 			push @tempfeats, $self->_makeFeature($featureRow, $factory);
     }
 
-	  # filter out blastx. it is used by cryptodb
-    if($typeString =~ /blastx/i) { 
-        @tempfeats = _blastx_filter(\@tempfeats);
-    }
-    elsif($typeString =~ /blat/i) { 
-        @tempfeats = _blastx_filter(\@tempfeats, 10);
+    if($typeString =~ /blat/i) { 
+        @tempfeats = _feature_filter(\@tempfeats, 10);
     }
 
     push(@features, @tempfeats);
@@ -518,14 +514,14 @@ sub _makeFeature() {
 	$feat;
 }
 
-# filter out the blastx output. First, sort the blastx data using sql
+# filter out the blat output. First, sort the blat data using sql
 # by e-value, match length and start. 
-# Second, filter features with overlap > 5 
+# Second, filter features with overlap > 10
 
-sub _blastx_filter {
+sub _feature_filter {
 
 	my $feats = shift;
-	my $depth = shift || 5; # default is 5 level in depth
+	my $depth = shift || 10; # default is 10 level in depth
 	my $counter = 0;
 	my $old_end = 2000000;
 
