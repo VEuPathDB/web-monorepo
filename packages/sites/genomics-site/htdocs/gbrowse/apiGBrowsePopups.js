@@ -61,9 +61,9 @@ function est (tip, paramsString) {
   // format into html table rows
   var rows = new Array();
   rows.push(twoColRow('Accession:', v[ACCESSION]));
-  rows.push(twoColRow('Location', v[START] + "-" + v[STOP]));
-  rows.push(twoColRow('Identity', v[PERC_IDENT] + "%"));
-  rows.push(twoColRow('Library', v[LIB]));
+  rows.push(twoColRow('Location:', v[START] + "-" + v[STOP]));
+  rows.push(twoColRow('Identity:', v[PERC_IDENT] + "%"));
+  rows.push(twoColRow('Library:', v[LIB]));
 
   tip.T_TITLE = 'EST ' + v[ACCESSION];
   return table(rows);
