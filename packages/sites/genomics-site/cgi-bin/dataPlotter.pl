@@ -8,7 +8,7 @@ $ENV{R_PROGRAM} = '@rProgram@';
 $ENV{R_LIBS} = '@cgilibTargetDir@/R';
 
 
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 
 use ApiCommonWebsite::View::CgiApp::DataPlotter;
 
