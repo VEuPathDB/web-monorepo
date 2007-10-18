@@ -434,7 +434,22 @@ sub _addBulkSubFeatures {
   while (my $featureRow = $sth->fetchrow_hashref) {
     my $feature = $featuresById{$$featureRow{'PARENT_ID'}};
     if ($feature) {
-      $feature->_addSubFeatureFromRow($featureRow);
+		  if($$featureRow{'TYPE'} =~ /^block/i) {
+        # BLAT uses in-between coordnate system, so plus 1 for start position
+        my @tstarts = map { s/\s+//g; $_+1 } split /,/, $$featureRow{'TSTARTS'};
+        my @blocksizes = map { s/\s+//g; $_ } split /,/, $$featureRow{'BLOCKSIZES'};
+        my $counter = 0;
+        foreach my $start (@tstarts) {
+          my $end = $start + $blocksizes[$counter] - 1;
+          $$featureRow{STARTM} = $start;
+          $$featureRow{END} = $end;
+          $feature->_addSubFeatureFromRow($featureRow);
+          $counter = $counter + 1;
+        }
+			}
+			else {
+        $feature->_addSubFeatureFromRow($featureRow);
+			}
     } else {
       $self->warn("sub feature [" . $$featureRow{'FEATURE_ID'} . "]'s parent feature ["
 		  . $$featureRow{'PARENT_ID'} . "] could not be found. bulk subfeature query is:\n"
