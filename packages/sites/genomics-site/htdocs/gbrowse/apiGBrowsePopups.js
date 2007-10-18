@@ -70,11 +70,38 @@ function est (tip, paramsString) {
 }
 
 
+// BLAST title
+function blt (tip, paramsString) {
+  // split paramsString on asterisk (to avoid defline characters)
+  var v = new Array();
+  v = paramsString.split('*');
+  
+  var ACCESSION = 0;
+  var DEFLINE = ACCESSION + 1;
+  var START = DEFLINE + 1;
+  var STOP = START + 1;
+  var PERC_IDENT = STOP + 1;
+  var EXPECT = PERC_IDENT + 1;
+
+  // format into html table rows
+  var rows = new Array();
+  rows.push(twoColRow('Accession:', "gi|" + v[ACCESSION]));
+  rows.push(twoColRow('Description:', v[DEFLINE]));
+  rows.push(twoColRow('Location:', v[START] + "-" + v[STOP]));
+  rows.push(twoColRow('Identity:', v[PERC_IDENT] + "%"));
+  rows.push(twoColRow('Positive:', v[PERC_IDENT] + "%"));
+  rows.push(twoColRow('Expect:', v[EXPECT]));
+
+  tip.T_TITLE = 'BLASTX: ' + "gi|" + v[ACCESSION];
+  return table(rows);
+}
+
+
 // SNP Title
 function pst (tip, paramsString) {
-  // split paramsString on comma
+  // split paramsString on ampersand
   var v = new Array();
-  v = paramsString.split(',');
+  v = paramsString.split('&');
 
   var revArray = new Array();
   revArray['A'] = 'T';
@@ -101,8 +128,8 @@ function pst (tip, paramsString) {
   var type = 'Non-coding';
   var refNA = (v[REVERSED] == '1')? revArray[v[REF_NA]] : v[REF_NA];
   var refAAString = '';
-  if (v[IS_CODING] == '1') {
-    var non = (v[NON_SYN] == '1')? 'non-' : '';
+  if (v[IS_CODING] == 'yes') {
+    var non = (v[NON_SYN] == 'yes')? 'non-' : '';
     type = 'Coding (' + non + 'synonymous)';
     refAAString = '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + v[REF_AA];
   }
@@ -112,7 +139,7 @@ function pst (tip, paramsString) {
   rows.push(twoColRow('SNP', link));
   rows.push(twoColRow('Location', v[START]));
   if (v[GENE] != '') rows.push(twoColRow('Gene', v[GENE]));
-  if (v[IS_CODING] == '1') {
+  if (v[IS_CODING] == 'yes') {
     rows.push(twoColRow('Position&nbsp;in&nbsp;CDS', v[POS_IN_CDS]));
     rows.push(twoColRow('Position&nbsp;in&nbsp;protein', v[POS_IN_PROTEIN]));
   }
@@ -130,7 +157,7 @@ function pst (tip, paramsString) {
     if (v[REVERSED] == '1') na = revArray[na]; 
     var aa = variant[2];
     var info = 
-     'NA=' + na + ((v[IS_CODING] == '1')? '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + aa : '');
+     'NA=' + na + ((v[IS_CODING] == 'yes')? '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + aa : '');
     rows.push(twoColRow(strain, info));    
   }
 
