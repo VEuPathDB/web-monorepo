@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+use strict;
+
+use lib "@targetDir@/lib/perl";
+$ENV{GUS_HOME} = '@targetDir@';
+
+my $MERCATOR_OUTPUT_DIR = "/files/cbil/data/cbil/toxoDb/manualDelivery/MultSeqAlignFromAnat/TG_ME49-TG_VEG-TG_GT1-TG_RH/alignments";
+my $CNDSRC_BIN = "/usr/local/bin/cndsrc-2006-09-19/bin";
+
+use ApiCommonWebsite::View::CgiApp::MultipleAlignmentMercatorMavid;
+
+my $app =
+  ApiCommonWebsite::View::CgiApp::MultipleAlignmentMercatorMavid->new($MERCATOR_OUTPUT_DIR, $CNDSRC_BIN);
+
+$app->go();
