@@ -25,7 +25,8 @@ function gene_title (tip, paramsString) {
   var cdsLink = "<a href=../../../cgi-bin/geneSrt?project_id=" + v[PROJECT_ID]
         + "&ids=" + v[SOURCE_ID]
         + "&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>CDS</a>"
-  var proteinLink = "<a href=../../../cgi-bin/geneSrt?ids=" + v[SOURCE_ID]
+  var proteinLink = "<a href=../../../cgi-bin/geneSrt?project_id=" + v[PROJECT_ID]
+        + "&ids=" + v[SOURCE_ID]
         + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>protein</a>"
 
   var type = (v[IS_PSEUDO] == '1')? v[SO_TERM] : v[SO_TERM] + " (pseudogene)";	
