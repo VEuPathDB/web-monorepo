@@ -65,7 +65,7 @@ SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
 FROM logins.users${commentDblink} u,
      ${commentSchema}.comments${commentDblink} c, dots.GeneFeature gf,
      dots.NaSequence ns, sres.TaxonName tn
-WHERE u.email = c.email
+WHERE u.email(+) = c.email
   AND c.comment_target_id='gene'
   AND c.stable_id = gf.source_id
   AND c.review_status_id != 'rejected'
