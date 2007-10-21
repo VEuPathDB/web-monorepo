@@ -61,7 +61,7 @@ my $sql;
 $sql = <<SQL;
 SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
        gf.source_id,
-       regexp_replace(c.content || ' (' || u.first_name || ' ' || u.last_name || ')', '[[:space:]]', ' ')
+       regexp_replace(c.content || ' (' || u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization || ')', '[[:space:]]', ' ')
 FROM logins.users${commentDblink} u,
      ${commentSchema}.comments${commentDblink} c, dots.GeneFeature gf,
      dots.NaSequence ns, sres.TaxonName tn
@@ -77,7 +77,7 @@ WHERE u.email(+) = c.email
                        WHERE project_id = '${projectId}')
 ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
        gf.source_id,
-       regexp_replace(c.content || ' (' || u.first_name || ' ' || u.last_name || ')', '[[:space:]]', ' ')
+       regexp_replace(c.content || ' (' || u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization || ')', '[[:space:]]', ' ')
 SQL
 
 &extractFile($dbh, $outDir, "comments.txt", $sql);
