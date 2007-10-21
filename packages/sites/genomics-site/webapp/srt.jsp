@@ -51,6 +51,17 @@ function setEnable(flag) {
 // -->
 </script>
 
+<script type="text/javascript" lang="JavaScript 1.2">
+<!-- //
+
+function setEnable2(flag) {
+    var offsetOptions2 = document.getElementById("offsetOptions2");
+    if (flag) offsetOptions2.style.display = "block";
+    else offsetOptions2.style.display = "none";   
+}
+
+// -->
+</script>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
  <tr>
@@ -168,17 +179,25 @@ function setEnable(flag) {
             <textarea name="ids" rows="4" cols="60">${orfsIds.default}</textarea>
     </td></tr>
 
-    <tr><td colspan="2">
+
+<tr><td colspan="2">
+    <b>Choose the type of sequence:</b>
+        <input type="radio" name="type" value="protein" onclick="setEnable2(false)">protein
+        <input type="radio" name="type" value="genomic" checked onclick="setEnable2(true)">genomic
+    </td></tr>
+
+<%--
     <b>Choose the type of sequence:</b>
         <input type="radio" name="type" value="protein" checked>protein
         <input type="radio" name="type" value="genomic">genomic
-    </td></tr>
+ --%>
 
+    
     <tr><td colspan="2">
+    <table id="offsetOptions2" cellpadding="4">
+<tr><td colspan="2">
     <b>Choose the region of the sequence(s):</b>
     </td></tr>
-    <tr><td colspan="2">
-    <table cellpadding="4">
         <tr><td>begin at</td>
             <td align="left">
                 <input type="radio" name="upstreamAnchor" value="Start" checked> start<br>
