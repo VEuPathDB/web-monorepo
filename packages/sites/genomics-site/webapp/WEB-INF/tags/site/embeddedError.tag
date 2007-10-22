@@ -34,9 +34,10 @@ Sample usage:
 %>
 
 <c:set var="publicHosts">
-        ${wdkModel.displayName}.org
-     qa.${wdkModel.displayName}.org
-    www.${wdkModel.displayName}.org
+           ${wdkModel.displayName}.org
+        qa.${wdkModel.displayName}.org
+       www.${wdkModel.displayName}.org
+  workshop.${wdkModel.displayName}.org
 </c:set>
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
