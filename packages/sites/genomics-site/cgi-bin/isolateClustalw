@@ -1,0 +1,17 @@
+#!/usr/bin/perl 
+
+use strict;
+
+use lib "@targetDir@/lib/perl";
+$ENV{GUS_HOME} = '/var/www/CryptoDB/cryptodb.hwang2.0/gus_home';
+
+use ApiCommonWebsite::View::CgiApp::IsolateClustalw;
+
+my $app =
+  ApiCommonWebsite::View::CgiApp::IsolateClustalw->
+    new(ConfigFile => "cryptoModel");
+
+$app->go();
+
+
+
