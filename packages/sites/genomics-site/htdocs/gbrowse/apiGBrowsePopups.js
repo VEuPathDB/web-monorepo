@@ -29,7 +29,7 @@ function gene_title (tip, paramsString) {
         + "&ids=" + v[SOURCE_ID]
         + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>protein</a>"
 
-  var type = (v[IS_PSEUDO] == '1')? v[SO_TERM] : v[SO_TERM] + " (pseudogene)";	
+  var type = (v[IS_PSEUDO] == '1')? v[SO_TERM] + " (pseudogene)" : v[SO_TERM];
   var download = cdsLink + " | " + proteinLink;
 
   // format into html table rows
