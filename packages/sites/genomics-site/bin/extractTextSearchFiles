@@ -60,8 +60,8 @@ my $sql;
 # comments
 $sql = <<SQL;
 SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
-       gf.source_id,
-       regexp_replace(c.content || ' (' || u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization || ')', '[[:space:]]', ' ')
+       gf.source_id, c.content,
+       u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
 FROM logins.users${commentDblink} u,
      ${commentSchema}.comments${commentDblink} c, dots.GeneFeature gf,
      dots.NaSequence ns, sres.TaxonName tn
@@ -77,7 +77,7 @@ WHERE u.email(+) = c.email
                        WHERE project_id = '${projectId}')
 ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
        gf.source_id,
-       regexp_replace(c.content || ' (' || u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization || ')', '[[:space:]]', ' ')
+       u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
 SQL
 
 &extractFile($dbh, $outDir, "comments.txt", $sql);
@@ -299,6 +299,8 @@ sub extractFile {
   while(my @row = $statement->fetchrow_array()){
     $count++;
     print "Processing record $count\n" if $verbose && $count % 10000 == 0;
+
+    map { s/\s+/ /g } @row;
     print OUT join("\t", @row), " \n";
   }
 
