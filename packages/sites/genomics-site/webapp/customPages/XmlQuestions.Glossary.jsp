@@ -42,10 +42,10 @@
     <table border="0" cellpadding="2" cellspacing="0" width="100%">
   
     <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
+    <a name="${term}">
     <tr class="rowLight"><td>
       <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${term}"><font color='black'><b>${term}</b></font></a> <br><br>${definition}</td></tr></table>
     <c:set var="i" value="${i+1}"/>
-  </c:if>
 </c:forEach>
 
 <p>
