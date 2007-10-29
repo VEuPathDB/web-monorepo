@@ -43,7 +43,7 @@ this is an attempt to show 0 when that happens.... (when is that? why is that?)
              <c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
                 <c:choose>
 
-                  <c:when test="${rSBP.key == 'cryptodb'}">
+                  <c:when test="${rSBP.key == 'CryptoDB'}">
 
 
 		      <c:set value="FOUND" var="CRYPTO_FOUND"/>
@@ -58,7 +58,7 @@ this is an attempt to show 0 when that happens.... (when is that? why is that?)
                           <c:set value="NA" var="CERROR"/>
 		      </c:if>
                   </c:when>
-                  <c:when test="${rSBP.key == 'plasmodb'}">
+                  <c:when test="${rSBP.key == 'PlasmoDB'}">
 
 		      <c:set value="FOUND" var="PLASMO_FOUND"/>
 
@@ -72,7 +72,7 @@ this is an attempt to show 0 when that happens.... (when is that? why is that?)
                           <c:set value="NA" var="PERROR"/>
 		      </c:if>
                   </c:when>
-                  <c:when test="${rSBP.key == 'toxodb'}">
+                  <c:when test="${rSBP.key == 'ToxoDB'}">
 
 		      <c:set value="FOUND" var="TOXO_FOUND"/>
 
@@ -95,7 +95,7 @@ this is an attempt to show 0 when that happens.... (when is that? why is that?)
 
 
 
-                  <c:when test="${rSBP.key == 'cryptodb'}">
+                  <c:when test="${rSBP.key == 'CryptoDB'}">
 	<c:if test="${rSBP.value>0}">
 &nbsp;&nbsp;<a href="showSummary.do?wdk_history_id=${histID}&pager.offset=0">
 CryptoDB: ${rSBP.value}</a>
@@ -113,7 +113,7 @@ length (used below) > 2 is not going to happen while pagesize is 20, but just in
 --%>
 
 
-                  <c:when test="${rSBP.key == 'plasmodb'}">
+                  <c:when test="${rSBP.key == 'PlasmoDB'}">
 	<c:if test="${rSBP.value>0}">
 &nbsp;&nbsp; 
 <c:set value="${CR / pageSize}" var="Poffset"/>
@@ -139,7 +139,7 @@ PlasmoDB: ${rSBP.value}</a>
 	</c:if>
                  </c:when>
 
-                  <c:when test="${rSBP.key == 'toxodb'}">
+                  <c:when test="${rSBP.key == 'ToxoDB'}">
 	<c:if test="${rSBP.value>0}">
 
 &nbsp;&nbsp; 
