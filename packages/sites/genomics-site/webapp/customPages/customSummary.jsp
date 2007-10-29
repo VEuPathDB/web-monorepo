@@ -455,18 +455,18 @@ function resetAttr() {
                
               <c:set value="${record.primaryKey}" var="primaryKey"/>
               <c:choose>
-                <c:when test = "${primaryKey.projectId == 'cryptodb'}">
+                <c:when test = "${primaryKey.projectId == 'CryptoDB'}">
                   <a href="http://www.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" 
                      target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
                 </c:when>
-                <c:when test = "${primaryKey.projectId=='plasmodb'}" >
+                <c:when test = "${primaryKey.projectId=='PlasmoDB'}" >
                   <c:if test="${isContigRec}">
                     <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
                   </c:if>
                   <a href="http://www.plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  
                      target="plasmodb">PlasmoDB:${primaryKey.recordId}</a>
                 </c:when>
-                <c:when test = "${primaryKey.projectId=='toxodb'}" >
+                <c:when test = "${primaryKey.projectId=='ToxoDB'}" >
                   <c:if test="${isContigRec}">
                     <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
                   </c:if>
