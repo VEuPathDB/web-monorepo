@@ -2,11 +2,12 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
-<!-- get wdkUser saved in session scope -->
+<%-- restore wdkUser as needed --%>
+<wdk:restoreUser />
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-
 
 <c:choose>
    <c:when test="${modelName eq 'ApiDB'}">

@@ -107,6 +107,7 @@
 			<input type="hidden" name="stableId" value="${stableId}"/>
 			<input type="hidden" name="externalDbName" value="${externalDbName}"/>
 			<input type="hidden" name="externalDbVersion" value="${externalDbVersion}"/>
+            <input type="hidden" name="organism" value="${organism}"/>
 			
 			<table width=60% cellspacing=8 bgcolor="#88aaca" align=center>
 		

@@ -29,6 +29,7 @@ attributes:
                 		<div class=medium>
                 		<strong>By: </strong>${comment.userName}, ${comment.organization} <br/>
                 		<strong>For: </strong>${comment.projectName}, version ${comment.projectVersion} <br/>
+                		<strong>On:</strong> ${comment.organism}<br>
                 		<strong>At:</strong> ${comment.commentDate}<br>
                 		<c:if test="${comment.reviewStatus == 'accepted'}">
                 			<strong>Status: </strong>
