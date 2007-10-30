@@ -46,7 +46,7 @@ display the attributions.
             <c:forEach var="attribution" items="${attributions}">
                 <li>
                     <c:set var="dataSourceUrl">
-                        <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=${caption}#" />
+                        <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=Query#" />
                     </c:set>
                     <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
                     <a href="${dataSourceUrl}${attribution}">
