@@ -33,17 +33,13 @@ BEGIN {
 }
 
 
-##################################################
-# CONFIGURE:
+my $q = new CGI;
+$q->param('project_id') or die "valid 'project_id' is required";
 
-##################################################
-
-my $c = new ApiCommonWebsite::Model::ModelConfig('cryptoModel');
+my $c = new ApiCommonWebsite::Model::ModelConfig( $q->param('project_id') );
 my $dsn = $c->getDbiDsn;
 my $username = $c->getLogin;
 my $password = $c->getPassword;
-
-my $q = new CGI;
 
 my $naSeqID = $q->param('id') || $ARGV[0];
 $naSeqID =~ s/[^\d]//g;
