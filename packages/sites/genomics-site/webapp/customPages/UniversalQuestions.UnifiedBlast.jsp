@@ -153,7 +153,7 @@
 <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
 
 <%-- display the question specific attribution list --%>
-<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Query" />
+<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 
