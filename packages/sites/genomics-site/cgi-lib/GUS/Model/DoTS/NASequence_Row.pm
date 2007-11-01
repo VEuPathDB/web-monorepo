@@ -97,6 +97,16 @@ sub getLength {
   return $self->get("length");
 }
 
+sub setSourceId {
+  my($self,$value) = @_;
+  $self->set("source_id",$value);
+}
+
+sub getSourceId {
+    my($self) = @_;
+  return $self->get("source_id");
+}
+
 sub setACount {
   my($self,$value) = @_;
   $self->set("a_count",$value);
