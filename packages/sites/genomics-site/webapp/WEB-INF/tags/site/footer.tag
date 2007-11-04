@@ -15,6 +15,13 @@
       <c:when test = "${project == 'PlasmoDB'}">
              <c:set var="logo" value="/images/plasmodb_logo.gif"/>      
       </c:when>
+<c:when test = "${project == 'CryptoDB'}">
+             <c:set var="logo" value="/images/oocyst_bg.gif"/>      
+      </c:when>
+      <c:when test = "${project == 'ApiDB'}">
+             <c:set var="logo" value="/images/apidb_logo.gif"/>      
+      </c:when>
+
   </c:choose>
 
 
