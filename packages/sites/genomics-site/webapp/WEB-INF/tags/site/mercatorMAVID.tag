@@ -21,7 +21,9 @@
               description="nucleotide position"
 %>
 
-
+<%@ attribute name="bkgClass"
+              description="tr class name"
+%>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
@@ -39,7 +41,7 @@ return true;
 
 <form action="${cgiUrl}/mavidAlign" onSubmit="popupform(this, 'mavidAlign')">
  <table border="0" cellpadding="5" cellspacing="1">
-  <tr class="secondary3"><td>
+  <tr class="${bkgClass}"><td>
    <table border="0" cellpadding="0">
     <tr><td colspan="2"><b>Retrieve the Multiple Alignment for <i>${contigId}</i> and All Available Genomes</b>
         <input name='project_id' value='${projectId}' size='20' type='hidden' />
