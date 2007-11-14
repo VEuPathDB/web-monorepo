@@ -22,12 +22,13 @@ Otherwise a standard select menu is used.
 <c:set var="qP" value="${qp}"/>
 <c:set var="pNam" value="${qP.name}"/>
 <c:set var="opt" value="0"/>
+<c:set var="displayType" value="${qP.displayType}"/>
 
 <c:choose>
 <c:when test="${qP.multiPick}">
   <%-- multiPick is true, use checkboxes or scroll pane --%>
   <c:choose>
-    <c:when test="${fn:length(qP.vocab) < 15}"><%-- use checkboxes --%>
+    <c:when test="${displayType eq 'checkBox' || (displayType == null && fn:length(qP.vocab) < 15)}"><%-- use checkboxes --%>
       <c:set var="i" value="0"/>
       <table border="1" cellspacing="0"><tr><td>
       <c:forEach items="${qP.vocab}" var="flatVoc">
@@ -40,7 +41,7 @@ Otherwise a standard select menu is used.
           <html:multibox property="myMultiProp(${pNam})" value="${flatVoc}" styleId="${qP.id}" />
           <i>${flatVoc}</i>&nbsp;
         </c:when>
-    <c:otherwise> <%-- use multiselect menu --%>
+        <c:otherwise> <%-- use multiselect menu --%>
           <html:multibox property="myMultiProp(${pNam})" value="${flatVoc}" styleId="${qP.id}" />
           ${flatVoc}&nbsp;
         </c:otherwise>
