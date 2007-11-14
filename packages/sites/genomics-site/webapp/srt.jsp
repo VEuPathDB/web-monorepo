@@ -82,7 +82,7 @@ function setEnable2(flag) {
 
   <form action="${CGI_URL}/${gSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
-    <table border="0" width="100%" cellpadding="4">
+    <table border="0" width="100%" cellpadding="2">
     <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
             <textarea name="ids" rows="4" cols="60">${genesIds.default}</textarea>
@@ -98,7 +98,7 @@ function setEnable2(flag) {
 
     <tr>
         <td colspan="2">
-    <table id="offsetOptions" cellpadding="4">
+    <table id="offsetOptions" cellpadding="2">
         <tr><td colspan="3">
                 <b>Choose the region of the sequence(s):</b>
             </td>
@@ -124,23 +124,18 @@ function setEnable2(flag) {
                              <input id="downstreamOffset" name="downstreamOffset" value="0" size="6"> residues
             </td>
         </tr>
-        <tr>
-            <td colspan="3"><a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a></td>
-        </tr>
-    </table>
-        </td>
-    </tr>
-
-        <td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
-
+        <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
+       </table></tr></td>
     </table>
   </form>
+<a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
 <hr>
+
 <h3><a name="contig">Retrieve Sequences By Contig IDs</a></h3>
   <form action="${CGI_URL}/${cSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
-    <table border="0" width="100%" cellpadding="4">
+    <table border="0" width="100%" cellpadding="2">
     <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
             <textarea name="ids" rows="4" cols="60">${contigsIds.default}</textarea>
@@ -154,18 +149,27 @@ function setEnable2(flag) {
     <b>Choose the region of the sequence(s):</b>
     </td></tr>
     <tr><td colspan="2">
-    <table cellpadding="4">
+    <table cellpadding="2">
         <tr><td>Nucleotide postions</td>
             <td align="left">
                              <input name="start" value="1" size="6"> to
                              <input name="end" value="10000" size="6"></td></tr>
-        <tr><td><a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a></td></tr>
+        <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>        
     </table></td></tr>
-
-        <td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
 
     </table>
   </form>
+<a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
+
+<c:if test="${wdkModel.name eq 'ToxoDB'}">
+
+  <hr>
+
+  <site:mercatorMAVID cgiUrl="${CGI_URL}" projectId="${wdkModel.name}" start="15,000" 
+                      end="30,000" inputContig="1" contigId="${contigsIds.default}" cellPadding="2"/>
+
+<a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
+</c:if>
 
 <hr>
 
@@ -173,7 +177,7 @@ function setEnable2(flag) {
 
   <form action="${CGI_URL}/${oSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
-    <table border="0" width="100%" cellpadding="4">
+    <table border="0" width="100%" cellpadding="2">
     <tr><td colspan="2" valign="top"><b>Enter a list of ORF IDs (white space or new line delimited):</b></td><tr>
     <tr><td colspan="2">
             <textarea name="ids" rows="4" cols="60">${orfsIds.default}</textarea>
@@ -194,7 +198,7 @@ function setEnable2(flag) {
 
     
     <tr><td colspan="2">
-    <table id="offsetOptions2" cellpadding="4">
+    <table id="offsetOptions2" cellpadding="2">
 <tr><td colspan="2">
     <b>Choose the region of the sequence(s):</b>
     </td></tr>
@@ -213,12 +217,13 @@ function setEnable2(flag) {
             </td>
             <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
                              <input name="downstreamOffset" value="0" size="6"> residues</td></tr>
-         <tr><td><a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a></td></tr>
-   </table></td></tr>
 
-        <td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
-
+            <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
+      </table></td></tr>
     </table>
+ </form>
+<a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
+
 <hr>
 
 <b><a name="help">Help</a></b>
