@@ -128,33 +128,58 @@
                 <a href="<c:url value="http://apidb.org/apidb/apidbGeneMetrics.jsp"/>" class="headerLink">Gene Metrics</a></td>
         </c:otherwise>
     </c:choose>
-<c:choose>
-        <c:when test="${division == 'tutorials'}">
+
+  <c:choose>
+        <c:when test="${division == 'downloads'}">
             <td class="borders" bgcolor="#800000" align="center">
-               <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>"><div class=smallWhite>Website Tutorials</div></a>
+                <a href="/common/downloads/"><div class=smallWhite>Download Files</div></a>
             </td>
         </c:when>
         <c:otherwise>
             <td class="borders" align="center">
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>" class="headerLink">Website Tutorials</a></td>
+                <a href="/common/downloads/" class="headerLink">Download Files</a></td>
         </c:otherwise>
     </c:choose>
+
+
 
   
 </tr>
 
+<%-- Since Upcoming Features is only for Plasmo, when Toxo the glossary uses colspan="2" --%>
+<c:if test = "${project == 'ToxoDB'}">
+	         <c:set var="colspan2" value="colspan=2"/>
+</c:if>
+
 <tr><c:choose>
         <c:when test="${division == 'glossary'}">
-            <td colspan="2" class="borders" bgcolor="#800000" align="center">
+            <td ${colspan2} class="borders" bgcolor="#800000" align="center">
                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>" ><div class=smallWhite>NEW! Glossary of Terms</div></a>
             </td>
         </c:when>
         <c:otherwise>
-            <td colspan="2" class="borders" align="center">
+            <td ${colspan2} class="borders" align="center">
                 <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>" class="headerLink">NEW! Glossary of Terms</a>
             </td>
         </c:otherwise>
     </c:choose>
+
+<%-- Upcoming Features only for Plasmo --%>
+<c:if test = "${project == 'PlasmoDB'}">
+<c:choose>
+        <c:when test="${division == 'coming_soon'}">
+            <td class="borders" bgcolor="#800000" align="center">
+                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ComingSoon"/>"><div class=smallWhite>Upcoming Features</div></a>
+            </td>
+        </c:when>
+        <c:otherwise>
+            <td class="borders" align="center">
+                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ComingSoon"/>" class="headerLink">Upcoming Features</a>
+           </td>
+        </c:otherwise>
+    </c:choose>
+</c:if>
+
 </tr>
 
 
@@ -172,17 +197,18 @@
         </c:otherwise>
     </c:choose>
 
-    <c:choose>
-        <c:when test="${division == 'downloads'}">
+  <c:choose>
+        <c:when test="${division == 'tutorials'}">
             <td class="borders" bgcolor="#800000" align="center">
-                <a href="/common/downloads/"><div class=smallWhite>Download Files</div></a>
+               <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>"><div class=smallWhite>Website Tutorials</div></a>
             </td>
         </c:when>
         <c:otherwise>
             <td class="borders" align="center">
-                <a href="/common/downloads/" class="headerLink">Download Files</a></td>
+                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>" class="headerLink">Website Tutorials</a></td>
         </c:otherwise>
     </c:choose>
+
 </tr>
 
 <tr bgcolor="#ddccdd"><c:choose>
