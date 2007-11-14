@@ -103,14 +103,16 @@
     </c:choose>
 
     <c:choose>
-        <c:when test="${division == 'downloads'}">
+        <c:when test="${division == 'methods'}">
             <td class="borders" bgcolor="#800000" align="center">
-                <a href="/common/downloads/"><div class=smallWhite>Download Files</div></a>
+                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Methods"/>">
+                    <div class=smallWhite>Analysis<br>Methods</div></a>
             </td>
         </c:when>
         <c:otherwise>
             <td class="borders" align="center">
-                <a href="/common/downloads/" class="headerLink">Download Files</a></td>
+             <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Methods"/>"
+                class=headerLink>Analysis<br>Methods</a></td>
         </c:otherwise>
     </c:choose>
 </tr>
@@ -169,16 +171,16 @@
             </td>
         </c:otherwise>
     </c:choose>
+
     <c:choose>
-        <c:when test="${division == 'coming_soon'}">
+        <c:when test="${division == 'downloads'}">
             <td class="borders" bgcolor="#800000" align="center">
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ComingSoon"/>"><div class=smallWhite>Upcoming Features</div></a>
+                <a href="/common/downloads/"><div class=smallWhite>Download Files</div></a>
             </td>
         </c:when>
         <c:otherwise>
             <td class="borders" align="center">
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ComingSoon"/>" class="headerLink">Upcoming Features</a>
-           </td>
+                <a href="/common/downloads/" class="headerLink">Download Files</a></td>
         </c:otherwise>
     </c:choose>
 </tr>
