@@ -161,7 +161,7 @@ function setEnable2(flag) {
   </form>
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
-<c:if test="${wdkModel.name eq 'ToxoDB'}">
+<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB'}">
 
   <hr>
 
