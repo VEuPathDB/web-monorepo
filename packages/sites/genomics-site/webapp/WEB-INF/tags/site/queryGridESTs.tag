@@ -12,7 +12,7 @@
         <td width="50%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstBySourceId" linktext="EST ID" existsOn="A P T"/>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstBySourceId" linktext="EST ID" existsOn="A C P T"/>
                 </tr>
 
                 <tr>
