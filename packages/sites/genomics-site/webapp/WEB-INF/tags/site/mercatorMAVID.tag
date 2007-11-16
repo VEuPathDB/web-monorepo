@@ -40,7 +40,7 @@
 function popupform(myform, windowname)
 {
 if (! window.focus)return true;
-window.open('', windowname, 'height=500,width=800,scrollbars=yes,resizable=1');
+window.open('', windowname, 'height=500,width=950,scrollbars=yes,resizable=1');
 myform.target=windowname;
 return true;
 }
