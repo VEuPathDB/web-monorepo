@@ -33,6 +33,10 @@
               description="table cell padding"
 %>
 
+<%@ attribute name="revCompOn"
+              description="boolean"
+%>
+
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
 <SCRIPT TYPE="text/javascript">
@@ -49,6 +53,10 @@ return true;
 
 <c:if test="${inputContig == null}">
  <c:set var="headerFiller" value="of <i>${contigId}</i>"/>
+</c:if>
+
+<c:if test="${revCompOn == 1}">
+ <c:set var="initialCheckBox" value="CHECKED"/>
 </c:if>
 
 
@@ -70,7 +78,7 @@ return true;
         <input type="text" name="start" value="${start}" maxlength="10" size="10"/>
      to <input type="text" name="stop" value="${end}" maxlength="10" size="10"/>
      &nbsp;&nbsp;&nbsp;&nbsp;
-         <input type="checkbox" name="revComp">Reverse & Complement</td></tr>
+         <input type="checkbox" name="revComp" ${initialCheckBox}>Reverse & Complement</td></tr>
     <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
         <input type="radio" name="type" value="clustal" checked>clustal
         <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
