@@ -67,8 +67,8 @@ return true;
           <input type="text" name="contig" value="${contigId}">
     </c:if>
     <tr><td colspan="2"><b>Nucleotide positions:</b>&nbsp;&nbsp;
-        <input type="text" name="start" value="${start}" maxlength="7" size="8"/>
-     to <input type="text" name="stop" value="${end}" maxlength="7" size="8"/>
+        <input type="text" name="start" value="${start}" maxlength="10" size="10"/>
+     to <input type="text" name="stop" value="${end}" maxlength="10" size="10"/>
      &nbsp;&nbsp;&nbsp;&nbsp;
          <input type="checkbox" name="revComp">Reverse & Complement</td></tr>
     <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
