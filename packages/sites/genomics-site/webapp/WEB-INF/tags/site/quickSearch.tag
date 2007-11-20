@@ -89,7 +89,7 @@
 		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii"/>
 	</c:when>
         <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
-		<c:set var="listOrganisms" value="C. hominis,C. parvum"/>
+		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum"/>
 	</c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
 		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii"/>
