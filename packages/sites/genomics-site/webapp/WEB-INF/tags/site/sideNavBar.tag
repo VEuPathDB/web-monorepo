@@ -283,6 +283,9 @@
          <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>">
              <i>See all data sources</i></a>
 
+	 <hr class="brown">
+	 <a href="/awstats/awstats.pl">Web Usage Statistics</a>
+
 	
 <c:if test = "${project == 'PlasmoDB'}">
          <hr class="brown">
