@@ -42,21 +42,21 @@
      </c:if>
      <html:form method="POST" action='/processLogin.do' >
      <tr>
-       <td align="right" colspan="2" nowrap>
+       <td align="center" colspan="2" nowrap>
          <div class="small">
-           <b>Email: </b><input type="text" name="email" size="11">
+           <b>Email: </b><input type="text" name="email" size="15">
          </div>
        </td>
      </tr>
      <tr>
-       <td align="right" colspan="2">
+       <td align="center" colspan="2">
          <div class="small">
-           <b>Password:</b><input type="password" name="password" size="8">
+           <b>Password:</b><input type="password" name="password" size="12">
          </div>
        </td>
      </tr>
      <tr>
-        <td colspan="2" align="right" nowrap>
+        <td colspan="2" align="center" nowrap>
             <span class="small">
                <a href="<c:url value='/showResetPassword.do'/>">forgot?</a>
                <input type="submit" value="Login" style="width:76px;"/>
@@ -70,7 +70,7 @@
 
     <html:form method="POST" action='/showRegister.do' >
      <tr>
-       <td colspan="2" align="right" valign="top">
+       <td colspan="2" align="center" valign="top">
           <div class="small"><input type="submit" value="Register / Subscribe" style="width:135px;"></div>
        </td>
      </tr>
