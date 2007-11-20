@@ -64,7 +64,10 @@ return true;
  <table border="0" cellpadding="${cellPadding}" cellspacing="1">
   <tr class="${bkgClass}"><td>
    <table border="0" cellpadding="${cellPadding}">
-    <tr><td colspan="2"><h3>Retrieve the multiple alignment ${headerFiller} across available genomes</h3>
+    <tr><td colspan="2">
+    Retrieve <a href="http://www.biostat.wisc.edu/~cdewey/mercator/">Mercator</a> 
+   and <a href="http://www.genome.org/cgi/content/abstract/14/4/693">MAVID</a> 
+   generated alignments ${headerFiller} across available genomes.<br>
         <input name='project_id' value='${projectId}' size='20' type='hidden' />
         <c:if test="${inputContig == null}">
           <input name='contig' value='${contigId}' size='20' type='hidden' />
