@@ -65,7 +65,7 @@
 		<b><a name="toc"></a>DataSources Categories</b>
 		<ul>
 	</c:if>
-	<c:if test="${showCat}">
+	<c:if test="${showCat && currentCat != 'ignore'}">
 		<li><a href="#${currentCat}">${currentCat}</a></li>
 	</c:if>
 	<c:set var="tocBegin" value="false"/>
@@ -84,8 +84,12 @@
 
 <c:set var="datasetList" value=",${param['datasets']},"/>
 <c:set var="resourcePattern" value=",${record.id},"/>
+<c:set var="currentCat" value="${record.attributesMap['category']}"/>
 
 <c:choose>
+
+<c:when test="${currentCat == 'ignore'}">
+</c:when>
 
 <c:when test="${param['idx'] != null && param['idx'] != i}">
 </c:when>
