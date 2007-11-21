@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
@@ -286,7 +287,7 @@
              <i>See all data sources</i></a>
 
 	 <hr class="brown">
-	 <a href="/awstats/awstats.pl">Web Usage Statistics</a>
+	 <a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}.org">Web Usage Statistics</a>
 
 	
 <c:if test = "${project == 'PlasmoDB'}">
