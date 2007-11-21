@@ -14,24 +14,21 @@
 <c:choose>
       <c:when test = "${project == 'ToxoDB'}">
              <c:set var="title" value="ToxoDB: The Toxoplasma gondii genome resource"/>
-             <c:set var="banner" value="<font size=\"+6\" face='Trebuchet MS,Arial,GillSans Ultra Bold,Trebuchet MS,Arial,Verdana,Sans-serif'>ToxoDB</font>"/>
-             <c:set var="isbannerimage" value="false"/>
       </c:when>
       <c:when test = "${project == 'PlasmoDB'}">
              <c:set var="title" value="PlasmoDB : The Plasmodium genome resource"/>
-             <c:set var="banner" value="/images/plasmodbBanner.jpg"/>
-             <c:set var="isbannerimage" value="true"/>
       </c:when>
- <c:when test = "${project == 'CryptoDB'}">
+      <c:when test = "${project == 'CryptoDB'}">
              <c:set var="title" value="CryptoDB: The Cryptosporidium genome resource"/>
-             <c:set var="banner" value="/images/cryptologo_maroon.gif"/>
-             <c:set var="isbannerimage" value="true"/>
+      </c:when>
+      <c:when test = "${project == 'ApiDB'}">
+             <c:set var="title" value="ApiDB: The Apicomplexan genome resource"/>
       </c:when>
   </c:choose>
 
 
 <site:header title="${title}"
-                 banner="${banner}"
+                 banner="${project} Download Files"
                  isBannerImage="${isbannerimage}"
                  bannerSuperScript="<br><b><font size=\"+1\">Release ${version}</font></b>"
                 division="downloads"/>
