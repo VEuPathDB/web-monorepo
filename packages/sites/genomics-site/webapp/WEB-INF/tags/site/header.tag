@@ -67,10 +67,12 @@
 <c:if test = "${project == 'PlasmoDB'}">
    <c:set var="stylesheet" value="/misc/plasmodb_style.css"/>
    <c:set var="logo" value="/images/plasmodb_logo.gif"/>
+   <c:set var="sidebarBgColor" value="#dfdfef"/>
 </c:if>
 <c:if test = "${project == 'ToxoDB'}">
    <c:set var="stylesheet" value="/misc/toxodb_style.css"/>
    <c:set var="logo" value="/images/toxodb_logo-rotated.jpg"/>
+   <c:set var="sidebarBgColor" value="white"/>
 </c:if>
  <link rel="StyleSheet" href="<c:url value="${stylesheet}" />" type="text/css">
 
@@ -240,7 +242,7 @@ Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via
 <%-- sidebar space --%>
 <c:choose>
           <c:when test="${ division != 'help'}">
-             <td rowspan="8" width="162" valign="top" bgcolor="#dfdfef"><site:sideNavBar division="${division}"/></td>
+             <td rowspan="8" width="162" valign="top" bgcolor="${sidebarBgColor}"><site:sideNavBar division="${division}"/></td>
           </c:when>
           <c:otherwise>
             <td rowspan="8"></td>

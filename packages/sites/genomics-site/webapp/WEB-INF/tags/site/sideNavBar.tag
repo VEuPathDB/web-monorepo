@@ -5,6 +5,10 @@
 
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+
 <c:set var="xqSetMap" value="${wdkModel.xmlQuestionSetsMap}"/>
 <c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>
 <c:set var="xqMap" value="${xqSet.questionsMap}"/>
@@ -40,8 +44,6 @@
   </c:when>
 </c:choose>
 
-<c:set var="props" value="${applicationScope.wdkModel.properties}" />
-<c:set var="project" value="${props['PROJECT_ID']}" />
 
 
 <%@ attribute name="division"
@@ -52,8 +54,8 @@
 <table border="0" cellspacing="0" cellpadding="4" width="90%" align="center" class="withThinBrownBorder">
 <tr><c:choose>
         <c:when test="${division == null || division == 'home'}">
-            <td class="borders" bgcolor="#800000" align="center">
-                <a href="<c:url value="/home.jsp"/>"><div class="smallWhite">Home</div></a>
+            <td class="bordersSpecial" align="center">
+                <a href="<c:url value="/home.jsp"/>"><div class="smallWhite">HOME</div></a>
             </td>
         </c:when>
         <c:otherwise>
@@ -63,8 +65,8 @@
 
     <c:choose>
         <c:when test="${division == 'queries_tools'}">
-            <td class="borders" bgcolor="#800000" align="center">
-                <a href="<c:url value="/queries_tools.jsp"/>"><div class="smallWhite">Queries & Tools</div></a>
+            <td class="bordersSpecial" align="center">
+                <a href="<c:url value="/queries_tools.jsp"/>"><div class="smallWhite">QUERIES & TOOLS</div></a>
             </td>
         </c:when>
         <c:otherwise>
@@ -76,51 +78,53 @@
 
 <tr bgcolor="#ddccdd"><c:choose>
         <c:when test="${division == 'query_history'}">
-            <td colspan="2" class="borders" bgcolor="#800000" align="center">
-               <a href="<c:url value="/showQueryHistory.do"/>"><div class=smallWhite>My Query History</div></a>
+            <td colspan="2" class="bordersSpecial"  align="center">
+               <a href="<c:url value="/showQueryHistory.do"/>"><div class=smallWhite>MY QUERY HISTORY</div></a>
                <b><span class='white'>${queryCount}</span>
             </td>
         </c:when>
         <c:otherwise>
             <td colspan="2" class="borders" align="center">
-                <a href="<c:url value="/showQueryHistory.do"/>" class="headerLink"><b>My Query History</b><br><b><span class='maroon'>${queryCount}</span></b></a></td>
+                <a href="<c:url value="/showQueryHistory.do"/>" class="headerLink"><b>My Query History</b><br>
+                <b><span class='maroon'>${queryCount}</span></b></a>
+            </td>
         </c:otherwise>
     </c:choose>
 </tr>
 
 <tr><c:choose>
         <c:when test="${division == 'data_sources'}">
-            <td class="borders" bgcolor="#800000" align="center">
+            <td class="bordersSpecial"  align="center">
                 <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>">
-                    <div class=smallWhite>Data<br>Sources</div></a>
+                    <div class=smallWhite>DATA SOURCES</div></a>
             </td>
         </c:when>
         <c:otherwise>
             <td class="borders" align="center">
              <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>"
-                class=headerLink>Data<br>Sources</a></td>
+                class=headerLink>Data Sources</a></td>
         </c:otherwise>
     </c:choose>
 
     <c:choose>
         <c:when test="${division == 'methods'}">
-            <td class="borders" bgcolor="#800000" align="center">
+            <td class="bordersSpecial"  align="center">
                 <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Methods"/>">
-                    <div class=smallWhite>Analysis<br>Methods</div></a>
+                    <div class=smallWhite>ANALYSIS METHODS</div></a>
             </td>
         </c:when>
         <c:otherwise>
             <td class="borders" align="center">
              <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Methods"/>"
-                class=headerLink>Analysis<br>Methods</a></td>
+                class=headerLink>Analysis Methods</a></td>
         </c:otherwise>
     </c:choose>
 </tr>
 
 <tr><c:choose>
         <c:when test="${division == 'metrics'}">
-            <td class="borders" bgcolor="#800000" align="center">
-                <a href="<c:url value="http://apidb.org/apidb/apidbGeneMetrics.jsp"/>"><div class="smallWhite"><b>Gene Metrics</b></div></a>
+            <td class="bordersSpecial"  align="center">
+                <a href="<c:url value="http://apidb.org/apidb/apidbGeneMetrics.jsp"/>"><div class="smallWhite"><b>GENE METRICS</b></div></a>
             </td>
         </c:when>
         <c:otherwise>
@@ -131,8 +135,8 @@
 
   <c:choose>
         <c:when test="${division == 'downloads'}">
-            <td class="borders" bgcolor="#800000" align="center">
-                <a href="/common/downloads/"><div class=smallWhite>Download Files</div></a>
+            <td class="bordersSpecial" align="center">
+                <a href="/common/downloads/"><div class=smallWhite>DOWNLOAD FILES</div></a>
             </td>
         </c:when>
         <c:otherwise>
@@ -140,8 +144,6 @@
                 <a href="/common/downloads/" class="headerLink">Download Files</a></td>
         </c:otherwise>
     </c:choose>
-
-
 
   
 </tr>
@@ -153,13 +155,13 @@
 
 <tr><c:choose>
         <c:when test="${division == 'glossary'}">
-            <td ${colspan2} class="borders" bgcolor="#800000" align="center">
-               <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>" ><div class=smallWhite>NEW! Glossary of Terms</div></a>
+            <td ${colspan2} class="bordersSpecial" align="center">
+               <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>" ><div class=smallWhite>GLOSSARY OF TERMS</div></a>
             </td>
         </c:when>
         <c:otherwise>
             <td ${colspan2} class="borders" align="center">
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>" class="headerLink">NEW! Glossary of Terms</a>
+                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>" class="headerLink">Glossary of Terms</a>
             </td>
         </c:otherwise>
     </c:choose>
@@ -168,8 +170,8 @@
 <c:if test = "${project == 'PlasmoDB'}">
 <c:choose>
         <c:when test="${division == 'coming_soon'}">
-            <td class="borders" bgcolor="#800000" align="center">
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ComingSoon"/>"><div class=smallWhite>Upcoming Features</div></a>
+            <td class="bordersSpecial"  align="center">
+                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ComingSoon"/>"><div class=smallWhite>UPCOMING FEATURES</div></a>
             </td>
         </c:when>
         <c:otherwise>
@@ -186,8 +188,8 @@
 <tr>
   <c:choose>
         <c:when test="${division == 'about'}">
-            <td class="borders" bgcolor="#800000" align="center">
-              <a href="<c:url value="/about.jsp"/>"><div class="smallWhite">About ${project}</div></a>
+            <td class="bordersSpecial"  align="center">
+              <a href="<c:url value="/about.jsp"/>"><div class="smallWhite">ABOUT ${project}</div></a>
             </td>
         </c:when>
         <c:otherwise>
@@ -199,8 +201,8 @@
 
   <c:choose>
         <c:when test="${division == 'tutorials'}">
-            <td class="borders" bgcolor="#800000" align="center">
-               <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>"><div class=smallWhite>Website Tutorials</div></a>
+            <td class="bordersSpecial" align="center">
+               <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>"><div class=smallWhite>WEBSITE TUTORIALS</div></a>
             </td>
         </c:when>
         <c:otherwise>
@@ -213,7 +215,7 @@
 
 <tr bgcolor="#ddccdd"><c:choose>
         <c:when test="${division == 'help'}">
-            <td colspan="2" class="borders" bgcolor="#800000" align="center">
+            <td colspan="2" class="bordersSpecial" align="center">
                <a href="<c:url value="/help.jsp"/>"  target="_blank" onClick="poptastic(this.href); return false;" class="headerLink"><font  class='maroon'><b>Ask us a Question!</b></font></a>
             </td>
         </c:when>
