@@ -44,14 +44,14 @@
      <tr>
        <td align="center" colspan="2" nowrap>
          <div class="small">
-           <b>Email: </b><input type="text" name="email" size="15">
+           <b>Email: </b><input type="text" name="email" size="12">
          </div>
        </td>
      </tr>
      <tr>
        <td align="center" colspan="2">
          <div class="small">
-           <b>Password:</b><input type="password" name="password" size="12">
+           <b>Password:</b><input type="password" name="password" size="8">
          </div>
        </td>
      </tr>
