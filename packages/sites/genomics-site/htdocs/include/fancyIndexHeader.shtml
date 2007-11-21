@@ -1,12 +1,2 @@
-<html>
-<head>
-<title>CryptoDB Downloads</title>
-<link rel="stylesheet" href="/a/misc/style.css" type="text/css">
-</head>
 
-<table width='95%' border='0' align='center'><tr><td>
-
-<table><tr><td width=25%><a href='/'><img src="/images/oocyst_bg.gif" border='0'></a></td>
-<td align=center width=50%><b><font face="Arial,Helvetica" size=+2><!--#echo var="REQUEST_URI" --></font></b></td>
-<td width=10%>&nbsp;</td></tr></table>
-<!--#include virtual="/include/toolbar.html" -->
+<!--#include virtual="/a/header.jsp" -->
