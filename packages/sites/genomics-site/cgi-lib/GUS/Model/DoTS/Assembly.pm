@@ -849,15 +849,16 @@ sub makeConsensus{
 
 sub toFasta {
   my($self,$type) = @_;
-  my $id;
+  my $defline;
   if ($type) {
-    $id = "D" . $self->getCacheId();
+    $defline = "D" . $self->getCacheId();
   } else {
-   #mheiges $id = "DT." . $self->getId();
-    $id = 'cluster.' . $self->getId() . '.tmp';
+   #mheiges $defline = "DT." . $self->getId();
+    # $defline = 'cluster.' . $self->getId() . '.tmp';
+    $defline = $self->getSourceId(). ' Length='. $self->getLength().' bp';
   }
   #mheiges - wrap to 60 nt
-  return "\>$id\n" . CBIL::Bio::SequenceUtils::breakSequence($self->getSequence(),60);
+  return "\>$defline\n" . CBIL::Bio::SequenceUtils::breakSequence($self->getSequence(),60);
 }
 
 ##outputs sequence in fasta format with the DOTS header (defline)
