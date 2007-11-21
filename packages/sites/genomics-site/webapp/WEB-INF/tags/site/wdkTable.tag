@@ -21,8 +21,15 @@
               description="Should the display of column headers be skipped?"
 %>
 
+<%@ attribute name="suppressDisplayName"
+              description="Should the display name be skipped?"
+%>
+
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
+<c:if test="${suppressDisplayName == null || !suppressDisplayName}">
+  <c:set value="${tbl.displayName}" var="tableDisplayName"/>
+</c:if>
 <c:set var="noData" value="false"/>
 
 <c:set var="tblContent">
@@ -78,7 +85,7 @@ ${postscript}
 
 </c:set>
 
-<site:toggle name="${tblName}" displayName="${tbl.displayName}"
+<site:toggle name="${tblName}" displayName="${tableDisplayName}"
              content="${tblContent}" isOpen="${isOpen}" noData="${noData}"
              attribution="${attribution}"/>
 
