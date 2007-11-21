@@ -19,8 +19,10 @@
                  divisionName="Methods"
                  division="methods"/>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
-These are the methods we used to generate/analyze the data in our queries.<br><hr>
+<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
+
+These are the methods we used to generate/analyze the data in our queries.
+<br>
 
  <tr>
   <td bgcolor=white valign=top>
