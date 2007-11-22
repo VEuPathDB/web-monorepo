@@ -100,19 +100,20 @@ function pst (tip, paramsString) {
 
   var POS_IN_CDS     = 0;
   var POS_IN_PROTEIN = POS_IN_CDS + 1; 
-  var REF_STRAIN    = POS_IN_PROTEIN + 1; 
-  var REF_AA        = REF_STRAIN + 1; 
-  var REVERSED     = REF_AA + 1; 
-  var REF_NA        = REVERSED + 1; 
-  var SOURCE_ID     = REF_NA + 1; 
-  var VARIANTS     = SOURCE_ID + 1; 
-  var START        = VARIANTS + 1;
-  var GENE         = START + 1; 
-  var IS_CODING    = GENE + 1;
-  var NON_SYN    = IS_CODING + 1;
+  var REF_STRAIN     = POS_IN_PROTEIN + 1; 
+  var REF_AA         = REF_STRAIN + 1; 
+  var REVERSED       = REF_AA + 1; 
+  var REF_NA         = REVERSED + 1; 
+  var SOURCE_ID      = REF_NA + 1; 
+  var VARIANTS       = SOURCE_ID + 1; 
+  var START          = VARIANTS + 1;
+  var GENE           = START + 1; 
+  var IS_CODING      = GENE + 1;
+  var NON_SYN        = IS_CODING + 1;
+  var WEBAPP         = NON_SYN + 1;
 
   // expand minimalist input data
-  var link = "<a href=/plasmo/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
+  var link = "<a href=/" + v[WEBAPP] + "/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
  
   var type = 'Non-coding';
   var refNA = (v[REVERSED] == '1')? revArray[v[REF_NA]] : v[REF_NA];
