@@ -260,9 +260,13 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
     </c:if>
 </c:if><br>
 
-
+<c:catch var="e">
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['cache_count']}">
  <b>Cache Tables:</b> ${wdkRecord.attributes['cache_count'].value}
+</c:if>
+</c:catch>
+<c:if test="${e!=null}"> 
+    <font color="red">Cache tables information not available. Did you run wdkCache?</font>
 </c:if>
 
 </body>
