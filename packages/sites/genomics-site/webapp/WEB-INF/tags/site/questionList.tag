@@ -5,6 +5,7 @@
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="modelName" value="${wdkModel.displayName}"/>
 
 <c:set var="CGI_URL" value="${wdkModel.properties['CGI_URL']}"/>
 <c:set var="version" value="${wdkModel.version}"/>
@@ -57,12 +58,32 @@
 
 
 <html:form method="get" action="/processQuestionSetsFlat.do">
+	<c:choose>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'ApiDB')}">
+		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii"/>
+	</c:when>
+        <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
+		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris"/>
+	</c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
+		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii"/>
+	</c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
+		<c:set var="listOrganisms" value="Toxoplasma gondii"/>
+	</c:when>
+ <c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
+		<c:set var="listOrganisms" value="Giardia lamblia"/>
+	</c:when>
+ <c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
+		<c:set var="listOrganisms" value="Trichomonas vaginalis"/>
+	</c:when>
+	</c:choose> 
 <tr><td width="30"></td>
     <td align="left"><i>${geneByTextQuestion.displayName}</i></td>
     <td align="right">
         <input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
         <input type="hidden" name="myMultiProp(text_search_organism)"
-               value="${organismlist}">
+               value="${listOrganisms}">
         <input type="hidden" name="myMultiProp(text_fields)"
                value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
        
