@@ -143,6 +143,7 @@ function pst (tip, paramsString) {
     var variant = new Array();
     variant = variants[i].split(':');
     var strain = variant[0];
+    if (strain == v[REF_STRAIN]) continue;
     var na = variant[1];
     if (v[REVERSED] == '1') na = revArray[na]; 
     var aa = variant[2];
