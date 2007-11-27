@@ -72,7 +72,13 @@ function setEnable2(flag) {
 <table border=0 width=100% cellpadding=10>
  <tr>
   <td bgcolor="white" valign="top">
-<b><center>Download Sequences By <br><a href="#gene">Gene IDs</a> | <a href="#contig">Contig IDs</a> |  <a href="#orf">Orf IDs</a> </center></b><hr>
+<b><center>Download Sequences By <br>
+<a href="#gene">Gene IDs</a> | 
+<a href="#contig">Contig IDs</a> |  
+<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB'}">
+<a href="#mercator">Alignments</a> |
+</c:if>
+<a href="#orf">Orf IDs</a> </center></b><hr>
   </td>
   <td valign="top" class="dottedLeftBorder"></td> 
 </tr>
@@ -164,7 +170,7 @@ function setEnable2(flag) {
 <c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB'}">
 
   <hr>
-
+<a name="mercator"></a>
   <site:mercatorMAVID cgiUrl="${CGI_URL}" projectId="${wdkModel.name}" start="15,000" 
                       end="30,000" inputContig="1" contigId="${contigsIds.default}" cellPadding="2"/>
 
