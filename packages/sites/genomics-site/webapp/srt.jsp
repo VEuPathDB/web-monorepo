@@ -218,8 +218,8 @@ function setEnable2(flag) {
             <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
                              <input name="downstreamOffset" value="0" size="6"> residues</td></tr>
 
-            <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
       </table></td></tr>
+    <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
     </table>
  </form>
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
