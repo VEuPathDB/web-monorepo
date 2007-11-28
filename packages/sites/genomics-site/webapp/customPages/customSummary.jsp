@@ -25,7 +25,7 @@
 --%>
 
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
-<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apiModel') || fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb') || fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
 
 <c:set var="global" value="${wdkUser.globalPreferences}"/>
 <c:set var="showParam" value="${global['preference_global_show_param']}"/>
