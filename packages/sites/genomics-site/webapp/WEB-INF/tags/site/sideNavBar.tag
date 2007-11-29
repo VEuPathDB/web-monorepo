@@ -149,11 +149,6 @@
   
 </tr>
 
-<%-- Since Upcoming Features is only for Plasmo, when Toxo the glossary uses colspan="2" --%>
-<c:if test = "${project == 'ToxoDB'}">
-	         <c:set var="colspan2" value="colspan=2"/>
-</c:if>
-
 <tr><c:choose>
         <c:when test="${division == 'glossary'}">
             <td ${colspan2} class="bordersSpecial" align="center">
@@ -167,24 +162,18 @@
         </c:otherwise>
     </c:choose>
 
-<%-- Upcoming Features only for Plasmo --%>
-<c:if test = "${project == 'PlasmoDB'}">
-<c:choose>
-        <c:when test="${division == 'coming_soon'}">
-            <td class="bordersSpecial"  align="center">
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ComingSoon"/>"><div class=smallWhite>UPCOMING FEATURES</div></a>
+  <c:choose>
+        <c:when test="${division == 'tutorials'}">
+            <td class="bordersSpecial" align="center">
+               <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>"><div class=smallWhite>WEBSITE TUTORIALS</div></a>
             </td>
         </c:when>
         <c:otherwise>
             <td class="borders" align="center">
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ComingSoon"/>" class="headerLink">Upcoming Features</a>
-           </td>
+                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>" class="headerLink">Website Tutorials</a></td>
         </c:otherwise>
     </c:choose>
-</c:if>
-
 </tr>
-
 
 <tr>
   <c:choose>
@@ -201,14 +190,14 @@
     </c:choose>
 
   <c:choose>
-        <c:when test="${division == 'tutorials'}">
+        <c:when test="${division == 'webstats'}">
             <td class="bordersSpecial" align="center">
-               <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>"><div class=smallWhite>WEBSITE TUTORIALS</div></a>
+               <a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}.org"><div class="smallWhite">SITE STATISTICS</div></a>
             </td>
         </c:when>
         <c:otherwise>
             <td class="borders" align="center">
-                <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>" class="headerLink">Website Tutorials</a></td>
+                <a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}.org" class="headerLink">Site Statistics</a></td>
         </c:otherwise>
     </c:choose>
 
@@ -285,9 +274,6 @@
          <br><br>
          <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>">
              <i>See all data sources</i></a>
-
-	 <hr class="brown">
-	 <a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}.org">Web Usage Statistics</a>
 
 	
 <c:if test = "${project == 'PlasmoDB'}">
