@@ -13,7 +13,10 @@
 
 <%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
 
+  
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
@@ -195,11 +198,14 @@ function showParamGroup(group, isShow)
   <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
 </html:form>
 
+
+
 <hr>
 <%-- display description for wdkQuestion --%>
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
-<%-- get the attributions of the question --%>
+<%-- get the attributions of the question if not ApiDB --%>
+<c:if test = "${project != 'ApiDB'}">
 <hr>
 <%-- get the property list map of the question --%>
 <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
@@ -207,8 +213,11 @@ function showParamGroup(group, isShow)
 <%-- display the question specific attribution list --%>
 <site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
 
+</c:if>
+
   </td>
   <td valign=top class=dottedLeftBorder></td> 
+
 </tr>
 </table> 
 
