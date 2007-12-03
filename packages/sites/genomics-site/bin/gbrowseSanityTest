@@ -293,7 +293,8 @@ sub getTestedQueryNames {
   my $count=0;
   foreach my $test (@{$sanityConfig->{test}}) {
     $count++;
-    $test->{min} && $test->{max} || die "test $count ($test->{name}) missing either min or max\n";
+    die "test $count ($test->{name}) missing min\n" if $test->{min} eq "";
+    die "test $count ($test->{name}) missing max\n" if $test->{max} eq "";
     $testedNames{$test->{name}} = 1;
     foreach my $param (@{$test->{param}}) {
       if ($param->{parentFeatureTest}) {
