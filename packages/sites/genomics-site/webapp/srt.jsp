@@ -78,7 +78,7 @@ function setEnable2(flag) {
 <c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB'}">
 <a href="#mercator">Alignments</a> |
 </c:if>
-<a href="#orf">Orf IDs</a> </center></b><hr>
+<a href="#orf">ORF IDs</a> </center></b><hr>
   </td>
   <td valign="top" class="dottedLeftBorder"></td> 
 </tr>
