@@ -152,13 +152,35 @@
         <a href="<c:url value="/srt.jsp"/>" class="blue">Sequence Retrieval</a> | 
         <a href="http://apicyc.apidb.org/${cycpath}/server.html" class="blue">${cycname}</a> ]
 
-<%-- <hr class="brown"> --%>
+ <hr class="brown"> 
 
   </td>
 </tr>
 
-<%-- choose queryGrid or questionList --%>
+<%-- choose queryGrid (with tr/td) or questionList --%>
+<%-- if queryGrid, add <hr class="brown" above, to separate the quick tools from the query grid --%>
+<%-- if queryGrid, add old queries for plasmo and toxo after the query grid  --%>
+
+<tr><td colspan="4">
 <site:questionList/>
+
+</td></tr>
+
+<%--
+<c:if test = "${project == 'PlasmoDB'}">
+<tr><td align="left" colspan="3"><b>PlasmoDB 4.4 queries/tools not yet in 5.4 >>
+    <td align="right"><a href="http://v4-4.plasmodb.org/restricted/Queries.shtml">
+                      <img src="<c:url value="/images/go.gif"/>" alt="PlasmoDB 4.4" border="0"></a>
+    </td>
+</tr>
+</c:if>
+<c:if test = "${project == 'ToxoDB'}">
+<tr><td align="left" colspan="3"><b>ToxoDB 3.3 queries/tools not yet in 4.0
+    <td align="right"><a href="http://v3-0.toxodb.org/restricted/Queries.shtml">
+                      <img src="<c:url value="/images/go.gif"/>" alt="ToxoDB 3.3" border="0"></a>&nbsp;</td></tr>
+</c:if>
+--%>
+
 
 </table>
 
