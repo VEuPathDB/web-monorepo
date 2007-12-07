@@ -60,6 +60,7 @@ WHERE u.email(+) = c.email
   AND c.comment_target_id='gene'
   AND c.review_status_id != 'rejected'
   AND project_name = '${projectId}'
+  AND c.comment_target_id = 'gene'
 ORDER BY substr(c.organism, 1, instr(c.organism || '  ', ' ', 1, 2)-1),
        c.stable_id,
        u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
