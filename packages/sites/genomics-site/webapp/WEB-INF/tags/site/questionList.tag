@@ -105,7 +105,7 @@
     <td align="right">
         <c:set var="pNam" value="${geneTypeParam.name}"/>
         <input type="hidden" name="questionFullName" value="GeneQuestions.GenesByGeneType">    
-        <input type="hidden" name="myMultiProp(organism)" value="${organismlist}">
+        <input type="hidden" name="myMultiProp(organism)" value="${listOrganisms}">
         <input type="hidden" name="myMultiProp(includePseudogenes)" value="No">
         <table><tr><td align="right" valign="middle">${geneTypeParam.prompt}:</td>
                    <td><html:select  property="myMultiProp(${pNam})">
