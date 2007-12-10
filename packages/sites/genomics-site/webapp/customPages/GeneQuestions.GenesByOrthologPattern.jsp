@@ -38,10 +38,10 @@
 <c:set var="ind" value="${qParams['phyletic_indent_map']}"/>
 <c:set var="trm" value="${qParams['phyletic_term_map']}"/>
 
-<c:if test="${fn:containsIgnoreCase(wdkModel.displayName,'ApiDB')}">
+<%--<c:if test="${fn:containsIgnoreCase(wdkModel.displayName,'ApiDB')}">
 	<c:set var="ind" value="${qParams['internal_phyletic_indent_map']}"/>
 	<c:set var="trm" value="${qParams['internal_phyletic_term_map']}"/>
-</c:if>
+</c:if>--%>
 
 <c:set var="indentMap" value="${ind.vocabMap}"/>
 <c:set var="termMap" value="${trm.vocabMap}"/>
@@ -277,7 +277,7 @@ Ack, this form won't work at all without JavaScript support!
 <tr>
   <td width="230" align="left"><b>Show results from species:</b>
   </td>
-  <td align="left">
+  <td align="left"> 
      <c:set var="opt" value="0"/>
      <html:select  property="myMultiProp(${resultSpeciesName})">
        <c:set var="opt" value="${opt+1}"/>
