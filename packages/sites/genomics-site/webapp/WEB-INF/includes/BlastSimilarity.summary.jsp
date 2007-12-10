@@ -21,7 +21,7 @@
 
 
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
-<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apiModel')}" />
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb')}" />
 
 <c:set var="global" value="${wdkUser.globalPreferences}"/>
 <c:set var="showParam" value="${global['preference_global_show_param']}"/>
@@ -173,6 +173,8 @@ function resetAttr() {
           </html:form>
     </tr>
 
+
+
     <!-- display parameters -->
     <tr>
        <td valign="top" align="right" width="10" nowrap><b>Details:&nbsp; </b></td>
@@ -189,6 +191,7 @@ function resetAttr() {
             </div>
        </td>
     </tr>
+
     <tr>
        <td></td>
        <td ${paddingStyle}>
@@ -217,6 +220,9 @@ function resetAttr() {
                 </div>
        </td>
     </tr>
+
+
+
     
     <!-- display result size -->
     <tr>
@@ -225,9 +231,12 @@ function resetAttr() {
           ${wdkAnswer.resultSize}
           <c:if test="${wdkAnswer.resultSize > 0}">
              (showing ${wdk_paging_start} to ${wdk_paging_end})
+<%--
               <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
                  <site:apidbSummary/>
              </c:if>
+--%>
+
           </c:if>
        </td>
     </tr>
