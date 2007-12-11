@@ -48,7 +48,7 @@ function showParamGroup(group, isShow)
 //-->
 </script>
 
-<c:if test="${wdkModel.displayName eq 'ApiDB.org'}">
+<c:if test="${wdkModel.displayName eq 'ApiDB'}">
      <div id="question_Form">
 </c:if>
 
