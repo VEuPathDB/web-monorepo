@@ -21,12 +21,9 @@ my ($outDir, $prefix, $commentSchema, $commentDblink, $justComments,
             "debug!" => \$debug,
             "gusConfigFile=s" => \$gusConfigFile);
 
-if (!$outDir || !$commentSchema){
+if (!$outDir){
 	die "usage: $0 --projectId <projectId> --outputDir <outputDirectory>"
             . " [--outputPrefix <file-prefix>]"
-            . " --commentSchema <commentSchema>"
-            . " [--commentDblink <dbLink (with \"@\")>]"
-            . " [--justComments]"
             . " [--verbose] [--debug]"
             . " [--gusConfigFile  <config (default=\$GUS_HOME/config/gus.config)>]\n";
 }
@@ -57,32 +54,35 @@ my $dbh = $db->getQueryHandle();
 $dbh->{LongReadLen} = 8192 * 1024;
 my $sql;
 
-# comments
-$sql = <<SQL;
-SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
-       gf.source_id, c.content,
-       u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
-FROM logins.users${commentDblink} u,
-     ${commentSchema}.comments${commentDblink} c, dots.GeneFeature gf,
-     dots.NaSequence ns, sres.TaxonName tn
-WHERE u.email(+) = c.email
-  AND c.comment_target_id='gene'
-  AND c.stable_id = gf.source_id
-  AND c.review_status_id != 'rejected'
-  AND gf.na_sequence_id = ns.na_sequence_id
-  AND ns.taxon_id = tn.taxon_id
-  AND tn.name_class = 'scientific name'
-  AND gf.source_id IN (SELECT source_id
-                       FROM apidb.GeneAttributes
-                       WHERE project_id = '${projectId}')
-ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
-       gf.source_id,
-       u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
-SQL
+# comments -- this gets its own script, because the comments, which are accessed
+#             through a dblink, are now stored in a CLOB.
+#
+#  $sql = <<SQL;
+#  SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+#         gf.source_id, c.content,
+#         u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
+#  FROM logins.users${commentDblink} u,
+#       ${commentSchema}.comments${commentDblink} c, dots.GeneFeature gf,
+#       dots.NaSequence ns, sres.TaxonName tn
+#  WHERE u.email(+) = c.email
+#    AND c.comment_target_id='gene'
+#    AND c.stable_id = gf.source_id
+#    AND c.review_status_id != 'rejected'
+#    AND gf.na_sequence_id = ns.na_sequence_id
+#    AND ns.taxon_id = tn.taxon_id
+#    AND tn.name_class = 'scientific name'
+#    AND gf.source_id IN (SELECT source_id
+#                         FROM apidb.GeneAttributes
+#                         WHERE project_id = '${projectId}')
+#  ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+#         gf.source_id,
+#         u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
+#  SQL
+#  
+#  &extractFile($dbh, $outDir, "comments.txt", $sql);
 
-&extractFile($dbh, $outDir, "comments.txt", $sql);
-
-exit if $justComments;
+die "extractTextSearchFiles can't get comments through db_link.  Use extractCommentFile."
+  if $justComments;
 
 # InterPro domains
 $sql = <<SQL;
