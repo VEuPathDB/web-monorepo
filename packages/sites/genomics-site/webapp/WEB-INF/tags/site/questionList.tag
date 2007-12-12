@@ -322,7 +322,7 @@
 
 <c:if test = "${project == 'PlasmoDB'}">
 
-<tr><td align="left" colspan="3"><br><b>PlasmoDB 4.4 queries/tools not yet in 5.4 >> 
+<tr><td align="left" colspan="3"><br><b>PlasmoDB 4.4 queries/tools not yet in ${wdkModel.version} >> 
     <td align="right"><a href="http://v4-4.plasmodb.org/restricted/Queries.shtml">
                       <img src="<c:url value="/images/go.gif"/>" alt="PlasmoDB 4.4" border="0"></a>
     </td>
@@ -334,7 +334,7 @@
 
 <tr><td align="right" colspan="3">[<a href="./queries_tools.jsp" class="blue">complete list of Queries & Tools</a>]</td><td></td></tr>
 
-<tr><td align="left" colspan="3"><br><b>ToxoDB 3.3 queries/tools not yet in 4.0  
+<tr><td align="left" colspan="3"><br><b>ToxoDB 3.0 queries/tools not yet in ${wdkModel.version} 
     <td align="right"><a href="http://v3-0.toxodb.org/restricted/Queries.shtml">
                       <img src="<c:url value="/images/go.gif"/>" alt="ToxoDB 3.3" border="0"></a></td></tr>
 
