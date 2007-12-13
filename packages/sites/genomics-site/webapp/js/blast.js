@@ -66,12 +66,14 @@ function changeQuestion(){
 //	var blastDb =  document.getElementById( 'BlastDatabaseType' ).value.toLowerCase();
 
 	var questionName;
-
+	
 	if (blastDb.indexOf("est") >= 0){
 		questionName = "EstQuestions.EstsBySimilarity";
 	} else 	if (blastDb.indexOf("orf") >= 0){
 		questionName = "OrfQuestions.OrfsBySimilarity";
 	} else 	if (blastDb.indexOf("genom") >= 0){
+		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
+	} else 	if (blastDb.indexOf("iso") >= 0){
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
@@ -83,6 +85,7 @@ function changeQuestion(){
 function updateOrganism(){
 	var orgValue = "";
 	var orgSelect = document.getElementById('BlastOrganism');
+
 	for(var i=0;i<orgSelect.length;i++){
 		var op = orgSelect[i];
 		if(op.selected){
@@ -104,10 +107,12 @@ var blastPXArray = new Array();
 
 //Organism variables
 var GeneUrl = "showRecord.do?name=AjaxRecordClasses.BlastGeneOrganismTermClass&primary_key=fill";
+var IsolateUrl = "showRecord.do?name=AjaxRecordClasses.BlastIsolateOrganismTermClass&primary_key=fill";
 var ESTUrl = "showRecord.do?name=AjaxRecordClasses.BlastESTOrganismTermClass&primary_key=fill";
 var SequenceUrl = "showRecord.do?name=AjaxRecordClasses.BlastSequenceOrganismTermClass&primary_key=fill";
 var ORFUrl = "showRecord.do?name=AjaxRecordClasses.BlastORFOrganismTermClass&primary_key=fill";
 var GeneArray = new Array();
+var IsolateArray = new Array();
 var ESTArray = new Array();
 var SequenceArray = new Array();
 var ORFArray = new Array();
@@ -150,23 +155,29 @@ function getOrganismTerms(){
 		sendReqUrl = GeneUrl; 
 		selectedArray = 'Transcripts';
 	}
+	else if(type == 'Isolates') {
+		sendReqUrl = IsolateUrl; 
+		selectedArray = 'Isolates';
+	}
 	else if(type == 'ORF') {
 		sendReqUrl = ORFUrl; 
 		selectedArray = 'ORF';
 	}
 
-        if(getArray(selectedArray).length > 0){
+  if(getArray(selectedArray).length > 0){
+				
 		fillSelectFromXML(null, 'BlastOrganism', selectedArray);
 		updateOrganism();	
 		return;
 	}
-        getAndWrite(sendReqUrl, 'BlastOrganism');	
+
+  getAndWrite(sendReqUrl, 'BlastOrganism');	
 }
 
 
 function getBlastAlgorithm() {
 	var label = "";
-        var type = "";
+  var type = "";
 	for(var x = 0; x < document.getElementsByName('type').length; x++){
 		if(document.getElementById('BlastType_'+x).checked)
 			type = document.getElementById('BlastType_'+x).value;
@@ -181,16 +192,20 @@ function getBlastAlgorithm() {
 		sendReqUrl = poUrl; 
 		selectedArray = 'po';
 	}
+	else if(type == 'Isolates'){
+		sendReqUrl = tgeUrl; 
+		selectedArray = 'tge';
+	}
 
-        if(getArray(selectedArray).length > 0){
+  if(getArray(selectedArray).length > 0){
 		fillDivFromXML(null, 'BlastAlgorithm', selectedArray);
 		clearList('BlastOrganism');
 		getOrganismTerms();
 		return;
-	}
-  
-        getAndWrite(sendReqUrl, 'BlastAlgorithm');
-        clearList('BlastOrganism');
+	} 
+
+	getAndWrite(sendReqUrl, 'BlastAlgorithm');
+  clearList('BlastOrganism');
 }
 
 
@@ -236,9 +251,11 @@ function getBlastTerms() {
         clearList('BlastOrganism');
  }
 
-function getAndWrite(sendReqUrl, elementId){
-       var xmlObj = null;
+function getAndWrite(sendReqUrl, elementId){ 
+  var xmlObj = null;
 	is_Done = false;
+
+  //alert(sendReqUrl + ' | ' +  elementId); 
 	if(window.XMLHttpRequest){
 		
 		xmlObj = new XMLHttpRequest();
@@ -278,8 +295,9 @@ function getAndWrite(sendReqUrl, elementId){
 
 function fillSelectFromXML(obj, id, index)
 {
-      	clearList(id);
+  clearList(id);
 	var defArray = null;
+
 	if(obj != null){
 		var def = new Array();
 		defArray = obj.getElementsByTagName('term'); //I'm assuming they're 'term' tags
@@ -298,7 +316,6 @@ function fillSelectFromXML(obj, id, index)
 			var option = new Option();
 			option.text = term;
 			option.value = term;
-		//	alert(x);
 			if(x == 0) {option.selected = true;}
 			sA.options[x] = option;
 		}
@@ -353,6 +370,7 @@ function getArray(index){
 	if(index == 'Genome') return SequenceArray;
 	if(index == 'EST') return ESTArray;
 	if(index == 'Transcripts') return GeneArray;
+	if(index == 'Isolates') return IsolateArray;
 	if(index == 'ORF') return ORFArray;
 	if(index == 'tge') return tgeArray;
 	if(index == 'po') return poArray;
@@ -364,6 +382,7 @@ function setArray(index, arr){
 	if(index == 'Genome') SequenceArray = arr;
 	if(index == 'EST') ESTArray = arr;
 	if(index == 'Transcripts') GeneArray = arr;
+	if(index == 'Isolates') IsolateArray = arr;
 	if(index == 'ORF') ORFArray = arr;
 	if(index == 'tge') tgeArray = arr;
 	if(index == 'po') poArray = arr;
