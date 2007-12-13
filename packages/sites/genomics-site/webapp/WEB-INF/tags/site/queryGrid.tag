@@ -101,5 +101,25 @@
     </td>
 </tr>
 
+<%--  Isolates  --%>
+<tr>
+    <%-- Isolates Queries TABLE  --%>
+    <td valign="top">     
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+		<tr class="headerRow">
+			<td  valign="top" align="center"><b>Identify Isolates by:</b></td>
+		</tr>
+		<tr><td align="center">
+			<site:queryGridIsolates/>
+		</td></tr>
+	</table> 
+    </td>
+
+    <%--  All ORF Queries TABLE --%>
+    <td valign="top">     
+    </td>
+</tr>
+
+
 
 </table>
