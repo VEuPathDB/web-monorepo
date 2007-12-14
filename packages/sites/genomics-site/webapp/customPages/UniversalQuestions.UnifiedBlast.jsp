@@ -61,7 +61,7 @@
 
 	<c:set var="counter" value="0"/>
         <c:forEach items="${qP.vocab}" var="flatVoc">
-              <input type="radio" name="algorithm" value="${flatVoc}" id="BlastAlgorithm_${flatVoc}" onClick="changeLabel()" disabled><font id="${flatVoc}_font" color="gray">${flatVoc}</font></input>
+              <input type="radio" name="algorithm" value="${flatVoc}" id="BlastAlgorithm_${flatVoc}" onClick="changeLabel();checkSequenceLength()" disabled><font id="${flatVoc}_font" color="gray">${flatVoc}</font></input>
 	      <c:set var="counter" value="${counter+1}"/>
        </c:forEach>
         <input type="hidden" name="myMultiProp(${pNam})" id="blastAlgo"/>
@@ -81,7 +81,7 @@
 
        <c:set var="counter" value="0"/>
        <c:forEach items="${qP.vocab}" var="flatVoc">
-              <input type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" onClick="getBlastAlgorithm();changeQuestion()">${flatVoc}</input>
+              <input type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" onClick="getBlastAlgorithm();changeQuestion();checkSequenceLength()">${flatVoc}</input>
 	      <c:set var="counter" value="${counter+1}"/>	
        </c:forEach>
        <input type="hidden" name="myMultiProp(${pNam})" id="blastType"/>
@@ -107,7 +107,11 @@
           <td>
             <c:choose>
               <c:when test="${pNam == 'BlastQuerySequence'}">
-                  <html:textarea property="myProp(${pNam})" styleId="sequence" cols="50" rows="4"/>
+                  <html:textarea property="myProp(${pNam})" styleId="sequence" cols="50" rows="4" onchange="checkSequenceLength()"/>
+		  <br><div id="short_sequence_warning"></div>
+              </c:when>
+              <c:when test="${pNam == '-e'}">
+                  <html:text property="myProp(${pNam})" styleId="e"/>
               </c:when>
               <c:otherwise>
                 <html:text property="myProp(${pNam})" styleId="${qP.id}" />
