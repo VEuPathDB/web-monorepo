@@ -428,3 +428,28 @@ function changeLabel(){
 	}
 	document.getElementById('parameter_label').innerHTML = "<b>"+label+"</b>";
 }
+
+
+function checkSequenceLength(){	
+	if(document.getElementById('sequence').value.length != 0){
+    		var algorithm = "";
+		var algos = document.getElementsByName('algorithm');
+		for(var y = 0; y < algos.length; y++){
+			if(algos[y].checked)
+				algorithm = algos[y].value;
+		}
+		var eval = document.getElementById('e');
+		var str=document.getElementById('sequence').value;
+		var str1 = str.replace(/^>.*/,"");
+		var str2 = str1.replace(/[^a-zA-Z]/g,"");
+		if(str2.length <= 25 && algorithm == "blastn"){
+			document.getElementById('short_sequence_warning').innerHTML = "Note:  The expect value has been set from " + eval.value + " to 1000 because <br> your query sequence is less than 25 nucleotides.  You may want <br> to adjust the expect value further to refine the specificity of your <br> query.";
+			eval.value = 1000;
+		}else{
+			document.getElementById('short_sequence_warning').innerHTML = "";
+		}
+	}else{
+		document.getElementById('short_sequence_warning').innerHTML = "";
+	}
+}
+ 
