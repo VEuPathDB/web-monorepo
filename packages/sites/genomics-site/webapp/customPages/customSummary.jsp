@@ -472,6 +472,18 @@ function resetAttr() {
                   </c:if>
                   <a href="http://www.toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
                 </c:when>
+                <c:when test = "${primaryKey.projectId=='GiardiaDB'}" >
+                  <c:if test="${isContigRec}">
+                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
+                  </c:if>
+                  <a href="http://www.giardiadb.org/giardiadb/showRecord.do?name=${recNam}&project_id=GiardiaDB&primary_key=${primaryKey.recordId}"  target="giardiadb">GiardiaDB:${primaryKey.recordId}</a>
+                </c:when>
+                <c:when test = "${primaryKey.projectId=='TrichDB'}" >
+                  <c:if test="${isContigRec}">
+                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
+                  </c:if>
+                  <a href="http://www.trichdb.org/trichdb/showRecord.do?name=${recNam}&project_id=TrichDB&primary_key=${primaryKey.recordId}"  target="trichdb">TrichDB:${primaryKey.recordId}</a>
+                </c:when>
               </c:choose>
             
             </c:when>
