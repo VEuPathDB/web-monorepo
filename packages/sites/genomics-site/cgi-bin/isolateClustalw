@@ -3,7 +3,7 @@
 use strict;
 
 use lib "@targetDir@/lib/perl";
-$ENV{GUS_HOME} = '/var/www/CryptoDB/cryptodb.hwang2.0/gus_home';
+$ENV{GUS_HOME} = '@targetDir@';
 
 use ApiCommonWebsite::View::CgiApp::IsolateClustalw;
 
