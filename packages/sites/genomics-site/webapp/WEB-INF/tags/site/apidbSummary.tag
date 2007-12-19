@@ -11,17 +11,11 @@
 <c:set var="historyId" value="${history.historyId}"/>
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
-<%--
-<c:set value="${param['wdk_history_id']}" var="historyId"/>
---%>
 <c:set value="${requestScope.wdk_history_id}" var="altHistoryId"/>
 
 <c:set value="Error" var="QUERY_ERROR"/>
 <c:set value="NA" var="NA"/>
 
-<%--
-<c:set value="${wdk_paging_end - wdk_paging_start + 1}" var="numResultsPage"/>
---%>
 <c:set value="${wdk_paging_pageSize}" var="pageSize"/>
 
 <c:choose>
@@ -32,157 +26,62 @@
                        <c:set value="${historyId}" var="histID"/>
                    </c:otherwise>
 </c:choose>
-<%-- in genes by location ,when choosing mal4, crypto is not in rSBP, while toxo does return 0....
-this is an attempt to show 0 when that happens.... (when is that? why is that?)
 
-<c:set value="NOTFOUND" var="CRYPTO_FOUND"/>
-<c:set value="NOTFOUND" var="PlASMO_FOUND"/>
-<c:set value="NOTFOUND" var="TOXO_FOUND"/>
---%>
+<font id="result_summary_strip"></font>
 
-             <c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
-                <c:choose>
+<script language="Javascript" type="text/javascript">
+var pageSize = ${wdk_paging_pageSize};
+var results = new Array ();
+	<c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
+var ${rSBP.key}_array = new Array(2); 
+${rSBP.key}_array[0] = "${rSBP.key}";
+${rSBP.key}_array[1] = ${rSBP.value};
+results.push(${rSBP.key}_array);
+	</c:forEach>
+write_links();
+function result_page_link(i)
+{
+	var testString = "";
+	var pName = results[i][0];
+	var value = results[i][1];
+	if(i == 0){
+		window.location = "showSummary.do?wdk_history_id=${histID}&pager.offset=0";		
+	}else{
+		var subTotalRes = 0;
+		for(var x=0; x<i; x++){
+			subTotalRes = subTotalRes + results[x][1];
+		}
+		var offset = subTotalRes % pageSize;
+		offset = subTotalRes - offset;
+		window.location = "showSummary.do?wdk_history_id=${histID}&pager.offset=" + offset;
+	}		
+}
 
-                  <c:when test="${rSBP.key == 'CryptoDB'}">
+function write_links(){
+	var summary_strip = "";
+	for(var i=0; i<results.length; i++){
+		var rs = results[i][1];
+		if(rs == 0){
+			summary_strip = summary_strip + "&nbsp;&nbsp;" + results[i][0] + ":&nbsp;" + results[i][1];
+		}else if(rs == -1) {
+			summary_strip = summary_strip + "&nbsp;&nbsp;" + results[i][0] + ":&nbsp;" + "Error";
+		}else if(rs == -2) {
+			summary_strip = summary_strip + "&nbsp;&nbsp;" + results[i][0] + ":&nbsp;" + "N/A";
+		}else{
+			summary_strip = summary_strip + "&nbsp;&nbsp;<a href='javascript:result_page_link(" + i + ")'>" + results[i][0] + ":&nbsp;" + results[i][1] + "</a>";
+		}
+		document.getElementById('result_summary_strip').innerHTML = summary_strip;
+	}
+}
 
 
-		      <c:set value="FOUND" var="CRYPTO_FOUND"/>
-
-                      <c:set value="${rSBP.value}" var="CR"/>
-		      <c:if test="${CR == -1}">
-			  <c:set value="0" var="CR"/>
-                          <c:set value="Error" var="CERROR"/>
-		      </c:if>
-		      <c:if test="${CR == -2}">
-			  <c:set value="0" var="CR"/>
-                          <c:set value="NA" var="CERROR"/>
-		      </c:if>
-                  </c:when>
-                  <c:when test="${rSBP.key == 'PlasmoDB'}">
-
-		      <c:set value="FOUND" var="PLASMO_FOUND"/>
-
-                      <c:set value="${rSBP.value}" var="PR"/>
-		      <c:if test="${PR == -1}">
-			  <c:set value="0" var="PR"/>
-                          <c:set value="Error" var="PERROR"/>
-		      </c:if>
-		      <c:if test="${PR == -2}">
-			  <c:set value="0" var="PR"/>
-                          <c:set value="NA" var="PERROR"/>
-		      </c:if>
-                  </c:when>
-                  <c:when test="${rSBP.key == 'ToxoDB'}">
-
-		      <c:set value="FOUND" var="TOXO_FOUND"/>
-
-                      <c:set value="${rSBP.value}" var="TR"/>
-		      <c:if test="${TR == -1}">
-			  <c:set value="0" var="TR"/>
-                          <c:set value="Error" var="TERROR"/>
-		      </c:if>
-		      <c:if test="${TR == -2}">
-			  <c:set value="0" var="TR"/>
-                          <c:set value="NA" var="TERROR"/>
-		      </c:if>
-                  </c:when>
-                </c:choose>
-             </c:forEach>
-
-             <c:forEach items="${wdkAnswer.resultSizesByProject}" var="rSBP">
-                <c:choose>
+</script>
 
 
 
 
-                  <c:when test="${rSBP.key == 'CryptoDB'}">
-	<c:if test="${rSBP.value>0}">
-&nbsp;&nbsp;<a href="showSummary.do?wdk_history_id=${histID}&pager.offset=0">
-CryptoDB: ${rSBP.value}</a>
-	</c:if>
-	<c:if test="${rSBP.value==0}">
-		&nbsp;&nbsp;CryptoDB: 0	
-        </c:if>
-	<c:if test="${rSBP.value < 0}">
-		&nbsp;&nbsp;CryptoDB: ${CERROR}
-	</c:if>
-                  </c:when>
-
-<%--
-length (used below) > 2 is not going to happen while pagesize is 20, but just in case
---%>
 
 
-                  <c:when test="${rSBP.key == 'PlasmoDB'}">
-	<c:if test="${rSBP.value>0}">
-&nbsp;&nbsp; 
-<c:set value="${CR / pageSize}" var="Poffset"/>
-<c:set value='${fn:substringAfter(Poffset, ".")}' var="dec"/>
-<c:set value="${fn:length(dec)}" var="length"/>
-<c:if test="${length > 2}">
-    <c:set value='${fn:substring(dec,0,2)}' var="dec"/></c:if>
-<c:if test="${length == 1}">
-    <c:set value="${pageSize * dec / 10}" var="extraC"/></c:if>
-<c:if test="${length == 2}">
-    <c:set value="${pageSize * dec / 100}" var="extraC"/></c:if>
-<c:set value='${fn:substringBefore(extraC, ".")}' var="extraC"/>
-<c:set value="${CR - extraC}" var="Poffset"/>
-
-<a href="showSummary.do?wdk_history_id=${histID}&pager.offset=${Poffset}">
-PlasmoDB: ${rSBP.value}</a>
-        </c:if>
-	<c:if test="${rSBP.value==0}">
-		&nbsp;&nbsp;PlasmoDB: 0	
-        </c:if>
-	<c:if test="${rSBP.value < 0}">
-		&nbsp;&nbsp;PlasmoDB: ${PERROR}
-	</c:if>
-                 </c:when>
-
-                  <c:when test="${rSBP.key == 'ToxoDB'}">
-	<c:if test="${rSBP.value>0}">
-
-&nbsp;&nbsp; 
-<c:set value="${(CR + PR) / pageSize}" var="Toffset"/>
-<c:set value='${fn:substringAfter(Toffset, ".")}' var="dec"/>
-<c:set value="${fn:length(dec)}" var="length"/>
-<c:if test="${length > 2}">
-    <c:set value='${fn:substring(dec,0,2)}' var="dec"/></c:if>
-<c:if test="${length == 1}">
-    <c:set value="${pageSize * dec / 10}" var="extraP"/></c:if>
-<c:if test="${length == 2}">
-    <c:set value="${pageSize * dec / 100}" var="extraP"/></c:if>
-<c:set value='${fn:substringBefore(extraP, ".")}' var="extraP"/>
-<c:set value="${CR + PR - extraP}" var="Toffset"/>
-                    
-<a href="showSummary.do?wdk_history_id=${histID}&pager.offset=${Toffset}">
-ToxoDB: ${rSBP.value}</a>
-        </c:if>
-
-	<c:if test="${rSBP.value==0}">
-		&nbsp;&nbsp;ToxoDB: 0	
-        </c:if>
-
-	<c:if test="${rSBP.value < 0}">
-		&nbsp;&nbsp;ToxoDB: ${TERROR}
-	</c:if>
-                 </c:when>
-
-                </c:choose>
-             </c:forEach>
-
-<%--
-
-<c:if test="${CRYPTO_FOUND == 'NOTFOUND'}">
-	&nbsp;&nbsp;CryptoDB: 0	
-</c:if>
-<c:if test="${PLASMO_FOUND == 'NOTFOUND'}">
-	&nbsp;&nbsp;PlasmoDB: 0	
-</c:if>
-<c:if test="${TOXO_FOUND == 'NOTFOUND'}">
-	&nbsp;&nbsp;ToxoDB: 0	
-</c:if>
---%>
 
 <c:if test="${wdkAnswer.resultSize > 0}">
 

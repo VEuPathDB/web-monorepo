@@ -144,7 +144,7 @@ function resetAttr() {
 
 
 <!-- display question and param values and result size for wdkAnswer -->
-<table border="0" cellspacing="1" cellpadding="1">
+<table border="0" width="100%" cellspacing="1" cellpadding="1">
     <c:set var="paddingStyle" value="" />
     <c:if test="${history.boolean}">
        <c:set var="paddingStyle" value="style='padding-left:40px;'" />
