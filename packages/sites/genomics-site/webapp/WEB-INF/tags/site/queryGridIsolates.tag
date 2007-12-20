@@ -6,46 +6,47 @@
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
-<table width="100%" border="0" cellspacing="1" cellpadding="1">
+<table width="100%" border="0" cellspacing="2" cellpadding="2">
 <tr>
 
-        <td width="50%" valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
- <tr> 
- <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolateId" linktext="Isolate ID" existsOn="C"/>
- </tr>
+<td width="33%" valign="top">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr> 
+        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolateId" linktext="Isolate ID" existsOn="C"/>
+    </tr>
+    <tr>
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByTaxon" linktext="Taxon" existsOn="C"/> 
+    </tr>
+    <tr>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="C"/>
+    </tr>
+    </table>
+</td>
 
- <tr>
-   <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByTaxon" linktext="Taxon" existsOn="C"/> 
- </tr>
+<td width="34%" valign="top">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolatation Source" existsOn="C"/>
+    </tr>
+    <tr>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="C"/>
+    </tr>
+    <tr>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByStudy" linktext="Study Name" existsOn="C"/>
+    </tr>
+    </table>
+</td>
 
- <tr>
-  <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="C"/>
- </tr>
-
- <tr>
-  <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolatation Source" existsOn="C"/>
- </tr>
-
- <tr>
-  <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="C"/>
- </tr>
-
- <tr>
-  <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByStudy" linktext="Study Name" existsOn="C"/>
- </tr>
-
- <tr>
-  <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Country Name" existsOn="C"/>
- </tr>
-
- <tr>
-  <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByAuthor" linktext="Author Name" existsOn="C"/>
- </tr>
-
-
-            </table>
-        </td>
+<td width="33%" valign="top">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Country Name" existsOn="C"/>
+    </tr>
+    <tr>
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByAuthor" linktext="Author Name" existsOn="C"/>
+    </tr>
+    </table>
+</td>
 
 </tr>
 </table>

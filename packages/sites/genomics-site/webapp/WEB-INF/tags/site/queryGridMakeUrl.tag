@@ -41,8 +41,12 @@
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
-<c:set var="ACPT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'api')    }"     />
 
+<%--
+<c:set var="ACPT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'api')    }"     />
+--%>
+<c:set var="API" value="${fn:containsIgnoreCase(modelName, 'api')    }"     />
+<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto')     }"     />
 
 <c:choose>
 <c:when test="${qname == 'UnifiedBlast'}">
@@ -142,14 +146,25 @@
 
     <td  width="56" nowrap align="right"  valign="bottom">
 
-<c:if test="${ACPT}">
+<c:if test="${API}">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr nowrap>
-	<td width="14">${A}</td>
+
 	<td width="14">${C}</td>
 	<td width="14">${P}</td>	
 	<td width="14">${T}</td>
+</tr>
+</table>
+</c:if>
+
+<c:if test="${COMPONENT}">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr nowrap>
+
+	<td align="right">${A}</td>
+
 </tr>
 </table>
 </c:if>
