@@ -174,9 +174,7 @@
 Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via <a href="http://v4-4.plasmodb.org">PlasmoDB&nbsp;4.4</a>, and the results of PlasmoDB&nbsp;4.4 queries may be exported to PlasmoDB&nbsp;${version} (see <a href="http://v4-4.plasmodb.org/plasmodb/servlet/sv?page=history">PlasmoDB&nbsp;4.4 Query History</a>).
           </div>
 
-          <div class="smallApiBlue" bgcolor="#ccccff">
-          <!-- orange box -- warnings and notices go here -->
-          </div>
+         
 </c:if> 
 <c:if test = "${project == 'ToxoDB'}">
 
@@ -202,11 +200,17 @@ Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via
 	  <b>Please NOTE</b>: This site is outside of ToxoDB; it includes  additional data sets that will be 
 	   incorporated in ToxoDB eventually.</div>
 	
-	  <div class="smallApiBlue" bgcolor="#ccccff">
-          <!-- orange box -- warnings and notices go here -->
-          </div>
+
 
 </c:if> 
+
+<%-- colored box -- warnings and notices go here --%>
+<div class="smallApiBlue">
+<font face="Arial,Helvetica" size="-1"  color="blue">
+&nbsp;&nbsp;As part of our ongoing education efforts we are proud to announce the third of four, annual, <b>apicomplexan database workshops</b>, next June. &nbsp;&nbsp;Please click <a href="http://apidb.org/workshop/2008/"><b>here</b></a> for further information.
+</font>
+</div>
+
 
 </td>
 </tr>
