@@ -45,6 +45,9 @@
     <tr>
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByAuthor" linktext="Author Name" existsOn="C"/>
     </tr>
+<tr>
+       <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ISOLATE" existsOn="C"  />
+    </tr>
     </table>
 </td>
 
