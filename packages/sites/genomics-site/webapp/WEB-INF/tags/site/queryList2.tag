@@ -80,9 +80,14 @@ function getComboElement()
         <c:set var="qName" value="${questionFullNameArray[1]}"/>
         <c:set var="qSet" value="${wdkModel.questionSetsMap[qSetName]}"/>
         <c:set var="q" value="${qSet.questionsMap[qName]}"/>
-        
+
+<c:set var="displayName" value="${q.displayName}"/>
+<c:if test="${qName == 'GenesByMassSpec'}"> 
+  <c:set var="displayName" value="C.p., P.b., T.g. Mass Spec. Evidence"/>
+</c:if>
+
         <td align="left">
-            <a href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>', 'des','${q.displayName}' )"
+            <a href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>', 'des','${displayName}' )"
 
            onmouseover = "return overlib('${q.summary}',
 		FGCOLOR, 'white',
@@ -95,7 +100,7 @@ function getComboElement()
         onmouseout = "return nd();"
 
       >
-            <font color="#000066" size="3"><b>${q.displayName}</b>${url}</font></a><br/>
+            <font color="#000066" size="3"><b>${displayName}</b>${url}</font></a><br/>
         </td> 
         <c:choose>
           <c:when test="${i % 2 == 0}"></tr><tr></c:when>
