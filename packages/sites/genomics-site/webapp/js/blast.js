@@ -10,6 +10,7 @@ window.onload = function(){
 	else if(target == 'ORF') clickDefault('ORF','type');
 	else if(target == 'EST') clickDefault('EST','type');
 	else if(target == 'SEQ') clickDefault('Genome','type');
+	else if(target == 'ISOLATE') clickDefault('Isolates','type');
 
 	if(parseUrl('-filter') != ""){
            revise = true;
