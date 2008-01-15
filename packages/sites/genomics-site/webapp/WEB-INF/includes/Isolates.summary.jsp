@@ -477,7 +477,7 @@ function resetAttr() {
                 </c:when>
                 <c:when test = "${primaryKey.projectId == 'CryptoDB'}">
                   <nobr><a href="http://www.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}"
-                      target="cryptodb">CryptoDB:${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey}"></nobr>
+                      target="cryptodb">CryptoDB:${fieldVal}</a></nobr>
                 </c:when>
                 <c:when test = "${primaryKey.projectId=='PlasmoDB'}" >
                   <c:if test="${isContigRec}">
