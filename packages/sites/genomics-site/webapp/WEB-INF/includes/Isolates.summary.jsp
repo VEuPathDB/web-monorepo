@@ -25,7 +25,7 @@
 --%>
 
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
-<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apiModel') || fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb') || fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
 
 <c:set var="global" value="${wdkUser.globalPreferences}"/>
 <c:set var="showParam" value="${global['preference_global_show_param']}"/>
@@ -46,6 +46,19 @@
 <!--
 
 var showParam = "${showParam}";
+
+function goToIsolate() {
+   var form = document.checkHandleForm;
+   var cbs = form.selectedFields;
+   var url = "/cgi-bin/isolateClustalw?project_id=CryptoDB;isolate_ids=";
+   for (var i=0; i<cbs.length; i++) {
+         if(cbs[i].checked) {
+       url += cbs[i].value + ",";
+               }
+   }
+   window.location.href = url;
+ }
+
 
 function enableRename() {
    var nameText = document.getElementById('nameText');
@@ -132,20 +145,10 @@ function resetAttr() {
     }
 }
 
-function goToIsolate() {
-  var form = document.checkHandleForm;
-  var cbs = form.selectedFields;
-  var url = "/cgi-bin/isolateClustalw?project_id=CryptoDB;isolate_ids=";
-  for (var i=0; i<cbs.length; i++) {
-	  if(cbs[i].checked) {
-      url += cbs[i].value + ",";
-		}
-  }
-  window.location.href = url;
-}
 
 //-->
 </script>
+
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 
@@ -154,7 +157,7 @@ function goToIsolate() {
 
 
 <!-- display question and param values and result size for wdkAnswer -->
-<table border="0" cellspacing="1" cellpadding="1">
+<table border="0" width="100%" cellspacing="1" cellpadding="1">
     <c:set var="paddingStyle" value="" />
     <c:if test="${history.boolean}">
        <c:set var="paddingStyle" value="style='padding-left:40px;'" />
@@ -438,6 +441,7 @@ function goToIsolate() {
     </c:forEach>
 </tr>
 
+
 <form name="checkHandleForm" method="post" action="/dosomething.jsp">
 <c:set var="i" value="0"/>
 <c:forEach items="${wdkAnswer.records}" var="record">
@@ -466,22 +470,37 @@ function goToIsolate() {
                
               <c:set value="${record.primaryKey}" var="primaryKey"/>
               <c:choose>
-                <c:when test = "${primaryKey.projectId == 'cryptodb'}">
-                  <a href="http://www.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" 
-                     target="cryptodb">CryptoDB:${primaryKey.recordId}</a>
+<c:when test = "${primaryKey.projectId == 'ApiDB'}">
+                  <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=${primaryKey.recordId}" target="ncbi">ApiDB:${primaryKey.recordId}</a>
                 </c:when>
-                <c:when test = "${primaryKey.projectId=='plasmodb'}" >
+                <c:when test = "${primaryKey.projectId == 'CryptoDB'}">
+                  <nobr><a href="http://www.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}"
+                      target="cryptodb">CryptoDB:${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey}"></nobr>
+                </c:when>
+                <c:when test = "${primaryKey.projectId=='PlasmoDB'}" >
                   <c:if test="${isContigRec}">
                     <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
                   </c:if>
                   <a href="http://www.plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  
                      target="plasmodb">PlasmoDB:${primaryKey.recordId}</a>
                 </c:when>
-                <c:when test = "${primaryKey.projectId=='toxodb'}" >
+                <c:when test = "${primaryKey.projectId=='ToxoDB'}" >
                   <c:if test="${isContigRec}">
                     <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
                   </c:if>
                   <a href="http://www.toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  target="toxodb">ToxoDB:${primaryKey.recordId}</a>
+                </c:when>
+                <c:when test = "${primaryKey.projectId=='GiardiaDB'}" >
+                  <c:if test="${isContigRec}">
+                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
+                  </c:if>
+                  <a href="http://www.giardiadb.org/giardiadb/showRecord.do?name=${recNam}&project_id=GiardiaDB&primary_key=${primaryKey.recordId}"  target="giardiadb">GiardiaDB:${primaryKey.recordId}</a>
+                </c:when>
+                <c:when test = "${primaryKey.projectId=='TrichDB'}" >
+                  <c:if test="${isContigRec}">
+                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
+                  </c:if>
+                  <a href="http://www.trichdb.org/trichdb/showRecord.do?name=${recNam}&project_id=TrichDB&primary_key=${primaryKey.recordId}"  target="trichdb">TrichDB:${primaryKey.recordId}</a>
                 </c:when>
               </c:choose>
             
@@ -490,7 +509,7 @@ function goToIsolate() {
 
               <%-- display a link to record page --%>
               <c:set value="${record.primaryKey}" var="primaryKey"/>
-              <nobr><a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey}"></nobr>
+             <nobr><a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey}"></nobr>
 
             </c:otherwise>
           </c:choose>
