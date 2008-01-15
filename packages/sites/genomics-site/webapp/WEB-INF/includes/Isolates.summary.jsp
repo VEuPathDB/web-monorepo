@@ -19,6 +19,8 @@
     <c:url value="/processSummary.do?${wdk_query_string}" />
 </c:set>
 
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
 
 <%--
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
@@ -545,6 +547,8 @@ function resetAttr() {
 </tr>
 </table>
 
+
+<c:if test = "${project != 'ApiDB'}">
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
   <tr align=center>
     <th> 
@@ -552,6 +556,7 @@ function resetAttr() {
     </th>
 	</tr>
 </table>
+</c:if>
 
 <br>
 
