@@ -70,7 +70,7 @@
     <c:when test="${pNam eq 'BlastDatabaseOrganism'}">
       <td>
 	<select name="blastOrganism" id="BlastOrganism" multiple="multiple" onChange="updateOrganism()">
-      
+           <option value="-">Select Target Data Type to display appropriate organisms</option>
         </select>
         <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
       </td>
