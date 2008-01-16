@@ -3,6 +3,37 @@ var Rtype = "";
 var Rprogram = "";
 var Rorganism = "";
 
+var is_Done = false;
+var selectedArray = "";
+
+// Type Variables
+var blastNUrl = "showRecord.do?name=AjaxRecordClasses.BlastNTermClass&primary_key=fill";
+var blastPXUrl = "showRecord.do?name=AjaxRecordClasses.BlastPXTermClass&primary_key=fill";
+var TblastUrl = "showRecord.do?name=AjaxRecordClasses.TBlastTermClass&primary_key=fill";
+var TblastArray = new Array();
+var blastNArray = new Array();
+var blastPXArray = new Array();
+
+//Organism variables
+var GeneUrl = "showRecord.do?name=AjaxRecordClasses.BlastGeneOrganismTermClass&primary_key=fill";
+var IsolateUrl = "showRecord.do?name=AjaxRecordClasses.BlastIsolateOrganismTermClass&primary_key=fill";
+var AssemblyUrl = "showRecord.do?name=AjaxRecordClasses.BlastAssembliesOrganismTermClass&primary_key=fill";
+var ESTUrl = "showRecord.do?name=AjaxRecordClasses.BlastESTOrganismTermClass&primary_key=fill";
+var SequenceUrl = "showRecord.do?name=AjaxRecordClasses.BlastSequenceOrganismTermClass&primary_key=fill";
+var ORFUrl = "showRecord.do?name=AjaxRecordClasses.BlastORFOrganismTermClass&primary_key=fill";
+var GeneArray = new Array();
+var IsolateArray = new Array();
+var AssemblyArray = new Array();
+var ESTArray = new Array();
+var SequenceArray = new Array();
+var ORFArray = new Array();
+
+//Program varaiables
+var tgeUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass&primary_key=fill";
+var poUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Protein_Orf_TermClass&primary_key=fill";
+var tgeArray = new Array();
+var poArray = new Array();
+
 window.onload = function(){
 	revise = false;
 	var target = parseUrl('target');
@@ -10,7 +41,6 @@ window.onload = function(){
 	else if(target == 'ORF') clickDefault('ORF','type');
 	else if(target == 'EST') clickDefault('EST','type');
 	else if(target == 'SEQ') clickDefault('Genome','type');
-	else if(target == 'ISOLATE') clickDefault('Isolates','type');
 
 	if(parseUrl('-filter') != ""){
            revise = true;
@@ -64,10 +94,7 @@ function changeQuestion(){
 		if(types[x].checked)
 			blastDb = types[x].value.toLowerCase();
 	}
-//	var blastDb =  document.getElementById( 'BlastDatabaseType' ).value.toLowerCase();
-
 	var questionName;
-	
 	if (blastDb.indexOf("est") >= 0){
 		questionName = "EstQuestions.EstsBySimilarity";
 	} else 	if (blastDb.indexOf("orf") >= 0){
@@ -79,14 +106,12 @@ function changeQuestion(){
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
 	}
-
 	document.getElementById( 'questionFullName' ).value = questionName;
 }
 
 function updateOrganism(){
 	var orgValue = "";
 	var orgSelect = document.getElementById('BlastOrganism');
-
 	for(var i=0;i<orgSelect.length;i++){
 		var op = orgSelect[i];
 		if(op.selected){
@@ -96,38 +121,7 @@ function updateOrganism(){
 	document.getElementById('blastOrg').value = orgValue.substring(1);
 }
 
-var is_Done = false;
-
-// Type Variables
-var blastNUrl = "showRecord.do?name=AjaxRecordClasses.BlastNTermClass&primary_key=fill";
-var blastPXUrl = "showRecord.do?name=AjaxRecordClasses.BlastPXTermClass&primary_key=fill";
-var TblastUrl = "showRecord.do?name=AjaxRecordClasses.TBlastTermClass&primary_key=fill";
-var TblastArray = new Array();
-var blastNArray = new Array();
-var blastPXArray = new Array();
-
-//Organism variables
-var GeneUrl = "showRecord.do?name=AjaxRecordClasses.BlastGeneOrganismTermClass&primary_key=fill";
-var IsolateUrl = "showRecord.do?name=AjaxRecordClasses.BlastIsolateOrganismTermClass&primary_key=fill";
-var ESTUrl = "showRecord.do?name=AjaxRecordClasses.BlastESTOrganismTermClass&primary_key=fill";
-var SequenceUrl = "showRecord.do?name=AjaxRecordClasses.BlastSequenceOrganismTermClass&primary_key=fill";
-var ORFUrl = "showRecord.do?name=AjaxRecordClasses.BlastORFOrganismTermClass&primary_key=fill";
-var GeneArray = new Array();
-var IsolateArray = new Array();
-var ESTArray = new Array();
-var SequenceArray = new Array();
-var ORFArray = new Array();
-
-//Program varaiables
-var tgeUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass&primary_key=fill";
-var poUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Protein_Orf_TermClass&primary_key=fill";
-var tgeArray = new Array();
-var poArray = new Array();
-
-var selectedArray = "";
-
 function getOrganismTerms(){
-//        var type = document.getElementById('BlastDatabaseType').value;
 	var type = "";
 	var types = document.getElementsByName('type');
 	for(var x = 0; x < types.length; x++){
@@ -135,15 +129,6 @@ function getOrganismTerms(){
 			type = types[x].value;
 	}
 	document.getElementById('blastType').value = type;
-
-//	var algo = "";
-//	var algos = document.getElementsByName('algorithm');
-//	for(var y = 0; y < algos.length; y++){
-//		if(algos[y].checked)
-//			algo = algos[y].value;
-//	}
-//	document.getElementById('blastAlgo').value = algo;
-    
 	if(type == 'EST') {
 		sendReqUrl = ESTUrl; 
 		selectedArray = 'EST';
@@ -159,6 +144,10 @@ function getOrganismTerms(){
 	else if(type == 'Isolates') {
 		sendReqUrl = IsolateUrl; 
 		selectedArray = 'Isolates';
+	}
+	else if(type == 'Assemblies') {
+		sendReqUrl = AssemblyUrl; 
+		selectedArray = 'Assemblies';
 	}
 	else if(type == 'ORF') {
 		sendReqUrl = ORFUrl; 
@@ -184,7 +173,6 @@ function getBlastAlgorithm() {
 			type = document.getElementById('BlastType_'+x).value;
 	}
 	document.getElementById('blastType').value = type;
-
 	if(type == 'EST' || type == 'Transcripts' || type == 'Genome') {
 		sendReqUrl = tgeUrl; 
 		selectedArray = 'tge';
@@ -197,19 +185,19 @@ function getBlastAlgorithm() {
 		sendReqUrl = tgeUrl; 
 		selectedArray = 'tge';
 	}
-
+	else if(type == 'Assemblies'){
+		sendReqUrl = tgeUrl; 
+		selectedArray = 'tge';
+	}
   if(getArray(selectedArray).length > 0){
 		fillDivFromXML(null, 'BlastAlgorithm', selectedArray);
 		clearList('BlastOrganism');
 		getOrganismTerms();
 		return;
 	} 
-
 	getAndWrite(sendReqUrl, 'BlastAlgorithm');
   clearList('BlastOrganism');
 }
-
-
 
 function getBlastTerms() {
 	var label = "";
@@ -219,8 +207,6 @@ function getBlastTerms() {
 			algorithm = document.getElementById('BlastAlgorithm_'+x).value;
 	}
 	document.getElementById('blastAlgo').value = algorithm;
-
-//      var algorithm = document.getElementById('BlastAlgorithm').value;
 	if(algorithm.indexOf('t') < 2) {
 		sendReqUrl = TblastUrl; 
 		selectedArray = 'T';
@@ -238,38 +224,25 @@ function getBlastTerms() {
 		selectedArray = 'N';
 		label = "Nucleotide Sequence";
 	}
-
 	document.getElementById('parameter_label').innerHTML = "<b>"+label+"</b>";
-
-        if(getArray(selectedArray).length > 0){
-//		fillSelectFromXML(null, 'BlastDatabaseType', selectedArray);
+    if(getArray(selectedArray).length > 0){
 		fillDivFromXML(null, 'BlastDatabaseType', selectedArray);
-//		getOrganismTerm();
 		clearList('BlastOrganism');
 		return;
 	}
-        getAndWrite(sendReqUrl, 'BlastDatabaseType');
-        clearList('BlastOrganism');
+    getAndWrite(sendReqUrl, 'BlastDatabaseType');
+    clearList('BlastOrganism');
  }
 
 function getAndWrite(sendReqUrl, elementId){ 
   var xmlObj = null;
 	is_Done = false;
-
-  //alert(sendReqUrl + ' | ' +  elementId); 
-	if(window.XMLHttpRequest){
-		
+	if(window.XMLHttpRequest){		
 		xmlObj = new XMLHttpRequest();
-	
 	} else if(window.ActiveXObject){
-		
 		xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
-
-		
 	} else {
-		
 		return;
-		
 	}
 	xmlObj.onreadystatechange = function(){
 		if(xmlObj.readyState == 4 ){
@@ -284,12 +257,9 @@ function getAndWrite(sendReqUrl, elementId){
 				}
 			}else{
 				alert("Message returned, but with an error status");
-			}
-			
+			}			
 		 }
 	}
-
-	
 	xmlObj.open( 'GET', sendReqUrl, true );
 	xmlObj.send('');
 }
@@ -298,7 +268,6 @@ function fillSelectFromXML(obj, id, index)
 {
   clearList(id);
 	var defArray = null;
-
 	if(obj != null){
 		var def = new Array();
 		defArray = obj.getElementsByTagName('term'); //I'm assuming they're 'term' tags
@@ -311,7 +280,6 @@ function fillSelectFromXML(obj, id, index)
 	var sA = document.getElementById(id);
 	sA.disabled = false;
 	if( ArrayLength != 0 ){
-		
 		for( var x = 0; x < ArrayLength; x++ ){
 			term = new String( defArray[x].firstChild.data );
 			var option = new Option();
@@ -320,12 +288,8 @@ function fillSelectFromXML(obj, id, index)
 			if(x == 0) {option.selected = true;}
 			sA.options[x] = option;
 		}
-		//sA.selectedIndex = 0;
-		
-		
 	}else{
 		alert("No Data Returned From the Server!!");
-		// No Panther data returned from server
 	}	
 }
 
@@ -351,15 +315,10 @@ function fillDivFromXML(obj, id, index)
 				radio.disabled = false;
 				document.getElementById(term+'_font').style.color="black";
 				document.getElementById(term+'_font').style.fontWeight="bold";
-			}//else{
-				//radio.disabled = true;
-				//document.getElementById(term+'_font').style.color="gray";
-				//document.getElementById(term+'_font').style.fontWeight="200";
-			//}
+			}
 		}
 	}else{
 		alert("No Data Returned From the Server!!");
-		// No Panther data returned from server
 	}	
 }
 
@@ -372,6 +331,7 @@ function getArray(index){
 	if(index == 'EST') return ESTArray;
 	if(index == 'Transcripts') return GeneArray;
 	if(index == 'Isolates') return IsolateArray;
+	if(index == 'Assemblies') return AssemblyArray;
 	if(index == 'ORF') return ORFArray;
 	if(index == 'tge') return tgeArray;
 	if(index == 'po') return poArray;
@@ -384,6 +344,7 @@ function setArray(index, arr){
 	if(index == 'EST') ESTArray = arr;
 	if(index == 'Transcripts') GeneArray = arr;
 	if(index == 'Isolates') IsolateArray = arr;
+	if(index == 'Assemblies') AssemblyArray = arr;
 	if(index == 'ORF') ORFArray = arr;
 	if(index == 'tge') tgeArray = arr;
 	if(index == 'po') poArray = arr;
