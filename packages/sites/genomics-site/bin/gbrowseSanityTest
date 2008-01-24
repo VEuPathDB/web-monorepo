@@ -14,7 +14,8 @@ use DBI;
 use List::Util qw(min max);
 use Getopt::Long qw(GetOptions);
 use ApiCommonWebsite::Model::ModelConfig;
-
+use ApiCommonWebsite::Model::SqlXmlParser;
+$| = 1;
 my ($sanityFile, $model, $gbrowseFile, $indexOnly, $failuresOnly, $suggestOnly, $skipTo, $stopAfter, $showParseG, $showParseS, $showSql, $showCommentedSql, $sqlMode, $showDbInfo);
 
 $stopAfter = 1000;
@@ -43,7 +44,7 @@ $sqlMode = 'commented' if $showCommentedSql;
 my ($sanityConfig, $defaultParams, $sqlValues) =
   &parseSanityFile($sanityFile, $showParseS);
 
-my $gbrowseConfig = &parseGbrowseFile($gbrowseFile, $showParseG);
+my $gbrowseConfig = &ApiCommonWebsite::Model::SqlXmlParser::parseSqlXmlFile($gbrowseFile, $showParseG);
 
 if ($indexOnly) {
   &showIndex($sanityConfig);
@@ -54,14 +55,14 @@ my ($queryNameHash, $queryNameArray) = &getQueryNameHash($gbrowseConfig);
 
 my $parentFeatureTests = {};   # tests that subfeature queries refer to
 
-&validateTests($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams, $parentFeatureTests);
+my $maxPrepareCounts = &validateTests($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams, $parentFeatureTests);
 
 exit(0) if ($suggestOnly);
 
 my $dbh = getDbHandle($showDbInfo);
 
 &runTests($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo,
-	  $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode);
+	  $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts);
 
 ###################################################################
 
@@ -174,13 +175,11 @@ sub parseSanityFile {
   my $simple = XML::Simple->new();
 
   # use forcearray so elements with one child are still arrays
-  # and, use keyattr so that handlers are given as an ordered list
-  # rather than a hash with name as key.  the ordering is needed
-  # so that undo operations are ordered.  also, the qualifiers retain
-  # the ordering found in the xml file.
+  # and, use keyattr so that test are given as an ordered list
+  # rather than a hash with name as key.
   my $data = $simple->XMLin($sanityFile,
 			    forcearray => 1,
-			    KeyAttr => {});
+			    KeyAttr => {sqlValue=>'+name'});
   if ($showParse) {
     print Dumper($data);
     print "\n\n\n";
@@ -221,32 +220,13 @@ sub test2string {
   return "$test->{name} $paramsString";
 }
 
-sub parseGbrowseFile {
-  my($gbrowseFile, $showParse) = @_;
-
-  open(FILE, $gbrowseFile) || die "can't open gbrowse file '$gbrowseFile' for reading\n";
-  my $simple = XML::Simple->new();
-
-  # use forcearray so elements with one child are still arrays
-  # and, use keyattr so that handlers are given as an ordered list
-  # rather than a hash with name as key.  the ordering is needed
-  # so that undo operations are ordered.  also, the qualifiers retain
-  # the ordering found in the xml file.
-  my $data = $simple->XMLin($gbrowseFile,
-			    forcearray => 1,
-	      	    KeyAttr => {});
-  if ($showParse) {
-    print Dumper($data);
-    print  "\n\n\n";
-  }
-  return $data;
-}
-
 sub validateTests {
   my ($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams, $parentFeatureTests) = @_;
 
   my %testedQueryNames =
     &getTestedQueryNames($sanityConfig, $parentFeatureTests);
+
+  my $maxPrepareCnts={};
 
   foreach my $queryName (@$queryNameArray) {
     my $query = $queryNameHash->{$queryName};
@@ -263,6 +243,12 @@ sub validateTests {
 	print "NO TEST FOR: $queryName\n\n";
       }
     }
+    else {
+      my $test = $testedQueryNames{$queryName};
+      if (my $testPrepare = $test->{prepare}) {
+ 	findPrepareSql($test, $sanityConfig->{sqlValue}, $maxPrepareCnts); # validate it
+      }
+    }
   }
 
   foreach my $testedQueryName (keys %testedQueryNames) {
@@ -270,7 +256,21 @@ sub validateTests {
       unless $queryNameHash->{$testedQueryName};
     ## make sure we have a name and value for the param
   }
+  return $maxPrepareCnts;
 }
+
+sub findPrepareSql {
+  my ($test, $sqlValues, $maxPrepareCounts) = @_;
+
+  my $type = $test->{prepare}->[0]->{type};
+  my $count = $test->{prepare}->[0]->{count};
+  my $sqlValue = $sqlValues->{$type};
+  $sqlValue || die "can't find sqlValue for <prepare type=\"$type\">";
+  $maxPrepareCounts->{$type} = $count if $count > $maxPrepareCounts->{$type};
+
+  return $sqlValue->{sql};
+}
+
 
 sub getQueryNameHash {
   my ($gbrowseConfig) = @_;
@@ -295,7 +295,7 @@ sub getTestedQueryNames {
     $count++;
     die "test $count ($test->{name}) missing min\n" if $test->{min} eq "";
     die "test $count ($test->{name}) missing max\n" if $test->{max} eq "";
-    $testedNames{$test->{name}} = 1;
+    $testedNames{$test->{name}} = $test;
     foreach my $param (@{$test->{param}}) {
       if ($param->{parentFeatureTest}) {
 	$parentFeatureTests->{$param->{parentFeatureTest}} = 1;
@@ -343,9 +343,9 @@ sub getDbHandle {
 
 
 sub runTests {
-  my ($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode) = @_;
+  my ($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts) = @_;
 
-  my $sqlValues = &getSqlValues($dbh, $sanityConfig->{sqlValue});
+  my $sqlValues = &getSqlValues($dbh, $sanityConfig->{sqlValue}, $maxPrepareCounts);
 
   my $count = 0;
   my $passed = 0;
@@ -408,24 +408,44 @@ sub runSingleTest {
 				     $test->{name},
 				     $test->{param}, $sqlValues,
 				     $parentFeatureId);
-  my $stmt = $dbh->prepare($sqlString);
-  $stmt->execute();
-  my $rowCount = 0;
-  my $parentFeatureTest = $parentFeatureTests->{$test->{name}};
-  my $parentFeatureId;
-
-  while (my $row = $stmt->fetchrow_hashref()) {
-    $rowCount++;
-    # if we have a feature_id, remember it in case there is a subfeature query
-    # that might need it.
-    $parentFeatureId = $row->{FEATURE_ID} if $rowCount == 1;
+  my @preparedInputs;
+  if ($test->{prepare}) {
+    @preparedInputs = getPreparedInputs($test, $sqlValues);
+  } else {
+    push(@preparedInputs, []);
   }
-  if ($parentFeatureTest) {
-    $parentFeatureTest->{featureId} = $parentFeatureId;
-    $parentFeatureTest->{rowCount} = $rowCount;
+
+  my $rowCount = 0;
+  my $stmt = $dbh->prepare($sqlString);
+  foreach my $preparedInput (@preparedInputs) {
+    $stmt->execute(@$preparedInput);
+    my $parentFeatureTest = $parentFeatureTests->{$test->{name}};
+    my $parentFeatureId;
+
+    while (my $row = $stmt->fetchrow_hashref()) {
+      $rowCount++;
+      # if we have a feature_id, remember it in case there is a subfeature query
+      # that might need it.
+      $parentFeatureId = $row->{FEATURE_ID} if $rowCount == 1;
+    }
+    if ($parentFeatureTest) {
+      $parentFeatureTest->{featureId} = $parentFeatureId;
+      $parentFeatureTest->{rowCount} = $rowCount;
+    }
   }
 
   return ($rowCount, $sqlString);
+}
+
+sub getPreparedInputs {
+  my ($test, $sqlValues) = @_;
+
+  my $prepareType = $test->{prepare}->[0]->{type};
+  my $count = $test->{prepare}->[0]->{count};
+  my $answer = $sqlValues->{$prepareType};
+  my @preparedInputs = @$answer;
+  $#preparedInputs = $count-1;
+  return @preparedInputs
 }
 
 sub findParentFeatureId {
@@ -448,21 +468,39 @@ sub findParentFeatureId {
 }
 
 sub getSqlValues {
-  my ($dbh, $sqlValueElements) = @_;
+  my ($dbh, $sqlValueElements, $maxPrepareCounts) = @_;
 
   my $answer = {};
-  foreach my $sqlValue (@$sqlValueElements) {
+
+  foreach my $sqlValueName (keys(%$sqlValueElements)) {
+    my $sqlValue = $sqlValueElements->{$sqlValueName};
     my $sql = $sqlValue->{sql}->[0];
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute();
-    my $rowCount;
-    while (my @result = $stmt->fetchrow_array()) {
-      $rowCount++;
-      die ("sqlValue $sqlValue->{name} does not return 1 row ($rowCount)") unless $rowCount == 1;
-      my $columnCount = scalar(@result);
-      die ("sqlValue $sqlValue->{name} does not return 1 column ($columnCount)")
-	unless $columnCount == 1;
-      $answer->{$sqlValue->{name}} = $result[0];
+
+    # here if running a query to get a bunch of rows to iterate test over
+    if (my $maxCount = $maxPrepareCounts->{$sqlValueName}) {
+      $sql =~ s/ROWNUM_COUNT/$maxCount/;
+      my $stmt = $dbh->prepare($sql);
+      $stmt->execute();
+      my @prepareResult;
+      while (my $result = $stmt->fetchrow_arrayref()) {
+	my @r = @$result;
+	push(@prepareResult, \@r);
+      }
+      $answer->{$sqlValueName} = \@prepareResult;
+    }
+    # here to get just one row and one column 
+    else {
+      my $stmt = $dbh->prepare($sql);
+      $stmt->execute();
+      my $rowCount;
+      while (my @result = $stmt->fetchrow_array()) {
+	$rowCount++;
+	die ("sqlValue $sqlValue->{name} does not return 1 row ($rowCount)") unless $rowCount == 1;
+	my $columnCount = scalar(@result);
+	die ("sqlValue $sqlValue->{name} does not return 1 column ($columnCount)")
+	  unless $columnCount == 1;
+	$answer->{$sqlValueName} = $result[0];
+      }
     }
   }
   return $answer;
