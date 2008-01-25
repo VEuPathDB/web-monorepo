@@ -1,27 +1,29 @@
-#!/usr/bin/perl
+#!@perl@
 
 ## unloads user-comment flat file for keyword search to grep through
 
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
 use CBIL::Bio::SequenceUtils;
-use DBI;
-use ApiCommonWebsite::Model::CommentConfig;
+use GUS::Supported::GusConfig;
 
-my ($outDir, $prefix, $commentSchema, $debug, $verbose, $projectId);
+my ($outDir, $prefix, $commentSchema, $gusConfigFile, $debug, $verbose, $projectId);
 &GetOptions("outputDir=s" => \$outDir,
             "outputPrefix=s" => \$prefix,
             "projectId=s" => \$projectId,
             "commentSchema=s" => \$commentSchema,
             "verbose!"=> \$verbose,
-            "debug!" => \$debug);
+            "debug!" => \$debug,
+            "gusConfigFile=s" => \$gusConfigFile);
 
 if (!$outDir || !$commentSchema){
 	die "usage: $0 --projectId <projectId> --outputDir <outputDirectory>"
             . " [--outputPrefix <file-prefix>]"
             . " --commentSchema <commentSchema>"
-            . " [--verbose] [--debug]\n";
+            . " [--verbose] [--debug]"
+            . " [--gusConfigFile  <config (default=\$GUS_HOME/config/gus.config)>]\n";
 }
 
 print "options: --outputDir=\"$outDir\" "
@@ -29,20 +31,21 @@ print "options: --outputDir=\"$outDir\" "
       . "projectId=\"$projectId\""
       . "commentSchema=\"$commentSchema\""
       . "verbose=\$verbose\""
-      . "debug=\"$debug\"" if $verbose;
+      . "debug=\"$debug\""
+      . "gusConfigFile=\"$gusConfigFile\"" if $verbose;
 
 print "Establishing dbi login\n" if $verbose;
-my $config = new ApiCommonWebsite::Model::CommentConfig($projectId);
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
-my $dsn = $config->getDbiDsn();
-my $login = $config->getLogin();
+my $db = GUS::ObjRelP::DbiDatabase
+           ->new($gusconfig->getDbiDsn(),
+		 $gusconfig->getReadOnlyDatabaseLogin(),
+		 $gusconfig->getReadOnlyDatabasePassword,
+		 $verbose,0,1,
+		 $gusconfig->getCoreSchemaName,
+		 $gusconfig->getOracleDefaultRollbackSegment());
 
-my $dbh = DBI->connect(
-            $config->getDbiDsn, 
-            $config->getLogin, 
-            $config->getPassword,
-            { PrintError => 1, RaiseError => 0}
-            ) or die "Can't connect to the database: $DBI::errstr\n";
+my $dbh = $db->getQueryHandle();
 
 $dbh->{LongReadLen} = 8192 * 1024;
 my $sql;
