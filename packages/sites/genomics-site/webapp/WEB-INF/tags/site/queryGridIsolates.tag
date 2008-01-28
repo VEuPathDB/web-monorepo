@@ -49,7 +49,7 @@
        <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ISOLATE" existsOn="A C"  />
     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateWithGeneOverlap" linktext="Gene Overlap" existsOn="C"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateWithGeneOverlap" linktext="Gene Overlap" existsOn="A C"/>
     </tr>
     
     </table>
