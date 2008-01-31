@@ -5,6 +5,10 @@
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<%@ attribute name="from"
+              description="jsp that calls this tag"
+%>
+
 
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -27,6 +31,8 @@
 <table width="100%" border="0" cellspacing="3" cellpadding="0">
 
 
+
+
 <c:if test="${API}">
 <tr><td colspan="3">  
     <div class="smallBlack" align="middle">
@@ -37,6 +43,7 @@
 	</div>
 </td></tr>
 </c:if>
+
 
 <c:if test="${COMPONENT}">
 <tr><td colspan="3">  
@@ -51,9 +58,13 @@
 <%--  All Gene Queries  --%>
 <tr class="headerRow"><td colspan="4" align="center"><b>Identify Genes by:</b></td></tr>
 
+<%-- api does not need currently these queries in front page (home) --%>
+<c:if test="${COMPONENT || from != 'home'}">
 <tr><td colspan="3" align="center">
  	<site:quickSearch/>
 </td></tr>
+</c:if>
+
 
 <tr><td colspan="3" align="center">
 	<site:queryGridGenes/>
