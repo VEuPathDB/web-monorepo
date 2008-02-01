@@ -443,6 +443,7 @@ sub getPreparedInputs {
   my $prepareType = $test->{prepare}->[0]->{type};
   my $count = $test->{prepare}->[0]->{count};
   my $answer = $sqlValues->{$prepareType};
+  die "can't find <sqlValue name=\"$prepareType\"> which is used by a <prepare>\n" unless $answer;
   my @preparedInputs = @$answer;
   $#preparedInputs = $count-1;
   return @preparedInputs
