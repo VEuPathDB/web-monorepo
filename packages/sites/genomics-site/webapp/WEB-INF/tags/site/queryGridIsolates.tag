@@ -3,7 +3,6 @@
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
 <table width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -20,9 +19,6 @@
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C"/>
     </tr>
-<tr>
-       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C"/>
-    </tr>
     </table>
 </td>
 
@@ -33,11 +29,12 @@
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C"/>
     </tr>
 
- <tr>
-       <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ISOLATE" existsOn="A C"  />
-    </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateWithGeneOverlap" linktext="Gene Overlap" existsOn="A C"/>
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C"/>
+    </tr>
+
+    <tr>
+       <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ISOLATE" existsOn="A C"  />
     </tr>
    
     </table>
@@ -49,13 +46,12 @@
     <tr>
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByAuthor" linktext="Author Name" existsOn="A C"/>
     </tr>
- <tr>
+    <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByStudy" linktext="Study Name" existsOn="A C"/>
     </tr>
-<tr>
+    <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Country Name" existsOn="A C"/>
     </tr>
-   
     
     </table>
 </td>
