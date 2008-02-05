@@ -49,7 +49,7 @@ function navigation_toggle(area,p_name)
 }
 
 function renameInputs(id,val){
-	if (Object.isString(id))
+	if (typeof id == "string")
 		var inputs = document.getElementById(id).getElementsByTagName('Input');
 	else
 		var inputs = id.getElementsByTagName('Input');
