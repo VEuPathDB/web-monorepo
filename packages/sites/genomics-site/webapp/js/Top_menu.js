@@ -10,6 +10,17 @@ function navigation_toggle(area,p_name)
 	if(document.getElementById(area+"_area").style.display == "none")
 	{
 		
+		var divs = document.getElementById('navigation').getElementsByTagName('div');
+		for(var i=0;i<divs.length;i++){
+			if(divs[i].style.display=="") {
+				var sect_name = divs[i].id.substring(0,divs[i].id.indexOf('_area'));
+				document.getElementById(sect_name).className = "";
+				renameInputs(divs[i],'none');
+				Effect.toggle(divs[i].id,'slide',{duration: .5});
+			}
+		}
+	
+/*
 		if(document.getElementById('Eukaryotic Pathogens_area').style.display=="") {
 			document.getElementById('Eukaryotic Pathogens').className = "";
 			renameInputs('Eukaryotic Pathogens_area','none');
@@ -27,17 +38,21 @@ function navigation_toggle(area,p_name)
 			renameInputs('Anaerobic Protists_area','none');
 			Effect.toggle('Anaerobic Protists_area','slide',{duration: .5});
 		}
-		
+*/		
 		var inputs = document.getElementById(area+'_area').getElementsByTagName('Input');
 		document.getElementById(area).className = "seled";
 		renameInputs(area+'_area','myMultiProp('+p_name+')');				
 		Effect.toggle(area+'_area','slide',{duration: .5});
-		return true; 
+		return true;
+
 	}
 }
 
 function renameInputs(id,val){
-	var inputs = document.getElementById(id).getElementsByTagName('Input');
+	if (Object.isString(id))
+		var inputs = document.getElementById(id).getElementsByTagName('Input');
+	else
+		var inputs = id.getElementsByTagName('Input');
 	for(var i=0;i<inputs.length;i++){
 			inputs[i].name = val;
 	}
