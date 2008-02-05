@@ -66,7 +66,7 @@
 </c:if>
 
 <c:if test="${wdkModel.displayName eq 'ApiDB'}">
-     </div>
+     </div><!--End Question Form Div-->
 </c:if>
 
   <table width="100%"  cellspacing="2" cellpadding="0">
