@@ -20,7 +20,7 @@
   <script src="js/prototype.js" type="text/javascript"></script>
   <script src="js/scriptaculous.js" type="text/javascript"></script>
   <script src="js/Top_menu.js" type="text/javascript"></script>
-  <link rel="stylesheet" href="<c:url value='/js/Top_menu.css' />" type="text/css">
+  <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
 </c:set>
 
 <%--CODE TO SET UP THE SITE VARIABLES --%>

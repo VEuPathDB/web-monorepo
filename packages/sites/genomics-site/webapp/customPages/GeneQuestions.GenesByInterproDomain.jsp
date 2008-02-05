@@ -13,11 +13,15 @@
 
 <%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="headElement">
   <script src="js/AjaxInterpro.js" type="text/javascript"></script>
   <script src="js/prototype.js" type="text/javascript"></script>
   <script src="js/scriptaculous.js" type="text/javascript"></script>
+  <script src="js/Top_menu.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
   <style type="text/css">
       div.searchBoxupdate ul {
       margin:0px;
@@ -34,6 +38,15 @@
       color:#FFFFFF}
   </style>
 </c:set>
+
+<c:if test="${wdkModel.displayName eq 'ApiDB'}">
+	<c:set var="portalsProp" value="${props['PORTALS']}" />
+<%--	<c:set var="portalsArr" value="${fn:split(portalsProp,';')}" />
+	<c:forEach items="${portalsArr}" var="portal">
+		<c:set var="portalArr" value="${fn:split(portal,',')}" />
+	</c:forEach>
+--%>
+</c:if>
 
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
              banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
@@ -82,13 +95,15 @@
   </c:when>
   <c:otherwise>
     
-  <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
-  <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td>
+    <c:set var="paramCount" value="${fn:length(paramGroup)}"/>
+
+  <%-- an individual param (can not use fullName, w/ '.', for mapped props) 
+  <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td>--%>
     
   <%-- choose between flatVocabParam and straight text or number param --%>
   <c:choose>
     <c:when test="${pNam eq 'domain_database'}">
-      <td>
+      <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
       <select name="myMultiProp(domain_database)" id="domain_database_list" onChange="loadSelectedData();">
           <c:forEach items="${qP.vocab}" var="flatVoc">
               <option value="${flatVoc}">${flatVoc}</option>
@@ -103,25 +118,34 @@
 
     </c:when>
     <c:when test="${pNam eq 'domain_accession'}">
-          <td>
+          <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
           <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box"/>
           </td>
     </c:when>
     <c:otherwise>
     
-      <c:choose>
+      <c:choose> 
+        <c:when test="${fn:contains(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
+                    <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5"><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
+			<c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
+                        <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
+                        <a href="#${anchorQp}">
+                        <img valign="bottom" src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a><br>
+				<site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
+		    </td> 
+        </c:when>
         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
-          <td>
+          <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
             <site:flatVocabParamInput qp="${qP}" />
           </td>
         </c:when>
         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-          <td>
+          <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
             <site:enumParamInput qp="${qP}" />
           </td>
         </c:when>
         <c:otherwise>  <%-- not flatvocab --%>
-          <td><c:choose>
+          <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td><c:choose>
                   <c:when test="${isReadonly}">
                       <bean:write name="qForm" property="myProp(${pNam})"/>
                       <html:hidden property="myProp(${pNam})"/>
@@ -135,7 +159,7 @@
         </c:otherwise>
       </c:choose>
       </c:otherwise></c:choose>
-    
+      <c:if test="${pNam != 'organism' && wdkModel.displayName eq 'ApiDB'}">
           <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>
               <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
@@ -143,6 +167,7 @@
               <a href="#${anchorQp}">
               <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
           </td>
+      </c:if>
       </tr>
     
     </c:otherwise></c:choose>
