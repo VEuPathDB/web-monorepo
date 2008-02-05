@@ -36,9 +36,10 @@ function writeData(page, div, quesName){
 			       document.getElementById(div).innerHTML += help;
 		
 			       if(ques.indexOf("<div id=\"navigation\">") != -1){
-				renameInputs('Eukaryotic Pathogens_area','none');
-				renameInputs('Apicomplexan_area','none');
-				renameInputs('Anaerobic Protists_area','none');
+				var divs = document.getElementById('navigation').getElementsByTagName('div');
+				for(var i=0;i<divs.length;i++){
+					renameInputs(divs[i],'none');
+				}
 				navigation_toggle('Eukaryotic Pathogens','organism');
 			       }
 
