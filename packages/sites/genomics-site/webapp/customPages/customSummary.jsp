@@ -19,10 +19,8 @@
     <c:url value="/processSummary.do?${wdk_query_string}" />
 </c:set>
 
-
-<%--
-<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb')}" />
---%>
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb') || fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
@@ -428,6 +426,13 @@ function resetAttr() {
     </c:forEach>
 </tr>
 
+
+<c:set var="cryptoIsolatesQuestion" value="${fn:containsIgnoreCase(qName, 'Isolate') && fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
+
+<c:if test = "${cryptoIsolatesQuestion}">
+   <form name="checkHandleForm" method="post" action="/dosomething.jsp">
+</c:if>
+
 <c:set var="i" value="0"/>
 <c:forEach items="${wdkAnswer.records}" var="record">
 
@@ -450,8 +455,8 @@ function resetAttr() {
       <c:choose>
         <c:when test="${j == 0}">
 
-          <c:choose>
-            <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+        <c:choose>
+           <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
                
               <c:set value="${record.primaryKey}" var="primaryKey"/>
               <c:choose>
@@ -489,7 +494,16 @@ function resetAttr() {
                 </c:when>
               </c:choose>
             
-            </c:when>
+           </c:when>
+
+           <c:when test = "${cryptoIsolatesQuestion}">
+
+              <%-- display a link to record page --%>
+              <c:set value="${record.primaryKey}" var="primaryKey"/>
+              <nobr><a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey}"></nobr>
+
+           </c:when>
+
             <c:otherwise>
 
               <%-- display a link to record page --%>
@@ -497,9 +511,10 @@ function resetAttr() {
               <a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a>
 
             </c:otherwise>
-          </c:choose>
+        </c:choose>
 
         </c:when>   <%-- when j=0 --%>
+
         <c:otherwise>
 
           <!-- need to know if fieldVal should be hot linked -->
@@ -525,8 +540,26 @@ function resetAttr() {
 <c:set var="i" value="${i+1}"/>
 </c:forEach>
 
+
+<c:if test = "${cryptoIsolatesQuestion}">
+  </form>
+</c:if>
+
 </tr>
 </table>
+
+
+<c:if test = "${cryptoIsolatesQuestion}">
+<table width="100%" border="0" cellpadding="3" cellspacing="0">
+  <tr align=center>
+    <th> 
+      <input type="button" value="Run Clustalw" onClick="goToIsolate()" />
+    </th>
+	</tr>
+</table>
+</c:if>
+
+
 
 <br>
 
