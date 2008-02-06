@@ -25,6 +25,8 @@
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb') || fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
 
+<c:set var="cryptoIsolatesQuestion" value="${fn:containsIgnoreCase(qName, 'Isolate') && fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
+
 <c:set var="global" value="${wdkUser.globalPreferences}"/>
 <c:set var="showParam" value="${global['preference_global_show_param']}"/>
 
@@ -44,6 +46,19 @@
 <!--
 
 var showParam = "${showParam}";
+
+function goToIsolate() {
+   var form = document.checkHandleForm;
+   var cbs = form.selectedFields;
+   var url = "/cgi-bin/isolateClustalw?project_id=CryptoDB;isolate_ids=";
+   for (var i=0; i<cbs.length; i++) {
+         if(cbs[i].checked) {
+       url += cbs[i].value + ",";
+               }
+   }
+   window.location.href = url;
+ }
+
 
 function enableRename() {
    var nameText = document.getElementById('nameText');
@@ -427,13 +442,27 @@ function resetAttr() {
 </tr>
 
 
-<c:set var="cryptoIsolatesQuestion" value="${fn:containsIgnoreCase(qName, 'Isolate') && fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
-
 <c:if test = "${cryptoIsolatesQuestion}">
    <form name="checkHandleForm" method="post" action="/dosomething.jsp">
+
+   <tr><td colspan="10" align="center"> 
+       
+       <c:if test = "${cryptoIsolatesQuestion}">
+          <table width="100%" border="0" cellpadding="3" cellspacing="0">
+         <tr align=center>
+         <th>  Please select at least two isolates to run ClustalW
+              <input type="button" value="Run Clustalw" onClick="goToIsolate()" />
+         </th>
+	 </tr>
+         </table>
+       </c:if>
+   </td></tr>
+
 </c:if>
 
 <c:set var="i" value="0"/>
+
+
 <c:forEach items="${wdkAnswer.records}" var="record">
 
 <c:choose>
@@ -449,11 +478,15 @@ function resetAttr() {
     <c:set var="nowrap">
         <c:if test="${recAttr.nowrap}">nowrap</c:if>
     </c:set>
+
     <td ${align} ${nowrap}>
       <c:set var="recNam" value="${record.recordClass.fullName}"/>
       <c:set var="fieldVal" value="${recAttr.briefValue}"/>
       <c:choose>
         <c:when test="${j == 0}">
+
+
+
 
         <c:choose>
            <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
