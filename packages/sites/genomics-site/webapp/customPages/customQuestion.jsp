@@ -150,41 +150,41 @@ function showParamGroup(group, isShow)
             <c:otherwise> <%-- visible param --%>
 	        <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
-               <%--     <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                    <td>--%>
-                        <%-- choose between flatVocabParam and straight text or number param --%>
                         <c:choose>
-			
-		<%--	    <c:when test="${fn:contains(pNam,'organism') && wdkModel.displayName eq 'ApiDB' && qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">--%>
-			    <c:when test="${fn:contains(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
-                    <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5"><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
-			<c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
-                        <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-                        <a href="#${anchorQp}">
-                        <img valign="bottom" src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a><br>
-				<site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
-		    </td> 
-                            </c:when>
+		         <c:when test="${fn:contains(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
+                           <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5"><table border="0"><tr>
+			   <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
+			      <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
+                              <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
+                              <a href="#${anchorQp}">
+                              <img valign="bottom" src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a><br>
+			      <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
+		           </td></tr></table></td><td valign="top" align="center"><table border="0">
+                         </c:when>
                         
 			    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
                     <td align="right" valign="top"><b>${qP.prompt}</b></td>
                     <td valign="top">
                                 <site:flatVocabParamInput qp="${qP}" />
+                    </td>
                             </c:when>
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
                     <td align="right" valign="top"><b>${qP.prompt}</b></td>
                     <td valign="top">
                                 <site:enumParamInput qp="${qP}" />
+                    </td>
                             </c:when>
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
                     <td align="right" valign="top"><b>${qP.prompt}</b></td>
                     <td valign="top">
                                 <wdk:historyParamInput qp="${qP}" />
+                    </td>
                             </c:when>
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
                     <td align="right" valign="top"><b>${qP.prompt}</b></td>
                     <td valign="top">
                                 <wdk:datasetParamInput qp="${qP}" />
+                    </td>
                             </c:when>
                             <c:otherwise>  <%-- not flatvocab --%>
                                 <c:choose>
@@ -193,16 +193,17 @@ function showParamGroup(group, isShow)
                     <td valign="top">
                                         <bean:write name="qForm" property="myProp(${pNam})"/>
                                         <html:hidden property="myProp(${pNam})"/>
+                    </td>
                                     </c:when>
                                     <c:otherwise>
                     <td align="right" valign="top"><b>${qP.prompt}</b></td>
                     <td valign="top">
                                         <html:text property="myProp(${pNam})" size="35" />
+                    </td>
                                     </c:otherwise>
                                 </c:choose>
                             </c:otherwise>
                         </c:choose>
-                    </td>
                     <c:if test="${pNam != 'organism' && wdkModel.displayName eq 'ApiDB'}">
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td valign="top" width="50" nowrap>
@@ -222,16 +223,16 @@ function showParamGroup(group, isShow)
     <%-- detemine ending display style by displayType of the group --%>
     <c:choose>
         <c:when test="${group.name eq 'empty'}">
-            </table>
+            </table></table>
         </c:when>
         <c:when test="${displayType eq 'ShowHide'}">
-                </table>
+                </table></table>
                 </div> <%-- show/hide div --%>
             <hr>
             </div>  <%-- group background div --%>
         </c:when>
         <c:otherwise>
-            </table>
+            </table></table>
         </c:otherwise>
     </c:choose>
     
