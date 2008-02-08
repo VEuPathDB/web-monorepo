@@ -123,7 +123,7 @@
           </td>
     </c:when>
     <c:otherwise>
-    
+    <tr>
       <c:choose> 
         <c:when test="${fn:contains(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
                     <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5"><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
@@ -132,7 +132,7 @@
                         <a href="#${anchorQp}">
                         <img valign="bottom" src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a><br>
 				<site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
-		    </td> 
+		    </td> </tr></table></td><td valign="top" align="center"><table border="0">
         </c:when>
         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
           <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
@@ -174,7 +174,7 @@
 
 </c:forEach>
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
-
+</table> 
   <tr><td></td>
       <td><html:submit property="questionSubmit" value="Get Answer"/></td>
 </table>
@@ -202,7 +202,7 @@
   </td>
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
-</table> 
+</table>
 
 
 <site:footer/>
