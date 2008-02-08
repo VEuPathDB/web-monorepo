@@ -205,12 +205,13 @@ Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via
 </c:if> 
 
 <%-- colored box -- warnings and notices go here --%>
+<%--
 <div class="smallApiBlue">
 <font face="Arial,Helvetica" size="-1"  color="blue">
 &nbsp;&nbsp;As part of ongoing efforts to educate ApiDB users to take fullest advantage of database resources, we are pleased to announce the third annual ApiDB database workshop, scheduled for June 8-11, 2008. &nbsp;&nbsp;Please click <a href="http://apidb.org/workshop/2008/"><b>here</b></a> for further information.
 </font>
 </div>
-
+--%>
 
 </td>
 </tr>
