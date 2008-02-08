@@ -41,10 +41,11 @@ cryptolink, plasmolink, toxolink
 
 --%>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="w"   uri="http://www.servletsuite.com/servlets/wraptag" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
 <c:choose> 
 <%-- this choose block is a crude effort to prevent data display
@@ -69,13 +70,21 @@ including authentication.
 <html>
 <head>
 <title>${pageContext.request.serverName} Site Info</title>
+<script type='text/javascript' src='/cryptodb/js/overlib.js'></script>
 <script type='text/javascript' src='/a/js/prototype.js'></script>
 <script type='text/javascript' src='/a/js/scriptaculous.js'></script>
 <%-- http://wiki.script.aculo.us/scriptaculous/show/Effect.toggle --%>
 
 <script type="text/javascript">
-
+var ol_textcolor = "#003366";
+var ol_fgcolor = "#ffffff";
+var ol_bgcolor = "#003366";
+var ol_texsize = "11px";
+var ol_cellpad = "5";
+var ol_height = -1;
+var ol_vpos = ABOVE;
 </script>
+
 <style type="text/css">
 <!--
 body {
@@ -227,8 +236,8 @@ tr.headerRow  td,th {
 <b>Web App:</b> ${pageContext.request.contextPath}<br>
 <b>Last webapp reload:</b> <%= lastReload(application, pageContext ) %>
 <br>
-<b><a href="#" onclick="Effect.toggle('element-blind','blind'); return false">JSP Classpath &#8593;&#8595;</a></b>
-<div id="element-blind" style="padding: 5px; display: none"><div>
+<b><a href="#" onclick="Effect.toggle('classpathlist','blind'); return false">JSP Classpath &#8593;&#8595;</a></b>
+<div id="classpathlist" style="padding: 5px; display: none"><div>
 ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')}
 </div></div>
 </p>
@@ -247,13 +256,27 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 </c:if>
 
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['apicommMacro']}">
-<p>
-<b>ApiComm Macro</b>: ${wdkRecord.attributes['apicommMacro'].value}<br>
+    <p>
+    <b>LOGIN_DBLINK Macro</b>
+    <a href='javascript:void()' 
+        onmouseover="return overlib(
+         '@LOGIN_DBLINK@ as defined in WDK Record scope.<br>' +
+         '(<i>cf.</i> the \'Available DBLinks\' table.)'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a>
+     : ${wdkRecord.attributes['apicommMacro'].value}
+       <br>
 </c:if>
 
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['apicomm_global_name']}">
     <c:catch var="e">
-   <b>ApiComm dblink global_name</b>:  ${wdkRecord.attributes['apicomm_global_name'].value}<br>
+   <b>ApiComm dblink global_name</b>
+    <a href='javascript:void()' 
+        onmouseover="return overlib(
+         'result of <i>select global_name from global_name${wdkRecord.attributes['apicommMacro'].value}</i>'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a>
+   :  ${wdkRecord.attributes['apicomm_global_name'].value}<br>
     </c:catch>
     <c:if test="${e!=null}">
         <font color="#CC0033">${e}</font>
@@ -267,6 +290,74 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 </c:catch>
 <c:if test="${e!=null}"> 
     <font color="red">Cache tables information not available. Did you run wdkCache?</font>
+</c:if>
+
+
+<h2>Build State</h2>
+<p>
+  <c:catch var="e">
+  <api:properties var="build" propfile="WEB-INF/wdk-model/config/.build.info" />
+  
+  Last build  was a '<b>${build['!Last.build.component']}</b> 
+  <b>${build['!Last.build.initialTarget']}</b>' 
+  on <b>${build['!Last.build.timestamp']}</b>
+  <a href='javascript:void()'
+        onmouseover="return overlib('A given build may not refresh all project components. ' + 
+        'For example, a \'ApiCommonData/Model install\' does not build any WDK code.<br>' +
+        'See Build Details for a cummulative record of past builds.')"
+        onmouseout = "return nd();"><sup>[?]</sup></a>
+
+  <br>
+
+  <b><a href="#" 
+        onclick="Effect.toggle('buildtime','blind'); return false">
+  Component Build Details &#8593;&#8595;</a></b>
+
+  <div id="buildtime" style="padding: 5px; display: none"><div>
+  <font size='-1'>A given build may not refresh all project components.<br>
+  The following is a cummulative record of past builds.</font>
+  
+      <table border='1' cellspacing='0'>
+      <c:forEach items="${build}" var="p">
+      <c:if test="${fn:contains(p.key, '.buildtime')}">
+      <tr>
+        <td><pre>${p.key}</pre></td>
+        <td><pre>${p.value}</pre></td>
+      </tr>
+      </c:if>
+      </c:forEach>
+      </table>
+  
+  </div></div>
+
+  <p>
+
+  <b><a href="#" onclick="Effect.toggle('svnstate','blind'); return false">
+  Svn Working Directory State &#8593;&#8595;</a></b>
+  <div id="svnstate" style="padding: 5px; display: none"><div>
+  <font size='-1'>State at build time. Uncommitted files are highlighted. Files may have been committed
+  since this state was recorded.</font>
+  
+      <table border='1' cellspacing='0'>
+      <c:forEach items="${build}" var="p">
+      <c:if test="${fn:contains(p.key, '.svn.') && p.value != '' }">
+          <c:if test="${fn:contains(p.key, '.svn.status')}">
+            <c:set var="bgcolor" value="bgcolor='#FFFF99'"/>
+          </c:if> 
+      <tr ${bgcolor}>
+        <td><pre>${p.key}</pre></td>
+        <td><pre>${p.value}</pre></td>
+      </tr>
+          <c:remove var="bgcolor"/>
+      </c:if>
+      </c:forEach>
+      </table>
+      
+  </div></div>
+
+</c:catch>
+<c:if test="${e!=null}">
+    <font size="-1" color="#CC0033">build info not available (check WEB-INF/wdk-model/config/.build.info)</font>
 </c:if>
 
 </body>
