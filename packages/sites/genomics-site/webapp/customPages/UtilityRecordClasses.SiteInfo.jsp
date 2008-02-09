@@ -65,7 +65,7 @@ including authentication.
 <%/* display page header with recordClass type in banner */%>
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
-<c:set var="dateFormatStr" value="EEE dd MMM yyyy h:mm:ss a"/>
+<c:set var="dateFormatStr" value="EEE dd MMM yyyy h:mm a"/>
 
 <html>
 <head>
@@ -93,8 +93,12 @@ body {
 
 a { color: #2F4F4F }
 
+h2 {
+	background: #B4A2A9;
+   }
+   
 h3 {
-	background: #336699;
+	background: #7F998F;
 	color: white;
 	cursor: pointer;
 	font-family: Arial, Helvetica, sans-serif;
@@ -109,8 +113,13 @@ p {
 	margin: 12px 8px;
 }
 
+table.p {
+	font-size: 12px;
+	margin: 12px 8px;
+}
+
 tr.rowMedium {
-    background-color: #FFFFFF;
+    background-color: #C4CFCB;
     color: black;
     font-family: arial;
 	font-size: 10pt;
@@ -164,128 +173,69 @@ tr.headerRow  td,th {
 <b>Oracle Version</b>: ${wdkRecord.attributes['version'].value}<br>
 
 <b>Available DBLinks</b>: <site:dataTable tblName="AllDbLinks"/>
-<p>
-<c:if test="${!empty wdkRecord.recordClass.attributeFields['cryptolink']}">
-    <br>
-    <b>CryptoDB dblink:</b>
-    <c:catch var="e">
-        ${wdkRecord.attributes['cryptolink'].value}
-    </c:catch>
-    <c:if test="${e!=null}">
-        <font color="#CC0033">not responding</font>
-    </c:if>
-</c:if>
-
-<c:if test="${!empty wdkRecord.recordClass.attributeFields['plasmolink']}">
-    <br>
-    <b>PlasmoDB dblink:</b>
-    <c:catch var="e">
-        ${wdkRecord.attributes['plasmolink'].value}
-    </c:catch>
-    <c:if test="${e!=null}">
-        <font color="#CC0033">not responding</font>
-    </c:if>
-</c:if>
-
-<c:if test="${!empty wdkRecord.recordClass.attributeFields['plasmolink2']}">
-    <br>
-    
-    <c:catch var="e">
-
-        ${wdkRecord.attributes['plasmolink2'].value}
-    </c:catch>
-    <c:if test="${e!=null}">
-        ${e}<br>
-        <font color="#CC0033">not responding</font>
-    </c:if>
-</c:if>
-
-<c:if test="${!empty wdkRecord.recordClass.attributeFields['toxolink']}">
-    <br>
-    <b>ToxoDB dblink:</b>
-    <c:catch var="e">
-        ${wdkRecord.attributes['toxolink'].value}
-    </c:catch>
-    <c:if test="${e!=null}">
-        <font color="#CC0033">not responding</font>
-    </c:if>
-</c:if>
-
-<c:if test="${!empty wdkRecord.recordClass.attributeFields['toxolink2']}">
-    <br>
-    
-    <c:catch var="e">
-        ${wdkRecord.attributes['toxolink2'].value}
-    </c:catch>
-    <c:if test="${e!=null}">
-        ${e}<br>
-        <font color="#CC0033">not responding</font>
-    </c:if>
-
-    <br><br>
-    (TEST1 --> DBC2<br>
-    TEST2 --> THEMIS<br>
-    TEST3 --> DBC1)<br>
-
-</c:if>
+</p>
 
 <h2>Tomcat</h2>
+
+<table class='p' border='0' cellpadding='0' cellspacing='0'>
+<tr><td><b>Instance:</b></td><td><%= System.getProperty("instance.name") %></td></tr>
+<tr><td><b>Instance uptime:</b></td><td><%= uptime() %></td></tr>
+<tr><td><b>Last instance restart:</b></td><td><%= lastRestart(application, pageContext ) %></td></tr>
+</table>
+<table class='p' border='0' cellpadding='0' cellspacing='0'>
+<tr><td><b>Webapp:</b> </td><td> ${pageContext.request.contextPath}</td></tr>
+<tr><td><b>Last webapp reload/restart:</b> </td><td> <%= lastReload(application, pageContext ) %></td></tr>
+</table>
 <p>
-<b>Instance:</b> <%= System.getProperty("instance.name") %></br>
-<b>Instance Uptime:</b> <%= uptime() %><br> 
-<b>Web App:</b> ${pageContext.request.contextPath}<br>
-<b>Last webapp reload:</b> <%= lastReload(application, pageContext ) %>
-<br>
-<b><a href="#" onclick="Effect.toggle('classpathlist','blind'); return false">JSP Classpath &#8593;&#8595;</a></b>
+<b><a href="#" onclick="Effect.toggle('classpathlist','blind'); return false">Webapp Classpath &#8593;&#8595;</a></b>
 <div id="classpathlist" style="padding: 5px; display: none"><div>
 ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')}
 </div></div>
 </p>
 
 <h2>WDK</h2>
-<p>
-<c:if test="${!empty wdkRecord.recordClass.attributeFields['userlink']}">
-<b>DB Link to User login, registration and comments Database:</b> 
-<c:catch var="e">
-        ${wdkRecord.attributes['userlink'].value}
-    </c:catch>
-    <c:if test="${e!=null}">
-        ${e}<br>
-        <font color="#CC0033">not responding</font>
-    </c:if>
-</c:if>
 
+<table class='p' border='0' cellpadding='0' cellspacing='0'>
+<tr><td>
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['apicommMacro']}">
-    <p>
     <b>LOGIN_DBLINK Macro</b>
     <a href='javascript:void()' 
         onmouseover="return overlib(
          '@LOGIN_DBLINK@ as defined in WDK Record scope.<br>' +
          '(<i>cf.</i> the \'Available DBLinks\' table.)'
         )"
-        onmouseout = "return nd();"><sup>[?]</sup></a>
-     : ${wdkRecord.attributes['apicommMacro'].value}
-       <br>
+        onmouseout = "return nd();"><sup>[?]</sup></a>:
+    </td><td valign="bottom">
+        ${wdkRecord.attributes['apicommMacro'].value}
 </c:if>
-
+</td></tr>
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['apicomm_global_name']}">
-    <c:catch var="e">
+    <tr><td>
    <b>ApiComm dblink global_name</b>
     <a href='javascript:void()' 
         onmouseover="return overlib(
          'result of <i>select global_name from global_name${wdkRecord.attributes['apicommMacro'].value}</i>'
         )"
-        onmouseout = "return nd();"><sup>[?]</sup></a>
-   :  ${wdkRecord.attributes['apicomm_global_name'].value}<br>
+        onmouseout = "return nd();"><sup>[?]</sup></a>:  
+    </td><td valign="bottom"> 
+    <c:catch var="e">
+        ${wdkRecord.attributes['apicomm_global_name'].value}
     </c:catch>
     <c:if test="${e!=null}">
         <font color="#CC0033">${e}</font>
     </c:if>
-</c:if><br>
+    </td></tr>
+</c:if>
+</table>
 
 <c:catch var="e">
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['cache_count']}">
- <b>Cache Tables:</b> ${wdkRecord.attributes['cache_count'].value}
+<table class='p' border='0' cellpadding='0' cellspacing='0'>
+ <tr><td><b>Cache table count:</b></td><td>${wdkRecord.attributes['cache_count'].value}</td></tr>
+ <tr><td><b>QueryInstance created:</b></td><td>${wdkRecord.attributes['creation_time'].value}</td></tr>
+ <tr><td><b>QueryInstance first entry:</b></td><td>${wdkRecord.attributes['first_time'].value}</td></tr>
+ <tr><td><b>QueryInstance last entry:</b></td><td>${wdkRecord.attributes['last_time'].value}</td></tr>
+</table>
 </c:if>
 </c:catch>
 <c:if test="${e!=null}"> 
@@ -317,13 +267,25 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
   <font size='-1'>A given build may not refresh all project components.<br>
   The following is a cummulative record of past builds.</font>
   
-      <table border='1' cellspacing='0'>
+      <c:set var="i" value="0"/>
+
+      <table border="0" cellspacing="3" cellpadding="2">
+      <tr class="secondary3">
+      <th align="left"><font size="-2">component</font></th>
+      <th align="left"><font size="-2">build time</font></th>
+      </tr>
       <c:forEach items="${build}" var="p">
       <c:if test="${fn:contains(p.key, '.buildtime')}">
-      <tr>
-        <td><pre>${p.key}</pre></td>
-        <td><pre>${p.value}</pre></td>
-      </tr>
+  
+          <c:choose>
+            <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
+            <c:otherwise><tr class="rowMedium"></c:otherwise>
+          </c:choose>
+  
+          <td><pre>${fn:replace(fn:replace(p.key, ".buildtime", ""), ".", "/")}</pre></td>
+          <td><pre>${p.value}</pre></td>
+        </tr>
+        <c:set var="i" value="${i +  1}"/>
       </c:if>
       </c:forEach>
       </table>
@@ -338,14 +300,25 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
   <font size='-1'>State at build time. Uncommitted files are highlighted. Files may have been committed
   since this state was recorded.</font>
   
-      <table border='1' cellspacing='0'>
+      <table class='p' border='1' cellspacing='0'>
       <c:forEach items="${build}" var="p">
-      <c:if test="${fn:contains(p.key, '.svn.') && p.value != '' }">
-          <c:if test="${fn:contains(p.key, '.svn.status')}">
+      
+      <c:if test="${fn:contains(p.key, '.svn.') && p.value != '' && p.value != 'NA' }">
+          <c:choose>
+          <c:when test="${fn:contains(p.key, '.svn.status')}">
             <c:set var="bgcolor" value="bgcolor='#FFFF99'"/>
-          </c:if> 
+            <c:set var="key">
+            ${fn:replace(fn:replace(p.key, ".svn.status", " status"), ".", "/")}
+            </c:set>
+          </c:when>
+          <c:otherwise>
+            <c:set var="key">
+            ${fn:replace(fn:replace(p.key, ".svn.info", ""), ".", "/")}
+            </c:set>
+          </c:otherwise>          
+          </c:choose>
       <tr ${bgcolor}>
-        <td><pre>${p.key}</pre></td>
+          <td><pre>${key}</pre></td>
         <td><pre>${p.value}</pre></td>
       </tr>
           <c:remove var="bgcolor"/>
@@ -404,6 +377,21 @@ public String uptime() {
 public String lastReload(ServletContext application, PageContext pageContext) {
   try {
    File jspFile = (File)application.getAttribute("javax.servlet.context.tempdir");
+   java.text.DateFormat formatter = new java.text.SimpleDateFormat( 
+                        (String)pageContext.getAttribute("dateFormatStr") );
+
+   return (String)formatter.format(new Date(jspFile.lastModified()));
+  } catch (Exception e) {
+    return "Error: " + e;
+  }
+}
+%>
+
+
+<%!
+public String lastRestart(ServletContext application, PageContext pageContext) {
+  try {
+   File jspFile = ( (File)application.getAttribute("javax.servlet.context.tempdir") ).getParentFile();
    java.text.DateFormat formatter = new java.text.SimpleDateFormat( 
                         (String)pageContext.getAttribute("dateFormatStr") );
 
