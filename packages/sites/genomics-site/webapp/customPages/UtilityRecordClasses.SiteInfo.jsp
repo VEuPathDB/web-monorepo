@@ -1,45 +1,3 @@
-<%--
-Required query:
-        <sqlQuery name="CurrentInstance" isCacheable='false'>
-            <paramRef ref="params.primaryKey"/> 
-            <column name="global_name" />
-            <column name="host_name" />
-            <column name="address" />
-            <column name="version" />
-            <column name="system_date" />
-            <column name="login" />
-           <sql> 
-            <![CDATA[           
-            select 
-                global_name, 
-                ver.banner version,
-                UTL_INADDR.get_host_name as host_name,
-                UTL_INADDR.get_host_address as address,
-                to_char(sysdate, 'Dy DD-Mon-YYYY HH24:MI:SS') as system_date,
-                sys_context('USERENV', 'SESSION_USER') as login
-            from global_name, v$version ver
-            where lower(ver.banner) like '%oracle%'
-             ]]>
-           </sql>
-        </sqlQuery>
-
-
-OPTIONAL, to test dblink. Allowed column names are
-cryptolink, plasmolink, toxolink 
-       <sqlQuery name="PingPlasmo" isCacheable='false'>
-            <paramRef ref="params.primaryKey"/> 
-            <column name="plasmolink" />
-            <sql> 
-            <![CDATA[           
-            select 
-                global_name as plasmolink
-            from global_name@plasmo
-             ]]>
-           </sql>
-        </sqlQuery>
-
-
---%>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w"   uri="http://www.servletsuite.com/servlets/wraptag" %>
@@ -70,7 +28,7 @@ including authentication.
 <html>
 <head>
 <title>${pageContext.request.serverName} Site Info</title>
-<script type='text/javascript' src='/cryptodb/js/overlib.js'></script>
+<script type='text/javascript' src='/a/js/overlib.js'></script>
 <script type='text/javascript' src='/a/js/prototype.js'></script>
 <script type='text/javascript' src='/a/js/scriptaculous.js'></script>
 <%-- http://wiki.script.aculo.us/scriptaculous/show/Effect.toggle --%>
