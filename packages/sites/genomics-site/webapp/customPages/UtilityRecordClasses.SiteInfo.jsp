@@ -52,11 +52,14 @@ body {
 a { color: #2F4F4F }
 
 h2 {
-	background: #B4A2A9;
+   border-width:2px 0;
+   border-style:solid;
+   border-color:#C28547;
+   padding-left: 5px;
    }
    
 h3 {
-	background: #7F998F;
+	background: #336699;
 	color: white;
 	cursor: pointer;
 	font-family: Arial, Helvetica, sans-serif;
@@ -74,6 +77,10 @@ p {
 table.p {
 	font-size: 12px;
 	margin: 12px 8px;
+}
+
+td.p {
+    padding-left: 10px; 
 }
 
 tr.rowMedium {
@@ -136,17 +143,16 @@ tr.headerRow  td,th {
 <h2>Tomcat</h2>
 
 <table class='p' border='0' cellpadding='0' cellspacing='0'>
-<tr><td><b>Instance:</b></td><td><%= System.getProperty("instance.name") %></td></tr>
-<tr><td><b>Instance uptime:</b></td><td><%= uptime() %></td></tr>
-<tr><td><b>Last instance restart:</b></td><td><%= lastRestart(application, pageContext ) %></td></tr>
-</table>
-<table class='p' border='0' cellpadding='0' cellspacing='0'>
-<tr><td><b>Webapp:</b> </td><td> ${pageContext.request.contextPath}</td></tr>
-<tr><td><b>Last webapp reload/restart:</b> </td><td> <%= lastReload(application, pageContext ) %></td></tr>
+<tr><td><b>Instance:</b></td><td class="p"><%= System.getProperty("instance.name") %></td></tr>
+<tr><td><b>Instance uptime:</b></td><td class="p"><%= uptime() %></td></tr>
+<tr><td><b>Last instance restart:</b></td><td class="p"><%= lastRestart(application, pageContext ) %></td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td><b>Webapp:</b> </td><td class="p">${pageContext.request.contextPath}</td></tr>
+<tr><td><b>Last webapp reload/restart:</b></td><td class="p"><%= lastReload(application, pageContext ) %></td></tr>
 </table>
 <p>
 <b><a href="#" onclick="Effect.toggle('classpathlist','blind'); return false">Webapp Classpath &#8593;&#8595;</a></b>
-<div id="classpathlist" style="padding: 5px; display: none"><div>
+<div id="classpathlist" style="padding: 5px; display: none;"><div>
 ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')}
 </div></div>
 </p>
@@ -154,6 +160,28 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 <h2>WDK</h2>
 
 <table class='p' border='0' cellpadding='0' cellspacing='0'>
+<c:catch var="e">
+<c:if test="${!empty wdkRecord.recordClass.attributeFields['cache_count']}">
+ <tr><td><b>Cache table count</b>:</td><td class="p">${wdkRecord.attributes['cache_count'].value}</td></tr>
+ <tr><td><b>Cache created</b><a href='javascript:void()'
+        onmouseover="return overlib('Creation time of the QueryInstance table.')"
+        onmouseout = "return nd();"><sup>[?]</sup></a>
+        :</td><td class="p">${wdkRecord.attributes['creation_time'].value}</td></tr>
+ <tr><td><b>Cache first entry</b><a href='javascript:void()'
+        onmouseover="return overlib('Determining when the WDK cache tables were \'-reset\' ' + 
+        'is non-trivial. However, we can use the minium start_time of the QueryInstance ' +
+        'table to report the first time the cache was used after a reset or create.')"
+        onmouseout = "return nd();"><sup>[?]</sup></a>
+        :</td><td class="p">${wdkRecord.attributes['first_time'].value}</td></tr>
+ <tr><td><b>Cache last entry:</b></td><td class="p">${wdkRecord.attributes['last_time'].value}</td></tr>
+</c:if>
+</c:catch>
+<c:if test="${e!=null}"> 
+    <tr><td><font color="red">Cache tables information not available. Did you run wdkCache?</font></td></tr>
+</c:if>
+
+<tr><td>&nbsp;</td></tr>
+
 <tr><td>
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['apicommMacro']}">
     <b>LOGIN_DBLINK Macro</b>
@@ -163,7 +191,7 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
          '(<i>cf.</i> the \'Available DBLinks\' table.)'
         )"
         onmouseout = "return nd();"><sup>[?]</sup></a>:
-    </td><td valign="bottom">
+    </td><td  class="p" valign="bottom">
         ${wdkRecord.attributes['apicommMacro'].value}
 </c:if>
 </td></tr>
@@ -175,7 +203,7 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
          'result of <i>select global_name from global_name${wdkRecord.attributes['apicommMacro'].value}</i>'
         )"
         onmouseout = "return nd();"><sup>[?]</sup></a>:  
-    </td><td valign="bottom"> 
+    </td><td class="p" valign="bottom"> 
     <c:catch var="e">
         ${wdkRecord.attributes['apicomm_global_name'].value}
     </c:catch>
@@ -184,21 +212,8 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
     </c:if>
     </td></tr>
 </c:if>
-</table>
 
-<c:catch var="e">
-<c:if test="${!empty wdkRecord.recordClass.attributeFields['cache_count']}">
-<table class='p' border='0' cellpadding='0' cellspacing='0'>
- <tr><td><b>Cache table count:</b></td><td>${wdkRecord.attributes['cache_count'].value}</td></tr>
- <tr><td><b>QueryInstance created:</b></td><td>${wdkRecord.attributes['creation_time'].value}</td></tr>
- <tr><td><b>QueryInstance first entry:</b></td><td>${wdkRecord.attributes['first_time'].value}</td></tr>
- <tr><td><b>QueryInstance last entry:</b></td><td>${wdkRecord.attributes['last_time'].value}</td></tr>
 </table>
-</c:if>
-</c:catch>
-<c:if test="${e!=null}"> 
-    <font color="red">Cache tables information not available. Did you run wdkCache?</font>
-</c:if>
 
 
 <h2>Build State</h2>
