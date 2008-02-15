@@ -17,8 +17,10 @@ function writeData(page, div, quesName){
 			if(xhr.status==200){
 		              // document.getElementById(div).innerHTML = xhr.responseText;
                                var questionPage = xhr.responseText;
-                               var index1 = questionPage.indexOf("<div id=\"question_Form\">") + 24;
-			       var index2 = questionPage.indexOf("</div><!--End Question Form Div-->", index1);
+                             //  var index1 = questionPage.indexOf("<div id=\"question_Form\">") + 24;
+			     //  var index2 = questionPage.indexOf("</div><!--End Question Form Div-->", index1);
+                               var index1 = questionPage.indexOf("<form");
+			       var index2 = questionPage.indexOf("</form>", index1);
 			       var ques = questionPage.substring(index1,index2);
 
                                var desc1 = questionPage.indexOf("<p><b>Query description");
