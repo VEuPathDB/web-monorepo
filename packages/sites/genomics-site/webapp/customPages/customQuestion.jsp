@@ -88,7 +88,7 @@ function showParamGroup(group, isShow)
 
 <!-- show error messages, if any -->
 <wdk:errors/>
-
+<c:set var="hasOrganism" value="false"/>
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
@@ -152,6 +152,7 @@ function showParamGroup(group, isShow)
                 <tr>
                         <c:choose>
 		         <c:when test="${fn:contains(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
+			   <c:set var="hasOrganism" value="true"/>
                            <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5"><table border="0"><tr>
 			   <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
 			      <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
@@ -222,25 +223,31 @@ function showParamGroup(group, isShow)
     
     <%-- detemine ending display style by displayType of the group --%>
     <c:choose>
+        <c:when test="${hasOrganism == 'true'}">
+ </table></table>
+	</c:when>
+	<c:otherwise>
+    <c:choose>
         <c:when test="${group.name eq 'empty'}">
-            </table></table>
+            </table>
         </c:when>
         <c:when test="${displayType eq 'ShowHide'}">
-                </table></table>
+                </table>
                 </div> <%-- show/hide div --%>
             <hr>
             </div>  <%-- group background div --%>
         </c:when>
         <c:otherwise>
-            </table></table>
+            </table>
         </c:otherwise>
     </c:choose>
-    
+    	</c:otherwise>
+    </c:choose>
 </c:forEach>
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-  <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
+<div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
 </html:form>
 
 <c:if test="${wdkModel.displayName eq 'ApiDB'}">
@@ -262,7 +269,7 @@ function showParamGroup(group, isShow)
 
 </c:if>
 
-  </td>
+ <%-- </td>--%>
   <td valign=top class=dottedLeftBorder></td> 
 
 </tr>
