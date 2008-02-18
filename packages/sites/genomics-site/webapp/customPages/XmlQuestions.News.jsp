@@ -2,6 +2,7 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
@@ -11,6 +12,9 @@
 <c:set var="banner" value="${xmlAnswer.question.displayName}"/>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
+<c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
+<fmt:setLocale value="en-US"/><%-- req. for date parsing when client browser (e.g. curl) doesn't send locale --%>
 
 <c:set var="rssUrl" value="showXmlDataContent.do?name=XmlQuestions.NewsRss"/>
 <c:set var="headElement">
@@ -32,20 +36,43 @@
  <tr>
   <td bgcolor=white valign=top>
 
+<%-- 
+  Validate that the date string in the xml is parsable to a date object.
+  Parsable date strings aren't strictly needed for news but are needed 
+  for sorting RSS feeds; the check is here so invalid dates will be
+  readily detected and corrected by a human.
+--%>
+<c:catch var="InvalidDateError">
+  <c:forEach items="${xmlAnswer.recordInstances}" var="record">
+    <c:set var="lastHeadline" value="${record.attributesMap['headline']}"/>
+    <fmt:parseDate pattern="${dateStringPattern}" value="${record.attributesMap['date']}" var="throwaway"/> 
+  </c:forEach>
+</c:catch>
+
+
 <%-- handle empty result set situation --%>
 <c:choose>
   <c:when test='${xmlAnswer.resultSize == 0}'>
     Not available.
   </c:when>
+
+  <c:when test="${InvalidDateError != null}">
+    <font color="red" size="+1">Error parsing date of "${lastHeadline}". 
+    Expecting date string of the form "03 August 2007 15:30"</font>
+  </c:when>
+
   <c:otherwise>
 
 <!-- main body start -->
 
 <c:set var="i" value="1"/>
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
+
+  <fmt:parseDate pattern="${dateStringPattern}" var="pdate" value="${record.attributesMap['date']}"/> 
+  <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
+
   <c:set var="headline" value="${record.attributesMap['headline']}"/>
   <c:set var="tag" value="${record.attributesMap['tag']}"/>
-  <c:set var="date" value="${record.attributesMap['date']}"/>
   <c:set var="item" value="${record.attributesMap['item']}"/>
 
   <c:if test="${param.tag == null or param.tag eq tag or param.tag == ''}">
@@ -55,9 +82,10 @@
   
     <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
     <tr class="rowLight"><td>
-      <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${tag}"><font color='black'><b>${headline}</b></font></a> (${date})<br><br>${item}</td></tr></table>
+      <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${tag}"><font color='black'><b>${headline}</b></font></a> (${fdate})<br><br>${item}</td></tr></table>
     <c:set var="i" value="${i+1}"/>
   </c:if>
+
 </c:forEach>
 
 <p>
