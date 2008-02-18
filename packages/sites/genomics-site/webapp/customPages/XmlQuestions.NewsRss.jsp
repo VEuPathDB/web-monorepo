@@ -53,6 +53,7 @@
   <c:set var="tag"      value="${ fn:escapeXml( record.attributesMap['tag']      ) }"/>
   <c:set var="date"     value="${ fn:escapeXml( record.attributesMap['date']     ) }"/>
   <c:set var="item"     value="${ fn:escapeXml( record.attributesMap['item']     ) }"/>
+  <c:set var="tag"      value="${ fn:replace(tag, ' ', '%20') }"/>
     <item>
         <title>${headline}</title>
         <link>${linkTmpl}&amp;tag=${tag}</link>
