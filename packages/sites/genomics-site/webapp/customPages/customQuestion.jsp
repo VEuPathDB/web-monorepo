@@ -16,32 +16,13 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<c:set var="headElement">
-  <script src="js/prototype.js" type="text/javascript"></script>
-  <script src="js/scriptaculous.js" type="text/javascript"></script>
-  <script src="js/Top_menu.js" type="text/javascript"></script>
-  <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
-</c:set>
-
-<%--CODE TO SET UP THE SITE VARIABLES --%>
-<c:if test="${wdkModel.displayName eq 'ApiDB'}">
-	<c:set var="portalsProp" value="${props['PORTALS']}" />
-<%--	<c:set var="portalsArr" value="${fn:split(portalsProp,';')}" />
-	<c:forEach items="${portalsArr}" var="portal">
-		<c:set var="portalArr" value="${fn:split(portal,',')}" />
-	</c:forEach>
---%>
-</c:if>
-
-
   
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
                  divisionName="Question"
-                 division="queries_tools"
-		 headElement="${headElement}"/>
+                 division="queries_tools"/>
 
 
 
@@ -60,7 +41,7 @@ function showParamGroup(group, isShow)
         groupLink.innerHTML = "<a href=\"#\" onclick=\"return showParamGroup('" + group + "', 'yes');\">Show</a>";
         groupArea.style.display = "none";
     }
-     
+    
     return false;
 }
 
@@ -88,7 +69,7 @@ function showParamGroup(group, isShow)
 
 <!-- show error messages, if any -->
 <wdk:errors/>
-<c:set var="hasOrganism" value="false"/>
+
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
@@ -118,7 +99,6 @@ function showParamGroup(group, isShow)
         </c:otherwise>
     </c:choose>
     
-    <c:set var="paramCount" value="${fn:length(paramGroup)}"/>
     <%-- display parameter list --%>
     <c:forEach items="${paramGroup}" var="paramItem">
         <c:set var="pNam" value="${paramItem.key}" />
@@ -148,64 +128,39 @@ function showParamGroup(group, isShow)
 		</c:choose>
 	    </c:when>
             <c:otherwise> <%-- visible param --%>
-	        <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
+
+                <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
-                        <c:choose>
-		         <c:when test="${fn:contains(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
-			   <c:set var="hasOrganism" value="true"/>
-                           <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5"><table border="0"><tr>
-			   <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
-			      <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
-                              <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-                              <a href="#${anchorQp}">
-                              <img valign="bottom" src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a><br>
-			      <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
-		           </td></tr></table></td><td valign="top" align="center"><table border="0">
-                         </c:when>
-                        
-			    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
                     <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                    <td valign="top">
+                    <td>
+                        <%-- choose between flatVocabParam and straight text or number param --%>
+                        <c:choose>
+                            <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
                                 <site:flatVocabParamInput qp="${qP}" />
-                    </td>
                             </c:when>
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                    <td valign="top">
                                 <site:enumParamInput qp="${qP}" />
-                    </td>
                             </c:when>
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
-                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                    <td valign="top">
                                 <wdk:historyParamInput qp="${qP}" />
-                    </td>
                             </c:when>
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
-                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                    <td valign="top">
                                 <wdk:datasetParamInput qp="${qP}" />
-                    </td>
                             </c:when>
                             <c:otherwise>  <%-- not flatvocab --%>
                                 <c:choose>
                                     <c:when test="${isReadonly}">
-                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                    <td valign="top">
                                         <bean:write name="qForm" property="myProp(${pNam})"/>
                                         <html:hidden property="myProp(${pNam})"/>
-                    </td>
                                     </c:when>
                                     <c:otherwise>
-                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                    <td valign="top">
                                         <html:text property="myProp(${pNam})" size="35" />
-                    </td>
                                     </c:otherwise>
                                 </c:choose>
                             </c:otherwise>
                         </c:choose>
-                    <c:if test="${pNam != 'organism' && wdkModel.displayName eq 'ApiDB'}">
+                    </td>
+
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td valign="top" width="50" nowrap>
                         <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
@@ -213,7 +168,6 @@ function showParamGroup(group, isShow)
                         <a href="#${anchorQp}">
                         <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
                     </td>
-		    </c:if>
                 </tr>
  
             </c:otherwise> <%-- end visible param --%>
@@ -222,11 +176,6 @@ function showParamGroup(group, isShow)
     </c:forEach>
     
     <%-- detemine ending display style by displayType of the group --%>
-    <c:choose>
-        <c:when test="${hasOrganism == 'true'}">
- </table></table>
-	</c:when>
-	<c:otherwise>
     <c:choose>
         <c:when test="${group.name eq 'empty'}">
             </table>
@@ -241,18 +190,15 @@ function showParamGroup(group, isShow)
             </table>
         </c:otherwise>
     </c:choose>
-    	</c:otherwise>
-    </c:choose>
+    
 </c:forEach>
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-<div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
+  <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
 </html:form>
 
-<c:if test="${wdkModel.displayName eq 'ApiDB'}">
-	</div><!--End Question Form Div-->
-</c:if>
+
 
 <hr>
 <%-- display description for wdkQuestion --%>
@@ -269,7 +215,7 @@ function showParamGroup(group, isShow)
 
 </c:if>
 
- <%-- </td>--%>
+  </td>
   <td valign=top class=dottedLeftBorder></td> 
 
 </tr>
