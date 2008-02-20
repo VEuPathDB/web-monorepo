@@ -11,7 +11,6 @@
 <c:set var="headElement">
   <script src="js/blast.js" type="text/javascript"></script>
 </c:set>
-
 <site:header title="${wdkModel.displayName} : BLAST"
                  banner="${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
@@ -71,7 +70,8 @@
       <td>
 	<select name="blastOrganism" id="BlastOrganism" multiple="multiple" onChange="updateOrganism()">
            <option value="-">Select Target Data Type to display appropriate organisms</option>
-        </select>
+        </select><br>
+	<input type="button" onClick="selectAll_None(true)" value="All"/>&nbsp;&nbsp;<input onClick="selectAll_None(false)" type="button" value="None"/><br>
         <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
       </td>
     </c:when>
