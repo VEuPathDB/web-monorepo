@@ -18,13 +18,15 @@
 <c:when test = "${project == 'CryptoDB'}">
              <c:set var="logo" value="/images/oocyst_bg.gif"/>      
       </c:when>
-      <c:when test = "${project == 'ApiDB'}">
+<%--
+      <c:when test = "${project == 'EuPathDB'}">
              <c:set var="logo" value="/images/apidb_logo.gif"/>      
       </c:when>
+--%>
 
   </c:choose>
 
-
+<%--  <c:set var="portalLogo" value="/images/apidb_logo.gif"/>       --%>
 
 <%-- footer itself in a table (sidebar (rowspan=2) should stretch to cover footer)  --%>
 <%-- in question page we add the help lines --%>
@@ -79,11 +81,11 @@
                 <tr>
                     <td valign="middle" align="right">
                         <a href='http://apidb.org'>
-                            <img SRC="<c:url value='/images/apidb_logo.gif'/>" height="35" text='APIDB' BORDER=0>
+                            <img SRC="<c:url value='${portalLogo}'/>" height="35" text='EUPATHDB' BORDER=0>
                         </a>
                     </td>
                     <td valign="middle" align="left">
-                        <a href="http://www.apidb.org">ApiDB.org</a>
+                        <a href="http://eupathdb.org"><i>EuPathDB.org</i></a>
                     </td>
                 </tr>
             </table>

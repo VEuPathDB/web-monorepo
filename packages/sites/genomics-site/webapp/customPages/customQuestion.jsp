@@ -259,7 +259,7 @@ function showParamGroup(group, isShow)
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
 <%-- get the attributions of the question if not ApiDB --%>
-<c:if test = "${project != 'ApiDB'}">
+<c:if test = "${project != 'EuPathDB'}">
 <hr>
 <%-- get the property list map of the question --%>
 <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>

@@ -19,11 +19,8 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<%--
-<c:set var="ACPT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'api')    }"     />
---%>
-<c:set var="API" value="${ fn:containsIgnoreCase(modelName, 'api')    }"     />
-<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto')    }"     />
+<c:set var="PORTAL" value="${ fn:containsIgnoreCase(modelName, 'api')    }"     />
+<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')   }"     />
 
 <%--------------------------------------------------------------------%>
 
@@ -33,13 +30,15 @@
 
 
 
-<c:if test="${API}">
+<c:if test="${PORTAL}">
 <tr><td colspan="3">  
     <div class="smallBlack" align="middle">
 	<b>Query Availability in Organism Specific Sites:</b> &nbsp;&nbsp; &nbsp;
-	<img src='<c:url value="/images/cryptodb_letter.gif" />' border='0' alt='cryptodb' /> = CryptoDB &nbsp;&nbsp;
-	<img src='<c:url value="/images/plasmodb_letter.gif" />' border='0' alt='plasmodb' /> = PlasmoDB &nbsp;&nbsp;
-	<img src='<c:url value="/images/toxodb_letter.jpg" />' border='0' alt='toxodb' /> = ToxoDB &nbsp; &nbsp;
+	<img src='<c:url value="/images/cryptodb_letter.gif" />' border='0' alt='crypto' /> = CryptoDB &nbsp;&nbsp;
+	<img src='<c:url value="/images/plasmodb_letter.gif" />' border='0' alt='plasmo' /> = PlasmoDB &nbsp;&nbsp;
+	<img src='<c:url value="/images/toxodb_letter.jpg" />' border='0' alt='toxo' /> = ToxoDB &nbsp; &nbsp;
+	<img src='<c:url value="/images/giardiadb_letter.jpg" />' border='0' alt='giardia' /> = GiardiaDB &nbsp; &nbsp;
+	<img src='<c:url value="/images/trichdb_letter.jpg" />' border='0' alt='trich' /> = TrichDB &nbsp; &nbsp;
 	</div>
 </td></tr>
 </c:if>
@@ -49,7 +48,7 @@
 <tr><td colspan="3">  
     <div class="smallBlack" align="middle">
 	<b>Query Availability: </b> &nbsp; click on &nbsp; 
-	<img src='<c:url value="/images/apidb_letter.gif" />' border='0' alt='apidb'/> &nbsp; to access a query in <b><a href="http://apidb.org">ApiDB.org</a></b>
+	<img src='<c:url value="/images/apidb_letter.gif" />' border='0' alt='eupathdb'/> &nbsp; to access a query in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>
 	</div>
 </td></tr>
 </c:if>
@@ -58,7 +57,7 @@
 <%--  All Gene Queries  --%>
 <tr class="headerRow"><td colspan="4" align="center"><b>Identify Genes by:</b></td></tr>
 
-<%-- api does not need currently these queries in front page (home) --%>
+<%-- portal does not need currently these queries in front page (home) --%>
 <c:if test="${COMPONENT || from != 'home'}">
 <tr><td colspan="3" align="center">
  	<site:quickSearch/>
@@ -73,7 +72,7 @@
 
 <%--  Isolates  --%>
 
-<c:if test = "${project == 'CryptoDB' || project == 'ApiDB'}">
+<c:if test = "${project == 'CryptoDB' || project == 'EuPathDB'}">
   <tr class="headerRow"><td colspan="4" align="center"><b>Identify Isolates by:</b></td></tr>
   <tr><td colspan="3" align="center">
 	<site:queryGridIsolates/> 
