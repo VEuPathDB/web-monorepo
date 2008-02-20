@@ -60,7 +60,7 @@
         <description>  
         ${item}
         &lt;br /&gt;
-        ${date} 
+        <fmt:formatDate value="${pdate}" pattern="d MMMM yyyy"/>
         </description>
         <pubDate>${fdate}</pubDate>
     </item>
