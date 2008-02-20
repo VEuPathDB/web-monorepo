@@ -21,8 +21,8 @@
       <c:when test = "${project == 'CryptoDB'}">
              <c:set var="title" value="CryptoDB: The Cryptosporidium genome resource"/>
       </c:when>
-      <c:when test = "${project == 'ApiDB'}">
-             <c:set var="title" value="ApiDB: The Apicomplexan genome resource"/>
+      <c:when test = "${project == 'EuPathDB'}">
+             <c:set var="title" value="EuPathDB: The Eukariotic Pathogen genome resource"/>
       </c:when>
   </c:choose>
 
