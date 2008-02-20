@@ -39,7 +39,7 @@
 /><c:set
     var="dateStringPattern" value="dd MMMM yyyy HH:mm"
 /><?xml version="1.0" encoding="UTF-8"?>
-<rss version="0.91">
+<rss version="2.0">
 <channel>
     <title>${xmlAnswer.question.displayName}</title>
     <link>${linkTmpl}</link>
