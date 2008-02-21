@@ -32,21 +32,23 @@
 <c:set var="T" value="" />
 <c:set var="C" value="" />
 <c:set var="A" value="" />
+<c:set var="G" value="" />
+<c:set var="Tr" value="" />
 
 <c:set var="plasmoRoot" value="http://www.plasmodb.org/plasmo/" />
 <c:set var="toxoRoot" value="http://www.toxodb.org/toxo/" />
 <c:set var="cryptoRoot" value="http://www.cryptodb.org/cryptodb/" />
-<c:set var="apiRoot" value="http://www.apidb.org/apidb/" />
+<c:set var="apiRoot" value="http://www.eupathdb.org/eupathdb/" />
+<c:set var="giardiaRoot" value="http://www.giardiadb.org/giardiadb/" />
+<c:set var="trichRoot" value="http://www.trichdb.org/trichdb/" />
 
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
-<%--
-<c:set var="ACPT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'api')    }"     />
---%>
+
 <c:set var="API" value="${fn:containsIgnoreCase(modelName, 'api')    }"     />
-<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto')     }"     />
+<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')    }"     />
 
 <c:choose>
 <c:when test="${qname == 'UnifiedBlast'}">
@@ -61,7 +63,19 @@
 
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
-  <c:if test="${token eq 'P'}">
+  <c:if test="${token eq 'G'}">
+        <c:set var="G_image">
+            <c:url value="/images/giardiadb_letter.gif" />
+        </c:set>
+        <c:set var="G" value="<a href='${giardiaRoot}${link}'><img src='${G_image}' border='0' alt='giardiadb' /></a>" />
+  </c:if>
+<c:if test="${token eq 'Tr'}">
+        <c:set var="Tr_image">
+            <c:url value="/images/trichdb_letter.gif" />
+        </c:set>
+        <c:set var="Tr" value="<a href='${trichRoot}${link}'><img src='${Tr_image}' border='0' alt='trichdb' /></a>" />
+  </c:if>
+<c:if test="${token eq 'P'}">
         <c:set var="P_image">
             <c:url value="/images/plasmodb_letter.gif" />
         </c:set>
@@ -69,7 +83,7 @@
   </c:if>
   <c:if test="${token eq 'T'}">
         <c:set var="T_image">
-            <c:url value="/images/toxodb_letter.jpg" />
+            <c:url value="/images/toxodb_letter.gif" />
         </c:set>
         <c:set var="T" value="<a href='${toxoRoot}${link}'><img src='${T_image}' border='0' alt='toxodb' /></a>" />
   </c:if>
@@ -152,8 +166,10 @@
 <tr nowrap>
 
 	<td width="14">${C}</td>
+	<td width="14">${G}</td>	
 	<td width="14">${P}</td>	
 	<td width="14">${T}</td>
+	<td width="14">${Tr}</td>
 </tr>
 </table>
 </c:if>
