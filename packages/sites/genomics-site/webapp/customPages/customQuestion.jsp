@@ -105,9 +105,9 @@ function showParamGroup(group, isShow)
             <div style="background: #DEDEDE">
                 <hr><b>${groupName}</b>
                 <span id="${group.name}_link">
-                    <a href="#" onclick="return showParamGroup('${group.name}', 'yes');">Show</a>
+                    <a href="#" onclick="return showParamGroup('${group.name}', 'no');">Hide</a>
                 </span>
-                <div id="${group.name}_area" style="display:none">
+                <div id="${group.name}_area" style="display:block">
                 <table border="0">
                     <tr><td colspan="4">${group.description}</td></tr>
         </c:when>
