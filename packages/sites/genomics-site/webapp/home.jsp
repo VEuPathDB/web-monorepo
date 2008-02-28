@@ -3,6 +3,11 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
+<fmt:setLocale value="en-US"/><%-- req. for date parsing when client browser (e.g.
+ curl) doesn't send locale --%>
 
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -110,7 +115,12 @@
     <c:forEach items="${newsAnswer.recordInstances}" var="record">
     <c:if test="${i <= 4}">
       <c:set var="attrs" value="${record.attributesMap}"/>
-      <li><b>${attrs['date']}</b>
+      
+      <fmt:parseDate pattern="${dateStringPattern}" 
+                     var="pdate" value="${attrs['date']}"/> 
+      <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
+
+      <li><b>${fdate}</b>
              <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News#newsItem${i}"/>">
                ${attrs['headline']}
              </a></li>
