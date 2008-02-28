@@ -7,6 +7,9 @@
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+
 <%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="headElement">
   <script src="js/blast.js" type="text/javascript"></script>
@@ -151,13 +154,18 @@
 <%-- display description for wdkQuestion --%>
 <p><b>Query description:</b> <jsp:getProperty name="wdkQuestion" property="description"/></p>
 
-<%-- get the attributions of the question --%>
+
+<%-- get the attributions of the question if not ApiDB --%>
+<c:if test = "${project != 'ApiDB'}">
+
 <hr>
 <%-- get the property list map of the question --%>
 <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
 
 <%-- display the question specific attribution list --%>
 <site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+
+</c:if>
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 
