@@ -195,7 +195,7 @@ Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via
 
      	  
           <div class="small" bgcolor="#aa0000">Here is an 
-	  <a href="http://roos-compbio2.bio.upenn.edu/toxo/cgi-bin/gbrowse/gbtoxo_amit/" target='new'> 
+	  <a href="http://ancillary.toxodb.org/cgi-bin/gbrowse/ancillary/" target='new'> 
  	  <b>Ancillary GBrowse Site for <i>T. gondii</i></b></a>. 
 	  <b>Please NOTE</b>: This site is outside of ToxoDB; it includes  additional data sets that will be 
 	   incorporated in ToxoDB eventually.</div>
