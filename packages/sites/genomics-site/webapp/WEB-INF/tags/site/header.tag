@@ -121,7 +121,7 @@
     <td align="center" valign="middle">
     <c:choose>
         <c:when test="${isBannerImage}">
-            <img src="<c:url value="${banner}"/>" alt="Page banner"/> 
+            <img src="${banner}" alt="Page banner"/> 
         </c:when>
         <c:otherwise>
             <c:choose>
