@@ -109,10 +109,10 @@
     <td rowspan="2" width="162" align="center"><a href="<c:url value="/home.jsp" />">
         <c:choose>
           <c:when test="${ division == 'home'}">
-            <img src="<c:url value="${logo}" />" border="0" alt="Site logo"/></a>
+            <img src="${logo}" border="0" alt="Site logo"/></a>
           </c:when>
           <c:otherwise>
-            <img src="<c:url value="${logo}" />" border="0" alt="Site logo"/></a>
+            <img src="${logo}" border="0" alt="Site logo"/></a>
           </c:otherwise>
         </c:choose>
     </td>
