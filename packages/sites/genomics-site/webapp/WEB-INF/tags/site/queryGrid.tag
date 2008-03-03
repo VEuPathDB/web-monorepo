@@ -35,9 +35,9 @@
     <div class="smallBlack" align="middle">
 	<b>Query Availability in Organism Specific Sites:</b> &nbsp;&nbsp; &nbsp;
 	<img src='<c:url value="/images/cryptodb_letter.gif" />' border='0' alt='crypto' /> = CryptoDB &nbsp;&nbsp;
+	<img src='<c:url value="/images/giardiadb_letter.gif" />' border='0' alt='giardia' /> = GiardiaDB &nbsp; &nbsp;
 	<img src='<c:url value="/images/plasmodb_letter.gif" />' border='0' alt='plasmo' /> = PlasmoDB &nbsp;&nbsp;
 	<img src='<c:url value="/images/toxodb_letter.gif" />' border='0' alt='toxo' /> = ToxoDB &nbsp; &nbsp;
-	<img src='<c:url value="/images/giardiadb_letter.gif" />' border='0' alt='giardia' /> = GiardiaDB &nbsp; &nbsp;
 	<img src='<c:url value="/images/trichdb_letter.gif" />' border='0' alt='trich' /> = TrichDB &nbsp; &nbsp;
 	</div>
 </td></tr>

@@ -52,13 +52,13 @@
                 <tr class="queryGridTitle"><td colspan="3"><a href="#Other%20Attributes">Other Attributes</a>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTextSearch" linktext="Keyword"  existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTextSearch" linktext="Keyword"  existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GeneByLocusTag" linktext="List of IDs"  existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GeneByLocusTag" linktext="List of IDs"  existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTaxon" linktext="Species" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTaxon" linktext="Species" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="Available Reagents" existsOn="A P"/>
@@ -76,10 +76,10 @@
                 <tr class="queryGridTitle"><td colspan="3"><a href="#Transcript%20Expression">Transcript Expression</a>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySageTag" linktext="SAGE Tag Evidence" existsOn="P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySageTag" linktext="SAGE Tag Evidence" existsOn="G P T"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A P T"/>
@@ -105,13 +105,13 @@
 
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMotifSearch" linktext="Protein Motif" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMotifSearch" linktext="Protein Motif" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByInterproDomain" linktext="Interpro/Pfam Domain" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByInterproDomain" linktext="Interpro/Pfam Domain" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST similarity" type="GENE" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST similarity" type="GENE" existsOn="A C G P T Tr"/>
                 </tr>
             </table>
         </td>
@@ -125,16 +125,16 @@
 
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMolecularWeight" linktext="Molecular Weight" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMolecularWeight" linktext="Molecular Weight" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByIsoelectricPoint" linktext="Isoelectric Point" existsOn="A P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByIsoelectricPoint" linktext="Isoelectric Point" existsOn="A G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByProteinStructure" linktext="Protein Structure" existsOn="A P"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByProteinStructure" linktext="Protein Structure" existsOn="A G P Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithEpitopes" linktext="Epitopes" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithEpitopes" linktext="Epitopes" existsOn="A C G P T"/>
                 </tr>
                 <tr>
             </table>
@@ -145,10 +145,10 @@
                 <tr class="queryGridTitle"><td colspan="3"><a href="#Putative%20Function">Putative Function</a>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByGoTerm" linktext="GO Term" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByGoTerm" linktext="GO Term" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC Number" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC Number" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMetabolicPathway" linktext="Metabolic Pathway" existsOn="A C P T"/>
@@ -167,10 +167,10 @@
                 <tr class="queryGridTitle"><td colspan="3"><a href="#Cellular%20Location">Cellular Location</a>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithSignalPeptide" linktext="Signal Peptide"  existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithSignalPeptide" linktext="Signal Peptide"  existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTransmembraneDomains" linktext="Transmembrane Domain" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTransmembraneDomains" linktext="Transmembrane Domain" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySubcellularLocalization" linktext="Organellar Compartment" existsOn="A P"/>
@@ -192,13 +192,13 @@
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesOrthologousToAGivenGene" linktext="Orthologs/Paralogs" existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOrthologPattern" linktext="Orthology Profile" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOrthologPattern" linktext="Orthology Profile" existsOn="A C G P T"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByPhyleticProfile" linktext="Homology Profile" existsOn="A P"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByPhylogeneticTree" linktext="Phylogenetic Tree" existsOn=""/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByPhylogeneticTree" linktext="Phylogenetic Tree" existsOn="G"/>
                 </tr>
             </table>
         </td>
@@ -218,190 +218,5 @@
 
  
     </tr>
-
-
-
-
-<%-- 
-<tr><td colspan="3"><hr style="color:#003366; ></td></tr>
---%>
-
-<%--
-
-<tr><td colspan="3"><hr></td></tr>
-
-    <tr>
-        <td valign="top" colspan="3">
-		<b>Identify Genomic Sequences Based On:</b>
-         </td>
-    </tr>
-
-
-
-    <tr>
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"  />
-                </tr>
-                <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="NA" linktext="DNA Sequence Motif" existsOn=""/>
-                </tr>
-            </table>
-        </td>
-
-
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="ID"  existsOn="A C P T"/>
-                </tr>
-                <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A P"/>
-                </tr>
-            </table>
-        </td>
-     </tr>
-
-<tr><td colspan="3"><hr></td></tr>
-
-     <tr>   
-        <td valign="top" colspan="3">
-		<b>Identify ESTs Based On:</b>
-        </td>
-    </tr>
-
-
-
-    <tr>
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
-                </tr>
-                <tr>
-                   <site:queryGridMakeUrl qset="EstQuestions" qname="EstsWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="C P T"/> 
-                </tr>
-            </table>
-        </td>
-
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                
-                <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"/>
-                </tr>
-                <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="NA" linktext="EST Sequence Motif" existsOn=""/>
-                </tr>
-            </table>
-        </td>
-
-        <td colspan="2" valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
-                <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLibrary" linktext="Library" existsOn="C P T"/>
-                </tr>
-                <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByTaxon" linktext="Species" existsOn=""/>
-                </tr>
-            </table>
-        </td>
-      </tr>
-
-<tr><td colspan="3"><hr></td></tr>
-
-     <tr>   
-        <td valign="top" colspan="3">
-		<b>Identify ORFs Based On:</b>
-        </td>
-    </tr>
-
-<tr><td></td></tr>
-
-    <tr>
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
-                </tr>
-
-            </table>
-        </td>
-
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF Sequence Motif" existsOn="A C"/>
-                </tr>
-            </table>
-        </td>
-
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByTaxon" linktext="Species" existsOn=""/>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsBySimilarity" linktext="BLAST Similarity" existsOn="A C P T"/>
-                </tr>
-
-            </table>
-        </td>
-        <td valign="top">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMassSpec" linktext="Mass Spec. Evidence" existsOn="C"/>
-            </tr>
-        </table>
-    </td>
-    </tr>
-
-
-
-<tr><td colspan="3"><hr></td></tr>
-
-     <tr>   
-        <td valign="top" colspan="3">
-		<b>Identify SNPs Based On:</b>
-        </td>
-    </tr>
-
-    <tr>
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                
-                <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByLocation" linktext="Chromosomal Location" existsOn="P T"/>
-                </tr>
-            </table>
-        </td>
-
-        <td valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                
-                <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="P T"/>
-                </tr>
-            </table>
-        </td>
-
-        <td colspan="2" valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByAlleleFrequency" linktext="AlleleFrequency" existsOn="P"/>
-                </tr>
-            </table>
-        </td>
-      </tr>
---%>
-
 
 </table>
