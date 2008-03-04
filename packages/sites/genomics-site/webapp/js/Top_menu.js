@@ -7,6 +7,10 @@
 
 function navigation_toggle(area,p_name)
 {
+	var IE = false;
+	if(navigator.appName == "Microsoft Internet Explorer")
+  	   IE = true;
+	
 	if(document.getElementById(area+"_area").style.display == "none")
 	{
 		
@@ -16,14 +20,21 @@ function navigation_toggle(area,p_name)
 				var sect_name = divs[i].id.substring(0,divs[i].id.indexOf('_area'));
 				document.getElementById(sect_name).className = "";
 				renameInputs(divs[i],'none');
-				Effect.toggle(divs[i].id,'slide',{duration: .5});
+				if(!IE)
+				    Effect.toggle(divs[i].id,'slide',{duration: .5});
+				else
+                                    document.getElementById(divs[i].id).style.display="none";
 			}
 		}
 	
 		var inputs = document.getElementById(area+'_area').getElementsByTagName('Input');
 		document.getElementById(area).className = "seled";
 		renameInputs(area+'_area','myMultiProp('+p_name+')');				
-		Effect.toggle(area+'_area','slide',{duration: .5});
+		if(!IE)
+		   Effect.toggle(area+'_area','slide',{duration: .5});
+		else
+                   document.getElementById(area+'_area').style.display="";
+              
 		return true;
 
 	}
@@ -56,4 +67,36 @@ function selectAll_None(area,val){
 		}
 	}
 }
- 
+
+function parseUrl(name){
+	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+ 	var regexS = "[\\?&]"+name+"=([^&#]*)";
+	var regex = new RegExp( regexS,"g" );
+	var res = new Array();
+	while (regex.lastIndex < window.location.href.length){
+	  var results = regex.exec( window.location.href );
+	  if( results != null )
+		res.push(results[1]);
+	  else
+		break;
+	}
+	if(res.length == 0)
+		return "";
+	else
+		return res;
+		
+}
+
+function isRevise(){
+	var inputs = document.getElementById('navigation').getElementsByTagName('Input');
+	var orgs = parseUrl('organism');
+	if(orgs != ""){
+	  for(var j=0;j<orgs.length;j++){
+	    org = orgs[j].replace('+',' ');
+	    for(var i=0;i<inputs.length;i++){
+		if(inputs[i].value == org)
+		    inputs[i].checked = true;
+	    }
+	  }	
+	}
+}
