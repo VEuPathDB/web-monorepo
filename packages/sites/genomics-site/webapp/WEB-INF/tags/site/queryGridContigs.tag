@@ -12,11 +12,11 @@
         <td width="50%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="Sequence ID"  existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="Sequence ID"  existsOn="A G C P T Tr"/>
                 </tr>
 
                  <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A G C P T Tr"/>
                 </tr>
             </table>
         </td>
@@ -27,7 +27,7 @@
         <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="SEQ" existsOn="A C P T"  />
+                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="SEQ" existsOn="A G C P T Tr"  />
                 </tr>
 
 

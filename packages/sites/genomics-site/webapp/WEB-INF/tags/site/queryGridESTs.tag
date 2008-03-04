@@ -12,14 +12,14 @@
         <td width="50%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstBySourceId" linktext="EST ID" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstBySourceId" linktext="EST ID" existsOn="A G C P T Tr"/>
                 </tr>
 
                 <tr>
-                   <site:queryGridMakeUrl qset="EstQuestions" qname="EstsWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="A C P T"/> 
+                   <site:queryGridMakeUrl qset="EstQuestions" qname="EstsWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="A G C P T Tr"/> 
                 </tr>
  <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLibrary" linktext="Library" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLibrary" linktext="Library" existsOn="A G C P T Tr"/>
                 </tr>
 
             </table>
@@ -30,13 +30,13 @@
         <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>
-                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="EST" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="EST" existsOn="A G C P T Tr"/>
                 </tr>
                  <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="NA" linktext="EST Motif" existsOn=""/>
                 </tr>           
 <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Chromosomal Location" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Chromosomal Location" existsOn="A G C P T Tr"/>
                 </tr>
 
             </table>

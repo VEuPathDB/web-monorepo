@@ -14,7 +14,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfByOrfId" linktext="ORF ID" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfByOrfId" linktext="ORF ID" existsOn="A G C P T Tr"/>
                 </tr>
 
 <tr>
@@ -36,13 +36,13 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 <tr>
-                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ORF" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ORF" existsOn="A G C P T Tr"/>
                 </tr>  
  <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF Motif" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF Motif" existsOn="A G C P T Tr"/>
                 </tr>
  <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Chromosomal Location" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Chromosomal Location" existsOn="A G C P T Tr"/>
                 </tr>
         	
 
