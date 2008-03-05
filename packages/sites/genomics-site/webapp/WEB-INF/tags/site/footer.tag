@@ -1,12 +1,35 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+
+<c:choose>
+
+<c:when test = "${project == 'EuPathDB'}">
+<%-- End Question Form Div
+     </div>
+--%>
+
+<%-- This closes the border div in the header --%>
+</div>
+
+<div  align="center"> 
+<div id="footer">&copy; 2008 The EuPath Project Team:: <a href="/">EuPathDB.org</a><br>  <a href="/a/help.jsp">Contact us</a>
+</div>
+</div>
+
+<%-- This closes the align div in the header --%>
+</div>
+
+
+</c:when>
+
+<c:otherwise>   <%-- code for all sites but EuPathDB --%>
+
 <%-- closing line opened in header: line with a sidebar (or empty space if "help" page) --%>
 </td>
 </tr>
-
-<c:set var="props" value="${applicationScope.wdkModel.properties}" />
-<c:set var="project" value="${props['PROJECT_ID']}" />
 
   <c:choose>
       <c:when test = "${project == 'ToxoDB'}">
@@ -18,15 +41,9 @@
 <c:when test = "${project == 'CryptoDB'}">
              <c:set var="logo" value="/images/oocyst_bg.gif"/>      
       </c:when>
-<%--
-      <c:when test = "${project == 'EuPathDB'}">
-             <c:set var="logo" value="/images/apidb_logo.gif"/>      
-      </c:when>
---%>
 
   </c:choose>
 
-<%--  <c:set var="portalLogo" value="/images/apidb_logo.gif"/>       --%>
 
 <%-- footer itself in a table (sidebar (rowspan=2) should stretch to cover footer)  --%>
 <%-- in question page we add the help lines --%>
@@ -67,9 +84,13 @@
   </TABLE>
 </c:if>
 
+
+<%-- moved to the EuPathDB section above --%>
+<%--  End Question Form Div
 <c:if test="${wdkModel.displayName eq 'ApiDB'}">
-     </div><!--End Question Form Div-->
+     </div>
 </c:if>
+--%>
 
   <table width="100%"  cellspacing="2" cellpadding="0">
    <tr><td colspan="4"><hr class="red"></td></tr>
@@ -122,5 +143,10 @@
 </tr>
 
 </table> <%-- TABLE opened in header.tag that includes sidebar and jsp page plus this footer --%>
+
+</c:otherwise> <%-- code for all sites but EuPathDB --%>
+</c:choose>
+
+
 
 </body></html>
