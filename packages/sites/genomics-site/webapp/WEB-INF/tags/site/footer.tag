@@ -4,12 +4,48 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<c:choose>
+<%--------------------------------------------------------------------%>
 
+<c:choose>
 <c:when test = "${project == 'EuPathDB'}">
-<%-- End Question Form Div
-     </div>
---%>
+
+<c:if test="${!empty helps}">
+  <BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+  <BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+
+  <TABLE cellpadding="0" width="100%" border="0" cellspacing="2">
+    <TR><TD bgcolor="#000000"><FONT size="+1" color="#ffffff">&nbsp;<B>Help</B></FONT></TD></TR>
+    <TR><TD>&nbsp;</TD></TR>
+  </TABLE>
+
+  <TABLE width="100%" border="0">
+
+      <!-- help for one form -->
+      <c:forEach items="${helps}" var="hlp">
+        <TR><TD valign="middle" bgcolor="#e0e0e0" align="left">
+              <FONT size="+0" color="#663333" face="helvetica,sans-serif">
+              <B>${hlp.key}</B></FONT></TD></TR>
+        <TR><TD><TABLE width="100%">
+
+                <!-- help for one param -->
+                <c:forEach items="${hlp.value}" var="hlpLn">
+                <TR><TD align="left"><B><A name="${hlpLn.key}"></A>${hlpLn.value.prompt}</B></TD>
+                    <TD align="right"><A href="#${hlp.key}">
+                        <IMG src='<c:url value="/images/fromHelp.jpg"/>' alt="Back To Form" border="0"></A>
+                    </TD></TR>
+                <TR><TD colspan="2">${hlpLn.value.help}</TD></TR>
+                <TR><TD colspan="2">&nbsp;</TD></TR>
+                </c:forEach>
+                </TABLE>
+            </TD></TR> 
+      </c:forEach>
+  </TABLE>
+</c:if>
+
+
+
+<%-- Not sure what this closes but seems necessary for the question page, otherwise the footer appears inside the border --%>
+</div>
 
 <%-- This closes the border div in the header --%>
 </div>
@@ -23,8 +59,10 @@
 <%-- This closes the align div in the header --%>
 </div>
 
-
 </c:when>
+
+<%--------------------------------------------------------------------%>
+
 
 <c:otherwise>   <%-- code for all sites but EuPathDB --%>
 
