@@ -47,7 +47,7 @@
             </table>
         </td>
 
-       <td  valign="top">
+       <td  width="33%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="queryGridTitle"><td colspan="3">Other Attributes
                 </tr>
@@ -99,6 +99,7 @@
                 </tr>
             </table>
         </td>
+
 <td valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="queryGridTitle"><td colspan="3">Similarity/Pattern
