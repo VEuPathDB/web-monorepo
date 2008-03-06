@@ -28,13 +28,20 @@
               description="GENE,SEQ,ORF or EST"
 %>
 
-<c:set var="P" value="" />
-<c:set var="T" value="" />
-<c:set var="C" value="" />
-<c:set var="A" value="" />
-<c:set var="G" value="" />
-<c:set var="Tr" value="" />
-<c:set var="E" value="" />
+
+<c:set var="E_image">
+   <c:url value="/images/empty_space.gif" /> 
+</c:set>
+<c:set var="E" value="<img src='${E_image}' border='0' alt='' />" />
+ 
+
+<c:set var="P" value="${E}" />
+<c:set var="T" value="${E}" />
+<c:set var="C" value="${E}" />
+<c:set var="A" value="${E}" />
+<c:set var="G" value="${E}" />
+<c:set var="Tr" value="${E}" />
+
 
 
 <c:set var="plasmoRoot" value="http://www.plasmodb.org/plasmo/" />
@@ -65,12 +72,7 @@
 
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
-  <c:if test="${token eq 'E'}">
-        <c:set var="E_image">
-            <c:url value="/images/empty_space.gif" />
-        </c:set>
-        <c:set var="E" value="<img src='${E_image}' border='0' alt='' />" />
-  </c:if>
+  
   <c:if test="${token eq 'G'}">
         <c:set var="G_image">
             <c:url value="/images/giardiadb_letter.gif" />
