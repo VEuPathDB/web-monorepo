@@ -7,7 +7,7 @@
 
 <!-- get wdkModel name to display as page header -->
 <site:header title="${site}.org :: Support"
-                 banner="${site} Support"
+                 banner="Support"
                  parentDivision="${site}"
                  parentUrl="/home.jsp"
                  divisionName="Generic"
