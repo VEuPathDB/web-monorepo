@@ -100,7 +100,7 @@
   <%-- an individual param (can not use fullName, w/ '.', for mapped props) 
   <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td>--%>
     
-  <%-- choose between flatVocabParam and straight text or number param --%>
+  <%-- choose between enum param and straight text or number param --%>
   <c:choose>
     <c:when test="${pNam eq 'domain_database'}">
       <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
@@ -134,17 +134,12 @@
 				<site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
 		    </td> </tr></table></td><td valign="top" align="center"><table border="0">
         </c:when>
-        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
-          <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
-            <site:flatVocabParamInput qp="${qP}" />
-          </td>
-        </c:when>
         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
           <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
-            <site:enumParamInput qp="${qP}" />
+            <wdk:enumParamInput qp="${qP}" />
           </td>
         </c:when>
-        <c:otherwise>  <%-- not flatvocab --%>
+        <c:otherwise>  <%-- not enum param --%>
           <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td><c:choose>
                   <c:when test="${isReadonly}">
                       <bean:write name="qForm" property="myProp(${pNam})"/>

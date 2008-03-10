@@ -21,9 +21,6 @@
 <c:set var="displayType" value="${qP.displayType}"/>
 <c:set var="vocabArray" value=""/>
 <%--<c:choose>
-   <c:when test="${qp.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
-      <c:set var="vocabArray" valuse="qP.vocab"/>
-   </c:when>
    <c:when test="${qp.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
       <c:set var="vocabArray" valuse="qP."/>
    </c:when>

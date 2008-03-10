@@ -94,16 +94,11 @@
     </c:when>
     <c:otherwise> <%-- not BlastDatabaseType --%>
     
-      <%-- choose between flatVocabParam and straight text or number param --%>
+      <%-- choose between enum param and straight text or number param --%>
       <c:choose>
-        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.FlatVocabParamBean'}">
-          <td>
-            <site:flatVocabParamInput qp="${qP}" />
-          </td>
-        </c:when>
         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
           <td>
-            <site:enumParamInput qp="${qP}" />
+            <wdk:enumParamInput qp="${qP}" />
           </td>
         </c:when>
         <c:otherwise>
