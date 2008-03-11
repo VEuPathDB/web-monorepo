@@ -77,10 +77,15 @@
       <c:when test = "${project == 'PlasmoDB'}">
              <c:set var="logo" value="/images/plasmodb_logo.gif"/>      
       </c:when>
-<c:when test = "${project == 'CryptoDB'}">
+      <c:when test = "${project == 'CryptoDB'}">
              <c:set var="logo" value="/images/oocyst_bg.gif"/>      
       </c:when>
-
+      <c:when test = "${project == 'GiardiaDB'}">
+             <c:set var="logo" value="/images/Mancuso1green2_blackbg_rotated_scale100.gif"/>      
+      </c:when>
+      <c:when test = "${project == 'TrichDB'}">
+             <c:set var="logo" value="/images/600dpi_edit_auto_cropped_round_scale120.jpg"/>      
+      </c:when>
   </c:choose>
 
 
