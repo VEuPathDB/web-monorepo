@@ -151,7 +151,7 @@ function showParamGroup(group, isShow)
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
                     <c:choose>
-                        <c:when test="${fn:contains(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
+                        <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
                             <c:set var="hasOrganism" value="true"/>
                             <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5">
                                 <table border="0">
@@ -166,6 +166,8 @@ function showParamGroup(group, isShow)
                                     </tr>
                                 </table>
                              </td>
+							 <td valign="top" align="center">
+								<table border="0">
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
@@ -204,7 +206,7 @@ function showParamGroup(group, isShow)
                             </c:choose>
                         </c:otherwise>
                     </c:choose>
-                    <c:if test="${pNam != 'organism' && wdkModel.displayName eq 'ApiDB'}">
+                    <c:if test="${!fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td valign="top" width="50" nowrap>
                         <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
