@@ -18,7 +18,6 @@
     <c:set var="originUrl" value="${header['referer']}" scope="request"/>
   </c:otherwise>
 </c:choose>
-<hr>
 <c:choose>
   <c:when test="${param.refererUrl != null}">
     <c:set var="refererUrl" value="${param.refererUrl}" scope="request"/>
@@ -41,13 +40,13 @@
 
 <p>
 
-<table width="30%" align="left" border="1">
+<!--<table width="30%" align="left" border="1">
   <tr>
-    <td>
+    <td>-->
     <site:login/>
-    </td>
+   <!-- </td>
   </tr>
-</table>
+</table>-->
 
 </body>
 </html>
