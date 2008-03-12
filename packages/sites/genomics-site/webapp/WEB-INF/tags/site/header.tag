@@ -1,51 +1,42 @@
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
 <%@ attribute name="title"
               description="Value to appear in page's title"
 %>
-
 <%@ attribute name="banner"
-              required="false"
+              required="true"
               description="Value to appear at top of page"
-%>
-
-<%@ attribute name="bannerPreformatted"
-              required="false"
-              description="Value to appear at top of page"
-%>
-
-<%@ attribute name="logo"
-              required="false"
-              description="relative url for logo to display, or no logo if set to 'none'"
-%>
-
-<%@ attribute name="parentDivision"
-              required="false"
-%>
-
-<%@ attribute name="parentUrl"
-              required="false"
-%>
-
-<%@ attribute name="divisionName"
-              required="false"
-%>
-
-<%@ attribute name="division"
-              required="false"
 %>
 
 <%@ attribute name="isBannerImage"
               required="false"
+              description="flag to indicate whether banner is referring to graphics"
 %>
 
 <%@ attribute name="bannerSuperScript"
               required="false"
+              description="additional banner part, e.g. release & release date"
+%>
+
+<%@ attribute name="parentDivision"
+              required="false"
+              description="context of page for parent page in the whole website"
+%>
+
+<%@ attribute name="parentUrl"
+              required="false"
+              description="URL for parent page"
+%>
+
+<%@ attribute name="divisionName"
+              required="false"
+              description="context of page in the whole website"
+%>
+
+<%@ attribute name="division"
+              required="false"
+              description="context of page in the whole website"
 %>
 
 <%@ attribute name="summary"
@@ -63,364 +54,206 @@
               description="additional body elements"
 %>
 
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 
-<head>
 
-  <title><c:out value="${title}" default="${banner}" /></title>
- <link rel="stylesheet" href="<c:url value='/misc/style.css' />" type="text/css"> 
-  <link rel="stylesheet" href="<c:url value='/misc/sequence.css' />" type="text/css">
-  <link rel="stylesheet" href="/assets/css/main.css" type="text/css">
-  <link rel="stylesheet" href="/assets/css/main2.css" type="text/css">
+<head>
+  <title>
+    <c:out value="${title}" default="${banner}" />
+  </title>
+
+ <c:set var="project" value="${wdkModel.name}"/>
+<c:if test = "${project == 'PlasmoDB'}">
+   <c:set var="stylesheet" value="/misc/plasmodb_style.css"/>
+   <c:set var="logo" value="/images/plasmodb_logo.gif"/>
+   <c:set var="sidebarBgColor" value="#dfdfef"/>
+</c:if>
+<c:if test = "${project == 'ToxoDB'}">
+   <c:set var="stylesheet" value="/misc/toxodb_style.css"/>
+   <c:set var="logo" value="/images/toxodb_logo-rotated.jpg"/>
+   <c:set var="sidebarBgColor" value="white"/>
+</c:if>
+ <link rel="StyleSheet" href="<c:url value="${stylesheet}" />" type="text/css">
+
+  <!--link type="text/css" rel="StyleSheet" href='<c:url value="/slider/css/winclassic.css"/>'-->
+  <!--link rel="StyleSheet" href="<c:url value="/misc/custom-slider.css" />" type="text/css"-->
+
+  <!--script type="text/javascript" src='<c:url value="/slider/js/range.js"/>'></script-->
+  <!--script type="text/javascript" src='<c:url value="/slider/js/timer.js"/>'></script-->
+  <!--script type="text/javascript" src='<c:url value="/slider/js/slider.js"/>'></script-->
   <script type="text/javascript" src='<c:url value="/js/api.js"/>'></script>
-  <script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
-  <script type='text/javascript' src='<c:url value="/js/overlib_anchor.js"/>'></script>
+<script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
   <script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
 
-<%-- unused 
-<script language="javascript" src="/js/overlib_crossframe.js"></script>
-<script language="javascript" src="/js/overlib_cssstyle.js"></script>
-<script language="javascript" src="/js/overlib_exclusive.js"></script>
-<script language="javascript" src="/js/overlib_followscroll.js"></script>
-<script language="javascript" src="/js/overlib_hideform.js"></script>
-<script language="javascript" src="/js/overlib_shadow.js"></script>
-<script language="javascript" src="/js/overlib_centerpopup.js"></script>
---%>
-
   ${headElement}
-<script language="JavaScript" type="text/JavaScript">
-<!--
-function MM_reloadPage(init) {  //reloads the window if Nav4 resized
-  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
-    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
-  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
-}
-MM_reloadPage(true);
-
-function MM_preloadImages() { //v3.0
-  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
-    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
-    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
-}
-
-function MM_swapImgRestore() { //v3.0
-  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
-}
-
-function MM_findObj(n, d) { //v4.01
-  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
-    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
-  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
-  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
-  if(!x && d.getElementById) x=d.getElementById(n); return x;
-}
-
-function MM_swapImage() { //v3.0
-  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
-   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
-}
-//-->
-</script>
 </head>
 
-<%--
-<body onLoad="MM_preloadImages('/assets/images/menu_home2.gif','/assets/images/menu_queryhist2.gif','/assets/images/menu_data2.gif','/assets/images/menu_dl2.gif','/assets/images/menu_contact2.gif','/assets/images/menu_allqueries2.gif')">
---%>
-<body>
+<body ${bodyElement}>
 
-<%-- query history count --%>
-<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-<c:choose>
-<c:when test="${wdkUser.historyCount == null}">
-<c:set var="count" value="0"/>
-</c:when>
-<c:otherwise>
-<c:set var="count" value="${wdkUser.historyCount}"/>
-</c:otherwise>
-</c:choose>
-
-<%-- added for overLIB --%>
-<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
-
-<%-- NEW LOOK --%> <%-- Closing is in footer.tag --%>
-<div align="center">
-
-<%------- DECISION TREE --------%>
-<c:choose>
-<c:when test="${division eq 'none'}">
-</c:when>
-
-<c:otherwise>      <%-- THREE CASES: FRONT PAGE, ALL SITES and REST --%>
-
-<%---------------%>
-
-
-<c:choose>
-
-<%-- FRONT PAGE --%>
-<c:when test="${division eq 'home'}">
-
-    <table width="90%"  border="0" cellspacing="0" cellpadding="0">
-    <tr>
-      <td width="435" rowspan="2" align="left" valign="top">
-      <img src="/assets/images/title.jpg" alt="EuPathDB: Eukaryotic Pathogens Database Resource" width="435" height="120" align="left"></td>
-      <td height="31" colspan="2" align="left" valign="middle"><div align="right"><site:requestURL/>
-		<site:loginRegister  division="${division}"/>&nbsp;</div></td>
-    </tr>
-    <tr>
-    <td colspan="2" align="left" valign="top"><table width="105" height="62"  border="0" align="right" cellpadding="0" cellspacing="0">
-    
-    <tr>
-      <td align="center" valign="middle" background="/assets/images/myquery_box2.jpg"><a href='<c:url value="/showQueryHistory.do"/>' class="white">My<br>Queries:<br>${count}</a></td>
-    </tr>
-  </table>
-    <span class="whitelrg_bld">Version 3.1</span><br>
-          <span class="white">December 12, 2007</span></td>
-      </tr>
-    </table>
-    
-    
-    <%-- OLD HEADER BELOW --%>
-    <%-- <table width="90%"  border="0" cellspacing="0" cellpadding="0">
-      <tr>
-      <td width="693" align="left" valign="top">
-          <img src="/assets/images/title.jpg" alt="EuPathDB: Eukaryotic Pathogens Database Resources" width="435" height="120" align="left"> 
-          <br><br>
-          <span class="whitelrg_bld">Version ${wdkModel.version}</span><br>
-          <span class="white">March 15, 2008</span> 
-      </td>
-
-      <td align="right" valign="top" >
-
- 	<table width="105" height="93"  border="0" cellpadding="0" cellspacing="0">
-        <tr>
-          <td height="31" align="center" valign="middle"><site:requestURL/>
-		<site:loginRegister  division="${division}"/></td>
-        </tr>
-        <tr>
-          <td height="62" align="center" valign="middle" background="/assets/images/myquery_box2.jpg">
-		<a href='<c:url value="/showQueryHistory.do"/>' class="white">My<br>Queries:<br>${count}</a></td>
-        </tr>
-        </table>
-
-      </td>
-      </tr>
-
-      <tr>
-        <td height="1"><img src="/assets/images/line.gif" width="693" height="1"></td>
-        <td  height="1"></td>
-      </tr>
-    </table> --%>
-
-<br>
-
-<%-- TOOLBAR --%>
-
-    <table width="80%"  border="0" align="center" cellpadding="0" cellspacing="0">
-      <tr>
-        <td width="28"><img src="/assets/images/menu_bar_lft.gif" name="Image1" width="28" height="28" id="Image1"></td>
-        <td background="/assets/images/menu_bar_cntr.gif">&nbsp;</td>
-        <td width="676" background="/assets/images/menu_bar_cntr.gif"><div align="center"><a href="/" onMouseOver="MM_swapImage('home','','/assets/images/menu_home2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_home1.gif" alt="Home" name="home" width="59" height="28" border="0" id="home"></a><a href="<c:url value='/queries_tools.jsp' />" onMouseOver="MM_swapImage('allqueries','','/assets/images/menu_allqueries2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_allqueries1.gif" alt="All Queries and Tools" name="allqueries" width="165" height="28" border="0" id="allqueries"></a><a href="<c:url value='/showQueryHistory.do' />" onmouseover="MM_swapImage('queryhist','','/assets/images/menu_queryhist2.gif',1)" onmouseout="MM_swapImgRestore();return nd()"><img src="/assets/images/menu_queryhist1.gif" alt="Query History" name="queryhist" width="117" height="28" border="0" id="queryhist"></a><a href="/static/sources.shtml" onMouseOver="MM_swapImage('data','','/assets/images/menu_data2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_data1.gif" alt="Data Sources" name="data" width="112" height="28" border="0" id="data"></a><a href="/common/downloads/" onMouseOver="MM_swapImage('dl','','/assets/images/menu_dl2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_dl1.gif" alt="Download Files" name="dl" width="125" height="28" border="0" id="dl"></a><a href="/a/help.jsp" target="_blank"  onClick="poptastic(this.href); return false;" onMouseOver="MM_swapImage('contact','','/assets/images/menu_contact2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_contact1.gif" alt="Contact Us" name="contact" width="96" height="28" border="0" id="contact"></a></div>
-        </td>
-        <td background="/assets/images/menu_bar_cntr.gif">&nbsp;</td>
-        <td width="28"><img src="/assets/images/menu_bar_rt.gif" width="28" height="28"></td>
-      </tr>
-      <tr>
-        <td width="28" height="10"></td>
-        <td height="10"></td>
-        <td width="676" height="10"><img src="/assets/images/line.gif" width="676" height="10"></td>
-        <td height="10"></td>
-        <td width="28" height="10"></td>
-      </tr>
-  </table>
-
-<%-- END OF TOOLBAR --%>
-
-<div id="toptext" class="Top_Alert_Red"><img src="/assets/images/Red_Check.gif" width="22" height="22" align="absmiddle"> Welcome to the newly expanded APIDB &mdash; new name, new organisms, same functionality.</div>
-
-
-<%-- Closing is in footer.tag --%>
-<div id="border">
-
-
-</c:when> <%-- division eq 'home' --%>
-<%-- END OF FRONT PAGE --%>
-
-<%------------------------------------------------------------------%>
-
-<c:when test="${divisionName eq 'allSites'}">
-
-<%-- THIS HEADER IS SIMILAR TO THE ONE USED BY STATIC PAGES IN HTML/INCLUDE/TOOLBAR.HTML --%>
-
-<%-- Closing is in footer.tag --%>
-<div id="border">
-
-<table width='80%' align='center' cellpadding='2' cellspacing='0' border='0'>
-<tr><td ALIGN="left" width="40%">
-
-<table align="left" border="0">
-<tr>
-   <td valign="top" width="10%" align="center"><a href="/">
-	<img SRC="/assets/images/eupathdb_titleonwhite.gif" BORDER=0 height=60 >
-        </a>
-   </td>
-   <td>&nbsp;</td>
-
- <td valign="top" align="left"><a href="http://cryptodb.org"><img border=0 src="/assets/images/dbcrypto.jpg"  height="70"></a></td>
-<td valign="top" align="left"><a href="http://giardiadb.org"><img border=0 src="/assets/images/dbgiardia.jpg"  height="70"></a></td>
-   <td valign="top" width="10%" align="center"><a href="http://plasmodb.org"><img border=0 src="/images/plasmoall.jpg" width="70" height="70"></a></td>
-   <td valign="top" align="left"><a href="http://toxodb.org"><img border=0 src="/images/toxoall.jpg"  height="70"></a></td>
-<td valign="top" align="left"><a href="http://trichdb.org"><img border=0 src="/assets/images/dbtrich.jpg"  height="70"></a></td>
-
-
-</tr>
-</table>
-
-
-<td  align="center" valign="middle"><b><font face="Arial,Helvetica" color="#003366" size="+3">Gene Metrics</font></b></td>
-<td align="right" width="10%">&nbsp;</td></tr>
-
-
-<tr><td colspan="3"><hr></td></tr>
-
-</table>
-
-
-
- 
+<c:set var="isHome" value="${ division == 'home' }"/>
+<c:set var="version" value="${wdkModel.version}"/>
 
 
 
 
-</c:when> <%-- divisionName eq 'allSites' --%>
-
-<%------------------------------------------------------------------%>
-
-<c:otherwise> <%-- all pages other than home and "static" --%>
 
 
-<table width="90%"  border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td width="203" rowspan="2" valign="top"><a href="/"><img src="/assets/images/title_small.jpg" alt="EuPathDB: Eukaryotic Pathogens Database Resource" width="203" height="120" border="0" align="left"></a></td>
-        <td height="31" colspan="2" align="center" valign="middle"><div align="right"><site:requestURL/>
-		<site:loginRegister  division="${division}"/>&nbsp;</div></td>
-      </tr>
-      <tr>
-        <td align="center" valign="top">
-        
-        <%-- TITLE --%>
-        
+<table width="100%" align="center" cellspacing="0" cellpadding="0" border="0">
+
+<tr valign="middle">
+
+<%-- logo spanning two rows: banner (image or text depending on page) and (if home) intro text  --%>
+<%-- logo size could vary when not in home --%>
+
+    <td rowspan="2" width="162" align="center"><a href="<c:url value="/home.jsp" />">
         <c:choose>
-                  <c:when test="${banner != null && bannerPreformatted == null}">
-                    <span class="titlesubpages">
-                    ${banner}
-                    </span>
-                  </c:when>
-                  <c:when test="${banner == null && bannerPreformatted != null}">
-                    ${bannerPreformatted}
-                  </c:when>
-                  <c:otherwise>
-                  </c:otherwise>
-                </c:choose>
-        
+          <c:when test="${ division == 'home'}">
+            <img src="${logo}" border="0" alt="Site logo"/></a>
+          </c:when>
+          <c:otherwise>
+            <img src="${logo}" border="0" alt="Site logo"/></a>
+          </c:otherwise>
+        </c:choose>
+    </td>
+
+<%-- banner  --%>
+    <td align="center" valign="middle">
+    <c:choose>
+        <c:when test="${isBannerImage}">
+            <img src="${banner}" alt="Page banner"/> 
+        </c:when>
+        <c:otherwise>
+            <c:choose>
+               <c:when test="${summary != null}">
+                  <h2>${banner}</h2>
+               </c:when>
+               <c:otherwise>
+                  <h1>${banner}</h1>
+               </c:otherwise>
+             </c:choose>
+        </c:otherwise>
+    </c:choose>
+    </td>
+
+
+
+<%-- Release number --%>
+    <td align="right" valign="down">
+<c:choose>
+    <c:when test="${bannerSuperScript != null}">
+        ${bannerSuperScript}&nbsp;&nbsp;&nbsp;
+    </c:when>
+    <%-- for pages other than home which do not use bannersuperscript (bigger font) --%>
+    <c:otherwise>
+         <b>Release ${version}&nbsp;&nbsp;&nbsp;</b>
+    </c:otherwise>
+ </c:choose>
+    </td>   
+ 
+</tr>
+
+<%-- intro text in home page, summary in record pages, or nothing in other pages --%>
+<c:choose>
+
+<c:when test="${ division == 'home'}">
+<tr>
+<td align="left" colspan="2">
+
+<c:if test = "${project == 'PlasmoDB'}">
+          <div class="small">
+          PlasmoDB.org hosts genomic and proteomic data (and more) for different species of the 
+	  parasitic eukaryote Plasmodium, the cause of Malaria. It brings together data provided by numerous laboratories worldwide (see the <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>">Data Sources</a> page), and adds its own data analysis.  Publications relying on  
+	  PlasmoDB should please <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">acknowledge</a>
+          the database developers
+          and the scientists who have made their data available. PlasmoDB is part of an NIH/NIAID
+          funded <a href="http://www.niaid.nih.gov/dmid/genomes/brc/default.htm">Bioinformatics Resource Center</a>
+          to provide <a href="http://apidb.org/">Apicomplexan Database Resources</a>.
+
+	  <br><br>
+Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via <a href="http://v4-4.plasmodb.org">PlasmoDB&nbsp;4.4</a>, and the results of PlasmoDB&nbsp;4.4 queries may be exported to PlasmoDB&nbsp;${version} (see <a href="http://v4-4.plasmodb.org/plasmodb/servlet/sv?page=history">PlasmoDB&nbsp;4.4 Query History</a>).
+          </div>
+
+         
+</c:if> 
+<c:if test = "${project == 'ToxoDB'}">
+
+        <div class="small" bgcolor="#aa0000">Welcome to ToxoDB!
+	 ToxoDB, the Toxoplasma gondii Genome resource, provides access to the  draft genome sequence of 
+	 the apicomplexan parasite <i>T. gondii</i> &nbsp; (ME49, GT1, VEG and RH (only Chr Ia and Chr Ib) strains).
+	 The whole genome shotgun sequence is generated by TIGR. 
+	 Publications exploiting ToxoDB should provide appropriate
+	 <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">acknowledgment</a>
+	 to the database developers and those scientists who have made their data available on this site.
+ 	 ToxoDB is part of an NIH/NIAID funded  Bioinformatics Resource Center 
+	 to provide <a href="http://apidb.org/">Apicomplexan Database Resources</a>.</div>
+
+	  
+          <div class="small" bgcolor="#aa0000">
+	   Features not yet available in ToxoDB ${version} may still be accessed via
+	    <a href="http://v3-0.toxodb.org/ToxoDB.shtml">ToxoDB 3.0</a>). </div>
+
+     	  
+          <div class="small" bgcolor="#aa0000">Here is an 
+	  <a href="http://ancillary.toxodb.org/cgi-bin/gbrowse/ancillary/" target='new'> 
+ 	  <b>Ancillary GBrowse Site for <i>T. gondii</i></b></a>. 
+	  <b>Please NOTE</b>: This site is outside of ToxoDB; it includes  additional data sets that will be 
+	   incorporated in ToxoDB eventually.</div>
+	
+
+
+</c:if> 
+
+<%-- colored box -- warnings and notices go here --%>
+<%--
+<div class="smallApiBlue">
+<font face="Arial,Helvetica" size="-1"  color="blue">
+&nbsp;&nbsp;As part of ongoing efforts to educate ApiDB users to take fullest advantage of database resources, we are pleased to announce the third annual ApiDB database workshop, scheduled for June 8-11, 2008. &nbsp;&nbsp;Please click <a href="http://apidb.org/workshop/2008/"><b>here</b></a> for further information.
+</font>
+</div>
+--%>
+
+</td>
+</tr>
+</c:when>
+
+<c:otherwise>
+<tr>
+       <td align="left" colspan="2">
+         <c:if test="${summary != null}">
+           ${summary}
+         </c:if>         
+       </td>
+
+<%-- saves some space setting Release above as in home page
+       <td align="right" valign="bottom" width="100">
+          <c:if test="${division != 'home'}">
+            <b>Release ${version}&nbsp;&nbsp;</b>
+          </c:if>
         </td>
-        <td width="203" align="right" valign="top" ><table width="105" height="62"  border="0" cellpadding="0" cellspacing="0">
-          <tr>
-            <td height="62" align="center" valign="middle" background="/assets/images/myquery_box2.jpg"><a href='<c:url value="/showQueryHistory.do"/>' class="white">My<br>Queries:<br>${count}</a></td>
-          </tr>
-        </table></td>
-      </tr>
-    </table>
+--%>
+</tr>
+</c:otherwise>
 
-  <%-- OLD HEADER BELOW --%>
-
-<%-- <table width="90%"  border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td width="203" valign="top">
-		<a href="/"><img src="/assets/images/title_small.jpg" alt="EuPathDB: Eukaryotic Pathogens Database Resources" width="203" height="120" border="0" align="left"></a>
-        </td>
-        <td align="center" valign="middle"> 
-
-		<c:choose>
-                  <c:when test="${banner != null && bannerPreformatted == null}">
-                    <b><font face="Arial,Helvetica" size="+3" color="#ffffff">
-                    ${banner}
-                    </font></b>
-                  </c:when>
-                  <c:when test="${banner == null && bannerPreformatted != null}">
-                    ${bannerPreformatted}
-                  </c:when>
-                  <c:otherwise>
-                  </c:otherwise>
-                </c:choose>
-
-        </td>
-        <td width="203" align="right" valign="top" >
-
-        <table width="105" height="93"  border="0" cellpadding="0" cellspacing="0">
-        <tr>
-          <td height="31" align="center" valign="middle"><site:requestURL/>
-		<site:loginRegister  division="${division}"/></td>
-        </tr>
-        <tr>
-          <td height="62" align="center" valign="middle" background="/assets/images/myquery_box2.jpg">
-		<a href='<c:url value="/showQueryHistory.do"/>' class="white">My<br>Queries:<br>${count}</a></td>
-        </tr>
-        </table>
-
-        </td>
-      </tr>
-
-      <tr>
-        <td height="1"><img src="/assets/images/line.gif" width="203" height="1"></td>
-        <td></td>
-        <td height="1"><img src="/assets/images/line.gif" width="203" height="1"></td>
-      </tr>
-</table> --%>
-
-
-<br>
-
-  <%-- TOOLBAR --%>
-
-    <table width="80%"  border="0" align="center" cellpadding="0" cellspacing="0">
-      <tr>
-        <td width="28"><img src="/assets/images/menu_bar_lft.gif" name="Image1" width="28" height="28" id="Image1"></td>
-        <td background="/assets/images/menu_bar_cntr.gif">&nbsp;</td>
-
- <td width="676" background="/assets/images/menu_bar_cntr.gif"><div align="center"><a href="/" onMouseOver="MM_swapImage('home','','/assets/images/menu_home2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_home1.gif" alt="Home" name="home" width="59" height="28" border="0" id="home"></a><a href="<c:url value='/queries_tools.jsp' />" onMouseOver="MM_swapImage('allqueries','','/assets/images/menu_allqueries2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_allqueries1.gif" alt="All Queries and Tools" name="allqueries" width="165" height="28" border="0" id="allqueries"></a><a href="<c:url value='/showQueryHistory.do' />" onmouseover="MM_swapImage('queryhist','','/assets/images/menu_queryhist2.gif',1)" onmouseout="MM_swapImgRestore();return nd()"><img src="/assets/images/menu_queryhist1.gif" alt="Query History" name="queryhist" width="117" height="28" border="0" id="queryhist"></a><a href="/static/sources.shtml" onMouseOver="MM_swapImage('data','','/assets/images/menu_data2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_data1.gif" alt="Data Sources" name="data" width="112" height="28" border="0" id="data"></a><a href="/common/downloads/" onMouseOver="MM_swapImage('dl','','/assets/images/menu_dl2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_dl1.gif" alt="Download Files" name="dl" width="125" height="28" border="0" id="dl"></a><a href="/a/help.jsp" target="_blank"  onClick="poptastic(this.href); return false;" onMouseOver="MM_swapImage('contact','','/assets/images/menu_contact2.gif',1)" onMouseOut="MM_swapImgRestore()"><img src="/assets/images/menu_contact1.gif" alt="Contact Us" name="contact" width="96" height="28" border="0" id="contact"></a></div>
-         </td>
-        <td background="/assets/images/menu_bar_cntr.gif">&nbsp;</td>
-        <td width="28"><img src="/assets/images/menu_bar_rt.gif" width="28" height="28"></td>
-      </tr>
-      <tr>
-        <td width="28" height="10"></td>
-        <td height="10"></td>
-        <td width="676" height="10"><img src="/assets/images/line.gif" width="676" height="10"></td>
-        <td height="10"></td>
-        <td width="28" height="10"></td>
-      </tr>
-  </table>
-
-<%-- END OF TOOLBAR --%>
-
-
-<%-- Closing is in footer.tag --%>
-<div id="border">
-
-
-</c:otherwise>  <%-- division is NOT home NEITHER divisionName is allsites --%>
 </c:choose>
 
-<%------------------------------------------------------------------%>
+</table>
 
 
+<%-- TABLE WITH sidebar and main page defined in the specific jsp --%>
+<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" >
+<tr>
 
-</c:otherwise>  <%-- division is NOT none --%>
-</c:choose>  
+<%-- sidebar space --%>
+<c:choose>
+          <c:when test="${ division != 'help'}">
+             <td rowspan="8" width="162" valign="top" bgcolor="${sidebarBgColor}"><site:sideNavBar division="${division}"/></td>
+          </c:when>
+          <c:otherwise>
+            <td rowspan="8"></td>
+          </c:otherwise>
+</c:choose>
 
 
-
+<%-- page itself, closed at footer.tag --%>
+<td valign="top">
