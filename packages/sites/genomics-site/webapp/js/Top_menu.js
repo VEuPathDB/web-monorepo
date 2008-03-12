@@ -8,7 +8,7 @@
 function navigation_toggle(area,p_name)
 {
 	var IE = false;
-	if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion <= 6)
+	if(navigator.appName == "Microsoft Internet Explorer")
   	   IE = true;
 	
 	if(document.getElementById(area+"_area").style.display == "none")
