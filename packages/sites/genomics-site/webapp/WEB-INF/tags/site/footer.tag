@@ -40,9 +40,10 @@
             </TD></TR> 
       </c:forEach>
   </TABLE>
+
 </c:if>
 
-
+<!-- DO NOT REMOVE THIS COMMENT USED BY AJAX PAGES -->
 
 <%-- Not sure what this closes but seems necessary for the question page, otherwise the footer appears inside the border --%>
 </div>

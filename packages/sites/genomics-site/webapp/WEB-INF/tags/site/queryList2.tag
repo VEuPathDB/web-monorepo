@@ -28,7 +28,7 @@ function writeData(page, div, quesName){
                                var desc = questionPage.substring(desc1, desc2+desc1);
 
  			       var help1 = questionPage.indexOf("<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>");
- 			       var help2 = questionPage.substring(help1).indexOf("</div><!--End Question Form Div-->");
+ 			       var help2 = questionPage.substring(help1).indexOf("<!-- DO NOT REMOVE THIS COMMENT USED BY AJAX PAGES -->");
                                var help = questionPage.substring(help1, help2+help1);
 
 
