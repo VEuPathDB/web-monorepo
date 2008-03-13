@@ -186,15 +186,18 @@
 <%-- display description for wdkQuestion --%>
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
-<%-- get the attributions of the question --%>
+
+<%-- get the attributions of the question if not ApiDB --%>
+<c:if test = "${project != 'EuPathDB'}">
 <hr>
-<%-- get the property list map of the question --%>
 <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
 
 <%-- display the question specific attribution list --%>
 <site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+</c:if>
 
-  </td>
+<%--  </td> --%>
+
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table>
