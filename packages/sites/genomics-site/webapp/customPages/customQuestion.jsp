@@ -172,7 +172,7 @@ function showParamGroup(group, isShow)
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
                             <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                            <td valign="top">
+                            <td align="left" valign="top">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
                         </c:when>
