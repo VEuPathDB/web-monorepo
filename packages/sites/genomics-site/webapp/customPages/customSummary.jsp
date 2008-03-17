@@ -145,6 +145,42 @@ function resetAttr() {
     }
 }
 
+function create_Portal_Record_Url(recordName, projectId, primaryKey, portal_url) {
+	//var portal_url = "";
+	if(portal_url.length == 0){
+		if(projectId == 'CryptoDB'){
+			portal_url = "http://www.cryptodb.org/cryptodb/showRecord.do?name=" + recordName + "&project_id=&primary_key=" + primaryKey;
+		} else if(projectId == 'PlasmoDB'){
+			portal_url = "http://www.plasmodb.org/plasmo/showRecord.do?name=" + recordName + "&project_id=&primary_key=" + primaryKey;
+		} else if(projectId == 'ToxoDB'){
+			portal_url = "http://www.toxodb.org/toxo/showRecord.do?name=" + recordName + "&project_id=&primary_key=" + primaryKey;
+		} else if(projectId == 'GiardiaDB'){
+			portal_url = "http://www.giardiadb.org/giardiadb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&primary_key=" + primaryKey;
+		} else if(projectId == 'TrichDB'){
+			portal_url = "http://www.trichdb.org/trichdb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&primary_key=" + 	primaryKey;
+		} else if(projectId == 'ApiDB'){
+			portal_url = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=" + primaryKey; 
+		}
+		window.location = portal_url;
+	} else {
+		recordName = parse_Url(portal_url, "name");
+		primaryKey = parse_Url(portal_url, "primary_key");
+		create_Portal_Record_Url(recordName,projectId,primaryKey,"");
+	} 
+}
+
+function parse_Url( url, parameter_name )
+{
+  parameter_name = parameter_name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+parameter_name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( url );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+}
+
 
 //-->
 </script>
@@ -492,45 +528,9 @@ function resetAttr() {
            <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
                
               <c:set value="${record.primaryKey}" var="primaryKey"/>
-              <c:choose>
-<c:when test = "${primaryKey.projectId == 'ApiDB'}">
-                  <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=${primaryKey.recordId}" 
-			>ApiDB:${primaryKey.recordId}</a>
-                </c:when>
-                <c:when test = "${primaryKey.projectId == 'CryptoDB'}">
-                  <a href="http://www.cryptodb.org/cryptodb/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}" 
-                     >CryptoDB:${primaryKey.recordId}</a>
-                </c:when>
-                <c:when test = "${primaryKey.projectId=='PlasmoDB'}" >
-                  <c:if test="${isContigRec}">
-                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
-                  </c:if>
-                  <a href="http://www.plasmodb.org/plasmo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  
-                     >PlasmoDB:${primaryKey.recordId}</a>
-                </c:when>
-                <c:when test = "${primaryKey.projectId=='ToxoDB'}" >
-                  <c:if test="${isContigRec}">
-                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
-                  </c:if>
-                  <a href="http://www.toxodb.org/toxo/showRecord.do?name=${recNam}&project_id=&primary_key=${primaryKey.recordId}"  
-			>ToxoDB:${primaryKey.recordId}</a>
-                </c:when>
-                <c:when test = "${primaryKey.projectId=='GiardiaDB'}" >
-                  <c:if test="${isContigRec}">
-                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
-                  </c:if>
-                  <a href="http://www.giardiadb.org/giardiadb/showRecord.do?name=${recNam}&project_id=GiardiaDB&primary_key=${primaryKey.recordId}"  
-			>GiardiaDB:${primaryKey.recordId}</a>
-                </c:when>
-                <c:when test = "${primaryKey.projectId=='TrichDB'}" >
-                  <c:if test="${isContigRec}">
-                    <c:set var="recNam" value="SequenceRecordClasses.SequenceRecordClass"/>
-                  </c:if>
-                  <a href="http://www.trichdb.org/trichdb/showRecord.do?name=${recNam}&project_id=TrichDB&primary_key=${primaryKey.recordId}"  
-			>TrichDB:${primaryKey.recordId}</a>
-                </c:when>
-              </c:choose>
-            
+              
+			  <a href="javascript:create_Portal_Record_Url('${recNam}', '${primaryKey.projectId}', '${primaryKey.recordId}','')">
+				${primaryKey.projectId}:${primaryKey.recordId}</a>
            </c:when>
 
            <c:when test = "${cryptoIsolatesQuestion}">
@@ -556,11 +556,18 @@ function resetAttr() {
 
           <!-- need to know if fieldVal should be hot linked -->
           <c:choose>
-            <c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
+			<c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
                <span style="color:gray;">N/A</span>
             </c:when>
             <c:when test="${recAttr.value.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
-              <a href="${recAttr.value.url}">${recAttr.value.visible}</a>
+              	<c:choose>
+				 <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+					<a href="javascript:create_Portal_Record_Url('','${record.primaryKey.projectId}','','${recAttr.value.url}')">${recAttr.value.visible}</a>
+	             </c:when>
+				 <c:otherwise>
+					<a href="${recAttr.value.url}">${recAttr.value.visible}</a>
+				 </c:otherwise>
+				</c:choose>
             </c:when>
             <c:otherwise>
               ${fieldVal}
