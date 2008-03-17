@@ -46,7 +46,7 @@
 	}
 </script>
 
-<table height="450" width="225"><tr><td valign="top">
+<table width="300"><tr><td valign="top">
 <div id="navigation">
 
 	<ul id="nav_list">
