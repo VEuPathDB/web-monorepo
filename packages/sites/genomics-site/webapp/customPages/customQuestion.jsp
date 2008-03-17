@@ -99,22 +99,22 @@ function showParamGroup(group, isShow)
     <c:set var="displayType" value="${group.displayType}" />
     <c:choose>
         <c:when test="${displayType eq 'empty'}">    
-            <table border="0">
+            <table border="0" width="100%">
         </c:when>
         <c:when test="${displayType eq 'ShowHide'}">
-            <div style="background: #DEDEDE">
+            <div style="background: #DEDEDE; text-align: center">
                 <hr><b>${groupName}</b>
                 <span id="${group.name}_link">
                     <a href="#" onclick="return showParamGroup('${group.name}', 'no');">Hide</a>
                 </span>
-                <div id="${group.name}_area" style="display:block">
+                <div id="${group.name}_area" style="display:block; text-align: left">
                 <table border="0">
                     <tr><td colspan="4">${group.description}</td></tr>
         </c:when>
         <c:otherwise>
             <hr><b>${groupName}</b><br>
             <div>${group.description}</div>
-            <table border="0">
+            <table border="0" width="100%">
         </c:otherwise>
     </c:choose>
     
