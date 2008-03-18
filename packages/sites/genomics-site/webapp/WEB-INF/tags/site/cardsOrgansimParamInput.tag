@@ -44,6 +44,7 @@
 </c:forEach>
 		navigation_toggle('${tLevel}','${pNam}');
 	}
+function noop(){}
 </script>
 
 <table width="300"><tr><td valign="top">
