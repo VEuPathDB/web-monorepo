@@ -55,7 +55,7 @@ function noop(){}
 	<c:forEach items="${portalsArr}" var="portal">
 		<c:set var="portalArr" value="${fn:split(portal,',')}" />
 		<c:set var="site" value="${fn:replace(portalArr[0],'\"','')}"/>
-		<li><c:if test="${!(v eq 0)}">&nbsp;&nbsp;&nbsp;&nbsp; </c:if><a id="${site}" onclick="navigation_toggle('${site}','${pNam}')" href="javascript:noop()">${site}</a>
+		<li><c:if test="${!(v eq 0)}">&nbsp;&nbsp;&nbsp;&nbsp; </c:if><a id="${site}" onclick="navigation_toggle('${site}','${pNam}')" href="javascript:var noop = 0">${site}</a>
 	</c:forEach>
 	</ul>
 
