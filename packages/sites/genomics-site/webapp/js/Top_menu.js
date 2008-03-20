@@ -40,6 +40,57 @@ function navigation_toggle(area,p_name)
 	}
 }
 
+
+function navigation_toggle_Color(area,p_name,sid)
+{
+	var IE = true;
+//	if(navigator.appName == "Microsoft Internet Explorer")
+//  	   IE = true;
+	
+	if(document.getElementById(area+"_area").style.display == "none")
+	{
+		
+		var divs = document.getElementById('navigation').getElementsByTagName('div');
+		for(var i=0;i<divs.length;i++){
+			if(divs[i].style.display=="") {
+				var sect_name = divs[i].id.substring(0,divs[i].id.indexOf('_area'));
+				document.getElementById(sect_name).className = "";
+				renameInputs(divs[i],'none');
+				if(!IE)
+				    Effect.toggle(divs[i].id,'slide',{duration: .5});
+				else
+                                    document.getElementById(divs[i].id).style.display="none";
+			}
+		}
+	
+		var inputs = document.getElementById(area+'_area').getElementsByTagName('Input');
+		document.getElementById(area).className = "seled";
+		renameInputs(area+'_area','myMultiProp('+p_name+')');
+		if(sid.length > 0)
+		changeSelectInput(sid,area+'_area');				
+		if(!IE)
+		   Effect.toggle(area+'_area','slide',{duration: .5});
+		else
+                   document.getElementById(area+'_area').style.display="";
+              
+		return true;
+
+	}
+}
+
+function changeSelectInput(selectId, area){
+	clearSelectLists(selectId);
+	var inputs = document.getElementById(area).getElementsByTagName('Input');
+	for(var v=0;v<loaded_libs.length;v++){
+		loaded_libs[v] = "";
+	}
+	for(var i=0;i<inputs.length;i++){
+		if(inputs[i].checked == true)
+			loadESTLibs(inputs[i].id, inputs[i].checked, selectId);
+	}
+	
+}
+
 function renameInputs(id,val){
 	if (typeof id == "string")
 		var inputs = document.getElementById(id).getElementsByTagName('Input');
@@ -50,12 +101,24 @@ function renameInputs(id,val){
 	}
 }
 
+function copySelectionColor(item,sid){
+	var inputs = document.getElementById('navigation').getElementsByTagName('Input');
+	for(var i=0;i<inputs.length;i++){
+		if(inputs[i].value == item.value){
+			inputs[i].checked = item.checked;
+			if(inputs[i].parentNode.parentNode.parentNode.id == 'Eukaryotic Pathogens_area'){
+				loadESTLibs(inputs[i].id,item.checked,sid);
+			}
+		}
+	}
+}
+
 function copySelection(item)
 {
 	var inputs = document.getElementById('navigation').getElementsByTagName('Input');
 	for(var i=0;i<inputs.length;i++){
 		if(inputs[i].value == item.value)
-			inputs[i].checked = item.checked;
+			inputs[i].checked = item.checked;	
 	}
 }
 
