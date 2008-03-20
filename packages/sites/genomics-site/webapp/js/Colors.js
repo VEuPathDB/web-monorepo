@@ -66,6 +66,7 @@ function fillSelectFromArray1(arr, id)
 	var offset = 0;
 //	var def = new Array();
 	var term;
+	var intern;
 	var sA = document.getElementById(id);
 	for(var i=0;i<arr.length;i++){
 	   var defArray = arr[i];
@@ -75,10 +76,11 @@ function fillSelectFromArray1(arr, id)
    	   if( ArrayLength != 0 ){
 		
 		for( var x = 0; x < ArrayLength; x++ ){
-			term = new String( defArray[x].firstChild.data );
+			term = new String( defArray[x].textContent );
+			intern = new String(defArray[x].attributes[0].valuexs );
 			var option = new Option();
 			option.text = term;
-			option.value = term;
+			option.value = intern;
 		//	option.style.color = whichColor(i);
 			if(indexArray[x] == 1) option.selected = "true";			
 
