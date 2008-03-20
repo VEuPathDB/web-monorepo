@@ -77,7 +77,7 @@ function fillSelectFromArray1(arr, id)
 		
 		for( var x = 0; x < ArrayLength; x++ ){
 			term = new String( defArray[x].textContent );
-			intern = new String(defArray[x].attributes[0].valuexs );
+			intern = new String(defArray[x].attributes[0].value );
 			var option = new Option();
 			option.text = term;
 			option.value = intern;
