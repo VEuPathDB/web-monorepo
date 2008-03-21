@@ -61,6 +61,9 @@ function fillArrays(){
 	}
 }
 	
+
+
+
 function fillSelectFromArray1(arr, id)
 {
 	var offset = 0;
@@ -76,11 +79,14 @@ function fillSelectFromArray1(arr, id)
    	   if( ArrayLength != 0 ){
 		
 		for( var x = 0; x < ArrayLength; x++ ){
-			term = new String( defArray[x].textContent );
+			term = new String( GetText(defArray[x]));
 			intern = new String(defArray[x].attributes[0].value );
 			var option = new Option();
 			option.text = term;
-			option.value = intern;
+			if(query == "geneParams.ms_assay")
+				option.value = intern;
+			else
+				option.value = term;
 		//	option.style.color = whichColor(i);
 			if(indexArray[x] == 1) option.selected = "true";			
 
