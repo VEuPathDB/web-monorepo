@@ -279,6 +279,8 @@ function reviseBooleanQuery(type, expression) {
             <div id="input_${historyId}" style="display:none"></div>
         </td>
         <td align='right' onmouseover="hideAnyName()" nowrap>${history.estimateSize}</td>
+
+<%--
         <c:if test="${isGeneRec && showOrthoLink}">
            
            <td nowrap>
@@ -287,7 +289,7 @@ function reviseBooleanQuery(type, expression) {
                 <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
            </td>	    
         </c:if>
-		
+--%>		
         <c:set value="${history.answer.question.fullName}" var="qName" />
         
         <td nowrap>
@@ -317,6 +319,15 @@ function reviseBooleanQuery(type, expression) {
 	          </c:otherwise>
 	        </c:choose>
          </td>
+
+         <c:if test="${isGeneRec && showOrthoLink}">
+           
+           <td nowrap>
+                <c:set var="dsColUrl" 
+                       value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${wdkUser.signature}:${historyId}&questionSubmit=Get+Answer&goto_summary=0"/>
+                <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
+           </td>	    
+        </c:if>
 
          <td nowrap>
              <a href="deleteHistory.do?wdk_history_id=${historyId}"
