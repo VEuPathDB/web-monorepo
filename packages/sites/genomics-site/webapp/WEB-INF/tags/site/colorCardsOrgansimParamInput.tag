@@ -97,7 +97,7 @@ var query = "${qName}";
 		<c:set var="top" value="${fn:replace(portalArr[0],'\"','')}"/>
 		<div id="${top}_area" style="display:none">
 			<ul>
-                        	<li><i onclick="selectAll_None('${top}',true)">All</i>&nbsp;&nbsp;<i onclick="selectAll_None('${top}',false)">None</i></li>
+                        	<li><i class="all_none" onclick="selectAll_None('${top}',true)">All</i>&nbsp;&nbsp;<i class="all_none" onclick="selectAll_None('${top}',false)">None</i></li>
 			<c:set var="z" value="0"/>
 			<c:forEach items="${portal}" var="site"><%-- Loop Through the organisms in each site (2)--%>
 			<c:set var="site" value="${fn:replace(site,'\"','')}" />
@@ -110,7 +110,7 @@ var query = "${qName}";
 						<c:if test="${fn:containsIgnoreCase(flatVoc,siteNam)}">
 							<li>		
 								<input name="myMultiProp(${pNam})" value="${flatVoc}" id="${siteCount}" type="checkbox" onclick="copySelectionColor(this,'${selectId}')">
-									${flatVoc}
+									<i>${flatVoc}</i>
 						    		</input>
 						    		<c:set var="myBox" value="${siteNam}.jpg"/>
 						    		&nbsp;&nbsp;<img src='<c:url value="/images/${myBox}"/>' width="10" height="10"/><br>
@@ -132,7 +132,7 @@ var query = "${qName}";
 							<c:set var="siteCount" value="${siteCount + 1}"/>
 						</c:forEach><%-- End of Loop (6) --%>
 						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" id="${siteNumber}" type="checkbox" onclick="copySelectionColor(this,'${selectId}')" >
-							${flatVoc}
+							<i>${flatVoc}</i>
 							<c:set var="myBox" value="${site}.jpg"/>
 						    	&nbsp;&nbsp;<img src='<c:url value="/images/${myBox}"/>' width="10" height="10"/><br>
 						</input></li>

@@ -65,7 +65,7 @@ function noop(){}
 		<c:set var="top" value="${fn:replace(portalArr[0],'\"','')}"/>
 		<div id="${top}_area" style="display:none">
 			<ul>
-                        	<li><i onclick="selectAll_None('${top}',true)">All</i>&nbsp;&nbsp;<i onclick="selectAll_None('${top}',false)">None</i></li>
+                        	<li><i class="all_none" onclick="selectAll_None('${top}',true)">All</i>&nbsp;&nbsp;<i class="all_none" onclick="selectAll_None('${top}',false)">None</i></li>
 			<c:set var="z" value="0"/>
 			<c:forEach items="${portal}" var="site">
 			<c:set var="site" value="${fn:replace(site,'\"','')}" />
@@ -73,7 +73,7 @@ function noop(){}
 				<c:when test="${v eq 0}">
 					    <c:set var="i" value="0"/>
 					    <c:forEach items="${qP.vocab}" var="flatVoc">
-						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" id="${v}_${i}" type="checkbox" onclick="copySelection(this)">${flatVoc}</input></li>
+						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" id="${v}_${i}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input></li>
 						<c:set var="i" value="${i+1}"/>
 					    </c:forEach>
 				</c:when>
@@ -81,7 +81,7 @@ function noop(){}
 					<c:set var="i" value="0"/>
 					<c:forEach items="${qP.vocab}" var="flatVoc">
 					  <c:if test="${fn:containsIgnoreCase(flatVoc,site)}">
-						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" type="checkbox" onclick="copySelection(this)">${flatVoc}</input></li>
+						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input></li>
 					  </c:if>
 					  <c:set var="i" value="${i+1}"/>
 					</c:forEach>
