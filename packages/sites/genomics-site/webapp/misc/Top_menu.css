@@ -36,11 +36,20 @@ text-decoration:none;
 	border:1px solid #000000;
 	left:20px;
 }
-#navigation div ul li i {
+
+/*#navigation div ul li i {
 	bottom:0px;
 	font-variant:small-caps;
 	font-size: 10px;
 }
+*/
+
+#navigation div ul li i.all_none {
+	bottom:0px;
+	font-variant:small-caps;
+	font-size: 10px;
+}
+
 #navigation div ul li i:hover {
 	text-decoration:underline;
 }
