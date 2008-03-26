@@ -86,7 +86,7 @@ var query = "${qName}";
 		<c:set var="site" value="${fn:replace(portalArr[0],'\"','')}"/>
 		<li><c:if test="${!(v eq 0)}">&nbsp;&nbsp;&nbsp;&nbsp; </c:if>
                     <a id="${site}" onclick="navigation_toggle_Color('${site}','${pNam}','${selectId}')" href="javascript:var noop = 0">
-			${site}
+			<span id="plus_minus"><img src="images/arrow_right.gif" border="0" width="10px" height="10px"/></span>&nbsp;&nbsp;${site}
 		    </a>
 	</c:forEach>
 	</ul>

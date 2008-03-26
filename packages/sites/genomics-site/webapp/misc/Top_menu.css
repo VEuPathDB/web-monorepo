@@ -23,8 +23,8 @@ padding:0pt;
 }
 #navigation ul li a {
 background:#FFFFFF none repeat scroll 0%;
-border:1px solid #CCCCCC;
-color:#CCCCCC;
+border:1px solid #000000;/*#CCCCCC;*/
+color:#000000;/*#CCCCCC;*/
 display:block;
 font-weight:bold;
 font_size:10px;
@@ -44,6 +44,11 @@ text-decoration:none;
 }
 */
 
+#plus_minus {
+	bottom:5px;
+	font-size: 10px;
+}
+
 #navigation div ul li i.all_none {
 	bottom:0px;
 	font-variant:small-caps;
@@ -57,7 +62,8 @@ text-decoration:none;
 vertical-align:center;
 }
 #navigation ul li a:hover {
-text-decoration:underline;
+text-decoration:none;
+color:#5e7c99;
 }
 #navigation ul li a.passive {
 background:#FFFFFF none repeat scroll 0%;
@@ -72,5 +78,6 @@ font-size:12px;
 background:#FFFFFF none repeat scroll 0%;
 border:1px solid #000000;
 color:#000000;
+background-color:#cedceb;
 font-size:12px;
 }
