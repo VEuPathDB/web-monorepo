@@ -62,12 +62,12 @@
     content="${rawdata}" />
 <br>
 
-<c:set var="normdata">
+<c:set var="alignedGenes">
 <site:dataTable tblName="Genes" align="left" />
 </c:set>
 <site:panel 
-    displayName="Genes"
-    content="${Genes}" />
+    displayName="All Genes the Sage Tag Aligns to"
+    content="${alignedGenes}" />
 <br>
 
 
