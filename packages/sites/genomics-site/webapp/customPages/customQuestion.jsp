@@ -206,7 +206,8 @@ function showParamGroup(group, isShow)
                             </c:choose>
                         </c:otherwise>
                     </c:choose>
-                    <c:if test="${!fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
+
+                    <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td valign="top" width="50" nowrap>
                         <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
@@ -266,7 +267,7 @@ function showParamGroup(group, isShow)
 <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
 
 <%-- display the question specific attribution list --%>
-<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+<%-- site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" /--%>
 
 </c:if>
 
