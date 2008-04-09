@@ -107,7 +107,7 @@
     </td>
 </tr>
 
-<%--  All EST and ORF --%>
+<%--  All EST and EST Assemblies --%>
 <tr>
     <%-- All EST Queries TABLE  --%>
     <td valign="top">     
@@ -117,6 +117,33 @@
 		</tr>
 		<tr><td align="center">
 			<site:queryGridESTs/>
+		</td></tr>	
+	</table> 
+    </td>
+
+    <%--  All EST Assemblies Queries TABLE --%>
+    <td valign="top">     
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+		<tr class="headerRow">
+			<td  valign="top" align="center"><b>Identify EST Assemblies by:</b></td>
+		</tr>
+		<tr><td align="center">
+			<site:queryGridAssem/>
+		</td></tr>
+   	</table> 
+    </td>
+</tr>
+
+<%--  All Sage Tags and ORF --%>
+<tr>
+    <%-- All SageTags Queries TABLE  --%>
+    <td valign="top">     
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+		<tr class="headerRow">
+			<td  valign="top" align="center"><b>Identify Sage Tags by:</b></td>
+		</tr>
+		<tr><td align="center">
+			<site:queryGridSage/>
 		</td></tr>	
 	</table> 
     </td>
@@ -133,7 +160,6 @@
    	</table> 
     </td>
 </tr>
-
 
 
 </table>
