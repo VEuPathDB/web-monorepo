@@ -40,10 +40,14 @@
 
 
  <tr>
-                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByRadSourceId" linktext="Rad Source Id" existsOn="A G"/>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByRadSourceId" linktext="Sage Tag ID" existsOn="A G"/>
                 </tr>
  <tr>
                     <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByLocation" linktext="Chromosomal Location" existsOn="A G"/>
+                </tr>
+
+ <tr>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByRStat" linktext="Differential Expression" existsOn="A G"/>
                 </tr>
         	
 
