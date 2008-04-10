@@ -46,8 +46,8 @@ my $dbh = DBI->connect(
 
 ###Begin DB Transaction###
 eval{
-my $sql=q(INSERT INTO MESSAGES (message_id, message_category, 
-          message_text, start_date, stop_date, 
+my $sql=q(INSERT INTO MESSAGES (message_id, message_text, 
+          message_category, start_date, stop_date, 
           admin_comments, time_submitted) 
           VALUES (messages_id_pkseq.nextval,?,?,
           (TO_DATE( ?, 'mm-dd-yyyy hh24:mi')),
