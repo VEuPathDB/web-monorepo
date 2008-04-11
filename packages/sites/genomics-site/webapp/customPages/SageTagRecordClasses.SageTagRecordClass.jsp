@@ -58,7 +58,7 @@
 <site:dataTable tblName="AllCounts" align="left" />
 </c:set>
 <site:panel 
-    displayName="Raw Data"
+    displayName="Raw and Normalized Data"
     content="${rawdata}" />
 <br>
 
@@ -66,7 +66,7 @@
 <site:dataTable tblName="Genes" align="left" />
 </c:set>
 <site:panel 
-    displayName="All Genes the Sage Tag Aligns to"
+    displayName="All Genes in proximity of the Sage Tag"
     content="${alignedGenes}" />
 <br>
 
