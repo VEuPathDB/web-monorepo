@@ -21,6 +21,8 @@
 <c:set var="gidqpMap" value="${geneByIdQuestion.paramsMap}"/>
 <c:set var="genesIds" value="${gidqpMap['genes_ids']}"/>
 <c:set var="contigsIds" value="${gidqpMap['contigs_ids']}"/>
+<c:set var="contigsIds2" value="${gidqpMap['contigs_ids']}"/>
+<c:set var="contigsIds3" value="${gidqpMap['contigs_ids']}"/>
 <c:set var="orfsIds" value="${gidqpMap['orfs_ids']}"/>
 
 <c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
@@ -28,9 +30,11 @@
 <c:set var="cSrt" value="contigSrt"/>
 <c:set var="oSrt" value="orfSrt"/>
 
+<%--
 <c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
     <c:set var="cSrt" value="Api_contigSrt"/>
 </c:if>
+--%>
 <%--
 <c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
     <c:set var="gSrt" value="Api_geneSrt"/>
@@ -89,7 +93,7 @@ function setEnable2(flag) {
   <form action="${CGI_URL}/${gSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
-    <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (white space or new line delimited):</b></td><tr>
+    <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (new line delimited):</b></td><tr>
     <tr><td colspan="2">
             <textarea name="ids" rows="4" cols="60">${genesIds.default}</textarea>
     </td></tr>
@@ -112,22 +116,41 @@ function setEnable2(flag) {
         <tr>
             <td>begin at</td>
             <td align="left">
-                <input type="radio" name="upstreamAnchor" value="Start" checked> start<br>
-                <input type="radio" name="upstreamAnchor" value="End"> stop<br>
+		<select name="upstreamAnchor">
+                    <option value="Start">transcription start (if known)</option>
+                    <option value="cStart" selected>translation start (ATG)</option>
+                    <option value="cEnd">translation stop codon</option>
+                    <option value="End">transcription stop (if known)</option>
+                </select>
             </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
-                             <input id="upstreamOffset" name="upstreamOffset" value="0" size="6">residues
+            <td align="left">
+                <select name="upstreamSign">
+		    <option value="plus" selected>+</option>
+                    <option value="minus">-</option>
+                </select>
+	    </td>
+            <td align="left">
+                <input id="upstreamOffset" name="upstreamOffset" value="0" size="6"/> nucleotides
             </td>
         </tr>
-
         <tr>
             <td>end at</td>
             <td align="left">
-                <input type="radio" name="downstreamAnchor" value="Start"> start<br>
-                <input type="radio" name="downstreamAnchor" value="End" checked> stop<br>
+		<select name="downstreamAnchor">
+                    <option value="Start">transcription start (if known)</option>
+                    <option value="cStart">translation start (ATG)</option>
+                    <option value="cEnd" selected>translation stop codon</option>
+                    <option value="End">transcription stop (if known)</option>
+                </select>
             </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
-                             <input id="downstreamOffset" name="downstreamOffset" value="0" size="6"> residues
+            <td align="left">
+                <select name="downstreamSign">
+		    <option value="plus" selected>+</option>
+                    <option value="minus">-</option>
+                </select>
+	    </td>
+            <td align="left">
+                <input id="downstreamOffset" name="downstreamOffset" value="0" size="6"> nucleotides
             </td>
         </tr>
        </table></td></tr>
@@ -142,21 +165,19 @@ function setEnable2(flag) {
   <form action="${CGI_URL}/${cSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
-    <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (white space or new line delimited):</b></td><tr>
+    <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (new line delimited):</b></td><tr>
     <tr><td colspan="2">
-            <textarea name="ids" rows="4" cols="60">${contigsIds.default}</textarea>
+            <textarea name="ids" rows="4" cols="60">${contigsIds.default}
+${contigsIds2.default} (14..700)
+${contigsIds3.default} reverse (100..2000)</textarea>
     </td></tr>
-
+    <tr><td colspan="2">Default region (for sequences in the list without a specified region):</td></tr>
     <tr><td colspan="2">
-        <input type="checkbox" name="revComp" value="protein">Reverse & Complement
-    </td></tr>
-
-    <tr><td colspan="2">
-    <b>Choose the region of the sequence(s):</b>
-    </td></tr>
-    <tr><td colspan="2">
-    <table cellpadding="2">
-        <tr><td>Nucleotide postions</td>
+    <table style="margin-left:20px;" cellpadding="2">
+        <tr><td colspan="2">
+            <input type="checkbox" name="revComp" value="protein">Reverse & Complement
+        </td></tr>
+        <tr><td>Nucleotide positions</td>
             <td align="left">
                              <input name="start" value="1" size="6"> to
                              <input name="end" value="10000" size="6"></td></tr>
@@ -184,7 +205,7 @@ function setEnable2(flag) {
   <form action="${CGI_URL}/${oSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
-    <tr><td colspan="2" valign="top"><b>Enter a list of ORF IDs (white space or new line delimited):</b></td><tr>
+    <tr><td colspan="2" valign="top"><b>Enter a list of ORF IDs (new line delimited):</b></td><tr>
     <tr><td colspan="2">
             <textarea name="ids" rows="4" cols="60">${orfsIds.default}</textarea>
     </td></tr>
@@ -210,20 +231,37 @@ function setEnable2(flag) {
     </td></tr>
         <tr><td>begin at</td>
             <td align="left">
-                <input type="radio" name="upstreamAnchor" value="Start" checked> start<br>
-                <input type="radio" name="upstreamAnchor" value="End"> stop<br>
+		<select name="upstreamAnchor">
+                    <option value="Start" selected>start</option>
+                    <option value="End">stop</option>
+                </select>
             </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
-                             <input name="upstreamOffset" value="0" size="6">residues</td></tr>
+            <td align="left">
+                <select name="upstreamSign">
+		    <option value="plus" selected>+</option>
+                    <option value="minus">-</option>
+                </select>
+            </td>
+            <td align="left">
+                <input name="upstreamOffset" value="0" size="6"/> nucleotides
+            </td></tr>
 
         <tr><td>end at</td>
-            <td align="left">
-                <input type="radio" name="downstreamAnchor" value="Start"> start<br>
-                <input type="radio" name="downstreamAnchor" value="End" checked> stop<br>
+          <td align="left">
+		<select name="downstreamAnchor">
+                    <option value="Start">start</option>
+                    <option value="End" selected>stop</option>
+                </select>
             </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
-                             <input name="downstreamOffset" value="0" size="6"> residues</td></tr>
-
+            <td align="left">
+                <select name="downstreamSign">
+		    <option value="plus" selected>+</option>
+                    <option value="minus">-</option>
+                </select>
+	    </td>
+            <td align="left">
+                <input name="downstreamOffset" value="0" size="6"/> nucleotides
+            </td></tr>
       </table></td></tr>
     <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
     </table>
@@ -263,16 +301,17 @@ Regions:
  <table width="100%" cellpadding="4">
    <tr>
       <td><i><b>relative to sequence start</b></i>
-      <td>to retrieve, eg, the 100 bp upstream genomic region, use "begin at <i>start</i> + -100  end at <i>start</i> + -1".
+      <td>to retrieve, eg, the 100 bp upstream genomic region, use "begin at <i>start</i> - 100  end at <i>start</i> - 1".
    <tr>
       <td><i><b>relative to sequence stop</b></i>
-      <td>to retrieve, eg, the last 10 amino acids of a protein, use "begin at <i>stop</i> + -9  end at <i>stop</i> + 0".
+      <td>to retrieve, eg, the last 10 bp of a sequence, use "begin at <i>stop</i> - 9  end at <i>stop</i> + 0".
     <tr>
       <td><i><b>relative to sequence start and stop</b></i>
-      <td>to retrieve, eg, a CDS with the  first and last 10 basepairs excised, use: "begin at <i>start</i> + 10 end at <i>stop</i> + -10".
+      <td>to retrieve, eg, a CDS with the  first and last 10 basepairs excised, use: "begin at <i>start</i> + 10 end at <i>stop</i> - 10".
     </tr>
   </table>
-
+ <br>
+ Note:  If UTRs have not been annotated for a gene, then choosing "transcription start" may have the same effect as choosing "translation start."  
 <table>
 <tr>
   <td valign="top" class="dottedLeftBorder"></td> 
