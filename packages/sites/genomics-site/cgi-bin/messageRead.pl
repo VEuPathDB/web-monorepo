@@ -45,8 +45,12 @@ my $dbh = DBI->connect(
 ) or die "Can't connect to the database: $DBI::errstr\n";;
 
 my $messageText;
-my $startDate;
-my $stopDate;
+my $messageCategory;
+
+#Query params passed via tag
+my $query=new CGI();
+my $messageCategory=$query->param("messageCategory");
+my $project=$query->param("project");
 
 #Get and format current time
 my $currentTime=ctime();
@@ -54,28 +58,30 @@ my $formatTime=ParseDate($currentTime);
 my $datestr= UnixDate($formatTime, "%m-%d-%Y %H:%M");
 print "Date::Manip gives $datestr\n";
 
-###Begin DB Transaction###
-my $sql=q(SELECT message_text FROM MESSAGES 
-          WHERE TO_CHAR(CURRENT_TIMESTAMP, 'mm-dd-yyyy') 
-          BETWEEN TO_CHAR(START_DATE, 'mm-dd-yyyy') 
-          AND TO_CHAR(STOP_DATE, 'mm-dd-yyyy') 
-          AND TO_CHAR(CURRENT_TIMESTAMP, 'hh24:mi') 
-          BETWEEN TO_CHAR(START_TIME, 'hh24:mi') 
-          AND TO_CHAR(STOP_TIME, 'hh24:mi'));
 
-my $sth=$dbh->prepare($sql);
-     die "Could not prepare query. Check SQL syntax."
-        unless defined $sql;
-$sth->execute();
+my $sql=q(SELECT m.message_text, c.category_name 
+            FROM messages m, category c, projects p, message_projects mp 
+            WHERE p.project_name = ? 
+            AND p.project_id = mp.project_id 
+            AND mp.message_id = m.message_id 
+            AND m.message_category  =  c.category_name 
+            AND TO_CHAR(CURRENT_TIMESTAMP, 'mm-dd-yyyy hh24:mi') 
+            BETWEEN TO_CHAR(START_DATE, 'mm-dd-yyyy hh24:mi') 
+            AND TO_CHAR(STOP_DATE, 'mm-dd-yyyy hh24:mi') 
+            AND m.message_category = ? );
+
+
+my $sth=$dbh->prepare($sql) or
+     die "Could not prepare query. Check SQL syntax.";
+     
+$sth->execute($project, $messageCategory) or die "Can't excecute SQL";
 
 my @row;
-while(@row=$sth->fetchrow_array()){
- my $messageText=$row[0];
- print "\n\n<b>$messageText</b>\n";
-}
-        
-###End DB Transaction### 
-
+ while (@row=$sth->fetchrow_array()){
+  $messageText=$row[0];
+  print "$messageText";
+  }
+ 
 #Finsh and close DB connection  
 $dbh->disconnect();
 
