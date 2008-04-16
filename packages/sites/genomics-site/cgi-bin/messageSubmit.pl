@@ -28,9 +28,9 @@ print $headers->as_string() . "\n";
 <form method="get" action="messageInsert.pl">
 <p>Message Category:
 <select name="messageCategory">
-<option value ="1">General Annoucement</option>
-<option value ="2">System Degraded</option>
-<option value ="3">System Failure</option>
+<option value ="Information">Information </option>
+<option value ="Degraded">Degraded</option>
+<option value ="Down">Down</option>
 </select>
 <p>Select affected systems:</p>
  <div style="width: 140px; height: 105px; padding: 5px; line-height: 1.3; background-color: #EDE6DE; border-style: ridge">
