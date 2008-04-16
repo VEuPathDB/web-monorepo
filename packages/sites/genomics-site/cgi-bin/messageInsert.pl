@@ -26,9 +26,7 @@ my $messageText=$query->param("messageText");
 my $messageCategory=$query->param("messageCategory");
 my @selectedProjects=$query->param("projects");
 my $startDate=$query->param("startDate");
-my $startTime=$query->param("startTime");
 my $stopDate=$query->param("stopDate");
-my $stopTime=$query->param("stopTime");
 my $adminComments=$query->param("adminComments");
 
 
@@ -50,12 +48,11 @@ my $dbh = DBI->connect(
 eval{
 my $sql=q(INSERT INTO MESSAGES (message_id, message_text, 
           message_category, start_date, stop_date, 
-          start_time, stop_time, admin_comments, time_submitted) 
+          admin_comments, time_submitted) 
           VALUES (messages_id_pkseq.nextval,?,?,
-          (TO_DATE( ? , 'mm-dd-yyyy')),
-          (TO_DATE( ? , 'mm-dd-yyyy')),
-          (TO_DATE( ? , 'hh24:mi')),
-          (TO_DATE( ? , 'hh24:mi')),?,SYSDATE)
+          (TO_DATE( ? , 'mm-dd-yyyy hh24:mi')),
+          (TO_DATE( ? , 'mm-dd-yyyy hh24:mi')),
+          ?,SYSDATE)
           RETURNING message_id INTO ?);
 my $sth=$dbh->prepare($sql);
      die "Could not prepare query. Check SQL syntax."
@@ -66,10 +63,8 @@ $sth->bind_param_inout(1,\$messageText, 38);
 $sth->bind_param_inout(2,\$messageCategory, 38);
 $sth->bind_param_inout(3,\$startDate, 38);
 $sth->bind_param_inout(4,\$stopDate, 38);
-$sth->bind_param_inout(5,\$startTime, 38);
-$sth->bind_param_inout(6,\$stopTime, 38);
-$sth->bind_param_inout(7,\$adminComments, 38); 
-$sth->bind_param_inout(8,\$newMessageID, 38); 
+$sth->bind_param_inout(5,\$adminComments, 38); 
+$sth->bind_param_inout(6,\$newMessageID, 38); 
 $sth->execute(); 
 
 #Bind message id's to selected projects in DB       
