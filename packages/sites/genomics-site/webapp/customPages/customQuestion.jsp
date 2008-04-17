@@ -223,6 +223,18 @@ function showParamGroup(group, isShow)
         
     </c:forEach>
     
+    <%-- display subType filter --%>
+    <c:set var="recordClass" value="${wdkQuestion.recordClass}"/>
+    <c:if test="${recordClass.hasSubType}">
+        <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
+        <tr>
+            <td align="right" valign="top"><b>${subTypeParam.prompt}</b></td>
+            <td align="left" valign="top">
+                <wdk:enumParamInput qp="${subTypeParam}" />
+            </td>
+        </tr>
+    </c:if>
+    
     <%-- detemine ending display style by displayType of the group --%>
     <c:choose>
         <c:when test="${hasOrganism == 'true'}">
