@@ -50,8 +50,8 @@ my $sql=q(INSERT INTO MESSAGES (message_id, message_text,
           message_category, start_date, stop_date, 
           admin_comments, time_submitted) 
           VALUES (messages_id_pkseq.nextval,?,?,
-          (TO_DATE( ? , 'mm-dd-yyyy hh24:mi')),
-          (TO_DATE( ? , 'mm-dd-yyyy hh24:mi')),
+          (TO_DATE( ? , 'mm-dd-yyyy hh24:mi:ss')),
+          (TO_DATE( ? , 'mm-dd-yyyy hh24:mi:ss')),
           ?,SYSDATE)
           RETURNING message_id INTO ?);
 my $sth=$dbh->prepare($sql);
