@@ -223,18 +223,6 @@ function showParamGroup(group, isShow)
         
     </c:forEach>
     
-    <%-- display subType filter --%>
-    <c:set var="recordClass" value="${wdkQuestion.recordClass}"/>
-    <c:if test="${recordClass.hasSubType}">
-        <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
-        <tr>
-            <td align="right" valign="top"><b>${subTypeParam.prompt}</b></td>
-            <td align="left" valign="top">
-                <wdk:enumParamInput qp="${subTypeParam}" />
-            </td>
-        </tr>
-    </c:if>
-    
     <%-- detemine ending display style by displayType of the group --%>
     <c:choose>
         <c:when test="${hasOrganism == 'true'}">
@@ -258,6 +246,22 @@ function showParamGroup(group, isShow)
         </c:otherwise>
     </c:choose>
 </c:forEach>
+
+    
+    <%-- display subType filter --%>
+<c:set var="recordClass" value="${wdkQuestion.recordClass}"/>
+<c:if test="${recordClass.hasSubType}">
+    <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
+    <div>&nbsp;</div>
+    <table align="center">
+        <tr>
+            <td align="right" valign="top"><b>${subTypeParam.prompt}</b></td>
+            <td align="left" valign="top">
+                <wdk:enumParamInput qp="${subTypeParam}" />
+            </td>
+        </tr>
+    </table>
+</c:if>
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
