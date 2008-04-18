@@ -20,12 +20,14 @@ print $headers->as_string() . "\n";
 <head>
 <title>AMS ALPHA</title>
 <h1 align="left">Message Submission</h1>
+<script language="javascript" type="text/javascript" src="../include/datetimepicker.js">
+</script>
 <!--Link to site style-->
 <link href="/var/www/ryanthib.giardiadb.org/project_home/ApiCommonWebsite/Site/htdocs/include/messageStyles.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<div style="width: 450px; left: 10px; top: 10%; height: 640px; padding: 5px; background-color: #E0E2EB">
-<form method="get" action="messageInsert.pl">
+<div style="width: 500px; left: 10px; top: 10%; height: 640px; padding: 5px; background-color: #E0E2EB">
+<form method="get" action="admin/messageInsert.pl">
 <p>Message Category:
 <select name="messageCategory">
 <option value ="Information">Information </option>
@@ -33,26 +35,21 @@ print $headers->as_string() . "\n";
 <option value ="Down">Down</option>
 </select>
 <p>Select affected systems:</p>
- <div style="width: 140px; height: 105px; padding: 5px; line-height: 1.3; background-color: #EDE6DE; border-style: ridge">
+ <div style="width: 140px; height: 105px; padding: 5px; line-height: 1.3; background-color: #EDE6DE; border-style: outset">
   <input type="checkbox" name="projects" value="1">CryptoDB<br>
   <input type="checkbox" name="projects" value="2">GiardiaDB<br>
   <input type="checkbox" name="projects" value="3">PlasmodDB<br>
   <input type="checkbox" name="projects" value="4">ToxoDB<br>
   <input type="checkbox" name="projects" value="5">TrichDB<br>
-   </div>
+  </div>
 <p>Enter Message Text:</p>
-<p><TEXTAREA cols="60" rows="5" name="messageText"></textarea></p>
+<p><textarea cols="60" rows="5" name="messageText"></textarea></p>
 <p>Start date:
-<input type="text" cols="10" name="startDate" id="startDate">
-Start Time:
-<input type="text" cols="5" name="startTime" id="startTime">
-<input type="checkbox" name="startNow">Now</p>
+<input id="startDate" type="text" name="startDate" size="25"><a href="javascript:NewCal('startDate','mmddyyyy', 'true')"><img src="../images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
 <p>Stop date:
-<input type="text" cols="10" name="stopDate">
-Stop Time:
-<input type="text" cols="5" name="stopTime"</p>
+<input id="stopDate" type="text" name="stopDate" size="25"><a href="javascript:NewCal('stopDate','mmddyyyy', 'true')"><img src="../images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
 <p>Enter Additional Comments:</p>
-<p><TEXTAREA cols="60" rows="5" name="adminComments"></textarea></p>
+<p><textarea cols="60" rows="5" name="adminComments"></textarea></p>
  <div style="margin: 0 auto ; width: 130px; height: 25px">
   <input type="submit" value="Submit New Message">
     </div>
