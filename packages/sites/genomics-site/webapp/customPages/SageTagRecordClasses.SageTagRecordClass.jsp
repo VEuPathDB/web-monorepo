@@ -6,7 +6,11 @@
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="CGI_OR_MOD" value="${props['CGI_OR_MOD']}"/>
 
+<c:set var="contig" value="${attrs['sequence_id'].value}" />
+<c:set var="context_start_range" value="${attrs['context_start'].value}" />
+<c:set var="context_end_range" value="${attrs['context_end'].value}" />
 
 
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
@@ -48,12 +52,67 @@
     displayName="${attr.displayName}"
     content="${attr.value}" />
 <br>
+
+
+<%-- DNA CONTEXT ---------------------------------------------------%>
+
+<c:set var="gtracks">
+Gene+DeprecatedGene+SAGEtags
+</c:set>
+
+<c:set var="attribution">
+</c:set>
+
+<c:if test="${gtracks ne ''}">
+    <c:set var="genomeContextUrl">
+    http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse_img/giardiadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${wdkRecord.primaryKey}@yellow
+    </c:set>
+    <c:set var="genomeContextImg">
+        <noindex follow><center>
+        <c:catch var="e">
+           <c:import url="${genomeContextUrl}"/>
+        </c:catch>
+        <c:if test="${e!=null}"> 
+            <site:embeddedError 
+                msg="<font size='-2'>temporarily unavailable</font>" 
+                e="${e}" 
+            />
+        </c:if>
+        </center>
+        </noindex>
+        <%--
+        <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
+        <c:set var="gbrowseUrl">
+            http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/giardiadb/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${wdkRecord.primaryKey}@yellow
+        </c:set>
+        <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+        --%>
+    </c:set>
+
+    <site:panel 
+        displayName="Genomic Context"
+        content="${genomeContextImg}"
+        attribution="${attribution}"/>
+    <br>
+</c:if>
+
+
+
+
+<c:set var="location">
+<site:dataTable tblName="Locations" align="left" />
+</c:set>
+<site:panel 
+    displayName="Genomic Locations"
+    content="${location}" />
+<br>
+<%--
 <c:set var="attr" value="${attrs['location_text']}" />
 <site:panel 
     displayName="${attr.displayName}"
     content="${attr.value}" />
 <br>
-
+--%>
 <c:set var="rawdata">
 <site:dataTable tblName="AllCounts" align="left" />
 </c:set>
