@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -Tw
 
 ###
 # messageInsert.pl  
@@ -10,12 +10,12 @@
 ###
 
 use DBI;
-use lib $ENV{GUS_HOME};
 use CGI qw/:standard/;
 use strict;
 use warnings;
 use CGI::Carp qw(fatalsToBrowser);
 use DBI qw(:sql_types);
+use lib $ENV{GUS_HOME};
 use ApiCommonWebsite::Model::CommentConfig;
 
 #New CGI object to query parameters
