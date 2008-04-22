@@ -283,7 +283,7 @@ function showParamGroup(group, isShow)
 <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
 
 <%-- display the question specific attribution list --%>
-<%-- site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" /--%>
+<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
 
 </c:if>
 
