@@ -3,6 +3,7 @@
 
 <c:set var="version" value="${wdkModel.version}"/>
 <c:set var="site" value="${wdkModel.displayName}"/>
+<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
 
 <!-- get wdkModel name to display as page header -->
@@ -50,7 +51,14 @@
                 <tr><td><div class="medium">Subject:</div></td>
                     <td><input type="text" name="subject" value="" size="81"></td></tr>
                 <tr><td><div class="medium">Your email address:</div></td>
+                    <c:choose>
+                    <c:when test="${wdkUser == null || wdkUser.guest == true}">
                     <td><input type="text" name="replyTo" value="" size="81"></td></tr>
+                    </c:when>
+                    <c:otherwise>
+                    <td><input type="text" name="replyTo" value="${wdkUser.email}" size="81"></td></tr>
+                    </c:otherwise>
+                    </c:choose>
                 <tr><td valign="top"><div class="medium">Message:</div></td>
                     <td><textarea name="message" cols="75" rows="8"></textarea>
                         <input type="hidden" name="website" value="${site}">
