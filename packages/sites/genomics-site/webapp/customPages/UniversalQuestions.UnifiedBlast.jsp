@@ -131,6 +131,23 @@
       </td>
   </tr>
 </c:forEach>
+
+
+    <%-- display subType filter --%>
+<c:set var="recordClass" value="${wdkQuestion.recordClass}"/>
+<c:if test="${recordClass.hasSubType}">
+    <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
+
+        <tr>
+            <td align="right" valign="top"><b>${subTypeParam.prompt}</b></td>
+            <td align="left" valign="top">
+                <wdk:enumParamInput qp="${subTypeParam}" />
+            </td>
+        </tr>
+
+</c:if>
+
+
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
   <tr><td><html:hidden property="altPageSize" value="1000000"/></td>
