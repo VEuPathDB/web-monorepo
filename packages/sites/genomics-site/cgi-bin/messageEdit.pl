@@ -1,13 +1,12 @@
-#!/usr/bin/perl -Tw
+#!/usr/bin/perl -Tw 
 
 
-use DBI;
 use CGI qw/:standard/;
 use strict;
 use warnings;
 use CGI::Carp qw(fatalsToBrowser);
 use DBI qw(:sql_types);
-use lib $ENV{GUS_HOME};
+use lib map { /(.*)/ } split /:/, $ENV{PERL5LIB}; # untaint PERL5LIB 
 use ApiCommonWebsite::Model::CommentConfig;
 use HTTP::Headers;
 
@@ -21,7 +20,7 @@ print $headers->as_string() . "\n";
 
 
 #Create DB connection
-my $model="GiardiaDB";
+my $model=$ENV{'PROJECT_ID'};
 my $dbconnect=new ApiCommonWebsite::Model::CommentConfig($model);
 
 my $dbh = DBI->connect(
@@ -33,7 +32,6 @@ my $dbh = DBI->connect(
       AutoCommit => 0 
     }
 ) or die "Can't connect to the database: $DBI::errstr\n";;
-
 
 my $query=new CGI();
 
@@ -48,8 +46,10 @@ if($query->param("updateMessageId")){
         my $editMessageId=$query->param("editMessageId");
         
         my $sql=q(SELECT message_id, message_text, 
-           message_category, TO_CHAR(start_date, 'mm-dd-yyyy hh24:mi:ss'), 
-           TO_CHAR(stop_date, 'mm-dd-yyyy hh24:mi:ss'), admin_comments 
+           message_category, 
+           TO_CHAR(start_date, 'mm-dd-yyyy hh24:mi:ss'), 
+           TO_CHAR(stop_date, 'mm-dd-yyyy hh24:mi:ss'), 
+           admin_comments 
            FROM messages
            WHERE message_id = ? );  
          
@@ -71,11 +71,12 @@ if($query->param("updateMessageId")){
 		print<<_END_OF_TEXT_
 	<html>
         <head>	
-	<title>Edit Project</title>
+	<title>Edit Message</title>
         <script language="javascript" type="text/javascript" src="../../include/datetimepicker.js">
         </script>
         </head>
-	<form method="post" action=messageEdit.pl>
+	<body style="background-color: #e0e2eb"> 
+        <form method="post" action=messageEdit.pl>
 	<p><b>Message ID:</b>
 	<textarea name="editMessageId"  style="overflow: auto" rows="1" cols="6" readonly="yes">$editMessageId</textarea></p>
 	<p><b>Message Category:</b>: 	
