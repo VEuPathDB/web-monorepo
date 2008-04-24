@@ -1,25 +1,21 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -Tw 
 
 ###
 # messageRead.pl  
 #
-# Insert a new user specified message into the DB
+# Check database for applicable messages 
 #
 # Author: Ryan Thibodeau
 #
 ###
 
-use DBI;
-use lib $ENV{GUS_HOME};
 use CGI qw/:standard/;
+use DBI qw(:sql_types);
+use HTTP::Headers;
+use lib map { /(.*)/ } split /:/, $ENV{PERL5LIB}; # Untaint PERL5LIB 
+use ApiCommonWebsite::Model::CommentConfig;
 use strict;
 use warnings;
-use CGI::Carp qw(fatalsToBrowser);
-use DBI qw(:sql_types);
-use ApiCommonWebsite::Model::CommentConfig;
-use Time::localtime;
-use Date::Manip qw(ParseDate UnixDate);
-use HTTP::Headers;
 
 # Print the content and no-cache headers
 my $headers = HTTP::Headers->new(
@@ -29,9 +25,8 @@ my $headers = HTTP::Headers->new(
         "Cache-Control" => "no-cache, must-revalidate");
 print $headers->as_string() . "\n";
 
-
 #Create DB connection
-my $model="GiardiaDB";
+my $model=$ENV{'PROJECT_ID'};
 my $dbconnect=new ApiCommonWebsite::Model::CommentConfig($model);
 
 my $dbh = DBI->connect(
@@ -44,19 +39,10 @@ my $dbh = DBI->connect(
     }
 ) or die "Can't connect to the database: $DBI::errstr\n";;
 
-my $messageText;
-my $messageCategory;
-
-#Query params passed via tag
+#Query parameters passed via tag
 my $query=new CGI();
- $messageCategory=$query->param("messageCategory");
-my $project=$query->param("project");
-
-#Get and format current time
-my $currentTime=ctime();
-my $formatTime=ParseDate($currentTime);
-my $datestr= UnixDate($formatTime, "%m-%d-%Y %H:%M");
-print "Date::Manip gives $datestr\n";
+my $messageCategory=$query->param("messageCategory");
+my $projectName=$query->param("projectName");
 
 
 my $sql=q(SELECT m.message_text, c.category_name 
@@ -74,13 +60,13 @@ my $sql=q(SELECT m.message_text, c.category_name
 my $sth=$dbh->prepare($sql) or
      die "Could not prepare query. Check SQL syntax.";
      
-$sth->execute($project, $messageCategory) or die "Can't excecute SQL";
+$sth->execute($projectName, $messageCategory) or die "Can't excecute SQL";
 
 my @row;
  while (@row=$sth->fetchrow_array()){
-  $messageText=$row[0];
-  print "$messageText";
-  }
+       my $messageText=$row[0];
+       print "$messageText";
+       }
  
 #Finsh and close DB connection  
 $dbh->disconnect();
