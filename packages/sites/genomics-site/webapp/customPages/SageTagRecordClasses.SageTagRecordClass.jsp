@@ -135,3 +135,4 @@ Gene+DeprecatedGene+SAGEtags
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
 <site:footer/>
+<script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip_3.45.js'></script>
