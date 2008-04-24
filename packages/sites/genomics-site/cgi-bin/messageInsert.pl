@@ -1,4 +1,4 @@
-#!/usr/bin/perl -Tw
+#!/usr/bin/perl -Tw 
 
 ###
 # messageInsert.pl  
@@ -9,13 +9,12 @@
 #
 ###
 
-use DBI;
 use CGI qw/:standard/;
 use strict;
 use warnings;
 use CGI::Carp qw(fatalsToBrowser);
 use DBI qw(:sql_types);
-use lib $ENV{GUS_HOME};
+use lib map { /(.*)/ } split /:/, $ENV{PERL5LIB}; # untaint PERL5LIB 
 use ApiCommonWebsite::Model::CommentConfig;
 
 #New CGI object to query parameters
@@ -31,7 +30,7 @@ my $adminComments=$query->param("adminComments");
 
 
 #Create DB connection
-my $model="GiardiaDB";
+my $model=$ENV{'PROJECT_ID'};
 my $dbconnect=new ApiCommonWebsite::Model::CommentConfig($model);
 
 my $dbh = DBI->connect(
@@ -43,6 +42,7 @@ my $dbh = DBI->connect(
       AutoCommit => 0
     }
 ) or die "Can't connect to the database: $DBI::errstr\n";;
+
 
 ###Begin DB Transaction###
 eval{
