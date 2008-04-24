@@ -7,11 +7,12 @@
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="CGI_OR_MOD" value="${props['CGI_OR_MOD']}"/>
-
+<c:set var="projectId" value="${wdkRecord.primaryKey.projectId}"/>
+<c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 <c:set var="contig" value="${attrs['sequence_id'].value}" />
 <c:set var="context_start_range" value="${attrs['context_start'].value}" />
 <c:set var="context_end_range" value="${attrs['context_end'].value}" />
-
+<c:set var="feature_source_id" value="${attrs['feature_source_id'].value}" />
 
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
@@ -65,7 +66,7 @@ Gene+DeprecatedGene+SAGEtags
 
 <c:if test="${gtracks ne ''}">
     <c:set var="genomeContextUrl">
-    http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse_img/giardiadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${wdkRecord.primaryKey}@yellow
+    http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse_img/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${feature_source_id}@yellow
     </c:set>
     <c:set var="genomeContextImg">
         <noindex follow><center>
@@ -83,7 +84,7 @@ Gene+DeprecatedGene+SAGEtags
         <%--
         <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
         <c:set var="gbrowseUrl">
-            http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/giardiadb/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${wdkRecord.primaryKey}@yellow
+            http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${wdkRecord.primaryKey}@yellow
         </c:set>
         <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
         --%>
