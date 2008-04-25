@@ -31,7 +31,7 @@
 
 <site:header title="${wdkRecord.primaryKey}"
              bannerPreformatted="${bannerText}"
-             divisionName="Sage Tag Record"
+             divisionName="SAGE Tag Record"
              division="queries_tools"/>
 
 <c:choose>
@@ -126,7 +126,7 @@ Gene+DeprecatedGene+SAGEtags
 <site:dataTable tblName="Genes" align="left" />
 </c:set>
 <site:panel 
-    displayName="All Genes in proximity of the Sage Tag"
+    displayName="All Genes in proximity of the SAGE Tag"
     content="${alignedGenes}" />
 <br>
 
