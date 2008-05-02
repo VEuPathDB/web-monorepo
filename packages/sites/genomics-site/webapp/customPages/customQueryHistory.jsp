@@ -193,7 +193,8 @@ function reviseBooleanQuery(type, expression) {
   <c:set var="type" value="${historyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="histList" value="${historyEntry.value}"/>
-  <c:set var="recDispName" value="${histList[0].answer.question.recordClass.type}"/>
+  <c:set var="recordClass" value="${histList[0].answer.question.recordClass}"/>
+  <c:set var="recDispName" value="${recordClass.type}"/>
 
 <c:set var="typeC" value="${typeC+1}"/>
 <c:if test="${typeC != 1}"><hr></c:if>
@@ -359,6 +360,7 @@ function reviseBooleanQuery(type, expression) {
       </tr>
       <tr>
          <td>
+            
             <html:form method="get" action="/processBooleanExpression.do">
                <span id="comb_title_${type}">Combine results</span>:
                <span id="comb_input_${type}">
@@ -367,6 +369,25 @@ function reviseBooleanQuery(type, expression) {
                <html:hidden property="historySectionId" value="${type}"/>
                <html:submit property="submit" value="Get Combined Result"/>
                <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>
+               <%-- display subType filter --%>
+               <c:if test="${recordClass.hasSubType && !recordClass.subType.questionOnly}">
+                 <div>
+                   <b>Expand operands:</b> <input type="checkbox" name="expandSubType" value="true" checked/>
+                   (<i>Check it to expand all operands into compelete lists before boolean operation</i>)
+                 </div>
+                 <div>
+                    <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
+                    <b>${subTypeParam.prompt}:</b>
+                    <html:select property="subTypeValue" 
+                                 value="${subTypeParam.default}"
+                                 styleId="subTypeParam.name">
+                        <html:options name="subTypeParam" 
+                                      property="vocab"
+                                      labelName="subTypeParam"
+                                      labelProperty="displays"/>
+                    </html:select>
+                 </div>
+               </c:if>
             </html:form>
          </td>
       </tr>
