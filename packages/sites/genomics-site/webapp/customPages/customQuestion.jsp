@@ -36,7 +36,7 @@
 
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>  
 <c:if test="${recordType eq 'Assembly'}">
-    <c:set var="recordType" value="Assemblies" />
+    <c:set var="recordType" value="Assemblie" />
 </c:if>
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="Identify ${recordType}s based on ${wdkQuestion.displayName}"
