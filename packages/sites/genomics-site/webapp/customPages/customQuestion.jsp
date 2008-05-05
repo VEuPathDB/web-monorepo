@@ -34,9 +34,12 @@
 </c:if>
 
 
-  
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>  
+<c:if test="${recordType eq 'Assembly'}">
+    <c:set var="recordType" value="Assemblies" />
+</c:if>
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
-                 banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
+                 banner="Identify ${recordType}s based on ${wdkQuestion.displayName}"
                  parentDivision="Queries & Tools"
                  parentUrl="/showQuestionSetsFlat.do"
                  divisionName="Question"
