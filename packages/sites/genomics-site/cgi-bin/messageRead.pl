@@ -25,7 +25,7 @@ my $headers = HTTP::Headers->new(
         "Cache-Control" => "no-cache, must-revalidate");
 print $headers->as_string() . "\n";
 
-#Create DB connection
+# Create DB connection
 my $model=$ENV{'PROJECT_ID'};
 my $dbconnect=new ApiCommonWebsite::Model::CommentConfig($model);
 
@@ -39,7 +39,7 @@ my $dbh = DBI->connect(
     }
 ) or die "Can't connect to the database: $DBI::errstr\n";;
 
-#Query parameters passed via tag
+# Query parameters passed via tag
 my $query=new CGI();
 my $messageCategory=$query->param("messageCategory");
 my $projectName=$query->param("projectName");
@@ -61,14 +61,14 @@ my $sth=$dbh->prepare($sql) or
      die "Could not prepare query. Check SQL syntax.";
      
 $sth->execute($projectName, $messageCategory) or die "Can't excecute SQL";
-
+# Output applicable messages
 my @row;
  while (@row=$sth->fetchrow_array()){
        my $messageText=$row[0];
        print "$messageText";
        }
  
-#Finsh and close DB connection  
+# Finish and close DB connection  
 $dbh->disconnect();
 
 
