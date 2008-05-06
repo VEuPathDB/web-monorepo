@@ -332,7 +332,8 @@ function parse_Url( url, parameter_name )
            <%-- display link to transform query --%>
            <c:if test="${recordClass.hasSubType && !recordClass.subType.questionOnly}">
                &nbsp;|&nbsp;
-               <c:set var="transformUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByStrainTransform&geneResult=${wdkAnswer.cacheTableName}&questionSubmit=Get+Answer&goto_summary=0"/>
+               <c:set var="transformUrl" 
+                      value="showQuestion.do?questionFullName=InternalQuestions.GenesByStrainTransform&geneResult=${wdkAnswer.cacheTableName}&questionSubmit=Get+Answer&goto_summary=0"/>
                <a href='<c:url value="${transformUrl}"/>'>Other Strains</a>
            </c:if>
 	       

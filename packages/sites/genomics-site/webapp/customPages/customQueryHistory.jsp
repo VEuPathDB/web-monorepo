@@ -195,6 +195,8 @@ function reviseBooleanQuery(type, expression) {
   <c:set var="histList" value="${historyEntry.value}"/>
   <c:set var="recordClass" value="${histList[0].answer.question.recordClass}"/>
   <c:set var="recDispName" value="${recordClass.type}"/>
+  
+  <c:set var="showTransform" value="${recordClass.hasSubType && !recordClass.subType.questionOnly}" />
 
 <c:set var="typeC" value="${typeC+1}"/>
 <c:if test="${typeC != 1}"><hr></c:if>
@@ -216,7 +218,8 @@ function reviseBooleanQuery(type, expression) {
           <th onmouseover="hideAnyName()">&nbsp;</th>
           <th onmouseover="hideAnyName()">Query</th>
           <th onmouseover="hideAnyName()">Size</th>
-          <c:if test="${isGeneRec}"><th>&nbsp;${dsCol}</th></c:if>
+          <c:if test="${isGeneRec && showOrthoLink}"><th>&nbsp;${dsCol}</th></c:if>
+          <c:if test="${showTransform}"><th>&nbsp;</th></c:if>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
@@ -346,7 +349,17 @@ function reviseBooleanQuery(type, expression) {
                        value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${wdkUser.signature}:${historyId}&questionSubmit=Get+Answer&goto_summary=0"/>
                 <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
            </td>	    
-        </c:if>
+         </c:if>
+
+         <%-- display transform button for each history --%>
+         <c:if test="${showTransform}">
+           <td nowrap>
+               <c:set var="result" value="${history.answer.cacheTableName}" />
+               <c:set var="transformUrl" 
+                      value="showQuestion.do?questionFullName=InternalQuestions.GenesByStrainTransform&geneResult=${result}&questionSubmit=Get+Answer&goto_summary=0"/>
+               <a href='<c:url value="${transformUrl}"/>'>Other Strains</a>
+           </td>	    
+         </c:if>
 
          <td nowrap>
              <a href="deleteHistory.do?wdk_history_id=${historyId}"
