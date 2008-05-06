@@ -254,6 +254,24 @@ function reviseBooleanQuery(type, expression) {
                                <td align="right" valign="top" class="medium" nowrap><i>Expression</i> : </td>
                                <td class="medium">${history.booleanExpression}</td>
                             </tr>
+                            
+                            <%-- display subType and transformer --%>
+                            <c:set var="recordClass" value="${wdkAnswer.question.recordClass}"/>
+                            <c:if test="${recordClass.hasSubType && !recordClass.subType.questionOnly}">
+                                <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
+                                <tr>
+                                    <td align="right" valign="top" class="medium" nowrap>
+                                        <i>${subTypeParam.prompt}</i> : 
+                                    </td>
+                                    <td class="medium">${wdkAnswer.subTypeValue}</td>
+                                </tr>
+                                <tr>
+                                    <td align="right" valign="top" class="medium" nowrap>
+                                        <i>Expand Result</i> : 
+                                    </td>
+                                    <td class="medium">${wdkAnswer.expandSubType}</td>
+                                </tr>
+                            </c:if>
                         </c:when>
                         <c:otherwise>
                             <tr>

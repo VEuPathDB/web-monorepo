@@ -255,20 +255,40 @@ function parse_Url( url, parameter_name )
                 <div id="showParamArea" style="display:none; background:#EEEEEE;">
              </c:otherwise>
           </c:choose>
-                    <c:choose>
-                        <c:when test="${wdkAnswer.isBoolean}">
-                            <div>
-                                <%-- boolean question --%>
-                                <nested:root name="wdkAnswer">
-                                    <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
-                                </nested:root>
-	                        </div>
-                        </c:when>
-                        <c:otherwise>
-                            <wdk:showParams wdkAnswer="${wdkAnswer}" />
-                        </c:otherwise>
-                    </c:choose>
+          <c:choose>
+            <c:when test="${wdkAnswer.isBoolean}">
+                <div>
+                    <%-- boolean question --%>
+                    <nested:root name="wdkAnswer">
+                        <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
+                    </nested:root>
                 </div>
+                <%-- display subType and transformer --%>
+                <c:set var="recordClass" value="${wdkAnswer.question.recordClass}"/>
+                <c:if test="${recordClass.hasSubType && !recordClass.subType.questionOnly}">
+                    <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
+                    <table>
+                    <tr>
+                        <td align="right" valign="top" class="medium" nowrap>
+                            <b>${subTypeParam.prompt}</b> : 
+                        </td>
+                        <td class="medium">${wdkAnswer.subTypeValue}</td>
+                    </tr>
+                    <tr>
+                        <td align="right" valign="top" class="medium" nowrap>
+                            <b>Expand Result</b> : 
+                        </td>
+                        <td class="medium">${wdkAnswer.expandSubType}</td>
+                    </tr>
+                    </table>
+                </c:if>
+
+            </c:when>
+            <c:otherwise>
+                <wdk:showParams wdkAnswer="${wdkAnswer}" />
+            </c:otherwise>
+          </c:choose>
+          </div>
        </td>
     </tr>
     
@@ -298,7 +318,8 @@ function parse_Url( url, parameter_name )
                Download</a>&nbsp;|&nbsp;
            <a href="<c:url value="/showQueryHistory.do"/>">Combine with other results</a>
 	       
-           <c:set value="${wdkAnswer.recordClass.fullName}" var="rsName"/>
+	       <c:set var="recordClass" value="${wdkAnswer.recordClass}"/>
+           <c:set var="rsName" value="${recordClass.fullName}"/>
            <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
            <c:set var="isContigRec" value="${fn:containsIgnoreCase(rsName, 'ContigRecordClass')}"/>
 	       <c:if test="${isGeneRec && showOrthoLink}">
@@ -307,8 +328,15 @@ function parse_Url( url, parameter_name )
                <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${wdkUser.signature}:${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
                <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
            </c:if>
+           
+           <%-- display link to transform query --%>
+           <c:if test="${recordClass.hasSubType && !recordClass.subType.questionOnly}">
+               &nbsp;|&nbsp;
+               <c:set var="transformUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByStrainTransform&geneResult=${wdkAnswer.cacheTableName}&questionSubmit=Get+Answer&goto_summary=0"/>
+               <a href='<c:url value="${transformUrl}"/>'>Other Strains</a>
+           </c:if>
 	       
-               <c:set value="${wdkAnswer.question.fullName}" var="qName" />
+           <c:set value="${wdkAnswer.question.fullName}" var="qName" />
 	       <c:if test="${history.boolean == false}">
 	           &nbsp;|&nbsp;
                    <c:set value="${wdkAnswer.questionUrlParams}" var="qurlParams"/>
