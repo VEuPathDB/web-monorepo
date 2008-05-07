@@ -1,29 +1,31 @@
-#!@perl@
+#!/usr/bin/perl
 
 ## unloads user-comment flat file for keyword search to grep through
 
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
-use GUS::ObjRelP::DbiDatabase;
-use CBIL::Bio::SequenceUtils;
-use GUS::Supported::GusConfig;
 
-my ($outDir, $prefix, $commentSchema, $gusConfigFile, $debug, $verbose, $projectId);
+my ($outDir, $prefix, $commentSchema, $gusConfigFile, $debug, $verbose, 
+    $projectId, $useWdkModel);
 &GetOptions("outputDir=s" => \$outDir,
             "outputPrefix=s" => \$prefix,
             "projectId=s" => \$projectId,
             "commentSchema=s" => \$commentSchema,
             "verbose!"=> \$verbose,
             "debug!" => \$debug,
-            "gusConfigFile=s" => \$gusConfigFile);
+            "gusConfigFile=s" => \$gusConfigFile,
+            "useWdkModel!" => \$useWdkModel,
+            );
 
 if (!$outDir || !$commentSchema){
 	die "usage: $0 --projectId <projectId> --outputDir <outputDirectory>"
             . " [--outputPrefix <file-prefix>]"
             . " --commentSchema <commentSchema>"
             . " [--verbose] [--debug]"
-            . " [--gusConfigFile  <config (default=\$GUS_HOME/config/gus.config)>]\n";
+            . " [--gusConfigFile  <config (default=\$GUS_HOME/config/gus.config)>]\n"
+            . " [--useWdkModel]\n"
+            ;
 }
 
 print "options: --outputDir=\"$outDir\" "
@@ -35,19 +37,10 @@ print "options: --outputDir=\"$outDir\" "
       . "gusConfigFile=\"$gusConfigFile\"" if $verbose;
 
 print "Establishing dbi login\n" if $verbose;
-my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
-my $db = GUS::ObjRelP::DbiDatabase
-           ->new($gusconfig->getDbiDsn(),
-		 $gusconfig->getReadOnlyDatabaseLogin(),
-		 $gusconfig->getReadOnlyDatabasePassword,
-		 $verbose,0,1,
-		 $gusconfig->getCoreSchemaName,
-		 $gusconfig->getOracleDefaultRollbackSegment());
-
-my $dbh = $db->getQueryHandle();
-
+my $dbh = getDbHandle();
 $dbh->{LongReadLen} = 8192 * 1024;
+
 my $sql;
 
 # comments
@@ -99,3 +92,48 @@ sub extractFile {
   rename($tempfile, $datafile);
 }
  
+sub getDbHandle {
+   
+  my ($dbh, $dsn, $login, $passwd);
+  
+  if ($useWdkModel) {
+    
+    require ApiCommonWebsite::Model::CommentConfig;
+    my $c = new ApiCommonWebsite::Model::CommentConfig($projectId);
+
+    $dsn    = $c->getDbiDsn();
+    $login  = $c->getLogin();
+    $passwd = $c->getPassword();
+    
+    $dbh = DBI->connect(
+                  $dsn, 
+                  $login, 
+                  $passwd,
+                  { PrintError => 1, RaiseError => 0}
+                  ) or die "Can't connect to the database: $DBI::errstr\n";
+  
+  } else {
+  
+    require GUS::ObjRelP::DbiDatabase;
+    require GUS::Supported::GusConfig;
+    
+    my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+    
+    $dsn    = $gusconfig->getDbiDsn();
+    $login  = $gusconfig->getReadOnlyDatabaseLogin();
+    $passwd = $gusconfig->getReadOnlyDatabasePassword();
+    
+    my $db = GUS::ObjRelP::DbiDatabase->new($dsn,
+             $login,
+             $passwd,
+             $verbose,0,1,
+             $gusconfig->getCoreSchemaName,
+             $gusconfig->getOracleDefaultRollbackSegment());
+    
+    $dbh = $db->getQueryHandle();
+  }
+
+  print "db info:\n  dsn=$dsn\n  login=$login\n\n" if $verbose;
+  return $dbh;
+  
+}
