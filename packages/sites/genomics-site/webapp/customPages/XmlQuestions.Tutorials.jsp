@@ -13,6 +13,11 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+
+
+
 <site:header title="${wdkModel.displayName} : Tutorials"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
@@ -20,6 +25,13 @@
                  divisionName="Tutorials"
                  division="tutorials"
                  headElement="${headElement}" />
+
+<c:if test = "${project != 'GiardiaDB' || project != 'TrichDB' }">
+
+The ${project} tutorials will be here soon. In the meantime we provide you with access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same navigation and querying capabilities as in ${project}.org.
+<br>
+</c:if>
+
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
