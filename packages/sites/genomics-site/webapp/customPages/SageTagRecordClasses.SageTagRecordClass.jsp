@@ -54,6 +54,13 @@
     content="${attr.value}" />
 <br>
 
+<c:set var="alignedGenes">
+<site:dataTable tblName="Genes" align="left" />
+</c:set>
+<site:panel 
+    displayName="All Genes in proximity of the SAGE Tag"
+    content="${alignedGenes}" />
+<br>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
@@ -122,13 +129,7 @@ Gene+DeprecatedGene+SAGEtags
     content="${rawdata}" />
 <br>
 
-<c:set var="alignedGenes">
-<site:dataTable tblName="Genes" align="left" />
-</c:set>
-<site:panel 
-    displayName="All Genes in proximity of the SAGE Tag"
-    content="${alignedGenes}" />
-<br>
+
 
 
 <%------------------------------------------------------------------%>

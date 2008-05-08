@@ -140,7 +140,7 @@
     <td valign="top">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerRow">
-			<td  valign="top" align="center"><b>Identify SAGE Tags by:</b></td>
+			<td  valign="top" align="center"><b>Identify SAGE Tag Alignments by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridSage/>
