@@ -256,11 +256,18 @@ function showParamGroup(group, isShow)
 <c:if test="${recordClass.hasSubType}">
     <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
     <div>&nbsp;</div>
-    <table align="center">
+    <table border="0" width="100%">
         <tr>
             <td align="right" valign="top"><b>${subTypeParam.prompt}</b></td>
             <td align="left" valign="top">
                 <wdk:enumParamInput qp="${subTypeParam}" />
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td valign="top" width="50" nowrap>
+                <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${subTypeParam.name}"/>
+                <c:set target="${helpQ}" property="${anchorQp}" value="${subTypeParam}"/>
+                <a href="#${anchorQp}">
+                <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
             </td>
         </tr>
     </table>
