@@ -134,6 +134,9 @@
 				<site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
 		    </td> </tr></table></td><td valign="top" align="center"><table border="0">
         </c:when>
+
+       
+
         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
           <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
             <wdk:enumParamInput qp="${qP}" />
@@ -154,7 +157,8 @@
         </c:otherwise>
       </c:choose>
       </c:otherwise></c:choose>
-      <c:if test="${pNam != 'organism' && wdkModel.displayName eq 'ApiDB'}">
+ 
+     <c:if test="${(pNam != 'organism' && wdkModel.displayName eq 'ApiDB') || wdkModel.displayName ne 'ApiDB' }">
           <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>
               <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
@@ -163,6 +167,7 @@
               <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
           </td>
       </c:if>
+
       </tr>
     
     </c:otherwise></c:choose>
