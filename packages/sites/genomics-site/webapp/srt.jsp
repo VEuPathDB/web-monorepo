@@ -118,8 +118,10 @@ function setEnable2(flag) {
             <td align="left">
 		<select name="upstreamAnchor">
                     <option value="Start">transcription start (if known)</option>
+                    <!--
                     <option value="cStart" selected>translation start (ATG)</option>
                     <option value="cEnd">translation stop codon</option>
+                    -->
                     <option value="End">transcription stop (if known)</option>
                 </select>
             </td>
@@ -138,8 +140,10 @@ function setEnable2(flag) {
             <td align="left">
 		<select name="downstreamAnchor">
                     <option value="Start">transcription start (if known)</option>
+                    <!--
                     <option value="cStart">translation start (ATG)</option>
                     <option value="cEnd" selected>translation stop codon</option>
+                    -->
                     <option value="End">transcription stop (if known)</option>
                 </select>
             </td>
