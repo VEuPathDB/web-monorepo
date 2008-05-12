@@ -69,37 +69,45 @@ function setEnable(flag) {
 
     <tr>
         <td colspan="2">
-    <table id="offsetOptions" cellpadding="4">
-        <tr><td colspan="3">
-                <b>Choose the region of the sequence(s):</b>
-            </td>
-        </tr>
-        <tr>
-            <td>begin at</td>
+    <table id="offsetOptions2" cellpadding="2">
+        <tr><td colspan="2">
+            <b>Choose the region of the sequence(s):</b>
+        </td></tr>
+        <tr><td>begin at</td>
             <td align="left">
-                <input type="radio" name="upstreamAnchor" value="Start" checked> start<br>
-                <input type="radio" name="upstreamAnchor" value="End"> stop<br>
+		<select name="upstreamAnchor">
+                    <option value="Start" selected>start</option>
+                    <option value="End">stop</option>
+                </select>
             </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
-                             <input id="upstreamOffset" name="upstreamOffset" value="0" size="6">residues
+            <td align="left">
+                <select name="upstreamSign">
+		    <option value="plus" selected>+</option>
+                    <option value="minus">-</option>
+                </select>
             </td>
-        </tr>
+            <td align="left">
+                <input name="upstreamOffset" value="0" size="6"/> nucleotides
+            </td></tr>
 
-        <tr>
-            <td>end at</td>
+        <tr><td>end at</td>
+          <td align="left">
+		<select name="downstreamAnchor">
+                    <option value="Start">start</option>
+                    <option value="End" selected>stop</option>
+                </select>
+            </td>
             <td align="left">
-                <input type="radio" name="downstreamAnchor" value="Start"> start<br>
-                <input type="radio" name="downstreamAnchor" value="End" checked> stop<br>
-            </td>
-            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
-                             <input id="downstreamOffset" name="downstreamOffset" value="0" size="6"> residues
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3"><a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a></td>
-        </tr>
-    </table>
-        </td>
+                <select name="downstreamSign">
+		    <option value="plus" selected>+</option>
+                    <option value="minus">-</option>
+                </select>
+	    </td>
+            <td align="left">
+                <input name="downstreamOffset" value="0" size="6"/> nucleotides
+            </td></tr>
+      </table>
+     </td>
     </tr>
 
         <td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>

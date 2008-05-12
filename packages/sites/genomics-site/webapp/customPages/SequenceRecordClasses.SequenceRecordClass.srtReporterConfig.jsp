@@ -50,15 +50,17 @@
     <b>Choose the region of the sequence(s):</b>
     </td></tr>
     <tr><td colspan="2">
-    <table cellpadding="4">
-        <tr><td>Nucleotide postions</td>
-            <td align="left">
-                             <input name="start" value="1" size="6"> to
-                             <input name="end" value="10000" size="6"></td></tr>
-        <tr><td><a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a></td></tr>
-    </table></td></tr>
-
-        <td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
+        <table style="margin-left:20px;" cellpadding="2">
+            <tr><td colspan="2">
+                <input type="checkbox" name="revComp" value="protein">Reverse & Complement
+            </td></tr>
+            <tr><td>Nucleotide positions</td>
+                <td align="left">
+                                 <input name="start" value="1" size="6"> to
+                                 <input name="end" value="10000" size="6"></td></tr>
+            <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>        
+        </table>
+    </td></tr>
 
     </table>
   </form>

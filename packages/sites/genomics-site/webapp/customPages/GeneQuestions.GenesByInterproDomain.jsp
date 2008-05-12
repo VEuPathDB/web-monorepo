@@ -173,10 +173,19 @@
     </c:otherwise></c:choose>
 
 </c:forEach>
+
+
+    <tr><td colspan="2">    
+        <%-- display subType filter --%>
+        <wdk:subTypeInput question="${wdkQuestion}" helpQ="${helpQ}" />
+    </td></tr>
+    
+
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
-</table> 
+  
   <tr><td></td>
       <td><html:submit property="questionSubmit" value="Get Answer"/></td>
+  </tr>
 </table>
 
 				<!-- onKeyDown="safariDownFix( event, 'searchBoxupdate');" -->

@@ -345,6 +345,12 @@ Ack, this form won't work at all without JavaScript support!
   </td>
 </tr>
 
+
+<tr><td colspan="3">    
+    <%-- display subType filter --%>
+    <wdk:subTypeInput question="${wdkQuestion}" helpQ="${helpQ}" />
+</td></tr>
+
 <tr align>
   <td colspan="3" align="center">
     <html:submit property="questionSubmit" value="Get Answer"/>
