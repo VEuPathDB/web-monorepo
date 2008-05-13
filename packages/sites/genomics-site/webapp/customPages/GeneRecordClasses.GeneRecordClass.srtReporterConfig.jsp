@@ -80,12 +80,12 @@ function setEnable(flag) {
             <td>begin at</td>
             <td align="left">
 		<select name="upstreamAnchor">
-                    <option value="Start">transcription start (if known)</option>
+                    <option value="Start">Start</option>
                     <!--
                     <option value="cStart" selected>translation start (ATG)</option>
                     <option value="cEnd">translation stop codon</option>
                     -->
-                    <option value="End">transcription stop (if known)</option>
+                    <option value="End">Stop</option>
                 </select>
             </td>
             <td align="left">
@@ -102,12 +102,12 @@ function setEnable(flag) {
             <td>end at</td>
             <td align="left">
 		<select name="downstreamAnchor">
-                    <option value="Start">stop</option>
+                    <option value="Start">Start</option>
                     <!--
                     <option value="cStart">translation start (ATG)</option>
                     <option value="cEnd" selected>translation stop codon</option>
                     -->
-                    <option value="End">start</option>
+                    <option value="End" selected>Stop</option>
                 </select>
             </td>
             <td align="left">
