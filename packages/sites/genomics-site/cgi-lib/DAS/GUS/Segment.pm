@@ -26,7 +26,7 @@ use Bio::Root::Root;
 use Bio::Das::SegmentI;
 use DAS::GUS::Segment::Feature;
 
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 
 use vars '@ISA', '$VERSION';
 @ISA = qw(Bio::Root::Root Bio::SeqI Bio::Das::SegmentI);
@@ -453,7 +453,7 @@ sub _addBulkSubFeatures {
     } else {
       $self->warn("sub feature [" . $$featureRow{'FEATURE_ID'} . "]'s parent feature ["
 		  . $$featureRow{'PARENT_ID'} . "] could not be found. bulk subfeature query is:\n"
-		  . $subFeatureSql);
+		  . $subFeatureSql) if DEBUG;
     }
   }
 }
