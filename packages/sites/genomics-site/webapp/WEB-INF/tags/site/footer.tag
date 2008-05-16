@@ -168,7 +168,7 @@
             <table  cellspacing="0" cellpadding="0">
                 <tr>
                     <td valign="middle" align="right">
-                        <a href="<c:url value='/help.jsp'/>">
+                        <a href="<c:url value='/help.jsp'/>" target="_blank" onClick="poptastic(this.href); return false;">
                             <img SRC="<c:url value='${logo}'/>" height="35" text='Help!' BORDER=0 width="40" height="38">
                         </a>
                     </td>
