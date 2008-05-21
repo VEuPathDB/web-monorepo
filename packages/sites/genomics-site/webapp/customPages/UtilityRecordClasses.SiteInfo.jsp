@@ -144,11 +144,11 @@ tr.headerRow  td,th {
 
 <table class='p' border='0' cellpadding='0' cellspacing='0'>
 <tr><td><b>Instance:</b></td><td class="p"><%= System.getProperty("instance.name") %></td></tr>
-<tr><td><b>Instance uptime:</b></td><td class="p"><%= uptime() %></td></tr>
-<tr><td><b>Last instance restart:</b></td><td class="p"><%= lastRestart(application, pageContext ) %></td></tr>
+<tr><td><b>Instance uptime:</b></td><td class="p"><%= uptimeText(application, pageContext) %></td></tr>
+
 <tr><td>&nbsp;</td></tr>
 <tr><td><b>Webapp:</b> </td><td class="p">${pageContext.request.contextPath}</td></tr>
-<tr><td><b>Last webapp reload/restart:</b></td><td class="p"><%= lastReload(application, pageContext ) %></td></tr>
+<tr><td><b>Webapp uptime:</b></td><td class="p"><%= webappUptime(application, pageContext ) %></td></tr>
 </table>
 <p>
 <b><a href="#" onclick="Effect.toggle('classpathlist','blind'); return false">Webapp Classpath &#8593;&#8595;</a></b>
@@ -315,13 +315,109 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 
 
 <%!
-public String uptime() {
+public String webappUptime(ServletContext application, PageContext pageContext) {
+  try {
+    java.text.DateFormat formatter = new java.text.SimpleDateFormat( 
+                        (String)pageContext.getAttribute("dateFormatStr") );
+
+    File jspFile = (File)application.getAttribute("javax.servlet.context.tempdir");
+    java.util.Date lastModified = new Date(jspFile.lastModified());
+    
+    long milliseconds = System.currentTimeMillis() - lastModified.getTime();
+     
+    int days    = (int)(milliseconds / (1000*60*60*24))     ;
+    int hours   = (int)(milliseconds / (1000*60*60   )) % 24;
+    int minutes = (int)(milliseconds / (1000*60      )) % 60;
+    int seconds = (int)(milliseconds / (1000         )) % 60;
+
+    String uptimeSince = (String)formatter.format(new Date(jspFile.lastModified()));
+    String uptimeBrief = uptimeBrief(days, hours, minutes, seconds);
+   
+    return uptimeBrief + " (since " + uptimeSince + ")";
+  } catch (Exception e) {
+    return "Error: " + e;
+  }
+}
+%>
+
+
+<%!
+public String uptimeText(ServletContext application, PageContext pageContext) {
+  try {
+
+    String uptime = elapsedTimeSinceTomcatJVMStart();
+    uptime = uptime.trim();
+    
+    java.util.regex.Pattern pat;
+    java.util.regex.Matcher m;
+
+    int days    = 0;
+    int hours   = 0;
+    int minutes = 0;
+    int seconds = 0;
+ 
+    pat = java.util.regex.Pattern.compile("^(?:(\\d+)-)?(?:(\\d+):)?(\\d+):(\\d+)$");
+    m = pat.matcher(uptime);
+
+    if (m.find()) {
+      if (m.group(1) != null) days    = Integer.parseInt(m.group(1));
+      if (m.group(2) != null) hours   = Integer.parseInt(m.group(2));
+      if (m.group(3) != null) minutes = Integer.parseInt(m.group(3));
+      if (m.group(4) != null) seconds = Integer.parseInt(m.group(4));
+    } else {
+        throw new Exception();
+    }
+        
+    String uptimeSince = uptimeSince(days, hours, minutes, seconds, (String)pageContext.getAttribute("dateFormatStr") );
+    String uptimeBrief = uptimeBrief(days, hours, minutes, seconds);
+    
+    return uptimeBrief + " (since " + uptimeSince + ")";
+
+  } catch (Exception e) {
+    return "<font color='red'>Error: unable to determine start time</font>";
+  }
+}
+%>
+
+<%!
+public String uptimeSince(int days, int hours, int minutes, int seconds, String fmt) {
+  java.util.Calendar calendar = java.util.Calendar.getInstance();
+   
+  calendar.add(Calendar.DAY_OF_MONTH, -days);
+  calendar.add(Calendar.HOUR,         -hours);
+  calendar.add(Calendar.MINUTE,       -minutes);
+  calendar.add(Calendar.SECOND,       -seconds);
+  
+  java.util.Date startTime = calendar.getTime();
+
+  java.text.DateFormat formatter = new java.text.SimpleDateFormat(fmt);
+
+  return (String)formatter.format(startTime) ;
+}
+%>
+
+<%!
+public String uptimeBrief(int days, int hours, int minutes, int seconds) {
+  String uptimeBrief = "";
+  if (days != 0)
+    uptimeBrief = days + "d " + hours + "h";
+  else if (hours != 0)
+    uptimeBrief = hours + "h " + minutes + "m";
+  else if (seconds != 0)
+    uptimeBrief = minutes + "m " + seconds + "s";
+  
+  return uptimeBrief;
+}
+%>
+
+<%!
+public String elapsedTimeSinceTomcatJVMStart() throws Exception {
   try {
     String result;
     Vector commands=new Vector();
     commands.add("/bin/bash");
     commands.add("-c");
-    commands.add("ps -o etime $PPID | grep -v ELAPSED | sed 's/\\s*//g' | sed 's/\\(.*\\)-\\(.*\\):\\(.*\\):\\(.*\\)/\\1d \\2h/; s/\\(.*\\):\\(.*\\):\\(.*\\)/\\1h \\2m/; s/\\(.*\\):\\(.*\\)/\\1m \\2s/'");
+    commands.add("ps -o etime $PPID | tail -n1");
     
     ProcessBuilder pb=new ProcessBuilder(commands);  
     Process pr=pb.start();
@@ -339,41 +435,11 @@ public String uptime() {
     }
     return result;
     } catch (Exception e) {
-    return "Error: " + e;
+    throw e;
   }
 }
 %>
 
-
-
-<%!
-public String lastReload(ServletContext application, PageContext pageContext) {
-  try {
-   File jspFile = (File)application.getAttribute("javax.servlet.context.tempdir");
-   java.text.DateFormat formatter = new java.text.SimpleDateFormat( 
-                        (String)pageContext.getAttribute("dateFormatStr") );
-
-   return (String)formatter.format(new Date(jspFile.lastModified()));
-  } catch (Exception e) {
-    return "Error: " + e;
-  }
-}
-%>
-
-
-<%!
-public String lastRestart(ServletContext application, PageContext pageContext) {
-  try {
-   File jspFile = ( (File)application.getAttribute("javax.servlet.context.tempdir") ).getParentFile();
-   java.text.DateFormat formatter = new java.text.SimpleDateFormat( 
-                        (String)pageContext.getAttribute("dateFormatStr") );
-
-   return (String)formatter.format(new Date(jspFile.lastModified()));
-  } catch (Exception e) {
-    return "Error: " + e;
-  }
-}
-%>
 
 </c:otherwise>
 </c:choose>
