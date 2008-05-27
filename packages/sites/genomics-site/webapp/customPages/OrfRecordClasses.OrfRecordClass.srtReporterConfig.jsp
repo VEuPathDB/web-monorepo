@@ -110,7 +110,11 @@ function setEnable(flag) {
      </td>
     </tr>
 
-        <td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
+    <tr><td valign="top" nowrap><b>Download Type</b>:
+            <input type="radio" name="downloadType" value="text">Save to File</input>
+            <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
+        </td></tr>
+    <tr><td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
 
     </table>
   </form>

@@ -27,24 +27,20 @@
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
 
-<c:choose>
+<!-- <c:choose>
 <c:when test="${fn:containsIgnoreCase(site, 'ApiDB')}">
   <form action="${CGI_URL}/Api_contigSrt" method="post">
 </c:when>
 <c:otherwise>
   <form action="${CGI_URL}/contigSrt" method="post">
 </c:otherwise>
-</c:choose>
+</c:choose> -->
 
-
+<form action="${CGI_URL}/contigSrt" method="post">
     <input type="hidden" name="ids" value="${allRecordIds}">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     
     <table border="0" width="100%" cellpadding="4">
-
-    <tr><td colspan="2">
-        <input type="checkbox" name="revComp" value="protein">Reverse & Complement
-    </td></tr>
 
     <tr><td colspan="2">
     <b>Choose the region of the sequence(s):</b>
@@ -57,7 +53,13 @@
             <tr><td>Nucleotide positions</td>
                 <td align="left">
                                  <input name="start" value="1" size="6"> to
-                                 <input name="end" value="10000" size="6"></td></tr>
+                                 <input name="end" value="0" size="6"></td></tr>
+
+    <tr><td valign="top" nowrap><b>Download Type</b>:
+            <input type="radio" name="downloadType" value="text">Save to File</input>
+            <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
+        </td></tr>
+
             <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>        
         </table>
     </td></tr>
@@ -70,19 +72,18 @@
 <b><a name="help">Help</a></b>
   <br>
   <br>
-Regions:
- <table width="100%" cellpadding="4">
-   <tr>
-      <td><i><b>relative to sequence start</b></i>
-      <td>to retrieve, eg, the 100 bp upstream genomic region, use "begin at <i>start</i> + -100  end at <i>start</i> + -1".
-   <tr>
-      <td><i><b>relative to sequence stop</b></i>
-      <td>to retrieve, eg, the last 10 amino acids of a protein, use "begin at <i>stop</i> + -9  end at <i>stop</i> + 0".
-    <tr>
-      <td><i><b>relative to sequence start and stop</b></i>
-      <td>to retrieve, eg, a CDS with the  first and last 10 basepairs excised, use: "begin at <i>start</i> + 10 end at <i>stop</i> + -10".
-    </tr>
+Options:
+  <table width="100%" cellpadding="4">
+     <tr>
+        <td><i><b>complete sequence</b></i></td>
+        <td>to retrieve the complete sequence for the requested genomic regions, use "Nucleotide positions 1 to 0"</td>
+     </tr>
+     <tr>
+        <td><i><b>specific sequence region</b></i></td>
+        <td>to retrieve a specific region for the requested genomic regions, use "Nucleotide positions <i>x</i> to <i>y</i>, where <i>y</i> is greater than <i>x</i>
+     </tr>
   </table>
+<table>
 
 <table>
 <tr>

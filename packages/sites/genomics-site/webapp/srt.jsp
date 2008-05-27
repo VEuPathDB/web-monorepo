@@ -158,6 +158,12 @@ function setEnable2(flag) {
             </td>
         </tr>
        </table></td></tr>
+
+    <tr><td valign="top" nowrap><b>Download Type</b>:
+            <input type="radio" name="downloadType" value="text">Save to File</input>
+            <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
+        </td></tr>
+
       <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
     </table>
   </form>
@@ -185,6 +191,11 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
             <td align="left">
                              <input name="start" value="1" size="6"> to
                              <input name="end" value="10000" size="6"></td></tr>
+
+    <tr><td valign="top" nowrap><b>Download Type</b>:
+            <input type="radio" name="downloadType" value="text">Save to File</input>
+            <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
+        </td></tr>
         <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>        
     </table></td></tr>
 
@@ -267,6 +278,10 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
                 <input name="downstreamOffset" value="0" size="6"/> nucleotides
             </td></tr>
       </table></td></tr>
+    <tr><td valign="top" nowrap><b>Download Type</b>:
+            <input type="radio" name="downloadType" value="text">Save to File</input>
+            <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
+        </td></tr>
     <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
     </table>
  </form>

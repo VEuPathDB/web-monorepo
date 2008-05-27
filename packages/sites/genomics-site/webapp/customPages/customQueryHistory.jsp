@@ -217,6 +217,8 @@ function reviseBooleanQuery(type, expression) {
           <th>ID</th> 
           <th onmouseover="hideAnyName()">&nbsp;</th>
           <th onmouseover="hideAnyName()">Query</th>
+          <th onmouseover="hideAnyName()">Date</th>
+          <th onmouseover="hideAnyName()">Version</th>
           <th onmouseover="hideAnyName()">Size</th>
           <c:if test="${isGeneRec && showOrthoLink}"><th>&nbsp;${dsCol}</th></c:if>
           <c:if test="${showTransform}"><th>&nbsp;</th></c:if>
@@ -299,6 +301,13 @@ function reviseBooleanQuery(type, expression) {
                  onclick="enableRename('${historyId}', '${history.customName}')">
                  ${dispNam}</div>
             <div id="input_${historyId}" style="display:none"></div>
+        </td>
+        <td align='center' onmouseover="hideAnyName()" nowrap>${history.lastRunTime}</td>
+	<td align='right' onmouseouver="hideAnyName()" nowrap>
+	<c:choose>
+	  <c:when test="${history.version == null || history.version eq ''}">N/A</c:when>
+          <c:otherwise>${history.version}</c:otherwise>
+        </c:choose>
         </td>
         <td align='right' onmouseover="hideAnyName()" nowrap>${history.estimateSize}</td>
 
