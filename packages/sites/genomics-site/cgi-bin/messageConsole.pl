@@ -26,74 +26,6 @@ my $headers = HTTP::Headers->new(
         "Cache-Control" => "no-cache, must-revalidate");
 print $headers->as_string() . "\n";
 
-
-# Test for new submission request
-my $query=new CGI();
-if ($query->param("submitMessage")){
-
-#XHTML to Render a new message submission form
-        print <<_END_OF_DATA_
-<html>
-<head>
-<title>AMS ALPHA</title>
-<h1 align="left">Message Submission</h1>
-<script language="javascript" type="text/javascript" src="../include/datetimepicker.js">
-</script>
-<script language="JavaScript">
-<!--
-function refreshParent() {
-  window.opener.location.href = "messageConsole.pl";
-
-  if (window.opener.progressWindow)
-		
- {
-    window.opener.progressWindow.close()
-  }
-  window.close();
-}
-//-->
-</script>
-<!--Link to site style-->
-<link href="/var/www/ryanthib.giardiadb.org/project_home/ApiCommonWebsite/Site/htdocs/include/messageStyles.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<div style="width: 500px; left: 10px; top: 10%; height: 640px; padding: 5px; background-color: #E0E2EB">
-<form method="get" name="submitNew" action="admin/messageInsert.pl">
-<p>Message Category:
-<select name="messageCategory">
-<option value ="Information">Information </option>
-<option value ="Degraded">Degraded</option>
-<option value ="Down">Down</option>
-</select>
-<p>Select affected systems:</p>
- <div style="width: 140px; height: 105px; padding: 5px; line-height: 1.3; background-color: #EDE6DE; border-style: outset">
-  <input type="checkbox" name="projects" value="1">CryptoDB<br>
-  <input type="checkbox" name="projects" value="2">GiardiaDB<br>
-  <input type="checkbox" name="projects" value="3">PlasmodDB<br>
-  <input type="checkbox" name="projects" value="4">ToxoDB<br>
-  <input type="checkbox" name="projects" value="5">TrichDB<br>
-  </div>
-<p>Enter Message Text:</p>
-<p><textarea cols="60" rows="5" name="messageText"></textarea></p>
-<p>Start date:
-<input id="startDate" type="text" name="startDate" size="25"><a href="javascript:NewCal('startDate','mmddyyyy', 'true')"><img src="../images/cal.png" width="16" height="16" border="0" alt="Pick a date"></a>
-<p>Stop date:
-<input id="stopDate" type="text" name="stopDate" size="25"><a href="javascript:NewCal('stopDate','mmddyyyy', 'true')"><img src="../images/cal.png" width="16" height="16" border="0" alt="Pick a date"></a>
-<p>Enter Additional Comments:</p>
-<p><textarea cols="60" rows="5" name="adminComments"></textarea></p>
-<input type="hidden" name="newMessage" value="newMessage">
- <div style="margin: 0 auto ; width: 130px; height: 25px">
-  <input type="submit" value="Submit New Message" onClick="refreshParent();">
-    </div>
-</form>
-</div>
-</body>
-</html>
-_END_OF_DATA_
-;
-}
-
-else{ # Display message database
 #Create DB connection
 my $model=$ENV{'PROJECT_ID'};
 my $dbconnect=new ApiCommonWebsite::Model::CommentConfig($model);
@@ -133,73 +65,111 @@ print <<_END_OF_TEXT_
         <script language="javascript">
          function submitWindow()
            {
-             mywindow = window.open ("/cgi-bin/messageConsole.pl",
-             "mywindow","location=1,status=1,scrollbars=1,
-             width=500,height=500");
-             mywindow.moveTo(0,0);
+              window.open("/cgi-bin/messageConsole.pl",
+             "mywindow",location=1,status=1,scrollbars=1,
+             width=500,height=500, value=submitMessage);  return false;
+             
            }
+
 	</script>
         </head>
         <body>
 	<!--Create column headers and border-->
-	<div style="position: relative; width: 80%; height: 60%; top: 5%; margin: 0 auto;">
+	<div style="position: relative; width: 80%; height: 60%; top: 5%; margin: 0 auto; text-align: center">
         <table> 
 	<tr class="header">
 	<th>Message ID</th>
 	<th>Message Text</th>
 	<th>Message Category</th>
+        <th>Projects</th>
 	<th>Start Date</th>
 	<th>Stop Date</th>
 	<th>Admin Comments</th>
-	<th>Time Submitted</th>
 	</tr>
 _END_OF_TEXT_
 ;
 
-# Print retrieved rows from database
+  
+# Print message rows from database
 my @row;
 my $i=0;
 my $n=0;
 
 
       while ((@row=$sth->fetchrow_array) && ($n < 10)){
-        
+       
+         my @projects=&getProjects($row[0]);
+         #@projects=~s/" "/,/;         
+ 
          my $rowStyle;        
 	if ($i % 2==0){$rowStyle="alternate";}
            else {$rowStyle="primary";}
 
          print <<_END_OF_TEXT_
-        <!--Print database row, alternating background color-->  
+        <!--Display database rows, alternating background color-->  
 	<tr class="$rowStyle">  
-        <td> <a href=/cgi-bin/admin/messageInsert.pl?editMessageId=$row[0] onClick="window.open('/cgi-bin/admin/messageInsert.pl?editMessageId=$row[0]','submitNew','width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">$row[0]</a></td>
-        <td>$row[1]</td>
+        <td> <a href=/cgi-bin/admin/messageInsert.pl?messageId=$row[0] onsubmit="return validate_form(this)" onClick="window.open('/cgi-bin/admin/messageInsert.pl?messageId=$row[0]','submitNew','width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">$row[0]</a></td>
+        <td class="message">$row[1]</td>
 	<td>$row[2]</td>
+        <td>@projects</td> 
 	<td>$row[3]</td>
 	<td>$row[4]</td>
-	<td>$row[5]</td>
-	<td>$row[6]</td>
-	</tr>
+	<td class="message">$row[5]</td>
+	</tr> 
         
 _END_OF_TEXT_
 ;
 $i++;
 $n++;
        }
-       
+
+
+ # Render button for new message creation       
 print <<_END_OF_TEXT_
 </table>
-</div>  
-<div style="position: relative; top: 3px; width: 175px; height: 30px; margin: 0 auto">
-   <form>
-    <input type= "submit" value="Submit New Message" onClick="submitWindow();"> 
-    <input type="hidden" name="submitMessage" value="submitMessage">
-   </form>
+  <div style="position: relative; bottom: 20px; width: 175px; height: 30px; margin: 0 auto">
+   <a href=admin/insertMessage.pl?submitMessage=true onClick="window.open('admin/messageInsert.pl?submitMessage=true','submitNew','width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">Create New Message</a>
+  </div>
 </div>
 </body>
 </html>
 _END_OF_TEXT_
 ;
      	 
-#Finsh and close DB connection  
+#Finish and close DB connection  
 $dbh->disconnect();
-}
+
+
+########################################
+  sub getProjects{
+
+   my $model=$ENV{'PROJECT_ID'};
+   my $dbconnect=new ApiCommonWebsite::Model::CommentConfig($model);
+
+   my $dbh = DBI->connect(
+    $dbconnect->{dbiDsn},
+    $dbconnect->{login},
+    $dbconnect->{password},
+    { PrintError => 1,
+      RaiseError => 1,
+      AutoCommit => 1,
+    }
+    ) or die "Can't connect to the database: $DBI::errstr\n";;
+
+   
+   my $messageID=$_[0];
+   my @projects;
+   my $sql=q(SELECT p.project_name FROM projects p, message_projects mp WHERE mp.message_ID = ? AND mp.project_ID = p.project_ID); 
+   my $sth=$dbh->prepare($sql);
+   $sth->execute($messageID);
+        
+     while (my @row=$sth->fetchrow_array()){
+     my $i=0;
+     push (@projects, $row[$i]);
+     $i++;
+     }
+   
+   return @projects;
+   $dbh->disconnect();
+   }# End getProjects subroutine 
+ 
