@@ -111,7 +111,7 @@
 	<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
         <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}">
         <input type="hidden" name="myMultiProp(text_fields)"
-               value="Gene product,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions">
+               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions">
         <input type="hidden" name="myMultiProp(whole_words)" value="yes">
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
         <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}" size="28"/>&nbsp;
