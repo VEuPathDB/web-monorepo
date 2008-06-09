@@ -355,7 +355,7 @@ function reviseBooleanQuery(type, expression) {
            
            <td nowrap>
                 <c:set var="dsColUrl" 
-                       value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&historyId=${wdkUser.signature}:${historyId}&questionSubmit=Get+Answer&goto_summary=0"/>
+                       value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&geneHistoryId=${wdkUser.signature}:${historyId}&questionSubmit=Get+Answer&goto_summary=0"/>
                 <a href='<c:url value="${dsColUrl}"/>'>${dsColVal}</a>
            </td>	    
          </c:if>
