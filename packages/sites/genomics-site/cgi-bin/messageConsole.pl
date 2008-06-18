@@ -43,8 +43,8 @@ my $dbh = DBI->connect(
 # SQL to select messages from DB for display
 my $sql=q(SELECT message_id, 
                 message_text, message_category, 
-                TO_CHAR(start_date, 'mm-dd-yyyy hh24:mi:ss'), 
-                TO_CHAR(stop_date, 'mm-dd-yyyy hh24:mi:ss'), 
+                TO_CHAR(start_date, 'mm-dd-yyyy hh24:mi'), 
+                TO_CHAR(stop_date, 'mm-dd-yyyy hh24:mi'), 
                 admin_comments, TO_CHAR(time_submitted, 'mm-dd-yyyy hh24:mi:ss') 
                 FROM MESSAGES ORDER BY message_id DESC);
 
@@ -53,7 +53,7 @@ my $sth=$dbh->prepare($sql) or
      
 $sth->execute() or die "Can't excecute SQL";
 
-
+my @row;
 # XHTML to display query results in bordered table.
 print <<_END_OF_TEXT_
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -72,6 +72,29 @@ print <<_END_OF_TEXT_
            }
 
 	</script>
+        <script language="javascript" type="text/javascript">
+          function change_image(id,image_url)
+          {
+          id.src = image_url;
+          }
+        </script>
+         <script language="JavaScript">
+         <!--
+         function confirmDelete(row)
+          {
+          var confirmDelete= confirm("Are you sure you want to delete this message record?");
+          if (confirmDelete== true)
+          {
+           window.location=("admin/messageInsert.pl?deleteMessageId="+row+"&messageDelete=true");
+           setTimeout('window.location=("messageConsole.pl"), 4000');
+          }
+          else
+            {
+             window.close();
+            }
+          }
+           //-->
+        </script>
         </head>
         <body>
 	<!--Create column headers and border-->
@@ -85,21 +108,22 @@ print <<_END_OF_TEXT_
 	<th>Start Date</th>
 	<th>Stop Date</th>
 	<th>Admin Comments</th>
+        <th></th>
 	</tr>
 _END_OF_TEXT_
 ;
 
   
 # Print message rows from database
-my @row;
+#my @row;
 my $i=0;
 my $n=0;
 
 
       while ((@row=$sth->fetchrow_array) && ($n < 10)){
        
-         my @projects=&getProjects($row[0]);
-         #@projects=~s/" "/,/;         
+         # Query associated projects from DB
+          my @projects=&getProjects($row[0]);
  
          my $rowStyle;        
 	if ($i % 2==0){$rowStyle="alternate";}
@@ -108,14 +132,20 @@ my $n=0;
          print <<_END_OF_TEXT_
         <!--Display database rows, alternating background color-->  
 	<tr class="$rowStyle">  
-        <td> <a href=/cgi-bin/admin/messageInsert.pl?messageId=$row[0] onsubmit="return validate_form(this)" onClick="window.open('/cgi-bin/admin/messageInsert.pl?messageId=$row[0]','submitNew','width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">$row[0]</a></td>
+        <td> <a href=/cgi-bin/admin/messageInsert.pl?messageId=$row[0] onsubmit="return validate_form(this)" onClick="window.open('/cgi-bin/admin/messageInsert.pl?messageId=$row[0]','submitNew', 'width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">$row[0]</a>
+        </td>
         <td class="message">$row[1]</td>
 	<td>$row[2]</td>
         <td>@projects</td> 
 	<td>$row[3]</td>
 	<td>$row[4]</td>
 	<td class="message">$row[5]</td>
-	</tr> 
+        <td>
+            <img id="image_id" src="/images/deleteButtongs.png" onclick="confirmDelete($row[0])" 
+            onmouseover="change_image(this, '/images/deleteButton.png')" 
+            onmouseout="change_image(this, '/images/deleteButtongs.png')" border="0"/></a>
+        </td>
+        </tr> 
         
 _END_OF_TEXT_
 ;
@@ -124,11 +154,11 @@ $n++;
        }
 
 
- # Render button for new message creation       
+ # Render link for new message creation       
 print <<_END_OF_TEXT_
 </table>
   <div style="position: relative; bottom: 20px; width: 175px; height: 30px; margin: 0 auto">
-   <a href=admin/insertMessage.pl?submitMessage=true onClick="window.open('admin/messageInsert.pl?submitMessage=true','submitNew','width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">Create New Message</a>
+      <a href=admin/insertMessage.pl?submitMessage=true onClick="window.open('admin/messageInsert.pl?submitMessage=true','submitNew', 'width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes, menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">Create New Message</a>
   </div>
 </div>
 </body>
