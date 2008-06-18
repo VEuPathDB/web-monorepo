@@ -213,6 +213,15 @@ Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via
 </div>
 --%>
 
+<c:if test = "${project == 'PlasmoDB'}">
+<div class="smallBlack2">
+<font face="Arial,Helvetica" >
+6 June 2008. The snapshot of the reannotation of the P. falciparum 3D7 genome has been updated. See the <a href="/plasmo/showXmlDataContent.do?name=XmlQuestions.News#newsItem1">news for more information</a>.
+</font>
+</div>
+</c:if>
+
+
 </td>
 </tr>
 </c:when>
