@@ -43,7 +43,14 @@ if ($query->param("submitMessage"))
   # Display new message form
     {
      &displayMessageForm();
-    exit(1);
+     exit(1);
+    }
+
+if ($query->param("messageDelete"))
+  # This is a message deletion. Call deletion routine.
+    {
+     &deleteMessage();
+     exit(1);
     }
 
 
@@ -61,13 +68,10 @@ if ($query->param("messageId")){
        $insertResult=&insertMessage();
        }
 
-# Is this a message update?
-#if ($query->param("updateMessageId")){
-  # $updateResult=&updateMessage();
-  # } 
 ##########################################################
     sub insertMessage(){
-        
+       
+        my $messageId=""; 
         my $messageText=$query->param("messageText");
         my $messageCategory=$query->param("messageCategory");
         my @selectedProjects=$query->param("selectedProjects");
@@ -76,7 +80,7 @@ if ($query->param("messageId")){
         my $adminComments=$query->param("adminComments");
 
        # Validate data from form
-       if (&validateData($messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
+       if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
 
 
         ###Begin DB Transaction###
@@ -153,7 +157,6 @@ if ($query->param("messageId")){
          my $adminComments;
 
          while (@row=$sth->fetchrow_array()) {
-		
           $messageId=$row[0];
 	  $messageText=$row[1];
 	  $messageCategory=$row[2];
@@ -196,7 +199,7 @@ if ($query->param("messageId")){
 }### End editMessage subroutine
 ##############################################################
     
-    # Write updated message record to the database.
+    ## Write updated message record to the database.
     sub updateMessage() {
        
         my $messageId = $query->param("updateMessageId");
@@ -208,7 +211,7 @@ if ($query->param("messageId")){
         my $adminComments = $query->param("adminComments");
 
        # Validate data from form
-        if (&validateData($messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
+        if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
         ### Begin database transaction
         eval{
         my $sql=q(UPDATE MESSAGES SET 
@@ -244,7 +247,7 @@ if ($query->param("messageId")){
        $sth->finish();
        $dbh->commit();
        };
-    }
+       }
              if($@) {
 	     warn "Unable to process record update transaction. Rolling back as a result of: $@\n";
 	     $dbh->rollback();
@@ -260,7 +263,6 @@ if ($query->param("messageId")){
 ####################################
 sub displayMessageForm{
 
-
         # Repopulate form with passed params
          my $errorMessage=$_[0];
          my $messageId=$_[1];
@@ -275,7 +277,8 @@ sub displayMessageForm{
          my $startDate=$_[10];
          my $stopDate=$_[11];
         my $adminComments=$_[12];
-        
+        my $idString;       
+ 
          if(!$messageId){
          # Pre-check previously checked project boxes from a failed new message submission 
          foreach my $project (@selectedProjects){
@@ -287,6 +290,11 @@ sub displayMessageForm{
          }
          }
 
+         # Display message ID in form if this is a message edit
+         if ($messageId){
+            $idString="<p><b>Message ID: $messageId</b></p>";
+            }
+        
     print<<_END_OF_TEXT_
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -307,7 +315,8 @@ sub displayMessageForm{
         <body style="background-color: #e0e0eb"> 
         <form method="get" name="submitEdit" action=messageInsert.pl>
         <p style="color: red">$errorMessage</p>
-        <p><b>Message ID: $messageId</b>
+        <!--<p><b>Message ID: $messageId</b>-->
+        $idString
         <p><b>Message Category:</b>:    
         <select name="messageCategory">
         <option value=$messageCategory>$messageCategory</option>
@@ -346,7 +355,8 @@ _END_OF_TEXT_
 ####################################
    sub getSelectedProjects(){
 
-     #Determine previously selected projects associated with given message ID.
+     ## Determine and return  previously selected projects associated with given message ID.
+     
      my $messageID=$_[0];
      my @selectedProjects;
      my $sql=q(SELECT p.project_name FROM projects p, message_projects mp WHERE mp.message_ID = ? AND mp.project_ID = p.project_ID);
@@ -363,10 +373,29 @@ _END_OF_TEXT_
      }## End getProjects subroutine 
 
 ####################################
+   sub deleteMessage(){
+ 
+      my $messageID=$query->param("deleteMessageId");
+
+      # Delete message from message_projects table
+      my $sql=q(DELETE FROM  message_projects WHERE message_id = ?);
+      my $sth=$dbh->prepare($sql);
+      $sth->execute($messageID);
+
+      # Delete message from message table
+        $sql=q(DELETE FROM messages WHERE message_id = ?);
+        $sth=$dbh->prepare($sql);
+        $sth->execute($messageID);
+
+        $sth->finish();
+        $dbh->commit();
+       }  
+###################################
    sub validateData(){
  
-         # This is an edit. Parameters passed via call.
-         my $messageId;
+         ## Validate data submitted from message form. Reload form and notify user if data is invalid.
+         
+         my $messageId=shift;
          my $messageCategory=shift;
          my (@selectedProjects)=@{(shift)};
          my $cryptoBox;
@@ -379,10 +408,11 @@ _END_OF_TEXT_
          my $stopDate=shift;
          my $adminComments=shift;
          my $errorMessage="";
-          
+         
+              
            # Check to ensure that required fields are filled out
-           $errorMessage .= "*At least one project must be selected.<br/>" if (!@selectedProjects);
-           $errorMessage .= "*Message field is required.<br/>" if (!$messageText);
+           $errorMessage .= "ERROR: At least one project must be selected.<br/>" if (!@selectedProjects);
+           $errorMessage .= "ERROR: Message field is required.<br/>" if (!$messageText);
        
        my $convertedStartDate=$startDate;
        my $convertedStopDate=$stopDate;
@@ -392,27 +422,34 @@ _END_OF_TEXT_
        $convertedStopDate=~s/:/-/g;
        
        # Convert date strings to seconds since epoch
-       (my $startMonth, my $startDay, my $startYear, my $startHour, my $startMinutes, my $startSeconds)=($convertedStartDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/); 
-       (my $stopMonth, my $stopDay, my $stopYear, my $stopHour, my $stopMinutes, my $stopSeconds)=($convertedStopDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
-      
-       $convertedStartDate = timelocal($startSeconds, $startMinutes, $startHour, $startDay, $startMonth-1, $startYear-1900);
-       $convertedStopDate = timelocal($stopSeconds, $stopMinutes, $stopHour, $stopDay, $stopMonth-1, $stopYear-1900);
+        (my $startMonth, my $startDay, my $startYear, my $startHour, my $startMinutes, my $startSeconds)=($convertedStartDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
+        (my $stopMonth, my $stopDay, my $stopYear, my $stopHour, my $stopMinutes, my $stopSeconds)=($convertedStopDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
+     
+          eval{ 
+          $convertedStartDate = timelocal($startSeconds, $startMinutes, $startHour, $startDay, $startMonth-1, $startYear-1900);
+          };
+              if ($@) {$errorMessage .= "ERROR: Start date must be in format MM-DD-YYYY HH:MM:SS.<br/>";}
+          eval{
+          $convertedStopDate = timelocal($stopSeconds, $stopMinutes, $stopHour, $stopDay, $stopMonth-1, $stopYear-1900);
+          };
+             if ($@) {$errorMessage .= "ERROR: Stop date must be in format MM-DD-YYYY HH:MM:SS.<br/>";}
 
-        $errorMessage .= "*Start date cannot be before stop date.<br/>" if  ($convertedStartDate >= $convertedStopDate);
+        # Check to ensure start/stop date logic is valid
+        $errorMessage .= "ERROR: Stop date cannot be before start date.<br/>" if  (($convertedStartDate) && ($convertedStopDate) && ($convertedStartDate >= $convertedStopDate));
       
         if ( $errorMessage )
            {
-             # Errors with the form - redisplay it and return failure
+             # Errors found within the form data - redisplay it and return failure
               &displayMessageForm($errorMessage,
                                   $messageId,
                                   $messageCategory,
                                   \@selectedProjects,
+                                  $messageText,
                                   $cryptoBox,
                                   $giardiaBox,
                                   $plasmoBox,
                                   $toxoBox,
                                   $trichBox,
-                                  $messageText,
                                   $startDate, 
                                   $stopDate,
                                   $adminComments);
@@ -426,7 +463,7 @@ _END_OF_TEXT_
         return 1;
            } 
        
-       } 
+       } ##End validate data subroutine 
 ###################################
  
 #Finish and close DB connection
