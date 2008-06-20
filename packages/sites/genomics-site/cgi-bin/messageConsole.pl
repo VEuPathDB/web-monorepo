@@ -114,18 +114,15 @@ _END_OF_TEXT_
 ;
 
   
-# Print message rows from database
-#my @row;
-my $i=0;
-my $n=0;
-
-
+# Print message rows from database 
+      my $i=0;
+      my $n=0;
       while ((@row=$sth->fetchrow_array) && ($n < 10)){
        
          # Query associated projects from DB
           my @projects=&getProjects($row[0]);
- 
-         my $rowStyle;        
+          
+        my $rowStyle;        
 	if ($i % 2==0){$rowStyle="alternate";}
            else {$rowStyle="primary";}
 
@@ -149,10 +146,9 @@ my $n=0;
         
 _END_OF_TEXT_
 ;
-$i++;
-$n++;
-       }
-
+        $i++;
+        $n++;
+     }
 
  # Render link for new message creation       
 print <<_END_OF_TEXT_
@@ -166,26 +162,12 @@ print <<_END_OF_TEXT_
 _END_OF_TEXT_
 ;
      	 
-#Finish and close DB connection  
-$dbh->disconnect();
 
 
 ########################################
   sub getProjects{
-
-   my $model=$ENV{'PROJECT_ID'};
-   my $dbconnect=new ApiCommonWebsite::Model::CommentConfig($model);
-
-   my $dbh = DBI->connect(
-    $dbconnect->{dbiDsn},
-    $dbconnect->{login},
-    $dbconnect->{password},
-    { PrintError => 1,
-      RaiseError => 1,
-      AutoCommit => 1,
-    }
-    ) or die "Can't connect to the database: $DBI::errstr\n";;
-
+   
+  ## Query database and return projects associated with messages
    
    my $messageID=$_[0];
    my @projects;
@@ -200,6 +182,13 @@ $dbh->disconnect();
      }
    
    return @projects;
-   $dbh->disconnect();
-   }# End getProjects subroutine 
  
+   }# End getProjects subroutine 
+ #######################################
+
+# Finish and close DB connection
+$dbh->disconnect();
+
+
+
+
