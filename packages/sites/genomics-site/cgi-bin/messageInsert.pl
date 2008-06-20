@@ -40,7 +40,7 @@ my $updateResult;
 
 
 if ($query->param("submitMessage"))
-  # Display new message form
+  # This is a new message request. Display new message form
     {
      &displayMessageForm();
      exit(1);
@@ -54,17 +54,18 @@ if ($query->param("messageDelete"))
     }
 
 
-# Is this a message edit?
 if ($query->param("messageId")){
-   $editResult=&editMessage();
+   # This is a message edit request. Display message for editing.
+    $editResult=&editMessage();
    }
    
    elsif ($query->param("updateMessageId")){
+   # This is an edited message submission. Write it to database.
    $updateResult=&updateMessage();
    }
 
     else{
-     # This is a new message submission
+     # This is a new message submission. Write it to database.
        $insertResult=&insertMessage();
        }
 
@@ -173,7 +174,7 @@ if ($query->param("messageId")){
          my $toxoBox;
          my $trichBox; 
        
-         # Pre-check previously checked project boxes  
+         # Re-check previously checked project boxes  
          foreach my $project (@selectedProjects){
          if ($project=~/CryptoDB/){$cryptoBox="checked='checked'";}
          if ($project=~/GiardiaDB/){$giardiaBox="checked='checked'";}
@@ -276,22 +277,22 @@ sub displayMessageForm{
          my $trichBox=$_[9];;
          my $startDate=$_[10];
          my $stopDate=$_[11];
-        my $adminComments=$_[12];
-        my $idString;       
+         my $adminComments=$_[12];
  
          if(!$messageId){
          # Pre-check previously checked project boxes from a failed new message submission 
-         foreach my $project (@selectedProjects){
-         if ($project=~/1/){$cryptoBox="checked='checked'";}
-         if ($project=~/2/){$giardiaBox="checked='checked'";}
-         if ($project=~/3/){$plasmoBox="checked='checked'";}
-         if ($project=~/4/){$toxoBox="checked='checked'";}
-         if ($project=~/5/){$trichBox="checked='checked'";}
-         }
+          foreach my $project (@selectedProjects){
+           if ($project=~/1/){$cryptoBox="checked='checked'";}
+           if ($project=~/2/){$giardiaBox="checked='checked'";}
+           if ($project=~/3/){$plasmoBox="checked='checked'";}
+           if ($project=~/4/){$toxoBox="checked='checked'";}
+           if ($project=~/5/){$trichBox="checked='checked'";}
+           }
          }
 
          # Display message ID in form if this is a message edit
-         if ($messageId){
+            my $idString;
+            if ($messageId){
             $idString="<p><b>Message ID: $messageId</b></p>";
             }
         
@@ -375,8 +376,12 @@ _END_OF_TEXT_
 ####################################
    sub deleteMessage(){
  
+      ## Delete a message record from the database
+ 
       my $messageID=$query->param("deleteMessageId");
 
+      ###Begin Database Transaction###
+      eval{
       # Delete message from message_projects table
       my $sql=q(DELETE FROM  message_projects WHERE message_id = ?);
       my $sth=$dbh->prepare($sql);
@@ -389,6 +394,13 @@ _END_OF_TEXT_
 
         $sth->finish();
         $dbh->commit();
+       };
+       ###End Database Transaction###
+       if ($@){
+             warn "Unable to process record update transaction. Rolling back as a result of: $@\n";
+             $dbh->rollback();
+             }
+
        }  
 ###################################
    sub validateData(){
@@ -410,33 +422,38 @@ _END_OF_TEXT_
          my $errorMessage="";
          
               
-           # Check to ensure that required fields are filled out
+         # Check to ensure that required fields are filled out
            $errorMessage .= "ERROR: At least one project must be selected.<br/>" if (!@selectedProjects);
            $errorMessage .= "ERROR: Message field is required.<br/>" if (!$messageText);
        
-       my $convertedStartDate=$startDate;
-       my $convertedStopDate=$stopDate;
-       $convertedStartDate=~s/\s/-/;
-       $convertedStopDate=~s/\s/-/;
-       $convertedStartDate=~s/:/-/g;
-       $convertedStopDate=~s/:/-/g;
+         # Alter submitted date string format to match localtime() format 
+           my $convertedStartDate=$startDate;
+           my $convertedStopDate=$stopDate;
+              $convertedStartDate=~s/\s/-/;
+              $convertedStopDate=~s/\s/-/;
+              $convertedStartDate=~s/:/-/g;
+              $convertedStopDate=~s/:/-/g;
        
-       # Convert date strings to seconds since epoch
-        (my $startMonth, my $startDay, my $startYear, my $startHour, my $startMinutes, my $startSeconds)=($convertedStartDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
-        (my $stopMonth, my $stopDay, my $stopYear, my $stopHour, my $stopMinutes, my $stopSeconds)=($convertedStopDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
+         # Convert date strings to integer seconds since epoch
+          (my $startMonth, my $startDay, my $startYear, my $startHour, my $startMinutes, my $startSeconds)=($convertedStartDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
+          (my $stopMonth, my $stopDay, my $stopYear, my $stopHour, my $stopMinutes, my $stopSeconds)=($convertedStopDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
      
-          eval{ 
-          $convertedStartDate = timelocal($startSeconds, $startMinutes, $startHour, $startDay, $startMonth-1, $startYear-1900);
-          };
-              if ($@) {$errorMessage .= "ERROR: Start date must be in format MM-DD-YYYY HH:MM:SS.<br/>";}
-          eval{
-          $convertedStopDate = timelocal($stopSeconds, $stopMinutes, $stopHour, $stopDay, $stopMonth-1, $stopYear-1900);
-          };
-             if ($@) {$errorMessage .= "ERROR: Stop date must be in format MM-DD-YYYY HH:MM:SS.<br/>";}
+            eval{ 
+                 $convertedStartDate = timelocal($startSeconds, $startMinutes, $startHour, $startDay, $startMonth-1, $startYear-1900);
+                };
+                 if ($@) {$errorMessage .= "ERROR: Start date must be in format MM-DD-YYYY HH:MM:SS.<br/>";}
+          
+            eval{
+                 $convertedStopDate = timelocal($stopSeconds, $stopMinutes, $stopHour, $stopDay, $stopMonth-1, $stopYear-1900);
+                };
+                 if ($@) {$errorMessage .= "ERROR: Stop date must be in format MM-DD-YYYY HH:MM:SS.<br/>";}
 
-        # Check to ensure start/stop date logic is valid
-        $errorMessage .= "ERROR: Stop date cannot be before start date.<br/>" if  (($convertedStartDate) && ($convertedStopDate) && ($convertedStartDate >= $convertedStopDate));
-      
+        # Ensure start/stop date logic is valid
+        $errorMessage .= "ERROR: Stop date cannot be before start date.<br/>" if (($convertedStartDate) && ($convertedStopDate) && ($convertedStartDate >= $convertedStopDate));
+     
+        # Ensure start date is not in the past, allow three minute delay
+        $errorMessage .= "ERROR: Start date cannot be in the past." if ($convertedStartDate < (time()-180));
+        
         if ( $errorMessage )
            {
              # Errors found within the form data - redisplay it and return failure
@@ -464,7 +481,7 @@ _END_OF_TEXT_
            } 
        
        } ##End validate data subroutine 
-###################################
+#######################################
  
 #Finish and close DB connection
 $dbh->disconnect();
