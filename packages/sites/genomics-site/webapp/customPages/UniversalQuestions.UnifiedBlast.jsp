@@ -76,6 +76,9 @@
         </select><br>
 	<input type="button" onClick="selectAll_None(true)" value="All"/>&nbsp;&nbsp;<input onClick="selectAll_None(false)" type="button" value="None"/><br>
         <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
+	
+
+
       </td>
     </c:when>
 <%--  <c:when test="${pNam eq 'BlastAlgorithm'}"> --%>
@@ -106,16 +109,18 @@
             <c:choose>
               <c:when test="${pNam == 'BlastQuerySequence'}">
                   <html:textarea property="myProp(${pNam})" styleId="sequence" cols="50" rows="4" onchange="checkSequenceLength()"/>
-		  <br><div id="short_sequence_warning"></div>
-              </c:when>
+		  <br>
+
+              </td> 
+	      </c:when>
               <c:when test="${pNam == '-e'}">
-                  <html:text property="myProp(${pNam})" styleId="e"/>
+                  <html:text property="myProp(${pNam})" styleId="e"/></td>
               </c:when>
               <c:otherwise>
-                <html:text property="myProp(${pNam})" styleId="${qP.id}" />
+                <html:text property="myProp(${pNam})" styleId="${qP.id}" /></td>
               </c:otherwise>
             </c:choose>
-          </td>
+          <!--</td>-->
         </c:otherwise>
       </c:choose>
 
@@ -164,6 +169,17 @@
 
 </c:if>
 
+<span id="short_sequence_warning" style="display: none;
+								background: url('images/text_bubble.png'); 
+								font-size: 12px; 
+								height: 66px; 
+								left: 583px; 
+								padding-left: 40px; 
+								padding-top: 12px; 
+								position: relative; 
+								top:-236px; 
+								width: 360px;
+			"></span>
   </td>
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
