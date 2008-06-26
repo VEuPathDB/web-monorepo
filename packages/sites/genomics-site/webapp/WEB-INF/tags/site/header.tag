@@ -136,6 +136,37 @@
     </c:choose>
     </td>
 
+<%--Retrieve from DB and display site degraded message scheduled via announcements system--%>
+<c:set var="siteDegraded">
+  <site:announcement messageCategory="Degraded" projectName="PlasmoDB" />
+</c:set>
+
+<c:if test="${siteDegraded != ''}">
+<div class="warningBox">
+  <div class="warningIcon">
+       <img src="/images/warningSign.png" alt="warningSign" />
+  </div>
+  <div class="warningMessage">
+      ${siteDegraded}
+  </div>
+</div>
+</c:if>
+
+<%--Retrieve from DB and display site down message scheduled via announcements system--%> 
+<c:set var="siteDown">
+  <site:announcement messageCategory="Down" projectName="PlasmoDB" />
+</c:set>
+
+<c:if test="${siteDown != ''}">
+<div class="downBox">
+  <div class="downIcon">
+       <img src="/images/stopSign.png" alt="stopSign" />
+  </div>
+  <div class="downMessage">
+       ${siteDown}
+  </div>
+</div>
+</c:if>
 
 
 <%-- Release number --%>
@@ -213,10 +244,16 @@ Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via
 </div>
 --%>
 
+
+<%--Information message retrieved from DB via messaging system--%>
+<c:set var="siteInfo">
+  <site:announcement messageCategory="Information" projectName="PlasmoDB" />
+</c:set>
+
 <c:if test = "${project == 'PlasmoDB'}">
 <div class="smallBlack2">
 <font face="Arial,Helvetica" >
-6 June 2008. The snapshot of the reannotation of the P. falciparum 3D7 genome has been updated. See the <a href="/plasmo/showXmlDataContent.do?name=XmlQuestions.News#newsItem1">news for more information</a>.
+${siteInfo}
 </font>
 </div>
 </c:if>
@@ -225,6 +262,8 @@ Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via
 </td>
 </tr>
 </c:when>
+
+
 
 <c:otherwise>
 <tr>
