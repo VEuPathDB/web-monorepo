@@ -66,7 +66,8 @@ if ($query->param("messageId")){
 
     else{
      # This is a new message submission. Write it to database.
-       $insertResult=&insertMessage();
+        $insertResult=&insertMessage();
+          if ($insertResult) {&confirmation();}
        }
 
 ##########################################################
@@ -124,7 +125,11 @@ if ($query->param("messageId")){
         if ($@) {
           warn "Unable to process database transaction. Rolling back as a result of: $@\n";
           eval{ $dbh->rollback() };
+          return 0;
           }
+        else{
+            return 1;
+            }
          ###End DB Transaction###
        }
 
@@ -482,7 +487,18 @@ _END_OF_TEXT_
        
        } ##End validate data subroutine 
 #######################################
- 
+
+sub confirmation(){
+
+print<<_END_OF_TEXT_
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml" >
+        <p>Message added successfully.</p>
+        <input type="submit" name="confirmation" value="OK" onclick="window.close();" />
+_END_OF_TEXT_
+;
+} 
 #Finish and close DB connection
 $dbh->disconnect();
 
