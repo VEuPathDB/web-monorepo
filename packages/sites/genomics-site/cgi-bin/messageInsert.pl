@@ -60,8 +60,9 @@ if ($query->param("messageId")){
    }
    
    elsif ($query->param("updateMessageId")){
-   # This is an edited message submission. Write it to database.
-   $updateResult=&updateMessage();
+    # This is an edited message submission. Write it to database.
+      $updateResult=&updateMessage();
+       if ($updateResult) {&confirmation();}
    }
 
     else{
@@ -136,7 +137,7 @@ if ($query->param("messageId")){
     } ## End insertMessage Subroutine
 ###########################################################################
 
-    # Retrieve message row from database for editing.
+    ## Retrieve message row from database for editing.
     sub editMessage(){
 
         my $editMessageId=$query->param("messageId");
@@ -209,7 +210,7 @@ if ($query->param("messageId")){
     sub updateMessage() {
        
         my $messageId = $query->param("updateMessageId");
-	my $messageText = $query->param("messageText");
+	    my $messageText = $query->param("messageText");
         my $messageCategory = $query->param("messageCategory");
         my @selectedProjects = $query->param("selectedProjects");
         my $startDate = $query->param("startDate");
@@ -217,7 +218,8 @@ if ($query->param("messageId")){
         my $adminComments = $query->param("adminComments");
 
        # Validate data from form
-        if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
+       if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
+       
         ### Begin database transaction
         eval{
         my $sql=q(UPDATE MESSAGES SET 
@@ -254,22 +256,22 @@ if ($query->param("messageId")){
        $dbh->commit();
        };
        }
-             if($@) {
-	     warn "Unable to process record update transaction. Rolling back as a result of: $@\n";
-	     $dbh->rollback();
-             }  
+          if($@){
+            warn "Unable to process record update transaction. Rolling back as a result of: $@\n";
+	        $dbh->rollback();
+            return 0;
+            }  
 
              else{
-             $updateResult="success";
-             return($updateResult);
+             return 1;
              }
-     
+       ###End database transaction###
 
     }## End updateMessage Subroutine
 ####################################
 sub displayMessageForm{
 
-        # Repopulate form with passed params
+        ## Render new submission form, or repopulate and display form with passed params if validation failed.
          my $errorMessage=$_[0];
          my $messageId=$_[1];
          my $messageCategory=$_[2];
@@ -331,7 +333,7 @@ sub displayMessageForm{
         <option value ="Down">Down</option>
         </select>
         </p>
-        <p>Select affected systems:</p>
+        <p><b>Select affected systems:</b></p>
         <div style="width: 140px; height: 105px; padding: 5px; line-height: 1.3; background-color: #ede6de; border-style: outset">
         <input type="checkbox" name="selectedProjects" value="1" $cryptoBox>CryptoDB<br>
         <input type="checkbox" name="selectedProjects" value="2" $giardiaBox>GiardiaDB<br>
@@ -457,7 +459,7 @@ _END_OF_TEXT_
         $errorMessage .= "ERROR: Stop date cannot be before start date.<br/>" if (($convertedStartDate) && ($convertedStopDate) && ($convertedStartDate >= $convertedStopDate));
      
         # Ensure start date is not in the past, allow three minute delay
-        $errorMessage .= "ERROR: Start date cannot be in the past." if ($convertedStartDate < (time()-180));
+        $errorMessage .= "ERROR: Stop date/time cannot be in the past." if ($convertedStopDate < (time()-600));
         
         if ( $errorMessage )
            {
