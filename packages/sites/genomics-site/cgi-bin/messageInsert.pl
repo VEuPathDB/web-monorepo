@@ -40,7 +40,7 @@ my $updateResult;
 
 
 if ($query->param("submitMessage"))
-  # This is a new message request. Display new message form
+  # This is a new message request. Display new message form and exit.
     {
      &displayMessageForm();
      exit(1);
@@ -55,7 +55,7 @@ if ($query->param("messageDelete"))
 
 
 if ($query->param("messageId")){
-   # This is a message edit request. Display message for editing.
+   # This is a message edit request. Display existing message for editing.
     $editResult=&editMessage();
    }
    
@@ -68,7 +68,7 @@ if ($query->param("messageId")){
     else{
      # This is a new message submission. Write it to database.
         $insertResult=&insertMessage();
-          if ($insertResult) {&confirmation();}
+          if ($insertResult) {&confirmation("new");}
        }
 
 ##########################################################
@@ -84,7 +84,6 @@ if ($query->param("messageId")){
 
        # Validate data from form
        if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
-
 
         ###Begin DB Transaction###
         eval{
@@ -206,11 +205,12 @@ if ($query->param("messageId")){
 }### End editMessage subroutine
 ##############################################################
     
-    ## Write updated message record to the database.
     sub updateMessage() {
+
+       ##Write an updated message record to the database.
        
         my $messageId = $query->param("updateMessageId");
-	    my $messageText = $query->param("messageText");
+	my $messageText = $query->param("messageText");
         my $messageCategory = $query->param("messageCategory");
         my @selectedProjects = $query->param("selectedProjects");
         my $startDate = $query->param("startDate");
@@ -363,7 +363,7 @@ _END_OF_TEXT_
 ####################################
    sub getSelectedProjects(){
 
-     ## Determine and return  previously selected projects associated with given message ID.
+     ## Determine and return previously selected projects associated with given message ID.
      
      my $messageID=$_[0];
      my @selectedProjects;
@@ -492,12 +492,25 @@ _END_OF_TEXT_
 
 sub confirmation(){
 
+##Provide confirmation of successful message submission in form window.
+
+my $messageType=$_[0];
+my $confirmation;
+
+if ($messageType eq "new"){$confirmation="Your message has been scheduled successfully.";}
+   else {$confirmation="Revised message has been scheduled successfully.";}
+
 print<<_END_OF_TEXT_
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" >
-        <p>Message added successfully.</p>
+        <body style="background-color: #e0e0eb;">
+        <div style="margin 0: auto; text-align: center; background-color: #ede6de;">
+        <p><b><i>$confirmation</i></b></p>
         <input type="submit" name="confirmation" value="OK" onclick="window.close();" />
+        </div>
+        </body>
+        </html>
 _END_OF_TEXT_
 ;
 } 
