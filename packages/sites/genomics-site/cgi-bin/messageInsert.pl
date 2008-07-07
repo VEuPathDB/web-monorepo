@@ -220,7 +220,7 @@ if ($query->param("messageId")){
        # Validate data from form
        if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
        
-        ### Begin database transaction
+        ###Begin database transaction###
         eval{
         my $sql=q(UPDATE MESSAGES SET 
                    message_text = ?, message_category = ?, 
@@ -296,6 +296,16 @@ sub displayMessageForm{
            if ($project=~/5/){$trichBox="checked='checked'";}
            }
          }
+         elsif ($messageId){
+           @selectedProjects=&getSelectedProjects($messageId);
+           foreach my $project (@selectedProjects){
+            if ($project=~/CryptoDB/){$cryptoBox="checked='checked'";}
+            if ($project=~/GiardiaDB/){$giardiaBox="checked='checked'";}
+            if ($project=~/PlasmoDB/){$plasmoBox="checked='checked'";}
+            if ($project=~/ToxoDB/){$toxoBox="checked='checked'";}
+            if ($project=~/TrichDB/){$trichBox="checked='checked'";}
+            }     
+          }
 
          # Display message ID in form if this is a message edit
             my $idString;
