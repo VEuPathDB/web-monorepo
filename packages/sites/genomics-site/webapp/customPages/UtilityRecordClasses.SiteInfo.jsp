@@ -132,11 +132,46 @@ tr.headerRow  td,th {
 <h2>Database</h2>
 
 <p>
-<b>Oracle instance</b>: ${fn:toLowerCase(wdkRecord.attributes['global_name'].value)}</b><br>
-<b>Login name</b>: ${fn:toLowerCase(wdkRecord.attributes['login'].value)}</b><br>
-<b>Hosted on</b>: ${wdkRecord.attributes['host_name'].value} (${wdkRecord.attributes['address'].value})<br>
-<b>Oracle Version</b>: ${wdkRecord.attributes['version'].value}<br>
-
+<b>Identifiers</b>:
+<table border="0" cellspacing="3" cellpadding="2" align="">
+<tr class="secondary3"><th><font size="-2">Identifier</font></th><th><font size="-2">Value</font></th><th></th></tr>
+<tr class="rowLight"><td>Service Name</td><td>${fn:toLowerCase(wdkRecord.attributes['service_name'].value)}</td>
+    <td><a href='javascript:void()' style="text-decoration:none"
+        onmouseover="return overlib(
+         'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'service_name\')&nbsp;from&nbsp;dual</i>'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a></td>
+</tr>
+<tr class="rowMedium"><td>Instance Name</td><td>${fn:toLowerCase(wdkRecord.attributes['instance_name'].value)}</td>
+    <td><a href='javascript:void()' style="text-decoration:none" 
+        onmouseover="return overlib(
+         'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'instance_name\')&nbsp;from&nbsp;dual</i>'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a></td>
+</tr>
+<tr class="rowLight"><td>Global Name</td><td>${fn:toLowerCase(wdkRecord.attributes['global_name'].value)}</td>
+    <td><a href='javascript:void()' style="text-decoration:none" 
+        onmouseover="return overlib(
+         'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'global_name\')&nbsp;from&nbsp;dual</i>'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a></td>
+</tr>
+<tr class="rowMedium"><td>DB Unique Name</td><td>${fn:toLowerCase(wdkRecord.attributes['db_unique_name'].value)}</td>
+    <td><a href='javascript:void()' style="text-decoration:none" 
+        onmouseover="return overlib(
+         'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'db_unique_name\')&nbsp;from&nbsp;dual</i>'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a></td>
+</tr>
+</table>
+<br>
+<b>Hosted on</b>: ${wdkRecord.attributes['server_name'].value} (${wdkRecord.attributes['server_ip'].value})<br>
+<b>Oracle Version</b>: ${wdkRecord.attributes['version'].value}
+<p>
+<b>Client login name</b>: ${fn:toLowerCase(wdkRecord.attributes['login'].value)}</b><br>
+<b>Client connecting from</b>: ${wdkRecord.attributes['client_host'].value}<br>
+<b>Client OS user</b>: ${wdkRecord.attributes['os_user'].value}<br>
+<p>
 <b>Available DBLinks</b>: <site:dataTable tblName="AllDbLinks"/>
 </p>
 
@@ -151,7 +186,7 @@ tr.headerRow  td,th {
 <tr><td><b>Webapp uptime:</b></td><td class="p"><%= webappUptime(application, pageContext ) %></td></tr>
 </table>
 <p>
-<b><a href="#" onclick="Effect.toggle('classpathlist','blind'); return false">Webapp Classpath &#8593;&#8595;</a></b>
+<b><a href="#" style="text-decoration:none" onclick="Effect.toggle('classpathlist','blind'); return false">Webapp Classpath &#8593;&#8595;</a></b>
 <div id="classpathlist" style="padding: 5px; display: none;"><div>
 ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')}
 </div></div>
@@ -185,7 +220,7 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 <tr><td>
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['apicommMacro']}">
     <b>LOGIN_DBLINK Macro</b>
-    <a href='javascript:void()' 
+    <a href='javascript:void()' style="text-decoration:none" 
         onmouseover="return overlib(
          '@LOGIN_DBLINK@ as defined in WDK Record scope.<br>' +
          '(<i>cf.</i> the \'Available DBLinks\' table.)'
@@ -198,7 +233,7 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['apicomm_global_name']}">
     <tr><td>
    <b>ApiComm dblink global_name</b>
-    <a href='javascript:void()' 
+    <a href='javascript:void()' style="text-decoration:none" 
         onmouseover="return overlib(
          'result of <i>select global_name from global_name${wdkRecord.attributes['apicommMacro'].value}</i>'
         )"
@@ -224,7 +259,7 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
   Last build  was a '<b>${build['!Last.build.component']}</b> 
   <b>${build['!Last.build.initialTarget']}</b>' 
   on <b>${build['!Last.build.timestamp']}</b>
-  <a href='javascript:void()'
+  <a href='javascript:void()' style="text-decoration:none"
         onmouseover="return overlib('A given build may not refresh all project components. ' + 
         'For example, a \'ApiCommonData/Model install\' does not build any WDK code.<br>' +
         'See Build Details for a cummulative record of past builds.')"
@@ -232,7 +267,7 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 
   <br>
 
-  <b><a href="#" 
+  <b><a href="#" style="text-decoration:none" 
         onclick="Effect.toggle('buildtime','blind'); return false">
   Component Build Details &#8593;&#8595;</a></b>
 
@@ -267,7 +302,7 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 
   <p>
 
-  <b><a href="#" onclick="Effect.toggle('svnstate','blind'); return false">
+  <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('svnstate','blind'); return false">
   Svn Working Directory State &#8593;&#8595;</a></b>
   <div id="svnstate" style="padding: 5px; display: none"><div>
   <font size='-1'>State at build time. Uncommitted files are highlighted. Files may have been committed
