@@ -129,7 +129,7 @@ _END_OF_TEXT_
          print <<_END_OF_TEXT_
         <!--Display database rows, alternating background color-->  
 	<tr class="$rowStyle">  
-        <td> <a href=/cgi-bin/admin/messageInsert.pl?messageId=$row[0] onsubmit="return validate_form(this)" onClick="window.open('/cgi-bin/admin/messageInsert.pl?messageId=$row[0]','submitNew', 'width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">$row[0]</a>
+        <td> <a href=/cgi-bin/admin/messageInsert.pl?messageId=$row[0] onsubmit="return validate_form(this)" onClick="window.open('/cgi-bin/admin/messageInsert.pl?messageId=$row[0]','submitNew', 'width=500,height=730,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">$row[0]</a>
         </td>
         <td class="message">$row[1]</td>
 	<td>$row[2]</td>
@@ -184,7 +184,7 @@ _END_OF_TEXT_
    return @projects;
  
    }# End getProjects subroutine 
- #######################################
+########################################
 
 # Finish and close DB connection
 $dbh->disconnect();
