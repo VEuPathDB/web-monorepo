@@ -275,7 +275,7 @@ sub displayMessageForm{
          my $errorMessage=$_[0];
          my $messageId=$_[1];
          my $messageCategory=$_[2];
-         my (@selectedProjects)=@{($_[3])} if ($messageCategory);
+         my (@selectedProjects)=@{($_[3])} if ($messageCategory); #Get selected projects from new message submit
          my $messageText=$_[4];
          my $cryptoBox=$_[5];
          my $giardiaBox=$_[6];
@@ -330,7 +330,7 @@ sub displayMessageForm{
         }        
         </script>
         </head>
-        <body style="background-color: #e0e0eb"> 
+        <body style="background-color: #dee2ed"> 
         <form method="get" name="submitEdit" action=messageInsert.pl>
         <p style="color: red">$errorMessage</p>
         <!--<p><b>Message ID: $messageId</b>-->
@@ -446,10 +446,8 @@ _END_OF_TEXT_
          # Alter submitted date string format to match localtime() format 
            my $convertedStartDate=$startDate;
            my $convertedStopDate=$stopDate;
-              $convertedStartDate=~s/\s/-/;
-              $convertedStopDate=~s/\s/-/;
-              $convertedStartDate=~s/:/-/g;
-              $convertedStopDate=~s/:/-/g;
+              $convertedStartDate=~s/\s|:/-/g;
+              $convertedStopDate=~s/\s|:/-/g;
        
          # Convert date strings to integer seconds since epoch
           (my $startMonth, my $startDay, my $startYear, my $startHour, my $startMinutes, my $startSeconds)=($convertedStartDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
@@ -510,17 +508,15 @@ my $confirmation;
 if ($messageType eq "new"){$confirmation="Your message has been scheduled successfully.";}
    else {$confirmation="Revised message has been scheduled successfully.";}
 
-print<<_END_OF_TEXT_
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-        <html xmlns="http://www.w3.org/1999/xhtml" >
-        <body style="background-color: #e0e0eb;">
-        <div style="margin 0: auto; text-align: center; background-color: #ede6de;">
-        <p><b><i>$confirmation</i></b></p>
-        <input type="submit" name="confirmation" value="OK" onclick="window.close();" />
-        </div>
-        </body>
-        </html>
+    print<<_END_OF_TEXT_
+    <html>
+     <body>
+     <script type="text/javascript">
+        alert ("$confirmation");
+        window.close();
+      </script>
+     </body>
+    </html>
 _END_OF_TEXT_
 ;
 } 
