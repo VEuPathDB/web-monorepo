@@ -345,11 +345,11 @@ sub displayMessageForm{
         </p>
         <p><b>Select affected systems:</b></p>
         <div style="width: 140px; height: 105px; padding: 5px; line-height: 1.3; background-color: #ede6de; border-style: outset">
-        <input type="checkbox" name="selectedProjects" value="1" $cryptoBox>CryptoDB<br>
-        <input type="checkbox" name="selectedProjects" value="2" $giardiaBox>GiardiaDB<br>
-        <input type="checkbox" name="selectedProjects" value="3" $plasmoBox>PlasmodDB<br>
-        <input type="checkbox" name="selectedProjects" value="4" $toxoBox>ToxoDB<br>
-        <input type="checkbox" name="selectedProjects" value="5" $trichBox>TrichDB<br>
+        <input type="checkbox" name="selectedProjects" value="10" $cryptoBox>CryptoDB<br>
+        <input type="checkbox" name="selectedProjects" value="20" $giardiaBox>GiardiaDB<br>
+        <input type="checkbox" name="selectedProjects" value="30" $plasmoBox>PlasmodDB<br>
+        <input type="checkbox" name="selectedProjects" value="40" $toxoBox>ToxoDB<br>
+        <input type="checkbox" name="selectedProjects" value="50" $trichBox>TrichDB<br>
         </div>
         <p><b>Message Text: </b></p>
         <p><textarea name="messageText" style="overflow: auto" rows ="5" cols="50">$messageText</textarea></p>     
