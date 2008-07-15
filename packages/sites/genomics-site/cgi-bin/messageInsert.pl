@@ -87,10 +87,10 @@ if ($query->param("messageId")){
 
         ###Begin DB Transaction###
         eval{
-             my $sql=q(INSERT INTO MESSAGES (message_id, message_text, 
+             my $sql=q(INSERT INTO announce.messages (message_id, message_text, 
                 message_category, start_date, stop_date, 
                 admin_comments, time_submitted) 
-                VALUES (messages_id_pkseq.nextval,?,?,
+                VALUES (announce.messages_id_pkseq.nextval,?,?,
                 (TO_DATE( ? , 'mm-dd-yyyy hh24:mi:ss')),
                 (TO_DATE( ? , 'mm-dd-yyyy hh24:mi:ss')),
                 ?,SYSDATE)
@@ -112,7 +112,7 @@ if ($query->param("messageId")){
 
         # Bind message id's to selected projects in DB       
         foreach my $projectID (@selectedProjects) {
-            my $insert=q(INSERT INTO MESSAGE_PROJECTS (message_id, project_id) VALUES (?, ?));
+            my $insert=q(INSERT INTO announce.message_projects (message_id, project_id) VALUES (?, ?));
                $sth=$dbh->prepare($insert);
                $sth->execute($newMessageID, $projectID);
                }
@@ -146,7 +146,7 @@ if ($query->param("messageId")){
            TO_CHAR(start_date, 'mm-dd-yyyy hh24:mi:ss'), 
            TO_CHAR(stop_date, 'mm-dd-yyyy hh24:mi:ss'), 
            admin_comments 
-           FROM messages
+           FROM announce.messages
            WHERE message_id = ? );  
          
         my $sth=$dbh->prepare($sql) or
@@ -222,7 +222,7 @@ if ($query->param("messageId")){
        
         ###Begin database transaction###
         eval{
-        my $sql=q(UPDATE MESSAGES SET 
+        my $sql=q(UPDATE announce.messages SET 
                    message_text = ?, message_category = ?, 
                    start_date = TO_DATE( ? , 'mm-dd-yyyy hh24:mi:ss'), 
                    stop_date = TO_DATE( ? , 'mm-dd-yyyy hh24:mi:ss'), 
@@ -239,7 +239,7 @@ if ($query->param("messageId")){
           or die "Could not execute SQL.";
 
          # Delete existing message_projects rows to avoid redundant messages
-         my $sqlDelete=q(DELETE FROM message_projects WHERE message_id = ?);
+         my $sqlDelete=q(DELETE FROM announce.message_projects WHERE message_id = ?);
             $sth=$dbh->prepare($sqlDelete);
             $sth->execute($messageId)
               or die "Could not execute SQL.";
@@ -247,7 +247,7 @@ if ($query->param("messageId")){
  
          # Bind message id's to revised selected projects in DB       
         foreach my $projectID (@selectedProjects) {
-            my $sqlInsert=q(INSERT INTO MESSAGE_PROJECTS (message_id, project_id) VALUES (?, ?));
+            my $sqlInsert=q(INSERT INTO announce.message_projects (message_id, project_id) VALUES (?, ?));
                $sth=$dbh->prepare($sqlInsert);
                $sth->execute($messageId, $projectID);
                }
@@ -354,9 +354,9 @@ sub displayMessageForm{
         <p><b>Message Text: </b></p>
         <p><textarea name="messageText" style="overflow: auto" rows ="5" cols="50">$messageText</textarea></p>     
         <p><b>Start Date/Time:</b>
-        <textarea name="startDate" id="startDate" rows="1" cols="20" size="25">$startDate</textarea><a href="javascript:NewCal('startDate','mmddyyyy', 'true')"><img src="../../images/cal.png" width="16" height="16" border="0" alt="Pick a date"></a>        
+        <textarea name="startDate" id="startDate" rows="1" cols="20" size="25">$startDate</textarea><a href="javascript:NewCal('startDate','mmddyyyy', 'true')"><img src="../../images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>        
         <p><b>Stop Date/Time:</b>
-        <textarea name="stopDate" id="stopDate" rows="1" cols="20" size="25">$stopDate</textarea><a href="javascript:NewCal('stopDate','mmddyyyy', 'true')"><img src="../../images/cal.png" width="16" height="16" border="0" alt="Pick a date"></a>
+        <textarea name="stopDate" id="stopDate" rows="1" cols="20" size="25">$stopDate</textarea><a href="javascript:NewCal('stopDate','mmddyyyy', 'true')"><img src="../../images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
         <p><b>Admin Comments:</p></b> 
         <textarea name="adminComments" rows="6" cols="50">$adminComments</textarea>
         <input type="hidden" name="updateMessageId" value="$messageId">
@@ -377,7 +377,7 @@ _END_OF_TEXT_
      
      my $messageID=$_[0];
      my @selectedProjects;
-     my $sql=q(SELECT p.project_name FROM projects p, message_projects mp WHERE mp.message_ID = ? AND mp.project_ID = p.project_ID);
+     my $sql=q(SELECT p.project_name FROM announce.projects p, announce.message_projects mp WHERE mp.message_ID = ? AND mp.project_ID = p.project_ID);
      my $sth=$dbh->prepare($sql);
      $sth->execute($messageID);
 
@@ -400,12 +400,12 @@ _END_OF_TEXT_
       ###Begin Database Transaction###
       eval{
       # Delete message from message_projects table
-      my $sql=q(DELETE FROM  message_projects WHERE message_id = ?);
+      my $sql=q(DELETE FROM announce.message_projects WHERE message_id = ?);
       my $sth=$dbh->prepare($sql);
       $sth->execute($messageID);
 
       # Delete message from message table
-        $sql=q(DELETE FROM messages WHERE message_id = ?);
+        $sql=q(DELETE FROM announce.messages WHERE message_id = ?);
         $sth=$dbh->prepare($sql);
         $sth->execute($messageID);
 
