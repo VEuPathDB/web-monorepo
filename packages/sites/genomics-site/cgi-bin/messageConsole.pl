@@ -42,11 +42,11 @@ my $dbh = DBI->connect(
 
 # SQL to select messages from DB for display
 my $sql=q(SELECT message_id, 
-                message_text, message_category, 
-                TO_CHAR(start_date, 'mm-dd-yyyy hh24:mi'), 
-                TO_CHAR(stop_date, 'mm-dd-yyyy hh24:mi'), 
-                admin_comments, TO_CHAR(time_submitted, 'mm-dd-yyyy hh24:mi:ss') 
-                FROM MESSAGES ORDER BY message_id DESC);
+                 message_text, message_category, 
+                 TO_CHAR(start_date, 'mm-dd-yyyy hh24:mi'), 
+                 TO_CHAR(stop_date, 'mm-dd-yyyy hh24:mi'), 
+                 admin_comments, TO_CHAR(time_submitted, 'mm-dd-yyyy hh24:mi:ss') 
+                 FROM announce.messages ORDER BY message_id DESC);
 
 my $sth=$dbh->prepare($sql) or
      die "Could not prepare query. Check SQL syntax.";
@@ -171,7 +171,7 @@ _END_OF_TEXT_
    
    my $messageID=$_[0];
    my @projects;
-   my $sql=q(SELECT p.project_name FROM projects p, message_projects mp WHERE mp.message_ID = ? AND mp.project_ID = p.project_ID); 
+   my $sql=q(SELECT p.project_name FROM announce.projects p, announce.message_projects mp WHERE mp.message_ID = ? AND mp.project_ID = p.project_ID); 
    my $sth=$dbh->prepare($sql);
    $sth->execute($messageID);
         
