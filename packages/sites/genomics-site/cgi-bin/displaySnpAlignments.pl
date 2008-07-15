@@ -88,7 +88,8 @@ sub getSnpLocations{
   $srcId = 'MAL'.$srcId;
   my @locations;
 
-  my $sql = "select distinct(start_min) from apidb.snpattributes where seq_source_id='$srcId' and start_min > ($start-$width) and start_min < ($start+$width) order by start_min";
+#  my $sql = "select distinct(start_min) from apidb.snpattributes where seq_source_id='$srcId' and start_min > ($start-$width) and start_min < ($start+$width) order by start_min";
+  my $sql = "select distinct(old_location) from apidb.PlasmoPfalLocations pfl, apidb.snpattributes sa where sa.seq_source_id='$srcId' and pfl.seq_source_id=sa.seq_source_id and start_min=new_location and old_location > ($start-$width) and old_location < ($start+$width) order by old_location";
 
   my $stmt = $dbh->prepareAndExecute($sql);
   while(my ($loc) = $stmt->fetchrow_array()){
