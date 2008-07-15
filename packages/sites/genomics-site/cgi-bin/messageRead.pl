@@ -39,14 +39,13 @@ my $dbh = DBI->connect(
     }
 ) or die "Can't connect to the database: $DBI::errstr\n";;
 
-# Query parameters passed via tag
+# Query database using parameters passed via announcement.tag
 my $query=new CGI();
 my $messageCategory=$query->param("messageCategory");
 my $projectName=$query->param("projectName");
 
-
 my $sql=q(SELECT m.message_text, c.category_name 
-            FROM messages m, category c, projects p, message_projects mp 
+            FROM announce.messages m, announce.category c, announce.projects p, announce.message_projects mp 
             WHERE p.project_name = ? 
             AND p.project_id = mp.project_id 
             AND mp.message_id = m.message_id 
@@ -61,7 +60,8 @@ my $sth=$dbh->prepare($sql) or
      die "Could not prepare query. Check SQL syntax.";
      
 $sth->execute($projectName, $messageCategory) or die "Can't excecute SQL";
-# Output applicable messages
+
+# Output message(s) returned via query
 my @row;
  while (@row=$sth->fetchrow_array()){
        my $messageText=$row[0];
