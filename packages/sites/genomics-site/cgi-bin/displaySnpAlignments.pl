@@ -73,7 +73,7 @@ print '</pre>';
 sub getParams{
   my ($snpSrcId) = @_;
 #  my $sql = "select seq_source_id, start_min from apidb.snpattributes where source_id ='$snpSrcId'";
-  my $sql = "select pfl.seq_source_id, pfl.old_location from apidb.PlasmoPfalLocations pfl, apidb.snpattributes sa where sa.source_id ='$snpSrcId' and sa.start_min=pfl.new_location";
+  my $sql = "select pfl.seq_source_id, pfl.old_location from apidb.PlasmoPfalLocations pfl, apidb.snpattributes sa where sa.source_id ='$snpSrcId' and sa.start_min=pfl.new_location and pfl.seq_source_id=sa.seq_source_id";
 
   my $stmt = $dbh->prepareAndExecute($sql);
   my ($srcId,$start) = $stmt->fetchrow_array();
