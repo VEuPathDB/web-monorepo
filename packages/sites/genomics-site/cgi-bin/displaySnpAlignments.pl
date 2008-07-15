@@ -56,8 +56,10 @@ foreach my $str (sort @strains) {
 
     if ($seqs{$s}=~/[ACGT]/) {
       for(my $i = 0; $i <$width*2; $i++) {
-	if ($is_snpLocation{$i+$snpLocation-$width} && $bases[$i]=~ /[ACGT]/ ) {
-	  $bases[$i] = "<font color=\"#FF1800\">$bases[$i]</font></b>";   # color red for SNP positions
+        if ($i == $width) {
+	  $bases[$i] = "<b><font color=\"#FF1800\">$bases[$i]</font></b>";   # bold, and red for SNP in question
+	} elsif ($is_snpLocation{$i+$snpLocation-$width} && $bases[$i]=~ /[ACGT]/ ) {
+	  $bases[$i] = "<font color=\"#FF1800\">$bases[$i]</font>";   # color red for SNP positions
 	}
 	print $bases[$i];
       }
@@ -72,7 +74,6 @@ print '</pre>';
 # returns chromosome number and snp location
 sub getParams{
   my ($snpSrcId) = @_;
-#  my $sql = "select seq_source_id, start_min from apidb.snpattributes where source_id ='$snpSrcId'";
   my $sql = "select pfl.seq_source_id, pfl.old_location from apidb.PlasmoPfalLocations pfl, apidb.snpattributes sa where sa.source_id ='$snpSrcId' and sa.start_min=pfl.new_location and pfl.seq_source_id=sa.seq_source_id";
 
   my $stmt = $dbh->prepareAndExecute($sql);
@@ -88,7 +89,6 @@ sub getSnpLocations{
   $srcId = 'MAL'.$srcId;
   my @locations;
 
-#  my $sql = "select distinct(start_min) from apidb.snpattributes where seq_source_id='$srcId' and start_min > ($start-$width) and start_min < ($start+$width) order by start_min";
   my $sql = "select distinct(old_location) from apidb.PlasmoPfalLocations pfl, apidb.snpattributes sa where sa.seq_source_id='$srcId' and pfl.seq_source_id=sa.seq_source_id and start_min=new_location and old_location > ($start-$width) and old_location < ($start+$width) order by old_location";
 
   my $stmt = $dbh->prepareAndExecute($sql);
