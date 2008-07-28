@@ -17,12 +17,14 @@ var blastPXArray = new Array();
 //Organism variables
 var GeneUrl = "showRecord.do?name=AjaxRecordClasses.BlastGeneOrganismTermClass&primary_key=fill";
 var IsolateUrl = "showRecord.do?name=AjaxRecordClasses.BlastIsolateOrganismTermClass&primary_key=fill";
+var BarcodeUrl = "showRecord.do?name=AjaxRecordClasses.BlastBarcodeOrganismTermClass&primary_key=fill";
 var AssemblyUrl = "showRecord.do?name=AjaxRecordClasses.BlastAssembliesOrganismTermClass&primary_key=fill";
 var ESTUrl = "showRecord.do?name=AjaxRecordClasses.BlastESTOrganismTermClass&primary_key=fill";
 var SequenceUrl = "showRecord.do?name=AjaxRecordClasses.BlastSequenceOrganismTermClass&primary_key=fill";
 var ORFUrl = "showRecord.do?name=AjaxRecordClasses.BlastORFOrganismTermClass&primary_key=fill";
 var GeneArray = new Array();
 var IsolateArray = new Array();
+var BarcodeArray = new Array();
 var AssemblyArray = new Array();
 var ESTArray = new Array();
 var SequenceArray = new Array();
@@ -42,6 +44,7 @@ window.onload = function(){
 	else if(target == 'EST') clickDefault('EST','type');
 	else if(target == 'SEQ') clickDefault('Genome','type');
 	else if(target == 'ISOLATE') clickDefault('Isolates','type');
+	else if(target == 'BARCODE') clickDefault('Barcodes','type');
 
 	if(parseUrl('-filter') != ""){
            revise = true;
@@ -148,6 +151,10 @@ function getOrganismTerms(){
 		sendReqUrl = IsolateUrl; 
 		selectedArray = 'Isolates';
 	}
+	else if(type == 'Barcodes') {
+		sendReqUrl = BarcodeUrl; 
+		selectedArray = 'Barcodes';
+	}
 	else if(type == 'Assemblies') {
 		sendReqUrl = AssemblyUrl; 
 		selectedArray = 'Assemblies';
@@ -185,6 +192,10 @@ function getBlastAlgorithm() {
 		selectedArray = 'po';
 	}
 	else if(type == 'Isolates'){
+		sendReqUrl = tgeUrl; 
+		selectedArray = 'tge';
+	}
+	else if(type == 'Barcodes'){
 		sendReqUrl = tgeUrl; 
 		selectedArray = 'tge';
 	}
@@ -334,6 +345,7 @@ function getArray(index){
 	if(index == 'EST') return ESTArray;
 	if(index == 'Transcripts') return GeneArray;
 	if(index == 'Isolates') return IsolateArray;
+	if(index == 'Barcodes') return BarcodeArray;
 	if(index == 'Assemblies') return AssemblyArray;
 	if(index == 'ORF') return ORFArray;
 	if(index == 'tge') return tgeArray;
@@ -347,6 +359,7 @@ function setArray(index, arr){
 	if(index == 'EST') ESTArray = arr;
 	if(index == 'Transcripts') GeneArray = arr;
 	if(index == 'Isolates') IsolateArray = arr;
+	if(index == 'Barcodes') BarcodeArray = arr;
 	if(index == 'Assemblies') AssemblyArray = arr;
 	if(index == 'ORF') ORFArray = arr;
 	if(index == 'tge') tgeArray = arr;
