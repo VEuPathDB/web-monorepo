@@ -516,7 +516,7 @@ function parse_Url( url, parameter_name )
           <table width="100%" border="0" cellpadding="3" cellspacing="0">
          <tr align=center>
          <th>  Please select at least two isolates to run ClustalW
-              <input type="button" value="Run Clustalw" onClick="goToIsolate()" />
+              <input type="button" value="Run ClustalW on Checked Strains" onClick="goToIsolate()" />
          </th>
 	 </tr>
          </table>
@@ -626,7 +626,7 @@ function parse_Url( url, parameter_name )
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
   <tr align=center>
     <th> 
-      <input type="button" value="Run Clustalw" onClick="goToIsolate()" />
+      <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate()" />
     </th>
 	</tr>
 </table>
