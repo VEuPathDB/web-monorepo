@@ -76,13 +76,13 @@
                 <tr class="queryGridTitle"><td colspan="3">Transcript Expression
                 </tr>
                 <tr>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A P T G"/>
+                </tr>
+                <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySageTagEvidence" linktext="SAGE Tag Evidence" existsOn="G P T"/>
-                </tr>
-                <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A P T G"/>
                 </tr>
             </table>
         </td>
