@@ -34,6 +34,9 @@
 
 <c:set var="tblContent">
 
+<%-- display the description --%>
+<div class="table-description">${tbl.description}</div>
+
 <c:if test="${suppressColumnHeaders == null || !suppressColumnHeaders}">
     <c:set var="h" value="0"/>
     <tr class="headerRow">
