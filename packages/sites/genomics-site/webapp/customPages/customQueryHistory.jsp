@@ -305,7 +305,7 @@ function reviseBooleanQuery(type, expression) {
         <td align='center' onmouseover="hideAnyName()" nowrap>${history.lastRunTime}</td>
 	<td align='right' onmouseouver="hideAnyName()" nowrap>
 	<c:choose>
-	  <c:when test="${history.version == null || history.version eq ''}">N/A</c:when>
+	  <c:when test="${history.version == null || history.version eq ''}">${wdkModel.version}</c:when>
           <c:otherwise>${history.version}</c:otherwise>
         </c:choose>
         </td>
