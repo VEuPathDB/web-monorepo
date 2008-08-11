@@ -19,6 +19,9 @@
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C"/>
     </tr>
+   <tr>
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C"/>
+    </tr>
     </table>
 </td>
 
@@ -28,21 +31,6 @@
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C"/>
     </tr>
-
-    <tr>
-       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C"/>
-    </tr>
-
-    <tr>
-       <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ISOLATE" existsOn="A C"  />
-    </tr>
-   
-    </table>
-</td>
-
-<td width="33%" valign="top">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-   
     <tr>
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByAuthor" linktext="Author Name" existsOn="A C"/>
     </tr>
@@ -51,6 +39,19 @@
     </tr>
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Country Name" existsOn="A C"/>
+    </tr>
+
+    </table>
+</td>
+
+<td width="33%" valign="top">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+   
+     <tr>
+       <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ISOLATE" existsOn="A C"  />
+     </tr>
+     <tr>
+     <site:queryGridMakeEasyUrl link="isolateClustering.jsp" linktext="Isolate Clustering" linkdesc="View Isolates in a treeview applet" existsOn="P"  />
     </tr>
     
     </table>
