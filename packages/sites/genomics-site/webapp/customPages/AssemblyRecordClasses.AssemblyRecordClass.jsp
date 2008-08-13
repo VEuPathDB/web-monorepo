@@ -12,7 +12,7 @@
              banner="Assembly ${id}"
              divisionName="Assembly Record"
              division="queries_tools"
-             summary="${overview.value}"/>
+             summary="EST Assembly Record"/>
 
 <%----c:set value="${wdkRecord.recordClass.type}" var="recordType"/----%>
 
@@ -28,6 +28,11 @@
 
 <table width="90%" align="center" cellspacing="5">
 <tr><td>
+
+<!-- Overview -->
+<site:toggle name="${overview.displayName}"
+    displayName="${overview.displayName}" isOpen="true"
+    content="${overview.value}" />
 
 
 <!-- genomic context -->
