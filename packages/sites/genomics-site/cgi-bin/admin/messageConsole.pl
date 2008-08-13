@@ -61,7 +61,7 @@ print <<_END_OF_TEXT_
         <html xmlns="http://www.w3.org/1999/xhtml" >
 	<head>
 	<title>AMS Console</title>
-        <link href="/include/messageStyles.css" rel="stylesheet" type="text/css" />
+        <link href="/css/messageStyles.css" rel="stylesheet" type="text/css" />
         <script language="javascript">
          function submitWindow()
            {
@@ -154,7 +154,7 @@ _END_OF_TEXT_
 print <<_END_OF_TEXT_
 </table>
   <div style="position: relative; bottom: 20px; width: 175px; height: 30px; margin: 0 auto">
-      <a href=admin/insertMessage.pl?submitMessage=true onClick="window.open('admin/messageInsert.pl?submitMessage=true','submitNew', 'width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes, menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">Create New Message</a>
+      <a href=admin/insertMessage.pl?submitMessage=true onClick="window.open('/cgi-bin/admin/messageInsert.pl?submitMessage=true','submitNew', 'width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes, menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">Create New Message</a>
   </div>
 </div>
 </body>
