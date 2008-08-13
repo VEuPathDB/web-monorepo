@@ -42,6 +42,7 @@ window.onload = function(){
 	else if(target == 'EST') clickDefault('EST','type');
 	else if(target == 'SEQ') clickDefault('Genome','type');
 	else if(target == 'ISOLATE') clickDefault('Isolates','type');
+	else if(target == 'ASSEMBLIES') clickDefault('Assemblies','type');
 
 	if(parseUrl('-filter') != ""){
            revise = true;
