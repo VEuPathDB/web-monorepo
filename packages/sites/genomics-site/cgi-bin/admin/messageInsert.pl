@@ -319,7 +319,7 @@ sub displayMessageForm{
         <html xmlns="http://www.w3.org/1999/xhtml" >
         <head>  
         <title>Edit Message</title>
-        <script language="javascript" type="text/javascript" src="../../include/datetimepicker.js">
+        <script language="javascript" type="text/javascript" src="/js/datetimepicker.js">
         </script>
         <script language="javascript" type="text/javascript">
         function refreshParent() {
@@ -354,9 +354,9 @@ sub displayMessageForm{
         <p><b>Message Text: </b></p>
         <p><textarea name="messageText" style="overflow: auto" rows ="5" cols="50">$messageText</textarea></p>     
         <p><b>Start Date/Time:</b>
-        <textarea name="startDate" id="startDate" rows="1" cols="20" size="25">$startDate</textarea><a href="javascript:NewCal('startDate','mmddyyyy', 'true')"><img src="../../images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>        
+        <textarea name="startDate" id="startDate" rows="1" cols="20" size="25">$startDate</textarea><a href="javascript:NewCal('startDate','mmddyyyy', 'true')"><img src="/images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>        
         <p><b>Stop Date/Time:</b>
-        <textarea name="stopDate" id="stopDate" rows="1" cols="20" size="25">$stopDate</textarea><a href="javascript:NewCal('stopDate','mmddyyyy', 'true')"><img src="../../images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
+        <textarea name="stopDate" id="stopDate" rows="1" cols="20" size="25">$stopDate</textarea><a href="javascript:NewCal('stopDate','mmddyyyy', 'true')"><img src="/images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
         <p><b>Admin Comments:</p></b> 
         <textarea name="adminComments" rows="6" cols="50">$adminComments</textarea>
         <input type="hidden" name="updateMessageId" value="$messageId">
