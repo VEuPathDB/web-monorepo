@@ -85,7 +85,7 @@ print <<_END_OF_TEXT_
           var confirmDelete= confirm("Are you sure you want to delete this message record?");
           if (confirmDelete== true)
           {
-           window.location=("admin/messageInsert.pl?deleteMessageId="+row+"&messageDelete=true");
+           window.location=("messageInsert.pl?deleteMessageId="+row+"&messageDelete=true");
            setTimeout('window.location=("messageConsole.pl"), 4000');
           }
           else
