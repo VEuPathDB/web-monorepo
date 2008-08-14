@@ -37,6 +37,9 @@
                     <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLocation" linktext="Chromosomal Location" existsOn="A G"/>
                 </tr>
 
+                <tr>
+                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST similarity" type="GENE" existsOn="A C G P T Tr"/>
+                </tr>
             </table>
         </td>
 
