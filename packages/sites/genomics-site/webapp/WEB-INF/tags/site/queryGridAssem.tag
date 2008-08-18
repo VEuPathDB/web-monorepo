@@ -31,7 +31,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
                  <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByGeneIDs" linktext="Genes IDs" existsOn="A G"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByGeneIDs" linktext="Gene IDs" existsOn="A G"/>
                 </tr>           
 <tr>
                     <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLocation" linktext="Chromosomal Location" existsOn="A G"/>
