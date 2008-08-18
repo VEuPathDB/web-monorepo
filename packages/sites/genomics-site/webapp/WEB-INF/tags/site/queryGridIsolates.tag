@@ -54,7 +54,7 @@
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateBySubmitter" linktext="Submitter" existsOn="A P"  />
      </tr>
      <tr>
-     <site:queryGridMakeEasyUrl link="isolateClustering.jsp" linktext="Isolate Clustering" linkdesc="View Isolates in a treeview applet" existsOn="A P"  />
+     <site:queryGridMakeEasyUrl link="isolateClustering.jsp" linktext="Isolate Clustering" linkdesc="View Isolates in a treeview applet" existsOn="P"  />
     </tr>
     
     </table>
