@@ -14,7 +14,7 @@
         <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolateId" linktext="Isolate ID" existsOn="A C"/>
     </tr>
     <tr>
-       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByTaxon" linktext="Taxon" existsOn="A C"/> 
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByTaxon" linktext="Taxon/Strain" existsOn="A C"/> 
     </tr>
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C"/>
@@ -51,7 +51,10 @@
        <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ISOLATE" existsOn="A C"  />
      </tr>
      <tr>
-     <site:queryGridMakeEasyUrl link="isolateClustering.jsp" linktext="Isolate Clustering" linkdesc="View Isolates in a treeview applet" existsOn="P"  />
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateBySubmitter" linktext="Submitter" existsOn="A P"  />
+     </tr>
+     <tr>
+     <site:queryGridMakeEasyUrl link="isolateClustering.jsp" linktext="Isolate Clustering" linkdesc="View Isolates in a treeview applet" existsOn="A P"  />
     </tr>
     
     </table>
