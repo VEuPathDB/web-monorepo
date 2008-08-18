@@ -130,31 +130,12 @@
 </c:if>
 
 
-<%-- moved to the EuPathDB section above --%>
-<%--  End Question Form Div
-<c:if test="${wdkModel.displayName eq 'ApiDB'}">
-     </div>
-</c:if>
---%>
-
   <table width="100%"  cellspacing="2" cellpadding="0">
    <tr><td colspan="4"><hr class="red"></td></tr>
 
     <tr>
         <td align="center">
-            
-            <table  cellspacing="0" cellpadding="0">
-                <tr>
-                    <td valign="middle" align="right">
-                        <a href='http://apidb.org'>
-                            <img SRC="<c:url value='${portalLogo}'/>" height="35" text='EUPATHDB' BORDER=0>
-                        </a>
-                    </td>
-                    <td valign="middle" align="left">
-                        <a href="http://eupathdb.org"><i>EuPathDB.org</i></a>
-                    </td>
-                </tr>
-            </table>
+         <a href="http://eupathdb.org"><img src="/images/eupathdblink_wt.png" alt="EuPathDB.org" border="0"/></a>
         </td>
 
  <!-- copyright information -->
