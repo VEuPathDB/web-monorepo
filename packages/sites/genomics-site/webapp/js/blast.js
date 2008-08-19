@@ -106,7 +106,7 @@ function changeQuestion(){
 	} else 	if (blastDb.indexOf("genom") >= 0){
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
 	} else 	if (blastDb.indexOf("iso") >= 0){
-		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
+		questionName = "IsolateQuestions.IsolatesBySimilarity";
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
 	}
