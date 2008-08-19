@@ -1,1 +1,1 @@
-<jsp:include page="/WEB-INF/includes/BlastSimilarity.jsp"/>
+<jsp:include page="/customPages/UniversalQuestions.UnifiedBlast.jsp"/>
