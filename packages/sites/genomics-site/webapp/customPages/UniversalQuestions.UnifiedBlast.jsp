@@ -173,11 +173,11 @@
 								background: url('images/text_bubble.png'); 
 								font-size: 12px; 
 								height: 66px; 
-								left: 583px; 
+								left: 369px; 
 								padding-left: 40px; 
 								padding-top: 12px; 
 								position: relative; 
-								top:-236px; 
+								top:-243px; 
 								width: 360px;
 			"></span>
   </td>
