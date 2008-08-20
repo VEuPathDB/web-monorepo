@@ -122,8 +122,10 @@ function showParamGroup(group, isShow)
     </c:choose>
     
     <c:set var="paramCount" value="${fn:length(paramGroup)}"/>
-    <%-- display parameter list --%>
-    <c:forEach items="${paramGroup}" var="paramItem">
+
+    <%-- display organism first --%>
+
+ <c:forEach items="${paramGroup}" var="paramItem">
         <c:set var="pNam" value="${paramItem.key}" />
         <c:set var="qP" value="${paramItem.value}" />
         
@@ -173,11 +175,76 @@ function showParamGroup(group, isShow)
 								<table border="0">
                         </c:when>
                         
-                        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
+                        <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName ne 'ApiDB'}">
+ 
+                            <c:choose>
+                            <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
                             <td align="right" valign="top"><b>${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
+                            </c:when>
+                            <c:otherwise> 
+                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td valign="top">
+                                <html:text property="myProp(${pNam})" size="35" />
+                            </td>
+                            </c:otherwise>
+                            </c:choose>
+
+                        </c:when>
+                    </c:choose>
+
+      
+                </tr>
+ 
+            </c:otherwise> <%-- end visible param --%>
+        </c:choose>
+        
+    </c:forEach>
+
+
+
+    <%-- display rest parameter list --%>
+    <c:forEach items="${paramGroup}" var="paramItem">
+        <c:set var="pNam" value="${paramItem.key}" />
+        <c:set var="qP" value="${paramItem.value}" />
+        
+        <c:set var="isHidden" value="${qP.isVisible == false}"/>
+        <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
+  
+        <%-- hide invisible params --%>
+        <c:choose>
+            <%--<c:when test="${isHidden}"><html:hidden property="myProp(${qP.class.name})"/></c:when>--%>
+            <c:when test="${isHidden}">
+        <c:choose>
+           <c:when test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
+            <c:choose>
+                   <c:when test="${pNam eq 'signature'}">
+                    <html:hidden property="myProp(${pNam})" value="${wdkUser.signature}"/>
+                   </c:when>
+                   <c:otherwise>
+                        <html:hidden property="myProp(${pNam})"/>
+                   </c:otherwise>
+            </c:choose>
+           </c:when>
+           <c:otherwise>
+                <html:hidden property="myProp(${pNam})"/>
+           </c:otherwise>
+        </c:choose>
+        </c:when>
+            <c:otherwise> <%-- rest of  visible param othr than organism --%>
+                <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
+                <tr>
+                    <c:choose>
+                        
+                        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
+                            <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
+                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td align="left" valign="top">
+                                <wdk:enumParamInput qp="${qP}" />
+                            </td>
+                            </c:if>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
                             <td align="right" valign="top"><b>${qP.prompt}</b></td>
@@ -201,10 +268,12 @@ function showParamGroup(group, isShow)
                                     </td>
                                 </c:when>
                                 <c:otherwise>
+                                    <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
                                     <td align="right" valign="top"><b>${qP.prompt}</b></td>
                                     <td valign="top">
                                         <html:text property="myProp(${pNam})" size="35" />
                                     </td>
+                                      </c:if>
                                 </c:otherwise>
                             </c:choose>
                         </c:otherwise>
@@ -218,7 +287,7 @@ function showParamGroup(group, isShow)
                         <a href="#${anchorQp}">
                         <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
                     </td>
-            </c:if>
+                    </c:if>
                 </tr>
  
             </c:otherwise> <%-- end visible param --%>
