@@ -38,7 +38,7 @@
                 </tr>
 
                 <tr>
-                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST similarity" type="GENE" existsOn="A C G P T Tr"/>
+                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST similarity" type="ASSEMBLIES" existsOn="A C G P T Tr"/>
                 </tr>
             </table>
         </td>
