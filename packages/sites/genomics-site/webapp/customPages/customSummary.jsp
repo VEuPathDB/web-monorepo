@@ -263,25 +263,8 @@ function parse_Url( url, parameter_name )
                         <jsp:include page="/WEB-INF/includes/bqShowNode.jsp"/>
                     </nested:root>
                 </div>
-                <%-- display subType and transformer --%>
+
                 <c:set var="recordClass" value="${wdkAnswer.question.recordClass}"/>
-                <c:if test="${recordClass.hasSubType && !recordClass.subType.questionOnly}">
-                    <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
-                    <table>
-                    <tr>
-                        <td align="right" valign="top" class="medium" nowrap>
-                            <b>${subTypeParam.prompt}</b> : 
-                        </td>
-                        <td class="medium">${wdkAnswer.subTypeValue}</td>
-                    </tr>
-                    <tr>
-                        <td align="right" valign="top" class="medium" nowrap>
-                            <b>Expand Result</b> : 
-                        </td>
-                        <td class="medium">${wdkAnswer.expandSubType}</td>
-                    </tr>
-                    </table>
-                </c:if>
 
             </c:when>
             <c:otherwise>
@@ -329,14 +312,6 @@ function parse_Url( url, parameter_name )
                <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
            </c:if>
            
-           <%-- display link to transform query --%>
-           <c:if test="${recordClass.hasSubType && !recordClass.subType.questionOnly}">
-               &nbsp;|&nbsp;
-               <c:set var="transformUrl" 
-                      value="showQuestion.do?questionFullName=InternalQuestions.GenesByStrainTransform&geneResult=${wdkAnswer.cacheTableName}&questionSubmit=Get+Answer&goto_summary=0"/>
-               <a href='<c:url value="${transformUrl}"/>'>Other Strains</a>
-           </c:if>
-	       
            <c:set value="${wdkAnswer.question.fullName}" var="qName" />
 	       <c:if test="${history.boolean == false}">
 	           &nbsp;|&nbsp;
@@ -529,7 +504,13 @@ function parse_Url( url, parameter_name )
 
 
 <c:forEach items="${wdkAnswer.records}" var="record">
-
+               
+<c:set var="primaryKey" value="${record.primaryKey}"/>
+<c:set var="pkValues" value="primaryKey.values" />
+<c:set var="projectId" value="pkValues['project_id']" />
+<c:set var="recordId" value="pkValues['source_id']" />
+<c:set var="summaryAttributes" value="${record.summaryAttributes}"/>
+   
 <c:choose>
   <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
   <c:otherwise><tr class="rowMedium"></c:otherwise>
@@ -538,7 +519,7 @@ function parse_Url( url, parameter_name )
   <c:set var="j" value="0"/>
 
   <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
-    <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
+    <c:set var="recAttr value="${summaryAttributes[sumAttrName]}"/>
     <c:set var="align" value="align='${recAttr.alignment}'" />
     <c:set var="nowrap">
         <c:if test="${recAttr.nowrap}">nowrap</c:if>
@@ -555,26 +536,22 @@ function parse_Url( url, parameter_name )
 
         <c:choose>
            <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
-               
-              <c:set value="${record.primaryKey}" var="primaryKey"/>
               
-			  <a href="javascript:create_Portal_Record_Url('${recNam}', '${primaryKey.projectId}', '${primaryKey.recordId}','')">
-				${primaryKey.projectId}:${primaryKey.recordId}</a>
+			  <a href="javascript:create_Portal_Record_Url('${recNam}', '${projectId}', '${recordId}','')">
+				${projectId}:${recordId}</a>
            </c:when>
 
            <c:when test = "${cryptoIsolatesQuestion}">
 
               <%-- display a link to record page --%>
-              <c:set value="${record.primaryKey}" var="primaryKey"/>
-              <nobr><a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey}"></nobr>
+              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey}"></nobr>
 
            </c:when>
 
             <c:otherwise>
 
               <%-- display a link to record page --%>
-              <c:set value="${record.primaryKey}" var="primaryKey"/>
-              <a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a>
+              <a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${recordId}">${fieldVal}</a>
 
             </c:otherwise>
         </c:choose>
@@ -588,13 +565,13 @@ function parse_Url( url, parameter_name )
 			<c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
                <span style="color:gray;">N/A</span>
             </c:when>
-            <c:when test="${recAttr.value.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
+            <c:when test="${recAttr.value.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
               	<c:choose>
 				 <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
-					<a href="javascript:create_Portal_Record_Url('','${record.primaryKey.projectId}','','${recAttr.value.url}')">${recAttr.value.visible}</a>
+					<a href="javascript:create_Portal_Record_Url('','${record.projectId}','','${recAttr.value.url}')">${recAttr.value.displayText}</a>
 	             </c:when>
 				 <c:otherwise>
-					<a href="${recAttr.value.url}">${recAttr.value.visible}</a>
+					<a href="${recAttr.value.url}">${recAttr.value.displayText}</a>
 				 </c:otherwise>
 				</c:choose>
             </c:when>
