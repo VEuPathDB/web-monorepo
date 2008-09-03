@@ -28,28 +28,30 @@
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
 <c:if test="${suppressDisplayName == null || !suppressDisplayName}">
-  <c:set value="${tbl.displayName}" var="tableDisplayName"/>
+  <c:set value="${tbl.tableField.displayName}" var="tableDisplayName"/>
 </c:if>
 <c:set var="noData" value="false"/>
 
 <c:set var="tblContent">
 
 <%-- display the description --%>
-<div class="table-description">${tbl.description}</div>
+<div class="table-description">${tbl.tableField.description}</div>
 
 <c:if test="${suppressColumnHeaders == null || !suppressColumnHeaders}">
     <c:set var="h" value="0"/>
     <tr class="headerRow">
-        <c:forEach var="hCol" items="${tbl.displayableFields}">
-           <c:set var="h" value="${h+1}"/>
-           <th align="left">${hCol.displayName}</th>
+        <c:forEach var="hCol" items="${tbl.tableField.attributeFields}">
+           <c:if test="${hCol.internal == false}">
+             <c:set var="h" value="${h+1}"/>
+             <th align="left">${hCol.displayName}</th>
+           </c:if>
         </c:forEach>
     </tr>
 </c:if>
 
     <%-- table rows --%>
     <c:set var="i" value="0"/>
-    <c:forEach var="row" items="${tbl.visibleRows}">
+    <c:forEach var="row" items="${tbl}">
         <c:choose>
             <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
             <c:otherwise><tr class="rowMedium"></c:otherwise>
@@ -57,23 +59,22 @@
 
         <c:set var="j" value="0"/>
         <c:forEach var="rColEntry" items="${row}">
+          <c:set var="rCol" value="${rColEntry.value}"/>
+          <c:if test="${rCol.attributeField.internal == false}">
             <c:set var="j" value="${j+1}"/>
-            <c:set var="rCol" value="${rColEntry.value}"/>
 
             <%-- need to know if value should be hot linked --%>
             <td>
                 <c:choose>
-                    <c:when test="${rCol.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
-                        <a href="${rCol.url}">${rCol.visible}</a>
-                    </c:when>
-                    <c:when test="${rCol.class.name eq 'org.gusdb.wdk.model.AttributeFieldValue'}">
-                        ${rCol.value}
+                    <c:when test="${rCol.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
+                        <a href="${rCol.url}">${rCol.displayText}</a>
                     </c:when>
                     <c:otherwise>
-                        ${rCol}
+                        ${rCol.value}
                     </c:otherwise>
                 </c:choose>
             </td>
+          </c:if>
         </c:forEach>
 
         </tr>
@@ -91,6 +92,3 @@ ${postscript}
 <site:toggle name="${tblName}" displayName="${tableDisplayName}"
              content="${tblContent}" isOpen="${isOpen}" noData="${noData}"
              attribution="${attribution}"/>
-
-<%-- close resultList --%>
-<c:set var="junk" value="${tbl.close}"/>
