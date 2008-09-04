@@ -320,10 +320,6 @@ function showParamGroup(group, isShow)
 </c:forEach>
 
     
-<%-- display subType filter --%>
-<wdk:subTypeInput question="${wdkQuestion}" helpQ="${helpQ}" />
-
-
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
 <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>

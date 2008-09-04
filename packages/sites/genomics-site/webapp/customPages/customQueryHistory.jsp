@@ -196,7 +196,7 @@ function reviseBooleanQuery(type, expression) {
   <c:set var="recordClass" value="${histList[0].answer.question.recordClass}"/>
   <c:set var="recDispName" value="${recordClass.type}"/>
   
-  <c:set var="showTransform" value="${recordClass.hasSubType && !recordClass.subType.questionOnly}" />
+  <c:set var="showTransform" value="${true}" />
 
 <c:set var="typeC" value="${typeC+1}"/>
 <c:if test="${typeC != 1}"><hr></c:if>
@@ -260,23 +260,7 @@ function reviseBooleanQuery(type, expression) {
                                <td class="medium">${history.booleanExpression}</td>
                             </tr>
                             
-                            <%-- display subType and transformer --%>
                             <c:set var="recordClass" value="${wdkAnswer.question.recordClass}"/>
-                            <c:if test="${recordClass.hasSubType && !recordClass.subType.questionOnly}">
-                                <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
-                                <tr>
-                                    <td align="right" valign="top" class="medium" nowrap>
-                                        <i>${subTypeParam.prompt}</i> : 
-                                    </td>
-                                    <td class="medium">${wdkAnswer.subTypeValue}</td>
-                                </tr>
-                                <tr>
-                                    <td align="right" valign="top" class="medium" nowrap>
-                                        <i>Expand Result</i> : 
-                                    </td>
-                                    <td class="medium">${wdkAnswer.expandSubType}</td>
-                                </tr>
-                            </c:if>
                         </c:when>
                         <c:otherwise>
                             <tr>
@@ -409,25 +393,6 @@ function reviseBooleanQuery(type, expression) {
                <html:hidden property="historySectionId" value="${type}"/>
                <html:submit property="submit" value="Get Combined Result"/>
                <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>
-               <%-- display subType filter --%>
-               <c:if test="${recordClass.hasSubType && !recordClass.subType.questionOnly}">
-                 <div>
-                   <b>Expand operands:</b> <input type="checkbox" name="expandSubType" value="true" checked/>
-                   (<i>Check it to expand all operands into compelete lists before boolean operation</i>)
-                 </div>
-                 <div>
-                    <c:set var="subTypeParam" value="${recordClass.subType.subTypeParam}"/>
-                    <b>${subTypeParam.prompt}:</b>
-                    <html:select property="subTypeValue" 
-                                 value="${subTypeParam.default}"
-                                 styleId="subTypeParam.name">
-                        <html:options name="subTypeParam" 
-                                      property="vocab"
-                                      labelName="subTypeParam"
-                                      labelProperty="displays"/>
-                    </html:select>
-                 </div>
-               </c:if>
             </html:form>
          </td>
       </tr>

@@ -175,8 +175,6 @@
 
 
     <tr><td colspan="2">    
-        <%-- display subType filter --%>
-        <wdk:subTypeInput question="${wdkQuestion}" helpQ="${helpQ}" />
     </td></tr>
     
 
