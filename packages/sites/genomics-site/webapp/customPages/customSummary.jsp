@@ -325,6 +325,89 @@ function parse_Url( url, parameter_name )
 </table>
 
 
+<%-- lay out the tables brute-force for now...I have no idea wtf the map stuff is --%>
+<div>
+<!-- display strain filters -->
+
+<!-- display basic filters -->
+<table>
+  <tr>
+    <th>Toxo Genes</th>
+    <th>Any Strain</th>
+    <th>ME49</th>
+    <th>GT1</th>
+    <th>Veg</th>
+    <th>All Strains</th>
+  </tr>
+  <tr>
+    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=any_genes">&nbsp;</a></td>
+    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=any_instance">&nbsp;</a></td>
+    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_instances">&nbsp;</a>&nbsp;(<a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_me49">&nbsp;</a>)</td>
+    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_instances">&nbsp;</a>&nbsp;(<a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_gt1">&nbsp;</a>)</td>
+    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_instances">&nbsp;</a>&nbsp;(<a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_veg">&nbsp;</a>)</td>
+    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_instances"/></td>
+  </tr>
+</table>
+<div><a id="toggle_filter" href="javascript:void(0)" onclick="toggleAdvanced()">Show</a> comparison of similarities and differences between strains.</div>
+
+<!-- display "advanced" filters -->
+<table id="advanced_filters" class="hidden">
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <td>GT1 minus ME49</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_me49">&nbsp;</a></td>
+        </tr>
+        <tr>
+          <td>GT1 intersect ME49</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_me49">&nbsp;</a></td>
+        </tr>
+        <tr>
+          <td>ME49 minus GT1</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_gt1">&nbsp;</a></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <td>GT1 minus Veg</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_veg">&nbsp;</a></td>
+        </tr>
+        <tr>
+          <td>GT1 intersect Veg</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_veg">&nbsp;</a></td>
+        </tr>
+        <tr>
+          <td>Veg minus GT1</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_gt1">&nbsp;</a></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <td>ME49 minus Veg</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_veg">&nbsp;</a></td>
+        </tr>
+        <tr>
+          <td>ME49 intersect Veg</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_int_veg">&nbsp;</a></td>
+        </tr>
+        <tr>
+          <td>Veg minus ME49</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_me49">&nbsp;</a></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
 <hr>
 
 <!-- handle empty result set situation -->
