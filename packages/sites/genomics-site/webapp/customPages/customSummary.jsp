@@ -506,9 +506,9 @@ function parse_Url( url, parameter_name )
 <c:forEach items="${wdkAnswer.records}" var="record">
                
 <c:set var="primaryKey" value="${record.primaryKey}"/>
-<c:set var="pkValues" value="primaryKey.values" />
-<c:set var="projectId" value="pkValues['project_id']" />
-<c:set var="recordId" value="pkValues['source_id']" />
+<c:set var="pkValues" value="${primaryKey.values}" />
+<c:set var="projectId" value="${pkValues['project_id']}" />
+<c:set var="recordId" value="${pkValues['source_id']}" />
 <c:set var="summaryAttributes" value="${record.summaryAttributes}"/>
    
 <c:choose>
@@ -519,7 +519,7 @@ function parse_Url( url, parameter_name )
   <c:set var="j" value="0"/>
 
   <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
-    <c:set var="recAttr value="${summaryAttributes[sumAttrName]}"/>
+    <c:set var="recAttr" value="${summaryAttributes[sumAttrName]}"/>
     <c:set var="align" value="align='${recAttr.alignment}'" />
     <c:set var="nowrap">
         <c:if test="${recAttr.nowrap}">nowrap</c:if>
