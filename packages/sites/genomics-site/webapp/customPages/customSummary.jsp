@@ -520,9 +520,9 @@ function parse_Url( url, parameter_name )
 
   <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
     <c:set var="recAttr" value="${summaryAttributes[sumAttrName]}"/>
-    <c:set var="align" value="align='${recAttr.alignment}'" />
+    <c:set var="align" value="align='${recAttr.attributeField.align}'" />
     <c:set var="nowrap">
-        <c:if test="${recAttr.nowrap}">nowrap</c:if>
+        <c:if test="${recAttr.attributeField.nowrap}">nowrap</c:if>
     </c:set>
 
     <td ${align} ${nowrap}>
