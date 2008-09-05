@@ -32,11 +32,13 @@
 </c:if>
 <c:set var="noData" value="false"/>
 
+
 <c:set var="tblContent">
 
 <%-- display the description --%>
 <div class="table-description">${tbl.tableField.description}</div>
 
+<table>
 <c:if test="${suppressColumnHeaders == null || !suppressColumnHeaders}">
     <c:set var="h" value="0"/>
     <tr class="headerRow">
@@ -52,6 +54,7 @@
     <%-- table rows --%>
     <c:set var="i" value="0"/>
     <c:forEach var="row" items="${tbl}">
+        <c:set var="hasRow" value="true" />
         <c:choose>
             <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
             <c:otherwise><tr class="rowMedium"></c:otherwise>
@@ -80,6 +83,7 @@
         </tr>
         <c:set var="i" value="${i +  1}"/>
     </c:forEach>
+</table>
 
 <c:if test="${i == 0}">
   <c:set var="noData" value="true"/>
