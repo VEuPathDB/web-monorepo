@@ -324,10 +324,8 @@ function parse_Url( url, parameter_name )
     </tr>
 </table>
 
-
-<%-- lay out the tables brute-force for now...I have no idea wtf the map stuff is --%>
-<div>
 <!-- display strain filters -->
+<div>
 
 <!-- display basic filters -->
 <table>
@@ -351,9 +349,8 @@ function parse_Url( url, parameter_name )
 <div><a id="toggle_filter" href="javascript:void(0)" onclick="toggleAdvanced()">Show</a> comparison of similarities and differences between strains.</div>
 
 <!-- display "advanced" filters -->
-<table id="advanced_filters" class="hidden">
-  <tr>
-    <td>
+<div id="advanced_filters" class="hidden">
+   <div class="filter_diagram">
       <table>
         <tr>
           <td>GT1 minus ME49</td>
@@ -368,10 +365,8 @@ function parse_Url( url, parameter_name )
           <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_gt1">&nbsp;</a></td>
         </tr>
       </table>
-    </td>
-  </tr>
-  <tr>
-    <td>
+   </div>
+   <div class="filter_diagram">
       <table>
         <tr>
           <td>GT1 minus Veg</td>
@@ -386,10 +381,8 @@ function parse_Url( url, parameter_name )
           <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_gt1">&nbsp;</a></td>
         </tr>
       </table>
-    </td>
-  </tr>
-  <tr>
-    <td>
+   </div>
+   <div class="filter_diagram">
       <table>
         <tr>
           <td>ME49 minus Veg</td>
@@ -404,9 +397,8 @@ function parse_Url( url, parameter_name )
           <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_me49">&nbsp;</a></td>
         </tr>
       </table>
-    </td>
-  </tr>
-</table>
+   </div>
+</div>
 
 <hr>
 

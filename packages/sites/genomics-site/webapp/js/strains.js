@@ -13,7 +13,9 @@ $(document).ready(function() {
 				curLink[i].attr("class", "");
 			},
 			error: function(data, msg, e){
-				alert("ERROR \n " + msg + "\n" + e);
+				curLink[i].attr("disabled", "yes");
+				curLink[i].attr("Error");
+				//alert("ERROR \n " + msg + "\n" + e);
 			}
 		});
 	});
@@ -24,12 +26,12 @@ function toggleAdvanced() {
 	var html = $("a#toggle_filter").html();
 	if (text == "Show") {
 		$("a#toggle_filter").html("Hide");
-		$("table#advanced_filters").removeClass("hidden");
+		$("div#advanced_filters").removeClass("hidden");
 		translateFilterLinks();
 	}
 	else {
 		$("a#toggle_filter").html("Show");
-		$("table#advanced_filters").addClass("hidden");
+		$("div#advanced_filters").addClass("hidden");
 	}
 }
 		

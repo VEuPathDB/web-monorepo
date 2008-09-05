@@ -217,6 +217,7 @@ function reviseBooleanQuery(type, expression) {
           <th>ID</th> 
           <th onmouseover="hideAnyName()">&nbsp;</th>
           <th onmouseover="hideAnyName()">Query</th>
+          <th onmouseover="hideAnyName()">Filter</th>
           <th onmouseover="hideAnyName()">Date</th>
           <th onmouseover="hideAnyName()">Version</th>
           <th onmouseover="hideAnyName()">Size</th>
@@ -286,6 +287,7 @@ function reviseBooleanQuery(type, expression) {
                  ${dispNam}</div>
             <div id="input_${historyId}" style="display:none"></div>
         </td>
+	<td align='center' onmouseover="hideAnyName()" nowrap>${history.filterDisplayName}</td>
         <td align='center' onmouseover="hideAnyName()" nowrap>${history.lastRunTime}</td>
 	<td align='right' onmouseouver="hideAnyName()" nowrap>
 	<c:choose>
@@ -311,7 +313,7 @@ function reviseBooleanQuery(type, expression) {
             <c:set var="surlParams">
                 <c:choose>
                     <c:when test="${history.boolean == false}">
-                        showSummary.do?questionFullName=${qName}${history.answer.summaryUrlParams}
+                        showSummary.do?questionFullName=${qName}${history.answer.summaryUrlParams}&wdk_history_id=${historyId}
                     </c:when>
                     <c:otherwise>
                         showSummary.do?wdk_history_id=${historyId}
