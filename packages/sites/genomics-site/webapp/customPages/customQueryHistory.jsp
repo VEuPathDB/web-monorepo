@@ -347,7 +347,7 @@ function reviseBooleanQuery(type, expression) {
          <%-- display transform button for each history --%>
          <c:if test="${showTransform}">
            <td nowrap>
-               <c:set var="result" value="${history.answer.cacheTableName}" />
+               <c:set var="result" value="${history.answer.checksum}" />
                <c:set var="transformUrl" 
                       value="showQuestion.do?questionFullName=InternalQuestions.GenesByStrainTransform&geneResult=${result}&questionSubmit=Get+Answer&goto_summary=0"/>
                <a href='<c:url value="${transformUrl}"/>'>Other Strains</a>

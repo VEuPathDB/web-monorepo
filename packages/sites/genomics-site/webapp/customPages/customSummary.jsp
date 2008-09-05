@@ -149,22 +149,22 @@ function create_Portal_Record_Url(recordName, projectId, primaryKey, portal_url)
 	//var portal_url = "";
 	if(portal_url.length == 0){
 		if(projectId == 'CryptoDB'){
-			portal_url = "http://www.cryptodb.org/cryptodb/showRecord.do?name=" + recordName + "&project_id=&primary_key=" + primaryKey;
+			portal_url = "http://www.cryptodb.org/cryptodb/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
 		} else if(projectId == 'PlasmoDB'){
-			portal_url = "http://www.plasmodb.org/plasmo/showRecord.do?name=" + recordName + "&project_id=&primary_key=" + primaryKey;
+			portal_url = "http://www.plasmodb.org/plasmo/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
 		} else if(projectId == 'ToxoDB'){
-			portal_url = "http://www.toxodb.org/toxo/showRecord.do?name=" + recordName + "&project_id=&primary_key=" + primaryKey;
+			portal_url = "http://www.toxodb.org/toxo/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
 		} else if(projectId == 'GiardiaDB'){
-			portal_url = "http://www.giardiadb.org/giardiadb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&primary_key=" + primaryKey;
+			portal_url = "http://www.giardiadb.org/giardiadb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
 		} else if(projectId == 'TrichDB'){
-			portal_url = "http://www.trichdb.org/trichdb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&primary_key=" + 	primaryKey;
+			portal_url = "http://www.trichdb.org/trichdb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + 	primaryKey;
 		} else if(projectId == 'ApiDB'){
 			portal_url = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=" + primaryKey; 
 		}
 		window.location = portal_url;
 	} else {
 		recordName = parse_Url(portal_url, "name");
-		primaryKey = parse_Url(portal_url, "primary_key");
+		primaryKey = parse_Url(portal_url, "source_id");
 		create_Portal_Record_Url(recordName,projectId,primaryKey,"");
 	} 
 }
@@ -627,14 +627,14 @@ function parse_Url( url, parameter_name )
            <c:when test = "${cryptoIsolatesQuestion}">
 
               <%-- display a link to record page --%>
-              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey}"></nobr>
+              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${source_id}"></nobr>
 
            </c:when>
 
             <c:otherwise>
 
               <%-- display a link to record page --%>
-              <a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${recordId}">${fieldVal}</a>
+              <a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${recordId}">${fieldVal}</a>
 
             </c:otherwise>
         </c:choose>
