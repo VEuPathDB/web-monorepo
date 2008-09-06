@@ -329,29 +329,69 @@ function parse_Url( url, parameter_name )
 
 <!-- display basic filters -->
 <table>
-  <tr>
-    <th>Toxo Genes</th>
-    <th>Any Strain</th>
-    <th>ME49</th>
-    <th>GT1</th>
-    <th>Veg</th>
-    <th>All Strains</th>
-  </tr>
-  <tr>
-    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=any_genes">&nbsp;</a></td>
-    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=any_instance">&nbsp;</a></td>
-    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_instances">&nbsp;</a>&nbsp;(<a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_me49">&nbsp;</a>)</td>
-    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_instances">&nbsp;</a>&nbsp;(<a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_gt1">&nbsp;</a>)</td>
-    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_instances">&nbsp;</a>&nbsp;(<a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_veg">&nbsp;</a>)</td>
-    <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_instances"/></td>
-  </tr>
+   <tr>
+    <td>
+      <table cellpadding="5" border="1">
+        <tr>
+          <th>All Results</th>
+          <th>Tg Results</th>
+          <th>Tg Genes</th>
+          <th>Nc Genes</th>
+        </tr>
+        <tr align="center">
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_results">&nbsp;</a></td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_tg_results">&nbsp;</a></td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=toxo_genes">&nbsp;</a></td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=neospora_genes">&nbsp;</a></td>
+        </tr>
+      </table>
+    </td>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+    <td>
+      <table cellpadding="5" border="1">
+        <tr>
+          <th colspan="2">GT1</th>
+          <th colspan="2">ME49</th>
+          <th colspan="2">VEG</th>
+          <th>All Tg Strains</th>
+        </tr>
+        <tr align="center">
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_genes">&nbsp;</a></td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_instances">&nbsp;</a></td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_genes">&nbsp;</a></td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_instances">&nbsp;</a></td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_genes">&nbsp;</a></td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_instances">&nbsp;</a></td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=each_tg_instance">&nbsp;</a></td>
+        </tr>
+      </table>
+    </td>
+   </tr>
 </table>
+
+
 <div><a id="toggle_filter" href="javascript:void(0)" onclick="toggleAdvanced()">Show</a> comparison of similarities and differences between strains.</div>
 
 <!-- display "advanced" filters -->
 <div id="advanced_filters" class="hidden">
    <div class="filter_diagram">
-      <table>
+      <table cellpadding="5" border="1">
+        <tr>
+          <td>Tg genes minus GT1</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_gt1">&nbsp;</a></td>
+        </tr>
+        <tr>
+          <td>Tg genes minus ME49</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_me49">&nbsp;</a></td>
+        </tr>
+        <tr>
+          <td>Tg genes minus VEG</td>
+          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_veg">&nbsp;</a></td>
+        </tr>
+      </table>
+   </div>
+   <div class="filter_diagram">
+      <table cellpadding="5" border="1">
         <tr>
           <td>GT1 minus ME49</td>
           <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_me49">&nbsp;</a></td>
@@ -367,7 +407,7 @@ function parse_Url( url, parameter_name )
       </table>
    </div>
    <div class="filter_diagram">
-      <table>
+      <table cellpadding="5" border="1">
         <tr>
           <td>GT1 minus Veg</td>
           <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_veg">&nbsp;</a></td>
@@ -383,7 +423,7 @@ function parse_Url( url, parameter_name )
       </table>
    </div>
    <div class="filter_diagram">
-      <table>
+      <table cellpadding="5" border="1">
         <tr>
           <td>ME49 minus Veg</td>
           <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_veg">&nbsp;</a></td>
