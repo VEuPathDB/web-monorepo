@@ -26,8 +26,7 @@
 
 <%-- table header --%>
 <tr class="secondary3">
-<%--<c:forEach var="hCol" items="${tbl.visibleAttributeFields}">--%>
-<c:forEach var="hCol" items="${tbl.displayableFields}">
+<c:forEach var="hCol" items="${tbl.tableField.attributeFields}">
 <c:if test="${!hCol.internal}">
 <th align="left"><font size="-2">${hCol.displayName}</font></th>
 </c:if>
@@ -36,7 +35,7 @@
 
 <%/* table rows */%>
 <c:set var="i" value="0"/>
-<c:forEach var="row" items="${tbl.visibleRows}">
+<c:forEach var="row" items="${tbl}">
     
     <c:choose>
     <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
@@ -76,8 +75,6 @@
     <c:set var="i" value="${i +  1}"/>
 </c:forEach>
 </table>
-<%/* close resultList */%>
-<c:set var="junk" value="${tbl.close}"/>
 </c:set>
 
 <c:choose>
