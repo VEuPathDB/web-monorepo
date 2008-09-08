@@ -12,14 +12,14 @@
         <td width="50%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
-                <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByEstAccession" linktext="EST Accession" existsOn="A G P"/>
+                <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByEstAccession" linktext="EST Accession" existsOn="A C G P T"/>
                 </tr>
 
                 <tr>
-                   <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="A G P"/> 
+                   <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="A C G P T"/> 
                 </tr>
  <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLibrary" linktext="Library" existsOn="A G P"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLibrary" linktext="Library" existsOn="A C G P T"/>
                 </tr>
 
             </table>
@@ -31,10 +31,10 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
                  <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByGeneIDs" linktext="Gene IDs" existsOn="A G P"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByGeneIDs" linktext="Gene IDs" existsOn="A C G P T"/>
                 </tr>           
 <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLocation" linktext="Chromosomal Location" existsOn="A G P"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLocation" linktext="Chromosomal Location" existsOn="A C G P T"/>
                 </tr>
 
                 <tr>
