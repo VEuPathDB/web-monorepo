@@ -67,7 +67,12 @@
             <c:set var="j" value="${j+1}"/>
 
             <%-- need to know if value should be hot linked --%>
-            <td>
+            <c:set var="align" value="align='${rCol.attributeField.align}'" />
+            <c:set var="nowrap">
+                <c:if test="${rCol.attributeField.nowrap}">nowrap</c:if>
+            </c:set>
+        
+            <td ${align} ${nowrap}>
                 <c:choose>
                     <c:when test="${rCol.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
                         <a href="${rCol.url}">${rCol.displayText}</a>
