@@ -13,6 +13,10 @@
               description="source id for the contig or chromosome"
 %>
 
+<%@ attribute name="availableGenomes"
+              description="string list of available genomes"
+%>
+
 <%@ attribute name="start"
               description="nucleotide position"
 %>
@@ -59,6 +63,12 @@ return true;
  <c:set var="initialCheckBox" value="CHECKED"/>
 </c:if>
 
+<c:if test="${availableGenomes == null}">
+ <c:set var="availableGenomes" value="available genomes"/>
+</c:if>
+
+
+
 
 <form action="${cgiUrl}/mavidAlign" onSubmit="popupform(this, 'mavidAlign')">
  <table border="0" cellpadding="${cellPadding}" cellspacing="1">
@@ -67,7 +77,7 @@ return true;
     <tr><td colspan="2">
     <b><font size="+1">Retrieve <a href="http://www.biostat.wisc.edu/~cdewey/mercator/">Mercator</a> 
    and <a href="http://www.genome.org/cgi/content/abstract/14/4/693">MAVID</a> 
-   generated alignments ${headerFiller} across available genomes.</font></b>
+   generated alignments ${headerFiller} across ${availableGenomes}.</font></b>
 <br><br>
         <input name='project_id' value='${projectId}' size='20' type='hidden' />
         <c:if test="${inputContig == null}">
