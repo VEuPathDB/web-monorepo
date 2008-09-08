@@ -198,17 +198,6 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 <c:catch var="e">
 <c:if test="${!empty wdkRecord.recordClass.attributeFields['cache_count']}">
  <tr><td><b>Cache table count</b>:</td><td class="p">${wdkRecord.attributes['cache_count'].value}</td></tr>
- <tr><td><b>Cache created</b><a href='javascript:void()'
-        onmouseover="return overlib('Creation time of the QueryInstance table.')"
-        onmouseout = "return nd();"><sup>[?]</sup></a>
-        :</td><td class="p">${wdkRecord.attributes['creation_time'].value}</td></tr>
- <tr><td><b>Cache first entry</b><a href='javascript:void()'
-        onmouseover="return overlib('Determining when the WDK cache tables were \'-reset\' ' + 
-        'is non-trivial. However, we can use the minium start_time of the QueryInstance ' +
-        'table to report the first time the cache was used after a reset or create.')"
-        onmouseout = "return nd();"><sup>[?]</sup></a>
-        :</td><td class="p">${wdkRecord.attributes['first_time'].value}</td></tr>
- <tr><td><b>Cache last entry:</b></td><td class="p">${wdkRecord.attributes['last_time'].value}</td></tr>
 </c:if>
 </c:catch>
 <c:if test="${e!=null}"> 
