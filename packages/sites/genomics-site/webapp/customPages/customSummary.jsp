@@ -284,7 +284,7 @@ function parse_Url( url, parameter_name )
               ${wdkAnswer.resultSize}
             </c:when>
             <c:otherwise>
-              ${history.estimateSize}
+              ${history.filterSize}
             </c:otherwise>
           </c:choose>
  <c:if test="${wdkAnswer.resultSize == 0}">
@@ -454,10 +454,10 @@ function parse_Url( url, parameter_name )
 </table>
 </div>
 
-<div class="clear_all"><span id="toggle_filter">Show</span> comparison of similarities and differences between strains.</div>
+<div class="clear_all"><span id="toggle_filter">Hide</span> comparison of similarities and differences between strains.</div>
 
 <!-- display "advanced" filters -->
-<div id="advanced_filters" class="hidden">
+<div id="advanced_filters">
    <div class="filter">
       <table cellpadding="5" border="1">
         <tr>
@@ -467,7 +467,7 @@ function parse_Url( url, parameter_name )
               <td class="selected">${wdkHistory.filterSize}
             </c:when>
             <c:otherwise>
-              <td><a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_gt1">&nbsp;</a>
+              <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_gt1">&nbsp;</a>
             </c:otherwise>
           </c:choose></td>
         </tr>
@@ -478,7 +478,7 @@ function parse_Url( url, parameter_name )
               <td class="selected">${wdkHistory.filterSize}
             </c:when>
             <c:otherwise>
-              <td><a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_me49">&nbsp;</a>
+              <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_me49">&nbsp;</a>
             </c:otherwise>
           </c:choose></td>
         </tr>
@@ -489,7 +489,7 @@ function parse_Url( url, parameter_name )
               <td class="selected">${wdkHistory.filterSize}
             </c:when>
             <c:otherwise>
-              <td><a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_veg">&nbsp;</a>
+              <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_veg">&nbsp;</a>
             </c:otherwise>
           </c:choose></td>
         </tr>
@@ -522,7 +522,7 @@ function parse_Url( url, parameter_name )
          </c:when>
          <c:otherwise>
          <li>
-           <a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_me49">&nbsp;</a>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_me49">&nbsp;</a>
          </c:otherwise>
        </c:choose>
        </li>
@@ -532,7 +532,7 @@ function parse_Url( url, parameter_name )
          </c:when>
          <c:otherwise>
          <li>
-           <a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_me49">&nbsp;</a>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_me49">&nbsp;</a>
          </c:otherwise>
        </c:choose>
        </li>
@@ -542,7 +542,7 @@ function parse_Url( url, parameter_name )
          </c:when>
          <c:otherwise>
          <li>
-           <a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_gt1">&nbsp;</a>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_gt1">&nbsp;</a>
          </c:otherwise>
        </c:choose>
        </li>
@@ -575,7 +575,7 @@ function parse_Url( url, parameter_name )
          </c:when>
          <c:otherwise>
          <li>
-           <a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_veg">&nbsp;</a>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_veg">&nbsp;</a>
          </c:otherwise>
        </c:choose>
        </li>
@@ -585,7 +585,7 @@ function parse_Url( url, parameter_name )
          </c:when>
          <c:otherwise>
          <li>
-           <a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_veg">&nbsp;</a>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_veg">&nbsp;</a>
          </c:otherwise>
        </c:choose>
        </li>
@@ -595,7 +595,7 @@ function parse_Url( url, parameter_name )
          </c:when>
          <c:otherwise>
          <li>
-           <a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_gt1">&nbsp;</a>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_gt1">&nbsp;</a>
          </c:otherwise>
        </c:choose>
        </li>
@@ -628,7 +628,7 @@ function parse_Url( url, parameter_name )
          </c:when>
          <c:otherwise>
          <li>
-           <a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_veg">&nbsp;</a>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_veg">&nbsp;</a>
          </c:otherwise>
        </c:choose>
        </li>
@@ -638,7 +638,7 @@ function parse_Url( url, parameter_name )
          </c:when>
          <c:otherwise>
          <li>
-           <a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_int_veg">&nbsp;</a>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_int_veg">&nbsp;</a>
          </c:otherwise>
        </c:choose>
        </li>
@@ -648,7 +648,7 @@ function parse_Url( url, parameter_name )
          </c:when>
          <c:otherwise>
          <li>
-           <a class="filter_link hidden" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_me49">&nbsp;</a>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_me49">&nbsp;</a>
          </c:otherwise>
        </c:choose>
        </li>
