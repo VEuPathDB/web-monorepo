@@ -1,27 +1,7 @@
 var curLink;
-//var curLink = [];
 
 $(document).ready(function() {
 	translateFilterLinks();
-	// OLD WAY, BULK LOAD
-	//$("a.filter_link").each(function(i) {
-	//	var url = $(this).attr("href");
-	//	curLink[i] = $(this);
-	//	$.ajax({
-	//		url: url,
-	//		dataType: "html",
-	//		success: function(data){
-	//			curLink[i].attr("href", $(data).attr("href"));
-	//			curLink[i].html($(data).text());
-	//			curLink[i].attr("class", "");
-	//		},
-	//		error: function(data, msg, e){
-	//			curLink[i].attr("disabled", "yes");
-	//			curLink[i].attr("Error");
-	//			//alert("ERROR \n " + msg + "\n" + e);
-	//		}
-	//	});
-	//});
 });
 
 function toggleAdvanced() {
@@ -30,6 +10,8 @@ function toggleAdvanced() {
 	if (text == "Show") {
 		$("a#toggle_filter").html("Hide");
 		$("div#advanced_filters").removeClass("hidden");
+		$("a.filter_link.hidden").removeClass("hidden");
+		$("#toggle_filter").parent("div.clear_all").html("<span id='toggle_filter'>Hide</span> comparison of similarities and differences between strains.</div>");
 		translateFilterLinks();
 	}
 	else {
@@ -40,8 +22,8 @@ function toggleAdvanced() {
 		
 function translateFilterLinks() {
 	curLink = $("a.filter_link:first");
-	if (curLink) {
-		var url = curLink.attr("href");
+	var url = curLink.attr("href");
+	if (url && !curLink.hasClass("hidden")) {
 		$.ajax({
 			url: url,
 			dataType: "html",
@@ -58,21 +40,7 @@ function translateFilterLinks() {
 			}
 		});
 	}
-	// OLD WAY, BULK LOAD
-	//$("a.advanced_filter_link").each(function(i) {
-	//	var url = $(this).attr("href");
-	//	curLink[i] = $(this);
-	//	$.ajax({
-	//		url: url,
-	//		dataType: "html",
-	//		success: function(data){
-	//			curLink[i].attr("href", $(data).attr("href"));
-	//			curLink[i].html($(data).text());
-	//			curLink[i].attr("class", "");
-	//		},
-	//		error: function(data, msg, e){
-	//			alert("ERROR \n " + msg + "\n" + e);
-	//		}
-	//	});
-	//});
+	else {
+		$("#toggle_filter").parent("div.clear_all").html("<a id='toggle_filter' href='javascript:void(0);' onclick='toggleAdvanced();'>" + $("#toggle_filter").text() + "</a> comparison of similarities and differences between strains.</div>");
+	}
 }
