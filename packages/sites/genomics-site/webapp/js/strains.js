@@ -1,24 +1,27 @@
-var curLink = [];
+var curLink;
+//var curLink = [];
 
 $(document).ready(function() {
-	$("a.filter_link").each(function(i) {
-		var url = $(this).attr("href");
-		curLink[i] = $(this);
-		$.ajax({
-			url: url,
-			dataType: "html",
-			success: function(data){
-				curLink[i].attr("href", $(data).attr("href"));
-				curLink[i].html($(data).text());
-				curLink[i].attr("class", "");
-			},
-			error: function(data, msg, e){
-				curLink[i].attr("disabled", "yes");
-				curLink[i].attr("Error");
-				//alert("ERROR \n " + msg + "\n" + e);
-			}
-		});
-	});
+	translateFilterLinks();
+	// OLD WAY, BULK LOAD
+	//$("a.filter_link").each(function(i) {
+	//	var url = $(this).attr("href");
+	//	curLink[i] = $(this);
+	//	$.ajax({
+	//		url: url,
+	//		dataType: "html",
+	//		success: function(data){
+	//			curLink[i].attr("href", $(data).attr("href"));
+	//			curLink[i].html($(data).text());
+	//			curLink[i].attr("class", "");
+	//		},
+	//		error: function(data, msg, e){
+	//			curLink[i].attr("disabled", "yes");
+	//			curLink[i].attr("Error");
+	//			//alert("ERROR \n " + msg + "\n" + e);
+	//		}
+	//	});
+	//});
 });
 
 function toggleAdvanced() {
@@ -36,20 +39,40 @@ function toggleAdvanced() {
 }
 		
 function translateFilterLinks() {
-	$("a.filter_link").each(function(i) {
-		var url = $(this).attr("href");
-		curLink[i] = $(this);
+	curLink = $("a.filter_link:first");
+	if (curLink) {
+		var url = curLink.attr("href");
 		$.ajax({
 			url: url,
 			dataType: "html",
 			success: function(data){
-				curLink[i].attr("href", $(data).attr("href"));
-				curLink[i].html($(data).text());
-				curLink[i].attr("class", "");
+				curLink.attr("href", $(data).attr("href"));
+				curLink.html($(data).text());
+				curLink.attr("class", "");
+				translateFilterLinks();
 			},
 			error: function(data, msg, e){
-				alert("ERROR \n " + msg + "\n" + e);
+				curLink[i].attr("disabled", "yes");
+				curLink[i].attr("Error");
+				//alert("ERROR \n " + msg + "\n" + e);
 			}
 		});
-	});
+	}
+	// OLD WAY, BULK LOAD
+	//$("a.advanced_filter_link").each(function(i) {
+	//	var url = $(this).attr("href");
+	//	curLink[i] = $(this);
+	//	$.ajax({
+	//		url: url,
+	//		dataType: "html",
+	//		success: function(data){
+	//			curLink[i].attr("href", $(data).attr("href"));
+	//			curLink[i].html($(data).text());
+	//			curLink[i].attr("class", "");
+	//		},
+	//		error: function(data, msg, e){
+	//			alert("ERROR \n " + msg + "\n" + e);
+	//		}
+	//	});
+	//});
 }

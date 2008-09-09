@@ -279,8 +279,14 @@ function parse_Url( url, parameter_name )
     <tr>
        <td valign="top" align="right" width="10" nowrap><b>Results:&nbsp; </b></td>
        <td valign="top" align="left" ${paddingStyle}>
-          ${wdkAnswer.resultSize}
-
+          <c:choose>
+            <c:when test="${wdkAnswer.filter == null}">
+              ${wdkAnswer.resultSize}
+            </c:when>
+            <c:otherwise>
+              ${history.estimateSize}
+            </c:otherwise>
+          </c:choose>
  <c:if test="${wdkAnswer.resultSize == 0}">
               <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
                  <site:apidbSummary/>
@@ -324,123 +330,333 @@ function parse_Url( url, parameter_name )
     </tr>
 </table>
 
-<!-- display strain filters -->
-<div>
+<c:choose>
+  <c:when test="${wdkAnswer.filter == null}">
+    <c:set value="all_results" var="curFilter" />
+  </c:when>
+  <c:otherwise>
+    <c:set value="${wdkAnswer.filter.name}" var="curFilter" />
+  </c:otherwise>
+</c:choose>
 
 <!-- display basic filters -->
-<table>
-   <tr>
-    <td>
-      <table cellpadding="5" border="1">
-        <tr>
-          <th>All Results</th>
-          <th>Tg Results</th>
-          <th>Tg Genes</th>
-          <th>Nc Genes</th>
-        </tr>
-        <tr align="center">
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_results">&nbsp;</a></td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_tg_results">&nbsp;</a></td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=toxo_genes">&nbsp;</a></td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=neospora_genes">&nbsp;</a></td>
-        </tr>
-      </table>
-    </td>
-    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-    <td>
-      <table cellpadding="5" border="1">
-        <tr>
-          <th colspan="2">GT1</th>
-          <th colspan="2">ME49</th>
-          <th colspan="2">VEG</th>
-          <th>All Tg Strains</th>
-        </tr>
-        <tr align="center">
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_genes">&nbsp;</a></td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_instances">&nbsp;</a></td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_genes">&nbsp;</a></td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_instances">&nbsp;</a></td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_genes">&nbsp;</a></td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_instances">&nbsp;</a></td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=each_tg_instance">&nbsp;</a></td>
-        </tr>
-      </table>
-    </td>
-   </tr>
+<div class="filter">
+<table cellpadding="5" border="1">
+  <tr>
+    <th>All Results</th>
+    <th>Tg Results</th>
+    <th>Tg Genes</th>
+    <th>Nc Genes</th>
+  </tr>
+  <tr align="center">
+    <c:choose>
+      <c:when test="${curFilter eq 'all_results'}">
+        <td class="selected">${wdkAnswer.resultSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_results">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'all_tg_results'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_tg_results">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'toxo_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=toxo_genes">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'neospora_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=neospora_genes">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+  </tr>
 </table>
+</div>
 
+<div class="filter">
+<table cellpadding="5" border="1">
+  <tr>
+    <th colspan="2">GT1</th>
+    <th colspan="2">ME49</th>
+    <th colspan="2">VEG</th>
+    <th>All Tg Strains</th>
+  </tr>
+  <tr align="center">
+    <c:choose>
+      <c:when test="${curFilter eq 'gt1_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_genes">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'gt1_instances'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_instances">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'me49_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_genes">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'me49_instances'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_instances">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'veg_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_genes">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'veg_instances'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_instances">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'each_tg_instance'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=each_tg_instance">&nbsp;</a>
+      </c:otherwise>
+    </c:choose></td>
+  </tr>
+</table>
+</div>
 
-<div><a id="toggle_filter" href="javascript:void(0)" onclick="toggleAdvanced()">Show</a> comparison of similarities and differences between strains.</div>
+<div class="clear_all"><a id="toggle_filter" href="javascript:void(0)" onclick="toggleAdvanced()">Show</a> comparison of similarities and differences between strains.</div>
 
 <!-- display "advanced" filters -->
 <div id="advanced_filters" class="hidden">
-   <div class="filter_diagram">
+   <div class="filter">
       <table cellpadding="5" border="1">
         <tr>
           <td>Tg genes minus GT1</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_gt1">&nbsp;</a></td>
+          <c:choose>
+            <c:when test="${curFilter eq 'all_min_gt1'}">
+              <td class="selected">${wdkHistory.filterSize}
+            </c:when>
+            <c:otherwise>
+              <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_gt1">&nbsp;</a>
+            </c:otherwise>
+          </c:choose></td>
         </tr>
         <tr>
           <td>Tg genes minus ME49</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_me49">&nbsp;</a></td>
+          <c:choose>
+            <c:when test="${curFilter eq 'all_min_me49'}">
+              <td class="selected">${wdkHistory.filterSize}
+            </c:when>
+            <c:otherwise>
+              <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_me49">&nbsp;</a>
+            </c:otherwise>
+          </c:choose></td>
         </tr>
         <tr>
           <td>Tg genes minus VEG</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_veg">&nbsp;</a></td>
+          <c:choose>
+            <c:when test="${curFilter eq 'all_min_veg'}">
+              <td class="selected">${wdkHistory.filterSize}
+            </c:when>
+            <c:otherwise>
+              <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_min_veg">&nbsp;</a>
+            </c:otherwise>
+          </c:choose></td>
         </tr>
       </table>
    </div>
-   <div class="filter_diagram">
-      <table cellpadding="5" border="1">
-        <tr>
-          <td>GT1 minus ME49</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_me49">&nbsp;</a></td>
-        </tr>
-        <tr>
-          <td>GT1 intersect ME49</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_me49">&nbsp;</a></td>
-        </tr>
-        <tr>
-          <td>ME49 minus GT1</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_gt1">&nbsp;</a></td>
-        </tr>
-      </table>
+   <div class="filter labels">
+     <ul>
+       <li class="top_label">GT1</li>
+       <li class="bottom_label">ME49</li>
+     </ul>
    </div>
-   <div class="filter_diagram">
-      <table cellpadding="5" border="1">
-        <tr>
-          <td>GT1 minus Veg</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_veg">&nbsp;</a></td>
-        </tr>
-        <tr>
-          <td>GT1 intersect Veg</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_veg">&nbsp;</a></td>
-        </tr>
-        <tr>
-          <td>Veg minus GT1</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_gt1">&nbsp;</a></td>
-        </tr>
-      </table>
+   <c:choose>
+     <c:when test="${curFilter eq 'gt1_min_me49'}">
+       <div class="filter diagram gt1_me49 gt1_selected">
+     </c:when>
+     <c:when test="${curFilter eq 'gt1_int_me49'}">
+       <div class="filter diagram gt1_me49 int_selected">
+     </c:when>
+     <c:when test="${curFilter eq 'me49_min_gt1'}">
+       <div class="filter diagram gt1_me49 me49_selected">
+     </c:when>
+     <c:otherwise>
+       <div class="filter diagram gt1_me49">
+     </c:otherwise>
+   </c:choose>
+     <ul>
+       <c:choose>
+         <c:when test="${curFilter eq 'gt1_min_me49'}">
+           <li class="selected">${wdkHistory.filterSize}
+         </c:when>
+         <c:otherwise>
+         <li>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_me49">&nbsp;</a>
+         </c:otherwise>
+       </c:choose>
+       </li>
+       <c:choose>
+         <c:when test="${curFilter eq 'gt1_int_me49'}">
+           <li class="selected">${wdkHistory.filterSize}
+         </c:when>
+         <c:otherwise>
+         <li>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_me49">&nbsp;</a>
+         </c:otherwise>
+       </c:choose>
+       </li>
+       <c:choose>
+         <c:when test="${curFilter eq 'me49_min_gt1'}">
+           <li class="selected">${wdkHistory.filterSize}
+         </c:when>
+         <c:otherwise>
+         <li>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_gt1">&nbsp;</a>
+         </c:otherwise>
+       </c:choose>
+       </li>
+     </ul>
    </div>
-   <div class="filter_diagram">
-      <table cellpadding="5" border="1">
-        <tr>
-          <td>ME49 minus Veg</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_veg">&nbsp;</a></td>
-        </tr>
-        <tr>
-          <td>ME49 intersect Veg</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_int_veg">&nbsp;</a></td>
-        </tr>
-        <tr>
-          <td>Veg minus ME49</td>
-          <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_me49">&nbsp;</a></td>
-        </tr>
-      </table>
+   <div class="filter labels">
+     <ul>
+       <li class="top_label">GT1</li>
+       <li class="bottom_label">VEG</li>
+     </ul>
+   </div>
+   <c:choose>
+     <c:when test="${curFilter eq 'gt1_min_veg'}">
+       <div class="filter diagram gt1_veg gt1_selected">
+     </c:when>
+     <c:when test="${curFilter eq 'gt1_int_veg'}">
+       <div class="filter diagram gt1_veg int_selected">
+     </c:when>
+     <c:when test="${curFilter eq 'veg_min_gt1'}">
+       <div class="filter diagram gt1_veg veg_selected">
+     </c:when>
+     <c:otherwise>
+       <div class="filter diagram gt1_veg">
+     </c:otherwise>
+   </c:choose>
+     <ul>
+       <c:choose>
+         <c:when test="${curFilter eq 'gt1_min_veg'}">
+           <li class="selected">${wdkHistory.filterSize}
+         </c:when>
+         <c:otherwise>
+         <li>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_min_veg">&nbsp;</a>
+         </c:otherwise>
+       </c:choose>
+       </li>
+       <c:choose>
+         <c:when test="${curFilter eq 'gt1_int_veg'}">
+           <li class="selected">${wdkHistory.filterSize}
+         </c:when>
+         <c:otherwise>
+         <li>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_int_veg">&nbsp;</a>
+         </c:otherwise>
+       </c:choose>
+       </li>
+       <c:choose>
+         <c:when test="${curFilter eq 'veg_min_gt1'}">
+           <li class="selected">${wdkHistory.filterSize}
+         </c:when>
+         <c:otherwise>
+         <li>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_gt1">&nbsp;</a>
+         </c:otherwise>
+       </c:choose>
+       </li>
+     </ul>
+   </div>
+   <div class="filter labels">
+     <ul>
+       <li class="top_label">ME49</li>
+       <li class="bottom_label">VEG</li>
+     </ul>
+   </div>
+   <c:choose>
+     <c:when test="${curFilter eq 'me49_min_veg'}">
+       <div class="filter diagram me49_veg me49_selected">
+     </c:when>
+     <c:when test="${curFilter eq 'me49_int_veg'}">
+       <div class="filter diagram me49_veg int_selected">
+     </c:when>
+     <c:when test="${curFilter eq 'veg_min_me49'}">
+       <div class="filter diagram me49_veg veg_selected">
+     </c:when>
+     <c:otherwise>
+       <div class="filter diagram me49_veg">
+     </c:otherwise>
+   </c:choose>
+     <ul>
+       <c:choose>
+         <c:when test="${curFilter eq 'me49_min_veg'}">
+           <li class="selected">${wdkHistory.filterSize}
+         </c:when>
+         <c:otherwise>
+         <li>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_min_veg">&nbsp;</a>
+         </c:otherwise>
+       </c:choose>
+       </li>
+       <c:choose>
+         <c:when test="${curFilter eq 'me49_int_veg'}">
+           <li class="selected">${wdkHistory.filterSize}
+         </c:when>
+         <c:otherwise>
+         <li>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_int_veg">&nbsp;</a>
+         </c:otherwise>
+       </c:choose>
+       </li>
+       <c:choose>
+         <c:when test="${curFilter eq 'veg_min_me49'}">
+           <li class="selected">${wdkHistory.filterSize}
+         </c:when>
+         <c:otherwise>
+         <li>
+           <a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_min_me49">&nbsp;</a>
+         </c:otherwise>
+       </c:choose>
+       </li>
+     </ul>
    </div>
 </div>
 
-<hr>
+<hr class="clear_all"/>
 
 <!-- handle empty result set situation -->
 <c:choose>
