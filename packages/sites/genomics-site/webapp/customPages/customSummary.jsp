@@ -339,6 +339,7 @@ function parse_Url( url, parameter_name )
   </c:otherwise>
 </c:choose>
 
+<c:if test="${fn:length(recordClass.filters) > 0}">
 <!-- display basic filters -->
 <div class="filter">
 <table cellpadding="5" border="1">
@@ -655,7 +656,7 @@ function parse_Url( url, parameter_name )
      </ul>
    </div>
 </div>
-
+</c:if>
 <hr class="clear_all"/>
 
 <!-- handle empty result set situation -->
