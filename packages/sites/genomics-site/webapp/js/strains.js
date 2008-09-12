@@ -7,7 +7,8 @@ $(document).ready(function() {
 function toggleAdvanced() {
 	var text = $("a#toggle_filter").text();
 	var html = $("a#toggle_filter").html();
-	if (text == "Show") {
+
+	if (text = "Show") {
 		$("a#toggle_filter").html("Hide");
 		$("div#advanced_filters").removeClass("hidden");
 		$("a.filter_link.hidden").removeClass("hidden");
@@ -18,10 +19,13 @@ function toggleAdvanced() {
 		$("a#toggle_filter").html("Show");
 		$("div#advanced_filters").addClass("hidden");
 	}
+
+	saveParameter("filters_param", text);
 }
 		
 function translateFilterLinks() {
 	curLink = $("a.filter_link:first");
+	curLink.removeClass("filter_link");
 	var url = curLink.attr("href");
 	if (url && !curLink.hasClass("hidden")) {
 		$.ajax({
@@ -34,9 +38,8 @@ function translateFilterLinks() {
 				translateFilterLinks();
 			},
 			error: function(data, msg, e){
-				curLink[i].attr("disabled", "yes");
-				curLink[i].attr("Error");
-				//alert("ERROR \n " + msg + "\n" + e);
+				curLink.html("Error");
+				translateFilterLinks();
 			}
 		});
 	}

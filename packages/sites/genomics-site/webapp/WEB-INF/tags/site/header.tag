@@ -86,7 +86,6 @@
   <script type="text/javascript" src='<c:url value="/js/api.js"/>'></script>
 <script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
   <script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
-  <script type='text/javascript' src='<c:url value="/js/strains.js"/>'></script>
 
   ${headElement}
 </head>
