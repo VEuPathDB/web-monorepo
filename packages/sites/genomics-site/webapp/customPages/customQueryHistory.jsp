@@ -185,45 +185,79 @@ function reviseBooleanQuery(type, expression) {
 
   </c:when>
   <c:otherwise>
+  <c:set var="typeC" value="0"/>  <!-- begin creating tabs for history sections -->
+  <ul id="history_tabs">
+  <c:forEach items="${histories}" var="historyEntry">
+  <c:set var="type" value="${historyEntry.key}"/>
+  <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
+  <c:set var="histList" value="${historyEntry.value}"/>
+  <c:set var="recordClass" value="${histList[0].answer.question.recordClass}"/>
+  <c:set var="recDispName" value="${recordClass.type}"/>
+  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
 
-
-<c:set var="typeC" value="0"/>
-<!-- begin of showing user answers grouped by RecordTypes -->
+  <c:set var="typeC" value="${typeC+1}"/>
+  <c:choose>
+    <c:when test="${typeC == 1}">
+      <li id="selected">
+    </c:when>
+    <c:otherwise>
+      <li>
+    </c:otherwise>
+  </c:choose>
+  <a id="tab_${recTabName}" onclick="displayHist('${recTabName}')"
+  href="javascript:void(0)">${recDispName}&nbsp;Queries</a></li>
+  </c:forEach>
+  <c:if test="${fn:length(invalidHistories) > 0}">
+    <li><a id="tab_incompatible" onclick="displayHist('incompatible')" href="javascript:void(0)">Incompatible&nbsp;Queries</a></li>
+  </c:if>
+  </ul>
+<!-- select/delete controls, dreaded table layout -->
+<table class="clear_all">
+   <tr>
+      <td><a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">select all</a>&nbsp|&nbsp;
+          <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">clear all</a></td>
+      <td></td>
+      <td class="medium">
+         <!-- display "delete button" -->
+         <input type="button" value="Delete" onclick="deleteHistories('deleteHistory.do?wdk_history_id=')"/>
+      </td>
+   </tr>
+</table>
+<c:set var="typeC" value="0"/> 
+<!-- begin creating divs to display history sections -->
 <c:forEach items="${histories}" var="historyEntry">
   <c:set var="type" value="${historyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="histList" value="${historyEntry.value}"/>
   <c:set var="recordClass" value="${histList[0].answer.question.recordClass}"/>
   <c:set var="recDispName" value="${recordClass.type}"/>
+  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
   
   <c:set var="showTransform" value="${true}" />
 
-<c:set var="typeC" value="${typeC+1}"/>
-<c:if test="${typeC != 1}"><hr></c:if>
+<c:set var="typeC" value="${typeC+1}"/>    <c:choose>
+      <c:when test="${typeC == 1}">
+        <div id="panel_${recTabName}" class="history_panel enabled">
+      </c:when>
+      <c:otherwise>
+        <div id="panel_${recTabName}" class="history_panel">
+      </c:otherwise> 
+    </c:choose>
 
-<h3>${recDispName} query history</h3>
-
-  <!-- show user answers one per line -->
-  <c:set var="NAME_TRUNC" value="65"/>
-  <table width="100%" border="0" cellpadding="0">
-
-    <tr>
-      <td>
-        <!-- begin of the html:form for rename query -->
-        <html:form method="get" action="/renameHistory.do">
-
+    <!-- begin of the html:form for rename query -->
+    <html:form method="get" action="/renameHistory.do">
       <table border="0" cellpadding="5" cellspacing="0">
       <tr class="headerRow">
+          <th onmouseover="hideAnyName()">&nbsp;</th>
           <th>ID</th> 
           <th onmouseover="hideAnyName()">&nbsp;</th>
           <th onmouseover="hideAnyName()">Query</th>
-          <th onmouseover="hideAnyName()">Filter</th>
+          <c:if test="${isGeneRec}"><th onmouseover="hideAnyName()">Filter</th></c:if>
           <th onmouseover="hideAnyName()">Date</th>
           <th onmouseover="hideAnyName()">Version</th>
           <th onmouseover="hideAnyName()">Size</th>
           <c:if test="${isGeneRec && showOrthoLink}"><th>&nbsp;${dsCol}</th></c:if>
           <c:if test="${showTransform}"><th>&nbsp;</th></c:if>
-          <th>&nbsp;</th>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
@@ -240,7 +274,7 @@ function reviseBooleanQuery(type, expression) {
             <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
             <c:otherwise><tr class="rowMedium"></c:otherwise>
          </c:choose>
-
+         <td><input type=checkbox id="${historyId}" onclick="updateSelectedList()"/></td>
          <td>${historyId}
 	        <!-- begin of floating info box -->
             <div id="div_${historyId}" 
@@ -287,7 +321,7 @@ function reviseBooleanQuery(type, expression) {
                  ${dispNam}</div>
             <div id="input_${historyId}" style="display:none"></div>
         </td>
-	<td align='center' onmouseover="hideAnyName()" nowrap>${history.filterDisplayName}</td>
+	<c:if test="${isGeneRec}"><td align='center' onmouseover="hideAnyName()" nowrap>${history.filterDisplayName}</td></c:if>
         <td align='center' onmouseover="hideAnyName()" nowrap>${history.lastRunTime}</td>
 	<td align='right' onmouseouver="hideAnyName()" nowrap>
 	<c:choose>
@@ -355,13 +389,6 @@ function reviseBooleanQuery(type, expression) {
                <a href='<c:url value="${transformUrl}"/>'>Other Strains</a>
            </td>	    
          </c:if>
-
-         <td nowrap>
-             <a href="deleteHistory.do?wdk_history_id=${historyId}"
-                title="delete saved query #${historyId}"
-                onclick="return deleteHistory('${historyId}', '${history.customName}');">delete</a>
-         </td>
-      
         </tr>
         <c:set var="i" value="${i+1}"/>
        </c:forEach>
@@ -381,12 +408,12 @@ function reviseBooleanQuery(type, expression) {
        </table>
        </html:form> 
        <!-- end of the html:form for rename query -->
-       
-      </td>
-      </tr>
-      <tr>
-         <td>
-            
+       </div>
+
+</c:forEach>
+<!-- end of showing user answers grouped by RecordTypes -->
+
+       <div>
             <html:form method="get" action="/processBooleanExpression.do">
                <span id="comb_title_${type}">Combine results</span>:
                <span id="comb_input_${type}">
@@ -396,58 +423,7 @@ function reviseBooleanQuery(type, expression) {
                <html:submit property="submit" value="Get Combined Result"/>
                <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>
             </html:form>
-         </td>
-      </tr>
-
-  </table>
-
-</c:forEach>
-<!-- end of showing user answers grouped by RecordTypes -->
-
-<c:if test="${typeC != 1}"><hr></c:if>
-
-<table>
-   <tr>
-      <td class="medium">
-         <div>&nbsp;</div>
-         <!-- display "delete all button" -->
-         <input type="button" value="Delete All Queries" onclick="deleteAllHistories()"/><br>
-         <div style="padding-left: 20px">
-            <i>Be careful: This will delete all your queries on ${wdkModel.displayName}.</i>
-         </div>
-         &nbsp;
-      </td>
-   </tr>
-   <tr>
-      <td>
-         <!-- display helper information -->
-         <font class="medium"><b>Understanding AND, OR and NOT</b>:</font>
-         <table border='0' cellspacing='3' cellpadding='0'>
-            <tr>
-               <td width='100'><font class="medium"><b>1 and 2</b></font></td>
-               <td><font class="medium">Genes that 1 and 2 have in common. You can also use "1 intersect 2".</font></td>
-            </tr>
-            <tr>
-               <td width='100'><font class="medium"><b>1 or 2</b></font></td>
-               <td><font class="medium">Genes present in 1 or 2, or both. You can also use "1 union 2".</font></td>
-            </tr>
-            <tr>
-               <td width='100'><font class="medium"><b>1 not 2</b></font></td>
-               <td><font class="medium">Genes in 1 but not in 2. You can also use "1 minus 2".</font></td>
-            </tr>
-         </table>
-      </td>
-   </tr>
-   <tr>
-      <td>
-         <font class="medium">
-            <a name='nodelete'><b>*</b></a> 
-            If you want to delete a query, you must first delete all other boolean queries that uses this one as a component.
-         </font>
-      </td>
-   </tr>
-</table>
-
+       </div>
 
   </c:otherwise>
 </c:choose> 
@@ -456,11 +432,29 @@ function reviseBooleanQuery(type, expression) {
 <!-- display invalid history list -->
 <c:set var="invalidHistories" value="${wdkUser.invalidHistories}" />
 <c:if test="${fn:length(invalidHistories) > 0}">
-
-    <hr>
-
-    <a name="incompatible"></a><h3>Incompatible Queries</h3>
-
+  <c:choose>
+  <c:when test="${wdkUser.historyCount == 0}">
+    <ul id="history_tabs">
+    <li><a id="tab_incompatible" onclick="displayHist('incompatible')" href="javascript:void(0)">Incompatible&nbsp;Queries</a></li>
+    </ul>
+<!-- select/delete controls, dreaded table layout -->
+<table class="clear_all">
+   <tr>
+      <td><a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">select all</a>&nbsp|&nbsp;
+          <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">clear all</a></td>
+      <td></td>
+      <td class="medium">
+         <!-- display "delete button" -->
+         <input type="button" value="Delete" onclick="deleteHistories('deleteHistory.do?wdk_history_id=')"/>
+      </td>
+   </tr>
+</table>
+    <div id="panel_incompatible" class="history_panel enabled">
+  </c:when>
+  <c:otherwise>
+    <div id="panel_incompatible" class="history_panel">
+  </c:otherwise>
+  </c:choose>
     <p>This section lists your queries from previous versions of ${wdkModel.displayName} that
         are no longer compatible with the current version of ${wdkModel.displayName}.  In most
         cases, you will be able to work around the incompatibility by finding an
@@ -471,6 +465,7 @@ function reviseBooleanQuery(type, expression) {
     <table>
 
         <tr class="headerRow">
+            <th onmouseover="hideAnyName()">&nbsp;</th>
             <th>ID</th> 
             <th onmouseover="hideAnyName()">Query</th>
             <th onmouseover="hideAnyName()">Size</th>
@@ -488,6 +483,7 @@ function reviseBooleanQuery(type, expression) {
                     <c:otherwise><tr class="rowMedium"></c:otherwise>
                 </c:choose>
 
+                <td><input type=checkbox id="${historyId}" onclick="updateSelectedList()"/></td>
                 <td class="medium">${historyId}
 	               <!-- begin of floating info box -->
                    <div id="div_${historyId}" 
@@ -524,38 +520,56 @@ function reviseBooleanQuery(type, expression) {
                     <c:set var="surlParams" value="showSummary.do?wdk_history_id=${historyId}" />
                     <a href="${surlParams}">show</a>
                 </td>
-
-                <td nowrap>
-                    <a href="deleteHistory.do?wdk_history_id=${historyId}"
-                       title="delete saved query #${historyId}"
-                       onclick="return deleteHistory('${historyId}', '${history.customName}');">delete</a>
-                </td>
-
             </tr>
             <c:set var="i" value="${i+1}"/>
         </c:forEach>
-
-        <!-- delete all invalid histories -->
-        <tr>
-          <td colspan="5" class="medium">
-             <div>&nbsp;</div>
-             <%-- display delete all invalid histories button --%>
-             <input type="button" value="Delete All Incompatible Queries" onclick="deleteAllInvHists()"/><br>
-             <div style="padding-left: 20px">
-                <i>Be careful: This will delete all your incompatible queries on ${wdkModel.displayName}.</i>
-             </div>
-             &nbsp;
-          </td>
-       </tr>
     </table>
+   </div>
 </c:if>
 
 <!-- end of display invalid history list -->
-
 
   </td>
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table> 
+<!-- <c:if test="${typeC != 1}"><hr></c:if> -->
+
+<c:if test="${fn:length(invalidHistories) > 0 || (wdkUser != null && wdkUser.historyCount != 0)}">
+<table>
+   <tr>
+      <td><a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">select all</a>&nbsp|&nbsp;
+          <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">clear all</a></td>
+      <td></td>
+      <td class="medium">
+         <!-- display "delete button" -->
+         <input type="button" value="Delete" onclick="deleteHistories('deleteHistory.do?wdk_history_id=')"/>
+      </td>
+   </tr>
+</table>
+<table>
+   <tr>
+      <td>
+         <!-- display helper information -->
+         <font class="medium"><b>Understanding AND, OR and NOT</b>:</font>
+         <table border='0' cellspacing='3' cellpadding='0'>
+            <tr>
+               <td width='100'><font class="medium"><b>1 and 2</b></font></td>
+               <td><font class="medium">Genes that 1 and 2 have in common. You can also use "1 intersect 2".</font></td>
+            </tr>
+            <tr>
+               <td width='100'><font class="medium"><b>1 or 2</b></font></td>
+               <td><font class="medium">Genes present in 1 or 2, or both. You can also use "1 union 2".</font></td>
+            </tr>
+            <tr>
+               <td width='100'><font class="medium"><b>1 not 2</b></font></td>
+               <td><font class="medium">Genes in 1 but not in 2. You can also use "1 minus 2".</font></td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+</table>
+</c:if>
+<script type='text/javascript' src='<c:url value="/js/history.js"/>'></script>
 
 <site:footer/>

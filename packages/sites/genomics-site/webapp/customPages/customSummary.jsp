@@ -658,7 +658,7 @@ function parse_Url( url, parameter_name )
    <div class="filter">
       <table cellpadding="5" border="1">
         <tr>
-          <td>Tg genes minus GT1</td>
+          <td class="rowHeader">Tg genes minus GT1</td>
           <c:choose>
             <c:when test="${curFilter eq 'all_min_gt1'}">
               <td class="selected">${wdkHistory.filterSize}
@@ -676,7 +676,7 @@ function parse_Url( url, parameter_name )
           </c:choose></td>
         </tr>
         <tr>
-          <td>Tg genes minus ME49</td>
+          <td class="rowHeader">Tg genes minus ME49</td>
           <c:choose>
             <c:when test="${curFilter eq 'all_min_me49'}">
               <td class="selected">${wdkHistory.filterSize}
@@ -694,7 +694,7 @@ function parse_Url( url, parameter_name )
           </c:choose></td>
         </tr>
         <tr>
-          <td>Tg genes minus VEG</td>
+          <td class="rowHeader">Tg genes minus VEG</td>
           <c:choose>
             <c:when test="${curFilter eq 'all_min_veg'}">
               <td class="selected">${wdkHistory.filterSize}
