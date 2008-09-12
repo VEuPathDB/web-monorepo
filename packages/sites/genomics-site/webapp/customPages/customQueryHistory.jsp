@@ -351,7 +351,7 @@ function reviseBooleanQuery(type, expression) {
            <td nowrap>
                <c:set var="result" value="${history.answer.checksum}" />
                <c:set var="transformUrl" 
-                      value="showQuestion.do?questionFullName=InternalQuestions.GenesByStrainTransform&geneResult=${result}&questionSubmit=Get+Answer&goto_summary=0"/>
+                      value="showQuestion.do?questionFullName=InternalQuestions.GenesByStrainTransform&gene_result=${result}&questionSubmit=Get+Answer&goto_summary=0"/>
                <a href='<c:url value="${transformUrl}"/>'>Other Strains</a>
            </td>	    
          </c:if>
