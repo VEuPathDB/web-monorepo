@@ -7,7 +7,12 @@
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="CGI_OR_MOD" value="${props['CGI_OR_MOD']}"/>
-<c:set var="projectId" value="${wdkRecord.primaryKey.projectId}"/>
+
+<c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
+<c:set var="pkValues" value="${primaryKey.values}" />
+<c:set var="projectId" value="${pkValues['project_id']}" />
+<c:set var="id" value="${pkValues['source_id']}" />
+
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 <c:set var="contig" value="${attrs['sequence_id'].value}" />
 <c:set var="context_start_range" value="${attrs['context_start'].value}" />
@@ -30,7 +35,7 @@
 </c:set>
 
 <site:header title="${wdkRecord.primaryKey}"
-             bannerPreformatted="${bannerText}"
+             banner="${bannerText}"
              divisionName="SAGE Tag Record"
              division="queries_tools"/>
 
@@ -49,18 +54,13 @@
 
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<site:toggle 
+    name="overview"
     displayName="${attr.displayName}"
     content="${attr.value}" />
 <br>
 
-<c:set var="alignedGenes">
-<site:dataTable tblName="Genes" align="left" />
-</c:set>
-<site:panel 
-    displayName="All Genes in proximity of the SAGE Tag"
-    content="${alignedGenes}" />
-<br>
+<site:wdkTable tblName="Genes" isOpen="true"/>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
@@ -97,7 +97,8 @@ Gene+DeprecatedGene+SAGEtags
         --%>
     </c:set>
 
-    <site:panel 
+    <site:toggle 
+        name="genomicContext"
         displayName="Genomic Context"
         content="${genomeContextImg}"
         attribution="${attribution}"/>
@@ -107,26 +108,9 @@ Gene+DeprecatedGene+SAGEtags
 
 
 
-<c:set var="location">
-<site:dataTable tblName="Locations" align="left" />
-</c:set>
-<site:panel 
-    displayName="Genomic Locations"
-    content="${location}" />
+<site:wdkTable tblName="Locations" isOpen="true"/>
 <br>
-<%--
-<c:set var="attr" value="${attrs['location_text']}" />
-<site:panel 
-    displayName="${attr.displayName}"
-    content="${attr.value}" />
-<br>
---%>
-<c:set var="rawdata">
-<site:dataTable tblName="AllCounts" align="left" />
-</c:set>
-<site:panel 
-    displayName="Raw and Normalized Data"
-    content="${rawdata}" />
+<site:wdkTable tblName="AllCounts" isOpen="true"/>
 <br>
 
 
