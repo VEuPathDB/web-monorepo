@@ -21,7 +21,6 @@ JSTL below is formatted to prevent blank lines
     var="tbl" value="${wdkRecord.tables['PfamTerms']}"
 /><data><terms>
 <c:forEach 
-    var="row" items="${tbl.visibleRows}"
+    var="row" items="${tbl}"
 ><term id="${row['accession'].value}">${row['description'].value}</term>
 </c:forEach></terms></data>
-<c:set var="junk" value="${tbl.close}"/>

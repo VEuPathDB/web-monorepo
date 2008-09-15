@@ -4,8 +4,13 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
+
+<c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
+<c:set var="pkValues" value="${primaryKey.values}" />
+<c:set var="projectId" value="${pkValues['project_id']}" />
+<c:set var="id" value="${pkValues['source_id']}" />
+
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
-<c:set var="id" value="${attrs['primaryKey'].value}"/>
 <c:set var="overview" value="${attrs['overview']}"/>
 
 <site:header title="${wdkModel.displayName} : Assembly ${id}"
@@ -72,7 +77,7 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
 --%>
 <c:set var="consensusSeq">
   <c:catch var="e">
-  <c:import url="http://${pageContext.request.serverName}/cgi-bin/estClusterProxy?id=${wdkRecord.primaryKey}&what=getConsensus&project_id=${wdkRecord.primaryKey.projectId}" />
+  <c:import url="http://${pageContext.request.serverName}/cgi-bin/estClusterProxy?id=${id}&what=getConsensus&project_id=${projectId}" />
   </c:catch>
   <c:if test="${e!=null}"> 
       <site:embeddedError 
@@ -99,7 +104,7 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
 
 <c:set var="clusterAlign">
   <c:catch var="e">
-  <c:import url="http://${pageContext.request.serverName}/cgi-bin/estClusterProxy?id=${wdkRecord.primaryKey}&what=getAlignment&project_id=${wdkRecord.primaryKey.projectId}" />
+  <c:import url="http://${pageContext.request.serverName}/cgi-bin/estClusterProxy?id=${id}&what=getAlignment&project_id=${projectId}" />
   </c:catch>
   <c:if test="${e!=null}"> 
       <site:embeddedError 
