@@ -1190,13 +1190,13 @@ function parse_Url( url, parameter_name )
 			<c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
                <span style="color:gray;">N/A</span>
             </c:when>
-            <c:when test="${recAttr.value.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
+            <c:when test="${recAttr.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
               	<c:choose>
 				 <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
-					<a href="javascript:create_Portal_Record_Url('','${record.projectId}','','${recAttr.value.url}')">${recAttr.value.displayText}</a>
+					<a href="javascript:create_Portal_Record_Url('','${record.projectId}','','${recAttr.url}')">${recAttr.displayText}</a>
 	             </c:when>
 				 <c:otherwise>
-					<a href="${recAttr.value.url}">${recAttr.value.displayText}</a>
+					<a href="${recAttr.url}">${recAttr.displayText}</a>
 				 </c:otherwise>
 				</c:choose>
             </c:when>
