@@ -129,7 +129,7 @@ tr.headerRow  td,th {
 
 <fmt:formatDate type="both" pattern="${dateFormatStr}" value="<%=new Date()%>" />
 
-<h2>Database</h2>
+<h2>Genome Database</h2>
 
 <p>
 <b>Identifiers</b>:
@@ -175,20 +175,64 @@ tr.headerRow  td,th {
 <b>Available DBLinks</b>: <site:dataTable tblName="AllDbLinks"/>
 </p>
 
+<h2><a href="#" style="text-decoration:none" onclick="Effect.toggle('cachedb','blind'); return false">
+Cache/Userlogin Database &#8593;&#8595;</a></h2>
+<div id="cachedb" style="padding: 5px; display: none"><div>
+<api:wdkCacheDB var="cache"/>
+<p>
+<b>Identifiers</b>:
+<table border="0" cellspacing="3" cellpadding="2" align="">
+<tr class="secondary3"><th><font size="-2">Identifier</font></th><th><font size="-2">Value</font></th><th></th></tr>
+<tr class="rowLight"><td>Service Name</td><td>${fn:toLowerCase(cache.dbInfo['service_name'])}</td>
+    <td><a href='javascript:void()' style="text-decoration:none"
+        onmouseover="return overlib(
+         'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'service_name\')&nbsp;from&nbsp;dual</i>'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a></td>
+</tr>
+<tr class="rowMedium"><td>Instance Name</td><td>${fn:toLowerCase(cache.dbInfo['instance_name'])}</td>
+    <td><a href='javascript:void()' style="text-decoration:none" 
+        onmouseover="return overlib(
+         'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'instance_name\')&nbsp;from&nbsp;dual</i>'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a></td>
+</tr>
+<tr class="rowLight"><td>Global Name</td><td>${fn:toLowerCase(cache.dbInfo['global_name'])}</td>
+    <td><a href='javascript:void()' style="text-decoration:none" 
+        onmouseover="return overlib(
+         'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'global_name\')&nbsp;from&nbsp;dual</i>'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a></td>
+</tr>
+<tr class="rowMedium"><td>DB Unique Name</td><td>${fn:toLowerCase(cache.dbInfo['db_unique_name'])}</td>
+    <td><a href='javascript:void()' style="text-decoration:none" 
+        onmouseover="return overlib(
+         'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'db_unique_name\')&nbsp;from&nbsp;dual</i>'
+        )"
+        onmouseout = "return nd();"><sup>[?]</sup></a></td>
+</tr>
+</table>
+<br>
+<b>Hosted on</b>: ${cache.dbInfo['server_name']} (${cache.dbInfo['server_ip']})<br>
+<p>
+<b>Client login name</b>: ${fn:toLowerCase(cache.dbInfo['login'])}</b><br>
+</div></div>
+
 <h2>Tomcat</h2>
+<api:webappInfo var="app"/>
 
 <table class='p' border='0' cellpadding='0' cellspacing='0'>
-<tr><td><b>Instance:</b></td><td class="p"><%= System.getProperty("instance.name") %></td></tr>
-<tr><td><b>Instance uptime:</b></td><td class="p"><%= uptimeText(application, pageContext) %></td></tr>
+<tr><td><b>Instance:</b></td><td class="p">${app.instanceName}</td></tr>
+<tr><td><b>Instance uptime:</b></td><td class="p">${app.instanceUptimeText}</td></tr>
 
 <tr><td>&nbsp;</td></tr>
-<tr><td><b>Webapp:</b> </td><td class="p">${pageContext.request.contextPath}</td></tr>
-<tr><td><b>Webapp uptime:</b></td><td class="p"><%= webappUptime(application, pageContext ) %></td></tr>
+<tr><td><b>Webapp:</b> </td><td class="p">${app.contextPath}</td></tr>
+<tr><td><b>Webapp uptime:</b></td><td class="p">${app.webappUptimeText}</td></tr>
 </table>
 <p>
 <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('classpathlist','blind'); return false">Webapp Classpath &#8593;&#8595;</a></b>
 <div id="classpathlist" style="padding: 5px; display: none;"><div>
-${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')}
+<c:forTokens items="${app.classpath}" delims=":" var="path">${path}<br></c:forTokens>
 </div></div>
 </p>
 
@@ -239,7 +283,24 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 
 </table>
 
+<table class='p' border='0' cellpadding='0' cellspacing='0'>
+    <tr><td>
+      <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('modelconfig','blind'); return false">
+  Model Configuration &#8593;&#8595;</a></b>
+  <div id="modelconfig" style="padding: 5px; display: none"><div>
 
+        <api:modelConfig var="modelConfig"/>
+        <p>
+        The following configurations were obtained from the WDK's running instance of the ModelConfig class. These generally represent values defined in 
+        the <code>model-config.xml</code>, <i>at the time the webapp was loaded</i>,
+        although some properties shown may have been added by the WDK's internals. Passwords have been masked in this display.
+        <pre>
+        <c:forEach var="cfg" items="${modelConfig.props}">${cfg.key} = ${fn:escapeXml(cfg.value)}
+        </c:forEach>
+        </pre>    
+      </div></div>
+    </td></tr>
+</table>
 <h2>Build State</h2>
 <p>
   <c:catch var="e">
@@ -332,138 +393,6 @@ ${fn:replace(applicationScope['org.apache.catalina.jsp_classpath'], ':', '<br>')
 
 </body>
 </html>
-
-
-<%-- #####################################################################  --%>
-<%-- #####################################################################  --%>
-
-
-<%!
-public String webappUptime(ServletContext application, PageContext pageContext) {
-  try {
-    java.text.DateFormat formatter = new java.text.SimpleDateFormat( 
-                        (String)pageContext.getAttribute("dateFormatStr") );
-
-    File jspFile = (File)application.getAttribute("javax.servlet.context.tempdir");
-    java.util.Date lastModified = new Date(jspFile.lastModified());
-    
-    long milliseconds = System.currentTimeMillis() - lastModified.getTime();
-     
-    int days    = (int)(milliseconds / (1000*60*60*24))     ;
-    int hours   = (int)(milliseconds / (1000*60*60   )) % 24;
-    int minutes = (int)(milliseconds / (1000*60      )) % 60;
-    int seconds = (int)(milliseconds / (1000         )) % 60;
-
-    String uptimeSince = (String)formatter.format(new Date(jspFile.lastModified()));
-    String uptimeBrief = uptimeBrief(days, hours, minutes, seconds);
-   
-    return uptimeBrief + " (since " + uptimeSince + ")";
-  } catch (Exception e) {
-    return "Error: " + e;
-  }
-}
-%>
-
-
-<%!
-public String uptimeText(ServletContext application, PageContext pageContext) {
-  try {
-
-    String uptime = elapsedTimeSinceTomcatJVMStart();
-    uptime = uptime.trim();
-    
-    java.util.regex.Pattern pat;
-    java.util.regex.Matcher m;
-
-    int days    = 0;
-    int hours   = 0;
-    int minutes = 0;
-    int seconds = 0;
- 
-    pat = java.util.regex.Pattern.compile("^(?:(\\d+)-)?(?:(\\d+):)?(\\d+):(\\d+)$");
-    m = pat.matcher(uptime);
-
-    if (m.find()) {
-      if (m.group(1) != null) days    = Integer.parseInt(m.group(1));
-      if (m.group(2) != null) hours   = Integer.parseInt(m.group(2));
-      if (m.group(3) != null) minutes = Integer.parseInt(m.group(3));
-      if (m.group(4) != null) seconds = Integer.parseInt(m.group(4));
-    } else {
-        throw new Exception();
-    }
-        
-    String uptimeSince = uptimeSince(days, hours, minutes, seconds, (String)pageContext.getAttribute("dateFormatStr") );
-    String uptimeBrief = uptimeBrief(days, hours, minutes, seconds);
-    
-    return uptimeBrief + " (since " + uptimeSince + ")";
-
-  } catch (Exception e) {
-    return "<font color='red'>Error: unable to determine start time</font>";
-  }
-}
-%>
-
-<%!
-public String uptimeSince(int days, int hours, int minutes, int seconds, String fmt) {
-  java.util.Calendar calendar = java.util.Calendar.getInstance();
-   
-  calendar.add(Calendar.DAY_OF_MONTH, -days);
-  calendar.add(Calendar.HOUR,         -hours);
-  calendar.add(Calendar.MINUTE,       -minutes);
-  calendar.add(Calendar.SECOND,       -seconds);
-  
-  java.util.Date startTime = calendar.getTime();
-
-  java.text.DateFormat formatter = new java.text.SimpleDateFormat(fmt);
-
-  return (String)formatter.format(startTime) ;
-}
-%>
-
-<%!
-public String uptimeBrief(int days, int hours, int minutes, int seconds) {
-  String uptimeBrief = "";
-  if (days != 0)
-    uptimeBrief = days + "d " + hours + "h";
-  else if (hours != 0)
-    uptimeBrief = hours + "h " + minutes + "m";
-  else if (seconds != 0)
-    uptimeBrief = minutes + "m " + seconds + "s";
-  
-  return uptimeBrief;
-}
-%>
-
-<%!
-public String elapsedTimeSinceTomcatJVMStart() throws Exception {
-  try {
-    String result;
-    Vector commands=new Vector();
-    commands.add("/bin/bash");
-    commands.add("-c");
-    commands.add("ps -o etime $PPID | tail -n1");
-    
-    ProcessBuilder pb=new ProcessBuilder(commands);  
-    Process pr=pb.start();
-    pr.waitFor();
-    
-    if (pr.exitValue()==0) {
-        BufferedReader output = new BufferedReader(
-                        new InputStreamReader(pr.getInputStream()));
-        result = output.readLine().trim();
-        output.close();
-    } else {
-        BufferedReader error = new BufferedReader(
-                        new InputStreamReader(pr.getErrorStream()));        
-        result = "Error: " + error.readLine(); 
-    }
-    return result;
-    } catch (Exception e) {
-    throw e;
-  }
-}
-%>
-
 
 </c:otherwise>
 </c:choose>
