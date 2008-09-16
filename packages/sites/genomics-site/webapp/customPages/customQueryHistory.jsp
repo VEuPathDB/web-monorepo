@@ -323,7 +323,7 @@ function reviseBooleanQuery(type, expression) {
         </td>
 	<c:if test="${isGeneRec}"><td align='center' onmouseover="hideAnyName()" nowrap>${history.filterDisplayName}</td></c:if>
         <td align='center' onmouseover="hideAnyName()" nowrap>${history.lastRunTime}</td>
-	<td align='right' onmouseouver="hideAnyName()" nowrap>
+	<td align='right' onmouseover="hideAnyName()" nowrap>
 	<c:choose>
 	  <c:when test="${history.version == null || history.version eq ''}">${wdkModel.version}</c:when>
           <c:otherwise>${history.version}</c:otherwise>
