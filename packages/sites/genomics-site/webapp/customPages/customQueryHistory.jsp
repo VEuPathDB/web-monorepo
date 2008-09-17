@@ -4,6 +4,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
+<c:set var="NAME_TRUNC" value="60" />
+
 <!-- get wdkUser saved in session scope -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="histories" value="${wdkUser.historiesByCategory}"/>
@@ -233,7 +235,7 @@ function reviseBooleanQuery(type, expression) {
   <c:set var="recDispName" value="${recordClass.type}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
   
-  <c:set var="showTransform" value="${true}" />
+  <c:set var="showTransform" value="${isGeneRec && modelName eq 'ToxoDB'}" />
 
 <c:set var="typeC" value="${typeC+1}"/>    <c:choose>
       <c:when test="${typeC == 1}">
@@ -257,7 +259,10 @@ function reviseBooleanQuery(type, expression) {
           <th onmouseover="hideAnyName()">Version</th>
           <th onmouseover="hideAnyName()">Size</th>
           <c:if test="${isGeneRec && showOrthoLink}"><th>&nbsp;${dsCol}</th></c:if>
-          <c:if test="${showTransform}"><th>&nbsp;</th></c:if>
+          <c:if test="${showTransform}">
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+          </c:if>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
@@ -268,6 +273,7 @@ function reviseBooleanQuery(type, expression) {
       <!-- begin of forEach history in the category -->
       <c:forEach items="${histList}" var="history">
          <c:set var="historyId" value="${history.historyId}"/>
+         <c:set var="wdkAnswer" value="${history.answer}"/>
          <jsp:setProperty name="history" property="nameTruncateTo" value="${NAME_TRUNC}"/>
 
          <c:choose>
@@ -282,7 +288,6 @@ function reviseBooleanQuery(type, expression) {
                  style="display:none;font-size:8pt;width:610px;position:absolute;left:0;top:0;"
                  onmouseover="hideAnyName()">
                 <table cellpadding="2" cellspacing="0" border="0"bgcolor="#ffffCC">
-                    <c:set var="wdkAnswer" value="${history.answer}"/>
                     <c:choose>
                         <c:when test="${history.boolean}">
                             <!-- boolean question -->
@@ -341,13 +346,13 @@ function reviseBooleanQuery(type, expression) {
            </td>	    
         </c:if>
 --%>		
-        <c:set value="${history.answer.question.fullName}" var="qName" />
+        <c:set value="${wdkAnswer.question.fullName}" var="qName" />
         
         <td nowrap>
             <c:set var="surlParams">
                 <c:choose>
                     <c:when test="${history.boolean == false}">
-                        showSummary.do?questionFullName=${qName}${history.answer.summaryUrlParams}&wdk_history_id=${historyId}
+                        showSummary.do?questionFullName=${qName}${wdkAnswer.summaryUrlParams}&wdk_history_id=${historyId}
                     </c:when>
                     <c:otherwise>
                         showSummary.do?wdk_history_id=${historyId}
@@ -361,7 +366,7 @@ function reviseBooleanQuery(type, expression) {
          <td nowrap>
             <c:choose>
                <c:when test="${history.boolean == false}">
-		          <c:set var="qurlParams" value="${history.answer.questionUrlParams}"/>
+		          <c:set var="qurlParams" value="${wdkAnswer.questionUrlParams}"/>
                   <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">revise</a>
 	           </c:when>
 	           <c:otherwise>
@@ -382,11 +387,26 @@ function reviseBooleanQuery(type, expression) {
 
          <%-- display transform button for each history --%>
          <c:if test="${showTransform}">
+           <c:set var="result">
+             <c:set var="filter" value="${wdkAnswer.filter}" />
+             <c:choose>
+               <c:when test="${filter == null}">
+                 ${wdkAnswer.checksum}
+               </c:when>
+               <c:otherwise>
+                 ${wdkAnswer.checksum}:${filter.name}
+               </c:otherwise>
+             </c:choose>
+           </c:set>
            <td nowrap>
-               <c:set var="result" value="${history.answer.checksum}" />
+               <c:set var="expandUrl" 
+                      value="showSummary.do?questionFullName=InternalQuestions.GenesByExpandResult&gene_result=${result}"/>
+               <a href='<c:url value="${expandUrl}"/>'>Expand</a>
+           </td>	    
+           <td nowrap>
                <c:set var="transformUrl" 
-                      value="showQuestion.do?questionFullName=InternalQuestions.GenesByStrainTransform&gene_result=${result}&questionSubmit=Get+Answer&goto_summary=0"/>
-               <a href='<c:url value="${transformUrl}"/>'>Other Strains</a>
+                      value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologTransform&gene_result=${result}&questionSubmit=Get+Answer&goto_summary=0"/>
+               <a href='<c:url value="${transformUrl}"/>'>Orthologs</a>
            </td>	    
          </c:if>
         </tr>
@@ -419,6 +439,11 @@ function reviseBooleanQuery(type, expression) {
                <span id="comb_input_${type}">
                   <html:text property="booleanExpression" value=""/>
                </span>
+
+               <c:if test="${showTransform}">
+                  <input type="checkbox" name="useBooleanFilter" value="checked" />
+               </c:if>
+               
                <html:hidden property="historySectionId" value="${type}"/>
                <html:submit property="submit" value="Get Combined Result"/>
                <font size="-1">[eg: 1 or ((4 and 3) not 2)]</font>

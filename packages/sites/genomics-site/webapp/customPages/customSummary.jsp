@@ -23,7 +23,7 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
-<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb') || fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb') || fn:containsIgnoreCase(modelName, 'CryptoDB')  || fn:containsIgnoreCase(modelName, 'ToxoDB')}" />
 
 <c:set var="cryptoIsolatesQuestion" value="${fn:containsIgnoreCase(qName, 'Isolate') && fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
 
@@ -313,9 +313,33 @@ function parse_Url( url, parameter_name )
            <c:set var="isContigRec" value="${fn:containsIgnoreCase(rsName, 'ContigRecordClass')}"/>
 	       <c:if test="${isGeneRec && showOrthoLink}">
 	           &nbsp;|&nbsp;
-               <c:set var="datasetId" value="${wdkAnswer.datasetId}"/>
-               <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&geneHistoryId=${wdkUser.signature}:${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
-               <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
+	           
+               <c:set var="result">
+                 <c:set var="filter" value="${wdkAnswer.filter}" />
+                 <c:choose>
+                   <c:when test="${filter == null}">
+                     ${wdkAnswer.checksum}
+                   </c:when>
+                   <c:otherwise>
+                     ${wdkAnswer.checksum}:${filter.name}
+                   </c:otherwise>
+                 </c:choose>
+               </c:set>
+               
+               <c:choose>
+                 <c:when test="${modelName eq 'ToxoDB'}>
+                   <c:set var="expandUrl" 
+                          value="showSummary.do?questionFullName=InternalQuestions.GenesByExpandResult&gene_result=${result}"/>
+                   <a href='<c:url value="${expandUrl}"/>'>Expand</a>
+                   <c:set var="transformUrl" 
+                          value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologTransform&gene_result=${result}&questionSubmit=Get+Answer&goto_summary=0"/>
+                   <a href='<c:url value="${transformUrl}"/>'>Orthologs</a>
+                 </c:when>
+                 <c:otherwise>
+                   <c:set var="dsColUrl" value="showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&geneHistoryId=${wdkUser.signature}:${historyId}&plasmodb_dataset=${datasetId}&questionSubmit=Get+Answer&goto_summary=0"/>
+                   <a href='<c:url value="${dsColUrl}"/>'>Orthologs</a>
+                 </c:otherwise>
+               </c:choose>
            </c:if>
            
            <c:set value="${wdkAnswer.question.fullName}" var="qName" />
