@@ -400,7 +400,7 @@ function reviseBooleanQuery(type, expression) {
            </c:set>
            <td nowrap>
                <c:set var="expandUrl" 
-                      value="showSummary.do?questionFullName=InternalQuestions.GenesByExpandResult&gene_result=${result}"/>
+                      value="showSummary.do?questionFullName=InternalQuestions.GenesByExpandResult&myProp%28gene_result%29=${result}"/>
                <a href='<c:url value="${expandUrl}"/>'>Expand</a>
            </td>	    
            <td nowrap>
