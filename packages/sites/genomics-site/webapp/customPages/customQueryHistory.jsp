@@ -441,7 +441,7 @@ function reviseBooleanQuery(type, expression) {
                </span>
 
                <c:if test="${showTransform}">
-                  <input type="checkbox" name="useBooleanFilter" value="checked" />
+                  <html:checkbox property="useBooleanFilter">On gene level</html:checkbox>
                </c:if>
                
                <html:hidden property="historySectionId" value="${type}"/>
