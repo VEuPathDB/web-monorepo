@@ -255,7 +255,8 @@ function reviseBooleanQuery(type, expression) {
           <th onmouseover="hideAnyName()">&nbsp;</th>
           <th onmouseover="hideAnyName()">Query</th>
           <c:if test="${isGeneRec}"><th onmouseover="hideAnyName()">Filter</th></c:if>
-          <th onmouseover="hideAnyName()">Date</th>
+          <th onmouseover="hideAnyName()">Created</th>
+          <th onmouseover="hideAnyName()">Viewed</th>
           <th onmouseover="hideAnyName()">Version</th>
           <th onmouseover="hideAnyName()">Size</th>
           <c:if test="${isGeneRec && showOrthoLink}"><th>&nbsp;${dsCol}</th></c:if>
@@ -327,7 +328,8 @@ function reviseBooleanQuery(type, expression) {
             <div id="input_${historyId}" style="display:none"></div>
         </td>
 	<c:if test="${isGeneRec}"><td align='center' onmouseover="hideAnyName()" nowrap>${history.filterDisplayName}</td></c:if>
-        <td align='center' onmouseover="hideAnyName()" nowrap>${history.lastRunTime}</td>
+        <td align='center' onmouseover="hideAnyName()" nowrap>${history.displayCreatedTime}</td>
+        <td align='center' onmouseover="hideAnyName()" nowrap>${history.displayLastRunTime}</td>
 	<td align='right' onmouseover="hideAnyName()" nowrap>
 	<c:choose>
 	  <c:when test="${history.version == null || history.version eq ''}">${wdkModel.version}</c:when>
