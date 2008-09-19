@@ -1043,11 +1043,15 @@ function parse_Url( url, parameter_name )
     <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
 
     <c:set var="j" value="0"/>
+    <c:set var="hasGeneId" value="0" />
 
     <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
         <th align="center" valign="middle">
             <c:set var="attrName" value="${sumAttrib.name}" />
-      
+            <c:if test="${attrName eq 'formatted_gene_id'}" >
+              <c:set var="hasGeneId" value="1" />
+            </c:if>      
+
             <table border="0" cellspacing="2" cellpadding="0">
                 <tr class="headerInternalRow">
                     <td valign="middle">
@@ -1152,7 +1156,8 @@ function parse_Url( url, parameter_name )
 
 <c:set var="i" value="0"/>
 
-
+<c:set var="curRowColor" value="rowMedium" />
+<c:set var="curGeneId" value="" />
 <c:forEach items="${wdkAnswer.records}" var="record">
                
 <c:set var="primaryKey" value="${record.primaryKey}"/>
@@ -1160,11 +1165,56 @@ function parse_Url( url, parameter_name )
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="recordId" value="${pkValues['source_id']}" />
 <c:set var="summaryAttributes" value="${record.summaryAttributes}"/>
-   
-<c:choose>
-  <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
-  <c:otherwise><tr class="rowMedium"></c:otherwise>
+
+<c:choose>   
+  <%-- does current record have formatted_gene_id? --%>
+  <c:when test="${hasGeneId != 0}" >
+    <c:set var="newGeneId" value="${summaryAttributes['formatted_gene_id'].briefValue}" />
+    <% System.out.println("hasGeneId is not zero"); %>
+    <c:choose>
+      <%-- is formatted_gene_id non-null? --%>
+      <c:when test="${newGeneId != null}">
+        <% System.out.println("formatted_gene_id is not null"); %>    
+        <%-- is formatted_gene_id == current gene id? --%>
+        <c:if test="${newGeneId != curGeneId}">
+          <%-- gene id has changed: update gene id, alternate color --%>
+          <c:set var="curGeneId" value="${newGeneId}" />
+          <c:choose>
+            <c:when test="${curRowColor == 'rowMedium'}">
+              <c:set var="curRowColor" value="rowLight"/>
+            </c:when>
+            <c:otherwise>
+              <c:set var="curRowColor" value="rowMedium"/>
+            </c:otherwise>
+          </c:choose>
+        </c:if>
+      </c:when>
+      <c:otherwise>
+        <% System.out.println("formatted_gene_id is null"); %>    
+          <%-- update gene id for next iteration, alternate color --%>
+          <c:set var="curGeneId" value="" />
+          <c:choose>
+            <c:when test="${curRowColor == 'rowMedium'}">
+              <c:set var="curRowColor" value="rowLight"/>
+            </c:when>
+            <c:otherwise>
+              <c:set var="curRowColor" value="rowMedium"/>
+            </c:otherwise>
+          </c:choose>
+      </c:otherwise>
+    </c:choose>
+  </c:when>
+  <c:otherwise>
+    <% System.out.println("hasGeneId is not zero"); %>
+    <%-- no gene id: alternate row colors --%>
+    <c:choose>
+      <c:when test="${i % 2 == 0}"><c:set var="curRowColor" value="rowLight" /></c:when>
+      <c:otherwise><c:set var="curRowColor" value="rowMedium" /></c:otherwise>
+    </c:choose>
+  </c:otherwise>
 </c:choose>
+
+<tr class="${curRowColor}">
 
   <c:set var="j" value="0"/>
 
