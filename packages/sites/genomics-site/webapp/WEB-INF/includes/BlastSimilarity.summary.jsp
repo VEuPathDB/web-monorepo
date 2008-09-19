@@ -285,10 +285,10 @@ function resetAttr() {
 <c:forEach items="${wdkAnswer.records}" var="record">
   <c:set var="headerI" value="${record.summaryAttributes['Header'].value}"/>
   <c:set var="footerI" value="${record.summaryAttributes['Footer'].value}"/>
-  <c:if test="${ headerI != '' }">
+  <c:if test="${ headerI != null }">
      <c:set var="headerStr" value="${headerI}"/>
   </c:if>
-  <c:if test="${ footerI != '' }">
+  <c:if test="${ footerI != null }">
      <c:set var="footerStr" value="${footerI}"/>
   </c:if>
 </c:forEach>
