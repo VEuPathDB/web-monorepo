@@ -73,7 +73,7 @@
 
   <c:choose>
       <c:when test = "${project == 'ToxoDB'}">
-             <c:set var="logo" value="/images/toxodb_logo-rotated.jpg"/>      
+             <c:set var="logo" value="/images/toxodb_small_rotated_logo.gif"/>      
       </c:when>
       <c:when test = "${project == 'PlasmoDB'}">
              <c:set var="logo" value="/images/plasmodb_logo.gif"/>      
