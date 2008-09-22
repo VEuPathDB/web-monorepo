@@ -100,7 +100,7 @@ function changeQuestion(){
 	if (blastDb.indexOf("est") >= 0){
 		questionName = "EstQuestions.EstsBySimilarity";
 	} else 	if (blastDb.indexOf("assem") >= 0){
-		questionName = "EstQuestions.EstsBySimilarity";
+		questionName = "AssemblyQuestions.AssembliesBySimilarity";
 	} else 	if (blastDb.indexOf("orf") >= 0){
 		questionName = "OrfQuestions.OrfsBySimilarity";
 	} else 	if (blastDb.indexOf("genom") >= 0){
