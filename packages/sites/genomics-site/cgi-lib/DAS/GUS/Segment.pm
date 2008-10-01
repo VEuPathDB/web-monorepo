@@ -366,7 +366,9 @@ sub features {
 
     $sql =~ s/(\$\w+)/eval $1/eg;
 
+		print "<pre>vvvvvvvvvv $typeString vvvvvvvvvvvvv</pre>" if DEBUG;
 		print "<pre>$sql</pre>" if DEBUG;
+		print "<pre>^^^^^^^^^^ End $typeString ^^^^^^^^^^^^^</pre>" if DEBUG;
 
     my $sth = $factory->dbh->prepare($sql);
     $sth->execute()
@@ -387,14 +389,22 @@ sub features {
 	my $bulkSubFeatureSql = $factory->parser->getSQL("Feature.pm", "$type:bulksubfeatures");
 	if($bulkSubFeatureSql) {
 	  $bulkSubFeatureSql =~ s/(\$\w+)/eval $1/eg;
-  	  $self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory) 
+
+	  print "<pre>vvvvvvvvvv $type:bulksubfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
+	  print "<pre>$bulkSubFeatureSql</pre>" if DEBUG;
+	  print "<pre>^^^^^^^^^^ End $type:bulksubfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
+
+
+  	$self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory) 
 	} 
 	
 	my $bulkAttributeSql = $factory->parser->getSQL("Feature.pm", "$type:bulkAttribute");
     next unless $bulkAttributeSql;
 	$bulkAttributeSql =~ s/(\$\w+)/eval $1/eg;
 
+	print "<pre>vvvvvvvvvv $type:bulkAttribute vvvvvvvvvvvvv</pre>" if DEBUG;
 	print "<pre>$bulkAttributeSql</pre>" if DEBUG;
+	print "<pre>^^^^^^^^^^ End $type:bulkAttribute ^^^^^^^^^^^^^</pre>" if DEBUG;
 
 	$self->_addBulkAttribute(\@features, $bulkAttributeSql, $factory);
 
