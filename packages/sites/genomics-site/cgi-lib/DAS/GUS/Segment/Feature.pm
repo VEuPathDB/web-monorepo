@@ -1185,7 +1185,7 @@ sub seq {
   my $type = $self->type;
 
   my $query = $self->factory->parser->getSQL("Feature.pm", "$type:seq");
-	return unless $query;
+  return unless $query;
 
   $query =~ s/(\$\w+)/eval $1/eg;
   my $sth = $self->factory->dbh->prepare($query);
