@@ -1,0 +1,39 @@
+<h3 class='banner' align='center'><a href='/'><? print $_SERVER['SERVER_NAME']?></a></h3>
+
+<fmt:formatDate type="both" pattern="${dateFormatStr}" value="<%=new Date()%>" />
+<? 
+
+$pageMap = array( 
+    'Databases'     => "/a/admin/index.jsp?p=Databases",
+    'WDK'           => "/a/admin/index.jsp?p=WDK",
+    'Tomcat'        => "/a/admin/index.jsp?p=Tomcat",
+    'Build'         => "/a/admin/index.jsp?p=Build",
+    'Announcements' => "/cgi-bin/admin/messageConsole.pl"
+    );
+
+
+include "head.php.inc";
+
+$page = ($_GET['p']) ? $_GET['p'] : 'Databases';
+
+?>
+
+<body>
+
+<ul id="tabmenu">
+ <? 
+    foreach ($pageMap as $key => $value) {
+        $active = ($key == $page) ? "class='active'" : '';
+        print "<li><a $active href='?p=$key'>$key</a></li>\n";
+    }
+ ?>
+</ul>
+
+<div id="content">
+
+    <? if ( $pageMap[$page] == '' || ! virtual($pageMap[$page]) )
+        print "'$pageMap[$page]' not found"?>
+
+</div>
+</body>
+</html>
