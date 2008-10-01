@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
 <%@ attribute name="title"
@@ -96,9 +97,9 @@
 <c:set var="version" value="${wdkModel.version}"/>
 
 
-
-
-
+<c:if test="${fn:startsWith(pageContext.request.serverName, 'beta')}">
+<center><font size='-1' color='orange'>This is a pre-release version of ${wdkModel.name} that is under active development. There may be incomplete or inaccurate data and frequent site outages can be expected.</font></center>
+</c:if>
 
 <table width="100%" align="center" cellspacing="0" cellpadding="0" border="0">
 
