@@ -727,6 +727,8 @@ sub sub_SeqFeature {
     # $query =~ s/(\$\w+)/eval "$1"/eg;
     $query = eval qq{"$query"};
 
+    print "<pre>$query</pre>" if DEBUG;
+
   }
 
   my $sth = $self->factory->dbh->prepare($query);

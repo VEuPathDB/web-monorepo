@@ -366,6 +366,8 @@ sub features {
 
     $sql =~ s/(\$\w+)/eval $1/eg;
 
+		print "<pre>$sql</pre>" if DEBUG;
+
     my $sth = $factory->dbh->prepare($sql);
     $sth->execute()
       or $self->throw("getting feature query failed");
@@ -391,6 +393,9 @@ sub features {
 	my $bulkAttributeSql = $factory->parser->getSQL("Feature.pm", "$type:bulkAttribute");
     next unless $bulkAttributeSql;
 	$bulkAttributeSql =~ s/(\$\w+)/eval $1/eg;
+
+	print "<pre>$bulkAttributeSql</pre>" if DEBUG;
+
 	$self->_addBulkAttribute(\@features, $bulkAttributeSql, $factory);
 
   }
