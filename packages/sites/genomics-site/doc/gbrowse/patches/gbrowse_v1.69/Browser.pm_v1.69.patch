@@ -1,0 +1,15 @@
+--- Browser.pm.orig	2008-10-02 12:23:25.000000000 -0400
++++ Browser.pm	2008-10-02 12:40:08.000000000 -0400
+@@ -1113,9 +1113,10 @@
+ 	     -alt   => $section});
+ 
+   my $html    = div({-align=>'center'},$img);
+-  $map        = "<noscript>\n<map name=\"$map_name\"$map</map>\n</noscript>" if $css_map;
++  #$map        = "<noscript>\n<map name=\"$map_name\"$map</map>\n</noscript>" if $css_map;
+   $css_map  ||= '';
+-  $html      .= $css_map . $map;
++  #$html      .= $css_map . $map;
++  $html      .= $css_map;
+ 
+   return $html;
+ }
