@@ -45,9 +45,9 @@ my ($source_id)  = $q->param('id') =~ m/(^\w+$)/               if $q->param('id'
 my $c = new ApiCommonWebsite::Model::ModelConfig($project_id);
 
 my $dbh = DBI->connect(
-    $c->{dbiDsn},
-    $c->{login},
-    $c->{password},
+    $c->getDbiDsn,
+    $c->getLogin,
+    $c->getPassword,
     { PrintError => 1,
       RaiseError => 0
     }

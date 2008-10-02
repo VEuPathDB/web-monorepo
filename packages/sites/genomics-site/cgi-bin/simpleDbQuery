@@ -37,9 +37,9 @@ my $c = new ApiCommonWebsite::Model::ModelConfig($model);
 
 
 my $dbh = DBI->connect(
-    $c->{dbiDsn},
-    $c->{login},
-    $c->{password},
+    $c->getDbiDsn,
+    $c->getLogin,
+    $c->getPassword,
     { PrintError => 1,
       RaiseError => 0
     }
@@ -52,7 +52,7 @@ $sth->execute();
 
 print $q->header();
 
-print "DSN: ", $c->{dbiDsn}, "<p>";
+print "DSN: ", $c->getDbiDsn, "<p>";
 
 while (my @row = $sth->fetchrow_array) {
     print $row[0] . "<br>\n";
