@@ -561,21 +561,6 @@ function parse_Url( url, parameter_name )
   </tr>
   <tr align="center">
     <c:choose>
-      <c:when test="${curFilter eq 'gt1_genes'}">
-        <td class="selected">${wdkHistory.filterSize}
-      </c:when>
-      <c:otherwise>
-	<c:choose>
-          <c:when test="${gt1_genes != ''}">
-            <td>${gt1_genes}
-          </c:when>
-          <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_genes">&nbsp;</a>
-          </c:otherwise>
-        </c:choose>
-      </c:otherwise>
-    </c:choose></td>
-    <c:choose>
       <c:when test="${curFilter eq 'gt1_instances'}">
         <td class="selected">${wdkHistory.filterSize}
       </c:when>
@@ -591,16 +576,16 @@ function parse_Url( url, parameter_name )
       </c:otherwise>
     </c:choose></td>
     <c:choose>
-      <c:when test="${curFilter eq 'me49_genes'}">
+      <c:when test="${curFilter eq 'gt1_genes'}">
         <td class="selected">${wdkHistory.filterSize}
       </c:when>
       <c:otherwise>
 	<c:choose>
-          <c:when test="${me49_genes != ''}">
-            <td>${me49_genes}
+          <c:when test="${gt1_genes != ''}">
+            <td>${gt1_genes}
           </c:when>
           <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_genes">&nbsp;</a>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gt1_genes">&nbsp;</a>
           </c:otherwise>
         </c:choose>
       </c:otherwise>
@@ -621,16 +606,16 @@ function parse_Url( url, parameter_name )
       </c:otherwise>
     </c:choose></td>
     <c:choose>
-      <c:when test="${curFilter eq 'veg_genes'}">
+      <c:when test="${curFilter eq 'me49_genes'}">
         <td class="selected">${wdkHistory.filterSize}
       </c:when>
       <c:otherwise>
 	<c:choose>
-          <c:when test="${veg_genes != ''}">
-            <td>${veg_genes}
+          <c:when test="${me49_genes != ''}">
+            <td>${me49_genes}
           </c:when>
           <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_genes">&nbsp;</a>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=me49_genes">&nbsp;</a>
           </c:otherwise>
         </c:choose>
       </c:otherwise>
@@ -650,6 +635,22 @@ function parse_Url( url, parameter_name )
         </c:choose>
       </c:otherwise>
     </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'veg_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${veg_genes != ''}">
+            <td>${veg_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=veg_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
     <c:choose>
       <c:when test="${curFilter eq 'each_tg_instance'}">
         <td class="selected">${wdkHistory.filterSize}
