@@ -60,13 +60,16 @@
 
         <api:modelConfig var="modelConfig"/>
         <p>
-        The following configurations were obtained from the WDK's running instance of the ModelConfig class. These generally represent values defined in 
+        The following configurations were obtained from the WDK's running instance of the ModelConfig* classes. These generally represent values defined in 
         the <code>model-config.xml</code>, <i>at the time the webapp was loaded</i>,
         although some properties shown may have been added by the WDK's internals. Passwords have been masked in this display.
-        <pre>
-        <c:forEach var="cfg" items="${modelConfig.props}">${cfg.key} = ${fn:escapeXml(cfg.value)}
-        </c:forEach>
-        </pre>    
+<pre><c:forEach 
+    var="section" items="${modelConfig.props}"
+><b>${section.key}</b><blockquote><c:forEach 
+    var="cfg" items="${section.value}"
+>${cfg.key} = ${fn:escapeXml(cfg.value)}
+</c:forEach></blockquote></c:forEach>
+</pre>    
       </div></div>
     </td></tr>
 </table>
