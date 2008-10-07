@@ -7,6 +7,7 @@
               required="true"
               description="list of question full names"
 %>
+
 <SCRIPT type="text/javascript" >
 
 function writeData(page, div, quesName){
@@ -15,17 +16,28 @@ function writeData(page, div, quesName){
         xhr.onreadystatechange = function() {
 		if(xhr.readyState==4) {
 			if(xhr.status==200){
-		              // document.getElementById(div).innerHTML = xhr.responseText;
-                               var questionPage = xhr.responseText;
-                             //  var index1 = questionPage.indexOf("<div id=\"question_Form\">") + 24;
-			     //  var index2 = questionPage.indexOf("</div><!--End Question Form Div-->", index1);
-                               var index1 = questionPage.indexOf("<form");
-			       var index2 = questionPage.indexOf("</form>", index1);
-			       var ques = questionPage.substring(index1,index2);
+		           // document.getElementById(div).innerHTML = xhr.responseText;
+                var questionPage = xhr.responseText;
+				var xmlDoc = document.createElement('div');
+				xmlDoc.innerHTML = questionPage;
+				var forms = xmlDoc.getElementsByTagName("form");
+				var ques = "";
+				for(var i=0;i<forms.length;i++){
+					ques += "<form name='" + forms[i].name + "' method='" + forms[i].method + "' action='" + forms[i].action + "' >";
+					ques += forms[i].innerHTML;
+					ques += "</form><br/>";
+				} 
+                   //  var index1 = questionPage.indexOf("<div id=\"question_Form\">") + 24;
+			       //  var index2 = questionPage.indexOf("</div><!--End Question Form Div-->", index1);
+                   //             var index1 = questionPage.indexOf("<form");
+			       // var index2 = questionPage.indexOf("</form>", index1);
+			       // var ques = questionPage.substring(index1,index2);
 
-                               var desc1 = questionPage.indexOf("<p><b>Query description");
+				   
+
+                   var desc1 = questionPage.indexOf("<p><b>Query description");
  			       var desc2 = questionPage.substring(desc1).indexOf("</p>");
-                               var desc = questionPage.substring(desc1, desc2+desc1);
+                   var desc = questionPage.substring(desc1, desc2+desc1);
 
  			       var help1 = questionPage.indexOf("<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>");
  			       var help2 = questionPage.substring(help1).indexOf("<!-- DO NOT REMOVE THIS COMMENT USED BY AJAX PAGES -->");
