@@ -140,7 +140,7 @@
 
 <%--Retrieve from DB and display site degraded message scheduled via announcements system--%>
 <c:set var="siteDegraded">
-  <site:announcement messageCategory="Degraded" projectName="PlasmoDB" />
+  <site:announcement messageCategory="Degraded" projectName="${project}" />
 </c:set>
 
 <c:if test="${siteDegraded != ''}">
@@ -156,7 +156,7 @@
 
 <%--Retrieve from DB and display site down message scheduled via announcements system--%> 
 <c:set var="siteDown">
-  <site:announcement messageCategory="Down" projectName="PlasmoDB" />
+  <site:announcement messageCategory="Down" projectName="${project}" />
 </c:set>
 
 <c:if test="${siteDown != ''}">
@@ -249,16 +249,14 @@ Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via
 
 <%--Information message retrieved from DB via messaging system--%>
 <c:set var="siteInfo">
-  <site:announcement messageCategory="Information" projectName="PlasmoDB" />
+  <site:announcement messageCategory="Information" projectName="${project}" />
 </c:set>
 
-<c:if test = "${project == 'PlasmoDB'}">
-<div class="smallBlack2">
+<div class="smallApiBlue">
 <font face="Arial,Helvetica" >
 ${siteInfo}
 </font>
 </div>
-</c:if>
 
 
 </td>
