@@ -184,6 +184,7 @@ function parse_Url( url, parameter_name )
 
 //-->
 </script>
+<script type='text/javascript' src='<c:url value="/js/lib/jquery-1.2.6.js"/>'></script>
 <script type='text/javascript' src='<c:url value="/js/strains.js"/>'></script>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 

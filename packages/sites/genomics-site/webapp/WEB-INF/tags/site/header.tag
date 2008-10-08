@@ -83,7 +83,6 @@
   <!--script type="text/javascript" src='<c:url value="/slider/js/range.js"/>'></script-->
   <!--script type="text/javascript" src='<c:url value="/slider/js/timer.js"/>'></script-->
   <!--script type="text/javascript" src='<c:url value="/slider/js/slider.js"/>'></script-->
-  <script type='text/javascript' src='<c:url value="/js/lib/jquery-1.2.6.js"/>'></script>
   <script type="text/javascript" src='<c:url value="/js/api.js"/>'></script>
 <script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
   <script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
