@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ attribute name="historyId"         required="true"  %>
+<%@ attribute name="curFilter"         required="true"  %>
 
 <%-- initialize filter link variables --%>
 <c:set var="all_results" value=""/>
