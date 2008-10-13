@@ -164,6 +164,7 @@ function reviseBooleanQuery(type, expression) {
 
 // -->
 </script>
+<script type='text/javascript' src='<c:url value="/js/lib/jquery-1.2.6.js"/>'></script>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 
