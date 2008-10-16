@@ -12,11 +12,6 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
-<c:set var="CPARVUMCHR6" value="${props['CPARVUMCHR6']}"/>
-<c:set var="CPARVUMCONTIGS" value="${props['CPARVUMCONTIGS']}"/>
-<c:set var="CHOMINISCONTIGS" value="${props['CHOMINISCONTIGS']}"/>
-
-
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
 <c:set var='bannerText'>
@@ -78,8 +73,10 @@
     content="${seq}" />
 
 <!-- Assembly -->
-<site:wdkTable tblName="AssemblyInfo" isOpen="true" attribution=""/>
 
+<c:if test="${projectId != 'TrichDB'}">
+  <site:wdkTable tblName="AssemblyInfo" isOpen="true" attribution=""/>
+</c:if>
 
 <br>
 <%-- REFERENCE ----------------------------------------------------%>
@@ -90,6 +87,4 @@
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
-<hr>
-<c:import url="http://${pageContext.request.serverName}/include/footer.html"/>
-
+<site:footer/>
