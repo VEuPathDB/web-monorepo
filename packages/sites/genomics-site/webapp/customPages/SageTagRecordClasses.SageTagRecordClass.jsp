@@ -27,14 +27,14 @@
           <b>${wdkRecord.attributes['organism'].value}</b>
           </font> <br>
           <font size="+3" face="Arial,Helvetica">
-          <b>${wdkRecord.primaryKey}</b>
+          <b>${id}</b>
           </font><br>
       </c:if>
       
           <font face="Arial,Helvetica">${recordType} Record</font>
 </c:set>
 
-<site:header title="${wdkRecord.primaryKey}"
+<site:header title="${id}"
              banner="${bannerText}"
              divisionName="SAGE Tag Record"
              division="queries_tools"/>
@@ -42,7 +42,7 @@
 <c:choose>
 <c:when test="${wdkRecord.attributes['organism'].value eq 'null'}">
   <br>
-  ${wdkRecord.primaryKey} was not found.
+  ${id} was not found.
   <br>
   <hr>
 </c:when>
@@ -64,9 +64,7 @@
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
-<c:set var="gtracks">
-Gene+DeprecatedGene+SAGEtags
-</c:set>
+<c:set var="gtracks" value="${attrs['gbrowseTracks'].value}" />
 
 <c:set var="attribution">
 </c:set>
@@ -91,7 +89,7 @@ Gene+DeprecatedGene+SAGEtags
         <%--
         <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
         <c:set var="gbrowseUrl">
-            http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${wdkRecord.primaryKey}@yellow
+            http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow
         </c:set>
         <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
         --%>
