@@ -9,6 +9,12 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="CGI_OR_MOD" value="${props['CGI_OR_MOD']}"/>
 
+<c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
+<c:set var="pkValues" value="${primaryKey.values}" />
+<c:set var="projectId" value="${pkValues['project_id']}" />
+<c:set var="id" value="${pkValues['source_id']}" />
+<c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
+
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
 <c:set var='bannerText'>
@@ -17,14 +23,14 @@
           <b>${wdkRecord.attributes['organism'].value}</b>
           </font> 
           <font size="+3" face="Arial,Helvetica">
-          <b>${wdkRecord.primaryKey}</b>
+          <b>${id}</b>
           </font><br>
       </c:if>
       
       <font face="Arial,Helvetica">${recordType} Record</font>
 </c:set>
 
-<site:header title="${wdkRecord.primaryKey}"
+<site:header title="${id}"
              bannerPreformatted="${bannerText}"
              divisionName="${recordType} Record"
              division="queries_tools"/>
@@ -32,7 +38,7 @@
 <c:choose>
 <c:when test="${wdkRecord.attributes['organism'].value eq 'null'}">
   <br>
-  ${wdkRecord.primaryKey} was not found.
+  ${id} was not found.
   <br>
   <hr>
 </c:when>
@@ -52,13 +58,14 @@
 
 <%-- DNA CONTEXT --------------------------------------------------%>
 
-<c:set var="gtracks" value="ORF+Gene+DeprecatedGene" />
+<c:set var="gtracks" value="${attrs['gbrowseTracks'].value}" />
+
 <c:set var="contig" value="${attrs['nas_id'].value}" /> 
 <c:set var="context_start_range" value="${attrs['orf_start'].value - 300}" /> 
 <c:set var="context_end_range" value="${attrs['orf_end'].value + 300}" /> 
 
 <c:set var="genomeContextUrl">
-  http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse_img/giardiadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${wdkRecord.primaryKey}@yellow
+  http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse_img/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
 </c:set>
 
 <c:set var="genomeContextImg">
@@ -76,7 +83,7 @@
   </noindex> 
   <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
   <c:set var="gbrowseUrl"> 
-    http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/giardiadb/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${wdkRecord.primaryKey}@yellow 
+    http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow 
   </c:set> 
   <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a> 
 </c:set> 
