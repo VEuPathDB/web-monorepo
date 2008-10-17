@@ -72,11 +72,16 @@
 <c:url value="${displayName}"/>
 </c:set>
 
-<table width="100%" cellpadding="3" >
+<table width="100%" 
+       cellpadding="3"        
+       bgcolor="#DDDDDD"
+       
+       >
   <tr>
     <c:choose>
       <c:when test="${noData}">
-        <td><b>${displayName}</b> <i>none</i></td>
+
+        <td><font size="-1" face="Arial,Helvetica"><b>${displayName}</b></font>  <i>none</i></td>
       </c:when>
       <c:otherwise>
         <td><!-- /td -->
@@ -100,7 +105,7 @@
         <%--  Safari/IE can't handle this way of doing it  --%>
         <c:choose>
         <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
-           <div id="toggle${name}" align="left"><b><font size="+0">${displayName}</font></b>
+           <div id="toggle${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
              <a href="javascript:${showOnClick}toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
            </div>
         </c:when>
@@ -108,11 +113,11 @@
         <%--  Netscape/Firefox can't handle this way of doing it  --%>
         <c:otherwise>
 
-           <div id="showToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
+           <div id="showToggle${name}" class="toggle" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
              <a href="javascript:${showOnClick}showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')&&storeIntelligentCookie('show${name}',1)" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
            </div>
 
-           <div id="hideToggle${name}" class="toggle" align="left"><b><font size="+0">${displayName}</font></b>
+           <div id="hideToggle${name}" class="toggle" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
               <a href="javascript:hideLayer('${name}')&&showLayer('showToggle${name}')&&hideLayer('hideToggle${name}')&&storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onMouseOver="status='Hide ${displayName}';return true" onMouseOut="status='';return true">Hide</a>
             </div>
         </c:otherwise>
