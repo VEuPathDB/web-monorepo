@@ -54,8 +54,8 @@
 </p>
 <br>
 <p>
-<h2>Cache/Userlogin Database</h2>
-<api:wdkCacheDB var="cache"/>
+<h2>WDK-Engine/Userlogin Database</h2>
+<api:wdkUserDB var="cache"/>
 <p>
 <b>Identifiers</b>:
 <table border="0" cellspacing="3" cellpadding="2" align="">
