@@ -46,8 +46,6 @@
 		
 	</c:forEach>
 </table>
-<%-- close resultList --%>
-<c:set var="junk" value="${commentsTable.close}"/>
 
 <hr/><br/><br/>
 <site:footer/>
