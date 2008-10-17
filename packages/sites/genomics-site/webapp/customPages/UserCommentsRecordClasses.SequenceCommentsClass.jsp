@@ -5,8 +5,13 @@
 
 <!--  TODO: Implement move to anchor, based on the comment ID -->
 
-<site:header title="${wdkModel.displayName} : User Comments on ${param['primary_key']}"
-                 banner="Comments on ${param['primary_key']}"/>
+<c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
+<c:set var="pkValues" value="${primaryKey.values}" />
+<c:set var="projectId" value="${pkValues['project_id']}" />
+<c:set var="id" value="${pkValues['source_id']}" />
+
+<site:header title="${wdkModel.displayName} : User Comments on ${id}"
+                 banner="Comments on ${id}"/>
 
 <c:set var="commentsTable" value="${requestScope.wdkRecord.tables['UserComments']}"/>
    

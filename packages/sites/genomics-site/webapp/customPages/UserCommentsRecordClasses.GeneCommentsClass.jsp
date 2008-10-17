@@ -11,7 +11,7 @@
 <c:set var="id" value="${pkValues['source_id']}" />
 
 <site:header title="${wdkModel.displayName} : User Comments on ${id}"
-                 banner="Comments on ${param['primary_key']}"/>
+                 banner="Comments on ${id}"/>
 
 <c:set var="commentsTable" value="${requestScope.wdkRecord.tables['UserComments']}"/>
    
