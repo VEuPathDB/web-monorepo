@@ -31,7 +31,7 @@
 </c:set>
 
 <site:header title="${id}"
-             bannerPreformatted="${bannerText}"
+             banner="${bannerText}"
              divisionName="${recordType} Record"
              division="queries_tools"/>
 
