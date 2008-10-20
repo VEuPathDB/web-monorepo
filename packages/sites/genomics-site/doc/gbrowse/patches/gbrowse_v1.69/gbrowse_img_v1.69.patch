@@ -1,0 +1,18 @@
+--- gbrowse_img.orig	2008-10-20 13:18:40.000000000 -0400
++++ gbrowse_img	2008-10-20 17:09:16.000000000 -0400
+@@ -101,6 +101,7 @@
+ my $id              = param('id');
+ my @h_region        = param('h_region');
+ my @h_feat          = param('h_feat');
++my $hmap            = param('hmap') || 'hmap';
+ 
+ $grid = 1 unless defined $grid;  # default for backward compatibility
+ $abs = 1  unless defined $abs;
+@@ -254,6 +255,7 @@
+ }
+ 
+ if ($embed) {
++  $panel->{hmap} = $hmap;
+   my $html            = $CONFIG->render_composite_track(
+ 							{section    => $section},
+ 							$panel

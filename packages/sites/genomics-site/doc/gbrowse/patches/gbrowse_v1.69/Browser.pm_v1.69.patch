@@ -1,5 +1,25 @@
---- Browser.pm.orig	2008-10-02 12:23:25.000000000 -0400
-+++ Browser.pm	2008-10-02 12:40:08.000000000 -0400
+--- Browser.pm.orig	2008-10-20 16:18:57.000000000 -0400
++++ Browser.pm	2008-10-20 17:17:00.000000000 -0400
+@@ -1082,8 +1082,8 @@
+   $section    =~ s/^\?//;
+   my $button  = $args->{image_button};
+ 
+-  my ($width,$height,$url,$map,$gd,$boxes) = @{$panel}{qw/width height image map gd boxes/};
+-  
++  my ($width,$height,$url,$map,$gd,$boxes, $hmap) = @{$panel}{qw/width height image map gd boxes hmap/};
++
+   my $css_map = $self->map_css($boxes,$section) if $section eq 'detail';
+ 
+   if ($args->{image_and_map}) {
+@@ -1092,7 +1092,7 @@
+   }
+ 
+   $map ||= '';
+-  my $map_name = "${section}_map";
++  my $map_name = $hmap || "${section}_map";
+ 
+   # The javascript functions for rubber-band selection
+   # need this ID as a hook, please do not change it
 @@ -1113,9 +1113,10 @@
  	     -alt   => $section});
  
@@ -9,7 +29,7 @@
    $css_map  ||= '';
 -  $html      .= $css_map . $map;
 +  #$html      .= $css_map . $map;
-+  $html      .= $css_map;
++  $html      .= $css_map; 
  
    return $html;
  }
