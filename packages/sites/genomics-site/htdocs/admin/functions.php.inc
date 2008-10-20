@@ -2,7 +2,7 @@
 
 function upstreamServer() {
   $headers = apache_request_headers();
-  if ( $headers['Via'] ) {
+  if ( isset($headers['Via']) ) {
       $host_port = getModuleSetting('apache2handler','Hostname:Port');
       $uphost = substr($host_port , 0, strrpos($host_port , ':'));
       return "<a href='http://$uphost/'>$uphost</a>";

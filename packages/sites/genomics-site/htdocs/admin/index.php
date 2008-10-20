@@ -24,7 +24,7 @@ $pageMap = array(
 
 include "head.php.inc";
 
-$page = ($_GET['p']) ? $_GET['p'] : 'Databases';
+$page = ( isset($_GET['p']) ) ? $_GET['p'] : 'Databases';
 
 ?>
 
