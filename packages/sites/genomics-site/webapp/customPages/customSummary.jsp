@@ -402,7 +402,7 @@ function parse_Url( url, parameter_name )
   <c:if test="${wdk_sorting_checksum != null}">
     <pg:param name="sort" id="pager" />
   </c:if>
-  <pg:param name="wdk_history_id" id="${historyId}" />
+  <pg:param name="wdk_history_id" id="pager" value="${historyId}" />
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%">
     <tr>
