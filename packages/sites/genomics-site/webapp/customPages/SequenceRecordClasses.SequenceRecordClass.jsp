@@ -44,7 +44,7 @@
 </c:set>
 
 <site:header title="${id}"
-             bannerPreformatted="${bannerText}"
+             banner="${bannerText}"
              divisionName="Genomic Sequence Record"
              division="queries_tools"/>
 
@@ -68,42 +68,6 @@
     content="${attr.value}" />
 <br>
 
-
-<c:set var="content">
-${externalLinks}
-<form action="${SRT_CONTIG_URL}" method="GET">
- <table border="0" cellpadding="0" cellspacing="1">
-  <tr class="secondary3"><td>
-  <table border="0" cellpadding="0">
-    <tr><td colspan="2"><h3>Retrieve this Contig with the Sequence Retrieval Tool</h3>
-      <input type='hidden' name='ids' size='20' value="${id}" />
-      <input type='hidden' name='project_id' size='20' value="${projectId}" />
-    </td></tr>
-    <tr><td colspan="2"><b>Nucleotide positions:</b> &nbsp;&nbsp;
-        <input type="text" name="start" value="1" maxlength="10" size="10" />
-     to <input type="text" name="end"   value="${attrs['length'].value}" maxlength="10" size="10" />
-     &nbsp;&nbsp;&nbsp;&nbsp;
-         <input type="checkbox" name="revComp" ${initialCheckBox}>Reverse & Complement
-    </td></td>
-    <tr><td><input type="submit" name='go' value='Get Sequence' /></td></tr>
-  </table>
-  </td></tr>
- </table>
-</form>
-
-<br />
-
-<c:if test="${is_top_level eq '1' && ((projectId eq 'PlasmoDB' && fn:containsIgnoreCase(organism, 'falciparum')) || projectId eq 'CryptoDB' || projectId eq 'ToxoDB')}">
-
-    <site:mercatorMAVID cgiUrl="${CGI_URL}" projectId="${projectId}" contigId="${id}"
-                        start="1" end="${attrs['length'].value}" bkgClass="secondary3" cellPadding="0"/>
-</c:if>
-</c:set>
-
-<site:panel 
-    displayName="Sequences"
-    content="${content}" />
-<br>
 
 <%------------------------------------------------------------------%>
 <c:url var="commentsUrl" value="showAddComment.do">
@@ -130,9 +94,6 @@ ${externalLinks}
     content="${commentLegend}" />
 <br>
 
-<site:wdkTable tblName="SequencePieces" isOpen="true"
-                 attribution=""/>
-
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
 <c:set var="gtracks" value="${attrs['gbrowseTracks'].value}" />
@@ -157,13 +118,13 @@ ${externalLinks}
         </c:if>
         </center>
         </noindex>
-        <%--
+
         <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
         <c:set var="gbrowseUrl">
             http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};label=${labels};h_feat=${id}@yellow
         </c:set>
         <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
-        --%>
+
     </c:set>
 
     <site:toggle 
@@ -176,6 +137,51 @@ ${externalLinks}
 
 
 <br>
+
+<site:wdkTable tblName="Centromere" isOpen="true"
+                 attribution=""/>
+
+<site:wdkTable tblName="SequencePieces" isOpen="true"
+                 attribution=""/>
+
+<%------------------------------------------------------------------%>
+
+<c:set var="content">
+${externalLinks}
+<form action="${SRT_CONTIG_URL}" method="GET">
+ <table border="0" cellpadding="0" cellspacing="1">
+  <tr class="secondary3"><td>
+  <table border="0" cellpadding="0">
+    <tr><td colspan="2"><h3>Retrieve this Contig with the Sequence Retrieval Tool</h3>
+      <input type='hidden' name='ids' size='20' value="${id}" />
+      <input type='hidden' name='project_id' size='20' value="${projectId}" />
+    </td></tr>
+    <tr><td colspan="2"><b>Nucleotide positions:</b> &nbsp;&nbsp;
+        <input type="text" name="start" value="1" maxlength="10" size="10" />
+     to <input type="text" name="end"   value="${attrs['length'].value}" maxlength="10" size="10" />
+     &nbsp;&nbsp;&nbsp;&nbsp;
+         <input type="checkbox" name="revComp" ${initialCheckBox}>Reverse & Complement
+    </td></td>
+    <tr><td><input type="submit" name='go' value='Get Sequence' /></td></tr>
+  </table>
+  </td></tr>
+ </table>
+</form>
+
+<c:if test="${is_top_level eq '1' && ((projectId eq 'PlasmoDB' && fn:containsIgnoreCase(organism, 'falciparum')) || projectId eq 'CryptoDB' || projectId eq 'ToxoDB')}">
+
+  <br />
+  <site:mercatorMAVID cgiUrl="${CGI_URL}" projectId="${projectId}" contigId="${id}"
+                        start="1" end="${attrs['length'].value}" bkgClass="secondary3" cellPadding="0"/>
+</c:if>
+</c:set>
+
+<site:toggle
+    isOpen="true"
+    name="Sequences"
+    attribution=""
+    displayName="Sequences"
+    content="${content}" />
 
 <%------------------------------------------------------------------%>
 <%------------------------------------------------------------------%>
@@ -236,10 +242,10 @@ Microbial Sequencing Center program at the Institute for Genomic Research
     </c:set>
     </c:when>
 
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (recordId eq 'MAL2' || recordId eq 'MAL10' || recordId eq 'MAL11' || recordId eq 'MAL14') && projectId eq 'PlasmoDB'}">
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (id eq 'MAL2' || id eq 'MAL10' || id eq 'MAL11' || id eq 'MAL14') && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- P. falciparum 2, 10, 11, 14 = TIGR --%>
-        <b>Chromosome ${recordId} of <i>P. falciparum</i> 3D7 was
+        <b>Chromosome ${id} of <i>P. falciparum</i> 3D7 was
         sequenced at 
         <a href="http://www.tigr.org/tdb/edb2/pfa1/htmls/">The
         Institute for Genomic Research</a>
@@ -248,25 +254,25 @@ Microbial Sequencing Center program at the Institute for Genomic Research
         Medical Research Center</a></b>
     </c:set>
     </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (recordId eq 'MAL1' || recordId eq 'MAL3' || recordId eq 'MAL4' || recordId eq 'MAL5' || recordId eq 'MAL6' || recordId eq 'MAL7' || recordId eq 'MAL8' || recordId eq 'MAL9' || recordId eq 'MAL13') && projectId eq 'PlasmoDB'}">
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (id eq 'MAL1' || id eq 'MAL3' || id eq 'MAL4' || id eq 'MAL5' || id eq 'MAL6' || id eq 'MAL7' || id eq 'MAL8' || id eq 'MAL9' || id eq 'MAL13') && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- P. falciparum 1, 3-9, 13 = Sanger --%>
-        <b>Chromosome ${recordId} of <i>P. falciparum</i> 3D7 was
+        <b>Chromosome ${id} of <i>P. falciparum</i> 3D7 was
         sequenced at the 
         <a href="http://www.sanger.ac.uk/Projects/P_falciparum/">Sanger
         Institute</a></b>
     </c:set>
     </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && recordId eq 'MAL12' && projectId eq 'PlasmoDB'}">
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'MAL12' && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- P. falciparum 12 = Stanford --%>
-        <b>Chromosome ${recordId} of <i>P. falciparum</i> 3D7 was
+        <b>Chromosome ${id} of <i>P. falciparum</i> 3D7 was
         sequenced at the
         <a href="http://sequence-www.stanford.edu/group/malaria/">Stanford
         Genome Technology Center</a></b>
     </c:set>
     </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && recordId eq 'AJ276844' && projectId eq 'PlasmoDB'}">
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'AJ276844' && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- P. falciparum mitochondrion = University of London --%>
         <b>The mitochondrial genome of <i>P. falciparum</i> was
@@ -276,7 +282,7 @@ Microbial Sequencing Center program at the Institute for Genomic Research
     </c:set>
 
     </c:when>
-    <c:when test="${organism eq '<i>P.&nbsp;falciparum 3D7</i>' && (recordId eq 'X95275' || recordId eq 'X95276') && projectId eq 'PlasmoDB'}">
+    <c:when test="${organism eq '<i>P.&nbsp;falciparum 3D7</i>' && (id eq 'X95275' || id eq 'X95276') && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- P. falciparum plastid --%>
         <b>The <i>P. falciparum</i> plastid was
@@ -326,7 +332,7 @@ Microbial Sequencing Center program at the Institute for Genomic Research
 <c:otherwise>
     <c:set var="reference">
   <b>ERROR: can't find attribution information for organism "${organism}",
-     sequence "${recordId}"</b>
+     sequence "${id}"</b>
     </c:set>
 </c:otherwise>
 
@@ -343,7 +349,7 @@ Microbial Sequencing Center program at the Institute for Genomic Research
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
-<c:import url="http://${pageContext.request.serverName}/include/footer.html"/>
+<site:footer/>
 
 <script type="text/javascript">
   document.write(
