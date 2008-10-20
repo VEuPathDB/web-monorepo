@@ -55,7 +55,7 @@
 <br>
 <%------------------------------------------------------------------%>
 
-<site:wdkTable tblName="AlignmentInfo" isOpen="true" attribution=""/>
+<site:wdkTable tblName="AlignmentInfo" isOpen="false" attribution=""/>
 
 <br>
 
