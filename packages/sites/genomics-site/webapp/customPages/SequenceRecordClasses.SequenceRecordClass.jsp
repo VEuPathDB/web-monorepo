@@ -329,6 +329,11 @@ Microbial Sequencing Center program at the Institute for Genomic Research
         </a></b>
     </c:set>
     </c:when>
+    <c:when test="${projectId eq 'ToxoDB'}">
+    <c:set var="reference">
+     T. gondii was sequenced by The Institute for <a href=" http://www.tigr.org/tdb/e2k1/tga1/">Genomic Research</a>
+    </c:set>
+    </c:when>
 <c:otherwise>
     <c:set var="reference">
   <b>ERROR: can't find attribution information for organism "${organism}",
