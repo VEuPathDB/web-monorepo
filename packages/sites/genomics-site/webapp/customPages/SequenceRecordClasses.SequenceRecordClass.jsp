@@ -335,6 +335,17 @@ Microbial Sequencing Center program at the Institute for Genomic Research
      T. gondii was sequenced by The Institute for <a href=" http://www.tigr.org/tdb/e2k1/tga1/">Genomic Research</a>
     </c:set>
     </c:when>
+    <c:when test="${projectId eq 'TrichDB'}">
+    <c:set var="reference">
+     T. vaginalis sequence from Jane Carlton (NYU,TIGR). PMID: 17218520
+    </c:set>
+    </c:when>
+    </c:when>
+    <c:when test="${projectId eq 'GiardiaDB'}">
+    <c:set var="reference">
+G. lamblia sequence, assembly, annotation from Mitchell Sogin(MBL). Genomic minimalism in the early diverging intestinal parasite Giardia lamblia. cd Hilary G. Morrison, Andrew G. McArthur, Frances D. Gillin, Stephen B. Aley, Rodney D. Adam, Gary J. Olsen, Aaron A. Best, W. Zacheus Cande, Feng Chen, Michael J. Cipriano, Barbara J. Davids, Scott C. Dawson, Heidi G. Elmendorf, Adrian B. Hehl, Michael E. Holder, Susan M. Huse, Ulandt U. Kim, Erica Lasek-Nesselquist, Gerard Manning, Anuranjini Nigam, Julie E. J. Nixon, Daniel Palm, Nora E. Passamaneck, Anjali Prabhu, Claudia I. Reich, David S. Reiner, John Samuelson, Staffan G. Svard, and Mitchell L. Sogin Science 28 September 2007, Volume 317, pp. 1921-1926.
+    </c:set>
+    </c:when>
 <c:otherwise>
     <c:set var="reference">
   <b>ERROR: can't find attribution information for organism "${organism}",
