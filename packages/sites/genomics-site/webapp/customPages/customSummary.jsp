@@ -16,7 +16,7 @@
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="summaryUrl" value="${wdk_summary_url}" />
 <c:set var="commandUrl">
-    <c:url value="/processSummary.do?${wdk_query_string}" />
+    <c:url value="/processSummary.do?${wdk_query_string}&wdk_history_id=${historyId}" />
 </c:set>
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
