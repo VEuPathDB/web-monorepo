@@ -128,6 +128,7 @@
     </c:set>
 
     <site:toggle 
+        isOpen="true"
         name="genomicContext"
         displayName="Genomic Context"
         content="${genomeContextImg}"
