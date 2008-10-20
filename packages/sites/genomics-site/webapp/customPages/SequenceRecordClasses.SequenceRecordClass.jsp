@@ -13,6 +13,8 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
+<c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
+
 <c:set var="CPARVUMCHR6" value="${props['CPARVUMCHR6']}"/>
 <c:set var="CPARVUMCONTIGS" value="${props['CPARVUMCONTIGS']}"/>
 <c:set var="CHOMINISCONTIGS" value="${props['CHOMINISCONTIGS']}"/>
@@ -23,14 +25,15 @@
 <c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
 
 <c:set var="externalDbName" value="${attrs['externalDbName'].value}" />
-
+<c:set var="organism" value="${wdkRecord.attributes['organism'].value}" />
+<c:set var="is_top_level" value="${wdkRecord.attributes['is_top_level'].value}" />
 
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
 <c:set var='bannerText'>
-      <c:if test="${wdkRecord.attributes['organism'].value ne 'null'}">
+      <c:if test="${organism ne 'null'}">
           <font face="Arial,Helvetica" size="+3">
-          <b>${wdkRecord.attributes['organism'].value}</b>
+          <b>${organism}</b>
           </font> 
           <font size="+3" face="Arial,Helvetica">
           <b>${id}</b>
@@ -46,7 +49,7 @@
              division="queries_tools"/>
 
 <c:choose>
-<c:when test="${wdkRecord.attributes['organism'].value eq 'null'}">
+<c:when test="${organism eq 'null'}">
   <br>
   ${id} was not found.
   <br>
@@ -65,14 +68,6 @@
     content="${attr.value}" />
 <br>
 
-<%------------------------------------------------------------------%>
-<c:choose><c:when test="${externalDbName eq CPARVUMCONTIGS or externalDbName eq CHOMINISCONTIGS}">
-  <c:set var="externalLinks">
-  <a href="http://apicyc.apidb.org/${wdkRecord.attributes['cyc_db'].value}/new-image?object=${id}">CryptoCyc Metabolic Pathway Database</a><br>
-  <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=${wdkRecord.attributes['secondary_identifier'].value}">GenBank Record</a><br>
-  <a href="showSummary.do?questionFullName=GeneQuestions.GenesByLocation&myProp%28chromosomeOptional%29=choose+one&myProp%28sequenceId%29=${id}&myProp%28start_point%29=1&myProp%28end_point%29=0">Lookup Genes on this Contig</a><br>
-  </c:set>
-</c:when></c:choose>
 
 <c:set var="content">
 ${externalLinks}
@@ -98,12 +93,15 @@ ${externalLinks}
 
 <br />
 
+<c:if test="${is_top_level eq '1' && ((projectId eq 'PlasmoDB' && fn:containsIgnoreCase(organism, 'falciparum')) || projectId eq 'CryptoDB' || projectId eq 'ToxoDB')}">
+
     <site:mercatorMAVID cgiUrl="${CGI_URL}" projectId="${projectId}" contigId="${id}"
                         start="1" end="${attrs['length'].value}" bkgClass="secondary3" cellPadding="0"/>
+</c:if>
 </c:set>
 
 <site:panel 
-    displayName="${attr.displayName}"
+    displayName="Sequences"
     content="${content}" />
 <br>
 
@@ -132,69 +130,26 @@ ${externalLinks}
     content="${commentLegend}" />
 <br>
 
+<site:wdkTable tblName="SequencePieces" isOpen="true"
+                 attribution=""/>
+
 <%-- DNA CONTEXT ---------------------------------------------------%>
-<c:choose>
-<c:when test="${externalDbName eq CPARVUMCONTIGS}">
-    <c:set var="gtracks">
-    Gene+SyntenySpanHominis+SyntenySpanMuris+WastlingMassSpecPeptides+LoweryMassSpecPeptides+EST+Cluster
 
-    <c:set var="attribution">
-    CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs,
-    Wastling2DGelLSMassSpec,Wastling1DGelLSMassSpec,WastlingMudPitSolMassSpec,
-    WastlingMudPitInsolMassSpec,CryptoLoweryLCMSMSInsolExcystedMassSpec,
-    CryptoLoweryLCMSMSInsolNonExcystedMassSpec,CryptoLoweryLCMSMSSolMassSpec
-    </c:set>
+<c:set var="gtracks" value="${attrs['gbrowseTracks'].value}" />
 
-    </c:set>
-</c:when>
-<c:when test="${externalDbName eq CHOMINISCONTIGS}">
-    <c:set var="gtracks">
-    Gene+SyntenySpanParvum+SyntenySpanMuris+EST+Cluster
-    </c:set>
-
-    <c:set var="attribution">
-    CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
-    </c:set>
-
-</c:when>
-<c:when test="${externalDbName eq CPARVUMCHR6}">
-    <c:set var="gtracks">
-    Gene+SyntenySpanParvum+SyntenySpanHominis+SyntenySpanMuris+WastlingMassSpecPeptides+EST+Cluster
-    </c:set>
-
-    <c:set var="attribution">
-    CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs,
-    Wastling2DGelLSMassSpec,Wastling1DGelLSMassSpec,WastlingMudPitSolMassSpec,
-    WastlingMudPitInsolMassSpec
-    </c:set>
-
-</c:when>
-<c:when test="${externalDbName eq CMURISCONTIGS}">
-    <c:set var="gtracks">
-    SyntenySpanParvum+SyntenyParvum+SyntenySpanHominis+EST
-    </c:set>
-
-    <c:set var="attribution">
-    CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
-    </c:set>
-
-</c:when>
-<c:otherwise>
-    <c:set var="gtracks" value="" />
-</c:otherwise>
-</c:choose>
+<c:set var="attribution">
+</c:set>
 
 <c:if test="${gtracks ne ''}">
     <c:set var="genomeContextUrl">
-    http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodb/?name=${id}:1..100000;hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
+    http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse_img/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${feature_source_id}@yellow
     </c:set>
-    
     <c:set var="genomeContextImg">
         <noindex follow><center>
         <c:catch var="e">
            <c:import url="${genomeContextUrl}"/>
         </c:catch>
-        <c:if test="${e!=null}">
+        <c:if test="${e!=null}"> 
             <site:embeddedError 
                 msg="<font size='-2'>temporarily unavailable</font>" 
                 e="${e}" 
@@ -202,26 +157,38 @@ ${externalLinks}
         </c:if>
         </center>
         </noindex>
+        <%--
         <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
         <c:set var="gbrowseUrl">
-            http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/cryptodb/?name=${id}:1..10000;label=${labels};h_feat=${id}@yellow
+            http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};label=${labels};h_feat=${id}@yellow
         </c:set>
         <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+        --%>
     </c:set>
-    
-    <site:panel 
+
+    <site:toggle 
+        name="genomicContext"
         displayName="Genomic Context"
         content="${genomeContextImg}"
-        attribution="${attribution}" />
+        attribution="${attribution}"/>
     <br>
 </c:if>
+
 
 <br>
 
 <%------------------------------------------------------------------%>
+<%------------------------------------------------------------------%>
 
-<c:choose>
-<c:when test="${externalDbName eq CPARVUMCONTIGS}">
+
+<%------- The Attribution Section is Organism Specific -------------%>
+
+<%------------------------------------------------------------------%>
+<%------------------------------------------------------------------%>
+
+
+  <c:choose>
+<c:when test="${externalDbName eq CPARVUMCONTIGS && projectId eq 'CryptoDB'}">
     <c:set var="reference">
 Abrahamsen MS, Templeton TJ, Enomoto S, Abrahante JE, Zhu G, Lancto CA, 
 Deng M, Liu C, Widmer G, Tzipori S, Buck GA, Xu P, Bankier AT, Dear PH, 
@@ -230,7 +197,7 @@ Konfortov BA, Spriggs HF, Iyer L, Anantharaman V, Aravind L, Kapur V.
 Science. 2004 Apr 16;<a href="http://www.sciencemag.org/cgi/content/full/304/5669/441"><b>304</b>(5669):441-5</a>.
     </c:set>
 </c:when>
-<c:when test="${externalDbName eq CHOMINISCONTIGS}">
+<c:when test="${externalDbName eq CHOMINISCONTIGS && projectId eq 'CryptoDB'}">
     <c:set var="reference">
 Xu P, Widmer G, Wang Y, Ozaki LS, Alves JM, Serrano MG, Puiu D, Manque P, 
 Akiyoshi D, Mackey AJ, Pearson WR, Dear PH, Bankier AT, Peterson DL, 
@@ -239,7 +206,7 @@ Abrahamsen MS, Kapur V, Tzipori S, Buck GA.
 Nature. 2004 Oct 28;<a href="http://www.nature.com/nature/journal/v431/n7012/abs/nature02977.html"><b>431</b>(7012):1107-12</a>.
     </c:set>
 </c:when>
-<c:when test="${externalDbName eq CPARVUMCHR6}">
+<c:when test="${externalDbName eq CPARVUMCHR6 && projectId eq 'CryptoDB'}">
     <c:set var="reference">
 Bankier AT, Spriggs HF, Fartmann B, Konfortov BA, Madera M, Vogel C, 
 Teichmann SA, Ivens A, Dear PH. 
@@ -247,7 +214,7 @@ Teichmann SA, Ivens A, Dear PH.
 </b>Genome Res. 2003 Aug;<a href="http://www.genome.org/cgi/content/full/13/8/1787">13(8):1787-99</a>
     </c:set>
 </c:when>
-<c:when test="${externalDbName eq CMURISCONTIGS}">
+<c:when test="${externalDbName eq CMURISCONTIGS && projectId eq 'CryptoDB'}">
     <c:set var="reference">
 The Cryptosporidium muris genome sequencing project has been funded by the
 National Institute of Allergy and Infections Diseases (NIAID), through the
@@ -255,10 +222,117 @@ Microbial Sequencing Center program at the Institute for Genomic Research
 (TIGR). 
 </c:set>
 </c:when>
+<c:when test="${fn:containsIgnoreCase(organism, 'vivax') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <b><i>P. vivax</i> was sequenced by 
+        <a href="http://www.tigr.org/tdb/e2k1/pva1/">The
+        Institute for Genomic Research</a></b>
+    </c:set>
+    </c:when>
+<c:when test="${fn:containsIgnoreCase(organism, 'yoelii') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <b><i>P. yoelii</i> was sequenced by
+        <a href="http://www.tigr.org/tdb/edb2/pya1/htmls/">The Institute for Genomic Research</a></b>
+    </c:set>
+    </c:when>
+
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (recordId eq 'MAL2' || recordId eq 'MAL10' || recordId eq 'MAL11' || recordId eq 'MAL14') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <%-- P. falciparum 2, 10, 11, 14 = TIGR --%>
+        <b>Chromosome ${recordId} of <i>P. falciparum</i> 3D7 was
+        sequenced at 
+        <a href="http://www.tigr.org/tdb/edb2/pfa1/htmls/">The
+        Institute for Genomic Research</a>
+        <br>and the
+        <a href="http://www.nmrc.navy.mil/">Naval
+        Medical Research Center</a></b>
+    </c:set>
+    </c:when>
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (recordId eq 'MAL1' || recordId eq 'MAL3' || recordId eq 'MAL4' || recordId eq 'MAL5' || recordId eq 'MAL6' || recordId eq 'MAL7' || recordId eq 'MAL8' || recordId eq 'MAL9' || recordId eq 'MAL13') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <%-- P. falciparum 1, 3-9, 13 = Sanger --%>
+        <b>Chromosome ${recordId} of <i>P. falciparum</i> 3D7 was
+        sequenced at the 
+        <a href="http://www.sanger.ac.uk/Projects/P_falciparum/">Sanger
+        Institute</a></b>
+    </c:set>
+    </c:when>
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && recordId eq 'MAL12' && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <%-- P. falciparum 12 = Stanford --%>
+        <b>Chromosome ${recordId} of <i>P. falciparum</i> 3D7 was
+        sequenced at the
+        <a href="http://sequence-www.stanford.edu/group/malaria/">Stanford
+        Genome Technology Center</a></b>
+    </c:set>
+    </c:when>
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && recordId eq 'AJ276844' && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <%-- P. falciparum mitochondrion = University of London --%>
+        <b>The mitochondrial genome of <i>P. falciparum</i> was
+        sequenced at the
+        <a href="http://www.lshtm.ac.uk/pmbu/staff/dconway/dconway.html">London
+        School of Hygiene & Tropical Medicine</a></b>
+    </c:set>
+
+    </c:when>
+    <c:when test="${organism eq '<i>P.&nbsp;falciparum 3D7</i>' && (recordId eq 'X95275' || recordId eq 'X95276') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <%-- P. falciparum plastid --%>
+        <b>The <i>P. falciparum</i> plastid was
+        sequenced at the 
+        <a href="http://www.nimr.mrc.ac.uk/parasitol/wilson/">National
+        Institute for Medical Research</a></b>
+    </c:set>
+    </c:when>
+    <c:when test="${fn:contains(organism,'berghei') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <%-- e.g.PB000938.03.0 --%>
+        <b>The <i>P. berghei</i> genome was sequenced by the
+        <a href="http://www.sanger.ac.uk/Projects/P_berghei">Sanger
+        Institute</a></b>
+    </c:set>
+    </c:when>
+    <c:when test="${fn:contains(organism,'knowlesi') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <b>The <i>P.knowlesi </i> genome was sequenced by the
+        <a href="http://www.sanger.ac.uk/Projects/P_knowlesi">Sanger
+        Institute</a></b>
+    </c:set>
+    </c:when>
+    <c:when test="${fn:contains(organism,'reichenowi') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <b>The <i>P. reichenowi</i> genome was sequenced by the
+        <a href="http://www.sanger.ac.uk/Projects/P_reichenowi">Sanger
+        Institute</a></b>
+    </c:set>
+    </c:when>
+    <c:when test="${fn:contains(organism,'gallinaceum') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <b>The <i>P. gallinaceum</i> genome was sequenced by the
+        <a href="http://www.sanger.ac.uk/Projects/P_gallinaceum">Sanger
+        Institute</a></b>
+    </c:set>
+    </c:when>
+    <c:when test="${fn:contains(organism,'chabaudi') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <%-- e.g. PC000000.00.0 --%>
+        <b>The <i>P. chabaudi</i> genome was sequenced by the
+        <a href="http://www.sanger.ac.uk/Projects/P_chabaudi">Sanger
+        Institute</a></b>
+        </a></b>
+    </c:set>
+    </c:when>
 <c:otherwise>
-    <c:set var="reference" value="${externalDbName}" />
+    <c:set var="reference">
+  <b>ERROR: can't find attribution information for organism "${organism}",
+     sequence "${recordId}"</b>
+    </c:set>
 </c:otherwise>
+
 </c:choose>
+
+
 
 <site:panel 
     displayName="Genome Sequencing and Annotation by:"
