@@ -32,7 +32,7 @@
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C"/>
     </tr>
     <tr>
-       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByAuthor" linktext="Author Name" existsOn="A C"/>
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByAuthor" linktext="Author/Submitter" existsOn="A C"/>
     </tr>
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByStudy" linktext="Study Name" existsOn="A C"/>
