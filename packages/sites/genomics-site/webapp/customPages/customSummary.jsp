@@ -378,6 +378,9 @@ function parse_Url( url, parameter_name )
 
 <hr class="clear_all"/>
 
+
+
+
 <!-- handle empty result set situation -->
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>
@@ -427,15 +430,71 @@ function parse_Url( url, parameter_name )
     </tr>
   </table>
 
+<!-- Sort by gene Id not shown -->
+<c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
+  <c:if test="${sumAttrib.name eq 'formatted_gene_id'}" >
+    <c:set var="formattedGeneSummaryAttribute" value="${sumAttrib}" />
+  </c:if>
+</c:forEach>
+
+<c:if test="${formattedGeneSummaryAttribute != null}">
+<table cellpadding="3">
+    <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
+    <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
+  <tr>
+  <td>
+                       <c:choose>
+                            <c:when test="${!formattedGeneSummaryAttribute.sortable}">
+                              Cannot Group Results by Genes
+                            </c:when>
+                            <c:when test="${formattedGeneSummaryAttribute.name == sortingAttrNames[0] && sortingAttrOrders[0]}">
+                              Results are currently colored by Gene Group
+                            </c:when>
+                            <c:otherwise>
+                                <%-- display sorting buttons --%>
+                                <a href="${commandUrl}&command=sort&attribute=${formattedGeneSummaryAttribute.name}&sortOrder=asc"
+                                    title="Sort by ${formattedGeneSummaryAttribute}">
+                                    Click here to Group Results by Genes</a>
+                            </c:otherwise>
+                        </c:choose>
+
+  </td>
+                    <td valign="middle" align="right">
+                    <div>
+
+                        <c:choose>
+                            <c:when test="${!formattedGeneSummaryAttribute.sortable}">
+                                <img src="<c:url value='/images/sort_down_g.gif' />" border="0" />
+                            </c:when>
+                            <c:when test="${formattedGeneSummaryAttribute.name == sortingAttrNames[0] && sortingAttrOrders[0]}">
+                                <img src="<c:url value='images/sort_down_h.gif' />" 
+                                    title="Result is sorted by ${formattedGeneSummaryAttribute}" />
+                            </c:when>
+                            <c:otherwise>
+                                <%-- display sorting buttons --%>
+                                <a href="${commandUrl}&command=sort&attribute=${formattedGeneSummaryAttribute.name}&sortOrder=asc"
+                                    title="Sort by ${formattedGeneSummaryAttribute}">
+                                    <img src="<c:url value='/images/sort_down.gif' />" border="0" /></a>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+      </td>
+  </tr>
+</table>
+</c:if>
+
+
 <!-- content of current page -->
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
 
 
 <tr class="headerRow">
   <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
+  <c:if test="${sumAttrib.name ne 'formatted_gene_id'}" >
     <th align="center" valign="middle">
       ${sumAttrib.displayName}
     </th>
+  </c:if>
   </c:forEach>
 </tr>
 
@@ -448,12 +507,15 @@ function parse_Url( url, parameter_name )
     <c:set var="hasGeneId" value="0" />
 
     <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
-        <th align="center" valign="middle">
-            <c:set var="attrName" value="${sumAttrib.name}" />
-            <c:if test="${attrName eq 'formatted_gene_id'}" >
-              <c:set var="hasGeneId" value="1" />
-            </c:if>      
 
+            <c:set var="attrName" value="${sumAttrib.name}" />
+ 
+          <c:choose>
+           <c:when test="${attrName eq 'formatted_gene_id'}" >
+              <c:set var="hasGeneId" value="1" />
+            </c:when>      
+            <c:otherwise>
+         <th align="center" valign="middle">
             <table border="0" cellspacing="2" cellpadding="0">
                 <tr class="headerInternalRow">
                     <td valign="middle">
@@ -533,6 +595,8 @@ function parse_Url( url, parameter_name )
                 </tr>
             </table>
         </th>
+      </c:otherwise>
+      </c:choose>
         <c:set var="j" value="${j+1}"/>
     </c:forEach>
 </tr>
@@ -627,6 +691,10 @@ function parse_Url( url, parameter_name )
         <c:if test="${recAttr.attributeField.nowrap}">nowrap</c:if>
     </c:set>
 
+<c:choose>
+<c:when test="${sumAttrName eq 'formatted_gene_id'}">
+</c:when>
+<c:otherwise>
     <td ${align} ${nowrap}>
       <c:set var="recNam" value="${record.recordClass.fullName}"/>
       <c:set var="fieldVal" value="${recAttr.briefValue}"/>
@@ -660,6 +728,9 @@ function parse_Url( url, parameter_name )
 
         </c:when>   <%-- when j=0 --%>
 
+<c:when test="${sumAttrName eq 'formatted_gene_id'}">
+</c:when>
+
         <c:otherwise>
 
           <!-- need to know if fieldVal should be hot linked -->
@@ -685,6 +756,8 @@ function parse_Url( url, parameter_name )
         </c:otherwise>
       </c:choose>
     </td>
+</c:otherwise>
+</c:choose>
     <c:set var="j" value="${j+1}"/>
 
   </c:forEach>
