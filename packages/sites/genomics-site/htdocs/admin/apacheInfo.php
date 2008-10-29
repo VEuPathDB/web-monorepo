@@ -6,12 +6,6 @@ $apacheEnv = $modinfo['Apache Environment'];
 $httpHeaders = $modinfo['HTTP Headers Information'];
 $upstreamServer = upstreamServer();
 
-$headers = apache_request_headers();
-$proxyNotice = '';
-if ( isset($headers['Via']) ) {
-    $via = $headers['Via'];
-    $proxyNotice = "<p>This site is reverse-proxied via <i>'$via'</i> to upstream host $upstreamServer.";
-}
 ?>
 <h2>Apache HTTP Server</h2>
 
