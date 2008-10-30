@@ -48,7 +48,7 @@
 <table class='p' border='0' cellpadding='0' cellspacing='0'>
     <tr><td>
       <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('modelconfig','blind'); return false">
-  Model Configuration &#8593;&#8595;</a></b>
+  WDK Model Configuration &#8593;&#8595;</a></b>
   <div id="modelconfig" style="padding: 5px; display: none"><div>
 
         <api:modelConfig var="modelConfig"/>
@@ -62,6 +62,27 @@
     var="cfg" items="${section.value}"
 >${cfg.key} = ${fn:escapeXml(cfg.value)}
 </c:forEach></blockquote></c:forEach>
+</pre>    
+      </div></div>
+    </td></tr>
+</table>
+
+<table class='p' border='0' cellpadding='0' cellspacing='0'>
+    <tr><td>
+      <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('commentconfig','blind'); return false">
+  User Comments Configuration &#8593;&#8595;</a></b>
+  <div id="commentconfig" style="padding: 5px; display: none"><div>
+
+        <api:commentConfig var="commentConfig"/>
+        <p>
+The following configurations were obtained from the WDK's running instance of the CommentConfig class. These generally represent values set in 
+<code>comment-config.xml</code> although some processing may occur by the WDK parser.
+The CommentConfig class is instantiated on the first page access requiring it (e.g. this page or the showAddComment.do action) - not at webapp load time. 
+Passwords have been masked in this display.
+<pre><c:forEach 
+    var="cfg" items="${commentConfig.props}"
+>${cfg.key} = ${fn:escapeXml(cfg.value)}
+</c:forEach>
 </pre>    
       </div></div>
     </td></tr>
