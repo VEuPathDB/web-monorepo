@@ -1,6 +1,7 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
+<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
 <api:wdkRecord name="UtilityRecordClasses.SiteInfo"/>
 
