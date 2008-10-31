@@ -59,6 +59,7 @@
 
 <b>Tuning Manager</b>
 <blockquote>
+<c:catch var='e'>
 <b>Database family name</b>: ${wdkRecord.attributes['family_name'].value}<br>
 <b>Last update</b>: ${wdkRecord.attributes['last_update'].value}<br>
 <c:if test="${wdkRecord.attributes['elapsedCheckDays'].value > 1}"><c:set var="tMWarning" value='1'/></c:if>
@@ -67,6 +68,10 @@
 (<c:if test="${wdkRecord.attributes['elapsedCheckDays'].value != 0}">${wdkRecord.attributes['elapsedCheckDays'].value} days </c:if>${wdkRecord.attributes['elapsedCheckHours'].value} hours ago)<br>
 <c:if test="${tMWarning == 1}"></div></c:if>
 <b>Subversion url</b>: <a href="${wdkRecord.attributes['subversion_url'].value}">${wdkRecord.attributes['subversion_url'].value}</a><br>
+</c:catch>
+<c:if test="${e!=null}"> 
+    <tr><td><font color="red">information not available</font><br><font size='-2'>${fn:replace(e, fn:substring(e, 175, -1), '...')}</font></td></tr>
+</c:if>
 </blockquote>
 </p>
 <p>
