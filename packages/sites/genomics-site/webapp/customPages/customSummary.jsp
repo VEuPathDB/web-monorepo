@@ -52,12 +52,12 @@ function goToIsolate() {
    var cbs = form.selectedFields;
    var url = "/cgi-bin/isolateClustalw?project_id=CryptoDB;isolate_ids=";
    for (var i=0; i<cbs.length; i++) {
-         if(cbs[i].checked) {
+     if(cbs[i].checked) {
        url += cbs[i].value + ",";
-               }
+     }
    }
    window.location.href = url;
- }
+}
 
 
 function enableRename() {
@@ -714,7 +714,7 @@ function parse_Url( url, parameter_name )
            <c:when test = "${cryptoIsolatesQuestion}">
 
               <%-- display a link to record page --%>
-              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${source_id}"></nobr>
+              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${recordId}"></nobr>
 
            </c:when>
 
