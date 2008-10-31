@@ -17,7 +17,7 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="headElement">
-  <script src="js/lib/jquery-1.2.6.js" type="text/javascript"><script>
+  <script src="js/lib/jquery-1.2.6.js" type="text/javascript"></script>
 <%--  <script src="js/prototype.js" type="text/javascript"></script>
   <script src="js/scriptaculous.js" type="text/javascript"></script>--%>
   <script src="js/Top_menu.js" type="text/javascript"></script>
