@@ -6,6 +6,7 @@
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
 <api:wdkRecord name="UtilityRecordClasses.SiteInfo"/>
+<c:set var="dateFormatStr" value="EEE dd MMM yyyy h:mm a"/>
 
 <h2>Genome Database</h2>
 
@@ -52,7 +53,30 @@
 <p>
 <b>Available DBLinks</b>: <site:dataTable tblName="AllDbLinks"/>
 </p>
-<br>
+
+<h2>Custom Tuning</h2>
+<p>
+
+<b>Tuning Manager</b>
+<blockquote>
+<b>Database family name</b>: ${wdkRecord.attributes['family_name'].value}<br>
+<b>Last update</b>: ${wdkRecord.attributes['last_update'].value}<br>
+<c:if test="${wdkRecord.attributes['elapsedCheckDays'].value > 1}"><c:set var="tMWarning" value='1'/></c:if>
+<c:if test="${tMWarning == 1}"><div style="background-color:red; color:white; padding:3px; width:75%"></c:if>
+<b>Last check</b>: ${wdkRecord.attributes['last_check']} 
+(<c:if test="${wdkRecord.attributes['elapsedCheckDays'].value != 0}">${wdkRecord.attributes['elapsedCheckDays'].value} days </c:if>${wdkRecord.attributes['elapsedCheckHours'].value} hours ago)<br>
+<c:if test="${tMWarning == 1}"></div></c:if>
+<b>Subversion url</b>: <a href="${wdkRecord.attributes['subversion_url'].value}">${wdkRecord.attributes['subversion_url'].value}</a><br>
+</blockquote>
+</p>
+<p>
+<b><a href="#" style="text-decoration:none" onclick="Effect.toggle('tuningtables','blind'); return false">
+Tuning Tables &#8593;&#8595;</a></b>
+<div id="tuningtables" style="padding: 5px; display: none"><div>
+<site:dataTable tblName="TuningTables"/>
+</div></div>
+</p>
+
 <p>
 <h2>WDK-Engine/Userlogin Database</h2>
 <api:wdkUserDB var="cache"/>
