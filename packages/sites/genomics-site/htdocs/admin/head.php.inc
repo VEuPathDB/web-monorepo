@@ -1,5 +1,5 @@
 <head>
-    <title>WDK Site Info</title>
+    <title><? print $_SERVER['HTTP_HOST'] ?> site info</title>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
 
     <script type='text/javascript' src='/a/js/overlib.js'></script>
