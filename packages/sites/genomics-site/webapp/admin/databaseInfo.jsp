@@ -70,6 +70,7 @@
     </div>
   </c:when>
   <c:otherwise>
+    <c:if test="${wdkRecord.attributes['elapsedCheckDays'].value > 1}"><c:set var="tMWarning" value='1'/></c:if>
     <c:if test="${tMWarning == 1}"><div style="background-color:red; color:white; padding:3px; width:75%"></c:if>
       <b>Last check</b>: ${wdkRecord.attributes['last_check']} 
       (<c:if test="${wdkRecord.attributes['elapsedCheckDays'].value != 0}">${wdkRecord.attributes['elapsedCheckDays'].value} days </c:if>${wdkRecord.attributes['elapsedCheckHours'].value} hours ago)<br>
