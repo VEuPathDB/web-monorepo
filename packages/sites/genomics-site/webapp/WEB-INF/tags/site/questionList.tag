@@ -49,7 +49,7 @@
         <input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag">
         ${geneIdParam.prompt}: 
         <html:text property="myProp(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})"
-                   value="${geneIdParam.default}" size="10"/></td>
+                   value="${geneIdParam.default}" size="12"/></td>
     <td align="right" width="24">
         <input type="hidden" name="questionSubmit" value="Get Answer">
     <input name="go" value="go" type="image" src="<c:url value="/images/go.gif"/>" border="0" onmouseover="return true;">
@@ -91,7 +91,7 @@
         <input type="hidden" name="myProp(max_pvalue)" value="-30">
          ${textParam.prompt}:
         <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})"
-                   value="${textParam.default}" size="10"/>
+                   value="${textParam.default}" size="12"/>
     <td align="right" width="24">
         <input type="hidden" name="questionSubmit" value="Get Answer">
     <input name="go" value="go" type="image" src="<c:url value="/images/go.gif"/>" border="0" onmouseover="return true;">
@@ -129,7 +129,7 @@
 <input type="hidden" id="sequenceId_type" name="sequenceId_type" value="DATA" />
         <input type="hidden" name="questionFullName" value="GenomicSequenceQuestions.SequenceBySourceId">
         ${sequenceIdParam.prompt}:
- <input type="text" name="sequenceId_data" value="${sequenceIdParam.default}" size="10"/>
+ <input type="text" name="sequenceId_data" value="${sequenceIdParam.default}" size="12"/>
 
     <td align="right" width="24">
         <input type="hidden" name="questionSubmit" value="Get Answer">
