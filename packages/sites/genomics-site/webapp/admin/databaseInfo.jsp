@@ -62,11 +62,21 @@
 <c:catch var='e'>
 <b>Database family name</b>: ${wdkRecord.attributes['family_name'].value}<br>
 <b>Last update</b>: ${wdkRecord.attributes['last_update'].value}<br>
-<c:if test="${wdkRecord.attributes['elapsedCheckDays'].value > 1}"><c:set var="tMWarning" value='1'/></c:if>
-<c:if test="${tMWarning == 1}"><div style="background-color:red; color:white; padding:3px; width:75%"></c:if>
-<b>Last check</b>: ${wdkRecord.attributes['last_check']} 
-(<c:if test="${wdkRecord.attributes['elapsedCheckDays'].value != 0}">${wdkRecord.attributes['elapsedCheckDays'].value} days </c:if>${wdkRecord.attributes['elapsedCheckHours'].value} hours ago)<br>
-<c:if test="${tMWarning == 1}"></div></c:if>
+
+<c:choose>
+  <c:when test="${wdkRecord.attributes['elapsedCheckDays'].value == null}">
+    <div style="background-color:red; color:white; padding:3px; width:75%">
+    <b>Last check</b>: No timestamp found in tuningManager registry.
+    </div>
+  </c:when>
+  <c:otherwise>
+    <c:if test="${tMWarning == 1}"><div style="background-color:red; color:white; padding:3px; width:75%"></c:if>
+      <b>Last check</b>: ${wdkRecord.attributes['last_check']} 
+      (<c:if test="${wdkRecord.attributes['elapsedCheckDays'].value != 0}">${wdkRecord.attributes['elapsedCheckDays'].value} days </c:if>${wdkRecord.attributes['elapsedCheckHours'].value} hours ago)<br>
+    <c:if test="${tMWarning == 1}"></div></c:if>
+  </c:otherwise>
+</c:choose>
+
 <b>Subversion url</b>: <a href="${wdkRecord.attributes['subversion_url'].value}">${wdkRecord.attributes['subversion_url'].value}</a><br>
 </c:catch>
 <c:if test="${e!=null}"> 
