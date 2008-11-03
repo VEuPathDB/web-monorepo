@@ -14,6 +14,8 @@
               description="Value to appear at top of page"
 %>
 
+<c:catch var='e'>
+
 <c:if test="!${align}">
     <c:set var="align" value="center" />
 </c:if>
@@ -85,3 +87,8 @@
     ${theTable}
     </c:otherwise>
 </c:choose>
+
+</c:catch>
+<c:if test="${e!=null}">
+<font color="red">information not available</font><br><font size='-2'>${fn:replace(e, fn:substring(e, 175, -1), '...')}</font>
+</c:if>
