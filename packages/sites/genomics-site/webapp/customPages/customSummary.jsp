@@ -59,6 +59,17 @@ function goToIsolate() {
    window.location.href = url;
 }
 
+function Check(chk) {
+  if(document.checkHandleForm.Check_All.value=="Check All"){
+    for (i = 0; i < chk.length; i++)
+      chk[i].checked = true ;
+    document.checkHandleForm.Check_All.value="UnCheck All";
+  } else{
+    for (i = 0; i < chk.length; i++)
+      chk[i].checked = false ;
+    document.checkHandleForm.Check_All.value="Check All";
+  }
+}
 
 function enableRename() {
    var nameText = document.getElementById('nameText');
@@ -90,17 +101,17 @@ function savePreference(paramKey, paramVal)
     // commit the preference
     var xmlObj = null;
 
-	if(window.XMLHttpRequest){
-		xmlObj = new XMLHttpRequest();
-	} else if(window.ActiveXObject){
-		xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
-	} else {
+  if(window.XMLHttpRequest){
+    xmlObj = new XMLHttpRequest();
+  } else if(window.ActiveXObject){
+    xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
+  } else {
         // ajax is not supported??
-		return;
-	}
-	
-	xmlObj.open( 'GET', url, true );
-	xmlObj.send('');
+    return;
+  }
+  
+  xmlObj.open( 'GET', url, true );
+  xmlObj.send('');
 
 }
 
@@ -146,27 +157,27 @@ function resetAttr() {
 }
 
 function create_Portal_Record_Url(recordName, projectId, primaryKey, portal_url) {
-	//var portal_url = "";
-	if(portal_url.length == 0){
-		if(projectId == 'CryptoDB'){
-			portal_url = "http://www.cryptodb.org/cryptodb/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
-		} else if(projectId == 'PlasmoDB'){
-			portal_url = "http://www.plasmodb.org/plasmo/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
-		} else if(projectId == 'ToxoDB'){
-			portal_url = "http://www.toxodb.org/toxo/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
-		} else if(projectId == 'GiardiaDB'){
-			portal_url = "http://www.giardiadb.org/giardiadb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
-		} else if(projectId == 'TrichDB'){
-			portal_url = "http://www.trichdb.org/trichdb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + 	primaryKey;
-		} else if(projectId == 'ApiDB'){
-			portal_url = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=" + primaryKey; 
-		}
-		window.location = portal_url;
-	} else {
-		recordName = parse_Url(portal_url, "name");
-		primaryKey = parse_Url(portal_url, "source_id");
-		create_Portal_Record_Url(recordName,projectId,primaryKey,"");
-	} 
+  //var portal_url = "";
+  if(portal_url.length == 0){
+    if(projectId == 'CryptoDB'){
+      portal_url = "http://www.cryptodb.org/cryptodb/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
+    } else if(projectId == 'PlasmoDB'){
+      portal_url = "http://www.plasmodb.org/plasmo/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
+    } else if(projectId == 'ToxoDB'){
+      portal_url = "http://www.toxodb.org/toxo/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
+    } else if(projectId == 'GiardiaDB'){
+      portal_url = "http://www.giardiadb.org/giardiadb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
+    } else if(projectId == 'TrichDB'){
+      portal_url = "http://www.trichdb.org/trichdb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" +   primaryKey;
+    } else if(projectId == 'ApiDB'){
+      portal_url = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=" + primaryKey; 
+    }
+    window.location = portal_url;
+  } else {
+    recordName = parse_Url(portal_url, "name");
+    primaryKey = parse_Url(portal_url, "source_id");
+    create_Portal_Record_Url(recordName,projectId,primaryKey,"");
+  } 
 }
 
 function parse_Url( url, parameter_name )
@@ -307,14 +318,14 @@ function parse_Url( url, parameter_name )
            <a href="downloadHistoryAnswer.do?wdk_history_id=${historyId}">
                Download</a>&nbsp;|&nbsp;
            <a href="<c:url value="/showQueryHistory.do"/>">Combine with other results</a>
-	       
-	       <c:set var="recordClass" value="${wdkAnswer.recordClass}"/>
+         
+         <c:set var="recordClass" value="${wdkAnswer.recordClass}"/>
            <c:set var="rsName" value="${recordClass.fullName}"/>
            <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
            <c:set var="isContigRec" value="${fn:containsIgnoreCase(rsName, 'ContigRecordClass')}"/>
-	       <c:if test="${isGeneRec && showOrthoLink}">
-	           &nbsp;|&nbsp;
-	           
+         <c:if test="${isGeneRec && showOrthoLink}">
+             &nbsp;|&nbsp;
+             
                <c:set var="result">
                  <c:set var="filter" value="${wdkAnswer.filter}" />
                  <c:choose>
@@ -345,13 +356,13 @@ function parse_Url( url, parameter_name )
            </c:if>
            
            <c:set value="${wdkAnswer.question.fullName}" var="qName" />
-	       <c:if test="${history.boolean == false}">
-	           &nbsp;|&nbsp;
+         <c:if test="${history.boolean == false}">
+             &nbsp;|&nbsp;
                    <c:set value="${wdkAnswer.questionUrlParams}" var="qurlParams"/>
-	           <c:set var="questionUrl" value="" />
+             <c:set var="questionUrl" value="" />
                    <a href="showQuestion.do?questionFullName=${qName}${qurlParams}&questionSubmit=Get+Answer&goto_summary=0">
-	           Revise query</a>
-	       </c:if>
+             Revise query</a>
+         </c:if>
        </td>
     </tr>
 </table>
@@ -613,7 +624,7 @@ function parse_Url( url, parameter_name )
          <th>  Please select at least two isolates to run ClustalW
               <input type="button" value="Run ClustalW on Checked Strains" onClick="goToIsolate()" />
          </th>
-	 </tr>
+   </tr>
          </table>
        </c:if>
    </td></tr>
@@ -707,8 +718,8 @@ function parse_Url( url, parameter_name )
         <c:choose>
            <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
               
-			  <a href="javascript:create_Portal_Record_Url('${recNam}', '${projectId}', '${recordId}','')">
-				${projectId}:${recordId}</a>
+        <a href="javascript:create_Portal_Record_Url('${recNam}', '${projectId}', '${recordId}','')">
+        ${projectId}:${recordId}</a>
            </c:when>
 
            <c:when test = "${cryptoIsolatesQuestion}">
@@ -735,18 +746,18 @@ function parse_Url( url, parameter_name )
 
           <!-- need to know if fieldVal should be hot linked -->
           <c:choose>
-			<c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
+      <c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
                <span style="color:gray;">N/A</span>
             </c:when>
             <c:when test="${recAttr.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
-              	<c:choose>
-				 <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
-					<a href="javascript:create_Portal_Record_Url('','${record.projectId}','','${recAttr.url}')">${recAttr.displayText}</a>
-	             </c:when>
-				 <c:otherwise>
-					<a href="${recAttr.url}">${recAttr.displayText}</a>
-				 </c:otherwise>
-				</c:choose>
+                <c:choose>
+         <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+          <a href="javascript:create_Portal_Record_Url('','${record.projectId}','','${recAttr.url}')">${recAttr.displayText}</a>
+               </c:when>
+         <c:otherwise>
+          <a href="${recAttr.url}">${recAttr.displayText}</a>
+         </c:otherwise>
+        </c:choose>
             </c:when>
             <c:otherwise>
               ${fieldVal}
@@ -767,22 +778,25 @@ function parse_Url( url, parameter_name )
 
 
 <c:if test = "${cryptoIsolatesQuestion}">
+
+  </tr>
+</table>
+
+<table width="100%" border="0" cellpadding="3" cellspacing="0">
+  <tr align=center>
+    <th align=right>
+      <input type="button" name="Check_All" value="Check All"
+        onClick="Check(document.checkHandleForm.selectedFields)" />
+     </th>
+    <th> 
+      <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate()" />
+    </th>
+
   </form>
 </c:if>
 
 </tr>
 </table>
-
-
-<c:if test = "${cryptoIsolatesQuestion}">
-<table width="100%" border="0" cellpadding="3" cellspacing="0">
-  <tr align=center>
-    <th> 
-      <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate()" />
-    </th>
-	</tr>
-</table>
-</c:if>
 
 
 
