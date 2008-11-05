@@ -16,8 +16,12 @@
 <c:set var="version" value="${wdkModel.version}"/>
 <c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
 
+<c:set var="project" value="${wdkModel.name}"/>
+
+<%-- old way
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
+--%>
 
 <c:set var="PORTAL" value="${ fn:containsIgnoreCase(modelName, 'api')    }"     />
 <c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')   }"     />
@@ -72,7 +76,7 @@
 
 <%--  Isolates  --%>
 
-<c:if test = "${project == 'CryptoDB' || project == 'EuPathDB' || project == 'PlasmoDB'}">
+<c:if test = "${project == 'CryptoDB' || project == 'ApiDB' || project == 'PlasmoDB'}">
   <tr class="headerRow"><td colspan="4" align="center"><b>Identify Isolates by:</b></td></tr>
   <tr><td colspan="3" align="center">
 	<site:queryGridIsolates/> 
