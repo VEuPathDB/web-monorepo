@@ -45,18 +45,17 @@
 </c:if>
 
 </table>
-
+<p>
 <api:modelConfig var="modelConfig"/>
-<table class='p' border='0' cellpadding='0' cellspacing='0'>
-    <tr><td>
-      <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('modelconfig','blind'); return false">
-  WDK Model Configuration &#8593;&#8595;</a></b>
-  <div id="modelconfig" style="padding: 5px; display: none"><div>
-
+<b><a href="#" style="text-decoration:none" onclick="Effect.toggle('modelconfig','blind'); return false">
+WDK Model Configuration &#8593;&#8595;</a></b>
+<div id="modelconfig" style="padding: 5px; display: none"><div>
         <p>
         The following configurations were obtained from the WDK's running instance of the ModelConfig* classes. These generally represent values defined in 
         the <code>model-config.xml</code> <i>at the time the webapp was loaded</i>,
-        although some properties shown may have been added by the WDK's internals. Passwords have been masked in this display.
+        although some properties shown may have been added by the WDK's internals. Passwords have been masked in this display.<br>
+        <i>This information is </i><b>not</b><i> suitable for 
+        copying directly into the model-config.xml as the attribute names shown here may not match the RNG spec.</i>
 <pre><c:forEach 
     var="section" items="${modelConfig.props}"
 ><b>${section.key}</b><blockquote><c:forEach 
@@ -64,43 +63,39 @@
 >${cfg.key} = ${fn:escapeXml(cfg.value)}
 </c:forEach></blockquote></c:forEach>
 </pre>    
-      </div></div>
-    </td></tr>
-</table>
+</div></div>
+</p>
 
-<table class='p' border='0' cellpadding='0' cellspacing='0'>
-  <c:catch var="e">
-  <api:commentConfig var="commentConfig"/>
-    <tr><td>
-      <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('commentconfig','blind'); return false">
-  User Comments Configuration &#8593;&#8595;</a></b>
-  <div id="commentconfig" style="padding: 5px; display: none"><div>
+<p>
+<c:catch var="e">
+<api:commentConfig var="commentConfig"/>
+<b><a href="#" style="text-decoration:none" onclick="Effect.toggle('commentconfig','blind'); return false">
+User Comments Configuration &#8593;&#8595;</a></b>
+<div id="commentconfig" style="padding: 5px; display: none"><div>
 
-        <p>
+<p>
 The following configurations were obtained from the WDK's running instance of the CommentConfig class. These generally represent values set in 
 <code>comment-config.xml</code> although some processing may occur by the WDK parser.
-The CommentConfig class is instantiated on the first page access requiring it (e.g. this page or the showAddComment.do action) - not at webapp load time. 
-Passwords have been masked in this display.
+The CommentConfig class is instantiated on the first page access requiring it (e.g. this page or the showAddComment.do action) - not at webapp load time. Passwords have been masked in this display.<br>
+<i>This information is </i><b>not</b><i> suitable for  copying directly into the comment-config.xml as the attribute names shown here may not match the RNG spec.</i>
+</p>
 <pre><c:forEach 
     var="cfg" items="${commentConfig.props}"
 >${cfg.key} = ${fn:escapeXml(cfg.value)}
 </c:forEach>
-</pre>    
-      </div></div>
-    </td></tr>
+</pre>
+    </div></div>
 </c:catch>
 <c:if test="${e!=null}"> 
-<tr><td>User Comments Configuration <font color="red">not available</font>
-<br><font size='-2'>${e}</font></td></tr>
+User Comments Configuration <font color="red">not available</font>
+<br><font size='-2'>${e}</font>
 </c:if>
-</table>
+</p>
 
-
-<table class='p' border='0' cellpadding='0' cellspacing='0'>
-    <tr><td>
-      <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('properties','blind'); return false">
-  Properties &#8593;&#8595;</a></b>
-  <div id="properties" style="padding: 5px; display: none"><div>
+<p>
+<b><a href="#" style="text-decoration:none" onclick="Effect.toggle('properties','blind'); return false">
+Properties &#8593;&#8595;</a></b>
+<div id="properties" style="padding: 5px; display: none"><div>
 
         <p>
         WDK built-in properties and properties defined in 
@@ -110,6 +105,5 @@ Passwords have been masked in this display.
 >${prop.key} = ${fn:escapeXml(prop.value)}
 </c:forEach>
 </pre>    
-      </div></div>
-    </td></tr>
-</table>
+</div></div>
+</p>
