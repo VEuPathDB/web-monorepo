@@ -19,7 +19,7 @@
 <c:set var="CPARVUMCONTIGS" value="${props['CPARVUMCONTIGS']}"/>
 <c:set var="CHOMINISCONTIGS" value="${props['CHOMINISCONTIGS']}"/>
 <c:set var="CMURISCONTIGS" value="${props['CMURISCONTIGS']}"/>
-<c:set var="CGI_OR_MOD" value="${props['CGI_OR_MOD']}"/>
+<c:set var="CGI_URL" value="${props['CGI_URL']}"/>
 
 <c:set var="SRT_CONTIG_URL" value="/cgi-bin/contigSrt"/>
 <c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
@@ -103,7 +103,7 @@
 
 <c:if test="${gtracks ne ''}">
     <c:set var="genomeContextUrl">
-    http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse_img/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${feature_source_id}@yellow
+    http://${pageContext.request.serverName}/${CGI_URL}/gbrowse_img/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${feature_source_id}@yellow
     </c:set>
     <c:set var="genomeContextImg">
         <noindex follow><center>
@@ -121,7 +121,7 @@
 
         <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
         <c:set var="gbrowseUrl">
-            http://${pageContext.request.serverName}/${CGI_OR_MOD}/gbrowse/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};label=${labels};h_feat=${id}@yellow
+            http://${pageContext.request.serverName}/${CGI_URL}/gbrowse/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};label=${labels};h_feat=${id}@yellow
         </c:set>
         <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
 
