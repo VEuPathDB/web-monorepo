@@ -10,6 +10,16 @@
 
 <h2>Genome Database</h2>
 
+<c:catch var="e">
+${wdkRecord.attributes['service_name'].value}
+</c:catch>
+<c:choose>
+<c:when test="${e!=null}">
+<font color='red'>Information not available</font><br>
+<font size='-2'>${fn:replace(e, fn:substring(e, 175, -1), '...')}</font>
+</c:when>
+<c:otherwise>
+
 <p>
 <b>Identifiers</b>:
 <table border="0" cellspacing="3" cellpadding="2" align="">
@@ -43,6 +53,7 @@
         onmouseout = "return nd();"><sup>[?]</sup></a></td>
 </tr>
 </table>
+
 <br>
 <b>Hosted on</b>: ${wdkRecord.attributes['server_name'].value} (${wdkRecord.attributes['server_ip'].value})<br>
 <b>Oracle Version</b>: ${wdkRecord.attributes['version'].value}
@@ -53,6 +64,8 @@
 <p>
 <b>Available DBLinks</b>: <site:dataTable tblName="AllDbLinks"/>
 </p>
+</c:otherwise>
+</c:choose>
 
 <h2>Custom Tuning</h2>
 <p>
