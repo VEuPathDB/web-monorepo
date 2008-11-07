@@ -50,11 +50,17 @@ var showParam = "${showParam}";
 function goToIsolate() {
    var form = document.checkHandleForm;
    var cbs = form.selectedFields;
+   var count = 0;
    var url = "/cgi-bin/isolateClustalw?project_id=CryptoDB;isolate_ids=";
    for (var i=0; i<cbs.length; i++) {
      if(cbs[i].checked) {
        url += cbs[i].value + ",";
+       count++;
      }
+   }
+   if(count < 2) {
+     alert("Please select at lease two isolates to run ClustalW");
+     return false;
    }
    window.location.href = url;
 }
