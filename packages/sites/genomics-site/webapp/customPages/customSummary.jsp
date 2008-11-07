@@ -758,7 +758,7 @@ function parse_Url( url, parameter_name )
             <c:when test="${recAttr.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
                 <c:choose>
          <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
-          <a href="javascript:create_Portal_Record_Url('','${record.projectId}','','${recAttr.url}')">${recAttr.displayText}</a>
+          <a href="javascript:create_Portal_Record_Url('','${projectId}','','${recAttr.url}')">${recAttr.displayText}</a>
                </c:when>
          <c:otherwise>
           <a href="${recAttr.url}">${recAttr.displayText}</a>
