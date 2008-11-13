@@ -389,6 +389,9 @@ function parse_Url( url, parameter_name )
   <c:when test="${modelName == 'GiardiaDB'}">
     <site:giardiaFilters historyId="${historyId}" curFilter="${curFilter}" />
   </c:when>
+  <c:when test="${modelName == 'CryptoDB'}">
+    <site:cryptoFilters historyId="${historyId}" curFilter="${curFilter}" />
+  </c:when>
 </c:choose>
 
 </c:if>
