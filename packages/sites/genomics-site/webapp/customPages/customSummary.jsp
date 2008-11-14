@@ -374,6 +374,7 @@ function parse_Url( url, parameter_name )
 </table>
 
 <c:if test="${fn:length(recordClass.filters) > 0}">
+
 <c:choose>
   <c:when test="${wdkAnswer.filter == null}">
     <c:set value="all_results" var="curFilter" />
@@ -382,21 +383,60 @@ function parse_Url( url, parameter_name )
     <c:set value="${wdkAnswer.filter.name}" var="curFilter" />
   </c:otherwise>
 </c:choose>
+
+
+
 <c:choose>
-  <c:when test="${modelName == 'ToxoDB'}">
-    <site:toxoFilters historyId="${historyId}" curFilter="${curFilter}" />
-  </c:when>
-  <c:when test="${modelName == 'GiardiaDB'}">
-    <site:giardiaFilters historyId="${historyId}" curFilter="${curFilter}" />
-  </c:when>
+  
+<c:when test="${modelName == 'ToxoDB'}">
+    <site:toxoFilters historyId="${historyId}" curFilter="${curFilter}"/>
+</c:when>
+<c:when test="${modelName == 'GiardiaDB'}">
+    <site:giardiaFilters historyId="${historyId}" curFilter="${curFilter}"/>
+</c:when>
+
+<c:when test="${modelName == 'ApiDB'}">
+
+<c:set value="${wdkAnswer.internalParams}" var="params"/>
+<c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
+<c:forEach items="${qParamsMap}" var="p">
+   <c:set var="pNam" value="${p.key}"/>
+   <c:set var="qP" value="${p.value}"/>
+   <c:set var="aP" value="${params[pNam]}"/>
+   <c:if test="${fn:containsIgnoreCase(pNam,'organism')}">
+       <c:set value="false" var="oneOrg"/>
+       <c:set var="stringOrg" value="${aP}"/>
+       <c:set var="arrayOrg" value="${fn:split(aP,',')}"/>
+
+       <%-- if there is only one organism do not call for filters --%>
+       <c:if test="${fn:length(arrayOrg) == 1}">
+           <c:set value="true" var="oneOrg"/>
+       </c:if>
+       <%-- while we only have defined filters for Giardia or Toxo, if these organisms were not queried, we do not display filters --%>
+       <c:if test="${!fn:containsIgnoreCase(stringOrg, 'Giardia') && !fn:containsIgnoreCase(stringOrg, 'Toxo')  && !fn:containsIgnoreCase(stringOrg, 'Neospora')   }">
+           <c:set value="true" var="oneOrg"/>
+       </c:if>
+
+   </c:if>
+</c:forEach>
+
+
+<%-- even if there is only one organism, if it is Gl or Tg, we display filters --%>
+<c:if test="${oneOrg eq 'false' || fn:containsIgnoreCase(stringOrg, 'Giardia') || fn:containsIgnoreCase(stringOrg, 'Toxo')}">
+   <site:apiFilters historyId="${historyId}" curFilter="${curFilter}" wdkAnswer="${wdkAnswer}"/>
+</c:if>
+
+
+
+
+</c:when>
+
   <c:when test="${modelName == 'CryptoDB'}">
     <site:cryptoFilters historyId="${historyId}" curFilter="${curFilter}" />
   </c:when>
 </c:choose>
 
 </c:if>
-
-<hr class="clear_all"/>
 
 
 
@@ -427,7 +467,11 @@ function parse_Url( url, parameter_name )
   </c:if>
   <pg:param name="wdk_history_id" id="pager" value="${historyId}" />
 
+
+
+
   <table cellspacing="0" cellpadding="0" border="0" width="100%">
+<hr class="clear_all"/>
     <tr>
       <td nowrap> 
         <!-- pager on top -->
