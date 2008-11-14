@@ -5,11 +5,7 @@
 
 <%@ attribute name="historyId"         required="true"  %>
 <%@ attribute name="curFilter"         required="true"  %>
-<%@ attribute name="wdkAnswer"
-              type="org.gusdb.wdk.model.jspwrap.AnswerBean"
-              required="false"
-              description="Answer Object"
-%>
+<%@ attribute name="stringOrg"         required="true"  %>
 
 <%-- initialize filter link variables --%>
 <c:set var="all_results" value=""/>
@@ -52,35 +48,23 @@
 </c:if>
 
 
-<c:set value="false" var="Org"/>
-<c:set value="${wdkAnswer.internalParams}" var="params"/>
-<c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
-<c:forEach items="${qParamsMap}" var="p">
-   <c:set var="pNam" value="${p.key}"/>
-   <c:set var="qP" value="${p.value}"/>
-   <c:set var="aP" value="${params[pNam]}"/>
-
-
-
-  <c:if test="${fn:containsIgnoreCase(pNam,'organism')}"> 
-    <c:set var="Org" value="true"/>
 
 <div class="filter">
-<table cellpadding="5" border="1" align="center">
+<table cellpadding="5" border="1">
   <tr>
     <th>All Results</th>
 
-       <c:if test="${fn:containsIgnoreCase(aP, 'Giardia')}"> 
-        <th>GiardiaDB<br>Gl</th>
-        <th>GiardiaDB<br>Gl(depr)</th>
+       <c:if test="${fn:containsIgnoreCase(stringOrg, 'Giardia')}"> 
+        <th>Gl</th>
+        <th>Gl(depr)</th>
        </c:if>
 
-      <c:if test="${fn:containsIgnoreCase(aP, 'Toxo')}"> 
-        <th>ToxoDB<br>Tg(repr)</th>
+      <c:if test="${fn:containsIgnoreCase(stringOrg, 'Toxo')}"> 
+        <th>Tg(repr)</th>
        </c:if>
 
-       <c:if test="${fn:containsIgnoreCase(aP, 'Neospora')}"> 
-         <th>ToxoDB<br>Nc</th>
+       <c:if test="${fn:containsIgnoreCase(stringOrg, 'Neospora')}"> 
+         <th>Nc</th>
        </c:if>
  </tr>
   <tr align="center">
@@ -103,7 +87,7 @@
     </c:choose></td>
 
 
-<c:if test="${fn:containsIgnoreCase(aP, 'Giardia')}"> 
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'Giardia')}"> 
       
 <%-- all_genes --%>
     <c:choose>
@@ -140,9 +124,9 @@
       </c:otherwise>
     </c:choose></td>
 
-       </c:if>
+</c:if>
 
-      <c:if test="${fn:containsIgnoreCase(aP, 'Toxo')}"> 
+      <c:if test="${fn:containsIgnoreCase(stringOrg, 'Toxo')}"> 
 
 <%-- toxo_genes --%>
 <c:choose>
@@ -163,7 +147,7 @@
 
        </c:if>
 
-       <c:if test="${fn:containsIgnoreCase(aP, 'Neospora')}"> 
+       <c:if test="${fn:containsIgnoreCase(stringOrg, 'Neospora')}"> 
 
 <%-- neospora_genes --%>
 <c:choose>
@@ -182,130 +166,14 @@
       </c:otherwise>
     </c:choose></td>
 
-       </c:if>
-
-
-  </c:if>
-
-</c:forEach>
-
-
-
-<%-- if there is no parameter organism we need to check the question definition, to which organisms the question applies. For now we just display filters  --%>
-<c:if test="${Org eq 'false'}">     
-  
-
-<!-- display all filters ....until we know which organisms are relevant to this question -->
-<div class="filter">
-<table cellpadding="5" border="1">
-  <tr>
-    <th>All Results</th>
-    <th>GiardiaDB<br>non-deprecated genes</th>
-    <th>GiardiaDB<br>deprecated genes</th>
-    <th>ToxoDB<br>representative genes</th>
-    <th>ToxoDB<br><i>Neospora caninum</i> genes</th>
-  </tr>
-  <tr align="center">
+ </c:if>
  
-<%-- all_results --%>
-   <c:choose>
-      <c:when test="${curFilter eq 'all_results'}">
-        <td class="selected">${wdkAnswer.resultSize}
-      </c:when>
-      <c:otherwise>
-	<c:choose>
-          <c:when test="${all_results != ''}">
-            <td>${all_results}
-          </c:when>
-          <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_results">&nbsp;</a>
-          </c:otherwise>
-        </c:choose>
-      </c:otherwise>
-    </c:choose></td>
-
-
-<%-- all_genes --%>
-    <c:choose>
-      <c:when test="${curFilter eq 'all_genes'}">
-        <td class="selected">${wdkHistory.filterSize}
-      </c:when>
-      <c:otherwise>
-	<c:choose>
-          <c:when test="${all_genes != ''}">
-            <td>${all_genes}
-          </c:when>
-          <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_genes">&nbsp;</a>
-          </c:otherwise>
-        </c:choose>
-      </c:otherwise>
-    </c:choose></td>
-
-
-<%-- deprecated_genes --%>
-<c:choose>
-      <c:when test="${curFilter eq 'deprecated_genes'}">
-        <td class="selected">${wdkHistory.filterSize}
-      </c:when>
-      <c:otherwise>
-	<c:choose>
-          <c:when test="${deprecated_genes != ''}">
-            <td>${deprecated_genes}
-          </c:when>
-          <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=deprecated_genes">&nbsp;</a>
-          </c:otherwise>
-        </c:choose>
-      </c:otherwise>
-    </c:choose></td>
-
-
-<%-- toxo_genes --%>
-<c:choose>
-      <c:when test="${curFilter eq 'toxo_genes'}">
-        <td class="selected">${wdkHistory.filterSize}
-      </c:when>
-      <c:otherwise>
-	<c:choose>
-          <c:when test="${toxo_genes != ''}">
-            <td>${toxo_genes}
-          </c:when>
-          <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=toxo_genes">&nbsp;</a>
-          </c:otherwise>
-        </c:choose>
-      </c:otherwise>
-    </c:choose></td>
-
-
-
-<%-- neospora_genes --%>
-<c:choose>
-      <c:when test="${curFilter eq 'neospora_genes'}">
-        <td class="selected">${wdkHistory.filterSize}
-      </c:when>
-      <c:otherwise>
-	<c:choose>
-          <c:when test="${neospora_genes != ''}">
-            <td>${neospora_genes}
-          </c:when>
-          <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=neospora_genes">&nbsp;</a>
-          </c:otherwise>
-        </c:choose>
-      </c:otherwise>
-    </c:choose></td>
-
-
-
-
-  </tr>
+</tr>
 </table>
 </div>
 
 
-     </c:if>
+
 
 
 

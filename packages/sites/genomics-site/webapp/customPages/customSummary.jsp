@@ -305,17 +305,21 @@ function parse_Url( url, parameter_name )
               ${history.filterSize}
             </c:otherwise>
           </c:choose>
+<%-- with filters the portal will not need this
  <c:if test="${wdkAnswer.resultSize == 0}">
               <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
                  <site:apidbSummary/>
              </c:if>
    </c:if>
-
+--%>
           <c:if test="${wdkAnswer.resultSize > 0}">
              (showing ${wdk_paging_start} to ${wdk_paging_end})
+
+<%-- with filters the portal will not need this
               <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
                  <site:apidbSummary/>
              </c:if>
+--%>
           </c:if>
        </td>
     </tr>
@@ -399,11 +403,15 @@ function parse_Url( url, parameter_name )
 
 <c:set value="${wdkAnswer.internalParams}" var="params"/>
 <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
+
+<%-- checking if there is an organism parameter --%>
+<c:set value="false" var="Org"/>
 <c:forEach items="${qParamsMap}" var="p">
    <c:set var="pNam" value="${p.key}"/>
    <c:set var="qP" value="${p.value}"/>
    <c:set var="aP" value="${params[pNam]}"/>
    <c:if test="${fn:containsIgnoreCase(pNam,'organism')}">
+       <c:set var="Org" value="true"/>
        <c:set value="false" var="oneOrg"/>
        <c:set var="stringOrg" value="${aP}"/>
        <c:set var="arrayOrg" value="${fn:split(aP,',')}"/>
@@ -412,33 +420,29 @@ function parse_Url( url, parameter_name )
        <c:if test="${fn:length(arrayOrg) == 1}">
            <c:set value="true" var="oneOrg"/>
        </c:if>
-       <%-- while we only have defined filters for Giardia or Toxo, if these organisms were not queried, we do not display filters --%>
-       <c:if test="${!fn:containsIgnoreCase(stringOrg, 'Giardia') && !fn:containsIgnoreCase(stringOrg, 'Toxo')  && !fn:containsIgnoreCase(stringOrg, 'Neospora')   }">
-           <c:set value="true" var="oneOrg"/>
-       </c:if>
-
    </c:if>
 </c:forEach>
 
+<%-- if there is no parameter organism we need to check the question definition, to which organisms the question applies. For now we just display filters  --%>
+<c:if test="${Org eq 'false'}">     
+</c:if>
 
 <%-- even if there is only one organism, if it is Gl or Tg, we display filters --%>
 <c:if test="${oneOrg eq 'false' || fn:containsIgnoreCase(stringOrg, 'Giardia') || fn:containsIgnoreCase(stringOrg, 'Toxo')}">
-   <site:apiFilters historyId="${historyId}" curFilter="${curFilter}" wdkAnswer="${wdkAnswer}"/>
+   <site:apiFilters historyId="${historyId}" curFilter="${curFilter}" stringOrg="${stringOrg}"/>
 </c:if>
-
-
-
 
 </c:when>
 
-  <c:when test="${modelName == 'CryptoDB'}">
+<c:when test="${modelName == 'CryptoDB'}">
     <site:cryptoFilters historyId="${historyId}" curFilter="${curFilter}" />
-  </c:when>
+</c:when>
+
 </c:choose>
 
 </c:if>
 
-
+<hr class="clear_all"/>
 
 
 <!-- handle empty result set situation -->
@@ -471,7 +475,7 @@ function parse_Url( url, parameter_name )
 
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%">
-<hr class="clear_all"/>
+
     <tr>
       <td nowrap> 
         <!-- pager on top -->
