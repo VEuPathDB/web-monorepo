@@ -314,14 +314,34 @@ function parse_Url( url, parameter_name )
   <c:set var="rsName" value="${recordClass.fullName}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
 
+<c:set value="${wdkAnswer.internalParams}" var="params"/>
+<c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
+<%-- checking if there is an organism parameter --%>
+<c:set value="false" var="Org"/>
+<c:set value="false" var="oneOrg"/>
+<c:forEach items="${qParamsMap}" var="p">
+   <c:set var="pNam" value="${p.key}"/>
+   <c:set var="qP" value="${p.value}"/>
+   <c:set var="aP" value="${params[pNam]}"/>
+   <c:if test="${fn:containsIgnoreCase(pNam,'organism')}">
+       <c:set var="Org" value="true"/>
+       <c:set var="stringOrg" value="${aP}"/>
+       <c:set var="arrayOrg" value="${fn:split(aP,',')}"/>
+       <c:if test="${fn:length(arrayOrg) == 1}">
+           <c:set value="true" var="oneOrg"/>
+       </c:if>
+   </c:if>
+</c:forEach>
+
 <%-- for questions other than gene questions, where no filters are defined  --%>
+<%-- also for when the organism value is encoded, no filters  --%>
+<%-- also for when there is no organism parameter --%>
 <%--  <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB') && !(isGeneRec)}">   --%>
-          <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB') && fn:length(recordClass.filters)== 0}">
-              <site:apidbSummary/>
+          <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+               <c:if test="${(fn:length(recordClass.filters)==0) || oneOrg || !Org}">
+                   <site:apidbSummary/>
+               </c:if>
           </c:if>
-
-
-
 
        </td>
     </tr>
@@ -401,39 +421,19 @@ function parse_Url( url, parameter_name )
 </c:when>
 
 <c:when test="${modelName == 'ApiDB'}">
-<c:set value="${wdkAnswer.internalParams}" var="params"/>
-<c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
-
-<%-- checking if there is an organism parameter --%>
-<c:set value="false" var="Org"/>
-<c:forEach items="${qParamsMap}" var="p">
-   <c:set var="pNam" value="${p.key}"/>
-   <c:set var="qP" value="${p.value}"/>
-   <c:set var="aP" value="${params[pNam]}"/>
-   <c:if test="${fn:containsIgnoreCase(pNam,'organism')}">
-       <c:set var="Org" value="true"/>
-       <c:set value="false" var="oneOrg"/>
-       <c:set var="stringOrg" value="${aP}"/>
-       <c:set var="arrayOrg" value="${fn:split(aP,',')}"/>
-
-
-       <%-- if there is only one organism do not call for filters --%>
-       <c:if test="${fn:length(arrayOrg) == 1}">
-           <c:set value="true" var="oneOrg"/>
-       </c:if>
-   </c:if>
-</c:forEach>
 
 <%-- if there is no parameter organism we need to check the question definition, to which organisms the question applies. For now we just display filters  --%>
-<c:if test="${Org eq 'false'}"> 
-<br>There is no organism param<br>    
-</c:if>
-
-<%-- even if there is only one organism, if it is Gl or Tg, we display filters --%>
+<c:choose>
+<c:when test="${Org eq 'false'}"> 
+    <br>There is no organism param<br>    
+</c:when>
+<c:otherwise>
+<%-- if there are more than one organism values OR if it is Gl or Tg, we display filters --%>
 <c:if test="${oneOrg eq 'false' || fn:containsIgnoreCase(stringOrg, 'Giardia') || fn:containsIgnoreCase(stringOrg, 'Toxo')}">
    <site:apiFilters historyId="${historyId}" curFilter="${curFilter}" stringOrg="${stringOrg}"/>
 </c:if>
-
+</c:otherwise>
+</c:choose>
 
 </c:when>
 
