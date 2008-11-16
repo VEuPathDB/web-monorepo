@@ -9,10 +9,23 @@
 
 <%-- initialize filter link variables --%>
 <c:set var="all_results" value=""/>
-<c:set var="all_genes" value=""/>
+<c:set var="ch_genes" value=""/>
+
+<c:set var="cp_genes" value=""/>
+<c:set var="gl_genes" value=""/>
 <c:set var="deprecated_genes" value=""/>
+<c:set var="pb_genes" value=""/>
+<c:set var="pf_genes" value=""/>
+<c:set var="pk_genes" value=""/>
+<c:set var="pv_genes" value=""/>
+<c:set var="py_genes" value=""/>
+<c:set var="tg_genes" value=""/>
 <c:set var="toxo_genes" value=""/>
+<c:set var="toxo_instances" value=""/>
 <c:set var="neospora_genes" value=""/>
+<c:set var="tv_genes" value=""/>
+
+
 
 <%-- check for filter link cache --%>
 <c:set var="answerCache" value="${sessionScope.answer_cache}"/>
@@ -30,17 +43,47 @@
       <c:when test="${cacheItem.key == 'all_results'}">
         <c:set var="all_results" value="${cacheItem.value}"/>
       </c:when>
-      <c:when test="${cacheItem.key == 'all_genes'}">
-        <c:set var="all_genes" value="${cacheItem.value}"/>
+     <c:when test="${cacheItem.key == 'ch_genes'}">
+        <c:set var="ch_genes" value="${cacheItem.value}"/>
+      </c:when>
+       <c:when test="${cacheItem.key == 'cp_genes'}">
+        <c:set var="cp_genes" value="${cacheItem.value}"/>
+      </c:when>
+ <c:when test="${cacheItem.key == 'pb_genes'}">
+        <c:set var="pb_genes" value="${cacheItem.value}"/>
+      </c:when>
+<c:when test="${cacheItem.key == 'pc_genes'}">
+        <c:set var="pc_genes" value="${cacheItem.value}"/>
+      </c:when>
+<c:when test="${cacheItem.key == 'pf_genes'}">
+        <c:set var="pf_genes" value="${cacheItem.value}"/>
+      </c:when>
+<c:when test="${cacheItem.key == 'pk_genes'}">
+        <c:set var="pk_genes" value="${cacheItem.value}"/>
+      </c:when>
+<c:when test="${cacheItem.key == 'pv_genes'}">
+        <c:set var="pv_genes" value="${cacheItem.value}"/>
+      </c:when>
+<c:when test="${cacheItem.key == 'py_genes'}">
+        <c:set var="py_genes" value="${cacheItem.value}"/>
+      </c:when>
+      <c:when test="${cacheItem.key == 'gl_genes'}">
+        <c:set var="gl_genes" value="${cacheItem.value}"/>
       </c:when>
       <c:when test="${cacheItem.key == 'deprecated_genes'}">
         <c:set var="deprecated_genes" value="${cacheItem.value}"/>
       </c:when>
- <c:when test="${cacheItem.key == 'toxo_genes'}">
+      <c:when test="${cacheItem.key == 'toxo_genes'}">
         <c:set var="toxo_genes" value="${cacheItem.value}"/>
       </c:when>
- <c:when test="${cacheItem.key == 'neospora_genes'}">
-        <c:set var="toxo_genes" value="${cacheItem.value}"/>
+ <c:when test="${cacheItem.key == 'toxo_instances'}">
+        <c:set var="toxo_instances" value="${cacheItem.value}"/>
+      </c:when>
+      <c:when test="${cacheItem.key == 'neospora_genes'}">
+        <c:set var="neospora_genes" value="${cacheItem.value}"/>
+      </c:when>
+<c:when test="${cacheItem.key == 'tv_genes'}">
+        <c:set var="tv_genes" value="${cacheItem.value}"/>
       </c:when>
     </c:choose>
     </c:forEach>
@@ -54,17 +97,50 @@
   <tr>
     <th>All Results</th>
 
-       <c:if test="${fn:containsIgnoreCase(stringOrg, 'Giardia')}"> 
+       <c:if test="${fn:containsIgnoreCase(stringOrg, 'hominis')}"> 
+        <th>Ch</th>
+</c:if>
+ <c:if test="${fn:containsIgnoreCase(stringOrg, 'parvum')}"> 
+        <th>Cp</th>
+       </c:if>
+
+  <c:if test="${fn:containsIgnoreCase(stringOrg, 'Giardia')}"> 
         <th>Gl</th>
         <th>Gl(depr)</th>
        </c:if>
 
+ <c:if test="${fn:containsIgnoreCase(stringOrg, 'berghei')}"> 
+        <th>Pb</th>
+       </c:if>
+ <c:if test="${fn:containsIgnoreCase(stringOrg, 'chabaudi')}"> 
+        <th>Pc</th>
+       </c:if>
+ <c:if test="${fn:containsIgnoreCase(stringOrg, 'falciparum')}"> 
+        <th>Pf</th>
+       </c:if>
+ <c:if test="${fn:containsIgnoreCase(stringOrg, 'knowlesi')}"> 
+        <th>Pk</th>
+       </c:if>
+ <c:if test="${fn:containsIgnoreCase(stringOrg, 'vivax')}"> 
+        <th>Pv</th>
+       </c:if>
+ <c:if test="${fn:containsIgnoreCase(stringOrg, 'yoelii')}"> 
+        <th>Py</th>
+       </c:if>
+
+     
+
       <c:if test="${fn:containsIgnoreCase(stringOrg, 'Toxo')}"> 
+        <th>Tg(inst)</th>
         <th>Tg(repr)</th>
        </c:if>
 
        <c:if test="${fn:containsIgnoreCase(stringOrg, 'Neospora')}"> 
          <th>Nc</th>
+       </c:if>
+
+ <c:if test="${fn:containsIgnoreCase(stringOrg, 'Trich')}"> 
+        <th>Tv</th>
        </c:if>
  </tr>
   <tr align="center">
@@ -87,20 +163,62 @@
     </c:choose></td>
 
 
-<c:if test="${fn:containsIgnoreCase(stringOrg, 'Giardia')}"> 
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'hominis')}"> 
       
-<%-- all_genes --%>
+<%-- ch_genes --%>
     <c:choose>
-      <c:when test="${curFilter eq 'all_genes'}">
+      <c:when test="${curFilter eq 'ch_genes'}">
         <td class="selected">${wdkHistory.filterSize}
       </c:when>
       <c:otherwise>
 	<c:choose>
-          <c:when test="${all_genes != ''}">
-            <td>${all_genes}
+          <c:when test="${ch_genes != ''}">
+            <td>${ch_genes}
           </c:when>
           <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=all_genes">&nbsp;</a>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=ch_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+</c:if>
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'parvum')}"> 
+
+<%-- cp_genes --%>
+    <c:choose>
+      <c:when test="${curFilter eq 'cp_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${cp_genes != ''}">
+            <td>${cp_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=cp_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+
+</c:if>
+
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'Giardia')}"> 
+      
+<%-- gl_genes --%>
+    <c:choose>
+      <c:when test="${curFilter eq 'gl_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${gl_genes != ''}">
+            <td>${gl_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=gl_genes">&nbsp;</a>
           </c:otherwise>
         </c:choose>
       </c:otherwise>
@@ -126,7 +244,149 @@
 
 </c:if>
 
+
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'berghei')}"> 
+
+<%-- pb_genes --%>
+    <c:choose>
+      <c:when test="${curFilter eq 'pb_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${pb_genes != ''}">
+            <td>${pb_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=pb_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+</c:if>
+
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'chabaudi')}"> 
+
+<%-- pc_genes --%>
+    <c:choose>
+      <c:when test="${curFilter eq 'pc_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${pc_genes != ''}">
+            <td>${pc_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=pc_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+</c:if>
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'falciparum')}"> 
+
+<%-- pf_genes --%>
+    <c:choose>
+      <c:when test="${curFilter eq 'pf_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${pf_genes != ''}">
+            <td>${pf_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=pf_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+</c:if>
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'knowlesi')}"> 
+
+<%-- pk_genes --%>
+    <c:choose>
+      <c:when test="${curFilter eq 'pk_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${pk_genes != ''}">
+            <td>${pk_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=pk_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+</c:if>
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'vivax')}"> 
+
+<%-- pv_genes --%>
+    <c:choose>
+      <c:when test="${curFilter eq 'pv_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${pv_genes != ''}">
+            <td>${pv_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=pv_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+</c:if>
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'yoelii')}"> 
+
+<%-- py_genes --%>
+    <c:choose>
+      <c:when test="${curFilter eq 'py_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${py_genes != ''}">
+            <td>${py_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=py_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+</c:if>
+
+
+
       <c:if test="${fn:containsIgnoreCase(stringOrg, 'Toxo')}"> 
+
+<%-- toxo_instances --%>
+<c:choose>
+      <c:when test="${curFilter eq 'toxo_instances'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${toxo_instances != ''}">
+            <td>${toxo_instances}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=toxo_instances">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
 
 <%-- toxo_genes --%>
 <c:choose>
@@ -144,6 +404,7 @@
         </c:choose>
       </c:otherwise>
     </c:choose></td>
+
 
        </c:if>
 
@@ -168,14 +429,30 @@
 
  </c:if>
  
+
+<c:if test="${fn:containsIgnoreCase(stringOrg, 'Trich')}"> 
+
+<%-- tv_genes --%>
+    <c:choose>
+      <c:when test="${curFilter eq 'tv_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${tv_genes != ''}">
+            <td>${tv_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=tv_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+</c:if>
+
+
 </tr>
 </table>
 </div>
-
-
-
-
-
-
-
 

@@ -166,11 +166,11 @@ function create_Portal_Record_Url(recordName, projectId, primaryKey, portal_url)
   //var portal_url = "";
   if(portal_url.length == 0){
     if(projectId == 'CryptoDB'){
-      portal_url = "http://www.cryptodb.org/cryptodb/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
+      portal_url = "http://www.cryptodb.org/cryptodb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
     } else if(projectId == 'PlasmoDB'){
-      portal_url = "http://www.plasmodb.org/plasmo/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
+      portal_url = "http://www.plasmodb.org/plasmo/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
     } else if(projectId == 'ToxoDB'){
-      portal_url = "http://www.toxodb.org/toxo/showRecord.do?name=" + recordName + "&project_id=&source_id=" + primaryKey;
+      portal_url = "http://www.toxodb.org/toxo/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
     } else if(projectId == 'GiardiaDB'){
       portal_url = "http://www.giardiadb.org/giardiadb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
     } else if(projectId == 'TrichDB'){
@@ -305,22 +305,24 @@ function parse_Url( url, parameter_name )
               ${history.filterSize}
             </c:otherwise>
           </c:choose>
-<%-- with filters the portal will not need this
- <c:if test="${wdkAnswer.resultSize == 0}">
-              <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
-                 <site:apidbSummary/>
-             </c:if>
-   </c:if>
---%>
+
           <c:if test="${wdkAnswer.resultSize > 0}">
              (showing ${wdk_paging_start} to ${wdk_paging_end})
+	   </c:if>
 
-<%-- with filters the portal will not need this
-              <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
-                 <site:apidbSummary/>
-             </c:if>
---%>
+  <c:set var="recordClass" value="${wdkAnswer.recordClass}"/>
+  <c:set var="rsName" value="${recordClass.fullName}"/>
+  <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
+
+<%-- for questions other than gene questions, where no filters are defined  --%>
+<%--  <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB') && !(isGeneRec)}">   --%>
+          <c:if test="${fn:containsIgnoreCase(dispModelName, 'ApiDB') && fn:length(recordClass.filters)== 0}">
+              <site:apidbSummary/>
           </c:if>
+
+
+
+
        </td>
     </tr>
     <tr>
@@ -329,9 +331,7 @@ function parse_Url( url, parameter_name )
                Download</a>&nbsp;|&nbsp;
            <a href="<c:url value="/showQueryHistory.do"/>">Combine with other results</a>
          
-         <c:set var="recordClass" value="${wdkAnswer.recordClass}"/>
-           <c:set var="rsName" value="${recordClass.fullName}"/>
-           <c:set var="isGeneRec" value="${fn:containsIgnoreCase(rsName, 'GeneRecordClass')}"/>
+       
            <c:set var="isContigRec" value="${fn:containsIgnoreCase(rsName, 'ContigRecordClass')}"/>
          <c:if test="${isGeneRec && showOrthoLink}">
              &nbsp;|&nbsp;
@@ -377,6 +377,7 @@ function parse_Url( url, parameter_name )
     </tr>
 </table>
 
+
 <c:if test="${fn:length(recordClass.filters) > 0}">
 
 <c:choose>
@@ -400,7 +401,6 @@ function parse_Url( url, parameter_name )
 </c:when>
 
 <c:when test="${modelName == 'ApiDB'}">
-
 <c:set value="${wdkAnswer.internalParams}" var="params"/>
 <c:set value="${wdkAnswer.question.paramsMap}" var="qParamsMap"/>
 
@@ -416,6 +416,7 @@ function parse_Url( url, parameter_name )
        <c:set var="stringOrg" value="${aP}"/>
        <c:set var="arrayOrg" value="${fn:split(aP,',')}"/>
 
+
        <%-- if there is only one organism do not call for filters --%>
        <c:if test="${fn:length(arrayOrg) == 1}">
            <c:set value="true" var="oneOrg"/>
@@ -424,13 +425,15 @@ function parse_Url( url, parameter_name )
 </c:forEach>
 
 <%-- if there is no parameter organism we need to check the question definition, to which organisms the question applies. For now we just display filters  --%>
-<c:if test="${Org eq 'false'}">     
+<c:if test="${Org eq 'false'}"> 
+<br>There is no organism param<br>    
 </c:if>
 
 <%-- even if there is only one organism, if it is Gl or Tg, we display filters --%>
 <c:if test="${oneOrg eq 'false' || fn:containsIgnoreCase(stringOrg, 'Giardia') || fn:containsIgnoreCase(stringOrg, 'Toxo')}">
    <site:apiFilters historyId="${historyId}" curFilter="${curFilter}" stringOrg="${stringOrg}"/>
 </c:if>
+
 
 </c:when>
 
@@ -704,7 +707,7 @@ function parse_Url( url, parameter_name )
   <%-- does current record have formatted_gene_id? --%>
   <c:when test="${hasGeneId != 0}" >
     <c:set var="newGeneId" value="${summaryAttributes['formatted_gene_id'].briefValue}" />
-    <% System.out.println("hasGeneId is not zero"); %>
+<%--    <% System.out.println("hasGeneId is not zero"); %>  --%>
     <c:choose>
       <%-- is formatted_gene_id non-null? --%>
       <c:when test="${newGeneId != null}">
@@ -739,7 +742,7 @@ function parse_Url( url, parameter_name )
     </c:choose>
   </c:when>
   <c:otherwise>
-    <% System.out.println("hasGeneId is not zero"); %>
+<%--    <% System.out.println("hasGeneId is not zero"); %> --%>
     <%-- no gene id: alternate row colors --%>
     <c:choose>
       <c:when test="${i % 2 == 0}"><c:set var="curRowColor" value="rowLight" /></c:when>
