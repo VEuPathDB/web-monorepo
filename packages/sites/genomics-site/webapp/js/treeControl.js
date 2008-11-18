@@ -1,7 +1,8 @@
 //jQuery.noConflict();
 $(document).ready(function(){
 	var root = $(".tree");
-	var nodes = $("term-node");
+	var fNode = $(".term-node:first input");
+	toggleChildrenCheck(fNode);
 	var children = $(".term-children").hide();
 	var x = 1;
 });
