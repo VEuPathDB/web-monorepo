@@ -105,7 +105,7 @@
   </c:if>
   <c:if test="${token eq 'A'}">
         <c:set var="A_image">
-            <c:url value="/images/apidb_letter.gif" />
+             /images/eupath_e.gif 
         </c:set>
         <c:set var="A" value="<a href='${apiRoot}${link}'><img src='${A_image}' border='0' alt='apidb' /></a>" />
   </c:if>

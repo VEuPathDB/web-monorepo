@@ -304,7 +304,7 @@ Ack, this form won't work at all without JavaScript support!
     <c:set var="idx" value="1"/>
     <tr>
       <td>
-        <a href="javascript:toggle(0)"><img border=0 id="img0" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<b>All Organisms</b>
+        <a href="javascript:toggle(0)"><img border=0 id="img0" alt="don't care" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<b>All Organisms</b>
       </td>
     </tr>
     <c:forEach var="sp" items="${ind.vocab}">
@@ -321,7 +321,7 @@ Ack, this form won't work at all without JavaScript support!
 	<td><c:forEach var="i" begin="0" end="${indent}" step="1">
                     &nbsp;&nbsp;&nbsp;&nbsp;
             </c:forEach>
-            <a href="javascript:toggle(${idx})"><img border=0 id="img${idx}" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<c:choose><c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when><c:otherwise><i>${spDisp}</i></c:otherwise></c:choose><c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
+            <a href="javascript:toggle(${idx})"><img border=0 id="img${idx}" alt="don't care" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<c:choose><c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when><c:otherwise><i>${spDisp}</i></c:otherwise></c:choose><c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
         </td>
         </tr>
 
@@ -344,7 +344,6 @@ Ack, this form won't work at all without JavaScript support!
     <html:hidden property="myProp(${profilePatternName})" value="%"/>
   </td>
 </tr>
-
 
 <tr align>
   <td colspan="3" align="center">

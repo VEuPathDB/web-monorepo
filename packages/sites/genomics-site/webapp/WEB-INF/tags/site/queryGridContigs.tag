@@ -10,6 +10,7 @@
      <tr>
 
         <td width="50%" valign="top">
+<div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>
                     <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="Sequence ID"  existsOn="A G C P T Tr"/>
@@ -19,12 +20,14 @@
                     <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A G C P T Tr"/>
                 </tr>
             </table>
+</div>
         </td>
 
 <%--	<td width="0.5" class="blueVcalLine"></td> --%>
 	<td width="0.5"></td>
 
         <td valign="top">
+<div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
                     <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="SEQ" existsOn="A G C P T Tr"  />
@@ -35,6 +38,7 @@
                      <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="NA" linktext="DNA Motif" existsOn=""/>
                 </tr>
             </table>
+</div>
         </td>
 
      </tr>

@@ -10,6 +10,7 @@
 <tr>
 
         <td width="50%" valign="top">
+<div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstBySourceId" linktext="EST ID" existsOn="A G C P T Tr"/>
@@ -23,11 +24,13 @@
                 </tr>
 
             </table>
+</div>
         </td>
 
 	<td width="0.5"></td>
 
         <td valign="top">
+<div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>
                     <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="EST" existsOn="A G C P T Tr"/>
@@ -40,6 +43,7 @@
                 </tr>
 
             </table>
+</div>
         </td>
 
 

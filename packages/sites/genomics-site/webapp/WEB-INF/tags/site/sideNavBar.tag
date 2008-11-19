@@ -280,7 +280,7 @@
          <hr class="brown">
          <center>
          <a href="http://geneplot.plasmodb.org">
-         <img src="<c:url value='/images/PlasmoCD.jpg' />" alt="PlasmoDB gene plot" border="0">
+         <img src="images/PlasmoCD.jpg" alt="PlasmoDB gene plot" border="0">
          <br>
          <div class="small">Access the latest PlasmoCD</div>
          </a>

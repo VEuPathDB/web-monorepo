@@ -42,7 +42,6 @@ window.onload = function(){
 	else if(target == 'EST') clickDefault('EST','type');
 	else if(target == 'SEQ') clickDefault('Genome','type');
 	else if(target == 'ISOLATE') clickDefault('Isolates','type');
-	else if(target == 'ASSEMBLIES') clickDefault('Assemblies','type');
 
 	if(parseUrl('-filter') != ""){
            revise = true;
@@ -100,13 +99,13 @@ function changeQuestion(){
 	if (blastDb.indexOf("est") >= 0){
 		questionName = "EstQuestions.EstsBySimilarity";
 	} else 	if (blastDb.indexOf("assem") >= 0){
-		questionName = "AssemblyQuestions.AssembliesBySimilarity";
+		questionName = "EstQuestions.EstsBySimilarity";
 	} else 	if (blastDb.indexOf("orf") >= 0){
 		questionName = "OrfQuestions.OrfsBySimilarity";
 	} else 	if (blastDb.indexOf("genom") >= 0){
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
 	} else 	if (blastDb.indexOf("iso") >= 0){
-		questionName = "IsolateQuestions.IsolatesBySimilarity";
+		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
 	}
@@ -409,15 +408,13 @@ function checkSequenceLength(){
 		var str1 = str.replace(/^>.*/,"");
 		var str2 = str1.replace(/[^a-zA-Z]/g,"");
 		if(str2.length <= 25 && algorithm == "blastn"){
-			document.getElementById('short_sequence_warning').style.display = "block";
-			document.getElementById('short_sequence_warning').innerHTML="Note:  The expect value has been set from " + eval.value + " to 1000 because <br> your query sequence is less than 25 nucleotides.  You may want <br> to adjust the expect value further to refine the specificity of your <br> query.";
-
+			document.getElementById('short_sequence_warning').innerHTML = "Note:  The expect value has been set from " + eval.value + " to 1000 because <br> your query sequence is less than 25 nucleotides.  You may want <br> to adjust the expect value further to refine the specificity of your <br> query.";
 			eval.value = 1000;
 		}else{
-			document.getElementById('short_sequence_warning').style.display = "none";
+			document.getElementById('short_sequence_warning').innerHTML = "";
 		}
 	}else{
-		document.getElementById('short_sequence_warning').style.display = "none;";
+		document.getElementById('short_sequence_warning').innerHTML = "";
 	}
 }
 

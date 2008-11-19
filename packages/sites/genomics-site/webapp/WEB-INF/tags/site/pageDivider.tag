@@ -7,12 +7,17 @@
 
 <br><br>
 <a name="${name}">
-
-<table border='0' width='100%'><tr class="secondary3">
-  <th align="center" width='85%'><font face="Arial,Helvetica" size="+1">
-     ${name}
-</font></th>
-  <th align="right" width='15%'>
-      <a HREF="#top">Back to the Top</a>
-  </th></tr></table>
-<br>
+<table BORDER="0" CELLSPACING="0" CELLPADDING="2" WIDTH="100%" BGCOLOR="#ffdddd">
+  <tr>
+    <td BGCOLOR="#ffeeee" ALIGN="left">
+      <font FACE="helvetica,sans-serif" SIZE="+1" COLOR="#AA0000"
+        <b>${name}</b>
+      </font>
+    </td>
+    <td BGCOLOR="#ffeeee" ALIGN="right">
+      <a HREF="#top">back to top</a>
+    </td>
+  </tr>
+  <tr>
+    <td COLSPAN=2 BGCOLOR="#ffffff">&nbsp;</td></tr>
+</table>

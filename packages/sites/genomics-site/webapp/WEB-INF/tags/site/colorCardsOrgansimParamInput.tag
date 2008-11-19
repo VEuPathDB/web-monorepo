@@ -86,7 +86,7 @@ var query = "${qName}";
 		<c:set var="site" value="${fn:replace(portalArr[0],'\"','')}"/>
 		<li><c:if test="${!(v eq 0)}">&nbsp;&nbsp;&nbsp;&nbsp; </c:if>
                     <a id="${site}" onclick="navigation_toggle_Color('${site}','${pNam}','${selectId}')" href="javascript:var noop = 0">
-			<span id="plus_minus"><img src="images/arrow_right.gif" border="0" width="10px" height="10px"/></span>&nbsp;&nbsp;${site}
+			<span id="plus_minus"><img src="images/arrow_right.gif" alt="" border="0" width="10px" height="10px"/></span>&nbsp;&nbsp;${site}
 		    </a>
 	</c:forEach>
 	</ul>
@@ -113,7 +113,7 @@ var query = "${qName}";
 									<i>${flatVoc}</i>
 						    		</input>
 						    		<c:set var="myBox" value="${siteNam}.jpg"/>
-						    		&nbsp;&nbsp;<img src='<c:url value="/images/${myBox}"/>' width="10" height="10"/><br>
+						    		&nbsp;&nbsp;<img src='<c:url value="/images/${myBox}"/>' alt="" width="10" height="10"/><br>
 							</li>
 						</c:if>
 						<c:set var="i" value="${i+1}"/>
@@ -134,7 +134,7 @@ var query = "${qName}";
 						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" id="${siteNumber}" type="checkbox" onclick="copySelectionColor(this,'${selectId}')" >
 							<i>${flatVoc}</i>
 							<c:set var="myBox" value="${site}.jpg"/>
-						    	&nbsp;&nbsp;<img src='<c:url value="/images/${myBox}"/>' width="10" height="10"/><br>
+						    	&nbsp;&nbsp;<img src='<c:url value="/images/${myBox}"/>' alt="" width="10" height="10"/><br>
 						</input></li>
 					  </c:if>
 					  <c:set var="i" value="${i+1}"/>

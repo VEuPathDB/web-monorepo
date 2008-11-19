@@ -1,43 +1,48 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%@ attribute name="title"
               description="Value to appear in page's title"
 %>
+
 <%@ attribute name="banner"
-              required="true"
+              required="false"
               description="Value to appear at top of page"
 %>
 
-<%@ attribute name="isBannerImage"
+<%@ attribute name="bannerPreformatted"
               required="false"
-              description="flag to indicate whether banner is referring to graphics"
+              description="Value to appear at top of page"
 %>
 
-<%@ attribute name="bannerSuperScript"
+<%@ attribute name="logo"
               required="false"
-              description="additional banner part, e.g. release & release date"
+              description="relative url for logo to display, or no logo if set to 'none'"
 %>
 
 <%@ attribute name="parentDivision"
               required="false"
-              description="context of page for parent page in the whole website"
 %>
 
 <%@ attribute name="parentUrl"
               required="false"
-              description="URL for parent page"
 %>
 
 <%@ attribute name="divisionName"
               required="false"
-              description="context of page in the whole website"
 %>
 
 <%@ attribute name="division"
               required="false"
-              description="context of page in the whole website"
+%>
+
+<%@ attribute name="isBannerImage"
+              required="false"
+%>
+
+<%@ attribute name="bannerSuperScript"
+              required="false"
 %>
 
 <%@ attribute name="summary"
@@ -55,252 +60,176 @@
               description="additional body elements"
 %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
-
 <head>
-  <title>
-    <c:out value="${title}" default="${banner}" />
-  </title>
-
- <c:set var="project" value="${wdkModel.name}"/>
-<c:if test = "${project == 'PlasmoDB'}">
-   <c:set var="stylesheet" value="/misc/plasmodb_style.css"/>
-   <c:set var="logo" value="/images/plasmodb_logo.gif"/>
-   <c:set var="sidebarBgColor" value="#dfdfef"/>
-</c:if>
-<c:if test = "${project == 'ToxoDB'}">
-   <c:set var="stylesheet" value="/misc/toxodb_style.css"/>
-   <c:set var="logo" value="/images/toxodb_logo-rotated.jpg"/>
-   <c:set var="sidebarBgColor" value="white"/>
-</c:if>
- <link rel="StyleSheet" href="<c:url value="${stylesheet}" />" type="text/css">
-
-  <!--link type="text/css" rel="StyleSheet" href='<c:url value="/slider/css/winclassic.css"/>'-->
-  <!--link rel="StyleSheet" href="<c:url value="/misc/custom-slider.css" />" type="text/css"-->
-
-  <!--script type="text/javascript" src='<c:url value="/slider/js/range.js"/>'></script-->
-  <!--script type="text/javascript" src='<c:url value="/slider/js/timer.js"/>'></script-->
-  <!--script type="text/javascript" src='<c:url value="/slider/js/slider.js"/>'></script-->
+  <title><c:out value="${title}" default="${banner}" /></title>
+  <link rel="stylesheet" href="<c:url value='/misc/style.css' />" type="text/css">
+  <link rel="stylesheet" href="<c:url value='/misc/sequence.css' />" type="text/css">
   <script type="text/javascript" src='<c:url value="/js/api.js"/>'></script>
+ <script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
 <script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
-  <script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
+
+
+  <c:set var="rssUrl" value="showXmlDataContent.do?name=XmlQuestions.NewsRss"/>
+  <link rel="alternate" type="application/rss+xml" 
+    title="RSS Feed for ${wdkModel.displayName}" 
+    href="${rssUrl}" />
+
+
 
   ${headElement}
 </head>
 
-<body ${bodyElement}>
+<body bgcolor="#FFFFFF" topmargin='3' marginheight='3' ${bodyElement}>
 
-<c:set var="isHome" value="${ division == 'home' }"/>
-<c:set var="version" value="${wdkModel.version}"/>
+<table width="90%" align="center" 
+        border="0" cellspacing="0" 
+        cellpadding="0">
+<tr><td colspan="3" align='center'>
+<%-- <font color='red'>CryptoDB is experiencing technical difficulties. We hope to resolve them very soon. Please accept our apologies for occasional service outages while we work to fix the problem. </font> --%>
+<%-- <font size='-1' color='red'>CryptoDB is undergoing maintenance today. There may be intermittent service outages.</font> --%>
+</td></tr>
+<tr><td colspan="3" align="right">
+<c:choose>
+<c:when test="${division ne 'home'}">
+  <font size='-1'>
+  <site:requestURL/>
+  <c:choose>
+    <c:when test="${wdkUser == null || wdkUser.guest == true}">
+    
+      <%--------------- Construct link to login page -------------%>  
+        <%-- 
+            urlencode the enclosing page's URL and append as a parameter 
+            in the queryString. site:requestURL compensates
+            for Struts' url mangling when forward in invoked.
+        --%>
+        <c:url value="login.jsp" var="loginUrl">
+           <c:param name="originUrl" value="${originRequestUrl}"/> 
+        </c:url>
+        <%-- 
+            urlencode the login page's URL and append as a parameter 
+            in the queryString.
+            If login fails, user returns to the refererUrl. If login
+            succeeds, user should return to originUrl.
+        --%>
+        <c:url var="loginJsp" value='login.jsp'/>
+        <c:url value="${loginUrl}" var="loginUrl">
+           <c:param name="refererUrl" value="${loginJsp}"/> 
+        </c:url>
+        
+        <c:if test="${division ne 'login'}">
+          <a href="${loginUrl}" id='login'>Login</a> | <a href="<c:url value='showRegister.do'/>" id='register'>Register</a>
+        </c:if>
+        
+    </c:when>
+    <c:otherwise>
+       <c:url value="processLogout.do" var="logoutUrl">
+          <c:param name="refererUrl" value="${originRequestUrl}"/> 
+       </c:url>
+        ${wdkUser.firstName} ${wdkUser.lastName} | <a href="<c:url value='/showProfile.do'/>" id='profile'>Profile</a> | <a href="<c:url value='${logoutUrl}' />" id='logout'>Logout</a>
+    </c:otherwise>
+  </c:choose>
+  </font>
+</c:when>
+</c:choose>
+</td>
+</tr>
 
-
-<c:if test="${fn:startsWith(pageContext.request.serverName, 'beta')}">
-<center><font size='-1' color='orange'>This is a pre-release version of ${wdkModel.name} that is under active development. There may be incomplete or inaccurate data and frequent site outages can be expected.</font></center>
-</c:if>
-
-<table width="100%" align="center" cellspacing="0" cellpadding="0" border="0">
-
-<tr valign="middle">
-
-<%-- logo spanning two rows: banner (image or text depending on page) and (if home) intro text  --%>
-<%-- logo size could vary when not in home --%>
-
-    <td rowspan="2" width="162" align="center"><a href="<c:url value="/home.jsp" />">
-        <c:choose>
-          <c:when test="${ division == 'home'}">
-            <img src="${logo}" border="0" alt="Site logo"/></a>
-          </c:when>
-          <c:otherwise>
-            <img src="${logo}" border="0" alt="Site logo"/></a>
-          </c:otherwise>
-        </c:choose>
-    </td>
-
-<%-- banner  --%>
-    <td align="center" valign="middle">
     <c:choose>
-        <c:when test="${isBannerImage}">
-            <img src="${banner}" alt="Page banner"/> 
+
+        <%-- option to have no header at all --%>
+        <c:when test="${banner eq 'none'}">
         </c:when>
-        <c:otherwise>
-            <c:choose>
-               <c:when test="${summary != null}">
-                  <h2>${banner}</h2>
-               </c:when>
-               <c:otherwise>
-                  <h1>${banner}</h1>
-               </c:otherwise>
-             </c:choose>
-        </c:otherwise>
-    </c:choose>
-    </td>
+              
+        <%-- front page header --%>
+        <c:when test="${division eq 'home'}">
+            <c:set value="/images/cryptologo_maroon.gif" var="logo"/>
 
-<%--Retrieve from DB and display site degraded message scheduled via announcements system--%>
-<c:set var="siteDegraded">
-  <site:announcement messageCategory="Degraded" projectName="${project}" />
-</c:set>
+            <tr>
+              <td width="30%">&nbsp;</td>
+              <td width="40%"valign="middle" align="center">
+                <a href="<c:url value="/" />">
+                  <img src="<c:url value="${logo}"/>" border="0" alt="Site logo" />
+                </a>
+              </td> 
+              <td width="30%" valign="middle" align="right">
+               <font face='Arial, Helvetica' size="3">
 
-<c:if test="${siteDegraded != ''}">
-<div class="warningBox">
-  <div class="warningIcon">
-       <img src="/images/warningSign.png" alt="warningSign" />
-  </div>
-  <div class="warningMessage">
-      ${siteDegraded}
-  </div>
-</div>
-</c:if>
-
-<%--Retrieve from DB and display site down message scheduled via announcements system--%> 
-<c:set var="siteDown">
-  <site:announcement messageCategory="Down" projectName="${project}" />
-</c:set>
-
-<c:if test="${siteDown != ''}">
-<div class="downBox">
-  <div class="downIcon">
-       <img src="/images/stopSign.png" alt="stopSign" />
-  </div>
-  <div class="downMessage">
-       ${siteDown}
-  </div>
-</div>
-</c:if>
-
-
-<%-- Release number --%>
-    <td align="right" valign="down">
 <c:choose>
     <c:when test="${bannerSuperScript != null}">
         ${bannerSuperScript}&nbsp;&nbsp;&nbsp;
     </c:when>
     <%-- for pages other than home which do not use bannersuperscript (bigger font) --%>
     <c:otherwise>
-         <b>Release ${version}&nbsp;&nbsp;&nbsp;</b>
+          <i><b>Release ${version}</b></i>
     </c:otherwise>
  </c:choose>
-    </td>   
- 
-</tr>
+                </font>
+                <br>
+                <font size="-3">&nbsp;&nbsp;February 19, 2008&nbsp;&nbsp;&nbsp;&nbsp;</font>
+              </td>
+            </tr>
+          
+            <tr>
+              <td align="center" colspan="3">
+                <c:import url="http://${pageContext.request.serverName}/include/announcements.html" />
+              </td>
+            </tr>
+          
+        </c:when> <%-- division eq 'home' --%>
+        
+        <%-- standard header --%>
+        <c:otherwise>
+        
+            <c:set value="/" var="home"/>
+            <c:set value="/images/oocyst_bg.gif" var="left_logo"/>
+            <c:set value="" var="right_logo"/>
 
-<%-- intro text in home page, summary in record pages, or nothing in other pages --%>
-<c:choose>
+            <tr>
+              <td  width="70" align="left">
+                <a href="${home}">
+                  <img src="<c:url value="${left_logo}"/>" border="0" alt="Site logo" />
+                </a>
+              </td>
+          
+              <td align="center">
+                <c:choose>
+                  <c:when test="${banner != null && bannerPreformatted == null}">
+                    <b><font face="Arial,Helvetica" size="+3">
+                    ${banner}
+                    </font></b>
+                  </c:when>
+                  <c:when test="${banner == null && bannerPreformatted != null}">
+                    ${bannerPreformatted}
+                  </c:when>
+                  <c:otherwise>
+                  </c:otherwise>
+                </c:choose>
+              </td>
+            <td width="70" align="right"><site:qhistButton/></td>  
+            </tr>
+            
+    
+        </c:otherwise>
+    </c:choose>
+    
+</table> <%-- End of banner --%>
 
-<c:when test="${ division == 'home'}">
-<tr>
-<td align="left" colspan="2">
-
-<c:if test = "${project == 'PlasmoDB'}">
-          <div class="small">
-          PlasmoDB.org hosts genomic and proteomic data (and more) for different species of the 
-	  parasitic eukaryote Plasmodium, the cause of Malaria. It brings together data provided by numerous laboratories worldwide (see the <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>">Data Sources</a> page), and adds its own data analysis.  Publications relying on  
-	  PlasmoDB should please <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">acknowledge</a>
-          the database developers
-          and the scientists who have made their data available. PlasmoDB is part of an NIH/NIAID
-          funded <a href="http://www.niaid.nih.gov/dmid/genomes/brc/default.htm">Bioinformatics Resource Center</a>
-          to provide <a href="http://apidb.org/">Apicomplexan Database Resources</a>.
-
-	  <br><br>
-Features not yet available in PlasmoDB&nbsp;${version} may still be accessed via <a href="http://v4-4.plasmodb.org">PlasmoDB&nbsp;4.4</a>, and the results of PlasmoDB&nbsp;4.4 queries may be exported to PlasmoDB&nbsp;${version} (see <a href="http://v4-4.plasmodb.org/plasmodb/servlet/sv?page=history">PlasmoDB&nbsp;4.4 Query History</a>).
-          </div>
-
-         
-</c:if> 
-<c:if test = "${project == 'ToxoDB'}">
-
-        <div class="small" bgcolor="#aa0000">Welcome to ToxoDB!
-	 ToxoDB, the Toxoplasma gondii Genome resource, provides access to the  draft genome sequence of 
-	 the apicomplexan parasite <i>T. gondii</i> &nbsp; (ME49, GT1, VEG and RH (only Chr Ia and Chr Ib) strains).
-	 The whole genome shotgun sequence is generated by TIGR. 
-	 Publications exploiting ToxoDB should provide appropriate
-	 <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">acknowledgment</a>
-	 to the database developers and those scientists who have made their data available on this site.
- 	 ToxoDB is part of an NIH/NIAID funded  Bioinformatics Resource Center 
-	 to provide <a href="http://apidb.org/">Apicomplexan Database Resources</a>.</div>
-
-	  
-          <div class="small" bgcolor="#aa0000">
-	   Features not yet available in ToxoDB ${version} may still be accessed via
-	    <a href="http://v3-0.toxodb.org/ToxoDB.shtml">ToxoDB 3.0</a>). </div>
-
-     	  
-          <div class="small" bgcolor="#aa0000">Here is an 
-	  <a href="http://ancillary.toxodb.org/cgi-bin/gbrowse/ancillary/" target='new'> 
- 	  <b>Ancillary GBrowse Site for <i>T. gondii</i></b></a>. 
-	  <b>Please NOTE</b>: This site is outside of ToxoDB; it includes  additional data sets that will be 
-	   incorporated in ToxoDB eventually.</div>
-	
-
-
-</c:if> 
-
-<%-- colored box -- warnings and notices go here --%>
-<%--
-<div class="smallApiBlue">
-<font face="Arial,Helvetica" size="-1"  color="blue">
-&nbsp;&nbsp;As part of ongoing efforts to educate ApiDB users to take fullest advantage of database resources, we are pleased to announce the third annual ApiDB database workshop, scheduled for June 8-11, 2008. &nbsp;&nbsp;Please click <a href="http://apidb.org/workshop/2008/"><b>here</b></a> for further information.
-</font>
-</div>
---%>
-
-
-<%--Information message retrieved from DB via messaging system--%>
-<c:set var="siteInfo">
-  <site:announcement messageCategory="Information" projectName="${project}" />
-</c:set>
-
-<div class="smallApiBlue">
-<font face="Arial,Helvetica" >
-${siteInfo}
-</font>
-</div>
-
-
-</td>
-</tr>
-</c:when>
-
-
-
-<c:otherwise>
-<tr>
-       <td align="left" colspan="2">
-         <c:if test="${summary != null}">
-           ${summary}
-         </c:if>         
-       </td>
-
-<%-- saves some space setting Release above as in home page
-       <td align="right" valign="bottom" width="100">
-          <c:if test="${division != 'home'}">
-            <b>Release ${version}&nbsp;&nbsp;</b>
-          </c:if>
-        </td>
---%>
-</tr>
-</c:otherwise>
-
-</c:choose>
-
+<table width="90%" align="center" 
+       border="0" cellspacing="0" 
+       cellpadding="0">
+<tr><td>
+<c:import url="http://${pageContext.request.serverName}/include/toolbar.html" />
+</td></tr>
 </table>
 
-
-<%-- TABLE WITH sidebar and main page defined in the specific jsp --%>
-<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" >
-<tr>
-
-<%-- sidebar space --%>
-<c:choose>
-          <c:when test="${ division != 'help'}">
-             <td rowspan="8" width="162" valign="top" bgcolor="${sidebarBgColor}"><site:sideNavBar division="${division}"/></td>
-          </c:when>
-          <c:otherwise>
-            <td rowspan="8"></td>
-          </c:otherwise>
-</c:choose>
-
-
-<%-- page itself, closed at footer.tag --%>
-<td valign="top">
+<%-- Open table and cell that encloses the page content --%>
+<table width="90%" align="center" border="0"
+       summary="parent table enclosing entire page content">
+<tr><td>
+<%-- Closing is in footer.tag --%>
+      

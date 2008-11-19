@@ -23,7 +23,7 @@ function navigation_toggle(area,p_name)
 				var lis = document.getElementById('nav_list').getElementsByTagName('li');
 				for(var j=0;j<lis.length;j++){
 					var plusminus = lis[j].getElementsByTagName('span');
-					plusminus[0].innerHTML = "<img src='images/arrow_right.gif' border='0' width='10px' height='10px'/>";
+					plusminus[0].innerHTML = "<img src='images/arrow_right.gif' alt='' border='0' width='10px' height='10px'/>";
 				}
 				if(!IE)
 				    Effect.toggle(divs[i].id,'slide',{duration: .5});
@@ -36,7 +36,7 @@ function navigation_toggle(area,p_name)
 		document.getElementById(area).className = "seled";
 		renameInputs(area+'_area','myMultiProp('+p_name+')');
 		var plusminus = document.getElementById(area).getElementsByTagName('span');
-		plusminus[0].innerHTML = "<img src='images/arrow_down.gif' border='0'/>";				
+		plusminus[0].innerHTML = "<img src='images/arrow_down.gif' alt='' border='0'/>";				
 		if(!IE)
 		   Effect.toggle(area+'_area','slide',{duration: .5});
 		else
@@ -68,7 +68,7 @@ function navigation_toggle_Color(area,p_name,sid)
 				var lis = document.getElementById('nav_list').getElementsByTagName('li');
 				for(var j=0;j<lis.length;j++){
 					var plusminus = lis[j].getElementsByTagName('span');
-					plusminus[0].innerHTML = "<img src='images/arrow_right.gif' border='0' width='10px' height='10px'/>";
+					plusminus[0].innerHTML = "<img src='images/arrow_right.gif' alt='' border='0' width='10px' height='10px'/>";
 				}
 				if(!IE)
 				    Effect.toggle(divs[i].id,'slide',{duration: .5});
@@ -81,7 +81,7 @@ function navigation_toggle_Color(area,p_name,sid)
 		document.getElementById(area).className = "seled";
 		renameInputs(area+'_area','myMultiProp('+p_name+')');
 		var plusminus = document.getElementById(area).getElementsByTagName('span');
-		plusminus[0].innerHTML = "<img src='images/arrow_down.gif' border='0'/>";
+		plusminus[0].innerHTML = "<img src='images/arrow_down.gif' alt='' border='0'/>";
 		if(sid.length > 0)
 		changeSelectInput(sid,area+'_area');				
 		if(!IE)
