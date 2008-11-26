@@ -131,7 +131,7 @@
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
                             <td align="right" valign="top"><b>${qP.prompt}</b></td>
                             <td valign="top">
-                                <wdk:historyParamInput qp="${qP}" />
+                                <wdk:answerParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">

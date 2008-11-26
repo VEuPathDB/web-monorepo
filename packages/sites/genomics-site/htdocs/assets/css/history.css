@@ -1,0 +1,63 @@
+ul#history_tabs {
+    background-color:#E6EBF2;
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    float:left;
+    margin:0;
+    padding:0 10px;
+    width: 98%;
+}
+
+#history_tabs li {;
+    float:left;
+    margin:0;
+}
+
+#history_tabs li a {
+    color:#999999;
+    display:block;
+    padding:0.24em 1em;
+    text-align:center;
+    text-decoration:none;
+}
+
+#history_tabs li a:hover {
+    color:#0000CC;
+}
+
+#history_tabs #selected_type a {
+    color:black;
+    font-weight:bold;
+    position:relative;
+    text-decoration:underline;
+}
+
+#history_table {
+    border:1px solid black;
+    clear:both;
+    padding:0 1em;
+}
+
+.history_panel {
+    display: none;
+}
+
+.history_panel.enabled {
+    display: inline;
+}
+
+.history_panel table li {
+    float:left;
+}
+
+.history_panel table li.operation {
+    border:none;
+    width:36px;
+    margin-top: -8px;
+}
+
+#cmplt_hist_link {
+    float: right;
+}
+
