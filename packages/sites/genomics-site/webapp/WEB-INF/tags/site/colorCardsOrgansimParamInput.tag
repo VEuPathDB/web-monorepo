@@ -119,6 +119,12 @@ var query = "${qName}";
 						<c:set var="i" value="${i+1}"/>
 					    </c:forEach><%-- End of Loop (4) --%>
 					    <c:set var="siteCount" value="${siteCount+1}"/>
+  <%-- Hack to consider neospora part of Toxo .This will not work when we have more than two organism famili
+es in one site.--%>
+                                            <c:if test="${fn:containsIgnoreCase(siteNam, 'Toxo')}">
+                                                <c:set var="siteCount" value="${siteCount-1}"/>
+                                            </c:if>
+
 					</c:forEach><%-- End of Loop (3) --%>
 				</c:when>
 				<c:otherwise>
