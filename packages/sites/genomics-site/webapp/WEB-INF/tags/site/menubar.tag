@@ -8,7 +8,7 @@
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <c:choose>
-<c:when test="${wdkUser.historyCount == null}">
+<c:when test="${wdkUser.stepCount == null}">
 <c:set var="count" value="0"/>
 </c:when>
 <c:otherwise>

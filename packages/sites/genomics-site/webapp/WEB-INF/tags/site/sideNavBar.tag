@@ -34,14 +34,14 @@
 
 <c:set var="queryCount" value ="(no queries)"/>
 <c:choose>
-  <c:when test="${wdkUser.historyCount == 0} ">
+  <c:when test="${wdkUser.stepCount == 0} ">
      <c:set var="queryCount" value ="(no queries)"/>
   </c:when>
-  <c:when test="${wdkUser.historyCount == 1}">
+  <c:when test="${wdkUser.stepCount == 1}">
      <c:set var="queryCount" value ="(1 query)"/>
   </c:when>
-  <c:when test="${wdkUser.historyCount > 1}">
-     <c:set var="queryCount" value ="(${wdkUser.historyCount} queries)"/>
+  <c:when test="${wdkUser.stepCount > 1}">
+     <c:set var="queryCount" value ="(${wdkUser.stepCount} queries)"/>
   </c:when>
 </c:choose>
 

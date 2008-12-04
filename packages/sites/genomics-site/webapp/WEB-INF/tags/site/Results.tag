@@ -336,10 +336,15 @@
 
   <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
     <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
-    <c:set var="align" value="align='${recAttr.alignment}'" />
+    <c:set var="align" value="align='${recAttr.attributeField.align}'" />
     <c:set var="nowrap">
-        <c:if test="${recAttr.nowrap}">nowrap</c:if>
+        <c:if test="${recAttr.attributeField.nowrap}">nowrap</c:if>
     </c:set>
+
+    <c:set value="${record.primaryKey}" var="primaryKey"/>
+    <c:set var="pkValues" value="${primaryKey.values}" />
+    <c:set var="projectId" value="${pkValues['project_id']}" />
+    <c:set var="id" value="${pkValues['source_id']}" />
 
     <td ${align} ${nowrap}>
       <c:set var="recNam" value="${record.recordClass.fullName}"/>
@@ -347,34 +352,26 @@
       <c:choose>
         <c:when test="${j == 0}">
 
-
-
-
         <c:choose>
            <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
                
-              <c:set value="${record.primaryKey}" var="primaryKey"/>
-              
-			  <a href="javascript:create_Portal_Record_Url('${recNam}', '${primaryKey.projectId}', '${primaryKey.recordId}','')">
-				${primaryKey.projectId}:${primaryKey.recordId}</a>
+              <a href="javascript:create_Portal_Record_Url('${recNam}', '${projectId}', '${id}','')">
+                   ${primaryKey.value}</a>
            </c:when>
 
            <c:when test = "${cryptoIsolatesQuestion}">
 
               <%-- display a link to record page --%>
-              <c:set value="${record.primaryKey}" var="primaryKey"/>
-              <nobr><a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey}"></nobr>
+              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey.value}"></nobr>
 
            </c:when>
 
             <c:otherwise>
 
 
-
               <%-- display a link to record page --%>
-              <c:set value="${record.primaryKey}" var="primaryKey"/>
-           <!--   <a href="showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}">${fieldVal}</a>-->
-				<span id="gene_id_${fieldVal}"> <a href="javascript:ToggleGenePageView('gene_id_${fieldVal}', 'showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}')">${fieldVal}</a></span>
+              <%--   <a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a> --%>
+              <span id="gene_id_${fieldVal}"> <a href="javascript:ToggleGenePageView('gene_id_${fieldVal}', 'showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}')">${fieldVal}</a></span>
 
 
 
@@ -390,15 +387,16 @@
 			<c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
                <span style="color:gray;">N/A</span>
             </c:when>
-            <c:when test="${recAttr.value.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
-              	<c:choose>
-				 <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
-					<a href="javascript:create_Portal_Record_Url('','${record.primaryKey.projectId}','','${recAttr.value.url}')">${recAttr.value.visible}</a>
-	             </c:when>
-				 <c:otherwise>
-					<a href="${recAttr.value.url}">${recAttr.value.visible}</a>
-				 </c:otherwise>
-				</c:choose>
+            <c:when test="${recAttr.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
+               <c:choose>
+		  <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+		    <a href="javascript:create_Portal_Record_Url('','${projectId}','','${recAttr.url}')">
+                      ${recAttr.displayText}</a>
+	          </c:when>
+	          <c:otherwise>
+		    <a href="${recAttr.url}">${recAttr.displayText}</a>
+		  </c:otherwise>
+	       </c:choose>
             </c:when>
             <c:otherwise>
               ${fieldVal}

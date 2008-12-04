@@ -57,11 +57,15 @@
 	<tr class="linesalt">
   </c:otherwise>
 </c:choose>
+<c:set var="primaryKey" value="${record.primaryKey}"/>
+<c:set var="pkValues" value="${primaryKey.values}" />
+<c:set var="projectId" value="${pkValues['project_id']}" />
+<c:set var="id" value="${pkValues['source_id']}" />
 <c:set var="pKeyName" value="${record.summaryAttributeNames[0]}" />
 <td align="left">
-   <c:set value="${record.primaryKey}" var="primaryKey"/>
    <c:set value="${record.recordClass.fullName}" var="recNam" />
-     <span id="list_gene_id_${record.summaryAttributes[pKeyName].value}"> <a href="javascript:ToggleGenePageView('gene_id_${record.summaryAttributes[pKeyName].value}', 'showRecord.do?name=${recNam}&project_id=${primaryKey.projectId}&primary_key=${primaryKey.recordId}')">${record.summaryAttributes[pKeyName].value}
+     <span id="list_gene_id_${primaryKey.value}"> 
+       <a href="javascript:ToggleGenePageView('gene_id_${primaryKey.value}', 'showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}')">${primaryKey.value}
 </a></span>
 </td>
 </tr>

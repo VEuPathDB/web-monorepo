@@ -32,8 +32,8 @@
 				<a href='<c:url value="/showQueryHistory.do"/>'>
 					<font size='+2'><b>
 					<c:choose>
-					  <c:when test="${wdkUser.historyCount == null}">0</c:when>
-					 <c:otherwise>${wdkUser.historyCount}</c:otherwise>
+					  <c:when test="${wdkUser.stepCount == null}">0</c:when>
+					 <c:otherwise>${wdkUser.stepCount}</c:otherwise>
 					</c:choose>
 					</b>
 					</font>
@@ -79,8 +79,8 @@
 		   <a style="color:#FAEBEE" href='<c:url value="/showQueryHistory.do"/>'>
 		   <font size='+1'><b>
 		   <c:choose>
-			 <c:when test="${wdkUser.historyCount == null}">0</c:when>
-			 <c:otherwise>${wdkUser.historyCount}</c:otherwise> 
+			 <c:when test="${wdkUser.stepCount == null}">0</c:when>
+			 <c:otherwise>${wdkUser.stepCount}</c:otherwise> 
 		   </c:choose>
 		  </b></font>
 		  </a>
