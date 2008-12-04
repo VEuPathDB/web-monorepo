@@ -34,6 +34,8 @@ sub link_target_ms_peptides {
 
     $extdbname =~ s/Wastling MassSpec/assay: /i;
     $extdbname =~ s/Lowery MassSpec/assay: /i;
+    $extdbname =~ s/Fiser_Proteomics_/assay: /i;
+    $extdbname =~ s/Ferrari_Proteomics_/assay: /i;
     
     my $content = "$extdbname<br>$desc";
 
