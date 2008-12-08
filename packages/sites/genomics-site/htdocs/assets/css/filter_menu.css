@@ -21,7 +21,7 @@
 }
 
 #query_form {
-	display: none;
+	/*display: none;*/
 	position: absolute;
 	left:135px;
 	top:279px;

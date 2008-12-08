@@ -135,12 +135,25 @@ behavior: url(/assets/css/csshover.htc);
       <li>
       <a href="#">Contact Us<img src="../assets/images/crypto/menu_divider5.png" alt="" width="17" height="9" /></a></li>
       <li>
-      <a href="#">Log In/Register</a> <%-- possible style when a user is login....<a href="#">Logout</a>
- 	  <br /><b style='color:black'>John Doe</b> | <a href="#">Profile</a>
-	  --%></li>      
+      <c:choose>
+        <c:when test="${wdkUser.guest}">
+          <a href="#">Log In/Register</a>
+          <ul class="login">
+            <li><site:login refer="home_header"/></li>
+          </ul>
+        </c:when>
+        <c:otherwise>
+          <a href="<c:url value="/processLogout.do"/>">Logout</a>
+	</c:otherwise>
+      </c:choose>
+      </li>      
       </ul>
+      <c:if test="${!wdkUser.guest}">
+        <div id="user_topdiv">
+ 	  <strong>${wdkUser.firstName}&nbsp;${wdkUser.lastName}</strong>&nbsp;|&nbsp;<a href="<c:url value="/showProfile.do"/>">Profile</a>
+        </div>
+      </c:if>
       </div>
-      	  
        </div>
    </div>
 

@@ -27,15 +27,15 @@
 
 <table border="0" 
        bgcolor="#DDDDDD" 
-       cellpadding="3" 
+       cellpadding="0" 
        cellspacing="1" 
        width="100%">
-<tr><td><font size="-1" face="Arial,Helvetica">
+<tr><td><font size="-2" face="Arial,Helvetica">
     <b>${displayName}</b></font>
 </td>
 <c:if test='${trimmedAttribution != null && trimmedAttribution != ""}'>
   <td align="right">
-     <font size="-1" face="Arial,Helvetica">
+     <font size="-2" face="Arial,Helvetica">
      [<a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${trimmedAttribution}&title=${displayName}">
      Data Sources</a>]
      </font>

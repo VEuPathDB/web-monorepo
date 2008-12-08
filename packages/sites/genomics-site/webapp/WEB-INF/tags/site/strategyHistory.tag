@@ -78,6 +78,8 @@
 
 <c:set var="typeC" value="0"/>
 <c:set var="strategiesMap" value="${user.unsavedStrategiesByCategory}"/>
+<!-- form for renaming strategies; action is set in javascript -->
+<form id="browse_rename" action="javascript:return false;" onsubmit="return validateSaveForm(this);">
 <!-- begin creating history sections to display strategies -->
 <c:forEach items="${strategiesMap}" var="strategyEntry">
   <c:set var="type" value="${strategyEntry.key}"/>
@@ -126,6 +128,7 @@
 </div>
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
+</form>
 
 <%-- invalid strategies, if any --%>
 <c:if test="${fn:length(invalidStrategies) > 0}">

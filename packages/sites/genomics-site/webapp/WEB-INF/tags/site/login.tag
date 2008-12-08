@@ -4,13 +4,19 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
+<%@ attribute name="refer" 
+ 			  type="java.lang.String"
+			  required="false" 
+			  description="Page calling this tag"
+%>
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <%-- set refererUrl to be the tag's enclosing page if not
       already set elsewhere in the page. (hint: external login pages
       such as login.jsp use this tag and will set refererUrl to be
-      that login page.)--%>
+      that login page.)
+--%>
 <c:if test="${requestScope.refererUrl == null}">
   <site:requestURL/>
   <c:set var="refererUrl" value="${originRequestUrl}" scope="request"/> 
@@ -25,108 +31,158 @@
 <c:remove var="originUrl"  scope="session"/>
 <c:remove var="refererUrl" scope="session"/>
 
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
 <c:choose>
-  <c:when test="${wdkUser != null && wdkUser.guest != true}">
-
+  <c:when test="${refer == 'home_header'}">
+    <table border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td valign="top" colspan="2" align="center">
-           <c:set var="firstName" value="${wdkUser.firstName}"/>
-       <div class="normal">Welcome ${firstName}! </div>
+        <td>
+          <html:form method="POST" action='/processLogin.do' >
+            <table>
+              <tr>
+                <td>
+                  <label for="email">Email:&nbsp;</label>
+                </td>
+                <td>
+                  <input class="search-box" id="email" type="text" name="email" size="11"/>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label for="password">Password:&nbsp;</label>
+                </td>
+                <td>
+                  <input  class="search-box" id="password" type="password" name="password" size="20"/>
+                </td>
+              </tr>
+              <tr>
+                <td colspan=2>
+                  <input id="remember" type="checkbox" name="remember" size="20"/>
+                  <label for="remember">Remember me</label>
+                </td>
+              </tr>
+              <tr>
+                <td colspan=2>
+                  <input type="submit" value="Login" id="login" />
+                  <c:if test="${originUrl != null}">
+                    <input type="hidden" name="originUrl" value="${originUrl}" />
+                  </c:if>
+                  <c:if test="${refererUrl != null}">
+                    <input type="hidden" name="refererUrl" value="${refererUrl}" />
+                  </c:if>
+                </td>
+              </tr>
+            </table>
+          </html:form>
         </td>
       </tr>
       <tr>
-        <td colspan="1" align="left" valign="top">
-           <div class="small">
-           <a href="<c:url value='/showProfile.do' />" id="profile">Profile</a>
-           </div>
-        </td>
-        <td colspan="1" align="right" valign="top">
-          <c:url value="processLogout.do" var="logoutUrl">
-             <c:param name="refererUrl" value="${originRequestUrl}"/> 
-          </c:url>
-        
-           <div class="small">
-           <a href="${logoutUrl}" id="logout">Logout</a>
-           </div>
+        <td>
+          <a href="<c:url value='/showResetPassword.do'/>">Forgot Password?</a>
         </td>
       </tr>
-
+      <tr>
+        <td>
+           <a href="<c:url value='/showRegister.do'/>">Register</a>
+        </td>
+      </tr>
+    </table>
   </c:when>
-
   <c:otherwise>
-
-     <c:if test="${sessionScope.loginError != null && sessionScope.loginError != ''}">
-       <c:set var="errorMessage" value="${sessionScope.loginError}"/>
-       <c:remove var="loginError" scope="session"/>
-       <tr>
-          <td colspan="2">
+    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <c:choose>
+      <c:when test="${wdkUser != null && wdkUser.guest != true}">
+        <tr>
+          <td valign="top" colspan="2" align="center">
+            <c:set var="firstName" value="${wdkUser.firstName}"/>
+            <div class="normal">Welcome ${firstName}! </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" align="left" valign="top">
+            <div class="small">
+              <a href="<c:url value='/showProfile.do' />" id="profile">Profile</a>
+            </div>
+          </td>
+          <td colspan="1" align="right" valign="top">
+            <c:url value="processLogout.do" var="logoutUrl">
+              <c:param name="refererUrl" value="${originRequestUrl}"/> 
+            </c:url>
+           <div class="small">
+             <a href="${logoutUrl}" id="logout">Logout</a>
+           </div>
+         </td>
+       </tr>
+     </c:when>
+     <c:otherwise>
+       <c:if test="${sessionScope.loginError != null && sessionScope.loginError != ''}">
+         <c:set var="errorMessage" value="${sessionScope.loginError}"/>
+         <c:remove var="loginError" scope="session"/>
+         <tr>
+           <td colspan="2">
              <div class="small"><font color="red">${errorMessage}<br>
              Note email and password are case-sensitive.</font></div>
-          </td>
-       </tr>
-     </c:if>
-     <html:form method="POST" action='/processLogin.do' >
-     <tr>
-       <td>
-        <div class="small">
-        <b>Email:</b>
-        </div>
-        </td><td>
-        <div class="small">
-        <b>Password:</b>
-        </div>
-        </td>
-     <tr>
-       <td align="left">
-         <div class="small">
-           <input id="email" type="text" name="email" size="11">
-         </td><td>
-         <div class="small">
-           <input id="password" type="password" name="password" size="11">
-         </div>
-       </td>
-     </tr>
-     <tr>
-       <td align="right">
-         <div class="small">
-           <input id="remember" type="checkbox" name="remember" size="11"/>
-         </div>
-       </td>
-       <td align="left">
-         <div class="small">
-           <b>Remember&nbsp;me</b>
-         </div>
-       </td>
-     </tr>
-     <tr>
-        <td colspan="2" align="center" nowrap>
-            <span class="small">
+           </td>
+         </tr>
+       </c:if>
+       <html:form method="POST" action='/processLogin.do' >
+         <tr>
+           <td>
+             <div class="small">
+               <b>Email:</b>
+             </div>
+           </td><td>
+             <div class="small">
+               <b>Password:</b>
+             </div>
+           </td>
+         <tr>
+           <td align="left">
+             <div class="small">
+               <input id="email" type="text" name="email" size="11">
+           </td><td>
+             <div class="small">
+               <input id="password" type="password" name="password" size="11">
+             </div>
+           </td>
+         </tr>
+         <tr>
+           <td align="right">
+             <div class="small">
+               <input id="remember" type="checkbox" name="remember" size="11"/>
+             </div>
+           </td>
+           <td align="left">
+             <div class="small">
+               <b>Remember&nbsp;me</b>
+             </div>
+           </td>
+         </tr>
+         <tr>
+           <td colspan="2" align="center" nowrap>
+             <span class="small">
                <input type="submit" value="Login" id="login" style="width:76px;"/>
-            </span>
-    
-           <c:if test="${originUrl != null}">
-             <input type="hidden" name="originUrl" value="${originUrl}">
-           </c:if>
-           <c:if test="${refererUrl != null}">
-             <input type="hidden" name="refererUrl" value="${refererUrl}">
-           </c:if>
-       </td>
-     </tr>
-    </html:form>
-
-    <html:form method="POST" action='/showRegister.do' >
-     <tr>
-       <td colspan="1" align="left" valign="top">
-          <div class="small"><a href="<c:url value='/showResetPassword.do'/>">Forgot Password?</a>&nbsp;</div>
-       </td>
-       <td colspan="1" align="right" valign="top">
-          <div class="small">&nbsp;<a href="showRegister.do">Register/Subscribe</a></div>
-       </td>
-     </tr>
-    </html:form>
-  </c:otherwise>
-
+             </span>
+             <c:if test="${originUrl != null}">
+               <input type="hidden" name="originUrl" value="${originUrl}">
+             </c:if>
+             <c:if test="${refererUrl != null}">
+               <input type="hidden" name="refererUrl" value="${refererUrl}">
+             </c:if>
+           </td>
+         </tr>
+       </html:form>
+       <html:form method="POST" action='/showRegister.do' >
+         <tr>
+           <td colspan="1" align="left" valign="top">
+             <div class="small"><a href="<c:url value='/showResetPassword.do'/>">Forgot Password?</a>&nbsp;</div>
+           </td>
+           <td colspan="1" align="right" valign="top">
+             <div class="small">&nbsp;<a href="showRegister.do">Register/Subscribe</a></div>
+           </td>
+         </tr>
+       </html:form>
+     </c:otherwise>
+   </c:choose>
+   </table>
+ </c:otherwise>
 </c:choose>
-
-</table>

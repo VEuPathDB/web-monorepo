@@ -3,9 +3,8 @@
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 
-<site:header title="Login"
-             banner="ApiDB Account Login"
-             division="login"/>
+<site:home_header refer="home"/>
+<site:menubar />
 
 <c:choose>
   <c:when test="${param.originUrl != null}">
@@ -30,23 +29,20 @@
   </c:otherwise>
 </c:choose>
 
-<body bgcolor='#ffffff'>
-<p><b>Login</b> so you can:
-<ul>
-<li>comment on genes and sequences
-<li>have your query history remembered from session to session
-<li>set site preferences (future release)
-</ul>
+<div id="contentwrapper">
+  <div id="contentcolumn">
+    <div class="innertube">
+      <body bgcolor='#ffffff'>
+      <p><b>Login</b> so you can:
+      <ul>
+        <li>comment on genes and sequences</li>
+        <li>have your query history remembered from session to session</li>
+        <li>set site preferences (future release)</li>
+      </ul>
+      <site:login/>
+    </div>
+  </div>
+</div>
 
-<p>
-
-<!--<table width="30%" align="left" border="1">
-  <tr>
-    <td>-->
-    <site:login/>
-   <!-- </td>
-  </tr>
-</table>-->
-
-</body>
-</html>
+<site:sidebar />
+<site:footer />

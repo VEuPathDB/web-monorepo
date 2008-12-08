@@ -134,7 +134,7 @@ Regions:
       <td>to retrieve, eg, a CDS with the  first and last 10 basepairs excised, use: "begin at <i>start</i> +/- 10 end at <i>stop</i> +/- -10".
     </tr>
   </table>
-    <img src="<c:url value="/images/genemodel.gif" />" border="1"/>
+    <img src="<c:url value="/images/genemodel.gif" />" alt="gene model" border="1"/>
   </td>
   <td valign="top" class="dottedLeftBorder"></td> 
 </tr>

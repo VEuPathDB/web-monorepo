@@ -15,13 +15,6 @@
               description="RecordClass Object for the Answer"
 %>
 
-<%@ attribute name="strategy"
-	      type="org.gusdb.wdk.model.jspwrap.StrategyBean"
-              required="false"
-              description="strategy for this result"
-%>
-<span id="proto" style="display: none">${strategy.strategyId}</span>
-<span id="last_step_id" style="display:none">${strategy.latestStep.stepId}</span>
 <c:set var="catMap" value="${model.questionsByCategory}" />
 <c:set var="recClass" value="${recordClass}" />
 <c:set var="qSetName" value="none" />

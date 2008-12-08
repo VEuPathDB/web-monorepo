@@ -3,6 +3,7 @@
 var _action = "";
 var original_Query_Form_Text;
 var update_hist = false;
+var current_Front_Strategy_Id = null;
 
 function showExportLink(stratId){
  	closeModal();
@@ -71,7 +72,7 @@ function formatFilterForm(data, edit, reviseStep){
 	var stepn = 0;
 	var insert = "";
 	var proto = "";
-	if(edit == 0){
+/*	if(edit == 0){
 		var parts = reviseStep.split(":");
 		insert = parts[1];
 		proto = parts[0];
@@ -81,30 +82,24 @@ function formatFilterForm(data, edit, reviseStep){
 		reviseStep = parseInt(parts[1]);
 		isSub = true;
 		operation = parts[4];
-	}
-
-	var lastStepId = $("#diagram_" + proto + " div.venn:last").attr("id");
-	lastStepId = lastStepId.substring(5);
-	
+	}*/
+	var stratBackId = getStrategy(current_Front_Strategy_Id).backId;
 	var pro_url = "";
 	if(edit == 0)
-		pro_url = "processFilter.do?strategy=" + proto + "&insert=" +insert;
+		pro_url = "processFilter.do?strategy=" + stratBackId + "&insert=" +insert;
 	else{
-		pro_url = "processFilter.do?strategy=" + proto + "&revise=" + reviseStep;
+		pro_url = "processFilter.do?strategy=" + stratBackId + "&revise=" + reviseStep;
 	}
 	var historyId = $("#history_id").val();
-
-	var stepNum = $("#diagram_" + proto + " div.box:last h3 a,crumb_name").attr("id");
-	stepNum = stepNum.substring(7);
 	
-	stepNum = parseInt(stepNum) + 1;
-	var prev_stepNum = stepNum - 1;
 	if(edit == 0){
 		var close_link = "<a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png'/></a>";
 		var back_link = "<a id='back_to_selection' href='javascript:close()'><img src='/assets/images/backbox.png'/></a>";
 	}else
 		var close_link = "<a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png'/></a>";
+		
 	var quesTitle = $("h1",data).text().replace(/Identify Genes based on/,"");
+	
 	var quesForm = $("form#form_question",data);
 	$("input[value=Get Answer]",quesForm).val("Run Step");
 	$("input[value=Run Step]",quesForm).attr("id","executeStepButton");
@@ -112,19 +107,20 @@ function formatFilterForm(data, edit, reviseStep){
 	$("div:last",quesForm).attr("style", "float:left;margin: 45px 0 0 1%;");
     $("table:first", quesForm).wrap("<div class='filter params'></div>");
 	$("table:first", quesForm).attr("style", "margin-top:15px;");
+	
 	// Bring in the advanced params, if exist, and remove styling
 	var advanced = $("#advancedParams_link",quesForm);
 	advanced = advanced.parent();
 	advanced.remove();
 	advanced.attr("style", "");
 	$(".filter.params", quesForm).append(advanced);
+	
 	if(edit == 0)
-		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;" + stepNum + ": " + quesTitle + "</span></br>");
+		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;: " + quesTitle + "</span></br>");
 	else
 		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Edit&nbsp;Step&nbsp;" + (reviseStep + 1) + ": " + quesTitle + "</span></br>");
 	if(edit == 0){
-		var previous_step_id = $("#step_"+prev_stepNum+"_sub a").attr("id");
-		$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine Step " + prev_stepNum + " with Step " + stepNum + "</span><div id='operations'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'>&nbsp;" + prev_stepNum + "&nbsp;<b>INTERSECT</b>&nbsp;" + stepNum + "</td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + prev_stepNum + "&nbsp;<b>UNION</b>&nbsp;" + stepNum + "</td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + prev_stepNum + "&nbsp;<b>MINUS</b>&nbsp;" + stepNum + "</td></tr></table></div></div>");
+		$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with </span><div id='operations'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'>&nbsp;&nbsp;<b>INTERSECT</b>&nbsp;</td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;&nbsp;<b>UNION</b>&nbsp;</td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;&nbsp;<b>MINUS</b>&nbsp;</td></tr></table></div></div>");
 	} else {
 		if(reviseStep != 0){
 			if(reviseStep != 1)
@@ -138,7 +134,7 @@ function formatFilterForm(data, edit, reviseStep){
 		}
 	}
 	if(edit == 0)	
-		var action = "javascript:AddStepToStrategy('" + proto + "', '" + pro_url + "')";
+		var action = "javascript:AddStepToStrategy('" + pro_url + "')";
 	else
 		var action = "javascript:EditStep('" + proto + "', '" + pro_url + "', " + parseInt(reviseStep) + ")";
 	var formtitle = "";
@@ -152,13 +148,13 @@ function formatFilterForm(data, edit, reviseStep){
 	else
 		var header = "<span class='dragHandle'>" + formtitle + " " + close_link + "</span>";
 		
-	$("#filter_link_div_" + proto + " #query_form").html(header);
-	$("#filter_link_div_" + proto + " #query_form").append(quesForm);
-	$("#filter_link_div_" + proto + " #query_selection").fadeOut("normal");
+	$("#query_form").html(header);
+	$("#query_form").append(quesForm);
+	//$("#filter_link_div_" + proto + " #query_selection").fadeOut("normal");
 	if(edit == 1)
-		$("#filter_link_div_" + proto + " #query_form div#operations input#" + operation).attr('checked','checked'); 
-	$("#filter_link_div_" + proto + " #query_form").jqDrag(".dragHandle");
-	$("#filter_link_div_" + proto + " #query_form").fadeIn("normal");
+		$("#query_form div#operations input#" + operation).attr('checked','checked'); 
+	$("#query_form").jqDrag(".dragHandle");
+	$("#query_form").fadeIn("normal");
 }
 
 function getQueryForm(url){	
@@ -185,7 +181,25 @@ function OpenOperationBox(stratId) {
 	$("#filter_link_div_" + stratId + " #query_form").html(ops);
 }
 
-function openFilter(IsIn) {
+function openFilter(dtype,strat_id){
+	current_Front_Strategy_Id = strat_id;
+	var url = "filter_page.jsp?dataType=" + dtype;
+	$.ajax({
+		url: url,
+		dataType: "html",
+		success: function(data){
+			filter = document.createElement('div');
+			$(filter).html(data);
+			$("div#Strategies").append(filter);
+			$("#query_form").jqDrag(".dragHandle");
+		},
+		error: function(){
+			alert("Error getting the needed information from the server \n Please contact the system administrator");
+		}
+	});
+	
+	
+/*	
 	var strat_number = IsIn.split(":");
 	strat_number = strat_number[0]; 
 	isInsert = IsIn;
@@ -211,6 +225,7 @@ function openFilter(IsIn) {
 			$(link[i]).attr("href",$(link[i]).attr("value"));
 		}
 	}
+*/
 }
 
 function close(){
@@ -220,7 +235,9 @@ function close(){
 	$("#filter_link_div_" + strat_number + " #query_form").jqDrag(".dragHandle");
 }
 
-function closeAll(){openFilter(isInsert);}
+function closeAll(){
+	$("#query_form").parent().remove();
+}
 
 function parseInputs(){
 	var quesForm = $("form[name=questionForm]");

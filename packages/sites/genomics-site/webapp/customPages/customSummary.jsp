@@ -52,8 +52,16 @@
 </c:choose>
 
 <site:home_header refer="customSummary" />
+
+<c:set var="scheme" value="${pageContext.request.scheme}" />
+<c:set var="serverName" value="${pageContext.request.serverName}" />
+<c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
+<c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
+<c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
+
 <script type="text/javascript" language="javascript">
 	$(document).ready(function(){
+		exportBaseURL = '${scheme}://${serverName}/${request_uri}/importStrategy.do?answer='
 		$("#diagram div.venn:last span.resultCount a").click();
 		<c:choose>
                   <c:when test="${showHist != null && showHist}">
@@ -82,14 +90,7 @@
      </c:otherwise>
    </c:choose>
 </ul>
-<%-- <c:choose>
-  <c:when test="${showHist != null && showHist}"> --%>
-    <div id="strategy_results">
-<%--  </c:when>
-  <c:otherwise>
-    <div id="strategy_results">
-  </c:otherwise>
-</c:choose> --%>
+<div id="strategy_results">
 <div class="strategy_controls"/>
 <table width="100%">
 <tr>
@@ -117,9 +118,13 @@
 
 <input type="hidden" id="history_id" value="${history.stepId}"/>
 <div id="Strategies">
+        <c:set var="i" value="0"/>
 	<c:forEach items="${strategies}" var="strat">
-		<site:BreadCrumbs strategy="${strat}" strat_step="${strat.latestStep}"/>
-		<br>
+                <script>
+                   init_strat_ids[${i}] = ${strat.strategyId};
+                   init_strat_order[${strat.strategyId}] = ${i + 1};
+                </script>
+                <c:set var="i" value="${i+1}"/>
 	</c:forEach>
 </div>
 
@@ -135,14 +140,8 @@
 <%--<site:Results strategy="${strategy}"/>--%>
 </div> 
 </div><!-- end results view div -->
-<%-- <c:choose>
-  <c:when test="${showHist != null && showHist}"> --%>
-    <div id="search_history">
-<%--  </c:when>
-  <c:otherwise>
-    <div id="search_history" class="hidden">
-  </c:otherwise>
-</c:choose> --%>
+
+<div id="search_history">
 <site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
 </div> <!-- end history view div -->
 
@@ -152,4 +151,3 @@
 
 <div id="loading_step_div"></div>
 <site:footer />
-
