@@ -130,8 +130,8 @@
      
 
       <c:if test="${fn:containsIgnoreCase(stringOrg, 'Toxo')}"> 
-        <th>Tg(inst)</th>
-        <th>Tg(repr)</th>
+        <th>Tg(red)</th>
+        <th>Tg(genes)</th>
        </c:if>
 
        <c:if test="${fn:containsIgnoreCase(stringOrg, 'Neospora')}"> 
