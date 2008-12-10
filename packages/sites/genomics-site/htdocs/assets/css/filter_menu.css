@@ -33,7 +33,7 @@
 	background-repeat: repeat-x;
 	border: 1px solid #345d9b;	
 	padding-bottom: 8px;
-	z-index: 90;
+	z-index: 1000;
 }
 
 #query_selection ul {
