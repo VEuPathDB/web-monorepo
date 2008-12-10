@@ -133,7 +133,7 @@ function createStep(ele, step, isLast){
 	var cl ="";
 	var inner = "";
 	if(step.back_boolean_Id == ""){
-		div_id = "step_" + id;
+		div_id = "step_" + id + "_sub";
 		left = -1;
 		cl = "box venn row2 col1 size1 arrowgrey";
 		inner = ""+
@@ -158,7 +158,7 @@ function createStep(ele, step, isLast){
 		left = offset(id);	
 		cl = "venn row2 size2 operation " + operation;
 		inner = ""+
-			"			<a class='operation' onclick='NewResults()' href='javascript:void(0)'>"+
+			"			<a class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
 			"				<img src='/assets/images/transparent1.gif'>"+
 			"			</a>"+
 			"			<span class='resultCount'>"+
@@ -328,7 +328,13 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 
 function AddStepToStrategy(url){	
 	b_strategyId = parseUrl('strategy',url)[0];
-	f_strategyId = getStrategyFromBackId(b_strategyId).frontId;
+	strategy = getStrategyFromBackId(b_strategyId);
+	f_strategyId = strategy.frontId;
+	var currentDiv = $("#Strategies div#diagram_" + f_strategyId).remove();
+	if(strategy.subStratOf != null){
+		strats.splice(findStrategy(f_strategyId));
+	}
+	
 	var d = parseInputs();
 	$.ajax({
 		url: url,
@@ -344,6 +350,8 @@ function AddStepToStrategy(url){
 			$("#diagram_0 div.venn:last span.resultCount a").addClass("selected");//click();
 		},
 		error: function(data, msg, e){
+			$("#Strategies").append(currentDiv);
+			removeLoading(f_strategyId);
 			alert("ERROR \n "+ msg + "\n" + e);
 		}
 	});
@@ -417,7 +425,9 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 			st = getStep(x, f_stepId);
 			if(st.child_Strat_Id == null)
 				alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
-			$("div#Strategies").append(displayModel(st.child_Strat_Id));
+			subDiv = displayModel(st.child_Strat_Id);
+			$(subDiv).addClass("sub_diagram").css({left: "19px", width: "97%"});
+			$("div#Strategies").append(subDiv);
 			removeLoading(f_strategyId);
 		},
 		error: function(data, msg, e){
@@ -429,7 +439,10 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 
 function updateStrategies(data){
 	stratId = loadModel(data);
-	$("div#Strategies div#diagram_" + stratId).remove();
+	subs = getSubStrategies(stratId);
+	for(i=0;i<subs.length;i++){
+		$("div#Strategies div#diagram_" + subs[i].frontId).remove();
+	}
 	$("div#Strategies").append(displayModel(stratId));
 }
 
