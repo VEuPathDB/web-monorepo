@@ -87,11 +87,10 @@ The table below summarizes the number of genes for the organisms currently avail
 	 <c:set var="Py" value="${record.attributesMap['Plasmodium_yoelii']}"/>
 	 <c:set var="Tg" value="${record.attributesMap['Toxoplasma_gondii']}"/>
 	 <c:set var="Tv" value="${record.attributesMap['Trichomonas_vaginalis']}"/> 
-<!--  <c:set var="" value="${record.attributesMap['']}"/>  -->
- 
-   
 
-<tr valign="top" align="left">
+
+
+    <tr valign="top" align="left">
     <td valign="top"><font face="Arial,Helvetica">${Metric_Type}</a></font></td>
     <td valign="top" align="right" bgcolor=${cryptoColor}><font face="Arial,Helvetica">${Ch}</font></td>
     <td valign="top" align="right" bgcolor=${cryptoColor}><font face="Arial,Helvetica">${Cp}</font></td>
@@ -105,15 +104,19 @@ The table below summarizes the number of genes for the organisms currently avail
     <td valign="top" align="right" bgcolor=${plasmoColor}><font face="Arial,Helvetica">${Py}</font></td>
     <td valign="top" align="right" bgcolor=${toxoColor}><font face="Arial,Helvetica">${Tg}</font></td>
     <td valign="top" align="right" bgcolor=${trichColor}><font face="Arial,Helvetica">${Tv}</font></td>
-</tr>
+    </tr>
 
  
   </c:forEach>
+
+
 
   </table>
 
   </c:otherwise>
 </c:choose>
+
+
 
 
 
