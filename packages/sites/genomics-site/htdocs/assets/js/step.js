@@ -7,16 +7,31 @@ function showDetails(det){
 //	det.addClass("jqDnR");
 //	det.find(".crumb_menu").addClass("dragHandle");
 //	det.jqDrag(".crumb_menu");
+	var parent = det.parent().parent();
 	var disp = det.css("display");
 	var crumb_details = $("div.crumb_details");
 	for(i=0;i<crumb_details.length;i++){
 		if($(crumb_details[i]).css("display") == "block")
 			$(crumb_details[i]).css("display", "none");
 	}
-	if(disp == "none")
-		det.show();
-	else
+	if(disp == "none"){
+		var det2 = det.clone();
+//		det.remove();
+		l = parent.css("left");
+		t = parent.css("top");
+		l = l.substring(0,l.indexOf("px"));
+		t = t.substring(0,t.indexOf("px"));
+		l = parseInt(l) + 58;
+		t = parseInt(t) + 235;
+		det2.css({
+			left: l + "px",
+			top: t + "px"
+		});
+		det2.show().appendTo("#Strategies");
+	}
+	else{
 		det.hide();
+	}
 }
 
 function hideDetails(det){

@@ -97,7 +97,7 @@ function displayModel(strat_id){
 		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + ")").attr("onclick","this.blur()").addClass("filter_link redbutton");
 		$(button).html("<span>Add Step</span>");
 		$(button).css({ position: "absolute",
-						left: buttonleft + "em",
+						left: buttonleft + "px",
 						top: "4.5em"});
 		$(div_strat).append(button);
 	return div_strat;
@@ -106,7 +106,8 @@ function displayModel(strat_id){
 }
 
 function offset(index){
-		return (index * 11.3) - (index - 1);
+	//	return (index * 11.3) - (index - 1);
+		return (index * 137) - (index - 1);
 }
 
 function createStep(ele, step, isLast){
@@ -171,7 +172,7 @@ function createStep(ele, step, isLast){
 			"			</ul>";
 		}
 		stepNumber = document.createElement('span');
-		$(stepNumber).addClass('stepNumber').css({ left: (left + 2.7) + "em"}).text("Step " + (id + 1));
+		$(stepNumber).addClass('stepNumber').css({ left: (left + 2.7) + "px"}).text("Step " + (id + 1));
 	}else{
 		div_id = "step_" + id + "_sub";
 		left = offset(id);
@@ -194,7 +195,7 @@ function createStep(ele, step, isLast){
 	var div_s = document.createElement("div");
 	if(left != -1){
 		$(div_s).attr("id", div_id).addClass(cl).html(inner);
-		$(div_s).css({ left: left + "em"});
+		$(div_s).css({ left: left + "px"});
 	}else{
 		$(div_s).attr("id", div_id).addClass(cl).html(inner);
 	}
@@ -219,10 +220,7 @@ function createDetails(ele, strat, step){
 	var id = step.frontId;
 	var params_table = createParameters($("params", ele));
 	inner = ""+	
-		"		<p class='question_name'><span>" + name + "</span></p>"+
-		"		<table></table>"+
-		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + id + "'>Download</a></p>"+
-		"		<div class='crumb_menu'>"+
+	    "		<div class='crumb_menu'>"+
 		"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this)'>Rename</a>&nbsp;|&nbsp;"+
 		"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ")' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;"+
 		"			<a class='edit_step_link' href='javascript:void(0)' onclick='EditStep(" + strat + "," + id + ",\"" + questionFullName + "\",\"" + urlParams + "\")' id='1|0|'>Edit</a>&nbsp;|&nbsp;"+
@@ -233,7 +231,11 @@ function createDetails(ele, strat, step){
 		"			<span style='float: right; position: absolute; right: 6px;'>"+
 		"				<a href='javascript:void(0)' onclick='hideDetails(this)'>[x]</a>"+
 		"			</span>"+
-		"		</div>";
+		"		</div>"+
+		"		<p class='question_name'><span>" + name + "</span></p>"+
+		"		<table></table>"+
+		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + id + "'>Download</a></p>";
+		
 	$(detail_div).html(inner);
 	$("table", detail_div).replaceWith(params_table);
 	return detail_div;       
