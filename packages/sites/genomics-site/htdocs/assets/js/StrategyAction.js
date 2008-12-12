@@ -241,7 +241,7 @@ function createDetails(ele, strat, step){
 
 function createParameters(params){
 	var table = document.createElement('table');
-	$(params).children().each(function(){
+	$(params).children("param").each(function(){
 		var tr = document.createElement('tr');
 		var prompt = document.createElement('td');
 		var space = document.createElement('td');
