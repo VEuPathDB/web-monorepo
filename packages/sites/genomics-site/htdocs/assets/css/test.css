@@ -9,7 +9,7 @@ body {
 	text-align: left;
 	color: #333333;
 	background-color: #ffffff;
-	background-image: url(../images/crypto/background.jpg);
+	background-image: url(../images/CryptoDB/background.jpg);
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	background-repeat: repeat-x;
@@ -40,7 +40,7 @@ a:hover, a:active {
 	width: 100%;
 	height: 159px;
 	text-align: left;
-	background-image: url(../images/crypto/backgroundtop.jpg);
+	background-image: url(../images/CryptoDB/backgroundtop.jpg);
 	background-repeat: no-repeat;
 }
 
@@ -64,7 +64,7 @@ a:hover, a:active {
 
 #menubar #mysearch {
 	width: auto;
-	background-image: url(../images/crypto/my_hist_menubar.png);
+	background-image: url(../images/CryptoDB/my_hist_menubar.png);
 	background-repeat: repeat-x;
 	margin-top: -4px;
 	padding: 3px;
@@ -81,7 +81,7 @@ a:hover, a:active {
 	min-width: 750px;
 	margin: 0 25px 0 226px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
 	background-color: #FFFFFF;
-	background-image: url(../images/crypto/footer.png);
+	background-image: url(../images/CryptoDB/footer.png);
 	background-repeat: repeat-x;
 	text-align: left;
 	border: 1px solid #345d9b;
@@ -110,7 +110,7 @@ a:hover, a:active {
 #mysearchhist {
 	width: 100%x;
 	text-align: center;
-	background-image: url(../images/crypto/bubble_my_searchbox.png);
+	background-image: url(../images/CryptoDB/bubble_my_searchbox.png);
 	background-repeat: repeat-x;
 	border: 1px solid #aebed7;
 	padding-top: 4px;
@@ -149,7 +149,7 @@ margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
 	text-align: left;
 	clear: both;
 	line-height: 1.3em;
-	background-image: url(../images/crypto/tools_bckgnd.jpg);
+	background-image: url(../images/CryptoDB/tools_bckgnd.jpg);
 	background-repeat: no-repeat;
 	padding: 16px;
 	margin-top: 20px;
@@ -246,7 +246,7 @@ margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
 	border-color:#888888;
 	padding: 6px 6px 6px 18px;
 	line-height: 14px;
-	list-style-image: url(../images/crypto/bullet_arrow.gif);
+	list-style-image: url(../images/CryptoDB/bullet_arrow.gif);
 }
 
 #nav li:hover ul {
@@ -298,7 +298,7 @@ margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
 	voice-family: "\"}\"";
 	voice-family: inherit;
 	text-decoration: none;
-	background-image: url(../images/crypto/menu_lft2.png);
+	background-image: url(../images/CryptoDB/menu_lft2.png);
 	background-repeat: no-repeat;
 	padding-right: 6px;
 	padding-left: 11px;
@@ -328,7 +328,7 @@ margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
 	border-color:#630d0d;
 	padding: 6px 6px 6px 11px;
 	line-height: 15px;
-	list-style-image: url(../images/crypto/bullet_6.png);
+	list-style-image: url(../images/CryptoDB/bullet_6.png);
 }
 
 
@@ -414,7 +414,7 @@ h2 {
 	width: 75%;
 	text-align: center;
 	background-color:#FFFFFF;
-	background-image: url(../images/crypto/footer.png);
+	background-image: url(../images/CryptoDB/footer.png);
 	background-repeat: repeat-x;
 	color: #505050;
 	padding: 9px;
