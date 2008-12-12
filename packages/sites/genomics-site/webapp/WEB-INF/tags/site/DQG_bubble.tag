@@ -2,6 +2,7 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
 <%@ attribute name="banner" 
  			  type="java.lang.String"
@@ -23,10 +24,15 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="catMap" value="${wdkModel.questionsByCategory}" />
+
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+
+
 <div id="3columndiv">
 
 
-<img src="/assets/images/crypto/${banner}" alt="${alt_banner}" width="247" height="46" />
+<img src="/assets/images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
 <c:choose>
 	<c:when test="${recordClasses == null}">
 		<site:DQG_tools />
