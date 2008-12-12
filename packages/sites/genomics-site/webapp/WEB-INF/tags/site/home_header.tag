@@ -1,13 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<%@ attribute name="title"
+              description="Value to appear in page's title"
+%>
 <%@ attribute name="refer" 
  			  type="java.lang.String"
 			  required="true" 
 			  description="Page calling this tag"
 %>
 
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -73,8 +79,8 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>CryptoDB -- Cryptosporidium Genome Resources</title>
-<link href="/assets/css/crypto.css" rel="stylesheet" type="text/css" />
+<title>${title}</title>
+<link href="/assets/css/${project}.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/assets/css/history.css" type="text/css"/>
 <link rel="stylesheet" type="text/css" href="/assets/css/Strategy.css" />
 <link rel="StyleSheet" href="/assets/css/filter_menu.css" type="text/css"/>
@@ -82,7 +88,7 @@
 <style type="text/css">
 <!--
 body {
-	background-image: url(/assets/images/crypto/background_s.jpg);
+	background-image: url(/assets/images/${project}/background_s.jpg);
 	background-repeat: repeat-x;
     }
 body {
@@ -90,7 +96,7 @@ behavior: url(/assets/css/csshover.htc);
 }
 #header {
 	height: 104px;
-	background-image: url(/assets/images/crypto/backgroundtop_s.jpg);
+	background-image: url(/assets/images/${project}/backgroundtop_s.jpg);
 }
 #header p {
 	font-size: 9px;
@@ -107,14 +113,14 @@ behavior: url(/assets/css/csshover.htc);
    <div id="header_rt">
    <div align="right"><div id="toplink">
    <a href="#skip"><img src="../assets/images/transparent1.gif" alt="Skip navigational links" width="1" height="1" border="0" /></a>
-   <a href="http://eupathdb.org"><img src="../assets/images/crypto/partofeupath.png" alt="Link to EuPathDB homepage" 
+   <a href="http://eupathdb.org"><img src="../assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage" 
 	width="174" height="23" /></a></div></div>
        <div id="bottom">
 	  <site:quickSearch /><br />
 	  <div id="nav_topdiv">
       <ul id="nav_top">
       <li>
-      <a href="#">About ${siteName}<img src="../assets/images/crypto/menu_divider5.png" alt="" width="17" height="9" /></a>
+      <a href="#">About ${siteName}<img src="../assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       		<ul>
           <li><a href="#">Who We Are</a></li>
           <li><a href="#">What We Do</a></li>
@@ -124,7 +130,7 @@ behavior: url(/assets/css/csshover.htc);
         	</ul>
         </li>
       <li>
-      <a href="#">Help<img src="../assets/images/crypto/menu_divider5.png" alt="" width="17" height="9" /></a>
+      <a href="#">Help<img src="../assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       		<ul>
           <li><a href="#">Web Tutorials</a></li>
           <li><a href="#">Community Links</a></li>
@@ -133,33 +139,42 @@ behavior: url(/assets/css/csshover.htc);
         	</ul>
         </li>
       <li>
-      <a href="#">Contact Us<img src="../assets/images/crypto/menu_divider5.png" alt="" width="17" height="9" /></a></li>
+      <a href="#">Contact Us<img src="../assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a></li>
       <li>
-      <c:choose>
-        <c:when test="${wdkUser.guest}">
-          <a href="#">Log In/Register</a>
-          <ul class="login">
-            <li><site:login refer="home_header"/></li>
-          </ul>
-        </c:when>
-        <c:otherwise>
-          <a href="<c:url value="/processLogout.do"/>">Logout</a>
-	</c:otherwise>
-      </c:choose>
-      </li>      
+      <a href="#">Log In/Register</a> <%-- possible style when a user is login....<a href="#">Logout</a>
+ 	  <br /><b style='color:black'>John Doe</b> | <a href="#">Profile</a>
+	  --%></li>      
       </ul>
-      <c:if test="${!wdkUser.guest}">
-        <div id="user_topdiv">
- 	  <strong>${wdkUser.firstName}&nbsp;${wdkUser.lastName}</strong>&nbsp;|&nbsp;<a href="<c:url value="/showProfile.do"/>">Profile</a>
-        </div>
-      </c:if>
       </div>
+      	  
        </div>
    </div>
 
-   <p><a href="/"><img src="../assets/images/crypto/title_s.png" alt="Link to CryptoDB homepage" 
-	width="318" height="64" align="left" /></a></p>
+<%--
+crypto width="318" height="64"    version    date  
+tryp          282           72
+--%>
+<c:if test="${fn:containsIgnoreCase(project, 'CryptoDB')}">
+     <c:set var="width" value="318" />
+     <c:set var="height" value="64" />
+     <c:set var="version" value="4.0" />
+     <c:set var="date" value="January 15th, 2009" />
+</c:if>
+
+<c:if test="${fn:containsIgnoreCase(project, 'TrypDB')}">
+     <c:set var="width" value="282" />
+     <c:set var="height" value="72" />
+     <c:set var="version" value="1.0" />
+     <c:set var="date" value="January 15th, 2009" />
+</c:if>
+
+
+
+   <p><a href="/"><img src="../assets/images/${project}/title_s.png" alt="Link to ${project} homepage" 
+	width="%{width}" height="${height}" align="left" /></a></p>
    <p>&nbsp;</p>
-   <p>Version 3.8<br />
-   October 15, 2008</p>
+   <p>Version ${version}<br />
+   ${date}</p>
 </div> 
+
+
