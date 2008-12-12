@@ -12,13 +12,22 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="${wdkModel.displayName} : Gene Metrics"
+<site:header  title="ApiDB/EuPathDB :: Gene Metrics"
+                 banner="ApiDB/EuPathDB Gene Metrics"
+                 parentDivision="ApiDB/EuPathDB"
+                 parentUrl="/home.jsp"
+                 divisionName="allSites"
+                 division="geneMetrics"/>
+
+<%--  title="${wdkModel.displayName} : Gene Metrics"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="GeneMetrics"
                  division="genemetrics"
                  headElement="${headElement}" />
+--%>
+
 
 <c:set var="cryptoColorHeader" value="#507494"/>
 <c:set var="plasmoColorHeader" value="#507494"/>
