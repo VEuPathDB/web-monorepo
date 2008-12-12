@@ -4,8 +4,11 @@ $("#diagram").ready(function(){
 
 function showDetails(det){
 	det = $(det).parent().parent().find("h3 div.crumb_details");
+//	det.addClass("jqDnR");
+//	det.find(".crumb_menu").addClass("dragHandle");
+//	det.jqDrag(".crumb_menu");
 	var disp = det.css("display");
-	var crumb_details = $("#diagram h3 div.crumb_details");
+	var crumb_details = $("div.crumb_details");
 	for(i=0;i<crumb_details.length;i++){
 		if($(crumb_details[i]).css("display") == "block")
 			$(crumb_details[i]).css("display", "none");
