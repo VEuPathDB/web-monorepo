@@ -27,7 +27,7 @@ function showDetails(det){
 		l = l.substring(0,l.indexOf("px"));
 		t = t.substring(0,t.indexOf("px"));
 		l = parseInt(l) + 58;
-		t = parseInt(t) + 235;
+		t = parseInt(t) + 255;
 		det2.css({
 			left: l + "px",
 			top: t + "px",
