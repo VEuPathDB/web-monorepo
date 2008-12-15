@@ -207,7 +207,7 @@ function createStep(ele, step, isLast){
 
 function createDetails(ele, strat, step){
 	var detail_div = document.createElement('div');
-	$(detail_div).addClass("crumb_details").css({ display: "none" });
+	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none" });
 	var name = $(ele).attr("name");
 	var shortName = $(ele).attr("shortName");
 	var collapsible = $(ele).attr("isCollapsed");

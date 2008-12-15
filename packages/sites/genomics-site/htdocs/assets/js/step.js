@@ -2,21 +2,26 @@ $("#diagram").ready(function(){
 	$("div.diagram:first div.venn:last span.resultCount a").click();
 });
 
+var openDetail = null;
+
 function showDetails(det){
-	det = $(det).parent().parent().find("h3 div.crumb_details");
+	openDetail = $(det).parent().parent().find("h3 div.crumb_details");
 //	det.addClass("jqDnR");
 //	det.find(".crumb_menu").addClass("dragHandle");
 //	det.jqDrag(".crumb_menu");
-	var parent = det.parent().parent();
-	var disp = det.css("display");
-	var crumb_details = $("div.crumb_details");
-	for(i=0;i<crumb_details.length;i++){
-		if($(crumb_details[i]).css("display") == "block")
-			$(crumb_details[i]).css("display", "none");
-	}
-	if(disp == "none"){
-		var det2 = det.clone();
-//		det.remove();
+	var parent = openDetail.parent().parent();
+	var diagram = parent.parent();
+	var disp = openDetail.attr("disp");
+	$("#Strategies").children("div.crumb_details").each(function(){
+		$(this).remove();	
+	});
+	$("div.crumb_details", diagram).each(function(){
+		$(this).attr("disp","0");
+	})
+	
+	if(disp == "0"){
+		openDetail.attr("disp","1");
+		var det2 = openDetail.clone();
 		l = parent.css("left");
 		t = parent.css("top");
 		l = l.substring(0,l.indexOf("px"));
@@ -25,18 +30,23 @@ function showDetails(det){
 		t = parseInt(t) + 235;
 		det2.css({
 			left: l + "px",
-			top: t + "px"
+			top: t + "px",
+			display: "block"
 		});
-		det2.show().appendTo("#Strategies");
+		det2.appendTo("#Strategies");
 	}
 	else{
-		det.hide();
+		openDetail.attr("disp","0");
 	}
 }
 
 function hideDetails(det){
-	det = $(det).parent().parent().parent();
-	det.hide();
+	openDetail.attr("disp","0");
+	openDetail = null;
+	
+	$("#Strategies").children("div.crumb_details").each(function(){
+		$(this).remove();	
+	});
 }
 
 function Edit_Step(ele,url){
