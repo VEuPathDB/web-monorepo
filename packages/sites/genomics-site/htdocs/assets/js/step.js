@@ -6,9 +6,6 @@ var openDetail = null;
 
 function showDetails(det){
 	openDetail = $(det).parent().parent().find("h3 div.crumb_details");
-//	det.addClass("jqDnR");
-//	det.find(".crumb_menu").addClass("dragHandle");
-//	det.jqDrag(".crumb_menu");
 	var parent = openDetail.parent().parent();
 	var diagram = parent.parent();
 	var disp = openDetail.attr("disp");
@@ -22,6 +19,10 @@ function showDetails(det){
 	if(disp == "0"){
 		openDetail.attr("disp","1");
 		var det2 = openDetail.clone();
+			det2.addClass("jqDnR");
+			det2.find(".crumb_menu").addClass("dragHandle");
+			det2.jqDrag(".crumb_menu");
+		
 		l = parent.css("left");
 		t = parent.css("top");
 		l = l.substring(0,l.indexOf("px"));
