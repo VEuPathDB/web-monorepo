@@ -286,24 +286,27 @@
 
 	}
 
-	.crumb_details {
+	#Strategies div.crumb_details {
 		display: none;
 		background-color: #eee;
 		color: #000000;
 		border: solid black;
 		position:absolute;
 		z-index: 200;
-		top: 57px;
-		left: 26px;
 		min-width: 365px;
+		text-align: center;
+		padding-bottom: 5px;
 	}
 
-	.crumb_menu {
+	#Strategies div.crumb_menu {
 		background-image:url(../images/CryptoDB/trsubhead.png);	
-		width: 100%;
-		left: -2px;
-		top: -29px;
+		width: 94%;
+		position: relative;
+		left: -3px;
+		top: -28px;
 		white-space: nowrap;
+		border: 2px solid #000000;
+		padding: 6px 20px 5px 4px;
 	}
 
 	.crumb_menu span, .crumb_menu a {
@@ -325,7 +328,7 @@
 
 .question_name {
 	font-size: 14px;
-	margin: 0px;
+	margin: -17px 0px 3px 0px;
 }
 
 .question_name span {
@@ -345,7 +348,7 @@
 	margin: 0 auto;*/
 
 .crumb_details table {
-	margin: 0 5px;
+	margin: 7px 47px;
 	line-height: 1;
 	border-collapse: separate;
 	border-spacing: 2px;
