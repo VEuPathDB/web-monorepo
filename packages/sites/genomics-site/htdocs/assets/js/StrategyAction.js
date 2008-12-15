@@ -106,8 +106,8 @@ function displayModel(strat_id){
 }
 
 function offset(index){
-	//	return (index * 11.3) - (index - 1);
-		return (index * 137) - (index - 1);
+	//	return (index * 137) - (index - 1);
+		return (index * 127) - (index - 1);
 }
 
 function createStep(ele, step, isLast){
@@ -172,7 +172,7 @@ function createStep(ele, step, isLast){
 			"			</ul>";
 		}
 		stepNumber = document.createElement('span');
-		$(stepNumber).addClass('stepNumber').css({ left: (left + 2.7) + "px"}).text("Step " + (id + 1));
+		$(stepNumber).addClass('stepNumber').css({ left: (left + 30) + "px"}).text("Step " + (id + 1));
 	}else{
 		div_id = "step_" + id + "_sub";
 		left = offset(id);
@@ -234,7 +234,7 @@ function createDetails(ele, strat, step){
 		"		</div>"+
 		"		<p class='question_name'><span>" + name + "</span></p>"+
 		"		<table></table>"+
-		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + step.back_step_Id + "'>Download</a></p>";
+		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + id + "'>Download</a></p>";
 		
 	$(detail_div).html(inner);
 	$("table", detail_div).replaceWith(params_table);
