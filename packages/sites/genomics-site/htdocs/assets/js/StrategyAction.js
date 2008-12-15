@@ -221,13 +221,13 @@ function createDetails(ele, strat, step){
 	var params_table = createParameters($("params", ele));
 	inner = ""+	
 	    "		<div class='crumb_menu'>"+
-		"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this)'>Rename</a>&nbsp;|&nbsp;"+
-		"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ")' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;"+
-		"			<a class='edit_step_link' href='javascript:void(0)' onclick='EditStep(" + strat + "," + id + ",\"" + questionFullName + "\",\"" + urlParams + "\")' id='1|0|'>Edit</a>&nbsp;|&nbsp;"+
-		"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(" + strat + "," + id + ",\"" + collapsedName + "\")'>Expand</a>&nbsp;|&nbsp;"+
-		"			<a class='insert_step_link' id='1|0' href='javascript:void(0)' onclick='InsertStep(" + strat + "," + id + ")'>Insert Before</a>"+
+		"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;"+
+		"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;"+
+		"			<a class='edit_step_link' href='javascript:void(0)' onclick='EditStep(" + strat + "," + id + ",\"" + questionFullName + "\",\"" + urlParams + "\");hideDetails(this)' id='1|0|'>Edit</a>&nbsp;|&nbsp;"+
+		"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(" + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;"+
+		"			<a class='insert_step_link' id='1|0' href='javascript:void(0)' onclick='InsertStep(" + strat + "," + id + ");hideDetails(this)'>Insert Before</a>"+
 		"			&nbsp;|&nbsp;"+
-		"			<a class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ")'>Delete</a>"+
+		"			<a class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>"+
 		"			<span style='float: right; position: absolute; right: 6px;'>"+
 		"				<a href='javascript:void(0)' onclick='hideDetails(this)'>[x]</a>"+
 		"			</span>"+
@@ -371,7 +371,7 @@ function EditStep(proto, url, step_number){
 		data: d,
 		beforeSend: function(obj){
 				showLoading(proto.split("_")[0]);
-				$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
+				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
 			updateStrategies(data);
@@ -397,7 +397,7 @@ function DeleteStep(f_strategyId,f_stepId){
 		dataType:"xml",
 		beforeSend: function(obj){
 				showLoading(f_strategyId);
-				$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
+				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
 				updateStrategies(data);
@@ -420,7 +420,7 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 		dataType: "xml",
 		beforeSend: function(){
 			showLoading(f_strategyId);
-			$("div#step_" + step.frontId + "_sub h3 div.crumb_details").hide();
+			//$("div#step_" + step.frontId + "_sub h3 div.crumb_details").hide();
 		},
 		success: function(data){
 			x = loadModel(data);

@@ -82,19 +82,17 @@ function Insert_Step(ele,url){
 	openFilter(sNumber[0] + ":" + sNumber[1]);
 }
 
-function Rename_Step(ele){
-	$(ele).parent().parent().hide();
-	var link = $(ele).parent().parent().parent().find("a:first");
-	link.html("<input id='new_name_box' type='text' value='"+link.text()+"' onblur='RenameStep(this)' onfocus='this.select()' onkeypress='blah(this,event)' size='10'/>");
+function Rename_Step(ele, strat, stpId){
+	var link = $("#diagram_" + strat + " div#step_" + stpId + "_sub h3 a#stepId_" + stpId, $(ele).parent().parent().parent());
+	link.html("<input id='new_name_box' type='text' value='"+link.text()+"' onblur='RenameStep(this, " + strat + "," + stpId +")' onfocus='this.select()' onkeypress='blah(this,event)' size='10'/>");
 	$("#new_name_box").focus();
 }
 
-function RenameStep(ele){
+function RenameStep(ele, s, stp){
 	var a = $(ele).parent();
 	var new_name = $(ele).val();
-	var x = $(ele).parent().attr("id");
-	x = x.substring(7);
-	var url = "renameStep.do?stepId=" + x + "&customName=" + new_name;	
+	step = getStep(s, stp);
+	var url = "renameStep.do?stepId=" + step.back_step_Id + "&customName=" + new_name;	
 	if(new_name.length > 14)
 		new_name = new_name.substring(0,12) + "...";	
 	$.ajax({
