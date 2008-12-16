@@ -56,7 +56,7 @@
 			<option value="${storedStrategy.strategyId}">${storedStrategy.name}</option>
 		</c:forEach>
 	</select>
-	<br><br><input type="button" value="Continue..." onclick="OpenOperationBox(${strategy.strategyId})"/>
+	<br><br><input id="continue_button" type="button" value="Continue..."/>
 </td>
 </tr>
 </table>
