@@ -455,7 +455,7 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 				alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
 			subDiv = displayModel(st.child_Strat_Id);
 			$(subDiv).addClass("sub_diagram").css({"margin-left":"40px"});
-			$("div#Strategies").append(subDiv);
+			$("div#Strategies div#diagram_" + f_strategyId).after(subDiv);
 			removeLoading(f_strategyId);
 		},
 		error: function(data, msg, e){
