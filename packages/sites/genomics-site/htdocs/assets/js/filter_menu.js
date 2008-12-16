@@ -171,14 +171,14 @@ function getQueryForm(url){
 }
 
 function OpenOperationBox(stratId) {
-	var selectedStrat = $("#filter_link_div_" + stratId + " select#selected_strategy").val();
-	var url = "\"processFilter.do?strategy=" + stratId + "&insert=&insertStrategy=" + selectedStrat +"\"";
-	var oform = "<form id='form_question' enctype='multipart/form-data' action='javascript:AddStepToStrategy(\""+ stratId + "\"," + url + ")' method='post' name='questionForm'>";
+	var selectedStrat = $("#query_form select#selected_strategy").val();
+	var url = "\"processFilter.do?strategy=" + getStrategy(stratId).backId + "&insert=&insertStrategy=" + selectedStrat +"\"";
+	var oform = "<form id='form_question' enctype='multipart/form-data' action='javascript:AddStepToStrategy(" + url + ")' method='post' name='questionForm'>";
 	var cform = "</form>";
 	var ops = "<div class='filter operators'><span class='form_subtitle'>Combine Strategy " + stratId + " with Strategy " + selectedStrat + "</span><div id='operations'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'><b>INTERSECT</b></td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td><b>UNION</b></td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td><b>MINUS</b></td></tr></table></div></div>"
 	var button = "<br><br><input type='submit' value='Add Strategy' />";
 	ops = oform + ops + button + cform;
-	$("#filter_link_div_" + stratId + " #query_form").html(ops);
+	$("#query_form div#query_selection").html(ops);
 }
 
 function openFilter(dtype,strat_id){
@@ -190,6 +190,10 @@ function openFilter(dtype,strat_id){
 		success: function(data){
 			filter = document.createElement('div');
 			$(filter).html(data);
+			$("#continue_button", filter).click(function(){
+				OpenOperationBox(strat_id);
+				return false;
+			});
 			$("div#Strategies").append(filter);
 			$("#query_form").jqDrag(".dragHandle");
 		},
