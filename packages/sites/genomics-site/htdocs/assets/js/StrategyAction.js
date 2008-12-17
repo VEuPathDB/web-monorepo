@@ -66,6 +66,8 @@ function displayModel(strat_id){
 		strat = getStrategy(strat_id);
 		var div_strat = document.createElement("div");
 		$(div_strat).attr("id","diagram_" + strat.frontId).addClass("diagram");
+		if(strat.subStratOf != null)
+			$(div_strat).addClass("sub_diagram").css({"margin-left":"40px"});
 		var close_span = document.createElement('span');
 		$(close_span).addClass("closeStrategy").html(""+
 		"	<a onclick='closeStrategy(" + strat.frontId + ")' href='javascript:void(0)'>"+
@@ -458,7 +460,6 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 			if(st.child_Strat_Id == null)
 				alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
 			subDiv = displayModel(st.child_Strat_Id);
-			$(subDiv).addClass("sub_diagram").css({"margin-left":"40px"});
 			$("div#Strategies div#diagram_" + f_strategyId).after(subDiv);
 			removeLoading(f_strategyId);
 		},
@@ -477,12 +478,6 @@ function updateStrategies(data){
 	}
 	$("div#Strategies").append(displayModel(stratId));
 }
-
-
-
-///////// ^^^^^^^ NEW CODE ^^^^^   ///////////////////////////////// vvvvvv OLD CODE vvvvvvvv ///////////////////////////////////////////
-
-
 
 var isInsert = "";
 function openStrategy(stratId){
@@ -507,13 +502,23 @@ function closeStrategy(stratId){
 		url: url,
 		dataType:"html",
 		success: function(data){
-			$("#diagram_" + stratId).hide("slow").remove();
+			hideStrat(stratId);
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e);
 		}
 	});
 	$("#eye_" + stratId).removeClass("strat_active").addClass("strat_inactive");
+}
+
+function hideStrat(id){
+	strat = getStrategy(id);
+	for(i=0;i<strat.Steps.length;i++){
+		if(strat.Steps[i].child_Strat_Id != null){
+			hideStrat(strat.Steps[i].child_Strat_Id);
+		}
+	}
+	$("#diagram_" + id).hide("slow").remove();
 }
 
 function saveStrategy(stratId, checkName){
@@ -567,7 +572,7 @@ function showLoading(divId){
 function removeLoading(divId){
 	$("#diagram_" + divId + " span#loadingGIF").remove();
 }
-
+/*
 var recur_Count;
 var sub_strat_ids;
 var count;
@@ -634,6 +639,6 @@ function recursiveRefresh(stratId){
 		}
 	});
 }
-
+*/
 
 
