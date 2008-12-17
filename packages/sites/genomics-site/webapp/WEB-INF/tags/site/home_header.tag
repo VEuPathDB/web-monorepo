@@ -175,7 +175,7 @@ tryp          282           72
      <c:set var="date" value="January 15th, 2009" />
 </c:if>
 
-<c:if test="${fn:containsIgnoreCase(project, 'TrypDB')}">
+<c:if test="${fn:containsIgnoreCase(project, 'TriTrypDB')}">
      <c:set var="width" value="282" />
      <c:set var="height" value="72" />
      <c:set var="version" value="1.0" />
