@@ -239,7 +239,7 @@ function createDetails(ele, strat, step){
 		"		</div>"+
 		"		<p class='question_name'><span>" + name + "</span></p>"+
 		"		<table></table>"+
-		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + id + "'>Download</a></p>";
+		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + step.back_step_Id + "'>Download</a></p>";
 		
 	$(detail_div).html(inner);
 	$("table", detail_div).replaceWith(params_table);
