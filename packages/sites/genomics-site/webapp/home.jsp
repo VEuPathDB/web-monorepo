@@ -21,8 +21,8 @@
 -->
 
       </c:when>
-      <c:when test = "${project == 'TrypDB'}">
-             <c:set var="title" value="TrypDB title..."/>
+      <c:when test = "${project == 'TriTrypDB'}">
+             <c:set var="title" value="TriTrypDB title..."/>
 <!--
              <c:set var="banner" value="/images/plasmodbBanner.jpg"/>
              <c:set var="isbannerimage" value="true"/>
