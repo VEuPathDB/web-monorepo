@@ -272,7 +272,8 @@ function createStrategyName(ele, strat){
 
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
-	$(div_sn).html(name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
+	if (strat.subStratOf == null){
+		$(div_sn).html(name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" +
 	"<a class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\">save as</a>" +
@@ -303,6 +304,9 @@ function createStrategyName(ele, strat){
 	"<input type='text' size=" + exportURL.length + " value=" + exportURL + " />" +
 	"</div>"+
 	"</span>");
+	}else{
+		$(div_sn).html(name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 
+	}
 	return div_sn;
 }
 
@@ -337,7 +341,7 @@ function AddStepToStrategy(url){
 	b_strategyId = parseUrl('strategy',url)[0];
 	strategy = getStrategyFromBackId(b_strategyId);
 	f_strategyId = strategy.frontId;
-	var currentDiv = $("#Strategies div#diagram_" + f_strategyId).remove();
+	var currentDiv = $("#Strategies div#diagram_" + f_strategyId);
 	if(strategy.subStratOf != null){
 		strats.splice(findStrategy(f_strategyId));
 	}
@@ -353,11 +357,11 @@ function AddStepToStrategy(url){
 		},
 		success: function(data){
 			updateStrategies(data);
-			removeLoading(f_strategyId);
+			//removeLoading(f_strategyId);
 			$("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
 		},
 		error: function(data, msg, e){
-			$("#Strategies").append(currentDiv);
+			//$("#Strategies").append(currentDiv);
 			removeLoading(f_strategyId);
 			alert("ERROR \n "+ msg + "\n" + e);
 		}
