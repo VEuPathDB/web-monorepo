@@ -1,15 +1,19 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
 
 <div id="leftcolumn">
 	<div class="innertube">
 		<div id="menu_lefttop">
-				<img src="/assets/images/CryptoDB/menu_lft1.png" alt="" width="208" height="12" />
+				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">News</a>
 				<div class="menu_lefttop_drop"><ul>
 					<li><a href="#">CryptoDB 3.7 is released with isolates and<em> C. muris</em> ESTs</a><br />(19 February 2008)</li>
 					<li><a href="#">CryptoDB 3.6 is released with SNP data from <em>C. parvum</em> IOWA, MD, TU114 strains</a><br />(6 December 2007)</li>
 					<li><a href="#">Status of the <em>C. muris</em> Genome Sequencing Project </a><br />(18 June 2007)</li>
 				</ul></div>
-				<img src="/assets/images/CryptoDB/menu_lft1.png" alt="" width="208" height="12" />
+				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">Web Tutorials</a>
 				<div class="menu_lefttop_drop"><ul>
 						<li>Introduction<br />(<a href="#">Quick Time</a>) (<a href="#">Windows Media</a>) (<a href="#">Flash</a>)</li>
@@ -18,7 +22,7 @@
 						<li>Introduction to the Genome Browser<br />(<a href="#">Quick Time</a>) (<a href="#">Windows Media</a>) (<a href="#">Flash</a>)</li>
 						<li>List of Gene Identifiers as Query Input<br />(<a href="#">Quick Time</a>) (<a href="#">Windows Media</a>) (<a href="#">Flash</a>)</li>
 				</ul></div>
-				<img src="/assets/images/CryptoDB/menu_lft1.png" alt="" width="208" height="12" />
+				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">Community Links</a>
 				<div class="menu_lefttop_drop"><ul>
 						<li><a href="#"> EuPathDB.org</a></li>
@@ -45,7 +49,7 @@
 						<li><a href="#"> VBI PathInfo</a></li>
 						<li><a href="#">Chartered Institute of Environmental Health </a></li>
 				</ul></div>
-				<img src="/assets/images/CryptoDB/menu_lft1.png" alt="" width="208" height="12" />
+				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">Information and Help</a>
 				<div class="menu_lefttop_drop"><ul>
 						<li> <a href="#">Glossary of Terms</a></li>
