@@ -577,8 +577,10 @@ function showLoading(divId){
 	var i = document.createElement('img');
 	$(i).attr("src","/assets/images/loading2.gif");
 	$(i).attr("height","23");
-	$(l).append(i);
+	//$(l).html("<p style='position:relative;top:-17px;z-index:300'>Loading...</p>");
+	$(l).prepend(i);
 	$(l).css({
+		"text-align": "center",
 		position: "absolute",
 		left: "10px",
 		top: "10px"
