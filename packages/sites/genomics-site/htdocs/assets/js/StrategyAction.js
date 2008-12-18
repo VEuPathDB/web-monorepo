@@ -250,7 +250,7 @@ function createDetails(ele, strat, step){
 		"		</div>"+
 		"		<p class='question_name'><span>" + name + "</span></p>"+
 		"		<table></table>"+
-		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + step.back_step_Id + "'>Download</a></p>";
+		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + id + "'>Download</a></p>";
 		
 	$(detail_div).html(inner);
 	$("table", detail_div).replaceWith(params_table);
@@ -575,7 +575,7 @@ function showLoading(divId){
 	var l = document.createElement('span');
 	$(l).attr("id","loadingGIF");
 	var i = document.createElement('img');
-	$(i).attr("src","/assets/images/loading.gif");
+	$(i).attr("src","/assets/images/loading2.gif");
 	$(i).attr("height","23");
 	$(l).append(i);
 	$(l).css({
