@@ -5,7 +5,7 @@ Strategy Object and Functions
 function Strategy(frontId, backId, isDisplay){
 	this.frontId = frontId;
 	this.backId = backId;
-	this.isDisplay = false;
+	this.isDisplay = isDisplay;
 }
 Strategy.prototype.subStratOf = null;
 Strategy.prototype.Steps = new Array();
