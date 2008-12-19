@@ -216,10 +216,13 @@ if ($query->param("messageId")){
         my $startDate = $query->param("startDate");
         my $stopDate =  $query->param("stopDate");
         my $adminComments = $query->param("adminComments");
+        my $validForm;
 
        # Validate data from form
        if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
-       
+     
+         $validForm=1; # form data is valid...proceed  
+
         ###Begin database transaction###
         eval{
         my $sql=q(UPDATE announce.messages SET 
@@ -261,10 +264,9 @@ if ($query->param("messageId")){
 	        $dbh->rollback();
             return 0;
             }  
-
-             else{
-             return 1;
-             }
+             elsif (!$@ && $validForm){
+                   return 1; # form is valid and db transaction succesful, so return success
+                 }
        ###End database transaction###
 
     }## End updateMessage Subroutine
@@ -275,7 +277,7 @@ sub displayMessageForm{
          my $errorMessage=$_[0];
          my $messageId=$_[1];
          my $messageCategory=$_[2];
-         my (@selectedProjects)=@{($_[3])} if ($messageCategory); #Get selected projects from new message submit
+         my (@selectedProjects)=@{($_[3])} if ($messageCategory); # get selected projects from a new message submit
          my $messageText=$_[4];
          my $cryptoBox=$_[5];
          my $giardiaBox=$_[6];
