@@ -47,7 +47,7 @@ if ($query->param("submitMessage"))
     }
 
 if ($query->param("messageDelete"))
-  # This is a message deletion. Call deletion routine.
+  # This is a message deletion - invoke deletion method.
     {
      &deleteMessage();
      exit(1);
@@ -187,7 +187,7 @@ if ($query->param("messageId")){
          if ($project=~/ToxoDB/){$toxoBox="checked='checked'";}
          if ($project=~/TrichDB/){$trichBox="checked='checked'";}
          }
-         # Display message form
+         # Populate fields and display message form
          &displayMessageForm($errorMessage,
                              $messageId, 
                              $messageCategory,
@@ -220,9 +220,9 @@ if ($query->param("messageId")){
 
        # Validate data from form
        if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
-     
-         $validForm=1; # form data is valid...proceed  
-
+       
+         $validForm=1; # form data is valid..proceed
+       
         ###Begin database transaction###
         eval{
         my $sql=q(UPDATE announce.messages SET 
@@ -232,8 +232,8 @@ if ($query->param("messageId")){
                    admin_comments = ? 
                    WHERE message_id = ?);
 
-       my $sth=$dbh->prepare($sql) or die "Could not prepare SQL. Check syntax.";
-       $sth->execute($messageText, 
+        my $sth=$dbh->prepare($sql) or die "Could not prepare SQL. Check syntax.";
+        $sth->execute($messageText, 
                      $messageCategory, 
                      $startDate, 
                      $stopDate, 
@@ -255,17 +255,18 @@ if ($query->param("messageId")){
                $sth->execute($messageId, $projectID);
                }
 
-       $sth->finish();
-       $dbh->commit();
-       };
+         $sth->finish();
+         $dbh->commit();
+         };
        }
-          if($@){
+  
+	if($@){
             warn "Unable to process record update transaction. Rolling back as a result of: $@\n";
 	        $dbh->rollback();
             return 0;
-            }  
+            }
              elsif (!$@ && $validForm){
-                   return 1; # form is valid and db transaction succesful, so return success
+                   return 1; # valid form, db transaction succesful, return success
                  }
        ###End database transaction###
 
@@ -274,10 +275,11 @@ if ($query->param("messageId")){
 sub displayMessageForm{
 
         ## Render new submission form, or repopulate and display form with passed params if validation failed.
+       
          my $errorMessage=$_[0];
          my $messageId=$_[1];
          my $messageCategory=$_[2];
-         my (@selectedProjects)=@{($_[3])} if ($messageCategory); # get selected projects from a new message submit
+         my (@selectedProjects)=@{($_[3])} if (@_); #Get selected projects from new message submit
          my $messageText=$_[4];
          my $cryptoBox=$_[5];
          my $giardiaBox=$_[6];
@@ -287,18 +289,19 @@ sub displayMessageForm{
          my $startDate=$_[10];
          my $stopDate=$_[11];
          my $adminComments=$_[12];
- 
+       
+
          if(!$messageId){
-         # Pre-check previously checked project boxes from a failed new message submission 
+         # Pre-check previously checked project boxes from a failed new submission 
           foreach my $project (@selectedProjects){
-           if ($project=~/1/){$cryptoBox="checked='checked'";}
+           if ($project=~/1/){$cryptoBox="checked='checked'";} 
            if ($project=~/2/){$giardiaBox="checked='checked'";}
            if ($project=~/3/){$plasmoBox="checked='checked'";}
            if ($project=~/4/){$toxoBox="checked='checked'";}
            if ($project=~/5/){$trichBox="checked='checked'";}
            }
          }
-         elsif ($messageId){
+         elsif ($messageId){ # Pre-check boxes for a failed message update
            @selectedProjects=&getSelectedProjects($messageId);
            foreach my $project (@selectedProjects){
             if ($project=~/CryptoDB/){$cryptoBox="checked='checked'";}
@@ -337,7 +340,7 @@ sub displayMessageForm{
         <p style="color: red">$errorMessage</p>
         <!--<p><b>Message ID: $messageId</b>-->
         $idString
-        <p><b>Message Category:</b>:    
+        <p><b>Message Category:</b>    
         <select name="messageCategory">
         <option value=$messageCategory>$messageCategory</option>
         <option value ="Information">Information</option>
@@ -439,9 +442,10 @@ _END_OF_TEXT_
          my $stopDate=shift;
          my $adminComments=shift;
          my $errorMessage="";
-         
-              
+                       
          # Check to ensure that required fields are filled out
+          
+           $errorMessage .= "ERROR: Message Category must be specified.<br/>" if(!$messageCategory);
            $errorMessage .= "ERROR: At least one project must be selected.<br/>" if (!@selectedProjects);
            $errorMessage .= "ERROR: Message field is required.<br/>" if (!$messageText);
        
