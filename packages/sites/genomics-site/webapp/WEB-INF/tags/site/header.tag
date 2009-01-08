@@ -67,6 +67,8 @@
 
 <head>
   <title><c:out value="${title}" default="${banner}" /></title>
+  <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"> <%-- standard --%>
+  <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
   <link rel="stylesheet" href="<c:url value='/misc/style.css' />" type="text/css">
   <link rel="stylesheet" href="<c:url value='/misc/sequence.css' />" type="text/css">
   <script type="text/javascript" src='<c:url value="/js/api.js"/>'></script>
