@@ -65,7 +65,7 @@
 <c:set var="context_end_range" value="${attrs['orf_end'].value + 300}" /> 
 
 <c:set var="genomeContextUrl">
-  http://${pageContext.request.serverName}/${CGI_URL}/gbrowse_img/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
+  http://${pageContext.request.serverName}${CGI_URL}/gbrowse_img/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
 </c:set>
 
 <c:set var="genomeContextImg">
@@ -83,7 +83,7 @@
   </noindex> 
   <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
   <c:set var="gbrowseUrl"> 
-    http://${pageContext.request.serverName}/${CGI_URL}/gbrowse/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow 
+    http://${pageContext.request.serverName}${CGI_URL}/gbrowse/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow 
   </c:set> 
   <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a> 
 </c:set> 
