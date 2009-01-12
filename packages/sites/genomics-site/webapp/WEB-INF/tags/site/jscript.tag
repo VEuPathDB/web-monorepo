@@ -36,13 +36,10 @@
 <script type="text/javascript" src="/assets/js/dqg.js"></script>
 
 <c:if test="${refer == 'customSummary'}">
-	<!-- dynamic query grid code -->
 	<script type="text/javascript" src="/assets/js/step.js"></script>
-</c:if>
-
-<c:if test="${refer == 'customSummary'}">
-	<!-- dynamic query grid code -->
 	<script type="text/javascript" src="/assets/js/pager.js"></script>
+	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexigrid.js"></script>
+	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexifluid.js"></script>
 </c:if>
 
 <!-- dynamic query grid code -->

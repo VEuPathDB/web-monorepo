@@ -23,7 +23,8 @@
     <th scope="col">Strategy</th>
     <th scope="col">&nbsp;</th>
     <th scope="col">&nbsp;</th>
-    <th scope="col">Date</th>
+    <th scope="col">Created</th>
+    <th scope="col">Modified</th>
     <th scope="col">Version</th>
     <th scope="col">Size</th>
   </tr>
@@ -71,8 +72,9 @@
         <div id="input_${strategyId}" style="display:none"></div>
       </td>
       <c:set var="stepId" value="${strategy.latestStep.stepId}"/>
-      <td nowrap><input type='button' value='Download' onclick="downloadStep('${stepId}')" /><%--<a href="downloadStep.do?step_id=${stepId}">download</a>--%></td>
-      <td nowrap>${strategy.latestStep.lastRunTime}</td>
+      <td nowrap><input type='button' value='Download' onclick="downloadStep('${stepId}')" /></td>
+      <td nowrap>${strategy.latestStep.createdTimeFormatted}</td>
+      <td nowrap>${strategy.latestStep.lastRunTimeFormatted}</td>
       <td nowrap>
         <c:choose>
           <c:when test="${strategy.latestStep.version == null || strategy.latestStep.version eq ''}">${wdkModel.version}</c:when>

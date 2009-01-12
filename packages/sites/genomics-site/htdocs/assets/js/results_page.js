@@ -49,6 +49,27 @@ function LoadGenePage(url,dest_id) {
 
 }
 
+function moveAttr(col_ix) {
+	// Get name of target attribute & attribute to left (if any)
+	// NOTE:  Have to convert these from frontId to backId!!!
+	var attr = $("tr.headerrow th:eq(" + col_ix + ")").attr("id");
+	var left;
+	if (col_ix > 0) {
+		var query = "th:eq(" + (col_ix-1) + ")";
+		left = $("tr.headerrow " + query).attr("id");
+	}
+	// Figure out what step/strategy is currently displayed in results panel
+	var step = $("div.selectedarrow");
+	if (step.length == 0) step = $("div.selected");
+	var stepfId = step.attr("id").split('_')[1];
+	var stratfId = step.parent().attr("id").split('_')[1];
+	var strat = getStrategy(stratfId);
+	var step = getStep(stratfId, stepfId);
+	// build url.
+	var url = "processSummary.do?strategy=" + strat.backId + "&step=" + step.back_step_Id + "&command=arrange&attribute=" + attr + "&left=" + left;
+	GetResultsPage(url, false);
+}
+
 // FOLLOWING TAKEN FROM OLD CUSTOMSUMMARY
 
 function addAttr(url) {
@@ -59,7 +80,7 @@ function addAttr(url) {
     if (attribute.length == 0) return;
 
     var url = url + "&command=add&attribute=" + attribute;
-    GetResultsPage(url);
+    GetResultsPage(url, true);
 	//window.location.href = url;
 }
 
@@ -67,7 +88,7 @@ function addAttr(url) {
 function resetAttr(url) {
     if (confirm("Are you sure you want to reset the column configuration back to the default?")) {
         var url = url + "&command=reset";
-        GetResultsPage(url);
+        GetResultsPage(url, true);
 		//window.location.href = url;
     }
 }

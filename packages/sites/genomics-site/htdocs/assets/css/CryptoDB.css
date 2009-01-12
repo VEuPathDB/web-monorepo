@@ -1014,6 +1014,10 @@ tr.headerInternalRow td {
 	vertical-align: middle;
 }
 
+tr.headerInternalRow .dragHandle {
+	cursor: move;
+}
+
 tr.lines {
 	background-color: #FFFFFF;
 }
