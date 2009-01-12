@@ -64,6 +64,10 @@
   </c:when>
   <c:otherwise>
 
+<wdk:filterLayouts strategyId="${strategy.strategyId}" 
+                   stepId="${wdkHistory.stepId}"
+                   answerValue="${wdkAnswer}" />
+
  <h2><b>${wdkAnswer.resultSize} <span id="text_data_type">${type}</span> - Strategy <span id="text_strategy_number">${strategy.strategyId}</span> Step <span id="text_step_number">${strategy.length}</span></b></h2> 
 
 <!-- pager -->

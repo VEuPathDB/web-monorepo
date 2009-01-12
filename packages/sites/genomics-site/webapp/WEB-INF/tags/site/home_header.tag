@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
 <%@ attribute name="title"
               description="Value to appear in page's title"
@@ -80,6 +81,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>${title}</title>
+
+<%-- import WDK related assets --%>
+<wdk:includes />
+
+<%-- import site specific assets --%>
 <link href="/assets/css/${project}.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/assets/css/history.css" type="text/css"/>
 <link rel="stylesheet" type="text/css" href="/assets/css/Strategy.css" />
