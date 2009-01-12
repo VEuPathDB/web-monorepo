@@ -47,30 +47,21 @@
     <c:forEach var="rCol" items="${row}">
         <c:set var="colVal" value="${rCol.value}"/>
         <c:if test="${colVal.attributeField.internal == false}">
-            <c:choose>
-                <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.AttributeFieldValue' && colVal.name eq 'pval'}">
-                    <td nowrap="nowrap">
-                </c:when>
-                <c:when test="${colVal eq 'pval'}">
-                    <td nowrap="nowrap">
-                </c:when>
-                <c:otherwise>
-                    <td>
-                </c:otherwise>
-            </c:choose>
-            
-            <%/* need to know if value should be hot linked */%>
-            <c:choose>
-                <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.LinkValue'}">
-                    <a href="${colVal.url}">${colVal.visible}</a>
-                </c:when>
-                <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.AttributeFieldValue'}">
-                    ${colVal.value}
-                </c:when>
-                <c:otherwise>
-                    ${colVal}
-                </c:otherwise>
-            </c:choose>
+            <%-- need to know if value should be hot linked --%>
+            <c:set var="align" value="align='${colVal.attributeField.align}'" />
+            <c:set var="nowrap">
+                <c:if test="${colVal.attributeField.nowrap}">nowrap</c:if>
+            </c:set>
+        
+            <td ${align} ${nowrap}>
+                <c:choose>
+                    <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
+                        <a href="${colVal.url}">${colVal.displayText}</a>
+                    </c:when>
+                    <c:otherwise>
+                        ${colVal.value}
+                    </c:otherwise>
+                </c:choose>
             </td>
         </c:if>
     </c:forEach>
