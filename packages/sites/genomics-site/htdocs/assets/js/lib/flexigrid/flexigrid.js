@@ -1486,15 +1486,3 @@
 	}; //end noSelect
 		
 })(jQuery);
-/*
-"SELECT s."
-                    + COLUMN_DISPLAY_ID + " FROM " + userSchema
-                    + TABLE_STRATEGY + "s, " + userSchema + TABLE_STEP 
-                    + "h WHERE s." + UserFactory.COLUMN_USER_ID
-                    + " = ? AND s." + COLUMN_PROJECT_ID + " = ?"
-                    + " AND h." + UserFactory.COLUMN_USER_ID
-                    + " = s." + UserFactory.COLUMN_USER_ID
-                    + " AND h." + COLUMN_PROJECT_ID + " = s." + COLUMN_PROJECT_ID
-                    + " AND h." + COLUMN_DISPLAY_ID + " = s." + COLUMN_ROOT_STEP_ID
-                    + " ORDER BY h." + COLUMN_LAST_RUN_TIME
-*/
