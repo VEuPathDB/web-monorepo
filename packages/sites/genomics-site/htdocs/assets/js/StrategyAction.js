@@ -423,7 +423,11 @@ function DeleteStep(f_strategyId,f_stepId){
 		else d_sub = "";
 		var d_strategyId = displayStep.parent().attr("id").split('_')[1];
 	}
-	url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id;
+	if (step.back_boolean_Id == "")
+		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id;
+	else
+		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_boolean_Id;
+		
 	$.ajax({
 		url: url,
 		type: "post",

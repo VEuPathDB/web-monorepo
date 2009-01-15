@@ -1292,10 +1292,10 @@ clear {
 	font-size: 9px;
 }
 
-.help_div {
+.help_span {
 	background-color: lightYellow;
-	width: 50px;
-	height: 20px;
+	max-width: 50%;
+	padding: 5px;
 	display:none;
 }
 

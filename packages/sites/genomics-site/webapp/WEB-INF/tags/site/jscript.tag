@@ -58,6 +58,7 @@
 <script type="text/javascript" src="/assets/js/history.js"></script>
 
 <script type="text/javascript" src="/assets/js/api.js"></script>
+<script type="text/javascript" src="/assets/js/htmltooltip.js"></script>
 
 <!-- fix to transparent png images in IE 7 -->
 <!--[if lt IE 7.]>

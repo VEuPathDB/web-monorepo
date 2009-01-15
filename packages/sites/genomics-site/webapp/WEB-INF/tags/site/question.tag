@@ -164,12 +164,9 @@
                     <td valign="top" width="50" nowrap>
                         <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                         <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-                        <a class="help_link" href="${pNam}">
+                        <a class="help_link" href="#" rel="htmltooltip">
                         	<img src="/assets/images/help.png" border="0" alt="Help">
 						</a>
-						<div class="help_div" id="${pNam}">
-						${qP.help}
-						</div>
                     </td>
             </c:if>
                 </tr>
@@ -201,6 +198,23 @@
     </c:choose>
         </c:otherwise>
     </c:choose>
+
+
+    <c:forEach items="${paramGroup}" var="paramItem">
+        <c:set var="pNam" value="${paramItem.key}" />
+        <c:set var="qP" value="${paramItem.value}" />
+        
+        <c:set var="isHidden" value="${qP.isVisible == false}"/>
+        <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
+
+            <c:if test="${!isHidden}">
+                    <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
+            	        <div class="htmltooltip" id="help_${pNam}">${qP.help}</div>
+                    </c:if>
+            </c:if>
+        
+    </c:forEach>
+
 </c:forEach>
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>

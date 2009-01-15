@@ -17,7 +17,7 @@ function showParamGroup(group, isShow)
 function toggleHelp(id)
 {
 	//var id = a-element.attr("href");
-	var ele = $("div#help_" + id);
+	var ele = $("#help_" + id);
 	ele.toggle();
 }
 

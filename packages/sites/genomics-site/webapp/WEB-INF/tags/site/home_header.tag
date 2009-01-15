@@ -85,6 +85,7 @@
 <%-- import WDK related assets --%>
 <wdk:includes />
 
+<link href="/assets/css/AllSites.css" rel="stylesheet" type="text/css" />
 <%-- import site specific assets --%>
 <link href="/assets/css/${project}.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/assets/css/flexigrid/flexigrid.css" type="text/css"/>
