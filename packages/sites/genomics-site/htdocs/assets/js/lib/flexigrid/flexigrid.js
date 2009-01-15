@@ -162,6 +162,7 @@
 						
 						
 						$(this.colCopy).css({position:'absolute',float:'left',display:'none', textAlign: obj.align});
+						$(this.colCopy).fadeTo("fast", 0.6);
 						$('body').append(this.colCopy);
 						$(this.cDrag).hide();
 						
