@@ -1,4 +1,4 @@
-var selected = [];
+var selected = new Array();
 
 function toggleSteps(strat) {
 	var img = $("img#img_" + strat);
@@ -27,7 +27,7 @@ function selectAllHist() {
 
 function selectNoneHist() {
 	$("div.history_panel input:checkbox").removeAttr("checked");
-	selected = [];
+	selected = new Array();
 }
 
 function displayHist(type) {
@@ -41,7 +41,7 @@ function displayHist(type) {
 }
 
 function updateSelectedList() {
-	selected = [];
+	selected = new Array();
 	$("div.history_panel input:checkbox").each(function (i) {
 		if ($(this).attr("checked")) {
 			selected.push($(this).attr("id"));
@@ -69,8 +69,14 @@ function deleteStrategies(url) {
 			success: function(data) {
 				$("#search_history").html($("#search_history", data).html());
 				$("#mysearch").html($("#mysearch", data).html());
+				for (i = 0; i < selected.length; i++){
+					var strat = getStrategyFromBackId(selected[i]);
+					hideStrat(strat.frontId);
+				}
+				selectNoneHist();
 			},
 			error: function(data, msg, e) {
+				selectNoneHist();
 				alert("ERROR \n " + msg + "\n" + e);
 			}
 		});
