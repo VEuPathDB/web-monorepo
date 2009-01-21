@@ -466,8 +466,9 @@ div.colCopy
 
 .flexigrid div.hDiv th.thMove
 {
-	background: #fff;
-	color: #fff;
+	background-image:url(../../images/CryptoDB/trheader.png);
+/*	background: #fff;
+	color: #fff;*/
 }
 	
 .flexigrid div.hDiv th.sorted.thMove > div
@@ -478,7 +479,8 @@ div.colCopy
 	
 .flexigrid div.hDiv th.thMove > div
 {
-	background: #fff !important;
+display:none !important;
+//	background: #fff !important;
 }	
 	
 .flexigrid div.hDiv th div.sdesc
