@@ -178,6 +178,7 @@ if ($query->param("messageId")){
          my $plasmoBox;
          my $toxoBox;
          my $trichBox; 
+         my $triTrypBox;
        
          # Re-check previously checked project boxes  
          foreach my $project (@selectedProjects){
@@ -186,6 +187,7 @@ if ($query->param("messageId")){
          if ($project=~/PlasmoDB/){$plasmoBox="checked='checked'";}
          if ($project=~/ToxoDB/){$toxoBox="checked='checked'";}
          if ($project=~/TrichDB/){$trichBox="checked='checked'";}
+         if ($project=~/TriTrypDB/){$triTrypBox="checked='checked'";};
          }
          # Populate fields and display message form
          &displayMessageForm($errorMessage,
@@ -198,6 +200,7 @@ if ($query->param("messageId")){
                              $plasmoBox,
                              $toxoBox,
                              $trichBox,
+                             $triTrypBox,
                              $startDate, 
                              $stopDate, 
                              $adminComments);
@@ -285,20 +288,22 @@ sub displayMessageForm{
          my $giardiaBox=$_[6];
          my $plasmoBox=$_[7];
          my $toxoBox=$_[8];
-         my $trichBox=$_[9];;
-         my $startDate=$_[10];
-         my $stopDate=$_[11];
-         my $adminComments=$_[12];
+         my $trichBox=$_[9];
+         my $triTrypBox=$_[10];
+         my $startDate=$_[11];
+         my $stopDate=$_[12];
+         my $adminComments=$_[13];
        
 
          if(!$messageId){
          # Pre-check previously checked project boxes from a failed new submission 
           foreach my $project (@selectedProjects){
-           if ($project=~/1/){$cryptoBox="checked='checked'";} 
-           if ($project=~/2/){$giardiaBox="checked='checked'";}
-           if ($project=~/3/){$plasmoBox="checked='checked'";}
-           if ($project=~/4/){$toxoBox="checked='checked'";}
-           if ($project=~/5/){$trichBox="checked='checked'";}
+           if ($project=~/10/){$cryptoBox="checked='checked'";} 
+           if ($project=~/20/){$giardiaBox="checked='checked'";}
+           if ($project=~/30/){$plasmoBox="checked='checked'";}
+           if ($project=~/40/){$toxoBox="checked='checked'";}
+           if ($project=~/50/){$trichBox="checked='checked'";}
+           if ($project=~/60/){$triTrypBox="checked='checked'";}
            }
          }
          elsif ($messageId){ # Pre-check boxes for a failed message update
@@ -309,6 +314,7 @@ sub displayMessageForm{
             if ($project=~/PlasmoDB/){$plasmoBox="checked='checked'";}
             if ($project=~/ToxoDB/){$toxoBox="checked='checked'";}
             if ($project=~/TrichDB/){$trichBox="checked='checked'";}
+            if ($project=~/TriTrypDB/){$triTrypBox="checked='checked'";}
             }     
           }
 
@@ -317,59 +323,141 @@ sub displayMessageForm{
             if ($messageId){
             $idString="<p><b>Message ID: $messageId</b></p>";
             }
-        
+   #### XHTML FORM #####     
     print<<_END_OF_TEXT_
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-        <html xmlns="http://www.w3.org/1999/xhtml" >
-        <head>  
-        <title>Edit Message</title>
-        <script language="javascript" type="text/javascript" src="/js/datetimepicker.js">
-        </script>
-        <script language="javascript" type="text/javascript">
-        function refreshParent() {
-        if (window.opener && !window.opener.closed) {
-        window.opener.location.reload();
-        }
-        //window.close();
-        }        
-        </script>
-        </head>
-        <body style="background-color: #dee2ed"> 
-        <form method="get" name="submitEdit" action=messageInsert.pl>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Edit Message</title>
+<style type="text/css">
+<!--
+.style3 {font-family: Georgia, "Times New Roman", Times, serif}
+body {
+	background-color: #F6F8FF;
+}
+-->
+</style>
+</head>
+
+<body>
+<form action="messageInsert.pl" method="get" name="submitEdit" id="submitEdit">
+  <div align="center">
+    <table width="500" border="0" cellpadding="5" cellspacing="5" bordercolor="#CCCCB0" bgcolor="#F6F8FF">
+      <tr>
         <p style="color: red">$errorMessage</p>
-        <!--<p><b>Message ID: $messageId</b>-->
-        $idString
-        <p><b>Message Category:</b>    
-        <select name="messageCategory">
-        <option value=$messageCategory>$messageCategory</option>
-        <option value ="Information">Information</option>
-        <option value ="Degraded">Degraded</option>
-        <option value ="Down">Down</option>
-        </select>
-        </p>
-        <p><b>Select affected systems:</b></p>
-        <div style="width: 140px; height: 105px; padding: 5px; line-height: 1.3; background-color: #ede6de; border-style: outset">
-        <input type="checkbox" name="selectedProjects" value="10" $cryptoBox>CryptoDB<br>
-        <input type="checkbox" name="selectedProjects" value="20" $giardiaBox>GiardiaDB<br>
-        <input type="checkbox" name="selectedProjects" value="30" $plasmoBox>PlasmodDB<br>
-        <input type="checkbox" name="selectedProjects" value="40" $toxoBox>ToxoDB<br>
-        <input type="checkbox" name="selectedProjects" value="50" $trichBox>TrichDB<br>
-        </div>
-        <p><b>Message Text: </b></p>
-        <p><textarea name="messageText" style="overflow: auto" rows ="5" cols="50">$messageText</textarea></p>     
-        <p><b>Start Date/Time:</b>
-        <textarea name="startDate" id="startDate" rows="1" cols="20" size="25">$startDate</textarea><a href="javascript:NewCal('startDate','mmddyyyy', 'true')"><img src="/images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>        
-        <p><b>Stop Date/Time:</b>
-        <textarea name="stopDate" id="stopDate" rows="1" cols="20" size="25">$stopDate</textarea><a href="javascript:NewCal('stopDate','mmddyyyy', 'true')"><img src="/images/cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
-        <p><b>Admin Comments:</p></b> 
-        <textarea name="adminComments" rows="6" cols="50">$adminComments</textarea>
-        <input type="hidden" name="updateMessageId" value="$messageId">
-        <p align="center"><input type="submit" name="newInfo" value="Submit Message" onClick="refreshParent();"></p>
-        </form>
-        <!--Submit Form--> 
-        </body>
-        </html>
+        <td><div align="right" class="style3">
+          <div align="right">Message Category:</div>
+        </div></td>
+        <td>
+          <label>
+          <select name="messageCategory" id="messageCategory">
+            <option value="$messageCategory">$messageCategory</option>
+            <option value="Information">Information</option>
+            <option value="Degraded">Degraded</option>
+            <option value="Down">Down</option>
+          </select>
+          </label></td>
+      </tr>
+      <tr>
+        <td valign="top"><div align="right" class="style3">
+          <div align="right">Projects Affected:</div>
+        </div></td>
+        <td bgcolor="#FFF8F2"><p>
+          <label>
+            <input type="checkbox" name="selectedProjects" value="10" $cryptoBox id="selectedProjects_0" />
+            <em>            CryptoDB</em></label>
+          <em><br />
+          <label>
+            <input type="checkbox" name="selectedProjects" value="20" $giardiaBox id="selectedProjects_1" />
+            GiardiaDB</label>
+          <br />
+          <label>
+            <input type="checkbox" name="selectedProjects" value="30" $plasmoBox id="selectedProjects_2" />
+            PlasmoDB</label>
+          <br />
+          <label>
+            <input type="checkbox" name="selectedProjects" value="40" $toxoBox id="selectedProjects_3" />
+            ToxoDB</label>
+          <br />
+          <label>
+            <input type="checkbox" name="selectedProjects" value="50" $trichBox id="selectedProjects_4" />
+            TrichDB</label>
+          <br />
+          <label>
+            <input type="checkbox" name="selectedProjects" value="60" $triTrypBox id="selectedProjects_5" />
+            TriTrypDB</label>
+          </em><br />
+        </p>        
+        <label></label></td>
+      </tr>
+      <tr>
+        <td valign="top"><div align="right" class="style3">
+          <div align="right">Message Text:</div>
+        </div></td>
+        <td>
+          <label>
+          <textarea name="messageText" id="messageText" cols="45" rows="5">$messageText</textarea>
+          </label></td>
+      </tr>
+      <tr>
+        <td><div align="right" class="style3">
+          <div align="right">Start Date:</div>
+        </div></td>
+        <td>
+           <label>
+          <input name="startDate" type="text" id="startDate" value="$startDate" size="30" />
+          </label>
+          <a href="javascript:NewCal('startDate','mmddyyyy', 'true')"><img src="/images/cal.gif" width="16" height="16" border="0" alt="Pick a date" /></td>      
+      </tr>
+      <tr>
+        <td><div align="right" class="style3">
+          <div align="right">Stop Date:</div>
+        </div></td>
+        <td>
+          <label>
+          <input name="stopDate" type="text" id="stopDate" value="$stopDate" size="30" />
+          </label>
+        <a href="javascript:NewCal('stopDate','mmddyyyy', 'true')"><img src="/images/cal.gif" width="16" height="16" border="0" alt="Pick a date" /></td>
+      </tr>
+      <tr>
+        <td valign="top"><div align="right" class="style3">
+          <div align="right">Admin Comments:</div>
+        </div></td>
+        <td>
+          <label>
+          <textarea name="adminComments" id="adminComments" cols="45" rows="5">$adminComments</textarea>
+        </label></td>
+      </tr>
+    </table>
+    <br/>
+    <label>
+    <input type="submit" name="newInfo" id="newInfo" value="Submit Message"  onClick="timedRefresh();"/>
+    </label>  
+    
+    <input name="updateMessageId" type="hidden" id="updateMessageId" value="$messageId" />
+  </div>
+</form>
+<div align="center">
+  <script language="javascript" type="text/javascript" src="/js/datetimepicker.js">
+</script>
+</div>
+<script language="javascript" type="text/javascript">
+
+function timedRefresh() {
+
+setTimeout("refreshParent()", 5000);
+
+}
+function refreshParent() {
+  if (window.opener && !window.opener.closed) {
+  window.opener.location.reload();
+      }
+      //window.close();
+  }        
+</script>
+</body>
+</html>
 _END_OF_TEXT_
 ;
 }
@@ -382,7 +470,10 @@ _END_OF_TEXT_
      
      my $messageID=$_[0];
      my @selectedProjects;
-     my $sql=q(SELECT p.project_name FROM announce.projects p, announce.message_projects mp WHERE mp.message_ID = ? AND mp.project_ID = p.project_ID);
+     my $sql=q(SELECT p.project_name 
+               FROM announce.projects p, announce.message_projects mp 
+               WHERE mp.message_ID = ? 
+               AND mp.project_ID = p.project_ID);
      my $sth=$dbh->prepare($sql);
      $sth->execute($messageID);
 
@@ -437,6 +528,7 @@ _END_OF_TEXT_
          my $plasmoBox;
          my $toxoBox;
          my $trichBox;
+         my $triTrypBox;
          my $messageText=shift;
          my $startDate=shift;
          my $stopDate=shift;
@@ -488,6 +580,7 @@ _END_OF_TEXT_
                                   $plasmoBox,
                                   $toxoBox,
                                   $trichBox,
+                                  $triTrypBox,
                                   $startDate, 
                                   $stopDate,
                                   $adminComments);
