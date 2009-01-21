@@ -7,8 +7,7 @@ function GetResultsPage(url, update){
 		dataType: "html",
 		success: function(data){
 			if (update) {
-				$("div#Workspace").html(data);
-				ResultsToGrid();
+				ResultsToGrid(data);
 			}
 		},
 		error : function(data, msg, e){
@@ -17,9 +16,11 @@ function GetResultsPage(url, update){
 	});
 }
 
-function ResultsToGrid() {
+function ResultsToGrid(data) {
+	$("div#Workspace").html(data);
+
 	// specify column sizes so flexigrid generates columns properly.
-	var headers = $('#Results_Table th:visible');
+	var headers = $('#Results_Table th');
 	$('#Results_Table tbody tr:first td').each(
 		function(idx,ele){
 			$(headers[idx]).attr("width", Math.max($(ele).width(),$(headers[idx]).width()) );

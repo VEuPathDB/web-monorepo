@@ -165,7 +165,7 @@
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
-              <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc')"
+              <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true)"
                   title="Sort by ${sumAttrib}">
                   <img src="/assets/images/results_arrw_up.png" alt="Sort up" border="0" /></a>
             </c:otherwise>
@@ -180,7 +180,7 @@
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
-              <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc')"
+              <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true)"
 	                    title="Sort by ${sumAttrib}">
               <img src="/assets/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
             </c:otherwise>
@@ -196,7 +196,7 @@
         <c:if test="${j != 0}">
           <div style="float:left;">
             <%-- display remove attribute button --%>
-            <a href="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}')"
+            <a href="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true)"
                         title="Remove ${sumAttrib} column">
               <img src="/assets/images/results_x.png" alt="Remove" border="0" /></a>
           </div>

@@ -342,8 +342,7 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 			}else{
 				$("#diagram_" + strategy.frontId + " #step_" + step.frontId + "_sub").addClass("selectedarrow");
 			}
-			$("div#Workspace").html(data);
-			ResultsToGrid();
+			ResultsToGrid(data);
 		},
 		error : function(data, msg, e){
 			  alert("ERROR \n "+ msg + "\n" + e);

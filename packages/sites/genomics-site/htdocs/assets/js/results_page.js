@@ -52,12 +52,10 @@ function LoadGenePage(url,dest_id) {
 function moveAttr(col_ix) {
 	// Get name of target attribute & attribute to left (if any)
 	// NOTE:  Have to convert these from frontId to backId!!!
-	var attr = $("tr.headerrow th:eq(" + col_ix + ")").attr("id");
+	var headers = $("div.flexigrid tr.headerrow th");
+	var attr = $(headers[col_ix]).attr("id");
 	var left;
-	if (col_ix > 0) {
-		var query = "th:eq(" + (col_ix-1) + ")";
-		left = $("tr.headerrow " + query).attr("id");
-	}
+	if (col_ix > 0) left = $(headers[col_ix-1]).attr("id");
 	// Figure out what step/strategy is currently displayed in results panel
 	var step = $("div.selectedarrow");
 	if (step.length == 0) step = $("div.selected");
