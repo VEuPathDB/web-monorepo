@@ -112,6 +112,14 @@ function getStrategyFromBackId(id){
 	return false;
 }
 
+function getStepFromBackId(strat,id){
+	strategy = getStrategyFromBackId(strat);
+	for(j=0;j<strategy.Steps.length;j++){
+		if(strategy.Steps[j].back_step_Id == id)
+			return strategy.Steps[j];
+	}
+}
+
 function getDataType(ele){
 	var s = "";
 	if(parseInt($(ele).attr("results")) > 1)
