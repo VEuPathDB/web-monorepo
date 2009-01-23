@@ -72,23 +72,24 @@ function formatFilterForm(data, edit, reviseStep){
 	var stepn = 0;
 	var insert = "";
 	var proto = "";
-/*	if(edit == 0){
-		var parts = reviseStep.split(":");
-		insert = parts[1];
-		proto = parts[0];
-	}else{
+//	if(edit == 0){
+//		var parts = reviseStep.split(":");
+//		insert = parts[1];
+//		proto = parts[0];
+if(edit == 1){//	}else{
 		var parts = reviseStep.split(":");
 		proto = parts[0];
 		reviseStep = parseInt(parts[1]);
 		isSub = true;
 		operation = parts[4];
-	}*/
+	}
 	var stratBackId = getStrategy(current_Front_Strategy_Id).backId;
+	var stepBackId = getStep(current_Front_Strategy_Id, reviseStep).back_step_Id;
 	var pro_url = "";
 	if(edit == 0)
 		pro_url = "processFilter.do?strategy=" + stratBackId + "&insert=" +insert;
 	else{
-		pro_url = "processFilter.do?strategy=" + stratBackId + "&revise=" + reviseStep;
+		pro_url = "processFilter.do?strategy=" + stratBackId + "&revise=" + stepBackId;   //reviseStep;
 	}
 	var historyId = $("#history_id").val();
 	
@@ -127,7 +128,7 @@ function formatFilterForm(data, edit, reviseStep){
 				var previous_step_id = $("#step_"+(reviseStep - 1)+"_sub a").attr("id");
 			else
 				var previous_step_id = $("#step_"+(reviseStep - 1)+" a").attr("id");						
-			lastStepId = previous_step_id.substring(7);
+	//		lastStepId = previous_step_id.substring(7);
 			$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (reviseStep) + "</span><div id='operations'><table><tr><td class='opcheck'><input id='INTERSECT' type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td>&nbsp;" + (reviseStep) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (reviseStep + 1) + "</td></tr><tr><td class='opcheck'><input id='UNION' type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (reviseStep) + "&nbsp;<b>UNION</b>&nbsp;" + (reviseStep + 1) + "</td></tr><tr><td class='opcheck'><input id='MINUS' type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (reviseStep) + "&nbsp;<b>MINUS</b>&nbsp;" + (reviseStep + 1) + "</td></tr></table></div></div>");
 		}else{
 			$(".filter.params", quesForm).after("<input type='hidden' name='booleanExpression' value='AND' />");

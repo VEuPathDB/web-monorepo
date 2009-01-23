@@ -50,15 +50,16 @@ function hideDetails(det){
 	});
 }
 
-function Edit_Step(ele,url){
-		$(ele).parent().parent().hide();
+function Edit_Step(ele, questionName, url){
+	//	hideDetails();
+		url = "showQuestion.do?questionFullName=" + questionName + url;
 		var link = $(".filter_link");
 		$(link).css({opacity:0.2});
 		$(link).attr("href","javascript:void(0)");
-		hideDetails();
 		var revisestep = $(ele).attr("id");
 		var parts = revisestep.split("|");
 		var strat = parts[0];
+		current_Front_Strategy_Id = parts[0];
 		revisestep = parseInt(parts[1]);
 		var operation = parts[2];
 		var reviseStepNumber = strat + ":" + revisestep + ":0:0:" + operation;
@@ -66,6 +67,11 @@ function Edit_Step(ele,url){
 			url: url,
 			dataType: "html",
 			success: function(data){
+				d = document.createElement('div');
+				qf = document.createElement('div');
+				$(qf).attr("id","query_form").addClass("jqDnR");
+				$(d).append(qf);
+				$("#Strategies").append(d);
 				formatFilterForm(data,1,reviseStepNumber);
 			},
 			error: function(data, msg, e){
