@@ -595,3 +595,36 @@ function removeLoading(divId){
 	$("#diagram_" + divId + " span#loadingGIF").remove();
 }
 
+function ChangeFilter(strategyId, stepId, url) {
+        b_strategyId = strategyId;
+        strategy = getStrategyFromBackId(b_strategyId); 
+        f_strategyId = strategy.frontId;
+        var currentDiv = $("#Strategies div#diagram_" + f_strategyId);
+        if(strategy.subStratOf != null){
+                strats.splice(findStrategy(f_strategyId));
+        }
+        
+        $.ajax({
+                url: url,
+                type: "GET",
+                dataType:"xml",
+                data: '',
+                beforeSend: function(){
+                        showLoading(f_strategyId);
+                },
+                success: function(data){
+                        updateStrategies(data);
+                        //removeLoading(f_strategyId);
+                        $("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
+                },
+                error: function(data, msg, e){
+                        //$("#Strategies").append(currentDiv);
+                        removeLoading(f_strategyId);
+                        alert("ERROR \n "+ msg + "\n" + e);
+                }
+        });
+        update_hist = true;
+        closeAll();
+
+}
+
