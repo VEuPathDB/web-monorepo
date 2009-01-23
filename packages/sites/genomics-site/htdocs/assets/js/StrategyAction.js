@@ -613,9 +613,14 @@ function ChangeFilter(strategyId, stepId, url) {
                         showLoading(f_strategyId);
                 },
                 success: function(data){
+                        var selectedBox = $("#Strategies div.selected");
+                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
+
                         updateStrategies(data);
                         //removeLoading(f_strategyId);
-                        $("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
+                        // $("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
+
+                        selectedBox.find("span.resultCount a").click();
                 },
                 error: function(data, msg, e){
                         //$("#Strategies").append(currentDiv);
