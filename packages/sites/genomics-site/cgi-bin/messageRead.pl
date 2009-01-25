@@ -63,10 +63,12 @@ $sth->execute($projectName, $messageCategory) or die "Can't excecute SQL";
 
 # Output message(s) returned via query
 my @row;
+my @messages;
  while (@row=$sth->fetchrow_array()){
-       my $messageText=$row[0];
-       print "$messageText";
-       }
+    push @messages, $row[0];
+}
+
+print join '<hr class="announce"/>', @messages;
  
 # Finish and close DB connection  
 $dbh->disconnect();
