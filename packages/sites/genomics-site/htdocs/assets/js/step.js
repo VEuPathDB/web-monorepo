@@ -90,12 +90,12 @@ function Insert_Step(ele,url){
 
 function Rename_Step(ele, strat, stpId){
 	var link = $("#diagram_" + strat + " div#step_" + stpId + "_sub h3 a#stepId_" + stpId, $(ele).parent().parent().parent());
-	link.html("<input id='new_name_box' type='text' value='"+link.text()+"' onblur='RenameStep(this, " + strat + "," + stpId +")' onfocus='this.select()' onkeypress='blah(this,event)' size='10'/>");
-	$("#new_name_box").focus();
+	link.hide();
+	link.after("<input id='new_name' type='text' value='"+link.text()+"' onblur='RenameStep(this, " + strat + "," + stpId +")' onfocus='this.select()' onkeypress='blah(this,event)' size='10'/>");
+	$("#new_name").focus();
 }
 
 function RenameStep(ele, s, stp){
-	var a = $(ele).parent();
 	var new_name = $(ele).val();
 	step = getStep(s, stp);
 	var url = "renameStep.do?stepId=" + step.back_step_Id + "&customName=" + new_name;	
@@ -105,7 +105,10 @@ function RenameStep(ele, s, stp){
 			url: url,
 			dataType: "html",
 			success: function(data){
-				a.text(new_name);
+				var link = $("#diagram_" + s + " div#step_" + stp + "_sub h3 a#stepId_" + stp);
+				$(link).text(new_name);
+				$(ele).remove();
+				$(link).show();
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e);
