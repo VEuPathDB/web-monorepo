@@ -330,11 +330,29 @@ Microbial Sequencing Center program at the Institute for Genomic Research
         </a></b>
     </c:set>
     </c:when>
-    <c:when test="${projectId eq 'ToxoDB'}">
+    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'ME49')}">
     <c:set var="reference">
-     T. gondii was sequenced by The Institute for <a href=" http://www.tigr.org/tdb/e2k1/tga1/">Genomic Research</a>
+     <b><i>Toxoplasma gondii</i> ME49  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
     </c:set>
     </c:when>
+    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'GT1')}">
+    <c:set var="reference">
+     <b><i>Toxoplasma gondii</i> GT1  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
+    </c:set>
+    </c:when>
+    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'VEG')}">
+    <c:set var="reference">
+     <b><i>Toxoplasma gondii</i> VEG  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
+    </c:set>
+    </c:when>
+    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'caninum')}">
+    <c:set var="reference">
+<b>N. caninum NC-Liverpool strain, was sequenced by The Wellcome Trust Sanger Institute.  The Welcome Trust Sanger Institute plans on publishing the completed and annotated sequences in a peer-reviewed
+journal as soon as possible. Permission should be obtained from Arnaub Pain before publishing analyses of the
+sequence/open reading frames/genes on a chromosome or genome scale.</b>
+    </c:set>
+    </c:when>
+
     <c:when test="${projectId eq 'TrichDB'}">
     <c:set var="reference">
      T. vaginalis sequence from Jane Carlton (NYU,TIGR). PMID: 17218520
