@@ -263,6 +263,7 @@ img {
 	background-color: #FFFFFF;
 	background-image: url(../images/CryptoDB/footer.png);
 	background-repeat: repeat-x;
+        background-position: 0 -15px;
 	text-align: left;
 	border: 1px solid #345d9b;
 }
@@ -1311,9 +1312,10 @@ td.strat_inactive {
 }
 
 ul#strategy_tabs {
-    border-bottom: 1px solid #CCCCCC;
+    border-bottom: 1px solid #777;
+    font-size: 18px;
     margin:0;
-    padding:0 10px 1.73em;
+    padding:0 10px 1.65em;
     width: 98%;
 }
 
@@ -1327,6 +1329,7 @@ ul#strategy_tabs {
 #strategy_tabs a:link, #strategy_tabs a:visited {
     background-color: #E8EBF0;
     border: 1px solid #CCCCCC;
+    border-bottom: 1px solid #777;
     color:#666666;
     float: left;
     margin-top: 2px;
@@ -1341,6 +1344,7 @@ ul#strategy_tabs {
 
 #strategy_tabs #selected a {
     background-color: #FFFFFF;
+    border: 1px solid #777;
     border-bottom: 1px solid #FFFFFF;
     color: #000000;
     font-weight:bold;

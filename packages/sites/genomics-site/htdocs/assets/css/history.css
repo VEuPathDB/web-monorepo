@@ -1,10 +1,10 @@
 ul#history_tabs {
-    background-color:#E6EBF2;
+    //background-color:#E6EBF2;
     list-style-image:none;
     list-style-position:outside;
     list-style-type:none;
     float:left;
-    margin:0;
+    margin:0 0 5px;
     padding:0 10px;
     width: 98%;
 }
