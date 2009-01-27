@@ -229,19 +229,20 @@ function createDetails(ele, strat, step){
 	var collapsible = $(ele).attr("isCollapsed");
 	var resultSize = $(ele).attr("results");
 	var operation = $(ele).parent().attr("operation");
-	var dataType = getDataType(ele);
+	var dataType = $(ele).attr("dataType");//getDataType(ele);
 	var urlParams = $("params urlParams", ele).text();
 	var questionFullName = $(ele).attr("questionName");
 	var collapsedName = "Expanded " + name;
 	var id = step.frontId;
+	var parentid = $(ele).parent().attr("id");
 	var params_table = createParameters($("params", ele));
 	inner = ""+	
 	    "		<div class='crumb_menu'>"+
 		"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;"+
 		"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;"+
-		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\");hideDetails(this)' id='" + strat + "|" + id + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;"+
+		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;"+
 		"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(" + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;"+
-		"			<a class='insert_step_link' id='1|0' href='javascript:void(0)' onclick='InsertStep(" + strat + "," + id + ");hideDetails(this)'>Insert Before</a>"+
+		"			<a class='insert_step_link' id='1|0' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dataType + "\");hideDetails(this)'>Insert Before</a>"+
 		"			&nbsp;|&nbsp;"+
 		"			<a class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>"+
 		"			<span style='float: right; position: absolute; right: 6px;'>"+

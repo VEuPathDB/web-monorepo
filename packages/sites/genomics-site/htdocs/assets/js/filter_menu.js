@@ -72,11 +72,11 @@ function formatFilterForm(data, edit, reviseStep){
 	var stepn = 0;
 	var insert = "";
 	var proto = "";
-//	if(edit == 0){
+	if(edit == 0){
 //		var parts = reviseStep.split(":");
-//		insert = parts[1];
+		insert = reviseStep;
 //		proto = parts[0];
-if(edit == 1){//	}else{
+	}else{
 		var parts = reviseStep.split(":");
 		proto = parts[0];
 		reviseStep = parseInt(parts[1]);
@@ -84,7 +84,7 @@ if(edit == 1){//	}else{
 		operation = parts[4];
 	}
 	var stratBackId = getStrategy(current_Front_Strategy_Id).backId;
-	var stepBackId = getStep(current_Front_Strategy_Id, reviseStep).back_step_Id;
+	var stepBackId = reviseStep;//getStep(current_Front_Strategy_Id, reviseStep).back_step_Id;
 	var pro_url = "";
 	if(edit == 0)
 		pro_url = "processFilter.do?strategy=" + stratBackId + "&insert=" +insert;
@@ -242,6 +242,7 @@ function close(){
 
 function closeAll(){
 	$("#query_form").parent().remove();
+	$(".filter_link").css({opacity:"1.0",}).attr("href")
 }
 
 function parseInputs(){
