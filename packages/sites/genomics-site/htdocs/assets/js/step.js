@@ -3,7 +3,7 @@ $("#diagram").ready(function(){
 });
 
 var openDetail = null;
-var isInsert = null;
+var isInsert = "";
 
 function showDetails(det){
 	openDetail = $(det).parent().parent().find("h3 div.crumb_details");
