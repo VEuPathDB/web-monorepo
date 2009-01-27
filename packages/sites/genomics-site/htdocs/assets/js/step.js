@@ -3,6 +3,7 @@ $("#diagram").ready(function(){
 });
 
 var openDetail = null;
+var isInsert = null;
 
 function showDetails(det){
 	openDetail = $(det).parent().parent().find("h3 div.crumb_details");
@@ -53,9 +54,9 @@ function hideDetails(det){
 function Edit_Step(ele, questionName, url){
 	//	hideDetails();
 		url = "showQuestion.do?questionFullName=" + questionName + url;
-		var link = $(".filter_link");
-		$(link).css({opacity:0.2});
-		$(link).attr("href","javascript:void(0)");
+	//	var link = $(".filter_link");
+	//	$(link).css({opacity:0.2});
+	//	$(link).attr("href","javascript:void(0)");
 		var revisestep = $(ele).attr("id");
 		var parts = revisestep.split("|");
 		var strat = parts[0];
@@ -81,21 +82,23 @@ function Edit_Step(ele, questionName, url){
 		$(this).parent().parent().hide();
 }
 
-function Insert_Step(ele,url){
-	$(ele).parent().parent().hide();
+function Insert_Step(ele,dt){
+	//$(ele).parent().parent().hide();
 	var sNumber = $(ele).attr("id");
 	sNumber = sNumber.split("|");
-	openFilter(sNumber[0] + ":" + sNumber[1]);
+	isInsert = sNumber[1];
+	current_Front_Strategy_Id = sNumber[0];
+	openFilter(dt,sNumber[0]);
 }
 
 function Rename_Step(ele, strat, stpId){
 	var link = $("#diagram_" + strat + " div#step_" + stpId + "_sub h3 a#stepId_" + stpId, $(ele).parent().parent().parent());
-	link.hide();
-	link.after("<input id='new_name' type='text' value='"+link.text()+"' onblur='RenameStep(this, " + strat + "," + stpId +")' onfocus='this.select()' onkeypress='blah(this,event)' size='10'/>");
-	$("#new_name").focus();
+	link.html("<input id='new_name_box' type='text' value='"+link.text()+"' onblur='RenameStep(this, " + strat + "," + stpId +")' onfocus='this.select()' onkeypress='blah(this,event)' size='10'/>");
+	$("#new_name_box").focus();
 }
 
 function RenameStep(ele, s, stp){
+	var a = $(ele).parent();
 	var new_name = $(ele).val();
 	step = getStep(s, stp);
 	var url = "renameStep.do?stepId=" + step.back_step_Id + "&customName=" + new_name;	
@@ -105,10 +108,7 @@ function RenameStep(ele, s, stp){
 			url: url,
 			dataType: "html",
 			success: function(data){
-				var link = $("#diagram_" + s + " div#step_" + stp + "_sub h3 a#stepId_" + stp);
-				$(link).text(new_name);
-				$(ele).remove();
-				$(link).show();
+				a.text(new_name);
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e);
