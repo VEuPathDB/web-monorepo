@@ -11,7 +11,14 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="siteAdminEmail" value="${props['SITE_ADMIN_EMAIL']}"/>
 
-<site:header banner="Unexpected Error" />
+<site:home_header refer="exception" />
+<site:menubar />
+
+<div id="contentwrapper">
+  	<div id="contentcolumn2">
+		<div class="innertube">
+<h2><span style="font-color: red;">Unexpected Error</span></h2>
+<%-- <site:header banner="Unexpected Error" /> --%>
 
 <em>Sorry, an unexpected error has occurred.</em>
 <p>
@@ -71,4 +78,8 @@ ${error}
   </c:if>
 </c:otherwise>
 </c:choose>
+
+		</div>
+  	</div>
+</div>
 <site:footer/>

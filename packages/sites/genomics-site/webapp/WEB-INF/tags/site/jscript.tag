@@ -32,6 +32,10 @@
 	<script type="text/javascript" src="/assets/js/sfhover.js"></script>
 </c:if>
 
+<c:if test="${refer == 'blastQuestion'}">
+        <script type="text/javascript" src="/assets/js/blast.js"></script>
+</c:if>
+
 <!-- dynamic query grid code -->
 <script type="text/javascript" src="/assets/js/dqg.js"></script>
 

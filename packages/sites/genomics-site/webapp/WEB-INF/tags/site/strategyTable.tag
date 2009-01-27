@@ -14,13 +14,18 @@
               required="true"
               description="Current User object"
 %>
+<%@ attribute name="prefix"
+              type="java.lang.String"
+              required="false"
+              description="Text to add before 'Strategy' in column header"
+%>
 
 <table border="0" cellpadding="5" cellspacing="0">
   <tr class="headerrow">
     <th scope="col">&nbsp;</th>
     <th scope="col">&nbsp;</th>
     <th scope="col">&nbsp;</th>
-    <th scope="col">Strategy</th>
+    <th scope="col"><c:if test="${prefix != null}">${prefix}&nbsp;</c:if>Strategies</th>
     <th scope="col">&nbsp;</th>
     <th scope="col">&nbsp;</th>
     <th scope="col">Created</th>
@@ -29,7 +34,7 @@
     <th scope="col">Size</th>
   </tr>
   <c:set var="i" value="0"/>
-  <%-- begin of forEach unsaved strategy in the category --%>
+  <%-- begin of forEach strategy in the category --%>
   <c:forEach items="${strategies}" var="strategy">
     <c:set var="strategyId" value="${strategy.strategyId}"/>
     <c:choose>

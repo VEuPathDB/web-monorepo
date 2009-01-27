@@ -47,6 +47,11 @@ ul#history_tabs {
     display: inline;
 }
 
+.history_panel table {
+    width: 100%;
+    margin: 5px 0;
+}
+
 .history_panel table li {
     float:left;
 }

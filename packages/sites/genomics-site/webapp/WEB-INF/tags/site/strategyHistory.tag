@@ -97,8 +97,7 @@
       <div class="panel_${recTabName} history_panel">
     </c:otherwise> 
   </c:choose>
-  <h2>In Progress</h2>
-  <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" />
+  <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Unsaved" />
 </div>
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
@@ -123,8 +122,7 @@
       <div class="panel_${recTabName} history_panel">
     </c:otherwise> 
   </c:choose>
-  <h2>Saved</h2>
-  <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" />
+  <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Saved" />
 </div>
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
