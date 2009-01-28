@@ -136,13 +136,18 @@ function createStep(ele, step, isLast){
 	var customName = $(ele).attr("customName");
 	var shortName = $(ele).attr("shortName");
 	if(customName != undefined){
-		var usedName = (customName.length > 15)?customName.substring(12) + "...":customName;
+		var usedName = (customName.length > 15)?customName.substring(0,12) + "...":customName;
 		if(name == customName)
 			usedName = shortName;
 	}else{
 		usedName = name;
 	}
 	var collapsible = $(ele).attr("isCollapsed");
+	if(collapsible == "true"){ 
+		var collapsedName = $(ele).children("strategy:first").attr("name");
+		if(collapsedName)
+			usedName = (collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
+	}
 	var resultSize = $(ele).attr("results");
 	var operation = $(ele).attr("operation");
 	var dataType = getDataType(ele);
@@ -229,7 +234,8 @@ function createDetails(ele, strat, step){
 	var collapsible = $(ele).attr("isCollapsed");
 	var resultSize = $(ele).attr("results");
 	var operation = $(ele).parent().attr("operation");
-	var dataType = $(ele).attr("dataType");//getDataType(ele);
+	var dType = $(ele).attr("dataType");
+	var dataType = getDataType(ele);
 	var urlParams = $("params urlParams", ele).text();
 	var questionFullName = $(ele).attr("questionName");
 	var collapsedName = "Expanded " + name;
@@ -242,7 +248,7 @@ function createDetails(ele, strat, step){
 		"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;"+
 		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;"+
 		"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(" + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;"+
-		"			<a class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dataType + "\");hideDetails(this)'>Insert Before</a>"+
+		"			<a class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>"+
 		"			&nbsp;|&nbsp;"+
 		"			<a class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>"+
 		"			<span style='float: right; position: absolute; right: 6px;'>"+
@@ -351,15 +357,22 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 	});
 }
 
+function removeStrategyDivs(stratId){
+	strategy = getStrategyFromBackId(stratId);
+	var currentDiv = $("#Strategies div#diagram_" + strategy.frontId).remove();
+	if(stratId.indexOf("_") > 0){
+		sub = getStrategyFromBackId(stratId.substring(0,stratId.indexOf("_")));
+		$("#Strategies div#diagram_" + sub.frontId).remove();
+	}
+	if(strategy.subStratOf != null){
+		strats.splice(findStrategy(strategy.frontId));
+	}
+}
+
 function AddStepToStrategy(url){	
 	b_strategyId = parseUrl('strategy',url)[0];
 	strategy = getStrategyFromBackId(b_strategyId);
 	f_strategyId = strategy.frontId;
-	var currentDiv = $("#Strategies div#diagram_" + f_strategyId);
-	if(strategy.subStratOf != null){
-		strats.splice(findStrategy(f_strategyId));
-	}
-	
 	var d = parseInputs();
 	$.ajax({
 		url: url,
@@ -370,6 +383,7 @@ function AddStepToStrategy(url){
 			showLoading(f_strategyId);
 		},
 		success: function(data){
+			removeStrategyDivs(b_strategyId);
 			updateStrategies(data);
 			//removeLoading(f_strategyId);
 			$("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
@@ -386,6 +400,7 @@ function AddStepToStrategy(url){
 
 function EditStep(proto, url, step_number){
 	$("#query_form").hide("fast");
+	var s = parseUrl('strategy',url)[0];
 	var d = parseInputs();
 		$.ajax({
 		url: url,
@@ -397,6 +412,7 @@ function EditStep(proto, url, step_number){
 				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
+			removeStrategyDivs(s);
 			updateStrategies(data);
 		    $("#"+selected_div+" span.resultCount a").click();
 		},
@@ -437,6 +453,7 @@ function DeleteStep(f_strategyId,f_stepId){
 				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
+				removeStrategyDivs(strategy.backId);
 				updateStrategies(data);
 				if (d_strategyId && f_strategyId == d_strategyId) {
 					var target;
@@ -461,6 +478,7 @@ function DeleteStep(f_strategyId,f_stepId){
 function ExpandStep(f_strategyId, f_stepId, collapsedName){
 	var strategy = getStrategy(f_strategyId);
 	var step = getStep(f_strategyId, f_stepId);
+	un = (collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
 	url = "expandStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id + "&collapsedName=" + collapsedName;
 	$.ajax({
 		url: url,
@@ -472,6 +490,8 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 		},
 		success: function(data){
 			x = loadModel(data);
+			if(collapsedName.indexOf("UNION") == -1 && collapsedName.indexOf("MINUS") == -1 && collapsedName.indexOf("INTERSECT") == -1 )
+				$("#step_" + f_stepId + "_sub h3 a:first").text(un);
 			st = getStep(x, f_stepId);
 			if(st.child_Strat_Id == null)
 				alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
@@ -489,16 +509,15 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 
 function updateStrategies(data){	
 	stratId = loadModel(data);
-	$("div#Strategies div#diagram_" + stratId).remove();
-	subs = getSubStrategies(stratId);
-	for(i=0;i<subs.length;i++){
-		$("div#Strategies div#diagram_" + subs[i].frontId).remove();
+//	$("div#Strategies div#diagram_" + stratId).remove();
+//	subs = getSubStrategies(stratId);
+//	for(i=0;i<subs.length;i++){
+//		$("div#Strategies div#diagram_" + subs[i].frontId).remove();
 		//closeStrategy(subs[i].frontId);
-	}
+//	}
 	$("div#Strategies").append(displayModel(stratId));
 }
 
-var isInsert = "";
 function openStrategy(stratId){
 	var url = "showStrategy.do?strategy=" + stratId;
 	$.ajax({
