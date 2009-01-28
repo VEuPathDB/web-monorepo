@@ -570,7 +570,7 @@ function saveStrategy(stratId, checkName){
 	url = url + strategy + "&name=" + name + "&checkName=" + checkName;
 	$.ajax({
 		url: url,
-		dataType: "html",
+		dataType: "xml",
 		success: function(data){
 			// reload strategy panel
 			if (data) {
