@@ -90,10 +90,15 @@ function Insert_Step(ele,dt){
 	current_Front_Strategy_Id = sNumber[0];
 	openFilter(dt,sNumber[0]);
 }
-
+var a_link;
 function Rename_Step(ele, strat, stpId){
-	var link = $("#diagram_" + strat + " div#step_" + stpId + "_sub h3 a#stepId_" + stpId, $(ele).parent().parent().parent());
-	link.html("<input id='new_name_box' type='text' value='"+link.text()+"' onblur='RenameStep(this, " + strat + "," + stpId +")' onfocus='this.select()' onkeypress='blah(this,event)' size='10'/>");
+	a_link = $("#diagram_" + strat + " div#step_" + stpId + "_sub h3 a#stepId_" + stpId, $(ele).parent().parent().parent());
+	old_name = $(a_link).text();
+	var input = document.createElement('input');
+	$(input).attr("id","new_name_box").attr("value",old_name).attr("onblur","RenameStep(this, " + strat + "," + stpId +")").attr("onfocus","this.select()").attr("onKeyprerss","blah(this,event)").attr("size","10");
+	$("#diagram_" + strat + " div#step_" + stpId + "_sub h3 a#stepId_" + stpId, $(ele).parent().parent().parent()).replaceWith(input);
+//	var link = $("#diagram_" + strat + " div#step_" + stpId + "_sub h3", $(ele).parent().parent().parent());
+//	link.html("<input id='new_name_box' type='text' value='"+link.text()+"' onblur='RenameStep(this, " + strat + "," + stpId +")' onfocus='this.select()' onkeypress='blah(this,event)' size='10'/>");
 	$("#new_name_box").focus();
 }
 
@@ -108,7 +113,10 @@ function RenameStep(ele, s, stp){
 			url: url,
 			dataType: "html",
 			success: function(data){
-				a.text(new_name);
+				a_link.text(new_name);
+				//a.text(new_name);
+				$("input",a).replaceWith(a_link);
+				//a.append(a_link);
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e);
