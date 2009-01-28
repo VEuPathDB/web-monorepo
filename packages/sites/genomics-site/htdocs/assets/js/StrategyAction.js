@@ -492,7 +492,7 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 			x = loadModel(data);
 			if(collapsedName.indexOf("UNION") == -1 && collapsedName.indexOf("MINUS") == -1 && collapsedName.indexOf("INTERSECT") == -1 )
 				$("#step_" + f_stepId + "_sub h3 a:first").text(un);
-			st = getStep(x, f_stepId);
+			st = getStep(strategy.frontId, f_stepId);
 			if(st.child_Strat_Id == null)
 				alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
 			strats[findStrategy(st.child_Strat_Id)].isDisplay = true;
@@ -562,6 +562,7 @@ function hideStrat(id){
 }
 
 function saveStrategy(stratId, checkName){
+//	s = getStrategyFromBackID(stratId);
 	var saveForm = $("div#save_strat_div_" + stratId);
 	var name = $("input[name='name']",saveForm).attr("value");
 	var strategy = $("input[name='strategy']",saveForm).attr("value");
@@ -574,6 +575,7 @@ function saveStrategy(stratId, checkName){
 			// reload strategy panel
 			if (data) {
 				saveForm.hide();
+				removeStrategyDivs(stratId);
 				updateStrategies(data);
 				update_hist = true;
 			}
