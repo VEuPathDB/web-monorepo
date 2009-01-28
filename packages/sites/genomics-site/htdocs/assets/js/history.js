@@ -101,7 +101,7 @@ function enableRename(stratId, name) {
    text.style.display = 'none';
    var nameBox = document.getElementById('name_' + stratId);
    nameBox.innerHTML = "<input name='strategy' type='hidden' value='" + stratId + "'>"
-                  + "<input id='name' name='name' type='text' size='42' maxLength='2000' value='" + name + "' style='margin-right:4px;'>" 
+                  + "<input id='name' name='name' type='text' maxLength='2000' value='" + name + "' style='margin-right:4px;width:100%'>" 
    nameBox.style.display='block';
    var input = document.getElementById('input_' + stratId);
    input.innerHTML = "<input type='submit' value='Update'>"

@@ -41,7 +41,7 @@
       <c:when test="${i % 2 == 0}"><tr class="lines"></c:when>
       <c:otherwise><tr class="linesalt"></c:otherwise>
     </c:choose>
-      <td scope="row"><input type=checkbox id="${strategyId}" onclick="updateSelectedList()"/></td>
+      <td style="width: 20px;" scope="row"><input type=checkbox id="${strategyId}" onclick="updateSelectedList()"/></td>
       <%-- need to see if this strategys id is in the session. --%>
       <c:set var="active" value=""/>
       <c:set var="activeStrategies" value="${wdkUser.activeStrategies}"/>
@@ -60,33 +60,33 @@
       </c:choose>
         <a href="javascript:void(0)" onclick="toggleEye(this,'${strategy.strategyId}')"><img src="/assets/images/transparent1.gif" alt="Toggle View of Strategy" /></a>
       </td>
-      <td>
+      <td style="width: 15px;">
         <img id="img_${strategyId}" class="plus-minus plus" src="/assets/images/sqr_bullet_plus.png" alt="" onclick="toggleSteps(${strategyId})"/>
       </td>
       <c:set var="dispNam" value="${strategy.name}"/>
-      <td width=450>
+      <td>
         <div id="text_${strategyId}">
           <span onclick="enableRename('${strategyId}', '${strategy.name}')">${dispNam}</span>
         </div>
         <div id="name_${strategyId}" style="display:none"></div>          
       </td>
-      <td>
+      <td style="width: 10em; text-align:right;">
         <div id="activate_${strategyId}">
           <input type='button' value='Save As' onclick="enableRename('${strategyId}', '${strategy.savedName}')" />
         </div>       
         <div id="input_${strategyId}" style="display:none"></div>
       </td>
       <c:set var="stepId" value="${strategy.latestStep.stepId}"/>
-      <td nowrap><input type='button' value='Download' onclick="downloadStep('${stepId}')" /></td>
-      <td nowrap>${strategy.latestStep.createdTimeFormatted}</td>
-      <td nowrap>${strategy.latestStep.lastRunTimeFormatted}</td>
-      <td nowrap>
+      <td style="width: 5em" nowrap><input type='button' value='Download' onclick="downloadStep('${stepId}')" /></td>
+      <td style="width: 5em" nowrap>${strategy.latestStep.createdTimeFormatted}</td>
+      <td style="width: 5em" nowrap>${strategy.latestStep.lastRunTimeFormatted}</td>
+      <td style="width: 5em" nowrap>
         <c:choose>
           <c:when test="${strategy.latestStep.version == null || strategy.latestStep.version eq ''}">${wdkModel.version}</c:when>
           <c:otherwise>${strategy.latestStep.version}</c:otherwise>
         </c:choose>
       </td>
-      <td nowrap>${strategy.latestStep.estimateSize}</td>
+      <td style="width: 5em" nowrap>${strategy.latestStep.estimateSize}</td>
     </tr>
     <!-- begin rowgroup for strategy steps -->
     <tbody id="steps_${strategyId}">
