@@ -93,7 +93,7 @@ function Insert_Step(ele,dt){
 var a_link;
 function Rename_Step(ele, strat, stpId){
 	a_link = $("#diagram_" + strat + " div#step_" + stpId + "_sub h3 a#stepId_" + stpId, $(ele).parent().parent().parent());
-	old_name = $(a_link).text();
+	old_name = $(a_link).parent().find("#fullStepName").text();
 	var input = document.createElement('input');
 	$(input).attr("id","new_name_box").attr("value",old_name).attr("onblur","RenameStep(this, " + strat + "," + stpId +")").attr("onfocus","this.select()").attr("onKeyprerss","blah(this,event)").attr("size","10");
 	$("#diagram_" + strat + " div#step_" + stpId + "_sub h3 a#stepId_" + stpId, $(ele).parent().parent().parent()).replaceWith(input);
@@ -107,13 +107,14 @@ function RenameStep(ele, s, stp){
 	var new_name = $(ele).val();
 	step = getStep(s, stp);
 	var url = "renameStep.do?stepId=" + step.back_step_Id + "&customName=" + new_name;	
-	if(new_name.length > 14)
-		new_name = new_name.substring(0,12) + "...";	
+//	if(new_name.length > 14)
+//		new_name = new_name.substring(0,12) + "...";	
 	$.ajax({
 			url: url,
 			dataType: "html",
 			success: function(data){
-				a_link.text(new_name);
+				$("#fullStepName",a).text(new_name);
+				a_link.text((new_name.length > 14)?new_name.substring(0,12) + "...":new_name);
 				//a.text(new_name);
 				$("input",a).replaceWith(a_link);
 				//a.append(a_link);

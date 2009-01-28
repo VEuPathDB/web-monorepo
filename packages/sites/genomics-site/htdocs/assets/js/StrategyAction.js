@@ -136,7 +136,7 @@ function createStep(ele, step, isLast){
 	var customName = $(ele).attr("customName");
 	var shortName = $(ele).attr("shortName");
 	if(customName != undefined){
-		var usedName = (customName.length > 15)?customName.substring(0,12) + "...":customName;
+		var usedName = customName;  //(customName.length > 15)?customName.substring(0,12) + "...":customName;
 		if(name == customName)
 			usedName = shortName;
 	}else{
@@ -146,8 +146,10 @@ function createStep(ele, step, isLast){
 	if(collapsible == "true"){ 
 		var collapsedName = $(ele).children("strategy:first").attr("name");
 		if(collapsedName)
-			usedName = (collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
+			usedName = collapsedName;   //(collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
 	}
+	var fullName = usedName;
+	usedName = (usedName.length > 15)?usedName.substring(0,12) + "...":usedName;
 	var resultSize = $(ele).attr("results");
 	var operation = $(ele).attr("operation");
 	var dataType = getDataType(ele);
@@ -164,6 +166,7 @@ function createStep(ele, step, isLast){
 							usedName +
 			"				<span class='collapsible' style='display: none;'>" + collapsible + "</span>"+
 			"			</a>"+
+			"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 			"			<div class='crumb_details'></div>"+
 			"		</h3>"+
 			"		<span class='resultCount'><a class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></span>";
@@ -204,6 +207,7 @@ function createStep(ele, step, isLast){
 							usedName +
 			"				<span class='collapsible' style='display: none;'>" + collapsible + "</span>"+
 			"			</a>"+
+			"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 			"			<div class='crumb_details'></div>"+
 			"		</h3>"+
 			"		<span class='resultCount'><a class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></span>"+
