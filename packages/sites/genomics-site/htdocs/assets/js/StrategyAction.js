@@ -548,7 +548,7 @@ function closeStrategy(stratId){
 			alert("ERROR \n "+ msg + "\n" + e);
 		}
 	});
-	$("#eye_" + stratId).removeClass("strat_active").addClass("strat_inactive");
+	$("#eye_" + strat.backId).removeClass("strat_active").addClass("strat_inactive");
 }
 
 function hideStrat(id){

@@ -131,11 +131,12 @@ function disableRename() {
 }
 
 function toggleEye(ele, stratId) {
+	s = getStrategyFromBackId(stratId);
 	var url = "";
 	var td = $(ele).parent();
 	if (td.hasClass("strat_inactive")){
 		openStrategy(stratId);
 	}else{
-		closeStrategy(stratId);
+		closeStrategy(s.frontId);//stratId);
 	}
 }
