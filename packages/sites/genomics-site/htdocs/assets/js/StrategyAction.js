@@ -619,7 +619,7 @@ function ChangeFilter(strategyId, stepId, url) {
         b_strategyId = strategyId;
         strategy = getStrategyFromBackId(b_strategyId); 
         f_strategyId = strategy.frontId;
-        var currentDiv = $("#Strategies div#diagram_" + f_strategyId);
+        //var currentDiv = $("#Strategies div#diagram_" + f_strategyId);
         if(strategy.subStratOf != null){
                 strats.splice(findStrategy(f_strategyId));
         }
@@ -635,7 +635,7 @@ function ChangeFilter(strategyId, stepId, url) {
                 success: function(data){
                         var selectedBox = $("#Strategies div.selected");
                         if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
-
+						removeStrategyDivs(strategy.backId);
                         updateStrategies(data);
                         //removeLoading(f_strategyId);
                         // $("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
