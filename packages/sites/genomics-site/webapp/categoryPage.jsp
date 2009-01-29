@@ -55,6 +55,10 @@ div.question .left {
 	<c:set var="type" value="${category} Questions" />
 </c:if>
 
+<div id="contentwrapper">
+   <div id="contentcolumn2">
+      <div class="innertube">
+
 <h1>${type}</h1>
 <c:forEach items="${questions}" var="q">
 	<div class="question">
@@ -64,7 +68,7 @@ div.question .left {
 		<div class="params"><h3>Parameters</h3><br>
 			<table cellspacing="5px">
 			    <c:forEach items="${q.params}" var="p">
-				<tr><td class="right">${p.prompt}:</td><td class="left">${p.help} </td></tr>
+				<tr><td class="right" nowrap>${p.prompt}:</td><td class="left">${p.help} </td></tr>
 			    </c:forEach>
 			</table>
 		</div>
@@ -72,5 +76,9 @@ div.question .left {
 </c:forEach>
 
 <hr width="90%"/>
+      </div>
+   </div>
+</div>
+
 <site:footer />
- 
+
