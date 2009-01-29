@@ -372,6 +372,10 @@ function removeStrategyDivs(stratId){
 	if(stratId.indexOf("_") > 0){
 		sub = getStrategyFromBackId(stratId.substring(0,stratId.indexOf("_")));
 		$("#Strategies div#diagram_" + sub.frontId).remove();
+		subs = getSubStrategies(sub.frontId);
+		for(i=0;i<subs.length;i++){
+			$("#Strategies div#diagram_" + subs[i].frontId).remove();
+		}
 	}
 	if(strategy.subStratOf != null){
 		strats.splice(findStrategy(strategy.frontId));
