@@ -236,6 +236,11 @@ function createDetails(ele, strat, step){
 	var name = $(ele).attr("name");
 	var shortName = $(ele).attr("shortName");
 	var collapsible = $(ele).attr("isCollapsed");
+	if(collapsible == "true"){ 
+		var collapsedName = $(ele).children("strategy:first").attr("name");
+		if(collapsedName)
+			name = collapsedName;   //(collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
+	}
 	var resultSize = $(ele).attr("results");
 	var operation = $(ele).parent().attr("operation");
 	var dType = $(ele).attr("dataType");
