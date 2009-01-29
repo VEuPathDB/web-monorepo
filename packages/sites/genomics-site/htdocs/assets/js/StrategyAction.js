@@ -249,7 +249,11 @@ function createDetails(ele, strat, step){
 	var questionFullName = $(ele).attr("questionName");
 	var collapsedName = "Expanded " + name;
 	var id = step.frontId;
-	var parentid = $(ele).parent().attr("id");
+	var parentid = "";
+	if(ele[0].parentNode.nodeName != 'strategy')
+		parentid = $(ele).parent().attr("id");
+	else
+		parentid = step.back_step_Id;
 	var params_table = createParameters($("params", ele));
 	inner = ""+	
 	    "		<div class='crumb_menu'>"+
