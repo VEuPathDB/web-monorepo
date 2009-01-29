@@ -65,7 +65,7 @@ function validateSaveForm(form){
 	return true;
 }
 
-function formatFilterForm(data, edit, reviseStep){
+function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	//edit = 0 ::: adding a new step
 	//edit = 1 ::: editing a current step
 	var operation = "";
@@ -98,7 +98,7 @@ function formatFilterForm(data, edit, reviseStep){
 		var back_link = "<a id='back_to_selection' href='javascript:close()'><img src='/assets/images/backbox.png'/></a>";
 	}else
 		var close_link = "<a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png'/></a>";
-		
+
 	var quesTitle = $("h1",data).text().replace(/Identify Genes based on/,"");
 	
 	var quesForm = $("form#form_question",data);
@@ -155,6 +155,17 @@ function formatFilterForm(data, edit, reviseStep){
 	if(edit == 1)
 		$("#query_form div#operations input#" + operation).attr('checked','checked'); 
 	$("#query_form").jqDrag(".dragHandle");
+	if (hideQuery){
+           $(".filter.params").remove();
+           $("input[name=questionFullName]").remove();
+           $(".filter.operators").width('auto');
+           $("#query_form").css({'max-width' : '315px','min-width' : '315px'});
+        }
+	if (hideOp){
+           $(".filter.operators").remove();
+           $(".filter.operators").width('auto');
+           $("#query_form").css({'max-width' : '61%','min-width' : '729px'});
+        }
 	$("#query_form").fadeIn("normal");
 }
 

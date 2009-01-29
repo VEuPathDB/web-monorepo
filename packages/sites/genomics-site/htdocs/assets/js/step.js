@@ -51,7 +51,7 @@ function hideDetails(det){
 	});
 }
 
-function Edit_Step(ele, questionName, url){
+function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 	//	hideDetails();
 		url = "showQuestion.do?questionFullName=" + questionName + url;
 	//	var link = $(".filter_link");
@@ -73,7 +73,7 @@ function Edit_Step(ele, questionName, url){
 				$(qf).attr("id","query_form").addClass("jqDnR");
 				$(d).append(qf);
 				$("#Strategies").append(d);
-				formatFilterForm(data,1,reviseStepNumber);
+				formatFilterForm(data,1,reviseStepNumber, hideQuery, hideOp);
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e);

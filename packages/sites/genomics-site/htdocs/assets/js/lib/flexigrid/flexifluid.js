@@ -25,20 +25,39 @@ flexifluid.init = function()
    $('.hDivBox').width('100%');
    $('.hDivBox table').width('100%');
    
+  var col = 0;
+  var minWidths = new Array();
   /* loop each header, reset width in % */
   $('.hDivBox th > div').each(function(){
       var pixWidth = $(this).width();
       var pWidth = parseInt((pixWidth / tableWidth) * 100);
+
+      // Charles Treatman, 1/29/09:  Also set min-width in px
+      // based on total width of contents (+1px to ensure no wrapping).
+      var minWidth = 1;
+      $('div', this).each(function(){
+	minWidth += $(this).width();
+      });
+
       $(this).width('100%');
       $(this.parentNode).width(pWidth + '%');
+      $(this.parentNode).css('min-width', minWidth + 'px');
+
+      minWidths[col] = minWidth;
+      col++;
   });
   
   /* loop each content, reset width in % */
+  var n = 0;  // keep track of how many total columns we've seen.
   $('#'+flexifluid.grid_name+' div').each(function(){
     var pixWidth = $(this).width();
     var pWidth = parseInt((pixWidth / tableWidth) * 100);
     $(this).width('100%');
     $(this.parentNode).width(pWidth + '%');
+    // set the min-width for this column by looking up in
+    // array of header min-width values.
+    $(this.parentNode).css('min-width', minWidths[n % col]);
+    n++;
   });
 
   /* Kill cDrag : will figure it out eventually*/ 
