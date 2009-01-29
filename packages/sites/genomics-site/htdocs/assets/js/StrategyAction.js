@@ -400,6 +400,7 @@ function AddStepToStrategy(url){
 			updateStrategies(data);
 			//removeLoading(f_strategyId);
 			$("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
+			isInsert = "";
 		},
 		error: function(data, msg, e){
 			//$("#Strategies").append(currentDiv);
