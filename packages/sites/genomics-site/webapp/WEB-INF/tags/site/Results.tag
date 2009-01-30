@@ -67,7 +67,10 @@
   </c:when>
   <c:otherwise>
 
-<h2><span id="text_strategy_number">${strategy.name}</span> (step <span id="text_step_number">${strategy.length}</span>) - ${wdkAnswer.resultSize} <span id="text_data_type">${type}(s)</span></h2>
+<h2><span id="text_strategy_number">${strategy.name}</span> 
+    (step <span id="text_step_number">${strategy.length}</span>) 
+    - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span>
+</h2>
 
 <!-- pager -->
 <pg:pager isOffset="true"
