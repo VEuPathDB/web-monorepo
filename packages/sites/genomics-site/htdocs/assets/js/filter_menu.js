@@ -91,6 +91,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	}
 	var stratBackId = getStrategy(current_Front_Strategy_Id).backId;
 	var stepBackId = reviseStep;//getStep(current_Front_Strategy_Id, reviseStep).back_step_Id;
+	var stepFrontId = getStepFromBackId(stratBackId, stepBackId).frontId;
 	var pro_url = "";
 	if(edit == 0)
 		pro_url = "processFilter.do?strategy=" + stratBackId + "&insert=" +insert;
@@ -123,11 +124,11 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	$(".filter.params", quesForm).append(advanced);
 	
 	if(edit == 0)
-		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;: " + quesTitle + "</span></br>");
+		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;" + (stepFrontId+2) + ": " + quesTitle + "</span></br>");
 	else
-		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Edit&nbsp;Step&nbsp;" + (reviseStep + 1) + ": " + quesTitle + "</span></br>");
+		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Edit&nbsp;Step&nbsp;" + (stepFrontId+1) + ": " + quesTitle + "</span></br>");
 	if(edit == 0){
-		$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with </span><div id='operations'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'>&nbsp;&nbsp;<b>INTERSECT</b>&nbsp;</td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;&nbsp;<b>UNION</b>&nbsp;</td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;&nbsp;<b>MINUS</b>&nbsp;</td></tr></table></div></div>");
+		$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (stepFrontId+1) + "</span><div id='operations'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'>&nbsp;" + (stepFrontId+1) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (stepFrontId+2) + "</td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (stepFrontId+1) + "&nbsp;<b>UNION</b>&nbsp;" + (stepFrontId+2) + "</td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (stepFrontId+1) + "&nbsp;<b>MINUS</b>&nbsp;" + (stepFrontId+2) + "</td></tr></table></div></div>");
 	} else {
 		if(reviseStep != 0){
 			if(reviseStep != 1)
@@ -135,7 +136,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 			else
 				var previous_step_id = $("#step_"+(reviseStep - 1)+" a").attr("id");						
 	//		lastStepId = previous_step_id.substring(7);
-			$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (reviseStep) + "</span><div id='operations'><table><tr><td class='opcheck'><input id='INTERSECT' type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td>&nbsp;" + (reviseStep) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (reviseStep + 1) + "</td></tr><tr><td class='opcheck'><input id='UNION' type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (reviseStep) + "&nbsp;<b>UNION</b>&nbsp;" + (reviseStep + 1) + "</td></tr><tr><td class='opcheck'><input id='MINUS' type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (reviseStep) + "&nbsp;<b>MINUS</b>&nbsp;" + (reviseStep + 1) + "</td></tr></table></div></div>");
+			$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (stepFrontId) + "</span><div id='operations'><table><tr><td class='opcheck'><input id='INTERSECT' type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (stepFrontId+1) + "</td></tr><tr><td class='opcheck'><input id='UNION' type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>UNION</b>&nbsp;" + (stepFrontId+1) + "</td></tr><tr><td class='opcheck'><input id='MINUS' type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>MINUS</b>&nbsp;" + (stepFrontId+1) + "</td></tr></table></div></div>");
 		}else{
 			$(".filter.params", quesForm).after("<input type='hidden' name='booleanExpression' value='AND' />");
 		}

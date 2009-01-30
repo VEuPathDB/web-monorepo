@@ -115,7 +115,8 @@ function getStrategyFromBackId(id){
 function getStepFromBackId(strat,id){
 	strategy = getStrategyFromBackId(strat);
 	for(j=0;j<strategy.Steps.length;j++){
-		if(strategy.Steps[j].back_step_Id == id)
+		if(strategy.Steps[j].back_step_Id == id
+		   || strategy.Steps[j].back_boolean_Id == id)
 			return strategy.Steps[j];
 	}
 }
