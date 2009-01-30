@@ -271,10 +271,11 @@
 		font-weight:bold;
 	}
 	
-	span.resultCount {
-		font-size:11px;
+	h6.resultCount {
+		font-size:10px;
 		font-style: italic;
 		font-weight: bold;
+		text-align:center;
 	}
 	
 	div.arrowgrey span.resultCount{

@@ -169,7 +169,7 @@ function createStep(ele, step, isLast){
 			"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 			"			<div class='crumb_details'></div>"+
 			"		</h3>"+
-			"		<span class='resultCount'><a class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></span>";
+			"		<h6 class='resultCount'><a class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>";
 		if(!isLast){
 			inner = inner + 
 			"		<ul>"+
@@ -186,9 +186,9 @@ function createStep(ele, step, isLast){
 			"			<a class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
 			"				<img src='/assets/images/transparent1.gif'>"+
 			"			</a>"+
-			"			<span class='resultCount'>"+
+			"			<h6 class='resultCount'>"+
 			"				<a class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>" + resultSize + "&nbsp;" + dataType + "</a>"+
-			"			</span>";
+			"			</h6>";
 		if(!isLast){
 			inner = inner + 
 			"			<ul>"+
@@ -210,7 +210,7 @@ function createStep(ele, step, isLast){
 			"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 			"			<div class='crumb_details'></div>"+
 			"		</h3>"+
-			"		<span class='resultCount'><a class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></span>"+
+			"		<h6 class='resultCount'><a class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
 			"		<ul>"+
 			"			<li><img class='downarrow' src='/assets/images/arrow_chain_down2.png' alt='equals'></li>"+
 			"		</ul>";
@@ -259,7 +259,7 @@ function createDetails(ele, strat, step){
 	    "		<div class='crumb_menu'>"+
 		"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;"+
 		"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;"+
-		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\"," + step.child_Strat_Id + "," + !operation + ");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;"+
+		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;"+
 		"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(" + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;"+
 		"			<a class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>"+
 		"			&nbsp;|&nbsp;"+
@@ -372,9 +372,9 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 
 function removeStrategyDivs(stratId){
 	strategy = getStrategyFromBackId(stratId);
-	var currentDiv = $("#Strategies div#diagram_" + strategy.frontId).remove();
 	if(stratId.indexOf("_") > 0){
-		sub = getStrategyFromBackId(stratId.substring(0,stratId.indexOf("_")));
+		var currentDiv = $("#Strategies div#diagram_" + strategy.frontId).remove();
+		//sub = getStrategyFromBackId(stratId.substring(0,stratId.indexOf("_")));
 		$("#Strategies div#diagram_" + sub.frontId).remove();
 		subs = getSubStrategies(sub.frontId);
 		for(i=0;i<subs.length;i++){
@@ -533,7 +533,11 @@ function updateStrategies(data){
 //		$("div#Strategies div#diagram_" + subs[i].frontId).remove();
 		//closeStrategy(subs[i].frontId);
 //	}
-	$("div#Strategies").append(displayModel(stratId));
+	if(isLoaded(stratId)){
+		$("div#Strategies div#diagram_" + stratId).replaceWith(displayModel(stratId));
+	}else{
+		$("div#Strategies").append(displayModel(stratId));
+	}
 }
 
 function openStrategy(stratId){

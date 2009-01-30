@@ -127,4 +127,10 @@ function getDataType(ele){
 	var cl = $(ele).attr("dataType");
 	if(cl == "GeneRecordClasses.GeneRecordClass")
 		return "Gene" + s;
+	if(cl == "SequenceRecordClasses.SequenceRecordClass")
+		return "Sequence" + s;
+	if(cl == "ESTRecordClasses.ESTRecordClass")
+		return "EST" + s;
+	if(cl == "ORFClasses.ORFRecordClass")
+		return "ORF" + s;
 }
