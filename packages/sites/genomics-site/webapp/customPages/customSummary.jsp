@@ -92,9 +92,11 @@
 </ul>
 <div id="strategy_results">
 <div class="strategy_controls"/>
+
+<%--
 <table width="100%">
 <tr>
-  <td width="50%">       <%--     <span id="strategy_name">  makes eh title move down..... --%>
+  <td width="50%">    
      <h2><b>My Search Strategies</b></h2>
   </td>
   <td width="50%" align="right">
@@ -113,6 +115,8 @@
 
 
 </table>
+--%>
+
 
 </div> 
 
