@@ -87,7 +87,11 @@ ivax,Plasmodium yoelii"/>
                <html:form method="get" action="/processQuestionSetsFlat.do">
           		<label>Gene ID:</label>
           		<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
-	  			<input type="text" class="search-box" name="myProp(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})" value="${geneIdParam.default}" size="15"/>
+                        <c:set var="geneIdValue" value="${sessionScope.gene_id_value}" />
+                        <c:if test="${fn:length(geneIdValue) == 0}">
+                            <c:set var="geneIdValue" value="${geneIdParam.default}" />
+                        </c:if>
+	  			<input type="text" class="search-box" name="myProp(${geneIdParam.name})" value="${geneIdValue}" size="15"/>
 	  			<input type="hidden" name="questionSubmit" value="Get Answer"/>
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
@@ -101,7 +105,11 @@ ivax,Plasmodium yoelii"/>
                		   value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions"/>
           		<input type="hidden" name="myMultiProp(whole_words)" value="no"/>
           		<input type="hidden" name="myProp(max_pvalue)" value="-30"/>
-          		<input type="text" class="search-box" name="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}"/>
+                        <c:set var="textSearchValue" value="${sessionScope.text_search_value}" />
+                        <c:if test="${fn:length(textSearchValue) == 0}">
+                            <c:set var="textSearchValue" value="${textParam.default}" />
+                        </c:if>
+          		<input type="text" class="search-box" name="myProp(${textParam.name})" value="${textSearchValue}"/>
           		<input type="hidden" name="questionSubmit" value="Get Answer"/>
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
