@@ -15,7 +15,7 @@ $(document).ready(function(){
 				id = loadModel(data);
 				$("div#Strategies").append(displayModel(id));
 				if (id == 0) {
-					$("#diagram_0 div.venn:last span.resultCount a").click();
+					$("#diagram_0 div.venn:last .resultCount a").click();
 				}
 			}
 		});
@@ -583,27 +583,23 @@ function hideStrat(id){
 	$("#diagram_" + id).hide("slow").remove();
 }
 
-function saveStrategy(stratId, checkName, fromHist){
+function saveStrategy(stratId, checkName){
 //	s = getStrategyFromBackID(stratId);
 	var saveForm = $("div#save_strat_div_" + stratId);
-	if (fromHist) saveForm = $("#browse_rename");
 	var name = $("input[name='name']",saveForm).attr("value");
 	var strategy = $("input[name='strategy']",saveForm).attr("value");
 	var url="renameStrategy.do?strategy=";
 	url = url + strategy + "&name=" + name + "&checkName=" + checkName;
-	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
 		dataType: "xml",
 		success: function(data){
 			// reload strategy panel
 			if (data) {
-				if (!fromHist) saveForm.hide();
+				saveForm.hide();
 				removeStrategyDivs(stratId);
 				updateStrategies(data);
 				update_hist = true;
-				if (fromHist) updateHistory();
-				displayHist(currentPanel);
 			}
 			else{
 				// data == "" -> save unsuccessful -> name collision
