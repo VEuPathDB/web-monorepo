@@ -93,7 +93,7 @@ function setEnable2(flag) {
   <form action="${CGI_URL}/${gSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
-    <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (new line delimited):</b></td><tr>
+    <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (each ID on a separate line):</b></td><tr>
     <tr><td colspan="2">
             <textarea name="ids" rows="4" cols="60">${genesIds.default}</textarea>
     </td></tr>
@@ -171,7 +171,7 @@ function setEnable2(flag) {
   <form action="${CGI_URL}/${cSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
-    <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (new line delimited):</b></td><tr>
+    <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (each ID on a separate line):</b></td><tr>
     <tr><td colspan="2">
             <textarea name="ids" rows="4" cols="60">${contigsIds.default}
 ${contigsIds2.default} (14..700)
@@ -216,7 +216,7 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
   <form action="${CGI_URL}/${oSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
-    <tr><td colspan="2" valign="top"><b>Enter a list of ORF IDs (new line delimited):</b></td><tr>
+    <tr><td colspan="2" valign="top"><b>Enter a list of ORF IDs (each ID on a separate line):</b></td><tr>
     <tr><td colspan="2">
             <textarea name="ids" rows="4" cols="60">${orfsIds.default}</textarea>
     </td></tr>
