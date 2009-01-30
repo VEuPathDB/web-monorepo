@@ -403,7 +403,7 @@ function AddStepToStrategy(url){
 			removeStrategyDivs(b_strategyId);
 			updateStrategies(data);
 			//removeLoading(f_strategyId);
-			$("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
+			$("#diagram_" + f_strategyId + " div.venn:last .resultCount a").click();
 			isInsert = "";
 		},
 		error: function(data, msg, e){
@@ -430,9 +430,11 @@ function EditStep(proto, url, step_number){
 				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
+			var selectedBox = $("#Strategies div.selected");
+            if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 			removeStrategyDivs(s);
 			updateStrategies(data);
-		    $("#"+selected_div+" span.resultCount a").click();
+		    selectedBox.find(".resultCount a").click();
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e);
@@ -476,13 +478,13 @@ function DeleteStep(f_strategyId,f_stepId){
 				if (d_strategyId && f_strategyId == d_strategyId) {
 					var target;
 					if (f_stepId == d_stepId) {
-						$("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
+						$("#diagram_" + f_strategyId + " div.venn:last .resultCount a").click();
 					}
 					else if (f_stepId > d_stepId) {
-						$("#diagram_" + f_strategyId + " div#step_" + d_stepId + d_sub + " span.resultCount a").click();
+						$("#diagram_" + f_strategyId + " div#step_" + d_stepId + d_sub + " .resultCount a").click();
 					}
 					else {
-						$("#diagram_" + f_strategyId + " div#step_" + (d_stepId-1) + d_sub + " span.resultCount a").click();
+						$("#diagram_" + f_strategyId + " div#step_" + (d_stepId-1) + d_sub + " .resultCount a").click();
 					}
 				}	
 			},
@@ -668,7 +670,7 @@ function ChangeFilter(strategyId, stepId, url) {
                         //removeLoading(f_strategyId);
                         // $("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
 
-                        selectedBox.find("span.resultCount a").click();
+                        selectedBox.find(".resultCount a").click();
                 },
                 error: function(data, msg, e){
                         //$("#Strategies").append(currentDiv);
