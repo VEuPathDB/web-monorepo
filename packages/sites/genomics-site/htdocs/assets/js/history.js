@@ -1,4 +1,5 @@
 var selected = new Array();
+var currentPanel;
 
 function toggleSteps(strat) {
 	var img = $("img#img_" + strat);
@@ -31,13 +32,17 @@ function selectNoneHist() {
 }
 
 function displayHist(type) {
-	if(!$("div.panel_" + type).hasClass("enabled")) {
-		$("li#selected_type").removeAttr("id");
-		$("div.history_panel.enabled").removeClass("enabled");
-		selectNoneHist();
-		$("a#tab_" + type).parent().attr("id", "selected_type");
-		$("div.panel_" + type).addClass("enabled");
-	}
+	$("#selected_type").removeAttr("id");
+	$(".history_panel").hide();
+	selectNoneHist();
+	$("#history_tabs li").each(function() {
+		var id = $("a", this).attr("id");
+		if (id == 'tab_' + type) {
+			if (!currentPanel || currentPanel != type) currentPanel = type;
+			$(this).attr("id", "selected_type");
+		}
+	});
+	$("div.panel_" + type).show();
 }
 
 function updateSelectedList() {
@@ -94,18 +99,18 @@ function enableRename(stratId, name) {
    
    currentStrategyId = stratId;
    var form = document.getElementById('browse_rename');
-   form.action = "javascript:saveStrategy(" + stratId + ", true, this)";
+   form.action = "javascript:saveStrategy('" + stratId + "', true, true)";
    var button = document.getElementById('activate_' + stratId);
    button.style.display = 'none';
    var text = document.getElementById('text_' + stratId);
    text.style.display = 'none';
    var nameBox = document.getElementById('name_' + stratId);
-   nameBox.innerHTML = "<input name='strategy' type='hidden' value='" + stratId + "'>"
-                  + "<input id='name' name='name' type='text' maxLength='2000' value='" + name + "' style='margin-right:4px;width:100%'>" 
+   nameBox.innerHTML = "<input name='strategy' type='hidden' value='" + stratId + "' />"
+                  + "<input id='name' name='name' type='text' maxLength='2000' value='" + name + "' style='margin-right:4px;width:100%' />" 
    nameBox.style.display='block';
    var input = document.getElementById('input_' + stratId);
-   input.innerHTML = "<input type='submit' value='Update'>"
-                   + "<input type='reset' value='Cancel' onclick='disableRename()'>";
+   input.innerHTML = "<input type='submit' value='Save' />"
+                   + "<input type='reset' value='Cancel' onclick='disableRename()' />";
    input.style.display='block';
    nameBox = document.getElementById('name');
    nameBox.select();

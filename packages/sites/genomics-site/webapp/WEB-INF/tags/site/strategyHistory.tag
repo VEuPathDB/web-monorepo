@@ -35,33 +35,35 @@
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="histList" value="${strategyEntry.value}"/>
   <c:set var="recDispName" value="${histList[0].latestStep.answerValue.question.recordClass.type}"/>
-  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
+  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
   <c:set var="typeC" value="${typeC+1}"/>
   <c:choose>
     <c:when test="${typeC == 1}">
-      <li id="selected_type">
+      <li>
+      <c:set var="displayType" value="${recTabName}" />
     </c:when>
     <c:otherwise>
-      <li>
+      <li>|</li><li>
     </c:otherwise>
   </c:choose>
   <a id="tab_${recTabName}" onclick="displayHist('${recTabName}')"
-  href="javascript:void(0)">My&nbsp;${recDispName}&nbsp;Searches</a></li>
+  href="javascript:void(0)">${recDispName}&nbsp;Strategies</a></li>
   </c:forEach>
   <c:if test="${fn:length(invalidStrategies) > 0}">
     <c:choose>
       <c:when test="${typeC == 0}">
-        <li id="selected_type">
+        <li>
+        <c:set var="displayType" value="${recTabName}" />
       </c:when>
       <c:otherwise>
         <li>
       </c:otherwise>
     </c:choose>
     <a id="tab_invalid" onclick="displayHist('invalid')"
-       href="javascript:void(0)">My$nbsp;Invalid&nbsp;Searches</a></li>
+       href="javascript:void(0)">Invalid&nbsp;Strategies</a></li>
   </c:if>
-  <a id="cmplt_hist_link" href="showQueryHistory.do?type=show_query_history">Complete History</a>
+  <a id="cmplt_hist_link" href="showQueryHistory.do?type=show_query_history">Full Query History</a>
   </ul>
 <!-- should be a div instead of a table -->
 <table class="clear_all">
@@ -86,12 +88,12 @@
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:set var="recDispName" value="${strategies[0].latestStep.answerValue.question.recordClass.type}"/>
-  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
+  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
   <c:set var="typeC" value="${typeC+1}"/>
   <c:choose>
     <c:when test="${typeC == 1}">
-      <div class="panel_${recTabName} history_panel enabled">
+      <div class="panel_${recTabName} history_panel">
     </c:when>
     <c:otherwise>
       <div class="panel_${recTabName} history_panel">
@@ -116,7 +118,7 @@
   <c:set var="typeC" value="${typeC+1}"/>
   <c:choose>
     <c:when test="${typeC == 1}">
-      <div class="panel_${recTabName} history_panel enabled">
+      <div class="panel_${recTabName} history_panel">
     </c:when>
     <c:otherwise>
       <div class="panel_${recTabName} history_panel">
@@ -132,7 +134,7 @@
 <c:if test="${fn:length(invalidStrategies) > 0}">
   <c:choose>
     <c:when test="${typeC == 0}">
-      <div class="panel_invalid history_panel enabled">
+      <div class="panel_invalid history_panel">
     </c:when>
     <c:otherwise>
       <div class="panel_invalid history_panel">
@@ -153,6 +155,9 @@
    </tr>
 </table>
 
+<script type="text/javascript" language="javascript">
+   displayHist('${displayType}');
+</script>
 
   </c:otherwise>
 </c:choose> 

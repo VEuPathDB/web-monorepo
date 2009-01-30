@@ -33,7 +33,13 @@ function updateHistory(){
 			dataType: "html",
 			success: function(data){
 				$("#search_history").html(data);
+				if ($("#" + currentPanel).length == 0) {
+					var type = $("#history_tabs a:first").attr("id").substr(4);
+					displayHist(type);
+				} else
+					displayHist(currentPanel);
 				$("div#search_history").unblock();
+
 				update_hist = false;
 			},
 			error: function(data, msg, e){
