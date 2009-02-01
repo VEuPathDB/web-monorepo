@@ -96,14 +96,18 @@
                 <tr class="subheaderrow2"><td colspan="4">Transcript Expression
                 </td></tr>
                 <tr>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A P T G"/>
+                </tr>
+                <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn="A C G P T Tr"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySageTagEvidence" linktext="SAGE Tag Evidence" existsOn="G P T"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySageTagEvidence" linktext="SAGE Tag Evidence" existsOn="A G P T"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByChIPchip" linktext="ChIP chip Evidence" existsOn="A T"/> 
                 </tr>
+
             </table>
 </div>
         </td>
