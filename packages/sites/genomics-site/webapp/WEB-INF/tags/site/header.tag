@@ -1,3 +1,4 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -5,6 +6,13 @@
 <%@ attribute name="title"
               description="Value to appear in page's title"
 %>
+<%@ attribute name="refer" 
+ 			  type="java.lang.String"
+			  required="false" 
+			  description="Page calling this tag"
+%>
+
+<%-------- OLD set of attributes,  division being used by login, banner by many pages   ---------------------%>
 
 <%@ attribute name="banner"
               required="false"
@@ -40,7 +48,9 @@
 <%@ attribute name="isBannerImage"
               required="false"
 %>
-
+<%@ attribute name="releaseDate"
+              required="false"
+%>
 <%@ attribute name="bannerSuperScript"
               required="false"
 %>
@@ -60,50 +70,254 @@
               description="additional body elements"
 %>
 
+<%---------------------------%>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
 
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+<c:set var="siteName" value="${applicationScope.wdkModel.name}" />
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--[if IE]>
+<style type="text/css" media="screen">
+	body {
+		behavior: url(/assets/css/csshover.htc);
+		font-size: 100%;
+	}
+
+	.ts_ie {
+		margin-left:-15px;
+	}
+
+	#menu ul li {
+		float: left; width: 100%;
+	}
+	
+	#menu ul li a {
+		height: 1%;
+	} 
+
+	#menu a, #menu h2 {
+		font: bold 0.7em/1.4em arial, helvetica, sans-serif;
+	}
+
+	.twoColHybLt #sidebar1 { 
+		padding-top: 30px; 
+	}
+	
+	.twoColHybLt #mainContent { 
+		zoom: 1; padding-top: 15px; 
+	}
+	
+	#menu_lefttop {
+		/*width: 220px;*/
+		margin-top: 8px;
+		position: absolute;
+		left: 6px;
+		top: 129px;
+	}
+	
+	*html .menu_lefttop_drop{
+		padding-left:8px;
+		padding-right:19px;
+	}
+	
+	*html #info {
+	   width: 250px;
+	   min-height: 240px;
+	   height:auto;
+	   background-image: /assets/images/bubble_backgrnd.png);
+	   background-repeat: repeat-y;
+	   text-align: left;
+	   padding-top: 2px;
+	   padding-left: 19px;
+	   z-index: 99;
+	}
+	
+	*html #infobottom{
+		width:250px;
+		margin:0px -3px 0px;
+	}
+	
+	*html table tr td{
+		vertical-align: top;
+	}
+	
+	*html #contentcolumn, *html #contentcolumn{
+		width:100%
+	}
+	
+	*html .rightarrow2 {
+		left: .5em;
+		top: -3.4em;
+	}
+	
+	*html .crumb_details {
+		width: 500px;
+		z-index: 999;
+	}
+	
+	*html .operation {
+		z-index: -1;
+	}
+	
+	a.redbutton {
+		z-index: -1;
+	}
+		
+</style>
+<![endif]-->
+
+<%------------------ setting title --------------%>
+
+<c:if test="${banner == null}">
+<c:choose>
+      <c:when test = "${project == 'CryptoDB'}">
+             <c:set var="banner" value="CryptoDB : The Cryptosporidium genome resource"/>
+      </c:when>
+      <c:when test = "${project == 'GiardiaDB'}">
+             <c:set var="banner" value="GiardiaDB : The Giardia genome resource"/>
+      </c:when>
+      <c:when test = "${project == 'PlasmoDB'}">
+             <c:set var="banner" value="PlasmoDB : The Plasmodium genome resource"/>
+      </c:when>
+      <c:when test = "${project == 'ToxoDB'}">
+             <c:set var="banner" value="ToxoDB : The Toxoplasma genome resource"/>
+      </c:when>
+      <c:when test = "${project == 'TrichDB'}">
+             <c:set var="banner" value="TrichDB : The Trichomonas genome resource"/>
+      </c:when>
+      <c:when test = "${project == 'TriTrypDB'}">
+             <c:set var="banner" value="TriTrypDB: The Kinetoplastid genome resource"/>
+      </c:when>
+</c:choose>
+</c:if>
+
+
+
+<%--------------------------- HEAD of HTML doc ---------------------%>
 <head>
-  <title><c:out value="${title}" default="${banner}" /></title>
-  <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"> <%-- standard --%>
-  <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
-  <link rel="stylesheet" href="<c:url value='/misc/style.css' />" type="text/css">
-  <link rel="stylesheet" href="<c:url value='/misc/sequence.css' />" type="text/css">
-  <script type="text/javascript" src='<c:url value="/js/api.js"/>'></script>
- <script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
-<script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 
-  <c:set var="rssUrl" value="showXmlDataContent.do?name=XmlQuestions.NewsRss"/>
-  <link rel="alternate" type="application/rss+xml" 
-    title="RSS Feed for ${wdkModel.displayName}" 
-    href="${rssUrl}" />
+<title>
+<c:out value="${title}" default="${banner}" />
+</title>
 
+<link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"> <%-- standard --%>
+<link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
 
+<%-- these were in reverse order in previous header --%>
+<link href="/assets/css/AllSites.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/${project}.css" rel="stylesheet" type="text/css" />
 
-  ${headElement}
+<link rel="stylesheet" href="/assets/css/history.css" type="text/css"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/Strategy.css" />
+<link rel="StyleSheet" href="/assets/css/filter_menu.css" type="text/css"/>
+
+<style type="text/css">
+<!--
+body {
+	background-image: url(/assets/images/${project}/background_s.jpg);
+	background-repeat: repeat-x;
+    }
+body {
+behavior: url(/assets/css/csshover.htc);
+}
+#header {
+	height: 104px;
+	background-image: url(/assets/images/${project}/backgroundtop_s.jpg);
+}
+#header p {
+	font-size: 9px;
+}
+-->
+</style>
+
+<site:jscript refer="${refer}"/>
+
+<%-- not in use currently --%>
+${headElement}
 </head>
 
-<body bgcolor="#FFFFFF" topmargin='3' marginheight='3' ${bodyElement}>
 
-<table width="90%" align="center" 
-        border="0" cellspacing="0" 
-        cellpadding="0">
-<tr><td colspan="3" align='center'>
-<%-- <font color='red'>CryptoDB is experiencing technical difficulties. We hope to resolve them very soon. Please accept our apologies for occasional service outages while we work to fix the problem. </font> --%>
-<%-- <font size='-1' color='red'>CryptoDB is undergoing maintenance today. There may be intermittent service outages.</font> --%>
-</td></tr>
-<tr><td colspan="3" align="right">
-<c:choose>
-<c:when test="${division ne 'home'}">
-  <font size='-1'>
-  <site:requestURL/>
-  <c:choose>
+<%--------------------------- BODY of HTML doc ---------------------%>
+<body>
+
+<%-- added for overLIB --%>
+<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
+
+<div id="header2">
+   <div id="header_rt">
+
+   <div align="right"><div id="toplink">
+    <%------ skip skips to menubar.tag ----%>
+   <a href="#skip"><img src="/assets/images/transparent1.gif" alt="Skip navigational links" width="1" height="1" border="0" /></a>
+
+
+   <c:if test="${project == 'TriTrypDB'}">
+     <map name="partof">
+     <area shape=rect coords="0,0 172,22" href="http://eupathdb.org" alt="EuPathDB home page">
+     <area shape=rect coords="310,0 380,22" href="http://www.genedb.org" alt="GeneDB home page">
+     </map>
+   </c:if>
+
+
+   <c:choose>
+   <c:when test="${project == 'TriTrypDB'}">
+     <img  usemap="#partof" src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/>
+   </c:when>
+   <c:otherwise>
+     <a href="http://eupathdb.org"><img src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
+   </c:otherwise>
+   </c:choose>
+   </div></div>
+       
+
+    <div id="bottom">
+      <site:quickSearch /><br />
+
+<%---------------------- Small Menu Options on Header  ------------------%>
+      <div id="nav_topdiv">
+           <ul id="nav_top">
+      <li>
+      <a href="#">About ${siteName}<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+      		<ul>
+	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li
+   	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#funding"/>">Funding</a></li>
+	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#organisms"/>">Organisms in TriTrypDB</a></li>
+	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">How to use this resource</a></li>
+             <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to cite us</a></li>
+
+<%-- 
+          <li><a href="#">Who We Are</a></li>
+          <li><a href="#">What We Do</a></li>
+          <li><a href="#">What You Can Do Here</a></li>
+          <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.News'/>">News</a></li>
+          <li><a href="#">Acknowledgements</a></li>
+--%>
+        	</ul>
+      </li>
+      <li>
+      <a href="#">Help<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+      		<ul>
+          <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a></li>
+          <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Community Links</a></li>
+          <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
+          <li><a href="/awstats/awstats.pl?config=tritrypdb.org">Website Statistics</a></li>
+        	</ul>
+      </li>
+      <li>
+      <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
+		Contact Us<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a></li>
+ 
+ 
+ <site:requestURL/>
+ <c:choose>
     <c:when test="${wdkUser == null || wdkUser.guest == true}">
     
-      <%--------------- Construct link to login page -------------%>  
+      <%--------------- Construct links to login/register/profile/logout pages -------------%>  
         <%-- 
             urlencode the enclosing page's URL and append as a parameter 
             in the queryString. site:requestURL compensates
@@ -122,116 +336,70 @@
         <c:url value="${loginUrl}" var="loginUrl">
            <c:param name="refererUrl" value="${loginJsp}"/> 
         </c:url>
-        
+<%--        
         <c:if test="${division ne 'login'}">
-          <a href="${loginUrl}" id='login'>Login</a> | <a href="<c:url value='showRegister.do'/>" id='register'>Register</a>
-        </c:if>
+--%>
+          <li>
+            <a href="${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a></li>
+          <li>
+          <a href="<c:url value='showRegister.do'/>" id='register'>Register</a></li>
+
         
     </c:when>
     <c:otherwise>
        <c:url value="processLogout.do" var="logoutUrl">
           <c:param name="refererUrl" value="${originRequestUrl}"/> 
        </c:url>
-        ${wdkUser.firstName} ${wdkUser.lastName} | <a href="<c:url value='/showProfile.do'/>" id='profile'>Profile</a> | <a href="<c:url value='${logoutUrl}' />" id='logout'>Logout</a>
+
+          <li>
+            <a href="<c:url value='/showProfile.do'/>" id='profile'>${wdkUser.firstName} ${wdkUser.lastName}'s Profile<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a></li>
+          <li>
+            <a href="<c:url value='${logoutUrl}' />" id='logout'>Logout</a></li>
+
     </c:otherwise>
   </c:choose>
-  </font>
-</c:when>
-</c:choose>
-</td>
-</tr>
 
-    <c:choose>
 
-        <%-- option to have no header at all --%>
-        <c:when test="${banner eq 'none'}">
-        </c:when>
-              
-        <%-- front page header --%>
-        <c:when test="${division eq 'home'}">
-            <c:set value="/images/cryptologo_maroon.gif" var="logo"/>
+           </ul>
 
-            <tr>
-              <td width="30%">&nbsp;</td>
-              <td width="40%"valign="middle" align="center">
-                <a href="<c:url value="/" />">
-                  <img src="<c:url value="${logo}"/>" border="0" alt="Site logo" />
-                </a>
-              </td> 
-              <td width="30%" valign="middle" align="right">
-               <font face='Arial, Helvetica' size="3">
+      </div>  <%-- id="nav_top" --%>
+      	  
+   </div>  <%-- id="bottom"    --%>
+   </div>  <%-- id="header_rt" --%>
 
-<c:choose>
-    <c:when test="${bannerSuperScript != null}">
-        ${bannerSuperScript}&nbsp;&nbsp;&nbsp;
-    </c:when>
-    <%-- for pages other than home which do not use bannersuperscript (bigger font) --%>
-    <c:otherwise>
-          <i><b>Release ${version}</b></i>
-    </c:otherwise>
- </c:choose>
-                </font>
-                <br>
-                <font size="-3">&nbsp;&nbsp;February 19, 2008&nbsp;&nbsp;&nbsp;&nbsp;</font>
-              </td>
-            </tr>
-          
-            <tr>
-              <td align="center" colspan="3">
-                <c:import url="http://${pageContext.request.serverName}/include/announcements.html" />
-              </td>
-            </tr>
-          
-        </c:when> <%-- division eq 'home' --%>
-        
-        <%-- standard header --%>
-        <c:otherwise>
-        
-            <c:set value="/" var="home"/>
-            <c:set value="/images/oocyst_bg.gif" var="left_logo"/>
-            <c:set value="" var="right_logo"/>
+<%------------- TOP HEADER:  SITE logo and DATE _______  is a EuPathDB Project  ----------------%>
 
-            <tr>
-              <td  width="70" align="left">
-                <a href="${home}">
-                  <img src="<c:url value="${left_logo}"/>" border="0" alt="Site logo" />
-                </a>
-              </td>
-          
-              <td align="center">
-                <c:choose>
-                  <c:when test="${banner != null && bannerPreformatted == null}">
-                    <b><font face="Arial,Helvetica" size="+3">
-                    ${banner}
-                    </font></b>
-                  </c:when>
-                  <c:when test="${banner == null && bannerPreformatted != null}">
-                    ${bannerPreformatted}
-                  </c:when>
-                  <c:otherwise>
-                  </c:otherwise>
-                </c:choose>
-              </td>
-            <td width="70" align="right"><site:qhistButton/></td>  
-            </tr>
-            
-    
-        </c:otherwise>
-    </c:choose>
-    
-</table> <%-- End of banner --%>
+   <c:if test="${fn:containsIgnoreCase(project, 'CryptoDB')}">
+     <c:set var="width" value="318" />
+     <c:set var="height" value="64" />
+     <c:set var="version" value="4.0" />
+     <c:set var="date" value="January 15th, 2009" />
+   </c:if>
 
-<table width="90%" align="center" 
-       border="0" cellspacing="0" 
-       cellpadding="0">
-<tr><td>
-<c:import url="http://${pageContext.request.serverName}/include/toolbar.html" />
-</td></tr>
-</table>
+   <c:if test="${fn:containsIgnoreCase(project, 'TriTrypDB')}">
+     <c:set var="width" value="320" />
+     <c:set var="height" value="72" />
+     <c:set var="version" value="1.0" />
+     <c:set var="date" value="January 15th, 2009" />
+   </c:if>
 
-<%-- Open table and cell that encloses the page content --%>
-<table width="90%" align="center" border="0"
-       summary="parent table enclosing entire page content">
-<tr><td>
-<%-- Closing is in footer.tag --%>
-      
+   <p><a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" 
+	width="${width}" height="${height}" align="left" /></a></p>
+   <p>&nbsp;</p>
+   <p>Version ${version}<br />
+   ${date}</p>
+
+</div>  <%-- id="header2" --%>
+
+
+
+<%------------- REST OF PAGE  ----------------%>
+
+<site:menubar />
+<site:siteAnnounce  refer="${refer}"/>
+
+<c:if test="${refer != 'home' && refer != 'home2'}">
+	<div id="contentwrapper">
+	<div id="contentcolumn2">
+	<div class="innertube">
+</c:if>

@@ -1,2 +1,2 @@
 
-<!--#include virtual="/a/header.jsp" -->
+<!--#include virtual="/a/header.jsp?ftype=Download" -->

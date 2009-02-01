@@ -3,34 +3,14 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
-
-<!-- get wdkModel saved in application scope -->
-<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
-<c:set var="version" value="${wdkModel.version}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<c:choose>
-      <c:when test = "${project == 'ToxoDB'}">
-             <c:set var="title" value="ToxoDB: The Toxoplasma gondii genome resource"/>
-      </c:when>
-      <c:when test = "${project == 'PlasmoDB'}">
-             <c:set var="title" value="PlasmoDB : The Plasmodium genome resource"/>
-      </c:when>
-      <c:when test = "${project == 'CryptoDB'}">
-             <c:set var="title" value="CryptoDB: The Cryptosporidium genome resource"/>
-      </c:when>
-      <c:when test = "${project == 'EuPathDB'}">
-             <c:set var="title" value="EuPathDB: The Eukariotic Pathogen genome resource"/>
-      </c:when>
-  </c:choose>
+<c:set var="ftype" value="Error Page"/>
+<c:if test="${!empty param.ftype}">
+  <c:set var="ftype" value="${param.ftype} Files"/>
+</c:if>
 
-
-<site:header title="${title}"
-                 banner="${project} Download Files"
-                 isBannerImage="${isbannerimage}"
-                 bannerSuperScript="<br><b><font size=\"+1\">Release ${version}</font></b>"
-                division="downloads"/>
-
+<%-- used by gbrowse and error pages directly, and by community files and download files pages via /html/include/fancy*IndexHeader.shtml ----%>
+<site:header     banner="${project} ${ftype}" />
 
