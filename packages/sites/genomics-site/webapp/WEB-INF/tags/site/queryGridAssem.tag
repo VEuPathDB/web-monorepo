@@ -13,7 +13,7 @@
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
-                <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByEstAccession" linktext="EST Accession" existsOn="A G"/>
+                <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByEstAccession" linktext="EST Accession(s)" existsOn="A G"/>
                 </tr>
 
                 <tr>
@@ -34,7 +34,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
                  <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByGeneIDs" linktext="Genes IDs" existsOn="A G"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByGeneIDs" linktext="Gene ID" existsOn="A G"/>
                 </tr>           
 <tr>
                     <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLocation" linktext="Chromosomal Location" existsOn="A G"/>

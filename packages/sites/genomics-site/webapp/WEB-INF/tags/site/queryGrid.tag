@@ -20,23 +20,24 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="PORTAL" value="${ fn:containsIgnoreCase(modelName, 'api')    }"     />
-<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')   }"     />
+<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')  }"     />
+<c:set var="INDY" value="${fn:containsIgnoreCase(modelName, 'tritryp')}" />
 
 <%--------------------------------------------------------------------%>
-
+<%-- these divs are needed because they do NOT come from header.... problem associated with having a sidebar --%>
 <div id="contentwrapper">
   <div id="contentcolumn">
 	<div class="innertube">
 
 <%-- TOOLS --%>
 <%--
-	<p align="center"><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"><strong>BLAST</strong></a> &nbsp;|&nbsp;<a href="<c:url value="/srt.jsp"/>"><strong>Sequence Retrieval</strong></a> &nbsp;|&nbsp; <a href="#"><strong>PubMed and Entrez</strong></a> &nbsp;|&nbsp; <a href="#"><strong>GBrowse</strong></a> &nbsp;|&nbsp; <a href="#"><strong>CryptoCyc</strong></a></p> <br>
+	<p align="center"><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"><strong>BLAST</strong></a> &nbsp;|&nbsp;<a href="<c:url value="/srt.jsp"/>"><strong>Sequence Retrieval</strong></a> &nbsp;|&nbsp; <a href="/common/PubCrawler/"><strong>PubMed and Entrez</strong></a> &nbsp;|&nbsp; <a href="#"><strong>GBrowse</strong></a> &nbsp;|&nbsp; <a href="#"><strong>CryptoCyc</strong></a></p> <br>
 --%>
 
 <%-- QUERIES --%>
 <%-- the cellspacing is what allows for separation between Genomic and SNP (EST and ORF) titles --%>
 <%-- with new UI design the cellspacing/cellpdding of the table seems useless, innertube2 class provdes the padding --%>
-<table width="100%" border="0" cellspacing="150" cellpadding="100">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 
 <c:if test="${PORTAL}">
@@ -62,6 +63,14 @@
 </td></tr>
 </c:if>
 
+<c:if test="${INDY}">
+<tr><td colspan="3">  
+    <div class="smallBlack" align="middle">
+	<br/>
+	</div>
+</td></tr>
+</c:if>
+
 <%-----------------------------------------------------------------------------%>
 <%--  All Gene Queries  --%>
 <tr class="headerrow2"><td colspan="4" align="center"><b>Identify Genes by:</b></td></tr>
@@ -83,7 +92,7 @@
 <%-----------------------------------------------------------------------------%>
 <%--  Isolates  --%>
 
-<c:if test = "${project == 'CryptoDB' || project == 'EuPathDB'}">
+<c:if test = "${project == 'CryptoDB' || project == 'EuPathDB' || project == 'PlasmoDB'}">
   <tr class="headerrow2"><td colspan="4" align="center"><b>Identify Isolates by:</b></td></tr>
   <tr><td colspan="3" align="center">
 	<site:queryGridIsolates/> 

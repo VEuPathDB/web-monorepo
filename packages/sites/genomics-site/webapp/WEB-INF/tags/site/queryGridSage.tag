@@ -15,12 +15,14 @@
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-<tr>
-                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagBySequence" linktext="Sequence" existsOn="A G"/>
-                </tr>
 
 <tr>
-	             <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByGeneSourceId" linktext="Gene Source Id" existsOn="A G"/>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByRadSourceId" linktext="Sage Tag ID(s)" existsOn="A G"/>
+                </tr>
+
+
+<tr>
+	             <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByGeneSourceId" linktext="Gene ID" existsOn="A G"/>
             	</tr>
 
  
@@ -42,9 +44,12 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 
- <tr>
-                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByRadSourceId" linktext="Sage Tag ID" existsOn="A G"/>
+<tr>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagBySequence" linktext="Sequence" existsOn="A G"/>
                 </tr>
+
+
+ 
  <tr>
                     <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByLocation" linktext="Chromosomal Location" existsOn="A G"/>
                 </tr>

@@ -13,7 +13,7 @@
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstBySourceId" linktext="EST ID" existsOn="A G C P T Tr"/>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstBySourceId" linktext="EST Accession(s)" existsOn="A G C P T Tr"/>
                 </tr>
 
                 <tr>

@@ -40,7 +40,8 @@
 <c:set var="C" value="${E}" />
 <c:set var="A" value="${E}" />
 <c:set var="G" value="${E}" />
-<c:set var="Tr" value="${E}" />
+<c:set var="Tr" value="${E}" />  <%-- for Trich --%>
+<c:set var="Tri" value="${E}" />   <%-- for TriTryp --%>
 
 
 
@@ -50,6 +51,8 @@
 <c:set var="apiRoot" value="http://www.eupathdb.org/eupathdb/" />
 <c:set var="giardiaRoot" value="http://www.giardiadb.org/giardiadb/" />
 <c:set var="trichRoot" value="http://www.trichdb.org/trichdb/" />
+<c:set var="tritrypRoot" value="http://www.tritrypdb.org/tritrypdb/" />
+
 
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -57,7 +60,11 @@
 
 
 <c:set var="API" value="${fn:containsIgnoreCase(modelName, 'api')    }"     />
-<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')    }"     />
+
+<%--
+<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')  || fn:containsIgnoreCase(modelName, 'tritryp')    }"     />
+--%>
+<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')     }"     />
 
 <c:choose>
 <c:when test="${qname == 'UnifiedBlast'}">
@@ -73,6 +80,12 @@
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
   
+<c:if test="${token eq 'Tri'}">
+        <c:set var="Tri_image">
+            <c:url value="/images/tritrypdb_letter.gif" />
+        </c:set>
+        <c:set var="Tri" value="<a href='${tritrypRoot}${link}'><img src='${Tri_image}' border='0' alt='tritrypdb' /></a>" />
+  </c:if>
   <c:if test="${token eq 'G'}">
         <c:set var="G_image">
             <c:url value="/images/giardiadb_letter.gif" />
@@ -127,7 +140,9 @@
 <c:if test="${modelName eq 'TrichDB'}">
         <c:set var="orgnismName" value="Trichomonas"/>
 </c:if>
-
+<c:if test="${modelName eq 'TriTrypDB'}">
+        <c:set var="orgnismName" value="Kinetoplastids"/>
+</c:if>
 
 <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
 
@@ -137,10 +152,12 @@
 <%-- LINK ACTIVE --%>
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
+<%--
     <td align="left" valign="bottom"><a href='${link}' class='queryGridActive' 
         onmouseover="return overlib('${popup}',
                 FGCOLOR, 'white',
                 BGCOLOR, '#003366',
+                BORDER, 5,
                 TEXTCOLOR, '#003366',
                 TEXTSIZE, '11px',
                 WIDTH, 300,
@@ -148,12 +165,17 @@
         onmouseout = "return nd();">
         ${linktext}</a> 
     </td>
+--%>
+
+     <td align="left" valign="bottom"><a href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
+     <div class="htmltooltip">${popup}</div>
 
 </c:if>
 
 <%-- LINK INACTIVE --%>
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
+<%--
     <td align="left" valign="bottom"><a href="javascript:void(0);" class='queryGridInactive' 
         onmouseover="return overlib('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).',
                 FGCOLOR, 'white',
@@ -165,6 +187,11 @@
         onmouseout = "return nd();">
         ${linktext}</a>
     </td>
+--%>
+
+     <td align="left" valign="bottom"><a href='${link}' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
+     <div class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
+
 
 </c:if>
 
@@ -180,7 +207,9 @@
 	<td width="14">${P}</td>	
 	<td width="14">${T}</td>
 	<td width="14">${Tr}</td>
+	<td width="14">${Tri}</td>
 </tr>
+
 </table>
 </c:if>
 
