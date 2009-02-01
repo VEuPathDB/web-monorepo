@@ -61,6 +61,8 @@
 <!-- history page code -->
 <script type="text/javascript" src="/assets/js/history.js"></script>
 
+<script type="text/javascript" src="<c:url value='/js/treeControl.js'/>"></script>
+
 <script type="text/javascript" src="/assets/js/api.js"></script>
 <script type="text/javascript" src="/assets/js/htmltooltip.js"></script>
 
@@ -68,4 +70,10 @@
 <!--[if lt IE 7.]>
 <script type="text/javascript" src="/assets/js/pngfix.js"></script>
 <![endif]-->
+
+<!-- js for Contact Us window -->
+<script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
+
+<!-- js for popups in query grid and other.... -->
+<script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
 

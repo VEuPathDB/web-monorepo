@@ -63,7 +63,7 @@ return true;
  <c:set var="initialCheckBox" value="CHECKED"/>
 </c:if>
 
-<c:if test="${availableGenomes == null}">
+<c:if test="${availableGenomes == null || availableGenomes == ''}">
  <c:set var="availableGenomes" value="available genomes"/>
 </c:if>
 
@@ -75,9 +75,8 @@ return true;
   <tr class="${bkgClass}"><td>
    <table border="0" cellpadding="${cellPadding}">
     <tr><td colspan="2">
-    <b><font size="+1">Retrieve <a href="http://www.biostat.wisc.edu/~cdewey/mercator/">Mercator</a> 
-   and <a href="http://www.genome.org/cgi/content/abstract/14/4/693">MAVID</a> 
-   generated alignments ${headerFiller} across ${availableGenomes}.</font></b>
+    <b><font size="+1">Retrieve <a href="http://www.biostat.wisc.edu/~cdewey/mercator/">Multiple Sequence Alignment</a>  
+    ${headerFiller} across ${availableGenomes}.</font></b>
 <br><br>
         <input name='project_id' value='${projectId}' size='20' type='hidden' />
         <c:if test="${inputContig == null}">
@@ -98,7 +97,8 @@ return true;
         <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
         <input type="radio" name="type" value="fasta_ungapped">multi fasta
      </td></tr>
-    <tr><td align="left"><input type="submit" name='go' value='Get Alignment' /></td></tr>
+    <tr><td align="left"><input type="submit" name='go' value='Get Alignment' /></td>
+     </tr>
     </table>
    </td></tr></table>
 </form>

@@ -5,7 +5,7 @@
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- TRANSPARENT PNGS for IE6 --%>
-<script defer type="text/javascript" src="/assets/js/pngfix.js"></script>
+<%--  <script defer type="text/javascript" src="/assets/js/pngfix.js"></script>   --%>
 
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -40,14 +40,17 @@
         </c:when>
 
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
-		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium v
-ivax,Plasmodium yoelii"/>
+		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii"/>
 	</c:when>
  <c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
 		<c:set var="listOrganisms" value="Giardia lamblia"/>
 	</c:when>
  <c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
 		<c:set var="listOrganisms" value="Trichomonas vaginalis"/>
+	</c:when>
+
+ <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
+		<c:set var="listOrganisms" value="Leishmania braziliensis,Leishmania infantum,Leishmania major,Trypanosoma brucei,Trypanosoma cruzi"/>
 	</c:when>
 
 </c:choose> 
@@ -57,6 +60,10 @@ ivax,Plasmodium yoelii"/>
 	  <div id="half_right">
           <html:form method="get" action="/processQuestionSetsFlat.do">
           <label>Text Search:</label>
+        <input type="hidden" name="myMultiProp(wdk_record_type)" value="gene">
+        <input type="hidden" name="myMultiProp(project_id)" value="${modelName}">
+        <input type="hidden" name="myMultiProp(text_search_fields)"
+               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions">
           <input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch"/>
           <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}"/>
           <input type="hidden" name="myMultiProp(text_fields)"
@@ -85,31 +92,28 @@ ivax,Plasmodium yoelii"/>
            <tr>
              <td width="216"><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
-          		<label>Gene ID:</label>
-          		<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
-                        <c:set var="geneIdValue" value="${sessionScope.gene_id_value}" />
-                        <c:if test="${fn:length(geneIdValue) == 0}">
-                            <c:set var="geneIdValue" value="${geneIdParam.default}" />
-                        </c:if>
-	  			<input type="text" class="search-box" name="myProp(${geneIdParam.name})" value="${geneIdValue}" size="15"/>
+          		<label><b>Gene ID:</b></label>
+         		<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
+	  			<input type="text" class="search-box" name="myProp(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})" value="${geneIdParam.default}" size="15"/>
 	  			<input type="hidden" name="questionSubmit" value="Get Answer"/>
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
 			 </div></td>
              <td width="216"><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
-          		<label>Text Search:</label>
-          		<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch"/>
+          		<label><b>Text Search:</b></label>
+          <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions"/>
+    <c:choose> 
+          <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
+             <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Phenotype"/>
+          </c:when>
+    </c:choose> 
+           		<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch"/>
 		        <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}"/>
-          		<input type="hidden" name="myMultiProp(text_fields)"
-               		   value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions"/>
+          		<input type="hidden" name="myMultiProp(text_fields)" value="${textFields}"/>
           		<input type="hidden" name="myMultiProp(whole_words)" value="no"/>
           		<input type="hidden" name="myProp(max_pvalue)" value="-30"/>
-                        <c:set var="textSearchValue" value="${sessionScope.text_search_value}" />
-                        <c:if test="${fn:length(textSearchValue) == 0}">
-                            <c:set var="textSearchValue" value="${textParam.default}" />
-                        </c:if>
-          		<input type="text" class="search-box" name="myProp(${textParam.name})" value="${textSearchValue}"/>
+          		<input type="text" class="search-box ts_ie" name="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}"/>
           		<input type="hidden" name="questionSubmit" value="Get Answer"/>
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>

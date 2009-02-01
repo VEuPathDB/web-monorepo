@@ -10,12 +10,12 @@ $(document).ready(function(){
 		if(img.hasClass("plus")){
 			img[0].src = "/assets/images/sqr_bullet_minus.gif";
 			img.removeClass("plus");
-			img.addClass("mius");
+			//img.addClass("minus");
 		}
 		else{
 			img[0].src = "/assets/images/sqr_bullet_plus.gif";
 			img.addClass("plus");
-			img.removeClass("minus");
+			//img.removeClass("minus");
 		}
 		sublist.slideToggle(dqg_speed);
 		return false;
@@ -27,12 +27,12 @@ $(document).ready(function(){
 		if(img.hasClass("plus")){
 			img[0].src = "/assets/images/sqr_bullet_minus.gif";
 			img.removeClass("plus");
-			img.addClass("mius");
+			//img.addClass("minus");
 		}
 		else{
 			img[0].src = "/assets/images/sqr_bullet_plus.gif";
 			img.addClass("plus");
-			img.removeClass("minus");
+			//img.removeClass("minus");
 		}
 		sublist.slideToggle(dqg_speed);
 		return false;
@@ -44,12 +44,12 @@ $(document).ready(function(){
 		if(val == "true"){
 			var img = $("li img.plus-minus", headList);
 			img.attr("src","/assets/images/sqr_bullet_minus.gif");
-			img.addClass("minus");
+			//img.addClass("minus");
 			img.removeClass("plus");
 			$("div.sub_list", headList).slideDown(dqg_speed);
 		}else{
 			var img = $("li img.plus-minus", headList);
-			img.removeClass("minus");
+			//img.removeClass("minus");
 			img.addClass("plus");
 			img.attr("src","/assets/images/sqr_bullet_plus.gif");
 			$("div.sub_list", headList).slideUp(dqg_speed);

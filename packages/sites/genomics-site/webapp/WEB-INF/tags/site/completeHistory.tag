@@ -31,14 +31,14 @@
 
   <!-- begin display steps -->
   <div id="complete_history">
-    <table border="0" cellpadding="5" cellspacing="0">
+    <table width="100%">
        <tr class="headerrow">
           <th>ID</th>
           <th>Query</th>
           <th>Type</th>
           <th>Date</th>
           <th>Version</th>
-          <th>Size</th>
+          <th align="right">Size</th>
           <th>&nbsp;</th>
        </tr>
        <c:forEach items="${steps}" var="step">
@@ -55,8 +55,8 @@
             <c:set var="dispName" value="${step.answerValue.question.displayName}"/>
             <td width>${dispName}</td>
             <td width>${recDispName}</td>
-	    <td align='right' nowrap>${step.createdTime}</td>
-	    <td align='right' nowrap>
+	    <td nowrap>${step.createdTime}</td>
+	    <td nowrap>
 	    <c:choose>
 	      <c:when test="${step.version == null || step.version eq ''}">${wdkModel.version}</c:when>
               <c:otherwise>${step.version}</c:otherwise>
@@ -73,7 +73,7 @@
 </div>
 <!-- end of showing steps -->
 
-       <div>
+       <div style="padding:5px 0;">
             <html:form method="get" action="/processBooleanExpression.do">
                <span id="comb_title_${type}">Combine results</span>:
                <span id="comb_input_${type}">

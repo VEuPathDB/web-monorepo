@@ -79,7 +79,7 @@ function setEnable2(flag) {
 <b><center>Download Sequences By <br>
 <a href="#gene">Gene IDs</a> | 
 <a href="#contig">Contig IDs</a> |  
-<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB'}">
+<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB' || wdkModel.name eq 'TriTrypDB'}">
 <a href="#mercator">Alignments</a> |
 </c:if>
 <a href="#orf">ORF IDs</a> </center></b><hr>
@@ -117,10 +117,12 @@ function setEnable2(flag) {
             <td>begin at</td>
             <td align="left">
 		<select name="upstreamAnchor">
-                    <option value="Start">transcription start (if known)</option>
+                    <option value="Start">Start</option>
+                    <!--
                     <option value="cStart" selected>translation start (ATG)</option>
                     <option value="cEnd">translation stop codon</option>
-                    <option value="End">transcription stop (if known)</option>
+                    -->
+                    <option value="End">Stop</option>
                 </select>
             </td>
             <td align="left">
@@ -137,10 +139,12 @@ function setEnable2(flag) {
             <td>end at</td>
             <td align="left">
 		<select name="downstreamAnchor">
-                    <option value="Start">transcription start (if known)</option>
+                    <option value="Start">Start</option>
+                    <!--
                     <option value="cStart">translation start (ATG)</option>
                     <option value="cEnd" selected>translation stop codon</option>
-                    <option value="End">transcription stop (if known)</option>
+                    -->
+                    <option value="End" selected>Stop</option>
                 </select>
             </td>
             <td align="left">
@@ -163,7 +167,7 @@ function setEnable2(flag) {
       <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
     </table>
   </form>
-<a href="#help"><img src="/assets/images/help.png" alt="Help" align="top" border='0'></a>
+<a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
 <hr>
 
@@ -197,16 +201,16 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
 
     </table>
   </form>
-<a href="#help"><img src="/assets/images/help.png" alt="Help" align="top" border='0'></a>
+<a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
-<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB' || wdkModel.name eq 'PlasmoDB'}">
+<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB' || wdkModel.name eq 'PlasmoDB' || wdkModel.name eq 'TriTrypDB'}">
 
   <hr>
 <a name="mercator"></a>
   <site:mercatorMAVID cgiUrl="${CGI_URL}" projectId="${wdkModel.name}" start="15,000" 
                       end="30,000" inputContig="1" contigId="${contigsIds.default}" cellPadding="2"/>
 
-<a href="#help"><img src="/assets/images/help.png" alt="Help" align="top" border='0'></a>
+<a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 </c:if>
 
 <hr>
@@ -281,14 +285,14 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
     <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
     </table>
  </form>
-<a href="#help"><img src="/assets/images/help.png" alt="Help" align="top" border='0'></a>
+<a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
 <hr>
 
 <b><a name="help">Help</a></b>
   <br>
   <br>
-<img src="images/genemodel.gif" alt="gene model" align="top" > 
+<img src="images/genemodel.gif" align="top" > 
 
 <br>
 Types of sequences:

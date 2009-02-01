@@ -8,7 +8,7 @@
 
 	<ul>
 		<c:forEach items="${catMap}" var="catByRec">
-		  <c:if test="${catByRec.key == 'GeneRecordClasses.GeneRecordClass' || catByRec.key == 'SequenceRecordClasses.SequenceRecordClass'  || catByRec.key == 'OrfRecordClasses.OrfRecordClass' || catByRec.key == 'EstRecordClasses.EstRecordClass' || catByRec.key == 'isolateRecordClasses.IsolateRecordClass' || catByRec.key == 'SnpRecordClasses.SnpRecordClass' }">
+		  <c:if test="${catByRec.key == 'GeneRecordClasses.GeneRecordClass' || catByRec.key == 'SequenceRecordClasses.SequenceRecordClass'  || catByRec.key == 'OrfRecordClasses.OrfRecordClass' || catByRec.key == 'EstRecordClasses.EstRecordClass' || catByRec.key == 'isolateRecordClasses.IsolateRecordClass' || catByRec.key == 'SnpRecordClasses.SnpRecordClass' || catByRec.key == 'AssemblyRecordClasses.AssemblyRecordClass' }">
 		 <c:choose>
 		  <c:when test="${catByRec.key=='GeneRecordClasses.GeneRecordClass'}">
 			<li><a href="#">Search for Genes</a>
@@ -19,7 +19,7 @@
 							<a href="javascript:void(0)">${cat.key}</a>
 							<ul>
 								<c:forEach items="${cat.value}" var="q">
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}">${q.displayName}</a></li>
+									<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
 						</li>
@@ -33,7 +33,7 @@
 			<li><a href="#">Search for &nbsp; ${cat.key}</a>
 				<ul>
 					<c:forEach items="${cat.value}" var="q">
-						<li><a href="showQuestion.do?questionFullName=${q.fullName}">${q.displayName}</a></li>
+						<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a></li>
 					</c:forEach>
 				</ul>
 			</li>
@@ -43,14 +43,5 @@
 		 </c:if>
 		</c:forEach>
 
-<li><a href="<c:url value="/queries_tools.jsp"/>">View all available searches</a></li>
-		<%--<li><a href="#">Tools</a>
-      		<ul>
-	<li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"> BLAST</a></li>
-  			<li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
-        		<li><a href="#"> PubMed and Entrez</a></li>
-        		<li><a href="${CGI_URL}/gbrowse/cryptodb"> GBrowse</a></li>
-        		<li><a href="#"> CryptoCyc</a></li>
-      		</ul>
-		</li>--%>
+        <li><a href="<c:url value="/queries_tools.jsp"/>">View all available searches</a></li>
 	</ul>

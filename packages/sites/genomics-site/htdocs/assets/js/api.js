@@ -153,7 +153,7 @@ function storeIntelligentCookie(name, value) {
     }
 }
 
-function uncheck(notFirst) {
+function uncheckFields(notFirst) {
     var form = document.downloadConfigForm;
     var cb = form.selectedFields;
     if (notFirst) {
@@ -165,7 +165,7 @@ function uncheck(notFirst) {
     }
 }
 
-function check(all) {
+function checkFields(all) {
     var form = document.downloadConfigForm;
     var cb = form.selectedFields;
     cb[0].checked = (all > 0 ? null : 'checked');

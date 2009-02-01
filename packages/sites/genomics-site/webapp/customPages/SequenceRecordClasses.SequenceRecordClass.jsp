@@ -19,10 +19,8 @@
 <c:set var="CPARVUMCONTIGS" value="${props['CPARVUMCONTIGS']}"/>
 <c:set var="CHOMINISCONTIGS" value="${props['CHOMINISCONTIGS']}"/>
 <c:set var="CMURISCONTIGS" value="${props['CMURISCONTIGS']}"/>
-<c:set var="CGI_URL" value="${props['CGI_URL']}"/>
 
 <c:set var="SRT_CONTIG_URL" value="/cgi-bin/contigSrt"/>
-<c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
 
 <c:set var="externalDbName" value="${attrs['externalDbName'].value}" />
 <c:set var="organism" value="${wdkRecord.attributes['organism'].value}" />
@@ -57,8 +55,18 @@
 </c:when>
 <c:otherwise>
 
-<br>
+<br/>
+
+<h2>
+<center>
+${id}
+</center>
+</h2>
+
 <%--#############################################################--%>
+
+
+
 
 <c:set var="append" value="" />
 
@@ -103,7 +111,7 @@
 
 <c:if test="${gtracks ne ''}">
     <c:set var="genomeContextUrl">
-    http://${pageContext.request.serverName}${CGI_URL}/gbrowse_img/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${feature_source_id}@yellow
+    http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${feature_source_id}@yellow
     </c:set>
     <c:set var="genomeContextImg">
         <noindex follow><center>
@@ -121,7 +129,7 @@
 
         <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
         <c:set var="gbrowseUrl">
-            http://${pageContext.request.serverName}${CGI_URL}/gbrowse/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};label=${labels};h_feat=${id}@yellow
+            /cgi-bin/gbrowse/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};label=${labels};h_feat=${id}@yellow
         </c:set>
         <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
 
@@ -169,10 +177,10 @@ ${externalLinks}
  </table>
 </form>
 
-<c:if test="${is_top_level eq '1' && ((projectId eq 'PlasmoDB' && fn:containsIgnoreCase(organism, 'falciparum')) || projectId eq 'CryptoDB' || projectId eq 'ToxoDB')}">
+<c:if test="${is_top_level eq '1' && ((projectId eq 'PlasmoDB' && fn:containsIgnoreCase(organism, 'falciparum')) || projectId eq 'TriTrypDB' || projectId eq 'CryptoDB' || projectId eq 'ToxoDB')}">
 
   <br />
-  <site:mercatorMAVID cgiUrl="${CGI_URL}" projectId="${projectId}" contigId="${id}"
+  <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" contigId="${id}"
                         start="1" end="${attrs['length'].value}" bkgClass="secondary3" cellPadding="0"/>
 </c:if>
 </c:set>
@@ -330,29 +338,11 @@ Microbial Sequencing Center program at the Institute for Genomic Research
         </a></b>
     </c:set>
     </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'ME49')}">
+    <c:when test="${projectId eq 'ToxoDB'}">
     <c:set var="reference">
-     <b><i>Toxoplasma gondii</i> ME49  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
+     T. gondii was sequenced by The Institute for <a href=" http://www.tigr.org/tdb/e2k1/tga1/">Genomic Research</a>
     </c:set>
     </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'GT1')}">
-    <c:set var="reference">
-     <b><i>Toxoplasma gondii</i> GT1  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'VEG')}">
-    <c:set var="reference">
-     <b><i>Toxoplasma gondii</i> VEG  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'caninum')}">
-    <c:set var="reference">
-<b>N. caninum NC-Liverpool strain, was sequenced by The Wellcome Trust Sanger Institute.  The Welcome Trust Sanger Institute plans on publishing the completed and annotated sequences in a peer-reviewed
-journal as soon as possible. Permission should be obtained from Arnaub Pain before publishing analyses of the
-sequence/open reading frames/genes on a chromosome or genome scale.</b>
-    </c:set>
-    </c:when>
-
     <c:when test="${projectId eq 'TrichDB'}">
     <c:set var="reference">
      T. vaginalis sequence from Jane Carlton (NYU,TIGR). PMID: 17218520
@@ -363,6 +353,17 @@ sequence/open reading frames/genes on a chromosome or genome scale.</b>
 G. lamblia sequence, assembly, annotation from Mitchell Sogin(MBL). Genomic minimalism in the early diverging intestinal parasite Giardia lamblia. cd Hilary G. Morrison, Andrew G. McArthur, Frances D. Gillin, Stephen B. Aley, Rodney D. Adam, Gary J. Olsen, Aaron A. Best, W. Zacheus Cande, Feng Chen, Michael J. Cipriano, Barbara J. Davids, Scott C. Dawson, Heidi G. Elmendorf, Adrian B. Hehl, Michael E. Holder, Susan M. Huse, Ulandt U. Kim, Erica Lasek-Nesselquist, Gerard Manning, Anuranjini Nigam, Julie E. J. Nixon, Daniel Palm, Nora E. Passamaneck, Anjali Prabhu, Claudia I. Reich, David S. Reiner, John Samuelson, Staffan G. Svard, and Mitchell L. Sogin Science 28 September 2007, Volume 317, pp. 1921-1926.
     </c:set>
     </c:when>
+
+<c:when test="${fn:contains(organism,'cruzi') && projectId eq 'TriTrypDB'}">
+  <c:set var="reference">
+  Sequence data from GeneDB for <i>${organism}</i> contigs were provided in Genbank format.  Mapping of gene coordinates from contigs to chromosomes for <i>${organism}</i> chromosomes, generated by Rick Tarleton lab (UGA).
+  </c:set>
+</c:when>
+<c:when test="${!fn:contains(organism,'cruzi') && projectId eq 'TriTrypDB'}">
+  <c:set var="reference">
+Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were generated at the Wellcome Trust Sanger Institute, TIGR/NRMC, and Stanford University. 
+  </c:set>
+</c:when>
 <c:otherwise>
     <c:set var="reference">
   <b>ERROR: can't find attribution information for organism "${organism}",

@@ -1,0 +1,19 @@
+<!--#include virtual="/a/header.jsp" -->
+<center>	    
+<table WIDTH="640" align="center" cellpadding=2 cellspacing=0 border="0">
+
+ <tr>
+       <td>
+      <b>The requested page requires user authentication.</b><p>
+      
+     Development and pre-release areas of <a href="http://<!--#echo var="PROJECT_ID" -->.org"><!--#echo var="PROJECT_ID" -->.org</a> are restricted.<br>
+     If you believe you should be permitted access, please 
+     contact <a href="mailto:help@<!--#echo var="PROJECT_ID" -->.org" target="_blank">help@<!--#echo var="PROJECT_ID" -->.org</a> 
+     for assistance and please provide the URL you tried to access.
+     <p>
+     
+     </td>
+  </tr>
+</table>
+</center>
+<!--#include virtual="/a/footer.jsp" -->

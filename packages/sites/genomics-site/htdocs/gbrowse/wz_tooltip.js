@@ -165,8 +165,15 @@ function tt_Htm(tt, t_id, txt)
 			'style="color:'+t_titc+';font-family:'+t_ff+';font-size:'+t_fsz+';"><b>' +
 			(tt_n4? '&nbsp;' : '')+t_tit+'</b></font></td></tr>';
 	}
+	
+//	commented out to fix style bug
+//  t_y += '<tr><td><table border="0" cellpadding="'+t_padd+'" cellspacing="'+t_bw+'" width="100%">' +
+//		'<tr><td'+(t_bgc? (' bgcolor="'+t_bgc+'"') : '')+(t_bgimg? ' background="'+t_bgimg+'"' : '')+' style="text-align:'+t_algn+';';
+// new code to us style attribute instead of older attributes		
 	t_y += '<tr><td><table border="0" cellpadding="'+t_padd+'" cellspacing="'+t_bw+'" width="100%">' +
-		'<tr><td'+(t_bgc? (' bgcolor="'+t_bgc+'"') : '')+(t_bgimg? ' background="'+t_bgimg+'"' : '')+' style="text-align:'+t_algn+';';
+			'<tr><td style="'+(t_bgc? (' background-color:'+t_bgc+';') : '')+(t_bgimg? ' background-image:'+t_bgimg+';' : '')+'text-align:'+t_algn+';';
+// end of correction		
+
 	if(tt_n6) t_y += 'padding:'+t_padd+'px;';
 	t_y += '" align="'+t_algn+'"><font color="'+t_fc+'" face="'+t_ff+'"' +
 		' style="color:'+t_fc+';font-family:'+t_ff+';font-size:'+t_fsz+';font-weight:'+t_fwght+';">';

@@ -27,12 +27,18 @@
   <td bgcolor=white valign=top>
 
 
+<br/>
 
-
-
+<h2>
+<center>
+${id}
+</center>
+</h2>
 
 <table width="90%" align="center" cellspacing="5">
 <tr><td>
+
+
 
 <!-- Overview -->
 <site:toggle name="${overview.displayName}"

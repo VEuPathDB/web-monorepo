@@ -10,6 +10,8 @@
 <c:set var="parvum_genes" value=""/>
 <c:set var="hominis_genes" value=""/>
 <c:set var="muris_genes" value=""/>
+<c:set var="parvum_chr6_genes" value=""/>
+<c:set var="crypto_distinct_genes" value=""/>
 
 <%-- check for filter link cache --%>
 <c:set var="answerCache" value="${sessionScope.answer_cache}"/>
@@ -36,6 +38,12 @@
       <c:when test="${cacheItem.key == 'muris_genes'}">
         <c:set var="muris_genes" value="${cacheItem.value}"/>
       </c:when>
+      <c:when test="${cacheItem.key == 'crypto_distinct_genes'}">
+        <c:set var="crypto_distinct_genes" value="${cacheItem.value}"/>
+      </c:when>
+      <c:when test="${cacheItem.key == 'parvum_chr6_genes'}">
+        <c:set var="parvum_chr6_genes" value="${cacheItem.value}"/>
+      </c:when>
     </c:choose>
     </c:forEach>
   </c:if>
@@ -45,10 +53,12 @@
 <div class="filter">
 <table cellpadding="5" border="1">
   <tr>
-    <th>All genes</th>
+    <th>All</th>
+    <th><i>Distinct Cryptosporidium</i></th>
     <th><i>C. parvum</i></th>
     <th><i>C. hominis</i></th>
     <th><i>C. muris</i></th>
+    <th><i>C. parvum (Chr. 6)</i></th>
   </tr>
   <tr align="center">
     <c:choose>
@@ -66,6 +76,24 @@
         </c:choose>
       </c:otherwise>
     </c:choose></td>
+
+    <c:choose>
+      <c:when test="${curFilter eq 'crypto_distinct_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${crypto_distinct_genes != ''}">
+            <td>${crypto_distinct_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=crypto_distinct_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+
     <c:choose>
       <c:when test="${curFilter eq 'parvum_genes'}">
         <td class="selected">${wdkHistory.filterSize}
@@ -111,6 +139,26 @@
         </c:choose>
       </c:otherwise>
     </c:choose></td>
+
+
+    <c:choose>
+      <c:when test="${curFilter eq 'parvum_chr6_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${parvum_chr6_genes != ''}">
+            <td>${parvum_chr6_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=parvum_chr6_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+
+
   </tr>
 </table>
 </div>
