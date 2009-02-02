@@ -1,10 +1,12 @@
 //jQuery.noConflict();
 $(document).ready(function(){
 	var root = $(".tree");
-	var fNode = $(".term-node:first input");
-	toggleChildrenCheck(fNode);
-	var children = $(".term-children").hide();
-	var x = 1;
+	if (root.length > 0) {
+		var fNode = $(".term-node:first input");
+		toggleChildrenCheck(fNode);
+		var children = $(".term-children").hide();
+		var x = 1;
+	}
 });
 
 function toggleChildren(ele){
