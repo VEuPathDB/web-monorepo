@@ -9,6 +9,8 @@ function showDetails(det){
 	openDetail = $(det).parent().parent().find("h3 div.crumb_details");
 	var parent = openDetail.parent().parent();
 	var diagram = parent.parent();
+	var dId = $(diagram).attr("id").substring(8);
+	dId = parseInt(dId);
 	var disp = openDetail.attr("disp");
 	$("#Strategies").children("div.crumb_details").each(function(){
 		$(this).remove();	
@@ -24,12 +26,14 @@ function showDetails(det){
 			det2.find(".crumb_menu").addClass("dragHandle");
 			det2.jqDrag(".crumb_menu");
 		
-		l = parent.css("left");
-		t = parent.css("top");
-		l = l.substring(0,l.indexOf("px"));
-		t = t.substring(0,t.indexOf("px"));
-		l = parseInt(l) + 53;//58;
-		t = parseInt(t) + 50;//255;
+//		l = parent.css("left");
+//		t = parent.css("top");
+//		l = l.substring(0,l.indexOf("px"));
+//		t = t.substring(0,t.indexOf("px"));
+//		l = parseInt(l) + 53;//58;
+//		t = parseInt(t) + 50;//255;
+		l = 276;
+		t = 114;
 		det2.css({
 			left: l + "px",
 			top: t + "px",
