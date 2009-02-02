@@ -13,7 +13,7 @@
 <div id="leftcolumn">
 	<div class="innertube">
 		<div id="menu_lefttop">
-				<img src="/assets/images/TriTrypDB/menu_lft1.png" alt="" width="208" height="12" />
+				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">News</a>
 
 
@@ -51,7 +51,7 @@
 				</div>
 
 <%--------------  COMMUNITY LINKS ---------------------------------------------%>
-				<img src="/assets/images/TriTrypDB/menu_lft1.png" alt="" width="208" height="12" />
+				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">Community Links</a>
 				<div class="menu_lefttop_drop"><ul>
 					<li><a href="http://www.genedb.org/">GeneDB</a></li>
@@ -72,9 +72,10 @@
 
 
 <%--------------  TUTORIALS ---------------------------------------------%>
-				<img src="/assets/images/TriTrypDB/menu_lft1.png" alt="" width="208" height="12" />
+				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">Web Tutorials</a>
 				<div class="menu_lefttop_drop"><ul>
+
 The TriTrypDB tutorials will be here soon. In the meantime we provide you with access to PlasmoDB and CryptoDB tutorials, websites that offer similar navigation and querying capabilities.<br><br>
 						<li>Queries and Tools<br />(<a href="http://apidb.org/tutorials/QueriesAndTools_PlasmoDB_5.3.mov">Quick Time</a>) 
 								(<a href="http://apidb.org/tutorials/QueriesAndTools_PlasmoDB_5.3.avi">Windows Media</a>) 
@@ -100,7 +101,7 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
 
 
 <%--------------  INFO AND HELP ---------------------------------------------%>
-				<img src="/assets/images/TriTrypDB/menu_lft1.png" alt="" width="208" height="12" />
+				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">Information and Help</a>
 				<div class="menu_lefttop_drop"><ul>
 						<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
