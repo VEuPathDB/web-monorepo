@@ -8,7 +8,7 @@
 
 	<ul>
 		<c:forEach items="${catMap}" var="catByRec">
-		  <c:if test="${catByRec.key == 'GeneRecordClasses.GeneRecordClass' || catByRec.key == 'SequenceRecordClasses.SequenceRecordClass'  || catByRec.key == 'OrfRecordClasses.OrfRecordClass' || catByRec.key == 'EstRecordClasses.EstRecordClass' || catByRec.key == 'isolateRecordClasses.IsolateRecordClass' || catByRec.key == 'SnpRecordClasses.SnpRecordClass' || catByRec.key == 'AssemblyRecordClasses.AssemblyRecordClass' }">
+		  <c:if test="${catByRec.key == 'GeneRecordClasses.GeneRecordClass' || catByRec.key == 'SequenceRecordClasses.SequenceRecordClass'  || catByRec.key == 'OrfRecordClasses.OrfRecordClass' || catByRec.key == 'EstRecordClasses.EstRecordClass' || catByRec.key == 'IsolateRecordClasses.IsolateRecordClass' || catByRec.key == 'SnpRecordClasses.SnpRecordClass' || catByRec.key == 'AssemblyRecordClasses.AssemblyRecordClass' }">
 		 <c:choose>
 		  <c:when test="${catByRec.key=='GeneRecordClasses.GeneRecordClass'}">
 			<li><a href="#">Search for Genes</a>
