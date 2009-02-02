@@ -208,6 +208,10 @@
 <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"> <%-- standard --%>
 <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
 
+<%-- import WDK related assets --%> 
+<wdk:includes /> 
+
+
 <%-- these were in reverse order in previous header --%>
 <link href="/assets/css/AllSites.css" rel="stylesheet" type="text/css" />
 <link href="/assets/css/${project}.css" rel="stylesheet" type="text/css" />
