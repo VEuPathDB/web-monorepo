@@ -159,10 +159,16 @@
    }
 
    /* Rows, columns, heights, widths, and sizes. */
-   .row1 { top: 0.6em }
-   .row2 { top: 4.6em }
+   .row1 { 
+		top: 10px;/*0.6em;*/ 
+	}
+   .row2 { 
+		top: 56.6px;/*4.6em;*/
+	}
    
-   .col1 { left: 1em }
+   .col1 { 
+		left: 12px;/*1em;*/ 
+	}
    
    .size1 { width: 8em; height: 3em; }
    .size2 { width: 8em; height: 3em;}
