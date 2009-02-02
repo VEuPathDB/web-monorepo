@@ -216,7 +216,7 @@
 <%-- these were in reverse order in previous header --%>
 <link href="/assets/css/AllSites.css" rel="stylesheet" type="text/css" />
 <link href="/assets/css/${project}.css" rel="stylesheet" type="text/css" />
-
+<link rel="stylesheet" href="/assets/css/flexigrid/flexigrid.css" type="text/css"/>
 <link rel="stylesheet" href="/assets/css/history.css" type="text/css"/>
 <link rel="stylesheet" type="text/css" href="/assets/css/Strategy.css" />
 <link rel="StyleSheet" href="/assets/css/filter_menu.css" type="text/css"/>
@@ -341,16 +341,21 @@ ${headElement}
         <c:url value="${loginUrl}" var="loginUrl">
            <c:param name="refererUrl" value="${loginJsp}"/> 
         </c:url>
-<%--        
-        <c:if test="${division ne 'login'}">
---%>
+
+<%-- in home_header login is a class instead of an id that brings up the popup --%>
           <li>
-            <a href="${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a></li>
+            <a href="${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+               <ul class="login">
+                    <li><site:login/></li>
+              </ul>
+
+         </li>
           <li>
           <a href="<c:url value='showRegister.do'/>" id='register'>Register</a></li>
 
         
     </c:when>
+
     <c:otherwise>
        <c:url value="processLogout.do" var="logoutUrl">
           <c:param name="refererUrl" value="${originRequestUrl}"/> 

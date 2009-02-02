@@ -94,7 +94,7 @@ function validateFields(e)
 
   <div align="left">
 
-<p> IMPORTANT: If you already registered in another site (ApiDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.
+<p> IMPORTANT: If you already registered in another site (EuPathDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.
 
 <p><b>Why register/subscribe</b>? So you can:
 <ul>
@@ -161,10 +161,10 @@ function validateFields(e)
     <td nowrap>
         <c:choose>
            <c:when test="${requestScope.preference_global_email_apidb != null}">
-              <input type="checkbox" name="preference_global_email_apidb" checked>ApiDB</input>
+              <input type="checkbox" name="preference_global_email_apidb" checked>EuPathDB</input>
            </c:when>
            <c:otherwise>
-              <input type="checkbox" name="preference_global_email_apidb">ApiDB</input>
+              <input type="checkbox" name="preference_global_email_apidb">EuPathDB</input>
            </c:otherwise>
         </c:choose>
         <c:choose>
@@ -175,7 +175,7 @@ function validateFields(e)
               <input type="checkbox" name="preference_global_email_cryptodb">CryptoDB</input>
            </c:otherwise>
         </c:choose>
-<c:choose>
+        <c:choose>
            <c:when test="${requestScope.preference_global_email_giardiadb != null}">
               <input type="checkbox" name="preference_global_email_giardiadb" checked>GiardiaDB</input>
            </c:when>
@@ -200,12 +200,20 @@ function validateFields(e)
            </c:otherwise>
         </c:choose>
 
-<c:choose>
+        <c:choose>
            <c:when test="${requestScope.preference_global_email_trichdb != null}">
               <input type="checkbox" name="preference_global_email_trichdb" checked>TrichDB</input>
            </c:when>
            <c:otherwise>
               <input type="checkbox" name="preference_global_email_trichdb">TrichDB</input>
+           </c:otherwise>
+        </c:choose>
+          <c:choose>
+           <c:when test="${requestScope.preference_global_email_tritrypdb != null}">
+              <input type="checkbox" name="preference_global_email_tritrypdb" checked>TriTrypDB</input>
+           </c:when>
+           <c:otherwise>
+              <input type="checkbox" name="preference_global_email_tritrypdb">TriTrypDB</input>
            </c:otherwise>
         </c:choose>
     </td>
@@ -243,4 +251,8 @@ How we will use your name and institution:
 <li>if you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment 
 <li>nothing else.  We will not release your name or institution.  
 </ul>
+
+
+
+
 <site:footer/>

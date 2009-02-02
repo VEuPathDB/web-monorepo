@@ -132,7 +132,7 @@ function validateFields(e)
       <td nowrap>
          <input type="checkbox" name="preference_global_email_apidb" 
 	        ${(global['preference_global_email_apidb'] == 'on')? 'checked' : ''}>
-	    ApiDB
+	    EuPathDB
 	 </input>
          <input type="checkbox" name="preference_global_email_cryptodb" 
 	        ${(global['preference_global_email_cryptodb'] == 'on')? 'checked' : ''}>
@@ -153,6 +153,10 @@ function validateFields(e)
  <input type="checkbox" name="preference_global_email_trichdb" 
 	        ${(global['preference_global_email_trichdb'] == 'on')? 'checked' : ''}>
 	    TrichDB
+	 </input>
+<input type="checkbox" name="preference_global_email_tritrypdb" 
+	        ${(global['preference_global_email_tritrypdb'] == 'on')? 'checked' : ''}>
+	    TriTrypDB
 	 </input>
       </td>
     </tr>
