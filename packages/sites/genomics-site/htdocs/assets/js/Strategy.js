@@ -132,6 +132,18 @@ function getDataType(ele){
 		return "Sequence" + s;
 	if(cl == "ESTRecordClasses.ESTRecordClass")
 		return "EST" + s;
-	if(cl == "ORFClasses.ORFRecordClass")
+	if(cl == "ORFRecordClasses.ORFRecordClass")
 		return "ORF" + s;
+	if(cl == "IsolateRecordClasses.IsolateRecordClass")
+		return "Isolate" + s;
+	if(cl == "SNPRecordClasses.SNPRecordClass")
+		return "SNP" + s;
+	if(cl == "AssembliesRecordClasses.AssembilesRecordClass"){
+		if(s == "") 
+			return "Assembly";
+		else 
+			return "Assemblies";
+	}
+	if(cl == "SageTagRecordClasses.SageTagRecordClass")
+		return "Sage Tag" + s;
 }
