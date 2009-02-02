@@ -20,9 +20,9 @@ function showPanel(panel) {
 		updateHistory();
 	}
 	$("#" + hidePanel + "_tab").parent().attr("id", "");
-	$("#" + hidePanel).hide();
+	$("#" + hidePanel).css({'position' : 'absolute', 'left' : '-1000em'});
 	$("#" + panel + "_tab").parent().attr("id", "selected");
-	$("#" + panel).show();
+	$("#" + panel).css({'position' : 'relative', 'left' : 'auto'});
 }
 
 function updateHistory(){

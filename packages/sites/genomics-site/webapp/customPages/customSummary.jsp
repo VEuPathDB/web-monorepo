@@ -65,10 +65,10 @@
 		$("#diagram div.venn:last span.resultCount a").click();
 		<c:choose>
                   <c:when test="${showHist != null && showHist}">
-                    $("#search_history").show();
+                    showPanel("search_history");
                   </c:when>
                   <c:otherwise>
-                    $("#strategy_results").show();
+                    showPanel("strategy_results");
                   </c:otherwise>
                 </c:choose>
 	});
@@ -79,18 +79,10 @@
   	<div id="contentcolumn2">
 		<div class="innertube">
 <ul id="strategy_tabs">
-   <c:choose>
-     <c:when test="${showHist != null && showHist}">
-       <li><a id="strategy_results_tab" onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
-       <li id="selected"><a id="search_history_tab" onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
-     </c:when>
-     <c:otherwise>
-       <li id="selected"><a id="strategy_results_tab" onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
-       <li><a id="search_history_tab" onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
-     </c:otherwise>
-   </c:choose>
+   <li><a id="strategy_results_tab" onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
+   <li><a id="search_history_tab" onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
 </ul>
-<div id="strategy_results">
+<div id="strategy_results" style="position:absolute;left:-999em">
 <div class="strategy_controls"/>
 
 <%--
@@ -145,7 +137,7 @@
 </div> 
 </div><!-- end results view div -->
 
-<div id="search_history">
+<div id="search_history" style="position:absolute;left:-999em">
 <site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
 </div> <!-- end history view div -->
 
