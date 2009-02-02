@@ -354,6 +354,9 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 	$.ajax({
 		url: url,
 		dataType: "html",
+		beforeSend: function(){
+			showLoading(f_strategyId);
+		},
 		success: function(data){
 			step.isSelected = true;
 			$("#Strategies div").removeClass("selected").removeClass("selectedarrow");
@@ -362,6 +365,7 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 			}else{
 				$("#diagram_" + strategy.frontId + " #step_" + step.frontId + "_sub").addClass("selectedarrow");
 			}
+			removeLoading(f_strategyId);
 			ResultsToGrid(data);
 		},
 		error : function(data, msg, e){
