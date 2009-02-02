@@ -3,7 +3,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 
-<site:header refer="queriesAndTools" />
+<site:header refer="home2" />
 
 <site:queryGrid />
 <site:sidebar />
