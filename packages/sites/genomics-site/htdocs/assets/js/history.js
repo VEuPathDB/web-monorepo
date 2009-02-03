@@ -21,6 +21,13 @@ function toggleSteps(strat) {
 	}
 }
 
+function showHistShare(ele, stratId) {
+       var btnOffset = $(ele).offset();
+       var prntOffset = $("div#search_history").offset();
+       $("div#hist_share_" + stratId).css("top", btnOffset.top - prntOffset.top + "px");
+       $("div#hist_share_" + stratId).show();
+}
+
 function selectAllHist() {
 	$("div.history_panel.enabled input:checkbox").attr("checked", "yes");
 	updateSelectedList();

@@ -131,7 +131,7 @@
 
 
 
-#query_form .dragHandle, .diagram .dragHandle {
+.dragHandle {
 	position: absolute;
 	top: -36px;
 	left: -1px;

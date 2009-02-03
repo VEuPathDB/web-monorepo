@@ -140,7 +140,7 @@
       <div class="panel_invalid history_panel">
     </c:otherwise>
   </c:choose>
-    <site:strategyTable strategies="${user.invalidStrategies}" wdkUser="${wdkUser}" />
+    <site:strategyTable strategies="${user.invalidStrategies}" wdkUser="${wdkUser}" prefix="Invalid" />
   </div>
 </c:if>
 

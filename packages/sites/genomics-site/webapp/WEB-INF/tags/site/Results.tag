@@ -70,7 +70,7 @@
 
 <h2><table width="100%"><tr><td><span id="text_strategy_number">${strategy.name}</span> 
     (step <span id="text_step_number">${strategy.length}</span>) 
-    - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span></td><td align="right">Download Result</td></tr></table>
+    - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span></td><td align="right"><a href="downloadStep.do?step=${wdkHistory.stepId}">Download Result</a></td></tr></table>
 </h2>
 
 <!-- pager -->

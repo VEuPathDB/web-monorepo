@@ -20,6 +20,13 @@
               description="Text to add before 'Strategy' in column header"
 %>
 
+<c:set var="scheme" value="${pageContext.request.scheme}" />
+<c:set var="serverName" value="${pageContext.request.serverName}" />
+<c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
+<c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
+<c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
+<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?answer=" />
+
 <table border="0" cellpadding="5" cellspacing="0">
   <tr class="headerrow">
     <th scope="col">&nbsp;</th>
@@ -37,6 +44,7 @@
   <%-- begin of forEach strategy in the category --%>
   <c:forEach items="${strategies}" var="strategy">
     <c:set var="strategyId" value="${strategy.strategyId}"/>
+    <c:set var="exportURL" value="${exportBaseUrl}${strategy.latestStep.answerId}"/>
     <c:choose>
       <c:when test="${i % 2 == 0}"><tr class="lines"></c:when>
       <c:otherwise><tr class="linesalt"></c:otherwise>
@@ -76,8 +84,19 @@
         </div>       
         <div id="input_${strategyId}" style="display:none"></div>
       </td>
-      <c:set var="stepId" value="${strategy.latestStep.stepId}"/>
-      <td style="width: 5em" nowrap><input type='button' value='Download' onclick="downloadStep('${stepId}')" /></td>
+      <td style="width: 10em" nowrap>
+         <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
+         <input type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
+         <div class='modal_div export_link' id="hist_share_${strategyId}" style="right:15em;">
+           <span class='dragHandle'>
+             <a class='close_window' href='javascript:closeModal()'>
+	       <img alt='Close' src='/assets/images/Close-X-box.png'/>
+             </a>
+           </span>
+           <p>Paste link in email:</p>
+           <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
+         </div>
+      </td>
       <td style="width: 5em" nowrap>${strategy.latestStep.createdTimeFormatted}</td>
       <td style="width: 5em" nowrap>${strategy.latestStep.lastRunTimeFormatted}</td>
       <td style="width: 5em" nowrap>
