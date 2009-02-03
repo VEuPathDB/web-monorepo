@@ -59,6 +59,7 @@
 <wdk:filterLayouts strategyId="${strategy.strategyId}" 
                    stepId="${wdkHistory.stepId}"
                    answerValue="${wdkAnswer}" />
+<hr />
 
 <!-- handle empty result set situation -->
 <c:choose>
