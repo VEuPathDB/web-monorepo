@@ -30,6 +30,7 @@ function loadModel(data){
 		if(newId == -1)
 			newId = index;
 		strat = new Strategy(newId, $(this).attr("id"), true);
+		strat.isSaved = $(this).attr("saved");
 		steps = $(this).children("step");
 		strat.initSteps(steps);
 		id = parseInt($(this).attr("id"));
@@ -411,8 +412,8 @@ function AddStepToStrategy(url){
 		},
 		success: function(data){
 			removeStrategyDivs(b_strategyId);
-			updateStrategies(data);
-			//removeLoading(f_strategyId);
+			f_strategyId = updateStrategies(data,"AddStep", strategy);
+			removeLoading(f_strategyId);
 			$("#diagram_" + f_strategyId + " div.venn:last .resultCount a").click();
 			isInsert = "";
 		},
@@ -429,6 +430,7 @@ function AddStepToStrategy(url){
 function EditStep(proto, url, step_number){
 	$("#query_form").hide("fast");
 	var s = parseUrl('strategy',url)[0];
+	
 	var d = parseInputs();
 		$.ajax({
 		url: url,
@@ -443,7 +445,7 @@ function EditStep(proto, url, step_number){
 			var selectedBox = $("#Strategies div.selected");
             if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 			removeStrategyDivs(s);
-			updateStrategies(data);
+			fsid = updateStrategies(data, "EditStep", getStrategyFromBackId(s));
 		    selectedBox.find(".resultCount a").click();
 		},
 		error: function(data, msg, e){
@@ -484,7 +486,7 @@ function DeleteStep(f_strategyId,f_stepId){
 			},
 		success: function(data){
 				removeStrategyDivs(strategy.backId);
-				updateStrategies(data);
+				f_strategyId = updateStrategies(data, "DeleteStep", strategy);
 				if (d_strategyId && f_strategyId == d_strategyId) {
 					var target;
 					if (f_stepId == d_stepId) {
@@ -537,7 +539,7 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 	update_hist = true;
 }
 
-function updateStrategies(data){	
+function updateStrategies(data,evnt,strategy){	
 	stratId = loadModel(data);
 //	$("div#Strategies div#diagram_" + stratId).remove();
 //	subs = getSubStrategies(stratId);
@@ -545,11 +547,16 @@ function updateStrategies(data){
 //		$("div#Strategies div#diagram_" + subs[i].frontId).remove();
 		//closeStrategy(subs[i].frontId);
 //	}
-	if(isLoaded(stratId)){
+	
+	if(strategy.isSaved == "true" && evnt != "Open"){
+		$("div#Strategies div#diagram_" + strategy.frontId).replaceWith(displayModel(stratId));
+	}
+	else if(isLoaded(stratId) && evnt != "Open"){
 		$("div#Strategies div#diagram_" + stratId).replaceWith(displayModel(stratId));
 	}else{
 		$("div#Strategies").append(displayModel(stratId));
 	}
+	return stratId;
 }
 
 function openStrategy(stratId){
@@ -558,7 +565,7 @@ function openStrategy(stratId){
 		url: url,
 		datatype:"html",
 		success: function(data){
-			updateStrategies(data);
+			updateStrategies(data, "Open", getStrategyFromBackId(stratId));
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e);
@@ -610,9 +617,12 @@ function saveStrategy(stratId, checkName, fromHist){
 		success: function(data){
 			// reload strategy panel
 			if (data) {
+				var selectedBox = $("#Strategies div.selected");
+	            if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 				if (!fromHist) saveForm.hide();
 				removeStrategyDivs(stratId);
-				updateStrategies(data);
+				updateStrategies(data, "Save", getStrategy(stratId));
+				selectedBox.find(".resultCount a").click();
 				update_hist = true;
 				if (fromHist) updateHistory();
 				displayHist(currentPanel);

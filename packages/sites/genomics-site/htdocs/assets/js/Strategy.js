@@ -9,6 +9,7 @@ function Strategy(frontId, backId, isDisplay){
 }
 Strategy.prototype.subStratOf = null;
 Strategy.prototype.Steps = new Array();
+Strategy.prototype.isSaved = false;
 Strategy.prototype.initSteps = function(steps){
 	var f_index = 0;
 	var cStrat = this;
