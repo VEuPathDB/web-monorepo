@@ -13,6 +13,11 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+
+
+
 <site:header title="${wdkModel.displayName} : Tutorials"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
@@ -20,6 +25,16 @@
                  divisionName="Tutorials"
                  division="tutorials"
                  headElement="${headElement}" />
+
+<c:if test = "${project == 'GiardiaDB'}">
+The ${project} tutorials will be here soon. In the meantime we provide you with access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same navigation and querying capabilities as in ${project}.org.
+<br>
+</c:if>
+
+<c:if test = "${project == 'TrichDB'}">
+We just updated the ${project} tutorials for Home Page and Queries and Tools!&nbsp;&nbsp;&nbsp; For the rest we still provide you with access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same navigation and querying capabilities as in ${project}.org.
+<br><br>
+</c:if>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -43,9 +58,21 @@
         <c:set var="projects" value="${row[0].value}"/>
         <c:if test="${fn:containsIgnoreCase(projects, wdkModel.displayName)}">
 
-          <c:set var="fileNameMov" value="${row[1].value}"/>
-          <c:set var="fileNameAvi" value="${row[2].value}"/>
-          <c:set var="fileNameFlv" value="${row[3].value}"/>
+          <c:set var="urlMov" value="${row[1].value}"/>
+          <c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
+            <c:set var="urlMov">http://apidb.org/tutorials/${urlMov}</c:set>
+          </c:if>
+
+          <c:set var="urlAvi" value="${row[2].value}"/>
+          <c:if test="${urlAvi != 'unavailable' &&  ! fn:startsWith(urlAvi, 'http://')}">
+            <c:set var="urlAvi">http://apidb.org/tutorials/${urlAvi}</c:set>
+          </c:if>
+
+          <c:set var="urlFlv" value="${row[3].value}"/>
+          <c:if test="${urlFlv != 'unavailable' &&  ! fn:startsWith(urlFlv, 'http://')}">
+            <c:set var="urlFlv">http://apidb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&autostart=true</c:set>
+          </c:if>
+
           <c:set var="duration" value="${row[4].value}"/>
           <c:set var="size" value="${row[5].value}"/>
 
@@ -61,20 +88,21 @@
           <c:if test="${fileNumber > 0}">
             <br>
           </c:if>
-<%--
-          <c:set var="splitFile" value='${fn:split(fileName, ".")}'/>
-          <c:set var="fileFormat"
-                 value="${fn:toUpperCase(splitFile[fn:length(splitFile)-1])}"/>
-          <c:if test='${fileFormat eq "MOV"}'>
-            <c:set var="fileFormat" value="QuickTime"/>
-          </c:if>
---%>
+
  <font size="-1">View in
-          <a href="http://apidb.org/tutorials/${fileNameMov}" target="tutorial"> QuickTime format (.mov)</a> ---&nbsp;
-          <a href="http://apidb.org/tutorials/${fileNameAvi}" target="tutorial"> Ms Windows format (.wmv)</a> ---&nbsp;
-          <a href="http://apidb.org/flv_player/flvplayer.swf?file=/tutorials/${fileNameFlv}&autostart=true"  
-			target="tutorial"> Flash Video format (.flv)</a> ---&nbsp;
-          Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${size}
+      <c:if test="${fileNameMov != 'unavailable'}">
+          <a href="${urlMov}" target="tutorial"> QuickTime format (.mov)</a> 
+      </c:if>
+      <c:if test="${urlAvi != 'unavailable'}">
+          ---&nbsp;<a href="${urlAvi}" target="tutorial"> Ms Windows format (.wmv)</a> 
+      </c:if>
+      <c:if test="${urlFlv != 'unavailable'}">
+          ---&nbsp;<a href="${urlFlv}"  
+			target="tutorial"> Flash Video format (.flv)</a>
+      </c:if>
+      <c:if test="${duration != 'unavailable' && size != 'unavailable'}">
+           ---&nbsp;Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${size}
+      </c:if>
  </font>
 
           <c:set var="fileNumber" value="${fileNumber+1}"/>
