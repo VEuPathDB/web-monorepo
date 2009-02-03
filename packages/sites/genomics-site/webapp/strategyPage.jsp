@@ -6,7 +6,7 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <root>
 <c:set var="strategy" value="${requestScope.wdkStrategy}" />
-<site:xml_strat first_step="${strategy.latestStep}" stratName="${strategy.name}" stratId="${strategy.strategyId}"/>
+<site:xml_strat first_step="${strategy.latestStep}" stratName="${strategy.name}" stratId="${strategy.strategyId}" saved="${strategy.isSaved}"/>
 </root>
 <%--
 <c:set var="wdkAnswer" value="${requestScope.wdkAnswer}" />
