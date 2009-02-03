@@ -28,15 +28,28 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
+<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+
+<c:choose>
+<c:when test="${wdkUser.stepCount == null}">
+<c:set var="count" value="0"/>
+</c:when>
+<c:otherwise>
+<c:set var="count" value="${wdkUser.strategyCount}"/>
+</c:otherwise>
+</c:choose>
 
 <div id="3columndiv">
 
-
 <img src="/assets/images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
 <c:choose>
+
+<%---------------------------------   TOOLS  -------------------------%>
 	<c:when test="${recordClasses == null}">
 		<site:DQG_tools />
 	</c:when>
+
+<%---------------------------------   RECORDCLASSSES OTHER THAN GENES  -------------------------%>
 	<c:when test="${recordClasses == 'others'}">
 		<div id="info">
 			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse</a></p>
@@ -60,11 +73,13 @@
 			</ul>
 		</div>
 		<div id="infobottom">
-			<div id="mysearchhist">
-				<a href="#">My Search History: 0</a>
+ 			<div id="mysearchhist">
+				<a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
 			</div>
 		</div>
 	</c:when>
+
+<%---------------------------------   GENES  -------------------------%>
 	<c:otherwise>
 		<div id="info">
 			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse</a></p>
@@ -90,7 +105,7 @@
 		</div>
 		<div id="infobottom">
 			<div id="mysearchhist">
-				<a href="#">My Search History: 0</a>
+				<a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
 			</div>
     	</div>
 	</c:otherwise>

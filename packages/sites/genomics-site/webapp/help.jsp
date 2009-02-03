@@ -14,32 +14,30 @@
                  divisionName="Generic"
                  division="help"/>
 
+
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
-
- <tr>
-  <td bgcolor=white valign=top>
-
-<!-- begin page table -->
-
-<table border=0 width=100% cellpadding=10><tr><td valign=top>
+<tr><td bgcolor=white valign=top>
 
  <hr class=brown>
     <center><a href="javascript:window.close()">Close this window.</a></center>  
-    <hr class=brown>
-<font size ="-1">
+ <hr class=brown>
+
     We are available to help with <b>Questions</b>, <b>Error reports</b>, <b>Feature requests</b>, <b>Dataset proposals</b>, etc. &nbsp;&nbsp;Please include (but all are optional):
+
+<div id="cirbulletlist">
         <ul>
         <li>Your email, so we can respond.
         <li>If you are describing a problem, <i>details</i> of how the problem occured, including:
+
+
           <ul>
           <li>The URL of the offending page
           <li><i>Exact</i> steps to recreate the problem. If possible, please try to recreate the problem yourself so you can give us an exact recipe.
           <li>The full error message, if any.
           </ul>
         </ul>
-</font>
-              <table width="100%"><tr><td align="center">
 
+</div>
               <table cellspacing="2" cellpadding="4" border="0" bgcolor="#cccccc">
               <form method="POST" action="${CGI_URL}/processMail">
 
@@ -71,19 +69,9 @@
               </form>
               </table>
  
-             </td></tr></table>
-
-          <br>
-
-	  </div>
-
 </td></tr></table>
-<!-- end page table -->
 
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table> 
+ 
 
 <site:footer/>
 

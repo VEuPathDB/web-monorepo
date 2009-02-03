@@ -10,3 +10,15 @@ div.htmltooltip{
    background-color: lightYellow;
    border: 1px solid black;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =used in help.jsp, classic bullet list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#cirbulletlist ul {
+	list-style-type: disc;
+	margin-left:  1em;
+	padding-left: 1em;
+	list-style-position: outside;
+}
+
+

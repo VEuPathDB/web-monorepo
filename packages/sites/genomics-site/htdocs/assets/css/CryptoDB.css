@@ -402,7 +402,7 @@ img {
 
 #infobottom {
 	width: 209px;
-	min-height: 40px;
+	min-height: 23px;    /* trying to keep buckest same size */
 	background-image: url(../images/bubble_bottom.png);
 	background-position: bottom;
 	background-repeat: no-repeat;
@@ -412,6 +412,12 @@ img {
 	padding-bottom: 30px;
 	padding-left: 19px;
 }
+
+#infobottom.tools {
+	padding-bottom: 0px;
+}
+
+
 
 /* for Internet Explorer */
 /*\*/
@@ -613,8 +619,10 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 	font-weight: normal;
 	padding: 6px 6px 6px 4px;
 	line-height: 15px;
-	list-style-position: inside;
+	list-style-position: outside;  /* so bullet lists wrap under text */
 	list-style-type: square;
+	margin-left:  1em;
+	padding-left: 0;
 }
 
 .menu_lefttop_drop {
@@ -666,6 +674,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 .img_align_middle {
 	white-space: normal;
 	margin-bottom: -4px;
+	background-color: transparent;   /* to override gbrowse background white */
 }
 
 
@@ -1257,6 +1266,7 @@ a.redbutton:active span {
 	background-color: #192a78;
 	color: #FFFFFF;
 }
+
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
