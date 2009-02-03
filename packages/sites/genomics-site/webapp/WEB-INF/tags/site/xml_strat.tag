@@ -30,6 +30,7 @@
 		<c:set value="${step.answerValue.question.paramsMap}" var="displayParams"/>
 		<c:set value="${step.answerValue.questionUrlParams}" var="urlParams"/>
 		<c:set value="${step.isBoolean}" var="isboolean" />
+		<c:set value="${step.filtered}" var="isFiltered" />
 		<c:if test="${isboolean}">
 		<c:set value="${step.childStep.stepId}" var="child_id" />
 		<c:set value="${step.childStep.answerId}" var="child_answerId" />
@@ -46,6 +47,7 @@
 		<c:set value="${step.childStep.answerValue.question.paramsMap}" var="displayParams"/>
 		<c:set value="${step.childStep.answerValue.questionUrlParams}" var="urlParams"/>
 		<c:set value="${step.childStep.isBoolean}" var="child_isboolean" />
+		<c:set value="${step.childStep.filtered}" var="child_isFiltered" />
 		</c:if>
 	
 				<c:choose>
@@ -60,7 +62,8 @@
 							 questionName="${questionName}"
 							 displayName="${displayName}"
 							 isboolean="${isboolean}"
-							 operation="${step.operation}">
+							 operation="${step.operation}"
+							 filtered="${isFiltered}">
 							
 							<step name="${child_cName}"
 								 customName="${child_customName}"
@@ -72,7 +75,8 @@
 								 results="${child_resultSize}"
 								 questionName="${child_questionName}"
 								 displayName="${child_displayName}"
-								 isboolean="${child_isboolean}">
+								 isboolean="${child_isboolean}"
+								 filtered="${child_isFiltered}">
 									<c:choose>
 										<c:when test="${child_collapsible == true}">
 											<c:set var="step" value="${step.childStep}" scope="request" />
@@ -110,7 +114,8 @@
 							 results="${resultSize}"
 							 questionName="${questionName}"
 							 displayName="${displayName}"
-							 isboolean="${isboolean}">
+							 isboolean="${isboolean}"
+							 filtered="${isFiltered}">
 								<c:choose>
 									<c:when test="${child_collapsible == true}">
 										<c:set var="step" value="${step.childStep}" scope="request" />
