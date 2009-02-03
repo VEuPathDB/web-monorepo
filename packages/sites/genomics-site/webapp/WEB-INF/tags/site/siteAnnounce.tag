@@ -18,9 +18,9 @@
 
 <%-- hardcoded warning message only for beta sites --%>
 <c:if test="${
-    fn:startsWith(pageContext.request.serverName, 'beta.') ||
-    fn:startsWith(pageContext.request.serverName, 'b1.')   ||
-    fn:startsWith(pageContext.request.serverName, 'b2.')
+    fn:startsWith(pageContext.request.serverName, 'beta') ||
+    fn:startsWith(pageContext.request.serverName, 'b1')   ||
+    fn:startsWith(pageContext.request.serverName, 'b2')
     }">
   <div class="warn announcebox ${homeClass}">
     <table><tr><td>
