@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <c:set var="xqSetMap" value="${wdkModel.xmlQuestionSetsMap}"/>
@@ -8,6 +9,10 @@
 <c:set var="xqMap" value="${xqSet.questionsMap}"/>
 <c:set var="newsQuestion" value="${xqMap['News']}"/>
 <c:set var="newsAnswer" value="${newsQuestion.fullAnswer}"/>
+<c:set var="tutQuestion" value="${xqMap['Tutorials']}"/>
+<c:set var="tutAnswer" value="${tutQuestion.fullAnswer}"/>
+<c:set var="extlQuestion" value="${xqMap['ExternalLinks']}"/>
+<c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
 <c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
 
 <div id="leftcolumn">
@@ -53,51 +58,61 @@
 <%--------------  COMMUNITY LINKS ---------------------------------------------%>
 				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">Community Links</a>
-				<div class="menu_lefttop_drop"><ul>
-					<li><a href="http://www.genedb.org/">GeneDB</a></li>
-					<li><a href="http://www.EuPathDB.org/">EuPathDB</a></li>
-					<li><a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a></li>
-					<li><a href="http://www.wellcome.ac.uk/index.htm">The Wellcome Trust</a></li>
-					<li><a href="http://www.who.int/trypanosomiasis_african/en/index.html">Human African Trypanosomiasis</a></li>
-					<li><a href="http://www.who.int/neglected_diseases/diseases/chagas/en/">Chagas Disease - American Trypanosomiasis</a></li>
-					<li><a href="http://www.who.int/leishmaniasis/en/">Leishmaniasis</a></li>
-					<li><a href="http://www.who.int/tdr/">WHO/TDR</a></li>
-                                        <li><a href="http://www.vsgdb.net/">VSG-DB</a></li>
-                                        <li><a href="http://trypanofan.path.cam.ac.uk/trypanofan/main/">TrypanoFAN</a></li>
-                                        <li><a href="http://tryps.rockefeller.edu/">TrypsRU</a></li>
+				<div class="menu_lefttop_drop">
 
-					<br><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;"><b>If you have a link that you think would be useful for the community, please send us a note.</b></a>
-				</ul></div>
+		<c:choose>
+                      <c:when test="${extlAnswer.resultSize < 1}">
+                        No links.
+                      </c:when>
+                      <c:otherwise>
+                        <ul>
+ 			<c:forEach items="${extlAnswer.recordInstances}" var="record">
+				 <c:forEach items="${record.tables}" var="table">
+					 <c:forEach items="${table.rows}" var="row"> 
+                          			<li><a href="${row[1].value}">${row[0].value}</a></li>
+                        </c:forEach> </c:forEach>  </c:forEach> 
+                        </ul>
+                      </c:otherwise>
+		</c:choose>
 
+	<br><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;"><b>If you have a link that you think would be useful for the community, please send us a note.</b></a>
+				</div>
 
 
 <%--------------  TUTORIALS ---------------------------------------------%>
 				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">Web Tutorials</a>
-				<div class="menu_lefttop_drop"><ul>
+				<div class="menu_lefttop_drop">
 
-The TriTrypDB tutorials will be here soon. In the meantime we provide you with access to PlasmoDB and CryptoDB tutorials, websites that offer similar navigation and querying capabilities.<br><br>
-						<li>Queries and Tools<br />(<a href="http://apidb.org/tutorials/QueriesAndTools_PlasmoDB_5.3.mov">Quick Time</a>) 
-								(<a href="http://apidb.org/tutorials/QueriesAndTools_PlasmoDB_5.3.avi">Windows Media</a>) 
-								(<a href="http://apidb.org/flv_player/flvplayer.swf?file=/tutorials/QueriesAndTools_PlasmoDB_5.3.flv&autostart=true">Flash</a>)</li>
-						<li>Query History<br />(<a href="http://apidb.org/tutorials/QueryHistory_CryptoDB_3.5.mov">Quick Time</a>) 
-								(<a href="http://apidb.org/tutorials/QueryHistory_CryptoDB_3.5.wmv">Windows Media</a>) 
-								(<a href="http://apidb.org/flv_player/flvplayer.swf?file=/tutorials/QueryHistory_CryptoDB_3.5.flv&autostart=true">Flash</a>)</li>
-						<li>Introduction to the Genome Browser<br />(<a href="http://apidb.org/tutorials/GenomeBrowserIntro_CryptoDB_3.5.mov">Quick Time</a>) 
-								(<a href="http://apidb.org/tutorials/GenomeBrowserIntro_CryptoDB_3.5.avi">Windows Media</a>) 
-								(<a href="http://apidb.org/flv_player/flvplayer.swf?file=/tutorials/GenomeBrowserIntro_CryptoDB_3.5.flv&autostart=true">Flash</a>)</li>
-     						<li>Options to Download Results<br />(<a href="http://apidb.org/tutorials/DownloadResults_PlasmoDB_5.3.mov">Quick Time</a>)
-								(<a href="http://apidb.org/tutorials/DownloadResults_PlasmoDB_5.3.avi">Windows Media</a>) 
-								(<a href="http://apidb.org/flv_player/flvplayer.swf?file=/tutorials/DownloadResults_PlasmoDB_5.3.flv&autostart=true">Flash</a>)</li>
-						<li>List of Gene Identifiers as Query Input<br />(<a href="http://apidb.org/tutorials/ListOfIDs_PlasmoDB_5.3.mov">Quick Time</a>) 
-								(<a href="http://apidb.org/tutorials/ListOfIDs_PlasmoDB_5.3.avi">Windows Media</a>) 
-								(<a href="http://apidb.org/flv_player/flvplayer.swf?file=/tutorials/ListOfIDs_PlasmoDB_5.3.flv&autostart=true">Flash</a>)</li>
-						<li>Query Result Column Management<br />(<a href="http://apidb.org/tutorials/ColumnManagement_PlasmoDB_5.3.mov">Quick Time</a>)
-								(<a href="http://apidb.org/tutorials/ColumnManagement_PlasmoDB_5.3.avi">Windows Media</a>) 
-								(<a href="http://apidb.org/flv_player/flvplayer.swf?file=/tutorials/ColumnManagement_PlasmoDB_5.3.flv&autostart=true">Flash</a>)</li>
-			<%--	<site:tutorials/>   --%>
-				</ul></div>
+        	<c:choose>
+                      <c:when test="${tutAnswer.resultSize < 1}">
+                        No tutorials.
+                      </c:when>
+                      <c:otherwise>
+<c:if test="${project == 'TriTrypDB'}">
+The TriTrypDB tutorials will be here soon. In the meantime we provide you with access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same navigation and querying capabilities as in TriTrypDB.org.<br>
+</c:if>
+                        <ul>
+                        <c:forEach items="${tutAnswer.recordInstances}" var="record">
+				 <c:set var="attrs" value="${record.attributesMap}"/>
+				 <c:forEach items="${record.tables}" var="table">
+					 <c:forEach items="${table.rows}" var="row">
+						 <c:set var="projects" value="${row[0].value}"/>
+						<c:if test="${fn:containsIgnoreCase(projects, project)}"> 
+					  <li>${attrs['title']}<br /> 
+                          		 (<a href="http://eupathdb.org/tutorials/${row[1].value}">Quick Time</a>)
+                          		 (<a href="http://eupathdb.org/tutorials/${row[2].value}">Windows media</a>)
+                          		 (<a href="http://eupathdb.org/tutorials/${row[3].value}">Flash</a>)
+					  </li>
+						</c:if>
+                              		</c:forEach> 
+				</c:forEach>
+ 			</c:forEach>
+                        </ul>
+                      </c:otherwise>
+		</c:choose>
 
+				</div>
 
 
 <%--------------  INFO AND HELP ---------------------------------------------%>
@@ -105,7 +120,7 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
 				<a class="heading" href="#">Information and Help</a>
 				<div class="menu_lefttop_drop"><ul>
 						<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
-						<li><a href="/awstats/awstats.pl?config=tritrypdb.org">Website Usage Statistics</a></li>
+						<li><a href="/awstats/awstats.pl?config=${project}.org">Website Usage Statistics</a></li>
 						<li><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
 				</ul></div>
 
