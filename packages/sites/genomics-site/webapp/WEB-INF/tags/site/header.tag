@@ -291,7 +291,7 @@ ${headElement}
       		<ul>
 	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li
    	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#funding"/>">Funding</a></li>
-	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#organisms"/>">Organisms in TriTrypDB</a></li>
+	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#organisms"/>">Organisms in ${project}</a></li>
 	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">How to use this resource</a></li>
              <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to cite us</a></li>
 
