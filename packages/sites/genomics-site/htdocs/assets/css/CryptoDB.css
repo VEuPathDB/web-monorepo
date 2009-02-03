@@ -402,7 +402,7 @@ img {
 
 #infobottom {
 	width: 209px;
-	min-height: 23px;    /* trying to keep buckest same size */
+	min-height: 35px;    /* trying to keep buckest same size */
 	background-image: url(../images/bubble_bottom.png);
 	background-position: bottom;
 	background-repeat: no-repeat;
@@ -414,7 +414,7 @@ img {
 }
 
 #infobottom.tools {
-	padding-bottom: 0px;
+	padding-bottom: 15px;
 }
 
 
