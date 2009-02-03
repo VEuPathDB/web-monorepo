@@ -67,9 +67,9 @@
   </c:when>
   <c:otherwise>
 
-<h2><span id="text_strategy_number">${strategy.name}</span> 
+<h2><table width="100%"><tr><td><span id="text_strategy_number">${strategy.name}</span> 
     (step <span id="text_step_number">${strategy.length}</span>) 
-    - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span>
+    - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span></td><td align="right">Download Result</td></tr></table>
 </h2>
 
 <!-- pager -->
@@ -122,12 +122,15 @@
 <div id="Results_Pane" style="display: block">
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
 	<tr class="subheaderrow">
+<%--
 			<th align="left">
 			      <input id="summary_view_button" disabled="disabled" type="submit" value="Summary View" onclick="ToggleGenePageView('')" />
 			</th>
+--%>
 			<th nowrap> 
 		        <wdk:pager pager_id="top"/> 
 		    </th>
+
 
 			<th nowrap align="right">
 		           <%-- display a list of sortable attributes --%>
