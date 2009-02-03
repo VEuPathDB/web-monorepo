@@ -13,7 +13,13 @@
 			  required="true"
 			  description="Protocol from the SummaryPage"
 %>
-<strategy name="${stratName}" id="${stratId}">
+<%@ attribute name="saved"
+			  type="java.lang.Boolean"
+			  required="true"
+			  description="Protocol from the SummaryPage"
+%>
+
+<strategy name="${stratName}" id="${stratId}" saved="${saved}">
 	<c:forEach var="step" items="${first_step.allSteps}">
 		<c:set value="${step.stepId}" var="id" />
 		<c:set value="${step.answerId}" var="answerId" />
