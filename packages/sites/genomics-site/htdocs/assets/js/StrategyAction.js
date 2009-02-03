@@ -276,7 +276,7 @@ function createDetails(ele, strat, step){
 		"		</div>"+
 		"		<p class='question_name'><span>" + name + "</span></p>"+
 		"		<table></table>"+
-		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + id + "'>Download</a></p>";
+		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;|&nbsp;<a href='downloadStep.do?step_id=" + step.back_step_Id + "'>Download</a></p>";
 		
 	$(detail_div).html(inner);
 	$("table", detail_div).replaceWith(params_table);
@@ -307,7 +307,7 @@ function createParameters(params){
 function createStrategyName(ele, strat){
 	var id = strat.backId;
 	var name = $(ele).attr("name");
-	var exportURL = exportBaseURL + getStep(strat.frontId, 0).answerId;	
+	var exportURL = exportBaseURL + strat.Steps[strat.Steps.length - 1].answerId;	
 
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
