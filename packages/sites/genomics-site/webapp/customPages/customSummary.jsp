@@ -51,7 +51,7 @@
 	</c:when>	
 </c:choose>
 
-<site:home_header refer="customSummary" />
+<site:header refer="customSummary" />
 
 <c:set var="scheme" value="${pageContext.request.scheme}" />
 <c:set var="serverName" value="${pageContext.request.serverName}" />
@@ -73,11 +73,7 @@
                 </c:choose>
 	});
 </script>
-<site:menubar />
 
-<div id="contentwrapper">
-  	<div id="contentcolumn2">
-		<div class="innertube">
 <ul id="strategy_tabs">
    <li><a id="strategy_results_tab" onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
    <li><a id="search_history_tab" onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
@@ -141,9 +137,6 @@
 <site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
 </div> <!-- end history view div -->
 
-</div>
-</div>
-</div>
 
 <div id="loading_step_div"></div>
 <site:footer />

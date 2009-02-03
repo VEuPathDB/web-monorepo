@@ -10,8 +10,7 @@
 
 <c:set var="questions" value="${catMap[record][category]}" />
 
-<site:home_header refer="category"/>
-<site:menubar />
+<site:header refer="category"/>
 
 <style>
 
@@ -55,10 +54,6 @@ div.question .left {
 	<c:set var="type" value="${category} Questions" />
 </c:if>
 
-<div id="contentwrapper">
-   <div id="contentcolumn2">
-      <div class="innertube">
-
 <h1>${type}</h1>
 <c:forEach items="${questions}" var="q">
 	<div class="question">
@@ -75,10 +70,6 @@ div.question .left {
 	</div>
 </c:forEach>
 
-<hr width="90%"/>
-      </div>
-   </div>
-</div>
 
 <site:footer />
 

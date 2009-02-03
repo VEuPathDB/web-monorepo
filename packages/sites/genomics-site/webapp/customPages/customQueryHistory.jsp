@@ -11,12 +11,8 @@
 <c:set var="dsCol" value="${param.dataset_column}"/>
 <c:set var="dsColVal" value="${param.dataset_column_label}"/>
 
-<site:home_header refer="customQueryHistory" />
-<site:menubar />
+<site:header refer="customQueryHistory" />
 
-<div id="contentwrapper">
-    <div id="contentcolumn2">
-        <div class="innertube">
 <%-- repurpose this page for complete query history --%>
 <h1>All Queries</h1>
 <site:completeHistory model="${wdkModel}" user="${wdkUser}" />
@@ -25,10 +21,5 @@
 <h1>My Searches</h1>
 <site:strategyTable model="${wdkModel}" user="${wdkUser}" />
 </div> --%>
-
-
-        </div>
-    </div>
-</div>
 
 <site:footer/>

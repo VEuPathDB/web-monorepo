@@ -47,20 +47,7 @@
 	</c:forEach>
 --%>
 </c:if>
-<site:home_header refer="interproQuestion" />
-<site:menubar />
-<%--
-<site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
-             banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
-             parentDivision="Queries & Tools"
-             parentUrl="/showQuestionSetsFlat.do"
-             divisionName="Question"
-             division="queries_tools"
-             headElement="${headElement}"/>
---%>
-<div id="contentwrapper">
-  <div id="contentcolumn2">
-    <div class="innertube">
+<site:header refer="interproQuestion" />
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -207,9 +194,5 @@
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table>
-
-    </div>
-  </div>
-</div>
 
 <site:footer/>

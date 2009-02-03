@@ -10,19 +10,7 @@
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
 <!-- display page header with wdkQuestion displayName as banner -->
-<site:home_header refer="orthologQuestion" />
-<site:menubar />
-<%--
-<site:header title="Queries & Tools :: Ortholog Pattern Question"
-                 banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
-                 parentDivision="Queries & Tools"
-                 parentUrl="/showQuestionSetsFlat.do"
-                 divisionName="BLAST Question"
-                 division="queries_tools"/>
---%>
-<div id="contentwrapper">
-  <div id="contentcolumn2">
-    <div class="innertube">
+<site:header refer="orthologQuestion" />
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -384,9 +372,5 @@ toggle(7);
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table> 
-
-    </div>
-  </div>
-</div>
 
 <site:footer/>
