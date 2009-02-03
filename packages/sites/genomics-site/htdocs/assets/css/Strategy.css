@@ -445,3 +445,10 @@ span.closeStrategy {
 .diagram .export_link input {
 	margin: 0 5px;
 }
+
+.diagram .filterImg {
+	position:relative;
+	float:right;
+	right:3px;
+	top:-10px;
+}

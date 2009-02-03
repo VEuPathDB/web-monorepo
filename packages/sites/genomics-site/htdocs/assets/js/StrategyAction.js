@@ -154,6 +154,10 @@ function createStep(ele, step, isLast){
 	var operation = $(ele).attr("operation");
 	var dataType = getDataType(ele);
 	var id = step.frontId;
+	var isfiltered = $(ele).attr("filtered");
+	var filterImg = "";
+	if(isfiltered == "true")
+		filterImg = "<span class='filterImg'><img src='/assets/images/filter.gif' height='10px' width='10px'/></span>";
 	var cl ="";
 	var inner = "";
 	if(step.back_boolean_Id == ""){
@@ -165,11 +169,12 @@ function createStep(ele, step, isLast){
 			"			<a id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
 							usedName +
 			"				<span class='collapsible' style='display: none;'>" + collapsible + "</span>"+
-			"			</a>"+
+			"			</a>"+ 
 			"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 			"			<div class='crumb_details'></div>"+
 			"		</h3>"+
-			"		<h6 class='resultCount'><a class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>";
+			"		<h6 class='resultCount'><a class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
+			 filterImg;
 		if(!isLast){
 			inner = inner + 
 			"		<ul>"+
@@ -188,7 +193,7 @@ function createStep(ele, step, isLast){
 			"			</a>"+
 			"			<h6 class='resultCount'>"+
 			"				<a class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>" + resultSize + "&nbsp;" + dataType + "</a>"+
-			"			</h6>";
+			"			</h6>" + filterImg;
 		if(!isLast){
 			inner = inner + 
 			"			<ul>"+
@@ -211,6 +216,7 @@ function createStep(ele, step, isLast){
 			"			<div class='crumb_details'></div>"+
 			"		</h3>"+
 			"		<h6 class='resultCount'><a class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
+			filterImg +
 			"		<ul>"+
 			"			<li><img class='downarrow' src='/assets/images/arrow_chain_down2.png' alt='equals'></li>"+
 			"		</ul>";
