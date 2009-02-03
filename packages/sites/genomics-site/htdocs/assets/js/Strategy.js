@@ -68,6 +68,7 @@ function Step(frontId, back_step_Id, back_boolean_Id, child_Strat_Id, answerId){
 }
 Step.prototype.isboolean = false;
 Step.prototype.isSelected = false;
+Step.prototype.isFiltered = false;
 
 /****************************************************
 Utility Functions
