@@ -63,7 +63,7 @@
     <a id="tab_invalid" onclick="displayHist('invalid')"
        href="javascript:void(0)">Invalid&nbsp;Strategies</a></li>
   </c:if>
-  <a id="cmplt_hist_link" href="showQueryHistory.do?type=show_query_history">All My Searches</a>
+  <a id="cmplt_hist_link" href="showQueryHistory.do?type=show_query_history">All My Queries</a>
   </ul>
 <!-- should be a div instead of a table -->
 <table class="clear_all">
