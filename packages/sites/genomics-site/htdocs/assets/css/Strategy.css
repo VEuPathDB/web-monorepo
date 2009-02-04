@@ -403,7 +403,9 @@ span.closeStrategy {
 	z-index: 5;
 }
 
-.diagram .modal_div {
+/* First selector is for history page,
+   second selector is for strat diagram */
+.modal_div, .diagram .modal_div {
 	display: none;
 	background-color: #FFFFFF;
 	background-image: url(../images/filter_top.gif);
@@ -431,20 +433,26 @@ span.closeStrategy {
 	width: 21em;
 }
 
-.diagram .export_link {
+/* First selector is for history page,
+   second selector is for strat diagram */
+.export_link, .diagram .export_link {
 	text-align: center;
 	position: absolute;
 	right: 0;
 	top: 6em;
 }
 
-.diagram .export_link p {
+/* First selector is for history page,
+   second selector is for strat diagram */
+.export_link p, .diagram .export_link p {
 	font-size: 10pt;
 	color: #000000;
 	padding: 5px;
 }
 
-.diagram .export_link input {
+/* First selector is for history page,
+   second selector is for strat diagram */
+.export_link input, .diagram .export_link input {
 	margin: 0 5px;
 }
 
