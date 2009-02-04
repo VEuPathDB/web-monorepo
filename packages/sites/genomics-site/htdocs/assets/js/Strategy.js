@@ -140,7 +140,7 @@ function getDataType(ele){
 		return "Isolate" + s;
 	if(cl == "SnpRecordClasses.SnpRecordClass")
 		return "SNP" + s;
-	if(cl == "AssembliesRecordClasses.AssembilesRecordClass"){
+	if(cl == "AssemblyRecordClasses.AssemblyRecordClass"){
 		if(s == "") 
 			return "Assembly";
 		else 
