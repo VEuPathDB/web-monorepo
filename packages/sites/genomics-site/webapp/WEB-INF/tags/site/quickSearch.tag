@@ -90,7 +90,7 @@
                <html:form method="get" action="/processQuestionSetsFlat.do">
           		<label><b>Gene ID:</b></label>
          		<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
-	  			<input type="text" class="search-box" name="myProp(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})" value="${geneIdParam.default}" size="15"/>
+	  			<input type="text" class="search-box" name="myProp(${geneIdParam.name})" value="${geneIdParam.default}" size="15"/>
 	  			<input type="hidden" name="questionSubmit" value="Get Answer"/>
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
@@ -109,7 +109,7 @@
           		<input type="hidden" name="myMultiProp(text_fields)" value="${textFields}"/>
           		<input type="hidden" name="myMultiProp(whole_words)" value="no"/>
           		<input type="hidden" name="myProp(max_pvalue)" value="-30"/>
-          		<input type="text" class="search-box ts_ie" name="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}"/>
+          		<input type="text" class="search-box ts_ie" name="myProp(${textParam.name})" value="${textParam.default}"/>
           		<input type="hidden" name="questionSubmit" value="Get Answer"/>
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
