@@ -177,6 +177,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 }
 
 function getQueryForm(url){	
+	    original_Query_Form_Text = $("#query_form").parent().html();
 		$.ajax({
 			url: url,
 			dataType:"html",
@@ -210,6 +211,7 @@ function openFilter(dtype,strat_id){
 			filter = document.createElement('div');
 			$(filter).html(data);
 			$("#continue_button", filter).click(function(){
+				original_Query_Form_Text = $("#query_form").parent().html();
 				OpenOperationBox(strat_id);
 				return false;
 			});
@@ -251,11 +253,10 @@ function openFilter(dtype,strat_id){
 */
 }
 
-function close(){
-	var strat_number = isInsert.split(":");
-	strat_number = strat_number[0]; 
-	$("#filter_link_div_" + strat_number + " #query_form").html(original_Query_Form_Text);
-	$("#filter_link_div_" + strat_number + " #query_form").jqDrag(".dragHandle");
+function close(ele){
+	cd = $("#query_form").parent();
+	$(cd).html(original_Query_Form_Text);
+	$("#query_form").jqDrag(".dragHandle");
 }
 
 function closeAll(){
