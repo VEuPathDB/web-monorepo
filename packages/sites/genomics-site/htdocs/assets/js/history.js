@@ -21,13 +21,6 @@ function toggleSteps(strat) {
 	}
 }
 
-function showHistShare(ele, stratId) {
-       var btnOffset = $(ele).offset();
-       var prntOffset = $("div#search_history").offset();
-       $("div#hist_share_" + stratId).css("top", btnOffset.top - prntOffset.top + "px");
-       $("div#hist_share_" + stratId).show();
-}
-
 function selectAllHist() {
 	$("div.history_panel.enabled input:checkbox").attr("checked", "yes");
 	updateSelectedList();
@@ -79,10 +72,11 @@ function deleteStrategies(url) {
 			url: url,
 			dataType: "html",
 			success: function(data) {
+				dselected = selected;
 				$("#search_history").html($("#search_history", data).html());
 				$("#mysearch").html($("#mysearch", data).html());
-				for (i = 0; i < selected.length; i++){
-					var strat = getStrategyFromBackId(selected[i]);
+				for (i = 0; i < dselected.length; i++){
+					var strat = getStrategyFromBackId(dselected[i]);
 					hideStrat(strat.frontId);
 				}
 				selectNoneHist();
