@@ -314,6 +314,7 @@
 		border: 2px solid #000000;
 		padding: 6px 2px 5px 0px;
 		height: 12px;
+		margin-right:-6px;
 		cursor:move;
 	}
 
