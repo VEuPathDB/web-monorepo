@@ -59,6 +59,8 @@
 <c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
 <c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
 <c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?answer=" />
+
+<%-- move between "Run" and "Browse" tabs --%>
 <script type="text/javascript" language="javascript">
 	$(document).ready(function(){
 		exportBaseURL = '${exportBaseUrl}';
@@ -78,35 +80,11 @@
    <li><a id="strategy_results_tab" onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
    <li><a id="search_history_tab" onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
 </ul>
+
 <div id="strategy_results" style="position:absolute;left:-999em">
-<div class="strategy_controls"/>
 
-<%--
-<table width="100%">
-<tr>
-  <td width="50%">    
-     <h2><b>My Search Strategies</b></h2>
-  </td>
-  <td width="50%" align="right">
-     <input type="submit" value="New" name="newStrategy" disabled/>
-     <input type="submit" value="Open" name="openStrategy" disabled/>
-     
-</td>
-</tr>
-<tr>
-<td colspan="2" align="center">
-<font size ="-2">Click on
-<a onclick="this.blur()" href="javascript:openFilter('add')"><b style='color:darkred'>Add Step</b></a> to refine your current result with an additional search.
-	&nbsp;&nbsp;&nbsp;Click on a query name to Edit a query.&nbsp;&nbsp;&nbsp;Click on the number of results to browse over the query results.
-</td>
-</tr>
-
-
-</table>
---%>
-
-
-</div> 
+<%------ if this div is not being used, please clean up ------ ---%>
+<div class="strategy_controls"/></div> 
 
 <input type="hidden" id="history_id" value="${history.stepId}"/>
 <div id="Strategies">
@@ -121,22 +99,17 @@
 </div>
 
 <input type="hidden" id="target_step" value="${stepNumber+1}"/>
-<%--
-<div id="filter_link_div">
-	<site:FilterInterface model="${model}" recordClass="${wdkAnswer.recordClass}" strategy="${strategy}"/>
-</div>
---%>
 <br>
 
-<div id="Workspace">
-<%--<site:Results strategy="${strategy}"/>--%>
-</div> 
+<div id="Workspace"></div> 
+
 </div><!-- end results view div -->
 
 <div id="search_history" style="position:absolute;left:-999em">
-<site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
+	<site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
 </div> <!-- end history view div -->
 
-
+<%------ if this div is not being used, please clean up ------ ---%>
 <div id="loading_step_div"></div>
+
 <site:footer />
