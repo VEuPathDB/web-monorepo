@@ -314,6 +314,7 @@
 		border: 2px solid #000000;
 		padding: 6px 2px 5px 0px;
 		height: 12px;
+		cursor:move;
 	}
 
 	.crumb_menu span, .crumb_menu a {
@@ -401,7 +402,7 @@ span.closeStrategy {
 	z-index: 5;
 }
 
-.modal_div, .diagram .modal_div {
+.diagram .modal_div {
 	display: none;
 	background-color: #FFFFFF;
 	background-image: url(../images/filter_top.gif);
@@ -429,20 +430,20 @@ span.closeStrategy {
 	width: 21em;
 }
 
-.export_link, .diagram .export_link {
+.diagram .export_link {
 	text-align: center;
 	position: absolute;
 	right: 0;
 	top: 6em;
 }
 
-.export_link p, .diagram .export_link p {
+.diagram .export_link p {
 	font-size: 10pt;
 	color: #000000;
 	padding: 5px;
 }
 
-.export_link input, .diagram .export_link input {
+.diagram .export_link input {
 	margin: 0 5px;
 }
 
