@@ -31,6 +31,7 @@ function loadModel(data){
 			newId = index;
 		strat = new Strategy(newId, $(this).attr("id"), true);
 		strat.isSaved = $(this).attr("saved");
+                strat.savedName = $(this).attr("savedName");
 		steps = $(this).children("step");
 		strat.initSteps(steps);
 		id = parseInt($(this).attr("id"));
@@ -328,7 +329,7 @@ function createStrategyName(ele, strat){
 	"</span>"+
 	"<form onsubmit='return validateSaveForm(this);' action=\"javascript:saveStrategy('" + id + "', true)\">"+
 	"<input type='hidden' value='" + id + "' name='strategy'/>"+
-	"<input type='text' value='' name='name'/>"+
+	"<input type='text' value='" + strat.savedName + "' name='name'/>"+
 	"<input type='submit' value='Save'/>"+
 	"</form>"+
 	"</div>"+
