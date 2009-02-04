@@ -317,7 +317,7 @@ function createStrategyName(ele, strat){
 		$(div_sn).html(name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" +
-	"<a class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\">save as</a>" +
+	"<a class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>SAVE AS</b></a>" +
 	"<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
 	"<span class='dragHandle'>" +
 	"<div class='modal_name'>"+
@@ -334,7 +334,7 @@ function createStrategyName(ele, strat){
 	"</form>"+
 	"</div>"+
 	"<br/>"+
-	"<a href=\"javascript:showExportLink('" + id + "')\">export</a>"+
+	"<a href=\"javascript:showExportLink('" + id + "')\"><b>SHARE</b></a>"+
 	"<div class='modal_div export_link' id='export_link_div_" + id + "'>" +
         "<span class='dragHandle'>" +
         "<a class='close_window' href='javascript:closeModal()'>" +

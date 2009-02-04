@@ -97,11 +97,15 @@ function validateFields(e)
 <p> IMPORTANT: If you already registered in another site (EuPathDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.
 
 <p><b>Why register/subscribe</b>? So you can:
+<div id="cirbulletlist">
 <ul>
 <li><i>optionally</i> receive infrequent alerts (at most monthly)
 <li>comment on genes and sequences
 <li>have your query history return the next time you login.
 <li>set site preferences, such as items per page displayed in the query result
+</ul>
+</div>
+
   </div>
 <hr>
   <div align="center">
@@ -240,11 +244,13 @@ function validateFields(e)
 <hr>
 <b>Privacy</b> 
 <p>How we will use your email: 
+<div id="cirbulletlist">
 <ul>
 <li>confirm your subscription
 <li>send you the infrequent alerts you have subscribed to.  You may always unsubscribe.
 <li>nothing else.  We will not release the email list.  
 </ul>
+</div>
 <p>
 How we will use your name and institution:
 <ul>
