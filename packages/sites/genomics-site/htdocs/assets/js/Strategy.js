@@ -124,21 +124,21 @@ function getStepFromBackId(strat,id){
 }
 
 function getDataType(ele){
-	var s = "";
-	if(parseInt($(ele).attr("results")) > 1)
-		s = "s"
+	var s = "s";
+	if(parseInt($(ele).attr("results")) == 1)
+		s = ""
 	var cl = $(ele).attr("dataType");
 	if(cl == "GeneRecordClasses.GeneRecordClass")
 		return "Gene" + s;
 	if(cl == "SequenceRecordClasses.SequenceRecordClass")
 		return "Sequence" + s;
-	if(cl == "ESTRecordClasses.ESTRecordClass")
+	if(cl == "EstRecordClasses.EstRecordClass")
 		return "EST" + s;
-	if(cl == "ORFRecordClasses.ORFRecordClass")
+	if(cl == "OrfRecordClasses.OrfRecordClass")
 		return "ORF" + s;
 	if(cl == "IsolateRecordClasses.IsolateRecordClass")
 		return "Isolate" + s;
-	if(cl == "SNPRecordClasses.SNPRecordClass")
+	if(cl == "SnpRecordClasses.SnpRecordClass")
 		return "SNP" + s;
 	if(cl == "AssembliesRecordClasses.AssembilesRecordClass"){
 		if(s == "") 
