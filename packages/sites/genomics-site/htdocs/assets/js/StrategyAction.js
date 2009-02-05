@@ -386,8 +386,8 @@ function removeStrategyDivs(stratId){
 	strategy = getStrategyFromBackId(stratId);
 	if(stratId.indexOf("_") > 0){
 		var currentDiv = $("#Strategies div#diagram_" + strategy.frontId).remove();
-		//sub = getStrategyFromBackId(stratId.substring(0,stratId.indexOf("_")));
-		$("#Strategies div#diagram_" + sub.frontId).remove();
+		sub = getStrategyFromBackId(stratId.substring(0,stratId.indexOf("_")));
+		//$("#Strategies div#diagram_" + sub.frontId).remove();
 		subs = getSubStrategies(sub.frontId);
 		for(i=0;i<subs.length;i++){
 			$("#Strategies div#diagram_" + subs[i].frontId).remove();

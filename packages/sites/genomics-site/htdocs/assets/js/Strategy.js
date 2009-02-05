@@ -99,7 +99,7 @@ function getStrategy(id){
 function getSubStrategies(id){
 	var arr = new Array();
 	var pStrat = getStrategy(id);
-	arr.push(pStrat);
+	//arr.push(pStrat);
 	for(i=0;i<strats.length;i++){
 		if(strats[i].backId.indexOf(pStrat.backId + "_") != -1)
 			arr.push(strats[i]);
