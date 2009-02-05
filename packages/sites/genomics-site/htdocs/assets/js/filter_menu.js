@@ -134,7 +134,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 			if(stepFrontId != 1)
 				var previous_step_id = $("#step_"+(stepFrontId)+"_sub a").attr("id");
 			else
-				var previous_step_id = $("#step_"+(stepFronId)+" a").attr("id");						
+				var previous_step_id = $("#step_"+(stepFrontId)+" a").attr("id");						
 	//		lastStepId = previous_step_id.substring(7);
 			$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (stepFrontId) + "</span><div id='operations'><table><tr><td class='opcheck'><input id='INTERSECT' type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (stepFrontId+1) + "</td></tr><tr><td class='opcheck'><input id='UNION' type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>UNION</b>&nbsp;" + (stepFrontId+1) + "</td></tr><tr><td class='opcheck'><input id='MINUS' type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>MINUS</b>&nbsp;" + (stepFrontId+1) + "</td></tr></table></div></div>");
 		}else{
