@@ -6,4 +6,4 @@
 <c:set var="strat_id" value="${requestScope.strat_Id}" />
 <c:set var="step" value="${requestScope.step}" />
 
-<site:xml_strat first_step="${step}" stratName="${stratName}" stratId="${strat_id}" saved="false"/>
+<site:xml_strat first_step="${step}" stratName="${stratName}" stratId="${strat_id}" saved="false" savedName="${stratName}"/>
