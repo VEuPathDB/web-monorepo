@@ -15,6 +15,9 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
+<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+
 <%--CODE TO SET UP THE SITE VARIABLES --%>
 <c:if test="${wdkModel.displayName eq 'ApiDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
@@ -22,7 +25,7 @@
 <c:if test="${wdkModel.displayName eq 'ApiDB'}">
      <div id="question_Form">
 </c:if>
-<h1>${wdkQuestion.displayName}</h1>
+<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 
  <tr>
