@@ -31,6 +31,7 @@ function loadModel(data){
 			newId = index;
 		strat = new Strategy(newId, $(this).attr("id"), true);
 		strat.isSaved = $(this).attr("saved");
+		strat.name = $(this).attr("name");
                 strat.savedName = $(this).attr("savedName");
 		steps = $(this).children("step");
 		strat.initSteps(steps);
