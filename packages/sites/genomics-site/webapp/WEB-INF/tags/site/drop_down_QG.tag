@@ -30,7 +30,7 @@
 		  <c:otherwise>
 			<c:set var="qByCat" value="${catByRec.value}" />
 			<c:forEach items="${qByCat}" var="cat">
-			<li><a href="#">Search for &nbsp; ${cat.key}</a>
+			<li><a href="#">Search for ${cat.key}</a>
 				<ul>
 					<c:forEach items="${cat.value}" var="q">
 						<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a></li>
