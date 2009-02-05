@@ -255,7 +255,9 @@ function createDetails(ele, strat, step){
 	var dataType = getDataType(ele);
 	var urlParams = $("params urlParams", ele).text();
 	var questionFullName = $(ele).attr("questionName");
-	var collapsedName = "Expanded " + name;
+	var collapsedName = name;
+	if(collapsible == "false")
+		collapsedName = "Expanded " + name;
 	var id = step.frontId;
 	var parentid = "";
 	if(ele[0].parentNode.nodeName != 'strategy')
