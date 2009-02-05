@@ -29,7 +29,7 @@ function showHistShare(ele, stratId) {
 }
 
 function selectAllHist() {
-	$("div.history_panel.enabled input:checkbox").attr("checked", "yes");
+	$("div.history_panel.panel_" + currentPanel + " input:checkbox").attr("checked", "yes");
 	updateSelectedList();
 }
 
