@@ -267,7 +267,7 @@ function closeAll(){
 
 function parseInputs(){
 	var quesForm = $("form[name=questionForm]");
-	var inputs = $("input", quesForm);
+	var inputs = $("input, textarea", quesForm);
 	var selects = $("select", quesForm);
 	var d = "";
 	var isFirst = 1;
