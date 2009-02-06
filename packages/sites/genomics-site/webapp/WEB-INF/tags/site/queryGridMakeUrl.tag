@@ -28,7 +28,6 @@
               description="GENE,SEQ,ORF or EST"
 %>
 
-
 <c:set var="E_image">
    <c:url value="/images/empty_space.gif" /> 
 </c:set>
@@ -74,8 +73,6 @@
 <c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
 </c:otherwise>
 </c:choose>
-
-
 
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
@@ -167,7 +164,7 @@
     </td>
 --%>
 
-     <td align="left" valign="bottom"><a href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
+     <td align="left" valign="bottom" style="padding:3px;" ><a href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
      <div class="htmltooltip">${popup}</div>
 
 </c:if>
@@ -176,7 +173,7 @@
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
 <%--
-    <td align="left" valign="bottom"><a href="javascript:void(0);" class='queryGridInactive' 
+    <td align="left" valign="bottom"  ><a href="javascript:void(0);" class='queryGridInactive' 
         onmouseover="return overlib('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).',
                 FGCOLOR, 'white',
                 BGCOLOR, '#003366',
@@ -189,7 +186,7 @@
     </td>
 --%>
 
-     <td align="left" valign="bottom"><a href='${link}' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
+     <td align="left" valign="bottom"  style="padding:3px;"><a href='${link}' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
      <div class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
 
 

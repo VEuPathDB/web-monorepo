@@ -25,12 +25,12 @@
   <c:set var="trimmedAttribution" value="${trimmedAttribution},${fn:trim(attr)}" />
 </c:forEach>
 
-<table border="0" 
+<table border="0" style="background:#dddddd;margin-bottom:3px;"  
        bgcolor="#DDDDDD" 
        cellpadding="0" 
        cellspacing="1" 
        width="100%">
-<tr><td><font size="-2" face="Arial,Helvetica">
+<tr><td style="padding:3px;"><font size="-2" face="Arial,Helvetica">
     <b>${displayName}</b></font>
 </td>
 <c:if test='${trimmedAttribution != null && trimmedAttribution != ""}'>
@@ -48,7 +48,7 @@
        cellpadding="5" 
        width="100%" 
        bgcolor="#FFFFFF">
-    <tr><td>${content}</td>
+    <tr><td style="padding:3px;font-size:14px;">${content}</td>
     </tr>
 </table>
 

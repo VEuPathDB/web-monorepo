@@ -132,8 +132,7 @@
         <c:set var="linkActive" value="1"/>
       </c:when>        
       <c:otherwise>
-        <c:set var="A_image">
-            <c:url value="/images/apidb_letter.gif" />
+        <c:set var="A_image">/images/eupath_e.gif
         </c:set>
         <c:set var="A" value="<a href='${apiRoot}${link}'><img src='${A_image}' border='0' alt='apidb' /></a>" />
       </c:otherwise>
@@ -167,6 +166,7 @@
 <%-- LINK ACTIVE --%>
 <c:if test="${linkActive == 1}">
 
+<%--
     <td align="left" valign="bottom"><a href='${link}' class='queryGridActive' 
         onmouseover="return overlib('${popup}',
                 FGCOLOR, 'white',
@@ -178,12 +178,19 @@
         onmouseout = "return nd();">
         ${linktext}</a> 
     </td>
+--%>
+
+ <td align="left" valign="bottom"><a href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
+     <div class="htmltooltip">${popup}</div>
+
+
 
 </c:if>
 
 <%-- LINK INACTIVE --%>
 <c:if test="${linkActive == 0}">
 
+<%--
     <td align="left" valign="bottom"><a href="javascript:void(0);" class='queryGridInactive' 
         onmouseover="return overlib('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).',
                 FGCOLOR, 'white',
@@ -195,6 +202,11 @@
         onmouseout = "return nd();">
         ${linktext}</a>
     </td>
+--%>
+
+<td align="left" valign="bottom"><a href='${link}' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
+     <div class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
+
 
 </c:if>
 
