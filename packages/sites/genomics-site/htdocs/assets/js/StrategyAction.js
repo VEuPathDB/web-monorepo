@@ -690,7 +690,7 @@ function ChangeFilter(strategyId, stepId, url) {
                         var selectedBox = $("#Strategies div.selected");
                         if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 						removeStrategyDivs(strategy.backId);
-                        updateStrategies(data);
+                        updateStrategies(data, '', strategy);
                         //removeLoading(f_strategyId);
                         // $("#diagram_" + f_strategyId + " div.venn:last span.resultCount a").click();
 
