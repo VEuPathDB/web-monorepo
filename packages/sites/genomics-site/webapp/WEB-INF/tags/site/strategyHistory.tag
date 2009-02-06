@@ -24,7 +24,7 @@
 <!-- decide whether strategy history is empty -->
 <c:choose>
   <c:when test="${user == null || user.strategyCount == 0}">
-  <div align="center">You have no searches in your history.  Please run a search from the <a href="/">home</a> page, or by using the "New Search" menu above, or by selecting a search from the <a href="/queries_tools.jsp">searches</a> page.</div>
+  <div align="center">You have no searches in your history.  Please run a search from the <a href="/">home</a> page, or by using the "New Search" menu above, or by selecting a search from the <a href="<c:url value="/queries_tools.jsp"/>">searches</a> page.</div>
   </c:when>
   <c:otherwise>
   <c:set var="typeC" value="0"/>
