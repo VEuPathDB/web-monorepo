@@ -266,7 +266,10 @@ function createDetails(ele, strat, step){
 		parentid = $(ele).parent().attr("id");
 	else
 		parentid = step.back_step_Id;
-	var params_table = createParameters($("params", ele));
+	var params = $(ele).children("params");
+	var params_table = "";
+	if(params.length != 0)
+		params_table = createParameters(params);
 	inner = ""+	
 	    "		<div class='crumb_menu'>"+
 		"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;"+
