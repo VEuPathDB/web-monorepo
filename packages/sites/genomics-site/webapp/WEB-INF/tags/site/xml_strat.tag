@@ -22,8 +22,12 @@
 			  required="true"
 			  description="Protocol from the SummaryPage"
 %>
+<%@ attribute name="importId"
+			  required="true"
+			  description="Protocol from the SummaryPage"
+%>
 
-<strategy name="${stratName}" id="${stratId}" saved="${saved}" savedName="${savedName}">
+<strategy name="${stratName}" id="${stratId}" saved="${saved}" savedName="${savedName}" importId="${importId}">
 	<c:forEach var="step" items="${first_step.allSteps}">
 		<c:set value="${step.stepId}" var="id" />
 		<c:set value="${step.answerId}" var="answerId" />
@@ -90,12 +94,14 @@
 									<c:choose>
 										<c:when test="${child_collapsible == true}">
 											<c:set var="step" value="${step.childStep}" scope="request" />
-											<c:set var="strat_Id" value="${stratId}_${child_id}" scope="request" />
+											<c:set var="strat_Id" value="${fn:split(stratId, '_')[0]}_${child_id}" scope="request" />
 											<c:set var="strat_name" value="${child_collapsedName}" scope="request" />
+											<c:set var="import_id" value="${importId}" scope="request" />
 											<c:import url="/WEB-INF/includes/xml_recurse.jsp"/>
 											<c:remove var="step" scope="request"/>
 											<c:remove var="strat_Id" scope="request"/>
 											<c:remove var="strat_name" scope="request"/>
+											<c:remove var="import_id" scope="request"/>
 										</c:when>
 										<c:otherwise>
 											<params>

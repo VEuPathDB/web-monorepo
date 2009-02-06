@@ -33,6 +33,7 @@ function loadModel(data){
 		strat.isSaved = $(this).attr("saved");
 		strat.name = $(this).attr("name");
                 strat.savedName = $(this).attr("savedName");
+                strat.importId = $(this).attr("importId");
 		steps = $(this).children("step");
 		strat.initSteps(steps);
 		id = parseInt($(this).attr("id"));
@@ -320,7 +321,7 @@ function createParameters(params){
 function createStrategyName(ele, strat){
 	var id = strat.backId;
 	var name = $(ele).attr("name");
-	var exportURL = exportBaseURL + getStep(strat.frontId, 0).answerId;	
+	var exportURL = exportBaseURL + strat.importId;
 
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");

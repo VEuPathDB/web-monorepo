@@ -12,6 +12,7 @@ Strategy.prototype.Steps = new Array();
 Strategy.prototype.isSaved = false;
 Strategy.prototype.name = null;
 Strategy.prototype.savedName = null;
+Strategy.prototype.importId = null;
 Strategy.prototype.initSteps = function(steps){
 	var f_index = 0;
 	var cStrat = this;

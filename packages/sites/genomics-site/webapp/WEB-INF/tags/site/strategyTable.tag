@@ -25,7 +25,7 @@
 <c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
 <c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
 <c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
-<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?answer=" />
+<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?strategy=" />
 
 <table border="0" cellpadding="5" cellspacing="0">
   <tr class="headerrow">
