@@ -16,14 +16,20 @@ ul#history_tabs {
 }
 
 #history_tabs li a {
-    color:#0000CC;
+    color:#BBC0C1;   /* #C9CCCC;*/  /* #E8EBF0; */   /* #0B4796; */  /*  #0000CC; */
     display:block;
     padding:0.24em 1em;
     text-align:center;
     text-decoration:none;
 }
 
-#history_tabs #selected_type a, #history_tabs li a:hover {
+#history_tabs li a:hover {
+    color:#0B4796;
+    padding:0.24em 0.8em;
+    position:relative;
+}
+
+#history_tabs #selected_type a {
     color:black;
     padding:0.24em 0.8em;
     font-weight:bold;

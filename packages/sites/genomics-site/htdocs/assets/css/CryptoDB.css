@@ -1349,7 +1349,7 @@ ul#strategy_tabs {
 }
 
 #strategy_tabs a:hover {
-    color:#0000CC;
+    color:#0B4796;    /* #0000CC;*/
 }
 
 #strategy_tabs #selected a {
