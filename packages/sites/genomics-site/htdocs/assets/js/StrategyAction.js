@@ -270,7 +270,7 @@ function createDetails(ele, strat, step){
 	    "		<div class='crumb_menu'>"+
 		"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;"+
 		"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;"+
-		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;"+
+		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\"," + collapsible + ");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;"+
 		"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(" + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;"+
 		"			<a class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>"+
 		"			&nbsp;|&nbsp;"+
