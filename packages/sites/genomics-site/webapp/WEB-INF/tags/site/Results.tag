@@ -152,9 +152,6 @@
 <!-- content of current page -->
 <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
-<p>Sorting names:&nbsp;${sortingAttrNames[0]}</p>
-<p>Sorting orders:&nbsp;${sortingAttrNames[0]}</p>
-
 <table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
 <thead>
 <tr class="headerrow">
