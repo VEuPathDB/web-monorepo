@@ -241,7 +241,7 @@ function createStep(ele, step, isLast){
 
 function createDetails(ele, strat, step){
 	var detail_div = document.createElement('div');
-	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none" });
+	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px" });
 	var name = $(ele).attr("name");
 	var shortName = $(ele).attr("shortName");
 	var collapsible = $(ele).attr("isCollapsed");
@@ -280,7 +280,7 @@ function createDetails(ele, strat, step){
 		"			</span>"+
 		"		</div>"+
 		"		<p class='question_name'><span>" + name + "</span></p>"+
-		"		<table></table>"+
+		"		<table></table><hr>"+
 		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "</p><hr /><a href='downloadStep.do?step_id=" + step.back_step_Id + "'>Download</a>";
 		
 	$(detail_div).html(inner);
@@ -295,11 +295,19 @@ function createParameters(params){
 		var prompt = document.createElement('td');
 		var space = document.createElement('td');
 		var value = document.createElement('td');
-		$(prompt).addClass("medium").attr("align","right").attr("nowrap","nowrap").attr("valign","top");
+		//$(prompt).addClass("medium").attr("align","right").attr("nowrap","wrap").attr("valign","top");
+		$(prompt).addClass("medium").css({
+			"text-align":"right",
+			"vertical-align":"top"
+		});
 		$(prompt).html("<b><i>" + $(this).attr("prompt") + "</i></b>");
 		$(space).addClass("medium").attr("valign","top");
 		$(space).html("&nbsp;:&nbsp;");
-		$(value).addClass("medium").attr("align","left").attr("nowrap","nowrap");
+		//$(value).addClass("medium").attr("align","left").attr("nowrap","nowrap");
+			$(value).addClass("medium").css({
+				"text-align":"left",
+				"vertical-align":"top"
+			});
 		$(value).html( $(this).attr("value") );
 		$(tr).append(prompt);
 		$(tr).append(space);
