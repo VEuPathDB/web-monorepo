@@ -313,7 +313,7 @@ ${headElement}
           <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a></li>
           <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Community Links</a></li>
           <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
-          <li><a href="/awstats/awstats.pl?config=tritrypdb.org">Website Statistics</a></li>
+          <li><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Statistics</a></li>
         	</ul>
       </li>
       <li>
