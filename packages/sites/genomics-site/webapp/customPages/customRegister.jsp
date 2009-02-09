@@ -250,14 +250,14 @@ function validateFields(e)
 <li>send you the infrequent alerts you have subscribed to.  You may always unsubscribe.
 <li>nothing else.  We will not release the email list.  
 </ul>
-</div>
+
 <p>
 How we will use your name and institution:
 <ul>
 <li>if you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment 
 <li>nothing else.  We will not release your name or institution.  
 </ul>
-
+</div>
 
 
 

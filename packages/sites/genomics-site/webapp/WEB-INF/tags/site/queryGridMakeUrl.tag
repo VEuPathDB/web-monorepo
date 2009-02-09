@@ -28,6 +28,13 @@
               description="GENE,SEQ,ORF or EST"
 %>
 
+<style type="text/css">
+  td { 
+    padding: 3px;
+}
+</style>
+
+
 <c:set var="E_image">
    <c:url value="/images/empty_space.gif" /> 
 </c:set>
@@ -164,7 +171,7 @@
     </td>
 --%>
 
-     <td align="left" valign="bottom" style="padding:3px;" ><a href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
+     <td align="left" valign="bottom" ><a href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
      <div class="htmltooltip">${popup}</div>
 
 </c:if>
@@ -186,7 +193,7 @@
     </td>
 --%>
 
-     <td align="left" valign="bottom"  style="padding:3px;"><a href='${link}' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
+     <td align="left" valign="bottom"><a href='${link}' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
      <div class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
 
 
