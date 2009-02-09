@@ -2,6 +2,7 @@ var dqg_speed = "fast";
 var sidebar_speed = "fast";
 $(document).ready(function(){
 	//hide all of the sub list
+	if($("div.sub_list")){
 	$("div.sub_list").hide();
 //	$("ul.heading_list li img").hide();
 	$("ul.heading_list li a.heading").click(function(){
@@ -70,4 +71,5 @@ $(document).ready(function(){
 		}
 		return false;
 	});
+}
 });
