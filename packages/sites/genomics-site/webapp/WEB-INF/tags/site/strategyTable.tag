@@ -97,8 +97,8 @@
            <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
          </div>
       </td>
-      <td style="width: 5em" nowrap>${strategy.allSteps[0].createdTimeFormatted}</td>
-      <td style="width: 5em" nowrap>${strategy.latestStep.lastRunTimeFormatted}</td>
+      <td style="width: 5em" nowrap>${strategy.createdTimeFormatted}</td>
+      <td style="width: 5em" nowrap>${strategy.lastRunTimeFormatted}</td>
       <td style="width: 5em" nowrap>
         <c:choose>
           <c:when test="${strategy.latestStep.version == null || strategy.latestStep.version eq ''}">${wdkModel.version}</c:when>
