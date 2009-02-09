@@ -41,15 +41,21 @@
 
 <c:if test="${wdkModel.displayName eq 'ApiDB'}">
 	<c:set var="portalsProp" value="${props['PORTALS']}" />
-<%--	<c:set var="portalsArr" value="${fn:split(portalsProp,';')}" />
-	<c:forEach items="${portalsArr}" var="portal">
-		<c:set var="portalArr" value="${fn:split(portal,',')}" />
-	</c:forEach>
---%>
+
 </c:if>
-<site:header refer="interproQuestion" />
+
+<site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
+             banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
+             parentDivision="Queries & Tools"
+             parentUrl="/showQuestionSetsFlat.do"
+             divisionName="Question"
+             division="queries_tools"
+             headElement="${headElement}"/>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+
+<tr><td><table>
+
 
  <tr>
   <td bgcolor=white valign=top>
@@ -62,6 +68,8 @@
 <A name="${fromAnchorQ}"></A>
 <html:form method="get" action="/processQuestion.do">
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
+
+
 <table>
 
 <!-- show error messages, if any -->
@@ -90,8 +98,6 @@
     
     <c:set var="paramCount" value="${fn:length(paramGroup)}"/>
 
-  <%-- an individual param (can not use fullName, w/ '.', for mapped props) 
-  <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td>--%>
     
   <%-- choose between enum param and straight text or number param --%>
   <c:choose>
@@ -127,6 +133,9 @@
 				<site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
 		    </td> </tr></table></td><td valign="top" align="center"><table border="0">
         </c:when>
+
+       
+
         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
           <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
             <wdk:enumParamInput qp="${qP}" />
@@ -139,7 +148,7 @@
                       <html:hidden property="myProp(${pNam})"/>
                   </c:when>
                   <c:otherwise>
-    <%--<html:text property="myProp(${pNam})" size="35" class="form_box"/> --%>
+   
                       <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box"/>
                   </c:otherwise>
               </c:choose>
@@ -147,31 +156,38 @@
         </c:otherwise>
       </c:choose>
       </c:otherwise></c:choose>
-      <c:if test="${pNam != 'organism' && wdkModel.displayName eq 'ApiDB'}">
+ 
+     <c:if test="${(pNam != 'organism' && wdkModel.displayName eq 'ApiDB') || wdkModel.displayName ne 'ApiDB' }">
           <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>
-              <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
-              <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-              <a href="#${anchorQp}">
+              <a href="#" rel="htmltooltip">
               <img src="/assets/images/help.png" border="0" alt="Help"></a>
           </td>
       </c:if>
+
       </tr>
     
     </c:otherwise></c:choose>
 
 </c:forEach>
-<c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
-</table> 
-  <tr><td></td>
-      <td><html:submit property="questionSubmit" value="Get Answer"/></td>
-</table>
 
+
+    <tr><td colspan="2">    
+    </td></tr>
+    
+
+<c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
+  
+</table></td></tr>
+
+</table>
 				<!-- onKeyDown="safariDownFix( event, 'searchBoxupdate');" -->
  <div id="searchBoxupdate"
       class="searchBoxupdate"
       style="display:none;border:1px solid black;background-color:white;height:125px;overflow:auto;">
  </div>
+
+<div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
 
 </html:form>
 
@@ -194,5 +210,16 @@
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table>
+
+
+<c:forEach items="${qParams}" var="qP">
+   <c:set var="pNam" value="${qP.name}" />
+   <c:set var="isHidden" value="${qP.isVisible == false}"/>
+   <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
+
+   <c:if test="${!isHidden}">
+        <div class="htmltooltip" id="help_${pNam}">${qP.help}</div>
+   </c:if>     
+</c:forEach>
 
 <site:footer/>

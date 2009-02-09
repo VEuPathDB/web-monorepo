@@ -97,7 +97,7 @@
            <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
          </div>
       </td>
-      <td style="width: 5em" nowrap>${strategy.latestStep.createdTimeFormatted}</td>
+      <td style="width: 5em" nowrap>${strategy.allSteps[0].createdTimeFormatted}</td>
       <td style="width: 5em" nowrap>${strategy.latestStep.lastRunTimeFormatted}</td>
       <td style="width: 5em" nowrap>
         <c:choose>

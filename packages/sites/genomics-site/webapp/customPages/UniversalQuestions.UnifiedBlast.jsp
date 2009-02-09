@@ -124,14 +124,21 @@
 
       <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
       <td>
-          <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
-          <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-          <a href="#${anchorQp}">
-          <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
+          <a href="#" rel="htmltooltip">
+          <img src="/assets/images/help.png" border="0" alt="Help"></a>
       </td>
   </tr>
 </c:forEach>
 
+
+<c:forEach items="${qParams}" var="qP">
+        <c:set var="isHidden" value="${qP.isVisible == false}"/>
+        <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
+
+        <c:if test="${!isHidden}">
+          <div class="htmltooltip" id="help_${pNam}">${qP.help}</div>
+        </c:if>
+</c:forEach>
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
