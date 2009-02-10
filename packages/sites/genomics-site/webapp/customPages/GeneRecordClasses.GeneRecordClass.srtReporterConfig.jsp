@@ -9,7 +9,7 @@
 <!-- get wdkAnswer from requestScope -->
 <jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
-<c:set var="history_id" value="${requestScope.wdk_history_id}"/>
+<c:set var="history_id" value="${requestScope.step_id}"/>
 <c:set var="format" value="${requestScope.wdkReportFormat}"/>
 <c:set var="allRecordIds" value="${wdkAnswer.allIdList}"/>
 
