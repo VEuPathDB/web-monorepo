@@ -121,7 +121,10 @@ function RenameStep(ele, s, stp){
 				a_link.text((new_name.length > 14)?new_name.substring(0,12) + "...":new_name);
 				//a.text(new_name);
 				$("input",a).replaceWith(a_link);
-				//a.append(a_link);
+				var par = $(a);
+				cur = $("div.crumb_details div.crumb_menu a.expand_step_link", par)[0].attributes[0].nodeValue;
+				cur = cur.substring(0, cur.lastIndexOf(",")) + ",\"Expanded " + new_name + "\");hideDetails(this)";
+				$("div.crumb_details div.crumb_menu a.expand_step_link", par)[0].attributes[0].nodeValue = cur;
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e);
