@@ -29,16 +29,16 @@
 
 <table border="0" cellpadding="5" cellspacing="0">
   <tr class="headerrow">
+    <th scope="col" style="width: 20px;">&nbsp;</th>
     <th scope="col">&nbsp;</th>
-    <th scope="col">&nbsp;</th>
-    <th scope="col">&nbsp;</th>
+    <th scope="col" style="width: 15px;">&nbsp;</th>
     <th scope="col"><c:if test="${prefix != null}">${prefix}&nbsp;</c:if>Strategies</th>
-    <th scope="col">&nbsp;</th>
-    <th scope="col">&nbsp;</th>
-    <th scope="col">Created</th>
-    <th scope="col">Modified</th>
-    <th scope="col">Version</th>
-    <th scope="col">Size</th>
+    <th scope="col" style="width: 10em; text-align:right;">&nbsp;</th>
+    <th scope="col" style="width: 10em">&nbsp;</th>
+    <th scope="col" style="width: 5em">Created</th>
+    <th scope="col" style="width: 5em">Modified</th>
+    <th scope="col" style="width: 5em">Version</th>
+    <th scope="col" style="width: 5em">Size</th>
   </tr>
   <c:set var="i" value="0"/>
   <%-- begin of forEach strategy in the category --%>
@@ -49,7 +49,7 @@
       <c:when test="${i % 2 == 0}"><tr class="lines"></c:when>
       <c:otherwise><tr class="linesalt"></c:otherwise>
     </c:choose>
-      <td style="width: 20px;" scope="row"><input type=checkbox id="${strategyId}" onclick="updateSelectedList()"/></td>
+      <td scope="row"><input type=checkbox id="${strategyId}" onclick="updateSelectedList()"/></td>
       <%-- need to see if this strategys id is in the session. --%>
       <c:set var="active" value=""/>
       <c:set var="activeStrategies" value="${wdkUser.activeStrategies}"/>
@@ -68,7 +68,7 @@
       </c:choose>
         <a href="javascript:void(0)" onclick="toggleEye(this,'${strategy.strategyId}')"><img src="/assets/images/transparent1.gif" alt="Toggle View of Strategy" /></a>
       </td>
-      <td style="width: 15px;">
+      <td>
         <img id="img_${strategyId}" class="plus-minus plus" src="/assets/images/sqr_bullet_plus.png" alt="" onclick="toggleSteps(${strategyId})"/>
       </td>
       <c:set var="dispNam" value="${strategy.name}"/>
@@ -78,13 +78,13 @@
         </div>
         <div id="name_${strategyId}" style="display:none"></div>          
       </td>
-      <td style="width: 10em; text-align:right;">
+      <td>
         <div id="activate_${strategyId}">
           <input type='button' value='Save As' onclick="enableRename('${strategyId}', '${strategy.savedName}')" />
         </div>       
         <div id="input_${strategyId}" style="display:none"></div>
       </td>
-      <td style="width: 10em" nowrap>
+      <td nowrap>
          <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
          <input type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
          <div class='modal_div export_link' id="hist_share_${strategyId}" style="right:15em;">
@@ -97,15 +97,15 @@
            <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
          </div>
       </td>
-      <td style="width: 5em" nowrap>${strategy.createdTimeFormatted}</td>
-      <td style="width: 5em" nowrap>${strategy.lastRunTimeFormatted}</td>
-      <td style="width: 5em" nowrap>
+      <td nowrap>${strategy.createdTimeFormatted}</td>
+      <td nowrap>${strategy.lastRunTimeFormatted}</td>
+      <td nowrap>
         <c:choose>
           <c:when test="${strategy.latestStep.version == null || strategy.latestStep.version eq ''}">${wdkModel.version}</c:when>
           <c:otherwise>${strategy.latestStep.version}</c:otherwise>
         </c:choose>
       </td>
-      <td style="width: 5em" nowrap>${strategy.latestStep.estimateSize}</td>
+      <td nowrap>${strategy.latestStep.estimateSize}</td>
     </tr>
     <!-- begin rowgroup for strategy steps -->
     <tbody id="steps_${strategyId}">

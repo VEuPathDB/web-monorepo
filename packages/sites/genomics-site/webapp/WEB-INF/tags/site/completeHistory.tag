@@ -18,7 +18,6 @@
 
 <c:set var="steps" value="${user.steps}"/>
 <c:set var="modelName" value="${model.name}"/>
-<%-- <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb') || fn:containsIgnoreCase(modelName, 'cryptodb')}" /> --%>
 <c:set var="invalidSteps" value="${user.invalidSteps}" />
 
 
@@ -28,43 +27,69 @@
   <div align="center">You have no searches in your history.  Please run a search from the <a href="/">home</a> page, or by using the "New Search" menu above, or by selecting a search from the <a href="/queries_tools.jsp">searches</a> page.</div>
   </c:when>
   <c:otherwise>
-
   <!-- begin display steps -->
   <div id="complete_history">
     <table width="100%">
        <tr class="headerrow">
-          <th>ID</th>
-          <th>Query</th>
-          <th>Type</th>
-          <th>Date</th>
-          <th>Version</th>
-          <th align="right">Size</th>
-          <th>&nbsp;</th>
+          <th onmouseover="hideAnyName()" style="width: 2em;">ID</th>
+          <th onmouseover="hideAnyName()">Query</th>
+          <th onmouseover="hideAnyName()" style="width: 5em;">Type</th>
+          <th onmouseover="hideAnyName()" style="width: 5em;">Date</th>
+          <th onmouseover="hideAnyName()" style="width: 5em;">Version</th>
+          <th align="right" style="width: 5em;">Size</th>
+          <th onmouseover="hideAnyName()" style="width: 5em;">&nbsp;</th>
        </tr>
        <c:forEach items="${steps}" var="step">
          <c:set var="type" value="${step.dataType}"/>
          <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
          <c:set var="recDispName" value="${step.answerValue.question.recordClass.type}"/>
          <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
-         
          <c:choose>
            <c:when test="${i % 2 == 0}"><tr class="lines"></c:when>
            <c:otherwise><tr class="linesalt"></c:otherwise>
          </c:choose>
-            <td>${step.stepId}</td>
-            <c:set var="dispName" value="${step.answerValue.question.displayName}"/>
-            <td width>${dispName}</td>
-            <td width>${recDispName}</td>
-	    <td nowrap>${step.createdTime}</td>
-	    <td nowrap>
+            <td>${step.stepId}
+               <div id="div_${step.stepId}" class="medium"
+                 style="display:none;font-size:8pt;width:610px;position:absolute;left:0;top:0;"
+                 onmouseover="hideAnyName()">
+                 <table cellpadding="2" cellspacing="0" border="0" style="background-color:#ffffcc;">
+                    <c:choose>
+                        <c:when test="${step.isBoolean}">
+                            <!-- boolean question -->
+                            <tr>
+                               <td valign="top" align="right" width="10" class="medium" nowrap><b>Query&nbsp;:</b></td>
+                               <td valign="top" align="left" class="medium">${step.answerValue.question.displayName}</td>
+                            </tr>
+                            <tr>
+                               <td align="right" valign="top" class="medium" nowrap><i>Expression</i> : </td>
+                               <td class="medium">${step.booleanExpression}</td>
+                            </tr>
+                            
+                            <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td>
+                                    <%-- simple question --%>
+                                    <wdk:showParams wdkAnswer="${step.answerValue}" />
+                                </td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
+                 </table>
+               </div>
+            </td>
+            <td onmouseover="displayName('${step.stepId}')" onmouseout="hideAnyName()">${step.customName}</td>
+            <td onmouseover="hideAnyName()">${recDispName}</td>
+	    <td onmouseover="hideAnyName()" nowrap>${step.createdTimeFormatted}</td>
+	    <td onmouseover="hideAnyName()" nowrap>
 	    <c:choose>
 	      <c:when test="${step.version == null || step.version eq ''}">${wdkModel.version}</c:when>
               <c:otherwise>${step.version}</c:otherwise>
             </c:choose>
             </td>
-            <td align='right' nowrap>${step.estimateSize}</td>
-            <c:set value="${step.answerValue.question.fullName}" var="qName" />
-            <td nowrap><a href="downloadStep.do?step_id=${step.stepId}">download</a></td>
+            <td onmouseover="hideAnyName()" align='right' nowrap>${step.estimateSize}</td>
+            <td onmouseover="hideAnyName()" nowrap><a href="downloadStep.do?step_id=${step.stepId}">download</a></td>
          </tr>
          <c:set var="i" value="${i+1}"/>
        </c:forEach>
@@ -72,7 +97,6 @@
     </table>
 </div>
 <!-- end of showing steps -->
-
        <div style="padding:5px 0;">
             <html:form method="get" action="/processBooleanExpression.do">
                <span id="comb_title_${type}">Combine results</span>:
