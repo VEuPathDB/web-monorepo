@@ -321,6 +321,8 @@ function createParameters(params){
 	return table;
 }
 
+
+
 function createStrategyName(ele, strat){
 	var id = strat.backId;
 	var name = $(ele).attr("name");
@@ -331,13 +333,13 @@ function createStrategyName(ele, strat){
 	if (strat.subStratOf == null){
 		$(div_sn).html(name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
 	"<span class='strategy_small_text'>" +
-	"<br/>" +
-	"<a class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>SAVE AS</b></a>" +
+	"<br/>" + 
+	"<a class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>RENAME<br>SAVE AS</b></a>" +
 	"<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
 	"<span class='dragHandle'>" +
 	"<div class='modal_name'>"+
-	"<h1>Save As</h1>" + 
-	"</div>"+
+	"<h2>Save As/Rename</h2>" + 
+	"</div>"+ 
 	"<a class='close_window' href='javascript:closeModal()'>"+
 	"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
 	"</a>"+

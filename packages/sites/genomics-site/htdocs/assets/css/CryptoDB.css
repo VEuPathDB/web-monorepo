@@ -21,7 +21,7 @@ a:link, a:visited {
 
 a:hover, a:active {
 	color: #83a6d4;
-	text-decoration: underline;
+	text-decoration: none;
 }
 #wrap {
 	width: 100%;

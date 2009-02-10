@@ -374,9 +374,10 @@ span.closeStrategy {
 	float: right;
 }
 
-.diagram div#strategy_name span.strategy_small_text{
+.diagram div#strategy_name span.strategy_small_text {
 	font-size: 10px;
 	color: #888;
+
 }
 
 .diagram h6.step_info_link {
@@ -430,7 +431,7 @@ span.closeStrategy {
 	position: absolute;
 	right: 0;
 	top: 5em;
-	width: 21em;
+	width: 25em;
 }
 
 /* First selector is for history page,
