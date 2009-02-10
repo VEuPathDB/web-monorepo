@@ -1,6 +1,31 @@
 var selected = new Array();
 var currentPanel;
 
+function updateHistory(){
+	if(update_hist){
+		$("div#search_history").block();
+		$.ajax({
+			url: "showQueryHistory.do",
+			dataType: "html",
+			success: function(data){
+				$("#search_history").html(data);
+				if ($("#" + currentPanel).length == 0) {
+					var type = $("#history_tabs a:first").attr("id").substr(4);
+					displayHist(type);
+				} else
+					displayHist(currentPanel);
+				$("div#search_history").unblock();
+
+				update_hist = false;
+			},
+			error: function(data, msg, e){
+				$("div#search_history").unblock();
+				alert("ERROR \n "+ msg + "\n" + e);
+			}
+		});
+	}
+}
+
 function toggleSteps(strat) {
 	var img = $("img#img_" + strat);
 	if (img.hasClass("plus")) {

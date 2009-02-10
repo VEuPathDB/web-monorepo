@@ -461,10 +461,10 @@ function EditStep(proto, url, step_number){
 			},
 		success: function(data){
 			var selectedBox = $("#Strategies div.selected");
-            if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
+			if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 			removeStrategyDivs(s);
 			fsid = updateStrategies(data, "EditStep", getStrategyFromBackId(s));
-		    selectedBox.find(".resultCount a").click();
+			selectedBox.find(".resultCount a").click();
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e);
@@ -566,7 +566,7 @@ function updateStrategies(data,evnt,strategy){
 		//closeStrategy(subs[i].frontId);
 //	}
 	
-	if(strategy.isSaved == "true" && evnt != "Open"){
+	if(evnt == "Save" || (strategy.isSaved == "true" && evnt != "Open")){
 		$("div#Strategies div#diagram_" + strategy.frontId).replaceWith(displayModel(stratId));
 	}
 	else if(isLoaded(stratId) && evnt != "Open"){
@@ -621,7 +621,6 @@ function hideStrat(id){
 }
 
 function saveStrategy(stratId, checkName, fromHist){
-//	s = getStrategyFromBackID(stratId);
 	var saveForm = $("div#save_strat_div_" + stratId);
 	if (fromHist) saveForm = $("#browse_rename");
 	var name = $("input[name='name']",saveForm).attr("value");
@@ -634,25 +633,22 @@ function saveStrategy(stratId, checkName, fromHist){
 		dataType: "xml",
 		success: function(data){
 			// reload strategy panel
-			if (data) {
+			var kids = $("root", data).children("strategy");
+			if (kids.length > 0) {
 				var selectedBox = $("#Strategies div.selected");
-	            if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
+	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 				if (!fromHist) saveForm.hide();
 				removeStrategyDivs(stratId);
-				updateStrategies(data, "Save", getStrategy(stratId));
+				updateStrategies(data, "Save", getStrategyFromBackId(stratId));
 				selectedBox.find(".resultCount a").click();
 				update_hist = true;
 				if (fromHist) updateHistory();
-				displayHist(currentPanel);
 			}
 			else{
-				// data == "" -> save unsuccessful -> name collision
+				// root element in data had no strategy children -> there was a name conflict.
 				var overwrite = confirm("A strategy already exists with the name '" + name + ".' Do you want to overwrite the existing strategy?");
 				if (overwrite) {
 					saveStrategy(stratId, false);
-				}
-				else {
-					saveForm.hide();
 				}
 			}
 		},
