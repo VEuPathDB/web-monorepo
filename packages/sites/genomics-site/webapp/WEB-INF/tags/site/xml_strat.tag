@@ -117,7 +117,7 @@
                                                        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
                                                           <c:set var="dataset" value="${qP.dataset}" />  
                                                           <c:set var="aP">
-                                                            "${dataset.summary}"
+                                                            ${dataset.summary}
                                                             <c:if test='${fn:length(dataset.uploadFile) > 0}'>
                                                                  from file &lt;${dataset.uploadFile}&gt;
                                                             </c:if>
@@ -167,9 +167,28 @@
                                                 <c:set var="pNam" value="${p.key}"/>
                                                 <c:set var="qP" value="${p.value}"/>
                                                 <c:set var="aP" value="${params[pNam]}"/>
-                                                <jsp:setProperty name="qP" property="paramValue" value="${aP}" />
-                                                <jsp:setProperty name="qP" property="truncateLength" value="1000" />
-                                                <param name="${pNam}" prompt="${fn:escapeXml(qP.prompt)}" value="${qP.decompressedValue}" className="${qP.class.name}"/>
+                                                    <jsp:setProperty name="qP" property="user" value="${sessionScope.wdkUser}" />
+                                                    <jsp:setProperty name="qP" property="dependentValue" value="${aP}" />
+                                                    <jsp:setProperty name="qP" property="truncateLength" value="1000" />
+                                                    <c:choose>
+                                                       <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
+                                                          <c:set var="dataset" value="${qP.dataset}" />
+                                                          <c:set var="aP">
+                                                            ${dataset.summary}
+                                                            <c:if test='${fn:length(dataset.uploadFile) > 0}'>
+                                                                 from file &lt;${dataset.uploadFile}&gt;
+                                                            </c:if>
+                                                          </c:set>
+                                                       </c:when>
+                                                       <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.AnswerParamBean'}">
+                                                            <c:set var="aP" value="Step ${aP}"/>
+                                                       </c:when>
+                                                       <c:otherwise>
+                                                          <c:set var="aP" value="${qP.briefRawValue}" />
+                                                       </c:otherwise>
+                                                    </c:choose>
+                                                    <param name="${pNam}" prompt="${fn:escapeXml(qP.prompt)}" value="${aP}" className="${qP.class.name
+}"/>                                        
                                             </c:forEach>
                                         </params>
                                     </c:otherwise>
