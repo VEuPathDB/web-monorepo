@@ -40,10 +40,8 @@
   			<li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
         	<li><a href="/common/PubCrawler/"> PubMed and Entrez</a></li>
         	<li><a href="/cgi-bin/gbrowse/"> GBrowse</a></li>
-        	<c:if test="${project != 'TriTrypDB' && 
-        	              project != 'GiardiaDB' && 
-        	              project != 'TrichDB'}">
-            	<li><a href="http://apicyc.apidb.org">ApiCyc</a></li>
+        	<c:if test="${project == 'CryptoDB'}" >
+            	<li><a href="http://apicyc.apidb.org/CPARVUM/server.html">CryptoCyc</a></li>
         	</c:if>
     	</ul>
 	</li>
