@@ -10,8 +10,8 @@ my ($model);
 &GetOptions("model=s"=> \$model);
 
 #get params from config file
-my $confFile = "$ENV{GUS_HOME}/config/${model}/gbrowseOrganisms.params";
 my $outDir   = "$ENV{GUS_HOME}/../conf/gbrowse.conf/";
+my $confFile = $outDir . "gbrowseOrganisms.params";
 
 open(FILE,"$confFile") || die "Unable to open input file $confFile\n";
 while (<FILE>) {
