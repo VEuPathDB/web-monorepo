@@ -534,6 +534,7 @@ function DeleteStep(f_strategyId,f_stepId){
 				}
 				}else{
 					removeStrategyDivs(strategy.backId);
+					$("div#diagram_"+strategy.frontId).remove();
 					if($("#Strategies div").length == 0){
 						showInstructions();
 					}
