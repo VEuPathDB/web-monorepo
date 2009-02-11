@@ -83,11 +83,12 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	var quesTitle = $("h1",data).text().replace(/Identify Genes based on/,"");
 	
 	var quesForm = $("form#form_question",data);
+	var tooltips = $("div.htmltooltip",data);
 	$("input[value=Get Answer]",quesForm).val("Run Step");
 	$("input[value=Run Step]",quesForm).attr("id","executeStepButton");
 	$("div:last",quesForm).attr("align", "");
 	$("div:last",quesForm).attr("style", "float:left;margin: 45px 0 0 1%;");
-    $("table:first", quesForm).wrap("<div class='filter params'></div>");
+	$("table:first", quesForm).wrap("<div class='filter params'></div>");
 	$("table:first", quesForm).attr("style", "margin-top:15px;");
 	
 	// Bring in the advanced params, if exist, and remove styling
@@ -132,6 +133,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 		
 	$("#query_form").html(header);
 	$("#query_form").append(quesForm);
+	$("#query_form").append(tooltips);
 	//$("#filter_link_div_" + proto + " #query_selection").fadeOut("normal");
 	if(edit == 1)
 		$("#query_form div#operations input#" + operation).attr('checked','checked'); 
@@ -147,6 +149,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
            $(".filter.operators").width('auto');
            $("#query_form").css({'max-width' : '61%','min-width' : '729px'});
         }
+	htmltooltip.render();
 	$("#query_form").fadeIn("normal");
 }
 
