@@ -30,7 +30,9 @@
 	</li>
 	</ul>
 	<ul>
-	<li><a href="<c:url value="/showApplication.do?showHistory=true"/>"><div id="mysearch">My Searches: ${count}</div></a>
+	<li><a href="<c:url value="/showApplication.do?showHistory=true"/>" rel="htmltooltip">
+	<div id="mysearch">My Searches: ${count}</div></a>
+<div class="htmltooltip">Click here to access the summary of all your searches</div>
 	</li>
 	</ul>
 	<ul>

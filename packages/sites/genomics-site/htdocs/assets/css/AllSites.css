@@ -8,8 +8,10 @@ div.htmltooltip{
    padding: 3px;
    width: 250px;
    background-color: lightYellow;
-   border: 1px solid black;
+   border: 2px solid black;
+   padding: 5px;
 }
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =used in help.jsp, classic bullet list
