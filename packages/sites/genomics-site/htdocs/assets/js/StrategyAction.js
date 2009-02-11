@@ -389,6 +389,7 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 	}else{
 		url = "showSummary.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id + "&resultsOnly=true";
 	}
+        url += "&noskip=1";
 	$.ajax({
 		url: url,
 		dataType: "html",
