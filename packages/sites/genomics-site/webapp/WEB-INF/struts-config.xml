@@ -98,6 +98,7 @@
       type="org.gusdb.wdk.controller.action.DeleteStrategyAction"
       scope="request">
       <forward name="delete_history" path="/showApplication.do"/>
+      <forward name="show_strategy" path="/strategyPage.jsp"/>
     </action>
     <action
       path="/showStrategy"
