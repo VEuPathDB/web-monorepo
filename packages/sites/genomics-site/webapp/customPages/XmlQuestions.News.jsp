@@ -30,8 +30,23 @@
                  divisionName="News"
                  division="news"
                  headElement="${headElement}" />
+<style type="text/css">
+  .thinTopBottomBorders ul { 
+    list-style: inside disc;
+	padding-left: 2em;
+    text-indent: -1em;
+  }
+  .thinTopBottomBorders ul ul {
+    list-style-type: circle;
+  }
+  .thinTopBottomBorders p {
+	margin-top: 1em;
+	margin-bottom: 1em;
+  }
+</style>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+<table border='0' width='100%' cellpadding='3' cellspacing='0' 
+       bgcolor='white' class='thinTopBottomBorders'> 
 
  <tr>
   <td bgcolor=white valign=top>
