@@ -78,7 +78,7 @@
         </div>
         <div id="name_${strategyId}" style="display:none"></div>          
       </td>
-      <td>
+      <td align="right">
         <div id="activate_${strategyId}">
           <input type='button' value='Save As' onclick="enableRename('${strategyId}', '${strategy.savedName}')" />
         </div>       
