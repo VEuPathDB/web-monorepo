@@ -78,6 +78,10 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 
+<c:if test="${project == 'CryptoDB'}">
+  <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahTMrNE2G2Bled15vogCImXw6TjMNBQeKxJGr2lD8yC0v8vilAhNZXuKjQ" />
+</c:if>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <!--[if IE]>
@@ -245,8 +249,14 @@ behavior: url(/assets/css/csshover.htc);
 
 <site:jscript refer="${refer}"/>
 
+<c:if test="${project == 'CryptoDB'}">
+  <script type="text/javascript" src="/assets/js/google_map.js"></script>
+  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${gkey}" type="text/javascript"></script>
+</c:if>
+
 <%-- not in use currently --%>
 ${headElement}
+
 </head>
 
 
