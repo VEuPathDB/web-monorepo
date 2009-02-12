@@ -9,6 +9,7 @@
 
 <!-- get wdkAnswer from requestScope -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+<c:set var="strategy" value="${requestScope.wdkStrategy}"/>
 <c:set var="step" value="${requestScope.wdkHistory}"/>
 <c:set var="stepId" value="${step.stepId}"/>
 <c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
@@ -35,6 +36,11 @@
     <pre>${wdkAnswer.resultMessage}</pre>
   </c:when>
   <c:otherwise>
+
+<h2><table width="100%"><tr><td><span id="text_strategy_number">${strategy.name}</span> 
+    (step <span id="text_step_number">${strategy.length}</span>) 
+    - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span></td><td align="right"><a href="downloadStep.do?step_id=${wdkHistory.stepId}">Download Result</a></td></tr></table>
+</h2>
 
 <!-- content of blast result -->
 <table width="100%" border="0" cellpadding="8" cellspacing="0">
