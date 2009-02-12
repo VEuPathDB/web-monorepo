@@ -36,7 +36,7 @@
                     <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ORF" existsOn="A G C P T Tr"/>
                 </tr>  
  <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="ORF Motif" existsOn="A G C P T Tr"/>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="Protein Motif" existsOn="A G C P T Tr"/>
                 </tr>
  <tr>
                     <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Chromosomal Location" existsOn="A G C P T Tr"/>
