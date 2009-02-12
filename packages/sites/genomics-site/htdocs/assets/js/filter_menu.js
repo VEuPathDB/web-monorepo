@@ -117,9 +117,9 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 		}
 	}
 	if(edit == 0)	
-		var action = "javascript:AddStepToStrategy('" + pro_url + "')";
+		var action = "javascript:validateAndCall('add','" + pro_url + "')";//"javascript:AddStepToStrategy('" + pro_url + "')";
 	else
-		var action = "javascript:EditStep('" + proto + "', '" + pro_url + "', " + parseInt(reviseStep) + ")";
+		var action = "javascript:validateAndCall('edit', '" + pro_url + "', '" + proto + "', "+ parseInt(reviseStep) + ")";//"javascript:EditStep('" + proto + "', '" + pro_url + "', " + parseInt(reviseStep) + ")";
 	var formtitle = "";
 	if(edit == 0)
 		formtitle = "<h1>Add&nbsp;Step</h1>";
@@ -151,6 +151,25 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
         }
 	htmltooltip.render();
 	$("#query_form").fadeIn("normal");
+}
+
+function validateAndCall(type, url, proto, rs){
+	var valid = false;
+	if($(".filter.operators")){
+		$(".filter.operators div#operations input[name='booleanExpression']").each(function(){
+			if($(this)[0].checked) valid = true;
+		});
+	}
+	if(!valid){
+		alert("Please select a booean operator.");
+		return;
+	}
+	if(type == 'add'){
+		AddStepToStrategy(url);
+	}else{
+		EditStep(url, proto, rs);
+	}
+	return;
 }
 
 function getQueryForm(url){	
