@@ -529,6 +529,7 @@ function DeleteStep(f_strategyId,f_stepId){
 						$("#diagram_" + f_strategyId + " div#step_" + d_stepId + d_sub + " .resultCount a").click();
 					}
 					else {
+						if(d_sub == "" && d_stepId == 1) d_sub = "_sub";
 						$("#diagram_" + f_strategyId + " div#step_" + (d_stepId-1) + d_sub + " .resultCount a").click();
 					}
 				}
