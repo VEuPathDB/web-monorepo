@@ -1,0 +1,355 @@
+<DAS>
+
+<module name="GUS.pm">
+  <sqlQuery>
+    <name>get_feature_by_name</name>
+    <description>fetch features by their name</description>
+    <sql>
+<![CDATA[
+SELECT trp.source_id ctg_name, 
+       tas.aa_sequence_id feature_id
+FROM   DOTS.TRANSLATEDAASEQUENCE TAS,
+       DOTS.TRANSLATEDAAFEATURE TAF,
+       DOTS.TRANSCRIPT TRP
+WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
+	     taf.na_feature_id = trp.na_feature_id and
+	     ( upper(substr(trp.source_id, 1, instr(trp.source_id, '-1', 1, 1) - 1)) = upper('$name') or
+	       upper(trp.protein_id) = upper('$name') )
+]]>
+    </sql>
+  </sqlQuery>
+</module>
+
+<module name="Segment.pm">
+
+  <sqlQuery>
+    <name>new:Segment</name>
+    <description>fetch features by their name</description>
+      <sql>
+<![CDATA[
+SELECT tas.aa_sequence_id srcfeature_id, 
+       1 startm, 
+       tas.length end, 
+       trp.source_id name, 
+       'protein' type
+FROM   DOTS.TRANSLATEDAASEQUENCE TAS, 
+       DOTS.TRANSLATEDAAFEATURE TAF,
+       DOTS.TRANSCRIPT TRP
+WHERE  tas.aa_sequence_id = taf.aa_sequence_id
+       and taf.na_feature_id = trp.na_feature_id 
+	     and (upper(substr(trp.source_id, 1, instr(trp.source_id, '-1', 1, 1) - 1)) = upper('$name') or
+	          upper(trp.source_id) = upper('$name') )
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>get_sequence</name>
+       <description></description>
+       <sql>
+<![CDATA[
+SELECT tas.sequence 
+FROM   DOTS.TRANSLATEDAASEQUENCE tas 
+WHERE  tas.aa_sequence_id = $srcfeature_id
+]]>
+      </sql>
+    </sqlQuery>   
+
+    <sqlQuery>
+      <name>domain:TMHMM</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT distinct * from (
+SELECT
+       tmf.aa_sequence_id feature_id,
+       'domain' type,
+       'TMHMM' source,
+       tmf.source_id name,
+       tmf.parent_id parent_id
+FROM
+       dots.TRANSMEMBRANEAAFEATURE tmf,
+	   core.ALGORITHM ALG
+WHERE
+       tmf.aa_sequence_id = $srcfeature_id and
+       tmf.prediction_algorithm_id = alg.algorithm_id and
+       alg.name = 'TMHMM'
+)
+]]>
+      </sql>
+    </sqlQuery>
+
+<sqlQuery>
+    <name>domain:MassSpecPeptides</name>
+	<description>Ratner's mass spec peptides</description>
+    <sql>
+<![CDATA[ 
+SELECT 
+       msf.aa_feature_id feature_id,
+       'domain' type,
+       'MassSpecPeptides' source,
+       msf.source_id name,
+       aal.start_max startm, 
+       aal.end_max end,
+       'Description=' || msf.description || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'ExtDbName=' || ed.name atts
+FROM  dots.massspecfeature msf,
+      dots.aalocation aal, dots.aasequence aas,
+      dots.translatedaafeature taaf,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.parent_id = taaf.aa_feature_id
+ AND  taaf.aa_sequence_id = $srcfeature_id
+ AND  msf.aa_feature_id = aal.aa_feature_id
+ AND  msf.aa_sequence_id = aas.aa_sequence_id
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  ed.name = 'DTASelect-filter_032108_Proteomics'
+]]>
+    </sql>
+  </sqlQuery>   
+
+    <sqlQuery>
+      <name>lowcomplexity:seg</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       lc.aa_feature_id feature_id,
+       'lowcomplexity' type, 
+       'seg' source, 
+       'low complexity region' name, 
+       '.' score, 
+       lc.aa_sequence_id parent_id, 
+       aal.start_min startm, 
+       aal.end_max end, 
+       '.' strand,
+       'Sequence=' || substr(aas.sequence, aal.start_min, (aal.end_max-aal.start_min+1)) atts
+FROM 
+       dots.LowComplexityAAFeature lc,
+       dots.AALocation aal, dots.AASequence aas
+WHERE
+       lc.aa_feature_id = aal.aa_feature_id and
+       lc.aa_sequence_id = aas.aa_sequence_id and
+       aal.start_min <= $rend and 
+       aal.end_max >= $base_start and 
+       lc.aa_sequence_id = $srcfeature_id 
+ORDER BY 
+       aal.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
+	<sqlQuery>
+      <name>domain:interpro</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT df.aa_feature_id feature_id, 
+       'domain' type, 
+			 'interpro' source, 
+			 dr.primary_identifier name, 
+			 df.score score, 
+			 df.parent_id parent_id, 
+			 min(aal.start_min) startm, 
+			 max(aal.end_max) end, 
+			 'Note=' || dr.secondary_identifier || ' ' || dr.remark || '$dlm' || 
+			 'Db=' || ed.name || '$dlm' || 
+			 'Evalue=' || df.e_value || '$dlm' || 
+			 'Pi=' || dr.primary_identifier atts
+FROM   dots.DomainFeature df, 
+       dots.DbRefAaFeature draf, 
+			 dots.AaLocation aal, 
+			 sres.DbRef dr, 
+			 sres.ExternalDatabaseRelease edr, 
+			 sres.ExternalDatabase ed, 
+			 core.AlgorithmInvocation ainv, 
+			 core.AlgorithmImplementation aimp 
+WHERE  df.aa_sequence_id = $srcfeature_id and 
+       aal.end_max > $base_start and 
+			 aal.start_min < $rend and 
+			 aal.aa_feature_id = df.aa_feature_id and 
+			 df.aa_feature_id = draf.aa_feature_id and 
+			 draf.db_ref_id = dr.db_ref_id and 
+			 dr.external_database_release_id = edr.external_database_release_id and 
+			 edr.external_database_id = ed.external_database_id and 
+			 df.row_alg_invocation_id = ainv.algorithm_invocation_id and 
+			 ainv.algorithm_implementation_id = aimp.algorithm_implementation_id and 
+			 aimp.executable = 'ApiCommonData::Load::Plugin::InsertInterproscanResults' 
+			 GROUP BY df.aa_feature_id, 'domain', 'interpro', dr.primary_identifier, 
+			          df.score, df.parent_id, '.', 
+								'Note=' || dr.secondary_identifier || ' ' || dr.remark || '$dlm' || 
+								'Db=' || ed.name || '$dlm' || 
+								'Evalue=' || df.e_value || '$dlm' || 
+								'Pi=' || dr.primary_identifier 
+			]]> 
+			</sql>
+  </sqlQuery>
+
+	<sqlQuery>
+      <name>domain:SignalP</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT
+       spf.aa_feature_id feature_id,
+       'domain' type,
+       'SignalP' source,
+       spf.aa_feature_id name,
+       '.' score,
+       spf.parent_id parent_id,
+       1 startm,
+       aal.end_max end,
+       '' atts
+FROM
+       dots.signalpeptidefeature spf,
+       dots.aalocation aal
+WHERE
+       spf.aa_sequence_id = $srcfeature_id and
+       aal.aa_feature_id = spf.aa_feature_id and
+       ( spf.maxy_conclusion +
+         spf.maxc_conclusion +
+         spf.maxs_conclusion +
+         spf.means_conclusion
+       ) >= 3
+]]>
+      </sql>
+    </sqlQuery>
+
+
+    <sqlQuery>
+      <name>match:BLASTP</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       sim.similarity_id feature_id,
+       'match' type, 
+       'BLASTP' source, 
+       eta.source_id name, 
+       sim.score score, 
+       sim.query_id  parent_id, 
+       sim.min_query_start startm, 
+       sim.max_query_end   end, 
+       '.' strand,
+       'Note=' || eta.description || '$dlm' ||
+       'Expect=' || sim.pvalue_mant || 'e' || sim.pvalue_exp || '$dlm' ||
+       'PercentIdentity=' || round(100 * sim.number_identical / sim.total_match_length) || '$dlm' ||
+       'PercentPositive=' || round(100 * sim.number_positive / sim.total_match_length) atts
+FROM 
+       dots.similarity sim,
+	   dots.externalaasequence eta,
+       dots.translatedaasequence tas, 
+       dots.transcript trp,
+       core.tableinfo qtab,
+       core.tableinfo stab
+WHERE 
+       tas.source_id = trp.source_id and
+       sim.query_id = tas.aa_sequence_id and
+       sim.subject_id = eta.aa_sequence_id and
+       sim.subject_table_id = stab.table_id and
+       stab.name = 'ExternalAASequence' and
+       sim.query_table_id  = qtab.table_id and
+       qtab.name = 'TranslatedAASequence' and
+	   sim.query_id = '$srcfeature_id' and
+	   RowNum < 6
+ORDER BY
+       to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) asc,
+       sim.total_match_length desc,
+       sim.score desc
+]]>
+      </sql>
+    </sqlQuery>
+
+
+  </module>
+
+  <module name="Feature.pm">
+    <sqlQuery>
+      <name>domain:TMHMM:subfeatures</name>
+      <description> </description>
+      <sql>
+<![CDATA[ 
+SELECT
+       aal.aa_location_id feature_id,
+       'subdomain' type,
+       'TMHMM' source,
+       aal.aa_location_id name,
+       aal.aa_feature_id parent_id,
+       aal.start_min startm,
+       aal.end_max end,
+       'Topology=' || tmf.topology atts
+FROM
+	   dots.transmembraneaafeature tmf,
+	   dots.aalocation aal,
+       core.algorithm alg
+WHERE
+       tmf.aa_feature_id = aal.aa_feature_id and
+       tmf.aa_sequence_id = $parent_id and
+       tmf.prediction_algorithm_id = alg.algorithm_id AND
+       alg.name = 'TMHMM'
+ORDER BY aal.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:BLASTP:subfeatures</name>
+	  <description></description> 
+      <sql>
+<![CDATA[ 
+SELECT simp.similarity_span_id feature_id, 
+       'HSP' type, 
+       'BLASTP' source, 
+       simp.similarity_span_id name, 
+       '.' phase, 
+       simp.score || '' score, 
+       simp.query_start startm, 
+       simp.query_end end, 
+       decode (simp.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       '' atts 
+FROM   dots.similarity sim, dots.similarityspan simp 
+WHERE  sim.similarity_id = simp.similarity_id and 
+       sim.similarity_id  = $parent_id
+]]>
+       </sql>
+    </sqlQuery>   
+
+		<sqlQuery>
+			<name>domain:interpro:subfeatures</name>
+			<description></description>
+			<sql>
+<![CDATA[ 
+SELECT aal.aa_location_id feature_id, 
+       'domain' type, 
+			 'interpro' source, 
+			 dr.primary_identifier name, 
+			 df.score score, 
+			 df.aa_feature_id parent_id, 
+			 aal.start_min startm, 
+			 aal.end_max end, 
+			 '.' strand 
+FROM   dots.DomainFeature df, 
+       dots.DbRefAaFeature draf, 
+			 dots.AaLocation aal, 
+			 sres.DbRef dr, 
+			 sres.ExternalDatabaseRelease edr, 
+			 sres.ExternalDatabase ed, 
+			 core.AlgorithmInvocation ainv, 
+			 core.AlgorithmImplementation aimp 
+WHERE  df.aa_sequence_id = $parent_id and 
+			 aal.aa_feature_id = df.aa_feature_id and 
+			 df.aa_feature_id = draf.aa_feature_id and 
+			 draf.db_ref_id = dr.db_ref_id and 
+			 dr.external_database_release_id = edr.external_database_release_id and 
+			 edr.external_database_id = ed.external_database_id and 
+			 df.row_alg_invocation_id = ainv.algorithm_invocation_id and 
+			 ainv.algorithm_implementation_id = aimp.algorithm_implementation_id and 
+			 aimp.executable = 'ApiCommonData::Load::Plugin::InsertInterproscanResults' 
+			]]> 
+			</sql> 
+		</sqlQuery>
+
+  </module>
+</DAS>

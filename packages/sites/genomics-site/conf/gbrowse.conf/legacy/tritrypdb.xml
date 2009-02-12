@@ -1,0 +1,1412 @@
+<DAS>
+
+<!--                        GUS.pm                        --> 
+<!-- This is the only query implemented by GUS.pm.        -->
+<!-- It's call by get_feature_by_name subroutine.         -->
+
+<module name="GUS.pm"> 
+  <sqlQuery> 
+    <name>get_feature_by_name</name>
+	<description>fetch features by their name</description> 
+    <sql>
+<![CDATA[
+SELECT  
+       ctg_name, feature_id, type, source, name, phase, parent_id,
+       startm, end, strand
+FROM (
+SELECT -- trying to find genes by source_id
+       nal.sequence_source_id ctg_name, 
+       nal.na_feature_id feature_id, 
+       'gene' type, 
+       'Genbank' source, 
+       nal.feature_source_id name, 
+       '' phase, 
+       nal.na_sequence_id parent_id, 
+       nal.start_min  startm, 
+       nal.end_max end, 
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand
+FROM   
+       ApiDB.FeatureLocation nal,
+       apidb.GENEALIAS ga
+WHERE  
+       nal.feature_source_id = ga.gene and
+       ga.alias like lower('$name') and
+       nal.is_top_level=1
+UNION
+SELECT   -- trying to find genes by product description ( at least 7 chars)
+       gs.source_id ctg_name,
+       gf.na_feature_id feature_id,
+       'gene' type,
+       'annotation' source,
+       gf.source_id || ':  ' || gf.product name,
+       '' phase,
+       gs.na_sequence_id parent_id,
+       ga.start_min startm,
+       ga.end_max end,
+       decode (ga.strand, 'forward', '+1', 'reverse', '-1', '.') strand
+FROM
+       dots.GeneFeature gf, apidb.GenomicSequence gs, apidb.GeneAttributes ga
+WHERE
+       ga.sequence_id = gs.source_id and
+       gf.source_id = ga.source_id and
+       length('$name') >= 7 and
+       upper(ga.product) like upper('%$name%')
+UNION
+SELECT -- match a sequence source_id
+       gs.source_id ctg_name,
+       gs.na_sequence_id feature_id,
+       so.term_name type,
+       ed.name source, 
+       gs.source_id, 
+       '' phase, 
+       null parent_id, 
+       1 startm, gs.length end, '.' strand
+FROM apidb.GenomicSequence gs, sres.SequenceOntology so,
+     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+     dots.NASequence nas
+WHERE gs.lowercase_source_id
+      in lower('$name')
+  AND gs.sequence_ontology_id = so.sequence_ontology_id
+  AND gs.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND gs.na_sequence_id = nas.na_sequence_id
+)
+]]>
+    </sql>
+  </sqlQuery>   
+</module>
+
+<!--                       Segment.pm                                 --> 
+<!-- Feature names are in the same format as the config - type:Source -->
+
+<module name="Segment.pm">
+  <sqlQuery>
+    <name>new:Segment</name>
+    <description>Normally, a segment is a chromosome, contig...  
+                 Use na_sequence_id as srcfeature_id
+    </description>
+    <sql>
+<![CDATA[
+SELECT etn.na_sequence_id srcfeature_id, 
+       1 startm, 
+       etn.length end, 
+       etn.source_id name, 
+       'contig' type, 
+       ' ' atts
+FROM   dots.NaSequence etn, apidb.SequenceAlias sa
+WHERE  etn.source_id = sa.source_id and
+       sa.lowercase_source_id = lower('$name') 
+]]>
+    </sql>
+  </sqlQuery>   
+
+  <sqlQuery> 
+    <name>get_sequence</name> 
+    <description></description> 
+    <sql> 
+<![CDATA[ 
+SELECT ens.sequence 
+FROM   DOTS.EXTERNALNASEQUENCE ens 
+WHERE  ens.na_sequence_id = $srcfeature_id 
+]]>
+    </sql>
+  </sqlQuery>   
+
+
+
+    <sqlQuery>
+      <name>match:syntenySpanMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       syn.synteny_id feature_id,
+       'match' type, 
+       'syntenySpanMC' source, 
+       b.source_id name, 
+       '.' score, 
+       syn.synteny_id parent_id, 
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END startm,
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END end, 
+       decode(is_reversed, 0, '+1', 1, '-1', '+1') strand,
+       'RefStart=' || syn.a_start || '$dlm' ||
+       'RefEnd=' || syn.a_end || '$dlm' ||
+       'RefContigLength=' || a.length || '$dlm' ||
+       'SynStart=' || syn.b_start || '$dlm' ||
+       'SynEnd=' || syn.b_end || '$dlm' ||
+       'ContigLength=' || b.length || '$dlm' ||
+       'Contig=' || b.source_id || '$dlm' ||
+       'Chromosome=' || b.chromosome || '$dlm' ||
+        (CASE WHEN (b.chromosome is NOT NULL) 
+             THEN (SELECT 'ChrColor=' || rcc.value || '$dlm' 
+                  FROM apidb.rodentChrColors rcc 
+                   WHERE b.chromosome = rcc.chromosome) 
+             ELSE ''
+             END) || 
+       'ExtDBName=' || ed.name || '$dlm' ||
+       'Taxon=' || tn.name ||  '$dlm' ||
+       'Scale=' || 
+       CASE WHEN (is_reversed = 1) 
+         THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
+         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) 
+         END atts
+FROM 
+      apidb.synteny syn,
+      apidb.syntenyAnchor anch_left,
+      apidb.syntenyAnchor anch_right,
+      apidb.sequenceattributes a,
+      apidb.sequenceattributes b,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed, 
+      Sres.TaxonName tn
+WHERE edr.external_database_id = ed.external_database_id
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND a.na_sequence_id = syn.a_na_sequence_id
+  AND b.na_sequence_id = syn.b_na_sequence_id
+  AND anch_left.synteny_id = syn.synteny_id
+  AND anch_left.prev_ref_loc < $base_start
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND b.organism = tn.name
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       gattr.na_feature_id feature_id,
+       'gene' type, 
+       'syntenyMC' source, 
+       gattr.source_id name, 
+       '.' score, 
+       anch_left.synteny_id parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         ELSE anch_left.ref_loc + ((fl.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         ELSE anch_left.ref_loc + ((fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
+       END end,
+       CASE WHEN (fl.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'Note=' || gattr.product || '$dlm' ||
+       'SOTerm=' || gattr.so_term_name || '$dlm' ||
+       'SyntenyID=' || syn.synteny_id || '$dlm' ||
+       'Contig=' || gattr.sequence_id || '$dlm' ||
+       'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
+       'Start=' || gattr.start_min || '$dlm' ||
+       'End=' || gattr.end_max || '$dlm' ||
+       'ExtDBName=' || ed.name || '$dlm' ||
+       'Taxon=' || gattr.organism atts
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.geneattributes gattr,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed,
+       apidb.featurelocation fl
+WHERE edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND fl.na_sequence_id = syn.b_na_sequence_id 
+  AND gattr.na_feature_id = fl.na_feature_id
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((fl.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) >= $base_start 
+       )
+  )
+  AND fl.start_min <= syn.b_end
+  AND fl.end_max >= syn.b_start
+]]>
+      </sql>
+    </sqlQuery>
+
+
+  <sqlQuery>
+    <name>gene:Genbank</name>
+	<description></description>
+    <sql>
+<![CDATA[ 
+SELECT
+       ga.na_feature_id feature_id,
+       'gene' type,
+       'Genbank' source,
+       ga.source_id name,
+       '.' score,
+       ga.na_sequence_id parent_id,
+       fl.start_min startm,
+       fl.end_max end,
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=' || ga.product  || '$dlm' ||
+       'soTerm=' || ga.so_term_name || '$dlm' ||
+       'product=' || replace(ga.product,'''','&#146;') || '$dlm' ||
+       'taxon=' || ga.organism || '$dlm' ||
+       'isPseudo=' || ga.is_pseudo
+         as atts
+FROM
+       apidb.GeneAttributes ga,
+       apidb.FeatureLocation fl
+WHERE  fl.na_sequence_id = $srcfeature_id
+  AND  fl.feature_type = 'GeneFeature'
+  AND  fl.na_feature_id = ga.na_feature_id
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+ORDER BY 
+       fl.start_min
+]]>
+    </sql>
+  </sqlQuery>   
+
+  <sqlQuery> 
+    <name>annotation:density</name> 
+    <description>Annotation density. bin size is 50K.</description> 
+    <sql> 
+<![CDATA[ 
+SELECT etn.na_sequence_id feature_id, 
+       'annotation' type, 
+       'density' source 
+FROM   dots.NASEQUENCE etn 
+WHERE  etn.na_sequence_id = $srcfeature_id 
+]]> 
+    </sql> 
+  </sqlQuery>
+
+    <sqlQuery>
+      <name>contig:Tcruzi</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT 's.' || piece_na_sequence_id as feature_id, 
+     'contig' type,
+     'Tcruzi' source,
+      source_id as name,
+      offset as startm,
+      (offset + length) as end,
+      decode(strand_orientation, '+', '+1', '-', '-1', '', '+1', '0') strand,
+      'Length=' || length || '$dlm' ||
+      'Type=contig' || '$dlm' ||
+      'Note=' || source_id atts
+FROM (
+(SELECT ens.source_id, sp.piece_na_sequence_id, sp.sequence_order,
+       ens.length, vs.length as chr_length, sp.strand_orientation,
+       0 as offset
+ FROM dots.VirtualSequence vs, dots.SequencePiece sp,
+     dots.ExternalNaSequence ens
+ WHERE vs.na_sequence_id = $srcfeature_id 
+  and vs.na_sequence_id = sp.virtual_na_sequence_id
+  and ens.na_sequence_id = sp.piece_na_sequence_id
+  and sp.sequence_order = 1 
+  and strand_orientation is not null
+GROUP by ens.source_id, sp.piece_na_sequence_id, sp.sequence_order,
+       ens.length, vs.length, sp.strand_orientation)
+UNION
+(SELECT ens.source_id, sp.piece_na_sequence_id, sp.sequence_order,
+       ens.length, vs.length as chr_length, sp.strand_orientation,
+       sum(predecessors.length) as offset
+ FROM dots.VirtualSequence vs, dots.SequencePiece sp,
+     dots.ExternalNaSequence ens,
+     (select sp2.virtual_na_sequence_id, sp2.sequence_order, ens2.length
+      from dots.SequencePiece sp2,
+           dots.ExternalNaSequence ens2
+      where sp2.piece_na_sequence_id = ens2.na_sequence_id) predecessors
+ WHERE vs.na_sequence_id = $srcfeature_id 
+  and vs.na_sequence_id = sp.virtual_na_sequence_id
+  and ens.na_sequence_id = sp.piece_na_sequence_id
+  and vs.na_sequence_id = predecessors.virtual_na_sequence_id(+)
+  and sp.sequence_order > predecessors.sequence_order
+  and ens.external_database_release_id is not null
+GROUP by ens.source_id, sp.piece_na_sequence_id, sp.sequence_order,
+       ens.length, vs.length, sp.strand_orientation )
+ORDER by offset) 
+where offset < $rend and (offset+length) > $base_start
+]]> 
+    </sql> 
+  </sqlQuery>
+
+  <sqlQuery>
+    <name>alignment:DoTSAssemblies</name>
+    <description></description>
+    <sql>
+<![CDATA[ 
+SELECT blat.blat_alignment_id feature_id, 
+       'alignment' type, 
+       'DoTSAssemblies' source, 
+       a.source_id name, 
+       blat.score || '' score, 
+       blat.target_na_sequence_id parent_id, 
+       blat.target_start startm, 
+       blat.target_end end, 
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       'PercentIdentity=' || blat.percent_identity || '$dlm' ||
+       'Count=' || a.number_of_contained_sequences atts 
+FROM   
+       apidb.BlatAlignmentLocation blat, 
+       dots.Assembly a
+WHERE  
+       blat.query_na_sequence_id = a.na_sequence_id and 
+       blat.target_start <= $rend and 
+       blat.target_end >= $base_start and 
+       blat.is_best_alignment = 1 and
+       blat.target_na_sequence_id = $srcfeature_id
+ORDER BY 
+       blat.target_start
+]]>
+      </sql>
+    </sqlQuery>
+
+
+  <sqlQuery>
+    <name>alignment:ORF</name>
+    <description></description>
+    <sql>
+    <![CDATA[ 
+SELECT taaf.na_feature_id feature_id, 
+       'alignment' type, 
+       so.term_name source, 
+       t    .source_id name, 
+       '' score, 
+       enas.na_sequence_id parent_id, 
+       nal.start_min startm, 
+       nal.end_max end, 
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand
+FROM
+       dots.externalnasequence enas,
+       dots.miscellaneous t,
+       dots.translatedaafeature taaf, 
+       dots.translatedaasequence taas, 
+       sres.taxonname tn, 
+       sres.sequenceontology so, 
+       ApiDB.FeatureLocation nal 
+WHERE
+       t.na_feature_id = taaf.na_feature_id
+       AND taaf.aa_sequence_id = taas.aa_sequence_id
+       AND enas.na_sequence_id = t.na_sequence_id 
+       AND enas.taxon_id = tn.taxon_id
+       AND tn.name_class = 'scientific name'
+       AND t.sequence_ontology_id = so.sequence_ontology_id
+       AND so.term_name = 'ORF'
+       AND taaf.na_feature_id = nal.na_feature_id
+       AND enas.na_sequence_id = $srcfeature_id
+       AND nal.start_min >= $base_start - 1 
+       AND nal.end_max <= $rend
+ORDER BY nal.start_min
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+    <name>alignment:EST</name>
+    <description></description>
+    <sql>
+<![CDATA[ 
+SELECT blat.blat_alignment_id feature_id, 
+       'alignment' type, 
+       'EST' source, 
+       est.accession name, 
+       blat.score || '' score, 
+       blat.query_na_sequence_id parent_id, 
+       blat.target_start startm, 
+       blat.target_end end, 
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
+       'Library=' || l.dbest_name  || '$dlm' atts 
+FROM   
+       apidb.BlatAlignmentLocation blat, 
+       dots.Est est, 
+       dots.ExternalNASequence estseq,
+       dots.Library l,
+       sres.SequenceOntology so
+WHERE  
+       blat.query_na_sequence_id = est.na_sequence_id and 
+       blat.target_start <= $rend and 
+       blat.target_end >= $base_start and 
+       (blat.target_end - blat.target_start ) < 5000 and 
+       blat.is_best_alignment = 1 and
+       est.library_id = l.library_id and
+       estseq.na_sequence_id = est.na_sequence_id and
+       so.sequence_ontology_id = estseq.sequence_ontology_id and
+       so.term_name = 'EST' and
+       blat.target_na_sequence_id = $srcfeature_id
+ORDER BY 
+       blat.target_start
+]]>
+    </sql>
+  </sqlQuery>   
+
+  <sqlQuery>
+    <name>match:WU_BLASTX</name>
+    <description></description>
+    <sql>
+<![CDATA[ 
+SELECT distinct sim.similarity_id feature_id, 
+       'match' type, 
+       'WU_BLASTX' source, 
+       extt.source_id name, 
+       sim.similarity_score || '' score, 
+       to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) pvalue,
+       extq.na_sequence_id parent_id, 
+       sim.min_query_start startm, 
+       sim.max_query_end end, 
+       decode (sim.similarity_is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       'Score=' || sim.similarity_score || '$dlm' || 
+       'Expect=' || (sim.pvalue_mant || 'e' ||sim.pvalue_exp)||'$dlm'|| 
+       'Defline=' || extt.description || '$dlm' || 
+       'PercentIdentity=' || sim.percent_identical || '$dlm' ||
+       'PercentPositive=' || sim.percent_positive || '$dlm' ||
+       'TStart=' || sim.min_query_start || '$dlm' || 
+       'TStop=' || sim.max_query_end atts 
+FROM   
+       apidb.SimilaritySpanLocation sim, 
+       dots.EXTERNALAASEQUENCE extt, 
+       dots.NASEQUENCE extq
+WHERE  
+       sim.query_id = extq.na_sequence_id and 
+       sim.subject_id = extt.aa_sequence_id and 
+       (sim.max_query_end - sim.min_query_start) < 5000 and 
+       sim.pvalue_exp < -10 and 
+       sim.min_query_start >= $base_start and 
+       sim.max_query_end <= $rend and 
+       sim.query_id = $srcfeature_id and 
+       RowNum < 4000 
+ORDER BY 
+       sim.min_query_start asc, 
+       pvalue asc
+]]>
+    </sql>
+  </sqlQuery>   
+
+  <sqlQuery>
+    <name>alignment:Cosmids</name>
+    <description></description>
+    <sql>
+<![CDATA[ 
+select f.feature_id, f.type, f.source, f.name, f.parent_id, f.startm, f.end,
+     'sequence=' || substr(s.sequence, f.startm, f.end - f.startm + 1) || '$dlm' ||
+     'sequence_id=' || s.source_id  atts
+from dots.nasequence s, (
+SELECT regexp_substr(etn.source_id, '(.*)[^(X)(Y)]') feature_id, 
+       'alignment' type, 
+       'Cosmids' source, 
+       regexp_substr(etn.source_id, '(.*)[^(X)(Y)]') name, 
+       max(blat.query_na_sequence_id) parent_id, 
+       min(blat.target_start) startm, 
+       max(blat.target_end) end,
+       max(blat.target_na_sequence_id) as query_na_sequence_id
+FROM   apidb.BlatAlignmentLocation blat, 
+       dots.ExternalNASequence etn
+WHERE  blat.query_na_sequence_id = etn.na_sequence_id 
+AND    blat.target_na_sequence_id = $srcfeature_id 
+AND    blat.target_start >= $base_start -1 
+AND    blat.target_end <= $rend
+AND    blat.is_best_alignment = 1
+AND    etn.external_database_release_id = blat.query_external_db_release_id
+AND    blat.number_of_spans =1
+AND    blat.query_external_db_release_id in (
+ SELECT edr.external_database_release_id  
+ FROM sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
+ WHERE ed.external_database_id=edr.external_database_id 
+ AND ed.name = 'L.major Cosmid Ends from Sanger'
+)
+GROUP BY regexp_substr(etn.source_id, '(.*)[^(X)(Y)]')
+) f
+where f.query_na_sequence_id = s.na_sequence_id
+]]>
+    </sql>
+  </sqlQuery>   
+
+  <sqlQuery>
+    <name>alignment:Bacs</name>
+    <description></description>
+    <sql>
+<![CDATA[ 
+select f.feature_id, f.type, f.source, f.name, f.parent_id, f.startm, f.end,
+     'sequence=' || substr(s.sequence, f.startm, f.end - f.startm + 1) || '$dlm' ||
+     'sequence_id=' || s.source_id || '$dlm' ||
+     'ExtDbName=' || f.database_name atts
+from dots.nasequence s, (
+SELECT regexp_substr(etn.source_id, '(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]') feature_id, 
+       'alignment' type,
+       'Bacs' source,
+       regexp_substr(etn.source_id, '(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]') name, 
+       max(blat.query_na_sequence_id) parent_id,
+       min(blat.target_start) startm,
+       max(blat.target_end) end,
+       max(blat.target_na_sequence_id) as query_na_sequence_id,
+       ed.name database_name
+FROM   apidb.BlatAlignmentLocation blat,
+       dots.ExternalNASequence etn,
+       sres.ExternalDatabase ed, sres.externalDatabaseRelease edr
+WHERE  blat.query_na_sequence_id = etn.na_sequence_id
+  AND  blat.target_na_sequence_id = $srcfeature_id
+  AND  blat.is_best_alignment = 1
+  AND  (blat.target_end - blat.target_start ) < 5000
+  AND  blat.number_of_spans =1
+  AND  etn.external_database_release_id = blat.query_external_db_release_id
+  AND  blat.query_external_db_release_id = edr.external_database_release_id
+  AND  ed.external_database_id=edr.external_database_id
+  AND  ed.name in ('L.major BAC Ends from Sanger','T.brucei RPCI93 BAC Ends','T.cruzi CHORI105 BAC End','L.major PAC Ends from Sanger')
+GROUP BY regexp_substr(etn.source_id, '(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]'), ed.name
+) f
+WHERE f.startm <= $rend AND f.end >= $base_start - 1
+ and f.query_na_sequence_id = s.na_sequence_id
+ORDER BY f.startm
+]]>
+    </sql>
+  </sqlQuery>   
+
+
+  <sqlQuery>
+    <name>alignment:RandomEnds</name>
+    <description></description>
+    <sql>
+<![CDATA[ 
+select f.feature_id, f.type, f.source, f.name, f.parent_id, f.startm, f.end,
+     'sequence=' || substr(s.sequence, f.startm, f.end - f.startm + 1) || '$dlm' ||
+     'sequence_id=' || s.source_id  atts
+from dots.nasequence s, (
+SELECT regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]') feature_id, 
+       'alignment' type,
+       'RandomEnds' source,
+       regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]') name, 
+       max(blat.query_na_sequence_id) parent_id,
+       min(blat.target_start) startm,
+       max(blat.target_end) end,
+       max(blat.target_na_sequence_id) as query_na_sequence_id
+FROM   apidb.BlatAlignmentLocation blat,
+       dots.ExternalNASequence etn
+WHERE  blat.query_na_sequence_id = etn.na_sequence_id
+  AND  blat.target_na_sequence_id = $srcfeature_id
+  AND  blat.is_best_alignment = 1
+  AND  (blat.target_end - blat.target_start ) < 5000
+  AND  etn.external_database_release_id = blat.query_external_db_release_id
+  AND  blat.number_of_spans =1
+  AND  blat.query_external_db_release_id in (
+  SELECT edr.external_database_release_id
+  FROM sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
+  WHERE ed.external_database_id=edr.external_database_id
+  AND ed.name = 'L.major FV1 random Ends from Sanger'
+  )
+GROUP BY regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]')
+) f
+WHERE f.startm <= $rend AND f.end >= $base_start - 1
+ and f.query_na_sequence_id = s.na_sequence_id
+ORDER BY f.startm
+]]>
+    </sql>
+  </sqlQuery>   
+
+    <sqlQuery>
+      <name>domain:TarletonMassSpecPeptides</name>
+      <description>Tarleton peptides</description>
+      <sql>
+<![CDATA[
+SELECT 
+       msf.na_feature_id feature_id,
+       'domain' type,
+       'TarletonMassSpecPeptides' source,
+       x.parent_id, startm, end,
+       msf.source_id name, x.strand,
+       'Count=' || match_count || '$dlm' ||
+       'ExtDbName=' || ed_name || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'SOTerm=' || fs.term_name atts
+FROM  dots.massspecfeature msf,
+      dots.translatedaafeature taaf,
+      apidb.FeatureSo fs,
+      dots.aasequence aas, dots.aalocation aal,
+(SELECT count(*) as match_count, 
+       min(msf.na_feature_id) as feat_id,
+       enas.na_sequence_id parent_id,
+       nal.start_min startm,
+       nal.end_max end,
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       ed.name as ed_name
+FROM  dots.massspecfeature msf,
+      apidb.FeatureLocation nal,
+      dots.nasequence enas,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.na_feature_id = nal.na_feature_id
+ AND  nal.na_sequence_id = $srcfeature_id
+ AND  enas.na_sequence_id = $srcfeature_id
+ AND  nal.start_min >= $base_start 
+ AND  nal.end_max <= $rend
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  ed.name like 'Tcruzi%'
+GROUP BY ed.name,enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x
+WHERE msf.na_feature_id = x.feat_id
+ AND  taaf.aa_sequence_id = msf.aa_sequence_id
+ AND  taaf.na_feature_id = fs.na_feature_id
+ AND  aal.aa_feature_id = msf.aa_feature_id
+ AND  aas.aa_sequence_id = to_number(msf.aa_sequence_id)
+    ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+      <name>domain:ZilbersteinMassSpecPeptides</name>
+      <description>Zilberstein peptides</description>
+      <sql>
+<![CDATA[
+SELECT 
+       msf.na_feature_id feature_id,
+       'domain' type,
+       'ZilbersteinMassSpecPeptides' source,
+       x.parent_id, startm, end,
+       msf.source_id name, x.strand,
+       'Count=' || match_count || '$dlm' ||
+       'ExtDbName=' || ed_name || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'SOTerm=' || fs.term_name atts
+FROM  dots.massspecfeature msf,
+      dots.translatedaafeature taaf,
+      apidb.FeatureSo fs,
+      dots.aasequence aas, dots.aalocation aal,
+(SELECT count(*) as match_count, 
+       min(msf.na_feature_id) as feat_id,
+       enas.na_sequence_id parent_id,
+       nal.start_min startm,
+       nal.end_max end,
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       ed.name as ed_name
+FROM  dots.massspecfeature msf,
+      apidb.FeatureLocation nal,
+      dots.nasequence enas,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.na_feature_id = nal.na_feature_id
+ AND  nal.na_sequence_id = $srcfeature_id
+ AND  enas.na_sequence_id = $srcfeature_id
+ AND  nal.start_min >= $base_start 
+ AND  nal.end_max <= $rend
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  ed.name like 'Linfantum Proteomics PTM%'
+GROUP BY ed.name,enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x
+WHERE msf.na_feature_id = x.feat_id
+ AND  taaf.aa_sequence_id = msf.aa_sequence_id
+ AND  taaf.na_feature_id = fs.na_feature_id
+ AND  aal.aa_feature_id = msf.aa_feature_id
+ AND  aas.aa_sequence_id = to_number(msf.aa_sequence_id)
+
+    ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+      <name>domain:StuartMassSpecPeptides</name>
+      <description>Stuart peptides</description>
+      <sql>
+<![CDATA[
+SELECT 
+       msf.na_feature_id feature_id,
+       'domain' type,
+       'StuartMassSpecPeptides' source,
+       x.parent_id, startm, end,
+       msf.source_id name, x.strand,
+       'Count=' || match_count || '$dlm' ||
+       'ExtDbName=' || ed_name || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'SOTerm=' || fs.term_name atts
+FROM  dots.massspecfeature msf,
+      dots.translatedaafeature taaf,
+      apidb.FeatureSo fs,
+      dots.aasequence aas, dots.aalocation aal,
+(SELECT count(*) as match_count, 
+       min(msf.na_feature_id) as feat_id,
+       enas.na_sequence_id parent_id,
+       nal.start_min startm,
+       nal.end_max end,
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       ed.name as ed_name
+FROM  dots.massspecfeature msf,
+      apidb.FeatureLocation nal,
+      dots.nasequence enas,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.na_feature_id = nal.na_feature_id
+ AND  nal.na_sequence_id = $srcfeature_id
+ AND  enas.na_sequence_id = $srcfeature_id
+ AND  nal.start_min >= $base_start 
+ AND  nal.end_max <= $rend
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  ed.name like 'Tbrucei%'
+GROUP BY ed.name,enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x
+WHERE msf.na_feature_id = x.feat_id
+ AND  taaf.aa_sequence_id = msf.aa_sequence_id
+ AND  taaf.na_feature_id = fs.na_feature_id
+ AND  aal.aa_feature_id = msf.aa_feature_id
+ AND  aas.aa_sequence_id = to_number(msf.aa_sequence_id)
+    ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+      <name>domain:BrothertonMassSpecPeptides</name>
+      <description>Brotherton peptides</description>
+      <sql>
+<![CDATA[
+SELECT 
+       msf.na_feature_id feature_id,
+       'domain' type,
+       'BrothertonMassSpecPeptides' source,
+       x.parent_id, startm, end,
+       msf.source_id name, x.strand,
+       'Count=' || match_count || '$dlm' ||
+       'ExtDbName=' || ed_name || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'SOTerm=' || fs.term_name atts
+FROM  dots.massspecfeature msf,
+      dots.translatedaafeature taaf,
+      apidb.FeatureSo fs,
+      dots.aasequence aas, dots.aalocation aal,
+(SELECT count(*) as match_count, 
+       min(msf.na_feature_id) as feat_id,
+       enas.na_sequence_id parent_id,
+       nal.start_min startm,
+       nal.end_max end,
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       ed.name as ed_name
+FROM  dots.massspecfeature msf,
+      apidb.FeatureLocation nal,
+      dots.nasequence enas,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.na_feature_id = nal.na_feature_id
+ AND  nal.na_sequence_id = $srcfeature_id
+ AND  enas.na_sequence_id = $srcfeature_id
+ AND  nal.start_min >= $base_start 
+ AND  nal.end_max <= $rend
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  (ed.name like 'Lmajor%'
+    OR ed.name like 'Lbraziliensis%'
+    OR ed.name like 'Linfantum Proteomics%Amastigote'
+    OR ed.name like 'Linfantum Proteomics%Promastigote')
+GROUP BY ed.name,enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x
+WHERE msf.na_feature_id = x.feat_id
+ AND  taaf.aa_sequence_id = msf.aa_sequence_id
+ AND  taaf.na_feature_id = fs.na_feature_id
+ AND  aal.aa_feature_id = msf.aa_feature_id
+ AND  aas.aa_sequence_id = to_number(msf.aa_sequence_id)
+    ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+      <name>domain:UnifiedMassSpecPeptides</name>
+      <description>Unified peptides</description>
+      <sql>
+<![CDATA[
+SELECT interval feature_id, 
+       'domain' type,
+       'UnifiedMassSpecPeptides' source,
+       count(interval) score, 
+       interval * 50 startm, 
+       (interval + 1) * 50 end,
+       'score=' || count(interval) atts
+FROM  ( SELECT ceil(nal.start_min /50) interval
+        FROM  dots.massspecfeature msf,
+              apidb.FeatureLocation nal,
+              dots.nasequence enas
+       WHERE msf.na_feature_id = nal.na_feature_id
+        AND  nal.na_sequence_id = $srcfeature_id 
+        AND  enas.na_sequence_id = $srcfeature_id
+        AND  nal.start_min >= $base_start
+        AND  nal.end_max <= $rend
+        ORDER BY nal.start_min)
+GROUP BY interval
+]]> 
+    </sql> 
+  </sqlQuery>
+
+    <sqlQuery>
+      <name>lowcomplexity:dust</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       lc.na_feature_id feature_id,
+       'lowcomplexity' type, 
+       'dust' source, 
+       lc.name name, 
+       '.' score, 
+       lc.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=here to work around Feature.pm bug of splitting null atts' atts
+FROM 
+       apidb.FeatureLocation fl, dots.LowComplexityNAFeature lc
+WHERE
+       fl.feature_type = 'LowComplexityNAFeature' and
+       fl.start_min <= $rend and 
+       fl.end_max >= $base_start and 
+       fl.na_sequence_id = $srcfeature_id and
+       fl.na_feature_id = lc.na_feature_id
+ORDER BY 
+       fl.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>TandemRepeat:TRF</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       fl.na_feature_id feature_id,
+       'TandemRepeat' type, 
+       'TRF' source, 
+       tr.name name, 
+       '.' score, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=here to work around Feature.pm bug of splitting null atts' atts
+FROM 
+       dots.NaFeature tr,
+       apidb.FeatureLocation fl
+WHERE
+       tr.na_feature_id = fl.na_feature_id and
+       fl.feature_type = 'TandemRepeatFeature' and
+       fl.start_min <= $rend and 
+       fl.end_max >= $base_start and 
+       fl.na_sequence_id = $srcfeature_id
+ORDER BY 
+       fl.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
+</module>
+
+<!--                       Feature.pm                         -->
+<!-- Description: All of the following queries are used by    -->
+<!-- sub_SeqFeatures() in Feature.pm.                         --> 
+<!-- Names are in a format - type:source:subfeatures,         --> 
+<!-- e.g.  gene:Genbank:subfeatures                           --> 
+<!-- They should be corespondent with the features types      --> 
+<!-- implemented in feature() subroutine in Segment.pm        -->
+
+<module name="Feature.pm">
+
+
+    <sqlQuery>
+      <name>gene:Genbank:attribute:Ortholog</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       ogf.source_id
+FROM 
+       dots.GENEFEATURE gf,
+       dots.GENEFEATURE ogf,
+       dots.SequenceSequenceGroup ssg,
+       dots.SequenceSequenceGroup ossg
+WHERE 
+       gf.source_id = '$name'
+  AND  ogf.source_id != '$name'
+  AND  ssg.sequence_id = gf.na_feature_id
+  AND  ossg.sequence_group_id = ssg.sequence_group_id
+  AND  ogf.na_feature_id = ossg.sequence_id
+]]>
+      </sql>
+    </sqlQuery>
+
+
+    <sqlQuery>
+      <name>gene:syntenyMC:attribute:Ortholog</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT
+       ogf.source_id
+FROM 
+       dots.GENEFEATURE gf,
+       dots.GENEFEATURE ogf,
+       dots.SequenceSequenceGroup ssg,
+       dots.SequenceSequenceGroup ossg
+WHERE 
+       gf.source_id = '$name'
+  AND  ogf.source_id != '$name'
+  AND  ssg.sequence_id = gf.na_feature_id
+  AND  ossg.sequence_group_id = ssg.sequence_group_id
+  AND  ogf.na_feature_id = ossg.sequence_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyMC:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       exf.na_feature_id feature_id,
+       'exon' type, 
+       'syntenyMC' source, 
+       exf.parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         ELSE anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         ELSE anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END end,
+       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.featurelocation exfloc,
+       dots.exonfeature exf,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND exfloc.feature_type = 'ExonFeature'
+  AND exfloc.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) <= $rend 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) >= $base_start 
+       )
+  )
+  AND exfloc.start_min <= syn.b_end
+  AND exfloc.end_max >= syn.b_start
+  AND exf.na_feature_id = exfloc.na_feature_id
+]]>
+      </sql>
+    </sqlQuery>
+
+
+
+
+	<sqlQuery>
+	  <name>gene:Genbank:bulksubfeatures</name>
+		<description></description>
+		<sql>
+<![CDATA[
+SELECT 
+       exon_loc.na_feature_id feature_id, 
+       'exon' type, 
+       'Genbank' source, 
+       exon_loc.na_feature_id name,
+       exon_loc.parent_id parent_id,
+       exon_loc.start_min startm,            
+       exon_loc.end_max end, 
+       decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       '' atts 
+FROM   
+       ApiDB.FeatureLocation exon_loc
+WHERE  exon_loc.na_sequence_id = $srcfeature_id
+  AND  exon_loc.feature_type = 'ExonFeature'
+  AND  exon_loc.start_min <= $rend
+  AND  exon_loc.end_max >= $base_start
+ORDER BY 
+       exon_loc.start_min
+]]>
+		</sql>
+	</sqlQuery>
+
+  <sqlQuery> 
+    <name>annotation:density:subfeatures</name> 
+    <description>Annotation density subfeatures. Bin size is 50K. 
+    </description> 
+    <sql> 
+<![CDATA[ 
+SELECT interval feature_id, 
+      'test' type, 
+      'test' source, 
+      count(interval) score, 
+      (interval - 1) * 30000 startm, 
+      interval * 30000 end 
+FROM ( 
+      SELECT ceil(nal.start_min / 30000) interval 
+      FROM   DoTS.GeneFeature gf, ApiDB.FeatureLocation nal 
+      WHERE  nal.na_sequence_id = $parent_id 
+         AND gf.na_feature_id = nal.na_feature_id
+      ORDER BY nal.start_min) 
+GROUP BY interval 
+]]> 
+    </sql> 
+  </sqlQuery>
+
+  <sqlQuery>
+    <name>match:WU_BLASTX:bulksubfeatures</name>
+    <description></description>
+    <sql>
+<![CDATA[ 
+SELECT sim.similarity_span_id feature_id, 
+       sim.similarity_id as parent_id,
+       'HSP' type, 
+       'WU_BLASTX' source, 
+       sim.similarity_span_id name, 
+       '.' phase, 
+       sim.span_score || '' score, 
+       sim.query_start startm, 
+       sim.query_end end, 
+       decode (sim.span_is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       '' atts 
+FROM   apidb.SimilaritySpanLocation sim
+WHERE  sim.query_id = $srcfeature_id
+AND    (sim.max_query_end - sim.min_query_start) < 5000
+AND    to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-10 
+AND    sim.min_query_start >= $base_start 
+AND    sim.max_query_end <= $rend
+]]>
+    </sql>
+  </sqlQuery>   
+
+    <sqlQuery>
+      <name>alignment:DoTSAssemblies:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT blat.blat_alignment_id feature_id,
+       'block' type,
+       'DoTSAssemblies' source,
+       a.source_id name, 
+       blat.score || '' score,
+       blat.blat_alignment_id parent_id,
+       blat.target_start startm,
+       blat.target_end end,
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       blat.tstarts TSTARTS,
+       blat.blocksizes BLOCKSIZES,
+       ' ' atts
+FROM
+       apidb.BlatAlignmentLocation blat,
+       dots.Assembly a
+WHERE
+       blat.query_na_sequence_id = a.na_sequence_id and 
+       blat.target_start <= $rend and 
+       blat.target_end >= $base_start and 
+       (blat.target_end - blat.target_start ) < 5000 and 
+       blat.is_best_alignment = 1 and
+       blat.target_na_sequence_id = $srcfeature_id
+ORDER BY
+       blat.target_start
+]]>
+      </sql>
+    </sqlQuery>
+
+  <sqlQuery>
+    <name>alignment:EST:bulksubfeatures</name>
+    <description></description>
+    <sql>
+<![CDATA[
+SELECT blat.blat_alignment_id feature_id,
+       'block' type,
+       'EST' source,
+       est.accession name,
+       blat.score || '' score,
+       blat.blat_alignment_id parent_id,
+       blat.target_start startm,
+       blat.target_end end,
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       blat.tstarts TSTARTS,
+       blat.blocksizes BLOCKSIZES,
+       ' ' atts
+FROM
+       apidb.BlatAlignmentLocation blat,
+       dots.EST est,
+       dots.EXTERNALNASEQUENCE etn
+WHERE  blat.target_start <= $rend
+  AND  blat.target_end >= $base_start
+  AND  blat.target_na_sequence_id = $srcfeature_id
+  AND  est.na_sequence_id = blat.query_na_sequence_id
+  AND  etn.na_sequence_id = est.na_sequence_id
+ORDER BY
+       blat.target_start
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery>
+      <name>alignment:Cosmids:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT blat.blat_alignment_id feature_id, 
+       'cosmid_end' type,
+       'Cosmids' source,
+       etn.source_id name, 
+       regexp_substr(etn.source_id, '(.*)[^(X)(Y)]') parent_id,
+       blat.score, 
+       blat.target_start startm,
+       blat.target_end end,
+       'pct=' || blat.percent_identity  atts
+FROM   apidb.BlatAlignmentLocation blat,
+       dots.ExternalNASequence etn
+WHERE  blat.query_na_sequence_id = etn.na_sequence_id
+  AND  blat.target_na_sequence_id = $srcfeature_id
+  AND  blat.target_start <= $rend 
+  AND  blat.target_end >= $base_start - 1
+  AND  blat.is_best_alignment = 1
+  AND  (blat.target_end - blat.target_start ) < 5000
+  AND  blat.number_of_spans =1
+  AND  etn.external_database_release_id = blat.query_external_db_release_id
+  AND  blat.query_external_db_release_id in (
+       SELECT edr.external_database_release_id
+       FROM   sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
+       WHERE  ed.external_database_id=edr.external_database_id
+          AND ed.name = 'L.major Cosmid Ends from Sanger'
+  )
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>alignment:Bacs:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT blat.blat_alignment_id feature_id, 
+       'bac_end' type,
+       'Bacs' source,
+       etn.source_id name, 
+      regexp_substr(etn.source_id, '(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]') parent_id, 
+       blat.score, 
+       blat.target_start startm,
+       blat.target_end end,
+       'pct=' || blat.percent_identity  atts
+FROM   apidb.BlatAlignmentLocation blat,
+       dots.ExternalNASequence etn
+WHERE  blat.query_na_sequence_id = etn.na_sequence_id
+  AND  blat.target_na_sequence_id = $srcfeature_id
+  AND  blat.target_start <= $rend 
+  AND  blat.target_end >= $base_start - 1
+  AND  blat.is_best_alignment = 1
+  AND  (blat.target_end - blat.target_start ) < 5000
+  AND  blat.number_of_spans =1
+  AND  etn.external_database_release_id = blat.query_external_db_release_id
+  AND  blat.query_external_db_release_id in (
+       SELECT edr.external_database_release_id
+       FROM   sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
+       WHERE  ed.external_database_id=edr.external_database_id
+         AND  ed.name in ('L.major BAC Ends from Sanger','T.brucei RPCI93 BAC Ends','T.cruzi CHORI105 BAC End','L.major PAC Ends from Sanger')
+  )
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>alignment:RandomEnds:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT blat.blat_alignment_id feature_id, 
+       'random_end' type,
+       'RandomEnds' source,
+       etn.source_id name, 
+       regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]') parent_id, 
+       blat.score, 
+       blat.target_start startm,
+       blat.target_end end,
+       'pct=' || blat.percent_identity  atts
+FROM   apidb.BlatAlignmentLocation blat,
+       dots.ExternalNASequence etn
+WHERE  blat.query_na_sequence_id = etn.na_sequence_id
+  AND  blat.target_na_sequence_id = $srcfeature_id
+  AND  blat.target_start <= $rend 
+  AND  blat.target_end >= $base_start - 1
+  AND  blat.is_best_alignment = 1
+  AND  (blat.target_end - blat.target_start ) < 5000
+  AND  etn.external_database_release_id = blat.query_external_db_release_id
+  AND  blat.number_of_spans =1
+  AND  blat.query_external_db_release_id in (
+       SELECT edr.external_database_release_id
+       FROM   sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
+       WHERE  ed.external_database_id=edr.external_database_id
+         AND  ed.name = 'L.major FV1 random Ends from Sanger'
+  )
+]]>
+      </sql>
+    </sqlQuery>
+
+
+  <sqlQuery>
+    <name>domain:TarletonMassSpecPeptides:bulksubfeatures</name>
+    <description></description>
+    <sql>
+<![CDATA[
+SELECT  msf.na_feature_id as feature_id,
+        'Peptide' type,
+        ed.name as source,
+        fl.start_min as startm,
+        fl.end_max as end,
+        fl.na_feature_id as parent_id,
+        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+        '' atts
+ FROM dots.MassSpecFeature msf, apidb.FeatureLocation fl,
+       sres.externaldatabaserelease edr, sres.externaldatabase ed
+ WHERE msf.na_feature_id = fl.na_feature_id
+  AND  fl.start_min >= $base_start 
+  AND  fl.end_max <= $rend
+  AND  fl.na_sequence_id = $srcfeature_id
+  AND  msf.external_database_release_id = edr.external_database_release_id
+  AND  edr.external_database_id = ed.external_database_id
+  AND  ed.name like 'Tcruzi%'
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+    <name>domain:ZilbersteinMassSpecPeptides:bulksubfeatures</name>
+    <description></description>
+    <sql>
+<![CDATA[
+SELECT  msf.na_feature_id as feature_id,
+        'Peptide' type,
+        ed.name as source,
+        fl.start_min as startm,
+        fl.end_max as end,
+        fl.na_feature_id as parent_id,
+        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+        '' atts
+ FROM dots.MassSpecFeature msf, apidb.FeatureLocation fl,
+       sres.externaldatabaserelease edr, sres.externaldatabase ed
+ WHERE msf.na_feature_id = fl.na_feature_id
+  AND  fl.start_min >= $base_start 
+  AND  fl.end_max <= $rend
+  AND  fl.na_sequence_id = $srcfeature_id
+  AND  msf.external_database_release_id = edr.external_database_release_id
+  AND  edr.external_database_id = ed.external_database_id
+  AND  ed.name like 'Linfantum Proteomics PTM%'
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+    <name>domain:StuartMassSpecPeptides:bulksubfeatures</name>
+    <description></description>
+    <sql>
+<![CDATA[
+SELECT  msf.na_feature_id as feature_id,
+        'Peptide' type,
+        ed.name as source,
+        fl.start_min as startm,
+        fl.end_max as end,
+        fl.na_feature_id as parent_id,
+        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+        '' atts
+ FROM dots.MassSpecFeature msf, apidb.FeatureLocation fl,
+       sres.externaldatabaserelease edr, sres.externaldatabase ed
+ WHERE msf.na_feature_id = fl.na_feature_id
+  AND  fl.start_min >= $base_start 
+  AND  fl.end_max <= $rend
+  AND  fl.na_sequence_id = $srcfeature_id
+  AND  msf.external_database_release_id = edr.external_database_release_id
+  AND  edr.external_database_id = ed.external_database_id
+  AND  ed.name like 'Tbrucei%'
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+    <name>domain:BrothertonMassSpecPeptides:bulksubfeatures</name>
+    <description></description>
+    <sql>
+<![CDATA[
+SELECT  msf.na_feature_id as feature_id,
+        'Peptide' type,
+        ed.name as source,
+        fl.start_min as startm,
+        fl.end_max as end,
+        fl.na_feature_id as parent_id,
+        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+        '' atts
+ FROM dots.MassSpecFeature msf, apidb.FeatureLocation fl,
+       sres.externaldatabaserelease edr, sres.externaldatabase ed
+ WHERE msf.na_feature_id = fl.na_feature_id
+  AND  fl.start_min >= $base_start 
+  AND  fl.end_max <= $rend
+  AND  fl.na_sequence_id = $srcfeature_id
+  AND  msf.external_database_release_id = edr.external_database_release_id
+  AND  edr.external_database_id = ed.external_database_id
+  AND  (ed.name like 'Lmajor%'
+     OR ed.name like 'Lbraziliensis%'
+     OR ed.name like 'Linfantum Proteomics%Amastigote'
+     OR ed.name like 'Linfantum Proteomics%Promastigote')
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+    <name>protein:seq</name>
+    <description>Retrive protein sequence from GUS</description>
+    <sql>
+<![CDATA[ 
+SELECT trp.protein_id, trp.source_id, tas.sequence 
+FROM   DOTS.TRANSLATEDAASEQUENCE tas, 
+       DOTS.TRANSLATEDAAFEATURE taf, 
+       DOTS.TRANSCRIPT trp 
+WHERE  
+       tas.aa_sequence_id = taf.aa_sequence_id and 
+       trp.na_feature_id = taf.na_feature_id and 
+       trp.na_feature_id = '$id'
+]]>
+    </sql>
+  </sqlQuery>   
+
+  <sqlQuery>
+    <name>template</name>
+    <description></description>
+    <sql>
+<![CDATA[ 
+]]>
+    </sql>
+  </sqlQuery>   
+</module>
+</DAS>

@@ -1,0 +1,570 @@
+<DAS>
+  <module name="GUS.pm">
+    <sqlQuery>
+      <name>get_feature_by_name</name>
+      <description>fetch features by their name</description>
+      <sql>
+<![CDATA[
+SELECT
+       gf.source_id ctg_name, 
+       aa.aa_sequence_id feature_id, 
+       'protein' type, 
+       'annotation' source, 
+       aa.source_id name, 
+       '.' phase, 
+       null parent_id, 
+       null score, 
+       1  startp, 
+       aa.length end, 
+       '.' strand 
+FROM   dots.genefeature gf, dots.transcript t,
+       dots.translatedaafeature taf, dots.translatedaasequence aa
+WHERE  gf.source_id = '$name'
+  AND  t.parent_id = gf.na_feature_id
+  AND  taf.na_feature_id = t.na_feature_id
+  AND  aa.aa_sequence_id = taf.aa_sequence_id
+       
+]]>
+      </sql>
+    </sqlQuery>
+  </module>
+
+
+  <module name="Segment.pm">
+    <sqlQuery>
+      <name>get_sequence</name>
+       <description></description>
+       <sql>
+<![CDATA[
+SELECT tas.sequence 
+FROM   DOTS.TRANSLATEDAASEQUENCE tas 
+WHERE  tas.aa_sequence_id = $srcfeature_id
+]]>
+      </sql>
+    </sqlQuery>   
+
+
+    <sqlQuery>
+      <name>new:Segment</name>
+      <description>fetch features by their name</description>
+      <sql>
+<![CDATA[
+SELECT
+       aa.aa_sequence_id srcfeature_id, 
+       1 startm, 
+       aa.length end, 
+       gf.source_id name, 
+       'protein' type,
+       'ID=' || aa.aa_sequence_id atts
+FROM   dots.genefeature gf, dots.transcript t,
+       dots.translatedaafeature taf, dots.translatedaasequence aa
+WHERE  gf.source_id = '$name'
+  AND  t.parent_id = gf.na_feature_id
+  AND  taf.na_feature_id = t.na_feature_id
+  AND  aa.aa_sequence_id = taf.aa_sequence_id
+
+]]>
+      </sql>
+    </sqlQuery>
+
+
+    <sqlQuery>
+      <name>get_2d_struc</name>
+       <description></description>
+       <sql>
+<![CDATA[
+SELECT ssc.STRUCTURE_TYPE, ssc.call_confidence 
+FROM   DOTS.secondarystructure ss,
+       DOTS.secondarystructurecall ssc
+WHERE  ss.aa_sequence_id = $srcfeature_id and
+       ss.SECONDARY_STRUCTURE_ID = ssc.SECONDARY_STRUCTURE_ID
+]]>
+      </sql>
+    </sqlQuery>
+
+
+    <sqlQuery>
+      <name>lowcomplexity:seg</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       lc.aa_feature_id feature_id,
+       'lowcomplexity' type, 
+       'seg' source, 
+       'low complexity region' name, 
+       '.' score, 
+       lc.aa_sequence_id parent_id, 
+       aal.start_min startm, 
+       aal.end_max end, 
+       '.' strand,
+       'Sequence=' || substr(aas.sequence, aal.start_min, (aal.end_max-aal.start_min+1)) atts
+FROM 
+       dots.LowComplexityAAFeature lc,
+       dots.AALocation aal, dots.AASequence aas
+WHERE
+       lc.aa_feature_id = aal.aa_feature_id and
+       lc.aa_sequence_id = aas.aa_sequence_id and
+       aal.start_min <= $rend and 
+       aal.end_max >= $base_start and 
+       lc.aa_sequence_id = $srcfeature_id 
+ORDER BY 
+       aal.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
+
+    <sqlQuery>
+      <name>domain:ExportPred</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT DISTINCT
+       df.aa_feature_id feature_id,
+       'domain' type,
+       'ExportPred' source,
+       df.aa_feature_id name,
+       '.' score,
+       df.parent_id parent_id,
+       min(aal.start_min) startm,
+       max(aal.end_max) end,
+       '.' strand,
+       'ID=' || df.aa_feature_id atts
+FROM
+       dots.domainfeature df,
+       dots.aasequence aas,
+       dots.aalocation aal
+WHERE
+       df.algorithm_name = 'exportpred' and
+       df.aa_sequence_id = $srcfeature_id and
+       aas.aa_sequence_id = $srcfeature_id and
+       df.aa_feature_id = aal.aa_feature_id
+GROUP BY
+      df.aa_feature_id, df.parent_id
+]]>
+      </sql>
+    </sqlQuery>
+<sqlQuery>
+    <name>domain:KhanMassSpecPeptides</name>
+	<description>P. falciparum Merozoite Mass Spec Peptides (Leiden Malaria Group)</description>
+    <sql>
+<![CDATA[ 
+SELECT 
+       msf.aa_feature_id feature_id,
+       'domain' type,
+       'KhanMassSpecPeptides' source,
+       msf.source_id name,
+       aal.start_max startm, 
+       aal.end_max end,
+       'Description=' || msf.description || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'ExtDbName=' || ed.name atts
+FROM  dots.massspecfeature msf,
+      dots.aalocation aal, dots.aasequence aas,
+      dots.translatedaafeature taaf,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.parent_id = taaf.aa_feature_id
+ AND  taaf.aa_sequence_id = $srcfeature_id
+ AND  msf.aa_feature_id = aal.aa_feature_id
+ AND  msf.aa_sequence_id = aas.aa_sequence_id
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  ed.name = 'Kahn Pfalciparum merozoite peptides'
+]]>
+    </sql>
+  </sqlQuery>   
+<sqlQuery>
+    <name>domain:LasonderMassSpecPeptides</name>
+	<description>Edwin Lasonder's Mosquito oocyst mass spec peptides</description>
+    <sql>
+<![CDATA[ 
+SELECT 
+       msf.aa_feature_id feature_id,
+       'domain' type,
+       'LasonderMassSpecPeptides' source,
+       msf.source_id name,
+       aal.start_max startm, 
+       aal.end_max end,
+       'Description=' || msf.description || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'ExtDbName=' || ed.name atts
+FROM  dots.massspecfeature msf,
+      dots.aalocation aal, dots.aasequence aas,
+      dots.translatedaafeature taaf,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.parent_id = taaf.aa_feature_id
+ AND  taaf.aa_sequence_id = $srcfeature_id
+ AND  msf.aa_feature_id = aal.aa_feature_id
+ AND  msf.aa_sequence_id = aas.aa_sequence_id
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  ed.name in ('Lasonder Mosquito oocyst peptides',
+                  'Lasonder Mosquito oocyst-derived sporozoite peptides',
+                  'Lasonder Mosquito salivary gland sporozoite peptides')
+]]>
+    </sql>
+
+  </sqlQuery>   
+
+<sqlQuery>
+    <name>domain:LiverStageMassSpecPeptides</name>
+	<description>Pyoelii Liver Stage LS40 mass spec peptides</description>
+    <sql>
+<![CDATA[ 
+SELECT 
+       msf.aa_feature_id feature_id,
+       'domain' type,
+       'LiverStageMassSpecPeptides' source,
+       msf.source_id name,
+       aal.start_max startm, 
+       aal.end_max end,
+       'Description=' || msf.description || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'ExtDbName=' || ed.name atts
+FROM  dots.massspecfeature msf,
+      dots.aalocation aal, dots.aasequence aas,
+      dots.translatedaafeature taaf,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.parent_id = taaf.aa_feature_id
+ AND  taaf.aa_sequence_id = $srcfeature_id
+ AND  msf.aa_feature_id = aal.aa_feature_id
+ AND  msf.aa_sequence_id = aas.aa_sequence_id
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  ed.name in ('Pyoelii LiverStage LS40',
+                  'Pyoelii LiverStage LS50')
+]]>
+    </sql>
+  </sqlQuery>   
+
+<sqlQuery>
+    <name>domain:WatersMassSpecPeptides</name>
+	<description>Berghei Waters  mass spec peptides</description>
+    <sql>
+<![CDATA[ 
+SELECT 
+       msf.aa_feature_id feature_id,
+       'domain' type,
+       'WatersMassSpecPeptides' source,
+       msf.source_id name,
+       aal.start_max startm, 
+       aal.end_max end,
+       'Description=' || msf.description || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'ExtDbName=' || ed.name atts
+FROM  dots.massspecfeature msf,
+      dots.aalocation aal, dots.aasequence aas,
+      dots.translatedaafeature taaf,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.parent_id = taaf.aa_feature_id
+ AND  taaf.aa_sequence_id = $srcfeature_id
+ AND  msf.aa_feature_id = aal.aa_feature_id
+ AND  msf.aa_sequence_id = aas.aa_sequence_id
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  ed.name in ('Waters Mixed Gametes',
+                  'Waters Male Gametes',
+                  'Waters Female Gametes')
+]]>
+    </sql>
+  </sqlQuery>   
+
+    <sqlQuery>
+      <name>domain:interpro</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT 
+       df.aa_feature_id feature_id,
+       'domain' type, 
+       'interpro' source, 
+       dr.primary_identifier name, 
+       df.score score, 
+       df.parent_id parent_id, 
+       min(aal.start_min) startm, 
+       max(aal.end_max) end,
+       '.' strand,
+       'Note=' || dr.secondary_identifier || ' ' || dr.remark || '$dlm' ||
+       'Db=' || ed.name || '$dlm' ||
+       'Evalue=' || df.e_value || '$dlm' || 
+       'Url=' ||
+              decode (ed.name,
+                      'INTERPRO',
+                      'http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=' ||
+                       dr.primary_identifier,
+                      'PFAM',
+                      'http://pfam.sanger.ac.uk/family?acc=' ||
+                       dr.primary_identifier,
+                      'PRINTS',
+                      'http://umber.sbs.man.ac.uk/cgi-bin/dbbrowser/sprint/searchprintss.cgi?prints_accn=' ||
+                       dr.primary_identifier ||
+                       '&display_opts=Prints&category=None&queryform=false&regexpr=off',
+                      'PRODOM',
+                      'http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query=' ||
+                       dr.primary_identifier,
+                      'PROFILE',
+                      'http://www.expasy.org/prosite/' ||
+                       dr.primary_identifier,
+                      'SMART',
+                      'http://smart.embl-heidelberg.de/smart/do_annotation.pl?ACC=' ||
+                       dr.primary_identifier || '&BLAST=DUMMY',
+                      'SUPERFAMILY',
+                      'http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid=' ||
+                       dr.primary_identifier,
+                      'http://www.ebi.ac.uk/interpro/ISearch?query=' ||
+                        dr.primary_identifier || '&mode=all') atts
+FROM
+       dots.DomainFeature df,
+       dots.DbRefAaFeature draf,
+       dots.AaLocation aal,
+       sres.DbRef dr,
+       sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase ed,
+       core.AlgorithmInvocation ainv,
+       core.AlgorithmImplementation aimp
+WHERE
+       df.aa_sequence_id = $srcfeature_id and
+       aal.end_max > $base_start and
+       aal.start_min < $rend and
+       aal.aa_feature_id = df.aa_feature_id and
+       df.aa_feature_id = draf.aa_feature_id and
+       draf.db_ref_id = dr.db_ref_id and
+       dr.external_database_release_id = edr.external_database_release_id and
+       edr.external_database_id = ed.external_database_id and
+       df.row_alg_invocation_id = ainv.algorithm_invocation_id and
+       ainv.algorithm_implementation_id = aimp.algorithm_implementation_id and
+       aimp.executable = 'ApiCommonData::Load::Plugin::InsertInterproscanResults'
+GROUP BY
+       df.aa_feature_id,
+       'domain',
+       'interpro',
+       dr.primary_identifier,
+       df.score,
+       df.parent_id,
+       '.',
+       'Note=' || dr.secondary_identifier || ' ' || dr.remark || '$dlm' ||
+       'Db=' || ed.name || '$dlm' ||
+       'Evalue=' || df.e_value || ';;' || 
+       'Url=' ||
+              decode (ed.name,
+                      'INTERPRO',
+                      'http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=' ||
+                       dr.primary_identifier,
+                      'PFAM',
+                      'http://pfam.sanger.ac.uk/family?acc=' ||
+                       dr.primary_identifier,
+                      'PRINTS',
+                      'http://umber.sbs.man.ac.uk/cgi-bin/dbbrowser/sprint/searchprintss.cgi?prints_accn=' ||
+                       dr.primary_identifier ||
+                       '&display_opts=Prints&category=None&queryform=false&regexpr=off',
+                      'PRODOM',
+                      'http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query=' ||
+                       dr.primary_identifier,
+                      'PROFILE',
+                      'http://www.expasy.org/prosite/' ||
+                       dr.primary_identifier,
+                      'SMART',
+                      'http://smart.embl-heidelberg.de/smart/do_annotation.pl?ACC=' ||
+                       dr.primary_identifier || '&BLAST=DUMMY',
+                      'SUPERFAMILY',
+                      'http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid=' ||
+                       dr.primary_identifier,
+                      'http://www.ebi.ac.uk/interpro/ISearch?query=' ||
+                        dr.primary_identifier || '&mode=all')
+]]>
+      </sql>
+    </sqlQuery>
+
+
+    <sqlQuery>
+      <name>domain:interpro:subfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT 
+       aal.aa_location_id feature_id,
+       'domain' type, 
+       'interpro' source, 
+       dr.primary_identifier name, 
+       df.score score, 
+       df.aa_feature_id parent_id, 
+       aal.start_min startm, 
+       aal.end_max end,
+       '.' strand
+FROM
+       dots.DomainFeature df,
+       dots.DbRefAaFeature draf,
+       dots.AaLocation aal,
+       sres.DbRef dr,
+       sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase ed,
+       core.AlgorithmInvocation ainv,
+       core.AlgorithmImplementation aimp
+WHERE
+       df.aa_sequence_id = $srcfeature_id and
+       aal.end_max > $base_start and
+       aal.start_min < $rend and
+       aal.aa_feature_id = df.aa_feature_id and
+       df.aa_feature_id = draf.aa_feature_id and
+       draf.db_ref_id = dr.db_ref_id and
+       dr.external_database_release_id = edr.external_database_release_id and
+       edr.external_database_id = ed.external_database_id and
+       df.row_alg_invocation_id = ainv.algorithm_invocation_id and
+       ainv.algorithm_implementation_id = aimp.algorithm_implementation_id and
+       aimp.executable = 'ApiCommonData::Load::Plugin::InsertInterproscanResults'
+]]>
+      </sql>
+    </sqlQuery>
+
+ <sqlQuery>
+      <name>domain:TMHMM</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT
+       tmf.aa_feature_id feature_id,
+       'domain' type,
+       'TMHMM' source,
+       tmf.aa_feature_id name,
+       '.' score,
+       tmf.parent_id parent_id,
+       aal.start_min startm,
+       aal.end_max end,
+       '.' strand,
+       'Topology=' || tmf.topology atts
+FROM
+       dots.transmembraneaafeature tmf,
+       dots.translatedaasequence tas,
+       dots.aalocation aal
+WHERE
+       tas.aa_sequence_id = $srcfeature_id and
+       tmf.aa_sequence_id = $srcfeature_id and
+       tmf.aa_feature_id = aal.aa_feature_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>domain:SignalP</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT
+       spf.aa_feature_id feature_id,
+       'domain' type,
+       'SignalP' source,
+       spf.aa_feature_id name,
+       '.' score,
+       spf.parent_id parent_id,
+       1 startm,
+       aal.end_max end,
+       '.' strand,
+       'DScore=' || ((spf.means_score + spf.maxy_score) / 2) || '$dlm' ||
+       'SignalProb=' || spf.signal_probability || '$dlm' ||
+       'ConclusionScore=' || (spf.maxy_conclusion +
+               spf.maxc_conclusion +
+               spf.maxs_conclusion +
+               spf.means_conclusion) as  atts
+FROM
+       dots.signalpeptidefeature spf,
+       dots.aalocation aal
+WHERE
+       spf.aa_sequence_id = $srcfeature_id and
+       aal.aa_feature_id = spf.aa_feature_id and
+       (( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) >= 3
+       or spf.signal_probability >= .5
+       or ((spf.means_score + spf.maxy_score) / 2) > .5 )
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:BLASTP</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       sim.similarity_id feature_id,
+       'match' type, 
+       'BLASTP' source, 
+       subj.source_id name, 
+       sim.score score, 
+       sim.query_id    parent_id, 
+       sim.min_query_start startm, 
+       sim.max_query_end   end, 
+       '.' strand,
+       'Note=' ||  'E() = ' || sim.pvalue_mant || 'e' || sim.pvalue_exp || ', ' || round(100 * sim.number_identical / sim.total_match_length) || '% identity, ' || subj.description || '$dlm' ||
+       'Expect=' || sim.pvalue_mant || 'e' || sim.pvalue_exp || '$dlm' ||
+       'PercentIdentity=' || round(sim.number_identical / sim.total_match_length) || '$dlm' ||
+       'PercentPositive=' || round(sim.number_positive / sim.total_match_length) atts
+FROM 
+       dots.similarity sim,
+       core.tableinfo qti,
+       core.tableinfo sti,
+       dots.externalaasequence subj
+WHERE 
+       sim.query_id = $srcfeature_id and
+       qti.table_id = sim.query_table_id and
+       qti.name = 'TranslatedAASequence' and
+       sti.table_id = sim.subject_table_id and
+       sti.name = 'ExternalAASequence' and
+       subj.aa_sequence_id = sim.subject_id
+ORDER BY 
+       sim.similarity_id
+]]>
+      </sql>
+    </sqlQuery>
+  </module>
+
+
+  <module name="Feature.pm">
+    <sqlQuery>
+      <name>domain:ExportPred:subfeatures</name>
+      <description> </description>
+      <sql>
+<![CDATA[ 
+SELECT
+       aal.aa_location_id feature_id,
+       'subdomain' type,
+       'ExportPred' source,
+       aal.aa_location_id name,
+       aal.aa_feature_id parent_id,
+       '' phase,
+       '.' score,
+       '.' strand,
+       aal.start_min startm,
+       aal.end_max end,
+       'ID=' || aal.aa_location_id atts
+FROM
+       dots.aalocation aal
+WHERE
+       aal.aa_feature_id = $parent_id
+ORDER BY aal.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
+
+    <sqlQuery>
+      <name>protein:seq</name>
+       <description></description>
+       <sql>
+<![CDATA[
+SELECT gf.source_id, gf.source_id, tas.sequence 
+FROM   dots.genefeature gf, dots.transcript t,
+       dots.translatedaafeature taf, dots.translatedaasequence tas
+       dots.transcript t
+WHERE  gf.source_id = $id'
+  AND  t.parent_id = gf.na_feature_id
+  AND  taf.na_feature_id = t.na_feature_id
+  AND  aa.aa_sequence_id = taf.aa_sequence_id
+]]>
+      </sql>
+    </sqlQuery>   
+  </module>
+</DAS>
