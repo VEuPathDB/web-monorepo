@@ -155,10 +155,14 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 
 function validateAndCall(type, url, proto, rs){
 	var valid = false;
-	if($(".filter.operators")){
-		$(".filter.operators div#operations input[name='booleanExpression']").each(function(){
-			if($(this)[0].checked) valid = true;
-		});
+	if($("input[name='booleanExpression']").attr("type") == "hidden"){
+		valid = true;
+	}else{
+		if($(".filter.operators")){
+			$(".filter.operators div#operations input[name='booleanExpression']").each(function(){
+				if($(this)[0].checked) valid = true;
+			});
+		}
 	}
 	if(!valid){
 		alert("Please select a booean operator.");
