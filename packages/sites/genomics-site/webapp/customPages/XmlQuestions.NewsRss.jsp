@@ -62,6 +62,7 @@
         &lt;br /&gt;
         <fmt:formatDate value="${pdate}" pattern="d MMMM yyyy"/>
         </description>
+        <guid>${tag}</guid>
         <pubDate>${fdate}</pubDate>
         <author>${wdkModel.displayName}</author>
     </item>
