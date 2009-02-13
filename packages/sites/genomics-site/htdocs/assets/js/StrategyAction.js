@@ -1,4 +1,4 @@
-var strats = new Array();
+	var strats = new Array();
 var xmldoc = null;
 var init_strat_ids = new Array();
 var init_strat_order = new Array();
@@ -341,6 +341,22 @@ function createStrategyName(ele, strat){
 	var name = $(ele).attr("name");
 	var exportURL = exportBaseURL + strat.importId;
 
+	var share = "";
+	if($(ele).attr("saved") == 'true'){
+		share = "<a title='Email this URL to your best friend' href=\"javascript:showExportLink('" + id + "')\"><b>SHARE</b></a>"+
+		"<div class='modal_div export_link' id='export_link_div_" + id + "'>" +
+	        "<span class='dragHandle'>" +
+	        "<a class='close_window' href='javascript:closeModal()'>" +
+		"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
+		"</a>"+
+	        "</span>" +
+		"<p>Paste link in email:</p>" +
+		"<input type='text' size=" + exportURL.length + " value=" + exportURL + " />" +
+		"</div>";
+	}else{
+		share = "<b color='gray'>SHARE</b>";
+	}
+
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
@@ -364,16 +380,7 @@ function createStrategyName(ele, strat){
 	"</form>"+
 	"</div>"+
 	"<br/>"+
-	"<a title='Email this URL to your best friend' href=\"javascript:showExportLink('" + id + "')\"><b>SHARE</b></a>"+
-	"<div class='modal_div export_link' id='export_link_div_" + id + "'>" +
-        "<span class='dragHandle'>" +
-        "<a class='close_window' href='javascript:closeModal()'>" +
-	"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
-	"</a>" +
-        "</span>" +
-	"<p>Paste link in email:</p>" +
-	"<input type='text' size=" + exportURL.length + " value=" + exportURL + " />" +
-	"</div>"+
+	share +
 	"</span>");
 	}else{
 		$(div_sn).html(name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 
