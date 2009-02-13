@@ -259,6 +259,11 @@ function createDetails(ele, strat, step){
 	var name = $(ele).attr("name");
 	var shortName = $(ele).attr("shortName");
 	var collapsible = $(ele).attr("isCollapsed");
+	var filtered = $(ele).attr("filtered");
+	var filteredName = "";
+	if(filtered == 'true'){
+		filteredName = "<span class='medium'><b>Applied Filter:&nbsp;</b>" + $(ele).children("filterName").text() + "</span><hr>";
+	}
 	if(collapsible == "true"){ 
 		var collapsedName = $(ele).children("strategy:first").attr("name");
 		if(collapsedName)
@@ -297,8 +302,8 @@ function createDetails(ele, strat, step){
 		"			</span>"+
 		"		</div>"+
 		"		<p class='question_name'><span>" + name + "</span></p>"+
-		"		<table></table><hr>"+
-		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "</p><hr /><a href='downloadStep.do?step_id=" + step.back_step_Id + "'>Download</a>";
+		"		<table></table><hr>" + filteredName +
+		"		<p><b>Results:&nbsp;</b>" + resultSize + "&nbsp;" + dataType + "&nbsp;&nbsp;|&nbsp;&nbsp;<a href='downloadStep.do?step_id=" + step.back_step_Id + "'>Download</a>";
 		
 	$(detail_div).html(inner);
 	$("table", detail_div).replaceWith(params_table);
