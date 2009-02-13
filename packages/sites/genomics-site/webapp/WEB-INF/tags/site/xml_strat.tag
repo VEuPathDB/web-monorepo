@@ -45,6 +45,7 @@
         <c:set value="${step.answerValue.questionUrlParams}" var="urlParams"/>
         <c:set value="${step.isBoolean}" var="isboolean" />
         <c:set value="${step.filtered}" var="isFiltered" />
+		<c:set value="${step.filterDisplayName}" var="filterName" />
         <c:if test="${isboolean}">
         <c:set value="${step.childStep.stepId}" var="child_id" />
         <c:set value="${step.childStep.answerId}" var="child_answerId" />
@@ -62,7 +63,8 @@
         <c:set value="${step.childStep.answerValue.questionUrlParams}" var="urlParams"/>
         <c:set value="${step.childStep.isBoolean}" var="child_isboolean" />
         <c:set value="${step.childStep.filtered}" var="child_isFiltered" />
-        </c:if>
+        <c:set value="${step.childStep.filterDisplayName}" var="child_filterName" />
+		</c:if>
     
                 <c:choose>
                     <c:when test="${isboolean}">
@@ -78,6 +80,7 @@
                              isboolean="${isboolean}"
                              operation="${step.operation}"
                              filtered="${isFiltered}">
+							<filterName>${filterName}</filterName>
                             
                             <step name="${child_cName}"
                                  customName="${child_customName}"
@@ -91,6 +94,7 @@
                                  displayName="${child_displayName}"
                                  isboolean="${child_isboolean}"
                                  filtered="${child_isFiltered}">
+								<filterName>${child_filterName}</filterName>
                                     <c:choose>
                                         <c:when test="${child_collapsible == true}">
                                             <c:set var="step" value="${step.childStep}" scope="request" />
@@ -150,6 +154,7 @@
                              displayName="${displayName}"
                              isboolean="${isboolean}"
                              filtered="${isFiltered}">
+							<filterName>${filterName}</filterName>
                                 <c:choose>
                                     <c:when test="${child_collapsible == true}">
                                         <c:set var="step" value="${step.childStep}" scope="request" />
