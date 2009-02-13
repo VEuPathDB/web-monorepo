@@ -62,6 +62,7 @@
 
 <%-- move between "Run" and "Browse" tabs --%>
 <script type="text/javascript" language="javascript">
+        var guestUser = '${wdkUser.guest}';
 	$(document).ready(function(){
 		exportBaseURL = '${exportBaseUrl}';
 		$("#diagram div.venn:last span.resultCount a").click();

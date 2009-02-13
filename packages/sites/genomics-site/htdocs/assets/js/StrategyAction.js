@@ -1,4 +1,4 @@
-	var strats = new Array();
+var strats = new Array();
 var xmldoc = null;
 var init_strat_ids = new Array();
 var init_strat_order = new Array();
@@ -344,6 +344,7 @@ function createParameters(params){
 function createStrategyName(ele, strat){
 	var id = strat.backId;
 	var name = $(ele).attr("name");
+	if ($(ele).attr("saved") == 'false') name = name + "*";
 	var exportURL = exportBaseURL + strat.importId;
 
 	var share = "";
@@ -362,28 +363,36 @@ function createStrategyName(ele, strat){
 		share = "<b color='gray'>SHARE</b>";
 	}
 
+	var save = "";
+	if (guestUser == 'true') {
+		save = "<b color='gray'>RENAME<br/>SAVE AS</b>";
+	}
+	else {
+		save = "<a title='A saved strategy will be in your summary whenever you login back into the system.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>RENAME<br/>SAVE AS</b></a>" +
+		"<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
+		"<span class='dragHandle'>" +
+		"<div class='modal_name'>"+
+		"<h2>Save As/Rename</h2>" + 
+		"</div>"+ 
+		"<a class='close_window' href='javascript:closeModal()'>"+
+		"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
+		"</a>"+
+		"</span>"+
+		"<form onsubmit='return validateSaveForm(this);' action=\"javascript:saveStrategy('" + id + "', true)\">"+
+		"<input type='hidden' value='" + id + "' name='strategy'/>"+
+		"<input type='text' value='" + strat.savedName + "' name='name'/>"+
+		"<input type='submit' value='Save'/>"+
+		"</form>"+
+		"</div>";
+	}
+
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
 		$(div_sn).html("<span  title='Name of this strategy. The (*) indicates this strategy is NOT saved. You can rename and save it any time.'>" + name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" + 
-	"<a title='A saved strategy will be in your summary whenever you login back into the system.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>RENAME<br>SAVE AS</b></a>" +
-	"<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
-	"<span class='dragHandle'>" +
-	"<div class='modal_name'>"+
-	"<h2>Save As/Rename</h2>" + 
-	"</div>"+ 
-	"<a class='close_window' href='javascript:closeModal()'>"+
-	"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
-	"</a>"+
-	"</span>"+
-	"<form onsubmit='return validateSaveForm(this);' action=\"javascript:saveStrategy('" + id + "', true)\">"+
-	"<input type='hidden' value='" + id + "' name='strategy'/>"+
-	"<input type='text' value='" + strat.savedName + "' name='name'/>"+
-	"<input type='submit' value='Save'/>"+
-	"</form>"+
-	"</div>"+
+	save +
 	"<br/>"+
 	share +
 	"</span>");
@@ -674,7 +683,7 @@ function saveStrategy(stratId, checkName, fromHist){
 	var name = $("input[name='name']",saveForm).attr("value");
 	var strategy = $("input[name='strategy']",saveForm).attr("value");
 	var url="renameStrategy.do?strategy=";
-	url = url + strategy + "&name=" + name + "&checkName=" + checkName;
+	url = url + strategy + "&save=true&name=" + name + "&checkName=" + checkName;
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
