@@ -80,7 +80,7 @@
                              isboolean="${isboolean}"
                              operation="${step.operation}"
                              filtered="${isFiltered}">
-							<filterName>${filterName}</filterName>
+							<filterName><![CDATA[${filterName}]]></filterName>
                             
                             <step name="${child_cName}"
                                  customName="${child_customName}"
@@ -94,7 +94,7 @@
                                  displayName="${child_displayName}"
                                  isboolean="${child_isboolean}"
                                  filtered="${child_isFiltered}">
-								<filterName>${child_filterName}</filterName>
+								<filterName><![CDATA[${child_filterName}]]></filterName>
                                     <c:choose>
                                         <c:when test="${child_collapsible == true}">
                                             <c:set var="step" value="${step.childStep}" scope="request" />
@@ -154,7 +154,7 @@
                              displayName="${displayName}"
                              isboolean="${isboolean}"
                              filtered="${isFiltered}">
-							<filterName>${filterName}</filterName>
+							<filterName><![CDATA[${filterName}]]></filterName>
                                 <c:choose>
                                     <c:when test="${child_collapsible == true}">
                                         <c:set var="step" value="${step.childStep}" scope="request" />
