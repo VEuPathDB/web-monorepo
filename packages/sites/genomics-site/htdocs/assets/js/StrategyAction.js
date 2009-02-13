@@ -389,6 +389,10 @@ function createStrategyName(ele, strat){
 }
 
 function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
+	if(f_strategyId == -1){
+		$("div#Workspace").html("");
+		return;
+	}
 	var strategy = getStrategy(f_strategyId);
 	var step = getStep(f_strategyId, f_stepId);
 	if(bool){
@@ -545,6 +549,7 @@ function DeleteStep(f_strategyId,f_stepId){
 					$("div#diagram_"+strategy.frontId).remove();
 					if($("#Strategies div").length == 0){
 						showInstructions();
+						NewResults(-1);
 					}
 				}	
 			},
@@ -635,8 +640,10 @@ function closeStrategy(stratId){
 		dataType:"html",
 		success: function(data){
 			hideStrat(stratId);
-			if($("#Strategies div").length == 0)
+			if($("#Strategies div").length == 0){
 				showInstructions();
+				NewResults(-1);
+			}
 			update_hist = true;
 		},
 		error: function(data, msg, e){
