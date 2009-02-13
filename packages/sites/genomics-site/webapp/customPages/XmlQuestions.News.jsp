@@ -56,11 +56,34 @@
   Parsable date strings aren't strictly needed for news but are needed 
   for sorting RSS feeds; the check is here so invalid dates will be
   readily detected and corrected by a human.
+  
+  Also require a unique, non-empty tag so the portal can deduplicate 
+  merged component feeds.
 --%>
+<jsp:useBean id="tagMap" class="java.util.HashMap" type="java.util.Map"/> 
 <c:catch var="InvalidDateError">
   <c:forEach items="${xmlAnswer.recordInstances}" var="record">
-    <c:set var="lastHeadline" value="${record.attributesMap['headline']}"/>
-    <fmt:parseDate pattern="${dateStringPattern}" value="${record.attributesMap['date']}" var="throwaway"/> 
+    <c:if test="${!break}">
+      <c:set var="lastHeadline" value="${record.attributesMap['headline']}"/>
+
+      <%-- date field validation --%>
+      <fmt:parseDate pattern="${dateStringPattern}" 
+                     value="${record.attributesMap['date']}" 
+                     var="throwaway"/> 
+
+      <%-- tag field validation --%>
+      <c:set var="tag" value="${record.attributesMap['tag']}" />
+      <c:if test="${empty tag}">
+          <c:set var="InvalidTagError" value="Tag is empty."/>
+          <c:set var="break" value="true"/>
+      </c:if>
+      <c:if test="${! empty tagMap[tag]}">
+          <c:set var="InvalidTagError" value="Tag '${tag}' is not unique."/>
+          <c:set var="break" value="true"/>
+      </c:if>
+      <c:set target="${tagMap}" property="${tag}" value="1"/>
+
+    </c:if>
   </c:forEach>
 </c:catch>
 
@@ -75,6 +98,12 @@
     <font color="red" size="+1">Error parsing date of "${lastHeadline}". 
     Expecting date string of the form "03 August 2007 15:30"</font>
   </c:when>
+
+  <c:when test="${InvalidTagError != null}">
+    <font color="red" size="+1">Invalid tag for "${lastHeadline}": 
+    ${InvalidTagError}.</font>
+  </c:when>
+
 
   <c:otherwise>
 
@@ -97,7 +126,9 @@
   
     <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
     <tr class="rowLight"><td>
-      <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${tag}"><font color='black'><b>${headline}</b></font></a> (${fdate})<br><br>${item}</td></tr></table>
+      <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${tag}">
+      <font color='black'><b>${headline}</b></font></a> (${fdate})<br><br>
+      ${item}</td></tr></table>
     <c:set var="i" value="${i+1}"/>
   </c:if>
 
