@@ -1,0 +1,30 @@
+<DAS>
+  <module name="GUS.pm">
+    <sqlQuery>
+      <name></name>
+      <description></description>
+      <sql>
+      </sql>
+    </sqlQuery>
+  </module>
+
+  <module name="Segment.pm">
+      <sqlQuery>
+      <name></name>
+      <description></description>
+      <sql>
+      </sql>
+    </sqlQuery>
+  </module>
+
+  <module name="Feature.pm">
+    <sqlQuery>
+      <name></name>
+      <description></description>
+      <sql>
+      </sql>
+    </sqlQuery>
+  </module>
+
+</DAS>
+
