@@ -15,6 +15,46 @@
       <sql>
       </sql>
     </sqlQuery>
+
+    <sqlQuery>
+      <name>get_sequence</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT tas.sequence 
+FROM   DoTS.TranslatedAASequence tas 
+WHERE  tas.aa_sequence_id = $srcfeature_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>lowcomplexity:seg</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT lc.aa_feature_id feature_id,
+       'lowcomplexity' type, 
+       'seg' source, 
+       'low complexity region' name, 
+       '.' score, 
+       lc.aa_sequence_id parent_id, 
+       aal.start_min startm, 
+       aal.end_max end, 
+       '.' strand,
+       'Sequence=' || substr(aas.sequence, aal.start_min, (aal.end_max-aal.start_min+1)) atts
+FROM   dots.LowComplexityAAFeature lc,
+       dots.AALocation aal, dots.AASequence aas
+WHERE  lc.aa_feature_id = aal.aa_feature_id and
+       lc.aa_sequence_id = aas.aa_sequence_id and
+       aal.start_min <= $rend and 
+       aal.end_max >= $base_start and 
+       lc.aa_sequence_id = $srcfeature_id 
+ORDER BY aal.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
   </module>
 
   <module name="Feature.pm">
