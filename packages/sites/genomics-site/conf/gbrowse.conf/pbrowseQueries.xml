@@ -68,6 +68,31 @@ WHERE  ss.aa_sequence_id = $srcfeature_id and
 ]]>
       </sql>
     </sqlQuery>
+
+<!-- ORIGINALLY FROM: giardia,trich,tritryp -->
+    <sqlQuery>
+      <name>domain:TMHMM</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT distinct * from (
+SELECT
+       tmf.aa_sequence_id feature_id,
+       'domain' type,
+       'TMHMM' source,
+       tmf.source_id name,
+       tmf.parent_id parent_id
+FROM
+       dots.TRANSMEMBRANEAAFEATURE tmf,
+       core.ALGORITHM ALG
+WHERE
+       tmf.aa_sequence_id = $srcfeature_id and
+       tmf.prediction_algorithm_id = alg.algorithm_id and
+       alg.name = 'TMHMM'
+)
+]]>
+      </sql>
+    </sqlQuery>
   </module>
 
   <module name="Feature.pm">
@@ -77,6 +102,36 @@ WHERE  ss.aa_sequence_id = $srcfeature_id and
       <sql>
       </sql>
     </sqlQuery>
+
+<!-- ORIGINALLY FROM: giardia,trich,tritryp -->
+    <sqlQuery>
+      <name>domain:TMHMM:subfeatures</name>
+      <description> </description>
+      <sql>
+<![CDATA[ 
+SELECT
+       aal.aa_location_id feature_id,
+       'subdomain' type,
+       'TMHMM' source,
+       aal.aa_location_id name,
+       aal.aa_feature_id parent_id,
+       aal.start_min startm,
+       aal.end_max end,
+       'Topology=' || tmf.topology atts
+FROM
+     DoTS.transmembraneaafeature tmf,
+     DoTS.aalocation aal,
+     Core.algorithm alg
+WHERE
+       tmf.aa_feature_id = aal.aa_feature_id and
+       tmf.aa_sequence_id = $parent_id and
+       tmf.prediction_algorithm_id = alg.algorithm_id AND
+       alg.name = 'TMHMM'
+ORDER BY aal.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
   </module>
 
 </DAS>
