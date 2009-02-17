@@ -146,8 +146,10 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
         }
 	if (hideOp){
            $(".filter.operators").remove();
+		   $(".filter.params").after("<input type='hidden' name='booleanExpression' value='AND' />");
            $(".filter.operators").width('auto');
            $("#query_form").css({'max-width' : '61%','min-width' : '729px'});
+		   
         }
 	htmltooltip.render();
 	$("#query_form").fadeIn("normal");
@@ -176,13 +178,13 @@ function validateAndCall(type, url, proto, rs){
 	return;
 }
 
-function getQueryForm(url){	
+function getQueryForm(url,hideOp){	
 	    original_Query_Form_Text = $("#query_form").parent().html();
 		$.ajax({
 			url: url,
 			dataType:"html",
 			success: function(data){
-				formatFilterForm(data,0,isInsert);
+				formatFilterForm(data,0,isInsert,false,hideOp);
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e);
@@ -218,7 +220,7 @@ function openFilter(dtype,strat_id,step_id){
 			});
 			$("#continue_button_transforms", filter).click(function(){
 				original_Query_Form_Text = $("#query_form").parent().html();
-				getQueryForm($("#query_form select#transforms").val());
+				getQueryForm($("#query_form select#transforms").val(),true);
 			});
 			$("div#Strategies").append(filter);
 			$("#query_form").jqDrag(".dragHandle");
