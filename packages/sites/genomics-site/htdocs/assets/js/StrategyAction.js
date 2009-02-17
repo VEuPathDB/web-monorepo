@@ -9,7 +9,8 @@ $(document).ready(function(){
 	if(init_strat_ids.length == 0){
 		showInstructions();
 	}else{
-		jQuery.each(init_strat_ids, function(){
+		initDisplay(0);
+/*		jQuery.each(init_strat_ids, function(){
 			$.ajax({
 				url: "showStrategy.do?strategy=" + this,
 				type: "POST",
@@ -23,8 +24,26 @@ $(document).ready(function(){
 				}
 			});
 		});
+*/
 	}
 });
+
+function initDisplay(index){
+	$.ajax({
+		url: "showStrategy.do?strategy=" + init_strat_ids[index],
+		type: "POST",
+		dataType: "xml",
+		success: function(data){
+			id = loadModel(data);
+			$("div#Strategies").append(displayModel(id));
+			if (id == 0) {
+				$("#diagram_0 div.venn:last .resultCount a").click();
+			}
+			if(index+1 < init_strat_ids.length)
+				initDisplay(index+1);
+		}
+	});
+}
 
 function showInstructions(){
 	var instr = document.createElement('div');
