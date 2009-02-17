@@ -66,7 +66,7 @@
           <td id="eye_${strategy.strategyId}" class="strat_active">
         </c:otherwise>
       </c:choose>
-        <a href="javascript:void(0)" onclick="toggleEye(this,'${strategy.strategyId}')"><img src="/assets/images/transparent1.gif" alt="Toggle View of Strategy" /></a>
+        <a href="javascript:void(0)" title="Click to open/close the strategy on the graphical display ('Run Strategies' tab)." onclick="toggleEye(this,'${strategy.strategyId}')"><img src="/assets/images/transparent1.gif" alt="Toggle View of Strategy" /></a>
       </td>
       <td>
         <img id="img_${strategyId}" class="plus-minus plus" src="/assets/images/sqr_bullet_plus.png" alt="" onclick="toggleSteps(${strategyId})"/>

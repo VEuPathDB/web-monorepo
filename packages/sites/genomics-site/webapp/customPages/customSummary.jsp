@@ -78,9 +78,32 @@
 </script>
 
 <ul id="strategy_tabs">
-   <li><a id="strategy_results_tab" onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
-   <li><a id="search_history_tab" onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
+   <li><a id="strategy_results_tab" title="Graphical display of your opened strategies. To close a strategy click on the right top corner X." onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
+   <li><a id="search_history_tab" title="Summary of all your strategies. From here you can open/close strategies on the graphical display by clicking on the 'eye'." onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
 </ul>
+
+<c:if test="${wdkUser == null || wdkUser.guest == true}">
+
+<!--
+	<site:requestURL/>
+
+	<c:url value="login.jsp" var="loginUrl">
+           <c:param name="originUrl" value="${originRequestUrl}"/> 
+        </c:url>
+	<c:url var="loginJsp" value='login.jsp'/>
+        <c:url value="${loginUrl}" var="loginUrl">
+           <c:param name="refererUrl" value="${loginJsp}"/> 
+        </c:url>
+-->
+	<div style="padding:3px; font-weight:bold; background-color:white; position:absolute; top:153px; left:400px;">
+	Please, 
+		<a href="${loginUrl}" id='login'>login</a>
+               <%--  <site:login/>--%>
+	if you want to save your strategies</div>
+</c:if>
+
+
+
 
 <div id="strategy_results" style="position:absolute;left:-999em">
 
