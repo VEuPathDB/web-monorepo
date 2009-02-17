@@ -15,6 +15,11 @@
               description="RecordClass Object for the Answer"
 %>
 
+<%@ attribute name="prevStepNum"
+				required="false"
+				description="Step number for transform param urls"
+%>
+
 <c:set var="catMap" value="${model.questionsByCategory}" />
 <c:set var="recClass" value="${recordClass}" />
 <c:set var="qSetName" value="none" />
@@ -22,6 +27,13 @@
 <c:set var="qSet" value="${qSets[qSetName]}" />
 <c:set var="qByCat" value="${qSet.questionsByCategory}" />
 <c:set var="user" value="${sessionScope.wdkUser}"/>
+
+<%--<jsp:useBean id="modelBean" scope="request" class="org.gus.wdk.model.jspwrap.WdkModelBean" >--%>
+<jsp:setProperty name="model" property="inputType" value="${recClass}" />
+<jsp:setProperty name="model" property="outputType" value="" />
+<%--</jsp:useBean>--%>
+
+<c:set var="transformQuestions" value="${model.transformQuestions}" />
 
 <div id="query_form" class="jqDnR">
 <span class="dragHandle"><div class="modal_name"><h1>Add&nbsp;Step</h1></div><a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span>
@@ -57,6 +69,19 @@
 		</c:forEach>
 	</select>
 	<br><br><input id="continue_button" type="button" value="Continue..."/>
+</td>
+<td>
+	<select id="transforms">
+		<c:forEach items="${transformQuestions}" var="t">
+			<jsp:setProperty name="t" property="inputType" value="${recClass}" />
+			<c:set var="tparams" value="" />
+			<c:forEach items="${t.transformParams}" var="tp">
+				<c:set var="tparams" value="${tparams}&${tp.name}=${prevStepNum}" />
+			</c:forEach>
+			<option value="showQuestion.do?questionFullName=${t.fullName}${tparams}">${t.displayName}</option>
+		</c:forEach>
+	</select>
+	<br><br><input id="continue_button_transforms" type="button" value="Continue..."/>
 </td>
 </tr>
 </table>
