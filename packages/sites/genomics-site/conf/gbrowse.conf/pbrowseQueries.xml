@@ -55,6 +55,19 @@ ORDER BY aal.start_min
       </sql>
     </sqlQuery>
 
+    <sqlQuery>
+      <name>get_2d_struc</name>
+       <description></description>
+       <sql>
+<![CDATA[
+SELECT ssc.structure_type, ssc.call_confidence 
+FROM   DoTS.SecondaryStructure ss,
+       DoTS.SecondaryStructureCall ssc
+WHERE  ss.aa_sequence_id = $srcfeature_id and
+       ss.secondary_structure_id = ssc.secondary_structure_id
+]]>
+      </sql>
+    </sqlQuery>
   </module>
 
   <module name="Feature.pm">
