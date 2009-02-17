@@ -622,10 +622,10 @@ function updateStrategies(data,evnt,strategy){
 	if(evnt == "Save" || (strategy.isSaved == "true" && evnt != "Open")){
 		$("div#Strategies div#diagram_" + strategy.frontId).replaceWith(displayModel(stratId));
 	}
-	else if(isLoaded(stratId) && evnt != "Open"){
+	else if(isLoaded(getStrategy(stratId).backId) && evnt != "Open"){
 		$("div#Strategies div#diagram_" + stratId).replaceWith(displayModel(stratId));
 	}else{
-		$("div#Strategies").append(displayModel(stratId));
+		$("div#Strategies").prepend(displayModel(stratId));
 	}
 	return stratId;
 }
