@@ -82,29 +82,6 @@
    <li><a id="search_history_tab" title="Summary of all your strategies. From here you can open/close strategies on the graphical display by clicking on the 'eye'." onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
 </ul>
 
-<c:if test="${wdkUser == null || wdkUser.guest == true}">
-
-<!--
-	<site:requestURL/>
-
-	<c:url value="login.jsp" var="loginUrl">
-           <c:param name="originUrl" value="${originRequestUrl}"/> 
-        </c:url>
-	<c:url var="loginJsp" value='login.jsp'/>
-        <c:url value="${loginUrl}" var="loginUrl">
-           <c:param name="refererUrl" value="${loginJsp}"/> 
-        </c:url>
--->
-	<div style="padding:3px; font-weight:bold; background-color:white; position:absolute; top:153px; left:400px;">
-	Please, 
-		<a href="${loginUrl}" id='login'>login</a>
-               <%--  <site:login/>--%>
-	if you want to save your strategies</div>
-</c:if>
-
-
-
-
 <div id="strategy_results" style="position:absolute;left:-999em">
 
 <%------ if this div is not being used, please clean up ------ ---%>
