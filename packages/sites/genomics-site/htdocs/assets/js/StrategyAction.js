@@ -140,12 +140,12 @@ function displayModel(strat_id){
 				$(div_strat).append(st[1]);
 				strat.Steps[j].isboolean = false;
 			}
-		}
+		} 
 		
 		buttonleft = offset(strat.Steps.length);
 		button = document.createElement('a');
 		dType = $("step#" + strat.Steps[strat.Steps.length - 1].back_step_Id, xmldoc).attr("dataType");
-		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + ")").attr("onclick","this.blur()").addClass("filter_link redbutton");
+		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + "," + strat.Steps[strat.Steps.length-1].back_step_Id + ")").attr("onclick","this.blur()").addClass("filter_link redbutton");
 		$(button).html("<span title='Run a new query (OR select a strategy), and combine (union, intersect) its result with this strategy's result.'>Add Step</span>");
 		$(button).css({ position: "absolute",
 						left: buttonleft + "px",

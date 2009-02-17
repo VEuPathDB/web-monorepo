@@ -202,9 +202,9 @@ function OpenOperationBox(stratId) {
 	$("#query_form div#query_selection").html(ops);
 }
 
-function openFilter(dtype,strat_id){
+function openFilter(dtype,strat_id,step_id){
 	current_Front_Strategy_Id = strat_id;
-	var url = "filter_page.jsp?dataType=" + dtype;
+	var url = "filter_page.jsp?dataType=" + dtype + "&prevStepNum=" + step_id;
 	$.ajax({
 		url: url,
 		dataType: "html",
@@ -215,6 +215,10 @@ function openFilter(dtype,strat_id){
 				original_Query_Form_Text = $("#query_form").parent().html();
 				OpenOperationBox(strat_id);
 				return false;
+			});
+			$("#continue_button_transforms", filter).click(function(){
+				original_Query_Form_Text = $("#query_form").parent().html();
+				getQueryForm($("#query_form select#transforms").val());
 			});
 			$("div#Strategies").append(filter);
 			$("#query_form").jqDrag(".dragHandle");
