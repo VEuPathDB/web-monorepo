@@ -44,8 +44,10 @@
         <c:set value="${step.answerValue.question.paramsMap}" var="displayParams"/>
         <c:set value="${step.answerValue.questionUrlParams}" var="urlParams"/>
         <c:set value="${step.isBoolean}" var="isboolean" />
-        <c:set value="${step.filtered}" var="isFiltered" />
+        <c:set value="${step.isTransform}" var="isTransform" />
+		<c:set value="${step.filtered}" var="isFiltered" />
 		<c:set value="${step.filterDisplayName}" var="filterName" />
+		
         <c:if test="${isboolean}">
         <c:set value="${step.childStep.stepId}" var="child_id" />
         <c:set value="${step.childStep.answerId}" var="child_answerId" />
@@ -62,7 +64,8 @@
         <c:set value="${step.childStep.answerValue.question.paramsMap}" var="displayParams"/>
         <c:set value="${step.childStep.answerValue.questionUrlParams}" var="urlParams"/>
         <c:set value="${step.childStep.isBoolean}" var="child_isboolean" />
-        <c:set value="${step.childStep.filtered}" var="child_isFiltered" />
+        <c:set value="${step.childStep.isTransform}" var="child_isTransform" />
+		<c:set value="${step.childStep.filtered}" var="child_isFiltered" />
         <c:set value="${step.childStep.filterDisplayName}" var="child_filterName" />
 		</c:if>
     
@@ -78,6 +81,7 @@
                              questionName="${questionName}"
                              displayName="${displayName}"
                              isboolean="${isboolean}"
+							 istransform="${isTransform}"
                              operation="${step.operation}"
                              filtered="${isFiltered}">
 							<filterName><![CDATA[${filterName}]]></filterName>
@@ -93,6 +97,7 @@
                                  questionName="${child_questionName}"
                                  displayName="${child_displayName}"
                                  isboolean="${child_isboolean}"
+								 istransform="${child_isTransform}"
                                  filtered="${child_isFiltered}">
 								<filterName><![CDATA[${child_filterName}]]></filterName>
                                     <c:choose>
@@ -153,6 +158,7 @@
                              questionName="${questionName}"
                              displayName="${displayName}"
                              isboolean="${isboolean}"
+							 istransform="${isTransform}"
                              filtered="${isFiltered}">
 							<filterName><![CDATA[${filterName}]]></filterName>
                                 <c:choose>
