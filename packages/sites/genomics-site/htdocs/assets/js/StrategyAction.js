@@ -641,7 +641,7 @@ function updateStrategies(data,evnt,strategy){
 	if(evnt == "Save" || (strategy.isSaved == "true" && evnt != "Open")){
 		$("div#Strategies div#diagram_" + strategy.frontId).replaceWith(displayModel(stratId));
 	}
-	else if(isLoaded(getStrategy(stratId).backId) && evnt != "Open"){
+	else if(isLoaded(getStrategy(stratId).backId) != -1 && evnt != "Open"){
 		$("div#Strategies div#diagram_" + stratId).replaceWith(displayModel(stratId));
 	}else{
 		$("div#Strategies").prepend(displayModel(stratId));
