@@ -197,6 +197,7 @@ function createStep(ele, step, isLast){
 	var cl ="";
 	var inner = "";
 	if(step.back_boolean_Id == ""){
+	  if(!step.isTransform){  // CREATES THE FIRST STEP IN THE STRATEGY
 		div_id = "step_" + id + "_sub";
 		left = -1;
 		cl = "box venn row2 col1 size1 arrowgrey";
@@ -218,8 +219,32 @@ function createStep(ele, step, isLast){
 			"		</ul>";
 		}
 		stepNumber = document.createElement('span');
-		$(stepNumber).addClass('stepNumber').css({ left: "3.7em"}).text("Step " + (id + 1));
-	}else if(step.isboolean){
+		$(stepNumber).addClass('stepNumber').css({ left: "44px"}).text("Step " + (id + 1));
+	  }else{  // CREATES STEP BOXES FOR TRANSFORM STEPS
+		div_id = "step_" + id + "_sub";
+		left = offset(id) + 32;
+		cl = "box row2 size1 arrowgrey";
+		inner = ""+
+			"		<h3>"+
+			"			<a title='Edit the step.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
+							usedName +
+			"				<span class='collapsible' style='display: none;'>" + collapsible + "</span>"+
+			"			</a>"+ 
+			"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
+			"			<div class='crumb_details'></div>"+
+			"		</h3>"+
+			"		<h6 class='resultCount'><a title='Show results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
+			 filterImg;
+		if(!isLast){
+			inner = inner + 
+			"		<ul>"+
+			"			<li><img class='rightarrow1' src='/assets/images/arrow_chain_right3.png' alt='input into'></li>"+
+			"		</ul>";
+		}
+		stepNumber = document.createElement('span');
+		$(stepNumber).addClass('stepNumber').css({ left: (left + 30) + "px"}).text("Step " + (id + 1));
+	  }
+	}else if(step.isboolean){ // CREATE THE BOOLEAN STEP BOX
 		div_id = "step_" + id;
 		left = offset(id);	
 		cl = "venn row2 size2 operation " + operation;
@@ -238,7 +263,7 @@ function createStep(ele, step, isLast){
 		}
 		stepNumber = document.createElement('span');
 		$(stepNumber).addClass('stepNumber').css({ left: (left + 30) + "px"}).text("Step " + (id + 1));
-	}else{
+	}else{ // CREATE THE CHILD STEP OF THE BOOLEAN ... THE TOP ROW BOX FOR THIS STEP
 		div_id = "step_" + id + "_sub";
 		left = offset(id);
 		cl = "box row1 size1 arrowgrey";

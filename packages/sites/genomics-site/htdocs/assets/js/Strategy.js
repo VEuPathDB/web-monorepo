@@ -24,6 +24,8 @@ Strategy.prototype.initSteps = function(steps){
 			if(this.parentNode.nodeName == "step")
 				bbid = $(this).parent().attr("id");
 			st = new Step(f_index, $(this).attr("id"), bbid, "", $(this).attr("answerId"));
+			if($(this).attr("istransform") == "true")
+				st.isTransform = true;
 		}else{
 			s = $(this).children("step");
 			if(s.length > 0){
@@ -72,6 +74,7 @@ function Step(frontId, back_step_Id, back_boolean_Id, child_Strat_Id, answerId){
 }
 Step.prototype.isboolean = false;
 Step.prototype.isSelected = false;
+Step.prototype.isTransform = false;
 Step.prototype.isFiltered = false;
 
 /****************************************************
