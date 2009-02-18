@@ -64,6 +64,13 @@ ${wdkRecord.attributes['service_name'].value}
 <p>
 <b>Available DBLinks</b>: <site:dataTable tblName="AllDbLinks"/>
 </p>
+<p>
+<b><a href="javascript:javascript:void(0)" 
+onclick="window.open('<c:url value="/admin/activeSql.jsp"/>', 
+'sqlMonitor${wdkRecord.attributes['service_name'].value}', 
+'toolbar=0,status=0,location=0,menubar=0,height=600,width=800,scrollbars=yes')">
+Active SQL Queries <font size='+1'>&#10063;</font></a></b>
+</p>
 </c:otherwise>
 </c:choose>
 
