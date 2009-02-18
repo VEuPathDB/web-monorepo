@@ -268,7 +268,6 @@ function close(ele){
 
 function closeAll(){
 	$("#query_form").parent().remove();
-	$("div[id$=_tip]").remove();
 	$(".filter_link").css({opacity:"1.0",}).attr("href")
 }
 

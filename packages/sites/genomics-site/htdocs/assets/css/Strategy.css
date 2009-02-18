@@ -213,6 +213,14 @@
 		width: 92px;
 	 }
 	
+	.rightarrow3 {
+			position: absolute;
+			left: 54px;
+			top: -3.2em;
+			z-index: 1;
+			height: 11px;
+			width: 47px;
+		 }
 		
    .downarrow {
 		position: absolute;

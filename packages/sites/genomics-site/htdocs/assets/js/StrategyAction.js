@@ -103,14 +103,14 @@ function findStep(stratId, fId){
 	return -1;
 }
 
-
+var div_strat = null;
 function displayModel(strat_id){
 	if(strats){
 	  $("#strat-instructions").remove();
 	  var strat = null;
 	  strat = getStrategy(strat_id);
 	  if(strat.isDisplay == true){
-		var div_strat = document.createElement("div");
+		 div_strat = document.createElement("div");
 		$(div_strat).attr("id","diagram_" + strat.frontId).addClass("diagram");
 		if(strat.subStratOf != null)
 			$(div_strat).addClass("sub_diagram").css({"margin-left":"40px"});
@@ -142,10 +142,13 @@ function displayModel(strat_id){
 			}
 		} 
 		
-		buttonleft = offset(strat.Steps.length);
+		buttonleft = offset(null,strat.Steps.length,strat.frontId);
 		button = document.createElement('a');
+		lsn = strat.Steps[strat.Steps.length-1].back_boolean_Id;
+		if(lsn == "")
+			lsn = strat.Steps[strat.Steps.length-1].back_step_Id;	
 		dType = $("step#" + strat.Steps[strat.Steps.length - 1].back_step_Id, xmldoc).attr("dataType");
-		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + "," + strat.Steps[strat.Steps.length-1].back_step_Id + ")").attr("onclick","this.blur()").addClass("filter_link redbutton");
+		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + "," + lsn + ")").attr("onclick","this.blur()").addClass("filter_link redbutton");
 		$(button).html("<span title='Run a new query (OR select a strategy), and combine (union, intersect) its result with this strategy's result.'>Add Step</span>");
 		$(button).css({ position: "absolute",
 						left: buttonleft + "px",
@@ -157,10 +160,43 @@ function displayModel(strat_id){
 	return null;
 }
 
-function offset(index){
-	//	return (index * 137) - (index - 1);
-		return (index * 127) - (index - 1);
+
+var transCount = 0;
+function offset(ele,index, m){
+	if(ele == null){
+		return index * 130;
+	}
+	if(ele[0].parentNode.nodeName == "step")
+		ele = $(ele).parent();
+	stepid = $(ele).prev().attr("id");
+	s = getStrategy(m);
+	psfid = getStepFromBackId(s.backId, stepid).frontId;
+	stepdiv = $("div[id^='step_"+psfid+"_sub']", div_strat);
+	cL = stepdiv.css("left");
+	cL = parseInt(cL.substring(0, cL.indexOf("px")));
+	
+	if($(ele).attr("istransform") == "true"){
+		if($(ele).prev().attr("istransform") == "true"){
+			cL = cL + 147; // TRANSFORM TO TRANSFORM
+		}else if($(ele).prev().attr("isboolean") == "true"){
+				cL = cL + 113; //BOOLEAN TO TRANSFORM
+		}else{
+				cL = cL + 127 //FIRST TO TRANSFORM
+		}
+	}else if($(ele).attr("isboolean") == "true"){
+		if($(ele).prev().attr("istransform") == "true"){
+			cL = cL + 114; //BOOLEAN TO TRANSFORM
+		}else if($(ele).prev().attr("isboolean") == "true"){
+			cL = cL + 125; //BOOLEAN TO BOOLEAN
+		}else{
+			cL = cL + 114 // FIRST TO BOOLEAN
+		}
+	}
+	return cL;
+//	m = 127;
+//	return (index * m);// - (index - 1);
 }
+
 
 function createStep(ele, step, isLast){
 	var strategyId = "";
@@ -168,6 +204,7 @@ function createStep(ele, step, isLast){
 		strategyId = isLoaded($(ele).parent().attr("id"));
 	else
 		strategyId = isLoaded($(ele).parent().parent().attr("id"));
+	m = strategyId;
 	var name = $(ele).attr("name");
 	var customName = $(ele).attr("customName");
 	var shortName = $(ele).attr("shortName");
@@ -200,7 +237,7 @@ function createStep(ele, step, isLast){
 	  if(!step.isTransform){  // CREATES THE FIRST STEP IN THE STRATEGY
 		div_id = "step_" + id + "_sub";
 		left = -1;
-		cl = "box venn row2 col1 size1 arrowgrey";
+		cl = "box venn row2 size1 arrowgrey";
 		inner = ""+
 			"		<h3>"+
 			"			<a title='Edit the step.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
@@ -221,8 +258,9 @@ function createStep(ele, step, isLast){
 		stepNumber = document.createElement('span');
 		$(stepNumber).addClass('stepNumber').css({ left: "44px"}).text("Step " + (id + 1));
 	  }else{  // CREATES STEP BOXES FOR TRANSFORM STEPS
+		transCount++;
 		div_id = "step_" + id + "_sub";
-		left = offset(id) + 32;
+		left = offset(ele,index,0);
 		cl = "box row2 size1 arrowgrey";
 		inner = ""+
 			"		<h3>"+
@@ -246,7 +284,7 @@ function createStep(ele, step, isLast){
 	  }
 	}else if(step.isboolean){ // CREATE THE BOOLEAN STEP BOX
 		div_id = "step_" + id;
-		left = offset(id);	
+		left = offset(ele,index,0);
 		cl = "venn row2 size2 operation " + operation;
 		inner = ""+
 			"			<a class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
@@ -256,16 +294,23 @@ function createStep(ele, step, isLast){
 			"				<a title='Show results in the area below.' class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>" + resultSize + "&nbsp;" + dataType + "</a>"+
 			"			</h6>" + filterImg;
 		if(!isLast){
-			inner = inner + 
-			"			<ul>"+
-			"				<li><img class='rightarrow2' src='/assets/images/arrow_chain_right4.png' alt='input into'></li>"+
-			"			</ul>";
+			if($(ele).next().attr("istransform") == "true"){
+				inner = inner + 
+				"			<ul>"+
+				"				<li><img class='rightarrow3' src='/assets/images/arrow_chain_right3.png' alt='input into'></li>"+
+				"			</ul>";
+			}else{
+				inner = inner + 
+				"			<ul>"+
+				"				<li><img class='rightarrow2' src='/assets/images/arrow_chain_right4.png' alt='input into'></li>"+
+				"			</ul>";
+			}
 		}
 		stepNumber = document.createElement('span');
 		$(stepNumber).addClass('stepNumber').css({ left: (left + 30) + "px"}).text("Step " + (id + 1));
 	}else{ // CREATE THE CHILD STEP OF THE BOOLEAN ... THE TOP ROW BOX FOR THIS STEP
 		div_id = "step_" + id + "_sub";
-		left = offset(id);
+		left = offset(ele,index,0);
 		cl = "box row1 size1 arrowgrey";
 		inner = ""+
 			"		<h3>"+
@@ -290,6 +335,7 @@ function createStep(ele, step, isLast){
 		$(div_s).css({ left: left + "px"});
 	}else{
 		$(div_s).attr("id", div_id).addClass(cl).html(inner);
+		$(div_s).css({ left: "12px"});
 	}
 	$(".crumb_details", div_s).replaceWith(createDetails(ele, strategyId, step));
 	divs.push(div_s);
@@ -698,10 +744,6 @@ function closeStrategy(stratId){
 		dataType:"html",
 		success: function(data){
 			hideStrat(stratId);
-			if($("#Strategies div").length == 0){
-				showInstructions();
-				NewResults(-1);
-			}
 			update_hist = true;
 		},
 		error: function(data, msg, e){
@@ -719,6 +761,10 @@ function hideStrat(id){
 		}
 	}
 	$("#diagram_" + id).hide("slow").remove();
+	if($("#Strategies div").length == 0){
+		showInstructions();
+		NewResults(-1);
+	}
 }
 
 function saveStrategy(stratId, checkName, fromHist){
