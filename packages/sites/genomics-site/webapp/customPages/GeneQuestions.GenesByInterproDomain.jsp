@@ -160,7 +160,7 @@
      <c:if test="${(pNam != 'organism' && wdkModel.displayName eq 'ApiDB') || wdkModel.displayName ne 'ApiDB' }">
           <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>
-              <a href="#" rel="htmltooltip">
+              <a href="#" id="help_${pnam}" rel="htmltooltip">
               <img src="/assets/images/help.png" border="0" alt="Help"></a>
           </td>
       </c:if>
@@ -218,7 +218,7 @@
    <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
 
    <c:if test="${!isHidden}">
-        <div class="htmltooltip" id="help_${pNam}">${qP.help}</div>
+        <div class="htmltooltip" id="help_${pNam}_tip">${qP.help}</div>
    </c:if>     
 </c:forEach>
 

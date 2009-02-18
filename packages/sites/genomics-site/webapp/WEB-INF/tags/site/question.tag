@@ -167,7 +167,7 @@
                     <td valign="top" width="50" nowrap>
                         <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                         <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-                        <a class="help_link" href="#" rel="htmltooltip">
+                        <a id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">
                         	<img src="/assets/images/help.png" border="0" alt="Help">
 						</a>
                     </td>
@@ -212,7 +212,7 @@
 
             <c:if test="${!isHidden}">
                     <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
-            	        <div class="htmltooltip" id="help_${pNam}">${qP.help}</div>
+            	        <div class="htmltooltip" id="help_${pNam}_tip">${qP.help}</div>
                     </c:if>
             </c:if>
         

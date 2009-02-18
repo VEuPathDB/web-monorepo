@@ -5,10 +5,10 @@ var htmltooltip={
 	tipclass: 'htmltooltip',
 	fadeeffect: [true, 500],
 	anchors: [],
-	tooltips: [], //array to contain references to all tooltip DIVs on the page
+	tooltips: new Object, //array to contain references to all tooltip DIVs on the page
 
-	positiontip:function($, tipindex, e){
-		var anchor=this.anchors[tipindex]
+	positiontip:function($, ancindex, tipindex, e){
+		var anchor=this.anchors[ancindex]
 		var tooltip=this.tooltips[tipindex]
 		var scrollLeft=window.pageXOffset? window.pageXOffset : this.iebody.scrollLeft
 		var scrollTop=window.pageYOffset? window.pageYOffset : this.iebody.scrollTop
@@ -23,53 +23,54 @@ var htmltooltip={
 
 	showtip:function($, tipindex, e){
 		var tooltip=this.tooltips[tipindex]
-		if (this.fadeeffect[0])
-			$(tooltip).hide().fadeIn(this.fadeeffect[1])
-		else
+		//if (this.fadeeffect[0])
+		//	$(tooltip).hide().fadeIn(this.fadeeffect[1])
+		//else
 			$(tooltip).show()
 	},
 
 	hidetip:function($, tipindex, e){
 		var tooltip=this.tooltips[tipindex]
-		if (this.fadeeffect[0])
-			$(tooltip).fadeOut(this.fadeeffect[1])
-		else
+		//if (this.fadeeffect[0])
+		//	$(tooltip).fadeOut(this.fadeeffect[1])
+		//else
 			$(tooltip).hide()	
 	},
 
 	updateanchordimensions:function($){
-		var $anchors=$('*[@rel="'+htmltooltip.tipclass+'"]')
+		var $anchors=$('*[@rel="'+htmltooltip.tipclass+'"]');
 		$anchors.each(function(index){
-			this.dimensions={w:this.offsetWidth, h:this.offsetHeight, offsetx:$(this).offset().left, offsety:$(this).offset().top}
-		})
+			this.dimensions={w:this.offsetWidth, h:this.offsetHeight, offsetx:$(this).offset().left, offsety:$(this).offset().top};
+		});
 	},
 
 	render:function(){
 		jQuery(document).ready(function($){
 			htmltooltip.iebody=(document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
-			var $anchors=$('*[@rel="'+htmltooltip.tipclass+'"]')
-			var $tooltips=$('div[@class="'+htmltooltip.tipclass+'"]')
+			var $anchors=$('*[@rel="'+htmltooltip.tipclass+'"]');
 			$anchors.each(function(index){ //find all links with "title=htmltooltip" declaration
-				this.dimensions={w:this.offsetWidth, h:this.offsetHeight, offsetx:$(this).offset().left, offsety:$(this).offset().top} //store anchor dimensions
-				this.tippos=index+' pos' //store index of corresponding tooltip
-				var tooltip=$tooltips.eq(index).get(0) //ref corresponding tooltip
+				this.dimensions={w:this.offsetWidth, h:this.offsetHeight, offsetx:$(this).offset().left, offsety:$(this).offset().top}; //store anchor dimensions
+				var ancpos=$(this).attr('id'); //store index of corresponding tooltip
+				this.tippos=ancpos+'_tip';
+				var tooltip=$('#'+this.tippos+'.'+htmltooltip.tipclass).get(0); //ref corresponding tooltip
 				if (tooltip==null) //if no corresponding tooltip found
-					return //exist
-				tooltip.dimensions={w:tooltip.offsetWidth, h:tooltip.offsetHeight}
-				$(tooltip).remove().appendTo('body') //add tooltip to end of BODY for easier positioning
-				htmltooltip.tooltips.push(tooltip) //store reference to each tooltip
-				htmltooltip.anchors.push(this) //store reference to each anchor
-				var $anchor=$(this)
+					return; //exist
+				tooltip.dimensions={w:tooltip.offsetWidth, h:tooltip.offsetHeight};
+				$(tooltip).remove().appendTo('body'); //add tooltip to end of BODY for easier positioning
+				htmltooltip.tooltips[this.tippos]=tooltip; //store reference to each tooltip
+				htmltooltip.anchors[ancpos]=this;
+				//htmltooltip.anchors.push(this); //store reference to each anchor
+				var $anchor=$(this);
 				$anchor.hover(
 					function(e){ //onMouseover element
-						htmltooltip.positiontip($, parseInt(this.tippos), e)
-						htmltooltip.showtip($, parseInt(this.tippos), e)
+						htmltooltip.updateanchordimensions($);
+						htmltooltip.positiontip($, ancpos, this.tippos, e);
+						htmltooltip.showtip($, this.tippos, e);
 					},
 					function(e){ //onMouseout element
-						htmltooltip.hidetip($, parseInt(this.tippos), e)
+						htmltooltip.hidetip($, this.tippos, e);
 					}
 				)
-				$(window).bind("resize", function(){htmltooltip.updateanchordimensions($)})
 			})
 		})
 	}

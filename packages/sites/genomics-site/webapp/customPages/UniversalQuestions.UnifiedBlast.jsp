@@ -124,7 +124,7 @@
 
       <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
       <td>
-          <a href="#" rel="htmltooltip">
+          <a href="#" id="help_${pNam}" rel="htmltooltip">
           <img src="/assets/images/help.png" border="0" alt="Help"></a>
       </td>
   </tr>
@@ -132,11 +132,12 @@
 
 
 <c:forEach items="${qParams}" var="qP">
+        <c:set var="pNam" value="${qP.name}" />
         <c:set var="isHidden" value="${qP.isVisible == false}"/>
         <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
 
         <c:if test="${!isHidden}">
-          <div class="htmltooltip" id="help_${pNam}">${qP.help}</div>
+          <div class="htmltooltip" id="help_${pNam}_tip">${qP.help}</div>
         </c:if>
 </c:forEach>
 
