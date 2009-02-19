@@ -302,7 +302,7 @@ function createStep(ele, step, isLast){
 		left = offset(ele,index,0);
 		cl = "venn row2 size2 operation " + operation;
 		inner = ""+
-			"			<a class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
+			"			<a title='Click on step name above, to modify this boolean operation.'  class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
 			"				<img src='/assets/images/transparent1.gif'>"+
 			"			</a>"+
 			"			<h6 class='resultCount'>"+
