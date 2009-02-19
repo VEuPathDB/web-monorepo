@@ -34,7 +34,7 @@
     <th scope="col" style="width: 15px;">&nbsp;</th>
     <th scope="col"><c:if test="${prefix != null}">${prefix}&nbsp;</c:if>Strategies</th>
     <th scope="col" style="width: 10em; text-align:right;">&nbsp;</th>
-    <th scope="col" style="width: 10em">&nbsp;</th>
+    <th scope="col" style="width: 15em">&nbsp;</th>
     <th scope="col" style="width: 5em">Created</th>
     <th scope="col" style="width: 5em">Modified</th>
     <th scope="col" style="width: 5em">Version</th>
@@ -74,28 +74,37 @@
       <c:set var="dispNam" value="${strategy.name}"/>
       <td>
         <div id="text_${strategyId}">
-          <span onclick="enableRename('${strategyId}', '${strategy.name}')">${dispNam}</span>
+          <span onclick="enableRename('${strategyId}', '${strategy.name}', true)">${dispNam}</span><c:if test="${!strategy.isSaved}">*</c:if>
         </div>
         <div id="name_${strategyId}" style="display:none"></div>          
       </td>
       <td align="right">
         <div id="activate_${strategyId}">
-          <input type='button' value='Save As' onclick="enableRename('${strategyId}', '${strategy.savedName}')" />
+          <input type='button' value='Rename' onclick="enableRename('${strategyId}', '${strategy.name}', true)" />
         </div>       
         <div id="input_${strategyId}" style="display:none"></div>
       </td>
       <td nowrap>
+         <c:choose>
+           <c:when test="${wdkUser.guest}">
+             <input type='button' value='Save As' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
+           </c:when>
+           <c:otherwise>
+             <input type='button' value='Save As' onclick="showHistSave(this, '${strategyId}')" />
+           </c:otherwise>
+         </c:choose>
+         <c:choose>
+           <c:when test="${wdkUser.guest}">
+             <input type='button' value='Share' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
+           </c:when>
+           <c:when test="${strategy.isSaved}">
+             <input type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
+           </c:when>
+           <c:otherwise>
+             <input type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
+           </c:otherwise>
+         </c:choose>
          <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
-         <input type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
-         <div class='modal_div export_link' id="hist_share_${strategyId}" style="right:15em;">
-           <span class='dragHandle'>
-             <a class='close_window' href='javascript:closeModal()'>
-	       <img alt='Close' src='/assets/images/Close-X-box.png'/>
-             </a>
-           </span>
-           <p>Paste link in email:</p>
-           <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
-         </div>
       </td>
       <td nowrap>${strategy.createdTimeFormatted}</td>
       <td nowrap>${strategy.lastRunTimeFormatted}</td>

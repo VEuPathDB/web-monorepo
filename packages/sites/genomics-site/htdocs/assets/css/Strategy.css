@@ -500,11 +500,17 @@ span.closeStrategy {
 	width: 100%;
 }
 
-.diagram .save_strat {
+.save_strat, .diagram .save_strat {
 	position: absolute;
 	right: 0;
 	top: 5em;
 	width: 25em;
+}
+
+.save_strat .dragHandle .modal_name {
+        margin:0;
+        padding:0;
+        position:absolute;
 }
 
 /* First selector is for history page,

@@ -473,7 +473,8 @@ function createParameters(params){
 function createStrategyName(ele, strat){
 	var id = strat.backId;
 	var name = $(ele).attr("name");
-	if ($(ele).attr("saved") == 'false') name = name + "*";
+	var append = '';
+	if ($(ele).attr("saved") == 'false') append = "<span id='append'>*</span>";
 	var exportURL = exportBaseURL + strat.importId;
 
 	var share = "";
@@ -488,20 +489,22 @@ function createStrategyName(ele, strat){
 		"<p>Paste link in email:</p>" +
 		"<input type='text' size=" + exportURL.length + " value=" + exportURL + " />" +
 		"</div>";
+	}else if(guestUser == 'true'){
+		share = "<a title='Please login so you can SAVE and then SHARE your strategy.' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>SHARE</b></a>";
 	}else{
-		share = "<b color='gray' title='Save this strategy so you can share it (email its URL).'>SHARE</b>";
+		share = "<a title='SAVE this strategy so you can SHARE it (email its URL).' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>SHARE</b></a>";
 	}
 
 	var save = "";
 	if (guestUser == 'true') {
-		save = "<b color='gray' title='Please login so you can SAVE (make a snapshot) your strategy.'>SAVE AS</b>";
+		save = "<a title='Please login so you can SAVE (make a snapshot) your strategy.' class='save_strat_link' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>SAVE AS</b></a>";
 	}
 	else {
 		save = "<a title='A saved strategy is like a snapshot, cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>SAVE AS</b></a>" +
 		"<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
 		"<span class='dragHandle'>" +
 		"<div class='modal_name'>"+
-		"<h2>Save As/Rename</h2>" + 
+		"<h2>Save As</h2>" + 
 		"</div>"+ 
 		"<a class='close_window' href='javascript:closeModal()'>"+
 		"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
@@ -518,7 +521,11 @@ function createStrategyName(ele, strat){
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
-		$(div_sn).html("<span  title='Name of this strategy. The (*) indicates this strategy is NOT saved. You can rename it any time.'>" + name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
+		$(div_sn).html("<span onclick=\"enableRename('" + id + "', '" + name + "')\" title='Name of this strategy. The (*) indicates this strategy is NOT saved. You can rename it any time.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
+        "<form id='rename' style='display: none;' action=\"javascript:renameStrategy('" + id  + "', true, false)\">" +
+        "<input type='hidden' value='" + id + "' name='strategy'/>" +
+        "<input id='name' type='text' style='margin-right: 4px; width: 100%;' value='" + name + "' maxlength='2000' name='name'/>" +
+        "</form>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" + 
 	save +
@@ -813,7 +820,7 @@ function hideStrat(id){
 
 function saveStrategy(stratId, checkName, fromHist){
 	var saveForm = $("div#save_strat_div_" + stratId);
-	if (fromHist) saveForm = $("#browse_rename");
+	if (fromHist) saveForm = $("#hist_save_" + stratId);
 	var name = $("input[name='name']",saveForm).attr("value");
 	var strategy = $("input[name='strategy']",saveForm).attr("value");
 	var url="renameStrategy.do?strategy=";
@@ -841,6 +848,46 @@ function saveStrategy(stratId, checkName, fromHist){
 				if (overwrite) {
 					saveStrategy(stratId, false);
 				}
+			}
+		},
+		error: function(data, msg, e){
+			alert("ERROR \n "+ msg + "\n" + e);
+		}
+	});
+}
+
+function renameStrategy(stratId, checkName, fromHist){
+	var strat = getStrategyFromBackId(stratId);
+	var renameForm = $("div#diagram_" + strat.frontId + " #rename");
+	if (fromHist) renameForm = $("#browse_rename");
+	var name = $("input[name='name']",renameForm).attr("value");
+	var strategy = $("input[name='strategy']",renameForm).attr("value");
+	var url="renameStrategy.do?strategy=";
+	url = url + strategy + "&name=" + name + "&checkName=" + checkName;
+	if (fromHist) url = url + "&showHistory=true";
+	$.ajax({
+		url: url,
+		dataType: "xml",
+		success: function(data){
+			// reload strategy panel
+			var kids = $("root", data).children("strategy");
+			if (kids.length > 0) {
+				var selectedBox = $("#Strategies div.selected");
+	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
+				if (!fromHist) renameForm.hide();
+				removeStrategyDivs(stratId);
+				updateStrategies(data, "Save", strat);
+				selectedBox.find(".resultCount a").click();
+				update_hist = true;
+				if (fromHist) updateHistory();
+			}
+			else{
+				var msg = '';
+				if (strat.isSaved)
+					msg = "A saved strategy already exists with the name '" + name + ".'  You must use Save As to overwrite the existing strategy.";
+				else
+					msg = "An unsaved strategy already exists with the name '" + name + ".'  You must Delete or Save the existing strategy in order to name this strategy '" + name + ".'";
+				alert(msg);
 			}
 		},
 		error: function(data, msg, e){

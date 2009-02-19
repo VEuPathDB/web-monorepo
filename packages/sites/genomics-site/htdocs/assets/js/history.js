@@ -46,6 +46,13 @@ function toggleSteps(strat) {
 	}
 }
 
+function showHistSave(ele, stratId) {
+       var btnOffset = $(ele).offset();
+       var prntOffset = $("div#search_history").offset();
+       $("div#hist_save_" + stratId).css("top", btnOffset.top - prntOffset.top + "px");
+       $("div#hist_save_" + stratId).show();
+}
+
 function showHistShare(ele, stratId) {
        var btnOffset = $(ele).offset();
        var prntOffset = $("div#search_history").offset();
@@ -126,28 +133,37 @@ function deleteStrategies(url) {
 
 var currentStrategyId = 0;
 
-function enableRename(stratId, name) {
-   // close the previous one
-   disableRename();
-   
-   currentStrategyId = stratId;
-   var form = document.getElementById('browse_rename');
-   form.action = "javascript:saveStrategy('" + stratId + "', true, true)";
-   var button = document.getElementById('activate_' + stratId);
-   button.style.display = 'none';
-   var text = document.getElementById('text_' + stratId);
-   text.style.display = 'none';
-   var nameBox = document.getElementById('name_' + stratId);
-   nameBox.innerHTML = "<input name='strategy' type='hidden' value='" + stratId + "' />"
-                  + "<input id='name' name='name' type='text' maxLength='2000' value='" + name + "' style='margin-right:4px;width:100%' />" 
-   nameBox.style.display='block';
-   var input = document.getElementById('input_' + stratId);
-   input.innerHTML = "<input type='submit' value='Save' />"
-                   + "<input type='reset' value='Cancel' onclick='disableRename()' />";
-   input.style.display='block';
-   nameBox = document.getElementById('name');
-   nameBox.select();
-   nameBox.focus();
+function enableRename(stratId, name, fromHist) {
+	if (fromHist) {
+		// close the previous one
+		disableRename();
+		currentStrategyId = stratId;
+		var form = document.getElementById('browse_rename');
+		form.action = "javascript:renameStrategy('" + stratId + "', true, true)";
+		var button = document.getElementById('activate_' + stratId);
+		button.style.display = 'none';
+		var text = document.getElementById('text_' + stratId);
+		text.style.display = 'none';
+		var nameBox = document.getElementById('name_' + stratId);
+		nameBox.innerHTML = "<input name='strategy' type='hidden' value='" + stratId + "' />"
+		+ "<input id='name' name='name' type='text' maxLength='2000' value='" + name + "' style='margin-right:4px;width:100%' />" 
+		nameBox.style.display='block';
+		var input = document.getElementById('input_' + stratId);
+		input.innerHTML = "<input type='submit' value='Rename' />"
+		+ "<input type='reset' value='Cancel' onclick='disableRename()' />";
+		input.style.display='block';
+		nameBox = document.getElementById('name');
+		nameBox.select();
+		nameBox.focus();
+	}
+	else {
+		var strat = getStrategyFromBackId(stratId);
+		stratName = $("#diagram_" + strat.frontId + " #strategy_name > span").eq(0);
+		append = $("#diagram_" + strat.frontId + " #append");
+		stratName.hide();
+		append.hide();
+		$("#diagram_" + strat.frontId + " #rename").show();
+	}
 }
 
 function disableRename() {

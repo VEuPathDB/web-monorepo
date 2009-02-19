@@ -130,6 +130,43 @@
 <!-- end of showing strategies grouped by RecordTypes -->
 </form>
 
+<!-- popups for save/rename forms -->
+<c:set var="strategiesMap" value="${user.strategiesByCategory}"/>
+<c:forEach items="${strategiesMap}" var="strategyEntry">
+  <c:set var="strategies" value="${strategyEntry.value}"/>
+  <c:forEach items="${strategies}" var="strategy">
+    <c:if test="${strategy.isSaved}">
+    <div class='modal_div export_link' id="hist_share_${strategy.strategyId}" style="right:15em;">
+      <span class='dragHandle'>
+        <a class='close_window' href='javascript:closeModal()'>
+          <img alt='Close' src='/assets/images/Close-X-box.png'/>
+        </a>
+      </span>
+      <p>Paste link in email:</p>
+      <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
+    </div>
+    </c:if>
+    <c:if test="${!wdkUser.guest}">
+    <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
+      <span class='dragHandle'>
+        <div class="modal_name">
+          <h2>Save As</h2>
+        </div>
+        <a class='close_window' href='javascript:closeModal()'>
+          <img alt='Close' src='/assets/images/Close-X-box.png'/>
+        </a>
+      </span>
+      <form onsubmit='return validateSaveForm(this);' action="javascript:saveStrategy('${strategy.strategyId}', true)">
+        <input type='hidden' value="${strategy.strategyId}" name='strategy'/>
+        <input type='text' value="${strategy.savedName}" name='name'/>
+        <input type='submit' value='Save'/>
+      </form>
+    </div>
+    </c:if>
+  </c:forEach>
+</c:forEach>
+
+
 <%-- invalid strategies, if any --%>
 <c:if test="${fn:length(invalidStrategies) > 0}">
   <c:choose>
