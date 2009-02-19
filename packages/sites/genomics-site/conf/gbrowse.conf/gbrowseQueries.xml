@@ -72,12 +72,39 @@ WHERE gs.lowercase_source_id
 </module>
 
   <module name="Segment.pm">
-      <sqlQuery>
-      <name></name>
-      <description></description>
+    <sqlQuery>
+      <name>get_sequence</name>
+       <description></description>
+       <sql>
+<![CDATA[
+SELECT ens.sequence 
+FROM   DOTS.NASEQUENCE ens
+WHERE  ens.na_sequence_id = $srcfeature_id
+]]>
+      </sql>
+    </sqlQuery>   
+    <sqlQuery>
+      <name>new:Segment</name>
+      <description>fetch features by their name</description>
       <sql>
+<![CDATA[
+SELECT etn.na_sequence_id srcfeature_id, 
+       1 startm, 
+       etn.length end, 
+       etn.source_id name, 
+       so.term_name type, 
+       ' ' atts
+FROM   dots.NaSequence etn, apidb.SequenceAlias sa, sres.sequenceontology so
+WHERE  etn.source_id = sa.source_id 
+ and so.sequence_ontology_id = etn.sequence_ontology_id
+ and sa.lowercase_source_id = lower('$name') 
+]]>
       </sql>
     </sqlQuery>
+
+
+
+
   </module>
   <module name="Feature.pm">
     <sqlQuery>
