@@ -5,6 +5,15 @@ var init_strat_order = new Array();
 var exportBaseURL;
 var index = 0;
 
+//DISTANCE FIGURES FOR STRATEGY LAYOUT
+var f2b = 114;
+var f2t = 147;
+var b2b = 125;
+var b2t = 114;
+var t2b = 113;
+var t2t = 147;
+// END DISTANCE FIGURES
+
 $(document).ready(function(){
 	if(init_strat_ids.length == 0){
 		showInstructions();
@@ -177,19 +186,19 @@ function offset(ele,index, m){
 	
 	if($(ele).attr("istransform") == "true"){
 		if($(ele).prev().attr("istransform") == "true"){
-			cL = cL + 147; // TRANSFORM TO TRANSFORM
+			cL = cL + t2t; // TRANSFORM TO TRANSFORM
 		}else if($(ele).prev().attr("isboolean") == "true"){
-				cL = cL + 113; //BOOLEAN TO TRANSFORM
+				cL = cL + b2t; //BOOLEAN TO TRANSFORM
 		}else{
-				cL = cL + 127 //FIRST TO TRANSFORM
+				cL = cL + f2t //FIRST TO TRANSFORM
 		}
 	}else if($(ele).attr("isboolean") == "true"){
 		if($(ele).prev().attr("istransform") == "true"){
-			cL = cL + 114; //BOOLEAN TO TRANSFORM
+			cL = cL + t2b; //TRANSFORM TO BOOLEAN
 		}else if($(ele).prev().attr("isboolean") == "true"){
-			cL = cL + 125; //BOOLEAN TO BOOLEAN
+			cL = cL + b2b; //BOOLEAN TO BOOLEAN
 		}else{
-			cL = cL + 114 // FIRST TO BOOLEAN
+			cL = cL + f2b // FIRST TO BOOLEAN
 		}
 	}
 	return cL;
@@ -261,7 +270,7 @@ function createStep(ele, step, isLast){
 		transCount++;
 		div_id = "step_" + id + "_sub";
 		left = offset(ele,index,0);
-		cl = "box row2 size1 arrowgrey";
+		cl = "box venn row2 size1 arrowgrey";
 		inner = ""+
 			"		<h3>"+
 			"			<a title='Edit the step.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
