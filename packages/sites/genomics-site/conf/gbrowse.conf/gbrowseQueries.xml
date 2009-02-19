@@ -1,12 +1,76 @@
 <DAS>
-  <module name="GUS.pm">
-    <sqlQuery>
-      <name></name>
-      <description></description>
-      <sql>
-      </sql>
-    </sqlQuery>
-  </module>
+<module name="GUS.pm"> 
+  <sqlQuery> 
+    <name>get_feature_by_name</name>
+  <description>fetch features by their name</description> 
+    <sql>
+<![CDATA[
+SELECT  
+       ctg_name, feature_id, type, source, name, phase, parent_id,
+       startm, end, strand
+FROM (
+SELECT -- trying to find genes by source_id
+       nal.sequence_source_id ctg_name, 
+       nal.na_feature_id feature_id, 
+       'gene' type, 
+       'annotation' source, 
+       nal.feature_source_id name, 
+       '' phase, 
+       nal.na_sequence_id parent_id, 
+       nal.start_min  startm, 
+       nal.end_max end, 
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand
+FROM   
+       ApiDB.FeatureLocation nal,
+       apidb.GENEALIAS ga
+WHERE  
+       nal.feature_source_id = ga.gene and
+       ga.alias like lower('$name') and
+       nal.is_top_level=1
+UNION
+SELECT   -- trying to find genes by product description ( at least 7 chars)
+       gs.source_id ctg_name,
+       gf.na_feature_id feature_id,
+       'gene' type,
+       'annotation' source,
+       gf.source_id || ':  ' || gf.product name,
+       '' phase,
+       gs.na_sequence_id parent_id,
+       ga.start_min startm,
+       ga.end_max end,
+       decode (ga.strand, 'forward', '+1', 'reverse', '-1', '.') strand
+FROM
+       dots.GeneFeature gf, apidb.GenomicSequence gs, apidb.GeneAttributes ga
+WHERE
+       ga.sequence_id = gs.source_id and
+       gf.source_id = ga.source_id and
+       length('$name') >= 7 and
+       upper(ga.product) like upper('%$name%')
+UNION
+SELECT -- match a sequence source_id
+       gs.source_id ctg_name,
+       gs.na_sequence_id feature_id,
+       so.term_name type,
+       ed.name source, 
+       gs.source_id, 
+       '' phase, 
+       null parent_id, 
+       1 startm, gs.length end, '.' strand
+FROM apidb.GenomicSequence gs, sres.SequenceOntology so,
+     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+     dots.NASequence nas
+WHERE gs.lowercase_source_id
+      in lower('$name')
+  AND gs.sequence_ontology_id = so.sequence_ontology_id
+  AND gs.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND gs.na_sequence_id = nas.na_sequence_id
+)
+]]>
+    </sql>
+  </sqlQuery>   
+</module>
+
   <module name="Segment.pm">
       <sqlQuery>
       <name></name>
