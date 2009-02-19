@@ -20,8 +20,9 @@ a:link, a:visited {
 }
 
 a:hover, a:active {
-	color: #83a6d4;
+	color: #08438F;        /*  #83a6d4; */
 	text-decoration: none;
+	font-weight: bold;
 }
 #wrap {
 	width: 100%;
