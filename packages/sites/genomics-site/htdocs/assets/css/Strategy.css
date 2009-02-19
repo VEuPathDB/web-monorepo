@@ -9,15 +9,46 @@
 	border-color: #ffffff #cccccc #666677 #aaaaaa;
 	border-style: solid;
  	border-width: 2px;
-	font-size:12pt;
+	font-size:11pt;
 	padding:0 5px 0 5px;
   }
 
-  #strat-instructions img {
+  #strat-instructions img#ns-arrow{
 	position:relative;
 	top:-57px;
 	margin: 0 0 -56px 0;
 	height:94px;
+  }
+
+  #strat-instructions-2 {
+	background-color:#EDEDED;
+	border-color:#FFFFFF #CCCCCC #666677 #AAAAAA;
+	border-style:solid;
+	border-width:2px;
+	font-size:11pt;
+	height:100px;
+	left:66px;
+	padding:0 5px;
+	position:absolute;
+	text-align:center;
+	top:10px;
+	width:187px;
+  }
+
+  #strat-instructions-2 img#ns-arrow {
+	height:94px;
+	left:29px;
+	margin:0 0 -79px;
+	position:relative;
+	top:-70px;
+  }
+
+  #strat-instructions-2 img#bs-arrow {
+	height:94px;
+	left:73px;
+	margin:0 0 -79px;
+	position:relative;
+	top:-20px;
   }
 
 /* The main diagram container needs to be positioned relatively, so that

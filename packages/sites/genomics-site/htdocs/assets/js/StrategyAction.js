@@ -55,10 +55,22 @@ function initDisplay(index){
 }
 
 function showInstructions(){
+	$("#strat-instructions").remove();
+	$("#strat-instructions-2").remove();
 	var instr = document.createElement('div');
-	$(instr).attr("id","strat-instructions").html(""+
-	"<img alt='Arrow pointing up' src='/assets/images/lookUp.png' width='45px'/><br>"+
-	"Click '<a href='queries_tools.jsp'>New Search</a>' <br/> to start a strategy");
+	id = "strat-instructions";
+	instr_text = "<br>Click '<a href='queries_tools.jsp'>New Search</a>' <br/> to start a strategy";
+	instr_text2 = "Or Click on '<a href='javascript:showPanel('search_history')'>Browse Strategies</a>' to view your available strategies.";
+	arrow_image = "<img id='ns-arrow' alt='Arrow pointing to New Search Button' src='/assets/images/lookUp.png' width='45px'/>"; 
+	arrow_image2 = "<img id='bs-arrow' alt='Arrow pointing to Browse Strategy Tab' src='/assets/images/lookUp2.png' width='45px'/>"; 
+	as = $("#mysearch").text();
+	as = as.substring(as.indexOf(":") + 2);
+	if(as != "0"){
+		instr_text = instr_text + "<br>" + instr_text2;
+		id = id + "-2";
+		arrow_image = arrow_image + arrow_image2;
+	}
+	$(instr).attr("id",id).html(arrow_image + instr_text);
 	$("#Strategies").append(instr);
 }
 
@@ -116,6 +128,7 @@ var div_strat = null;
 function displayModel(strat_id){
 	if(strats){
 	  $("#strat-instructions").remove();
+	  $("#strat-instructions-2").remove();
 	  var strat = null;
 	  strat = getStrategy(strat_id);
 	  if(strat.isDisplay == true){
@@ -789,7 +802,7 @@ function hideStrat(id){
 		}
 	}
 	$("#diagram_" + id).hide("slow").remove();
-	if($("#Strategies div").length == 0){
+	if($("#Strategies div[id^='diagram']").length == 0){
 		showInstructions();
 		NewResults(-1);
 	}
