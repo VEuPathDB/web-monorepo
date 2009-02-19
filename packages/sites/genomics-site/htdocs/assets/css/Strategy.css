@@ -314,8 +314,18 @@
 	
 	div.arrowgrey span.resultCount{
 		padding-left: 20px;
+		z-index:1;
 	}
 
+	div.expandedStep {
+		background-image:url(/assets/images/sSbackground2.gif);
+		border:none;
+		height:44px;
+		position:absolute;
+		top:3px;
+		width:109px;
+		z-index:0;
+	}
 
 	#bread_crumb_div {
 

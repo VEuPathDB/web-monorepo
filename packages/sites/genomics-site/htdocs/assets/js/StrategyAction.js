@@ -137,16 +137,22 @@ function displayModel(strat_id){
 			if(strat.Steps[j].back_boolean_Id == ""){
 				var xml_step = $("strategy#" + strat.backId + " step#" + strat.Steps[j].back_step_Id, xmldoc);
 				st = createStep(xml_step, strat.Steps[j], last);
+				if(st.length > 2)
+				$(div_strat).append(st[2]);
 				$(div_strat).append(st[0]);
 				$(div_strat).append(st[1]);
 			}else {
 				var xml_step_boolean = $("strategy#" + strat.backId + " step#" + strat.Steps[j].back_boolean_Id, xmldoc);
 				var xml_step_operand = $("strategy#" + strat.backId + " step#" + strat.Steps[j].back_step_Id, xmldoc);
-				$(div_strat).append(createStep(xml_step_operand, strat.Steps[j], last)[0]);
+				opstep = createStep(xml_step_operand, strat.Steps[j], last);
+				if(opstep.length > 2)
+					$(div_strat).append(opstep[2]);
+				$(div_strat).append(opstep[0]);
 				strat.Steps[j].isboolean = true;
 				st = createStep(xml_step_boolean, strat.Steps[j], last);
 				$(div_strat).append(st[0]);
 				$(div_strat).append(st[1]);
+					
 				strat.Steps[j].isboolean = false;
 			}
 		} 
@@ -335,6 +341,12 @@ function createStep(ele, step, isLast){
 			"		<ul>"+
 			"			<li><img class='downarrow' src='/assets/images/arrow_chain_down2.png' alt='equals'></li>"+
 			"		</ul>";
+		var bkgdDiv = null;
+		if(collapsible == "true"){
+			bkgdDiv = document.createElement("div");
+			$(bkgdDiv).addClass("expandedStep");
+			$(bkgdDiv).css({ left: (left-2) + "px"});
+		}
 		stepNumber = null;
 	}
 	var divs = new Array();
@@ -349,6 +361,8 @@ function createStep(ele, step, isLast){
 	$(".crumb_details", div_s).replaceWith(createDetails(ele, strategyId, step));
 	divs.push(div_s);
 	divs.push(stepNumber);
+	if(bkgdDiv != null)
+		divs.push(bkgdDiv);
 	return divs;
 }
 
@@ -694,6 +708,11 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 			x = loadModel(data);
 			if(collapsedName.indexOf("UNION") == -1 && collapsedName.indexOf("MINUS") == -1 && collapsedName.indexOf("INTERSECT") == -1 )
 				$("#step_" + f_stepId + "_sub h3 a:first").text(un);
+			l = $("#step_" + f_stepId + "_sub").css("left");
+			l = parseInt(l.substring(0,l.indexOf("px")));
+			gsd = document.createElement('div');
+			$(gsd).addClass("expandedStep").css({ left: (l-2) + "px"});
+			$("#step_" + f_stepId + "_sub").before(gsd);
 			st = getStep(strategy.frontId, f_stepId);
 			if(st.child_Strat_Id == null)
 				alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
