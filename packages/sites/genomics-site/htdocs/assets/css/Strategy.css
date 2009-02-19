@@ -348,6 +348,10 @@
 		z-index:1;
 	}
 
+	.transform {
+		background: url(/assets/images/TransformBg.gif) no-repeat -3px -2px;
+	}
+
 	div.expandedStep {
 		background-image:url(/assets/images/sSbackground2.gif);
 		border:none;

@@ -180,7 +180,7 @@ function displayModel(strat_id){
 		$(button).html("<span title='Run a new query (OR select a strategy), and combine (union, intersect) its result with this strategy's result.'>Add Step</span>");
 		$(button).css({ position: "absolute",
 						left: buttonleft + "px",
-						top: "4.5em"});
+						top: "56px"});
 		$(div_strat).append(button);
 	    return div_strat;
 	  }
@@ -192,7 +192,10 @@ function displayModel(strat_id){
 var transCount = 0;
 function offset(ele,index, m){
 	if(ele == null){
-		return index * 130;
+		lb = $("div.box:last", div_strat);
+		le = lb.css("left");
+		le = parseInt(le.substring(0,le.indexOf("px")));
+		return le + 123;
 	}
 	if(ele[0].parentNode.nodeName == "step")
 		ele = $(ele).parent();
@@ -289,7 +292,7 @@ function createStep(ele, step, isLast){
 		transCount++;
 		div_id = "step_" + id + "_sub";
 		left = offset(ele,index,0);
-		cl = "box venn row2 size1 arrowgrey";
+		cl = "box venn row2 size1 transform";
 		inner = ""+
 			"		<h3>"+
 			"			<a title='Edit the step.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
@@ -315,7 +318,7 @@ function createStep(ele, step, isLast){
 		left = offset(ele,index,0);
 		cl = "venn row2 size2 operation " + operation;
 		inner = ""+
-			"			<a title='Click on step name above, to modify this boolean operation.'  class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
+			"			<a class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
 			"				<img src='/assets/images/transparent1.gif'>"+
 			"			</a>"+
 			"			<h6 class='resultCount'>"+
