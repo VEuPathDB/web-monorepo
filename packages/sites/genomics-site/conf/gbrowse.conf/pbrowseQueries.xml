@@ -69,6 +69,48 @@ WHERE  ss.aa_sequence_id = $srcfeature_id and
       </sql>
     </sqlQuery>
 
+<!-- ORIGINALLY FROM: plasmo,toxo,tritryp -->
+  <sqlQuery>
+      <name>domain:SignalP</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT
+       spf.aa_feature_id feature_id,
+       'domain' type,
+       'SignalP' source,
+       spf.aa_feature_id name,
+       '.' score,
+       spf.parent_id parent_id,
+       1 startm,
+       aal.end_max end,
+       '.' strand,
+       'DScore=' || ((spf.means_score + spf.maxy_score) / 2) || '$dlm' ||
+       'SignalProb=' || spf.signal_probability || '$dlm' ||
+       'ConclusionScore=' || (spf.maxy_conclusion +
+               spf.maxc_conclusion +
+               spf.maxs_conclusion +
+               spf.means_conclusion) as  atts
+FROM
+       dots.signalpeptidefeature spf,
+       dots.aalocation aal
+WHERE
+       spf.aa_sequence_id = $srcfeature_id and
+       aal.aa_feature_id = spf.aa_feature_id and
+       (( spf.maxy_conclusion +
+         spf.maxc_conclusion +
+         spf.maxs_conclusion +
+         spf.means_conclusion
+       ) >= 3
+       OR ((spf.means_score + spf.maxy_score) / 2) >= 0.5
+       OR spf.signal_probability >= 0.5
+      ) 
+]]>
+      </sql>
+    </sqlQuery>
+
+
+
 <!-- ORIGINALLY FROM: giardia,trich,tritryp -->
     <sqlQuery>
       <name>domain:TMHMM</name>
