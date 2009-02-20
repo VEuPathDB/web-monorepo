@@ -1381,8 +1381,9 @@ ul#strategy_tabs {
 
 
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = for old UI with new graphics (deprecated) 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  = for old UI with new graphics (deprecated)  
+        RETHINK this section, CryptoDB.css does not have it
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
@@ -1411,7 +1412,7 @@ tr.rowLight td {
 }
 
 td.recordClassTitle{
-    background-color: #918599; /* cbd8ca; */
+    background-color: #918599;
     color: white;
     font-family: arial;
     font-size: 10pt;
@@ -1448,6 +1449,9 @@ tr.headerRow  td,th {
    padding: 0;
 }
 
+
+/* these css might refer to the filters.... not for strategies
+
 .diagram {
    background: transparent url(../images/venn_filters.png) repeat scroll 2px 0;
    height: 100px;
@@ -1465,6 +1469,10 @@ tr.headerRow  td,th {
 .diagram.btm_selected {
    background-position: 2px -324px;
 }
+
+
+*/
+
 
 .labels {
    margin-right: 3px;
@@ -1526,4 +1534,10 @@ span#toggle_filter {
 }
 
 .fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
+
+
+
+
+
+
 
