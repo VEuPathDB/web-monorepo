@@ -28,10 +28,30 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
   </module>
 
   <module name="Segment.pm">
-      <sqlQuery>
-      <name></name>
-      <description></description>
+
+<!-- ORIGINALLY FROM: crypto -->
+  <sqlQuery>
+    <name>new:Segment</name>
+    <description>fetch features by their name</description>
       <sql>
+<![CDATA[
+SELECT tas.aa_sequence_id srcfeature_id, 
+       1 startm, 
+       tas.length end, 
+       trp.protein_id name, 
+       'protein' type,
+       'ID=' || tas.aa_sequence_id atts
+FROM   dots.translatedaasequence tas, 
+       dots.translatedaafeature taf,
+       dots.transcript trp,
+       dots.genefeature gf
+WHERE  tas.aa_sequence_id = taf.aa_sequence_id
+       and taf.na_feature_id = trp.na_feature_id 
+       and trp.parent_id = gf.na_feature_id
+       and (upper(trp.protein_id) = upper('$name') or
+            upper(trp.source_id) = upper('$name') or
+            upper(gf.source_id) = upper('$name') )
+]]>
       </sql>
     </sqlQuery>
 
