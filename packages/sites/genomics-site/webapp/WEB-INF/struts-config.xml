@@ -406,6 +406,12 @@
       name="userFileUploadForm">
       <forward name="community_upload" path="/communityUploadResult.jsp"/>
    </action>
+    <action
+      path="/showResultSize"
+      type="org.gusdb.wdk.controller.action.ShowResultSizeAction"
+      scope="request"
+      name="resultSizeForm">
+   </action>
   </action-mappings>
 
   <controller maxFileSize="1M" />
