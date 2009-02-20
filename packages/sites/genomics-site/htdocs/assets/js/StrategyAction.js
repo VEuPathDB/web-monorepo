@@ -291,7 +291,7 @@ function createStep(ele, step, isLast){
 	  }else{  // CREATES STEP BOXES FOR TRANSFORM STEPS
 		transCount++;
 		div_id = "step_" + id + "_sub";
-		left = offset(ele,index,0);
+		left = offset(ele,index,m);
 		cl = "box venn row2 size1 transform";
 		inner = ""+
 			"		<h3>"+
@@ -315,7 +315,7 @@ function createStep(ele, step, isLast){
 	  }
 	}else if(step.isboolean){ // CREATE THE BOOLEAN STEP BOX
 		div_id = "step_" + id;
-		left = offset(ele,index,0);
+		left = offset(ele,index,m);
 		cl = "venn row2 size2 arrowgrey operation " + operation;
 		inner = ""+
 			"			<a title='Click on the step name above to modify this boolean operation.' class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
@@ -341,7 +341,7 @@ function createStep(ele, step, isLast){
 		$(stepNumber).addClass('stepNumber').css({ left: (left + 30) + "px"}).text("Step " + (id + 1));
 	}else{ // CREATE THE CHILD STEP OF THE BOOLEAN ... THE TOP ROW BOX FOR THIS STEP
 		div_id = "step_" + id + "_sub";
-		left = offset(ele,index,0);
+		left = offset(ele,index,m);
 		cl = "box row1 size1 arrowgrey";
 		inner = ""+
 			"		<h3>"+
