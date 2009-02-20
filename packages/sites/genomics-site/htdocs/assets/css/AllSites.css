@@ -25,4 +25,8 @@ div.htmltooltip{
 
 .fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
 
-
+div.innertube #record-toolbox {
+    float: right;
+    border-style: double;
+    border-width: 3px;
+}
