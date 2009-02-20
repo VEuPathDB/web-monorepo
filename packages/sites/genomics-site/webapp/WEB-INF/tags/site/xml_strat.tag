@@ -102,7 +102,12 @@
 								<filterName><![CDATA[${child_filterName}]]></filterName>
                                     <c:choose>
                                         <c:when test="${child_collapsible == true}">
-                                            <c:set var="step" value="${step.childStep}" scope="request" />
+										 	<c:set var="tst" value="${step.childStep}" />
+											<c:forEach var="tsts" items="${tst.allSteps}">
+												<jsp:setProperty name="tsts" property="isCollapsible" value="false" />
+											</c:forEach>
+											<c:set var="step" value="${tst}" scope="request" />
+	                                        <%--<c:set var="step" value="${step.childStep}" scope="request" />--%>
                                             <c:set var="strat_Id" value="${fn:split(stratId, '_')[0]}_${child_id}" scope="request" />
                                             <c:set var="strat_name" value="${child_collapsedName}" scope="request" />
                                             <c:set var="import_id" value="${importId}" scope="request" />
@@ -163,7 +168,12 @@
 							<filterName><![CDATA[${filterName}]]></filterName>
                                 <c:choose>
                                     <c:when test="${child_collapsible == true}">
-                                        <c:set var="step" value="${step.childStep}" scope="request" />
+									 	<c:set var="tst" value="${step.childStep}" />
+										<c:forEach var="tsts" items="${tst.allSteps}">
+											<jsp:setProperty name="tsts" property="isCollapsible" value="false" />
+										</c:forEach>
+										<c:set var="step" value="${tst}" scope="request" />
+                                        <%--<c:set var="step" value="${step.childStep}" scope="request" />--%>
                                         <c:set var="strat_Id" value="${stratId}_${child_id}" scope="request" />
                                         <c:set var="strat_name" value="${child_collapsedName}" scope="request" />
                                         <c:import url="/WEB-INF/includes/xml_recurse.jsp"/>
