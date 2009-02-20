@@ -585,9 +585,9 @@ function removeStrategyDivs(stratId){
 			$("#Strategies div#diagram_" + subs[i].frontId).remove();
 		}
 	}
-	if(strategy.subStratOf != null){
-		strats.splice(findStrategy(strategy.frontId));
-	}
+//	if(strategy.subStratOf != null){
+//		strats.splice(findStrategy(strategy.frontId));
+//	}
 }
 
 function AddStepToStrategy(url){	
