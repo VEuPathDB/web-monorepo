@@ -99,9 +99,9 @@ function validateFields(e)
 <p><b>Why register/subscribe</b>? So you can:
 <div id="cirbulletlist">
 <ul>
-<li><i>optionally</i> receive infrequent alerts (at most monthly)
+<li>have your strategies back the next time you login.
 <li>comment on genes and sequences
-<li>have your query history return the next time you login.
+<li><i>optionally</i> receive infrequent alerts (at most monthly)
 <li>set site preferences, such as items per page displayed in the query result
 </ul>
 </div>

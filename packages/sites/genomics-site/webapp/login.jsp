@@ -36,8 +36,8 @@
 
 <div id="cirbulletlist">
 <ul>
+<li>have your strategies (unsaved and saved) remembered from session to session
 <li>comment on genes and sequences
-<li>have your query history remembered from session to session
 <li>set site preferences (future release)
 </ul>
 </div>
