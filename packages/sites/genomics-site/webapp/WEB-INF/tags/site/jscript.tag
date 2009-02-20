@@ -77,3 +77,6 @@
 <!-- js for popups in query grid and other.... -->
 <script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
 
+<%-- show/hide the tables in the record page --%>
+<script type='text/javascript' src="/assets/js/show_hide_tables.js"></script>
+
