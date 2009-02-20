@@ -177,7 +177,7 @@ function displayModel(strat_id){
 			lsn = strat.Steps[strat.Steps.length-1].back_step_Id;	
 		dType = $("step#" + strat.Steps[strat.Steps.length - 1].back_step_Id, xmldoc).attr("dataType");
 		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + "," + lsn + ")").attr("onclick","this.blur()").addClass("filter_link redbutton");
-		$(button).html("<span title='Run a new query (OR select a strategy), and combine (union, intersect) its result with this strategy's result.'>Add Step</span>");
+		$(button).html("<span title='Run a new query and combine its result with your current result.     Alternatively, you could obtain the orthologs to your current result or run another available transform.'>Add Step</span>");
 		$(button).css({ position: "absolute",
 						left: buttonleft + "px",
 						top: "56px"});
@@ -271,14 +271,14 @@ function createStep(ele, step, isLast){
 		cl = "box venn row2 size1 arrowgrey";
 		inner = ""+
 			"		<h3>"+
-			"			<a title='Edit the step.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
+			"			<a title='Make changes to this step.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
 							usedName +
 			"				<span class='collapsible' style='display: none;'>" + collapsible + "</span>"+
 			"			</a>"+ 
 			"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 			"			<div class='crumb_details'></div>"+
 			"		</h3>"+
-			"		<h6 class='resultCount'><a title='Show results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
+			"		<h6 class='resultCount'><a title='Show these results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
 			 filterImg;
 		if(!isLast){
 			inner = inner + 
@@ -295,14 +295,14 @@ function createStep(ele, step, isLast){
 		cl = "box venn row2 size1 transform";
 		inner = ""+
 			"		<h3>"+
-			"			<a title='Edit the step.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
+			"			<a title='Make changes to this step.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
 							usedName +
 			"				<span class='collapsible' style='display: none;'>" + collapsible + "</span>"+
 			"			</a>"+ 
 			"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 			"			<div class='crumb_details'></div>"+
 			"		</h3>"+
-			"		<h6 class='resultCount'><a title='Show results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
+			"		<h6 class='resultCount'><a title='Show these results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
 			 filterImg;
 		if(!isLast){
 			inner = inner + 
@@ -316,13 +316,13 @@ function createStep(ele, step, isLast){
 	}else if(step.isboolean){ // CREATE THE BOOLEAN STEP BOX
 		div_id = "step_" + id;
 		left = offset(ele,index,0);
-		cl = "venn row2 size2 operation " + operation;
+		cl = "venn row2 size2 arrowgrey operation " + operation;
 		inner = ""+
-			"			<a class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
+			"			<a title='Click on the step name above to modify this boolean operation.' class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
 			"				<img src='/assets/images/transparent1.gif'>"+
 			"			</a>"+
 			"			<h6 class='resultCount'>"+
-			"				<a title='Show results in the area below.' class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>" + resultSize + "&nbsp;" + dataType + "</a>"+
+			"				<a title='Show these results in the area below.' class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>" + resultSize + "&nbsp;" + dataType + "</a>"+
 			"			</h6>" + filterImg;
 		if(!isLast){
 			if($(ele).next().attr("istransform") == "true"){
@@ -345,14 +345,14 @@ function createStep(ele, step, isLast){
 		cl = "box row1 size1 arrowgrey";
 		inner = ""+
 			"		<h3>"+
-			"			<a title='Edit the step and/or the boolean operation.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
+			"			<a title='Make changes to this step and/or the boolean operation.' id='stepId_" + id + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
 							usedName +
 			"				<span class='collapsible' style='display: none;'>" + collapsible + "</span>"+
 			"			</a>"+
 			"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 			"			<div class='crumb_details'></div>"+
 			"		</h3>"+
-			"		<h6 class='resultCount'><a title='Show results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
+			"		<h6 class='resultCount'><a title='Show these results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + strategyId + "," + id + ", false)'> " + resultSize + "&nbsp;" + dataType + "</a></h6>"+
 			filterImg +
 			"		<ul>"+
 			"			<li><img class='downarrow' src='/assets/images/arrow_chain_down2.png' alt='equals'></li>"+
@@ -490,17 +490,17 @@ function createStrategyName(ele, strat){
 		"<input type='text' size=" + exportURL.length + " value=" + exportURL + " />" +
 		"</div>";
 	}else if(guestUser == 'true'){
-		share = "<a title='Please login so you can SAVE and then SHARE your strategy.' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>SHARE</b></a>";
+		share = "<a title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>SHARE</b></a>";
 	}else{
 		share = "<a title='SAVE this strategy so you can SHARE it (email its URL).' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>SHARE</b></a>";
 	}
 
 	var save = "";
 	if (guestUser == 'true') {
-		save = "<a title='Please login so you can SAVE (make a snapshot) your strategy.' class='save_strat_link' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>SAVE AS</b></a>";
+		save = "<a title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' class='save_strat_link' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>SAVE AS</b></a>";
 	}
 	else {
-		save = "<a title='A saved strategy is like a snapshot, cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>SAVE AS</b></a>" +
+		save = "<a title='A saved strategy is like a snapshot, it cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>SAVE AS</b></a>" +
 		"<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
 		"<span class='dragHandle'>" +
 		"<div class='modal_name'>"+
@@ -521,7 +521,7 @@ function createStrategyName(ele, strat){
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
-		$(div_sn).html("<span onclick=\"enableRename('" + id + "', '" + name + "')\" title='Name of this strategy. The (*) indicates this strategy is NOT saved. You can rename it any time.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
+		$(div_sn).html("<span onclick=\"enableRename('" + id + "', '" + name + "')\" title='Name of this strategy. Click to RENAME. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
         "<form id='rename' style='display: none;' action=\"javascript:renameStrategy('" + id  + "', true, false)\">" +
         "<input type='hidden' value='" + id + "' name='strategy'/>" +
         "<input id='name' type='text' style='margin-right: 4px; width: 100%;' value='" + name + "' maxlength='2000' name='name'/>" +

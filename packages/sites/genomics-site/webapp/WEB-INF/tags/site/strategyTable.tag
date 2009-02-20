@@ -74,7 +74,7 @@
       <c:set var="dispNam" value="${strategy.name}"/>
       <td>
         <div id="text_${strategyId}">
-          <span onclick="enableRename('${strategyId}', '${strategy.name}', true)">${dispNam}</span><c:if test="${!strategy.isSaved}">*</c:if>
+          <span title="Click to rename." onclick="enableRename('${strategyId}', '${strategy.name}', true)">${dispNam}</span><c:if test="${!strategy.isSaved}">*</c:if>
         </div>
         <div id="name_${strategyId}" style="display:none"></div>          
       </td>
@@ -87,21 +87,21 @@
       <td nowrap>
          <c:choose>
            <c:when test="${wdkUser.guest}">
-             <input type='button' value='Save As' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
+             <input title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' type='button' value='Save As' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
            </c:when>
            <c:otherwise>
-             <input type='button' value='Save As' onclick="showHistSave(this, '${strategyId}')" />
+             <input title='A saved strategy is like a snapshot, it cannot be changed.' type='button' value='Save As' onclick="showHistSave(this, '${strategyId}')" />
            </c:otherwise>
          </c:choose>
          <c:choose>
            <c:when test="${wdkUser.guest}">
-             <input type='button' value='Share' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
+             <input title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' type='button' value='Share' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
            </c:when>
            <c:when test="${strategy.isSaved}">
-             <input type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
+             <input title='Email this URL to your best friend.' type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
            </c:when>
            <c:otherwise>
-             <input type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
+             <input title='SAVE this strategy so you can SHARE it (email its URL).' type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
            </c:otherwise>
          </c:choose>
          <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
