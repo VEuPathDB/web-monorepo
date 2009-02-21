@@ -8,12 +8,19 @@
 <c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>
 <c:set var="xqMap" value="${xqSet.questionsMap}"/>
 <c:set var="newsQuestion" value="${xqMap['News']}"/>
+
+
+<c:if test = "${project != 'GiardiaDB' && project != 'TrichDB' && project != 'ApiDB'}">
+
 <c:set var="newsAnswer" value="${newsQuestion.fullAnswer}"/>
 <c:set var="tutQuestion" value="${xqMap['Tutorials']}"/>
 <c:set var="tutAnswer" value="${tutQuestion.fullAnswer}"/>
 <c:set var="extlQuestion" value="${xqMap['ExternalLinks']}"/>
 <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
 <c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
+
+</c:if>
+
 
 <div id="leftcolumn">
 	<div class="innertube">
@@ -23,6 +30,11 @@
 
 
 <%--------------  NEWS ---------------------------------------------%>
+
+
+<c:if test = "${project != 'GiardiaDB' && project != TrichDB && project != ApiDB}">
+
+
 				<div class="menu_lefttop_drop">
                     <c:choose>
                       <c:when test="${newsAnswer.resultSize < 1}">
@@ -55,6 +67,9 @@
                     </c:choose>
 				</div>
 
+</c:if>
+
+
 <%--------------  COMMUNITY LINKS ---------------------------------------------%>
 				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 				<a class="heading" href="#">Community Links</a>
@@ -77,6 +92,7 @@
 
 	<br><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;"><b>If you have a link that you think would be useful for the community, please send us a note.</b></a>
 				</div>
+
 
 
 <%--------------  TUTORIALS ---------------------------------------------%>
