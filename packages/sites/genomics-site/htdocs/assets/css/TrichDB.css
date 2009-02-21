@@ -15,12 +15,12 @@ body {
 }
 
 a:link, a:visited {
-	color: #772841;
+	color: #538001;
 	text-decoration: none;
 }
 
 a:hover, a:active {
-	color: #cf7d96;
+	color: #a9cb6d;
 	text-decoration: underline;
 }
 #wrap {
@@ -61,7 +61,7 @@ img {
 
 
 #header_rt {
-   color: #3c8935;
+   color: #8c8b35;
    font-size: 12px;
    width: 430px;
    float: right;
@@ -70,7 +70,7 @@ img {
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #3c8935;
+   color: #8c8b35;
    text-decoration: none;
 }
 
@@ -108,7 +108,7 @@ img {
 	line-height: 1;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
-	color: #3c8935;
+	color: #8c8b35;
 	z-index: 520;
 }
 
@@ -122,7 +122,7 @@ img {
 #nav_top a:link, #nav_top a:visited {
 	display: block;
 	width: auto;
-	color: #3c8935;
+	color: #8c8b35;
 	text-decoration: none;
 	z-index: 520;
 }
@@ -154,7 +154,7 @@ img {
 	background-position: top;
 	border-width: 1px 1px 1px 1px;
 	border-style: solid;
-	border-color:#3c8935;
+	border-color:#8c8b35;
 	padding: 6px 6px 6px 18px;
 	line-height: 14px;
 	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
@@ -188,7 +188,7 @@ img {
 }
 
 #nav_top li ul a:link, #nav_top li ul a:visited {
-	color: #3c8935;
+	color: #8c8b35;
 	text-decoration: none;
 	padding: 2px;
 	width: 13em;
@@ -196,7 +196,7 @@ img {
 }
 
 #nav_top li ul a:hover, #nav_top li ul a:active {
-	color: #6f223a;
+	color: #605f0e;
 	text-decoration: none;
 	padding: 2px;
 	background-color: #FFFFFF;
@@ -237,7 +237,7 @@ img {
 	background-repeat: repeat-x;
 	margin-top: -4px;
 	padding: 4px 3px 3px 3px;
-	border: 1px solid #831639;
+	border: 1px solid #868520;
 	z-index: 1;
 }
  
@@ -254,7 +254,7 @@ img {
 	background-image: url(../images/ToxoDB/footer.png);
 	background-repeat: repeat-x;
 	text-align: left;
-	border: 1px solid #20691a;
+	border: 1px solid #455f15;
 }
 
 #contentcolumn2 {
@@ -264,7 +264,7 @@ img {
 	background-image: url(../images/ToxoDB/footer.png);
 	background-repeat: repeat-x;
 	text-align: left;
-	border: 1px solid #20691a;
+	border: 1px solid #455f15;
 }
 
 #leftcolumn {
@@ -289,7 +289,7 @@ img {
 	text-align: center;
 	background-image: url(../images/ToxoDB/bubble_my_searchbox.png);
 	background-repeat: repeat-x;
-	border: 1px solid #20691a;
+	border: 1px solid #c9dea4;
 	padding-top: 4px;
 	padding-bottom: 4px;
 	margin-top: 12px;
@@ -341,7 +341,7 @@ img {
 	float: left;
 	text-align: left;
 	line-height: 1.3em;
-	background-color: #bfccdf;
+	background-color: #d9e8cc;
 	padding: 8px;
 	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
 	position: relative;
@@ -355,7 +355,7 @@ img {
 #pink_title {
 	font-size: 15px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #5e0f28;
+	color: #585b0f;
 	text-align: left;
 	background-image: url(../images/ToxoDB/trheader.png);
 	background-repeat: repeat-x;
@@ -638,8 +638,8 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
    width: 8em;
    padding: 2px;
    color: #5b5b5b;
-   background-color: #e9f4e7;
-   border: solid 1px #1c7c12;
+   background-color: #eaf0de;
+   border: solid 1px #3f5d27;
    font-size: 11px;
    text-align: right;
 } 
@@ -731,7 +731,7 @@ h1 {
 	font-size: 20px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	color: #20691a;
+	color: #455f15;
 	text-align: center;
 	margin-bottom: 14px;
 }
@@ -740,7 +740,7 @@ h2 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	margin-bottom: 11px;
-  	color: #20691a;
+  	color: #455f15;
 	text-align: left;
 	margin-left: 11px;
 }
@@ -816,7 +816,7 @@ td.headerrow {
 	height: 29px;
 	font-size: 15px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #5e0f28;
+	color: #585b0f;
 	background-image: url(../images/ToxoDB/trheader.png);
 	background-repeat: repeat-x;
 	background-position: top;
@@ -829,7 +829,7 @@ tr.headerrow {
 	height: 29px;
 	font-size: 15px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #5e0f28;
+	color: #585b0f;
 	background-image: url(../images/ToxoDB/trheader.png);
 	background-repeat: repeat-x;
 	background-position: top;
@@ -875,7 +875,7 @@ tr.subheaderrow {
 tr.headerrow2 td{
 	font-size: 14px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-        color: #5e0f28;
+        color: #585b0f;
 	background-image: url(../images/ToxoDB/trheader.png);
 	background-repeat: repeat-x;
 	background-position: top;
@@ -905,7 +905,7 @@ a.queryGridActive {
         text-align:         center;
         font-family:        Helvetica;
         font-size:          10pt;
-        color:              #772841;
+        color:              #538001;
 }
 td.lines2 {
 	padding-top: 3px;
@@ -951,14 +951,14 @@ tr.subheaderrow th {
 	padding: 4px;
 	border-width: 2px 0 2px 0;
 	border-style: solid;
-	border-color: #772841;
+	border-color: #538001;
 }
 
 tr.headerrow th { 
 	padding: 4px;
 	border-width: 2px 0 2px 0;
 	border-style: solid;
-	border-color: #772841;
+	border-color: #538001;
 }
 
 tr.headerInternalRow td {
@@ -1151,7 +1151,7 @@ a.redbutton:active span {
 	background-image: url(../images/infobox.jpg);
 	background-repeat: repeat-x;
 	text-align: left;
-	border: 1px solid #20691a;
+	border: 1px solid #455f15;
 	vertical-align: middle;
 }
 
@@ -1200,7 +1200,7 @@ a.redbutton:active span {
 #adv_paging {
 	width: 225px;
 	padding: 6px;
-	background-color: #192a78;
+	background-color: #496138;
 	color: #FFFFFF;
 }
 
@@ -1223,7 +1223,7 @@ a.redbutton:active span {
 span.marker a:link, span.marker a:visited {
 	padding-left: 15px;
 	font-weight: bold;
-	color: #7D0101;
+	color: #717001;
 }
 
 clear {
@@ -1272,7 +1272,7 @@ ul#strategy_tabs {
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #E8EBF0;
+    background-color: #e9eee5;
     border: 1px solid #CCCCCC;
     color:#666666;
     float: left;
