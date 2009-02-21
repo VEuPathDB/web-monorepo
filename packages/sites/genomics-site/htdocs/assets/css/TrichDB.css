@@ -43,7 +43,7 @@ img {
 	width: 100%;
 	height: 159px;
 	text-align: left;
-	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
+	background-image: url(../images/TrichDB/backgroundtop_s.jpg);
 	background-repeat: no-repeat;
 	min-width: 1000px;
 }
@@ -55,7 +55,7 @@ img {
 	min-width: 950px;
 	height: 104px;
 	text-align: left;
-	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
+	background-image: url(../images/TrichDB/backgroundtop_s.jpg);
 	background-repeat: no-repeat;
 }
 
@@ -95,7 +95,7 @@ img {
 	display: block;
 	width: 174px;
 	text-align: right;
-	background-image: url(../images/ToxoDB/partofeupath2.gif);
+	background-image: url(../images/TrichDB/partofeupath2.gif);
 }
 
 
@@ -149,7 +149,7 @@ img {
 	font-size: 12px;
 	font-weight: normal;
 	background-color: #FFFFFF;
-	background-image: url(../images/ToxoDB/footer.png);
+	background-image: url(../images/TrichDB/footer.png);
 	background-repeat: repeat-x;
 	background-position: top;
 	border-width: 1px 1px 1px 1px;
@@ -157,7 +157,7 @@ img {
 	border-color:#8c8b35;
 	padding: 6px 6px 6px 18px;
 	line-height: 14px;
-	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
+	list-style-image: url(../images/TrichDB/bullet_arrow.gif);
 	z-index: 520;
 }
 
@@ -233,7 +233,7 @@ img {
 
 #menubar #mysearch {
 	width: auto;
-	background-image: url(../images/ToxoDB/my_hist_menubar.png);
+	background-image: url(../images/TrichDB/my_hist_menubar.png);
 	background-repeat: repeat-x;
 	margin-top: -4px;
 	padding: 4px 3px 3px 3px;
@@ -251,7 +251,7 @@ img {
 	min-width: 750px;
 	margin: 0 25px 0 226px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
 	background-color: #FFFFFF;
-	background-image: url(../images/ToxoDB/footer.png);
+	background-image: url(../images/TrichDB/footer.png);
 	background-repeat: repeat-x;
 	text-align: left;
 	border: 1px solid #455f15;
@@ -261,7 +261,7 @@ img {
 	min-width: 900px;
 	margin: 0 25px 0 6px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
 	background-color: #FFFFFF;
-	background-image: url(../images/ToxoDB/footer.png);
+	background-image: url(../images/TrichDB/footer.png);
 	background-repeat: repeat-x;
 	text-align: left;
 	border: 1px solid #455f15;
@@ -287,7 +287,7 @@ img {
 #mysearchhist {
 	width: 100%;
 	text-align: center;
-	background-image: url(../images/ToxoDB/bubble_my_searchbox.png);
+	background-image: url(../images/TrichDB/bubble_my_searchbox.png);
 	background-repeat: repeat-x;
 	border: 1px solid #c9dea4;
 	padding-top: 4px;
@@ -329,7 +329,7 @@ img {
 	text-align: left;
 	clear: both;
 	line-height: 1.3em;
-	background-image: url(../images/ToxoDB/tools_bckgnd.jpg);
+	background-image: url(../images/TrichDB/tools_bckgnd.jpg);
 	background-repeat: no-repeat;
 	padding: 16px;
 	margin-top: 20px;
@@ -343,7 +343,7 @@ img {
 	line-height: 1.3em;
 	background-color: #d9e8cc;
 	padding: 8px;
-	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
+	list-style-image: url(../images/TrichDB/bullet_arrow.gif);
 	position: relative;
 }
 #about_us_right {
@@ -357,7 +357,7 @@ img {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #585b0f;
 	text-align: left;
-	background-image: url(../images/ToxoDB/trheader.png);
+	background-image: url(../images/TrichDB/trheader.png);
 	background-repeat: repeat-x;
 	padding: 4px;
 	width: 100%;
@@ -584,7 +584,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 	voice-family: "\"}\"";
 	voice-family: inherit;
 	text-decoration: none;
-	background-image: url(../images/ToxoDB/menu_lft2.png);
+	background-image: url(../images/TrichDB/menu_lft2.png);
 	background-repeat: no-repeat;
 	padding-right: 6px;
 	padding-left: 11px;
@@ -791,7 +791,7 @@ a.heading:hover + a.detail_link, .detail_link:hover {
    width: 75%;
    text-align: right;
    background-color:#FFFFFF;
-   background-image: url(../images/ToxoDB/footer.png);
+   background-image: url(../images/TrichDB/footer.png);
    background-repeat: repeat-x;
    color: #505050;
    padding: 9px;
@@ -817,7 +817,7 @@ td.headerrow {
 	font-size: 15px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #585b0f;
-	background-image: url(../images/ToxoDB/trheader.png);
+	background-image: url(../images/TrichDB/trheader.png);
 	background-repeat: repeat-x;
 	background-position: top;
 	font-weight: bold;
@@ -830,7 +830,7 @@ tr.headerrow {
 	font-size: 15px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #585b0f;
-	background-image: url(../images/ToxoDB/trheader.png);
+	background-image: url(../images/TrichDB/trheader.png);
 	background-repeat: repeat-x;
 	background-position: top;
 	font-weight: bold;
@@ -844,7 +844,7 @@ td.subheaderrow {
 	font-size: 13px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #474747;
-	background-image: url(../images/ToxoDB/trsubhead.png);
+	background-image: url(../images/TrichDB/trsubhead.png);
 	background-repeat: repeat-x;
 	background-position: top;
 	font-weight: bold;
@@ -856,7 +856,7 @@ tr.subheaderrow {
 	font-size: 14px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #474747;
-	background-image: url(../images/ToxoDB/trsubhead.png);
+	background-image: url(../images/TrichDB/trsubhead.png);
 	background-repeat: repeat-x;
 	background-position: top;
 	font-weight: bold;
@@ -876,7 +876,7 @@ tr.headerrow2 td{
 	font-size: 14px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
         color: #585b0f;
-	background-image: url(../images/ToxoDB/trheader.png);
+	background-image: url(../images/TrichDB/trheader.png);
 	background-repeat: repeat-x;
 	background-position: top;
 	padding: 4px;
@@ -887,7 +887,7 @@ tr.subheaderrow2 td{
 	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #474747;
-	background-image: url(../images/ToxoDB/trsubhead.png);
+	background-image: url(../images/TrichDB/trsubhead.png);
 	background-repeat: repeat-x;
 	background-position: top;
 	font-weight: bold;
@@ -1095,7 +1095,7 @@ a.redbutton:active span {
 	float: left; 
 	width: 12em;
 	color: #FFFFFF;
-	background-image: url(../images/ToxoDB/aboutus.png);
+	background-image: url(../images/TrichDB/aboutus.png);
 	background-repeat: repeat-y;
 	padding: 15px 0; /* top and bottom padding create visual space within this div  */
 }
