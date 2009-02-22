@@ -47,7 +47,7 @@ div.innertube #record-toolbox {
         vertical-align: middle;
 }
 .announcebox.home {
-        min-width: 780px;
+        min-width: 738px;  /*780px;  */
         margin: 12px 25px 0 226px;
 }
 .announcebox img {
