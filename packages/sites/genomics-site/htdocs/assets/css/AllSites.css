@@ -30,3 +30,45 @@ div.innertube #record-toolbox {
     border-style: double;
     border-width: 3px;
 }
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         =WARNING BOXES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.announcebox {
+        min-height: 35px;
+        height:auto !important;
+        height:35px;
+        margin: 12px 25px 0 6px;
+        padding: 6px;
+        background-repeat: repeat-x;
+        text-align: left;
+        border: 1px solid #345d9b;
+        vertical-align: middle;
+}
+.announcebox.home {
+        min-width: 780px;
+        margin: 12px 25px 0 226px;
+}
+.announcebox img {
+        margin-right: 3px;
+}
+.announcebox td {
+        vertical-align:middle;
+}
+.announcebox.info {
+        background-image: url(../images/infobox.jpg);
+        color: #093c8a;
+        background-color: #cdd9eb;
+}
+.announcebox.error {
+        color: #c4000e;
+        background-color: #eec1c2;
+        background-image: url(../images/errorbox.jpg);
+}
+.announcebox.warn {
+        color: #c4000e;
+        background-color: #edf0ac;
+        background-image: url(../images/warnbox.jpg);
+}
+
