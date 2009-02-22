@@ -391,27 +391,51 @@ ${headElement}
    </div>  <%-- id="header_rt" --%>
 
 <%------------- TOP HEADER:  SITE logo and DATE _______  is a EuPathDB Project  ----------------%>
-
-   <c:if test="${fn:containsIgnoreCase(project, 'CryptoDB')}">
+<c:choose>
+   <c:when test="${fn:containsIgnoreCase(project, 'CryptoDB')}">
      <c:set var="width" value="318" />
      <c:set var="height" value="64" />
      <c:set var="version" value="4.0" />
-     <c:set var="date" value="January 15th, 2009" />
-   </c:if>
+     <c:set var="date" value="January 16th, 2009" />
+   </c:when>
 
-   <c:if test="${fn:containsIgnoreCase(project, 'TriTrypDB')}">
+   <c:when test="${fn:containsIgnoreCase(project, 'TriTrypDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
      <c:set var="version" value="1.0" />
-     <c:set var="date" value="January 15th, 2009" />
-   </c:if>
+     <c:set var="date" value="February 6th, 2009" />
+   </c:when>
 
- <c:if test="${fn:containsIgnoreCase(project, 'PlasmoDB')}">
+ <c:when test="${fn:containsIgnoreCase(project, 'PlasmoDB')}">
+     <c:set var="width" value="320" />
+     <c:set var="height" value="72" />
+     <c:set var="version" value="5.5" />
+     <c:set var="date" value="September 16th, 2008" />
+   </c:when>
+
+<c:when test="${fn:containsIgnoreCase(project, 'GiardiaDB')}">
+     <c:set var="width" value="320" />
+     <c:set var="height" value="72" />
+     <c:set var="version" value="1.1" />
+     <c:set var="date" value="May 12th, 2008" />
+   </c:when>
+
+<c:when test="${fn:containsIgnoreCase(project, 'TrichDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
      <c:set var="version" value="1.0" />
-     <c:set var="date" value="May 15th, 2009" />
-   </c:if>
+     <c:set var="date" value="September 14th, 2007" />
+   </c:when>
+
+<c:when test="${fn:containsIgnoreCase(project, 'ApiDB')}">
+     <c:set var="width" value="320" />
+     <c:set var="height" value="72" />
+     <c:set var="version" value="5.50" />
+     <c:set var="date" value="March 15th, 2009" />
+   </c:when>
+
+
+</c:choose>
 
 
    <p><a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" 
