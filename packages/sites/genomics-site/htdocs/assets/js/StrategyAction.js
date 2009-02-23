@@ -89,10 +89,11 @@ function loadModel(data){
 		steps = $(this).children("step");
 		strat.initSteps(steps);
 		id = parseInt($(this).attr("id"));
-		if(isLoaded(id) != -1)
+		if(isLoaded(id) != -1){
 			strats[findStrategy(newId)] = strat;
-		else
+		}else{
 			strats.push(strat);
+		}
 		index++;
 		value = strat.frontId;
 	});
@@ -422,7 +423,7 @@ function createDetails(ele, strat, step){
 		"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;"+
 		"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;"+
 		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\"," + collapsible + ");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;"+
-		"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(" + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;"+
+		"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;"+
 		"			<a class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>"+
 		"			&nbsp;|&nbsp;"+
 		"			<a class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>"+
@@ -714,7 +715,7 @@ function DeleteStep(f_strategyId,f_stepId){
 	update_hist = true;
 }
 
-function ExpandStep(f_strategyId, f_stepId, collapsedName){
+function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 	var strategy = getStrategy(f_strategyId);
 	var step = getStep(f_strategyId, f_stepId);
 	un = (collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
@@ -739,9 +740,11 @@ function ExpandStep(f_strategyId, f_stepId, collapsedName){
 			st = getStep(strategy.frontId, f_stepId);
 			if(st.child_Strat_Id == null)
 				alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
-			strats[findStrategy(st.child_Strat_Id)].isDisplay = true;
-			subDiv = displayModel(st.child_Strat_Id);
-			$("div#Strategies div#diagram_" + f_strategyId).after(subDiv);
+			if($("#diagram_"+st.child_Strat_Id).length == 0){
+				strats[findStrategy(st.child_Strat_Id)].isDisplay = true;
+				subDiv = displayModel(st.child_Strat_Id);
+				$("div#Strategies div#diagram_" + f_strategyId).after(subDiv);
+			}
 			removeLoading(f_strategyId);
 		},
 		error: function(data, msg, e){
