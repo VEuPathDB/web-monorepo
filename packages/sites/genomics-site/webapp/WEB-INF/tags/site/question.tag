@@ -74,8 +74,8 @@
                     <c:otherwise>plus.gif</c:otherwise>
                 </c:choose>
             </c:set>
-            <div class="group-title>
-                <img class="group-handle" src='<c:url value="/assets/images/${image}" />' />
+            <div class="group-title">
+                <img class="group-handle" src='<c:url value="/images/${image}" />' />
                 ${groupName}
             </div>
             <div class="group-detail" style="display:${display};">
@@ -138,40 +138,40 @@
                                     </tr>
                                 </table>
                              </td>
-							 <td valign="top" align="center">
-								<table border="0">
+                             <td valign="top" align="center">
+			         <table border="0">
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
-                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                            <td valign="top">
+                            <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td align="left" valign="top">
                                 <wdk:answerParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
-                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                            <td valign="top">
+                            <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td align="left" valign="top">
                                 <wdk:datasetParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:otherwise>  <%-- not enumParam --%>
                             <c:choose>
                                 <c:when test="${isReadonly}">
-                                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                                    <td valign="top">
+                                    <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td align="left" valign="top">
                                         <bean:write name="qForm" property="myProp(${pNam})"/>
                                         <html:hidden property="myProp(${pNam})"/>
                                     </td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
-                                    <td valign="top">
+                                    <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td align="left" valign="top">
                                         <html:text property="myProp(${pNam})" size="35" />
                                     </td>
                                 </c:otherwise>
@@ -196,6 +196,7 @@
         </c:forEach> <%-- end of forEach params --%>
         
         <%-- detemine ending display style by displayType of the group --%>
+        <c:if test="${hasOrganism}"></table></c:if>
         </table>
     
         <%-- prepare the help info --%>
