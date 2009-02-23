@@ -27,9 +27,7 @@
       <img src="/images/warningSign.png" alt="warningSign" /></td>
     <td>
       <span class="warningMessage">
-      This is a pre-release version of ${wdkModel.name} that is under active 
-      development. There may be incomplete or inaccurate data and frequent site 
-      outages can be expected.</span>
+      This pre-release version of ${wdkModel.name} is available for early community review. Please explore the site and  <a href='<c:url value='/help.jsp'/>'>contact us</a> with your feedback. This site is under active development so there may be incomplete or inaccurate data and occasional site outages can be expected.</span>
      </td></tr></table>
   </div>
 </c:if>
