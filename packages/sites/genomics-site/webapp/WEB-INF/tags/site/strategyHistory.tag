@@ -156,7 +156,7 @@
           <img alt='Close' src='/assets/images/Close-X-box.png'/>
         </a>
       </span>
-      <form onsubmit='return validateSaveForm(this);' action="javascript:saveStrategy('${strategy.strategyId}', true)">
+      <form onsubmit='return validateSaveForm(this);' action="javascript:saveStrategy('${strategy.strategyId}', true, true)">
         <input type='hidden' value="${strategy.strategyId}" name='strategy'/>
         <input type='text' value="${strategy.savedName}" name='name'/>
         <input type='submit' value='Save'/>
