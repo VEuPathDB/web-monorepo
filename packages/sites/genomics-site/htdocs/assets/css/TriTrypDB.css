@@ -645,7 +645,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
    width: 8em;
    padding: 2px;
    color: #5b5b5b;
-   background-color: #eadfd9;
+   background-color: white;  /*  #eadfd9; */
    border: solid 1px #a06442;
    font-size: 11px;
    text-align: right;

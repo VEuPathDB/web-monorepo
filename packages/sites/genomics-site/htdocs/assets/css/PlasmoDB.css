@@ -360,7 +360,7 @@ img {
 
 #info {
    width: 209px;
-   min-height: 240px;
+   min-height: 227px;
    height:auto;
    background-image: url(../images/bubble_backgrnd.png);
    background-repeat: repeat-y;
@@ -388,7 +388,7 @@ img {
 
 #infobottom {
 	width: 209px;
-	min-height: 40px;
+	min-height: 10px;
 	background-image: url(../images/bubble_bottom.png);
 	background-position: bottom;
 	background-repeat: no-repeat;
@@ -624,7 +624,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
    width: 8em;
    padding: 2px;
    color: #5b5b5b;
-   background-color: #e2dcec;
+   background-color: white;  /*  #e2dcec; */
    border: solid 1px #634697;
    font-size: 11px;
    text-align: right;
