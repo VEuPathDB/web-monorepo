@@ -313,21 +313,21 @@
 	}
 	
 	.diagram div.operation.UNION.selected {
-		border: 2px solid #ea9797;
+		border: 2px solid #ffff00;
 		height: 37px;
-		background: url(/assets/images/operationIcons_pink.gif) no-repeat 0px -73px;
+		background: url(/assets/images/operationIcons_yellow.gif) no-repeat 0px -73px;
 	}
 
 	.diagram div.operation.INTERSECT.selected {
-		border: 2px solid #ea9797;
+		border: 2px solid #ffff00;
 		height: 37px;
-		background: url(/assets/images/operationIcons_pink.gif) no-repeat 0px -37px;
+		background: url(/assets/images/operationIcons_yellow.gif) no-repeat 0px -37px;
 	}
 
 	.diagram div.operation.MINUS.selected {
-		border: 2px solid #ea9797;
+		border: 2px solid #ffff00;
 		height: 37px;
-		background: url(/assets/images/operationIcons_pink.gif) no-repeat 0px -1px;
+		background: url(/assets/images/operationIcons_yellow.gif) no-repeat 0px -1px;
 	}
 
 	a.operation img {
@@ -353,8 +353,18 @@
 		z-index:1;
 	}
 
+	.diagram div.transform {
+		border: none;
+		height: 3.4em;
+		width: 8.7em;
+	}
+
 	.transform {
-		background: url(/assets/images/TransformBg.gif) no-repeat -3px -2px;
+		background: url(/assets/images/TransformBg.gif) no-repeat -1px 0;
+	}
+
+	.transform.selectedarrow {
+		background: url(/assets/images/TransformBg_yellow.gif) no-repeat -1px 0;
 	}
 
 	div.expandedStep {

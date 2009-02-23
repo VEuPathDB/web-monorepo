@@ -291,7 +291,7 @@ function createStep(ele, step, isLast){
 	  }else{  // CREATES STEP BOXES FOR TRANSFORM STEPS
 		transCount++;
 		div_id = "step_" + id + "_sub";
-		left = offset(ele,index,m);
+		left = offset(ele,index,m) - 7;
 		cl = "box venn row2 size1 transform";
 		inner = ""+
 			"		<h3>"+
@@ -524,7 +524,7 @@ function createStrategyName(ele, strat){
 		$(div_sn).html("<span onclick=\"enableRename('" + id + "', '" + name + "')\" title='Name of this strategy. Click to RENAME. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
         "<form id='rename' style='display: none;' action=\"javascript:renameStrategy('" + id  + "', true, false)\">" +
         "<input type='hidden' value='" + id + "' name='strategy'/>" +
-        "<input id='name' type='text' style='margin-right: 4px; width: 100%;' value='" + name + "' maxlength='2000' name='name'/>" +
+        "<input id='name' onblur='this.form.submit();' type='text' style='margin-right: 4px; width: 100%;' value='" + name + "' maxlength='2000' name='name'/>" +
         "</form>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" + 

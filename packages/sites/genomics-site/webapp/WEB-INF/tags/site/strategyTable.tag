@@ -85,6 +85,7 @@
         <div id="input_${strategyId}" style="display:none"></div>
       </td>
       <td nowrap>
+         <c:if test="${!strategy.isSaved}">
          <c:choose>
            <c:when test="${wdkUser.guest}">
              <input title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' type='button' value='Save As' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
@@ -93,6 +94,7 @@
              <input title='A saved strategy is like a snapshot, it cannot be changed.' type='button' value='Save As' onclick="showHistSave(this, '${strategyId}')" />
            </c:otherwise>
          </c:choose>
+         </c:if>
          <c:choose>
            <c:when test="${wdkUser.guest}">
              <input title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' type='button' value='Share' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />

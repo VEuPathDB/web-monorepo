@@ -146,7 +146,7 @@
       <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
     </div>
     </c:if>
-    <c:if test="${!wdkUser.guest}">
+    <c:if test="${!wdkUser.guest && !strategy.isSaved}">
     <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
       <span class='dragHandle'>
         <div class="modal_name">
