@@ -53,7 +53,7 @@
     <%-- detemine starting display style by displayType of the group --%>
     <c:set var="groupName" value="${group.displayName}" />
     <c:set var="displayType" value="${group.displayType}" />
-    <div name="${wdkQuestion.name + '_' + group.name}"
+    <div name="${wdkQuestion.name}_${group.name}"
          class="param-group" 
          type="${displayType}">
     <c:choose>
