@@ -43,6 +43,7 @@
 
 <!-- show error messages, if any -->
 <wdk:errors/>
+
 <c:set var="hasOrganism" value="false"/>
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
 <c:forEach items="${paramGroups}" var="paramGroupItem">
@@ -52,26 +53,42 @@
     <%-- detemine starting display style by displayType of the group --%>
     <c:set var="groupName" value="${group.displayName}" />
     <c:set var="displayType" value="${group.displayType}" />
+    <div name="${wdkQuestion.name + '_' + group.name}"
+         class="param-group" 
+         type="${displayType}">
     <c:choose>
-        <c:when test="${displayType eq 'empty'}">    
-            <table border="0" width="100%">
+        <c:when test="${displayType eq 'empty'}">
+            <%-- output nothing else --%> 
+            <div class="group-detail">
         </c:when>
         <c:when test="${displayType eq 'ShowHide'}">
-            <div style="background: #DEDEDE; text-align: center">
-                <hr><b>${groupName}</b>
-                <span id="${group.name}_link">
-                    <a href="#" onclick="return showParamGroup('${group.name}', 'no');">Hide</a>
-                </span>
-                <div id="${group.name}_area" style="display:block; text-align: left">
-                <table border="0">
-                    <tr><td colspan="4">${group.description}</td></tr>
+            <c:set var="display">
+                <c:choose>
+                    <c:when test="${group.visible}">block</c:when>
+                    <c:otherwise>none</c:otherwise>
+                </c:choose>
+            </c:set>
+            <c:set var="image">
+                <c:choose>
+                    <c:when test="${group.visible}">minus.gif</c:when>
+                    <c:otherwise>plus.gif</c:otherwise>
+                </c:choose>
+            </c:set>
+            <div class="group-title>
+                <img class="group-handle" src='<c:url value="/assets/images/${image}" />' />
+                ${groupName}
+            </div>
+            <div class="group-detail" style="display:${display};">
+                <div class="group-description">${group.description}</div>
         </c:when>
         <c:otherwise>
-            <hr><b>${groupName}</b><br>
-            <div>${group.description}</div>
-            <table border="0" width="100%">
+            <div class="group-title>${groupName}</div>
+            <div class="group-detail">
+                <div class="group-description">${group.description}</div>
         </c:otherwise>
     </c:choose>
+    
+    <table border="0" width="100%">
     
     <c:set var="paramCount" value="${fn:length(paramGroup)}"/>
     <%-- display parameter list --%>
@@ -163,62 +180,44 @@
                     </c:choose>
 
                     <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                    <td valign="top" width="50" nowrap>
-                        <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
-                        <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-                        <a id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">
-                        	<img src="/assets/images/help.png" border="0" alt="Help">
-						</a>
-                    </td>
-            </c:if>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td valign="top" width="50" nowrap>
+                            <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
+                            <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
+                            <a id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">
+                            	<img src="/assets/images/help.png" border="0" alt="Help">
+    						</a>
+                        </td>
+                    </c:if>
                 </tr>
- 
             </c:otherwise> <%-- end visible param --%>
         </c:choose>
         
-    </c:forEach>
+        </c:forEach> <%-- end of forEach params --%>
+        
+        <%-- detemine ending display style by displayType of the group --%>
+        </table>
     
-    <%-- detemine ending display style by displayType of the group --%>
-    <c:choose>
-        <c:when test="${hasOrganism == 'true'}">
- </table></table>
-    </c:when>
-    <c:otherwise>
-    <c:choose>
-        <c:when test="${group.name eq 'empty'}">
-            </table>
-        </c:when>
-        <c:when test="${displayType eq 'ShowHide'}">
-                </table>
-                </div> <%-- show/hide div --%>
-            <hr>
-            </div>  <%-- group background div --%>
-        </c:when>
-        <c:otherwise>
-            </table>
-        </c:otherwise>
-    </c:choose>
-        </c:otherwise>
-    </c:choose>
+        <%-- prepare the help info --%>
+        <c:forEach items="${paramGroup}" var="paramItem">
+            <c:set var="pNam" value="${paramItem.key}" />
+            <c:set var="qP" value="${paramItem.value}" />
+            
+            <c:set var="isHidden" value="${qP.isVisible == false}"/>
+            <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
+    
+                <c:if test="${!isHidden}">
+                        <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
+                	        <div class="htmltooltip" id="help_${pNam}_tip">${qP.help}</div>
+                        </c:if>
+                </c:if>
+            
+        </c:forEach>
+    
+        </div> <%-- end of group-detail div --%>
+    </div> <%-- end of param-group div --%>
 
-
-    <c:forEach items="${paramGroup}" var="paramItem">
-        <c:set var="pNam" value="${paramItem.key}" />
-        <c:set var="qP" value="${paramItem.value}" />
-        
-        <c:set var="isHidden" value="${qP.isVisible == false}"/>
-        <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
-
-            <c:if test="${!isHidden}">
-                    <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
-            	        <div class="htmltooltip" id="help_${pNam}_tip">${qP.help}</div>
-                    </c:if>
-            </c:if>
-        
-    </c:forEach>
-
-</c:forEach>
+</c:forEach> <%-- end of foreach on paramGroups --%>
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
