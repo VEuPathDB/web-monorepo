@@ -150,7 +150,7 @@ function enableRename(stratId, name, fromHist) {
 		nameBox.style.display='block';
 		var input = document.getElementById('input_' + stratId);
 		input.innerHTML = "<input type='submit' value='Rename' />"
-		+ "<input type='reset' value='Cancel' onclick='disableRename()' />";
+		+ "<input type='reset' value='Cancel' onclick='disableRename(null, true)' />";
 		input.style.display='block';
 		nameBox = document.getElementById('name');
 		nameBox.select();
@@ -166,22 +166,36 @@ function enableRename(stratId, name, fromHist) {
 	}
 }
 
-function disableRename() {
-   if (currentStrategyId && currentStrategyId != '0') {
-      var form = document.getElementById('browse_rename');
-      form.action = "javascript:return false;";
-      var button = document.getElementById('activate_' + currentStrategyId);
-      button.style.display = 'block';
-      var name = document.getElementById('name_' + currentStrategyId);
-      name.innerText = '';
-      name.style.display = 'none';
-      var input = document.getElementById('input_' + currentStrategyId);
-      input.innerText = '';
-      input.style.display = 'none';
-      var text = document.getElementById('text_' + currentStrategyId);
-      text.style.display = 'block';
-      currentStrategyId = 0;
-   }
+function disableRename(stratId, fromHist) {
+	if (fromHist) {
+		if (currentStrategyId && currentStrategyId != '0') {
+			var form = document.getElementById('browse_rename');
+			form.action = "javascript:return false;";
+			var button = document.getElementById('activate_' + currentStrategyId);
+			button.style.display = 'block';
+			var name = document.getElementById('name_' + currentStrategyId);
+			name.innerText = '';
+			name.style.display = 'none';
+			var input = document.getElementById('input_' + currentStrategyId);
+			input.innerText = '';
+			input.style.display = 'none';
+			var text = document.getElementById('text_' + currentStrategyId);
+			text.style.display = 'block';
+			currentStrategyId = 0;
+		}
+	}
+	else {
+		var strat = getStrategyFromBackId(stratId);
+		stratName = $("#diagram_" + strat.frontId + " #strategy_name > span").eq(0);
+		append = $("#diagram_" + strat.frontId + " #append");
+		var nameDiv = $("#diagram_" + strat.frontId + " #rename > #name");
+		var onblur = nameDiv.attr("onblur");
+		nameDiv.removeAttr("onblur");
+		$("#diagram_" + strat.frontId + " #rename").hide();
+		nameDiv.attr("onblur",onblur);
+		stratName.show();
+		append.show();
+	}
 }
 
 function toggleEye(ele, stratId) {

@@ -873,7 +873,7 @@ function renameStrategy(stratId, checkName, fromHist){
 			if (kids.length > 0) {
 				var selectedBox = $("#Strategies div.selected");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
-				if (!fromHist) renameForm.hide();
+				disableRename(stratId, fromHist);
 				removeStrategyDivs(stratId);
 				updateStrategies(data, "Save", strat);
 				selectedBox.find(".resultCount a").click();
@@ -881,12 +881,9 @@ function renameStrategy(stratId, checkName, fromHist){
 				if (fromHist) updateHistory();
 			}
 			else{
-				var msg = '';
-				if (strat.isSaved)
-					msg = "A saved strategy already exists with the name '" + name + ".'  You must use Save As to overwrite the existing strategy.";
-				else
-					msg = "An unsaved strategy already exists with the name '" + name + ".'  You must Delete or Save the existing strategy in order to name this strategy '" + name + ".'";
-				alert(msg);
+				alert("An unsaved strategy already exists with the name '" + name + ".'");
+				disableRename(stratId, fromHist);	
+				if (strat.isSaved)  $("input[name='name']",renameForm).attr("value", strat.savedName);
 			}
 		},
 		error: function(data, msg, e){
