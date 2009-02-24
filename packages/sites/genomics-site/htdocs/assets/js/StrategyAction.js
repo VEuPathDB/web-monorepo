@@ -814,6 +814,9 @@ function hideStrat(id){
 			hideStrat(strat.Steps[i].child_Strat_Id);
 		}
 	}
+	if($("#diagram_" + id + " div.selected,#diagram_" + id + " div.selectedarrow").length > 0){
+		NewResults(-1);
+	}
 	$("#diagram_" + id).hide("slow").remove();
 	if($("#Strategies div[id^='diagram']").length == 0){
 		showInstructions();
