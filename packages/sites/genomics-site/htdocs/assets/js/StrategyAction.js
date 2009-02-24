@@ -108,23 +108,6 @@ function isLoaded(id){
 	return -1;
 }
 
-function findStrategy(fId){
-	for(i=0;i<strats.length;i++){
-		if(strats[i].frontId == fId)
-			return i;
-	}
-	return -1;
-}
-
-function findStep(stratId, fId){
-	steps = getStrategy(stratId).Steps;
-	for(i=0;i<steps.length;i++){
-		if(steps[i].frontId == fId)
-			return i;
-	}
-	return -1;
-}
-
 var div_strat = null;
 function displayModel(strat_id){
 	if(strats){

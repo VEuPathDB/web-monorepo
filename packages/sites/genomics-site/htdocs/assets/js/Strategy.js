@@ -129,6 +129,23 @@ function getStepFromBackId(strat,id){
 	}
 }
 
+function findStrategy(fId){
+	for(i=0;i<strats.length;i++){
+		if(strats[i].frontId == fId)
+			return i;
+	}
+	return -1;
+}
+
+function findStep(stratId, fId){
+	steps = getStrategy(stratId).Steps;
+	for(i=0;i<steps.length;i++){
+		if(steps[i].frontId == fId)
+			return i;
+	}
+	return -1;
+}
+
 function getDataType(ele){
 	var s = "s";
 	if(parseInt($(ele).attr("results")) == 1)
