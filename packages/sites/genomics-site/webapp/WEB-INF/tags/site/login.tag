@@ -4,14 +4,6 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
-
-<%-- remove this once we have all pages using header.tag (used by home_header)  --%>
-<%@ attribute name="refer" 
- 			  type="java.lang.String"
-			  required="false" 
-			  description="Page calling this tag"
-%>
-
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <%-- set refererUrl to be the tag's enclosing page if not
@@ -35,7 +27,6 @@
 <table border="0" cellspacing="0" cellpadding="0" width="50%">
 <c:choose>
   <c:when test="${wdkUser != null && wdkUser.guest != true}">
-
       <tr>
         <td valign="top" colspan="2" align="center">
            <c:set var="firstName" value="${wdkUser.firstName}"/>
@@ -52,17 +43,13 @@
           <c:url value="processLogout.do" var="logoutUrl">
              <c:param name="refererUrl" value="${originRequestUrl}"/> 
           </c:url>
-        
            <div class="small">
            <a href="${logoutUrl}" id="logout">Logout</a>
            </div>
         </td>
       </tr>
-
   </c:when>
-
   <c:otherwise>
-
      <c:if test="${sessionScope.loginError != null && sessionScope.loginError != ''}">
        <c:set var="errorMessage" value="${sessionScope.loginError}"/>
        <c:remove var="loginError" scope="session"/>
@@ -93,6 +80,11 @@
            <input id="password" type="password" name="password" size="11">
          </div>
        </td>
+     </tr>
+     <tr>
+        <td colspan="2" align="center" nowrap>
+           <input type="checkbox" id="remember" name="remember" size="11">Remember me on this computer.</input>
+        </td>
      </tr>
      <tr>
         <td colspan="2" align="center" nowrap>
