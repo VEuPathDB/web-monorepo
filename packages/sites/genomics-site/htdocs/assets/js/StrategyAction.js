@@ -384,6 +384,9 @@ function createStep(ele, step, isLast){
 }
 
 function createDetails(ele, strat, step){
+	var f = false;
+	if(ele[0].parentNode.nodeName == "strategy")
+		f = true;
 	var detail_div = document.createElement('div');
 	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px" });
 	var name = $(ele).attr("name");
@@ -418,18 +421,25 @@ function createDetails(ele, strat, step){
 	var params_table = "";
 	if(params.length != 0)
 		params_table = createParameters(params);
+	
+	rename_step = 	"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
+	view_step = 	"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
+	edit_step =		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\"," + collapsible + ");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;";
+	if(f){
+		expand_step = 	"			<span class='expand_step_link' style='color:grey'>Expand</span>&nbsp;|&nbsp;";
+	}else{
+		expand_step = 	"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;";
+	}
+	insert_step = 	"			<a class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>&nbsp;|&nbsp;";
+	delete_step = 	"			<a class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>";
+	close_button = 	"			<span style='float: right; position: absolute; right: 6px;'>"+
+					"				<a href='javascript:void(0)' onclick='hideDetails(this)'>[x]</a>"+
+					"			</span>";
+	
+	
+	
 	inner = ""+	
-	    "		<div class='crumb_menu'>"+
-		"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;"+
-		"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;"+
-		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\"," + collapsible + ");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;"+
-		"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;"+
-		"			<a class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>"+
-		"			&nbsp;|&nbsp;"+
-		"			<a class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>"+
-		"			<span style='float: right; position: absolute; right: 6px;'>"+
-		"				<a href='javascript:void(0)' onclick='hideDetails(this)'>[x]</a>"+
-		"			</span>"+
+	    "		<div class='crumb_menu'>"+ rename_step + view_step + edit_step + expand_step + insert_step + delete_step + close_button +
 		"		</div>"+
 		"		<p class='question_name'><span>" + name + "</span></p>"+
 		"		<table></table><hr>" + filteredName +
