@@ -358,6 +358,7 @@ body {
           <label>
           <select name="messageCategory" id="messageCategory">
             <option value="$messageCategory">$messageCategory</option>
+            <option value="Event">Event</option>
             <option value="Information">Information</option>
             <option value="Degraded">Degraded</option>
             <option value="Down">Down</option>
@@ -370,31 +371,31 @@ body {
         </div></td>
         <td bgcolor="#FFF8F2"><p>
           <label>
-            <input type="checkbox" name="selectedProjects" value="60" $cryptoBox id="selectedProjects_0" />
+            <input type="checkbox" name="selectedProjects" value="10" $cryptoBox id="selectedProjects_0" />
             <em>            CryptoDB</em></label>
           <em><br />
           <label>
-            <input type="checkbox" name="selectedProjects" value="70" $giardiaBox id="selectedProjects_1" />
+            <input type="checkbox" name="selectedProjects" value="20" $giardiaBox id="selectedProjects_1" />
             GiardiaDB</label>
           <br />
           <label>
-            <input type="checkbox" name="selectedProjects" value="80" $plasmoBox id="selectedProjects_2" />
+            <input type="checkbox" name="selectedProjects" value="30" $plasmoBox id="selectedProjects_2" />
             PlasmoDB</label>
           <br />
           <label>
-            <input type="checkbox" name="selectedProjects" value="90" $toxoBox id="selectedProjects_3" />
+            <input type="checkbox" name="selectedProjects" value="40" $toxoBox id="selectedProjects_3" />
             ToxoDB</label>
           <br />
           <label>
-            <input type="checkbox" name="selectedProjects" value="100" $trichBox id="selectedProjects_4" />
+            <input type="checkbox" name="selectedProjects" value="50" $trichBox id="selectedProjects_4" />
             TrichDB</label>
           <br />
           <label>
-            <input type="checkbox" name="selectedProjects" value="110" $triTrypBox id="selectedProjects_5" />
+            <input type="checkbox" name="selectedProjects" value="60" $triTrypBox id="selectedProjects_5" />
             TriTrypDB</label>
           <br />
           <label>
-            <input type="checkbox" name="selectedProjects" value="120" $eupathBox id="selectedProjects_6" />
+            <input type="checkbox" name="selectedProjects" value="70" $eupathBox id="selectedProjects_6" />
             EupathDB</label>
           </em><br />
         </p>        
