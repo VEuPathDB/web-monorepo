@@ -41,6 +41,7 @@ function initDisplay(index){
 	$.ajax({
 		url: "showStrategy.do?strategy=" + init_strat_ids[index],
 		type: "POST",
+                data: '',
 		dataType: "xml",
 		success: function(data){
 			id = loadModel(data);
