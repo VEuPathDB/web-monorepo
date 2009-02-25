@@ -794,7 +794,6 @@ function closeStrategy(stratId){
 		dataType:"html",
 		success: function(data){
 			hideStrat(stratId);
-			update_hist = true;
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e);
