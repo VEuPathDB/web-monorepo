@@ -668,6 +668,7 @@ function DeleteStep(f_strategyId,f_stepId){
 		url: url,
 		type: "post",
 		dataType:"xml",
+		data:"",
 		beforeSend: function(obj){
 				showLoading(f_strategyId);
 				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
@@ -718,6 +719,7 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 		url: url,
 		type: "post",
 		dataType: "xml",
+		data: "",
 		beforeSend: function(){
 			showLoading(f_strategyId);
 			//$("div#step_" + step.frontId + "_sub h3 div.crumb_details").hide();
