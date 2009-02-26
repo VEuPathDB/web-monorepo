@@ -5,7 +5,9 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
+
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
@@ -44,8 +46,12 @@
 <!-- show error messages, if any -->
 <wdk:errors/>
 
+<%-- the js has to be included here in order to appear in the step form --%>
+<script type="text/javascript" src='<c:url value="/assets/js/wdkQuestion.js"/>'></script>
+
 <c:set var="hasOrganism" value="false"/>
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
+<div class="params">
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
     <c:set var="paramGroup" value="${paramGroupItem.value}" />
@@ -143,19 +149,19 @@
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-                            <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
-                            <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:answerParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
-                            <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:datasetParamInput qp="${qP}" />
                             </td>
@@ -163,14 +169,14 @@
                         <c:otherwise>  <%-- not enumParam --%>
                             <c:choose>
                                 <c:when test="${isReadonly}">
-                                    <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <bean:write name="qForm" property="myProp(${pNam})"/>
                                         <html:hidden property="myProp(${pNam})"/>
                                     </td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td width="300" align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <html:text property="myProp(${pNam})" size="35" />
                                     </td>
@@ -220,9 +226,11 @@
 
 </c:forEach> <%-- end of foreach on paramGroups --%>
 
+</div> <%-- end of params div --%>
+
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-<div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
+<div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
 </html:form>
 
 <c:if test="${wdkModel.displayName eq 'ApiDB'}">

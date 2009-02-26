@@ -263,7 +263,7 @@
 	.operation {
 		height: 18px;
 		text-align: center;
-		width: 8em;/*5.6em;*/
+	/*	width: 8em;*//*5.6em;*/
 		margin-top: -4px;
 	/*	margin-left: 2px;*/
 		margin-right: 2px;
@@ -272,7 +272,7 @@
 	/* added to deal with operators showing well when adding a substrategy, in TriTryp  */
 	td.operation {
 		height: 18px;
-		width: 25em;/*5.6em;*/
+		width: 40px;
 	}
 
 	.operation.UNION {

@@ -5,8 +5,11 @@
 			  required="true" 
 			  description="Page calling this tag"
 %>
+<%-- JQuery library is included by WDK 
 <!-- JQuery Library -->
 <script type="text/javascript" src="/assets/js/lib/jquery-1.2.6.js"></script>
+--%>
+
 <!-- JQuery Drag And Drop Plugin -->
 
 <c:if test="${refer == 'customSummary'}">
