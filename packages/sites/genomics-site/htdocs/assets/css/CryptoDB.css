@@ -111,6 +111,7 @@ img {
 	font-size: 12px;
 	color: #395b8e;
 	z-index: 520;
+	min-width:440px;
 }
 
 #nav_top ul {
@@ -249,7 +250,7 @@ img {
 }
 
 #contentcolumn {
-	min-width: 750px;
+	min-width: 740px;
 	margin: 0 25px 0 226px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
 	background-color: #FFFFFF;
 	background-image: url(../images/CryptoDB/footer.png);
@@ -1384,7 +1385,7 @@ ul#strategy_tabs {
 }
 
 .announcebox.home {
-	min-width: 780px;	
+	min-width: 728px;	
 	margin: 12px 25px 0 226px;
 }
 
