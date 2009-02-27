@@ -130,18 +130,19 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 		var header = "<span class='dragHandle'>" + formtitle + " " + close_link + "</span>";
 		
 	$("#query_form").html(header);
+	if (hideQuery){
+           $(".filter.params", quesForm).remove();
+           $("input[name=questionFullName]", quesForm).remove();
+           $(".filter.operators", quesForm).width('auto');
+           quesForm.css({'max-width' : '500px','min-width' : '500px'});
+           $("#query_form").css("min-width", "500px");
+        }
 	$("#query_form").append(quesForm);
 	$("#query_form").append(tooltips);
 	//$("#filter_link_div_" + proto + " #query_selection").fadeOut("normal");
 	if(edit == 1)
 		$("#query_form div#operations input#" + operation).attr('checked','checked'); 
 	$("#query_form").jqDrag(".dragHandle");
-	if (hideQuery){
-           $(".filter.params").remove();
-           $("input[name=questionFullName]").remove();
-           $(".filter.operators").width('auto');
-           $("#query_form").css({'max-width' : '315px','min-width' : '315px'});
-        }
 	if (hideOp){
            $(".filter.operators").remove();
 		   $(".filter.params").after("<input type='hidden' name='booleanExpression' value='AND' />");

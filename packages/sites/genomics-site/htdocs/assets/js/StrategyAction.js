@@ -147,7 +147,7 @@ function displayModel(strat_id){
 					$(div_strat).append(opstep[2]);
 				$(div_strat).append(opstep[0]);
 				strat.Steps[j].isboolean = true;
-				st = createStep(xml_step_boolean, strat.Steps[j], last);
+				st = createStep(xml_step_boolean, strat.Steps[j], last, xml_step_operand);
 				$(div_strat).append(st[0]);
 				$(div_strat).append(st[1]);
 					
@@ -214,7 +214,7 @@ function offset(ele,index, m){
 }
 
 
-function createStep(ele, step, isLast){
+function createStep(ele, step, isLast, child){
 	var strategyId = "";
 	if(ele[0].parentNode.nodeName == "strategy")
 		strategyId = isLoaded($(ele).parent().attr("id"));
@@ -302,8 +302,10 @@ function createStep(ele, step, isLast){
 		div_id = "step_" + id;
 		left = offset(ele,index,m);
 		cl = "venn row2 size2 arrowgrey operation " + operation;
+		var urlParams = $("params urlParams", child).text();
+		var questionFullName = $(child).attr("questionName");
 		inner = ""+
-			"			<a title='Click on the step name above to modify this boolean operation.' class='operation' onclick='NewResults(" + strategyId + "," + id + ", true)' href='javascript:void(0)'>"+
+			"			<a id='" + strategyId + "|" + step.back_boolean_Id + "|" + operation + "' title='Click on this icon or on the step name above to modify this boolean operation.' class='operation' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\",\"true\")'>"+
 			"				<img src='/assets/images/transparent1.gif'>"+
 			"			</a>"+
 			"			<h6 class='resultCount'>"+
