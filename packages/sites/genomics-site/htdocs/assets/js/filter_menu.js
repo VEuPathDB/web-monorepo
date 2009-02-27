@@ -282,44 +282,8 @@ function parseInputs(){
 	var quesForm = $("form[name=questionForm]");
 	var inputs = $("input, textarea", quesForm);
 	var selects = $("select", quesForm);
-	var d = "";
-	var isFirst = 1;
-	for(i=0;i<inputs.length;i++){
-	    var name = inputs[i].name;
-	    if(inputs[i].type == "checkbox" || inputs[i].type == "radio"){
-		var boxType = inputs[i].type;
-	    	var tempName = name;
-		var tempValue = "";
-		while(tempName == name && inputs[i].type == boxType){
-		   if(inputs[i].checked == true)
-			tempValue = tempValue + "," + inputs[i].value;
-		   i++;
-		   name = inputs[i].name;
-		}
-		tempValue = tempValue.substring(1);
-		if(d == "")
-			d = tempName + "=" + tempValue;
-		else
-			d = d + "&" + tempName + "=" + tempValue;
-		i--;
-	    }else{
-	      if(inputs[i].type != "submit"){
-	    	var value = inputs[i].value;
-	    	if(i == 0)
-			d = name + "=" + value;
-	    	else
-			d = d + "&" + name + "=" + value;
-	      }
-	    }
-	    isFirst = 0;
-	}
-	for(i=0;i<selects.length;i++){
-			var sname = selects[i].name;
-			var svalue = selects[i].value;
-			if(isFirst == 1)
-				d = sname + "=" + svalue;
-		    else
-				d = d + "&" + sname + "=" + svalue;
-	}
-	return d;
+
+        // Jerric - use ajax to serialize the form data
+	var d = quesForm.serialize();
+        return d;
 }	
