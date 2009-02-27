@@ -515,6 +515,8 @@ function createStrategyName(ele, strat){
 		"</div>";
 	}
 
+var rename = "<a style='color: #0b4796' title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a>";
+
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
@@ -524,6 +526,8 @@ function createStrategyName(ele, strat){
         "<input id='name' onblur='this.form.submit();' type='text' style='margin-right: 4px; width: 100%;' value='" + name + "' maxlength='2000' name='name'/>" +
         "</form>" +
 	"<span class='strategy_small_text'>" +
+	"<br/>" + 
+	rename +
 	"<br/>" + 
 	save +
 	"<br/>"+
