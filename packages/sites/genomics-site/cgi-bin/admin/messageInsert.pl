@@ -282,21 +282,21 @@ sub displayMessageForm{
 
         ## Render new submission form, or repopulate and display form with passed params if validation failed.
        
-         my $errorMessage=$_[0];
-         my $messageId=$_[1];
-         my $messageCategory=$_[2];
+         my $errorMessage=$_[0] || '';
+         my $messageId=$_[1] || '';
+         my $messageCategory=$_[2] || '';
          my (@selectedProjects)=@{($_[3])} if (@_); #Get selected projects from new message submit
-         my $messageText=$_[4];
-         my $cryptoBox=$_[5];
-         my $giardiaBox=$_[6];
-         my $plasmoBox=$_[7];
-         my $toxoBox=$_[8];
-         my $trichBox=$_[9];
-         my $triTrypBox=$_[10];
-         my $eupathBox=$_[11];
-         my $startDate=$_[12];
-         my $stopDate=$_[13];
-         my $adminComments=$_[14];
+         my $messageText=$_[4] || '';
+         my $cryptoBox=$_[5] || '';
+         my $giardiaBox=$_[6] || '';
+         my $plasmoBox=$_[7] || '';
+         my $toxoBox=$_[8] || '';
+         my $trichBox=$_[9] || '';
+         my $triTrypBox=$_[10] || '';
+         my $eupathBox=$_[11] || '';
+         my $startDate=$_[12] || '';
+         my $stopDate=$_[13] || '';
+         my $adminComments=$_[14] || '';
        
 
          if(!$messageId){
