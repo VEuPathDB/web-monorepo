@@ -37,19 +37,69 @@ sub new {
 
 }
 
+sub setProjectId {$_[0]->{projectId} = $_[1]}
+
 sub getSQL {
 	my $self = shift;
 	my ($modulename, $key) = @_;
 
 	my $obj = $self->{tree}->{module}->{$modulename}->{sqlQuery};
 
-	return $obj->{sql} if (exists $obj->{sql});
-	return $obj->{$key}->{sql};
+        return $obj->{sql} if (exists $obj->{sql});
+        my $sqlObj = $obj->{$key}->{sql};
+
+        return $self->_getSQL($sqlObj, $key);
 }
+
 
 sub print {
 	my $self = shift;
 	print Dumper($self);
+}
+
+sub _getSQL {
+  my ($self, $sqlObj, $key) = @_;
+
+  my $projectId = $self->{projectId};
+
+  my $rv;
+  my $sqlCount = 0;
+
+  if(ref($sqlObj) eq 'ARRAY') {
+    my $alreadyIncluded;
+
+    foreach my $sql (@$sqlObj) {
+      if(ref($sql) eq 'HASH') {
+        next if($sql->{excludeProjects} && $sql->{excludeProjects} =~ /$projectId/);
+
+        if($sql->{includeProjects} && $sql->{includeProjects} =~ /$projectId/) {
+          $rv = $sql->{content};
+          $alreadyIncluded = 1;
+          $sqlCount++;
+        }
+        if($sql->{excludeProjects} && $sql->{excludeProjects} !~ /$projectId/) {
+          $rv = $sql->{content} unless($alreadyIncluded);
+          $sqlCount++;
+        }
+      }
+      else {
+        $rv = $sql unless($alreadyIncluded);
+        $sqlCount++;
+      }
+    }
+  }
+
+  else {
+    $rv = $sqlObj;
+    $sqlCount++;
+  }
+
+  unless($sqlCount == 1) {
+    die "Multiple SQL statements found for $key" . Dumper $sqlObj;
+  }
+
+  return $rv;
+
 }
 
 1;

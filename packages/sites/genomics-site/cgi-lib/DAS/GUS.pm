@@ -85,10 +85,12 @@ sub new {
   my $self = bless {}, ref($proto) || $proto;
   my %arg = @_;
 
-  my $dsn      = $arg{-dsn};
-  my $username = $arg{-user};
-  my $password = $arg{-pass};
-  my $sqlfile  = $arg{-sqlfile};
+  my $projectId = $arg{-projectId};
+
+  my $dsn       = $arg{-dsn};
+  my $username  = $arg{-user};
+  my $password  = $arg{-pass};
+  my $sqlfile   = $arg{-sqlfile};
   my $dbh = DBI->connect( $dsn, $username, $password )
       or $self->throw("unable to open db handle");
   
@@ -98,6 +100,8 @@ sub new {
 
   $self->dbh($dbh);
   $self->parser(DAS::Util::SqlParser->new($sqlfile));
+  $self->parser->setProjectId($projectId);
+
   return $self;
 }
 
