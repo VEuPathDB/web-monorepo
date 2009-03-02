@@ -1,0 +1,113 @@
+#!/usr/bin/perl -Tw 
+
+###
+# messageRead.pl  
+#
+# Check database for applicable messages 
+#
+# Author: Ryan Thibodeau
+#
+###
+
+use CGI qw/:standard/;
+use DBI qw(:sql_types);
+use HTTP::Headers;
+use lib map { /(.*)/ } split /:/, $ENV{PERL5LIB}; # Untaint PERL5LIB 
+use ApiCommonWebsite::Model::CommentConfig;
+use strict;
+use warnings;
+
+# Print the content and no-cache headers
+my $headers = HTTP::Headers->new(
+        "Content-type" => "text/xml",
+        Expires => 0,
+        Pragma => "no-cache",
+        "Cache-Control" => "no-cache, must-revalidate");
+print $headers->as_string() . "\n";
+
+# Create DB connection
+my $model=$ENV{'PROJECT_ID'};
+my $dbconnect=new ApiCommonWebsite::Model::CommentConfig($model);
+
+my $dbh = DBI->connect(
+    $dbconnect->{dbiDsn},
+    $dbconnect->{login},
+    $dbconnect->{password},
+    { PrintError => 1,
+      RaiseError => 1,
+      AutoCommit => 1
+    }
+) or die "Can't connect to the database: $DBI::errstr\n";;
+
+# Query database using parameters passed via announcement.tag
+my $query=new CGI();
+my $messageCategory=$query->param("messageCategory") || '';
+my $projectName=$query->param("projectName") || '';
+my $range=$query->param("range") || '';
+my $displayStart=$query->param("displayStart") || '';
+my $displayEnd=$query->param("displayEnd") || '';
+
+my $rangeSql;
+if ($range eq 'all') {
+    $rangeSql = '';
+} elsif ($range eq 'expired') {
+    $rangeSql = <<SQL;
+    AND TO_CHAR(CURRENT_TIMESTAMP, 'mm-dd-yyyy hh24:mi:ss') 
+    > TO_CHAR(STOP_DATE, 'mm-dd-yyyy hh24:mi:ss') 
+SQL
+} else {
+    $rangeSql = <<SQL;
+    AND TO_CHAR(CURRENT_TIMESTAMP, 'mm-dd-yyyy hh24:mi:ss') 
+    BETWEEN TO_CHAR(START_DATE, 'mm-dd-yyyy hh24:mi:ss') 
+    AND TO_CHAR(STOP_DATE, 'mm-dd-yyyy hh24:mi:ss') 
+SQL
+}
+
+my $sql;
+
+if ($projectName) {
+    $sql=qq(SELECT m.message_text, m.stop_date
+            FROM announce.messages m, announce.category c, 
+                 announce.projects p, 
+                 announce.message_projects mp 
+            WHERE p.project_id = mp.project_id 
+            AND mp.message_id = m.message_id 
+            AND m.message_category  =  c.category_name 
+            AND m.message_category = '$messageCategory' 
+            AND p.project_name = '$projectName'
+            $rangeSql
+            order by m.stop_date);
+} else {
+    $sql=qq(SELECT m.message_text, m.stop_date
+            FROM announce.messages m, announce.category c
+            WHERE m.message_category = c.category_name 
+            AND m.message_category = '$messageCategory' 
+            $rangeSql
+            order by m.stop_date);
+}
+
+my $sth=$dbh->prepare($sql) or
+     die "Could not prepare query. Check SQL syntax.";
+     
+$sth->execute() or die "Can't excecute SQL";
+
+print qq(<?xml version="1.0" encoding="UTF-8"?>\n);
+print "<records>\n";
+
+my @row;
+my @messages;
+ while (@row=$sth->fetchrow_array()){
+    print $row[0] . "\n";
+}
+
+
+print "</records>\n";
+
+# Finish and close DB connection  
+$dbh->disconnect();
+
+
+
+
+
+
