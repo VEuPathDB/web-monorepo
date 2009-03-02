@@ -117,7 +117,7 @@ _END_OF_TEXT_
 # Print message rows from database 
       my $i=0;
       my $n=0;
-      while ((@row=$sth->fetchrow_array) && ($n < 10)){
+      while ((@row=$sth->fetchrow_array) && ($n < 50)){
        
          # Query associated projects from DB
           my @projects=&getProjects($row[0]);
