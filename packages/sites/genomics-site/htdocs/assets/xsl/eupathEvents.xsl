@@ -2,6 +2,8 @@
 <xsl:stylesheet version="2.0" 
      xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+<xsl:strip-space elements="*"/>
+
 <xsl:template match="records">
   <center>  	      
   <table width="100%" border="0" cellpadding="2" cellspacing="2">
@@ -38,14 +40,21 @@
   <xsl:if test="$projCount &gt; 0">
     <tr valign="top" align="left">
         <td valign="top" bgcolor="#efefef">
-            <font face="Arial,Helvetica">
-              <a>
-              <xsl:attribute name="href">
-                <xsl:value-of select="normalize-space(url)" />
-              </xsl:attribute>
-              <xsl:value-of select="name"/>
-              </a>
-             </font>
+          <font face="Arial,Helvetica">
+            <xsl:choose>
+              <xsl:when test="url/text()">
+                <a>
+                <xsl:attribute name="href">
+                  <xsl:value-of select="normalize-space(url)" />
+                </xsl:attribute>
+                <xsl:value-of select="name"/>
+                </a>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="name"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </font>
         </td>
         <td valign="top" bgcolor="#efefef">
             <font face="Arial,Helvetica"><xsl:value-of select="presence/type"/></font>
