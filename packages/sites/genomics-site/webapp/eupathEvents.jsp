@@ -41,7 +41,9 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
      <td valign="top" width="10%" align="center"><a href="/">
   </a></td>
      <td>&nbsp;</td>
-  
+     <td ALIGN=right width=20><a href="/">
+        <img SRC="/assets/images/eupathdb_titleonwhite.gif" border=0>
+     </a></td> 
      <td  valign="top" width="10%" align="right">
         <table align="center" cellspacing=0 cellpadding=0>
         <tr valign="down"><td valign="bottom" align="center"><a href="http://cryptodb.org"><img border=0 src="/images/oocyst_bg.gif" width="55" height="55"></a></td></tr>
