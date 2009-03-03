@@ -611,7 +611,7 @@ sub confirmation(){
 my $messageType=$_[0];
 my $confirmation;
 
-if ($messageType eq "new"){$confirmation="Your message has been scheduled successfully.";}
+if ($messageType && $messageType eq "new"){$confirmation="Your message has been scheduled successfully.";}
    else {$confirmation="Revised message has been scheduled successfully.";}
 
     print<<_END_OF_TEXT_
