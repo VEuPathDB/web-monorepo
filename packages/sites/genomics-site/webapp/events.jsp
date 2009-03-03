@@ -33,7 +33,7 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
 </head>
 <body>
 
-<table width='80%' align='center' cellpadding='2' cellspacing='0' border='0'>
+<table width='90%' align='center' cellpadding='2' cellspacing='0' border='0'>
 <tr><td ALIGN="left" width="40%">  
 
   <table align="left" border="0">
@@ -67,7 +67,7 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
 <tr><td colspan="3"><font face="Arial,Helvetica">The <a href="/">Eukaryotic Pathogen Bioinformatics Resource Center (BRC)</a> designs, develops and maintains the EuPathDB, CryptoDB, GiardiaDB, PlasmoDB, ToxoDB and TrichDB websites.  The scientists and staff involved in this BRC attend numerous events to explain the resources we are building and to encourage scientists around the world to use them.</font></td></tr>
 <tr><td><br></td></tr>
 </table>
-<table width='80%' align='center' cellpadding='2' cellspacing='0' border='0'>
+<table width='90%' align='center' cellpadding='2' cellspacing='0' border='0'>
     <tr><td colspan="3"><font face="Arial,Helvetica" color="#003366" size="+2"><b>Upcoming Events</b></font></td></tr>
     <tr><td>
 
