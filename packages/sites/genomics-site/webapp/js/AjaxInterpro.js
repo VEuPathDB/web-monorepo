@@ -1,61 +1,29 @@
 function loadSelectedData(){
 
-	var datatype =  document.getElementById( 'domain_database_list' ).value; //use this to select database
+	var datatype =  $("#domain_database_list").val(); //use this to select database
 	var sendReqUrl = 'showRecord.do?name=AjaxRecordClasses.InterproTermClass&primary_key='+datatype;
-	var xmlObj = null;
-
-	if(window.XMLHttpRequest){
-		
-		xmlObj = new XMLHttpRequest();
-	
-	} else if(window.ActiveXObject){
-		
-		xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
-
-		
-	} else {
-		
-		return;
-		
-	}
-	
-	xmlObj.onreadystatechange = function(){
-		if(xmlObj.readyState == 4 ){
-			createAutoComplete( xmlObj.responseXML );
-		 }
-	}
-
-	
-	xmlObj.open( 'GET', sendReqUrl, true );
-	xmlObj.send('');
-
-			
-
-	
+	$.ajax({
+		url: sendReqUrl,
+		dataType: "XML",
+		success: function(data){
+			createAutoComplete(data);
+		}
+	});
 }
 
-function createAutoComplete( obj ){
+function createAutoComplete(obj){
 	
 	var def = new Array();
-	
-	var defArray = obj.getElementsByTagName('term'); //I'm assuming they're 'term' tags
-	var ArrayLength = defArray.length;
 	var term;
-	
-	if( ArrayLength != 0 ){
-		
-		for( var x = 0; x < ArrayLength; x++ ){
-			
-			term = new String( defArray[x].firstChild.data );
+	if( $("term",obj).length != 0 ){
+		$("term",obj).each(function(){
+			term = this.firstChild.data;
 			def.push(term);
-			
-		}
-		
+		});
+		$("#searchBox").autocomplete(def,{
+			matchContains: true
+		});		
 	}else{
 		// No Panther data returned from server
 	}
-	
-	new Autocompleter.Local('searchBox','searchBoxupdate', def,
-	{ tokens: new Array(',','\n'), fullSearch: true, partialSearch: true, partialChars: 0, choices: 9999 });
-	
 }
