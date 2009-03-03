@@ -17,11 +17,9 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="headElement">
-  <script src="js/AjaxInterpro.js" type="text/javascript"></script>
-  <script src="js/prototype.js" type="text/javascript"></script>
-  <script src="js/scriptaculous.js" type="text/javascript"></script>
   <script src="js/Top_menu.js" type="text/javascript"></script>
   <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
+<link rel="stylesheet" href="/assets/css/jquery.autocomplete.css" type="text/css">
   <style type="text/css">
       div.searchBoxupdate ul {
       margin:0px;
@@ -66,7 +64,9 @@
 
 <%-- put an anchor here for linking back from help sections --%>
 <A name="${fromAnchorQ}"></A>
-<html:form method="get" action="/processQuestion.do">
+<html:form method="get" action="/processQuestion.do" styleId="form_question">
+  <script src="js/lib/jquery.autocomplete.js" type="text/javascript"></script>
+  <script src="js/AjaxInterpro.js" type="text/javascript"></script> 
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 
@@ -111,9 +111,9 @@
       </td>
 
       <%-- reload term list on back button --%>
-      <script type="text/javascript">
-      if ( document.getElementById('domain_database_list').selectedIndex != 0 ) loadSelectedData();
-      </script>
+      <!--<script type="text/javascript">
+      //if ( document.getElementById('domain_database_list').selectedIndex != 0 ) loadSelectedData();
+      </script>-->
 
     </c:when>
     <c:when test="${pNam eq 'domain_accession'}">
@@ -187,7 +187,7 @@
       style="display:none;border:1px solid black;background-color:white;height:125px;overflow:auto;">
  </div>
 
-<div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
+<div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
 
 </html:form>
 
