@@ -5,16 +5,19 @@
 <xsl:output method="html"/>
 <xsl:strip-space elements="*"/>
 
-<xsl:variable name="recCount" select="count(/records/event)"/>
+<xsl:variable name="recCount" select="count(/records/record)"/>
 
 <xsl:template match="records">
       <xsl:apply-templates/>
 </xsl:template>
 
+<xsl:template match="record">
+  <xsl:apply-templates/>
+  <xsl:if test="position() &lt; $recCount"><hr/></xsl:if>
+</xsl:template>
 
 <xsl:template match="event">
   <xsl:variable name="projCount" select="count(presence/projects/project)"/>
-
   <p>
   <b class="title">
   <xsl:choose>
@@ -53,9 +56,11 @@
   </xsl:if>
   </p>
   </p>
-  <xsl:if test="position() &lt; $recCount"><hr/></xsl:if>
 </xsl:template>
 
-
+<xsl:template match="recid"/>
+<xsl:template match="displayStartDate"/>
+<xsl:template match="displayStopDate"/>
+<xsl:template match="submissionDate"/>
 
 </xsl:stylesheet>

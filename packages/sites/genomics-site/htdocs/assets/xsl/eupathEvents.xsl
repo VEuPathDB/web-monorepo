@@ -34,8 +34,6 @@
   </center>
 </xsl:template>
 
-
-
 <xsl:template match="event">
   <xsl:variable name="projCount" select="count(presence/projects/project)"/>
   <xsl:if test="$projCount &gt; 0">
@@ -70,11 +68,16 @@
                <xsl:attribute name="src">/assets/images/<xsl:value-of select="normalize-space(.)"/>/favicon.jpg</xsl:attribute>
                </img>
                <xsl:value-of select="normalize-space(.)"/>
-               <xsl:if test="position() &lt; $projCount"><br/> </xsl:if>
+               <xsl:if test="position() &lt; $projCount"><br/></xsl:if>
            </xsl:for-each>
         </td>
     </tr>
   </xsl:if>
 </xsl:template>
+
+<xsl:template match="recid"/>
+<xsl:template match="displayStartDate"/>
+<xsl:template match="displayStopDate"/>
+<xsl:template match="submissionDate"/>
 
 </xsl:stylesheet>

@@ -43,7 +43,7 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
   }
 </style>
 
-<h2 align='center'>Community Events</h2>
+<h2 align='center'>${projectName} Community Events</h2>
 
 
 <c:catch var='e'>

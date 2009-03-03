@@ -65,7 +65,10 @@ SQL
 my $sql;
 
 if ($projectName) {
-    $sql=qq(SELECT m.message_text, m.stop_date
+    $sql=qq(SELECT m.message_text, m.message_id, 
+                   TO_CHAR(start_date, 'Dy, dd Mon yyyy hh24:mi:ss'),
+                   TO_CHAR(stop_date, 'Dy, dd Mon yyyy hh24:mi:ss'),
+                   TO_CHAR(time_submitted, 'd Month yyyy HH:mm')
             FROM announce.messages m, announce.category c, 
                  announce.projects p, 
                  announce.message_projects mp 
@@ -96,7 +99,13 @@ print "<records>\n";
 my @row;
 my @messages;
  while (@row=$sth->fetchrow_array()){
+    print "<record>\n";
     print $row[0] . "\n";
+    print "<recid>$row[1]</recid>\n";
+    print "<displayStartDate>$row[2]</displayStartDate>\n";
+    print "<displayStopDate>$row[3]</displayStopDate>\n";
+    print "<submissionDate>$row[4]</submissionDate>\n";
+    print "</record>\n\n";
 }
 
 
