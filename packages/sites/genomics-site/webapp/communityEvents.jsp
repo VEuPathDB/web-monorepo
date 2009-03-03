@@ -23,6 +23,12 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
 <site:header refer="events" title="${wdkModel.displayName} : Community Events" />
 
 <style type="text/css">
+  .title {
+    font-size: 12pt;
+  }
+  div.events {
+     padding: 1em;
+   }
   .events ul { 
     list-style: inside disc;
 	padding-left: 2em;
