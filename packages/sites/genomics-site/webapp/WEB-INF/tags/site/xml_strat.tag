@@ -144,7 +144,8 @@
                                                           <c:set var="aP" value="${qP.briefRawValue}" />
                                                        </c:otherwise>
                                                     </c:choose>
-                                                    <param name="${pNam}" prompt="${fn:escapeXml(qP.prompt)}" value="${aP}" className="${qP.class.name}"/>
+                                                    <param name="${pNam}" prompt="${fn:escapeXml(qP.prompt)}" 
+                                                           value="${aP}" visible="${qP.isVisible}" className="${qP.class.name}"/>
                                                 </c:forEach>
                                             </params>
                                         </c:otherwise>
@@ -208,7 +209,8 @@
                                                           <c:set var="aP" value="${qP.briefRawValue}" />
                                                        </c:otherwise>
                                                     </c:choose>
-                                                    <param name="${pNam}" prompt="${fn:escapeXml(qP.prompt)}" value="${aP}" className="${qP.class.name
+                                                    <param name="${pNam}" prompt="${fn:escapeXml(qP.prompt)}" 
+                                                           value="${aP}" visible="${qP.isVisible}" className="${qP.class.name
 }"/>                                        
                                             </c:forEach>
                                         </params>

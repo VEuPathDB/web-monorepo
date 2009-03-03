@@ -439,6 +439,8 @@ function createDetails(ele, strat, step){
 function createParameters(params){
 	var table = document.createElement('table');
 	$(params).children("param").each(function(){
+            var visible  = $(this).attr("visible");
+            if (visible != 'false') {
 		var tr = document.createElement('tr');
 		var prompt = document.createElement('td');
 		var space = document.createElement('td');
@@ -461,6 +463,7 @@ function createParameters(params){
 		$(tr).append(space);
 		$(tr).append(value);
 		$(table).append(tr);
+            }
 	});
 	return table;
 }

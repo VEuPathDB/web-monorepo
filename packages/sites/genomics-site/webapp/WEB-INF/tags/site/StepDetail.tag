@@ -44,6 +44,7 @@
 		<c:set var="displayName" value="${step.childStep.collapsedName}" />
 	</c:if>
 	<p class="question_name"><span>${displayName}</span></p>
+        <div>good time</div>
 	<table>
                     <c:forEach items="${displayParams}" var="p">
                        <c:set var="pNam" value="${p.key}"/>
@@ -63,7 +64,7 @@
                                          from file &lt;${dataset.uploadFile}&gt;
                                       </c:if>
                                    </c:when>
-                                   <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
+                                   <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.AnswerParamBean'}">
                                       <td class="medium">
                                       <jsp:setProperty name="qP" property="combinedId" value="${aP}" />
                                       <c:set var="subHistory" value="${qP.history}" />
