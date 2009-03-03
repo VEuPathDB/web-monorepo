@@ -733,12 +733,12 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 		success: function(data){
 			x = loadModel(data);
 			if(collapsedName.indexOf("UNION") == -1 && collapsedName.indexOf("MINUS") == -1 && collapsedName.indexOf("INTERSECT") == -1 )
-				$("#step_" + f_stepId + "_sub h3 a:first").text(un);
-			l = $("#step_" + f_stepId + "_sub").css("left");
+				$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub h3 a:first").text(un);
+			l = $("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub").css("left");
 			l = parseInt(l.substring(0,l.indexOf("px")));
 			gsd = document.createElement('div');
 			$(gsd).addClass("expandedStep").css({ left: (l-2) + "px"});
-			$("#step_" + f_stepId + "_sub").before(gsd);
+			$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub").before(gsd);
 			st = getStep(strategy.frontId, f_stepId);
 			if(st.child_Strat_Id == null)
 				alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
