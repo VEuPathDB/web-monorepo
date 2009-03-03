@@ -359,7 +359,7 @@ ${headElement}
           <li>
             <a href="${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
                <ul class="login">
-                    <li><site:login/></li>
+                    <li><site:login /></li>
               </ul>
 
          </li>

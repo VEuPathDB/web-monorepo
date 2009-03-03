@@ -4,6 +4,10 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
+<%@ attribute name="showError"
+              required="false"
+%>
+
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <%-- set refererUrl to be the tag's enclosing page if not
@@ -50,7 +54,7 @@
       </tr>
   </c:when>
   <c:otherwise>
-     <c:if test="${sessionScope.loginError != null && sessionScope.loginError != ''}">
+     <c:if test="${showError && sessionScope.loginError != null && sessionScope.loginError != ''}">
        <c:set var="errorMessage" value="${sessionScope.loginError}"/>
        <c:remove var="loginError" scope="session"/>
        <tr>

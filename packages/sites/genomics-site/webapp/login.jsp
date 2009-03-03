@@ -45,6 +45,6 @@
 <p>
 
 
-<site:login/>
+<site:login showError="true" />
 <site:footer />
 
