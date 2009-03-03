@@ -13,7 +13,7 @@ Transform XML message into Upcoming and Past events tables.
 http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=Event
 </c:set>
 <c:set var='expiredDataUrl'>
-http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&range=expired
+http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&range=expired&stopDateSort=DESC
 </c:set>
 <c:set var='xsltUrl'>
 http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl

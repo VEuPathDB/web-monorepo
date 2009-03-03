@@ -46,20 +46,19 @@ my $projectName=$query->param("projectName") || '';
 my $range=$query->param("range") || '';
 my $displayStart=$query->param("displayStart") || '';
 my $displayEnd=$query->param("displayEnd") || '';
+my $stopDateSort=$query->param("stopDateSort") || '';
 
 my $rangeSql;
 if ($range eq 'all') {
     $rangeSql = '';
 } elsif ($range eq 'expired') {
     $rangeSql = <<SQL;
-    AND TO_CHAR(CURRENT_TIMESTAMP, 'mm-dd-yyyy hh24:mi:ss') 
-    > TO_CHAR(STOP_DATE, 'mm-dd-yyyy hh24:mi:ss') 
+    AND CURRENT_TIMESTAMP > STOP_DATE
 SQL
 } else {
     $rangeSql = <<SQL;
-    AND TO_CHAR(CURRENT_TIMESTAMP, 'mm-dd-yyyy hh24:mi:ss') 
-    BETWEEN TO_CHAR(START_DATE, 'mm-dd-yyyy hh24:mi:ss') 
-    AND TO_CHAR(STOP_DATE, 'mm-dd-yyyy hh24:mi:ss') 
+    AND CURRENT_TIMESTAMP
+    BETWEEN START_DATE AND STOP_DATE
 SQL
 }
 
@@ -76,14 +75,14 @@ if ($projectName) {
             AND m.message_category = '$messageCategory' 
             AND p.project_name = '$projectName'
             $rangeSql
-            order by m.stop_date);
+            order by m.stop_date $stopDateSort);
 } else {
     $sql=qq(SELECT m.message_text, m.stop_date
             FROM announce.messages m, announce.category c
             WHERE m.message_category = c.category_name 
             AND m.message_category = '$messageCategory' 
             $rangeSql
-            order by m.stop_date);
+            order by m.stop_date $stopDateSort);
 }
 
 my $sth=$dbh->prepare($sql) or
