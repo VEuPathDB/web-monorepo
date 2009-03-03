@@ -23,10 +23,10 @@
 
 
 <div id="leftcolumn">
-	<div class="innertube">
-		<div id="menu_lefttop">
-				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-				<a class="heading" href="#">News</a>
+  <div class="innertube">
+    <div id="menu_lefttop">
+        <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+        <a class="heading" href="#">News</a>
 
 
 <%--------------  NEWS ---------------------------------------------%>
@@ -34,73 +34,81 @@
 
 <c:if test = "${project != 'GiardiaDB' && project != TrichDB && project != ApiDB}">
 
-
-				<div class="menu_lefttop_drop">
-                    <c:choose>
-                      <c:when test="${newsAnswer.resultSize < 1}">
-                        No news now, please check back later.<br>
-                      </c:when>
-                      <c:otherwise>
-                        <c:set var="i" value="1"/>
-                        <ul>
-                        <c:forEach items="${newsAnswer.recordInstances}" var="record">
-                        <c:if test="${i <= 4}">
-                          <c:set var="attrs" value="${record.attributesMap}"/>
-                          
-                          <fmt:parseDate pattern="${dateStringPattern}" 
-                                         var="pdate" value="${attrs['date']}"/> 
-                          <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
-                    
-                          <li><b>${fdate}</b>
-                                 <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News#newsItem${i}"/>">
-                                   ${attrs['headline']}
-                                 </a></li>
-                        </c:if>
-                        <c:set var="i" value="${i+1}"/>
-                        </c:forEach>
-                        <li>
-                          <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>"
-                             class="blue">All ${project} News</a>
-                        </li>
-                        </ul>
-                      </c:otherwise>
-                    </c:choose>
-				</div>
+   <div class="menu_lefttop_drop">
+      <c:choose>
+        <c:when test="${newsAnswer.resultSize < 1}">
+          No news now, please check back later.<br>
+        </c:when>
+        <c:otherwise>
+          <c:set var="i" value="1"/>
+          <ul>
+          <c:forEach items="${newsAnswer.recordInstances}" var="record">
+          <c:if test="${i <= 4}">
+            <c:set var="attrs" value="${record.attributesMap}"/>
+            
+            <fmt:parseDate pattern="${dateStringPattern}" 
+                           var="pdate" value="${attrs['date']}"/> 
+            <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
+      
+            <li><b>${fdate}</b>
+                   <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News#newsItem${i}"/>">
+                     ${attrs['headline']}
+                   </a></li>
+          </c:if>
+          <c:set var="i" value="${i+1}"/>
+          </c:forEach>
+          <li style='list-style:circle;'>
+            <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>"
+               class="blue">All ${project} News</a>
+          </li>
+          </ul>
+        </c:otherwise>
+      </c:choose>
+   </div>
 
 </c:if>
 
 
 <%--------------  COMMUNITY LINKS ---------------------------------------------%>
-				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-				<a class="heading" href="#">Community Links</a>
-				<div class="menu_lefttop_drop">
+    <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+    <a class="heading" href="#">Community Links</a>
+    
+    <div class="menu_lefttop_drop">
+    Upcoming Events
+    <site:communityEventListing/>
+    
+    <hr>
+    Information
+    <c:choose>
+      <c:when test="${extlAnswer.resultSize < 1}">
+        No links.
+      </c:when>
+      <c:otherwise>
+        <ul>
+        <c:forEach items="${extlAnswer.recordInstances}" var="record">
+          <c:forEach items="${record.tables}" var="table">
+            <c:forEach items="${table.rows}" var="row"> 
+               <li><a href="${row[1].value}">${row[0].value}</a></li>
+            </c:forEach>
+          </c:forEach>
+        </c:forEach> 
+        </ul>
+      </c:otherwise>
+    </c:choose>
 
-		<c:choose>
-                      <c:when test="${extlAnswer.resultSize < 1}">
-                        No links.
-                      </c:when>
-                      <c:otherwise>
-                        <ul>
- 			<c:forEach items="${extlAnswer.recordInstances}" var="record">
-				 <c:forEach items="${record.tables}" var="table">
-					 <c:forEach items="${table.rows}" var="row"> 
-                          			<li><a href="${row[1].value}">${row[0].value}</a></li>
-                        </c:forEach> </c:forEach>  </c:forEach> 
-                        </ul>
-                      </c:otherwise>
-		</c:choose>
-
-	<br><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;"><b>If you have a link that you think would be useful for the community, please send us a note.</b></a>
-				</div>
+    <br><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
+    <b>If you have a link that you think would be useful for the community, 
+    please send us a note.</b></a>
+    </div>
 
 
 
 <%--------------  TUTORIALS ---------------------------------------------%>
-				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-				<a class="heading" href="#">Web Tutorials</a>
-				<div class="menu_lefttop_drop">
+        <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+        <a class="heading" href="#">Web Tutorials</a>
+        <div class="menu_lefttop_drop">
 
-        	<c:choose>
+          <c:choose>
                       <c:when test="${tutAnswer.resultSize < 1}">
                         No tutorials.
                       </c:when>
@@ -110,38 +118,38 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
 </c:if>
                         <ul>
                         <c:forEach items="${tutAnswer.recordInstances}" var="record">
-				 <c:set var="attrs" value="${record.attributesMap}"/>
-				 <c:forEach items="${record.tables}" var="table">
-					 <c:forEach items="${table.rows}" var="row">
-						 <c:set var="projects" value="${row[0].value}"/>
-						<c:if test="${fn:containsIgnoreCase(projects, project)}"> 
-					  <li>${attrs['title']}<br /> 
-                          		 (<a href="http://eupathdb.org/tutorials/${row[1].value}">Quick Time</a>)
-                          		 (<a href="http://eupathdb.org/tutorials/${row[2].value}">Windows media</a>)
-                          		 (<a href="http://eupathdb.org/tutorials/${row[3].value}">Flash</a>)
-					  </li>
-						</c:if>
-                              		</c:forEach> 
-				</c:forEach>
- 			</c:forEach>
+         <c:set var="attrs" value="${record.attributesMap}"/>
+         <c:forEach items="${record.tables}" var="table">
+           <c:forEach items="${table.rows}" var="row">
+             <c:set var="projects" value="${row[0].value}"/>
+            <c:if test="${fn:containsIgnoreCase(projects, project)}"> 
+            <li>${attrs['title']}<br /> 
+                               (<a href="http://eupathdb.org/tutorials/${row[1].value}">Quick Time</a>)
+                               (<a href="http://eupathdb.org/tutorials/${row[2].value}">Windows media</a>)
+                               (<a href="http://eupathdb.org/tutorials/${row[3].value}">Flash</a>)
+            </li>
+            </c:if>
+                                  </c:forEach> 
+        </c:forEach>
+      </c:forEach>
                         </ul>
                       </c:otherwise>
-		</c:choose>
+    </c:choose>
 
-				</div>
+        </div>
 
 
 <%--------------  INFO AND HELP ---------------------------------------------%>
-				<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-				<a class="heading" href="#">Information and Help</a>
-				<div class="menu_lefttop_drop"><ul>
-						<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
-						<li><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}..org">Website Usage Statistics</a></li>
-						<li><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
-				</ul></div>
+        <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+        <a class="heading" href="#">Information and Help</a>
+        <div class="menu_lefttop_drop"><ul>
+            <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
+            <li><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}..org">Website Usage Statistics</a></li>
+            <li><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
+        </ul></div>
 
 
-		</div>
-	</div>
+    </div>
+  </div>
 </div>
-	
+  
