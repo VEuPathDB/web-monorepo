@@ -65,7 +65,7 @@
 	<select id="selected_strategy" type="multiple">
 		<option value="--">--Choose a Strategy to add--</option>
 		<c:forEach items="${user.strategiesByCategory[recordClass]}" var="storedStrategy">
-			<option value="${storedStrategy.strategyId}">${storedStrategy.name}</option>
+			<option value="${storedStrategy.strategyId}">${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
 		</c:forEach>
 	</select>
 	<br><br><input id="continue_button" type="button" value="Continue..."/>

@@ -192,7 +192,7 @@ function disableRename(stratId, fromHist) {
 		var onblur = nameDiv.attr("onblur");
 		nameDiv.removeAttr("onblur");
 		$("#diagram_" + strat.frontId + " #rename").hide();
-		nameDiv.attr("onblur",onblur);
+		//nameDiv.attr("onblur",onblur);
 		stratName.show();
 		append.show();
 	}
