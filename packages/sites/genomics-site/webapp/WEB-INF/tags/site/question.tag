@@ -88,7 +88,7 @@
                 <div class="group-description">${group.description}</div>
         </c:when>
         <c:otherwise>
-            <div class="group-title>${groupName}</div>
+            <div class="group-title">${groupName}</div>
             <div class="group-detail">
                 <div class="group-description">${group.description}</div>
         </c:otherwise>
