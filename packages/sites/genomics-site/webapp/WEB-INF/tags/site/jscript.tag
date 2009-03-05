@@ -41,6 +41,7 @@
 
 <!-- dynamic query grid code -->
 <script type="text/javascript" src="/assets/js/dqg.js"></script>
+<script type="text/javascript" src="/assets/js/newitems.js"></script>
 
 <c:if test="${refer == 'customSummary'}">
 	<script type="text/javascript" src="/assets/js/step.js"></script>

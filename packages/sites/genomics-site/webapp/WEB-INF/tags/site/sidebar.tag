@@ -26,7 +26,7 @@
   <div class="innertube">
     <div id="menu_lefttop">
         <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-        <a class="heading" href="#">News</a>
+        <a class="heading" id='news' href="#">News</a>
 
 
 <%--------------  NEWS ---------------------------------------------%>
@@ -41,7 +41,7 @@
         </c:when>
         <c:otherwise>
           <c:set var="i" value="1"/>
-          <ul>
+          <ul id='news'>
           <c:forEach items="${newsAnswer.recordInstances}" var="record">
           <c:if test="${i <= 4}">
             <c:set var="attrs" value="${record.attributesMap}"/>
@@ -68,11 +68,9 @@
 
 </c:if>
 
-
 <%--------------  COMMUNITY LINKS ---------------------------------------------%>
     <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-    <a class="heading" href="#">Community Resources</a>
-    
+    <a  class="heading" id='community' href="#">Community Resources</a>
     <div class="menu_lefttop_drop">
     Upcoming Events
     <site:communityEventListing/>
@@ -105,7 +103,7 @@
 
 <%--------------  TUTORIALS ---------------------------------------------%>
         <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-        <a class="heading" href="#">Web Tutorials</a>
+        <a class="heading" id='tutorials' href="#">Web Tutorials</a>
         <div class="menu_lefttop_drop">
 
           <c:choose>
@@ -141,11 +139,12 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
 
 <%--------------  INFO AND HELP ---------------------------------------------%>
         <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-        <a class="heading" href="#">Information and Help</a>
-        <div class="menu_lefttop_drop"><ul>
-            <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
-            <li><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}..org">Website Usage Statistics</a></li>
-            <li><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
+        <a class="heading" id='information' href="#">Information and Help</a>
+        <div class="menu_lefttop_drop">
+        <ul id=information>
+            <li id='help-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
+            <li id='help-2'><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}..org">Website Usage Statistics</a></li>
+            <li id='help-1'><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
         </ul></div>
 
 
@@ -153,3 +152,8 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
   </div>
 </div>
   
+
+<script type="text/javascript">
+getUserUnReadItems();
+updateUserReadItems(getTrackedListItems());
+</script>
