@@ -88,8 +88,6 @@
 		img, input.img_align_middle {
 			behavior: url(/assets/css/iepngfix.htc);
 		}
-		
-		
 	</style>
 <![endif]-->
 
@@ -135,9 +133,12 @@
 		padding-left:8px;
 		padding-right:1px;
 	}
+	*html a.heading {
+		margin-top: -5px;
+	}
 	
 	*html #info {
-	   width: 250px;
+	   width: 209px;
 	   min-height: 240px;
 	   height:auto;
 	   background-image: /assets/images/bubble_backgrnd.png);
@@ -146,10 +147,11 @@
 	   padding-top: 2px;
 	   padding-left: 19px;
 	   z-index: 99;
+	margin-top: -3px;
 	}
 	
 	*html #infobottom{
-		width:250px;
+		width:209px;
 		margin:0px -3px 0px;
 	}
 	
