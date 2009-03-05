@@ -62,14 +62,17 @@ $(document).ready(function(){
 	$("div", top_div).hide();
 	var op = $("div:first", top_div);
 	$("div:first", top_div).show();
-	$("a.heading", top_div).click(function(){
-		var testOp = op.prev("a").text();
-		if(op.prev("a").text() != $(this).text()){
-			op.hide(sidebar_speed);
-			op = $(this).next("div");
-			$(this).next("div").show(sidebar_speed);
-		}
-		return false;
-	});
+    $("a.heading, a.heading p", top_div).click(function(){
+        me = this;
+        if(me.nodeName == "P")
+            me = $(this).parent();
+        var testOp = op.prev("a").text();
+        if(op.prev("a").text() != $(me).text()){
+            op.hide(sidebar_speed);
+            op = $(me).next("div");
+            $(me).next("div").show(sidebar_speed);
+        }
+        return false;
+    });
 }
 });
