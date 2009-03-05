@@ -88,6 +88,11 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	$("input[value=Run Step]",quesForm).attr("id","executeStepButton");
 	$(".params", quesForm).wrap("<div class='filter params'></div>");
 	$(".params", quesForm).attr("style", "margin-top:15px;");
+
+        // hide the file upload box
+        quesForm.find(".dataset-file").each(function() {
+            $(this).css("display", "none");
+        });
 	
 	// Bring in the advanced params, if exist, and remove styling
 	var advanced = $("#advancedParams_link",quesForm);
