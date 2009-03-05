@@ -20,14 +20,11 @@
     var="serverName" value="${pageContext.request.serverName}"
 /><c:set 
     var="contextPath" value="${pageContext.request.contextPath}" 
-/><c:set 
-    var='currentDataUrl'
-    value='http://${serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}'
 /><c:set
     var="linkTmpl" 
     value="${scheme}://${serverName}${contextPath}/communityEvents.jsp"
 /><c:import
-    url="http://mheiges.tritrypdb.org/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=TriTrypDB" var="xml"
+    url="http://mheiges.tritrypdb.org/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}" var="xml"
 /><x:parse
     doc="${xml}" var="doc"
 /><c:set
