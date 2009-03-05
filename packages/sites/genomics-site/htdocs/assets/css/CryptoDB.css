@@ -20,7 +20,7 @@ a:link, a:visited {
 }
 
 a:hover, a:active {
-	color: #610bob;    /* for contrast 08438F; */        /*  #83a6d4; */
+	color: #610b0b;    /* for contrast 08438F; */        /*  #83a6d4; */
 	text-decoration: none;
 }
 #wrap {
