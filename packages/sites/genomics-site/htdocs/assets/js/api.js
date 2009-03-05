@@ -139,13 +139,13 @@ function storeMasterCookie() {
     }
 }
 
-function storeIntelligentCookie(name, value) {
+function storeIntelligentCookie(name, value, expires, path, domain, secure) {
     if (!getCookie('MasterCookie')) {
         storeMasterCookie();
     }
     var IntelligentCookie = getCookie(name);
     if ((!IntelligentCookie) || (IntelligentCookie != value)) {
-        setCookie(name, value);
+        setCookie(name, value, expires, path, domain, secure);
         var IntelligentCookie = getCookie(name);
         if ((!IntelligentCookie) || (IntelligentCookie != value)) {
             deleteCookie('MasterCookie');
