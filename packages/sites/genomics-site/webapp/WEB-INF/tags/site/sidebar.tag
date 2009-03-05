@@ -71,14 +71,14 @@
 
 <%--------------  COMMUNITY LINKS ---------------------------------------------%>
     <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-    <a class="heading" href="#">Community Links</a>
+    <a class="heading" href="#">Community Resources</a>
     
     <div class="menu_lefttop_drop">
     Upcoming Events
     <site:communityEventListing/>
     
     <hr>
-    Information
+    Related Sites
     <c:choose>
       <c:when test="${extlAnswer.resultSize < 1}">
         No links.
