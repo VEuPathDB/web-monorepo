@@ -139,7 +139,7 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
 
 <%--------------  INFO AND HELP ---------------------------------------------%>
         <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-        <a class="heading" id='information' href="#">Information and Help</a>
+        <a class="heading" id='informationAndHelp' href="#">Information and Help</a>
         <div class="menu_lefttop_drop">
         <ul id=information>
             <li id='help-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
@@ -154,6 +154,7 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
   
 
 <script type="text/javascript">
-getUserUnReadItems();
+getUserUnReadItems('ul#communityEventList li', 'a#community', '1');
+getUserUnReadItems('ul#information li', 'a#informationAndHelp', '3');
 updateUserReadItems(getTrackedListItems());
 </script>

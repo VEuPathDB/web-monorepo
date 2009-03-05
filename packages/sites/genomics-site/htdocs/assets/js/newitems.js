@@ -9,7 +9,7 @@ function getTrackedListItems(selector) {
   return listItems;
 }
 
-function getUserUnReadItems() {
+function getUserUnReadItems(liSel, hSel, pos) {
   var value = {};
   var read = {};
   var cookie = getCookie('read');
@@ -20,9 +20,10 @@ function getUserUnReadItems() {
     read[value[i]] = 1;
   }
   
-  selector = 'ul#communityEventList li';
-  var listItems = getTrackedListItems(selector);
+  //selector = 'ul#communityEventList li';
 
+  var listItems = getTrackedListItems(liSel);
+console.log(liSel);
   if (listItems != null && listItems.length > 0) {
     var lp = document.createElement('p');
     var label = document.createTextNode(
@@ -31,8 +32,8 @@ function getUserUnReadItems() {
         );
     lp.appendChild(label);
     lp.id = 'unreadlabel';
-    $('#menu_lefttop a.heading:eq(1)').css({'padding-bottom' : '8px'});
-    $('a#community').append(lp);
+    $('#menu_lefttop a.heading:eq(' + pos + ')').css({'padding-bottom' : '8px'});
+    $(hSel).append(lp);
 
     for (i = 0;  i < listItems.length; i++) {
       if (read[listItems[i]]) continue;
