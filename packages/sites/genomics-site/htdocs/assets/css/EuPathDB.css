@@ -574,7 +574,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 	text-decoration: none;
 	background-image: url(../images/EuPathDB/menu_lft2.png);
 	background-repeat: no-repeat;
-	padding-right: 6px;
+	padding-right: 10px;
 	padding-left:  7px;
 	margin-bottom: 5px;
 }
