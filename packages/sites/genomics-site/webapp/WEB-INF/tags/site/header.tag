@@ -83,6 +83,15 @@
 </c:if>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
+<!--[if lt IE 7]>
+	<style type="text/css" media="screen">
+		img, input.img_align_middle {
+			behavior: url(/assets/css/iepngfix.htc);
+		}
+		
+		
+	</style>
+<![endif]-->
 
 <!--[if IE]>
 <style type="text/css" media="screen">
@@ -90,7 +99,6 @@
 		behavior: url(/assets/css/csshover.htc);
 		font-size: 100%;
 	}
-
 	.ts_ie {
 		margin-left:-15px;
 	}
@@ -125,7 +133,7 @@
 	
 	*html .menu_lefttop_drop{
 		padding-left:8px;
-		padding-right:19px;
+		padding-right:1px;
 	}
 	
 	*html #info {
@@ -210,6 +218,8 @@
 <c:out value="${title}" default="${banner}" />
 </title>
 
+
+
 <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"> <%-- standard --%>
 <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
 
@@ -249,6 +259,10 @@ behavior: url(/assets/css/csshover.htc);
 </style>
 
 <site:jscript refer="${refer}"/>
+
+<!--[if lt IE 7]>
+<script type="text/javascript" src="/assets/js/pngfix.js"></script>
+<![endif]-->
 
 <c:if test="${project == 'CryptoDB'}">
   <script type="text/javascript" src="/assets/js/google_map.js"></script>
