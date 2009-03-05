@@ -12,6 +12,11 @@ div.htmltooltip{
   z-index:1000;
 }
 
+p#unreadlabel {
+  color:yellow;
+  font-size:.5em;
+  padding-left:3px;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =used in help.jsp, classic bullet list
