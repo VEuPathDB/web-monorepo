@@ -44,12 +44,13 @@
   <c:set var="date"><x:out select="submissionDate"/></c:set>
   <c:set var="headline"><x:out select="event/name" escapeXml="false"/></c:set>
   <c:set var="tag">event-<x:out select="recid"/></c:set>
+  <c:set var="exturl"><x:out select="event/url"/></c:set>
   <c:set var="item"><x:out select="event/description" escapeXml="false"/></c:set>
   <fmt:parseDate  var="pdate" pattern="${dateStringPattern}" value="${date}" parseLocale="en_US"/> 
   <fmt:formatDate value="${pdate}" pattern="EEE, dd MMM yyyy HH:mm:ss zzz" var="fdate"/>
   <item>
       <title>${headline}</title>
-      <link>${linkTmpl}&amp;tag=${tag}</link>
+      <link>${exturl}</link>
       <description>  
       ${item}
       </description>
