@@ -12,7 +12,7 @@ div.htmltooltip{
   z-index:1000;
 }
 
-p#unreadlabel {
+p.unreadlabel {
   color:yellow;
   font-size:.5em;
   padding-left:3px;

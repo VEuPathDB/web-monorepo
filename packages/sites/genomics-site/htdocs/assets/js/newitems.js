@@ -1,51 +1,70 @@
-function getTrackedListItems(selector) {
+var readListCookieName = 'sb_read';
+var oldHeadingPadBot;
+
+function getReadFromCookie() {
+  var readMap = {};
+  var cookie = getCookie(readListCookieName);
+
+  if (cookie == null) return readMap;
+  
+  var value = cookie.split(',');
+  
+  $(value).each(function(i, val){
+    readMap[val] = 1;
+  });
+
+  return readMap;
+}
+
+function flagUnreadListItems() {
+  var readMap = getReadFromCookie();
   var listItems = new Array();
-
-  for (i = 0;  i < $(selector).length; i++) {
-    li = $(selector)[i];
-    if (li.id == null || li.id.length == 0) continue;
-    listItems[i] = li.id;
-  }
-  return listItems;
-}
-
-function getUserUnReadItems(liSel, hSel, pos) {
-  var value = {};
-  var read = {};
-  var cookie = getCookie('read');
+  var totalUnreadCount = 0;
   
-  if (cookie != null) value = cookie.split(',');
-  
-  for (i = 0; i < value.length; i++) {
-    read[value[i]] = 1;
-  }
-  
-  //selector = 'ul#communityEventList li';
-
-  var listItems = getTrackedListItems(liSel);
-console.log(liSel);
-  if (listItems != null && listItems.length > 0) {
-    var lp = document.createElement('p');
-    var label = document.createTextNode(
-          "expand for " + listItems.length + " new item" + 
-          ((listItems.length > 1) ? "s" : "")
-        );
-    lp.appendChild(label);
-    lp.id = 'unreadlabel';
-    $('#menu_lefttop a.heading:eq(' + pos + ')').css({'padding-bottom' : '8px'});
-    $(hSel).append(lp);
-
-    for (i = 0;  i < listItems.length; i++) {
-      if (read[listItems[i]]) continue;
-      document.getElementById(listItems[i]).style.backgroundColor='yellow';
-      document.getElementById(listItems[i]).style.margin='2px';
-      document.getElementById(listItems[i]).style.paddingLeft='1px';
+  $('a.heading').each(function(j){
+    
+    var sectUnreadCount = 0
+    
+    $(this).next('div.menu_lefttop_drop:first').
+      children('ul:first').children('li[@id]').each(function(k){
+        
+        listItems.push(this.id);
+                  
+        if ( ! readMap[this.id]) {
+          this.style.backgroundColor='yellow';
+          this.style.margin='2px';
+          this.style.paddingLeft='1px';
+          sectUnreadCount++;
+          totalUnreadCount++;
+        }
+    });
+    if (sectUnreadCount > 0) {
+      $(this).append(
+        "<p class='unreadlabel'>expand for " + sectUnreadCount + " unread items</p>"
+      );
+      oldHeadingPadBot = $(this).css('padding-bottom');
+      $(this).css({'padding-bottom' : '8px'});
     }
-  }
-
+  });
+  //console.log('totalUnreadCount ' + totalUnreadCount);
 }
 
-function updateUserReadItems(readlist) {
+function putReadInCookie(headernode) {
+  var newCookieVal = new Array();
+  var readMap = getReadFromCookie();
+  $(headernode).next('div.menu_lefttop_drop:first').
+    children('ul:first').children('li[@id]').each(function(k){
+       readMap[this.id] = 1;
+  });
+  
+  for(key in readMap) {
+      if (key == null) continue;
+      newCookieVal.push(key);
+  }
+  
+  $(headernode).children('p:first').remove();
+  $(headernode).css({'padding-bottom' : oldHeadingPadBot})
+
   var expiresDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * 24 * 365);
-//  storeIntelligentCookie('read', readlist, expiresDate)
+//  storeIntelligentCookie(readListCookieName, newCookieVal, expiresDate);
 }

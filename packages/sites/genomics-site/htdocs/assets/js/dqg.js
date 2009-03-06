@@ -72,7 +72,9 @@ $(document).ready(function(){
             op = $(me).next("div");
             $(me).next("div").show(sidebar_speed);
         }
+        putReadInCookie(this);
         return false;
     });
 }
+    flagUnreadListItems();
 });

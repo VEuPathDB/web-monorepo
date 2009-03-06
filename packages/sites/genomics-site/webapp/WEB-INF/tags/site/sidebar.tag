@@ -154,7 +154,4 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
   
 
 <script type="text/javascript">
-getUserUnReadItems('ul#communityEventList li', 'a#community', '1');
-getUserUnReadItems('ul#information li', 'a#informationAndHelp', '3');
-updateUserReadItems(getTrackedListItems());
 </script>
