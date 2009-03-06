@@ -189,7 +189,7 @@ if ($query->param("messageId")){
          if ($project=~/ToxoDB/){$toxoBox="checked='checked'";}
          if ($project=~/TrichDB/){$trichBox="checked='checked'";}
          if ($project=~/TriTrypDB/){$triTrypBox="checked='checked'";}
-         if ($project=~/EupathDB/){$eupathBox="checked='checked'";}
+         if ($project=~/EuPathDB/){$eupathBox="checked='checked'";}
          }
          # Populate fields and display message form
          &displayMessageForm($errorMessage,
@@ -320,7 +320,7 @@ sub displayMessageForm{
             if ($project=~/ToxoDB/){$toxoBox="checked='checked'";}
             if ($project=~/TrichDB/){$trichBox="checked='checked'";}
             if ($project=~/TriTrypDB/){$triTrypBox="checked='checked'";}
-            if ($project=~/EupathDB/){$eupathBox="checked='checked'";} 
+            if ($project=~/EuPathDB/){$eupathBox="checked='checked'";} 
            }     
           }
 
@@ -396,7 +396,7 @@ body {
           <br />
           <label>
             <input type="checkbox" name="selectedProjects" value="70" $eupathBox id="selectedProjects_6" />
-            EupathDB</label>
+            EuPathDB</label>
           </em><br />
         </p>        
         <label></label></td>
