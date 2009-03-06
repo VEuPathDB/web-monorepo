@@ -775,10 +775,10 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 
 .selectedarrow {
    padding: 4px;
-   background-color: #ffffe0;
+   background-color: #FFFFA0;
+   border-color: #FFFFA0;
    text-align: left;
    border-width: 1px;
-   border-color: #ffffe0;
 }
 
 
