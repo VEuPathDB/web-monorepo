@@ -4,7 +4,6 @@
 <c:set var="version" value="${wdkModel.version}"/>
 <c:set var="site" value="${wdkModel.displayName}"/>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-<c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
 
 <!-- get wdkModel name to display as page header -->
 <site:header title="${site}.org :: Support"
@@ -39,7 +38,7 @@
 
 </div>
               <table cellspacing="2" cellpadding="4" border="0" bgcolor="#cccccc">
-              <form method="POST" action="${CGI_URL}/processMail">
+              <form method="POST" action="/cgi-bin/processMail">
 
                 <input type="hidden" name="to1" value="apibugz@"/>
                 <input type="hidden" name="to2" value="pcbi.upenn.edu"/>

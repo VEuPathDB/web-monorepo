@@ -25,7 +25,6 @@
 <c:set var="contigsIds3" value="${gidqpMap['contigs_ids']}"/>
 <c:set var="orfsIds" value="${gidqpMap['orfs_ids']}"/>
 
-<c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
 <c:set var="gSrt" value="geneSrt"/>
 <c:set var="cSrt" value="contigSrt"/>
 <c:set var="oSrt" value="orfSrt"/>
@@ -90,7 +89,7 @@ function setEnable2(flag) {
 
 <h3><a name="gene">Retrieve Sequences By Gene IDs</a></h3>
 
-  <form action="${CGI_URL}/${gSrt}" method="post">
+  <form action="/cgi-bin/${gSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
     <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (each ID on a separate line):</b></td><tr>
@@ -172,7 +171,7 @@ function setEnable2(flag) {
 <hr>
 
 <h3><a name="contig">Retrieve Sequences By Contig IDs</a></h3>
-  <form action="${CGI_URL}/${cSrt}" method="post">
+  <form action="/cgi-bin/${cSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
     <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (each ID on a separate line):</b></td><tr>
@@ -207,7 +206,7 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
 
   <hr>
 <a name="mercator"></a>
-  <site:mercatorMAVID cgiUrl="${CGI_URL}" projectId="${wdkModel.name}" start="15,000" 
+  <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${wdkModel.name}" start="15,000" 
                       end="30,000" inputContig="1" contigId="${contigsIds.default}" cellPadding="2"/>
 
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
@@ -217,7 +216,7 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
 
 <h3><a name="orf">Retrieve Sequences By Open Reading Frame IDs</a></h3>
 
-  <form action="${CGI_URL}/${oSrt}" method="post">
+  <form action="/cgi-bin/${oSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
     <tr><td colspan="2" valign="top"><b>Enter a list of ORF IDs (each ID on a separate line):</b></td><tr>

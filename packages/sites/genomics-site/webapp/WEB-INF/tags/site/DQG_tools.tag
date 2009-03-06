@@ -2,7 +2,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
-<c:set var="CGI_URL" value="${wdkModel.properties['CGI_URL']}"/>
 <c:set var="sName" value="${fn:substringBefore(modelName,'DB')}" />
 <c:set var="cycName" value="${sName}Cyc" />
 
@@ -47,7 +46,7 @@
 		<li><a href="/common/PubCrawler/"><strong>PubMed and Entrez</strong></a>
 			<ul><li>View the Latest <i>${listOrganisms}</i> Pubmed and Entrez Results</li></ul>
 		</li>
-		<li><a href="${CGI_URL}/gbrowse/${modelName}/"><strong>GBrowse</strong></a>
+		<li><a href="/cgi-bin/gbrowse/${modelName}/"><strong>GBrowse</strong></a>
 			<ul><li>View Sequences and Features in the GMOD Genome Browser</li></ul>
 		</li>
 

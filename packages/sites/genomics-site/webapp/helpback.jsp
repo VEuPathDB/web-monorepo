@@ -3,7 +3,6 @@
 
 <c:set var="version" value="${wdkModel.version}"/>
 <c:set var="site" value="${wdkModel.displayName}"/>
-<c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
 
 <!-- get wdkModel name to display as page header -->
 <site:header title="${site}.org :: Support Feedback"

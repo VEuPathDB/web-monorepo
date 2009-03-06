@@ -6,8 +6,6 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
-
-<c:set var="CGI_URL" value="${wdkModel.properties['CGI_URL']}"/>
 <c:set var="version" value="${wdkModel.version}"/>
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
