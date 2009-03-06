@@ -40,7 +40,9 @@ function flagUnreadListItems() {
     });
     if (sectUnreadCount > 0) {
       $(this).append(
-        "<p class='unreadlabel'>expand for " + sectUnreadCount + " unread items</p>"
+        "<p class='unreadlabel'>expand for " + 
+            sectUnreadCount + " new item" +
+          ((listItems.length > 1) ? "s" : "") + "</p>"
       );
       oldHeadingPadBot = $(this).css('padding-bottom');
       $(this).css({'padding-bottom' : '8px'});
