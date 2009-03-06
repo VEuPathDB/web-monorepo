@@ -1022,7 +1022,7 @@ FROM DUAL
   
   
   <sqlQuery>
-   <name>gene:alternateModels</name>
+   <name>gene:AlternateModels</name>
     <description></description>
      <sql>
 <![CDATA[
@@ -3059,7 +3059,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
   
   
   <sqlQuery>
-   <name>gene:alternateModels:bulksubfeatures</name>
+   <name>gene:AlternateModels:bulksubfeatures</name>
     <description></description>
      <sql>
 <![CDATA[
