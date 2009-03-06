@@ -7,7 +7,6 @@
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
-<c:set var="CGI_URL" value="${props['CGI_URL']}"/>
 
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
 <c:set var="pkValues" value="${primaryKey.values}" />
@@ -72,7 +71,7 @@ ${id}
 <c:set var="context_end_range" value="${attrs['orf_end'].value + 300}" /> 
 
 <c:set var="genomeContextUrl">
-  http://${pageContext.request.serverName}/${CGI_URL}/gbrowse_img/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
+  http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
 </c:set>
 
 <c:set var="genomeContextImg">
@@ -90,7 +89,7 @@ ${id}
   </noindex> 
   <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
   <c:set var="gbrowseUrl"> 
-    http://${pageContext.request.serverName}/${CGI_URL}/gbrowse/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow 
+    http://${pageContext.request.serverName}/cgi-bin/gbrowse/${projectIdLowerCase}/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow 
   </c:set> 
   <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a> 
 </c:set> 

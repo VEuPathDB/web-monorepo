@@ -15,9 +15,6 @@
 
 <c:set var="site" value="${wdkModel.displayName}"/>
 
-<c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
-
-
 <!-- display page header -->
 <site:header banner="Retrieve Genome Sequences" />
 
@@ -29,14 +26,14 @@
 
 <!-- <c:choose>
 <c:when test="${fn:containsIgnoreCase(site, 'ApiDB')}">
-  <form action="${CGI_URL}/Api_contigSrt" method="post">
+  <form action="/cgi-bin/Api_contigSrt" method="post">
 </c:when>
 <c:otherwise>
-  <form action="${CGI_URL}/contigSrt" method="post">
+  <form action="/cgi-bin/contigSrt" method="post">
 </c:otherwise>
 </c:choose> -->
 
-<form action="${CGI_URL}/contigSrt" method="post">
+<form action="/cgi-bin/contigSrt" method="post">
     <input type="hidden" name="ids" value="${allRecordIds}">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     

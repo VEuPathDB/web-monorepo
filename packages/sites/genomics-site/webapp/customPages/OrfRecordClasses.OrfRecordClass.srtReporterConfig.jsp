@@ -15,12 +15,6 @@
 
 <c:set var="site" value="${wdkModel.displayName}"/>
 
-
-
-
-<c:set var="CGI_URL" value="${applicationScope.wdkModel.properties['CGI_URL']}"/>
-
-
 <!-- display page header -->
 <site:header banner="Retrieve Orf Sequences" />
 
@@ -45,11 +39,11 @@ function setEnable(flag) {
 <%--
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(site, 'ApiDB')}">
-  <form action="${CGI_URL}/Api_orfSrt" method="post">
+  <form action="/cgi-bin/Api_orfSrt" method="post">
 </c:when>
 <c:otherwise>
 --%>
- <form action="${CGI_URL}/orfSrt" method="post">
+ <form action="/cgi-bin/orfSrt" method="post">
 <%--
 </c:otherwise>
 </c:choose>
