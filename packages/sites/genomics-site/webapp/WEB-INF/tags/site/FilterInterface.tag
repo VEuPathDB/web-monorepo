@@ -40,8 +40,9 @@
 <!--<div id="filter_div">-->
 
 <div id="query_selection">
-	<table width="90%">
-		<tr><th>Select a Search</th><th>--Or--</th><th>Select a Strategy (as a step)</th></tr>
+
+	<table align="left" width="70%">
+		<tr><th title="This search will be combined (AND,OR,NOT) with the previous step.">Select a Search</th><th>--Or--</th><th title="The transform converts the input set of IDs (from the previous step) into a new set of IDs">Select a Transform</th><th>--Or--</th><th title="Adding a strategy as a step allows you to generate non-linear strategies (trees).">Select a Strategy</th></tr>
 		<tr>
 				<td>
 <ul class="top_nav">
@@ -61,17 +62,8 @@
 </td>
 <td></td>
 <td>
-	<%--  <label>Strategy : </label>  --%>
-	<select id="selected_strategy" type="multiple">
-		<option value="--">--Choose a Strategy to add--</option>
-		<c:forEach items="${user.strategiesByCategory[recordClass]}" var="storedStrategy">
-			<option value="${storedStrategy.strategyId}">${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
-		</c:forEach>
-	</select>
-	<br><br><input id="continue_button" type="button" value="Continue..."/>
-</td>
-<td>
 	<select id="transforms">
+			<option value="--">--Choose a Transform to apply--</option>
 		<c:forEach items="${transformQuestions}" var="t">
 			<jsp:setProperty name="t" property="inputType" value="${recClass}" />
 			<c:set var="tparams" value="" />
@@ -82,6 +74,16 @@
 		</c:forEach>
 	</select>
 	<br><br><input id="continue_button_transforms" type="button" value="Continue..."/>
+</td>
+<td></td>
+<td>
+	<select id="selected_strategy" type="multiple">
+		<option value="--">--Choose a Strategy to add--</option>
+		<c:forEach items="${user.strategiesByCategory[recordClass]}" var="storedStrategy">
+			<option value="${storedStrategy.strategyId}">${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
+		</c:forEach>
+	</select>
+	<br><br><input id="continue_button" type="button" value="Continue..."/>
 </td>
 </tr>
 </table>
