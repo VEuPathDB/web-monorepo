@@ -4,6 +4,8 @@ var init_strat_ids = new Array();
 var init_strat_order = new Array();
 var exportBaseURL;
 var index = 0;
+var recordType= new Array();   //stratid, recordType which is the type of the last step
+
 
 //DISTANCE FIGURES FOR STRATEGY LAYOUT
 var f2b = 114;
@@ -124,10 +126,12 @@ function displayModel(strat_id){
 		var close_span = document.createElement('span');
 		$(close_span).addClass("closeStrategy").html(""+
 		"	<a onclick='closeStrategy(" + strat.frontId + ")' href='javascript:void(0)'>"+
-		"		<img alt='click here to remove strategy from the list' src='/assets/images/Close-X.png'/>"+
+		"		<img alt='Click here to close the strategy (it will only be removed from the display)' src='/assets/images/Close-X.png'/>"+
 		"	</a>");
 		$(div_strat).append(close_span);
+
 		$(div_strat).append(createStrategyName($("strategy#" + strat.backId,xmldoc), strat));
+
 		for(var j=0;j<strat.Steps.length;j++){
 			last = false;
 			if(j == strat.Steps.length - 1) 
@@ -154,6 +158,17 @@ function displayModel(strat_id){
 				strat.Steps[j].isboolean = false;
 			}
 		} 
+
+// sent: ele and strat, it writes recordtype (Genes) in top-left corner in strat display
+$(div_strat).append(createRecordTypeName($("strategy#" + strat.backId,xmldoc), strat));
+
+/*
+var myrecordname = createRecordTypeName($("strategy#" + strat.backId,xmldoc), strat);
+alert("displayModel(): Adding recordname to grey background in display: " + myrecordname);
+var myrecordname2 = getRecordName(myrecordname);
+alert("displayModel(): Adding recordname to grey background in display: " + myrecordname2);
+$(div_strat).append(myrecordname2);
+*/
 		
 		buttonleft = offset(null,strat.Steps.length,strat.frontId);
 		button = document.createElement('a');
@@ -216,12 +231,31 @@ function offset(ele,index, m){
 
 function createStep(ele, step, isLast, child){
 	var strategyId = "";
-	if(ele[0].parentNode.nodeName == "strategy")
-		strategyId = isLoaded($(ele).parent().attr("id"));
-	else
-		strategyId = isLoaded($(ele).parent().parent().attr("id"));
-	m = strategyId;
 	var name = $(ele).attr("name");
+
+	if(ele[0].parentNode.nodeName == "strategy") {
+		strategyId = isLoaded($(ele).parent().attr("id"));
+		n = $(ele).parent().attr("id");
+//		alert('createStep(): parentNode.nodeName is strategy, this is a step in a strategy id: ' + n + ', step: ' + name);
+             }
+	else {
+		strategyId = isLoaded($(ele).parent().parent().attr("id"));
+		n = $(ele).parent().parent().attr("id");
+//		alert('createStep(): parentNode.nodeName is NOT strategy, this is a step in a *' + ele[0].parentNode.nodeName + '* - id: ' + n + ', step: ' + name);
+             }
+
+	m = strategyId;
+
+
+ var recordClass = $(ele).attr("dataType");
+ if(isLast) { 
+	recordType[n] = recordClass; 
+//	 alert('createStep(): This is the last step in strategy' + n + ' ---  recordtype is '+ recordType[n] + ' --- name is: ' + name);
+} //if this is the last step, it defines the type of the strategy, recordType global variable
+else {
+	//alert('createStep(): This is NOT the last step in strategy' + n);
+}
+
 	var customName = $(ele).attr("customName");
 	var shortName = $(ele).attr("shortName");
 	if(customName != undefined){
@@ -468,6 +502,54 @@ function createParameters(params){
 	return table;
 }
 
+
+function getRecordName(cl){
+
+	if(cl == "GeneRecordClasses.GeneRecordClass")
+		return "Gene" + s;
+	if(cl == "SequenceRecordClasses.SequenceRecordClass")
+		return "Sequence" + s;
+	if(cl == "EstRecordClasses.EstRecordClass")
+		return "EST" + s;
+	if(cl == "OrfRecordClasses.OrfRecordClass")
+		return "ORF" + s;
+	if(cl == "IsolateRecordClasses.IsolateRecordClass")
+		return "Isolate" + s;
+	if(cl == "SnpRecordClasses.SnpRecordClass")
+		return "SNP" + s;
+	if(cl == "AssemblyRecordClasses.AssemblyRecordClass"){
+		if(s == "") 
+			return "Assembly";
+		else 
+			return "Assemblies";
+	}
+	if(cl == "SageTagRecordClasses.SageTagRecordClass")
+		return "Sage Tag" + s;
+}
+
+
+function createRecordTypeName(ele, strat){
+        var id = (ele).attr("id");
+//     	alert("createRecordTypeName(): STRAT id is " + id);
+	if (strat.subStratOf == null){
+        	var recordName = recordType[id];
+//		alert("createRecordTypeName(): (only if we are in a main strat) Record for this strat is:" + recordName);
+
+        	var div_sn = document.createElement("div");
+        	$(div_sn).attr("id","record_name");
+
+        	$(div_sn).html(
+        	"<span class='strategy_small_text'>" +
+        	recordName +
+        	"</span>");
+
+        	return div_sn;
+        	}
+	else {
+//		alert("createRecordTypeName():this was not a main strat");
+		return "";
+	}
+}
 
 
 function createStrategyName(ele, strat){

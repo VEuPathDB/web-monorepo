@@ -451,6 +451,17 @@
 	border-spacing: 2px;
 }
 
+.diagram div#record_name {
+        border: none;
+        left: 4px;
+        top: 0px;
+        text-align: left
+        font-color: #08438F;
+        font-weight:bold;
+         text-decoration:none;;
+}
+
+
 .diagram div#strategy_name {
 	border: none;
 	right: 40px;
