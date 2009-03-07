@@ -143,7 +143,7 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
         <div class="menu_lefttop_drop">
         <ul id=information>
             <li id='help-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
-            <li id='help-2'><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}..org">Website Usage Statistics</a></li>
+            <li id='help-2'><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
             <li id='help-1'><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
         </ul></div>
 
