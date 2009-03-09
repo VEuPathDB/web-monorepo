@@ -203,6 +203,52 @@ WHERE
       </sql>
     </sqlQuery>
 
+  <sqlQuery>
+      <name>domain:interpro</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT df.aa_feature_id feature_id, 
+       'domain' type, 
+       'interpro' source, 
+       dr.primary_identifier name, 
+       df.score score, 
+       df.parent_id parent_id, 
+       min(aal.start_min) startm, 
+       max(aal.end_max) end, 
+       'Note=' || dr.secondary_identifier || ' ' || dr.remark || '$dlm' || 
+       'Db=' || ed.name || '$dlm' || 
+       'Evalue=' || df.e_value || '$dlm' || 
+       'Pi=' || dr.primary_identifier atts
+FROM   dots.DomainFeature df, 
+       dots.DbRefAaFeature draf, 
+       dots.AaLocation aal, 
+       sres.DbRef dr, 
+       sres.ExternalDatabaseRelease edr, 
+       sres.ExternalDatabase ed, 
+       core.AlgorithmInvocation ainv, 
+       core.AlgorithmImplementation aimp 
+WHERE  df.aa_sequence_id = $srcfeature_id and 
+       aal.end_max > $base_start and 
+       aal.start_min < $rend and 
+       aal.aa_feature_id = df.aa_feature_id and 
+       df.aa_feature_id = draf.aa_feature_id and 
+       draf.db_ref_id = dr.db_ref_id and 
+       dr.external_database_release_id = edr.external_database_release_id and 
+       edr.external_database_id = ed.external_database_id and 
+       df.row_alg_invocation_id = ainv.algorithm_invocation_id and 
+       ainv.algorithm_implementation_id = aimp.algorithm_implementation_id and 
+       aimp.executable = 'ApiCommonData::Load::Plugin::InsertInterproscanResults' 
+       GROUP BY df.aa_feature_id, 'domain', 'interpro', dr.primary_identifier, 
+                df.score, df.parent_id, '.', 
+                'Note=' || dr.secondary_identifier || ' ' || dr.remark || '$dlm' || 
+                'Db=' || ed.name || '$dlm' || 
+                'Evalue=' || df.e_value || '$dlm' ||
+                'Pi=' || dr.primary_identifier 
+      ]]> 
+      </sql>
+  </sqlQuery>
+
   </module>
 
   <module name="Feature.pm">
@@ -263,6 +309,46 @@ WHERE
        tmf.prediction_algorithm_id = alg.algorithm_id AND
        alg.name = 'TMHMM'
 ORDER BY aal.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>domain:interpro:subfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT 
+       aal.aa_location_id feature_id,
+       'domain' type, 
+       'interpro' source, 
+       dr.primary_identifier name, 
+       df.score score, 
+       df.aa_feature_id parent_id, 
+       aal.start_min startm, 
+       aal.end_max end,
+       '.' strand
+FROM
+       dots.DomainFeature df,
+       dots.DbRefAaFeature draf,
+       dots.AaLocation aal,
+       sres.DbRef dr,
+       sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase ed,
+       core.AlgorithmInvocation ainv,
+       core.AlgorithmImplementation aimp
+WHERE
+       df.aa_sequence_id = $srcfeature_id and
+       aal.end_max > $base_start and
+       aal.start_min < $rend and
+       aal.aa_feature_id = df.aa_feature_id and
+       df.aa_feature_id = draf.aa_feature_id and
+       draf.db_ref_id = dr.db_ref_id and
+       dr.external_database_release_id = edr.external_database_release_id and
+       edr.external_database_id = ed.external_database_id and
+       df.row_alg_invocation_id = ainv.algorithm_invocation_id and
+       ainv.algorithm_implementation_id = aimp.algorithm_implementation_id and
+       aimp.executable = 'ApiCommonData::Load::Plugin::InsertInterproscanResults'
 ]]>
       </sql>
     </sqlQuery>
