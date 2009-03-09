@@ -193,7 +193,7 @@
     </td>
 --%>
 
-     <td align="left" valign="bottom"><a href='${link}' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
+     <td align="left" valign="bottom"><a href='javascript:void(0);' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
      <div class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
 
 
