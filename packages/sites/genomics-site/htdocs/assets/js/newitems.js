@@ -40,8 +40,14 @@ function flagUnreadListItems() {
   $('a.heading').each(function(j){
     
     var sectUnreadCount = 0
+
+    var section = $(this).next('div.menu_lefttop_drop:first');
+    var display = section.css("display");
     
-    $(this).next('div.menu_lefttop_drop:first').
+    // div content is visible, consider them read without requiring user interaction.
+    if (display != "none") putReadInCookie(this);
+    
+    $(section).
       children('ul').children('li[@id]').each(function(k){
         
         listItems.push(this.id);
@@ -53,15 +59,20 @@ function flagUnreadListItems() {
           sectUnreadCount++;
           totalUnreadCount++;
         }
+
     });
+    
     if (sectUnreadCount > 0) {
-      $(this).append(
-        "<p class='unreadlabel'>expand for " + 
-            sectUnreadCount + " new item" +
+    
+      var label = "<p class='unreadlabel'>";
+      
+      if (display == "none") label = label + "expand for ";
+      label = label + sectUnreadCount + " new item" +
           ((listItems.length > 1) ? "s" : "") + "</p>"
-      );
+
       oldHeadingPadBot = $(this).css('padding-bottom');
       $(this).css({'padding-bottom' : '8px'});
+      $(this).append(label);
     }
   });
   //console.log('totalUnreadCount ' + totalUnreadCount);
