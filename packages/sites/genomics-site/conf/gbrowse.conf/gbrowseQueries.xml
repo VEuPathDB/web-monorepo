@@ -2047,55 +2047,7 @@ WHERE  f.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
-  
-  
-  <sqlQuery>
-   <name>oldgene:annotation</name>
-    <description></description>
-     <sql includeProjects="ToxoDB">
-<![CDATA[
- SELECT
-       gf.na_feature_id feature_id,
-       'oldgene' type, 
-       'annotation' source, 
-       gf.source_id name, 
-       '.' score, 
-       gf.na_sequence_id parent_id, 
-       fl.start_min startm, 
-       fl.end_max end, 
-       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       'Note=' || gf.product  || '$dlm' ||
-       'soTerm=' || so.term_name || '$dlm' ||
-       'product=' || replace(gf.product,'''','&#146;') || '$dlm' ||
-       'taxon=' || tn.name || '$dlm' ||
-       'isPseudo=' || gf.is_pseudo 
-         as atts
-FROM 
-       dots.GeneFeature gf,
-       apidb.FeatureLocation fl,
-       dots.NaSequence ns,
-       SRes.TaxonName tn,
-       SRes.SequenceOntology so,
-       SRes.ExternalDatabaseRelease edr, 
-       SRes.ExternalDatabase ed
-WHERE  fl.na_sequence_id = $srcfeature_id
-  AND  fl.feature_type = 'GenePrediction'
-  AND  fl.na_sequence_id = ns.na_sequence_id
-  AND  fl.na_feature_id = gf.na_feature_id 
-  AND  so.sequence_ontology_id = gf.sequence_ontology_id
-  AND  fl.start_min <= $rend 
-  AND  fl.end_max >= $base_start 
-  AND  tn.taxon_id = ns.taxon_id 
-  AND  tn.name_class = 'scientific name' 
-  AND  gf.external_database_release_id = edr.external_database_release_id
-  AND  edr.external_database_id = ed.external_database_id
-  AND  ed.name = 'Old annotation for ME49'
-ORDER BY 
-       fl.start_min
-]]>
-    </sql>
-  </sqlQuery>
-  
+    
   
   <sqlQuery>
    <name>AffymetrixProbes:GenotypingMarkers</name>
