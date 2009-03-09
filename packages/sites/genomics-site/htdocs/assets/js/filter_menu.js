@@ -91,6 +91,19 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
         quesForm.find(".dataset-file").each(function() {
             $(this).css("display", "none");
         });
+
+        // hide the incompatible type from blast query
+        var question = quesForm.find("#questionFullName").val();
+        quesForm.find(".blast-type").each(function() {
+            var type = $(this).val();
+            if (type == 'Transcripts' && question != 'GeneQuestions.GenesBySimilarity') this.disabled = true;
+            else if (type == 'Proteins' && question != 'GeneQuestions.GenesBySimilarity') this.disabled = true;
+            else if (type == 'Genome' && question != 'GenomicSequenceQuestions.SequencesBySimilarity') this.disabled = true;
+            else if (type == 'ORF' && question != 'OrfQuestions.OrfsBySimilarity') this.disabled = true;
+            else if (type == 'EST' && question != 'EstQuestions.EstsBySimilarity') this.disabled = true;
+            else if (type == 'Assemblies' && question != 'AssemblyQuestions.AssembliesBySimilarity') this.disabled = true;
+            else if (type == 'Isolates' && question != 'UniversalQuestions.UnifiedBlast') this.disabled = true;
+        });
 	
 	// Bring in the advanced params, if exist, and remove styling
 	var advanced = $("#advancedParams_link",quesForm);

@@ -54,16 +54,7 @@
 <c:set var="termMap" value="${trm.vocabMap}"/>
 
 
-
-
-
-
-
 <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
-
- <tr>
-  <td bgcolor=white valign=top>
 
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
@@ -280,34 +271,17 @@ Ack, this form won't work at all without JavaScript support!
 </c:if>
 
 
-<%--  get answer button on top in the middle
-<tr align>
-  <td colspan="2" align="center">
-    <html:submit property="questionSubmit" value="Get Answer"/>
-  </td>
-</tr>
---%>
-
-<table border ="0" width="100%">
-
-
-<tr>
-  <td width="230" align="left"><b>Show results from species:</b>
-  </td>
-  <td align="left"> 
-     <c:set var="opt" value="0"/>
-     <html:select  property="myMultiProp(${resultSpeciesName})">
-       <c:set var="opt" value="${opt+1}"/>
-       <c:set var="sel" value=""/>
-       <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
-       <html:options property="values(${resultSpeciesName})" labelProperty="labels(${resultSpeciesName})"/>
-     </html:select>
-  </td>
- <td  align="right">
-    <html:submit property="questionSubmit" value="Get Answer"/>
-  </td>
-</tr>
-<tr><td><br></td></tr>
+<div>
+  <b>Show results from species:</b>
+  <c:set var="opt" value="0"/>
+  <html:select  property="myMultiProp(${resultSpeciesName})">
+    <c:set var="opt" value="${opt+1}"/>
+    <c:set var="sel" value=""/>
+    <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
+    <html:options property="values(${resultSpeciesName})" labelProperty="labels(${resultSpeciesName})"/>
+  </html:select>
+</div>
+<br />
 
 <%--${wdkModel.displayName}
 <c:choose>
@@ -316,7 +290,6 @@ Ack, this form won't work at all without JavaScript support!
 </c:when>
 <c:otherwise>--%>
 
-<tr><td colspan="3">
 <table border="0" cellpadding="2">
     <c:set var="idx" value="1"/>
     <tr>
@@ -346,31 +319,16 @@ Ack, this form won't work at all without JavaScript support!
     </c:forEach>
 </table>
 
-    </td></tr>
+  <html:hidden property="myProp(${includedSpeciesName})" value="n/a" />
+  <html:hidden property="myProp(${excludedSpeciesName})" value="n/a" />
+  <html:hidden property="myProp(${profilePatternName})" value="%"/>
 
-<%--</c:otherwise>
-</c:choose>
---%>
-<tr>
- <td></td>
-  <td><html:hidden property="myProp(${includedSpeciesName})" /></td>
-  <td><html:hidden property="myProp(${excludedSpeciesName})" /></td>
-</tr>
-<tr>
-  <td colspan="3">
-    <html:hidden property="myProp(${profilePatternName})" value="%"/>
-  </td>
-</tr>
-
-
-<tr align>
-  <td colspan="3" align="center">
-    <html:submit property="questionSubmit" value="Get Answer"/>
-  </td>
-</tr>
-
-</table>
 </div><%-- END OF PARAMS DIV --%>
+
+<div class="filter-button">
+  <html:submit property="questionSubmit" value="Get Answer"/>
+</div>
+
 </html:form>
 
 <script type="text/javascript" lang="JavaScript 1.2">
@@ -409,9 +367,4 @@ toggle(7);
 
 </c:if>
 
- <%-- </td>--%>
-  <td valign=top class=dottedLeftBorder></td> 
-
-</tr>
-</table> 
 
