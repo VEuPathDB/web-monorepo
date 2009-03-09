@@ -1045,6 +1045,7 @@ SELECT
        'score=' || round(gf.score,4) || '$dlm' ||
        'isPseudo=' || gf.is_pseudo || '$dlm' ||
        'isDeprecated=' ||  ga.is_deprecated || '$dlm' ||
+       'ExtDbName=' ||  ed.name || '$dlm' ||
        'FeatureType=' || fl.feature_type
          as atts
 FROM 
