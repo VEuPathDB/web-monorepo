@@ -18,9 +18,9 @@ function showPanel(panel) {
 		updateHistory();
 	}
 	$("#" + hidePanel + "_tab").parent().attr("id", "");
-	$("#" + hidePanel).css({'position' : 'absolute', 'left' : '-1000em'});
+	$("#" + hidePanel).css({'position':'absolute','left':'-1000em','width':'100%'});
 	$("#" + panel + "_tab").parent().attr("id", "selected");
-	$("#" + panel).css({'position' : 'relative', 'left' : 'auto'});
+	$("#" + panel).css({'position':'relative','left':'auto'});
 }
 
 function showSaveForm(stratId){

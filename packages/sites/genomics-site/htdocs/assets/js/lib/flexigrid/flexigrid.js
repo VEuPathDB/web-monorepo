@@ -995,15 +995,14 @@
 									g.dcolt = n;
 									
 									} else if (!g.colresize) {
-										
 									var nv = $('th:visible',g.hDiv).index(this);
 									var onl = parseInt($('div:eq('+nv+')',g.cDrag).css('left'));
-									var nw = parseInt($(g.nBtn).width()) + parseInt($(g.nBtn).css('borderLeftWidth'));
+									var nw = parseInt($(g.nBtn).width());
+ 									nw += isNaN($(g.nBtn).css('borderLeftWidth'))? 0 : parseInt($(g.nBtn).css('borderLeftWidth'));
 									nl = onl - nw + Math.floor(p.cgwidth/2);
-									
 									$(g.nDiv).hide();$(g.nBtn).hide();
-									
-									$(g.nBtn).css({'left':nl,top:g.hDiv.offsetTop}).show();
+									$(g.nBtn).css({left: nl, top: g.hDiv.offsetTop}).show(); 	
+
 									
 									var ndw = parseInt($(g.nDiv).width());
 									

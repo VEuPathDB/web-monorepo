@@ -93,7 +93,7 @@
 --%>
 
 
-<div id="strategy_results" style="position:absolute;left:-999em">
+<div id="strategy_results" style="position:absolute;left:-999em;width:100%;">
 
 <%------ if this div is not being used, please clean up ------ ---%>
 <div class="strategy_controls"/></div> 
@@ -117,7 +117,7 @@
 
 </div><!-- end results view div -->
 
-<div id="search_history" style="position:absolute;left:-999em">
+<div id="search_history" style="position:absolute;left:-999em;width:100%;">
 	<site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
 </div> <!-- end history view div -->
 
