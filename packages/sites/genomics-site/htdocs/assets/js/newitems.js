@@ -79,7 +79,7 @@ function putReadInCookie(headernode) {
   var newCookieVal = new Array();
   var readMap = getReadFromCookie();
   $(headernode).next('div.menu_lefttop_drop:first').
-    children('ul:first').children('li[@id]').each(function(k){
+    children('ul').children('li[@id]').each(function(k){
        readMap[this.id] = 1;
   });
   
