@@ -1,5 +1,3 @@
-
-
 var _action = "";
 var original_Query_Form_Text;
 var update_hist = false;
@@ -241,35 +239,6 @@ function openFilter(dtype,strat_id,step_id){
 			alert("Error getting the needed information from the server \n Please contact the system administrator");
 		}
 	});
-	
-	
-/*	
-	var strat_number = IsIn.split(":");
-	strat_number = strat_number[0]; 
-	isInsert = IsIn;
-	var link = $(".filter_link");
-	if($(link).attr("href").indexOf("openFilter") != -1) {   
-		original_Query_Form_Text = $("#filter_link_div_" + strat_number + " #query_form").html();
-		$("#filter_link_div_" + strat_number + " #query_form").css({
-			top: "337px",
-			left: "22px"
-		});
-		$("#filter_link_div_" + strat_number + " #query_form").show("normal");
-		$("#filter_link_div_" + strat_number + " #query_form").jqDrag(".dragHandle");
-		for(var i=0; i < link.length; i++){
-			$(link[i]).css({opacity:0.2});
-			$(link[i]).attr("value",$(link[i]).attr("href"));
-			$(link[i]).attr("href","javascript:void(0)");
-		}
-	}else{
-		$("#filter_link_div_" + strat_number + " #query_form").html(original_Query_Form_Text);
-		$("#filter_link_div_" + strat_number + " #query_form").hide();
-		for(var i=0; i < link.length; i++){
-			$(link[i]).css({opacity:1.0}); 
-			$(link[i]).attr("href",$(link[i]).attr("value"));
-		}
-	}
-*/
 }
 
 function close(ele){
@@ -280,7 +249,7 @@ function close(ele){
 
 function closeAll(){
 	$("#query_form").parent().remove();
-	$(".filter_link").css({opacity:"1.0",}).attr("href")
+	$(".filter_link").css({opacity:"1.0"}).attr("href");
 }
 
 function parseInputs(){

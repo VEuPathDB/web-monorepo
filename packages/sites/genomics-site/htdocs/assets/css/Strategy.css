@@ -360,11 +360,12 @@
 	}
 
 	.transform {
-		background: url(/assets/images/TransformBg.gif) no-repeat -1px 0;
+		background: url(/assets/images/TransformBg.gif) no-repeat -1px -0.5px;
 	}
 
-	.transform.selectedarrow {
-		background: url(/assets/images/TransformBg_yellow.gif) no-repeat -1px 0;
+	.selectedtransform {
+		background: url(/assets/images/TransformBg_yellow.gif) no-repeat -1px -0.5px;
+                border: none;
 	}
 
 	div.expandedStep {

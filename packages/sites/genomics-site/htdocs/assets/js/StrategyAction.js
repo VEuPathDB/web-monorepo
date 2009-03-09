@@ -645,9 +645,11 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 		},
 		success: function(data){
 			step.isSelected = true;
-			$("#Strategies div").removeClass("selected").removeClass("selectedarrow");
+			$("#Strategies div").removeClass("selected").removeClass("selectedarrow").removeClass("selectedtransform");
 			if(bool){
 				$("#diagram_" + strategy.frontId + " #step_" + step.frontId).addClass("selected");
+			}else if (step.isTransform){
+				$("#diagram_" + strategy.frontId + " #step_" + step.frontId + "_sub").addClass("selectedtransform");
 			}else{
 				$("#diagram_" + strategy.frontId + " #step_" + step.frontId + "_sub").addClass("selectedarrow");
 			}

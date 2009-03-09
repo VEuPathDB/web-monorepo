@@ -369,7 +369,7 @@ img {
 	 =Main Page Bubble Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#3columndiv {
+.threecolumndiv {
 	width: 247px;
 }
 
@@ -1324,8 +1324,9 @@ td.strat_inactive {
 ul#strategy_tabs {
     border-bottom: 1px solid #777;
     font-size: 18px;
-    margin:0;
-    padding:0 10px 1.65em;
+    margin:0 0 1px;
+    padding:0 10px;
+    height: 29.5px;
     width: 98%;
 }
 

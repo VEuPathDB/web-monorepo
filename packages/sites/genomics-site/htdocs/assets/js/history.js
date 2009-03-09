@@ -158,8 +158,8 @@ function enableRename(stratId, name, fromHist) {
 	}
 	else {
 		var strat = getStrategyFromBackId(stratId);
-		stratName = $("#diagram_" + strat.frontId + " #strategy_name > span").eq(0);
-		append = $("#diagram_" + strat.frontId + " #append");
+		var stratName = $("#diagram_" + strat.frontId + " #strategy_name > span").eq(0);
+		var append = $("#diagram_" + strat.frontId + " #append");
 		stratName.hide();
 		append.hide();
 		$("#diagram_" + strat.frontId + " #rename").show();
@@ -186,8 +186,8 @@ function disableRename(stratId, fromHist) {
 	}
 	else {
 		var strat = getStrategyFromBackId(stratId);
-		stratName = $("#diagram_" + strat.frontId + " #strategy_name > span").eq(0);
-		append = $("#diagram_" + strat.frontId + " #append");
+		var stratName = $("#diagram_" + strat.frontId + " #strategy_name > span").eq(0);
+		var append = $("#diagram_" + strat.frontId + " #append");
 		var nameDiv = $("#diagram_" + strat.frontId + " #rename > #name");
 		var onblur = nameDiv.attr("onblur");
 		nameDiv.removeAttr("onblur");

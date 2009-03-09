@@ -39,7 +39,7 @@
 </c:otherwise>
 </c:choose>
 
-<div id="3columndiv">
+<div class="threecolumndiv">
 
 <img src="/assets/images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
 <c:choose>

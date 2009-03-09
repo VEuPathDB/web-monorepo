@@ -4,6 +4,7 @@ ul#history_tabs {
     list-style-position:outside;
     list-style-type:none;
     float:left;
+    display:inline-block;
     margin:0 0 5px;
     padding:0 10px;
     width: 98%;
@@ -16,15 +17,15 @@ ul#history_tabs {
 }
 
 #history_tabs li a {
-    color:black;  /* #BBC0C1;*/   /* #C9CCCC;*/  /* #E8EBF0; */   /* #0B4796; */  /*  #0000CC; */
-    display:block;
+    color:black;
+    display:inline-block;
     padding:0.24em 1em;
     text-align:center;
     text-decoration:none;
 }
 
 #history_tabs li a:hover {
-    color:black;    /*#0B4796; */
+    color:black;
     font-weight:bold;
     padding:0.24em 0.8em;
     position:relative;
@@ -36,6 +37,12 @@ ul#history_tabs {
     padding:0.24em 0.8em;
     font-weight:bold;
     position:relative;
+}
+
+#history_tabs #cmplt_hist_link {
+    float: right;
+    display: inline-block;
+    padding-top: 0.4em
 }
 
 #history_table {
@@ -67,8 +74,4 @@ ul#history_tabs {
     margin-top: -8px;
 }
 
-#cmplt_hist_link {
-    float: right;
-    padding-top: 0.4em
-}
 
