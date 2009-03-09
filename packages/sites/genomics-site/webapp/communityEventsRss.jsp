@@ -40,7 +40,7 @@
 <x:forEach var="r" select="$doc/records/record">
   <c:set var="date"><x:out select="submissionDate"/></c:set>
   <c:set var="headline"><x:out select="event/name" escapeXml="false"/></c:set>
-  <c:set var="tag">event-<x:out select="recid"/></c:set>
+  <c:set var="tag">ev-<x:out select="recid"/></c:set>
   <c:set var="exturl"><x:out select="event/url"/></c:set>
   <c:set var="item"><x:out select="event/description" escapeXml="false"/></c:set>
   <fmt:parseDate  var="pdate" pattern="${dateStringPattern}" value="${date}" parseLocale="en_US"/> 

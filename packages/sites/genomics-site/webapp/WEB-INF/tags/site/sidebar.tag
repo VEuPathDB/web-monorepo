@@ -41,7 +41,7 @@
         </c:when>
         <c:otherwise>
           <c:set var="i" value="1"/>
-          <ul id='news'>
+          <ul>
           <c:forEach items="${newsAnswer.recordInstances}" var="record">
           <c:if test="${i <= 4}">
             <c:set var="attrs" value="${record.attributesMap}"/>
@@ -50,7 +50,7 @@
                            var="pdate" value="${attrs['date']}"/> 
             <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
       
-            <li><b>${fdate}</b>
+            <li id="n-${attrs['tag']}"><b>${fdate}</b>
                    <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News#newsItem${i}"/>">
                      ${attrs['headline']}
                    </a></li>
@@ -86,7 +86,15 @@
         <c:forEach items="${extlAnswer.recordInstances}" var="record">
           <c:forEach items="${record.tables}" var="table">
             <c:forEach items="${table.rows}" var="row"> 
-               <li><a href="${row[1].value}">${row[0].value}</a></li>
+               <c:set var='url' value='${row[1].value}'/>
+               <c:set var='tmp' value='${fn:replace(url, "http://", "")}'/>
+               <c:set var='tmp' value='${fn:replace(url, ".", "")}'/>
+               <c:set var='uid' value=''/>
+               <c:forEach var="i" begin="0" end="${fn:length(tmp)}" step='3'>
+                  <c:set var='uid'>${uid}${fn:substring(tmp, i, i+1)}</c:set>
+               </c:forEach>
+
+               <li id='rs-${uid}'><a href="${url}">${row[0].value}</a></li>
             </c:forEach>
           </c:forEach>
         </c:forEach> 
@@ -112,7 +120,9 @@
                       </c:when>
                       <c:otherwise>
 <c:if test="${project == 'TriTrypDB'}">
-The TriTrypDB tutorials will be here soon. In the meantime we provide you with access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same navigation and querying capabilities as in TriTrypDB.org.<br>
+The TriTrypDB tutorials will be here soon. In the meantime we provide you with 
+access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same 
+navigation and querying capabilities as in TriTrypDB.org.<br>
 </c:if>
                         <ul>
                         <c:forEach items="${tutAnswer.recordInstances}" var="record">
@@ -121,7 +131,7 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
            <c:forEach items="${table.rows}" var="row">
              <c:set var="projects" value="${row[0].value}"/>
             <c:if test="${fn:containsIgnoreCase(projects, project)}"> 
-            <li>${attrs['title']}<br /> 
+            <li id='t-${attrs['uid']}'>${attrs['title']}<br /> 
                                (<a href="http://eupathdb.org/tutorials/${row[1].value}">Quick Time</a>)
                                (<a href="http://eupathdb.org/tutorials/${row[2].value}">Windows media</a>)
                                (<a href="http://eupathdb.org/tutorials/${row[3].value}">Flash</a>)
@@ -131,6 +141,7 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
         </c:forEach>
       </c:forEach>
                         </ul>
+
                       </c:otherwise>
     </c:choose>
 
@@ -142,9 +153,9 @@ The TriTrypDB tutorials will be here soon. In the meantime we provide you with a
         <a class="heading" id='informationAndHelp' href="#">Information and Help</a>
         <div class="menu_lefttop_drop">
         <ul id=information>
-            <li id='help-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
-            <li id='help-2'><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
-            <li id='help-1'><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
+            <li id='h-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
+            <li id='h-2'><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
+            <li id='h-1'><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
         </ul></div>
 
 
