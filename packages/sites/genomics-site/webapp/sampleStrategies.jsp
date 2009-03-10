@@ -23,7 +23,7 @@
 </c:if>
 <c:if test="${site == 'TriTrypDB'}">
   <tr align = "center"><td>Simple strategy</td><td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:3"/>">Protein coding Signal Peptide </a> </td></tr>
-  <tr align = "center"><td>Expanded strategy with transform</td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:9"/>">kinases, TM,  (EST or proteomics) transform</a> </td></tr>
+  <tr align = "center"><td>Expanded strategy with transform</td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:10"/>">kinases, TM,  (EST or proteomics) transform</a> </td></tr>
 </c:if>
 
 </table>
