@@ -149,7 +149,9 @@
 
 		       <c:set var="counter" value="0"/>
 		       <c:forEach items="${qP.vocab}" var="flatVoc">
-		              <input class="blast-type" type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" onClick="getBlastAlgorithm();changeQuestion();checkSequenceLength()">${flatVoc}</input>
+		              <input class="blast-type" type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" 
+                                     onClick="getBlastAlgorithm();changeQuestion();checkSequenceLength()" />
+                              <span>${flatVoc}</span>
 			      <c:set var="counter" value="${counter+1}"/>	
 		       </c:forEach>
 		       <input type="hidden" name="myMultiProp(${pNam})" id="blastType"/>

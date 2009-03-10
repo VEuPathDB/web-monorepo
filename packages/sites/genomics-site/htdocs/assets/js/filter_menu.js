@@ -96,13 +96,18 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
         var question = quesForm.find("#questionFullName").val();
         quesForm.find(".blast-type").each(function() {
             var type = $(this).val();
-            if (type == 'Transcripts' && question != 'GeneQuestions.GenesBySimilarity') this.disabled = true;
-            else if (type == 'Proteins' && question != 'GeneQuestions.GenesBySimilarity') this.disabled = true;
-            else if (type == 'Genome' && question != 'GenomicSequenceQuestions.SequencesBySimilarity') this.disabled = true;
-            else if (type == 'ORF' && question != 'OrfQuestions.OrfsBySimilarity') this.disabled = true;
-            else if (type == 'EST' && question != 'EstQuestions.EstsBySimilarity') this.disabled = true;
-            else if (type == 'Assemblies' && question != 'AssemblyQuestions.AssembliesBySimilarity') this.disabled = true;
-            else if (type == 'Isolates' && question != 'UniversalQuestions.UnifiedBlast') this.disabled = true;
+            if ((type == 'Transcripts' && question != 'GeneQuestions.GenesBySimilarity')
+                || (type == 'Proteins' && question != 'GeneQuestions.GenesBySimilarity')
+                || (type == 'Genome' && question != 'GenomicSequenceQuestions.SequencesBySimilarity')
+                || (type == 'ORF' && question != 'OrfQuestions.OrfsBySimilarity')
+                || (type == 'EST' && question != 'EstQuestions.EstsBySimilarity')
+                || (type == 'Assemblies' && question != 'AssemblyQuestions.AssembliesBySimilarity')
+                || (type == 'Isolates' && question != 'UniversalQuestions.UnifiedBlast')) {
+                this.disabled = true;
+                $(this).next().css("color", "gray");
+            } else {
+               $(this).next().css("font-weight", "bold");
+            }
         });
 	
 	// Bring in the advanced params, if exist, and remove styling
@@ -203,7 +208,7 @@ function getQueryForm(url,hideOp){
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e + ". \nPlease double check your parameters, and try again." + 
-                                      "\nReloading this page might also solve the problem. \nOtherwise, please contact site support.");
+                                      + "\nReloading this page might also solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
 }
