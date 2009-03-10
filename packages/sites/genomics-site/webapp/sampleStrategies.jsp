@@ -27,5 +27,11 @@
 </c:if>
 
 </table>
+<hr>
+<h1>Help</h1>
+The following image shows some of the functionality of the Run Strategies tab.  Mousing over these (and other) elements when you are running strategies will provide context sensitive help. Of particular note, clicking the title for any step shows the details for that step and provides a menu that allows you to modify the step by editing search parameters, deleting or inserting a step, etc.  Clicking the number of records for any step allows you to see and filter the results for that particular step.<br>
+<center>
+<img src="/images/strategy_help.png">
+</center>
 
 <site:footer/>
