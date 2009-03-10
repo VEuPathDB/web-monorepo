@@ -889,14 +889,16 @@ tr.headerrow {
 	font-size: 15px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #5f140e;
+	font-weight: bold;
+	padding: 4px;
+}
+
+tr.headerrow th {
 	background-image: url(../images/CryptoDB/trheader.png);
 	background-repeat: repeat-x;
 	background-position: top;
-	font-weight: bold;
-	padding: 4px;
 	background-color: #EEEEEE;
 }
-
 
 td.subheaderrow {
 	height: 30px;
@@ -915,11 +917,14 @@ tr.subheaderrow {
 	font-size: 14px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #474747;
+	font-weight: bold;
+	padding: 4px;
+}
+
+tr.subheaderrow th {
 	background-image: url(../images/CryptoDB/trsubhead.png);
 	background-repeat: repeat-x;
 	background-position: top;
-	font-weight: bold;
-	padding: 4px;
 	background-color: #EEEEEE;
 }
 

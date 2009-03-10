@@ -128,7 +128,7 @@
 			      <input id="summary_view_button" disabled="disabled" type="submit" value="Summary View" onclick="ToggleGenePageView('')" />
 			</th>
 --%>
-			<th nowrap> 
+			<th align="left" nowrap> 
 		        <wdk:pager pager_id="top"/> 
 		    </th>
 
