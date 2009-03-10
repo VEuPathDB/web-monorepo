@@ -202,7 +202,7 @@ function getQueryForm(url,hideOp){
 				formatFilterForm(data,0,isInsert,false,hideOp);
 			},
 			error: function(data, msg, e){
-				alert("ERROR \n "+ msg + "\n" + e);
+				alert("ERROR \n "+ msg + "\n" + e + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
 }

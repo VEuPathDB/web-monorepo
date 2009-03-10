@@ -20,7 +20,8 @@ function updateHistory(){
 			},
 			error: function(data, msg, e){
 				$("div#search_history").unblock();
-				alert("ERROR \n "+ msg + "\n" + e);
+				alert("ERROR \n "+ msg + "\n" + e
+                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
 	}
@@ -122,7 +123,8 @@ function deleteStrategies(url) {
 			},
 			error: function(data, msg, e) {
 				selectNoneHist();
-				alert("ERROR \n " + msg + "\n" + e);
+				alert("ERROR \n " + msg + "\n" + e
+                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
 	}	

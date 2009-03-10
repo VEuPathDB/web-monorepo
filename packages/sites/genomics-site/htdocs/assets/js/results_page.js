@@ -27,7 +27,7 @@ function LoadGenePage(url,dest_id) {
 			dataType: "html",
 			beforeSend: function(obj){
 				var pro_bar = "<div id='gene_page_progress_bar'>" +
-							  "<div class='record' id='graphic_span'>Loading...</div></div>";//<div id='loading_span'>Loading</div></div>";
+				"<div class='record' id='graphic_span'>Loading...</div></div>";//"<div id='loading_span'>Loading</div></div>";
 				$("#" + dest_id).html(pro_bar);
 				$("#graphic_span").css({opacity: 0.2});
 			  for(i = 0;i<100;i++){
@@ -43,7 +43,8 @@ function LoadGenePage(url,dest_id) {
 				$("#" + dest_id).html(data);
 			},
 			error: function(data, msg, e){
-				alert("ERROR \n "+ msg + "\n" + e);
+				alert("ERROR \n "+ msg + "\n" + e
+                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 	});
 

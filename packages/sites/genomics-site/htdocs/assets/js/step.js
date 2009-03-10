@@ -80,7 +80,8 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 				formatFilterForm(data,1,reviseStepNumber, hideQuery, hideOp);
 			},
 			error: function(data, msg, e){
-				alert("ERROR \n "+ msg + "\n" + e);
+				alert("ERROR \n "+ msg + "\n" + e
+                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
 		$(this).parent().parent().hide();
@@ -127,7 +128,8 @@ function RenameStep(ele, s, stp){
 				$("div.crumb_details div.crumb_menu a.expand_step_link", par)[0].attributes[0].nodeValue = cur;
 			},
 			error: function(data, msg, e){
-				alert("ERROR \n "+ msg + "\n" + e);
+				alert("ERROR \n "+ msg + "\n" + e
+                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
 }
