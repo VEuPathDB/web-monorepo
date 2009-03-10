@@ -4,6 +4,7 @@
  ******************************************************************************/
 var readListCookieName = 'sb_read';
 var oldHeadingPadBot;
+var listItems = new Array();
 
 /*
  *  return associative array where key = list IDs of read items
@@ -34,8 +35,8 @@ function getReadFromCookie() {
  */
 function flagUnreadListItems() {
   var readMap = getReadFromCookie();
-  var listItems = new Array();
   var totalUnreadCount = 0;
+  var open = new Array();
   
   $('a.heading').each(function(j){
     
@@ -43,9 +44,6 @@ function flagUnreadListItems() {
 
     var section = $(this).next('div.menu_lefttop_drop:first');
     var display = section.css("display");
-    
-    // div content is visible, consider them read without requiring user interaction.
-    if (display != "none") putReadInCookie(this);
     
     $(section).
       children('ul').children('li[@id]').each(function(k){
@@ -74,7 +72,13 @@ function flagUnreadListItems() {
       $(this).css({'padding-bottom' : '8px'});
       $(this).append(label);
     }
+
+    // div content is visible, consider them read without requiring user interaction.
+    if (display != "none") open.push(this);
+    
   });
+  
+  $(open).each(function(){ putReadInCookie(this); });
   //console.log('totalUnreadCount ' + totalUnreadCount);
 }
 
@@ -93,9 +97,10 @@ function putReadInCookie(headernode) {
     children('ul').children('li[@id]').each(function(k){
        readMap[this.id] = 1;
   });
-  
+
   for(key in readMap) {
-      if (key == null) continue;
+      if (key == null || key == "") continue;
+      if ($.inArray(key, listItems) < 0) continue;
       newCookieVal.push(key);
   }
   
