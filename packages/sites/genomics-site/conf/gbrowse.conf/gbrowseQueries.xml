@@ -2434,7 +2434,7 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
   AND ga.na_feature_id = exon_loc.parent_id
   and ga.is_deprecated = 0
 ORDER BY 
-       exon_loc.start_min;
+       exon_loc.start_min
 ]]>
     </sql>
   </sqlQuery>
