@@ -249,6 +249,45 @@ WHERE  df.aa_sequence_id = $srcfeature_id and
       </sql>
   </sqlQuery>
 
+    <sqlQuery>
+      <name>match:BLASTP</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT sim.similarity_id feature_id,
+       'match' type, 
+       'BLASTP' source, 
+       eta.source_id name, 
+       sim.score score, 
+       sim.query_id  parent_id, 
+       sim.min_query_start startm, 
+       sim.max_query_end   end, 
+       '.' strand,
+       'Note=' || eta.description || '$dlm' ||
+       'Expect=' || sim.pvalue_mant || 'e' || sim.pvalue_exp || '$dlm' ||
+       'PercentIdentity=' || round(100 * sim.number_identical / sim.total_match_length) || '$dlm' ||
+       'PercentPositive=' || round(100 * sim.number_positive / sim.total_match_length) atts
+FROM   dots.similarity sim,
+       dots.externalaasequence eta,
+       dots.translatedaasequence tas, 
+       core.tableinfo qtab,
+       core.tableinfo stab
+WHERE  sim.query_id = tas.aa_sequence_id and
+       sim.subject_id = eta.aa_sequence_id and
+       sim.subject_table_id = stab.table_id and
+       stab.name = 'ExternalAASequence' and
+       sim.query_table_id  = qtab.table_id and
+       qtab.name = 'TranslatedAASequence' and
+	   sim.query_id = '$srcfeature_id' and
+	   RowNum < 6
+ORDER BY
+       to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) asc,
+       sim.total_match_length desc,
+       sim.score desc
+]]>
+      </sql>
+    </sqlQuery>
+
   </module>
 
   <module name="Feature.pm">
@@ -352,6 +391,28 @@ WHERE
 ]]>
       </sql>
     </sqlQuery>
+
+    <sqlQuery>
+      <name>match:BLASTP:subfeatures</name>
+    <description></description> 
+      <sql>
+<![CDATA[ 
+SELECT simp.similarity_span_id feature_id, 
+       'HSP' type, 
+       'BLASTP' source, 
+       simp.similarity_span_id name, 
+       '.' phase, 
+       simp.score || '' score, 
+       simp.query_start startm, 
+       simp.query_end end, 
+       decode (simp.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       '' atts 
+FROM   dots.similarity sim, dots.similarityspan simp 
+WHERE  sim.similarity_id = simp.similarity_id and 
+       sim.similarity_id  = $parent_id
+]]>
+       </sql>
+    </sqlQuery>   
 
   </module>
 
