@@ -2723,6 +2723,29 @@ AND ed.name in ('L.major BAC Ends from Sanger',
     </sql>
   </sqlQuery>
   
+
+<sqlQuery>
+   <name>annotation:density:subfeatures</name>
+    <description></description>
+     <sql>
+<![CDATA[
+ SELECT interval feature_id, 
+      'test' type, 
+      'test' source, 
+      count(interval) score, 
+      (interval - 1) * 30000 startm, 
+      interval * 30000 end 
+FROM ( 
+      SELECT ceil(nal.start_max / 30000) interval 
+      FROM   dots.GENEFEATURE gf, dots.NALOCATION nal 
+      WHERE  gf.na_feature_id = nal.na_feature_id and 
+             gf.na_sequence_id = $parent_id 
+      ORDER BY nal.start_max) 
+GROUP BY interval
+]]>
+    </sql>
+  </sqlQuery>
+
   
   <sqlQuery>
    <name>alignment:Cosmids:bulksubfeatures</name>
