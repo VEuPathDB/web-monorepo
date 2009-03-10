@@ -313,19 +313,19 @@
 	}
 	
 	.diagram div.operation.UNION.selected {
-		border: 2px solid #ffffe0;
+		border: 2px solid #ffffa0;
 		height: 37px;
 		background: url(/assets/images/operationIcons_yellow.gif) no-repeat 0px -73px;
 	}
 
 	.diagram div.operation.INTERSECT.selected {
-		border: 2px solid #ffffe0;
+		border: 2px solid #ffffa0;
 		height: 37px;
 		background: url(/assets/images/operationIcons_yellow.gif) no-repeat 0px -37px;
 	}
 
 	.diagram div.operation.MINUS.selected {
-		border: 2px solid #ffffe0;
+		border: 2px solid #ffffa0;
 		height: 37px;
 		background: url(/assets/images/operationIcons_yellow.gif) no-repeat 0px -1px;
 	}
