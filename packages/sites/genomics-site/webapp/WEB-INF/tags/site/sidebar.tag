@@ -43,14 +43,22 @@
           <c:set var="i" value="1"/>
           <ul>
           <c:forEach items="${newsAnswer.recordInstances}" var="record">
+
           <c:if test="${i <= 4}">
+
             <c:set var="attrs" value="${record.attributesMap}"/>
+
+            <c:set var='tmp' value="${attrs['tag']}"/>
+            <c:set var='shorttag' value=''/>
+            <c:forEach var="k" begin="0" end="${fn:length(tmp)}" step='3'>
+               <c:set var='shorttag'>${shorttag}${fn:substring(tmp, k, k+1)}</c:set>
+            </c:forEach>
             
             <fmt:parseDate pattern="${dateStringPattern}" 
                            var="pdate" value="${attrs['date']}"/> 
             <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
       
-            <li id="n-${attrs['tag']}"><b>${fdate}</b>
+            <li id="n-${shorttag}"><b>${fdate}</b>
                    <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News#newsItem${i}"/>">
                      ${attrs['headline']}
                    </a></li>
@@ -88,7 +96,7 @@
             <c:forEach items="${table.rows}" var="row"> 
                <c:set var='url' value='${row[1].value}'/>
                <c:set var='tmp' value='${fn:replace(url, "http://", "")}'/>
-               <c:set var='tmp' value='${fn:replace(url, ".", "")}'/>
+               <c:set var='tmp' value='${fn:replace(tmp, ".", "")}'/>
                <c:set var='uid' value=''/>
                <c:forEach var="i" begin="0" end="${fn:length(tmp)}" step='3'>
                   <c:set var='uid'>${uid}${fn:substring(tmp, i, i+1)}</c:set>
