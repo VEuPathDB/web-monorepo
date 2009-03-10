@@ -80,7 +80,7 @@
 <ul id="strategy_tabs">
    <li><a id="strategy_results_tab" title="Graphical display of your opened strategies. To close a strategy click on the right top corner X." onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
    <li><a id="search_history_tab" title="Summary of all your strategies. From here you can open/close strategies on the graphical display by clicking on the 'eye'." onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
- <li><a id="sample_strat_tab" title="View some examples of linear and non-linear strategies." href="<c:url value="/sampleStrategies.jsp"/>">Sample Strategies</a></li>
+ <li><a id="sample_strat_tab" title="View some examples of linear and non-linear strategies." href="<c:url value="/sampleStrategies.jsp"/>">Help / Sample Strategies</a></li>
 
 
 </ul>

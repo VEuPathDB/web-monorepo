@@ -35,6 +35,9 @@
 
 <c:set var="transformQuestions" value="${model.transformQuestions}" />
 
+
+
+
 <div id="query_form" class="jqDnR">
 <span class="dragHandle"><div class="modal_name"><h1>Add&nbsp;Step</h1></div><a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span>
 <!--<div id="filter_div">-->
@@ -42,7 +45,16 @@
 <div id="query_selection">
 
 	<table align="left" width="70%">
-		<tr><th title="This search will be combined (AND,OR,NOT) with the previous step.">Select a Search</th><th>--Or--</th><th title="The transform converts the input set of IDs (from the previous step) into a new set of IDs">Select a Transform</th><th>--Or--</th><th title="Adding a strategy as a step allows you to generate non-linear strategies (trees).">Select a Strategy</th></tr>
+		<tr><th title="This search will be combined (AND,OR,NOT) with the previous step.">Select a Search</th>
+                    <th>--Or--</th>
+
+<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass'}">
+                    <th title="The transform converts the input set of IDs (from the previous step) into a new set of IDs">Obtain Ortholog Genes</th>
+                    <th>--Or--</th>
+</c:if>
+
+
+                    <th title="Adding a strategy as a step allows you to generate non-linear strategies (trees).">Select a Strategy</th></tr>
 		<tr>
 				<td>
 <ul class="top_nav">
@@ -61,9 +73,11 @@
 
 </td>
 <td></td>
+
+<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass'}">
 <td>
 	<select id="transforms">
-			<option value="--">--Choose a Transform to apply--</option>
+		<%--	<option value="--">--Choose a Transform to apply--</option> --%>
 		<c:forEach items="${transformQuestions}" var="t">
 			<jsp:setProperty name="t" property="inputType" value="${recClass}" />
 			<c:set var="tparams" value="" />
@@ -75,7 +89,10 @@
 	</select>
 	<br><br><input id="continue_button_transforms" type="button" value="Continue..."/>
 </td>
+
 <td></td>
+</c:if>
+
 <td>
 	<select id="selected_strategy" type="multiple">
 		<option value="--">--Choose a Strategy to add--</option>

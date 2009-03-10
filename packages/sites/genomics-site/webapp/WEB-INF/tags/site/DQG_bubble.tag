@@ -58,7 +58,7 @@
 				    <c:if test="${catByRec.key != 'GeneRecordClasses.GeneRecordClass'}">
 				      <c:set var="qByCat" value="${catByRec.value}" />
 				      <c:forEach items="${qByCat}" var="cat">
-					<li><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;<a class="heading" href="javascript:void(0)">Identify&nbsp; ${cat.key}</a><a class="detail_link small" href="categoryPage.jsp?record=${catByRec.key}&category=${cat.key}">details</a>
+					<li><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;<a class="heading" href="javascript:void(0)">By&nbsp; ${cat.key}</a><a class="detail_link small" href="categoryPage.jsp?record=${catByRec.key}&category=${cat.key}">details</a>
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.value}" var="q">
@@ -73,9 +73,9 @@
 			</ul>
 		</div>
 		<div id="infobottom">
- 			<div id="mysearchhist">
+ 		<%--	<div id="mysearchhist">
 				<a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
-			</div>
+			</div>  --%>
 		</div>
 	</c:when>
 
@@ -104,9 +104,9 @@
 			</ul>	
 		</div>
 		<div id="infobottom">
-			<div id="mysearchhist">
+		<%--	<div id="mysearchhist">
 				<a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
-			</div>
+			</div> --%>
     	</div>
 	</c:otherwise>
 </c:choose>	
