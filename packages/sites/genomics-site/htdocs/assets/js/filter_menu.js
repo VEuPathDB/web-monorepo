@@ -202,7 +202,7 @@ function getQueryForm(url,hideOp){
 				formatFilterForm(data,0,isInsert,false,hideOp);
 			},
 			error: function(data, msg, e){
-				alert("ERROR \n "+ msg + "\n" + e + ". \nPlease double check your parameters, and try again."
+				alert("ERROR \n "+ msg + "\n" + e + ". \nPlease double check your parameters, and try again." + 
                                       "\nReloading this page might also solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
@@ -274,4 +274,4 @@ function parseInputs(){
         // Jerric - use ajax to serialize the form data
 	var d = quesForm.serialize();
         return d;
-}	
+}
