@@ -65,6 +65,11 @@ sub _getSQL {
   my $rv;
   my $sqlCount = 0;
 
+  # If there is only one but it has an includeProjects attribute force it onto an array
+  if(ref($sqlObj) eq 'HASH') {
+    $sqlObj = [$sqlObj];
+  }
+
   if(ref($sqlObj) eq 'ARRAY') {
     my $alreadyIncluded;
 
@@ -88,7 +93,6 @@ sub _getSQL {
       }
     }
   }
-
   else {
     $rv = $sqlObj;
     $sqlCount++;
