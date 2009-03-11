@@ -553,9 +553,9 @@ ORDER BY blat.target_start asc, blat.score desc
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, 
-       CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
+       CASE WHEN f.taxon like 'Leishmania%' OR f.taxon like 'Trypanosoma%'
               THEN f.feature_id
-       CASE WHEN tn.name like 'Toxoplasma%'
+            WHEN f.taxon like 'Toxoplasma%'
               THEN f.feature_id  || '[p/q]1c' 
        END name,
 f.feature_id name, f.parent_id, f.startm, f.end,
@@ -570,13 +570,13 @@ select bacs.feature_id,
         min(bacs.target_start) startm,        
         max(bacs.target_end) end,
         max(bacs.target_na_sequence_id) as query_na_sequence_id,
-        bacs.name database_name
+        bacs.name database_name,bacs.taxon as taxon
 FROM (
 SELECT CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
               THEN regexp_substr(source_id, '(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]')
-       CASE WHEN tn.name like 'Toxoplasma%'
+            WHEN tn.name like 'Toxoplasma%'
               THEN regexp_substr(etn.source_id, '(.*)[^(q|p)1c)]')
-       END feature_id,
+       END feature_id,tn.name as taxon,
        blat.query_na_sequence_id, blat.target_start, blat.target_end,
        blat.target_na_sequence_id, ed.name 
 FROM apidb.BlatAlignmentLocation blat,
@@ -598,7 +598,7 @@ AND ed.name in ('L.major BAC Ends from Sanger',
                 'L.major PAC Ends from Sanger',
                 'TgME49B7 Sanger BAC Ends')
 ) bacs
-GROUP BY bacs.feature_id, bacs.name
+GROUP BY bacs.feature_id, bacs.name, bacs.taxon
 ) f
 WHERE f.startm <= $rend AND f.end >= $base_start  - 1
 and f.query_na_sequence_id = s.na_sequence_id
@@ -628,7 +628,7 @@ SELECT bacs.feature_id,
 FROM (
 SELECT CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
               THEN regexp_substr(etn.source_id, '(.*)[^(X)(Y)]')
-       CASE WHEN tn.name like 'Toxoplasma%'
+       WHEN tn.name like 'Toxoplasma%'
               THEN regexp_substr(etn.source_id, '(.*)[^T(V|H)]')
        END feature_id,
        blat.query_na_sequence_id, blat.target_start, blat.target_end,
@@ -799,6 +799,31 @@ select f.feature_id, f.type, f.source, f.name, f.parent_id, f.startm, f.end,
 from dots.nasequence s, (
 SELECT regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]') feature_id, 
        'alignment' type,
+       'RandomEnds' source,
+       regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]') name, 
+       max(blat.query_na_sequence_id) parent_id,
+       min(blat.target_start) startm,
+       max(blat.target_end) end,
+       max(blat.target_na_sequence_id) as query_na_sequence_id
+FROM   apidb.BlatAlignmentLocation blat,
+       dots.ExternalNASequence etn
+WHERE  blat.query_na_sequence_id = etn.na_sequence_id
+  AND  blat.target_na_sequence_id = $srcfeature_id
+  AND  blat.is_best_alignment = 1
+  AND  (blat.target_end - blat.target_start ) < 5000
+  AND  etn.external_database_release_id = blat.query_external_db_release_id
+  AND  blat.number_of_spans =1
+  AND  blat.query_external_db_release_id in (
+  SELECT edr.external_database_release_id
+  FROM sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
+  WHERE ed.external_database_id=edr.external_database_id
+  AND ed.name = 'L.major FV1 random Ends from Sanger'
+  )
+GROUP BY regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]')
+) f
+WHERE f.startm <= $rend AND f.end >= $base_start - 1
+ and f.query_na_sequence_id = s.na_sequence_id
+ORDER BY f.startm
 ]]>
     </sql>
   </sqlQuery>
@@ -2691,7 +2716,7 @@ SELECT blat.blat_alignment_id feature_id,
 etn.source_id name, 
 CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
               THEN regexp_substr(etn.source_id, '(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]')
-CASE WHEN tn.name like 'Toxoplasma%'
+     WHEN tn.name like 'Toxoplasma%'
               THEN regexp_substr(etn.source_id, '(.*)[^(q|p)1c)]') 
 END parent_id,
 blat.score, 
@@ -2758,7 +2783,7 @@ SELECT blat.blat_alignment_id feature_id,
 etn.source_id name, 
  CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
          THEN regexp_substr(etn.source_id, '(.*)[^(X)(Y)]')
- CASE WHEN tn.name like 'Toxoplasma%'
+      WHEN tn.name like 'Toxoplasma%'
          THEN regexp_substr(etn.source_id, '(.*)[^T(V|H)]')
   END parent_id,
 blat.score, 
