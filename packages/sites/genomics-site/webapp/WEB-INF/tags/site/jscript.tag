@@ -19,6 +19,9 @@
 	<script type="text/javascript" src="/assets/js/lib/jquery.blockUI.js"></script>
 </c:if>
 
+<%-- js for quick seach box --%>
+<script type="text/javascript" src="/assets/js/quicksearch.js"></script>
+
 <!-- Prototype Library -->
 <!--<script type="text/javascript" src="/assets/js/lib/prototype.js"></script>-->
 <!-- Scriptaculous Library -->

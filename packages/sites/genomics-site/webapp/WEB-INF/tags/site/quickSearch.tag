@@ -84,6 +84,7 @@
           </div>
 --%>
 
+<div id="quick-search">
          <table width="432" border="0" cellpadding="3">
            <tr>
              <td width="216"><div align="right">
@@ -116,3 +117,4 @@
 			 </div></td>
             </tr>
          </table>
+</div>
