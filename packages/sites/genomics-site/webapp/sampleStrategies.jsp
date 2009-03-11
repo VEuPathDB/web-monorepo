@@ -15,9 +15,9 @@
 
 <h1>Sample Strategies</h1>
 
-<table align="center" width="90%">
+<table align="center" width="90%" cellpadding="2" cellspacing="1" border="1" bordercolor="black">
 
-<tr align = "center"><td><b>Type</td><td><b>Description</td><td><b>Click to add this strategy in your display</td></tr>
+<tr align = "center"><th><b>Type</th><th><b>Description</th><th><b>Click to add this strategy in your display</th></tr>
 <c:if test="${site == 'CryptoDB'}">
   <tr align = "center"><td>Simple strategy</td><td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:1"/>">Protein coding Signal Peptide </a> </td></tr>
   <tr align = "center"><td>Expanded strategy with transform</td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:2"/>">kinases, TM, (EST or proteomics), transform</a> </td></tr>
