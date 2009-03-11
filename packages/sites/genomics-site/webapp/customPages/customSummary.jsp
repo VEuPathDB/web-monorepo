@@ -78,9 +78,9 @@
 </script>
 
 <ul id="strategy_tabs">
-   <li><a id="strategy_results_tab" title="Graphical display of your opened strategies. To close a strategy click on the right top corner X." onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
-   <li><a id="search_history_tab" title="Summary of all your strategies. From here you can open/close strategies on the graphical display by clicking on the 'eye'." onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
- <li><a id="sample_strat_tab" title="View some examples of linear and non-linear strategies." href="<c:url value="/sampleStrategies.jsp"/>">Help / Sample Strategies</a></li>
+   <li><a id="tab_strategy_results" title="Graphical display of your opened strategies. To close a strategy click on the right top corner X." onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
+   <li><a id="tab_search_history" title="Summary of all your strategies. From here you can open/close strategies on the graphical display by clicking on the 'eye'." onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
+   <li><a id="tab_sample_strat" title="View some examples of linear and non-linear strategies." href="javascript:showPanel('sample_strat')">Help / Sample Strategies</a></li>
 
 
 </ul>
@@ -120,6 +120,10 @@
 <div id="search_history" style="position:absolute;left:-999em;width:100%;">
 	<site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
 </div> <!-- end history view div -->
+
+<div id="sample_strat" style="position:absolute;left:-999em;width:100%;">
+        <site:sampleStrategies wdkModel="${wdkModel}" wdkUser="${wdkUser}" />
+</div> <!-- end sample strats div -->
 
 <%------ if this div is not being used, please clean up ------ ---%>
 <div id="loading_step_div"></div>

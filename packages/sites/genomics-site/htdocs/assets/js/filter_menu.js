@@ -10,17 +10,13 @@ function showExportLink(stratId){
 }
 
 function showPanel(panel) {
-	var hidePanel;
-	if (panel == 'strategy_results')
-		hidePanel = 'search_history';
-	else{
-		hidePanel = 'strategy_results';
-		updateHistory();
-	}
-	$("#" + hidePanel + "_tab").parent().attr("id", "");
-	$("#" + hidePanel).css({'position':'absolute','left':'-1000em','width':'100%'});
-	$("#" + panel + "_tab").parent().attr("id", "selected");
-	$("#" + panel).css({'position':'relative','left':'auto'});
+	$("#strategy_tabs li").each(function(){
+		var hidePanel = $("a", this).attr("id").substring(4);
+		$("#tab_" + hidePanel).parent().removeAttr("id");
+		$("#" + hidePanel).css({'position':'absolute','left':'-1000em','width':'100%'});
+	});
+	$("#tab_" + panel).parent().attr("id", "selected");
+	$("#" + panel).css({'position':'relative','left':'auto'}); 
 }
 
 function showSaveForm(stratId){
