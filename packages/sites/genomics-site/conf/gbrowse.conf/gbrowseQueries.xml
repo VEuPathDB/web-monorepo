@@ -555,7 +555,7 @@ ORDER BY blat.target_start asc, blat.score desc
 select f.feature_id, f.type, f.source, 
        CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
               THEN f.feature_id
-            WHEN tn.name like 'Toxoplasma%'
+       CASE WHEN tn.name like 'Toxoplasma%'
               THEN f.feature_id  || '[p/q]1c' 
        END name,
 f.feature_id name, f.parent_id, f.startm, f.end,
@@ -574,7 +574,7 @@ select bacs.feature_id,
 FROM (
 SELECT CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
               THEN regexp_substr(source_id, '(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]')
-            WHEN tn.name like 'Toxoplasma%'
+       CASE WHEN tn.name like 'Toxoplasma%'
               THEN regexp_substr(etn.source_id, '(.*)[^(q|p)1c)]')
        END feature_id,
        blat.query_na_sequence_id, blat.target_start, blat.target_end,
@@ -628,7 +628,7 @@ SELECT bacs.feature_id,
 FROM (
 SELECT CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
               THEN regexp_substr(etn.source_id, '(.*)[^(X)(Y)]')
-            WHEN tn.name like 'Toxoplasma%'
+       CASE WHEN tn.name like 'Toxoplasma%'
               THEN regexp_substr(etn.source_id, '(.*)[^T(V|H)]')
        END feature_id,
        blat.query_na_sequence_id, blat.target_start, blat.target_end,
@@ -2691,7 +2691,7 @@ SELECT blat.blat_alignment_id feature_id,
 etn.source_id name, 
 CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
               THEN regexp_substr(etn.source_id, '(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]')
-     WHEN tn.name like 'Toxoplasma%'
+CASE WHEN tn.name like 'Toxoplasma%'
               THEN regexp_substr(etn.source_id, '(.*)[^(q|p)1c)]') 
 END parent_id,
 blat.score, 
@@ -2758,7 +2758,7 @@ SELECT blat.blat_alignment_id feature_id,
 etn.source_id name, 
  CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
          THEN regexp_substr(etn.source_id, '(.*)[^(X)(Y)]')
-      WHEN tn.name like 'Toxoplasma%'
+ CASE WHEN tn.name like 'Toxoplasma%'
          THEN regexp_substr(etn.source_id, '(.*)[^T(V|H)]')
   END parent_id,
 blat.score, 
