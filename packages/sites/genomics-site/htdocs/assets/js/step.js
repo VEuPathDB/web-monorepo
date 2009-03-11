@@ -12,7 +12,7 @@ function showDetails(det){
 	var dId = $(diagram).attr("id").substring(8);
 	dId = parseInt(dId);
 	var disp = openDetail.attr("disp");
-	$("#Strategies").children("div.crumb_details").each(function(){
+	$("#strategy_results").children("div.crumb_details").each(function(){
 		$(this).remove();	
 	});
 	$("div.crumb_details", diagram).each(function(){
@@ -37,9 +37,13 @@ function showDetails(det){
 		det2.css({
 			left: l + "px",
 			top: t + "px",
-			display: "block"
+			display: "block",
+                   	position: "absolute",
+                   	textAlign: "center",
+                   	border: "medium solid black",
+                   	backgroundColor: "#EEEEEE"
 		});
-		det2.appendTo("#Strategies");
+		det2.appendTo("#strategy_results");
 	}
 	else{
 		openDetail.attr("disp","0");
@@ -50,7 +54,7 @@ function hideDetails(det){
 	openDetail.attr("disp","0");
 	openDetail = null;
 	
-	$("#Strategies").children("div.crumb_details").each(function(){
+	$("#strategy_results").children("div.crumb_details").each(function(){
 		$(this).remove();	
 	});
 }
@@ -76,7 +80,7 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 				qf = document.createElement('div');
 				$(qf).attr("id","query_form").addClass("jqDnR");
 				$(d).append(qf);
-				$("#Strategies").append(d);
+				$("#strategy_results").append(d);
 				formatFilterForm(data,1,reviseStepNumber, hideQuery, hideOp);
 			},
 			error: function(data, msg, e){

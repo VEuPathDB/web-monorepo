@@ -251,7 +251,7 @@ function openFilter(dtype,strat_id,step_id){
 				original_Query_Form_Text = $("#query_form").parent().html();
 				getQueryForm($("#query_form select#transforms").val(),true);
 			});
-			$("div#Strategies").append(filter);
+			$("div#strategy_results").append(filter);
 			$("#query_form").jqDrag(".dragHandle");
 		},
 		error: function(){
