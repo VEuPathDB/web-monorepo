@@ -50,7 +50,7 @@
 
 <c:choose>
 
-  <c:when test="${1 == 2}">
+  <c:when test="${empty wdkUser || wdkUser.guest}">
     <p align=center>Please login to post a comment.</p>
     <table align='center'><tr><td><site:login/></td></tr></table>
   </c:when>
@@ -74,6 +74,13 @@
 
         <c:if test="${param.flag ne '0'}">
           <wdk:errors/>
+
+      Stable ID: ${phenotypeForm.stableId} <br>
+      commentTargetId: ${phenotypeForm.commentTargetId}<br>
+      organism: ${phenotypeForm.organism}<br>
+      externalDbName: ${phenotypeForm.externalDbName}<br>
+      externalDbVersion: ${phenotypeForm.externalDbVersion}<br>
+
         </c:if>
          
       <html:form method="post" action="addPhenotype.do"  enctype="multipart/form-data">
@@ -90,7 +97,7 @@
       </tr>
     
       <tr class="medium">
-        <td width=150>Headline</td>
+        <td width=150>Headline <font color=red>*</font></td>
         <td><html:text property="headline" size="60"/></td>
       </tr>
 
@@ -109,7 +116,7 @@
            <html:text property="background" size="60"/> <br>
            <ul class="myul">
             <li>
-           genotype, strain, other mutations/markers), other genotypic information</li>
+           Genotype, strain, other mutations/markers), other genotypic information</li>
 
            <li>Use std nomenclature; as per Bzik/Fox suggestions? </li>
 
@@ -121,11 +128,13 @@
       <tr class="medium">
          <td>Mutant Type</td>
          <td>
-            <input type=radio name="mutationType" value=1 checked>Gene knock out</input>
+            <input type=radio name="mutationType" value=1>Gene knock out</input>
             <input type=radio name="mutationType" value=2>Gene knock in</input>
             <input type=radio name="mutationType" value=3>Induced mutation</input>
             <input type=radio name="mutationType" value=4>Chromosomal substitution</input>
+            <br>
             <input type=radio name="mutationType" value=5>Transfection</input>
+            <input type=radio name="mutationType" value=6 checked>Don't know</input>
           </td>
       </tr>
 
@@ -150,7 +159,7 @@
 
       <tr class="medium">
         <td>Mutation Method Description</td>
-        <td><html:textarea property="mutationMethodDescription" rows="5" cols="50"/>
+        <td><html:textarea property="mutationMethodDescription" rows="5" cols="70"/>
           <ul class="myul">
             <li>Description of targeting construct</li>
             <li>Assay & method</li>
@@ -188,8 +197,8 @@
       </tr>
 
       <tr class="medium">
-        <td>Phenotype Description</td>
-        <td><html:textarea property="phenotypeDescription" rows="5" cols="50"/>
+        <td>Phenotype Description <font color=red>*</font></td>
+        <td><html:textarea property="phenotypeDescription" rows="5" cols="70"/>
            <ul class="myul">
              <li>Description of the observed phenotype</li>
           </ul>
@@ -200,9 +209,9 @@
       <tr class="medium">
          <td>Expression</td>
          <td>
-            <input type=radio name="expression" value=1 checked>Stable</input>
+            <input type=radio name="expression" value=1>Stable</input>
             <input type=radio name="expression" value=2>Transient</input>
-            <input type=radio name="expression" value=3>Don't Know</input>
+            <input type=radio name="expression" value=3 checked>Don't Know</input>
           </td>
       </tr>
 
