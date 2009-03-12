@@ -38,6 +38,16 @@ sub new {
 }
 
 sub setProjectId {$_[0]->{projectId} = $_[1]}
+sub getProjectId {
+  my ($self) = @_;
+
+  my $projectId = $self->{projectId};
+
+  unless($projectId) {
+    die "Project Id was not set!";
+  }
+  return $projectId;
+}
 
 sub getSQL {
 	my $self = shift;
@@ -60,7 +70,7 @@ sub print {
 sub _getSQL {
   my ($self, $sqlObj, $key) = @_;
 
-  my $projectId = $self->{projectId};
+  my $projectId = $self->getProjectId();
 
   my $rv;
   my $sqlCount = 0;
@@ -99,7 +109,7 @@ sub _getSQL {
   }
 
   unless($sqlCount == 1) {
-    die "Multiple SQL statements found for $key" . Dumper $sqlObj;
+    die "Multiple SQL statements found for $key" . Dumper $rv;
   }
 
   return $rv;
