@@ -397,11 +397,9 @@
 	.crumb_details div.crumb_menu {
 		background-image:url(../images/CryptoDB/trsubhead.png);	
 		position: relative;
-		left: -3px;
-		top: -28px;
 		white-space: nowrap;
-		border: 2px solid #000000;
-		padding: 6px 2px 5px 0px;
+		border-bottom: 2px solid #000000;
+		padding: 6px 0px 5px 0px;
 		height: 12px;
 		margin-right:-6px;
 		cursor:move;
@@ -426,7 +424,7 @@
 
 .question_name {
 	font-size: 14px;
-	margin: -17px 0px 3px 0px;
+	margin: 3px 0px;
 }
 
 .question_name span {

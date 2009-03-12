@@ -272,6 +272,22 @@ behavior: url(/assets/css/csshover.htc);
 <script type="text/javascript" src="/assets/js/pngfix.js"></script>
 <![endif]-->
 
+<!--[if IE]>
+<style>
+  * html #query_selection {
+	behavior: url("/assets/css/csshover.htc");
+  }
+
+  * html #query_selection .top_nav li:hover ul {
+	left: 10em;
+  }
+
+  * html .crumb_details div.crumb_menu {
+	margin-right: -3px;
+  }
+</style>
+<![endif]-->
+
 <c:if test="${project == 'CryptoDB'}">
   <script type="text/javascript" src="/assets/js/google_map.js"></script>
   <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${gkey}" type="text/javascript"></script>

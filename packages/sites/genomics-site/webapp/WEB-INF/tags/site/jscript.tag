@@ -34,8 +34,10 @@
 	<!-- Strategy Interaction javascript -->
 	<script type="text/javascript" src="/assets/js/StrategyAction.js"></script>
 	
+	<%-- this is marked "hover for home page" but it's only included on application page --%>
+        <%-- ...and it doesn't seem to be used by anything at all on that page
  	<!-- hover for home page -->
-	<script type="text/javascript" src="/assets/js/sfhover.js"></script>
+	<script type="text/javascript" src="/assets/js/sfhover.js"></script> --%>
 </c:if>
 
 <c:if test="${refer == 'blastQuestion'}">

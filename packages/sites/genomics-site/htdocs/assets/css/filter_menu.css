@@ -15,8 +15,7 @@
 #query_selection {
 	left: 140px;
 	position:relative;
-	top: 0.25em;
-	/*width: 13em;*/
+	margin-top: 36px;
 	width: 100%;
 }
 
@@ -31,9 +30,15 @@
 	background-image: url(../images/filter_top.gif);
 /*	background-image: url(../images/CryptoDB/footer.png);*/
 	background-repeat: repeat-x;
+	background-position: 0 36px;
 	border: 1px solid #345d9b;	
 	padding-bottom: 8px;
 	z-index: 1000;
+}
+
+#query_form form {
+	position: relative;
+	margin-top:40px;
 }
 
 #query_selection ul {
@@ -58,7 +63,7 @@
 
 #query_selection .top_nav ul {
 	position:absolute; 
-	top:-999em;
+	display:none;
 }
 
 #query_selection .top_nav li {
@@ -67,6 +72,7 @@
 	text-align:center;
 	z-index:50;
 	padding-right: 13px;
+        white-space: nowrap;
 }
 
 #query_selection .top_nav li a:link, #query_selection .top_nav li a:visited{
@@ -86,8 +92,9 @@
 }
 
 #query_selection .top_nav li:hover ul{
-	left:11.25em;
-	top:-4px;
+	display: block;
+	left: 11.25em;
+	top: -4px;
 }
 
 #close_filter_query {
@@ -133,7 +140,6 @@
 
 .dragHandle {
 	position: absolute;
-	top: -36px;
 	left: -1px;
 	background-color: Grey;
 	height: 25px;
