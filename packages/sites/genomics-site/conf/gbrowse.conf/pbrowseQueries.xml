@@ -38,7 +38,7 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
 SELECT tas.aa_sequence_id srcfeature_id, 
        1 startm, 
        tas.length end, 
-       trp.protein_id name, 
+       gf.source_id name, 
        'protein' type,
        'ID=' || tas.aa_sequence_id atts
 FROM   dots.translatedaasequence tas, 
@@ -322,12 +322,6 @@ ORDER BY
   </module>
 
   <module name="Feature.pm">
-    <sqlQuery>
-      <name></name>
-      <description></description>
-      <sql>
-      </sql>
-    </sqlQuery>
 
 <!-- Was only in: plasmo -->
     <sqlQuery>
