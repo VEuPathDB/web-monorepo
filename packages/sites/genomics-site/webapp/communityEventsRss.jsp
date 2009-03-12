@@ -32,7 +32,7 @@
 /><?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 <channel>
-    <title>${xmlAnswer.question.displayName}</title>
+    <title>${wdkModel.displayName} Community Events</title>
     <link>${linkTmpl}</link>
     <description>${wdkModel.displayName} Community Events</description>
     <language>en</language>

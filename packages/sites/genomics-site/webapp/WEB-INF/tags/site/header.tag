@@ -215,6 +215,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<c:url var='eventsRss' value='/communityEventsRss.jsp'/>
+<c:url var='newsRss' value='/showXmlDataContent.do?name=XmlQuestions.NewsRss'/>
+<link rel="alternate" type="application/rss+xml" 
+      title="${wdkModel.displayName} News" href="${newsRss}" />
+<link rel="alternate" type="application/rss+xml" 
+      title="${wdkModel.displayName} Community Events" href="${eventsRss}" />
 
 <title>
 <c:out value="${title}" default="${banner}" />
