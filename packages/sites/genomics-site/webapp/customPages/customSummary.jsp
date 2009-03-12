@@ -64,6 +64,8 @@
 <script type="text/javascript" language="javascript">
         var guestUser = '${wdkUser.guest}';
 	$(document).ready(function(){
+		// tell jQuery not to cache ajax requests.
+		$.ajaxSetup ({ cache: false}); 
 		exportBaseURL = '${exportBaseUrl}';
 		$("#diagram div.venn:last span.resultCount a").click();
 		<c:choose>
