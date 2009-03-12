@@ -2743,7 +2743,7 @@ AND ed.name in ('L.major BAC Ends from Sanger',
                 'T.brucei RPCI93 BAC Ends',
                 'T.cruzi CHORI105 BAC End',
                 'L.major PAC Ends from Sanger',
-                'TgME49B7 Sanger BAC Ends')
+                'TgME49B7 Sanger BAC Ends'))
 ]]>
     </sql>
   </sqlQuery>
