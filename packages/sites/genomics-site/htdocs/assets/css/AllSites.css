@@ -92,3 +92,16 @@ div.innertube #record-toolbox {
 ul#strategy_tabs {
     font-size: 16px;
 }
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = used in sample strategies
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.tableWithBorders table{
+	border-collapse: collapse;
+}
+.tableWithBorders tr td{
+	padding: 2px 4px 2px 4px;
+	border: 1px solid #660000;
+}
