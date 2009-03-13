@@ -58,7 +58,20 @@
 				    <c:if test="${catByRec.key != 'GeneRecordClasses.GeneRecordClass'}">
 				      <c:set var="qByCat" value="${catByRec.value}" />
 				      <c:forEach items="${qByCat}" var="cat">
-					<li><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;<a class="heading" href="javascript:void(0)">By&nbsp; ${cat.key}</a><a class="detail_link small" href="categoryPage.jsp?record=${catByRec.key}&category=${cat.key}">details</a>
+  <%-- fixing plural and uppercase --%>
+  <c:set var="recordType" value="${cat.key}" />
+  <c:if test="${fn:containsIgnoreCase(recordType, 'Snp') || fn:containsIgnoreCase(recordType, 'Est')  || fn:containsIgnoreCase(recordType, 'Orf') }">
+	<c:set var="recordType" value="${fn:toUpperCase(recordType)}s" />
+  </c:if>
+  <c:if test="${fn:contains(recordType, 'Assem') }">
+	<c:set var="recordType" value="Assemblies" />
+  </c:if>
+
+					<li><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;<a class="heading" href="javascript:void(0)">By&nbsp; ${recordType}</a><a class="detail_link small" href="categoryPage.jsp?record=${catByRec.key}&category=${cat.key}">details</a>
+
+
+
+
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.value}" var="q">
