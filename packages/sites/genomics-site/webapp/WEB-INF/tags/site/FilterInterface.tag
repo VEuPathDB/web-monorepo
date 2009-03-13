@@ -46,11 +46,11 @@
 
 	<table align="left" width="70%">
 		<tr><th title="This search will be combined (AND,OR,NOT) with the previous step.">Select a Search</th>
-                    <th>--Or--</th>
+                    <th>--or--</th>
 
 <c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass'}">
-                    <th title="The transform converts the input set of IDs (from the previous step) into a new set of IDs">Obtain Ortholog Genes</th>
-                    <th>--Or--</th>
+                    <th title="The transform converts the input set of IDs (from the previous step) into a new set of IDs">Select a Transform</th>
+                    <th>--or--</th>
 </c:if>
 
 
