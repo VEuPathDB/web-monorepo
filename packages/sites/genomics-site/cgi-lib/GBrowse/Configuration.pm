@@ -15,9 +15,7 @@ require Exporter;
 
 sub new {
   my $class = shift;
-  my $self  = {
-    track_no => 0,
-  };
+  my $self  = { track_no => 0 };
   bless ($self, $class);
   return $self;
 }

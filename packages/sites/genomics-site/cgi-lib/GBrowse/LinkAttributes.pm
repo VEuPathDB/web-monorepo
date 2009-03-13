@@ -4,7 +4,7 @@ use strict;
  sub synSpanLink {
      my $f = shift;
      my $name = $f->name;
-     return "/toxo/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$name"
+     return "/a/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$name"
  }
 
  sub synGeneTitle {
@@ -72,7 +72,7 @@ use strict;
      hover( ($type =~ /gap/i) ? 'All gaps in region' : 'Scaffold', \@data);
  }
 
-
+# TODO:  What is 'toxo' doing here??
 sub snpTitleQuick {
    my $f = shift;
    my $webapp = 'toxo';
