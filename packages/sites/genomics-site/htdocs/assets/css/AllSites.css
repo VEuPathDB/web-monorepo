@@ -77,3 +77,11 @@ div.innertube #record-toolbox {
         background-image: url(../images/warnbox.jpg);
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOOTER adds to what is in (project).css
+            this allows to insert a div with version and date
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#footer{
+   position:relative;
+}
