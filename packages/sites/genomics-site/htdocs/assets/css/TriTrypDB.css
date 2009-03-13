@@ -712,11 +712,11 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 }
 
 .arrowgrey a:hover {
-	color: #FFFFFF;
+	color:#B45F04;      /*  #FFFFFF; */
 }
 
 .arrowgrey_drk a:hover {
-	color: #FFFFFF;
+	color: #B45F04;     /* #FFFFFF; */
 }
 
 .arrowred a:link, .arrowred a:visited{
@@ -755,21 +755,6 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
    background-repeat: no-repeat;
    background-position: right;   }
 
-.arrowgrey a:hover {
-   color: #FFFFFF;
-}
-
-.arrowgrey_drk a:hover {
-   color: #FFFFFF;
-}
-
-.arrowred a:link, .arrowred a:visited{
-   color: white;
-}
-
-.arrowred a:hover {
-   color: #CCCCCC;
-}
 
 .selectedarrow {
    padding: 4px;
