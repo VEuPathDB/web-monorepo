@@ -30,6 +30,12 @@
 		  <c:otherwise>
 			<c:set var="qByCat" value="${catByRec.value}" />
 <c:set var="recordType" value="${fn:substringBefore(catByRec.key,'Record')}" />
+<c:if test="${fn:containsIgnoreCase(recordType, 'Snp') || fn:contains(recordType, 'Est')  || fn:contains(recordType, 'Orf') }">
+	<c:set var="recordType" value="${fn:toUpperCase(recordType)}" />
+</c:if>
+<c:if test="${fn:contains(recordType, 'Assem') }">
+	<c:set var="recordType" value="Assemblie" />
+</c:if>
 			<c:forEach items="${qByCat}" var="cat">
 		<%--	<li><a href="#">Search for ${cat.key}s</a>  --%>
 			<li><a href="#">Search for ${recordType}s</a> 
