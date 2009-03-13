@@ -1,5 +1,62 @@
 use strict;
 
+#--------------------------------------------------------------------------------
+#  Methods which Return 1 or 0 for determining the Label
+#--------------------------------------------------------------------------------
+
+sub _labelFromTagValue { 
+  my ($f, $tag, $value) = @_;
+
+  my ($type) = $f->get_tag_values($tag);
+  return 1 if($type eq $value);
+  return 0;
+}
+
+
+
+#--------------------------------------------------------------------------------
+#  Methods for Titles
+#--------------------------------------------------------------------------------
+
+sub scaffoldTitle { 
+  my $f = shift;
+  my $name = $f->name;
+  my $chr  = $f->seq_id;
+  my $loc  = $f->location->to_FTstring;
+  my $orient   = $f->strand eq '-1' ? "reverse" : "forward";
+  my ($length) = $f->get_tag_values("Length");
+  my ($type) = $f->get_tag_values("Type");
+  my $start = $f->start;
+  my $stop = $f->stop;
+  my @data;
+  if($type eq "fgap"){
+    my @gaps = $f->sub_SeqFeature();
+    my $count = 0;
+    foreach(@gaps) {
+      $count++;
+      my $gstart = $_->start;
+      my $gstop  = $_->stop;
+      my $gsize  = $gstop - $gstart + 1;
+      push @data, [ "Gap $count: $gstart..$gstop:"  => $gsize ]; 
+    }
+  } elsif($type eq "scaffold") {
+    push @data, [ 'Name:'    => $name ]; 
+    push @data, [ 'Length:'  => $length ];
+    push @data, [ 'Orientation:' => "$orient" ]; 
+    push @data, [ 'Location:' => "$start..$stop" ];
+  } 
+  hover( ($type eq 'scaffold') ? 'Scaffold' : 'All gaps in region', \@data);
+}
+
+#--------------------------------------------------------------------------------
+#  Methods For Color
+#--------------------------------------------------------------------------------
+
+sub _simpleBgColorFromStrand {
+  my ($f, $first, $second) = @_;
+  $f->strand == +1 ? $first : $second;
+}
+
 sub oldChipColor { 
   my $f   = shift;
   my ($a) = $f->get_tag_values('Analysis');
