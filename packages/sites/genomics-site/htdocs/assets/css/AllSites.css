@@ -85,3 +85,10 @@ div.innertube #record-toolbox {
 #footer{
    position:relative;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = subs  what is in (project).css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+ul#strategy_tabs {
+    font-size: 16px;
+}
