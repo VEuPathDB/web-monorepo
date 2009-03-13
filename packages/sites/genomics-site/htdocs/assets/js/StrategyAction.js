@@ -408,7 +408,7 @@ function createDetails(ele, strat, step){
 	if(ele[0].parentNode.nodeName == "strategy")
 		f = true;
 	var detail_div = document.createElement('div');
-	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px" });
+	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"350px" });
 	var name = $(ele).attr("name");
 	var shortName = $(ele).attr("shortName");
 	var collapsible = $(ele).attr("isCollapsed");
