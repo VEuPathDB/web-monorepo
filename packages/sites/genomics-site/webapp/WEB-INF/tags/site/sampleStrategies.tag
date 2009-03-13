@@ -32,7 +32,7 @@
   <tr align = "left"><td>Expanded strategy with transform</td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:2"/>">kinases, TM, (EST or proteomics), transform</a> </td></tr>
 </c:if>
 <c:if test="${site == 'TriTrypDB'}">
-  <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:3"/>">Simple strategy</a> </td><td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td></tr>
+  <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:27"/>">Simple strategy</a> </td><td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td></tr>
   <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:10"/>">Expanded strategy with transform</a> </td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td></tr>
 </c:if>
 
