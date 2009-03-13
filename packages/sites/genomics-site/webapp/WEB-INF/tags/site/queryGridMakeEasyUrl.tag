@@ -3,6 +3,11 @@
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<%@ attribute name="linkid"
+              required="true"
+              description="unique id for the link for popup"
+%>
+
 <%@ attribute name="link"
               required="true"
               description="link url"

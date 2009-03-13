@@ -853,6 +853,7 @@ a.heading:hover + a.detail_link, .detail_link:hover {
    padding: 9px;
    line-height: 1.2em;
    clear: both;
+   z-index: -1;
 }
 	#footer img{
    margin-left: 24px;

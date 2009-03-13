@@ -34,7 +34,7 @@
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Geographic Location" existsOn="A C P"/>
     </tr>
     <tr>
-      <site:queryGridMakeEasyUrl  link="/common/community/lxiao/RFLP_reference_images/Actual&#32;RFLP.htm" linktext="Reference RFLP Gel Images" linkdesc="RFLP images provided by Dr. Lihua Xiao from Centers for Disease Control and Prevention, Atlanta, Georgia, USA" existsOn="C"  />
+      <site:queryGridMakeEasyUrl  linkid="RFLP" link="/common/community/lxiao/RFLP_reference_images/Actual&#32;RFLP.htm" linktext="Reference RFLP Gel Images" linkdesc="RFLP images provided by Dr. Lihua Xiao from Centers for Disease Control and Prevention, Atlanta, Georgia, USA" existsOn="C"  />
     </tr>
 
     </table>
@@ -53,7 +53,7 @@
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateBySubmitter" linktext="Submitter" existsOn="A P"  />
      </tr>
      <tr>
-     <site:queryGridMakeEasyUrl link="isolateClustering.jsp" linktext="Isolate Clustering" linkdesc="View Isolates in a treeview applet" existsOn="P"  />
+     <site:queryGridMakeEasyUrl linkid="treeview" link="isolateClustering.jsp" linktext="Isolate Clustering" linkdesc="View Isolates in a treeview applet" existsOn="P"  />
     </tr>
     
     </table>

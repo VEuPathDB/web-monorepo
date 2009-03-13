@@ -171,8 +171,8 @@
     </td>
 --%>
 
-     <td align="left" valign="bottom" ><a href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
-     <div class="htmltooltip">${popup}</div>
+     <td align="left" valign="bottom" ><a id="${qset}_${qname}_${type}" href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
+     <div id="${qset}_${qname}_${type}_tip" class="htmltooltip">${popup}</div>
 
 </c:if>
 
@@ -193,8 +193,8 @@
     </td>
 --%>
 
-     <td align="left" valign="bottom"><a href='javascript:void(0);' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
-     <div class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
+     <td align="left" valign="bottom"><a id="${qset}_${qname}_${type}" href='javascript:void(0);' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
+     <div id="${qset}_${qname}_${type}_tip" class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
 
 
 </c:if>
