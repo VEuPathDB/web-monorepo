@@ -183,7 +183,7 @@ function validateAndCall(type, url, proto, rs){
 		}
 	}
 	if(!valid){
-		alert("Please select a booean operator.");
+		alert("Please select a boolean operator.");
 		return;
 	}
 	if(type == 'add'){
@@ -236,17 +236,19 @@ function openFilter(dtype,strat_id,step_id){
 			$(filter).html(data);
 			if(isFirst){
 				$("#selected_strategy,#continue_button", filter).attr("disabled","disabled");
+				$("#transforms,#continue_button_transforms", filter).attr("disabled","disabled");
 			}else{
 				$("#continue_button", filter).click(function(){
 					original_Query_Form_Text = $("#query_form").parent().html();
 					OpenOperationBox(strat_id);
 					return false;
 				});
-			}
+		
 			$("#continue_button_transforms", filter).click(function(){
 				original_Query_Form_Text = $("#query_form").parent().html();
 				getQueryForm($("#query_form select#transforms").val(),true);
 			});
+			}
 			$("div#strategy_results").append(filter);
 			$("#query_form").jqDrag(".dragHandle");
 		},
