@@ -529,7 +529,7 @@ height: 240px;
 
 #menu ul ul a:link, #menu ul ul a:visited{
 	left:100%;
-	width: 16em;
+	width: 14em;
 	color: #414141;
 	font-weight: normal;
 	padding: 6px 6px 6px 6px;
@@ -540,7 +540,7 @@ height: 240px;
 #menu ul ul a:hover, #menu ul ul a:active{
 	left:100%;
 	margin-left: -2px;
-	width: 16em;
+	width: 12em;
 	color: #b30101;
 	font-weight: normal;
 	background-color: #FFFFFF;
@@ -565,9 +565,9 @@ div#menu ul ul, div#menu ul li:hover ul ul, div#menu ul ul li:hover ul ul {
 	z-index: 500;
 }
 
-div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover ul {
+div#menu ul li:hover ul, div#menu ul ul li:hover ul {
 	display:block;
-	width: 18em;
+	width: 14em;
 	text-decoration: none;
 	padding: 2px;
 	background-color: #FFFFFF;
@@ -575,7 +575,14 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 }
 
 
-
+div#menu ul ul ul li:hover ul {
+	display:block;
+	width: 16em;
+	text-decoration: none;
+	padding: 2px;
+	background-color: #FFFFFF;
+	z-index: 500;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menu Lists
