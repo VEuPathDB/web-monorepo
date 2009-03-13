@@ -102,6 +102,7 @@ ul#strategy_tabs {
 	border-collapse: collapse;
 }
 .tableWithBorders tr td{
-	padding: 2px 4px 2px 4px;
-	border: 1px solid #660000;
+	padding: 3px 4px 3px 4px;
+	border: 1px solid black;
+        vertical-align: middle;
 }
