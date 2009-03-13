@@ -506,25 +506,21 @@ function createParameters(params){
 function getRecordName(cl){
 
 	if(cl == "GeneRecordClasses.GeneRecordClass")
-		return "Gene" + s;
+		return "Genes";
 	if(cl == "SequenceRecordClasses.SequenceRecordClass")
-		return "Sequence" + s;
+		return "Genomic Sequences";
 	if(cl == "EstRecordClasses.EstRecordClass")
-		return "EST" + s;
+		return "ESTs";
 	if(cl == "OrfRecordClasses.OrfRecordClass")
-		return "ORF" + s;
+		return "ORFs";
 	if(cl == "IsolateRecordClasses.IsolateRecordClass")
-		return "Isolate" + s;
+		return "Isolates";
 	if(cl == "SnpRecordClasses.SnpRecordClass")
-		return "SNP" + s;
-	if(cl == "AssemblyRecordClasses.AssemblyRecordClass"){
-		if(s == "") 
-			return "Assembly";
-		else 
-			return "Assemblies";
-	}
+		return "SNPs";
+	if(cl == "AssemblyRecordClasses.AssemblyRecordClass")
+		return "Assemblies";
 	if(cl == "SageTagRecordClasses.SageTagRecordClass")
-		return "Sage Tag" + s;
+		return "Sage Tags";
 }
 
 
@@ -532,7 +528,8 @@ function createRecordTypeName(ele, strat){
         var id = (ele).attr("id");
 //     	alert("createRecordTypeName(): STRAT id is " + id);
 	if (strat.subStratOf == null){
-        	var recordName = recordType[id];
+	var recordName = getRecordName(recordType[id]);
+
 //		alert("createRecordTypeName(): (only if we are in a main strat) Record for this strat is:" + recordName);
 
         	var div_sn = document.createElement("div");
