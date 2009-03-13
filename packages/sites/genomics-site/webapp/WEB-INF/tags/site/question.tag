@@ -27,6 +27,10 @@
 <c:if test="${wdkModel.displayName eq 'ApiDB'}">
      <div id="question_Form">
 </c:if>
+<c:if test="${fn:contains(recordType, 'Assem') }">
+	<c:set var="recordType" value="Assemblie" />
+</c:if>
+
 <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 
