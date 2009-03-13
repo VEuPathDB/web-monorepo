@@ -1325,10 +1325,9 @@ td.strat_inactive {
 
 ul#strategy_tabs {
     border-bottom: 1px solid #777;
- /*  font-size: 18px; */
     margin:0 0 1px;
     padding:0 10px;
-    height: 29.5px;
+    height: 26.5px;
     width: 98%;
 }
 

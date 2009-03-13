@@ -278,6 +278,10 @@ behavior: url(/assets/css/csshover.htc);
 	behavior: url("/assets/css/csshover.htc");
   }
 
+  * html #query_selection .top_nav li:hover {
+	background-color: #DDDDDD;
+  }
+
   * html #query_selection .top_nav li:hover ul {
 	left: 10em;
   }
