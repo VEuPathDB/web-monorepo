@@ -265,7 +265,7 @@ img {
 
 #contentcolumn2 {
 	min-width: 900px;
-	margin: 0 25px 0 6px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
+	margin: 0 5px 0 6px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
 	background-color: #FFFFFF;
 	background-image: url(../images/CryptoDB/footer.png);
 	background-repeat: repeat-x;
