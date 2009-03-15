@@ -1534,11 +1534,6 @@ span#toggle_filter {
 	 = used in sample strategies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.tableWithBorders table{
-	border-collapse: collapse;
-}
 .tableWithBorders tr td{
-	padding: 3px 4px 3px 4px;
 	border: 1px solid #660000;
-        vertical-align: middle;
 }

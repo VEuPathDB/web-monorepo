@@ -13,7 +13,7 @@
 }
 
 #query_selection {
-	left: 140px;
+	left: 40px;  /* 140 */
 	position:relative;
 	margin-top: 36px;
 	width: 100%;
@@ -22,9 +22,9 @@
 #query_form {
 	/*display: none;*/
 	position: absolute;
-	left:200px; /*135px;*/
+	left:150px;  /*200px;*/ /*135px;*/
 	top:60px; /*279px;*/
-	min-width: 900px;
+	min-width: 860px  /* 900 */;
 	max-width: 78%;
 	background-color: #FFFFFF;
 	background-image: url(../images/filter_top.gif);

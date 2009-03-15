@@ -24,7 +24,7 @@
 
 <h1>Sample Strategies</h1>
 
-<table class="tableWithBorders" align="center" width="90%">
+<table class="tableWithBorders" style="margin-left: auto; margin-right: auto;" width="90%">
 
 <tr align = "center"><td><b>Type<br>Click to view strategy</b></td><td><b>Description</b></td></tr>
 <c:if test="${site == 'CryptoDB'}">

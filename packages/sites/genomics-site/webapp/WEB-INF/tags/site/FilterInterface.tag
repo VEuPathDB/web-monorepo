@@ -44,7 +44,7 @@
 
 <div id="query_selection">
 
-	<table align="left" width="70%">
+	<table width="90%">
 		<tr><th title="This search will be combined (AND,OR,NOT) with the previous step.">Select a Search</th>
                     <th>--or--</th>
 
