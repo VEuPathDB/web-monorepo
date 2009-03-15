@@ -126,7 +126,7 @@ function displayModel(strat_id){
 		var close_span = document.createElement('span');
 		$(close_span).addClass("closeStrategy").html(""+
 		"	<a onclick='closeStrategy(" + strat.frontId + ")' href='javascript:void(0)'>"+
-		"		<img alt='Click here to close the strategy (it will only be removed from the display)' src='/assets/images/Close-X.png'/>"+
+		"		<img alt='Click here to close the strategy (it will only be removed from the display)' src='/assets/images/Close-X.png' title='Click here to close the strategy (it will only be removed from the display)' src='/assets/images/Close-X.png'/>"+
 		"	</a>");
 		$(div_strat).append(close_span);
 
@@ -442,16 +442,16 @@ function createDetails(ele, strat, step){
 	if(params.length != 0)
 		params_table = createParameters(params);
 	
-	rename_step = 	"			<a class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
-	view_step = 	"			<a class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
-	edit_step =		"			<a class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\"," + collapsible + ");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;";
+	rename_step = 	"			<a title='Click to rename the step' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
+	view_step = 	"			<a title='Click to view the results of this query (or substrategy) in the Resuts area below' class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
+	edit_step =		"			<a title='Click to edit the query and/or the operation'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\"," + collapsible + ");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Edit</a>&nbsp;|&nbsp;";
 	if(f){
 		expand_step = 	"			<span class='expand_step_link' style='color:grey'>Expand</span>&nbsp;|&nbsp;";
 	}else{
-		expand_step = 	"			<a class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;";
+		expand_step = 	"			<a title='If this step is not a subsrategy, click to begin one; if this step is already a substrategy, click to open it and continue working on it' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;";
 	}
-	insert_step = 	"			<a class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>&nbsp;|&nbsp;";
-	delete_step = 	"			<a class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>";
+	insert_step = 	"			<a title='Click to insert a step befpre this one, by either running a new query or choosing an existing strategy'  class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>&nbsp;|&nbsp;";
+	delete_step = 	"			<a title='This will remove the step from the strategy; if this step is the only step in this strategy, this will remove the strategy also' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>";
 	close_button = 	"			<span style='float: right; position: absolute; right: 6px;'>"+
 					"				<a href='javascript:void(0)' onclick='hideDetails(this)'>[x]</a>"+
 					"			</span>";
