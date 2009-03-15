@@ -1343,7 +1343,7 @@ ul#strategy_tabs {
     background-color: #E8EBF0;
     border: 1px solid #CCCCCC;
     border-bottom: 1px solid #777;
-    color:#666666;
+    color: #3f3737;   /*  #666666;*/
     float: left;
     margin-top: 2px;
     padding:0.24em 1em;
