@@ -30,6 +30,64 @@ sub synSpanScale {
 #  Methods For Color
 #--------------------------------------------------------------------------------
 
+sub massSpecBgColorFromExtDbName {
+  my $f = shift;
+
+  my %colors = ('Wastling 1-D SDS PAGE Insoluble' => 'mediumslateblue',
+                'Wastling 1-D SDS PAGE' => 'mediumslateblue',
+                'Wastling 1-D SDS PAGE Soluble' => 'mediumslateblue',
+                'Wastling MudPIT Soluble' => 'black',
+                'Wastling MudPIT Insoluble' => 'black',
+                'Wastling Rhoptry' => 'mediumblue',
+                'Wastling' => 'mediumblue',
+                'Murray Conoid-enriched Fraction' =>  'maroon',
+                'Murray Conoid-depleted Fraction' => 'darksalmon',
+                '1D Gel Tachyzoite Membrane fraction 12-2006' => 'sandybrown',
+                '1D Gel Tachyzoite Cytosolic fraction 03-2006' => 'sienna',
+                '1D Gel Tachyzoite Membrane fraction 10-2006' => 'peachpuff',
+                'MS Tachyzoite Membrane fraction 05-02-2006' => 'peru', 
+                'MS Tachyzoite Membrane fraction 06-2006' => 'rosybrown',
+                'MS Tachyzoite Membrane fraction 10-2006' => 'darkkhaki',
+                'MS Tachyzoite Membrane fraction 05-10-2006' => 'brown',
+                'MS Tachyzoite Membrane fraction 02-03-2006' => 'tan',
+                'MS Carruthers MudPIT Twinscan hits' => 'violet',
+                'MS Carruthers 2destinct peptides' => 'plum',
+                'Moreno DTASelect filter sample A' => 'lime',
+                'Moreno DTASelect filter sample G' => 'green',
+               );
+
+
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+
+  if(my $color = $colors{$extdbname}) {
+    return $color
+  }
+  return 'yellow';
+}
+
+
+sub wastlingMassSpecBgColor {
+  my $f = shift;
+  my $extdbname;
+  if(ref $f->parent =~ /GUS::Segment$/) {
+    ($extdbname) = $f->get_tag_values('ExtDbName');
+  } else {
+    ($extdbname) = $f->parent->get_tag_values('ExtDbName');
+  }
+  ($extdbname =~ m/1-d/i) && return 'mediumslateblue';
+  ($extdbname =~ m/mudpit/i) && return 'black';
+  ($extdbname =~ m/rhoptry/i) && return 'mediumblue';
+  return 'yellow';
+}
+
+
+sub glyphFlipBgColor { 
+  my ($f, $glyph) = @_;
+  my $flip = $glyph->{flip};
+  $f->strand == ($flip ? -1 : 1) ? "navy" : "maroon";
+}
+
+
 sub simpleBgColorFromStrand {
   my ($f, $first, $second) = @_;
   $f->strand == +1 ? $first : $second;
@@ -91,6 +149,12 @@ sub peakHeight {
   return $score; 
 }
 
+sub heightBySOTerm {
+  my ($f, $term, $val1, $val2) = @_;
+  my ($soterm) = $f->get_tag_values('SOTerm');
+  return ($soterm eq $term) ? $val1 : $val2;
+}
+
 
 #--------------------------------------------------------------------------------
 #  Other Display
@@ -114,6 +178,8 @@ sub synSpanScale {
   my $f = shift; 
   my ($scale) = $f->get_tag_values("Scale");
 }
+
+
 
 
 1;

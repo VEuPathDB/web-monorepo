@@ -4,11 +4,51 @@ use strict;
 
 use GBrowse::Configuration;
 
+#--------------------------------------------------------------------------------
+#  Methods for Titles
+#--------------------------------------------------------------------------------
+
+# ToxoDB only
+sub tigrAssemblyLink {
+  my $f = shift;
+  my $name = $f->name;
+  my ($species) =  ($f->get_tag_values("TGISpecies") eq 'TgGI') ?  't_gondii' : 'unk';     
+  
+  if ($name =~ m/^TC/) {
+    "http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=$species&tc=$name";
+  } elsif ($name =~ m/^(NP|HT|ET)/) {
+    "http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/egad_report.pl?id=$name";
+  } else {
+    "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=$name";
+    #                   "http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/est_report.pl?gudb=$species&EST=$name";
+  }
+}
+
 sub synSpanLink {
   my $f = shift;
   my $name = $f->name;
   return "/a/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$name"
 }
+
+sub assemblyLink { 
+  my $f = shift;
+  my $name = $f->name;
+  my $link = "/a/showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=$name";
+  return $link;
+}
+
+sub estLink { 
+  my $f = shift;
+  my $name = $f->name;
+  my $link = "/a/showRecord.do?name=EstRecordClasses.EstRecordClass&primary_key=$name";
+  return $link;
+}
+
+
+
+#--------------------------------------------------------------------------------
+#  Methods for Titles (Popups)
+#--------------------------------------------------------------------------------
 
 sub synGeneTitle {
   my $f = shift;
@@ -129,10 +169,6 @@ sub geneTitle {
   return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo'))"};
 } 
 
-#--------------------------------------------------------------------------------
-#  Methods for Titles
-#--------------------------------------------------------------------------------
-
 sub scaffoldTitle { 
   my $f = shift;
   my $name = $f->name;
@@ -161,6 +197,146 @@ sub scaffoldTitle {
     push @data, [ 'Location:' => "$start..$stop" ];
   } 
   hover( ($type eq 'scaffold') ? 'Scaffold' : 'All gaps in region', \@data);
+}
+
+
+sub assemblyTitle { 
+  my $f = shift;
+  my $name  = $f->name; 
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my @data; 
+  my ($percent_identity) = $f->get_tag_values("PercentIdentity");
+  my ($count) = $f->get_tag_values("Count");
+  push @data, [ 'Name:' => $name ]; 
+  push @data, [ 'Start:'  => $start ];
+  push @data, [ 'Stop:'   => $stop ];
+  push @data, [ 'Percent Identity:' => $percent_identity ]; 
+  push @data, [ 'Count of ESTs:' => $count ]; 
+  hover("DoTS EST Assemblies: $name", \@data);
+}
+
+sub tigrAssemblyTitle {
+  my $f = shift;
+  my $name = $f->name;
+  my $chr = $f->seq_id;
+  my $loc = $f->location->to_FTstring;
+  my ($desc) = $f->get_tag_values("Note");
+  $desc ||= "<i>unavailable</i>";
+  my ($db) = $f->get_tag_values("TGI");
+  my ($ver) = $f->get_tag_values("TGIver");
+  my @data;
+  push @data, [ 'Accession: ' => $name ];
+  # push @data, [ 'Location: ' => "$chr $loc" ];
+  push @data, [ 'Description: ' => $desc ];
+  hover("TIGR EST $db $ver Assembly: $name", \@data);
+}
+
+sub estTitle { 
+  my $f = shift;
+  my $name  = $f->name; 
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my @data; 
+  my ($percent_identity) = $f->get_tag_values("PercentIdentity");
+  my ($primer) = $f->get_tag_values("Primer");
+  my ($library) = $f->get_tag_values("Library");
+  my ($vector) = $f->get_tag_values("Vector");
+  my ($stage) = $f->get_tag_values("Stage");
+  push @data, [ 'Name:' => $name ]; 
+  push @data, [ 'Start:'  => $start ];
+  push @data, [ 'Stop:'   => $stop ];
+  push @data, [ 'Percent Identity:' => $percent_identity ]; 
+  push @data, [ 'Library:' => $library ]; 
+  push @data, [ 'Vector:' => $vector ]; 
+  push @data, [ 'Primer:' => $primer ]; 
+  push @data, [ 'Stage:' => $stage ]; 
+  hover("dbEST Alignment: $name", \@data);
+}
+
+sub cosmidTitle { 
+  my $f = shift;
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my $length = $stop - $start;
+  my $cname = $f->name;
+  my @data; 
+  push @data, [ 'Clone Size:'     => $length ]; 
+  push @data, [ 'Clone Location:' => "$start..$stop"];
+  push @data, [ '<hr>'            => '<hr>' ];
+  my @subs = $f->sub_SeqFeature;
+  my $count = 0;
+  foreach(@subs) {
+    $count++;
+    my $name  = $_->name; 
+    my $start = $_->start;
+    my $stop  = $_->stop;
+    my ($pct) = $_->get_tag_values("pct");
+    push @data, [ 'Bac End:'      => $name ]; 
+    push @data, [ 'Location:'  => "$start..$stop" ];
+    push @data, [ 'Percent Identity:' => "$pct %" ]; 
+    push @data, [ 'Score:' => $_->score ]; 
+    push @data, [ '<hr>' => '<hr>' ] if $count % 2;
+  }
+  hover("End-Sequenced Cosmid: $cname", \@data);
+}
+
+sub bacsTitle { 
+  my $f = shift;
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my $length = $stop - $start;
+  my $cname = $f->name;
+  my @data; 
+  push @data, [ 'Clone Size:'     => $length ]; 
+  push @data, [ 'Clone Location:' => "$start..$stop"];
+  push @data, [ '<hr>'            => '<hr>' ];
+  my @subs = $f->sub_SeqFeature;
+  my $count = 0;
+  foreach(@subs) {
+    $count++;
+    my $name  = $_->name; 
+    my $start = $_->start;
+    my $stop  = $_->stop;
+    my ($pct) = $_->get_tag_values("pct");
+    push @data, [ 'Bac End:'      => $name ]; 
+    push @data, [ 'Location:'  => "$start..$stop" ];
+    push @data, [ 'Percent Identity:' => "$pct %" ]; 
+    push @data, [ 'Score:' => $_->score ]; 
+    push @data, [ '<hr>' => '<hr>' ] if $count % 2;
+  }
+  hover("End-Sequenced BAC: $cname", \@data);
+}
+
+sub orfTitle {
+  my $f = shift;
+  my $name = $f->name;
+  my $start  = $f->start;
+  my $stop   = $f->stop;
+  my ($length) = $f->get_tag_values("Length");
+  my @data;
+  push @data, [ 'Name:'   => $name ];
+  push @data, [ 'Start:'  => $start ];
+  push @data, [ 'Stop:'   => $stop ];
+  push @data, [ 'Length:' => $length . ' aa' ];
+  return hover( 'ORFs >= 150 nt', \@data);
+}
+
+
+sub massSpecTitle {  
+  my ($f, $replaceString) = @_;
+  my ($desc) = $f->get_tag_values('Description');
+  $desc =~s/\nreport:(.*)$//;
+  my ($seq) =  $f->get_tag_values('PepSeq');
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+  $desc =~ s/[\r\n]/<br>/g;
+
+  if($replaceString) {
+    $extdbname =~ s/$replaceString/assay: /i;
+  }
+  my @data;
+  push @data, [ '' => "$extdbname<br>sequence:$seq<br>$desc" ];
+  hover('', \@data);
 }
 
 1;
