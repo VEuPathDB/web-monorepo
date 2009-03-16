@@ -388,7 +388,7 @@
 		color: #000000;
 		border: solid black;
 		position:absolute;
-		z-index: 200;
+		z-index: 1000;
 		min-width: 365px;
 		text-align: center;
 		padding-bottom: 5px;
