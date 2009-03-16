@@ -82,6 +82,8 @@ function displayHist(type) {
 			$(this).attr("id", "selected_type");
 		}
 	});
+	if (type == 'complete') $(".history_controls").hide();
+	else $(".history_controls").show();
 	$("div.panel_" + type).show();
 }
 
@@ -209,4 +211,59 @@ function toggleEye(ele, stratId) {
 	}else{
 		closeStrategy(s.frontId);//stratId);
 	}
+}
+
+var IE = document.all?true:false
+var mouseX = 0;
+var mouseY = 0;
+var overHistoryId = 0;
+var currentHistoryId = 0;
+
+document.onmousemove = getMousePos;
+
+if (!IE) {
+   document.captureEvents(Event.CLICK);
+   document.captureEvents(Event.MOUSEOVER);
+   document.captureEvents(Event.MOUSEOUT);
+}
+
+function getMousePos(e) {
+   if (!e)
+      var e = window.event||window.Event;
+      
+   if('undefined'!=typeof e.pageX){
+      mouseX = e.pageX;
+      mouseY = e.pageY;
+   } else {
+      mouseX = e.clientX + document.body.scrollLeft;
+      mouseY = e.clientY + document.body.scrollTop;
+   }
+}
+
+function displayName(histId) {
+   // alert(mouseX);
+   if (overHistoryId != histId) hideAnyName();
+   overHistoryId = histId;
+
+   if (currentHistoryId == histId) return;
+   if (mouseX == 0 && mouseY == 0) return;
+   
+   var name = document.getElementById('div_' + histId);
+   name.style.position = 'absolute';
+   name.style.left = mouseX+3 + "px";
+   name.style.top = mouseY-180 + "px";
+   name.style.display = 'block';
+}
+
+function hideName(histId) {
+   if (overHistoryId == 0) return;
+   
+   //alert(mouseX);
+
+   var name = document.getElementById('div_' + histId);
+   name.style.display = 'none';
+}
+
+function hideAnyName() {
+    hideName(overHistoryId);
 }

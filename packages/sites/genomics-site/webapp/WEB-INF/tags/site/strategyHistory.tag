@@ -16,6 +16,11 @@
               description="Currently active user object"
 %>
 
+<%@ attribute name="loadPanels"
+              required="false"
+              description="Flag indicating whether to include the history panels"
+%>
+
 <c:set var="strategiesMap" value="${user.strategiesByCategory}"/>
 <c:set var="invalidStrategies" value="${user.invalidStrategies}"/>
 <c:set var="modelName" value="${model.name}"/>
@@ -63,12 +68,12 @@
     <a id="tab_invalid" onclick="displayHist('invalid')"
        href="javascript:void(0)">Invalid&nbsp;Strategies</a></li>
   </c:if>
-  <li id="cmplt_hist_link">
-    <a href="showQueryHistory.do?type=show_query_history">All My Queries</a>
+  <li class="cmplt_hist_link">
+    <a id="tab_complete" onclick="displayHist('complete')">All My Searches</a>
   </li>
   </ul>
 <!-- should be a div instead of a table -->
-<table class="clear_all">
+<table class="history_controls clear_all">
    <tr>
       <td><a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">select all</a>&nbsp|&nbsp;
           <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">select none</a></td>
@@ -80,56 +85,31 @@
    </tr>
 </table>
 
-<c:set var="typeC" value="0"/>
-<c:set var="strategiesMap" value="${user.unsavedStrategiesByCategory}"/>
+<c:set var="strategiesMap" value="${user.strategiesByCategory}"/>
+<c:set var="savedStrategiesMap" value="${user.savedStrategiesByCategory}"/>
+<c:set var="unsavedStrategiesMap" value="${user.unsavedStrategiesByCategory}"/>
 <!-- form for renaming strategies; action is set in javascript -->
 <form id="browse_rename" action="javascript:return false;" onsubmit="return validateSaveForm(this);">
-<!-- begin creating history sections to display strategies -->
+<!-- begin creating history sections to display saved strategies -->
 <c:forEach items="${strategiesMap}" var="strategyEntry">
   <c:set var="type" value="${strategyEntry.key}"/>
-  <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
-  <c:set var="strategies" value="${strategyEntry.value}"/>
-  <c:set var="recDispName" value="${strategies[0].latestStep.answerValue.question.recordClass.type}"/>
-  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
-
-  <c:set var="typeC" value="${typeC+1}"/>
-  <c:choose>
-    <c:when test="${typeC == 1}">
-      <div class="panel_${recTabName} history_panel">
-    </c:when>
-    <c:otherwise>
-      <div class="panel_${recTabName} history_panel">
-    </c:otherwise> 
-  </c:choose>
-  <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Unsaved" />
-</div>
-</c:forEach>
-<!-- end of showing strategies grouped by RecordTypes -->
-
-
-<c:set var="typeC" value="0"/>
-<c:set var="strategiesMap" value="${user.savedStrategiesByCategory}"/>
-<!-- begin creating history sections to display strategies -->
-<c:forEach items="${strategiesMap}" var="strategyEntry">
-  <c:set var="type" value="${strategyEntry.key}"/>
-  <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:set var="recDispName" value="${strategies[0].latestStep.answerValue.question.recordClass.type}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
-
-  <c:set var="typeC" value="${typeC+1}"/>
-  <c:choose>
-    <c:when test="${typeC == 1}">
-      <div class="panel_${recTabName} history_panel">
-    </c:when>
-    <c:otherwise>
-      <div class="panel_${recTabName} history_panel">
-    </c:otherwise> 
-  </c:choose>
-  <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Saved" />
-</div>
+  <div class="panel_${recTabName} history_panel">
+    <c:if test="${loadPanels}">
+      <c:set var="strategies" value="${savedStrategiesMap[type]}"/>
+      <c:if test="${strategies != null}">
+        <site:strategyTable strategies="${strategies}" wdkUser="${user}" prefix="Saved" />
+      </c:if>
+      <c:set var="strategies" value="${unsavedStrategiesMap[type]}"/>
+      <c:if test="${strategies != null}">
+        <site:strategyTable strategies="${strategies}" wdkUser="${user}" prefix="Unsaved" />
+      </c:if>
+    </c:if>
+  </div>
 </c:forEach>
-<!-- end of showing strategies grouped by RecordTypes -->
+<!-- end of showing unsaved strategies grouped by RecordTypes -->
 </form>
 
 <!-- popups for save/rename forms -->
@@ -148,7 +128,7 @@
       <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
     </div>
     </c:if>
-    <c:if test="${!wdkUser.guest && !strategy.isSaved}">
+    <c:if test="${!user.guest && !strategy.isSaved}">
     <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
       <span class='dragHandle'>
         <div class="modal_name">
@@ -171,19 +151,22 @@
 
 <%-- invalid strategies, if any --%>
 <c:if test="${fn:length(invalidStrategies) > 0}">
-  <c:choose>
-    <c:when test="${typeC == 0}">
-      <div class="panel_invalid history_panel">
-    </c:when>
-    <c:otherwise>
-      <div class="panel_invalid history_panel">
-    </c:otherwise>
-  </c:choose>
-    <site:strategyTable strategies="${user.invalidStrategies}" wdkUser="${wdkUser}" prefix="Invalid" />
+  <div class="panel_invalid history_panel">
+    <c:if test="${loadPanels}">
+      <site:strategyTable strategies="${user.invalidStrategies}" wdkUser="${user}" prefix="Invalid" />
+    </c:if>
   </div>
 </c:if>
 
-<table>
+<%-- complete query history --%>
+<div class="panel_complete history_panel">
+    <c:if test="${loadPanels}">
+      <h1>All Queries</h1>
+      <site:completeHistory model="${wdkModel}" user="${user}" />
+    </c:if>
+</div>
+
+<table class="history_controls">
    <tr>
       <td><a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">select all</a>&nbsp|&nbsp;
           <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">select none</a></td>
