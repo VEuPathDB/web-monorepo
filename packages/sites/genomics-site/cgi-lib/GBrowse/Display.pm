@@ -1,10 +1,12 @@
+package GBrowse::Display;
+
 use strict;
 
 #--------------------------------------------------------------------------------
 #  Methods which Return 1 or 0 for determining the Label
 #--------------------------------------------------------------------------------
 
-sub _labelFromTagValue { 
+sub labelFromTagValue { 
   my ($f, $tag, $value) = @_;
 
   my ($type) = $f->get_tag_values($tag);
@@ -12,6 +14,16 @@ sub _labelFromTagValue {
   return 0;
 }
 
+# not sure why this is returning the name ... should only be 1 or 0
+sub synSpanScale {
+  my $f = shift;
+  my ($type) = $f->get_tag_values('Type');
+  return 0 if ($type =~ /gap/i);
+  my $name = $f->name;
+  my ($scale) = $f->get_tag_values("Scale");
+  $scale = sprintf("%.2f", $scale);
+  return $name; 
+}
 
 
 #--------------------------------------------------------------------------------
@@ -52,19 +64,10 @@ sub scaffoldTitle {
 #  Methods For Color
 #--------------------------------------------------------------------------------
 
-sub _simpleBgColorFromStrand {
+sub simpleBgColorFromStrand {
   my ($f, $first, $second) = @_;
   $f->strand == +1 ? $first : $second;
 }
-
-sub oldChipColor { 
-  my $f   = shift;
-  my ($a) = $f->get_tag_values('Analysis');
-  return '#00C896' if($a =~ /H3K4(.*) - Rep1/);
-  return '#00C800' if($a =~ /H3K4(.*) - Rep2/);
-  return '#FA9600' if($a =~ /H3K9(.*) - Rep1/);
-  return '#C86400' if($a =~ /H3K9(.*) - Rep2/);
-} 
 
 sub chipColor { 
   my $f   = shift;
@@ -75,31 +78,6 @@ sub chipColor {
   return '#C86400' if($a =~ /H3K9/ && $r == 1);
   return '#FA9600' if($a =~ /H3K9/ && $r == 2);
 } 
-
-sub peakTitle {
-  my $f  = shift;
-  my $name = $f->name;
-  my $score = $f->score;
-  my ($analysis) = $f->get_tag_values("Analysis");
-  my @data;
-  push @data, [ 'Probe Id:' => $name ];
-  push @data, [ 'Analysis:' => $analysis ];
-  push @data, [ 'Score:' => $score ];
-  hover( "ChIP-chip called peaks $name", \@data); 
-}
-
-sub peakHeight {
-  my $f = shift;
-  my $score = $f->score;
-  return $score; 
-}
-
-sub changeType { 
-  my $f = shift;
-  my ($type) = $f->get_tag_values("Type");
-  return "arrow" if($type eq 'scaffold');
-  return "segments";
-}
 
 sub gapFgcolor { 
   my $f = shift; 
@@ -126,16 +104,12 @@ sub gapBgcolor {
 }
 
 
-sub synSpanScale {
-  my $f = shift;
-  my ($type) = $f->get_tag_values('Type');
-  return 0 if ($type =~ /gap/i);
-  my $name = $f->name;
-  my ($scale) = $f->get_tag_values("Scale");
-  $scale = sprintf("%.2f", $scale);
-  return $name; 
-}
 
+
+
+#--------------------------------------------------------------------------------
+#  Methods For Height
+#--------------------------------------------------------------------------------
 
 sub snpHeight {
   my $f = shift;
@@ -145,5 +119,23 @@ sub snpHeight {
   return $zoom_level <= 60000? 10 : 6;
 }
 
+sub peakHeight {
+  my $f = shift;
+  my $score = $f->score;
+  return $score; 
+}
+
+
+#--------------------------------------------------------------------------------
+#  Other Display
+#--------------------------------------------------------------------------------
+
+
+sub changeType { 
+  my $f = shift;
+  my ($type) = $f->get_tag_values("Type");
+  return "arrow" if($type eq 'scaffold');
+  return "segments";
+}
 
 1;
