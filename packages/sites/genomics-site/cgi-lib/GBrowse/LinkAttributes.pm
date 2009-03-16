@@ -1,4 +1,4 @@
-package GBrowse::LinkAttributes;
+package GBrowse::PopupAndLinks;
 
 use strict;
 
@@ -128,5 +128,39 @@ sub geneTitle {
   $soTerm =~ s/\b(\w)/\U$1/g;
   return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo'))"};
 } 
+
+#--------------------------------------------------------------------------------
+#  Methods for Titles
+#--------------------------------------------------------------------------------
+
+sub scaffoldTitle { 
+  my $f = shift;
+  my $name = $f->name;
+  my $chr  = $f->seq_id;
+  my $loc  = $f->location->to_FTstring;
+  my $orient   = $f->strand eq '-1' ? "reverse" : "forward";
+  my ($length) = $f->get_tag_values("Length");
+  my ($type) = $f->get_tag_values("Type");
+  my $start = $f->start;
+  my $stop = $f->stop;
+  my @data;
+  if($type eq "fgap"){
+    my @gaps = $f->sub_SeqFeature();
+    my $count = 0;
+    foreach(@gaps) {
+      $count++;
+      my $gstart = $_->start;
+      my $gstop  = $_->stop;
+      my $gsize  = $gstop - $gstart + 1;
+      push @data, [ "Gap $count: $gstart..$gstop:"  => $gsize ]; 
+    }
+  } elsif($type eq "scaffold") {
+    push @data, [ 'Name:'    => $name ]; 
+    push @data, [ 'Length:'  => $length ];
+    push @data, [ 'Orientation:' => "$orient" ]; 
+    push @data, [ 'Location:' => "$start..$stop" ];
+  } 
+  hover( ($type eq 'scaffold') ? 'Scaffold' : 'All gaps in region', \@data);
+}
 
 1;
