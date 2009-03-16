@@ -1054,7 +1054,7 @@ FROM DUAL
 SELECT
        gf.na_feature_id feature_id,
        'gene' type, 
-       'annotation' source, 
+       'AlternateModels' source, 
        gf.source_id name, 
        '.' score, 
        gf.na_sequence_id parent_id, 
@@ -3067,7 +3067,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
 SELECT
        fl.na_feature_id feature_id, 
        'exon' type, 
-       'annotation' source, 
+       'AlternateModels' source, 
        fl.na_feature_id name,
        gf.na_feature_id parent_id, 
        '.' score, 
