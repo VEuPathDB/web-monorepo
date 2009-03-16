@@ -38,10 +38,6 @@ function showDetails(det){
 			left: l + "px",
 			top: t + "px",
 			display: "block",
-                   	position: "absolute",
-                   	textAlign: "center",
-                   	border: "medium solid black",
-                   	backgroundColor: "#EEEEEE"
 		});
 		det2.appendTo("#strategy_results");
 	}
