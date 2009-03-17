@@ -479,4 +479,79 @@ sub affyProbesTitle {
 }
 
 
+### pbrowse specific methods
+
+sub interproTitle {
+  my $f = shift;
+  my $name = $f->name;
+  my ($desc) = $f->get_tag_values("Note");
+  my ($db) = $f->get_tag_values("Db");
+  my ($url) = $f->get_tag_values("Url");
+  my ($evalue) = $f->get_tag_values("Evalue");
+  $evalue = sprintf("%.2E", $evalue);
+  my @data;
+  push @data, [ 'Accession:'  => $name ];
+  push @data, [ 'Description:' => $desc ];
+  push @data, [ 'Database:'  => $db ];
+  push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
+  push @data, [ 'Evalue:' => $evalue ];
+  hover("InterPro Domain: $name", \@data);
+}
+
+sub interproLink {
+  my $f = shift;
+  my ($url) = $f->get_tag_values("Url");
+  return $url;
+}
+
+sub signalpTitle {
+  my $f = shift;
+  my @data;
+  my ($d_score) = $f->get_tag_values("DScore");
+  my ($signal_prob) = $f->get_tag_values("SignalProb");
+  my ($conclusion_score) = $f->get_tag_values("ConclusionScore");
+  push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
+  push @data, [ 'NN Conclusion Score:' => $conclusion_score ];
+  push @data, [ 'NN D-Score:' => $d_score ];
+  push @data, [ 'HMM Signal Probability:' => $signal_prob ];
+  hover("Signal peptide", \@data);
+}
+
+sub tmhmmTitle {
+  my $f = shift;
+  my $name = $f->name;
+  my ($desc) = $f->get_tag_values("Topology");
+  my @data;
+  push @data, [ 'Name:'  => $name ];
+  push @data, [ 'Topology:' => $desc ];
+  push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
+  hover("Transmembrane Domain", \@data);
+}
+
+sub blastpTitle {
+  my $f = shift;
+  my $name = $f->name;
+  my ($desc) = $f->get_tag_values("Note");
+  $desc ||= "<i>unavailable</i>";
+  $desc =~ s/\001.*//;
+  my @data;
+  push @data, [ 'Name:'  => $name ];
+  push @data, [ 'Description:' => $desc ];
+  push @data, [ 'Expectation:' => $f->get_tag_values("Expect") ];
+  push @data, [ '% Identical:' => sprintf("%3.1f", $f->get_tag_values("PercentIdentity")) ];
+  push @data, [ '% Positive:' => sprintf("%3.1f", $f->get_tag_values("PercentPositive")) ];
+  push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
+  hover("BLASTP hit: $name", \@data);
+}
+
+sub lowcomplexitySegTitle {
+  my $f = shift;
+  my @data;
+  my ($sequence) = $f->get_tag_values("Sequence");
+  push @data, [ 'Coordinates:' => $f->start . '..' . $f->end ];
+  push @data, [ 'Sequence:'  => $sequence ];
+  hover("Low complexity", \@data);
+}
+
+
 1;
