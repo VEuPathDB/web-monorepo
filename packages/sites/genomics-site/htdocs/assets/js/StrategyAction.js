@@ -450,7 +450,7 @@ function createDetails(ele, strat, step){
 	}else{
 		expand_step = 	"			<a title='If this step is not a subsrategy, click to begin one; if this step is already a substrategy, click to open it and continue working on it' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;";
 	}
-	insert_step = 	"			<a title='Click to insert a step befpre this one, by either running a new query or choosing an existing strategy'  class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>&nbsp;|&nbsp;";
+	insert_step = 	"			<a title='Click to insert a step before this one, by either running a new query or choosing an existing strategy'  class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>&nbsp;|&nbsp;";
 	delete_step = 	"			<a title='This will remove the step from the strategy; if this step is the only step in this strategy, this will remove the strategy also' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>";
 	close_button = 	"			<span style='float: right; position: absolute; right: 6px;'>"+
 					"				<a href='javascript:void(0)' onclick='hideDetails(this)'>[x]</a>"+
