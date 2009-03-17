@@ -241,7 +241,6 @@
 <link rel="stylesheet" href="<c:url value='/misc/style.css'/>"   type="text/css" />  
 <link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" />
 <link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
-<link rel="stylesheet" href="/assets/css/flexigrid/flexigrid.css" type="text/css"/>
 <link rel="stylesheet" href="/assets/css/history.css"            type="text/css"/>
 <link rel="stylesheet" href="/assets/css/Strategy.css"           type="text/css" />
 <link rel="StyleSheet" href="/assets/css/filter_menu.css"        type="text/css"/>
@@ -345,7 +344,7 @@ ${headElement}
       <li>
       <a href="#">About ${siteName}<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       		<ul>
-	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li
+	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li>
    	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#funding"/>">Funding</a></li>
 	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#organisms"/>">Organisms in ${project}</a></li>
 	     <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">How to use this resource</a></li>

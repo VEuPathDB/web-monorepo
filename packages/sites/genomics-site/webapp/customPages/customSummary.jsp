@@ -51,7 +51,10 @@
 	</c:when>	
 </c:choose>
 
-<site:header refer="customSummary" />
+<c:set var="headElement">
+<link rel="stylesheet" href="/assets/css/flexigrid/flexigrid.css" type="text/css"/>
+</c:set>
+<site:header refer="customSummary" headElement="${headElement}"/>
 
 <c:set var="scheme" value="${pageContext.request.scheme}" />
 <c:set var="serverName" value="${pageContext.request.serverName}" />

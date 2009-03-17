@@ -820,7 +820,7 @@ h2 {
 	color: #808080;
 }
 
-a.heading:hover + a.detail_link, .detail_link:hover {
+a.heading:hover + a.detail_link, a.detail_link:hover {
 	left: -2px;
 	position: relative;
 }
