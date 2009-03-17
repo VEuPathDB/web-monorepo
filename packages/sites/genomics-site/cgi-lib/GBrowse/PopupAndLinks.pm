@@ -147,6 +147,35 @@ sub snpTitleQuick {
   }
 }
 
+sub snpTitle {
+  my $f = shift;
+  my ($isCoding) = $f->get_tag_values("IsCoding"); 
+  my ($posInCDS) = $f->get_tag_values("PositionInCDS"); 
+  my ($refStrain) = $f->get_tag_values("RefStrain"); 
+  my ($refNA) = $f->get_tag_values("RefNA"); 
+  my ($nonSyn) = $f->get_tag_values("NonSyn"); 
+  my ($src_id) = $f->get_tag_values("SourceID"); 
+  my $link = qq(<a href=/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$src_id>$src_id</a>);
+  my $variants = $f->bulkAttributes();
+  my @data;
+  push @data, [ 'SNP'  => $link ];
+  push @data, [ 'Location:'  => $f->start ];
+  my $class = 'Non-Coding';
+  if ($isCoding) {
+    my $non = $nonSyn? 'non-' : '';
+    $class = "Coding (${non}synonymous)";
+    push @data, [ 'Position in CDS:'  => $posInCDS ];
+  }
+  push @data, ["$refStrain (reference)"=>"NA=$refNA"];
+  foreach my $variant (@$variants) {
+    my $strain = $variant->{STRAIN};
+    next if ($strain eq $refStrain);
+    my $na = $variant->{ALLELE};
+    push @data, [ "$strain" => "NA=$na" ];
+  }
+  hover( "Genotyped SNP - $class", \@data);
+}
+
 
 sub peakTitle {
   my $f  = shift;
@@ -396,5 +425,58 @@ sub sageTagTitle {
   }
   return hover( "Sage Tag - Temp ID $name", \@data); 
 } 
+
+
+sub geneticMarkersTitle {
+  my $f = shift;
+  my ($isCoding) = $f->get_tag_values("IsCoding"); 
+  my ($posInCDS) = $f->get_tag_values("PositionInCDS"); 
+  my ($posInProtein) = $f->get_tag_values("PositionInProtein"); 
+  my ($refStrain) = $f->get_tag_values("RefStrain"); 
+  my ($refAA) = $f->get_tag_values("RefAA"); 
+  my ($refNA) = $f->get_tag_values("RefNA"); 
+  my ($nonSyn) = $f->get_tag_values("NonSyn"); 
+  my ($src_id) = $f->get_tag_values("SourceID"); 
+  my $link = qq(<a href=/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$src_id>$src_id</a>);
+  my $variants = $f->bulkAttributes();
+  my @data;
+  push @data, [ 'SNP'  => $link ];
+  push @data, [ 'Location:'  => $f->start ];
+  my $class = 'Non-Coding';
+  if ($isCoding) {
+    $refAA = ": $refAA"; 
+    my $non = $nonSyn? 'non-' : '';
+    $class = "Coding (${non}synonymous)";
+    push @data, [ 'Position in CDS:'  => $posInCDS ];
+    push @data, [ 'Position in Protein:'  => $posInProtein ];
+  }
+  push @data, ["Strain: $refStrain (reference)"=>"$refNA $refAA"];
+  foreach my $variant (@$variants) {
+    my $strain = $variant->{STRAIN};
+    next if ($strain eq $refStrain);
+    my $na = $variant->{ALLELE};
+    my $aa = $variant->{PRODUCT};
+    my $info = "$na" . ($isCoding? " : $aa" : "");
+    push @data, [ "Strain: $strain" => $info ];
+  }
+  hover( "Genetic Markers - $class", \@data);
+}
+
+sub affyProbesTitle {
+  my ($f, $type) = @_;
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my ($count) = $f->get_tag_values("Count"); 
+  my ($probeSet) = $f->get_tag_values("ProbeSet"); 
+  my $probeId = $f->name; 
+  my @data;
+  push @data, ['ProbeSetID:' => $probeSet ];
+  push @data, ['ProbeID:' => $probeId ];
+  push @data, ['Start:'        => $start];
+  push @data, ['Stop:'         => $stop];
+  push @data, ['Count:' => $count];
+  hover( $type, \@data);   
+}
+
 
 1;

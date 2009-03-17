@@ -25,12 +25,35 @@ sub synSpanLabel {
   return $name; 
 }
 
+# not sure why this is returning the name ... should only be 1 or 0
+sub sageTagLabel {
+  my $f = shift;
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my $strand  = $f->strand;
+  $start = $stop if ($strand == -1);
+  my ($tag_seq) = $f->get_tag_values("Tag"); 
+  my ($count) = $f->get_tag_values("Occurrence"); 
+  return  $start . " [" . $count . "]"; 
+}
 
 
 
 #--------------------------------------------------------------------------------
 #  Methods For Color
 #--------------------------------------------------------------------------------
+
+sub snpBgFromIsCodingAndNonSyn {
+  my $f = shift;
+  my ($isCoding) = $f->get_tag_values("IsCoding"); 
+  my $color = 'white';
+  if ($isCoding) {
+    my ($nonSyn) = $f->get_tag_values("NonSyn"); 
+    $color = $nonSyn? 'blue' : 'lightblue'; 
+  }
+  return $color; 
+}
+
 
 sub sageTagFgColor { 
   my $f            = shift;
