@@ -729,8 +729,8 @@ function EditStep(url, proto, step_number){
 			selectedBox = selectedBox.attr("id");
 			removeStrategyDivs(s);
 			fsid = updateStrategies(data, "EditStep", getStrategyFromBackId(s));
-			var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " span.resultCount a");
-			if (selectedLink.length() != 0) selectedLink.click();
+			var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+			if (selectedLink.length != 0) selectedLink.click();
 			else NewResults(-1);
                 },
 		error: function(data, msg, e){
@@ -944,8 +944,8 @@ function saveStrategy(stratId, checkName, fromHist){
 				if (!fromHist) saveForm.hide();
 				removeStrategyDivs(stratId);
 				updateStrategies(data, "Save", getStrategyFromBackId(stratId));
-				var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " span.resultCount a");
-				if (selectedLink.length() != 0) selectedLink.click();
+				var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+				if (selectedLink.length != 0) selectedLink.click();
 				else NewResults(-1);
 				update_hist = true;
 				if (fromHist) updateHistory();
@@ -989,8 +989,8 @@ function renameStrategy(stratId, checkName, fromHist){
 				disableRename(stratId, fromHist);
 				removeStrategyDivs(stratId);
 				updateStrategies(data, "Save", strat);
-				var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " span.resultCount a");
-				if (selectedLink.length() != 0) selectedLink.click();
+				var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+				if (selectedLink.length != 0) selectedLink.click();
 				else NewResults(-1);
 				update_hist = true;
 				if (fromHist) updateHistory();
@@ -1054,8 +1054,8 @@ function ChangeFilter(strategyId, stepId, url) {
 			selectedBox = selectedBox.attr("id");
  			removeStrategyDivs(strategy.backId);
                         updateStrategies(data, '', strategy);
-			var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " span.resultCount a");
-			if (selectedLink.length() != 0) selectedLink.click();
+			var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+			if (selectedLink.length != 0) selectedLink.click();
 			else NewResults(-1);
                 },
                 error: function(data, msg, e){
