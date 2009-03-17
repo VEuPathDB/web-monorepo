@@ -21,11 +21,12 @@ sub new {
 }
 
 sub init {
+  my ($file) = shift; # the xml file
   my $projectId = $ENV{PROJECT_ID};
   my $docRoot = $ENV{DOCUMENT_ROOT};
   my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
   my $resolvedDsn = ApiCommonWebsite::Model::DbUtils->resolveOracleDSN($c->appDb->dbiDsn);
-  { -sqlfile => $docRoot .'/../conf/gbrowse.conf/gbrowseQueries.xml',
+  { -sqlfile => $docRoot .'/../conf/gbrowse.conf/' . $file,
       -dsn     => $resolvedDsn,
         -user    => $c->appDb->login,
           -pass    => $c->appDb->password,
