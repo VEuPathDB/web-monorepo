@@ -20,8 +20,8 @@ sub filterByExtDbNameAndFeatureType {
 
 sub filterByExtDbNameAndDescription { 
   my ($f, $nm, $desc) = @_;
-  my $extdbname = $f->get_tag_values('ExtDbName');
-  my ($description) = $f->get_tag_values('Description');                  
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+  my ($description) = $f->get_tag_values('Description');
   (($extdbname =~ /$nm/i) && ($description =~ /$desc/i));
 }
 
