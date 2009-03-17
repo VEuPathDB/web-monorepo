@@ -377,7 +377,7 @@ sub sageTagTitle {
   ($start,$stop) = ($stop,$start) if ($strand == -1); 
   my ($tag)        = $f->get_tag_values('Sequence'); 
 #  my $sageDb_url = "<a target='new' href=http://vmbmod10.msu.montana.edu/vmb/cgi-bin/sage.cgi?prevpage=newsage4.htm;normal=yes;database=toxoditagscorrect;library=sp;intag=" 
-    . $tag . ">TgSAGEDB</a>";
+#    . $tag . ">TgSAGEDB</a>";
   my ($occurrence) = $f->get_tag_values('Occurrence'); 
   my @data; 
   push @data, [ 'Name:'          => "$sourceId" ];
