@@ -184,7 +184,7 @@ function validateAndCall(type, url, proto, rs){
 		}
 	}
 	if(!valid){
-		alert("Please select a boolean operator.");
+		alert("Please select Intersect, Union or Minus operator.");
 		return;
 	}
 	if(type == 'add'){
