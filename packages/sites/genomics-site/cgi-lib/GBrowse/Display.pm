@@ -15,7 +15,7 @@ sub labelFromTagValue {
 }
 
 # not sure why this is returning the name ... should only be 1 or 0
-sub synSpanScale {
+sub synSpanLabel {
   my $f = shift;
   my ($type) = $f->get_tag_values('Type');
   return 0 if ($type =~ /gap/i);
@@ -26,9 +26,27 @@ sub synSpanScale {
 }
 
 
+
+
 #--------------------------------------------------------------------------------
 #  Methods For Color
 #--------------------------------------------------------------------------------
+
+sub sageTagFgColor { 
+  my $f            = shift;
+  my $strand       = $f->strand; 
+  my ($occurrence) = $f->get_tag_values('Occurrence'); 
+  if ($strand  eq "+1") {
+    return "lightblue" if ($occurrence < 3);
+    return "darkblue" if ($occurrence > 5);
+    return "blue";
+  } else {
+    return "pink" if ($occurrence < 3);
+    return "darkred" if ($occurrence > 5);
+    return "red";
+  }
+}
+
 
 sub massSpecBgColorFromExtDbName {
   my $f = shift;
@@ -174,11 +192,11 @@ sub synSpanRelativeCoords {
   my ($scale) = $f->get_tag_values("Scale");$off*$scale;
 }
 
+
 sub synSpanScale { 
   my $f = shift; 
   my ($scale) = $f->get_tag_values("Scale");
 }
-
 
 
 

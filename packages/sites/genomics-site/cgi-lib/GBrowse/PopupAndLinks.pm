@@ -5,7 +5,7 @@ use strict;
 use GBrowse::Configuration;
 
 #--------------------------------------------------------------------------------
-#  Methods for Titles
+#  Methods for Links
 #--------------------------------------------------------------------------------
 
 # ToxoDB only
@@ -41,6 +41,13 @@ sub estLink {
   my $f = shift;
   my $name = $f->name;
   my $link = "/a/showRecord.do?name=EstRecordClasses.EstRecordClass&primary_key=$name";
+  return $link;
+}
+
+sub sageTagLink { 
+  my $f = shift;
+  my $name = $f->name;
+  my $link = "/a/showRecord.do?name=SageTagRecordClasses.SageTagRecordClass&primary_key=$name";
   return $link;
 }
 
@@ -338,5 +345,56 @@ sub massSpecTitle {
   push @data, [ '' => "$extdbname<br>sequence:$seq<br>$desc" ];
   hover('', \@data);
 }
+
+sub blastxTitle {
+  my $f = shift;
+  my $name = $f->name;
+  my $chr = $f->seq_id;
+  my $loc = $f->location->to_FTstring;
+  my ($e) = $f->get_tag_values("Expect");
+  my ($pctI) = $f->get_tag_values("PercentIdentity");
+  my ($desc) = $f->get_tag_values("Defline");
+  $desc ||= "<i>unavailable</i>";
+  $desc =~ s/\001.*//;
+  my @data;
+  push @data, [ 'Accession:'   => "gi\|$name" ];
+  push @data, [ 'Score:'       => $f->score ];
+  push @data, [ 'E-Value:'     => $e];
+  push @data, [ 'Identity %:'  => $pctI];
+  push @data, [ 'Description:' => $desc ];
+  hover("BLASTX: gi\|$name", \@data);
+}
+
+
+# TODO:  There is a link to a ToxoDB specific Database... is this needed?  can we get this from the sage tag record page?  Want to make the popup as generic as possible so all sites can use
+sub sageTagTitle { 
+  my $f            = shift;
+  my $name         = $f->name;
+  my ($sourceId)    = $f->get_tag_values('SourceID'); 
+  my $start        = $f->start; 
+  my $stop         = $f->stop; 
+  my $strand       = $f->strand;
+  ($start,$stop) = ($stop,$start) if ($strand == -1); 
+  my ($tag)        = $f->get_tag_values('Sequence'); 
+#  my $sageDb_url = "<a target='new' href=http://vmbmod10.msu.montana.edu/vmb/cgi-bin/sage.cgi?prevpage=newsage4.htm;normal=yes;database=toxoditagscorrect;library=sp;intag=" 
+    . $tag . ">TgSAGEDB</a>";
+  my ($occurrence) = $f->get_tag_values('Occurrence'); 
+  my @data; 
+  push @data, [ 'Name:'          => "$sourceId" ];
+  push @data, [ 'Temporary external ID:' => "$name" ];
+  push @data, [ 'Location:'        => "$start..$stop" ];
+  push @data, [ 'Sequence:'        => $tag ];
+  push @data, [ 'Found in genome:' => $occurrence ];
+#  push @data, [ 'Link'             => $sageDb_url];
+  my $bulkEntries = $f->bulkAttributes();
+  push @data, [ "<b>Library</b>" => "<b>Percent | RawCount</b>" ];
+  foreach my $item (@$bulkEntries) {
+    my $lib = $item->{LIBRARY_NAME};
+    my $raw_count = $item->{RAW_COUNT};
+    my $percent = sprintf("%.3f", $item->{LIBRARY_TAG_PERCENTAGE});
+    push @data, [ "$lib" => "$percent % | $raw_count" ];
+  }
+  return hover( "Sage Tag - Temp ID $name", \@data); 
+} 
 
 1;
