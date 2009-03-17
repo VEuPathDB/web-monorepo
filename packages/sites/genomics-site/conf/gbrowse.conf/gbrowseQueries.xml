@@ -217,39 +217,18 @@ ORDER BY blat.target_start asc, blat.score desc
     <description></description>
      <sql>
 <![CDATA[
-SELECT distinct sim.similarity_id feature_id, 
-       'match' type, 
-       'WU_BLASTX' source, 
-       extt.source_id name, 
-       sim.similarity_score || '' score, 
-       to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) pvalue,
-       extq.na_sequence_id parent_id, 
-       sim.min_query_start startm, 
-       sim.max_query_end end, 
-       decode (sim.similarity_is_reversed, 0, '+1', 1, '-1', '.') strand, 
-       'Score=' || sim.similarity_score || '$dlm' || 
-       'Expect=' || (sim.pvalue_mant || 'e' ||sim.pvalue_exp)||'$dlm'|| 
-       'description=' || extt.description || '$dlm' || 
-       'PercentIdentity=' || sim.percent_identical || '$dlm' ||
-       'PercentPositive=' || sim.percent_positive || '$dlm' ||
-       'TStart=' || sim.min_query_start || '$dlm' || 
-       'TStop=' || sim.max_query_end atts 
+SELECT b.similarity_id feature_id, 'match' type, 'WU_BLASTX' source, 
+       b.name, b.score, b.pvalue, b.na_sequence_id parent_id, 
+       b.startm, b.end, b.strand, b.atts
 FROM   
-       apidb.SimilaritySpanLocation sim, 
-       dots.EXTERNALAASEQUENCE extt, 
-       dots.NASEQUENCE extq
+       apidb.blastx b
 WHERE  
-       sim.query_id = extq.na_sequence_id and 
-       sim.subject_id = extt.aa_sequence_id and 
-       (sim.max_query_end - sim.min_query_start) < 5000 and 
-       sim.pvalue_exp < -10 and 
-       sim.min_query_start >= $base_start and 
-       sim.max_query_end <= $rend and 
-       sim.query_id = $srcfeature_id and 
+       b.startm between $base_start and $rend and
+       b.end between $base_start and $rend and       
+       b.na_sequence_id = $srcfeature_id and 
        RowNum < 4000 
 ORDER BY 
-       sim.min_query_start asc, 
-       pvalue asc
+       b.na_sequence_id, b.startm, b.pvalue
 ]]>
     </sql>
   </sqlQuery>
@@ -2072,6 +2051,30 @@ WHERE  f.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
+
+  <sqlQuery>
+   <name>ChIP_peaks_RH:Hakimi</name>
+    <description></description>
+     <sql includeProjects="ToxoDB">
+<![CDATA[
+ SELECT f.na_feature_id   as feature_id,
+       'ChIP_peaks_RH'  as type, 
+       'Hakimi'         as source, 
+       f.name            as name, 
+       f.score           as score, 
+       f.na_sequence_id  as parent_id, 
+       f.start_min       as startm, 
+       f.end_max         as end,
+       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
+FROM   ApiDB.ChIPFeature f
+WHERE  f.na_sequence_id = $srcfeature_id
+   AND f.start_min <= $rend
+   AND f.end_max >= $base_start
+   AND f.protocol_name = 'NimbleScan_ChIP_Hakimi_called_peaks'
+   AND f.strain = 'RH'
+]]>
+    </sql>
+  </sqlQuery>
     
   
   <sqlQuery>
@@ -2130,6 +2133,24 @@ WHERE
     </sql>
   </sqlQuery>
   
+  <sqlQuery>
+   <name>ChIP_RH:Hakimi</name>
+    <description></description>
+     <sql includeProjects="ToxoDB">
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP_RH'         as type, 
+       'Hakimi'          as source, 
+       e.source_id       as name, 
+       e.source_id       as parent_id, 
+       $base_start       as startm, 
+       $rend             as end
+FROM   DoTS.NASequence e
+WHERE  
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
   
   <sqlQuery>
    <name>SNP:Broad</name>
@@ -3236,6 +3257,30 @@ WHERE  f.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
+  <sqlQuery>
+   <name>ChIP_RH:Hakimi:bulksubfeatures</name>
+    <description></description>
+     <sql includeProjects="ToxoDB">
+<![CDATA[
+SELECT f.na_feature_id   as feature_id,
+       'ChIP_sub'        as type,
+       'Hakimi'          as source, 
+       f.score           as score, 
+       f.na_sequence_id  as parent_id, 
+       f.start_min       as startm, 
+       f.end_max         as end,
+       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
+FROM   ApiDB.ChIPFeature f
+WHERE  f.na_sequence_id = $srcfeature_id
+   AND f.start_min <= $rend
+   AND f.end_max >= $base_start
+   AND f.protocol_name = 'NimbleScan_ChIP_Hakimi'
+   AND f.strain = 'RH'
+]]>
+    </sql>
+  </sqlQuery>
+
+
   <sqlQuery>
    <name>GeneticMarkers:Sibley:bulkAttribute</name>
     <description></description>
