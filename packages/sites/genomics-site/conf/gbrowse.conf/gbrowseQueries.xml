@@ -257,7 +257,7 @@ WHERE
        blat.query_na_sequence_id = a.na_sequence_id and 
        blat.target_start <= $rend and 
        blat.target_end >= $base_start and 
-       (blat.target_end - blat.target_start ) < 5000 and 
+--       (blat.target_end - blat.target_start ) < 5000 and 
        blat.is_best_alignment = 1 and
        blat.target_na_sequence_id = $srcfeature_id
 ORDER BY 
@@ -2548,7 +2548,7 @@ WHERE
        blat.query_na_sequence_id = a.na_sequence_id and 
        blat.target_start <= $rend and 
        blat.target_end >= $base_start and 
-       (blat.target_end - blat.target_start ) < 5000 and 
+--       (blat.target_end - blat.target_start ) < 5000 and 
        blat.is_best_alignment = 1 and
        blat.target_na_sequence_id = $srcfeature_id
 ORDER BY
