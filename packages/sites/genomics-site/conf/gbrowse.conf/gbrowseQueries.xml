@@ -2775,19 +2775,20 @@ AND ed.name in ('L.major BAC Ends from Sanger',
     <description></description>
      <sql>
 <![CDATA[
- SELECT interval feature_id, 
-      'test' type, 
-      'test' source, 
+SELECT interval feature_id, 
+      'annotation' type, 
+      'density' source, 
       count(interval) score, 
-      (interval - 1) * 30000 startm, 
-      interval * 30000 end 
+      (interval - 1) * 50000 startm, 
+      interval * 50000 end 
 FROM ( 
-      SELECT ceil(nal.start_max / 30000) interval 
-      FROM   dots.GENEFEATURE gf, dots.NALOCATION nal 
-      WHERE  gf.na_feature_id = nal.na_feature_id and 
-             gf.na_sequence_id = $parent_id 
-      ORDER BY nal.start_max) 
-GROUP BY interval
+      SELECT ceil(fl.start_min / 50000) interval 
+      FROM   apidb.GENEATTRIBUTES gf, apidb.FeatureLocation fl
+
+      WHERE  gf.na_feature_id = fl.na_feature_id and 
+             fl.na_sequence_id = $parent_id 
+      ORDER BY fl.start_min) 
+GROUP BY interval 
 ]]>
     </sql>
   </sqlQuery>
