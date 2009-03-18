@@ -1,9 +1,9 @@
+var openDetail = null;
+var isInsert = "";
+
 $("#diagram").ready(function(){
 	$("div.diagram:first div.venn:last span.resultCount a").click();
 });
-
-var openDetail = null;
-var isInsert = "";
 
 function showDetails(det){
 	openDetail = $(det).parent().parent().find("h3 div.crumb_details");
@@ -37,7 +37,7 @@ function showDetails(det){
 		det2.css({
 			left: l + "px",
 			top: t + "px",
-			display: "block",
+			display: "block"
 		});
 		det2.appendTo("#strategy_results");
 	}
