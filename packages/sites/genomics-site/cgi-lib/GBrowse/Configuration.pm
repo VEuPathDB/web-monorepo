@@ -110,7 +110,7 @@ sub hover {
   $str =~ s/'/\\'/g;
   $str =~ s/\"/&quot;/g;
   $str =~ s/\s+$//;
-  my $cmd = "this.T_STICKY=true;this.T_TITLE='$name'";
+  my $cmd = "this.T_STICKY=false;this.T_TITLE='$name'";
   $cmd = qq{" onMouseOver="$cmd;return escape('$str')};
   return $cmd;
 }
@@ -130,7 +130,7 @@ sub myfooter {
 }
 
 sub myheader {
-  return qq(<!--#include virtual='/a/header.jsp'--> ); 
+  return qq(<!--#include virtual='/a/header.jsp?originParam=http://$ENV{SERVER_NAME}$ENV{REQUEST_URI}'-->);
 }
 
 sub mypostgrid { 
