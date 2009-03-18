@@ -409,3 +409,39 @@ function receiveAsyncContent(request, contentTag) {
         content.innerHTML = "Failed. Cannot retrieve the content.";
     }
 }
+
+
+
+
+/* ==========================================================================
+ * The following JQuery ajax methods are defined to fetch GBrowse images
+ * ========================================================================== */
+
+function fetchGbrowseImg(button, url) {
+      var wz = $("<script>").
+            attr("type", "text/javascript").
+            attr("src", "/gbrowse/wz_tooltip.js");
+      var api = $("<script>").
+            attr("type", "text/javascript").
+            attr("src", "/gbrowse/apiGBrowsePopups.js");      
+      var loadingImg = $("<p>").
+            append($("<img/>").attr("src", "/assets/images/dna-animated.gif")).
+            append(" Loading...");
+
+      $(document).ready(function () {
+        $(button).click(function(){
+          $(button).before(loadingImg).remove();
+          $("#gbGnCtx");
+          $("#gbGnCtx").load(url, null, 
+          function(responseText, status, XMLHttpRequest) {
+             $("#gbGnCtx").append(api);
+             $("#gbGnCtx").append(wz);
+          });          
+          return true;
+        });
+      }); 
+       
+      $().ajaxError(function(info,xhr){
+        $("#gbGnCtx").append("Oops: " +  xhr.status + ' ' + xhr.statusText);
+      });
+}
