@@ -111,6 +111,7 @@ function isLoaded(id){
 	return -1;
 }
 
+/**********************************  Moved to strategyWriter.js ***********************
 var div_strat = null;
 function displayModel(strat_id){
 	if(strats){
@@ -161,14 +162,6 @@ function displayModel(strat_id){
 
 // sent: ele and strat, it writes recordtype (Genes) in top-left corner in strat display
 $(div_strat).append(createRecordTypeName($("strategy#" + strat.backId,xmldoc), strat));
-
-/*
-var myrecordname = createRecordTypeName($("strategy#" + strat.backId,xmldoc), strat);
-alert("displayModel(): Adding recordname to grey background in display: " + myrecordname);
-var myrecordname2 = getRecordName(myrecordname);
-alert("displayModel(): Adding recordname to grey background in display: " + myrecordname2);
-$(div_strat).append(myrecordname2);
-*/
 		
 		buttonleft = offset(null,strat.Steps.length,strat.frontId);
 		button = document.createElement('a');
@@ -187,9 +180,10 @@ $(div_strat).append(myrecordname2);
     }
 	return null;
 }
+*/
 
-
-var transCount = 0;
+// NOT NEEDED var transCount = 0;
+/***************** Moved to strategyWriter.js ********************
 function offset(ele,index, m){
 	if(ele == null){
 		lb = $("div.box:last", div_strat);
@@ -227,8 +221,8 @@ function offset(ele,index, m){
 //	m = 127;
 //	return (index * m);// - (index - 1);
 }
-
-
+*/
+/**************** moved to strategyWriter.js *******************
 function createStep(ele, step, isLast, child){
 	var strategyId = "";
 	var name = $(ele).attr("name");
@@ -537,7 +531,7 @@ function createRecordTypeName(ele, strat){
 
         	$(div_sn).html(
         	"<span class='strategy_small_text'>" +
-        	recordName +
+        	recordName + " Strategy" +
         	"</span>");
 
         	return div_sn;
@@ -620,6 +614,9 @@ var rename = "<a href='javascript=void(0)' title='Click to rename.'  onclick=\"e
 	}
 	return div_sn;
 }
+*/
+
+
 
 function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 	if(f_strategyId == -1){
@@ -660,21 +657,6 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 	});
 }
 
-function removeStrategyDivs(stratId){
-	strategy = getStrategyFromBackId(stratId);
-	if(stratId.indexOf("_") > 0){
-		var currentDiv = $("#Strategies div#diagram_" + strategy.frontId).remove();
-		sub = getStrategyFromBackId(stratId.substring(0,stratId.indexOf("_")));
-		//$("#Strategies div#diagram_" + sub.frontId).remove();
-		subs = getSubStrategies(sub.frontId);
-		for(i=0;i<subs.length;i++){
-			$("#Strategies div#diagram_" + subs[i].frontId).remove();
-		}
-	}
-//	if(strategy.subStratOf != null){
-//		strats.splice(findStrategy(strategy.frontId));
-//	}
-}
 
 function AddStepToStrategy(url){	
 	b_strategyId = parseUrl('strategy',url)[0];
@@ -1006,27 +988,6 @@ function renameStrategy(stratId, checkName, fromHist){
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
-}
-
-function showLoading(divId){
-	var d = $("#diagram_" + divId);
-	var l = document.createElement('span');
-	$(l).attr("id","loadingGIF");
-	var i = document.createElement('img');
-	$(i).attr("src","/assets/images/loading2.gif");
-	$(i).attr("height","23");
-	//$(l).html("<p style='position:relative;top:-17px;z-index:300'>Loading...</p>");
-	$(l).prepend(i);
-	$(l).css({
-		"text-align": "center",
-		position: "absolute",
-		left: "10px",
-		top: "10px"
-	});
-	$(d).append(l);
-}
-function removeLoading(divId){
-	$("#diagram_" + divId + " span#loadingGIF").remove();
 }
 
 function ChangeFilter(strategyId, stepId, url) {

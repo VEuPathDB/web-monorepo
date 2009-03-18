@@ -141,27 +141,4 @@ function Expand_Step(ele, url){
 
 // Utility Functions
 
-function checkEnter(ele,evt){
-	var charCode = (evt.which) ? evt.which : evt.keyCode;
-	if(charCode == 13) $(ele).blur();
-}
-
-function parseUrl(name,url){
- 	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
- 	var regexS = "[\\?&]"+name+"=([^&#]*)";
- 	var regex = new RegExp( regexS,"g" );
- 	var res = new Array();
- 	//while (regex.lastIndex < url.length){
- 		var results = regex.exec( url );
- 		if( results != null )
- 			res.push(results[1]);
- 	//	else
- 	//		break;
- 	//}
- 	if(res.length == 0)
- 		return "";
- 	else
- 		return res;
-}
-
 
