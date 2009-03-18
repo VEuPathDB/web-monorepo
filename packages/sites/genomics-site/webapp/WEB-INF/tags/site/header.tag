@@ -399,14 +399,14 @@ ${headElement}
 
 <%-- in home_header login is a class instead of an id that brings up the popup --%>
           <li>
-            <a href="${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+            <a href="/${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
                <ul class="login">
                     <li><site:login /></li>
               </ul>
 
          </li>
           <li>
-          <a href="<c:url value='showRegister.do'/>" id='register'>Register</a></li>
+          <a href="<c:url value='/showRegister.do'/>" id='register'>Register</a></li>
 
         
     </c:when>
@@ -419,7 +419,7 @@ ${headElement}
           <li>
             <a href="<c:url value='/showProfile.do'/>" id='profile'>${wdkUser.firstName} ${wdkUser.lastName}'s Profile<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a></li>
           <li>
-            <a href="<c:url value='${logoutUrl}' />" id='logout'>Logout</a></li>
+            <a href="<c:url value='/${logoutUrl}' />" id='logout'>Logout</a></li>
 
     </c:otherwise>
   </c:choose>
