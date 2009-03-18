@@ -17,28 +17,25 @@
 	<script type="text/javascript" src="/assets/js/lib/jqDnR.js"></script>
 	<!-- JQuery BlockUI Plugin -->
 	<script type="text/javascript" src="/assets/js/lib/jquery.blockUI.js"></script>
+	<!-- filter menu javascript -->
+	<script type="text/javascript" src="/assets/js/filter_menu.js"></script>
+	<!-- Strategy Interaction javascript -->
+	<script type="text/javascript" src="/assets/js/js-utils.js"></script>
+	<script type="text/javascript" src="/assets/js/Strategy.js"></script>
+	<script type="text/javascript" src="/assets/js/strategyWriter.js"></script>
+	<script type="text/javascript" src="/assets/js/step.js"></script>
+	<script type="text/javascript" src="/assets/js/StrategyAction.js"></script>
+	<script type="text/javascript" src="/assets/js/pager.js"></script>
+	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexigrid.js"></script>
+	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexifluid.js"></script>
+	<!-- Results Page AJAX Javascript code -->
+	<script type="text/javascript" src="/assets/js/results_page.js"></script>
+
 </c:if>
 
 <%-- js for quick seach box --%>
 <script type="text/javascript" src="/assets/js/quicksearch.js"></script>
-
-<!-- Prototype Library -->
-<!--<script type="text/javascript" src="/assets/js/lib/prototype.js"></script>-->
-<!-- Scriptaculous Library -->
-<!--<script type="text/javascript" src="/assets/js/lib/scriptaculous.js"></script>-->
  
-<c:if test="${refer == 'customSummary'}">
-	<!-- filter menu javascript -->
-	<script type="text/javascript" src="/assets/js/filter_menu.js"></script>
-	<script type="text/javascript" src="/assets/js/Strategy.js"></script>
-	<!-- Strategy Interaction javascript -->
-	<script type="text/javascript" src="/assets/js/StrategyAction.js"></script>
-	
-	<%-- this is marked "hover for home page" but it's only included on application page --%>
-        <%-- ...and it doesn't seem to be used by anything at all on that page
- 	<!-- hover for home page -->
-	<script type="text/javascript" src="/assets/js/sfhover.js"></script> --%>
-</c:if>
 
 <c:if test="${refer == 'blastQuestion'}">
         <script type="text/javascript" src="/assets/js/blast.js"></script>
@@ -48,22 +45,12 @@
 <script type="text/javascript" src="/assets/js/dqg.js"></script>
 <script type="text/javascript" src="/assets/js/newitems.js"></script>
 
-<c:if test="${refer == 'customSummary'}">
-	<script type="text/javascript" src="/assets/js/step.js"></script>
-	<script type="text/javascript" src="/assets/js/pager.js"></script>
-	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexigrid.js"></script>
-	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexifluid.js"></script>
-</c:if>
 
 <!-- dynamic query grid code -->
 <script type="text/javascript" src="/assets/js/questionPage.js"></script>
 <!-- dynamic query grid code -->
 <!--<script type="text/javascript" src="/assets/js/Top_menu.js"></script>-->
 
-<c:if test="${refer == 'customSummary'}">
-	<!-- Results Page AJAX Javascript code -->
-	<script type="text/javascript" src="/assets/js/results_page.js"></script>
-</c:if>
 
 <!-- Record Page GBrowse Javascript code -->
 <%--<script type="text/javascript" src="/gbrowse/wz_tooltip_3.45.js"></script>--%>
