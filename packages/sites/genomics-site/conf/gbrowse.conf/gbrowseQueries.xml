@@ -106,7 +106,7 @@ WHERE  etn.source_id = sa.source_id
     <sql>
 <![CDATA[ 
 SELECT ens.sequence 
-FROM   DOTS.EXTERNALNASEQUENCE ens 
+FROM   DOTS.NASEQUENCE ens 
 WHERE  ens.na_sequence_id = $srcfeature_id 
 ]]>
     </sql>
@@ -2065,7 +2065,7 @@ WHERE  f.na_sequence_id = $srcfeature_id
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
+       'Treatment=' || f.treatment || '$dlm' || 'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
 FROM   ApiDB.ChIPFeature f
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
@@ -3270,7 +3270,7 @@ SELECT f.na_feature_id   as feature_id,
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
+       'Treatment=' || f.treatment || '$dlm' || 'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
 FROM   ApiDB.ChIPFeature f
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
