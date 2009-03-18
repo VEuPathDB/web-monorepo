@@ -2489,7 +2489,16 @@ ORDER BY
   <sqlQuery>
    <name>gene:syntenyMC:attribute:Ortholog</name>
     <description></description>
-     <sql>
+      <sql includeProjects="ToxoDB">
+<![CDATA[
+select sb.source_id
+from apidb.SYNTENICORTHOLOGS sa, apidb.SYNTENICORTHOLOGS sb
+where sa.SOURCE_ID = '$name'
+and sa.group_id = sb.GROUP_ID
+and sa.organism != sb.organism
+]]>
+  </sql>
+     <sql excludeProjects="ToxoDB">
 <![CDATA[
 select gb.SOURCE_ID
 from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb
@@ -2596,9 +2605,18 @@ WHERE
   
   
   <sqlQuery>
-   <name>gene:annotation:Ortholog</name>
+   <name>gene:annotation:attribute:Ortholog</name>
     <description></description>
-     <sql>
+      <sql includeProjects="ToxoDB">
+<![CDATA[
+select sb.source_id
+from apidb.SYNTENICORTHOLOGS sa, apidb.SYNTENICORTHOLOGS sb
+where sa.SOURCE_ID = '$name'
+and sa.group_id = sb.GROUP_ID
+and sa.organism != sb.organism
+]]>
+  </sql>
+     <sql excludeProjects="ToxoDB">
 <![CDATA[
 select gb.SOURCE_ID
 from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb
