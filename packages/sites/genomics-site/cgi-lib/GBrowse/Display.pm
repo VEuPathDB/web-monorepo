@@ -128,8 +128,17 @@ sub glyphFlipBgColor {
   $f->strand == ($flip ? -1 : 1) ? "navy" : "maroon";
 }
 
-
 sub simpleBgColorFromStrand {
+  my ($f, $first, $second) = @_;
+  simpleColorFromStrand($f, $first, $second);
+}
+
+sub simpleFgColorFromStrand {
+  my ($f, $first, $second) = @_;
+  simpleColorFromStrand($f, $first, $second);
+}
+
+sub simpleColorFromStrand {
   my ($f, $first, $second) = @_;
   $f->strand == +1 ? $first : $second;
 }
