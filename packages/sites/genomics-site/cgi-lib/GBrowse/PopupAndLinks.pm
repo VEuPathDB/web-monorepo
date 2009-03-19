@@ -102,9 +102,11 @@ sub synSpanTitle {
   my ($contigLength) = $f->get_tag_values("ContigLength");
   my ($refContigLength) = $f->get_tag_values("RefContigLength");
   my ($contigSourceId) = $f->get_tag_values("Contig");
+  my ($chromosome) = $f->get_tag_values("Chromosome");
   my ($type) = $f->get_tag_values("Type");
   my @data;
   if ($type !~ /gap/i) {
+    push @data, [ 'Chromsome: '=> "$chromosome" ] if ($chromosome);
     push @data, [ 'Syntenic Contig: ' => "$contigSourceId" ];
     push @data, [ 'Ref location: ' => "$refStart&nbsp;-&nbsp;$refEnd ($refLength&nbsp;bp)" ];
     push @data, [ 'Syn location: ' => "$synStart&nbsp;-&nbsp;$synEnd ($synLength&nbsp;bp)" ];

@@ -4,9 +4,14 @@ use strict;
 
 
 sub filterByTaxon {
-  my ($f, $value) = @_;
+  my ($f, $value,$IncludeContig) = @_;
   my ($taxon) = $f->get_tag_values("Taxon");
+  if ($IncludeContig) {
+  my $contig = $f->get_tag_values("Contig");
+  $taxon eq qq /$value/ && $contig !~ /-S$/;
+  } else {
   $taxon eq qq /$value/;
+  }
 }
 
 
