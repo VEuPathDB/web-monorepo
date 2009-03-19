@@ -6,6 +6,30 @@ function twoColRow(left, right) {
   return '<tr><td>' + left + '</td><td>' + right + '</td></tr>';
 }
 
+
+
+function popup_text () {
+  var items = popup_text.arguments.length;
+
+  var tip = popup_text.arguments[0];
+  var name = popup_text.arguments[1];
+
+  var rows = new Array();
+
+  // The first value is the name... the following values are in sets of 2
+  // (name, header_0, value_0, header_1, value_1, ....)
+  for (i = 2;i < items; i++) {
+    var rowHeader = popup_text.arguments[i];
+    i++;
+    var rowValue = popup_text.arguments[i];
+    rows.push(twoColRow(rowHeader, rowValue));
+  }
+
+  tip.T_TITLE = name;
+  return table(rows);
+}
+
+
 // Gene title
 function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, isPseudo) {
   
