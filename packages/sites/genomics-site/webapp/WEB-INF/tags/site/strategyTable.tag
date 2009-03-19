@@ -20,13 +20,6 @@
               description="Text to add before 'Strategy' in column header"
 %>
 
-<c:set var="scheme" value="${pageContext.request.scheme}" />
-<c:set var="serverName" value="${pageContext.request.serverName}" />
-<c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
-<c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
-<c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
-<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?strategy=" />
-
 <table border="0" cellpadding="5" cellspacing="0">
   <tr class="headerrow">
     <th scope="col" style="width: 20px;">&nbsp;</th>
@@ -44,7 +37,6 @@
   <%-- begin of forEach strategy in the category --%>
   <c:forEach items="${strategies}" var="strategy">
     <c:set var="strategyId" value="${strategy.strategyId}"/>
-    <c:set var="exportURL" value="${exportBaseUrl}${strategy.latestStep.answerId}"/>
     <c:choose>
       <c:when test="${i % 2 == 0}"><tr class="lines"></c:when>
       <c:otherwise><tr class="linesalt"></c:otherwise>
@@ -103,7 +95,7 @@
              <input title='Email this URL to your best friend.' type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
            </c:when>
            <c:otherwise>
-             <input title='SAVE this strategy so you can SHARE it (email its URL).' type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
+             <input title='SAVE this strategy so you can SHARE it (email its URL).' type='button' value='Share' onclick="showHistSave(this, '${strategyId}')" />
            </c:otherwise>
          </c:choose>
          <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />

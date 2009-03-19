@@ -132,12 +132,20 @@
 <!-- end of showing strategies grouped by RecordTypes -->
 </form>
 
+<c:set var="scheme" value="${pageContext.request.scheme}" />
+<c:set var="serverName" value="${pageContext.request.serverName}" />
+<c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
+<c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
+<c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
+<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?strategy=" />
+
 <!-- popups for save/rename forms -->
 <c:set var="strategiesMap" value="${user.strategiesByCategory}"/>
 <c:forEach items="${strategiesMap}" var="strategyEntry">
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:forEach items="${strategies}" var="strategy">
     <c:if test="${strategy.isSaved}">
+    <c:set var="exportURL" value="${exportBaseUrl}${strategy.latestStep.answerId}"/>
     <div class='modal_div export_link' id="hist_share_${strategy.strategyId}" style="right:15em;">
       <span class='dragHandle'>
         <a class='close_window' href='javascript:closeModal()'>
