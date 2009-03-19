@@ -54,6 +54,14 @@ sub snpBgFromIsCodingAndNonSyn {
   return $color; 
 }
 
+sub MassSpecScoreBgColor {
+   my $f = shift;
+    my ($count) = $f->get_tag_values("score"); 
+   return 'red' if ($count > 50); #darkgray
+   return 'blue' if ($count > 25 );
+   return 'green' if ($count > 10 );
+   return 'gray'; #antiquegray
+}
 
 sub sageTagFgColor { 
   my $f            = shift;
@@ -95,9 +103,13 @@ sub massSpecBgColorFromExtDbName {
                 'MS Carruthers 2destinct peptides' => 'plum',
                 'Moreno DTASelect filter sample A' => 'lime',
                 'Moreno DTASelect filter sample G' => 'green',
+                'Tcruzi Proteomics-Epimastigote' => 'black'
+                'Tcruzi Proteomics-Amastigote' => 'mediumslateblue'
+                'Tcruzi Proteomics-Trypomastigote' => 'green'
+                'Tcruzi Proteomics-Metacyclic' => 'brown'
                );
 
-
+  $f = $f->parent if (! $f->get_tag_values('ExtDbName'));
   my ($extdbname) = $f->get_tag_values('ExtDbName');
 
   if(my $color = $colors{$extdbname}) {

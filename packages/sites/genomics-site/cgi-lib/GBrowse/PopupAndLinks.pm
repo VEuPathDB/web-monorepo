@@ -44,6 +44,13 @@ sub estLink {
   return $link;
 }
 
+sub orfLink {
+  my $f = shift;
+  my $name = $f->name;
+  my $link = "/a/showRecord.do?name=OrfRecordClasses.OrfRecordClass&primary_key=$name";
+  return $link;
+}
+
 sub sageTagLink { 
   my $f = shift;
   my $name = $f->name;
@@ -382,6 +389,7 @@ sub massSpecTitle {
   my ($f, $replaceString) = @_;
   my ($desc) = $f->get_tag_values('Description');
   $desc =~s/\nreport:(.*)$//;
+  my ($count) = $f->get_tag_values('Count');
   my ($seq) =  $f->get_tag_values('PepSeq');
   my ($extdbname) = $f->get_tag_values('ExtDbName');
   $desc =~ s/[\r\n]/<br>/g;
@@ -390,8 +398,15 @@ sub massSpecTitle {
     $extdbname =~ s/$replaceString/assay: /i;
   }
   my @data;
+  if ($desc && $count) {
+  push @data, [ '' => "$extdbname<br>sequence:$seq<br>$desc<br>Number of matches:$count" ];
+  } elsif ($desc) {
   push @data, [ '' => "$extdbname<br>sequence:$seq<br>$desc" ];
-  hover('', \@data);
+  } else {
+  push @data, [ '' => "$extdbname<br>sequence:$seq<br>Number of matches:$count" ];
+  }
+  
+ hover('', \@data);
 }
 
 sub blastxTitle {
@@ -400,6 +415,8 @@ sub blastxTitle {
   my $chr = $f->seq_id;
   my $loc = $f->location->to_FTstring;
   my ($e) = $f->get_tag_values("Expect");
+  my ($tstart) = $f->get_tag_values('TStart');
+  my ($tstop )= $f->get_tag_values('TStop');
   my ($pctI) = $f->get_tag_values("PercentIdentity");
   my ($desc) = $f->get_tag_values("Defline");
   $desc ||= "<i>unavailable</i>";
@@ -408,6 +425,7 @@ sub blastxTitle {
   push @data, [ 'Accession:'   => "gi\|$name" ];
   push @data, [ 'Score:'       => $f->score ];
   push @data, [ 'E-Value:'     => $e];
+  push @data, [ 'Location:' => "$tstart - $tstop"]; 
   push @data, [ 'Identity %:'  => $pctI];
   push @data, [ 'Description:' => $desc ];
   hover("BLASTX: gi\|$name", \@data);
