@@ -104,6 +104,28 @@ sub popup_template {
 
 sub hover {
   my ($name, $data) = @_;
+
+  my @dataArray;
+  foreach(@$data) {
+    push @dataArray, @$_;
+  }
+
+  my @quotedData;
+  foreach(@dataArray) {
+    s/'/\\'/g;
+    s/\"/&quot;/g;
+    s/\s+$//;
+    push @quotedData, "'$_'";
+  }
+
+  my $dataString = scalar @quotedData > 0 ? "," . join(',', @quotedData) : '';
+
+  return qq{" onmouseover="return escape(popup_text(this,'$name'$dataString))"};
+}
+
+
+sub oldhover {
+  my ($name, $data) = @_;
   my $tmpl = HTML::Template->new(filename => $ENV{DOCUMENT_ROOT}.'/gbrowse/hover.tmpl');
   $tmpl->param(DATA => [ map { { @$_ > 1 ? (KEY => $_->[0], VALUE => $_->[1]) : (SINGLE => $_->[0]) } } @$data ]);
   my $str = $tmpl->output;
