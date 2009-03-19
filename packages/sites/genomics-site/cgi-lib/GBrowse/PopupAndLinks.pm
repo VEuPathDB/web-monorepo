@@ -205,6 +205,25 @@ sub geneTitle {
   return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo'))"};
 } 
 
+sub contigTitle {  
+  my $f = shift;
+  my $name = $f->name;
+  my $chr  = $f->seq_id;
+  my $loc  = $f->location->to_FTstring;
+  my $orient   = $f->strand eq '-1' ? "reverse" : "forward";
+  my ($length) = $f->get_tag_values("Length");
+  my ($type) = $f->get_tag_values("Type");
+  my $start = $f->start;
+  my $stop = $f->stop;
+  my @data;
+  push @data, [ 'Name:'    => $name ]; 
+  push @data, [ 'Length:'  => $length ];
+  push @data, [ 'Orientation:' => "$orient" ]; 
+  push @data, [ 'Location:' => "$start..$stop" ];
+  hover('Contig', \@data);
+  }
+
+
 sub scaffoldTitle { 
   my $f = shift;
   my $name = $f->name;

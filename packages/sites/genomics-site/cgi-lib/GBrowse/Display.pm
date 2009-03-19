@@ -205,6 +205,13 @@ sub heightBySOTerm {
   return ($soterm eq $term) ? $val1 : $val2;
 }
 
+sub heightByCount {
+  my ($f, $height) = @_;
+   $f = $f->parent if (! $f->get_tag_values('Count'));
+   my ($count) = $f->get_tag_values("Count"); 
+   return ($count/2)+$height;
+}
+
 
 #--------------------------------------------------------------------------------
 #  Other Display
