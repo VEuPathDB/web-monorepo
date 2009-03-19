@@ -103,10 +103,30 @@ sub massSpecBgColorFromExtDbName {
                 'MS Carruthers 2destinct peptides' => 'plum',
                 'Moreno DTASelect filter sample A' => 'lime',
                 'Moreno DTASelect filter sample G' => 'green',
-                'Tcruzi Proteomics-Epimastigote' => 'black'
-                'Tcruzi Proteomics-Amastigote' => 'mediumslateblue'
-                'Tcruzi Proteomics-Trypomastigote' => 'green'
-                'Tcruzi Proteomics-Metacyclic' => 'brown'
+                'Tcruzi Proteomics-Epimastigote' => 'black',
+                'Tcruzi Proteomics-Amastigote' => 'mediumslateblue',
+                'Tcruzi Proteomics-Trypomastigote' => 'green',
+                'Tcruzi Proteomics-Metacyclic' => 'brown',
+                'Tbrucei Proteomics Procyclic Form'=> 'yellow',
+                'Linfantum Proteomics PTM-acetylation' => 'slateblue',
+                'Linfantum Proteomics PTM-methylation' => 'black',
+                'Linfantum Proteomics SDS Amastigote' => 'mediumslateblue',
+                'Lbraziliensis Proteomics Promastigote temperature and pH stressed' => 'blue',
+                'Lbraziliensis Proteomics Promastigote temperature and pH non-stressed' => 'blue',
+                'Lmajor Proteomics 2DGel 6-11 Amastigote' => 'mediumslateblue',
+                'Linfantum Proteomics 2DGel 6-9 Amastigote' => 'mediumslateblue',
+                'Lmajor Proteomics 2DGel 6-9 Amastigote' => 'mediumslateblue',
+                'Lmajor Proteomics Promastigote temperature and pH stressed' => 'blue',
+                'Lmajor Proteomics SDS Amastigote' => 'mediumslateblue',
+                'Linfantum Proteomics 2DGel 6-9 Promastigote' => 'blue',
+                'Lmajor Proteomics Promastigote temperature and pH non-stressed' => 'blue',
+                'Linfantum Proteomics PTM-glycosylation' => 'brown',
+                'Lmajor Proteomics Promastigote Secreted Protein' => 'blue',
+                'Lmajor Proteomics 2DGel 6-9 Promastigote' => 'blue',
+                'Linfantum Proteomics 2DGel 6-11 Amastigote' =>'mediumslateblue',
+                'Linfantum Proteomics PTM-phosphorylation' => 'green',
+                'Linfantum Proteomics 2DGel 6-11 Promastigote' => 'blue',
+                'Lmajor Proteomics 2DGel 6-11 Promastigote' => 'blue'
                );
 
   $f = $f->parent if (! $f->get_tag_values('ExtDbName'));
@@ -189,7 +209,15 @@ sub gapBgcolor {
   return "red" if ($type eq "sgap");
 }
 
-
+sub bacsBgcolor { 
+    my $f = shift;
+    my ($extdbname) = $f->get_tag_values('ExtDbName');
+    if ($extdbname =~ m/PAC/) { 
+    return 'green';
+    } else {
+      return 'orange';
+    }
+ }
 
 
 

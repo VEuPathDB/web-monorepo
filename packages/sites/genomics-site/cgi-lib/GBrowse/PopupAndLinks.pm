@@ -299,6 +299,7 @@ sub estTitle {
   my $name  = $f->name; 
   my $start = $f->start;
   my $stop  = $f->stop;
+  my $score  = $f->score; 
   my @data; 
   my ($percent_identity) = $f->get_tag_values("PercentIdentity");
   my ($primer) = $f->get_tag_values("Primer");
@@ -309,6 +310,8 @@ sub estTitle {
   push @data, [ 'Start:'  => $start ];
   push @data, [ 'Stop:'   => $stop ];
   push @data, [ 'Percent Identity:' => $percent_identity ]; 
+  push @data, [ 'Length:' => abs($stop - $start) . ' nt' ]; 
+  push @data, [ 'Score:' => $score ]; 
   push @data, [ 'Library:' => $library ]; 
   push @data, [ 'Vector:' => $vector ]; 
   push @data, [ 'Primer:' => $primer ]; 
@@ -497,6 +500,32 @@ sub geneticMarkersTitle {
     push @data, [ "Strain: $strain" => $info ];
   }
   hover( "Genetic Markers - $class", \@data);
+}
+
+sub RandomEndsTitle {
+  my $f = shift;
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my $length = $stop - $start;
+  my $cname = $f->name;
+  my @data; 
+  push @data, [ 'Clone Size:'     => $length ]; 
+  push @data, [ 'Clone Location:' => "$start..$stop"];
+  push @data, [ '<hr>'            => '<hr>' ];
+  my @subs = $f->sub_SeqFeature;
+  my $count = 0;
+  foreach(@subs) {
+    $count++;
+    my $name  = $_->name; 
+     my $start = $_->start;
+     my $stop  = $_->stop;
+     my ($pct) = $_->get_tag_values("pct");
+     push @data, [ 'Random End:'      => $name ]; 
+     push @data, [ 'Location:'  => "$start..$stop" ];
+     push @data, [ 'Percent Identity:' => "$pct %" ]; 
+     push @data, [ 'Score:' => $_->score ]; 
+  }
+ hover("Random End: $cname", \@data);
 }
 
 sub affyProbesTitle {
