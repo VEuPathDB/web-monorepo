@@ -14,6 +14,11 @@ sub filterByTaxon {
   }
 }
 
+sub filterByExtDbName {
+  my ($f, $nm) = @_;
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+  $extdbname =~ /$nm/i;
+}
 
 sub filterByExtDbNameAndFeatureType {
   my ($f, $nm, $tp) = @_;
