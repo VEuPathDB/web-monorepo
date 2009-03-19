@@ -190,7 +190,6 @@ sub peakTitle {
   my $score = $f->score;
   my ($analysis) = $f->get_tag_values("Analysis");
   my @data;
-  push @data, [ 'Probe Id:' => $name ];
   push @data, [ 'Analysis:' => $analysis ];
   push @data, [ 'Score:' => $score ];
   hover( "ChIP-chip called peaks $name", \@data); 
@@ -401,15 +400,11 @@ sub massSpecTitle {
     $extdbname =~ s/$replaceString/assay: /i;
   }
   my @data;
-  if ($desc && $count) {
-  push @data, [ '' => "$extdbname<br>sequence:$seq<br>$desc<br>Number of matches:$count" ];
-  } elsif ($desc) {
-  push @data, [ '' => "$extdbname<br>sequence:$seq<br>$desc" ];
-  } else {
-  push @data, [ '' => "$extdbname<br>sequence:$seq<br>Number of matches:$count" ];
-  }
-  
- hover('', \@data);
+  push @data, [ 'Experiment:' => "$extdbname" ];
+  push @data, [ 'Sequence:' => "$seq" ];
+  push @data, [ 'Description:' => "$desc" ] if($desc);
+  push @data, [ 'Number of Matches:' => "$count" ] if($count);
+  hover('Mass Spec', \@data);
 }
 
 sub blastxTitle {

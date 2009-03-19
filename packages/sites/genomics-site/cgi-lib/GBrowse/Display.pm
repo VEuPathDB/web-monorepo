@@ -178,11 +178,16 @@ sub simpleColorFromStrand {
 sub chipColor { 
   my $f   = shift;
   my ($a) = $f->get_tag_values('Antibody');
+  my ($t) = $f->get_tag_values('Treatment');
   my ($r) = $f->get_tag_values('Rep');
   return '#00C800' if($a =~ /H3K4/ && $r == 1);
   return '#00C896' if($a =~ /H3K4/ && $r == 2);
   return '#C86400' if($a =~ /H3K9/ && $r == 1);
   return '#FA9600' if($a =~ /H3K9/ && $r == 2);
+
+  return '#4B0082' if($t =~ /DMSO/ );
+  return '#F08080' if($t =~ /FR235222/ );
+
 } 
 
 sub gapFgcolor { 
