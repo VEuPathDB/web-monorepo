@@ -1348,7 +1348,7 @@ ul#strategy_tabs {
 #strategy_tabs a:link, #strategy_tabs a:visited {
     background-color: #f2e9e4;
     border: 1px solid #CCCCCC;
-    color: #3f3737;      /*  #666666; */
+/*    color: #3f3737; */     /*  #666666; */
     float: left;
     margin-top: 2px;
     padding:0.24em 1em;
@@ -1356,9 +1356,11 @@ ul#strategy_tabs {
     text-decoration:none;
 }
 
+/*
 #strategy_tabs a:hover {
-    color:#0B4796;         /* #0000CC; */
+    color:#0B4796;       
 }
+*/
 
 #strategy_tabs #selected a {
     background-color: #FFFFFF;
