@@ -437,9 +437,13 @@ function fetchGbrowseImg(buttonId, url) {
         $(buttonSel).click(function(){
           if (gbIsLoading) return;
           
-          $("div[id^=tOoLtIp]").remove(); // previous wz_tooltips
+          $("div[id^=tOoLtIp]").remove(); // previously loaded wz_tooltips
           
-          if (gbDispCache[buttonId] == null) { 
+          if (          true           || gbDispCache[buttonId] == null) { 
+          /*            ^^^^
+              Safari 4 (at least) loses wz_tooltip bindings when loading cached
+              nodes (it works in FF 3 provide the wz_tooltips.js is re-appended).
+              Node caching disabled until we find a fix for Safari. **/
             gbIsLoading = true;
             var oriButton = $(buttonSel).clone(true);
             $(buttonSel).replaceWith(loadingImg);
