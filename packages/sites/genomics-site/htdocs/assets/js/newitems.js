@@ -51,7 +51,7 @@ function flagUnreadListItems() {
         listItems.push(this.id);
                   
         if ( ! readMap[this.id]) {
-          this.style.backgroundColor='yellow';
+          this.style.backgroundColor='#ffffa0';
           this.style.margin='2px';
           this.style.paddingLeft='1px';
           sectUnreadCount++;
