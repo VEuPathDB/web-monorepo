@@ -414,34 +414,62 @@ function receiveAsyncContent(request, contentTag) {
 
 
 /* ==========================================================================
- * The following JQuery ajax methods are defined to fetch GBrowse images
+ * The following JQuery ajax methods are defined to fetch and display GBrowse images
  * ========================================================================== */
 
-function fetchGbrowseImg(button, url) {
+var gbDispCache = {};
+var gbIsLoading = false;
+function fetchGbrowseImg(buttonId, url) {
+      var dispSel = "#gbInline";
       var wz = $("<script>").
             attr("type", "text/javascript").
             attr("src", "/gbrowse/wz_tooltip.js");
       var api = $("<script>").
             attr("type", "text/javascript").
             attr("src", "/gbrowse/apiGBrowsePopups.js");      
-      var loadingImg = $("<p>").
-            append($("<img/>").attr("src", "/assets/images/dna-animated.gif")).
-            append(" Loading...");
-
+      var loadingImg = ($("<div>").attr("id", buttonId)).attr("class", "gbGnCtx").
+            append($("<img/>").
+              attr("src", "/assets/images/dna-animated.gif")).
+            append("<br>Loading...");
+      var buttonSel = '#'+buttonId;
+      
       $(document).ready(function () {
-        $(button).click(function(){
-          $(button).before(loadingImg).remove();
-          $("#gbGnCtx");
-          $("#gbGnCtx").load(url, null, 
-          function(responseText, status, XMLHttpRequest) {
-             $("#gbGnCtx").append(api);
-             $("#gbGnCtx").append(wz);
-          });          
+        $(buttonSel).click(function(){
+          if (gbIsLoading) return;
+          
+          $("div[id^=tOoLtIp]").remove(); // previous wz_tooltips
+          
+          if (gbDispCache[buttonId] == null) { 
+            gbIsLoading = true;
+            var oriButton = $(buttonSel).clone(true);
+            $(buttonSel).replaceWith(loadingImg);
+            $(dispSel).load(url, null, 
+                    function(responseText, status, XMLHttpRequest) {
+               $(dispSel).append(api);
+               $(dispSel).append(wz);
+               $(buttonSel).replaceWith(oriButton);
+               $(dispSel).attr('src', buttonId);
+               gbDispCache[buttonId] = $(dispSel).clone();
+               gbIsLoading = false;
+               gbLoadedHl(buttonSel);
+            });
+          } else {
+            if ( $(dispSel).attr('src') == gbDispCache[buttonId].attr('src')) 
+              return;
+            $(dispSel).replaceWith(gbDispCache[buttonId]);
+            $(dispSel).append(wz);
+            gbLoadedHl(buttonSel);
+          }
           return true;
         });
       }); 
        
       $().ajaxError(function(info,xhr){
-        $("#gbGnCtx").append("Oops: " +  xhr.status + ' ' + xhr.statusText);
+        $(dispSel).append("Oops: " +  xhr.status + ' ' + xhr.statusText);
       });
+}
+
+function gbLoadedHl(buttonSel) {
+  $('.gbGnCtxActive').removeClass('gbGnCtxActive');               
+  $(buttonSel).addClass('gbGnCtxActive');
 }
