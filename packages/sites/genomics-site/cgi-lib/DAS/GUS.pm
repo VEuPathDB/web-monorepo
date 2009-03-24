@@ -55,13 +55,14 @@ package DAS::GUS;
 
 use strict;
 use DAS::GUS::Segment;
-use DAS::Util::SqlParser;
 use Bio::Root::Root;
 use Bio::DasI;
 use Bio::PrimarySeq;
 use DBI;
 use Carp qw(longmess);
 use vars qw($VERSION @ISA);
+
+use ApiCommonWebsite::Model::SqlXmlParser;
 
 use constant DEBUG => 0;
 
@@ -99,7 +100,7 @@ sub new {
   $dbh->{LongReadLen} = 10000000;
 
   $self->dbh($dbh);
-  $self->parser(DAS::Util::SqlParser->new($sqlfile));
+  $self->parser(ApiCommonWebsite::Model::SqlXmlParser->new($sqlfile));
   $self->parser->setProjectId($projectId);
 
   return $self;
