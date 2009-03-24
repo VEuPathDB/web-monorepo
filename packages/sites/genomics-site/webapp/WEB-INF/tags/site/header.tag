@@ -291,7 +291,7 @@ behavior: url(/assets/css/csshover.htc);
 </style>
 <![endif]-->
 
-<c:if test="${project == 'CryptoDB'}"> 
+<c:if test="${param.questionFullName eq 'IsolateQuestions.IsolateByCountry'}">
   <script type="text/javascript" src="/assets/js/google_map.js"></script>
   <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${gkey}" type="text/javascript"></script>
 </c:if>
