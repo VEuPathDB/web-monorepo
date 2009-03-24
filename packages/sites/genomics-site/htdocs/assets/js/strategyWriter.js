@@ -258,7 +258,7 @@ function createDetails(ele, strat, step){
 	if(ele[0].parentNode.nodeName == "strategy")
 		f = true;
 	var detail_div = document.createElement('div');
-	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"350px" });
+	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"42%" });
 	var name = $(ele).attr("name");
 	var shortName = $(ele).attr("shortName");
 	var collapsible = $(ele).attr("isCollapsed");
@@ -292,22 +292,33 @@ function createDetails(ele, strat, step){
 	if(params.length != 0)
 		params_table = createParameters(params);
 	
-	rename_step = 	"			<a title='Click to rename the step' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
-	view_step = 	"			<a title='Click to view the results of this query (or substrategy) in the Resuts area below' class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
-	edit_step =		"			<a title='Click to edit the query and/or the operation'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\"," + collapsible + ");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Revise</a>&nbsp;|&nbsp;";
+	if(collapsible == "false"){                              /* simple step */
+var rename_popup = "Rename this search";
+var view_popup = "View the results of this search in the Resuts area below";
+var edit_popup = "Revise the parameters of this search and/or its combine operation";
+var expand_popup = "Expand this step in a new panel to add nested steps. (Use this to build a non-linear strategy)";
+} else {   							/* substrategy */
+var rename_popup = "Rename this expanded step (substrategy)";             
+var view_popup = "View the results of this expanded step in the Resuts area below";
+var edit_popup = "Expand into a new panel to add or edit nested steps";
+var expand_popup = "Expand into a new panel to add or edit nested steps";
+}							
+var insert_popup = "Insert a new step to the left of this one, by either running a new query or choosing an existing strategy";
+var delete_popup = "Delete this step from the strategy; if this step is the only step in this strategy, this will delete the strategy also";
+
+	rename_step = "<a title='" + rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + strat + "," + id + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
+	view_step = "<a title='" + view_popup + "' class='view_step_link' onclick='NewResults(" + strat + "," + id + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
+	edit_step ="<a title='" + edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionFullName + "\",\"" + urlParams + "\"," + collapsible + ");hideDetails(this)' id='" + strat + "|" + parentid + "|" + operation + "'>Revise</a>&nbsp;|&nbsp;";
 	if(f){
-		expand_step = 	"			<span class='expand_step_link' style='color:grey'>Expand</span>&nbsp;|&nbsp;";
+		expand_step = "<span class='expand_step_link' style='color:grey'>Expand</span>&nbsp;|&nbsp;";
 	}else{
-		expand_step = 	"			<a title='If this step is not a subsrategy, click to begin one; if this step is already a substrategy, click to open it and continue working on it' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;";
+		expand_step = "<a title='" + expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;";
 	}
-	insert_step = 	"			<a title='Click to insert a step befpre this one, by either running a new query or choosing an existing strategy'  class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert Before</a>&nbsp;|&nbsp;";
-	delete_step = 	"			<a title='This will remove the step from the strategy; if this step is the only step in this strategy, this will remove the strategy also' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>";
-	close_button = 	"			<span style='float: right; position: absolute; right: 6px;'>"+
-					"				<a href='javascript:void(0)' onclick='hideDetails(this)'>[x]</a>"+
-					"			</span>";
-	
-	
-	
+	insert_step = "<a title='" + insert_popup + "'  class='insert_step_link' id='" + strat + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + dType + "\");hideDetails(this)'>Insert New Step Before</a>&nbsp;|&nbsp;";
+	delete_step = "<a title='" + delete_popup + "' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + strat + "," + id + ");hideDetails(this)'>Delete</a>";
+	close_button = "<span style='float: right; position: absolute; right: 6px;'>"+
+					"<a href='javascript:void(0)' onclick='hideDetails(this)'>[x]</a>"+
+					"</span>";
 	inner = ""+	
 	    "		<div class='crumb_menu'>"+ rename_step + view_step + edit_step + expand_step + insert_step + delete_step + close_button +
 		"		</div>"+
