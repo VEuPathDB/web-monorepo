@@ -44,14 +44,16 @@ $sqlMode = 'commented' if $showCommentedSql;
 my ($sanityConfig, $defaultParams, $sqlValues) =
   &parseSanityFile($sanityFile, $showParseS);
 
-my $gbrowseConfig = &ApiCommonWebsite::Model::SqlXmlParser::parseSqlXmlFile($gbrowseFile, $showParseG);
+my $sqlParser = ApiCommonWebsite::Model::SqlXmlParser->new($gbrowseFile);
+$sqlParser->setProjectId($model);
+$sqlParser->print() if($showParseG);
 
 if ($indexOnly) {
   &showIndex($sanityConfig);
   exit(0);
 }
 
-my ($queryNameHash, $queryNameArray) = &getQueryNameHash($gbrowseConfig);
+my ($queryNameHash, $queryNameArray) = &getQueryNameHash($sqlParser);
 
 my $parentFeatureTests = {};   # tests that subfeature queries refer to
 
@@ -273,16 +275,22 @@ sub findPrepareSql {
 
 
 sub getQueryNameHash {
-  my ($gbrowseConfig) = @_;
+  my ($sqlParser) = @_;
+
+  my $queryNamesHash = $sqlParser->getQueryNamesHash();
 
   my $qnh = {};
   my @qna;
-  foreach my $module (@{$gbrowseConfig->{module}}) {
-    foreach my $sqlQuery (@{$module->{sqlQuery}}) {
-      push(@qna, $sqlQuery->{name}->[0]);
-      $qnh->{$sqlQuery->{name}->[0]} = $sqlQuery;
+
+  foreach my $module (keys %{$queryNamesHash}) {
+    foreach my $queryName (@{$queryNamesHash->{$module}}) {
+      my $sqlQuery = $sqlParser->getSQL($module, $queryName);
+
+      push(@qna, $queryName);
+      $qnh->{$queryName} = $sqlQuery;
     }
   }
+
   return ($qnh,\@qna);
 }
 
@@ -402,7 +410,13 @@ Total time: $totalTime
 }
 sub runSingleTest {
   my ($dbh, $test, $defaultParams, $sqlValues, $parentFeatureTests, $parentFeatureId) = @_;
-  my $rawSqlString = $queryNameHash->{$test->{name}}->{sql}->[0];
+
+  my $queryName = $test->{name};
+  my $rawSqlString = $queryNameHash->{$queryName};
+
+  unless($rawSqlString) {
+    die "No sql found for query: $queryName";
+  }
 
   my $sqlString = &interpolateParams($rawSqlString, $defaultParams,
 				     $test->{name},
