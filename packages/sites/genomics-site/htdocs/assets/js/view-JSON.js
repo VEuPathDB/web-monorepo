@@ -146,11 +146,12 @@ function booleanStep(modelstep, jsonstep, sid){
 		$(bkgdDiv).addClass("expandedStep");
 		$(bkgdDiv).css({ left: (leftOffset-2) + "px"});
 	}
+	if(bkgdDiv != null)
+		stepdivs.push(bkgdDiv);
 	stepdivs.push(boolDiv);
 	stepdivs.push(stepNumber);
 	stepdivs.push(childDiv);
-	if(bkgdDiv != null)
-		stepdivs.push(bkgdDiv);
+	
 }
 
 //Creates all steps that are on the bottom line only ie. this first step and transform steps
@@ -208,15 +209,18 @@ function createDetails(modelstep, jsonstep, sid){
 	var detail_div = document.createElement('div');
 	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"350px" });
 	var name = jsonstep.displayName;
+	if(modelstep.isboolean)
+		name = jsonstep.step.displayName;
 	var filteredName = "";
 	if(jsonstep.filtered){
 		filteredName = "<span class='medium'><b>Applied Filter:&nbsp;</b>" + jsonstep.filterName + "</span><hr>";
 	}
-	if(jsonstep.isCollapsed)
-		name = jsonstep.strategy.name;
 	var collapsedName = name;
-	if(!jsonstep.isCollapsed)
+	if(jsonstep.isCollapsed){
+		name = jsonstep.strategy.name;
+	}else{
 		collapsedName = "Expanded " + name;
+	}
 	var parentid = modelstep.back_step_Id;
 	if(modelstep.back_boolean_Id != null){
 		parentid = modelstep.back_boolean_Id;
@@ -232,7 +236,7 @@ function createDetails(modelstep, jsonstep, sid){
 	if(modelstep.frontId == 1){
 		expand_step = 	"			<span class='expand_step_link' style='color:grey'>Expand</span>&nbsp;|&nbsp;";
 	}else{
-		expand_step = 	"			<a title='If this step is not a subsrategy, click to begin one; if this step is already a substrategy, click to open it and continue working on it' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + strat + "," + id + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;";
+		expand_step = 	"			<a title='If this step is not a subsrategy, click to begin one; if this step is already a substrategy, click to open it and continue working on it' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Expand</a>&nbsp;|&nbsp;";
 	}
 	insert_step = 	"			<a title='Click to insert a step befpre this one, by either running a new query or choosing an existing strategy'  class='insert_step_link' id='" + sid + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + getDataType(jsonstep.dataType,jsonstep.results) + "\");hideDetails(this)'>Insert Before</a>&nbsp;|&nbsp;";
 	delete_step = 	"			<a title='This will remove the step from the strategy; if this step is the only step in this strategy, this will remove the strategy also' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + sid + "," + modelstep.frontId + ");hideDetails(this)'>Delete</a>";
