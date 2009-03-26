@@ -44,9 +44,9 @@
       <td scope="row"><input type=checkbox id="${strategyId}" onclick="updateSelectedList()"/></td>
       <%-- need to see if this strategys id is in the session. --%>
       <c:set var="active" value=""/>
-      <c:set var="activeStrategies" value="${wdkUser.activeStrategies}"/>
-      <c:forEach items="${activeStrategies}" var="id">
-        <c:if test="${strategyId == id}">
+      <c:set var="openedStrategies" value="${wdkUser.openedStrategies}"/>
+      <c:forEach items="${openedStrategies}" var="str">
+        <c:if test="${strategyId == str.strategyId}">
           <c:set var="active" value="true"/>
         </c:if>
       </c:forEach>

@@ -15,41 +15,13 @@
 <c:set var="dsCol" value="${param.dataset_column}"/>
 <c:set var="dsColVal" value="${param.dataset_column_label}"/>
 
-<c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
-<c:set var="history" value="${requestScope.wdkHistory}"/>
 <c:set var="model" value="${applicationScope.wdkModel}" />
-<c:set var="strategy" value="${requestScope.wdkStrategy}" />
 <c:set var="showHist" value="${requestScope.showHistory}" />
 <c:set var="strategies" value="${requestScope.wdkActiveStrategies}"/>
 
 <c:set var="commandUrl">
     <c:url value="/processSummary.do?${wdk_query_string}" />
 </c:set>
-
-<c:set var="type" value="None" />
-<c:choose>
-	<c:when test="${wdkAnswer.recordClass.fullName == 'GeneRecordClasses.GeneRecordClass'}">
-		<c:set var="type" value="Gene" />
-	</c:when>
-	<c:when test="${wdkAnswer.recordClass.fullName == 'SequenceRecordClasses.SequenceRecordClass'}">
-		<c:set var="type" value="Sequence" />
-	</c:when>
-	<c:when test="${wdkAnswer.recordClass.fullName == 'EstRecordClasses.EstRecordClass'}">
-		<c:set var="type" value="EST" />
-	</c:when>
-	<c:when test="${wdkAnswer.recordClass.fullName == 'OrfRecordClasses.OrfRecordClass'}">
-		<c:set var="type" value="ORF" />
-	</c:when>
-	<c:when test="${wdkAnswer.recordClass.fullName == 'SnpRecordClasses.SnpRecordClass'}">
-		<c:set var="type" value="SNP" />
-	</c:when>
-	<c:when test="${wdkAnswer.recordClass.fullName == 'AssemblyRecordClasses.AssemblyRecordClass'}">
-		<c:set var="type" value="Assembly" />
-	</c:when>
-	<c:when test="${wdkAnswer.recordClass.fullName == 'IsolateRecordClasses.IsolateRecordClass'}">
-		<c:set var="type" value="Isolate" />
-	</c:when>	
-</c:choose>
 
 <c:set var="headElement">
 <link rel="stylesheet" href="/assets/css/flexigrid/flexigrid.css" type="text/css"/>
@@ -103,16 +75,19 @@
 <%------ if this div is not being used, please clean up ------ ---%>
 <div class="strategy_controls"/></div> 
 
-<input type="hidden" id="history_id" value="${history.stepId}"/>
 <div id="Strategies">
-        <c:set var="i" value="0"/>
-	<c:forEach items="${strategies}" var="strat">
-                <script>
-                   init_strat_ids[${i}] = ${strat.strategyId};
-                   init_strat_order[${strat.strategyId}] = ${i + 1};
-                </script>
-                <c:set var="i" value="${i+1}"/>
-	</c:forEach>
+        <script>
+          <c:set var="i" value="0"/>
+	  <c:forEach items="${strategies}" var="strat">
+            init_strat_ids[${i}] = ${strat.strategyId};
+            init_strat_order[${strat.strategyId}] = ${i + 1};
+            <c:set var="i" value="${i+1}"/>
+	  </c:forEach>
+          <c:if test="${wdkUser.viewStrategyId != null && wdkUser.viewStepId != null}">
+            init_view_strat = "${wdkUser.viewStrategyId}";
+            init_view_step = "${wdkUser.viewStepId}";
+          </c:if>
+        </script>
 </div>
 
 <input type="hidden" id="target_step" value="${stepNumber+1}"/>

@@ -1,5 +1,7 @@
 var strats = new Array();
 var xmldoc = null;
+var init_view_strat = null;
+var init_view_step = null;
 var init_strat_ids = new Array();
 var init_strat_order = new Array();
 var exportBaseURL;
@@ -21,21 +23,6 @@ $(document).ready(function(){
 		showInstructions();
 	}else{
 		initDisplay(0);
-/*		jQuery.each(init_strat_ids, function(){
-			$.ajax({
-				url: "showStrategy.do?strategy=" + this,
-				type: "POST",
-				dataType: "xml",
-				success: function(data){
-					id = loadModel(data);
-					$("div#Strategies").append(displayModel(id));
-					if (id == 0) {
-						$("#diagram_0 div.venn:last .resultCount a").click();
-					}
-				}
-			});
-		});
-*/
 	}
 });
 
@@ -48,7 +35,13 @@ function initDisplay(index){
 		success: function(data){
 			id = loadModel(data);
 			$("div#Strategies").append(displayModel(id));
-			if (id == 0) {
+                        var strat = getStrategy(id);
+			if (strat.backId == init_view_strat) {
+				var step = getStepFromBackId(strat.backId,init_view_step);
+                                var selectedBox = $("#diagram_" + strat.frontId + " #step_" + step.frontId);
+				if (selectedBox.length == 0) selectedBox = $("#diagram_" + strat.frontId + " #step_" + step.frontId + "_sub");
+				$(".resultCount a",selectedBox).click();
+			}else if (id == 0 && (init_view_strat == null || init_view_step == null)) {
 				$("#diagram_0 div.venn:last .resultCount a").click();
 			}
 			if(index+1 < init_strat_ids.length)
