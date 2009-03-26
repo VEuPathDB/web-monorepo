@@ -156,12 +156,13 @@ function AddStepToStrategy(url){
 	$.ajax({
 		url: url,
 		type: "POST",
-		dataType:"xml",
+		dataType:"JSON",
 		data: d,
 		beforeSend: function(){
 			showLoading(f_strategyId);
 		},
 		success: function(data){
+			data = eval("(" + data + ")");
 			removeStrategyDivs(b_strategyId);
 			f_strategyId = updateStrategies(data,"AddStep", strategy);
 			removeLoading(f_strategyId);
@@ -187,13 +188,14 @@ function EditStep(url, proto, step_number){
 		$.ajax({
 		url: url,
 		type: "POST",
-		dataType:"xml",
+		dataType:"JSON",
 		data: d,
 		beforeSend: function(obj){
 				showLoading(proto.split("_")[0]);
 				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
+			data = eval("(" + data + ")");
 			var selectedBox = $("#Strategies div.selected");
 			if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 			if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
@@ -238,29 +240,30 @@ function DeleteStep(f_strategyId,f_stepId){
 	$.ajax({
 		url: url,
 		type: "post",
-		dataType:"xml",
+		dataType:"JSON",
 		data:"",
 		beforeSend: function(obj){
 				showLoading(f_strategyId);
 				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
-				if($("root", data).children("strategy").length > 0){
-				removeStrategyDivs(strategy.backId);
-				var new_f_strategyId = updateStrategies(data, "DeleteStep", strategy);
-				if (d_strategyId && f_strategyId == d_strategyId) {
-					var target;
-					if (f_stepId == d_stepId) {
-						$("#diagram_" + new_f_strategyId + " div.row2:last .resultCount a").click();
+				data = eval("(" + data + ")");
+				if(data.strategy != undefined){
+					removeStrategyDivs(strategy.backId);
+					var new_f_strategyId = updateStrategies(data, "DeleteStep", strategy);
+					if (d_strategyId && f_strategyId == d_strategyId) {
+						var target;
+						if (f_stepId == d_stepId) {
+							$("#diagram_" + new_f_strategyId + " div.row2:last .resultCount a").click();
+						}
+						else if (f_stepId > d_stepId) {
+							$("#diagram_" + new_f_strategyId + " div#step_" + d_stepId + d_sub + " .resultCount a").click();
+						}
+						else {
+							if(d_sub == "" && d_stepId == 1) d_sub = "_sub";
+							$("#diagram_" + new_f_strategyId + " div#step_" + (d_stepId-1) + d_sub + " .resultCount a").click();
+						}
 					}
-					else if (f_stepId > d_stepId) {
-						$("#diagram_" + new_f_strategyId + " div#step_" + d_stepId + d_sub + " .resultCount a").click();
-					}
-					else {
-						if(d_sub == "" && d_stepId == 1) d_sub = "_sub";
-						$("#diagram_" + new_f_strategyId + " div#step_" + (d_stepId-1) + d_sub + " .resultCount a").click();
-					}
-				}
 				}else{
 					removeStrategyDivs(strategy.backId);
 					$("div#diagram_"+strategy.frontId).remove();
@@ -289,13 +292,14 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 	$.ajax({
 		url: url,
 		type: "post",
-		dataType: "xml",
+		dataType: "JSON",
 		data: "",
 		beforeSend: function(){
 			showLoading(f_strategyId);
 			//$("div#step_" + step.frontId + "_sub h3 div.crumb_details").hide();
 		},
 		success: function(data){
+			data = eval("(" + data + ")");
 			x = loadModel(data);
 			if(collapsedName.indexOf("UNION") == -1 && collapsedName.indexOf("MINUS") == -1 && collapsedName.indexOf("INTERSECT") == -1 )
 				$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub h3 a:first").text(un);
