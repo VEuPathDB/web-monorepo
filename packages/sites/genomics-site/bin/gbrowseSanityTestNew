@@ -61,95 +61,9 @@ my $dbh = getDbHandle($showDbInfo);
 &runTests($dbh, $queryNameHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo,
 	  $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts);
 
-###################################################################
 
-sub usage {
-  die
-q{
-Test all sql in a gbrowse XML file
+###########################################################################
 
-Usage: gbrowseSanityTest --model PlasmoDB --gbrowseFile gbrowseXmlFile [--indexOnly | --failuresOnly] [--skipTo testnum] [--stopAfter testnum] [--showParse] [--showSql] [--showCommentedSql] [--showDbInfo]
-
-Where:
-  model            the name of the model in WDK parlance
-  gbrowseFile      the xml file that contains the queries used by gbrowse
-  indexOnly        don't run the test. only print tests and their test number
-  failuresOnly     run the test but only report the failures
-  skipTo           the index of the first test to run
-  stopAfter        the index of the last test to run
-  showParse       show the data structure resulting from the parse of gbrowseFile
-  showSql          show the SQL even if the test passes
-  showCommentedSql like --showSql, but with macro names labelled in SQL comments
-                    (note that this can cause errors for macros inside quotes)
-  showDbInfo       show the database connection info (dsn and login)
-
-Sample test info in the gbrowse XML:
-<DAS>
-    <defaultParamValue name="rend" value="500000"/>
-    <defaultParamValue name="base_start" value="1000"/>
-    <defaultParamValue name="dlm" value=","/>
-    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_MAL3$$"/>
-
-    <sqlValue name="na_seq_id_MAL3">
-      <sql>
-      select na_sequence_id from dots.externalnasequence where source_id = 'MAL3'
-      </sql>
-    </sqlValue>
-
-    <sqlValue name="na_feat_id_PF11_0344">
-      <sql>
-      select na_feature_id from dots.genefeature where source_id = 'PF11_0344'
-      </sql>
-    </sqlValue>
-
-  <module name="GUS.pm"> 
-    <sqlQuery> 
-      <name>get_feature_by_name</name>
-      <testParamSet>
-         <param name="name" value="MAL1"/>
-      </testParamSet>
-      <sql>
-       ...
-      </sql>
-     </sqlQuery>
-  </module>
-
- <module name="Segment.pm">
-    <test name="annotation:density:subfeatures" min="1" max="2000">
-    </test>
-
-    <sqlQuery>
-      <name>annotation:density:subfeatures</name>
-      <testParamSet>
-        <param name="parent_id" value="$$na_feat_id_PF11_0344$$"/>
-      </testParamSet>
-    ...
-    </sqlQuery>
-
-
-  ...
-
-Strategy for adding tests to the gbrowse XML File
-
-Step 1: create <defaultParam> tags
-
-Step 2: create <sqlValue> tags.  Use one of these when there is a <param> or 
-        <defaultParamValue> that expects an internal ID (eg, an na_sequence_id)
-        as a value.  Because your sanity test file will go into SVN, you do not
-        want to pollute it with hard-coded internal IDs.  Instead, use an
-        <sqlValue> tag to write sql that will produce an internal ID from a 
-        stable ID.  Give the <sqlValue> a unique name.  You can now refer to it
-        in any <param> or <defaultParamValue> by using the $$ macro syntax (see
-        the sample sanity file above).
-
-Step 3: for any query that needs param values that are not provided by the defaults, 
-        add a <paramValuesSet> to provide the needed param values
-
-Step 4: to add additional tests (ie, to test different param values) add more 
-        <paramValuesSet>s
-
-};
-}
 
 # make structure that has one element per test
 sub getSanityConfig {
@@ -164,6 +78,8 @@ sub getSanityConfig {
 	  next if ($sqlQuery->{exclude} && $sqlQuery->{exclude} =~ /$model/);
 	  if ($sqlQuery->{testParamValues}) {
 	      foreach my $testParamValues (@{$sqlQuery->{testParamValues}}) {
+		  die "<testParamValues> must include a model= attribute" unless $testParamValues->{model};
+		  next if $testParamValues->{model} ne $model;
 		  my $test = {name => $sqlQuery->{name}->[0]};
 		  $test->{param} = $testParamValues->{param};
 		  push(@{$sanityConfig->{test}}, $test);
@@ -176,13 +92,23 @@ sub getSanityConfig {
       }
   }
 
+  my $testInfo;
+  foreach my $testInfoDecl (@{$gbrowseConfig->{sanityTestInfo}}) {
+      if ($testInfoDecl->{model} eq $model) {
+	  die "Duplicate <sanityTestInfo model=\"$model\">" if $testInfo;
+	  $testInfo = $testInfoDecl;
+      }
+  }
+  
+  die "Cannot find <sanityTestInfo model=\"$model\">" unless $testInfo;  
+
   my $defaultParams = {};
-  foreach my $defaultParamValue (@{$gbrowseConfig->{defaultParamValue}}) {
+  foreach my $defaultParamValue (@{$testInfo->{defaultParamValue}}) {
     $defaultParams->{$defaultParamValue->{name}} =
       {value=> $defaultParamValue->{value}, sql => $defaultParamValue->{value}};
   }
 
-  return ($sanityConfig, $defaultParams, $gbrowseConfig->{sqlValue});
+  return ($sanityConfig, $defaultParams, $testInfo->{sqlValue});
 }
 
 sub showIndex {
@@ -540,6 +466,94 @@ sub substituteSqlValue {
   }
 
   return $val;
+}
+
+sub usage {
+  die
+q{
+Test all sql in a gbrowse XML file
+
+Usage: gbrowseSanityTest --model PlasmoDB --gbrowseFile gbrowseXmlFile [--indexOnly | --failuresOnly] [--skipTo testnum] [--stopAfter testnum] [--showParse] [--showSql] [--showCommentedSql] [--showDbInfo]
+
+Where:
+  model            the name of the model in WDK parlance
+  gbrowseFile      the xml file that contains the queries used by gbrowse
+  indexOnly        don't run the test. only print tests and their test number
+  failuresOnly     run the test but only report the failures
+  skipTo           the index of the first test to run
+  stopAfter        the index of the last test to run
+  showParse       show the data structure resulting from the parse of gbrowseFile
+  showSql          show the SQL even if the test passes
+  showCommentedSql like --showSql, but with macro names labelled in SQL comments
+                    (note that this can cause errors for macros inside quotes)
+  showDbInfo       show the database connection info (dsn and login)
+
+Sample test info in the gbrowse XML:
+<DAS>
+    <defaultParamValue name="rend" value="500000"/>
+    <defaultParamValue name="base_start" value="1000"/>
+    <defaultParamValue name="dlm" value=","/>
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_MAL3$$"/>
+
+    <sqlValue name="na_seq_id_MAL3">
+      <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'MAL3'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="na_feat_id_PF11_0344">
+      <sql>
+      select na_feature_id from dots.genefeature where source_id = 'PF11_0344'
+      </sql>
+    </sqlValue>
+
+  <module name="GUS.pm"> 
+    <sqlQuery> 
+      <name>get_feature_by_name</name>
+      <testParamSet>
+         <param name="name" value="MAL1"/>
+      </testParamSet>
+      <sql>
+       ...
+      </sql>
+     </sqlQuery>
+  </module>
+
+ <module name="Segment.pm">
+    <test name="annotation:density:subfeatures" min="1" max="2000">
+    </test>
+
+    <sqlQuery>
+      <name>annotation:density:subfeatures</name>
+      <testParamSet>
+        <param name="parent_id" value="$$na_feat_id_PF11_0344$$"/>
+      </testParamSet>
+    ...
+    </sqlQuery>
+
+
+  ...
+
+Strategy for adding tests to the gbrowse XML File
+
+Step 1: create <defaultParam> tags
+
+Step 2: create <sqlValue> tags.  Use one of these when there is a <param> or 
+        <defaultParamValue> that expects an internal ID (eg, an na_sequence_id)
+        as a value.  Because your sanity test file will go into SVN, you do not
+        want to pollute it with hard-coded internal IDs.  Instead, use an
+        <sqlValue> tag to write sql that will produce an internal ID from a 
+        stable ID.  Give the <sqlValue> a unique name.  You can now refer to it
+        in any <param> or <defaultParamValue> by using the $$ macro syntax (see
+        the sample sanity file above).
+
+Step 3: for any query that needs param values that are not provided by the defaults, 
+        add a <paramValuesSet> to provide the needed param values
+
+Step 4: to add additional tests (ie, to test different param values) add more 
+        <paramValuesSet>s
+
+};
 }
 
 
