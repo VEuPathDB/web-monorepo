@@ -409,6 +409,39 @@ sub massSpecTitle {
   hover('Mass Spec', \@data);
 }
 
+sub massSpecUnifiedTitle {
+  my $f = shift;
+  my ($count) = $f->get_tag_values('Count');
+  my ($seq) =  $f->get_tag_values('PepSeq');
+  my ($db_ids) = $f->get_tag_values('DbIds');
+  my ($db_names) = $f->get_tag_values('DbNames');
+  my @data;
+
+  push @data, [ 'Sequence' => "$seq" ];
+  push @data, [ 'Total matches' => "$count" ];
+
+  # make hash with external_db_rel_id as key, and number of matches as value
+  my @hits = split(/, /, $db_ids);
+  my %freq;
+  foreach my $hit (sort(@hits)) {
+    $freq{$hit}++;
+  }
+  # make hash with external_db_rel_id as key, and db_name as value
+  my @names = split(/, /, $db_names);
+  my %test;
+  foreach my $hit (sort(@names)) {
+    my ($key,$val) = split(/=/, $hit);
+    $test{$key} = $val;
+  }
+  # display all 'db_name (number of matches)'
+  my $assayTitle = 'Asay (count)';
+  foreach my $try (keys(%freq)) {   ##@fields) {
+    push @data, [ "$assayTitle" => "$test{$try} ($freq{$try})" ];
+    $assayTitle = ' ';
+  }
+  hover('', \@data);
+}
+
 sub blastxTitle {
   my $f = shift;
   my $name = $f->name;
