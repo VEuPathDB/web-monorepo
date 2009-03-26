@@ -21,10 +21,10 @@
 	<script type="text/javascript" src="/assets/js/filter_menu.js"></script>
 	<!-- Strategy Interaction javascript -->
 	<script type="text/javascript" src="/assets/js/js-utils.js"></script>
-	<script type="text/javascript" src="/assets/js/Strategy.js"></script>
-	<script type="text/javascript" src="/assets/js/strategyWriter.js"></script>
+	<script type="text/javascript" src="/assets/js/model-JSON.js"></script>
+	<script type="text/javascript" src="/assets/js/view-JSON.js"></script>
 	<script type="text/javascript" src="/assets/js/step.js"></script>
-	<script type="text/javascript" src="/assets/js/StrategyAction.js"></script>
+	<script type="text/javascript" src="/assets/js/controler-JSON.js"></script>
 	<script type="text/javascript" src="/assets/js/pager.js"></script>
 	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexigrid.js"></script>
 	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexifluid.js"></script>
