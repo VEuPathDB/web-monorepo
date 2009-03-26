@@ -8,6 +8,12 @@
 <c:set var="err" scope="request" value="${requestScope['org.apache.struts.action.ERROR']}"/>
 <c:set var="exp" scope="request" value="${requestScope['org.apache.struts.action.EXCEPTION']}"/>
 
+<c:set var="props" value="${applicationScope.wdkModel.properties}" /> 
+<c:set var="to" value="${props['SITE_ADMIN_EMAIL']}" />
+<c:set var="from" value="${commentForm.commentTargetId}_comment_alert@${wdkModel.displayName}.org" />
+<c:set var="subject" value="${subject}" />
+<c:set var="body" value="${body}" />
+
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
@@ -94,11 +100,18 @@ $("#box a").click(function(event) {
           </c:otherwise>
 
         </c:choose>
-            
-         <p align=center>Thank you for the comment.
-         <br/><br/>
+
+        <site:email
+              to="${to}"
+              from="${from}"
+              subject="${subject}"
+              body="${body}"
+        />
+         
+        <p align=center>Thank you for the comment.
+        <br/><br/>
       
-         <a href="${returnUrl}">Return to ${commentTarget.displayName} ${commentForm.stableId} page</a>
+         <a href="${returnUrl}">Return to ${commentForm.commentTargetId} ${commentForm.stableId} page</a>
          </p>
        </c:when>    
 
