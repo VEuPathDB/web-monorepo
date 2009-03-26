@@ -4,9 +4,14 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
-
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
+<c:set var="props" value="${applicationScope.wdkModel.properties}" /> 
+<c:set var="to" value="${props['SITE_ADMIN_EMAIL']}" />
+<c:set var="from" value="phenotype_comment_${phenotypeForm.stableId}@${wdkModel.displayName}.org" />
+<c:set var="subject" value="${subject}" />
+<c:set var="body" value="${body}" />
 
 <site:header title="${wdkModel.displayName}.org :: Add A Phenotype Comment"
                  banner="Add A Phenotype Comment"/>
@@ -60,14 +65,22 @@
     <c:choose>
       <c:when test="${submitStatus eq 'success'}">
       
-            <c:set var="returnUrl">
-            <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${phenotypeForm.stableId}"/>
-            </c:set>
-         <p align=center>Thank you for the comment.
-         <br/><br/>
+        <c:set var="returnUrl">
+        <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${phenotypeForm.stableId}"/>
+        </c:set>
+
+        <site:email
+              to="${to}"
+              from="${from}"
+              subject="${subject}"
+              body="${body}"
+        />
+
+        <p align=center>Thank you for the comment.
+        <br/><br/>
       
-         <a href="${returnUrl}">Return to ${commentTarget.displayName} ${phenotypeForm.stableId} page</a>
-         </p>
+        <a href="${returnUrl}">Return to ${commentTarget.displayName} ${phenotypeForm.stableId} page</a>
+        </p>
        </c:when>
 
       <c:otherwise>
@@ -118,15 +131,13 @@
             <li>
            Genotype, strain, other mutations/markers), other genotypic information</li>
 
-           <li>Use std nomenclature; as per Bzik/Fox suggestions? </li>
-
            </ul>
 
         </td>
       </tr>
 
       <tr class="medium">
-         <td>Mutant Type</td>
+         <td>Mutation Type</td>
          <td>
             <input type=radio name="mutationType" value=1>Gene knock out</input>
             <input type=radio name="mutationType" value=2>Gene knock in</input>
@@ -139,12 +150,12 @@
       </tr>
 
       <tr class="medium">
-         <td>Mutant Method</td>
+         <td>Mutation Method</td>
          <td>
             <html:select property="mutationMethod">
               <html:option value="1">Transgene (over)expression</html:option>
               <html:option value="2">Pharmacological KO</html:option>
-              <html:option value="3">Homologous eecombination (DKO)</html:option>
+              <html:option value="3">Homologous recombination (DKO)</html:option>
               <html:option value="4">Spontaneous mutant</html:option>
               <html:option value="5">ENU mutagenesis</html:option>
               <html:option value="6">Xray mutagenesis</html:option>
