@@ -56,7 +56,7 @@ sub snpBgFromIsCodingAndNonSyn {
 
 sub MassSpecScoreBgColor {
    my $f = shift;
-    my ($count) = $f->get_tag_values("score"); 
+    my ($count) = $f->get_tag_values("Count"); 
    return 'red' if ($count > 50); #darkgray
    return 'blue' if ($count > 25 );
    return 'green' if ($count > 10 );
