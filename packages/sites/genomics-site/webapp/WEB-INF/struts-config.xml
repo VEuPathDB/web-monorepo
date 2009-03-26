@@ -54,7 +54,7 @@
       type="org.gusdb.wdk.controller.action.ExpandStepAction"
       scope="request"
       validate="false">
-      <forward name="show_strategy" path="/strategyPage.jsp"/>
+      <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
       path="/importStrategy"
