@@ -36,14 +36,14 @@ GetOptions("model=s" => \$model,
 $sqlMode = $showSql;
 $sqlMode = 'commented' if $showCommentedSql;
 
-my $gbrowseConfig = &ApiCommonWebsite::Model::SqlXmlParser::parseSqlXmlFile($gbrowseFile, $showParse);
+my $parser = ApiCommonWebsite::Model::SqlXmlParser->new($gbrowseFile, $showParse);
+
+my $gbrowseConfig = $parser->getTree();
 
 exit(0) if $showParse;
 
-my ($sanityConfig, $defaultParams, $sqlValues) =
+my ($sanityConfig, $defaultParams, $sqlValuesDecl) =
   &getSanityConfig($gbrowseConfig, $model);
-
-print Dumper($sanityConfig);exit(0);
 
 if ($indexOnly) {
   &showIndex($sanityConfig);
@@ -58,7 +58,7 @@ my $maxPrepareCounts = &validateTests($queryNameHash, $queryNameArray, $sanityCo
 
 my $dbh = getDbHandle($showDbInfo);
 
-&runTests($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo,
+&runTests($dbh, $queryNameHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo,
 	  $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts);
 
 ###################################################################
@@ -157,6 +157,7 @@ sub getSanityConfig {
 
   my $sanityConfig = {};
   $sanityConfig->{test} = [];
+
   foreach my $module (@{$gbrowseConfig->{module}}) {
       foreach my $sqlQuery (@{$module->{sqlQuery}}) {
 	  next if ($sqlQuery->{include} && $sqlQuery->{include} !~ /$model/);
@@ -181,7 +182,7 @@ sub getSanityConfig {
       {value=> $defaultParamValue->{value}, sql => $defaultParamValue->{value}};
   }
 
-  return ($sanityConfig, $defaultParams, $gbrowseConfig->{sqlValues});
+  return ($sanityConfig, $defaultParams, $gbrowseConfig->{sqlValue});
 }
 
 sub showIndex {
@@ -274,8 +275,8 @@ sub getTestedQueryNames {
   my $count=0;
   foreach my $test (@{$sanityConfig->{test}}) {
     $count++;
-    die "test $count ($test->{name}) missing min\n" if $test->{min} eq "";
-    die "test $count ($test->{name}) missing max\n" if $test->{max} eq "";
+    $test->{min} = 1 if $test->{min} eq "";
+    $test->{max} = 10000000 if $test->{max} eq "";
     $testedNames{$test->{name}} = $test;
     foreach my $param (@{$test->{param}}) {
       if ($param->{parentFeatureTest}) {
@@ -324,9 +325,9 @@ sub getDbHandle {
 
 
 sub runTests {
-  my ($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts) = @_;
+  my ($dbh, $queryNameHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts) = @_;
 
-  my $sqlValues = &getSqlValues($dbh, $sanityConfig->{sqlValue}, $maxPrepareCounts);
+  my $sqlValues = &getSqlValues($dbh, $sqlValuesDecl, $maxPrepareCounts);
 
   my $count = 0;
   my $passed = 0;
