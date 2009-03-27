@@ -37,7 +37,7 @@ Strategy.prototype.initSteps = function(steps){
 				}
 			}else{ 
 				st = new Step(i, steps[i].id, "", null, steps[i].answerId);
-				if(steps[i].isTransform){
+				if(steps[i].istransform){
 					st.isTransform = true;
 				}
 			}
@@ -45,11 +45,14 @@ Strategy.prototype.initSteps = function(steps){
 				st.isLast = true;
 			if(st.frontId != 1){
 				pstp = steps[parseInt(i)-1];
-				st.prevStepType = (pstp.isTransform) ? "transform" : "boolean";
+				if(parseInt(i)-1 == 1)
+					st.prevStepType = "";
+				else 
+					st.prevStepType = (pstp.istransform) ? "transform" : "boolean";
 			}
 			if(!st.isLast){
 				nstp = steps[parseInt(i)+1];
-				st.nextStepType = (nstp.isTransform) ? "transform" : "boolean";
+				st.nextStepType = (nstp.istransform) ? "transform" : "boolean";
 			}
 			arr.push(st);
 		}

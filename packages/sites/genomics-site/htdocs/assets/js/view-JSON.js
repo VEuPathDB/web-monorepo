@@ -406,9 +406,9 @@ offset = function(modelstep){
 		leftOffset += t2b;
 	}else if(modelstep.isTransform && modelstep.prevStepType == "transform"){
 		leftOffset += t2t;
-	}else if(modelstep.prevStepType == "boolean"){
+	}else if(modelstep.isboolean){
 		leftOffset += f2b;
-	}else if(modelstep.prevStepType == "transform"){
+	}else if(modelstep.isTransform){
 		leftOffset += f2t;
 	}
 	return leftOffset;
