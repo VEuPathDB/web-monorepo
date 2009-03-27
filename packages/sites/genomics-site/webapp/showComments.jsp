@@ -15,68 +15,177 @@ attributes:
 <site:header title="${wdkModel.displayName} : User Comments on ${stable_id}"
                  banner="Comments on ${stable_id}"/>
 
+<head>
+<style type="text/css">
+  table.mybox {
+		width:     90%;
+		max-width: 100%;
+		padding:   6px;
+		color:     #000;
+		cellpandding: 3;
+		cellspacing: 3;
+		align: center;
+	}
+	td {
+		padding:   3px;
+		vertical-align: top;
+	}
+	th {
+		vertical-align: top;
+		padding:   3px;
+		background:  #88aaca ;
+		color:  #ffffff;
+	}
+	ul.myul {
+		list-style: inherit;
+		margin:auto 1.5em;
+		margin-top: 0.5em;
+		margin-bottom: 0.5em;
+	} 
+</style>
+
+
 <c:choose>
     <c:when test="${fn:length(comments) == 0}">
         <p>There's currently no comment for ${stable_id}.</p>
     </c:when>
     <c:otherwise> <%-- has comments for the stable id --%>
-        <table cellspacing=8 width="60%">
-        	<c:forEach var="comment" items="${comments}">
-        		<tr>
-            		<td>
-                		<div align="center"><a name=${comment.commentId}><strong>${comment.headline}</strong></a>
-                		</div>
-                		<div class=medium>
-                		<strong>By: </strong>${comment.userName}, ${comment.organization} <br/>
-                		<strong>For: </strong>${comment.projectName}, version ${comment.projectVersion} <br/>
-                		<strong>On:</strong> ${comment.organism}<br>
-                		<strong>At:</strong> ${comment.commentDate}<br>
-                		<c:if test="${comment.reviewStatus == 'accepted'}">
-                			<strong>Status: </strong>
-                			<em>included in the Annotation Center's official annotation</em>
-                			<br />
-                		</c:if>
-                		
-                		<%-- display external database info --%>
-                		<c:set var="externalDbs" value="${comment.externalDbs}" />
-                		<c:if test="${fn:length(externalDbs) > 0}">
-                			<strong>External Databases:</strong>
-                			<c:set var="firstItem" value="1" />
-                			<c:forEach var="externalDb" items="${externalDbs}">
-                			    <c:choose>
-                			        <c:when test="${firstItem == 1}">
-                			            <c:set var="firstItem" value="0" />
-                			        </c:when>
-                			        <c:otherwise>, </c:otherwise>
-                			    </c:choose>
-                			    ${externalDb.externalDbName} ${externalDb.externalDbVersion}
-                			</c:forEach>
-                			<br />
-                		</c:if>
+
+      <c:forEach var="comment" items="${comments}">
+
+        <table class=mybox>
+
+            <tr>
+               <th width=150>Headline:</th>
+               <th> <a name=${comment.commentId}>${comment.headline}</a></th>
+            </tr>
+
+            <tr>
+               <td>Author:</td>
+                <td>${comment.userName}, ${comment.organization} </td>
+            </tr>
+
+            <tr>
+               <td>Project:</td>
+                <td>${comment.projectName}, version ${comment.projectVersion} </td>
+            </tr>
+
+            <tr>
+               <td>Organism:</td>
+                <td>${comment.organism}</td>
+            </tr>
+
+            <tr> 
+               <td>Date:</td>
+                <td>${comment.commentDate}</td>
+            </tr>
+
+            <tr>
+               <td>PMID(s):</td>
+                <td> <c:forEach items="${comment.pmIds}" var="row">
+                        <a href="http://www.ncbi.nlm.nih.gov/pubmed/<c:out value="${row}"/>"><c:out value="${row}"/></a>
+                      </c:forEach>
+                </td>
+            </tr>
+
+            <tr>
+               <td>Genbank Accessions:</td>
+                <td> <c:forEach items="${comment.accessions}" var="row">
+                        <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&cmd=&term=<c:out value="${row}"/>"><c:out value="${row}"/></a>
+                      </c:forEach>
+                </td>
+            </tr>
+
+            <tr>
+               <td>Other Related Genes:</td>
+                <td> <c:forEach items="${comment.associatedStableIds}" var="row">
+                       <a href="showRecord.do?name=GeneRecordClasses.GeneRecordClass&source_id=<c:out value="${row}"/>"><c:out value="${row}"/> </a>
+                      </c:forEach>
+                </td>
+            </tr>
+
+            <tr>
+               <td>Category:</td>
+                <td> <c:forEach items="${comment.targetCategoryNames}" var="row">
+                       <c:out value="${row}"/>
+                      </c:forEach>
+                </td>
+
+            </tr>
+
+            <tr>
+               <td>Uploaded files:</td>
+                <td> <c:forEach items="${comment.files}" var="row">
+                        <a href="/common/communityfiles/<c:out value="${row}"/>">
+                        <c:out value="${row}"/></a>
+                      </c:forEach>
+                </td>
+            </tr>
+
+
+                    
+            <tr>
+               <td>External Database:</td>
+
+                    <%-- display external database info --%>
+                    <c:set var="externalDbs" value="${comment.externalDbs}" />
+                    <c:if test="${fn:length(externalDbs) > 0}">
+                        <td>
+                      <c:set var="firstItem" value="1" />
+                      <c:forEach var="externalDb" items="${externalDbs}">
+                          <c:choose>
+                              <c:when test="${firstItem == 1}">
+                                  <c:set var="firstItem" value="0" />
+                              </c:when>
+                              <c:otherwise>, </c:otherwise>
+                          </c:choose>
+                          ${externalDb.externalDbName} ${externalDb.externalDbVersion}
+                      </c:forEach>
+                        </td>
+                    </c:if>
+              </tr>
+
+              <tr>
+               <td>Location:</td>
 
                         <%-- display locations --%>
-                		<c:set var="locations" value="${comment.locations}" />
-                		<c:if test="${fn:length(locations) > 0}">
-                			<strong>Locations:</strong>
-                			<c:set var="firstItem" value="1" />
-                			<c:forEach var="location" items="${locations}">
-                			    <c:choose>
-                			        <c:when test="${firstItem == 1}">
-                			            <c:set var="firstItem" value="0" />
-                			        </c:when>
-                			        <c:otherwise>, </c:otherwise>
-                			    </c:choose>
-                			    ${location.coordinateType}: ${location.locationStart}-${location.locationEnd}
-                			    <c:if test="${location.reversed}">(reversed)</c:if>
-                			</c:forEach>
-                		</c:if>
-                		</div>
-                    		<p align=justify>${comment.content}</p>
-                		<hr/>
-            		</td>
-        		</tr>
-        	</c:forEach>
-        </table>
+                    <c:set var="locations" value="${comment.locations}" />
+                    <c:if test="${fn:length(locations) > 0}">
+                      
+                         <td>
+                      <c:set var="firstItem" value="1" />
+                      <c:forEach var="location" items="${locations}">
+                          <c:choose>
+                              <c:when test="${firstItem == 1}">
+                                  <c:set var="firstItem" value="0" />
+                              </c:when>
+                              <c:otherwise>, </c:otherwise>
+                          </c:choose>
+                          ${location.coordinateType}: ${location.locationStart}-${location.locationEnd}
+                          <c:if test="${location.reversed}">(reversed)</c:if>
+                      </c:forEach>
+                        </td>
+                    </c:if>
+                </tr>
+
+                <tr>
+                  <td>Content:</td>
+                      
+                        <td> <p align=justify>${comment.content}</p> </td>
+                </tr>
+
+                <tr>
+               <td>Status:</td>
+                <td>
+                  <c:if test="${comment.reviewStatus == 'accepted'}">
+                      Status: <em>included in the Annotation Center's official annotation</em> 
+                   </c:if>
+                </td>
+                </tr> 
+
+							 </table>
+            <br />
+          </c:forEach>
     </c:otherwise> <%-- has comments for the stable id --%>
 </c:choose>
 
