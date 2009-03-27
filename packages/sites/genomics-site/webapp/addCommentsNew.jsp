@@ -290,9 +290,8 @@ $("#box a").click(function(event) {
         <td valign=top>Genbank Accession(s)</td>
         <td>
           <html:text property="accessions" size="70"/>
-            <ul class="myul">
-              <li>Enter one or more Acccession(s) in the box above separated by ','</li>
-            </ul>
+          <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>Enter one or more Acccession(s) in the box above separated by \',\'</li></ul>')">
+          <img src="/assets/images/help.png" align=bottom border=0></a>
         </td>
       </tr>
 
@@ -303,14 +302,12 @@ $("#box a").click(function(event) {
       <tr class="medium">
         <td>&nbsp;</td>
         <td valign=top>Other Related Genes</td>
-        <td> <html:textarea property="associatedStableIds" rows="3" cols="70"/>
-            <ul class="myul">
-              <li>Enter one or more Gene Id(s) in the box above separated by ','. </li>
-              <li>The same comment and files will be appear on those gene ids.</li>
-            </ul>
+        <td> 
+				  <html:textarea property="associatedStableIds" rows="3" cols="70"/>
+         <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>Enter one or more Gene Id(s) in the box above separated by \',\'. </li><li>The same comment and files will be appear on those gene ids.</li></ul>')"> 
+          <img src="/assets/images/help.png" align=top border=0></a>
         </td>
       </tr>
-        
         
       <tr class="medium">
         <td colspan=3 align=center>
