@@ -14,21 +14,6 @@ $(document).ready(function(){
 		showInstructions();
 	}else{
 		initDisplay(0);
-/*		jQuery.each(init_strat_ids, function(){
-			$.ajax({
-				url: "showStrategy.do?strategy=" + this,
-				type: "POST",
-				dataType: "xml",
-				success: function(data){
-					id = loadModel(data);
-					$("div#Strategies").append(displayModel(id));
-					if (id == 0) {
-						$("#diagram_0 div.venn:last .resultCount a").click();
-					}
-				}
-			});
-		});
-*/
 	}
 });
 
@@ -40,7 +25,7 @@ function initDisplay(index){
 		dataType: "JSON",
 		success: function(data){
 			data = eval("(" + data + ")");
-			id = loadModel(data.strategy);
+			id = loadModel(data);
 			$("div#Strategies").append(displayModel(id));
 			if (id == 0) {
 				$("#diagram_0 div.venn:last .resultCount a").click();
@@ -71,15 +56,29 @@ function showInstructions(){
 	$("#Strategies").append(instr);
 }
 
-function loadModel(strategy){
+function loadModel(json){
 	var value = -1;
+	var strategy = json.strategy;
 	//$("root",data).children("strategy").each(function(){
-		var newId = isLoaded(parseInt(strategy.id));
+		var newId = isLoaded(strategy.id);//parseInt(strategy.id));
 		if(newId == -1){
 			newId = sidIndex;
 			sidIndex++;
+		}else{
+			removeSubStrategies(strategy.id);
 		}
 		var strat = new Strategy(newId, strategy.id, true);
+		if(strategy.importId != ""){
+			strat.checksum = json.strategies[strat.backId];
+		}else{
+			ss = strat.backId.indexOf("_");
+			ss = strat.backId.substring(0,ss);
+			ss = getStrategyFromBackId(ss).frontId;
+			strat.subStratOf = ss;
+			if(strategy.order > 0){
+				strat.isDisplay = true;
+			}
+		}
 		strat.JSON = strategy;
 		strat.isSaved = strategy.saved;
 		strat.name = strategy.name;
@@ -89,7 +88,7 @@ function loadModel(strategy){
 		strat.initSteps(steps);
 		//lstp = strat.getStep(strategy.steps.length);
 		strat.dataType = strategy.steps[strategy.steps.length].dataType;
-		id = parseInt(strategy.id);
+		id = strategy.id;
 		if(isLoaded(id) != -1){
 			strats[findStrategy(newId)] = strat;
 		}else{
@@ -98,6 +97,13 @@ function loadModel(strategy){
 		value = strat.frontId;
 	//});
 	return value;
+}
+
+function removeSubStrategies(id){
+	for(s in strats){
+		if(strats[s].backId.indexOf(id + "_") != -1)
+			strats.splice(s,1);
+	}
 }
 
 function isLoaded(id){
@@ -163,11 +169,15 @@ function AddStepToStrategy(url){
 		},
 		success: function(data){
 			data = eval("(" + data + ")");
-			removeStrategyDivs(b_strategyId);
-			f_strategyId = updateStrategies(data,"AddStep", strategy);
-			removeLoading(f_strategyId);
-			$("#diagram_" + f_strategyId + " div.venn:last .resultCount a").click();
-			isInsert = "";
+			if(ErrorHandler(data)){
+				removeStrategyDivs(b_strategyId);
+				f_strategyId = updateStrategies(data,"AddStep", strategy);
+				removeLoading(f_strategyId);
+				$("#diagram_" + f_strategyId + " div.venn:last .resultCount a").click();
+				isInsert = "";
+			}else{
+				removeLoading(f_strategyId);
+			}
 		},
 		error: function(data, msg, e){
 			//$("#Strategies").append(currentDiv);
@@ -327,23 +337,27 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 }
 
 function updateStrategies(data,evnt,strategy){	
-	stratId = loadModel(data.strategy);
-//	$("div#Strategies div#diagram_" + stratId).remove();
-//	subs = getSubStrategies(stratId);
-//	for(i=0;i<subs.length;i++){
-//		$("div#Strategies div#diagram_" + subs[i].frontId).remove();
-		//closeStrategy(subs[i].frontId);
-//	}
-	
-	if(evnt == "Save" || (strategy.isSaved == "true" && evnt != "Open")){
-		$("div#Strategies div#diagram_" + strategy.frontId).replaceWith(displayModel(stratId));
-	}
-	else if(isLoaded(getStrategy(stratId).backId) != -1 && evnt != "Open"){
-		$("div#Strategies div#diagram_" + stratId).replaceWith(displayModel(stratId));
+	stratId = loadModel(data);
+	valid = ValidateView(data.strategies);
+	if(valid){
+		if(evnt == "Save" || (strategy.isSaved == "true" && evnt != "Open")){
+			$("div#Strategies div#diagram_" + strategy.frontId).replaceWith(displayModel(stratId));
+		}
+		else if(isLoaded(getStrategy(stratId).backId) != -1 && evnt != "Open"){
+			$("div#Strategies div#diagram_" + stratId).replaceWith(displayModel(stratId));
+		}else{
+			$("div#Strategies").prepend(displayModel(stratId));
+		}	
+		return stratId;
 	}else{
-		$("div#Strategies").prepend(displayModel(stratId));
+		message = "There are inconsistancies in strategies:\n";
+		for(v in valid){
+			message += valid[v] + " \n";
+		}
+		alert(message + "Click 'OK' and page will be reloaded to fixed this condition");
+		$("div#Strategies div").remove();
+		initDisplay(0);
 	}
-	return stratId;
 }
 
 function openStrategy(stratId){
@@ -484,6 +498,19 @@ function renameStrategy(stratId, checkName, fromHist){
 	});
 }
 
+function ValidateView(strategies){
+	var failed = new Array();
+	for(str in strats){
+		strat = strats[str];
+		if(strat.checksum != strategies[strat.backId])
+			failed.push(strat.frontId);
+	}
+	if(failed.length == 0)
+		return true;
+	else
+		return failed;
+}
+
 function ChangeFilter(strategyId, stepId, url) {
         b_strategyId = strategyId;
         strategy = getStrategyFromBackId(b_strategyId); 
@@ -525,3 +552,13 @@ function ChangeFilter(strategyId, stepId, url) {
 
 }
 
+function ErrorHandler(data){
+	var type = null;
+	if(data.type != "error"){
+		type = true;
+	}else{
+		type = false;
+		alert("AN ERROR HAS OCCURED/n" + data.exception);
+	}
+	return type;
+}

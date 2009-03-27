@@ -7,6 +7,7 @@ function Strategy(frontId, backId, isDisplay){
 	this.backId = backId;
 	this.isDisplay = isDisplay;
 }
+Strategy.prototype.checksum = null;
 Strategy.prototype.JSON = null;
 Strategy.prototype.subStratOf = null;
 Strategy.prototype.Steps = new Array();
@@ -32,7 +33,7 @@ Strategy.prototype.initSteps = function(steps){
 				st = new Step(i, steps[i].step.id, steps[i].id, null, steps[i].step.answerId);
 				st.isboolean = true;
 				if(steps[i].step.isCollapsed){
-					subId = loadModel(steps[i].step.strategy);
+					subId = loadModel(steps[i].step);
 					st.child_Strat_Id = subId;
 				}
 			}else{ 

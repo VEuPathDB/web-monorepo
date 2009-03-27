@@ -102,7 +102,6 @@ function booleanStep(modelstep, jsonstep, sid){
 		}
 	boolDiv = document.createElement('div');
 	$(boolDiv).attr("id","step_" + modelstep.frontId).addClass(booleanClasses + jsonstep.operation).html(boolinner).css({left: offset(modelstep) + "px"});
-	$(".crumb_details", boolDiv).replaceWith(createDetails(modelstep, jsonstep, sid));
 	
 	stepNumber = document.createElement('span');
 	$(stepNumber).addClass('stepNumber').css({ left: (leftOffset + 30) + "px"}).text("Step " + modelstep.frontId);
@@ -137,7 +136,7 @@ function booleanStep(modelstep, jsonstep, sid){
 		"		</ul>";	
 	childDiv = document.createElement('div');
 	$(childDiv).attr("id","step_" + modelstep.frontId + "_sub").addClass(operandClasses).html(childinner).css({left: leftOffset + "px"});
-	$(".crumb_details", childDiv).replaceWith(createDetails(modelstep, jsonstep, sid));
+	$(".crumb_details", childDiv).replaceWith(createDetails(modelstep, childStp, sid));
 	
 	// Create the background div for a collapsed step if step is expanded
 	var bkgdDiv = null;
@@ -145,6 +144,9 @@ function booleanStep(modelstep, jsonstep, sid){
 		bkgdDiv = document.createElement("div");
 		$(bkgdDiv).addClass("expandedStep");
 		$(bkgdDiv).css({ left: (leftOffset-2) + "px"});
+		if(modelstep.child_Strat_Id != null){
+			ExpandStep(null, sid, modelstep.frontId,childStp.strategy.name);
+		}
 	}
 	if(bkgdDiv != null)
 		stepdivs.push(bkgdDiv);
@@ -210,10 +212,7 @@ function createDetails(modelstep, jsonstep, sid){
 	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"350px" });
 	var name = jsonstep.displayName;
 	var questionName = jsonstep.questionName;
-	if(modelstep.isboolean){
-		name = jsonstep.step.displayName;
-		questionName = jsonstep.step.questionName;
-	}
+	
 	var filteredName = "";
 	if(jsonstep.filtered){
 		filteredName = "<span class='medium'><b>Applied Filter:&nbsp;</b>" + jsonstep.filterName + "</span><hr>";
