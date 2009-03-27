@@ -100,13 +100,13 @@
       type="org.gusdb.wdk.controller.action.DeleteStrategyAction"
       scope="request">
       <forward name="delete_history" path="/showApplication.do"/>
-      <forward name="show_strategy" path="/strategyPage.jsp"/>
+      <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
       path="/showStrategy"
       type="org.gusdb.wdk.controller.action.ShowStrategyAction"
       scope="request">
-      <forward name="show_strategy" path="/strategyPage.jsp"/>
+      <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
       path="/getFilterLink"
@@ -259,7 +259,7 @@
       type="org.gusdb.wdk.controller.action.ProcessRenameStrategyAction"
       scope="request"
       name="renameStrategyForm">
-      <forward name="show_strategy" path="/strategyPage.jsp"/>
+      <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
       path="/processBooleanExpression"
@@ -267,7 +267,7 @@
       name="booleanExpressionForm"
       input="/showQueryHistory.do"
       scope="request">
-      <forward name="show_strategy" path="/strategyPage.jsp"/>
+      <forward name="show_strategy" path="/showStrategy.do"/>
       <forward name="process_boolean_expression" path="/showSummary.do"/>
     </action>
     <action
