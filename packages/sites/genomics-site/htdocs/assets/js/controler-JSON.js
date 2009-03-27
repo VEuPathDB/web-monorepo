@@ -67,8 +67,9 @@ function loadModel(json){
 		}else{
 			removeSubStrategies(strategy.id);
 		}
-		var strat = new Strategy(newId, strategy.id, true);
+		var strat = new Strategy(newId, strategy.id, false);
 		if(strategy.importId != ""){
+			strat.isDisplay = true;
 			strat.checksum = json.strategies[strat.backId];
 		}else{
 			ss = strat.backId.indexOf("_");
@@ -364,8 +365,9 @@ function openStrategy(stratId){
 	var url = "showStrategy.do?strategy=" + stratId;
 	$.ajax({
 		url: url,
-		datatype:"html",
+		datatype:"JSON",
 		success: function(data){
+			data = eval("(" + data + ")");
 			updateStrategies(data, "Open", getStrategyFromBackId(stratId));
 		},
 		error: function(data, msg, e){
@@ -377,13 +379,12 @@ function openStrategy(stratId){
 }
 
 function closeStrategy(stratId){
-	strat = getStrategy(stratId);
-	strat.isDisplay = false;
 	var url = "closeStrategy.do?strategy=" + strat.backId;
 	$.ajax({
 		url: url,
-		dataType:"html",
+		dataType:"JSON",
 		success: function(data){
+//			data = eval("(" + data + ")");			
 			hideStrat(stratId);
 		},
 		error: function(data, msg, e){
@@ -396,6 +397,7 @@ function closeStrategy(stratId){
 
 function hideStrat(id){
 	var strat = getStrategy(id);
+	strat.isDisplay = false;
 	for(var i=0;i<strat.Steps.length;i++){
 		if(strat.Steps[i].child_Strat_Id != null){
 			hideStrat(strat.Steps[i].child_Strat_Id);
