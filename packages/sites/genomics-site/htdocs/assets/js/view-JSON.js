@@ -144,7 +144,7 @@ function booleanStep(modelstep, jsonstep, sid){
 		bkgdDiv = document.createElement("div");
 		$(bkgdDiv).addClass("expandedStep");
 		$(bkgdDiv).css({ left: (leftOffset-2) + "px"});
-		if(modelstep.child_Strat_Id != null){
+		if(modelstep.child_Strat_Id != null && getStrategy(modelstep.child_Strat_Id).isDisplay == true){
 			ExpandStep(null, sid, modelstep.frontId,childStp.strategy.name);
 		}
 	}
