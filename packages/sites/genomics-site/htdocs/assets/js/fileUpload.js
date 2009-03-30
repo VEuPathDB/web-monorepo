@@ -1,53 +1,53 @@
 var fCount = 0;
-var fileTableName = 'fileSelTbl';
+var filesTable = '#fileSelTbl';
 
+$(document).ready(function(){
+  addFileSelRow();
+  
+  $('#newfile').click(function(){
+    addFileSelRow();
+  });
+
+});
+ 
 function addFileSelRow() {
-  
-  var fileSelTbl = document.getElementById(fileTableName);
-  
-  var selLabel = document.createTextNode('Select File:');
+  var remove = $("<td>").append($("<a>").
+        attr("href", "javascript:void(0)").
+           append($("<img>").attr("src", "images/remove.gif")
+             .click(function(){  
+                  removeRow($(this).parents("tr:last"));
+             })
+           ));
 
-  var delEl = document.createElement('a');
-  delEl.href = 'javascript:void(0)';
-  delEl.onclick = function(){removeRow(this)};
-  
-  delImg = document.createElement('img');
-  delImg.src = 'images/remove.gif';
-  delImg.border = '0';
-  
-  delEl.appendChild(delImg);
-  
-  var fSelEl = document.createElement('input');
-  fSelEl.type = "file";
-  fSelEl.name = "file[" +  fCount +  "]";
-  fSelEl.onchange = function(){addFileSelRow()};
+  $(filesTable).append(
+    '<tr><td><table style="border:1px solid black;">' + 
+    '<td>Select a file:</td>' +
+    '<td><input name="file[' + fCount + ']" type="file">' +
+    '<td id="f_rm"></td>' +
+    '</tr>' + 
+    '<tr>' +
+    '<td style="vertical-align:top">Brief Description:<br>(4000 max characters)</td>' +
+    '<td colspan="2"><textarea name="notes[' + fCount + 
+       ']" rows="3" cols="50"></textarea></td>' +
+    '</table></td></tr>'
+  );
 
-  var newRow = fileSelTbl.insertRow(0);
+  if (fCount > 0) {
+    var rowCount = $(filesTable).find("table").length;
+    $(filesTable + ' tr:nth-child(' + (rowCount -1) + 
+        ') table:first tr:first td:last').replaceWith(remove);
+  }
 
-  var cell0 = newRow.insertCell(0);
-  cell0.appendChild(selLabel);
-
-  var cell1 = newRow.insertCell(1);
-  cell1.appendChild(fSelEl);
-  cell1.style.align="center";
-
-  var cell2 = newRow.insertCell(2);
-  cell2.appendChild(document.createTextNode('\u00A0'));
-
-  var lastCell = fileSelTbl.rows[0].cells.length - 1;  
-  
-  if (fileSelTbl.rows.length > 1) {
-    var nCell = document.createElement('td');
-        nCell.appendChild(delEl);
-  
-    fileSelTbl.rows[1].
-          replaceChild(nCell,fileSelTbl.rows[1].cells[lastCell]);
-  }  
+  zebraStripe();
   
   fCount++;
 }
 
+function zebraStripe() {
+  $(filesTable + " table:odd").css("background-color", "#cccccc");
+  $(filesTable + " table:even").css("background-color", "#ffffff");
+}
 function removeRow(row) {
-  var i = row.parentNode.parentNode.rowIndex;
-  document.getElementById('fileSelTbl').deleteRow(i);
+  $(row).remove();
+  zebraStripe(); 
 }
