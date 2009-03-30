@@ -2,6 +2,8 @@ var strats = new Array();
 var xmldoc = null;
 var init_strat_ids = new Array();
 var init_strat_order = new Array();
+var init_view_strat = null;
+var init_view_step = null;
 var exportBaseURL;
 var sidIndex = 0;
 var recordType= new Array();   //stratid, recordType which is the type of the last step
@@ -27,8 +29,14 @@ function initDisplay(index){
 			data = eval("(" + data + ")");
 			id = loadModel(data);
 			$("div#Strategies").append(displayModel(id));
-			if (id == 0) {
+			var strat = getStrategy(id);
+			if (init_view_strat == null && id == 0)
 				$("#diagram_0 div.venn:last .resultCount a").click();
+			else if (init_view_strat == strat.backId) {
+				var step = getStepFromBackId(strat.backId, init_view_step);
+				var stepBox = $("#diagram_" + strat.frontId + " div#step_" + step.frontId);
+				if (stepBox.length == 0) stepBox = $("#diagram_" + strat.frontId + " div#step_" + step.frontId + "_sub");
+				$(".resultCount a", stepBox).click();
 			}
 			if(index+1 < init_strat_ids.length)
 				initDisplay(index+1);
