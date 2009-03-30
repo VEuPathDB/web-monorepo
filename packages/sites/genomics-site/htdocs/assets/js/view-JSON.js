@@ -141,6 +141,9 @@ function booleanStep(modelstep, jsonstep, sid){
 	// Create the background div for a collapsed step if step is expanded
 	var bkgdDiv = null;
 	if(childStp.isCollapsed){
+		ss_name = childStp.strategy.name.length > 15 ? childStp.strategy.name.substring(0,12) + "...":childStp.strategy.name; 
+		$(".crumb_name", childDiv).text(ss_name);
+		$("span#fullStepName").text(childStp.strategy.name);
 		bkgdDiv = document.createElement("div");
 		$(bkgdDiv).addClass("expandedStep");
 		$(bkgdDiv).css({ left: (leftOffset-2) + "px"});
@@ -217,12 +220,13 @@ function createDetails(modelstep, jsonstep, sid){
 	if(jsonstep.filtered){
 		filteredName = "<span class='medium'><b>Applied Filter:&nbsp;</b>" + jsonstep.filterName + "</span><hr>";
 	}
-	var collapsedName = name;
+	var collapsedName = "Expanded" + name;
 	if(jsonstep.isCollapsed){
 		name = jsonstep.strategy.name;
-	}else{
-		collapsedName = "Expanded " + name;
-	}
+		collapsedName = name;
+	}//else{
+	 //	collapsedName = "Expanded " + name;
+	 //}
 	var parentid = modelstep.back_step_Id;
 	if(modelstep.back_boolean_Id != null){
 		parentid = modelstep.back_boolean_Id;
