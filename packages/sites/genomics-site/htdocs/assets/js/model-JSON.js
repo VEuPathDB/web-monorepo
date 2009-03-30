@@ -32,7 +32,7 @@ Strategy.prototype.initSteps = function(steps){
 			if(steps[i].isboolean){
 				st = new Step(i, steps[i].step.id, steps[i].id, null, steps[i].step.answerId);
 				st.isboolean = true;
-				if(steps[i].step.isCollapsed){
+				if(steps[i].step.isCollapsed && steps[i].step.strategy.order > 0){
 					subId = loadModel(steps[i].step);
 					st.child_Strat_Id = subId;
 				}

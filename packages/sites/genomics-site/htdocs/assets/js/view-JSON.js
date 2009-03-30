@@ -141,7 +141,7 @@ function booleanStep(modelstep, jsonstep, sid){
 	// Create the background div for a collapsed step if step is expanded
 	var bkgdDiv = null;
 	if(childStp.isCollapsed){
-		ss_name = childStp.strategy.name.length > 15 ? childStp.strategy.name.substring(0,12) + "...":childStp.strategy.name; 
+		var ss_name = childStp.strategy.name.length > 15 ? childStp.strategy.name.substring(0,12) + "...":childStp.strategy.name; 
 		$(".crumb_name", childDiv).text(ss_name);
 		$("span#fullStepName").text(childStp.strategy.name);
 		bkgdDiv = document.createElement("div");
