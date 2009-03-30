@@ -1,11 +1,34 @@
 <DAS>
 
+<sanityTestInfo include="TriTrypDB">
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_LmjF05_01_20050601_V5.2$$"/>
+    <defaultParamValue name="base_start" value="1000"/>
+    <defaultParamValue name="rend" value="500000"/>
+    <defaultParamValue name="dlm" value=","/>
+
+    <sqlValue name="na_seq_id_LmjF05_01_20050601_V5.2">
+      <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'LmjF05_01_20050601_V5.2'
+      </sql> 
+    </sqlValue>
+
+    <sqlValue name="na_feat_id_cgd6_780">
+      <sql>
+      select na_feature_id from dots.genefeature where source_id = 'cgd6_780'
+     </sql> 
+    </sqlValue>
+</sanityTestInfo>
+
+
 <!--                        GUS.pm                        -->
 <!-- This is the only query implemented by GUS.pm.        -->
 <!-- It's call by get_feature_by_name subroutine.         -->
 
 <module name="GUS.pm">
   <sqlQuery>
+    <testParamValues include="TriTrypDB">
+       <param name="name" value="LmjF05_01_20050601_V5.2"/>
+    </testParamValues>
     <name>get_feature_by_name</name>
         <description>fetch features by their name</description>
     <sql>
@@ -81,6 +104,9 @@ WHERE gs.lowercase_source_id
 
 <module name="Segment.pm">
   <sqlQuery>
+    <testParamValues include="TriTrypDB">
+       <param name="name" value="LmjF05_01_20050601_V5.2"/>
+    </testParamValues>
    <name>new:Segment</name>
     <description></description>
      <sql>
@@ -191,7 +217,7 @@ SELECT blat.blat_alignment_id feature_id,
        blat.target_end end, 
        decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'Direction=' || est.p_end || ' prime' || '$dlm' ||
-       'PCT=' || blat.percent_identity atts 
+       'PercentIdentity=' || blat.percent_identity atts 
 FROM   
        apidb.BlatAlignmentLocation blat, 
        dots.ASSEMBLYSEQUENCE asbl, 
