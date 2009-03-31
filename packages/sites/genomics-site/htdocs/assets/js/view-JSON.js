@@ -257,8 +257,8 @@ function createDetails(modelstep, jsonstep, sid){
 		rename_step = 	"			<a title='" + ss_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
 		view_step = 	"			<a title='" + ss_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
 		edit_step =		"			<a title='" + ss_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + jsonstep.isCollapsed + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
-		if(modelstep.frontId == 1){
-			expand_step = 	"			<span class='expand_step_link' style='color:grey'>Nested Strategy</span>&nbsp;|&nbsp;";
+		if(modelstep.frontId == 1 || modelstep.isTransform){
+			expand_step = 	"			<span class='expand_step_link' style='color:grey'>Make Nested Strategy</span>&nbsp;|&nbsp;";
 		}else{
 			expand_step = 	"			<a title='" + ss_expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Make Nested Strategy</a>&nbsp;|&nbsp;";
 		}
