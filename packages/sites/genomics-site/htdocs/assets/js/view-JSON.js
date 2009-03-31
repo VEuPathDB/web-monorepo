@@ -240,14 +240,15 @@ function createDetails(modelstep, jsonstep, sid){
 		collapsedName = name;
 	}
 	var parentid = modelstep.back_step_Id;
-	if(modelstep.back_boolean_Id != null){
+	if(modelstep.back_boolean_Id != null && modelstep.back_boolean_Id.length != 0){
 		parentid = modelstep.back_boolean_Id;
 	}
 	var params = jsonstep.params;
 	var params_table = "";
 	if(params != undefined && params.length != 0)
 		params_table = createParameters(params);
-
+	var hideOp = false;
+	var hideQu = false;
 	if(jsonstep.isCollapsed){                              /* substrategy */
 		rename_step = 	"			<a title='" + sub_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
 		view_step = 	"			<a title='" + sub_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
@@ -257,7 +258,10 @@ function createDetails(modelstep, jsonstep, sid){
 	} else {   							/* simple step */
 		rename_step = 	"			<a title='" + ss_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
 		view_step = 	"			<a title='" + ss_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
-		edit_step =		"			<a title='" + ss_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + jsonstep.isCollapsed + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
+		if(modelstep.isTransform){
+			hideOp = true;
+		}
+		edit_step =		"			<a title='" + ss_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
 		if(modelstep.frontId == 1 || modelstep.isTransform){
 			expand_step = 	"			<span class='expand_step_link' style='color:grey'>Make Nested Strategy</span>&nbsp;|&nbsp;";
 		}else{
