@@ -207,10 +207,10 @@ function AddStepToStrategy(url, proto, stpId){
 function EditStep(url, proto, step_number){
 	$("#query_form").hide("fast");
 //	var s = parseUrl('strategy',url)[0];
-	var ss = getStrategy(proto);
-	var s = ss.backId;
+	var ss = getStrategyFromBackId(proto);
+	var s = proto;
 	var d = parseInputs();
-	url = "processFilter.do?strategy="+s+"&insert="+step_number+"&strategy_checksum="+ss.checksum;
+	url = url+"&strategy_checksum="+ss.checksum;
 		$.ajax({
 		url: url,
 		type: "POST",
