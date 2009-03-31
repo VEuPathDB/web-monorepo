@@ -1083,7 +1083,7 @@ ORDER BY
   <sqlQuery name="match:syntenySpanMC">
 
     <description></description>
-     <sql includeProjects="TriTrypDB">
+     <sql includeProjects="TriTrypDB,PlasmoDB,CryptoDB">
 <![CDATA[
 SELECT
        syn.synteny_id feature_id,
@@ -1249,130 +1249,6 @@ WHERE edr.external_database_id = ed.external_database_id
 ]]>
     </sql>
     
-     <sql includeProjects="PlasmoDB">
-<![CDATA[
-SELECT
-       syn.synteny_id feature_id,
-       'match' type, 
-       'syntenySpanMC' source, 
-       b.source_id name, 
-       '.' score, 
-       syn.synteny_id parent_id, 
-       CASE WHEN (is_reversed = 1) 
-         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
-         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
-       END startm,
-       CASE WHEN (is_reversed = 1) 
-         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
-         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
-       END end, 
-       decode(is_reversed, 0, '+1', 1, '-1', '+1') strand,
-       'RefStart=' || syn.a_start || '$dlm' ||
-       'RefEnd=' || syn.a_end || '$dlm' ||
-       'RefContigLength=' || a.length || '$dlm' ||
-       'SynStart=' || syn.b_start || '$dlm' ||
-       'SynEnd=' || syn.b_end || '$dlm' ||
-       'ContigLength=' || b.length || '$dlm' ||
-       'Contig=' || b.source_id || '$dlm' ||
-       'Chromosome=' || b.chromosome || '$dlm' ||
-        (CASE WHEN (b.chromosome is NOT NULL) 
-             THEN (SELECT 'ChrColor=' || rcc.value || '$dlm' 
-                  FROM apidb.rodentChrColors rcc 
-                   WHERE b.chromosome = rcc.chromosome) 
-             ELSE ''
-             END) || 
-       'ExtDBName=' || ed.name || '$dlm' ||
-       'Taxon=' || tn.name ||  '$dlm' ||
-       'Scale=' || 
-       CASE WHEN (is_reversed = 1) 
-         THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
-         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) 
-         END atts
-FROM 
-      apidb.synteny syn,
-      apidb.syntenyAnchor anch_left,
-      apidb.syntenyAnchor anch_right,
-      apidb.sequenceattributes a,
-      apidb.sequenceattributes b,
-      sres.externaldatabaserelease edr,
-      sres.externaldatabase ed, 
-      Sres.TaxonName tn
-WHERE edr.external_database_id = ed.external_database_id
-  AND syn.external_database_release_id = edr.external_database_release_id
-  AND syn.a_start <= $rend 
-  AND syn.a_end >= $base_start
-  AND syn.a_na_sequence_id = $srcfeature_id
-  AND a.na_sequence_id = syn.a_na_sequence_id
-  AND b.na_sequence_id = syn.b_na_sequence_id
-  AND anch_left.synteny_id = syn.synteny_id
-  AND anch_left.prev_ref_loc < $base_start
-  AND anch_left.ref_loc >= $base_start
-  AND anch_right.synteny_id = syn.synteny_id
-  AND anch_right.ref_loc < $rend
-  AND anch_right.next_ref_loc >= $rend
-  AND b.organism = tn.name
-]]>
-    </sql>
-    
-     <sql includeProjects="CryptoDB">
-<![CDATA[
-SELECT
-       syn.synteny_id feature_id,
-       'match' type, 
-       'syntenySpanMC' source, 
-       b.source_id name, 
-       '.' score, 
-       syn.synteny_id parent_id, 
-       CASE WHEN (is_reversed = 1) 
-         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
-         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
-       END startm,
-       CASE WHEN (is_reversed = 1) 
-         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
-         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
-       END end, 
-       decode(is_reversed, 0, '+1', 1, '-1', '+1') strand,
-       'RefStart=' || syn.a_start || '$dlm' ||
-       'RefEnd=' || syn.a_end || '$dlm' ||
-       'RefContigLength=' || a.length || '$dlm' ||
-       'SynStart=' || syn.b_start || '$dlm' ||
-       'SynEnd=' || syn.b_end || '$dlm' ||
-       'ContigLength=' || b.length || '$dlm' ||
-       'Contig=' || b.source_id || '$dlm' ||
-       --'Chromosome=' || b.chromosome || '$dlm' ||
-       'ChrColor=' || '#FF00FF' || '$dlm' ||
-       'ExtDBName=' || ed.name || '$dlm' ||
-       'Taxon=' || tn.name ||  '$dlm' ||
-       'Scale=' || 
-       CASE WHEN (is_reversed = 1) 
-         THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
-         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) 
-         END atts
-FROM 
-      apidb.synteny syn,
-      apidb.syntenyAnchor anch_left,
-      apidb.syntenyAnchor anch_right,
-      dots.nasequence a,
-      dots.nasequence b,
-      sres.externaldatabaserelease edr,
-      sres.externaldatabase ed, 
-      Sres.TaxonName tn
-WHERE edr.external_database_id = ed.external_database_id
-  AND syn.external_database_release_id = edr.external_database_release_id
-  AND syn.a_start <= $rend 
-  AND syn.a_end >= $base_start
-  AND syn.a_na_sequence_id = $srcfeature_id
-  AND a.na_sequence_id = syn.a_na_sequence_id
-  AND b.na_sequence_id = syn.b_na_sequence_id
-  AND anch_left.synteny_id = syn.synteny_id
-  AND anch_left.prev_ref_loc < $base_start
-  AND anch_left.ref_loc >= $base_start
-  AND anch_right.synteny_id = syn.synteny_id
-  AND anch_right.ref_loc < $rend
-  AND anch_right.next_ref_loc >= $rend
-  AND b.taxon_id = tn.taxon_id
-]]>
-    </sql>
   </sqlQuery>
   
   
