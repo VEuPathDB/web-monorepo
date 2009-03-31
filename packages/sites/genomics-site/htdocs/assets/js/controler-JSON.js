@@ -171,7 +171,7 @@ function AddStepToStrategy(url, proto, stpId){
 	var strategy = getStrategyFromBackId(proto);
 	var b_strategyId = strategy.backId;
 	var f_strategyId = strategy.frontId;
-	url = "processFilter.do?strategy="+b_strategyId+"&insert=&strategy_checksum="+strategy.checksum;
+	url = url + "&strategy_checksum="+strategy.checksum;//"processFilter.do?strategy="+b_strategyId+"&insert=&strategy_checksum="+strategy.checksum;
 	var d = parseInputs();
 	$.ajax({
 		url: url,

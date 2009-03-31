@@ -93,7 +93,7 @@ function Insert_Step(ele,dt){
 	sNumber = sNumber.split("|");
 	isInsert = sNumber[1];
 	current_Front_Strategy_Id = sNumber[0];
-	openFilter(dt,sNumber[0]);
+	openFilter(dt,sNumber[0],sNumber[1]);
 }
 var a_link;
 function Rename_Step(ele, strat, stpId){

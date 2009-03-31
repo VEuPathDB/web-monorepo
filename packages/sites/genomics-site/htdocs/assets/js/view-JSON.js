@@ -263,7 +263,7 @@ function createDetails(modelstep, jsonstep, sid){
 			expand_step = 	"			<a title='" + ss_expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Make Nested Strategy</a>&nbsp;|&nbsp;";
 		}
 	}							
-	insert_step = 	"			<a title='" + insert_popup + "'  class='insert_step_link' id='" + sid + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + getDataType(jsonstep.dataType,jsonstep.results) + "\");hideDetails(this)'>Insert Step Before</a>&nbsp;|&nbsp;";
+	insert_step = 	"			<a title='" + insert_popup + "'  class='insert_step_link' id='" + sid + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + jsonstep.dataType + "\");hideDetails(this)'>Insert Step Before</a>&nbsp;|&nbsp;";
 	delete_step = 	"			<a title='" + delete_popup + "' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + sid + "," + modelstep.frontId + ");hideDetails(this)'>Delete</a>";
 	
 
