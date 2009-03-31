@@ -1,24 +1,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
-<html>
+<site:header title="${wdkModel.displayName}.org :: Community Upload"
+             banner="Community Upload"/>
 
-<head>
-<title>Success</title>
-</head>
-
-<body>
 
 <c:set value="${requestScope.fileName}" var="fileName"/>
 
 
-<p align="center"><font size="5" color="#000080">File Successfully Received</font></p>
-
-<%
-String fileName=(String)request.getAttribute("fileName");
-%>
+<h2>Files Successfully Received</h2>
 
 
-File: ${fileName}<%=fileName%>
-</body>
-
-</html>
+<site:footer/>
