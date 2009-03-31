@@ -21,11 +21,14 @@ p.unreadlabel {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =used in help.jsp, classic bullet list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#cirbulletlist ul {
+#cirbulletlist ul, #cirbulletlist ol {
 	list-style-type: disc;
 	margin-left:  1em;
 	padding-left: 1em;
 	list-style-position: outside;
+}
+#cirbulletlist ol {
+    list-style-type: decimal;
 }
 
 .fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
@@ -106,3 +109,15 @@ ul#strategy_tabs {
 	border: 1px solid black;
         vertical-align: middle;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     = jquery validation plugin messages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+label.error {
+  float: none;
+  color: red;
+  padding-left: .5em;
+  vertical-align: top;
+  font-weight:bold;
+}
+
