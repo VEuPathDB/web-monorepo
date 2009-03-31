@@ -164,10 +164,14 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 }
 
 
-function AddStepToStrategy(url){	
-	b_strategyId = parseUrl('strategy',url)[0];
-	strategy = getStrategyFromBackId(b_strategyId);
-	f_strategyId = strategy.frontId;
+function AddStepToStrategy(url, proto, stpId){	
+	//b_strategyId = parseUrl("strategy",url)[0];
+	//strategy = getStrategyFromBackId(b_strategyId);
+	//f_strategyId = strategy.frontId;
+	var strategy = getStrategy(proto);
+	var b_strategyId = strategy.backId;
+	var f_strategyId = strategy.frontId;
+	url = "processFilter.do?strategy="+s+"&insert=&strategy_checksum="+strategy.checksum;
 	var d = parseInputs();
 	$.ajax({
 		url: url,
@@ -202,9 +206,11 @@ function AddStepToStrategy(url){
 
 function EditStep(url, proto, step_number){
 	$("#query_form").hide("fast");
-	var s = parseUrl('strategy',url)[0];
-	
+//	var s = parseUrl('strategy',url)[0];
+	var ss = getStrategy(proto);
+	var s = ss.backId;
 	var d = parseInputs();
+	url = "processFilter.do?strategy="+s+"&insert="+step_number+"&strategy_checksum="+ss.checksum;
 		$.ajax({
 		url: url,
 		type: "POST",
@@ -253,9 +259,9 @@ function DeleteStep(f_strategyId,f_stepId){
 		var d_strategyId = displayStep.parent().attr("id").split('_')[1];
 	}
 	if (step.back_boolean_Id == "")
-		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id;
+		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id+"&strategy_checksum="+strategy.checksum;
 	else
-		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_boolean_Id;
+		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_boolean_Id+"&strategy_checksum="+strategy.checksum;
 		
 	$.ajax({
 		url: url,
@@ -308,7 +314,7 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 	var strategy = getStrategy(f_strategyId);
 	var step = getStep(f_strategyId, f_stepId);
 	un = (collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
-	url = "expandStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id + "&collapsedName=" + collapsedName;
+	url = "expandStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id + "&collapsedName=" + collapsedName+"&strategy_checksum="+strategy.checksum;
 	$.ajax({
 		url: url,
 		type: "post",
@@ -391,7 +397,7 @@ function openStrategy(stratId){
 
 function closeStrategy(stratId){
 	var strat = getStrategy(stratId);
-	var url = "closeStrategy.do?strategy=" + strat.backId;
+	var url = "closeStrategy.do?strategy=" + strat.backId+"&strategy_checksum="+strat.checksum;
 	$.ajax({
 		url: url,
 		dataType:"JSON",
@@ -432,7 +438,7 @@ function saveStrategy(stratId, checkName, fromHist){
 	var name = $("input[name='name']",saveForm).attr("value");
 	var strategy = $("input[name='strategy']",saveForm).attr("value");
 	var url="renameStrategy.do?strategy=";
-	url = url + strategy + "&save=true&name=" + name + "&checkName=" + checkName;
+	url = url + strategy + "&save=true&name=" + name + "&checkName=" + checkName+"&strategy_checksum="+getStrategy(stratId).checksum;
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
@@ -477,7 +483,7 @@ function renameStrategy(stratId, checkName, fromHist){
 	var name = $("input[name='name']",renameForm).attr("value");
 	var strategy = $("input[name='strategy']",renameForm).attr("value");
 	var url="renameStrategy.do?strategy=";
-	url = url + strategy + "&name=" + name + "&checkName=" + checkName;
+	url = url + strategy + "&name=" + name + "&checkName=" + checkName+"&strategy_checksum="+strat.checksum;
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
@@ -534,7 +540,7 @@ function ChangeFilter(strategyId, stepId, url) {
         if(strategy.subStratOf != null){
                 strats.splice(findStrategy(f_strategyId));
         }
-        
+        url += "&strategy_checksum="+strategy.checksum;
         $.ajax({
                 url: url,
                 type: "GET",
