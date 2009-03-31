@@ -1,8 +1,7 @@
 <DAS>
   <module name="GUS.pm">
 <!-- ORIGINALLY FROM: crypto -->
-  <sqlQuery>
-    <name>get_feature_by_name</name>
+  <sqlQuery name="get_feature_by_name">
     <description>fetch features by their name</description>
     <sql>
 <![CDATA[
@@ -30,8 +29,7 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
   <module name="Segment.pm">
 
 <!-- ORIGINALLY FROM: crypto -->
-  <sqlQuery>
-    <name>new:Segment</name>
+  <sqlQuery name="new:Segment">
     <description>fetch features by their name</description>
       <sql>
 <![CDATA[
@@ -55,8 +53,8 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id
       </sql>
     </sqlQuery>
 
-    <sqlQuery>
-      <name>get_sequence</name>
+    <sqlQuery name="get_sequence">
+
       <description></description>
       <sql>
 <![CDATA[
@@ -67,8 +65,7 @@ WHERE  tas.aa_sequence_id = $srcfeature_id
       </sql>
     </sqlQuery>
 
-    <sqlQuery>
-      <name>domain:MassSpecPeptides</name>
+    <sqlQuery name="domain:MassSpecPeptides">
       <description></description>
       <sql>
 <![CDATA[
@@ -98,8 +95,7 @@ WHERE msf.parent_id = taaf.aa_feature_id
     </sql>
   </sqlQuery>
 
-    <sqlQuery>
-      <name>lowcomplexity:seg</name>
+    <sqlQuery name="lowcomplexity:seg">
       <description></description>
       <sql>
 <![CDATA[ 
@@ -125,8 +121,7 @@ ORDER BY aal.start_min
       </sql>
     </sqlQuery>
 
-    <sqlQuery>
-      <name>get_2d_struc</name>
+    <sqlQuery name="get_2d_struc">
        <description></description>
        <sql>
 <![CDATA[
@@ -140,8 +135,7 @@ WHERE  ss.aa_sequence_id = $srcfeature_id and
     </sqlQuery>
 
 <!-- Was only in: plasmo -->
-    <sqlQuery>
-      <name>domain:ExportPred</name>
+    <sqlQuery name="domain:ExportPred">
       <description></description>
       <sql>
 <![CDATA[
@@ -168,8 +162,7 @@ GROUP BY df.aa_feature_id, df.parent_id
     </sqlQuery>
 
 <!-- ORIGINALLY FROM: plasmo,toxo,tritryp -->
-  <sqlQuery>
-      <name>domain:SignalP</name>
+  <sqlQuery name="domain:SignalP">
       <description></description>
       <sql>
 <![CDATA[
@@ -210,8 +203,7 @@ WHERE
 
 
 <!-- ORIGINALLY FROM: giardia,trich,tritryp -->
-    <sqlQuery>
-      <name>domain:TMHMM</name>
+    <sqlQuery name="domain:TMHMM">
       <description></description>
       <sql>
 <![CDATA[
@@ -234,8 +226,7 @@ WHERE
       </sql>
     </sqlQuery>
 
-  <sqlQuery>
-      <name>domain:interpro</name>
+  <sqlQuery name="domain:interpro">
       <description></description>
       <sql>
 <![CDATA[
@@ -280,8 +271,7 @@ WHERE  df.aa_sequence_id = $srcfeature_id and
       </sql>
   </sqlQuery>
 
-    <sqlQuery>
-      <name>match:BLASTP</name>
+    <sqlQuery name="match:BLASTP">
       <description></description>
       <sql>
 <![CDATA[ 
@@ -324,8 +314,7 @@ ORDER BY
   <module name="Feature.pm">
 
 <!-- Was only in: plasmo -->
-    <sqlQuery>
-      <name>domain:ExportPred:subfeatures</name>
+    <sqlQuery name="domain:ExportPred:subfeatures">
       <description> </description>
       <sql>
 <![CDATA[ 
@@ -349,8 +338,7 @@ ORDER BY aal.start_min
 
 
 <!-- ORIGINALLY FROM: giardia,trich,tritryp -->
-    <sqlQuery>
-      <name>domain:TMHMM:subfeatures</name>
+    <sqlQuery name="domain:TMHMM:subfeatures">
       <description> </description>
       <sql>
 <![CDATA[ 
@@ -377,8 +365,7 @@ ORDER BY aal.start_min
       </sql>
     </sqlQuery>
 
-    <sqlQuery>
-      <name>domain:interpro:subfeatures</name>
+    <sqlQuery name="domain:interpro:subfeatures">
       <description></description>
       <sql>
 <![CDATA[ 
@@ -417,8 +404,7 @@ WHERE
       </sql>
     </sqlQuery>
 
-    <sqlQuery>
-      <name>match:BLASTP:subfeatures</name>
+    <sqlQuery name="match:BLASTP:subfeatures">
     <description></description> 
       <sql>
 <![CDATA[ 
