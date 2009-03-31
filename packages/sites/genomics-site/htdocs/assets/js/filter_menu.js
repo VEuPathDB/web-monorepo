@@ -133,9 +133,9 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 		}
 	}
 	if(edit == 0)	
-		var action = "javascript:validateAndCall('add','" + pro_url + "')";//"javascript:AddStepToStrategy('" + pro_url + "')";
+		var action = "javascript:validateAndCall('add','" + pro_url + "', '" + stratBackId + "')";//"javascript:AddStepToStrategy('" + pro_url + "')";
 	else
-		var action = "javascript:validateAndCall('edit', '" + pro_url + "', '" + proto + "', "+ parseInt(reviseStep) + ")";//"javascript:EditStep('" + proto + "', '" + pro_url + "', " + parseInt(reviseStep) + ")";
+		var action = "javascript:validateAndCall('edit', '" + pro_url + "', '" + stratBackId + "', "+ parseInt(reviseStep) + ")";//"javascript:EditStep('" + proto + "', '" + pro_url + "', " + parseInt(reviseStep) + ")";
 	var formtitle = "";
 	if(edit == 0)
 		formtitle = "<h1>Add&nbsp;Step</h1>";
@@ -188,7 +188,7 @@ function validateAndCall(type, url, proto, rs){
 		return;
 	}
 	if(type == 'add'){
-		AddStepToStrategy(url);
+		AddStepToStrategy(url, proto, rs);
 	}else{
 		EditStep(url, proto, rs);
 	}
