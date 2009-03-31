@@ -56,11 +56,13 @@ sub snpBgFromIsCodingAndNonSyn {
 
 sub MassSpecScoreBgColor {
    my $f = shift;
-    my ($count) = $f->get_tag_values("Count"); 
-   return 'red' if ($count > 50); #darkgray
-   return 'blue' if ($count > 25 );
-   return 'green' if ($count > 10 );
-   return 'gray'; #antiquegray
+   my ($count) = $f->get_tag_values("Count"); 
+   # use shades of red, brighter as count is larger
+   return '#FF0000' if ($count > 100);
+   return '#E00000' if ($count > 50);
+   return '#B00000' if ($count > 25 );
+   return '#800000' if ($count > 10 );
+   return '#500000';
 }
 
 sub sageTagFgColor { 
@@ -252,9 +254,9 @@ sub heightBySOTerm {
 
 sub heightByCount {
   my ($f, $height) = @_;
-   $f = $f->parent if (! $f->get_tag_values('Count'));
-   my ($count) = $f->get_tag_values("Count"); 
-   return ($count/2)+$height;
+  $f = $f->parent if (! $f->get_tag_values('Count'));
+  my ($count) = $f->get_tag_values("Count"); 
+  return (log($count*$height)/log(2));
 }
 
 
