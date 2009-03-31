@@ -24,7 +24,8 @@ function addFileSelRow() {
         attr("href", "javascript:void(0)").
            append($("<img>").attr("src", "images/remove.gif")
              .click(function(){  
-                  removeRow($(this).parents("tr:last"));
+                  $(this).parents("table:first").parents("tr:first").remove();
+                  zebraStripe();
              })
            ));
 
@@ -59,7 +60,4 @@ function zebraStripe() {
   $(filesTable + " table:odd").css("background-color", "#cccccc");
   $(filesTable + " table:even").css("background-color", "#ffffff");
 }
-function removeRow(row) {
-  $(row).remove();
-  zebraStripe(); 
-}
+
