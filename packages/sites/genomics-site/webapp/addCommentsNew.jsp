@@ -67,11 +67,12 @@ $("#box a").click(function(event) {
   
 </style>
 
+<script type="text/javascript" src="/assets/js/lib/jquery-validate/jquery.validate.pack.js"></script>
 <script type="text/javascript" src="/assets/js/fileUpload.js"></script>
 
 </head>
 
-<body onload='addFileSelRow();'>
+<body>
 
 <c:choose>
 
@@ -122,7 +123,7 @@ $("#box a").click(function(event) {
     </c:if>
 
 
-      <html:form method="post" action="addComment.do" enctype="multipart/form-data">
+      <html:form method="post" action="addComment.do" styleId="uploadForm" enctype="multipart/form-data">
         <html:hidden property="commentTargetId" value="${commentForm.commentTargetId}"/>
         <html:hidden property="stableId" value="${commentForm.stableId}"/>
         <html:hidden property="externalDbName" value="${commentForm.externalDbName}"/>
@@ -272,7 +273,12 @@ $("#box a").click(function(event) {
       <tr class="medium">
         <td>&nbsp;</td>
         <td>Upload File</td>
-        <td><table id="fileSelTbl"></table></td>
+        <td>
+          <table id="fileSelTbl"></table>
+          <table>
+            <tr><td><input type="button" name="newfile" value="Add Another File" id="newfile"></td></tr>
+          </table>
+        </td>
       </tr>
 
       <tr class="medium">
@@ -303,7 +309,7 @@ $("#box a").click(function(event) {
         <td>&nbsp;</td>
         <td valign=top>Other Related Genes</td>
         <td> 
-				  <html:textarea property="associatedStableIds" rows="3" cols="70"/>
+          <html:textarea property="associatedStableIds" rows="3" cols="70"/>
          <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>Enter one or more Gene Id(s) in the box above separated by \',\'. </li><li>The same comment and files will be appear on those gene ids.</li></ul>')"> 
           <img src="/assets/images/help.png" align=top border=0></a>
         </td>
