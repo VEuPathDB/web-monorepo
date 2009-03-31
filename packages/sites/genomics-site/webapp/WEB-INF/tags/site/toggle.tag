@@ -102,22 +102,23 @@
             <a name="${anchorName}"></a>   
         </c:if>
 
-        <%--  Safari/IE can't handle this way of doing it  --%>
+        <%--  Safari/IE cannot handle this way of doing it  --%>
         <c:choose>
         <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
-           <div id="toggle${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
+           <div id="toggle${name}" class="toggle-handle" name="${name}" align="left">
+             <b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
              <a href="javascript:${showOnClick}toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
            </div>
         </c:when>
 
-        <%--  Netscape/Firefox can't handle this way of doing it  --%>
+        <%--  Netscape/Firefox cannot handle this way of doing it  --%>
         <c:otherwise>
 
-           <div id="showToggle${name}" class="toggle" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
+           <div id="showToggle${name}" class="toggle" name="${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
              <a href="javascript:${showOnClick}showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')&&storeIntelligentCookie('show${name}',1)" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
            </div>
 
-           <div id="hideToggle${name}" class="toggle" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
+           <div id="hideToggle${name}" class="toggle" name="${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
               <a href="javascript:hideLayer('${name}')&&showLayer('showToggle${name}')&&hideLayer('hideToggle${name}')&&storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onMouseOver="status='Hide ${displayName}';return true" onMouseOut="status='';return true">Hide</a>
             </div>
         </c:otherwise>
