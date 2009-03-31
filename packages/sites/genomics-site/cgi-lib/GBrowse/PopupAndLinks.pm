@@ -439,7 +439,7 @@ sub massSpecUnifiedTitle {
     push @data, [ "$assayTitle" => "$test{$try} ($freq{$try})" ];
     $assayTitle = ' ';
   }
-  hover('', \@data);
+  hover('', \@data) if $count;;
 }
 
 sub blastxTitle {
