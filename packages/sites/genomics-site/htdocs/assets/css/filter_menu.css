@@ -197,3 +197,13 @@
 	top: 65px;*/
 	color: #FFFFFF;
 }
+table.parameter-errors{
+	border-collapse:separate;
+	border:1px dotted red;
+	color:red;
+	margin:10px 0 0 22px;
+	width:95%;
+}
+table.parameter-errors td{
+	padding:6px 0 0 10px;
+}
