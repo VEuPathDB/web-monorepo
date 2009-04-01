@@ -266,7 +266,7 @@ function close(ele){
 }
 
 function closeAll(){
-	$("#query_form").parent().remove();
+	$("#query_form").parent().hide();
 	$(".filter_link").css({opacity:"1.0"}).attr("href");
 }
 
