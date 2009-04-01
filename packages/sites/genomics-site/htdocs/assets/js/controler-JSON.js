@@ -183,7 +183,8 @@ function AddStepToStrategy(url, proto, stpId){
 		},
 		success: function(data){
 			data = eval("(" + data + ")");
-			if(ErrorHandler(data)){
+			if(ErrorHandler("AddStep", data, strategy, $("div#query_form"))){
+				$("div#query_form").parent().remove();
 				removeStrategyDivs(b_strategyId);
 				f_strategyId = updateStrategies(data,"AddStep", strategy);
 				removeLoading(f_strategyId);
@@ -521,19 +522,6 @@ function renameStrategy(stratId, checkName, fromHist){
 	});
 }
 
-function ValidateView(strategies){
-	var failed = new Array();
-	for(str in strats){
-		strat = strats[str];
-		if(strat.checksum != strategies[strat.backId])
-			failed.push(strat.frontId);
-	}
-	if(failed.length == 0)
-		return true;
-	else
-		return failed;
-}
-
 function ChangeFilter(strategyId, stepId, url) {
         b_strategyId = strategyId;
         strategy = getStrategyFromBackId(b_strategyId); 
@@ -576,13 +564,4 @@ function ChangeFilter(strategyId, stepId, url) {
 
 }
 
-function ErrorHandler(data){
-	var type = null;
-	if(data.type != "error"){
-		type = true;
-	}else{
-		type = false;
-		alert("AN ERROR HAS OCCURED/n" + data.exception);
-	}
-	return type;
-}
+
