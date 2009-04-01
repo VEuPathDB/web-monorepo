@@ -9,18 +9,24 @@ use strict;
 my $q = new CGI;
 
 print $q->header('text/html');
-my $id = $q->param('pmid');
-my $content = pcbiPubmed::setPubmedID($id);
+my $idstr = $q->param('pmids');
 
-my $title   = pcbiPubmed::fetchTitle($content, "ArticleTitle");
-my $journal = pcbiPubmed::fetchPublication($content, "Journal");
-my $author = pcbiPubmed::fetchAuthorList($content, "Author");
-my $url     = pcbiPubmed::fetchPubmedUrl();
+my @ids = split /-/, $idstr;
+
+foreach my $id (@ids) {
+
+  next if($id.length == 0);
+	my $content = pcbiPubmed::setPubmedID($id);
+
+	my $title   = pcbiPubmed::fetchTitle($content, "ArticleTitle");
+	my $journal = pcbiPubmed::fetchPublication($content, "Journal");
+	my $author  = pcbiPubmed::fetchAuthorList($content, "Author");
+	my $url     = pcbiPubmed::fetchPubmedUrl();
 
 print <<EOL
 <table class=mybox>
-<tr>
-  <td>PMID:</td>
+<tr bgcolor="lightgrey">
+  <td width=5>PMID:</td>
   <td><a href="$url">$id</a></td>
 </tr>
 <tr>
@@ -35,4 +41,9 @@ print <<EOL
   <td>Author:</td>
   <td>$author</td>
 </tr>
+<tr>
+  <td colspan=2><hr></td>
+</tr>
 EOL
+
+}
