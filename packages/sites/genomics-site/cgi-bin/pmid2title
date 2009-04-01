@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
+use pcbiPubmed;
+use XMLUtils;
+use CGI; 
+use strict;
+
+my $q = new CGI;
+
+print $q->header('text/html');
+my $id = $q->param('pmid');
+my $content = pcbiPubmed::setPubmedID($id);
+
+my $title   = pcbiPubmed::fetchTitle($content, "ArticleTitle");
+my $journal = pcbiPubmed::fetchPublication($content, "Journal");
+my $author = pcbiPubmed::fetchAuthorList($content, "Author");
+my $url     = pcbiPubmed::fetchPubmedUrl();
+
+print <<EOL
+<table class=mybox>
+<tr>
+  <td>PMID:</td>
+  <td><a href="$url">$id</a></td>
+</tr>
+<tr>
+  <td>Title:</td>
+  <td>$title</td>
+</tr>
+<tr>
+  <td>Journal:</td>
+  <td>$journal</td>
+</tr>
+<tr>
+  <td>Author:</td>
+  <td>$author</td>
+</tr>
+EOL
