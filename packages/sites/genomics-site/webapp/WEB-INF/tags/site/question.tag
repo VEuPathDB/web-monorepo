@@ -153,19 +153,19 @@
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
-                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:answerParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
-                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:datasetParamInput qp="${qP}" />
                             </td>
@@ -173,14 +173,14 @@
                         <c:otherwise>  <%-- not enumParam --%>
                             <c:choose>
                                 <c:when test="${isReadonly}">
-                                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <bean:write name="qForm" property="myProp(${pNam})"/>
                                         <html:hidden property="myProp(${pNam})"/>
                                     </td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <html:text property="myProp(${pNam})" size="35" />
                                     </td>
@@ -190,7 +190,7 @@
                     </c:choose>
 
                     <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
-                        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td width="30%">&nbsp;&nbsp;&nbsp;&nbsp;</td>
                         <td valign="top" width="50" nowrap>
                             <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                             <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>

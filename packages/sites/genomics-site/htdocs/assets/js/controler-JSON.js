@@ -442,8 +442,9 @@ function saveStrategy(stratId, checkName, fromHist){
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
-		dataType: "xml",
+		dataType: "JSON",
 		success: function(data){
+                        data = eval("(" + data + ")");
 			// reload strategy panel
 			var kids = $("root", data).children("strategy");
 			if (kids.length > 0) {
@@ -487,8 +488,9 @@ function renameStrategy(stratId, checkName, fromHist){
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
-		dataType: "xml",
+		dataType: "JSON",
 		success: function(data){
+                        data = eval("(" + data + ")");
 			// reload strategy panel
 			var kids = $("root", data).children("strategy");
 			if (kids.length > 0) {
@@ -499,7 +501,7 @@ function renameStrategy(stratId, checkName, fromHist){
 				selectedBox = selectedBox.attr("id");
 				disableRename(stratId, fromHist);
 				removeStrategyDivs(stratId);
-				updateStrategies(data, "Save", strat);
+				updateStrategies(data, "Rename", strat);
 				var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
 				if (selectedLink.length != 0) selectedLink.click();
 				else NewResults(-1);
@@ -544,19 +546,20 @@ function ChangeFilter(strategyId, stepId, url) {
         $.ajax({
                 url: url,
                 type: "GET",
-                dataType:"xml",
+                dataType:"JSON",
                 data: '',
                 beforeSend: function(){
                         showLoading(f_strategyId);
                 },
                 success: function(data){
+                        data = eval("(" + data + ")");
                         var selectedBox = $("#Strategies div.selected");
                         if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
                         if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
 			var selectedStrat = selectedBox.parent().attr("id");
 			selectedBox = selectedBox.attr("id");
  			removeStrategyDivs(strategy.backId);
-                        updateStrategies(data, '', strategy);
+                        updateStrategies(data, 'ChangeFilter', strategy);
 			var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
 			if (selectedLink.length != 0) selectedLink.click();
 			else NewResults(-1);
