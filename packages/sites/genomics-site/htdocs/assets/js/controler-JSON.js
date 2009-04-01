@@ -223,17 +223,21 @@ function EditStep(url, proto, step_number){
 			},
 		success: function(data){
 			data = eval("(" + data + ")");
-			var selectedBox = $("#Strategies div.selected");
-			if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
-			if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
-			var selectedStrat = selectedBox.parent().attr("id");
-			selectedBox = selectedBox.attr("id");
-			removeStrategyDivs(s);
-			fsid = updateStrategies(data, "EditStep", getStrategyFromBackId(s));
-			var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
-			if (selectedLink.length != 0) selectedLink.click();
-			else NewResults(-1);
-                },
+			if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
+				var selectedBox = $("#Strategies div.selected");
+				if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
+				if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
+				var selectedStrat = selectedBox.parent().attr("id");
+				selectedBox = selectedBox.attr("id");
+				removeStrategyDivs(s);
+				fsid = updateStrategies(data, "EditStep", getStrategyFromBackId(s));
+				var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+				if (selectedLink.length != 0) selectedLink.click();
+				else NewResults(-1);
+			}else{
+				removeLoading(ss.frontId);
+			}
+		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
@@ -275,29 +279,33 @@ function DeleteStep(f_strategyId,f_stepId){
 			},
 		success: function(data){
 				data = eval("(" + data + ")");
-				if(data.strategy != undefined){
-					removeStrategyDivs(strategy.backId);
-					var new_f_strategyId = updateStrategies(data, "DeleteStep", strategy);
-					if (d_strategyId && f_strategyId == d_strategyId) {
-						var target;
-						if (f_stepId == d_stepId) {
-							$("#diagram_" + new_f_strategyId + " div.row2:last .resultCount a").click();
+				if(ErrorHandler("DeleteStep", data, strategy, null)){
+					if(data.strategy != undefined){
+						removeStrategyDivs(strategy.backId);
+						var new_f_strategyId = updateStrategies(data, "DeleteStep", strategy);
+						if (d_strategyId && f_strategyId == d_strategyId) {
+							var target;
+							if (f_stepId == d_stepId) {
+								$("#diagram_" + new_f_strategyId + " div.row2:last .resultCount a").click();
+							}
+							else if (f_stepId > d_stepId) {
+								$("#diagram_" + new_f_strategyId + " div#step_" + d_stepId + d_sub + " .resultCount a").click();
+							}
+							else {
+								if(d_sub == "" && d_stepId == 1) d_sub = "_sub";
+								$("#diagram_" + new_f_strategyId + " div#step_" + (d_stepId-1) + d_sub + " .resultCount a").click();
+							}
 						}
-						else if (f_stepId > d_stepId) {
-							$("#diagram_" + new_f_strategyId + " div#step_" + d_stepId + d_sub + " .resultCount a").click();
-						}
-						else {
-							if(d_sub == "" && d_stepId == 1) d_sub = "_sub";
-							$("#diagram_" + new_f_strategyId + " div#step_" + (d_stepId-1) + d_sub + " .resultCount a").click();
+					}else{
+						removeStrategyDivs(strategy.backId);
+						$("div#diagram_"+strategy.frontId).remove();
+						if($("#Strategies div").length == 0){
+							showInstructions();
+							NewResults(-1);
 						}
 					}
 				}else{
-					removeStrategyDivs(strategy.backId);
-					$("div#diagram_"+strategy.frontId).remove();
-					if($("#Strategies div").length == 0){
-						showInstructions();
-						NewResults(-1);
-					}
+					removeLoading(strategy.frontId);
 				}	
 			},
 		error: function(data, msg, e){
@@ -327,23 +335,27 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 		},
 		success: function(data){
 			data = eval("(" + data + ")");
-			x = loadModel(data);
-			if(collapsedName.indexOf("UNION") == -1 && collapsedName.indexOf("MINUS") == -1 && collapsedName.indexOf("INTERSECT") == -1 )
-				$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub h3 a:first").text(un);
-			l = $("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub").css("left");
-			l = parseInt(l.substring(0,l.indexOf("px")));
-			gsd = document.createElement('div');
-			$(gsd).addClass("expandedStep").css({ left: (l-2) + "px"});
-			$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub").before(gsd);
-			st = getStep(strategy.frontId, f_stepId);
-			if(st.child_Strat_Id == null)
-				alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
-			if($("#diagram_"+st.child_Strat_Id).length == 0){
-				strats[findStrategy(st.child_Strat_Id)].isDisplay = true;
-				subDiv = displayModel(st.child_Strat_Id);
-				$("div#Strategies div#diagram_" + f_strategyId).after(subDiv);
+			if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
+				x = loadModel(data);
+				if(collapsedName.indexOf("UNION") == -1 && collapsedName.indexOf("MINUS") == -1 && collapsedName.indexOf("INTERSECT") == -1 )
+					$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub h3 a:first").text(un);
+				l = $("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub").css("left");
+				l = parseInt(l.substring(0,l.indexOf("px")));
+				gsd = document.createElement('div');
+				$(gsd).addClass("expandedStep").css({ left: (l-2) + "px"});
+				$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub").before(gsd);
+				st = getStep(strategy.frontId, f_stepId);
+				if(st.child_Strat_Id == null)
+					alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
+				if($("#diagram_"+st.child_Strat_Id).length == 0){
+					strats[findStrategy(st.child_Strat_Id)].isDisplay = true;
+					subDiv = displayModel(st.child_Strat_Id);
+					$("div#Strategies div#diagram_" + f_strategyId).after(subDiv);
+				}
+				removeLoading(f_strategyId);
+			}else{
+				removeLoading(f_strategyId);
 			}
-			removeLoading(f_strategyId);
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n " + msg + "\n" + e
