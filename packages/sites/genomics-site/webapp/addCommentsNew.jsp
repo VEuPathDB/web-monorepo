@@ -70,6 +70,16 @@ $("#box a").click(function(event) {
 <script type="text/javascript" src="/assets/js/lib/jquery-validate/jquery.validate.pack.js"></script>
 <script type="text/javascript" src="/assets/js/fileUpload.js"></script>
 
+<script type="text/javascript">
+$(document).ready(function(){
+   $("#preview").click(function(){
+   var pmids = $('#pmIds').val(); 
+   var pmids = pmids.replace(/\D/g, "-");
+   $("#quote p").load("/cgi-bin/pmid2title?pmids=" + pmids);
+  });      
+}); 
+</script>
+
 </head>
 
 <body>
@@ -285,9 +295,13 @@ $("#box a").click(function(event) {
         <td>&nbsp;</td>
         <td valign=top>PMID(s)</td>
         <td>
-          <html:text property="pmIds" size="70"/>
+          <html:text property="pmIds" styleId="pmIds" size="70"/>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title</li><li>Enter one or more IDs in the box above separated by \',\'</li><li>Example: 18172196,10558988</li></ul>')">
           <img src="/assets/images/help.png" align=bottom border=0></a>
+          <div id="wrapper">
+            <div id="quote"><p></p></div>
+            <input type="button" id="preview" value="Preview">
+          </div>
         </td>
       </tr>
 
