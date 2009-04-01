@@ -25,6 +25,7 @@
 	<script type="text/javascript" src="/assets/js/view-JSON.js"></script>
 	<script type="text/javascript" src="/assets/js/step.js"></script>
 	<script type="text/javascript" src="/assets/js/controler-JSON.js"></script>
+	<script type="text/javascript" src="/assets/js/error-JSON.js"></script>
 	<script type="text/javascript" src="/assets/js/pager.js"></script>
 	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexigrid.js"></script>
 	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexifluid.js"></script>
