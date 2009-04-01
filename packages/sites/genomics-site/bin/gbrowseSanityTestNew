@@ -36,14 +36,16 @@ GetOptions("model=s" => \$model,
 $sqlMode = $showSql;
 $sqlMode = 'commented' if $showCommentedSql;
 
-my $parser = ApiCommonWebsite::Model::SqlXmlParser->new($gbrowseFile, $showParse);
-
-my $gbrowseConfig = $parser->getTree();
+my $parser = ApiCommonWebsite::Model::SqlXmlParser->new($gbrowseFile, $model, $showParse);
 
 exit(0) if $showParse;
 
+my $gbrowseConfig = $parser->getTree();
+
 my ($sanityConfig, $defaultParams, $sqlValuesDecl) =
   &getSanityConfig($gbrowseConfig, $model);
+
+#print Dumper $sanityConfig;
 
 if ($indexOnly) {
   &showIndex($sanityConfig);
@@ -59,7 +61,7 @@ my $maxPrepareCounts = &validateTests($queryNameHash, $queryNameArray, $sanityCo
 my $dbh = getDbHandle($showDbInfo);
 
 &runTests($dbh, $queryNameHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo,
-	  $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts);
+	  $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts, $parser);
 
 
 ###########################################################################
@@ -72,21 +74,21 @@ sub getSanityConfig {
   my $sanityConfig = {};
   $sanityConfig->{test} = [];
 
-  foreach my $module (@{$gbrowseConfig->{module}}) {
-      foreach my $sqlQuery (@{$module->{sqlQuery}}) {
-	  next if ($sqlQuery->{include} && $sqlQuery->{include} !~ /$model/);
-	  next if ($sqlQuery->{exclude} && $sqlQuery->{exclude} =~ /$model/);
+  foreach my $moduleName (sort(keys(%{$gbrowseConfig->{module}}))) {
+      my $module = $gbrowseConfig->{module}->{$moduleName};
+      foreach my $sqlQueryName (sort(keys(%{$module->{sqlQuery}}))) {
+	  my $sqlQuery = $module->{sqlQuery}->{$sqlQueryName};
 	  if ($sqlQuery->{testParamValues}) {
 	      foreach my $testParamValues (@{$sqlQuery->{testParamValues}}) {
-		  die "<testParamValues> must include a model= attribute" unless $testParamValues->{model};
-		  next if $testParamValues->{model} ne $model;
-		  my $test = {name => $sqlQuery->{name}->[0]};
+		  die "<testParamValues> for $sqlQuery->{name} must include a 'project=' attribute\n" unless $testParamValues->{project};
+		  next if $testParamValues->{project} ne $model;
+		  my $test = {name => $sqlQuery->{name}};
 		  $test->{param} = $testParamValues->{param};
 		  push(@{$sanityConfig->{test}}, $test);
 	      }
 	  }
 	  else {
-	      my $test = {name => $sqlQuery->{name}->[0]};
+	      my $test = {name => $sqlQuery->{name}};
 	      push(@{$sanityConfig->{test}}, $test);
 	  }
       }
@@ -94,13 +96,13 @@ sub getSanityConfig {
 
   my $testInfo;
   foreach my $testInfoDecl (@{$gbrowseConfig->{sanityTestInfo}}) {
-      if ($testInfoDecl->{model} eq $model) {
-	  die "Duplicate <sanityTestInfo model=\"$model\">" if $testInfo;
+      if ($testInfoDecl->{project} eq $model) {
+	  die "Duplicate <sanityTestInfo model=\"$model\"" if $testInfo;
 	  $testInfo = $testInfoDecl;
       }
   }
-  
-  die "Cannot find <sanityTestInfo model=\"$model\">" unless $testInfo;  
+
+  die "Cannot find <sanityTestInfo project=\"$model\">" unless $testInfo;
 
   my $defaultParams = {};
   foreach my $defaultParamValue (@{$testInfo->{defaultParamValue}}) {
@@ -185,10 +187,12 @@ sub getQueryNameHash {
 
   my $qnh = {};
   my @qna;
-  foreach my $module (@{$gbrowseConfig->{module}}) {
-    foreach my $sqlQuery (@{$module->{sqlQuery}}) {
-      push(@qna, $sqlQuery->{name}->[0]);
-      $qnh->{$sqlQuery->{name}->[0]} = $sqlQuery;
+  foreach my $moduleName (sort(keys(%{$gbrowseConfig->{module}}))) {
+    my $module = $gbrowseConfig->{module}->{$moduleName};
+    foreach my $sqlQueryName (sort(keys(%{$module->{sqlQuery}}))) {
+      my $sqlQuery = $module->{sqlQuery}->{$sqlQueryName};
+      push(@qna, $sqlQueryName);
+      $qnh->{$sqlQueryName} = $sqlQuery;
     }
   }
   return ($qnh,\@qna);
@@ -251,7 +255,7 @@ sub getDbHandle {
 
 
 sub runTests {
-  my ($dbh, $queryNameHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts) = @_;
+  my ($dbh, $queryNameHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts, $parser) = @_;
 
   my $sqlValues = &getSqlValues($dbh, $sqlValuesDecl, $maxPrepareCounts);
 
@@ -270,12 +274,12 @@ sub runTests {
 
     my ($parentFeatureId, $parentFeatureRowCount) =
       &findParentFeatureId($dbh, $test->{param}, $defaultParams, $sqlValues,
-			   $parentFeatureTests);
+			   $parentFeatureTests, $parser);
 
     my $startTime = gettimeofday();
     my ($rowCount, $sqlString) = 
       &runSingleTest($dbh, $test, $defaultParams,
-		     $sqlValues, $parentFeatureTests, $parentFeatureId);
+		     $sqlValues, $parentFeatureTests, $parentFeatureId, $parser);
     my $time = gettimeofday() - $startTime;
     $time = int($time * 10000)/10000;
     $totalTime += $time;
@@ -309,8 +313,9 @@ Total time: $totalTime
 ";
 }
 sub runSingleTest {
-  my ($dbh, $test, $defaultParams, $sqlValues, $parentFeatureTests, $parentFeatureId) = @_;
-  my $rawSqlString = $queryNameHash->{$test->{name}}->{sql}->[0];
+  my ($dbh, $test, $defaultParams, $sqlValues, $parentFeatureTests, $parentFeatureId, $parser) = @_;
+
+  my $rawSqlString = $parser->getSqlStringFromSqlQuery($queryNameHash->{$test->{name}});
 
   my $sqlString = &interpolateParams($rawSqlString, $defaultParams,
 				     $test->{name},
@@ -358,7 +363,7 @@ sub getPreparedInputs {
 }
 
 sub findParentFeatureId {
-  my ($dbh, $params, $defaultParams, $sqlValues, $parentFeatureTests) = @_;
+  my ($dbh, $params, $defaultParams, $sqlValues, $parentFeatureTests, $parser) = @_;
   my $parentFeatureId;
   my $parentFeatureRowCount;
 
@@ -368,7 +373,7 @@ sub findParentFeatureId {
     if (!$parentTestStuff->{featureId}) {
       print STDERR "(running test '$parentTestStuff->{test}->{name}' to get parent feature id)\n";
       &runSingleTest($dbh, $parentTestStuff->{test}, $defaultParams,
-		     $sqlValues, $parentFeatureTests);
+		     $sqlValues, $parentFeatureTests, undef, $parser);
     }
     $parentFeatureId = $parentTestStuff->{featureId};
     $parentFeatureRowCount = $parentTestStuff->{rowCount};
@@ -381,12 +386,11 @@ sub getSqlValues {
 
   my $answer = {};
 
-  foreach my $sqlValueName (keys(%$sqlValueElements)) {
-    my $sqlValue = $sqlValueElements->{$sqlValueName};
+  foreach my $sqlValue (@$sqlValueElements) {
     my $sql = $sqlValue->{sql}->[0];
 
     # here if running a query to get a bunch of rows to iterate test over
-    if (my $maxCount = $maxPrepareCounts->{$sqlValueName}) {
+    if (my $maxCount = $maxPrepareCounts->{$sqlValue->{name}}) {
       $sql =~ s/ROWNUM_COUNT/$maxCount/;
       my $stmt = $dbh->prepare($sql);
       $stmt->execute();
@@ -395,7 +399,7 @@ sub getSqlValues {
 	my @r = @$result;
 	push(@prepareResult, \@r);
       }
-      $answer->{$sqlValueName} = \@prepareResult;
+      $answer->{$sqlValue->{name}} = \@prepareResult;
     }
     # here to get just one row and one column 
     else {
@@ -408,7 +412,7 @@ sub getSqlValues {
 	my $columnCount = scalar(@result);
 	die ("sqlValue $sqlValue->{name} does not return 1 column ($columnCount)")
 	  unless $columnCount == 1;
-	$answer->{$sqlValueName} = $result[0];
+	$answer->{$sqlValue->{name}} = $result[0];
       }
     }
   }
