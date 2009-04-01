@@ -226,7 +226,7 @@ function singleStep(modelstep, jsonstep, sid){
 function createDetails(modelstep, jsonstep, sid){
 	strat = getStrategy(sid);
 	var detail_div = document.createElement('div');
-	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"42%" });
+	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"55%" });
 	var name = jsonstep.displayName;
 	var questionName = jsonstep.questionName;
 	
@@ -250,35 +250,41 @@ function createDetails(modelstep, jsonstep, sid){
 	var hideOp = false;
 	var hideQu = false;
 	if(jsonstep.isCollapsed){                              /* substrategy */
-		rename_step = 	"			<a title='" + sub_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
-		view_step = 	"			<a title='" + sub_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
-		//edit_step =		"			<a title='" + sub_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + jsonstep.isCollapsed + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
-		edit_step = 	"			<a title='" + sub_edit_popup + "' class='edit_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Revise</a>&nbsp;|&nbsp;";
-		expand_step = 	"			<a title='" + sub_expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Open Nested Strategy</a>&nbsp;|&nbsp;";
+
+		rename_step = 	"<a title='" + sub_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
+
+		view_step = 	"<a title='" + sub_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
+
+		//edit_step =	"<a title='" + sub_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + jsonstep.isCollapsed + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
+
+		edit_step = 	"<a title='" + sub_edit_popup + "' class='edit_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Revise</a>&nbsp;|&nbsp;";
+
+		expand_step = 	"<a title='" + sub_expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Open Nested Strategy</a>&nbsp;|&nbsp;";
+
 	} else {   							/* simple step */
-		rename_step = 	"			<a title='" + ss_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
-		view_step = 	"			<a title='" + ss_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
+
+		rename_step = 	"<a title='" + ss_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
+
+		view_step = 	"<a title='" + ss_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
+
 		if(modelstep.isTransform){
 			hideOp = true;
 		}
-		edit_step =		"			<a title='" + ss_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
+		edit_step =	"<a title='" + ss_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
+
 		if(modelstep.frontId == 1 || modelstep.isTransform){
-			expand_step = 	"			<span class='expand_step_link' style='color:grey'>Make Nested Strategy</span>&nbsp;|&nbsp;";
+			expand_step = 	"<span class='expand_step_link' style='color:grey'>Make Nested Strategy</span>&nbsp;|&nbsp;";
 		}else{
-			expand_step = 	"			<a title='" + ss_expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Make Nested Strategy</a>&nbsp;|&nbsp;";
+			expand_step = 	"<a title='" + ss_expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Make Nested Strategy</a>&nbsp;|&nbsp;";
 		}
-	}							
-	insert_step = 	"			<a title='" + insert_popup + "'  class='insert_step_link' id='" + sid + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + jsonstep.dataType + "\");hideDetails(this)'>Insert Step Before</a>&nbsp;|&nbsp;";
-	delete_step = 	"			<a title='" + delete_popup + "' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + sid + "," + modelstep.frontId + ");hideDetails(this)'>Delete</a>";
-	
+	}
+						
+	insert_step = 	"<a title='" + insert_popup + "'  class='insert_step_link' id='" + sid + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + jsonstep.dataType + "\");hideDetails(this)'>Insert Step Before</a>&nbsp;|&nbsp;";
+
+	delete_step = 	"<a title='" + delete_popup + "' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + sid + "," + modelstep.frontId + ");hideDetails(this)'>Delete</a>";
 
 
-
-	close_button = 	"			<span style='float: right; position: absolute; right: 6px;'>"+
-					"				<a href='javascript:void(0)' onclick='hideDetails(this)'>[x]</a>"+
-					"			</span>";
-	
-	
+	close_button = 	"<a href='javascript:void(0)' style='float: none; position: absolute; right: 6px;' onclick='hideDetails(this)'>[x]</a>";	
 	
 	inner = ""+	
 	    "		<div class='crumb_menu'>"+ rename_step + view_step + edit_step + expand_step + insert_step + delete_step + close_button +
