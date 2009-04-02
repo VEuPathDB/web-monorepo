@@ -168,6 +168,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
            $("#query_form").css({'max-width' : '61%','min-width' : '729px'});
 		   
         }
+	$("#query_form").append("<div class='bottom-close'><a href='javascript:closeAll(false)' id='close_filter_query'>Close</a></div>");
 	htmltooltip.render();
 	$("#query_form").fadeIn("normal");
 }
