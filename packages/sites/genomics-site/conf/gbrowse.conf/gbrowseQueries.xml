@@ -1,5 +1,5 @@
 <DAS>
-<sanityTestInfo include="TriTrypDB">
+<sanityTestInfo project="TriTrypDB">
     <defaultParamValue name="srcfeature_id" value="$$na_seq_id_LmjF05_01_20050601_V5.2$$"/>
     <defaultParamValue name="base_start" value="1000"/>
     <defaultParamValue name="rend" value="500000"/>
@@ -25,10 +25,9 @@
 
 <module name="GUS.pm">
   <sqlQuery name="get_feature_by_name">
-    <testParamValues include="TriTrypDB">
+    <testParamValues project="TriTrypDB">
        <param name="name" value="LmjF05_01_20050601_V5.2"/>
     </testParamValues>
-    <description>fetch features by their name</description>
     <sql>
 <![CDATA[
 SELECT  
@@ -102,10 +101,9 @@ WHERE gs.lowercase_source_id
 
 <module name="Segment.pm">
   <sqlQuery name="new:Segment">
-    <testParamValues include="TriTrypDB">
+    <testParamValues project="TriTrypDB">
        <param name="name" value="LmjF05_01_20050601_V5.2"/>
     </testParamValues>
-    <description></description>
      <sql>
 <![CDATA[
 SELECT etn.na_sequence_id srcfeature_id, 
@@ -124,8 +122,6 @@ WHERE  etn.source_id = sa.source_id
   
   
   <sqlQuery name="get_sequence">
-
-    <description></description>
     <sql>
 <![CDATA[ 
 SELECT ens.sequence 
@@ -137,8 +133,6 @@ WHERE  ens.na_sequence_id = $srcfeature_id
   
   
   <sqlQuery name="gene:annotation">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT
@@ -174,8 +168,6 @@ ORDER BY
   
   
   <sqlQuery name="alignment:ORF">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT na_feature_id feature_id, 
@@ -200,8 +192,6 @@ ORDER BY
   
   
   <sqlQuery name="alignment:EST">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
@@ -236,8 +226,6 @@ ORDER BY blat.target_start asc, blat.score desc
   
   
   <sqlQuery name="match:WU_BLASTX">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT b.similarity_id feature_id, 'match' type, 'WU_BLASTX' source, 
@@ -258,8 +246,6 @@ ORDER BY
   
   
   <sqlQuery name="alignment:DoTSAssemblies">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
@@ -291,8 +277,6 @@ ORDER BY
   
   
   <sqlQuery name="gene:syntenyMC">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT
@@ -361,8 +345,6 @@ WHERE edr.external_database_id = ed.external_database_id
   
   
   <sqlQuery name="lowcomplexity:dust">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT
@@ -392,8 +374,6 @@ ORDER BY
   
   
   <sqlQuery name="match:TGI">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT
@@ -430,8 +410,6 @@ ORDER BY
   
   
   <sqlQuery name="SAGE:3-5prime">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT distinct * from
@@ -463,8 +441,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
   
   
   <sqlQuery name="domain:MassSpecPeptides">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT 
@@ -511,9 +487,7 @@ WHERE msf.na_feature_id = x.feat_id
     </sql>
   </sqlQuery>
   
-  <sqlQuery>
-      <name>domain:UnifiedMassSpecPeptides</name>
-      <description>Unified peptides</description>
+  <sqlQuery name="domain:UnifiedMassSpecPeptides">
       <sql>
 <![CDATA[
 SELECT 
@@ -574,8 +548,6 @@ WHERE msf.na_feature_id = x.feat_id
   </sqlQuery>
   
   <sqlQuery name="alignment:BLAT">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT blat.blat_alignment_id feature_id, 
@@ -611,8 +583,6 @@ ORDER BY blat.target_start asc, blat.score desc
   
   
   <sqlQuery name="alignment:Bacs">
-
-    <description></description>
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, 
@@ -672,8 +642,6 @@ ORDER BY f.startm
   
   
   <sqlQuery name="alignment:Cosmids">
-
-    <description></description>
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, f.feature_id name, f.parent_id, f.startm, f.end,
@@ -722,8 +690,6 @@ where f.query_na_sequence_id = s.na_sequence_id
   
   
   <sqlQuery name="annotation:density">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT etn.na_sequence_id feature_id, 
@@ -737,8 +703,6 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   
   
   <sqlQuery name="TandemRepeat:TRF">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT
@@ -769,8 +733,6 @@ ORDER BY
   
   
   <sqlQuery name="alignment:dbEST">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT blat.blat_alignment_id feature_id, 
@@ -809,8 +771,6 @@ ORDER BY
   
   
   <sqlQuery name="match:BLASTX">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT distinct sim.similarity_id feature_id, 
@@ -852,8 +812,6 @@ ORDER BY
   
   
   <sqlQuery name="alignment:RandomEnds">
-
-    <description></description>
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, f.name, f.parent_id, f.startm, f.end,
@@ -893,8 +851,6 @@ ORDER BY f.startm
   
   
   <sqlQuery name="contig:Genbank">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT 's.' || piece_na_sequence_id as feature_id, 
@@ -950,8 +906,6 @@ where offset < $rend and (offset+length) > $base_start
   
 
   <sqlQuery name="clusteralignment:EstCluster">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT blat.blat_alignment_id feature_id, 
@@ -982,8 +936,6 @@ ORDER BY
   
   
   <sqlQuery name="Microsatellite:sts">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT S.na_feature_id as feature_id,
@@ -1010,8 +962,6 @@ ORDER BY
   
   
   <sqlQuery name="match:IsolateCDC">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT distinct sim.similarity_id feature_id, 
@@ -1048,8 +998,6 @@ ORDER BY
   
   
   <sqlQuery name="scaffold:TIGR">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT 's.' || piece_na_sequence_id as feature_id, 
@@ -1110,8 +1058,6 @@ FROM DUAL
   
   
   <sqlQuery name="gene:AlternateModels">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT
@@ -1163,10 +1109,8 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:syntenySpanMC">
-
-    <description></description>
-     <sql includeProjects="TriTrypDB,PlasmoDB,CryptoDB">
+  <sqlQuery name="match:syntenySpanMC" includeProjects="TriTrypDB,PlasmoDB,CryptoDB">
+     <sql>
 <![CDATA[
 SELECT
        syn.synteny_id feature_id,
@@ -1230,8 +1174,10 @@ WHERE edr.external_database_id = ed.external_database_id
   AND b.organism = tn.name
 ]]>
     </sql>
+  </sqlQuery>
  
-     <sql includeProjects="ToxoDB">
+ <sqlQuery name="match:syntenySpanMC" includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT
        syn.synteny_id || '_syn' feature_id,
@@ -1331,14 +1277,11 @@ WHERE edr.external_database_id = ed.external_database_id
   AND b.taxon_id = tn.taxon_id
 ]]>
     </sql>
-    
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Alignment">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="SNP:Alignment"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT  /*+use_nl(sa snp)*/
        sa.na_feature_id          as feature_id,
@@ -1376,10 +1319,8 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Stanford">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="SNP:Stanford"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        sa.na_feature_id          as feature_id,
@@ -1417,10 +1358,8 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:density">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="SNP:density"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT etn.na_sequence_id feature_id, 
        'SNP' type, 
@@ -1433,8 +1372,6 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   
   
   <sqlQuery name="AffymetrixProbes:Exons">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT 
@@ -1469,10 +1406,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-ExonIb'
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_peaks_TypeIII:Einstein">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_peaks_TypeIII:Einstein"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT f.na_feature_id   as feature_id,
        'ChIP_peaks_TypeIII' as type, 
@@ -1494,10 +1429,8 @@ WHERE  f.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_PLK:Einstein">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_PLK:Einstein"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
        'ChIP_PLK'        as type, 
@@ -1514,10 +1447,8 @@ WHERE
   </sqlQuery>
   
   
-  <sqlQuery name="GeneticMarkers:Sibley">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="GeneticMarkers:Sibley"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        sa.na_feature_id           as feature_id,
@@ -1554,10 +1485,8 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:Introns">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:Introns"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1591,10 +1520,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit -Expresssion-IbIntron'
   </sqlQuery>
   
   
-  <sqlQuery name="GeneticMarkers:overview">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="GeneticMarkers:overview"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT
        sv.na_feature_id as feature_id,
@@ -1619,10 +1546,8 @@ WHERE  sv.external_database_release_id = edr.external_database_release_id and
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_TypeIII:Einstein">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_TypeIII:Einstein" includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
        'ChIP_TypeIII'    as type, 
@@ -1639,10 +1564,8 @@ WHERE
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:GenotypingEstSNPs">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:GenotypingEstSNPs"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1676,10 +1599,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-estSNPs'
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:Resequencing">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:Resequencing"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1713,10 +1634,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Resequencing'
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:NuclearCodingAS">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:NuclearCodingAS"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1750,10 +1669,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expresssion-Antisense'
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:TBLASTNTranscriptDiscovery">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:TBLASTNTranscriptDiscovery"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1784,10 +1701,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - TBLASTN-TranscriptDiscovery'
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:ESTTranscriptDiscovery">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:ESTTranscriptDiscovery"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1818,10 +1733,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - EST-TranscriptDiscovery'
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:BLASTXTranscriptDiscovery">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:BLASTXTranscriptDiscovery"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1852,10 +1765,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - BLASTX-TranscriptDiscovery'
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:ChIP">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:ChIP"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1889,10 +1800,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - ChIP'
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:NuclearCoding">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:NuclearCoding"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1926,10 +1835,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearCoding'
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:NuclearNonCoding">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:NuclearNonCoding"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1963,10 +1870,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearNonCoding'
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_peaks_RH:Einstein">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_peaks_RH:Einstein"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT f.na_feature_id   as feature_id,
        'ChIP_peaks_RH'  as type, 
@@ -1988,10 +1893,8 @@ WHERE  f.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_peaks_PLK:Einstein">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_peaks_PLK:Einstein"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT f.na_feature_id   as feature_id,
        'ChIP_peaks_PLK'  as type, 
@@ -2012,10 +1915,8 @@ WHERE  f.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="ChIP_peaks_RH:Hakimi">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_peaks_RH:Hakimi"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT f.na_feature_id   as feature_id,
        'ChIP_peaks_RH'  as type, 
@@ -2037,10 +1938,8 @@ WHERE  f.na_sequence_id = $srcfeature_id
   </sqlQuery>
     
   
-  <sqlQuery name="AffymetrixProbes:GenotypingMarkers">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="AffymetrixProbes:GenotypingMarkers" includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -2074,10 +1973,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-Markers'
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_RH:Einstein">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_RH:Einstein"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
        'ChIP_RH'         as type, 
@@ -2093,10 +1990,8 @@ WHERE
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="ChIP_RH:Hakimi">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_RH:Hakimi"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
        'ChIP_RH'         as type, 
@@ -2112,10 +2007,8 @@ WHERE
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="SNP:Broad">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Broad"  includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
  SELECT 
        sa.na_feature_id          as feature_id,
@@ -2154,10 +2047,8 @@ WHERE  sa.dataset =  'Broad SNPs'
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:SangerPf">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:SangerPf"  includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
  SELECT 
        sa.na_feature_id          as feature_id,
@@ -2196,10 +2087,8 @@ WHERE  sa.dataset = 'Sanger falciparum SNPs'
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:SangerPr">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:SangerPr"  includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
  SELECT 
        sa.na_feature_id          as feature_id,
@@ -2234,10 +2123,8 @@ WHERE  sa.dataset = 'Sanger reichenowi SNPs'
   </sqlQuery>
   
   
-  <sqlQuery name="match:BergmanVaidyaOligos">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="match:BergmanVaidyaOligos"  includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
  SELECT
        sim.similarity_id feature_id,
@@ -2286,10 +2173,8 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Combined">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Combined"  includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
  SELECT 
        sa.na_feature_id          as feature_id,
@@ -2328,10 +2213,8 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Su">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Su"  includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
  SELECT
        sa.na_feature_id          as feature_id,
@@ -2366,10 +2249,8 @@ WHERE  sa.dataset =  'NIH SNPs'
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Widmer">
-
-    <description></description>
-     <sql includeProjects="CryptoDB">
+  <sqlQuery name="SNP:Widmer"  includeProjects="CryptoDB">
+     <sql>
 <![CDATA[
  SELECT 
        sa.na_feature_id         as feature_id,
@@ -2417,8 +2298,6 @@ WHERE  fl.na_sequence_id = $srcfeature_id
 
 
   <sqlQuery name="gene:annotation:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT 
@@ -2446,10 +2325,8 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="gene:syntenyMC:attribute:Ortholog">
-
-    <description></description>
-      <sql includeProjects="ToxoDB">
+  <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  includeProjects="ToxoDB">
+      <sql>
 <![CDATA[
 select sb.source_id
 from apidb.SYNTENICORTHOLOGS sa, apidb.SYNTENICORTHOLOGS sb
@@ -2457,8 +2334,11 @@ where sa.SOURCE_ID = '$name'
 and sa.group_id = sb.GROUP_ID
 and sa.organism != sb.organism
 ]]>
-  </sql>
-     <sql excludeProjects="ToxoDB">
+ </sql>
+ </sqlQuery>
+
+ <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  excludeProjects="ToxoDB">
+     <sql>
 <![CDATA[
 select gb.SOURCE_ID
 from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb
@@ -2494,8 +2374,6 @@ and og.source_id = ocog.source_id
   
   
   <sqlQuery name="alignment:DoTSAssemblies:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id,
@@ -2528,8 +2406,6 @@ ORDER BY
   
   
   <sqlQuery name="alignment:EST:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id,
@@ -2564,10 +2440,8 @@ WHERE
   </sqlQuery>
   
   
-  <sqlQuery name="gene:annotation:attribute:Ortholog">
-
-    <description></description>
-      <sql includeProjects="ToxoDB">
+  <sqlQuery name="gene:annotation:attribute:Ortholog"  includeProjects="ToxoDB">
+      <sql>
 <![CDATA[
 select sb.source_id
 from apidb.SYNTENICORTHOLOGS sa, apidb.SYNTENICORTHOLOGS sb
@@ -2576,7 +2450,10 @@ and sa.group_id = sb.GROUP_ID
 and sa.organism != sb.organism
 ]]>
   </sql>
-     <sql excludeProjects="ToxoDB">
+ </sqlQuery>
+
+  <sqlQuery name="gene:annotation:attribute:Ortholog"   excludeProjects="ToxoDB">
+     <sql>
 <![CDATA[
 select gb.SOURCE_ID
 from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb
@@ -2612,8 +2489,6 @@ and og.source_id = ocog.source_id
   
   
   <sqlQuery name="domain:MassSpecPeptides:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT  msf.na_feature_id as feature_id,
@@ -2638,8 +2513,6 @@ SELECT  msf.na_feature_id as feature_id,
   
   
   <sqlQuery name="match:TGI:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT
@@ -2671,8 +2544,6 @@ WHERE
   
   
   <sqlQuery name="alignment:BLAT:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id,
@@ -2705,8 +2576,6 @@ WHERE  blat.query_na_sequence_id = asbl.na_sequence_id and
   
   
   <sqlQuery name="alignment:Bacs:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
@@ -2749,8 +2618,6 @@ AND ed.name in ('L.major BAC Ends from Sanger',
   
 
   <sqlQuery name="annotation:density:subfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT interval feature_id, 
@@ -2773,8 +2640,6 @@ GROUP BY interval
 
   
   <sqlQuery name="alignment:Cosmids:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
@@ -2813,8 +2678,6 @@ AND ed.name in ('L.major Cosmid Ends from Sanger',
   
   
   <sqlQuery name="gene:syntenyMC:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT
@@ -2872,8 +2735,6 @@ WHERE edr.external_database_id = ed.external_database_id
   
   
   <sqlQuery name="match:WU_BLASTX:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT sim.similarity_span_id feature_id, 
@@ -2899,8 +2760,6 @@ AND    sim.max_query_end <= $rend
   
   
   <sqlQuery name="match:BLASTX:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT sim.similarity_span_id feature_id, 
@@ -2926,8 +2785,6 @@ AND    sim.max_query_end <= $rend
   
   
   <sqlQuery name="alignment:dbEST:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id,
@@ -2959,8 +2816,6 @@ ORDER BY
   
   
   <sqlQuery name="SAGE:3-5prime:bulkAttribute">
-
-    <description></description>
      <sql>
 <![CDATA[
  SELECT fl.na_feature_id as feature_id,
@@ -2985,8 +2840,6 @@ ORDER BY feature_id, a.assay_id
   
   
   <sqlQuery name="alignment:BLAT:seq">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT est.na_sequence_id, est.source_id, est.sequence
@@ -2998,8 +2851,6 @@ WHERE  est.source_id = '$name'
   
   
   <sqlQuery name="clusteralignment:EstCluster:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
@@ -3032,8 +2883,6 @@ ORDER BY
   
   
   <sqlQuery name="scaffold:TIGR:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT sg.na_feature_id as feature_id,
@@ -3060,8 +2909,6 @@ WHERE  fl.na_feature_id = sg.na_feature_id
   
   
   <sqlQuery name="gene:AlternateModels:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT
@@ -3102,8 +2949,6 @@ ORDER BY
   
   
   <sqlQuery name="match:syntenySpanMC:bulksubfeatures">
-
-    <description></description>
      <sql>
 <![CDATA[
 SELECT * FROM (
@@ -3162,10 +3007,8 @@ ORDER By startm
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Stanford:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="SNP:Stanford:bulkAttribute"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
 SELECT    sa.na_feature_id as feature_id,
           var.strain,
@@ -3188,10 +3031,8 @@ WHERE fl.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:density:subfeatures">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="SNP:density:subfeatures"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
  SELECT interval feature_id, 
       'SNP' type, 
@@ -3212,10 +3053,8 @@ GROUP BY interval
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_RH:Einstein:bulksubfeatures">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_RH:Einstein:bulksubfeatures"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
 SELECT f.na_feature_id   as feature_id,
        'ChIP_sub'        as type,
@@ -3236,10 +3075,8 @@ WHERE  f.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_RH:Hakimi:bulksubfeatures">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_RH:Hakimi:bulksubfeatures" includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
 SELECT f.na_feature_id   as feature_id,
        'ChIP_sub'        as type,
@@ -3260,10 +3097,8 @@ WHERE  f.na_sequence_id = $srcfeature_id
   </sqlQuery>
 
 
-  <sqlQuery name="GeneticMarkers:Sibley:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="GeneticMarkers:Sibley:bulkAttribute"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
 SELECT    sa.na_feature_id as feature_id,
           var.strain,
@@ -3286,10 +3121,8 @@ WHERE fl.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_PLK:Einstein:bulksubfeatures">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_PLK:Einstein:bulksubfeatures"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
 SELECT f.na_feature_id   as feature_id,
        'ChIP_sub'        as type, 
@@ -3310,10 +3143,8 @@ WHERE  f.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="ChIP_TypeIII:Einstein:bulksubfeatures">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_TypeIII:Einstein:bulksubfeatures"  includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
 SELECT f.na_feature_id   as feature_id,
        'ChIP_sub'        as type, 
@@ -3334,10 +3165,8 @@ WHERE  f.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Alignment:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="ToxoDB">
+  <sqlQuery name="SNP:Alignment:bulkAttribute" includeProjects="ToxoDB">
+     <sql>
 <![CDATA[
 SELECT    sa.na_feature_id as feature_id,
           var.strain,
@@ -3361,10 +3190,8 @@ WHERE fl.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:SangerPr:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:SangerPr:bulkAttribute"  includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
@@ -3381,10 +3208,8 @@ ORDER BY var.strain
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Combined:density">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Combined:density"  includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
  SELECT etn.na_sequence_id feature_id, 
        'SNP:Combined' type, 
@@ -3396,10 +3221,8 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Broad:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Broad:bulkAttribute"  includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
@@ -3416,10 +3239,8 @@ ORDER BY var.strain
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:SangerPf:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:SangerPf:bulkAttribute" includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
@@ -3436,10 +3257,8 @@ ORDER BY var.strain
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Winzeler:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Winzeler:bulkAttribute" includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
@@ -3457,10 +3276,8 @@ ORDER BY var.strain
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Combined:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Combined:bulkAttribute" includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
@@ -3477,10 +3294,8 @@ ORDER BY var.strain
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Su:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Su:bulkAttribute" includeProjects="PlasmoDB">
+     <sql>
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
@@ -3498,10 +3313,8 @@ ORDER BY var.strain
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Widmer:bulkAttribute">
-
-    <description></description>
-     <sql includeProjects="CryptoDB">
+  <sqlQuery name="SNP:Widmer:bulkAttribute" includeProjects="CryptoDB">
+     <sql>
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, UPPER(var.strain) strain, var.allele,
        var.phenotype, var.product
@@ -3520,3 +3333,4 @@ WHERE fl.na_sequence_id = $srcfeature_id
   </sqlQuery>
 </module>
 </DAS>
+
