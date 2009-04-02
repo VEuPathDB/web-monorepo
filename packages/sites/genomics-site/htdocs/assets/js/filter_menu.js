@@ -70,10 +70,10 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	var historyId = $("#history_id").val();
 	
 	if(edit == 0){
-		var close_link = "<a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png'/></a>";
+		var close_link = "<a id='close_filter_query' href='javascript:closeAll(false)'><img src='/assets/images/Close-X-box.png'/></a>";
 		var back_link = "<a id='back_to_selection' href='javascript:close()'><img src='/assets/images/backbox.png'/></a>";
 	}else
-		var close_link = "<a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png'/></a>";
+		var close_link = "<a id='close_filter_query' href='javascript:closeAll(false)'><img src='/assets/images/Close-X-box.png'/></a>";
 
 	var quesTitle = $("h1",data).text().replace(/Identify Genes based on/,"");
 	
@@ -265,8 +265,11 @@ function close(ele){
 	$("#query_form").jqDrag(".dragHandle");
 }
 
-function closeAll(){
-	$("#query_form").parent().hide();
+function closeAll(hide){
+	if(hide)
+		$("#query_form").parent().hide();
+	else
+		$("#query_form").parent().remove();
 	$(".filter_link").css({opacity:"1.0"}).attr("href");
 }
 

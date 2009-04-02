@@ -202,7 +202,7 @@ function AddStepToStrategy(url, proto, stpId){
 		}
 	});
 	update_hist = true;
-	closeAll();
+	closeAll(true);
 }
 
 function EditStep(url, proto, step_number){
@@ -243,7 +243,7 @@ function EditStep(url, proto, step_number){
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
-	closeAll();
+	closeAll(true);
 	update_hist = true;
 }
 
@@ -398,7 +398,9 @@ function openStrategy(stratId){
 		datatype:"JSON",
 		success: function(data){
 			data = eval("(" + data + ")");
-			updateStrategies(data, "Open", getStrategyFromBackId(stratId));
+			if(ErrorHandler("Open", data, null, null)){
+				updateStrategies(data, "Open", getStrategyFromBackId(stratId));
+			}
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
@@ -415,8 +417,10 @@ function closeStrategy(stratId){
 		url: url,
 		dataType:"JSON",
 		success: function(data){
-//			data = eval("(" + data + ")");			
-			hideStrat(stratId);
+			data = eval("(" + data + ")");			
+			if(ErrorHandler("CloseStrategy", data, strat, null)){
+				hideStrat(stratId);
+			}
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
@@ -457,31 +461,32 @@ function saveStrategy(stratId, checkName, fromHist){
 		url: url,
 		dataType: "JSON",
 		success: function(data){
-                        data = eval("(" + data + ")");
-			// reload strategy panel
-			var kids = $("root", data).children("strategy");
-			if (kids.length > 0) {
-				var selectedBox = $("#Strategies div.selected");
+					data = eval("(" + data + ")");
+					if(ErrorHandler("SaveStrategy", data, getStrategy(stratId), null)){
+						// reload strategy panel
+						var kids = $("root", data).children("strategy");
+						if (kids.length > 0) {
+							var selectedBox = $("#Strategies div.selected");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
-				var selectedStrat = selectedBox.parent().attr("id");
-				selectedBox = selectedBox.attr("id");
-				if (!fromHist) saveForm.hide();
-				removeStrategyDivs(stratId);
-				updateStrategies(data, "Save", getStrategyFromBackId(stratId));
-				var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
-				if (selectedLink.length != 0) selectedLink.click();
-				else NewResults(-1);
-				update_hist = true;
-				if (fromHist) updateHistory();
-			}
-			else{
-				// root element in data had no strategy children -> there was a name conflict.
-				var overwrite = confirm("A strategy already exists with the name '" + name + ".' Do you want to overwrite the existing strategy?");
-				if (overwrite) {
-					saveStrategy(stratId, false);
-				}
-			}
+							var selectedStrat = selectedBox.parent().attr("id");
+							selectedBox = selectedBox.attr("id");
+							if (!fromHist) saveForm.hide();
+							removeStrategyDivs(stratId);
+							updateStrategies(data, "Save", getStrategyFromBackId(stratId));
+							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+							if (selectedLink.length != 0) selectedLink.click();
+							else NewResults(-1);
+							update_hist = true;
+							if (fromHist) updateHistory();
+						}else{
+							// root element in data had no strategy children -> there was a name conflict.
+							var overwrite = confirm("A strategy already exists with the name '" + name + ".' Do you want to overwrite the existing strategy?");
+							if (overwrite) {
+								saveStrategy(stratId, false);
+							}
+						}
+					}
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
@@ -503,29 +508,30 @@ function renameStrategy(stratId, checkName, fromHist){
 		url: url,
 		dataType: "JSON",
 		success: function(data){
-                        data = eval("(" + data + ")");
-			// reload strategy panel
-			var kids = $("root", data).children("strategy");
-			if (kids.length > 0) {
-				var selectedBox = $("#Strategies div.selected");
+					data = eval("(" + data + ")");
+					if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
+						// reload strategy panel
+						var kids = $("root", data).children("strategy");
+						if (kids.length > 0) {
+							var selectedBox = $("#Strategies div.selected");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
-				var selectedStrat = selectedBox.parent().attr("id");
-				selectedBox = selectedBox.attr("id");
-				disableRename(stratId, fromHist);
-				removeStrategyDivs(stratId);
-				updateStrategies(data, "Rename", strat);
-				var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
-				if (selectedLink.length != 0) selectedLink.click();
-				else NewResults(-1);
-				update_hist = true;
-				if (fromHist) updateHistory();
-			}
-			else{
-				alert("An unsaved strategy already exists with the name '" + name + ".'");
-				disableRename(stratId, fromHist);	
-				if (strat.isSaved)  $("input[name='name']",renameForm).attr("value", strat.savedName);
-			}
+							var selectedStrat = selectedBox.parent().attr("id");
+							selectedBox = selectedBox.attr("id");
+							disableRename(stratId, fromHist);
+							removeStrategyDivs(stratId);
+							updateStrategies(data, "Rename", strat);
+							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+							if (selectedLink.length != 0) selectedLink.click();
+							else NewResults(-1);
+							update_hist = true;
+							if (fromHist) updateHistory();
+						}else{
+							alert("An unsaved strategy already exists with the name '" + name + ".'");
+							disableRename(stratId, fromHist);	
+							if (strat.isSaved)  $("input[name='name']",renameForm).attr("value", strat.savedName);
+						}
+					}
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
@@ -553,16 +559,22 @@ function ChangeFilter(strategyId, stepId, url) {
                 },
                 success: function(data){
                         data = eval("(" + data + ")");
-                        var selectedBox = $("#Strategies div.selected");
-                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
-                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
-			var selectedStrat = selectedBox.parent().attr("id");
-			selectedBox = selectedBox.attr("id");
- 			removeStrategyDivs(strategy.backId);
-                        updateStrategies(data, 'ChangeFilter', strategy);
-			var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
-			if (selectedLink.length != 0) selectedLink.click();
-			else NewResults(-1);
+                        if(ErrorHandler("ChangeFilter", data, strategy, null)){
+							var selectedBox = $("#Strategies div.selected");
+                        	if (selectedBox.length == 0) 
+								selectedBox = $("#Strategies div.selectedarrow");
+                        	if (selectedBox.length == 0) 
+								selectedBox = $("#Strategies div.selectedtransform");
+							var selectedStrat = selectedBox.parent().attr("id");
+							selectedBox = selectedBox.attr("id");
+ 							removeStrategyDivs(strategy.backId);
+                        	updateStrategies(data, 'ChangeFilter', strategy);
+							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+							if (selectedLink.length != 0) 
+								selectedLink.click();
+							else 
+								NewResults(-1);
+						}
                 },
                 error: function(data, msg, e){
                         //$("#Strategies").append(currentDiv);
@@ -572,7 +584,7 @@ function ChangeFilter(strategyId, stepId, url) {
                 }
         });
         update_hist = true;
-        closeAll();
+      //  closeAll();
 
 }
 
