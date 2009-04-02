@@ -100,8 +100,7 @@ sub new {
   $dbh->{LongReadLen} = 10000000;
 
   $self->dbh($dbh);
-  $self->parser(ApiCommonWebsite::Model::SqlXmlParser->new($sqlfile));
-  $self->parser->setProjectId($projectId);
+  $self->parser(ApiCommonWebsite::Model::SqlXmlParser->new($sqlfile, $projectId, 0));
 
   return $self;
 }
