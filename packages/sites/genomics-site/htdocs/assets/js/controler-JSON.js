@@ -335,7 +335,7 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 		},
 		success: function(data){
 			data = eval("(" + data + ")");
-			if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
+			if(ErrorHandler("EditStep", data, strategy, $("div#query_form"))){
 				x = loadModel(data);
 				if(collapsedName.indexOf("UNION") == -1 && collapsedName.indexOf("MINUS") == -1 && collapsedName.indexOf("INTERSECT") == -1 )
 					$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub h3 a:first").text(un);
@@ -419,6 +419,10 @@ function closeStrategy(stratId){
 		success: function(data){
 			data = eval("(" + data + ")");			
 			if(ErrorHandler("CloseStrategy", data, strat, null)){
+				if(strat.subStratOf != null){
+					ps = getStrategy(strat.subStratOf);
+					ps.checksum = data.strategies[ps.backId];
+				}
 				hideStrat(stratId);
 			}
 		},
