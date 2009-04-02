@@ -40,10 +40,11 @@ my $parser = ApiCommonWebsite::Model::SqlXmlParser->new($gbrowseFile, $model, $s
 
 exit(0) if $showParse;
 
-my $gbrowseConfig = $parser->getTree();
+my $sqlQueryArray = $parser->getSqlQueryArray();
+my $sanityTestInfo = $parser->getSanityTestInfo();
 
 my ($sanityConfig, $defaultParams, $sqlValuesDecl) =
-  &getSanityConfig($gbrowseConfig, $model);
+  &getSanityConfig($sqlQueryArray, $sanityTestInfo, $model);
 
 #print Dumper $sanityConfig;
 
@@ -52,15 +53,15 @@ if ($indexOnly) {
   exit(0);
 }
 
-my ($queryNameHash, $queryNameArray) = &getQueryNameHash($gbrowseConfig);
+my $sqlQueryHash = &getQueryNameHash($sqlQueryArray);
 
 my $parentFeatureTests = {};   # tests that subfeature queries refer to
 
-my $maxPrepareCounts = &validateTests($queryNameHash, $queryNameArray, $sanityConfig, $defaultParams, $parentFeatureTests);
+my $maxPrepareCounts = &validateTests($sqlQueryHash, $sqlQueryArray, $sanityConfig, $defaultParams, $parentFeatureTests);
 
 my $dbh = getDbHandle($showDbInfo);
 
-&runTests($dbh, $queryNameHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo,
+&runTests($dbh, $sqlQueryHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo,
 	  $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts, $parser);
 
 
@@ -69,33 +70,29 @@ my $dbh = getDbHandle($showDbInfo);
 
 # make structure that has one element per test
 sub getSanityConfig {
-  my($gbrowseConfig, $model) = @_;
+  my($sqlQueryArray, $sanityTestInfo, $model) = @_;
 
   my $sanityConfig = {};
   $sanityConfig->{test} = [];
 
-  foreach my $moduleName (sort(keys(%{$gbrowseConfig->{module}}))) {
-      my $module = $gbrowseConfig->{module}->{$moduleName};
-      foreach my $sqlQueryName (sort(keys(%{$module->{sqlQuery}}))) {
-	  my $sqlQuery = $module->{sqlQuery}->{$sqlQueryName};
-	  if ($sqlQuery->{testParamValues}) {
-	      foreach my $testParamValues (@{$sqlQuery->{testParamValues}}) {
-		  die "<testParamValues> for $sqlQuery->{name} must include a 'project=' attribute\n" unless $testParamValues->{project};
-		  next if $testParamValues->{project} ne $model;
-		  my $test = {name => $sqlQuery->{name}};
-		  $test->{param} = $testParamValues->{param};
-		  push(@{$sanityConfig->{test}}, $test);
-	      }
-	  }
-	  else {
-	      my $test = {name => $sqlQuery->{name}};
-	      push(@{$sanityConfig->{test}}, $test);
-	  }
+  foreach my $sqlQuery (@$sqlQueryArray) {
+    if ($sqlQuery->{testParamValues}) {
+      foreach my $testParamValues (@{$sqlQuery->{testParamValues}}) {
+	die "<testParamValues> for $sqlQuery->{name} must include a 'project=' attribute\n" unless $testParamValues->{project};
+	next if $testParamValues->{project} ne $model;
+	my $test = {name => $sqlQuery->{name}};
+	$test->{param} = $testParamValues->{param};
+	push(@{$sanityConfig->{test}}, $test);
       }
+    }
+    else {
+      my $test = {name => $sqlQuery->{name}};
+      push(@{$sanityConfig->{test}}, $test);
+    }
   }
 
   my $testInfo;
-  foreach my $testInfoDecl (@{$gbrowseConfig->{sanityTestInfo}}) {
+  foreach my $testInfoDecl (@$sanityTestInfo) {
       if ($testInfoDecl->{project} eq $model) {
 	  die "Duplicate <sanityTestInfo model=\"$model\"" if $testInfo;
 	  $testInfo = $testInfoDecl;
@@ -141,15 +138,15 @@ sub test2string {
 }
 
 sub validateTests {
-  my ($queryNameHash, $queryNameArray, $sanityConfig, $defaultParams, $parentFeatureTests) = @_;
+  my ($sqlQueryHash, $sqlQueryArray, $sanityConfig, $defaultParams, $parentFeatureTests) = @_;
 
   my %testedQueryNames =
     &getTestedQueryNames($sanityConfig, $parentFeatureTests);
 
   my $maxPrepareCnts={};
 
-  foreach my $queryName (@$queryNameArray) {
-    my $query = $queryNameHash->{$queryName};
+  foreach my $query (@$sqlQueryArray) {
+    my $queryName = $query->{name};
     if (!$testedQueryNames{$queryName}) {
 	print "NO TEST FOR: $queryName\n\n";
     }
@@ -163,7 +160,7 @@ sub validateTests {
 
   foreach my $testedQueryName (keys %testedQueryNames) {
     print "TEST OF NON-EXISTENT QUERY: '$testedQueryName'\n\n"
-      unless $queryNameHash->{$testedQueryName};
+      unless $sqlQueryHash->{$testedQueryName};
     ## make sure we have a name and value for the param
   }
   return $maxPrepareCnts;
@@ -183,19 +180,13 @@ sub findPrepareSql {
 
 
 sub getQueryNameHash {
-  my ($gbrowseConfig) = @_;
+  my ($sqlQueryArray) = @_;
 
   my $qnh = {};
-  my @qna;
-  foreach my $moduleName (sort(keys(%{$gbrowseConfig->{module}}))) {
-    my $module = $gbrowseConfig->{module}->{$moduleName};
-    foreach my $sqlQueryName (sort(keys(%{$module->{sqlQuery}}))) {
-      my $sqlQuery = $module->{sqlQuery}->{$sqlQueryName};
-      push(@qna, $sqlQueryName);
-      $qnh->{$sqlQueryName} = $sqlQuery;
-    }
+  foreach my $sqlQuery (@$sqlQueryArray) {
+    $qnh->{$sqlQuery->{name}} = $sqlQuery;
   }
-  return ($qnh,\@qna);
+  return ($qnh);
 }
 
 sub getTestedQueryNames {
@@ -255,7 +246,7 @@ sub getDbHandle {
 
 
 sub runTests {
-  my ($dbh, $queryNameHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts, $parser) = @_;
+  my ($dbh, $sqlQueryHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts, $parser) = @_;
 
   my $sqlValues = &getSqlValues($dbh, $sqlValuesDecl, $maxPrepareCounts);
 
@@ -315,7 +306,7 @@ Total time: $totalTime
 sub runSingleTest {
   my ($dbh, $test, $defaultParams, $sqlValues, $parentFeatureTests, $parentFeatureId, $parser) = @_;
 
-  my $rawSqlString = $parser->getSqlStringFromSqlQuery($queryNameHash->{$test->{name}});
+  my $rawSqlString = $parser->getSqlStringFromSqlQuery($sqlQueryHash->{$test->{name}});
 
   my $sqlString = &interpolateParams($rawSqlString, $defaultParams,
 				     $test->{name},
