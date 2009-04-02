@@ -171,7 +171,10 @@ function AddStepToStrategy(url, proto, stpId){
 	var strategy = getStrategyFromBackId(proto);
 	var b_strategyId = strategy.backId;
 	var f_strategyId = strategy.frontId;
-	url = url + "&strategy_checksum="+strategy.checksum;//"processFilter.do?strategy="+b_strategyId+"&insert=&strategy_checksum="+strategy.checksum;
+	var cs = strategy.checksum;
+	if(strategy.subStratOf != null)
+		cs = getStrategy(strategy.subStratOf).checksum;
+	url = url + "&strategy_checksum="+cs;//"processFilter.do?strategy="+b_strategyId+"&insert=&strategy_checksum="+strategy.checksum;
 	var d = parseInputs();
 	$.ajax({
 		url: url,
@@ -211,7 +214,10 @@ function EditStep(url, proto, step_number){
 	var ss = getStrategyFromBackId(proto);
 	var s = proto;
 	var d = parseInputs();
-	url = url+"&strategy_checksum="+ss.checksum;
+	var cs = ss.checksum;
+	if(ss.subStratOf != null)
+		cs = getStrategy(ss.subStratOf).checksum;
+	url = url+"&strategy_checksum="+cs;
 		$.ajax({
 		url: url,
 		type: "POST",
@@ -263,10 +269,13 @@ function DeleteStep(f_strategyId,f_stepId){
 		else d_sub = "";
 		var d_strategyId = displayStep.parent().attr("id").split('_')[1];
 	}
+	var cs = strategy.checksum;
+	if(strategy.subStratOf != null)
+		cs = getStrategy(strategy.subStratOf).checksum;
 	if (step.back_boolean_Id == "")
-		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id+"&strategy_checksum="+strategy.checksum;
+		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id+"&strategy_checksum="+cs;
 	else
-		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_boolean_Id+"&strategy_checksum="+strategy.checksum;
+		url = "deleteStep.do?strategy=" + strategy.backId + "&step=" + step.back_boolean_Id+"&strategy_checksum="+cs;
 		
 	$.ajax({
 		url: url,
@@ -323,7 +332,10 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 	var strategy = getStrategy(f_strategyId);
 	var step = getStep(f_strategyId, f_stepId);
 	un = (collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
-	url = "expandStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id + "&collapsedName=" + collapsedName+"&strategy_checksum="+strategy.checksum;
+	var cs = strategy.checksum;
+	if(strategy.subStratOf != null)
+		cs = getStrategy(strategy.subStratOf).checksum;
+	url = "expandStep.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id + "&collapsedName=" + collapsedName+"&strategy_checksum="+cs;
 	$.ajax({
 		url: url,
 		type: "post",
@@ -393,12 +405,17 @@ function updateStrategies(data,evnt,strategy){
 
 function openStrategy(stratId){
 	var url = "showStrategy.do?strategy=" + stratId;
+	strat = getStrategyFromBackId(stratId);
 	$.ajax({
 		url: url,
 		datatype:"JSON",
 		success: function(data){
 			data = eval("(" + data + ")");
 			if(ErrorHandler("Open", data, null, null)){
+				if(strat.subStratOf != null){
+					ps = getStrategy(strat.subStratOf);
+					ps.checksum = data.strategies[ps.backId];
+				}
 				updateStrategies(data, "Open", getStrategyFromBackId(stratId));
 			}
 		},
@@ -412,7 +429,10 @@ function openStrategy(stratId){
 
 function closeStrategy(stratId){
 	var strat = getStrategy(stratId);
-	var url = "closeStrategy.do?strategy=" + strat.backId+"&strategy_checksum="+strat.checksum;
+	var cs = strat.checksum;
+	if(strat.subStratOf != null)
+		cs = getStrategy(strat.subStratOf).checksum;
+	var url = "closeStrategy.do?strategy=" + strat.backId+"&strategy_checksum="+cs;
 	$.ajax({
 		url: url,
 		dataType:"JSON",
@@ -506,7 +526,10 @@ function renameStrategy(stratId, checkName, fromHist){
 	var name = $("input[name='name']",renameForm).attr("value");
 	var strategy = $("input[name='strategy']",renameForm).attr("value");
 	var url="renameStrategy.do?strategy=";
-	url = url + strategy + "&name=" + name + "&checkName=" + checkName+"&strategy_checksum="+strat.checksum;
+	var cs = strat.checksum;
+	if(strat.subStratOf != null)
+		cs = getStrategy(strat.subStratOf).checksum;
+	url = url + strategy + "&name=" + name + "&checkName=" + checkName+"&strategy_checksum="+cs;
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
@@ -552,7 +575,10 @@ function ChangeFilter(strategyId, stepId, url) {
         if(strategy.subStratOf != null){
                 strats.splice(findStrategy(f_strategyId));
         }
-        url += "&strategy_checksum="+strategy.checksum;
+		var cs = strategy.checksum;
+		if(strategy.subStratOf != null)
+			cs = getStrategy(strategy.subStratOf).checksum;
+        url += "&strategy_checksum="+cs;
         $.ajax({
                 url: url,
                 type: "GET",
