@@ -1,4 +1,40 @@
 <DAS>
+
+<sanityTestInfo project="ToxoDB">
+    <defaultParamValue name="name" value="TGME49_039250"/>
+    <defaultParamValue name="parent_id" value="TGME49_039250"/>
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_X$$"/>
+    <defaultParamValue name="base_start" value="1"/>
+    <defaultParamValue name="rend" value="1311700"/>
+    <defaultParamValue name="dlm" value="|"/>
+
+    <sqlValue name="na_seq_id_Ib">
+      <sql>
+      select na_sequence_id from dots.VirtualSequence where source_id = 'TGME49_chrIb'
+      </sql>
+    </sqlValue>
+    <sqlValue name="na_seq_id_X">
+      <sql>
+      select na_sequence_id from dots.VirtualSequence where source_id = 'TGME49_chrX'
+      </sql>
+    </sqlValue>
+    <sqlValue name="na_seq_id_IX">
+      <sql>
+      select na_sequence_id from dots.VirtualSequence where source_id = 'TGME49_chrIX'
+      </sql>
+    </sqlValue>
+    <sqlValue name="mass_spec_feature_id">
+      <sql>
+      select na_feature_id from dots.MassSpecFeature where rownum=1
+      </sql>
+    </sqlValue>
+    <sqlValue name="similarity_id">
+      <sql>
+      select similarity_id from dots.SimilaritySpan where rownum=1
+      </sql>
+    </sqlValue>
+</sanityTestInfo>
+
 <sanityTestInfo project="TriTrypDB">
     <defaultParamValue name="srcfeature_id" value="$$na_seq_id_LmjF05_01_20050601_V5.2$$"/>
     <defaultParamValue name="base_start" value="1000"/>
@@ -10,7 +46,6 @@
       select na_sequence_id from dots.externalnasequence where source_id = 'LmjF05_01_20050601_V5.2'
       </sql> 
     </sqlValue>
-
     <sqlValue name="na_feat_id_cgd6_780">
       <sql>
       select na_feature_id from dots.genefeature where source_id = 'cgd6_780'
@@ -103,6 +138,9 @@ WHERE gs.lowercase_source_id
   <sqlQuery name="new:Segment">
     <testParamValues project="TriTrypDB">
        <param name="name" value="LmjF05_01_20050601_V5.2"/>
+    </testParamValues>
+    <testParamValues project="ToxoDB">
+       <param name="name" value="TGME49_chrX"/>
     </testParamValues>
      <sql>
 <![CDATA[
@@ -1372,7 +1410,10 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   
   
   <sqlQuery name="AffymetrixProbes:Exons">
-     <sql>
+   <testParamValues project="ToxoDB">
+     <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
+   </testParamValues>  
+   <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1486,7 +1527,10 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   
   
   <sqlQuery name="AffymetrixProbes:Introns"  includeProjects="ToxoDB">
-     <sql>
+   <testParamValues project="ToxoDB">
+     <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
+   </testParamValues> 
+    <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1635,7 +1679,10 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Resequencing'
   
   
   <sqlQuery name="AffymetrixProbes:NuclearCodingAS"  includeProjects="ToxoDB">
-     <sql>
+  <testParamValues project="ToxoDB">
+     <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
+  </testParamValues> 
+  <sql>
 <![CDATA[
  SELECT 
        f.na_feature_id            as feature_id,
@@ -1766,6 +1813,9 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - BLASTX-TranscriptDiscovery'
   
   
   <sqlQuery name="AffymetrixProbes:ChIP"  includeProjects="ToxoDB">
+   <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_IX$$"/>
+   </testParamValues> 
      <sql>
 <![CDATA[
  SELECT 
@@ -1836,6 +1886,9 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearCoding'
   
   
   <sqlQuery name="AffymetrixProbes:NuclearNonCoding"  includeProjects="ToxoDB">
+   <testParamValues project="ToxoDB">
+        <param name="srcfeature_id" value="$$na_seq_id_IX$$"/>
+   </testParamValues> 
      <sql>
 <![CDATA[
  SELECT 
@@ -2627,6 +2680,9 @@ AND ed.name in ('L.major BAC Ends from Sanger',
    <testParamValues project="TriTrypDB">
     <param name="parent_id" parentFeatureTest="annotation:density"/>
    </testParamValues>
+   <testParamValues project="ToxoDB">
+      <param name="parent_id" value="$$na_seq_id_X$$"/>
+   </testParamValues> 
      <sql>
 <![CDATA[
 SELECT interval feature_id, 
@@ -3041,6 +3097,9 @@ WHERE fl.na_sequence_id = $srcfeature_id
   
   
   <sqlQuery name="SNP:density:subfeatures"  includeProjects="ToxoDB">
+   <testParamValues project="ToxoDB">
+        <param name="parent_id" value="$$na_seq_id_X$$"/>
+   </testParamValues> 
      <sql>
 <![CDATA[
  SELECT interval feature_id, 
