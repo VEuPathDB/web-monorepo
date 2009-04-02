@@ -2338,6 +2338,9 @@ and sa.organism != sb.organism
  </sqlQuery>
 
  <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  excludeProjects="ToxoDB">
+  <testParamValues project="TriTrypDB">
+      <param name="name" value="LmjF05.1010"/>
+  </testParamValues>
      <sql>
 <![CDATA[
 select gb.SOURCE_ID
@@ -2453,6 +2456,9 @@ and sa.organism != sb.organism
  </sqlQuery>
 
   <sqlQuery name="gene:annotation:attribute:Ortholog"   excludeProjects="ToxoDB">
+   <testParamValues project="TriTrypDB">
+    <param name="name" value="LmjF05.1010"/>
+   </testParamValues>
      <sql>
 <![CDATA[
 select gb.SOURCE_ID
@@ -2618,6 +2624,9 @@ AND ed.name in ('L.major BAC Ends from Sanger',
   
 
   <sqlQuery name="annotation:density:subfeatures">
+   <testParamValues project="TriTrypDB">
+    <param name="parent_id" parentFeatureTest="annotation:density"/>
+   </testParamValues>
      <sql>
 <![CDATA[
 SELECT interval feature_id, 
