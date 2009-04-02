@@ -108,6 +108,6 @@
 </div><!-- End of Query Selection Div -->
 <!--</div> End of Filter div -->
 <!--<div id="query_form" class="jqDnR">-->
-	<div class="bottom-close"><a id='close_filter_query' href='javascript:closeAll()'>Close</a>
+	<div class="bottom-close"><a id='close_filter_query' href='javascript:closeAll(false)'>Close</a>
 </div><!-- End of Query Form Div -->
 
