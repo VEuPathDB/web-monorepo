@@ -17,6 +17,35 @@
                  banner="Add A Phenotype Comment"/>
 <head>
 
+
+<script type="text/javascript">
+$(function()
+{ 
+ $("#trigger").click(function(event) {
+ event.preventDefault();
+ $("#box").slideToggle();
+});
+  
+$("#box a").click(function(event) {
+  event.preventDefault();
+  $("#box").slideUp();
+});
+});
+</script>
+
+<script type="text/javascript" src="/assets/js/lib/jquery-validate/jquery.validate.pack.js"></script>
+<script type="text/javascript" src="/assets/js/fileUpload.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+   $("#preview").click(function(){
+   var pmids = $('#pmIds').val(); 
+   var pmids = pmids.replace(/\D/g, "-");
+   $("#quote p").load("/cgi-bin/pmid2title?pmids=" + pmids);
+  });      
+}); 
+</script>
+
 <style type="text/css">
     table.mybox {
       width:     90%;
@@ -46,16 +75,13 @@
   
 </style>
 
-
-<script type="text/javascript" src="/assets/js/fileUpload.js"></script>
-
 </head>
 
-<body onload='addFileSelRow();'>
+<body> 
 
 <c:choose>
 
-  <c:when test="${empty wdkUser || wdkUser.guest}">
+  <c:when test="${1 == 0}">
     <p align=center>Please login to post a comment.</p>
     <table align='center'><tr><td><site:login/></td></tr></table>
   </c:when>
@@ -87,13 +113,6 @@
 
         <c:if test="${param.flag ne '0'}">
           <wdk:errors/>
-
-      Stable ID: ${phenotypeForm.stableId} <br>
-      commentTargetId: ${phenotypeForm.commentTargetId}<br>
-      organism: ${phenotypeForm.organism}<br>
-      externalDbName: ${phenotypeForm.externalDbName}<br>
-      externalDbVersion: ${phenotypeForm.externalDbVersion}<br>
-
         </c:if>
          
       <html:form method="post" action="addPhenotype.do"  enctype="multipart/form-data">
@@ -126,12 +145,8 @@
       <tr class="medium">
         <td>Genetic Background</td>
         <td>
-           <html:text property="background" size="60"/> <br>
-           <ul class="myul">
-            <li>
-           Genotype, strain, other mutations/markers), other genotypic information</li>
-
-           </ul>
+           <html:text property="background" size="60"/> 
+          <a href="javascript:void(0)" onmouseover="this.T_OFFSETY=10;return escape('<ul class=myul><li>Genotype, strain, other mutations/markers), other genotypic information</li></ul>')" ><img src="/assets/images/help.png" align=bottom border=0></a> 
 
         </td>
       </tr>
@@ -242,19 +257,26 @@
       </tr>
 
       <tr class="medium">
-        <td>Upload/Link</div></td>
-        <td><table id="fileSelTbl"></table></td>
+        <td>Upload File</div></td>
+        <td>
+          <table id="fileSelTbl"></table>
+          <table>
+            <tr><td><input type="button" name="newfile" value="Add Another File" id="newfile"></td></tr>
+          </table> 
+        </td>
       </tr>
 
       <tr class="medium">
         <td valign=top>PMID(s)</div></td>
         <td>
-          <html:text property="pmIds" size="50"/><br/>
-          <ul class="myul">
-            <li> First, find the publcation in <a href='http://www.ncbi.nlm.nih.gov/pubmed'>PubMed</a> based on author or title</li>
-            <li>Enter one or more IDs in the box above separated by ','</li>
-            <li>Example: 18172196,10558988</li>
-          </ul>
+          <html:text property="pmIds" styleId="pmIds" size="70"/>
+          <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title</li><li>Enter one or more IDs in the box above separated by \',\'</li><li>Example: 18172196,10558988</li></ul>')">
+          <img src="/assets/images/help.png" align=bottom border=0></a>
+
+          <div id="wrapper">
+            <div id="quote"><p></p></div>
+            <input type="button" id="preview" value="Preview">
+          </div>
         </td>
       </tr>
 
@@ -273,5 +295,6 @@
     </c:otherwise>
 </c:choose>  
 
-<br/>
+<script language="JavaScript" type="text/javascript" src="/gbrowse/wz_tooltip.js"></script>
+</body>
 <site:footer/>
