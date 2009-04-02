@@ -207,3 +207,9 @@ table.parameter-errors{
 table.parameter-errors td{
 	padding:6px 0 0 10px;
 }
+div.bottom-close{
+	position:relative;
+	bottom:8px;
+	right:5px;
+	text-decoration:underline;
+}
