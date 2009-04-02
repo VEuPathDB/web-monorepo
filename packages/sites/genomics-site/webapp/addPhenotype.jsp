@@ -117,14 +117,14 @@
       <tr class="medium">
          <td>Mutant Status</td>
          <td>
-            <input type=radio name="mutantStatus" value=1 checked>Successful/Available</input>
-            <input type=radio name="mutantStatus" value=2>Failed/Unavailable</input>
+            <input type=radio name="mutantStatus" value=1 checked>Successful</input>
+            <input type=radio name="mutantStatus" value=2>Failed</input>
             <input type=radio name="mutantStatus" value=3>In Progress</input>
           </td>
       </tr>
 
       <tr class="medium">
-        <td>Background</td>
+        <td>Genetic Background</td>
         <td>
            <html:text property="background" size="60"/> <br>
            <ul class="myul">
@@ -142,10 +142,13 @@
             <input type=radio name="mutationType" value=1>Gene knock out</input>
             <input type=radio name="mutationType" value=2>Gene knock in</input>
             <input type=radio name="mutationType" value=3>Induced mutation</input>
-            <input type=radio name="mutationType" value=4>Chromosomal substitution</input>
+            <input type=radio name="mutationType" value=4>Inducible/Conditional mutation</input>
             <br>
-            <input type=radio name="mutationType" value=5>Transfection</input>
-            <input type=radio name="mutationType" value=6 checked>Don't know</input>
+            <input type=radio name="mutationType" value=5>Random insertion</input>
+            <input type=radio name="mutationType" value=6>Point mutation</input>
+            <input type=radio name="mutationType" value=7>Transient/Knock down</input>
+            <input type=radio name="mutationType" value=8>Dominant negative</input>
+            <input type=radio name="mutationType" value=9>Spontaneous</input>
           </td>
       </tr>
 
@@ -179,30 +182,32 @@
       </tr>
 
       <tr class="medium">
+         <td>Reporters</td>
+         <td>
+            <html:checkbox property="marker" value="1">Luciferase</html:checkbox>
+            <html:checkbox property="marker" value="2">Fluorescent Protein (GFP, RFP, etc)</html:checkbox>
+          </td>
+      </tr>
+
+      <tr class="medium">
          <td>Selectable Marker(s)</td>
          <td>
             <html:checkbox property="marker" value="1">BLE</html:checkbox>
-            <html:checkbox property="marker" value="2">DHFR</html:checkbox>
-            <html:checkbox property="marker" value="3">PHLEO</html:checkbox>
-            <html:checkbox property="marker" value="4">HXGPRT</html:checkbox>
-            <html:checkbox property="marker" value="5">CAT</html:checkbox>
-            <html:checkbox property="marker" value="6">GFP</html:checkbox>
-            <html:checkbox property="marker" value="7">RFP</html:checkbox>
-            <html:checkbox property="marker" value="8">Other</html:checkbox>
           </td>
       </tr>
 
       <tr class="medium">
          <td>Phenotype Category</td>
          <td>
-            <html:select property="phenotypeCategory">
+            <html:select property="phenotypeCategory" multiple="true" size="5">
               <html:option value="1">Growth</html:option>
               <html:option value="2">Invasion</html:option>
               <html:option value="3">Motility</html:option>
-              <html:option value="4">Differenciation</html:option>
+              <html:option value="4">Differentiation</html:option>
               <html:option value="5">Replication</html:option>
-              <html:option value="6">Mouse Virulence</html:option>
-              <html:option value="7">Other</html:option>
+              <html:option value="6">EGRESS</html:option>
+              <html:option value="7">Host Response</html:option>
+              <html:option value="8">Other</html:option>
             </html:select>
           </td>
       </tr>
@@ -216,6 +221,16 @@
         
         </td>
       </tr>
+
+      <tr class="medium">
+         <td>Phenotype Tested In</td>
+         <td>
+            <input type=radio name="expression" value=1>in vitro</input>
+            <input type=radio name="expression" value=2>in vivo</input>
+            <input type=radio name="expression" value=3>both</input>
+          </td>
+      </tr>
+
 
       <tr class="medium">
          <td>Expression</td>
