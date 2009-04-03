@@ -7,8 +7,8 @@ $(document).ready(function(){
   $('#uploadForm').validate({
     rules: {
       title: {
-          required: true,
-      },
+          required: true
+      }
     }
   });
   
