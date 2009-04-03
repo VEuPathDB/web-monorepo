@@ -17,13 +17,44 @@ Strategy.prototype.name = null;
 Strategy.prototype.savedName = null;
 Strategy.prototype.importId = null;
 Strategy.prototype.dataType = null;
-Strategy.prototype.getStep = function(stepId){
+Strategy.prototype.getStep = function(stepId,isfront){
 	for(s in this.Steps){
-		if(this.Steps[s].frontId == stepId)
-			return this.Steps[s];
+		if(isfront){
+			if(this.Steps[s].frontId == stepId)
+				return this.Steps[s];
+		}else{
+			if(this.Steps[s].back_step_Id == stepId)
+				return this.Steps[s];
+		}
 	}
 	return null;
 }
+Strategy.prototype.depth = function(stepid, d){
+	if(this.subStratOf == null)
+		return 0;
+	var parStrat = this;
+	if(stepid == null){
+		d = 1;
+		ssParts = this.backId.split("_");
+		stepid = ssParts[1];
+		parStrat = getStrategyFromBackId(ssParts[0]);
+	}
+	var parStep = parStrat.getStep(stepid, false);
+	if(parStep != null){
+		return 1;
+	}else{
+		var subS = getSubStrategies(parStrat.frontId);
+		if(subS.length == 0)
+			return null;
+		for(str in subS){
+			r = subS[str].depth(stepid, d);
+			if(r != null)
+				return d + r;
+		}
+		
+	}
+}
+
 Strategy.prototype.initSteps = function(steps){
 	var arr = new Array();
 	var st = null;
@@ -110,9 +141,15 @@ function getSubStrategies(id){
 	var arr = new Array();
 	var pStrat = getStrategy(id);
 	//arr.push(pStrat);
-	for(i=0;i<strats.length;i++){
+/*	for(i=0;i<strats.length;i++){
 		if(strats[i].backId.indexOf(pStrat.backId + "_") != -1)
 			arr.push(strats[i]);
+	}*/
+	for(substrt in pStrat.Steps){
+		if(pStrat.Steps[substrt].child_Strat_Id != null){
+			if(getStrategy(pStrat.Steps[substrt].child_Strat_Id) != false)
+				arr.push(getStrategy(pStrat.Steps[substrt].child_Strat_Id));
+		}
 	}
 	return arr;
 }

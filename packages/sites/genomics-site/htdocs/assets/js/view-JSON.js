@@ -39,8 +39,11 @@ function displayModel(strat_id){
 	  if(strat.isDisplay == true){
 		var div_strat = document.createElement("div");
 		$(div_strat).attr("id","diagram_" + strat.frontId).addClass("diagram");
-		if(strat.subStratOf != null)
-			$(div_strat).addClass("sub_diagram").css({"margin-left":"40px"});
+		if(strat.subStratOf != null){
+			//psml = $("#Strategies div#diagram_"+strat.subStratOf).css("margin-left");
+			//psml = parseInt(psml.substring(0,psml.indexOf("px")));
+			$(div_strat).addClass("sub_diagram").css({"margin-left": (strat.depth(null) * 15) + "px"});
+		}
 		var close_span = document.createElement('span');
 		$(close_span).addClass("closeStrategy").html(""+
 		"	<a onclick='closeStrategy(" + strat.frontId + ")' href='javascript:void(0)'>"+
@@ -52,9 +55,9 @@ function displayModel(strat_id){
 		$(div_strat).append(createRecordTypeName(strat));
 		buttonleft = offset(null);
 		button = document.createElement('a');
-		lsn = strat.getStep(strat.Steps.length).back_boolean_Id;
+		lsn = strat.getStep(strat.Steps.length,true).back_boolean_Id;
 		if(lsn == "" || lsn == null)
-			lsn = strat.getStep(strat.Steps.length).back_step_Id;	
+			lsn = strat.getStep(strat.Steps.length, true).back_step_Id;	
 		dType = strat.dataType;
 		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + "," + lsn + ")").attr("onclick","this.blur()").addClass("filter_link redbutton");
 		$(button).html("<span title='Run a new query and combine its result with your current result.     Alternatively, you could obtain the orthologs to your current result or run another available transform.'>Add Step</span>");

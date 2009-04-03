@@ -79,10 +79,8 @@ function loadModel(json){
 			strat.isDisplay = true;
 			strat.checksum = json.strategies[strat.backId];
 		}else{
-			ss = strat.backId.indexOf("_");
-			ss = strat.backId.substring(0,ss);
-			ss = getStrategyFromBackId(ss).frontId;
-			strat.subStratOf = ss;
+			prts = strat.backId.split("_");
+			strat.subStratOf = getStrategyFromBackId(prts[0]).frontId;
 			if(strategy.order > 0){
 				strat.isDisplay = true;
 			}
