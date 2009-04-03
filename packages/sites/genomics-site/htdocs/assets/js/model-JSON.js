@@ -6,6 +6,7 @@ function Strategy(frontId, backId, isDisplay){
 	this.frontId = frontId;
 	this.backId = backId;
 	this.isDisplay = isDisplay;
+	this.subStratOrder = new Object();
 }
 Strategy.prototype.checksum = null;
 Strategy.prototype.JSON = null;
@@ -34,6 +35,7 @@ Strategy.prototype.initSteps = function(steps){
 				st.isboolean = true;
 				if(steps[i].step.isCollapsed && steps[i].step.strategy.order > 0){
 					subId = loadModel(steps[i].step);
+					this.subStratOrder[steps[i].step.strategy.order] = subId;
 					st.child_Strat_Id = subId;
 				}
 			}else{ 

@@ -27,8 +27,9 @@ function initDisplay(index){
 		dataType: "JSON",
 		success: function(data){
 			data = eval("(" + data + ")");
-			id = loadModel(data);
-			$("div#Strategies").append(displayModel(id));
+			//id = loadModel(data);
+			//$("div#Strategies").append(displayModel(id));
+			id = updateStrategies(data, "Open", null);
 			var strat = getStrategy(id);
 			if (init_view_strat == null && id == 0)
 				$("#diagram_0 div.venn:last .resultCount a").click();
@@ -92,6 +93,7 @@ function loadModel(json){
              //   strat.savedName = $(this).attr("savedName");
                 strat.importId = strategy.importId;
 		steps = strategy.steps;
+		strats.push(strat);
 		strat.initSteps(steps);
 		//lstp = strat.getStep(strategy.steps.length);
 		strat.dataType = strategy.steps[strategy.steps.length].dataType;
@@ -379,11 +381,14 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 
 function updateStrategies(data,evnt,strategy){	
 	stratId = loadModel(data);
+	var strat = getStrategy(stratId);
 	valid = ValidateView(data.strategies);
 	if(valid){
-		if(strategy.subStratOf != null)
+		if( strategy != null && strategy.subStratOf != null)
 			removeSubStrategies(strategy.frontId);
-		if(evnt == "Save" || (strategy.isSaved == "true" && evnt != "Open")){
+		if(strategy == null){
+			$("div#Strategies").prepend(displayModel(stratId));
+		}else if(evnt == "Save" || (strategy.isSaved == "true" && evnt != "Open")){
 			$("div#Strategies div#diagram_" + strategy.frontId).replaceWith(displayModel(stratId));
 		}
 		else if(isLoaded(getStrategy(stratId).backId) != -1 && evnt != "Open"){
@@ -391,6 +396,13 @@ function updateStrategies(data,evnt,strategy){
 		}else{
 			$("div#Strategies").prepend(displayModel(stratId));
 		}	
+		var sCount = 0;
+		for(j in strat.subStratOrder)
+			sCount++;
+		for(var j=sCount;j>0;j--){
+			subs = displayModel(strat.subStratOrder[j]);
+			$("div#Strategies div#diagram_" + strat.frontId).after(subs);
+		}
 		return stratId;
 	}else{
 		message = "There are inconsistancies in strategies:\n";

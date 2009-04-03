@@ -26,10 +26,9 @@ var sub_edit_popup = "Open into a new panel to add or edit nested steps";
 var sub_expand_popup = "Open into a new panel to add or edit nested steps";
 
 //VARIABLES
-var div_strat = null;
+//var div_strat = null;
 var stepDivs = null;
 var leftOffset = 0;
-
 // MANAGE THE DISPLAY OF THE STRATEGY BASED ON THE ID PASSED IN
 function displayModel(strat_id){
 	if(strats){
@@ -38,7 +37,7 @@ function displayModel(strat_id){
 	  var strat = null;
 	  strat = getStrategy(strat_id);
 	  if(strat.isDisplay == true){
-		 div_strat = document.createElement("div");
+		var div_strat = document.createElement("div");
 		$(div_strat).attr("id","diagram_" + strat.frontId).addClass("diagram");
 		if(strat.subStratOf != null)
 			$(div_strat).addClass("sub_diagram").css({"margin-left":"40px"});
@@ -49,7 +48,7 @@ function displayModel(strat_id){
 		"	</a>");
 		$(div_strat).append(close_span);
 		$(div_strat).append(createStrategyName(strat));
-		displaySteps = createSteps(strat);
+		displaySteps = createSteps(strat,div_strat);
 		$(div_strat).append(createRecordTypeName(strat));
 		buttonleft = offset(null);
 		button = document.createElement('a');
@@ -71,7 +70,7 @@ function displayModel(strat_id){
 
 
 // HANDLES THE CREATION OF THE STEP BOX -- This function could be broken down to smaller bites based on the type of step -- future work
-function createSteps(strat){
+function createSteps(strat,div_strat){
 	stepdivs = new Array();
 	leftOffset = 12;
 	for(var ind=0; ind < strat.Steps.length; ind++){  //cStp in strat.Steps){
@@ -161,9 +160,9 @@ function booleanStep(modelstep, jsonstep, sid){
 		bkgdDiv = document.createElement("div");
 		$(bkgdDiv).addClass("expandedStep");
 		$(bkgdDiv).css({ left: (leftOffset-2) + "px"});
-		if(modelstep.child_Strat_Id != null && getStrategy(modelstep.child_Strat_Id).isDisplay == true){
-			ExpandStep(null, sid, modelstep.frontId,childStp.strategy.name);
-		}
+//		if(modelstep.child_Strat_Id != null && getStrategy(modelstep.child_Strat_Id).isDisplay == true){
+//			ExpandStep(null, sid, modelstep.frontId,childStp.strategy.name);
+//		}
 	}
 	if(bkgdDiv != null)
 		stepdivs.push(bkgdDiv);
