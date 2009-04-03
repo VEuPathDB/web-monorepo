@@ -20,14 +20,13 @@ $(document).ready(function(){
 });
  
 function addFileSelRow() {
-  var remove = $("<td>").append($("<a>").
-        attr("href", "javascript:void(0)").
-           append($("<img>").attr("src", "images/remove.gif")
+  var rmBtn = $("<td>")
+          .append($("<img>").attr("src", "images/remove.gif")
              .click(function(){  
-                  $(this).parents("table:first").parents("tr:first").remove();
-                  zebraStripe();
+                $(this).parents("table:first").parents("tr:first").remove();
+                zebraStripe();
              })
-           ));
+           );
 
   $(filesTable).append(
     '<tr><td><table style="border:1px solid black;">' + 
@@ -46,7 +45,7 @@ function addFileSelRow() {
   if (fCount > 0) {
     var rowCount = $(filesTable).find("table").length;
     $(filesTable + ' tr:nth-child(' + (rowCount -1) + 
-        ') table:first tr:first td:last').replaceWith(remove);
+        ') table:first tr:first td:last').replaceWith(rmBtn);
   }
 
 //    $("file").rules("add", "required");
