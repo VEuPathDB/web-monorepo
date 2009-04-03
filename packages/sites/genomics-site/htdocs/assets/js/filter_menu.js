@@ -188,6 +188,7 @@ function validateAndCall(type, url, proto, rs){
 		alert("Please select Intersect, Union or Minus operator.");
 		return;
 	}
+	window.scrollTo(0,0);
 	if(type == 'add'){
 		AddStepToStrategy(url, proto, rs);
 	}else{
