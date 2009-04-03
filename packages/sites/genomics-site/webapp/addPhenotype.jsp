@@ -39,9 +39,13 @@ $("#box a").click(function(event) {
 <script type="text/javascript">
 $(document).ready(function(){
    $("#preview").click(function(){
+	 $("#wrapper").show();
    var pmids = $('#pmIds').val(); 
    var pmids = pmids.replace(/\D/g, "-");
    $("#quote p").load("/cgi-bin/pmid2title?pmids=" + pmids);
+  });      
+  $("#remove").click(function(){
+	 $("#wrapper").hide();
   });      
 }); 
 </script>
@@ -71,6 +75,10 @@ $(document).ready(function(){
       margin-top: 0.5em;
       margin-bottom: 0.5em;
     }
+		div.border{
+		  border: 1px solid lightgrey;
+			width: 600px;
+		}
 
   
 </style>
@@ -287,11 +295,13 @@ $(document).ready(function(){
           <html:text property="pmIds" styleId="pmIds" size="70"/>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title</li><li>Enter one or more IDs in the box above separated by \',\'</li><li>Example: 18172196,10558988</li></ul>')">
           <img src="/assets/images/help.png" align=bottom border=0></a>
-
-          <div id="wrapper">
-            <div id="quote"><p></p></div>
-            <input type="button" id="preview" value="Preview">
+					<br />
+          <div id="wrapper" style="display:none;">
+            <div id="quote" class="border">
+					  <img id="remove" src="images/remove.gif" align=right>
+						<p></p></div>
           </div>
+          <input type="button" id="preview" value="Preview">
         </td>
       </tr>
 
