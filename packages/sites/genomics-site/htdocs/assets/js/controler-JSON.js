@@ -91,8 +91,9 @@ function loadModel(json){
              //   strat.savedName = $(this).attr("savedName");
                 strat.importId = strategy.importId;
 		steps = strategy.steps;
-		strats.push(strat);
+		var pos = strats.push(strat);
 		strat.initSteps(steps);
+		strats.splice(pos-1, 1);
 		//lstp = strat.getStep(strategy.steps.length);
 		strat.dataType = strategy.steps[strategy.steps.length].dataType;
 		id = strategy.id;
@@ -189,9 +190,9 @@ function AddStepToStrategy(url, proto, stpId){
 			if(ErrorHandler("AddStep", data, strategy, $("div#query_form"))){
 				$("div#query_form").parent().remove();
 				removeStrategyDivs(b_strategyId);
-				f_strategyId = updateStrategies(data,"AddStep", strategy);
-				removeLoading(f_strategyId);
-				$("#diagram_" + f_strategyId + " div.venn:last .resultCount a").click();
+				f_id = updateStrategies(data,"AddStep", strategy);
+				removeLoading(f_id);
+				$("#diagram_" + f_id + " div.venn:last .resultCount a").click();
 				isInsert = "";
 			}else{
 				removeLoading(f_strategyId);
@@ -289,6 +290,10 @@ function DeleteStep(f_strategyId,f_stepId){
 		success: function(data){
 				data = eval("(" + data + ")");
 				if(ErrorHandler("DeleteStep", data, strategy, null)){
+					if(step.child_Strat_Id != null){
+						if(findStrategy(step.child_Strat_Id) != -1 && getStrategy(step.child_Strat_Id).isDisplay)
+							hideStrat(step.child_Strat_Id);
+					}
 					if(data.strategy != undefined){
 						removeStrategyDivs(strategy.backId);
 						var new_f_strategyId = updateStrategies(data, "DeleteStep", strategy);
@@ -348,25 +353,7 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 		success: function(data){
 			data = eval("(" + data + ")");
 			if(ErrorHandler("EditStep", data, strategy, $("div#query_form"))){
-				x = loadModel(data);
-				if(collapsedName.indexOf("UNION") == -1 && collapsedName.indexOf("MINUS") == -1 && collapsedName.indexOf("INTERSECT") == -1 )
-					$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub h3 a:first").text(un);
-				l = $("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub").css("left");
-				l = parseInt(l.substring(0,l.indexOf("px")));
-				gsd = document.createElement('div');
-				$(gsd).addClass("expandedStep").css({ left: (l-2) + "px"});
-				$("#diagram_" + f_strategyId + " #step_" + f_stepId + "_sub").before(gsd);
-				st = getStep(strategy.frontId, f_stepId);
-				if(st.child_Strat_Id == null)
-					alert("There was an error in the Expand Operation for this step.  Please contact administrator.");
-				if($("#diagram_"+st.child_Strat_Id).length == 0){
-					strats[findStrategy(st.child_Strat_Id)].isDisplay = true;
-					subDiv = displayModel(st.child_Strat_Id);
-					$("div#Strategies div#diagram_" + f_strategyId).after(subDiv);
-				}
-				removeLoading(f_strategyId);
-			}else{
-				removeLoading(f_strategyId);
+				f_id = updateStrategies(data, "Expand", strategy);
 			}
 		},
 		error: function(data, msg, e){
