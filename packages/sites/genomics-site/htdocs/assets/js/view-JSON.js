@@ -416,9 +416,9 @@ var rename = "<a style='color: #0b4796' title='Click to rename.'  onclick=\"enab
 //REMOVE ALL OF THE SUBSTRATEGIES OF A GIVEN STRATEGY FROM THE DISPLAY
 function removeStrategyDivs(stratId){
 	strategy = getStrategyFromBackId(stratId);
-	if(stratId.indexOf("_") > 0){
+	if(strategy != null && strategy.subStratOf != null){  //stratId.indexOf("_") > 0){
 		var currentDiv = $("#Strategies div#diagram_" + strategy.frontId).remove();
-		sub = getStrategyFromBackId(stratId.substring(0,stratId.indexOf("_")));
+		sub = getStrategyFromBackId(stratId.split("_")[0]);  //substring(0,stratId.indexOf("_")));
 		//$("#Strategies div#diagram_" + sub.frontId).remove();
 		subs = getSubStrategies(sub.frontId);
 		for(i=0;i<subs.length;i++){

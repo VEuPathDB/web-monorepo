@@ -106,7 +106,7 @@ function loadModel(json){
 	return value;
 }
 
-function removeSubStrategies(id){
+function unloadStrategy(id){
 	for(s in strats){
 		s = parseInt(s);
 		if(strats[s].frontId == id){//if(strats[s].backId.indexOf(id + "_") != -1)
@@ -383,7 +383,7 @@ function updateStrategies(data,evnt,strategy){
 	valid = ValidateView(data.strategies);
 	if(valid){
 		if( strategy != null && strategy.subStratOf != null)
-			removeSubStrategies(strategy.frontId);
+			unloadStrategy(strategy.frontId);
 		if(strategy == null){
 			$("div#Strategies").prepend(displayModel(stratId));
 		}else if(evnt == "Save" || (strategy.isSaved == "true" && evnt != "Open")){
@@ -397,9 +397,13 @@ function updateStrategies(data,evnt,strategy){
 		var sCount = 0;
 		for(j in strat.subStratOrder)
 			sCount++;
-		for(var j=sCount;j>0;j--){
+		//for(var j=sCount;j>0;j--){
+		for(var j=1;j<=sCount;j++){
 			subs = displayModel(strat.subStratOrder[j]);
-			$("div#Strategies div#diagram_" + strat.frontId).after(subs);
+			if($("#Strategies div#diagram_" + strat.subStratOrder[j]).length == 0)
+				$("div#Strategies div#diagram_" + strat.frontId).after(subs);
+			else
+				$("div#Strategies div#diagram_" + strat.subStratOrder[j]).replaceWith(subs);
 		}
 		return stratId;
 	}else{
@@ -466,7 +470,7 @@ function closeStrategy(stratId){
 
 function hideStrat(id){
 	var strat = getStrategy(id);
-	removeSubStrategies(id);
+	unloadStrategy(id);
 	strat.isDisplay = false;
 	for(var i=0;i<strat.Steps.length;i++){
 		if(strat.Steps[i].child_Strat_Id != null){
