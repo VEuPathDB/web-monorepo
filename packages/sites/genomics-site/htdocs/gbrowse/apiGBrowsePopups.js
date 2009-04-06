@@ -33,20 +33,12 @@ function popup_text () {
 // Gene title
 function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, isPseudo) {
 
-  // In ToxoDB, sequences of alternative gene models have to be returned
-  var ignore_gene_alias = 0;
-  if (projectId == 'ToxoDB') {
-    ignore_gene_alias = 1;
-  } 
-
   // expand minimalist input data
   var cdsLink = "<a href=../../../cgi-bin/geneSrt?project_id=" + projectId
         + "&ids=" + sourceId
-        + "&ignore_gene_alias=" + ignore_gene_alias
         + "&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>CDS</a>"
   var proteinLink = "<a href=../../../cgi-bin/geneSrt?project_id=" + projectId
         + "&ids=" + sourceId
-        + "&ignore_gene_alias=" + ignore_gene_alias
         + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>protein</a>"
 
   var type = (isPseudo == '1')? soTerm + " (pseudogene)" : soTerm;
