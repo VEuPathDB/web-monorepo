@@ -215,8 +215,9 @@ function getQueryForm(url,hideOp){
 function OpenOperationBox(stratId) {
 	var selectedStrat = $("#query_form select#selected_strategy").val();
 	var selectedName = $("#query_form select#selected_strategy option[selected]").text();
-	var url = "\"processFilter.do?strategy=" + getStrategy(stratId).backId + "&insert=&insertStrategy=" + selectedStrat +"\"";
-	var oform = "<form id='form_question' enctype='multipart/form-data' action='javascript:AddStepToStrategy(" + url + ")' method='post' name='questionForm'>";
+	var url = "processFilter.do?strategy=" + getStrategy(stratId).backId + "&insert=&insertStrategy=" + selectedStrat +"&checksum=" + getStrategy(stratId).checksum;
+	//var oform = "<form id='form_question' enctype='multipart/form-data' action='javascript:AddStepToStrategy(" + url + ")' method='post' name='questionForm'>";
+	var oform = "<form id='form_question' enctype='multipart/form-data' action='javascript:validateAndCall(\"add\",\""+ url + "\", " + getStrategy(stratId).backId + ")' method='post' name='questionForm'>";
 	var cform = "</form>";
 	var ops = "<div class='filter operators' style='width:auto'><span class='form_subtitle' style='padding:0 20px'>Combine " + getStrategy(stratId).name + " with " + selectedName + "</span><div id='operations' style='width:45%'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'><b>INTERSECT</b></td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td><b>UNION</b></td></tr><tr><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td><b>MINUS</b></td></tr></table></div></div>"
 	var button = "<div style='position:absolute;left:200px;top:185px;'><input type='submit' value='Add Strategy' /></div>";
