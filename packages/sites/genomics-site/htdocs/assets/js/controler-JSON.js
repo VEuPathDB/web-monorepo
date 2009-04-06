@@ -394,17 +394,7 @@ function updateStrategies(data,evnt,strategy){
 		}else{
 			$("div#Strategies").prepend(displayModel(stratId));
 		}	
-		var sCount = 0;
-		for(j in strat.subStratOrder)
-			sCount++;
-		//for(var j=sCount;j>0;j--){
-		for(var j=1;j<=sCount;j++){
-			subs = displayModel(strat.subStratOrder[j]);
-			if($("#Strategies div#diagram_" + strat.subStratOrder[j]).length == 0)
-				$("div#Strategies div#diagram_" + strat.frontId).after(subs);
-			else
-				$("div#Strategies div#diagram_" + strat.subStratOrder[j]).replaceWith(subs);
-		}
+		displayOpenSubStrategies(strat);
 		return stratId;
 	}else{
 		message = "There are inconsistancies in strategies:\n";
@@ -414,6 +404,23 @@ function updateStrategies(data,evnt,strategy){
 		alert(message + "Click 'OK' and page will be reloaded to fixed this condition");
 		$("div#Strategies div").remove();
 		initDisplay(0);
+	}
+}
+
+function displayOpenSubStrategies(s){
+	var sCount = 0;
+	for(j in s.subStratOrder)
+		sCount++;
+	//for(var j=sCount;j>0;j--){
+	for(var j=1;j<=sCount;j++){
+		subs = displayModel(s.subStratOrder[j]);
+		if($("#Strategies div#diagram_" + s.subStratOrder[j]).length == 0)
+			$("div#Strategies div#diagram_" + s.frontId).after(subs);
+		else
+			$("div#Strategies div#diagram_" + s.subStratOrder[j]).replaceWith(subs);
+		if(getSubStrategies(s.subStratOrder[j]).length > 0){
+			displayOpenSubStrategies(getStrategy(s.subStratOrder[j]));
+		}
 	}
 }
 
