@@ -18,30 +18,30 @@ attributes:
 <head>
 <style type="text/css">
   table.mybox {
-		width:     90%;
-		max-width: 100%;
-		padding:   6px;
-		color:     #000;
-		cellpandding: 3;
-		cellspacing: 3;
-		align: center;
-	}
-	td {
-		padding:   3px;
-		vertical-align: top;
-	}
-	th {
-		vertical-align: top;
-		padding:   3px;
-		background:  #88aaca ;
-		color:  #ffffff;
-	}
-	ul.myul {
-		list-style: inherit;
-		margin:auto 1.5em;
-		margin-top: 0.5em;
-		margin-bottom: 0.5em;
-	} 
+    width:     90%;
+    max-width: 100%;
+    padding:   6px;
+    color:     #000;
+    cellpandding: 3;
+    cellspacing: 3;
+    align: center;
+  }
+  td {
+    padding:   3px;
+    vertical-align: top;
+  }
+  th {
+    vertical-align: top;
+    padding:   3px;
+    background:  #88aaca ;
+    color:  #ffffff;
+  }
+  ul.myul {
+    list-style: inherit;
+    margin:auto 1.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  } 
 </style>
 
 
@@ -115,11 +115,23 @@ attributes:
 
             <tr>
                <td>Uploaded files:</td>
-                <td> <c:forEach items="${comment.files}" var="row">
-                        <a href="/common/communityfiles/<c:out value="${row}"/>">
-                        <c:out value="${row}"/></a>
-                      </c:forEach>
-                </td>
+               <td> 
+                  <table border=1>
+                  <tr>
+                    <th>Name/Link</th>
+                    <th>Description</th>
+                  </tr>
+                  <c:forEach items="${comment.files}" var="row">
+                     <c:set var="file" value="${fn:split(row, '|')}"/>
+                     <tr>
+                       <td><a href="/common/communityfiles/<c:out value="${file[1]}"/>">
+                        <c:out value="${file[1]}"/></a>
+                      </td>
+                       <td>${file[2]}</td>
+                    </tr>
+                  </c:forEach>
+                  </table>
+               </td>
             </tr>
 
 
@@ -183,7 +195,7 @@ attributes:
                 </td>
                 </tr> 
 
-							 </table>
+               </table>
             <br />
           </c:forEach>
     </c:otherwise> <%-- has comments for the stable id --%>
