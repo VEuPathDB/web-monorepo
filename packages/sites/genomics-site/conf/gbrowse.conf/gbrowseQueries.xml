@@ -901,7 +901,10 @@ ORDER BY f.startm
   
   
   <sqlQuery name="contig:Genbank">
-     <sql>
+    <testParamValues project="TriTrypDB">
+    <param name="srcfeature_id" value="183227"/>
+    </testParamValues>     
+  <sql>
 <![CDATA[
 SELECT 's.' || piece_na_sequence_id as feature_id, 
      'contig' type,
