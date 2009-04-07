@@ -239,6 +239,9 @@ function openFilter(dtype,strat_id,step_id){
 	$.ajax({
 		url: url,
 		dataType: "html",
+		beforeSend: function(){
+			$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});
+		},
 		success: function(data){
 			filter = document.createElement('div');
 			$(filter).html(data);
@@ -277,7 +280,8 @@ function closeAll(hide){
 		$("#query_form").parent().hide();
 	else
 		$("#query_form").parent().remove();
-	$(".filter_link").css({opacity:"1.0"}).attr("href");
+	//$(".filter_link").css({opacity:"1.0"}).attr("href");
+	$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 1.0});
 }
 
 
