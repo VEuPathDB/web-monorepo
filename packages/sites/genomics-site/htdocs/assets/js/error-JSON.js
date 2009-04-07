@@ -31,6 +31,17 @@ function ErrorHandler(evt, data, strategy, qform){
 			removeLoading(strategy.frontId);
 			$("#diagram_" + strategy.frontId + " div.venn:last .resultCount a").click();
 			isInsert = "";
+		}else if(type == "dup-name-error"){
+			if(evt == "SaveStrategy"){
+				var overwrite = confirm("A strategy already exists with the name '" + name + ".' Do you want to overwrite the existing strategy?");
+				if (overwrite) {
+					saveStrategy(strategy.backId, false);
+				}
+			}else if(evt == "RenameStrategy"){
+				alert("An unsaved strategy already exists with the name '" + name + ".'");
+				disableRename(strategy.backId, fromHist);	
+				if (strategy.isSaved)  $("input[name='name']",qform).attr("value", strategy.savedName);
+			}
 		}else{ //Gerenal Error Catcher
 			alert(data.message);
 			//TODO : Add a AJAX call to send an e-mail to Admininstrator with exception, stacktrace and message

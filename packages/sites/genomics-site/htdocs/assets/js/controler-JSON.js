@@ -495,10 +495,7 @@ function saveStrategy(stratId, checkName, fromHist){
 		dataType: "JSON",
 		success: function(data){
 					data = eval("(" + data + ")");
-					if(ErrorHandler("SaveStrategy", data, getStrategy(stratId), null)){
-						// reload strategy panel
-						var kids = $("root", data).children("strategy");
-						if (kids.length > 0) {
+					if(ErrorHandler("SaveStrategy", data, ss, null)){
 							var selectedBox = $("#Strategies div.selected");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
@@ -512,13 +509,6 @@ function saveStrategy(stratId, checkName, fromHist){
 							else NewResults(-1);
 							update_hist = true;
 							if (fromHist) updateHistory();
-						}else{
-							// root element in data had no strategy children -> there was a name conflict.
-							var overwrite = confirm("A strategy already exists with the name '" + name + ".' Do you want to overwrite the existing strategy?");
-							if (overwrite) {
-								saveStrategy(stratId, false);
-							}
-						}
 					}
 		},
 		error: function(data, msg, e){
@@ -545,10 +535,8 @@ function renameStrategy(stratId, checkName, fromHist){
 		dataType: "JSON",
 		success: function(data){
 					data = eval("(" + data + ")");
-					if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
+					if(ErrorHandler("RenameStrategy", data, strat, renameForm)){
 						// reload strategy panel
-						var kids = $("root", data).children("strategy");
-						if (kids.length > 0) {
 							var selectedBox = $("#Strategies div.selected");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
@@ -562,11 +550,6 @@ function renameStrategy(stratId, checkName, fromHist){
 							else NewResults(-1);
 							update_hist = true;
 							if (fromHist) updateHistory();
-						}else{
-							alert("An unsaved strategy already exists with the name '" + name + ".'");
-							disableRename(stratId, fromHist);	
-							if (strat.isSaved)  $("input[name='name']",renameForm).attr("value", strat.savedName);
-						}
 					}
 		},
 		error: function(data, msg, e){
