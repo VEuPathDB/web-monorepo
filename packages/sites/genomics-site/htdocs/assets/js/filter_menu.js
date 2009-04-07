@@ -228,8 +228,12 @@ function OpenOperationBox(stratId) {
 function openFilter(dtype,strat_id,step_id){
 	var isFirst = false;
 	steps = getStrategy(strat_id).Steps;
-	if(step_id == undefined)
+	if(step_id == undefined){
 		isFirst = true;
+	}else{
+		stp = getStrategy(strat_id).getStep(step_id,false)
+		if(stp.frontId == 1) isFirst = true;
+	}
 	current_Front_Strategy_Id = strat_id;
 	var url = "filter_page.jsp?dataType=" + dtype + "&prevStepNum=" + step_id;
 	$.ajax({
