@@ -482,12 +482,13 @@ function hideStrat(id){
 }
 
 function saveStrategy(stratId, checkName, fromHist){
+	var ss = getStrategyFromBackId(stratId);
 	var saveForm = $("div#save_strat_div_" + stratId);
 	if (fromHist) saveForm = $("#hist_save_" + stratId);
 	var name = $("input[name='name']",saveForm).attr("value");
 	var strategy = $("input[name='strategy']",saveForm).attr("value");
 	var url="renameStrategy.do?strategy=";
-	url = url + strategy + "&save=true&name=" + name + "&checkName=" + checkName+"&strategy_checksum="+getStrategy(stratId).checksum;
+	url = url + strategy + "&save=true&name=" + name + "&checkName=" + checkName+"&strategy_checksum="+ss.checksum;
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
