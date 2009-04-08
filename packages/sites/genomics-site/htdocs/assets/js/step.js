@@ -109,7 +109,7 @@ function RenameStep(ele, s, stp){
 	var a = $(ele).parent();
 	var new_name = $(ele).val();
 	step = getStep(s, stp);
-	var url = "renameStep.do?stepId=" + step.back_step_Id + "&customName=" + new_name;	
+	var url = "renameStep.do?strategy=" + getStrategy(s).backId + "&stepId=" + step.back_step_Id + "&customName=" + new_name;	
 	$.ajax({
 			url: url,
 			dataType: "html",
