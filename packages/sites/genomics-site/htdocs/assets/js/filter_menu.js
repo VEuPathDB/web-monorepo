@@ -232,7 +232,7 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 		isFirst = true;
 	}else{
 		stp = getStrategy(strat_id).getStep(step_id,false)
-		if(stp != null && stp.frontId == 1) isFirst = true;
+		if(stp != null && stp.frontId == 1 && !isAdd) isFirst = true;
 	}
 	current_Front_Strategy_Id = strat_id;
 	var url = "filter_page.jsp?dataType=" + dtype + "&prevStepNum=" + step_id;
