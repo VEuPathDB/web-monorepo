@@ -253,6 +253,7 @@
       scope="request"
       name="renameStepForm">
       <forward name="rename_history" path="/showApplication.do"/>
+      <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
       path="/renameStrategy"
