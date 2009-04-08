@@ -409,6 +409,9 @@ ORDER BY
   
   
   <sqlQuery name="match:TGI">
+    <testParamValues project="ToxoDB">
+    <param name="srcfeature_id" value="240961"/>
+    </testParamValues>     
      <sql>
 <![CDATA[
 SELECT
@@ -2609,6 +2612,9 @@ GROUP BY interval, na_sequence_id
   </sqlQuery>
  
   <sqlQuery name="match:TGI:bulksubfeatures">
+    <testParamValues project="ToxoDB">
+    <param name="srcfeature_id" value="240961"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT
