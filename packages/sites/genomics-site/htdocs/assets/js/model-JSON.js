@@ -23,7 +23,7 @@ Strategy.prototype.getStep = function(stepId,isfront){
 			if(this.Steps[s].frontId == stepId)
 				return this.Steps[s];
 		}else{
-			if(this.Steps[s].back_step_Id == stepId)
+			if(this.Steps[s].back_step_Id == stepId || this.Steps[s].back_boolean_Id == stepId)
 				return this.Steps[s];
 		}
 	}
