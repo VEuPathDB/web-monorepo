@@ -114,6 +114,8 @@ function RenameStep(ele, s, stp){
 			url: url,
 			dataType: "html",
 			success: function(data){
+				data = eval("(" + data + ")");
+				getStrategy(s).checksum = data.strategies[getStrategy(s).backId];
 				$("#fullStepName",a).text(new_name);
 				a_link.text((new_name.length > 14)?new_name.substring(0,12) + "...":new_name);
 				//a.text(new_name);
