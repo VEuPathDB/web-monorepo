@@ -31,7 +31,12 @@
                enctype="multipart/form-data">
 
     <h2>Upload Files</h2>
-    <br>
+    This form allows you to upload and share documents, images, small datasets and other files 
+    of community interest. Files submitted via this form will be publicly available
+    (see the file listing <a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">here</a>). 
+    If you wish to submit data privately, please contact us via the 'Contact Us' link
+    in the above menu and we will provide further assistance.
+    <br><br>
     <div id="cirbulletlist">
     Provide a simple title to identify your files. For example,
         <ul><li><i>Cellular localization of P-glycoprotein</i></li></ul>
