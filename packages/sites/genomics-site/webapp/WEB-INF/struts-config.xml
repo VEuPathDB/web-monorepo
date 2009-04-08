@@ -427,6 +427,13 @@
       <forward name="community_upload" path="/communityUploadResult.jsp"/>
    </action>
     <action
+      path="/communityDownload"
+      type="org.apidb.apicommon.controller.UserFileDownloadAction"
+      name="communityDownload"
+      scope="request">
+      <forward name="fileNotFound" path="/404.jsp"/>
+   </action>
+    <action
       path="/showResultSize"
       type="org.gusdb.wdk.controller.action.ShowResultSizeAction"
       scope="request"

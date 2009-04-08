@@ -176,7 +176,7 @@
       <c:choose>
 
         <c:when test="${recAttr.name eq 'filename'}">
-          <a href="/common/communityfiles/${fieldVal}">${fieldVal}</a><br>
+          <a href="<c:url value="/communityDownload.do?fname=${fieldVal}" />">${fieldVal}</a><br>
           
         </c:when>
 
