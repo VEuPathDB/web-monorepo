@@ -225,7 +225,7 @@ function OpenOperationBox(stratId) {
 	$("#query_form div#query_selection").html(ops);
 }
 
-function openFilter(dtype,strat_id,step_id){
+function openFilter(dtype,strat_id,step_id,isAdd){
 	var isFirst = false;
 	steps = getStrategy(strat_id).Steps;
 	if(step_id == undefined){
@@ -260,6 +260,7 @@ function openFilter(dtype,strat_id,step_id){
 				getQueryForm($("#query_form select#transforms").val(),true);
 			});
 			}
+			if(!isAdd){
 			$("#query_form select#transforms option", filter).each(function(){
 				stp = getStrategy(strat_id).getStep(step_id,false);
 				fid = parseInt(stp.frontId);
@@ -275,6 +276,7 @@ function openFilter(dtype,strat_id,step_id){
 					$(this).val(value);
 				}
 			});
+			}
 			$("div#strategy_results").append(filter);
 			$("#query_form").jqDrag(".dragHandle");
 		},

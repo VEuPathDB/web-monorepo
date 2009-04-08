@@ -59,7 +59,7 @@ function displayModel(strat_id){
 		if(lsn == "" || lsn == null)
 			lsn = strat.getStep(strat.Steps.length, true).back_step_Id;	
 		dType = strat.dataType;
-		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + "," + lsn + ")").attr("onclick","this.blur()").addClass("filter_link redbutton");
+		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + "," + lsn + ",true)").attr("onclick","this.blur()").addClass("filter_link redbutton");
 		$(button).html("<span title='Run a new query and combine its result with your current result.     Alternatively, you could obtain the orthologs to your current result or run another available transform.'>Add Step</span>");
 		$(button).css({ position: "absolute",
 						left: buttonleft + "px",
@@ -241,10 +241,12 @@ function createDetails(modelstep, jsonstep, sid){
 		name = jsonstep.strategy.name;
 		collapsedName = name;
 	}
+
 	var parentid = modelstep.back_step_Id;
 	if(modelstep.back_boolean_Id != null && modelstep.back_boolean_Id.length != 0){
 		parentid = modelstep.back_boolean_Id;
 	}
+	
 	var params = jsonstep.params;
 	var params_table = "";
 	if(params != undefined && params.length != 0)
