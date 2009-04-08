@@ -261,17 +261,19 @@ function openFilter(dtype,strat_id,step_id){
 			});
 			}
 			$("#query_form select#transforms option", filter).each(function(){
-				value = $(this).val();
-				stpId = value.split("gene_result=");
 				stp = getStrategy(strat_id).getStep(step_id,false);
 				fid = parseInt(stp.frontId);
-				prevStp = getStrategy(strat_id).getStep(fid-1,true);
-				if(prevStp.back_boolean_Id != null)
-					stpId[1] = prevStp.back_boolean_Id;
-				else
-					stpId[1] = prevStp.back_step_Id;
-				value = stpId.join("gene_result=");
-				$(this).val(value);
+				if(fid > 1){
+					value = $(this).val();
+					stpId = value.split("gene_result=");
+					prevStp = getStrategy(strat_id).getStep(fid-1,true);
+					if(prevStp.back_boolean_Id != null && prevStp.back_boolean_Id != "")
+						stpId[1] = prevStp.back_boolean_Id;
+					else
+						stpId[1] = prevStp.back_step_Id;
+						value = stpId.join("gene_result=");
+					$(this).val(value);
+				}
 			});
 			$("div#strategy_results").append(filter);
 			$("#query_form").jqDrag(".dragHandle");
