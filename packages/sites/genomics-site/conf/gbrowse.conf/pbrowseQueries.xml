@@ -1,8 +1,65 @@
 <DAS>
+
+<sanityTestInfo project="ToxoDB">
+    <defaultParamValue name="name" value="TGME49_039250"/>
+    <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_X$$"/>
+    <defaultParamValue name="base_start" value="1"/>
+    <defaultParamValue name="rend" value="1311700"/>
+    <defaultParamValue name="dlm" value="|"/>
+    <defaultParamValue name="id" value="TGME49_039250-1"/>
+
+    <sqlValue name="aa_seq_id_X">
+      <sql>
+       select aa_sequence_id from dots.translatedAaSequence where source_id like 'TGME49_039250%'
+      </sql>
+    </sqlValue>
+</sanityTestInfo>
+
+<sanityTestInfo project="TriTrypDB">
+  <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
+  <defaultParamValue name="base_start" value="1"/>
+  <defaultParamValue name="rend" value="1000"/>
+  <defaultParamValue name="dlm" value=","/>
+
+  <sqlValue name="aa_seq_id_sample_gene">
+    <sql>
+  SELECT AA_SEQUENCE_ID 
+  FROM   DOTS.GENEFEATURE gf, 
+         DOTS.TRANSCRIPT t, 
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'Tb927.8.620'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id  
+    </sql> 
+  </sqlValue>
+  
+  <sqlValue name="aa_seq_id_sample_L_infantum_gene">
+    <sql>
+  SELECT AA_SEQUENCE_ID 
+  FROM   DOTS.GENEFEATURE gf, 
+         DOTS.TRANSCRIPT t, 
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'LinJ17_V3.0100'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id  
+    </sql> 
+  </sqlValue>
+  
+  <sqlValue name="tas_id_with_transmem">
+    <sql>
+  select aa_sequence_id
+  from dots.TransmembraneAaFeature
+  where rownum = 1
+    </sql> 
+  </sqlValue>
+</sanityTestInfo>
+
   <module name="GUS.pm">
 <!-- ORIGINALLY FROM: crypto -->
   <sqlQuery name="get_feature_by_name">
-    <description>fetch features by their name</description>
+    <testParamValues project="TriTrypDB">
+      <param name="name" value="Tb927.8.620"/>
+    </testParamValues>
     <sql>
 <![CDATA[
 SELECT trp.source_id ctg_name, 
@@ -30,7 +87,9 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
 
 <!-- ORIGINALLY FROM: crypto -->
   <sqlQuery name="new:Segment">
-    <description>fetch features by their name</description>
+    <testParamValues project="TriTrypDB">
+      <param name="name" value="Tb927.8.620"/>
+    </testParamValues>
       <sql>
 <![CDATA[
 SELECT tas.aa_sequence_id srcfeature_id, 
@@ -54,8 +113,6 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id
     </sqlQuery>
 
     <sqlQuery name="get_sequence">
-
-      <description></description>
       <sql>
 <![CDATA[
 SELECT tas.sequence 
@@ -66,7 +123,6 @@ WHERE  tas.aa_sequence_id = $srcfeature_id
     </sqlQuery>
 
     <sqlQuery name="domain:MassSpecPeptides">
-      <description></description>
       <sql>
 <![CDATA[
 SELECT distinct
@@ -96,7 +152,6 @@ WHERE msf.parent_id = taaf.aa_feature_id
   </sqlQuery>
 
     <sqlQuery name="lowcomplexity:seg">
-      <description></description>
       <sql>
 <![CDATA[ 
 SELECT lc.aa_feature_id feature_id,
@@ -122,7 +177,6 @@ ORDER BY aal.start_min
     </sqlQuery>
 
     <sqlQuery name="get_2d_struc">
-       <description></description>
        <sql>
 <![CDATA[
 SELECT ssc.structure_type, ssc.call_confidence 
@@ -135,8 +189,10 @@ WHERE  ss.aa_sequence_id = $srcfeature_id and
     </sqlQuery>
 
 <!-- Was only in: plasmo -->
-    <sqlQuery name="domain:ExportPred">
-      <description></description>
+    <sqlQuery name="domain:ExportPred" includeProjects="PlasmoDB">
+    <testParamValues project="PlasmoDB">
+       <param name="srcfeature_id" value="$$aa_seq_id_PF14_0010$$"/>    
+    </testParamValues>
       <sql>
 <![CDATA[
 SELECT DISTINCT df.aa_feature_id feature_id,
@@ -163,7 +219,6 @@ GROUP BY df.aa_feature_id, df.parent_id
 
 <!-- ORIGINALLY FROM: plasmo,toxo,tritryp -->
   <sqlQuery name="domain:SignalP">
-      <description></description>
       <sql>
 <![CDATA[
 SELECT
@@ -204,7 +259,9 @@ WHERE
 
 <!-- ORIGINALLY FROM: giardia,trich,tritryp -->
     <sqlQuery name="domain:TMHMM">
-      <description></description>
+    <testParamValues project="TriTrypDB">
+    <param name="srcfeature_id" value="$$tas_id_with_transmem$$"/>
+    </testParamValues>
       <sql>
 <![CDATA[
 SELECT distinct * from (
@@ -227,7 +284,6 @@ WHERE
     </sqlQuery>
 
   <sqlQuery name="domain:interpro">
-      <description></description>
       <sql>
 <![CDATA[
 SELECT df.aa_feature_id feature_id, 
@@ -272,7 +328,6 @@ WHERE  df.aa_sequence_id = $srcfeature_id and
   </sqlQuery>
 
     <sqlQuery name="match:BLASTP">
-      <description></description>
       <sql>
 <![CDATA[ 
 SELECT sim.similarity_id feature_id,
@@ -314,8 +369,10 @@ ORDER BY
   <module name="Feature.pm">
 
 <!-- Was only in: plasmo -->
-    <sqlQuery name="domain:ExportPred:subfeatures">
-      <description> </description>
+    <sqlQuery name="domain:ExportPred:subfeatures" includeProjects="PlasmoDB">
+    <testParamValues project="PlasmoDB">
+      <param name="parent_id" parentFeatureTest="domain:ExportPred"/>       
+    </testParamValues>
       <sql>
 <![CDATA[ 
 SELECT aal.aa_location_id feature_id,
@@ -339,7 +396,9 @@ ORDER BY aal.start_min
 
 <!-- ORIGINALLY FROM: giardia,trich,tritryp -->
     <sqlQuery name="domain:TMHMM:subfeatures">
-      <description> </description>
+    <testParamValues project="TriTrypDB">
+    <param name="parent_id" parentFeatureTest="domain:TMHMM"/>
+    </testParamValues>
       <sql>
 <![CDATA[ 
 SELECT
@@ -366,7 +425,6 @@ ORDER BY aal.start_min
     </sqlQuery>
 
     <sqlQuery name="domain:interpro:subfeatures">
-      <description></description>
       <sql>
 <![CDATA[ 
 SELECT 
@@ -405,7 +463,9 @@ WHERE
     </sqlQuery>
 
     <sqlQuery name="match:BLASTP:subfeatures">
-    <description></description> 
+    <testParamValues project="TriTrypDB">
+       <param name="parent_id" parentFeatureTest="match:BLASTP"/> 
+    </testParamValues>
       <sql>
 <![CDATA[ 
 SELECT simp.similarity_span_id feature_id, 
