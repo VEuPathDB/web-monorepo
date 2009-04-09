@@ -117,7 +117,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	if(edit == 0)
 		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;" + (parseInt(stepFrontId)+1) + ": " + quesTitle + "</span></br>");
 	else
-		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Edit&nbsp;Step&nbsp;" + (stepFrontId) + ": " + quesTitle + "</span></br>");
+		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Revise&nbsp;Step&nbsp;" + (stepFrontId) + ": " + quesTitle + "</span></br>");
 	if(edit == 0){
 		$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (stepFrontId) + "</span><div id='operations'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'>&nbsp;" + (stepFrontId) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (parseInt(stepFrontId)+1) + "</td><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>UNION</b>&nbsp;" + (parseInt(stepFrontId)+1) + "</td><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>MINUS</b>&nbsp;" + (parseInt(stepFrontId)+1) + "</td></tr></table></div></div>");
 	} else {
@@ -140,7 +140,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	if(edit == 0)
 		formtitle = "<h1>Add&nbsp;Step</h1>";
 	else
-		formtitle = "<h1>Edit&nbsp;Step</h1>";
+		formtitle = "<h1>Revise&nbsp;Step</h1>";
 	quesForm.attr("action",action);
 	if(edit == 0)
 		var header = "<span class='dragHandle'>" + back_link + " " + formtitle + " " + close_link + "</span>";
