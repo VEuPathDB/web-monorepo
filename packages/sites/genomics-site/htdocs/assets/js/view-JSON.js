@@ -16,12 +16,12 @@ var delete_popup = "Delete this step from the strategy; if this step is the only
 
 	//Simple Steps
 var ss_rename_popup = "Rename this search";
-var ss_view_popup = "View the results of this search in the Resuts area below";
+var ss_view_popup = "View the results of this search in the Results area below";
 var ss_edit_popup = "Revise the parameters of this search and/or its combine operation";
 var ss_expand_popup = "Expand this step in a new panel to add nested steps. (Use this to build a non-linear strategy)";							
 	//Substrategies
 var sub_rename_popup = "Rename this nested strategy";             
-var sub_view_popup = "View the results of this nested strategy in the Resuts area below";
+var sub_view_popup = "View the results of this nested strategy in the Results area below";
 var sub_edit_popup = "Open into a new panel to add or edit nested steps";
 var sub_expand_popup = "Open into a new panel to add or edit nested steps";
 
