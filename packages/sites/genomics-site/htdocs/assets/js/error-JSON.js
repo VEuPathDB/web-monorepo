@@ -1,5 +1,4 @@
-var OOSMessage = "Your operation was canceled due to an inconsistancy between your display and the data on our server.\n" +
-				 "We will update your display to show the status ont eh server and you will have to repeat your last operation";
+var OOSMessage = "Sorry, we had an error.\nPlease redo your last action.";
 
 function ErrorHandler(evt, data, strategy, qform){
 	var type = null;
