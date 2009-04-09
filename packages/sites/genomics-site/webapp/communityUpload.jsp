@@ -37,6 +37,10 @@
     If you wish to submit data privately, please contact us via the 'Contact Us' link
     in the above menu and we will provide further assistance.
     <br><br>
+    Files to be associated with specific genes or genomic sequences should be added
+    via the 'User Comments' form which is linked on each record page.
+    <br><br>
+    <h3>Instructions</h3>
     <div id="cirbulletlist">
     Provide a simple title to identify your files. For example,
         <ul><li><i>Cellular localization of P-glycoprotein</i></li></ul>
