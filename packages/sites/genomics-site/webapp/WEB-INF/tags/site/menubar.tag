@@ -60,16 +60,15 @@
 	</li>
 	</ul>
 	<ul>
-	<li><a href="#">Download Files</a>
+	<li><a href="#">Transfer Files</a>
 
 		<ul>
     		<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#download"/>">Understanding Downloads</a></li>
     		<li><a href="/common/downloads">Data Files</a></li>
     		<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#doc-prot"/>">Documents and Publications</a></li> 
     		<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#doc-prot"/>">Protocols and Methods</a></li>
-<%-- 
-    		<li><a href="#">Experimental Data</a></li>
---%>
+    		<li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
+    		<li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
 
    
   		</ul>
