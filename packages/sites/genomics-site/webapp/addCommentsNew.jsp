@@ -206,6 +206,7 @@ $(document).ready(function(){
             <html:checkbox property="targetCategory" value="3">Function</html:checkbox> 
             <html:checkbox property="targetCategory" value="4">Expression</html:checkbox> 
             <html:checkbox property="targetCategory" value="5">Sequence</html:checkbox>
+            <html:checkbox property="targetCategory" value="6">Phenoteyp</html:checkbox>
           </c:if>
           <c:if test="${commentForm.commentTargetId eq 'isolate'}">
             <html:checkbox property="targetCategory" value="7">Characteristics/Overview</html:checkbox> 
@@ -218,6 +219,7 @@ $(document).ready(function(){
             <html:checkbox property="targetCategory" value="12">Centromere</html:checkbox> 
             <html:checkbox property="targetCategory" value="13">Genomic Assembly</html:checkbox> 
             <html:checkbox property="targetCategory" value="14">Sequence</html:checkbox> 
+            <html:checkbox property="targetCategory" value="6">Phenoteyp</html:checkbox>
           </c:if>
           <c:if test="${commentForm.commentTargetId eq 'snp'}">
             <html:checkbox property="targetCategory" value="15">Characteristics/Overview</html:checkbox> 
