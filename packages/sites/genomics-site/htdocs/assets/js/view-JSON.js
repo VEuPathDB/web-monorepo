@@ -236,7 +236,7 @@ function createDetails(modelstep, jsonstep, sid){
 	if(jsonstep.filtered){
 		filteredName = "<span class='medium'><b>Applied Filter:&nbsp;</b>" + jsonstep.filterName + "</span><hr>";
 	}
-	var collapsedName = "Nested " + name;
+	var collapsedName = name;//"Nested " + name;
 	if(jsonstep.isCollapsed){
 		name = jsonstep.strategy.name;
 		collapsedName = name;
