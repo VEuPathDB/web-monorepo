@@ -727,9 +727,12 @@ sub sub_SeqFeature {
     # $query =~ s/(\$\w+)/eval "$1"/eg;
     $query = eval qq{"$query"};
 
+    print "<pre>vvvvvvvvvvvvvv $type:subfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
     print "<pre>$query</pre>" if DEBUG;
+    print "<pre>^^^^^^^^^^^^^^ $type:subfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
 
   }
+
 
   my $sth = $self->factory->dbh->prepare($query);
   $sth->execute or $self->throw("subfeature query failed");
