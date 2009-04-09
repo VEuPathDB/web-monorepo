@@ -1432,11 +1432,13 @@ tr.headerRow  td,th {
 .toggle {display: none;}
 .boggle {margin: 6px 20px 6px 20px; display: none;}
 
+/*  Appears to be missaligning the question page in the step pop-up box... commented out to fix this problem.
 .filter {
    float:left;
    margin-right: 30px;
    margin-bottom: 5px;
 }
+*/
 
 .filter ul {
    list-style-type: none;
