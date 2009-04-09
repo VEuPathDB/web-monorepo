@@ -567,3 +567,12 @@ span.closeStrategy {
 	right:3px;
 	top:-10px;
 }
+
+.disabled {
+	opacity:0.4;
+	cursor:move;
+}
+
+a.disabled:hover, a.disabled:active {
+	color:#0B4796;
+}
