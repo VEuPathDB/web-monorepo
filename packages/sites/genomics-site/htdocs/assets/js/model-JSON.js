@@ -63,6 +63,7 @@ Strategy.prototype.initSteps = function(steps){
 		if(i != "length"){
 			if(steps[i].isboolean){
 				st = new Step(i, steps[i].step.id, steps[i].id, null, steps[i].step.answerId);
+				st.operation = steps[i].operation;
 				st.isboolean = true;
 				if(steps[i].step.isCollapsed && steps[i].step.strategy.order > 0){
 					subId = loadModel(steps[i].step);
@@ -105,6 +106,7 @@ function Step(frontId, back_step_Id, back_boolean_Id, child_Strat_Id, answerId){
 	this.child_Strat_Id = null;
 	this.answerId = answerId;
 }
+Step.prototype.operation = null;
 Step.prototype.isboolean = false;
 Step.prototype.isSelected = false;
 Step.prototype.isTransform = false;
