@@ -149,25 +149,26 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 		
 	$("#query_form").html(header);
 	if (hideQuery){
-           $(".filter.params", quesForm).remove();
-           $("input[name=questionFullName]", quesForm).remove();
-           $(".filter.operators", quesForm).width('auto');
-           quesForm.css({'max-width' : '500px','min-width' : '500px'});
-           $("#query_form").css("min-width", "500px");
-        }
+        $(".filter.params", quesForm).remove();
+        $("input[name=questionFullName]", quesForm).remove();
+        $(".filter.operators", quesForm).width('auto');
+        quesForm.css({'max-width' : '500px','min-width' : '500px'});
+		$("#query_form").css("min-width", "500px");
+    }
+	if (hideOp){
+		$(".filter.operators", quesForm).remove();
+		$(".filter.params", quesForm).after("<input type='hidden' name='booleanExpression' value='AND' />");
+		//$(".filter.operators").width('auto');
+		$("#query_form").css({'max-width' : '61%','min-width' : '729px'});
+	}
+	
 	$("#query_form").append(quesForm);
 	$("#query_form").append(tooltips);
 	//$("#filter_link_div_" + proto + " #query_selection").fadeOut("normal");
 	if(edit == 1)
 		$("#query_form div#operations input#" + operation).attr('checked','checked'); 
 	$("#query_form").jqDrag(".dragHandle");
-	if (hideOp){
-           $(".filter.operators").remove();
-		   $(".filter.params").after("<input type='hidden' name='booleanExpression' value='AND' />");
-           $(".filter.operators").width('auto');
-           $("#query_form").css({'max-width' : '61%','min-width' : '729px'});
-		   
-        }
+	
 	$("#query_form").append("<div class='bottom-close'><a href='javascript:closeAll(false)' id='close_filter_query'>Close</a></div>");
 	htmltooltip.render();
 	$("#query_form").fadeIn("normal");
