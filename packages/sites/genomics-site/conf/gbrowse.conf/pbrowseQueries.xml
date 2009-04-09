@@ -424,12 +424,12 @@ ORDER BY aal.start_min
       </sql>
     </sqlQuery>
 
-    <sqlQuery name="domain:interpro:subfeatures">
+    <sqlQuery name="domain:interpro:bulksubfeatures">
       <sql>
 <![CDATA[ 
 SELECT 
        aal.aa_location_id feature_id,
-       'domain' type, 
+       'subdomain' type, 
        'interpro' source, 
        dr.primary_identifier name, 
        df.score score, 
