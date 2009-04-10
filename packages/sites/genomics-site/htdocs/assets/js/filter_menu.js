@@ -291,6 +291,17 @@ function close(ele){
 	cd = $("#query_form").parent();
 	$(cd).html(original_Query_Form_Text);
 	$("#query_form").jqDrag(".dragHandle");
+	
+	$("#query_form #continue_button").click(function(){
+		original_Query_Form_Text = $("#query_form").parent().html();
+		OpenOperationBox(strat_id);
+		return false;
+	});
+
+	$("#query_form #continue_button_transforms").click(function(){
+		original_Query_Form_Text = $("#query_form").parent().html();
+		getQueryForm($("#query_form select#transforms").val(),true);
+	});
 }
 
 function closeAll(hide){
