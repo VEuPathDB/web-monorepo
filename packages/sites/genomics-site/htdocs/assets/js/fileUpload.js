@@ -15,7 +15,6 @@ $(document).ready(function(){
   
   $('#newfile').click(function(){
     addFileSelRow();
-    $("#notes[0]").addClass("required");
   });
 
 });
