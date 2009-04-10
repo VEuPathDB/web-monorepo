@@ -6,6 +6,12 @@
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
+<c:set var="xqSetMap" value="${wdkModel.xmlQuestionSetsMap}"/>
+<c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>
+<c:set var="xqMap" value="${xqSet.questionsMap}"/>
+<c:set var="extlQuestion" value="${xqMap['ExternalLinks']}"/>
+<c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
+
 <c:choose>
 <c:when test="${wdkUser.stepCount == null}">
 <c:set var="count" value="0"/>
@@ -73,6 +79,40 @@
    
   		</ul>
 	</li>
+    </ul>
+    
+    	<ul>
+	<li><a href="#">Community</a>
+
+		<ul>
+    		<li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>
+    		<li><a href="https://community.eupathdb.org/forum">Discussion Forums</a></li>
+    		<li><a href="#">Related Sites</a>
+    		  <ul>
+                <c:forEach items="${extlAnswer.recordInstances}" var="record">
+                  <c:forEach items="${record.tables}" var="table">
+                    <c:forEach items="${table.rows}" var="row"> 
+                       <c:set var='url' value='${row[1].value}'/>
+                       <c:set var='tmp' value='${fn:replace(url, "http://", "")}'/>
+                       <c:set var='tmp' value='${fn:replace(tmp, ".", "")}'/>
+                       <c:set var='uid' value=''/>
+                       <c:forEach var="i" begin="0" end="${fn:length(tmp)}" step='3'>
+                          <c:set var='uid'>${uid}${fn:substring(tmp, i, i+1)}</c:set>
+                       </c:forEach>
+        
+                       <li id='rs-${uid}'><a href="${url}">${row[0].value}</a></li>
+                    </c:forEach>
+                  </c:forEach>
+                </c:forEach> 
+    		  </ul>
+    		</li>
+    		<li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
+    		<li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+
+   
+  		</ul>
+	</li>
 </ul>
+
 </div>
 </div><a name="skip" id="skip"></a>
