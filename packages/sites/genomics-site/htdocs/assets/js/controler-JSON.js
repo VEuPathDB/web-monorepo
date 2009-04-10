@@ -470,6 +470,7 @@ function closeStrategy(stratId){
 
 function hideStrat(id){
 	var strat = getStrategy(id);
+	if(!strat) return;
 	unloadStrategy(id);
 	strat.isDisplay = false;
 	for(var i=0;i<strat.Steps.length;i++){
