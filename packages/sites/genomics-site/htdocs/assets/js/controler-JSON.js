@@ -353,7 +353,13 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 		success: function(data){
 			data = eval("(" + data + ")");
 			if(ErrorHandler("EditStep", data, strategy, $("div#query_form"))){
-				f_id = updateStrategies(data, "Expand", strategy);
+				if(strategy.subStratOf != null){
+					topstrat = getStrategyFromBackId(strategy.backId.split("_")[0]);
+					removeStrategyDivs(topstrat.backId);
+					f_if = updateStrategies(data, "Expand", topstrat);
+				}else{
+					f_id = updateStrategies(data, "Expand", strategy);
+				}
 			}
 		},
 		error: function(data, msg, e){
