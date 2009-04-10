@@ -384,23 +384,25 @@ ${headElement}
             in the queryString. site:requestURL compensates
             for Struts' url mangling when forward in invoked.
         --%>
-        <c:url value="login.jsp" var="loginUrl">
+        <c:url value="/login.jsp" var="loginUrl">
            <c:param name="originUrl" value="${originRequestUrl}"/> 
         </c:url>
         <%-- 
-            urlencode the login page's URL and append as a parameter 
+            urlencode the login page;s URL and append as a parameter 
             in the queryString.
             If login fails, user returns to the refererUrl. If login
             succeeds, user should return to originUrl.
         --%>
+<%--
         <c:url var="loginJsp" value='login.jsp'/>
         <c:url value="${loginUrl}" var="loginUrl">
            <c:param name="refererUrl" value="${loginJsp}"/> 
         </c:url>
+--%>
 
 <%-- in home_header login is a class instead of an id that brings up the popup --%>
           <li>
-            <a href="/${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+            <a href="${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
                <ul class="login">
                     <li><site:login /></li>
               </ul>
