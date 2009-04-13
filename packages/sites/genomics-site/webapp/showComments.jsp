@@ -124,7 +124,7 @@ attributes:
                   <c:forEach items="${comment.files}" var="row">
                      <c:set var="file" value="${fn:split(row, '|')}"/>
                      <tr>
-                       <td><a href="/common/communityfiles/<c:out value="${file[1]}"/>">
+                       <td><a href="/common/communityfiles/${comment.projectName}/${file[1]}">
                         <c:out value="${file[1]}"/></a>
                       </td>
                        <td>${file[2]}</td>
