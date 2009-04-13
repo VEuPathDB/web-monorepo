@@ -23,7 +23,7 @@ This may result from incorrect query parameter values (for instance, you may hav
 <c:set var="error">
 Site error from
 Remote Host: ${pageContext.request.remoteHost}
-Refered from: ${header['Referer']}
+Referred from: ${header['Referer']}
 Error on:
 
 ${scheme}://${serverName}${request_uri}?${query_string}
