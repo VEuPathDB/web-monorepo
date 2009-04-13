@@ -431,7 +431,7 @@
       type="org.apidb.apicommon.controller.UserFileDownloadAction"
       name="communityDownload"
       scope="request">
-      <forward name="isDir" path="/common/communityfiles"/>
+      <forward name="isDir" path="/common/community"/>
       <forward name="fileNotFound" path="/404.jsp"/>
    </action>
     <action
