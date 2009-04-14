@@ -20,8 +20,8 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="PORTAL" value="${ fn:containsIgnoreCase(modelName, 'api')    }"     />
-<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')  }"     />
-<c:set var="INDY" value="${fn:containsIgnoreCase(modelName, 'tritryp')}" />
+<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')   || fn:containsIgnoreCase(modelName, 'tritryp')  }"     />
+
 
 <%--------------------------------------------------------------------%>
 <%-- these divs are needed because they do NOT come from header.... problem associated with having a sidebar --%>
@@ -49,6 +49,7 @@
 	<img src='<c:url value="/images/plasmodb_letter.gif" />' border='0' alt='plasmo' /> = PlasmoDB &nbsp;&nbsp;
 	<img src='<c:url value="/images/toxodb_letter.gif" />' border='0' alt='toxo' /> = ToxoDB &nbsp; &nbsp;
 	<img src='<c:url value="/images/trichdb_letter.gif" />' border='0' alt='trich' /> = TrichDB &nbsp; &nbsp;
+        <img src='<c:url value="/images/tritrypdb_letter.gif" />' border='0' alt='Tt' /> = TriTrypDB &nbsp; &nbsp;
 	</div>
 </td></tr>
 </c:if>
@@ -59,14 +60,6 @@
     <div class="smallBlack" align="middle">
 	(Click on &nbsp; 
 	<img src="/images/eupath_e.gif" border='0' alt='eupathdb'/> &nbsp; to access a query in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>)
-	</div>
-</td></tr>
-</c:if>
-
-<c:if test="${INDY}">
-<tr><td colspan="3">  
-    <div class="smallBlack" align="middle">
-	<br/>
 	</div>
 </td></tr>
 </c:if>

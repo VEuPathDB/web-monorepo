@@ -47,7 +47,7 @@
 <c:set var="A" value="${E}" />
 <c:set var="G" value="${E}" />
 <c:set var="Tr" value="${E}" />  <%-- for Trich --%>
-<c:set var="Tri" value="${E}" />   <%-- for TriTryp --%>
+<c:set var="Tt" value="${E}" />   <%-- for TriTryp --%>
 
 
 
@@ -67,10 +67,12 @@
 
 <c:set var="API" value="${fn:containsIgnoreCase(modelName, 'api')    }"     />
 
-<%--
+
 <c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')  || fn:containsIgnoreCase(modelName, 'tritryp')    }"     />
---%>
+
+<%--
 <c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')     }"     />
+--%>
 
 <c:choose>
 <c:when test="${qname == 'UnifiedBlast'}">
@@ -84,11 +86,11 @@
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
   
-<c:if test="${token eq 'Tri'}">
+<c:if test="${token eq 'Tt'}">
         <c:set var="Tri_image">
             <c:url value="/images/tritrypdb_letter.gif" />
         </c:set>
-        <c:set var="Tri" value="<a href='${tritrypRoot}${link}'><img src='${Tri_image}' border='0' alt='tritrypdb' /></a>" />
+        <c:set var="Tri" value="<a href='${tritrypRoot}${link}'><img src='${Tt_image}' border='0' alt='tritrypdb' /></a>" />
   </c:if>
   <c:if test="${token eq 'G'}">
         <c:set var="G_image">
@@ -145,7 +147,7 @@
         <c:set var="orgnismName" value="Trichomonas"/>
 </c:if>
 <c:if test="${modelName eq 'TriTrypDB'}">
-        <c:set var="orgnismName" value="Kinetoplastids"/>
+        <c:set var="orgnismName" value="Kinetoplastid"/>
 </c:if>
 
 <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
@@ -211,7 +213,7 @@
 	<td width="14">${P}</td>	
 	<td width="14">${T}</td>
 	<td width="14">${Tr}</td>
-	<td width="14">${Tri}</td>
+	<td width="14">${Tt}</td>
 </tr>
 
 </table>
