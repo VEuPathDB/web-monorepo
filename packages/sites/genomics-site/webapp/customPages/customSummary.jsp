@@ -77,12 +77,7 @@
 
 <div id="Strategies">
         <script>
-          <c:set var="i" value="0"/>
-	  <c:forEach items="${strategies}" var="strategy">
-            init_strat_ids[${i}] = ${strategy};
-            init_strat_order[${strategy}] = ${i + 1};
-            <c:set var="i" value="${i+1}"/>
-	  </c:forEach>
+          init_strat_ids = ${strategies};
           <c:if test="${wdkUser.viewStrategyId != null && wdkUser.viewStepId != null}">
             init_view_strat = "${wdkUser.viewStrategyId}";
             init_view_step = "${wdkUser.viewStepId}";
