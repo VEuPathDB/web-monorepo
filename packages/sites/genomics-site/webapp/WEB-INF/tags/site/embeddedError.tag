@@ -43,10 +43,6 @@ Sample usage:
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 
 <c:set var="to" value="${props['SITE_ADMIN_EMAIL']}" />
-<%--
-<c:set var="from" value="tomcat@${wdkModel.displayName}.org" />
---%>
-<c:set var="from" value="tomcat@${serverName}" />
 <%-- including remote host in subject to aid filtering in email --%>
 <c:set var="subject" value="Embedded error - ${pageContext.request.remoteHost}" />
 
@@ -56,6 +52,7 @@ Sample usage:
 <c:set var="query_string" value="${requestScope['javax.servlet.forward.query_string']}" />
 <c:set var="errorOn" value="${scheme}://${serverName}${request_uri}?${query_string}" />
 
+<c:set var="from" value="tomcat@${serverName}" />
 <c:choose>
 <c:when test="${ ! fn:containsIgnoreCase(publicHosts, serverName)}">
 <%-- Display for Developer site --%>
