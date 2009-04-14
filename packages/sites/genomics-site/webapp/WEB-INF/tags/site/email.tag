@@ -24,6 +24,7 @@ try{
  client.closeServer();
 }
 catch (IOException e){	
+  System.out.println("Error " + e);
 }
 
 %>
