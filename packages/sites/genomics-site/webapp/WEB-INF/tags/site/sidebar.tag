@@ -171,6 +171,7 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
   </div>
 </div>
   
-
+<%-- what s this for?
 <script type="text/javascript">
 </script>
+--%>
