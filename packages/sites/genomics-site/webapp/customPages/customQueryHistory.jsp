@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
-<!-- get wdkUser saved in session scope -->
+<%-- get wdkUser saved in session scope --%>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 

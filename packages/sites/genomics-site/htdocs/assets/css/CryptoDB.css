@@ -1279,7 +1279,7 @@ a.redbutton:active span {
 	min-height: 124px;
 	max-height: 300px;
 	overflow-y: auto;
-	border: 2px solid grey;
+	border: 2px solid gray;
 }
 
 #Workspace {

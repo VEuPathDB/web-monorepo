@@ -7,7 +7,7 @@
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
 <%-- from customQueryHistory --%>
-<!-- get wdkUser saved in session scope -->
+<%-- get wdkUser saved in session scope --%>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <%-- end from customQueryHistory --%>
