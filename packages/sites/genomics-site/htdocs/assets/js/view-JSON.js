@@ -34,6 +34,7 @@ function displayModel(strat_id){
 	if(strats){
 	  $("#strat-instructions").remove();
 	  $("#strat-instructions-2").remove();
+	  $("#Strategies").removeAttr("style");
 	  var strat = null;
 	  strat = getStrategy(strat_id);
 	  if(strat.isDisplay == true){

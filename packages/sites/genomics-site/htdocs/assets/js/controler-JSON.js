@@ -48,6 +48,7 @@ function initDisplay(index){
 function showInstructions(){
 	$("#strat-instructions").remove();
 	$("#strat-instructions-2").remove();
+	$("#Strategies").removeAttr("style");
 	var instr = document.createElement('div');
 	id = "strat-instructions";
 	instr_text = "<br>Click '<a href='queries_tools.jsp'>New Search</a>' <br/> to start a strategy";
@@ -62,6 +63,7 @@ function showInstructions(){
 		arrow_image = arrow_image + arrow_image2;
 	}
 	$(instr).attr("id",id).html(arrow_image + instr_text);
+	$("#Strategies").css({"overflow-y" : "visible"});
 	$("#Strategies").append(instr);
 }
 

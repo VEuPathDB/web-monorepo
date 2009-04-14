@@ -288,6 +288,10 @@ behavior: url(/assets/css/csshover.htc);
   * html .crumb_details div.crumb_menu {
 	margin-right: -3px;
   }
+ 
+  #Strategies {
+    position: relative;
+  }
 </style>
 <![endif]-->
 
