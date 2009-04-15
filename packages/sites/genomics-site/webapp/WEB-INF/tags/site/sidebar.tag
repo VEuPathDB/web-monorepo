@@ -2,13 +2,13 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<fmt:setLocale value="en-US"/>
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <c:set var="xqSetMap" value="${wdkModel.xmlQuestionSetsMap}"/>
 <c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>
 <c:set var="xqMap" value="${xqSet.questionsMap}"/>
 <c:set var="newsQuestion" value="${xqMap['News']}"/>
-
 
 <c:if test = "${project != 'GiardiaDB' && project != 'TrichDB' && project != 'ApiDB'}">
 
