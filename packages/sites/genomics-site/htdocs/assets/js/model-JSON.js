@@ -10,6 +10,7 @@ function Strategy(frontId, backId, isDisplay){
 }
 Strategy.prototype.checksum = null;
 Strategy.prototype.JSON = null;
+Strategy.prototype.DIV = null;
 Strategy.prototype.subStratOf = null;
 Strategy.prototype.Steps = new Array();
 Strategy.prototype.isSaved = false;
@@ -132,7 +133,7 @@ function getStep(strat,id){
 }
 	
 function getStrategy(id){
-	for(i=0;i<strats.length;i++){
+	for(i in strats){
 		if(strats[i].frontId == id)
 			return strats[i];
 	}
@@ -142,11 +143,6 @@ function getStrategy(id){
 function getSubStrategies(id){
 	var arr = new Array();
 	var pStrat = getStrategy(id);
-	//arr.push(pStrat);
-/*	for(i=0;i<strats.length;i++){
-		if(strats[i].backId.indexOf(pStrat.backId + "_") != -1)
-			arr.push(strats[i]);
-	}*/
 	for(substrt in pStrat.Steps){
 		if(pStrat.Steps[substrt].child_Strat_Id != null){
 			if(getStrategy(pStrat.Steps[substrt].child_Strat_Id) != false)
@@ -157,7 +153,7 @@ function getSubStrategies(id){
 }
 
 function getStrategyFromBackId(id){
-	for(i=0;i<strats.length;i++){
+	for(i in strats){
 		if(strats[i].backId == id)
 			return strats[i];
 	}
@@ -174,7 +170,7 @@ function getStepFromBackId(strat,id){
 }
 
 function findStrategy(fId){
-	for(i=0;i<strats.length;i++){
+	for(i in strats){
 		if(strats[i].frontId == fId)
 			return i;
 	}
@@ -188,6 +184,14 @@ function findStep(stratId, fId){
 			return i;
 	}
 	return -1;
+}
+
+function isLoaded(id){
+	for(i in strats){
+		if(strats[i].backId == id)
+			return true;
+	} 
+	return false;
 }
 
 function getDataType(cl, sz){

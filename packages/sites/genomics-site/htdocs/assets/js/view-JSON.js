@@ -30,13 +30,12 @@ var sub_expand_popup = "Open into a new panel to add or edit nested steps";
 var stepDivs = null;
 var leftOffset = 0;
 // MANAGE THE DISPLAY OF THE STRATEGY BASED ON THE ID PASSED IN
-function displayModel(strat_id){
+function displayModel(strat){
 	if(strats){
 	  $("#strat-instructions").remove();
 	  $("#strat-instructions-2").remove();
-	  $("#Strategies").removeAttr("style");
-	  var strat = null;
-	  strat = getStrategy(strat_id);
+	  //var strat = null;
+	  //strat = getStrategy(strat_id);
 	  if(strat.isDisplay == true){
 		var div_strat = document.createElement("div");
 		$(div_strat).attr("id","diagram_" + strat.frontId).addClass("diagram");
@@ -78,7 +77,8 @@ function createSteps(strat,div_strat){
 	stepdivs = new Array();
 	leftOffset = 12;
 	for(var ind=0; ind < strat.Steps.length; ind++){  //cStp in strat.Steps){
-		cStp = getStep(strat.frontId, ind+1);
+		//cStp = getStep(strat.frontId, ind+1);
+		cStp = strat.getStep(ind+1,true);
 		jsonStep = strat.JSON.steps[cStp.frontId];
 		if(cStp.isboolean){
 			booleanStep(cStp, jsonStep, strat.frontId);

@@ -1,54 +1,86 @@
-var strats = new Array();
+var strats = new Object();
 var xmldoc = null;
-var init_strat_ids = new Array();
-var init_strat_order = new Array();
-var init_view_strat = null;
-var init_view_step = null;
 var exportBaseURL;
 var sidIndex = 0;
 var recordType= new Array();   //stratid, recordType which is the type of the last step
-
-
-
-
+var state = null;
+var p_state = null;
 $(document).ready(function(){
-	if(init_strat_ids.length == 0){
-		showInstructions();
-	}else{
-		initDisplay(0);
-	}
+		initDisplay();
 });
 
-function initDisplay(index){
+function initDisplay(){
+	var url = "showStrategy.do";
 	$.ajax({
-		url: "showStrategy.do?strategy=" + init_strat_ids[index],
+		url: url,
 		type: "POST",
-                data: '',
-		dataType: "JSON",
+		dataType: "json",
+		data:"state=",
 		success: function(data){
-			data = eval("(" + data + ")");
-			//id = loadModel(data);
-			//$("div#Strategies").append(displayModel(id));
-			id = updateStrategies(data, "Open", null);
-			var strat = getStrategy(id);
-			if (init_view_strat == null && id == 0)
-				$("#diagram_0 div.venn:last .resultCount a").click();
-			else if (init_view_strat == strat.backId) {
-				var step = getStepFromBackId(strat.backId, init_view_step);
-				var stepBox = $("#diagram_" + strat.frontId + " div#step_" + step.frontId);
-				if (stepBox.length == 0) stepBox = $("#diagram_" + strat.frontId + " div#step_" + step.frontId + "_sub");
-				$(".resultCount a", stepBox).click();
-			}
-			if(index+1 < init_strat_ids.length)
-				initDisplay(index+1);
+		//	data = eval("(" + data + ")");
+			updateStrategies(data);
+			showStrategies();
 		}
 	});
 }
 
+function updateStrategies(data){	
+	state = data.state;
+	p_state = $.json.serialize(state);
+	for(st in state){
+	  if(st != "length"){
+		var str = state[st].id;
+		if(isLoaded(str)){
+			if(getStrategyFromBackId(state[st].id).checksum != state[st].checksum){
+				loadModel(data.strategies[state[st].checksum], st);
+			}
+	  	}else{
+			loadModel(data.strategies[state[st].checksum], st);
+		}
+	  }
+	}
+	showStrategies();
+}
+
+function removeClosedStrategies(bes){
+	for(s in strats){
+		if(strats[s].subStratOf == null && bes[strats[s].backId] == undefined)
+			hideStrat(strats[s].frontId);
+	}
+}
+
+function showStrategies(){
+	var sC = 0;
+	for(s in strats)
+		sC++;
+	var s2 = document.createElement('div');
+	for(var t=1; t<=sC; t++){
+		$(s2).prepend(strats[t].DIV);
+	}
+	$("#Strategies").html($(s2).html());
+}
+
+function displayOpenSubStrategies(s){
+	var sCount = 0;
+	for(j in s.subStratOrder)
+		sCount++;
+	//for(var j=sCount;j>0;j--){
+	for(var j=1;j<=sCount;j++){
+		subs = displayModel(s.subStratOrder[j]);
+		if($("#Strategies div#diagram_" + s.subStratOrder[j]).length == 0)
+			$("div#Strategies div#diagram_" + s.frontId).after(subs);
+		else
+			$("div#Strategies div#diagram_" + s.subStratOrder[j]).replaceWith(subs);
+		if(getSubStrategies(s.subStratOrder[j]).length > 0){
+			displayOpenSubStrategies(getStrategy(s.subStratOrder[j]));
+		}
+	}
+}
+
+
 function showInstructions(){
 	$("#strat-instructions").remove();
 	$("#strat-instructions-2").remove();
-	$("#Strategies").removeAttr("style");
 	var instr = document.createElement('div');
 	id = "strat-instructions";
 	instr_text = "<br>Click '<a href='queries_tools.jsp'>New Search</a>' <br/> to start a strategy";
@@ -63,69 +95,50 @@ function showInstructions(){
 		arrow_image = arrow_image + arrow_image2;
 	}
 	$(instr).attr("id",id).html(arrow_image + instr_text);
-	$("#Strategies").css({"overflow-y" : "visible"});
 	$("#Strategies").append(instr);
 }
 
-function loadModel(json){
-	var value = -1;
-	var strategy = json.strategy;
-	//$("root",data).children("strategy").each(function(){
-		var newId = isLoaded(strategy.id);//parseInt(strategy.id));
-		if(newId == -1){
-			newId = sidIndex;
-			sidIndex++;
-		}
-		var strat = new Strategy(newId, strategy.id, false);
-		if(strategy.importId != ""){
+function loadModel(json, ord){
+	var strategy = json;
+	var strat = null;
+	if(!isLoaded(strategy.id)){
+		var strat = new Strategy(sidIndex, strategy.id, false);
+		sidIndex++;
+	}else{
+		var strat = getStrategyFromBackId(strategy.id);
+	}		
+	if(strategy.importId != ""){
+		strat.isDisplay = true;
+		strat.checksum = state[ord].checksum;
+	}else{
+		var prts = strat.backId.split("_");
+		strat.subStratOf = getStrategyFromBackId(prts[0]).frontId;
+		if(strategy.order > 0){
 			strat.isDisplay = true;
-			strat.checksum = json.strategies[strat.backId];
-		}else{
-			prts = strat.backId.split("_");
-			strat.subStratOf = getStrategyFromBackId(prts[0]).frontId;
-			if(strategy.order > 0){
-				strat.isDisplay = true;
-			}
 		}
-		strat.JSON = strategy;
-		strat.isSaved = strategy.saved;
-		strat.name = strategy.name;
-             //   strat.savedName = $(this).attr("savedName");
-                strat.importId = strategy.importId;
-		steps = strategy.steps;
-		var pos = strats.push(strat);
-		strat.initSteps(steps);
-		strats.splice(pos-1, 1);
-		//lstp = strat.getStep(strategy.steps.length);
-		strat.dataType = strategy.steps[strategy.steps.length].dataType;
-		id = strategy.id;
-		if(isLoaded(id) != -1){
-			strats[findStrategy(newId)] = strat;
-		}else{
-			strats.push(strat);
-		}
-		value = strat.frontId;
-	//});
-	return value;
+	}
+	strat.JSON = strategy;
+	strat.isSaved = strategy.saved;
+	strat.name = strategy.name;
+    strat.importId = strategy.importId;
+	var steps = strategy.steps;
+	strats[ord] = strat;
+	strat.initSteps(steps);
+	strat.dataType = strategy.steps[strategy.steps.length].dataType;
+	strat.DIV = displayModel(strat);
+	return strat.frontId;
 }
 
 function unloadStrategy(id){
 	for(s in strats){
 		s = parseInt(s);
-		if(strats[s].frontId == id){//if(strats[s].backId.indexOf(id + "_") != -1)
-			strats.splice(s,1);
+		if(strats[s].frontId == id){
+			delete strats[s];
 			return;
 		}
 	}
 }
 
-function isLoaded(id){
-	for(i=0;i<strats.length;i++){
-		if(strats[i].backId == id)
-			return strats[i].frontId;
-	} 
-	return -1;
-}
 
 function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 	if(f_strategyId == -1){
@@ -182,15 +195,15 @@ function AddStepToStrategy(url, proto, stpId){
 	$.ajax({
 		url: url,
 		type: "POST",
-		dataType:"JSON",
-		data: d,
+		dataType:"json",
+		data: d + "&state=" + p_state,
 		beforeSend: function(){
 			showLoading(f_strategyId);
 		},
 		success: function(data){
-			data = eval("(" + data + ")");
+			//data = eval("(" + data + ")");
 			if(ErrorHandler("AddStep", data, strategy, $("div#query_form"))){
-				$("div#query_form").parent().remove();
+				$("div#query_form").remove();//.parent().remove();
 				removeStrategyDivs(b_strategyId);
 				f_id = updateStrategies(data,"AddStep", strategy);
 				removeLoading(f_id);
@@ -224,14 +237,14 @@ function EditStep(url, proto, step_number){
 		$.ajax({
 		url: url,
 		type: "POST",
-		dataType:"JSON",
-		data: d,
+		dataType:"json",
+		data: d + "&state=" + p_state,
 		beforeSend: function(obj){
 				showLoading(proto.split("_")[0]);
 				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
-			data = eval("(" + data + ")");
+			//data = eval("(" + data + ")");
 			if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
 				var selectedBox = $("#Strategies div.selected");
 				if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
@@ -260,7 +273,7 @@ function EditStep(url, proto, step_number){
 
 function DeleteStep(f_strategyId,f_stepId){
 	var strategy = getStrategy(f_strategyId);
-	var step = getStep(f_strategyId, f_stepId);
+	var step = strategy.getStep(f_stepId, true);
 	// Get the front id of the currently selected step & strategy
 	var displayStep = $("div[id^='diagram_'] div.selectedarrow");
 	if (displayStep.length == 0) displayStep = $("div[id^='diagram_'] div.selected");
@@ -283,20 +296,24 @@ function DeleteStep(f_strategyId,f_stepId){
 	$.ajax({
 		url: url,
 		type: "post",
-		dataType:"JSON",
-		data:"",
+		dataType:"json",
+		data:"state=" + p_state,
 		beforeSend: function(obj){
 				showLoading(f_strategyId);
 				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
-				data = eval("(" + data + ")");
+				//data = eval("(" + data + ")");
 				if(ErrorHandler("DeleteStep", data, strategy, null)){
 					if(step.child_Strat_Id != null){
 						if(findStrategy(step.child_Strat_Id) != -1 && getStrategy(step.child_Strat_Id).isDisplay)
 							hideStrat(step.child_Strat_Id);
 					}
-					if(data.strategy != undefined){
+					updateStrategies(data);
+				}else{
+					removeLoading(strategy.frontId);
+				}
+				/*	if(data.strategy != undefined){
 						removeStrategyDivs(strategy.backId);
 						var new_f_strategyId = updateStrategies(data, "DeleteStep", strategy);
 						if (d_strategyId && f_strategyId == d_strategyId) {
@@ -322,7 +339,7 @@ function DeleteStep(f_strategyId,f_stepId){
 					}
 				}else{
 					removeLoading(strategy.frontId);
-				}	
+				}*/	
 			},
 		error: function(data, msg, e){
 				//alert("ERROR \n "+ msg + "\n" + e);
@@ -346,14 +363,14 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 	$.ajax({
 		url: url,
 		type: "post",
-		dataType: "JSON",
-		data: "",
+		dataType: "json",
+		data: "state=" + p_state,
 		beforeSend: function(){
 			showLoading(f_strategyId);
 			//$("div#step_" + step.frontId + "_sub h3 div.crumb_details").hide();
 		},
 		success: function(data){
-			data = eval("(" + data + ")");
+			//data = eval("(" + data + ")");
 			if(ErrorHandler("EditStep", data, strategy, $("div#query_form"))){
 				if(strategy.subStratOf != null){
 					topstrat = getStrategyFromBackId(strategy.backId.split("_")[0]);
@@ -372,61 +389,15 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 	update_hist = true;
 }
 
-function updateStrategies(data,evnt,strategy){	
-	stratId = loadModel(data);
-	var strat = getStrategy(stratId);
-	valid = ValidateView(data.strategies);
-	if(valid){
-		if( strategy != null && strategy.subStratOf != null)
-			unloadStrategy(strategy.frontId);
-		if(strategy == null){
-			$("div#Strategies").prepend(displayModel(stratId));
-		}else if(evnt == "Save" || (strategy.isSaved && evnt != "Open")){
-			$("div#Strategies div#diagram_" + strategy.frontId).replaceWith(displayModel(stratId));
-		}
-		else if(isLoaded(getStrategy(stratId).backId) != -1 && evnt != "Open"){
-			$("div#Strategies div#diagram_" + stratId).replaceWith(displayModel(stratId));
-		}else{
-			$("div#Strategies").prepend(displayModel(stratId));
-		}	
-		displayOpenSubStrategies(strat);
-		return stratId;
-	}else{
-		message = "There are inconsistancies in strategies:\n";
-		for(v in valid){
-			message += valid[v] + " \n";
-		}
-		alert(message + "Click 'OK' and page will be reloaded to fixed this condition");
-		$("div#Strategies div").remove();
-		initDisplay(0);
-	}
-}
-
-function displayOpenSubStrategies(s){
-	var sCount = 0;
-	for(j in s.subStratOrder)
-		sCount++;
-	//for(var j=sCount;j>0;j--){
-	for(var j=1;j<=sCount;j++){
-		subs = displayModel(s.subStratOrder[j]);
-		if($("#Strategies div#diagram_" + s.subStratOrder[j]).length == 0)
-			$("div#Strategies div#diagram_" + s.frontId).after(subs);
-		else
-			$("div#Strategies div#diagram_" + s.subStratOrder[j]).replaceWith(subs);
-		if(getSubStrategies(s.subStratOrder[j]).length > 0){
-			displayOpenSubStrategies(getStrategy(s.subStratOrder[j]));
-		}
-	}
-}
-
 function openStrategy(stratId){
 	var url = "showStrategy.do?strategy=" + stratId;
 	strat = getStrategyFromBackId(stratId);
 	$.ajax({
 		url: url,
-		datatype:"JSON",
+		datatype:"json",
+		data:"state=" + p_state,
 		success: function(data){
-			data = eval("(" + data + ")");
+			//data = eval("(" + data + ")");
 			if(ErrorHandler("Open", data, null, null)){
 				if(strat.subStratOf != null){
 					ps = getStrategy(strat.subStratOf);
@@ -451,9 +422,10 @@ function closeStrategy(stratId){
 	var url = "closeStrategy.do?strategy=" + strat.backId+"&strategy_checksum="+cs;
 	$.ajax({
 		url: url,
-		dataType:"JSON",
+		dataType:"json",
+		data:"state=" + p_state,
 		success: function(data){
-			data = eval("(" + data + ")");			
+			//data = eval("(" + data + ")");			
 			if(ErrorHandler("CloseStrategy", data, strat, null)){
 				if(strat.subStratOf != null){
 					ps = getStrategy(strat.subStratOf);
@@ -501,9 +473,10 @@ function saveStrategy(stratId, checkName, fromHist){
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
-		dataType: "JSON",
+		dataType: "json",
+		data:"state=" + p_state,
 		success: function(data){
-					data = eval("(" + data + ")");
+					//data = eval("(" + data + ")");
 					if(ErrorHandler("SaveStrategy", data, ss, null)){
 							var selectedBox = $("#Strategies div.selected");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
@@ -541,9 +514,10 @@ function renameStrategy(stratId, checkName, fromHist){
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
-		dataType: "JSON",
+		dataType: "json",
+		data:"state=" + p_state,
 		success: function(data){
-					data = eval("(" + data + ")");
+					//data = eval("(" + data + ")");
 					if(ErrorHandler("RenameStrategy", data, strat, renameForm)){
 						// reload strategy panel
 							var selectedBox = $("#Strategies div.selected");
@@ -583,13 +557,13 @@ function ChangeFilter(strategyId, stepId, url) {
         $.ajax({
                 url: url,
                 type: "GET",
-                dataType:"JSON",
-                data: '',
+                dataType:"json",
+				data:"state=" + p_state,
                 beforeSend: function(){
                         showLoading(f_strategyId);
                 },
                 success: function(data){
-                        data = eval("(" + data + ")");
+                        //data = eval("(" + data + ")");
                         if(ErrorHandler("ChangeFilter", data, strategy, null)){
 							var selectedBox = $("#Strategies div.selected");
                         	if (selectedBox.length == 0) 
