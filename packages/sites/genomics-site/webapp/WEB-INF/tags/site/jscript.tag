@@ -7,14 +7,17 @@
 %>
 <%-- JQuery library is included by WDK 
 <!-- JQuery Library -->
-<script type="text/javascript" src="/assets/js/lib/jquery-1.2.6.js"></script>
+<script type="text/javascript" src="/assets/js/lib/jquery-1.3.2.js"></script>
 --%>
 
 <!-- JQuery Drag And Drop Plugin -->
 
 <c:if test="${refer == 'customSummary'}">
 	<!-- JQuery Drag And Drop Plugin -->
-	<script type="text/javascript" src="/assets/js/lib/jqDnR.js"></script>
+	<!--<script type="text/javascript" src="/assets/js/lib/jqDnR.js"></script>-->
+	<script type="text/javascript" src="/assets/js/lib/json.js"></script>
+	<script type="text/javascript" src="/assets/js/lib/ui/ui.core.js"></script>
+	<script type="text/javascript" src="/assets/js/lib/ui/ui.draggable.js"></script>
 	<!-- JQuery BlockUI Plugin -->
 	<script type="text/javascript" src="/assets/js/lib/jquery.blockUI.js"></script>
 	<!-- filter menu javascript -->
