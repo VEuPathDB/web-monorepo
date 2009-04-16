@@ -74,11 +74,14 @@ function removeClosedStrategies(bes){
 
 function showStrategies(strId, stpId, isFront){
 	var sC = 0;
-	for(s in strats)
-		sC++;
+	for(s in strats){
+		if(s != "0" || s > 0)
+			sC++;
+	}
 	var s2 = document.createElement('div');
 	for(var t=1; t<=sC; t++){
 		$(s2).prepend(strats[t].DIV);
+		displayOpenSubStrategies(strats[t], s2);
 	}
 	var initStr = (isFront) ? getStrategy(strId) : getStrategyFromBackId(strId);
 	if(initStr != false){
@@ -92,23 +95,19 @@ function showStrategies(strId, stpId, isFront){
 	$("#Strategies").html($(s2).html());
 }
 
-function displayOpenSubStrategies(s){
+function displayOpenSubStrategies(s, d){
 	var sCount = 0;
 	for(j in s.subStratOrder)
 		sCount++;
 	//for(var j=sCount;j>0;j--){
 	for(var j=1;j<=sCount;j++){
-		subs = displayModel(s.subStratOrder[j]);
-		if($("#Strategies div#diagram_" + s.subStratOrder[j]).length == 0)
-			$("div#Strategies div#diagram_" + s.frontId).after(subs);
-		else
-			$("div#Strategies div#diagram_" + s.subStratOrder[j]).replaceWith(subs);
+		subs = displayModel(getStrategy(s.subStratOrder[j]));
+		$("div#diagram_" + s.frontId, d).after(subs);
 		if(getSubStrategies(s.subStratOrder[j]).length > 0){
 			displayOpenSubStrategies(getStrategy(s.subStratOrder[j]));
 		}
 	}
 }
-
 
 function showInstructions(){
 	$("#strat-instructions").remove();

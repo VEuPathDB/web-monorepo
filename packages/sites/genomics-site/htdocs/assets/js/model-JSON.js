@@ -74,7 +74,7 @@ Strategy.prototype.initSteps = function(steps){
 				st.operation = steps[i].operation;
 				st.isboolean = true;
 				if(steps[i].step.isCollapsed && steps[i].step.strategy.order > 0){
-					subId = loadModel(steps[i].step);
+					subId = loadModel(steps[i].step.strategy, "0");
 					this.subStratOrder[steps[i].step.strategy.order] = subId;
 					st.child_Strat_Id = subId;
 				}
