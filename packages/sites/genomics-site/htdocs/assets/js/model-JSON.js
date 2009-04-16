@@ -121,7 +121,7 @@ Utility Functions
 *****************************************************/
 	
 function getStep(strat,id){
-	for(i=0;i<strats.length;i++){
+	for(i in strats){
 		if(strats[i].frontId == strat){
 			for(j=0;j<strats[i].Steps.length;j++){
 				if(strats[i].Steps[j].frontId == id)
