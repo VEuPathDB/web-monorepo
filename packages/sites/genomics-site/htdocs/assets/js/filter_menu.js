@@ -217,11 +217,12 @@ function getQueryForm(url,hideOp){
 		});
 }
 
-function OpenOperationBox(stratId) {
+function OpenOperationBox(stratId, insertId) {
 //	var header = $("#query_form span.dragHandle");
 	var selectedStrat = $("#query_form select#selected_strategy").val();
 	var selectedName = $("#query_form select#selected_strategy option[selected]").text();
-	var url = "processFilter.do?strategy=" + getStrategy(stratId).backId + "&insert=&insertStrategy=" + selectedStrat +"&checksum=" + getStrategy(stratId).checksum;
+        if (insertId == undefined) insertId = "";
+	var url = "processFilter.do?strategy=" + getStrategy(stratId).backId + "&insert=" + insertId + "&insertStrategy=" + selectedStrat +"&checksum=" + getStrategy(stratId).checksum;
 	//var oform = "<form id='form_question' enctype='multipart/form-data' action='javascript:AddStepToStrategy(" + url + ")' method='post' name='questionForm'>";
 	var oform = "<form id='form_question' enctype='multipart/form-data' action='javascript:validateAndCall(\"add\",\""+ url + "\", " + getStrategy(stratId).backId + ")' method='post' name='questionForm'>";
 	var cform = "</form>";
@@ -257,7 +258,7 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 			}else{
 				$("#continue_button", filter).click(function(){
 					original_Query_Form_Text = $("#query_form").parent().html();
-					OpenOperationBox(strat_id);
+					OpenOperationBox(strat_id, (isAdd ? undefined : step_id));
 					return false;
 				});
 		
@@ -307,7 +308,7 @@ function close(ele){
 	
 	$("#query_form #continue_button").click(function(){
 		original_Query_Form_Text = $("#query_form").parent().html();
-		OpenOperationBox(strat_id);
+		OpenOperationBox(strat_id, undefined);
 		return false;
 	});
 
