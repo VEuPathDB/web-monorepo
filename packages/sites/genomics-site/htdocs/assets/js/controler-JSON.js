@@ -20,8 +20,18 @@ function initDisplay(){
 		//	data = eval("(" + data + ")");
 			updateStrategies(data);
 			showStrategies();
+			var initStr = getStrategyFromBackId(init_view_strat);
+			var initStp = initStr.getStep(init_view_step, false);
+			highlightStep(initStr, initStp);
 		}
 	});
+}
+
+function highlightStep(str, stp){
+	var stepBox = $("#diagram_" + str.frontId + " div#step_" + stp.frontId);
+	if (stepBox.length == 0)
+		stepBox = $("#diagram_" + str.frontId + " div#step_" + stp.frontId + "_sub");
+	$(".resultCount a", stepBox).click();
 }
 
 function updateStrategies(data){	
@@ -354,7 +364,7 @@ function DeleteStep(f_strategyId,f_stepId){
 
 function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 	var strategy = getStrategy(f_strategyId);
-	var step = getStep(f_strategyId, f_stepId);
+	var step = strategy.getStep(f_stepId, true);
 	un = (collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
 	var cs = strategy.checksum;
 	if(strategy.subStratOf != null)
