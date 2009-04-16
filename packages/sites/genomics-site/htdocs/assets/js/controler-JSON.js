@@ -20,27 +20,22 @@ function initDisplay(){
 		data:"state=",
 		success: function(data){
 		//	data = eval("(" + data + ")");
-			updateStrategies(data);
-			showStrategies();
-			if (init_view_strat && init_view_step){
-				var initStr = getStrategyFromBackId(init_view_strat);
-				var initStp = initStr.getStep(init_view_step, false);
-				highlightStep(initStr, initStp);
-			}
+			updateStrategies(data, init_view_strat, init_view_step, false);
 		}
 	});
 }
 
-function highlightStep(str, stp){
-	var stepBox = $("#diagram_" + str.frontId + " div#step_" + stp.frontId);
+function highlightStep(str, stp, s){
+	var stepBox = $("#diagram_" + str.frontId + " div#step_" + stp.frontId, s);
 	if (stepBox.length == 0)
-		stepBox = $("#diagram_" + str.frontId + " div#step_" + stp.frontId + "_sub");
+		stepBox = $("#diagram_" + str.frontId + " div#step_" + stp.frontId + "_sub", s);
 	$(".resultCount a", stepBox).click();
 }
 
-function updateStrategies(data){	
+function updateStrategies(data, strId, stpId, isFront){	
 	state = data.state;
 	p_state = $.json.serialize(state);
+	if(strId == null || strId == undefined) isFront = false;
 	for(st in state){
 	  if(st != "length"){
 		var str = state[st].id;
@@ -51,9 +46,12 @@ function updateStrategies(data){
 	  	}else{
 			loadModel(data.strategies[state[st].checksum], st);
 		}
+		if(strId == null || strId == undefined){
+			strId = state[st].id;
+		}
 	  }
 	}
-	showStrategies();
+	showStrategies(strId, stpId, isFront);
 }
 
 function removeClosedStrategies(bes){
@@ -63,7 +61,7 @@ function removeClosedStrategies(bes){
 	}
 }
 
-function showStrategies(){
+function showStrategies(strId, stpId, isFront){
 	var sC = 0;
 	for(s in strats)
 		sC++;
@@ -71,6 +69,13 @@ function showStrategies(){
 	for(var t=1; t<=sC; t++){
 		$(s2).prepend(strats[t].DIV);
 	}
+	var initStr = (isFront) ? getStrategy(strId) : getStrategyFromBackId(strId);
+	var initStp = null;
+	if(stpId == null || stpId == undefined) 
+		initStp = initStr.getLastStep();
+	else 
+		initStp = initStr.getStep(stpId, isFront);
+	highlightStep(initStr, initStp, s2);
 	$("#Strategies").html($(s2).html());
 }
 
@@ -177,11 +182,11 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 			step.isSelected = true;
 			$("#Strategies div").removeClass("selected").removeClass("selectedarrow").removeClass("selectedtransform");
 			if(bool){
-				$("#diagram_" + strategy.frontId + " #step_" + step.frontId).addClass("selected");
+				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "']").addClass("selected");
 			}else if (step.isTransform){
-				$("#diagram_" + strategy.frontId + " #step_" + step.frontId + "_sub").addClass("selectedtransform");
+				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedtransform");
 			}else{
-				$("#diagram_" + strategy.frontId + " #step_" + step.frontId + "_sub").addClass("selectedarrow");
+				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedarrow");
 			}
 			removeLoading(f_strategyId);
 			ResultsToGrid(data);
@@ -195,9 +200,6 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 
 
 function AddStepToStrategy(url, proto, stpId){	
-	//b_strategyId = parseUrl("strategy",url)[0];
-	//strategy = getStrategyFromBackId(b_strategyId);
-	//f_strategyId = strategy.frontId;
 	var strategy = getStrategyFromBackId(proto);
 	var b_strategyId = strategy.backId;
 	var f_strategyId = strategy.frontId;
@@ -219,9 +221,9 @@ function AddStepToStrategy(url, proto, stpId){
 			if(ErrorHandler("AddStep", data, strategy, $("div#query_form"))){
 				$("div#query_form").remove();//.parent().remove();
 				removeStrategyDivs(b_strategyId);
-				f_id = updateStrategies(data,"AddStep", strategy);
-				removeLoading(f_id);
-				$("#diagram_" + f_id + " div.venn:last .resultCount a").click();
+				updateStrategies(data,strategy.frontId, null, true);
+				//removeLoading(f_id);
+				//$("#diagram_" + f_id + " div.venn:last .resultCount a").click();
 				isInsert = "";
 			}else{
 				removeLoading(f_strategyId);
