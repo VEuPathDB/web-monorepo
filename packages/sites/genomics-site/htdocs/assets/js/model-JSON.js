@@ -30,6 +30,13 @@ Strategy.prototype.getStep = function(stepId,isfront){
 	}
 	return null;
 }
+Strategy.prototype.getLastStep = function(){
+	cId = 0;
+	for(s in this.Steps){
+		cId = this.Steps[s].frontId > cId?this.Steps[s].frontId:cId;
+	}
+	return this.getStep(cId,true);
+}
 Strategy.prototype.depth = function(stepid, d){
 	if(this.subStratOf == null)
 		return 0;
@@ -121,7 +128,7 @@ Utility Functions
 *****************************************************/
 	
 function getStep(strat,id){
-	for(i in strats){
+	for(i=0;i<strats.length;i++){
 		if(strats[i].frontId == strat){
 			for(j=0;j<strats[i].Steps.length;j++){
 				if(strats[i].Steps[j].frontId == id)
