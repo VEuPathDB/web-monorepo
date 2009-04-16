@@ -26,16 +26,26 @@ function initDisplay(){
 }
 
 function highlightStep(str, stp, s){
-	var stepBox = $("#diagram_" + str.frontId + " div#step_" + stp.frontId, s);
-	if (stepBox.length == 0)
-		stepBox = $("#diagram_" + str.frontId + " div#step_" + stp.frontId + "_sub", s);
-	$(".resultCount a", stepBox).click();
+	if(s == undefined) s = document;
+	if(!str || stp == null){
+		NewResults(-1);
+	}else{
+		var stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "']", s);
+		if (stepBox.length == 0)
+			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "_sub']", s);
+		$(".resultCount a", stepBox).click();
+	}
 }
 
 function updateStrategies(data, strId, stpId, isFront){	
+  if(data.state.length == 0){
+	showInstructions();
+  }else{
 	state = data.state;
 	p_state = $.json.serialize(state);
-	if(strId == null || strId == undefined) isFront = false;
+	if(strId == undefined) strId = init_view_strat;
+	if(stpId == undefined) stpId = init_view_step;
+	if(isFront == undefined) isFront = true;
 	for(st in state){
 	  if(st != "length"){
 		var str = state[st].id;
@@ -46,12 +56,13 @@ function updateStrategies(data, strId, stpId, isFront){
 	  	}else{
 			loadModel(data.strategies[state[st].checksum], st);
 		}
-		if(strId == null || strId == undefined){
-			strId = state[st].id;
-		}
+//		if(strId == null || strId == undefined){
+//			strId = state[st].id;
+//		}
 	  }
 	}
 	showStrategies(strId, stpId, isFront);
+  }
 }
 
 function removeClosedStrategies(bes){
@@ -70,11 +81,13 @@ function showStrategies(strId, stpId, isFront){
 		$(s2).prepend(strats[t].DIV);
 	}
 	var initStr = (isFront) ? getStrategy(strId) : getStrategyFromBackId(strId);
-	var initStp = null;
-	if(stpId == null || stpId == undefined) 
-		initStp = initStr.getLastStep();
-	else 
-		initStp = initStr.getStep(stpId, isFront);
+	if(initStr != false){
+		var initStp = null;
+		if(stpId == null) 
+			initStp = initStr.getLastStep();
+		else 
+			initStp = initStr.getStep(stpId, isFront);
+	}
 	highlightStep(initStr, initStp, s2);
 	$("#Strategies").html($(s2).html());
 }
@@ -181,6 +194,8 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 		success: function(data){
 			step.isSelected = true;
 			$("#Strategies div").removeClass("selected").removeClass("selectedarrow").removeClass("selectedtransform");
+			init_view_strat = strategy.frontId;
+			init_view_step = step.frontId;
 			if(bool){
 				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "']").addClass("selected");
 			}else if (step.isTransform){
@@ -221,9 +236,7 @@ function AddStepToStrategy(url, proto, stpId){
 			if(ErrorHandler("AddStep", data, strategy, $("div#query_form"))){
 				$("div#query_form").remove();//.parent().remove();
 				removeStrategyDivs(b_strategyId);
-				updateStrategies(data,strategy.frontId, null, true);
-				//removeLoading(f_id);
-				//$("#diagram_" + f_id + " div.venn:last .resultCount a").click();
+				updateStrategies(data,strategy.frontId, null);
 				isInsert = "";
 			}else{
 				removeLoading(f_strategyId);
@@ -242,9 +255,7 @@ function AddStepToStrategy(url, proto, stpId){
 
 function EditStep(url, proto, step_number){
 	$("#query_form").hide("fast");
-//	var s = parseUrl('strategy',url)[0];
 	var ss = getStrategyFromBackId(proto);
-	var s = proto;
 	var d = parseInputs();
 	var cs = ss.checksum;
 	if(ss.subStratOf != null)
@@ -262,16 +273,7 @@ function EditStep(url, proto, step_number){
 		success: function(data){
 			//data = eval("(" + data + ")");
 			if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
-				var selectedBox = $("#Strategies div.selected");
-				if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
-				if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
-				var selectedStrat = selectedBox.parent().attr("id");
-				selectedBox = selectedBox.attr("id");
-				removeStrategyDivs(s);
-				fsid = updateStrategies(data, "EditStep", getStrategyFromBackId(s));
-				var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
-				if (selectedLink.length != 0) selectedLink.click();
-				else NewResults(-1);
+				updateStrategies(data, init_view_strat, init_view_step);
 			}else{
 				removeLoading(ss.frontId);
 			}
@@ -290,17 +292,6 @@ function EditStep(url, proto, step_number){
 function DeleteStep(f_strategyId,f_stepId){
 	var strategy = getStrategy(f_strategyId);
 	var step = strategy.getStep(f_stepId, true);
-	// Get the front id of the currently selected step & strategy
-	var displayStep = $("div[id^='diagram_'] div.selectedarrow");
-	if (displayStep.length == 0) displayStep = $("div[id^='diagram_'] div.selected");
-	if (displayStep.length == 0) displayStep = $("div[id^='diagram_'] div.selectedtransform");
-	if (displayStep.length != 0) {
-		var d_stepId = displayStep.attr("id").split('_')[1];
-		var d_sub = displayStep.attr("id").split('_')[2];
-		if (d_sub) d_sub = "_" + d_sub;
-		else d_sub = "";
-		var d_strategyId = displayStep.parent().attr("id").split('_')[1];
-	}
 	var cs = strategy.checksum;
 	if(strategy.subStratOf != null)
 		cs = getStrategy(strategy.subStratOf).checksum;
@@ -316,46 +307,14 @@ function DeleteStep(f_strategyId,f_stepId){
 		data:"state=" + p_state,
 		beforeSend: function(obj){
 				showLoading(f_strategyId);
-				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
 			},
 		success: function(data){
 				//data = eval("(" + data + ")");
 				if(ErrorHandler("DeleteStep", data, strategy, null)){
-					if(step.child_Strat_Id != null){
-						if(findStrategy(step.child_Strat_Id) != -1 && getStrategy(step.child_Strat_Id).isDisplay)
-							hideStrat(step.child_Strat_Id);
-					}
 					updateStrategies(data);
 				}else{
 					removeLoading(strategy.frontId);
-				}
-				/*	if(data.strategy != undefined){
-						removeStrategyDivs(strategy.backId);
-						var new_f_strategyId = updateStrategies(data, "DeleteStep", strategy);
-						if (d_strategyId && f_strategyId == d_strategyId) {
-							var target;
-							if (f_stepId == d_stepId) {
-								$("#diagram_" + new_f_strategyId + " div.row2:last .resultCount a").click();
-							}
-							else if (f_stepId > d_stepId) {
-								$("#diagram_" + new_f_strategyId + " div#step_" + d_stepId + d_sub + " .resultCount a").click();
-							}
-							else {
-								if(d_sub == "" && d_stepId == 1) d_sub = "_sub";
-								$("#diagram_" + new_f_strategyId + " div#step_" + (d_stepId-1) + d_sub + " .resultCount a").click();
-							}
-						}
-					}else{
-						removeStrategyDivs(strategy.backId);
-						$("div#diagram_"+strategy.frontId).remove();
-						if($("#Strategies div").length == 0){
-							showInstructions();
-							NewResults(-1);
-						}
-					}
-				}else{
-					removeLoading(strategy.frontId);
-				}*/	
+				}	
 			},
 		error: function(data, msg, e){
 				//alert("ERROR \n "+ msg + "\n" + e);
@@ -371,7 +330,7 @@ function DeleteStep(f_strategyId,f_stepId){
 function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 	var strategy = getStrategy(f_strategyId);
 	var step = strategy.getStep(f_stepId, true);
-	un = (collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
+//	un = (collapsedName.length > 15)?collapsedName.substring(0,12) + "...":collapsedName;
 	var cs = strategy.checksum;
 	if(strategy.subStratOf != null)
 		cs = getStrategy(strategy.subStratOf).checksum;
@@ -388,13 +347,9 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 		success: function(data){
 			//data = eval("(" + data + ")");
 			if(ErrorHandler("EditStep", data, strategy, $("div#query_form"))){
-				if(strategy.subStratOf != null){
-					topstrat = getStrategyFromBackId(strategy.backId.split("_")[0]);
-					removeStrategyDivs(topstrat.backId);
-					f_if = updateStrategies(data, "Expand", topstrat);
-				}else{
-					f_id = updateStrategies(data, "Expand", strategy);
-				}
+				updateStrategies(data);
+			}else{
+				removeLoading(f_strategyId);
 			}
 		},
 		error: function(data, msg, e){
@@ -447,7 +402,7 @@ function closeStrategy(stratId){
 					ps = getStrategy(strat.subStratOf);
 					ps.checksum = data.strategies[ps.backId];
 				}
-				hideStrat(stratId);
+				updateStrategies(data);
 			}
 		},
 		error: function(data, msg, e){
@@ -494,19 +449,21 @@ function saveStrategy(stratId, checkName, fromHist){
 		success: function(data){
 					//data = eval("(" + data + ")");
 					if(ErrorHandler("SaveStrategy", data, ss, null)){
-							var selectedBox = $("#Strategies div.selected");
+/*							var selectedBox = $("#Strategies div.selected");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
 							var selectedStrat = selectedBox.parent().attr("id");
 							selectedBox = selectedBox.attr("id");
 							if (!fromHist) saveForm.hide();
 							removeStrategyDivs(stratId);
-							updateStrategies(data, "Save", getStrategyFromBackId(stratId));
-							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+*/
+							updateStrategies(data);
+/*							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
 							if (selectedLink.length != 0) selectedLink.click();
 							else NewResults(-1);
 							update_hist = true;
 							if (fromHist) updateHistory();
+*/
 					}
 		},
 		error: function(data, msg, e){
@@ -536,19 +493,21 @@ function renameStrategy(stratId, checkName, fromHist){
 					//data = eval("(" + data + ")");
 					if(ErrorHandler("RenameStrategy", data, strat, renameForm)){
 						// reload strategy panel
-							var selectedBox = $("#Strategies div.selected");
+/*							var selectedBox = $("#Strategies div.selected");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
 	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
 							var selectedStrat = selectedBox.parent().attr("id");
 							selectedBox = selectedBox.attr("id");
 							disableRename(stratId, fromHist);
 							removeStrategyDivs(stratId);
-							updateStrategies(data, "Rename", strat);
-							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
+*/
+							updateStrategies(data);
+/*							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
 							if (selectedLink.length != 0) selectedLink.click();
 							else NewResults(-1);
 							update_hist = true;
 							if (fromHist) updateHistory();
+*/
 					}
 		},
 		error: function(data, msg, e){
@@ -581,7 +540,7 @@ function ChangeFilter(strategyId, stepId, url) {
                 success: function(data){
                         //data = eval("(" + data + ")");
                         if(ErrorHandler("ChangeFilter", data, strategy, null)){
-							var selectedBox = $("#Strategies div.selected");
+/*							var selectedBox = $("#Strategies div.selected");
                         	if (selectedBox.length == 0) 
 								selectedBox = $("#Strategies div.selectedarrow");
                         	if (selectedBox.length == 0) 
@@ -589,13 +548,17 @@ function ChangeFilter(strategyId, stepId, url) {
 							var selectedStrat = selectedBox.parent().attr("id");
 							selectedBox = selectedBox.attr("id");
  							removeStrategyDivs(strategy.backId);
-                        	updateStrategies(data, 'ChangeFilter', strategy);
+*/
+                        	updateStrategies(data);
+/*
 							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
 							if (selectedLink.length != 0) 
 								selectedLink.click();
 							else 
 								NewResults(-1);
+*/
 						}
+
                 },
                 error: function(data, msg, e){
                         //$("#Strategies").append(currentDiv);
