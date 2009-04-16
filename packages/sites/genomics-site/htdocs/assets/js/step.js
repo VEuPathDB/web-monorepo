@@ -24,7 +24,10 @@ function showDetails(det){
 		var det2 = openDetail.clone();
 			det2.addClass("jqDnR");
 			det2.find(".crumb_menu").addClass("dragHandle");
-			det2.draggable({ handle: '.dragHandle'});
+			det2.draggable({
+				handle: '.dragHandle',
+				containment: 'parent'
+			});
 			//det2.jqDrag(".crumb_menu");
 		
 //		l = parent.css("left");
