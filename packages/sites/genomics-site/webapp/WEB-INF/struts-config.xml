@@ -68,6 +68,7 @@
       type="org.gusdb.wdk.controller.action.CloseStrategyAction"
       scope="request"
       validate="false">
+      <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
       path="/deleteStep"
@@ -154,6 +155,7 @@
        input="/showQuestion.do">
        <forward name="pq_show_summary" path="/showSummary.do"/>
        <forward name="pq_start_boolean" path="/startBoolean.do"/>
+       <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
       path="/showSummary"
