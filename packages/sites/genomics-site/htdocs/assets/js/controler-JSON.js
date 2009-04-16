@@ -5,6 +5,8 @@ var sidIndex = 0;
 var recordType= new Array();   //stratid, recordType which is the type of the last step
 var state = null;
 var p_state = null;
+var init_view_strat;
+var init_view_step;
 $(document).ready(function(){
 		initDisplay();
 });
@@ -20,9 +22,11 @@ function initDisplay(){
 		//	data = eval("(" + data + ")");
 			updateStrategies(data);
 			showStrategies();
-			var initStr = getStrategyFromBackId(init_view_strat);
-			var initStp = initStr.getStep(init_view_step, false);
-			highlightStep(initStr, initStp);
+			if (init_view_strat && init_view_step){
+				var initStr = getStrategyFromBackId(init_view_strat);
+				var initStp = initStr.getStep(init_view_step, false);
+				highlightStep(initStr, initStp);
+			}
 		}
 	});
 }

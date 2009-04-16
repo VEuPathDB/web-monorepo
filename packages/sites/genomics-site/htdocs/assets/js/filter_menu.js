@@ -167,7 +167,8 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	//$("#filter_link_div_" + proto + " #query_selection").fadeOut("normal");
 	if(edit == 1)
 		$("#query_form div#operations input#" + operation).attr('checked','checked'); 
-	$("#query_form").jqDrag(".dragHandle");
+	//$("#query_form").jqDrag(".dragHandle");
+	$("#query_form").draggable({handle: '.dragHandle'});
 	
 	$("#query_form").append("<div class='bottom-close'><a href='javascript:closeAll(false)' id='close_filter_query'>Close</a></div>");
 	htmltooltip.render();
@@ -280,7 +281,8 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 			});
 			}
 			$("div#strategy_results").append(filter);
-			$("#query_form").jqDrag(".dragHandle");
+			//$("#query_form").jqDrag(".dragHandle");
+			$("#query_form").draggable({handle: '.dragHandle'});
 		},
 		error: function(){
 			alert("Error getting the needed information from the server \n Please contact the system administrator");
@@ -291,7 +293,8 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 function close(ele){
 	cd = $("#query_form").parent();
 	$(cd).html(original_Query_Form_Text);
-	$("#query_form").jqDrag(".dragHandle");
+	//$("#query_form").jqDrag(".dragHandle");
+	$("#query_form").draggable({handle: '.dragHandle'});
 	
 	$("#query_form #continue_button").click(function(){
 		original_Query_Form_Text = $("#query_form").parent().html();
