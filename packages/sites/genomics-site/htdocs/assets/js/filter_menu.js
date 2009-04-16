@@ -203,7 +203,7 @@ function validateAndCall(type, url, proto, rs){
 }
 
 function getQueryForm(url,hideOp){	
-	    original_Query_Form_Text = $("#query_form").parent().html();
+	    original_Query_Form_Text = $("#query_form").html();
 		$.ajax({
 			url: url,
 			dataType:"html",
@@ -257,13 +257,13 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 				$("#transforms,#continue_button_transforms", filter).attr("disabled","disabled");
 			}else{
 				$("#continue_button", filter).click(function(){
-					original_Query_Form_Text = $("#query_form").parent().html();
+					original_Query_Form_Text = $("#query_form").html();
 					OpenOperationBox(strat_id, (isAdd ? undefined : step_id));
 					return false;
 				});
 		
 			$("#continue_button_transforms", filter).click(function(){
-				original_Query_Form_Text = $("#query_form").parent().html();
+				original_Query_Form_Text = $("#query_form").html();
 				getQueryForm($("#query_form select#transforms").val(),true);
 			});
 			}
@@ -284,7 +284,7 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 				}
 			});
 			}
-			$("div#strategy_results").append(filter);
+			$("div#strategy_results").append($(filter).html());
 			//$("#query_form").jqDrag(".dragHandle");
 			$("#query_form").draggable({
 				handle: '.dragHandle',
@@ -298,7 +298,7 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 }
 
 function close(ele){
-	cd = $("#query_form").parent();
+	cd = $("#query_form");
 	$(cd).html(original_Query_Form_Text);
 	//$("#query_form").jqDrag(".dragHandle");
 	$("#query_form").draggable({
@@ -320,9 +320,9 @@ function close(ele){
 
 function closeAll(hide){
 	if(hide)
-		$("#query_form").parent().hide();
+		$("#query_form").hide();
 	else
-		$("#query_form").parent().remove();
+		$("#query_form").remove();
 	//$(".filter_link").css({opacity:"1.0"}).attr("href");
 	$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 1.0});
 }
