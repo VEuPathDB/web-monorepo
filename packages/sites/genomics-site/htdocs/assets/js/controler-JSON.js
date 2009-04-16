@@ -146,7 +146,7 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 		return;
 	}
 	var strategy = getStrategy(f_strategyId);
-	var step = getStep(f_strategyId, f_stepId);
+	var step = strategy.getStep(f_stepId,true);
 	if(bool){
 		url = "showSummary.do?strategy=" + strategy.backId + "&step=" + step.back_boolean_Id + "&resultsOnly=true";
 	}else{
