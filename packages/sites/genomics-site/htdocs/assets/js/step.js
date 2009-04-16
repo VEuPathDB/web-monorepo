@@ -80,7 +80,7 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 				qf = document.createElement('div');
 				$(qf).attr("id","query_form").addClass("jqDnR");
 				$(d).append(qf);
-				$("#strategy_results").append(d);
+				$("#strategy_results").append($(d).html());
 				formatFilterForm(data,1,reviseStepNumber, hideQuery, hideOp);
 			},
 			error: function(data, msg, e){
