@@ -81,9 +81,16 @@ attributes:
             </tr>
 
             <tr>
+               <td>Content:</td> 
+               <td> <p align=justify>${comment.content}</p> </td>
+            </tr>
+
+            <tr>
                <td>PMID(s):</td>
                 <td> <c:forEach items="${comment.pmIds}" var="row">
-                        <a href="http://www.ncbi.nlm.nih.gov/pubmed/<c:out value="${row}"/>"><c:out value="${row}"/></a>
+                        <c:import url="http://${pageContext.request.serverName}/cgi-bin/pmid2title">
+                          <c:param name="pmids" value="${row}"/>
+                        </c:import>
                       </c:forEach>
                 </td>
             </tr>
@@ -106,9 +113,12 @@ attributes:
 
             <tr>
                <td>Category:</td>
-                <td> <c:forEach items="${comment.targetCategoryNames}" var="row">
-                       <c:out value="${row}"/>
-                      </c:forEach>
+                <td> 
+                  <c:set var="i" value="0"/>
+                  <c:forEach items="${comment.targetCategoryNames}" var="row">
+                    <c:set var="i" value="${i+1}"/>
+                      ${i}) <c:out value="${row}"/>
+                  </c:forEach>
                 </td>
 
             </tr>
@@ -117,17 +127,27 @@ attributes:
                <td>Uploaded files:</td>
                <td> 
                   <table border=1>
-                  <tr>
-                    <th>Name/Link</th>
-                    <th>Description</th>
+                  <tr align=center>
+                    <th width=20>#</th>
+                    <th width=150>Name/Link</th>
+                    <th width=200>Description</th>
+                    <th width=100>Preview</th>
                   </tr>
+                  <c:set var="i" value="0"/>
                   <c:forEach items="${comment.files}" var="row">
+                     <c:set var="i" value="${i+1}"/>
                      <c:set var="file" value="${fn:split(row, '|')}"/>
                      <tr>
+                       <td align=center>${i}</td>
                        <td><a href="/common/community/${comment.projectName}/${file[1]}">
                         <c:out value="${file[1]}"/></a>
                       </td>
-                       <td>${file[2]}</td>
+                      <td>${file[2]}</td>
+                      <td>
+                       <a href="/common/community/${comment.projectName}/${file[1]}">
+                        <img src='/common/community/${comment.projectName}/${file[1]}' width=80 height=80/></a>
+                      </td>
+
                     </tr>
                   </c:forEach>
                   </table>
@@ -178,12 +198,6 @@ attributes:
                       </c:forEach>
                         </td>
                     </c:if>
-                </tr>
-
-                <tr>
-                  <td>Content:</td>
-                      
-                        <td> <p align=justify>${comment.content}</p> </td>
                 </tr>
 
                 <tr>
