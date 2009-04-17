@@ -44,6 +44,7 @@ print <<EOL
 <tr>
   <td colspan=2><hr></td>
 </tr>
+</table>
 EOL
 
 }
