@@ -472,12 +472,12 @@ SELECT distinct * from
 SELECT fl.na_feature_id as feature_id,
        'SAGE' type, 
        '3-5prime' source, 
-       fl.feature_source_id name, 
+       sta.source_id name, 
        fl.na_sequence_id parent_id, 
        fl.start_min startm, 
        fl.end_max end, 
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       'SourceID=' || sta.source_id || '$dlm' ||
+       'SourceID=' || sta.feature_source_id || '$dlm' ||
        'Sequence=CATG' || staa.sequence || '$dlm' ||
        'Occurrence=' || staa.occurrence atts
 FROM   apidb.FeatureLocation fl,
