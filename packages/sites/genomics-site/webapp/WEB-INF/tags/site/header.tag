@@ -88,6 +88,9 @@
 		img, input.img_align_middle {
 			behavior: url(/assets/css/iepngfix.htc);
 		}
+                #Strategies {
+                   height: expression(this.scrollHeight > 299 ? "300px" : "auto");
+		}
 	</style>
 <![endif]-->
 
@@ -269,6 +272,13 @@ behavior: url(/assets/css/csshover.htc);
 
 <!--[if lt IE 7]>
 <script type="text/javascript" src="/assets/js/pngfix.js"></script>
+<c:if test="${refer == 'customSummary'}">
+<script>
+        $(document).ready(function(){
+		$("#Strategies").prepend("<div style='height:124px;'>&nbsp;</div>");
+	});
+</script>
+</c:if>
 <![endif]-->
 
 <!--[if IE]>

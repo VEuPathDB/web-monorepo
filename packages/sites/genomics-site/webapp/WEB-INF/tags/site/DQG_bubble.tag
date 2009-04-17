@@ -40,8 +40,7 @@
 </c:choose>
 
 <div class="threecolumndiv">
-
-<img src="/assets/images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
+<img class="threecolumndivimg" src="/assets/images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
 <c:choose>
 
 <%---------------------------------   TOOLS  -------------------------%>
