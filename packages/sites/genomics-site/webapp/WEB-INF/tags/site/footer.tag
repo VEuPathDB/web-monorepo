@@ -38,7 +38,7 @@
    </c:when>
 
 
-<c:when test="${fn:containsIgnoreCase(siteName, 'EuPathDB')}">
+<c:when test="${fn:containsIgnoreCase(siteName, 'ApiDB')}">
      <c:set var="version" value="2.0" />
      <c:set var="date" value="May 15th, 2009" />
    </c:when>
