@@ -191,6 +191,9 @@
 
 <c:if test="${banner == null}">
 <c:choose>
+      <c:when test = "${project == 'ApiDB'}">
+             <c:set var="banner" value="EuPathDB : The Eukaryotic Pathogen genome resource"/>
+      </c:when>
       <c:when test = "${project == 'CryptoDB'}">
              <c:set var="banner" value="CryptoDB : The Cryptosporidium genome resource"/>
       </c:when>
@@ -339,6 +342,9 @@ ${headElement}
 
 
    <c:choose>
+    <c:when test="${project == 'ApiDB'}">
+       <%-- do not add this --%>
+   </c:when>
    <c:when test="${project == 'TriTrypDB'}">
      <img  usemap="#partof" src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/>
    </c:when>
