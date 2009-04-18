@@ -343,7 +343,8 @@ ${headElement}
 
    <c:choose>
     <c:when test="${project == 'ApiDB'}">
-       <%-- do not add this --%>
+       <%-- we have it for now so the page renders correctly --%>
+       <a href="http://eupathdb.org"><img src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
    </c:when>
    <c:when test="${project == 'TriTrypDB'}">
      <img  usemap="#partof" src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/>
