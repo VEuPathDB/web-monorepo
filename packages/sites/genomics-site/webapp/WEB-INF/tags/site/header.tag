@@ -461,14 +461,14 @@ ${headElement}
      <c:set var="width" value="318" />
      <c:set var="height" value="64" />
      <c:set var="version" value="4.0" />
-     <c:set var="date" value="Jan 16th, 2009" />
+     <c:set var="date" value="May 16th, 2009" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(project, 'GiardiaDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
      <c:set var="version" value="1.1" />
-     <c:set var="date" value="May 12th, 2008" />
+     <c:set var="date" value="May 12th, 2009" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(project, 'PlasmoDB')}">
@@ -482,29 +482,29 @@ ${headElement}
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
      <c:set var="version" value="5.0" />
-     <c:set var="date" value="Nov 18th, 2008" />
+     <c:set var="date" value="Nov 18th, 2009" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(project, 'TrichDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
      <c:set var="version" value="1.0" />
-     <c:set var="date" value="Sep 14th, 2007" />
+     <c:set var="date" value="Sep 14th, 2009" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(project, 'TriTrypDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
      <c:set var="version" value="1.0" />
-     <c:set var="date" value="Feb 6th, 2009" />
+     <c:set var="date" value="May 15th, 2009" />
    </c:when>
 
 
-<c:when test="${fn:containsIgnoreCase(project, 'EuPathDB')}">
+<c:when test="${fn:containsIgnoreCase(project, 'ApiDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
-     <c:set var="version" value="5.50" />
-     <c:set var="date" value="Mar 15th, 2009" />
+     <c:set var="version" value="2.0" />
+     <c:set var="date" value="May 15th, 2009" />
    </c:when>
 
 
