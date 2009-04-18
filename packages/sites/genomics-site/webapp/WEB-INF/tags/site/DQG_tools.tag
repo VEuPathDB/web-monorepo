@@ -8,7 +8,7 @@
 
 <c:choose>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'ApiDB')}">
-		<c:set var="listOrganisms" value="Cryptosporidium,Giardia,Plasmodium,Toxoplasma,Neospora,Trichomonas,Trypanosoma,Leishmania"/>
+		<c:set var="listOrganisms" value="Cryptosporidium, Giardia, Plasmodium, Toxoplasma, Neospora, Trichomonas, Trypanosoma, Leishmania"/>
 	</c:when>
         <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
 		<c:set var="listOrganisms" value="Cryptosporidium"/>
