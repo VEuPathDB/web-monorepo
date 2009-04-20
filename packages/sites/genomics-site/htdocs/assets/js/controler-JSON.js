@@ -61,19 +61,21 @@ function updateStrategies(data, strId, stpId, isFront){
 
 function removeClosedStrategies(){
 	for(s in strats){
-		var x = true;
-		for(t in state){
-			if(t != "length"){
-				if(strats[s].backId == state[t].id && strats[s].checksum == state[t].checksum){
-					x = false;
-					if(t != s){
-						strats[t] = strats[s];
-						delete strats[s];
+		if(s != 0){
+			var x = true;
+			for(t in state){
+				if(t != "length"){
+					if(strats[s].backId == state[t].id && strats[s].checksum == state[t].checksum){
+						x = false;
+						if(t != s){
+							strats[t] = strats[s];
+							delete strats[s];
+						}
 					}
 				}
 			}
+			if(x) delete strats[s];
 		}
-		if(x) delete strats[s];
 	}
 }
 
