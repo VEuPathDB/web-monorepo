@@ -364,63 +364,6 @@ img {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Main Page Bubble Lists
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#3columndiv {
-	width: 247px;
-}
-
-#info {
-   width: 209px;
-   min-height: 227px;
-   height:auto;
-   background-image: url(../images/bubble_backgrnd.png);
-   background-repeat: repeat-y;
-   text-align: left;
-   padding-top: 2px;
-   padding-right: 19px;
-   padding-bottom: 0px;
-   padding-left: 19px;
-}
-
-#info li
-{
-	line-height: 1.5em;
-/*	list-style-image: url(../images/cir_bullet.png);*/
-	list-style-type: none;
-	margin-left: 7px;
-}
-
-#info li ul li
-{
-/*	list-style-image: url(../images/cir_bullet2.png);*/
-	list-style-type: none;
-	margin-left: 26px;
-}
-
-#infobottom {
-	width: 209px;
-	min-height: 10px;
-	background-image: url(../images/bubble_bottom.png);
-	background-position: bottom;
-	background-repeat: no-repeat;
-	text-align: center;
-	padding-top: 2px;
-	padding-right: 19px;
-	padding-bottom: 30px;
-	padding-left: 19px;
-}
-
-/* for Internet Explorer */
-/*\*/
-* html #info {
-height: 240px;
-}
-/**/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -567,14 +510,6 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu_lefttop {
-	width: 220px;
-	margin-top: 8px;
-	position: absolute;
-	left: 6px;
-	top: 129px;
-}
-
 #menu_lefttop a.heading {
 	height: 24px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -588,45 +523,6 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 	padding-left:  7px;
 	margin-bottom: 5px;
 }
-
-#menu_lefttop a.heading:link, #menu_lefttop a.heading:visited {
-	color: #FFFFFF;
-	display: block;
-	}
-	
-#menu_lefttop a.heading:hover {
-	color: #CCCCCC;
-	display: block;
-	}	
-	
-#menu_lefttop div {
-	height: auto;
-}
-
-#menu_lefttop div ul{  /* second-level lists */
-	width: 179px;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-weight: normal;
-	padding: 6px 6px 6px 4px;
-	line-height: 15px;
-	list-style-position: inside;
-	list-style-type: square;
-}
-
-.menu_lefttop_drop {
-   width: 194px;
-   font-family: Arial, Helvetica, sans-serif;
-   font-size: 12px;
-   font-weight: normal;
-   padding: 6px;
-   line-height: 15px;
-   border: 1px solid;
-   border-color: #393966;
-   background-color: #FFFFFF;
-   margin: -5px 0px 5px;
-}
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Search Boxes
@@ -806,10 +702,6 @@ a.heading:hover + a.detail_link, .detail_link:hover {
 	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-table .3column {
-	clear: both;
-}
-
 td.headerrow {
 	height: 29px;
 	font-size: 15px;
@@ -934,11 +826,6 @@ tr.lines {
 tr.linesalt {
 	background-color: #EEEEEE;
 	padding: 4px;
-}
-
-
-table.3column {
-	clear: both;
 }
 
 table.results {

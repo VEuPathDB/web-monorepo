@@ -94,7 +94,7 @@
 	</style>
 <![endif]-->
 
-<!--[if IE]>
+<!--[if lt IE 8]>
 <style type="text/css" media="screen">
 	body {
 		behavior: url(/assets/css/csshover.htc);
@@ -284,7 +284,7 @@ behavior: url(/assets/css/csshover.htc);
 </c:if>
 <![endif]-->
 
-<!--[if IE]>
+<!--[if lt IE 8]>
 <style>
   * html #query_selection {
 	behavior: url("/assets/css/csshover.htc");

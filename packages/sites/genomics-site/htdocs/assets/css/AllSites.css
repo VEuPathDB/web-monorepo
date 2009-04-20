@@ -19,6 +19,140 @@ p.unreadlabel {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TABLES 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+table.threecolumn {
+	clear: both;
+}
+
+table.threecolumn td {
+        vertical-align: top;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Main Page Bubble Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.threecolumndiv {
+	width: 247px;
+}
+
+.threecolumndivimg {
+	display: block;
+}
+
+#info {
+   width: 209px;
+   min-height: 240px;
+   height:auto;
+   background-image: url(../images/bubble_backgrnd.png);
+   background-repeat: repeat-y;
+   text-align: left;
+   padding-top: 2px;
+   padding-right: 19px;
+   padding-bottom: 0px;
+   padding-left: 19px;
+}
+
+#info li
+{
+	line-height: 1.5em;
+/*	list-style-image: url(../images/cir_bullet.png);*/
+	list-style-type: none;
+	margin-left: 7px;
+}
+
+#info li ul li
+{
+/*	list-style-image: url(../images/cir_bullet2.png);*/
+	list-style-type: none;
+	margin-left: 26px;
+}
+
+#infobottom {
+	width: 209px;
+	min-height: 35px;    /* trying to keep buckest same size */
+	background-image: url(../images/bubble_bottom.png);
+	background-position: bottom;
+	background-repeat: no-repeat;
+	text-align: center;
+	padding-top: 2px;
+	padding-right: 19px;
+	padding-bottom: 30px;
+	padding-left: 19px;
+}
+
+#infobottom.tools {
+	padding-bottom: 15px;
+}
+
+
+
+/* for Internet Explorer */
+/*\*/
+* html #info {
+height: 240px;
+}
+/**/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Menu Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#menu_lefttop {
+	width: 220px;
+	margin-top: 8px;
+	position: absolute;
+	left: 6px;
+	top: 129px;
+}
+
+#menu_lefttop a.heading:link, #menu_lefttop a.heading:visited {
+	color: #FFFFFF;
+	display: block;
+}
+	
+#menu_lefttop a.heading:hover {
+	color: #CCCCCC;
+	display: block;
+}
+
+#menu_lefttop img {
+        display: block;
+}	
+	
+#menu_lefttop div {
+	height: auto;
+}
+
+#menu_lefttop div ul{  /* second-level lists */
+	width: 179px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+	padding: 6px 6px 6px 4px;
+	line-height: 15px;
+	list-style-position: outside;  /* so bullet lists wrap under text */
+	list-style-type: square;
+	margin-left:  1em;
+	padding-left: 0;
+}
+
+.menu_lefttop_drop {
+   width: 194px;
+   font-family: Arial, Helvetica, sans-serif;
+   font-size: 12px;
+   font-weight: normal;
+   padding: 6px;
+   line-height: 15px;
+   border: 1px solid #630d0d;
+   border-color: 630d0d;
+   background-color: #FFFFFF;
+   margin: -5px 0px 5px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =used in help.jsp, classic bullet list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #cirbulletlist ul, #cirbulletlist ol {
