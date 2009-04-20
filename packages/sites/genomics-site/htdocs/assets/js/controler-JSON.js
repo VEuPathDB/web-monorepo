@@ -61,7 +61,7 @@ function updateStrategies(data, strId, stpId, isFront){
 
 function removeClosedStrategies(){
 	for(s in strats){
-		if(s != 0){
+		if(s.indexOf(".") == -1){
 			var x = true;
 			for(t in state){
 				if(t != "length"){
@@ -69,12 +69,33 @@ function removeClosedStrategies(){
 						x = false;
 						if(t != s){
 							strats[t] = strats[s];
+							removeSubStrategies(s, t);
 							delete strats[s];
+							break;
 						}
 					}
 				}
 			}
-			if(x) delete strats[s];
+			if(x){
+				removeSubStrategies(s);
+				delete strats[s];
+			}
+		}
+	}
+}
+
+function removeSubStrategies(ord1, ord2){
+	for(var f in strats){
+		if(f.split(".").length > 1 && f.split(".")[0] == ord1){
+			if(ord2 == undefined){
+				delete strats[f];
+			}else{
+				var n_ord = f.split(".");
+				n_ord[0] = ord2;
+				n_ord = n_ord.join(".");
+				strats[n_ord] = strats[f];
+				delete strats[f];
+			}
 		}
 	}
 }
@@ -82,7 +103,7 @@ function removeClosedStrategies(){
 function showStrategies(strId, stpId, isFront){
 	var sC = 0;
 	for(s in strats){
-		if(s != "0" || s > 0)
+		if(s.indexOf(".") == -1)
 			sC++;
 	}
 	var s2 = document.createElement('div');
@@ -112,7 +133,7 @@ function displayOpenSubStrategies(s, d){
 		subs = displayModel(getStrategy(s.subStratOrder[j]));
 		$("div#diagram_" + s.frontId, d).after(subs);
 		if(getSubStrategies(s.subStratOrder[j]).length > 0){
-			displayOpenSubStrategies(getStrategy(s.subStratOrder[j]));
+			displayOpenSubStrategies(getStrategy(s.subStratOrder[j]),d);
 		}
 	}
 }
@@ -120,9 +141,6 @@ function displayOpenSubStrategies(s, d){
 function showInstructions(){
 	$("#strat-instructions").remove();
 	$("#strat-instructions-2").remove();
-	// For IE : when instructions are shown, need to specify 'overflow : visible'
-	// Need to remove this inline style when instructions are removed
-	$("#Strategies").removeAttr("style");
 	var instr = document.createElement('div');
 	id = "strat-instructions";
 	instr_text = "<br>Click '<a href='queries_tools.jsp'>New Search</a>' <br/> to start a strategy";
@@ -137,8 +155,6 @@ function showInstructions(){
 		arrow_image = arrow_image + arrow_image2;
 	}
 	$(instr).attr("id",id).html(arrow_image + instr_text);
-	// For IE : when instructions are shown, need to specify 'overflow : visible'
-	$("#Strategies").css({'overflow' : 'visible'});
 	$("#Strategies").append(instr);
 }
 
@@ -167,7 +183,7 @@ function loadModel(json, ord){
     strat.importId = strategy.importId;
 	var steps = strategy.steps;
 	strats[ord] = strat;
-	strat.initSteps(steps);
+	strat.initSteps(steps, ord);
 	strat.dataType = strategy.steps[strategy.steps.length].dataType;
 	strat.DIV = displayModel(strat);
 	return strat.frontId;
