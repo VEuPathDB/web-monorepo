@@ -27,7 +27,6 @@ function addFileSelRow() {
                 zebraStripe();
              })
            );
-    console.log('adding row ' + fCount);
 
   $(filesTable).append(
     '<tr><td><table style="border:1px solid black;">' + 
