@@ -61,14 +61,16 @@ function updateStrategies(data, strId, stpId, isFront){
 //		}
 	  }
 	}
+	removeClosedStrategies();
 	showStrategies(strId, stpId, isFront);
   }
 }
 
-function removeClosedStrategies(bes){
+function removeClosedStrategies(){
 	for(s in strats){
-		if(strats[s].subStratOf == null && bes[strats[s].backId] == undefined)
-			hideStrat(strats[s].frontId);
+		if(strats[s].subStratOf == null && state[s] == undefined)
+			//hideStrat(strats[s].frontId);
+			unloadStrategy(strats[s].frontId);
 	}
 }
 
@@ -112,7 +114,6 @@ function displayOpenSubStrategies(s, d){
 function showInstructions(){
 	$("#strat-instructions").remove();
 	$("#strat-instructions-2").remove();
-	$("#Strategies").removeAttr("style");
 	var instr = document.createElement('div');
 	id = "strat-instructions";
 	instr_text = "<br>Click '<a href='queries_tools.jsp'>New Search</a>' <br/> to start a strategy";
@@ -127,7 +128,6 @@ function showInstructions(){
 		arrow_image = arrow_image + arrow_image2;
 	}
 	$(instr).attr("id",id).html(arrow_image + instr_text);
-	$("#Strategies").css({'overflow-y' : 'visible'});
 	$("#Strategies").append(instr);
 }
 
@@ -399,10 +399,10 @@ function closeStrategy(stratId){
 		success: function(data){
 			//data = eval("(" + data + ")");			
 			if(ErrorHandler("CloseStrategy", data, strat, null)){
-				if(strat.subStratOf != null){
-					ps = getStrategy(strat.subStratOf);
-					ps.checksum = data.strategies[ps.backId];
-				}
+	//			if(strat.subStratOf != null){
+	//				ps = getStrategy(strat.subStratOf);
+	//				ps.checksum = data.strategies[ps.backId];
+	//			}
 				updateStrategies(data);
 			}
 		},
