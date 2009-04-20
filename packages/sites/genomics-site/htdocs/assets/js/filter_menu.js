@@ -251,24 +251,24 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 		},
 		success: function(data){
 			filter = document.createElement('div');
-			$(filter).html(data);
+			$("div#strategy_results").append(data);//$(filter).html(data);
 			if(isFirst){
-				$("#selected_strategy,#continue_button", filter).attr("disabled","disabled");
-				$("#transforms,#continue_button_transforms", filter).attr("disabled","disabled");
+				$("#query_form #selected_strategy,#continue_button").attr("disabled","disabled");
+				$("#query_form #transforms,#continue_button_transforms").attr("disabled","disabled");
 			}else{
-				$("#continue_button", filter).click(function(){
+				$("#query_form #continue_button").click(function(){
 					original_Query_Form_Text = $("#query_form").html();
 					OpenOperationBox(strat_id, (isAdd ? undefined : step_id));
 					return false;
 				});
 		
-			$("#continue_button_transforms", filter).click(function(){
+			$("#query_form #continue_button_transforms").click(function(){
 				original_Query_Form_Text = $("#query_form").html();
 				getQueryForm($("#query_form select#transforms").val(),true);
 			});
 			}
 			if(!isAdd){
-			$("#query_form select#transforms option", filter).each(function(){
+			$("#query_form select#transforms option").each(function(){
 				stp = getStrategy(strat_id).getStep(step_id,false);
 				fid = parseInt(stp.frontId);
 				if(fid > 1){
@@ -284,7 +284,6 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 				}
 			});
 			}
-			$("div#strategy_results").append($(filter).html());
 			//$("#query_form").jqDrag(".dragHandle");
 			$("#query_form").draggable({
 				handle: '.dragHandle',
