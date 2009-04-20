@@ -62,10 +62,10 @@ Strategy.prototype.depth = function(stepid, d){
 		
 	}
 }
-
-Strategy.prototype.initSteps = function(steps){
+Strategy.prototype.initSteps = function(steps, ord){
 	var arr = new Array();
 	var st = null;
+	var ssind = 1;
 	var stepCount = steps.length;
 	for(var i in steps){
 		if(i != "length"){
@@ -74,7 +74,8 @@ Strategy.prototype.initSteps = function(steps){
 				st.operation = steps[i].operation;
 				st.isboolean = true;
 				if(steps[i].step.isCollapsed && steps[i].step.strategy.order > 0){
-					subId = loadModel(steps[i].step.strategy, "0");
+					subId = loadModel(steps[i].step.strategy, ord + "." + ssind);
+					ssind++;
 					this.subStratOrder[steps[i].step.strategy.order] = subId;
 					st.child_Strat_Id = subId;
 				}
