@@ -34,6 +34,8 @@ function displayModel(strat){
 	if(strats){
 	  $("#strat-instructions").remove();
 	  $("#strat-instructions-2").remove();
+	  // For IE : when instructions are shown, need to specify 'overflow : visible'
+	  // Need to remove this inline style when instructions are removed
 	  $("#Strategies").removeAttr("style");
 	  //var strat = null;
 	  //strat = getStrategy(strat_id);
