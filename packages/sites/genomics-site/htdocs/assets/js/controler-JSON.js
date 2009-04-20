@@ -38,9 +38,6 @@ function highlightStep(str, stp, s){
 }
 
 function updateStrategies(data, strId, stpId, isFront){	
-  if(data.state.length == 0){
-	showInstructions();
-  }else{
 	state = data.state;
 	p_state = $.json.serialize(state);
 	if(strId == undefined) strId = init_view_strat;
@@ -60,7 +57,6 @@ function updateStrategies(data, strId, stpId, isFront){
 	  }
 	}
 	showStrategies(strId, stpId, isFront);
-  }
 }
 
 function removeClosedStrategies(){
@@ -102,6 +98,7 @@ function showStrategies(strId, stpId, isFront){
 	}
 	highlightStep(initStr, initStp, s2);
 	$("#Strategies").html($(s2).html());
+	if(sC == 0) showInstructions();
 }
 
 function displayOpenSubStrategies(s, d){
