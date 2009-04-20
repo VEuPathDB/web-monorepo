@@ -9,9 +9,9 @@
 <c:set var="exp" scope="request" value="${requestScope['org.apache.struts.action.EXCEPTION']}"/>
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" /> 
-<c:set var="to" value="${props['SITE_ADMIN_EMAIL']}" />
-<c:set var="from" value="${commentForm.commentTargetId}_comment_alert@${wdkModel.displayName}.org" />
-<c:set var="subject" value="${subject}" />
+<c:set var="to" value="${wdkModel.projectId}_annotators@pcbi.upenn.edu" /> 
+<c:set var="from" value="${wdkModel.projectId}_annotators@pcbi.upenn.edu" />
+<c:set var="subject" value="${commentForm.commentTargetId}_comment_${commentForm.stableId}" />
 <c:set var="body" value="${body}" />
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
