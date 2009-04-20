@@ -46,6 +46,7 @@ function updateStrategies(data, strId, stpId, isFront){
 	if(strId == undefined) strId = init_view_strat;
 	if(stpId == undefined) stpId = init_view_step;
 	if(isFront == undefined) isFront = true;
+	removeClosedStrategies();
 	for(st in state){
 	  if(st != "length"){
 		var str = state[st].id;
@@ -56,21 +57,27 @@ function updateStrategies(data, strId, stpId, isFront){
 	  	}else{
 			loadModel(data.strategies[state[st].checksum], st);
 		}
-//		if(strId == null || strId == undefined){
-//			strId = state[st].id;
-//		}
 	  }
 	}
-	removeClosedStrategies();
 	showStrategies(strId, stpId, isFront);
   }
 }
 
 function removeClosedStrategies(){
 	for(s in strats){
-		if(strats[s].subStratOf == null && state[s] == undefined)
-			//hideStrat(strats[s].frontId);
-			unloadStrategy(strats[s].frontId);
+		var x = true;
+		for(t in state){
+			if(t != "length"){
+				if(strats[s].backId == state[t].id && strats[s].checksum == state[t].checksum){
+					x = false;
+					if(t != s){
+						strats[t] = strats[s];
+						delete strats[s];
+					}
+				}
+			}
+		}
+		if(x) delete strats[s];
 	}
 }
 
@@ -366,16 +373,12 @@ function openStrategy(stratId){
 	strat = getStrategyFromBackId(stratId);
 	$.ajax({
 		url: url,
-		datatype:"json",
+		dataType:"json",
 		data:"state=" + p_state,
 		success: function(data){
 			//data = eval("(" + data + ")");
 			if(ErrorHandler("Open", data, null, null)){
-				if(strat.subStratOf != null){
-					ps = getStrategy(strat.subStratOf);
-					ps.checksum = data.strategies[ps.backId];
-				}
-				updateStrategies(data, "Open", getStrategyFromBackId(stratId));
+				updateStrategies(data);
 			}
 		},
 		error: function(data, msg, e){
