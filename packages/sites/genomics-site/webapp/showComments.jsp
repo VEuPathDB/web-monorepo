@@ -127,14 +127,17 @@ attributes:
                <td>Uploaded files:</td>
                <td> 
                   <table border=1>
-                  <tr align=center>
-                    <th width=20>#</th>
-                    <th width=150>Name/Link</th>
-                    <th width=200>Description</th>
-                    <th width=100>Preview</th>
-                  </tr>
                   <c:set var="i" value="0"/>
                   <c:forEach items="${comment.files}" var="row">
+                    <c:if test="${i == 0}">
+                      <tr align=center>
+                        <th width=20>#</th>
+                        <th width=150>Name/Link</th>
+                        <th width=200>Description</th>
+                        <th width=100>Preview</th>
+                      </tr>
+                    </c:if>
+
                      <c:set var="i" value="${i+1}"/>
                      <c:set var="file" value="${fn:split(row, '|')}"/>
                      <tr>
@@ -152,9 +155,7 @@ attributes:
                   </c:forEach>
                   </table>
                </td>
-            </tr>
-
-
+            </tr> 
                     
             <tr>
                <td>External Database:</td>
