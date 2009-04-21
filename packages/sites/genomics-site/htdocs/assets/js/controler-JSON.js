@@ -25,14 +25,17 @@ function initDisplay(){
 	});
 }
 
-function highlightStep(str, stp, s){
+function highlightStep(str, stp, v){
 	if(s == undefined) s = document;
 	if(!str || stp == null){
 		NewResults(-1);
 	}else{
-		var stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "']", s);
-		if (stepBox.length == 0)
-			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "_sub']", s);
+		var stepBox = null;
+		if(v != "v" && init_view_step == stp.back_step_Id)
+			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "_sub']");
+		else 
+			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "']");
+			
 		$(".resultCount a", stepBox).click();
 	}
 }
@@ -42,7 +45,7 @@ function updateStrategies(data, strId, stpId, isFront){
 	p_state = $.json.serialize(state);
 	if(strId == undefined) strId = init_view_strat;
 	if(stpId == undefined) stpId = init_view_step;
-	if(isFront == undefined) isFront = true;
+	if(isFront == undefined) isFront = false;
 	removeClosedStrategies();
 	for(st in state){
 	  if(st != "length"){
@@ -65,12 +68,19 @@ function removeClosedStrategies(){
 			var x = true;
 			for(t in state){
 				if(t != "length"){
-					if(strats[s].backId == state[t].id && strats[s].checksum == state[t].checksum){
+					if(strats[s].checksum == state[t].checksum){
 						x = false;
 						if(t != s){
 							strats[t] = strats[s];
 							removeSubStrategies(s, t);
 							delete strats[s];
+							break;
+						}
+					}else if(strats[s].backId == state[t].id){
+						x = false;
+						if(t != s){
+							strats[t] = strats[s];
+							removeSubStrategies(s, t);
 							break;
 						}
 					}
@@ -114,13 +124,13 @@ function showStrategies(strId, stpId, isFront){
 	var initStr = (isFront) ? getStrategy(strId) : getStrategyFromBackId(strId);
 	if(initStr != false){
 		var initStp = null;
-		if(stpId == null) 
+		if(stpId == "add") 
 			initStp = initStr.getLastStep();
 		else 
-			initStp = initStr.getStep(stpId, isFront);
+			initStp = initStr.getStep(String(stpId).split(".")[0], isFront);
 	}
-	highlightStep(initStr, initStp, s2);
 	$("#Strategies").html($(s2).html());
+	highlightStep(initStr, initStp, String(stpId).split(".")[1]);
 	if(sC == 0) showInstructions();
 }
 
@@ -222,14 +232,17 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 		success: function(data){
 			step.isSelected = true;
 			$("#Strategies div").removeClass("selected").removeClass("selectedarrow").removeClass("selectedtransform");
-			init_view_strat = strategy.frontId;
-			init_view_step = step.frontId;
+			init_view_strat = strategy.backId//frontId;
+			//init_view_step = step.frontId;
 			if(bool){
 				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "']").addClass("selected");
+				init_view_step = step.back_step_Id + ".v";
 			}else if (step.isTransform){
 				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedtransform");
+				init_view_step = step.back_step_Id;
 			}else{
 				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedarrow");
+				init_view_step = step.back_step_Id;
 			}
 			removeLoading(f_strategyId);
 			ResultsToGrid(data);
@@ -264,8 +277,10 @@ function AddStepToStrategy(url, proto, stpId){
 			if(ErrorHandler("AddStep", data, strategy, $("div#query_form"))){
 				$("div#query_form").remove();//.parent().remove();
 				removeStrategyDivs(b_strategyId);
-				updateStrategies(data,strategy.frontId, null);
-				isInsert = "";
+				if(isInsert == "")
+					updateStrategies(data,strategy.backId, "add");
+				else
+					updateStrategies(data);
 			}else{
 				removeLoading(f_strategyId);
 			}
