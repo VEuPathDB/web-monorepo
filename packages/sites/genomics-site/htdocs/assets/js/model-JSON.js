@@ -30,6 +30,20 @@ Strategy.prototype.getStep = function(stepId,isfront){
 	}
 	return null;
 }
+
+Strategy.prototype.findStep = function(stpId, isFront){
+	var s = null;
+	if(st = this.getStep(stpId,isFront)){
+		s = {str:this, stp:st};
+	}else{
+		for(var t in this.subStratOrder){
+			s = getStrategy(this.subStratOrder[t]).findStep(stpId, isFront);
+			if(s != null) break;
+		}
+	}
+	return s;
+}
+
 Strategy.prototype.getLastStep = function(){
 	cId = 0;
 	for(s in this.Steps){

@@ -6,6 +6,7 @@ var recordType= new Array();   //stratid, recordType which is the type of the la
 var state = null;
 var p_state = null;
 var init_view_strat;
+var init_view_strat_front;
 var init_view_step;
 $(document).ready(function(){
 		initDisplay();
@@ -21,6 +22,7 @@ function initDisplay(){
 		success: function(data){
 		//	data = eval("(" + data + ")");
 			updateStrategies(data, init_view_strat, init_view_step, false);
+			init_view_strat_front = getStrategyFromBackId(init_view_strat).frontId;
 		}
 	});
 }
@@ -124,10 +126,14 @@ function showStrategies(strId, stpId, isFront){
 	var initStr = (isFront) ? getStrategy(strId) : getStrategyFromBackId(strId);
 	if(initStr != false){
 		var initStp = null;
-		if(stpId == "add") 
+		if(stpId == "add"){ 
 			initStp = initStr.getLastStep();
-		else 
-			initStp = initStr.getStep(String(stpId).split(".")[0], isFront);
+		}else{ 
+			//initStp = initStr.getStep(String(stpId).split(".")[0], isFront);
+			strStpObj = initStr.findStep(String(stpId).split(".")[0], isFront);
+			initStr = strStpObj.str;
+			initStp = strStpObj.stp;
+		}
 	}
 	$("#Strategies").html($(s2).html());
 	highlightStep(initStr, initStp, String(stpId).split(".")[1]);
@@ -232,8 +238,8 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 		success: function(data){
 			step.isSelected = true;
 			$("#Strategies div").removeClass("selected").removeClass("selectedarrow").removeClass("selectedtransform");
-			init_view_strat = strategy.backId//frontId;
-			//init_view_step = step.frontId;
+			init_view_strat = strategy.backId
+			init_view_strat_front = strategy.frontId;
 			if(bool){
 				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "']").addClass("selected");
 				init_view_step = step.back_step_Id + ".v";
