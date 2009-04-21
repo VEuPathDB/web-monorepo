@@ -129,7 +129,6 @@ function showStrategies(strId, stpId, isFront){
 		if(stpId == "add"){ 
 			initStp = initStr.getLastStep();
 		}else{ 
-			//initStp = initStr.getStep(String(stpId).split(".")[0], isFront);
 			strStpObj = initStr.findStep(String(stpId).split(".")[0], isFront);
 			initStr = strStpObj.str;
 			initStp = strStpObj.stp;
@@ -284,7 +283,7 @@ function AddStepToStrategy(url, proto, stpId){
 				$("div#query_form").remove();//.parent().remove();
 				removeStrategyDivs(b_strategyId);
 				if(isInsert == "")
-					updateStrategies(data,strategy.backId, "add");
+					updateStrategies(data,strategy.backId.split("_")[0], "add", false);
 				else
 					updateStrategies(data);
 			}else{
