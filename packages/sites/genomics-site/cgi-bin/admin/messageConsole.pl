@@ -65,7 +65,7 @@ print <<_END_OF_TEXT_
         <script language="javascript">
          function submitWindow()
            {
-              window.open("/cgi-bin/messageConsole.pl",
+              window.open("/cgi-bin/admin/messageConsole.pl",
              "mywindow",location=1,status=1,scrollbars=1,
              width=500,height=500, value=submitMessage);  return false;
              
@@ -85,8 +85,8 @@ print <<_END_OF_TEXT_
           var confirmDelete= confirm("Are you sure you want to delete this message record?");
           if (confirmDelete== true)
           {
-           window.location=("messageInsert.pl?deleteMessageId="+row+"&messageDelete=true");
-           setTimeout('window.location=("messageConsole.pl"), 4000');
+           window.location=("/cgi-bin/admin/messageInsert.pl?deleteMessageId="+row+"&messageDelete=true");
+           setTimeout('window.location=("/cgi-bin/admin/messageConsole.pl"), 4000');
           }
           else
             {
