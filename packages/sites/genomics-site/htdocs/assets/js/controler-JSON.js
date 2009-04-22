@@ -31,21 +31,17 @@ function highlightStep(str, stp, v){
 		NewResults(-1);
 	}else{
 		var stepBox = null;
-		if((v != "v" && init_view_step == stp.back_step_Id) || stp.isTransform)
+		if(!v || stp.isTransform)
 			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "_sub']");
 		else 
 			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "']");
-			
 		$(".resultCount a", stepBox).click();
 	}
 }
 
-function updateStrategies(data, strId, stpId, isFront){	
+function updateStrategies(data){	
 	state = data.state;
 	p_state = $.json.serialize(state);
-	if(strId == undefined) strId = init_view_strat.split("_")[0];
-	if(stpId == undefined) stpId = init_view_step;
-	if(isFront == undefined) isFront = false;
 	removeClosedStrategies();
 	for(st in state){
 	  if(st != "length"){
@@ -59,7 +55,7 @@ function updateStrategies(data, strId, stpId, isFront){
 		}
 	  }
 	}
-	showStrategies(strId, stpId, isFront);
+	showStrategies(data.currentView);
 }
 
 function removeClosedStrategies(){
@@ -110,7 +106,7 @@ function removeSubStrategies(ord1, ord2){
 	}
 }
 
-function showStrategies(strId, stpId, isFront){
+function showStrategies(view){
 	var sC = 0;
 	for(s in strats){
 		if(s.indexOf(".") == -1)
@@ -121,23 +117,13 @@ function showStrategies(strId, stpId, isFront){
 		$(s2).prepend(strats[t].DIV);
 		displayOpenSubStrategies(strats[t], s2);
 	}
-	var initStr = (isFront) ? getStrategy(strId) : getStrategyFromBackId(strId);
-	if(initStr != false){
-		var initStp = null;
-		if(stpId == "add"){ 
-			initStp = initStr.getLastStep();
-		}else{ 
-			strStpObj = initStr.findStep(String(stpId).split(".")[0], isFront);
-			if(strStpObj != null){
-				initStr = strStpObj.str;
-				initStp = strStpObj.stp;
-			}else{
-				initStp = initStr.getLastStep();
-			}
-		}
-	}
 	$("#Strategies").html($(s2).html());
-	highlightStep(initStr, initStp, String(stpId).split(".")[1]);
+	if(view.strategy != undefined || view.step != undefined){
+		var initStr = getStrategyFromBackId(view.strategy);
+		var initStp = initStr.getStep(view.step, false);
+		var isVenn = (initStp.back_boolean_Id == view.step);
+		highlightStep(initStr, initStp, isVenn);
+	}
 	if(sC == 0) showInstructions();
 }
 
@@ -282,11 +268,7 @@ function AddStepToStrategy(url, proto, stpId){
 			//data = eval("(" + data + ")");
 			if(ErrorHandler("AddStep", data, strategy, $("div#query_form"))){
 				$("div#query_form").remove();
-				//removeStrategyDivs(b_strategyId);
-				if(isInsert == "")
-					updateStrategies(data,strategy.backId.split("_")[0], "add", false);
-				else
-					updateStrategies(data);
+				updateStrategies(data);
 			}else{
 				removeLoading(f_strategyId);
 			}
@@ -323,13 +305,7 @@ function EditStep(url, proto, step_number){
 			//data = eval("(" + data + ")");
 			if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
 				$("div#query_form").remove();
-				if(sss.back_step_Id == init_view_step){
-					updateStrategies(data, ss.frontId, sss.frontId, true);
-				}else if(sss.back_boolean_Id == init_view_step){
-					updateStrategies(data, ss.frontId, sss.frontId + ".v", true);
-				}else{
-					updateStrategies(data);
-				}
+				updateStrategies(data);
 			}else{
 				removeLoading(ss.frontId);
 			}
@@ -450,10 +426,6 @@ function closeStrategy(stratId){
 		success: function(data){
 			//data = eval("(" + data + ")");			
 			if(ErrorHandler("CloseStrategy", data, strat, null)){
-	//			if(strat.subStratOf != null){
-	//				ps = getStrategy(strat.subStratOf);
-	//				ps.checksum = data.strategies[ps.backId];
-	//			}
 				updateStrategies(data);
 			}
 		},
@@ -501,21 +473,7 @@ function saveStrategy(stratId, checkName, fromHist){
 		success: function(data){
 					//data = eval("(" + data + ")");
 					if(ErrorHandler("SaveStrategy", data, ss, null)){
-/*							var selectedBox = $("#Strategies div.selected");
-	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
-	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
-							var selectedStrat = selectedBox.parent().attr("id");
-							selectedBox = selectedBox.attr("id");
-							if (!fromHist) saveForm.hide();
-							removeStrategyDivs(stratId);
-*/
 							updateStrategies(data);
-/*							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
-							if (selectedLink.length != 0) selectedLink.click();
-							else NewResults(-1);
-							update_hist = true;
-							if (fromHist) updateHistory();
-*/
 					}
 		},
 		error: function(data, msg, e){
@@ -541,25 +499,9 @@ function renameStrategy(stratId, checkName, fromHist){
 		url: url,
 		dataType: "json",
 		data:"state=" + p_state,
-		success: function(data){
-					//data = eval("(" + data + ")");
+		success: function(data){;
 					if(ErrorHandler("RenameStrategy", data, strat, renameForm)){
-						// reload strategy panel
-/*							var selectedBox = $("#Strategies div.selected");
-	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedarrow");
-	                        if (selectedBox.length == 0) selectedBox = $("#Strategies div.selectedtransform");
-							var selectedStrat = selectedBox.parent().attr("id");
-							selectedBox = selectedBox.attr("id");
-							disableRename(stratId, fromHist);
-							removeStrategyDivs(stratId);
-*/
 							updateStrategies(data);
-/*							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
-							if (selectedLink.length != 0) selectedLink.click();
-							else NewResults(-1);
-							update_hist = true;
-							if (fromHist) updateHistory();
-*/
 					}
 		},
 		error: function(data, msg, e){
@@ -573,7 +515,6 @@ function ChangeFilter(strategyId, stepId, url) {
         b_strategyId = strategyId;
         strategy = getStrategyFromBackId(b_strategyId); 
         f_strategyId = strategy.frontId;
-        //var currentDiv = $("#Strategies div#diagram_" + f_strategyId);
         if(strategy.subStratOf != null){
                 strats.splice(findStrategy(f_strategyId));
         }
@@ -590,27 +531,9 @@ function ChangeFilter(strategyId, stepId, url) {
                         showLoading(f_strategyId);
                 },
                 success: function(data){
-                        //data = eval("(" + data + ")");
                         if(ErrorHandler("ChangeFilter", data, strategy, null)){
-/*							var selectedBox = $("#Strategies div.selected");
-                        	if (selectedBox.length == 0) 
-								selectedBox = $("#Strategies div.selectedarrow");
-                        	if (selectedBox.length == 0) 
-								selectedBox = $("#Strategies div.selectedtransform");
-							var selectedStrat = selectedBox.parent().attr("id");
-							selectedBox = selectedBox.attr("id");
- 							removeStrategyDivs(strategy.backId);
-*/
                         	updateStrategies(data);
-/*
-							var selectedLink = $("#" + selectedStrat + " #" + selectedBox + " .resultCount a");
-							if (selectedLink.length != 0) 
-								selectedLink.click();
-							else 
-								NewResults(-1);
-*/
 						}
-
                 },
                 error: function(data, msg, e){
                         //$("#Strategies").append(currentDiv);
@@ -620,7 +543,6 @@ function ChangeFilter(strategyId, stepId, url) {
                 }
         });
         update_hist = true;
-      //  closeAll();
 
 }
 
