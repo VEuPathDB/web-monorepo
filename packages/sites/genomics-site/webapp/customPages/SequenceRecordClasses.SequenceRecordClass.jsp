@@ -19,6 +19,7 @@
 <c:set var="CPARVUMCONTIGS" value="${props['CPARVUMCONTIGS']}"/>
 <c:set var="CHOMINISCONTIGS" value="${props['CHOMINISCONTIGS']}"/>
 <c:set var="CMURISCONTIGS" value="${props['CMURISCONTIGS']}"/>
+<c:set var="CPARVUMCHRMAP" value="${props['CPARVUMCHRMAP']}"/>
 
 <c:set var="SRT_CONTIG_URL" value="/cgi-bin/contigSrt"/>
 
@@ -237,6 +238,12 @@ Microbial Sequencing Center program at the Institute for Genomic Research
 (TIGR). 
 </c:set>
 </c:when>
+<c:when test="${externalDbName eq CPARVUMCHRMAP && projectId eq 'CryptoDB'}">
+    <c:set var="reference">
+Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> generated from Genbank chromosome records.
+</c:set>
+</c:when>
+
 <c:when test="${fn:containsIgnoreCase(organism, 'vivax') && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <b><i>P. vivax</i> was sequenced by 
