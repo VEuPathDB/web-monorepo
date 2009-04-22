@@ -28,7 +28,6 @@ function initDisplay(){
 }
 
 function highlightStep(str, stp, v){
-	if(s == undefined) s = document;
 	if(!str || stp == null){
 		NewResults(-1);
 	}else{
