@@ -27,12 +27,13 @@ function ResultsToGrid(data) {
 			$(headers[idx]).attr("width", Math.max($(ele).width(),$(headers[idx]).width()) );
 		}
 	);
-	$("#Results_Table").flexigrid({height:'auto',
-				       showToggleBtn:false,
-				       useRp:false,
-				       singleSelect: true,
-				       onMoveColumn:moveAttr,
-				       resizable:false});
+	$("#Results_Table").flexigrid({height : 'auto',
+				       showToggleBtn : false,
+				       useRp : false,
+				       singleSelect : true,
+				       onMoveColumn : moveAttr,
+                                       nowrap : false,
+				       resizable : false});
 	$(".cDrag").remove();
 	flexifluid.init();
 }

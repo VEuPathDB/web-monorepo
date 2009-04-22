@@ -26,38 +26,75 @@ flexifluid.init = function()
    $('.hDivBox table').width('100%');
    
   var col = 0;
+  var pctWidths = new Array();
   var minWidths = new Array();
-  /* loop each header, reset width in % */
+  /* loop each header, reset width in %
+     make first calculation of min-width
+     using table headers */
   $('.hDivBox th > div').each(function(){
       var pixWidth = $(this).width();
       var pWidth = parseInt((pixWidth / tableWidth) * 100);
 
       // Charles Treatman, 1/29/09:  Also set min-width in px
-      // based on total width of contents (+1px to ensure no wrapping).
-      var minWidth = 1;
+      // based on total width of contents (+5px to ensure no wrapping).
+      var minWidth = 5;
       $('div', this).each(function(){
 	minWidth += $(this).width();
       });
 
       $(this).width('100%');
       $(this.parentNode).width(pWidth + '%');
-      $(this.parentNode).css('min-width', minWidth + 'px');
-
+      //$(this.parentNode).css('min-width', minWidth + 'px');
+      
+      pctWidths[col] = pWidth;
       minWidths[col] = minWidth;
       col++;
   });
   
-  /* loop each content, reset width in % */
-  var n = 0;  // keep track of how many total columns we've seen.
+  /* loop each content, reset width in %,
+     attempt to refine min-width using
+     table contents */
+  // Create div for calculating word size
+  var wordDiv = document.createElement('div');
+  $(wordDiv).css({'position' : 'absolute',
+                  'visibility' : 'hidden',
+                  'height' : 'auto',
+                  'width' : 'auto',
+                  'font-size' : '100%'});
+  $(wordDiv).attr('id', 'wordDiv');
+  $("body").append(wordDiv);
+
+  var n = 0;  // keep track of how many total cells we've seen.
   $('#'+flexifluid.grid_name+' div').each(function(){
     var pixWidth = $(this).width();
-    var pWidth = parseInt((pixWidth / tableWidth) * 100);
+    $(this.parentNode).width(pctWidths[n % col] + '%');
+    // attempt to refine min-width by splitting contents on
+    // whitespace & calculating size of smallest non-breakable
+    // text for the current cell
+    var firstWord = $(this).text().replace(/^\s+|\s+$/g, '').split(/\s+/)[0];
+    $("#wordDiv").text(firstWord);
+    var minWidth = $("#wordDiv").width() + 5;
+    if (minWidth > minWidths[n % col])
+	minWidths[n % col] = $(this).width();
     $(this).width('100%');
-    $(this.parentNode).width(pWidth + '%');
-    // set the min-width for this column by looking up in
-    // array of header min-width values.
-    $(this.parentNode).css('min-width', minWidths[n % col]);
     n++;
+  });
+
+  // Remove div for calculating word size
+  $("#wordDiv").remove();
+
+  /* loop each header again to set min-width */
+  col = 0;
+  $('.hDivBox th > div').each(function(){
+      $(this.parentNode).css('min-width', minWidths[col]);
+      col++;
+  });
+
+  /* loop each content again to set min-width */
+  n = 0;
+  $('#'+flexifluid.grid_name+' div').each(function(){
+      $(this.parentNode).css('min-width', minWidths[n % col]);
+      n++;
   });
 
   /* Kill cDrag : will figure it out eventually*/ 
