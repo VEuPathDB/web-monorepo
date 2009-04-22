@@ -61,6 +61,11 @@ attributes:
             </tr>
 
             <tr>
+               <td>Comment Id:</td>
+               <td>${comment.commentId}</td>
+            </tr>
+
+            <tr>
                <td>Author:</td>
                 <td>${comment.userName}, ${comment.organization} </td>
             </tr>

@@ -11,7 +11,7 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" /> 
 <c:set var="to" value="${wdkModel.projectId}_annotators@pcbi.upenn.edu" /> 
 <c:set var="from" value="${wdkModel.projectId}_annotators@pcbi.upenn.edu" />
-<c:set var="subject" value="${commentForm.commentTargetId}_comment_${commentForm.stableId}" />
+<c:set var="subject" value="${commentForm.commentTargetId} comment ${commentForm.stableId}" />
 <c:set var="body" value="${body}" />
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
@@ -121,7 +121,7 @@ $(document).ready(function(){
         </c:choose>
 
         <site:email
-              to="${to}"
+              to="${wdkUser.email}, ${to}"
               from="${from}"
               subject="${subject}"
               body="${body}"
