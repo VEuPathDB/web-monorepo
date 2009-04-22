@@ -135,7 +135,7 @@ WHERE gs.lowercase_source_id
 <!-- Feature names are in the same format as the config - type:Source -->
 
 <module name="Segment.pm">
-  <sqlQuery name="new:Segment" includeProjects="TriTrypDB,CryptoDB,GiardiaDB,TricDB">
+  <sqlQuery name="new:Segment" includeProjects="TriTrypDB,CryptoDB,GiardiaDB,TrichDB">
     <testParamValues project="TriTrypDB">
        <param name="name" value="LmjF05_01_20050601_V5.2"/>
     </testParamValues>
@@ -156,6 +156,9 @@ WHERE  etn.source_id = sa.source_id
   </sqlQuery>
 
   <sqlQuery name="new:Segment" includeProjects="ToxoDB,PlasmoDB">
+    <testParamValues project="ToxoDB">
+       <param name="name" value="TGME49_chrX"/>
+    </testParamValues>
      <sql>
 <![CDATA[
 SELECT etn.na_sequence_id srcfeature_id, 
