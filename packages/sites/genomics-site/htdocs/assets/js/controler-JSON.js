@@ -6,7 +6,6 @@ var recordType= new Array();   //stratid, recordType which is the type of the la
 var state = null;
 var p_state = null;
 var init_view_strat;
-var init_view_strat_front;
 var init_view_step;
 $(document).ready(function(){
 		initDisplay();
@@ -32,7 +31,7 @@ function highlightStep(str, stp, v){
 		NewResults(-1);
 	}else{
 		var stepBox = null;
-		if(v != "v" && init_view_step == stp.back_step_Id)
+		if((v != "v" && init_view_step == stp.back_step_Id) || stp.isTransform)
 			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "_sub']");
 		else 
 			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "']");
@@ -44,7 +43,7 @@ function highlightStep(str, stp, v){
 function updateStrategies(data, strId, stpId, isFront){	
 	state = data.state;
 	p_state = $.json.serialize(state);
-	if(strId == undefined) strId = init_view_strat;
+	if(strId == undefined) strId = init_view_strat.split("_")[0];
 	if(stpId == undefined) stpId = init_view_step;
 	if(isFront == undefined) isFront = false;
 	removeClosedStrategies();
@@ -129,8 +128,12 @@ function showStrategies(strId, stpId, isFront){
 			initStp = initStr.getLastStep();
 		}else{ 
 			strStpObj = initStr.findStep(String(stpId).split(".")[0], isFront);
-			initStr = strStpObj.str;
-			initStp = strStpObj.stp;
+			if(strStpObj != null){
+				initStr = strStpObj.str;
+				initStp = strStpObj.stp;
+			}else{
+				initStp = initStr.getLastStep();
+			}
 		}
 	}
 	$("#Strategies").html($(s2).html());
@@ -237,7 +240,6 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 			step.isSelected = true;
 			$("#Strategies div").removeClass("selected").removeClass("selectedarrow").removeClass("selectedtransform");
 			init_view_strat = strategy.backId
-			init_view_strat_front = strategy.frontId;
 			if(bool){
 				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "']").addClass("selected");
 				init_view_step = step.back_step_Id + ".v";
@@ -279,8 +281,8 @@ function AddStepToStrategy(url, proto, stpId){
 		success: function(data){
 			//data = eval("(" + data + ")");
 			if(ErrorHandler("AddStep", data, strategy, $("div#query_form"))){
-				$("div#query_form").remove();//.parent().remove();
-				removeStrategyDivs(b_strategyId);
+				$("div#query_form").remove();
+				//removeStrategyDivs(b_strategyId);
 				if(isInsert == "")
 					updateStrategies(data,strategy.backId.split("_")[0], "add", false);
 				else
@@ -303,6 +305,7 @@ function AddStepToStrategy(url, proto, stpId){
 function EditStep(url, proto, step_number){
 	$("#query_form").hide("fast");
 	var ss = getStrategyFromBackId(proto);
+	var sss = ss.getStep(step_number, false);
 	var d = parseInputs();
 	var cs = ss.checksum;
 	if(ss.subStratOf != null)
@@ -314,13 +317,19 @@ function EditStep(url, proto, step_number){
 		dataType:"json",
 		data: d + "&state=" + p_state,
 		beforeSend: function(obj){
-				showLoading(proto.split("_")[0]);
-				//$("div#step_" + step.frontId + " h3 div.crumb_details").hide();
+				showLoading(ss.frontId);
 			},
 		success: function(data){
 			//data = eval("(" + data + ")");
 			if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
-				updateStrategies(data, init_view_strat, init_view_step);
+				$("div#query_form").remove();
+				if(sss.back_step_Id == init_view_step){
+					updateStrategies(data, ss.frontId, sss.frontId, true);
+				}else if(sss.back_boolean_Id == init_view_step){
+					updateStrategies(data, ss.frontId, sss.frontId + ".v", true);
+				}else{
+					updateStrategies(data);
+				}
 			}else{
 				removeLoading(ss.frontId);
 			}
