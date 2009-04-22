@@ -439,7 +439,7 @@ function fetchGbrowseImg(buttonId, url) {
           
           $("div[id^=tOoLtIp]").remove(); // previously loaded wz_tooltips
           
-          if (                      gbDispCache[buttonId] == null) { 
+          if (          true        ||  gbDispCache[buttonId] == null) { 
           /*            ^^^^
               Safari 4 (at least) loses wz_tooltip bindings when loading cached
               nodes (it works in FF 3 provide the wz_tooltips.js is re-appended).
@@ -477,3 +477,4 @@ function gbLoadedHl(buttonSel) {
   $('.gbGnCtxActive').removeClass('gbGnCtxActive');               
   $(buttonSel).addClass('gbGnCtxActive');
 }
+
