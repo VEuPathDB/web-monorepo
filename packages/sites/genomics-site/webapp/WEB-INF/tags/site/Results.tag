@@ -70,7 +70,7 @@
 
 
 <table width="100%"><tr>
-<td style="padding-top:6px;"><h2><span id="text_strategy_number">${strategy.name}</span> 
+<td style="padding-top:6px;"><h2 style="display:none"><span id="text_strategy_number">${strategy.name}</span> 
     (step <span id="text_step_number">${strategy.length}</span>) 
     - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span></h2></td>
 <td align="right" style="vertical-align:middle"><a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a></td>
