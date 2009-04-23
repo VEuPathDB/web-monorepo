@@ -8,7 +8,7 @@ var p_state = null;
 var init_view_strat;
 var init_view_step;
 $(document).ready(function(){
-		initDisplay();
+	initDisplay();
 });
 
 function initDisplay(){
@@ -124,6 +124,8 @@ function showStrategies(view){
 		var initStp = initStr.getStep(view.step, false);
 		var isVenn = (initStp.back_boolean_Id == view.step);
 		highlightStep(initStr, initStp, isVenn);
+	}else{
+		NewResults(-1);
 	}
 	if(sC == 0) showInstructions();
 }
