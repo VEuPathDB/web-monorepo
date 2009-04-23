@@ -286,19 +286,15 @@ behavior: url(/assets/css/csshover.htc);
 
 <!--[if lt IE 8]>
 <style>
-  * html #query_selection {
+  #query_selection {
 	behavior: url("/assets/css/csshover.htc");
   }
 
-  * html #query_selection .top_nav li:hover {
+  #query_selection .top_nav li:hover {
 	background-color: #DDDDDD;
   }
 
-  * html #query_selection .top_nav li:hover ul {
-	left: 10em;
-  }
-
-  * html .crumb_details div.crumb_menu {
+  .crumb_details div.crumb_menu {
 	margin-right: -3px;
   }
  
