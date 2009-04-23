@@ -1,10 +1,12 @@
 CryptoDB.organisms=C. hominis,C. muris,C. parvum
 
-TriTrypDB.organisms=T. brucei,T. cruzi,L. braziliensis,L. infantum,L. major
+TriTrypDB.organisms=T. brucei,T. cruzi,L. braziliensis,L. infantum,L. major,L. tarentolae
 
 examples.T. brucei=Tb927_02_v4:1-55000 Tb11.01.1740
 examples.T. cruzi=TcChr27-P:109314..119313 AAHK01004761 Tc00.1047053507641.290
 examples.L. braziliensis=Lbr.chr33:102175..112174 LbrM13_V2.0190
 examples.L. infantum=Lin.chr17:65001..75000 LinJ13_V3.1460
 examples.L. major= LmjF13_01_20050601_V5.2:89951..94950 LmjF05.1010
+examples.L. tarentolae=r1596.contig136 r1596.contig2551
+
 
