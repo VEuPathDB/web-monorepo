@@ -51,6 +51,8 @@ attributes:
     </c:when>
     <c:otherwise> <%-- has comments for the stable id --%>
 
+      <h2><center>Comments on ${stable_id}</center></h2>
+
       <c:forEach var="comment" items="${comments}">
 
         <table class=mybox>
@@ -63,6 +65,11 @@ attributes:
             <tr>
                <td>Comment Id:</td>
                <td>${comment.commentId}</td>
+            </tr>
+
+            <tr>
+               <td>Comment Target:</td>
+               <td>${comment.commentTarget} ${comment.stableId}</td>
             </tr>
 
             <tr>
