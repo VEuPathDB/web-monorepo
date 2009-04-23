@@ -771,6 +771,18 @@ WHERE  etn.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
+  <sqlQuery name = "ORF:density"> 
+    <description>ORF density. bin size is 500bp.</description> 
+    <sql> 
+<![CDATA[ 
+SELECT etn.na_sequence_id feature_id, 
+       'ORF' type, 
+       'density' source 
+FROM   dots.NASEQUENCE etn 
+WHERE  etn.na_sequence_id = $srcfeature_id 
+]]> 
+    </sql> 
+  </sqlQuery>
   
   <sqlQuery name="TandemRepeat:TRF">
      <sql>
@@ -2766,6 +2778,43 @@ GROUP BY interval
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="ORF:density:bulksubfeatures"> 
+    <sql> 
+<![CDATA[ 
+SELECT interval feature_id, 
+       na_sequence_id as parent_id,
+      'ORF' type, 
+      'density' source,
+      count(interval) score, 
+      interval * 500 startm, 
+      (interval + 1) * 500 end,
+      'score=' || count(interval) atts
+FROM ( SELECT ceil(nal.start_min /500) interval, nal.na_sequence_id
+FROM
+       dots.externalnasequence enas,
+       dots.miscellaneous t,
+       dots.translatedaafeature taaf, 
+       dots.translatedaasequence taas, 
+       sres.taxonname tn, 
+       sres.sequenceontology so, 
+       ApiDB.FeatureLocation nal 
+WHERE
+       t.na_feature_id = taaf.na_feature_id
+       AND taaf.aa_sequence_id = taas.aa_sequence_id
+       AND enas.na_sequence_id = t.na_sequence_id 
+       AND enas.taxon_id = tn.taxon_id
+       AND tn.name_class = 'scientific name'
+       AND t.sequence_ontology_id = so.sequence_ontology_id
+       AND so.term_name = 'ORF'
+       AND taaf.na_feature_id = nal.na_feature_id
+       AND enas.na_sequence_id = $srcfeature_id
+       AND nal.start_min >= $base_start - 1 
+       AND nal.end_max <= $rend
+ORDER BY nal.start_min)
+GROUP BY interval, na_sequence_id
+]]> 
+    </sql> 
+  </sqlQuery>
   
   <sqlQuery name="alignment:Cosmids:bulksubfeatures">
      <sql>
