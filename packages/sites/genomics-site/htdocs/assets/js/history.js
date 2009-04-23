@@ -1,7 +1,6 @@
 var selected = new Array();
 
 function updateHistory(){
-	var currentPanel = getCurrentTabCookie(true);
 	if(update_hist){
 		$("div#search_history").block();
 		$.ajax({
@@ -9,11 +8,7 @@ function updateHistory(){
 			dataType: "html",
 			success: function(data){
 				$("#search_history").html(data);
-				if ($("#tab_" + currentPanel).length == 0) {
-					var type = $("#history_tabs a:first").attr("id").substr(4);
-					displayHist(type);
-				} else
-					displayHist(currentPanel);
+				initDisplayType();
 				$("div#search_history").unblock();
 
 				update_hist = false;
@@ -26,8 +21,17 @@ function updateHistory(){
 		});
 	}
 	else{
-		displayHist(currentPanel);
+		initDisplayType();
 	}
+}
+
+function initDisplayType() {
+	var currentPanel = getCurrentTabCookie(true);
+	if ($("#tab_" + currentPanel).length == 0) {
+		var type = $("#history_tabs a:first").attr("id").substr(4);
+		displayHist(type);
+	} else
+		displayHist(currentPanel);
 }
 
 function toggleSteps(strat) {
