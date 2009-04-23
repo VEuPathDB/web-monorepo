@@ -264,7 +264,10 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 		
 			$("#query_form #continue_button_transforms").click(function(){
 				original_Query_Form_Text = $("#query_form").html();
-				getQueryForm($("#query_form select#transforms").val(),true);
+				if($("#query_form select#selected_strategy").val() == "--")
+					alert("Please select a strategy from the list.");
+				else
+					getQueryForm($("#query_form select#transforms").val(),true);
 			});
 			}
 			if(!isAdd){

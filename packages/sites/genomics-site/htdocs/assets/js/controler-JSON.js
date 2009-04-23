@@ -238,6 +238,9 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 			}
 			removeLoading(f_strategyId);
 			ResultsToGrid(data);
+			$("span#text_strategy_number").html(strategy.JSON.name);
+			$("span#text_step_number").html(step.frontId);
+			$("span#text_strategy_number").parent().show();
 		},
 		error : function(data, msg, e){
 			  alert("ERROR \n "+ msg + "\n" + e
