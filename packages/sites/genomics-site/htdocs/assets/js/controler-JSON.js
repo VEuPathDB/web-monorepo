@@ -122,8 +122,12 @@ function showStrategies(view){
 	if(view.strategy != undefined || view.step != undefined){
 		var initStr = getStrategyFromBackId(view.strategy);
 		var initStp = initStr.getStep(view.step, false);
-		var isVenn = (initStp.back_boolean_Id == view.step);
-		highlightStep(initStr, initStp, isVenn);
+		if(initStr == false || initStp == null){
+			NewResults(-1);
+		}else{
+			var isVenn = (initStp.back_boolean_Id == view.step);
+			highlightStep(initStr, initStp, isVenn);
+		}
 	}else{
 		NewResults(-1);
 	}
