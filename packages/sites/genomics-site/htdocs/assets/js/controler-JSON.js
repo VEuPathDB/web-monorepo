@@ -85,6 +85,7 @@ function removeClosedStrategies(){
 			if(x){
 				removeSubStrategies(s);
 				delete strats[s];
+				update_hist = true; //set update flag for history if anything was closed.
 			}
 		}
 	}
@@ -162,6 +163,7 @@ function showInstructions(){
 }
 
 function loadModel(json, ord){
+	update_hist = true; //set update flag for history if anything was opened/changed.
 	var strategy = json;
 	var strat = null;
 	if(!isLoaded(strategy.id)){
@@ -283,7 +285,6 @@ function AddStepToStrategy(url, proto, stpId){
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
-	update_hist = true;
 	closeAll(true);
 }
 
@@ -319,7 +320,6 @@ function EditStep(url, proto, step_number){
 		}
 	});
 	closeAll(true);
-	update_hist = true;
 }
 
 
@@ -359,7 +359,6 @@ function DeleteStep(f_strategyId,f_stepId){
 				}
 			}
 	});
-	update_hist = true;
 }
 
 function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
@@ -392,7 +391,6 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
-	update_hist = true;
 }
 
 function openStrategy(stratId){
@@ -545,8 +543,6 @@ function ChangeFilter(strategyId, stepId, url) {
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
                 }
         });
-        update_hist = true;
-
 }
 
 

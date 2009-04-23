@@ -1,7 +1,7 @@
 var selected = new Array();
-var currentPanel;
 
 function updateHistory(){
+	var currentPanel = getCurrentTabCookie(true);
 	if(update_hist){
 		$("div#search_history").block();
 		$.ajax({
@@ -9,7 +9,7 @@ function updateHistory(){
 			dataType: "html",
 			success: function(data){
 				$("#search_history").html(data);
-				if ($("#" + currentPanel).length == 0) {
+				if ($("#tab_" + currentPanel).length == 0) {
 					var type = $("#history_tabs a:first").attr("id").substr(4);
 					displayHist(type);
 				} else
@@ -24,6 +24,9 @@ function updateHistory(){
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
+	}
+	else{
+		displayHist(currentPanel);
 	}
 }
 
@@ -62,6 +65,7 @@ function showHistShare(ele, stratId) {
 }
 
 function selectAllHist() {
+	var currentPanel = getCurrentTabCookie(true);
 	$("div.history_panel.panel_" + currentPanel + " input:checkbox").attr("checked", "yes");
 	updateSelectedList();
 }
@@ -78,11 +82,12 @@ function displayHist(type) {
 	$("#history_tabs li").each(function() {
 		var id = $("a", this).attr("id");
 		if (id == 'tab_' + type) {
-			if (!currentPanel || currentPanel != type) currentPanel = type;
 			$(this).attr("id", "selected_type");
 		}
 	});
 	$("div.panel_" + type).show();
+	setCurrentTabCookie('search_history');
+	setCurrentTabCookie(type, true);
 }
 
 function updateSelectedList() {
@@ -107,22 +112,21 @@ function deleteStrategies(url) {
 	// else delete and replace page sections that have changed
 	var agree=confirm("Are you sure you want to delete the selected strategies?");
  	if (agree) {
+		$("div#search_history").block();
 		url = url + selected.join("&strategy=");
 		$.ajax({
 			url: url,
-			dataType: "html",
+			dataType: "json",
+			data:"state=" + p_state,
 			success: function(data) {
-				dselected = selected;
-				$("#search_history").html($("#search_history", data).html());
-				$("#mysearch").html($("#mysearch", data).html());
-				for (i = 0; i < dselected.length; i++){
-					var strat = getStrategyFromBackId(dselected[i]);
-					hideStrat(strat.frontId);
-				}
 				selectNoneHist();
+				updateStrategies(data);
+				update_hist = true;
+				updateHistory(); // update history immediately, since we're already on the history page
 			},
 			error: function(data, msg, e) {
 				selectNoneHist();
+				$("div#search_history").unblock();
 				alert("ERROR \n " + msg + "\n" + e
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}

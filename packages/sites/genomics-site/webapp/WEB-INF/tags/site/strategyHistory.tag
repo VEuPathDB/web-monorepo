@@ -38,29 +38,16 @@
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
   <c:set var="typeC" value="${typeC+1}"/>
-  <c:choose>
-    <c:when test="${typeC == 1}">
-      <li>
-      <c:set var="displayType" value="${recTabName}" />
-    </c:when>
-    <c:otherwise>
-      <li>|</li><li>
-    </c:otherwise>
-  </c:choose>
+  <c:if test="${typeC != 1}">
+    <li>|</li>
+  </c:if>
+  <li>
   <a id="tab_${recTabName}" onclick="displayHist('${recTabName}')"
   href="javascript:void(0)">${recDispName}&nbsp;Strategies</a></li>
   </c:forEach>
   <c:if test="${fn:length(invalidStrategies) > 0}">
-    <c:choose>
-      <c:when test="${typeC == 0}">
-        <li>
-        <c:set var="displayType" value="${recTabName}" />
-      </c:when>
-      <c:otherwise>
-        <li>
-      </c:otherwise>
-    </c:choose>
-    <a id="tab_invalid" onclick="displayHist('invalid')"
+    <li>
+      <a id="tab_invalid" onclick="displayHist('invalid')"
        href="javascript:void(0)">Invalid&nbsp;Strategies</a></li>
   </c:if>
   <li id="cmplt_hist_link">
@@ -201,10 +188,6 @@
       </td>
    </tr>
 </table>
-
-<script type="text/javascript" language="javascript">
-   displayHist('${displayType}');
-</script>
 
   </c:otherwise>
 </c:choose> 

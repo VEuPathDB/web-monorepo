@@ -37,6 +37,10 @@
 
 </c:if>
 
+<%-- jQuery Cookie plugin --%>
+<script type="text/javascript" src="/assets/js/lib/jquery.cookie.js"></script>
+<script type="text/javascript" src="/assets/js/stratTabCookie.js"></script>
+
 <%-- js for quick seach box --%>
 <script type="text/javascript" src="/assets/js/quicksearch.js"></script>
  

@@ -43,14 +43,11 @@
 		$.ajaxSetup ({ cache: false}); 
 		exportBaseURL = '${exportBaseUrl}';
 		$("#diagram div.venn:last span.resultCount a").click();
-		<c:choose>
-                  <c:when test="${showHist != null && showHist}">
-                    showPanel("search_history");
-                  </c:when>
-                  <c:otherwise>
-                    showPanel("strategy_results");
-                  </c:otherwise>
-                </c:choose>
+		var current = getCurrentTabCookie();
+		if (!current || current == null)
+			showPanel('strategy_results');
+		else
+	                showPanel(current);
 	});
 </script>
 
@@ -58,8 +55,6 @@
    <li><a id="tab_strategy_results" title="Graphical display of your opened strategies. To close a strategy click on the right top corner X." onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
    <li><a id="tab_search_history" title="Summary of all your strategies. From here you can open/close strategies on the graphical display by clicking on the 'eye'." onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
    <li><a id="tab_sample_strat" title="View some examples of linear and non-linear strategies." href="javascript:showPanel('sample_strat')">Help / Sample Strategies</a></li>
-
-
 </ul>
 
 <%-- fixed position des not work, with announcements and warnings coming and going  --anyway, we add a tab

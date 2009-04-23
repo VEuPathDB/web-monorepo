@@ -18,6 +18,7 @@ function showPanel(panel) {
 	$("#tab_" + panel).parent().attr("id", "selected");
 	$("#" + panel).css({'position':'relative','left':'auto'});
 	if (panel == 'search_history') updateHistory();
+	setCurrentTabCookie(panel, false);
 }
 
 function showSaveForm(stratId){

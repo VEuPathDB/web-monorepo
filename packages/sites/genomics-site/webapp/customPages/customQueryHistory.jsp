@@ -5,8 +5,8 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
 <%-- get wdkUser saved in session scope --%>
-<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="user" value="${sessionScope.wdkUser}"/>
+<c:set var="model" value="${applicationScope.wdkModel}"/>
 
 <c:set var="dsCol" value="${param.dataset_column}"/>
 <c:set var="dsColVal" value="${param.dataset_column_label}"/>
@@ -73,6 +73,60 @@ function hideAnyName() {
 }
 // -->
 </script>
+
+<%-- dummy strategy tabs for pretending we're still in the application page. --%>
+<ul id="strategy_tabs">
+   <li><a id="tab_strategy_results" title="Graphical display of your opened strategies. To close a strategy click on the right top corner X." onclick="setCurrentTabCookie('strategy_results');" href="<c:url value="/showApplication.do"/>">Run Strategies</a></li>
+   <li id="selected"><a id="tab_search_history" title="Summary of all your strategies. From here you can open/close strategies on the graphical display by clicking on the 'eye'." onclick="setCurrentTabCookie('search_history');" href="<c:url value="/showApplication.do"/>">Browse Strategies</a></li>
+   <li><a id="tab_sample_strat" title="View some examples of linear and non-linear strategies." onclick="setCurrentTabCookie('sample_strat');" href="<c:url value="/showApplication.do"/>">Help / Sample Strategies</a></li>
+</ul>
+
+<%-- dummy history type tabs for pretending we're still on the browse tab --%>
+<c:set var="strategiesMap" value="${user.strategiesByCategory}"/>
+<c:set var="invalidStrategies" value="${user.invalidStrategies}"/>
+<c:set var="modelName" value="${model.name}"/>
+<c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb') || fn:containsIgnoreCase(modelName, 'cryptodb')}" />
+
+<c:set var="typeC" value="0"/>
+<!-- begin creating tabs for history sections -->
+<ul id="history_tabs">
+  <c:forEach items="${strategiesMap}" var="strategyEntry">
+    <c:set var="type" value="${strategyEntry.key}"/>
+    <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
+    <c:set var="histList" value="${strategyEntry.value}"/>
+    <c:set var="recDispName" value="${histList[0].latestStep.answerValue.question.recordClass.type}"/>
+    <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
+    <c:set var="typeC" value="${typeC+1}"/>
+    <c:choose>
+      <c:when test="${typeC == 1}">
+        <li>
+        <c:set var="displayType" value="${recTabName}" />
+      </c:when>
+      <c:otherwise>
+        <li>|</li><li>
+      </c:otherwise>
+    </c:choose>
+    <a id="tab_${recTabName}" onclick="setCurrentTabCookie('${recTabName}',true);"
+    href="<c:url value="/showApplication.do"/>">${recDispName}&nbsp;Strategies</a></li>
+  </c:forEach>
+  <c:if test="${fn:length(invalidStrategies) > 0}">
+    <c:choose>
+      <c:when test="${typeC == 0}">
+        <li>
+        <c:set var="displayType" value="${recTabName}" />
+      </c:when>
+      <c:otherwise>
+        <li>
+      </c:otherwise>
+    </c:choose>
+    <a id="tab_invalid" onclick="setCurrentTabCookie('invalid',true);"
+     href="<c:url value="/showApplication.do"/>">Invalid&nbsp;Strategies</a></li>
+  </c:if>
+  <li id="cmplt_hist_link">
+    <a href="showQueryHistory.do?type=show_query_history">All My Queries</a>
+  </li>
+</ul>
+
 <h1>All Queries</h1>
-<site:completeHistory model="${wdkModel}" user="${wdkUser}" />
+<site:completeHistory model="${model}" user="${user}" />
 <site:footer/>
