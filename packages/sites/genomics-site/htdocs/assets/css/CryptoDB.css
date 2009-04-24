@@ -730,13 +730,13 @@ a.heading:hover + a.detail_link, .detail_link:hover {
 	
 #footer{
    font-size: 10px;
-   width: 75%;
-   text-align: right;
+   width: 95%;
+   text-align: center;
    background-color:#FFFFFF;
    background-image: url(../images/CryptoDB/footer.png);
    background-repeat: repeat-x;
    color: #505050;
-   padding: 9px;
+   padding: 9px 9px 25px;
    line-height: 1.2em;
    clear: both;
 /*    z-index: -1;   links in footer do not work with this  */

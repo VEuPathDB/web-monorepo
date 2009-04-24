@@ -722,7 +722,7 @@ a.heading:hover + a.detail_link, a.detail_link:hover {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER 
+	 =FOOTER  padding 25px helps in showing the whole background, otherwise its height is limited by its content
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
@@ -733,7 +733,7 @@ a.heading:hover + a.detail_link, a.detail_link:hover {
    background-image: url(../images/TriTrypDB/footer.png);
    background-repeat: repeat-x;
    color: #505050;
-   padding: 9px;
+   padding: 9px 9px 25px;
    line-height: 1.2em;
    clear: both;
 
