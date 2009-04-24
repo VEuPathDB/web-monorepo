@@ -31,7 +31,7 @@
 	</li>
 	</ul>
 	<ul>
-	<li><a href="<c:url value="/queries_tools.jsp"/>">New Search</a>
+	<li><a href="#" title="To access the page with all available searches, choose the last option in the dropdown menu." >New Search</a>
   	<site:drop_down_QG />
 	</li>
 	</ul>

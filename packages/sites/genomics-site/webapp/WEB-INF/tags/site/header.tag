@@ -420,7 +420,10 @@ ${headElement}
 
 <%-- in home_header login is a class instead of an id that brings up the popup --%>
           <li>
+<%--
             <a href="${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+--%>
+            <a href="#" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
                <ul class="login">
                     <li><site:login /></li>
               </ul>
