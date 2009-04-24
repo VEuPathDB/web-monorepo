@@ -4,6 +4,10 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
+<c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
+<c:set var="qName" value="${wdkAnswer.question.fullName}" />
+<c:set var="modelName" value="${applicationScope.wdkModel.name}" />
+<c:set var="cryptoIsolatesQuestion" value="${fn:containsIgnoreCase(qName, 'Isolate') && fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
 
 <%-- When implement visualizing multiple strategies, the name of the strategy (for the title) could cme from the step object probably --%>
 
@@ -153,6 +157,9 @@
 		    </th>
 	</tr>
 </table>	
+<c:if test = "${cryptoIsolatesQuestion}">
+  <form name="checkHandleForm" method="post" action="/dosomething.jsp"> 
+</c:if>
 <!-- content of current page -->
 <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
@@ -218,12 +225,10 @@
 </tr>
 </thead>
 
-<c:if test = "${cryptoIsolatesQuestion}">
-   <form name="checkHandleForm" method="post" action="/dosomething.jsp">
-</c:if>
 
 <tbody>
 
+<!--
 <c:if test = "${cryptoIsolatesQuestion}">
    <tr><td colspan="10" align="center"> 
        
@@ -239,6 +244,7 @@
    </td></tr>
 
 </c:if>
+-->
 
 <c:set var="i" value="0"/>
 
@@ -330,22 +336,21 @@
 <c:set var="i" value="${i+1}"/>
 </c:forEach>
 
+</tr>
+
+</tbody>
+</table>
 
 <c:if test = "${cryptoIsolatesQuestion}">
   </form>
 </c:if>
 
-</tr>
-
-<tbody>
-</table>
-
-
 <c:if test = "${cryptoIsolatesQuestion}">
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
   <tr align=center>
-    <th> 
-      <input type="button" value="Run Clustalw" onClick="goToIsolate()" />
+    <th> <br/> 
+          Please select at least two isolates to run ClustalW <br/> 
+      <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate()" />
     </th>
 	</tr>
 </table>
