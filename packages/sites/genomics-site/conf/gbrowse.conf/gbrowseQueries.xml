@@ -2810,6 +2810,7 @@ WHERE
        AND enas.na_sequence_id = $srcfeature_id
        AND nal.start_min >= $base_start - 1 
        AND nal.end_max <= $rend
+       AND nal.end_max - nal.start_min >= 300
 ORDER BY nal.start_min)
 GROUP BY interval, na_sequence_id
 ]]> 
