@@ -4,42 +4,36 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
+<c:set var="version" value="${applicationScope.wdkModel.version}" />
 
 <%-------------  SITE Version and DATE  ----------------%>
 <c:choose>
    <c:when test="${fn:containsIgnoreCase(siteName, 'CryptoDB')}">
-     <c:set var="version" value="4.0" />
      <c:set var="date" value="May 16th, 2009" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(siteName, 'GiardiaDB')}">
-     <c:set var="version" value="1.1" />
      <c:set var="date" value="May 12th, 2009" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(siteName, 'PlasmoDB')}">
-     <c:set var="version" value="5.5" />
      <c:set var="date" value="Sep 16th, 2009" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(siteName, 'ToxoDB')}">
-     <c:set var="version" value="5.0" />
      <c:set var="date" value="Nov 18th, 2009" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(siteName, 'TrichDB')}">
-     <c:set var="version" value="1.0" />
      <c:set var="date" value="Sep 14th, 2009" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(siteName, 'TriTrypDB')}">
-     <c:set var="version" value="1.0" />
      <c:set var="date" value="May 15th, 2009" />
    </c:when>
 
 
 <c:when test="${fn:containsIgnoreCase(siteName, 'ApiDB')}">
-     <c:set var="version" value="2.0" />
      <c:set var="date" value="May 15th, 2009" />
    </c:when>
 

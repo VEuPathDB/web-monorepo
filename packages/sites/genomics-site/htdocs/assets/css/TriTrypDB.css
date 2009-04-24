@@ -541,7 +541,7 @@ div#menu ul ul ul li:hover ul {
 .search-box{
    width: 8em;
    padding: 2px;
-   color: #5b5b5b;
+   color: black;    /*   #5b5b5b;  */
    background-color: white;  /*  #eadfd9; */
    border: solid 1px #a06442;
    font-size: 11px;
