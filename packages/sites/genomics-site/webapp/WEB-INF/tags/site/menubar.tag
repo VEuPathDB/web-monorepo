@@ -66,7 +66,7 @@
 	</li>
 	</ul>
 	<ul>
-	<li><a href="#">Transfer Files</a>
+	<li><a href="#">Downloads</a>
 
 		<ul>
     		<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#download"/>">Understanding Downloads</a></li>
