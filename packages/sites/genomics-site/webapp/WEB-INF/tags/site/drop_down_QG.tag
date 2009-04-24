@@ -41,7 +41,9 @@
 			<li><a href="#">Search for ${recordType}s</a> 
 				<ul>
 					<c:forEach items="${cat.value}" var="q">
+<c:if test="${ !fn:contains(recordType, 'Isolate') || !fn:contains(q.displayName, 'RFLP')}">
 						<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a></li>
+</c:if>
 					</c:forEach>
 				</ul>
 			</li>
