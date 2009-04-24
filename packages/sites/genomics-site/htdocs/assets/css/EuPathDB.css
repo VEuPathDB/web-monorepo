@@ -719,13 +719,12 @@ a.heading:hover + a.detail_link, .detail_link:hover {
 	
 #footer{
    font-size: 10px;
-   width: 75%;
+   width: 95%;
    text-align: center;
    background-color:#FFFFFF;
    background-image: url(../images/EuPathDB/footer.png);
    background-repeat: repeat-x;
    color: #505050;
-   padding: 9px;
    line-height: 1.2em;
    clear: both;
 }
