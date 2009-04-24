@@ -34,7 +34,7 @@
   <c:set var="type" value="${strategyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="histList" value="${strategyEntry.value}"/>
-  <c:set var="recDispName" value="${histList[0].latestStep.answerValue.question.recordClass.type}"/>
+  <c:set var="recDispName" value="${histList[0].latestStep.question.recordClass.type}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
   <c:set var="typeC" value="${typeC+1}"/>
@@ -76,7 +76,7 @@
   <c:set var="type" value="${strategyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="strategies" value="${strategyEntry.value}"/>
-  <c:set var="recDispName" value="${strategies[0].latestStep.answerValue.question.recordClass.type}"/>
+  <c:set var="recDispName" value="${strategies[0].latestStep.question.recordClass.type}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
   <c:set var="typeC" value="${typeC+1}"/>
@@ -101,7 +101,7 @@
   <c:set var="type" value="${strategyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="strategies" value="${strategyEntry.value}"/>
-  <c:set var="recDispName" value="${strategies[0].latestStep.answerValue.question.recordClass.type}"/>
+  <c:set var="recDispName" value="${strategies[0].latestStep.question.recordClass.type}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
 
   <c:set var="typeC" value="${typeC+1}"/>

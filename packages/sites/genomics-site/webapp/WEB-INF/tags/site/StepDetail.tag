@@ -22,18 +22,18 @@
 
 <c:choose>
 <c:when test="${step.isFirstStep}">
-<c:set value="${step.answerValue.question.fullName}" var="questionName" />
-<c:set value="${step.answerValue.question.displayName}" var="displayName"/>
-<c:set value="${step.answerValue.internalParams}" var="params"/>
-<c:set value="${step.answerValue.question.paramsMap}" var="displayParams"/>
-<c:set value="${step.answerValue.questionUrlParams}" var="urlParams"/>
+<c:set value="${step.question.fullName}" var="questionName" />
+<c:set value="${step.question.displayName}" var="displayName"/>
+<c:set value="${step.params}" var="params"/>
+<c:set value="${step.question.paramsMap}" var="displayParams"/>
+<c:set value="${step.questionUrlParams}" var="urlParams"/>
 </c:when>
 <c:otherwise>
-<c:set value="${step.childStep.answerValue.question.fullName}" var="questionName" />
-<c:set value="${step.childStep.answerValue.question.displayName}" var="displayName"/>
-<c:set value="${step.childStep.answerValue.internalParams}" var="params"/>
-<c:set value="${step.childStep.answerValue.question.paramsMap}" var="displayParams"/>
-<c:set value="${step.childStep.answerValue.questionUrlParams}" var="urlParams"/>
+<c:set value="${step.childStep.question.fullName}" var="questionName" />
+<c:set value="${step.childStep.question.displayName}" var="displayName"/>
+<c:set value="${step.childStep.params}" var="params"/>
+<c:set value="${step.childStep.question.paramsMap}" var="displayParams"/>
+<c:set value="${step.childStep.questionUrlParams}" var="urlParams"/>
 </c:otherwise>
 </c:choose>
 
@@ -111,10 +111,10 @@
 	<a class="view_step_link" onclick="NewResults(this,'showSummary.do?strategy=${strategyNum}&step=${stepNum}${subq}&resultsOnly=true')" href="javascript:void(0)">View</a>&nbsp;|&nbsp;
 	<a class="edit_step_link" href="javascript:void(0)" onclick="Edit_Step(this,'showQuestion.do?questionFullName=${questionName}${urlParams}&questionSubmit=Get+Answer&goto_summary=0')" id="${strategyNum}|${stepNum}|${oper}">Edit</a>&nbsp;|&nbsp;
 	<!--<span style="color:#888;">Edit</span>&nbsp;|&nbsp;-->
-	<c:set var="expandUrl" value="expandStep.do?strategy=${strategyNum}&step=${step.childStep.stepId}&collapsedName=Expanded%20${step.childStep.answerValue.question.displayName}" />
+	<c:set var="expandUrl" value="expandStep.do?strategy=${strategyNum}&step=${step.childStep.stepId}&collapsedName=Expanded%20${step.childStep.question.displayName}" />
 <%--	<c:set var="expandUrl" value="expandStep.do?strategy=${strategyNum}&step=${step.childStep.stepId}" />
 	<c:if test="${!step.isCollapsible}">
-		<c:set var="expandUrl" value="expandStep.do?strategy=${strategyNum}&step=${step.childStep.stepId}&collapsedName=Expanded%20${step.childStep.answerValue.question.displayName}" />
+		<c:set var="expandUrl" value="expandStep.do?strategy=${strategyNum}&step=${step.childStep.stepId}&collapsedName=Expanded%20${step.childStep.question.displayName}" />
 	</c:if>--%>
 	<a class="expand_step_link" href="javascript:void(0)" onclick="Expand_Step(this,'${expandUrl}')">Expand</a>&nbsp;|&nbsp;
 	<a class="insert_step_link" id="${strategyNum}|${stepNum}" href="javascript:void(0)" onclick="Insert_Step(this,'processFilter.do?strategy=${strategyNum}&insert=${stepNum}')">Insert Before</a>

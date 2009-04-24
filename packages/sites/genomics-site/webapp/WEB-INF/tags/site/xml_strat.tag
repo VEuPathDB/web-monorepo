@@ -38,11 +38,11 @@
         <c:set value="${step.customName}" var="cName" />
         <c:set value="${step.dataType}" var="dataType" />
         <c:set value="${step.resultSize}" var="resultSize" />
-        <c:set value="${step.answerValue.question.fullName}" var="questionName" />
-        <c:set value="${step.answerValue.question.displayName}" var="displayName"/>
-        <c:set value="${step.answerValue.internalParams}" var="params"/>
-        <c:set value="${step.answerValue.question.paramsMap}" var="displayParams"/>
-        <c:set value="${step.answerValue.questionUrlParams}" var="urlParams"/>
+        <c:set value="${step.question.fullName}" var="questionName" />
+        <c:set value="${step.question.displayName}" var="displayName"/>
+        <c:set value="${step.params}" var="params"/>
+        <c:set value="${step.question.paramsMap}" var="displayParams"/>
+        <c:set value="${step.questionUrlParams}" var="urlParams"/>
         <c:set value="${step.isBoolean}" var="isboolean" />
         <c:set value="${step.isTransform}" var="isTransform" />
 		<c:set value="${step.filtered}" var="isFiltered" />
@@ -58,11 +58,11 @@
         <c:set value="${step.childStep.customName}" var="child_cName" />
         <c:set value="${step.childStep.dataType}" var="child_dataType" />
         <c:set value="${step.childStep.resultSize}" var="child_resultSize" />
-        <c:set value="${step.childStep.answerValue.question.fullName}" var="child_questionName" />
-        <c:set value="${step.childStep.answerValue.question.displayName}" var="child_displayName"/>
-        <c:set value="${step.childStep.answerValue.internalParams}" var="params"/>
-        <c:set value="${step.childStep.answerValue.question.paramsMap}" var="displayParams"/>
-        <c:set value="${step.childStep.answerValue.questionUrlParams}" var="urlParams"/>
+        <c:set value="${step.childStep.question.fullName}" var="child_questionName" />
+        <c:set value="${step.childStep.question.displayName}" var="child_displayName"/>
+        <c:set value="${step.childStep.params}" var="params"/>
+        <c:set value="${step.childStep.question.paramsMap}" var="displayParams"/>
+        <c:set value="${step.childStep.questionUrlParams}" var="urlParams"/>
         <c:set value="${step.childStep.isBoolean}" var="child_isboolean" />
         <c:set value="${step.childStep.isTransform}" var="child_isTransform" />
 		<c:set value="${step.childStep.filtered}" var="child_isFiltered" />

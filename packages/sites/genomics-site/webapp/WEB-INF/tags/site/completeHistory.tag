@@ -42,7 +42,7 @@
        <c:forEach items="${steps}" var="step">
          <c:set var="type" value="${step.dataType}"/>
          <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
-         <c:set var="recDispName" value="${step.answerValue.question.recordClass.type}"/>
+         <c:set var="recDispName" value="${step.question.recordClass.type}"/>
          <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
          <c:choose>
            <c:when test="${i % 2 == 0}"><tr class="lines"></c:when>
@@ -58,14 +58,14 @@
                             <!-- boolean question -->
                             <tr>
                                <td valign="top" align="right" width="10" class="medium" nowrap><b>Query&nbsp;:</b></td>
-                               <td valign="top" align="left" class="medium">${step.answerValue.question.displayName}</td>
+                               <td valign="top" align="left" class="medium">${step.question.displayName}</td>
                             </tr>
                             <tr>
                                <td align="right" valign="top" class="medium" nowrap><i>Expression</i> : </td>
                                <td class="medium">${step.booleanExpression}</td>
                             </tr>
                             
-                            <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
+                            <c:set var="recordClass" value="${step.question.recordClass}"/>
                         </c:when>
                         <c:otherwise>
                             <tr>
