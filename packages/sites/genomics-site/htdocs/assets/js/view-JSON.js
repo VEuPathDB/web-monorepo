@@ -265,7 +265,9 @@ function createDetails(modelstep, jsonstep, sid){
 
 		//edit_step =	"<a title='" + sub_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + jsonstep.isCollapsed + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
 
-		edit_step = 	"<a title='" + sub_edit_popup + "' class='edit_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Revise</a>&nbsp;|&nbsp;";
+		//edit_step = 	"<a title='" + sub_edit_popup + "' class='edit_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Revise</a>&nbsp;|&nbsp;";
+
+		edit_step = "<a title='" + sub_edit_popup + "' class='edit_step_link disabled' href='javascript:void(0)'>Revise</a>&nbsp;|&nbsp;";
 
 		expand_step = 	"<a title='" + sub_expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Open Nested Strategy</a>&nbsp;|&nbsp;";
 
