@@ -38,17 +38,36 @@
 <%-- move between "Run" and "Browse" tabs --%>
 <script type="text/javascript" language="javascript">
         var guestUser = '${wdkUser.guest}';
-	$(document).ready(function(){
-		// tell jQuery not to cache ajax requests.
-		$.ajaxSetup ({ cache: false}); 
-		exportBaseURL = '${exportBaseUrl}';
-		$("#diagram div.venn:last span.resultCount a").click();
-		var current = getCurrentTabCookie();
-		if (!current || current == null)
-			showPanel('strategy_results');
-		else
-	                showPanel(current);
-	});
+  $(document).ready(function(){
+    // tell jQuery not to cache ajax requests.
+    $.ajaxSetup ({ cache: false}); 
+    exportBaseURL = '${exportBaseUrl}';
+    $("#diagram div.venn:last span.resultCount a").click();
+    var current = getCurrentTabCookie();
+    if (!current || current == null)
+      showPanel('strategy_results');
+    else
+      showPanel(current);
+  });
+
+  function goToIsolate() {
+    var form = document.checkHandleForm;
+    var cbs = form.selectedFields;
+    var count = 0;
+    var url = "/cgi-bin/isolateClustalw?project_id=CryptoDB;isolate_ids=";
+    for (var i=0; i<cbs.length; i++) {
+      if(cbs[i].checked) {
+      url += cbs[i].value + ",";
+      count++;
+      }
+    }
+    if(count < 2) {
+      alert("Please select at lease two isolates to run ClustalW");
+      return false;
+    }
+    window.location.href = url;
+  }
+
 </script>
 
 <ul id="strategy_tabs">
@@ -60,7 +79,7 @@
 <%-- fixed position des not work, with announcements and warnings coming and going  --anyway, we add a tab
 <div style="padding:3px; font-weight:bold; background-color:white; position:absolute; top:153px; left:400px;">
          Click <a href="<c:url value="/importStrategy.do?strategy=ca5bc32fb29086d29b778b17f18a97c:1"/>">
-		here</a> to add a sample strategy in your display</a>
+    here</a> to add a sample strategy in your display</a>
 </div>
 --%>
 
@@ -88,7 +107,7 @@
 </div><!-- end results view div -->
 
 <div id="search_history" style="position:absolute;left:-999em;width:100%;">
-	<site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
+  <site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
 </div> <!-- end history view div -->
 
 <div id="sample_strat" style="position:absolute;left:-999em;width:100%;">
