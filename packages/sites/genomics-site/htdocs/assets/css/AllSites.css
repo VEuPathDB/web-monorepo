@@ -227,14 +227,6 @@ div.innertube #record-toolbox {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = subs  what is in (project).css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-ul#strategy_tabs {
-    font-size: 16px;
-}
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = used in sample strategies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -274,4 +266,23 @@ label.error {
   left:214px;
   position:relative;
   top:-13px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     = Summary page tabs, cross-site styles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+ul#strategy_tabs {
+    font-size: 16px;
+    border-bottom: 1px solid #777;
+    margin:0 0 1px;
+    padding:0 10px;
+    height: 26.5px;
+    width: 98%;
+}
+
+#strategy_tabs li {
+    display: inline;
+    list-style-type: none;
+    margin:0;
+    padding: 0;
 }

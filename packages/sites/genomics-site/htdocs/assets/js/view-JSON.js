@@ -359,7 +359,7 @@ function createStrategyName(strat){
 	var id = strat.backId;
 	var name = json.name;
 	var append = '';
-	if (!json.saved) append = "<span id='append'>*</span>";
+	if (!json.saved) append = "<span class='append'>*</span>";
 	var exportURL = exportBaseURL + json.importId;
 	var share = "";
 	if(json.saved){
@@ -371,7 +371,7 @@ function createStrategyName(strat){
 		"</a>"+
 	        "</span>" +
 		"<p>Paste link in email:</p>" +
-		"<input type='text' size=" + exportURL.length + " value=" + exportURL + " />" +
+		"<input type='text' size=" + exportURL.length + " value=" + exportURL + " readonly='true' />" +
 		"</div>";
 	}else if(guestUser == 'true'){
 		share = "<a title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>SHARE</b></a>";
@@ -402,13 +402,13 @@ function createStrategyName(strat){
 		"</div>";
 	}
 
-var rename = "<a  href='javascript:void(0) style='color: #0b4796' title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a>";
+var rename = "<a  href='javascript:void(0)' style='color: #0b4796' title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a>";
 
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
 		$(div_sn).html("<span onclick=\"enableRename('" + id + "', '" + name + "')\" title='Name of this strategy. Click to RENAME. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
-        "<form id='rename' style='display: none;' action=\"javascript:renameStrategy('" + id  + "', true, false)\">" +
+        "<form id='rename_" + strat.frontId + "' style='display: none;' action=\"javascript:renameStrategy('" + id  + "', true, false)\">" +
         "<input type='hidden' value='" + id + "' name='strategy'/>" +
         "<input id='name' onblur='this.form.submit();' type='text' style='margin-right: 4px; width: 100%;' value='" + name + "' maxlength='2000' name='name'/>" +
         "</form>" +

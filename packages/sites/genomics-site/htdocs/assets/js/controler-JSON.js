@@ -499,7 +499,7 @@ function saveStrategy(stratId, checkName, fromHist){
 
 function renameStrategy(stratId, checkName, fromHist){
 	var strat = getStrategyFromBackId(stratId);
-	var renameForm = $("div#diagram_" + strat.frontId + " #rename");
+	var renameForm = $("#rename_" + strat.frontId);
 	if (fromHist) renameForm = $("#browse_rename");
 	var name = $("input[name='name']",renameForm).attr("value");
 	var strategy = $("input[name='strategy']",renameForm).attr("value");

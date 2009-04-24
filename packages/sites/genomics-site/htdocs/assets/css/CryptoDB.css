@@ -1200,21 +1200,6 @@ td.strat_inactive {
     background: url(/assets/images/eyeGrey.png) no-repeat 8px 8px;
 }
 
-ul#strategy_tabs {
-    border-bottom: 1px solid #777;
-    margin:0 0 1px;
-    padding:0 10px;
-    height: 26.5px;
-    width: 98%;
-}
-
-#strategy_tabs li {
-    display: inline;
-    list-style-type: none;
-    margin:0;
-    padding: 0;
-}
-
 #strategy_tabs a:link, #strategy_tabs a:visited {
     background-color: #E8EBF0;
     border: 1px solid #CCCCCC;
