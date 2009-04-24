@@ -24,20 +24,53 @@
 
 <h1>Sample Strategies</h1>
 
+<%-------------  Set sample strategy signatures in all sites  ----------------%>
+<c:choose>
+   <c:when test="${fn:containsIgnoreCase(site, 'CryptoDB')}">
+      <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:1" />
+      <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:2" />
+   </c:when>
+
+<c:when test="${fn:containsIgnoreCase(site, 'GiardiaDB')}">
+
+   </c:when>
+
+ <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
+ 
+   </c:when>
+
+<c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
+
+   </c:when>
+
+<c:when test="${fn:containsIgnoreCase(site, 'TrichDB')}">
+
+   </c:when>
+
+ <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
+      <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:27" />
+      <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:10" />
+   </c:when>
+
+
+<c:when test="${fn:containsIgnoreCase(site, 'ApiDB')}">
+ 
+   </c:when>
+
+</c:choose>
+
+
 <table class="tableWithBorders" style="margin-left: auto; margin-right: auto;" width="90%">
 
-<tr align = "center"><td><b>Type<br>Click to view strategy</b></td><td><b>Description</b></td></tr>
-<c:if test="${site == 'CryptoDB'}">
-  <tr align = "left"><td>Simple strategy</td><td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:1"/>">Protein coding Signal Peptide </a> </td></tr>
-  <tr align = "left"><td>Expanded strategy with transform</td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:2"/>">kinases, TM, (EST or proteomics), transform</a> </td></tr>
-</c:if>
-<c:if test="${site == 'TriTrypDB'}">
-  <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:27"/>">Simple strategy</a> </td><td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td></tr>
-  <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=e8a3ba254a30471b456bfa72796352af:10"/>">Expanded strategy with transform</a> </td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td></tr>
-</c:if>
+<tr align = "center"><td><b>Click to import strategy in your workspace</b></td><td><b>Description</b></td></tr>
+
+<tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${simple}"/>">Simple strategy</a> </td><td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td></tr>
+  <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expanded}"/>">With nested strategy and transform</a> </td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td></tr>
 
 </table>
+
 <hr>
+
 <h1>Help</h1>
 The following image shows some of the functionality of the Run Strategies tab.  Mousing over these (and other) elements when you are running strategies will provide context sensitive help. Of particular note, clicking the title for any step shows the details for that step and provides a menu that allows you to modify the step by editing search parameters, deleting or inserting a step, etc.  Clicking the number of records for any step allows you to see and filter the results for that particular step.<br>
 <center>
