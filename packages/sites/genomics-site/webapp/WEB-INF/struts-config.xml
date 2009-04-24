@@ -166,7 +166,7 @@
       <forward name="show_application" path="/showApplication.do"/>
       <forward name="results_only" path="/resultsPage.jsp"/>
       <forward name="skip_to_record" path="/showRecord.do"/>
-      <forward name="skip_to_download" path="/downloadHistoryAnswer.do"/>
+      <forward name="skip_to_download" path="/downloadStep.do"/>
     </action>
     <action
       path="/showApplication"
