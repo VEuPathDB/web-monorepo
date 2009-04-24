@@ -294,6 +294,7 @@ function AddStepToStrategy(url, proto, stpId){
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
+	isInsert = "";
 	closeAll(true);
 }
 

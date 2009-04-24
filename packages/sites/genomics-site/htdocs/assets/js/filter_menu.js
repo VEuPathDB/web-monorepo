@@ -247,13 +247,14 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 		url: url,
 		dataType: "html",
 		beforeSend: function(){
-			closeAll(false);
+			$("#query_form").remove();
+			$("#Strategies div a#filter_link span").css({opacity: 1.0});
 			$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});
 		},
 		success: function(data){
 			//filter = document.createElement('div');
 			$("div#strategy_results").append(data);
-			if(isInsert == "")
+			if(isAdd)
 				$("#query_form h1#query_form_title").html("Add&nbsp;Step");
 			else
 				$("#query_form h1#query_form_title").html("Insert&nbsp;Step");
@@ -323,7 +324,7 @@ function closeAll(hide){
 	else
 		$("#query_form").remove();
 		isInsert = "";
-	$("#Strategies div#diagram a#filter_link span").css({opacity: 1.0});
+	$("#Strategies div a#filter_link span").css({opacity: 1.0});
 }
 
 function setDraggable(e, handle){
