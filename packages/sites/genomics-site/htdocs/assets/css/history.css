@@ -39,7 +39,7 @@ ul#history_tabs {
     position:relative;
 }
 
-#history_tabs #cmplt_hist_link {
+#history_tabs .cmplt_hist_link {
     float: right;
     display: inline-block;
     padding-top: 0.4em

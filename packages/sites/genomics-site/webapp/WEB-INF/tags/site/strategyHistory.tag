@@ -50,12 +50,12 @@
       <a id="tab_invalid" onclick="displayHist('invalid')"
        href="javascript:void(0)">Invalid&nbsp;Strategies</a></li>
   </c:if>
-  <li id="cmplt_hist_link">
-    <a href="showQueryHistory.do?type=show_query_history">All My Queries</a>
+  <li class="cmplt_hist_link">
+    <a id="tab_cmplt" onclick="displayHist('cmplt')" href="javascript:void(0)">All My Queries</a>
   </li>
   </ul>
 <!-- should be a div instead of a table -->
-<table class="clear_all">
+<table class="history_controls clear_all">
    <tr>
       <td><a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">select all</a>&nbsp|&nbsp;
           <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">select none</a></td>
@@ -178,7 +178,12 @@
   </div>
 </c:if>
 
-<table>
+<div class="panel_cmplt history_panel">
+  <h1>All Queries</h1>
+  <site:completeHistory model="${model}" user="${user}" />
+</div>
+
+<table class="history_controls">
    <tr>
       <td><a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">select all</a>&nbsp|&nbsp;
           <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">select none</a></td>

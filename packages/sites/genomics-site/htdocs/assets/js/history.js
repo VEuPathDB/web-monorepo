@@ -1,4 +1,7 @@
 var selected = new Array();
+// vars for complete query history tab
+var overHistoryId = 0;
+var currentHistoryId = 0;
 
 function updateHistory(){
 	if(update_hist){
@@ -89,6 +92,8 @@ function displayHist(type) {
 			$(this).attr("id", "selected_type");
 		}
 	});
+	if (type == 'cmplt') $(".history_controls").hide();
+	else $(".history_controls").show();
 	$("div.panel_" + type).show();
 	setCurrentTabCookie('search_history');
 	setCurrentTabCookie(type, true);
@@ -217,4 +222,22 @@ function toggleEye(ele, stratId) {
 	}else{
 		closeStrategy(s.frontId);//stratId);
 	}
+}
+
+function displayName(histId) {
+   if (overHistoryId != histId) hideAnyName();
+   overHistoryId = histId;
+   display = $('#div_' + histId);
+   display.css({ 'top' : (display.parent().position().top + 20)});
+   $('#div_' + histId).show();
+}
+
+function hideName(histId) {
+   if (overHistoryId == 0) return;
+   
+   $('#div_' + histId).hide();
+}
+
+function hideAnyName() {
+    hideName(overHistoryId);
 }

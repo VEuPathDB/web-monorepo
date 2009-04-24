@@ -36,7 +36,7 @@
 	</li>
 	</ul>
 	<ul>
-	<li><a onclick="setCurrentTabCookie('search_history');" href="<c:url value="/showApplication.do"/>" title="Access a summary with all your searches">
+	<li><a href="<c:url value="/showApplication.do"/>" title="Access a summary with all your searches">
 	<div id="mysearch">My Searches: ${count}</div></a>
 	</li>
 	</ul>

@@ -35,20 +35,25 @@
 <c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
 <c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?strategy=" />
 
-<%-- move between "Run" and "Browse" tabs --%>
+<%-- inline script for initial load of summary page --%>
 <script type="text/javascript" language="javascript">
         var guestUser = '${wdkUser.guest}';
-  $(document).ready(function(){
-    // tell jQuery not to cache ajax requests.
-    $.ajaxSetup ({ cache: false}); 
-    exportBaseURL = '${exportBaseUrl}';
-    $("#diagram div.venn:last span.resultCount a").click();
-    var current = getCurrentTabCookie();
-    if (!current || current == null)
-      showPanel('strategy_results');
-    else
-      showPanel(current);
-  });
+        init_strat_ids = ${strategies};
+        <c:if test="${wdkUser.viewStrategyId != null && wdkUser.viewStepId != null}">
+          init_view_strat = "${wdkUser.viewStrategyId}";
+          init_view_step = "${wdkUser.viewStepId}";
+        </c:if>
+        $(document).ready(function(){
+		// tell jQuery not to cache ajax requests.
+		$.ajaxSetup ({ cache: false}); 
+		exportBaseURL = '${exportBaseUrl}';
+		$("#diagram div.venn:last span.resultCount a").click();
+		var current = getCurrentTabCookie();
+		if (!current || current == null)
+			showPanel('strategy_results');
+		else
+	                showPanel(current);
+	});
 
   function goToIsolate() {
     var form = document.checkHandleForm;
@@ -90,13 +95,6 @@
 <div class="strategy_controls"/></div> 
 
 <div id="Strategies">
-        <script>
-          init_strat_ids = ${strategies};
-          <c:if test="${wdkUser.viewStrategyId != null && wdkUser.viewStepId != null}">
-            init_view_strat = "${wdkUser.viewStrategyId}";
-            init_view_step = "${wdkUser.viewStepId}";
-          </c:if>
-        </script>
 </div>
 
 <input type="hidden" id="target_step" value="${stepNumber+1}"/>

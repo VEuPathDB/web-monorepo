@@ -26,18 +26,9 @@ function toggleLayer(controllingLayerName, textLayerName) {
     storeIntelligentCookie("show" + controllingLayerName, style.display == "block"? 1:0);
 }
 
-// use DOM tricks to force Hide and Show text down the throat of the anchor
 function sayShowOrHide(controllingLayerName, textLayerName, style) {
-    var textLayer = document.getElementById(textLayerName);
-    var child = textLayer.firstChild;
-    var count = 0;
-    while (child != null) {
-     child = child.nextSibling;
-     if (count++ == 1) {
-	child.textContent = style.display == "block"? "Hide" : "Show";
-      }
-    }
-
+    var content = style.display == "block"? "Hide" : "Show";
+    $("#" + textLayerName + " a").text(content);
     return true;
 }
 
