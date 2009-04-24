@@ -18,6 +18,9 @@ function initDisplay(){
 		type: "POST",
 		dataType: "json",
 		data:"state=",
+		beforeSend: function(){
+			showLoading();
+		},
 		success: function(data){
 		//	data = eval("(" + data + ")");
 			updateStrategies(data, init_view_strat, init_view_step, false);
@@ -430,6 +433,9 @@ function closeStrategy(stratId){
 		url: url,
 		dataType:"json",
 		data:"state=" + p_state,
+		beforeSend: function(){
+			showLoading(stratId);
+		},
 		success: function(data){
 			//data = eval("(" + data + ")");			
 			if(ErrorHandler("CloseStrategy", data, strat, null)){
