@@ -243,6 +243,8 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 		url: url,
 		dataType: "html",
 		beforeSend: function(){
+			$("#Strategies div a#filter_link span").css({opacity: 1.0});
+			$("#query_form").remove();
 			$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});
 		},
 		success: function(data){
