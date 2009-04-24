@@ -74,9 +74,9 @@ function removeClosedStrategies(){
 						}
 					}else if(strats[s].backId == state[t].id){
 						x = false;
+						removeSubStrategies(s, t);
 						if(t != s){
 							strats[t] = strats[s];
-							removeSubStrategies(s, t);
 							break;
 						}
 					}
