@@ -3,15 +3,24 @@ package GBrowse::Filter;
 use strict;
 
 
+sub filterByContigName {
+  my ($f, $value) = @_;
+  my ($contig) = $f->get_tag_values("Contig");
+
+  $contig =~ /$value/;
+}
+
+
 sub filterByTaxon {
-  my ($f, $value,$IncludeContig) = @_;
+  my ($f, $value) = @_;
   my ($taxon) = $f->get_tag_values("Taxon");
-  if ($IncludeContig) {
-  my $contig = $f->get_tag_values("Contig");
-  $taxon eq qq /$value/ && $contig !~ /-S$/;
-  } else {
   $taxon eq qq /$value/;
-  }
+}
+
+
+sub filterByTaxonAndContigName {
+  my ($f, $taxon, $contig) = @_;
+  &filterByTaxon($f, $taxon) && &filterByContigName($f, $contig);
 }
 
 sub filterByExtDbName {
