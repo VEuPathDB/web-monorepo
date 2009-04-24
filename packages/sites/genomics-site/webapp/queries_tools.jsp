@@ -7,4 +7,4 @@
 
 <site:queryGrid />
 <site:sidebar />
-<site:footer />
+<site:footer refer="home2" />

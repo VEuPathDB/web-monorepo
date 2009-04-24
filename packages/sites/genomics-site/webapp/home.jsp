@@ -9,4 +9,4 @@
 
 <site:DQG />
 <site:sidebar />
-<site:footer />
+<site:footer  refer="home"/>

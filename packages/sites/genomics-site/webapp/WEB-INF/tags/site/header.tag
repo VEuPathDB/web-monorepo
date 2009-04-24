@@ -461,7 +461,7 @@ ${headElement}
    <c:when test="${fn:containsIgnoreCase(project, 'CryptoDB')}">
      <c:set var="width" value="318" />
      <c:set var="height" value="64" />
-     <c:set var="date" value="May 16th, 2009" />
+     <c:set var="date" value="Apr 26th, 2009" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(project, 'GiardiaDB')}">
@@ -491,7 +491,7 @@ ${headElement}
  <c:when test="${fn:containsIgnoreCase(project, 'TriTrypDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
-      <c:set var="date" value="May 15th, 2009" />
+      <c:set var="date" value="Apr 26th, 2009" />
    </c:when>
 
 
