@@ -138,10 +138,14 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	else
 		var action = "javascript:validateAndCall('edit', '" + pro_url + "', '" + stratBackId + "', "+ parseInt(reviseStep) + ")";//"javascript:EditStep('" + proto + "', '" + pro_url + "', " + parseInt(reviseStep) + ")";
 	var formtitle = "";
-	if(edit == 0)
-		formtitle = "<h1>Add&nbsp;Step</h1>";
-	else
+	if(edit == 0){
+		if(insert == "")
+			formtitle = "<h1>Add&nbsp;Step</h1>";
+		else
+			formtitle = "<h1>Insert&nbsp;Step</h1>";
+	}else{
 		formtitle = "<h1>Revise&nbsp;Step</h1>";
+	}
 	quesForm.attr("action",action);
 	if(edit == 0)
 		var header = "<span class='dragHandle'>" + back_link + " " + formtitle + " " + close_link + "</span>";
@@ -248,8 +252,12 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 			$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});
 		},
 		success: function(data){
-			filter = document.createElement('div');
-			$("div#strategy_results").append(data);//$(filter).html(data);
+			//filter = document.createElement('div');
+			$("div#strategy_results").append(data);
+			if(isInsert == "")
+				$("#query_form h1#query_form_title").html("Add&nbsp;Step");
+			else
+				$("#query_form h1#query_form_title").html("Insert&nbsp;Step");
 			if(isFirst){
 				$("#query_form #selected_strategy,#continue_button").attr("disabled","disabled");
 				$("#query_form #transforms,#continue_button_transforms").attr("disabled","disabled");
