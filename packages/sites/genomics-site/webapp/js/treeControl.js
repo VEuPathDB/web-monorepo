@@ -59,7 +59,7 @@ function uncheck(ele){
 	$(ele).attr("checked",false);
 	var childDiv = $(ele).siblings(".term-children");
 	if(childDiv.length > 0){
-		var kids = $(childDiv).children(".term-node input");
+		var kids = $(childDiv).children(".term-node");
 		for(var i=0;i<kids.length;i++){
 			uncheck($(kids[i]).children("input")[0]);
 		}
@@ -70,7 +70,7 @@ function check(ele){
 	$(ele).attr("checked",true);
 	var childDiv = $(ele).siblings(".term-children");
 	if(childDiv.length > 0){
-		var kids = $(childDiv).children(".term-node input");
+		var kids = $(childDiv).children(".term-node");
 		for(var i=0;i<kids.length;i++){
 			check($(kids[i]).children("input")[0]);
 		}
