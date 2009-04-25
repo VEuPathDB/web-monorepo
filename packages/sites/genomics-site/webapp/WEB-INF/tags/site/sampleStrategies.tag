@@ -50,6 +50,8 @@
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
       <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:27" />
       <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:10" />
+      <c:set var="expressed" value="b57717e3cb5c116dc7daabe8ef4ef4de:1" />
+      <c:set var="expressedTbrucei" value="e8a3ba254a30471b456bfa72796352af:41" />
    </c:when>
 
 
@@ -64,8 +66,18 @@
 
 <tr align = "center"><td><b>Click to import strategy in your workspace</b></td><td><b>Description</b></td></tr>
 
+<c:if test="${simple != null}">
 <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${simple}"/>">Simple strategy</a> </td><td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td></tr>
+</c:if>
+<c:if test="${expanded != null}">
   <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expanded}"/>">With nested strategy and transform</a> </td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td></tr>
+</c:if>
+<c:if test="${expressed != null}">
+<tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expressed}"/>">Genes with evidence of expression</a> </td><td>Find all genes in the database that have any direct evidence for expression</td></tr>
+</c:if>
+<c:if test="${expressedTbrucei != null}">
+<tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expressedTbrucei}"/>"><i>T. brucei</i> genes with any evidence of expression</a> </td><td>Find all genes from <i>T. brucei</i> that have any evidence for expression based on direct evidence or using orthology</td></tr>
+</c:if>
 
 </table>
 
