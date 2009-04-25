@@ -392,7 +392,7 @@ G. lamblia sequence, assembly, annotation from Mitchell Sogin(MBL). Genomic mini
 </c:when>
 <c:when test="${fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB'}">
   <c:set var="reference">
-Chromosome sequence for <i>Leishmania tarentolae</i> is provided by  the CIHR Group on host pathogen interactions (Marc Ouellette, Jacques Corbeil, Barbara Papadopoulou, Michel J. Tremblay, Frederic Raymond, Sebastien Boisvert from Universite Laval, and Martin Olivier from McGill University). The CIHR group plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible. Permission  should be obtained from Marc Ouellette before publishing analyses of the  sequence/open reading frames/genes on a chromosome or genome scale.
+Chromosome sequence for <i>Leishmania tarentolae</i> is provided by  the CIHR Group on host pathogen interactions (Marc Ouellette, Jacques Corbeil, Barbara Papadopoulou, Michel J. Tremblay, Fr&#233;d&#233;ric Raymond, S&#233;bastien Boisvert from Universit&#233; Laval, and Martin Olivier from McGill University). The CIHR group plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible. Permission  should be obtained from Marc Ouellette before publishing analyses of the  sequence/open reading frames/genes on a chromosome or genome scale.
   </c:set>
 </c:when>
 <c:when test="${!fn:contains(organism,'cruzi') && !fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB'}">
