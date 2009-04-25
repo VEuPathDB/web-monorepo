@@ -50,8 +50,8 @@
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
       <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:27" />
       <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:10" />
-      <c:set var="expressed" value="b57717e3cb5c116dc7daabe8ef4ef4de:1" />
-      <c:set var="expressedTbrucei" value="e8a3ba254a30471b456bfa72796352af:41" />
+      <c:set var="expressed" value="e8a3ba254a30471b456bfa72796352af:53" />
+      <c:set var="expressedTbrucei" value="e8a3ba254a30471b456bfa72796352af:54" />
    </c:when>
 
 
