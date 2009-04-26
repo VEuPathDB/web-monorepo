@@ -139,17 +139,44 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
            <c:forEach items="${table.rows}" var="row">
              <c:set var="projects" value="${row[0].value}"/>
             <c:if test="${fn:containsIgnoreCase(projects, project)}"> 
-            <li id='t-${attrs['uid']}'>${attrs['title']}<br /> 
-                               (<a href="http://eupathdb.org/tutorials/${row[1].value}">Quick Time</a>)
-                               (<a href="http://eupathdb.org/tutorials/${row[2].value}">Windows media</a>)
-                               (<a href="http://eupathdb.org/tutorials/${row[3].value}">Flash</a>)
-            </li>
-            </c:if>
-                                  </c:forEach> 
-        </c:forEach>
-      </c:forEach>
-                        </ul>
+                          <c:set var="urlMov" value="${row[1].value}"/>
+                          <c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
+                            <c:set var="urlMov">http://eupathdb.org/tutorials/${urlMov}</c:set>
+                          </c:if>
+                
+                          <c:set var="urlAvi" value="${row[2].value}"/>
+                          <c:if test="${urlAvi != 'unavailable' &&  ! fn:startsWith(urlAvi, 'http://')}">
+                            <c:set var="urlAvi">http://eupathdb.org/tutorials/${urlAvi}</c:set>
+                          </c:if>
+                
+                          <c:set var="urlFlv" value="${row[3].value}"/>
+                          <c:choose>
+                          <c:when test="${ ! fn:endsWith(urlFlv, 'flv')}">
+                            <c:set var="urlFlv">http://eupathdb.org/tutorials/${urlFlv}</c:set>
+                          </c:when>
+                          <c:when test="${urlFlv != 'unavailable' &&  ! fn:startsWith(urlFlv, 'http://')}">
+                            <c:set var="urlFlv">http://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&autostart=true</c:set>
+                          </c:when>
+                          </c:choose>
+                          <c:set var="duration" value="${row[4].value}"/>
+                          <c:set var="size" value="${row[5].value}"/>
 
+					  <li id='t-${attrs['uid']}'>${attrs['title']}<br />
+                             <c:if test="${urlMov != 'unavailable'}">
+                          		 (<a href="${urlMov}">Quick Time</a>)
+                             </c:if>
+                             <c:if test="${urlAvi != 'unavailable'}">
+                          		 (<a href="${urlAvi}">Windows media</a>)
+                             </c:if>
+                             <c:if test="${urlFlv != 'unavailable'}">
+                          		 (<a href="${urlFlv}">Flash</a>)
+                             </c:if>
+					  </li>
+						</c:if>
+                              		</c:forEach> 
+				</c:forEach>
+ 			</c:forEach>
+                        </ul>
                       </c:otherwise>
     </c:choose>
 
