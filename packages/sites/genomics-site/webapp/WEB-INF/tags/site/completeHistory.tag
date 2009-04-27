@@ -53,29 +53,12 @@
                  style="display:none;font-size:8pt;width:610px;position:absolute;left:0;top:0;"
                  onmouseover="hideAnyName()">
                  <table cellpadding="2" cellspacing="0" border="0" style="background-color:#ffffcc;">
-                    <c:choose>
-                        <c:when test="${step.isBoolean}">
-                            <!-- boolean question -->
-                            <tr>
-                               <td valign="top" align="right" width="10" class="medium" nowrap><b>Query&nbsp;:</b></td>
-                               <td valign="top" align="left" class="medium">${step.question.displayName}</td>
-                            </tr>
-                            <tr>
-                               <td align="right" valign="top" class="medium" nowrap><i>Expression</i> : </td>
-                               <td class="medium">${step.booleanExpression}</td>
-                            </tr>
-                            
-                            <c:set var="recordClass" value="${step.question.recordClass}"/>
-                        </c:when>
-                        <c:otherwise>
                             <tr>
                                 <td>
                                     <%-- simple question --%>
-                                    <wdk:showParams wdkAnswer="${step.answerValue}" />
+                                    <wdk:showParams step="${step}" />
                                 </td>
                             </tr>
-                        </c:otherwise>
-                    </c:choose>
                  </table>
                </div>
             </td>
