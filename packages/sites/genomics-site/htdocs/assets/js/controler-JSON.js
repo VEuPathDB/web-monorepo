@@ -260,6 +260,32 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 	});
 }
 
+function RenameStep(ele, s, stp){
+//	var a = $(ele).parent();
+	var new_name = $(ele).val();
+	step = getStep(s, stp);
+	var url = "renameStep.do?strategy=" + getStrategy(s).backId + "&stepId=" + step.back_step_Id + "&customName=" + new_name;	
+	$.ajax({
+			url: url,
+			dataType: "html",
+			data: "state=" + p_state,
+			beforeSend: function(){
+				showLoading(s);
+			},
+			success: function(data){
+				data = eval("(" + data + ")");
+				if(ErrorHandler("RenameStep", data, getStrategy(s), null)){
+					updateStrategies(data);
+				}else{
+					removeLoading(f_strategyId);
+				}
+			},
+			error: function(data, msg, e){
+				alert("ERROR \n "+ msg + "\n" + e
+                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+			}
+		});
+}
 
 function AddStepToStrategy(url, proto, stpId){	
 	var strategy = getStrategyFromBackId(proto);

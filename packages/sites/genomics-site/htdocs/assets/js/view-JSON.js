@@ -163,7 +163,7 @@ function booleanStep(modelstep, jsonstep, sid){
 	if(childStp.isCollapsed){
 		var ss_name = childStp.strategy.name.length > 15 ? childStp.strategy.name.substring(0,12) + "...":childStp.strategy.name; 
 		$(".crumb_name", childDiv).text(ss_name);
-		$("span#fullStepName").text(childStp.strategy.name);
+		$("span#fullStepName", childDiv).text(childStp.strategy.name);
 		bkgdDiv = document.createElement("div");
 		$(bkgdDiv).addClass("expandedStep");
 		$(bkgdDiv).css({ left: (leftOffset-2) + "px"});

@@ -110,36 +110,6 @@ function Rename_Step(ele, strat, stpId){
 	$("#new_name_box").focus();
 }
 
-function RenameStep(ele, s, stp){
-	var a = $(ele).parent();
-	var new_name = $(ele).val();
-	step = getStep(s, stp);
-	var url = "renameStep.do?strategy=" + getStrategy(s).backId + "&stepId=" + step.back_step_Id + "&customName=" + new_name;	
-	$.ajax({
-			url: url,
-			dataType: "html",
-			success: function(data){
-				data = eval("(" + data + ")");
-				getStrategy(s).checksum = data.strategies[getStrategy(s).backId];
-				$("#fullStepName",a).text(new_name);
-				a_link.text((new_name.length > 14)?new_name.substring(0,12) + "...":new_name);
-				//a.text(new_name);
-				$("input",a).replaceWith(a_link);
-				var par = $(a);
-				cur = $("div.crumb_details div.crumb_menu a.expand_step_link", par);
-				// Only update expand link if it's not the first step.
-				if (cur.length != 0){
-					cur = cur[0].attributes[0].nodeValue;
-					cur = cur.substring(0, cur.lastIndexOf(",")) + ",\"Expanded " + new_name + "\");hideDetails(this)";
-					$("div.crumb_details div.crumb_menu a.expand_step_link", par)[0].attributes[0].nodeValue = cur;
-				}
-			},
-			error: function(data, msg, e){
-				alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
-			}
-		});
-}
 
 function Expand_Step(ele, url){
 	$(ele).parent().parent().hide();
