@@ -415,7 +415,7 @@ function createStrategyName(strat){
 		"</div>";
 	}
 
-var rename = "<a  href='javascript:void(0)' style='color: #0b4796' title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a>";
+var rename = "<a  href='javascript:void(0)' style='title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a>";
 
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
