@@ -20,9 +20,10 @@ var ss_view_popup = "View the results of this search in the Results area below";
 var ss_edit_popup = "Revise the parameters of this search and/or its combine operation";
 var ss_expand_popup = "Expand this step in a new panel to add nested steps. (Use this to build a non-linear strategy)";							
 	//Substrategies
+var sub_edit_expand_openned = "Revise the nested strategy in the open panel below";	
 var sub_rename_popup = "Rename this nested strategy";             
 var sub_view_popup = "View the results of this nested strategy in the Results area below";
-var sub_edit_popup = "Open into a new panel to add or edit nested steps";
+var sub_edit_popup = "Open this nested step to revise";
 var sub_expand_popup = "Open into a new panel to add or edit nested steps";
 
 //VARIABLES
@@ -265,11 +266,23 @@ function createDetails(modelstep, jsonstep, sid){
 
 		//edit_step =	"<a title='" + sub_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + jsonstep.isCollapsed + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
 
-		//edit_step = 	"<a title='" + sub_edit_popup + "' class='edit_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Revise</a>&nbsp;|&nbsp;";
-
-		edit_step = "<a title='" + sub_edit_popup + "' class='edit_step_link disabled' href='javascript:void(0)'>Revise</a>&nbsp;|&nbsp;";
-
-		expand_step = 	"<a title='" + sub_expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Open Nested Strategy</a>&nbsp;|&nbsp;";
+		//edit_step = "<a title='" + sub_edit_popup + "' class='edit_step_link disabled' href='javascript:void(0)'>Revise</a>&nbsp;|&nbsp;";
+	    disab = "";
+		ocExp = "onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'";
+		oM = "Open Nested Strategy";
+		moExp = sub_expand_popup;
+		moEdit = sub_edit_popup;
+		if(jsonstep.strategy.order > 0){
+			disab = "disabled";
+			ocExp = "";
+			oM = "Already Open Below...";
+			moExp = sub_edit_expand_openned;
+			moEdit = sub_edit_expand_openned;
+		}
+		
+		edit_step = 	"<a title='" + moEdit + "' class='edit_step_link " + disab + "' href='javascript:void(0)' " + ocExp + ">Revise</a>&nbsp;|&nbsp;";
+		
+		expand_step = 	"<a title='" + moExp + "' class='expand_step_link " + disab + "' href='javascript:void(0)' " + ocExp + ">" + oM + "</a>&nbsp;|&nbsp;";
 
 	} else {   							/* simple step */
 
