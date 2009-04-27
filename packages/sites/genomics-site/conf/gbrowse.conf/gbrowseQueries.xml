@@ -135,27 +135,10 @@ WHERE gs.lowercase_source_id
 <!-- Feature names are in the same format as the config - type:Source -->
 
 <module name="Segment.pm">
-  <sqlQuery name="new:Segment" includeProjects="TriTrypDB,CryptoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="new:Segment">
     <testParamValues project="TriTrypDB">
        <param name="name" value="LmjF05_01_20050601_V5.2"/>
     </testParamValues>
-     <sql>
-<![CDATA[
-SELECT etn.na_sequence_id srcfeature_id, 
-       1 startm, 
-       etn.length end, 
-       etn.source_id name, 
-       'contig' type, 
-       ' ' atts
-FROM   dots.NaSequence etn, apidb.SequenceAlias sa, sres.sequenceontology so
-WHERE  etn.source_id = sa.source_id 
- and so.sequence_ontology_id = etn.sequence_ontology_id
- and sa.lowercase_source_id = lower('$name') 
-]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="new:Segment" includeProjects="ToxoDB,PlasmoDB">
     <testParamValues project="ToxoDB">
        <param name="name" value="TGME49_chrX"/>
     </testParamValues>
@@ -165,16 +148,15 @@ SELECT etn.na_sequence_id srcfeature_id,
        1 startm, 
        etn.length end, 
        etn.source_id name, 
-       'chromosome' type, 
+       'Sequence' type, 
        ' ' atts
 FROM   dots.NaSequence etn, apidb.SequenceAlias sa, sres.sequenceontology so
 WHERE  etn.source_id = sa.source_id 
  and so.sequence_ontology_id = etn.sequence_ontology_id
  and sa.lowercase_source_id = lower('$name') 
-]]>   
+]]>
     </sql>
-  </sqlQuery> 
- 
+  </sqlQuery>
   
   <sqlQuery name="get_sequence">
     <sql>
