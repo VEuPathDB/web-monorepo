@@ -132,7 +132,7 @@
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:forEach items="${strategies}" var="strategy">
     <c:if test="${strategy.isSaved}">
-    <c:set var="exportURL" value="${exportBaseUrl}${strategy.latestStep.answerId}"/>
+    <c:set var="exportURL" value="${exportBaseUrl}${strategy.importId}" />
     <div class='modal_div export_link' id="hist_share_${strategy.strategyId}" style="right:15em;">
       <span class='dragHandle'>
         <a class='close_window' href='javascript:closeModal()'>
