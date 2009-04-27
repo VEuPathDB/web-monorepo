@@ -274,9 +274,9 @@ Ack, this form won't work at all without JavaScript support!
 <div>
   <b>Show results from species:</b>
   <c:set var="opt" value="0"/>
-  <html:select  property="myMultiProp(${resultSpeciesName})">
+  <html:select  property="myMultiProp(${resultSpeciesName})" multiple="true">
     <c:set var="opt" value="${opt+1}"/>
-    <c:set var="sel" value=""/>
+    <c:set var="sel" value="selected"/>
     <c:if test="${opt == 1}"><c:set var="sel" value="selected"/></c:if>      
     <html:options property="values(${resultSpeciesName})" labelProperty="labels(${resultSpeciesName})"/>
   </html:select>
