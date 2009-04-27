@@ -50,8 +50,8 @@
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
       <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:27" />
       <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:10" />
-      <c:set var="expressed" value="e8a3ba254a30471b456bfa72796352af:53" />
-      <c:set var="expressedTbrucei" value="e8a3ba254a30471b456bfa72796352af:54" />
+      <c:set var="expressed" value="e8a3ba254a30471b456bfa72796352af:59" />
+      <c:set var="expressedTbrucei" value="e8a3ba254a30471b456bfa72796352af:60" />
    </c:when>
 
 
@@ -83,7 +83,7 @@
 
 <hr>
 
-<h1>Help</h1>
+<h1>Help (<a href="http://eupathdb.org/tutorials/New_Strat/New_Strat_viewlet_swf.html">Tutorial</a>)</h1>
 The following image shows some of the functionality of the Run Strategies tab.  Mousing over these (and other) elements when you are running strategies will provide context sensitive help. Of particular note, clicking the title for any step shows the details for that step and provides a menu that allows you to modify the step by editing search parameters, deleting or inserting a step, etc.  Clicking the number of records for any step allows you to see and filter the results for that particular step.<br>
 <center>
 <img src="/images/strategy_help.jpg">
