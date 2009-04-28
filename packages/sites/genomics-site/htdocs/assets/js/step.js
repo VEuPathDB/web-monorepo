@@ -41,7 +41,8 @@ function showDetails(det){
 		det2.css({
 			left: l + "px",
 			top: t + "px",
-			display: "block"
+			display: "block",
+			position: "absolute"
 		});
 		det2.appendTo("#strategy_results");
 	}
