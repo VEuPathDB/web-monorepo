@@ -79,6 +79,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	var quesTitle = $("h1",data).text().replace(/Identify Genes based on/,"");
 	
 	var quesForm = $("form#form_question",data);
+	var quesDescription = $("p#query-description-section",data);
 	var tooltips = $("div.htmltooltip",data);
 	$("input[value=Get Answer]",quesForm).val("Run Step");
 	$("input[value=Run Step]",quesForm).attr("id","executeStepButton");
@@ -174,6 +175,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 		$("#query_form div#operations input#" + operation).attr('checked','checked'); 
 	setDraggable($("#query_form"), ".dragHandle");
 	$("#query_form").append("<div class='bottom-close'><a href='javascript:closeAll(false)' id='close_filter_query'>Close</a></div>");
+	$("#query_form .filter.params").append("<p style='padding:5px;margin:5px 15px 5px 15px;border-top:1px solid grey;border-bottom:1px solid grey'>" + quesDescription.html() + "</p>");
 	htmltooltip.render();
 	$("#query_form").fadeIn("normal");
 }
