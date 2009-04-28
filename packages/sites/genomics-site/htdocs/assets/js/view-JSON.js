@@ -393,15 +393,17 @@ function createStrategyName(strat){
 	}
 
 	var save = "";
+	var sTitle = "SAVE AS";
+	if(json.saved) sTitle = "COPY AS";
 	if (guestUser == 'true') {
-		save = "<a title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' class='save_strat_link' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>SAVE AS</b></a>";
+		save = "<a title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' class='save_strat_link' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>" + sTitle + "</b></a>";
 	}
 	else {
-		save = "<a title='A saved strategy is like a snapshot, it cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>SAVE AS</b></a>" +
+		save = "<a title='A saved strategy is like a snapshot, it cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>" + sTitle + "</b></a>" +
 		"<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
 		"<span class='dragHandle'>" +
 		"<div class='modal_name'>"+
-		"<h2>Save As</h2>" + 
+		"<h2>" + sTitle + "</h2>" + 
 		"</div>"+ 
 		"<a class='close_window' href='javascript:closeModal()'>"+
 		"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
