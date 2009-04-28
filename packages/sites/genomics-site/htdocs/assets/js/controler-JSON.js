@@ -154,6 +154,7 @@ function displayOpenSubStrategies(s, d){
 function showInstructions(){
 	$("#strat-instructions").remove();
 	$("#strat-instructions-2").remove();
+	$("#Strategies").removeAttr("style"); // DO NOT DELETE.  This is for IE.
 	var instr = document.createElement('div');
 	id = "strat-instructions";
 	instr_text = "<br>Click '<a href='queries_tools.jsp'>New Search</a>' <br/> to start a strategy";
@@ -168,6 +169,7 @@ function showInstructions(){
 		arrow_image = arrow_image + arrow_image2;
 	}
 	$(instr).attr("id",id).html(arrow_image + instr_text);
+	$("#Strategies").css({'overflow' : 'visible'}); // DO NOT DELETE.  This is for IE to display instructions correctly.
 	$("#Strategies").append(instr);
 }
 
