@@ -423,7 +423,7 @@ var rename = "<a  href='javascript:void(0)' style='title='Click to rename.'  onc
 		$(div_sn).html("<span onclick=\"enableRename('" + id + "', '" + name + "')\" title='Name of this strategy. Click to RENAME. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
         "<form id='rename_" + strat.frontId + "' style='display: none;' action=\"javascript:renameStrategy('" + id  + "', true, false)\">" +
         "<input type='hidden' value='" + id + "' name='strategy'/>" +
-        "<input id='name' onblur='this.form.submit();' type='text' style='margin-right: 4px; width: 100%;' value='" + name + "' maxlength='2000' name='name'/>" +
+        "<input id='name' onblur='this.form.submit();' type='text' value='" + name + "' size='50' maxlength='2000' name='name'/>" +
         "</form>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" + 
