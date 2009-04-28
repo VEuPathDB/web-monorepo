@@ -4,7 +4,7 @@ function loadSelectedData(){
 	var sendReqUrl = 'showRecord.do?name=AjaxRecordClasses.InterproTermClass&primary_key='+datatype;
 	$.ajax({
 		url: sendReqUrl,
-		dataType: "XML",
+		dataType: "xml",
 		success: function(data){
 			createAutoComplete(data);
 		}
