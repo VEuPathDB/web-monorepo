@@ -272,7 +272,7 @@
 
 <hr>
 <%-- display description for wdkQuestion --%>
-<p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
+<p id="query-description-section"><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
 <%-- get the attributions of the question if not ApiDB --%>
 <c:if test = "${project != 'EuPathDB'}">
