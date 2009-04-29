@@ -106,7 +106,6 @@ function putReadInCookie(headernode) {
   
   $(headernode).children('p:first').remove();
   $(headernode).css({'padding-bottom' : oldHeadingPadBot})
-
   var expiresDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * 24 * 365);
-  storeIntelligentCookie(readListCookieName, newCookieVal, expiresDate);
+  storeIntelligentCookie(readListCookieName, newCookieVal, expiresDate, '/', secondLevelDomain());
 }
