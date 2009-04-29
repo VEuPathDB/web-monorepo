@@ -54,7 +54,7 @@
 </c:if>
 
 
-                    <th title="Adding a strategy as a step allows you to generate non-linear strategies (trees).">Select a Strategy</th></tr>
+                    <th title="Adding a strategy as a step allows you to generate non-linear strategies (trees).">Select a Opened Strategy</th></tr>
 		<tr>
 				<td>
 <ul class="top_nav">
@@ -98,9 +98,13 @@
 
 <td>
 	<select id="selected_strategy" type="multiple">
-		<option value="--">--Choose a Strategy to add--</option>
-		<c:forEach items="${user.strategiesByCategory[recordClass]}" var="storedStrategy">
-			<option value="${storedStrategy.strategyId}">${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
+		<option value="--">--Choose a Opened Strategy to add--</option>
+<%--		<c:forEach items="${user.strategiesByCategory[recordClass]}" var="storedStrategy"> --%>
+		<c:forEach items="${user.activeStrategies}" var="storedStrategy">
+			<c:set var="l" value="${storedStrategy.length-1}"/>
+		 	<c:if test="${storedStrategy.allSteps[l].dataType == recordClass}">
+				<option value="${storedStrategy.strategyId}">${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
+			</c:if>
 		</c:forEach>
 	</select>
 	<br><br><input id="continue_button" type="button" value="Continue..."/>
