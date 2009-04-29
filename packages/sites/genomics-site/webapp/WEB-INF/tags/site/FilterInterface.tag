@@ -58,17 +58,20 @@
 		<tr>
 				<td>
 <ul class="top_nav">
-
 <c:set var="qByCat" value="${catMap[recordClass]}" />
 <c:forEach items="${qByCat}" var="cat">
+	<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass'}">
 	<li><a class="category" href="javascript:void(0)">${cat.key}</a>
 	<ul>
+	</c:if>
 	<c:forEach items="${cat.value}" var="q">
 		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}')">${q.displayName}</a></li>
 	</c:forEach>
+	<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass'}">
+	</li>
 	</ul>
+	</c:if>
 </c:forEach>
-
 </ul>
 
 </td>
