@@ -9,12 +9,18 @@ function showLoading(divId){
 		t = "40px";
 		l_gif = "loading.gif";
 		sz = "45";
-	}else{
+	}else if($("#diagram_" + divId).length > 0){
 		d = $("#diagram_" + divId);
 		le = "10px";
 		t = "10px";
 		l_gif = "loading2.gif";
 		sz = "35";
+	} else {
+		d = $("#" + divId);
+		le = "405px";
+		t = "160px";
+		l_gif = "loading.gif";
+		sz = "50";
 	}
 	var l = document.createElement('span');
 	$(l).attr("id","loadingGIF");

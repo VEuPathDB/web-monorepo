@@ -48,20 +48,23 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	var stepn = 0;
 	var insert = "";
 	var proto = "";
+	var currStrategy = getStrategy(current_Front_Strategy_Id);
+	var stratBackId = currStrategy.backId;
+	var stp = null;
+	var stepBackId = null;
 	if(edit == 0){
-//		var parts = reviseStep.split(":");
+		stp = currStrategy.getLastStep();
+		stepBackId = (stp.back_boolean_Id == "") ? stp.back_step_Id : stp.back_boolean_id;
 		insert = reviseStep;
-//		proto = parts[0];
 	}else{
 		var parts = reviseStep.split(":");
 		proto = parts[0];
 		reviseStep = parseInt(parts[1]);
+		stp = currStrategy.getStep(reviseStep,false);
+		stepBackId = reviseStep;
 		isSub = true;
 		operation = parts[4];
 	}
-	var stratBackId = getStrategy(current_Front_Strategy_Id).backId;
-	var stepBackId = reviseStep;//getStep(current_Front_Strategy_Id, reviseStep).back_step_Id;
-	var stepFrontId = getStepFromBackId(stratBackId, stepBackId).frontId;
 	var pro_url = "";
 	if(edit == 0)
 		pro_url = "processFilter.do?strategy=" + stratBackId + "&insert=" +insert;
@@ -116,20 +119,24 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	advanced.attr("style", "");
 	$(".filter.params", quesForm).append(advanced);
 	
-	if(edit == 0)
-		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;" + (parseInt(stepFrontId)+1) + ": " + quesTitle + "</span></br>");
-	else
-		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Revise&nbsp;Step&nbsp;" + (stepFrontId) + ": " + quesTitle + "</span></br>");
 	if(edit == 0){
-		$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (stepFrontId) + "</span><div id='operations'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'>&nbsp;" + (stepFrontId) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (parseInt(stepFrontId)+1) + "</td><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>UNION</b>&nbsp;" + (parseInt(stepFrontId)+1) + "</td><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (stepFrontId) + "&nbsp;<b>MINUS</b>&nbsp;" + (parseInt(stepFrontId)+1) + "</td></tr></table></div></div>");
+		if(insert == ""){
+			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;" + (parseInt(stp.frontId)+1) + ": " + quesTitle + "</span></br>");		
+		}else{
+			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Insert&nbsp;Step&nbsp;Between&nbsp;" + (parseInt(stp.frontId)-1) + "&nbsp;And&nbsp;" + (stp.frontId) + ": " + quesTitle + "</span></br>");		
+		}
+	}else{
+		$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Revise&nbsp;Step&nbsp;" + (stp.frontId) + ": " + quesTitle + "</span></br>");
+	}
+	if(edit == 0){
+		if(insert == ""){
+			$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (stp.frontId) + "</span><div id='operations'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'>&nbsp;" + (stp.frontId) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (parseInt(stp.frontId)+1) + "</td><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (stp.frontId) + "&nbsp;<b>UNION</b>&nbsp;" + (parseInt(stp.frontId)+1) + "</td><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (stp.frontId) + "&nbsp;<b>MINUS</b>&nbsp;" + (parseInt(stp.frontId)+1) + "</td></tr></table></div></div>");
+		}else{
+			$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (parseInt(stp.frontId)-1) + "</span><div id='operations'><table><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td valign='middle'>&nbsp;" + (parseInt(stp.frontId)-1) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (stp.frontId) + "</td><td class='opcheck'><input type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (parseInt(stp.frontId)-1) + "&nbsp;<b>UNION</b>&nbsp;" + (stp.frontId) + "</td><td class='opcheck'><input type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (parseInt(stp.frontId)-1) + "&nbsp;<b>MINUS</b>&nbsp;" + (stp.frontId) + "</td></tr></table></div></div>");
+		}
 	} else {
-		if(stepFrontId != 0){
-			if(stepFrontId != 1)
-				var previous_step_id = $("#step_"+(stepFrontId)+"_sub a").attr("id");
-			else
-				var previous_step_id = $("#step_"+(stepFrontId)+" a").attr("id");						
-	//		lastStepId = previous_step_id.substring(7);
-			$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (parseInt(stepFrontId)-1) + "</span><div id='operations'><table><tr><td class='opcheck'><input id='INTERSECT' type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td>&nbsp;" + (parseInt(stepFrontId)-1) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (stepFrontId) + "</td><td class='opcheck'><input id='UNION' type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (parseInt(stepFrontId)-1) + "&nbsp;<b>UNION</b>&nbsp;" + (stepFrontId) + "</td><td class='opcheck'><input id='MINUS' type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (parseInt(stepFrontId)-1) + "&nbsp;<b>MINUS</b>&nbsp;" + (stepFrontId) + "</td></tr></table></div></div>");
+		if(stp.frontId != 1){
+			$(".filter.params", quesForm).after("<div class='filter operators'><span class='form_subtitle'>Combine with Step " + (parseInt(stp.frontId)-1) + "</span><div id='operations'><table><tr><td class='opcheck'><input id='INTERSECT' type='radio' name='booleanExpression' value='AND' /></td><td class='operation INTERSECT'></td><td>&nbsp;" + (parseInt(stp.frontId)-1) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (stp.frontId) + "</td><td class='opcheck'><input id='UNION' type='radio' name='booleanExpression' value='OR'></td><td class='operation UNION'></td><td>&nbsp;" + (parseInt(stp.frontId)-1) + "&nbsp;<b>UNION</b>&nbsp;" + (stp.frontId) + "</td><td class='opcheck'><input id='MINUS' type='radio' name='booleanExpression' value='NOT'></td><td class='operation MINUS'></td><td>&nbsp;" + (parseInt(stp.frontId)-1) + "&nbsp;<b>MINUS</b>&nbsp;" + (stp.frontId) + "</td></tr></table></div></div>");
 		}else{
 			$(".filter.params", quesForm).after("<input type='hidden' name='booleanExpression' value='AND' />");
 		}
@@ -209,6 +216,9 @@ function getQueryForm(url,hideOp){
 		$.ajax({
 			url: url,
 			dataType:"html",
+			beforeSend: function(){
+				showLoading("query_form");
+			},
 			success: function(data){
 				formatFilterForm(data,0,isInsert,false,hideOp);
 			},
