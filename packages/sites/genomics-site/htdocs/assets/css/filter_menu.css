@@ -76,7 +76,7 @@
 }
 
 #query_selection .top_nav li a:link, #query_selection .top_nav li a:visited{
-	color:#414141;
+	color:#000000; /*414141;*/
 }
 
 #query_selection .top_nav li a:hover{
