@@ -256,6 +256,7 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 		success: function(data){
 			//filter = document.createElement('div');
 			$("div#strategy_results").append(data);
+			$("#query_form select#selected_strategy option[value='" + getStrategy(strat_id).backId + "']").remove();
 			if(isAdd)
 				$("#query_form h1#query_form_title").html("Add&nbsp;Step");
 			else
