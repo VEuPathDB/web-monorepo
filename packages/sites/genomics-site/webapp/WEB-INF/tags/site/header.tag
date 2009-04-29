@@ -277,7 +277,7 @@ behavior: url(/assets/css/csshover.htc);
 <!--[if lt IE 7]>
 <script type="text/javascript" src="/assets/js/pngfix.js"></script>
 <c:if test="${refer == 'customSummary'}">
-<script>
+<script type="text/javascript">
         $(document).ready(function(){
 		$("#Strategies").prepend("<div style='height:124px;'>&nbsp;</div>");
 	});

@@ -80,15 +80,17 @@ function displayModel(strat){
 function createSteps(strat,div_strat){
 	stepdivs = new Array();
 	leftOffset = 12;
+	var zIndex = 80;
 	for(var ind=0; ind < strat.Steps.length; ind++){  //cStp in strat.Steps){
 		//cStp = getStep(strat.frontId, ind+1);
 		cStp = strat.getStep(ind+1,true);
 		jsonStep = strat.JSON.steps[cStp.frontId];
 		if(cStp.isboolean){
-			booleanStep(cStp, jsonStep, strat.frontId);
+			booleanStep(cStp, jsonStep, strat.frontId, zIndex);
 		}else{
-			singleStep(cStp, jsonStep,strat.frontId);
+			singleStep(cStp, jsonStep,strat.frontId, zIndex);
 		}
+		zIndex--; // DO NOT DELETE, needed for correct display in IE7.
 	}
 	for(var id in stepdivs){
 		$(div_strat).append(stepdivs[id]);
@@ -96,7 +98,7 @@ function createSteps(strat,div_strat){
 }
 
 //Creates the boolean Step and the operand step displayed above it
-function booleanStep(modelstep, jsonstep, sid){
+function booleanStep(modelstep, jsonstep, sid, zIndex){
 	// Create the boolean venn diagram box
 	var filterImg = "";
 	if(jsonstep.filtered)
@@ -122,8 +124,8 @@ function booleanStep(modelstep, jsonstep, sid){
 			}
 		}
 	boolDiv = document.createElement('div');
-	$(boolDiv).attr("id","step_" + modelstep.frontId).addClass(booleanClasses + jsonstep.operation).html(boolinner).css({left: offset(modelstep) + "px"});
-	
+	$(boolDiv).attr("id","step_" + modelstep.frontId).addClass(booleanClasses + jsonstep.operation).html(boolinner).css({left: offset(modelstep) + "px", 'z-index' : zIndex});
+	zIndex++; // DO NOT DELETE this or previous line, needed for correct display in IE7.
 	stepNumber = document.createElement('span');
 	$(stepNumber).addClass('stepNumber').css({ left: (leftOffset + 30) + "px"}).text("Step " + modelstep.frontId);
 	
@@ -156,7 +158,8 @@ function booleanStep(modelstep, jsonstep, sid){
 		"			<li><img class='downarrow' src='/assets/images/arrow_chain_down2.png' alt='equals'></li>"+
 		"		</ul>";	
 	childDiv = document.createElement('div');
-	$(childDiv).attr("id","step_" + modelstep.frontId + "_sub").addClass(operandClasses).html(childinner).css({left: leftOffset + "px"});
+	$(childDiv).attr("id","step_" + modelstep.frontId + "_sub").addClass(operandClasses).html(childinner).css({left: leftOffset + "px", 'z-index' : zIndex});
+	zIndex--; // DO NOT DELETE this or previous line, needed for correct display in IE7.
 	$(".crumb_details", childDiv).replaceWith(createDetails(modelstep, childStp, sid));
 	
 	// Create the background div for a collapsed step if step is expanded
@@ -181,7 +184,7 @@ function booleanStep(modelstep, jsonstep, sid){
 }
 
 //Creates all steps that are on the bottom line only ie. this first step and transform steps
-function singleStep(modelstep, jsonstep, sid){
+function singleStep(modelstep, jsonstep, sid, zIndex){
 	uname = "";
 	fullName = "";
 	if(jsonstep.name == jsonstep.customName){
@@ -223,6 +226,7 @@ function singleStep(modelstep, jsonstep, sid){
 		$(singleDiv).addClass(firstClasses).css({ left: leftOffset + "px" });
 		$(stepNumber).css({ left: "44px"});
 	}
+	$(singleDiv).css({'z-index' : zIndex}); // DO NOT DELETE, needed for correct display in IE7.
 	$(".crumb_details", singleDiv).replaceWith(createDetails(modelstep,jsonstep, sid));
 	stepdivs.push(singleDiv);
 	stepdivs.push(stepNumber);
@@ -438,6 +442,7 @@ var rename = "<a  href='javascript:void(0)' style='title='Click to rename.'  onc
 	}else{
 		$(div_sn).html(name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 
 	}
+	$(div_sn).css({'z-index' : 90}); // DO NOT DELETE, needed for IE7
 	return div_sn;
 }
 
