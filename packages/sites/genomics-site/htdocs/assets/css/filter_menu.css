@@ -69,7 +69,7 @@
 #query_selection .top_nav li {
 	position:relative;
 	width:11em;
-	text-align:center;
+	text-align:left;
 	z-index:50;
 	padding-right: 13px;
         white-space: nowrap;
