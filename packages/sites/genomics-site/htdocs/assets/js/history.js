@@ -178,6 +178,12 @@ function enableRename(stratId, name, fromHist) {
 		stratName.hide();
 		append.hide();
 		$("#rename_" + strat.frontId).show();
+		// Hide control for enabling the rename form
+		$("#rename_" + strat.frontId + "_0").hide();
+		// Show controls for active rename form
+		$("#rename_" + strat.frontId + "_1").show();
+		$("#rename_" + strat.frontId + "_sep").show();
+		$("#rename_" + strat.frontId + "_2").show();
 	}
 }
 
@@ -204,12 +210,15 @@ function disableRename(stratId, fromHist) {
 		var stratName = $("#diagram_" + strat.frontId + " #strategy_name > span").eq(0);
 		var append = $("#diagram_" + strat.frontId + " .append");
 		var nameDiv = $("#rename_" + strat.frontId + " > .name");
-		var onblur = nameDiv.attr("onblur");
-		nameDiv.removeAttr("onblur");
 		$("#rename_" + strat.frontId).hide();
-		//nameDiv.attr("onblur",onblur);
 		stratName.show();
 		append.show();
+		// Hide controls for active rename form
+		$("#rename_" + strat.frontId + "_1").hide();
+		$("#rename_" + strat.frontId + "_sep").hide();
+		$("#rename_" + strat.frontId + "_2").hide();
+		// Show control for enabling the rename form
+		$("#rename_" + strat.frontId + "_0").show();
 	}
 }
 

@@ -421,7 +421,7 @@ function createStrategyName(strat){
 		"</div>";
 	}
 
-var rename = "<a  href='javascript:void(0)' style='title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a>";
+var rename = "<a id='rename_" + strat.frontId + "_0' href='javascript:void(0)' title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a><a id='rename_" + strat.frontId + "_1' href='javascript:void(0)' style='display : none' title='Click to rename.' onclick=\"$('rename_" + strat.frontId + "').submit();\"><b>RENAME</b></a><span id='rename_" + strat.frontId + "_sep' style='display : none'>&nbsp;|&nbsp;</span><a id='rename_" + strat.frontId + "_2' href='javascript:void(0)' style='display : none' title='Click to rename.'  onclick=\"disableRename('" + id + "')\"><b>CANCEL</b></a>";
 
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
@@ -429,7 +429,7 @@ var rename = "<a  href='javascript:void(0)' style='title='Click to rename.'  onc
 		$(div_sn).html("<span onclick=\"enableRename('" + id + "', '" + name + "')\" title='Name of this strategy. Click to RENAME. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
         "<form id='rename_" + strat.frontId + "' style='display: none;' action=\"javascript:renameStrategy('" + id  + "', true, false)\">" +
         "<input type='hidden' value='" + id + "' name='strategy'/>" +
-        "<input id='name' onblur='this.form.submit();' type='text' value='" + name + "' size='50' maxlength='2000' name='name'/>" +
+        "<input id='name' type='text' value='" + name + "' size='50' maxlength='2000' name='name'/>" +
         "</form>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" + 
