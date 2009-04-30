@@ -133,15 +133,15 @@
 		top: 129px;
 	}
 	
-	*html .menu_lefttop_drop{
+	.menu_lefttop_drop{
 		padding-left:8px;
 		padding-right:1px;
 	}
-	*html a.heading {
+	a.heading {
 		margin-top: -5px;
 	}
 	
-	*html #info {
+	#info {
 	   width: 209px;
 	   min-height: 240px;
 	   height:auto;
@@ -151,33 +151,27 @@
 	   padding-top: 2px;
 	   padding-left: 19px;
 	   z-index: 99;
-	margin-top: -3px;
+	   margin-top: -3px;
 	}
 	
-	*html #infobottom{
+	#infobottom{
 		width:209px;
 		margin:0px -3px 0px;
 	}
 	
-	*html table tr td{
+	table tr td{
 		vertical-align: top;
 	}
 	
-	*html #contentcolumn, *html #contentcolumn{
+	*html #contentcolumn {
 		width:100%
 	}
 	
-	*html .rightarrow2 {
-		left: .5em;
-		top: -3.4em;
+	#menu > ul > li > ul {
+		left:0;
 	}
-	
-	*html .crumb_details {
-		width: 500px;
-		z-index: 999;
-	}
-	
-	*html .operation {
+
+	.operation {
 		z-index: -1;
 	}
 	
@@ -293,6 +287,19 @@ behavior: url(/assets/css/csshover.htc);
 
   #query_selection .top_nav li:hover {
 	background-color: #DDDDDD;
+  }
+
+	
+  .rightarrow2 {
+	left: .5em;
+	top: -3.4em;
+  }
+
+	
+  .crumb_details {
+	border-width: 2px;
+	width: 500px;
+	z-index: 999;
   }
 
   .crumb_details div.crumb_menu {
