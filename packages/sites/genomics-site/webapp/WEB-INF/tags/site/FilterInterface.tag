@@ -60,14 +60,16 @@
 <ul class="top_nav">
 <c:set var="qByCat" value="${catMap[recordClass]}" />
 <c:forEach items="${qByCat}" var="cat">
-	<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass'}">
+	<c:if test="${fn:length(qByCat) > 1}">
 	<li><a class="category" href="javascript:void(0)">${cat.key}</a>
 	<ul>
 	</c:if>
 	<c:forEach items="${cat.value}" var="q">
-		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}')">${q.displayName}</a></li>
+	<c:if test="${ !fn:contains(recordClass, 'Isolate') || !fn:contains(q.displayName, 'RFLP')}">
+		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}')">${q.displayName}</a></li>			
+	</c:if>
 	</c:forEach>
-	<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass'}">
+	<c:if test="${fn:length(qByCat) > 1}">
 	</li>
 	</ul>
 	</c:if>
