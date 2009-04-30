@@ -1,4 +1,9 @@
-/*  Stylesheet for styles that are the same across all sites */
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Stylesheet for styles that are the same across all sites 
+     Definitions here get overriden by entries in (project).css
+     (after the order set up in header.tag)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 div.htmltooltip{
   background-color:#FFFFC3;

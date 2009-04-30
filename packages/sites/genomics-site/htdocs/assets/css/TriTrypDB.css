@@ -518,6 +518,9 @@ div#menu ul ul ul li:hover ul {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.menu_lefttop_drop {
+   border-color: #9E5933;  /* color as in contentcolumn border */
+}
 
 #menu_lefttop a.heading {
 	height: 24px;
