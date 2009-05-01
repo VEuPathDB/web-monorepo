@@ -22,7 +22,7 @@ function ErrorHandler(evt, data, strategy, qform){
 				}
 			}
 			$("form",qform).prepend(table);
-			$(qform).parent().show();
+			$(qform).show();
 		}else if(type == "out-of-sync"){ //Checksum sent did not match the back-end checksum
 			if(data.state.length == 0)
 				alert(SessionTimeOutMessage);
