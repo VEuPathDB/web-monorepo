@@ -1,5 +1,5 @@
 var OOSMessage = "Sorry, we had an error.\nPlease redo your last action.";
-
+var SessionTimeOutMessage = "Your session may have timed out and all of your data has been lost.  By registering and logging in you can prevent this from happening in the future.";
 function ErrorHandler(evt, data, strategy, qform){
 	var type = null;
 	if(data.type == "success"){
@@ -24,7 +24,10 @@ function ErrorHandler(evt, data, strategy, qform){
 			$("form",qform).prepend(table);
 			$(qform).parent().show();
 		}else if(type == "out-of-sync"){ //Checksum sent did not match the back-end checksum
-			alert(OOSMessage);
+			if(data.state.length == 0)
+				alert(SessionTimeOutMessage);
+			else
+				alert(OOSMessage);
 			removeStrategyDivs(strategy.backId);
 			f_strategyId = updateStrategies(data, evt, strategy);
 			removeLoading(strategy.frontId);
