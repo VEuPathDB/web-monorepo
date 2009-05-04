@@ -84,8 +84,7 @@
         <td><font size="-1" face="Arial,Helvetica"><b>${displayName}</b></font>  <i>none</i></td>
       </c:when>
       <c:otherwise>
-        <td><!-- /td -->
-        <!-- td -->
+        <td>
         <c:set var="showOnClick" value=""/>
         <c:if test="${imageId != null}">
             <c:set var="showOnClick" value="updateImage('${imageId}', '${imageSource}')"/>
@@ -94,7 +93,7 @@
             <c:set var="showOnClick" value="updateImageMapDiv('${imageMapDivId}', '${imageMapSource}')"/>
         </c:if>
         <c:if test="${showOnClick != ''}">
-            <c:set var="showOnClick" value="${showOnClick}&&"/>
+            <c:set var="showOnClick" value="${showOnClick}&amp;&amp;"/>
         </c:if>
 
         <c:if test="${ anchorName == null}">
@@ -107,7 +106,7 @@
         <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
            <div id="toggle${name}" class="toggle-handle" name="${name}" align="left">
              <b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
-             <a href="javascript:${showOnClick}toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
+             <a href="javascript:${showOnClick}toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
            </div>
         </c:when>
 
@@ -115,18 +114,18 @@
         <c:otherwise>
 
            <div id="showToggle${name}" class="toggle" name="${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
-             <a href="javascript:${showOnClick}showLayer('${name}')&&showLayer('hideToggle${name}')&&hideLayer('showToggle${name}')&&storeIntelligentCookie('show${name}',1)" title="Show ${displayName}" onMouseOver="status='Show ${displayName}';return true" onMouseOut="status='';return true">Show</a>
+             <a href="javascript:${showOnClick}showLayer('${name}')&amp;&amp;showLayer('hideToggle${name}')&amp;&amp;hideLayer('showToggle${name}')&amp;&amp;storeIntelligentCookie('show${name}',1)" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
            </div>
 
            <div id="hideToggle${name}" class="toggle" name="${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
-              <a href="javascript:hideLayer('${name}')&&showLayer('showToggle${name}')&&hideLayer('hideToggle${name}')&&storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onMouseOver="status='Hide ${displayName}';return true" onMouseOut="status='';return true">Hide</a>
+              <a href="javascript:hideLayer('${name}')&amp;&amp;showLayer('showToggle${name}')&amp;&amp;hideLayer('hideToggle${name}')&amp;&amp;storeIntelligentCookie('show${name}',0);" title="Hide ${displayName}" onmouseover="status='Hide ${displayName}';return true" onmouseout="status='';return true">Hide</a>
             </div>
         </c:otherwise>
         </c:choose>
 
       </c:otherwise>
     </c:choose>
-
+    </td>
     <c:if test='${attribution != null && attribution != ""}'>
       <td align="right">
          <font size="-1" face="Arial,Helvetica">
@@ -150,9 +149,9 @@
      <c:choose>
       <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
         <c:if test="${isOpen}"> 
-           <SCRIPT TYPE="text/javascript" LANG="JavaScript">
+           <script tupe="text/javascript">
               toggleLayer('${name}', 'toggle${name}');
-            </SCRIPT>
+            </script>
         </c:if>
      </c:when> 
 
@@ -160,40 +159,40 @@
      <c:otherwise>
         <c:choose>
           <c:when test="${isOpen}">
-          <SCRIPT TYPE="text/javascript" LANG="JavaScript">
+          <script type="text/javascript">
           <!-- //
             showLayer("${name}");
             showLayer("hideToggle${name}");
             hideLayer("showToggle${name}");
           // -->
-          </SCRIPT>
+          </script>
          </c:when>
          <c:otherwise>
-          <SCRIPT TYPE="text/javascript" LANG="JavaScript">
+          <script type="text/javascript">
           <!-- //
             hideLayer("${name}");
             hideLayer("hideToggle${name}");
             showLayer("showToggle${name}");
           // -->
-          </SCRIPT>
+          </script>
          </c:otherwise>
         </c:choose>
      </c:otherwise>
      </c:choose>
 
         <c:if test="${imageId != null && isOpen}">
-          <SCRIPT TYPE="text/javascript" LANG="JavaScript">
+          <script type="text/javascript">
             <!-- //
               updateImage('${imageId}', '${imageSource}')
             // -->
-          </SCRIPT>
+          </script>
         </c:if>
 
         <c:if test="${imageMapDivId != null && isOpen}">
-          <SCRIPT TYPE="text/javascript" LANG="JavaScript">
+          <script type="text/javascript">
             <!-- //
               updateImageMapDiv('${imageMapDivId}', '${imageMapSource}')
             // -->
-          </SCRIPT>
+          </script>
         </c:if>
 </c:if>
