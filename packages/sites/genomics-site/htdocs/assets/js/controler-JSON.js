@@ -525,7 +525,7 @@ function saveStrategy(stratId, checkName, fromHist){
 	});
 }
 
-function copyStrategy(stratId){
+function copyStrategy(stratId, fromHist){
         var ss = getStrategyFromBackId(stratId);
         var result = confirm("Do you want to make a copy of strategy '" + ss.name + "'?");
         if (result == false) return;
@@ -537,7 +537,11 @@ function copyStrategy(stratId){
                 success: function(data){
                                         //data = eval("(" + data + ")");
                                         if(ErrorHandler("Copytrategy", data, ss, null)){
-                                                        updateStrategies(data);
+                                            updateStrategies(data);
+                                            if (fromHist) {
+                                                update_hist = true;
+                                                updateHistory();
+                                            }
                                         }
                 },
                 error: function(data, msg, e){

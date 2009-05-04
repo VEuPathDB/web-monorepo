@@ -81,7 +81,7 @@
          <c:when test="${!strategy.isSaved}">
          
          <%-- copy the strategy --%>
-         <input type='button' value='Copy' onclick="copyStrategy('${strategyId}');" />
+         <input type='button' value='Copy' onclick="copyStrategy('${strategyId}', true);" />
 
          <c:choose>
            <c:when test="${wdkUser.guest}">
