@@ -150,7 +150,7 @@ img {
 	text-align: left;
 	position: absolute;
 	width: 13em;
-	left: -999em;
+	display: none;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	font-weight: normal;
@@ -168,22 +168,22 @@ img {
 }
 
 #nav_top li:hover ul ul, #nav_top li:hover ul ul ul, #nav_top li.sfhover ul ul, #nav_top li.sfHover ul ul ul {
-	left: -999em;
+	display: none;
 	z-index: 520;
 }
 
 #nav_top li:hover ul, #nav_top li li:hover ul, #nav_top li li li:hover ul, #nav_top li.sfhover ul, #nav_top li li.sfhover ul, #nav_top li li li.sfHover ul {
-	left: auto;
+	display: block;
 	z-index: 520;
 }
 
 #nav_top li li ul a:hover + ul{
-	left:auto;
+	display: block;
 	z-index: 520;
 }
 
 #nav_top li:hover ul {
-	left: auto;
+	display: block;
 	z-index: 520;
 }
 
