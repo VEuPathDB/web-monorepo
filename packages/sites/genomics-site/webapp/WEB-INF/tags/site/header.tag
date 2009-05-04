@@ -289,10 +289,18 @@ behavior: url(/assets/css/csshover.htc);
 	background-color: #DDDDDD;
   }
 
+  .rightarrow1 {
+	left: 7.3em;
+  }
 	
   .rightarrow2 {
 	left: .5em;
-	top: -3.4em;
+	top: -3.3em;
+  }
+	
+  .rightarrow3 {
+	left: 5px;
+	top: -3.3em;
   }
 
 	

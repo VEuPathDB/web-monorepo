@@ -71,7 +71,9 @@
 		<br>&copy;2009 The EuPath Project Team
 </div>
 
-	<a href="http://www.eupathdb.org"><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage" width="144" height="25" align="right" border='0' /></a>
+<div style="position:absolute;top:0px;right:0px;padding:9px;">
+	<a href="http://www.eupathdb.org"><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a>
+</div>
 	<span style="font-size:1.4em;position:absolute;top:15px;left:350px">Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments</span>
 
 

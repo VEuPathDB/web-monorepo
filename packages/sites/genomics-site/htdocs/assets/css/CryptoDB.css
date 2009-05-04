@@ -740,10 +740,6 @@ a.heading:hover + a.detail_link, .detail_link:hover {
    clear: both;
 /*    z-index: -1;   links in footer do not work with this  */
 }
-	#footer img{
-   margin-left: 24px;
-}
-	
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TABLES 
