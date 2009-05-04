@@ -971,7 +971,7 @@ where offset < $rend and (offset+length) > $base_start
     </sql>
   </sqlQuery>
   
-
+<!-- 
   <sqlQuery name="clusteralignment:EstCluster">
      <sql>
 <![CDATA[
@@ -1000,7 +1000,7 @@ ORDER BY
 ]]>
     </sql>
   </sqlQuery>
-  
+ -->
   
   <sqlQuery name="Microsatellite:sts">
      <sql>
@@ -3009,7 +3009,7 @@ WHERE  est.source_id = '$name'
     </sql>
   </sqlQuery>
   
-  
+<!--  
   <sqlQuery name="clusteralignment:EstCluster:bulksubfeatures">
      <sql>
 <![CDATA[
@@ -3040,7 +3040,7 @@ ORDER BY
 ]]>
     </sql>
   </sqlQuery>
-  
+  -->
   
   <sqlQuery name="scaffold:TIGR:bulksubfeatures">
      <sql>
