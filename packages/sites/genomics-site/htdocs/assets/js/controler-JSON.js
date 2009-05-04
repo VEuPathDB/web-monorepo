@@ -516,6 +516,10 @@ function saveStrategy(stratId, checkName, fromHist){
 					//data = eval("(" + data + ")");
 					if(ErrorHandler("SaveStrategy", data, ss, null)){
 							updateStrategies(data);
+							if (fromHist) {
+								update_hist = true;
+								updateHistory();
+							}
 					}
 		},
 		error: function(data, msg, e){
@@ -570,6 +574,10 @@ function renameStrategy(stratId, checkName, fromHist){
 		success: function(data){;
 					if(ErrorHandler("RenameStrategy", data, strat, renameForm)){
 							updateStrategies(data);
+							if (fromHist) {
+								update_hist = true;
+								updateHistory();
+							}
 					}
 		},
 		error: function(data, msg, e){
