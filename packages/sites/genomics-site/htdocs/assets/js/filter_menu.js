@@ -33,12 +33,13 @@ function closeModal(){
 }
 
 function validateSaveForm(form){
-	if (form.name.value == ""){
-		var message = "<h1>You must specify a name for saving!</h1><input type='button' value='OK' onclick='$(\"div#diagram_" + form.strategy.value + "\").unblock()'/>";
-		$("div#diagram_" + form.strategy.value).block({message: message});
-		return false;
-	}
-	return true;
+        if (form.name.value == ""){
+                var message = "<h1>You must specify a name for saving!</h1><input type='button' value='OK' onclick='$(\"div#diagram_" + form.strategy.
+value + "\").unblock()'/>";
+                $("div#diagram_" + form.strategy.value).block({message: message});
+                return false;
+        }
+        return true;
 }
 
 function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){

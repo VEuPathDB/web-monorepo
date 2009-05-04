@@ -145,9 +145,11 @@
     </c:if>
     <c:if test="${!wdkUser.guest}">
     <c:set var="saveHeader" value="Save As"/>
+<%--
     <c:if test="${strategy.isSaved}">
       <c:set var="saveHeader" value="Copy As"/>
     </c:if>
+--%>
     <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
       <span class='dragHandle'>
         <div class="modal_name">

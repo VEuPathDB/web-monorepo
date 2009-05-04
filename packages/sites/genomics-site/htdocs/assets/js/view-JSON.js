@@ -398,7 +398,7 @@ function createStrategyName(strat){
 
 	var save = "";
 	var sTitle = "SAVE AS";
-	if(json.saved) sTitle = "COPY AS";
+	// if(json.saved) sTitle = "COPY AS";
 	if (guestUser == 'true') {
 		save = "<a title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' class='save_strat_link' href='login.jsp?refererUrl=login.jsp&originUrl=" + window.location + "'><b>" + sTitle + "</b></a>";
 	}
@@ -420,6 +420,10 @@ function createStrategyName(strat){
 		"</form>"+
 		"</div>";
 	}
+     
+        var copy = "<a title='Create a copy of the strategy.' class='copy_strat_link'" +
+                   " href='javascript:void(0)' onclick=\"copyStrategy('" + id + "')\">" +
+                   "<b>COPY</b></a>";
 
 var rename = "<a id='rename_" + strat.frontId + "_0' href='javascript:void(0)' title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a><a id='rename_" + strat.frontId + "_1' href='javascript:void(0)' style='display : none' title='Click to rename.' onclick=\"$('rename_" + strat.frontId + "').submit();\"><b>RENAME</b></a><span id='rename_" + strat.frontId + "_sep' style='display : none'>&nbsp;|&nbsp;</span><a id='rename_" + strat.frontId + "_2' href='javascript:void(0)' style='display : none' title='Click to rename.'  onclick=\"disableRename('" + id + "')\"><b>CANCEL</b></a>";
 
@@ -434,7 +438,9 @@ var rename = "<a id='rename_" + strat.frontId + "_0' href='javascript:void(0)' t
 	"<span class='strategy_small_text'>" +
 	"<br/>" + 
 	rename +
-	"<br/>" + 
+	"<br/>" +
+        copy + 
+        "<br/>" +
 	save +
 	"<br/>"+
 	share +

@@ -525,6 +525,28 @@ function saveStrategy(stratId, checkName, fromHist){
 	});
 }
 
+function copyStrategy(stratId){
+        var ss = getStrategyFromBackId(stratId);
+        var result = confirm("Do you want to make a copy of strategy '" + ss.name + "'?");
+        if (result == false) return;
+        var url="copyStrategy.do?strategy=" + stratId + "&strategy_checksum="+ss.checksum;
+        $.ajax({        
+                url: url,
+                dataType: "json", 
+                data:"state=" + p_state,
+                success: function(data){
+                                        //data = eval("(" + data + ")");
+                                        if(ErrorHandler("Copytrategy", data, ss, null)){
+                                                        updateStrategies(data);
+                                        }
+                },
+                error: function(data, msg, e){
+                        alert("ERROR \n "+ msg + "\n" + e
+                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                }
+        });     
+}
+
 function renameStrategy(stratId, checkName, fromHist){
 	var strat = getStrategyFromBackId(stratId);
 	var renameForm = $("#rename_" + strat.frontId);

@@ -79,6 +79,10 @@
       <td nowrap>
          <c:choose>
          <c:when test="${!strategy.isSaved}">
+         
+         <%-- copy the strategy --%>
+         <input type='button' value='Copy' onclick="copyStrategy('${strategyId}');" />
+
          <c:choose>
            <c:when test="${wdkUser.guest}">
              <input title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' type='button' value='Save As' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
