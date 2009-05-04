@@ -82,10 +82,10 @@
   <c:set var="typeC" value="${typeC+1}"/>
   <c:choose>
     <c:when test="${typeC == 1}">
-      <div class="panel_${recTabName} history_panel">
+      <div id="unsaved-strategies" class="panel_${recTabName} history_panel">
     </c:when>
     <c:otherwise>
-      <div class="panel_${recTabName} history_panel">
+      <div id="saved-strategies" class="panel_${recTabName} history_panel">
     </c:otherwise> 
   </c:choose>
   <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Unsaved" />
