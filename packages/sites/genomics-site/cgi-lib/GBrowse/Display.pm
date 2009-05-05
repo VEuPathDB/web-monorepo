@@ -43,20 +43,11 @@ sub sageTagLabel {
 #  Methods For Color
 #--------------------------------------------------------------------------------
 
-sub snpColor {
-    my $f = shift;
-             my ($isCoding) = $f->get_tag_values("IsCoding"); 
-             my ($hasIsolate) = $f->get_tag_values("HasIsolate"); 
-             my $color = 'white';
-             my ($nonSyn) = $f->get_tag_values("NonSyn"); 
-             if ($isCoding eq 'yes') {
-               $color = $nonSyn? 'blue' : 'lightblue'; 
-             }
-             if ($hasIsolate eq '1') {
-               $color = $nonSyn? 'darkred' : 'lightred'; 
-             }
-             return $color; 
-     }
+sub interproDomainRainbow {
+  my $f = shift;
+  $main::seenPfam{$f->feature_id} ||= $main::rainbow[scalar(keys %main::seenPfam) % scalar(@main::rainbow)]; 
+  return $main::seenPfam{$f->feature_id}; 
+}
 
 
 sub snpBgFromIsCodingAndNonSyn {
@@ -68,41 +59,6 @@ sub snpBgFromIsCodingAndNonSyn {
     $color = $nonSyn? 'blue' : 'lightblue'; 
   }
   return $color; 
-}
-
-sub SnpBgFromMatchingReference {
-       my $f = shift;
-       my $var = $f->bulkAttributes();
-       my $ctDiffs = 0;
-       foreach my $s (@$var){
-               $ctDiffs++ unless $s->{MATCHES_REFERENCE};
-       }
-       my $color = 'white';
-       if($ctDiffs >= 4){
-               $color = 'green';
-       }elsif($ctDiffs >= 2){
-               $color = 'lightgreen';
-       }
-       return $color;
-}
-
-sub SnpBgcolorFromAllele {
-      my $f = shift;
-      my ($allele) = $f->get_tag_values('Allele');
-      #print $allele;
-      if($allele eq 'A') {
-      return 'darkgreen';
-      } elsif($allele eq 'T') {
-      return 'lightgreen';
-      } elsif($allele eq 'C') {
-      return 'red';
-      } elsif($allele eq 'G') {
-      return 'darkred';
-      } elsif($allele eq 'N') {
-      return 'orange';
-      } else {
-      return 'yellow';
-      }
 }
 
 sub MassSpecScoreBgColor {
@@ -135,7 +91,8 @@ sub sageTagFgColor {
 sub massSpecBgColorFromExtDbName {
   my $f = shift;
 
-  my %colors = ('Wastling 1-D SDS PAGE Insoluble' => 'mediumslateblue',
+  my %colors = (#ToxoDB
+                'Wastling 1-D SDS PAGE Insoluble' => 'mediumslateblue',
                 'Wastling 1-D SDS PAGE' => 'mediumslateblue',
                 'Wastling 1-D SDS PAGE Soluble' => 'mediumslateblue',
                 'Wastling MudPIT Soluble' => 'black',
@@ -156,6 +113,7 @@ sub massSpecBgColorFromExtDbName {
                 'MS Carruthers 2destinct peptides' => 'plum',
                 'Moreno DTASelect filter sample A' => 'lime',
                 'Moreno DTASelect filter sample G' => 'green',
+                # TriTrypDB
                 'Tcruzi Proteomics-Epimastigote' => 'black',
                 'Tcruzi Proteomics-Amastigote' => 'mediumslateblue',
                 'Tcruzi Proteomics-Trypomastigote' => 'green',
@@ -179,7 +137,21 @@ sub massSpecBgColorFromExtDbName {
                 'Linfantum Proteomics 2DGel 6-11 Amastigote' =>'mediumslateblue',
                 'Linfantum Proteomics PTM-phosphorylation' => 'green',
                 'Linfantum Proteomics 2DGel 6-11 Promastigote' => 'blue',
-                'Lmajor Proteomics 2DGel 6-11 Promastigote' => 'blue'
+                'Lmajor Proteomics 2DGel 6-11 Promastigote' => 'blue',
+                # CryptoDB
+                'Ferrari_Proteomics_LTQ_Oocyst_walls' => 'sandybrown',
+                'Ferrari_Proteomics_LTQ_Sporozoites_merged' => 'tan',
+                'Ferrari_Proteomics_LTQ_intact_oocysts_merged' => 'khaki',
+                'Fiser_Proteomics_14Aug2006_1D_gel' => 'peru',
+                'Fiser_Proteomics_16May2006_1D_gel' => 'rosybrown',
+                'Fiser_Proteomics_24Jun2006_1D_gel' => 'peachpuff',
+                'Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction' => 'maroon',
+                'Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction' => 'darksalmon',
+                'Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions' => 'lightseagreen',
+                'Wastling MassSpec 1D Gel LC-MS/MS' => 'mediumslateblue',
+                'Wastling MassSpec 2D Gel LC-MS/MS' => 'green',
+                'Wastling MassSpec MudPit Insoluble' => 'brown',
+                'Wastling MassSpec MudPit Soluble' => 'black',
                );
 
   $f = $f->parent if (! $f->get_tag_values('ExtDbName'));
@@ -228,6 +200,12 @@ sub simpleColorFromStrand {
   $f->strand == +1 ? $first : $second;
 }
 
+sub simpleColorFromSoTerm {
+  my ($f, $first, $second) = @_;
+  my ($soterm) = $f->get_tag_values('SOTerm');
+  $soterm eq 'protein_coding' ? $first : $second;
+}
+
 sub chipColor { 
   my $f   = shift;
   my ($a) = $f->get_tag_values('Antibody');
@@ -242,16 +220,6 @@ sub chipColor {
   return '#F08080' if($t =~ /FR235222/ );
 
 } 
-
-sub ChromosomeFgcolor {
-    my $f = shift;
-    my ($chr) =$f->get_tag_values("Chromosome");
-    if ($chr) { 
-        my ($col) = $f->get_tag_values("ChrColor"); 
-        return $col;
-    }
-}
-
 
 sub gapFgcolor { 
   my $f = shift; 
@@ -292,6 +260,7 @@ sub bacsBgcolor {
 #--------------------------------------------------------------------------------
 #  Methods For Height
 #--------------------------------------------------------------------------------
+
 sub snpHeight {
   my $f = shift;
   my ($rend) = $f->get_tag_values("rend"); 
