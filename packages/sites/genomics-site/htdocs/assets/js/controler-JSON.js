@@ -237,17 +237,19 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 		},
 		success: function(data){
 			step.isSelected = true;
-			$("#Strategies div").removeClass("selected").removeClass("selectedarrow").removeClass("selectedtransform");
-			init_view_strat = strategy.backId
-			if(bool){
-				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "']").addClass("selected");
-				init_view_step = step.back_step_Id + ".v";
-			}else if (step.isTransform){
-				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedtransform");
-				init_view_step = step.back_step_Id;
-			}else{
-				$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedarrow");
-				init_view_step = step.back_step_Id;
+			if(ErrorHandler("Results", data, strategy, $("#diagram_" + strategy.frontId + " step_" + step.frontId + "_sub div.crumb_details div.crumb_menu a.edit_step_link"))){
+				$("#Strategies div").removeClass("selected").removeClass("selectedarrow").removeClass("selectedtransform");
+				init_view_strat = strategy.backId
+				if(bool){
+					$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "']").addClass("selected");
+					init_view_step = step.back_step_Id + ".v";
+				}else if (step.isTransform){
+					$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedtransform");
+					init_view_step = step.back_step_Id;
+				}else{
+					$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedarrow");
+					init_view_step = step.back_step_Id;
+				}
 			}
 			removeLoading(f_strategyId);
 			ResultsToGrid(data);

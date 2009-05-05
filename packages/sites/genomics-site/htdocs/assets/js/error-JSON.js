@@ -2,7 +2,15 @@ var OOSMessage = "Sorry, we had an error.\nPlease redo your last action.";
 var SessionTimeOutMessage = "Your session may have timed out and all of your data has been lost.  By registering and logging in you can prevent this from happening in the future.";
 function ErrorHandler(evt, data, strategy, qform){
 	var type = null;
-	if(data.type == "success"){
+	
+	if(evt == "Results"){
+		if(data.substring(0,1) == "{"){
+			qform.click();
+			return false;
+		}
+		return true;
+			
+	}else if(data.type == "success"){
 		return true;
 	}else{
 		type = data.type;
