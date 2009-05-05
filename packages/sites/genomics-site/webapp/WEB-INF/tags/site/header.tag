@@ -84,104 +84,6 @@
 </c:if>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-<!--[if lt IE 7]>
-	<style type="text/css" media="screen">
-		img, input.img_align_middle {
-			behavior: url(/assets/css/iepngfix.htc);
-		}
-                #Strategies {
-                   height: expression(this.scrollHeight > 299 ? "300px" : "auto");
-		}
-	</style>
-<![endif]-->
-
-<!--[if lt IE 8]>
-<style type="text/css" media="screen">
-	body {
-		behavior: url(/assets/css/csshover.htc);
-		font-size: 100%;
-	}
-	.ts_ie {
-		margin-left:-15px;
-	}
-
-	#menu ul li {
-		float: left; width: 100%;
-	}
-	
-	#menu ul li a {
-		height: 1%;
-	} 
-
-	#menu a, #menu h2 {
-		font: bold 0.7em/1.4em arial, helvetica, sans-serif;
-	}
-
-	.twoColHybLt #sidebar1 { 
-		padding-top: 30px; 
-	}
-	
-	.twoColHybLt #mainContent { 
-		zoom: 1; padding-top: 15px; 
-	}
-	
-	#menu_lefttop {
-		/*width: 220px;*/
-		margin-top: 8px;
-		position: absolute;
-		left: 6px;
-		top: 129px;
-	}
-	
-	.menu_lefttop_drop{
-		padding-left:8px;
-		padding-right:1px;
-	}
-	a.heading {
-		margin-top: -5px;
-	}
-	
-	#info {
-	   width: 209px;
-	   min-height: 240px;
-	   height:auto;
-	   background-image: /assets/images/bubble_backgrnd.png);
-	   background-repeat: repeat-y;
-	   text-align: left;
-	   padding-top: 2px;
-	   padding-left: 19px;
-	   z-index: 99;
-	   margin-top: -3px;
-	}
-	
-	#infobottom{
-		width:209px;
-		margin:0px -3px 0px;
-	}
-	
-	table tr td{
-		vertical-align: top;
-	}
-	
-	*html #contentcolumn {
-		width:100%
-	}
-	
-	#menu > ul > li > ul {
-		left:0;
-	}
-
-	.operation {
-		z-index: -1;
-	}
-	
-	a.redbutton {
-		z-index: -1;
-	}
-		
-</style>
-<![endif]-->
-
 <%------------------ setting title --------------%>
 
 <c:if test="${banner == null}">
@@ -247,28 +149,106 @@
 <link rel="StyleSheet" href="/assets/css/filter_menu.css"        type="text/css"/>
 <link rel="StyleSheet" href="/assets/css/jquery.autocomplete.css" type="text/css"/>
 
-<style type="text/css">
-<!--
-body {
-	background-image: url(/assets/images/${project}/background_s.jpg);
-	background-repeat: repeat-x;
-    }
-body {
-behavior: url(/assets/css/csshover.htc);
-}
-#header {
-	height: 104px;
-	background-image: url(/assets/images/${project}/backgroundtop_s.jpg);
-}
-#header p {
-	font-size: 9px;
-}
--->
-</style>
-
 <site:jscript refer="${refer}"/>
 
+<!--[if lt IE 8]>
+<style>
+   body {
+	behavior: url(/assets/css/csshover.htc);
+   }
+
+   #query_selection {
+	behavior: url("/assets/css/csshover.htc");
+   }
+
+   #query_selection .top_nav li:hover {
+	background-color: #DDDDDD;
+   }
+
+   .rightarrow1 {
+	left: 7.3em;
+   }
+
+   .rightarrow2 {
+	left: 0.5em;
+	top: -3.3em;
+   }
+
+   .rightarrow3 {
+	left: 5px;
+	top: -3.3em;
+   }
+
+   .crumb_details {
+	border-width: 2px;
+	width: 500px;
+	z-index: 999;
+   }
+
+   .crumb_details div.crumb_menu {
+	margin-right: -3px;
+   }
+
+   #Strategies {
+	position: relative;
+   }
+
+   #menu_lefttop div ul {
+	padding: 3px 3px 3px 0;
+   }
+
+   .ts_ie {
+	margin-left:-15px;
+   }
+
+   .twoColHybLt #sidebar1 { 
+	padding-top: 30px; 
+   }
+
+   .twoColHybLt #mainContent { 
+	zoom: 1; padding-top: 15px; 
+   }
+
+   #menu > ul > li > ul {
+	left:0;
+   }
+
+   .operation {
+	z-index: -1;
+   }
+
+   a.redbutton {
+	z-index: -1;
+   }
+</style>
+<![endif]-->
+
 <!--[if lt IE 7]>
+<style>
+   #menu ul li {
+	width: 100%;
+   }
+
+   #menu ul li ul {
+	left: 0;
+   }
+
+   #menu ul li ul li ul {
+	left: 14em;
+   }
+
+   #mysearch {
+	height: 1%;
+   }
+
+   img, input.img_align_middle {
+	behavior: url(/assets/css/iepngfix.htc);
+   }
+
+   #Strategies {
+	height: expression(this.scrollHeight > 299 ? "300px" : "auto");
+   }
+</style>
 <script type="text/javascript" src="/assets/js/pngfix.js"></script>
 <c:if test="${refer == 'customSummary'}">
 <script type="text/javascript">
@@ -277,47 +257,6 @@ behavior: url(/assets/css/csshover.htc);
 	});
 </script>
 </c:if>
-<![endif]-->
-
-<!--[if lt IE 8]>
-<style>
-  #query_selection {
-	behavior: url("/assets/css/csshover.htc");
-  }
-
-  #query_selection .top_nav li:hover {
-	background-color: #DDDDDD;
-  }
-
-  .rightarrow1 {
-	left: 7.3em;
-  }
-	
-  .rightarrow2 {
-	left: .5em;
-	top: -3.3em;
-  }
-	
-  .rightarrow3 {
-	left: 5px;
-	top: -3.3em;
-  }
-
-	
-  .crumb_details {
-	border-width: 2px;
-	width: 500px;
-	z-index: 999;
-  }
-
-  .crumb_details div.crumb_menu {
-	margin-right: -3px;
-  }
- 
-  #Strategies {
-    position: relative;
-  }
-</style>
 <![endif]-->
 
 <c:if test="${param.questionFullName eq 'IsolateQuestions.IsolateByCountry'}">

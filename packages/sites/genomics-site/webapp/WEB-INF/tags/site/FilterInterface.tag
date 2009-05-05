@@ -70,8 +70,8 @@
 	</c:if>
 	</c:forEach>
 	<c:if test="${fn:length(qByCat) > 1}">
-	</li>
 	</ul>
+	</li>
 	</c:if>
 </c:forEach>
 </ul>

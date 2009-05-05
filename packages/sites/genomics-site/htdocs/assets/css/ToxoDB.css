@@ -12,6 +12,8 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	white-space: normal;
+	background-image: url(/assets/images/ToxoDB/background_s.jpg);
+	background-repeat: repeat-x;
 }
 
 a:link, a:visited {
@@ -1096,7 +1098,7 @@ a.redbutton:active span {
 	min-height: 130px;
 	max-height: 300px;
 	overflow-y: auto;
-	border: 2px solid grey;
+	border: 2px solid gray;
 }
 
 #Workspace {
