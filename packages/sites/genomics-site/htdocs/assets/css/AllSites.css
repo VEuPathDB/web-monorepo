@@ -291,3 +291,7 @@ ul#strategy_tabs {
     margin:0;
     padding: 0;
 }
+
+.toggle {display: none;}
+.boggle {margin: 6px 20px 6px 20px; display: none;}
+
