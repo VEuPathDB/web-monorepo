@@ -12,7 +12,10 @@ use GBrowse::Configuration;
 sub tigrAssemblyLink {
   my $f = shift;
   my $name = $f->name;
-  my ($species) =  ($f->get_tag_values("TGISpecies") eq 'TgGI') ?  't_gondii' : 'unk';     
+# my ($species) =  ($f->get_tag_values("TGISpecies") eq 'TgGI') ?  't_gondii' : 'unk';       
+# first, this conditional expression is not ok as it makes the subroutine toxo specific.
+# this has been commented out because, the only track that uses this in toxo has fallen out of use.
+  my ($species) =  $f->get_tag_values("TGISpecies");     
   
   if ($name =~ m/^TC/) {
     "http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=$species&tc=$name";
@@ -58,7 +61,12 @@ sub sageTagLink {
   return $link;
 }
 
-
+sub ArrayElementLink {
+  my $f = shift;
+  my $name = $f->name;
+  my $link = "/a/showRecord.do?name=ArrayElementRecordClasses.ArrayElementRecordClass&primary_key=$name";
+  return $link;
+}
 
 #--------------------------------------------------------------------------------
 #  Methods for Titles (Popups)
@@ -134,7 +142,7 @@ sub synSpanTitle {
 # TODO:  What is 'toxo' doing here??
 sub snpTitleQuick {
   my $f = shift;
-  my $webapp = 'toxo';
+# my $webapp = 'toxo';
   my ($gene) = $f->get_tag_values("Gene"); 
   my ($isCoding) = $f->get_tag_values("IsCoding"); 
   my ($nonSyn) = $f->get_tag_values("NonSyn"); 
@@ -150,7 +158,7 @@ sub snpTitleQuick {
     }
     my $varsString = join('|', @vars);
     my $start = $f->start();
-    return qq{" onmouseover="return escape(pst(this,'$params&$varsString&$start&$gene&$isCoding&$nonSyn&$webapp'))"};
+    return qq{" onmouseover="return escape(pst(this,'$params&$varsString&$start&$gene&$isCoding&$nonSyn'))"};
   } else {
     return $gene? "In gene $gene" : "Intergenic"; 
   }
@@ -158,33 +166,110 @@ sub snpTitleQuick {
 
 sub snpTitle {
   my $f = shift;
+  my %rev = ( A => 'T', T => 'A', C => 'G', G => 'C' );
   my ($isCoding) = $f->get_tag_values("IsCoding"); 
   my ($posInCDS) = $f->get_tag_values("PositionInCDS"); 
+  my ($posInProtein) = $f->get_tag_values("PositionInProtein"); 
   my ($refStrain) = $f->get_tag_values("RefStrain"); 
+  my ($refAA) = $f->get_tag_values("RefAA"); 
+  my ($gene) = $f->get_tag_values("Gene"); 
+  my ($reversed) = $f->get_tag_values("Reversed"); 
   my ($refNA) = $f->get_tag_values("RefNA"); 
+  $refNA = $rev{$refNA} if $reversed;
   my ($nonSyn) = $f->get_tag_values("NonSyn"); 
-  my ($src_id) = $f->get_tag_values("SourceID"); 
-  my $link = qq(<a href=/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$src_id>$src_id</a>);
   my $variants = $f->bulkAttributes();
-  my @data;
-  push @data, [ 'SNP'  => $link ];
-  push @data, [ 'Location:'  => $f->start ];
-  my $class = 'Non-Coding';
+  my ($source_id) = $f->get_tag_values("SourceID"); 
+  my $type = 'Non-Coding';
+  my ($rend) = $f->get_tag_values("rend"); 
+  my ($base_start) = $f->get_tag_values("base_start");
+  my $zoom_level = $rend - $base_start; 
   if ($isCoding) {
-    my $non = $nonSyn? 'non-' : '';
-    $class = "Coding (${non}synonymous)";
-    push @data, [ 'Position in CDS:'  => $posInCDS ];
+     my $non = $nonSyn? 'non-' : '';
+     $type = "Coding (${non}synonymous)";
+     push @data, [ 'Position in CDS:'  => $posInCDS ];
   }
-  push @data, ["$refStrain (reference)"=>"NA=$refNA"];
-  foreach my $variant (@$variants) {
-    my $strain = $variant->{STRAIN};
-    next if ($strain eq $refStrain);
-    my $na = $variant->{ALLELE};
-    push @data, [ "$strain" => "NA=$na" ];
+  if ($zoom_level <= 60000) {
+    my @data;
+    my $link = qq(<a href=/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$source_id>$source_id</a>);
+    push @data, [ 'SNP'  => $link ];
+    push @data, [ 'Location:'  => $f->start ];
+    if ($gene) {
+       push @data, [ 'Gene:'  => $gene ]; 
+    }
+    if ($isCoding) {
+       $refAA = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$refAA"; 
+       push @data, [ 'Position in CDS:'  => $posInCDS ];
+       push @data, [ 'Position in Protein:'  => $posInProtein ];
+    }
+    push @data, [ 'Type:'  => $type ];
+    push @data, ["$refStrain (reference)"=>"NA=$refNA$refAA"];
+    foreach my $variant (@$variants) {
+      my $strain = $variant->{STRAIN};
+      my $na = $variant->{ALLELE};
+      $na = $rev{$na} if $reversed;
+      my $aa = $variant->{PRODUCT};
+      my $info = "NA=$na" . ($isCoding? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$aa" : "");
+      push @data, [ "$strain" => $info ];
+    }
+    return hover( "SNP", \@data) if $refStrain;
+  } else {
+    return $gene? "In gene $gene" : "Non-coding"; 
   }
-  hover( "Genotyped SNP - $class", \@data);
-}
+ }
 
+
+sub snpTitleFromMatchToReference {
+             my $f = shift;
+             my ($isCoding) = $f->get_tag_values("IsCoding");
+             my ($refStrain) = $f->get_tag_values("RefStrain");
+             my ($gene) = $f->get_tag_values("Gene");
+             my ($refNA) = $f->get_tag_values("RefNA");
+             my ($source_id) = $f->get_tag_values("SourceID");
+             my ($rend) = $f->get_tag_values("rend");
+             my ($base_start) = $f->get_tag_values("base_start");
+             my $zoom_level = $rend - $base_start;
+             my $variants = $f->bulkAttributes();
+             my $type = $isCoding? 'Coding' : 'Non-Coding';
+             if ($zoom_level <= 50000) {
+               my @data;
+               push @data, [ 'Location:'  => $f->start ];
+               if ($gene) {
+                  push @data, [ 'Gene:'  => $gene ];
+               }
+               push @data, ["Sequence:" => $refNA];
+               push @data, ["Strains:" => ""];
+               push @data, ["$refStrain" => "Reference"];
+               foreach my $variant (@$variants) {
+                 my $strain = $variant->{STRAIN};
+                 next if $strain eq $refStrain;
+                 my $likeRef = $variant->{MATCHES_REFERENCE};
+                 my $info = $likeRef ? "matches reference" : "polymorphic";
+                 push @data, [ "$strain" => $info ];
+               }
+               hover( "CGH | $source_id | $type", \@data) if $refStrain;
+             } else {
+                return $gene? "In gene $gene" : "Non-coding";
+             }
+
+} 
+
+
+ sub chipTitleQuick {
+   my $f = shift;
+   my @data;
+   my $name = $f->name;
+   my ($country) = $f->get_tag_values("Country"); 
+   my ($allele) = $f->get_tag_values("Allele"); 
+   my ($strain) = $f->get_tag_values("Strain"); 
+   my ($snpid) = $f->get_tag_values("SnpId"); 
+   my $link = qq(<a href="/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$snpid">$snpid</a>);
+   push @data, [ 'Name:'  => $name ];
+   push @data, [ 'Strain:'  => $strain ];
+   push @data, [ 'Country:'  => $country ];
+   push @data, [ 'Allele:'  => $allele ];
+   push @data, [ 'SNP Id:'  => $link ];
+   return hover( "3k Chip", \@data); 
+ }
 
 sub peakTitle {
   my $f  = shift;
@@ -212,6 +297,29 @@ sub geneTitle {
   $soTerm =~ s/\b(\w)/\U$1/g;
   return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo'))"};
 } 
+
+
+sub MicrosatelliteTitle {
+    my $f            = shift;
+    my $name         = $f->name;
+    my $genbankLink  = "<a target='_blank' href='http://www.ncbi.nlm.nih.gov/sites/entrez?db=unists&cmd=search&term=$name'>$name</a>";
+    my $projectId    = $ENV{PROJECT_ID};
+    my $start        = $f->start;
+    my $stop         = $f->stop;
+    my $length       = $stop - $start + 1;
+    my ($type)        = $f->get_tag_values('Name');
+    my ($sequenceId)        = $f->get_tag_values('SequenceId');
+    my $msaLink = "<a target='_blank' href='/cgi-bin/mavidAlign?project_id=$projectId&contig=$sequenceId&start=$start&stop=$stop&revComp=off&type=clustal'>Available Strains</a>";
+    my @data;
+    push @data, [ 'Genbank Accession:'        => $genbankLink ];
+    push @data, [ 'Type:'        => $type ];
+    push @data, [ 'Sequence Id:'        => $sequenceId ];
+    push @data, [ '3D7 Start:'        => $start ];
+    push @data, [ '3D7 End:'        => $stop ];
+    push @data, [ '3D7 ePCR Product Size:'        => $length ];
+    push @data, [ 'Multiple Sequence Alignment'        => $msaLink ];
+    return hover( "Microsatellite STS - $name", \@data);
+}
 
 sub contigTitle {  
   my $f = shift;
@@ -388,6 +496,19 @@ sub orfTitle {
   return hover( 'ORFs >= 150 nt', \@data);
 }
 
+sub ArrayElementTitle {
+     my $f = shift;
+     my $name = $f->name;
+     my $chr = $f->seq_id;
+     my $loc = $f->location->to_FTstring;
+     my ($desc) = $f->get_tag_values("Note");
+     my @data;
+     push @data, [ 'Name:'  => $name ];
+     push @data, [ 'Description:' => $desc ];
+     # push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
+     push @data, [ 'Location:'  => "$chr $loc" ];
+     hover("Glass Slide Oligo: $name", \@data);
+}
 
 sub massSpecTitle {  
   my ($f, $replaceString) = @_;
@@ -451,6 +572,7 @@ sub blastxTitle {
   my ($tstart) = $f->get_tag_values('TStart');
   my ($tstop )= $f->get_tag_values('TStop');
   my ($pctI) = $f->get_tag_values("PercentIdentity");
+  my ($percent_pos) = $f->get_tag_values("PercentPositive");
   my ($desc) = $f->get_tag_values("Defline");
   $desc ||= "<i>unavailable</i>";
   $desc =~ s/\001.*//;
@@ -460,6 +582,7 @@ sub blastxTitle {
   push @data, [ 'E-Value:'     => $e];
   push @data, [ 'Location:' => "$tstart - $tstop"]; 
   push @data, [ 'Identity %:'  => $pctI];
+  push @data, [ 'Percent Positive' => $percent_pos];
   push @data, [ 'Description:' => $desc ];
   hover("BLASTX: gi\|$name", \@data);
 }

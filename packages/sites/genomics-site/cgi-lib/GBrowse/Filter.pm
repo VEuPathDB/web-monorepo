@@ -44,6 +44,19 @@ sub filterByExtDbNameAndDescription {
   (($extdbname =~ /$nm/i) && ($description =~ /$desc/i));
 }
 
+sub filterByExtDbNameAndAttribute {
+  my ($f, $nm,$attr,$val) = @_;
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+  my ($attribute) = $f ->get_tag_values($attr);
+  (($extdbname =~ /$nm/i) && ($attribute =~ /$val/i));
+}
+
+sub filterByExtDbNameAndSecondaryScore {
+  my ($f, $nm, $ss) = @_;
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+  my ($secondaryscore) = $f->get_tag_values('SecondaryScore');
+  (($extdbname =~ /$nm/i) && ($secondaryscore >= $ss));
+}
 
 sub filterByDescription { 
   my ($f, $desc)  = @_;
