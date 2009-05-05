@@ -75,7 +75,7 @@ flexifluid.init = function()
     $("#wordDiv").text(firstWord);
     var minWidth = $("#wordDiv").width() + 5;
     if (minWidth > minWidths[n % col])
-	minWidths[n % col] = $(this).width();
+	minWidths[n % col] = minWidth;
     $(this).width('100%');
     n++;
   });
