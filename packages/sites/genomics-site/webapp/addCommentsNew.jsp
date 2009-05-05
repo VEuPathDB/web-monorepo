@@ -16,14 +16,14 @@
 
 <c:set var="strand" value="${commentForm.strand}" /> 
 
-<c:if test="${strand eq '+'}">
-  <c:set var="pos" value="checked" />
-  <c:set var="rev" value="" />
-</c:if>
-
 <c:if test="${strand eq '-'}">
   <c:set var="pos" value="" />
   <c:set var="rev" value="checked" />
+</c:if>
+
+<c:if test="${strand ne '-'}">
+  <c:set var="pos" value="checked" />
+  <c:set var="rev" value="" />
 </c:if>
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
