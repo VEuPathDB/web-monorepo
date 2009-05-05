@@ -14,6 +14,18 @@
 <c:set var="subject" value="${commentForm.commentTargetId} comment ${commentForm.stableId}" />
 <c:set var="body" value="${body}" />
 
+<c:set var="strand" value="${commentForm.strand}" /> 
+
+<c:if test="${strand eq '+'}">
+  <c:set var="pos" value="checked" />
+  <c:set var="rev" value="" />
+</c:if>
+
+<c:if test="${strand eq '-'}">
+  <c:set var="pos" value="" />
+  <c:set var="rev" value="checked" />
+</c:if>
+
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
@@ -271,8 +283,8 @@ $(document).ready(function(){
 
         <td class="medium">
           Strand:
-             <input type=radio name="locType" value=genomef checked>Forward</input>
-             <input type=radio name="locType" value=genomer>Reverse</input>
+             <input type=radio name="locType" value=genomef ${pos}>Forward</input>
+             <input type=radio name="locType" value=genomer ${rev}>Reverse</input>
         </td>
       </tr>
 
