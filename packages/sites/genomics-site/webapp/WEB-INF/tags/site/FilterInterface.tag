@@ -101,12 +101,23 @@
 <td>
 	<select id="selected_strategy" type="multiple">
 		<option value="--">--Choose a Opened Strategy to add--</option>
-<%--		<c:forEach items="${user.strategiesByCategory[recordClass]}" var="storedStrategy"> --%>
+		<!-- Display the currently ACTIVE (OPENED) Strategies -->
+		<option value="--">----Open Strategies----</option>
 		<c:forEach items="${user.activeStrategies}" var="storedStrategy">
 			<c:set var="l" value="${storedStrategy.length-1}"/>
 		 	<c:if test="${storedStrategy.allSteps[l].dataType == recordClass}">
-				<option value="${storedStrategy.strategyId}">${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
+				<option value="${storedStrategy.strategyId}">&nbsp;&nbsp;${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
 			</c:if>
+		</c:forEach>
+		<!-- Display the Saved Strategies -->
+		<option value="--">----Saved Strategies----</option>
+		<c:forEach items="${user.savedStrategiesByCategory[recordClass]}" var="storedStrategy">
+				<option value="${storedStrategy.strategyId}">&nbsp;&nbsp;${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
+		</c:forEach>
+		<!-- Display the recent Strategies (Opened  viewed in the last 24 hours) -->
+		<option value="--">----Recent Strategies----${currentTime}</option>
+		<c:forEach items="${user.recentStrategiesByCategory[recordClass]}" var="storedStrategy">
+				<option value="${storedStrategy.strategyId}">&nbsp;&nbsp;${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
 		</c:forEach>
 	</select>
 	<br><br><input id="continue_button" type="button" value="Continue..."/>
