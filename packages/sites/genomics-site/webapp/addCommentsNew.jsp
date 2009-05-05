@@ -63,10 +63,10 @@ $("#box a").click(function(event) {
     #box {
        display: none;
     }
-		div.border{
-		  border: 1px solid lightgrey;
-			width: 600px;
-		}
+    div.border{
+      border: 1px solid lightgrey;
+      width: 600px;
+    }
 
   
 </style>
@@ -77,13 +77,13 @@ $("#box a").click(function(event) {
 <script type="text/javascript">
 $(document).ready(function(){
    $("#preview").click(function(){
-	 $("#wrapper").show();
+   $("#wrapper").show();
    var pmids = $('#pmIds').val(); 
    var pmids = pmids.replace(/\D/g, "-");
    $("#quote p").load("/cgi-bin/pmid2title?pmids=" + pmids);
   });      
   $("#remove").click(function(){
-	 $("#wrapper").hide();
+   $("#wrapper").hide();
   });      
 }); 
 </script>
@@ -160,8 +160,16 @@ $(document).ready(function(){
       Please add only scientific comments to be displayed on the ${commentForm.commentTargetId} page for ${commentForm.stableId}. 
       If you want to report a problem, use the <a href="<c:url value='/help.jsp'/>">support page.</a>
       
-      Your comments are appreciated. They will be forwarded to the Annotation Center for review and possibly 
-      included in future releases of the genome. 
+      Your comments are appreciated. 
+      
+     <c:if test="${wdkModel.projectId eq 'TriTrypDB'}" > 
+        They will be forwarded to the Annotation Center for review and possibly 
+        included in future releases of the genome. 
+    </c:if>
+
+     <c:if test="${wdkModel.projectId ne 'TriTrypDB'}" > 
+        They will be forwarded to the genome curators.
+    </c:if>
       
     <c:if test="${commentForm.commentTargetId eq 'gene'}">
       If this is a <b>new gene</b>, please <a href="addComment.do?stableId=${commentForm.contig}&commentTargetId=genome&externaDbName=${commentForm.externalDbName}&externalDbVersion=${commentForm.externalDbVersion}&flag=0">click here</a>.
@@ -307,11 +315,11 @@ $(document).ready(function(){
           <html:text property="pmIds" styleId="pmIds" size="70"/>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title</li><li>Enter one or more IDs in the box above separated by \',\'</li><li>Example: 18172196,10558988</li></ul>')">
           <img src="/assets/images/help.png" align=bottom border=0></a>
-					<br />
+          <br />
           <div id="wrapper" style="display:none;">
             <div id="quote" class="border">
-					  <img id="remove" src="images/remove.gif" align=right>
-						<p></p></div>
+            <img id="remove" src="images/remove.gif" align=right>
+            <p></p></div>
           </div>
           <input type="button" id="preview" value="Preview">
         </td>
