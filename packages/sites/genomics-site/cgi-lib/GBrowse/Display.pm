@@ -43,6 +43,13 @@ sub sageTagLabel {
 #  Methods For Color
 #--------------------------------------------------------------------------------
 
+sub interproDomainRainbow {
+  my $f = shift;
+  $main::seenPfam{$f->feature_id} ||= $main::rainbow[scalar(keys %main::seenPfam) % scalar(@main::rainbow)]; 
+  return $main::seenPfam{$f->feature_id}; 
+}
+
+
 sub snpBgFromIsCodingAndNonSyn {
   my $f = shift;
   my ($isCoding) = $f->get_tag_values("IsCoding"); 

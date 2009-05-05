@@ -1,5 +1,7 @@
 package GBrowse::Configuration;
 
+@main::rainbow = qw(red green yellow blue khaki pink orange cyan purple);
+
 use ApiCommonWebsite::Model::ModelConfig;
 use ApiCommonWebsite::Model::DbUtils;
 
@@ -86,7 +88,7 @@ sub link_target_ms_peptides {
 sub filter_to_depth {
     my ($self, $feat, $name, $depth) = @_;
     return 1 unless $depth;
-    my $span = $feat->{start} . '-' . $feat->{end} . ':' . $feat->{strand};
+    my $span = $feat->{start} . '-' . $feat->{end};
     $self->{$name}->{$span}++ < $depth;
 }
 
