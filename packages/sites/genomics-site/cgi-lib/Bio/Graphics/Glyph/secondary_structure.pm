@@ -177,7 +177,7 @@ sub _checkEncodings {
   } elsif ($max > 50 && $max <= 100) {
     $max = 100;
   } else {
-    &confess("suspicious encodings");
+    warn("suspicious encodings");
   }
   return ($min, $max);
 }
