@@ -1,10 +1,12 @@
 package Bio::Graphics::Glyph::secondary_structure;
 
 use strict;
-use Carp;
+use Carp qw(cluck);
 use Bio::Graphics::Glyph::generic;
 use vars '@ISA';
 @ISA = qw(Bio::Graphics::Glyph::generic);
+
+use constant DEBUG => 0;
 
 # turn off description
 sub description { 0 }
@@ -177,7 +179,7 @@ sub _checkEncodings {
   } elsif ($max > 50 && $max <= 100) {
     $max = 100;
   } else {
-    warn("suspicious encodings");
+    &cluck("suspicious encodings") if DEBUG;
   }
   return ($min, $max);
 }
