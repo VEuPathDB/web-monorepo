@@ -161,14 +161,19 @@ sub _checkEncodings {
 
   my $delim = $self->encoding_delimitor;
   my @h = split(/$delim/, $sec_struc_encs->{helix});
-  &confess("helix encoding length (" . @h .  ") and sequence length ($len) mismatch")
-    unless abs($len - scalar(@h)) <= 1;
   my @c = split(/$delim/, $sec_struc_encs->{coil});
-  &confess("coil encoding length (" . @c .  ") and sequence length ($len) mismatch")
-    unless abs($len - scalar(@c)) <= 1;
   my @s = split(/$delim/, $sec_struc_encs->{strand});
-  &confess("strand encoding length (" . @s .  ") and sequence length ($len) mismatch")
-    unless abs($len - scalar(@s)) <= 1;
+
+  if(DEBUG) {
+    &cluck("helix encoding length (" . @h .  ") and sequence length ($len) mismatch")
+      unless abs($len - scalar(@h)) <= 1;
+
+    &cluck("coil encoding length (" . @c .  ") and sequence length ($len) mismatch")
+      unless abs($len - scalar(@c)) <= 1;
+
+    &cluck("strand encoding length (" . @s .  ") and sequence length ($len) mismatch")
+      unless abs($len - scalar(@s)) <= 1;
+  }
 
   my $min = 0;
   my $max = $h[0] + $c[0] + $s[0];
