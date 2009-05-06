@@ -2375,7 +2375,36 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
     </sql>
   </sqlQuery>
   
-  
+  <sqlQuery name="mapp:promotersForward"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT distinct(na_sequence_id) feature_id,
+             'mapp' type,
+             'promotersForward' source
+       FROM  apidb.plasmoMapp
+       WHERE na_sequence_id = $srcfeature_id
+         AND location <= $rend
+         AND location >= $base_start - 1 
+         AND strand = 1
+]]>
+    </sql>
+  </sqlQuery>
+
+<sqlQuery name="mapp:promotersReverse"  includeProjects="PlasmoDB">    
+  <sql>
+<![CDATA[
+      SELECT distinct(na_sequence_id) feature_id,
+             'mapp' type,
+             'promotersReverse' source
+       FROM  apidb.plasmoMapp
+       WHERE na_sequence_id = $srcfeature_id
+         AND location <= $rend
+         AND location >= $base_start - 1 
+         AND strand = -1
+]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="SNP:Su"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -3451,7 +3480,50 @@ ORDER BY var.strain
     </sql>
   </sqlQuery>
   
-  
+  <sqlQuery name="mapp:promotersForward:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT location feature_id, 
+             'mapp' type, 
+             'promotersForward' source, 
+             '' name, 
+             value score, 
+             na_sequence_id parent_id, 
+             location startm, 
+             location end, 
+             strand,
+             '' atts
+       FROM  ApiDB.plasmoMapp
+       WHERE na_sequence_id = $srcfeature_id 
+         AND location <= $rend
+         AND location >= $base_start - 1 
+         AND strand = 1
+]]>
+    </sql>
+  </sqlQuery>
+ 
+  <sqlQuery name="mapp:promotersReverse:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT location feature_id, 
+             'mapp' type, 
+             'promotersReverse' source, 
+             '' name, 
+             value score, 
+             na_sequence_id parent_id, 
+             location startm, 
+             location end, 
+             strand,
+             '' atts
+       FROM  ApiDB.plasmoMapp
+       WHERE na_sequence_id = $srcfeature_id 
+         AND location <= $rend
+         AND location >= $base_start - 1 
+         AND strand = -1
+]]>
+    </sql>
+  </sqlQuery>
+ 
   <sqlQuery name="SNP:Combined:density"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
