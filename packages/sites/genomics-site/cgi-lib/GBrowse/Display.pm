@@ -206,6 +206,13 @@ sub massSpecBgColorFromExtDbName {
                 'Wastling MassSpec 2D Gel LC-MS/MS' => 'green',
                 'Wastling MassSpec MudPit Insoluble' => 'brown',
                 'Wastling MassSpec MudPit Soluble' => 'black',
+                #PlasmoDB
+                'Waters Female Gametes' => 'red',
+                'Waters Male Gametes' => 'blue',
+                'Lasonder Mosquito salivary gland sporozoite peptides' => 'yellow',
+                'Lasonder Mosquito oocyst-derived sporozoite peptides' =>  'orange',
+                'Lasonder Mosquito oocyst peptides' => 'mediumslateblue',
+                'Pyoelii LiverStage LS40' => 'red'
                );
 
   $f = $f->parent if (! $f->get_tag_values('ExtDbName'));

@@ -511,7 +511,7 @@ sub ArrayElementTitle {
 }
 
 sub massSpecTitle {  
-  my ($f, $replaceString) = @_;
+  my ($f, $replaceString,$replaceString2,$val2) = @_;
   my ($desc) = $f->get_tag_values('Description');
   $desc =~s/\nreport:(.*)$//;
   my ($count) = $f->get_tag_values('Count');
@@ -522,6 +522,11 @@ sub massSpecTitle {
   if($replaceString) {
     $extdbname =~ s/$replaceString/assay: /i;
   }
+
+ if($replaceString2) {
+    $extdbname =~ s/$replaceString2/$val2/i;
+  }
+
   my @data;
   push @data, [ 'Experiment:' => "$extdbname" ];
   push @data, [ 'Sequence:' => "$seq" ];
