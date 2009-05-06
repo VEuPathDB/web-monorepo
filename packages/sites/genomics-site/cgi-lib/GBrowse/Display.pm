@@ -61,6 +61,60 @@ sub snpBgFromIsCodingAndNonSyn {
   return $color; 
 }
 
+
+sub snpColor {
+    my $f = shift;
+             my ($isCoding) = $f->get_tag_values("IsCoding");
+             my ($hasIsolate) = $f->get_tag_values("HasIsolate");
+             my $color = 'white';
+             my ($nonSyn) = $f->get_tag_values("NonSyn");
+             if ($isCoding eq 'yes') {
+               $color = $nonSyn? 'blue' : 'lightblue';
+             }
+             if ($hasIsolate eq '1') {
+               $color = $nonSyn? 'darkred' : 'lightred';
+             }
+             return $color;
+     }
+
+
+sub SnpBgFromMatchingReference {
+       my $f = shift;
+       my $var = $f->bulkAttributes();
+       my $ctDiffs = 0;
+       foreach my $s (@$var){
+               $ctDiffs++ unless $s->{MATCHES_REFERENCE};
+       }
+       my $color = 'white';
+       if($ctDiffs >= 4){
+               $color = 'green';
+       }elsif($ctDiffs >= 2){
+               $color = 'lightgreen';
+       }
+       return $color;
+}
+
+
+sub SnpBgcolorFromAllele {
+      my $f = shift;
+      my ($allele) = $f->get_tag_values('Allele');
+      #print $allele;
+      if($allele eq 'A') {
+      return 'darkgreen';
+      } elsif($allele eq 'T') {
+      return 'lightgreen';
+      } elsif($allele eq 'C') {
+      return 'red';
+      } elsif($allele eq 'G') {
+      return 'darkred';
+      } elsif($allele eq 'N') {
+      return 'orange';
+      } else {
+      return 'yellow';
+      }
+}
+
+
 sub MassSpecScoreBgColor {
    my $f = shift;
    my ($count) = $f->get_tag_values("Count"); 
@@ -220,6 +274,16 @@ sub chipColor {
   return '#F08080' if($t =~ /FR235222/ );
 
 } 
+
+
+sub ChromosomeFgcolor {
+    my $f = shift;
+    my ($chr) =$f->get_tag_values("Chromosome");
+    if ($chr) { 
+        my ($col) = $f->get_tag_values("ChrColor");
+        return $col;
+    } 
+}  
 
 sub gapFgcolor { 
   my $f = shift; 
