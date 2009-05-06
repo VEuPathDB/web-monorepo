@@ -186,7 +186,6 @@ sub snpTitle {
   if ($isCoding) {
      my $non = $nonSyn? 'non-' : '';
      $type = "Coding (${non}synonymous)";
-     push @data, [ 'Position in CDS:'  => $posInCDS ];
   }
   if ($zoom_level <= 60000) {
     my @data;
