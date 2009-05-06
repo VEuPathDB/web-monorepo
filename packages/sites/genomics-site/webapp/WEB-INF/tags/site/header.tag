@@ -159,6 +159,8 @@
 
    #query_selection {
 	behavior: url("/assets/css/csshover.htc");
+	left: auto;
+	padding: 10px 20px;
    }
 
    #query_selection .top_nav li:hover {
