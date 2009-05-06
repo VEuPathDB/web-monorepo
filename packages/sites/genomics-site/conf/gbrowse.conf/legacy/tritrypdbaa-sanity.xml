@@ -1,0 +1,90 @@
+<gbrowseSanity>
+  <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
+  <defaultParamValue name="base_start" value="1"/>
+  <defaultParamValue name="rend" value="1000"/>
+  <defaultParamValue name="dlm" value=","/>
+
+  <sqlValue name="aa_seq_id_sample_gene">
+    <sql>
+  SELECT AA_SEQUENCE_ID 
+  FROM   DOTS.GENEFEATURE gf, 
+         DOTS.TRANSCRIPT t, 
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'Tb927.8.620'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id  
+    </sql> 
+  </sqlValue>
+  
+  <sqlValue name="aa_seq_id_sample_L_infantum_gene">
+    <sql>
+  SELECT AA_SEQUENCE_ID 
+  FROM   DOTS.GENEFEATURE gf, 
+         DOTS.TRANSCRIPT t, 
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'LinJ17_V3.0100'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id  
+    </sql> 
+  </sqlValue>
+  
+  <sqlValue name="tas_id_with_transmem">
+    <sql>
+  select aa_sequence_id
+  from dots.TransmembraneAaFeature
+  where rownum = 1
+    </sql> 
+  </sqlValue>
+  
+  <test name="get_feature_by_name" min="1" max="50">
+    <param name="name" value="Tb927.8.620"/>
+  </test>
+  
+  <test name="new:Segment" min="1" max="50">
+    <param name="name" value="Tb927.8.620"/>
+  </test>
+  
+  <test name="get_sequence" min="1" max="50">
+  </test>
+  
+  <test name="domain:TMHMM" min="1" max="50">
+    <param name="srcfeature_id" value="$$tas_id_with_transmem$$"/>
+  </test>
+  
+  <test name="domain:interpro" min="1" max="50">
+  </test>
+  
+  <test name="domain:SignalP" min="1" max="50">
+  </test>
+  
+  <test name="match:BLASTP" min="1" max="50">
+  </test>
+  
+  <test name="domain:TMHMM:subfeatures" min="1" max="50">
+    <param name="parent_id" parentFeatureTest="domain:TMHMM"/>
+  </test>
+  
+  <test name="match:BLASTP:subfeatures" min="1" max="50">
+    <param name="parent_id" parentFeatureTest="match:BLASTP"/>
+  </test>
+
+  <test name="domain:TarletonMassSpecPeptides" min="1" max="50">
+  </test>
+  
+  <test name="domain:ZilbersteinMassSpecPeptides" min="1" max="50">
+    <param name="srcfeature_id" value="$$aa_seq_id_sample_L_infantum_gene$$"/>
+  </test>
+  
+  <test name="domain:StuartMassSpecPeptides" min="1" max="50">
+  </test>
+  
+  <test name="domain:BrothertonMassSpecPeptides" min="1" max="50">
+  </test>
+  
+  <test name="get_2d_struc" min="1" max="50">
+  </test>
+  
+  <test name="lowcomplexity:seg" min="1" max="50">
+  </test>
+  
+</gbrowseSanity>

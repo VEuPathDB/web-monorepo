@@ -1,0 +1,152 @@
+<gbrowseSanity>
+  <defaultParamValue name="srcfeature_id" value="$$na_seq_id_LmjF05_01_20050601_V5.2$$"/>
+  <defaultParamValue name="base_start" value="1000"/>
+  <defaultParamValue name="rend" value="500000"/>
+  <defaultParamValue name="dlm" value=","/>
+
+  <sqlValue name="na_seq_id_LmjF05_01_20050601_V5.2">
+	  <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'LmjF05_01_20050601_V5.2'
+    </sql> 
+  </sqlValue>
+
+  <sqlValue name="na_feat_id_cgd6_780">
+	  <sql>
+      select na_feature_id from dots.genefeature where source_id = 'cgd6_780'
+    </sql> 
+  </sqlValue>
+
+  <test name="get_feature_by_name" min="1" max="2000">
+    <param name="name" value="LmjF05_01_20050601_V5.2"/>
+  </test>
+
+  <test name="new:Segment" min="1" max="2000">
+    <param name="name" value="LmjF05_01_20050601_V5.2"/>
+  </test>
+  
+  <test name="get_sequence" min="1" max="2000">
+  </test>
+  <test name="gene:Genbank" min="1" max="2000">
+  </test>
+  
+  <test name="annotation:density" min="1" max="2000">
+  </test>
+  
+  <test name="alignment:ORF" min="1" max="6000">
+  </test>
+  
+  <test name="match:WU_BLASTX" min="1" max="4000">
+  </test>
+
+  <test name="gene:Genbank:bulksubfeatures" min="1" max="2000">
+  </test>
+
+  <test name="annotation:density:subfeatures" min="1" max="2000">
+    <param name="parent_id" parentFeatureTest="annotation:density"/>
+  </test>
+
+  <test name="match:WU_BLASTX:bulksubfeatures" min="1" max="5000">
+  </test>
+
+  <test name="match:syntenySpanMC" min="1" max="1000">
+  </test>
+
+  <test name="gene:syntenyMC" min="1" max="1000">
+  </test>
+
+  <test name="alignment:Cosmids" min="1" max="50">
+  </test>
+
+  <test name="alignment:Bacs" min="1" max="20">
+  </test>
+
+  <test name="alignment:RandomEnds" min="1" max="150">
+  </test>
+
+  <test name="alignment:Cosmids:bulksubfeatures" min="1" max="100">
+  </test>
+
+  <test name="alignment:Bacs:bulksubfeatures" min="1" max="50">
+  </test>
+
+  <test name="alignment:RandomEnds:bulksubfeatures" min="1" max="200">
+  </test>
+
+  <test name="alignment:EST" min="10" max="500">
+  </test>
+
+  <test name="gene:syntenyMC:attribute:Ortholog" min="1" max="1000">
+    <param name="name" value="LmjF05.1010"/>
+  </test>
+
+  <test name="gene:Genbank:attribute:Ortholog" min="1" max="1000">
+    <param name="name" value="LmjF05.1010"/>
+  </test>
+
+  <test name="gene:syntenyMC:bulksubfeatures" min="1" max="1000">
+  </test>
+
+  <test name="alignment:EST:bulksubfeatures" min="10" max="500">
+  </test>
+
+  <test name="alignment:DoTSAssemblies" min="1" max="200">
+  </test>
+
+  <test name="alignment:DoTSAssemblies:bulksubfeatures" min="1" max="200">
+  </test>
+
+  <test name="protein:seq" min="1" max="1000">
+    <param name="id" value="1705"/>
+  </test>
+
+  <test name="contig:Tcruzi" min="1" max="100">
+    <param name="srcfeature_id" value="183227"/>
+  </test>
+
+  <test name="domain:TarletonMassSpecPeptides" min="1" max="300">
+    <param name="srcfeature_id" value="221454"/> <!--source_id='TcChr32-P'-->
+    <param name="base_start" value="688900"/>
+    <param name="rend" value="691900"/>
+  </test>
+
+  <test name="domain:TarletonMassSpecPeptides:bulksubfeatures" min="1" max="300">
+    <param name="srcfeature_id" value="221454"/> 
+    <param name="base_start" value="688900"/>
+    <param name="rend" value="690900"/>
+  </test>
+
+  <test name="domain:StuartMassSpecPeptides" min="1" max="400">
+    <param name="srcfeature_id" value="56026"/> <!--source_id='Tb927_11_01_v4'-->
+    <param name="base_start" value="2632261"/>
+    <param name="rend" value="2634976"/>
+  </test>
+
+  <test name="domain:StuartMassSpecPeptides:bulksubfeatures" min="1" max="400">
+    <param name="srcfeature_id" value="56026"/> 
+  </test>
+
+  <test name="domain:LinfantumMassSpecPeptides" min="1" max="400">
+  </test>
+
+  <test name="domain:UnifiedMassSpecPeptides" min="1" max="400">
+  </test>
+
+  <test name="domain:UnifiedMassSpecPeptides2" min="1" max="400">
+  </test>
+
+  <test name="lowcomplexity:dust" min="300" max="800">
+  </test>
+
+  <test name="TandemRepeat:TRF" min="1" max="400">
+  </test>
+
+  <test name="UnifiedMassSpecPeptides:density" min="1" max="400">
+  </test>
+
+  <test name="domain:LinfantumMassSpecPeptides:bulksubfeatures" min="1" max="400">
+  </test>
+
+  <test name="domain:UnifiedMassSpecPeptides2:bulksubfeatures" min="1" max="400">
+  </test>
+
+</gbrowseSanity>
