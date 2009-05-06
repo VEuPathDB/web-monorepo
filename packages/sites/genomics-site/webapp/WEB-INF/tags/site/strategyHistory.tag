@@ -145,11 +145,6 @@
     </c:if>
     <c:if test="${!wdkUser.guest}">
     <c:set var="saveHeader" value="Save As"/>
-<%--
-    <c:if test="${strategy.isSaved}">
-      <c:set var="saveHeader" value="Copy As"/>
-    </c:if>
---%>
     <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
       <span class='dragHandle'>
         <div class="modal_name">
@@ -161,7 +156,7 @@
       </span>
       <form onsubmit='return validateSaveForm(this);' action="javascript:saveStrategy('${strategy.strategyId}', true, true)">
         <input type='hidden' value="${strategy.strategyId}" name='strategy'/>
-        <input type='text' value="${strategy.savedName}" name='name'/>
+        <input type='text' value="${strategy.name}" name='name'/>
         <input type='submit' value='Save'/>
       </form>
     </div>

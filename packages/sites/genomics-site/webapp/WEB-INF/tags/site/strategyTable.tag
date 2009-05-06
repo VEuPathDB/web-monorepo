@@ -77,12 +77,8 @@
         <div id="input_${strategyId}" style="display:none"></div>
       </td>
       <td nowrap>
-         <c:choose>
-         <c:when test="${!strategy.isSaved}">
-         
          <%-- copy the strategy --%>
          <input type='button' value='Copy' onclick="copyStrategy('${strategyId}', true);" />
-
          <c:choose>
            <c:when test="${wdkUser.guest}">
              <input title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' type='button' value='Save As' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
@@ -90,11 +86,6 @@
            <c:otherwise>
              <input title='A saved strategy is like a snapshot, it cannot be changed.' type='button' value='Save As' onclick="showHistSave(this, '${strategyId}')" />
            </c:otherwise>
-         </c:choose>
-         </c:when>
-         <c:otherwise>
-             <input title='Make a copy of this saved strategy.' type='button' value='Copy As' onclick="showHistSave(this, '${strategyId}')" />
-         </c:otherwise>
          </c:choose>
          <c:choose>
            <c:when test="${wdkUser.guest}">
