@@ -69,13 +69,15 @@ flexifluid.init = function()
     var pixWidth = $(this).width();
     $(this.parentNode).width(pctWidths[n % col] + '%');
     // attempt to refine min-width by splitting contents on
-    // whitespace & calculating size of smallest non-breakable
+    // whitespace & calculating size of largest non-breakable
     // text for the current cell
-    var firstWord = $(this).text().replace(/^\s+|\s+$/g, '').split(/\s+/)[0];
-    $("#wordDiv").text(firstWord);
-    var minWidth = $("#wordDiv").width() + 5;
-    if (minWidth > minWidths[n % col])
-	minWidths[n % col] = minWidth;
+    var words = $(this).text().replace(/^\s+|\s+$/g, '').split(/\s+/);
+    for (var i = 0; i < words.length; ++i){
+        $("#wordDiv").text(words[i]);
+        var minWidth = $("#wordDiv").width() + 5;
+        if (minWidth > minWidths[n % col])
+   	    minWidths[n % col] = minWidth;
+    }
     $(this).width('100%');
     n++;
   });
