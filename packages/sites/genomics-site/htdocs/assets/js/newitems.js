@@ -2,7 +2,7 @@
  * functions to flag sidebar list items that have been added since client's
  * last visit. State is maintained in a cookie.
  ******************************************************************************/
-var readListCookieName = 'sb_read';
+var readListCookieName = 'sbi_read';
 var oldHeadingPadBot;
 var listItems = new Array();
 
