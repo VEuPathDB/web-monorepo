@@ -139,10 +139,8 @@ sub synSpanTitle {
   hover( ($type =~ /gap/i) ? 'All gaps in region' : 'Scaffold', \@data);
 }
 
-# TODO:  What is 'toxo' doing here??
 sub snpTitleQuick {
   my $f = shift;
-# my $webapp = 'toxo';
   my ($gene) = $f->get_tag_values("Gene"); 
   my ($isCoding) = $f->get_tag_values("IsCoding"); 
   my ($nonSyn) = $f->get_tag_values("NonSyn"); 
