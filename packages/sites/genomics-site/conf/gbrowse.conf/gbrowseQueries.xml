@@ -2653,14 +2653,19 @@ and sa.organism != sb.organism
    </testParamValues>
      <sql>
 <![CDATA[
-select gb.SOURCE_ID
+select gf.SOURCE_ID,
+'ExtDbName=' || ed.name || '$dlm' ||
+'Version=' || edr.version
+         as atts
+FROM
+(select gb.SOURCE_ID as source_id
 from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb
 where ga.source_id = '$name'
 and ga.gene_id = gb.GENE_ID
 and ga.ORGANISM != gb.organism
 UNION
 SELECT
-ogf.source_id
+ogf.source_id as source_id
 FROM 
 dots.GENEFEATURE gf,
 dots.GENEFEATURE ogf,
@@ -2673,14 +2678,21 @@ AND ssg.sequence_id = gf.na_feature_id
 AND ossg.sequence_group_id = ssg.sequence_group_id
 AND ogf.na_feature_id = ossg.sequence_id
 UNION
-select og.source_id
+select og.source_id as source_id
 from apidb.CHROMOSOME6ORTHOLOGY cog, ApiDB.CHROMOSOME6ORTHOLOGY ocog,
 dots.GENEFEATURE g, dots.GENEFEATURE og
 where g.source_id = '$name'
 and og.source_id != '$name'
 and cog.source_id = g.source_id
 and ocog.group_id = cog.group_id
-and og.source_id = ocog.source_id
+and og.source_id = ocog.source_id) ortho,
+dots.GENEFEATURE gf,
+SRes.ExternalDatabaseRelease edr,
+SRes.ExternalDatabase ed 
+WHERE
+ortho.source_id = gf.source_id
+and gf.external_database_release_id = edr.external_database_release_id 
+AND  edr.external_database_id = ed.external_database_id 
 ]]>
     </sql>
   </sqlQuery>
