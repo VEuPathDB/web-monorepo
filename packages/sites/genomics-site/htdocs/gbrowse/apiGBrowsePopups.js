@@ -137,7 +137,7 @@ function pst (tip, paramsString) {
   var WEBAPP         = NON_SYN + 1;
 
   // expand minimalist input data
-  var link = "<a href=/" + v[WEBAPP] + "/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
+  var link = "<a href=/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
  
   var type = 'Non-coding';
   var refNA = (v[REVERSED] == '1')? revArray[v[REF_NA]] : v[REF_NA];
