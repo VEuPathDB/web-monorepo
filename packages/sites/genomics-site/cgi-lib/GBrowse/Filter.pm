@@ -29,6 +29,14 @@ sub filterByExtDbName {
   $extdbname =~ /$nm/i;
 }
 
+sub filterByExtDbNameAndVersion {
+  my ($f, $nm, $ver) = @_;
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+  my ($dbversion) = $f ->get_tag_values('Version');
+  (($extdbname.":".$dbversion) != ($nm.":".$ver)); 
+}
+
+
 sub filterByExtDbNameAndFeatureType {
   my ($f, $nm, $tp) = @_;
   my ($extdbname) = $f->get_tag_values('ExtDbName');
