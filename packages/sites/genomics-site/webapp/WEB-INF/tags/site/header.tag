@@ -199,6 +199,10 @@
 	padding: 3px 3px 3px 0;
    }
 
+   .thinTopBorders {
+	line-height: normal;
+   }
+
    .ts_ie {
 	margin-left:-15px;
    }
