@@ -721,7 +721,41 @@ sub interproTitle {
 
 sub interproLink {
   my $f = shift;
-  my ($url) = $f->get_tag_values("Url");
+  my $name = $f->name;
+  my ($desc) = $f->get_tag_values("Note");
+  my ($db) = $f->get_tag_values("Db");
+  my ($evalue) = $f->get_tag_values('Evalue');
+  $evalue = sprintf("%.2E", $evalue);
+  my @data;
+  push @data, [ 'Database:'  => $db ];
+  push @data, [ 'Accession:'  => $name ];
+  push @data, [ 'Description:' => $desc ];
+  push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
+  push @data, [ 'E_value:' => $evalue];
+  hover("InterPro Domain: $name", \@data);
+}
+link         = sub { 
+  my $f = shift;
+  my ($db) = $f->get_tag_values('Db');
+  my ($pi) = $f->get_tag_values('Pi');
+  my $url;
+  if($db eq 'INTERPRO') { 
+    $url = qq|http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=$pi|;
+  } elsif( $db eq 'PFAM') { 
+    $url = qq|http://pfam.sanger.ac.uk/family?acc=$pi|;
+  } elsif( $db eq 'PRINTS') {
+    $url = qq|http://umber.sbs.man.ac.uk/cgi-bin/dbbrowser/sprint/searchprintss.cgi?prints_accn=$pi&display_opts=Prints&category=None&queryform=false&regexpr=off|;
+  } elsif( $db eq 'PRODOM') {
+    $url = qq|http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query=$pi|;
+  } elsif( $db eq 'PROFILE') {
+    $url = qq|http://www.expasy.org/prosite/$pi|;
+  } elsif( $db eq 'SMART') {
+    $url = qq|http://smart.embl-heidelberg.de/smart/do_annotation.pl?ACC=$pi&BLAST=DUMMY|; 
+  } elsif( $db eq 'SUPERFAMILY') { 
+    $url = qq|http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid=$pi|;
+  } else {
+    $url = qq|http://www.ebi.ac.uk/interpro/ISearch?query=$pi&mode=all|;
+  }
   return $url;
 }
 
