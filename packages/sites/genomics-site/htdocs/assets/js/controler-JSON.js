@@ -47,7 +47,9 @@ function updateStrategies(data){
 	p_state = $.json.serialize(state);
 	removeClosedStrategies();
 	for(st in state){
-	  if(st != "length"){
+          if(st == "count")
+                $("#mysearch").text("My Searches: " + state[st]);
+	  else if(st != "length"){
 		var str = state[st].id;
 		if(isLoaded(str)){
 			if(getStrategyFromBackId(state[st].id).checksum != state[st].checksum){
