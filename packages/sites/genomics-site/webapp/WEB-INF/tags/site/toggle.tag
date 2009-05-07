@@ -42,6 +42,11 @@
               description="the src of a image map in the content"
 %>
 
+<%@ attribute name="postLoadJS"
+              required="false"
+              description="comma separated list of javascript to load, in the order listed, after imageMapSource loads"
+%>
+
 <%@ attribute name="isOpen"
               required="false"
               description="Whether toggle block should initially be open"
@@ -90,7 +95,7 @@
             <c:set var="showOnClick" value="updateImage('${imageId}', '${imageSource}')"/>
         </c:if>
         <c:if test="${imageMapDivId != null}">
-            <c:set var="showOnClick" value="updateImageMapDiv('${imageMapDivId}', '${imageMapSource}')"/>
+            <c:set var="showOnClick" value="updateImageMapDiv('${imageMapDivId}', '${imageMapSource}', '${postLoadJS}')"/>
         </c:if>
         <c:if test="${showOnClick != ''}">
             <c:set var="showOnClick" value="${showOnClick}&amp;&amp;"/>
@@ -191,7 +196,7 @@
         <c:if test="${imageMapDivId != null && isOpen}">
           <script type="text/javascript">
             <!-- //
-              updateImageMapDiv('${imageMapDivId}', '${imageMapSource}')
+              updateImageMapDiv('${imageMapDivId}', '${imageMapSource}', '${postLoadJS}')
             // -->
           </script>
         </c:if>

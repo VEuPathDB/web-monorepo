@@ -283,51 +283,41 @@ function dynamiccontent(elementid,content){
     }
 }
 
-function updateImageMapDiv(imgMapDivId, imgMapSrc) {
+function updateImageMapDiv(imgMapDivId, imgMapSrc, postLoadJS) {
+
     var http = getHTTPObject();
     httpObjects[imgMapDivId] = http;
+
+    var slot = "#" + imgMapDivId;
 
     var isWorking = false;
     workStates[imgMapDivId] = isWorking;
 
-    if (!isWorking && http) {
-        //if imgMapSrc is on a different domain, we need to sign the scripts and ask for expanded privilege
-        try {
-            netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
-        } catch (e) {
-            //alert("cat not enable UniversalBrowserRead: " + e.message);
-        }
-        try {
-            http.open("GET", imgMapSrc, true);
-            if (imgMapDivId == 'dnaContextDiv') {
-                http.onreadystatechange = handle_dnaContextDiv; 
-            } else if (imgMapDivId == 'proteinFeaturesDiv') {
-                http.onreadystatechange = handle_proteinFeaturesDiv;
-            } else {
-                //alert("unexpected image map div ID" + imgMapDivId);
-            }
-            workStates[imgMapDivId] = true;
-            http.send(null);
-        } catch (e) {
-            var altImgMapSrc = imgMapSrc.replace('http://www.', 'http://');
+    var loadingImg = ($("<div>").attr("id", "imgMapDivId_loading")).attr("class", "gbGnCtx").
+          append($("<img/>").
+            attr("src", "/assets/images/loading2.gif")).
+          append("<br>Loading...");
 
-            try {
-                http.open("GET", altImgMapSrc, true);
-                if (imgMapDivId == 'dnaContextDiv') {
-                    http.onreadystatechange = handle_dnaContextDiv; 
-                } else if (imgMapDivId == 'proteinFeaturesDiv') {
-                    http.onreadystatechange = handle_proteinFeaturesDiv;
-                } else {
-                    //alert("unexpected image map div ID" + imgMapDivId);
-                }
-                workStates[imgMapDivId] = true;
-                http.send(null);
-            } catch (e2) {
-                document.getElementById(imgMapDivId).innerHTML
-                    = '<font color="red">Could not request the following url because it is on a different domain:<br>'
-                    + altImgMapSrc + '<br>Error: ' + e2 +'</font>';
+    if (!isWorking && http) {
+      $(slot).append(loadingImg);
+      
+      $(slot).load(imgMapSrc, null, 
+              function(responseText, status, XMLHttpRequest) {
+         $(postLoadJS.split(',')).each(function (i, val) {
+            if (val.indexOf("wz_tooltip") != -1) {
+              $("div[id^=tOoLtIp]").remove(); // previously loaded wz_tooltips
             }
-        }
+            js = $("<script>").
+                   attr("type", "text/javascript").
+                   attr("src", val);
+            $(slot).append(js);
+         });
+      });
+       
+      $().ajaxError(function(info,xhr){
+        $(imgMapDivId).append("Oops: " +  xhr.status + ' ' + xhr.statusText);
+      });
+      
     }
     workStates[imgMapDivId] = false;
     return true;
@@ -401,73 +391,6 @@ function receiveAsyncContent(request, contentTag) {
     }
 }
 
-
-
-
-/* ==========================================================================
- * The following JQuery ajax methods are defined to fetch and display GBrowse images
- * ========================================================================== */
-
-var gbDispCache = {};
-var gbIsLoading = false;
-function fetchGbrowseImg(buttonId, url) {
-      var dispSel = "#gbInline";
-      var wz = $("<script>").
-            attr("type", "text/javascript").
-            attr("src", "/gbrowse/wz_tooltip.js");
-      var api = $("<script>").
-            attr("type", "text/javascript").
-            attr("src", "/gbrowse/apiGBrowsePopups.js");      
-      var loadingImg = ($("<div>").attr("id", buttonId)).attr("class", "gbGnCtx").
-            append($("<img/>").
-              attr("src", "/assets/images/dna-animated.gif")).
-            append("<br>Loading...");
-      var buttonSel = '#'+buttonId;
-      
-      $(document).ready(function () {
-        $(buttonSel).click(function(){
-          if (gbIsLoading) return;
-          
-          $("div[id^=tOoLtIp]").remove(); // previously loaded wz_tooltips
-          
-          if (          true        ||  gbDispCache[buttonId] == null) { 
-          /*            ^^^^
-              Safari 4 (at least) loses wz_tooltip bindings when loading cached
-              nodes (it works in FF 3 provide the wz_tooltips.js is re-appended).
-              Node caching disabled until we find a fix for Safari. **/
-            gbIsLoading = true;
-            var oriButton = $(buttonSel).clone(true);
-            $(buttonSel).replaceWith(loadingImg);
-            $(dispSel).load(url, null, 
-                    function(responseText, status, XMLHttpRequest) {
-               $(dispSel).append(api);
-               $(dispSel).append(wz);
-               $(buttonSel).replaceWith(oriButton);
-               $(dispSel).attr('src', buttonId);
-               gbDispCache[buttonId] = $(dispSel).clone();
-               gbIsLoading = false;
-               gbLoadedHl(buttonSel);
-            });
-          } else {
-            if ( $(dispSel).attr('src') == gbDispCache[buttonId].attr('src')) 
-              return;
-            $(dispSel).replaceWith(gbDispCache[buttonId]);
-            $(dispSel).append(wz);
-            gbLoadedHl(buttonSel);
-          }
-          return true;
-        });
-      }); 
-       
-      $().ajaxError(function(info,xhr){
-        $(dispSel).append("Oops: " +  xhr.status + ' ' + xhr.statusText);
-      });
-}
-
-function gbLoadedHl(buttonSel) {
-  $('.gbGnCtxActive').removeClass('gbGnCtxActive');               
-  $(buttonSel).addClass('gbGnCtxActive');
-}
 
 // return domain.org from www.domain.org
 function secondLevelDomain(){
