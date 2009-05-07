@@ -264,21 +264,25 @@ WHERE
     </testParamValues>
       <sql>
 <![CDATA[
-SELECT distinct * from (
 SELECT
-       tmf.aa_sequence_id feature_id,
+       tmf.aa_feature_id feature_id,
        'domain' type,
        'TMHMM' source,
-       tmf.source_id name,
-       tmf.parent_id parent_id
+       tmf.aa_feature_id name,
+       '.' score,
+       tmf.parent_id parent_id,
+       aal.start_min startm,
+       aal.end_max end,
+       '.' strand,
+       'Topology=' || tmf.topology atts
 FROM
-       dots.TRANSMEMBRANEAAFEATURE tmf,
-       core.ALGORITHM ALG
+       dots.transmembraneaafeature tmf,
+       dots.translatedaasequence tas,
+       dots.aalocation aal
 WHERE
+       tas.aa_sequence_id = $srcfeature_id and
        tmf.aa_sequence_id = $srcfeature_id and
-       tmf.prediction_algorithm_id = alg.algorithm_id and
-       alg.name = 'TMHMM'
-)
+       tmf.aa_feature_id = aal.aa_feature_id
 ]]>
       </sql>
     </sqlQuery>
@@ -394,7 +398,7 @@ ORDER BY aal.start_min
     </sqlQuery>
 
 
-<!-- ORIGINALLY FROM: giardia,trich,tritryp -->
+<!--
     <sqlQuery name="domain:TMHMM:subfeatures">
     <testParamValues project="TriTrypDB">
     <param name="parent_id" parentFeatureTest="domain:TMHMM"/>
@@ -423,6 +427,8 @@ ORDER BY aal.start_min
 ]]>
       </sql>
     </sqlQuery>
+
+-->
 
     <sqlQuery name="domain:interpro:bulksubfeatures">
       <sql>
