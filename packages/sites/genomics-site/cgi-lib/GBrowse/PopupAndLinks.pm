@@ -776,5 +776,11 @@ sub lowcomplexitySegTitle {
   hover("Low complexity", \@data);
 }
 
+sub ExportPredTitle{
+   my $f = shift;
+   my @data;
+   push @data, [ 'Coordinates:' => $f->start . '..' . $f->end ];
+   hover("Predicted export domain", \@data);
+}
 
 1;
