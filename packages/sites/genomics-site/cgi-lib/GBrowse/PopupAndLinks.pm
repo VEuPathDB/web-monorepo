@@ -721,21 +721,6 @@ sub interproTitle {
 
 sub interproLink {
   my $f = shift;
-  my $name = $f->name;
-  my ($desc) = $f->get_tag_values("Note");
-  my ($db) = $f->get_tag_values("Db");
-  my ($evalue) = $f->get_tag_values('Evalue');
-  $evalue = sprintf("%.2E", $evalue);
-  my @data;
-  push @data, [ 'Database:'  => $db ];
-  push @data, [ 'Accession:'  => $name ];
-  push @data, [ 'Description:' => $desc ];
-  push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
-  push @data, [ 'E_value:' => $evalue];
-  hover("InterPro Domain: $name", \@data);
-}
-link         = sub { 
-  my $f = shift;
   my ($db) = $f->get_tag_values('Db');
   my ($pi) = $f->get_tag_values('Pi');
   my $url;
@@ -774,10 +759,8 @@ sub signalpTitle {
 
 sub tmhmmTitle {
   my $f = shift;
-  my $name = $f->name;
-  my ($desc) = $f->get_tag_values("Topology");
+   my ($desc) = $f->get_tag_values("Topology");
   my @data;
-  push @data, [ 'Name:'  => $name ];
   push @data, [ 'Topology:' => $desc ];
   push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
   hover("Transmembrane Domain", \@data);
