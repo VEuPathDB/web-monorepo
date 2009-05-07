@@ -292,6 +292,16 @@ ul#strategy_tabs {
     padding: 0;
 }
 
+#search_history {
+	min-height: 130px;
+}
+
+#search_history, #sample_strat, #strategy_results {
+	position: absolute;
+	left: -999em;
+	width:100%;
+}
+
 .toggle {display: none;}
 .boggle {margin: 6px 20px 6px 20px; display: none;}
 

@@ -47,7 +47,6 @@
 		// tell jQuery not to cache ajax requests.
 		$.ajaxSetup ({ cache: false}); 
 		exportBaseURL = '${exportBaseUrl}';
-		$("#diagram div.venn:last span.resultCount a").click();
 		var current = getCurrentTabCookie();
 		if (!current || current == null)
 			showPanel('strategy_results');
@@ -89,7 +88,7 @@
 --%>
 
 
-<div id="strategy_results" style="position:absolute;left:-999em;width:100%;">
+<div id="strategy_results">
 
 <%------ if this div is not being used, please clean up ------ ---%>
 <div class="strategy_controls"/></div> 
@@ -104,11 +103,11 @@
 
 </div><!-- end results view div -->
 
-<div id="search_history" style="position:absolute;left:-999em;width:100%;">
-  <site:strategyHistory model="${wdkModel}" user="${wdkUser}" />
+<div id="search_history">
+  <%-- <site:strategyHistory model="${wdkModel}" user="${wdkUser}" /> --%>
 </div> <!-- end history view div -->
 
-<div id="sample_strat" style="position:absolute;left:-999em;width:100%;">
+<div id="sample_strat">
         <site:sampleStrategies wdkModel="${wdkModel}" wdkUser="${wdkUser}" />
 </div> <!-- end sample strats div -->
 

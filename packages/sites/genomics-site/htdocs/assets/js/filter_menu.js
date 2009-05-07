@@ -1,6 +1,5 @@
 var _action = "";
 var original_Query_Form_Text;
-var update_hist = false;
 var current_Front_Strategy_Id = null;
 
 function showExportLink(stratId){

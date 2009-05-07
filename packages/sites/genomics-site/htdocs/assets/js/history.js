@@ -2,6 +2,7 @@ var selected = new Array();
 // vars for complete query history tab
 var overHistoryId = 0;
 var currentHistoryId = 0;
+var update_hist = true;
 
 function updateHistory(){
 	if(update_hist){
