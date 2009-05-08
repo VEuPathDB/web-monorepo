@@ -132,13 +132,27 @@ $(document).ready(function(){
 
         </c:choose>
 
-        <site:email
-              to="${wdkUser.email}, ${to}"
-              from="${from}"
-              subject="${subject}"
-              body="${body}"
-        />
-         
+        <c:choose>
+
+          <c:when test="${param.bulk ne 'yes'}">
+            <site:email
+                  to="${wdkUser.email}, ${to}"
+                  from="${from}"
+                  subject="${subject}"
+                  body="${body}"
+            />
+          </c:when>
+          <c:otherwise>
+            <site:email
+                  to="${to}"
+                  from="${from}"
+                  subject="${subject}"
+                  body="${body}"
+            />
+          </c:otherwise>
+
+        </c:choose>
+           
         <p align=center>Thank you for the comment.
         <br/><br/>
       
