@@ -153,12 +153,7 @@
 
 <!--[if lt IE 8]>
 <style>
-   body {
-	behavior: url(/assets/css/csshover.htc);
-   }
-
    #query_selection {
-	behavior: url("/assets/css/csshover.htc");
 	left: auto;
 	padding: 10px 20px;
    }
@@ -231,6 +226,14 @@
 
 <!--[if lt IE 7]>
 <style>
+   body {
+	behavior: url(/assets/css/csshover.htc);
+   }
+
+   .top_nav {
+	behavior: url(/assets/css/csshover.htc);
+   }
+
    #menu ul li {
 	width: 100%;
    }
@@ -254,15 +257,11 @@
    #Strategies {
 	height: expression(this.scrollHeight > 299 ? "300px" : "auto");
    }
+
+   #search_history {
+	height: 130px;
+   }
 </style>
-<script type="text/javascript" src="/assets/js/pngfix.js"></script>
-<c:if test="${refer == 'customSummary'}">
-<script type="text/javascript">
-        $(document).ready(function(){
-		$("#Strategies").prepend("<div style='height:124px;'>&nbsp;</div>");
-	});
-</script>
-</c:if>
 <![endif]-->
 
 <c:if test="${param.questionFullName eq 'IsolateQuestions.IsolateByCountry'}">

@@ -71,8 +71,15 @@
 <script type="text/javascript" src="/assets/js/htmltooltip.js"></script>
 
 <!-- fix to transparent png images in IE 7 -->
-<!--[if lt IE 7.]>
+<!--[if lt IE 7]>
 <script type="text/javascript" src="/assets/js/pngfix.js"></script>
+<c:if test="${refer == 'customSummary'}">
+<script type="text/javascript">
+        $(document).ready(function(){
+		$("#Strategies").prepend("<div style='height:124px;'>&nbsp;</div>");
+	});
+</script>
+</c:if>
 <![endif]-->
 
 <!-- js for Contact Us window -->
