@@ -1,3 +1,37 @@
+function getStrategyJSON(backId){
+	var strategyJSON = null;
+	$.ajax({
+		async: false,
+		url:"showStrategy.do?strategy=" + backId + "&open=false",
+		type: "POST",
+		dataType: "json",
+		data:"pstate=" + p_state,
+		success: function(data){
+			for(var s in data.strategies){
+				if(s != "length") {
+					data.strategies[s].checksum = s;
+					strategyJSON = data.strategies[s];
+				}
+					
+			}
+		}
+	});
+	return strategyJSON;
+}
+
+function getStrategyOBJ(backId){
+	if(getStrategyFromBackId(backId) != false){
+		return getStrategyFromBackId(backId);
+	}else{
+		var json = getStrategyJSON(backId);
+		var s = new Strategy(strats.length, json.id, false);
+		s.checksum = json.checksum;
+		s.JSON = json;
+		s.name = json.name;
+		return s;
+	}
+}
+
 //show the loading icon in the upper right corner of the strategy that is being operated on
 function showLoading(divId){
 	var d = null;

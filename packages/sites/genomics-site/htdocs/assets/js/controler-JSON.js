@@ -504,7 +504,7 @@ function hideStrat(id){
 }
 
 function saveStrategy(stratId, checkName, fromHist){
-	var ss = getStrategyFromBackId(stratId);
+	var ss = getStrategyOBJ(stratId);//getStrategyFromBackId(stratId);
 	var saveForm = $("div#save_strat_div_" + stratId);
 	if (fromHist) saveForm = $("#hist_save_" + stratId);
 	var name = $("input[name='name']",saveForm).attr("value");
@@ -534,7 +534,7 @@ function saveStrategy(stratId, checkName, fromHist){
 }
 
 function copyStrategy(stratId, fromHist){
-        var ss = getStrategyFromBackId(stratId);
+        var ss = getStrategyOBJ(stratId);//getStrategyFromBackId(stratId);
         var result = confirm("Do you want to make a copy of strategy '" + ss.name + "'?");
         if (result == false) return;
         var url="copyStrategy.do?strategy=" + stratId + "&strategy_checksum="+ss.checksum;
@@ -544,7 +544,7 @@ function copyStrategy(stratId, fromHist){
                 data:"state=" + p_state,
                 success: function(data){
                                         //data = eval("(" + data + ")");
-                                        if(ErrorHandler("Copytrategy", data, ss, null)){
+                                        if(ErrorHandler("Copystrategy", data, ss, null)){
                                             updateStrategies(data);
                                             if (fromHist) {
                                                 update_hist = true;
@@ -560,7 +560,7 @@ function copyStrategy(stratId, fromHist){
 }
 
 function renameStrategy(stratId, checkName, fromHist){
-	var strat = getStrategyFromBackId(stratId);
+	var strat = getStrategyOBJ(stratId);//getStrategyFromBackId(stratId);
 	var renameForm = $("#rename_" + strat.frontId);
 	if (fromHist) renameForm = $("#browse_rename");
 	var name = $("input[name='name']",renameForm).attr("value");
