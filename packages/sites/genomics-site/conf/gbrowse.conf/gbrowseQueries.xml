@@ -2169,6 +2169,34 @@ WHERE  ed.name = 'Winzeler Array - Plasmodium Genetic Variation'
     </sql>
   </sqlQuery> 
 
+  <sqlQuery name="SNP:Genotyping"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT 
+       sa.na_feature_id          as feature_id,
+       'SNP'                     as type, 
+       'Genotyping'              as source, 
+       sa.source_id              as name, 
+       '.'                       as score, 
+       sa.seq_source_id          as parent_id, 
+       sa.start_min              as startm, 
+       sa.start_min              as end, 
+       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'IsoDbName=' || iso_ext_db_name || '$dlm' ||
+       'MinorAllele=' || swi.minor_allele || '$dlm' ||
+       'MajorAllele=' || swi.major_allele || '$dlm' ||
+       'MinorAlleleFreq=' || swi.minor_allele_frequency || '$dlm' ||
+       'NumIsolates=' || swi.number_isolates as atts
+FROM   apidb.snpsWithIsolates swi, apidb.SnpAttributes sa
+WHERE  swi.snp_source_id = sa.source_id
+  AND  sa.na_sequence_id = $srcfeature_id
+  AND  sa.start_min <= $rend
+  AND  sa.start_min >= $base_start
+
+]]>
+    </sql>
+  </sqlQuery> 
+
   <sqlQuery name="SNP:3kChip"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
