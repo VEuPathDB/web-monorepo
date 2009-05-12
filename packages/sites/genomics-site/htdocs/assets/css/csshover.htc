@@ -89,11 +89,12 @@ function HoverElement(node, className, events) {
 	}
 
 function getElementsBySelect(rule) {
-	var parts, nodes = [doc];
+	return $(rule).get();
+/*	var parts, nodes = [doc];
 	parts = rule.split(' ');
 	for(var i=0; i<parts.length; i++) {
 		nodes = getSelectedNodes(parts[i], nodes);
-	}	return nodes;
+	}*/	return nodes;
 }
 	function getSelectedNodes(select, elements) {
 		var result, node, nodes = [];
