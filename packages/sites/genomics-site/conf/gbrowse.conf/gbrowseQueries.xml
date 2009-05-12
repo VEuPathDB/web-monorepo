@@ -1147,6 +1147,7 @@ SELECT
        'isPseudo=' || gf.is_pseudo || '$dlm' ||
        'isDeprecated=' ||  ga.is_deprecated || '$dlm' ||
        'ExtDbName=' ||  ed.name || '$dlm' ||
+       'Version=' ||  edr.version || '$dlm' ||
        'FeatureType=' || fl.feature_type
          as atts
 FROM 
