@@ -65,14 +65,10 @@ sub snpBgFromIsCodingAndNonSyn {
 sub snpColor {
     my $f = shift;
              my ($isCoding) = $f->get_tag_values("IsCoding");
-             my ($hasIsolate) = $f->get_tag_values("HasIsolate");
              my $color = 'white';
              my ($nonSyn) = $f->get_tag_values("NonSyn");
              if ($isCoding eq 'yes') {
                $color = $nonSyn? 'blue' : 'lightblue';
-             }
-             if ($hasIsolate eq '1') {
-               $color = $nonSyn? 'darkred' : 'lightred';
              }
              return $color;
      }
