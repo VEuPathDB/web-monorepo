@@ -268,6 +268,28 @@ sub snpTitleFromMatchToReference {
    return hover( "3k Chip", \@data); 
  }
 
+ sub chipTitle {
+   my $f = shift;
+   my @data;
+   my $name = $f->name;
+   my ($source) = $f->get_tag_values("IsoDbName");
+   my ($location) = $f->start;
+   my ($majorAllele) = $f->get_tag_values("MajorAllele");
+   my ($minorAllele) = $f->get_tag_values("MinorAllele");
+   my ($minorAlleleFreq) = $f->get_tag_values("MinorAlleleFreq");
+   my ($numIsolates) = $f->get_tag_values("NumIsolates");
+   my ($snpid) = $f->get_tag_values("SnpId");
+   my $link = qq(<a href="/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$name">$name</a>);
+   push @data, [ 'Name:'  => $name ];
+   push @data, [ 'Data Source:'  => $source ];
+   push @data, [ 'Location:' => $location ];
+   push @data, [ 'Major Allele:'  => $majorAllele ];
+   push @data, [ 'Minor Allele:'  => $minorAllele ];
+   push @data, [ 'Minor Allele Frequency:'  => $minorAlleleFreq ];
+   push @data, [ '# of isolates:'  => $numIsolates ];
+   return hover( "SNP on genotypying chip", \@data); 
+ }
+
 sub peakTitle {
   my $f  = shift;
   my $name = $f->name;
