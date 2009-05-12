@@ -2182,6 +2182,8 @@ SELECT
        sa.start_min              as startm, 
        sa.start_min              as end, 
        decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'base_start='   || '$base_start' || '$dlm' ||
+       'rend='   || '$rend' || '$dlm' ||
        'IsoDbName=' || iso_ext_db_name || '$dlm' ||
        'MinorAllele=' || swi.minor_allele || '$dlm' ||
        'MajorAllele=' || swi.major_allele || '$dlm' ||
