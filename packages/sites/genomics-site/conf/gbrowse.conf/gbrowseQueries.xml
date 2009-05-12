@@ -2107,10 +2107,6 @@ WHERE
        'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
        'IsCoding=' || sa.is_coding || '$dlm' ||
        'Gene=' || sa.gene_source_id || '$dlm' ||
-       'HasIsolate=' || (CASE WHEN (sa.source_id in
-                                    (SELECT snp_source_id FROM apidb.isolateSnps
-                                     WHERE sa.dataset=snp_db_name AND sa.source_id=snp_source_id)) 
-                                    THEN 1 ELSE 0 END) || '$dlm' ||
        'params=' || sa.position_in_CDS || '&' ||
        sa.position_in_protein || '&' ||
        sa.reference_strain || '&' ||
@@ -2258,10 +2254,6 @@ where  etn.na_sequence_id = src.na_sequence_id
        'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
        'IsCoding=' || sa.is_coding || '$dlm' ||
        'Gene=' || sa.gene_source_id || '$dlm' ||
-       'HasIsolate=' || (CASE WHEN (sa.source_id in
-                                    (SELECT snp_source_id FROM apidb.isolateSnps
-                                     WHERE sa.dataset=snp_db_name AND sa.source_id=snp_source_id)) 
-                                    THEN 1 ELSE 0 END) || '$dlm' ||
        'params=' || sa.position_in_CDS || '&' ||
        sa.position_in_protein || '&' ||
        sa.reference_strain || '&' ||
@@ -2384,10 +2376,6 @@ ORDER BY
        'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
        'IsCoding=' || sa.is_coding || '$dlm' ||
        'Gene=' || sa.gene_source_id || '$dlm' ||
-       'HasIsolate=' || (CASE WHEN (sa.source_id in
-                                    (SELECT snp_source_id FROM apidb.isolateSnps
-                                     WHERE sa.dataset=snp_db_name AND sa.source_id=snp_source_id)) 
-                                    THEN 1 ELSE 0 END) || '$dlm' ||
        'params=' || sa.position_in_CDS || '&' ||
        sa.position_in_protein || '&' ||
        sa.reference_strain || '&' ||
