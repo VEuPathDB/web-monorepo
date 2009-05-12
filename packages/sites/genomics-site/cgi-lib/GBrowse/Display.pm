@@ -95,22 +95,48 @@ sub SnpBgFromMatchingReference {
 }
 
 
-sub SnpBgcolorFromAllele {
+sub SnpBgcolorForGenotyping {
+#  red for 75k chip, green 3k chip and blue for barcoding.
       my $f = shift;
-      my ($allele) = $f->get_tag_values('Allele');
-      #print $allele;
-      if($allele eq 'A') {
-      return 'darkgreen';
-      } elsif($allele eq 'T') {
-      return 'lightgreen';
-      } elsif($allele eq 'C') {
-      return 'red';
-      } elsif($allele eq 'G') {
-      return 'darkred';
-      } elsif($allele eq 'N') {
-      return 'orange';
-      } else {
-      return 'yellow';
+      my ($source) = $f->get_tag_values('IsoDbName');
+      my ($freq) = $f->get_tag_values('MinorAlleleFreq');
+
+      if ($source eq 'Broad 75K genotyping chip') {
+	if ($freq <= 0.1) {
+	  return '#FF0000';
+	} elsif ($freq <= 0.2) {
+	  return '#E00000';
+	} elsif ($freq <= 0.3) {
+	  return '#C00000';
+	} elsif ($freq <= 0.4) {
+	  return '#A00000';
+	} else {
+	  return '#800000';
+	}
+      } elsif ($source eq 'Broad 3K genotyping chip') {
+	if ($freq <= 0.1) {
+	  return '#0000FF';
+	} elsif ($freq <= 0.2) {
+	  return '#0000E0';
+	} elsif ($freq <= 0.3) {
+	  return '#0000C0';
+	} elsif ($freq <= 0.4) {
+	  return '#0000A0';
+	} else {
+	  return '#000080';
+	}
+      } else {  # for 'Isolate barcode data from Broad'
+	if ($freq <= 0.1) {
+	  return '#00FF00';
+	} elsif ($freq <= 0.2) {
+	  return '#00E000';
+	} elsif ($freq <= 0.3) {
+	  return '#00C000';
+	} elsif ($freq <= 0.4) {
+	  return '#00A000';
+	} else {
+	  return '#008000';
+	}
       }
 }
 
