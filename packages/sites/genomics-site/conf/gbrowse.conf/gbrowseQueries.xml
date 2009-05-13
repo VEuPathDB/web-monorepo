@@ -2191,7 +2191,7 @@ WHERE  swi.snp_source_id = sa.source_id
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
-
+  AND  sa.dataset='PlasmoDB combined SNPs'
 ]]>
     </sql>
   </sqlQuery> 
