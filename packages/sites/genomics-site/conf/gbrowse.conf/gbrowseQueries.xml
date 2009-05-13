@@ -2196,47 +2196,6 @@ WHERE  swi.snp_source_id = sa.source_id
     </sql>
   </sqlQuery> 
 
-  <sqlQuery name="SNP:3kChip"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-SELECT 
-       if.na_feature_id       as feature_id,
-       'SNP'                  as type, 
-       '3kChip'               as source, 
-       etn.source_id          as name, 
-       chr.na_sequence_id     as parent_id, 
-       nal.start_min          as startm, 
-       CASE 
-         WHEN ($rend - $base_start <= 10000) THEN nal.start_min + 50
-         WHEN ($rend - $base_start <= 20000) THEN nal.start_min + 100
-         WHEN ($rend - $base_start <= 30000) THEN nal.start_min + 200
-         WHEN ($rend - $base_start <= 60000) THEN nal.start_min + 400
-         WHEN ($rend - $base_start <= 100000) THEN nal.start_min + 800
-         WHEN ($rend - $base_start <= 200000) THEN nal.start_min + 1600
-         ELSE nal.start_min + 3200
-       END end,
-       'Country=' || nvl(src.country,'no data') || '$dlm' ||
-       'Strain=' || src.strain || '$dlm' ||
-       'SnpId=' || snp.source_id || '$dlm' ||
-       'Allele=' || nvl(if.allele, 'no data') as atts
-FROM   apidb.isolateattributes etn,
-       dots.isolatesource src,
-       dots.isolatefeature if,
-       dots.externalnasequence chr,
-       ApiDB.FeatureLocation nal,
-       dots.SNPFeature snp
-where  etn.na_sequence_id = src.na_sequence_id
-       and src.na_feature_id = if.parent_id
-       and nal.na_feature_id = if.na_feature_id
-       and snp.source_id = if.source_id
-       and chr.na_sequence_id = if.na_sequence_id
-       and chr.na_sequence_id = $srcfeature_id
-  AND  nal.start_min <= $rend
-  AND  nal.start_min +50>= $base_start
-]]>
-    </sql>
-  </sqlQuery>
- 
   <sqlQuery name="SNP:SangerPf"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
