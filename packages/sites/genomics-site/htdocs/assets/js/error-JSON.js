@@ -3,14 +3,11 @@ var SessionTimeOutMessage = "Your session may have timed out and all of your dat
 function ErrorHandler(evt, data, strategy, qform){
 	var type = null;
 	
-	if(evt == "Results"){
-		if(data.substring(0,1) == "{"){
-			qform.click();
-			return false;
-		}
-		return true;
-			
-	}else if(data.type == "success"){
+	if(evt == "Results") {
+            if (data.substring(0,1) != "{") return true;
+            data = eval("(" + data + ")");
+	}
+        if(data.type == "success"){
 		return true;
 	}else{
 		type = data.type;

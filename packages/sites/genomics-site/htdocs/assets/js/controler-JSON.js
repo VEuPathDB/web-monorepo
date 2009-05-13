@@ -252,12 +252,12 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 					$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedarrow");
 					init_view_step = step.back_step_Id;
 				}
-			}
-			removeLoading(f_strategyId);
-			ResultsToGrid(data);
-			$("span#text_strategy_number").html(strategy.JSON.name);
-			$("span#text_step_number").html(step.frontId);
-			$("span#text_strategy_number").parent().show();
+			    ResultsToGrid(data);
+			    $("span#text_strategy_number").html(strategy.JSON.name);
+			    $("span#text_step_number").html(step.frontId);
+			    $("span#text_strategy_number").parent().show();
+                        } 
+                        removeLoading(f_strategyId);
 		},
 		error : function(data, msg, e){
 			  alert("ERROR \n "+ msg + "\n" + e
