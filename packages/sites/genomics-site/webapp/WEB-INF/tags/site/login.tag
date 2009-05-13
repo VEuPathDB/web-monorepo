@@ -8,6 +8,10 @@
               required="false"
 %>
 
+<%@ attribute name="includeCancel"
+              required="false"
+%>
+
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <%-- set refererUrl to be the tag's enclosing page if not
@@ -28,7 +32,7 @@
 <c:remove var="originUrl"  scope="session"/>
 <c:remove var="refererUrl" scope="session"/>
 
-<table border="0" cellspacing="0" cellpadding="0" width="50%">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
 <c:choose>
   <c:when test="${wdkUser != null && wdkUser.guest != true}">
       <tr>
@@ -58,7 +62,7 @@
        <c:set var="errorMessage" value="${sessionScope.loginError}"/>
        <c:remove var="loginError" scope="session"/>
        <tr>
-          <td colspan="2">
+          <td align="center" colspan="2">
              <div class="small"><font color="red">${errorMessage}<br>
              Note email and password are case-sensitive.</font></div>
           </td>
@@ -66,24 +70,12 @@
      </c:if>
      <html:form method="POST" action='/processLogin.do' >
      <tr>
-       <td>
-        <div class="small">
-        <b>Email:</b>
-        </div>
-        </td><td>
-        <div class="small">
-        <b>Password:</b>
-        </div>
-        </td>
+       <td align="right" width="45%"><div class="small"><b>Email:</b></div></td>
+       <td align="left"><div class="small"><input id="email" type="text" name="email" size="20"></div></td>
+     </tr>
      <tr>
-       <td align="left">
-         <div class="small">
-           <input id="email" type="text" name="email" size="15">
-         </td><td>
-         <div class="small">
-           <input id="password" type="password" name="password" size="11">
-         </div>
-       </td>
+       <td align="right"><div class="small"><b>Password:</b></div></td>
+       <td align="left"><div class="small"><input id="password" type="password" name="password" size="20"></div></td>
      </tr>
      <tr>
         <td colspan="2" align="center" nowrap>
@@ -94,6 +86,9 @@
         <td colspan="2" align="center" nowrap>
             <span class="small">
                <input type="submit" value="Login" id="login" style="width:76px;"/>
+               <c:if test="${includeCancel}">
+                 <input type="submit" value="Cancel" style="width:76px;" onclick="$.unblockUI();return false;"/>
+               </c:if>
             </span>
     
            <c:if test="${originUrl != null}">
@@ -108,11 +103,8 @@
 
     <html:form method="POST" action='/showRegister.do' >
      <tr>
-       <td colspan="1" align="left" valign="top">
-          <div class="small"><a href="<c:url value='/showResetPassword.do'/>">Forgot Password?</a>&nbsp;</div>
-       </td>
-       <td colspan="1" align="right" valign="top">
-          <div class="small">&nbsp;<a href="showRegister.do">Register/Subscribe</a></div>
+       <td colspan="2" align="center" valign="top">
+          <span class="small"><a href="<c:url value='/showResetPassword.do'/>">Forgot Password?</a>&nbsp;&nbsp;<a href="showRegister.do">Register/Subscribe</a></span>
        </td>
      </tr>
     </html:form>

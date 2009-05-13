@@ -1167,3 +1167,16 @@ td.strat_inactive {
 .clear_all {
     clear: both;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	background-repeat: repeat-x;
+	border: 2px solid #3c8935;
+}
+
+.blockPage{
+	background-image: url(../images/ToxoDB/footer.png);
+}

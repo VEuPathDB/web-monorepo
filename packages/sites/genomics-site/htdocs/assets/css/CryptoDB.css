@@ -1297,3 +1297,16 @@ td.strat_inactive {
 	margin-right: 12px;
 }
 */
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	background-repeat: repeat-x;
+	border: 2px solid #345d9b;
+}
+
+.blockPage{
+	background-image: url(../images/CryptoDB/footer.png);
+}

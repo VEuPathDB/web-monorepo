@@ -1404,3 +1404,17 @@ span#toggle_filter {
 .tableWithBorders tr td{
 	border: 1px solid #660000;
 }
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	background-repeat: repeat-x;
+	border: 2px solid #9e5933;
+}
+
+.blockPage{
+	background-image: url(../images/TriTrypDB/footer.png);
+}

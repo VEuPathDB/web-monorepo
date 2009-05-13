@@ -81,7 +81,7 @@
          <input type='button' value='Copy' onclick="copyStrategy('${strategyId}', true);" />
          <c:choose>
            <c:when test="${wdkUser.guest}">
-             <input title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' type='button' value='Save As' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
+             <input title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' type='button' value='Save As' onclick="popLogin()" />
            </c:when>
            <c:otherwise>
              <input title='A saved strategy is like a snapshot, it cannot be changed.' type='button' value='Save As' onclick="showHistSave(this, '${strategyId}')" />
@@ -89,7 +89,7 @@
          </c:choose>
          <c:choose>
            <c:when test="${wdkUser.guest}">
-             <input title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' type='button' value='Share' onclick="window.location='login.jsp?refererUrl=login.jsp&originUrl=${pageContext.request.requestURL}';" />
+             <input title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' type='button' value='Share' onclick="popLogin()" />
            </c:when>
            <c:when test="${strategy.isSaved}">
              <input title='Email this URL to your best friend.' type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />

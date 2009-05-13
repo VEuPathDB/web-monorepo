@@ -401,3 +401,14 @@ function secondLevelDomain(){
     return("");
   }
 }
+
+
+/***************************************************
+*  Charles Treatman 5/13/09
+*  The following method is for the login form popup
+*  and requires the jQuery BlockUI plugin.
+***************************************************/
+
+function popLogin(){
+	$.blockUI({message : $("#loginForm"), css : {cursor : 'auto'}});
+}

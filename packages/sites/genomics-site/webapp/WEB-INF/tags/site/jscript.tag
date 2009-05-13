@@ -18,8 +18,6 @@
 	<script type="text/javascript" src="/assets/js/lib/json.js"></script>
 	<script type="text/javascript" src="/assets/js/lib/ui/ui.core.js"></script>
 	<script type="text/javascript" src="/assets/js/lib/ui/ui.draggable.js"></script>
-	<!-- JQuery BlockUI Plugin -->
-	<script type="text/javascript" src="/assets/js/lib/jquery.blockUI.js"></script>
 	<!-- filter menu javascript -->
 	<script type="text/javascript" src="/assets/js/filter_menu.js"></script>
 	<!-- Strategy Interaction javascript -->
@@ -36,6 +34,9 @@
 	<script type="text/javascript" src="/assets/js/results_page.js"></script>
 
 </c:if>
+
+<!-- JQuery BlockUI Plugin -->
+<script type="text/javascript" src="/assets/js/lib/jquery.blockUI.js"></script>
 
 <%-- jQuery Cookie plugin --%>
 <script type="text/javascript" src="/assets/js/lib/jquery.cookie.js"></script>

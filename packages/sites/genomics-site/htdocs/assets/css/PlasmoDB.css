@@ -1192,3 +1192,16 @@ td.strat_inactive {
 .clear_all {
     clear: both;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	background-repeat: repeat-x;
+	border: 2px solid #634697;
+}
+
+.blockPage{
+	background-image: url(../images/PlasmoDB/footer.png);
+}

@@ -382,10 +382,11 @@ ${headElement}
 <%--
             <a href="${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
 --%>
-            <a href="#" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
-               <ul class="login">
+            <a href="javascript:void(0)" onclick="popLogin()">Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+	    <div id="loginForm" style="display:none;"><h2 style="textAlign: center">EuPathDB Account Login</h2><site:login includeCancel="true" /></div>
+              <%-- <ul class="login">
                     <li><site:login /></li>
-              </ul>
+              </ul> --%>
 
          </li>
           <li>
