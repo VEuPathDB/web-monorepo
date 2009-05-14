@@ -250,7 +250,7 @@ sub snpTitleFromMatchToReference {
 
 } 
 
-
+# not needed?
  sub chipTitleQuick {
    my $f = shift;
    my @data;
@@ -802,6 +802,23 @@ sub blastpTitle {
   push @data, [ '% Positive:' => sprintf("%3.1f", $f->get_tag_values("PercentPositive")) ];
   push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
   hover("BLASTP hit: $name", \@data);
+}
+
+sub isolatesTitle {
+  my $f = shift;
+  my $name = $f->name;
+  my ($evalue) = $f->get_tag_values('Expect');
+  my ($qstart) = $f->get_tag_values('QStart');
+  my ($qend) = $f->get_tag_values('QStop');
+  my ($desc) = $f->get_tag_values('Note');
+  my ($matchlen) = $f->get_tag_values('MatchLen');
+  my @data;
+  push @data, [ 'Name:'   => $name ];
+  push @data, [ 'Score:'  => $f->score ];
+  push @data, [ 'Expect:' => $evalue ];
+  push @data, [ 'Match:'  => "$matchlen nt" ];
+  push @data, [ 'Note:'   => $desc ];
+  hover( "$name", \@data);
 }
 
 sub lowcomplexitySegTitle {
