@@ -1184,10 +1184,20 @@ td.strat_inactive {
 }
 
 .blockPage{
-	background-image: url(../images/ToxoDB/footer.png);
+	background-image: url(/assets/images/ToxoDB/footer.png);
 }
 
 .flexigrid div.hDiv
 {
-	background-image:url(../../images/ToxoDB/trheader.png);
+	background-image:url(/assets/images/ToxoDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/ToxoDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/ToxoDB/trheader.png);
 }

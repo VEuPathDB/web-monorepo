@@ -1212,10 +1212,20 @@ td.strat_inactive {
 }
 
 .blockPage{
-	background-image: url(../images/EuPathDB/footer.png);
+	background-image: url(/assets/images/EuPathDB/footer.png);
 }
 
 .flexigrid div.hDiv
 {
-	background-image:url(../../images/EuPathDB/trheader.png);
+	background-image:url(/assets/images/EuPathDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/EuPathDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/EuPathDB/trheader.png);
 }

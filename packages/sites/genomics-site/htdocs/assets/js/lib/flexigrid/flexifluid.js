@@ -44,7 +44,6 @@ flexifluid.init = function()
 
       $(this).width('100%');
       $(this.parentNode).width(pWidth + '%');
-      //$(this.parentNode).css('min-width', minWidth + 'px');
       
       pctWidths[col] = pWidth;
       minWidths[col] = minWidth;
@@ -88,14 +87,14 @@ flexifluid.init = function()
   /* loop each header again to set min-width */
   col = 0;
   $('.hDivBox th > div').each(function(){
-      $(this.parentNode).css('min-width', minWidths[col]);
+      $(this).css('min-width', minWidths[col] + 'px');
       col++;
   });
 
   /* loop each content again to set min-width */
   n = 0;
   $('#'+flexifluid.grid_name+' div').each(function(){
-      $(this.parentNode).css('min-width', minWidths[n % col]);
+      $(this).css('min-width', minWidths[n % col] + 'px');
       n++;
   });
 

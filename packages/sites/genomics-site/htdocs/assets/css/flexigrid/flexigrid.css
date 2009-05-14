@@ -428,7 +428,6 @@
 div.colCopy
 {
 	background-color:#EEEEEE;
-	background-image:url(../../images/CryptoDB/trheader.png);
 	background-position:center top;
 	background-repeat:repeat-x;
 	color:#5F140E;
@@ -468,7 +467,6 @@ div.colCopy
 
 .flexigrid div.hDiv th.thMove
 {
-	background-image:url(../../images/CryptoDB/trheader.png);
 	/* background: #fff;
 	color: #fff; */
 }

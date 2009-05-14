@@ -1422,10 +1422,20 @@ span#toggle_filter {
 }
 
 .blockPage{
-	background-image: url(../images/TriTrypDB/footer.png);
+	background-image: url(/assets/images/TriTrypDB/footer.png);
 }
 
 .flexigrid div.hDiv
 {
-	background-image:url(../../images/TriTrypDB/trheader.png);
+	background-image:url(/assets/images/TriTrypDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/TriTrypDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/TriTrypDB/trheader.png);
 }

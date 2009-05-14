@@ -1208,10 +1208,20 @@ td.strat_inactive {
 }
 
 .blockPage{
-	background-image: url(../images/PlasmoDB/footer.png);
+	background-image: url(/assets/images/PlasmoDB/footer.png);
 }
 
 .flexigrid div.hDiv
 {
-	background-image:url(../../images/PlasmoDB/trheader.png);
+	background-image:url(/assets/images/PlasmoDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/PlasmoDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/PlasmoDB/trheader.png);
 }

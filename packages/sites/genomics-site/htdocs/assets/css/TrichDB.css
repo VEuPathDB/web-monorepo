@@ -1184,10 +1184,20 @@ td.strat_inactive {
 }
 
 .blockPage{
-	background-image: url(../images/TrichDB/footer.png);
+	background-image: url(/assets/images/TrichDB/footer.png);
 }
 
 .flexigrid div.hDiv
 {
-	background-image:url(../../images/TrichDB/trheader.png);
+	background-image:url(/assets/images/TrichDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/TrichDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/TrichDB/trheader.png);
 }

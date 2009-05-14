@@ -1184,10 +1184,20 @@ td.strat_inactive {
 }
 
 .blockPage{
-	background-image: url(../images/GiardiaDB/footer.png);
+	background-image: url(/assets/images/GiardiaDB/footer.png);
 }
 
 .flexigrid div.hDiv
 {
-	background-image:url(../../images/GiardiaDB/trheader.png);
+	background-image:url(/assets/images/GiardiaDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/GiardiaDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/GiardiaDB/trheader.png);
 }
