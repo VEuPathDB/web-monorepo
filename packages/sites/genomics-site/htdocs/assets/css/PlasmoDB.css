@@ -1384,6 +1384,7 @@ span#toggle_filter {
 
 .tableWithBorders tr td{
 	border: 1px solid #660000;
+
 }
 
 
@@ -1416,5 +1417,4 @@ div.colCopy
 {
 	background-image:url(/assets/images/PlasmoDB/trheader.png);
 }
->>>>>>> .r28799
 
