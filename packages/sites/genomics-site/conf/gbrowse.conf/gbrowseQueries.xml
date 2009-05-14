@@ -1028,12 +1028,13 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:IsolateCDC">
+<!-- NOTE: externalDatabase.name list specified in query, for Crypto AND Plasmo -->
+  <sqlQuery name="match:IsolatePopset">
      <sql>
 <![CDATA[
 SELECT distinct sim.similarity_id feature_id, 
        'match' type, 
-       'IsolateCDC' source, 
+       'IsolatePopset' source, 
        extq.source_id name, 
        sim.score,
        to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) pvalue, 
@@ -1046,9 +1047,12 @@ SELECT distinct sim.similarity_id feature_id,
        'Note=' || extq.description atts
 FROM   
        dots.Similarity sim, 
-       dots.EXTERNALNASEQUENCE extt, 
-       dots.NASEQUENCE extq
+       dots.ExternalNASequence extt, dots.NASequence extq,
+       sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
 WHERE  
+       extq.external_database_release_id = edr.external_database_release_id and
+       ed.external_database_id = edr.external_database_id and
+       ed.name in ('C. parvum isolate data','Plasmodium isolates From Genbank') and
        sim.query_id = extq.na_sequence_id and 
        sim.subject_id = extt.na_sequence_id and 
        to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-20 and 
