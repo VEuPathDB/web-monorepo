@@ -45,41 +45,21 @@
 </div> <%-- id="contentwrapper" --%>
 </c:if>
 
- <c:if test="${fn:containsIgnoreCase(siteName, 'ApiDB')}">
+<c:if test="${fn:containsIgnoreCase(siteName, 'ApiDB')}">
      <c:set var="siteName" value="EupathDB" />
 </c:if>
 
 <%--------------------------------------------%>
 
-<div align="center">
-
-<c:if test="${refer != 'home' && refer != 'home2'}">
-</c:if>
-
 <div id="footer" >
-<%--
-	<div style="position:absolute;top:0px;left:0px;padding:9px;text-align:left;">Version ${version}<br/>${date}</div>
-	
-	<a href="http://www.eupathdb.org"><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage" width="144" height="25" align="right" border='0' /></a>
-	&copy;2009  The EuPath Project Team:: <a href="http://${fn:toLowerCase(dispModelName)}.org">${dispModelName}.org</a> <br />
-	Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or concerns.
---%>
-
-
-<div style="position:absolute;top:0px;left:0px;padding:9px;text-align:left;">
+<div style="float:left;padding-left:9px;padding-top:9px;">
  	 <a href="http://${fn:toLowerCase(siteName)}.org">${siteName}.org</a> ${version},&nbsp;${date}
 		<br>&copy;2009 The EuPath Project Team
 </div>
-
-<div style="position:absolute;top:0px;right:0px;padding:9px;">
+<div style="float:right;padding-right:9px;padding-top:9px;">
 	<a href="http://www.eupathdb.org"><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a>
 </div>
-	<span style="font-size:1.4em;position:absolute;top:15px;left:350px">Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments</span>
-
-
+<span style="font-size:1.4em;line-height:3;">Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments</span>
 </div>
-
-</div>
-
 </body>
 </html>

@@ -221,6 +221,19 @@
    a.redbutton {
 	z-index: -1;
    }
+
+   <%-- for some reason, IE needs both of these styles --%>
+   a.disabled {
+	color: gray;
+   }
+
+   a.disabled:hover {
+	color: gray;
+   }
+
+   #footer div {
+	display: inline-block;
+   }
 </style>
 <![endif]-->
 
