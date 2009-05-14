@@ -25,7 +25,7 @@
   <c:set var="trimmedAttribution" value="${trimmedAttribution},${fn:trim(attr)}" />
 </c:forEach>
 
-<table border="0" style="background:#dddddd;margin-bottom:3px;"  
+<table border="0" class="paneltoggle"  
        bgcolor="#DDDDDD" 
        cellpadding="0" 
        cellspacing="1" 

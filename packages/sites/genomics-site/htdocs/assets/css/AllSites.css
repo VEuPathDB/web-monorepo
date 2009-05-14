@@ -1,3 +1,6 @@
+
+@import url("reset.css");	
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       Stylesheet for styles that are the same across all sites 
      Definitions here get overriden by entries in (project).css
@@ -33,6 +36,15 @@ table.threecolumn {
 
 table.threecolumn td {
         vertical-align: top;
+}
+
+table.paneltoggle {
+        background:#dddddd;
+        margin-bottom:3px;
+        padding-top: 2px;
+        padding-right: 2px;
+        padding-bottom: 2px;
+        padding-left: 2px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

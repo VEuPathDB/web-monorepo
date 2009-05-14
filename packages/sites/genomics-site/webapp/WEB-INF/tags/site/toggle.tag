@@ -77,7 +77,7 @@
 <c:url value="${displayName}"/>
 </c:set>
 
-<table width="100%" 
+<table width="100%" class="paneltoggle"
        cellpadding="3"        
        bgcolor="#DDDDDD"
        

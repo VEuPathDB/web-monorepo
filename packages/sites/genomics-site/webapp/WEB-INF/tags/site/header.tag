@@ -141,7 +141,7 @@
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
 <%-- We need to figure out which styles we are using from this old file and set them in the project.css file --%>
 <%-------  keep it for generecordpage while we do that --%>
-<link rel="stylesheet" href="<c:url value='/misc/style.css'/>"   type="text/css" />  
+<%-- <link rel="stylesheet" href="<c:url value='/misc/style.css'/>"   type="text/css" />   --%>
 <link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" />
 <link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
 <link rel="stylesheet" href="/assets/css/history.css"            type="text/css"/>
