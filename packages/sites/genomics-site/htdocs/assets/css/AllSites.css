@@ -40,11 +40,15 @@ table.threecolumn td {
 
 table.paneltoggle {
         background:#dddddd;
-        margin-bottom:3px;
-        padding-top: 2px;
-        padding-right: 2px;
-        padding-bottom: 2px;
-        padding-left: 2px;
+        margin-bottom:0px;
+        padding-top: 2.5px;
+        padding-right: 3px;
+        padding-bottom: 2.5px;
+        padding-left: 3px;
+}
+
+td { 
+    padding: 3px 3px 3px 3px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
