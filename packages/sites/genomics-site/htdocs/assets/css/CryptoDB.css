@@ -1310,3 +1310,8 @@ td.strat_inactive {
 .blockPage{
 	background-image: url(../images/CryptoDB/footer.png);
 }
+
+.flexigrid div.hDiv
+{
+	background-image:url(../../images/CryptoDB/trheader.png);
+}

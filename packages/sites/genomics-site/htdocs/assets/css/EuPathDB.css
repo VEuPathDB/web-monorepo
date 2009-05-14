@@ -758,11 +758,14 @@ tr.headerrow {
 	font-size: 15px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #505453;
+	font-weight: bold;
+	padding: 4px;
+}
+
+tr.headerrow th {
 	background-image: url(../images/EuPathDB/trheader.png);
 	background-repeat: repeat-x;
 	background-position: top;
-	font-weight: bold;
-	padding: 4px;
 	background-color: #EEEEEE;
 }
 
@@ -779,16 +782,20 @@ td.subheaderrow {
 	padding: 4px;
 }
 
+
 tr.subheaderrow {
 	height:30px;
 	font-size: 14px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #474747;
+	font-weight: bold;
+	padding: 4px;
+}
+
+tr.subheaderrow th {
 	background-image: url(../images/EuPathDB/trsubhead.png);
 	background-repeat: repeat-x;
 	background-position: top;
-	font-weight: bold;
-	padding: 4px;
 	background-color: #EEEEEE;
 }
 
@@ -1206,4 +1213,9 @@ td.strat_inactive {
 
 .blockPage{
 	background-image: url(../images/EuPathDB/footer.png);
+}
+
+.flexigrid div.hDiv
+{
+	background-image:url(../../images/EuPathDB/trheader.png);
 }
