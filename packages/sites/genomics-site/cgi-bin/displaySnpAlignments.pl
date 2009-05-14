@@ -78,7 +78,9 @@ sub getParams{
 
   my $stmt = $dbh->prepareAndExecute($sql);
   my ($srcId,$start) = $stmt->fetchrow_array();
-  $srcId =~s/MAL//;  #put test to check integer found
+
+#  $srcId =~s/MAL//;  #put test to check integer found
+  $srcId =~s/Pf3D7_//;
 
   return ($srcId, $start);
 }
