@@ -6,7 +6,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
-<!-- get wdkXmlAnswer saved in request scope -->
+<%-- get wdkXmlAnswer saved in request scope --%>
 <c:set var="xmlAnswer" value="${requestScope.wdkXmlAnswer}"/>
 
 <c:set var="banner" value="${xmlAnswer.question.displayName}"/>

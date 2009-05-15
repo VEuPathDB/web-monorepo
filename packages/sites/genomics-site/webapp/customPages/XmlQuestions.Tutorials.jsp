@@ -6,7 +6,7 @@
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<!-- get wdkXmlAnswer saved in request scope -->
+<%-- get wdkXmlAnswer saved in request scope --%>
 <c:set var="xmlAnswer" value="${requestScope.wdkXmlAnswer}"/>
 
 <c:set var="banner" value="${wdkModel.displayName} ${xmlAnswer.question.displayName}"/>
