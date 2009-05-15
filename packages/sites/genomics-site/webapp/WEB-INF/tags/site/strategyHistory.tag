@@ -67,7 +67,6 @@
    </tr>
 </table>
 
-<c:set var="typeC" value="0"/>
 <c:set var="strategiesMap" value="${user.unsavedStrategiesByCategory}"/>
 <!-- form for renaming strategies; action is set in javascript -->
 <form id="browse_rename" action="javascript:return false;" onsubmit="return validateSaveForm(this);">
@@ -79,22 +78,12 @@
   <c:set var="recDispName" value="${strategies[0].latestStep.question.recordClass.type}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
-  <c:set var="typeC" value="${typeC+1}"/>
-  <c:choose>
-    <c:when test="${typeC == 1}">
-      <div id="unsaved-strategies" class="panel_${recTabName} history_panel">
-    </c:when>
-    <c:otherwise>
-      <div id="saved-strategies" class="panel_${recTabName} history_panel">
-    </c:otherwise> 
-  </c:choose>
-  <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Unsaved" />
-</div>
+  <div class="panel_${recTabName} history_panel unsaved-strategies">
+    <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Unsaved" />
+  </div>
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
 
-
-<c:set var="typeC" value="0"/>
 <c:set var="strategiesMap" value="${user.savedStrategiesByCategory}"/>
 <!-- begin creating history sections to display strategies -->
 <c:forEach items="${strategiesMap}" var="strategyEntry">
@@ -102,19 +91,11 @@
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:set var="recDispName" value="${strategies[0].latestStep.question.recordClass.type}"/>
-  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' ')-1)}"/>
+  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
-  <c:set var="typeC" value="${typeC+1}"/>
-  <c:choose>
-    <c:when test="${typeC == 1}">
-      <div class="panel_${recTabName} history_panel">
-    </c:when>
-    <c:otherwise>
-      <div class="panel_${recTabName} history_panel">
-    </c:otherwise> 
-  </c:choose>
-  <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Saved" />
-</div>
+  <div class="panel_${recTabName} history_panel saved-strategies">
+    <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Saved" />
+  </div>
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
 </form>
@@ -167,16 +148,9 @@
 
 <%-- invalid strategies, if any --%>
 <c:if test="${fn:length(invalidStrategies) > 0}">
-  <c:choose>
-    <c:when test="${typeC == 0}">
-      <div class="panel_invalid history_panel">
-    </c:when>
-    <c:otherwise>
-      <div class="panel_invalid history_panel">
-    </c:otherwise>
-  </c:choose>
-    <site:strategyTable strategies="${user.invalidStrategies}" wdkUser="${wdkUser}" prefix="Invalid" />
-  </div>
+    <div class="panel_invalid history_panel unsaved-strategies">
+      <site:strategyTable strategies="${user.invalidStrategies}" wdkUser="${wdkUser}" prefix="Invalid" />
+    </div>
 </c:if>
 
 <div class="panel_cmplt history_panel">
