@@ -425,7 +425,7 @@ function createStrategyName(strat){
                    " href='javascript:void(0)' onclick=\"copyStrategy('" + id + "')\">" +
                    "<b>COPY</b></a>";
 
-var rename = "<a id='rename_" + strat.frontId + "_0' href='javascript:void(0)' title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a><a id='rename_" + strat.frontId + "_1' href='javascript:void(0)' style='display : none' title='Click to rename.' onclick=\"$('rename_" + strat.frontId + "').submit();\"><b>RENAME</b></a><span id='rename_" + strat.frontId + "_sep' style='display : none'>&nbsp;|&nbsp;</span><a id='rename_" + strat.frontId + "_2' href='javascript:void(0)' style='display : none' title='Click to rename.'  onclick=\"disableRename('" + id + "')\"><b>CANCEL</b></a>";
+var rename = "<a id='rename_" + strat.frontId + "_0' href='javascript:void(0)' title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a><a id='rename_" + strat.frontId + "_1' href='javascript:void(0)' style='display : none' title='Click to rename.' onclick=\"$('#rename_" + strat.frontId + "').submit();\"><b>RENAME</b></a><span id='rename_" + strat.frontId + "_sep' style='display : none'>&nbsp;|&nbsp;</span><a id='rename_" + strat.frontId + "_2' href='javascript:void(0)' style='display : none' title='Click to rename.'  onclick=\"disableRename('" + id + "')\"><b>CANCEL</b></a>";
 
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
