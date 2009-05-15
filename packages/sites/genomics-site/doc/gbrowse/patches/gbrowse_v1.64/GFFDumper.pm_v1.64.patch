@@ -1,0 +1,20 @@
+--- GFFDumper.pm.orig	2009-05-15 11:05:44.000000000 -0400
++++ GFFDumper.pm	2009-05-15 11:46:18.000000000 -0400
+@@ -133,7 +133,16 @@
+   print "##sequence-region ",join(' ',$segment->ref,$segment->start,$segment->stop),"\n";
+   print "##source gbrowse GFFDumper plugin\n";
+   print $mode eq 'selected' ? "##NOTE: Selected features dumped.\n"
+-                            : "##NOTE: All features dumped.\n";
++                            : "##NOTE: All features dumped.\n"; 
++ 
++  if($coords eq 'relative') {
++    my $name = $segment->name;
++    my $start = $segment->start;
++    my $end = $segment->end;
++    $segment->name($name);
++    $segment->start(1);
++    $segment->end($end - $start + 1);
++  }
+ 
+   my @args;
+   if ($mode eq 'selected') {
