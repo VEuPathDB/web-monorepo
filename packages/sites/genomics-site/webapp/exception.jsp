@@ -52,6 +52,7 @@ Parameter Value: <c:out value='${p.value}'/>
 <c:set var="publicHosts">
         ${wdkModel.displayName}.org
      qa.${wdkModel.displayName}.org
+     beta.${wdkModel.displayName}.org
     www.${wdkModel.displayName}.org
 </c:set>
 
