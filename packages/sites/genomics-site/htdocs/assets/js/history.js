@@ -6,6 +6,7 @@ var update_hist = true;
 
 function updateHistory(){
 	if(update_hist){
+		update_hist = false;
 		$("div#search_history").block();
 		$.ajax({
 			url: "showQueryHistory.do",
@@ -15,7 +16,7 @@ function updateHistory(){
 				initDisplayType();
 				$("div#search_history").unblock();
 
-				update_hist = false;
+			//	update_hist = false;
 			},
 			error: function(data, msg, e){
 				$("div#search_history").unblock();
