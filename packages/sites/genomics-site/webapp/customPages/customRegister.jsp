@@ -77,8 +77,7 @@ function validateFields(e)
   </h1>
 
   <p>We have sent you an email with a temporary password.</p>
-  <p>Please login and change your password to one that you'll remember.
-  </p>
+  <p>Please login and change your password to one that you'll remember.</p>
   </div>
 
   </c:when>
@@ -92,24 +91,32 @@ function validateFields(e)
      <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
   </c:if>
 
-  <div align="left">
 
-<p> IMPORTANT: If you already registered in another site (EuPathDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.
 
-<p><b>Why register/subscribe</b>? So you can:
+
+
+  <div align="center">
+
+<p> <b>IMPORTANT</b>: If you already registered in another site (EuPathDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.</p>
+
+
+<div align="left" style="font-size:1.2em;width:700px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
+
+
+<p><b>Why register/subscribe?</b> So you can:</p>
 <div id="cirbulletlist">
 <ul>
-<li>have your strategies back the next time you login.
-<li>comment on genes and sequences
-<li><i>optionally</i> receive infrequent alerts (at most monthly)
-<li>set site preferences, such as items per page displayed in the query result
+<li>Have your strategies back the next time you login
+<li>Add a comment on genes and sequences
+
+<li>Set site preferences, such as items per page displayed in the query result
+<li>Opt to receive infrequent alerts (at most monthly), by selecting (below) from which EuPathDB sites
 </ul>
 </div>
 
-  </div>
-<hr>
-  <div align="center">
+</div>
 
+<br>
 
   <table width="650">
 
@@ -240,25 +247,47 @@ function validateFields(e)
 
 </c:choose>
 
+
+
+
+
+<br>
+<hr>
+
+<div align="left" style="line-height:1.5em;">
+
+<div style="font-size:1.2em;">
+<b>&nbsp;&nbsp;&nbsp;Web Sites Privacy Policy</b> 
 </div>
 <hr>
-<b>Privacy</b> 
-<p>How we will use your email: 
+<table><tr>
+<td width="40%">
+<p><b>How we will use your email:</b> </p>
 <div id="cirbulletlist">
 <ul>
-<li>confirm your subscription
-<li>send you the infrequent alerts you have subscribed to.  You may always unsubscribe.
-<li>nothing else.  We will not release the email list.  
-</ul>
-
-<p>
-How we will use your name and institution:
-<ul>
-<li>if you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment 
-<li>nothing else.  We will not release your name or institution.  
+<li>Confirm your subscription
+<li>Send you infrequent alerts if you subscribe to receive them
+<li>NOTHING ELSE.  We will not release the email list.  
 </ul>
 </div>
+</td>
 
+<td>
+<p><b>How we will use your name and institution:</b></p>
+<div id="cirbulletlist">
+<ul>
+<li>If you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment 
+<li>NOTHING ELSE.  We will not release your name or institution.  
+</ul>
+</div>
+</td>
+
+</tr></table>
+
+</div>  <%-- div align left --%>
+
+
+</div> <%-- div align center --%>
 
 
 <site:footer/>
