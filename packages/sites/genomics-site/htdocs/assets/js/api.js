@@ -410,5 +410,9 @@ function secondLevelDomain(){
 ***************************************************/
 
 function popLogin(){
-	$.blockUI({message : $("#loginForm"), css : {cursor : 'auto'}});
+	$.blockUI({message : $("#loginForm"), css : {cursor: 'auto',width:'30%',top:'40%',left:'35%' }});
+}
+
+function popRegister(){
+	$.blockUI({message : $("#registerForm"), css : {cursor: 'auto',width: '80%',top:'10%',left:'10%' } });
 }
