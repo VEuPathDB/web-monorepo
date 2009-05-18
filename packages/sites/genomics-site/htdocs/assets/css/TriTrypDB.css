@@ -729,7 +729,6 @@ a.heading:hover + a.detail_link, a.detail_link:hover {
 #footer{
    font-size: 10px;
    width: 95%;  /* 75%  */
-   text-align: center;
    background-color:#FFFFFF;
    background-image: url(../images/TriTrypDB/footer.png);
    background-repeat: repeat-x;

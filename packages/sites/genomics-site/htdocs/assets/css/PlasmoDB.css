@@ -722,7 +722,6 @@ a.heading:hover + a.detail_link, .detail_link:hover {
 #footer{
    font-size: 10px;
    width: 95%;
-   text-align: right;
    background-color:#FFFFFF;
    background-image: url(../images/PlasmoDB/footer.png);
    background-repeat: repeat-x;

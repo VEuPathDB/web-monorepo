@@ -724,7 +724,6 @@ a.heading:hover + a.detail_link, .detail_link:hover {
 #footer{
    font-size: 10px;
    width: 95%;
-   text-align: center;
    background-color:#FFFFFF;
    background-image: url(../images/EuPathDB/footer.png);
    background-repeat: repeat-x;
