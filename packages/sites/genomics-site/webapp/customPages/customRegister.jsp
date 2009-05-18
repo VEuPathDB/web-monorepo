@@ -67,70 +67,62 @@ function validateFields(e)
 <!-- display page header with recordClass type in banner -->
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
+
+<div align="center">
+
+
 <!-- display the success information, if the user registered successfully -->
 <c:choose>
+
   <c:when test="${requestScope.registerSucceed != null}">
 
-  <div align="center">
-  <h1>
-    <b>You have registered successfully.</b>
-  </h1>
-
-  <p>We have sent you an email with a temporary password.</p>
-  <p>Please login and change your password to one that you'll remember.</p>
-  </div>
-
+    <h1>
+      <b>You have registered successfully.</b>
+    </h1>
+    <p>We have sent you an email with a temporary password.</p>
+    <p>Please login and change your password to one that you'll remember.</p>
+ 
   </c:when>
 
   <c:otherwise>
-  <!-- continue registration fomr -->
+    <!-- registration form -->
+    <html:form method="POST" action='/processRegister.do' >
 
-<html:form method="POST" action='/processRegister.do' >
+    <c:if test="${requestScope.refererUrl != null}">
+       <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
+    </c:if>
 
-  <c:if test="${requestScope.refererUrl != null}">
-     <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
-  </c:if>
+    <p> <b>IMPORTANT</b>: If you already registered in another site (EuPathDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.</p>
 
+    <div align="left" style="font-size:1.2em;width:700px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
 
+	<p><b>Why register/subscribe?</b> So you can:</p>
+	<div id="cirbulletlist">
+	<ul>
+	<li>Have your strategies back the next time you login
+	<li>Add a comment on genes and sequences
+	<li>Set site preferences, such as items per page displayed in the query result
+	<li>Opt to receive infrequent alerts (at most monthly), by selecting (below) from which EuPathDB sites
+	</ul>
+	</div>
 
+    </div>  <%-- align left --%>
 
+    <br>
 
-  <div align="center">
+    <table width="650">
 
-<p> <b>IMPORTANT</b>: If you already registered in another site (EuPathDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.</p>
-
-
-<div align="left" style="font-size:1.2em;width:700px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
-
-
-<p><b>Why register/subscribe?</b> So you can:</p>
-<div id="cirbulletlist">
-<ul>
-<li>Have your strategies back the next time you login
-<li>Add a comment on genes and sequences
-
-<li>Set site preferences, such as items per page displayed in the query result
-<li>Opt to receive infrequent alerts (at most monthly), by selecting (below) from which EuPathDB sites
-</ul>
-</div>
-
-</div>
-
-<br>
-
-  <table width="650">
-
-<c:choose>
-  <c:when test="${wdkUser != null && wdkUser.guest != true}">
+    <c:choose>
+    <c:when test="${wdkUser != null && wdkUser.guest != true}">
 
     <tr>
       <td colspan="2"><p>You are logged in. </p>
         <p>To change your password or profile go <a href="<c:url value='/showProfile.do'/>">here</a>.</p></td>
     </tr>
 
-  </c:when>
+    </c:when>
 
-  <c:otherwise>
+    <c:otherwise>
 
     <!-- check if there's an error message to display -->
     <c:if test="${requestScope.registerError != null}">
@@ -235,54 +227,51 @@ function validateFields(e)
        </td>
     </tr>
 
+    </c:otherwise>
+
+    </c:choose>
+
+    </table>
+
+    </html:form>
+
   </c:otherwise>
 
 </c:choose>
-
-  </table>
-</html:form>
-
-
-  </c:otherwise>
-
-</c:choose>
-
-
-
-
 
 <br>
 <hr>
 
 <div align="left" style="line-height:1.5em;">
 
-<div style="font-size:1.2em;">
-<b>&nbsp;&nbsp;&nbsp;Web Sites Privacy Policy</b> 
-</div>
-<hr>
-<table><tr>
-<td width="40%">
-<p><b>How we will use your email:</b> </p>
-<div id="cirbulletlist">
-<ul>
-<li>Confirm your subscription
-<li>Send you infrequent alerts if you subscribe to receive them
-<li>NOTHING ELSE.  We will not release the email list.  
-</ul>
-</div>
-</td>
+	<div style="font-size:1.2em;">
+	<b>&nbsp;&nbsp;&nbsp;EuPathDB Websites Privacy Policy</b> 
+	</div>
 
-<td>
-<p><b>How we will use your name and institution:</b></p>
-<div id="cirbulletlist">
-<ul>
-<li>If you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment 
-<li>NOTHING ELSE.  We will not release your name or institution.  
-</ul>
-</div>
-</td>
+	<hr>
 
-</tr></table>
+	<table><tr>
+	<td width="40%">
+	<p><b>How we will use your email:</b> </p>
+	<div id="cirbulletlist">
+	<ul>
+	<li>Confirm your subscription
+	<li>Send you infrequent alerts if you subscribe to receive them
+	<li>NOTHING ELSE.  We will not release the email list.  
+	</ul>
+	</div>
+	</td>
+
+	<td>
+	<p><b>How we will use your name and institution:</b></p>
+	<div id="cirbulletlist">
+	<ul>
+	<li>If you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment 
+	<li>NOTHING ELSE.  We will not release your name or institution.  
+	</ul>
+	</div>
+	</td>
+	</tr></table>
 
 </div>  <%-- div align left --%>
 

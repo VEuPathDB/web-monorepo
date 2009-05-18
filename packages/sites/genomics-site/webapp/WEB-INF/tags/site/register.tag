@@ -87,18 +87,18 @@ function validateFields(e)
 <!-- display page header with recordClass type in banner -->
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
+  <div align="center">
+
 <!-- display the success information, if the user registered successfully -->
 <c:choose>
   <c:when test="${requestScope.registerSucceed != null}">
 
-  <div align="center">
   <h1>
     <b>You have registered successfully.</b>
   </h1>
 
   <p>We have sent you an email with a temporary password.</p>
   <p>Please login and change your password to one that you'll remember.</p>
-  </div>
 
   </c:when>
 
@@ -111,36 +111,27 @@ function validateFields(e)
      <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
   </c:if>
 
+  <p> <b>IMPORTANT</b>: If you already registered in another site (EuPathDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.</p>
 
+  <div align="left" style="width:550px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
 
+  <p><b>Why register/subscribe?</b> So you can:</p>
+  <div id="cirbulletlist">
+  <ul>
+  <li>Have your strategies back the next time you login
+  <li>Add a comment on genes and sequences
+  <li>Set site preferences, such as items per page displayed in the query result
+  <li>Opt to receive infrequent alerts (at most monthly), by selecting (below) from which EuPathDB sites
+  </ul>
+  </div>
 
+  </div>
 
-  <div align="center">
-
-<p> <b>IMPORTANT</b>: If you already registered in another site (EuPathDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.</p>
-
-
-<div align="left" style="width:550px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
-
-
-<p><b>Why register/subscribe?</b> So you can:</p>
-<div id="cirbulletlist">
-<ul>
-<li>Have your strategies back the next time you login
-<li>Add a comment on genes and sequences
-
-<li>Set site preferences, such as items per page displayed in the query result
-<li>Opt to receive infrequent alerts (at most monthly), by selecting (below) from which EuPathDB sites
-</ul>
-</div>
-
-</div>
-
-<br>
+  <br>
 
   <table width="650">
 
-<c:choose>
+  <c:choose>
   <c:when test="${wdkUser != null && wdkUser.guest != true}">
 
     <tr>
@@ -260,7 +251,7 @@ function validateFields(e)
 
   </c:otherwise>
 
-</c:choose>
+  </c:choose>
 
   </table>
 </html:form>
