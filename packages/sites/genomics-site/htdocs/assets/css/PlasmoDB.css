@@ -20,8 +20,8 @@ a:link, a:visited {
 }
 
 a:hover, a:active {
-	color: #330099;
-	text-decoration: underline;
+	color: #8f0165;    /*  #330099;  */
+	text-decoration: none;    /*  underline; */
 }
 #wrap {
 	width: 100%;
@@ -588,11 +588,11 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 }
 
 .arrowgrey a:hover {
-	color: #FFFFFF;
+	color: #8f0165;   /*  #FFFFFF; */
 }
 
 .arrowgrey_drk a:hover {
-	color: #FFFFFF;
+	color: #8f0165;   /*  #FFFFFF; */
 }
 
 .arrowred a:link, .arrowred a:visited{
@@ -632,11 +632,11 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
    background-position: right;   }
 
 .arrowgrey a:hover {
-   color: #FFFFFF;
+   color: #8f0165;   /*#FFFFFF; */
 }
 
 .arrowgrey_drk a:hover {
-   color: #FFFFFF;
+   color: #8f0165;   /* #FFFFFF; */
 }
 
 .arrowred a:link, .arrowred a:visited{
@@ -649,7 +649,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 
 .selectedarrow {
    padding: 4px;
-   background-color: #ea9797;
+   background-color: #FFFFA0;   /* #ea9797; */
    text-align: left;
    border-width: 1px;
    border-color: #b16565;
@@ -1172,7 +1172,7 @@ td.strat_inactive {
 #strategy_tabs a:link, #strategy_tabs a:visited {
     background-color: #e9e6ee;
     border: 1px solid #CCCCCC;
-    color:#666666;
+/*    color:#666666; */
     float: left;
     margin-top: 2px;
     padding:0.24em 1em;
@@ -1181,7 +1181,7 @@ td.strat_inactive {
 }
 
 #strategy_tabs a:hover {
-    color:#0000CC;
+    color:#8f0165;               /* #0000CC;  */
 }
 
 #strategy_tabs #selected a {
