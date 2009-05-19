@@ -512,6 +512,10 @@ function copyStrategy(stratId, fromHist){
                 url: url,
                 dataType: "json", 
                 data:"state=" + p_state,
+				beforeSend: function(){
+					if(!fromHist)
+						showLoading(ss.frontId);
+				},
                 success: function(data){
                                         //data = eval("(" + data + ")");
                                         if(ErrorHandler("Copystrategy", data, ss, null)){
@@ -545,6 +549,10 @@ function saveOrRenameStrategy(stratId, checkName, save, fromHist){
 		url: url,
 		dataType: "json",
 		data:"state=" + p_state,
+		beforeSend: function(){
+			if(!fromHist)
+				showLoading(strat.frontId);
+		},
 		success: function(data){
 					var type = save ? "SaveStrategy" : "RenameStrategy";
 					if(ErrorHandler(type, data, strat, form)){
