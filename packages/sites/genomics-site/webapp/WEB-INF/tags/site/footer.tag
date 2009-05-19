@@ -16,25 +16,25 @@
 <%-------------  SITE Version and DATE  ----------------%>
 <c:choose>
    <c:when test="${fn:containsIgnoreCase(siteName, 'CryptoDB')}">
-     <c:set var="date" value="Apr 26th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
 <c:when test="${fn:containsIgnoreCase(siteName, 'GiardiaDB')}">
-     <c:set var="date" value="May 12th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
  <c:when test="${fn:containsIgnoreCase(siteName, 'PlasmoDB')}">
-     <c:set var="date" value="Sep 16th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
 <c:when test="${fn:containsIgnoreCase(siteName, 'ToxoDB')}">
-     <c:set var="date" value="Nov 18th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
 <c:when test="${fn:containsIgnoreCase(siteName, 'TrichDB')}">
-     <c:set var="date" value="Sep 14th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
  <c:when test="${fn:containsIgnoreCase(siteName, 'TriTrypDB')}">
-     <c:set var="date" value="Apr 26th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
 <c:when test="${fn:containsIgnoreCase(siteName, 'ApiDB')}">
-     <c:set var="date" value="May 15th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
 </c:choose>
 
