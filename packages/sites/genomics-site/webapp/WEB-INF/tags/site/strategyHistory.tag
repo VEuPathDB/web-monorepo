@@ -16,7 +16,8 @@
               description="Currently active user object"
 %>
 
-<c:set var="strategiesMap" value="${user.strategiesByCategory}"/>
+<c:set var="unsavedStrategiesMap" value="${user.unsavedStrategiesByCategory}"/>
+<c:set var="savedStrategiesMap" value="${user.savedStrategiesByCategory}"/>
 <c:set var="invalidStrategies" value="${user.invalidStrategies}"/>
 <c:set var="modelName" value="${model.name}"/>
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb') || fn:containsIgnoreCase(modelName, 'cryptodb')}" />
@@ -30,21 +31,35 @@
   <c:set var="typeC" value="0"/>
   <!-- begin creating tabs for history sections -->
   <ul id="history_tabs">
-  <c:forEach items="${strategiesMap}" var="strategyEntry">
-  <c:set var="type" value="${strategyEntry.key}"/>
-  <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
-  <c:set var="histList" value="${strategyEntry.value}"/>
-  <c:set var="recDispName" value="${histList[0].latestStep.question.recordClass.type}"/>
-  <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
+  <c:forEach items="${unsavedStrategiesMap}" var="strategyEntry">
+    <c:set var="type" value="${strategyEntry.key}"/>
+    <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
+    <c:set var="unsavedStratList" value="${strategyEntry.value}"/>
+    <c:set var="savedStratList" value="${savedStrategiesMap[type]}" />
 
-  <c:set var="typeC" value="${typeC+1}"/>
-  <c:if test="${typeC != 1}">
-    <li>|</li>
-  </c:if>
-  <li>
-  <a id="tab_${recTabName}" onclick="displayHist('${recTabName}')"
-  href="javascript:void(0)">${recDispName}&nbsp;Strategies</a></li>
+    <c:if test="${fn:length(unsavedStratList) > 0 || fn:length(savedStratList) > 0}">
+      <c:choose>
+        <c:when test="${fn:length(unsavedStratList) > 0}">
+          <c:set var="strat" value="${unsavedStratList[0]}" />
+        </c:when>
+        <c:otherwise>
+          <c:set var="strat" value="${savedStratList[0]}" />
+        </c:otherwise>
+      </c:choose>
+      <c:set var="recDispName" value="${strat.latestStep.question.recordClass.type}"/>
+      <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
+
+      <c:set var="typeC" value="${typeC+1}"/>
+      <c:if test="${typeC != 1}">
+        <li>|</li>
+      </c:if>
+      <li>
+        <a id="tab_${recTabName}" onclick="displayHist('${recTabName}')"
+           href="javascript:void(0)">${recDispName}&nbsp;Strategies</a>
+      </li>
+    </c:if>
   </c:forEach>
+
   <c:if test="${fn:length(invalidStrategies) > 0}">
     <li>
       <a id="tab_invalid" onclick="displayHist('invalid')"
@@ -69,9 +84,8 @@
    </tr>
 </table>
 
-<c:set var="strategiesMap" value="${user.unsavedStrategiesByCategory}"/>
 <!-- begin creating history sections to display strategies -->
-<c:forEach items="${strategiesMap}" var="strategyEntry">
+<c:forEach items="${unsavedStrategiesMap}" var="strategyEntry">
   <c:set var="type" value="${strategyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="strategies" value="${strategyEntry.value}"/>
@@ -84,9 +98,8 @@
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
 
-<c:set var="strategiesMap" value="${user.savedStrategiesByCategory}"/>
 <!-- begin creating history sections to display strategies -->
-<c:forEach items="${strategiesMap}" var="strategyEntry">
+<c:forEach items="${savedStrategiesMap}" var="strategyEntry">
   <c:set var="type" value="${strategyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="strategies" value="${strategyEntry.value}"/>
@@ -107,8 +120,7 @@
 <c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?strategy=" />
 
 <!-- popups for save/rename forms -->
-<c:set var="strategiesMap" value="${user.strategiesByCategory}"/>
-<c:forEach items="${strategiesMap}" var="strategyEntry">
+<c:forEach items="${unsavedStrategiesMap}" var="strategyEntry">
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:forEach items="${strategies}" var="strategy">
     <c:if test="${strategy.isSaved}">
@@ -144,6 +156,41 @@
   </c:forEach>
 </c:forEach>
 
+<c:forEach items="${savedStrategiesMap}" var="strategyEntry">
+  <c:set var="strategies" value="${strategyEntry.value}"/>
+  <c:forEach items="${strategies}" var="strategy">
+    <c:if test="${strategy.isSaved}">
+    <c:set var="exportURL" value="${exportBaseUrl}${strategy.importId}" />
+    <div class='modal_div export_link' id="hist_share_${strategy.strategyId}" style="right:15em;">
+      <span class='dragHandle'>
+        <a class='close_window' href='javascript:closeModal()'>
+          <img alt='Close' src='/assets/images/Close-X-box.png'/>
+        </a>
+      </span>
+      <p>Copy and Paste URL below to Email or Bookmark:</p>
+      <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
+    </div>
+    </c:if>
+    <c:if test="${!wdkUser.guest}">
+    <c:set var="saveHeader" value="Save As"/>
+    <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
+      <span class='dragHandle'>
+        <div class="modal_name">
+          <h2>${saveHeader}</h2>
+        </div>
+        <a class='close_window' href='javascript:closeModal()'>
+          <img alt='Close' src='/assets/images/Close-X-box.png'/>
+        </a>
+      </span>
+      <form onsubmit='return validateSaveForm(this);' action="javascript:saveStrategy('${strategy.strategyId}', true, true)">
+        <input type='hidden' value="${strategy.strategyId}" name='strategy'/>
+        <input type='text' value="${strategy.name}" name='name'/>
+        <input type='submit' value='Save'/>
+      </form>
+    </div>
+    </c:if>
+  </c:forEach>
+</c:forEach>
 
 <%-- invalid strategies, if any --%>
 <c:if test="${fn:length(invalidStrategies) > 0}">

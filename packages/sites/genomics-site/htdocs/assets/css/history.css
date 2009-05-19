@@ -75,7 +75,7 @@ ul#history_tabs {
 }
 
 .unsaved-strategies {
-    height: 250px;
+    max-height: 250px;
     overflow: auto;
 }
 

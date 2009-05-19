@@ -24,7 +24,10 @@
   <tr class="headerrow">
     <th scope="col" style="width: 25px;">&nbsp;</th>
     <th scope="col" style="width: 20px;">&nbsp;</th>
-    <th scope="col"><c:if test="${prefix != null}">${prefix}&nbsp;</c:if>Strategies</th>
+    <th scope="col">
+      ${fn:length(strategies)}
+      <c:if test="${prefix != null}">${prefix}&nbsp;</c:if>Strategies
+    </th>
     <th scope="col" style="width: 7em;">&nbsp;</th>
     <th scope="col" style="width: 4em">&nbsp;</th>
     <th scope="col" style="width: 9em">&nbsp;</th>
