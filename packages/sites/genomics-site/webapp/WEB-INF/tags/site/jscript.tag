@@ -57,8 +57,8 @@
 
 <!-- dynamic query grid code -->
 <script type="text/javascript" src="/assets/js/questionPage.js"></script>
-<!-- dynamic query grid code -->
-<!--<script type="text/javascript" src="/assets/js/Top_menu.js"></script>-->
+<!-- dynamic organism param in portal -->
+<script type="text/javascript" src="<c:url value='/js/Top_menu.js'/>"></script>
 
 
 <!-- Record Page GBrowse Javascript code -->
