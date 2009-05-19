@@ -443,37 +443,37 @@ ${headElement}
    <c:when test="${fn:containsIgnoreCase(project, 'CryptoDB')}">
      <c:set var="width" value="318" />
      <c:set var="height" value="64" />
-     <c:set var="date" value="Apr 26th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(project, 'GiardiaDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
-      <c:set var="date" value="May 12th, 2009" />
+      <c:set var="date" value="June 2009" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(project, 'PlasmoDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
-      <c:set var="date" value="Sep 16th, 2008" />
+      <c:set var="date" value="June 2009" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(project, 'ToxoDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
-     <c:set var="date" value="Nov 18th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(project, 'TrichDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
-     <c:set var="date" value="Sep 14th, 2009" />
+     <c:set var="date" value="June 2009" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(project, 'TriTrypDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
-      <c:set var="date" value="Apr 26th, 2009" />
+      <c:set var="date" value="June 2009" />
    </c:when>
 
 
