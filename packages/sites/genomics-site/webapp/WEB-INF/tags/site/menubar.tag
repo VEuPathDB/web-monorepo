@@ -37,7 +37,9 @@
 	</ul>
 	<ul>
 	<li><a href="<c:url value="/showApplication.do"/>" title="Access a summary with all your searches">
-	My Searches: ${count}</a>
+<%-- 	<div id="mysearch">My Searches: ${count}</div>   --%>
+	My Searches: ${count} 
+        </a>
 	</li>
 	</ul>
 	<ul>
