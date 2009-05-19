@@ -150,7 +150,7 @@ function handleBulkStrategies(type) {
 		agree=confirm("Are you sure you want to delete the selected strategies?");
 	}
 	if (type != 'delete' || agree) {
-		$("div#search_history").block();
+	// Alrady being done by the UpdateHistory function	$("div#search_history").block();
 		url = url + selected.join(",");
 		$.ajax({
 			url: url,
