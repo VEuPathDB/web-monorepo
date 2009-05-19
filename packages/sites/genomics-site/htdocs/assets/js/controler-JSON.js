@@ -503,36 +503,6 @@ function hideStrat(id){
 	}
 }
 
-function saveStrategy(stratId, checkName, fromHist){
-	var ss = getStrategyOBJ(stratId);//getStrategyFromBackId(stratId);
-	var saveForm = $("div#save_strat_div_" + stratId);
-	if (fromHist) saveForm = $("#hist_save_" + stratId);
-	var name = $("input[name='name']",saveForm).attr("value");
-	var strategy = $("input[name='strategy']",saveForm).attr("value");
-	var url="renameStrategy.do?strategy=";
-	url = url + strategy + "&save=true&name=" + name + "&checkName=" + checkName+"&strategy_checksum="+ss.checksum;
-	if (fromHist) url = url + "&showHistory=true";
-	$.ajax({
-		url: url,
-		dataType: "json",
-		data:"state=" + p_state,
-		success: function(data){
-					//data = eval("(" + data + ")");
-					if(ErrorHandler("SaveStrategy", data, ss, null)){
-							updateStrategies(data);
-							if (fromHist) {
-								update_hist = true;
-								updateHistory();
-							}
-					}
-		},
-		error: function(data, msg, e){
-			alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
-		}
-	});
-}
-
 function copyStrategy(stratId, fromHist){
         var ss = getStrategyOBJ(stratId);//getStrategyFromBackId(stratId);
         var result = confirm("Do you want to make a copy of strategy '" + ss.name + "'?");
@@ -559,24 +529,25 @@ function copyStrategy(stratId, fromHist){
         });     
 }
 
-function renameStrategy(stratId, checkName, fromHist){
+function saveOrRenameStrategy(stratId, checkName, save, fromHist){
 	var strat = getStrategyOBJ(stratId);//getStrategyFromBackId(stratId);
-	var renameForm = $("#rename_" + strat.frontId);
-	if (fromHist) renameForm = $("#browse_rename");
-	var name = $("input[name='name']",renameForm).attr("value");
-	var strategy = $("input[name='strategy']",renameForm).attr("value");
+	var form = $("#save_strat_div_" + strat.frontId);
+	if (fromHist) form = $("#hist_save_" + stratId);
+	var name = $("input[name='name']",form).attr("value");
+	var strategy = $("input[name='strategy']",form).attr("value");
 	var url="renameStrategy.do?strategy=";
 	var cs = strat.checksum;
 	if(strat.subStratOf != null)
 		cs = getStrategy(strat.subStratOf).checksum;
-	url = url + strategy + "&name=" + name + "&checkName=" + checkName+"&strategy_checksum="+cs;
+	url = url + strategy + "&name=" + name + "&checkName=" + checkName+"&save=" + save + "&strategy_checksum="+cs;
 	if (fromHist) url = url + "&showHistory=true";
 	$.ajax({
 		url: url,
 		dataType: "json",
 		data:"state=" + p_state,
-		success: function(data){;
-					if(ErrorHandler("RenameStrategy", data, strat, renameForm)){
+		success: function(data){
+					var type = save ? "SaveStrategy" : "RenameStrategy";
+					if(ErrorHandler(type, data, strat, form)){
 							updateStrategies(data);
 							if (fromHist) {
 								update_hist = true;

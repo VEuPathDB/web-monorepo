@@ -22,14 +22,14 @@
 
 <table border="0" cellpadding="5" cellspacing="0">
   <tr class="headerrow">
+    <th scope="col" style="width: 25px;">&nbsp;</th>
     <th scope="col" style="width: 20px;">&nbsp;</th>
-    <th scope="col">&nbsp;</th>
-    <th scope="col" style="width: 15px;">&nbsp;</th>
     <th scope="col"><c:if test="${prefix != null}">${prefix}&nbsp;</c:if>Strategies</th>
-    <th scope="col" style="width: 10em; text-align:right;">&nbsp;</th>
-    <th scope="col" style="width: 15em">&nbsp;</th>
-    <th scope="col" style="width: 5em">Created</th>
+    <th scope="col" style="width: 7em;">&nbsp;</th>
+    <th scope="col" style="width: 4em">&nbsp;</th>
+    <th scope="col" style="width: 9em">&nbsp;</th>
     <th scope="col" style="width: 5em">Modified</th>
+    <th scope="col" style="width: 5em">Viewed</th>
     <th scope="col" style="width: 5em">Version</th>
     <th scope="col" style="width: 5em">Size</th>
   </tr>
@@ -42,7 +42,7 @@
       <c:otherwise><tr class="linesalt"></c:otherwise>
     </c:choose>
       <td scope="row"><input type=checkbox id="${strategyId}" onclick="updateSelectedList()"/></td>
-      <%-- need to see if this strategys id is in the session. --%>
+      <%-- need to see if this strategy id is in the session. --%>
       <c:set var="active" value=""/>
       <c:set var="openedStrategies" value="${wdkUser.activeStrategyIds}"/>
       <c:forEach items="${openedStrategies}" var="activeId">
@@ -50,55 +50,40 @@
           <c:set var="active" value="true"/>
         </c:if>
       </c:forEach>
-      <c:choose>
-        <c:when test="${active == ''}">
-          <td id="eye_${strategy.strategyId}" class="strat_inactive">
-        </c:when>
-        <c:otherwise>
-          <td id="eye_${strategy.strategyId}" class="strat_active">
-        </c:otherwise>
-      </c:choose>
-        <a href="javascript:void(0)" title="Click to open/close the strategy on the graphical display ('Run Strategies' tab)." onclick="toggleEye(this,'${strategy.strategyId}')"><img src="/assets/images/transparent1.gif" alt="Toggle View of Strategy" /></a>
-      </td>
       <td>
         <img id="img_${strategyId}" class="plus-minus plus" src="/assets/images/sqr_bullet_plus.png" alt="" onclick="toggleSteps(${strategyId})"/>
       </td>
       <c:set var="dispNam" value="${strategy.name}"/>
       <td>
         <div id="text_${strategyId}">
-          <span title="Click to rename." onclick="enableRename('${strategyId}', '${strategy.name}', true)">${dispNam}</span><c:if test="${!strategy.isSaved}">*</c:if>
-        </div>
-        <div id="name_${strategyId}" style="display:none"></div>          
+          <span <c:if test="${active}">style="background-color:#ffffa0"</c:if> title="Click to rename." onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if></span>
+        </div>        
       </td>
       <td align="right">
         <div id="activate_${strategyId}">
-          <input type='button' value='Rename' onclick="enableRename('${strategyId}', '${strategy.name}', true)" />
-        </div>       
-        <div id="input_${strategyId}" style="display:none"></div>
+          <input type='button' value='Open' onclick="openStrategy('${strategyId}')" />
+          <input type='button' value='Close' onclick="closeStrategy('${strategyId}')" />
+        </div>
+      </td>
+      <td>
+         <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
       </td>
       <td nowrap>
-         <%-- copy the strategy --%>
-         <input type='button' value='Copy' onclick="copyStrategy('${strategyId}', true);" />
-         <c:choose>
-           <c:when test="${wdkUser.guest}">
-             <input title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' type='button' value='Save As' onclick="popLogin()" />
-           </c:when>
-           <c:otherwise>
-             <input title='A saved strategy is like a snapshot, it cannot be changed.' type='button' value='Save As' onclick="showHistSave(this, '${strategyId}')" />
-           </c:otherwise>
-         </c:choose>
-         <c:choose>
-           <c:when test="${wdkUser.guest}">
-             <input title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' type='button' value='Share' onclick="popLogin()" />
-           </c:when>
-           <c:when test="${strategy.isSaved}">
-             <input title='Email this URL to your best friend.' type='button' value='Share' onclick="showHistShare(this, '${strategyId}')" />
-           </c:when>
-           <c:otherwise>
-             <input title='SAVE this strategy so you can SHARE it (email its URL).' type='button' value='Share' onclick="showHistSave(this, '${strategyId}')" />
-           </c:otherwise>
-         </c:choose>
-         <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
+         <c:set var="saveAction" value="showHistSave(this, '${strategyId}', true);"/>
+         <c:set var="shareAction" value="showHistShare(this, '${strategyId}');" />
+         <c:if test="${wdkUser.guest}">
+           <c:set var="saveAction" value="popLogin();"/>
+         </c:if>
+         <c:if test="${!strategy.isSaved}">
+           <c:set var="shareAction" value="showHistSave(this, '${strategyId}', true);" />
+         </c:if>
+         <select id="actions_${strategyId}" onchange="eval(this.value);this[0].selected='true';">
+            <option value="return false;">---More actions---</option>
+            <option value="copyStrategy('${strategyId}', true);">Copy</option>
+            <option value="showHistSave(this, '${strategyId}', false)">Rename</option>
+            <option value="${saveAction}">Save As</option>
+            <option value="${shareAction}">Share</option>
+         </select>
       </td>
       <td nowrap>${strategy.createdTimeFormatted}</td>
       <td nowrap>${strategy.lastRunTimeFormatted}</td>

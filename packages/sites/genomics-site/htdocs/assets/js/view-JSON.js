@@ -403,7 +403,7 @@ function createStrategyName(strat){
 		save = "<a title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' class='save_strat_link' href='javascript:void(0)' onclick='popLogin()'><b>" + sTitle + "</b></a>";
 	}
 	else {
-		save = "<a title='A saved strategy is like a snapshot, it cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>" + sTitle + "</b></a>" +
+		save = "<a title='A saved strategy is like a snapshot, it cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "', true)\"><b>" + sTitle + "</b></a>" +
 		"<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
 		"<span class='dragHandle'>" +
 		"<div class='modal_name'>"+
@@ -425,16 +425,12 @@ function createStrategyName(strat){
                    " href='javascript:void(0)' onclick=\"copyStrategy('" + id + "')\">" +
                    "<b>COPY</b></a>";
 
-var rename = "<a id='rename_" + strat.frontId + "_0' href='javascript:void(0)' title='Click to rename.'  onclick=\"enableRename('" + id + "', '" + name + "')\"><b>RENAME</b></a><a id='rename_" + strat.frontId + "_1' href='javascript:void(0)' style='display : none' title='Click to rename.' onclick=\"$('#rename_" + strat.frontId + "').submit();\"><b>RENAME</b></a><span id='rename_" + strat.frontId + "_sep' style='display : none'>&nbsp;|&nbsp;</span><a id='rename_" + strat.frontId + "_2' href='javascript:void(0)' style='display : none' title='Click to rename.'  onclick=\"disableRename('" + id + "')\"><b>CANCEL</b></a>";
+var rename = "<a id='rename_" + strat.frontId + "' href='javascript:void(0)' title='Click to rename.'  onclick=\"showSaveForm('" + id + "', false)\"><b>RENAME</b></a>";
 
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
-		$(div_sn).html("<span onclick=\"enableRename('" + id + "', '" + name + "')\" title='Name of this strategy. Click to RENAME. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
-        "<form id='rename_" + strat.frontId + "' style='display: none;' action=\"javascript:renameStrategy('" + id  + "', true, false)\">" +
-        "<input type='hidden' value='" + id + "' name='strategy'/>" +
-        "<input id='name' type='text' value='" + name + "' size='50' maxlength='2000' name='name'/>" +
-        "</form>" +
+		$(div_sn).html("<span title='Name of this strategy. Click to RENAME. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" + 
 	rename +

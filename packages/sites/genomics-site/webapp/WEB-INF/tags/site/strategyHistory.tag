@@ -57,19 +57,19 @@
 <!-- should be a div instead of a table -->
 <table class="history_controls clear_all">
    <tr>
-      <td><a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">select all</a>&nbsp|&nbsp;
-          <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">select none</a></td>
-      <td></td>
+      <td>Select:&nbsp;<a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">All</a>&nbsp|&nbsp;
+                  <a class="check_toggle" onclick="selectAllHist('saved')" href="javascript:void(0)">Saved</a>&nbsp|&nbsp;
+                  <a class="check_toggle" onclick="selectAllHist('unsaved')" href="javascript:void(0)">Unsaved</a>&nbsp|&nbsp;
+                  <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">None</a></td>
       <td class="medium">
-         <!-- display "delete button" -->
-         <input type="button" value="Delete" onclick="deleteStrategies('deleteStrategy.do?strategy=')"/>
+         <input type="button" value="Open" onclick="handleBulkStrategies('open')"/>
+         <input type="button" value="Close" onclick="handleBulkStrategies('close')"/>
+         <input type="button" value="Delete" onclick="handleBulkStrategies('delete')"/>
       </td>
    </tr>
 </table>
 
 <c:set var="strategiesMap" value="${user.unsavedStrategiesByCategory}"/>
-<!-- form for renaming strategies; action is set in javascript -->
-<form id="browse_rename" action="javascript:return false;" onsubmit="return validateSaveForm(this);">
 <!-- begin creating history sections to display strategies -->
 <c:forEach items="${strategiesMap}" var="strategyEntry">
   <c:set var="type" value="${strategyEntry.key}"/>
@@ -98,7 +98,6 @@
   </div>
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
-</form>
 
 <c:set var="scheme" value="${pageContext.request.scheme}" />
 <c:set var="serverName" value="${pageContext.request.serverName}" />
@@ -160,11 +159,14 @@
 
 <table class="history_controls">
    <tr>
-      <td><a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">select all</a>&nbsp|&nbsp;
-          <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">select none</a></td>
+      <td>Select:&nbsp;<a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">All</a>&nbsp|&nbsp;
+                  <a class="check_toggle" onclick="selectAllHist('saved')" href="javascript:void(0)">Saved</a>&nbsp|&nbsp;
+                  <a class="check_toggle" onclick="selectAllHist('unsaved')" href="javascript:void(0)">Unsaved</a>&nbsp|&nbsp;
+                  <a class="check_toggle" onclick="selectNoneHist()" href="javascript:void(0)">None</a></td>
       <td class="medium">
-         <!-- display "delete button" -->
-         <input type="button" value="Delete" onclick="deleteStrategies('deleteStrategy.do?strategy=')"/>
+         <input type="button" value="Open" onclick="handleBulkStrategies('open')"/>
+         <input type="button" value="Close" onclick="handleBulkStrategies('close')"/>
+         <input type="button" value="Delete" onclick="handleBulkStrategies('delete')"/>
       </td>
    </tr>
 </table>

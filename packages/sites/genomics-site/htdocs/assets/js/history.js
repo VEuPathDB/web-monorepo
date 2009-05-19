@@ -1,7 +1,6 @@
 var selected = new Array();
-// vars for complete query history tab
-var overHistoryId = 0;
-var currentHistoryId = 0;
+var overStepId = 0;
+var currentStepId = 0;
 var update_hist = true;
 
 function updateHistory(){
@@ -59,11 +58,22 @@ function toggleSteps(strat) {
 	}
 }
 
-function showHistSave(ele, stratId) {
+function showHistSave(ele, stratId, save) {
+       var popup = $("div#hist_save_" + stratId);
+       if (save){
+         $("form", popup).attr("action", "javascript:saveOrRenameStrategy(" + stratId + ", true, true, true)");
+         $("h2", popup).text("Save As");
+         $("input[type=submit]", popup).attr("value", "Save");
+       }
+       else{
+         $("form", popup).attr("action", "javascript:saveOrRenameStrategy(" + stratId + ", true, false, true)");
+         $("h2", popup).text("Rename");
+         $("input[type=submit]", popup).attr("value", "Rename");
+       }
        var btnOffset = $(ele).offset();
        var prntOffset = $("div#search_history").offset();
-       $("div#hist_save_" + stratId).css("top", btnOffset.top - prntOffset.top + "px");
-       $("div#hist_save_" + stratId).show();
+       popup.css("top", btnOffset.top - prntOffset.top + "px");
+       popup.show();
 }
 
 function showHistShare(ele, stratId) {
@@ -73,9 +83,18 @@ function showHistShare(ele, stratId) {
        $("div#hist_share_" + stratId).show();
 }
 
-function selectAllHist() {
+function selectAllHist(type) {
 	var currentPanel = getCurrentTabCookie(true);
-	$("div.history_panel.panel_" + currentPanel + " input:checkbox").attr("checked", "yes");
+	selectNoneHist();
+	if (type == 'saved'){
+		$("div.history_panel.saved-strategies.panel_" + currentPanel + " input:checkbox").attr("checked", "yes");
+	}
+	else if (type == 'unsaved'){
+		$("div.history_panel.unsaved-strategies.panel_" + currentPanel + " input:checkbox").attr("checked", "yes");
+	}
+	else{
+		$("div.history_panel.panel_" + currentPanel + " input:checkbox").attr("checked", "yes");
+	}
 	updateSelectedList();
 }
 
@@ -115,16 +134,24 @@ function downloadStep(stepId) {
 	window.location = url;
 }
 
-function deleteStrategies(url) {
+function handleBulkStrategies(type) {
+	var agree;
+	var url;
+	if (type == 'delete') url = "deleteStrategy.do?strategy=";
+	else if (type == 'open') url = "showStrategy.do?strategy=";
+	else url = "closeStrategy.do?strategy=";
 	// make sure something is selected.
 	if (selected.length == 0) {
+		alert("No strategies were selected!");
 		return false;
 	}
-	// else delete and replace page sections that have changed
-	var agree=confirm("Are you sure you want to delete the selected strategies?");
- 	if (agree) {
+	if (type == 'delete'){
+		// else delete and replace page sections that have changed
+		agree=confirm("Are you sure you want to delete the selected strategies?");
+	}
+	if (type != 'delete' || agree) {
 		$("div#search_history").block();
-		url = url + selected.join("&strategy=");
+		url = url + selected.join(",");
 		$.ajax({
 			url: url,
 			dataType: "json",
@@ -139,116 +166,26 @@ function deleteStrategies(url) {
 				selectNoneHist();
 				$("div#search_history").unblock();
 				alert("ERROR \n " + msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                     + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
-	}	
-}
-
-
-//FOLLOWING TAKEN FROM OLD CUSTOMQUERYHISTORY
-
-var currentStrategyId = 0;
-
-function enableRename(stratId, name, fromHist) {
-	if (fromHist) {
-		// close the previous one
-		disableRename();
-		currentStrategyId = stratId;
-		var form = document.getElementById('browse_rename');
-		form.action = "javascript:renameStrategy('" + stratId + "', true, true)";
-		var button = document.getElementById('activate_' + stratId);
-		button.style.display = 'none';
-		var text = document.getElementById('text_' + stratId);
-		text.style.display = 'none';
-		var nameBox = document.getElementById('name_' + stratId);
-		nameBox.innerHTML = "<input name='strategy' type='hidden' value='" + stratId + "' />"
-		+ "<input id='name' name='name' type='text' maxLength='2000' value='" + name + "' style='margin-right:4px;width:100%' />" 
-		nameBox.style.display='block';
-		var input = document.getElementById('input_' + stratId);
-		input.innerHTML = "<input type='submit' value='Rename' />"
-		+ "<input type='reset' value='Cancel' onclick='disableRename(null, true)' />";
-		input.style.display='block';
-		nameBox = document.getElementById('name');
-		nameBox.select();
-		nameBox.focus();
-	}
-	else {
-		var strat = getStrategyFromBackId(stratId);
-		var stratName = $("#diagram_" + strat.frontId + " #strategy_name > span").eq(0);
-		var append = $("#diagram_" + strat.frontId + " .append");
-		stratName.hide();
-		append.hide();
-		$("#rename_" + strat.frontId).show();
-		// Hide control for enabling the rename form
-		$("#rename_" + strat.frontId + "_0").hide();
-		// Show controls for active rename form
-		$("#rename_" + strat.frontId + "_1").show();
-		$("#rename_" + strat.frontId + "_sep").show();
-		$("#rename_" + strat.frontId + "_2").show();
-	}
-}
-
-function disableRename(stratId, fromHist) {
-	if (fromHist) {
-		if (currentStrategyId && currentStrategyId != '0') {
-			var form = document.getElementById('browse_rename');
-			form.action = "javascript:return false;";
-			var button = document.getElementById('activate_' + currentStrategyId);
-			button.style.display = 'block';
-			var name = document.getElementById('name_' + currentStrategyId);
-			name.innerText = '';
-			name.style.display = 'none';
-			var input = document.getElementById('input_' + currentStrategyId);
-			input.innerText = '';
-			input.style.display = 'none';
-			var text = document.getElementById('text_' + currentStrategyId);
-			text.style.display = 'block';
-			currentStrategyId = 0;
-		}
-	}
-	else {
-		var strat = getStrategyFromBackId(stratId);
-		var stratName = $("#diagram_" + strat.frontId + " #strategy_name > span").eq(0);
-		var append = $("#diagram_" + strat.frontId + " .append");
-		var nameDiv = $("#rename_" + strat.frontId + " > .name");
-		$("#rename_" + strat.frontId).hide();
-		stratName.show();
-		append.show();
-		// Hide controls for active rename form
-		$("#rename_" + strat.frontId + "_1").hide();
-		$("#rename_" + strat.frontId + "_sep").hide();
-		$("#rename_" + strat.frontId + "_2").hide();
-		// Show control for enabling the rename form
-		$("#rename_" + strat.frontId + "_0").show();
-	}
-}
-
-function toggleEye(ele, stratId) {
-	s = getStrategyFromBackId(stratId);
-	var url = "";
-	var td = $(ele).parent();
-	if (td.hasClass("strat_inactive")){
-		openStrategy(stratId);
-	}else{
-		closeStrategy(s.frontId);//stratId);
 	}
 }
 
 function displayName(histId) {
-   if (overHistoryId != histId) hideAnyName();
-   overHistoryId = histId;
+   if (overStepId != histId) hideAnyName();
+   overStepId = histId;
    display = $('#div_' + histId);
    display.css({ 'top' : (display.parent().position().top + 20)});
    $('#div_' + histId).show();
 }
 
 function hideName(histId) {
-   if (overHistoryId == 0) return;
+   if (overStepId == 0) return;
    
    $('#div_' + histId).hide();
 }
 
 function hideAnyName() {
-    hideName(overHistoryId);
+    hideName(overStepId);
 }
