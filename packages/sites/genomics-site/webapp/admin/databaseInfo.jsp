@@ -80,9 +80,6 @@ Active SQL Queries <font size='+1'>&#10063;</font></a></b>
 <b>Tuning Manager</b>
 <blockquote>
 <c:catch var='e'>
-<b>Database family name</b>: ${wdkRecord.attributes['family_name'].value}<br>
-<b>Last update</b>: ${wdkRecord.attributes['last_update'].value}<br>
-
 <c:choose>
   <c:when test="${wdkRecord.attributes['elapsedCheckDays'].value == null}">
     <div style="background-color:red; color:white; padding:3px; width:75%">
@@ -93,11 +90,26 @@ Active SQL Queries <font size='+1'>&#10063;</font></a></b>
     <c:if test="${wdkRecord.attributes['elapsedCheckDays'].value > 1}"><c:set var="tMWarning" value='1'/></c:if>
     <c:if test="${tMWarning == 1}"><div style="background-color:red; color:white; padding:3px; width:75%"></c:if>
       <b>Last check</b>: ${wdkRecord.attributes['last_check']} 
-      (<c:if test="${wdkRecord.attributes['elapsedCheckDays'].value != 0}">${wdkRecord.attributes['elapsedCheckDays'].value} days </c:if>${wdkRecord.attributes['elapsedCheckHours'].value} hours ago)<br>
+      (<c:if 
+         test="${wdkRecord.attributes['elapsedCheckDays'].value != 0}">${wdkRecord.attributes['elapsedCheckDays'].value} days </c:if><c:if 
+         test="${wdkRecord.attributes['elapsedCheckHours'].value != 0}">${wdkRecord.attributes['elapsedCheckHours'].value} hours </c:if><c:if 
+         test="${wdkRecord.attributes['elapsedCheckDays'].value == 0 && wdkRecord.attributes['elapsedCheckHours'].value == 0}">${wdkRecord.attributes['elapsedCheckMinutes'].value} minutes</c:if> ago)<br>
     <c:if test="${tMWarning == 1}"></div></c:if>
   </c:otherwise>
 </c:choose>
 
+<b>Last check status</b>: 
+  <c:choose>
+    <c:when test="${wdkRecord.attributes['state'].value == 0}">up to date, no changes</c:when>
+    <c:when test="${wdkRecord.attributes['state'].value == 1}"><font color='green'>tables updated</font>, expand <a href="#" style="text-decoration:none" onclick="Effect.toggle('tuningtables','blind'); return false">
+Tuning Tables &#8593;&#8595;</a> below for details</c:when>
+    <c:when test="${wdkRecord.attributes['state'].value == 2}"><font color='red'><b>out of date</b> since ${wdkRecord.attributes['outdated_since'].value}</font></c:when>
+    <c:otherwise><font color='red'>unknown status</font></c:otherwise>
+  </c:choose>
+  <br>
+<b>Last OK state</b>: ${wdkRecord.attributes['last_ok'].value}<br>
+
+<b>Database family name</b>: ${wdkRecord.attributes['family_name'].value}<br>
 <b>Subversion url</b>: <a href="${wdkRecord.attributes['subversion_url'].value}">${wdkRecord.attributes['subversion_url'].value}</a><br>
 </c:catch>
 <c:if test="${e!=null}"> 
