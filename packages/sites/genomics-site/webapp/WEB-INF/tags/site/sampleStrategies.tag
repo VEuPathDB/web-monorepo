@@ -36,7 +36,9 @@
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
- 
+      <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:8" />
+      <c:set var="expressed" value="e8a3ba254a30471b456bfa72796352af:9" />
+      <c:set var="expressedPknowlesi" value="e8a3ba254a30471b456bfa72796352af:10" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
@@ -48,10 +50,10 @@
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
-      <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:27" />
-      <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:10" />
-      <c:set var="expressed" value="e8a3ba254a30471b456bfa72796352af:60" />
-      <c:set var="expressedTbrucei" value="e8a3ba254a30471b456bfa72796352af:61" />
+      <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:93" />
+      <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:97" />
+      <c:set var="expressed" value="e8a3ba254a30471b456bfa72796352af:98" />
+      <c:set var="expressedTbrucei" value="e8a3ba254a30471b456bfa72796352af:99" />
    </c:when>
 
 
@@ -77,6 +79,9 @@
 </c:if>
 <c:if test="${expressedTbrucei != null}">
 <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expressedTbrucei}"/>"><i>T. brucei</i> genes with any evidence of expression</a> </td><td>Find all genes from <i>T. brucei</i> that have any evidence for expression based on direct evidence or using orthology</td></tr>
+</c:if>
+<c:if test="${expressedPknowlesi != null}">
+<tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expressedPknowlesi}"/>"><i>P. knowlesi</i> genes with any evidence of expression</a> </td><td>Find all genes from <i>P. knowlesi</i> that have any evidence for expression based on orthology to other <i>Plasmodium</i> species</td></tr>
 </c:if>
 
 </table>
