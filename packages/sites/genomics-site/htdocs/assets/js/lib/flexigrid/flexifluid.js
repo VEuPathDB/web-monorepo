@@ -86,10 +86,14 @@ flexifluid.init = function()
 
   /* loop each header again to set min-width */
   col = 0;
+  sum = 0; // for calculating min-width of container div
   $('.hDivBox th > div').each(function(){
       $(this).css('min-width', minWidths[col] + 'px');
+      sum += minWidths[col];
+      sum += (10 + 8 + 4); // account for padding & borders on table cells
       col++;
   });
+  sum += (8 + 2); // account for padding & borders on table rows
 
   /* loop each content again to set min-width */
   n = 0;
@@ -97,6 +101,9 @@ flexifluid.init = function()
       $(this).css('min-width', minWidths[n % col] + 'px');
       n++;
   });
+
+  // Set min-width for container div for horizontal scrollbar
+  $('.flexigrid').css('min-width', sum + 'px');
 
   /* Kill cDrag : will figure it out eventually*/ 
   $('.cDrag').hide();
