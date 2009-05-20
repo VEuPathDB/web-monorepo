@@ -537,7 +537,7 @@ function copyStrategy(stratId, fromHist){
 
 function saveOrRenameStrategy(stratId, checkName, save, fromHist){
 	var strat = getStrategyOBJ(stratId);//getStrategyFromBackId(stratId);
-	var form = $("#save_strat_div_" + strat.frontId);
+	var form = $("#save_strat_div_" + stratId);
 	if (fromHist) form = $("#hist_save_" + stratId);
 	var name = $("input[name='name']",form).attr("value");
 	var strategy = $("input[name='strategy']",form).attr("value");
