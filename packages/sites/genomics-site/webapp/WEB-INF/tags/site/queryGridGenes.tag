@@ -48,8 +48,9 @@
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByExonCount" linktext="Exon/Intron Structure" existsOn="A C G P T Tr Tt"/>
                 </tr>
-
-                <tr><td class="lines2">&nbsp;</td></tr>
+                <tr>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOldAnnotation" linktext="Old Annotation (v 5.5)"  existsOn="A P"/>
+                </tr>
                 <tr><td class="lines2">&nbsp;</td></tr>
 
             </table>
@@ -270,20 +271,6 @@
  <tr><td class="lines2">&nbsp;</td></tr>
  <tr><td class="lines2">&nbsp;</td></tr>
 
-            </table>
-</div>
-        </td>
-        <td valign="top">
-<div class="innertube2">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr class="subheaderrow2"><td colspan="4">Old Annotation
-                </td></tr>
-                <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOldAnnotation" linktext="Old Annotation (v 5.5)"  existsOn="A P"/>
-                </tr>
- <tr><td class="lines2">&nbsp;</td></tr>
- <tr><td class="lines2">&nbsp;</td></tr>
- <tr><td class="lines2">&nbsp;</td></tr>
             </table>
 </div>
         </td>
