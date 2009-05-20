@@ -143,7 +143,7 @@
   </c:forEach>
 </c:forEach>
 
-<c:if test="${!wdkUser.isGuest}">
+<c:if test="${!wdkUser.guest}">
 <c:set var="savedStrategiesMap" value="${user.savedStrategiesByCategory}"/>
 <c:forEach items="${savedStrategiesMap}" var="strategyEntry">
   <c:set var="strategies" value="${strategyEntry.value}"/>
