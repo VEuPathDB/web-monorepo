@@ -231,7 +231,7 @@ img {
 	z-index: 1;
 }
 
-#menubar #mysearch {
+/* #menubar #mysearch {
 	width: auto;
 	background-image: url(../images/TriTrypDB/my_hist_menubar.png);
 	background-repeat: repeat-x;
@@ -239,7 +239,7 @@ img {
 	padding: 4px 3px 3px 3px;
 	border: 1px solid #175982;
 	z-index: 1;
-}
+} */
  
 #contentwrapper {
 	float: left;

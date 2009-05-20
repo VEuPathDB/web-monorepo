@@ -219,7 +219,7 @@ img {
 	margin-bottom: 5px;
 }
 
-#menubar #mysearch {
+/* #menubar #mysearch {
 	width: auto;
 	background-image: url(../images/EuPathDB/my_hist_menubar.png);
 	background-repeat: repeat-x;
@@ -227,7 +227,7 @@ img {
 	padding: 4px 3px 3px 3px;
 	border: 1px solid #6e2b2a;
 	z-index: 1;
-}
+} */
  
 #contentwrapper {
 	float: left;

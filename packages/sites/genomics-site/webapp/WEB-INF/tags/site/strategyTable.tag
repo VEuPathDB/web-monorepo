@@ -27,7 +27,7 @@
     <th scope="col">
       <c:if test="${prefix != null}">${prefix}&nbsp;</c:if>Strategies&nbsp;(${fn:length(strategies)})
     </th>
-    <th scope="col" style="width: 7em;">&nbsp;</th>
+    <th scope="col" style="width: 3em;">&nbsp;</th>
     <th scope="col" style="width: 4em">&nbsp;</th>
     <th scope="col" style="width: 9em">&nbsp;</th>
     <th scope="col" style="width: 5em">Modified</th>
@@ -61,10 +61,10 @@
           <span <c:if test="${active}">style="background-color:#ffffa0"</c:if> title="Click to rename." onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if></span>
         </div>        
       </td>
-      <td align="right">
+      <td nowrap>
         <div id="activate_${strategyId}">
           <input type='button' value='Open' onclick="openStrategy('${strategyId}')" />
-          <input type='button' value='Close' onclick="closeStrategy('${strategyId}', true)" />
+          <%-- <input type='button' value='Close' onclick="closeStrategy('${strategyId}', true)" /> --%>
         </div>
       </td>
       <td>
