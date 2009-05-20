@@ -128,7 +128,7 @@ ${id}
 
 <site:panel 
     displayName="Attributions"
-    content="Computed by ApiDB" />
+    content="Computed by EuPathDB" />
 <br>
 
 <%------------------------------------------------------------------%>
