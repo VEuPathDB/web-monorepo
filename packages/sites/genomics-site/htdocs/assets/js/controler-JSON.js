@@ -446,6 +446,7 @@ function openStrategy(stratId){
 			//data = eval("(" + data + ")");
 			if(ErrorHandler("Open", data, null, null)){
 				updateStrategies(data);
+				if (getCurrentTabCookie(false) != 'strategy_results') showPanel('strategy_results');
 			}
 		},
 		error: function(data, msg, e){
@@ -456,8 +457,9 @@ function openStrategy(stratId){
 	$("#eye_" + stratId).removeClass("strat_inactive").addClass("strat_active");
 }
 
-function closeStrategy(stratId){
+function closeStrategy(stratId, isBackId){
 	var strat = getStrategy(stratId);
+	if (isBackId) strat = getStrategyFromBackId(stratId);
 	var cs = strat.checksum;
 	if(strat.subStratOf != null)
 		cs = getStrategy(strat.subStratOf).checksum;

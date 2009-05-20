@@ -159,8 +159,11 @@ function handleBulkStrategies(type) {
 			success: function(data) {
 				selectNoneHist();
 				updateStrategies(data);
-				update_hist = true;
-				updateHistory(); // update history immediately, since we're already on the history page
+				if (type == 'open') showPanel('strategy_results');
+				else{
+					update_hist = true;
+					updateHistory(); // update history immediately, since we're already on the history page
+				}
 			},
 			error: function(data, msg, e) {
 				selectNoneHist();

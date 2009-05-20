@@ -25,8 +25,7 @@
     <th scope="col" style="width: 25px;">&nbsp;</th>
     <th scope="col" style="width: 20px;">&nbsp;</th>
     <th scope="col">
-      ${fn:length(strategies)}
-      <c:if test="${prefix != null}">${prefix}&nbsp;</c:if>Strategies
+      <c:if test="${prefix != null}">${prefix}&nbsp;</c:if>Strategies&nbsp;(${fn:length(strategies)})
     </th>
     <th scope="col" style="width: 7em;">&nbsp;</th>
     <th scope="col" style="width: 4em">&nbsp;</th>
@@ -65,7 +64,7 @@
       <td align="right">
         <div id="activate_${strategyId}">
           <input type='button' value='Open' onclick="openStrategy('${strategyId}')" />
-          <input type='button' value='Close' onclick="closeStrategy('${strategyId}')" />
+          <input type='button' value='Close' onclick="closeStrategy('${strategyId}', true)" />
         </div>
       </td>
       <td>
@@ -74,11 +73,12 @@
       <td nowrap>
          <c:set var="saveAction" value="showHistSave(this, '${strategyId}', true);"/>
          <c:set var="shareAction" value="showHistShare(this, '${strategyId}');" />
-         <c:if test="${wdkUser.guest}">
-           <c:set var="saveAction" value="popLogin();"/>
-         </c:if>
          <c:if test="${!strategy.isSaved}">
            <c:set var="shareAction" value="showHistSave(this, '${strategyId}', true);" />
+         </c:if>
+         <c:if test="${wdkUser.guest}">
+           <c:set var="saveAction" value="popLogin();"/>
+           <c:set var="shareAction" value="popLogin();"/>
          </c:if>
          <select id="actions_${strategyId}" onchange="eval(this.value);this[0].selected='true';">
             <option value="return false;">---More actions---</option>

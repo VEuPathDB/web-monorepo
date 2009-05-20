@@ -120,22 +120,10 @@
 <c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?strategy=" />
 
 <!-- popups for save/rename forms -->
+<c:set var="unsavedStrategiesMap" value="${user.unsavedStrategiesByCategory}"/>
 <c:forEach items="${unsavedStrategiesMap}" var="strategyEntry">
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:forEach items="${strategies}" var="strategy">
-    <c:if test="${strategy.isSaved}">
-    <c:set var="exportURL" value="${exportBaseUrl}${strategy.importId}" />
-    <div class='modal_div export_link' id="hist_share_${strategy.strategyId}" style="right:15em;">
-      <span class='dragHandle'>
-        <a class='close_window' href='javascript:closeModal()'>
-          <img alt='Close' src='/assets/images/Close-X-box.png'/>
-        </a>
-      </span>
-      <p>Copy and Paste URL below to Email or Bookmark:</p>
-      <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
-    </div>
-    </c:if>
-    <c:if test="${!wdkUser.guest}">
     <c:set var="saveHeader" value="Save As"/>
     <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
       <span class='dragHandle'>
@@ -152,14 +140,14 @@
         <input type='submit' value='Save'/>
       </form>
     </div>
-    </c:if>
   </c:forEach>
 </c:forEach>
 
+<c:if test="${!wdkUser.isGuest}">
+<c:set var="savedStrategiesMap" value="${user.savedStrategiesByCategory}"/>
 <c:forEach items="${savedStrategiesMap}" var="strategyEntry">
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:forEach items="${strategies}" var="strategy">
-    <c:if test="${strategy.isSaved}">
     <c:set var="exportURL" value="${exportBaseUrl}${strategy.importId}" />
     <div class='modal_div export_link' id="hist_share_${strategy.strategyId}" style="right:15em;">
       <span class='dragHandle'>
@@ -170,8 +158,6 @@
       <p>Copy and Paste URL below to Email or Bookmark:</p>
       <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
     </div>
-    </c:if>
-    <c:if test="${!wdkUser.guest}">
     <c:set var="saveHeader" value="Save As"/>
     <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
       <span class='dragHandle'>
@@ -188,9 +174,9 @@
         <input type='submit' value='Save'/>
       </form>
     </div>
-    </c:if>
   </c:forEach>
 </c:forEach>
+</c:if>
 
 <%-- invalid strategies, if any --%>
 <c:if test="${fn:length(invalidStrategies) > 0}">
