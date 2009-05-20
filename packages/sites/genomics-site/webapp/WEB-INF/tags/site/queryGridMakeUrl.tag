@@ -44,7 +44,7 @@
 <c:set var="P" value="${E}" />
 <c:set var="T" value="${E}" />
 <c:set var="C" value="${E}" />
-<c:set var="A" value="${E}" />
+<c:set var="A" value="${E}" />    <%-- for portal --%>
 <c:set var="G" value="${E}" />
 <c:set var="Tr" value="${E}" />  <%-- for Trich --%>
 <c:set var="Tt" value="${E}" />   <%-- for TriTryp --%>
@@ -87,10 +87,10 @@
 <c:forEach var="token" items="${array}" >
   
 <c:if test="${token eq 'Tt'}">
-        <c:set var="Tri_image">
+        <c:set var="Tt_image">
             <c:url value="/images/tritrypdb_letter.gif" />
         </c:set>
-        <c:set var="Tri" value="<a href='${tritrypRoot}${link}'><img src='${Tt_image}' border='0' alt='tritrypdb' /></a>" />
+        <c:set var="Tt" value="<a href='${tritrypRoot}${link}'><img src='${Tt_image}' border='0' alt='tritrypdb' /></a>" />
   </c:if>
   <c:if test="${token eq 'G'}">
         <c:set var="G_image">
