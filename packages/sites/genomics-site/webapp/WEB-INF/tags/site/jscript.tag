@@ -28,8 +28,10 @@
 	<script type="text/javascript" src="/assets/js/controler-JSON.js"></script>
 	<script type="text/javascript" src="/assets/js/error-JSON.js"></script>
 	<script type="text/javascript" src="/assets/js/pager.js"></script>
+<%--
 	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexigrid.js"></script>
 	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexifluid.js"></script>
+--%>
 	<!-- Results Page AJAX Javascript code -->
 	<script type="text/javascript" src="/assets/js/results_page.js"></script>
 
