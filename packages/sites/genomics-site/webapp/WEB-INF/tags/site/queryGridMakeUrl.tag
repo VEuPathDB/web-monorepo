@@ -194,7 +194,9 @@
         ${linktext}</a>
     </td>
 --%>
-
+<c:if test="${API}">
+   <c:set var="modelName" value="EuPathDB"/>
+</c:if>
      <td align="left" valign="bottom"><a id="${qset}_${qname}_${type}" href='javascript:void(0);' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
      <div id="${qset}_${qname}_${type}_tip" class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
 
