@@ -51,7 +51,7 @@
  <c:if test="${project != 'ApiDB'}" >
             <li><a href="/cgi-bin/gbrowse/"> GBrowse</a></li>
  </c:if>
- <c:choose>
+
  <c:if test="${project != 'TriTryp'  && project != 'Giardia'   && project != 'Trich'}">
 
             <c:if test="${project == 'CryptoDB'}" >
