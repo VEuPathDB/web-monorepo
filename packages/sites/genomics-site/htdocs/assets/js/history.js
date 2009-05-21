@@ -6,19 +6,19 @@ var update_hist = true;
 function updateHistory(){
 	if(update_hist){
 		update_hist = false;
-		$("div#search_history").block();
+		$("body").block();//$("div#search_history").block();
 		$.ajax({
 			url: "showQueryHistory.do",
 			dataType: "html",
 			success: function(data){
 				$("#search_history").html(data);
 				initDisplayType();
-				$("div#search_history").unblock();
+				$("body").unblock();//$("div#search_history").unblock();
 
 			//	update_hist = false;
 			},
 			error: function(data, msg, e){
-				$("div#search_history").unblock();
+				$("body").unblock();//$("div#search_history").unblock();
 				alert("ERROR \n "+ msg + "\n" + e
                                       + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
 			}
