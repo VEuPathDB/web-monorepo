@@ -58,14 +58,19 @@
       <c:set var="dispNam" value="${strategy.name}"/>
       <td>
         <div id="text_${strategyId}">
+<%--
           <span <c:if test="${active}">style="background-color:#ffffa0"</c:if> title="Click to rename." onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if></span>
+--%>
+          <span <c:if test="${active}">style="font-weight:bold"</c:if> title="Click to rename." onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if></span>
         </div>        
       </td>
       <td nowrap>
+        <c:if test="${!active}">
         <div id="activate_${strategyId}">
           <input type='button' value='Open' onclick="openStrategy('${strategyId}')" />
           <%-- <input type='button' value='Close' onclick="closeStrategy('${strategyId}', true)" /> --%>
         </div>
+        </c:if>
       </td>
       <td>
          <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
@@ -82,8 +87,8 @@
          </c:if>
          <select id="actions_${strategyId}" onchange="eval(this.value);this[0].selected='true';">
             <option value="return false;">---More actions---</option>
-            <option value="copyStrategy('${strategyId}', true);">Copy</option>
             <option value="showHistSave(this, '${strategyId}', false)">Rename</option>
+            <option value="copyStrategy('${strategyId}', true);">Copy</option>
             <option value="${saveAction}">Save As</option>
             <option value="${shareAction}">Share</option>
          </select>
