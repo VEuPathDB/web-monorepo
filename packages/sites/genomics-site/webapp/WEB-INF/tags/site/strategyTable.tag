@@ -65,12 +65,16 @@
         </div>        
       </td>
       <td nowrap>
-        <c:if test="${!active}">
         <div id="activate_${strategyId}">
-          <input type='button' value='Open' onclick="openStrategy('${strategyId}')" />
-          <%-- <input type='button' value='Close' onclick="closeStrategy('${strategyId}', true)" /> --%>
+          <c:choose>
+            <c:when test="${!active}">
+              <input type='button' value='Open' onclick="openStrategy('${strategyId}')" />
+            </c:when>
+            <c:otherwise>
+              <input type='button' value='Close' onclick="closeStrategy('${strategyId}', true)" />
+            </c:otherwise>
+          </c:choose>
         </div>
-        </c:if>
       </td>
       <td>
          <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
