@@ -66,7 +66,7 @@
 <site:dataTable tblName="Genes" align="left" />
 </c:set>
 <site:panel 
-    displayName="All Genes in proximity of the Sage Tag"
+    displayName="All Genes in proximity of this Sage Tag Alignment"
     content="${alignedGenes}" />
 <br>
 
