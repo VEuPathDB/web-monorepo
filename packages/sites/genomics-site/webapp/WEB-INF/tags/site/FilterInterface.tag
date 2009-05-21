@@ -66,7 +66,7 @@
 	</c:if>
 	<c:forEach items="${cat.value}" var="q">
 	<c:if test="${ !fn:contains(recordClass, 'Isolate') || !fn:contains(q.displayName, 'RFLP')}">
-		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}')">${q.displayName}</a></li>			
+		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&partial=true')">${q.displayName}</a></li>			
 	</c:if>
 	</c:forEach>
 	<c:if test="${fn:length(qByCat) > 1}">
