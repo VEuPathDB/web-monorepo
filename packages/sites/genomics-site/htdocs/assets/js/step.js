@@ -24,18 +24,11 @@ function showDetails(det){
 		var det2 = openDetail.clone();
 			det2.addClass("jqDnR");
 			det2.find(".crumb_menu").addClass("dragHandle");
-			det2.draggable({
-				handle: '.dragHandle',
-				containment: 'parent'
-			});
-			//det2.jqDrag(".crumb_menu");
-		
-//		l = parent.css("left");
-//		t = parent.css("top");
-//		l = l.substring(0,l.indexOf("px"));
-//		t = t.substring(0,t.indexOf("px"));
-//		l = parseInt(l) + 53;//58;
-//		t = parseInt(t) + 50;//255;
+			setDraggable(det2, ".dragHandle");
+		//	det2.draggable({
+		//		handle: '.dragHandle',
+		//		containment: 'parent'
+		//	});
 		l = 276;
 		t = 114;
 		det2.css({
@@ -44,7 +37,7 @@ function showDetails(det){
 			display: "block",
 			position: "absolute"
 		});
-		det2.appendTo("#strategy_results");
+	det2.appendTo("#strategy_results");
 	}
 	else{
 		openDetail.attr("disp","0");
