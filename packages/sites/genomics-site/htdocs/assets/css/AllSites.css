@@ -924,7 +924,14 @@ h2 {
  	text-align: left;
 	margin-left: 11px;
 }
-
+#h2center {
+	font-size: 18px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	margin-bottom: 11px;
+ 	text-align: center;
+	margin-left: 11px;
+}
 .large {
 	font-size: 18px;
 	font-weight: bold;
