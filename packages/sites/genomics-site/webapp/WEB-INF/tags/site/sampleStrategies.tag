@@ -22,7 +22,8 @@
 <c:set var="version" value="${wdkModel.version}"/>
 <c:set var="site" value="${wdkModel.displayName}"/>
 
-<h1>Sample Strategies</h1>
+<%--  <h1>Sample Strategies</h1>  --%>
+<br><br>
 
 <%-------------  Set sample strategy signatures in all sites  ----------------%>
 <c:choose>
@@ -88,8 +89,8 @@
 
 <br><br>
 
-<h1>Help</h1>
-<div id="h2center"><a href="http://eupathdb.org/tutorials/New_Strat/New_Strat_viewlet_swf.html">(Please, also see the tutorial)</a></div><br>
+<%--   <h1>Help</h1>  --%>
+<div id="h2center"><a href="http://eupathdb.org/tutorials/New_Strat/New_Strat_viewlet_swf.html">For detailed information on the use of strategies see the 5mn tutorial</a></div><br>
 The following image shows some of the functionality of the Run Strategies tab.  Mousing over these (and other) elements when you are running strategies will provide context sensitive help. Of particular note, clicking the title for any step shows the details for that step and provides a menu that allows you to modify the step by editing search parameters, deleting or inserting a step, etc.  Clicking the number of records for any step allows you to see and filter the results for that particular step.<br>
 <center>
 <img src="/images/strategy_help.jpg">
