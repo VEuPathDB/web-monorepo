@@ -288,7 +288,9 @@ img {
 }
 
 
-
+#quick-search a:hover {
+ color: #4a5f72;  /* as in header_rt */
+}
 
 #half_left {
 	width: 45%;

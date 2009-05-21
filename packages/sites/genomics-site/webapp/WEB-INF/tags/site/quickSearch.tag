@@ -56,40 +56,12 @@
 </c:choose> 
 
 
-<%--
-	  <div id="half_right">
-          <html:form method="get" action="/processQuestionSetsFlat.do">
-          <label>Text Search:</label>
-          <input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch"/>
-          <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}"/>
-          <input type="hidden" name="myMultiProp(text_fields)"
-               value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions"/>
-          <input type="hidden" name="myMultiProp(whole_words)" value="no"/>
-          <input type="hidden" name="myProp(max_pvalue)" value="-30"/>
-          <input type="text" class="search-box" name="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})" value="${textParam.default}"/>
-          <input type="hidden" name="questionSubmit" value="Get Answer"/>
-	  <input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" class="img_align_middle" />
-          </html:form>
-	  </div>
-
-
-	  <div id="half_left">
-          <html:form method="get" action="/processQuestionSetsFlat.do">
-          <label>Gene ID:</label>
-          <input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
-	  <input type="text" class="search-box" name="myProp(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})" value="${geneIdParam.default}" size="15"/>
-	  <input type="hidden" name="questionSubmit" value="Get Answer"/>
-	  <input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
-          </html:form>
-          </div>
---%>
-
 <div id="quick-search">
          <table width="432" border="0" cellpadding="3">
            <tr>
-             <td width="216"><div align="right">
+             <td width="170"><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
-          		<label><b>Gene ID:</b></label>
+          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" title="Click to input several Gene IDs">Gene ID:</a></b></label>
          		<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
 	  			<input type="text" class="search-box" name="myProp(${geneIdParam.name})" value="${geneIdParam.default}" size="15"/>
 	  			<input type="hidden" name="questionSubmit" value="Get Answer"/>
@@ -98,7 +70,7 @@
 			 </div></td>
              <td width="216"><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
-          		<label><b>Text Search:</b></label>
+          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" title="Click to access an advanced gene search">Gene Text Search:</a></b></label>
           <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions"/>
     <c:choose> 
           <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
