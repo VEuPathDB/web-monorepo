@@ -89,7 +89,7 @@
 			<c:forEach items="${t.transformParams}" var="tp">
 				<c:set var="tparams" value="${tparams}&${tp.name}=${prevStepNum}" />
 			</c:forEach>
-			<option value="showQuestion.do?questionFullName=${t.fullName}${tparams}">${t.displayName}</option>
+			<option value="showQuestion.do?questionFullName=${t.fullName}${tparams}&partial=true">${t.displayName}</option>
 		</c:forEach>
 	</select>
 	<br><br><input id="continue_button_transforms" type="button" value="Continue..."/>

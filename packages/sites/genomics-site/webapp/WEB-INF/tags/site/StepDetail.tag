@@ -109,7 +109,7 @@
    <div class="crumb_menu">
     <a class="rename_step_link" href="javascript:void(0)" onclick="Rename_Step(this)">Rename</a>&nbsp;|&nbsp;
 	<a class="view_step_link" onclick="NewResults(this,'showSummary.do?strategy=${strategyNum}&step=${stepNum}${subq}&resultsOnly=true')" href="javascript:void(0)">View</a>&nbsp;|&nbsp;
-	<a class="edit_step_link" href="javascript:void(0)" onclick="Edit_Step(this,'showQuestion.do?questionFullName=${questionName}${urlParams}&questionSubmit=Get+Answer&goto_summary=0')" id="${strategyNum}|${stepNum}|${oper}">Edit</a>&nbsp;|&nbsp;
+	<a class="edit_step_link" href="javascript:void(0)" onclick="Edit_Step(this,'showQuestion.do?questionFullName=${questionName}${urlParams}&questionSubmit=Get+Answer&goto_summary=0&partial=true')" id="${strategyNum}|${stepNum}|${oper}">Edit</a>&nbsp;|&nbsp;
 	<!--<span style="color:#888;">Edit</span>&nbsp;|&nbsp;-->
 	<c:set var="expandUrl" value="expandStep.do?strategy=${strategyNum}&step=${step.childStep.stepId}&collapsedName=Expanded%20${step.childStep.question.displayName}" />
 <%--	<c:set var="expandUrl" value="expandStep.do?strategy=${strategyNum}&step=${step.childStep.stepId}" />

@@ -55,7 +55,7 @@ function hideDetails(det){
 
 function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 	//	hideDetails();
-		url = "showQuestion.do?questionFullName=" + questionName + url;
+		url = "showQuestion.do?questionFullName=" + questionName + url + "&partial=true";
 		closeAll(false);
 	//	var link = $(".filter_link");
 	//	$(link).css({opacity:0.2});
