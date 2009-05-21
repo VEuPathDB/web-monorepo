@@ -475,6 +475,10 @@ function closeStrategy(stratId, isBackId){
 			//data = eval("(" + data + ")");			
 			if(ErrorHandler("CloseStrategy", data, strat, null)){
 				updateStrategies(data);
+				if (getCurrentTabCookie(false) == 'search_history'){
+					update_hist = true;
+					updateHistory();
+				}
 			}
 		},
 		error: function(data, msg, e){
