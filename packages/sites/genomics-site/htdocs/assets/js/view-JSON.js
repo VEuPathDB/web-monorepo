@@ -430,7 +430,7 @@ var rename = "<a id='rename_" + strat.frontId + "' href='javascript:void(0)' tit
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
-		$(div_sn).html("<span title='Name of this strategy. Click to RENAME. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
+		$(div_sn).html("<span title='Name of this strategy. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" + 
 	rename +

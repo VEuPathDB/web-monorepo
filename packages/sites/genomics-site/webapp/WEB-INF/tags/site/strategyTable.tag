@@ -59,9 +59,14 @@
       <td>
         <div id="text_${strategyId}">
 <%--
-          <span <c:if test="${active}">style="background-color:#ffffa0"</c:if> title="Click to rename." onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if></span>
+          <span <c:if test="${active}">style="background-color:#ffffa0"</c:if> title="Click to open this strategy in the Run tab above, our graphical display" onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if></span>
 --%>
-          <span <c:if test="${active}">style="font-weight:bold"</c:if> title="Click to rename." onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if></span>
+          <span <c:choose>
+		<c:when test="${active}">style="font-weight:bold" title="Click to go the Run tab"</c:when>
+		<c:otherwise> title="Click to open this strategy in the Run tab above, our graphical display" </c:otherwise>
+		</c:choose>
+		 onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if>
+	  </span>
         </div>        
       </td>
       <td nowrap>
