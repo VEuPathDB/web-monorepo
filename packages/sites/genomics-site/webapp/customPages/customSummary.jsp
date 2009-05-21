@@ -76,7 +76,7 @@
 
 <ul id="strategy_tabs">
    <li><a id="tab_strategy_results" title="Graphical display of your opened strategies. To close a strategy click on the right top corner X." onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
-   <li><a id="tab_search_history" title="Summary of all your strategies. From here you can open/close strategies on the graphical display by clicking on the 'eye'." onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
+   <li><a id="tab_search_history" title="Summary of all your strategies. From here you can open/close strategies on the 'Run Strategies' tab, our graphical display." onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
    <li><a id="tab_sample_strat" title="View some examples of linear and non-linear strategies." href="javascript:showPanel('sample_strat')">Help / Sample Strategies</a></li>
 </ul>
 
