@@ -393,7 +393,7 @@ function createStrategyName(strat){
 	}else if(guestUser == 'true'){
 		share = "<a title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' href='javascript:void(0)' onclick='popLogin()'><b>SHARE</b></a>";
 	}else{
-		share = "<a title='SAVE this strategy so you can SHARE it (email its URL).' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "')\"><b>SHARE</b></a>";
+		share = "<a title='SAVE this strategy so you can SHARE it (email its URL).' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "', true)\"><b>SHARE</b></a>";
 	}
 
 	var save = "";
@@ -403,8 +403,9 @@ function createStrategyName(strat){
 		save = "<a title='Please LOGIN so you can SAVE (make a snapshot) your strategy.' class='save_strat_link' href='javascript:void(0)' onclick='popLogin()'><b>" + sTitle + "</b></a>";
 	}
 	else {
-		save = "<a title='A saved strategy is like a snapshot, it cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "', true)\"><b>" + sTitle + "</b></a>" +
-		"<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
+		save = "<a title='A saved strategy is like a snapshot, it cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "', true)\"><b>" + sTitle + "</b></a>";
+	}
+	save += "<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
 		"<span class='dragHandle'>" +
 		"<div class='modal_name'>"+
 		"<h2>" + sTitle + "</h2>" + 
@@ -419,8 +420,7 @@ function createStrategyName(strat){
 		"<input type='submit' value='Save'/>"+
 		"</form>"+
 		"</div>";
-	}
-     
+
         var copy = "<a title='Create a copy of the strategy.' class='copy_strat_link'" +
                    " href='javascript:void(0)' onclick=\"copyStrategy('" + id + "')\">" +
                    "<b>COPY</b></a>";

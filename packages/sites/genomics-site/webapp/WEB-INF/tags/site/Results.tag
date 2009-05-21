@@ -171,7 +171,9 @@
     <c:set var="attrName" value="${sumAttrib.name}" />
     <th id="${attrName}" align="left" valign="middle">
       <%-- <div class="headercontents"> --%>
-        <div style="float:left; min-height:20px; width:20px;">
+	<table>
+          <tr>
+            <td style="width:20px;min-height:20px;">
           <c:choose>
             <c:when test="${!sumAttrib.sortable}">
               <img style="float:left;" src="/assets/images/results_arrw_up_blk.png" border="0" alt="Sort up"/>
@@ -202,8 +204,8 @@
               <img src="/assets/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
             </c:otherwise>
           </c:choose>
-        </div>
-        <div style="float:left;">${sumAttrib.displayName}</div>
+             </td>
+        <td nowrap>${sumAttrib.displayName}</td>
         <%-- <c:if test="${j != 0}">
           <div style="float:left;">
             <a href="javascript:void(0)">
@@ -211,14 +213,16 @@
           </div>
         </c:if> --%>
         <c:if test="${j != 0}">
-          <div style="float:left;">
+          <td>
             <%-- display remove attribute button --%>
             <a href="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true)"
                         title="Remove ${sumAttrib} column">
               <img src="/assets/images/results_x.png" alt="Remove" border="0" /></a>
-          </div>
+          </td>
         </c:if>
       <%-- </div> --%>
+         </tr>
+      </table>
     </th>
   <c:set var="j" value="${j+1}"/>
   </c:forEach>
