@@ -145,7 +145,7 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 		childfilterImg = "<span class='filterImg'><img src='/assets/images/filter.gif' height='10px' width='10px'/></span>";
 	childinner = ""+
 		"		<h3>"+
-		"			<a title='Make changes to this step and/or the boolean operation.' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
+		"			<a title='Make changes to this step and/or how it is combined with the previous step' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
 						uname +
 		"				<span class='collapsible' style='display: none;'>false</span>"+
 		"			</a>"+
