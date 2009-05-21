@@ -48,10 +48,22 @@
 </span>
   	    <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
             <li><a href="/common/PubCrawler/"> PubMed and Entrez</a></li>
+ <c:if test="${project != 'ApiDB'}" >
             <li><a href="/cgi-bin/gbrowse/"> GBrowse</a></li>
+ </c:if>
+ <c:choose>
+ <c:if test="${project != 'TriTryp'  && project != 'Giardia'   && project != 'Trich'}">
+
             <c:if test="${project == 'CryptoDB'}" >
             	<li><a href="http://apicyc.apidb.org/CPARVUM/server.html">CryptoCyc</a></li>
             </c:if>
+ <c:if test="${project == 'PlasmoDB'}" >
+            	<li><a href="http://apicyc.apidb.org/PLASMO/server.html">CryptoCyc</a></li>
+            </c:if>
+ <c:if test="${project == 'ToxoDB'}" >
+            	<li><a href="http://apicyc.apidb.org/TOXO/server.html">CryptoCyc</a></li>
+            </c:if>
+ </c:if>
 
     	</ul>
 

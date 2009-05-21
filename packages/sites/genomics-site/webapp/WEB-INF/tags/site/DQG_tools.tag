@@ -33,8 +33,6 @@
 
 </c:choose> 
 
-
-
 <div id="info">
     	<ul>
 		<li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"><strong>BLAST</strong></a>
@@ -46,14 +44,30 @@
 		<li><a href="/common/PubCrawler/"><strong>PubMed and Entrez</strong></a>
 			<ul><li>View the Latest <i>${listOrganisms}</i> Pubmed and Entrez Results</li></ul>
 		</li>
+
+<c:if test="${sName != 'Api'}">
 		<li><a href="/cgi-bin/gbrowse/${modelName}/"><strong>GBrowse</strong></a>
 			<ul><li>View Sequences and Features in the GMOD Genome Browser</li></ul>
 		</li>
+</c:if>
 
 
 <c:choose>
-<c:when test="${sName != 'TriTryp'}">
-                <li><a href="#"><strong>${cycName}</strong></a>
+<c:when test="${sName == 'Crypto'}">
+          
+                <li><a href="http://apicyc.apidb.org/CPARVUM/server.html"><strong>${cycName}</strong></a>
+                        <ul><li>Explore Automatically Defined Metabolic Pathways</li></ul>
+                </li>
+</c:when>
+<c:when test="${sName == 'Api'}">
+          
+                <li><a href="http://apicyc.apidb.org/"><strong>${cycName}</strong></a>
+                        <ul><li>Explore Automatically Defined Metabolic Pathways</li></ul>
+                </li>
+</c:when>
+<c:when test="${sName == 'Plasmo' || sName == 'Toxo'}">
+          
+                <li><a href="http://apicyc.apidb.org/${sName}/server.html"><strong>${cycName}</strong></a>
                         <ul><li>Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
 </c:when>
