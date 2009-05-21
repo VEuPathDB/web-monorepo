@@ -57,9 +57,9 @@
 
 
 <div id="quick-search">
-         <table width="432" border="0" cellpadding="3">
+         <table width="450" border="0" cellpadding="3">
            <tr>
-             <td width="170"><div align="right">
+             <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" title="Click to input several Gene IDs">Gene ID:</a></b></label>
          		<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
@@ -68,7 +68,7 @@
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
 			 </div></td>
-             <td width="216"><div align="right">
+             <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" title="Click to access an advanced gene search">Gene Text Search:</a></b></label>
           <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions"/>
