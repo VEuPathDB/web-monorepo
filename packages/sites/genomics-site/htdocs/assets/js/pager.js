@@ -1,14 +1,19 @@
 
 function GetResultsPage(url, update){
-//	var url = $(this).attr("href");
+	var s = parseUrlUtil("strategy", url);
+	var strat = getStrategyFromBackId(s[0]);
 	url = url + "&resultsOnly=true";
 	$.ajax({
 		url: url,
 		dataType: "html",
+		beforeSend: function(){
+			showLoading(strat.frontId);
+		},
 		success: function(data){
 			if (update) {
 				ResultsToGrid(data);
 			}
+			removeLoading(strat.frontId);
 		},
 		error : function(data, msg, e){
 			  alert("ERROR \n "+ msg + "\n" + e

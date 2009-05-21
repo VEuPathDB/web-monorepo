@@ -96,7 +96,7 @@ function checkEnter(ele,evt){
 	if(charCode == 13) $(ele).blur();
 }
 
-function parseUrl(name,url){
+function parseUrlUtil(name,url){
  	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
  	var regexS = "[\\?&]"+name+"=([^&#]*)";
  	var regex = new RegExp( regexS,"g" );
