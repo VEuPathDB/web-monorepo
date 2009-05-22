@@ -387,7 +387,7 @@ function createStrategyName(strat){
 		"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
 		"</a>"+
 	        "</span>" +
-		"<p>Paste link in email:</p>" +
+		"<span id='h2center'>Copy and paste URL below to email or bookmark</span>" +
 		"<input type='text' size=" + exportURL.length + " value=" + exportURL + " readonly='true' />" +
 		"</div>";
 	}else if(guestUser == 'true'){
