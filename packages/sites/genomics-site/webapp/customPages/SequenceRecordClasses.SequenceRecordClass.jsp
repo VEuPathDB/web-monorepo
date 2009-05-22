@@ -265,34 +265,37 @@ Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> gen
     </c:set>
     </c:when>
 
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (id eq 'MAL2' || id eq 'MAL10' || id eq 'MAL11' || id eq 'MAL14') && projectId eq 'PlasmoDB'}">
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (id eq 'Pf3D7_02' || id eq 'Pf3D7_10' || id eq 'Pf3D7_11' || id eq 'Pf3D7_14') && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- P. falciparum 2, 10, 11, 14 = TIGR --%>
         <b>Chromosome ${id} of <i>P. falciparum</i> 3D7 was
         sequenced at 
         <a href="http://www.tigr.org/tdb/edb2/pfa1/htmls/">The
         Institute for Genomic Research</a>
-        <br>and the
+        and the
         <a href="http://www.nmrc.navy.mil/">Naval
-        Medical Research Center</a></b>
+        Medical Research Center</a></b>.
+<br>The new annotation for P. falciparum 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:set>
     </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (id eq 'MAL1' || id eq 'MAL3' || id eq 'MAL4' || id eq 'MAL5' || id eq 'MAL6' || id eq 'MAL7' || id eq 'MAL8' || id eq 'MAL9' || id eq 'MAL13') && projectId eq 'PlasmoDB'}">
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (id eq 'Pf3D7_01' || id eq 'Pf3D7_03' || id eq 'Pf3D7_04' || id eq 'Pf3D7_05' || id eq 'Pf3D7_06' || id eq 'Pf3D7_07' || id eq 'Pf3D7_08' || id eq 'Pf3D7_09' || id eq 'Pf3D7_13') && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- P. falciparum 1, 3-9, 13 = Sanger --%>
         <b>Chromosome ${id} of <i>P. falciparum</i> 3D7 was
         sequenced at the 
         <a href="http://www.sanger.ac.uk/Projects/P_falciparum/">Sanger
-        Institute</a></b>
+        Institute</a></b>.
+<br>The new annotation for P. falciparum 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:set>
     </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'MAL12' && projectId eq 'PlasmoDB'}">
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'Pf3D7_12' && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- P. falciparum 12 = Stanford --%>
         <b>Chromosome ${id} of <i>P. falciparum</i> 3D7 was
         sequenced at the
         <a href="http://sequence-www.stanford.edu/group/malaria/">Stanford
-        Genome Technology Center</a></b>
+        Genome Technology Center</a></b>.
+<br>The new annotation for P. falciparum 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:set>
     </c:when>
     <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'AJ276844' && projectId eq 'PlasmoDB'}">
