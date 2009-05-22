@@ -94,6 +94,7 @@ td {
 #info li ul li
 {
 /*	list-style-image: url(../images/cir_bullet2.png);*/
+	border-bottom:1px solid lightgrey;
 	list-style-type: none;
 	margin-left: 26px;
 }
