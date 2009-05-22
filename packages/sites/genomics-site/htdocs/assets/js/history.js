@@ -2,6 +2,21 @@ var selected = new Array();
 var overStepId = 0;
 var currentStepId = 0;
 var update_hist = true;
+var queryhistloaded = false;
+
+function updateQueryHistory(){
+	$.ajax({
+		url: "showQueryHistory.do?type=step",
+		dataType: "html",
+		beforeSend:function(){
+			$("body").block();
+		},
+		success: function(data){
+			$("div.loading").html(data);
+			$("body").unblock();
+		}
+	});
+}
 
 function updateHistory(){
 	if(update_hist){
@@ -113,7 +128,13 @@ function displayHist(type) {
 			$(this).attr("id", "selected_type");
 		}
 	});
-	if (type == 'cmplt') $(".history_controls").hide();
+	if (type == 'cmplt'){
+		if(!queryhistloaded){
+			updateQueryHistory();
+			queryhistloaded = true;
+		}
+		 $(".history_controls").hide();
+	}
 	else $(".history_controls").show();
 	$("div.panel_" + type).show();
 	setCurrentTabCookie('search_history');
