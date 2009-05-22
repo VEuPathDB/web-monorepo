@@ -349,7 +349,8 @@ Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> gen
     <c:when test="${fn:contains(organism,'chabaudi') && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- e.g. PC000000.00.0 --%>
-<b>The <a href="http://www.sanger.ac.uk/Projects/P_chabaudi">Wellcome Trust Sanger Institute</a> plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated annotation) of P. chabaudi AS in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.</b>
+Annotation of the P. chabaudi AS chromosomes was obtained from the Pathogen Sequencing Unit at the <a href="http://www.sanger.ac.uk/Projects/P_chabaudi">Wellcome Trust Sanger Institute</a>, 2009-03-24. It included sequence and gene models. 
+<br><b>The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated annotation) of P. chabaudi AS in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.</b>
     </c:set>
     </c:when>
 
