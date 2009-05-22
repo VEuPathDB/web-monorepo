@@ -322,7 +322,16 @@ ul#strategy_tabs {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Copied from TriTryp.css 5/20/09 : attempt to have here most of the css
+**********************************************************************
+**********************************************************************
+**********************************************************************
+
+    Copied from TriTryp.css 5/20/09 : attempt to have here all common css
+
+    Some classes below might already exist above;  need to remove above
+
+*********************************************************************
+*********************************************************************
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
@@ -337,6 +346,7 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	white-space: normal;
+	background-repeat: repeat-x;
 }
 
 
@@ -368,6 +378,7 @@ img {
 	height: 159px;
 	text-align: left;
 	min-width: 1000px;
+	background-repeat: no-repeat;
 }
 
 #header2 {
@@ -377,6 +388,7 @@ img {
 	min-width: 950px;
 	height: 104px;
 	text-align: left;
+	background-repeat: no-repeat;
 }
 
 
@@ -756,6 +768,7 @@ img {
 	padding: 2px;
 	line-height: 14px;
 	z-index: 500;
+  	color: #414141;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
@@ -874,6 +887,9 @@ div#menu ul ul ul li:hover ul {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Arrow Chains 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+.chain_background {
+   background-color: #ededed
+}
 
 .arrowgrey {
    padding: 4px;
@@ -1469,14 +1485,6 @@ td.strat_inactive {
 }
 
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = styles for blockUI popups
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.blockMsg{
-	background-repeat: repeat-x;
-
-}
 
 
 
@@ -1634,4 +1642,12 @@ span#toggle_filter {
 
 
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	background-repeat: repeat-x;
+
+}
 

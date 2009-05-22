@@ -5,7 +5,6 @@
 
 body {
 	background-image: url(/assets/images/PlasmoDB/background_s.jpg);
-	background-repeat: repeat-x;
 }
 
 a:link, a:visited {
@@ -22,12 +21,10 @@ a:hover, a:active {
 
 #header {
 	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
-	background-repeat: no-repeat;
 }
 
 #header2 {
 	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
-	background-repeat: no-repeat;
 }
 
 
@@ -117,10 +114,6 @@ a:hover, a:active {
 	color:#5c0141;
 }
 
-#menu ul ul a:link, #menu ul ul a:visited{
-	color: #414141;
-}
-
 #menu ul ul a:hover, #menu ul ul a:active{
 	color: #8f0165;
 }
@@ -154,11 +147,7 @@ a:hover, a:active {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Arrow Chains 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-.chain_background {
-   background-color: #ededed
-}
-
+/* NOT used in TriTryp, maybe not needed here either */
 .selectedarrow {
    border-color: #b16565;
 }
@@ -233,6 +222,10 @@ tr.subheaderrow2 td{
 	background-image: url(../images/PlasmoDB/trsubhead.png);
 }
 
+a.queryGridInactive {
+        color:               #C8C8C8;
+}
+
 a.queryGridActive {
         color:              #440c94;
 }
@@ -276,6 +269,15 @@ tr.headerrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ADVANCED STRATEGY PAGING 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =used in help.jsp, classic bullet list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -294,8 +296,17 @@ span.marker a:link, span.marker a:visited {
     background-color: #e9e6ee;
 }
 
-#strategy_tabs a:hover {
-    color:#8f0165;               /* #0000CC;  */
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+copying following from TriTrypDB.css (now AllSites.css ( = for old UI ...)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+td.recordClassTitle{
+    border-color:#330099;
+}
+
+
+tr.headerRow  td,th {
+   border-color:#330099;  /*#6b7d70;*/
 }
 
 
@@ -327,18 +338,6 @@ div.colCopy
 }
 
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-copying following from TriTrypDB.css (now AllSites.css ( = for old UI ...)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-td.recordClassTitle{
-    border-color:#330099;
-}
-
-
-tr.headerRow  td,th {
-   border-color:#330099;  /*#6b7d70;*/
-}
 
 
 
