@@ -510,13 +510,14 @@ span.closeStrategy {
 	background-image: url(../images/filter_top.gif);
 	background-repeat: repeat-x;
 	border: 1px solid #345d9b;	
-	padding-bottom: 8px;
+	padding-bottom: 0px;
+	padding-top: 4px;
 	z-index: 90;
 }
 
 .modal_div .dragHandle {
-	top: -25px;
-	height: 13px;
+	top: -22px;  /*  -25px; */
+	height: 11px;  /*  13px; */
 }
 
 .dragHandle .modal_name {
@@ -558,7 +559,7 @@ span.closeStrategy {
 /* First selector is for history page,
    second selector is for strat diagram */
 .export_link input, .diagram .export_link input {
-	margin: 0 5px;
+	margin: 5px;
 }
 
 .diagram .filterImg {
