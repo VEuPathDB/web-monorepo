@@ -30,7 +30,7 @@
 
 <style type="text/css">
   td { 
-    padding: 2px;
+    padding: 1px;
 }
 </style>
 
