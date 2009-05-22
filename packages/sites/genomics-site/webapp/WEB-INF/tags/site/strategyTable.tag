@@ -21,6 +21,7 @@
 %>
 
 <table border="0" cellpadding="5" cellspacing="0">
+  <thead>
   <tr class="headerrow">
     <th scope="col" style="width: 25px;">&nbsp;</th>
     <th scope="col" style="width: 20px;">&nbsp;</th>
@@ -35,6 +36,8 @@
     <th scope="col" style="width: 5em">Version</th>
     <th scope="col" style="width: 5em">Size</th>
   </tr>
+  </thead>
+  <tbody class="unsaved-strategies-body">
   <c:set var="i" value="0"/>
   <%-- begin of forEach strategy in the category --%>
   <c:forEach items="${strategies}" var="strategy">
@@ -67,7 +70,14 @@
 		</c:choose>
 		 onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if>
 	  </span>
-        </div>        
+        </div> 
+    <!-- begin rowgroup for strategy steps -->
+	<table>
+          <tbody id="steps_${strategyId}">
+          <site:stepRows latestStep="${strategy.latestStep}" i="${i}" indent="10"/>
+          </tbody>    
+        </table>
+    <!-- end rowgroup for strategy steps -->
       </td>
       <td nowrap>
         <div id="activate_${strategyId}">
@@ -112,12 +122,8 @@
       </td>
       <td nowrap>${strategy.latestStep.estimateSize}</td>
     </tr>
-    <!-- begin rowgroup for strategy steps -->
-    <tbody id="steps_${strategyId}">
-      <site:stepRows latestStep="${strategy.latestStep}" i="${i}" indent="10"/>
-    </tbody>
-    <!-- end rowgroup for strategy steps -->
     <c:set var="i" value="${i+1}"/>
   </c:forEach>
   <!-- end of forEach strategy in the category -->
+  </tbody>
 </table>

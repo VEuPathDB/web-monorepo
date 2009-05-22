@@ -74,9 +74,10 @@ ul#history_tabs {
     margin-top: -8px;
 }
 
-.unsaved-strategies {
-    max-height: 250px;
-    overflow: auto;
+.unsaved-strategies-body {
+    height: 250px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 
