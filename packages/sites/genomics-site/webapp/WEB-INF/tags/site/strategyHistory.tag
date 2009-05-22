@@ -92,9 +92,11 @@
   <c:set var="recDispName" value="${strategies[0].latestStep.question.recordClass.type}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
-  <div class="panel_${recTabName} history_panel unsaved-strategies">
-    <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Unsaved" />
-  </div>
+  <c:if test="${fn:length(strategies) > 0}">
+    <div class="panel_${recTabName} history_panel unsaved-strategies">
+      <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Unsaved" />
+    </div>
+  </c:if>
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
 
@@ -106,9 +108,11 @@
   <c:set var="recDispName" value="${strategies[0].latestStep.question.recordClass.type}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
-  <div class="panel_${recTabName} history_panel saved-strategies">
-    <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Saved" />
-  </div>
+  <c:if test="${fn:length(strategies) > 0}">
+    <div class="panel_${recTabName} history_panel saved-strategies">
+      <site:strategyTable strategies="${strategies}" wdkUser="${wdkUser}" prefix="Saved" />
+    </div>
+  </c:if>
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
 
