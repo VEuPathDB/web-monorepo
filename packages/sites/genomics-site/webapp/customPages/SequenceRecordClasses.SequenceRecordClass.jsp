@@ -275,7 +275,7 @@ Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> gen
         and the
         <a href="http://www.nmrc.navy.mil/">Naval
         Medical Research Center</a></b>.
-<br>The new annotation for P. falciparum 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:set>
     </c:when>
     <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (id eq 'Pf3D7_01' || id eq 'Pf3D7_03' || id eq 'Pf3D7_04' || id eq 'Pf3D7_05' || id eq 'Pf3D7_06' || id eq 'Pf3D7_07' || id eq 'Pf3D7_08' || id eq 'Pf3D7_09' || id eq 'Pf3D7_13') && projectId eq 'PlasmoDB'}">
@@ -285,7 +285,7 @@ Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> gen
         sequenced at the 
         <a href="http://www.sanger.ac.uk/Projects/P_falciparum/">Sanger
         Institute</a></b>.
-<br>The new annotation for P. falciparum 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:set>
     </c:when>
     <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'Pf3D7_12' && projectId eq 'PlasmoDB'}">
@@ -295,7 +295,7 @@ Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> gen
         sequenced at the
         <a href="http://sequence-www.stanford.edu/group/malaria/">Stanford
         Genome Technology Center</a></b>.
-<br>The new annotation for P. falciparum 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:set>
     </c:when>
     <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'AJ276844' && projectId eq 'PlasmoDB'}">
