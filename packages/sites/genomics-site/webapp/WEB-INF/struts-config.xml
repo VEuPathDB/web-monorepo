@@ -239,8 +239,8 @@
       path="/showQueryHistory"
       type="org.gusdb.wdk.controller.action.ShowQueryHistoryAction"
       scope="request">
-      <forward name="show_strat_history" path="/browseStrategies.jsp"/>
-      <forward name="show_query_history" path="/queryHistory.jsp"/>
+      <forward name="show_strat_history" path="/strategyHistory.jsp"/>
+      <forward name="show_step_history" path="/stepHistory.jsp"/>
     </action>
     <action
       path="/downloadStep"

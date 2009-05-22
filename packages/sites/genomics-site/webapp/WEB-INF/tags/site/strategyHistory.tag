@@ -187,7 +187,7 @@
 
 <div class="panel_cmplt history_panel">
   <h1>All Queries</h1>
-  <site:completeHistory model="${model}" user="${user}" />
+  <div class="loading"></div>
 </div>
 
 <table class="history_controls">
