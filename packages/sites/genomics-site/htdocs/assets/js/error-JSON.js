@@ -1,6 +1,6 @@
 var OOSMessage = "Sorry, we had an error.\nPlease redo your last action.";
 var SessionTimeOutMessage = "Your session may have timed out and all of your data has been lost.  By registering and logging in you can prevent this from happening in the future.";
-function ErrorHandler(evt, data, strategy, qform){
+function ErrorHandler(evt, data, strategy, qform, fromHist){
 	var type = null;
 	
 	if(evt == "Results") {
@@ -42,7 +42,7 @@ function ErrorHandler(evt, data, strategy, qform){
 			if(evt == "SaveStrategy"){
 				var overwrite = confirm("A strategy already exists with the name '" + name + ".' Do you want to overwrite the existing strategy?");
 				if (overwrite) {
-					saveStrategy(strategy.backId, false);
+					saveOrRenameStrategy(strategy.backId, false, true, fromHist);
 				}
 			}else if(evt == "RenameStrategy"){
 				alert("An unsaved strategy already exists with the name '" + name + ".'");

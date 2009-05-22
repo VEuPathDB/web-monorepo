@@ -561,13 +561,15 @@ function saveOrRenameStrategy(stratId, checkName, save, fromHist){
 		},
 		success: function(data){
 					var type = save ? "SaveStrategy" : "RenameStrategy";
-					if(ErrorHandler(type, data, strat, form)){
+					if(ErrorHandler(type, data, strat, form, fromHist)){
 							updateStrategies(data);
 							if (fromHist) {
 								update_hist = true;
 								updateHistory();
 							}
 					}
+					if(!fromHist)
+						removeLoading(strat.frontId);
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
