@@ -18,6 +18,7 @@
 <c:set var="model" value="${applicationScope.wdkModel}" />
 <c:set var="showHist" value="${requestScope.showHistory}" />
 <c:set var="strategies" value="${requestScope.wdkActiveStrategies}"/>
+<c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 
 <c:set var="commandUrl">
     <c:url value="/processSummary.do?${wdk_query_string}" />
@@ -58,7 +59,7 @@
     var form = document.checkHandleForm;
     var cbs = form.selectedFields;
     var count = 0;
-    var url = "/cgi-bin/isolateClustalw?project_id=CryptoDB;isolate_ids=";
+    var url = "/cgi-bin/isolateClustalw?project_id=${modelName};isolate_ids=";
     for (var i=0; i<cbs.length; i++) {
       if(cbs[i].checked) {
       url += cbs[i].value + ",";
