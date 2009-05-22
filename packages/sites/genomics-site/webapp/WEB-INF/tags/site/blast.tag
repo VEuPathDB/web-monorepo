@@ -110,10 +110,10 @@
 		  <tr>
 		  <c:choose>
 		   <c:when test="${pNam eq 'BlastQuerySequence'}">
-		   <td align="right" id="parameter_label"><b><jsp:getProperty name="qP" property="prompt"/></b></td>
+		   <td align="right" id="parameter_label"><b href="#" id="help_${pNam}" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td>
 		  </c:when>
 		  <c:otherwise>
-		   <td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td>
+		   <td align="right"><b href="#" id="help_${pNam}" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td>
 		  </c:otherwise>
 		  </c:choose>
 		  <%-- Handle database-type parm in HTML, so it can set questionFullName --%>

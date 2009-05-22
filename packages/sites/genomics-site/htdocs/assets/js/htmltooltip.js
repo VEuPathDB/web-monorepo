@@ -50,6 +50,7 @@ var htmltooltip={
 			htmltooltip.iebody=(document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
 //			var $anchors=$('*[@rel="'+htmltooltip.tipclass+'"]');
 			var $anchors=$('*[rel="'+htmltooltip.tipclass+'"]');
+			var i=0;
 			$anchors.each(function(index){ //find all links with "title=htmltooltip" declaration
 				this.dimensions={w:this.offsetWidth, h:this.offsetHeight, offsetx:$(this).offset().left, offsety:$(this).offset().top}; //store anchor dimensions
 				var ancpos=$(this).attr('id'); //store index of corresponding tooltip
@@ -60,6 +61,7 @@ var htmltooltip={
 				tooltip.dimensions={w:tooltip.offsetWidth, h:tooltip.offsetHeight};
 				$(tooltip).remove().appendTo('body'); //add tooltip to end of BODY for easier positioning
 				htmltooltip.tooltips[this.tippos]=tooltip; //store reference to each tooltip
+				ancpos = ancpos + i++;
 				htmltooltip.anchors[ancpos]=this;
 				//htmltooltip.anchors.push(this); //store reference to each anchor
 				var $anchor=$(this);

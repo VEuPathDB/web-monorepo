@@ -140,7 +140,7 @@
 
 
 					<c:when test="${pNam eq 'domain_database'}">
-				      <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
+				      <tr><td align="right"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td><td>
 				      <select name="myMultiProp(domain_database)" id="domain_database_list" onChange="loadSelectedData();">
 				          <c:forEach items="${qP.vocab}" var="flatVoc">
 				              <option value="${flatVoc}">${flatVoc}</option>
@@ -155,7 +155,7 @@
 
 				    </c:when>
 				    <c:when test="${pNam eq 'domain_accession'}">
-				          <tr><td align="right"><b><jsp:getProperty name="qP" property="prompt"/></b></td><td>
+				          <tr><td align="right"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td><td>
 				          <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box"/>
 				          </td>
 				    </c:when>
@@ -167,7 +167,7 @@
                             <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5">
                                 <table border="0">
                                     <tr>
-                                    <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
+                                    <td ><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
                                     <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                                     <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
                                     <a href="#${anchorQp}">
@@ -182,19 +182,19 @@
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
-                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:answerParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
-                            <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:datasetParamInput qp="${qP}" />
                             </td>
@@ -202,14 +202,14 @@
                         <c:otherwise>  <%-- not enumParam --%>
                             <c:choose>
                                 <c:when test="${isReadonly}">
-                                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <bean:write name="qForm" property="myProp(${pNam})"/>
                                         <html:hidden property="myProp(${pNam})"/>
                                     </td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <html:text property="myProp(${pNam})" size="35" />
                                     </td>

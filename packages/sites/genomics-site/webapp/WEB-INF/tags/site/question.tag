@@ -153,19 +153,19 @@
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-                            <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
-                            <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:answerParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
-                            <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
+                            <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:datasetParamInput qp="${qP}" />
                             </td>
@@ -173,14 +173,14 @@
                         <c:otherwise>  <%-- not enumParam --%>
                             <c:choose>
                                 <c:when test="${isReadonly}">
-                                    <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <bean:write name="qForm" property="myProp(${pNam})"/>
                                         <html:hidden property="myProp(${pNam})"/>
                                     </td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td width="30%" align="right" valign="top"><b>${qP.prompt}</b></td>
+                                    <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <html:text property="myProp(${pNam})" size="35" />
                                     </td>
