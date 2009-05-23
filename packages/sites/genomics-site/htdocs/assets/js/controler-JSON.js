@@ -261,7 +261,7 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 		},
 		error : function(data, msg, e){
 			  alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
 }
@@ -288,7 +288,7 @@ function RenameStep(ele, s, stp){
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
 }
@@ -323,7 +323,7 @@ function AddStepToStrategy(url, proto, stpId){
 			//$("#Strategies").append(currentDiv);
 			removeLoading(f_strategyId);
 			alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
 	isInsert = "";
@@ -358,7 +358,7 @@ function EditStep(url, proto, step_number){
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
 	closeAll(true);
@@ -430,7 +430,7 @@ function ExpandStep(e, f_strategyId, f_stepId, collapsedName){
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n " + msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
 }
@@ -451,7 +451,7 @@ function openStrategy(stratId){
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
 	$("#eye_" + stratId).removeClass("strat_inactive").addClass("strat_active");
@@ -483,7 +483,7 @@ function closeStrategy(stratId, isBackId){
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
 	$("#eye_" + strat.backId).removeClass("strat_active").addClass("strat_inactive");
@@ -534,7 +534,7 @@ function copyStrategy(stratId, fromHist){
                 },
                 error: function(data, msg, e){
                         alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
                 }
         });     
 }
@@ -573,7 +573,7 @@ function saveOrRenameStrategy(stratId, checkName, save, fromHist){
 		},
 		error: function(data, msg, e){
 			alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
 }
@@ -606,7 +606,7 @@ function ChangeFilter(strategyId, stepId, url) {
                         //$("#Strategies").append(currentDiv);
                         removeLoading(f_strategyId);
                         alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
                 }
         });
 }

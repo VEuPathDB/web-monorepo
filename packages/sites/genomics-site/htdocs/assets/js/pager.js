@@ -17,7 +17,7 @@ function GetResultsPage(url, update){
 		},
 		error : function(data, msg, e){
 			  alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
 }

@@ -35,7 +35,7 @@ function updateHistory(){
 			error: function(data, msg, e){
 				$("body").unblock();//$("div#search_history").unblock();
 				alert("ERROR \n "+ msg + "\n" + e
-                                      + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
 	}
@@ -190,7 +190,7 @@ function handleBulkStrategies(type) {
 				selectNoneHist();
 				$("div#search_history").unblock();
 				alert("ERROR \n " + msg + "\n" + e
-                                     + ". \nReload this page might solve the problem. \nOtherwise, please contact site support.");
+                                     + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 			}
 		});
 	}
