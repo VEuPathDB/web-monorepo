@@ -20,6 +20,7 @@
 				description="Step number for transform param urls"
 %>
 
+<c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 <c:set var="catMap" value="${model.questionsByCategory}" />
 <c:set var="recClass" value="${recordClass}" />
 <c:set var="qSetName" value="none" />
@@ -66,7 +67,9 @@
 	</c:if>
 	<c:forEach items="${cat.value}" var="q">
 	<c:if test="${ !fn:contains(recordClass, 'Isolate') || !fn:contains(q.displayName, 'RFLP')}">
+          <c:if test="${!(siteName == 'PlasmoDB' && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">
 		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&partial=true')">${q.displayName}</a></li>			
+          </c:if>
 	</c:if>
 	</c:forEach>
 	<c:if test="${fn:length(qByCat) > 1}">
