@@ -58,10 +58,10 @@
             	<li><a href="http://apicyc.apidb.org/CPARVUM/server.html">CryptoCyc</a></li>
             </c:if>
  <c:if test="${project == 'PlasmoDB'}" >
-            	<li><a href="http://apicyc.apidb.org/PLASMO/server.html">CryptoCyc</a></li>
+            	<li><a href="http://apicyc.apidb.org/PLASMO/server.html">PlasmoCyc</a></li>
             </c:if>
  <c:if test="${project == 'ToxoDB'}" >
-            	<li><a href="http://apicyc.apidb.org/TOXO/server.html">CryptoCyc</a></li>
+            	<li><a href="http://apicyc.apidb.org/TOXO/server.html">ToxoCyc</a></li>
             </c:if>
  </c:if>
 
