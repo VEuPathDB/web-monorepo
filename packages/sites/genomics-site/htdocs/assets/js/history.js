@@ -46,11 +46,13 @@ function updateHistory(){
 
 function initDisplayType() {
 	var currentPanel = getCurrentTabCookie(true);
-	if ($("#tab_" + currentPanel).length == 0) {
-		var type = $("#history_tabs a:first").attr("id").substr(4);
-		displayHist(type);
-	} else
-		displayHist(currentPanel);
+	if($("#history_tabs").length > 0){
+		if ($("#tab_" + currentPanel).length == 0) {
+			var type = $("#history_tabs a:first").attr("id").substr(4);
+			displayHist(type);
+		} else
+			displayHist(currentPanel);
+	}
 }
 
 function toggleSteps(strat) {
