@@ -12,10 +12,10 @@ function showPanel(panel) {
 	$("#strategy_tabs li").each(function(){
 		var hidePanel = $("a", this).attr("id").substring(4);
 		$("#tab_" + hidePanel).parent().removeAttr("id");
-		$("#" + hidePanel).css({'position':'absolute','left':'-1000em','width':'100%'});
+		$("#" + hidePanel).css({'position':'absolute','left':'-1000em','width':'100%','display':'none'});
 	});
 	$("#tab_" + panel).parent().attr("id", "selected");
-	$("#" + panel).css({'position':'relative','left':'auto'});
+	$("#" + panel).css({'position':'relative','left':'auto','display':'block'});
 	if (panel == 'search_history') updateHistory();
 	setCurrentTabCookie(panel, false);
 }
