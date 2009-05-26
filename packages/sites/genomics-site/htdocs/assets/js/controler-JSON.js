@@ -457,6 +457,31 @@ function openStrategy(stratId){
 	$("#eye_" + stratId).removeClass("strat_inactive").addClass("strat_active");
 }
 
+function deleteStrategy(stratId, fromHist){
+	var url = "deleteStrategy.do?strategy=" + stratId;
+	$.ajax({
+		url: url,
+		dataType: "json",
+		data:"state=" + p_state,
+		beforeSend: function(){
+			if (!fromHist) showLoading(stratId);
+		},
+		success: function(data){
+			if (ErrorHandler("DeleteStrategy", data, null, null)){
+				updateStrategies(data);
+				updateHist = true;
+				if (getCurrentTabCookie(false) == 'search_history'){
+					updateHistory();
+				}
+			}
+		},
+		error: function(data, msg, e){
+			alert("ERROR \n "+ msg + "\n" + e
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
+		}
+	});
+}
+
 function closeStrategy(stratId, isBackId){
 	var strat = getStrategy(stratId);
 	if (isBackId) strat = getStrategyFromBackId(stratId);

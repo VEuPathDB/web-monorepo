@@ -427,6 +427,8 @@ function createStrategyName(strat){
 
 var rename = "<a id='rename_" + strat.frontId + "' href='javascript:void(0)' title='Click to rename.'  onclick=\"showSaveForm('" + id + "', false)\"><b>RENAME</b></a>";
 
+var deleteStrat = "<a id='delete_" + strat.frontId + "' href='javascript:void(0)' title='Click to delete.'  onclick=\"deleteStrategy('" + id + "', false)\"><b>DELETE<b></a>";
+
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
@@ -440,6 +442,8 @@ var rename = "<a id='rename_" + strat.frontId + "' href='javascript:void(0)' tit
 	save +
 	"<br/>"+
 	share +
+	"<br/>"+
+	deleteStrat +
 	"</span>");
 	}else{
 		$(div_sn).html(name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 

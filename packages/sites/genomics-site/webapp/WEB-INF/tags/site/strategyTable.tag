@@ -110,6 +110,7 @@
             <option value="copyStrategy('${strategyId}', true);">Copy</option>
             <option value="${saveAction}">Save As</option>
             <option value="${shareAction}">Share</option>
+            <option value="deleteStrategy(${strategyId}, false)">Delete</option>
          </select>
       </td>
       <td nowrap>${strategy.createdTimeFormatted}</td>
