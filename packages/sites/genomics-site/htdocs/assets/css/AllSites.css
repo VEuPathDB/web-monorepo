@@ -882,7 +882,7 @@ div#menu ul ul ul li:hover ul {
 .img_align_middle {
 	white-space: normal;
 	margin-bottom: -4px;
-	background-color: transparent;
+	background-color: transparent; /* to override gbrowse background white  */
 }
 
 
