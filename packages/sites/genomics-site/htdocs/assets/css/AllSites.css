@@ -574,6 +574,7 @@ img {
 	margin: 0 5px 0 6px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
 	background-color: #FFFFFF;
 	background-repeat: repeat-x;
+	background-position: 0 -25px;
 	text-align: left;
 }
 
@@ -1465,7 +1466,9 @@ td.strat_inactive {
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    border: 1px solid #CCCCCC;
+    border-color: #CCCCCC #CCCCCC #777777;
+    border-style: solid;
+    border-width: 1px;
     float: left;
     margin-top: 2px;
     padding:0.24em 1em;
@@ -1476,7 +1479,7 @@ td.strat_inactive {
 
 #strategy_tabs #selected a {
     background-color: #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
+    border-color: #777777 #777777 #FFFFFF;
     color: #000000;
     font-weight:bold;
 }

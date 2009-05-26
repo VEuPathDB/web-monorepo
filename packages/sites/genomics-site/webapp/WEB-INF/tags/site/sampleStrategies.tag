@@ -64,25 +64,50 @@
 
 </c:choose>
 
+<div id="h2center">Click to import a strategy in your workspace</div>
 
 <table class="tableWithBorders" style="margin-left: auto; margin-right: auto;" width="90%">
 
-<tr align = "center"><td><b>Click to import strategy in your workspace</b></td><td><b>Description</b></td></tr>
+<tr align = "center" style="font-weight:bold"><td>Strategy name</td><td>Example of</td><td>Description</td></tr>
 
 <c:if test="${simple != null}">
-<tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${simple}"/>">Simple strategy</a> </td><td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td></tr>
+<tr align = "left">
+	<td><a title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${simple}"/>">"Prot Cod Sig Pep EST Evidence"</a> </td>
+	<td>Simple strategy</td>
+	<td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td>
+</tr>
 </c:if>
+
 <c:if test="${expanded != null}">
-  <tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expanded}"/>">With nested strategy and transform</a> </td><td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td></tr>
+  <tr align = "left">
+	<td><a  title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expanded}"/>">"kin, TM, (EST or Prot) ortho"</a> </td>
+	<td>Strategy with nested strategy and transform</td>
+	<td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td>
+</tr>
 </c:if>
+
 <c:if test="${expressed != null}">
-<tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expressed}"/>">Genes with evidence of expression</a> </td><td>Find all genes in the database that have any direct evidence for expression</td></tr>
+<tr align = "left">
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressed}"/>">"Expressed Genes"</a> </td>
+	<td>Strategy with a nested strategy</td>
+	<td>Find all genes in the database that have any direct evidence for expression</td>
+</tr>
 </c:if>
+
 <c:if test="${expressedTbrucei != null}">
-<tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expressedTbrucei}"/>"><i>T. brucei</i> genes with any evidence of expression</a> </td><td>Find all genes from <i>T. brucei</i> that have any evidence for expression based on direct evidence or using orthology</td></tr>
+<tr align = "left">
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedTbrucei}"/>">"All T.brucei Expressed Genes"</a> </td>
+	<td>Strategy with an ortholog transform</td>
+	<td>Find all genes from <i>T. brucei</i> that have any evidence for expression based on direct evidence or using orthology</td>
+</tr>
 </c:if>
+
 <c:if test="${expressedPknowlesi != null}">
-<tr align = "left"><td><a href="<c:url value="/importStrategy.do?strategy=${expressedPknowlesi}"/>"><i>P. knowlesi</i> genes with any evidence of expression</a> </td><td>Find all genes from <i>P. knowlesi</i> that have any evidence for expression based on orthology to other <i>Plasmodium</i> species</td></tr>
+<tr align = "left">
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedPknowlesi}"/>">"P.knowlesi Expressed Genes"</a> </td>
+	<td>Strategy with a nested strategy and an ortholog transform</td>
+	<td>Find all genes from <i>P. knowlesi</i> that have any evidence for expression based on orthology to other <i>Plasmodium</i> species</td>
+</tr>
 </c:if>
 
 </table>
@@ -90,7 +115,7 @@
 <br><br>
 
 <%--   <h1>Help</h1>  --%>
-<div id="h2center"><a href="http://eupathdb.org/tutorials/New_Strat/New_Strat_viewlet_swf.html">For detailed information on the use of strategies see the 5mn tutorial</a></div><br>
+<div id="h2center">For detailed information on the use of strategies see the <a href="http://eupathdb.org/tutorials/New_Strat/New_Strat_viewlet_swf.html">Tutorial</a> (5 minutes)</div><br>
 The following image shows some of the functionality of the Run Strategies tab.  Mousing over these (and other) elements when you are running strategies will provide context sensitive help. Of particular note, clicking the title for any step shows the details for that step and provides a menu that allows you to modify the step by editing search parameters, deleting or inserting a step, etc.  Clicking the number of records for any step allows you to see and filter the results for that particular step.<br>
 <center>
 <img src="/images/strategy_help.jpg">
