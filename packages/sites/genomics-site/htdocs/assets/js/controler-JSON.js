@@ -561,7 +561,7 @@ function saveOrRenameStrategy(stratId, checkName, save, fromHist){
 		},
 		success: function(data){
 					var type = save ? "SaveStrategy" : "RenameStrategy";
-					if(ErrorHandler(type, data, strat, form, fromHist)){
+					if(ErrorHandler(type, data, strat, form, name, fromHist)){
 							updateStrategies(data);
 							if (fromHist) {
 								update_hist = true;

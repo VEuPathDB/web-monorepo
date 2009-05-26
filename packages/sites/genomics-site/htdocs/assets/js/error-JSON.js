@@ -1,6 +1,6 @@
 var OOSMessage = "Sorry, we had an error.\nPlease redo your last action.";
 var SessionTimeOutMessage = "Your session may have timed out and all of your data has been lost.  By registering and logging in you can prevent this from happening in the future.";
-function ErrorHandler(evt, data, strategy, qform, fromHist){
+function ErrorHandler(evt, data, strategy, qform, name, fromHist){
 	var type = null;
 	
 	if(evt == "Results") {
@@ -46,7 +46,6 @@ function ErrorHandler(evt, data, strategy, qform, fromHist){
 				}
 			}else if(evt == "RenameStrategy"){
 				alert("An unsaved strategy already exists with the name '" + name + ".'");
-				disableRename(strategy.backId, fromHist);	
 				if (strategy.isSaved)  $("input[name='name']",qform).attr("value", strategy.savedName);
 			}
 		}else{ //Gerenal Error Catcher
