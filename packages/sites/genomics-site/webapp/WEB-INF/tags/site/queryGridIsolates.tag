@@ -34,7 +34,10 @@
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Geographic Location" existsOn="A C P"/>
     </tr>
     <tr>
-      <site:queryGridMakeEasyUrl  linkid="RFLP" link="/common/community/lxiao/RFLP_reference_images/Actual&#32;RFLP.htm" linktext="Reference RFLP Gel Images" linkdesc="RFLP images provided by Dr. Lihua Xiao from Centers for Disease Control and Prevention, Atlanta, Georgia, USA" existsOn="A C"  />
+<%--
+      <site:queryGridMakeEEasyUrl  linkid="RFLP" link="/common/community/lxiao/RFLP_reference_images/Actual&#32;RFLP.htm" linktext="Reference RFLP Gel Images" linkdesc="RFLP images provided by Dr. Lihua Xiao from Centers for Disease Control and Prevention, Atlanta, Georgia, USA" existsOn="A C"  />
+--%>
+	      <site:queryGridMakeUrl qset="IsolateInternalQuestions" qname="IsolatesByRFLP" linktext="Reference RFLP Gel Images" existsOn="C"/>
     </tr>
 
     </table>
