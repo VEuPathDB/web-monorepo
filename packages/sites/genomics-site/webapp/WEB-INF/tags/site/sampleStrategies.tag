@@ -38,6 +38,7 @@
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
       <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:8" />
+      <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:11" />
       <c:set var="expressed" value="e8a3ba254a30471b456bfa72796352af:9" />
       <c:set var="expressedPknowlesi" value="e8a3ba254a30471b456bfa72796352af:10" />
    </c:when>
