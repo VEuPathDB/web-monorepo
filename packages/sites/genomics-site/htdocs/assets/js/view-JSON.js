@@ -57,6 +57,7 @@ function displayModel(strat){
 		$(div_strat).append(createStrategyName(strat));
 		displaySteps = createSteps(strat,div_strat);
 		$(div_strat).append(createRecordTypeName(strat));
+		$(div_strat).append(createParentStep(strat));
 		buttonleft = offset(null);
 		button = document.createElement('a');
 		lsn = strat.getStep(strat.Steps.length,true).back_boolean_Id;
@@ -372,6 +373,20 @@ function createRecordTypeName(strat){
 		$(div_sn).attr("id","record_name").addClass("strategy_small_text").text(getDataType(strat.dataType, 1) + "Strategy");
 		return div_sn;
    	}
+}
+
+function createParentStep(strat){
+	var parentStep = null;
+	var pstp = document.createElement('div');
+	if(strat.subStratOf != null)
+		parentStep = strat.findParentStep(strat.backId.split("_")[1],false);
+	if(parentStep == null)
+		return;
+	else{
+		$(pstp).attr("id","record_name").css("width","85px");
+		$(pstp).append("Expanded View of Step " + parentStep.stp.frontId);
+		return pstp;
+	}
 }
 
 // HANDLE THE DISPLAY OF THE STRATEGY NAME DIV

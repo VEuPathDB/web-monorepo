@@ -18,6 +18,7 @@ Strategy.prototype.name = null;
 Strategy.prototype.savedName = null;
 Strategy.prototype.importId = null;
 Strategy.prototype.dataType = null;
+
 Strategy.prototype.getStep = function(stepId,isfront){
 	for(s in this.Steps){
 		if(isfront){
@@ -29,6 +30,14 @@ Strategy.prototype.getStep = function(stepId,isfront){
 		}
 	}
 	return null;
+}
+
+Strategy.prototype.findParentStep = function(stpId, isFront){
+	if(this.subStratOf == null){
+		return null;
+	}else{
+		return getStrategy(this.subStratOf).findStep(stpId, isFront);
+	}
 }
 
 Strategy.prototype.findStep = function(stpId, isFront){
