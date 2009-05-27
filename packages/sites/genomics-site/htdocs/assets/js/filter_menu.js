@@ -51,7 +51,7 @@ value + "\").unblock()'/>";
         return true;
 }
 
-function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
+function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog){
 	//edit = 0 ::: adding a new step
 	//edit = 1 ::: editing a current step
 	var operation = "";
@@ -77,7 +77,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	}
 	var pro_url = "";
 	if(edit == 0)
-		pro_url = "processFilter.do?strategy=" + stratBackId + "&insert=" +insert;
+		pro_url = "processFilter.do?strategy=" + stratBackId + "&insert=" +insert + "&ortholog=" + isOrtholog;
 	else{
 		pro_url = "processFilter.do?strategy=" + stratBackId + "&revise=" + stepBackId;   //reviseStep;
 	}
@@ -132,6 +132,8 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp){
 	if(edit == 0){
 		if(insert == ""){
 			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;" + (parseInt(stp.frontId)+1) + ": " + quesTitle + "</span></br>");		
+		}else if (isOrtholog){
+			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Insert&nbsp;Step&nbsp;Between&nbsp;" + (stp.frontId) + "&nbsp;And&nbsp;" + (parseInt(stp.frontId)+1) + ": " + quesTitle + "</span></br>");		
 		}else{
 			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Insert&nbsp;Step&nbsp;Between&nbsp;" + (parseInt(stp.frontId)-1) + "&nbsp;And&nbsp;" + (stp.frontId) + ": " + quesTitle + "</span></br>");		
 		}
@@ -222,7 +224,7 @@ function validateAndCall(type, url, proto, rs){
 	return;
 }
 
-function getQueryForm(url,hideOp){	
+function getQueryForm(url,hideOp,isOrtholog){
 	    original_Query_Form_Text = $("#query_form").html();
 		$.ajax({
 			url: url,
@@ -231,7 +233,7 @@ function getQueryForm(url,hideOp){
 				showLoading("query_form");
 			},
 			success: function(data){
-				formatFilterForm(data,0,isInsert,false,hideOp);
+				formatFilterForm(data,0,isInsert,false,hideOp,isOrtholog);
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e + ". \nPlease double check your parameters, and try again." + 
@@ -323,6 +325,19 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 			alert("Error getting the needed information from the server \n Please contact the system administrator");
 		}
 	});
+}
+
+function openOrthologFilter(strat_id, step_id){
+	var strat = getStrategyFromBackId(strat_id);
+	isInsert = step_id;
+	current_Front_Strategy_Id = strat.frontId;
+	var url = 'showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&gene_result=' + step_id;
+	$("#query_form").remove();
+	$("#Strategies div a#filter_link span").css({opacity: 1.0});
+	$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});
+	$("div#strategy_results").append("<div id='query_form' class='jqDnR' style='min-height:140px;'><span class='dragHandle'><div class='modal_name'><h1 id='query_form_title'></h1></div><a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span></div>");
+	setDraggable($("#query_form"), ".handle");
+	getQueryForm(url, true, true);
 }
 
 function close(ele){

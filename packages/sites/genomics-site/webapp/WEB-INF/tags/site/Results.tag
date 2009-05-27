@@ -64,7 +64,6 @@
                    stepId="${wdkHistory.stepId}"
                    answerValue="${wdkAnswer}" />
 
-
 <!-- handle empty result set situation -->
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>
@@ -77,7 +76,8 @@
 <td style="padding-top:6px;"><h2 style="display:none"><span id="text_strategy_number">${strategy.name}</span> 
     (step <span id="text_step_number">${strategy.length}</span>) 
     - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span></h2></td>
-<td align="right" style="vertical-align:middle"><a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a></td>
+<td align="right" style="vertical-align:middle" nowrap>
+<c:if test="${type == 'Genes'}"><a href="javascript:void(0)" onclick="openOrthologFilter(${strategy.strategyId},${wdkHistory.stepId})"><b>ORTHOLOGS</b></a>&nbsp;|&nbsp;</c:if><a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a></td>
 </tr></table>
 
 

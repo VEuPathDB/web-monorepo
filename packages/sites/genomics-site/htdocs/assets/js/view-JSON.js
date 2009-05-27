@@ -309,6 +309,10 @@ function createDetails(modelstep, jsonstep, sid){
 						
 	insert_step = 	"<a title='" + insert_popup + "'  class='insert_step_link' id='" + sid + "|" + parentid + "' href='javascript:void(0)' onclick='Insert_Step(this,\"" + jsonstep.dataType + "\");hideDetails(this)'>Insert Step Before</a>&nbsp;|&nbsp;";
 
+	orthologs = "";
+	if(jsonstep.dataType == "GeneRecordClasses.GeneRecordClass"){
+		orthologs = "<a title='Click this link to get the orthologs of this step' class='orthologs_link' href='javascript:void(0)' onclick='openOrthologFilter(" + strat.backId + "," + modelstep.back_step_Id + ");hideDetails(this)'>Orthologs</a>&nbsp;|&nbsp;";
+	}
 	if(modelstep.frontId == 1){
 		//delete_step = "<span class='expand_step_link' style='color:grey'>Delete</span>&nbsp;|&nbsp;";
 		delete_step = 	"<a title='" + delete_popup + "' class='delete_step_link disabled' href='javascript:void(0)'>Delete</a>";
@@ -319,7 +323,7 @@ function createDetails(modelstep, jsonstep, sid){
 	close_button = 	"<a href='javascript:void(0)' style='float: none; position: absolute; right: 6px;' onclick='hideDetails(this)'>[x]</a>";	
 	
 	inner = ""+	
-	    "		<div class='crumb_menu'>"+ rename_step + view_step + edit_step + expand_step + insert_step + delete_step + close_button +
+	    "		<div class='crumb_menu'>"+ rename_step + view_step + edit_step + expand_step + insert_step + orthologs + delete_step + close_button +
 		"		</div>"+
 		"		<p class='question_name'><span>" + name + "</span></p>"+
 		"		<table></table><hr>" + filteredName +
