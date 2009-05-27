@@ -762,6 +762,23 @@ SELECT etn.na_sequence_id feature_id,
        'density' source 
 FROM   dots.NASEQUENCE etn 
 WHERE  etn.na_sequence_id = $srcfeature_id 
+]]>
+    </sql>
+  </sqlQuery>
+  
+  
+  <sqlQuery name="Centromere:overview"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT fl.na_sequence_id feature_id,
+       'Centromere' type,
+       'overview' source,
+       start_min startm,
+       end_max end
+FROM  apidb.featurelocation fl, sres.sequenceOntology so  
+WHERE fl.na_sequence_id = $srcfeature_id
+  AND so.sequence_ontology_id = fl.sequence_ontology_id 
+  AND so.term_name='centromere'    
 ]]> 
     </sql> 
   </sqlQuery>
