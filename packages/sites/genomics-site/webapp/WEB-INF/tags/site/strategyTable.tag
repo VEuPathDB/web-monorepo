@@ -37,7 +37,7 @@
     <th scope="col" style="width: 5em">Size</th>
   </tr>
   </thead>
-  <tbody class="unsaved-strategies-body">
+  <tbody <c:if test="${prefix == 'Unsaved'}">class="unsaved-strategies-body"</c:if>>
   <c:set var="i" value="0"/>
   <%-- begin of forEach strategy in the category --%>
   <c:forEach items="${strategies}" var="strategy">
