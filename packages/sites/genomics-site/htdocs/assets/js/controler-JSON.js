@@ -459,6 +459,8 @@ function openStrategy(stratId){
 
 function deleteStrategy(stratId, fromHist){
 	var url = "deleteStrategy.do?strategy=" + stratId;
+	var agree = confirm("Are you sure you want to delete the strategy?");
+	if (agree){
 	$.ajax({
 		url: url,
 		dataType: "json",
@@ -480,6 +482,7 @@ function deleteStrategy(stratId, fromHist){
                                       + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
+	}
 }
 
 function closeStrategy(stratId, isBackId){
