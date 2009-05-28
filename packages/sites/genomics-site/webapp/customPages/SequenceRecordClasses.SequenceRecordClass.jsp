@@ -298,6 +298,20 @@ Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> gen
 <br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:set>
     </c:when>
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'M76611' && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <%-- P. falciparum mitochondrial genome --%>
+        <b>The <i>P. falciparum</i> mitochondrial genome was obtained from the Wellcome Trust Sanger Institute (WTSI).</b>
+<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the WTSI and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+    </c:set>
+    </c:when>
+    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'PFC10_API_IRAB' && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <%-- P. falciparum plastid genome --%>
+        <b>The <i>P. falciparum</i> plastid genome was obtained from the Wellcome Trust Sanger Institute (WTSI).</b>
+<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the WTSI and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+    </c:set>
+    </c:when>
     <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'AJ276844' && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <%-- P. falciparum mitochondrion = University of London --%>
