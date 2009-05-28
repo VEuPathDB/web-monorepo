@@ -196,9 +196,10 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog)
 	if(edit == 1)
 		$("#query_form div#operations input#" + operation).attr('checked','checked'); 
 	setDraggable($("#query_form"), ".dragHandle");
-	$("#query_form").append("<div class='bottom-close'><a href='javascript:closeAll(false)' id='close_filter_query'>Close</a></div>");
 	if(quesDescription.length > 0)
-		$("#query_form .filter.params").append("<div style='padding:5px;margin:5px 15px 5px 15px;border-top:1px solid grey;border-bottom:1px solid grey'>" + quesDescription.html() + "</div>");
+		$("#query_form").append("<div style='padding:5px;margin:5px 15px 5px 15px;border-top:1px solid grey;border-bottom:1px solid grey'>" + quesDescription.html() + "</div>");
+		//$("#query_form .filter.params").append("<div style='padding:5px;margin:5px 15px 5px 15px;border-top:1px solid grey;border-bottom:1px solid grey'>" + quesDescription.html() + "</div>");
+	$("#query_form").append("<div class='bottom-close'><a href='javascript:closeAll(false)' class='close_window'>Close</a></div>");
 	htmltooltip.render();
 	$("#query_form").fadeIn("normal");
 }
