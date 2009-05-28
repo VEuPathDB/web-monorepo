@@ -72,5 +72,12 @@ sub filterByDescription {
   ($description !~ /$desc/i);
 }
 
+sub filterByExtDbAndDepth {
+  my ($f,$feat,$nm,$dp,$Extdb) = @_;
+  ($depth = 1) unless $depth;
+  my $span = $feat->{start} . '-' . $feat->{end};
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+  (($extdbname =~ /$Extdb/i) && ($f->{$nm}->{$span}++ < $depth));
+} 
 
 1;
