@@ -20,18 +20,21 @@ function showPanel(panel) {
 	setCurrentTabCookie(panel, false);
 }
 
-function showSaveForm(stratId, save){
+function showSaveForm(stratId, save, share){
 	closeModal();
 	$("div.save_strat_div").addClass("hidden");
 	var saveForm = $("div#save_strat_div_" + stratId);
        if (save){
          $("form", saveForm).attr("action", "javascript:saveOrRenameStrategy(" + stratId + ", true, true, false)");
-         $("h2", saveForm).text("Save As");
+         $("span.h3left", saveForm).text("Save As");
          $("input[type=submit]", saveForm).attr("value", "Save");
+         if (share) {
+		  $("span.h3left", saveForm).text("First you need to Save it!");
+         }
        }
        else{
          $("form", saveForm).attr("action", "javascript:saveOrRenameStrategy(" + stratId + ", true, false, false)");
-         $("h2", saveForm).text("Rename");
+         $("span.h3left", saveForm).text("Rename");
          $("input[type=submit]", saveForm).attr("value", "Rename");
        }
 	saveForm.show();

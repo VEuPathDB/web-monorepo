@@ -164,11 +164,14 @@ h2 {
   	color: #634697;
 }
 
-/*
-#h2center {
-  	color: #634697;
+
+.h2center {
+  	color: #5f0f47;
 }
-*/
+.h3left {
+  	color: #5f0f47;
+}
+
 
 
 .subcolor {
@@ -300,9 +303,10 @@ span.marker a:link, span.marker a:visited {
     background-color: #e9e6ee;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-copying following from TriTrypDB.css (now AllSites.css ( = for old UI ...)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  = for old UI with new graphics (deprecated)  
+        RETHINK this section, CryptoDB.css does not have it
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.recordClassTitle{
     border-color:#330099;

@@ -398,22 +398,46 @@ function createStrategyName(strat){
 	if (!json.saved) append = "<span class='append'>*</span>";
 	var exportURL = exportBaseURL + json.importId;
 	var share = "";
+
+/*
 	if(json.saved){
 		share = "<a title='Email this URL to your best friend.' href=\"javascript:showExportLink('" + id + "')\"><b>SHARE</b></a>"+
 		"<div class='modal_div export_link' id='export_link_div_" + id + "'>" +
-	        "<span class='dragHandle'>" +
+	        "<div class='dragHandle'>" +
 	        "<a class='close_window' href='javascript:closeModal()'>" +
-		"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
+		"<img alt='Close' src='/assets/images/Close-X.png' height='16'/>" +
 		"</a>"+
-	        "</span>" +
-		"<span id='h2center'>Copy and paste URL below to email or bookmark</span>" +
+	        "</div>" +
+		"<span class='h3left'>Copy and paste URL below to email or bookmark</span>" +
 		"<input type='text' size=" + exportURL.length + " value=" + exportURL + " readonly='true' />" +
 		"</div>";
 	}else if(guestUser == 'true'){
 		share = "<a title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' href='javascript:void(0)' onclick='popLogin()'><b>SHARE</b></a>";
 	}else{
-		share = "<a title='SAVE this strategy so you can SHARE it (email its URL).' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "', true)\"><b>SHARE</b></a>";
+		share = "<a title='SAVE this strategy so you can SHARE it (email its URL).' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "', true,true)\"><b>SHARE</b></a>";
 	}
+*/
+
+	if(json.saved){
+		share = "<a title='Email this URL to your best friend.' href=\"javascript:showExportLink('" + id + "')\"><b>SHARE</b></a>"+
+		"<div class='modal_div export_link' id='export_link_div_" + id + "'>" +
+	        "<div class='dragHandle'>" +
+		"<div class='modal_name'>"+
+		"<span class='h3left'>Copy and paste URL below to email or bookmark</span>" + 
+		"</div>"+ 
+		"<a class='close_window' href='javascript:closeModal()'>"+
+		"<img alt='Close' src='/assets/images/Close-X.png' height='16' />" +
+		"</a>"+
+		"</div>"+
+		"<input type='text' size=" + (exportURL.length-13) + " value=" + exportURL + " readonly='true' />" +
+		"</div>";
+	}else if(guestUser == 'true'){
+		share = "<a title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' href='javascript:void(0)' onclick='popLogin()'><b>SHARE</b></a>";
+	}else{
+		share = "<a title='SAVE this strategy so you can SHARE it (email its URL).' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "', true,true)\"><b>SHARE</b></a>";
+	}
+
+
 
 	var save = "";
 	var sTitle = "SAVE AS";
@@ -425,18 +449,18 @@ function createStrategyName(strat){
 		save = "<a title='A saved strategy is like a snapshot, it cannot be changed.' class='save_strat_link' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "', true)\"><b>" + sTitle + "</b></a>";
 	}
 	save += "<div id='save_strat_div_" + id + "' class='modal_div save_strat'>" +
-		"<span class='dragHandle'>" +
+		"<div class='dragHandle'>" +
 		"<div class='modal_name'>"+
-		"<h2>" + sTitle + "</h2>" + 
+		"<span class='h3left'>" + sTitle + "</span>" + 
 		"</div>"+ 
 		"<a class='close_window' href='javascript:closeModal()'>"+
-		"<img alt='Close' src='/assets/images/Close-X-box.png'/>" +
+		"<img alt='Close' src='/assets/images/Close-X.png' height='16' />" +
 		"</a>"+
-		"</span>"+
+		"</div>"+
 		"<form onsubmit='return validateSaveForm(this);' action=\"javascript:saveStrategy('" + id + "', true)\">"+
 		"<input type='hidden' value='" + id + "' name='strategy'/>"+
 		"<input type='text' value='" + name + "' name='name'/>"+
-		"<input type='submit' value='Save'/>"+
+		"<input style='position:absolute;right:0' type='submit' value='Save'/>"+
 		"</form>"+
 		"</div>";
 

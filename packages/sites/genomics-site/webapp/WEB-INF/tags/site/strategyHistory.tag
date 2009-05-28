@@ -159,7 +159,7 @@
           <img alt='Close' src='/assets/images/Close-X-box.png'/>
         </a>
       </span>
-      <span id="h2center">Copy and paste URL below to email or bookmark</span>
+      <span class="h2center">Copy and paste URL below to email or bookmark</span>
       <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
     </div>
     <c:set var="saveHeader" value="Save As"/>

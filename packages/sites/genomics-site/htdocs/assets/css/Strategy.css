@@ -452,8 +452,7 @@
 
 .diagram div#record_name {
         border: none;
-        left: 4px;
-        top: 0px;
+	padding: 0px 0px 0px 5px;   
         text-align: left;
         font-color: #08438F;
         font-weight:bold;
@@ -509,15 +508,18 @@ span.closeStrategy {
 	background-color: #FFFFFF;
 	background-image: url(../images/filter_top.gif);
 	background-repeat: repeat-x;
-	border: 1px solid #345d9b;	
-	padding-bottom: 0px;
-	padding-top: 4px;
+	border: 1px solid #888888;   /*   #345d9b;	  */
+/*	padding-bottom: 0px;
+	padding-top: 4px; */
+	padding: 5px;
 	z-index: 90;
+	text-align: left; /* Run tab: all content in Rename/Save As popups */
 }
 
 .modal_div .dragHandle {
-	top: -22px;  /*  -25px; */
-	height: 11px;  /*  13px; */
+	border:1px solid grey;
+	top: -17px;  /*  -25px; */
+	height: 14px;  /*  13px; */
 }
 
 .dragHandle .modal_name {
@@ -528,9 +530,9 @@ span.closeStrategy {
 
 .save_strat, .diagram .save_strat {
 	position: absolute;
-	right: 0;
-	top: 5em;
-	width: 25em;
+	right: 5em;
+	top: 4em;
+	width: 22em;
 }
 
 .save_strat .dragHandle .modal_name {
@@ -542,24 +544,17 @@ span.closeStrategy {
 /* First selector is for history page,
    second selector is for strat diagram */
 .export_link, .diagram .export_link {
-	text-align: center;
 	position: absolute;
-	right: 0;
-	top: 6em;
+	right: 5em;
+	top: 4em;
+	width: 67em;
 }
 
-/* First selector is for history page,
-   second selector is for strat diagram */
+/* this selector is for history page,*/
 .export_link p, .diagram .export_link p {
 	font-size: 10pt;
 	color: #000000;
 	padding: 5px;
-}
-
-/* First selector is for history page,
-   second selector is for strat diagram */
-.export_link input, .diagram .export_link input {
-	margin: 5px;
 }
 
 .diagram .filterImg {

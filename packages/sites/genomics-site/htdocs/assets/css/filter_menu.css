@@ -147,9 +147,9 @@
 	background-image: url(../images/handbar.jpg);
 	cursor: move;
 	padding-top: 10px;
-	border-top: 1px solid #345D9B;
-	border-left: 1px solid #345D9B;
-	border-right: 1px solid #345D9B;
+	border-top: 1px solid #888888;   /* #345D9B; */
+	border-left: 1px solid #888888;   /*  #345D9B; */
+	border-right: 1px solid #888888;    /* #345D9B; */
 	border-bottom: 1px solid #000000;
 }
 
