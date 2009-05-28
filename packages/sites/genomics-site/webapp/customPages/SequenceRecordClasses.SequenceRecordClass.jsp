@@ -251,6 +251,11 @@ Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> gen
 </c:set>
 </c:when>
 
+<c:when test="${fn:containsIgnoreCase(organism, 'vivax') && (id eq 'AY598140') && projectId eq 'PlasmoDB'}">
+    <c:set var="reference">
+        <b><i>P. vivax</i> mitochondrial sequence and annotation was obtained from Genbank</b>
+    </c:set>
+    </c:when>
 <c:when test="${fn:containsIgnoreCase(organism, 'vivax') && projectId eq 'PlasmoDB'}">
     <c:set var="reference">
         <b><i>P. vivax</i> was sequenced by 
