@@ -11,7 +11,7 @@ my $q = new CGI;
 print $q->header('text/html');
 my $idstr = $q->param('pmids');
 
-my @ids = split /-/, $idstr;
+my @ids = split /[-|,]/, $idstr;
 
 foreach my $id (@ids) {
 
