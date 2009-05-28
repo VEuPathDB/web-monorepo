@@ -446,7 +446,7 @@ function createStrategyName(strat){
 
 var rename = "<a id='rename_" + strat.frontId + "' href='javascript:void(0)' title='Click to rename.'  onclick=\"showSaveForm('" + id + "', false)\"><b>RENAME</b></a>";
 
-var deleteStrat = "<a id='delete_" + strat.frontId + "' href='javascript:void(0)' title='Click to delete.'  onclick=\"deleteStrategy('" + id + "', false)\"><b>DELETE<b></a>";
+var deleteStrat = "<a id='delete_" + strat.frontId + "' href='javascript:void(0)' title='Click to delete.'  onclick=\"deleteStrategy('" + id + "', false)\"><b>DELETE</b></a>";
 
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");

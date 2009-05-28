@@ -82,6 +82,10 @@ ul#history_tabs {
     overflow-x: hidden;
 }
 
+.tbody-overflow {
+    height: 250px;
+}
+
 
 
 

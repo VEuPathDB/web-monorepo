@@ -238,6 +238,16 @@
    #footer div {
 	display: inline-block;
    }
+
+   .tbody-overflow {
+	height: auto;
+    }
+
+    .unsaved-strategies {
+	max-height: 250px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+    }
 </style>
 <![endif]-->
 

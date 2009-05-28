@@ -139,7 +139,7 @@ function displayHist(type) {
 	}
 	else $(".history_controls").show();
 	$("div.panel_" + type).show();
-	if ($("div.panel_" + type + " .unsaved-strategies-body").height() > 250) $("div.panel_" + type + " .unsaved-strategies-body").height(250);
+	if ($("div.panel_" + type + " .unsaved-strategies-body").height() > 250) $("div.panel_" + type + " .unsaved-strategies-body").addClass('tbody-overflow');
 	setCurrentTabCookie('search_history');
 	setCurrentTabCookie(type, true);
 }
