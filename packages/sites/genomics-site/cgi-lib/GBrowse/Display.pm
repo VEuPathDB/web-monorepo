@@ -234,7 +234,12 @@ sub massSpecBgColorFromExtDbName {
                 'Lasonder Mosquito salivary gland sporozoite peptides' => 'yellow',
                 'Lasonder Mosquito oocyst-derived sporozoite peptides' =>  'orange',
                 'Lasonder Mosquito oocyst peptides' => 'mediumslateblue',
-                'Pyoelii LiverStage LS40' => 'red'
+                'Pyoelii LiverStage LS40' => 'red',
+                'Florens Life Cycle MassSpec-Merozoites' => 'sandybrown',
+                'Florens Life Cycle MassSpec-Trophozoites' =>'tan',
+                'Florens PIESPs MassSpec' => 'khaki',
+                'Florens Life Cycle MassSpec-Gametocytes' =>'yellow',
+                'Florens Life Cycle MassSpec-Sporozoite' => 'brown'
                );
 
   $f = $f->parent if (! $f->get_tag_values('ExtDbName'));
