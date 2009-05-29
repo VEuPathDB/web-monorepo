@@ -76,3 +76,13 @@ function check(ele){
 		}
 	}
 }
+
+function expandCollapseAll(ele, flag) {
+    $(ele).parents(".param-tree").find(".term-node > img").each(function() {
+        if($(this).hasClass("plus")){
+            if (flag) toggleChildren(this);
+        } else {
+            if (!flag) toggleChildren(this);
+        }
+    });
+}
