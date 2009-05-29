@@ -98,7 +98,7 @@
          <c:set var="saveAction" value="showHistSave(this, '${strategyId}', true);"/>
          <c:set var="shareAction" value="showHistShare(this, '${strategyId}');" />
          <c:if test="${!strategy.isSaved}">
-           <c:set var="shareAction" value="showHistSave(this, '${strategyId}', true);" />
+           <c:set var="shareAction" value="showHistSave(this, '${strategyId}', true,true);" />
          </c:if>
          <c:if test="${wdkUser.guest}">
            <c:set var="saveAction" value="popLogin();"/>

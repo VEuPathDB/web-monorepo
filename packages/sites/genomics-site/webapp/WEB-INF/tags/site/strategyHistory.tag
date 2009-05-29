@@ -128,20 +128,20 @@
 <c:forEach items="${unsavedStrategiesMap}" var="strategyEntry">
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:forEach items="${strategies}" var="strategy">
-    <c:set var="saveHeader" value="Save As"/>
-    <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
-      <span class='dragHandle'>
+    <c:set var="saveHeader" value="Unused"/>
+    <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}">
+      <div class='dragHandle' style='height:4px'>
         <div class="modal_name">
-          <h2>${saveHeader}</h2>
+          <span class='h3left'>${saveHeader}</span>
         </div>
         <a class='close_window' href='javascript:closeModal()'>
-          <img alt='Close' src='/assets/images/Close-X-box.png'/>
+        <img alt='Close' src='/assets/images/Close-X.png'  height='16'/>
         </a>
-      </span>
+      </div>
       <form onsubmit='return validateSaveForm(this);' action="javascript:saveStrategy('${strategy.strategyId}', true, true)">
         <input type='hidden' value="${strategy.strategyId}" name='strategy'/>
         <input type='text' value="${strategy.name}" name='name'/>
-        <input type='submit' value='Save'/>
+        <input  style='position:absolute;right:0' type='submit' value='Save'/>
       </form>
     </div>
   </c:forEach>
@@ -153,29 +153,31 @@
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:forEach items="${strategies}" var="strategy">
     <c:set var="exportURL" value="${exportBaseUrl}${strategy.importId}" />
-    <div class='modal_div export_link' id="hist_share_${strategy.strategyId}" style="right:15em;">
-      <span class='dragHandle'>
-        <a class='close_window' href='javascript:closeModal()'>
-          <img alt='Close' src='/assets/images/Close-X-box.png'/>
-        </a>
-      </span>
-      <span class="h2center">Copy and paste URL below to email or bookmark</span>
-      <input type='text' size="${fn:length(exportURL)}" value="${exportURL}"/>
+    <div class='modal_div export_link' id="hist_share_${strategy.strategyId}" >
+      <div class='dragHandle'  style='height:4px'>
+	 <div class="modal_name">
+		<span class="h3left">Copy and paste URL below to email or bookmark</span>
+	 </div>
+         <a class='close_window' href='javascript:closeModal()'>
+         <img alt='Close' src='/assets/images/Close-X.png'  height='16'/>
+         </a>
+      </div>
+      <input type='text' size="${fn:length(exportURL)-12}" value="${exportURL}"/>
     </div>
     <c:set var="saveHeader" value="Save As"/>
-    <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}" style="right:15em;">
-      <span class='dragHandle'>
+    <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}">
+      <div class='dragHandle'  style='height:4px'>
         <div class="modal_name">
-          <h2>${saveHeader}</h2>
+          <span class='h3left'>${saveHeader}</span>
         </div>
         <a class='close_window' href='javascript:closeModal()'>
-          <img alt='Close' src='/assets/images/Close-X-box.png'/>
+          <img alt='Close' src='/assets/images/Close-X.png'  height='16'/>
         </a>
-      </span>
+      </div>
       <form onsubmit='return validateSaveForm(this);' action="javascript:saveStrategy('${strategy.strategyId}', true, true)">
         <input type='hidden' value="${strategy.strategyId}" name='strategy'/>
         <input type='text' value="${strategy.name}" name='name'/>
-        <input type='submit' value='Save'/>
+        <input  style='position:absolute;right:0' type='submit' value='Save'/>
       </form>
     </div>
   </c:forEach>

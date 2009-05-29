@@ -518,7 +518,7 @@ span.closeStrategy {
 
 .modal_div .dragHandle {
 	border:1px solid grey;
-	top: -17px;  /*  -25px; */
+	top: -16px;  /*  -25px; */
 	height: 14px;  /*  13px; */
 }
 
@@ -526,6 +526,7 @@ span.closeStrategy {
 	border: none;
 	top: 0;
 	width: 100%;
+	position: absolute;
 }
 
 .save_strat, .diagram .save_strat {
@@ -541,16 +542,15 @@ span.closeStrategy {
         position:absolute;
 }
 
-/* First selector is for history page,
-   second selector is for strat diagram */
+/* This selector is for Browse and Run  tab */
 .export_link, .diagram .export_link {
 	position: absolute;
-	right: 5em;
-	top: 4em;
-	width: 67em;
+	right: 5em; /* for Run tab */
+	top: 4em;   /* for Run tab */
+	width: 66em;   /* for Run tab */
 }
 
-/* this selector is for history page,*/
+
 .export_link p, .diagram .export_link p {
 	font-size: 10pt;
 	color: #000000;

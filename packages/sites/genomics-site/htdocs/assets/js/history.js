@@ -75,28 +75,32 @@ function toggleSteps(strat) {
 	}
 }
 
-function showHistSave(ele, stratId, save) {
+function showHistSave(ele, stratId, save,share) {
        var popup = $("div#hist_save_" + stratId);
        if (save){
          $("form", popup).attr("action", "javascript:saveOrRenameStrategy(" + stratId + ", true, true, true)");
-         $("h2", popup).text("Save As");
+         $("span.h3left", popup).text("Save As");
          $("input[type=submit]", popup).attr("value", "Save");
+ 	 if (share) {
+		  $("span.h3left", popup).text("First you need to Save it!");
+         }
        }
        else{
          $("form", popup).attr("action", "javascript:saveOrRenameStrategy(" + stratId + ", true, false, true)");
-         $("h2", popup).text("Rename");
+         $("span.h3left", popup).text("Rename");
          $("input[type=submit]", popup).attr("value", "Rename");
        }
        var btnOffset = $(ele).offset();
        var prntOffset = $("div#search_history").offset();
-       popup.css("top", btnOffset.top - prntOffset.top + "px");
+       popup.css("top", (btnOffset.top - prntOffset.top - 40) + "px");
+       popup.css("right", "292px");
        popup.show();
 }
 
 function showHistShare(ele, stratId) {
        var btnOffset = $(ele).offset();
        var prntOffset = $("div#search_history").offset();
-       $("div#hist_share_" + stratId).css("top", btnOffset.top - prntOffset.top + "px");
+       $("div#hist_share_" + stratId).css("top", (btnOffset.top - prntOffset.top - 40)  + "px");
        $("div#hist_share_" + stratId).show();
 }
 
