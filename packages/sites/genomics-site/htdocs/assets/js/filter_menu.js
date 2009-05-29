@@ -1,5 +1,6 @@
 var _action = "";
 var original_Query_Form_Text;
+var original_Query_Form_CSS = new Object();
 var current_Front_Strategy_Id = null;
 
 function showExportLink(stratId){
@@ -202,12 +203,13 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog)
 	//$("#filter_link_div_" + proto + " #query_selection").fadeOut("normal");
 	if(edit == 1)
 		$("#query_form div#operations input#" + operation).attr('checked','checked'); 
-	setDraggable($("#query_form"), ".dragHandle");
+	
 	if(quesDescription.length > 0)
 		$("#query_form").append("<div style='padding:5px;margin:5px 15px 5px 15px;border-top:1px solid grey;border-bottom:1px solid grey'>" + quesDescription.html() + "</div>");
 		//$("#query_form .filter.params").append("<div style='padding:5px;margin:5px 15px 5px 15px;border-top:1px solid grey;border-bottom:1px solid grey'>" + quesDescription.html() + "</div>");
 	$("#query_form").append("<div class='bottom-close'><a href='javascript:closeAll(false)' class='close_window'>Close</a></div>");
 	htmltooltip.render();
+	setDraggable($("#query_form"), ".dragHandle");
 	$("#query_form").fadeIn("normal");
 }
 
@@ -290,6 +292,8 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 		success: function(data){
 			//filter = document.createElement('div');
 			$("div#strategy_results").append(data);
+			original_Query_Form_CSS.maxW = $("#query_form").css("max-width");
+			original_Query_Form_CSS.minW = $("#query_form").css("min-width");
 			$("#query_form select#selected_strategy option[value='" + getStrategy(strat_id).backId + "']").remove();
 			if(isAdd)
 				$("#query_form h1#query_form_title").html("Add&nbsp;Step");
@@ -354,16 +358,18 @@ function openOrthologFilter(strat_id, step_id){
 function close(ele){
 	cd = $("#query_form");
 	$(cd).html(original_Query_Form_Text);
+	$("#query_form").css("max-width",original_Query_Form_CSS.maxW);
+	$("#query_form").css("min-width",original_Query_Form_CSS.minW);
 	setDraggable($("#query_form"), ".dragHandle");
 	
 	$("#query_form #continue_button").click(function(){
-		original_Query_Form_Text = $("#query_form").parent().html();
+		original_Query_Form_Text = $("#query_form").html();
 		OpenOperationBox(strat_id, undefined);
 		return false;
 	});
 
 	$("#query_form #continue_button_transforms").click(function(){
-		original_Query_Form_Text = $("#query_form").parent().html();
+		original_Query_Form_Text = $("#query_form").html();
 		getQueryForm($("#query_form select#transforms").val(),true);
 	});
 }
@@ -380,7 +386,7 @@ function closeAll(hide){
 function setDraggable(e, handle){
 	$(e).draggable({
 		handle: handle,
-		containment: [0,0,$("div#contentwrapper")[0].clientWidth - $(e)[0].clientWidth, $("div#footer")[0].offsetTop + $("div#footer")[0].clientHeight]
+		containment: [0,0,$("div#contentwrapper").width() - e.width() - 10, $("body").height()]
 	});
 }
 
