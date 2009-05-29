@@ -6,8 +6,9 @@ $("#diagram").ready(function(){
 });
 
 function showDetails(det){
-	openDetail = $(det).parent().parent().find("h3 div.crumb_details");
-	var parent = openDetail.parent().parent();
+	openDetail = $(det).parent().find("div.crumb_details");
+	var parent = openDetail.parent(); // for boolean details, parent is step div
+	if (!parent.is("div")) parent = parent.parent(); // for non-boolean details, grandparent is step div
 	var diagram = parent.parent();
 	var dId = $(diagram).attr("id").substring(8);
 	dId = parseInt(dId);

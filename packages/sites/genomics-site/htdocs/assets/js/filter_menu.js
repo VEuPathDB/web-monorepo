@@ -66,9 +66,14 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog)
 	var stp = null;
 	var stepBackId = null;
 	if(edit == 0){
-		stp = currStrategy.getLastStep();
-		stepBackId = (stp.back_boolean_Id == "") ? stp.back_step_Id : stp.back_boolean_id;
 		insert = reviseStep;
+		if (insert == ""){
+			stp = currStrategy.getLastStep();
+			stepBackId = (stp.back_boolean_Id == "") ? stp.back_step_Id : stp.back_boolean_id;
+		}else{
+			stp = currStrategy.getStep(insert,false);
+			stepBackId = insert;
+		}
 	}else{
 		var parts = reviseStep.split(":");
 		proto = parts[0];
@@ -135,6 +140,10 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog)
 	if(edit == 0){
 		if(insert == ""){
 			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;" + (parseInt(stp.frontId)+1) + ": " + quesTitle + "</span></br>");		
+		}else if (stp.frontId == 1 && !isOrtholog){
+			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Insert&nbsp;Step&nbsp;Before&nbsp;" + (stp.frontId) + ": " + quesTitle + "</span></br>");
+		}else if (stp.isLast && isOrtholog){
+			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Insert&nbsp;Step&nbsp;After&nbsp;" + (stp.frontId) + ": " + quesTitle + "</span></br>");
 		}else if (isOrtholog){
 			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Insert&nbsp;Step&nbsp;Between&nbsp;" + (stp.frontId) + "&nbsp;And&nbsp;" + (parseInt(stp.frontId)+1) + ": " + quesTitle + "</span></br>");		
 		}else{
