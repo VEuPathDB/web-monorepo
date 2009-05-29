@@ -10,6 +10,16 @@
 
 <h2>Genome Database</h2>
 
+<div class='related_siteinfo_links'>
+Related Links
+<ul>
+<li>CBIL DBA Interface (password required)</li>
+  <ul>
+    <li><a href="https://www.cbil.upenn.edu/dba/uga.php">UGA databases</a></li>
+    <li><a href="https://www.cbil.upenn.edu/dba/">Penn databases</a></li>
+  </ul>
+</div>
+
 <c:catch var="e">
 ${wdkRecord.attributes['service_name'].value}
 </c:catch>
@@ -64,6 +74,7 @@ ${wdkRecord.attributes['service_name'].value}
 <p>
 <b>Available DBLinks</b>: <site:dataTable tblName="AllDbLinks"/>
 </p>
+<!--
 <p>
 <b><a href="javascript:javascript:void(0)" 
 onclick="window.open('<c:url value="/admin/activeSql.jsp"/>', 
@@ -71,6 +82,7 @@ onclick="window.open('<c:url value="/admin/activeSql.jsp"/>',
 'toolbar=0,status=0,location=0,menubar=0,height=600,width=800,scrollbars=yes')">
 Active SQL Queries <font size='+1'>&#10063;</font></a></b>
 </p>
+--!>
 </c:otherwise>
 </c:choose>
 

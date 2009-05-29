@@ -150,6 +150,16 @@
        padding-left: 5px;
     }
 
+    div.related_siteinfo_links {
+      float: right;
+      width: 27em;
+      padding: 0.5em;
+      margin: 0 0em 0 0;
+      color: black;
+      background: #dee2ed;
+      border-left: 1px solid #C28547;
+      border-top: 1px solid #C28547;
+      }
 </style>
 
 
