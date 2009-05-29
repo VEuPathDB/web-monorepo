@@ -402,6 +402,10 @@ function secondLevelDomain(){
   }
 }
 
+function goToMySearches(){
+	setCurrentTabCookie('search_history', false);
+	return true;
+}
 
 /***************************************************
 *  Charles Treatman 5/13/09
