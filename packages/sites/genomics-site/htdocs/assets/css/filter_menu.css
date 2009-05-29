@@ -205,5 +205,6 @@ div.bottom-close{
 	position:relative;
 	bottom:8px;
 	right:5px;
+	top:-5px;
 	text-decoration:underline;
 }
