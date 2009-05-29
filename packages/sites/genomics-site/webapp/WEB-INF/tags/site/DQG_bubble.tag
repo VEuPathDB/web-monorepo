@@ -51,7 +51,7 @@
 <%---------------------------------   RECORDCLASSSES OTHER THAN GENES  -------------------------%>
 	<c:when test="${recordClasses == 'others'}">
 		<div id="info">
-			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse</a></p>
+			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
 			<ul class="heading_list">
 				<c:forEach items="${catMap}" var="catByRec">
 				    <c:if test="${catByRec.key != 'GeneRecordClasses.GeneRecordClass'}">
@@ -94,7 +94,7 @@
 <%---------------------------------   GENES  -------------------------%>
 	<c:otherwise>
 		<div id="info">
-			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse</a></p>
+			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
 			<ul class="heading_list">
 				
 				<c:set var="qByCat" value="${catMap['GeneRecordClasses.GeneRecordClass']}" />
