@@ -138,12 +138,10 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog)
 	$(".filter.params", quesForm).append(advanced);
 	
 	if(edit == 0){
-		if(insert == ""){
+		if(insert == "" || (stp.isLast && isOrtholog)){
 			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Add&nbsp;Step&nbsp;" + (parseInt(stp.frontId)+1) + ": " + quesTitle + "</span></br>");		
 		}else if (stp.frontId == 1 && !isOrtholog){
 			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Insert&nbsp;Step&nbsp;Before&nbsp;" + (stp.frontId) + ": " + quesTitle + "</span></br>");
-		}else if (stp.isLast && isOrtholog){
-			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Insert&nbsp;Step&nbsp;After&nbsp;" + (stp.frontId) + ": " + quesTitle + "</span></br>");
 		}else if (isOrtholog){
 			$(".filter.params", quesForm).prepend("<span class='form_subtitle'>Insert&nbsp;Step&nbsp;Between&nbsp;" + (stp.frontId) + "&nbsp;And&nbsp;" + (parseInt(stp.frontId)+1) + ": " + quesTitle + "</span></br>");		
 		}else{
