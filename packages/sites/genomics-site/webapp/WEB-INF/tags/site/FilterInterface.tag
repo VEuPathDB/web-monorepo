@@ -40,7 +40,7 @@
 
 
 <div id="query_form" class="jqDnR" style="min-height:140px;">
-<span class="dragHandle"><div class="modal_name"><h1 id="query_form_title"></h1></div><a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span>
+<span class="dragHandle"><div class="modal_name"><h1 id="query_form_title"></h1></div><a class='close_window' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span>
 <!--<div id="filter_div">-->
 
 <div id="query_selection">
@@ -131,6 +131,6 @@
 </div><!-- End of Query Selection Div -->
 <!--</div> End of Filter div -->
 <!--<div id="query_form" class="jqDnR">-->
-	<div class="bottom-close"><a id='close_filter_query' href='javascript:closeAll(false)'>Close</a>
+	<div class="bottom-close"><a class='close_window' href='javascript:closeAll(false)'>Close</a>
 </div><!-- End of Query Form Div -->
 
