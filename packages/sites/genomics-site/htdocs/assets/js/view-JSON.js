@@ -32,6 +32,7 @@ var stepDivs = null;
 var leftOffset = 0;
 // MANAGE THE DISPLAY OF THE STRATEGY BASED ON THE ID PASSED IN
 function displayModel(strat){
+  //try{
 	if(strats){
 	  $("#strat-instructions").remove();
 	  $("#strat-instructions-2").remove();
@@ -55,9 +56,9 @@ function displayModel(strat){
 		"	</a>");
 		$(div_strat).append(close_span);
 		$(div_strat).append(createStrategyName(strat));
+		$(div_strat).append(createParentStep(strat));
 		displaySteps = createSteps(strat,div_strat);
 		$(div_strat).append(createRecordTypeName(strat));
-		$(div_strat).append(createParentStep(strat));
 		buttonleft = offset(null);
 		button = document.createElement('a');
 		lsn = strat.getStep(strat.Steps.length,true).back_boolean_Id;
@@ -73,6 +74,9 @@ function displayModel(strat){
 	    return div_strat;
 	  }
     }
+//  }catch(e){
+	//initDisplay(0);
+ // }
 	return null;
 }
 

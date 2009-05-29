@@ -97,9 +97,10 @@ Strategy.prototype.initSteps = function(steps, ord){
 				st.operation = steps[i].operation;
 				st.isboolean = true;
 				if(steps[i].step.isCollapsed && steps[i].step.strategy.order > 0){
+					this.subStratOrder[steps[i].step.strategy.order] = sidIndex;
 					subId = loadModel(steps[i].step.strategy, ord + "." + ssind);
 					ssind++;
-					this.subStratOrder[steps[i].step.strategy.order] = subId;
+					//this.subStratOrder[steps[i].step.strategy.order] = subId;
 					st.child_Strat_Id = subId;
 				}
 			}else{ 
