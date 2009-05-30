@@ -165,13 +165,9 @@ h2 {
 }
 
 
-.h2center {
+.h2center, .h3left, .h4left {
   	color: #5f0f47;
 }
-.h3left {
-  	color: #5f0f47;
-}
-
 
 
 .subcolor {
@@ -307,17 +303,17 @@ span.marker a:link, span.marker a:visited {
   = for old UI with new graphics (deprecated)  
         RETHINK this section, CryptoDB.css does not have it
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+/*
 td.recordClassTitle{
     border-color:#330099;
 }
 
 
 tr.headerRow  td,th {
-   border-color:#330099;  /*#6b7d70;*/
+   border-color:#330099;  
 }
 
-
+*/
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = styles for blockUI popups
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

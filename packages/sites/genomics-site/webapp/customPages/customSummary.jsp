@@ -75,44 +75,37 @@
 
 </script>
 
+<%--------------- TABS ---------------%>
 <ul id="strategy_tabs">
    <li><a id="tab_strategy_results" title="Graphical display of your opened strategies. To close a strategy click on the right top corner X." onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
    <li><a id="tab_search_history" title="Summary of all your strategies. From here you can open/close strategies on the 'Run Strategies' tab, our graphical display." onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
    <li><a id="tab_sample_strat" title="View some examples of linear and non-linear strategies." href="javascript:showPanel('sample_strat')">Help / Sample Strategies</a></li>
 </ul>
 
-<%-- fixed position des not work, with announcements and warnings coming and going  --anyway, we add a tab
-<div style="padding:3px; font-weight:bold; background-color:white; position:absolute; top:153px; left:400px;">
-         Click <a href="<c:url value="/importStrategy.do?strategy=ca5bc32fb29086d29b778b17f18a97c:1"/>">
-    here</a> to add a sample strategy in your display</a>
-</div>
---%>
-
-
+<%--------------- REST OF PAGE ---------------%>
 <div id="strategy_results">
 
-<%------ if this div is not being used, please clean up ------ ---%>
-<div class="strategy_controls"/></div> 
+<%--   <div class="strategy_controls"/></div>   --%>
 
-<div id="Strategies">
-</div>
+	<div id="Strategies">
+	</div>
 
-<input type="hidden" id="target_step" value="${stepNumber+1}"/>
-<br>
+	<input type="hidden" id="target_step" value="${stepNumber+1}"/>
 
-<div id="Workspace"></div> 
+	<br/>
+
+	<div id="Workspace">
+	</div> 
 
 </div><!-- end results view div -->
 
 <div id="search_history">
-  <%-- <site:strategyHistory model="${wdkModel}" user="${wdkUser}" /> --%>
-</div> <!-- end history view div -->
+</div>
 
 <div id="sample_strat">
         <site:sampleStrategies wdkModel="${wdkModel}" wdkUser="${wdkUser}" />
-</div> <!-- end sample strats div -->
+</div>
 
-<%------ if this div is not being used, please clean up ------ ---%>
-<div id="loading_step_div"></div>
+<%-- <div id="loading_step_div"></div>  --%>
 
 <site:footer />

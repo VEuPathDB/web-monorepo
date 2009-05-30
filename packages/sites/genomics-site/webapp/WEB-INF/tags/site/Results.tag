@@ -73,11 +73,17 @@
 
 
 <table width="100%"><tr>
-<td style="padding-top:6px;"><h2 style="display:none"><span id="text_strategy_number">${strategy.name}</span> 
-    (step <span id="text_step_number">${strategy.length}</span>) 
-    - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span></h2></td>
-<td align="right" style="vertical-align:middle" nowrap>
-<c:if test="${type == 'Genes'}"><a href="javascript:void(0)" onclick="openOrthologFilter(${strategy.strategyId},${wdkHistory.stepId})"><b>ORTHOLOGS</b></a>&nbsp;|&nbsp;</c:if><a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a></td>
+<td  style="vertical-align:middle;padding-bottom:7px;">
+	<span class="h4left" style="display:none">
+		<span id="text_strategy_number">${strategy.name}</span> 
+    		(step <span id="text_step_number">${strategy.length}</span>) 
+    		- ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span>
+	</span>
+</td>
+
+<td  style="vertical-align:middle;text-align:right" nowrap>
+<c:if test="${type == 'Genes'}"><a href="javascript:void(0)" onclick="openOrthologFilter(${strategy.strategyId},${wdkHistory.stepId})"><b>ORTHOLOGS</b></a>&nbsp;|&nbsp;</c:if><a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a>
+</td>
 </tr></table>
 
 
@@ -273,7 +279,7 @@
     <c:set var="projectId" value="${pkValues['project_id']}" />
     <c:set var="id" value="${pkValues['source_id']}" />
 
-    <td ${align} ${nowrap}>
+    <td ${align} ${nowrap} style="padding:3px 2px">
       <c:set var="recNam" value="${record.recordClass.fullName}"/>
       <c:set var="fieldVal" value="${recAttr.briefValue}"/>
       <c:choose>

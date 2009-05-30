@@ -31,12 +31,15 @@
     <th scope="col" style="width: 3em;">&nbsp;</th>
     <th scope="col" style="width: 4em">&nbsp;</th>
     <th scope="col" style="width: 9em">&nbsp;</th>
-    <th scope="col" style="width: 5em">Modified</th>
-    <th scope="col" style="width: 5em">Viewed</th>
-    <th scope="col" style="width: 5em">Version</th>
-    <th scope="col" style="width: 5em">Size</th>
+    <th scope="col" style="width: 5em;text-align:center">Modified</th>
+    <th scope="col" style="width: 5em;text-align:center">Viewed</th>
+    <th scope="col" style="width: 4em">Version</th>
+    <th scope="col" style="width: 4em;text-align:right">Size</th>
+    <th>&nbsp;</th>
   </tr>
   </thead>
+
+
   <tbody <c:if test="${prefix == 'Unsaved'}">class="unsaved-strategies-body"</c:if>>
   <c:set var="i" value="0"/>
   <%-- begin of forEach strategy in the category --%>
@@ -72,9 +75,9 @@
 	  </span>
         </div> 
     <!-- begin rowgroup for strategy steps -->
-	<table>
+	<table id="strat_description">
           <tbody id="steps_${strategyId}">
-          <site:stepRows latestStep="${strategy.latestStep}" i="${i}" indent="10"/>
+          <site:stepRows latestStep="${strategy.latestStep}" i="${i}" indent="0"/>
           </tbody>    
         </table>
     <!-- end rowgroup for strategy steps -->
@@ -113,15 +116,16 @@
             <option value="deleteStrategy(${strategyId}, false)">Delete</option>
          </select>
       </td>
-      <td nowrap>${strategy.createdTimeFormatted}</td>
-      <td nowrap>${strategy.lastRunTimeFormatted}</td>
-      <td nowrap>
+      <td nowrap style="padding:0 2px 0 2px;">${strategy.createdTimeFormatted}</td>
+      <td nowrap  style="padding:0 2px;text-align:right">${strategy.lastRunTimeFormatted}</td>
+      <td nowrap style="text-align:center">
         <c:choose>
           <c:when test="${strategy.latestStep.version == null || strategy.latestStep.version eq ''}">${wdkModel.version}</c:when>
           <c:otherwise>${strategy.latestStep.version}</c:otherwise>
         </c:choose>
       </td>
-      <td nowrap>${strategy.latestStep.estimateSize}</td>
+      <td nowrap style="text-align:right">${strategy.latestStep.estimateSize}</td>
+      <td>&nbsp;</td>
     </tr>
     <c:set var="i" value="${i+1}"/>
   </c:forEach>

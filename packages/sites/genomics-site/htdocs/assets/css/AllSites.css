@@ -949,7 +949,7 @@ h2 {
 	font-size: 14px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	color:  black;  /* default*/
+	color:  black; 
 	margin-bottom: 11px;
  	text-align: center;
 	margin-left: 11px;
@@ -959,10 +959,18 @@ h2 {
 	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	color:  black;     /* default */
+	color:  black;    
 	margin-bottom: 11px;
  	text-align: left;
 	margin-left: 11px;
+}
+
+.h4left {
+	font-size: 14px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color:  black;    
+ 	text-align: left;
 }
 
 
@@ -1135,15 +1143,6 @@ td.linesalt {
 	padding: 4px;
 }
 
-tr.lines {
-	padding: 4px;
-}
-
-tr.linesalt {
-	background-color: #EEEEEE;
-	padding: 4px;
-}
-
 table.results {
 	margin-top: 6px;
 }
@@ -1155,9 +1154,20 @@ tr.subheaderrow th {
 }
 
 tr.headerrow th { 
-	padding: 4px;
+	white-space: nowrap;
+	font-size: 12px;
+	vertical-align:	middle;
+	padding: 1px; /* 4px; decreased for result column headers */
 	border-width: 2px 0 2px 0;
 	border-style: solid;
+}
+
+/* result column headers */
+tr.headerrow th table tbody tr td { 
+	padding: 1px;
+	white-space: nowrap;
+	vertical-align: middle;
+	font-size: 12px;
 }
 
 tr.headerInternalRow td {
@@ -1173,9 +1183,14 @@ tr.linesalt {
 }
 
 tr.lines td, tr.linesalt td {
-	padding: 4px;
+	padding: 0px 2px;
 }
 
+#strat_description tr.lines td, #strat_description tr.linesalt td {
+	padding: 6px 0px;
+	white-space: nowrap;
+	
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     =RED BUTTON
@@ -1508,10 +1523,11 @@ td.strat_inactive {
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   = for old UI with new graphics (deprecated)  
-        RETHINK this section, CryptoDB.css does not have it
+        this section, CryptoDB.css does not have it
+     MIGHT NOT BE NEEDED ANYMORE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
+/* used still in some tables in record pages */
 tr.rowMedium {
     background-color: #DDDDDD;
     color: black;
@@ -1550,12 +1566,16 @@ tr.headerRow {
 	background: #EFEFEF;
 }
 
+
+/* used in gene record pages for section titles (top/bottom border look */
 tr.headerRow  td,th {
    border-width:2px 0;
    border-style:solid;
    padding: 3px;
    vertical-align: middle;
 }
+
+
 
 /*  Appears to be missaligning the question page in the step pop-up box... commented out to fix this problem.
 .filter {
@@ -1565,12 +1585,13 @@ tr.headerRow  td,th {
 }
 */
 
+/*
 .filter ul {
    list-style-type: none;
    margin: 0;
    padding: 0;
 }
-
+*/
 
 /* these css might refer to the filters.... not for strategies
 
@@ -1595,7 +1616,7 @@ tr.headerRow  td,th {
 
 */
 
-
+/*
 .labels {
    margin-right: 3px;
    height: 100px;
@@ -1657,7 +1678,7 @@ span#toggle_filter {
 
 .fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
 
-
+*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = styles for blockUI popups

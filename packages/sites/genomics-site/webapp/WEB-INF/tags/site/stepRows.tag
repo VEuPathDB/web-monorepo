@@ -51,12 +51,12 @@
               <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.resultSize}): Step ${j}</li><li class="operation ${step.operation}" /><li>${dispName}&nbsp;(${step.childStep.resultSize})</li></ul></td>
             </c:when>
             <c:otherwise>
-              <td nowrap><ul style="margin-left: ${indent}px; margin-top:-8px;"><li>Step ${j + 1} (${step.resultSize}): Step ${j}</li><li class="operation ${step.operation}" /><li>${dispName}&nbsp;(${step.childStep.resultSize})</li></ul></td>
+              <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.resultSize}): Step ${j}</li><li class="operation ${step.operation}" /><li>${dispName}&nbsp;(${step.childStep.resultSize})</li></ul></td>
             </c:otherwise>
           </c:choose>
         </c:when>
         <c:otherwise>
-          <td nowrap><ul style="margin-left: 10px;"><li>Step ${j + 1} (${step.resultSize}): ${step.customName}</li></ul></td>
+          <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.resultSize}): ${step.customName}</li></ul></td>
         </c:otherwise>
       </c:choose>
     </c:otherwise>
@@ -74,7 +74,7 @@
     <td nowrap><a href="downloadStep.do?step_id=${stepId}">download</a></td> --%>
   </tr>
   <c:if test="${step.childStep.isCollapsible}">
-    <site:stepRows latestStep="${step.childStep}" i="${i}" indent="${indent + 10}"/>
+    <site:stepRows latestStep="${step.childStep}" i="${i}" indent="${indent + 40}"/>
   </c:if>
   <c:set var="j" value="${j + 1}"/>
 </c:forEach>
