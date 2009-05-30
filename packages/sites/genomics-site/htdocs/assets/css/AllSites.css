@@ -1068,16 +1068,16 @@ td.subheaderrow {
 	background-repeat: repeat-x;
 	background-position: top;
 	font-weight: bold;
-	padding: 4px;
+	padding: 4px; 
 }
 
 tr.subheaderrow {
 	height:30px;
-	font-size: 14px;
+	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #474747;
 	font-weight: bold;
-	padding: 4px;
+	padding: 4px; 
 }
 
 tr.subheaderrow th {
@@ -1148,7 +1148,7 @@ table.results {
 }
 
 tr.subheaderrow th {
-	padding: 4px;
+	padding: 0px;  /* not needed in paging bar */
 	border-width: 2px 0 2px 0;
 	border-style: solid;
 }
