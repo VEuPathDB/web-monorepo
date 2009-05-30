@@ -276,14 +276,14 @@ label.error {
 .advanced-paging {
   display:none; 
   position:absolute;
-  border:solid 2px #B2BFD4;  
+  border:solid 2px #888888;   /* #B2BFD4;   */
   background-color:#c2cee1;
   padding:5px;
 }
 .advanced-paging span#CAP{
-  font-size:6pt;
+  font-size:7pt;
   cursor:pointer;
-  left:214px;
+  left:240px;
   position:relative;
   top:-13px;
 }

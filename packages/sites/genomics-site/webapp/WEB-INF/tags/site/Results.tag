@@ -105,6 +105,8 @@
     <pg:param name="sort" id="pager" />
   </c:if>
 
+
+<%--
 <div id="primaryKey_div" style="display:none">
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 <tr><td valign="top" width="75px" style="background-color: #DDDDDD">
@@ -134,20 +136,23 @@
 </td></tr>
 </table>
 </div>
+-%>
+
+
 <div id="Results_Pane" style="display: block">
+
+<%--------- PAGING TOP BAR ----------%>
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
 	<tr class="subheaderrow">
 <%--
-			<th align="left">
-			      <input id="summary_view_button" disabled="disabled" type="submit" value="Summary View" onclick="ToggleGenePageView('')" />
-			</th>
+	<th align="left">
+	   <input id="summary_view_button" disabled="disabled" type="submit" value="Summary View" onclick="ToggleGenePageView('')" />
+	</th>
 --%>
-			<th align="left" nowrap> 
-		        <wdk:pager pager_id="top"/> 
-		    </th>
-
-
-			<th nowrap align="right">
+	<th align="left" nowrap> 
+	       <wdk:pager pager_id="top"/> 
+	</th>
+	<th nowrap align="right">
 		           <%-- display a list of sortable attributes --%>
 		           <c:set var="addAttributes" value="${wdkAnswer.displayableAttributes}" />
 		           <select id="addAttributes" onChange="addAttr('${commandUrl}')">
@@ -156,19 +161,23 @@
 		                 <option value="${attribute.name}">${attribute.displayName}</option>
 		               </c:forEach>
 		           </select>
-		    </th>
-		    <th nowrap align="right" width="5%">
-		         &nbsp;
-		         <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}')" />
-		    </th>
+	</th>
+	<th nowrap align="right" width="5%">
+	    &nbsp;
+	   <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}')" />
+	</th>
 	</tr>
-</table>	
+</table>
+<%--------- END OF PAGING TOP BAR ----------%>
+	
 <c:if test = "${cryptoIsolatesQuestion}">
   <form name="checkHandleForm" method="post" action="/dosomething.jsp"> 
 </c:if>
 <!-- content of current page -->
 <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
+
+<%--------- RESULTS  ----------%>
 <table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
 <thead>
 <tr class="headerrow">
@@ -350,6 +359,8 @@
 
 </tbody>
 </table>
+<%--------- END OF RESULTS  ----------%>
+
 
 <c:if test = "${cryptoIsolatesQuestion}">
   </form>
@@ -366,19 +377,40 @@
 </table>
 </c:if>
 
+
+<%--------- PAGING BOTTOM BAR ----------%>
+<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<tr class="subheaderrow">
+<%--
+	<th align="left">
+	   <input id="summary_view_button" disabled="disabled" type="submit" value="Summary View" onclick="ToggleGenePageView('')" />
+	</th>
+--%>
+	<th align="left" nowrap> 
+	       <wdk:pager pager_id="top"/> 
+	</th>
+	<th nowrap align="right">
+		&nbsp;
+	</th>
+	<th nowrap align="right" width="5%">
+	    &nbsp;
+	</th>
+	</tr>
+</table>
+<%--------- END OF PAGING BOTTOM BAR ----------%>
+
 </div> <!-- END OF RESULTS PANE -->
 
-<br>
+<%--   <wdk:pager pager_id="bottom"/> --%> 
 
-  <!-- pager at bottom -->
-  <wdk:pager pager_id="bottom"/>
 </pg:pager>
 
   </c:otherwise>
 </c:choose>
 
-
+<%-- unclear what is this....
   </td>
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table>
+--%>
