@@ -7,7 +7,8 @@
 <c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
-<c:set var="cryptoIsolatesQuestion" value="${fn:containsIgnoreCase(qName, 'Isolate') && fn:containsIgnoreCase(modelName, 'CryptoDB')}" />
+<c:set var="eupathIsolatesQuestion" value="${fn:containsIgnoreCase(qName, 'Isolate') && (fn:containsIgnoreCase(modelName, 'CryptoDB') || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}" />
+
 
 <%-- When implement visualizing multiple strategies, the name of the strategy (for the title) could cme from the step object probably --%>
 
@@ -170,7 +171,7 @@
 </table>
 <%--------- END OF PAGING TOP BAR ----------%>
 	
-<c:if test = "${cryptoIsolatesQuestion}">
+<c:if test = "${eupathIsolatesQuestion}">
   <form name="checkHandleForm" method="post" action="/dosomething.jsp"> 
 </c:if>
 <!-- content of current page -->
@@ -248,10 +249,10 @@
 <tbody>
 
 <!--
-<c:if test = "${cryptoIsolatesQuestion}">
+<c:if test = "${eupathIsolatesQuestion}">
    <tr><td colspan="10" align="center"> 
        
-       <c:if test = "${cryptoIsolatesQuestion}">
+       <c:if test = "${eupathIsolatesQuestion}">
           <table width="100%" border="0" cellpadding="3" cellspacing="0">
          <tr align=center>
          <th>  Please select at least two isolates to run ClustalW
@@ -301,7 +302,7 @@
                    ${primaryKey.value}</a>
            </c:when>
 
-           <c:when test = "${cryptoIsolatesQuestion}">
+           <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'PopSet'}">
 
               <%-- display a link to record page --%>
               <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey.value}"></nobr>
@@ -362,11 +363,11 @@
 <%--------- END OF RESULTS  ----------%>
 
 
-<c:if test = "${cryptoIsolatesQuestion}">
+<c:if test = "${eupathIsolatesQuestion}">
   </form>
 </c:if>
 
-<c:if test = "${cryptoIsolatesQuestion}">
+<c:if test = "${eupathIsolatesQuestion}">
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
   <tr align=center>
     <th> <br/> 
