@@ -76,6 +76,7 @@ function toggleSteps(strat) {
 }
 
 function showHistSave(ele, stratId, save,share) {
+	   $("div[id^='hist_save_']").hide();
        var popup = $("div#hist_save_" + stratId);
        if (save){
          $("form", popup).attr("action", "javascript:saveOrRenameStrategy(" + stratId + ", true, true, true)");
