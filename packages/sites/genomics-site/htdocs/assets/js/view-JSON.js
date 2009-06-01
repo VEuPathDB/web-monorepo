@@ -234,9 +234,12 @@ function singleStep(modelstep, jsonstep, sid, zIndex){
 	if(modelstep.isTransform){
 		$(singleDiv).addClass(transformClasses).css({ left: offset(modelstep) + "px" });
 		$(stepNumber).css({ left: (leftOffset + 30) + "px"});
+		$("ul li img", singleDiv).css({left: "7.6em", top: "-3.1em"});
 	}else{
 		$(singleDiv).addClass(firstClasses).css({ left: leftOffset + "px" });
 		$(stepNumber).css({ left: "44px"});
+		if(modelstep.nextStepType == "transform")
+			$("ul li img",singleDiv).css({width: "54px"});
 	}
 	$(singleDiv).css({'z-index' : zIndex}); // DO NOT DELETE, needed for correct display in IE7.
 	$(".crumb_details", singleDiv).replaceWith(createDetails(modelstep,jsonstep, sid));
