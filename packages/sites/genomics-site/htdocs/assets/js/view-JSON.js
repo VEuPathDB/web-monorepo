@@ -253,8 +253,7 @@ function createDetails(modelstep, jsonstep, sid){
 	strat = getStrategy(sid);
 	var detail_div = document.createElement('div');
 	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"55%" });
-	var name = "<p class='question_name'><span>" + jsonstep.displayName + "</span></p>";
-	if (jsonstep.isboolean) name = "<ul class='question_name'><li>Step " + (modelstep.frontId - 1) + "</li><li class='operation " + jsonstep.operation + "'></li><li>" + jsonstep.step.displayName + "</li></ul>";
+	var name = jsonstep.displayName;
 	var questionName = jsonstep.questionName;
 	
 	var filteredName = "";
@@ -266,6 +265,9 @@ function createDetails(modelstep, jsonstep, sid){
 		name = jsonstep.strategy.name;
 		collapsedName = name;
 	}
+
+	var name = "<p class='question_name'><span>" + jsonstep.displayName + "</span></p>";
+	if (jsonstep.isboolean) name = "<ul class='question_name'><li>Step " + (modelstep.frontId - 1) + "</li><li class='operation " + jsonstep.operation + "'></li><li>" + jsonstep.step.displayName + "</li></ul>";
 
 	var parentid = modelstep.back_step_Id;
 	if(modelstep.back_boolean_Id != null && modelstep.back_boolean_Id.length != 0){
