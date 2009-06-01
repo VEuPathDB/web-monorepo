@@ -13,7 +13,7 @@
 }
 
 #query_selection {
-	left: 40px;  /* 140 */
+/*	left: 40px;*/
 	position:relative;
 	margin-top: 36px;
 	width: 100%;
@@ -24,15 +24,15 @@
 	position: absolute;
 	left:150px;  /*200px;*/ /*135px;*/
 	top:60px; /*279px;*/
-	min-width: 860px  /* 900 */;
-	max-width: 78%;
+	min-width: 741px;
+	max-width: 60%;
 	background-color: #FFFFFF;
 	background-image: url(../images/filter_top.gif);
 /*	background-image: url(../images/CryptoDB/footer.png);*/
 	background-repeat: repeat-x;
 	background-position: 0 36px;
 	border: 1px solid #888888;	
-	padding-bottom: 8px;
+	padding: 0 8px 8px 8px;
 	z-index: 1000;
 }
 

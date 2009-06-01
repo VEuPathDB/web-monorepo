@@ -189,13 +189,13 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog)
         $("input[name=questionFullName]", quesForm).remove();
         $(".filter.operators", quesForm).width('auto');
         quesForm.css({'max-width' : '600px','min-width' : '500px'});
-		$("#query_form").css("min-width", "500px");
+	//	$("#query_form").css("min-width", "500px");
     }
 	if (hideOp){
 		$(".filter.operators", quesForm).remove();
 		$(".filter.params", quesForm).after("<input type='hidden' name='booleanExpression' value='AND' />");
 		//$(".filter.operators").width('auto');
-		$("#query_form").css({'max-width' : '61%','min-width' : '729px'});
+	//	$("#query_form").css({'max-width' : '61%','min-width' : '729px'});
 	}
 	
 	$("#query_form").append(quesForm);
@@ -386,7 +386,7 @@ function closeAll(hide){
 function setDraggable(e, handle){
 	$(e).draggable({
 		handle: handle,
-		containment: [0,0,$("div#contentwrapper").width() - e.width() - 10, $("body").height()]
+		containment: [0,0,$("div#contentwrapper").width() - e.width() -18, $("body").height()]
 	});
 }
 
