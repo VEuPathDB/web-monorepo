@@ -153,8 +153,17 @@
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-                            <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
-                            <td align="left" valign="top">
+                            <td width="30%" align="right" style="vertical-align:top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
+				
+
+<%-- to have select, clear, expand, collapse, under parameter name 
+				<c:if test="${qP.multiPick}">
+ 					<%@ include file="/WEB-INF/includes/selectAllParamOpt2.jsp" %>
+				</c:if>
+use enumParamInput2 in next <td> below --%>
+
+			    </td>
+                            <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
                         </c:when>

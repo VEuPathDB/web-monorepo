@@ -87,3 +87,18 @@ function expandCollapseAll(ele, flag) {
         }
     });
 }
+
+
+//alternative look on positioning select/clear/expand/collapse on multipick params
+function expandCollapseAll2(ele, flag, name) {
+//  $(ele).parent().next().children(".param-tree").find(".term-node > img").each(function() {
+   $("#" + name + "aaa").children(".param-tree").find(".term-node > img").each(function() {
+       	if ($(this).siblings(".term-children").length == 0) return;
+       	if ($(this).hasClass("plus")){
+      	    if (flag) toggleChildren(this);
+        } else {
+            if (!flag) toggleChildren(this);
+        }
+    });
+}
+
