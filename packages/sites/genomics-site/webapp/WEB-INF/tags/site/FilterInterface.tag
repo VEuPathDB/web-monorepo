@@ -66,7 +66,7 @@
 	<ul>
 	</c:if>
 	<c:forEach items="${cat.value}" var="q">
-	<c:if test="${ !fn:contains(recordClass, 'Isolate') || !fn:contains(q.displayName, 'RFLP')}">
+	<c:if test="${ !fn:contains(recordClass, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
           <c:if test="${!(siteName == 'PlasmoDB' && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">
 		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&partial=true')">${q.displayName}</a></li>			
           </c:if>
