@@ -384,9 +384,12 @@ function closeAll(hide){
 }
 
 function setDraggable(e, handle){
+	var rlimit = $("div#contentwrapper").width() - e.width() - 18;
+	if(rlimit < 0) rlimit = 525;
+	var blimit = $("body").height();
 	$(e).draggable({
 		handle: handle,
-		containment: [0,0,$("div#contentwrapper").width() - e.width() -18, $("body").height()]
+		containment: [0,0,rlimit,blimit]
 	});
 }
 
