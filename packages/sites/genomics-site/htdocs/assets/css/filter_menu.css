@@ -208,3 +208,23 @@ div.bottom-close{
 	top:-5px;
 	text-decoration:underline;
 }
+
+.crumb_details ul.question_name {
+    float:left;
+    position:relative;
+    left:50%;
+}
+
+.crumb_details ul.question_name li {
+    float:left;
+    font-weight:bold;
+    margin-top:8px;
+    position:relative;
+    right:50%;
+}
+
+.crumb_details ul.question_name li.operation {
+    border:none;
+    width:36px;
+    margin-top: 2px;
+}

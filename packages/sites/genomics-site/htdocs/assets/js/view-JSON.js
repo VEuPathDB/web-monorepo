@@ -253,8 +253,8 @@ function createDetails(modelstep, jsonstep, sid){
 	strat = getStrategy(sid);
 	var detail_div = document.createElement('div');
 	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"55%" });
-	var name = jsonstep.displayName;
-	if (jsonstep.isboolean) name = "Step " + (modelstep.frontId - 1) + " " + jsonstep.operation + " " + jsonstep.step.displayName;
+	var name = "<p class='question_name'><span>" + jsonstep.displayName + "</span></p>";
+	if (jsonstep.isboolean) name = "<ul class='question_name'><li>Step " + (modelstep.frontId - 1) + "</li><li class='operation " + jsonstep.operation + "'></li><li>" + jsonstep.step.displayName + "</li></ul>";
 	var questionName = jsonstep.questionName;
 	
 	var filteredName = "";
@@ -341,9 +341,8 @@ function createDetails(modelstep, jsonstep, sid){
 
 	inner = ""+	
 	    "		<div class='crumb_menu'>"+ rename_step + view_step + edit_step + expand_step + insert_step + orthologs + delete_step + close_button +
-		"		</div>"+
-		"		<p class='question_name'><span>" + name + "</span></p>"+
-		"		<table></table><hr>" + filteredName +
+		"		</div>"+ name +
+		"		<table></table><hr class='clear_all' />" + filteredName +
 		"		<p><b>Results:&nbsp;</b>" + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType,jsonstep.results) + "&nbsp;&nbsp;|&nbsp;&nbsp;<a href='downloadStep.do?step_id=" + modelstep.back_step_Id + "'>Download</a>";
 		
 	$(detail_div).html(inner);

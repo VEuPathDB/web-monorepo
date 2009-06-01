@@ -243,6 +243,11 @@
 	height: auto;
     }
 
+    .crumb_details ul.question_name {
+	float:none;
+	left:90%;
+    }
+
     .unsaved-strategies {
 	max-height: 250px;
 	overflow-y: scroll;
