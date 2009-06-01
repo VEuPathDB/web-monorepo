@@ -114,9 +114,10 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	if(jsonstep.filtered)
 		filterImg = "<span class='filterImg'><img src='/assets/images/filter.gif' height='10px' width='10px'/></span>";
 	boolinner = ""+
-		"			<a id='" + sid + "|" + modelstep.back_boolean_Id + "|" + jsonstep.operation + "' title='Click on this icon or on the step name above to modify this boolean operation.' class='operation' href='javascript:void(0)' onclick='Edit_Step(this,\"" + jsonstep.questionName + "\",\"" + jsonstep.urlParams + "\",\"true\")'>"+
+		"			<a id='" + sid + "|" + modelstep.back_boolean_Id + "|" + jsonstep.operation + "' title='Click on this icon or on the step name above to modify this boolean operation.' class='operation' href='javascript:void(0)' onclick='showDetails(this)'>"+
 		"				<img src='/assets/images/transparent1.gif'>"+
 		"			</a>"+
+		"			<div class='crumb_details'></div>"+
 		"			<h6 class='resultCount'>"+
 		"				<a title='Show these results in the area below.' class='operation' onclick='NewResults(" + sid + "," + modelstep.frontId + ", true)' href='javascript:void(0)'>" + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType, jsonstep.results) + "</a>"+
 		"			</h6>" + filterImg;
@@ -135,6 +136,7 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 		}
 	boolDiv = document.createElement('div');
 	$(boolDiv).attr("id","step_" + modelstep.frontId).addClass(booleanClasses + jsonstep.operation).html(boolinner).css({left: offset(modelstep) + "px", 'z-index' : zIndex});
+	$(".crumb_details", boolDiv).replaceWith(createDetails(modelstep, jsonstep, sid));
 	zIndex++; // DO NOT DELETE this or previous line, needed for correct display in IE7.
 	stepNumber = document.createElement('span');
 	$(stepNumber).addClass('stepNumber').css({ left: (leftOffset + 30) + "px"}).text("Step " + modelstep.frontId);
@@ -249,6 +251,7 @@ function createDetails(modelstep, jsonstep, sid){
 	var detail_div = document.createElement('div');
 	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"55%" });
 	var name = jsonstep.displayName;
+	if (jsonstep.isboolean) name = "Step " + (modelstep.frontId - 1) + " " + jsonstep.operation + " " + jsonstep.step.displayName;
 	var questionName = jsonstep.questionName;
 	
 	var filteredName = "";
@@ -278,9 +281,6 @@ function createDetails(modelstep, jsonstep, sid){
 
 		view_step = 	"<a title='" + sub_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
 
-		//edit_step =	"<a title='" + sub_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + jsonstep.isCollapsed + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + jsonstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
-
-		//edit_step = "<a title='" + sub_edit_popup + "' class='edit_step_link disabled' href='javascript:void(0)'>Revise</a>&nbsp;|&nbsp;";
 	    disab = "";
 		ocExp = "onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'";
 		oM = "Open Nested Strategy";
@@ -298,19 +298,24 @@ function createDetails(modelstep, jsonstep, sid){
 		
 		expand_step = 	"<a title='" + moExp + "' class='expand_step_link " + disab + "' href='javascript:void(0)' " + ocExp + ">" + oM + "</a>&nbsp;|&nbsp;";
 
-	} else {   							/* simple step */
+	}else{   							/* simple step */
 
-		rename_step = 	"<a title='" + ss_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
+		if (jsonstep.isboolean){
+			rename_step = 	"<a title='" + ss_rename_popup + "' class='rename_step_link disabled' href='javascript:void(0)'>Rename</a>&nbsp;|&nbsp;";
+		} else{
+			rename_step = 	"<a title='" + ss_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
+		}
 
 		view_step = 	"<a title='" + ss_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
 
 		if(modelstep.isTransform || modelstep.frontId == 1){
 			hideOp = true;
 		}
+		if(jsonstep.isboolean) hideQu = true;
+
 		edit_step =	"<a title='" + ss_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + modelstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
 
-		if(modelstep.frontId == 1 || modelstep.isTransform){
-			//expand_step = 	"<span class='expand_step_link' style='color:grey'>Make Nested Strategy</span>&nbsp;|&nbsp;";
+		if(modelstep.frontId == 1 || modelstep.isTransform || jsonstep.isboolean){
 			expand_step = 	"<a title='" + ss_expand_popup + "' class='expand_step_link disabled' href='javascript:void(0)'>Make Nested Strategy</a>&nbsp;|&nbsp;";
 		}else{
 			expand_step = 	"<a title='" + ss_expand_popup + "' class='expand_step_link' href='javascript:void(0)' onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'>Make Nested Strategy</a>&nbsp;|&nbsp;";
@@ -324,14 +329,13 @@ function createDetails(modelstep, jsonstep, sid){
 		orthologs = "<a title='Click this link to get the orthologs of this step' class='orthologs_link' href='javascript:void(0)' onclick='openOrthologFilter(" + strat.backId + "," + modelstep.back_step_Id + ");hideDetails(this)'>Orthologs</a>&nbsp;|&nbsp;";
 	}
 	if(modelstep.frontId == 1){
-		//delete_step = "<span class='expand_step_link' style='color:grey'>Delete</span>&nbsp;|&nbsp;";
 		delete_step = 	"<a title='" + delete_popup + "' class='delete_step_link disabled' href='javascript:void(0)'>Delete</a>";
 	}else{
 		delete_step = 	"<a title='" + delete_popup + "' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + sid + "," + modelstep.frontId + ");hideDetails(this)'>Delete</a>";
 	}
 
-	close_button = 	"<a href='javascript:void(0)' style='float: none; position: absolute; right: 6px;' onclick='hideDetails(this)'>[x]</a>";	
-	
+	close_button = 	"<a href='javascript:void(0)' style='float: none; position: absolute; right: 6px;' onclick='hideDetails(this)'>[x]</a>";
+
 	inner = ""+	
 	    "		<div class='crumb_menu'>"+ rename_step + view_step + edit_step + expand_step + insert_step + orthologs + delete_step + close_button +
 		"		</div>"+
