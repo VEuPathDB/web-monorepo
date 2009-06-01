@@ -29,16 +29,17 @@ function initDisplay(){
 	});
 }
 
-function highlightStep(str, stp, v){
+function highlightStep(str, stp, v, pagerOffset){
 	if(!str || stp == null){
 		NewResults(-1);
 	}else{
-		var stepBox = null;
-		if(!v || stp.isTransform)
-			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "_sub']");
-		else 
-			stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "']");
-		$(".resultCount a", stepBox).click();
+		NewResults(str.frontId, stp.frontId, v, pagerOffset);
+		//var stepBox = null;
+		//if(!v || stp.isTransform)
+		//	stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "_sub']");
+		//else 
+		//	stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "']");
+		//$(".resultCount a", stepBox).click();
 	}
 }
 
@@ -131,7 +132,8 @@ function showStrategies(view){
 			NewResults(-1);
 		}else{
 			var isVenn = (initStp.back_boolean_Id == view.step);
-			highlightStep(initStr, initStp, isVenn);
+			var pagerOffset = view.pagerOffset;
+			highlightStep(initStr, initStp, isVenn, pagerOffset);
 		}
 	}else{
 		NewResults(-1);
@@ -218,7 +220,7 @@ function unloadStrategy(id){
 }
 
 
-function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
+function NewResults(f_strategyId, f_stepId, bool, pagerOffset){//(ele,url){
 	if(f_strategyId == -1){
 		$("div#Workspace").html("");
 		return;
@@ -230,7 +232,8 @@ function NewResults(f_strategyId, f_stepId, bool){//(ele,url){
 	}else{
 		url = "showSummary.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id + "&resultsOnly=true";
 	}
-        url += "&noskip=1";
+        if (!pagerOffset) url += "&noskip=1";
+	else url += "&pager.offset=" + pagerOffset;
 	$.ajax({
 		url: url,
 		dataType: "html",
