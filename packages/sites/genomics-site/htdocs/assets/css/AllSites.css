@@ -358,6 +358,20 @@ a:link, a:visited {
 a:hover, a:active {
 	text-decoration: none;
 }
+
+div.param-tree > a:link, 
+div.param-tree > a:visited,
+div.param-tree > a:hover,
+div.param-tree > a:active,
+div.param-multiPick  a:link, 
+div.param-multiPick  a:visited,
+div.param-multiPick  a:hover,
+div.param-multiPick  a:active{
+
+	font-size:  8pt;
+}
+
+
 #wrap {
 	width: 100%;
 	text-align: left;
@@ -368,7 +382,7 @@ img {
 	margin: 0;
 }
 
-img.switch {
+img.switch,img.plus-minus {
 	cursor: pointer;
 }
 
