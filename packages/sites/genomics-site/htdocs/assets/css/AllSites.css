@@ -283,9 +283,9 @@ label.error {
 .advanced-paging span#CAP{
   font-size:7pt;
   cursor:pointer;
-  left:240px;
-  position:relative;
-  top:-13px;
+  left:250px;
+  position:absolute;
+  top:0px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
