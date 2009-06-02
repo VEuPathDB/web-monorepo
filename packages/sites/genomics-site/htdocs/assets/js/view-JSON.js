@@ -260,14 +260,22 @@ function createDetails(modelstep, jsonstep, sid){
 	if(jsonstep.filtered){
 		filteredName = "<span class='medium'><b>Applied Filter:&nbsp;</b>" + jsonstep.filterName + "</span><hr>";
 	}
-	var collapsedName = name;//"Nested " + name;
 	if(jsonstep.isCollapsed){
 		name = jsonstep.strategy.name;
-		collapsedName = name;
+	} else if (jsonstep.isboolean){
+		if (jsonstep.step.isCollapsed) {
+			name = jsonstep.step.strategy.name;
+		} else {
+			name = jsonstep.step.displayName;
+		}
 	}
+	var collapsedName = name;//"Nested " + name;
 
-	var name = "<p class='question_name'><span>" + jsonstep.displayName + "</span></p>";
-	if (jsonstep.isboolean) name = "<ul class='question_name'><li>Step " + (modelstep.frontId - 1) + "</li><li class='operation " + jsonstep.operation + "'></li><li>" + jsonstep.step.displayName + "</li></ul>";
+	if (jsonstep.isboolean && !jsonstep.isCollapsed){
+		name = "<ul class='question_name'><li>Step " + (modelstep.frontId - 1) + "</li><li class='operation " + jsonstep.operation + "'></li><li>" + name + "</li></ul>";
+	} else {
+		name = "<p class='question_name'><span>" + name + "</span></p>";
+	}
 
 	var parentid = modelstep.back_step_Id;
 	if(modelstep.back_boolean_Id != null && modelstep.back_boolean_Id.length != 0){
