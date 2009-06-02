@@ -60,15 +60,6 @@ a:hover, a:active {
 #nav_top li ul a:hover, #nav_top li ul a:active {
 	color: #630d0d;
 }
-/*  unused?
-#user_topdiv {
-       clear: both;
-}
-
-#user_topdiv strong {
-	color: black;
-}
-*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
@@ -166,7 +157,7 @@ h2 {
 }
 
 .h2center, .h3left, .h4left {
-        color: #5f0f47;
+        color: #610b0b;
 }
 
 
@@ -260,9 +251,11 @@ tr.headerrow th {
 	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+/* seems unused, not in other component sites 
 .twoColHybLt #container_au { 
 	background-image: url(../images/CryptoDB/aboutus.png);
 }
+*/
 
 .twoColHybLt #sidebar1 {
 	background-image: url(../images/CryptoDB/aboutus.png);
@@ -332,3 +325,27 @@ div.colCopy
 {
 	background-image:url(/assets/images/CryptoDB/trheader.png);
 }
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 history.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Strategy.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter_menu.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#query_form {
+	border: 1px solid #345d9b;	
+}
+
+
+
+/*THE END */
