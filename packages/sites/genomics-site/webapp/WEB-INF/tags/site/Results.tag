@@ -83,7 +83,7 @@
 </td>
 
 <td  style="vertical-align:middle;text-align:right" nowrap>
-<c:if test="${type == 'Genes'}"><a href="javascript:void(0)" onclick="openOrthologFilter(${strategy.strategyId},${wdkHistory.stepId})"><b>ORTHOLOGS</b></a>&nbsp;|&nbsp;</c:if><a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a>
+<a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a>
 </td>
 </tr></table>
 
