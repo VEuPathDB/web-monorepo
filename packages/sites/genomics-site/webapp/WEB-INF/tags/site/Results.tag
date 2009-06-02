@@ -388,7 +388,7 @@
 	</th>
 --%>
 	<th align="left" nowrap> 
-	       <wdk:pager pager_id="top"/> 
+	       <wdk:pager pager_id="bottom"/> 
 	</th>
 	<th nowrap align="right">
 		&nbsp;
