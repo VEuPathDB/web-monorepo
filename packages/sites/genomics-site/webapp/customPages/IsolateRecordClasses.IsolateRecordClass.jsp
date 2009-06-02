@@ -75,7 +75,7 @@
 
 <%-- Alignments and Genes ------------------------------------------------%>
 
-<c:if test="${data_type eq 'PopSet'}">
+<c:if test="${data_type eq 'Genbank'}">
 
 <site:wdkTable tblName="GeneOverlap" isOpen="true"
      attribution=""/>
@@ -108,7 +108,7 @@
 </c:forEach>
 </c:if>
 
-<c:if test="${data_type eq 'PopSet' || data_type eq 'Barcode'}">
+<c:if test="${data_type eq 'Genbank' || data_type eq 'Barcode'}">
 
 <%-- GENOME SEQUENCE ------------------------------------------------%>
 <c:set var="attr" value="${attrs['sequence']}" />
