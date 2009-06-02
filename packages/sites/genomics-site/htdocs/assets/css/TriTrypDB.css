@@ -37,10 +37,11 @@ a:hover, a:active {
    color: #95461a;
 }
 
+
+/* only used in tritryp (genedb link)  */
 #toplink a:link, #toplink a:visited{
 	width: 381px;
 }
-
 #toplink a:hover {
 	width: 381px;
 }
@@ -164,7 +165,8 @@ h1 {
 h2 {
   	color: #a45d35;
 }
-#h2center {
+
+.h2center, .h3left, .h4left {
   	color: #a45d35;
 }
 
@@ -175,7 +177,7 @@ h2 {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER  padding 25px helps in showing the whole background, otherwise its height is limited by its content
+	 =FOOTER  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
@@ -308,7 +310,7 @@ span.marker a:link, span.marker a:visited {
         RETHINK this section, CryptoDB.css does not have it
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
+/*
 td.recordClassTitle{
      border-color:#6b7d70;
 }
@@ -317,7 +319,7 @@ td.recordClassTitle{
 tr.headerRow  td,th {
    border-color:#175982;  /*#6b7d70;*/
 }
-
+*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = styles for blockUI popups
@@ -345,3 +347,29 @@ div.colCopy
 {
 	background-image:url(/assets/images/TriTrypDB/trheader.png);
 }
+
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 history.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Strategy.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter_menu.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#query_form {
+	border: 1px solid #9e5933;	
+}
+
+
+
+/*THE END */
