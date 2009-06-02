@@ -65,9 +65,9 @@
 <%--#############################################################--%>
 <%-- Link to SNPs ------------------------------------------------%>
 
-<c:if test="${data_type eq '3kChip' || data_type eq '75kChip' || data_type eq 'Barcode'}">
+<c:if test="${data_type eq '3kChip' || data_type eq 'HD_Array' || data_type eq 'Barcode'}">
 
-<br><b><a href="http://brunkb.plasmodb.org/plasmo.brunkb/processQuestion.do?questionFullName=SnpQuestions.SnpsByIsolateId&isolate_id=${id}">Click here to retrieve SNPs</a></b> that were assayed in this isolate.<br><br>
+<br><b><a href="processQuestion.do?questionFullName=SnpQuestions.SnpsByIsolateId&myProp(isolate_id)=${id}">Click here to retrieve SNPs</a></b> that were assayed in this isolate.<br><br>
 
 </c:if>
 
