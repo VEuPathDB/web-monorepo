@@ -7,7 +7,7 @@
 <c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
-<c:set var="eupathIsolatesQuestion" value="${fn:containsIgnoreCase(qName, 'Isolate') && (fn:containsIgnoreCase(modelName, 'CryptoDB') || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}" />
+<c:set var="eupathIsolatesQuestion" value="${fn:containsIgnoreCase(qName, 'IsolateQuestions') && (fn:containsIgnoreCase(modelName, 'CryptoDB') || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}" />
 
 
 <%-- When implement visualizing multiple strategies, the name of the strategy (for the title) could cme from the step object probably --%>
