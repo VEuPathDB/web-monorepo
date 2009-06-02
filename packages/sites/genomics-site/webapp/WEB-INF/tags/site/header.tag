@@ -408,18 +408,8 @@ ${headElement}
             If login fails, user returns to the refererUrl. If login
             succeeds, user should return to originUrl.
         --%>
-<%--
-        <c:url var="loginJsp" value='login.jsp'/>
-        <c:url value="${loginUrl}" var="loginUrl">
-           <c:param name="refererUrl" value="${loginJsp}"/> 
-        </c:url>
---%>
 
-<%-- in home_header login is a class instead of an id that brings up the popup --%>
           <li>
-<%--
-            <a href="${loginUrl}" id='login'>Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
---%>
             <a href="javascript:void(0)" onclick="popLogin()">Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
 	    <div id="loginForm" style="display:none;"><h2 style="text-align: center">EuPathDB Account Login</h2><site:login includeCancel="true" /></div>
               <%-- <ul class="login">
