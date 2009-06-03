@@ -220,7 +220,7 @@ function unloadStrategy(id){
 }
 
 
-function NewResults(f_strategyId, f_stepId, bool, pagerOffset){//(ele,url){
+function NewResults(f_strategyId, f_stepId, bool, pagerOffset){
 	if(f_strategyId == -1){
 		$("div#Workspace").html("");
 		return;

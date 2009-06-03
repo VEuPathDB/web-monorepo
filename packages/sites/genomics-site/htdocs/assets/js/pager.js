@@ -1,7 +1,9 @@
 
 function GetResultsPage(url, update){
 	var s = parseUrlUtil("strategy", url);
+	var st = parseUrlUtil("step", url);
 	var strat = getStrategyFromBackId(s[0]);
+	var step = strat.getStep(st[0], false);
 	url = url + "&resultsOnly=true";
 	$.ajax({
 		url: url,
@@ -12,6 +14,9 @@ function GetResultsPage(url, update){
 		success: function(data){
 			if (update) {
 				ResultsToGrid(data);
+				$("span#text_strategy_number").html(strat.JSON.name);
+			    $("span#text_step_number").html(step.frontId);
+			    $("span#text_strategy_number").parent().show();
 			}
 			removeLoading(strat.frontId);
 		},
@@ -24,6 +29,7 @@ function GetResultsPage(url, update){
 
 function ResultsToGrid(data) {
 	$("div#Workspace").html(data);
+	
 
 	// specify column sizes so flexigrid generates columns properly.
 /*
