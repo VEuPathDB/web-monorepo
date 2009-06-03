@@ -91,6 +91,7 @@
       </c:when>
       <c:otherwise>
         <ul>
+		<c:set var="count" value="0" />
         <c:forEach items="${extlAnswer.recordInstances}" var="record">
           <c:forEach items="${record.tables}" var="table">
             <c:forEach items="${table.rows}" var="row"> 
@@ -101,16 +102,21 @@
                <c:forEach var="i" begin="0" end="${fn:length(tmp)}" step='3'>
                   <c:set var='uid'>${uid}${fn:substring(tmp, i, i+1)}</c:set>
                </c:forEach>
-
-               <li id='rs-${uid}'><a href="${url}">${row[0].value}</a></li>
+			   <c:if test="${count < 9}">
+               		<li id='rs-${uid}'><a href="${url}">${row[0].value}</a></li>
+			   		<c:set var="count" value="${count + 1}" />
+			   </c:if>
             </c:forEach>
           </c:forEach>
         </c:forEach> 
         </ul>
+		<c:if test="${count > 0}">
+			<a style="margin-left: 0px" href="showXmlDataContent.do?name=XmlQuestions.ExternalLinks">Full Links Page</a><hr>
+		</c:if>
       </c:otherwise>
     </c:choose>
 
-    <br><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
+    <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
     <b>If you have a link that you think would be useful for the community, 
     please send us a note.</b></a>
     </div>

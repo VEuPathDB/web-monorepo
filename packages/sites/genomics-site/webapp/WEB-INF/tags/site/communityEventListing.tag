@@ -24,7 +24,6 @@ http://${pageContext.request.serverName}${feedPath}
   <fmt:formatDate var="fdate" value="${e.publishedDate}" pattern="d MMMM yyyy"/>
   <li id="${e.uri}"><a href='${fn:trim(e.link)}'>${e.title}</a></li>
 </c:forEach>
-  <li style='list-style:circle;'><a href='<c:url value="/communityEvents.jsp"/>'>Full Events Page</a></li>
 </c:catch>
 <c:if test="${feedex != null}">
   <br>
@@ -34,3 +33,4 @@ http://${pageContext.request.serverName}${feedPath}
   />
 </c:if>
 </ul>
+  <a style="margin-left:0px" href='<c:url value="/communityEvents.jsp"/>'>Full Events Page</a>
