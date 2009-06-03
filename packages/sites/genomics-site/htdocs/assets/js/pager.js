@@ -28,7 +28,9 @@ function GetResultsPage(url, update){
 }
 
 function ResultsToGrid(data) {
-	$("div#Workspace").html(data);
+        // the html() doesn't work in IE 7/8 sometimes (but not always.
+        // $("div#Workspace").html(data);
+        document.getElementById('Workspace').innerHTML = data;
 	
 
 	// specify column sizes so flexigrid generates columns properly.

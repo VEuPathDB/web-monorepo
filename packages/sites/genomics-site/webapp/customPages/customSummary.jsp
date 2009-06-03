@@ -94,7 +94,7 @@
 
 	<br/>
 
-	<div id="Workspace">
+	<div id="Workspace">&nbsp;
 	</div> 
 
 </div><!-- end results view div -->
