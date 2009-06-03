@@ -20,6 +20,13 @@
               description="Text to add before 'Strategy' in column header"
 %>
 
+<c:set var="scheme" value="${pageContext.request.scheme}" />
+<c:set var="serverName" value="${pageContext.request.serverName}" />
+<c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
+<c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
+<c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
+<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?strategy=" />
+
 <table border="0" cellpadding="5" cellspacing="0">
   <thead>
   <tr class="headerrow">
@@ -98,10 +105,10 @@
          <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
       </td>
       <td nowrap>
-         <c:set var="saveAction" value="showHistSave(this, '${strategyId}', true);"/>
-         <c:set var="shareAction" value="showHistShare(this, '${strategyId}');" />
+         <c:set var="saveAction" value="showHistSave(this, '${strategyId}', '${strategy.name}', true);"/>
+         <c:set var="shareAction" value="showHistShare(this, '${strategyId}', '${exportBaseUrl}${strategy.importId}');" />
          <c:if test="${!strategy.isSaved}">
-           <c:set var="shareAction" value="showHistSave(this, '${strategyId}', true,true);" />
+           <c:set var="shareAction" value="showHistSave(this, '${strategyId}', '${strategy.name}', true,true);" />
          </c:if>
          <c:if test="${wdkUser.guest}">
            <c:set var="saveAction" value="popLogin();"/>
@@ -109,7 +116,7 @@
          </c:if>
          <select id="actions_${strategyId}" onchange="eval(this.value);this[0].selected='true';">
             <option value="return false;">---More actions---</option>
-            <option value="showHistSave(this, '${strategyId}', false)">Rename</option>
+            <option value="showHistSave(this, '${strategyId}', '${strategy.name}', false)">Rename</option>
             <option value="copyStrategy('${strategyId}', true);">Copy</option>
             <option value="${saveAction}">Save As</option>
             <option value="${shareAction}">Share</option>

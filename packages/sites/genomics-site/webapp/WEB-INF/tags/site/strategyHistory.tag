@@ -124,27 +124,27 @@
 <c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?strategy=" />
 
 <!-- popups for save/rename forms -->
-<c:set var="unsavedStrategiesMap" value="${user.unsavedStrategiesByCategory}"/>
+<%--<c:set var="unsavedStrategiesMap" value="${user.unsavedStrategiesByCategory}"/>
 <c:forEach items="${unsavedStrategiesMap}" var="strategyEntry">
   <c:set var="strategies" value="${strategyEntry.value}"/>
   <c:forEach items="${strategies}" var="strategy">
-    <c:set var="saveHeader" value="Unused"/>
-    <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}">
+    <c:set var="saveHeader" value="Unused"/>--%>
+    <div class='modal_div save_strat' id="hist_save_rename">
       <div class='dragHandle' style='height:4px'>
         <div class="modal_name">
-          <span class='h3left'>${saveHeader}</span>
+          <span id='popup-title' class='h3left'></span>
         </div>
         <a class='close_window' href='javascript:closeModal()'>
         <img alt='Close' src='/assets/images/Close-X.png'  height='16'/>
         </a>
       </div>
-      <form onsubmit='return validateSaveForm(this);' action="javascript:saveStrategy('${strategy.strategyId}', true, true)">
-        <input type='hidden' value="${strategy.strategyId}" name='strategy'/>
-        <input type='text' value="${strategy.name}" name='name'/>
+      <form id='save_strat_form' onsubmit='return validateSaveForm(this);'><!-- action="javascript:saveStrategy('${strategy.strategyId}', true, true)">-->
+        <input type='hidden' value="" name='strategy'/>
+        <input type='text' value="" name='name'/>
         <input  style='position:absolute;right:0' type='submit' value='Save'/>
       </form>
     </div>
-  </c:forEach>
+<%--  </c:forEach>
 </c:forEach>
 
 <c:if test="${!wdkUser.guest}">
@@ -182,7 +182,7 @@
     </div>
   </c:forEach>
 </c:forEach>
-</c:if>
+</c:if>--%>
 
 <%-- invalid strategies, if any --%>
 <c:if test="${fn:length(invalidStrategies) > 0}">
