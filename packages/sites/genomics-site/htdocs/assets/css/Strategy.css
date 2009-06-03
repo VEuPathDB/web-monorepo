@@ -520,6 +520,7 @@ span.closeStrategy {
 	border:1px solid grey;
 	top: -16px;  /*  -25px; */
 	height: 14px;  /*  13px; */
+	cursor: default;
 }
 
 .dragHandle .modal_name {
