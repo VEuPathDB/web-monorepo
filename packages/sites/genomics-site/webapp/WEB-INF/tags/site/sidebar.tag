@@ -110,7 +110,7 @@
           </c:forEach>
         </c:forEach> 
         </ul>
-		<c:if test="${count > 0}">
+		<c:if test="${count > 8}">
 			<a style="margin-left: 0px" href="showXmlDataContent.do?name=XmlQuestions.ExternalLinks">Full Links Page</a><hr>
 		</c:if>
       </c:otherwise>
