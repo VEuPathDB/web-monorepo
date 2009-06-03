@@ -75,9 +75,13 @@ function toggleSteps(strat) {
 	}
 }
 
-function showHistSave(ele, stratId, save,share) {
-	   $("div[id^='hist_save_']").hide();
-       var popup = $("div#hist_save_" + stratId);
+function showHistSave(ele, stratId, stratName, save,share) {
+	   $(".viewed-popup-box").remove();
+	   var perm_popup = $("div#hist_save_rename");
+       var popup = perm_popup.clone();
+	   popup.addClass('viewed-popup-box');
+	   $("input[name='name']", popup).attr("value",stratName);
+	   $("input[name='strategy']",popup).attr("value",stratId);
        if (save){
          $("form", popup).attr("action", "javascript:saveOrRenameStrategy(" + stratId + ", true, true, true)");
          $("span.h3left", popup).text("Save As");
@@ -96,14 +100,26 @@ function showHistSave(ele, stratId, save,share) {
        popup.css("top", (btnOffset.top - prntOffset.top - 40) + "px");
        popup.css("right", "292px");
        popup.css("width", "18em");
-       popup.show();
+       popup.appendTo(perm_popup.parent()).show();
 }
 
-function showHistShare(ele, stratId) {
-       var btnOffset = $(ele).offset();
-       var prntOffset = $("div#search_history").offset();
-       $("div#hist_share_" + stratId).css("top", (btnOffset.top - prntOffset.top - 40)  + "px");
-       $("div#hist_share_" + stratId).show();
+function showHistShare(ele, stratId, url) {
+	$(".viewed-popup-box").remove();
+	var perm_popup = $("div#hist_save_rename");
+    var popup = perm_popup.clone();
+	popup.addClass('viewed-popup-box');
+	$("span.h3left", popup).text("Copy and paste URL below to email or bookmark");
+	$("input[name='name']", popup).attr("value",url).attr("readonly",true).attr("size",url.length - 12);
+	$("input[type=submit]", popup).attr("value", "Ok").click(function(){
+		closeModal();
+		return false;
+	});
+	var btnOffset = $(ele).offset();
+    var prntOffset = $("div#search_history").offset();
+    popup.css("top", (btnOffset.top - prntOffset.top - 40) + "px");
+    popup.css("right", "292px");
+    popup.css("width", "62.5em");
+    popup.appendTo(perm_popup.parent()).show();
 }
 
 function selectAllHist(type) {
