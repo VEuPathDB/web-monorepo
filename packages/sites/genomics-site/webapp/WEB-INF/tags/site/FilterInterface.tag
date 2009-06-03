@@ -49,7 +49,7 @@
 		<tr><th title="This search will be combined (AND,OR,NOT) with the previous step.">Select a Search</th>
                     <th>--or--</th>
 
-<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass'}">
+<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass' && fn:length(transformQuestions) > 0}">
                     <th title="The transform converts the input set of IDs (from the previous step) into a new set of IDs">Select a Transform</th>
                     <th>--or--</th>
 </c:if>
@@ -82,7 +82,7 @@
 </td>
 <td></td>
 
-<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass'}">
+<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass' && fn:length(transformQuestions) > 0}">
 <td>
 	<select id="transforms">
 		<%--	<option value="--">--Choose a Transform to apply--</option> --%>
