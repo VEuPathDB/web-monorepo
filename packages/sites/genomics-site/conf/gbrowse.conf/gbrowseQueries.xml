@@ -602,33 +602,36 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   <sqlQuery name="alignment:BLAT">
      <sql>
 <![CDATA[
- SELECT blat.blat_alignment_id feature_id, 
+SELECT blat.blat_alignment_id feature_id, 
        'alignment' type, 
        'BLAT' source, 
        est.accession name, 
        blat.score || '' score, 
-       etn.na_sequence_id parent_id, 
+       blat.query_na_sequence_id parent_id, 
        blat.target_start startm, 
        blat.target_end end, 
        decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand, 
-       'Direction=' || est.p_end || ' prime' || '$dlm' ||
-			 'PCT=' || blat.percent_identity atts
+       'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
+       'Library=' || l.dbest_name  || '$dlm' atts 
 FROM   
-       dots.BLATALIGNMENT blat, 
-       dots.ASSEMBLYSEQUENCE asbl, 
-       dots.EST est, 
-       dots.EXTERNALNASEQUENCE etn
+       apidb.BlatAlignmentLocation blat, 
+       dots.Est est, 
+       dots.ExternalNASequence estseq,
+       dots.Library l,
+       sres.SequenceOntology so
 WHERE  
-       blat.query_na_sequence_id = asbl.na_sequence_id and 
-       blat.target_na_sequence_id = etn.na_sequence_id and 
-       est.na_sequence_id = asbl.na_sequence_id and 
-       blat.target_start >= $base_start -1 and 
-       blat.target_end <= $rend and 
-	     etn.external_database_release_id = blat.target_external_db_release_id and
+       blat.query_na_sequence_id = est.na_sequence_id and 
+       blat.target_start <= $rend and 
+       blat.target_end >= $base_start and 
        (blat.target_end - blat.target_start ) < 5000 and 
-			 blat.is_best_alignment = 1 and
-       etn.na_sequence_id = $srcfeature_id 
-ORDER BY blat.target_start asc, blat.score desc
+       blat.is_best_alignment = 1 and
+       est.library_id = l.library_id and
+       estseq.na_sequence_id = est.na_sequence_id and
+       so.sequence_ontology_id = estseq.sequence_ontology_id and
+       so.term_name = 'EST' and
+       blat.target_na_sequence_id = $srcfeature_id
+ORDER BY 
+       blat.target_start
 ]]>
     </sql>
   </sqlQuery>
