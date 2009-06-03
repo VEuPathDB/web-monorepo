@@ -31,7 +31,10 @@ function ResultsToGrid(data) {
         // the html() doesn't work in IE 7/8 sometimes (but not always.
         // $("div#Workspace").html(data);
         document.getElementById('Workspace').innerHTML = data;
-	
+
+        // invoke filters
+        var wdkFilter = new WdkFilter();
+        wdkFilter.initialize();
 
 	// specify column sizes so flexigrid generates columns properly.
 /*

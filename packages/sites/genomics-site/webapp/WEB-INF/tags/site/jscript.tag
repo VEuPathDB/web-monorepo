@@ -35,6 +35,7 @@
 	<!-- Results Page AJAX Javascript code -->
 	<script type="text/javascript" src="/assets/js/results_page.js"></script>
 
+        <script type="text/javascript" src="<c:url value='/assets/js/wdkFilter.js' />"></script>
 </c:if>
 
 <!-- JQuery BlockUI Plugin -->
