@@ -25,7 +25,8 @@ function toggleChildrenCheck(ele){
 	if($(ele).attr("checked")){
 		check(ele);
 		checkBranch(ele);
-		//$(ele).parent().parents(".term-node").children("input").attr("disabled",true).attr("checked", true);
+		if($(ele).parent().children("div.term-children").length > 0 && $(ele).prev().hasClass('plus'))
+			toggleChildren($(ele).prev());
 	}else{
 		uncheck(ele);
 		checkBranch(ele);
@@ -33,7 +34,7 @@ function toggleChildrenCheck(ele){
 }
 
 function checkBranch(ele){
-	if($(ele).parent().parent().hasClass("param")) return;
+	if($(ele).parent().parent().hasClass("param") || ele == undefined) return;
 	var any = false;
 	var all = true;
 	if(ele.checked) 
