@@ -53,6 +53,30 @@
     </sqlValue>
 </sanityTestInfo>
 
+<sanityTestInfo project="PlasmoDB">
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_Pf3D7_11$$"/>
+    <defaultParamValue name="base_start" value="1211700"/>
+    <defaultParamValue name="rend" value="1311700"/>
+    <defaultParamValue name="dlm" value=","/>
+
+    <sqlValue name="na_seq_id_Pf3D7_11">
+      <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'Pf3D7_11'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="na_seq_id_AABL01000005">
+      <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'AABL01000005'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="na_feat_id_PF11_0344">
+      <sql>
+      select na_feature_id from dots.genefeature where source_id = 'PF11_0344'
+      </sql>
+    </sqlValue>
+</sanityTestInfo>
 
 <!--                        GUS.pm                        -->
 <!-- This is the only query implemented by GUS.pm.        -->
