@@ -34,6 +34,8 @@
 </c:choose> 
 
 <div id="info">
+
+
     	<ul>
 		<li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"><strong>BLAST</strong></a>
 			<ul><li style="border:0">Identify Sequence Similarities</li></ul>
@@ -52,6 +54,9 @@
 </c:if>
 
 
+<c:choose>   <%-- SITES WITH FEW TOOLS, SO THERE IS SPACE IN BUCKET FOR DESCRIPTIONS --%>
+<c:when test="${sName != 'Plasmo'}">
+
 <c:choose>
 <c:when test="${sName == 'Crypto'}">
           
@@ -65,7 +70,7 @@
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
 </c:when>
-<c:when test="${sName == 'Plasmo' || sName == 'Toxo'}">
+<c:when test="${sName == 'Toxo'}">
           
                 <li><a href="http://apicyc.apidb.org/${sName}/server.html"><strong>${cycName}</strong></a>
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
@@ -78,6 +83,18 @@
 </c:choose>
 
     	</ul>
+</c:when>
+<c:otherwise>   <%-- PLASMO: LOTS OF TOOLS, descriptions as mouseovers --%>
+
+
+  		<li><p style="color:#6600cc;padding-top:16px;"><i>For additional tools mouseover the </i><b>Tools</b><i> menu above.....</i></p>
+		</li>
+
+	</ul>
+
+</c:otherwise>
+</c:choose>
+
 </div>
 
 <div id="infobottom" class="tools">

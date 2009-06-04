@@ -45,25 +45,29 @@
     <li><a href="#">Tools</a>
 	<ul>
 	    <li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"> BLAST</a></li>
-</span>
   	    <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
             <li><a href="/common/PubCrawler/"> PubMed and Entrez</a></li>
- <c:if test="${project != 'ApiDB'}" >
-            <li><a href="/cgi-bin/gbrowse/"> GBrowse</a></li>
- </c:if>
-
- <c:if test="${project != 'TriTryp'  && project != 'Giardia'   && project != 'Trich'}">
-
+ 	    <c:if test="${project != 'ApiDB'}" >
+            	<li><a href="/cgi-bin/gbrowse/"> GBrowse</a></li>
+ 	    </c:if>
+	    <c:if test="${project == 'PlasmoDB'}" >
+		<li><a href="http://v4-4.plasmodb.org/restricted/PlasmoAPcgi.shtml">PlasmoAP</a>
+		</li>
+		<li><a href="http://gecco.org.chemie.uni-frankfurt.de/pats/pats-index.php">PATS</a>
+		</li>
+		<li><a href="http://gecco.org.chemie.uni-frankfurt.de/plasmit">PlasMit</a>
+		</li>
+	    </c:if>
             <c:if test="${project == 'CryptoDB'}" >
             	<li><a href="http://apicyc.apidb.org/CPARVUM/server.html">CryptoCyc</a></li>
             </c:if>
- <c:if test="${project == 'PlasmoDB'}" >
+ 	    <c:if test="${project == 'PlasmoDB'}" >
             	<li><a href="http://apicyc.apidb.org/PLASMO/server.html">PlasmoCyc</a></li>
             </c:if>
- <c:if test="${project == 'ToxoDB'}" >
+ 	    <c:if test="${project == 'ToxoDB'}" >
             	<li><a href="http://apicyc.apidb.org/TOXO/server.html">ToxoCyc</a></li>
             </c:if>
- </c:if>
+
 
     	</ul>
 
