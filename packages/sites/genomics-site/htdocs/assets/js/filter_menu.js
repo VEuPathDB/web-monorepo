@@ -237,16 +237,18 @@ function validateAndCall(type, url, proto, rs){
 	return;
 }
 
-function getQueryForm(url,hideOp,isOrtholog){
+function getQueryForm(url,hideOp,isOrtholog, loadingParent){
 	    original_Query_Form_Text = $("#query_form").html();
+		if(loadingParent == undefined) loadingParent = "query_form";
 		$.ajax({
 			url: url,
 			dataType:"html",
 			beforeSend: function(){
-				showLoading("query_form");
+				showLoading(loadingParent);//"query_form");
 			},
 			success: function(data){
 				formatFilterForm(data,0,isInsert,false,hideOp,isOrtholog);
+				removeLoading(loadingParent);
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e + ". \nPlease double check your parameters, and try again." + 
@@ -350,9 +352,9 @@ function openOrthologFilter(strat_id, step_id){
 	$("#query_form").remove();
 	$("#Strategies div a#filter_link span").css({opacity: 1.0});
 	$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});
-	$("div#strategy_results").append("<div id='query_form' class='jqDnR' style='min-height:140px;'><span class='dragHandle'><div class='modal_name'><h1 id='query_form_title'></h1></div><a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span></div>");
-	setDraggable($("#query_form"), ".handle");
-	getQueryForm(url, true, true);
+	$("div#strategy_results").append("<div id='query_form' class='jqDnR' style='min-height:140px; display:none'><span class='dragHandle'><div class='modal_name'><h1 id='query_form_title'></h1></div><a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span></div>");
+//	setDraggable($("#query_form"), ".handle");
+	getQueryForm(url, true, true, strat.frontId);
 }
 
 function close(ele){
