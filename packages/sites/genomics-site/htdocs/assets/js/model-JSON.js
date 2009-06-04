@@ -250,4 +250,6 @@ function getDataType(cl, sz){
 	}
 	if(cl == "SageTagRecordClasses.SageTagRecordClass")
 		return "Sage Tag" + s;
+	if(cl == "UserFileRecords.UserFile")
+		return "File" + s;
 }

@@ -585,4 +585,6 @@ function getRecordName(cl){
 		return "Assemblies";
 	if(cl == "SageTagRecordClasses.SageTagRecordClass")
 		return "Sage Tags";
+	if(cl == "UserFileRecords.UserFile")
+		return "Files";
 }
