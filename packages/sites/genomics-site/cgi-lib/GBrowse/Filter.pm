@@ -2,7 +2,6 @@ package GBrowse::Filter;
 
 use strict;
 
-
 sub filterByContigName {
   my ($f, $value) = @_;
   my ($contig) = $f->get_tag_values("Contig");
@@ -72,5 +71,11 @@ sub filterByDescription {
   ($description !~ /$desc/i);
 }
 
+sub filterMassSpecByExtDbNameAndDepth {
+  my ($f,$cfg, $name,$dbname,$depth) = @_;
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+  my $span = $f->{start} . '-' . $f->{end}; 
+  (($extdbname =~ /$dbname/i) && ($$cfg->{$name}->{$span}++ < $depth) );
+}
 
 1;
