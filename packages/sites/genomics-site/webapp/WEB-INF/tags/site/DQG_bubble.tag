@@ -66,7 +66,7 @@
 	<c:set var="recordType" value="Assemblies" />
   </c:if>
 
-					<li><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;<a class="heading" href="javascript:void(0)">By&nbsp; ${recordType}</a><a class="detail_link small" href="categoryPage.jsp?record=${catByRec.key}&category=${cat.key}">details</a>
+					<li><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;<a class="heading" href="javascript:void(0)">&nbsp;${recordType}</a><a class="detail_link small" href="categoryPage.jsp?record=${catByRec.key}&category=${cat.key}">details</a>
 
 
 
