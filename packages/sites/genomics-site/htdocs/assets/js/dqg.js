@@ -66,12 +66,12 @@ $(document).ready(function(){
         me = this;
         if(me.nodeName == "P")
             me = $(this).parent();
-        var testOp = op.prev("a").text();
-        if(op.prev("a").text() != $(me).text()){
-            op.hide(sidebar_speed);
+        if(op == null || op.prev("a").text() != $(me).text()){
+            if(op != null) op.hide(sidebar_speed);
             op = $(me).next("div");
             $(me).next("div").show(sidebar_speed);
         }else{
+			op = null;
 			$(me).next("div").hide(sidebar_speed);
 		}
         putReadInCookie(this);
