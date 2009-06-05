@@ -1593,63 +1593,51 @@ tr.headerRow  td,th {
    vertical-align: middle;
 }
 
-
-
-/*  Appears to be missaligning the question page in the step pop-up box... commented out to fix this problem.
-.filter {
+.vennFilter {
    float:left;
    margin-right: 30px;
    margin-bottom: 5px;
 }
-*/
 
-/*
-.filter ul {
+.vennFilter ul {
    list-style-type: none;
    margin: 0;
    padding: 0;
 }
-*/
 
-/* these css might refer to the filters.... not for strategies
-
-.diagram {
-   background: transparent url(../images/venn_filters.png) repeat scroll 2px 0;
+.vennDiagram {
+   background: transparent url(/a/images/venn_filters.png) repeat scroll 2px 0;
    height: 100px;
    width: 100px;
 }
 
-.diagram.top_selected {
+.vennDiagram.top_selected {
    background-position: 2px -108px;
 }
 
-.diagram.int_selected {
+.vennDiagram.int_selected {
    background-position: 2px -216px;
 }
 
-.diagram.btm_selected {
+.vennDiagram.btm_selected {
    background-position: 2px -324px;
 }
 
-
-*/
-
-/*
-.labels {
+.vennLabels {
    margin-right: 3px;
    height: 100px;
 }
 
-.filter.labels ul {
+.vennFilter.vennLabels ul {
    text-align: right;
 }
 
-.filter.diagram ul {
+.vennFilter.vennDiagram ul {
    text-align: center;
 }
 
-.filter.diagram ul li {
-   margin-top: 10px;
+.vennFilter.vennDiagram ul li {
+   margin-top: 14px;
 }
 
 .top_label {
@@ -1660,6 +1648,8 @@ tr.headerRow  td,th {
    margin-top: 24px;
 }
 
+
+/*
 .selected_filter {
    position: absolute;
    display: block;
