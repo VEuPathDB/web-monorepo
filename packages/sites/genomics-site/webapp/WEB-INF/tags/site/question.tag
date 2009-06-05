@@ -251,8 +251,17 @@ use enumParamInput2 in next <td> below --%>
 </c:if>
 
 <hr>
+
+<c:set var="descripId" value="query-description-section"/>
+<c:if test="${wdkQuestion.fullName == 'IsolateQuestions.IsolateByCountry'}">
+	<c:set var="descripId" value="query-description-noShowOnForm"/>
+</c:if>
+
+
 <%-- display description for wdkQuestion --%>
-<div id="query-description-section"><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
+<div id="$(descripId}"><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
+
+
 
 <%-- get the attributions of the question if not ApiDB --%>
 <c:if test = "${project != 'EuPathDB'}">
