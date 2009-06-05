@@ -105,8 +105,8 @@
 	<ul>
     	    <li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>
     	    <li><a href="https://community.eupathdb.org/forum">Discussion Forums</a></li>
-    	    <li><a href="#">Related Sites</a>
-    		<ul>
+    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Related Sites</a>
+    	<%--	<ul>
                     <c:forEach items="${extlAnswer.recordInstances}" var="record">
                       <c:forEach items="${record.tables}" var="table">
                         <c:forEach items="${table.rows}" var="row"> 
@@ -122,7 +122,7 @@
                         </c:forEach>
                       </c:forEach>
                     </c:forEach> 
-    		</ul>
+    		</ul>--%>
     	    </li>
     	    <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
     	    <li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
