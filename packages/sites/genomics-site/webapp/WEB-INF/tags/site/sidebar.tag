@@ -2,6 +2,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%-- This variable gets used to limit the number of items that appear in the sidebar menus.  Change the value here to change the length of tehse menus --%>
+<c:set var="SidebarLimit" value="7" />
+
 <fmt:setLocale value="en-US"/>
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
@@ -18,7 +21,7 @@
 <c:set var="extlQuestion" value="${xqMap['ExternalLinks']}"/>
 <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
 <c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
-
+ 
 </c:if>
 
 
@@ -105,7 +108,7 @@
                <c:forEach var="i" begin="0" end="${fn:length(tmp)}" step='3'>
                   <c:set var='uid'>${uid}${fn:substring(tmp, i, i+1)}</c:set>
                </c:forEach>
-			   <c:if test="${count < 9}">
+			   <c:if test="${count < SidebarLimit}">
                		<li id='rs-${uid}'><a href="${url}">${row[0].value}</a></li>
 			   		<c:set var="count" value="${count + 1}" />
 			   </c:if>
@@ -113,8 +116,8 @@
           </c:forEach>
         </c:forEach> 
         </ul>
-		<c:if test="${count > 8}">
-			<a style="margin-left: 0px" href="showXmlDataContent.do?name=XmlQuestions.ExternalLinks">Full Links Page</a><hr>
+		<c:if test="${count >= SidebarLimit}">
+			<a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Full Links Page</a><hr>
 		</c:if>
       </c:otherwise>
     </c:choose>
@@ -142,9 +145,10 @@ access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same
 navigation and querying capabilities as in TriTrypDB.org.<br>
 </c:if>
                         <ul>
+	 <c:set var="count" value="0" />
                         <c:forEach items="${tutAnswer.recordInstances}" var="record">
          <c:set var="attrs" value="${record.attributesMap}"/>
-         <c:forEach items="${record.tables}" var="table">
+		 <c:forEach items="${record.tables}" var="table">
            <c:forEach items="${table.rows}" var="row">
              <c:set var="projects" value="${row[0].value}"/>
             <c:if test="${fn:containsIgnoreCase(projects, project)}"> 
@@ -169,7 +173,8 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
                           </c:choose>
                           <c:set var="duration" value="${row[4].value}"/>
                           <c:set var="size" value="${row[5].value}"/>
-
+					<c:if test="${count < SidebarLimit}">	
+					  <c:set var="count" value="${count + 1}" />
 					  <li id='t-${attrs['uid']}'>${attrs['title']}<br />
                              <c:if test="${urlMov != 'unavailable'}">
                           		 (<a href="${urlMov}">Quick Time</a>)
@@ -181,11 +186,15 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
                           		 (<a href="${urlFlv}">Flash</a>)
                              </c:if>
 					  </li>
+					</c:if>
 						</c:if>
                               		</c:forEach> 
 				</c:forEach>
  			</c:forEach>
                         </ul>
+						<c:if test="${count >= SidebarLimit}">
+							<a style="margin-left:0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">All Tutorials</a>
+						</c:if>
                       </c:otherwise>
     </c:choose>
 
