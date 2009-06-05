@@ -65,11 +65,14 @@
           </c:if>
           <c:set var="i" value="${i+1}"/>
           </c:forEach>
-          <li style='list-style:circle;'>
+         <%-- <li style='list-style:circle;'>
             <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>"
                class="blue">All ${project} News</a>
-          </li>
+          </li>--%>
           </ul>
+
+		  <a style="margin-left: 0px" href="/showXmlDataContent.do?name=XmlQuestions.News">All ${project} News</a>
+
         </c:otherwise>
       </c:choose>
    </div>
