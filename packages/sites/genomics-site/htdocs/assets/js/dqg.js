@@ -71,7 +71,9 @@ $(document).ready(function(){
             op.hide(sidebar_speed);
             op = $(me).next("div");
             $(me).next("div").show(sidebar_speed);
-        }
+        }else{
+			$(me).next("div").hide(sidebar_speed);
+		}
         putReadInCookie(this);
         return false;
     });
