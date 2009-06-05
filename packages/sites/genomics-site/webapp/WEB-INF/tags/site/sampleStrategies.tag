@@ -37,9 +37,10 @@
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
-      <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:8" />
-      <c:set var="expressed" value="e8a3ba254a30471b456bfa72796352af:9" />
-      <c:set var="expressedPknowlesi" value="e8a3ba254a30471b456bfa72796352af:10" />
+      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:7" />
+      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:8" />
+      <c:set var="expressed" value="ca5bc32fb29086d29b778b17f18a97c:13" />
+      <c:set var="expressedPknowlesi" value="ca5bc32fb29086d29b778b17f18a97c:14" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
@@ -51,10 +52,10 @@
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
-      <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:93" />
-      <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:97" />
-      <c:set var="expressed" value="e8a3ba254a30471b456bfa72796352af:98" />
-      <c:set var="expressedTbrucei" value="e8a3ba254a30471b456bfa72796352af:99" />
+      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:1" />
+      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:2" />
+      <c:set var="expressed" value="" />
+      <c:set var="expressedTbrucei" value="" />
    </c:when>
 
 
@@ -72,7 +73,7 @@
 
 <c:if test="${simple != null}">
 <tr align = "left">
-	<td><a title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${simple}"/>">"Prot Cod Sig Pep EST Evidence"</a> </td>
+	<td><a title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${simple}"/>">Prot Cod Sig Pep EST Evidence</a> </td>
 	<td>Simple strategy</td>
 	<td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td>
 </tr>
@@ -80,7 +81,7 @@
 
 <c:if test="${expanded != null}">
   <tr align = "left">
-	<td><a  title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expanded}"/>">"kin, TM, (EST or Prot) ortho"</a> </td>
+	<td><a  title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expanded}"/>">kin, TM, (EST or Prot) ortho</a> </td>
 	<td>Strategy with nested strategy and transform</td>
 	<td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td>
 </tr>
@@ -88,7 +89,7 @@
 
 <c:if test="${expressed != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressed}"/>">"Expressed Genes"</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressed}"/>">Expressed Genes</a> </td>
 	<td>Strategy with a nested strategy</td>
 	<td>Find all genes in the database that have any direct evidence for expression</td>
 </tr>
@@ -96,7 +97,7 @@
 
 <c:if test="${expressedTbrucei != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedTbrucei}"/>">"All T.brucei Expressed Genes"</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedTbrucei}"/>">All T.brucei Expressed Genes</a> </td>
 	<td>Strategy with an ortholog transform</td>
 	<td>Find all genes from <i>T. brucei</i> that have any evidence for expression based on direct evidence or using orthology</td>
 </tr>
@@ -104,7 +105,7 @@
 
 <c:if test="${expressedPknowlesi != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedPknowlesi}"/>">"P.knowlesi Expressed Genes"</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedPknowlesi}"/>">P.knowlesi Expressed Genes</a> </td>
 	<td>Strategy with a nested strategy and an ortholog transform</td>
 	<td>Find all genes from <i>P. knowlesi</i> that have any evidence for expression based on orthology to other <i>Plasmodium</i> species</td>
 </tr>
