@@ -28,8 +28,8 @@
 <%-------------  Set sample strategy signatures in all sites  ----------------%>
 <c:choose>
    <c:when test="${fn:containsIgnoreCase(site, 'CryptoDB')}">
-      <c:set var="simple" value="e8a3ba254a30471b456bfa72796352af:1" />
-      <c:set var="expanded" value="e8a3ba254a30471b456bfa72796352af:2" />
+      <c:set var="simple" value="" />
+      <c:set var="expanded" value="" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'GiardiaDB')}">
@@ -54,8 +54,8 @@
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
       <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:1" />
       <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:2" />
-      <c:set var="expressed" value="" />
-      <c:set var="expressedTbrucei" value="" />
+      <c:set var="expressed" value="ca5bc32fb29086d29b778b17f18a97c:3" />
+      <c:set var="expressedLbrazilliensis" value="ca5bc32fb29086d29b778b17f18a97c:5" />
    </c:when>
 
 
@@ -95,11 +95,11 @@
 </tr>
 </c:if>
 
-<c:if test="${expressedTbrucei != null}">
+<c:if test="${expressedLbrazilliensis != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedTbrucei}"/>">All T.brucei Expressed Genes</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedLbrazilliensis}"/>"><i>L. brazilliensis</i> Expressed Genes</a> </td>
 	<td>Strategy with an ortholog transform</td>
-	<td>Find all genes from <i>T. brucei</i> that have any evidence for expression based on direct evidence or using orthology</td>
+	<td>Find all genes from <i>L. brazilliensis</i> that have any evidence for expression based on direct evidence or using orthology</td>
 </tr>
 </c:if>
 
