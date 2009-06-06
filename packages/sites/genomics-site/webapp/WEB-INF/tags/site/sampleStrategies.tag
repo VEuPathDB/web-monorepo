@@ -28,12 +28,13 @@
 <%-------------  Set sample strategy signatures in all sites  ----------------%>
 <c:choose>
    <c:when test="${fn:containsIgnoreCase(site, 'CryptoDB')}">
-      <c:set var="simple" value="" />
-      <c:set var="expanded" value="" />
+      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:11" />
+      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:12" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'GiardiaDB')}">
-
+      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:1" />
+      <c:set var="expanded" value="" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
@@ -44,6 +45,8 @@
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
+      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:1" />
+      <c:set var="expanded" value="" />
 
    </c:when>
 
