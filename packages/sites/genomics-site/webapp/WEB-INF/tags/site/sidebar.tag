@@ -13,7 +13,7 @@
 <c:set var="xqMap" value="${xqSet.questionsMap}"/>
 <c:set var="newsQuestion" value="${xqMap['News']}"/>
 
-<c:if test = "${project != 'GiardiaDB' && project != 'TrichDB' && project != 'ApiDB'}">
+
 
 <c:set var="newsAnswer" value="${newsQuestion.fullAnswer}"/>
 <c:set var="tutQuestion" value="${xqMap['Tutorials']}"/>
@@ -22,7 +22,7 @@
 <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
 <c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
  
-</c:if>
+
 
 
 <div id="leftcolumn">
@@ -34,8 +34,6 @@
 
 <%--------------  NEWS ---------------------------------------------%>
 
-
-<c:if test = "${project != 'GiardiaDB' && project != TrichDB && project != ApiDB}">
 
    <div class="menu_lefttop_drop">
       <c:choose>
@@ -80,7 +78,7 @@
       </c:choose>
    </div>
 
-</c:if>
+
 
 <%--------------  COMMUNITY LINKS ---------------------------------------------%>
     <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
