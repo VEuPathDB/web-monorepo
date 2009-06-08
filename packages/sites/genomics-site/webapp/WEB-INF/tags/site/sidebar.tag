@@ -74,7 +74,7 @@
           </li>--%>
           </ul>
 
-		  <a style="margin-left: 0px" href="/showXmlDataContent.do?name=XmlQuestions.News">All ${project} News</a>
+		  <a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News</a>
 
         </c:otherwise>
       </c:choose>
