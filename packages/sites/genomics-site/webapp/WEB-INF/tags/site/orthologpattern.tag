@@ -263,11 +263,16 @@ Ack, this form won't work at all without JavaScript support!
 <div class="params">
 <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
 
-<c:if test="${fn:containsIgnoreCase(wdkModel.displayName,'ApiDB')}">
+<c:choose>
+<c:when test="${fn:containsIgnoreCase(wdkModel.displayName,'ApiDB')}">
 	<input name="myMultiProp(internal_phyletic_indent_map)" value="Archaea" type="hidden"/>
 	<input name="myMultiProp(internal_phyletic_term_map)" value="rno" type="hidden"/>
-</c:if>
-
+</c:when >
+<c:otherwise>
+	<input name="myMultiProp(phyletic_indent_map)" value="Archaea" type="hidden"/>
+	<input name="myMultiProp(phyletic_term_map)" value="rno" type="hidden"/>
+</c:otherwise>
+</c:choose>
 
 <table>
   <tr>
