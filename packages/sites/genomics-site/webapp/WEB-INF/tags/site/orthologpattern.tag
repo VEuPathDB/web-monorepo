@@ -270,6 +270,7 @@ Ack, this form won't work at all without JavaScript support!
 </c:when >
 <c:when test="${fn:containsIgnoreCase(wdkModel.displayName,'PlasmoDB')}">
 	<input name="myMultiProp(phyletic_term_map)" value="rnor" type="hidden"/>
+	<input name="myMultiProp(internal_phyletic_term_map)" value="rno" type="hidden"/>
 </c:when>
 <c:otherwise>
 	<input name="myMultiProp(phyletic_indent_map)" value="Archaea" type="hidden"/>
