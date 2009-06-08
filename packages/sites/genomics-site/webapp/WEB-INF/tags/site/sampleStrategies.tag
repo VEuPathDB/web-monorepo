@@ -33,8 +33,8 @@
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'GiardiaDB')}">
-      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:1" />
-      <c:set var="expanded" value="" />
+      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:5" />
+      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:3" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
@@ -46,7 +46,7 @@
 
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
       <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:1" />
-      <c:set var="expanded" value="" />
+      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:6" />
 
    </c:when>
 
