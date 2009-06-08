@@ -43,6 +43,7 @@
       <c:set var="expressed" value="ca5bc32fb29086d29b778b17f18a97c:13" />
       <c:set var="expressedPknowlesi" value="ca5bc32fb29086d29b778b17f18a97c:14" />
       <c:set var="PfalVaccineAg" value="b57717e3cb5c116dc7daabe8ef4ef4de:13" />
+      <c:set var="vivaxCryptoOrthologs" value="9de59ccd16cadc9c43bdd36a625fbbdd:17" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
@@ -121,7 +122,14 @@
 	<td>Simple stategy to identify potential vaccine antigens</td>
 	<td>Find all genes from <i>P. falciparum</i> that that could be worth following up as a potential vaccine antigen.  Note that there are many ways to do this search ... experiment with different parameter settings and incorporating different queries.</td>
 </tr>
+</c:if>
 
+<c:if test="${vivaxCryptoOrthologs != null}">
+<tr align = "left">
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${vivaxCryptoOrthologs}"/>"><i>P.vivax</i> orthologs</a> </td>
+	<td>Simple stategy</td>
+	<td><i>P. vivax</i> orthologs of cryptosporidium genes that have evidence of expression in oocysts.</td>
+</tr>
 </c:if>
 
 </table>
