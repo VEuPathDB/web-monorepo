@@ -7,8 +7,6 @@
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 
-
-
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
 <c:set var='bannerText'>
@@ -48,11 +46,6 @@
     displayName="${attr.displayName}"
     content="${attr.value}" />
 <br>
-<c:set var="attr" value="${attrs['location_text']}" />
-<site:panel 
-    displayName="${attr.displayName}"
-    content="${attr.value}" />
-<br>
 
 <c:set var="rawdata">
 <site:dataTable tblName="AllCounts" align="left" />
@@ -68,6 +61,15 @@
 <site:panel 
     displayName="All Genes in proximity of this Sage Tag Alignment"
     content="${alignedGenes}" />
+<br>
+
+<c:set var="locations">
+<site:dataTable tblName="Locations" align="left" />
+</c:set>
+<site:panel 
+    displayName="Genomic Locations"
+    content="${locations}" />
+
 <br>
 
 
