@@ -75,9 +75,10 @@ function toggleSteps(strat) {
 	}
 }
 
-function showHistSave(ele, stratId, stratName, save,share) {
+function showHistSave(ele, stratId, save,share) {
 	   $(".viewed-popup-box").remove();
 	   var perm_popup = $("div#hist_save_rename");
+       var stratName = $("div#text_" + stratId + " span").text();
        var popup = perm_popup.clone();
 	   popup.addClass('viewed-popup-box');
 	   $("input[name='name']", popup).attr("value",stratName);

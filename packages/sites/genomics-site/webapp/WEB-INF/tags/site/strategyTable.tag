@@ -71,15 +71,11 @@
       <c:set var="dispNam" value="${strategy.name}"/>
       <td>
         <div id="text_${strategyId}">
-<%--
-          <span <c:if test="${active}">style="background-color:#ffffa0"</c:if> title="Click to open this strategy in the Run tab above, our graphical display" onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if></span>
---%>
           <span <c:choose>
 		<c:when test="${active}">style="font-weight:bold;cursor:pointer" title="Click to go the Run tab"</c:when>
 		<c:otherwise> style="cursor:pointer" title="Click to open this strategy in the Run tab above, our graphical display" </c:otherwise>
 		</c:choose>
-		 onclick="openStrategy('${strategyId}')">${dispNam}<c:if test="${!strategy.isSaved}">*</c:if>
-	  </span>
+		 onclick="openStrategy('${strategyId}')">${dispNam}</span><c:if test="${!strategy.isSaved}">*</c:if>
         </div> 
     <!-- begin rowgroup for strategy steps -->
 	<table id="strat_description">
@@ -105,10 +101,10 @@
          <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
       </td>
       <td nowrap>
-         <c:set var="saveAction" value="showHistSave(this, '${strategyId}', '${strategy.name}', true);"/>
+         <c:set var="saveAction" value="showHistSave(this, '${strategyId}', true);"/>
          <c:set var="shareAction" value="showHistShare(this, '${strategyId}', '${exportBaseUrl}${strategy.importId}');" />
          <c:if test="${!strategy.isSaved}">
-           <c:set var="shareAction" value="showHistSave(this, '${strategyId}', '${strategy.name}', true,true);" />
+           <c:set var="shareAction" value="showHistSave(this, '${strategyId}', true,true);" />
          </c:if>
          <c:if test="${wdkUser.guest}">
            <c:set var="saveAction" value="popLogin();"/>
@@ -116,7 +112,7 @@
          </c:if>
          <select id="actions_${strategyId}" onchange="eval(this.value);this[0].selected='true';">
             <option value="return false;">---More actions---</option>
-            <option value="showHistSave(this, '${strategyId}', '${strategy.name}', false)">Rename</option>
+            <option value="showHistSave(this, '${strategyId}', false)">Rename</option>
             <option value="copyStrategy('${strategyId}', true);">Copy</option>
             <option value="${saveAction}">Save As</option>
             <option value="${shareAction}">Share</option>

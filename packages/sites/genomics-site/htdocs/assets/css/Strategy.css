@@ -260,75 +260,75 @@
 		z-index: 1; 	
 	 }
 	
-	.operation {
-		height: 18px;
-		text-align: center;
-	/*	width: 8em;*//*5.6em;*/
-		margin-top: -4px;
-	/*	margin-left: 2px;*/
-		margin-right: 2px;
-		padding: 5px 0 0 0;
-	}
-	/* added to deal with operators showing well when adding a substrategy, in TriTryp  */
-	td.operation {
-		height: 18px;
-		width: 40px;
-	}
+.operation {
+	height: 18px;
+	text-align: center;
+	margin-top: -4px;
+	margin-right: 2px;
+	padding: 5px 0 0 0;
+}
+/* added to deal with operators showing well when adding a substrategy, in TriTryp  */
+td.operation, div.operation {
+	background-image: url(/assets/images/operationIcons.gif);
+}
 
-	.operation.UNION {
-		border: 2px solid #FFFFFF;
-		height: 25px;
-		background: url(/assets/images/operationIcons.gif) no-repeat -28px -73px;
-	}
+td.operation {
+	height: 18px;
+	width: 44px;
+	background-repeat: no-repeat;
+}
 
-	.operation.INTERSECT {
-		border: 2px solid #FFFFFF;
-		height: 25px;
-		background: url(/assets/images/operationIcons.gif) no-repeat -28px -37px;
-	}
+.operation.MINUS {
+	border: 2px solid #FFFFFF;
+	height: 25px;
+	background-position: -30px -11px;
+}
 
-	.operation.MINUS {
-		border: 2px solid #FFFFFF;
-		height: 25px;
-		background: url(/assets/images/operationIcons.gif) no-repeat -28px -1px;
-	}
+.operation.INTERSECT {
+	border: 2px solid #FFFFFF;
+	height: 25px;
+	background-position: -30px -47px;
+}
+
+.operation.UNION {
+	border: 2px solid #FFFFFF;
+	height: 25px;
+	background-position: -30px -83px;
+}
 	
+.operation.RMINUS {
+	border: 2px solid #FFFFFF;
+	height: 25px;
+	background-position: -30px -119px;
+}
 	
-	.diagram div.operation.UNION {
-		border: 2px solid #EDEDED;
-		height: 37px;
-		background: url(/assets/images/operationIcons.gif) no-repeat 0px -73px;
-	}
+.diagram div.operation {
+	border: 2px solid #EDEDED;
+	background-color: #EDEDED;
+	height: 37px;
+	background-repeat: no-repeat;
+}
 
-	.diagram div.operation.INTERSECT {
-		border: 2px solid #EDEDED;
-		height: 37px;
-		background: url(/assets/images/operationIcons.gif) no-repeat 0px -37px;
-	}
+.diagram div.operation.selected {
+	border: 2px solid #ffffa0;
+	background-color: #ffffa0;
+}
 
-	.diagram div.operation.MINUS {
-		border: 2px solid #EDEDED;
-		height: 37px;
-		background: url(/assets/images/operationIcons.gif) no-repeat 0px -1px;
-	}
+.diagram div.operation.MINUS {
+	background-position: 0px -11px;
+}
+
+.diagram div.operation.INTERSECT {
+	background-position: 0px -47px;
+}
+
+.diagram div.operation.UNION {
+	background-position: 0px -83px;
+}
 	
-	.diagram div.operation.UNION.selected {
-		border: 2px solid #ffffa0;
-		height: 37px;
-		background: url(/assets/images/operationIcons_yellow.gif) no-repeat 0px -73px;
-	}
-
-	.diagram div.operation.INTERSECT.selected {
-		border: 2px solid #ffffa0;
-		height: 37px;
-		background: url(/assets/images/operationIcons_yellow.gif) no-repeat 0px -37px;
-	}
-
-	.diagram div.operation.MINUS.selected {
-		border: 2px solid #ffffa0;
-		height: 37px;
-		background: url(/assets/images/operationIcons_yellow.gif) no-repeat 0px -1px;
-	}
+.diagram div.operation.RMINUS {
+	background-position: 0px -119px;
+}
 
 	a.operation img {
 		height: 22px;
