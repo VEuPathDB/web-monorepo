@@ -490,11 +490,10 @@ function createStrategyName(strat){
 		"</div>"+
 		"<form onsubmit='return validateSaveForm(this);' action=\"javascript:saveStrategy('" + id + "', true)\">"+
 		"<input type='hidden' value='" + id + "' name='strategy'/>"+
-		"<input type='text' value='" + name + "' name='name'/>"+
+		"<input type='text' value='' name='name'/>"+
 		"<input style='position:absolute;right:0' type='submit' value='Save'/>"+
 		"</form>"+
 		"</div>";
-
         var copy = "<a title='Create a copy of the strategy.' class='copy_strat_link'" +
                    " href='javascript:void(0)' onclick=\"copyStrategy('" + id + "')\">" +
                    "<b>COPY</b></a>";
