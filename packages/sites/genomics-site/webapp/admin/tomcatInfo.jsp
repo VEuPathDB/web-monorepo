@@ -18,3 +18,6 @@
 <c:forTokens items="${app.classpath}" delims=":" var="path">${path}<br></c:forTokens>
 </div></div>
 </p>
+<p>
+<b><a href="<c:url value="/admin/logger.jsp" />">Manage Log Levels</a></b> for this running instance of the webapp
+</p>
