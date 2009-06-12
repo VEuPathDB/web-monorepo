@@ -11,7 +11,7 @@
 <td width="33%" valign="top">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr> 
-        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolateId" linktext="Isolate ID(s)" existsOn="A C P"/>
+        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolateId" linktext="Isolate ID(s)" existsOn="A C P T"/>
     </tr>
     <tr>
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByTaxon" linktext="Taxon/Strain" existsOn="A C P"/> 
