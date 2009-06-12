@@ -160,6 +160,10 @@
         clear: left;
 }
 
+#operations td {
+	padding: 0;
+}
+
 .filter {
 	border: 1px solid black;
 }
