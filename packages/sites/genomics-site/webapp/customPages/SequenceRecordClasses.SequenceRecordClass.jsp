@@ -388,6 +388,16 @@ Annotation of the P. chabaudi AS chromosomes was obtained from the Pathogen Sequ
      <b><i>Toxoplasma gondii</i> VEG  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
     </c:set>
     </c:when>
+    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'RH') && id eq 'NC_001799'}">
+    <c:set var="reference">
+     <b>Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David Roos (University of Pennsylvania), Jessica Kissinger (University of Georgia).The apicoplast genome of <i>T. gondii</i> RH (Type I) strain is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799"TARGET="_blank">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html"TARGET="_blank">here</a> to view a map of the <i>T. gondii</i> apicoplast. </b>
+    </c:set>
+    </c:when>
+    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'RH')}">
+    <c:set var="reference">
+     <b>Scaffold genome sequence for <i>Toxoplasma gondii</i> type I RH strain (Chromosomes Ia and Ib only) provided on 2006-09-25, by Matt Berriman (The Wellcome Trust Sanger Institute), Jim Ajioka (University of Cambridge).</b>
+    </c:set>
+    </c:when>
     <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'caninum')}">
     <c:set var="reference">
 <b>Chromosome sequence and annotation for Neospora caninum provided by Arnab Pain (The Wellcome Trust Sanger Institute) and Jonathan Wastling (University of Liverpool, Faculty of Veterinary Science). The Welcome Trust Sanger Institute plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible. Permission should be obtained from Arnaub Pain before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.</b>
