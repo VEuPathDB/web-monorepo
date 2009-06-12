@@ -87,6 +87,10 @@
   <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahQTcYCy8iFaEFUpq-RKhUlyaXswfRSkzh9P8XS6wfHjLQhH6aRG_redTg" />
 </c:if>
 
+<c:if test="${project == 'ToxoDB'}">
+  <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahTbXWpA0E7vCdCxcYwpPwzMOEinFhTk3zvyW9eMl1CGc0wQabgrO2GHiA" />
+</c:if>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <%------------------ setting title --------------%>
 
