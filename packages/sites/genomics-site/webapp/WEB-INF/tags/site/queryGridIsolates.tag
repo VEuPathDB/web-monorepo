@@ -14,10 +14,13 @@
         <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolateId" linktext="Isolate ID(s)" existsOn="A C P T"/>
     </tr>
     <tr>
-       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByTaxon" linktext="Taxon/Strain" existsOn="A C P"/> 
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByTaxon" linktext="Taxon/Strain" existsOn="A C P T"/> 
     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C T"/>
+    </tr>
+    <tr>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByGenotype" linktext="Genotype" existsOn="A T"/>
     </tr>
     </table>
 </td>
@@ -25,13 +28,13 @@
 <td width="34%" valign="top">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C"/>
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C T"/>
     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C T"/>
     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Geographic Location" existsOn="A C P"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Geographic Location" existsOn="A C P T"/>
     </tr>
     <tr>
 <%--
@@ -47,10 +50,10 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
    
      <tr>
-       <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST/Reference Typing Tool" type="ISOLATE" existsOn="A C P"  />
+       <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST/Reference Typing Tool" type="ISOLATE" existsOn="A C P T"  />
      </tr>
     <tr>
-       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolatesByTextSearch" linktext="Text" existsOn="A C"/>
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolatesByTextSearch" linktext="Text" existsOn="A C T"/>
     </tr>
      <tr>
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateBySubmitter" linktext="Submitter" existsOn="A P"  />
