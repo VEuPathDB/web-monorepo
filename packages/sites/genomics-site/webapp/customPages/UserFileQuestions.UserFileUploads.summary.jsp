@@ -188,7 +188,7 @@
             </c:when>
             <c:when test="${recAttr.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
                <c:choose>
-		  <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+		  <c:when test="${fn:containsIgnoreCase(dispModelName, 'EuPathDB')}">
 		    <a href="javascript:create_Portal_Record_Url('','${projectId}','','${recAttr.url}')">
                       ${recAttr.displayText}</a>
 	          </c:when>

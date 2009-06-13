@@ -65,7 +65,7 @@
    </c:when>
 
 
-<c:when test="${fn:containsIgnoreCase(site, 'ApiDB')}">
+<c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
  
    </c:when>
 

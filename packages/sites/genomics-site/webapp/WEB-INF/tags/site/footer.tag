@@ -33,7 +33,7 @@
  <c:when test="${fn:containsIgnoreCase(siteName, 'TriTrypDB')}">
      <c:set var="date" value="June 2009" />
    </c:when>
-<c:when test="${fn:containsIgnoreCase(siteName, 'ApiDB')}">
+<c:when test="${fn:containsIgnoreCase(siteName, 'EuPathDB')}">
      <c:set var="date" value="June 2009" />
    </c:when>
 </c:choose>
@@ -45,7 +45,7 @@
 </div> <%-- id="contentwrapper" --%>
 </c:if>
 
-<c:if test="${fn:containsIgnoreCase(siteName, 'ApiDB')}">
+<c:if test="${fn:containsIgnoreCase(siteName, 'EuPathDB')}">
      <c:set var="siteName" value="EupathDB" />
 </c:if>
 

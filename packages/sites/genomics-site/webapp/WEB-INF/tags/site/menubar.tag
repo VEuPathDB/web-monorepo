@@ -47,7 +47,7 @@
 	    <li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"> BLAST</a></li>
   	    <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
             <li><a href="/common/PubCrawler/"> PubMed and Entrez</a></li>
- 	    <c:if test="${project != 'ApiDB'}" >
+ 	    <c:if test="${project != 'EuPathDB'}" >
             	<li><a href="/cgi-bin/gbrowse/"> GBrowse</a></li>
  	    </c:if>
 	    <c:if test="${project == 'PlasmoDB'}" >

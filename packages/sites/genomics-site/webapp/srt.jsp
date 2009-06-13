@@ -30,12 +30,12 @@
 <c:set var="oSrt" value="orfSrt"/>
 
 <%--
-<c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
+<c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'EuPathDB')}">
     <c:set var="cSrt" value="Api_contigSrt"/>
 </c:if>
 --%>
 <%--
-<c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
+<c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'EuPathDB')}">
     <c:set var="gSrt" value="Api_geneSrt"/>
     <c:set var="cSrt" value="Api_contigSrt"/>
     <c:set var="oSrt" value="Api_orfSrt"/>

@@ -25,7 +25,7 @@
 <wdk:reporter/>
 
 <c:choose>
-<!-- <c:when test="${fn:containsIgnoreCase(site, 'ApiDB')}">
+<!-- <c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
   <form action="/cgi-bin/Api_contigSrt" method="post">
 </c:when>
 <c:otherwise> 

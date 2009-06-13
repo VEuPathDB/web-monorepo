@@ -21,10 +21,10 @@
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
 <%--CODE TO SET UP THE SITE VARIABLES --%>
-<c:if test="${wdkModel.displayName eq 'ApiDB'}">
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
 </c:if>
-<c:if test="${wdkModel.displayName eq 'ApiDB'}">
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
      <div id="question_Form">
 </c:if>
 <c:if test="${fn:contains(recordType, 'Assem') }">
@@ -114,7 +114,7 @@
             <%--<c:when test="${isHidden}"><html:hidden property="myProp(${qP.class.name})"/></c:when>--%>
             <c:when test="${isHidden}">
         <c:choose>
-           <c:when test="${fn:containsIgnoreCase(wdkModel.displayName, 'ApiDB')}">
+           <c:when test="${fn:containsIgnoreCase(wdkModel.displayName,'EuPathDB')}">
             <c:choose>
                    <c:when test="${pNam eq 'signature'}">
                     <html:hidden property="myProp(${pNam})" value="${wdkUser.signature}"/>
@@ -133,7 +133,7 @@
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
                     <c:choose>
-                        <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'ApiDB'}">
+                        <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'EuPathDB'}">
                             <c:set var="hasOrganism" value="true"/>
                             <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5">
                                 <table border="0">
@@ -246,7 +246,7 @@ use enumParamInput2 in next <td> below --%>
 <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
 </html:form>
 
-<c:if test="${wdkModel.displayName eq 'ApiDB'}">
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     </div><!--End Question Form Div-->
 </c:if>
 
@@ -263,7 +263,7 @@ use enumParamInput2 in next <td> below --%>
 
 
 
-<%-- get the attributions of the question if not ApiDB --%>
+<%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB'}">
 <hr>
 <%-- get the property list map of the question --%>

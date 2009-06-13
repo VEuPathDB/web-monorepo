@@ -133,7 +133,7 @@
   </c:if>
   <c:if test="${token eq 'A'}">
     <c:choose>
-      <c:when test="${wdkModel.displayName eq 'ApiDB'}">
+      <c:when test="${wdkModel.displayName eq 'EuPathDB'}">
         <c:set var="linkActive" value="1"/>
       </c:when>        
       <c:otherwise>

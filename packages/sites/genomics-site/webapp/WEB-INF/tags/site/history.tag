@@ -10,7 +10,7 @@
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <c:choose>
-   <c:when test="${modelName eq 'ApiDB'}">
+   <c:when test="${modelName eq 'EuPathDB'}">
    
 	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
 	  <tr height="5">

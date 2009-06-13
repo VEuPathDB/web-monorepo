@@ -21,10 +21,10 @@
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
 <%--CODE TO SET UP THE SITE VARIABLES --%>
-<c:if test="${wdkModel.displayName eq 'ApiDB'}">
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
 </c:if>
-<c:if test="${wdkModel.displayName eq 'ApiDB'}">
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
      <div id="question_Form">
 </c:if>
 <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
@@ -245,7 +245,7 @@
 			"></span>
 </html:form>
 
-<c:if test="${wdkModel.displayName eq 'ApiDB'}">
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     </div><!--End Question Form Div-->
 </c:if>
 
@@ -253,7 +253,7 @@
 <%-- display description for wdkQuestion --%>
 <p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
-<%-- get the attributions of the question if not ApiDB --%>
+<%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB'}">
 <hr>
 <%-- get the property list map of the question --%>

@@ -96,7 +96,7 @@
 
 <c:if test="${banner == null}">
 <c:choose>
-      <c:when test = "${project == 'ApiDB'}">
+      <c:when test = "${project == 'EuPathDB'}">
              <c:set var="banner" value="EuPathDB : The Eukaryotic Pathogen genome resource"/>
       </c:when>
       <c:when test = "${project == 'CryptoDB'}">
@@ -334,7 +334,7 @@ ${headElement}
 
 
    <c:choose>
-    <c:when test="${project == 'ApiDB'}">
+    <c:when test="${project == 'EuPathDB'}">
        <%-- we have it for now so the page renders correctly --%>
        <a href="http://eupathdb.org"><img src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
    </c:when>
@@ -492,7 +492,7 @@ ${headElement}
    </c:when>
 
 
-<c:when test="${fn:containsIgnoreCase(project, 'ApiDB')}">
+<c:when test="${fn:containsIgnoreCase(project, 'EuPathDB')}">
      <c:set var="width" value="320" />
      <c:set var="height" value="72" />
      <c:set var="date" value="June 2009" />

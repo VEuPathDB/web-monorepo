@@ -129,7 +129,7 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
 
 <hr>
 <div align="center">
- CAP4 clustering and alignments by ApiDB. EST sequences as individually attributed.
+ CAP4 clustering and alignments by EuPathDB. EST sequences as individually attributed.
 </div>
  
 </td></tr>

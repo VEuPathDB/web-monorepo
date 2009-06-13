@@ -57,7 +57,7 @@
 
 <html:form method="get" action="/processQuestionSetsFlat.do">
 	<c:choose>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'ApiDB')}">
+	<c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
 		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii"/>
 	</c:when>
         <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
