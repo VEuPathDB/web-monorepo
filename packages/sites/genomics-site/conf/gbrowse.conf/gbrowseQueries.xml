@@ -2120,6 +2120,25 @@ WHERE
 ]]>
     </sql>
   </sqlQuery>
+
+
+  <sqlQuery name="ChIP_Centromere:Einstein"  includeProjects="ToxoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP_Centromere'         as type, 
+       'Einstein'        as source, 
+       e.source_id       as name, 
+       e.source_id       as parent_id, 
+       $base_start       as startm, 
+       $rend             as end
+FROM   DoTS.NASequence e
+WHERE  
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
   
   <sqlQuery name="ChIP_RH:Hakimi"  includeProjects="ToxoDB">
      <sql>
@@ -3403,6 +3422,26 @@ WHERE  f.na_sequence_id = $srcfeature_id
    AND f.end_max >= $base_start
    AND f.protocol_name = 'NimbleScan_ChIP_Hakimi'
    AND f.strain = 'RH'
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="ChIP_Centromere:Einstein:bulksubfeatures" includeProjects="ToxoDB">
+     <sql>
+<![CDATA[
+SELECT f.na_feature_id   as feature_id,
+       'ChIP_Centromere_sub'        as type,
+       'Einstein'          as source, 
+       f.score           as score, 
+       f.na_sequence_id  as parent_id, 
+       f.start_min       as startm, 
+       f.end_max         as end,
+       'Treatment=' || f.treatment || '$dlm' || 'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
+FROM   ApiDB.ChIPFeature f
+WHERE  f.na_sequence_id = $srcfeature_id
+   AND f.start_min <= $rend
+   AND f.end_max >= $base_start
+   AND f.protocol_name = 'ChIP_chip_Einstein_centromere'
 ]]>
     </sql>
   </sqlQuery>
