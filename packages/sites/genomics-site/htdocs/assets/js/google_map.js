@@ -29,16 +29,27 @@ jQuery.fn.slowEach = function( interval, callback ) {
 
 jQuery(document).ready(function(){
   initialize();
+
+  var dd   = document.domain;
+  var type = "&myMultiProp(type)=3kChip,75kChip,Barcode,Genbank";
+  if(dd.match('toxodb')) {
+    type = "&myMultiProp(type)=RFLP,Genbank";
+  } else if(dd.match('plasmodb')) {
+    type = "&myMultiProp(type)=3kChip,75kChip,Barcode,Genbank";
+  } else if(dd.match('plasmodb')) {
+    type = '';
+  } 
+
   jQuery.get("/country.xml",{},function(xml){
     jQuery('country',xml).slowEach(200, function(i) {
        name = jQuery(this).find("name").text();
        count = jQuery(this).find("count").text();
-       createMarker(name, count);
+       createMarker(name, count, type);
     });
   }); 
 });
 
-function createMarker(country, total) {
+function createMarker(country, total, type) {
   var marker = null;
   if(geocoder) {
     geocoder.getLatLng(
@@ -49,7 +60,7 @@ function createMarker(country, total) {
           marker = new GMarker(point);
           map.addOverlay(marker);
           GEvent.addListener(marker, "click", function() {
-            marker.openInfoWindowHtml(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&myMultiProp(country)="+country+"&myMultiProp(type)=3kChip,75kChip,Barcode,Genbank' target='_blank'> Click for Details</a>");
+            marker.openInfoWindowHtml(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&myMultiProp(country)="+country+type+"' target='_blank'> Click for Details</a>");
           });
         }
       }
