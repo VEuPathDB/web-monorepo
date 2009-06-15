@@ -20,7 +20,7 @@
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C T"/>
     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByGenotype" linktext="Genotype" existsOn="A T"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByGenotypeNumber" linktext="Genotype" existsOn="A T"/>
     </tr>
     </table>
 </td>
