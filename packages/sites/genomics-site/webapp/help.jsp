@@ -56,6 +56,9 @@
                     <td><input type="text" name="replyTo" value="${wdkUser.email}" size="81"></td></tr>
                     </c:otherwise>
                     </c:choose>
+                <tr><td><div class="medium">Cc addresses:</div></td>
+                    <td><input type="text" name="addCc" value="" size="81"></td></tr>
+                    <tr><td colspan='3'><i>(maximum 4 Cc addresses, comma separated.)</i></td</tr>
                 <tr><td valign="top"><div class="medium">Message:</div></td>
                     <td><textarea name="message" cols="75" rows="8"></textarea>
                         <input type="hidden" name="website" value="${site}">
