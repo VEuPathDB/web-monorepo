@@ -112,6 +112,11 @@ ${id}
   <c:set var="gtracks" value="BLASTX+ORF" />
 </c:if>
 
+<c:if test="${fn:contains(organism,'TgCkUg2') && projectId eq 'ToxoDB'}">
+  <c:set var="gtracks" value="BLASTX+ORF+TandemRepeat+LowComplexity" />
+</c:if>
+
+
 <c:set var="attribution">
 </c:set>
 
