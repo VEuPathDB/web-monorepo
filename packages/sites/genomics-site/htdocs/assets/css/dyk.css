@@ -1,0 +1,85 @@
+#dyk-box,#dyk-shadow{
+	position:absolute;
+	width:400px;
+	height:200px;
+	top:200px;
+	left:250px;
+	z-index:100000;
+	border:1px solid #888888;
+	-webkit-border-bottom-left-radius:10px;
+	-webkit-border-bottom-right-radius:10px;
+	-moz-border-radius-bottomleft:10px;
+	-moz-border-radius-bottomright:10px;
+}
+
+div#dyk-box{
+	background-color:#FFFFFF;
+}
+
+div#dyk-shadow{
+	background-color:#000000;
+	left:247px;
+	opacity:0.4;
+	top:204px;
+	z-index:800;
+}
+
+div#dyk-box div.dragHandle{
+	height:9px;
+}
+
+div#dyk-box div.dragHandle h3{
+	margin-top:-6px;
+	padding-left:5px;
+	text-align:center;
+}
+
+div#dyk-box div#dyk-text{
+	background-color:#FFFFFF;
+	height:145px;
+	margin:24px 0 10px;
+	width:100%;
+}
+
+div#dyk-box div#closing-items{
+	bottom:4px;
+	position:absolute;
+	right:8px;
+}
+
+div#dyk-box ul.tip-box{
+	-moz-border-radius-bottomleft:10px;
+	-moz-border-radius-bottomright:10px;
+	-webkit-border-bottom-left-radius:10px;
+	-webkit-border-bottom-right-radius:10px;
+	background-color:#F0F0F0;
+	bottom:0;
+	padding:8px 0 4px;
+	position:absolute;
+	width:100%;
+}
+
+div#dyk-box ul.tip-box li{
+	float:left;
+	padding:0 9px;
+}
+
+div#dyk-box ul.tip-box li div{
+	height:50px;
+	width:50px;
+	bottom:0px;
+	background-image: url(../images/black_button.gif);
+	text-align:center;
+	font-size:15pt;
+	color:black;
+}
+
+div#dyk-box ul.tip-box li div.current{
+	background-image: url(../images/red_button.gif);
+}
+
+div#dyk-box div.dragHandle span{
+	float:right;
+	font-size:7pt;
+	margin:-12px 4px 0 0;
+}
