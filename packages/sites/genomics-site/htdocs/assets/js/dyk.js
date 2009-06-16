@@ -1,11 +1,15 @@
 var currentTip = 0;
 var tipMax;
+var tips = null;
 $(document).ready(function(){
-	//TODO Create and read in an XML file to provide the text for the Did You Know elements...
+	initDYK(false);
+});
+
+function initDYK(o){	//TODO Create and read in an XML file to provide the text for the Did You Know elements...
 	setTipMax();
 	var co = $.cookie("DYK");
-	if(co){
-		$("#dyk-box,#dyk-shadow").remove();
+	if(co && !o){
+		tips = $("#dyk-box,#dyk-shadow").remove();
 		return;
 	} 
 	var randomnumber=Math.floor(Math.random()*tipMax);
@@ -51,7 +55,7 @@ $(document).ready(function(){
 			$("#dyk-shadow").show();
 		}
 	});
-});
+}
 
 function setTipMax(){
 	tipMax = $("#dyk-box span[id^='tip_']").length + 1;
@@ -89,10 +93,18 @@ function prevTip(){
 	displayCurrent();
 }
 
+function dykOpen(){
+	$(tips[0]).find("input#stay-closed-check").attr("disabled",true);
+	$("div.innertube").append(tips[0]);
+	$("div.innertube").append(tips[1]);
+	initDYK(true);
+}
+
 function dykClose(){
 	var ex = $("div#dyk-box input#stay-closed-check").attr("checked");
-	$("#dyk-box,#dyk-shadow").remove();
-	setDYKCookie(ex);
+	if(tips == null)
+		setDYKCookie(ex);
+	tips = $("#dyk-box,#dyk-shadow").remove();
 }
 
 function setDYKCookie(expire){
