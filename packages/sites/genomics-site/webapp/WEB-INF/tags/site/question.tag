@@ -259,7 +259,7 @@ use enumParamInput2 in next <td> below --%>
 
 
 <%-- display description for wdkQuestion --%>
-<div id="$(descripId}"><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
+<div id="${descripId}"><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
 
 
 
