@@ -56,6 +56,10 @@ function setTipMax(){
 	tipMax = $("#dyk-box span[id^='tip_']").length + 1;
 }
 
+function setCount(){
+	$("#dyk-count").text(currentTip + " of " + (tipMax - 1));
+}
+
 function displayCurrent(){
 	if(currentTip > 0 && currentTip < tipMax )
 		$("#dyk-box div#dyk-text").html($("#dyk-box span#tip_" + currentTip).html());
@@ -66,6 +70,7 @@ function displayCurrent(){
 			currentTip = 1;
 		$("#dyk-box div#dyk-text").html($("#dyk-box span#tip_" + currentTip).html());
 	}
+	setCount();
 }
 
 function setCurrent(tipnum){
