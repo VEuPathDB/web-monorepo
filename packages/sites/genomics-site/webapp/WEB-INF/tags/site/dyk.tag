@@ -1,6 +1,7 @@
 <div id="dyk-box">
 	<div class="dragHandle">
 		<h3>Did You Know...</h3>
+		<span id="dyk-count">1 of 7</span>
 	</div>
 	<div id="dyk-text">
 	</div>
