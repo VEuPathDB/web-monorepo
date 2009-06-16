@@ -19,9 +19,9 @@ $(document).ready(function(){
 	$("div#dyk-box").resizable({
 		minWidth: 405,
 		minHeight: 167,
-		alsoResize: '#dyk-shadow'
+		alsoResize: '#dyk-shadow,#dyk-text'
 	});
-	$("div#dyk-shadow").resizable();
+//	$("div#dyk-shadow").resizable();
 	
 	$("div#dyk-box").draggable({
 		handle: ".dragHandle",
