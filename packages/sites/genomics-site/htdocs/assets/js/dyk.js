@@ -8,7 +8,8 @@ $(document).ready(function(){
 		$("#dyk-box,#dyk-shadow").remove();
 		return;
 	} 
-	setCurrent(1);
+	var randomnumber=Math.floor(Math.random()*tipMax);
+	setCurrent(randomnumber);
 	$("#dyk-box input#close").click(function(){
 		dykClose();
 	});
