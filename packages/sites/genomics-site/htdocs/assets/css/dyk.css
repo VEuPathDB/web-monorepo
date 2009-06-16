@@ -61,17 +61,11 @@ div#dyk-box ul.tip-box{
 
 div#dyk-box ul.tip-box li{
 	float:left;
-	padding:0 9px;
+	padding:0 2px;
 }
 
-div#dyk-box ul.tip-box li div{
-	height:50px;
-	width:50px;
-	bottom:0px;
-	background-image: url(../images/black_button.gif);
-	text-align:center;
-	font-size:15pt;
-	color:black;
+div#dyk-box ul.tip-box li input{
+	width: 87px;
 }
 
 div#dyk-box ul.tip-box li div.current{
