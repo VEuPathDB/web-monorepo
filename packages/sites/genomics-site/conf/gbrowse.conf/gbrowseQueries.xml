@@ -1096,9 +1096,11 @@ FROM
 WHERE  
        extq.external_database_release_id = edr.external_database_release_id and
        ed.external_database_id = edr.external_database_id and
-       ed.name in ('C. parvum isolate data','Plasmodium isolates From Genbank') and
+       ed.name in ('C. parvum isolate data','Plasmodium isolates From Genbank','Toxoplasma isolates From David Sibley','Toxoplasma isolates From Genbank') and
        sim.query_id = extq.na_sequence_id and 
        sim.subject_id = extt.na_sequence_id and 
+       sim.pvalue_mant is not null and
+       sim.pvalue_exp is not null and
        to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-20 and 
        sim.min_subject_start >= $base_start and 
        sim.max_subject_end <= $rend 
