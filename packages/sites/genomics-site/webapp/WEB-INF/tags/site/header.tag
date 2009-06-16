@@ -151,7 +151,9 @@
 <%-------  keep it for generecordpage while we do that --%>
 <%-- <link rel="stylesheet" href="<c:url value='/misc/style.css'/>"   type="text/css" />   --%>
 <link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" />
+<link rel="stylesheet" href="/assets/css/jquery-ui-1.7.2.custom.css"           type="text/css" />
 <link rel="stylesheet" href="/assets/css/history.css"            type="text/css"/>
+<link rel="stylesheet" href="/assets/css/dyk.css"            type="text/css"/>
 <link rel="stylesheet" href="/assets/css/Strategy.css"           type="text/css" />
 <link rel="StyleSheet" href="/assets/css/filter_menu.css"        type="text/css"/>
 <link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />

@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="/assets/css/flexigrid/flexigrid.css" type="text/css"/>
 </c:set>
 <site:header refer="customSummary" headElement="${headElement}"/>
-
+<site:dyk />
 <c:set var="scheme" value="${pageContext.request.scheme}" />
 <c:set var="serverName" value="${pageContext.request.serverName}" />
 <c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
