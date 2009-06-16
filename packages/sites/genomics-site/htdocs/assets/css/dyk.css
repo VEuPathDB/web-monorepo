@@ -80,6 +80,8 @@ div#dyk-box ul.tip-box li div.current{
 
 div#dyk-box div.dragHandle span{
 	float:right;
+	font-family:georgia;
 	font-size:7pt;
-	margin:-12px 4px 0 0;
+	font-weight:bold;
+	margin:-12px 12px 0 0;
 }
