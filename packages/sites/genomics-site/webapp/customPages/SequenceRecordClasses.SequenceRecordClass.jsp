@@ -409,6 +409,12 @@ Annotation of the P. chabaudi AS chromosomes was obtained from the Pathogen Sequ
 <b>Chromosome sequence and annotation for Neospora caninum provided by Arnab Pain (The Wellcome Trust Sanger Institute) and Jonathan Wastling (University of Liverpool, Faculty of Veterinary Science). The Welcome Trust Sanger Institute plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible. Permission should be obtained from Arnaub Pain before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.</b>
     </c:set>
     </c:when>
+    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'TgCkUg2')}">
+    <c:set var="reference">
+      <b>Whole genome sequence of the natural recombinant strain  Toxoplasma gondii TgCkUg2 is provided by Irene Lindström Bontell, Institute of Integrative and Comparative Biology, Miall Building, Clarendon Way, University of Leeds, Leeds, LS2 9JT, United Kingdom</b>
+    </c:set>
+    </c:when>
+
 
     <c:when test="${projectId eq 'TrichDB'}">
     <c:set var="reference">
