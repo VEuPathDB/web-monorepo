@@ -292,7 +292,7 @@
 	overflow: hidden;
 }	
 
-.flexigrid div.hDiv table
+.flexigrid div.hDiv > table
 {
 	border-right: 1px solid #fff;
         width:100%;
@@ -425,6 +425,11 @@
 	overflow: hidden;
 }	
 
+.flexigrid div.hDiv th#primary_key
+{
+	cursor: auto;
+}
+
 div.colCopy
 {
 	background-color:#EEEEEE;
@@ -497,7 +502,6 @@ div.colCopy
 {
 	border-bottom: 1px solid #fff;
 	vertical-align: top;
-	white-space: nowrap;
 }
 
 .flexigrid div.hDiv th > div

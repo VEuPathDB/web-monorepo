@@ -319,7 +319,7 @@ function createDetails(modelstep, jsonstep, sid){
 			rename_step = 	"<a title='" + ss_rename_popup + "' class='rename_step_link' href='javascript:void(0)' onclick='Rename_Step(this, " + sid + "," + modelstep.frontId + ");hideDetails(this)'>Rename</a>&nbsp;|&nbsp;";
 		}
 
-		view_step = 	"<a title='" + ss_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
+		view_step = 	"<a title='" + ss_view_popup + "' class='view_step_link' onclick='NewResults(" + sid + "," + modelstep.frontId + "," + jsonstep.isboolean + ");hideDetails(this)' href='javascript:void(0)'>View</a>&nbsp;|&nbsp;";
 
 		if(modelstep.isTransform || modelstep.frontId == 1){
 			hideOp = true;
