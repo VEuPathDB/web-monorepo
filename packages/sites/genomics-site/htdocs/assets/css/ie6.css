@@ -1,0 +1,39 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Stylesheet for styles that are applied in IE6 and earlier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	behavior: url(/assets/css/csshover.htc);
+}
+
+.top_nav {
+	behavior: url(/assets/css/csshover.htc);
+}
+
+#menu ul li {
+	width: 100%;
+}
+
+#menu ul li ul {
+	left: 0;
+}
+
+#menu ul li ul li ul {
+	left: 14em;
+}
+
+#mysearch {
+	height: 1%;
+}
+
+img, input.img_align_middle {
+	behavior: url(/assets/css/iepngfix.htc);
+}
+
+#Strategies {
+	height: expression(this.scrollHeight > 299 ? "300px" : "auto");
+}
+
+#search_history {
+	height: 130px;
+}

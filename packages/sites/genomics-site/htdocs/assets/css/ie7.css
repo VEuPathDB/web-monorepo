@@ -1,0 +1,100 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Stylesheet for styles that are applied in IE7 and earlier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#query_selection {
+	left: auto;
+	padding: 10px 20px;
+}
+
+#query_selection .top_nav li:hover {
+	background-color: #DDDDDD;
+}
+
+.rightarrow1 {
+	left: 7.3em;
+}
+
+.rightarrow2 {
+	left: 0.5em;
+	top: -3.3em;
+}
+
+.rightarrow3 {
+	left: 5px;
+	top: -3.3em;
+}
+
+.crumb_details {
+	border-width: 2px;
+	width: 500px;
+	z-index: 999;
+}
+
+.crumb_details div.crumb_menu {
+	margin-right: -3px;
+}
+
+#Strategies {
+	position: relative;
+}
+
+#menu_lefttop div ul {
+	padding: 3px 3px 3px 0;
+}
+
+.thinTopBorders {
+	line-height: normal;
+}
+
+.ts_ie {
+	margin-left:-15px;
+}
+
+.twoColHybLt #sidebar1 { 
+	padding-top: 30px; 
+}
+
+.twoColHybLt #mainContent { 
+	zoom: 1; padding-top: 15px; 
+}
+
+#menu > ul > li > ul {
+	left:0;
+}
+
+.operation {
+	z-index: -1;
+}
+
+a.redbutton {
+	z-index: -1;
+}
+
+a.disabled {
+	color: gray;
+}
+
+a.disabled:hover {
+	color: gray;
+}
+
+#footer div {
+	display: inline-block;
+}
+
+.tbody-overflow {
+	height: auto;
+}
+
+.crumb_details ul.question_name {
+	float:none;
+	left:90%;
+}
+
+.unsaved-strategies {
+	max-height: 250px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+

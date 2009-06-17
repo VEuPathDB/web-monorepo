@@ -100,7 +100,6 @@ function showHistSave(ele, stratId, save,share) {
        var prntOffset = $("div#search_history").offset();
        popup.css("top", (btnOffset.top - prntOffset.top - 40) + "px");
        popup.css("right", "292px");
-       popup.css("width", "18em");
        popup.appendTo(perm_popup.parent()).show();
 }
 
