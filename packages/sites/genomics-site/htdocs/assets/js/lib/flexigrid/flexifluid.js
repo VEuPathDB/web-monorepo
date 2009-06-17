@@ -18,27 +18,16 @@ flexifluid.init = function()
   /* Get base width to build percentages from */
    $('.bDiv').width('100%');
    var fullWidth = $('.bDiv').width();
-   var tableWidth = $('.hDivBox > table').width();
+   var tableWidth = $('.hDivBox table').width();
 
    /* Set Header to 100% */
    $('.hDiv').width('100%');
    $('.hDivBox').width('100%');
-   $('.hDivBox > table').width('100%');
+   $('.hDivBox table').width('100%');
    
-  // Create div for calculating word size
-  var wordDiv = document.createElement('div');
-  $(wordDiv).css({'position' : 'absolute',
-                  'visibility' : 'hidden',
-                  'height' : 'auto',
-                  'width' : 'auto',
-                  'font-size' : '100%'});
-  $(wordDiv).attr('id', 'wordDiv');
-  $("body").append(wordDiv);
-
   var col = 0;
   var pctWidths = new Array();
   var minWidths = new Array();
-  var minWidth;
   /* loop each header, reset width in %
      make first calculation of min-width
      using table headers */
@@ -47,8 +36,11 @@ flexifluid.init = function()
       var pWidth = parseInt((pixWidth / tableWidth) * 100);
 
       // Charles Treatman, 1/29/09:  Also set min-width in px
-      // based on total width of contents (+5px fudge factor).
-      minWidth = $(this).width();
+      // based on total width of contents (+5px to ensure no wrapping).
+      var minWidth = 5;
+      $('div', this).each(function(){
+	minWidth += $(this).width();
+      });
 
       $(this).width('100%');
       $(this.parentNode).width(pWidth + '%');
@@ -61,6 +53,15 @@ flexifluid.init = function()
   /* loop each content, reset width in %,
      attempt to refine min-width using
      table contents */
+  // Create div for calculating word size
+  var wordDiv = document.createElement('div');
+  $(wordDiv).css({'position' : 'absolute',
+                  'visibility' : 'hidden',
+                  'height' : 'auto',
+                  'width' : 'auto',
+                  'font-size' : '100%'});
+  $(wordDiv).attr('id', 'wordDiv');
+  $("body").append(wordDiv);
 
   var n = 0;  // keep track of how many total cells we've seen.
   $('#'+flexifluid.grid_name+' div').each(function(){

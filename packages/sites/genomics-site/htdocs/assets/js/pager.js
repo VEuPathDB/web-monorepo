@@ -44,7 +44,6 @@ function ResultsToGrid(data) {
 			$(headers[idx]).attr("width", Math.max($(ele).width(),$(headers[idx]).width()) );
 		}
 	);
-*/
 	$("#Results_Table").flexigrid({height : 'auto',
 				       showToggleBtn : false,
 				       useRp : false,
@@ -52,8 +51,9 @@ function ResultsToGrid(data) {
 				       onMoveColumn : moveAttr,
                                        nowrap : false,
 				       resizable : false});
-//	$(".cDrag").remove();
+	$(".cDrag").remove();
 	flexifluid.init();
+*/
 }
 
 function updatePageCount(pager_id) {

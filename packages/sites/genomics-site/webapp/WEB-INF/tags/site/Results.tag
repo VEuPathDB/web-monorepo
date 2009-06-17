@@ -183,17 +183,14 @@
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
 
 <%--------- RESULTS  ----------%>
-<div class="flexigrid">
-<div class="hDiv">
-<div class="hDivBox">
-<table width="100%" border="0" cellpadding="3" cellspacing="0">
+<table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
 <thead>
 <tr class="headerrow">
   <c:set var="j" value="0"/>
   <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
     <c:set var="attrName" value="${sumAttrib.name}" />
     <th id="${attrName}" align="left" valign="middle">
-      <div class="headercontents">
+      <%-- <div class="headercontents"> --%>
 	<table>
           <tr>
             <td style="width:20px;min-height:20px;">
@@ -236,28 +233,23 @@
           </div>
         </c:if> --%>
         <c:if test="${j != 0}">
-          <td style="width:20px;">
+          <td>
             <%-- display remove attribute button --%>
             <a href="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true)"
                         title="Remove ${sumAttrib} column">
               <img src="/assets/images/results_x.png" alt="Remove" border="0" /></a>
           </td>
         </c:if>
+      <%-- </div> --%>
          </tr>
       </table>
-      </div>
     </th>
   <c:set var="j" value="${j+1}"/>
   </c:forEach>
 </tr>
 </thead>
-</table>
-</div>
-</div>
 
-<div class="bDiv">
-<div class="bDivBox">
-<table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
+
 <tbody>
 
 <!--
@@ -301,7 +293,7 @@
     <c:set var="projectId" value="${pkValues['project_id']}" />
     <c:set var="id" value="${pkValues['source_id']}" />
 
-    <td ${align} ${nowrap} style="padding:3px 2px"><div>
+    <td ${align} ${nowrap} style="padding:3px 2px">
       <c:set var="recNam" value="${record.recordClass.fullName}"/>
       <c:set var="fieldVal" value="${recAttr.briefValue}"/>
       <c:choose>
@@ -360,7 +352,7 @@
 
         </c:otherwise>
       </c:choose>
-    </div></td>
+    </td>
     <c:set var="j" value="${j+1}"/>
 
   </c:forEach>
@@ -372,9 +364,6 @@
 
 </tbody>
 </table>
-</div>
-</div>
-</div>
 <%--------- END OF RESULTS  ----------%>
 
 
