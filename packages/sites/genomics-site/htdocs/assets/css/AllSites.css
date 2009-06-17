@@ -1605,21 +1605,25 @@ tr.headerRow  td,th {
    padding: 0;
 }
 
+.vennFilter ul .current {
+   background-color: transparent;
+}
+
 .vennDiagram {
    background: transparent url(/a/images/venn_filters.png) repeat scroll 2px 0;
    height: 100px;
    width: 100px;
 }
 
-.vennDiagram.top_selected {
+.vennDiagram.topSelected {
    background-position: 2px -108px;
 }
 
-.vennDiagram.int_selected {
+.vennDiagram.midSelected {
    background-position: 2px -216px;
 }
 
-.vennDiagram.btm_selected {
+.vennDiagram.btmSelected {
    background-position: 2px -324px;
 }
 

@@ -54,7 +54,25 @@
      </ul>
    </div>
 
-   <div class="vennFilter vennDiagram">
+   <c:set var="currentFilter" value="" />
+   <c:if test="${answerValue.filter != null}">
+     <c:set var="currentFilter" value="${answerValue.filter.name}"/>
+   </c:if>
+
+   <c:choose>
+     <c:when test="${currentFilter eq 'gt1_min_me49'}">
+       <div class="vennFilter vennDiagram topSelected">
+     </c:when>
+     <c:when test="${currentFilter eq 'gt1_int_me49'}">
+       <div class="vennFilter vennDiagram midSelected">
+     </c:when>
+     <c:when test="${currentFilter eq 'me49_min_gt1'}">
+       <div class="vennFilter vennDiagram btmSelected">
+     </c:when>
+     <c:otherwise>
+       <div class="vennFilter vennDiagram">
+     </c:otherwise>
+   </c:choose>
      <ul>
          <li>
       <wdk:filterInstance strategyId="${strategyId}" 
@@ -84,7 +102,20 @@
      </ul>
    </div>
 
-   <div class="vennFilter vennDiagram">
+   <c:choose>
+     <c:when test="${currentFilter eq 'gt1_min_veg'}">
+       <div class="vennFilter vennDiagram topSelected">
+     </c:when>
+     <c:when test="${currentFilter eq 'gt1_int_veg'}">
+       <div class="vennFilter vennDiagram midSelected">
+     </c:when>
+     <c:when test="${currentFilter eq 'veg_min_gt1'}">
+       <div class="vennFilter vennDiagram btmSelected">
+     </c:when>
+     <c:otherwise>
+       <div class="vennFilter vennDiagram">
+     </c:otherwise>
+   </c:choose>
      <ul>
          <li>
       <wdk:filterInstance strategyId="${strategyId}" 
@@ -107,7 +138,6 @@
      </ul>
    </div>
 
-
    <div class="vennFilter vennLabels">
      <ul>
        <li class="top_label">ME49</li>
@@ -115,8 +145,20 @@
      </ul>
    </div>
 
-
-   <div class="vennFilter vennDiagram">
+   <c:choose>
+     <c:when test="${currentFilter eq 'me49_min_veg'}">
+       <div class="vennFilter vennDiagram topSelected">
+     </c:when>
+     <c:when test="${currentFilter eq 'me49_int_veg'}">
+       <div class="vennFilter vennDiagram midSelected">
+     </c:when>
+     <c:when test="${currentFilter eq 'veg_min_me49'}">
+       <div class="vennFilter vennDiagram btmSelected">
+     </c:when>
+     <c:otherwise>
+       <div class="vennFilter vennDiagram">
+     </c:otherwise>
+   </c:choose>
      <ul>
          <li>
       <wdk:filterInstance strategyId="${strategyId}" 
@@ -142,4 +184,3 @@
   </td>
  </tr>
 </table>
-
