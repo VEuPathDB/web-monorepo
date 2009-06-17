@@ -411,9 +411,9 @@ Annotation of the P. chabaudi AS chromosomes was obtained from the Pathogen Sequ
     </c:when>
     <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'TgCkUg2')}">
     <c:set var="reference">
-      <b>Whole genome sequence of the natural recombinant strain  Toxoplasma gondii TgCkUg2 is provided by Irene Lindström Bontell, Institute of Integrative and Comparative Biology, Miall Building, Clarendon Way, University of Leeds, Leeds, LS2 9JT, United Kingdom</b>
-    </c:set>
-    </c:when>
+      <b>Whole genome sequence of the natural recombinant Toxoplasma gondii strain TgCkUg2 was provided by Judith E Smith, Institute of Integrative and Comparative Biology, Clarendon Way, University of Leeds, Leeds, LS2 9JT, UK.  Further information may be obtained from the following publication: Genome Biol. 2009 May 20;10(5):R53. PMID 19457243.</b>
+   </c:set>
+   </c:when>
 
 
     <c:when test="${projectId eq 'TrichDB'}">
