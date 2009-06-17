@@ -39,6 +39,7 @@ div#dyk-box div#dyk-text{
 	height:145px;
 	margin:24px 0 10px;
 	width:100%;
+	overflow-y: scroll;
 }
 
 div#dyk-box div#closing-items{
