@@ -190,9 +190,8 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog)
         $(".filter.params", quesForm).remove();
         $("input[name=questionFullName]", quesForm).remove();
         $(".filter.operators", quesForm).width('auto');
-        quesForm.css({'max-width' : '600px','min-width' : '500px'});
 	//	$("#query_form").css("min-width", "500px");
-    }
+	    }
 	if (hideOp){
 		$(".filter.operators", quesForm).remove();
 		$(".filter.params", quesForm).after("<input type='hidden' name='booleanExpression' value='AND' />");
