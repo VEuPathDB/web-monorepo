@@ -26,8 +26,8 @@ function initDYK(o){	//TODO Create and read in an XML file to provide the text f
 		minHeight: 167,
 		alsoResize: '#dyk-shadow,#dyk-text'
 	});
-//	$("div#dyk-shadow").resizable();
-	
+	$("div#dyk-shadow").resizable();
+
 	$("div#dyk-box").draggable({
 		handle: ".dragHandle",
 /*		drag: function(e, u){
@@ -94,7 +94,7 @@ function prevTip(){
 }
 
 function dykOpen(){
-	$(tips[0]).find("input#stay-closed-check").attr("disabled",true);
+//	$(tips[0]).find("input#stay-closed-check").attr("disabled",true);
 	$("div.innertube").append(tips[0]);
 	$("div.innertube").append(tips[1]);
 	initDYK(true);
@@ -102,8 +102,7 @@ function dykOpen(){
 
 function dykClose(){
 	var ex = $("div#dyk-box input#stay-closed-check").attr("checked");
-	if(tips == null)
-		setDYKCookie(ex);
+	setDYKCookie(ex);
 	tips = $("#dyk-box,#dyk-shadow").remove();
 }
 
