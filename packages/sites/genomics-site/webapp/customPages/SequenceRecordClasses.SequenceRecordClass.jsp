@@ -79,11 +79,12 @@ ${id}
 
 
 <%------------------------------------------------------------------%>
-<c:url var="commentsUrl" value="showAddComment.do">
+<c:url var="commentsUrl" value="addComment.do">
   <c:param name="stableId" value="${id}"/>
   <c:param name="commentTargetId" value="genome"/>
   <c:param name="externalDbName" value="${attrs['externalDbName'].value}" />
   <c:param name="externalDbVersion" value="${attrs['externalDbVersion'].value}" />
+  <c:param name="flag" value="0" /> 
 </c:url>
 <c:set var='commentLegend'>
     <c:catch var="e">
