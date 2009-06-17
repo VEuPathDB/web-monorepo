@@ -71,6 +71,14 @@
 
 </c:if>
 
+<%-- RFLP table ------------------------------------------------%>
+<c:if test="${data_type eq 'RFLP'}">
+
+<site:wdkTable tblName="RFLPdata" isOpen="true"
+     attribution=""/>
+<br>
+</c:if>
+
 <%--#############################################################--%>
 
 <%-- Alignments and Genes ------------------------------------------------%>
