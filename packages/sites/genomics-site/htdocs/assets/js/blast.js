@@ -42,6 +42,7 @@ window.onload = function(){
 	else if(target == 'EST') clickDefault('EST','type');
 	else if(target == 'SEQ') clickDefault('Genome','type');
 	else if(target == 'ISOLATE') clickDefault('Isolates','type');
+	else if(target == 'ASSEMBLIES') clickDefault('Assemblies','type');
 
 	if(parseUrl('-filter') != ""){
            revise = true;
@@ -99,13 +100,13 @@ function changeQuestion(){
 	if (blastDb.indexOf("est") >= 0){
 		questionName = "EstQuestions.EstsBySimilarity";
 	} else 	if (blastDb.indexOf("assem") >= 0){
-		questionName = "EstQuestions.EstsBySimilarity";
+		questionName = "AssemblyQuestions.AssembliesBySimilarity";
 	} else 	if (blastDb.indexOf("orf") >= 0){
 		questionName = "OrfQuestions.OrfsBySimilarity";
 	} else 	if (blastDb.indexOf("genom") >= 0){
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
 	} else 	if (blastDb.indexOf("iso") >= 0){
-		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
+		questionName = "IsolateQuestions.IsolatesBySimilarity";
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
 	}
