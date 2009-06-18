@@ -70,7 +70,7 @@ function displayModel(strat){
 			lsn = strat.getStep(strat.Steps.length, true).back_step_Id;	
 		dType = strat.dataType;
 		$(button).attr("id","filter_link").attr("href","javascript:openFilter('" + dType + "'," + strat.frontId + "," + lsn + ",true)").attr("onclick","this.blur()").addClass("filter_link redbutton");
-		$(button).html("<span title='Run a new query and combine its result with your current result.     Alternatively, you could obtain the orthologs to your current result or run another available transform.'>Add Step</span>");
+		$(button).html("<span title='CLICK to run a new query and combine its result with your current result.     Alternatively, you could obtain the orthologs to your current result or run another available transform.'>Add Step</span>");
 		$(button).css({ position: "absolute",
 						left: buttonleft + "px",
 						top: "56px"});
@@ -114,12 +114,12 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	if(jsonstep.filtered)
 		filterImg = "<span class='filterImg'><img src='/assets/images/filter.gif' height='10px' width='10px'/></span>";
 	boolinner = ""+
-		"			<a id='" + sid + "|" + modelstep.back_boolean_Id + "|" + jsonstep.operation + "' title='Click on this icon or on the step name above to modify this boolean operation.' class='operation' href='javascript:void(0)' onclick='showDetails(this)'>"+
+		"			<a id='" + sid + "|" + modelstep.back_boolean_Id + "|" + jsonstep.operation + "' title='CLICK to modify this boolean operation.' class='operation' href='javascript:void(0)' onclick='showDetails(this)'>"+
 		"				<img src='/assets/images/transparent1.gif'>"+
 		"			</a>"+
 		"			<div class='crumb_details'></div>"+
 		"			<h6 class='resultCount'>"+
-		"				<a title='Show these results in the area below.' class='operation' onclick='NewResults(" + sid + "," + modelstep.frontId + ", true)' href='javascript:void(0)'>" + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType, jsonstep.results) + "</a>"+
+		"				<a title='CLICK to show these results in the area below.' class='operation' onclick='NewResults(" + sid + "," + modelstep.frontId + ", true)' href='javascript:void(0)'>" + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType, jsonstep.results) + "</a>"+
 		"			</h6>" + filterImg;
 		if(!modelstep.isLast){
 			if(modelstep.nextStepType == "transform"){
@@ -157,14 +157,14 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 		childfilterImg = "<span class='filterImg'><img src='/assets/images/filter.gif' height='10px' width='10px'/></span>";
 	childinner = ""+
 		"		<h3>"+
-		"			<a title='Make changes to this step and/or how it is combined with the previous step' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
+		"			<a style='text-decoration:underline' title='CLICK to make changes to this step and/or how it is combined with the previous step' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
 						uname +
 		"				<span class='collapsible' style='display: none;'>false</span>"+
 		"			</a>"+
 		"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 		"			<div class='crumb_details'></div>"+
 		"		</h3>"+
-		"		<h6 class='resultCount'><a title='Show these results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + sid + "," + modelstep.frontId + ", false)'> " + childStp.results + "&nbsp;" + getDataType(childStp.dataType, childStp.results) + "</a></h6>"+
+		"		<h6 class='resultCount'><a title='CLICK to show these results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + sid + "," + modelstep.frontId + ", false)'> " + childStp.results + "&nbsp;" + getDataType(childStp.dataType, childStp.results) + "</a></h6>"+
 		childfilterImg +
 		"		<ul>"+
 		"			<li><img class='downarrow' src='/assets/images/arrow_chain_down2.png' alt='equals'></li>"+
@@ -211,14 +211,14 @@ function singleStep(modelstep, jsonstep, sid, zIndex){
 		filterImg = "<span class='filterImg'><img src='/assets/images/filter.gif' height='10px' width='10px'/></span>";
 	inner = ""+
 		"		<h3>"+
-		"			<a title='Make changes to this step.' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
+		"			<a style='text-decoration:underline' title='CLICK to make changes to this step.' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
 						uname +
 		"				<span class='collapsible' style='display: none;'>false</span>"+
 		"			</a>"+ 
 		"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
 		"			<div class='crumb_details'></div>"+
 		"		</h3>"+
-		"		<h6 class='resultCount'><a title='Show these results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + sid + "," + modelstep.frontId + ", false)'> " + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType,jsonstep.results) + "</a></h6>"+
+		"		<h6 class='resultCount'><a title='CLICK to show these results in the area below.' class='results_link' href='javascript:void(0)' onclick='NewResults(" + sid + "," + modelstep.frontId + ", false)'> " + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType,jsonstep.results) + "</a></h6>"+
 		 filterImg;
 	if(!modelstep.isLast){
 		inner = inner + 
