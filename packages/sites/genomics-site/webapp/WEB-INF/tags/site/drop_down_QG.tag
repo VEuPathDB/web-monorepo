@@ -19,7 +19,7 @@
 							<a href="javascript:void(0)">${cat.key}</a>
 							<ul>
 								<c:forEach items="${cat.value}" var="q">
-									<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a></li>
+									<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=GENE"/>">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
 						</li>
@@ -29,22 +29,32 @@
 		  </c:when>
 		  <c:otherwise>
 			<c:set var="qByCat" value="${catByRec.value}" />
+
 <c:set var="recordType" value="${fn:substringBefore(catByRec.key,'Record')}" />
 <c:if test="${fn:containsIgnoreCase(recordType, 'Snp') || fn:contains(recordType, 'Est')  || fn:contains(recordType, 'Orf') }">
 	<c:set var="recordType" value="${fn:toUpperCase(recordType)}" />
+	<c:set var="target" value="${recordType}" />         <%-- target is used for blast to know which target data type option should be clicked --%>
 </c:if>
 <c:if test="${fn:containsIgnoreCase(recordType, 'SageTag') }">
 	<c:set var="recordType" value="SAGE Tag" />
 </c:if>
 <c:if test="${fn:contains(recordType, 'Assem') }">
 	<c:set var="recordType" value="Assemblie" />
+	<c:set var="target" value="ASSEMBLIES" />
 </c:if>
+<c:if test="${fn:contains(recordType, 'Sequence') }">
+	<c:set var="target" value="SEQ" />
+</c:if>
+<c:if test="${fn:contains(recordType, 'Isolate') }">
+	<c:set var="target" value="ISOLATE" />
+</c:if>
+
 			<c:forEach items="${qByCat}" var="cat">
 		<%--	<li><a href="#">Search for ${cat.key}s</a>  --%>
 			<li><a href="#">Search for ${recordType}s</a> 
 				<ul>
 				<c:forEach items="${cat.value}" var="q">
-				<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a></li>
+				<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=${target}"/>">${q.displayName}</a></li>
 				</c:forEach>
 				</ul>
 			</li>
