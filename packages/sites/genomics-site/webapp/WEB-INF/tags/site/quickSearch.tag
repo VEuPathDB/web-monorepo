@@ -25,6 +25,7 @@
 <c:set var="gkwqpMap" value="${geneByTextQuestion.paramsMap}"/>
 <c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
 <c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
+<c:set var="timestampParam" value="${gkwqpMap['timestamp']}"/>
 
 
 <c:choose>
@@ -83,6 +84,7 @@
           		<input type="hidden" name="myMultiProp(whole_words)" value="no"/>
           		<input type="hidden" name="myProp(max_pvalue)" value="-30"/>
           		<input type="text" class="search-box ts_ie" name="myProp(${textParam.name})" value="${textParam.default}"/>
+                        <input type="hidden" name="myProp(timestamp)" value="${timestampParam.default}"/>
           		<input type="hidden" name="questionSubmit" value="Get Answer"/>
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
