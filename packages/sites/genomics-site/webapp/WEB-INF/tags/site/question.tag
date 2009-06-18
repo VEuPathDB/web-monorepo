@@ -112,23 +112,26 @@
         <%-- hide invisible params --%>
         <c:choose>
             <%--<c:when test="${isHidden}"><html:hidden property="myProp(${qP.class.name})"/></c:when>--%>
+            <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.TimestampParamBean'}">
+                <wdk:timestampParamInput qp="${qP}" />
+            </c:when>
             <c:when test="${isHidden}">
-        <c:choose>
-           <c:when test="${fn:containsIgnoreCase(wdkModel.displayName,'EuPathDB')}">
-            <c:choose>
-                   <c:when test="${pNam eq 'signature'}">
-                    <html:hidden property="myProp(${pNam})" value="${wdkUser.signature}"/>
+                <c:choose>
+                   <c:when test="${fn:containsIgnoreCase(wdkModel.displayName,'EuPathDB')}">
+                        <c:choose>
+                           <c:when test="${pNam eq 'signature'}">
+                            <html:hidden property="myProp(${pNam})" value="${wdkUser.signature}"/>
+                           </c:when>
+                           <c:otherwise>
+                                <html:hidden property="myProp(${pNam})"/>
+                           </c:otherwise>
+                        </c:choose>
                    </c:when>
                    <c:otherwise>
                         <html:hidden property="myProp(${pNam})"/>
                    </c:otherwise>
-            </c:choose>
-           </c:when>
-           <c:otherwise>
-                <html:hidden property="myProp(${pNam})"/>
-           </c:otherwise>
-        </c:choose>
-        </c:when>
+                </c:choose>
+            </c:when>
             <c:otherwise> <%-- visible param --%>
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
