@@ -299,6 +299,10 @@ sub chipColor {
   my ($a) = $f->get_tag_values('Antibody');
   my ($t) = $f->get_tag_values('Treatment');
   my ($r) = $f->get_tag_values('Rep');
+
+  return '#000080' if($a eq 'CenH3_H3K9me2');
+  return '#B0E0E6' if($a eq 'CenH3');
+
   return '#00C800' if($a =~ /H3K4/ && $r == 1);
   return '#00C896' if($a =~ /H3K4/ && $r == 2);
   return '#C86400' if($a =~ /H3K9/ && $r == 1);
