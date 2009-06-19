@@ -87,7 +87,7 @@
 <c:otherwise>   <%-- PLASMO: LOTS OF TOOLS, descriptions as mouseovers --%>
 
 
-  		<li><p style="color:#6600cc;padding-top:16px;"><i>For additional tools mouseover the </i><b>Tools</b><i> menu above.....</i></p>
+  		<li><p style="color:#6600cc;padding-top:16px;"><i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
 		</li>
 
 	</ul>
