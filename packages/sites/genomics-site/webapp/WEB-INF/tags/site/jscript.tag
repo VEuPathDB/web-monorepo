@@ -10,15 +10,24 @@
 <script type="text/javascript" src="/assets/js/lib/jquery-1.3.2.js"></script>
 --%>
 
+
+<!-- js for Help - Did you know window --> 
+<!-- these files were under IF customSummary but the Help needs to work in any page -->
+<script type="text/javascript" src="/assets/js/lib/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="/assets/js/dyk.js"></script>	
+
+
 <!-- JQuery Drag And Drop Plugin -->
 
 <c:if test="${refer == 'customSummary'}">
 	<!-- JQuery Drag And Drop Plugin -->
 	<!--<script type="text/javascript" src="/assets/js/lib/jqDnR.js"></script>-->
 	<script type="text/javascript" src="/assets/js/lib/json.js"></script>
+
 <%--	<script type="text/javascript" src="/assets/js/lib/ui/ui.core.js"></script>
-	<script type="text/javascript" src="/assets/js/lib/ui/ui.draggable.js"></script>--%>
-	<script type="text/javascript" src="/assets/js/lib/jquery-ui-1.7.2.custom.min.js"></script>
+	<script type="text/javascript" src="/assets/js/lib/ui/ui.draggable.js"></script>
+--%>
+
 	<!-- filter menu javascript -->
 	<script type="text/javascript" src="/assets/js/filter_menu.js"></script>
 	<!-- Strategy Interaction javascript -->
@@ -36,7 +45,7 @@
 	<!-- Results Page AJAX Javascript code -->
 	<script type="text/javascript" src="/assets/js/results_page.js"></script>
 	
-	<script type="text/javascript" src="/assets/js/dyk.js"></script>	
+
 
         <script type="text/javascript" src="<c:url value='/assets/js/wdkFilter.js' />"></script>
 </c:if>
@@ -91,6 +100,8 @@
 
 <!-- js for Contact Us window -->
 <script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
+
+
 
 <!-- js for popups in query grid and other.... -->
 <script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
