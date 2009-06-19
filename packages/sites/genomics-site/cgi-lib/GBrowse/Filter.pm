@@ -16,6 +16,12 @@ sub filterByTaxon {
   $taxon eq qq /$value/;
 }
 
+sub filterByDeprecatedGenes {
+  my ($f) = @_;
+  my ($isdeprecated) = $f->get_tag_values("isDeprecated");
+  $isdeprecated == 1;
+}
+
 
 sub filterByTaxonAndContigName {
   my ($f, $taxon, $contig) = @_;
