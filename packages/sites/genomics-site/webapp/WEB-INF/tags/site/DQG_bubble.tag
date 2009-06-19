@@ -57,24 +57,35 @@
 				    <c:if test="${catByRec.key != 'GeneRecordClasses.GeneRecordClass'}">
 				      <c:set var="qByCat" value="${catByRec.value}" />
 				      <c:forEach items="${qByCat}" var="cat">
-  <%-- fixing plural and uppercase --%>
-  <c:set var="recordType" value="${cat.key}" />
+
+<%-- SAME CODE AS IN drop_down_QG.tag --%>
+<%-- fixing plural and uppercase and setting target for BLAST--%>
+<%-- target is used for blast to know which target data type option should be clicked --%>
+
+  <%--  <c:set var="recordType" value="${cat.key}" />  --%>
+  <c:set var="recordType" value="${fn:substringBefore(catByRec.key,'Record')}" />
+
   <c:if test="${fn:containsIgnoreCase(recordType, 'Snp') || fn:containsIgnoreCase(recordType, 'Est')  || fn:containsIgnoreCase(recordType, 'Orf') }">
-	<c:set var="recordType" value="${fn:toUpperCase(recordType)}s" />
+	<c:set var="recordType" value="${fn:toUpperCase(recordType)}" />
+	<c:set var="target" value="${recordType}" />        
   </c:if>
   <c:if test="${fn:contains(recordType, 'Assem') }">
-	<c:set var="recordType" value="Assemblies" />
+	<c:set var="recordType" value="Assemblie" />
+	<c:set var="target" value="ASSEMBLIES" />
+  </c:if>
+  <c:if test="${fn:contains(recordType, 'Sequence') }">
+        <c:set var="target" value="SEQ" />
+  </c:if>
+  <c:if test="${fn:contains(recordType, 'Isolate') }">
+        <c:set var="target" value="ISOLATE" />
   </c:if>
 
-					<li><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;<a class="heading" href="javascript:void(0)">&nbsp;${recordType}</a><a class="detail_link small" href="categoryPage.jsp?record=${catByRec.key}&category=${cat.key}">details</a>
-
-
-
+					<li><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;<a class="heading" href="javascript:void(0)">&nbsp;${recordType}s</a><a class="detail_link small" href="categoryPage.jsp?record=${catByRec.key}&category=${cat.key}">details</a>
 
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.value}" var="q">
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}">${q.displayName}</a></li>
+									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=${target}">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
 						</div>
@@ -107,7 +118,7 @@
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.value}" var="q">
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}">${q.displayName}</a></li>
+									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=GENE">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
 						</div>

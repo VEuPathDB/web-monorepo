@@ -30,6 +30,8 @@
 		  <c:otherwise>
 			<c:set var="qByCat" value="${catByRec.value}" />
 
+
+<%-- SAME CODE AS IN DQG_bubble.tag --%>
 <c:set var="recordType" value="${fn:substringBefore(catByRec.key,'Record')}" />
 <c:if test="${fn:containsIgnoreCase(recordType, 'Snp') || fn:contains(recordType, 'Est')  || fn:contains(recordType, 'Orf') }">
 	<c:set var="recordType" value="${fn:toUpperCase(recordType)}" />
