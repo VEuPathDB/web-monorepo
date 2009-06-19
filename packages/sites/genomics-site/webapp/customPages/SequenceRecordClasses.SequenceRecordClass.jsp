@@ -15,12 +15,6 @@
 
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 
-<c:set var="CPARVUMCHR6" value="${props['CPARVUMCHR6']}"/>
-<c:set var="CPARVUMCONTIGS" value="${props['CPARVUMCONTIGS']}"/>
-<c:set var="CHOMINISCONTIGS" value="${props['CHOMINISCONTIGS']}"/>
-<c:set var="CMURISCONTIGS" value="${props['CMURISCONTIGS']}"/>
-<c:set var="CPARVUMCHRMAP" value="${props['CPARVUMCHRMAP']}"/>
-
 <c:set var="SRT_CONTIG_URL" value="/cgi-bin/contigSrt"/>
 
 <c:set var="externalDbName" value="${attrs['externalDbName'].value}" />
@@ -216,44 +210,46 @@ ${externalLinks}
 <%------------------------------------------------------------------%>
 
 
-  <c:choose>
-<c:when test="${externalDbName eq CPARVUMCONTIGS && projectId eq 'CryptoDB'}">
-    <c:set var="reference">
-Abrahamsen MS, Templeton TJ, Enomoto S, Abrahante JE, Zhu G, Lancto CA, 
-Deng M, Liu C, Widmer G, Tzipori S, Buck GA, Xu P, Bankier AT, Dear PH, 
-Konfortov BA, Spriggs HF, Iyer L, Anantharaman V, Aravind L, Kapur V. 
-<b>Complete genome sequence of the apicomplexan, <i>Cryptosporidium parvum</i>.</b> 
-Science. 2004 Apr 16;<a href="http://www.sciencemag.org/cgi/content/full/304/5669/441"><b>304</b>(5669):441-5</a>.
-    </c:set>
-</c:when>
-<c:when test="${externalDbName eq CHOMINISCONTIGS && projectId eq 'CryptoDB'}">
-    <c:set var="reference">
-Xu P, Widmer G, Wang Y, Ozaki LS, Alves JM, Serrano MG, Puiu D, Manque P, 
-Akiyoshi D, Mackey AJ, Pearson WR, Dear PH, Bankier AT, Peterson DL, 
-Abrahamsen MS, Kapur V, Tzipori S, Buck GA. 
-<b>The genome of <i>Cryptosporidium hominis</i>.</b> 
-Nature. 2004 Oct 28;<a href="http://www.nature.com/nature/journal/v431/n7012/abs/nature02977.html"><b>431</b>(7012):1107-12</a>.
-    </c:set>
-</c:when>
-<c:when test="${externalDbName eq CPARVUMCHR6 && projectId eq 'CryptoDB'}">
-    <c:set var="reference">
-Bankier AT, Spriggs HF, Fartmann B, Konfortov BA, Madera M, Vogel C, 
-Teichmann SA, Ivens A, Dear PH. 
-<b>Integrated mapping, chromosomal sequencing and sequence analysis of <i>Cryptosporidium parvum</i>. 
-</b>Genome Res. 2003 Aug;<a href="http://www.genome.org/cgi/content/full/13/8/1787">13(8):1787-99</a>
-    </c:set>
-</c:when>
-<c:when test="${externalDbName eq CMURISCONTIGS && projectId eq 'CryptoDB'}">
-    <c:set var="reference">
-The Cryptosporidium muris genome sequencing project has been funded by the
-National Institute of Allergy and Infections Diseases (NIAID), through the
-Microbial Sequencing Center program at the Institute for Genomic Research
-(TIGR). 
+ <c:choose>
+ <c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium hominis') && projectId eq 'CryptoDB'}">
+ <c:set var="reference">
+    Xu P, Widmer G, Wang Y, Ozaki LS, Alves JM, Serrano MG, Puiu D, Manque P, 
+    Akiyoshi D, Mackey AJ, Pearson WR, Dear PH, Bankier AT, Peterson DL, 
+    Abrahamsen MS, Kapur V, Tzipori S, Buck GA. 
+    <b>The genome of <i>Cryptosporidium hominis</i>.</b> 
+    Nature. 2004 Oct 28;<a href="http://www.nature.com/nature/journal/v431/n7012/abs/nature02977.html"><b>431</b>(7012):1107-12</a>.
 </c:set>
 </c:when>
-<c:when test="${externalDbName eq CPARVUMCHRMAP && projectId eq 'CryptoDB'}">
-    <c:set var="reference">
-Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> generated from Genbank chromosome records.
+<c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium muris') && projectId eq 'CryptoDB'}">
+<c:set var="reference">
+    The Cryptosporidium muris genome sequencing project has been funded by the
+    National Institute of Allergy and Infections Diseases (NIAID), through the
+    Microbial Sequencing Center program at the Institute for Genomic Research (TIGR). 
+</c:set>
+</c:when>
+ <c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium parvum Iowa II') && (id eq 'CM000429' || id eq 'CM000430' || id eq 'CM000431' || id eq 'CM000432' || id eq 'CM000433' || id eq 'CM000434' || id eq 'CM000435' || id eq 'CM000436') && projectId eq 'CryptoDB'}">
+<c:set var="reference">
+    Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> generated 
+    from Genbank chromosome records.
+</c:set>
+</c:when>
+<c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium parvum Iowa II') && projectId eq 'CryptoDB'}">
+<c:set var="reference">
+    Abrahamsen MS, Templeton TJ, Enomoto S, Abrahante JE, Zhu G, Lancto CA, 
+    Deng M, Liu C, Widmer G, Tzipori S, Buck GA, Xu P, Bankier AT, Dear PH, 
+    Konfortov BA, Spriggs HF, Iyer L, Anantharaman V, Aravind L, Kapur V. 
+    <b>Complete genome sequence of the apicomplexan, <i>Cryptosporidium parvum</i>.</b> 
+    Science. 2004 Apr 16;
+    <a href="http://www.sciencemag.org/cgi/content/full/304/5669/441"><b>304</b>(5669):441-5</a>.
+</c:set>
+</c:when>
+<c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium parvum') && projectId eq 'CryptoDB'}">
+<%-- sequence_source_id = BX526834 --%>
+<c:set var="reference">
+    Bankier AT, Spriggs HF, Fartmann B, Konfortov BA, Madera M, Vogel C, 
+    Teichmann SA, Ivens A, Dear PH. 
+    <b>Integrated mapping, chromosomal sequencing and sequence analysis of <i>Cryptosporidium parvum</i>. 
+    </b>Genome Res. 2003 Aug;<a href="http://www.genome.org/cgi/content/full/13/8/1787">13(8):1787-99</a>
 </c:set>
 </c:when>
 
