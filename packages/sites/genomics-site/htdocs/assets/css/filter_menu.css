@@ -22,8 +22,8 @@
 #query_form {
 	/*display: none;*/
 	position: absolute;
-	left:150px;  /*200px;*/ /*135px;*/
-	top:60px; /*279px;*/
+	left:250px;   /* Omar's request  150px; */  /*200px;*/ /*135px;*/
+	top:-100px;   /*   60px;  */    /*279px;*/
 	min-width: 741px;
 	max-width: 60%;
 	background-color: #FFFFFF;
