@@ -80,6 +80,7 @@
 <PRE>${headerStr}${sumSect}</PRE>
 
 <c:set var="junk" value="${wdkAnswer.resetAnswerRowCursor}"/>
+<br>
 
 <c:set var="algnSect" value=""/>
 <c:forEach items="${wdkAnswer.records}" var="record">
