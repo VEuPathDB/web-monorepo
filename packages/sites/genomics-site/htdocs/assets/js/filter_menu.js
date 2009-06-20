@@ -125,7 +125,7 @@ function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog)
                 || (type == 'ORF' && question != 'OrfQuestions.OrfsBySimilarity')
                 || (type == 'EST' && question != 'EstQuestions.EstsBySimilarity')
                 || (type == 'Assemblies' && question != 'AssemblyQuestions.AssembliesBySimilarity')
-                || (type == 'Isolates' && question != 'UniversalQuestions.UnifiedBlast')) {
+                || (type == 'Isolates' && question != 'IsolateQuestions.IsolatesBySimilarity')) {
                 this.disabled = true;
                 $(this).next().css("color", "gray");
             } else {
