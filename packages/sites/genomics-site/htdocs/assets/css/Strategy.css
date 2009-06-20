@@ -1,3 +1,13 @@
+
+
+#strategy_workspace {
+	position: absolute;
+	top:10.5em;
+	right:10em;
+	z-index: 1;
+
+}
+
   #strat-instructions {
 	background-color:#EDEDED;
 	width:150px;

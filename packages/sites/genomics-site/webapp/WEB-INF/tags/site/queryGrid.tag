@@ -25,9 +25,12 @@
 
 <%--------------------------------------------------------------------%>
 <%-- these divs are needed because they do NOT come from header.... problem associated with having a sidebar --%>
+
+<c:if test="${from != 'tab'}">
 <div id="contentwrapper">
   <div id="contentcolumn">
 	<div class="innertube">
+</c:if>
 
 <%-- TOOLS --%>
 <%--
@@ -54,6 +57,13 @@
 </td></tr>
 </c:if>
 
+<span style="position: relative;left:1.5em;" class="h3left">Select a search to start a new strategy
+<c:if test="${from != 'tab'}">
+ 	or  click on "My Searches: " to enter your strategy workspace.</span>
+</c:if>
+<c:if test="${from == 'tab'}">
+ 	or  click on the "Run" or "Browse" tabs above, to access your strategies.</span>
+</c:if>
 
 <c:if test="${COMPONENT}">
 <tr><td colspan="3">  

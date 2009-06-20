@@ -28,7 +28,7 @@
 <ul><li><a href="<c:url value="/"/>">Home</a></li></ul>
 
 <ul>
-    <li><a href="<c:url value="/queries_tools.jsp"/>" title="Click to access the page with all available searches, or choose the last option in the dropdown menu." >New Search</a>
+    <li><a href="<c:url value="/queries_tools.jsp"/>" title="START a NEW search strategy, or CLICK to access the page with all available searches (last option in the dropdown menu)." >New Search</a>
   	<site:drop_down_QG />
     </li>
 </ul>
