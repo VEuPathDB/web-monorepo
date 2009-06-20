@@ -24,7 +24,7 @@
 	position: absolute;
 	left:250px;   /* Omar's request  150px; */  /*200px;*/ /*135px;*/
 	top:-100px;   /*   60px;  */    /*279px;*/
-	min-width: 741px;
+	min-width: 775px; /* increase to accommodate blast data type options   741px; */
 	max-width: 60%;
 	background-color: #FFFFFF;
 	background-image: url(../images/filter_top.gif);
