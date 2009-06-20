@@ -75,6 +75,8 @@ function displayModel(strat){
 						left: buttonleft + "px",
 						top: "56px"});
 		$(div_strat).append(button);
+		var diagram_width = buttonleft + 200;
+		$(div_strat).css("min-width",diagram_width + "px");
 	    return div_strat;
 	  }
     }
@@ -505,7 +507,7 @@ var deleteStrat = "<a id='delete_" + strat.frontId + "' href='javascript:void(0)
 	var div_sn = document.createElement("div");
 	$(div_sn).attr("id","strategy_name");
 	if (strat.subStratOf == null){
-		$(div_sn).html("<span title='Name of this strategy. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
+		$(div_sn).html("<span style='font-weight:bold' title='Name of this strategy. The (*) indicates this strategy is NOT saved.'>" + name + "</span>" + append + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>" +
 	"<span class='strategy_small_text'>" +
 	"<br/>" + 
 	rename +
@@ -519,9 +521,10 @@ var deleteStrat = "<a id='delete_" + strat.frontId + "' href='javascript:void(0)
 	deleteStrat +
 	"</span>");
 	}else{
-		$(div_sn).html(name + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 
+		$(div_sn).html("<span style='font-weight:bold' title='Name of this substrategy. To rename, click on the corresponding step name in the parent strategy'>" + name + "</span>" + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 
 	}
 	$(div_sn).css({'z-index' : 90}); // DO NOT DELETE, needed for IE7
+	$(div_sn).css("top","0px");     // to have the strategy name closer to the top
 	return div_sn;
 }
 
