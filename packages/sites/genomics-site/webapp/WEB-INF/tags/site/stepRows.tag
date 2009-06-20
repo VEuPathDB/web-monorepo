@@ -29,7 +29,7 @@
     <c:otherwise><tr class="linesalt" style="display: none;"></c:otherwise>
   </c:choose>
   <!-- offer a rename here too? -->
-  <td scope="row" colspan="2"></td>
+
   <c:choose>
     <c:when test="${j == 0}">
       <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.resultSize}): ${step.customName}</li></ul></td>
@@ -61,7 +61,9 @@
       </c:choose>
     </c:otherwise>
   </c:choose>
-  <td colspan="7"/>
+
+
+
   <%-- <td></td>
     <td align="right" nowrap>
       <c:choose>
@@ -72,6 +74,8 @@
     <td align='right' nowrap>${step.resultSize}</td>
     <c:set var="stepId" value="${step.stepId}"/>
     <td nowrap><a href="downloadStep.do?step_id=${stepId}">download</a></td> --%>
+
+
   </tr>
   <c:if test="${step.childStep.isCollapsible}">
     <site:stepRows latestStep="${step.childStep}" i="${i}" indent="${indent + 40}"/>

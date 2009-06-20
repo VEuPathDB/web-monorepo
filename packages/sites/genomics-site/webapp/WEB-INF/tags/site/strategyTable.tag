@@ -65,18 +65,22 @@
           <c:set var="active" value="true"/>
         </c:if>
       </c:forEach>
+
       <td>
         <img id="img_${strategyId}" class="plus-minus plus" src="/assets/images/sqr_bullet_plus.png" alt="" onclick="toggleSteps(${strategyId})"/>
       </td>
+
       <c:set var="dispNam" value="${strategy.name}"/>
+
       <td>
         <div id="text_${strategyId}">
           <span <c:choose>
-		<c:when test="${active}">style="font-weight:bold;cursor:pointer" title="Click to go the Run tab"</c:when>
-		<c:otherwise> style="cursor:pointer" title="Click to open this strategy in the Run tab above, our graphical display" </c:otherwise>
+		<c:when test="${active}">style="font-weight:bold;cursor:pointer" title="Click to go to the graphical display (Run tab)"</c:when>
+		<c:otherwise> style="cursor:pointer" title="Click to open this strategy in the strategy graphical display (Run tab)" </c:otherwise>
 		</c:choose>
 		 onclick="openStrategy('${strategyId}')">${dispNam}</span><c:if test="${!strategy.isSaved}">*</c:if>
         </div> 
+
     <!-- begin rowgroup for strategy steps -->
 	<table id="strat_description">
           <tbody id="steps_${strategyId}">
@@ -84,7 +88,9 @@
           </tbody>    
         </table>
     <!-- end rowgroup for strategy steps -->
+
       </td>
+
       <td nowrap>
         <div id="activate_${strategyId}">
           <c:choose>
@@ -97,6 +103,7 @@
           </c:choose>
         </div>
       </td>
+
       <td>
          <input type='button' value='Download' onclick="downloadStep('${strategy.latestStep.stepId}')" />
       </td>
