@@ -292,7 +292,7 @@ label.error {
      = Summary page tabs, cross-site styles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 ul#strategy_tabs {
-    font-size: 16px;
+    font-size: 16px; /* it is being overriden by font size in reset.css */
     border-bottom: 1px solid #777;
     margin:0 0 1px;
     padding:0 10px;
@@ -1520,6 +1520,7 @@ td.strat_inactive {
     padding:0.24em 1em;
     text-align:center;
     text-decoration:none;
+    font-size: 15px;
 }
 
 
