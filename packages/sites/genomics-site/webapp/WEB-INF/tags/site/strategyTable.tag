@@ -67,7 +67,7 @@
       </c:forEach>
 
       <td>
-        <img id="img_${strategyId}" class="plus-minus plus" src="/assets/images/sqr_bullet_plus.png" alt="" onclick="toggleSteps(${strategyId})"/>
+        <img id="img_${strategyId}" class="plus-minus plus" src="/assets/images/sqr_bullet_plus.png" alt="" onclick="toggleSteps2(${strategyId})"/>
       </td>
 
       <c:set var="dispNam" value="${strategy.name}"/>
@@ -81,15 +81,17 @@
 		 onclick="openStrategy('${strategyId}')">${dispNam}</span><c:if test="${!strategy.isSaved}">*</c:if>
         </div> 
 
-    <!-- begin rowgroup for strategy steps -->
+      </td>
+
+
+<%-- here, the description cannot expand beyond the td, it wraps using more vertical space.
 	<table id="strat_description">
           <tbody id="steps_${strategyId}">
           <site:stepRows latestStep="${strategy.latestStep}" i="${i}" indent="0"/>
           </tbody>    
         </table>
-    <!-- end rowgroup for strategy steps -->
+--%>
 
-      </td>
 
       <td nowrap>
         <div id="activate_${strategyId}">
@@ -137,6 +139,20 @@
       <td nowrap style="text-align:right">${strategy.latestStep.estimateSize}</td>
       <td>&nbsp;</td>
     </tr>
+
+<%-- description : because of being in a diferent tr, we can expand to use all horizontal space  --%>
+<tr id="desc_${strategyId}"  style="display: none;"><td colspan="11">
+
+
+	<table id="strat_description">
+          <tbody id="steps_${strategyId}">
+          <site:stepRows latestStep="${strategy.latestStep}" i="${i}" indent="50"/>
+          </tbody>    
+        </table>
+
+
+</td></tr>
+
     <c:set var="i" value="${i+1}"/>
   </c:forEach>
   <!-- end of forEach strategy in the category -->
