@@ -42,7 +42,7 @@
     <th scope="col" style="width: 5em;text-align:center">Viewed</th>
     <th scope="col" style="width: 4em">Version</th>
     <th scope="col" style="width: 4em;text-align:right">Size</th>
-    <th>&nbsp;</th>
+    <th>&nbsp;&nbsp;</th>
   </tr>
   </thead>
 
@@ -139,7 +139,7 @@
         </c:choose>
       </td>
       <td nowrap style="text-align:right">${strategy.latestStep.estimateSize}</td>
-      <td>&nbsp;</td>
+      <td>&nbsp;&nbsp;</td>
     </tr>
 
 <%-- description : because of being in a diferent tr, we can expand to use all horizontal space  --%>
