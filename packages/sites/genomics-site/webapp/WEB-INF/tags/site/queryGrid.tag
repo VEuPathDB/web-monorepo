@@ -19,7 +19,7 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<c:set var="PORTAL" value="${ fn:containsIgnoreCase(modelName, 'api')    }"     />
+<c:set var="PORTAL" value="${ fn:containsIgnoreCase(modelName, 'eupath')    }"     />
 <c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')   || fn:containsIgnoreCase(modelName, 'tritryp')  }"     />
 
 
