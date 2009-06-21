@@ -105,6 +105,9 @@ My Search Strategies Workspace
 
 
 <%--------------- REST OF PAGE ---------------%>
+
+
+
 <div id="strategy_results">
 
 	<div id="Strategies">
@@ -126,14 +129,14 @@ My Search Strategies Workspace
         <site:sampleStrategies wdkModel="${wdkModel}" wdkUser="${wdkUser}" />
 </div>
 
-<div id="help">
+
+<div id="help" style="display:none">
         <site:helpStrategies wdkModel="${wdkModel}" wdkUser="${wdkUser}" />
 </div>
 
-<div id="strategy_new">
+
+<div id="strategy_new" style="display:none">
         <site:queryGrid  from="tab"/>
 </div>
-
-
 
 <site:footer />
