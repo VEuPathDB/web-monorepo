@@ -107,8 +107,6 @@ My Search Strategies Workspace
 <%--------------- REST OF PAGE ---------------%>
 <div id="strategy_results">
 
-<%--   <div class="strategy_controls"/></div>   --%>
-
 	<div id="Strategies">
 	</div>
 
@@ -119,7 +117,7 @@ My Search Strategies Workspace
 	<div id="Workspace">&nbsp;
 	</div> 
 
-</div><!-- end results view div -->
+</div>
 
 <div id="search_history">
 </div>
@@ -137,7 +135,5 @@ My Search Strategies Workspace
 </div>
 
 
-
-<%-- <div id="loading_step_div"></div>  --%>
 
 <site:footer />

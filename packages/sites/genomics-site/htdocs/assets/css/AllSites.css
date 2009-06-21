@@ -296,7 +296,7 @@ ul#strategy_tabs {
     border-bottom: 1px solid #777;
     margin:0 0 1px;
     padding:0 10px;
-    height: 26.5px;
+    height: 24.5px;   /* decreased when the font size in tabs decreased 26.5px;  */
     width: 98%;
 }
 
