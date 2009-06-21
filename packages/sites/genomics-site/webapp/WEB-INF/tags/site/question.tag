@@ -144,8 +144,10 @@
                                     <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
                                     <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                                     <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
+<%--
                                     <a href="#${anchorQp}">
                                     <img valign="bottom" src="/assets/images/help.png" border="0" alt="Help"></a><br>
+--%>
                                     <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
                                     </td>
                                     </tr>
