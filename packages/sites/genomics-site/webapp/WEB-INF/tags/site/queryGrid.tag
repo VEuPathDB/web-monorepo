@@ -43,6 +43,15 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 
+<div style="padding-top:5px;position: relative;left: 1.5em;" class="h3left">Select a search to start a new strategy
+<c:if test="${from != 'tab'}">
+ 	or  click on "My Searches: " to enter your strategy workspace.</div>
+</c:if>
+<c:if test="${from == 'tab'}">
+ 	or  click on the "Run" or "Browse" tabs above, to access your strategies.</div>
+</c:if>
+
+
 <c:if test="${PORTAL}">
 <tr><td colspan="3">  
     <div class="smallBlack" align="middle">
@@ -55,14 +64,6 @@
         <img src='<c:url value="/images/tritrypdb_letter.gif" />' border='0' alt='Tt' /> = TriTrypDB &nbsp; &nbsp;
 	</div>
 </td></tr>
-</c:if>
-
-<span style="position: relative;left:1.5em;" class="h3left">Select a search to start a new strategy
-<c:if test="${from != 'tab'}">
- 	or  click on "My Searches: " to enter your strategy workspace.</span>
-</c:if>
-<c:if test="${from == 'tab'}">
- 	or  click on the "Run" or "Browse" tabs above, to access your strategies.</span>
 </c:if>
 
 <c:if test="${COMPONENT}">
