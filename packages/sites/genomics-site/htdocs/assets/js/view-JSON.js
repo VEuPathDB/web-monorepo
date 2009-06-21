@@ -274,9 +274,9 @@ function createDetails(modelstep, jsonstep, sid){
 	var collapsedName = name;//"Nested " + name;
 
 	if (jsonstep.isboolean && !jsonstep.isCollapsed){
-		name = "<ul class='question_name'><li>Step " + (modelstep.frontId - 1) + "</li><li class='operation " + jsonstep.operation + "'></li><li>" + name + "</li></ul>";
+		name = "<ul class='question_name'><li>STEP " + modelstep.frontId + " : Step " + (modelstep.frontId - 1) + "</li><li class='operation " + jsonstep.operation + "'></li><li>" + name + "</li></ul>";
 	} else {
-		name = "<p class='question_name'><span>" + name + "</span></p>";
+		name = "<p class='question_name'><span>STEP " + modelstep.frontId + " : " + name + "</span></p>";
 	}
 
 	var parentid = modelstep.back_step_Id;
