@@ -53,8 +53,10 @@
   <c:forEach items="${strategies}" var="strategy">
     <c:set var="strategyId" value="${strategy.strategyId}"/>
     <c:choose>
-      <c:when test="${i % 2 == 0}"><tr class="lines"></c:when>
-      <c:otherwise><tr class="linesalt"></c:otherwise>
+      <c:when test="${i % 2 == 0}">
+		<tr class="lines"></c:when>
+      <c:otherwise>
+		<tr class="linesalt"></c:otherwise>
     </c:choose>
       <td scope="row"><input type=checkbox id="${strategyId}" onclick="updateSelectedList()"/></td>
       <%-- need to see if this strategy id is in the session. --%>

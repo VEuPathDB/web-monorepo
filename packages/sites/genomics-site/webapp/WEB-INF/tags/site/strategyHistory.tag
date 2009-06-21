@@ -99,7 +99,7 @@
   </c:if>
 </c:forEach>
 <!-- end of showing strategies grouped by RecordTypes -->
-
+<br/>
 <!-- begin creating history sections to display strategies -->
 <c:forEach items="${savedStrategiesMap}" var="strategyEntry">
   <c:set var="type" value="${strategyEntry.key}"/>
