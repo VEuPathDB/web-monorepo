@@ -23,7 +23,7 @@ function initDYK(o){	//TODO Create and read in an XML file to provide the text f
 
 	$("div#dyk-box").resizable({
 		minWidth: 405,
-		minHeight: 167,
+		minHeight: 106,
 		alsoResize: '#dyk-shadow,#dyk-text'
 	});
 	$("div#dyk-shadow").resizable();
