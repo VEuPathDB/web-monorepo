@@ -397,7 +397,11 @@ td.operation {
 		left:-1px;
 		top:-1px;
 	}
-
+	
+	div.transform a.crumb_name img{
+		left: 9px;
+	}
+	
 	div.crumb_details {
 		display: none;
 		background-color: #eee;
