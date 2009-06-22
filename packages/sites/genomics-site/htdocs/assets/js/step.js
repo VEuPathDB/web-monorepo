@@ -19,7 +19,7 @@ function showDetails(det){
 	$("div.crumb_details", diagram).each(function(){
 		$(this).attr("disp","0");
 	})
-	
+	$("a.crumb_name img").attr("src","/assets/images/plus.gif");
 	if(disp == "0"){
 		openDetail.attr("disp","1");
 		var det2 = openDetail.clone();
@@ -30,8 +30,8 @@ function showDetails(det){
 		//		handle: '.dragHandle',
 		//		containment: 'parent'
 		//	});
-		l = 276;
-		t = 114;
+		l = 361;
+		t = -27;
 		det2.css({
 			left: l + "px",
 			top: t + "px",
@@ -39,11 +39,11 @@ function showDetails(det){
 			position: "absolute"
 		});
 	det2.appendTo("#strategy_results");
-	$(det).children("img").attr("src","/assets/images/minus.gif");
+	if ($(det).hasClass('crumb_name')) $(det).children("img").attr("src","/assets/images/minus.gif");
 	}
 	else{
 		openDetail.attr("disp","0");
-		$(det).children("img").attr("src","/assets/images/plus.gif");
+	if ($(det).hasClass('crumb_name')) $(det).children("img").attr("src","/assets/images/plus.gif");
 	}
 }
 
@@ -54,6 +54,7 @@ function hideDetails(det){
 	$("#strategy_results").children("div.crumb_details").each(function(){
 		$(this).remove();	
 	});
+	$("a.crumb_name img").attr("src","/assets/images/plus.gif");
 }
 
 function Edit_Step(ele, questionName, url, hideQuery, hideOp){
