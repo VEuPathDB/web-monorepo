@@ -119,6 +119,7 @@ function showHistSave(ele, stratId, save,share) {
        popup.css("top", (btnOffset.top - prntOffset.top - 40) + "px");
        popup.css("right", "292px");
        popup.appendTo(perm_popup.parent()).show();
+	$("input[name='name']", popup).focus().select();
 }
 
 function showHistShare(ele, stratId, url) {
