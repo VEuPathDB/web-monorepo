@@ -79,7 +79,7 @@
 ----------------------------------*/
 
 /* states and images */
-.ui-icon { width: 16px; height: 16px; background-image: url(images/ui-icons_222222_256x240.png); }
+.ui-icon { width: 16px; height: 16px; background-image: url(/assets/images/ui-icons_222222_256x240.png); }
 .ui-widget-content .ui-icon {background-image: url(images/ui-icons_222222_256x240.png); }
 .ui-widget-header .ui-icon {background-image: url(images/ui-icons_ffffff_256x240.png); }
 .ui-state-default .ui-icon { background-image: url(images/ui-icons_ef8c08_256x240.png); }
@@ -260,7 +260,7 @@
 .ui-icon-grip-dotted-horizontal { background-position: -16px -224px; }
 .ui-icon-grip-solid-vertical { background-position: -32px -224px; }
 .ui-icon-grip-solid-horizontal { background-position: -48px -224px; }
-.ui-icon-gripsmall-diagonal-se { background-position: -64px -224px; }
+.ui-icon-gripsmall-diagonal-se { background-position: -66px -226px; }
 .ui-icon-grip-diagonal-se { background-position: -80px -224px; }
 
 
