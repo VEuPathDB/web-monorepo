@@ -1,4 +1,5 @@
 #dyk-box,#dyk-shadow{
+	display: none;
 	position:absolute;
 	width:400px;
 	height:200px;

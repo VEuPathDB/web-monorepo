@@ -12,6 +12,7 @@ function initDYK(o){	//TODO Create and read in an XML file to provide the text f
 		tips = $("#dyk-box,#dyk-shadow").remove();
 		return;
 	} 
+	$("#dyk-box,#dyk-shadow").show();
 	var randomnumber=Math.floor(Math.random()*tipMax);
 	setCurrent(randomnumber);
 	$("#dyk-box input#close").click(function(){
