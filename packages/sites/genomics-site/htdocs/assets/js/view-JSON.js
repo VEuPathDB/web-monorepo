@@ -270,7 +270,7 @@ function createDetails(modelstep, jsonstep, sid){
 		if (jsonstep.step.isCollapsed) {
 			name = jsonstep.step.strategy.name;
 		} else {
-			name = jsonstep.step.displayName;
+			name = jsonstep.step.customName;
 		}
 	}
 	var collapsedName = name;//"Nested " + name;
