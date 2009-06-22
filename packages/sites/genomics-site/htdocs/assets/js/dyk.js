@@ -31,6 +31,7 @@ function initDYK(o){	//TODO Create and read in an XML file to provide the text f
 
 	$("div#dyk-box").draggable({
 		handle: ".dragHandle",
+		containment: 'window',
 /*		drag: function(e, u){
 			var lef = $(this).css('left');
 			var to = $(this).css('top');
