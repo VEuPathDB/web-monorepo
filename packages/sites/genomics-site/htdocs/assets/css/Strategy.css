@@ -392,6 +392,12 @@ td.operation {
 
 	}
 
+	a.crumb_name img {
+		position:absolute;
+		left:-1px;
+		top:-1px;
+	}
+
 	div.crumb_details {
 		display: none;
 		background-color: #eee;

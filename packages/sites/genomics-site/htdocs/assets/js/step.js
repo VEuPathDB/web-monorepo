@@ -39,9 +39,11 @@ function showDetails(det){
 			position: "absolute"
 		});
 	det2.appendTo("#strategy_results");
+	$(det).children("img").attr("src","/assets/images/minus.gif");
 	}
 	else{
 		openDetail.attr("disp","0");
+		$(det).children("img").attr("src","/assets/images/plus.gif");
 	}
 }
 

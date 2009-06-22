@@ -161,6 +161,7 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 		"		<h3>"+
 		"			<a style='text-decoration:underline' title='CLICK to make changes to this step and/or how it is combined with the previous step' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
 						uname +
+		"				<img src='/assets/images/plus.gif' width='13' height='13'/>"+
 		"				<span class='collapsible' style='display: none;'>false</span>"+
 		"			</a>"+
 		"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
@@ -215,6 +216,7 @@ function singleStep(modelstep, jsonstep, sid, zIndex){
 		"		<h3>"+
 		"			<a style='text-decoration:underline' title='CLICK to make changes to this step.' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
 						uname +
+		"				<img src='/assets/images/plus.gif' width='13' height='13'/>"+
 		"				<span class='collapsible' style='display: none;'>false</span>"+
 		"			</a>"+ 
 		"			<span id='fullStepName' style='display: none;'>" + fullName + "</span>"+
