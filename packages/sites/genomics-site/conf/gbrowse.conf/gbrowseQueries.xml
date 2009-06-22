@@ -838,7 +838,33 @@ ORDER BY
 ]]>
     </sql>
   </sqlQuery>
-  
+ 
+  <sqlQuery name="repeat_region:Genbank">
+  <sql>
+<![CDATA[ 
+SELECT gf.na_feature_id feature_id,
+       'repeat_region' type, 
+       'Genbank' source, 
+       gf.source_id name, 
+       gf.na_sequence_id parent_id, 
+       ga.start_min startm, 
+       ga.end_max end, 
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Name=' || gf.source_id || '$dlm' ||
+       'Type=' || ga.so_term_name || '$dlm' ||
+       'Note=' || ga.product atts
+FROM   dots.GENEFEATURE gf, 
+       dots.NALOCATION nal,
+       apidb.GeneAttributes ga 
+WHERE  ga.so_term_name = 'repeat_region'
+   AND nal.na_feature_id = gf.na_feature_id
+   AND ga.start_min <= $rend 
+   AND ga.end_max >= $base_start 
+   AND gf.source_id = ga.source_id
+   AND gf.na_sequence_id = $srcfeature_id 
+]]>
+    </sql>
+  </sqlQuery>    
   
   <sqlQuery name="alignment:dbEST">
      <sql>
