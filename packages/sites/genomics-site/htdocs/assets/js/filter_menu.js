@@ -276,7 +276,7 @@ function OpenOperationBox(stratId, insertId) {
 }
 
 function openFilter(dtype,strat_id,step_id,isAdd){
-	hideDetails();
+	if(openDetail != null) hideDetails();
 	var isFirst = false;
 	steps = getStrategy(strat_id).Steps;
 	if(step_id == undefined){
