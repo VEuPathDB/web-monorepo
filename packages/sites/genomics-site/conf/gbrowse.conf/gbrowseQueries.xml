@@ -850,9 +850,12 @@ SELECT gf.na_feature_id feature_id,
        ga.start_min startm, 
        ga.end_max end, 
        decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       'Name=' || gf.source_id || '$dlm' ||
-       'Type=' || ga.so_term_name || '$dlm' ||
-       'Note=' || ga.product atts
+       'Note=' || ga.product  || '$dlm' ||
+       'soTerm=' || ga.so_term_name || '$dlm' ||
+       'product=' || replace(ga.product,'''','&#146;') || '$dlm' ||
+       'taxon=' || ga.organism || '$dlm' ||
+       'isPseudo=' || ga.is_pseudo
+         as atts
 FROM   dots.GENEFEATURE gf, 
        dots.NALOCATION nal,
        apidb.GeneAttributes ga 

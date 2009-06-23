@@ -84,4 +84,10 @@ sub filterMassSpecByExtDbNameAndDepth {
   (($extdbname =~ /$dbname/i) && ($$cfg->{$name}->{$span}++ < $depth) );
 }
 
+sub filterRepeatRegion {
+  my ($f) = @_;
+  my ($soterm) = $f->get_tag_values('soTerm');
+  ($soterm ne 'repeat_region');
+}
+
 1;
