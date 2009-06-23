@@ -61,6 +61,7 @@ function showLoading(divId){
 	var i = document.createElement('img');
 	$(i).attr("src","/assets/images/" + l_gif);
 	$(i).attr("height",sz);
+	$(i).attr("width",sz);
 	//$(l).html("<p style='position:relative;top:-17px;z-index:300'>Loading...</p>");
 	$(l).prepend(i);
 	$(l).css({
