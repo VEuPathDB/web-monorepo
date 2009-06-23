@@ -98,3 +98,7 @@ a.disabled:hover {
 	overflow-x: hidden;
 }
 
+#strategy_results, #search_history,
+#sample_strat, #help, #strategy_new {
+	z-index: 2;
+}
