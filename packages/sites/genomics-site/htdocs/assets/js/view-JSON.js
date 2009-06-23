@@ -160,7 +160,7 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	childinner = ""+
 		"		<h3>"+
 		"			<a style='text-decoration:underline' title='CLICK to make changes to this step and/or how it is combined with the previous step' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
-						uname +
+		"				<span id='name'>"+uname+"</span>"+
 		"				<img src='/assets/images/plus.gif' width='13' height='13'/>"+
 		"				<span class='collapsible' style='display: none;'>false</span>"+
 		"			</a>"+
@@ -181,7 +181,7 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	var bkgdDiv = null;
 	if(childStp.isCollapsed){
 		var ss_name = childStp.strategy.name.length > 15 ? childStp.strategy.name.substring(0,12) + "...":childStp.strategy.name; 
-		$(".crumb_name", childDiv).text(ss_name);
+		$(".crumb_name span#name", childDiv).text(ss_name);
 		$("span#fullStepName", childDiv).text(childStp.strategy.name);
 		bkgdDiv = document.createElement("div");
 		$(bkgdDiv).addClass("expandedStep");
@@ -215,7 +215,7 @@ function singleStep(modelstep, jsonstep, sid, zIndex){
 	inner = ""+
 		"		<h3>"+
 		"			<a style='text-decoration:underline' title='CLICK to make changes to this step.' id='stepId_" + modelstep.frontId + "' class='crumb_name' onclick='showDetails(this)' href='javascript:void(0)'>"+
-						uname +
+		"				<span id='name'>"+uname+"</span>"+
 		"				<img src='/assets/images/plus.gif' width='13' height='13'/>"+
 		"				<span class='collapsible' style='display: none;'>false</span>"+
 		"			</a>"+ 
