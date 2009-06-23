@@ -37,13 +37,6 @@ function ResultsToGrid(data) {
         wdkFilter.initialize();
 
 	// specify column sizes so flexigrid generates columns properly.
-/*
-	var headers = $('#Results_Table th');
-	$('#Results_Table tbody tr:first td').each(
-		function(idx,ele){
-			$(headers[idx]).attr("width", Math.max($(ele).width(),$(headers[idx]).width()) );
-		}
-	);
 	$("#Results_Table").flexigrid({height : 'auto',
 				       showToggleBtn : false,
 				       useRp : false,
@@ -51,9 +44,7 @@ function ResultsToGrid(data) {
 				       onMoveColumn : moveAttr,
                                        nowrap : false,
 				       resizable : false});
-	$(".cDrag").remove();
-	flexifluid.init();
-*/
+	//flexifluid.init();
 }
 
 function updatePageCount(pager_id) {

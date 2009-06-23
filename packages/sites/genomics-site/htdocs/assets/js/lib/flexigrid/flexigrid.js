@@ -12,9 +12,10 @@
 		  
 	$.addFlex = function(t,p)
 	{
+		// MAYBE DON'T NEED THIS SETUP STUFF?
+		if (t.grid) return false; //return if already exist
 
-		if (t.grid) return false; //return if already exist	
-		
+		// PROBABLY DON'T NEED PROPERTIES?
 		// apply default properties
 		p = $.extend({
 			 height: 200, //default height
@@ -52,14 +53,17 @@
 			 onSubmit: false, // using a custom populate function
 			 onMoveColumn: false
 		  }, p);
-		  		
-
+	
+		// NOT NEEDED SINCE STRUCTURE GENERATED ON BACKEND
+		/*
 		$(t)
 		.show() //show if hidden
 		.attr({cellPadding: 0, cellSpacing: 0, border: 0})  //remove padding and spacing
 		.removeAttr('width') //remove width properties	
 		;
-		
+		*/
+
+		// BEGIN CREATING GRID CLASS
 		//create grid class
 		var g = {
 			hset : {},
@@ -67,10 +71,10 @@
 
 			var cdleft = 0 - this.hDiv.scrollLeft;
 			if (this.hDiv.scrollLeft>0) cdleft -= Math.floor(p.cgwidth/2);
-			$(g.cDrag).css({top:g.hDiv.offsetTop+1});
+			//$(g.cDrag).css({top:g.hDiv.offsetTop+1});
 			var cdpad = this.cdpad;
 			
-			$('div',g.cDrag).hide();
+			//$('div',g.cDrag).hide();
 			
 			$('thead tr:first th:visible',this.hDiv).each
 				(
@@ -85,7 +89,7 @@
 
 					cdpos = cdpos + cdleft + cdpad;
 					
-					$('div:eq('+n+')',g.cDrag).css({'left':cdpos+'px'}).show();
+					//$('div:eq('+n+')',g.cDrag).css({'left':cdpos+'px'}).show();
 
 					cdleft = cdpos;
 					}
@@ -96,34 +100,34 @@
 					newH = false;
 					if (!newH) newH = $(g.bDiv).height();
 					var hdHeight = $(this.hDiv).height();
-					$('div',this.cDrag).each(
-						function ()
-							{
-								$(this).height(newH+hdHeight);
-							}
-					);
+					//$('div',this.cDrag).each(
+					//	function ()
+					//		{
+					//			$(this).height(newH+hdHeight);
+					//		}
+					//);
 					
-					var nd = parseInt($(g.nDiv).height());
+					//var nd = parseInt($(g.nDiv).height());
 					
-					if (nd>newH)
-						$(g.nDiv).height(newH).width(200);
-					else
-						$(g.nDiv).height('auto').width('auto');
+					//if (nd>newH)
+					//	$(g.nDiv).height(newH).width(200);
+					//else
+					//	$(g.nDiv).height('auto').width('auto');
 					
 					$(g.block).css({height:newH,marginBottom:(newH * -1)});
 					
 					var hrH = g.bDiv.offsetTop + newH;
-					if (p.height != 'auto' && p.resizable) hrH = g.vDiv.offsetTop;
-					$(g.rDiv).css({height: hrH});
+					//if (p.height != 'auto' && p.resizable) hrH = g.vDiv.offsetTop;
+					//$(g.rDiv).css({height: hrH});
 				
 			},
 			dragStart: function (dragtype,e,obj) { //default drag function start
 				
 				if (dragtype=='colresize') //column resize
 					{
-						$(g.nDiv).hide();$(g.nBtn).hide();
-						var n = $('div',this.cDrag).index(obj);
-						var ow = $('th:visible div:eq('+n+')',this.hDiv).width();
+						//$(g.nDiv).hide();$(g.nBtn).hide();
+						//var n = $('div',this.cDrag).index(obj);
+						//var ow = $('th:visible div:eq('+n+')',this.hDiv).width();
 						$(obj).addClass('dragging').siblings().hide();
 						$(obj).prev().addClass('dragging').show();
 						
@@ -145,7 +149,7 @@
 
 				else if (dragtype=='colMove') //column header drag
 					{
-						$(g.nDiv).hide();$(g.nBtn).hide();
+						//$(g.nDiv).hide();$(g.nBtn).hide();
 						this.hset = $(this.hDiv).offset();
 						this.hset.right = this.hset.left + $('table',this.hDiv).width();
 						this.hset.bottom = this.hset.top + $('table',this.hDiv).height();
@@ -164,7 +168,7 @@
 						$(this.colCopy).css({position:'absolute',float:'left',display:'none', textAlign: obj.align});
 						$(this.colCopy).fadeTo("fast", 0.6);
 						$('body').append(this.colCopy);
-						$(this.cDrag).hide();
+						//$(this.cDrag).hide();
 						
 					}
 														
@@ -244,8 +248,8 @@
 								this.hDiv.scrollLeft = this.bDiv.scrollLeft;
 
 
-						$('div:eq('+n+')',this.cDrag).siblings().show();
-						$('.dragging',this.cDrag).removeClass('dragging');
+						//$('div:eq('+n+')',this.cDrag).siblings().show();
+						//$('.dragging',this.cDrag).removeClass('dragging');
 						this.rePosDrag();
 						this.fixHeight();
 						this.colresize = false;
@@ -270,8 +274,8 @@
 							
 							
 							this.switchCol(this.dcoln,this.dcolt);
-							$(this.cdropleft).remove();
-							$(this.cdropright).remove();
+							//$(this.cdropleft).remove();
+							//$(this.cdropright).remove();
 							this.rePosDrag();
 																			
 							}
@@ -283,12 +287,12 @@
 						this.colCopy = null;
 						
 						$('.thMove',this.hDiv).removeClass('thMove');
-						$(this.cDrag).show();
+						//$(this.cDrag).show();
 					}										
 				$('body').css('cursor','default');
 				$('body').noSelect(false);
 			},
-			toggleCol: function(cid,visible) {
+			/* toggleCol: function(cid,visible) {
 				
 				var ncol = $("th[axis='col"+cid+"']",this.hDiv)[0];
 				var n = $('thead th',g.hDiv).index(ncol);
@@ -302,7 +306,7 @@
 				
 				
 				
-				if ($('input:checked',g.nDiv).length<p.minColToggle&&!visible) return false;
+				//if ($('input:checked',g.nDiv).length<p.minColToggle&&!visible) return false;
 				
 				if (visible)
 					{
@@ -333,10 +337,10 @@
 				if (p.onToggleCol) p.onToggleCol(cid,visible);
 				
 				return visible;
-			},
+			}, */
 			switchCol: function(cdrag,cdrop) { //switch columns
 				
-				$('tbody tr',t).each
+				$('tbody#rootBody tr',t).each
 					(
 						function ()
 							{
@@ -348,10 +352,10 @@
 					);
 					
 					//switch order in nDiv
-					if (cdrag>cdrop)
-						$('tr:eq('+cdrop+')',this.nDiv).before($('tr:eq('+cdrag+')',this.nDiv));
-					else
-						$('tr:eq('+cdrop+')',this.nDiv).after($('tr:eq('+cdrag+')',this.nDiv));
+					//if (cdrag>cdrop)
+						//$('tr:eq('+cdrop+')',this.nDiv).before($('tr:eq('+cdrag+')',this.nDiv));
+					//else
+						//$('tr:eq('+cdrop+')',this.nDiv).after($('tr:eq('+cdrag+')',this.nDiv));
 						
 					if ($.browser.msie&&$.browser.version<7.0) $('tr:eq('+cdrop+') input',this.nDiv)[0].checked = true;	
 					
@@ -531,11 +535,11 @@
 				if ($.browser.opera) $(t).css('visibility','visible');
 				
 			},
-			changeSort: function(th) { //change sortorder
+			/* changeSort: function(th) { //change sortorder
 			
 				if (this.loading) return true;
 				
-				$(g.nDiv).hide();$(g.nBtn).hide();
+				//$(g.nDiv).hide();$(g.nBtn).hide();
 				
 				if (p.sortname == $(th).attr('abbr'))
 					{
@@ -554,11 +558,11 @@
 				else
 					this.populate();				
 			
-			},
-			buildpager: function(){ //rebuild pager based on new properties
+			}, */
+			/* buildpager: function(){ //rebuild pager based on new properties
 			
-			$('.pcontrol input',this.pDiv).val(p.page);
-			$('.pcontrol span',this.pDiv).html(p.pages);
+			//$('.pcontrol input',this.pDiv).val(p.page);
+			//$('.pcontrol span',this.pDiv).html(p.pages);
 			
 			var r1 = (p.page-1) * p.rp + 1; 
 			var r2 = r1 + p.rp - 1; 
@@ -571,9 +575,9 @@
 			stat = stat.replace(/{to}/,r2);
 			stat = stat.replace(/{total}/,p.total);
 			
-			$('.pPageStat',this.pDiv).html(stat);
+			//$('.pPageStat',this.pDiv).html(stat);
 			
-			},
+			}, */
 			populate: function () { //get latest data
 
 				if (this.loading) return true;
@@ -587,9 +591,9 @@
 				this.loading = true;
 				if (!p.url) return false;
 				
-				$('.pPageStat',this.pDiv).html(p.procmsg);
+				//$('.pPageStat',this.pDiv).html(p.procmsg);
 				
-				$('.pReload',this.pDiv).addClass('loading');
+				//$('.pReload',this.pDiv).addClass('loading');
 				
 				$(g.block).css({top:g.bDiv.offsetTop});
 				
@@ -624,14 +628,14 @@
 					   error: function(data) { try { if (p.onError) p.onError(data); } catch (e) {} }
 					 });
 			},
-			doSearch: function () {
-				p.query = $('input[name=q]',g.sDiv).val();
-				p.qtype = $('select[name=qtype]',g.sDiv).val();
+			/* doSearch: function () {
+				//p.query = $('input[name=q]',g.sDiv).val();
+				//p.qtype = $('select[name=qtype]',g.sDiv).val();
 				p.newp = 1;
 
 				this.populate();				
-			},
-			changePage: function (ctype){ //change page
+			}, */
+			/* changePage: function (ctype){ //change page
 			
 				if (this.loading) return true;
 			
@@ -658,15 +662,15 @@
 				else				
 					this.populate();
 			
-			},
+			}, */
 			addCellProp: function ()
 			{
 				
-					$('tbody tr td',g.bDiv).each
+					/* $('.bDivBox > table > tbody > tr > td',g.bDiv).each
 					(
 						function ()
 							{
-									var tdDiv = document.createElement('div');
+									var tdDiv = $("div", this).eq(0);
 									var n = $('td',$(this).parent()).index(this);
 									var pth = $('th:eq('+n+')',g.hDiv).get(0);
 			
@@ -676,7 +680,7 @@
 										{
 										this.className = 'sorted';
 										}
-									 $(tdDiv).css({textAlign:pth.align,width: $('div:first',pth)[0].style.width});
+									 $(tdDiv).css({width: $('div:first',pth)[0].style.width});
 									 
 									 if (pth.hide) $(this).css('display','none');
 									 
@@ -687,7 +691,7 @@
 									 if (this.innerHTML=='') this.innerHTML = '&nbsp;';
 									 
 									 //tdDiv.value = this.innerHTML; //store preprocess value
-									 tdDiv.innerHTML = this.innerHTML;
+									 //tdDiv.innerHTML = this.innerHTML;
 									 
 									 var prnt = $(this).parent()[0];
 									 var pid = false;
@@ -703,7 +707,7 @@
 									//add editable event here 'dblclick'
 
 							}
-					);
+					); */
 					
 			},
 			getCellDim: function (obj) // get cell prop for editable event
@@ -783,7 +787,10 @@
 			},
 			pager: 0
 			};		
-		
+		// END CREATING GRID CLASS
+
+		// DON'T NEED SINCE NOT USING COLMODEL?
+		/*
 		//create model if any
 		if (p.colModel)
 		{
@@ -824,8 +831,11 @@
 			$(thead).append(tr);
 			$(t).prepend(thead);
 		} // end if p.colmodel	
+		*/
 
+		// STRUCTURE ALREADY CREATED...SHOULD BE ABLE TO FIND W/ JQUERY
 		//init divs
+		/*
 		g.gDiv = document.createElement('div'); //create global container
 		g.mDiv = document.createElement('div'); //create title container
 		g.hDiv = document.createElement('div'); //create header container
@@ -839,26 +849,40 @@
 		g.iDiv = document.createElement('div'); //create editable layer
 		g.tDiv = document.createElement('div'); //create toolbar
 		g.sDiv = document.createElement('div');
-		
+		*/
+		// NOT USING PAGER, COULD ELIMINATE THIS
+		/*
 		if (p.usepager) g.pDiv = document.createElement('div'); //create pager container
 		g.hTable = document.createElement('table');
+		*/
 
+		// GDIV ALREADY EXISTS, NEED TO FIND IT!
 		//set gDiv
+		g.gDiv = $(".flexigrid").eq(0);
+		/*
 		g.gDiv.className = 'flexigrid';
 		if (p.width!='auto') g.gDiv.style.width = p.width + 'px';
+		*/
 
 		//add conditional classes
 		if ($.browser.msie)
 			$(g.gDiv).addClass('ie');
-		
+
+		// DON'T NEED NOVSTRIPE		
+		/*
 		if (p.novstripe)
 			$(g.gDiv).addClass('novstripe');
+		*/
 
+		// DON'T NEED TO APPEND GDIV
+		/*
 		$(t).before(g.gDiv);
 		$(g.gDiv)
 		.append(t)
-		;
+		; */
 
+		// DON'T NEED TOOLBAR EITHER
+		/*
 		//set toolbar
 		if (p.buttons) 
 		{
@@ -905,21 +929,14 @@
 				$(g.tDiv).append("<div style='clear:both'></div>");
 				$(g.gDiv).prepend(g.tDiv);
 		}
-		
+		*/
+		//END TOOLBAR
+
+		// FIND HDIV INSTEAD OF CREATING
 		//set hDiv
-		g.hDiv.className = 'hDiv';
+		g.hDiv = $(".bDiv", g.gDiv).eq(0);
+		g.hTable = $(".bDivBox > table").eq(0);
 
-		$(t).before(g.hDiv);
-
-		//set hTable
-			g.hTable.cellPadding = 0;
-			g.hTable.cellSpacing = 0;
-			$(g.hDiv).append('<div class="hDivBox"></div>');
-			$('div',g.hDiv).append(g.hTable);
-			var thead = $("thead:first",t).get(0);
-			if (thead) $(g.hTable).append(thead);
-			thead = null;
-		
 		if (!p.colmodel) var ci = 0;
 
 		//setup thead			
@@ -927,6 +944,7 @@
 			(
 			 	function ()
 					{
+						/*
 						var thdiv = document.createElement('div');
 						
 						
@@ -963,8 +981,9 @@
 						 $(thdiv).css({textAlign:this.align, width: this.width + 'px'});
 						 thdiv.innerHTML = this.innerHTML;
 						 
-						$(this).empty().append(thdiv).removeAttr('width')
-						.mousedown(function (e) 
+						$(this).empty().append(thdiv).removeAttr('width') */
+						if ($(this).attr("id") != 'primary_key') {
+						$(this).mousedown(function (e) 
 							{
 								g.dragStart('colMove',e,this);
 							})
@@ -996,28 +1015,28 @@
 									
 									} else if (!g.colresize) {
 									var nv = $('th:visible',g.hDiv).index(this);
-									var onl = parseInt($('div:eq('+nv+')',g.cDrag).css('left'));
-									var nw = parseInt($(g.nBtn).width());
- 									nw += isNaN($(g.nBtn).css('borderLeftWidth'))? 0 : parseInt($(g.nBtn).css('borderLeftWidth'));
-									nl = onl - nw + Math.floor(p.cgwidth/2);
-									$(g.nDiv).hide();$(g.nBtn).hide();
-									$(g.nBtn).css({left: nl, top: g.hDiv.offsetTop}).show(); 	
+									//var onl = parseInt($('div:eq('+nv+')',g.cDrag).css('left'));
+									//var nw = parseInt($(g.nBtn).width());
+ 									//nw += isNaN($(g.nBtn).css('borderLeftWidth'))? 0 : parseInt($(g.nBtn).css('borderLeftWidth'));
+									//nl = onl - nw + Math.floor(p.cgwidth/2);
+									//$(g.nDiv).hide();$(g.nBtn).hide();
+									//$(g.nBtn).css({left: nl, top: g.hDiv.offsetTop}).show(); 	
 
 									
-									var ndw = parseInt($(g.nDiv).width());
+									//var ndw = parseInt($(g.nDiv).width());
 									
-									$(g.nDiv).css({top:g.bDiv.offsetTop});
+									//$(g.nDiv).css({top:g.bDiv.offsetTop});
 									
-									if ((nl+ndw)>$(g.gDiv).width())
-										$(g.nDiv).css('left',onl-ndw+1);
-									else
-										$(g.nDiv).css('left',nl);
+									//if ((nl+ndw)>$(g.gDiv).width())
+									//	$(g.nDiv).css('left',onl-ndw+1);
+									//else
+									//	$(g.nDiv).css('left',nl);
 										
-									if ($(this).hasClass('sorted')) 
-										$(g.nBtn).addClass('srtd');
-									else
-										$(g.nBtn).removeClass('srtd');
-										
+									//if ($(this).hasClass('sorted')) 
+									//	$(g.nBtn).addClass('srtd');
+									//else
+									//	$(g.nBtn).removeClass('srtd');
+									//	
 									}
 									
 							},
@@ -1034,16 +1053,18 @@
 									}
 								if (g.colCopy) 
 									{								
-									$(g.cdropleft).remove();
-									$(g.cdropright).remove();
+									//$(g.cdropleft).remove();
+									//$(g.cdropright).remove();
 									g.dcolt = null;
 									}
 							})
 						; //wrap content
+						}
 					}
 			);
 
 		//set bDiv
+		/*
 		g.bDiv.className = 'bDiv';
 		$(t).before(g.bDiv);
 		$(g.bDiv)
@@ -1051,10 +1072,11 @@
 		.scroll(function (e) {g.scroll()})
 		.append(t)
 		;
-		
+		*/
+		g.bDiv = $(".bDiv",g.gDiv).eq(0);
 		if (p.height == 'auto') 
 			{
-			$('table',g.bDiv).addClass('autoht');
+			$('.bDivBox > table',g.bDiv).addClass('autoht');
 			}
 
 
@@ -1065,7 +1087,7 @@
 		g.addRowProp();
 		
 		//set cDrag
-		
+		/*
 		var cdcol = $('thead tr:first th:first',g.hDiv).get(0);
 		
 		if (cdcol != null)
@@ -1118,7 +1140,8 @@
 							
 		}
 		
-
+		*/
+		/*
 		//add strip		
 		if (p.striped) 
 			$('tbody tr:odd',g.bDiv).addClass('erow');
@@ -1358,7 +1381,7 @@
 		$(g.gDiv)
 		.hover(function(){},function(){$(g.nDiv).hide();$(g.nBtn).hide();})
 		;
-		
+		*/
 		//add document events
 		$(document)
 		.mousemove(function(e){g.dragMove(e)})

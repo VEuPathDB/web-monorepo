@@ -19,10 +19,9 @@
 .flexigrid
 {
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11px;
 	position: relative;
 	border: 0px solid #eee;
-	overflow: hidden;
+	overflow: visible;
 	color: #000;
 }
 
@@ -62,13 +61,13 @@
 	width: 100%;
 }
 
-.flexigrid div.bDiv table
+.flexigrid div.bDiv > table
 {
 	margin-bottom: 10px;
         width:100%;
 }
 	
-.flexigrid div.bDiv table.autoht
+.flexigrid div.bDiv > table.autoht
 {
 	border-bottom: 0px;
 	margin-bottom: 0px;
@@ -292,7 +291,7 @@
 	overflow: hidden;
 }	
 
-.flexigrid div.hDiv table
+.flexigrid div.hDiv > table
 {
 	border-right: 1px solid #fff;
         width:100%;
@@ -333,7 +332,6 @@
 .flexigrid div.iDiv input, .flexigrid div.iDiv select, .flexigrid div.iDiv textarea
 {
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11px;
 }
 		
 .flexigrid div.iDiv input.tb
@@ -351,11 +349,11 @@
 	border: 1px solid #ccc;
 	border-top: 0px;
 	background: #fff;
-	overflow: auto;
+	overflow: visible;
 	position: relative;
 }
 	
-.flexigrid div.bDiv table
+.flexigrid div.bDiv > table
 {
 	border-bottom: 1px solid #ccc;
 }
@@ -402,7 +400,7 @@
 	background: none;
 }
 
-.flexigrid div.hDiv th, .flexigrid  div.bDiv td  /* common cell properties*/
+.flexigrid div.hDiv th, .flexigrid  div.bDiv > table > tr > td  /* common cell properties*/
 {
 	text-align: left;
 	border-right: 1px solid #ddd;
@@ -411,19 +409,24 @@
 	vertical-align: top !important;
 }
 
-.flexigrid div.hDiv th > div, .flexigrid  div.bDiv td  div, div.colCopy div/* common inner cell properties*/
+.flexigrid div.hDiv th > div, .flexigrid  div.bDiv > table > tr > td  div, div.colCopy div/* common inner cell properties*/
 {
 	padding: 5px;
 	border-left: 0px solid #fff;
 }
 
-.flexigrid div.hDiv th, div.colCopy
+.flexigrid div.bDiv th, div.colCopy
 {
 	height: 24px;
 	cursor: move;
 	white-space: nowrap;
 	overflow: hidden;
 }	
+
+.flexigrid div.bDiv th#primary_key
+{
+	cursor: auto;
+}
 
 div.colCopy
 {
@@ -432,15 +435,15 @@ div.colCopy
 	background-repeat:repeat-x;
 	color:#5F140E;
 	font-family:Verdana,Arial,Helvetica,sans-serif;
-	font-size:15px;
 	font-weight:bold;
-	height:29px;
-	padding:4px;
-	/* font-family: Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	background: #fafafa url(images/fhbg.gif) repeat-x bottom; */
 	border: 1px solid #ccc;
 	overflow: hidden;
+}
+
+div.colCopy table tr td
+{
+	padding: 1px;
+	vertical-align: middle
 }
 
 .flexigrid div.hDiv th.sorted
@@ -493,11 +496,10 @@ div.colCopy
 	background: url(images/up.png) no-repeat center top;
 }	
 		
-.flexigrid div.bDiv td
+.flexigrid div.bDiv > table > tr > td
 {
 	border-bottom: 1px solid #fff;
 	vertical-align: top;
-	white-space: nowrap;
 }
 
 .flexigrid div.hDiv th > div
@@ -529,7 +531,7 @@ div.colCopy
 	margin-bottom: -24px;
 }
 
-.flexigrid div.bDiv td div
+.flexigrid div.bDiv > table > tr > td div
 {
 	border-top: 0px solid #fff;
 	padding-bottom: 4px;
@@ -588,13 +590,13 @@ div.colCopy
 }
 
 /* novstripe adjustments */
-.flexigrid.novstripe .bDiv table
+.flexigrid.novstripe .bDiv > table
 {
 	border-bottom: 1px solid #ccc;
 	border-right: 1px solid #ccc;
 }
 
-.flexigrid.novstripe  div.bDiv td  
+.flexigrid.novstripe  div.bDiv > table > tr > td  
 {
 	border-right-color: #fff;
 }
@@ -744,12 +746,12 @@ div.pGroup
 }															
 
 /* ie adjustments */		
-.flexigrid.ie div.hDiv th div, .flexigrid.ie  div.bDiv td  div, div.colCopy.ie div/* common inner cell properties*/
+.flexigrid.ie div.hDiv th div, .flexigrid.ie  div.bDiv > table > tr > td  div, div.colCopy.ie div/* common inner cell properties*/
 {
 	overflow: hidden;
 }			
 		
-.flexigrid.ie div.hDiv th, .flexigrid.ie div.hDiv th div,.flexigrid.ie  div.bDiv td, .flexigrid.ie  div.bDiv td div, div.colCopy.ie div
+.flexigrid.ie div.hDiv th, .flexigrid.ie div.hDiv th div,.flexigrid.ie  div.bDiv > table > tr > td, .flexigrid.ie  div.bDiv > table > tr > td div, div.colCopy.ie div
 {
 	padding-left: 0;
 	padding-right: 0;
