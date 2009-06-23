@@ -47,5 +47,5 @@ function openATVWin( dataurl ) {
 }
 
 function parameterizedCookie() {
-  return document.cookie.replace(/; /, "&");
+  return document.cookie.replace(/; /g, "&");
 }
