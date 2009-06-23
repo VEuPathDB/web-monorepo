@@ -57,7 +57,7 @@ value + "\").unblock()'/>";
         return true;
 }
 
-function formatFilterForm(data, edit, reviseStep, hideQuery, hideOp, isOrtholog){
+function formatFilterForm(url, data, edit, reviseStep, hideQuery, hideOp, isOrtholog){
 	//edit = 0 ::: adding a new step
 	//edit = 1 ::: editing a current step
 	var operation = "";
@@ -239,16 +239,18 @@ function validateAndCall(type, url, proto, rs){
 }
 
 function getQueryForm(url,hideOp,isOrtholog, loadingParent){
+    // retrieve the question form, but leave out all params
+    var questionUrl = url + "&showParams=false";
 	    original_Query_Form_Text = $("#query_form").html();
 		if(loadingParent == undefined) loadingParent = "query_form";
 		$.ajax({
-			url: url,
+			url: questionUrl,
 			dataType:"html",
 			beforeSend: function(){
 				showLoading(loadingParent);//"query_form");
 			},
 			success: function(data){
-				formatFilterForm(data,0,isInsert,false,hideOp,isOrtholog);
+				formatFilterForm(url, data,0,isInsert,false,hideOp,isOrtholog);
 				removeLoading(loadingParent);
 			},
 			error: function(data, msg, e){
