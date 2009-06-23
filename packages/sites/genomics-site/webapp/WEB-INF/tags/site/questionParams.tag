@@ -27,7 +27,9 @@
         <c:set var="recordType" value="Assemblie" />
 </c:if>
 
-
+<%-- show all params of question, collect help info along the way --%>
+<c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
+<jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 
 <c:set var="hasOrganism" value="false"/>
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>

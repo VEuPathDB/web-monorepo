@@ -36,7 +36,9 @@
 <c:choose>
     <c:when test="${showParams == true}">
         <%-- display params section only --%>
-        <site:questionParams />
+        <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
+            <site:questionParams />
+        </html:form>
     </c:when>
     <c:otherwise>
         <%-- display question section --%>
