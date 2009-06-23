@@ -46,6 +46,17 @@
           url="${wdk_paging_url}"
           maxPageItems="${wdk_paging_pageSize}"
           export="currentPageNumber=pageNumber">
+  <c:forEach var="paramName" items="${wdk_paging_params}">
+    <pg:param name="${paramName}" id="pager" />
+  </c:forEach>
+  <c:if test="${wdk_summary_checksum != null}">
+    <pg:param name="summary" id="pager" />
+  </c:if>
+  <c:if test="${wdk_sorting_checksum != null}">
+    <pg:param name="sort" id="pager" />
+  </c:if>
+
+
 
 
 
