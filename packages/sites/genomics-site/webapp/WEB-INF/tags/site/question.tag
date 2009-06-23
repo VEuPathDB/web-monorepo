@@ -20,7 +20,6 @@
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 <c:set var="showParams" value="${requestScope.showParams}"/>
 
-<h1>test: '${showParams}'</h1>
 <%--CODE TO SET UP THE SITE VARIABLES --%>
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
