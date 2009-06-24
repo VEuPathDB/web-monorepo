@@ -26,6 +26,7 @@
 <c:if test="${fn:contains(recordType, 'Assem') }">
         <c:set var="recordType" value="Assemblie" />
 </c:if>
+<html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
 
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
@@ -139,11 +140,7 @@
                             <td width="30%" align="right" style="vertical-align:top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
 				
 
-<%-- to have select, clear, expand, collapse, under parameter name 
-				<c:if test="${qP.multiPick}">
- 					<%@ include file="/WEB-INF/includes/selectAllParamOpt2.jsp" %>
-				</c:if>
-use enumParamInput2 in next <td> below --%>
+
 
 			    </td>
                             <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
@@ -221,4 +218,4 @@ use enumParamInput2 in next <td> below --%>
     </div> <%-- end of param-group div --%>
 
 </c:forEach> <%-- end of foreach on paramGroups --%>
-
+</html:form>
