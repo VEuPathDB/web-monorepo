@@ -9,6 +9,8 @@
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="recordName" value="${wdkAnswer.question.recordClass.fullName}" />
 
+<c:set var="clustalwIsolatesCount" value="0" />
+
 <c:set var="eupathIsolatesQuestion" value="${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
   && (fn:containsIgnoreCase(modelName, 'CryptoDB') 
   || fn:containsIgnoreCase(modelName, 'ToxoDB') 
@@ -307,8 +309,10 @@
 
            <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Genbank'}">
 
-              <%-- display a link to record page --%>
+              <%-- add checkbox --%>
               <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey.value}"></nobr>
+
+            <c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
 
            </c:when>
 
@@ -373,11 +377,11 @@
   </form>
 </c:if>
 
-<c:if test = "${eupathIsolatesQuestion}">
+<c:if test = "${eupathIsolatesQuestion && clustalwIsolatesCount > 1}">
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
   <tr align=center>
     <th> <br/> 
-          Please select at least two isolates to run ClustalW <br/> 
+          Please select at least two isolates to run ClustalW<br/> 
       <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate()" />
     </th>
 	</tr>
