@@ -58,9 +58,12 @@ value + "\").unblock()'/>";
         return true;
 }
 
-function formatFilterForm(url, data, edit, reviseStep, hideQuery, hideOp, isOrtholog){
+function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isOrtholog){
 	//edit = 0 ::: adding a new step
 	//edit = 1 ::: editing a current step
+	var ps = document.createElement('div');
+	ps.innerHTML = params.substring(params.indexOf("<form"),params.indexOf("</form>") + 6);
+	
 	var operation = "";
 	var stepn = 0;
 	var insert = "";
@@ -192,7 +195,9 @@ function formatFilterForm(url, data, edit, reviseStep, hideQuery, hideOp, isOrth
         $("input[name=questionFullName]", quesForm).remove();
         $(".filter.operators", quesForm).width('auto');
 	//	$("#query_form").css("min-width", "500px");
-	    }
+	}else{
+		$("div.filter div.params", quesForm).html(ps.getElementsByTagName('form')[0].innerHTML);
+	}
 	if (hideOp){
 		$(".filter.operators", quesForm).remove();
 		$(".filter.params", quesForm).after("<input type='hidden' name='booleanExpression' value='AND' />");
@@ -241,7 +246,8 @@ function validateAndCall(type, url, proto, rs){
 
 function getQueryForm(url,hideOp,isOrtholog, loadingParent){
     // retrieve the question form, but leave out all params
-    var questionUrl = url + "&showParams=false";
+    	var questionUrl = url + "&showParams=false";
+		var paramsUrl = url + "&showParams=true";
 	    original_Query_Form_Text = $("#query_form").html();
 		if(loadingParent == undefined) loadingParent = "query_form";
 		$.ajax({
@@ -251,7 +257,13 @@ function getQueryForm(url,hideOp,isOrtholog, loadingParent){
 				showLoading(loadingParent);//"query_form");
 			},
 			success: function(data){
-				formatFilterForm(url, data,0,isInsert,false,hideOp,isOrtholog);
+				$.ajax({
+					url:paramsUrl,
+					dataType: "html",
+					success: function(params){
+						formatFilterForm(params,data,0,isInsert,false,hideOp,isOrtholog);
+					}
+				});
 				removeLoading(loadingParent);
 			},
 			error: function(data, msg, e){
