@@ -323,7 +323,7 @@ function createDetails(modelstep, jsonstep, sid){
 		expand_step = 	"<a title='" + moExp + "' class='expand_step_link " + disab + "' href='javascript:void(0)' " + ocExp + ">" + oM + "</a>&nbsp;|&nbsp;";
 
 	}else{   							/* simple step */
-
+		disab = "";
 		if (jsonstep.isboolean){
 			rename_step = 	"<a title='" + ss_rename_popup + "' class='rename_step_link disabled' href='javascript:void(0)'>Rename</a>&nbsp;|&nbsp;";
 		} else{
@@ -335,9 +335,12 @@ function createDetails(modelstep, jsonstep, sid){
 		if(modelstep.isTransform || modelstep.frontId == 1){
 			hideOp = true;
 		}
-		if(jsonstep.isboolean) hideQu = true;
+		if(jsonstep.isboolean) {
+			hideQu = true;
+			disab = "disabled";
+		}
 
-		edit_step =	"<a title='" + ss_edit_popup + "'  class='edit_step_link' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + modelstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
+		edit_step =	"<a title='" + ss_edit_popup + "'  class='edit_step_link " + disab + "' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + modelstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
 
 		if(modelstep.frontId == 1 || modelstep.isTransform || jsonstep.isboolean){
 			expand_step = 	"<a title='" + ss_expand_popup + "' class='expand_step_link disabled' href='javascript:void(0)'>Make Nested Strategy</a>&nbsp;|&nbsp;";
