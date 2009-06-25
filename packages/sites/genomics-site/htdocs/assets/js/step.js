@@ -48,7 +48,8 @@ function showDetails(det){
 }
 
 function hideDetails(det){
-	openDetail.attr("disp","0");
+	
+	if(openDetail != null) openDetail.attr("disp","0");
 	openDetail = null;
 	
 	$("#strategy_results").children("div.crumb_details").each(function(){
@@ -76,6 +77,9 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 		$.ajax({
 			url: questionUrl,
 			dataType: "html",
+			beforeSend: function(){
+				showLoading(current_Front_Strategy_Id);
+			},
 			success: function(data){
 				d = document.createElement('div');
 				qf = document.createElement('div');
@@ -87,6 +91,7 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 					dataType: "html",
 					success: function(params){
 						formatFilterForm(params,data,1,reviseStepNumber,false,hideOp,true);
+						removeLoading(current_Front_Strategy_Id);
 					}
 				});
 			},
