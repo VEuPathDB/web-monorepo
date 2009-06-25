@@ -222,7 +222,7 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 
 function validateAndCall(type, url, proto, rs){
 	var valid = false;
-	if($("input[name='booleanExpression']").attr("type") == "hidden"){
+	if($("div#query_form div.filter.operators").length == 0){//if($("input[name='booleanExpression']").attr("type") == "hidden"){
 		valid = true;
 	}else{
 		if($(".filter.operators")){
