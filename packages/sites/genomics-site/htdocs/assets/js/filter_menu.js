@@ -262,9 +262,9 @@ function getQueryForm(url,hideOp,isOrtholog, loadingParent){
 					dataType: "html",
 					success: function(params){
 						formatFilterForm(params,data,0,isInsert,false,hideOp,isOrtholog);
+						removeLoading(loadingParent);
 					}
 				});
-				removeLoading(loadingParent);
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e + ". \nPlease double check your parameters, and try again." + 
