@@ -1,8 +1,19 @@
 <div id="dyk-box">
+
+<%--
 	<div class="dragHandle">
 		<h3>Did You Know...</h3>
 		<span id="dyk-count">1 of 7</span>
 	</div>
+--%>
+
+	<div class="dragHandle">
+		<div style="margin:0;padding:0;position:absolute;top:0">
+			<span class="h3left">Did You Know...</span>
+		</div>
+		<span id="dyk-count">1 of 7</span>
+	</div>
+
 	<div id="dyk-text">
 	</div>
 
