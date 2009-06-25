@@ -354,6 +354,7 @@ function EditStep(url, proto, step_number){
 			//data = eval("(" + data + ")");
 			if(ErrorHandler("EditStep", data, ss, $("div#query_form"))){
 				$("div#query_form").remove();
+				hideDetails();
 				updateStrategies(data);
 			}else{
 				removeLoading(ss.frontId);

@@ -1681,10 +1681,6 @@ span#toggle_filter {
    text-decoration: underline;
 }
 
-.clear_all {
-    clear: both;
-}
-
 .hidden {
     display: none;
 }

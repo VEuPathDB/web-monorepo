@@ -288,7 +288,14 @@ function createDetails(modelstep, jsonstep, sid){
 	
 	var params = jsonstep.params;
 	var params_table = "";
-	if(params != undefined && params.length != 0)
+	if(jsonstep.isboolean && !jsonstep.isCollapsed){
+		var url = "processFilter.do?strategy=" + strat.backId + "&revise=" + modelstep.back_boolean_Id + "&checksum=" + strat.checksum;
+		var oform = "<form id='form_question' class='clear_all' enctype='multipart/form-data' action='javascript:validateAndCall(\"edit\",\""+ url + "\", \"" + strat.backId + "\");' method='post' name='questionForm'>";
+		var cform = "</form>";
+		var params_table = "<div class='filter operators'><span class='form_subtitle' style='padding-right:20px'>Revise Operation</span><div id='operations'><table style='margin-left:auto; margin-right:auto;'><tr><td class='opcheck' valign='middle'><input type='radio' name='booleanExpression' value='INTERSECT' /></td><td class='operation INTERSECT'></td><td valign='middle'>&nbsp;" + (parseInt(modelstep.frontId)-1) + "&nbsp;<b>INTERSECT</b>&nbsp;" + (modelstep.frontId) + "</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td class='opcheck'><input type='radio' name='booleanExpression' value='UNION'></td><td class='operation UNION'></td><td>&nbsp;" + (parseInt(modelstep.frontId)-1) + "&nbsp;<b>UNION</b>&nbsp;" + (modelstep.frontId) + "</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td class='opcheck'><input type='radio' name='booleanExpression' value='MINUS'></td><td class='operation MINUS'></td><td>&nbsp;" + (parseInt(modelstep.frontId)-1) + "&nbsp;<b>MINUS</b>&nbsp;" + (modelstep.frontId) + "</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td class='opcheck'><input type='radio' name='booleanExpression' value='RMINUS'></td><td class='operation RMINUS'></td><td>&nbsp;" + (modelstep.frontId) + "&nbsp;<b>MINUS</b>&nbsp;" + (parseInt(modelstep.frontId)-1) + "</td></tr></table></div></div>"
+		var button = "<div style='text-align:center'><input type='submit' value='Revise' /></div>";
+		params_table = oform + params_table + button + cform;
+	}else if(params != undefined && params.length != 0)
 		params_table = createParameters(params);
 	var hideOp = false;
 	var hideQu = false;
@@ -364,7 +371,7 @@ function createDetails(modelstep, jsonstep, sid){
 		"		</div>"+ name +
 		"		<table></table><hr class='clear_all' />" + filteredName +
 		"		<p><b>Results:&nbsp;</b>" + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType,jsonstep.results) + "&nbsp;&nbsp;|&nbsp;&nbsp;<a href='downloadStep.do?step_id=" + modelstep.back_step_Id + "'>Download</a>";
-		
+
 	$(detail_div).html(inner);
 	$("table", detail_div).replaceWith(params_table);
 	return detail_div;       

@@ -228,7 +228,25 @@ div.bottom-close{
 }
 
 .crumb_details ul.question_name li.operation {
-    border:none;
     width:36px;
     margin-top: 2px;
+}
+
+.crumb_details .filter, .crumb_details .operation {
+    border:none;
+}
+
+.crumb_details #operations {
+    margin: auto;
+}
+
+.crumb_details #form_question {
+    border: 1px solid black;
+    background-color: white;
+    margin: 0 5px;
+    padding-bottom: 5px;
+}
+
+.crumb_details .form_subtitle {
+    font-size: 15px;
 }
