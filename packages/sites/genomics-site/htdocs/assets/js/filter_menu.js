@@ -348,7 +348,7 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 						stpId[1] = prevStp.back_boolean_Id;
 					else
 						stpId[1] = prevStp.back_step_Id;
-						value = stpId.join("gene_result=");
+						value = stpId.join("gene_result=") + "&partial=true";
 					$(this).val(value);
 				}
 			});
