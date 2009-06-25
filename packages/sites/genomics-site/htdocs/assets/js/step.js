@@ -86,7 +86,7 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 					url:paramsUrl,
 					dataType: "html",
 					success: function(params){
-						formatFilterForm(params,data,0,isInsert,false,hideOp,true);
+						formatFilterForm(params,data,1,reviseStepNumber,false,hideOp,true);
 					}
 				});
 			},
