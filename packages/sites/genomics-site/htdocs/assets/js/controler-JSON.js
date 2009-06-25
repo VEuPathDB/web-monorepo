@@ -148,6 +148,7 @@ function displayOpenSubStrategies(s, d){
 	//for(var j=sCount;j>0;j--){
 	for(var j=1;j<=sCount;j++){
 		subs = displayModel(getStrategy(s.subStratOrder[j]));
+		$("div#diagram_" + s.frontId + " div#step_" + s.getStep(getStrategy(s.subStratOrder[j]).backId.split("_")[1],false).frontId + "_sub", d).css({"border-color":colors[currentColor].step});
 		$("div#diagram_" + s.frontId, d).after(subs);
 		if(getSubStrategies(s.subStratOrder[j]).length > 0){
 			displayOpenSubStrategies(getStrategy(s.subStratOrder[j]),d);
@@ -186,6 +187,7 @@ function loadModel(json, ord){
 		sidIndex++;
 	}else{
 		var strat = getStrategyFromBackId(strategy.id);
+		strat.subStratOrder = new Object();
 	}		
 	if(strategy.importId != ""){
 		strat.isDisplay = true;

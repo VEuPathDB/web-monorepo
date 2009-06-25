@@ -18,6 +18,7 @@ Strategy.prototype.name = null;
 Strategy.prototype.savedName = null;
 Strategy.prototype.importId = null;
 Strategy.prototype.dataType = null;
+Strategy.prototype.color = null;
 
 Strategy.prototype.getStep = function(stepId,isfront){
 	for(s in this.Steps){
