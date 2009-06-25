@@ -19,9 +19,9 @@ div#dyk-box{
 
 div#dyk-shadow{
 	background-color:#000000;
-	left:310px;    /* 247px; */
-	opacity:0.4;
-	top:188px;   /* 204px; */
+	left:319px;    /* 247px; */
+	opacity:0.2;
+	top:190px;   /* 204px; */
 	z-index:800;
 }
 
