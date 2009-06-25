@@ -28,7 +28,10 @@ function toggleLayer(controllingLayerName, textLayerName) {
 
 function sayShowOrHide(controllingLayerName, textLayerName, style) {
     var content = style.display == "block"? "Hide" : "Show";
-    $("#" + textLayerName + " a").text(content);
+    // don't use # shortcut for id lookup here...special characters
+    // in element id cause problems, and for some reason escaping
+    // with \\ (as spec'd in jquery docs) is not working.
+    $("div[id='" + textLayerName + "'] a").text(content);
     return true;
 }
 
