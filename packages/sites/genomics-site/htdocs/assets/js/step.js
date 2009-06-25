@@ -39,6 +39,12 @@ function showDetails(det){
 			position: "absolute"
 		});
 	det2.appendTo("#strategy_results");
+	var op = $(".question_name .operation", det2);
+	if (op.length > 0) {
+		var opstring = op.removeClass("operation").attr('class');
+		op.addClass("operation");
+		$("input[value='" + opstring + "']", det2).attr('checked','checked');
+	}
 	if ($(det).hasClass('crumb_name')) $(det).children("img").attr("src","/assets/images/minus.gif");
 	}
 	else{
