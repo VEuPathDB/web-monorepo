@@ -400,6 +400,7 @@ td.operation {
 	
 	div.transform a.crumb_name img{
 		left: 9px;
+		top: 1px;
 	}
 	
 	div.crumb_details {
