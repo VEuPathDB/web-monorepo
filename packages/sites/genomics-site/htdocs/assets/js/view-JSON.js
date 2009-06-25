@@ -3,6 +3,7 @@ var booleanClasses = "venn row2 size2 arrowgrey operation ";
 var firstClasses = "box venn row2 size1 arrowgrey";
 var transformClasses = "box venn row2 size1 transform"; 
 var operandClasses = "box row1 size1 arrowgrey";
+var indent = 20;
 //distances for the step layout
 var f2b = 114; // first step to boolean step
 var f2t = 147; // first step to transform step
@@ -61,7 +62,7 @@ function displayModel(strat){
 		if(strat.subStratOf != null){
 			//psml = $("#Strategies div#diagram_"+strat.subStratOf).css("margin-left");
 			//psml = parseInt(psml.substring(0,psml.indexOf("px")));
-			$(div_strat).addClass("sub_diagram").css({"margin-left": (strat.depth(null) * 15) + "px"});
+			$(div_strat).addClass("sub_diagram").css({"margin-left": (strat.depth(null) * indent) + "px"});
 		}
 		var close_span = document.createElement('span');
 		$(close_span).addClass("closeStrategy").html(""+
