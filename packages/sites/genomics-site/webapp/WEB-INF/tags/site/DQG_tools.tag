@@ -47,7 +47,7 @@
 			<ul><li  style="border:0">View the Latest <i>${listOrganisms}</i> Pubmed and Entrez Results</li></ul>
 		</li>
 
-<c:if test="${sName != 'Api'}">
+<c:if test="${sName != 'EuPath'}">
 		<li><a href="/cgi-bin/gbrowse/${modelName}/"><strong>GBrowse</strong></a>
 			<ul><li  style="border:0">View Sequences and Features in the GMOD Genome Browser</li></ul>
 		</li>
@@ -64,9 +64,9 @@
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
 </c:when>
-<c:when test="${sName == 'Api'}">
+<c:when test="${sName == 'EuPath'}">
           
-                <li><a href="http://apicyc.apidb.org/"><strong>${cycName}</strong></a>
+                <li><a href="http://apicyc.apidb.org/"><strong>ApiCyc</strong></a>
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
 </c:when>
