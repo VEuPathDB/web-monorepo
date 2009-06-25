@@ -71,7 +71,8 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 		revisestep = parseInt(parts[1]);
 		var operation = parts[2];
 		var reviseStepNumber = strat + ":" + revisestep + ":0:0:" + operation;
-                var questionUrl = url + "&showParams=false";
+        var questionUrl = url + "&showParams=false";
+		var paramsUrl = url + "&showParams=true";
 		$.ajax({
 			url: questionUrl,
 			dataType: "html",
@@ -81,7 +82,13 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 				$(qf).attr("id","query_form").addClass("jqDnR");
 				$(d).append(qf);
 				$("#strategy_results").append($(d).html());
-				formatFilterForm(url, data,1,reviseStepNumber, hideQuery, hideOp);
+				$.ajax({
+					url:paramsUrl,
+					dataType: "html",
+					success: function(params){
+						formatFilterForm(params,data,0,isInsert,false,hideOp,true);
+					}
+				});
 			},
 			error: function(data, msg, e){
 				alert("ERROR \n "+ msg + "\n" + e
