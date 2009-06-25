@@ -14,11 +14,11 @@ var t2t = 147; // transform step to transform step
 //Colors for explanded substrategies
 var colors = new Array();
 colors[0] = {step:"#000000", top:"#FFFFFF", right:"#CCCCCC", bottom:"#666677", left:"#A0A0A0"};
-colors[1] = {step:"#A00000", top:"#FFFFFF", right:"#A00000", bottom:"#A00000", left:"#A00000"};
-colors[2] = {step:"#A0A000", top:"#FFFFFF", right:"#A0A000", bottom:"#A0A000", left:"#A0A000"};
-colors[3] = {step:"#A000A0", top:"#FFFFFF", right:"#A000A0", bottom:"#A000A0", left:"#A000A0"};
-colors[4] = {step:"#00A0A0", top:"#FFFFFF", right:"#00A0A0", bottom:"#00A0A0", left:"#00A0A0"};
-colors[5] = {step:"#0000A0", top:"#FFFFFF", right:"#0000A0", bottom:"#0000A0", left:"#0000A0"};
+colors[1] = {step:"#A00000", top:"#A00000", right:"#A00000", bottom:"#A00000", left:"#A00000"};
+colors[2] = {step:"#A0A000", top:"#A0A000", right:"#A0A000", bottom:"#A0A000", left:"#A0A000"};
+colors[3] = {step:"#A000A0", top:"#A000A0", right:"#A000A0", bottom:"#A000A0", left:"#A000A0"};
+colors[4] = {step:"#00A0A0", top:"#00A0A0", right:"#00A0A0", bottom:"#00A0A0", left:"#00A0A0"};
+colors[5] = {step:"#0000A0", top:"#0000A0", right:"#0000A0", bottom:"#0000A0", left:"#0000A0"};
 var currentColor = 0;
 //Popup messages
 var insert_popup = "Insert a new step to the left of this one, by either running a new query or choosing an existing strategy";
@@ -346,10 +346,12 @@ function createDetails(modelstep, jsonstep, sid){
 		if(modelstep.isTransform || modelstep.frontId == 1){
 			hideOp = true;
 		}
-		if(jsonstep.isboolean)
-			edit_step =	"<a title='" + ss_edit_popup + "'  class='edit_step_link disabled' href='javascript:void(0)'>Revise</a>&nbsp;|&nbsp;";
-		else
-			edit_step =	"<a title='" + ss_edit_popup + "'  class='edit_step_link " + disab + "' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + modelstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
+		if(jsonstep.isboolean) {
+			hideQu = true;
+			disab = "disabled";
+		}
+
+		edit_step =	"<a title='" + ss_edit_popup + "'  class='edit_step_link " + disab + "' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + modelstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
 
 		if(modelstep.frontId == 1 || modelstep.isTransform || jsonstep.isboolean){
 			expand_step = 	"<a title='" + ss_expand_popup + "' class='expand_step_link disabled' href='javascript:void(0)'>Make Nested Strategy</a>&nbsp;|&nbsp;";
