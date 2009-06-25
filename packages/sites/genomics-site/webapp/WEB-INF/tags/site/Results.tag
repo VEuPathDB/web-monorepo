@@ -310,7 +310,7 @@
            <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Genbank'}">
 
               <%-- add checkbox --%>
-              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" value="${primaryKey.value}"></nobr>
+              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}"></nobr>
 
             <c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
 
