@@ -147,9 +147,14 @@ function displayOpenSubStrategies(s, d){
 		sCount++;
 	//for(var j=sCount;j>0;j--){
 	for(var j=1;j<=sCount;j++){
-		subs = displayModel(getStrategy(s.subStratOrder[j]));
-		$("div#diagram_" + s.frontId + " div#step_" + s.getStep(getStrategy(s.subStratOrder[j]).backId.split("_")[1],false).frontId + "_sub", d).css({"border-color":colors[currentColor].step});
-		$("div#diagram_" + s.frontId, d).after(subs);
+//		subs = displayModel(getStrategy(s.subStratOrder[j]));
+		subs = getStrategy(s.subStratOrder[j]);
+		subs.color = parseInt(s.getStep(getStrategy(s.subStratOrder[j]).backId.split("_")[1],false).frontId) % colors.length;
+		$(subs.DIV).addClass("sub_diagram").css({"margin-left": (subs.depth(null) * indent) + "px",
+												 "border-color": colors[subs.color].top+" "+colors[subs.color].right+" "+colors[subs.color].bottom+" "+colors[subs.color].left
+												});
+		$("div#diagram_" + s.frontId + " div#step_" + s.getStep(getStrategy(s.subStratOrder[j]).backId.split("_")[1],false).frontId + "_sub", d).css({"border-color":colors[subs.color].step});
+		$("div#diagram_" + s.frontId, d).after(subs.DIV);
 		if(getSubStrategies(s.subStratOrder[j]).length > 0){
 			displayOpenSubStrategies(getStrategy(s.subStratOrder[j]),d);
 		}
@@ -183,7 +188,7 @@ function loadModel(json, ord){
 	var strategy = json;
 	var strat = null;
 	if(!isLoaded(strategy.id)){
-		var strat = new Strategy(sidIndex, strategy.id, false);
+		var strat = new Strategy(sidIndex, strategy.id, true);
 		sidIndex++;
 	}else{
 		var strat = getStrategyFromBackId(strategy.id);

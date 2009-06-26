@@ -14,12 +14,12 @@ var t2t = 147; // transform step to transform step
 
 //Colors for explanded substrategies
 var colors = new Array();
-colors[0] = {step:"#000000", top:"#FFFFFF", right:"#CCCCCC", bottom:"#666677", left:"#A0A0A0"};
-colors[1] = {step:"#A00000", top:"#A00000", right:"#A00000", bottom:"#A00000", left:"#A00000"};
-colors[2] = {step:"#A0A000", top:"#A0A000", right:"#A0A000", bottom:"#A0A000", left:"#A0A000"};
-colors[3] = {step:"#A000A0", top:"#A000A0", right:"#A000A0", bottom:"#A000A0", left:"#A000A0"};
-colors[4] = {step:"#00A0A0", top:"#00A0A0", right:"#00A0A0", bottom:"#00A0A0", left:"#00A0A0"};
-colors[5] = {step:"#0000A0", top:"#0000A0", right:"#0000A0", bottom:"#0000A0", left:"#0000A0"};
+//colors[0] = {step:"#000000", top:"#FFFFFF", right:"#CCCCCC", bottom:"#666677", left:"#A0A0A0"};
+colors[0] = {step:"#A00000", top:"#A00000", right:"#A00000", bottom:"#A00000", left:"#A00000"};
+colors[1] = {step:"#A0A000", top:"#A0A000", right:"#A0A000", bottom:"#A0A000", left:"#A0A000"};
+colors[2] = {step:"#A000A0", top:"#A000A0", right:"#A000A0", bottom:"#A000A0", left:"#A000A0"};
+colors[3] = {step:"#00A0A0", top:"#00A0A0", right:"#00A0A0", bottom:"#00A0A0", left:"#00A0A0"};
+colors[4] = {step:"#0000A0", top:"#0000A0", right:"#0000A0", bottom:"#0000A0", left:"#0000A0"};
 var currentColor = 0;
 //Popup messages
 var insert_popup = "Insert a new step to the left of this one, by either running a new query or choosing an existing strategy";
@@ -56,14 +56,14 @@ function displayModel(strat){
 	  $("#Strategies").removeAttr("style");
 	  //var strat = null;
 	  //strat = getStrategy(strat_id);
-	  if(strat.isDisplay == true){
+	  if(strat.isDisplay){
 		var div_strat = document.createElement("div");
 		$(div_strat).attr("id","diagram_" + strat.frontId).addClass("diagram");
-		if(strat.subStratOf != null){
+		//if(strat.subStratOf != null){
 			//psml = $("#Strategies div#diagram_"+strat.subStratOf).css("margin-left");
 			//psml = parseInt(psml.substring(0,psml.indexOf("px")));
-			$(div_strat).addClass("sub_diagram").css({"margin-left": (strat.depth(null) * indent) + "px"});
-		}
+			//$(div_strat).addClass("sub_diagram").css({"margin-left": (strat.depth(null) * indent) + "px"});
+		//}
 		var close_span = document.createElement('span');
 		$(close_span).addClass("closeStrategy").html(""+
 		"	<a onclick='closeStrategy(" + strat.frontId + ")' href='javascript:void(0)'>"+
@@ -72,7 +72,7 @@ function displayModel(strat){
 		$(div_strat).append(close_span);
 		$(div_strat).append(createStrategyName(strat));
 		$(div_strat).append(createParentStep(strat));
-		$(div_strat).css({"border-color": colors[currentColor].top+" "+colors[currentColor].right+" "+colors[currentColor].bottom+" "+colors[currentColor].left});
+		//$(div_strat).css({"border-width":"4px", "border-style":"ridge", "border-color": colors[currentColor].top+" "+colors[currentColor].right+" "+colors[currentColor].bottom+" "+colors[currentColor].left});
 		displaySteps = createSteps(strat,div_strat);
 		$(div_strat).append(createRecordTypeName(strat));
 		buttonleft = offset(null);
@@ -438,11 +438,12 @@ function createParentStep(strat){
 	if(strat.subStratOf != null)
 		parentStep = strat.findParentStep(strat.backId.split("_")[1],false);
 	if(parentStep == null){
-		currentColor = 0;
+//		currentColor = 0;
+//		strat.color = 0;
 		return;
 	}else{
-		currentColor = (currentColor + 1) > 5 ? 1 : currentColor + 1;
-		strat.color = currentColor;
+//		currentColor = (currentColor + 1) > colors.length ? 1 : currentColor + 1;
+//		strat.color = currentColor;
 		$(pstp).attr("id","record_name").css("width","85px");
 		$(pstp).append("Expanded View of Step " + parentStep.stp.frontId);
 		return pstp;
