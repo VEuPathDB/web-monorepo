@@ -70,8 +70,8 @@
 	 background-color: #EDEDED;
      height:   120px;
      border-color: #ffffff #cccccc #666677 #aaaaaa;
-	 border-style: solid;
-	 border-width: 2px;
+	 border-style: ridge;
+	 border-width: 4px;
    }
 
    /* Turn off this Opera/Mozilla feature. */
