@@ -465,7 +465,7 @@ WHERE  sim.min_subject_start <= $rend and
        query.na_sequence_id = sim.query_id and
        query.external_database_release_id = edbr.external_database_release_id and
        edb.external_database_id = edbr.external_database_id and 
-       edb.name in ('TgGI','PfGI','PvGI','PbGI','PyGI')
+       edb.name in ('TgGI','Sanger P. falciparum chromosomes','P.vivax contigs from Genbank','P. berghei genome','Jane Carlton P. yoelii chromosomes')
 ORDER BY 
        sim.min_subject_start
 ]]>
