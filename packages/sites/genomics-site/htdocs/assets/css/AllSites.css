@@ -758,7 +758,7 @@ img.switch,img.plus-minus {
 	position:relative;
 	line-height: 14px;
 	font-weight:normal;
-/*	z-index: 500; */
+	z-index: 500;
 }
 
 #menu ul ul {

@@ -17,7 +17,15 @@ function showPanel(panel) {
 	});
 	$("#tab_" + panel).parent().attr("id", "selected");
 	$("#" + panel).css({'position':'relative','left':'auto','display':'block'});
-	if (panel == 'search_history') updateHistory();
+	if (panel == 'strategy_results') {
+		$("body > #query_form").show();
+		$("body > .crumb_details").show();
+	}
+	else {
+		if (panel == 'search_history') updateHistory();
+		$("body > #query_form").hide();
+		$("body > .crumb_details").hide();
+	}
 	setCurrentTabCookie(panel, false);
 }
 
@@ -310,7 +318,7 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 		},
 		success: function(data){
 			//filter = document.createElement('div');
-			$("div#strategy_results").append(data);
+			$("body").append(data);
 			original_Query_Form_CSS.maxW = $("#query_form").css("max-width");
 			original_Query_Form_CSS.minW = $("#query_form").css("min-width");
 			$("#query_form select#selected_strategy option[value='" + getStrategy(strat_id).backId + "']").remove();
@@ -369,7 +377,7 @@ function openOrthologFilter(strat_id, step_id){
 	$("#query_form").remove();
 	$("#Strategies div a#filter_link span").css({opacity: 1.0});
 	$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});
-	$("div#strategy_results").append("<div id='query_form' class='jqDnR' style='min-height:140px; display:none'><span class='dragHandle'><div class='modal_name'><h1 id='query_form_title'></h1></div><a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span></div>");
+	$("body").append("<div id='query_form' class='jqDnR' style='min-height:140px; display:none'><span class='dragHandle'><div class='modal_name'><h1 id='query_form_title'></h1></div><a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span></div>");
 //	setDraggable($("#query_form"), ".handle");
 	getQueryForm(url, true, true, strat.frontId);
 }

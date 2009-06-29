@@ -13,7 +13,7 @@ function showDetails(det){
 	var dId = $(diagram).attr("id").substring(8);
 	dId = parseInt(dId);
 	var disp = openDetail.attr("disp");
-	$("#strategy_results").children("div.crumb_details").each(function(){
+	$("body").children("div.crumb_details").each(function(){
 		$(this).remove();	
 	});
 	$("div.crumb_details", diagram).each(function(){
@@ -31,14 +31,14 @@ function showDetails(det){
 		//		containment: 'parent'
 		//	});
 		l = 361;
-		t = -27;
+		t = 145;
 		det2.css({
 			left: l + "px",
 			top: t + "px",
 			display: "block",
 			position: "absolute"
 		});
-	det2.appendTo("#strategy_results");
+	det2.appendTo("body");
 	var op = $(".question_name .operation", det2);
 	if (op.length > 0) {
 		var opstring = op.removeClass("operation").attr('class');
@@ -58,7 +58,7 @@ function hideDetails(det){
 	if(openDetail != null) openDetail.attr("disp","0");
 	openDetail = null;
 	
-	$("#strategy_results").children("div.crumb_details").each(function(){
+	$("body").children("div.crumb_details").each(function(){
 		$(this).remove();	
 	});
 	$("a.crumb_name img").attr("src","/assets/images/plus.gif");
