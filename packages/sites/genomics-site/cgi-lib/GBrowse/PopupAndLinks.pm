@@ -202,11 +202,13 @@ sub snpTitle {
     push @data, ["$refStrain (reference)"=>"NA=$refNA$refAA"];
     foreach my $variant (@$variants) {
       my $strain = $variant->{STRAIN};
-      my $na = $variant->{ALLELE};
-      $na = $rev{$na} if $reversed;
-      my $aa = $variant->{PRODUCT};
-      my $info = "NA=$na" . ($isCoding? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$aa" : "");
-      push @data, [ "$strain" => $info ];
+      if (!($strain =~/$refStrain/i)) {
+        my $na = $variant->{ALLELE};
+        $na = $rev{$na} if $reversed;
+        my $aa = $variant->{PRODUCT};
+        my $info = "NA=$na" . ($isCoding? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$aa" : "");
+        push @data, [ "$strain" => $info ];
+      }
     }
     return hover( "SNP", \@data) if $refStrain;
   } else {
