@@ -15,17 +15,17 @@
 %>
 
 
-<c:set value="${wdkModel.questionsByCategory['GeneRecordClasses.GeneRecordClass']}" var="catList"/>
+<c:set value="${wdkModel.rootCategoryMap['GeneRecordClasses.GeneRecordClass']}" var="rootCat"/>
 
 <c:set var="found" value="false"/>
-<c:forEach items="${catList}" var="cat">
-        <c:if test="${qcat eq cat.key}">
+<c:forEach items="${rootCat.children}" var="catEntry">
+        <c:if test="${qcat eq catEntry.key}">
             <c:set var="found" value="true"/>
         </c:if>
 </c:forEach>
 
 <c:if test="${found eq 'true'}">
-    <td colspan="2"><a href="#${fn:replace(qcat, ' ', '%20')}">${qcat}</a></td>
+    <td colspan="2"><a href="#${fn:replace(qcat, ' ', '%20')}">${rootCat.children[qcat]}</a></td>
 </c:if>
 
 <c:if test="${found eq 'false'}">

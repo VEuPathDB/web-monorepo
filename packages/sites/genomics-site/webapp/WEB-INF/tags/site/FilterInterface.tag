@@ -21,12 +21,10 @@
 %>
 
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
-<c:set var="catMap" value="${model.questionsByCategory}" />
 <c:set var="recClass" value="${recordClass}" />
 <c:set var="qSetName" value="none" />
 <c:set var="qSets" value="${model.questionSetsMap}" />
 <c:set var="qSet" value="${qSets[qSetName]}" />
-<c:set var="qByCat" value="${qSet.questionsByCategory}" />
 <c:set var="user" value="${sessionScope.wdkUser}"/>
 
 <%--<jsp:useBean id="modelBean" scope="request" class="org.gus.wdk.model.jspwrap.WdkModelBean" >--%>
@@ -59,22 +57,24 @@
 		<tr>
 				<td>
 <ul class="top_nav">
-<c:set var="qByCat" value="${catMap[recordClass]}" />
-<c:forEach items="${qByCat}" var="cat">
-	<c:if test="${fn:length(qByCat) > 1}">
-	<li><a class="category" href="javascript:void(0)">${cat.key}</a>
-	<ul>
+<c:set var="rootCat" value="${model.rootCategoryMap[recordClass]}" />
+<c:forEach items="${rootCat.children}" var="catEntry">
+    <c:set var="cat" value="${catEntry.value}" />
+	<c:if test="${cat.multiCategory}">
+    	<li><a class="category" href="javascript:void(0)">${cat.displayName}</a>
+    	<ul>
 	</c:if>
-	<c:forEach items="${cat.value}" var="q">
-	<c:if test="${ !fn:contains(recordClass, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
-          <c:if test="${!(siteName == 'PlasmoDB' && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">
-		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&partial=true')">${q.displayName}</a></li>			
-          </c:if>
-	</c:if>
+	<c:forEach items="${cat.questions}" var="qEntry">
+	    <c:set var="q" value="${qEntry.value}" />
+    	<c:if test="${ !fn:contains(recordClass, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
+              <c:if test="${!(siteName == 'PlasmoDB' && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">
+    		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&partial=true')">${q.displayName}</a></li>			
+              </c:if>
+    	</c:if>
 	</c:forEach>
-	<c:if test="${fn:length(qByCat) > 1}">
-	</ul>
-	</li>
+	<c:if test="${cat.multiCategory}">
+    	</ul>
+    	</li>
 	</c:if>
 </c:forEach>
 </ul>

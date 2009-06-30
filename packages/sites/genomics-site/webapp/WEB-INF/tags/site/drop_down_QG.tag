@@ -4,21 +4,24 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
-<c:set var="catMap" value="${wdkModel.questionsByCategory}" />
+<c:set var="rootCatMap" value="${wdkModel.rootCategoryMap}" />
 
 	<ul>
-		<c:forEach items="${catMap}" var="catByRec">
-		  <c:if test="${catByRec.key == 'GeneRecordClasses.GeneRecordClass' || catByRec.key == 'SequenceRecordClasses.SequenceRecordClass'  || catByRec.key == 'OrfRecordClasses.OrfRecordClass' || catByRec.key == 'EstRecordClasses.EstRecordClass' || catByRec.key == 'IsolateRecordClasses.IsolateRecordClass' || catByRec.key == 'SnpRecordClasses.SnpRecordClass' || catByRec.key == 'AssemblyRecordClasses.AssemblyRecordClass' || catByRec.key == 'SageTagRecordClasses.SageTagRecordClass' }">
+		<c:forEach items="${rootCatMap}" var="rootCatEntry">
+		    <c:set var="recType" value="${rootCatEntry.key}" />
+		    <c:set var="rootCat" value="${rootCatEntry.value}" />
+		  <c:if test="${recType == 'GeneRecordClasses.GeneRecordClass' || recType == 'SequenceRecordClasses.SequenceRecordClass'  || recType == 'OrfRecordClasses.OrfRecordClass' || recType == 'EstRecordClasses.EstRecordClass' || recType == 'IsolateRecordClasses.IsolateRecordClass' || recType == 'SnpRecordClasses.SnpRecordClass' || recType == 'AssemblyRecordClasses.AssemblyRecordClass' || recType == 'SageTagRecordClasses.SageTagRecordClass' }">
 		 <c:choose>
-		  <c:when test="${catByRec.key=='GeneRecordClasses.GeneRecordClass'}">
+		  <c:when test="${recType=='GeneRecordClasses.GeneRecordClass'}">
 			<li><a href="#">Search for Genes</a>
 				<ul>
-					<c:set var="qByCat" value="${catByRec.value}" />
-					<c:forEach items="${qByCat}" var="cat">
+					<c:forEach items="${rootCat.children}" var="catEntry">
+					    <c:set var="cat" value="${catEntry.value}" />
 						<li>
-							<a href="javascript:void(0)">${cat.key}</a>
+							<a href="javascript:void(0)">${cat.displayName}</a>
 							<ul>
-								<c:forEach items="${cat.value}" var="q">
+								<c:forEach items="${cat.question}" var="qEntry">
+								    <c:set var="q" value="${qEntry.value}" />
 									<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=GENE"/>">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
@@ -51,12 +54,14 @@
 	<c:set var="target" value="ISOLATE" />
 </c:if>
 
-			<c:forEach items="${qByCat}" var="cat">
-		<%--	<li><a href="#">Search for ${cat.key}s</a>  --%>
+			<c:forEach items="${rootCat.children}" var="catEntry">
+			    <c:set var="cat" value="${catEntry.value}" />
+		<%--	<li><a href="#">${cat.displayName}s</a>  --%>
 			<li><a href="#">Search for ${recordType}s</a> 
 				<ul>
-				<c:forEach items="${cat.value}" var="q">
-				<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=${target}"/>">${q.displayName}</a></li>
+				<c:forEach items="${cat.question}" var="qEntry">
+				    <c:set var="q" value="${qEntry.value}" />
+				    <li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=${target}"/>">${q.displayName}</a></li>
 				</c:forEach>
 				</ul>
 			</li>

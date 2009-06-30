@@ -6,9 +6,9 @@
 <c:set var="record" value="${param.record}" />
 <c:set var="category" value="${param.category}" />
 <c:set var="model" value="${applicationScope.wdkModel}" />
-<c:set var="catMap" value="${model.questionsByCategory}" />
+<c:set var="rootCatMap" value="${model.rootCategoryMap}" />
 
-<c:set var="questions" value="${catMap[record][category]}" />
+<c:set var="cat" value="${rootCatMap[record].children[category]}" />
 
 <site:header refer="category"/>
 
@@ -54,8 +54,8 @@ div.question .left {
 	<c:set var="type" value="${category} Questions" />
 </c:if>
 
-<h1>${type}</h1>
-<c:forEach items="${questions}" var="q">
+<h1>${cat.displayName}</h1>
+<c:forEach items="${cat.questions}" var="q">
 	<div class="question">
 		<a href="showQuestion.do?questionFullName=${q.fullName}"><h2>${q.displayName}</h2></a><br>
 		<div class="summary"><h3>Summary</h3><br>${q.summary}</div>

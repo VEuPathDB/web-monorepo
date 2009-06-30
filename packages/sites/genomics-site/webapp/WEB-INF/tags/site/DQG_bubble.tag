@@ -23,7 +23,7 @@
 %>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
-<c:set var="catMap" value="${wdkModel.questionsByCategory}" />
+<c:set var="rootCats" value="${wdkModel.rootCategoryMap}" />
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
@@ -53,16 +53,17 @@
 		<div id="info">
 			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
 			<ul class="heading_list">
-				<c:forEach items="${catMap}" var="catByRec">
-				    <c:if test="${catByRec.key != 'GeneRecordClasses.GeneRecordClass'}">
-				      <c:set var="qByCat" value="${catByRec.value}" />
-				      <c:forEach items="${qByCat}" var="cat">
-
+				<c:forEach items="${rootCats}" var="rootCatEntry">
+				    <c:if test="${rootCatEntry.key != 'GeneRecordClasses.GeneRecordClass'}">
+				      <c:set var="rootCat" value="${catByRec.value}" />
+				      <c:forEach items="${rootCat.children}" var="catEntry">
+				          <c:set var="cat" value="${catEntry.value}" />
+				        
 <%-- SAME CODE AS IN drop_down_QG.tag --%>
 <%-- fixing plural and uppercase and setting target for BLAST--%>
 <%-- target is used for blast to know which target data type option should be clicked --%>
 
-  <%--  <c:set var="recordType" value="${cat.key}" />  --%>
+  <%--  <c:set var="recordType" value="${rootCat.name}" />  --%>
   <c:set var="recordType" value="${fn:substringBefore(catByRec.key,'Record')}" />
 
   <c:if test="${fn:containsIgnoreCase(recordType, 'Snp') || fn:containsIgnoreCase(recordType, 'Est')  || fn:containsIgnoreCase(recordType, 'Orf') }">
@@ -84,7 +85,8 @@
 
 						<div class="sub_list">
 							<ul>
-								<c:forEach items="${cat.value}" var="q">
+								<c:forEach items="${cat.questions}" var="qEntry">
+								    <c:set var="q" value="${qEntry.value}" />
 									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=${target}">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
@@ -108,16 +110,18 @@
 			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
 			<ul class="heading_list">
 				
-				<c:set var="qByCat" value="${catMap['GeneRecordClasses.GeneRecordClass']}" />
+				<c:set var="rootCat" value="${rootCats['GeneRecordClasses.GeneRecordClass']}" />
 
-				<c:forEach items="${qByCat}" var="cat">
+				<c:forEach items="${rootCat}" var="catEntry">
+				    <c:set var="cat" value="${catEntry.value}" />
 					<li>
 						<img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
-						<a class="heading" href="javascript:void(0)">${cat.key}</a>
-						<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.key}">details</a>
+						<a class="heading" href="javascript:void(0)">${cat.displayName}</a>
+						<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.name}">details</a>
 						<div class="sub_list">
 							<ul>
-								<c:forEach items="${cat.value}" var="q">
+								<c:forEach items="${cat.questions}" var="qEntry">
+								    <c:set var="q" value="${qEntry.value}" />
 									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=GENE">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
