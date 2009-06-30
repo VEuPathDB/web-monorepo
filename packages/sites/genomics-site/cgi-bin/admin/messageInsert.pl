@@ -19,7 +19,7 @@ my $headers = HTTP::Headers->new(
 print $headers->as_string() . "\n";
 
 
-#Create DB connection
+# Open DB connection
 my $model=$ENV{'PROJECT_ID'};
 my $dbconnect=new ApiCommonWebsite::Model::CommentConfig($model);
 
@@ -133,11 +133,11 @@ if ($query->param("messageId")){
          ###End DB Transaction###
        }
 
-    } ## End insertMessage Subroutine
+    } 
 ###########################################################################
 
     ## Retrieve message row from database for editing.
-    sub editMessage(){
+    sub editMessage() {
 
         my $editMessageId=$query->param("messageId");
         
@@ -173,42 +173,32 @@ if ($query->param("messageId")){
          # Determine and re-select previously checked projects
          my @selectedProjects=&getSelectedProjects($editMessageId);
          
-         my $cryptoBox;
-         my $giardiaBox;
-         my $plasmoBox;
-         my $toxoBox;
-         my $trichBox; 
-         my $triTrypBox;
-         my $eupathBox;
- 
+          # foreach my $project (@selectedProjects) {
+                    #  if ($projectId eq $project) {$checkBox = "checked='checked'"};
+                   # }
+
+
          # Re-check previously checked project boxes  
-         foreach my $project (@selectedProjects){
-         if ($project=~/CryptoDB/){$cryptoBox="checked='checked'";}
-         if ($project=~/GiardiaDB/){$giardiaBox="checked='checked'";}
-         if ($project=~/PlasmoDB/){$plasmoBox="checked='checked'";}
-         if ($project=~/ToxoDB/){$toxoBox="checked='checked'";}
-         if ($project=~/TrichDB/){$trichBox="checked='checked'";}
-         if ($project=~/TriTrypDB/){$triTrypBox="checked='checked'";}
-         if ($project=~/EuPathDB/){$eupathBox="checked='checked'";}
-         }
+         # foreach my $project (@selectedProjects){
+         # if ($project =~ /CryptoDB/) {$cryptoBox="checked='checked'";}
+         # if ($project =~ /GiardiaDB/) {$giardiaBox="checked='checked'";}
+         # if ($project =~ /PlasmoDB/) {$plasmoBox="checked='checked'";}
+         # if ($project =~ /ToxoDB/) {$toxoBox="checked='checked'";}
+         # if ($project =~ /TrichDB/) {$trichBox="checked='checked'";}
+         # if ($project =~ /TriTrypDB/) {$triTrypBox="checked='checked'";}
+         #if ($project =~ /EuPathDB/) {$eupathBox="checked='checked'";}
+         # }
          # Populate fields and display message form
          &displayMessageForm($errorMessage,
                              $messageId, 
                              $messageCategory,
                              \@selectedProjects,
                              $messageText,
-                             $cryptoBox,
-                             $giardiaBox,
-                             $plasmoBox,
-                             $toxoBox,
-                             $trichBox,
-                             $triTrypBox,
-                             $eupathBox,
                              $startDate, 
                              $stopDate, 
                              $adminComments);
        
-}### End editMessage subroutine
+}
 ##############################################################
     
     sub updateMessage() {
@@ -225,9 +215,9 @@ if ($query->param("messageId")){
         my $validForm;
 
        # Validate data from form
-       if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)){
+       if (&validateData($messageId, $messageCategory, \@selectedProjects, $messageText, $startDate, $stopDate, $adminComments)) {
        
-         $validForm=1; # form data is valid..proceed
+         $validForm = 1; # form data is valid..proceed
        
         ###Begin database transaction###
         eval{
@@ -266,69 +256,46 @@ if ($query->param("messageId")){
          };
        }
   
-	if($@){
+	if($@) {
             warn "Unable to process record update transaction. Rolling back as a result of: $@\n";
 	        $dbh->rollback();
             return 0;
             }
-             elsif (!$@ && $validForm){
+             elsif (!$@ && $validForm) {
                    return 1; # valid form, db transaction succesful, return success
                  }
        ###End database transaction###
 
-    }## End updateMessage Subroutine
+    }
 ####################################
-sub displayMessageForm{
+sub displayMessageForm {
 
         ## Render new submission form, or repopulate and display form with passed params if validation failed.
        
          my $errorMessage=$_[0] || '';
          my $messageId=$_[1] || '';
          my $messageCategory=$_[2] || '';
-         my (@selectedProjects)=@{($_[3])} if (@_); #Get selected projects from new message submit
-         my $messageText=$_[4] || '';
-         my $cryptoBox=$_[5] || '';
-         my $giardiaBox=$_[6] || '';
-         my $plasmoBox=$_[7] || '';
-         my $toxoBox=$_[8] || '';
-         my $trichBox=$_[9] || '';
-         my $triTrypBox=$_[10] || '';
-         my $eupathBox=$_[11] || '';
-         my $startDate=$_[12] || '';
-         my $stopDate=$_[13] || '';
-         my $adminComments=$_[14] || '';
-       
+         my (@selectedProjects)=@{($_[3])} if (@_); # Get selected projects from new message submit
+         my $messageText=$_[4] || '';   
+         my $startDate=$_[5] || '';
+         my $stopDate=$_[6] || '';
+         my $adminComments=$_[7] || '';
+         my $checkBox;
+         my $projectId;
 
-         if(!$messageId){
-         # Pre-check previously checked project boxes from a failed new submission 
-          foreach my $project (@selectedProjects){
-           if ($project=~/10/){$cryptoBox="checked='checked'";} 
-           if ($project=~/20/){$giardiaBox="checked='checked'";}
-           if ($project=~/30/){$plasmoBox="checked='checked'";}
-           if ($project=~/40/){$toxoBox="checked='checked'";}
-           if ($project=~/50/){$trichBox="checked='checked'";}
-           if ($project=~/60/){$triTrypBox="checked='checked'";}
-           if ($project=~/70/){$eupathBox="checked='checked'";}
-           }
-         }
-         elsif ($messageId){ # Pre-check boxes for a failed message update
-           @selectedProjects=&getSelectedProjects($messageId);
-           foreach my $project (@selectedProjects){
-            if ($project=~/CryptoDB/){$cryptoBox="checked='checked'";}
-            if ($project=~/GiardiaDB/){$giardiaBox="checked='checked'";}
-            if ($project=~/PlasmoDB/){$plasmoBox="checked='checked'";}
-            if ($project=~/ToxoDB/){$toxoBox="checked='checked'";}
-            if ($project=~/TrichDB/){$trichBox="checked='checked'";}
-            if ($project=~/TriTrypDB/){$triTrypBox="checked='checked'";}
-            if ($project=~/EuPathDB/){$eupathBox="checked='checked'";} 
-           }     
-          }
+         # if ($messageId) { # Pre-check boxes for a failed message update
+         #  @selectedProjects=&getSelectedProjects($messageId);
+         #  }
 
          # Display message ID in form if this is a message edit
             my $idString;
             if ($messageId){
             $idString="<p><b>Message ID: $messageId</b></p>";
             }
+
+#my $projects;
+my @projectNames=getProjectNames();
+my @projectIds=getProjectIds();
    #### XHTML FORM #####     
     print<<_END_OF_TEXT_
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -370,36 +337,35 @@ body {
           <div align="right">Projects Affected:</div>
         </div></td>
         <td bgcolor="#FFF8F2"><p>
-          <label>
-            <input type="checkbox" name="selectedProjects" value="10" $cryptoBox id="selectedProjects_0" />
-            <em>            CryptoDB</em></label>
-          <em><br />
-          <label>
-            <input type="checkbox" name="selectedProjects" value="20" $giardiaBox id="selectedProjects_1" />
-            GiardiaDB</label>
-          <br />
-          <label>
-            <input type="checkbox" name="selectedProjects" value="30" $plasmoBox id="selectedProjects_2" />
-            PlasmoDB</label>
-          <br />
-          <label>
-            <input type="checkbox" name="selectedProjects" value="40" $toxoBox id="selectedProjects_3" />
-            ToxoDB</label>
-          <br />
-          <label>
-            <input type="checkbox" name="selectedProjects" value="50" $trichBox id="selectedProjects_4" />
-            TrichDB</label>
-          <br />
-          <label>
-            <input type="checkbox" name="selectedProjects" value="60" $triTrypBox id="selectedProjects_5" />
-            TriTrypDB</label>
-          <br />
-          <label>
-            <input type="checkbox" name="selectedProjects" value="70" $eupathBox id="selectedProjects_6" />
-            EuPathDB</label>
-          </em><br />
-        </p>        
-        <label></label></td>
+_END_OF_TEXT_
+;
+
+           my $i=0;
+           foreach $projectId (@projectIds) {
+            $checkBox = '';
+             if (!$messageId) {
+                 foreach my $project (@selectedProjects) { 
+                      if ($projectId eq $project) {$checkBox = "checked='checked'"};
+                     }
+                  } 
+                elsif ($messageId) {
+                   @selectedProjects = getSelectedProjects($messageId);
+                    foreach my $project (@selectedProjects) {
+                      if ($projectId eq $project) {$checkBox = "checked='checked'"};
+                    }
+                 }
+             print "<label>";
+             print "<input type=\"checkbox\" name=\"selectedProjects\" value=\"$projectId\" $checkBox id=\"selectedProjects_[$i]\" />";
+             print "<em>$projectNames[$i]</em>";
+             print "</label>";
+             print "<em>";
+             print "<br/>";
+             $i++;
+            }
+
+print<<_END_OF_TEXT_
+        </p>
+       <label></label></td>
       </tr>
       <tr>
         <td valign="top"><div align="right" class="style10">
@@ -407,8 +373,7 @@ body {
         </div></td>
         <td>
           <label>
-           <textarea name="messageText" id="messageText" cols="45" rows="5">$messageText
-           </textarea>
+           <textarea name="messageText" id="messageText" cols="45" rows="5">$messageText</textarea>
           </label></td>
       </tr>
       <tr>
@@ -475,7 +440,7 @@ _END_OF_TEXT_
      
      my $messageID=$_[0];
      my @selectedProjects;
-     my $sql=q(SELECT p.project_name 
+     my $sql=q(SELECT p.project_id 
                FROM announce.projects p, announce.message_projects mp 
                WHERE mp.message_ID = ? 
                AND mp.project_ID = p.project_ID);
@@ -489,10 +454,52 @@ _END_OF_TEXT_
      }
    
      return @selectedProjects;
-     }## End getProjects subroutine 
+     } 
 
 ####################################
-   sub deleteMessage(){
+
+ sub getProjectIds() {
+
+     ## Query DB and return ID's associated with projects.
+
+     my @projectIds;
+     my $sql=q(SELECT project_id from announce.projects);
+     my $sth=$dbh->prepare($sql);
+     $sth->execute();
+
+     while (my @row=$sth->fetchrow_array()){
+     my $i=0;
+     push (@projectIds,  $row[$i]);
+     $i++;
+     }
+
+     return @projectIds;
+     }
+
+####################################
+
+sub getProjectNames() {
+
+     ## Query DB and return ID's associated with projects.
+
+     my @projectNames;
+     my $sql=q(SELECT project_name from announce.projects
+               ORDER BY project_id);
+     my $sth=$dbh->prepare($sql);
+     $sth->execute();
+
+     while (my @row=$sth->fetchrow_array()){
+     my $i=0;
+     push (@projectNames,  $row[$i]);
+     $i++;
+     }
+
+     return @projectNames;
+     }
+
+####################################
+
+   sub deleteMessage() {
  
       ## Delete a message record from the database
  
@@ -514,35 +521,26 @@ _END_OF_TEXT_
         $dbh->commit();
        };
        ###End Database Transaction###
-       if ($@){
+       if ($@) {
              warn "Unable to process record update transaction. Rolling back as a result of: $@\n";
              $dbh->rollback();
              }
-
        }  
 ###################################
    sub validateData(){
  
          ## Validate data submitted from message form. Reload form and notify user if data is invalid.
-         
-         my $messageId=shift;
-         my $messageCategory=shift;
-         my (@selectedProjects)=@{(shift)};
-         my $cryptoBox;
-         my $giardiaBox;
-         my $plasmoBox;
-         my $toxoBox;
-         my $trichBox;
-         my $triTrypBox;
-         my $eupathBox;
-         my $messageText=shift;
-         my $startDate=shift;
-         my $stopDate=shift;
-         my $adminComments=shift;
-         my $errorMessage="";
-                       
-         # Check to ensure that required fields are filled out
+      
+         my $messageId = shift;
+         my $messageCategory = shift;
+         my (@selectedProjects) = @{(shift)};
+         my $messageText = shift;
+         my $startDate = shift;
+         my $stopDate = shift;
+         my $adminComments = shift;
+         my $errorMessage = "";
           
+         # Check to ensure that required fields are filled out
            $errorMessage .= "ERROR: Message Category must be specified.<br/>" if(!$messageCategory);
            $errorMessage .= "ERROR: At least one project must be selected.<br/>" if (!@selectedProjects);
            $errorMessage .= "ERROR: Message field is required.<br/>" if (!$messageText);
@@ -554,8 +552,8 @@ _END_OF_TEXT_
               $convertedStopDate=~s/\s|:/-/g;
        
          # Convert date strings to integer seconds since epoch
-          (my $startMonth, my $startDay, my $startYear, my $startHour, my $startMinutes, my $startSeconds)=($convertedStartDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
-          (my $stopMonth, my $stopDay, my $stopYear, my $stopHour, my $stopMinutes, my $stopSeconds)=($convertedStopDate=~/(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
+          (my $startMonth, my $startDay, my $startYear, my $startHour, my $startMinutes, my $startSeconds) = ($convertedStartDate =~ /(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
+          (my $stopMonth, my $stopDay, my $stopYear, my $stopHour, my $stopMinutes, my $stopSeconds) = ($convertedStopDate =~ /(\d+)-(\d+)-(\d+)-(\d+)-(\d+)-(\d+)/);
      
             eval{ 
                  $convertedStartDate = timelocal($startSeconds, $startMinutes, $startHour, $startDay, $startMonth-1, $startYear-1900);
@@ -581,13 +579,6 @@ _END_OF_TEXT_
                                   $messageCategory,
                                   \@selectedProjects,
                                   $messageText,
-                                  $cryptoBox,
-                                  $giardiaBox,
-                                  $plasmoBox,
-                                  $toxoBox,
-                                  $trichBox,
-                                  $triTrypBox,
-                                  $eupathBox,
                                   $startDate, 
                                   $stopDate,
                                   $adminComments);
@@ -602,6 +593,7 @@ _END_OF_TEXT_
            } 
        
        } ##End validate data subroutine 
+
 #######################################
 
 sub confirmation(){
