@@ -173,21 +173,6 @@ if ($query->param("messageId")){
          # Determine and re-select previously checked projects
          my @selectedProjects=&getSelectedProjects($editMessageId);
          
-          # foreach my $project (@selectedProjects) {
-                    #  if ($projectId eq $project) {$checkBox = "checked='checked'"};
-                   # }
-
-
-         # Re-check previously checked project boxes  
-         # foreach my $project (@selectedProjects){
-         # if ($project =~ /CryptoDB/) {$cryptoBox="checked='checked'";}
-         # if ($project =~ /GiardiaDB/) {$giardiaBox="checked='checked'";}
-         # if ($project =~ /PlasmoDB/) {$plasmoBox="checked='checked'";}
-         # if ($project =~ /ToxoDB/) {$toxoBox="checked='checked'";}
-         # if ($project =~ /TrichDB/) {$trichBox="checked='checked'";}
-         # if ($project =~ /TriTrypDB/) {$triTrypBox="checked='checked'";}
-         #if ($project =~ /EuPathDB/) {$eupathBox="checked='checked'";}
-         # }
          # Populate fields and display message form
          &displayMessageForm($errorMessage,
                              $messageId, 
@@ -283,17 +268,12 @@ sub displayMessageForm {
          my $checkBox;
          my $projectId;
 
-         # if ($messageId) { # Pre-check boxes for a failed message update
-         #  @selectedProjects=&getSelectedProjects($messageId);
-         #  }
-
          # Display message ID in form if this is a message edit
             my $idString;
             if ($messageId){
             $idString="<p><b>Message ID: $messageId</b></p>";
             }
 
-#my $projects;
 my @projectNames=getProjectNames();
 my @projectIds=getProjectIds();
    #### XHTML FORM #####     
