@@ -55,8 +55,8 @@
 
 <sanityTestInfo project="PlasmoDB">
     <defaultParamValue name="srcfeature_id" value="$$na_seq_id_Pf3D7_11$$"/>
-    <defaultParamValue name="base_start" value="1211700"/>
-    <defaultParamValue name="rend" value="1311700"/>
+    <defaultParamValue name="base_start" value="1279000"/>
+    <defaultParamValue name="rend" value="1314000"/>
     <defaultParamValue name="dlm" value=","/>
 
     <sqlValue name="na_seq_id_Pf3D7_11">
@@ -1095,6 +1095,8 @@ ORDER BY
   <sqlQuery name="Microsatellite:sts" excludeProjects="TriTrypDB,ToxoDB">
     <testParamValues project="PlasmoDB">
        <param name="srcfeature_id" value="341016"/>
+       <param name="base_start" value="469864"/> 
+       <param name="rend" value="470011"/> 
     </testParamValues>
      <sql>
 <![CDATA[
@@ -1127,6 +1129,11 @@ ORDER BY
        <param name="srcfeature_id" value="238333"/>
        <param name="base_start" value="893548"/>
        <param name="rend" value="894278"/>
+    </testParamValues>
+    <testParamValues project="PlasmoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_11$$"/>
+       <param name="base_start" value="1279000"/>
+       <param name="rend" value="1314000"/>
     </testParamValues>
      <sql>
 <![CDATA[
