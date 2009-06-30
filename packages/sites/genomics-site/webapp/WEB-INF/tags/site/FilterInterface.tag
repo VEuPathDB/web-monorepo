@@ -71,7 +71,7 @@
               </c:if>
     	</c:if>
 	</c:forEach>
-	<c:if test="${cat.multiCategory}">
+	<c:if test="${rootCat.multiCategory}">
     	</ul>
     	</li>
 	</c:if>
