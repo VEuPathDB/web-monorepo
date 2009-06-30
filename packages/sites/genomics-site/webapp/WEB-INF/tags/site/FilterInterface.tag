@@ -64,8 +64,7 @@
     	<li><a class="category" href="javascript:void(0)">${cat.displayName}</a>
     	<ul>
 	</c:if>
-	<c:forEach items="${cat.questions}" var="qEntry">
-	    <c:set var="q" value="${qEntry.value}" />
+	<c:forEach items="${cat.questions}" var="q">
     	<c:if test="${ !fn:contains(recordClass, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
               <c:if test="${!(siteName == 'PlasmoDB' && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">
     		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&partial=true')">${q.displayName}</a></li>			

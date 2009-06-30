@@ -55,7 +55,7 @@
 			<ul class="heading_list">
 				<c:forEach items="${rootCats}" var="rootCatEntry">
 				    <c:if test="${rootCatEntry.key != 'GeneRecordClasses.GeneRecordClass'}">
-				      <c:set var="rootCat" value="${catByRec.value}" />
+				      <c:set var="rootCat" value="${rootCatEntry.value}" />
 				      <c:forEach items="${rootCat.children}" var="catEntry">
 				          <c:set var="cat" value="${catEntry.value}" />
 				        
@@ -63,30 +63,13 @@
 <%-- fixing plural and uppercase and setting target for BLAST--%>
 <%-- target is used for blast to know which target data type option should be clicked --%>
 
-  <%--  <c:set var="recordType" value="${rootCat.name}" />  --%>
-  <c:set var="recordType" value="${fn:substringBefore(catByRec.key,'Record')}" />
-
-  <c:if test="${fn:containsIgnoreCase(recordType, 'Snp') || fn:containsIgnoreCase(recordType, 'Est')  || fn:containsIgnoreCase(recordType, 'Orf') }">
-	<c:set var="recordType" value="${fn:toUpperCase(recordType)}" />
-	<c:set var="target" value="${recordType}" />        
-  </c:if>
-  <c:if test="${fn:contains(recordType, 'Assem') }">
-	<c:set var="recordType" value="Assemblie" />
-	<c:set var="target" value="ASSEMBLIES" />
-  </c:if>
-  <c:if test="${fn:contains(recordType, 'Sequence') }">
-        <c:set var="target" value="SEQ" />
-  </c:if>
-  <c:if test="${fn:contains(recordType, 'Isolate') }">
-        <c:set var="target" value="ISOLATE" />
-  </c:if>
-
-					<li><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;<a class="heading" href="javascript:void(0)">&nbsp;${recordType}s</a><a class="detail_link small" href="categoryPage.jsp?record=${catByRec.key}&category=${cat.key}">details</a>
+					<li>
+                                            <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
+                                            <a class="heading" href="javascript:void(0)">&nbsp;${cat.displayName}</a><a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}">details</a>
 
 						<div class="sub_list">
 							<ul>
-								<c:forEach items="${cat.questions}" var="qEntry">
-								    <c:set var="q" value="${qEntry.value}" />
+								<c:forEach items="${cat.questions}" var="q">
 									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=${target}">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
@@ -111,8 +94,7 @@
 			<ul class="heading_list">
 				
 				<c:set var="rootCat" value="${rootCats['GeneRecordClasses.GeneRecordClass']}" />
-
-				<c:forEach items="${rootCat}" var="catEntry">
+				<c:forEach items="${rootCat.children}" var="catEntry">
 				    <c:set var="cat" value="${catEntry.value}" />
 					<li>
 						<img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
@@ -120,8 +102,7 @@
 						<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.name}">details</a>
 						<div class="sub_list">
 							<ul>
-								<c:forEach items="${cat.questions}" var="qEntry">
-								    <c:set var="q" value="${qEntry.value}" />
+								<c:forEach items="${cat.questions}" var="q">
 									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=GENE">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>

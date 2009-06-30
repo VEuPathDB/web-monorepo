@@ -20,8 +20,7 @@
 						<li>
 							<a href="javascript:void(0)">${cat.displayName}</a>
 							<ul>
-								<c:forEach items="${cat.question}" var="qEntry">
-								    <c:set var="q" value="${qEntry.value}" />
+								<c:forEach items="${cat.questions}" var="q">
 									<li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=GENE"/>">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
@@ -57,10 +56,9 @@
 			<c:forEach items="${rootCat.children}" var="catEntry">
 			    <c:set var="cat" value="${catEntry.value}" />
 		<%--	<li><a href="#">${cat.displayName}s</a>  --%>
-			<li><a href="#">Search for ${recordType}s</a> 
+			<li><a href="#">${cat.displayName}</a> 
 				<ul>
-				<c:forEach items="${cat.question}" var="qEntry">
-				    <c:set var="q" value="${qEntry.value}" />
+				<c:forEach items="${cat.questions}" var="q">
 				    <li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=${target}"/>">${q.displayName}</a></li>
 				</c:forEach>
 				</ul>
