@@ -423,3 +423,14 @@ function popLogin(){
 function popRegister(){
 	$.blockUI({message : $("#registerForm"), css : {cursor: 'auto',width: '80%',top:'10%',left:'10%' } });
 }
+
+function checkboxAll(field) {
+  for (i = 0; i < field.length; i++)
+    field[i].checked = true ;
+}
+
+function checkboxNone(field) {
+  for (i = 0; i < field.length; i++)
+    field[i].checked = false ;
+}
+
