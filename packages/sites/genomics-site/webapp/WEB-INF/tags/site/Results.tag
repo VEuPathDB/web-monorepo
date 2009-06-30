@@ -380,10 +380,17 @@
 <c:if test = "${eupathIsolatesQuestion && clustalwIsolatesCount > 1}">
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
   <tr align=center>
-    <th> <br/> 
-          Please select at least two isolates to run ClustalW<br/> 
+    <td> <b><br/> 
+     Please select at least two isolates to run ClustalW. Note: only isolates from a single results page will be aligned. <br/>
+     Increase the page size in advanced paging to increase the number that can be aligned).  </b>
+    </td>
+  </tr>
+	<tr>
+	  <td align=center> 
       <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate()" />
-    </th>
+      <input type="button" name="CheckAll" value="Check All" onClick="checkboxAll(document.checkHandleForm.selectedFields)">
+      <input type="button" name="UnCheckAll" value="Uncheck All" onClick="checkboxNone(document.checkHandleForm.selectedFields)">
+    </td>
 	</tr>
 </table>
 </c:if>
