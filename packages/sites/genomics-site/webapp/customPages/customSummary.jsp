@@ -34,7 +34,7 @@
 <c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
 <c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
 <c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
-<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/importStrategy.do?strategy=" />
+<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/im.do?s=" />
 
 <%-- inline script for initial load of summary page --%>
 <script type="text/javascript" language="javascript">

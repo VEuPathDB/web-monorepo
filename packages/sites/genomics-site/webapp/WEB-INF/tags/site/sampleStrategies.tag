@@ -79,7 +79,7 @@
 
 <c:if test="${simple != null}">
 <tr align = "left">
-	<td><a title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${simple}"/>">Prot Cod Sig Pep EST Evidence</a> </td>
+	<td><a title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${simple}"/>">Prot Cod Sig Pep EST Evidence</a> </td>
 	<td>Simple strategy</td>
 	<td>Find all protein coding genes that have a signal peptide and evidence for expression based on EST alignments</td>
 </tr>
@@ -87,7 +87,7 @@
 
 <c:if test="${expanded != null}">
   <tr align = "left">
-	<td><a  title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expanded}"/>">kin, TM, (EST or Prot) ortho</a> </td>
+	<td><a  title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expanded}"/>">kin, TM, (EST or Prot) ortho</a> </td>
 	<td>Strategy with nested strategy and transform</td>
 	<td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td>
 </tr>
@@ -95,7 +95,7 @@
 
 <c:if test="${expressed != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressed}"/>">Expressed Genes</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressed}"/>">Expressed Genes</a> </td>
 	<td>Strategy with a nested strategy</td>
 	<td>Find all genes in the database that have any direct evidence for expression</td>
 </tr>
@@ -103,7 +103,7 @@
 
 <c:if test="${expressedLbrazilliensis != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedLbrazilliensis}"/>"><i>L. brazilliensis</i> Expressed Genes</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressedLbrazilliensis}"/>"><i>L. brazilliensis</i> Expressed Genes</a> </td>
 	<td>Strategy with an ortholog transform</td>
 	<td>Find all genes from <i>L. brazilliensis</i> that have any evidence for expression based on direct evidence or using orthology</td>
 </tr>
@@ -111,7 +111,7 @@
 
 <c:if test="${expressedPknowlesi != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${expressedPknowlesi}"/>">P.knowlesi Expressed Genes</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/imp.do?s=${expressedPknowlesi}"/>">P.knowlesi Expressed Genes</a> </td>
 	<td>Strategy with a nested strategy and an ortholog transform</td>
 	<td>Find all genes from <i>P. knowlesi</i> that have any evidence for expression based on orthology to other <i>Plasmodium</i> species</td>
 </tr>
@@ -119,7 +119,7 @@
 
 <c:if test="${PfalVaccineAg != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${PfalVaccineAg}"/>"><i>P.falciparum</i> candidate vaccine antigens</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${PfalVaccineAg}"/>"><i>P.falciparum</i> candidate vaccine antigens</a> </td>
 	<td>Simple stategy to identify potential vaccine antigens</td>
 	<td>Find all genes from <i>P. falciparum</i> that that could be worth following up as a potential vaccine antigen.  Note that there are many ways to do this search ... experiment with different parameter settings and incorporating different queries.</td>
 </tr>
@@ -127,7 +127,7 @@
 
 <c:if test="${PfalDrugTargets != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${PfalDrugTargets}"/>"><i>P.falciparum</i> candidate drug targets</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${PfalDrugTargets}"/>"><i>P.falciparum</i> candidate drug targets</a> </td>
 	<td>Nested stategy to identify potential drug targets.</td>
 	<td>Find genes from <i>P. falciparum</i> that that could be worth following up as potential drug targets.  Note that there are many ways to do this search ... experiment with different parameter settings and incorporating different queries.</td>
 </tr>
@@ -135,7 +135,7 @@
 
 <c:if test="${vivaxCryptoOrthologs != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/importStrategy.do?strategy=${vivaxCryptoOrthologs}"/>"><i>P.vivax</i> orthologs</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${vivaxCryptoOrthologs}"/>"><i>P.vivax</i> orthologs</a> </td>
 	<td>Simple stategy</td>
 	<td><i>P. vivax</i> orthologs of cryptosporidium genes that have evidence of expression in oocysts.</td>
 </tr>

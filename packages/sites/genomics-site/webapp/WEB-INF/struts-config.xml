@@ -64,6 +64,13 @@
       <forward name="show_application" path="/showApplication.do"/>
     </action>
     <action
+      path="/im"
+      type="org.gusdb.wdk.controller.action.ImportStrategyAction"
+      scope="request"
+      validate="false">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
       path="/closeStrategy"
       type="org.gusdb.wdk.controller.action.CloseStrategyAction"
       scope="request"
