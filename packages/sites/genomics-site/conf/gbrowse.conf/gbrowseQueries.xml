@@ -440,7 +440,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:TGI">
+  <sqlQuery name="match:TGI" excludeProjects="TriTrypDB">
     <testParamValues project="ToxoDB">
     <param name="srcfeature_id" value="240961"/>
     </testParamValues>
@@ -484,7 +484,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="SAGE:3-5prime">
+  <sqlQuery name="SAGE:3-5prime" excludeProjects="TriTrypDB">
      <sql>
 <![CDATA[
 SELECT distinct * from
@@ -1089,7 +1089,7 @@ ORDER BY
   </sqlQuery>
  -->
   
-  <sqlQuery name="Microsatellite:sts">
+  <sqlQuery name="Microsatellite:sts" excludeProjects="TriTrypDB">
     <testParamValues project="PlasmoDB">
        <param name="srcfeature_id" value="341016"/>
     </testParamValues>
@@ -1119,7 +1119,7 @@ ORDER BY
   
   
 <!-- NOTE: externalDatabase.name list specified in query, for Crypto AND Plasmo -->
-  <sqlQuery name="match:IsolatePopset">
+  <sqlQuery name="match:IsolatePopset" excludeProjects="TriTrypDB">
      <sql>
 <![CDATA[
 SELECT distinct sim.similarity_id feature_id, 
@@ -1572,7 +1572,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:Exons" excludeProjects="PlasmoDB">
+  <sqlQuery name="AffymetrixProbes:Exons" excludeProjects="PlasmoDB,TriTrypDB">
    <testParamValues project="ToxoDB">
      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
    </testParamValues>  
@@ -2510,7 +2510,7 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="mapp:promotersForward"  excludeProjects="PlasmoDB">
+  <sqlQuery name="mapp:promotersForward"  excludeProjects="PlasmoDB,TriTrypDB,ToxoDB">
      <sql>
 <![CDATA[
       SELECT distinct(na_sequence_id) feature_id,
@@ -2525,7 +2525,7 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
     </sql>
   </sqlQuery>
 
-<sqlQuery name="mapp:promotersReverse"  excludeProjects="PlasmoDB">    
+<sqlQuery name="mapp:promotersReverse"  excludeProjects="PlasmoDB,TriTrypDB,ToxoDB">    
   <sql>
 <![CDATA[
       SELECT distinct(na_sequence_id) feature_id,
@@ -2888,7 +2888,7 @@ GROUP BY interval, na_sequence_id
     </sql> 
   </sqlQuery>
  
-  <sqlQuery name="match:TGI:bulksubfeatures">
+  <sqlQuery name="match:TGI:bulksubfeatures" excludeProjects="TriTrypDB">
     <testParamValues project="ToxoDB">
     <param name="srcfeature_id" value="240961"/>
     </testParamValues>
@@ -3246,7 +3246,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="SAGE:3-5prime:bulkAttribute">
+  <sqlQuery name="SAGE:3-5prime:bulkAttribute" excludeProjects="TriTrypDB">
      <sql>
 <![CDATA[
  SELECT fl.na_feature_id as feature_id,
@@ -3270,7 +3270,7 @@ ORDER BY feature_id, a.assay_id
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:BLAT:seq" excludeProjects="PlasmoDB">
+  <sqlQuery name="alignment:BLAT:seq" excludeProjects="PlasmoDB,TriTrypDB">
      <sql>
 <![CDATA[
 SELECT est.na_sequence_id, est.source_id, est.sequence
@@ -3313,7 +3313,7 @@ ORDER BY
   </sqlQuery>
   -->
   
-  <sqlQuery name="scaffold:TIGR:bulksubfeatures" excludeProjects="PlasmoDB">
+  <sqlQuery name="scaffold:TIGR:bulksubfeatures" excludeProjects="PlasmoDB,TriTrypDB">
      <sql>
 <![CDATA[
 SELECT sg.na_feature_id as feature_id,
@@ -3683,7 +3683,7 @@ ORDER BY var.strain
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="mapp:promotersForward:bulksubfeatures"  excludeProjects="PlasmoDB">
+  <sqlQuery name="mapp:promotersForward:bulksubfeatures"  excludeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
 <![CDATA[
       SELECT location feature_id, 
@@ -3705,7 +3705,7 @@ ORDER BY var.strain
     </sql>
   </sqlQuery>
  
-  <sqlQuery name="mapp:promotersReverse:bulksubfeatures"  excludeProjects="PlasmoDB">
+  <sqlQuery name="mapp:promotersReverse:bulksubfeatures"  excludeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
 <![CDATA[
       SELECT location feature_id, 
