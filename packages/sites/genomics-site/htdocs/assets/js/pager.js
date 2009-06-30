@@ -86,7 +86,7 @@ function openAdvancedPaging(element){
                     panel.css({"display" : "block",
                                "left": offset.left + "px",
                                "top": offset.top + "px",
-			   "width": "256px", 
+			   "width": "290px", 
                                "z-index" : 500});
                     button.val("Cancel");
 	}else{
