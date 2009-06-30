@@ -268,7 +268,9 @@ function singleStep(modelstep, jsonstep, sid, zIndex){
 function createDetails(modelstep, jsonstep, sid){
 	strat = getStrategy(sid);
 	var detail_div = document.createElement('div');
-	$(detail_div).addClass("crumb_details").attr("disp","0").css({ display: "none", "max-width":"650px", "min-width":"55%" });
+	$(detail_div).addClass("crumb_details").attr("disp","0");
+	if (jsonstep.isboolean && !jsonstep.isCollapsed) $(detail_div).css({ display: "none", "width":"680px"});
+	else $(detail_div).css({ display: "none", "max-width":"650px", "min-width":"55%" });
 	var name = jsonstep.displayName;
 	var questionName = jsonstep.questionName;
 	
