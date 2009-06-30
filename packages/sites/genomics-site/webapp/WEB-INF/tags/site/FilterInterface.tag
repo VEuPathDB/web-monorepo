@@ -60,7 +60,7 @@
 <c:set var="rootCat" value="${model.rootCategoryMap[recordClass]}" />
 <c:forEach items="${rootCat.children}" var="catEntry">
     <c:set var="cat" value="${catEntry.value}" />
-	<c:if test="${cat.multiCategory}">
+	<c:if test="${rootCat.multiCategory}">
     	<li><a class="category" href="javascript:void(0)">${cat.displayName}</a>
     	<ul>
 	</c:if>
