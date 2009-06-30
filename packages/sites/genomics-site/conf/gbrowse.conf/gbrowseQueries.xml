@@ -87,6 +87,9 @@
     <testParamValues project="TriTrypDB">
        <param name="name" value="LmjF05_01_20050601_V5.2"/>
     </testParamValues>
+    <testParamValues project="PlasmoDB">
+       <param name="name" value="Pf3D7_11"/>
+    </testParamValues>
     <sql>
 <![CDATA[
 SELECT  
@@ -165,6 +168,9 @@ WHERE gs.lowercase_source_id
     </testParamValues>
     <testParamValues project="ToxoDB">
        <param name="name" value="TGME49_chrX"/>
+    </testParamValues>
+    <testParamValues project="PlasmoDB">
+       <param name="name" value="Pf3D7_11"/>
     </testParamValues>
      <sql>
 <![CDATA[
@@ -437,7 +443,12 @@ ORDER BY
   <sqlQuery name="match:TGI">
     <testParamValues project="ToxoDB">
     <param name="srcfeature_id" value="240961"/>
-    </testParamValues>     
+    </testParamValues>
+    <testParamValues project="PlasmoDB">
+    <param name="srcfeature_id" value="928098"/>
+    <param name="rend" value="50"/>
+    <param name="base_start" value="1"/>
+    </testParamValues>
      <sql>
 <![CDATA[
 SELECT
@@ -661,7 +672,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:Bacs">
+  <sqlQuery name="alignment:Bacs" excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, 
@@ -720,7 +731,7 @@ ORDER BY f.startm
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:Cosmids">
+  <sqlQuery name="alignment:Cosmids" excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, f.feature_id name, f.parent_id, f.startm, f.end,
@@ -795,6 +806,9 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   
   
   <sqlQuery name="Centromere:overview"  includeProjects="PlasmoDB">
+    <testParamValues project="PlasmoDB">
+       <param name="srcfeature_id" value="335722"/>
+    </testParamValues>
      <sql>
 <![CDATA[
 SELECT fl.na_sequence_id feature_id,
@@ -839,7 +853,7 @@ ORDER BY
     </sql>
   </sqlQuery>
  
-  <sqlQuery name="repeat_region:Genbank">
+  <sqlQuery name="repeat_region:Genbank" includeProjects="TrichDB">
   <sql>
 <![CDATA[ 
 SELECT gf.na_feature_id feature_id,
@@ -948,7 +962,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:RandomEnds">
+  <sqlQuery name="alignment:RandomEnds" excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, f.name, f.parent_id, f.startm, f.end,
@@ -987,7 +1001,7 @@ ORDER BY f.startm
   </sqlQuery>
   
   
-  <sqlQuery name="contig:Genbank">
+  <sqlQuery name="contig:Genbank" excludeProjects="PlasmoDB">
     <testParamValues project="TriTrypDB">
     <param name="srcfeature_id" value="183227"/>
     </testParamValues>     
@@ -1076,6 +1090,9 @@ ORDER BY
  -->
   
   <sqlQuery name="Microsatellite:sts">
+    <testParamValues project="PlasmoDB">
+       <param name="srcfeature_id" value="341016"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT S.na_feature_id as feature_id,
@@ -1555,7 +1572,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:Exons">
+  <sqlQuery name="AffymetrixProbes:Exons" excludeProjects="PlasmoDB">
    <testParamValues project="ToxoDB">
      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
    </testParamValues>  
@@ -2404,6 +2421,11 @@ WHERE  sa.dataset = 'Sanger reichenowi SNPs'
   
   
   <sqlQuery name="match:BergmanVaidyaOligos"  includeProjects="PlasmoDB">
+    <testParamValues project="PlasmoDB">
+       <param name="srcfeature_id" value="435075"/>
+       <param name="rend" value="600"/>
+       <param name="base_start" value="663"/>
+    </testParamValues> 
      <sql>
 <![CDATA[
  SELECT
@@ -2488,7 +2510,7 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="mapp:promotersForward"  includeProjects="PlasmoDB">
+  <sqlQuery name="mapp:promotersForward"  excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
       SELECT distinct(na_sequence_id) feature_id,
@@ -2503,7 +2525,7 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
     </sql>
   </sqlQuery>
 
-<sqlQuery name="mapp:promotersReverse"  includeProjects="PlasmoDB">    
+<sqlQuery name="mapp:promotersReverse"  excludeProjects="PlasmoDB">    
   <sql>
 <![CDATA[
       SELECT distinct(na_sequence_id) feature_id,
@@ -2646,6 +2668,9 @@ and sa.organism != sb.organism
   <testParamValues project="TriTrypDB">
       <param name="name" value="LmjF05.1010"/>
   </testParamValues>
+  <testParamValues project="PlasmoDB">
+      <param name="name" value="PF11_0344"/>
+  </testParamValues>
      <sql>
 <![CDATA[
 select gb.SOURCE_ID
@@ -2764,6 +2789,9 @@ and sa.organism != sb.organism
    <testParamValues project="TriTrypDB">
     <param name="name" value="LmjF05.1010"/>
    </testParamValues>
+  <testParamValues project="PlasmoDB">
+      <param name="name" value="PF11_0344"/>
+  </testParamValues>
      <sql>
 <![CDATA[
 select gf.SOURCE_ID,
@@ -2864,6 +2892,11 @@ GROUP BY interval, na_sequence_id
     <testParamValues project="ToxoDB">
     <param name="srcfeature_id" value="240961"/>
     </testParamValues>
+    <testParamValues project="PlasmoDB">
+    <param name="srcfeature_id" value="928098"/>
+    <param name="rend" value="50"/>
+    <param name="base_start" value="1"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT
@@ -2926,7 +2959,7 @@ WHERE  blat.query_na_sequence_id = asbl.na_sequence_id and
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:Bacs:bulksubfeatures">
+  <sqlQuery name="alignment:Bacs:bulksubfeatures" excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
@@ -2974,6 +3007,9 @@ AND ed.name in ('L.major BAC Ends from Sanger',
    </testParamValues>
    <testParamValues project="ToxoDB">
       <param name="parent_id" value="$$na_seq_id_X$$"/>
+   </testParamValues>
+   <testParamValues project="PlasmoDB">
+    <param name="parent_id" parentFeatureTest="annotation:density"/>
    </testParamValues> 
      <sql>
 <![CDATA[
@@ -3034,7 +3070,7 @@ GROUP BY interval, na_sequence_id
     </sql> 
   </sqlQuery>
   
-  <sqlQuery name="alignment:Cosmids:bulksubfeatures">
+  <sqlQuery name="alignment:Cosmids:bulksubfeatures" excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
@@ -3234,7 +3270,7 @@ ORDER BY feature_id, a.assay_id
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:BLAT:seq">
+  <sqlQuery name="alignment:BLAT:seq" excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT est.na_sequence_id, est.source_id, est.sequence
@@ -3277,7 +3313,7 @@ ORDER BY
   </sqlQuery>
   -->
   
-  <sqlQuery name="scaffold:TIGR:bulksubfeatures">
+  <sqlQuery name="scaffold:TIGR:bulksubfeatures" excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT sg.na_feature_id as feature_id,
@@ -3647,7 +3683,7 @@ ORDER BY var.strain
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="mapp:promotersForward:bulksubfeatures"  includeProjects="PlasmoDB">
+  <sqlQuery name="mapp:promotersForward:bulksubfeatures"  excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
       SELECT location feature_id, 
@@ -3669,7 +3705,7 @@ ORDER BY var.strain
     </sql>
   </sqlQuery>
  
-  <sqlQuery name="mapp:promotersReverse:bulksubfeatures"  includeProjects="PlasmoDB">
+  <sqlQuery name="mapp:promotersReverse:bulksubfeatures"  excludeProjects="PlasmoDB">
      <sql>
 <![CDATA[
       SELECT location feature_id, 
