@@ -63,6 +63,36 @@
 <br>
 
 <%--#############################################################--%>
+
+<%-- User Comments ------------------------------------------------%>
+
+<c:url var="commentsUrl" value="addComment.do">
+  <c:param name="stableId" value="${id}"/>
+	<c:param name="commentTargetId" value="isolate"/>
+	<c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
+	<c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
+	<c:param name="organism" value="${attrs['organism'].value}" />
+	<c:param name="flag" value="0" />
+</c:url>
+
+<c:set var='commentLegend'>
+   <c:catch var="e">
+	   <site:dataTable tblName="IsolateComments"/>
+	   <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
+		</c:catch>
+		<c:if test="${e != null}">
+		  <site:embeddedError
+		    msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
+		    e="${e}"
+		/>
+		</c:if>
+</c:set> 
+<site:panel
+	displayName="User Comments"
+	content="${commentLegend}" />
+<br>
+
+<%--#############################################################--%>
 <%-- Link to SNPs ------------------------------------------------%>
 
 <c:if test="${data_type eq '3kChip' || data_type eq 'HD_Array' || data_type eq 'Barcode'}">
