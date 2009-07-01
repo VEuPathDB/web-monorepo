@@ -38,7 +38,12 @@
     <th scope="col" style="width: 3em;">&nbsp;</th>
     <th scope="col" style="width: 4em">&nbsp;</th>
     <th scope="col" style="width: 9em">&nbsp;</th>
-    <th scope="col" style="width: 5em;text-align:center">Modified</th>
+    <th scope="col" style="width: 5em;text-align:center">
+      <c:choose>
+        <c:when test="${prefix == 'Saved'}">Saved</c:when>
+        <c:otherwise>Modified</c:otherwise>
+      </c:choose>
+    </th>
     <th scope="col" style="width: 5em;text-align:center">Viewed</th>
     <th scope="col" style="width: 4em">Version</th>
     <th scope="col" style="width: 4em;text-align:right">Size</th>
@@ -130,8 +135,8 @@
             <option value="deleteStrategy(${strategyId}, false)">Delete</option>
          </select>
       </td>
-      <td nowrap style="padding:0 2px 0 2px;">${strategy.createdTimeFormatted}</td>
-      <td nowrap  style="padding:0 2px;text-align:right">${strategy.lastRunTimeFormatted}</td>
+      <td nowrap style="padding:0 2px 0 2px;">${strategy.lastModifiedTimeFormatted}</td>
+      <td nowrap  style="padding:0 2px;text-align:right">${strategy.lastViewedTimeFormatted}</td>
       <td nowrap style="text-align:center">
         <c:choose>
           <c:when test="${strategy.latestStep.version == null || strategy.latestStep.version eq ''}">${wdkModel.version}</c:when>
