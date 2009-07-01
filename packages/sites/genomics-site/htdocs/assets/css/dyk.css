@@ -2,8 +2,8 @@
 	display: none;
 	position:absolute;
 	width:417px;
-	height:90px;
-	top:184px;
+	height:87px;
+	top:50px;
 	left:313px;
 	z-index:100000;
 	border:1px solid #888888;
@@ -21,7 +21,7 @@ div#dyk-shadow{
 	background-color:#000000;
 	left:319px;    /* 247px; */
 	opacity:0.2;
-	top:190px;   /* 204px; */
+	top:56px;   /* 204px; */
 	z-index:800;
 }
 
@@ -35,7 +35,8 @@ div#dyk-box div#dyk-text{
 	height:39px;
 	margin:18px 0 10px;
 	width:100%;
-	overflow-y: scroll;
+/*	overflow-y: scroll; */
+	padding-top: 1px;
 }
 
 div#dyk-box div#closing-items{
@@ -51,7 +52,7 @@ div#dyk-box ul.tip-box{
 	-webkit-border-bottom-right-radius:10px;
 	background-color:#F0F0F0;
 	bottom:0;
-	padding:8px 0 4px;
+	padding:2px 0 4px;
 	position:absolute;
 	width:100%;
 }

@@ -48,8 +48,8 @@ function initDYK(o){	//TODO Create and read in an XML file to provide the text f
 		stop:function(e,ui){
 			var lef = $(this).css('left');
 			var to = $(this).css('top');
-			lef = parseInt(lef.split("px")[0]) - 3;
-			to = parseInt(to.split("px")[0]) + 3;
+			lef = parseInt(lef.split("px")[0]) + 6;
+			to = parseInt(to.split("px")[0]) + 6;
 			$("div#dyk-shadow").css({
 				top: to + "px",
 				left: lef + "px"

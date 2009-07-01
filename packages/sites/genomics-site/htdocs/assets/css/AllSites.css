@@ -624,6 +624,7 @@ img.switch,img.plus-minus {
 
 .innertube{
 	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
+	position: relative;   /* used to position the strategy workspace title */
 }
 
 
