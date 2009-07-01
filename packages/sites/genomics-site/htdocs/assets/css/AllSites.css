@@ -622,12 +622,17 @@ img.switch,img.plus-minus {
 	margin-top: 12px;
 }
 
+/* used to position the strategy workspace title */
 .innertube{
 	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
-	position: relative;   /* used to position the strategy workspace title */
+	position: relative;   
 }
 
+/* used by sidebar */
+.innertube3{
+	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
 
+}
 
 /* were used in quickSearch
 

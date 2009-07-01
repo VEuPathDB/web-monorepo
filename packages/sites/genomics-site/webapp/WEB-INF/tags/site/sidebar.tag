@@ -26,7 +26,7 @@
 
 
 <div id="leftcolumn">
-  <div class="innertube">
+  <div class="innertube3">
     <div id="menu_lefttop">
         <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
         <a class="heading" id='news' href="#">News</a>
