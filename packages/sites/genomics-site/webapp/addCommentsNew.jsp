@@ -124,6 +124,12 @@ $(document).ready(function(){
             </c:set>
           </c:when>
 
+          <c:when test="${commentForm.commentTargetId eq 'isolate'}">
+            <c:set var="returnUrl">
+            <c:url value="/showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&project_id=${wdkModel.projectId}&primary_key=${commentForm.stableId}"/>
+            </c:set>
+          </c:when>
+
           <c:otherwise>
             <c:set var="returnUrl"> 
             <c:url value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=${wdkModel.projectId}&primary_key=${commentForm.stableId}"/>
@@ -193,7 +199,7 @@ $(document).ready(function(){
         included in future releases of the genome. 
     </c:if>
 
-     <c:if test="${wdkModel.projectId ne 'TriTrypDB'}" > 
+     <c:if test="${wdkModel.projectId eq 'CryptoDB'}" > 
         They will be forwarded to the genome curators.
     </c:if>
       
@@ -220,7 +226,6 @@ $(document).ready(function(){
           <html:text property="headline" size="70"/>
         </td>
       </tr>
-
 
       <!--  gene_model      = 1 in comments2.TargetCategory -->
       <!--  gene_name       = 2 in comments2.TargetCategory -->
@@ -290,6 +295,8 @@ $(document).ready(function(){
         <td><html:textarea property="content" rows="5" cols="70"/></td>
       </tr>
 
+      <c:if test="${commentForm.commentTargetId eq 'gene' || commentForm.commentTargetId eq 'genome'}">
+
       <tr class="medium">
         <td rowspan=2>&nbsp;</td>
 
@@ -318,6 +325,12 @@ $(document).ready(function(){
         </td>
 
       </tr>
+      </c:if>
+
+      <c:if test="${commentForm.commentTargetId eq 'isolate'}">
+        <input type="hidden" name="locType" value="genomef"/>
+        <input type="hidden" name="locations" value=""/>
+      </c:if>
 
       <tr class="medium">
         <th colspan=3>Part II: Evidence for This Comment (Optional)</th>
@@ -362,12 +375,12 @@ $(document).ready(function(){
       </tr>
 
       <tr class="medium">
-        <th colspan=3>Part III: Other Genes Relating to This Comment (Optional)</th>
+        <th colspan=3>Part III: Other Genes to which you want to apply this comment (Optional)</th>
       </tr>
 
       <tr class="medium">
         <td>&nbsp;</td>
-        <td valign=top>Other Related Genes</td>
+        <td valign=top>Gene Identifiers</td>
         <td> 
           <html:textarea property="associatedStableIds" rows="3" cols="70"/>
          <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>Enter one or more Gene Id(s) in the box above separated by \',\'. </li><li>The same comment and files will be appear on those gene ids.</li></ul>')"> 
@@ -441,7 +454,6 @@ $(document).ready(function(){
       <div id="box">
       ${formatHelp}
       </div>
-
 
     </td></tr>
     </table>
