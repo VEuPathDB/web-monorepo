@@ -5,9 +5,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-
-
-
 <c:url var="feedPath" value="/communityEventsRss.jsp" />
 <c:set var="rss_Url">
 http://${pageContext.request.serverName}${feedPath}
@@ -17,7 +14,6 @@ http://${pageContext.request.serverName}${feedPath}
  <synd:feed feed="allFeeds" timeout="5000">
      ${rss_Url}
  </synd:feed>
-
 
 <ul id='communityEventList'>
 <c:forEach items="${allFeeds.entries}" var="e" begin="0" end="3" >
@@ -33,4 +29,10 @@ http://${pageContext.request.serverName}${feedPath}
   />
 </c:if>
 </ul>
+<c:choose>
+<c:when test="${fn:length(allFeeds.entries) > 0}">
   <a style="margin-left:0px" href='<c:url value="/communityEvents.jsp"/>'>Full Events Page</a>
+</c:when>
+<c:otherwise>
+</c:otherwise>
+</c:choose>
