@@ -373,7 +373,7 @@ function openOrthologFilter(strat_id, step_id){
 	var strat = getStrategyFromBackId(strat_id);
 	isInsert = step_id;
 	current_Front_Strategy_Id = strat.frontId;
-	var url = 'showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&gene_result=' + step_id;
+	var url = 'showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&gene_result=' + step_id + '&partial=true';
 	$("#query_form").remove();
 	$("#Strategies div a#filter_link span").css({opacity: 1.0});
 	$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});
