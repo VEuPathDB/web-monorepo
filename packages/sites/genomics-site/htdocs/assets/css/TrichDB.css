@@ -11,7 +11,7 @@ a:link, a:visited {
 }
 
 a:hover, a:active {
-	color: #a9cb6d;
+	color: #7B5A37;  /* #a9cb6d; */
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
@@ -147,14 +147,14 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #455f15;
+	color: #7b5a37;   /*455f15;*/
 }
 h2 {
-  	color: #455f15;
+  	color: #7b5a37; 
 }
 
 .h2center, .h3left, .h4left {
-  	color: #5f0f47;
+  	color: #7b5a37;
 }
 
 .subcolor {
