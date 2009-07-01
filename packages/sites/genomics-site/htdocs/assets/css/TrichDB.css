@@ -106,7 +106,7 @@ a:hover, a:active {
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	color: #b30101;
+	color: #7b5a37;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -321,6 +321,6 @@ div.colCopy
 	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #query_form {
-	border: 1px solid #634697;	
+	border: 1px solid #7b5a37;	
 }
 
