@@ -3,363 +3,97 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	text-align: left;
-	color: #000000;
-	background-color: #ffffff;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	white-space: normal;
 	background-image: url(/assets/images/TrichDB/background_s.jpg);
-	background-repeat: repeat-x;
 }
 
 a:link, a:visited {
 	color: #538001;
-	text-decoration: none;
 }
 
 a:hover, a:active {
 	color: #a9cb6d;
-	text-decoration: none;   /* underline; */
 }
-#wrap {
-	width: 100%;
-	text-align: left;
-}
-
-img {
-	padding: 0;
-	margin: 0;
-}
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	color: #666666;
-	font-size: 10px;
-	width: 100%;
-	height: 159px;
-	text-align: left;
 	background-image: url(../images/TrichDB/backgroundtop_s.jpg);
-	background-repeat: no-repeat;
-	min-width: 1000px;
 }
 
 #header2 {
-	color: #666666;
-	font-size: 8px;
-	width: 100%;
-	min-width: 950px;
-	height: 104px;
-	text-align: left;
 	background-image: url(../images/TrichDB/backgroundtop_s.jpg);
-	background-repeat: no-repeat;
 }
 
 
 #header_rt {
    color: #8c8b35;
-   font-size: 12px;
-   width: 430px;
-   float: right;
-   text-align: right;
-   margin-right: 25px;
 }
 
 #header_rt a:link, #header_rt a:visited {
    color: #8c8b35;
-   text-decoration: none;
 }
-
-#header_rt a:hover, #header_rt a:active {
-   color: #FFFFFF;
-   text-decoration: none;
-}
-
-#header_rt #bottom {
-   width: 100%;
-   height: 50px;
-   margin-top: 18px;
-} 
-
-#toplink a:link, #toplink a:visited{
-	display: block;
-	width: 174px;
-	text-align: right;
-}
-
-#toplink a:hover {
-	display: block;
-	width: 174px;
-	text-align: right;
-	background-image: url(../images/TrichDB/partofeupath2.gif);
-}
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 #nav_top {
-	float: right;
-	text-align: right;
-	line-height: 1;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
 	color: #8c8b35;
-	z-index: 520;
 }
-
-#nav_top ul {
-	padding: 0;
-	margin: 0;
-	z-index: 520;
-	list-style-image: none;
-} 
 
 #nav_top a:link, #nav_top a:visited {
-	display: block;
-	width: auto;
 	color: #8c8b35;
-	text-decoration: none;
-	z-index: 520;
 }
-#nav_top a:hover, #nav_top a:active {
-	display: block;
-	width: auto;
-	color: #FFFFFF;
-	text-decoration: none;
-	z-index: 520;
-}
-
-#nav_top li {
-	float: left;
-	width: auto;
-	z-index: 520;
-}
-
 #nav_top li ul {  /* second-level lists */
-	text-align: left;
-	position: absolute;
-	width: 13em;
-	display: none;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-weight: normal;
-	background-color: #FFFFFF;
 	background-image: url(../images/TrichDB/footer.png);
-	background-repeat: repeat-x;
-	background-position: top;
-	border-width: 1px 1px 1px 1px;
-	border-style: solid;
 	border-color:#8c8b35;
-	padding: 6px 6px 6px 18px;
-	line-height: 14px;
 	list-style-image: url(../images/TrichDB/bullet_arrow.gif);
-	z-index: 520;
-}
-
-#nav_top li:hover ul ul, #nav_top li:hover ul ul ul, #nav_top li.sfhover ul ul, #nav_top li.sfHover ul ul ul {
-	display: none;
-	z-index: 520;
-}
-
-#nav_top li:hover ul, #nav_top li li:hover ul, #nav_top li li li:hover ul, #nav_top li.sfhover ul, #nav_top li li.sfhover ul, #nav_top li li li.sfHover ul {
-	display: block;
-	z-index: 520;
-}
-
-#nav_top li li ul a:hover + ul{
-	display: block;
-	z-index: 520;
-}
-
-#nav_top li:hover ul {
-	display: block;
-	z-index: 520;
-}
-
-#nav_top li:hover ul.login {
-	right:25px;
-	width:auto;
-	list-style-image: none;
 }
 
 #nav_top li ul a:link, #nav_top li ul a:visited {
 	color: #8c8b35;
-	text-decoration: none;
-	padding: 2px;
-	width: 13em;
-	z-index: 520;
 }
 
 #nav_top li ul a:hover, #nav_top li ul a:active {
 	color: #605f0e;
-	text-decoration: none;
-	padding: 2px;
-	background-color: #FFFFFF;
-	width: 13em;
-	display: block;
-	z-index: 520;
 }
 
-#user_topdiv {
-       clear: both;
-}
-
-#user_topdiv strong {
-	color: black;
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-#menubar {
-	min-width: 900px;
-	height: 19px;
-	text-align: left;
-	background-image: url(../images/menu_bar.png);
-	background-repeat: repeat-x;
-	
-	padding-left: 45px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	vertical-align: middle;
-	clear: both;
-	z-index: 1;
-}
-
 /* #menubar #mysearch {
-	width: auto;
 	background-image: url(../images/TrichDB/my_hist_menubar.png);
-	background-repeat: repeat-x;
-	margin-top: -4px;
-	padding: 4px 3px 3px 3px;
 	border: 1px solid #868520;
-	z-index: 1;
 } */
  
-#contentwrapper {
-	float: left;
-	width: 100%;
-	margin: 8px 0 12px 0;
-}
-
 #contentcolumn {
-	min-width: 750px;
-	margin: 0 25px 0 226px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
-	background-color: #FFFFFF;
 	background-image: url(../images/TrichDB/footer.png);
-	background-repeat: repeat-x;
-	text-align: left;
 	border: 1px solid #455f15;
 }
 
 #contentcolumn2 {
-	min-width: 900px;
-	margin: 0 25px 0 6px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
-	background-color: #FFFFFF;
 	background-image: url(../images/TrichDB/footer.png);
-	background-repeat: repeat-x;
-	text-align: left;
 	border: 1px solid #455f15;
 }
 
-#leftcolumn {
-	float: left;
-	width: 220px; /*Width of left column*/
-	margin-left: -100%;
-}
-
-#rightcolumn {
-	float: left;
-	width: 25px; /*Width of right column*/
-	margin-left: -25px; /*Set left marginto -(RightColumnWidth)*/
-}
-
-#center {
-	width: 100%;
-	text-align: center;
-}
-
 #mysearchhist {
-	width: 100%;
-	text-align: center;
 	background-image: url(../images/TrichDB/bubble_my_searchbox.png);
-	background-repeat: repeat-x;
 	border: 1px solid #c9dea4;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	margin-top: 12px;
-}
-
-.innertube{
-	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
-}
-
-
-
-
-#half_left {
-	width: 45%;
-	text-align: right;
-	padding: 4px;
-	margin: 6 0 12 0;
-	float: left;
-}
-
-#half_right {
-	width: 45%;
-	text-align: left;
-	padding: 4px;
-	margin: 6 0 12 0;
-	float: right;
-}
-
-#full {
-	width: 100%;
-	text-align: center;
-	clear: both;
 }
 
 #main_tools {
-	width: 95%;
-	text-align: left;
-	clear: both;
-	line-height: 1.3em;
 	background-image: url(../images/TrichDB/tools_bckgnd.jpg);
-	background-repeat: no-repeat;
-	padding: 16px;
-	margin-top: 20px;
-	margin-bottom: 20px;
 }
 
 #about_us_left {
-	width: 245px;
-	float: left;
-	text-align: left;
-	line-height: 1.3em;
 	background-color: #d9e8cc;
-	padding: 8px;
 	list-style-image: url(../images/TrichDB/bullet_arrow.gif);
-	position: relative;
-}
-#about_us_right {
-	float: right;
-	width: 100%;
-	padding: 8px;
-	margin-left: 270px;
 }
 #pink_title {
-	font-size: 15px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #585b0f;
-	text-align: left;
 	background-image: url(../images/TrichDB/trheader.png);
-	background-repeat: repeat-x;
-	padding: 4px;
-	width: 100%;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -367,143 +101,13 @@ img {
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
-#menu {
-	z-index: 500;
-	margin-left: -45px;
-	padding-top: 0px;
-	height: 20px;
-}
-
-#menu ul {
-	display:block;
-	text-align: center;
-	float:left;
-	line-height: 16px;
-	margin:0pt;
-	padding:0pt;
-	padding-top: 6px;
-	width: 10em;
-	border-top-width: 0px;
-	border-right-width: 2px;
-	border-bottom-width: 0px;
-	border-left-width: 0px;
-	border-style: solid;
-	border-color: #888888;
-	z-index: 500;
-}
-
-#menu a, #menu h2 {
-	display:block;
-	line-height: 14px;
-	line-height: 1;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 13px;
-	font-weight: bold;
-	color: #FFFFFF;
-	text-decoration: none;
-	font-size-adjust:none;
-	font-stretch:normal;
-	font-style:normal;
-	font-variant:normal;
-	font-weight:bold;
-	margin:0pt;
-	padding:0pt;
-	z-index: 500;
-}
-
-#menu a:link, #menu a:visited {
-	color:#FFFFFF;
-	line-height: 14px;
-	width: auto;
-	text-decoration:none;
-	z-index: 500;
-}
-
 #menu a:hover, #menu a:active {
-	display: block;
-	line-height: 14px;
 	color:#560000;
-	width: auto;
-	text-decoration: none;
-	z-index: 500;
-}
-
-#menu li {
-	position:relative;
-	line-height: 14px;
-	font-weight:normal;
-	z-index: 500;
-}
-
-#menu ul ul {
-	float: left;
-	position: absolute;
-	display: block;
-	text-align: left;
-	width: 16em;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
-	background-color: #FFFFFF;
-	background-image: url(../images/dropdownmenu.jpg);
-	background-repeat: repeat-x;
-	background-position: top;
-	border-width: 1px;
-	border-style: solid;
-	border-color:#888888;
-	padding: 10px 6px 6px 18px;
-	line-height: 14px;
-	z-index: 500;
-}
-
-#menu ul ul a:link, #menu ul ul a:visited{
-	left:100%;
-	width: 15em;
-	color: #414141;
-	font-weight: normal;
-	padding: 6px 6px 6px 6px;
-	line-height: 14px;
-	z-index: 500;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	left:100%;
-	width: 14em;
 	color: #b30101;
-	font-weight: normal;
-	background-color: #FFFFFF;
-	text-decoration: none;
-	padding: 6px 6px 6px 6px;
-	line-height: 14px;
-	display: block;
-	z-index: 500;
 }
-
-#menu ul ul ul {
-	left:100%;
-	width: 16em;
-	position:absolute;
-	top:0pt;
-	z-index: 500;
-}
-
-div#menu ul ul, div#menu ul li:hover ul ul, div#menu ul ul li:hover ul ul {
-	display:none;
-	width: 16em;
-	z-index: 500;
-}
-
-div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover ul {
-	display:block;
-	width: 18em;
-	text-decoration: none;
-	padding: 2px;
-	background-color: #FFFFFF;
-	z-index: 500;
-}
-
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menu Lists
@@ -513,17 +117,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 }
 
 #menu_lefttop a.heading {
-	height: 24px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 17px;
-	voice-family: "\"}\"";
-	voice-family: inherit;
-	text-decoration: none;
 	background-image: url(../images/TrichDB/menu_lft2.png);
-	background-repeat: no-repeat;
-	padding-right: 10px;
-	padding-left:  7px;
-	margin-bottom: 5px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -531,35 +125,11 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   width: 8em;
-   padding: 2px;
-   color: #5b5b5b;
-   background-color: white;  /*  #eaf0de; */
    border: solid 1px #3f5d27;
-   font-size: 11px;
-   text-align: right;
 } 
 
-.search-box input{
-	font-family: Arial, Helvetica, sans-serif;
-}
-
 .search-box .textbox{
-	color: #333333;
-	padding: 3px 5px;
-	background-color: #EEEEEE;
 	border: solid 1px #b3b3b3;
-}
-
-.search-box .submit{
-	padding: 3px 0;
-	color: white;
-	background-color: black;
-}
-
-.img_align_middle {
-	white-space: normal;
-	margin-bottom: -4px;
 }
 
 
@@ -567,54 +137,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 	 =Arrow Chains 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-.chain_background {
-   background-color: #ededed
-}
-
-.arrowgrey {
-   padding: 4px;
-   background-color: #d0cfcf;
-   text-align: left;
-   border-width: 1px;
-   border-color: #848484;
-}
-
-.arrowgrey_drk {
-   padding: 4px;
-   background-color: #b8b8b8;
-   text-align: left;
-   border-width: 1px;
-   border-color: #848484;
-}
-
-.arrowred {
-   padding: 6px 14px 4px 8px;
-   text-align: left;
-   background-image: url(../images/arrow_red.gif);
-   background-repeat: no-repeat;
-   background-position: right;   }
-
-.arrowgrey a:hover {
-   color: #FFFFFF;
-}
-
-.arrowgrey_drk a:hover {
-   color: #FFFFFF;
-}
-
-.arrowred a:link, .arrowred a:visited{
-   color: white;
-}
-
-.arrowred a:hover {
-   color: #CCCCCC;
-}
-
 .selectedarrow {
-   padding: 4px;
-   background-color: #f2a2bb;
-   text-align: left;
-   border-width: 1px;
    border-color: #b1667e;
 }
 
@@ -624,52 +147,14 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul, div#menu ul ul ul li:hover 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	font-size: 20px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
 	color: #455f15;
-	text-align: center;
-	margin-bottom: 14px;
 }
 h2 {
-	font-size: 18px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	margin-bottom: 11px;
   	color: #455f15;
-	text-align: left;
-	margin-left: 11px;
 }
 
-.large {
-	font-size: 18px;
-	font-weight: bold;
-	line-height: 23px;
-}
-.larger {
-	font-size: 22px;
-	font-weight: bold;
-	line-height: 28px;
-}
-
-.small {
-	font-size: 11px;	
-}
-
-.detail_link {
-	border: 2px solid #d8d8d8;
-	display: inline;
-	left: -9999px;
-	position: absolute;
-}
-
-.detail_link:link, .detail_link:visited{
-	color: #808080;
-}
-
-a.heading:hover + a.detail_link, .detail_link:hover {
-	left: -2px;
-	position: relative;
+.h2center, .h3left, .h4left {
+  	color: #5f0f47;
 }
 
 .subcolor {
@@ -683,14 +168,7 @@ a.heading:hover + a.detail_link, .detail_link:hover {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
-   font-size: 10px;
-   width: 95%;
-   background-color:#FFFFFF;
    background-image: url(../images/TrichDB/footer.png);
-   background-repeat: repeat-x;
-   color: #505050;
-   line-height: 1.2em;
-   clear: both;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -699,61 +177,26 @@ a.heading:hover + a.detail_link, .detail_link:hover {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	height: 29px;
-	font-size: 15px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #585b0f;
 	background-image: url(../images/TrichDB/trheader.png);
-	background-repeat: repeat-x;
-	background-position: top;
-	font-weight: bold;
-	padding: 4px;
 }
 
 
 tr.headerrow {
-	height: 29px;
-	font-size: 15px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #585b0f;
-	font-weight: bold;
-	padding: 4px;
 }
 
 tr.headerrow th {
 	background-image: url(../images/TrichDB/trheader.png);
-	background-repeat: repeat-x;
-	background-position: top;
-	background-color: #EEEEEE;
 }
 
 
 td.subheaderrow {
-	height: 30px;
-	font-size: 13px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #474747;
 	background-image: url(../images/TrichDB/trsubhead.png);
-	background-repeat: repeat-x;
-	background-position: top;
-	font-weight: bold;
-	padding: 4px;
-}
-
-tr.subheaderrow {
-	height:30px;
-	font-size: 14px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #474747;
-	font-weight: bold;
-	padding: 4px;
 }
 
 tr.subheaderrow th {
 	background-image: url(../images/TrichDB/trsubhead.png);
-	background-repeat: repeat-x;
-	background-position: top;
-	background-color: #EEEEEE;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -761,413 +204,78 @@ tr.subheaderrow th {
 	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.innertube2{
-	margin: 2px; /*Margins for inner DIV inside each column (to provide padding)*/
-}
 tr.headerrow2 td{
-	font-size: 14px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
         color: #585b0f;
 	background-image: url(../images/TrichDB/trheader.png);
-	background-repeat: repeat-x;
-	background-position: top;
-	padding: 4px;
-	background-color: #EEEEEE;
 }
 
 tr.subheaderrow2 td{
-	font-size: 12px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #474747;
 	background-image: url(../images/TrichDB/trsubhead.png);
-	background-repeat: repeat-x;
-	background-position: top;
-	font-weight: bold;
-	padding: 4px;
-	background-color: #EEEEEE;
 }
-div.smallBlack { font-size: 8pt; color: black}
+
 a.queryGridInactive {
-        text-align:         center;
-        font-family:        Helvetica;
-        font-size:          10pt;
         color:              #C8C8C8;
 }
 a.queryGridActive {
-        text-align:         center;
-        font-family:        Helvetica;
-        font-size:          10pt;
         color:              #538001;
 }
-td.lines2 {
-	padding-top: 3px;
-}
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =END OF TABLES FOR QUERY GRID
 	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-td.lines {
-	padding: 4px;
-}
-
-td.lines {
-	padding: 4px;
-}
-
-td.linesalt {
-	background-color: #EEEEEE;
-	padding: 4px;
-}
-
-tr.lines {
-	padding: 4px;
-}
-
-tr.linesalt {
-	background-color: #EEEEEE;
-	padding: 4px;
-}
-
-table.results {
-	margin-top: 6px;
-}
-
 tr.subheaderrow th {
-	padding: 4px;
-	border-width: 2px 0 2px 0;
-	border-style: solid;
 	border-color: #538001;
 }
 
 tr.headerrow th { 
-	padding: 4px;
-	border-width: 2px 0 2px 0;
-	border-style: solid;
 	border-color: #538001;
 }
-
-tr.headerInternalRow td {
-	vertical-align: middle;
-}
-
-tr.lines {
-	background-color: #FFFFFF;
-}
-
-tr.linesalt {
-	background-color: #DDDDDD;
-}
-
-tr.lines td, tr.linesalt td {
-	padding: 4px;
-}
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     =RED BUTTON
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-a.redbutton {
-   color: #FFFFFF;
-/*   display: block;*/
-/*   float: left;*/
-   font: normal 13px arial, sans-serif;
-   margin-right: 6px;
-   padding-right: 3px; /* sliding doors padding */
-   text-decoration: none;
-   background-attachment: scroll;
-   background-color: transparent;
-   background-position: right top;   
-   width: 115px;
-}
-
-a.redbutton span {
-	color: #FFFFFF;
-	display: block;
-   line-height: 13px;
-   padding: 15px 23px 12px 18px;
-   text-decoration: none;
-   background-color: transparent;
-   background-image: url(../images/redboxb.gif);
-   background-repeat: no-repeat;
-}
-
-a.redbutton:active {
-	background-position: bottom right;
-   color: #cecece;
-   outline: none; /* hide dotted outline in Firefox */
-}
-
-a.redbutton:active span {
-   background-position: bottom left;
-   padding: 16px 23px 11px 18px; /* push text down 1px */
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#record_page_cell_div {
-	margin-left: 20px;
-}	
-
-#Details_div {
-	position: absolute;
-	left: 143px;
-	top: 341px;
-	width: 96.6%;
-}
-
-#step_progress_bar {
-	position: relative;
-	left: 450px;
-	top: 100px;
-	width: 289px;
-	height: 20px;
-	z-index: 200;
-}
-
-#gene_page_progress_bar {
-	position: relative;
-	left: 450px;
-	top: 26px;
-	width: 289px;
-	height: 20px;
-}
-
-#graphic_span {
-	width: 289px;
-	height: 20px;
-	font-weight: bold;
-	color: #FFFFFF;
-	padding-top: 1px;
-	font-size: 16px;
-	text-align: center;
-	position: absolute;
-}
-
-.step {background-image: url(../images/loading_step.png);}
-.record {background-image: url(../images/loading.png);}
-
-#gene_page_progress_bar div#loading_span {
-	position: absolute;
-	left: 118px;
-	top: 3px;
-	font-weight: bold;
-	color: #FFFFFF;
-	z-index: 100;
-}
-
-#loading_step_div {
-	display: none;
-}
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.twoColHybLt #container_au { 
-	width: 100%;  /* this will create a container 100% of the browser width */
-	background-color: #FFFFFF;
-	margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
-	border: 1px solid #000000;
-	text-align: left; /* this overrides the text-align: center on the body element. */
-} 
-
 .twoColHybLt #sidebar1 {
-	float: left; 
-	width: 12em;
-	color: #FFFFFF;
 	background-image: url(../images/TrichDB/aboutus.png);
-	background-repeat: repeat-y;
-	padding: 15px 0; /* top and bottom padding create visual space within this div  */
 }
-
-.twoColHybLt #sidebar1 h3, .twoColHybLt #sidebar1 p {
-	margin-left: 10px; /* the left and right margin should be given to every element that will be placed in the side columns */
-	margin-right: 10px;
-}
-
-.twoColHybLt #mainContent { 
-	margin: 0 20px 0 13em; /* the right margin can be given in percentages or pixels. It creates the space down the right side of the page. */
-} 
-
-/* Miscellaneous classes for reuse */
-.fltrt { /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
-	float: right;
-	margin-left: 8px;
-}
-
-.fltlft { /* this class can be used to float an element left in your page */
-	float: left;
-	margin-right: 8px;
-}
-
-.clearfloat { /* this class should be placed on a div or break element and should be the final element before the close of a container that should fully contain a float */
-	clear:both;
-    height:0;
-    font-size: 1px;
-    line-height: 0px;
-}
-
-/* To be placed with the <head>
-<!--[if lt IE 7]>
-<style type="text/css"> 
-.twoColHybLt #sidebar1 { padding-top: 30px; }
-.twoColHybLt #mainContent { zoom: 1; padding-top: 15px; }
-</style>
-<![endif]-->
-*/
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WARNING BOXES 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.infobox {
-	min-width: 900px;
-	margin: 6px 25px 0 6px; 
-	color: #093c8a;
-	background-color: #cdd9eb;
-	padding: 6px;
-	background-image: url(../images/infobox.jpg);
-	background-repeat: repeat-x;
-	text-align: left;
-	border: 1px solid #455f15;
-	vertical-align: middle;
-}
-
-.infobox img {
-	margin-right: 12px;
-}
-
-.errorbox {
-	min-width: 900px;
-	margin: 6px 25px 0 6px; 
-	color: #c4000e;
-	background-color: #eec1c2;
-	padding: 6px;
-	background-image: url(../images/errorbox.jpg);
-	background-repeat: repeat-x;
-	text-align: left;
-	border: 1px solid #c4000d;
-	vertical-align: middle;
-}
-
-.errorbox img {
-	margin-right: 12px;
-}
-
-.warnbox {
-	min-width: 900px;
-	margin: 6px 25px 0 6px; 
-	color: #c4000e;
-	background-color: #edf0ac;
-	padding: 6px;
-	background-image: url(../images/warnbox.jpg);
-	background-repeat: repeat-x;
-	text-align: left;
-	border: 1px solid #f56614;
-	vertical-align: middle;
-}
-
-.warnbox img {
-	margin-right: 12px;
-}
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ADVANCED STRATEGY PAGING 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#adv_paging {
-	width: 225px;
-	padding: 6px;
-	background-color: #496138;
-	color: #FFFFFF;
-}
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =MISC 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#Strategies {
-	width: 100%;
-	min-height: 130px;
-	max-height: 300px;
-	overflow-y: auto;
-	border: 2px solid gray;
-}
-
-#Workspace {
-	z-index: 50;
-}
-
 span.marker a:link, span.marker a:visited {
-	padding-left: 15px;
-	font-weight: bold;
 	color: #717001;
 }
 
-clear {
-	clear: both;
-}
-
-.imgpadding {
-	padding: 0px 4px 0px 4px;
-	vertical-align: middle;
-}
-
-.small_links {
-	font-size: 9px;
-}
-
-.help_div {
-	background-color: lightYellow;
-	width: 50px;
-	height: 20px;
-	display:none;
-}
 
 /* APPLICATION PAGE STYLES */
-td.strat_active {
-    width: 30px;
-    background: url(/assets/images/eyeBlue.png) no-repeat 8px 8px;
-}
-
-td.strat_inactive {
-    width: 30px;
-    background: url(/assets/images/eyeGrey.png) no-repeat 8px 8px;
-}
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
     background-color: #e9eee5;
-    border: 1px solid #CCCCCC;
-    color:#666666;
-    float: left;
-    margin-top: 2px;
-    padding:0.24em 1em;
-    text-align:center;
-    text-decoration:none;
-}
-
-#strategy_tabs a:hover {
-    color:#0000CC;
-}
-
-#strategy_tabs #selected a {
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
-    color: #000000;
-    font-weight:bold;
-}
-
-.clear_all {
-    clear: both;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1175,7 +283,6 @@ td.strat_inactive {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	background-repeat: repeat-x;
 	border: 2px solid #455f15;
 }
 
@@ -1197,3 +304,23 @@ div.colCopy
 {
 	background-image:url(/assets/images/TrichDB/trheader.png);
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 history.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Strategy.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter_menu.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#query_form {
+	border: 1px solid #634697;	
+}
+
