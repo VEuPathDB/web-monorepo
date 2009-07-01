@@ -67,7 +67,7 @@ function displayModel(strat){
 		var close_span = document.createElement('span');
 		$(close_span).addClass("closeStrategy").html(""+
 		"	<a onclick='closeStrategy(" + strat.frontId + ")' href='javascript:void(0)'>"+
-		"		<img alt='Click here to close the strategy (it will only be removed from the display)' src='/assets/images/Close-X.png' title='Click here to close the strategy (it will only be removed from the display)' src='/assets/images/Close-X.png'/>"+
+		"		<img alt='Click here to close the strategy (it will only be removed from the display)' src='/assets/images/Close-X.png' title='Click here to close the strategy (it will only be removed from the display)' height='15' width='15' src='/assets/images/Close-X.png'/>"+
 		"	</a>");
 		$(div_strat).append(close_span);
 		$(div_strat).append(createStrategyName(strat));
@@ -429,7 +429,8 @@ function createParameters(params){
 function createRecordTypeName(strat){
 	if (strat.subStratOf == null){
 		var div_sn = document.createElement("div");
-		$(div_sn).attr("id","record_name").addClass("strategy_small_text").text(getDataType(strat.dataType, 1) + "Strategy");
+	//	$(div_sn).attr("id","record_name").addClass("strategy_small_text").text(getDataType(strat.dataType, 1) + "Strategy");
+		$(div_sn).attr("id","record_name").addClass("strategy_small_text").text("(" + getDataType(strat.dataType) + ")"   );
 		return div_sn;
    	}
 }

@@ -40,7 +40,7 @@ div#dyk-box div#dyk-text{
 }
 
 div#dyk-box div#closing-items{
-	bottom:4px;
+	bottom:1px;
 	position:absolute;
 	right:8px;
 }
@@ -52,7 +52,7 @@ div#dyk-box ul.tip-box{
 	-webkit-border-bottom-right-radius:10px;
 	background-color:#F0F0F0;
 	bottom:0;
-	padding:2px 0 4px;
+	padding:2px 0 2px;
 	position:absolute;
 	width:100%;
 }
