@@ -112,7 +112,7 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 	}else
 		var close_link = "<a class='close_window' href='javascript:closeAll(false)'><img src='/assets/images/Close-X-box.png'/></a>";
 
-	var quesTitle = $("h1",data).text().replace(/Identify Genes based on/,"");
+	var quesTitle = data.substring(data.indexOf("<h1>") + 4,data.indexOf("</h1>")).replace(/Identify Genes based on/,"");
 	
 	var quesForm = $("form#form_question",data);
 	var quesDescription = $("#query-description-section",data);
