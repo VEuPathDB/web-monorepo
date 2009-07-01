@@ -19,6 +19,7 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+<c:set var="showParams" value="${requestScope.showParams}"/>
 
 <%--CODE TO SET UP THE SITE VARIABLES --%>
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
@@ -27,6 +28,219 @@
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
      <div id="question_Form">
 </c:if>
+
+<jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
+
+<c:choose>
+    <c:when test="${showParams == true}">
+<html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
+      <div class="params">
+<c:set var="hasOrganism" value="false"/>
+<c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
+<c:forEach items="${paramGroups}" var="paramGroupItem">
+    <c:set var="group" value="${paramGroupItem.key}" />
+    <c:set var="paramGroup" value="${paramGroupItem.value}" />
+  
+    <%-- detemine starting display style by displayType of the group --%>
+    <c:set var="groupName" value="${group.displayName}" />
+    <c:set var="displayType" value="${group.displayType}" />
+    <div name="${wdkQuestion.name}_${group.name}"
+         class="param-group" 
+         type="${displayType}">
+    <c:choose>
+        <c:when test="${displayType eq 'empty'}">
+            <%-- output nothing else --%> 
+            <div class="group-detail">
+        </c:when>
+        <c:when test="${displayType eq 'ShowHide'}">
+            <c:set var="display">
+                <c:choose>
+                    <c:when test="${group.visible}">block</c:when>
+                    <c:otherwise>none</c:otherwise>
+                </c:choose>
+            </c:set>
+            <c:set var="image">
+                <c:choose>
+                    <c:when test="${group.visible}">minus.gif</c:when>
+                    <c:otherwise>plus.gif</c:otherwise>
+                </c:choose>
+            </c:set>
+            <div class="group-title">
+                <img class="group-handle" src='<c:url value="/images/${image}" />' />
+                ${groupName}
+            </div>
+            <div class="group-detail" style="display:${display};">
+                <div class="group-description">${group.description}</div>
+        </c:when>
+        <c:otherwise>
+            <div class="group-title">${groupName}</div>
+            <div class="group-detail">
+                <div class="group-description">${group.description}</div>
+        </c:otherwise>
+    </c:choose>
+    
+    <table border="0" width="100%">
+    
+    <c:set var="paramCount" value="${fn:length(paramGroup)}"/>
+    <%-- display parameter list --%>
+    <c:forEach items="${paramGroup}" var="paramItem">
+        <c:set var="pNam" value="${paramItem.key}" />
+        <c:set var="qP" value="${paramItem.value}" />
+        
+        <c:set var="isHidden" value="${qP.isVisible == false}"/>
+        <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
+  
+        <c:choose>
+            <c:when test="${isHidden}">
+        <c:choose>
+           <c:when test="${fn:containsIgnoreCase(wdkModel.displayName,'EuPathDB')}">
+            <c:choose>
+                   <c:when test="${pNam eq 'signature'}">
+                    <html:hidden property="myProp(${pNam})" value="${wdkUser.signature}"/>
+                   </c:when>
+                   <c:otherwise>
+                        <html:hidden property="myProp(${pNam})"/>
+                   </c:otherwise>
+            </c:choose>
+           </c:when>
+
+		   <c:when test="${pNam eq 'domain_database'}">
+	          <input type="hidden" name="myProp(${pNam})" id="domain_database_list" value="${qP.default}" />
+	          <script type="text/javascript">loadSelectedData();</script>
+	       </c:when>
+	
+           <c:otherwise>
+                <html:hidden property="myProp(${pNam})"/>
+           </c:otherwise>
+        </c:choose>
+        </c:when>
+            <c:otherwise>
+                <tr>
+                    <c:choose>
+
+
+					<c:when test="${pNam eq 'domain_database'}">
+				      <tr><td align="right"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td><td>
+				      <select name="myMultiProp(domain_database)" id="domain_database_list" onChange="loadSelectedData();">
+				          <c:forEach items="${qP.vocab}" var="flatVoc">
+				              <option value="${flatVoc}">${flatVoc}</option>
+				          </c:forEach>
+				      </select>
+				      </td>
+
+				      <!--<script type="text/javascript">
+				      //if ( document.getElementById('domain_database_list').selectedIndex != 0 ) loadSelectedData();
+				      </script>-->
+
+				    </c:when>
+				    <c:when test="${pNam eq 'domain_accession'}">
+				          <tr><td align="right"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td><td>
+				          <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box"/>
+				          </td>
+				    </c:when>
+
+
+
+                        <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'EuPathDB'}">
+                            <c:set var="hasOrganism" value="true"/>
+                            <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5">
+                                <table border="0">
+                                    <tr>
+                                    <td ><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
+                                    <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
+                                    <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
+                                    <a href="#${anchorQp}">
+                                    <img valign="bottom" src="/assets/images/help.png" border="0" alt="Help"></a><br>
+                                    <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
+                                    </td>
+                                    </tr>
+                                </table>
+                             </td>
+                             <td valign="top" align="center">
+			         <table border="0">
+                        </c:when>
+                        
+                        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
+                            <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
+                            <td align="left" valign="top">
+                                <wdk:enumParamInput qp="${qP}" />
+                            </td>
+                        </c:when>
+                        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
+                            <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
+                            <td align="left" valign="top">
+                                <wdk:answerParamInput qp="${qP}" />
+                            </td>
+                        </c:when>
+                        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
+                            <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
+                            <td align="left" valign="top">
+                                <wdk:datasetParamInput qp="${qP}" />
+                            </td>
+                        </c:when>
+                        <c:otherwise>
+                            <c:choose>
+                                <c:when test="${isReadonly}">
+                                    <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
+                                    <td align="left" valign="top">
+                                        <bean:write name="qForm" property="myProp(${pNam})"/>
+                                        <html:hidden property="myProp(${pNam})"/>
+                                    </td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td align="right" valign="top"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">${qP.prompt}</b></td>
+                                    <td align="left" valign="top">
+                                        <html:text property="myProp(${pNam})" size="35" />
+                                    </td>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:otherwise>
+                    </c:choose>
+
+                    <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td valign="top" width="50" nowrap>
+                            <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
+                            <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
+                            <a id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">
+                            	<img src="/assets/images/help.png" border="0" alt="Help">
+    						</a>
+                        </td>
+                    </c:if>
+                </tr>
+            </c:otherwise>
+        </c:choose>
+        
+        </c:forEach>
+        
+ 
+        <c:if test="${hasOrganism}"></table></c:if>
+        </table>
+    
+ 
+        <c:forEach items="${paramGroup}" var="paramItem">
+            <c:set var="pNam" value="${paramItem.key}" />
+            <c:set var="qP" value="${paramItem.value}" />
+            
+            <c:set var="isHidden" value="${qP.isVisible == false}"/>
+            <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
+    
+                <c:if test="${!isHidden}">
+                        <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
+                	        <div class="htmltooltip" id="help_${pNam}_tip">${qP.help}</div>
+                        </c:if>
+                </c:if>
+            
+        </c:forEach>
+    
+        </div> <%-- end of group-detail div --%>
+    </div> <%-- end of param-group div --%>
+
+</c:forEach> <%-- end of foreach on paramGroups --%>
+      </div>
+</html:form>
+    </c:when>
+    <c:otherwise>
 <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 
@@ -35,7 +249,6 @@
 
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
-<jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 
 <%-- put an anchor here for linking back from help sections --%>
 <A name="${fromAnchorQ}"></A>
@@ -51,9 +264,10 @@
 <script src="js/lib/jquery.autocomplete.js" type="text/javascript"></script>
 <script src="js/AjaxInterpro.js" type="text/javascript"></script>
 
+<div class="params">
+<c:if test="${showParams == null}">
 <c:set var="hasOrganism" value="false"/>
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
-<div class="params">
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
     <c:set var="paramGroup" value="${paramGroupItem.value}" />
@@ -258,7 +472,7 @@
     </div> <%-- end of param-group div --%>
 
 </c:forEach> <%-- end of foreach on paramGroups --%>
-
+</c:if>
 </div> <%-- end of params div --%>
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
@@ -291,3 +505,5 @@
 </tr>
 </table> 
 
+  </c:otherwise> <%-- otherwise of showParams == true --%>
+</c:choose>
