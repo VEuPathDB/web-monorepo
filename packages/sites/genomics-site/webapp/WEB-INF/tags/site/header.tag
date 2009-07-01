@@ -13,7 +13,7 @@
 			  description="Page calling this tag"
 %>
 
-<%-------- OLD set of attributes,  division being used by login, banner by many pages   ---------------------%>
+<%-------- OLD set of attributes,  division being used by login and help, banner by many pages   ---------------------%>
 
 <%@ attribute name="banner"
               required="false"
@@ -182,6 +182,9 @@ ${headElement}
 
 <%--------------------------- BODY of HTML doc ---------------------%>
 <body>
+
+<%-- the "Contact Us" page does not need header, only the css above --%>
+   <c:if test="${division != 'help'}"> 
 
 <%-- added for overLIB --%>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
@@ -388,6 +391,11 @@ ${headElement}
 
 <site:menubar />
 <site:siteAnnounce  refer="${refer}"/>
+
+
+</c:if>  <%-- page was not the "Contact Us" page --%>
+
+
 
 <c:if test="${refer != 'home' && refer != 'home2'}">
 	<div id="contentwrapper">

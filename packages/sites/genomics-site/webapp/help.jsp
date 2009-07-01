@@ -5,7 +5,8 @@
 <c:set var="site" value="${wdkModel.displayName}"/>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
-<!-- get wdkModel name to display as page header -->
+
+<%-- we need the header only for the css and js --%>
 <site:header title="${site}.org :: Support"
                  banner="Support"
                  parentDivision="${site}"
@@ -17,8 +18,9 @@
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 <tr><td bgcolor=white valign=top>
 
+<h1>We appreciate your questions and feedback</h1>
  <hr class=brown>
-    <center><a href="javascript:window.close()">Close this window.</a></center>  
+    <center><a style="font-size:14px" href="javascript:window.close()">Close this window.</a></center>  
  <hr class=brown>
 
     We are available to help with <b>Questions</b>, <b>Error reports</b>, <b>Feature requests</b>, <b>Dataset proposals</b>, etc. &nbsp;&nbsp;Please include (but all are optional):
