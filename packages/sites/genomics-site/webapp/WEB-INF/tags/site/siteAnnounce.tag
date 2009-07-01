@@ -18,6 +18,7 @@
 
 <%-- hardcoded warning message only for beta sites --%>
 <c:if test="${
+    param.beta eq 'true' || 
     fn:startsWith(pageContext.request.serverName, 'beta') ||
     fn:startsWith(pageContext.request.serverName, 'b1')   ||
     fn:startsWith(pageContext.request.serverName, 'b2')
