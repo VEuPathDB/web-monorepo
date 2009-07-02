@@ -380,7 +380,21 @@ $(document).ready(function(){
 
       <tr class="medium">
         <td>&nbsp;</td>
-        <td valign=top>Gene Identifiers</td>
+
+        <c:choose> 
+          <c:when test="${commentForm.commentTargetId eq 'gene'}"> 
+            <td valign=top>Gene Identifiers</td>
+          </c:when>
+
+          <c:when test="${commentForm.commentTargetId eq 'isolate'}"> 
+            <td valign=top>Isolate Identifiers</td>
+          </c:when>
+
+          <c:otherwise>
+            <td valign=top>Gene Identifiers</td>
+          </c:otherwise>
+        </c:choose>
+
         <td> 
           <html:textarea property="associatedStableIds" rows="3" cols="70"/>
          <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>Enter asscociated Gene/Genome/Isolate Id(s) in the box above separated by space or \',\'. </li><li>The same comment and uploaded files will be showed on those associated gene/genome/isolate pages.</li></ul>')"> 
