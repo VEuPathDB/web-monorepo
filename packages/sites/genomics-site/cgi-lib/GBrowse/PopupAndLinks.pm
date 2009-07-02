@@ -195,8 +195,8 @@ sub snpTitle {
     }
     if ($isCoding) {
        $refAA = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$refAA"; 
-       push @data, [ 'Position in CDS:'  => $posInCDS ];
-       push @data, [ 'Position in Protein:'  => $posInProtein ];
+       push @data, [ 'Position in CDS:'  => $posInCDS ] if ($posInCDS);
+       push @data, [ 'Position in Protein:'  => $posInProtein ] if ($posInProtein);
     }
     push @data, [ 'Type:'  => $type ];
     push @data, ["$refStrain (reference)"=>"NA=$refNA$refAA"];
