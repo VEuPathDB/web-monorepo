@@ -1520,9 +1520,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        'PositionInCDS=' || sa.position_in_CDS || '$dlm' ||
        'PositionInProtein=' || sa.position_in_protein || '$dlm' ||
        'RefStrain=' || sa.reference_strain || '$dlm' ||
-       sa.reference_aa || '$dlm' ||
-       sa.gene_strand || '$dlm' ||
-       sa.reference_na || '$dlm' ||
+       'RefAA='   || sa.reference_aa || '$dlm' ||
        'SourceID='   ||  sa.source_id 
         as atts
 FROM   apidb.featurelocation fl,
