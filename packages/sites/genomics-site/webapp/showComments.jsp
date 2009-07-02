@@ -117,9 +117,19 @@ attributes:
 
             <tr>
                <td>Other Related Genes:</td>
-                <td> <c:forEach items="${comment.associatedStableIds}" var="row">
-                       <a href="showRecord.do?name=GeneRecordClasses.GeneRecordClass&source_id=<c:out value="${row}"/>"><c:out value="${row}"/> </a>
-                      </c:forEach>
+                <td> 
+                <c:forEach items="${comment.associatedStableIds}" var="row">
+
+                 <c:if test="${comment.commentTarget eq 'gene'}">
+                 <a href="showRecord.do?name=GeneRecordClasses.GeneRecordClass&source_id=<c:out value="${row}"/>"><c:out value="${row}"/> </a>
+                 </c:if>
+
+                 <c:if test="${comment.commentTarget eq 'isolate'}">
+                 <a href="showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&source_id=<c:out value="${row}"/>"><c:out value="${row}"/> </a>
+                 </c:if>
+
+                 </c:forEach>
+
                 </td>
             </tr>
 
