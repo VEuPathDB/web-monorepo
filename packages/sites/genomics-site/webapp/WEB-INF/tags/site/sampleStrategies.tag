@@ -28,28 +28,28 @@
 <%-------------  Set sample strategy signatures in all sites  ----------------%>
 <c:choose>
    <c:when test="${fn:containsIgnoreCase(site, 'CryptoDB')}">
-      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:11" />
-      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:12" />
+      <c:set var="simple" value="be21be3fa78e67fa" />
+      <c:set var="expanded" value="645f96ff3792dcd8" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'GiardiaDB')}">
-      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:5" />
-      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:3" />
+      <c:set var="simple" value="1aae5898da478e93" />
+      <c:set var="expanded" value="371bdee08100f6f5" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
-      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:7" />
-      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:8" />
-      <c:set var="expressed" value="ca5bc32fb29086d29b778b17f18a97c:13" />
-      <c:set var="expressedPknowlesi" value="ca5bc32fb29086d29b778b17f18a97c:14" />
-      <c:set var="PfalVaccineAg" value="b57717e3cb5c116dc7daabe8ef4ef4de:13" />
-      <c:set var="PfalDrugTargets" value="ca5bc32fb29086d29b778b17f18a97c:15" />
-      <c:set var="vivaxCryptoOrthologs" value="9de59ccd16cadc9c43bdd36a625fbbdd:17" />
+      <c:set var="simple" value="1e0dccb636a58a91" />
+      <c:set var="expanded" value="5d0b81139d371422" />
+      <c:set var="expressed" value="c4e672fb46e21b2d0" />
+      <c:set var="expressedPknowlesi" value="9e370e45de7a124c" />
+      <c:set var="PfalVaccineAg" value="d6da190be19651a3" />
+      <c:set var="PfalDrugTargets" value="3dada0a520754b5d" />
+      <c:set var="vivaxCryptoOrthologs" value="5734b351e036548c" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
-      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:1" />
-      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:6" />
+      <c:set var="simple" value="cc5c9876caa70f82" />
+      <c:set var="expanded" value="64ee4d56cc82e2f9" />
 
    </c:when>
 
@@ -58,10 +58,10 @@
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
-      <c:set var="simple" value="ca5bc32fb29086d29b778b17f18a97c:1" />
-      <c:set var="expanded" value="ca5bc32fb29086d29b778b17f18a97c:2" />
-      <c:set var="expressed" value="ca5bc32fb29086d29b778b17f18a97c:3" />
-      <c:set var="expressedLbrazilliensis" value="ca5bc32fb29086d29b778b17f18a97c:5" />
+      <c:set var="simple" value="6d18cc017993d226" />
+      <c:set var="expanded" value="f58790bf857161c3" />
+      <c:set var="expressed" value="55b70c857bee1bfa" />
+      <c:set var="expressedLbrazilliensis" value="36217c6cc264ac15" />
    </c:when>
 
 
