@@ -20,7 +20,7 @@
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C T"/>
     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByGenotypeNumber" linktext="RFLP Genotype #" existsOn="A T"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByGenotypeNumber" linktext="RFLP Genotype Number" existsOn="A T"/>
     </tr>
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByRFLPGenotype" linktext="RFLP Genotype" existsOn="A T"/>
