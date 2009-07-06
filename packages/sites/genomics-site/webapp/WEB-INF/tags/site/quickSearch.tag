@@ -26,6 +26,7 @@
 <c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
 <c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
 <c:set var="timestampParam" value="${gkwqpMap['timestamp']}"/>
+<c:set var="sessionId" value="${sessionScope['sessionId']}"/>
 
 
 <c:choose>
@@ -57,7 +58,7 @@
 </c:choose> 
 
 
-<div id="quick-search">
+<div id="quick-search" session-id="${sessionId}">
          <table width="450" border="0" cellpadding="3">
            <tr>
              <td><div align="right">
