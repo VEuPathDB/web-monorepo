@@ -15,6 +15,33 @@
     </sqlValue>
 </sanityTestInfo>
 
+<sanityTestInfo project="PlasmoDB">
+  <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
+  <defaultParamValue name="base_start" value="1"/>
+  <defaultParamValue name="rend" value="1868"/>
+  <defaultParamValue name="dlm" value=","/>
+
+  <sqlValue name="aa_seq_id_sample_gene">
+    <sql>
+  SELECT AA_SEQUENCE_ID
+  FROM   DOTS.GENEFEATURE gf,
+         DOTS.TRANSCRIPT t,
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'PF11_0344'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id
+    </sql>
+  </sqlValue>
+
+  <sqlValue name="tas_id_with_transmem">
+    <sql>
+  select aa_sequence_id
+  from dots.TransmembraneAaFeature
+  where rownum = 1
+    </sql>
+  </sqlValue>
+</sanityTestInfo>
+
 <sanityTestInfo project="TriTrypDB">
   <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
   <defaultParamValue name="base_start" value="1"/>
@@ -63,6 +90,9 @@
     <testParamValues project="ToxoDB">
       <param name="name" value="TGME49_039250"/>
     </testParamValues>
+    <testParamValues project="PlasmoDB">
+      <param name="name" value="PF11_0344"/>
+    </testParamValues>
     <sql>
 <![CDATA[
 SELECT trp.source_id ctg_name, 
@@ -95,6 +125,9 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
     </testParamValues>
     <testParamValues project="ToxoDB">
       <param name="name" value="TGME49_039250"/>
+    </testParamValues>
+    <testParamValues project="PlasmoDB">
+      <param name="name" value="PF11_0344"/>
     </testParamValues>
       <sql>
 <![CDATA[
@@ -198,8 +231,11 @@ ORDER BY aal.start_min
     </sqlQuery>
 
     <sqlQuery name="get_2d_struc">
-    <testParamValues project="PlasmoDB">
+    <testParamValues project="ToxoDB">
        <param name="srcfeature_id" value="83372"/>
+    </testParamValues>
+    <testParamValues project="PlasmoDB">
+       <param name="srcfeature_id" value="252177"/>
     </testParamValues>
        <sql>
 <![CDATA[
@@ -215,7 +251,7 @@ WHERE  ss.aa_sequence_id = $srcfeature_id and
 <!-- Was only in: plasmo -->
     <sqlQuery name="domain:ExportPred" includeProjects="PlasmoDB">
     <testParamValues project="PlasmoDB">
-       <param name="srcfeature_id" value="$$aa_seq_id_PF14_0010$$"/>    
+       <param name="srcfeature_id" value="218307"/>    
     </testParamValues>
       <sql>
 <![CDATA[
@@ -288,6 +324,9 @@ WHERE
     </testParamValues>
     <testParamValues project="ToxoDB">
     <param name="srcfeature_id" value="$$aa_seq_id_X$$"/>
+    </testParamValues>
+    <testParamValues project="PlasmoDB">
+    <param name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
     </testParamValues>
       <sql>
 <![CDATA[
@@ -501,6 +540,9 @@ WHERE
     </testParamValues>
     <testParamValues project="ToxoDB">
        <param name="parent_id" parentFeatureTest="match:BLASTP"/>
+    </testParamValues>
+    <testParamValues project="PlasmoDB">
+       <param name="parent_id" value="106486"/>
     </testParamValues>
       <sql>
 <![CDATA[ 
