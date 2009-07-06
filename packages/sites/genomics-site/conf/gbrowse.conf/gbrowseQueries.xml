@@ -3118,10 +3118,10 @@ AND ed.name in ('L.major Cosmid Ends from Sanger',
      <sql>
 <![CDATA[
 SELECT
-       exf.na_feature_id feature_id,
+       exfloc.na_feature_id feature_id,
        'exon' type, 
        'syntenyMC' source, 
-       exf.parent_id,
+       exfloc.parent_id,
        CASE WHEN (syn.is_reversed = 1) 
          THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
          ELSE anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
@@ -3135,8 +3135,7 @@ FROM
        apidb.synteny syn,
        apidb.syntenyAnchor anch_left,
        apidb.syntenyAnchor anch_right,
-       apidb.featurelocation exfloc,
-       dots.exonfeature exf
+       apidb.featurelocation exfloc
 WHERE syn.a_na_sequence_id = $srcfeature_id
   AND syn.a_start <= $rend 
   AND syn.a_end >= $base_start 
@@ -3161,7 +3160,6 @@ WHERE syn.a_na_sequence_id = $srcfeature_id
   )
   AND exfloc.start_min <= syn.b_end
   AND exfloc.end_max >= syn.b_start
-  AND exf.na_feature_id = exfloc.na_feature_id
 ]]>
     </sql>
   </sqlQuery>
@@ -3433,8 +3431,7 @@ WHERE  edr.external_database_id = ed.external_database_id
   )
   AND fl.start_min <= syn.b_end
   AND fl.end_max >= syn.b_start
-) 
-ORDER By startm
+)
 ]]>
     </sql>
   </sqlQuery>
