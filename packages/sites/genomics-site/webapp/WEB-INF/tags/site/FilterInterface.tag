@@ -108,18 +108,30 @@
 		<c:forEach items="${user.activeStrategies}" var="storedStrategy">
 			<c:set var="l" value="${storedStrategy.length-1}"/>
 		 	<c:if test="${storedStrategy.allSteps[l].dataType == recordClass}">
-				<option value="${storedStrategy.strategyId}">&nbsp;&nbsp;${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
+				<c:set var="displayName" value="${storedStrategy.name}" />
+				<c:if test="${fn:length(displayName) > 30}">
+                                    <c:set var="displayName" value="${fn:substring(displayName,0,27)}..." />
+                                </c:if>
+				<option value="${storedStrategy.strategyId}">&nbsp;&nbsp;${displayName}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
 			</c:if>
 		</c:forEach>
 		<!-- Display the Saved Strategies -->
 		<option value="--">----Saved strategies----</option>
 		<c:forEach items="${user.savedStrategiesByCategory[recordClass]}" var="storedStrategy">
-				<option value="${storedStrategy.strategyId}">&nbsp;&nbsp;${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
+				<c:set var="displayName" value="${storedStrategy.name}" />
+				<c:if test="${fn:length(displayName) > 30}">
+                                    <c:set var="displayName" value="${fn:substring(displayName,0,27)}..." />
+                                </c:if>
+				<option value="${storedStrategy.strategyId}">&nbsp;&nbsp;${displayName}</option>
 		</c:forEach>
 		<!-- Display the recent Strategies (Opened  viewed in the last 24 hours) -->
 		<option value="--">----Recent strategies----${currentTime}</option>
 		<c:forEach items="${user.recentStrategiesByCategory[recordClass]}" var="storedStrategy">
-				<option value="${storedStrategy.strategyId}">&nbsp;&nbsp;${storedStrategy.name}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
+				<c:set var="displayName" value="${storedStrategy.name}" />
+				<c:if test="${fn:length(displayName) > 30}">
+                                    <c:set var="displayName" value="${fn:substring(displayName,0,27)}..." />
+                                </c:if>
+				<option value="${storedStrategy.strategyId}">&nbsp;&nbsp;${displayName}<c:if test="${!storedStrategy.isSaved}">*</c:if></option>
 		</c:forEach>
 	</select>
 	<br><br><input id="continue_button" type="button" value="Continue..."/>

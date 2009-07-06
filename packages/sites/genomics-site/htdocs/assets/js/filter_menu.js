@@ -57,12 +57,18 @@ function closeModal(){
 }
 
 function validateSaveForm(form){
+	var strat = getStrategyFromBackId(form.strategy.value);
         if (form.name.value == ""){
-                var message = "<h1>You must specify a name for saving!</h1><input type='button' value='OK' onclick='$(\"div#diagram_" + form.strategy.
-value + "\").unblock()'/>";
-                $("div#diagram_" + form.strategy.value).block({message: message});
+                var message = "<h1>You must specify a name for saving!</h1><input type='button' value='OK' onclick='$(\"div#diagram_" + strat.frontId + "\").unblock();$(\"div#search_history\").unblock();'/>";
+                $("div#diagram_" + strat.frontId).block({message: message});
+                $("div#search_history").block({message: message});
                 return false;
-        }
+        } else if (form.name.value.length > 30) {
+                var message = "<h1>The name you have entered is too long.  Please enter a name that is at most 30 characters.</h1><input type='button' value='OK' onclick='$(\"div#diagram_" + strat.frontId + "\").unblock();$(\"div#search_history\").unblock();'/>";
+                $("div#diagram_" + strat.frontId).block({message: message});
+                $("div#search_history").block({message: message});
+		return false;
+	}
         return true;
 }
 
