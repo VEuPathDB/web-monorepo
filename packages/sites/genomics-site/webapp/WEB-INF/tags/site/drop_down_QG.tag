@@ -17,6 +17,7 @@
 				<ul>
 					<c:forEach items="${rootCat.children}" var="catEntry">
 					    <c:set var="cat" value="${catEntry.value}" />
+                                            <c:if test="${fn:length(cat.questions) > 0}">
 						<li>
 							<a href="javascript:void(0)">${cat.displayName}</a>
 							<ul>
@@ -25,6 +26,7 @@
 								</c:forEach>
 							</ul>
 						</li>
+                                            </c:if>
 					</c:forEach>
 				</ul>
 			</li>
@@ -55,6 +57,7 @@
 
 			<c:forEach items="${rootCat.children}" var="catEntry">
 			    <c:set var="cat" value="${catEntry.value}" />
+                            <c:if test="${fn:length(cat.questions) > 0}">
 		<%--	<li><a href="#">${cat.displayName}s</a>  --%>
 			<li><a href="#">${cat.displayName}</a> 
 				<ul>
@@ -63,6 +66,7 @@
 				</c:forEach>
 				</ul>
 			</li>
+                            </c:if>
 			</c:forEach>
 		  </c:otherwise>
 		 </c:choose>
