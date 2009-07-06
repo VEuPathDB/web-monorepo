@@ -91,7 +91,7 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 				qf = document.createElement('div');
 				$(qf).attr("id","query_form").addClass("jqDnR");
 				$(d).append(qf);
-				$("#strategy_results").append($(d).html());
+				$("body").append($(d).html());
 				$.ajax({
 					url:paramsUrl,
 					dataType: "html",
