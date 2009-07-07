@@ -114,7 +114,11 @@ a:hover, a:active {
 	color:#5c0141;
 }
 
+#menu ul ul a:link, #menu ul ul a:visited{
+	border-bottom-color: #5f0f47;
+}
 #menu ul ul a:hover, #menu ul ul a:active{
+	border-bottom-color: #5f0f47;
 	color: #8f0165;
 }
 

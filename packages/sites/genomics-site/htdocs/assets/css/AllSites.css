@@ -788,6 +788,7 @@ img.switch,img.plus-minus {
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
+	border-bottom: 0.1px solid black;  /* color will be overriden in project.css */
 	left:100%;
 	width: 15em;
 	font-weight: normal;
@@ -798,6 +799,7 @@ img.switch,img.plus-minus {
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
+	border-bottom: 0.1px solid black;   /* color will be overriden in project.css */
 	left:100%;
 	width: 15em;
 	font-weight: normal;
