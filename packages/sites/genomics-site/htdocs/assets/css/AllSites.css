@@ -1706,3 +1706,27 @@ span#toggle_filter {
 
 }
 
+#browser-info h2 {
+	text-align: center;
+}
+
+#browser-info p {
+	margin: 15px;
+	text-align: justify;
+}
+
+#browser-info h3 {
+	margin-left: 15px;
+	margin-top: 15px;
+	text-align: left;
+}
+
+#browser-info #supported-browsers {
+	margin-left: 30px;
+	list-style-type: inherit;
+	text-align: left;
+}
+
+#browser-info input {
+	margin-bottom: 15px;
+}
