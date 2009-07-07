@@ -107,6 +107,14 @@
 <site:wdkTable tblName="RFLPdata" isOpen="true"
      attribution=""/>
 <br>
+
+
+  <c:if test="${wdkRecord.attributes['external_db_name'].value eq 'Toxoplasma RFLPs from Chunlei Su'}">
+  Click <a href="/Standards_gel_pics.pdf">here</a> for associated RFLP images in PDF format.
+  
+  <br/>
+  </c:if>
+
 </c:if>
 
 <%--#############################################################--%>
