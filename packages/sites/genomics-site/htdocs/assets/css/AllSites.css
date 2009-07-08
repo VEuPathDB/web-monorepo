@@ -792,7 +792,7 @@ img.switch,img.plus-minus {
 	left:100%;
 	width: 15em;
 	font-weight: normal;
-	padding: 2px;
+	padding: 2px 0px;
 	line-height: 14px;
 	z-index: 500;
   	color: #414141;
@@ -805,7 +805,7 @@ img.switch,img.plus-minus {
 	font-weight: normal;
 	background-color: #FFFFFF;
 	text-decoration: none;
-	padding: 2px;
+	padding: 2px 0px;
 	line-height: 14px;
 	display: block;
 	z-index: 500;
