@@ -159,6 +159,11 @@
 <link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
 <link rel="StyleSheet" href="/assets/css/jquery.autocomplete.css" type="text/css"/>
 
+<%-- temporary:  generate url for old version of site --%>
+<script type="text/javascript">
+   var oldSiteUrl = 'http://old.${project}.org';
+</script>
+
 <site:jscript refer="${refer}"/>
 
 <!--[if lt IE 8]>

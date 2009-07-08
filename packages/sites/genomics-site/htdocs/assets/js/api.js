@@ -9,8 +9,6 @@ the version that works on Netscape doesn't work at all on Safari, as it seems th
 in sayShowOrHide don't work
 
 */
-var oldSiteUrl = "/";
-
 $(document).ready(function() {
 	popUnsupported();
 });
