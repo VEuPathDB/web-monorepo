@@ -1,14 +1,5 @@
 #!/usr/bin/perl -Tw 
 
-###
-# messageRead.pl  
-#
-# Check database for applicable messages 
-#
-# Author: Ryan Thibodeau
-#
-###
-
 use CGI qw/:standard/;
 use DBI qw(:sql_types);
 use HTTP::Headers;
