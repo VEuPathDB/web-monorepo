@@ -42,8 +42,10 @@
       <c:set var="expanded" value="5d0b81139d371422" />
       <c:set var="expressed" value="4e672fb46e21b2d0" />
       <c:set var="expressedPknowlesi" value="9e370e45de7a124c" />
+<%--
       <c:set var="PfalVaccineAg" value="d6da190be19651a3" />
       <c:set var="PfalDrugTargets" value="3dada0a520754b5d" />
+--%>
       <c:set var="vivaxCryptoOrthologs" value="5734b351e036548c" />
    </c:when>
 
@@ -111,7 +113,7 @@
 
 <c:if test="${expressedPknowlesi != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/imp.do?s=${expressedPknowlesi}"/>">P.knowlesi Expressed Genes</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressedPknowlesi}"/>">P.knowlesi Expressed Genes</a> </td>
 	<td>Strategy with a nested strategy and an ortholog transform</td>
 	<td>Find all genes from <i>P. knowlesi</i> that have any evidence for expression based on orthology to other <i>Plasmodium</i> species</td>
 </tr>
