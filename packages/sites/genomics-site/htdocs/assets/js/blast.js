@@ -35,11 +35,16 @@ var tgeArray = new Array();
 var poArray = new Array();
 
 window.onload = function(){
-	initBlastQuestion(window.location.href);
+	if(window.location.href.indexOf("showApplication") == -1)
+		initBlastQuestion(window.location.href);
 }
 
 function initBlastQuestion(url){
 	revise = false;
+	var target = parseUrlUtil('target',url);
+	if(window.location.href.indexOf("showApplication.do") != -1){
+		restrictTypes(target);
+	}
 	if(parseUrlUtil('-filter',url) != ""){
        revise = true;
        Rorganism = unescape(parseUrlUtil('BlastDatabaseOrganism',url)).replace(/\+/g," ").split(",");
@@ -48,13 +53,43 @@ function initBlastQuestion(url){
 	   clickDefault(Rtype, 'type'); 
 	   enableRadioArray('algorithm', Rprogram);
 	}else{
-		var target = parseUrlUtil('target',url);
 		if(target == 'GENE') clickDefault('Transcripts','type');
 		else if(target == 'ORF') clickDefault('ORF','type');
 		else if(target == 'EST') clickDefault('EST','type');
 		else if(target == 'SEQ') clickDefault('Genome','type');
 		else if(target == 'ISOLATE') clickDefault('Isolates','type');
 		else if(target == 'ASSEMBLIES') clickDefault('Assemblies','type');
+	}
+}
+
+function restrictTypes(type){
+	var n = "";
+	if(type == "GENE") n = "0,1";
+	else if(type == "ISOLATE") n = "6";
+	else if(type == "ASSEMBLIES") n = "5";
+	else if(type == "EST") n = "4";
+	else if(type == "ORF") n = "3";
+	else if(type == "SEQ") n = "2";
+	var y = document.getElementsByName("type");
+	n = n.split(",");
+	for(x in y){
+		var d = false;
+		if(x == "length") break;
+		for(m in n){
+		//	alert("x=" +x+"\ny[x].id="+y[x].id+"\nm="+m+"\nn[m]="+n[m]);
+			if(y[x].id == "BlastType_" + n[m]){
+				d = true;
+			}
+		}
+		if(d){
+			y[x].disabled = false;
+			document.getElementById("type_" + y[x].id).style.color="black";
+			document.getElementById("type_" + y[x].id).style.fontWeight="200";
+		}else{
+			y[x].disabled = true;
+			document.getElementById("type_" + y[x].id).style.color="grey";
+			document.getElementById("type_" + y[x].id).style.fontWeight="200";
+		}
 	}
 }
 

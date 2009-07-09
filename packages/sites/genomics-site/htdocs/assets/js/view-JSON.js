@@ -353,8 +353,18 @@ function createDetails(modelstep, jsonstep, sid){
 			hideQu = true;
 			disab = "disabled";
 		}
-
-		edit_step =	"<a title='" + ss_edit_popup + "'  class='edit_step_link " + disab + "' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + jsonstep.urlParams + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + modelstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
+		parms = jsonstep.urlParams;
+		t = "";
+		if(questionName.indexOf("BySimilarity") != -1) {
+			if(questionName.indexOf("GeneQuestions") != -1) t = "GENE";
+			if(questionName.indexOf("OrfQuestions") != -1) t = "ORF";
+			if(questionName.indexOf("GenomicSequenceQuestions") != -1) t = "SEQ";
+			if(questionName.indexOf("IsolateQuestions") != -1) t = "ISOLATE";
+			if(questionName.indexOf("AssemblyQuestions") != -1) t = "ASSEMBLIES";
+			if(questionName.indexOf("EstQuestions") != -1) t = "EST";
+			parms = parms + "&target="+ t;
+		} 
+		edit_step =	"<a title='" + ss_edit_popup + "'  class='edit_step_link " + disab + "' href='javascript:void(0)' onclick='Edit_Step(this,\"" + questionName + "\",\"" + parms + "\"," + hideQu + "," + hideOp + ");hideDetails(this)' id='" + sid + "|" + parentid + "|" + modelstep.operation + "'>Revise</a>&nbsp;|&nbsp;";
 
 		if(modelstep.frontId == 1 || modelstep.isTransform || jsonstep.isboolean){
 			expand_step = 	"<a title='" + ss_expand_popup + "' class='expand_step_link disabled' href='javascript:void(0)'>Make Nested Strategy</a>&nbsp;|&nbsp;";
