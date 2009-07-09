@@ -1,14 +1,5 @@
 #!/usr/bin/perl -Tw 
 
-###
-# messageConsole.pl  
-#
-# AMS management script
-#
-# Author: Ryan Thibodeau
-#
-###
-
 use CGI qw/:standard/;
 use strict;
 use warnings;
