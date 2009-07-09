@@ -38,6 +38,7 @@
           <th onmouseover="hideAnyName()" style="width: 5em;">Version</th>
           <th align="right" style="width: 5em;">Size</th>
           <th onmouseover="hideAnyName()" style="width: 5em;">&nbsp;</th>
+          <th onmouseover="hideAnyName()" style="width: 5em;">&nbsp;</th>
        </tr>
        <c:forEach items="${steps}" var="step">
          <c:set var="type" value="${step.dataType}"/>
@@ -72,6 +73,8 @@
             </c:choose>
             </td>
             <td onmouseover="hideAnyName()" align='right' nowrap>${step.estimateSize}</td>
+            <c:set value="${step.question.fullName}" var="qName" />
+            <td onmouseover="hideAnyName()" nowrap><a onclick="setCurrentTabCookie('strategy_results', false);" href="showSummary.do?questionFullName=${qName}${step.summaryUrlParams}">view</a></td>
             <td onmouseover="hideAnyName()" nowrap><a href="downloadStep.do?step_id=${step.stepId}">download</a></td>
          </tr>
          <c:set var="i" value="${i+1}"/>
