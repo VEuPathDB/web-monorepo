@@ -115,7 +115,7 @@ parent[${idx}] = parents[parents.length-1];
 
 function setstate (imgidx, urlidx, dofixparent) {
     state[imgidx] = urlidx;
-    document["images"]["img" + imgidx].src = "<c:url value="/images/"/>" + urls[urlidx];
+    $("img#img" + imgidx).attr('src',"<c:url value="/images/"/>" + urls[urlidx]);
     for (var i = 0 ; i < children[imgidx].length ; i++) {
 	setstate(children[imgidx][i], urlidx == 3 ? 0 : urlidx, 0);
     }
@@ -142,11 +142,11 @@ function fixparent (imgidx, urlidx) {
 	}
 	if (allmatch) {
 	    state[parentidx] = urlidx;
-	    document["images"]["img" + parentidx].src = "<c:url value="/images/"/>" + urls[urlidx];
+	    $("img#img" + parentidx).attr('src', "<c:url value="/images/"/>" + urls[urlidx]);
 	    fixparent(parentidx, urlidx);
 	} else {
 	    state[parentidx] = null;
-	    document["images"]["img" + parentidx].src = "<c:url value="/images/"/>" + urls[4];
+	    $("img#img" + parentidx).attr('src', "<c:url value="/images/"/>" + urls[4]);
 	    fixparent(parentidx, null);
 	}
     }
@@ -210,13 +210,13 @@ function calctext () {
 
     }
     var includedStr = 'n/a'; if (includeClause.length > 0) includedStr = includeClause.join(", ");
-    document.forms['questionForm']['myProp(${includedSpeciesName})'].value = includedStr;
+    $("form[name='questionForm'] input:hidden[name='myProp(${includedSpeciesName})']").attr('value', includedStr);
     var excludedStr = 'n/a'; if (excludeClause.length > 0) excludedStr = excludeClause.join(", ");
-    document.forms['questionForm']['myProp(${excludedSpeciesName})'].value = excludedStr;
+    $("form[name='questionForm'] input:hidden[name='myProp(${excludedSpeciesName})']").attr('value', excludedStr);
 
     var bothClauseSQL = includeClauseSQL.concat(excludeClauseSQL);
-    document.forms['questionForm']['myProp(${profilePatternName})'].value =
-	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%";
+    $("form[name='questionForm'] input:hidden[name='myProp(${profilePatternName})']").attr('value',
+	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%");
 }
 
 function countchildren (parent) {
@@ -389,7 +389,7 @@ parent[${idx}] = parents[parents.length-1];
 
 function setstate (imgidx, urlidx, dofixparent) {
     state[imgidx] = urlidx;
-    document["images"]["img" + imgidx].src = "<c:url value="/images/"/>" + urls[urlidx];
+    $("img#img" + imgidx).attr('src', "<c:url value="/images/"/>" + urls[urlidx]);
     for (var i = 0 ; i < children[imgidx].length ; i++) {
 	setstate(children[imgidx][i], urlidx == 3 ? 0 : urlidx, 0);
     }
@@ -416,11 +416,11 @@ function fixparent (imgidx, urlidx) {
 	}
 	if (allmatch) {
 	    state[parentidx] = urlidx;
-	    document["images"]["img" + parentidx].src = "<c:url value="/images/"/>" + urls[urlidx];
+	    $("img#img" + parentidx).attr('src', "<c:url value="/images/"/>" + urls[urlidx]);
 	    fixparent(parentidx, urlidx);
 	} else {
 	    state[parentidx] = null;
-	    document["images"]["img" + parentidx].src = "<c:url value="/images/"/>" + urls[4];
+	    $("img#img" + parentidx).attr('src', "<c:url value="/images/"/>" + urls[4]);
 	    fixparent(parentidx, null);
 	}
     }
@@ -484,13 +484,13 @@ function calctext () {
 
     }
     var includedStr = 'n/a'; if (includeClause.length > 0) includedStr = includeClause.join(", ");
-    document.forms['questionForm']['myProp(${includedSpeciesName})'].value = includedStr;
+    $("form[name='questionForm'] input:hidden[name='myProp(${includedSpeciesName})']").attr('value', includedStr);
     var excludedStr = 'n/a'; if (excludeClause.length > 0) excludedStr = excludeClause.join(", ");
-    document.forms['questionForm']['myProp(${excludedSpeciesName})'].value = excludedStr;
+    $("form[name='questionForm'] input:hidden[name='myProp(${excludedSpeciesName})']").attr('value', excludedStr);
 
     var bothClauseSQL = includeClauseSQL.concat(excludeClauseSQL);
-    document.forms['questionForm']['myProp(${profilePatternName})'].value =
-	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%";
+    $("form[name='questionForm'] input:hidden[name='myProp(${profilePatternName})']").attr('value',
+	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%");
 }
 
 function countchildren (parent) {
