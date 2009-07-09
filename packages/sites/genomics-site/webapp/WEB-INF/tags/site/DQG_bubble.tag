@@ -67,7 +67,29 @@
 					<li>
                                             <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
                                             <a class="heading" href="javascript:void(0)">&nbsp;${display}</a><a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}">details</a>
-
+											<c:choose>
+												<c:when test="${cat.name == 'isolates'}">
+													<c:set var="target" value="ISOLATE"/>
+												</c:when>
+												<c:when test="${cat.name == 'genomic'}">
+													<c:set var="target" value="SEQ"/>
+												</c:when>
+												<c:when test="${cat.name == 'snp'}">
+													<c:set var="target" value="SNP"/>
+												</c:when>
+												<c:when test="${cat.name == 'orf'}">
+													<c:set var="target" value="ORF"/>
+												</c:when>
+												<c:when test="${cat.name == 'est'}">
+													<c:set var="target" value="EST"/>
+												</c:when>
+												<c:when test="${cat.name == 'assembly'}">
+													<c:set var="target" value="ASSEMBLIES"/>
+												</c:when>
+												<c:otherwise>
+													<c:set var="target" value=""/>
+												</c:otherwise>
+											</c:choose>
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.questions}" var="q">

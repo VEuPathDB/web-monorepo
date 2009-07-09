@@ -35,11 +35,11 @@
 			<c:set var="qByCat" value="${catByRec.value}" />
 
 
-<%-- SAME CODE AS IN DQG_bubble.tag --%>
+<%-- SAME CODE AS IN DQG_bubble.tag 
 <c:set var="recordType" value="${fn:substringBefore(catByRec.key,'Record')}" />
 <c:if test="${fn:containsIgnoreCase(recordType, 'Snp') || fn:contains(recordType, 'Est')  || fn:contains(recordType, 'Orf') }">
 	<c:set var="recordType" value="${fn:toUpperCase(recordType)}" />
-	<c:set var="target" value="${recordType}" />         <%-- target is used for blast to know which target data type option should be clicked --%>
+	<c:set var="target" value="${recordType}" />
 </c:if>
 <c:if test="${fn:containsIgnoreCase(recordType, 'SageTag') }">
 	<c:set var="recordType" value="SAGE Tag" />
@@ -54,12 +54,35 @@
 <c:if test="${fn:contains(recordType, 'Isolate') }">
 	<c:set var="target" value="ISOLATE" />
 </c:if>
-
+--%>
 			<c:forEach items="${rootCat.children}" var="catEntry">
 			    <c:set var="cat" value="${catEntry.value}" />
                             <c:if test="${fn:length(cat.questions) > 0}">
 		<%--	<li><a href="#">${cat.displayName}s</a>  --%>
 			<li><a href="#">${cat.displayName}</a> 
+				<c:choose>
+					<c:when test="${cat.name == 'isolates'}">
+						<c:set var="target" value="ISOLATE"/>
+					</c:when>
+					<c:when test="${cat.name == 'genomic'}">
+						<c:set var="target" value="SEQ"/>
+					</c:when>
+					<c:when test="${cat.name == 'snp'}">
+						<c:set var="target" value="SNP"/>
+					</c:when>
+					<c:when test="${cat.name == 'orf'}">
+						<c:set var="target" value="ORF"/>
+					</c:when>
+					<c:when test="${cat.name == 'est'}">
+						<c:set var="target" value="EST"/>
+					</c:when>
+					<c:when test="${cat.name == 'assembly'}">
+						<c:set var="target" value="ASSEMBLIES"/>
+					</c:when>
+					<c:otherwise>
+						<c:set var="target" value=""/>
+					</c:otherwise>
+				</c:choose>
 				<ul>
 				<c:forEach items="${cat.questions}" var="q">
 				    <li><a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=${target}"/>">${q.displayName}</a></li>

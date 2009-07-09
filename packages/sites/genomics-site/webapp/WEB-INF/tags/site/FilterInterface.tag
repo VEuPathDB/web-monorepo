@@ -60,6 +60,29 @@
 <c:set var="rootCat" value="${model.rootCategoryMap[recordClass]}" />
 <c:forEach items="${rootCat.children}" var="catEntry">
     <c:set var="cat" value="${catEntry.value}" />
+	<c:choose>
+		<c:when test="${cat.name == 'isolates'}">
+			<c:set var="target" value="ISOLATE"/>
+		</c:when>
+		<c:when test="${cat.name == 'genomic'}">
+			<c:set var="target" value="SEQ"/>
+		</c:when>
+		<c:when test="${cat.name == 'snp'}">
+			<c:set var="target" value="SNP"/>
+		</c:when>
+		<c:when test="${cat.name == 'orf'}">
+			<c:set var="target" value="ORF"/>
+		</c:when>
+		<c:when test="${cat.name == 'est'}">
+			<c:set var="target" value="EST"/>
+		</c:when>
+		<c:when test="${cat.name == 'assembly'}">
+			<c:set var="target" value="ASSEMBLIES"/>
+		</c:when>
+		<c:otherwise>
+			<c:set var="target" value="GENE"/>
+		</c:otherwise>
+	</c:choose>
 	<c:if test="${rootCat.multiCategory}">
     	<li><a class="category" href="javascript:void(0)">${cat.displayName}</a>
     	<ul>
@@ -67,7 +90,7 @@
 	<c:forEach items="${cat.questions}" var="q">
     	<c:if test="${ !fn:contains(recordClass, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
               <c:if test="${!(siteName == 'PlasmoDB' && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">
-    		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&partial=true')">${q.displayName}</a></li>			
+    		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&target=${target}&partial=true')">${q.displayName}</a></li>			
               </c:if>
     	</c:if>
 	</c:forEach>
