@@ -18,7 +18,7 @@
 
 
 <!-- JQuery Drag And Drop Plugin -->
-
+<script type="text/javascript" src="/assets/js/js-utils.js"></script>
 <c:if test="${refer == 'customSummary'}">
 	<!-- JQuery Drag And Drop Plugin -->
 	<!--<script type="text/javascript" src="/assets/js/lib/jqDnR.js"></script>-->
@@ -31,7 +31,7 @@
 	<!-- filter menu javascript -->
 	<script type="text/javascript" src="/assets/js/filter_menu.js"></script>
 	<!-- Strategy Interaction javascript -->
-	<script type="text/javascript" src="/assets/js/js-utils.js"></script>
+	
 	<script type="text/javascript" src="/assets/js/model-JSON.js"></script>
 	<script type="text/javascript" src="/assets/js/view-JSON.js"></script>
 	<script type="text/javascript" src="/assets/js/step.js"></script>
@@ -58,9 +58,9 @@
 <script type="text/javascript" src="/assets/js/quicksearch.js"></script>
  
 
-<c:if test="${refer == 'blastQuestion'}">
+<%--<c:if test="${refer == 'blastQuestion'}"> --%>
         <script type="text/javascript" src="/assets/js/blast.js"></script>
-</c:if>
+<%--</c:if>--%>
 
 <!-- dynamic query grid code -->
 <script type="text/javascript" src="/assets/js/dqg.js"></script>
