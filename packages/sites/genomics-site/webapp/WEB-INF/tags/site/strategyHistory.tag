@@ -140,7 +140,7 @@
       </div>
       <form id='save_strat_form' onsubmit='return validateSaveForm(this);'><!-- action="javascript:saveStrategy('${strategy.strategyId}', true, true)">-->
         <input type='hidden' value="" name='strategy'/>
-        <input type='text' value="" name='name'/>
+        <input type='text' value="" name='name' maxlength='200'/>
         <input  style='margin-left:5px;' type='submit' value='Save'/>
       </form>
     </div>
