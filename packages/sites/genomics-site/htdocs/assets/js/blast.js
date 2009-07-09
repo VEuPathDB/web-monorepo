@@ -282,7 +282,6 @@ function fillSelectFromXML(obj, id, index)
 	var term;
 	var sA = document.getElementById(id);
 	sA.disabled = false;
-	alert("FillSELECTFROMXML");
 	if( ArrayLength != 0 ){
 		for( var x = 0; x < ArrayLength; x++ ){
 			term = new String( defArray[x].firstChild.data );
