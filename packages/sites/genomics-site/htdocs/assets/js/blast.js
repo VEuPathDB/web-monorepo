@@ -1,7 +1,7 @@
 var revise = false;
 var Rtype = "";
 var Rprogram = "";
-var Rorganism = "";
+var Rorganism = null;
 
 var is_Done = false;
 var selectedArray = "";
@@ -45,11 +45,10 @@ window.onload = function(){
 	else if(target == 'ASSEMBLIES') clickDefault('Assemblies','type');
 
 	if(parseUrl('-filter') != ""){
-           revise = true;
+       revise = true;
+       Rorganism = unescape(parseUrl('BlastDatabaseOrganism')).replace(/\+/g," ").split(",");
 	   Rtype = parseUrl('BlastDatabaseType');
-	   Rorganism = parseUrl('BlastDatabaseOrganism');
 	   Rprogram = parseUrl('BlastAlgorithm');   
-	   
 	   clickDefault(Rtype, 'type'); 
 	   enableRadioArray('algorithm', Rprogram);
 	}
@@ -283,18 +282,24 @@ function fillSelectFromXML(obj, id, index)
 	var term;
 	var sA = document.getElementById(id);
 	sA.disabled = false;
+	alert("FillSELECTFROMXML");
 	if( ArrayLength != 0 ){
 		for( var x = 0; x < ArrayLength; x++ ){
 			term = new String( defArray[x].firstChild.data );
 			var option = new Option();
 			option.text = term;
 			option.value = term;
-			if(x == 0) {option.selected = true;}
+			if(revise == true && Rorganism != null){
+				for(var o in Rorganism){
+					if(term == Rorganism[o]) option.selected = true;
+				}
+			}else if(x == 0) {option.selected = true;}
 			sA.options[x] = option;
 		}
 	}else{
 		alert("No Data Returned From the Server!!");
-	}	
+	}
+	revise = false;	
 }
 
 function fillDivFromXML(obj, id, index)
@@ -310,7 +315,7 @@ function fillDivFromXML(obj, id, index)
 	var ArrayLength = defArray.length;
 	var term;
 	if(!revise) initRadioArray('algorithm'); 
-	else revise = false;
+	//else revise = false;
 	if( ArrayLength != 0 ){
 		for(var i=0; i<ArrayLength;i++){
 			term = new String( defArray[i].firstChild.data );
