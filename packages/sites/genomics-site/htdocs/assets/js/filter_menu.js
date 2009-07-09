@@ -260,7 +260,7 @@ function validateAndCall(type, url, proto, rs){
 
 function getQueryForm(url,hideOp,isOrtholog, loadingParent){
     // retrieve the question form, but leave out all params
-    	var questionName = parseUrlUtil("questionFullName", url)[1];
+    	var questionName = parseUrlUtil("questionFullName", url)[0];
 		var questionUrl = url + "&showParams=false";
 		var paramsUrl = url + "&showParams=true";
 	    original_Query_Form_Text = $("#query_form").html();
