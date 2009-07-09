@@ -63,8 +63,8 @@ function validateSaveForm(form){
                 $("div#diagram_" + strat.frontId).block({message: message});
                 $("div#search_history").block({message: message});
                 return false;
-        } else if (form.name.value.length > 200) {
-                var message = "<h1>The name you have entered is too long.  Please enter a name that is at most 200 characters.</h1><input type='button' value='OK' onclick='$(\"div#diagram_" + strat.frontId + "\").unblock();$(\"div#search_history\").unblock();'/>";
+        } else if (form.name.value.length > 30) {
+                var message = "<h1>The name you have entered is too long.  Please enter a name that is at most 30 characters.</h1><input type='button' value='OK' onclick='$(\"div#diagram_" + strat.frontId + "\").unblock();$(\"div#search_history\").unblock();'/>";
                 $("div#diagram_" + strat.frontId).block({message: message});
                 $("div#search_history").block({message: message});
 		return false;
@@ -260,7 +260,8 @@ function validateAndCall(type, url, proto, rs){
 
 function getQueryForm(url,hideOp,isOrtholog, loadingParent){
     // retrieve the question form, but leave out all params
-    	var questionUrl = url + "&showParams=false";
+    	var questionName = parseUrlUtil("questionFullName", url)[1];
+		var questionUrl = url + "&showParams=false";
 		var paramsUrl = url + "&showParams=true";
 	    original_Query_Form_Text = $("#query_form").html();
 		if(loadingParent == undefined) loadingParent = "query_form";
@@ -276,6 +277,9 @@ function getQueryForm(url,hideOp,isOrtholog, loadingParent){
 					dataType: "html",
 					success: function(params){
 						formatFilterForm(params,data,0,isInsert,false,hideOp,isOrtholog);
+						if(questionName.indexOf("BySimilarity") != -1){
+							initBlastQuestion(url);
+						}
 						removeLoading(loadingParent);
 					}
 				});
@@ -380,6 +384,19 @@ function openOrthologFilter(strat_id, step_id){
 	isInsert = step_id;
 	current_Front_Strategy_Id = strat.frontId;
 	var url = 'showQuestion.do?questionFullName=InternalQuestions.GenesByOrthologs&gene_result=' + step_id + '&partial=true';
+	$("#query_form").remove();
+	$("#Strategies div a#filter_link span").css({opacity: 1.0});
+	$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});
+	$("body").append("<div id='query_form' class='jqDnR' style='min-height:140px; display:none'><span class='dragHandle'><div class='modal_name'><h1 id='query_form_title'></h1></div><a id='close_filter_query' href='javascript:closeAll()'><img src='/assets/images/Close-X-box.png' alt='Close'/></a></span></div>");
+//	setDraggable($("#query_form"), ".handle");
+	getQueryForm(url, true, true, strat.frontId);
+}
+
+function openSyntenicOrthologFilter(strat_id, step_id){
+	var strat = getStrategyFromBackId(strat_id);
+	isInsert = step_id;
+	current_Front_Strategy_Id = strat.frontId;
+	var url = 'showQuestion.do?questionFullName=InternalQuestions.GenesBySyntenicOrthologs&gene_result=' + step_id;
 	$("#query_form").remove();
 	$("#Strategies div a#filter_link span").css({opacity: 1.0});
 	$("#Strategies div#diagram_" + current_Front_Strategy_Id + " a#filter_link span").css({opacity: 0.4});

@@ -35,22 +35,26 @@ var tgeArray = new Array();
 var poArray = new Array();
 
 window.onload = function(){
-	revise = false;
-	var target = parseUrl('target');
-	if(target == 'GENE') clickDefault('Transcripts','type');
-	else if(target == 'ORF') clickDefault('ORF','type');
-	else if(target == 'EST') clickDefault('EST','type');
-	else if(target == 'SEQ') clickDefault('Genome','type');
-	else if(target == 'ISOLATE') clickDefault('Isolates','type');
-	else if(target == 'ASSEMBLIES') clickDefault('Assemblies','type');
+	initBlastQuestion(window.location.href);
+}
 
-	if(parseUrl('-filter') != ""){
+function initBlastQuestion(url){
+	revise = false;
+	if(parseUrlUtil('-filter',url) != ""){
        revise = true;
-       Rorganism = unescape(parseUrl('BlastDatabaseOrganism')).replace(/\+/g," ").split(",");
-	   Rtype = parseUrl('BlastDatabaseType');
-	   Rprogram = parseUrl('BlastAlgorithm');   
+       Rorganism = unescape(parseUrlUtil('BlastDatabaseOrganism',url)).replace(/\+/g," ").split(",");
+	   Rtype = parseUrlUtil('BlastDatabaseType',url);
+	   Rprogram = parseUrlUtil('BlastAlgorithm',url);   
 	   clickDefault(Rtype, 'type'); 
 	   enableRadioArray('algorithm', Rprogram);
+	}else{
+		var target = parseUrlUtil('target',url);
+		if(target == 'GENE') clickDefault('Transcripts','type');
+		else if(target == 'ORF') clickDefault('ORF','type');
+		else if(target == 'EST') clickDefault('EST','type');
+		else if(target == 'SEQ') clickDefault('Genome','type');
+		else if(target == 'ISOLATE') clickDefault('Isolates','type');
+		else if(target == 'ASSEMBLIES') clickDefault('Assemblies','type');
 	}
 }
 

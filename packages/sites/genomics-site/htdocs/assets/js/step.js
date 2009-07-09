@@ -97,6 +97,9 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 					dataType: "html",
 					success: function(params){
 						formatFilterForm(params,data,1,reviseStepNumber,false,hideOp,true);
+						if(questionName.indexOf("BySimilarity") != -1){
+							initBlastQuestion(url);
+						}
 						removeLoading(current_Front_Strategy_Id);
 					}
 				});
