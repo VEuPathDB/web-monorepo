@@ -443,3 +443,18 @@ function setDraggable(e, handle){
 	});
 }
 
+function initOrthologQuestion(url){
+	var include = unescape(parseUrlUtil('included_species', url)).replace(/\+/g," ").split(", ");
+	var exclude = unescape(parseUrlUtil('excluded_species', url)).replace(/\+/g," ").split(", ");
+	var pattern = unescape(parseUrlUtil('profile_pattern', url));
+
+	$("form#form_question input:hidden[name='myProp(profile_pattern)']").attr('value',pattern);
+
+	for (var i = 0, len = include.length; i < len; ++i) {
+		$("form#form_question div.params td b:contains(" + include[i] + ")").parent().find("a").click();
+	}
+
+	for (var i = 0, len = exclude.length; i < len; ++i) {
+		$("form#form_question div.params td b:contains(" + exclude[i] + ")").parent().find("a").click().click();
+	}
+}

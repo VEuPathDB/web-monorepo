@@ -62,6 +62,8 @@
         <script type="text/javascript" src="/assets/js/blast.js"></script>
 <%--</c:if>--%>
 
+<script type="text/javascript" src="/assets/js/orthologpattern.js"></script>
+
 <!-- dynamic query grid code -->
 <script type="text/javascript" src="/assets/js/dqg.js"></script>
 <script type="text/javascript" src="/assets/js/newitems.js"></script>

@@ -99,6 +99,8 @@ function Edit_Step(ele, questionName, url, hideQuery, hideOp){
 						formatFilterForm(params,data,1,reviseStepNumber,false,hideOp,true);
 						if(questionName.indexOf("BySimilarity") != -1){
 							initBlastQuestion(url);
+						} else if (questionName.indexOf("OrthologPattern") != -1){
+							initOrthologQuestion(url);
 						}
 						removeLoading(current_Front_Strategy_Id);
 					}

@@ -60,12 +60,15 @@
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
 <script type="text/javascript" lang="JavaScript 1.2">
 <!-- //
+includedSpeciesName = '${includedSpeciesName}';
+excludedSpeciesName = '${excludedSpeciesName}';
+profilePatternName = '${profilePatternName}';
 
 <c:set var="taxaCount" value="${fn:length(ind.vocab)+1}"/>
-var state = new Array(${taxaCount});
-var urls = new Array("dc.gif", "yes.gif", "no.gif", "yes.gif", "unk.gif");
-var children = new Array(${taxaCount});
-var parent = new Array(${taxaCount});
+state = new Array(${taxaCount});
+urls = new Array("dc.gif", "yes.gif", "no.gif", "yes.gif", "unk.gif");
+children = new Array(${taxaCount});
+parent = new Array(${taxaCount});
 
 for (var i = 0 ; i < ${taxaCount} ; i++) {
     state[i] = 0;
@@ -73,7 +76,7 @@ for (var i = 0 ; i < ${taxaCount} ; i++) {
     parent[i] = null;
 }
 
-var abbrev =
+abbrev =
   new Array("All Organisms"
             <c:forEach var="sp" items="${ind.vocab}">, "${sp}"</c:forEach>
    );
@@ -81,7 +84,7 @@ var abbrev =
 
 
 
-var parents = new Array();
+parents = new Array();
 parents.push(0);
 <c:set var="idx" value="1" />
 <c:set var="lastindent" value="0" />
@@ -112,141 +115,6 @@ parent[${idx}] = parents[parents.length-1];
 	  children[parentidx][children[parentidx].length] = i;
       } 
 }
-
-function setstate (imgidx, urlidx, dofixparent) {
-    state[imgidx] = urlidx;
-    $("img#img" + imgidx).attr('src',"<c:url value="/images/"/>" + urls[urlidx]);
-    for (var i = 0 ; i < children[imgidx].length ; i++) {
-	setstate(children[imgidx][i], urlidx == 3 ? 0 : urlidx, 0);
-    }
-    
-    if (dofixparent) {
-	fixparent(imgidx, urlidx);
-    }
-}
-
-function fixparent (imgidx, urlidx) {
-
-    var parentidx = parent[imgidx];
-    if (parentidx != null) {
-	var allmatch = 1;
-	if (urlidx == null) {
-	    allmatch = 0;
-	} else {
-	    for (var i = 0 ; i < children[parentidx].length ; i++) {
-		if (state[children[parentidx][i]] != urlidx) {
-		    allmatch = 0;
-		    break;
-		}
-	    }    
-	}
-	if (allmatch) {
-	    state[parentidx] = urlidx;
-	    $("img#img" + parentidx).attr('src', "<c:url value="/images/"/>" + urls[urlidx]);
-	    fixparent(parentidx, urlidx);
-	} else {
-	    state[parentidx] = null;
-	    $("img#img" + parentidx).attr('src', "<c:url value="/images/"/>" + urls[4]);
-	    fixparent(parentidx, null);
-	}
-    }
-}
-
-function toggle (imgidx) {
-    var urlidx = 0;
-    if (state[imgidx] != null) {
-	urlidx = (state[imgidx] + 1) % 3;
-    }
-    setstate(imgidx, urlidx, 1);
-    calctext();
-}
-
-function calctext () {
-    var tree = new Array();
-
-    var includeClause = new Array();
-    var excludeClause = new Array();
-    var includeClauseSQL = new Array();
-    var excludeClauseSQL = new Array();
-
-    tree[tree.length] = 0;
-    while (tree.length) {
-	var parent = tree.shift();
-	var leafabbrev = abbrev[parent];
-	var leaflist = new Array();
-	if (state[parent] == null) {
-	    // need to walk children
-	    for (var j = 0 ; j < children[parent].length ; j++) {
-		tree[tree.length] = children[parent][j];
-	    }
-	} else if (state[parent] == 1) {
-	    includeClause.push(leafabbrev);
-	    if(children[parent].length) {
-		var childlist = listchildren(parent);
-		for (var i = 0 ; i < childlist.length ; i++) {
-		    includeClauseSQL.push(childlist[i] + ":Y");
-		}
-	    } else {
-		includeClauseSQL.push(leafabbrev + ":Y");
-	    }
-	} else if (state[parent] == 2) {
-	    excludeClause.push(leafabbrev);
-	    if(children[parent].length) {
-		var childlist = listchildren(parent);
-		for (var i = 0 ; i < childlist.length ; i++) {
-		    excludeClauseSQL.push(childlist[i] + ":N");
-		}
-	    } else {
-		excludeClauseSQL.push(leafabbrev + ":N");
-	    }
-	}
-
-     // this is a remnant of orthomcl-db behavior, allowing
-     // parental "any" inclusion without specifying leaves:
-     //
-     // } else if (state[parent] == 3) { clause[clause.length] =
-     //     leafabbrev + ">=1T";
-     // }
-
-    }
-    var includedStr = 'n/a'; if (includeClause.length > 0) includedStr = includeClause.join(", ");
-    $("form[name='questionForm'] input:hidden[name='myProp(${includedSpeciesName})']").attr('value', includedStr);
-    var excludedStr = 'n/a'; if (excludeClause.length > 0) excludedStr = excludeClause.join(", ");
-    $("form[name='questionForm'] input:hidden[name='myProp(${excludedSpeciesName})']").attr('value', excludedStr);
-
-    var bothClauseSQL = includeClauseSQL.concat(excludeClauseSQL);
-    $("form[name='questionForm'] input:hidden[name='myProp(${profilePatternName})']").attr('value',
-	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%");
-}
-
-function countchildren (parent) {
-    var count = 0;
-    for (var i = 0 ; i < children[parent].length ; i++) {
-	if(children[children[parent][i]].length) {
-	    count += countchildren(children[parent][i]);
-	} else {
-	    count += 1;
-	}
-    }
-    return count;
-}
-
-function listchildren (parent) {
-    var list = new Array();
-    for (var i = 0 ; i < children[parent].length ; i++) {
-	if(children[children[parent][i]].length) {
-	    newlist = listchildren(children[parent][i]);
-	    for (var j = 0 ; j < newlist.length ; j++) {
-		list[list.length] = newlist[j];
-	    }
-	} else {
-	    list[list.length] = abbrev[children[parent][i]];
-	}
-    }
-    return list;
-}
-
-
 // -->
 </script>
 <noscript>
@@ -284,7 +152,7 @@ Ack, this form won't work at all without JavaScript support!
     <c:set var="idx" value="1"/>
     <tr>
       <td>
-        <a href="javascript:toggle(0)"><img border=0 id="img0" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<b>All Organisms</b>
+        <a href="javascript:void(0)" onclick="toggle(0)"><img border=0 id="img0" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<b>All Organisms</b>
       </td>
     </tr>
     <c:forEach var="sp" items="${ind.vocab}">
@@ -301,7 +169,7 @@ Ack, this form won't work at all without JavaScript support!
 	<td><c:forEach var="i" begin="0" end="${indent}" step="1">
                     &nbsp;&nbsp;&nbsp;&nbsp;
             </c:forEach>
-            <a href="javascript:toggle(${idx})"><img border=0 id="img${idx}" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<c:choose><c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when><c:otherwise><i>${spDisp}</i></c:otherwise></c:choose><c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
+            <a href="javascript:void(0)" onclick="toggle(${idx})"><img border=0 id="img${idx}" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<c:choose><c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when><c:otherwise><i>${spDisp}</i></c:otherwise></c:choose><c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
         </td>
         </tr>
 
@@ -333,13 +201,17 @@ Ack, this form won't work at all without JavaScript support!
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
 <c:if test="${showParams == null}">
 <script type="text/javascript" lang="JavaScript 1.2">
+includedSpeciesName = '${includedSpeciesName}';
+excludedSpeciesName = '${excludedSpeciesName}';
+profilePatternName = '${profilePatternName}';
+
 <!-- //
 
 <c:set var="taxaCount" value="${fn:length(ind.vocab)+1}"/>
-var state = new Array(${taxaCount});
-var urls = new Array("dc.gif", "yes.gif", "no.gif", "yes.gif", "unk.gif");
-var children = new Array(${taxaCount});
-var parent = new Array(${taxaCount});
+state = new Array(${taxaCount});
+urls = new Array("dc.gif", "yes.gif", "no.gif", "yes.gif", "unk.gif");
+children = new Array(${taxaCount});
+parent = new Array(${taxaCount});
 
 for (var i = 0 ; i < ${taxaCount} ; i++) {
     state[i] = 0;
@@ -347,7 +219,7 @@ for (var i = 0 ; i < ${taxaCount} ; i++) {
     parent[i] = null;
 }
 
-var abbrev =
+abbrev =
   new Array("All Organisms"
             <c:forEach var="sp" items="${ind.vocab}">, "${sp}"</c:forEach>
    );
@@ -355,7 +227,7 @@ var abbrev =
 
 
 
-var parents = new Array();
+parents = new Array();
 parents.push(0);
 <c:set var="idx" value="1" />
 <c:set var="lastindent" value="0" />
@@ -386,140 +258,6 @@ parent[${idx}] = parents[parents.length-1];
 	  children[parentidx][children[parentidx].length] = i;
       } 
 }
-
-function setstate (imgidx, urlidx, dofixparent) {
-    state[imgidx] = urlidx;
-    $("img#img" + imgidx).attr('src', "<c:url value="/images/"/>" + urls[urlidx]);
-    for (var i = 0 ; i < children[imgidx].length ; i++) {
-	setstate(children[imgidx][i], urlidx == 3 ? 0 : urlidx, 0);
-    }
-    
-    if (dofixparent) {
-	fixparent(imgidx, urlidx);
-    }
-}
-
-function fixparent (imgidx, urlidx) {
-
-    var parentidx = parent[imgidx];
-    if (parentidx != null) {
-	var allmatch = 1;
-	if (urlidx == null) {
-	    allmatch = 0;
-	} else {
-	    for (var i = 0 ; i < children[parentidx].length ; i++) {
-		if (state[children[parentidx][i]] != urlidx) {
-		    allmatch = 0;
-		    break;
-		}
-	    }    
-	}
-	if (allmatch) {
-	    state[parentidx] = urlidx;
-	    $("img#img" + parentidx).attr('src', "<c:url value="/images/"/>" + urls[urlidx]);
-	    fixparent(parentidx, urlidx);
-	} else {
-	    state[parentidx] = null;
-	    $("img#img" + parentidx).attr('src', "<c:url value="/images/"/>" + urls[4]);
-	    fixparent(parentidx, null);
-	}
-    }
-}
-
-function toggle (imgidx) {
-    var urlidx = 0;
-    if (state[imgidx] != null) {
-	urlidx = (state[imgidx] + 1) % 3;
-    }
-    setstate(imgidx, urlidx, 1);
-    calctext();
-}
-
-function calctext () {
-    var tree = new Array();
-
-    var includeClause = new Array();
-    var excludeClause = new Array();
-    var includeClauseSQL = new Array();
-    var excludeClauseSQL = new Array();
-
-    tree[tree.length] = 0;
-    while (tree.length) {
-	var parent = tree.shift();
-	var leafabbrev = abbrev[parent];
-	var leaflist = new Array();
-	if (state[parent] == null) {
-	    // need to walk children
-	    for (var j = 0 ; j < children[parent].length ; j++) {
-		tree[tree.length] = children[parent][j];
-	    }
-	} else if (state[parent] == 1) {
-	    includeClause.push(leafabbrev);
-	    if(children[parent].length) {
-		var childlist = listchildren(parent);
-		for (var i = 0 ; i < childlist.length ; i++) {
-		    includeClauseSQL.push(childlist[i] + ":Y");
-		}
-	    } else {
-		includeClauseSQL.push(leafabbrev + ":Y");
-	    }
-	} else if (state[parent] == 2) {
-	    excludeClause.push(leafabbrev);
-	    if(children[parent].length) {
-		var childlist = listchildren(parent);
-		for (var i = 0 ; i < childlist.length ; i++) {
-		    excludeClauseSQL.push(childlist[i] + ":N");
-		}
-	    } else {
-		excludeClauseSQL.push(leafabbrev + ":N");
-	    }
-	}
-
-     // this is a remnant of orthomcl-db behavior, allowing
-     // parental "any" inclusion without specifying leaves:
-     //
-     // } else if (state[parent] == 3) { clause[clause.length] =
-     //     leafabbrev + ">=1T";
-     // }
-
-    }
-    var includedStr = 'n/a'; if (includeClause.length > 0) includedStr = includeClause.join(", ");
-    $("form[name='questionForm'] input:hidden[name='myProp(${includedSpeciesName})']").attr('value', includedStr);
-    var excludedStr = 'n/a'; if (excludeClause.length > 0) excludedStr = excludeClause.join(", ");
-    $("form[name='questionForm'] input:hidden[name='myProp(${excludedSpeciesName})']").attr('value', excludedStr);
-
-    var bothClauseSQL = includeClauseSQL.concat(excludeClauseSQL);
-    $("form[name='questionForm'] input:hidden[name='myProp(${profilePatternName})']").attr('value',
-	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%");
-}
-
-function countchildren (parent) {
-    var count = 0;
-    for (var i = 0 ; i < children[parent].length ; i++) {
-	if(children[children[parent][i]].length) {
-	    count += countchildren(children[parent][i]);
-	} else {
-	    count += 1;
-	}
-    }
-    return count;
-}
-
-function listchildren (parent) {
-    var list = new Array();
-    for (var i = 0 ; i < children[parent].length ; i++) {
-	if(children[children[parent][i]].length) {
-	    newlist = listchildren(children[parent][i]);
-	    for (var j = 0 ; j < newlist.length ; j++) {
-		list[list.length] = newlist[j];
-	    }
-	} else {
-	    list[list.length] = abbrev[children[parent][i]];
-	}
-    }
-    return list;
-}
-
 
 // -->
 </script>
@@ -560,7 +298,7 @@ Ack, this form won't work at all without JavaScript support!
     <c:set var="idx" value="1"/>
     <tr>
       <td>
-        <a href="javascript:toggle(0)"><img border=0 id="img0" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<b>All Organisms</b>
+        <a href="javascript:void(0)" onclick="toggle(0)"><img border=0 id="img0" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<b>All Organisms</b>
       </td>
     </tr>
     <c:forEach var="sp" items="${ind.vocab}">
@@ -577,7 +315,7 @@ Ack, this form won't work at all without JavaScript support!
 	<td><c:forEach var="i" begin="0" end="${indent}" step="1">
                     &nbsp;&nbsp;&nbsp;&nbsp;
             </c:forEach>
-            <a href="javascript:toggle(${idx})"><img border=0 id="img${idx}" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<c:choose><c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when><c:otherwise><i>${spDisp}</i></c:otherwise></c:choose><c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
+            <a href="javascript:void(0)" onclick="toggle(${idx})"><img border=0 id="img${idx}" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<c:choose><c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when><c:otherwise><i>${spDisp}</i></c:otherwise></c:choose><c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
         </td>
         </tr>
 
