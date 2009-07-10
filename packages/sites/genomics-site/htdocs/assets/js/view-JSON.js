@@ -4,6 +4,7 @@ var firstClasses = "box venn row2 size1 arrowgrey";
 var transformClasses = "box venn row2 size1 transform"; 
 var operandClasses = "box row1 size1 arrowgrey";
 var indent = 20;
+
 //distances for the step layout
 var f2b = 114; // first step to boolean step
 var f2t = 147; // first step to transform step
@@ -47,7 +48,7 @@ var leftOffset = 0;
 // thus it is only used in an error condition
 // if there is strange behavior in the Strategy display, first step should be to comment out the try/catch blocks in order to see the errors more clearly.
 function displayModel(strat){
-  try{
+//  try{
 	if(strats){
 	  $("#strat-instructions").remove();
 	  $("#strat-instructions-2").remove();
@@ -92,10 +93,10 @@ function displayModel(strat){
 	    return div_strat;
 	  }
     }
-  }catch(e){
-	alert(e);
-	initDisplay(0);
-  }
+ // }catch(e){
+//	alert(e);
+//	initDisplay(0);
+//  }
 	return null;
 }
 
@@ -154,7 +155,11 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	zIndex++; // DO NOT DELETE this or previous line, needed for correct display in IE7.
 	stepNumber = document.createElement('span');
 	$(stepNumber).addClass('stepNumber').css({ left: (leftOffset + 30) + "px"}).text("Step " + modelstep.frontId);
-	
+	var boolean_invalid = null;
+	if(!jsonstep.isValid){
+		boolean_invalid = createInvalidDiv();
+		$(boolean_invalid).addClass(booleanClasses).css({left: leftOffset + "px"});
+	}
 	//Create the operand Step Box
 	childStp = jsonstep.step;	
 	uname = "";
@@ -188,6 +193,15 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	$(childDiv).attr("id","step_" + modelstep.frontId + "_sub").addClass(operandClasses).html(childinner).css({left: leftOffset + "px", 'z-index' : zIndex});
 	zIndex--; // DO NOT DELETE this or previous line, needed for correct display in IE7.
 	$(".crumb_details", childDiv).replaceWith(createDetails(modelstep, childStp, sid));
+	var child_invalid = null;
+	if(!childStp.isValid){
+		child_invalid = createInvalidDiv();
+		$(child_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(operandClasses).css({left: leftOffset + "px"});
+		$("img", child_invalid).click(function(){
+			var iv_id = $(this).parent().attr("id").split("_");
+			$("div#diagram_" + iv_id[0] + " div#step_" + iv_id[1] + "_sub div.crumb_menu a.edit_step_link").click();
+		});
+	}
 	
 	// Create the background div for a collapsed step if step is expanded
 	var bkgdDiv = null;
@@ -207,7 +221,10 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	stepdivs.push(boolDiv);
 	stepdivs.push(stepNumber);
 	stepdivs.push(childDiv);
-	
+	if(boolean_invalid != null)
+		stepdivs.push(boolean_invalid);
+	if(child_invalid != null)
+		stepdivs.push(child_invalid);
 }
 
 //Creates all steps that are on the bottom line only ie. this first step and transform steps
@@ -242,7 +259,7 @@ function singleStep(modelstep, jsonstep, sid, zIndex){
 			"			<li><img class='rightarrow1' src='/assets/images/arrow_chain_right3.png' alt='input into'></li>"+
 			"		</ul>";
 	}
-		
+	
 	singleDiv = document.createElement('div');
 	$(singleDiv).attr("id","step_" + modelstep.frontId + "_sub").html(inner);
 	stepNumber = document.createElement('span');
@@ -259,7 +276,17 @@ function singleStep(modelstep, jsonstep, sid, zIndex){
 	}
 	$(singleDiv).css({'z-index' : zIndex}); // DO NOT DELETE, needed for correct display in IE7.
 	$(".crumb_details", singleDiv).replaceWith(createDetails(modelstep,jsonstep, sid));
+	var step_invalid = null;
+	if(!jsonstep.isValid){
+		step_invalid = createInvalidDiv();
+		if(modelstep.isTransform)
+			$(step_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(transformClasses).css({left: leftOffset + "px"});
+		else
+			$(step_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(firstClasses).css({left: leftOffset + "px"});
+	}
 	stepdivs.push(singleDiv);
+	if(step_invalid != null)
+		stepdivs.push(step_invalid);
 	stepdivs.push(stepNumber);
 	
 }
@@ -631,3 +658,22 @@ function getRecordName(cl){
 	if(cl == "UserFileRecords.UserFile")
 		return "Files";
 }
+
+function createInvalidDiv(){
+	var inval = document.createElement('div');
+	var i = document.createElement('img');
+	$(i).attr("src","/assets/images/InvalidStep.png").
+	     attr("height","36").
+		 attr("width","98").
+		 attr("onclick","reviseInvalidSteps(this)");
+	$(inval).css({
+				background: "none",
+				position: "absolute",
+				"z-index": 999,
+				opacity: 0.6,
+				border: "none",
+				"padding-top":"2px"
+	 	 	 }).append(i);
+	return inval;
+}
+
