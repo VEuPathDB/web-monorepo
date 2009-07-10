@@ -166,6 +166,7 @@ sub snpTitle {
   my $f = shift;
   my %rev = ( A => 'T', T => 'A', C => 'G', G => 'C' );
   my ($isCoding) = $f->get_tag_values("IsCoding"); 
+  $isCoding = $isCoding eq 'yes' ? 1 : 0;
   my ($posInCDS) = $f->get_tag_values("PositionInCDS"); 
   my ($posInProtein) = $f->get_tag_values("PositionInProtein"); 
   my ($refStrain) = $f->get_tag_values("RefStrain"); 
@@ -181,6 +182,7 @@ sub snpTitle {
   my ($rend) = $f->get_tag_values("rend"); 
   my ($base_start) = $f->get_tag_values("base_start");
   my $zoom_level = $rend - $base_start; 
+
   if ($isCoding) {
      my $non = $nonSyn? 'non-' : '';
      $type = "Coding (${non}synonymous)";
