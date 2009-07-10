@@ -51,11 +51,11 @@
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
       <c:set var="simple" value="cc5c9876caa70f82" />
       <c:set var="expanded" value="64ee4d56cc82e2f9" />
-
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'TrichDB')}">
-
+      <c:set var="simple" value="694e907a87f1f48f" />
+      <c:set var="expandedTmOrSP" value="0820464a66737f55" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
@@ -91,6 +91,14 @@
 	<td><a  title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expanded}"/>">kin, TM, (EST or Prot) ortho</a> </td>
 	<td>Strategy with nested strategy and transform</td>
 	<td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td>
+</tr>
+</c:if>
+
+<c:if test="${expandedTmOrSP!= null}">
+  <tr align = "left">
+	<td><a  title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expandedTmOrSP}"/>">kinase, TM or SP, EST evidence</a> </td>
+	<td>Strategy with nested strategy</td>
+	<td>Find all kinases that have at least one transmembrane domain or a signal peptide and evidence for expression based on EST alignments</td>
 </tr>
 </c:if>
 
