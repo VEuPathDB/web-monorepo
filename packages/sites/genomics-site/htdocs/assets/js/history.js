@@ -21,6 +21,7 @@ function updateQueryHistory(){
 function updateHistory(){
 	if(update_hist){
 		update_hist = false;
+		queryhistloaded = false;
 		$("body").block();//$("div#search_history").block();
 		$.ajax({
 			url: "showQueryHistory.do",
