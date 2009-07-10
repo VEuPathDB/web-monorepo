@@ -42,11 +42,10 @@
       <c:set var="expanded" value="5d0b81139d371422" />
       <c:set var="expressed" value="4e672fb46e21b2d0" />
       <c:set var="expressedPknowlesi" value="9e370e45de7a124c" />
-<%--
+<%-- these need to be regenerated
       <c:set var="PfalVaccineAg" value="d6da190be19651a3" />
       <c:set var="PfalDrugTargets" value="3dada0a520754b5d" />
 --%>
-      <c:set var="vivaxCryptoOrthologs" value="5734b351e036548c" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
@@ -132,14 +131,6 @@
 	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${PfalDrugTargets}"/>"><i>P.falciparum</i> candidate drug targets</a> </td>
 	<td>Nested stategy to identify potential drug targets.</td>
 	<td>Find genes from <i>P. falciparum</i> that that could be worth following up as potential drug targets.  Note that there are many ways to do this search ... experiment with different parameter settings and incorporating different queries.</td>
-</tr>
-</c:if>
-
-<c:if test="${vivaxCryptoOrthologs != null}">
-<tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${vivaxCryptoOrthologs}"/>"><i>P.vivax</i> orthologs</a> </td>
-	<td>Simple stategy</td>
-	<td><i>P. vivax</i> orthologs of cryptosporidium genes that have evidence of expression in oocysts.</td>
 </tr>
 </c:if>
 
