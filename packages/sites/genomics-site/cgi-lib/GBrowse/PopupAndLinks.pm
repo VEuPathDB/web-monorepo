@@ -537,7 +537,8 @@ sub massSpecTitle {
   my ($f, $replaceString,$replaceString2,$val2) = @_;
   my ($desc) = $f->get_tag_values('Description');
   $desc =~s/\nreport:(.*)$//;
-  my ($count) = $f->get_tag_values('Count');
+  $desc =~s/\nscore:(.*)$//; 
+my ($count) = $f->get_tag_values('Count');
   my ($seq) =  $f->get_tag_values('PepSeq');
   my ($extdbname) = $f->get_tag_values('ExtDbName');
   $desc =~ s/[\r\n]/<br>/g;
