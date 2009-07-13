@@ -54,7 +54,7 @@
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'TrichDB')}">
-      <c:set var="simple" value="694e907a87f1f48f" />
+      <c:set var="simple" value="7fbf3b1254b01c94" />
       <c:set var="expandedTmOrSP" value="0820464a66737f55" />
    </c:when>
 
