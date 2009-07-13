@@ -73,6 +73,65 @@
 	 border-style: ridge;
 	 border-width: 4px;
    }
+/*
+   .diagram.link_top{
+	background-attachment:scroll;
+	background-color:transparent;
+	background-image:none;
+	background-position:0 0;
+	background-repeat:repeat;
+	border-bottom-style:solid;
+	border-left-style-ltr-source:physical;
+	border-left-style-rtl-source:physical;
+	border-right-color-ltr-source:physical;
+	border-right-color-rtl-source:physical;
+	border-right-color-value:-moz-use-text-color;
+	border-right-width-ltr-source:physical;
+	border-right-width-rtl-source:physical;
+	border-right-width-value:medium;
+	border-top-color:-moz-use-text-color;
+	border-top-style:none;
+	border-top-width:medium;
+	height:69px;
+	margin-left:10px;
+	margin-top:0;
+	opacity:0.6;
+	position:absolute;
+	width:15px;
+   }
+
+   .diagram.link_bottom{
+	background-attachment:scroll;
+	background-color:transparent;
+	background-image:none;
+	background-position:0 0;
+	background-repeat:repeat;
+	border-bottom-style:none;
+	border-left-style-ltr-source:physical;
+	border-left-style-rtl-source:physical;
+	border-right-color-ltr-source:physical;
+	border-right-color-rtl-source:physical;
+	border-right-color-value:-moz-use-text-color;
+	border-right-style-ltr-source:physical;
+	border-right-style-rtl-source:physical;
+	border-right-style-value:none;
+	border-right-width-ltr-source:physical;
+	border-right-width-rtl-source:physical;
+	border-right-width-value:medium;
+	border-top-color:#AAAAAA;
+	border-top-style:solid;
+	border-top-width:medium;
+	height:54px;
+	margin-left:10px;
+	margin-top:72px;
+	opacity:0.6;
+	position:absolute;
+	width:15px;
+   }
+*/
+   .invalid-image:hover{
+		cursor:pointer;
+	}
 
    /* Turn off this Opera/Mozilla feature. */
    .diagram abbr, .diagram acronym { border-bottom: 0 }
