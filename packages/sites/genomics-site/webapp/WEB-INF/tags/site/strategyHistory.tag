@@ -46,7 +46,7 @@
           <c:set var="strat" value="${savedStratList[0]}" />
         </c:otherwise>
       </c:choose>
-      <c:set var="recDispName" value="${strat.latestStep.question.recordClass.type}"/>
+      <c:set var="recDispName" value="${strat.displayType}"/>
       <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
       <c:set var="typeC" value="${typeC+1}"/>
@@ -89,7 +89,7 @@
   <c:set var="type" value="${strategyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="strategies" value="${strategyEntry.value}"/>
-  <c:set var="recDispName" value="${strategies[0].latestStep.question.recordClass.type}"/>
+  <c:set var="recDispName" value="${strategies[0].displayType}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
   <c:if test="${fn:length(strategies) > 0}">
@@ -105,7 +105,7 @@
   <c:set var="type" value="${strategyEntry.key}"/>
   <c:set var="isGeneRec" value="${fn:containsIgnoreCase(type, 'GeneRecordClass')}"/>
   <c:set var="strategies" value="${strategyEntry.value}"/>
-  <c:set var="recDispName" value="${strategies[0].latestStep.question.recordClass.type}"/>
+  <c:set var="recDispName" value="${strategies[0].displayType}"/>
   <c:set var="recTabName" value="${fn:substring(recDispName, 0, fn:indexOf(recDispName, ' '))}"/>
 
   <c:if test="${fn:length(strategies) > 0}">
