@@ -61,7 +61,7 @@
       <c:when test="${i % 2 == 0}">
 		<tr class="lines"></c:when>
       <c:otherwise>
-		<tr class="linesalt"></c:otherwise>
+		<tr class="linesalt"></c:otherwise> 
     </c:choose>
       <td scope="row"><input type=checkbox id="${strategyId}" onclick="updateSelectedList()"/></td>
       <%-- need to see if this strategy id is in the session. --%>
@@ -85,7 +85,7 @@
 		<c:when test="${active}">style="font-weight:bold;cursor:pointer" title="Click to go to the graphical display (Run tab)"</c:when>
 		<c:otherwise> style="cursor:pointer" title="Click to open this strategy in the strategy graphical display (Run tab)" </c:otherwise>
 		</c:choose>
-		 onclick="openStrategy('${strategyId}')">${dispNam}</span><c:if test="${!strategy.isSaved}">*</c:if>
+		 onclick="openStrategy('${strategyId}')">${dispNam}</span><c:if test="${!strategy.isSaved}">*</c:if><c:if test="${!strategy.valid}">&nbsp;&nbsp;&nbsp;<img src="/assets/images/invalidIcon.png" width="12"/></c:if>
         </div> 
 
       </td>
