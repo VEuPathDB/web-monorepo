@@ -72,6 +72,10 @@ ul#history_tabs {
     padding: 0px;    
 }
 
+#complete_history table td {
+    padding: 2px 3px;
+}
+
 .history_panel table li {
     float:left;
 }

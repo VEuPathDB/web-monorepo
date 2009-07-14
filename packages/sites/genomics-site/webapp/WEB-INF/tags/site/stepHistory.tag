@@ -74,7 +74,7 @@
             </td>
             <td onmouseover="hideAnyName()" align='right' nowrap>${step.estimateSize}</td>
             <c:set value="${step.question.fullName}" var="qName" />
-            <td onmouseover="hideAnyName()" nowrap><a onclick="setCurrentTabCookie('strategy_results', false);" href="showSummary.do?questionFullName=${qName}${step.summaryUrlParams}">view</a></td>
+            <td onmouseover="hideAnyName()" style="text-align:center;" nowrap><a onclick="setCurrentTabCookie('strategy_results', false);" href="showSummary.do?questionFullName=${qName}${step.summaryUrlParams}">view</a></td>
             <td onmouseover="hideAnyName()" nowrap><a href="downloadStep.do?step_id=${step.stepId}">download</a></td>
          </tr>
          <c:set var="i" value="${i+1}"/>

@@ -192,7 +192,7 @@
 </c:if>
 
 <div class="panel_cmplt history_panel">
-  <h1>All Queries</h1>
+  <h1>All My Queries</h1>
   <div class="loading"></div>
 </div>
 
