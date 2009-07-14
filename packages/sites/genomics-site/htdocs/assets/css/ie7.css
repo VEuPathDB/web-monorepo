@@ -102,3 +102,15 @@ a.disabled:hover {
 #sample_strat, #help, #strategy_new {
 	z-index: 2;
 }
+
+div#dyk-box div.dragHandle{
+	position:relative;
+	left:auto;
+	border-left: none;
+	border-right: none;
+	border-top: none;
+}
+
+div#dyk-box div#dyk-text{
+	margin: 0;
+}
