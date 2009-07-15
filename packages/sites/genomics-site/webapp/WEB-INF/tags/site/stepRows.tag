@@ -32,7 +32,7 @@
 
   <c:choose>
     <c:when test="${j == 0}">
-      <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.resultSize}): ${step.customName}</li></ul></td>
+      <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.estimateSize}): ${step.customName}</li></ul></td>
     </c:when>
     <c:otherwise>
       <!-- only for boolean, need to check for transforms -->
@@ -48,15 +48,18 @@
           </c:choose>
           <c:choose>
             <c:when test="${j == 1}">
-              <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.resultSize}): Step ${j}</li><li class="operation ${step.operation}" /><li>${dispName}&nbsp;(${step.childStep.resultSize})</li></ul></td>
+              <td nowrap><ul style="margin-left: ${indent}px;">
+                <li>Step ${j + 1} (${step.estimateSize}): Step ${j}</li>
+                <li class="operation ${step.operation}" />
+                <li>${dispName}&nbsp;(${step.childStep.estimateSize})</li></ul></td>
             </c:when>
             <c:otherwise>
-              <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.resultSize}): Step ${j}</li><li class="operation ${step.operation}" /><li>${dispName}&nbsp;(${step.childStep.resultSize})</li></ul></td>
+              <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.estimateSize}): Step ${j}</li><li class="operation ${step.operation}" /><li>${dispName}&nbsp;(${step.childStep.estimateSize})</li></ul></td>
             </c:otherwise>
           </c:choose>
         </c:when>
         <c:otherwise>
-          <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.resultSize}): ${step.customName}</li></ul></td>
+          <td nowrap><ul style="margin-left: ${indent}px;"><li>Step ${j + 1} (${step.estimateSize}): ${step.customName}</li></ul></td>
         </c:otherwise>
       </c:choose>
     </c:otherwise>
@@ -71,7 +74,7 @@
         <c:otherwise>${step.version}</c:otherwise>
       </c:choose>
     </td>
-    <td align='right' nowrap>${step.resultSize}</td>
+    <td align='right' nowrap>${step.estimateSize}</td>
     <c:set var="stepId" value="${step.stepId}"/>
     <td nowrap><a href="downloadStep.do?step_id=${stepId}">download</a></td> --%>
 

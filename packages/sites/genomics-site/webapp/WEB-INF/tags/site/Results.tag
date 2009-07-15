@@ -89,7 +89,26 @@
 </td>
 
 <td  style="vertical-align:middle;text-align:right" nowrap>
-<a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a>
+  <div style="float:right">
+    <a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a>
+  </div>
+<%--
+  <c:choose>
+    <c:when test="${fn:containsIgnoreCase(dispModelName, 'ApiDB')}">
+
+     </c:when>
+     <c:otherwise>
+       <form name="questionForm2" method="post" action="http://eupathdb.org/eupathdb/processQuestion.do">
+         <input type="hidden" value="GeneQuestions.GeneByLocusTag" name="questionFullName"/>
+         <input type="hidden" value="${sessionScope.wdkUser.signature}" name="myProp(signature)"/>
+         <input id="ds_gene_ids_type" type="hidden" value="DATA" name="ds_gene_ids_type"/>
+         <textarea id="ds_gene_ids_data" style="display:none;" name="ds_gene_ids_data">${wdkAnswer.allIdList}</textarea>
+         <b><a href="javascript:void(0)" onclick="$(this).parents('form').submit();">Export Result to EuPathDB</a></b>
+         &nbsp;|&nbsp;
+       </form>
+     </c:otherwise>
+  </c:choose>
+--%>
 </td>
 </tr></table>
 
