@@ -102,7 +102,7 @@
 </c:if>
 
 <%-- RFLP table ------------------------------------------------%>
-<c:if test="${data_type eq 'RFLP'}">
+<c:if test="${data_type eq 'RFLP Typed'}">
 
 <site:wdkTable tblName="RFLPdata" isOpen="true"
      attribution=""/>
@@ -121,7 +121,7 @@
 
 <%-- Alignments and Genes ------------------------------------------------%>
 
-<c:if test="${data_type eq 'Genbank'}">
+<c:if test="${data_type eq 'Sequencing Typed'}">
 
 <site:wdkTable tblName="GeneOverlap" isOpen="true"
      attribution=""/>
@@ -154,7 +154,7 @@
 </c:forEach>
 </c:if>
 
-<c:if test="${data_type eq 'Genbank' || data_type eq 'Barcode'}">
+<c:if test="${data_type eq 'Sequencing Typed' || data_type eq 'Barcode'}">
 
 <%-- GENOME SEQUENCE ------------------------------------------------%>
 <c:set var="attr" value="${attrs['sequence']}" />
