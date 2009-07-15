@@ -63,7 +63,9 @@
                  </table>
                </div>
             </td>
-            <td onmouseover="displayName('${step.stepId}')" onmouseout="hideAnyName()">${step.customName}</td>
+            <td onmouseover="displayName('${step.stepId}')" onmouseout="hideAnyName()">${step.customName}
+              <c:if test="${step.isValid == false}"><img width="12" src="/assets/images/invalidIcon.png"/></c:if>
+            </td>
             <td onmouseover="hideAnyName()">${recDispName}</td>
 	    <td onmouseover="hideAnyName()" nowrap>${step.createdTimeFormatted}</td>
 	    <td onmouseover="hideAnyName()" nowrap>
