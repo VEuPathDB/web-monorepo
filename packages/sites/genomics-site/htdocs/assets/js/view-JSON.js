@@ -155,11 +155,11 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	zIndex++; // DO NOT DELETE this or previous line, needed for correct display in IE7.
 	stepNumber = document.createElement('span');
 	$(stepNumber).addClass('stepNumber').css({ left: (leftOffset + 30) + "px"}).text("Step " + modelstep.frontId);
-	var boolean_invalid = null;
-	if(!jsonstep.isValid){
-		boolean_invalid = createInvalidDiv();
-		$(boolean_invalid).addClass(booleanClasses).css({left: leftOffset + "px"});
-	}
+//	var boolean_invalid = null;
+//	if(!jsonstep.isValid){
+//		boolean_invalid = createInvalidDiv();
+//		$(boolean_invalid).addClass(booleanClasses).css({left: leftOffset + "px"});
+//	}
 	//Create the operand Step Box
 	childStp = jsonstep.step;	
 	uname = "";
@@ -221,8 +221,8 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	stepdivs.push(boolDiv);
 	stepdivs.push(stepNumber);
 	stepdivs.push(childDiv);
-	if(boolean_invalid != null)
-		stepdivs.push(boolean_invalid);
+//	if(boolean_invalid != null)
+//		stepdivs.push(boolean_invalid);
 	if(child_invalid != null)
 		stepdivs.push(child_invalid);
 }
