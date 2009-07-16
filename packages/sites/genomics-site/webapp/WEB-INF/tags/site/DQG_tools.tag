@@ -14,7 +14,7 @@
 		<c:set var="listOrganisms" value="Cryptosporidium"/>
 	</c:when>
 <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
-                <c:set var="listOrganisms" value="Toxoplasma,Neospora"/>
+                <c:set var="listOrganisms" value="Toxoplasma, Neospora"/>
         </c:when>
 
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
@@ -28,7 +28,7 @@
 	</c:when>
 
  <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
-		<c:set var="listOrganisms" value="Leishmania,Trypanosoma"/>
+		<c:set var="listOrganisms" value="Leishmania, Trypanosoma"/>
 	</c:when>
 
 </c:choose> 
@@ -71,6 +71,10 @@
                 </li>
 </c:when>
 <c:when test="${sName == 'Toxo'}">
+		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary GBrowse</strong></a>
+                        <ul><li  style="border:0">Access additional data sets like Affymetrix probesets and  
+the <i>Toxoplasma</i> microarray chip</li></ul>
+                </li>
           
                 <li><a href="http://apicyc.apidb.org/${sName}/server.html"><strong>${cycName}</strong></a>
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>

@@ -96,7 +96,9 @@ td {
 /*	list-style-image: url(../images/cir_bullet2.png);*/
 	border-bottom:1px solid lightgrey;
 	list-style-type: none;
-	margin-left: 26px;
+	margin-left: 16px;
+	font-size: 11px;
+	line-height: 1.1em;
 }
 
 #infobottom {
