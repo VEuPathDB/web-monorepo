@@ -60,7 +60,7 @@
             <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
       
             <li id="n-${shorttag}"><b>${fdate}</b>
-                   <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News#newsItem${i}"/>">
+                   <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News#${attrs['tag']}"/>">
                      ${attrs['headline']}
                    </a></li>
           </c:if>
