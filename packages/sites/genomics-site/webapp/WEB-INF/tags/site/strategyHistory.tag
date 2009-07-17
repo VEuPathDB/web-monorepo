@@ -214,3 +214,28 @@
 </c:choose> 
 <!-- end of deciding strategy emptiness -->
 
+<c:if test="${!wdkUser.guest}">
+<c:set var="projectId" value="${model.projectId}" />
+<c:set var="previousSite">
+  <c:choose>
+    <c:when test="${projectId == 'CryptoDB'}">http://old.cryptodb.org</c:when>
+    <c:when test="${projectId == 'EuPathDB'}">http://old.eupathdb.org</c:when>
+    <c:when test="${projectId == 'GiardiaDB'}">http://old.giardiadb.org</c:when>
+    <c:when test="${projectId == 'PlasmoDB'}">http://old.plasmodb.org</c:when>
+    <c:when test="${projectId == 'ToxoDB'}">http://old.toxodb.org</c:when>
+    <c:when test="${projectId == 'TrichDB'}">http://old.trichdb.org</c:when>
+    <c:when test="${projectId == 'TriTrypDB'}">http://old.tritrypdb.org</c:when>
+  </c:choose>
+</c:set>
+
+<div>
+<hr />
+<p>If you want to access your old query histories, please go to our previous 
+site at <a href="${previousSite}">${previousSite}</a>.</p>
+<br />
+<p>We strongly suggest you to re-run your old queries on our current site, in 
+order to take the advantage of the strategy system.</p>
+</div>
+
+</c:if> <%-- end of test & display urls to old site --%>
+
