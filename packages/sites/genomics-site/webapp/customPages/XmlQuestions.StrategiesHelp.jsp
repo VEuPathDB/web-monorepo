@@ -53,13 +53,17 @@
   <c:set var="alreadyPrintedSomething" value="true"/>
 
   <c:set var="title" value="${record.attributesMap['title']}"/>
-  <c:set var="text" value="${record.attributesMap['text']}"/>
+  <c:set var="text" value="${record.attributesMap['body']}"/>
   <c:set var="image" value="${record.attributesMap['image']}"/>
-  <b>...${title}</b>
+  <c:set var="showTip" value="${record.attributesMap['showTipAsDidYouKnow']}"/>
+  <c:set var="tip" value="${record.attributesMap['tip']}"/>
+  <b id="strat_help_${i}" class="strat_help_title">${title}</b>
+
+  <c:if test="${showTip}"><span id="tip_${i}"><div style="margin: 10px 15px 15px;"><p><b>...${tip}</b>&nbsp;<a href="#strat_help_${i}">Learn more...</a></p></div></span></c:if>
 
   <br><br>${text}
 
-  <br><c:if test="${image != null && image != ''}"><img src="$image" alt=""/></c:if>
+  <br><c:if test="${image != null && image != ''}"><img src="${image}" alt=""/></c:if>
 
   </td>
 </tr>

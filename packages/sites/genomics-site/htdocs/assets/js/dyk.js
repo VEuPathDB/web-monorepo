@@ -2,13 +2,29 @@ var currentTip = 0;
 var tipMax;
 var tips = null;
 $(document).ready(function(){
-	if($("div#Strategies").attr("newstrategy") == true)
-		initDYK(true);
-	else
-		initDYK(false);
+	initHelp();
 });
 
-function initDYK(o){	//TODO Create and read in an XML file to provide the text for the Did You Know elements...
+function initHelp() {
+	var url = "showXmlDataContent.do?name=XmlQuestions.StrategiesHelp";
+	$.ajax({
+		url: url,
+		type: "POST",
+		dataType: "html",
+		success: function(data){
+			$("div#help div.h2center").after($("div#contentcolumn2 div.innertube",data).html() + "<hr />");
+			$("div#help span[id^='tip_']").each(function() {
+				$("#dyk-box div#content").append(this);
+			});
+			if($("div#Strategies").attr("newstrategy") == true)
+				initDYK(true);
+			else
+				initDYK(false);
+		}
+	});
+}
+
+function initDYK(o){
 	setTipMax();
 	var co = $.cookie("DYK");
 	if(co && !o){
@@ -63,23 +79,26 @@ function initDYK(o){	//TODO Create and read in an XML file to provide the text f
 }
 
 function setTipMax(){
-	tipMax = $("#dyk-box span[id^='tip_']").length + 1;
+	tipMax = $("#dyk-box span[id^='tip_']").length;
 }
 
 function setCount(){
-	$("#dyk-count").text(currentTip + " of " + (tipMax - 1));
+	$("#dyk-count").text((currentTip + 1) + " of " + (tipMax));
 }
 
 function displayCurrent(){
-	if(currentTip > 0 && currentTip < tipMax )
+	if(currentTip >= 0 && currentTip < tipMax )
 		$("#dyk-box div#dyk-text").html($("#dyk-box span#tip_" + currentTip).html());
 	else {
-		if(currentTip < 1)
+		if(currentTip < 0)
 			currentTip = tipMax - 1;
 		else
-			currentTip = 1;
+			currentTip = 0;
 		$("#dyk-box div#dyk-text").html($("#dyk-box span#tip_" + currentTip).html());
 	}
+	$("#dyk-box div#dyk-text a").click(function(){
+		showPanel('help');
+	});
 	setCount();
 }
 

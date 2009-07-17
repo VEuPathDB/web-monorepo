@@ -653,3 +653,7 @@ span.closeStrategy {
 a.disabled:hover, a.disabled:active {
 	color:#0B4796;
 }
+
+b.strat_help_title > span {
+	display: none;
+}
