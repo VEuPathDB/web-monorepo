@@ -2,7 +2,9 @@ var currentTip = 0;
 var tipMax;
 var tips = null;
 $(document).ready(function(){
+	
 	initHelp();
+
 });
 
 function initHelp() {
@@ -16,7 +18,9 @@ function initHelp() {
 			$("div#help span[id^='tip_']").each(function() {
 				$("#dyk-box div#content").append(this);
 			});
-			if($("div#Strategies").attr("newstrategy") == true)
+			if($("div#strategy_results").css("display") == 'none')
+				initDYK(false);
+			else if($("div#Strategies").attr("newstrategy") == 'true')
 				initDYK(true);
 			else
 				initDYK(false);
@@ -27,10 +31,13 @@ function initHelp() {
 function initDYK(o){
 	setTipMax();
 	var co = $.cookie("DYK");
-	if(co && !o){
+	if(!o){
 		tips = $("#dyk-box,#dyk-shadow").remove();
 		return;
-	} 
+	}else if(co){
+		tips = $("#dyk-box,#dyk-shadow").remove();
+		return;
+	}
 	$("#dyk-box,#dyk-shadow").show();
 	var randomnumber=Math.floor(Math.random()*tipMax);
 	setCurrent(randomnumber);

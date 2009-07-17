@@ -10,6 +10,14 @@ function showExportLink(stratId){
 }
 
 function showPanel(panel) {
+	if(panel == 'strategy_results'){
+		if($("div#Strategies").attr("newstrategy") == 'true')
+			initDYK(true);
+		else
+			initDYK(false);
+	}else 
+		initDYK(false);
+	
 	$("#strategy_tabs li").each(function(){
 		var hidePanel = $("a", this).attr("id").substring(4);
 		$("#tab_" + hidePanel).parent().removeAttr("id");
@@ -328,6 +336,7 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 		},
 		success: function(data){
 			//filter = document.createElement('div');
+			dykClose();
 			$("body").append(data);
 			original_Query_Form_CSS.maxW = $("#query_form").css("max-width");
 			original_Query_Form_CSS.minW = $("#query_form").css("min-width");
