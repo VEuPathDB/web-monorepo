@@ -110,7 +110,6 @@ My Search Strategies Workspace
 <c:set var="newStrat"><c:if test="${newStrategy != null && newStrategy == true}">newStrategy="true"</c:if></c:set>
 
 <div id="strategy_results">
-        <div>---${newStrategy}---</div>
 	<div id="Strategies" ${newStrat}>
 	</div>
 
