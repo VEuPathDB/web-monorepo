@@ -5,7 +5,7 @@
 	height:87px;
 	top:50px;
 	left:313px;
-	z-index:100000;
+	z-index:81;
 	border:1px solid #888888;
 	-webkit-border-bottom-left-radius:10px;
 	-webkit-border-bottom-right-radius:10px;
@@ -22,7 +22,7 @@ div#dyk-shadow{
 	left:319px;    /* 247px; */
 	opacity:0.2;
 	top:56px;   /* 204px; */
-	z-index:800;
+	z-index:80;
 }
 
 div#dyk-box div.dragHandle{
