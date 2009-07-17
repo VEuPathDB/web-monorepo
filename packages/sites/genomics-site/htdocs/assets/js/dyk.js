@@ -2,7 +2,10 @@ var currentTip = 0;
 var tipMax;
 var tips = null;
 $(document).ready(function(){
-	initDYK(false);
+	if($("div#Strategies").attr("newstrategy") == true)
+		initDYK(true);
+	else
+		initDYK(false);
 });
 
 function initDYK(o){	//TODO Create and read in an XML file to provide the text for the Did You Know elements...
