@@ -216,37 +216,45 @@
     <th id="${attrName}" align="left" valign="middle">
 	<table>
           <tr>
-            <td style="width:20px;min-height:20px;">
+            <td>
+		<table>
+                  <tr>
+                    <td style="padding:0;">
           <c:choose>
             <c:when test="${!sumAttrib.sortable}">
-              <img style="float:left;" src="/assets/images/results_arrw_up_blk.png" border="0" alt="Sort up"/>
+              <img src="/assets/images/results_arrw_up_blk.png" border="0" alt="Sort up"/>
             </c:when>
             <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
-              <img style="float:left;" src="/assets/images/results_arrw_up_gr.png"  alt="Sort up" 
+              <img src="/assets/images/results_arrw_up_gr.png"  alt="Sort up" 
                   title="Result is sorted by ${sumAttrib}" />
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
-              <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true)"
-                  title="Sort by ${sumAttrib}">
+              <a href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true)" title="Sort by ${sumAttrib}">
                   <img src="/assets/images/results_arrw_up.png" alt="Sort up" border="0" /></a>
             </c:otherwise>
           </c:choose>
+                 </td>
+               </tr>
+               <tr>
+                 <td style="padding:0;">
 	  <c:choose>
             <c:when test="${!sumAttrib.sortable}">
-	      <img style="float:left;" src="/assets/images/results_arrw_dwn_blk.png" border="0" />
+	      <img src="/assets/images/results_arrw_dwn_blk.png" border="0" />
 	    </c:when>
             <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
-              <img style="float:left;" src="/assets/images/results_arrw_dwn_gr.png" alt="Sort down" 
+              <img src="/assets/images/results_arrw_dwn_gr.png" alt="Sort down" 
 	                    title="Result is sorted by ${sumAttrib}" />
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
-              <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true)"
-	                    title="Sort by ${sumAttrib}">
+              <a href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true)" title="Sort by ${sumAttrib}">
               <img src="/assets/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
             </c:otherwise>
           </c:choose>
+                   </td>
+                 </tr>
+               </table>
              </td>
         <td nowrap>${sumAttrib.displayName}</td>
         <%-- <c:if test="${j != 0}">
