@@ -43,7 +43,7 @@ attributes:
     margin-bottom: 0.5em;
   } 
 </style>
-
+</head>
 
 <c:choose>
     <c:when test="${fn:length(comments) == 0}">
@@ -94,7 +94,9 @@ attributes:
 
             <tr>
                <td>Content:</td> 
-               <td> <p align=justify>${comment.content}</p> </td>
+               <td> 
+               <site:BBCode content="${comment.content}" />
+               </td>
             </tr>
 
             <tr>
