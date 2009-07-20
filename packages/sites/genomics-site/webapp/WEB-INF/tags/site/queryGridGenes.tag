@@ -78,7 +78,7 @@
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTaxon" linktext="Species" existsOn="A C G P T Tr Tt"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="Available Reagents" existsOn="A C P"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="Available Reagents" existsOn="A C P T"/>
                 </tr>
 
               
@@ -98,7 +98,7 @@
                 <tr class="subheaderrow2"><td colspan="4">Transcript Expression
                 </td></tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A P T G"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A G P T Tt"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn="A C G P T Tr Tt"/>

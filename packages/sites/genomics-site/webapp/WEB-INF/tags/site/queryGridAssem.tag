@@ -16,7 +16,7 @@
                 </tr>
 
                 <tr>
-                   <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="A C G P T"/> 
+                   <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="A C G P T Tt"/> 
                 </tr>
  <tr>
                     <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLibrary" linktext="Library" existsOn="A C G P T Tt"/>

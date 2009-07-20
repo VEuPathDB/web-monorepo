@@ -57,7 +57,7 @@
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
 
-<c:set var="API" value="${fn:containsIgnoreCase(modelName, 'api')    }"     />
+<c:set var="API" value="${fn:containsIgnoreCase(modelName, 'eupath')    }"     />
 <c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')    }"     />
 
 
