@@ -110,12 +110,8 @@ td {
 	text-align: center;
 	padding-top: 2px;
 	padding-right: 19px;
-	padding-bottom: 12px;  /* eupath needs 20px, in eupathdb.css */
+	padding-bottom: 0px; 
 	padding-left: 19px;
-}
-
-#infobottom.tools {
-	padding-bottom: 0px;
 }
 
 

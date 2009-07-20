@@ -72,8 +72,7 @@
 </c:when>
 <c:when test="${sName == 'Toxo'}">
 		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary GBrowse</strong></a>
-                        <ul><li  style="border:0">Access additional data sets like Affymetrix probesets and  
-the <i>Toxoplasma</i> microarray chip</li></ul>
+                        <ul><li  style="border:0">Access additional info like probeset data and <i>Toxoplasma</i> array info</li></ul>
                 </li>
           
                 <li><a href="http://apicyc.apidb.org/${sName}/server.html"><strong>${cycName}</strong></a>
