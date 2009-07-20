@@ -28,14 +28,14 @@ function initHelp() {
 	});
 }
 
-function initDYK(o){
+function initDYK(o,co){
 	setTipMax();
-	var co = $.cookie("DYK");
+	if(co == undefined) co = $.cookie("DYK");
 	if(!o){
-		tips = $("#dyk-box,#dyk-shadow").remove();
+		tips = $("#dyk-box,#dyk-shadow").hide();
 		return;
 	}else if(co){
-		tips = $("#dyk-box,#dyk-shadow").remove();
+		tips = $("#dyk-box,#dyk-shadow").hide();
 		return;
 	}
 	$("#dyk-box,#dyk-shadow").show();
@@ -126,15 +126,15 @@ function prevTip(){
 
 function dykOpen(){
 //	$(tips[0]).find("input#stay-closed-check").attr("disabled",true);
-	$("div.innertube").append(tips[0]);
-	$("div.innertube").append(tips[1]);
-	initDYK(true);
+//	$("div.innertube").append(tips[0]);
+//	$("div.innertube").append(tips[1]);
+	initDYK(true, false);
 }
 
 function dykClose(){
 	var ex = $("div#dyk-box input#stay-closed-check").attr("checked");
 	setDYKCookie(ex);
-	tips = $("#dyk-box,#dyk-shadow").remove();
+	tips = $("#dyk-box,#dyk-shadow").hide();
 }
 
 function setDYKCookie(expire){
