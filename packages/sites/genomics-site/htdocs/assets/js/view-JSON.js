@@ -424,7 +424,7 @@ function createDetails(modelstep, jsonstep, sid){
 	    "		<div class='crumb_menu'>"+ rename_step + view_step + edit_step + expand_step + insert_step + orthologs + delete_step + close_button +
 		"		</div>"+ name +
 		"		<table></table><hr class='clear_all' />" + filteredName +
-		"		<p><b>Results:&nbsp;</b>" + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType,jsonstep.results) + "&nbsp;&nbsp;|&nbsp;&nbsp;<a href='downloadStep.do?step_id=" + modelstep.back_step_Id + "'>Download</a>";
+		"		<p><b>Results:&nbsp;</b>" + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType,jsonstep.results);// + "&nbsp;&nbsp;|&nbsp;&nbsp;<a href='downloadStep.do?step_id=" + modelstep.back_step_Id + "'>Download</a>";
 
 	$(detail_div).html(inner);
 	$("table", detail_div).replaceWith(params_table);
