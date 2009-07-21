@@ -417,7 +417,8 @@ $(document).ready(function(){
         <div class=medium>
         Use the formatting commands exemplified below to add bold, italics, underline, superscript, subscript 
         and lists to your comment:
-        <p/>
+        <br/>
+        <br/>
         Your comment can contain [i]italicized text[/i], some [b]bold words[/b] and a few [u]underlined words[/u]. 
         Subscripts such as A[sub]min[/sub] or superscripts such as B[sup]max[/sup] are allowed. You can also
         use numbered lists such as:
@@ -458,7 +459,10 @@ $(document).ready(function(){
         <li> Bananas</li>
         </ul>
         </div>
-        
+
+        <br/>
+        <br/>
+        <b>Note:</b> line break tag &lt;br/&gt; <b>won't</b> be rendered. If you need a <b>new line</b>, please use the \"Enter\" key.  
         </td></tr></table>"/>
     
     <table width=60% align=center>
