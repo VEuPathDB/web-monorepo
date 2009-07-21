@@ -69,7 +69,30 @@
     <a id="tab_cmplt" onclick="displayHist('cmplt')" href="javascript:void(0)">All My Queries</a>
   </li>
   </ul>
-<!-- should be a div instead of a table -->
+<%-- display link to old site if user is logged in (temp) --%>
+<c:if test="${!wdkUser.guest}">
+<c:set var="projectId" value="${model.projectId}" />
+<c:set var="previousSite">
+  <c:choose>
+    <c:when test="${projectId == 'CryptoDB'}">http://old.cryptodb.org</c:when>
+    <c:when test="${projectId == 'EuPathDB'}">http://old.eupathdb.org</c:when>
+    <c:when test="${projectId == 'GiardiaDB'}">http://old.giardiadb.org</c:when>
+    <c:when test="${projectId == 'PlasmoDB'}">http://old.plasmodb.org</c:when>
+    <c:when test="${projectId == 'ToxoDB'}">http://old.toxodb.org</c:when>
+    <c:when test="${projectId == 'TrichDB'}">http://old.trichdb.org</c:when>
+    <c:when test="${projectId == 'TriTrypDB'}">http://old.tritrypdb.org</c:when>
+  </c:choose>
+</c:set>
+<div style="clear:both;">
+<p>If you want to access your old query histories, please go to our previous 
+site at <a href="${previousSite}">${previousSite}</a>.</p>
+<br />
+<p>We strongly suggest you to re-run your old queries on our current site, in 
+order to take the advantage of the strategy system.</p>
+<hr />
+</div>
+</c:if>
+<%-- end display link to old site --%>
 <table class="history_controls clear_all">
    <tr>
       <td>Select:&nbsp;<a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">All</a>&nbsp|&nbsp;
@@ -215,19 +238,6 @@
 <!-- end of deciding strategy emptiness -->
 
 <c:if test="${!wdkUser.guest}">
-<c:set var="projectId" value="${model.projectId}" />
-<c:set var="previousSite">
-  <c:choose>
-    <c:when test="${projectId == 'CryptoDB'}">http://old.cryptodb.org</c:when>
-    <c:when test="${projectId == 'EuPathDB'}">http://old.eupathdb.org</c:when>
-    <c:when test="${projectId == 'GiardiaDB'}">http://old.giardiadb.org</c:when>
-    <c:when test="${projectId == 'PlasmoDB'}">http://old.plasmodb.org</c:when>
-    <c:when test="${projectId == 'ToxoDB'}">http://old.toxodb.org</c:when>
-    <c:when test="${projectId == 'TrichDB'}">http://old.trichdb.org</c:when>
-    <c:when test="${projectId == 'TriTrypDB'}">http://old.tritrypdb.org</c:when>
-  </c:choose>
-</c:set>
-
 <div>
 <hr />
 <p>If you want to access your old query histories, please go to our previous 
