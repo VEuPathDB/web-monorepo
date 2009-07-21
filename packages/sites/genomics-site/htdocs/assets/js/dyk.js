@@ -12,6 +12,7 @@ function initHelp() {
 	$.ajax({
 		url: url,
 		type: "POST",
+		data: "",
 		dataType: "html",
 		success: function(data){
 			$("div#help div.h2center").after($("div#contentcolumn2 div.innertube",data).html() + "<hr />");
