@@ -16,9 +16,9 @@ function showDetails(det){
 	$("body").children("div.crumb_details").each(function(){
 		$(this).remove();	
 	});
-	$("div.crumb_details", diagram).each(function(){
+	$("div#Strategies").find("div.crumb_details").each(function(){
 		$(this).attr("disp","0");
-	})
+	});
 	$("a.crumb_name img").attr("src","/assets/images/plus.gif");
 	if(disp == "0"){
 		openDetail.attr("disp","1");
