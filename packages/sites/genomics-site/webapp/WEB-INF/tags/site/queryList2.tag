@@ -10,51 +10,56 @@
 <SCRIPT type="text/javascript" >
 
 function writeData(page, div, quesName){
-        if(page=="") {document.getElementById(div).innerHTML = ""; return;}
+    if(page=="") {document.getElementById(div).innerHTML = ""; return;}
+	var t = $("#"+div);
+	$.ajax({
+		url: page,
+		dataType: 'html',
+		success: function(data){
+			var q = document.createElement('div');
+			$(q).html(data);
+			var qf = $("form#form_question",q);
+			$("#" + div).html(qf);
+		}
+	});
+}	
+/*	
 	var xhr = createXMLHttpRequest();
-        xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function() {
 		if(xhr.readyState==4) {
 			if(xhr.status==200){
-		              // document.getElementById(div).innerHTML = xhr.responseText;
-                               var questionPage = xhr.responseText;
-                             //  var index1 = questionPage.indexOf("<div id=\"question_Form\">") + 24;
-			     //  var index2 = questionPage.indexOf("</div><!--End Question Form Div-->", index1);
-                               var index1 = questionPage.indexOf("<form");
-			       var index2 = questionPage.indexOf("</form>", index1);
-			       var ques = questionPage.substring(index1,index2);
-
-                               var desc1 = questionPage.indexOf("<p><b>Query description");
- 			       var desc2 = questionPage.substring(desc1).indexOf("</p>");
-                               var desc = questionPage.substring(desc1, desc2+desc1);
-
- 			       var help1 = questionPage.indexOf("<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>");
- 			       var help2 = questionPage.substring(help1).indexOf("<!-- DO NOT REMOVE THIS COMMENT USED BY AJAX PAGES -->");
-                               var help = questionPage.substring(help1, help2+help1);
-
-
-			       document.getElementById(div).innerHTML = "<font size='5' align='center'><b>" + quesName + "</b></font><br/><br/>";
-                               document.getElementById(div).innerHTML += ques;
-			       document.getElementById(div).innerHTML += "<hr/>" + desc;
-			       document.getElementById(div).innerHTML += help;
-		
-			       if(ques.indexOf("<div id=\"navigation\">") != -1){
-				var divs = document.getElementById('navigation').getElementsByTagName('div');
-				for(var i=0;i<divs.length;i++){
-					renameInputs(divs[i],'none');
+				var q = document.createElement('div');
+        		$(q).html(xhr.responseText);
+				//var questionPage = xhr.responseText;
+            	//var index1 = questionPage.indexOf("<form");
+				//var index2 = questionPage.indexOf("</form>", index1);
+				//var ques = questionPage.substring(index1,index2);
+				//var desc1 = questionPage.indexOf("<p><b>Query description");
+ 				var desc2 = questionPage.substring(desc1).indexOf("</p>");
+            	var desc = questionPage.substring(desc1, desc2+desc1);
+				var help1 = questionPage.indexOf("<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>");
+ 				var help2 = questionPage.substring(help1).indexOf("<!-- DO NOT REMOVE THIS COMMENT USED BY AJAX PAGES -->");
+            	var help = questionPage.substring(help1, help2+help1);
+				document.getElementById(div).innerHTML = "<font size='5' align='center'><b>" + quesName + "</b></font><br/><br/>";
+            	document.getElementById(div).innerHTML += ques;
+				document.getElementById(div).innerHTML += "<hr/>" + desc;
+				document.getElementById(div).innerHTML += help;
+				if(ques.indexOf("<div id=\"navigation\">") != -1){
+					var divs = document.getElementById('navigation').getElementsByTagName('div');
+					for(var i=0;i<divs.length;i++){
+						renameInputs(divs[i],'none');
+					}
+					navigation_toggle('Eukaryotic Pathogens','organism');
 				}
-				navigation_toggle('Eukaryotic Pathogens','organism');
-			       }
-
-			       
 			}else{
 				alert("Message returned, but with an error status");
 			}
-	     	}
-	 }	
-	 xhr.open("GET", page, true);
- xhr.send(null);
+    	}
+	}	
+	xhr.open("GET", page, true);
+ 	xhr.send(null);
 }
-
+*/
 function createXMLHttpRequest() {
 	try{return new ActiveXObject("Msxml2.XMLHTTP");}catch(e){}
 	try{return new ActiveXObject("Microsoft.XMLHTTP");}catch(e){}
@@ -91,19 +96,7 @@ function getComboElement()
         <c:set var="q" value="${qSet.questionsMap[qName]}"/>
         
         <td align="left">
-            <a href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>', 'des','${q.displayName}' )"
-
-           onmouseover = "return overlib('${q.summary}',
-		FGCOLOR, 'white',
-		BGCOLOR, '#003366',
-		TEXTCOLOR, '#003366',
-		TEXTSIZE, '12px',
-		WIDTH, 350,
-		DELAY, 150,
-		CELLPAD, 5)"
-        onmouseout = "return nd();"
-
-      >
+            <a title="${q.summary}" href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${q.displayName}' )">
             <font color="#000066" size="3"><b>${q.displayName}</b>${url}</font></a><br/>
         </td> 
         <c:choose>
