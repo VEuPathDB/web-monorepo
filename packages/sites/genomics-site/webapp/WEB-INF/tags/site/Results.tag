@@ -10,7 +10,7 @@
 <c:set var="recordName" value="${wdkAnswer.question.recordClass.fullName}" />
 
 <c:set var="clustalwIsolatesCount" value="0" />
-
+<c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 <c:set var="eupathIsolatesQuestion" value="${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
   && (fn:containsIgnoreCase(modelName, 'CryptoDB') 
   || fn:containsIgnoreCase(modelName, 'ToxoDB') 
@@ -23,6 +23,7 @@
               required="true"
               description="Strategy Id we are looking at"
 %>
+<
 <c:set var="type" value="Results" />
 <c:set var="step_dataType" value="${strategy.latestStep.dataType}" />
 <c:choose>
