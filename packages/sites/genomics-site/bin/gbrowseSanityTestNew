@@ -76,20 +76,18 @@ sub getSanityConfig {
   $sanityConfig->{test} = [];
 
   foreach my $sqlQuery (@$sqlQueryArray) {
+    my $test = {name => $sqlQuery->{name}};  
     if ($sqlQuery->{testParamValues}) {
       foreach my $testParamValues (@{$sqlQuery->{testParamValues}}) {
-	die "<testParamValues> for $sqlQuery->{name} must include a 'project=' attribute\n" unless $testParamValues->{project};
-	next if $testParamValues->{project} ne $model;
-	my $test = {name => $sqlQuery->{name}};
-	$test->{param} = $testParamValues->{param};
-	push(@{$sanityConfig->{test}}, $test);
+        die "<testParamValues> for $sqlQuery->{name} must include a 'project=' attribute\n" unless $testParamValues->{project};
+        next if $testParamValues->{project} ne $model;
+        $test->{param} = $testParamValues->{param};
       }
     }
-    else {
-      my $test = {name => $sqlQuery->{name}};
-      push(@{$sanityConfig->{test}}, $test);
-    }
+    push(@{$sanityConfig->{test}}, $test);
   }
+
+
 
   my $testInfo;
   foreach my $testInfoDecl (@$sanityTestInfo) {
