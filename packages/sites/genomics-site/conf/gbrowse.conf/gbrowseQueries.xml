@@ -1127,12 +1127,7 @@ ORDER BY
        <param name="base_start" value="893548"/>
        <param name="rend" value="894278"/>
     </testParamValues>
-    <testParamValues project="PlasmoDB">
-       <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_11$$"/>
-       <param name="base_start" value="1279000"/>
-       <param name="rend" value="1314000"/>
-    </testParamValues>
-     <sql>
+    <sql>
 <![CDATA[
 SELECT distinct sim.similarity_id feature_id, 
        'match' type, 
