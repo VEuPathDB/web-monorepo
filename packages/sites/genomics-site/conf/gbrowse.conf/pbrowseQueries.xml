@@ -15,6 +15,39 @@
     </sqlValue>
 </sanityTestInfo>
 
+<sanityTestInfo project="CryptoDB">
+  <defaultParamValue name="name" value="cgd7_230"/>
+  <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_cgd7_230$$"/>
+  <defaultParamValue name="base_start" value="1"/>
+  <defaultParamValue name="rend" value="880"/>
+  <defaultParamValue name="dlm" value=","/>
+
+  <sqlValue name="aa_seq_id_cgd7_230">
+    <sql>
+  SELECT AA_SEQUENCE_ID 
+  FROM   DOTS.GENEFEATURE gf, 
+         DOTS.TRANSCRIPT t, 
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'cgd7_230'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id  
+    </sql> 
+  </sqlValue>
+
+  <sqlValue name="aa_seq_id_cgd6_690">
+    <sql>
+  SELECT AA_SEQUENCE_ID 
+  FROM   DOTS.GENEFEATURE gf, 
+         DOTS.TRANSCRIPT t, 
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'cgd6_690'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id  
+    </sql> 
+  </sqlValue>
+</sanityTestInfo>
+
+
 <sanityTestInfo project="PlasmoDB">
   <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
   <defaultParamValue name="base_start" value="1"/>
@@ -206,6 +239,11 @@ WHERE msf.na_feature_id =  x.feat_id
   </sqlQuery>
 
     <sqlQuery name="lowcomplexity:seg">
+    <testParamValues project="CryptoDB">
+       <param name="srcfeature_id" value="1589"/>
+       <param name="base_start" value="13500"/>
+       <param name="rend" value="13564"/>
+    </testParamValues>
       <sql>
 <![CDATA[ 
 SELECT lc.aa_feature_id feature_id,
@@ -279,7 +317,10 @@ GROUP BY df.aa_feature_id, df.parent_id
 
 <!-- ORIGINALLY FROM: plasmo,toxo,tritryp -->
   <sqlQuery name="domain:SignalP">
-      <sql>
+    <testParamValues project="CryptoDB">
+       <param name="srcfeature_id" value="8212"/>       
+    </testParamValues> 
+     <sql>
 <![CDATA[
 SELECT
        spf.aa_feature_id feature_id,
@@ -328,7 +369,10 @@ WHERE
     <testParamValues project="PlasmoDB">
     <param name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
     </testParamValues>
-      <sql>
+    <testParamValues project="CryptoDB">
+       <param name="srcfeature_id" value="$$aa_seq_id_cgd6_690$$"/>
+    </testParamValues>
+    <sql>
 <![CDATA[
 SELECT
        tmf.aa_feature_id feature_id,
@@ -539,6 +583,9 @@ WHERE
        <param name="parent_id" parentFeatureTest="match:BLASTP"/> 
     </testParamValues>
     <testParamValues project="ToxoDB">
+       <param name="parent_id" parentFeatureTest="match:BLASTP"/>
+    </testParamValues>
+    <testParamValues project="CryptoDB">
        <param name="parent_id" parentFeatureTest="match:BLASTP"/>
     </testParamValues>
     <testParamValues project="PlasmoDB">
