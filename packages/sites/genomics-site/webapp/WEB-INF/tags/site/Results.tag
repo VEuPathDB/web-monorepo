@@ -335,7 +335,7 @@
                    ${primaryKey.value}</a>
            </c:when>
 
-           <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Genbank'}">
+           <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Sequencing Typed'}">
 
               <%-- add checkbox --%>
               <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}"></nobr>
