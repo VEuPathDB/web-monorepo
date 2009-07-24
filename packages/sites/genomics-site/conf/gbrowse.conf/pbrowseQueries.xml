@@ -34,6 +34,30 @@
     </sql> 
   </sqlValue>
 
+  <sqlValue name="aa_seq_id_CMU_018010">
+    <sql>
+  SELECT AA_SEQUENCE_ID
+  FROM   DOTS.GENEFEATURE gf,
+         DOTS.TRANSCRIPT t,
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'CMU_018010'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id
+    </sql>
+  </sqlValue>
+
+  <sqlValue name="aa_seq_id_1MB.841">
+    <sql>
+  SELECT AA_SEQUENCE_ID
+  FROM   DOTS.GENEFEATURE gf,
+         DOTS.TRANSCRIPT t,
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = '1MB.841'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id
+    </sql>
+  </sqlValue>
+
   <sqlValue name="aa_seq_id_cgd6_690">
     <sql>
   SELECT AA_SEQUENCE_ID 
@@ -240,7 +264,7 @@ WHERE msf.na_feature_id =  x.feat_id
 
     <sqlQuery name="lowcomplexity:seg">
     <testParamValues project="CryptoDB">
-       <param name="srcfeature_id" value="1589"/>
+       <param name="srcfeature_id" value="$$aa_seq_id_CMU_018010$$"/>
        <param name="base_start" value="13500"/>
        <param name="rend" value="13564"/>
     </testParamValues>
@@ -318,7 +342,7 @@ GROUP BY df.aa_feature_id, df.parent_id
 <!-- ORIGINALLY FROM: plasmo,toxo,tritryp -->
   <sqlQuery name="domain:SignalP">
     <testParamValues project="CryptoDB">
-       <param name="srcfeature_id" value="8212"/>       
+       <param name="srcfeature_id" value="$$aa_seq_id_1MB.841$$"/> 
     </testParamValues> 
      <sql>
 <![CDATA[
