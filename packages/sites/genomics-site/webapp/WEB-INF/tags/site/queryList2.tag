@@ -19,7 +19,11 @@ function writeData(page, div, quesName){
 			var q = document.createElement('div');
 			$(q).html(data);
 			var qf = $("form#form_question",q);
-			$("#" + div).html(qf);
+			var qt = $("div#question_Form", q).children("h1");
+			var qd = $("div#query-description-section", q);
+			$("#" + div).html(qt);
+			$("#" + div).append(qf);
+			$("#" + div).append(qd);
 		}
 	});
 }	
@@ -60,13 +64,7 @@ function writeData(page, div, quesName){
  	xhr.send(null);
 }
 */
-function createXMLHttpRequest() {
-	try{return new ActiveXObject("Msxml2.XMLHTTP");}catch(e){}
-	try{return new ActiveXObject("Microsoft.XMLHTTP");}catch(e){}
-	try{return new XMLHttpRequest();}catch(e){}
-        alert("XMLHttpRequest is not support");
-	return null;
-}
+
 function changeDesc(myUrl) 
 {
 // var myUrl = document.getElementById("querySelect").options[document.getElementById("querySelect").selectedIndex].value;
