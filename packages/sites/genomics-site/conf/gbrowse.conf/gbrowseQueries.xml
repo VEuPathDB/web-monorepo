@@ -48,6 +48,18 @@
     </sql> 
   </sqlValue>
 
+  <sqlValue name="na_seq_id_scf_23">
+          <sql>
+      select na_sequence_id from dots.nasequence where source_id = 'scf_23'
+    </sql>
+  </sqlValue>
+
+  <sqlValue name="na_seq_id_CM000431">
+          <sql>
+      select na_sequence_id from dots.nasequence where source_id = 'CM000431'
+    </sql>
+  </sqlValue>
+
   <sqlValue name="na_feat_id_cgd7_230">
 	  <sql>
       select na_feature_id from dots.genefeature where source_id = 'cgd7_230'
@@ -1148,7 +1160,7 @@ ORDER BY
        <param name="rend" value="894278"/>
     </testParamValues>
     <testParamValues project="CryptoDB">
-       <param name="srcfeature_id" value="1799"/>
+       <param name="srcfeature_id" value="$$na_seq_id_scf_23$$"/>
        <param name="base_start" value="445770"/>
        <param name="rend" value="450820"/>
     </testParamValues>
@@ -2609,7 +2621,7 @@ WHERE  sa.dataset =  'NIH SNPs'
   
   <sqlQuery name="SNP:Widmer"  includeProjects="CryptoDB">
     <testParamValues project="CryptoDB">
-       <param name="srcfeature_id" value="98194"/>
+       <param name="srcfeature_id" value="$$na_seq_id_CM000431$$"/>
        <param name="base_start" value="150000"/>
        <param name="rend" value="152000"/>
     </testParamValues>
@@ -3940,7 +3952,7 @@ ORDER BY var.strain
   
   <sqlQuery name="SNP:Widmer:bulkAttribute" includeProjects="CryptoDB">
     <testParamValues project="CryptoDB">
-       <param name="srcfeature_id" value="98194"/>
+       <param name="srcfeature_id" value="$$na_seq_id_CM000431$$"/>
        <param name="base_start" value="150000"/>
        <param name="rend" value="152000"/>
     </testParamValues>
