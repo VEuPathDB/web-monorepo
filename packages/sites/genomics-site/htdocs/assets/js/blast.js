@@ -148,7 +148,7 @@ function changeQuestion(){
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
 	}
-	document.getElementById( 'questionFullName' ).value = questionName;
+	document.getElementById( 'questionFullName_id_that_IE7_likes' ).value = questionName;
 }
 
 function updateOrganism(){

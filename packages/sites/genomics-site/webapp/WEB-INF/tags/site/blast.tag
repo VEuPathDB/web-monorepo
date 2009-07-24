@@ -226,7 +226,7 @@
 <A name="${fromAnchorQ}"></A>
 <!--html:form method="get" action="/processQuestion.do" -->
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
-<input id="questionFullName" type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
+<input id="questionFullName_id_that_IE7_likes" type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 <!-- show error messages, if any -->
 <wdk:errors/>
