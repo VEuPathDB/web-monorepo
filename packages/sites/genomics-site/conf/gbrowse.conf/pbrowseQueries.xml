@@ -13,6 +13,11 @@
        select aa_sequence_id from dots.translatedAaSequence where source_id like 'TGME49_039250%'
       </sql>
     </sqlValue>
+    <sqlValue name="aa_seq_id_I">
+      <sql>
+       select aa_sequence_id from dots.translatedAaSequence where source_id like 'TGME49_024100%'
+      </sql>
+    </sqlValue>
 </sanityTestInfo>
 
 <sanityTestInfo project="CryptoDB">
@@ -144,9 +149,6 @@
     <testParamValues project="TriTrypDB">
       <param name="name" value="Tb927.8.620"/>
     </testParamValues>
-    <testParamValues project="ToxoDB">
-      <param name="name" value="TGME49_039250"/>
-    </testParamValues>
     <testParamValues project="PlasmoDB">
       <param name="name" value="PF11_0344"/>
     </testParamValues>
@@ -179,9 +181,6 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
   <sqlQuery name="new:Segment">
     <testParamValues project="TriTrypDB">
       <param name="name" value="Tb927.8.620"/>
-    </testParamValues>
-    <testParamValues project="ToxoDB">
-      <param name="name" value="TGME49_039250"/>
     </testParamValues>
     <testParamValues project="PlasmoDB">
       <param name="name" value="PF11_0344"/>
@@ -294,7 +293,7 @@ ORDER BY aal.start_min
 
     <sqlQuery name="get_2d_struc">
     <testParamValues project="ToxoDB">
-       <param name="srcfeature_id" value="83372"/>
+       <param name="srcfeature_id" value="$$aa_seq_id_I$$"/>
     </testParamValues>
     <testParamValues project="PlasmoDB">
        <param name="srcfeature_id" value="252177"/>
@@ -386,9 +385,6 @@ WHERE
     <sqlQuery name="domain:TMHMM">
     <testParamValues project="TriTrypDB">
     <param name="srcfeature_id" value="$$tas_id_with_transmem$$"/>
-    </testParamValues>
-    <testParamValues project="ToxoDB">
-    <param name="srcfeature_id" value="$$aa_seq_id_X$$"/>
     </testParamValues>
     <testParamValues project="PlasmoDB">
     <param name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
