@@ -101,6 +101,7 @@
 </sanityTestInfo>
 
 <sanityTestInfo project="PlasmoDB">
+    <defaultParamValue name="name" value="Pf3D7_11"/>
     <defaultParamValue name="srcfeature_id" value="$$na_seq_id_Pf3D7_11$$"/>
     <defaultParamValue name="base_start" value="1279000"/>
     <defaultParamValue name="rend" value="1314000"/>
@@ -111,16 +112,19 @@
       select na_sequence_id from dots.externalnasequence where source_id = 'Pf3D7_11'
       </sql>
     </sqlValue>
-
-    <sqlValue name="na_seq_id_AABL01000005">
+    <sqlValue name="na_seq_id_Pf3D7_09">
       <sql>
-      select na_sequence_id from dots.externalnasequence where source_id = 'AABL01000005'
+      select na_sequence_id from dots.externalnasequence where source_id = 'Pf3D7_09'
       </sql>
     </sqlValue>
-
-    <sqlValue name="na_feat_id_PF11_0344">
+    <sqlValue name="na_seq_id_Pf3D7_06">
       <sql>
-      select na_feature_id from dots.genefeature where source_id = 'PF11_0344'
+      select na_sequence_id from dots.externalnasequence where source_id = 'Pf3D7_06'
+      </sql>
+    </sqlValue>
+    <sqlValue name="na_seq_id_AABL01000313">
+      <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'AABL01000313'
       </sql>
     </sqlValue>
 </sanityTestInfo>
@@ -133,9 +137,6 @@
   <sqlQuery name="get_feature_by_name">
     <testParamValues project="TriTrypDB">
        <param name="name" value="LmjF05_01_20050601_V5.2"/>
-    </testParamValues>
-    <testParamValues project="PlasmoDB">
-       <param name="name" value="Pf3D7_11"/>
     </testParamValues>
     <sql>
 <![CDATA[
@@ -212,9 +213,6 @@ WHERE gs.lowercase_source_id
   <sqlQuery name="new:Segment">
     <testParamValues project="TriTrypDB">
        <param name="name" value="LmjF05_01_20050601_V5.2"/>
-    </testParamValues>
-    <testParamValues project="PlasmoDB">
-       <param name="name" value="Pf3D7_11"/>
     </testParamValues>
      <sql>
 <![CDATA[
@@ -850,7 +848,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   
   <sqlQuery name="Centromere:overview"  includeProjects="PlasmoDB">
     <testParamValues project="PlasmoDB">
-       <param name="srcfeature_id" value="335722"/>
+       <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_09$$"/>
     </testParamValues>
      <sql>
 <![CDATA[
@@ -1134,7 +1132,7 @@ ORDER BY
   
   <sqlQuery name="Microsatellite:sts" excludeProjects="TriTrypDB,ToxoDB,CryptoDB">
     <testParamValues project="PlasmoDB">
-       <param name="srcfeature_id" value="341016"/>
+       <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_06$$"/>
        <param name="base_start" value="469864"/> 
        <param name="rend" value="470011"/> 
     </testParamValues>
@@ -2521,7 +2519,7 @@ WHERE  sa.dataset = 'Sanger reichenowi SNPs'
   
   <sqlQuery name="match:BergmanVaidyaOligos"  includeProjects="PlasmoDB">
     <testParamValues project="PlasmoDB">
-       <param name="srcfeature_id" value="435075"/>
+       <param name="srcfeature_id" value="$$na_seq_id_AABL01000313$$"/>
        <param name="rend" value="600"/>
        <param name="base_start" value="663"/>
     </testParamValues> 

@@ -78,6 +78,7 @@
 
 
 <sanityTestInfo project="PlasmoDB">
+  <defaultParamValue name="name" value="PF11_0344"/>
   <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
   <defaultParamValue name="base_start" value="1"/>
   <defaultParamValue name="rend" value="1868"/>
@@ -94,7 +95,28 @@
         AND taf.na_feature_id = t.na_feature_id
     </sql>
   </sqlValue>
-
+  <sqlValue name="aa_seq_id_PKH_133200">
+    <sql>
+  SELECT AA_SEQUENCE_ID
+  FROM   DOTS.GENEFEATURE gf,
+         DOTS.TRANSCRIPT t,
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'PKH_133200'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id
+    </sql>
+  </sqlValue>
+  <sqlValue name="aa_seq_id_PFF1545w">
+    <sql>
+  SELECT AA_SEQUENCE_ID
+  FROM   DOTS.GENEFEATURE gf,
+         DOTS.TRANSCRIPT t,
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'PFF1545w'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id
+    </sql>
+  </sqlValue>
   <sqlValue name="tas_id_with_transmem">
     <sql>
   select aa_sequence_id
@@ -149,9 +171,6 @@
     <testParamValues project="TriTrypDB">
       <param name="name" value="Tb927.8.620"/>
     </testParamValues>
-    <testParamValues project="PlasmoDB">
-      <param name="name" value="PF11_0344"/>
-    </testParamValues>
     <sql>
 <![CDATA[
 SELECT trp.source_id ctg_name, 
@@ -181,9 +200,6 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
   <sqlQuery name="new:Segment">
     <testParamValues project="TriTrypDB">
       <param name="name" value="Tb927.8.620"/>
-    </testParamValues>
-    <testParamValues project="PlasmoDB">
-      <param name="name" value="PF11_0344"/>
     </testParamValues>
       <sql>
 <![CDATA[
@@ -296,7 +312,7 @@ ORDER BY aal.start_min
        <param name="srcfeature_id" value="$$aa_seq_id_I$$"/>
     </testParamValues>
     <testParamValues project="PlasmoDB">
-       <param name="srcfeature_id" value="252177"/>
+       <param name="srcfeature_id" value="$$aa_seq_id_PKH_133200$$"/>
     </testParamValues>
        <sql>
 <![CDATA[
@@ -312,7 +328,7 @@ WHERE  ss.aa_sequence_id = $srcfeature_id and
 <!-- Was only in: plasmo -->
     <sqlQuery name="domain:ExportPred" includeProjects="PlasmoDB">
     <testParamValues project="PlasmoDB">
-       <param name="srcfeature_id" value="218307"/>    
+       <param name="srcfeature_id" value="$$aa_seq_id_PFF1545w$$"/> 
     </testParamValues>
       <sql>
 <![CDATA[
