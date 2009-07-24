@@ -1,13 +1,18 @@
 <DAS>
 
 <sanityTestInfo project="ToxoDB">
-    <defaultParamValue name="name" value="TGME49_039250"/>
+    <defaultParamValue name="name" value="TGME49_chrVI"/>
     <defaultParamValue name="parent_id" value="TGME49_039250"/>
-    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_X$$"/>
-    <defaultParamValue name="base_start" value="1"/>
-    <defaultParamValue name="rend" value="1311700"/>
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_VI$$"/>
+    <defaultParamValue name="base_start" value="470000"/>
+    <defaultParamValue name="rend" value="510000"/>
     <defaultParamValue name="dlm" value="|"/>
 
+    <sqlValue name="na_seq_id_VI">
+      <sql>
+      select na_sequence_id from dots.VirtualSequence where source_id = 'TGME49_chrVI'
+      </sql>
+    </sqlValue>
     <sqlValue name="na_seq_id_Ib">
       <sql>
       select na_sequence_id from dots.VirtualSequence where source_id = 'TGME49_chrIb'
@@ -21,6 +26,16 @@
     <sqlValue name="na_seq_id_IX">
       <sql>
       select na_sequence_id from dots.VirtualSequence where source_id = 'TGME49_chrIX'
+      </sql>
+    </sqlValue>
+    <sqlValue name="na_seq_id_scf_1107000999720">
+      <sql>
+      select na_sequence_id from dots.NaSequence where source_id = 'scf_1107000999720'
+      </sql>
+    </sqlValue>
+    <sqlValue name="na_seq_id_scf_1107000999162">
+      <sql>
+      select na_sequence_id from dots.NaSequence where source_id = 'scf_1107000999162'
       </sql>
     </sqlValue>
     <sqlValue name="mass_spec_feature_id">
@@ -122,9 +137,6 @@
     <testParamValues project="PlasmoDB">
        <param name="name" value="Pf3D7_11"/>
     </testParamValues>
-    <testParamValues project="ToxoDB">
-       <param name="name" value="TGME49_039250"/>
-    </testParamValues>
     <sql>
 <![CDATA[
 SELECT  
@@ -200,9 +212,6 @@ WHERE gs.lowercase_source_id
   <sqlQuery name="new:Segment">
     <testParamValues project="TriTrypDB">
        <param name="name" value="LmjF05_01_20050601_V5.2"/>
-    </testParamValues>
-    <testParamValues project="ToxoDB">
-       <param name="name" value="TGME49_chrX"/>
     </testParamValues>
     <testParamValues project="PlasmoDB">
        <param name="name" value="Pf3D7_11"/>
@@ -474,12 +483,14 @@ ORDER BY
   
   <sqlQuery name="match:TGI" excludeProjects="TriTrypDB,CryptoDB">
     <testParamValues project="ToxoDB">
-    <param name="srcfeature_id" value="240961"/>
+      <param name="srcfeature_id" value="$$na_seq_id_scf_1107000999720$$"/>
+      <param name="rend" value="70824"/>
+      <param name="base_start" value="66116"/>
     </testParamValues>
     <testParamValues project="PlasmoDB">
-    <param name="srcfeature_id" value="928098"/>
-    <param name="rend" value="50"/>
-    <param name="base_start" value="1"/>
+      <param name="srcfeature_id" value="928098"/>
+      <param name="rend" value="50"/>
+      <param name="base_start" value="1"/>
     </testParamValues>
      <sql>
 <![CDATA[
@@ -1155,7 +1166,7 @@ ORDER BY
 <!-- NOTE: externalDatabase.name list specified in query, for Crypto AND Plasmo -->
   <sqlQuery name="match:IsolatePopset" excludeProjects="TriTrypDB">
     <testParamValues project="ToxoDB">
-       <param name="srcfeature_id" value="238333"/>
+       <param name="srcfeature_id" value="$$na_seq_id_scf_1107000999162$$"/>
        <param name="base_start" value="893548"/>
        <param name="rend" value="894278"/>
     </testParamValues>
@@ -1531,6 +1542,11 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   
   
   <sqlQuery name="SNP:Stanford"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
+       <param name="rend" value="7363367"/>
+       <param name="base_start" value="7363350"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT 
@@ -1618,7 +1634,9 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   <sqlQuery name="AffymetrixProbes:Exons" excludeProjects="PlasmoDB,TriTrypDB,CryptoDB">
    <testParamValues project="ToxoDB">
      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
-   </testParamValues>  
+     <param name="rend" value="1904851"/>
+     <param name="base_start" value="1904778"/>
+  </testParamValues> 
    <sql>
 <![CDATA[
  SELECT 
@@ -1695,6 +1713,11 @@ WHERE
   
   
   <sqlQuery name="GeneticMarkers:Sibley"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
+       <param name="rend" value="6929962"/>
+       <param name="base_start" value="6766705"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT 
@@ -1735,7 +1758,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   <sqlQuery name="AffymetrixProbes:Introns"  includeProjects="ToxoDB">
    <testParamValues project="ToxoDB">
      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
-   </testParamValues> 
+     <param name="rend" value="1744501"/>
+     <param name="base_start" value="1744242"/>
+   </testParamValues>
     <sql>
 <![CDATA[
  SELECT 
@@ -1815,6 +1840,11 @@ WHERE
   
   
   <sqlQuery name="AffymetrixProbes:GenotypingEstSNPs"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
+       <param name="rend" value="7363379"/>
+       <param name="base_start" value="7363300"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT 
@@ -1850,6 +1880,11 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-estSNPs'
   
   
   <sqlQuery name="AffymetrixProbes:Resequencing"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
+       <param name="rend" value="7215402"/>
+       <param name="base_start" value="7215397"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT 
@@ -1887,7 +1922,9 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Resequencing'
   <sqlQuery name="AffymetrixProbes:NuclearCodingAS"  includeProjects="ToxoDB">
   <testParamValues project="ToxoDB">
      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
-  </testParamValues> 
+     <param name="rend" value="1912512"/>
+     <param name="base_start" value="1904662"/>
+  </testParamValues>
   <sql>
 <![CDATA[
  SELECT 
@@ -1923,6 +1960,11 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expresssion-Antisense'
   
   
   <sqlQuery name="AffymetrixProbes:TBLASTNTranscriptDiscovery"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
+       <param name="rend" value="7279231"/>
+       <param name="base_start" value="5214207"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT 
@@ -1987,6 +2029,11 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - EST-TranscriptDiscovery'
   
   
   <sqlQuery name="AffymetrixProbes:BLASTXTranscriptDiscovery"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
+       <param name="rend" value="7279231"/>
+       <param name="base_start" value="5214207"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT 
@@ -2019,9 +2066,11 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - BLASTX-TranscriptDiscovery'
   
   
   <sqlQuery name="AffymetrixProbes:ChIP"  includeProjects="ToxoDB">
-   <testParamValues project="ToxoDB">
+    <testParamValues project="ToxoDB">
        <param name="srcfeature_id" value="$$na_seq_id_IX$$"/>
-   </testParamValues> 
+       <param name="rend" value="4174385"/>
+       <param name="base_start" value="4174035"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT 
@@ -2092,9 +2141,11 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearCoding'
   
   
   <sqlQuery name="AffymetrixProbes:NuclearNonCoding"  includeProjects="ToxoDB">
-   <testParamValues project="ToxoDB">
-        <param name="srcfeature_id" value="$$na_seq_id_IX$$"/>
-   </testParamValues> 
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_IX$$"/>
+       <param name="rend" value="5141061"/>
+       <param name="base_start" value="5139825"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT 
@@ -2198,6 +2249,11 @@ WHERE  f.na_sequence_id = $srcfeature_id
     
   
   <sqlQuery name="AffymetrixProbes:GenotypingMarkers" includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
+       <param name="rend" value="7215671"/>
+       <param name="base_start" value="7101593"/>
+    </testParamValues>
      <sql>
 <![CDATA[
  SELECT 
@@ -2765,6 +2821,9 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
   
   
   <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="name" value="TGME49_039250"/> 
+    </testParamValues>
       <sql>
 <![CDATA[
 select sb.source_id
@@ -2889,6 +2948,9 @@ WHERE
   
   
   <sqlQuery name="gene:annotation:attribute:Ortholog"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="name" value="TGME49_039250"/>           
+    </testParamValues>
       <sql>
 <![CDATA[
 select sb.source_id
@@ -3008,12 +3070,14 @@ GROUP BY interval, na_sequence_id
  
   <sqlQuery name="match:TGI:bulksubfeatures" excludeProjects="TriTrypDB,CryptoDB">
     <testParamValues project="ToxoDB">
-    <param name="srcfeature_id" value="240961"/>
+      <param name="srcfeature_id" value="$$na_seq_id_scf_1107000999720$$"/>
+      <param name="rend" value="70824"/>
+      <param name="base_start" value="66116"/>
     </testParamValues>
     <testParamValues project="PlasmoDB">
-    <param name="srcfeature_id" value="928098"/>
-    <param name="rend" value="50"/>
-    <param name="base_start" value="1"/>
+      <param name="srcfeature_id" value="928098"/>
+      <param name="rend" value="50"/>
+      <param name="base_start" value="1"/>
     </testParamValues>
      <sql>
 <![CDATA[
@@ -3124,7 +3188,7 @@ AND ed.name in ('L.major BAC Ends from Sanger',
     <param name="parent_id" parentFeatureTest="annotation:density"/>
    </testParamValues>
    <testParamValues project="ToxoDB">
-      <param name="parent_id" value="$$na_seq_id_X$$"/>
+      <param name="parent_id" value="$$na_seq_id_VI$$"/>
    </testParamValues>
    <testParamValues project="PlasmoDB">
     <param name="parent_id" parentFeatureTest="annotation:density"/>
@@ -3557,6 +3621,11 @@ WHERE  edr.external_database_id = ed.external_database_id
   
   
   <sqlQuery name="SNP:Stanford:bulkAttribute"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
+       <param name="rend" value="7363367"/>
+       <param name="base_start" value="7363350"/>
+    </testParamValues>
      <sql>
 <![CDATA[
 SELECT    sa.na_feature_id as feature_id,
@@ -3604,7 +3673,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
   
   <sqlQuery name="SNP:density:subfeatures"  includeProjects="ToxoDB">
    <testParamValues project="ToxoDB">
-        <param name="parent_id" value="$$na_seq_id_X$$"/>
+        <param name="parent_id" value="$$na_seq_id_VI$$"/>
    </testParamValues> 
      <sql>
 <![CDATA[
@@ -3692,6 +3761,11 @@ WHERE  f.na_sequence_id = $srcfeature_id
 
 
   <sqlQuery name="GeneticMarkers:Sibley:bulkAttribute"  includeProjects="ToxoDB">
+    <testParamValues project="ToxoDB">
+       <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
+       <param name="rend" value="6929962"/>
+       <param name="base_start" value="6766705"/>
+    </testParamValues>
      <sql>
 <![CDATA[
 SELECT    sa.na_feature_id as feature_id,
