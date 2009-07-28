@@ -127,9 +127,10 @@
 </sanityTestInfo>
 
 <sanityTestInfo project="TriTrypDB">
+  <defaultParamValue name="name" value="Tb927.8.620"/>
   <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_sample_gene$$"/>
   <defaultParamValue name="base_start" value="1"/>
-  <defaultParamValue name="rend" value="1000"/>
+  <defaultParamValue name="rend" value="500"/>
   <defaultParamValue name="dlm" value=","/>
 
   <sqlValue name="aa_seq_id_sample_gene">
@@ -168,9 +169,6 @@
   <module name="GUS.pm">
 <!-- ORIGINALLY FROM: crypto -->
   <sqlQuery name="get_feature_by_name">
-    <testParamValues project="TriTrypDB">
-      <param name="name" value="Tb927.8.620"/>
-    </testParamValues>
     <sql>
 <![CDATA[
 SELECT trp.source_id ctg_name, 
@@ -198,9 +196,6 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
 
 <!-- ORIGINALLY FROM: crypto -->
   <sqlQuery name="new:Segment">
-    <testParamValues project="TriTrypDB">
-      <param name="name" value="Tb927.8.620"/>
-    </testParamValues>
       <sql>
 <![CDATA[
 SELECT tas.aa_sequence_id srcfeature_id, 
