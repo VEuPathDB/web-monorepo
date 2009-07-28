@@ -166,6 +166,38 @@
   </sqlValue>
 </sanityTestInfo>
 
+<sanityTestInfo project="GiardiaDB">
+    <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_GL50803_102438$$"/>
+    <defaultParamValue name="base_start" value="1"/>
+    <defaultParamValue name="rend" value="900"/>
+    <defaultParamValue name="dlm" value=","/>
+    <defaultParamValue name="name" value="GL50803_102438"/>
+
+  <sqlValue name="aa_seq_id_GL50803_102438">
+    <sql>
+  SELECT AA_SEQUENCE_ID 
+  FROM   DOTS.GENEFEATURE gf, 
+         DOTS.TRANSCRIPT t, 
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'GL50803_102438'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id  
+    </sql> 
+  </sqlValue>
+  <sqlValue name="aa_seq_id_GL50803_31750">
+    <sql>
+  SELECT AA_SEQUENCE_ID
+  FROM   DOTS.GENEFEATURE gf,
+         DOTS.TRANSCRIPT t,
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'GL50803_31750'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id
+    </sql>
+  </sqlValue>
+ </sanityTestInfo>
+
+
   <module name="GUS.pm">
 <!-- ORIGINALLY FROM: crypto -->
   <sqlQuery name="get_feature_by_name">
@@ -353,6 +385,9 @@ GROUP BY df.aa_feature_id, df.parent_id
   <sqlQuery name="domain:SignalP">
     <testParamValues project="CryptoDB">
        <param name="srcfeature_id" value="$$aa_seq_id_1MB.841$$"/> 
+    </testParamValues>
+    <testParamValues project="GiardiaDB">
+       <param name="srcfeature_id" value="$$aa_seq_id_GL50803_31750$$"/>
     </testParamValues> 
      <sql>
 <![CDATA[
@@ -621,6 +656,9 @@ WHERE
     </testParamValues>
     <testParamValues project="PlasmoDB">
        <param name="parent_id" value="106486"/>
+    </testParamValues>
+    <testParamValues project="GiardiaDB">
+       <param name="parent_id" parentFeatureTest="match:BLASTP"/>
     </testParamValues>
       <sql>
 <![CDATA[ 
