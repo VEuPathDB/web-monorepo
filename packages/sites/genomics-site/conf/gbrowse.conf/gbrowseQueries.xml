@@ -152,6 +152,23 @@
     </sqlValue>
 </sanityTestInfo>
 
+<sanityTestInfo project="GiardiaDB">
+  <defaultParamValue name="name" value="CH991767"/>
+  <defaultParamValue name="srcfeature_id" value="$$na_seq_id_CH991767$$"/>
+  <defaultParamValue name="base_start" value="212601"/>
+  <defaultParamValue name="rend" value="244949"/>
+  <defaultParamValue name="dlm" value=","/>
+
+  <sqlValue name="na_seq_id_CH991767">
+    <sql>
+      select na_sequence_id from dots.nasequence where source_id = 'CH991767'
+    </sql> 
+  </sqlValue>
+</sanityTestInfo>
+
+
+
+
 <!--                        GUS.pm                        -->
 <!-- This is the only query implemented by GUS.pm.        -->
 <!-- It's call by get_feature_by_name subroutine.         -->
@@ -402,7 +419,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="gene:syntenyMC">
+  <sqlQuery name="gene:syntenyMC" excludeProjects="GiardiaDB">
      <sql>
 <![CDATA[
 SELECT
@@ -467,7 +484,7 @@ WHERE syn.a_na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="lowcomplexity:dust">
+  <sqlQuery name="lowcomplexity:dust" excludeProjects="GiardiaDB">
      <sql>
 <![CDATA[
 SELECT
@@ -496,7 +513,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:TGI" excludeProjects="TriTrypDB,CryptoDB">
+  <sqlQuery name="match:TGI" excludeProjects="TriTrypDB,CryptoDB,GiardiaDB">
     <testParamValues project="ToxoDB">
       <param name="srcfeature_id" value="$$na_seq_id_scf_1107000999720$$"/>
       <param name="rend" value="70824"/>
@@ -730,7 +747,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:Bacs" excludeProjects="PlasmoDB,CryptoDB">
+  <sqlQuery name="alignment:Bacs" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB">
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, 
@@ -789,7 +806,7 @@ ORDER BY f.startm
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:Cosmids" excludeProjects="PlasmoDB,CryptoDB">
+  <sqlQuery name="alignment:Cosmids" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_LmjF24_01_20050601_V5.2$$"/>
       <param name="rend" value="204367"/>
@@ -887,7 +904,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql> 
   </sqlQuery>
   
-  <sqlQuery name="TandemRepeat:TRF">
+  <sqlQuery name="TandemRepeat:TRF" excludeProjects="GiardiaDB">
      <sql>
 <![CDATA[
  SELECT
@@ -1025,7 +1042,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:RandomEnds" excludeProjects="PlasmoDB,ToxoDB,CryptoDB">
+  <sqlQuery name="alignment:RandomEnds" excludeProjects="PlasmoDB,ToxoDB,CryptoDB,GiardiaDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_LmjF01_01_20050601_5.2$$"/>
     </testParamValues>
@@ -1155,7 +1172,7 @@ ORDER BY
   </sqlQuery>
  -->
   
-  <sqlQuery name="Microsatellite:sts" excludeProjects="TriTrypDB,ToxoDB,CryptoDB">
+  <sqlQuery name="Microsatellite:sts" excludeProjects="TriTrypDB,ToxoDB,CryptoDB,GiardiaDB">
     <testParamValues project="PlasmoDB">
        <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_06$$"/>
        <param name="base_start" value="469864"/> 
@@ -1187,7 +1204,7 @@ ORDER BY
   
   
 <!-- NOTE: externalDatabase.name list specified in query, for Crypto AND Plasmo -->
-  <sqlQuery name="match:IsolatePopset" excludeProjects="TriTrypDB">
+  <sqlQuery name="match:IsolatePopset" excludeProjects="TriTrypDB,GiardiaDB">
     <testParamValues project="ToxoDB">
        <param name="srcfeature_id" value="$$na_seq_id_scf_1107000999162$$"/>
        <param name="base_start" value="893548"/>
@@ -1654,7 +1671,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:Exons" excludeProjects="PlasmoDB,TriTrypDB,CryptoDB">
+  <sqlQuery name="AffymetrixProbes:Exons" excludeProjects="PlasmoDB,TriTrypDB,CryptoDB,GiardiaDB">
    <testParamValues project="ToxoDB">
      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
      <param name="rend" value="1904851"/>
@@ -2632,7 +2649,7 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="mapp:promotersForward"  excludeProjects="PlasmoDB,TriTrypDB,ToxoDB,CryptoDB">
+  <sqlQuery name="mapp:promotersForward"  excludeProjects="PlasmoDB,TriTrypDB,ToxoDB,CryptoDB,GiardiaDB">
      <sql>
 <![CDATA[
       SELECT distinct(na_sequence_id) feature_id,
@@ -2647,7 +2664,7 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
     </sql>
   </sqlQuery>
 
-<sqlQuery name="mapp:promotersReverse"  excludeProjects="PlasmoDB,TriTrypDB,ToxoDB,CryptoDB">    
+<sqlQuery name="mapp:promotersReverse"  excludeProjects="PlasmoDB,TriTrypDB,ToxoDB,CryptoDB,GiardiaDB">    
   <sql>
 <![CDATA[
       SELECT distinct(na_sequence_id) feature_id,
@@ -2858,7 +2875,7 @@ and sa.organism != sb.organism
  </sql>
  </sqlQuery>
 
- <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  excludeProjects="ToxoDB">
+ <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  excludeProjects="ToxoDB,GiardiaDB">
   <testParamValues project="TriTrypDB">
       <param name="name" value="LmjF05.1010"/>
   </testParamValues>
@@ -2985,7 +3002,7 @@ and sa.organism != sb.organism
   </sql>
  </sqlQuery>
 
-  <sqlQuery name="gene:annotation:attribute:Ortholog"   excludeProjects="ToxoDB">
+  <sqlQuery name="gene:annotation:attribute:Ortholog"   excludeProjects="ToxoDB,GiardiaDB">
    <testParamValues project="TriTrypDB">
     <param name="name" value="LmjF05.1010"/>
    </testParamValues>
@@ -3091,7 +3108,7 @@ GROUP BY interval, na_sequence_id
     </sql> 
   </sqlQuery>
  
-  <sqlQuery name="match:TGI:bulksubfeatures" excludeProjects="TriTrypDB,CryptoDB">
+  <sqlQuery name="match:TGI:bulksubfeatures" excludeProjects="TriTrypDB,CryptoDB,GiardiaDB">
     <testParamValues project="ToxoDB">
       <param name="srcfeature_id" value="$$na_seq_id_scf_1107000999720$$"/>
       <param name="rend" value="70824"/>
@@ -3164,7 +3181,7 @@ WHERE  blat.query_na_sequence_id = asbl.na_sequence_id and
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:Bacs:bulksubfeatures" excludeProjects="PlasmoDB,CryptoDB">
+  <sqlQuery name="alignment:Bacs:bulksubfeatures" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB">
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
@@ -3218,6 +3235,9 @@ AND ed.name in ('L.major BAC Ends from Sanger',
    </testParamValues>
    <testParamValues project="CryptoDB">
     <param name="parent_id" parentFeatureTest="annotation:density"/>
+   </testParamValues>
+   <testParamValues project="GiardiaDB">
+    <param name="parent_id" parentFeatureTest="annotation:density"/>
    </testParamValues> 
      <sql>
 <![CDATA[
@@ -3239,7 +3259,7 @@ GROUP BY interval
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="ORF:density:bulksubfeatures" excludeProjects="ToxoDB,CryptoDB"> 
+  <sqlQuery name="ORF:density:bulksubfeatures" excludeProjects="ToxoDB,CryptoDB,GiardiaDB"> 
     <sql> 
 <![CDATA[ 
 SELECT interval feature_id, 
@@ -3278,7 +3298,7 @@ GROUP BY interval, na_sequence_id
     </sql> 
   </sqlQuery>
   
-  <sqlQuery name="alignment:Cosmids:bulksubfeatures" excludeProjects="PlasmoDB,CryptoDB">
+  <sqlQuery name="alignment:Cosmids:bulksubfeatures" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_LmjF24_01_20050601_V5.2$$"/>
       <param name="rend" value="204367"/>
@@ -3321,7 +3341,7 @@ AND ed.name in ('L.major Cosmid Ends from Sanger',
   </sqlQuery>
   
   
-  <sqlQuery name="gene:syntenyMC:bulksubfeatures">
+  <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="GiardiaDB">
      <sql>
 <![CDATA[
 SELECT
@@ -3522,7 +3542,7 @@ ORDER BY
   </sqlQuery>
   -->
   
-  <sqlQuery name="scaffold:TIGR:bulksubfeatures" excludeProjects="PlasmoDB,TriTrypDB,CryptoDB">
+  <sqlQuery name="scaffold:TIGR:bulksubfeatures" excludeProjects="PlasmoDB,TriTrypDB,CryptoDB,GiardiaDB">
      <sql>
 <![CDATA[
 SELECT sg.na_feature_id as feature_id,
@@ -3588,7 +3608,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:syntenySpanMC:bulksubfeatures" excludeProjects="CryptoDB">
+  <sqlQuery name="match:syntenySpanMC:bulksubfeatures" excludeProjects="CryptoDB,GiardiaDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_TcChr7-S$$"/>
       <param name="rend" value="564285"/>
@@ -3908,7 +3928,7 @@ ORDER BY var.strain
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="mapp:promotersForward:bulksubfeatures"  excludeProjects="PlasmoDB,ToxoDB,TriTrypDB,CryptoDB">
+  <sqlQuery name="mapp:promotersForward:bulksubfeatures"  excludeProjects="PlasmoDB,ToxoDB,TriTrypDB,CryptoDB,GiardiaDB">
      <sql>
 <![CDATA[
       SELECT location feature_id, 
@@ -3930,7 +3950,7 @@ ORDER BY var.strain
     </sql>
   </sqlQuery>
  
-  <sqlQuery name="mapp:promotersReverse:bulksubfeatures"  excludeProjects="PlasmoDB,ToxoDB,TriTrypDB,CryptoDB">
+  <sqlQuery name="mapp:promotersReverse:bulksubfeatures"  excludeProjects="PlasmoDB,ToxoDB,TriTrypDB,CryptoDB,GiardiaDB">
      <sql>
 <![CDATA[
       SELECT location feature_id, 
