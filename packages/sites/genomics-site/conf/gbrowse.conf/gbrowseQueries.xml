@@ -82,23 +82,46 @@
   </sqlValue>
 </sanityTestInfo>
 
+
 <sanityTestInfo project="TriTrypDB">
-    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_LmjF05_01_20050601_V5.2$$"/>
-    <defaultParamValue name="base_start" value="1000"/>
-    <defaultParamValue name="rend" value="500000"/>
+    <defaultParamValue name="name" value="Tb927_08_v4"/>
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_Tb927_08_v4$$"/>
+    <defaultParamValue name="base_start" value="160000"/>
+    <defaultParamValue name="rend" value="193000"/>
     <defaultParamValue name="dlm" value=","/>
 
-    <sqlValue name="na_seq_id_LmjF05_01_20050601_V5.2">
+    <sqlValue name="na_seq_id_Tb927_08_v4">
       <sql>
-      select na_sequence_id from dots.externalnasequence where source_id = 'LmjF05_01_20050601_V5.2'
-      </sql> 
+      select na_sequence_id from dots.externalnasequence where source_id = 'Tb927_08_v4'
+      </sql>
     </sqlValue>
-    <sqlValue name="na_feat_id_cgd6_780">
+    <sqlValue name="na_feat_id_Tb927.8.620">
       <sql>
-      select na_feature_id from dots.genefeature where source_id = 'cgd6_780'
-     </sql> 
+      select na_feature_id from dots.genefeature where source_id = 'Tb927.8.620'
+     </sql>
+    </sqlValue>
+    <sqlValue name="na_feat_id_LmjF24_01_20050601_V5.2">
+      <sql>
+      select na_sequence_id from dots.nasequence where source_id = 'LmjF24_01_20050601_V5.2'
+     </sql>
+    </sqlValue>
+    <sqlValue name="na_feat_id_LmjF01_01_20050601_5.2">
+      <sql>
+     select na_sequence_id from dots.nasequence where source_id = 'LmjF01_01_20050601_5.2' 
+     </sql>
+    </sqlValue>
+    <sqlValue name="na_feat_id_TcChr10-S">
+      <sql>
+     select na_sequence_id from dots.nasequence where source_id = 'TcChr10-S'
+     </sql>
+    </sqlValue>
+    <sqlValue name="na_feat_id_TcChr7-S">
+      <sql>
+     select na_sequence_id from dots.nasequence where source_id = 'TcChr7-S'
+     </sql>
     </sqlValue>
 </sanityTestInfo>
+
 
 <sanityTestInfo project="PlasmoDB">
     <defaultParamValue name="name" value="Pf3D7_11"/>
@@ -135,9 +158,6 @@
 
 <module name="GUS.pm">
   <sqlQuery name="get_feature_by_name">
-    <testParamValues project="TriTrypDB">
-       <param name="name" value="LmjF05_01_20050601_V5.2"/>
-    </testParamValues>
     <sql>
 <![CDATA[
 SELECT  
@@ -211,9 +231,6 @@ WHERE gs.lowercase_source_id
 
 <module name="Segment.pm">
   <sqlQuery name="new:Segment">
-    <testParamValues project="TriTrypDB">
-       <param name="name" value="LmjF05_01_20050601_V5.2"/>
-    </testParamValues>
      <sql>
 <![CDATA[
 SELECT etn.na_sequence_id srcfeature_id, 
@@ -773,6 +790,11 @@ ORDER BY f.startm
   
   
   <sqlQuery name="alignment:Cosmids" excludeProjects="PlasmoDB,CryptoDB">
+    <testParamValues project="TriTrypDB">
+      <param name="srcfeature_id" value="$$na_feat_id_LmjF24_01_20050601_V5.2$$"/>
+      <param name="rend" value="204367"/>
+      <param name="base_start" value="203962"/>
+    </testParamValues>
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, f.feature_id name, f.parent_id, f.startm, f.end,
@@ -1004,6 +1026,9 @@ ORDER BY
   
   
   <sqlQuery name="alignment:RandomEnds" excludeProjects="PlasmoDB,ToxoDB,CryptoDB">
+    <testParamValues project="TriTrypDB">
+      <param name="srcfeature_id" value="$$na_feat_id_LmjF01_01_20050601_5.2$$"/>
+    </testParamValues>
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, f.name, f.parent_id, f.startm, f.end,
@@ -1044,8 +1069,8 @@ ORDER BY f.startm
   
   <sqlQuery name="contig:Genbank" excludeProjects="PlasmoDB,ToxoDB">
     <testParamValues project="TriTrypDB">
-    <param name="srcfeature_id" value="183227"/>
-    </testParamValues>     
+    <param name="srcfeature_id" value="$$na_feat_id_TcChr10-S$$"/>
+    </testParamValues>  
   <sql>
 <![CDATA[
 SELECT 's.' || piece_na_sequence_id as feature_id, 
@@ -3254,6 +3279,11 @@ GROUP BY interval, na_sequence_id
   </sqlQuery>
   
   <sqlQuery name="alignment:Cosmids:bulksubfeatures" excludeProjects="PlasmoDB,CryptoDB">
+    <testParamValues project="TriTrypDB">
+      <param name="srcfeature_id" value="$$na_feat_id_LmjF24_01_20050601_V5.2$$"/>
+      <param name="rend" value="204367"/>
+      <param name="base_start" value="203962"/>
+    </testParamValues>
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
@@ -3559,7 +3589,12 @@ ORDER BY
   
   
   <sqlQuery name="match:syntenySpanMC:bulksubfeatures" excludeProjects="CryptoDB">
-         <sql>
+    <testParamValues project="TriTrypDB">
+      <param name="srcfeature_id" value="$$na_feat_id_TcChr7-S$$"/>
+      <param name="rend" value="564285"/>
+      <param name="base_start" value="108690"/>
+    </testParamValues>
+  <sql>
 <![CDATA[
 SELECT * FROM (
 SELECT fl.na_feature_id feature_id,
