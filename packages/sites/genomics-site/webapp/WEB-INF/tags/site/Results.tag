@@ -23,7 +23,7 @@
               required="true"
               description="Strategy Id we are looking at"
 %>
-<
+
 <c:set var="type" value="Results" />
 <c:set var="step_dataType" value="${strategy.latestStep.dataType}" />
 <c:choose>
