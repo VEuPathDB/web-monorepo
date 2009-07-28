@@ -19,6 +19,7 @@ Strategy.prototype.savedName = null;
 Strategy.prototype.importId = null;
 Strategy.prototype.dataType = null;
 Strategy.prototype.color = null;
+Strategy.prototype.nonTransformLength = null;
 
 Strategy.prototype.getStep = function(stepId,isfront){
 	for(s in this.Steps){
@@ -92,7 +93,7 @@ Strategy.prototype.initSteps = function(steps, ord){
 	var ssind = 1;
 	var stepCount = steps.length;
 	for(var i in steps){
-		if(i != "length"){
+		if(i != "length" && i != "nonTransformLength"){
 			if(steps[i].isboolean){
 				st = new Step(i, steps[i].step.id, steps[i].id, null, steps[i].step.answerId);
 				st.operation = steps[i].operation;

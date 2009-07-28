@@ -412,10 +412,11 @@ function createDetails(modelstep, jsonstep, sid){
 		}
 		orthologs = "<a title='Add an ortholog transform to this step: obtain the ortholog genes to the genes in this result' class='orthologs_link' href='javascript:void(0)' onclick='openOrthologFilter(\"" + strat.backId + "\"," + orthologTgt + ");hideDetails(this)'>Orthologs</a>&nbsp;|&nbsp;";
 	}
-	if(modelstep.frontId == 1){
-		delete_step = 	"<a title='" + delete_popup + "' class='delete_step_link disabled' href='javascript:void(0)'>Delete</a>";
-	}else{
-		delete_step = 	"<a title='" + delete_popup + "' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + sid + "," + modelstep.frontId + ");hideDetails(this)'>Delete</a>";
+	var delete_strat = '';
+	if(modelstep.frontId == 1 && strat.nonTransformLength == 1){
+		delete_step = "<a title='" + delete_popup + "' class='delete_step_link' href='javascript:void(0)' onclick=\"deleteStrategy('" + strat.backId + "',false);hideDetails(this)\">Delete</a>";
+	} else {
+		delete_step = "<a title='" + delete_popup + "' class='delete_step_link' href='javascript:void(0)' onclick='DeleteStep(" + sid + "," + modelstep.frontId + ");hideDetails(this)'>Delete</a>";
 	}
 
 	close_button = 	"<a href='javascript:void(0)' style='float: none; position: absolute; right: 6px;' onclick='hideDetails(this)'>[x]</a>";

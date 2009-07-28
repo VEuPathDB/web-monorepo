@@ -211,9 +211,13 @@ function handleBulkStrategies(type) {
 		alert("No strategies were selected!");
 		return false;
 	}
+	var stratNames = '';
+	$.each(selected, function(i, n){
+		stratNames += $("div#text_" + n).text().trim() + "\n";
+	});
 	if (type == 'delete'){
 		// else delete and replace page sections that have changed
-		agree=confirm("Are you sure you want to delete the selected strategies?");
+		agree=confirm("You are about to delete the following strategies:\n" + stratNames + "Are you sure you want to do that?");
 	}
 	if (type != 'delete' || agree) {
 	// Alrady being done by the UpdateHistory function	$("div#search_history").block();

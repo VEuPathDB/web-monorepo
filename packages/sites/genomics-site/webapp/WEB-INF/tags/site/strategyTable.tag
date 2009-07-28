@@ -132,7 +132,7 @@
             <option value="copyStrategy('${strategyId}', true);">Copy</option>
             <option value="${saveAction}">Save As</option>
             <option value="${shareAction}">Share</option>
-            <option value="deleteStrategy(${strategyId}, false)">Delete</option>
+            <option value="deleteStrategy(${strategyId}, true)">Delete</option>
          </select>
       </td>
       <td nowrap style="padding:0 2px 0 2px;">${strategy.lastModifiedTimeFormatted}</td>

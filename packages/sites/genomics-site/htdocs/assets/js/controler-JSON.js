@@ -212,6 +212,7 @@ function loadModel(json, ord){
 	strats[ord] = strat;
 	strat.initSteps(steps, ord);
 	strat.dataType = strategy.steps[strategy.steps.length].dataType;
+	strat.nonTransformLength = strategy.steps.nonTransformLength;
 	strat.DIV = displayModel(strat);
 	return strat.frontId;
 }
@@ -470,7 +471,22 @@ function openStrategy(stratId){
 
 function deleteStrategy(stratId, fromHist){
 	var url = "deleteStrategy.do?strategy=" + stratId;
-	var agree = confirm("Are you sure you want to delete the strategy?");
+	var stratName;
+	var message = "Are you sure you want to delete the strategy '";
+	if (fromHist) stratName = $("div#text_" + stratId).text().trim();
+	else {
+		strat = getStrategyFromBackId(stratId);
+		stratName = strat.name;
+		if (strat.subStratOf != null) {
+			var parent = getStrategy(strat.subStratOf);
+			var cs = parent.checksum;
+			url = "deleteStep.do?strategy="+strat.backId+"&step="+stratId.split('_')[1]+"&strategy_checksum="+cs;
+			message = "Are you sure you want to delete the substrategy '";
+			stratName = strat.name + "' from the strategy '" + parent.name;
+		}
+	}
+	message = message + stratName + "'?";
+	var agree = confirm(message);
 	if (agree){
 	$.ajax({
 		url: url,
