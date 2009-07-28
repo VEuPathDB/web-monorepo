@@ -197,6 +197,49 @@
   </sqlValue>
  </sanityTestInfo>
 
+<sanityTestInfo project="TrichDB">
+    <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_TVAG_386080$$"/>
+    <defaultParamValue name="base_start" value="1"/>
+    <defaultParamValue name="rend" value="500"/>
+    <defaultParamValue name="dlm" value=","/>
+    <defaultParamValue name="name" value="TVAG_386080"/>
+
+  <sqlValue name="aa_seq_id_TVAG_386080">
+    <sql>
+  SELECT AA_SEQUENCE_ID
+  FROM   DOTS.GENEFEATURE gf,
+         DOTS.TRANSCRIPT t,
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'TVAG_386080'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id
+    </sql>
+  </sqlValue>
+  <sqlValue name="aa_seq_id_TVAG_008710">
+    <sql>
+  SELECT AA_SEQUENCE_ID
+  FROM   DOTS.GENEFEATURE gf,
+         DOTS.TRANSCRIPT t,
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'TVAG_008710'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id
+    </sql>
+  </sqlValue>
+  <sqlValue name="aa_seq_id_TVAG_538840">
+    <sql>
+  SELECT AA_SEQUENCE_ID
+  FROM   DOTS.GENEFEATURE gf,
+         DOTS.TRANSCRIPT t,
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'TVAG_538840'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id
+    </sql>
+  </sqlValue>
+</sanityTestInfo>
+
+
 
   <module name="GUS.pm">
 <!-- ORIGINALLY FROM: crypto -->
@@ -260,7 +303,7 @@ WHERE  tas.aa_sequence_id = $srcfeature_id
       </sql>
     </sqlQuery>
 
-    <sqlQuery name="domain:MassSpecPeptides">
+    <sqlQuery name="domain:MassSpecPeptides" excludeProjects="TrichDB">
       <sql>
 <![CDATA[
 SELECT msf.aa_feature_id feature_id,
@@ -304,11 +347,16 @@ WHERE msf.na_feature_id =  x.feat_id
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="lowcomplexity:seg">
+ <sqlQuery name="lowcomplexity:seg">
     <testParamValues project="CryptoDB">
        <param name="srcfeature_id" value="$$aa_seq_id_CMU_018010$$"/>
        <param name="base_start" value="13500"/>
        <param name="rend" value="13564"/>
+    </testParamValues>
+    <testParamValues project="TrichDB">
+       <param name="srcfeature_id" value="$$aa_seq_id_TVAG_538840$$"/>
+       <param name="base_start" value="1"/>
+       <param name="rend" value="12"/>
     </testParamValues>
       <sql>
 <![CDATA[ 
@@ -389,6 +437,9 @@ GROUP BY df.aa_feature_id, df.parent_id
     <testParamValues project="GiardiaDB">
        <param name="srcfeature_id" value="$$aa_seq_id_GL50803_31750$$"/>
     </testParamValues> 
+    <testParamValues project="TrichDB">
+       <param name="srcfeature_id" value="$$aa_seq_id_TVAG_008710$$"/>
+    </testParamValues>
      <sql>
 <![CDATA[
 SELECT
@@ -437,6 +488,9 @@ WHERE
     </testParamValues>
     <testParamValues project="CryptoDB">
        <param name="srcfeature_id" value="$$aa_seq_id_cgd6_690$$"/>
+    </testParamValues>
+    <testParamValues project="TrichDB">
+       <param name="srcfeature_id" value="$$aa_seq_id_TVAG_008710$$"/>
     </testParamValues>
     <sql>
 <![CDATA[
@@ -658,6 +712,9 @@ WHERE
        <param name="parent_id" value="106486"/>
     </testParamValues>
     <testParamValues project="GiardiaDB">
+       <param name="parent_id" parentFeatureTest="match:BLASTP"/>
+    </testParamValues>
+    <testParamValues project="TrichDB">
        <param name="parent_id" parentFeatureTest="match:BLASTP"/>
     </testParamValues>
       <sql>
