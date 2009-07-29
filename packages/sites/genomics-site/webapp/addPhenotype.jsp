@@ -7,6 +7,9 @@
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
+<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
 <c:set var="props" value="${applicationScope.wdkModel.properties}" /> 
 <c:set var="to" value="${props['SITE_ADMIN_EMAIL']}" />
 <c:set var="from" value="phenotype_comment_${phenotypeForm.stableId}@${wdkModel.displayName}.org" />
@@ -39,13 +42,13 @@ $("#box a").click(function(event) {
 <script type="text/javascript">
 $(document).ready(function(){
    $("#preview").click(function(){
-	 $("#wrapper").show();
+   $("#wrapper").show();
    var pmids = $('#pmIds').val(); 
    var pmids = pmids.replace(/\D/g, "-");
    $("#quote p").load("/cgi-bin/pmid2title?pmids=" + pmids);
   });      
   $("#remove").click(function(){
-	 $("#wrapper").hide();
+   $("#wrapper").hide();
   });      
 }); 
 </script>
@@ -75,10 +78,10 @@ $(document).ready(function(){
       margin-top: 0.5em;
       margin-bottom: 0.5em;
     }
-		div.border{
-		  border: 1px solid lightgrey;
-			width: 600px;
-		}
+    div.border{
+      border: 1px solid lightgrey;
+      width: 600px;
+    }
 
   
 </style>
@@ -89,10 +92,10 @@ $(document).ready(function(){
 
 <c:choose>
 
-  <c:when test="${1 == 0}">
+  <c:when test="${empty wdkUser || wdkUser.guest}">
     <p align=center>Please login to post a comment.</p>
     <table align='center'><tr><td><site:login/></td></tr></table>
-  </c:when>
+  </c:when> 
   
   <c:otherwise>
 
@@ -135,6 +138,13 @@ $(document).ready(function(){
       <tr class="medium">
         <th colspan=2 align=center>Add phenotype comment for gene ${phenotypeForm.stableId}</td>
       </tr>
+
+      <tr class="medium">
+        <td colspan=3> 
+        Please add only scientific phenotype comments to be displayed on the ${phenotypeForm.commentTargetId} page for ${phenotypeForm.stableId}. If you want to report a problem, use the <a href="<c:url value='/help.jsp'/>">support page.</a> Your comments are appreciated. If this comment is about other characters of ${phenotypeForm.commentTargetId} ${phenotypeForm.stableId} rather than phenotype, please <a href="addComment.do?stableId=${phenotypeForm.stableId}&commentTargetId=gene&externaDbName=${phenotypeForm.externalDbName}&externalDbVersion=${phenotypeForm.externalDbVersion}&flag=0">click here</a> to use regular comment form.
+
+        </td>
+      </tr> 
     
       <tr class="medium">
         <td width=150>Headline <font color=red>*</font></td>
@@ -172,6 +182,7 @@ $(document).ready(function(){
             <input type=radio name="mutationType" value=7>Transient/Knock down</input>
             <input type=radio name="mutationType" value=8>Dominant negative</input>
             <input type=radio name="mutationType" value=9>Spontaneous</input>
+            <input type=radio name="mutationType" value=10 checked>Other</input>
           </td>
       </tr>
 
@@ -207,10 +218,11 @@ $(document).ready(function(){
       <tr class="medium">
          <td>Reporters</td>
          <td>
-            <html:checkbox property="marker" value="1">Luciferase</html:checkbox>
-            <html:checkbox property="marker" value="2">Fluorescent Protein (GFP, RFP, etc)</html:checkbox>
-            <html:checkbox property="marker" value="3">CAT</html:checkbox>
-            <html:checkbox property="marker" value="4">beta-galactosidase</html:checkbox>
+            <html:checkbox property="reporter" value="1">Luciferase</html:checkbox>
+            <html:checkbox property="reporter" value="2">Fluorescent Protein (GFP, RFP, etc)</html:checkbox>
+            <html:checkbox property="reporter" value="3">CAT</html:checkbox>
+            <html:checkbox property="reporter" value="4">beta-galactosidase</html:checkbox>
+            <html:checkbox property="reporter" value="5">Other</html:checkbox>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>CAT: Chloramphenicol acyl transferase (Chloramphenicol resistance)</li></ul>')">
           <img src="/assets/images/help.png" align=bottom border=0></a>
 
@@ -220,7 +232,7 @@ $(document).ready(function(){
       <tr class="medium">
          <td>Selectable Marker(s)</td>
          <td>
-            <html:checkbox property="marker" value="1">BLE</html:checkbox>
+            <html:checkbox property="marker" value="1">ble</html:checkbox>
             <html:checkbox property="marker" value="2">dhfr</html:checkbox>
             <html:checkbox property="marker" value="3">hxgprt</html:checkbox>
             <html:checkbox property="marker" value="4">cat</html:checkbox>
@@ -280,12 +292,12 @@ $(document).ready(function(){
       </tr>
 
       <tr class="medium">
-        <td>Upload File</div></td>
+        <td>Upload File</td>
         <td>
           <table id="fileSelTbl"></table>
           <table>
             <tr><td><input type="button" name="newfile" value="Add Another File" id="newfile"></td></tr>
-          </table> 
+          </table>
         </td>
       </tr>
 
@@ -295,11 +307,11 @@ $(document).ready(function(){
           <html:text property="pmIds" styleId="pmIds" size="70"/>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title</li><li>Enter one or more IDs in the box above separated by \',\'</li><li>Example: 18172196,10558988</li></ul>')">
           <img src="/assets/images/help.png" align=bottom border=0></a>
-					<br />
+          <br />
           <div id="wrapper" style="display:none;">
             <div id="quote" class="border">
-					  <img id="remove" src="images/remove.gif" align=right>
-						<p></p></div>
+            <img id="remove" src="images/remove.gif" align=right>
+            <p></p></div>
           </div>
           <input type="button" id="preview" value="Preview">
         </td>
