@@ -20,16 +20,6 @@
               description="Value to appear at top of page"
 %>
 
-<%@ attribute name="bannerPreformatted"
-              required="false"
-              description="Value to appear at top of page"
-%>
-
-<%@ attribute name="logo"
-              required="false"
-              description="relative url for logo to display, or no logo if set to 'none'"
-%>
-
 <%@ attribute name="parentDivision"
               required="false"
 %>
@@ -46,13 +36,7 @@
               required="false"
 %>
 
-<%@ attribute name="isBannerImage"
-              required="false"
-%>
 <%@ attribute name="releaseDate"
-              required="false"
-%>
-<%@ attribute name="bannerSuperScript"
               required="false"
 %>
 

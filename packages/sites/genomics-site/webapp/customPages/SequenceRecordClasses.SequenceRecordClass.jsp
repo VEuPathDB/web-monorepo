@@ -17,38 +17,21 @@
 
 <c:set var="SRT_CONTIG_URL" value="/cgi-bin/contigSrt"/>
 
-<c:set var="externalDbName" value="${attrs['externalDbName'].value}" />
-<c:set var="organism" value="${wdkRecord.attributes['organism'].value}" />
-<c:set var="is_top_level" value="${wdkRecord.attributes['is_top_level'].value}" />
-
-<c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
-
-<c:set var='bannerText'>
-      <c:if test="${organism ne 'null'}">
-          <font face="Arial,Helvetica" size="+3">
-          <b>${organism}</b>
-          </font> 
-          <font size="+3" face="Arial,Helvetica">
-          <b>${id}</b>
-          </font><br>
-      </c:if>
-      
-      <font face="Arial,Helvetica">${recordType} Record</font>
-</c:set>
+<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 
 <site:header title="${id}"
-             banner="${bannerText}"
              divisionName="Genomic Sequence Record"
              division="queries_tools"/>
 
 <c:choose>
-<c:when test="${organism eq 'null'}">
-  <br>
-  ${id} was not found.
-  <br>
-  <hr>
+<c:when test="${wdkRecord.attributes['organism'].value eq 'null' || !wdkRecord.validRecord}">
+  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>
+
+<c:set var="externalDbName" value="${attrs['externalDbName'].value}" />
+<c:set var="organism" value="${wdkRecord.attributes['organism'].value}" />
+<c:set var="is_top_level" value="${wdkRecord.attributes['is_top_level'].value}" />
 
 <br/>
 

@@ -7,7 +7,6 @@
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
-<c:set var="data_type" value="${attrs['data_type']}" />
 
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
 <c:set var="pkValues" value="${primaryKey.values}" />
@@ -15,34 +14,18 @@
 
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
-<c:set var='bannerText'>
-      <c:if test="${wdkRecord.attributes['organism'].value ne 'null'}">
-          <font face="Arial,Helvetica" size="+2">
-          <b>${wdkRecord.attributes['organism'].value}</b>
-          </font> 
-          <font size="+2" face="Arial,Helvetica">
-          <b>${wdkRecord.primaryKey}</b>
-          </font><br>
-      </c:if>
-      
-      <font face="Arial,Helvetica">${recordType} Record</font>
-</c:set>
-
 <site:header title="${wdkRecord.primaryKey}"
-             bannerPreformatted="${bannerText}"
              divisionName="${recordType} Record"
              division="queries_tools"/>
 
 
 <c:choose>
-<c:when test="${wdkRecord.attributes['organism'].value eq 'null'}">
-  <br>
-  ${wdkRecord.primaryKey} was not found.
-  <br>
-  <hr>
+<c:when test="${wdkRecord.attributes['organism'].value eq 'null' || !wdkRecord.validRecord}">
+  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
 </c:when>
 
 <c:otherwise>
+<c:set var="data_type" value="${attrs['data_type']}" />
 
 <%--#############################################################--%>
 

@@ -12,33 +12,16 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
-<c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
-
-<c:set var='bannerText'>
-      <c:if test="${wdkRecord.attributes['organism'].value ne 'null'}">
-          <font face="Arial,Helvetica" size="+3">
-          <b>${wdkRecord.attributes['organism'].value}</b>
-          </font> 
-          <font size="+3" face="Arial,Helvetica">
-          <b>${id}</b>
-          </font><br>
-      </c:if>
-      
-          <font face="Arial,Helvetica">${recordType} Record</font>
-</c:set>
+<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 
 <site:header title="${wdkModel.displayName} : EST ${id}"
-             banner="EST ${id}"
              divisionName="EST Record"
              division="queries_tools"/>
 
 
 <c:choose>
-<c:when test="${wdkRecord.attributes['organism'].value eq 'null'}">
-  <br>
-  ${id} was not found.
-  <br>
-  <hr>
+<c:when test="${wdkRecord.attributes['organism'].value eq 'null' || !wdkRecord.validRecord}">
+  <h2 style="text-align:center;color:#CC0000;">The ${recordType} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>
 

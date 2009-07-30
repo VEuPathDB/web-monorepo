@@ -11,16 +11,19 @@
 <c:set var="id" value="${pkValues['source_id']}" />
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
-<c:set var="overview" value="${attrs['overview']}"/>
 
 <site:header title="${wdkModel.displayName} : Assembly ${id}"
-             banner="Assembly ${id}"
              divisionName="Assembly Record"
              division="queries_tools"
              summary="EST Assembly Record"/>
 
-<%----c:set value="${wdkRecord.recordClass.type}" var="recordType"/----%>
-
+<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:choose>
+  <c:when test="${wdkRecord.attributes['organism'].value eq null || !wdkRecord.validRecord}">
+    <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  </c:when>
+  <c:otherwise>
+<c:set var="overview" value="${attrs['overview']}"/>
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white
        class=thinTopBottomBorders>
  <tr>
@@ -134,5 +137,7 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
  
 </td></tr>
 </table>
+</c:otherwise>
+</c:choose>
 
 <site:footer/>
