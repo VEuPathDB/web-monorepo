@@ -25,7 +25,7 @@
     <c:set var="portalsProp" value="${props['PORTALS']}" />
 </c:if>
 <c:if test="${fn:contains(recordType, 'Assem') }">
-        <c:set var="recordType" value="Assemblie" />
+        <c:set var="recordType" value="Transcript Assemblie" />
 </c:if>
 
 <%-- show all params of question, collect help info along the way --%>

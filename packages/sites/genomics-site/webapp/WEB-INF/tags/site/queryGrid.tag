@@ -158,7 +158,7 @@
 <div class="innertube2">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerrow2">
-			<td  valign="top" align="center"><b>Identify EST Assemblies by:</b></td>
+			<td  valign="top" align="center"><b>Identify Transcript Assemblies by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridAssem/>
