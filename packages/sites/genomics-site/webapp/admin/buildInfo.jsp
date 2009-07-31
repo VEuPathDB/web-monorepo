@@ -92,6 +92,11 @@
       <tr><td class='monospaced'>
          <c:forEach items="${build}" var="p">
            <c:if test="${fn:contains(p.key, '.svn.info')}">
+              <c:set var="svnrevision">
+                ${fn:trim(
+                    fn:substringAfter(
+                        fn:substringBefore(p.value, "Last Changed Rev: "), "Revision: "))}
+              </c:set>
               <c:set var="svnbranch">
                 ${fn:trim(
                     fn:substringAfter(
@@ -100,12 +105,11 @@
               <c:set var="svnproject">
                 ${fn:replace(fn:replace(p.key, ".svn.info", ""), ".", "/")}
               </c:set>
-            svn switch ${svnbranch} ${svnproject};<br>
+            svn switch -r${svnrevision} ${svnbranch} ${svnproject};<br>
           </c:if>
         </c:forEach>
       </td></tr>
       </table>
-      
   </div></div>
 
 </c:catch>
