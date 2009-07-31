@@ -46,8 +46,13 @@ function initDYK(o,co){
 		dykClose();
 	});
 	
-	$("#dyk-box input#previous").click(function(){ prevTip()});
-	$("#dyk-box input#next").click(function(){ nextTip()});
+	// In some cases, repeated calls to initDYK result in
+	// multiple bindings;  to avoid this, unbind any click
+	// handler before re-attaching.
+	$("#dyk-box input#previous").unbind('click');
+	$("#dyk-box input#previous").click(function(){ prevTip(); });
+	$("#dyk-box input#next").unbind('click');
+	$("#dyk-box input#next").click(function(){ nextTip(); });
 
 	$("div#dyk-box").resizable({
 		minWidth: 405,
