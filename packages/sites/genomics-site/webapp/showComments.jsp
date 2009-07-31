@@ -150,6 +150,11 @@ attributes:
                   </td>
                 </tr> 
 
+                <tr>
+                 <td>Mutant Expression:</td>
+                 <td>${comment.mutantExpressionName}</td>
+                </tr> 
+
               </c:when>
 
               <c:otherwise>

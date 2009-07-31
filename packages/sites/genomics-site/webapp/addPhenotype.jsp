@@ -275,9 +275,9 @@ $(document).ready(function(){
       <tr class="medium">
          <td>Phenotype Tested In</td>
          <td>
-            <input type=radio name="expression" value=1>in vitro</input>
-            <input type=radio name="expression" value=2>in vivo</input>
-            <input type=radio name="expression" value=3>both</input>
+            <input type=radio name="mutationIn" value=1>in vitro</input>
+            <input type=radio name="mutationIn" value=2>in vivo</input>
+            <input type=radio name="mutationIn" value=3>both</input>
           </td>
       </tr>
 
