@@ -109,31 +109,6 @@ attributes:
                 </td>
             </tr>
 
-            <tr>
-               <td>Genbank Accessions:</td>
-                <td> <c:forEach items="${comment.accessions}" var="row">
-                        <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&cmd=&term=<c:out value="${row}"/>"><c:out value="${row}"/></a>
-                      </c:forEach>
-                </td>
-            </tr>
-
-            <tr>
-               <td>Other Related Genes:</td>
-                <td> 
-                <c:forEach items="${comment.associatedStableIds}" var="row">
-
-                 <c:if test="${comment.commentTarget eq 'gene'}">
-                 <a href="showRecord.do?name=GeneRecordClasses.GeneRecordClass&source_id=<c:out value="${row}"/>"><c:out value="${row}"/> </a>
-                 </c:if>
-
-                 <c:if test="${comment.commentTarget eq 'isolate'}">
-                 <a href="showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&source_id=<c:out value="${row}"/>"><c:out value="${row}"/> </a>
-                 </c:if>
-
-                 </c:forEach>
-
-                </td>
-            </tr>
 
             <c:choose>
 
@@ -178,6 +153,33 @@ attributes:
               </c:when>
 
               <c:otherwise>
+
+                <tr>
+                   <td>Genbank Accessions:</td>
+                    <td> <c:forEach items="${comment.accessions}" var="row">
+                            <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&cmd=&term=<c:out value="${row}"/>"><c:out value="${row}"/></a>
+                          </c:forEach>
+                    </td>
+                </tr>
+
+                <tr>
+                   <td>Other Related Genes:</td>
+                    <td> 
+                    <c:forEach items="${comment.associatedStableIds}" var="row">
+
+                     <c:if test="${comment.commentTarget eq 'gene'}">
+                     <a href="showRecord.do?name=GeneRecordClasses.GeneRecordClass&source_id=<c:out value="${row}"/>"><c:out value="${row}"/> </a>
+                     </c:if>
+
+                     <c:if test="${comment.commentTarget eq 'isolate'}">
+                     <a href="showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&source_id=<c:out value="${row}"/>"><c:out value="${row}"/> </a>
+                     </c:if>
+
+                     </c:forEach>
+
+                    </td>
+                </tr>
+
                 <tr>
                  <td>Category:</td>
                   <td> 
