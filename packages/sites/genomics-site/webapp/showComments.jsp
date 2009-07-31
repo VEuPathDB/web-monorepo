@@ -135,17 +135,85 @@ attributes:
                 </td>
             </tr>
 
-            <tr>
-               <td>Category:</td>
-                <td> 
-                  <c:set var="i" value="0"/>
-                  <c:forEach items="${comment.targetCategoryNames}" var="row">
-                    <c:set var="i" value="${i+1}"/>
-                      ${i}) <c:out value="${row}"/>
-                  </c:forEach>
-                </td>
+            <c:choose>
 
-            </tr>
+              <c:when test="${param.commentTargetId eq 'phenotype'}">
+
+                <tr>
+                 <td>Mutant Status:</td>
+                 <td>${comment.mutantStatusName}</td>
+                </tr> 
+
+                <tr>
+                 <td>Mutant Type:</td>
+                 <td>${comment.mutantTypeName}</td>
+                </tr> 
+
+                <tr>
+                 <td>Mutation Method:</td>
+                 <td>${comment.mutationMethodName}</td>
+                </tr> 
+
+                <tr>
+                 <td>Mutation Method Description:</td>
+                 <td>${comment.mutationDescription}</td>
+                </tr> 
+
+                <tr>
+                 <td>Genetic Background:</td>
+                 <td>${comment.background}</td>
+                </tr> 
+
+                <tr>
+                 <td>Mutant Marker:</td>
+                  <td> 
+                    <c:set var="i" value="0"/>
+                    <c:forEach items="${comment.mutantMarkerNames}" var="row">
+                      <c:set var="i" value="${i+1}"/>
+                        ${i}) <c:out value="${row}"/>
+                    </c:forEach>
+                  </td>
+                </tr> 
+
+              </c:when>
+
+              <c:otherwise>
+                <tr>
+                 <td>Category:</td>
+                  <td> 
+                    <c:set var="i" value="0"/>
+                    <c:forEach items="${comment.targetCategoryNames}" var="row">
+                      <c:set var="i" value="${i+1}"/>
+                        ${i}) <c:out value="${row}"/>
+                    </c:forEach>
+                  </td>
+                </tr>
+
+              <tr>
+               <td>Location:</td>
+
+                        <%-- display locations --%>
+                    <c:set var="locations" value="${comment.locations}" />
+                    <c:if test="${fn:length(locations) > 0}">
+                      
+                         <td>
+                      <c:set var="firstItem" value="1" />
+                      <c:forEach var="location" items="${locations}">
+                          <c:choose>
+                              <c:when test="${firstItem == 1}">
+                                  <c:set var="firstItem" value="0" />
+                              </c:when>
+                              <c:otherwise>, </c:otherwise>
+                          </c:choose>
+                          ${location.coordinateType}: ${location.locationStart}-${location.locationEnd}
+                          <c:if test="${location.reversed}">(reversed)</c:if>
+                      </c:forEach>
+                        </td>
+                    </c:if>
+                </tr>
+
+               </c:otherwise>
+            </c:choose>
 
             <tr>
                <td>Uploaded files:</td>
@@ -202,28 +270,6 @@ attributes:
                     </c:if>
               </tr>
 
-              <tr>
-               <td>Location:</td>
-
-                        <%-- display locations --%>
-                    <c:set var="locations" value="${comment.locations}" />
-                    <c:if test="${fn:length(locations) > 0}">
-                      
-                         <td>
-                      <c:set var="firstItem" value="1" />
-                      <c:forEach var="location" items="${locations}">
-                          <c:choose>
-                              <c:when test="${firstItem == 1}">
-                                  <c:set var="firstItem" value="0" />
-                              </c:when>
-                              <c:otherwise>, </c:otherwise>
-                          </c:choose>
-                          ${location.coordinateType}: ${location.locationStart}-${location.locationEnd}
-                          <c:if test="${location.reversed}">(reversed)</c:if>
-                      </c:forEach>
-                        </td>
-                    </c:if>
-                </tr>
 
                 <tr>
                <td>Status:</td>
