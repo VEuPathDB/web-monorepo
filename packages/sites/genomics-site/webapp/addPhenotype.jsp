@@ -240,6 +240,7 @@ $(document).ready(function(){
             <html:checkbox property="marker" value="6">bsd</html:checkbox>
             <html:checkbox property="marker" value="7">hph</html:checkbox>
             <html:checkbox property="marker" value="8">pac</html:checkbox>
+            <html:checkbox property="marker" value="9">other</html:checkbox>
 
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>dhfr: Dihydrofolate reductase (pyrimethamine/WR99210 resistance)</li><li>hxgprt: hypoxanthine-xanthine-guanine phosphoribosyl transferase (mycophenolic acid resistance)</li><li>neo: neomycin phosphotransferase (G418/neomycin/kanamycin resistance)</li><li>bsd:  blasticidin S deaminase (blasticidin S resistance)</li><li>hph: hygromycin B phosphotransferase (hygromycin resistance)</li><li>pac: puromycin N-acetyltransferase (puromycin resistance)</li><li>sat: streptothricin acetyltransferase (nourseothricin resistance)</li><li>ble:  phleomycin resistance gene (phleomycin resistance)</li></ul>')">
           <img src="/assets/images/help.png" align=bottom border=0></a>
