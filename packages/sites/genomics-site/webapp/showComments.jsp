@@ -157,6 +157,11 @@ attributes:
                 </tr>
 
                 <tr>
+                 <td>Phenotype Tested in:</td>
+                 <td>${comment.phenotypeLocName}</td>
+                </tr> 
+
+                <tr>
                  <td>Mutant Expression:</td>
                  <td>${comment.mutantExpressionName}</td>
                 </tr> 
