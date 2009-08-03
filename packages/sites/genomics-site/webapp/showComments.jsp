@@ -51,7 +51,7 @@ attributes:
     </c:when>
     <c:otherwise> <%-- has comments for the stable id --%>
 
-      <h2><center>Comments on ${stable_id}</center></h2>
+      <h2><center>${param.commentTargetId} comments on ${stable_id}</center></h2>
 
       <c:forEach var="comment" items="${comments}">
 
@@ -92,31 +92,19 @@ attributes:
                 <td>${comment.commentDate}</td>
             </tr>
 
-            <tr>
-               <td>Content:</td> 
-               <td> 
-               <site:BBCode content="${comment.content}" />
-               </td>
-            </tr>
-
-            <tr>
-               <td>PMID(s):</td>
-                <td> <c:forEach items="${comment.pmIds}" var="row">
-                        <c:import url="http://${pageContext.request.serverName}/cgi-bin/pmid2title">
-                          <c:param name="pmids" value="${row}"/>
-                        </c:import>
-                      </c:forEach>
-                </td>
-            </tr>
-
-
             <c:choose>
 
               <c:when test="${param.commentTargetId eq 'phenotype'}">
 
+
                 <tr>
                  <td>Mutant Status:</td>
                  <td>${comment.mutantStatusName}</td>
+                </tr> 
+
+                <tr>
+                 <td>Genetic Background:</td>
+                 <td>${comment.background}</td>
                 </tr> 
 
                 <tr>
@@ -135,8 +123,14 @@ attributes:
                 </tr> 
 
                 <tr>
-                 <td>Genetic Background:</td>
-                 <td>${comment.background}</td>
+                 <td>Mutant Reporter:</td>
+                  <td> 
+                    <c:set var="i" value="0"/>
+                    <c:forEach items="${comment.mutantReporterNames}" var="row">
+                      <c:set var="i" value="${i+1}"/>
+                        ${i}) <c:out value="${row}"/>
+                    </c:forEach>
+                  </td>
                 </tr> 
 
                 <tr>
@@ -151,6 +145,18 @@ attributes:
                 </tr> 
 
                 <tr>
+                 <td>Phenotype Category:</td>
+                 <td>${comment.mutantCategoryName}</td>
+                </tr> 
+
+                <tr>
+                   <td>Phenotype Description:</td> 
+                   <td> 
+                   <site:BBCode content="${comment.content}" />
+                   </td>
+                </tr>
+
+                <tr>
                  <td>Mutant Expression:</td>
                  <td>${comment.mutantExpressionName}</td>
                 </tr> 
@@ -158,6 +164,13 @@ attributes:
               </c:when>
 
               <c:otherwise>
+
+                <tr>
+                   <td>Content:</td> 
+                   <td> 
+                   <site:BBCode content="${comment.content}" />
+                   </td>
+                </tr>
 
                 <tr>
                    <td>Genbank Accessions:</td>
@@ -221,6 +234,16 @@ attributes:
 
                </c:otherwise>
             </c:choose>
+
+            <tr>
+               <td>PMID(s):</td>
+                <td> <c:forEach items="${comment.pmIds}" var="row">
+                        <c:import url="http://${pageContext.request.serverName}/cgi-bin/pmid2title">
+                          <c:param name="pmids" value="${row}"/>
+                        </c:import>
+                      </c:forEach>
+                </td>
+            </tr> 
 
             <tr>
                <td>Uploaded files:</td>
