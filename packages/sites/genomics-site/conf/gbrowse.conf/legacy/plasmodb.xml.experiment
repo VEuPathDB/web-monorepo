@@ -1,0 +1,2255 @@
+<DAS> 
+  <module name="GUS.pm">
+    <sqlQuery>
+      <name>get_feature_by_name</name>
+      <description>fetch features by their name</description>
+      <sql>
+<![CDATA[
+SELECT  -- trying to find genes by source_id match
+       etn.source_id ctg_name, 
+       trp.na_feature_id feature_id, 
+       'gene' type, 
+       'annotation' source, 
+       trp.source_id name, 
+       decode (trp.codon_start, 1, 1, 2, 2, 3, 3, null) phase, 
+       etn.na_sequence_id parent_id, 
+       null score, 
+       greatest(1, least(nal.start_min, nal.end_max) - 5000) startm,
+       least(etn.length, greatest(nal.start_min, nal.end_max) + 5000) end,
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand 
+FROM   
+       dots.EXTERNALNASEQUENCE etn, 
+       dots.TRANSCRIPT trp, 
+       dots.GENEFEATURE gf,
+       apidb.GENEALIAS ga,
+       dots.NALOCATION nal 
+WHERE  ga.alias like lower('$name') 
+  AND  gf.source_id = ga.gene
+  AND  trp.parent_id = gf.na_feature_id 
+  AND  nal.na_feature_id = trp.na_feature_id 
+  AND  etn.na_sequence_id = gf.na_sequence_id 
+UNION
+SELECT -- trying to find genes by product description (at least 4 chars) match
+       etn.source_id ctg_name, 
+       trp.na_feature_id feature_id, 
+       'gene' type, 
+       'annotation' source, 
+       trp.source_id name, 
+       decode (trp.codon_start, 1, 1, 2, 2, 3, 3, null) phase, 
+       etn.na_sequence_id parent_id, 
+       null score, 
+       greatest(1, least(nal.start_min, nal.end_max) - 5000) startm,
+       least(etn.length, greatest(nal.start_min, nal.end_max) + 5000) end,
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand 
+FROM   
+       dots.EXTERNALNASEQUENCE etn, 
+       dots.TRANSCRIPT trp, 
+       dots.GENEFEATURE gf,
+       dots.NALOCATION nal 
+WHERE  length('$name') >= 4
+  AND  upper(gf.product) like upper('%$name%')
+  AND  trp.parent_id = gf.na_feature_id 
+  AND  nal.na_feature_id = trp.na_feature_id 
+  AND  etn.na_sequence_id = gf.na_sequence_id 
+UNION
+SELECT -- trying to find genes by chromosome/contig source_id
+       etn.source_id ctg_name, 
+       etn.na_sequence_id feature_id, 
+       'chromosome' type, 
+       'TIGR' source, 
+       etn.source_id name, 
+       null phase, 
+       null parent_id, 
+       null score, 
+       0 startm,
+       etn.length end,
+       '.' strand 
+FROM   
+       dots.EXTERNALNASEQUENCE etn,
+       sres.EXTERNALDATABASERELEASE edr,
+       sres.EXTERNALDATABASE ed
+WHERE  upper(etn.source_id) like upper('$name') 
+  AND  edr.external_database_release_id = etn.external_database_release_id 
+  AND  ed.external_database_id = edr.external_database_id
+  AND  ed.name like '%P.%'
+  AND  (ed.name like '%hromosome%' OR ed.name like '%enome%')
+]]>
+      </sql>
+    </sqlQuery>
+  </module>
+  <module name="Segment.pm">
+    <sqlQuery>
+      <name>get_sequence</name>
+       <description></description>
+       <sql>
+<![CDATA[
+SELECT ens.sequence 
+FROM   DOTS.EXTERNALNASEQUENCE ens
+WHERE  ens.na_sequence_id = $srcfeature_id
+]]>
+      </sql>
+    </sqlQuery>   
+    <sqlQuery>
+      <name>new:Segment</name>
+      <description>fetch features by their name</description>
+      <sql>
+<![CDATA[
+SELECT
+       etn.na_sequence_id srcfeature_id, 
+       1 startm, 
+       etn.length end, 
+       etn.source_id name, 
+       'chromosome' type,
+       'ID=' || etn.source_id atts
+FROM
+       dots.externalnasequence etn, apidb.SequenceAlias sa 
+WHERE  
+       etn.source_id = sa.source_id and 
+       sa.lowercase_source_id = lower('$name')  
+]]>
+      </sql>
+    </sqlQuery>
+
+  <sqlQuery> 
+    <name>SNP:Combined:density</name> 
+    <description>SNP density. bin size is 10K.</description> 
+    <sql> 
+<![CDATA[ 
+SELECT etn.na_sequence_id feature_id, 
+       'SNP:Combined' type, 
+       'density' source 
+FROM   dots.ExternalNaSequence etn 
+WHERE  etn.na_sequence_id = $srcfeature_id 
+]]> 
+    </sql> 
+  </sqlQuery>
+
+    <sqlQuery>
+      <name>lowcomplexity:dust</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       lc.na_feature_id feature_id,
+       'lowcomplexity' type, 
+       'dust' source, 
+       lc.name name, 
+       '.' score, 
+       lc.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=here to work around Feature.pm bug of splitting null atts' atts
+FROM 
+       apidb.FeatureLocation fl, dots.LowComplexityNAFeature lc
+WHERE
+       fl.feature_type = 'LowComplexityNAFeature' and
+       fl.start_min <= $rend and 
+       fl.end_max >= $base_start and 
+       fl.na_sequence_id = $srcfeature_id and
+       fl.na_feature_id = lc.na_feature_id
+ORDER BY 
+       fl.start_min
+]]>
+      </sql>
+    </sqlQuery>
+    <sqlQuery>
+      <name>TandemRepeat:TRF</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       fl.na_feature_id feature_id,
+       'TandemRepeat' type, 
+       'TRF' source, 
+       tr.name name, 
+       '.' score, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=here to work around Feature.pm bug of splitting null atts' atts
+FROM 
+       dots.NaFeature tr,
+       apidb.FeatureLocation fl
+WHERE
+       tr.na_feature_id = fl.na_feature_id and
+       fl.feature_type = 'TandemRepeatFeature' and
+       fl.start_min <= $rend and 
+       fl.end_max >= $base_start and 
+       fl.na_sequence_id = $srcfeature_id
+ORDER BY 
+       fl.start_min
+]]>
+      </sql>
+    </sqlQuery>
+    <sqlQuery>
+      <name>gene:annotation</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       gf.na_feature_id feature_id,
+       'gene' type, 
+       'annotation' source, 
+       gf.source_id name, 
+       '.' score, 
+       gf.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=' || trp.product  || '$dlm' ||
+       'soTerm=' ||  so.term_name || ';' ||
+       trp.product || ';' ||
+       tn.name || ';' ||
+       gf.is_pseudo 
+         as atts
+FROM 
+       dots.GeneFeature gf,
+       dots.Transcript trp,
+       apidb.FeatureLocation fl,
+       dots.NaSequence ns,
+       SRes.TaxonName tn,
+       SRes.SequenceOntology so
+WHERE  fl.na_sequence_id = $srcfeature_id
+  AND  fl.feature_type = 'GeneFeature'
+  AND  fl.na_sequence_id = ns.na_sequence_id
+  AND  gf.na_sequence_id = ns.na_sequence_id 
+  AND  trp.parent_id = gf.na_feature_id 
+  AND  so.sequence_ontology_id = gf.sequence_ontology_id
+  AND  fl.na_feature_id = gf.na_feature_id 
+  AND  fl.start_min <= $rend 
+  AND  fl.end_max >= $base_start 
+  AND  tn.taxon_id = ns.taxon_id 
+  AND  tn.name_class = 'scientific name' 
+ORDER BY 
+       fl.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
+  <sqlQuery>
+    <name>annotation:density</name>
+    <description>Annotation density. bin size is 50K.</description>
+    <sql>
+<![CDATA[
+SELECT etn.na_sequence_id feature_id,
+       'annotation' type,
+       'density' source
+FROM   dots.EXTERNALNASEQUENCE etn
+WHERE  etn.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery>
+    <name>alignment:dbEST</name>
+    <description></description>
+    <sql>
+<![CDATA[ 
+SELECT blat.blat_alignment_id feature_id, 
+       'alignment' type, 
+       'dbEST' source, 
+       est.accession name, 
+       blat.score || '' score, 
+       etn.na_sequence_id parent_id, 
+       blat.target_start startm, 
+       blat.target_end end, 
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
+       'Library=' || l.dbest_name  || '$dlm' atts 
+FROM   
+       dots.BlatAlignment blat, 
+       dots.Est est, 
+       dots.ExternalNASequence etn,
+       dots.ExternalNASequence estseq,
+       dots.Library l,
+       sres.SequenceOntology so
+WHERE  
+       blat.query_na_sequence_id = est.na_sequence_id and 
+       blat.target_na_sequence_id = etn.na_sequence_id and 
+       blat.target_start <= $rend and 
+       blat.target_end >= $base_start and 
+       etn.external_database_release_id = blat.target_external_db_release_id and
+       (blat.target_end - blat.target_start ) < 5000 and 
+       blat.is_best_alignment = 1 and
+       est.library_id = l.library_id and
+       estseq.na_sequence_id = est.na_sequence_id and
+       so.sequence_ontology_id = estseq.sequence_ontology_id and
+       so.term_name = 'EST' and
+       etn.na_sequence_id = $srcfeature_id
+ORDER BY 
+       blat.target_start
+]]>
+    </sql>
+  </sqlQuery>   
+
+    <sqlQuery>
+      <name>match:TGI</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       sim.similarity_id feature_id,
+       'match' type, 
+       'TGI' source, 
+       query.source_id name, 
+       (sim.number_positive / sim.total_match_length) score, 
+       sim.subject_id    parent_id, 
+       sim.min_subject_start startm, 
+       sim.max_subject_end   end, 
+       decode(sim.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=' || query.description || '$dlm' ||
+       'TGI=' || edb.name || '$dlm' ||
+       'TGIver=' || edbr.version || '$dlm' ||
+       'TGISpecies=' || decode(edb.name, 'PvGI', 'P.vivax', 'PfGI', 'P.falciparum', 'PyGI', 'P.yoelii', 'PbGI', 'P.berghei', 'unk') atts
+FROM 
+       dots.similarity sim,
+       core.tableinfo ti,
+       dots.externalnasequence query,
+       sres.externaldatabase edb,
+       sres.externaldatabaserelease edbr
+WHERE 
+       edb.name in ('PfGI', 'PvGI', 'PbGI', 'PyGI') and
+       edbr.external_database_id = edb.external_database_id and
+       query.external_database_release_id = edbr.external_database_release_id and
+       sim.query_id = query.na_sequence_id and
+       ti.name = 'ExternalNASequence' and
+       sim.min_subject_start <= $rend and 
+       sim.max_subject_end >= $base_start and 
+       sim.subject_id = $srcfeature_id and
+       sim.subject_table_id = ti.table_id and
+       sim.query_table_id = ti.table_id 
+ORDER BY 
+       sim.min_subject_start
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>SNP:Winzeler</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       sa.na_feature_id          as feature_id,
+       'SNP'                      as type, 
+       'Winzeler'                 as source, 
+       sa.source_id              as name, 
+       '.'                        as score, 
+       sa.seq_source_id           as parent_id, 
+       sa.start_min               as startm, 
+       sa.start_min               as end, 
+       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'base_start='   || '$base_start' || '$dlm' ||
+       'rend='   || '$rend' || '$dlm' ||
+       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
+       'IsCoding=' || sa.is_coding || '$dlm' ||
+       'Gene=' || sa.gene_source_id || '$dlm' ||
+       'params=' || sa.position_in_CDS || '&' ||
+       sa.position_in_protein || '&' ||
+       sa.reference_strain || '&' ||
+       sa.reference_aa || '&' ||
+       sa.gene_strand || '&' ||
+       sa.reference_na || '&' ||
+       sa.source_id 
+        as atts
+FROM   apidb.SnpAttributes sa
+WHERE  sa.dataset =  'Winzeler Array - Plasmodium Genetic Variation'  
+  AND  sa.na_sequence_id = $srcfeature_id
+  AND  sa.start_min <= $rend
+  AND  sa.start_min >= $base_start
+]]>
+      </sql>
+    </sqlQuery> 
+
+    <sqlQuery>
+      <name>SNP:Su</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       sa.na_feature_id          as feature_id,
+       'SNP'                      as type, 
+       'Su'                       as source, 
+       sa.source_id              as name, 
+       '.'                        as score, 
+       sa.seq_source_id           as parent_id, 
+       sa.start_min               as startm, 
+       sa.start_min               as end, 
+       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'base_start='   || '$base_start' || '$dlm' ||
+       'rend='   || '$rend' || '$dlm' ||
+       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
+       'IsCoding=' || sa.is_coding || '$dlm' ||
+       'Gene=' || sa.gene_source_id || '$dlm' ||
+       'params=' || sa.position_in_CDS || '&' ||
+       sa.position_in_protein || '&' ||
+       sa.reference_strain || '&' ||
+       sa.reference_aa || '&' ||
+       sa.gene_strand || '&' ||
+       sa.reference_na || '&' ||
+       sa.source_id 
+        as atts
+FROM   apidb.SnpAttributes sa
+WHERE  sa.dataset =  'NIH SNPs'
+  AND  sa.na_sequence_id = $srcfeature_id
+  AND  sa.start_min <= $rend
+  AND  sa.start_min >= $base_start
+]]>
+      </sql>
+    </sqlQuery> 
+
+    <sqlQuery>
+      <name>SNP:Broad</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT 
+       sa.na_feature_id          as feature_id,
+       'SNP'                      as type, 
+       'Broad'                 as source, 
+       sa.source_id              as name, 
+       '.'                        as score, 
+       sa.seq_source_id           as parent_id, 
+       sa.start_min               as startm, 
+       sa.start_min               as end, 
+       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'base_start='   || '$base_start' || '$dlm' ||
+       'rend='   || '$rend' || '$dlm' ||
+       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
+       'IsCoding=' || sa.is_coding || '$dlm' ||
+       'Gene=' || sa.gene_source_id || '$dlm' ||
+       'params=' || sa.position_in_CDS || '&' ||
+       sa.position_in_protein || '&' ||
+       sa.reference_strain || '&' ||
+       sa.reference_aa || '&' ||
+       sa.gene_strand || '&' ||
+       sa.reference_na || '&' ||
+       sa.source_id 
+        as atts
+FROM   apidb.SnpAttributes sa
+WHERE  sa.dataset =  'Broad SNPs'
+  AND  sa.na_sequence_id = $srcfeature_id
+  AND  sa.start_min <= $rend
+  AND  sa.start_min >= $base_start
+]]>
+      </sql>
+    </sqlQuery> 
+
+    <sqlQuery>
+      <name>SNP:Combined</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT 
+       sa.na_feature_id          as feature_id,
+       'SNP'                      as type, 
+       'Combined'                 as source, 
+       sa.source_id              as name, 
+       '.'                        as score, 
+       sa.seq_source_id           as parent_id, 
+       sa.start_min               as startm, 
+       sa.start_min               as end, 
+       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'base_start='   || '$base_start' || '$dlm' ||
+       'rend='   || '$rend' || '$dlm' ||
+       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
+       'IsCoding=' || sa.is_coding || '$dlm' ||
+       'Gene=' || sa.gene_source_id || '$dlm' ||
+       'params=' || sa.position_in_CDS || '&' ||
+       sa.position_in_protein || '&' ||
+       sa.reference_strain || '&' ||
+       sa.reference_aa || '&' ||
+       sa.gene_strand || '&' ||
+       sa.reference_na || '&' ||
+       sa.source_id 
+        as atts
+FROM   apidb.SnpAttributes sa
+WHERE  sa.dataset = 'PlasmoDB combined SNPs'  
+  AND  sa.na_sequence_id = $srcfeature_id
+  AND  sa.start_min <= $rend
+  AND  sa.start_min >= $base_start
+]]>
+      </sql>
+    </sqlQuery> 
+
+    <sqlQuery>
+      <name>SNP:SangerPf</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT 
+       sa.na_feature_id          as feature_id,
+       'SNP'                      as type, 
+       'SangerPf'                 as source, 
+       sa.source_id              as name, 
+       '.'                        as score, 
+       sa.seq_source_id           as parent_id, 
+       sa.start_min               as startm, 
+       sa.start_min               as end, 
+       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'base_start='   || '$base_start' || '$dlm' ||
+       'rend='   || '$rend' || '$dlm' ||
+       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
+       'IsCoding=' || sa.is_coding || '$dlm' ||
+       'Gene=' || sa.gene_source_id || '$dlm' ||
+       'params=' || sa.position_in_CDS || '&' ||
+       sa.position_in_protein || '&' ||
+       sa.reference_strain || '&' ||
+       sa.reference_aa || '&' ||
+       sa.gene_strand || '&' ||
+       sa.reference_na || '&' ||
+       sa.source_id 
+        as atts
+FROM   apidb.SnpAttributes sa
+WHERE  sa.dataset = 'Sanger falciparum SNPs'
+  AND  sa.na_sequence_id = $srcfeature_id
+  AND  sa.start_min <= $rend
+  AND  sa.start_min >= $base_start
+]]>
+      </sql>
+    </sqlQuery> 
+
+    <sqlQuery>
+      <name>SNP:SangerPr</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT 
+       sa.na_feature_id          as feature_id,
+       'SNP'                      as type, 
+       'SangerPr'                 as source, 
+       sa.source_id              as name, 
+       '.'                        as score, 
+       sa.seq_source_id           as parent_id, 
+       sa.start_min               as startm, 
+       sa.start_min               as end, 
+       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'base_start='   || '$base_start' || '$dlm' ||
+       'rend='   || '$rend' || '$dlm' ||
+       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
+       'IsCoding=' || sa.is_coding || '$dlm' ||
+       'Gene=' || sa.gene_source_id || '$dlm' ||
+       'params=' || sa.position_in_CDS || '&' ||
+       sa.position_in_protein || '&' ||
+       sa.reference_strain || '&' ||
+       sa.reference_aa || '&' ||
+       sa.gene_strand || '&' ||
+       sa.reference_na || '&' ||
+       sa.source_id 
+        as atts
+FROM   apidb.SnpAttributes sa
+WHERE  sa.dataset = 'Sanger reichenowi SNPs'  
+  AND  sa.na_sequence_id = $srcfeature_id
+  AND  sa.start_min <= $rend
+  AND  sa.start_min >= $base_start
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:BLASTX</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       sim.similarity_id feature_id,
+       'match' type,
+       'BLASTX' source,
+       subj.source_id name,
+       sim.score score,
+       sim.query_id    parent_id,
+       sim.min_query_start startm,
+       sim.max_query_end   end,
+       decode(sim.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Defline=' || subj.description || '$dlm' ||
+       'Expect=' || sim.pvalue_mant || 'e' || sim.pvalue_exp || '$dlm' ||
+       'PercentIdentity=' || round(100 * sim.number_identical / sim.total_match_length,1) || '$dlm' ||
+       'PercentPositive=' || round(100 * sim.number_positive / sim.total_match_length,1) atts
+FROM 
+       dots.similarity sim,
+       core.tableinfo qti,
+       core.tableinfo sti,
+       dots.externalaasequence subj
+WHERE 
+       sim.min_query_start <= $rend and 
+       sim.max_query_end >= $base_start and 
+       sim.query_id = $srcfeature_id and
+       qti.table_id = sim.query_table_id and
+       qti.name = 'ExternalNASequence' and
+       sti.table_id = sim.subject_table_id and
+       sti.name = 'ExternalAASequence' and
+       subj.aa_sequence_id = sim.subject_id
+ORDER BY 
+       sim.min_query_start
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:syntenyYoeliiMC</name>
+      <description></description>
+      <sql>
+<![CDATA[
+ SELECT
+       syn.synteny_id feature_id,
+       'match' type, 
+       'syntenyYoeliiMC' source, 
+       b.source_id name, 
+       '.' score, 
+       syn.synteny_id parent_id, 
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END startm,
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END end, 
+       decode(is_reversed, 0, '+1', 1, '-1', '+1') strand,
+       'RefStart=' || syn.a_start || '$dlm' ||
+       'RefEnd=' || syn.a_end || '$dlm' ||
+       'SynStart=' || syn.b_start || '$dlm' ||
+       'SynEnd=' || syn.b_end || '$dlm' ||
+       'ContigLength=' || b.length || '$dlm' ||
+       'Chromosome=' || b.chromosome || '$dlm' ||
+       (CASE WHEN (b.chromosome is NOT NULL) 
+             THEN (SELECT 'ChrColor=' || rcc.value || '$dlm' 
+                   FROM apidb.rodentChrColors rcc 
+                   WHERE b.chromosome = rcc.chromosome) 
+             ELSE ''
+             END) || 
+       'Scale=' || 
+       CASE WHEN (is_reversed = 1) 
+         THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
+         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) 
+         END atts
+FROM 
+      apidb.synteny syn,
+      apidb.syntenyAnchor anch_left,
+      apidb.syntenyAnchor anch_right,
+      dots.externalnasequence a,
+      dots.externalnasequence b,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE ed.name = 'yoelii-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND a.na_sequence_id = syn.a_na_sequence_id
+  AND b.na_sequence_id = syn.b_na_sequence_id
+  AND anch_left.synteny_id = syn.synteny_id
+  AND anch_left.prev_ref_loc < $base_start
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:syntenyVivaxMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       syn.synteny_id feature_id,
+       'match' type, 
+       'syntenyVivaxMC' source, 
+       b.source_id name, 
+       '.' score, 
+       syn.synteny_id parent_id, 
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END startm,
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END end, 
+       decode(is_reversed, 0, '+1', 1, '-1', '+1') strand,
+       'RefStart=' || syn.a_start || '$dlm' ||
+       'RefEnd=' || syn.a_end || '$dlm' ||
+       'SynStart=' || syn.b_start || '$dlm' ||
+       'SynEnd=' || syn.b_end || '$dlm' ||
+       'ContigLength=' || b.length || '$dlm' ||
+       'Chromosome=' || b.chromosome || '$dlm' ||
+       (CASE WHEN (b.chromosome is NOT NULL) 
+             THEN (SELECT 'ChrColor=' || rcc.value || '$dlm' 
+                   FROM apidb.rodentChrColors rcc 
+                   WHERE b.chromosome = rcc.chromosome) 
+             ELSE ''
+             END) || 
+       'Scale=' || 
+       CASE WHEN (is_reversed = 1) 
+         THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
+         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) 
+         END atts
+FROM 
+      apidb.synteny syn,
+      apidb.syntenyAnchor anch_left,
+      apidb.syntenyAnchor anch_right,
+      dots.externalnasequence a,
+      dots.externalnasequence b,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE ed.name = 'vivax-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND a.na_sequence_id = syn.a_na_sequence_id
+  AND b.na_sequence_id = syn.b_na_sequence_id
+  AND anch_left.synteny_id = syn.synteny_id
+  AND anch_left.prev_ref_loc < $base_start
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:syntenyBergheiMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       syn.synteny_id feature_id,
+       'match' type, 
+       'syntenyBergheiMC' source, 
+       b.source_id name, 
+       '.' score, 
+       syn.synteny_id parent_id, 
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END startm,
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END end, 
+       decode(is_reversed, 0, '+1', 1, '-1', '+1') strand,
+       'RefStart=' || syn.a_start || '$dlm' ||
+       'RefEnd=' || syn.a_end || '$dlm' ||
+       'SynStart=' || syn.b_start || '$dlm' ||
+       'SynEnd=' || syn.b_end || '$dlm' ||
+       'ContigLength=' || b.length || '$dlm' ||
+       'Chromosome=' || b.chromosome || '$dlm' ||
+       (CASE WHEN (b.chromosome is NOT NULL) 
+             THEN (SELECT 'ChrColor=' || rcc.value || '$dlm' 
+                   FROM apidb.rodentChrColors rcc 
+                   WHERE b.chromosome = rcc.chromosome) 
+             ELSE ''
+             END) || 
+       'Scale=' || 
+       CASE WHEN (is_reversed = 1) 
+         THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
+         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) 
+         END atts
+FROM 
+      apidb.synteny syn,
+      apidb.syntenyAnchor anch_left,
+      apidb.syntenyAnchor anch_right,
+      dots.externalnasequence a,
+      dots.externalnasequence b,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE ed.name = 'berghei-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND a.na_sequence_id = syn.a_na_sequence_id
+  AND b.na_sequence_id = syn.b_na_sequence_id
+  AND anch_left.synteny_id = syn.synteny_id
+  AND anch_left.prev_ref_loc < $base_start
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:syntenyChabaudiMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       syn.synteny_id feature_id,
+       'match' type, 
+       'syntenyChabaudiMC' source, 
+       b.source_id name, 
+       '.' score, 
+       syn.synteny_id parent_id,
+       CASE WHEN (anch_left.synteny_anchor_id = anch_right.synteny_anchor_id) 
+       THEN syn.a_start
+       ELSE 
+         CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         END
+       END startm,
+
+       CASE WHEN (anch_left.synteny_anchor_id = anch_right.synteny_anchor_id) 
+       THEN syn.a_end
+       ELSE
+         CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc) / (anch_left.syntenic_loc - anch_right.syntenic_loc))
+         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc) / (anch_right.syntenic_loc - anch_left.syntenic_loc))
+         END
+       END end, 
+       decode(is_reversed, 0, '+1', 1, '-1', '+1') strand,
+       'RefStart=' || syn.a_start || '$dlm' ||
+       'RefEnd=' || syn.a_end || '$dlm' ||
+       'SynStart=' || syn.b_start || '$dlm' ||
+       'SynEnd=' || syn.b_end || '$dlm' ||
+       'Chromosome=' || b.chromosome || '$dlm' ||
+       'ContigLength=' || b.length || '$dlm' ||
+       (CASE WHEN (b.chromosome is NOT NULL) 
+             THEN (SELECT 'ChrColor=' || rcc.value || '$dlm' 
+                   FROM apidb.rodentChrColors rcc 
+                   WHERE b.chromosome = rcc.chromosome) 
+             ELSE ''
+             END) || 
+       'Scale=' || 
+       CASE WHEN (anch_left.synteny_anchor_id = anch_right.synteny_anchor_id) 
+       THEN (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)
+       ELSE  
+         CASE WHEN (is_reversed = 1) 
+         THEN (anch_right.ref_loc - anch_left.ref_loc) / (anch_left.syntenic_loc - anch_right.syntenic_loc)
+         ELSE (anch_right.ref_loc - anch_left.ref_loc) / (anch_right.syntenic_loc - anch_left.syntenic_loc) 
+         END
+       END atts
+FROM 
+      apidb.synteny syn,
+      apidb.syntenyAnchor anch_left,
+      apidb.syntenyAnchor anch_right,
+      dots.externalnasequence a,
+      dots.externalnasequence b,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE ed.name = 'chabaudi-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND a.na_sequence_id = syn.a_na_sequence_id
+  AND b.na_sequence_id = syn.b_na_sequence_id
+  AND anch_left.synteny_id = syn.synteny_id
+  AND anch_left.prev_ref_loc < $base_start
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:syntenyKnowlesiMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       syn.synteny_id feature_id,
+       'match' type, 
+       'syntenyKnowlesiMC' source, 
+       b.source_id name, 
+       '.' score, 
+       syn.synteny_id parent_id, 
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END startm,
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END end, 
+       decode(is_reversed, 0, '+1', 1, '-1', '+1') strand,
+       'RefStart=' || syn.a_start || '$dlm' ||
+       'RefEnd=' || syn.a_end || '$dlm' ||
+       'SynStart=' || syn.b_start || '$dlm' ||
+       'SynEnd=' || syn.b_end || '$dlm' ||
+       'Chromosome=' || b.chromosome || '$dlm' ||
+       'ContigLength=' || b.length || '$dlm' ||
+       (CASE WHEN (b.chromosome is NOT NULL) 
+             THEN (SELECT 'ChrColor=' || rcc.value || '$dlm' 
+                   FROM apidb.rodentChrColors rcc 
+                   WHERE b.chromosome = rcc.chromosome) 
+             ELSE ''
+             END) || 
+       'Scale=' || 
+       CASE WHEN (is_reversed = 1) 
+         THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
+         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) 
+         END atts
+FROM 
+      apidb.synteny syn,
+      apidb.syntenyAnchor anch_left,
+      apidb.syntenyAnchor anch_right,
+      dots.externalnasequence a,
+      dots.externalnasequence b,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE ed.name = 'knowlesi-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND a.na_sequence_id = syn.a_na_sequence_id
+  AND b.na_sequence_id = syn.b_na_sequence_id
+  AND anch_left.synteny_id = syn.synteny_id
+  AND anch_left.prev_ref_loc < $base_start
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyYoeliiMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       gattr.na_feature_id feature_id,
+       'gene' type, 
+       'syntenyYoeliiMC' source, 
+       gattr.source_id name, 
+       '.' score, 
+       anch_left.synteny_id parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
+       END end,
+       CASE WHEN (gattr.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'Note=' || gattr.product || '$dlm' ||
+       'SOTerm=' || gattr.so_term_name || '$dlm' ||
+       'SyntenyID=' || syn.synteny_id || '$dlm' ||
+       'Contig=' || gattr.sequence_id || '$dlm' ||
+       'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
+       'Start=' || gattr.start_min || '$dlm' ||
+       'End=' || gattr.end_max || '$dlm' ||
+       'Taxon=' || gattr.organism atts
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.geneattributes gattr,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'yoelii-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND gattr.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) >= $base_start 
+       )
+  )
+  AND gattr.start_min <= syn.b_end
+  AND gattr.end_max >= syn.b_start
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyVivaxMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       gattr.na_feature_id feature_id,
+       'gene' type, 
+       'syntenyVivaxMC' source, 
+       gattr.source_id name, 
+       '.' score, 
+       anch_left.synteny_id parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
+       END end,
+       CASE WHEN (gattr.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'Note=' || gattr.product || '$dlm' ||
+       'SOTerm=' || gattr.so_term_name || '$dlm' ||
+       'SyntenyID=' || syn.synteny_id || '$dlm' ||
+       'Contig=' || gattr.sequence_id || '$dlm' ||
+       'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
+       'Start=' || gattr.start_min || '$dlm' ||
+       'End=' || gattr.end_max || '$dlm' ||
+       'Taxon=' || gattr.organism atts
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.geneattributes gattr,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'vivax-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND gattr.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) >= $base_start 
+       )
+  )
+  AND gattr.start_min <= syn.b_end
+  AND gattr.end_max >= syn.b_start
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyBergheiMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       gattr.na_feature_id feature_id,
+       'gene' type, 
+       'syntenyBergheiMC' source, 
+       gattr.source_id name, 
+       '.' score, 
+       anch_left.synteny_id parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
+       END end,
+       CASE WHEN (gattr.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'Note=' || gattr.product || '$dlm' ||
+       'SOTerm=' || gattr.so_term_name || '$dlm' ||
+       'SyntenyID=' || syn.synteny_id || '$dlm' ||
+       'Contig=' || gattr.sequence_id || '$dlm' ||
+       'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
+       'Start=' || gattr.start_min || '$dlm' ||
+       'End=' || gattr.end_max || '$dlm' ||
+       'Taxon=' || gattr.organism atts
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.geneattributes gattr,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'berghei-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND gattr.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) >= $base_start 
+       )
+  )
+  AND gattr.start_min <= syn.b_end
+  AND gattr.end_max >= syn.b_start
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyChabaudiMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       gattr.na_feature_id feature_id,
+       'gene' type, 
+       'syntenyChabaudiMC' source, 
+       gattr.source_id name, 
+       '.' score, 
+       anch_left.synteny_id parent_id,
+       CASE WHEN (anch_left.synteny_anchor_id = anch_right.synteny_anchor_id) 
+       THEN
+         CASE WHEN (syn.is_reversed = 1) 
+         THEN syn.a_start + ((syn.b_end - gattr.end_max) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start))
+         ELSE syn.a_start + ((gattr.start_min - syn.b_start) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start))  
+         END
+       ELSE
+         CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+         END
+       END startm,
+       CASE WHEN (anch_left.synteny_anchor_id = anch_right.synteny_anchor_id) 
+       THEN
+         CASE WHEN (syn.is_reversed = 1) 
+         THEN syn.a_start + ((syn.b_end - gattr.start_min) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start))
+         ELSE syn.a_start + ((gattr.end_max - syn.b_start) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) 
+         END
+       ELSE
+         CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+         END 
+       END end,
+       CASE WHEN (gattr.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'Note=' || gattr.product || '$dlm' ||
+       'SOTerm=' || gattr.so_term_name || '$dlm' ||
+       'SyntenyID=' || syn.synteny_id || '$dlm' ||
+       'Contig=' || gattr.sequence_id || '$dlm' ||
+       'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
+       'Start=' || gattr.start_min || '$dlm' ||
+       'End=' || gattr.end_max || '$dlm' ||
+       'Taxon=' || gattr.organism atts
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.geneattributes gattr,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'chabaudi-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND gattr.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+    (anch_left.synteny_anchor_id = anch_right.synteny_anchor_id
+     AND anch_left.prev_ref_loc < $base_start
+     AND anch_left.next_ref_loc > $rend
+     AND (
+       (syn.is_reversed = 0
+        AND syn.a_start + ((gattr.start_min - syn.b_start) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) <= $rend 
+        AND syn.a_start + ((gattr.end_max - syn.b_start) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND syn.a_start + ((syn.b_end - gattr.end_max) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) <= $rend 
+        AND syn.a_start + ((syn.b_end - gattr.start_min) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) >= $base_start 
+       )
+     )
+    )
+    OR
+    (anch_left.synteny_anchor_id <> anch_right.synteny_anchor_id
+     AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) >= $base_start 
+       )
+     )
+    )
+  )
+  AND gattr.start_min <= syn.b_end
+  AND gattr.end_max >= syn.b_start
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyKnowlesiMC</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       gattr.na_feature_id feature_id,
+       'gene' type, 
+       'syntenyKnowlesiMC' source, 
+       gattr.source_id name, 
+       '.' score, 
+       anch_left.synteny_id parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
+       END end,
+       CASE WHEN (gattr.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'Note=' || gattr.product || '$dlm' ||
+       'SOTerm=' || gattr.so_term_name || '$dlm' ||
+       'SyntenyID=' || syn.synteny_id || '$dlm' ||
+       'Contig=' || gattr.sequence_id || '$dlm' ||
+       'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
+       'Start=' || gattr.start_min || '$dlm' ||
+       'End=' || gattr.end_max || '$dlm' ||
+       'Taxon=' || gattr.organism atts
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.geneattributes gattr,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'knowlesi-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND gattr.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((gattr.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((gattr.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - gattr.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) >= $base_start 
+       )
+  )
+  AND gattr.start_min <= syn.b_end
+  AND gattr.end_max >= syn.b_start
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:BergmanVaidyaOligos</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       sim.similarity_id feature_id,
+       'match' type,
+       'BergmanVaidyaOligos' source,
+       qry.source_id name,
+       sim.score score,
+       sim.query_id    parent_id,
+       sim.min_subject_start startm,
+       sim.max_subject_end   end,
+       decode(sim.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=' || subj.description || '$dlm' ||
+       'Expect=' || sim.pvalue_mant || 'e' || sim.pvalue_exp || '$dlm' ||
+       'PercentIdentity=' || sim.number_identical / sim.total_match_length || '$dlm' ||
+       'PercentPositive=' || sim.number_positive / sim.total_match_length atts
+ FROM 
+       dots.similarity sim,
+       core.tableinfo qti,
+       core.tableinfo sti,
+       dots.externalnasequence subj,
+       dots.externalnasequence qry,
+       sres.externaldatabase ed1,
+       sres.externaldatabase ed2,
+       sres.externaldatabaserelease edr1,
+       sres.externaldatabaserelease edr2
+WHERE 
+       sim.min_subject_start <= $rend and 
+       sim.max_subject_end >= $base_start and
+       sim.subject_id = $srcfeature_id and
+       qti.table_id = sim.query_table_id and
+       qti.name = 'ExternalNASequence' and
+       sti.table_id = sim.subject_table_id and
+       sti.name = 'ExternalNASequence' and
+       qry.na_sequence_id = sim.query_id and
+       subj.na_sequence_id = sim.subject_id and
+       subj.external_database_release_id = edr1.external_database_release_id and
+       qry.external_database_release_id = edr2.external_database_release_id and
+       edr1.external_database_id = ed1.external_database_id and
+       edr2.external_database_id = ed2.external_database_id and
+       ed1.name = 'Jane Carlton P. yoelii chromosomes' and
+       ed2.name = 'Vaidya Bergman oligos'
+ORDER BY 
+       sim.min_query_start
+]]>
+      </sql>
+    </sqlQuery>
+
+  <sqlQuery>
+    <name>domain:WatersMassSpecPeptides</name>
+	<description>Waters Mascot-derived peptides</description>
+    <sql>
+<![CDATA[ 
+ SELECT 
+       msf.na_feature_id feature_id,
+       'domain' type,
+       'WatersMassSpecPeptides' source,
+       enas.na_sequence_id parent_id,
+       nal.start_max startm,
+       nal.end_max end,
+       msf.source_id name,
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Description=' || msf.description || '$dlm' ||
+       'ExtDbName=' || ed.name || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'SOTerm=' || term_name atts
+FROM  dots.massspecfeature msf,
+      dots.nalocation nal,
+      dots.translatedaafeature taaf,
+      ( select gf.na_sequence_id, t.na_feature_id, term_name
+        from dots.nafeature gf, dots.nafeature t,
+        sres.sequenceontology sres
+        where  gf.na_feature_id =  t.parent_id
+        and gf.sequence_ontology_id = sres.sequence_ontology_id
+        UNION
+        select na_sequence_id, na_feature_id, term_name
+        from dots.miscellaneous misc,
+        sres.sequenceontology sres
+        where misc.sequence_ontology_id = sres.sequence_ontology_id
+      ) t,
+      dots.externalnasequence enas,
+      dots.aasequence aas, dots.aalocation aal,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.na_feature_id = nal.na_feature_id
+ AND  taaf.aa_sequence_id = msf.aa_sequence_id
+ AND  taaf.na_feature_id = t.na_feature_id
+ AND  t.na_sequence_id = enas.na_sequence_id
+ AND  enas.na_sequence_id = $srcfeature_id
+ AND  nal.start_max >= $base_start 
+ AND  nal.end_max <= $rend
+ AND  aal.aa_feature_id = msf.aa_feature_id
+ AND  msf.aa_sequence_id = aas.aa_sequence_id
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  edr.external_database_id = ed.external_database_id
+ AND  ed.name like 'Waters%'
+]]>
+    </sql>
+  </sqlQuery>   
+
+  <sqlQuery>
+	  <name>SAGE:3-5prime</name>
+		<description></description>
+		<sql>
+		<![CDATA[ 
+SELECT distinct * from
+(
+SELECT stf.na_feature_id as feature_id,
+	     'SAGE' type, 
+	     '3-5prime' source, 
+	     stf.source_id name, 
+	     stf.na_sequence_id parent_id, 
+	     nal.start_min startm, 
+	     nal.end_max end, 
+	     decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+	     'Sequence=CATG' || st.sequence || '$dlm' ||
+	     'Occurrence=' || st.occurrence || '$dlm' ||
+			 'Library=' || CASE WHEN st.library_name = 'Characterization of the Giardia intestinalis Transcriptome_Trophozoite_Cell_Culture' THEN 'Troph1' ELSE st.library_name END || '$dlm' ||  
+	     'RawCount=' || st.tag_count atts
+FROM   DOTS.SAGETAGFEATURE stf,
+	     DOTS.NALOCATION NAL,
+	     apidb.sagetaganalysisattributes st
+WHERE  stf.na_sequence_id = $srcfeature_id 
+	AND  nal.start_min <= $rend
+	AND  nal.end_max >= $base_start
+	AND  stf.na_feature_id = nal.na_feature_id 
+	AND  st.source_id = stf.source_id
+)
+]]>
+	  </sql>
+	</sqlQuery>
+
+  </module>
+
+
+  <module name="Feature.pm">
+   <sqlQuery>
+     <name>SNP:Su:bulkAttribute</name>
+     <description></description>
+     <sql>
+<![CDATA[
+SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
+       var.phenotype, var.product
+FROM apidb.SnpAttributes sa,
+     dots.SeqVariation var
+WHERE sa.dataset = 'NIH SNPs'
+  AND sa.na_sequence_id = $srcfeature_id
+  AND sa.start_min <= $rend
+  AND sa.start_min >= $base_start
+  AND var.parent_id = sa.na_feature_id
+ORDER BY var.strain
+ ]]>
+     </sql>
+   </sqlQuery>
+
+   <sqlQuery>
+     <name>SNP:Winzeler:bulkAttribute</name>
+     <description></description>
+     <sql>
+<![CDATA[
+SELECT sa.na_feature_id as feature_id,
+          var.strain,
+          var.matches_reference
+FROM apidb.SnpAttributes sa,
+     dots.SeqVariation var
+WHERE sa.dataset = 'Winzeler Array - Plasmodium Genetic Variation'  
+  AND sa.na_sequence_id = $srcfeature_id
+  AND sa.start_min <= $rend
+  AND sa.start_min >= $base_start
+  AND var.parent_id = sa.na_feature_id
+ ORDER BY var.strain
+ ]]>
+     </sql>
+   </sqlQuery>
+
+   <sqlQuery>
+     <name>SNP:Broad:bulkAttribute</name>
+     <description></description>
+     <sql>
+<![CDATA[
+SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
+       var.phenotype, var.product
+FROM apidb.SnpAttributes sa,
+     dots.SeqVariation var
+WHERE sa.dataset = 'Broad SNPs'
+  AND sa.na_sequence_id = $srcfeature_id
+  AND sa.start_min <= $rend
+  AND sa.start_min >= $base_start
+  AND var.parent_id = sa.na_feature_id
+ORDER BY var.strain
+]]>
+     </sql>
+   </sqlQuery>
+
+   <sqlQuery>
+     <name>SNP:Combined:bulkAttribute</name>
+     <description></description>
+     <sql>
+<![CDATA[
+SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
+       var.phenotype, var.product
+FROM apidb.SnpAttributes sa,
+     dots.SeqVariation var
+WHERE sa.dataset = 'PlasmoDB combined SNPs'
+  AND sa.na_sequence_id = $srcfeature_id
+  AND sa.start_min <= $rend
+  AND sa.start_min >= $base_start
+  AND var.parent_id = sa.na_feature_id
+ORDER BY var.strain
+]]>
+     </sql>
+   </sqlQuery>
+
+   <sqlQuery>
+     <name>SNP:SangerPf:bulkAttribute</name>
+     <description></description>
+     <sql>
+<![CDATA[
+SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
+       var.phenotype, var.product
+FROM apidb.SnpAttributes sa,
+     dots.SeqVariation var
+WHERE sa.dataset = 'Sanger falciparum SNPs'
+  AND sa.na_sequence_id = $srcfeature_id
+  AND sa.start_min <= $rend
+  AND sa.start_min >= $base_start
+  AND var.parent_id = sa.na_feature_id
+ORDER BY var.strain
+]]>
+     </sql>
+   </sqlQuery>
+
+   <sqlQuery>
+     <name>SNP:SangerPr:bulkAttribute</name>
+     <description></description>
+     <sql>
+<![CDATA[
+SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
+       var.phenotype, var.product
+FROM apidb.SnpAttributes sa,
+     dots.SeqVariation var
+WHERE sa.dataset = 'Sanger reichenowi SNPs'
+  AND sa.na_sequence_id = $srcfeature_id
+  AND sa.start_min <= $rend
+  AND sa.start_min >= $base_start
+  AND var.parent_id = sa.na_feature_id
+ORDER BY var.strain
+]]>
+     </sql>
+   </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:annotation:attribute:Ortholog</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       ogf.source_id
+FROM 
+       dots.GENEFEATURE gf,
+       dots.EXTERNALNASEQUENCE ens,
+       dots.GENEFEATURE ogf,
+       dots.EXTERNALNASEQUENCE oens,
+       dots.SequenceSequenceGroup ssg,
+       dots.SequenceSequenceGroup ossg
+WHERE 
+       gf.source_id = '$name'
+  AND  ens.na_sequence_id = gf.na_sequence_id
+  AND  ssg.sequence_id = gf.na_feature_id
+  AND  ossg.sequence_group_id = ssg.sequence_group_id
+  AND  ogf.na_feature_id = ossg.sequence_id
+  AND  oens.na_sequence_id = ogf.na_sequence_id
+  AND  ens.taxon_id <> oens.taxon_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyVivaxMC:attribute:Ortholog</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       ogf.source_id
+FROM 
+       dots.GENEFEATURE gf,
+       dots.EXTERNALNASEQUENCE ens,
+       dots.GENEFEATURE ogf,
+       dots.EXTERNALNASEQUENCE oens,
+       dots.SequenceSequenceGroup ssg,
+       dots.SequenceSequenceGroup ossg
+WHERE 
+       gf.source_id = '$name'
+  AND  ens.na_sequence_id = gf.na_sequence_id
+  AND  ssg.sequence_id = gf.na_feature_id
+  AND  ossg.sequence_group_id = ssg.sequence_group_id
+  AND  ogf.na_feature_id = ossg.sequence_id
+  AND  oens.na_sequence_id = ogf.na_sequence_id
+  AND  ens.taxon_id <> oens.taxon_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyYoeliiMC:attribute:Ortholog</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       ogf.source_id
+FROM 
+       dots.GENEFEATURE gf,
+       dots.EXTERNALNASEQUENCE ens,
+       dots.GENEFEATURE ogf,
+       dots.EXTERNALNASEQUENCE oens,
+       dots.SequenceSequenceGroup ssg,
+       dots.SequenceSequenceGroup ossg
+WHERE 
+       gf.source_id = '$name'
+  AND  ens.na_sequence_id = gf.na_sequence_id
+  AND  ssg.sequence_id = gf.na_feature_id
+  AND  ossg.sequence_group_id = ssg.sequence_group_id
+  AND  ogf.na_feature_id = ossg.sequence_id
+  AND  oens.na_sequence_id = ogf.na_sequence_id
+  AND  ens.taxon_id <> oens.taxon_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyBergheiMC:attribute:Ortholog</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       ogf.source_id
+FROM 
+       dots.GENEFEATURE gf,
+       dots.EXTERNALNASEQUENCE ens,
+       dots.GENEFEATURE ogf,
+       dots.EXTERNALNASEQUENCE oens,
+       dots.SequenceSequenceGroup ssg,
+       dots.SequenceSequenceGroup ossg
+WHERE 
+       gf.source_id = '$name'
+  AND  ens.na_sequence_id = gf.na_sequence_id
+  AND  ssg.sequence_id = gf.na_feature_id
+  AND  ossg.sequence_group_id = ssg.sequence_group_id
+  AND  ogf.na_feature_id = ossg.sequence_id
+  AND  oens.na_sequence_id = ogf.na_sequence_id
+  AND  ens.taxon_id <> oens.taxon_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyChabaudiMC:attribute:Ortholog</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       ogf.source_id
+FROM 
+       dots.GENEFEATURE gf,
+       dots.EXTERNALNASEQUENCE ens,
+       dots.GENEFEATURE ogf,
+       dots.EXTERNALNASEQUENCE oens,
+       dots.SequenceSequenceGroup ssg,
+       dots.SequenceSequenceGroup ossg
+WHERE 
+       gf.source_id = '$name'
+  AND  ens.na_sequence_id = gf.na_sequence_id
+  AND  ssg.sequence_id = gf.na_feature_id
+  AND  ossg.sequence_group_id = ssg.sequence_group_id
+  AND  ogf.na_feature_id = ossg.sequence_id
+  AND  oens.na_sequence_id = ogf.na_sequence_id
+  AND  ens.taxon_id <> oens.taxon_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyKnowlesiMC:attribute:Ortholog</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       ogf.source_id
+FROM 
+       dots.GENEFEATURE gf,
+       dots.EXTERNALNASEQUENCE ens,
+       dots.GENEFEATURE ogf,
+       dots.EXTERNALNASEQUENCE oens,
+       dots.SequenceSequenceGroup ssg,
+       dots.SequenceSequenceGroup ossg
+WHERE 
+       gf.source_id = '$name'
+  AND  ens.na_sequence_id = gf.na_sequence_id
+  AND  ssg.sequence_id = gf.na_feature_id
+  AND  ossg.sequence_group_id = ssg.sequence_group_id
+  AND  ogf.na_feature_id = ossg.sequence_id
+  AND  oens.na_sequence_id = ogf.na_sequence_id
+  AND  ens.taxon_id <> oens.taxon_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:annotation:bulksubfeatures</name>
+      <description> </description>
+      <sql>
+<![CDATA[ 
+SELECT
+       exf.na_feature_id feature_id, 
+       exf.name type, 
+       'annotation' source, 
+       exf.na_feature_id name, 
+       gf.na_feature_id parent_id, 
+       '.' score, 
+       nal.start_min startm,            
+       nal.end_max end, 
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       '' atts 
+FROM   
+       dots.EXONFEATURE exf, 
+       dots.GeneFeature gf,
+       dots.NALOCATION nal 
+WHERE  exf.na_sequence_id = $srcfeature_id 
+  AND  gf.na_feature_id = exf.parent_id
+  AND  nal.na_feature_id = exf.na_feature_id
+  AND  nal.start_min <= $rend 
+  AND  nal.end_max >= $base_start  
+ORDER BY 
+       nal.start_min
+]]>
+      </sql>
+    </sqlQuery>
+
+  <sqlQuery>
+    <name>annotation:density:subfeatures</name>
+    <description>Annotation density subfeatures. Bin size is 50K.
+    </description>
+    <sql>
+<![CDATA[
+SELECT interval feature_id,
+      'test' type,
+      'test' source,
+      count(interval) score,
+      (interval - 1) * 50000 startm,
+      interval * 50000 end
+FROM (
+      SELECT ceil(start_min / 50000) interval
+      FROM   apidb.FeatureLocation
+      WHERE  feature_type = 'GeneFeature'
+      AND    na_sequence_id = $parent_id
+)
+GROUP BY interval
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery>
+      <name>match:TGI:bulksubfeatures</name>
+      <description> </description>
+      <sql>
+<![CDATA[ 
+SELECT
+       hsp.similarity_span_id feature_id,
+       'HSP' type, 
+       'TGI' source, 
+       query.source_id name, 
+       hsp.similarity_id parent_id,
+       '' phase, 
+       hsp.number_positive / hsp.match_length score, 
+       hsp.subject_start startm,            
+       hsp.subject_end end, 
+       decode (hsp.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'QStart=' || hsp.query_start || '$dlm' ||
+       'QEnd=' || hsp.query_end  atts 
+FROM 
+       dots.similarity sim,
+       dots.similarityspan hsp,
+       core.tableinfo ti,
+       dots.externalnasequence query,
+       sres.externaldatabase edb,
+       sres.externaldatabaserelease edbr
+WHERE 
+       edb.name in ('PfGI', 'PvGI', 'PbGI', 'PyGI') and
+       edbr.external_database_id = edb.external_database_id and
+       query.external_database_release_id = edbr.external_database_release_id and
+       sim.query_id = query.na_sequence_id and
+       ti.name = 'ExternalNASequence' and
+       sim.min_subject_start <= $rend and 
+       sim.max_subject_end >= $base_start and 
+       sim.subject_id = $srcfeature_id and
+       sim.subject_table_id = ti.table_id and
+       sim.query_table_id = ti.table_id and
+       hsp.similarity_id = sim.similarity_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>match:BLASTX:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       hsp.similarity_span_id feature_id,
+       'HSP' type, 
+       'BLASTX' source, 
+			 hsp.score score,
+       sim.similarity_id as parent_id,
+       subj.source_id name, 
+			 sim.similarity_id parent_id,
+       hsp.query_start startm,            
+       hsp.query_end end, 
+       decode (hsp.is_reversed, 0, '+1', 1, '-1', '.') strand
+FROM   
+       dots.similarity sim,
+       core.tableinfo qti,
+       core.tableinfo sti,
+       dots.similarityspan hsp,
+       dots.externalaasequence subj
+WHERE  
+       sim.min_query_start <= $rend and 
+       sim.max_query_end >= $base_start and 
+       sim.query_id = $srcfeature_id and
+       qti.table_id = sim.query_table_id and
+       qti.name = 'ExternalNASequence' and
+       sti.table_id = sim.subject_table_id and
+       sti.name = 'ExternalAASequence' and
+       subj.aa_sequence_id = sim.subject_id and
+       hsp.similarity_id = sim.similarity_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyYoeliiMC:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       exf.na_feature_id feature_id,
+       'exon' type, 
+       'syntenyYoeliiMC' source, 
+       exf.parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END end,
+       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.featurelocation exfloc,
+       dots.exonfeature exf,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'yoelii-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND exfloc.feature_type = 'ExonFeature'
+  AND exfloc.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start 
+       )
+  )
+  AND exfloc.start_min <= syn.b_end
+  AND exfloc.end_max >= syn.b_start
+  AND exf.na_feature_id = exfloc.na_feature_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyVivaxMC:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       exf.na_feature_id feature_id,
+       'exon' type, 
+       'syntenyVivaxMC' source, 
+       exf.parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END end,
+       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.featurelocation exfloc,
+       dots.exonfeature exf,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'vivax-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND exfloc.feature_type = 'ExonFeature'
+  AND exfloc.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start 
+       )
+  )
+  AND exfloc.start_min <= syn.b_end
+  AND exfloc.end_max >= syn.b_start
+  AND exf.na_feature_id = exfloc.na_feature_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyBergheiMC:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       exf.na_feature_id feature_id,
+       'exon' type, 
+       'syntenyBergheiMC' source, 
+       exf.parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END end,
+       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.featurelocation exfloc,
+       dots.exonfeature exf,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'berghei-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND exfloc.feature_type = 'ExonFeature'
+  AND exfloc.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start 
+       )
+  )
+  AND exfloc.start_min <= syn.b_end
+  AND exfloc.end_max >= syn.b_start
+  AND exf.na_feature_id = exfloc.na_feature_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyChabaudiMC:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       exf.na_feature_id feature_id,
+       'exon' type, 
+       'syntenyChabaudiMC' source, 
+       exf.parent_id,
+       CASE WHEN (anch_left.synteny_anchor_id = anch_right.synteny_anchor_id) 
+       THEN
+         CASE WHEN (syn.is_reversed = 1) 
+         THEN syn.a_start + ((syn.b_end - exfloc.end_max) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start))
+         ELSE syn.a_start + ((exfloc.start_min - syn.b_start) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start))  
+         END
+       ELSE
+         CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+         END
+       END startm,
+       CASE WHEN (anch_left.synteny_anchor_id = anch_right.synteny_anchor_id) 
+       THEN
+         CASE WHEN (syn.is_reversed = 1) 
+         THEN syn.a_start + ((syn.b_end - exfloc.start_min) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start))
+         ELSE syn.a_start + ((exfloc.end_max - syn.b_start) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) 
+         END
+       ELSE
+         CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+         END 
+       END end,
+       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.featurelocation exfloc,
+       dots.exonfeature exf,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'chabaudi-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND exfloc.feature_type = 'ExonFeature'
+  AND exfloc.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+    (anch_left.synteny_anchor_id = anch_right.synteny_anchor_id
+     AND anch_left.prev_ref_loc < $base_start
+     AND anch_left.next_ref_loc > $rend
+     AND (
+       (syn.is_reversed = 0
+        AND syn.a_start + ((exfloc.start_min - syn.b_start) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) <= $rend 
+        AND syn.a_start + ((exfloc.end_max - syn.b_start) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND syn.a_start + ((syn.b_end - exfloc.end_max) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) <= $rend 
+        AND syn.a_start + ((syn.b_end - exfloc.start_min) * (syn.a_end - syn.a_start) / (syn.b_end - syn.b_start)) >= $base_start 
+       )
+     )
+    )
+    OR
+    (anch_left.synteny_anchor_id <> anch_right.synteny_anchor_id
+     AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) >= $base_start 
+       )
+     )
+    )
+  )
+  AND exfloc.start_min <= syn.b_end
+  AND exfloc.end_max >= syn.b_start
+  AND exf.na_feature_id = exfloc.na_feature_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>gene:syntenyKnowlesiMC:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[ 
+SELECT
+       exf.na_feature_id feature_id,
+       'exon' type, 
+       'syntenyKnowlesiMC' source, 
+       exf.parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END end,
+       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidb.featurelocation exfloc,
+       dots.exonfeature exf,
+       sres.externaldatabaserelease edr,
+       sres.externaldatabase ed
+WHERE ed.name = 'knowlesi-falciparum synteny from Mercator'
+  AND edr.external_database_id = ed.external_database_id 
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND exfloc.feature_type = 'ExonFeature'
+  AND exfloc.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start 
+       )
+  )
+  AND exfloc.start_min <= syn.b_end
+  AND exfloc.end_max >= syn.b_start
+  AND exf.na_feature_id = exfloc.na_feature_id
+]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery>
+      <name>alignment:dbEST:bulksubfeatures</name>
+      <description></description>
+      <sql>
+<![CDATA[
+SELECT blat.blat_alignment_id feature_id,
+       'block' type,
+       'dbEST' source,
+       est.accession name,
+       blat.score || '' score,
+       blat.blat_alignment_id parent_id,
+       blat.target_start startm,
+       blat.target_end end,
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       blat.tstarts TSTARTS,
+       blat.blocksizes BLOCKSIZES,
+       ' ' atts
+FROM
+       dots.BLATALIGNMENT blat,
+       dots.EST est,
+       dots.EXTERNALNASEQUENCE etn
+WHERE  blat.target_start <= $rend
+  AND  blat.target_end >= $base_start
+  AND  blat.target_na_sequence_id = $srcfeature_id
+  AND  est.na_sequence_id = blat.query_na_sequence_id
+  AND  etn.na_sequence_id = blat.target_na_sequence_id
+ORDER BY
+       blat.target_start
+]]>
+      </sql>
+    </sqlQuery> 
+
+  <sqlQuery>
+    <name>domain:WatersMassSpecPeptides:bulksubfeatures</name>
+    <description></description>
+    <sql>
+<![CDATA[
+SELECT nal.na_feature_id feature_id,
+			'Peptide' type,
+			'WatersMassSpecPeptides' source,
+			nal.start_max startm,
+			nal.end_max end,
+			nal.na_feature_id parent_id,
+			decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+			'ExtDbName=' || ed.name || '$dlm' ||
+			'SOTerm=' || term_name atts
+FROM  dots.nalocation nal,
+			dots.massspecfeature msf,
+			dots.translatedaafeature taaf,
+			( SELECT gf.na_sequence_id, t.na_feature_id, term_name
+			  FROM   dots.nafeature gf, dots.nafeature t,
+			         sres.sequenceontology sres
+			  WHERE  gf.na_feature_id =  t.parent_id
+			         AND gf.sequence_ontology_id = sres.sequence_ontology_id
+			  UNION
+			  SELECT na_sequence_id, na_feature_id, term_name
+			  FROM   dots.miscellaneous misc, sres.sequenceontology sres
+			  WHERE  misc.sequence_ontology_id = sres.sequence_ontology_id
+			) t,
+			dots.externalnasequence enas,
+			sres.externaldatabaserelease edr,
+			sres.externaldatabase ed
+                       WHERE nal.na_feature_id = msf.na_feature_id
+			AND  taaf.aa_sequence_id = msf.aa_sequence_id
+			AND  taaf.na_feature_id = t.na_feature_id
+			AND  t.na_sequence_id = enas.na_sequence_id
+			AND  msf.external_database_release_id = edr.external_database_release_id
+			AND  edr.external_database_id = ed.external_database_id
+			AND  nal.start_max >= $base_start 
+			AND  nal.end_max <= $rend
+			AND  enas.na_sequence_id = $srcfeature_id
+			AND  edr.external_database_id = ed.external_database_id
+			AND  ed.name like 'Waters%'
+]]>
+    </sql>
+  </sqlQuery>   
+
+
+    <sqlQuery>
+      <name>protein:seq</name>
+       <description></description>
+       <sql>
+<![CDATA[
+SELECT gf.source_id, gf.source_id, tas.sequence 
+FROM   dots.genefeature gf, dots.transcript t,
+       dots.translatedaafeature taf, dots.translatedaasequence tas
+WHERE  gf.source_id = '$id'
+  AND  t.parent_id = gf.na_feature_id
+  AND  taf.na_feature_id = t.na_feature_id
+  AND  tas.aa_sequence_id = taf.aa_sequence_id
+]]>
+      </sql>
+    </sqlQuery>   
+  </module>
+</DAS>
