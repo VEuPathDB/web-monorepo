@@ -1,0 +1,290 @@
+<gbrowseSanity>
+    <defaultParamValue name="name" value="TGME49_039250"/>
+    <defaultParamValue name="parent_id" value="TGME49_039250"/>
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_X$$"/>
+    <defaultParamValue name="base_start" value="1"/>
+    <defaultParamValue name="rend" value="1311700"/>
+    <defaultParamValue name="dlm" value="|"/>
+
+    <sqlValue name="na_seq_id_Ib">
+      <sql>
+      select na_sequence_id from dots.VirtualSequence where source_id = 'TGME49_chrIb'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="na_seq_id_X">
+      <sql>
+      select na_sequence_id from dots.VirtualSequence where source_id = 'TGME49_chrX'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="na_seq_id_IX">
+      <sql>
+      select na_sequence_id from dots.VirtualSequence where source_id = 'TGME49_chrIX'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="mass_spec_feature_id">
+      <sql>
+      select na_feature_id from dots.MassSpecFeature where rownum=1
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="similarity_id">
+      <sql>
+      select similarity_id from dots.SimilaritySpan where rownum=1
+      </sql>
+    </sqlValue>
+
+    <test name="domain:WastlingMassSpecPeptides" min="1000" max="2000">
+    </test>
+
+    <test name="domain:MurrayMassSpecPeptides" min="1" max="1000">
+    </test>
+
+    <test name="domain:EinsteinMassSpecPeptides" min="1000" max="2000">
+    </test>
+
+    <test name="domain:OtherMassSpecPeptides" min="1" max="1000">
+    </test>
+
+    <test name="domain:WastlingMassSpecPeptides:bulksubfeatures" min="2200" max="2600">
+    </test>
+
+    <test name="domain:MurrayMassSpecPeptides:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="domain:EinsteinMassSpecPeptides:bulksubfeatures" min="1000" max="2500">
+    </test>
+
+    <test name="domain:OtherMassSpecPeptides:bulksubfeatures" min="2000" max="3000">
+    </test>
+
+    <test name="alignment:Cosmids" min="1" max="1000">
+    </test>
+
+    <test name="alignment:Bacs" min="1" max="1000">
+    </test>
+
+    <test name="SNP:Stanford" min="1" max="2000"/>
+
+    <test name="get_feature_by_name" min="1" max="1000">
+    </test>
+
+    <test name="get_sequence" min="1" max="1000">
+    </test>
+
+    <test name="new:Segment" min="1" max="1000">
+      <param name="name" value="TGME49_chrX"/>
+    </test>
+
+    <test name="alignment:Bacs:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="GeneticMarkers:overview" min="1" max="1000">
+    </test>
+
+    <test name="annotation:density" min="1" max="1000">
+    </test>
+
+    <test name="SNP:density" min="1" max="1000">
+    </test>
+
+    <test name="lowcomplexity:dust" min="2000" max="3000">
+    </test>
+
+    <test name="TandemRepeat:TRF" min="1" max="1000">
+    </test>
+
+    <test name="scaffold:TIGR" min="1" max="1000">
+    </test>
+
+    <test name="gene:annotation" min="1" max="1000">
+    </test>
+
+    <test name="TwinScan:annotation" min="1" max="1000">
+    </test>
+
+    <test name="GlimmerHMM:annotation" min="1" max="1000">
+    </test>
+
+    <test name="TigrScan:annotation" min="1" max="1000">
+    </test>
+
+    <test name="GLEAN:annotation" min="1" max="1000">
+    </test>
+
+    <test name="alignment:dbEST" min="1000" max="7000">
+    </test>
+
+    <test name="alignment:dbEST:bulksubfeatures" min="1000" max="7000">
+    </test>
+
+    <test name="alignment:DoTSAssemblies" min="400" max="600">
+    </test>
+
+    <test name="alignment:DoTSAssemblies:bulksubfeatures" min="500" max="700">
+    </test>
+
+    <test name="match:TGI" min="1" max="1000">
+    </test>
+
+    <test name="alignment:ORF" min="15000" max="17000">
+    </test>
+
+    <test name="GeneticMarkers:Sibley" min="1" max="1000">
+    </test>
+
+    <test name="SNP:Alignment" min="10000" max="15000">
+    </test>
+
+    <test name="AffymetrixProbes:NuclearCoding" min="1000" max="2000">
+    </test>
+
+    <test name="AffymetrixProbes:NuclearCodingAS" min="2000" max="3000">
+      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
+    </test>
+
+    <test name="AffymetrixProbes:NuclearNonCoding" min="1" max="1000">
+      <param name="srcfeature_id" value="$$na_seq_id_IX$$"/>
+    </test>
+
+    <test name="AffymetrixProbes:Introns" min="3000" max="4000">
+      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
+    </test>
+
+    <test name="AffymetrixProbes:Exons" min="5000" max="6000">
+      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
+    </test>
+
+    <test name="AffymetrixProbes:Resequencing" min="1" max="1000">
+    </test>
+
+    <test name="AffymetrixProbes:ChIP" min="1" max="1000">
+      <param name="srcfeature_id" value="$$na_seq_id_IX$$"/>
+    </test>
+
+    <test name="AffymetrixProbes:GenotypingEstSNPs" min="1" max="1000">
+    </test>
+
+    <test name="AffymetrixProbes:GenotypingMarkers" min="1" max="1000">
+    </test>
+
+    <test name="AffymetrixProbes:BLASTXTranscriptDiscovery" min="1" max="1000">
+    </test>
+
+    <test name="AffymetrixProbes:TBLASTNTranscriptDiscovery" min="1" max="1000">
+    </test>
+
+    <test name="AffymetrixProbes:ESTTranscriptDiscovery" min="1" max="1000">
+    </test>
+
+    <test name="match:BLASTX" min="1000" max="2200">
+    </test>
+
+    <test name="annotation:density:subfeatures" min="1" max="1000">
+      <param name="parent_id" value="$$na_seq_id_X$$"/>
+    </test>
+
+    <test name="SNP:density:subfeatures" min="1" max="1000">
+      <param name="parent_id" value="$$na_seq_id_X$$"/>
+    </test>
+
+    <test name="GeneticMarkers:Sibley:bulkAttribute" min="1" max="1000">
+    </test>
+
+    <test name="SNP:Stanford:bulkAttribute" min="1" max="1000">
+    </test>
+
+    <test name="SNP:Alignment:bulkAttribute" min="1" max="50000">
+    </test>
+
+    <test name="gene:annotation:attribute:Ortholog" min="0" max="0">
+    </test>
+
+    <test name="gene:annotation:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="TwinScan:annotation:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="GlimmerHMM:annotation:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="TigrScan:annotation:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="GLEAN:annotation:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="match:TGI:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="match:BLASTX:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="protein:seq" min="1" max="1000">
+      <param name="id" value="TGME49_039250-1"/>
+    </test>
+
+    <test name="match:syntenySpanMC" min="1" max="1000">
+    </test>
+
+    <test name="gene:syntenyMC" min="1" max="1000">
+    </test>
+
+    <test name="oldgene:annotation" min="1" max="1000">
+    </test>
+
+    <test name="ChIP_PLK:Einstein" min="1" max="1000">
+    </test>
+
+    <test name="ChIP_TypeIII:Einstein" min="1" max="1000">
+    </test>
+
+    <test name="ChIP_RH:Einstein" min="1" max="1000">
+    </test>
+
+    <test name="ChIP_peaks_PLK:Einstein" min="1" max="1000">
+    </test>
+
+    <test name="ChIP_peaks_TypeIII:Einstein" min="1" max="1000">
+    </test>
+
+    <test name="ChIP_peaks_RH:Einstein" min="1" max="1000">
+    </test>
+
+    <test name="SAGE:3-5prime" min="1" max="1000">
+    </test>
+
+    <test name="domain:CarruthersMassSpecPeptides" min="1" max="1000">
+    </test>
+
+    <test name="domain:MorenoMassSpecPeptides" min="1" max="1000">
+    </test>
+
+    <test name="domain:CarruthersMassSpecPeptides:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="domain:MorenoMassSpecPeptides:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="ChIP_PLK:Einstein:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="ChIP_TypeIII:Einstein:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="ChIP_RH:Einstein:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="gene:syntenyMC:attribute:Ortholog" min="1" max="1000">
+    </test>
+
+    <test name="gene:syntenyMC:bulksubfeatures" min="1" max="1000">
+    </test>
+
+    <test name="oldgene:annotation:bulksubfeatures" min="1" max="1000">
+    </test>
+
+</gbrowseSanity>

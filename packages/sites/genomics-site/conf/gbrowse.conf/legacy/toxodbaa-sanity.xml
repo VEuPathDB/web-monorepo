@@ -1,0 +1,43 @@
+<gbrowseSanity>
+    <defaultParamValue name="name" value="TGME49_039250"/>
+    <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_X$$"/>
+    <defaultParamValue name="base_start" value="1"/>
+    <defaultParamValue name="rend" value="1311700"/>
+    <defaultParamValue name="dlm" value="|"/>
+    <defaultParamValue name="id" value="TGME49_039250-1"/>
+
+    <sqlValue name="aa_seq_id_X">
+      <sql>
+       select aa_sequence_id from dots.translatedAaSequence where source_id like 'TGME49_039250%'
+      </sql>
+    </sqlValue>
+
+    <test name="get_feature_by_name" min="1" max="1000">
+    </test>
+
+    <test name="get_sequence" min="1" max="1000">
+    </test>
+
+    <test name="new:Segment" min="1" max="1000">
+    </test>
+
+    <test name="lowcomplexity:seg" min="1" max="1000">
+    </test>
+
+    <test name="domain:interpro" min="1" max="1000">
+    </test>
+
+    <test name="domain:MassSpecPeptides" min="1" max="1000">
+    </test>
+
+    <test name="domain:TMHMM" min="1" max="1000">
+    </test>
+
+    <test name="domain:SignalP" min="1" max="1000">
+    </test>
+
+    <test name="match:BLASTP" min="1" max="1000">
+    </test>
+
+
+</gbrowseSanity>
