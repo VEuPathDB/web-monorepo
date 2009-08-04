@@ -606,8 +606,47 @@ WHERE  fl.feature_type ='SAGETagFeature'
 ]]>
     </sql>
   </sqlQuery>
-  
-  
+
+    <sqlQuery name="rsalign:gcMin10" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+SELECT 
+       ra.rnaseq_align_id feature_id,
+       'rsalign' type,
+       'gcMin10' source,
+       ra.na_sequence_id as parent_id, ra.start_a as startm, ra.end_b as end,
+       ra.query_id name, ra.strand||'1' as strand,
+       'Count=' || ra.genome_matches  atts
+FROM  apidb.rnaseq_align ra
+WHERE ra.na_sequence_id = $srcfeature_id
+ AND  ra.sample = 'gc_sample'
+ AND  ra.start_a >= $base_start 
+ AND  ra.end_b <= $rend
+ AND  ra.intron_size >= 10
+ AND  ra.genome_matches = 1
+]]>
+    </sql>
+  </sqlQuery>
+
+      <sqlQuery name="splice:align" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+SELECT 
+       ra.rnaseq_align_id feature_id,
+       'splice' type,
+       'align' source,
+       ra.na_sequence_id as parent_id, ra.start_a as startm, ra.end_a as end,
+       ra.query_id name, ra.strand||'1' as strand,
+       '' atts
+FROM  apidb.rnaseq_align ra
+WHERE ra.na_sequence_id = $srcfeature_id
+ AND  ra.sample = 'spliced_sites'
+ AND  ra.start_a >= $base_start 
+ AND  ra.end_a <= $rend
+]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="domain:MassSpecPeptides" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
@@ -2672,6 +2711,54 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
     </sql>
   </sqlQuery>
   
+  <sqlQuery name="rnaseq:gcsampleUnique"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT distinct(na_sequence_id) feature_id,
+             'rnaseq' type,
+             'gcsampleUnique' source
+       FROM  apidb.rnaseq_coverage 
+       WHERE na_sequence_id = $srcfeature_id
+         AND sample = 'GC_sample'
+         AND type = 'unique'
+         AND location <= $rend
+         AND location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseq:gcsampleMax10"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT distinct(rc.na_sequence_id) feature_id,
+             'rnaseq' type,
+             'gcsampleMax10' source
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'max10'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseq:gcsampleProvider"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT distinct(rc.na_sequence_id) feature_id,
+             'rnaseq' type,
+             'gcsampleProvider' source
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'provider'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="mapp:promotersForward"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -3080,7 +3167,42 @@ AND  edr.external_database_id = ed.external_database_id
 ]]>
     </sql>
   </sqlQuery>
-  
+
+    <sqlQuery name="rsalign:gcMin10:bulksubfeatures" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+SELECT 
+       ra.rnaseq_align_id||'_a' feature_id,
+       'rsalign' type,
+       'gcMin10' source,
+       ra.rnaseq_align_id as parent_id, ra.start_a as startm, ra.end_a as end,
+       ra.strand||'1' as strand,
+       'Count=' || ra.genome_matches  atts
+FROM  apidb.rnaseq_align ra
+WHERE ra.na_sequence_id = $srcfeature_id
+ AND  ra.sample = 'gc_sample'
+ AND  ra.start_a >= $base_start 
+ AND  ra.end_b <= $rend
+ AND  ra.intron_size >= 10
+ AND  ra.genome_matches = 1
+UNION
+SELECT 
+       ra.rnaseq_align_id||'_b' feature_id,
+       'rsalign' type,
+       'gcMin10' source,
+       ra.rnaseq_align_id as parent_id, ra.start_b as startm, ra.end_b as end,
+       ra.strand||'+1' as strand,
+       'Count=' || ra.genome_matches  atts
+FROM  apidb.rnaseq_align ra
+WHERE ra.na_sequence_id = $srcfeature_id
+ AND  ra.sample = 'gc_sample'
+ AND  ra.start_a >= $base_start 
+ AND  ra.end_b <= $rend
+ AND  ra.intron_size >= 10
+ AND  ra.genome_matches = 1
+]]>
+    </sql>
+  </sqlQuery>
   
   <sqlQuery name="domain:MassSpecPeptides:bulksubfeatures" excludeProjects="TrichDB">
      <sql>
@@ -3953,7 +4075,76 @@ ORDER BY var.strain
 ]]>
     </sql>
   </sqlQuery>
-  
+
+    <sqlQuery name="rnaseq:gcsampleUnique:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'gcsampleUnique' source, 
+             '' name, 
+             coverage score, 
+             rc.na_sequence_id parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             1 strand,
+             '' atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'unique'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq:gcsampleMax10:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'gcsampleMax10' source, 
+             '' name, 
+             coverage score, 
+             rc.na_sequence_id parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             1 strand,
+             '' atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'max10'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq:gcsampleProvider:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'gcsampleProvider' source, 
+             '' name, 
+             coverage score, 
+             rc.na_sequence_id parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             1 strand,
+             '' atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'provider'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="mapp:promotersForward:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
