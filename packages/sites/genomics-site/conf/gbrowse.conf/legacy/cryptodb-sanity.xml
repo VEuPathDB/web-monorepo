@@ -1,0 +1,122 @@
+<gbrowseSanity>
+  <defaultParamValue name="srcfeature_id" value="$$na_seq_id_AAEE01000002$$"/>
+  <defaultParamValue name="base_start" value="1000"/>
+  <defaultParamValue name="rend" value="500000"/>
+  <defaultParamValue name="dlm" value=","/>
+
+  <sqlValue name="na_seq_id_AAEE01000002">
+	  <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'AAEE01000002'
+    </sql> 
+  </sqlValue>
+
+  <sqlValue name="na_feat_id_cgd6_780">
+	  <sql>
+      select na_feature_id from dots.genefeature where source_id = 'cgd6_780'
+    </sql> 
+  </sqlValue>
+
+  <test name="get_feature_by_name" min="1" max="2000">
+    <param name="name" value="AAEE01000002"/>
+  </test>
+
+  <test name="new:Segment" min="1" max="2000">
+    <param name="name" value="AAEE01000002"/>
+  </test>
+  
+  <test name="get_sequence" min="1" max="2000">
+  </test>
+  <test name="gene:Genbank" min="1" max="2000">
+  </test>
+  
+  <test name="annotation:density" min="1" max="2000">
+  </test>
+  
+  <test name="alignment:ORF" min="1" max="2000">
+  </test>
+  
+  <test name="alignment:BLAT" min="1" max="2000">
+  </test>
+  
+  <test name="clusteralignment:EstCluster" min="1" max="2000">
+  </test>
+  
+  <test name="synteny:seq" min="1" max="2000">
+  </test>
+
+  <!-- test name="syntenygene:Genbank" min="1" max="2000">
+  </test -->
+
+  <!-- test name="syntenygene:Chr6" min="1" max="2000">
+  </test -->
+
+  <test name="match:WU_BLASTX" min="1" max="2000">
+  </test>
+
+  <test name="gene:Genbank:bulksubfeatures" min="1" max="2000">
+  </test>
+
+  <test name="annotation:density:subfeatures" min="1" max="2000">
+    <param name="parent_id" parentFeatureTest="annotation:density"/>
+  </test>
+
+  <test name="match:WU_BLASTX:bulksubfeatures" min="1" max="2000">
+    <param name="parent_id" parentFeatureTest="match:WU_BLASTX"/>
+  </test>
+
+  <test name="SNP:Widmer" min="1" max="2000">
+  </test>
+
+  <test name="domain:WastlingMassSpecPeptides" min="1" max="2000">
+  </test>
+
+  <test name="domain:LoweryMassSpecPeptides" min="1" max="2000">
+  </test>
+
+  <test name="domain:EinsteinMassSpecPeptides" min="1" max="2000">
+  </test>
+
+  <test name="match:IsolateCDC" min="1" max="2000">
+  </test>
+
+  <test name="Cmuris:seq" min="1" max="2000">
+  </test>
+
+  <!-- test name="syntenygene:Genbank:bulksubfeatures" min="1" max="2000">
+  </test -->
+
+  <test name="SNP:Widmer:bulkAttribute" min="1" max="2000">
+  </test>
+
+  <test name="domain:WastlingMassSpecPeptides:bulksubfeatures" min="1" max="2000">
+  </test>
+
+  <test name="domain:LoweryMassSpecPeptides:bulksubfeatures" min="1" max="2000">
+  </test>
+
+  <test name="domain:EinsteinMassSpecPeptides:bulksubfeatures" min="1" max="2000">
+  </test>
+
+  <test name="alignment:BLAT:bulksubfeatures" min="1" max="2000">
+  </test>
+
+  <test name="clusteralignment:EstCluster:bulksubfeatures" min="1" max="2000">
+  </test>
+
+  <!-- test name="gene:Genbank:attribute:Ortholog" min="1" max="2000">
+  </test -->
+
+  <!-- test name="syntenygene:Genbank:attribute:Ortholog" min="1" max="2000">
+  </test -->
+
+  <test name="protein:seq" min="1" max="2000">
+  </test>
+
+  <test name="alignment:BLAT:seq" min="1" max="2000">
+      <param name="name" value="XCPa000285(cgd6_780)"/>
+  </test>
+
+  <test name="template" min="1" max="2000">
+  </test>
+
+</gbrowseSanity>
