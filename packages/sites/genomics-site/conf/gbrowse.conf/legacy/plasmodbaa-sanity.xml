@@ -1,0 +1,74 @@
+<gbrowseSanity>
+    <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_PF11_0344$$"/>
+    <defaultParamValue name="base_start" value="1"/>
+    <defaultParamValue name="rend" value="5000"/>
+    <defaultParamValue name="dlm" value=","/>
+
+    <sqlValue name="aa_seq_id_PF11_0344">
+      <sql>
+      select aa_sequence_id 
+      from dots.genefeature gf, dots.transcript t,
+           dots.translatedaafeature taf
+      where gf.source_id = 'PF11_0344'
+        and t.parent_id = gf.na_feature_id
+        and taf.na_feature_id = t.na_feature_id  
+      </sql>
+    </sqlValue>
+
+     <sqlValue name="aa_seq_id_PF14_0010">
+      <sql>
+      select aa_sequence_id 
+      from dots.genefeature gf, dots.transcript t,
+           dots.translatedaafeature taf
+      where gf.source_id = 'PF14_0010'
+        and t.parent_id = gf.na_feature_id
+        and taf.na_feature_id = t.na_feature_id  
+      </sql>
+    </sqlValue>
+
+   <test name="get_feature_by_name" min="1" max="50">
+      <param name="name" value="PF11_0344"/>
+    </test>
+
+    <test name="get_sequence" min="1" max="50">
+    </test>
+
+    <test name="new:Segment" min="1" max="50">
+      <param name="name" value="PF11_0344"/>
+    </test>
+
+    <test name="get_2d_struc" min="1" max="50">
+    </test>
+
+    <test name="lowcomplexity:seg" min="1" max="50">
+    </test>
+
+    <test name="domain:ExportPred" min="1" max="50">
+       <param name="srcfeature_id" value="$$aa_seq_id_PF14_0010$$"/>
+    </test>
+
+    <test name="domain:interpro" min="1" max="50">
+    </test>
+
+    <test name="domain:interpro:subfeatures" min="1" max="50">
+    </test>
+
+    <test name="domain:TMHMM" min="1" max="50">
+    </test>
+
+    <test name="domain:SignalP" min="1" max="50">
+    </test>
+
+    <test name="match:BLASTP" min="1" max="50">
+    </test>
+
+    <test name="domain:ExportPred:subfeatures" min="1" max="50">
+      <param name="parent_id" parentFeatureTest="domain:ExportPred"/>
+    </test>
+
+    <test name="protein:seq" min="1" max="50">
+      <param name="id" value="PF11_0344"/>
+    </test>
+
+
+</gbrowseSanity>

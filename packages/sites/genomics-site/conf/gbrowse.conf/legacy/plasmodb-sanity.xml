@@ -1,0 +1,211 @@
+<gbrowseSanity>
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_MAL11$$"/>
+    <defaultParamValue name="base_start" value="1211700"/>
+    <defaultParamValue name="rend" value="1311700"/>
+    <defaultParamValue name="dlm" value=","/>
+
+    <sqlValue name="na_seq_id_MAL11">
+      <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'MAL11'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="na_seq_id_MALPY00525">
+      <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'MALPY00525'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="na_feat_id_PF11_0344">
+      <sql>
+      select na_feature_id from dots.genefeature where source_id = 'PF11_0344'
+      </sql>
+    </sqlValue>
+
+    <test name="get_feature_by_name" min="1" max="2000">
+      <param name="name" value="MAL1"/>
+    </test>
+
+    <test name="get_sequence" min="1" max="2000">
+    </test>
+
+    <test name="new:Segment" min="1" max="2000">
+      <param name="name" value="MAL3"/>
+    </test>
+
+    <test name="SNP:Combined:density" min="1" max="2000">
+    </test>
+
+    <test name="lowcomplexity:dust" min="1" max="3000">
+    </test>
+
+    <test name="TandemRepeat:TRF" min="1" max="2000">
+    </test>
+
+    <test name="gene:annotation" min="1" max="2000">
+    </test>
+
+    <test name="annotation:density" min="1" max="2000">
+    </test>
+
+    <test name="Evigan:annotation" min="1" max="200">
+    </test>
+
+    <test name="Evigan:annotation:bulksubfeatures" min="1" max="2000">
+    </test>
+
+    <test name="gene:newannotation" min="1" max="2000">
+    </test>
+
+    <test name="gene:newannotation:bulksubfeatures" min="1" max="2000">
+    </test>
+
+    <test name="alignment:dbEST" min="1" max="2000">
+    </test>
+
+    <test name="match:TGI" min="1" max="2000">
+    </test>
+
+    <test name="SNP:Winzeler" min="1" max="2000">
+    </test>
+
+    <test name="SNP:Su" min="1" max="2000">
+    </test>
+
+    <test name="SNP:Broad" min="1" max="2000">
+    </test>
+
+    <test name="SNP:Combined" min="1" max="2000">
+    </test>
+
+    <test name="SNP:SangerPf" min="1" max="2000">
+    </test>
+
+    <test name="SNP:SangerPr" min="400" max="1100">
+    </test>
+
+    <test name="match:BLASTX" min="1" max="3500">
+    </test>
+
+<!--    <test name="match:syntenyYoeliiMC" min="1" max="2000">
+    </test>
+
+    <test name="match:syntenyVivaxMC" min="1" max="2000">
+    </test>
+
+    <test name="match:syntenyBergheiMC" min="1" max="2000">
+    </test>
+
+    <test name="match:syntenyChabaudiMC" min="1" max="2000">
+    </test>
+
+    <test name="match:syntenyKnowlesiMC" min="1" max="2000">
+    </test>
+-->
+
+    <test name="match:BergmanVaidyaOligos" min="1" max="2000">
+       <param name="srcfeature_id" value="$$na_seq_id_MALPY00525$$"/>
+       <param name="base_start" value="1"/>
+       <param name="rend" value="9000"/>
+    </test>
+
+    <test name="SNP:Su:bulkAttribute" min="1" max="2000">
+    </test>
+
+    <test name="SNP:Winzeler:bulkAttribute" min="1" max="10000">
+    </test>
+
+    <test name="SNP:Broad:bulkAttribute" min="1" max="5000">
+    </test>
+
+    <test name="SNP:Combined:bulkAttribute" min="1" max="10000">
+    </test>
+
+    <test name="SNP:SangerPf:bulkAttribute" min="1" max="2000">
+    </test>
+
+    <test name="SNP:SangerPr:bulkAttribute" min="1000" max="2200">
+    </test>
+
+    <test name="gene:annotation:attribute:Ortholog" min="1" max="2000">
+      <param name="name" value="PF11_0344"/>
+    </test>
+
+    <test name="gene:annotation:bulksubfeatures" min="1" max="2000">
+    </test>
+
+    <test name="annotation:density:subfeatures" min="1" max="2000">
+      <param name="parent_id" value="$$na_seq_id_MAL11$$"/>
+    </test>
+
+    <test name="match:TGI:bulksubfeatures" min="1" max="400">
+    </test>
+
+    <test name="alignment:dbEST:bulksubfeatures" min="1" max="400">
+    </test>
+
+   <test name="match:BLASTX:bulksubfeatures" min="1" max="2000">
+    </test>
+
+    <test name="protein:seq" min="1" max="2000">
+      <param name="id" value="PF11_0344"/>
+    </test>
+
+    <test name="domain:WatersMassSpecPeptides" min="1" max="2000">
+    </test>
+
+    <test name="SAGE:3-5prime" min="1" max="2000">
+    </test>
+
+    <test name="domain:WatersMassSpecPeptides:bulksubfeatures" min="1" max="2000">
+    </test>
+
+    <test name="match:syntenySpanMC" min="1" max="400">
+    </test>
+
+    <test name="gene:syntenyMC" min="1" max="400">
+    </test>
+
+    <test name="alignment:DoTSAssemblies" min="1" max="400">
+    </test>
+
+    <test name="SNP:3kChip" min="1" max="400">
+    </test>
+
+    <test name="domain:KhanMassSpecPeptides" min="1" max="400">
+    </test>
+
+    <test name="domain:LasonderMassSpecPeptides" min="1" max="400">
+    </test>
+
+    <test name="domain:LiverStageMassSpecPeptides" min="1" max="400">
+    </test>
+
+    <test name="Microsatellite:sts" min="1" max="400">
+    </test>
+
+    <test name="mapp:promotersForward" min="1" max="400">
+    </test>
+
+    <test name="mapp:promotersReverse" min="1" max="400">
+    </test>
+
+    <test name="alignment:ORF" min="1" max="400">
+    </test>
+
+    <test name="gene:syntenyMC:attribute:Ortholog" min="1" max="400">
+    </test>
+
+    <test name="gene:syntenyMC:bulksubfeatures" min="1" max="400">
+    </test>
+
+    <test name="mapp:promotersForward:bulksubfeatures" min="1" max="400">
+    </test>
+
+    <test name="mapp:promotersReverse:bulksubfeatures" min="1" max="400">
+    </test>
+
+    <test name="alignment:DoTSAssemblies:bulksubfeatures" min="1" max="400">
+    </test>
+
+</gbrowseSanity>
