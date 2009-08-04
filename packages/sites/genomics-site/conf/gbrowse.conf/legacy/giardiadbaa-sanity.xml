@@ -1,0 +1,57 @@
+<gbrowseSanity>
+  <defaultParamValue name="srcfeature_id" value="$$aa_seq_id_cgd6_690$$"/>
+  <defaultParamValue name="base_start" value="1"/>
+  <defaultParamValue name="rend" value="1000"/>
+  <defaultParamValue name="dlm" value=","/>
+
+  <sqlValue name="aa_seq_id_cgd6_690">
+    <sql>
+  SELECT AA_SEQUENCE_ID 
+  FROM   DOTS.GENEFEATURE gf, 
+         DOTS.TRANSCRIPT t, 
+         DOTS.TRANSLATEDAAFEATURE taf
+  WHERE gf.source_id = 'cgd6_690'
+        AND t.parent_id = gf.na_feature_id
+        AND taf.na_feature_id = t.na_feature_id  
+    </sql> 
+  </sqlValue>
+  
+  <test name="get_feature_by_name" min="1" max="50">
+    <param name="name" value="cgd6_690"/>
+  </test>
+  
+  <test name="new:Segment" min="1" max="50">
+    <param name="name" value="cgd6_690"/>
+  </test>
+  
+  <test name="get_sequence" min="1" max="50">
+  </test>
+  
+  <test name="domain:TMHMM" min="1" max="50">
+  </test>
+  
+  <test name="domain:interpro" min="1" max="50">
+  </test>
+  
+  <test name="domain:SignalP" min="1" max="50">
+  </test>
+  
+  <test name="domain:MassSpecPeptides" min="1" max="50">
+  </test>
+  
+  <test name="match:BLASTP" min="1" max="50">
+  </test>
+  
+  <test name="domain:TMHMM:subfeatures" min="1" max="50">
+    <param name="parent_id" parentFeatureTest="domain:TMHMM"/>
+  </test>
+  
+  <test name="match:BLASTP:subfeatures" min="1" max="50">
+    <param name="parent_id" parentFeatureTest="match:BLASTP"/>
+  </test>
+  
+  <test name="domain:interpro:subfeatures" min="1" max="50">
+    <param name="parent_id" parentFeatureTest="domain:interpro"/>
+  </test>
+  
+</gbrowseSanity>

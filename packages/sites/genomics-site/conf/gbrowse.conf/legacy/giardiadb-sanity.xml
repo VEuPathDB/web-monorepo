@@ -1,0 +1,84 @@
+<gbrowseSanity>
+  <defaultParamValue name="srcfeature_id" value="$$na_seq_id_AAEE01000002$$"/>
+  <defaultParamValue name="base_start" value="1000"/>
+  <defaultParamValue name="rend" value="500000"/>
+  <defaultParamValue name="dlm" value=","/>
+
+  <sqlValue name="na_seq_id_AAEE01000002">
+	  <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'AAEE01000002'
+    </sql> 
+  </sqlValue>
+
+  <sqlValue name="na_feat_id_cgd6_780">
+	  <sql>
+      select na_feature_id from dots.genefeature where source_id = 'cgd6_780'
+    </sql> 
+  </sqlValue>
+
+  <test name="get_feature_by_name" min="1" max="2000">
+    <param name="name" value="AAEE01000002"/>
+  </test>
+
+  <test name="new:Segment" min="1" max="2000">
+    <param name="name" value="AAEE01000002"/>
+  </test>
+  
+  <test name="get_sequence" min="1" max="2000">
+  </test>
+  <test name="gene:Genbank" min="1" max="2000">
+  </test>
+  
+  <test name="annotation:density" min="1" max="2000">
+  </test>
+  
+  <test name="alignment:ORF" min="1" max="2000">
+  </test>
+  
+  <test name="alignment:BLAT" min="1" max="2000">
+  </test>
+  
+  <test name="clusteralignment:EstCluster" min="1" max="2000">
+  </test>
+  
+  <test name="domain:MassSpecPeptides" min="1" max="2000">
+  </test>
+  
+  <test name="match:WU_BLASTN" min="1" max="2000">
+  </test>
+
+  <test name="chr6:WU_BLASTN" min="1" max="2000">
+  </test>
+
+  <test name="synteny:seq" min="1" max="2000">
+  </test>
+
+  <test name="syntenygene:Genbank" min="1" max="2000">
+  </test>
+
+  <test name="syntenygene:Chr6" min="1" max="2000">
+  </test>
+
+  <test name="match:WU_BLASTX" min="1" max="2000">
+  </test>
+
+  <test name="gene:Genbank:bulksubfeatures" min="1" max="2000">
+  </test>
+
+  <test name="annotation:density:subfeatures" min="1" max="2000">
+    <param name="parent_id" parentFeatureTest="annotation:density"/>
+  </test>
+
+  <test name="match:WU_BLASTX:subfeatures" min="1" max="2000">
+    <param name="parent_id" parentFeatureTest="match:WU_BLASTX"/>
+  </test>
+
+  <test name="match:WU_BLASTN:subfeatures" min="1" max="2000">
+    <param name="parent_id" parentFeatureTest="match:WU_BLASTN"/>
+  </test>
+
+  <test name="chr6:WU_BLASTN:subfeatures" min="1" max="2000">
+    <param name="parent_id" parentFeatureTest="chr6:WU_BLASTN"/>
+  </test>
+
+</gbrowseSanity>
