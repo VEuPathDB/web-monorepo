@@ -106,18 +106,16 @@
 
 <c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass' && fn:length(transformQuestions) > 0}">
 <td>
-	<select id="transforms">
-		<%--	<option value="--">--Choose a Transform to apply--</option> --%>
-		<c:forEach items="${transformQuestions}" var="t">
-			<jsp:setProperty name="t" property="inputType" value="${recClass}" />
-			<c:set var="tparams" value="" />
-			<c:forEach items="${t.transformParams}" var="tp">
-				<c:set var="tparams" value="${tparams}&${tp.name}=${prevStepNum}" />
-			</c:forEach>
-			<option value="showQuestion.do?questionFullName=${t.fullName}${tparams}&partial=true">${t.displayName}</option>
-		</c:forEach>
-	</select>
-	<br><br><input id="continue_button_transforms" type="button" value="Continue..."/>
+  <ul class="top_nav">
+    <c:forEach items="${transformQuestions}" var="t">
+      <jsp:setProperty name="t" property="inputType" value="${recClass}" />
+      <c:set var="tparams" value="" />
+      <c:forEach items="${t.transformParams}" var="tp">
+	<c:set var="tparams" value="${tparams}&${tp.name}=${prevStepNum}" />
+      </c:forEach>
+      <li style="width:auto;"><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${t.fullName}${tparams}&partial=true')">${t.displayName}</a></li>
+    </c:forEach>
+  </ul>
 </td>
 
 <td></td>
