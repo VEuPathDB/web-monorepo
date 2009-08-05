@@ -7,13 +7,7 @@
 
  <c:choose>
 
-<!--
-    <c:when test="${projectId == 'CryptoDB' || projectId == 'ToxoDB' || projectId == 'TriTrypDB'}">
-	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesBySageTagEvidence" /> 
-    </c:when>
--->
-
-    <c:when test="${projectId == 'GiardiaDB' || projectId == 'ToxoDB'}">
+    <c:when test="${projectId == 'GiardiaDB' || projectId == 'PlasmoDB' || projectId == 'ToxoDB'}">
 	<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesBySageTagEvidence.jsp"/>
     </c:when>
 

@@ -9,7 +9,7 @@
     <c:when test="${projectId == 'GiardiaDB'}">
 	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GiardiaGenesByDifferentialExpression" /> 
     </c:when>
-  <c:when test="${projectId == 'ToxoDB'}">
+  <c:when test="${projectId == 'ToxoDB' || projectId == 'PlasmoDB'}">
 	<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesBySageTagEvidence.jsp"/>
     </c:when>
  <c:when test="${projectId == 'TriTrypDB'}">
