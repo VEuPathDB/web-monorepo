@@ -10,7 +10,7 @@
 	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GiardiaGenesByDifferentialExpression" /> 
     </c:when>
   <c:when test="${projectId == 'EuPathDB' || projectId == 'ToxoDB' || projectId == 'PlasmoDB'}">
-	<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesBySageTagEvidence.jsp"/>
+	<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesByMicroarrayEvidence.jsp"/>
     </c:when>
  <c:when test="${projectId == 'TriTrypDB'}">
 	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByPromastigoteTimeSeries" /> 
