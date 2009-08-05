@@ -879,7 +879,7 @@ div#menu ul ul ul li:hover ul {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   width: 8em;
+   width: 10em;
    padding: 2px;
    color: black;    /*   #5b5b5b;  */
    background-color: white;  /*  #eadfd9; */
