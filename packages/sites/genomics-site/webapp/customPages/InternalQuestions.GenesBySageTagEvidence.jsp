@@ -13,7 +13,7 @@
     </c:when>
 -->
 
-    <c:when test="${projectId == 'GiardiaDB'}">
+    <c:when test="${projectId == 'GiardiaDB' || projectId == 'ToxoDB'}">
 	<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesBySageTagEvidence.jsp"/>
     </c:when>
 
