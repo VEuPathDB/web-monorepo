@@ -7,7 +7,7 @@
 
  <c:choose>
 
-    <c:when test="${projectId == 'GiardiaDB' || projectId == 'PlasmoDB' || projectId == 'ToxoDB'}">
+    <c:when test="${ projectId == 'EuPathDB' || projectId == 'GiardiaDB' || projectId == 'PlasmoDB' || projectId == 'ToxoDB'}">
 	<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesBySageTagEvidence.jsp"/>
     </c:when>
 
