@@ -58,7 +58,7 @@
 
 
 <div id="quick-search" session-id="${sessionId}">
-         <table width="450" border="0" cellpadding="3">
+         <table width="460" border="0" cellpadding="3">
            <tr>
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
