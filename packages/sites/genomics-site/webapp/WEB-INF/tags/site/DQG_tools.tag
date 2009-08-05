@@ -48,7 +48,7 @@
 		</li>
 
 <c:if test="${sName != 'EuPath'}">
-		<li><a href="/cgi-bin/gbrowse/${modelName}/"><strong>GBrowse</strong></a>
+		<li><a href="/cgi-bin/gbrowse/${modelName}/"><strong>Genome Browse</strong></a>
 			<ul><li  style="border:0">View Sequences and Features in the GMOD Genome Browser</li></ul>
 		</li>
 </c:if>
@@ -71,7 +71,7 @@
                 </li>
 </c:when>
 <c:when test="${sName == 'Toxo'}">
-		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary GBrowse</strong></a>
+		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary Genome Browse</strong></a>
                         <ul><li  style="border:0">Access additional info like probeset data and <i>Toxoplasma</i> array info</li></ul>
                 </li>
           
