@@ -13,12 +13,27 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="organism" value="${attrs['organism'].value}"/>
+
+<c:set var="start" value="${attrs['start_min_text'].value}"/>
+<c:set var="end" value="${attrs['end_max_text'].value}"/> 
+
+<c:set var="recordType" value="${wdkRecord.recordClass.type}"/> 
+
+<c:choose>
+<c:when test="${wdkRecord.attributes['organism'].value eq null || !wdkRecord.validRecord}">
+<site:header title="GiardiaDB: gene ${id} (${prd})"
+             summary="${overview.value} (${length.value} bp)"
+             divisionName="Gene Record"
+             division="queries_tools" />
+  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+</c:when>
+<c:otherwise>
 
 <c:set var="extdbname" value="${attrs['external_db_name'].value}" />
 <c:set var="contig" value="${attrs['sequence_id'].value}" />
 <c:set var="context_start_range" value="${attrs['context_start'].value}" />
 <c:set var="context_end_range" value="${attrs['context_end'].value}" />
-<c:set var="organism" value="${attrs['organism'].value}"/>
 <c:set var="binomial" value="${attrs['genus_species'].value}"/>
 <c:set var="so_term_name" value="${attrs['so_term_name'].value}"/>
 <c:set var="prd" value="${attrs['product'].value}"/>
@@ -27,40 +42,13 @@
 <c:set var="tree_source_id" value="${attrs['phyTreeId'].value}"/>
 <c:set var="tree_applet" value="${attrs['tree_applet_link'].value}"/>
 <%-- display page header with recordClass type in banner --%>
-<c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
-
-<c:set var="start" value="${attrs['start_min_text'].value}"/>
-<c:set var="end" value="${attrs['end_max_text'].value}"/> 
 
 <c:set var="async" value="${param.sync != '1'}"/>
 
-<c:set var='bannerText'>
-      <c:if test="${wdkRecord.attributes['organism'].value ne 'null'}">
-          <font face="Arial,Helvetica" size="+3">
-          <b>${wdkRecord.attributes['organism'].value}</b>
-          </font> 
-          <font size="+3" face="Arial,Helvetica">
-          <b>${wdkRecord.primaryKey}</b>
-          </font><br>
-      </c:if>
-      
-      <font face="Arial,Helvetica">${recordType} Record</font>
-</c:set>
-
 <site:header title="GiardiaDB: gene ${id} (${prd})"
-             banner="${id}<br>${prd}"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
              division="queries_tools" />
-
-<c:choose>
-<c:when test="${wdkRecord.attributes['organism'].value eq 'null'}">
-  <br>
-  ${wdkRecord.primaryKey} was not found.
-  <br>
-  <hr>
-</c:when>
-<c:otherwise>
 
 <br>
 <%--#############################################################--%>
@@ -157,9 +145,11 @@ G.lamblia_contigsGB
         <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
     </c:set>
 
-    <site:panel 
+    <site:toggle 
         displayName="Genomic Context"
         content="${genomeContextImg}"
+        isOpen="true"
+        name="Genomic Context"
         attribution="${attribution}"/>
     <br>
 </c:if>
@@ -224,48 +214,6 @@ G.lamblia_contigsGB
 </c:if>
 <br>
 
-<%-- Microarray Data ------------------------------------------------------%>
-
-  <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
-  <c:set var="secName" value="Stress::Ver1"/>
-  <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=giardia&fmt=png&id=${id}&vp=hist"/>
-
-  <c:set var="expressionContent">
-    <table>
-      <tr>
-        <td rowspan="2">
-              <img src="${imgSrc}">
-        </td>
-      </tr>
-      <tr>
-        <td><image src="<c:url value="/images/spacer.gif"/>" height="150" width="1"></td>
-        <td>
-          <div class="small">
-          <b>Stress Response in Giardia lamblia Trophozoites</b>:  Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample  (ie. Control=Control/Control,...).  Cases where the Control bar is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.
-          </div>
-        </td>
-      </tr>
-    </table>
-  </c:set>
-
-  <c:if test="${attrs['graph_stress'].value == 0}">
-    < c:set var="expressionContent" value="none"/>
-  </c:if>
-
-<site:panel 
-    displayName="Expression Microarray"
-    content="${expressionContent}"
-    attribution=""/>
-<br>
-
-<%-- SAGE tags ------------------------------------------------------%>
-
-<site:wdkTable tblName="SageTags" isOpen="true"
-               attribution="GiardiaSageTagArrayDesign,GiardiaSageTagFreqs"/>
-
-
-
 <%-- ORTHOMCL ------------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
@@ -275,6 +223,124 @@ G.lamblia_contigsGB
     attribution="OrthoMCLV2"/>
 
 </c:if>
+<br>
+
+<%-- Microarray Data ------------------------------------------------------%>
+
+  <site:pageDivider name="Expression"/>
+
+
+  <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
+
+
+  <c:set var="secName1" value="Stress::Ver1"/>
+  <c:set var="secName2" value="StressPercentile::Ver1"/>
+
+  <c:set var="imgSrc1" value="${plotBaseUrl}?type=${secName1}&project_id=${projectId}&model=giardia&fmt=png&id=${id}"/>
+  <c:set var="imgSrc2" value="${plotBaseUrl}?type=${secName2}&project_id=${projectId}&model=giardia&fmt=png&id=${id}"/>
+
+  <c:set var="expressionContent">
+    <table>
+      <tr>
+        <td class="centered">
+              <img src="${imgSrc1}">
+        </td>
+
+        <td class="centered">
+          <div class="small">
+          <b>Stress Response in Giardia lamblia Trophozoites</b>:  Samples were incubated for 30min with varying concentrations of DTT.  Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample  (ie. Control=Control/Control,...).  Cases where the Control bar is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.
+          </div>
+        </td>
+
+        <td class="centered"><image src="<c:url value="/images/spacer.gif"/>" height="150" width="150"></td>
+
+      </tr>
+
+      <tr>
+        <td class="centered">
+              <img src="${imgSrc2}">
+        </td>
+
+
+        <td class="centered">
+          <div class="small">
+          <b>Percentiles:  </b>  The mean raw expression value was computed for each sample group and for every gene and the percentile indicates the level of expression relative to all other genes in that group.   Green bars represent the reference channel (control).
+          </div>
+        </td>
+
+        <td class="centered"><image src="<c:url value="/images/spacer.gif"/>" height="150" width="150"></td>
+
+      </tr>
+     
+    </table>
+  </c:set>
+
+  <c:if test="${attrs['graph_stress'].value == 0}">
+    < c:set var="expressionContent" value="none"/>
+  </c:if>
+
+<site:toggle
+    displayName="Stress response in Trophozoites - Varying DTT Concentrations and Temperature"
+    content="${expressionContent}"
+    name="StressResponse1"
+    isOpen="true"
+    attribution="GL_Spycher_metaData"/>
+
+
+
+<%-------------------------------------------------------------------------------------%>
+
+
+  <c:set var="secName1" value="Stress::Ver2"/>
+  <c:set var="secName2" value="StressPercentile::Ver2"/>
+
+  <c:set var="imgSrc1" value="${plotBaseUrl}?type=${secName1}&project_id=${projectId}&model=giardia&fmt=png&id=${id}"/>
+  <c:set var="imgSrc2" value="${plotBaseUrl}?type=${secName2}&project_id=${projectId}&model=giardia&fmt=png&id=${id}"/>
+
+  <c:set var="expressionContent">
+    <table>
+      <tr>
+        <td class="centered">
+              <img src="${imgSrc1}">
+        </td>
+        <td class="centered">
+          <div class="small">
+          <b>Stress Response in Giardia lamblia Trophozoites</b>:  Samples were incubated 30min, 60min, 120min at 14.2mM DTT.  Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample  (ie. Control=Control/Control,...).  Cases where the Control bar is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.
+          </div>
+        </td>
+        <td class="centered"><image src="<c:url value="/images/spacer.gif"/>" height="150" width="150"></td>
+      </tr>
+
+      <tr>
+        <td class="centered">
+              <img src="${imgSrc2}">
+        </td>
+        <td class="centered">
+          <div class="small">
+          <b>Percentiles:  </b>  The mean raw expression value was computed for each sample group and for every gene and the percentile indicates the level of expression relative to all other genes in that group.   Green bars represent the reference channel (control).
+          </div>
+        </td>
+        <td class="centered"><image src="<c:url value="/images/spacer.gif"/>" height="150" width="150"></td>
+      </tr>
+    </table>
+  </c:set>
+
+  <c:if test="${attrs['graph_stress_ts'].value == 0}">
+    < c:set var="expressionContent" value="none"/>
+  </c:if>
+
+<site:toggle
+    displayName="Stress response in Trophozoites - Varying Incubation Time"
+    content="${expressionContent}"
+    name="StressResponse2"
+    isOpen="true"
+    attribution="GL_Spycher_metaData_2"/>
+
+
+<%-- SAGE tags ------------------------------------------------------%>
+
+<site:wdkTable tblName="SageTags" isOpen="true"
+               attribution="GiardiaSageTagArrayDesign,GiardiaSageTagFreqs"/>
 
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
@@ -308,9 +374,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
         </center></noindex>
     </c:set>
 
-    <site:panel 
+    <site:toggle 
         displayName="Predicted Protein Features"
         content="${proteinFeaturesImg}"
+        isOpen="true"
+        name="Protein Context"
         attribution="${attribution}"/>
       <!--${proteinFeaturesUrl} -->
    <br>
