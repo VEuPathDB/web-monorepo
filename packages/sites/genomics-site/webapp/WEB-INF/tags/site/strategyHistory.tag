@@ -69,6 +69,8 @@
     <a id="tab_cmplt" onclick="displayHist('cmplt')" href="javascript:void(0)">All My Queries</a>
   </li>
   </ul>
+
+
 <%-- display link to old site if user is logged in (temp) --%>
 <c:if test="${!wdkUser.guest}">
 <c:set var="projectId" value="${model.projectId}" />
@@ -83,16 +85,11 @@
     <c:when test="${projectId == 'TriTrypDB'}">http://old.tritrypdb.org</c:when>
   </c:choose>
 </c:set>
-<div style="clear:both;">
-<p>If you want to access your old query histories, please go to our previous 
-site at <a href="${previousSite}">${previousSite}</a>.</p>
-<br />
-<p>We strongly suggest you to re-run your old queries on our current site, in 
-order to take the advantage of the strategy system.</p>
-<hr />
-</div>
-</c:if>
-<%-- end display link to old site --%>
+
+<site:qhWarning prevSite="${previousSite}" />
+</c:if>  <%-- end display link to old site --%>
+
+
 <table class="history_controls clear_all">
    <tr>
       <td>Select:&nbsp;<a class="check_toggle" onclick="selectAllHist()" href="javascript:void(0)">All</a>&nbsp|&nbsp;
@@ -237,15 +234,9 @@ order to take the advantage of the strategy system.</p>
 </c:choose> 
 <!-- end of deciding strategy emptiness -->
 
-<c:if test="${!wdkUser.guest}">
-<div>
-<hr />
-<p>If you want to access your old query histories, please go to our previous 
-site at <a href="${previousSite}">${previousSite}</a>.</p>
-<br />
-<p>We strongly suggest you to re-run your old queries on our current site, in 
-order to take the advantage of the strategy system.</p>
-</div>
 
+<c:if test="${!wdkUser.guest}">
+	<hr>
+	<site:qhWarning prevSite="${previousSite}"/>
 </c:if> <%-- end of test & display urls to old site --%>
 
