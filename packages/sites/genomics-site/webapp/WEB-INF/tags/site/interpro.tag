@@ -5,9 +5,7 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
-
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
@@ -106,7 +104,6 @@
 
 		   <c:when test="${pNam eq 'domain_database'}">
 	          <input type="hidden" name="myProp(${pNam})" id="domain_database_list" value="${qP.default}" />
-	          <script type="text/javascript">loadSelectedData();</script>
 	       </c:when>
 	
            <c:otherwise>
@@ -121,7 +118,7 @@
 
 					<c:when test="${pNam eq 'domain_database'}">
 				      <tr><td align="right"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td><td>
-				      <select name="myMultiProp(domain_database)" id="domain_database_list" onChange="loadSelectedData();">
+				      <select name="myMultiProp(domain_database)" id="domain_database_list">
 				          <c:forEach items="${qP.vocab}" var="flatVoc">
 				              <option value="${flatVoc}">${flatVoc}</option>
 				          </c:forEach>
@@ -135,7 +132,7 @@
 				    </c:when>
 				    <c:when test="${pNam eq 'domain_accession'}">
 				          <tr><td align="right"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td><td>
-				          <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box"/>
+				          <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box typeAhead" recordClass="${qP.recordClassRef}" dataType="${qP.dataTypeRef}" isParam="${qP.isDataTypeParam}" />
 				          </td>
 				    </c:when>
 
@@ -262,7 +259,7 @@
 <%-- the js has to be included here in order to appear in the step form --%>
 <script type="text/javascript" src='<c:url value="/assets/js/wdkQuestion.js"/>'></script>
 <script src="js/lib/jquery.autocomplete.js" type="text/javascript"></script>
-<script src="js/AjaxInterpro.js" type="text/javascript"></script>
+<script src="js/typeAhead.js" type="text/javascript"></script>
 
 <div class="params">
 <c:if test="${showParams == null}">
@@ -339,7 +336,6 @@
 
 		   <c:when test="${pNam eq 'domain_database'}">
 	          <input type="hidden" name="myProp(${pNam})" id="domain_database_list" value="${qP.default}" />
-	          <script type="text/javascript">loadSelectedData();</script>
 	       </c:when>
 	
            <c:otherwise>
@@ -355,7 +351,7 @@
 
 					<c:when test="${pNam eq 'domain_database'}">
 				      <tr><td align="right"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td><td>
-				      <select name="myMultiProp(domain_database)" id="domain_database_list" onChange="loadSelectedData();">
+				      <select name="myMultiProp(domain_database)" id="domain_database_list">
 				          <c:forEach items="${qP.vocab}" var="flatVoc">
 				              <option value="${flatVoc}">${flatVoc}</option>
 				          </c:forEach>
@@ -370,7 +366,7 @@
 				    </c:when>
 				    <c:when test="${pNam eq 'domain_accession'}">
 				          <tr><td align="right"><b id="help_${pNam}" class="help_link" href="#" rel="htmltooltip"><jsp:getProperty name="qP" property="prompt"/></b></td><td>
-				          <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box"/>
+				          <input type="text" id="searchBox" name="myProp(${pNam})" size="50" class="form_box typeAhead" recordClass="${qP.recordClassRef}" dataType="${qP.dataTypeRef}" isParam="${qP.isDataTypeParam}" />
 				          </td>
 				    </c:when>
 
