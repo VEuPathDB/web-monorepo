@@ -2,27 +2,38 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
+<%@ taglib prefix="synd" uri="http://crashingdaily.com/taglib/syndication" %>
+
 <%-- This variable gets used to limit the number of items that appear in the sidebar menus.  Change the value here to change the length of tehse menus --%>
 <c:set var="SidebarLimit" value="7" />
 
 <fmt:setLocale value="en-US"/>
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
+
+<c:if test="${project == 'EuPathDB'}">
+<c:catch var="e">
+	<api:configurations var="config" configfile="WEB-INF/wdk-model/config/apifed-config.xml" />
+</c:catch>
+<c:if test="${e!=null}">
+    <font size="-1" color="#CC0033">News not available for the component Sites</font>
+</c:if>
+</c:if>
+
 <c:set var="xqSetMap" value="${wdkModel.xmlQuestionSetsMap}"/>
 <c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>
 <c:set var="xqMap" value="${xqSet.questionsMap}"/>
+
 <c:set var="newsQuestion" value="${xqMap['News']}"/>
-
-
+<c:set var="tutQuestion" value="${xqMap['Tutorials']}"/>
+<c:set var="extlQuestion" value="${xqMap['ExternalLinks']}"/>
 
 <c:set var="newsAnswer" value="${newsQuestion.fullAnswer}"/>
-<c:set var="tutQuestion" value="${xqMap['Tutorials']}"/>
 <c:set var="tutAnswer" value="${tutQuestion.fullAnswer}"/>
-<c:set var="extlQuestion" value="${xqMap['ExternalLinks']}"/>
 <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
-<c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
- 
 
+<c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
 
 
 <div id="leftcolumn">
@@ -41,6 +52,55 @@
           No news now, please check back later.<br>
         </c:when>
         <c:otherwise>
+
+
+<c:if test="${project == 'EuPathDB'}">
+
+	<c:set var="rss_Url">
+		http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
+	</c:set>
+	<c:forEach items="${config}" var="s">
+  		<c:set var="rss_Url">
+  			${rss_Url} 
+  			${fn:substringBefore(s.value,'services')}showXmlDataContent.do?name=XmlQuestions.NewsRss
+  		</c:set>
+	</c:forEach>
+
+<%-- 
+ synd:feed returns a SyndFeed object which has a Bean interface for 
+iteration and getting SyndEntry objects and their attributes. 
+See the Rome API for SyndEntry attributes you can get.
+https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summary.html
+--%>
+
+
+	<c:catch var="feedex">
+ 	<synd:feed feed="allFeeds" timeout="2000">
+     		${rss_Url}
+	</synd:feed>
+	<synd:sort feed="allFeeds" direction="desc" value="date"/>
+
+	<ul>
+		<c:forEach items="${allFeeds.entries}" var="e" begin="0" end="6" >
+		<fmt:formatDate var="fdate" value="${e.publishedDate}" pattern="d MMMM yyyy"/>
+		<c:if test="${fdate != null && e.author != null}">
+			<li id="n-${shorttag}">
+				<b>${fdate}</b>
+				<a href='${e.link}'>${e.title}</a> 
+			</li>
+   		</c:if> 
+		</c:forEach>
+	</ul>
+	</c:catch>
+
+	<c:if test="${feedex != null}">
+		 <i>News temporarily unavailable</i>
+	</c:if>
+
+</c:if>
+
+<c:if test="${project != 'EuPathDB'}">
+
           <c:set var="i" value="1"/>
           <ul>
           <c:forEach items="${newsAnswer.recordInstances}" var="record">
@@ -66,13 +126,11 @@
           </c:if>
           <c:set var="i" value="${i+1}"/>
           </c:forEach>
-         <%-- <li style='list-style:circle;'>
-            <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>"
-               class="blue">All ${project} News</a>
-          </li>--%>
           </ul>
 
-		  <a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News</a>
+	  <a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News</a>
+
+</c:if>
 
         </c:otherwise>
       </c:choose>
@@ -137,11 +195,13 @@
                         No tutorials.
                       </c:when>
                       <c:otherwise>
+<!--
 <c:if test="${project == 'TriTrypDB'}">
 The TriTrypDB tutorials will be here soon. In the meantime we provide you with 
 access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same 
 navigation and querying capabilities as in TriTrypDB.org.<br>
 </c:if>
+-->
                         <ul>
 	 <c:set var="count" value="0" />
                         <c:forEach items="${tutAnswer.recordInstances}" var="record">
