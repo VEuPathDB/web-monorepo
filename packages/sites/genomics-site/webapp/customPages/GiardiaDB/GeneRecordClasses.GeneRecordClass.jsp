@@ -349,7 +349,7 @@ G.lamblia_contigsGB
 <site:pageDivider name="Protein Features"/>
 
     <c:set var="ptracks">
-     RatnerMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP
+     RatnerMassSpecPeptides+TachezyMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP
     </c:set>
     
     <c:set var="attribution">
