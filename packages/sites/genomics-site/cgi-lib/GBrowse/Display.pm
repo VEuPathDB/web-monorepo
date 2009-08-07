@@ -228,6 +228,7 @@ sub massSpecBgColorFromExtDbName {
                 'Wastling MassSpec 2D Gel LC-MS/MS' => 'green',
                 'Wastling MassSpec MudPit Insoluble' => 'brown',
                 'Wastling MassSpec MudPit Soluble' => 'black',
+                'C. parvum mass spec data from Lorenza Putignani' => 'mediumslategreen',
                 #PlasmoDB
                 'Waters Female Gametes' => 'red',
                 'Waters Male Gametes' => 'blue',
