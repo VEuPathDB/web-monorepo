@@ -6,10 +6,7 @@
 
 
  <c:choose>
-    <c:when test="${projectId == 'GiardiaDB'}">
-	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GiardiaGenesByDifferentialExpression" /> 
-    </c:when>
-  <c:when test="${projectId == 'EuPathDB' || projectId == 'ToxoDB' || projectId == 'PlasmoDB'}">
+  <c:when test="${projectId == 'EuPathDB' || projectId == 'ToxoDB' || projectId == 'PlasmoDB'|| projectId == 'GiardiaDB' }">
 	<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesByMicroarrayEvidence.jsp"/>
     </c:when>
  <c:when test="${projectId == 'TriTrypDB'}">
