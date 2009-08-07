@@ -403,7 +403,7 @@ ${orthomcltxt}
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
     <c:set var="ptracks">
-    InterproDomains+SignalP+TMHMM+WastlingMassSpecPeptides+LoweryMassSpecPeptides+EinsteinMassSpecPeptides+FerrariMassSpecPeptides+HydropathyPlot+SecondaryStructure+BLASTP
+    InterproDomains+SignalP+TMHMM+WastlingMassSpecPeptides+LoweryMassSpecPeptides+EinsteinMassSpecPeptides+FerrariMassSpecPeptides+PutignaniMassSpecPeptides+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     
     <c:set var="attribution">
