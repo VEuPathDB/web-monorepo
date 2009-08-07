@@ -295,6 +295,13 @@ sub simpleColorFromSoTerm {
   $soterm eq 'protein_coding' ? $first : $second;
 }
 
+sub colorFromBinaryColor {
+  my ($f, $first, $second) = @_;
+  my ($binColor) = $f->get_tag_values('binaryColor');
+  $binColor == 1 ? $second : $first;
+}
+
+
 sub chipColor { 
   my $f   = shift;
   my ($a) = $f->get_tag_values('Antibody');

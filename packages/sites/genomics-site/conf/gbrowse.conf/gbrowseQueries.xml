@@ -2711,53 +2711,6 @@ WHERE  sa.dataset = 'PlasmoDB combined SNPs'
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="rnaseq:gcsampleUnique"  includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-      SELECT distinct(na_sequence_id) feature_id,
-             'rnaseq' type,
-             'gcsampleUnique' source
-       FROM  apidb.rnaseq_coverage 
-       WHERE na_sequence_id = $srcfeature_id
-         AND sample = 'GC_sample'
-         AND type = 'unique'
-         AND location <= $rend
-         AND location >= $base_start - 1
-]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:gcsampleMax10"  includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-      SELECT distinct(rc.na_sequence_id) feature_id,
-             'rnaseq' type,
-             'gcsampleMax10' source
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = 'GC_sample'
-         AND rc.type = 'max10'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1
-]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:gcsampleProvider"  includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-      SELECT distinct(rc.na_sequence_id) feature_id,
-             'rnaseq' type,
-             'gcsampleProvider' source
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = 'GC_sample'
-         AND rc.type = 'provider'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1
-]]>
-    </sql>
-  </sqlQuery>
 
   <sqlQuery name="mapp:promotersForward"  includeProjects="PlasmoDB">
      <sql>
@@ -2865,6 +2818,20 @@ WHERE  fl.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
+
+<!-- RNA seq queries. Need one / track as too much data to use filters -->
+
+  <sqlQuery name="rnaseq:gcsample"  includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+        SELECT 'gcsample_id' as feature_id,
+               'rnaseq' type,
+               'gcsample' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
 </module>
 
 <!--                       Feature.pm                         -->
@@ -4076,74 +4043,6 @@ ORDER BY var.strain
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq:gcsampleUnique:bulksubfeatures"  includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-      SELECT rc.location feature_id, 
-             'rnaseq' type, 
-             'gcsampleUnique' source, 
-             '' name, 
-             coverage score, 
-             rc.na_sequence_id parent_id, 
-             rc.location startm, 
-             rc.location end, 
-             1 strand,
-             '' atts
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = 'GC_sample'
-         AND rc.type = 'unique'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:gcsampleMax10:bulksubfeatures"  includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-      SELECT rc.location feature_id, 
-             'rnaseq' type, 
-             'gcsampleMax10' source, 
-             '' name, 
-             coverage score, 
-             rc.na_sequence_id parent_id, 
-             rc.location startm, 
-             rc.location end, 
-             1 strand,
-             '' atts
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = 'GC_sample'
-         AND rc.type = 'max10'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:gcsampleProvider:bulksubfeatures"  includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-      SELECT rc.location feature_id, 
-             'rnaseq' type, 
-             'gcsampleProvider' source, 
-             '' name, 
-             coverage score, 
-             rc.na_sequence_id parent_id, 
-             rc.location startm, 
-             rc.location end, 
-             1 strand,
-             '' atts
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = 'GC_sample'
-         AND rc.type = 'provider'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1
-]]>
-    </sql>
-  </sqlQuery>
 
   <sqlQuery name="mapp:promotersForward:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
@@ -4317,6 +4216,32 @@ WHERE fl.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
+
+<!-- RNA seq bulksubfeature queries. Need one / track as too much data to use filters -->
+
+    <sqlQuery name="rnaseq:gcsample:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'gcsample' source, 
+             '' name, 
+             rc.coverage score, 
+             'gcsample_id' parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             '+1' strand,
+             'binaryColor='||rc.multiple atts
+       FROM  apidb.rnaseq_coveragem rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'max14'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
 </module>
 </DAS>
 
