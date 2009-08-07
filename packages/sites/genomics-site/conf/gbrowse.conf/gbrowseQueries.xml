@@ -4232,7 +4232,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
              rc.location end, 
              '+1' strand,
              'binaryColor='||rc.multiple atts
-       FROM  apidb.rnaseq_coveragem rc
+       FROM  apidb.rnaseq_coverage rc
        WHERE rc.na_sequence_id = $srcfeature_id
          AND rc.sample = 'GC_sample'
          AND rc.type = 'max14'
