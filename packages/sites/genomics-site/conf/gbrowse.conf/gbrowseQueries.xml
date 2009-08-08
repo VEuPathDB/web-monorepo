@@ -2843,6 +2843,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
+
   <sqlQuery name="rnaseq:cn_pf8h"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
@@ -2900,6 +2901,83 @@ WHERE  fl.na_sequence_id = $srcfeature_id
         SELECT 'rnaseq_id' as feature_id,
                'rnaseq' type,
                'cn_pf48h' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseqcn_pf0h:density"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseqcn_pf0h' type,
+               'density' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseqcn_pf8h:density"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseqcn_pf8h' type,
+               'density' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseqcn_pf16h:density"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseqcn_pf16h' type,
+               'density' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseqcn_pf24h:density"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseqcn_pf24h' type,
+               'density' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseqcn_pf32h:density"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseqcn_pf32h' type,
+               'density' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseqcn_pf40h:density"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseqcn_pf40h' type,
+               'density' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseqcn_pf48h:density"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseqcn_pf48h' type,
+               'density' source
         FROM   dual
        ]]>
     </sql>
@@ -4474,6 +4552,167 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND rc.type = 'p'
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseqcn_pf0h:density:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseqcn_pf0h' type, 
+             'density' source, 
+             '' name, 
+             max(coverage) score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 20 startm, 
+             (interval + 1) * 20 end 
+       FROM (select ceil(rc.location / 20) interval, rc.coverage
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '0h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseqcn_pf8h:density:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseqcn_pf8h' type, 
+             'density' source, 
+             '' name, 
+             max(coverage) score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 20 startm, 
+             (interval + 1) * 20 end
+       FROM (select ceil(rc.location / 20) interval, rc.coverage
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '8h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseqcn_pf16h:density:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseqcn_pf16h' type, 
+             'density' source, 
+             '' name, 
+             max(coverage) score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 20 startm, 
+             (interval + 1) * 20 end
+       FROM (select ceil(rc.location / 20) interval, rc.coverage
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '16h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseqcn_pf24h:density:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseqcn_pf24h' type, 
+             'density' source, 
+             '' name, 
+             max(coverage) score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 20 startm, 
+             (interval + 1) * 20 end
+       FROM (select ceil(rc.location / 20) interval, rc.coverage
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '24h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseqcn_pf32h:density:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseqcn_pf32h' type, 
+             'density' source, 
+             '' name, 
+             max(coverage) score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 20 startm, 
+             (interval + 1) * 20 end
+       FROM (select ceil(rc.location / 20) interval, rc.coverage
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '32h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseqcn_pf40h:density:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseqcn_pf40h' type, 
+             'density' source, 
+             '' name, 
+             max(coverage) score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 20 startm, 
+             (interval + 1) * 20 end
+       FROM (select ceil(rc.location / 20) interval, rc.coverage
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '40h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseqcn_pf48h:density:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseqcn_pf48h' type, 
+             'density' source, 
+             '' name, 
+             max(coverage) score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 20 startm, 
+             (interval + 1) * 20 end
+       FROM (select ceil(rc.location / 20) interval, rc.coverage
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '48h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval
 ]]>
     </sql>
   </sqlQuery>
