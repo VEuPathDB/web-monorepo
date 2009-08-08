@@ -2832,6 +2832,80 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="rnaseq:cn_pf0h"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_id' as feature_id,
+               'rnaseq' type,
+               'cn_pf0h' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseq:cn_pf8h"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_id' as feature_id,
+               'rnaseq' type,
+               'cn_pf8h' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseq:cn_pf16h"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_id' as feature_id,
+               'rnaseq' type,
+               'cn_pf16h' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+  <sqlQuery name="rnaseq:cn_pf24h"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_id' as feature_id,
+               'rnaseq' type,
+               'cn_pf24h' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+  <sqlQuery name="rnaseq:cn_pf32h"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_id' as feature_id,
+               'rnaseq' type,
+               'cn_pf32h' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+  <sqlQuery name="rnaseq:cn_pf40h"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_id' as feature_id,
+               'rnaseq' type,
+               'cn_pf40h' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+  <sqlQuery name="rnaseq:cn_pf48h"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_id' as feature_id,
+               'rnaseq' type,
+               'cn_pf48h' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+
 </module>
 
 <!--                       Feature.pm                         -->
@@ -4236,6 +4310,168 @@ WHERE fl.na_sequence_id = $srcfeature_id
        WHERE rc.na_sequence_id = $srcfeature_id
          AND rc.sample = 'GC_sample'
          AND rc.type = 'max14'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq:cn_pf0h:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'cn_pf0h' source, 
+             '' name, 
+             rc.coverage score, 
+             'rnaseq_id' parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             '+1' strand,
+             'binaryColor='||rc.multiple atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '0h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq:cn_pf8h:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'cn_pf8h' source, 
+             '' name, 
+             rc.coverage score, 
+             'rnaseq_id' parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             '+1' strand,
+             'binaryColor='||rc.multiple atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '8h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+
+    <sqlQuery name="rnaseq:cn_pf16h:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'cn_pf16h' source, 
+             '' name, 
+             rc.coverage score, 
+             'rnaseq_id' parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             '+1' strand,
+             'binaryColor='||rc.multiple atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '16h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq:cn_pf24h:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'cn_pf24h' source, 
+             '' name, 
+             rc.coverage score, 
+             'rnaseq_id' parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             '+1' strand,
+             'binaryColor='||rc.multiple atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '24h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq:cn_pf32h:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'cn_pf32h' source, 
+             '' name, 
+             rc.coverage score, 
+             'rnaseq_id' parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             '+1' strand,
+             'binaryColor='||rc.multiple atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '32h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq:cn_pf40h:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'cn_pf40h' source, 
+             '' name, 
+             rc.coverage score, 
+             'rnaseq_id' parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             '+1' strand,
+             'binaryColor='||rc.multiple atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '40h'
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq:cn_pf48h:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'cn_pf48h' source, 
+             '' name, 
+             rc.coverage score, 
+             'rnaseq_id' parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             '+1' strand,
+             'binaryColor='||rc.multiple atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = '48h'
+         AND rc.type = 'p'
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1
 ]]>
