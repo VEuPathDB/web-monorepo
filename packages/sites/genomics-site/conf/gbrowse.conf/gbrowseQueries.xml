@@ -2906,6 +2906,17 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="rnaseq_gcsample:density"  includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseq_gcsample' type,
+               'density' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="rnaseqcn_pf0h:density"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
@@ -4552,6 +4563,30 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND rc.type = 'p'
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq_gcsample:density:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseq_gcsample' type, 
+             'density' source, 
+             '' name, 
+             max(coverage) score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 20 startm, 
+             (interval + 1) * 20 end,
+             'binaryColor='||multiple atts
+       FROM (select ceil(rc.location / 20) interval, rc.coverage, rc.multiple
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'max14'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval,multiple
 ]]>
     </sql>
   </sqlQuery>
