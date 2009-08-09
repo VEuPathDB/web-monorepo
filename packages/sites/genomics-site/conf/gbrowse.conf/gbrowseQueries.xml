@@ -4574,7 +4574,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
              'rnaseq_gcsample' type, 
              'density' source, 
              '' name, 
-             max(coverage) score, 
+             CASE WHEN multiple = 1 THEN min(coverage) ELSE max(coverage) END score, 
              'rnaseq_density_id' parent_id, 
              interval * 20 startm, 
              (interval + 1) * 20 end,
