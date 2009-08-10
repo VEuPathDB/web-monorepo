@@ -399,9 +399,42 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <div align="center">
       <i>The ${binomial} genome is not finished.  Please consult Plasmodium orthologs to support your conclusions.</i><br><br>
   </div>
-</c:if>
+</c:if> 
 
+<br/>
+<!-- test on plasmo phenotype user comment form -->
 
+<c:set var="externalDbName" value="${attrs['external_db_name']}"/>
+<c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
+<c:url var="phenotypeCommentsUrl" value="addPhenotype.do">
+  <c:param name="stableId" value="${id}"/>
+  <c:param name="commentTargetId" value="phenotype"/>
+  <c:param name="externalDbName" value="${externalDbName.value}" />
+  <c:param name="externalDbVersion" value="${externalDbVersion.value}" />
+  <c:param name="organism" value="${binomial}" />
+  <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
+  <c:param name="contig" value="${contig}" />
+  <c:param name="strand" value="${strand}" />
+  <c:param name="flag" value="0" /> 
+  <c:param name="bulk" value="0" /> 
+</c:url>
+<b><a href="${phenotypeCommentsUrl}">Add a phenotype comment on ${id}</a></b><br><br>
+
+<c:catch var="e">
+
+<site:wdkTable tblName="PhenotypeComments"  isOpen="true"/> 
+
+</c:catch>
+<c:if test="${e != null}">
+ <table  width="100%" cellpadding="3">
+      <tr><td><b>User Comments</b>
+     <site:embeddedError 
+         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
+         e="${e}" 
+     />
+     </td></tr>
+ </table>
+</c:if> 
 
 <!-- External Links --> 
 <%-- "This if clause is redundant as the new (re) annotation has become the official annotation"
@@ -1228,7 +1261,45 @@ trophozite and schizont stage.
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Intraerythrocytic comparison of antigenic and adherent variant clones of P. falciparum 3D7"
-               attribution="E-MEXP-128_arrayData"/>
+               attribution="E-MEXP-128_arrayData"/> 
+
+  <c:set var="secName" value="PfRNASeq::Ver1"/>
+  <c:set var="imgId" value="img${secName}"/>
+  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}"/>
+  <c:set var="isOpen" value="false"/>
+
+  <c:set var="expressionContent">
+    <table width="90%" cellpadding=3>
+      <tr>
+        <td class="centered">
+          <c:choose>
+          <c:when test="${!async}">
+              <img src="${imgSrc}">
+          </c:when>
+          <c:otherwise>
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+          </c:otherwise>
+          </c:choose>
+        </td>
+        <td class="centered">
+         <div class="small">            
+P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle. Y-axis are the log2 of the geometric mean of coverage / kb of unique sequence. 
+         </div>
+        </td>
+      </tr>
+    </table>
+  </c:set>
+
+  <c:set var="noData" value="false"/>
+  <c:if test="${attrs['graph_pf_rna_seq'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle"
+               attribution="Pfalciparum_RNA_Seq"/> 
 
   <c:set var="secName" value="Cowman::Ver1"/>
   <c:set var="imgId" value="img${secName}"/>
