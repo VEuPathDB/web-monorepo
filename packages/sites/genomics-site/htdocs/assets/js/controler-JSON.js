@@ -473,7 +473,7 @@ function deleteStrategy(stratId, fromHist){
 	var url = "deleteStrategy.do?strategy=" + stratId;
 	var stratName;
 	var message = "Are you sure you want to delete the strategy '";
-	if (fromHist) stratName = $("div#text_" + stratId).text().trim();
+	if (fromHist) stratName = $.trim($("div#text_" + stratId).text());
 	else {
 		strat = getStrategyFromBackId(stratId);
 		stratName = strat.name;

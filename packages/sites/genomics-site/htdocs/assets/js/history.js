@@ -213,7 +213,7 @@ function handleBulkStrategies(type) {
 	}
 	var stratNames = '';
 	$.each(selected, function(i, n){
-		stratNames += $("div#text_" + n).text().trim() + "\n";
+		stratNames += $.trim($("div#text_" + n).text())+ "\n";
 	});
 	if (type == 'delete'){
 		// else delete and replace page sections that have changed
