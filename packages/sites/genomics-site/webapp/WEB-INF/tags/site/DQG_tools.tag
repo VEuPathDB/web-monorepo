@@ -48,7 +48,7 @@
 		</li>
 
 <c:if test="${sName != 'EuPath'}">
-		<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(modelName)}/"><strong>Genome Browse</strong></a>
+		<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(modelName)}/"><strong>Genome Browser</strong></a>
 			<ul><li  style="border:0">View Sequences and Features in the GMOD Genome Browser</li></ul>
 		</li>
 </c:if>

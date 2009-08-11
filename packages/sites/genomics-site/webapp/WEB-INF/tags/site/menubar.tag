@@ -48,7 +48,7 @@
   	    <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
             <li><a href="/common/PubCrawler/"> PubMed and Entrez</a></li>
  	    <c:if test="${project != 'EuPathDB'}" >
-            	<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(project)}/"> Genome Browse</a></li>
+            	<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(project)}/"> Genome Browser</a></li>
  	    </c:if>
 	    <c:if test="${project == 'PlasmoDB'}" >
 		<li><a href="http://v4-4.plasmodb.org/restricted/PlasmoAPcgi.shtml">PlasmoAP</a>
@@ -65,7 +65,7 @@
             	<li><a href="http://apicyc.apidb.org/PLASMO/server.html">PlasmoCyc</a></li>
             </c:if>
  	    <c:if test="${project == 'ToxoDB'}" >
-		<li><a href="http://ancillary.toxodb.org">Ancillary Genome Browse</a></li>
+		<li><a href="http://ancillary.toxodb.org">Ancillary Genome Browser</a></li>
             	<li><a href="http://apicyc.apidb.org/TOXO/server.html">ToxoCyc</a></li>
             </c:if>
 
