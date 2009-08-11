@@ -2821,16 +2821,28 @@ WHERE  fl.na_sequence_id = $srcfeature_id
 
 <!-- RNA seq queries. Need one / track as too much data to use filters -->
 
-  <sqlQuery name="rnaseq:gcsample"  includeProjects="TriTrypDB">
+  <sqlQuery name="rnaseq:gcsample_blat"  includeProjects="TriTrypDB">
      <sql>
        <![CDATA[
         SELECT 'gcsample_id' as feature_id,
                'rnaseq' type,
-               'gcsample' source
+               'gcsample_blat' source
         FROM   dual
        ]]>
     </sql>
   </sqlQuery>
+
+  <sqlQuery name="rnaseq:gcsample_bt"  includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+        SELECT 'gcsample_id' as feature_id,
+               'rnaseq' type,
+               'gcsample_bt' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
 
   <sqlQuery name="rnaseq:cn_pf0h"  includeProjects="PlasmoDB">
      <sql>
@@ -2906,12 +2918,45 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="rnaseq_gcsample:density"  includeProjects="TriTrypDB">
+  <sqlQuery name="rnaseq_gcsample_blat:density"  includeProjects="TriTrypDB">
      <sql>
        <![CDATA[
         SELECT 'rnaseq_density_id' as feature_id,
-               'rnaseq_gcsample' type,
+               'rnaseq_gcsample_blat' type,
                'density' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseq_gcsample_bt:density"  includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseq_gcsample_bt' type,
+               'density' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseq_gcsample_blat:density100"  includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseq_gcsample_blat' type,
+               'density100' source
+        FROM   dual
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="rnaseq_gcsample_bt:density100"  includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+        SELECT 'rnaseq_density_id' as feature_id,
+               'rnaseq_gcsample_bt' type,
+               'density100' source
         FROM   dual
        ]]>
     </sql>
@@ -4382,12 +4427,12 @@ WHERE fl.na_sequence_id = $srcfeature_id
 
 <!-- RNA seq bulksubfeature queries. Need one / track as too much data to use filters -->
 
-    <sqlQuery name="rnaseq:gcsample:bulksubfeatures"  includeProjects="TriTrypDB">
+    <sqlQuery name="rnaseq:gcsample_blat:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
       SELECT rc.location feature_id, 
              'rnaseq' type, 
-             'gcsample' source, 
+             'gcsample_blat' source, 
              '' name, 
              rc.coverage score, 
              'gcsample_id' parent_id, 
@@ -4399,6 +4444,28 @@ WHERE fl.na_sequence_id = $srcfeature_id
        WHERE rc.na_sequence_id = $srcfeature_id
          AND rc.sample = 'GC_sample'
          AND rc.type = 'max14'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+]]>
+    </sql>
+  </sqlQuery>
+    <sqlQuery name="rnaseq:gcsample_bt:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT rc.location feature_id, 
+             'rnaseq' type, 
+             'gcsample_bt' source, 
+             '' name, 
+             rc.coverage score, 
+             'gcsample_id' parent_id, 
+             rc.location startm, 
+             rc.location end, 
+             '+1' strand,
+             'binaryColor='||rc.multiple atts
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'bt'
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1
 ]]>
@@ -4567,11 +4634,11 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq_gcsample:density:bulksubfeatures"  includeProjects="TriTrypDB">
+    <sqlQuery name="rnaseq_gcsample_blat:density:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
       SELECT interval feature_id, 
-             'rnaseq_gcsample' type, 
+             'rnaseq_gcsample_blat' type, 
              'density' source, 
              '' name, 
              CASE WHEN multiple = 1 THEN min(coverage) ELSE max(coverage) END score, 
@@ -4584,6 +4651,78 @@ WHERE fl.na_sequence_id = $srcfeature_id
        WHERE rc.na_sequence_id = $srcfeature_id
          AND rc.sample = 'GC_sample'
          AND rc.type = 'max14'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq_gcsample_bt:density:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseq_gcsample_bt' type, 
+             'density' source, 
+             '' name, 
+             CASE WHEN multiple = 1 THEN min(coverage) ELSE max(coverage) END score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 20 startm, 
+             (interval + 1) * 20 end,
+             'binaryColor='||multiple atts
+       FROM (select ceil(rc.location / 20) interval, rc.coverage, rc.multiple
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'bt'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq_gcsample_blat:density100:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseq_gcsample_blat' type, 
+             'density100' source, 
+             '' name, 
+             CASE WHEN multiple = 1 THEN min(coverage) ELSE max(coverage) END score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 100 startm, 
+             (interval + 1) * 100 end,
+             'binaryColor='||multiple atts
+       FROM (select ceil(rc.location / 100) interval, rc.coverage, rc.multiple
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'max14'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq_gcsample_bt:density100:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+      SELECT interval feature_id, 
+             'rnaseq_gcsample_bt' type, 
+             'density100' source, 
+             '' name, 
+             CASE WHEN multiple = 1 THEN min(coverage) ELSE max(coverage) END score, 
+             'rnaseq_density_id' parent_id, 
+             interval * 100 startm, 
+             (interval + 1) * 100 end,
+             'binaryColor='||multiple atts
+       FROM (select ceil(rc.location / 100) interval, rc.coverage, rc.multiple
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample = 'GC_sample'
+         AND rc.type = 'bt'
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
        GROUP BY interval,multiple
