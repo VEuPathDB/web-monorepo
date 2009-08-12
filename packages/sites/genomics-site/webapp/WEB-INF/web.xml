@@ -9,7 +9,7 @@
     <param-name>GUS_HOME</param-name>
     <param-value>/WEB-INF/wdk-model/</param-value>
   </context-param>
-<!-- For the EuPathDB project, the model param goes in the webapp's context xml
+<!-- For the EuPathDB-BRC project, the model param goes in the webapp's context xml
   <context-param>
     <param-name>model</param-name>
     <param-value>SomeDB</param-value>
@@ -28,7 +28,7 @@
   </listener>
 
   <servlet>
-    <servlet-name>wdkEuPathDb</servlet-name>
+    <servlet-name>wdkEuPathDbBrc</servlet-name>
     <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
     <init-param>
       <param-name>config</param-name>
@@ -37,7 +37,7 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-    <servlet-name>wdkEuPathDb</servlet-name>
+    <servlet-name>wdkEuPathDbBrc</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
 
