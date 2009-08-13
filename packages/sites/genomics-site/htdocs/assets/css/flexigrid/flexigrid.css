@@ -423,9 +423,21 @@
 	overflow: hidden;
 }	
 
+.flexigrid div.bDiv th:hover
+{
+	border-left: 1px solid;
+	border-right: 1px solid;
+}
+
 .flexigrid div.bDiv th#primary_key
 {
 	cursor: auto;
+}
+
+.flexigrid div.bDiv th#primary_key:hover
+{
+	border-left: none;
+	border-right: none;
 }
 
 div.colCopy
