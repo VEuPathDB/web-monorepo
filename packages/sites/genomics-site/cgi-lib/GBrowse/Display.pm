@@ -309,6 +309,10 @@ sub colorFromBinaryColor {
   $binColor == 1 ? $second : $first;
 }
 
+sub colorForSpliceSites {
+
+}
+
 
 sub chipColor { 
   my $f   = shift;
