@@ -310,7 +310,10 @@ sub colorFromBinaryColor {
 }
 
 sub colorForSpliceSites {
-
+  my ($f, $first, $second, $third, $fourth) = @_;
+  my $strand = $f->strand;
+  my $gm = $f->get_tag_values('genome_matches');
+  return $strand == +1 ? ($gm == 1 ? $first : $second) : ($gm == 1 ? $third : $fourth);
 }
 
 

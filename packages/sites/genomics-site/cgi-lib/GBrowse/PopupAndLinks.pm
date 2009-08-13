@@ -324,14 +324,15 @@ sub geneTitle {
 sub spliceSiteAlignTitle {
   my $f = shift;
   my $seq = $f->name;  ##currently using the name to hold sequence
-  my @data;
-  push(@data, ['Sequence:' => $f->name]);
-  push(@data, ['Location:' => $f->location->to_FTstring]);
+  my $loc = $f->location->to_FTstring;
   my ($seqNum) = $f->get_tag_values('count');
   my ($genMatches) = $f->get_tag_values('genome_matches');
+  my @data;
+  push(@data, ['Sequence:' => $seq]);
+  push(@data, ['Location:' => $loc]);
   push(@data, ['Number of Sequences:' => $seqNum]);
   push(@data, ['Genome Matches:' => $genMatches]);
-  return hover("Splice Site: $seq",\@data);
+  return hover("Splice Site: $loc",\@data);
 }
 
 sub MicrosatelliteTitle {
