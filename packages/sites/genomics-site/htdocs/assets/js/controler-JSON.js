@@ -263,7 +263,7 @@ function NewResults(f_strategyId, f_stepId, bool, pagerOffset){
 					$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedarrow");
 					init_view_step = step.back_step_Id;
 				}
-			    ResultsToGrid(data);
+			    ResultsToGrid(data, true);
 			    $("span#text_strategy_number").html(strategy.JSON.name);
 			    $("span#text_step_number").html(step.frontId);
 			    $("span#text_strategy_number").parent().show();

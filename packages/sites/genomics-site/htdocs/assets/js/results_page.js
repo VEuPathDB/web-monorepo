@@ -80,7 +80,7 @@ function addAttr(url) {
     if (attribute.length == 0) return;
 
     var url = url + "&command=add&attribute=" + attribute;
-    GetResultsPage(url, true);
+    GetResultsPage(url, true, false);
 	//window.location.href = url;
 }
 
@@ -88,7 +88,7 @@ function addAttr(url) {
 function resetAttr(url) {
     if (confirm("Are you sure you want to reset the column configuration back to the default?")) {
         var url = url + "&command=reset";
-        GetResultsPage(url, true);
+        GetResultsPage(url, true, false);
 		//window.location.href = url;
     }
 }

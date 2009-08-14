@@ -1,10 +1,11 @@
 
-function GetResultsPage(url, update){
+function GetResultsPage(url, update, includeFilters){
 	var s = parseUrlUtil("strategy", url);
 	var st = parseUrlUtil("step", url);
 	var strat = getStrategyFromBackId(s[0]);
 	var step = strat.getStep(st[0], false);
 	url = url + "&resultsOnly=true";
+	if (update){$("#Workspace").block();}
 	$.ajax({
 		url: url,
 		dataType: "html",
@@ -13,10 +14,11 @@ function GetResultsPage(url, update){
 		},
 		success: function(data){
 			if (update) {
-				ResultsToGrid(data);
+				ResultsToGrid(data, includeFilters);
 				$("span#text_strategy_number").html(strat.JSON.name);
-			    $("span#text_step_number").html(step.frontId);
-			    $("span#text_strategy_number").parent().show();
+				$("span#text_step_number").html(step.frontId);
+				$("span#text_strategy_number").parent().show();
+				$("#Workspace").unblock();
 			}
 			removeLoading(strat.frontId);
 		},
@@ -27,15 +29,18 @@ function GetResultsPage(url, update){
 	});
 }
 
-function ResultsToGrid(data) {
+function ResultsToGrid(data, includeFilters) {
         // the html() doesn't work in IE 7/8 sometimes (but not always.
         // $("div#Workspace").html(data);
-        document.getElementById('Workspace').innerHTML = data;
+	if (includeFilters) {
+	        document.getElementById('Workspace').innerHTML = data;
 
-        // invoke filters
-        var wdkFilter = new WdkFilter();
-        wdkFilter.initialize();
-
+        	// invoke filters
+        	var wdkFilter = new WdkFilter();
+        	wdkFilter.initialize();
+	} else {
+		document.getElementById('Results_Pane').innerHTML= data.substring(data.indexOf("<div id='Results_Pane'"));
+	}
 	// specify column sizes so flexigrid generates columns properly.
 	$("#Results_Table").flexigrid({height : 'auto',
 				       showToggleBtn : false,
@@ -44,7 +49,6 @@ function ResultsToGrid(data) {
 				       onMoveColumn : moveAttr,
                                        nowrap : false,
 				       resizable : false});
-	//flexifluid.init();
 }
 
 function updatePageCount(pager_id) {
@@ -71,7 +75,7 @@ function gotoPage(pager_id) {
     gotoPageUrl = gotoPageUrl.replace(/\&pageSize=\d+/, "");
     gotoPageUrl += "&pager.offset=" + pageOffset;
     gotoPageUrl += "&pageSize=" + pageSize;
-    GetResultsPage(gotoPageUrl, true);
+    GetResultsPage(gotoPageUrl, true, false);
 }
 
 function openAdvancedPaging(element){

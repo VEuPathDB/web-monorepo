@@ -91,7 +91,7 @@
 
 <td  style="vertical-align:middle;text-align:right" nowrap>
   <div style="float:right">
-    <a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT&nbsp;&nbsp;&nbsp;&nbsp;</b></a>
+    <a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT</b></a>
   </div>
 <%--
   <c:choose>
@@ -114,6 +114,7 @@
 </tr></table>
 
 
+<div id='Results_Pane'>
 <!-- pager -->
 <pg:pager isOffset="true"
           scope="request"
@@ -165,9 +166,6 @@
 </div>
 -%>
 
-
-<div id="Results_Pane" style="display: block">
-
 <%--------- PAGING TOP BAR ----------%>
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
 	<tr class="subheaderrow">
@@ -205,7 +203,7 @@
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
 
 <%--------- RESULTS  ----------%>
-<div class="flexigrid">
+<div id="Results_Div" class="flexigrid">
 <div class="bDiv">
 <div class="bDivBox">
 <table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
@@ -444,19 +442,8 @@
 	</tr>
 </table>
 <%--------- END OF PAGING BOTTOM BAR ----------%>
-
-</div> <!-- END OF RESULTS PANE -->
-
-<%--   <wdk:pager pager_id="bottom"/> --%> 
-
 </pg:pager>
+</div> <!-- END OF RESULTS PANE -->
 
   </c:otherwise>
 </c:choose>
-
-<%-- unclear what is this....
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table>
---%>
