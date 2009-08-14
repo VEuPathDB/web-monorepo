@@ -607,40 +607,22 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rsalign:gcMin10" includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-SELECT 
-       ra.rnaseq_align_id feature_id,
-       'rsalign' type,
-       'gcMin10' source,
-       ra.na_sequence_id as parent_id, ra.start_a as startm, ra.end_b as end,
-       ra.query_id name, ra.strand||'1' as strand,
-       'Count=' || ra.genome_matches  atts
-FROM  apidb.rnaseq_align ra
-WHERE ra.na_sequence_id = $srcfeature_id
- AND  ra.sample = 'gc_sample'
- AND  ra.start_a >= $base_start 
- AND  ra.end_b <= $rend
- AND  ra.intron_size >= 10
- AND  ra.genome_matches = 1
-]]>
-    </sql>
-  </sqlQuery>
-
-      <sqlQuery name="splice:align" includeProjects="TriTrypDB">
+      <sqlQuery name="splice:curated" includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
 SELECT 
        ra.rnaseq_align_id feature_id,
        'splice' type,
-       'align' source,
+       'curated' source,
        ra.na_sequence_id as parent_id, ra.start_a as startm, ra.end_a as end,
-       ra.query_id name, ra.strand||'1' as strand,
-       '' atts
+       ra.query_id||'-'||ra.end_b name, ra.strand||'1' as strand, 
+       'binaryColor='||CASE WHEN ra.genome_matches >= 50 THEN 1 ELSE 0 END || '$dlm' ||
+       'sas_count='|| ra.intron_size || '$dlm' ||
+       'utr_length='|| ra.end_b || '$dlm' || 
+       'gene_id=' || ra.query_id atts
 FROM  apidb.rnaseq_align ra
 WHERE ra.na_sequence_id = $srcfeature_id
- AND  ra.sample = 'spliced_sites'
+ AND  ra.sample = 'gc_curated_ss'
  AND  ra.start_a >= $base_start 
  AND  ra.end_a <= $rend
 ]]>
@@ -3455,42 +3437,6 @@ AND  edr.external_database_id = ed.external_database_id
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rsalign:gcMin10:bulksubfeatures" includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-SELECT 
-       ra.rnaseq_align_id||'_a' feature_id,
-       'rsalign' type,
-       'gcMin10' source,
-       ra.rnaseq_align_id as parent_id, ra.start_a as startm, ra.end_a as end,
-       ra.strand||'1' as strand,
-       'Count=' || ra.genome_matches  atts
-FROM  apidb.rnaseq_align ra
-WHERE ra.na_sequence_id = $srcfeature_id
- AND  ra.sample = 'gc_sample'
- AND  ra.start_a >= $base_start 
- AND  ra.end_b <= $rend
- AND  ra.intron_size >= 10
- AND  ra.genome_matches = 1
-UNION
-SELECT 
-       ra.rnaseq_align_id||'_b' feature_id,
-       'rsalign' type,
-       'gcMin10' source,
-       ra.rnaseq_align_id as parent_id, ra.start_b as startm, ra.end_b as end,
-       ra.strand||'+1' as strand,
-       'Count=' || ra.genome_matches  atts
-FROM  apidb.rnaseq_align ra
-WHERE ra.na_sequence_id = $srcfeature_id
- AND  ra.sample = 'gc_sample'
- AND  ra.start_a >= $base_start 
- AND  ra.end_b <= $rend
- AND  ra.intron_size >= 10
- AND  ra.genome_matches = 1
-]]>
-    </sql>
-  </sqlQuery>
-  
   <sqlQuery name="domain:MassSpecPeptides:bulksubfeatures" excludeProjects="TrichDB">
      <sql>
 <![CDATA[

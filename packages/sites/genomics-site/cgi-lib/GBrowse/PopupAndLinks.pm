@@ -321,6 +321,21 @@ sub geneTitle {
   return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo'))"};
 } 
 
+sub spliceSiteCuratedTitle {
+  my $f = shift;
+  my $id = $f->name;  
+  my $loc = $f->location->to_FTstring;
+  my ($sasNum) = $f->get_tag_values('sas_count');
+  my ($utr_len) = $f->get_tag_values('utr_length');
+  my ($gene_id) = $f->get_tag_values('gene_id');
+  my @data;
+  push(@data, ['Location:' => $loc]);
+  push(@data, ['Gene:' => $gene_id]);
+  push(@data, ['Sequence count:' => $sasNum]);
+  push(@data, ['UTR length:' => $utr_len]);
+  return hover("$id",\@data);
+}
+
 sub spliceSiteAlignTitle {
   my $f = shift;
   my $seq = $f->name;  ##currently using the name to hold sequence
