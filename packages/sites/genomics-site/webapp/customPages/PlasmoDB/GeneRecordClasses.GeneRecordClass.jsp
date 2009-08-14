@@ -39,6 +39,33 @@
 <c:set var="context_start_range" value="${attrs['context_start'].value}" />
 <c:set var="context_end_range" value="${attrs['context_end'].value}" />
 
+<c:set value="${wdkRecord.tables['CategoryLink']}" var="ctgLinks"/>
+
+<c:forEach var="row" items="${ctgLinks}">
+  <c:set var="ctgLink" value="${row['category_link'].value}"/>
+  <c:set var="category" value="${fn:substringBefore(ctgLink, ':')}"/>
+  <c:set var="num" value="${fn:substringAfter(ctgLink, ':')}"/>
+  <c:set var="cmtLink" value="<a href='#user-comment'>[Link to User Comment]</a>"/>
+
+  <c:choose>
+    <c:when test="${category eq 'name/product' || category eq 'function'}">
+      <c:set var="has_namefun_comment" value="${cmtLink}"/>
+    </c:when>
+    <c:when test="${category eq 'phenotype'}">
+      <c:set var="has_phenotype_comment" value="${cmtLink}"/>
+    </c:when>
+    <c:when test="${category eq 'sequence'}">
+      <c:set var="has_sequence_comment" value="${cmtLink}"/>
+    </c:when>
+    <c:when test="${category eq 'gene model'}">
+      <c:set var="has_model_comment" value="${cmtLink}"/>
+    </c:when>
+    <c:when test="${category eq 'expression'}">
+      <c:set var="has_expression_comment" value="${cmtLink}"/>
+    </c:when>
+  </c:choose>
+</c:forEach> 
+
 <c:choose>
   <c:when test="${fn:contains(organism,'vivax')}">
     <c:set var="species" value="vivax"/>
@@ -140,7 +167,7 @@ ${id} <br /> ${prd}
 </h2>
 <c:set var="attr" value="${attrs['overview']}" />
 <site:panel 
-    displayName="${attr.displayName}"
+    displayName="${attr.displayName} ${has_namefun_comment}" 
     content="${attr.value}${append}" />
 <br>
 
@@ -307,7 +334,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
+    attribution="${attribution} ${has_model_comment}"
   />
 </c:if> 
 
@@ -644,7 +671,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 
 <c:if test="${binomial eq 'Plasmodium falciparum' || binomial eq 'Plasmodium yoelii' || binomial eq 'Plasmodium berghei'}">
-  <site:pageDivider name="Expression"/>
+  <site:pageDivider name="Expression ${has_expression_comment}"/>
 
   <site:wdkTable tblName="ArrayElements" attribution="Vaidya_Bergman_oligos,DeRisi_oligos,berghei_gss_oligos"/>
 </c:if>
@@ -1629,7 +1656,7 @@ The overall expression percentile of each condition is the average percentile ov
 
 <%--</c:if><!-- this is for the test for new genes before aliases -->--%>
 
-<site:pageDivider name="Sequence"/>
+<site:pageDivider name="Sequence ${has_sequence_comment}"/>
 <font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font>
 <c:if test="${isCodingGene}">
 <!-- protein sequence -->
