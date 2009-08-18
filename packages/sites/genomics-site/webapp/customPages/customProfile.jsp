@@ -106,11 +106,11 @@ function validateFields(e)
     </tr>
 
     <tr>
-      <td align="right" width="50%" nowrap>Email: </td>
+      <td align="right" width="50%" nowrap><font color="red">*</font> Email: </td>
       <td align="left"><input type="text" name="email" value="${wdkUser.email}" size="20"></td>
     </tr>
     <tr>
-      <td align="right" width="50%" nowrap><font color="red">*</font>Re-type email: </td>
+      <td align="right" width="50%" nowrap><font color="red">*</font> Re-type email: </td>
       <td align="left"><input type="text" name="confirmEmail" value="${wdkUser.email}" size="20"></td>
     </tr>
 
