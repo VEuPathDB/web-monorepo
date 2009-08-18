@@ -316,6 +316,13 @@ sub colorForSpliceSites {
   return $strand == +1 ? ($gm == 1 ? $first : $second) : ($gm == 1 ? $third : $fourth);
 }
 
+sub colorForIE_RNASeq {
+  my $f = shift;
+  my ($sample) = $f->get_tag_values('sample');
+  return 'blue' if $sample eq '0h';
+  return 'red' if $sample eq '8h';
+  return 'lightslategray';
+}
 
 sub chipColor { 
   my $f   = shift;
