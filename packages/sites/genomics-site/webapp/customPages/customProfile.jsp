@@ -23,7 +23,11 @@ function validateFields(e)
         return;
     }
 
-    if (document.profileForm.firstName.value == "") {
+    if (document.profileForm.email.value != document.profileForm.confirmEmail.value) {
+        alert("the email does not match.");
+        document.profileForm.email.focus();
+        return email;
+    } else if (document.profileForm.firstName.value == "") {
         alert('Please provide your first name.');
         document.profileForm.firstName.focus();
         return false;
@@ -86,7 +90,7 @@ function validateFields(e)
 
   <c:otherwise>
 
-    <!-- check if there's an error message to display -->
+    <!-- check if there is an error message to display -->
     <c:if test="${requestScope.profileError != null}">
        <tr>
           <td colspan="2">
@@ -96,14 +100,20 @@ function validateFields(e)
     </c:if>
 
     <tr>
-      <td align="right" width="50%" nowrap>Email: </td>
-      <td align="left">${wdkUser.email}</td>
-    </tr>
-    <tr>
       <td colspan="2" align="right">
          <a href="<c:url value='/showPassword.do'/>"><img border="0" src="<c:url value='/images/change_pwd.gif'/>"></a>
       </td>
     </tr>
+
+    <tr>
+      <td align="right" width="50%" nowrap>Email: </td>
+      <td align="left"><input type="text" name="email" value="${wdkUser.email}" size="20"></td>
+    </tr>
+    <tr>
+      <td align="right" width="50%" nowrap><font color="red">*</font>Re-type email: </td>
+      <td align="left"><input type="text" name="confirmEmail" value="${wdkUser.email}" size="20"></td>
+    </tr>
+
     <tr>
        <td colspan="2" align="left"><hr><b>User Information:</b></td>
     </tr>
