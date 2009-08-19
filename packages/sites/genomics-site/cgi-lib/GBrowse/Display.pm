@@ -316,11 +316,22 @@ sub colorForSpliceSites {
   return $strand == +1 ? ($gm == 1 ? $first : $second) : ($gm == 1 ? $third : $fourth);
 }
 
-sub colorForIE_RNASeq {
+sub colorForThreeSampleRNASeq{
   my $f = shift;
   my ($sample) = $f->get_tag_values('sample');
-  return 'blue' if $sample eq '0h';
-  return 'red' if $sample eq '8h';
+  return 'blue' if $sample eq '8h';
+  return 'green' if $sample eq '24h';
+  return 'red' if $sample eq '40h';
+  return 'lightslategray';
+}
+
+sub colorForFourSampleRNASeq{
+  my $f = shift;
+  my ($sample) = $f->get_tag_values('sample');
+  return 'orange' if $sample eq '0h';
+  return 'blue' if $sample eq '16h';
+  return 'green' if $sample eq '32h';
+  return 'red' if $sample eq '48h';
   return 'lightslategray';
 }
 

@@ -339,7 +339,7 @@ sub spliceSiteCuratedTitle {
 sub spliceSiteAlignTitle {
   my $f = shift;
   my $seq = $f->name;  ##currently using the name to hold sequence
-  my $loc = $f->location->to_FTstring;
+  my $loc = $f->start;
   my ($seqNum) = $f->get_tag_values('count');
   my ($genMatches) = $f->get_tag_values('genome_matches');
   my @data;
