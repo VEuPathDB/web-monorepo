@@ -36,7 +36,7 @@
 <div id="info">
 
 
-    	<ul>
+    	<ul> 
 		<li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"><strong>BLAST</strong></a>
 			<ul><li style="border:0">Identify Sequence Similarities</li></ul>
 		</li>
@@ -49,7 +49,7 @@
 
 <c:if test="${sName != 'EuPath'}">
 		<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(modelName)}/"><strong>Genome Browser</strong></a>
-			<ul><li  style="border:0">View Sequences and Features in the GMOD Genome Browser</li></ul>
+			<ul><li  style="border:0">View Sequences and Features in the GBrowse genome browser (GMOD)</li></ul>
 		</li>
 </c:if>
 
@@ -57,38 +57,37 @@
 <c:choose>   <%-- SITES WITH FEW TOOLS, SO THERE IS SPACE IN BUCKET FOR DESCRIPTIONS --%>
 <c:when test="${sName != 'Plasmo'}">
 
-<c:choose>
-<c:when test="${sName == 'Crypto'}">
+	<c:choose>
+	<c:when test="${sName == 'Crypto'}">
           
                 <li><a href="http://apicyc.apidb.org/CPARVUM/server.html"><strong>${cycName}</strong></a>
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
-</c:when>
-<c:when test="${sName == 'EuPath'}">
+	</c:when>
+	<c:when test="${sName == 'EuPath'}">
           
                 <li><a href="http://apicyc.apidb.org/"><strong>ApiCyc</strong></a>
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
-</c:when>
-<c:when test="${sName == 'Toxo'}">
+	</c:when>
+	<c:when test="${sName == 'Toxo'}">
 		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary Genome Browse</strong></a>
-                        <ul><li  style="border:0">Access additional info like probeset data and <i>Toxoplasma</i> array info</li></ul>
+                        <ul><li  style="border:0">Access Additional info like Probeset data and <i>Toxoplasma</i> Array info</li></ul>
                 </li>
           
                 <li><a href="http://apicyc.apidb.org/${sName}/server.html"><strong>${cycName}</strong></a>
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
-</c:when>
-<c:otherwise>   <%----- fill in 2 empty lines to keep buckets aligned -----%>
+	</c:when>
+	<c:otherwise>   <%----- fill in 2 empty lines to keep buckets aligned -----%>
                 <li>&nbsp;<ul><li  style="border:0">&nbsp;</li></ul></li> 
 
-</c:otherwise>
-</c:choose>
+	</c:otherwise>
+	</c:choose>
 
     	</ul>
 </c:when>
-<c:otherwise>   <%-- PLASMO: LOTS OF TOOLS, descriptions as mouseovers --%>
-
+<c:otherwise>   <%-- PLASMO: LOTS OF TOOLS, add descriptions as mouseovers --%>
 
   		<li><p style="color:#6600cc;padding-top:16px;"><i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
 		</li>
