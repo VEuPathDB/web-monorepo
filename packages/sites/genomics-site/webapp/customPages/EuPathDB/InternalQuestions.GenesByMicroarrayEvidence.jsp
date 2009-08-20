@@ -11,8 +11,8 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="headElement">
-  <script src="js/prototype.js" type="text/javascript"></script>
-  <script src="js/scriptaculous.js" type="text/javascript"></script>
+<%--  <script src="js/prototype.js" type="text/javascript"></script>
+  <script src="js/scriptaculous.js" type="text/javascript"></script>--%>
   <script src="js/Top_menu.js" type="text/javascript"></script>
   <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
 </c:set>
@@ -44,7 +44,7 @@
 <tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
 
 
-<site:queryList questions="GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,GeneQuestions.GenesByExpressionPercentile,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,GeneQuestions.GenesByPromastigoteTimeSeries"/>
+<site:queryList2 questions="GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,GeneQuestions.GenesByExpressionPercentile,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,GeneQuestions.GenesByPromastigoteTimeSeries"/>
 
 </table>
 

@@ -18,8 +18,8 @@
      var sites = new Array(${used_sites});
      var query = "geneParams.ms_assay";
   </script>
-  <script src="js/prototype.js" type="text/javascript"></script>
-  <script src="js/scriptaculous.js" type="text/javascript"></script>
+ <%-- <script src="js/prototype.js" type="text/javascript"></script>
+  <script src="js/scriptaculous.js" type="text/javascript"></script>--%>
   <script src="js/Top_menu.js" type="text/javascript"></script>
   <script src="js/ApiDB_Ajax_Utils.js" type="text/javascript"></script>
   <script src="js/Colors.js" type="text/javascript"></script>
@@ -53,7 +53,7 @@
 <%-- NOT NEEDED:  Py Mass Spec Evidence: GenesByMassSpec4
      Pb life cycle: GenesByProteomicsProfile 
 --%>
-<site:queryList questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
+<site:queryList2 questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
 </table>
 
 <script type="text/javascript" src='/gbrowse/wz_tooltip.js'></script>

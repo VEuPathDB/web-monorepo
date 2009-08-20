@@ -15,8 +15,8 @@
 
 <c:set var="headElement">
   <script src="js/prototype.js" type="text/javascript"></script>
-  <script src="js/scriptaculous.js" type="text/javascript"></script>
-  <script src="js/Top_menu.js" type="text/javascript"></script>
+<%--  <script src="js/scriptaculous.js" type="text/javascript"></script>
+  <script src="js/Top_menu.js" type="text/javascript"></script>--%>
   <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
 </c:set>
 
@@ -45,7 +45,7 @@
 <tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
 
 
-<site:queryList questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesWithStructurePrediction,GeneQuestions.GenesBySecondaryStructure"/>
+<site:queryList2 questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesWithStructurePrediction,GeneQuestions.GenesBySecondaryStructure"/>
 </table>
 
 <script type="text/javascript" src='/gbrowse/wz_tooltip.js'></script>

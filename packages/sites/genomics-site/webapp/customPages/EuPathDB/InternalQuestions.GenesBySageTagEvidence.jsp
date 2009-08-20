@@ -28,7 +28,7 @@
 
 <tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
 
-<site:queryList questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
+<site:queryList2 questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
 </table>
 
 <script type="text/javascript" src='/gbrowse/wz_tooltip.js'></script>
