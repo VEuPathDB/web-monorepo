@@ -328,7 +328,10 @@ sub spliceSiteCuratedTitle {
   my ($sasNum) = $f->get_tag_values('sas_count');
   my ($utr_len) = $f->get_tag_values('utr_length');
   my ($gene_id) = $f->get_tag_values('gene_id');
+  my ($sample) = $f->get_tag_values('sample');
+  my $sampleName = $sample eq 'gc_curated_ss' ? 'Splice Leader Site' : 'Polyadenylation Site';
   my @data;
+  push(@data, [$sampleName => '']);
   push(@data, ['Location:' => $loc]);
   push(@data, ['Gene:' => $gene_id]);
   push(@data, ['Sequence count:' => $sasNum]);
@@ -343,7 +346,7 @@ sub spliceSiteAlignTitle {
   my ($seqNum) = $f->get_tag_values('count');
   my ($genMatches) = $f->get_tag_values('genome_matches');
   my @data;
-  push(@data, ['Sequence:' => $seq]);
+  push(@data, ['Longest Sequence:' => $seq]);
   push(@data, ['Location:' => $loc]);
   push(@data, ['Number of Sequences:' => $seqNum]);
   push(@data, ['Genome Matches:' => $genMatches]);

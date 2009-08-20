@@ -316,22 +316,27 @@ sub colorForSpliceSites {
   return $strand == +1 ? ($gm == 1 ? $first : $second) : ($gm == 1 ? $third : $fourth);
 }
 
-sub colorForThreeSampleRNASeq{
-  my $f = shift;
-  my ($sample) = $f->get_tag_values('sample');
-  return 'blue' if $sample eq '8h';
-  return 'green' if $sample eq '24h';
-  return 'red' if $sample eq '40h';
-  return 'lightslategray';
+sub colorForCuratedSpliceAndPaSites {
+  my ($f) = @_;
+  my ($bc) = $f->get_tag_values('binaryColor'); ##predominant site if 1
+  my ($sample) = $f->get_tag_values('sample');  ## one of gc_curated_ss | gc_curated_pas
+  return 'green' if $bc == 1 && $sample eq 'gc_curated_ss';
+  return 'lightgreen' if $bc == 0 && $sample eq 'gc_curated_ss';
+  return 'darkviolet' if $bc == 1 && $sample eq 'gc_curated_pas';
+  return 'orchid' if $bc == 0 && $sample eq 'gc_curated_pas';
+  return 'gray';
 }
 
-sub colorForFourSampleRNASeq{
+sub colorForSevenSampleRNASeq{
   my $f = shift;
   my ($sample) = $f->get_tag_values('sample');
   return 'orange' if $sample eq '0h';
+  return 'aqua' if $sample eq '8h';
   return 'blue' if $sample eq '16h';
-  return 'green' if $sample eq '32h';
-  return 'red' if $sample eq '48h';
+  return 'lawngreen' if $sample eq '24h';
+  return 'forestgreen' if $sample eq '32h';
+  return 'magenta' if $sample eq '40h';
+  return 'firebrick' if $sample eq '48h';
   return 'lightslategray';
 }
 
