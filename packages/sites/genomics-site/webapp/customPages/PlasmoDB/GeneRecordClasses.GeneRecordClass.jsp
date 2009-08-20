@@ -330,11 +330,11 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   </c:set>
 
   <site:toggle 
-    name="dnaContextSyn" displayName="Genomic Context"
+    name="dnaContextSyn" displayName="Genomic Context ${has_model_comment}"
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution} ${has_model_comment}"
+    attribution="${attribution}"
   />
 </c:if> 
 
@@ -445,8 +445,12 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <c:param name="flag" value="0" /> 
   <c:param name="bulk" value="0" /> 
 </c:url>
-<b><a href="${phenotypeCommentsUrl}">Add a phenotype comment on ${id}</a></b><br><br>
 
+<!--
+<b><a href="${phenotypeCommentsUrl}">Add a phenotype comment on ${id}</a></b><br><br>
+-->
+
+<%--
 <c:catch var="e">
 
 <site:wdkTable tblName="PhenotypeComments"  isOpen="true"/> 
@@ -462,6 +466,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
      </td></tr>
  </table>
 </c:if> 
+--%>
 
 <!-- External Links --> 
 <%-- "This if clause is redundant as the new (re) annotation has become the official annotation"
