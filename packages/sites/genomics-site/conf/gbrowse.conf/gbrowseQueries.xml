@@ -484,13 +484,13 @@ WHERE syn.a_na_sequence_id = $srcfeature_id
   AND gattr.na_feature_id = fl.na_feature_id
   AND (
        (syn.is_reversed = 0
-        AND (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
         AND anch_left.ref_loc + ((fl.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
         AND anch_left.ref_loc + ((fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
        ) 
        OR
        (syn.is_reversed = 1 
-        AND (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
         AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) <= $rend 
         AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) >= $base_start 
        )
@@ -3686,13 +3686,13 @@ WHERE syn.a_na_sequence_id = $srcfeature_id
   AND exfloc.na_sequence_id = syn.b_na_sequence_id 
   AND (
        (syn.is_reversed = 0
-        AND (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
         AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
         AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
        ) 
        OR
        (syn.is_reversed = 1 
-        AND (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
         AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
         AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) >= $base_start 
         )
