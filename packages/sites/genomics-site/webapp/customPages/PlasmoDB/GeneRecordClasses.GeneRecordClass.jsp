@@ -330,7 +330,8 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   </c:set>
 
   <site:toggle 
-    name="dnaContextSyn" displayName="Genomic Context ${has_model_comment}"
+    name="dnaContextSyn" displayName="Genomic Context"
+    displayLink="${has_model_comment}"
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
