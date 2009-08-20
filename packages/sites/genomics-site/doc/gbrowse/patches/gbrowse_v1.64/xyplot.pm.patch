@@ -1,0 +1,13 @@
+--- xyplot.pm.orig	2009-08-20 10:26:09.000000000 -0400
++++ xyplot.pm	2009-08-20 10:27:29.000000000 -0400
+@@ -349,6 +349,10 @@
+   my ($gd,$scale,$min,$max,$dx,$dy,$y_origin) = @_;
+   my ($x1,$y1,$x2,$y2) = $self->calculate_boundaries($dx,$dy);
+ 
++  # add extra space for y-axis
++	$x1 += $self->option('left_shift') || 0;
++	$x2 -= $self->option('right_shift') || 0;
++
+   # this is wrong
+   #  $y2 -= $self->pad_bottom - 1;
+   my $crosses_origin = $min < 0 && $max > 0;
