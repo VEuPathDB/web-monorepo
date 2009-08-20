@@ -12,6 +12,11 @@
               description="Value to appear at top of page"
 %>
 
+<%@ attribute name="displayLink"
+              required="false"
+              description="Work around on toggle-handle for hyperlink"
+%>
+
 <%@ attribute name="content"
               required="true"
               description="text appearing inside toggle block in 'show' mode"
@@ -131,6 +136,13 @@
       </c:otherwise>
     </c:choose>
     </td>
+    <c:if test='${displayLink != null && displayLink != ""}'>
+      <td align="left">
+         <font size="-1" face="Arial,Helvetica">
+				 ${displayLink}
+         </font>
+      </td>
+    </c:if>
     <c:if test='${attribution != null && attribution != ""}'>
       <td align="right">
          <font size="-1" face="Arial,Helvetica">
