@@ -11,6 +11,7 @@ attributes:
 --%>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <site:header title="${wdkModel.displayName} : User Comments on ${stable_id}"
                  banner="Comments on ${stable_id}"/>
@@ -32,9 +33,10 @@ attributes:
   }
   th {
     vertical-align: top;
-    padding:   3px;
+    padding:     3px;
     background:  #88aaca ;
-    color:  #ffffff;
+    color:       #250517;
+    font-weight: normal;
   }
   ul.myul {
     list-style: inherit;
@@ -43,6 +45,13 @@ attributes:
     margin-bottom: 0.5em;
   } 
 </style>
+<script type="text/javascript">                                         
+$(document).ready(function() { 
+  $("a.delete").click(function() {
+    return confirm("Really delete this comment? Press OK to delete.");
+  });
+});
+</script>     
 </head>
 
 <c:choose>
@@ -51,7 +60,7 @@ attributes:
     </c:when>
     <c:otherwise> <%-- has comments for the stable id --%>
 
-      <h2><center>${param.commentTargetId} comments on ${stable_id}</center></h2>
+      <div id=menu><center>${param.commentTargetId} comments on ${stable_id}</center></div>
 
       <c:forEach var="comment" items="${comments}">
 
@@ -59,7 +68,12 @@ attributes:
 
             <tr>
                <th width=150>Headline:</th>
-               <th> <a name=${comment.commentId}>${comment.headline}</a></th>
+               <th> 
+               <a name=${comment.commentId}>${comment.headline}</a> 
+               <c:if test="${comment.email eq wdkUser.email}">
+               &nbsp;&nbsp;&nbsp; <a href="deleteComment.do?projectId=${comment.projectName}&stableId=${comment.stableId}&commentTargetId=${comment.commentTarget}&commentId=${comment.commentId}&email=${wdkUser.email}" class="delete">[delete comment]</a>
+               </c:if>
+               </th>
             </tr>
 
             <tr>
