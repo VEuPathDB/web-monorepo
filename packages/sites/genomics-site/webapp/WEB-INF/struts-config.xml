@@ -26,6 +26,7 @@
     <form-bean name="phenotypeForm" type="org.apidb.apicommon.controller.PhenotypeForm"/>
     <form-bean name="commentForm" type="org.apidb.apicommon.controller.NewCommentForm"/> 
     <form-bean name="showCommentForm" type="org.apidb.apicommon.controller.ShowCommentForm"/>
+    <form-bean name="deleteCommentForm" type="org.apidb.apicommon.controller.DeleteCommentForm"/>
     <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.action.RenameStepForm"/>
     <form-bean name="renameStrategyForm" type="org.gusdb.wdk.controller.action.RenameStrategyForm"/>
     <form-bean name="userFileUploadForm" type="org.apidb.apicommon.controller.UserFileUploadForm"/>
@@ -398,6 +399,12 @@
       scope="session"
       name="showCommentForm">
       <forward name="show_comment" path="/showComment.jsp"/>
+    </action>
+   <action
+      path="/deleteComment"
+      type="org.apidb.apicommon.controller.DeleteCommentAction"
+      scope="session"
+      name="deleteCommentForm">
     </action>
     <action
       path="/savePreference"
