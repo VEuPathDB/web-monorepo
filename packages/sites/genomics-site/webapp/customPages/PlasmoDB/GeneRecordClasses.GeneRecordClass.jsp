@@ -396,7 +396,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <c:param name="externalDbVersion" value="${externalDbVersion.value}" />
   <c:param name="organism" value="${binomial}" />
   <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
-  <c:param name="contig" value="${contig}" />
+  <c:param name="contig" value="${attrs['sequence_id'].value}" /> 
   <c:param name="strand" value="${strand}" />
   <c:param name="flag" value="0" /> 
   <c:param name="bulk" value="0" /> 
@@ -441,7 +441,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <c:param name="externalDbVersion" value="${externalDbVersion.value}" />
   <c:param name="organism" value="${binomial}" />
   <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
-  <c:param name="contig" value="${contig}" />
+  <c:param name="contig" value="${attrs['sequence_id'].value}" /> 
   <c:param name="strand" value="${strand}" />
   <c:param name="flag" value="0" /> 
   <c:param name="bulk" value="0" /> 
