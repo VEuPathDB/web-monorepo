@@ -2906,6 +2906,24 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="rnaseq:cn_seven_samples_log"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+        SELECT 'cn_seven_sample_log' as feature_id,
+               'rnaseq' type,
+               sample as name,
+               'cn_seven_samples_log' source
+        FROM   apidb.rnaseq_coverage rc
+        WHERE   rc.na_sequence_id = $srcfeature_id
+         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1
+         GROUP BY rc.sample
+       ]]>
+    </sql>
+  </sqlQuery>
+
 
   <sqlQuery name="rnaseq:cn_pf0h"  includeProjects="PlasmoDB">
      <sql>
@@ -4536,6 +4554,29 @@ WHERE fl.na_sequence_id = $srcfeature_id
              'cn_seven_samples' source, 
              power(2,max(coverage)) score, 
              'cn_seven_sample' parent_id, 
+             interval * (($rend - $base_start + 1) / 800) startm, 
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'sample='||sample atts
+       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
+       FROM  apidb.rnaseq_coverage rc
+       WHERE rc.na_sequence_id = $srcfeature_id
+         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
+         AND rc.type = 'p'
+         AND rc.location <= $rend
+         AND rc.location >= $base_start - 1)
+       GROUP BY interval,sample
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="rnaseq:cn_seven_samples_log:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+      SELECT sample||interval feature_id, 
+             'rnaseq' type, 
+             'cn_seven_samples_log' source, 
+             max(coverage) score, 
+             'cn_seven_sample_log' parent_id, 
              interval * (($rend - $base_start + 1) / 800) startm, 
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'sample='||sample atts
