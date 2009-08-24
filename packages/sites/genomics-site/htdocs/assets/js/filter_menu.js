@@ -84,8 +84,10 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 	//edit = 0 ::: adding a new step
 	//edit = 1 ::: editing a current step
 	var ps = document.createElement('div');
+	var topMenu_script = null;
 	ps.innerHTML = params.substring(params.indexOf("<form"),params.indexOf("</form>") + 6);
-	
+	if($("script#initScript", ps).length > 0)
+		topMenu_script = $("script#initScript", ps).text();
 	var operation = "";
 	var stepn = 0;
 	var insert = "";
@@ -240,6 +242,10 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 	htmltooltip.render();
 	setDraggable($("#query_form"), ".dragHandle");
 	$("#query_form").fadeIn("normal");
+	if(topMenu_script != null){
+		var tms = topMenu_script.substring(topMenu_script.indexOf("{")+1,topMenu_script.indexOf("}"));
+		eval(tms);
+	}
 }
 
 function validateAndCall(type, url, proto, rs){
