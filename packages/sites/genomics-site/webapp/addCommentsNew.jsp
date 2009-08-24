@@ -4,6 +4,7 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
+<%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic" %>
 
 <c:set var="err" scope="request" value="${requestScope['org.apache.struts.action.ERROR']}"/>
 <c:set var="exp" scope="request" value="${requestScope['org.apache.struts.action.EXCEPTION']}"/>
@@ -227,65 +228,17 @@ $(document).ready(function(){
         </td>
       </tr>
 
-      <!--  gene_model      = 1 in comments2.TargetCategory -->
-      <!--  gene_name       = 2 in comments2.TargetCategory -->
-      <!--  gene_function   = 3 in comments2.TargetCategory -->
-      <!--  gene_expression = 4 in comments2.TargetCategory -->
-      <!--  gene_sequence   = 5 in comments2.TargetCategory -->
-      <!--  gene_other      = 6 in comments2.TargetCategory -->
-
       <tr class="medium">
         <td>&nbsp;</td>
         <td>Category<br/></td>
-        <td>
-          <c:if test="${commentForm.commentTargetId eq 'gene'}">
-            <html:checkbox property="targetCategory" value="1">Gene Model</html:checkbox> 
-            <html:checkbox property="targetCategory" value="2">Name/Product</html:checkbox> 
-            <html:checkbox property="targetCategory" value="3">Function</html:checkbox> 
-            <html:checkbox property="targetCategory" value="4">Expression</html:checkbox> 
-            <html:checkbox property="targetCategory" value="5">Sequence</html:checkbox>
-            <html:checkbox property="targetCategory" value="6">Phenotype</html:checkbox>
-          </c:if>
-          <c:if test="${commentForm.commentTargetId eq 'isolate'}">
-            <html:checkbox property="targetCategory" value="7">Characteristics/Overview</html:checkbox> 
-            <html:checkbox property="targetCategory" value="8">Reference</html:checkbox> 
-            <html:checkbox property="targetCategory" value="9">Sequence</html:checkbox> 
-          </c:if>
-          <c:if test="${commentForm.commentTargetId eq 'genome'}">
-            <html:checkbox property="targetCategory" value="10">New Gene</html:checkbox> 
-            <html:checkbox property="targetCategory" value="11">New Feature</html:checkbox> 
-            <html:checkbox property="targetCategory" value="12">Centromere</html:checkbox> 
-            <html:checkbox property="targetCategory" value="13">Genomic Assembly</html:checkbox> 
-            <html:checkbox property="targetCategory" value="14">Sequence</html:checkbox> 
-            <html:checkbox property="targetCategory" value="33">Phenotype</html:checkbox>
-          </c:if>
-          <c:if test="${commentForm.commentTargetId eq 'snp'}">
-            <html:checkbox property="targetCategory" value="15">Characteristics/Overview</html:checkbox> 
-            <html:checkbox property="targetCategory" value="16">Gene Context</html:checkbox> 
-            <html:checkbox property="targetCategory" value="17">Strains</html:checkbox> 
-          </c:if> 
-          <c:if test="${commentForm.commentTargetId eq 'est'}">
-            <html:checkbox property="targetCategory" value="19">Characteristics/Overview</html:checkbox> 
-            <html:checkbox property="targetCategory" value="20">Alignment</html:checkbox> 
-            <html:checkbox property="targetCategory" value="21">Sequence</html:checkbox> 
-            <html:checkbox property="targetCategory" value="22">Assembly</html:checkbox> 
-          </c:if>
-          <c:if test="${commentForm.commentTargetId eq 'assembly'}">
-            <html:checkbox property="targetCategory" value="23">Characteristics/Overview</html:checkbox> 
-            <html:checkbox property="targetCategory" value="24">Consensus Sequence</html:checkbox> 
-            <html:checkbox property="targetCategory" value="25">Alignment</html:checkbox> 
-            <html:checkbox property="targetCategory" value="26">Include Est's</html:checkbox> 
-          </c:if>
-          <c:if test="${commentForm.commentTargetId eq 'sage'}">
-            <html:checkbox property="targetCategory" value="27">Characteristics/Overview</html:checkbox> 
-            <html:checkbox property="targetCategory" value="28">Gene</html:checkbox> 
-            <html:checkbox property="targetCategory" value="29">Alignment</html:checkbox> 
-            <html:checkbox property="targetCategory" value="30">Library Counts</html:checkbox> 
-          </c:if>
-          <c:if test="${commentForm.commentTargetId eq 'orf'}">
-            <html:checkbox property="targetCategory" value="31">Alignment</html:checkbox> 
-            <html:checkbox property="targetCategory" value="32">Sequence</html:checkbox> 
-          </c:if>
+        <td> 
+          <logic:iterate id="category" property="categoryList" name="commentForm"> 
+	          <bean:define id="categorybean" name="category" type="org.apache.struts.util.LabelValueBean"/>
+	          <html:multibox property="targetCategory">
+	            <bean:write name="categorybean" property="value"/>
+	          </html:multibox>
+	            <bean:write name="categorybean" property="label"/>
+          </logic:iterate> 
         </td>
       </tr>
         
