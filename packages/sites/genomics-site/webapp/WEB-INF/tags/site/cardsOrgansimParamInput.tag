@@ -31,7 +31,7 @@
 		<c:set var="portalArr" value="${fn:split(portal,',')}" />
 	</c:forEach>
 
-<script language="JavaScript" type="text/javascript">
+<script id="initScript" language="JavaScript" type="text/javascript">
 	window.onload = function(){
 <c:set var="v" value="0"/>
 <c:set var="tLevel" value=""/>
