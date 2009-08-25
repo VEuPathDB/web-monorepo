@@ -233,7 +233,7 @@
 
 <%-- the js has to be included here in order to appear in the step form --%>
 <script type="text/javascript" src='<c:url value="/assets/js/wdkQuestion.js"/>'></script>
-<script src="/assets/js/blast.js" type="text/javascript"></script>
+<%--<script src="/assets/js/blast.js" type="text/javascript"></script>--%>
 
 <div class="params">
 <c:if test="${showParams == null}">
@@ -337,7 +337,7 @@
 		       <c:forEach items="${qP.vocab}" var="flatVoc">
 		              <input class="blast-type" type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" 
                                      onClick="getBlastAlgorithm();changeQuestion();checkSequenceLength()" />
-                              <span>${flatVoc}</span>
+                              <span id="type_${counter}">${flatVoc}</span>
 			      <c:set var="counter" value="${counter+1}"/>	
 		       </c:forEach>
 		       <input type="hidden" name="myMultiProp(${pNam})" id="blastType"/>
