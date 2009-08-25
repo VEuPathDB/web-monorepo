@@ -72,9 +72,8 @@ function restrictTypes(type){
 	else if(type == "SEQ") n = "2";
 	var y = document.getElementsByName("type");
 	n = n.split(",");
-	for(x in y){
+	for(var x=0; x < y.length;x++){
 		var d = false;
-		if(x == "length") break;
 		for(m in n){
 		//	alert("x=" +x+"\ny[x].id="+y[x].id+"\nm="+m+"\nn[m]="+n[m]);
 			if(y[x].id == "BlastType_" + n[m]){
