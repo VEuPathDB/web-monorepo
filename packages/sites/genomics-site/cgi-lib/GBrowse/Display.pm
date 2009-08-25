@@ -316,15 +316,68 @@ sub colorForSpliceSites {
   return $strand == +1 ? ($gm == 1 ? $first : $second) : ($gm == 1 ? $third : $fourth);
 }
 
+sub bgColorForSpliceSites {
+  my ($f, $first, $second, $third, $fourth) = @_;
+  my $strand = $f->strand;
+  my ($count) = $f->get_tag_values('count');
+  my ($gm) = $f->get_tag_values('genome_matches');
+  return 'white' if $gm > 1;
+  if($strand == +1){
+    return 'blue' if $count > 10;
+    return 'lightskyblue' if $count == 1;
+    return 'cornflowerblue';
+  }else{
+    return 'darkred' if $count > 10;
+    return 'tomato' if $count == 1;
+    return 'red';
+  } 
+}
+
+sub fgColorForSpliceSites {
+  my ($f, $first, $second, $third, $fourth) = @_;
+  my $strand = $f->strand;
+  my ($count) = $f->get_tag_values('count');
+  my ($gm) = $f->get_tag_values('genome_matches');
+  if($strand == +1){
+    return 'blue' if $count > 10;
+    return 'lightskyblue' if $count == 1;
+    return 'cornflowerblue';
+  }else{
+    return 'darkred' if $count > 10;
+    return 'tomato' if $count == 1;
+    return 'red';
+  } 
+}
+
 sub colorForCuratedSpliceAndPaSites {
   my ($f) = @_;
   my ($bc) = $f->get_tag_values('binaryColor'); ##predominant site if 1
+  my $strand = $f->strand;
+  my ($count) = $f->get_tag_values('sas_count');
   my ($sample) = $f->get_tag_values('sample');  ## one of gc_curated_ss | gc_curated_pas
-  return 'green' if $bc == 1 && $sample eq 'gc_curated_ss';
-  return 'lightgreen' if $bc == 0 && $sample eq 'gc_curated_ss';
-  return 'darkviolet' if $bc == 1 && $sample eq 'gc_curated_pas';
-  return 'orchid' if $bc == 0 && $sample eq 'gc_curated_pas';
-  return 'gray';
+  if($sample eq 'gc_curated_ss'){
+    if($strand eq '+1'){
+      return 'blue' if $count > 10;
+      return 'lightskyblue' if $count == 1;
+      return 'cornflowerblue';
+    }else{
+      return 'darkred' if $count > 10;
+      return 'tomato' if $count == 1;
+      return 'red';
+    } 
+  }elsif($sample eq 'gc_curated_pas'){
+    if($strand eq '+1'){
+      return 'green' if $count > 10;
+      return 'lightgreen' if $count == 1;
+      return 'limegreen';
+    }else{
+      return 'purple' if $count > 10;
+      return 'orchid' if $count == 1;
+      return 'darkorchid';
+    }
+  }else{
+    return 'lightslategray';
+  }
 }
 
 sub colorForSevenSampleRNASeq{
