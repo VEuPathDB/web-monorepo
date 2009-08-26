@@ -96,7 +96,7 @@
 <%-----------------------------------------------------------------------------%>
 <%--  Isolates  --%>
 
-<c:if test = "${project == 'CryptoDB' || project == 'EuPathDB' || project == 'PlasmoDB' || project == 'ToxoDB'}">
+<c:if test = "${project == 'CryptoDB' || project == 'EuPathDB' || project == 'PlasmoDB' || project == 'ToxoDB' || project == 'GiardiaDB'}">
   <tr class="headerrow2"><td colspan="4" align="center"><b>Identify Isolates by:</b></td></tr>
   <tr><td colspan="3" align="center">
 	<site:queryGridIsolates/> 
