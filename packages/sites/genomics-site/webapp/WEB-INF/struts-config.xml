@@ -444,6 +444,12 @@
       scope="request">
       <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
+    <action
+      path="/getTypeAheadData"
+      type="org.gusdb.wdk.controller.action.GetTypeAheadDataAction"
+      scope="request">
+      <forward name="type_ahead" path="/typeAheadXml.jsp"/>
+    </action>
   </action-mappings>
 
   <controller maxFileSize="10M" />

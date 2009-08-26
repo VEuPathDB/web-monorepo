@@ -34,6 +34,8 @@
 
 <c:choose>
     <c:when test="${showParams == true}">
+        <script src="js/lib/jquery.autocomplete.js" type="text/javascript"></script>
+        <script src="js/parameterHandlers.js" type="text/javascript"></script>
         <%-- display params section only --%>
         <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
             <site:questionParams />
@@ -73,6 +75,8 @@
 --%>
 
 <c:if test="${showParams == null}">
+    <script src="js/lib/jquery.autocomplete.js" type="text/javascript"></script>
+    <script src="js/parameterHandlers.js" type="text/javascript"></script>
 <%--CODE TO SET UP THE SITE VARIABLES --%>
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
