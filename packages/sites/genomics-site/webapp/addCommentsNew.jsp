@@ -180,7 +180,7 @@ $(document).ready(function(){
         <html:hidden property="externalDbName" value="${commentForm.externalDbName}"/>
         <html:hidden property="externalDbVersion" value="${commentForm.externalDbVersion}"/>
         <html:hidden property="organism" value="${commentForm.organism}"/>
-        <html:hidden property="locations" value="${fn:replace(commentForm.locations, ',', '')}"/>
+        <%--<html:hidden property="locations" value="${fn:replace(commentForm.locations, ',', '')}"/> --%>
         
       <table class="mybox" cellspacing=3 width=90% border=0>
 
@@ -256,9 +256,9 @@ $(document).ready(function(){
         <td valign=top>Location<br/> ${locationStr}</td>
 
         <td class="medium">
-          Strand:
+          Strand: 
              <input type=radio name="locType" value=genomef ${pos}>Forward</input>
-             <input type=radio name="locType" value=genomer ${rev}>Reverse</input>
+-            <input type=radio name="locType" value=genomer ${rev}>Reverse</input> 
         </td>
       </tr>
 
