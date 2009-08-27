@@ -327,7 +327,7 @@ sub bgColorForSpliceSites {
     return 'lightskyblue' if $count == 1;
     return 'cornflowerblue';
   }else{
-    return 'darkred' if $count > 10;
+    return 'firebrick' if $count > 10;
     return 'tomato' if $count == 1;
     return 'red';
   } 
@@ -343,37 +343,101 @@ sub fgColorForSpliceSites {
     return 'lightskyblue' if $count == 1;
     return 'cornflowerblue';
   }else{
-    return 'darkred' if $count > 10;
+    return 'firebrick' if $count > 10;
     return 'tomato' if $count == 1;
     return 'red';
   } 
 }
 
-sub colorForCuratedSpliceAndPaSites {
-  my ($f) = @_;
-  my ($bc) = $f->get_tag_values('binaryColor'); ##predominant site if 1
+sub bgColorForPolyASites {
+  my ($f, $first, $second, $third, $fourth) = @_;
   my $strand = $f->strand;
-  my ($count) = $f->get_tag_values('sas_count');
+  my ($count) = $f->get_tag_values('count');
+  my ($gm) = $f->get_tag_values('genome_matches');
+  return 'white' if $gm > 1;
+  if($strand == +1){
+    return 'green' if $count > 10;
+    return 'lightgreen' if $count == 1;
+    return 'limegreen';
+  }else{
+    return 'purple' if $count > 10;
+    return 'orchid' if $count == 1;
+    return 'darkorchid';
+  } 
+}
+
+sub fgColorForPolyASites {
+  my ($f, $first, $second, $third, $fourth) = @_;
+  my $strand = $f->strand;
+  my ($count) = $f->get_tag_values('count');
+  my ($gm) = $f->get_tag_values('genome_matches');
+  if($strand == +1){
+    return 'green' if $count > 10;
+    return 'lightgreen' if $count == 1;
+    return 'limegreen';
+  }else{
+    return 'purple' if $count > 10;
+    return 'orchid' if $count == 1;
+    return 'darkorchid';
+  } 
+}
+
+sub fgColorForSpliceAndPaSites {
+  my ($f) = @_;
+  my $strand = $f->strand;
+  my ($count) = $f->get_tag_values('count');
   my ($sample) = $f->get_tag_values('sample');  ## one of gc_curated_ss | gc_curated_pas
-  if($sample eq 'gc_curated_ss'){
+  if($sample eq 'gc_curated_ss' || $sample eq 'gc_splice_reads'){
     if($strand eq '+1'){
       return 'blue' if $count > 10;
       return 'lightskyblue' if $count == 1;
       return 'cornflowerblue';
     }else{
-      return 'darkred' if $count > 10;
+      return 'firebrick' if $count > 10;
       return 'tomato' if $count == 1;
       return 'red';
     } 
-  }elsif($sample eq 'gc_curated_pas'){
+  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rm'){
     if($strand eq '+1'){
       return 'green' if $count > 10;
       return 'lightgreen' if $count == 1;
       return 'limegreen';
     }else{
-      return 'purple' if $count > 10;
+      return 'darkorchid' if $count > 10;
       return 'orchid' if $count == 1;
-      return 'darkorchid';
+      return 'mediumorchid';
+    }
+  }else{
+    return 'lightslategray';
+  }
+}
+
+sub bgColorForSpliceAndPaSites {
+  my ($f) = @_;
+  my $strand = $f->strand;
+  my ($count) = $f->get_tag_values('count');
+  my ($sample) = $f->get_tag_values('sample');  ## one of gc_curated_ss | gc_curated_pas
+  my ($gm) = $f->get_tag_values('genome_matches');
+  return 'white' if $gm > 1;
+  if($sample eq 'gc_curated_ss' || $sample eq 'gc_splice_reads'){
+    if($strand eq '+1'){
+      return 'blue' if $count > 10;
+      return 'lightskyblue' if $count == 1;
+      return 'cornflowerblue';
+    }else{
+      return 'firebrick' if $count > 10;
+      return 'tomato' if $count == 1;
+      return 'red';
+    } 
+  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rm'){
+    if($strand eq '+1'){
+      return 'green' if $count > 10;
+      return 'lightgreen' if $count == 1;
+      return 'limegreen';
+    }else{
+      return 'darkorchid' if $count > 10;
+      return 'orchid' if $count == 1;
+      return 'mediumorchid';
     }
   }else{
     return 'lightslategray';

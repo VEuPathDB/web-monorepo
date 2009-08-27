@@ -324,8 +324,8 @@ sub geneTitle {
 sub spliceSiteCuratedTitle {
   my $f = shift;
   my $id = $f->name;  
-  my $loc = $f->location->to_FTstring;
-  my ($sasNum) = $f->get_tag_values('sas_count');
+  my $loc = $f->start;
+  my ($sasNum) = $f->get_tag_values('count');
   my ($utr_len) = $f->get_tag_values('utr_length');
   my ($gene_id) = $f->get_tag_values('gene_id');
   my ($sample) = $f->get_tag_values('sample');
@@ -345,12 +345,29 @@ sub spliceSiteAlignTitle {
   my $loc = $f->start;
   my ($seqNum) = $f->get_tag_values('count');
   my ($genMatches) = $f->get_tag_values('genome_matches');
+  my ($sample) = $f->get_tag_values('sample');
+  my $sampleName = $sample eq 'gc_splice_reads' ? 'Splice Leader Site' : 'Polyadenylation Site';
   my @data;
+  push(@data, [$sampleName => '']);
   push(@data, ['Longest Sequence:' => $seq]);
   push(@data, ['Location:' => $loc]);
   push(@data, ['Number of Sequences:' => $seqNum]);
   push(@data, ['Genome Matches:' => $genMatches]);
   return hover("Splice Site: $loc",\@data);
+}
+
+sub polyASiteAlignTitle {
+  my $f = shift;
+  my $seq = $f->name;  ##currently using the name to hold sequence
+  my $loc = $f->start;
+  my ($seqNum) = $f->get_tag_values('count');
+  my ($genMatches) = $f->get_tag_values('genome_matches');
+  my @data;
+  push(@data, ['Longest Sequence:' => $seq]);
+  push(@data, ['Location:' => $loc]);
+  push(@data, ['Number of Sequences:' => $seqNum]);
+  push(@data, ['Genome Matches:' => $genMatches]);
+  return hover("PolyA Site: $loc",\@data);
 }
 
 sub MicrosatelliteTitle {
