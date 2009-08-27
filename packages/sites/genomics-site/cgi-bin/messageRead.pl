@@ -41,9 +41,7 @@ my $sql=q(SELECT m.message_text, c.category_name
             AND p.project_id = mp.project_id 
             AND mp.message_id = m.message_id 
             AND m.message_category  =  c.category_name 
-            AND TO_CHAR(CURRENT_TIMESTAMP, 'mm-dd-yyyy hh24:mi:ss') 
-            BETWEEN TO_CHAR(START_DATE, 'mm-dd-yyyy hh24:mi:ss') 
-            AND TO_CHAR(STOP_DATE, 'mm-dd-yyyy hh24:mi:ss') 
+            AND CURRENT_TIMESTAMP BETWEEN START_DATE AND STOP_DATE
             AND m.message_category = ? );
 
 
