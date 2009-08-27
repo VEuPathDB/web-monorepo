@@ -20,24 +20,21 @@
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C T G"/>
     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByGenotypeNumber" linktext="RFLP Genotype Number" existsOn="A T"/>
-    </tr>
-    <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByRFLPGenotype" linktext="RFLP Genotype" existsOn="A T"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C T G"/>
     </tr>
     </table>
 </td>
 
 <td width="34%" valign="top">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C T G"/>
-    </tr>
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C T G"/>
     </tr>
+     <tr>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByGenotypeNumber" linktext="RFLP Genotype Number" existsOn="A T"/>
+     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Geographic Location" existsOn="A C P T G"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByRFLPGenotype" linktext="RFLP Genotype" existsOn="A T"/>
     </tr>
     <tr>
 <%--
@@ -51,16 +48,20 @@
 
 <td width="33%" valign="top">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-   
+    <tr>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Geographic Location" existsOn="A C P T G"/>
+    </tr>
      <tr>
        <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST/Reference Typing Tool" type="ISOLATE" existsOn="A C P T G"  />
      </tr>
     <tr>
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolatesByTextSearch" linktext="Text" existsOn="A C T G"/>
     </tr>
+<%--
      <tr>
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateBySubmitter" linktext="Submitter" existsOn="A P"  />
      </tr>
+--%>
      <tr>
      <site:queryGridMakeEasyUrl linkid="treeview" link="isolateClustering.jsp" linktext="Isolate Clustering" linkdesc="View Isolates in a treeview applet" existsOn="P"  />
     </tr>
