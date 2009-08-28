@@ -4635,18 +4635,19 @@ WHERE fl.na_sequence_id = $srcfeature_id
       SELECT interval feature_id, 
              'rnaseq' type, 
              'cn_pf0h' source, 
-             max(coverage) score, 
+             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
              'rnaseq_0h' parent_id, 
              interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='|| DECODE(sample,'map',1,0) atts
+       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
        FROM  apidb.rnaseq_coverage rc
        WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = '0h'
-         AND rc.type = 'p'
+         AND rc.sample in ('0h','map')
+         AND rc.type in ('p','m')
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
-       GROUP BY interval
+       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -4679,18 +4680,19 @@ WHERE fl.na_sequence_id = $srcfeature_id
       SELECT interval feature_id, 
              'rnaseq' type, 
              'cn_pf8h' source, 
-             max(coverage) score, 
+             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
              'rnaseq_8h' parent_id, 
              interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='|| DECODE(sample,'map',1,0) atts
+       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
        FROM  apidb.rnaseq_coverage rc
        WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = '8h'
-         AND rc.type = 'p'
+         AND rc.sample in ('8h','map')
+         AND rc.type in ('p','m')
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
-       GROUP BY interval
+       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -4724,18 +4726,19 @@ WHERE fl.na_sequence_id = $srcfeature_id
       SELECT interval feature_id, 
              'rnaseq' type, 
              'cn_pf16h' source, 
-             max(coverage) score, 
+             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
              'rnaseq_16h' parent_id, 
              interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='|| DECODE(sample,'map',1,0) atts
+       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
        FROM  apidb.rnaseq_coverage rc
        WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = '16h'
-         AND rc.type = 'p'
+         AND rc.sample in ('16h','map')
+         AND rc.type in ('p','m')
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
-       GROUP BY interval
+       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -4768,18 +4771,19 @@ WHERE fl.na_sequence_id = $srcfeature_id
       SELECT interval feature_id, 
              'rnaseq' type, 
              'cn_pf24h' source, 
-             max(coverage) score, 
+             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
              'rnaseq_24h' parent_id, 
              interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='|| DECODE(sample,'map',1,0) atts
+       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
        FROM  apidb.rnaseq_coverage rc
        WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = '24h'
-         AND rc.type = 'p'
+         AND rc.sample in ('24h','map')
+         AND rc.type in ('p','m')
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
-       GROUP BY interval
+       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -4812,18 +4816,19 @@ WHERE fl.na_sequence_id = $srcfeature_id
       SELECT interval feature_id, 
              'rnaseq' type, 
              'cn_pf32h' source, 
-             max(coverage) score, 
+             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
              'rnaseq_32h' parent_id, 
              interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='|| DECODE(sample,'map',1,0) atts
+       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
        FROM  apidb.rnaseq_coverage rc
        WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = '32h'
-         AND rc.type = 'p'
+         AND rc.sample in ('32h','map')
+         AND rc.type in ('p','m')
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
-       GROUP BY interval
+       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -4856,18 +4861,19 @@ WHERE fl.na_sequence_id = $srcfeature_id
       SELECT interval feature_id, 
              'rnaseq' type, 
              'cn_pf40h' source, 
-             max(coverage) score, 
+             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
              'rnaseq_40h' parent_id, 
              interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='|| DECODE(sample,'map',1,0) atts
+       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
        FROM  apidb.rnaseq_coverage rc
        WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = '40h'
-         AND rc.type = 'p'
+         AND rc.sample in ('40h','map')
+         AND rc.type in ('p','m')
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
-       GROUP BY interval
+       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -4900,18 +4906,19 @@ WHERE fl.na_sequence_id = $srcfeature_id
       SELECT interval feature_id, 
              'rnaseq' type, 
              'cn_pf48h' source, 
-             max(coverage) score, 
+             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
              'rnaseq_48h' parent_id, 
              interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='|| DECODE(sample,'map',1,0) atts
+       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
        FROM  apidb.rnaseq_coverage rc
        WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample = '48h'
-         AND rc.type = 'p'
+         AND rc.sample in ('48h','map')
+         AND rc.type in ('p','m')
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
-       GROUP BY interval
+       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
