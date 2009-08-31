@@ -14,6 +14,7 @@
 <c:set var="eupathIsolatesQuestion" value="${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
   && (fn:containsIgnoreCase(modelName, 'CryptoDB') 
   || fn:containsIgnoreCase(modelName, 'ToxoDB') 
+  || fn:containsIgnoreCase(modelName, 'GiardiaDB') 
   || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}" /> 
 
 <%-- When implement visualizing multiple strategies, the name of the strategy (for the title) could cme from the step object probably --%>
