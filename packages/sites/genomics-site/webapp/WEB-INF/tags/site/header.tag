@@ -75,6 +75,10 @@
   <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahTbXWpA0E7vCdCxcYwpPwzMOEinFhTk3zvyW9eMl1CGc0wQabgrO2GHiA" />
 </c:if>
 
+<c:if test="${project == 'GiardiaDB'}">
+  <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahTlNDst8dXAmD5YyQ2VVS97EWFghhQhZPGp197fIBaqTKkE2AWWB1m7xA" />
+</c:if>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <%------------------ setting title --------------%>
 
