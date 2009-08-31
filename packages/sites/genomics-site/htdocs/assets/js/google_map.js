@@ -36,6 +36,8 @@ jQuery(document).ready(function(){
     type = "&myMultiProp(type)=RFLP,Genbank";
   } else if(dd.match('plasmodb')) {
     type = "&myMultiProp(type)=3kChip,75kChip,Barcode,Genbank";
+  } else if(dd.match('giardiadb')) {
+    type = '';
   } else if(dd.match('plasmodb')) {
     type = '';
   } 
