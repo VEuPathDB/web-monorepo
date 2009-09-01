@@ -34,8 +34,6 @@
 
 <c:choose>
     <c:when test="${showParams == true}">
-        <script src="js/lib/jquery.autocomplete.js" type="text/javascript"></script>
-        <script src="assets/js/parameterHandlers.js" type="text/javascript"></script>
         <%-- display params section only --%>
         <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
             <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
@@ -66,6 +64,11 @@
 
 <%-- the js has to be included here in order to appear in the step form --%>
 <script type="text/javascript" src='<c:url value="/assets/js/wdkQuestion.js"/>'></script>
+<c:if test="${showParams == null}">
+            <script type="text/javascript">
+              $(document).ready(function() { initParamHandlers(); });
+            </script>
+</c:if>
 
 <div class="params">
 
@@ -76,8 +79,6 @@
 --%>
 
 <c:if test="${showParams == null}">
-    <script src="js/lib/jquery.autocomplete.js" type="text/javascript"></script>
-    <script src="assets/js/parameterHandlers.js" type="text/javascript"></script>
 <%--CODE TO SET UP THE SITE VARIABLES --%>
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />

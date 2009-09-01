@@ -246,6 +246,7 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 		var tms = topMenu_script.substring(topMenu_script.indexOf("{")+1,topMenu_script.indexOf("}"));
 		eval(tms);
 	}
+	initParamHandlers();
 }
 
 function validateAndCall(type, url, proto, rs){

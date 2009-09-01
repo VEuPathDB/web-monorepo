@@ -14,13 +14,11 @@
 <!-- js for Help - Did you know window --> 
 <!-- these files were under IF customSummary but the Help needs to work in any page -->
 <script type="text/javascript" src="/assets/js/lib/jquery-ui-1.7.2.custom.min.js"></script>
-<c:if test="${refer == 'customSummary'}">
-  <script type="text/javascript" src="/assets/js/dyk.js"></script>	
-</c:if>
 
 <!-- JQuery Drag And Drop Plugin -->
 <script type="text/javascript" src="/assets/js/js-utils.js"></script>
 <c:if test="${refer == 'customSummary'}">
+  <script type="text/javascript" src="/assets/js/dyk.js"></script>
 	<!-- JQuery Drag And Drop Plugin -->
 	<!--<script type="text/javascript" src="/assets/js/lib/jqDnR.js"></script>-->
 	<script type="text/javascript" src="/assets/js/lib/json.js"></script>
@@ -46,6 +44,12 @@
 
 
         <script type="text/javascript" src="<c:url value='/assets/js/wdkFilter.js' />"></script>
+</c:if>
+
+
+<c:if test="${refer == 'customSummary' || refer == 'customQuestion'}">
+  <script src="js/lib/jquery.autocomplete.js" type="text/javascript"></script>
+  <script src="assets/js/parameterHandlers.js" type="text/javascript"></script>
 </c:if>
 
 <!-- JQuery BlockUI Plugin -->
