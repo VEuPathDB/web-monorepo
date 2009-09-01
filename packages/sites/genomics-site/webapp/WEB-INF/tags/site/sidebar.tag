@@ -81,7 +81,7 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
 	<synd:sort feed="allFeeds" direction="desc" value="date"/>
 
 	<ul>
-		<c:forEach items="${allFeeds.entries}" var="e" begin="0" end="6" >
+	    <c:forEach items="${allFeeds.entries}" var="e" begin="0" end="6" >
 		<fmt:formatDate var="fdate" value="${e.publishedDate}" pattern="d MMMM yyyy"/>
 		<c:if test="${fdate != null && e.author != null}">
 			<li id="n-${shorttag}">
@@ -89,13 +89,15 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
 				<a href='${e.link}'>${e.title}</a> 
 			</li>
    		</c:if> 
-		</c:forEach>
+	    </c:forEach>
 	</ul>
 	</c:catch>
 
 	<c:if test="${feedex != null}">
-		 <i>News temporarily unavailable</i>
+		 <i>Specific-Organism Site News temporarily unavailable</i>
 	</c:if>
+
+	 <a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News</a>
 
 </c:if>
 
