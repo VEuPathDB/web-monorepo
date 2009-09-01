@@ -569,13 +569,15 @@ sub changeType {
 sub synSpanRelativeCoords { 
   my $f = shift; 
   my ($off) = $f->get_tag_values("SynStart"); 
-  my ($scale) = $f->get_tag_values("Scale");$off*$scale;
+  my ($scale) = $f->get_tag_values("Scale");
+  return $off*$scale;
 }
 
 
 sub synSpanScale { 
   my $f = shift; 
   my ($scale) = $f->get_tag_values("Scale");
+  return $scale;
 }
 
 
