@@ -445,10 +445,13 @@
       <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
-      path="/getTypeAheadData"
-      type="org.gusdb.wdk.controller.action.GetTypeAheadDataAction"
-      scope="request">
-      <forward name="type_ahead" path="/typeAheadXml.jsp"/>
+      path="/getVocab"
+      type="org.gusdb.wdk.controller.action.GetVocabAction"
+      scope="request"
+      name="questionForm"
+      validate="false">
+      <forward name="vocab_xml" path="/vocabXml.jsp"/>
+      <forward name="vocab_html" path="/vocabHtml.jsp"/>
     </action>
   </action-mappings>
 
