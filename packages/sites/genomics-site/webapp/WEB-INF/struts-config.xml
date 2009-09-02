@@ -25,6 +25,7 @@
     <form-bean name="showResetPasswordForm" type="org.gusdb.wdk.controller.action.ShowResetPasswordForm"/>
     <form-bean name="phenotypeForm" type="org.apidb.apicommon.controller.PhenotypeForm"/>
     <form-bean name="commentForm" type="org.apidb.apicommon.controller.NewCommentForm"/> 
+    <form-bean name="editCommentForm" type="org.apidb.apicommon.controller.EditCommentForm"/> 
     <form-bean name="showCommentForm" type="org.apidb.apicommon.controller.ShowCommentForm"/>
     <form-bean name="deleteCommentForm" type="org.apidb.apicommon.controller.DeleteCommentForm"/>
     <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.action.RenameStepForm"/>
@@ -383,6 +384,14 @@
       scope="session"
       input="/addCommentsNew.jsp"
       name="commentForm">
+      <forward name="add_comment" path="/addComment.do"/>
+   </action> 
+   <action
+      path="/editComment"
+      type="org.apidb.apicommon.controller.EditCommentAction"
+      scope="request"
+      input="/showComments.jsp"
+      name="editCommentForm">
       <forward name="add_comment" path="/addComment.do"/>
    </action> 
    <action
