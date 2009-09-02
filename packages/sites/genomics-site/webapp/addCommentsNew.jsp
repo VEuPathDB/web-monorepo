@@ -34,6 +34,13 @@
                  banner="Add A Comment"/>
 <head>
 <script type="text/javascript">
+$(document).ready(function(){
+        $('#oldCommentFile td img.delete').click(function(){
+    $(this).parent().parent().parent().remove();
+    });
+});
+
+
 $(function()
 { 
  $("#trigger").click(function(event) {
@@ -143,7 +150,7 @@ $(document).ready(function(){
 
           <c:when test="${param.bulk ne 'yes'}">
             <site:email
-                  to="${wdkUser.email}, ${to}"
+                  to="${wdkUser.email}"
                   from="${from}"
                   subject="${subject}"
                   body="${body}"
@@ -151,7 +158,7 @@ $(document).ready(function(){
           </c:when>
           <c:otherwise>
             <site:email
-                  to="${to}"
+                  to="${wdkUser.email}"
                   from="${from}"
                   subject="${subject}"
                   body="${body}"
@@ -175,17 +182,37 @@ $(document).ready(function(){
 
 
       <html:form method="post" action="addComment.do" styleId="uploadForm" enctype="multipart/form-data">
+
         <html:hidden property="commentTargetId" value="${commentForm.commentTargetId}"/>
         <html:hidden property="stableId" value="${commentForm.stableId}"/>
         <html:hidden property="externalDbName" value="${commentForm.externalDbName}"/>
         <html:hidden property="externalDbVersion" value="${commentForm.externalDbVersion}"/>
         <html:hidden property="organism" value="${commentForm.organism}"/>
+        <html:hidden property="commentTargetId" value="${commentForm.commentTargetId}"/>
         <%--<html:hidden property="locations" value="${fn:replace(commentForm.locations, ',', '')}"/> --%>
         
       <table class="mybox" cellspacing=3 width=90% border=0>
 
       <tr>
-        <td colspan=3 align=center><div class="medium"><h3>Add a comment to ${commentForm.commentTargetId} ${commentForm.stableId}</h3></div></td>
+        <td colspan=3 align=center>
+          <div class="medium">
+          <h3>
+          <c:choose>
+            <c:when test="${commentForm.commentId ne null}"> 
+              Edit comment ${commentForm.commentId} ${commentForm.stableId} <br/>
+
+              <html:hidden property="commentId" value="${commentForm.commentId}"/> 
+
+
+            </c:when>
+
+            <c:otherwise> 
+               Add a comment to ${commentForm.commentTargetId} ${commentForm.stableId}
+            </c:otherwise>
+          </c:choose>
+          </h3>
+          </div>
+        </td>
       </tr>
 
       <tr class="medium">
@@ -233,11 +260,11 @@ $(document).ready(function(){
         <td>Category<br/></td>
         <td> 
           <logic:iterate id="category" property="categoryList" name="commentForm"> 
-	          <bean:define id="categorybean" name="category" type="org.apache.struts.util.LabelValueBean"/>
-	          <html:multibox property="targetCategory">
-	            <bean:write name="categorybean" property="value"/>
-	          </html:multibox>
-	            <bean:write name="categorybean" property="label"/>
+            <bean:define id="categorybean" name="category" type="org.apache.struts.util.LabelValueBean"/>
+            <html:multibox property="targetCategory">
+              <bean:write name="categorybean" property="value"/>
+            </html:multibox>
+              <bean:write name="categorybean" property="label"/>
           </logic:iterate> 
         </td>
       </tr>
@@ -293,6 +320,52 @@ $(document).ready(function(){
         <td>&nbsp;</td>
         <td>Upload File</td>
         <td>
+        
+         <c:if test="${commentForm.files ne null}"> 
+
+         <c:forEach var="file" items="${commentForm.files}">
+
+            <c:set var="fArray" value="${fn:split(file, '|')}" />
+            <c:set var="fId" value="${fArray[0]}"/>
+            <c:set var="fName" value="${fArray[1]}"/>
+            <c:set var="fNote" value="${fArray[2]}"/>
+
+         <table>
+         <tr><td>
+
+         <table id="oldCommentFile" style="border:1px solid black;background-color:#cccccc">
+
+           <tr>
+             <td>Select a file:</td>
+             <td> 
+              test ${file}
+              <html:text property="existingNames" value="${fName}" size="40" disabled="true"/> 
+             </td>
+             <td align="right">
+             
+              <html:hidden property="existingFiles" value="${file}"/> 
+              <img class="delete" src="images/remove.gif">
+             </td>
+           </tr>
+
+           <tr>
+            <td style="vertical-align:top">
+               Brief Description:<br>(4000 max characters)
+            </td> 
+            <td colspan="2">
+              <textarea name="existingNotes" rows="3" cols="50" maxlength="4000" disabled>${fNote}</textarea>
+            </td>
+           </tr>
+          </table>
+
+          </td></tr>
+          </table>
+
+          </c:forEach>
+
+         </c:if>
+
+
           <table id="fileSelTbl"></table>
           <table>
             <tr><td><input type="button" name="newfile" value="Add Another File" id="newfile"></td></tr>
