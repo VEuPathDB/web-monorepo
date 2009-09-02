@@ -4,6 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<c:set var="project" value="${applicationScope.wdkModel.name}" />
 
 <c:url var="feedPath" value="/communityEventsRss.jsp" />
 <c:set var="rss_Url">
@@ -31,7 +32,14 @@ http://${pageContext.request.serverName}${feedPath}
 </ul>
 <c:choose>
 <c:when test="${fn:length(allFeeds.entries) > 0}">
-  <a style="margin-left:0px" href='<c:url value="/communityEvents.jsp"/>'>Full Events Page</a>
+	<c:choose>
+	<c:when test="${project == 'EuPathDB'}">
+      		<a style="margin-left:0px" href='<c:url value="/eupathEvents.jsp"/>'>Full Events Page</a>
+	</c:when>
+	<c:otherwise>
+	 	<a style="margin-left:0px" href='<c:url value="/communityEvents.jsp"/>'>Full Events Page</a>
+	</c:otherwise>
+	</c:choose>
 </c:when>
 <c:otherwise>
 </c:otherwise>
