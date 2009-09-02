@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
 <%-- 
 attributes:
@@ -71,7 +72,11 @@ $(document).ready(function() {
                <th> 
                <a name=${comment.commentId}>${comment.headline}</a> 
                <c:if test="${comment.email eq wdkUser.email}">
-               &nbsp;&nbsp;&nbsp; <a href="deleteComment.do?projectId=${comment.projectName}&stableId=${comment.stableId}&commentTargetId=${comment.commentTarget}&commentId=${comment.commentId}&email=${wdkUser.email}" class="delete">[delete comment]</a>
+               &nbsp;&nbsp;&nbsp; 
+
+               <a href="editComment.do?projectId=${comment.projectName}&stableId=${comment.stableId}&commentTargetId=${comment.commentTarget}&commentId=${comment.commentId}&email=${wdkUser.email}">[edit comment]</a>
+
+               <a href="deleteComment.do?projectId=${comment.projectName}&stableId=${comment.stableId}&commentTargetId=${comment.commentTarget}&commentId=${comment.commentId}&email=${wdkUser.email}" class="delete">[delete comment]</a>
                </c:if>
                </th>
             </tr>
