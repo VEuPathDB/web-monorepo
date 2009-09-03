@@ -652,7 +652,7 @@ FROM
    AND  ra.sample = 'gc_splice_reads'
    AND  ra.start_a >= $base_start
    AND  ra.end_a <= $rend
-  UNION
+/*  UNION
   SELECT ra.rnaseq_align_id feature_id,
          ra.na_sequence_id as parent_id, 
          CASE WHEN strand = '+' THEN ra.end_a ELSE ra.start_a END as startm, 
@@ -662,7 +662,7 @@ FROM
   WHERE ra.na_sequence_id = $srcfeature_id
    AND  ra.sample = 'gc_polyA_rm'
    AND  ra.start_a >= $base_start
-   AND  ra.end_a <= $rend )
+   AND  ra.end_a <= $rend */)
 GROUP BY parent_id,sample,strand,startm
 ]]>
     </sql>
