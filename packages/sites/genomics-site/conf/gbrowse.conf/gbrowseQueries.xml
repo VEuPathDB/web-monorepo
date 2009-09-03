@@ -440,6 +440,7 @@ ORDER BY
   <sqlQuery name="gene:syntenyMC" excludeProjects="GiardiaDB,TrichDB">
      <sql>
 <![CDATA[
+SELECT * FROM (
 SELECT
        gattr.na_feature_id feature_id,
        'gene' type, 
@@ -497,6 +498,9 @@ WHERE syn.a_na_sequence_id = $srcfeature_id
   )
   AND fl.start_min <= syn.b_end
   AND fl.end_max >= syn.b_start
+) 
+WHERE startm <= $rend
+  AND end >= $base_start
 ]]>
     </sql>
   </sqlQuery>
@@ -3735,6 +3739,7 @@ AND ed.name in ('L.major Cosmid Ends from Sanger',
   <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="GiardiaDB,TrichDB">
      <sql>
 <![CDATA[
+SELECT * FROM (
 SELECT
        exfloc.na_feature_id feature_id,
        'exon' type, 
@@ -3780,6 +3785,9 @@ WHERE syn.a_na_sequence_id = $srcfeature_id
   )
   AND exfloc.start_min <= syn.b_end
   AND exfloc.end_max >= syn.b_start
+)
+WHERE startm <= $rend
+  AND end >= $base_start
 ]]>
     </sql>
   </sqlQuery>
