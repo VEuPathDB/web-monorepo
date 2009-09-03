@@ -150,7 +150,7 @@ $(document).ready(function(){
 
           <c:when test="${param.bulk ne 'yes'}">
             <site:email
-                  to="${wdkUser.email}"
+                  to="${wdkUser.email}, ${to}"
                   from="${from}"
                   subject="${subject}"
                   body="${body}"
@@ -158,7 +158,7 @@ $(document).ready(function(){
           </c:when>
           <c:otherwise>
             <site:email
-                  to="${wdkUser.email}"
+                  to="${to}"
                   from="${from}"
                   subject="${subject}"
                   body="${body}"
