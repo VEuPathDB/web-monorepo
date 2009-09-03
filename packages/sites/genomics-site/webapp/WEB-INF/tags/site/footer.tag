@@ -12,31 +12,7 @@
 
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 <c:set var="version" value="${applicationScope.wdkModel.version}" />
-
-<%-------------  SITE Version and DATE  ----------------%>
-<c:choose>
-   <c:when test="${fn:containsIgnoreCase(siteName, 'CryptoDB')}">
-     <c:set var="date" value="June 2009" />
-   </c:when>
-<c:when test="${fn:containsIgnoreCase(siteName, 'GiardiaDB')}">
-     <c:set var="date" value="June 2009" />
-   </c:when>
- <c:when test="${fn:containsIgnoreCase(siteName, 'PlasmoDB')}">
-     <c:set var="date" value="June 2009" />
-   </c:when>
-<c:when test="${fn:containsIgnoreCase(siteName, 'ToxoDB')}">
-     <c:set var="date" value="June 2009" />
-   </c:when>
-<c:when test="${fn:containsIgnoreCase(siteName, 'TrichDB')}">
-     <c:set var="date" value="June 2009" />
-   </c:when>
- <c:when test="${fn:containsIgnoreCase(siteName, 'TriTrypDB')}">
-     <c:set var="date" value="June 2009" />
-   </c:when>
-<c:when test="${fn:containsIgnoreCase(siteName, 'EuPathDB')}">
-     <c:set var="date" value="June 2009" />
-   </c:when>
-</c:choose>
+<c:set var="date" value="September 2009" />
 
 <%------------ divs defined in header.tag for all pages but home/home2  -----------%>
 <c:if test="${refer != 'home' && refer != 'home2'}">
@@ -45,21 +21,30 @@
 </div> <%-- id="contentwrapper" --%>
 </c:if>
 
-<c:if test="${fn:containsIgnoreCase(siteName, 'EuPathDB')}">
-     <c:set var="siteName" value="EupathDB" />
-</c:if>
-
 <%--------------------------------------------%>
 
 <div id="footer" >
-<div style="float:left;padding-left:9px;padding-top:9px;">
- 	 <a href="http://${fn:toLowerCase(siteName)}.org">${siteName}.org</a> ${version},&nbsp;${date}
+	<div style="float:left;padding-left:9px;padding-top:9px;">
+ 	 	<a href="http://${fn:toLowerCase(siteName)}.org">${siteName}.org</a> ${version},&nbsp;${date}
 		<br>&copy;2009 The EuPath Project Team
+	</div>
+	<div style="float:right;padding-right:9px;padding-top:9px;">
+		<a href="http://www.eupathdb.org"><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a>
+	</div>
+	<span style="font-size:1.4em;line-height:2;">
+
+	Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments
+	<br>
+	<a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb.jpg"  height=20 width=20></a>&nbsp;&nbsp;
+        <a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb.jpg"  height=20 width=20></a>&nbsp;&nbsp;
+        <a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb.jpg"  height=20 width=20></a>&nbsp;&nbsp;
+        <a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb.jpg"  height=20 width=20></a>&nbsp;&nbsp;
+        <a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb.jpg"  height=20 width=25></a>&nbsp;&nbsp;
+        <a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb.jpg"  height=20 width=20></a>
+
+
+	</span>
 </div>
-<div style="float:right;padding-right:9px;padding-top:9px;">
-	<a href="http://www.eupathdb.org"><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a>
-</div>
-<span style="font-size:1.4em;line-height:3;">Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments</span>
-</div>
+
 </body>
 </html>

@@ -38,23 +38,20 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
 
   <table align="left" border="0">
   <tr>
-     <td valign="top" width="10%" align="center"><a href="/">
-  </a></td>
-     <td>&nbsp;</td>
-     <td ALIGN=right width=20><a href="/">
-        <img SRC="/assets/images/eupathdb_titleonwhite.gif" border=0>
-     </a></td> 
-     <td  valign="top" width="10%" align="right">
-        <table align="center" cellspacing=0 cellpadding=0>
-        <tr valign="down"><td valign="bottom" align="center"><a href="http://cryptodb.org"><img border=0 src="/images/oocyst_bg.gif" width="55" height="55"></a></td></tr>
-        <tr valign="top"><td valign="top" align="center"><a href="http://cryptodb.org"><img border=0 src="/images/cryptobanner.gif" width="60" height="17"></a></td></tr>
-        </table>
-     </td>
-  <td valign="top" align="left"><a href="http://giardiadb.org"><img border=0 src="/assets/images/dbgiardia.jpg"  height="70"></a></td>
-     <td valign="top" width="10%" align="center"><a href="http://plasmodb.org"><img border=0 src="/images/plasmoall.jpg" width="70" height="70"></a></td>
-     <td valign="top" align="left"><a href="http://toxodb.org"><img border=0 src="/assets/images/dbtoxo.jpg"  height="70"></a></td>
-  <td valign="top" align="left"><a href="http://trichdb.org"><img border=0 src="/assets/images/dbtrich.jpg"  height="70"></a></td>
-  
+     <td><a href="/"><img src="/assets/images/eupathdb_titleonwhite.gif" border=0></a></td> 
+	<td>&nbsp;</td> 
+    <td><a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb.jpg"  height=25 width=25></a></td>
+	<td>&nbsp;</td> 
+    <td><a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb.jpg"  height=25 width=25></a></td>	
+	<td>&nbsp;</td> 
+    <td><a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb.jpg"  height=25 width=25></a></td>
+	<td>&nbsp;</td> 
+    <td><a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb.jpg"  height=25 width=25></a></td>
+	<td>&nbsp;</td> 
+    <td><a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb.jpg"  height=25 width=30></a></td>
+	<td>&nbsp;</td> 
+    <td><a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb.jpg"  height=25 width=25></a></td>
+
   
   </tr>
   </table>
@@ -90,6 +87,6 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
 
 </c:catch>
 <c:if test="${e != null}">
-    oops. this is borken. <br> 
+    oops. this is broken. <br> 
     ${e}
 </c:if>
