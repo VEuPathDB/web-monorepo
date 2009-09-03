@@ -338,7 +338,6 @@ $(document).ready(function(){
            <tr>
              <td>Select a file:</td>
              <td> 
-              test ${file}
               <html:text property="existingNames" value="${fName}" size="40" disabled="true"/> 
              </td>
              <td align="right">
