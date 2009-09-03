@@ -397,15 +397,15 @@ sub fgColorForSpliceAndPaSites {
       return 'tomato' if $count == 1;
       return 'red';
     } 
-  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rm'){
+  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rm' || $sample eq 'gc_polyA_from_gc'){
     if($strand eq '+1'){
       return 'green' if $count > 10;
       return 'lightgreen' if $count == 1;
       return 'limegreen';
     }else{
-      return 'darkorchid' if $count > 10;
-      return 'orchid' if $count == 1;
-      return 'mediumorchid';
+      return 'darkgoldenrod' if $count > 10;
+      return 'gold' if $count == 1;
+      return 'goldenrod';
     }
   }else{
     return 'lightslategray';
@@ -429,15 +429,15 @@ sub bgColorForSpliceAndPaSites {
       return 'tomato' if $count == 1;
       return 'red';
     } 
-  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rm'){
+  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rm' || $sample eq 'gc_polyA_from_gc'){
     if($strand eq '+1'){
       return 'green' if $count > 10;
       return 'lightgreen' if $count == 1;
       return 'limegreen';
     }else{
-      return 'darkorchid' if $count > 10;
-      return 'orchid' if $count == 1;
-      return 'mediumorchid';
+      return 'darkgoldenrod' if $count > 10;
+      return 'gold' if $count == 1;
+      return 'goldenrod';
     }
   }else{
     return 'lightslategray';
