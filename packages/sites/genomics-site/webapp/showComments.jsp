@@ -61,7 +61,29 @@ $(document).ready(function() {
     </c:when>
     <c:otherwise> <%-- has comments for the stable id --%>
 
-      <div id=menu><center>${param.commentTargetId} comments on ${stable_id}</center></div>
+      <c:choose>
+          <c:when test="${comment_target_id eq 'gene'}">
+            <c:set var="returnUrl">
+            <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
+            </c:set>
+          </c:when>
+
+          <c:when test="${comment_target_id eq 'isolate'}">
+            <c:set var="returnUrl">
+            <c:url value="/showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
+            </c:set>
+          </c:when>
+
+          <c:otherwise>
+            <c:set var="returnUrl"> 
+            <c:url value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
+            </c:set>
+          </c:otherwise>
+
+      </c:choose> 
+
+      <p align="center">${comment_target_id} comments on <a href="${returnUrl}">${stable_id}</a></p>
+      <br/>
 
       <c:forEach var="comment" items="${comments}">
 
