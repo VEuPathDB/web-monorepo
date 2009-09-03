@@ -17,10 +17,10 @@
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByTaxon" linktext="Taxon/Strain" existsOn="A C P T G"/> 
     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C T G"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByHost" linktext="Host" existsOn="A C T G P"/>
     </tr>
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C T G"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolationSource" linktext="Isolation Source" existsOn="A C T G P"/>
     </tr>
     </table>
 </td>
@@ -28,7 +28,7 @@
 <td width="34%" valign="top">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C T G"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C T G P"/>
     </tr>
      <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByGenotypeNumber" linktext="RFLP Genotype Number" existsOn="A T"/>
@@ -55,7 +55,7 @@
        <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST/Reference Typing Tool" type="ISOLATE" existsOn="A C P T G"  />
      </tr>
     <tr>
-       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolatesByTextSearch" linktext="Text" existsOn="A C T G"/>
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolatesByTextSearch" linktext="Text" existsOn="A C T G P"/>
     </tr>
 <%--
      <tr>
