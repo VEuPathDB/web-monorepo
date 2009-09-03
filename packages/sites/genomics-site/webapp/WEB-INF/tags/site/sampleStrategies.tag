@@ -65,6 +65,11 @@
       <c:set var="expressedLbrazilliensis" value="36217c6cc264ac15" />
    </c:when>
 
+ <c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
+      <c:set var="simple" value="4961f7629e7950c9" />
+      <c:set var="expanded" value="1fb4107e239e7e13" />
+   </c:when>
+
 
 <c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
  
