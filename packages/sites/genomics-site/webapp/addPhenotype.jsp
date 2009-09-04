@@ -2,6 +2,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
+<%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic" %>
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
@@ -218,11 +220,15 @@ $(document).ready(function(){
       <tr class="medium">
          <td>Reporters</td>
          <td>
-            <html:checkbox property="reporter" value="1">Luciferase</html:checkbox>
-            <html:checkbox property="reporter" value="2">Fluorescent Protein (GFP, RFP, etc)</html:checkbox>
-            <html:checkbox property="reporter" value="3">CAT</html:checkbox>
-            <html:checkbox property="reporter" value="4">beta-galactosidase</html:checkbox>
-            <html:checkbox property="reporter" value="5">Other</html:checkbox>
+          <logic:iterate id="rep" property="reporterList" name="phenotypeForm"> 
+
+            <bean:define id="repBean" name="rep" type="org.apache.struts.util.LabelValueBean"/>
+            <html:multibox property="reporter">
+              <bean:write name="repBean" property="value"/>
+            </html:multibox>
+              <bean:write name="repBean" property="label"/>
+          </logic:iterate> 
+
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>CAT: Chloramphenicol acyl transferase (Chloramphenicol resistance)</li></ul>')">
           <img src="/assets/images/help.png" align=bottom border=0></a>
 
