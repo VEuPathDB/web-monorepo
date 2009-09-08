@@ -159,7 +159,7 @@ h1 {
 h2 {
   	color: #626262;
 }
-.h2center, .h3left, .h4left {
+.h2center, .h3left, .h3center,  .h4left {
         color: #610b0b;   /* reddish */
 }
 

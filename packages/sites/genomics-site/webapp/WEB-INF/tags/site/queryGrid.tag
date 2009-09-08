@@ -42,8 +42,11 @@
 <%-- with new UI design the cellspacing/cellpdding of the table seems useless, innertube2 class provdes the padding --%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-
-<div style="padding-top:5px;position: relative;left: 1.5em;" class="h3left">Select a search to start a new strategy
+<%--
+<div style="padding-top:5px;position: relative;left: 1.5em;" class="h3left">
+--%>
+<div style="padding-top:5px;" class="h3center">
+	Select a search to start a new strategy
 <c:if test="${from != 'tab'}">
  	or  click on "My Searches: " to enter your strategy workspace.</div>
 </c:if>

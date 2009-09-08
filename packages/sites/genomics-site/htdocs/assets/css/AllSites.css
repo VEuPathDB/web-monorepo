@@ -981,6 +981,15 @@ h2 {
 	margin-left: 11px;
 }
 
+.h3center {
+	font-size: 12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color:  black;    
+	margin-bottom: 5px;
+ 	text-align: center;
+}
+
 .h3left {
 	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;

@@ -161,7 +161,7 @@ h1 {
 h2 {
   	color: #226723;
 }
-.h2center, .h3left, .h4left {
+.h2center, .h3left,.h3center, .h4left {
   	color: #2c2c7d;   /* 5f0f47; */
 }
 .subcolor {
