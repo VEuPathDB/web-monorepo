@@ -34,7 +34,7 @@
 	</tr>
 	</table>
 
-	<br><br>
+	<br>
 	</p>
 </c:when>
 <c:otherwise>
