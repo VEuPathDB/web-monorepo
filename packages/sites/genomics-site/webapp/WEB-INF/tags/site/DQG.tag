@@ -22,7 +22,17 @@
         <td align="center" width="17%"><a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb.jpg"           height=50 width=50></a></td>
         <td align="center" width="17%"><a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb.jpg"        height=50 width=65></a></td>
         <td align="center" width="17%" ><a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb.jpg" height=60 width=40></a></td>
-	</tr></table>
+	</tr>
+
+	<tr>
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#a03f43">CryptoDB<br>Rel.4.2</td>
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#67678d">GiardiaDB<br>Rel.1.3</td
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#ad448e">PlasmoDB<br>Rel.6.1</td
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#af5672">ToxoDB<br>Rel.5.2</td
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#8d7658">TrichDB<br>Rel.1.1</td
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#4f9cce">TriTrypDB<Br>Rel.1.2</td
+	</tr>
+	</table>
 
 	<br><br>
 	</p>
