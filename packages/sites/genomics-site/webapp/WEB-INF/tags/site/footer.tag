@@ -33,14 +33,14 @@
 		Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments
 	</div>
 
-	<span>
-		<a href="http://www.eupathdb.org"><br><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a>
-		<a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb.jpg"  height=20 width=20></a>&nbsp;&nbsp;
-       		<a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb.jpg"  height=20 width=20></a>&nbsp;&nbsp;
-        	<a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb.jpg"  height=20 width=20></a>&nbsp;&nbsp;
-        	<a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb.jpg"  height=20 width=20></a>&nbsp;&nbsp;
-        	<a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb.jpg"  height=20 width=25></a>&nbsp;&nbsp;
-        	<a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb.jpg"  height=20 width=20></a>
+	<span style="position: relative; top: -9px;">
+		<a href="http://www.eupathdb.org"><br><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a>&nbsp;&nbsp;
+		<a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb_w50.png"     	width=30></a>&nbsp;
+       		<a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb_w50.png"  	width=30></a>&nbsp;&nbsp;
+        	<a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb_w50.png"     	width=30></a>&nbsp;&nbsp;
+        	<a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb_w50.png"           	width=30></a>&nbsp;&nbsp;
+        	<a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb_w65.png"        	height=30></a>&nbsp;&nbsp;
+        	<a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb_w40.png"	width=25></a>
 	</span>
 
 </div>

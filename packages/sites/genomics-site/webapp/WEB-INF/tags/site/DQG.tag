@@ -16,12 +16,12 @@
 	<br>
 
 	<table class="center" style="padding:2px;" width="95%"><tr>
-	<td align="center" width="17%"><a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb.jpg"     height=50 width=50></a></td>
-        <td align="center" width="17%"><a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb.jpg"  height=50 width=50></a></td>
-        <td align="center" width="17%"><a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb.jpg"     height=50 width=50></a></td>
-        <td align="center" width="17%"><a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb.jpg"           height=50 width=50></a></td>
-        <td align="center" width="17%"><a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb.jpg"        height=50 width=65></a></td>
-        <td align="center" width="17%" ><a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb.jpg" height=60 width=40></a></td>
+	<td align="center" width="17%"><a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb_w50.png"></a></td>
+        <td align="center" width="17%"><a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb_w50.png"></a></td>
+        <td align="center" width="17%"><a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb_w50.png"></a></td>
+        <td align="center" width="17%"><a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb_w50.png"></a></td>
+        <td align="center" width="17%"><a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb_w65.png"></a></td>
+        <td align="center" width="17%" ><a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb_w40.png"></a></td>
 	</tr>
 
 	<tr>
