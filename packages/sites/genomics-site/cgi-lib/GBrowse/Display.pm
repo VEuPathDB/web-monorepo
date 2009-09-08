@@ -218,10 +218,7 @@ sub massSpecBgColorFromExtDbName {
                 'Linfantum Proteomics PTM-phosphorylation' => 'green',
                 'Linfantum Proteomics 2DGel 6-11 Promastigote' => 'blue',
                 'Lmajor Proteomics 2DGel 6-11 Promastigote' => 'blue',
-                'Linfantum Proteomics data from Marc Ouellette-pH5-6 Meta Wt' => 'lightseagreen',
-                'Linfantum Proteomics data from Marc Ouellette-pH5-6 Meta KO' => 'seagreen',
-                'Lmajor Proteomics data from Marc Ouellette-pH5-6 Meta KO' => 'lightbrown',
-                'Lmajor Proteomics data from Marc Ouellette-pH5-6 Meta Wt' => 'sandybrown',
+                'Linfantum Proteomics data from Marc Ouellette' => 'lightseagreen',
                 # CryptoDB
                 'Ferrari_Proteomics_LTQ_Oocyst_walls' => 'sandybrown',
                 'Ferrari_Proteomics_LTQ_Sporozoites_merged' => 'tan',
