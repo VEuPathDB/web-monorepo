@@ -684,80 +684,27 @@ GROUP BY parent_id,sample,strand,startm
     </sql>
   </sqlQuery>
 
-      <sqlQuery name="polya:alignseqfor" includeProjects="TriTrypDB">
+      <sqlQuery name="polya:alignseq" includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
 SELECT min(feature_id) as feature_id, parent_id, startm, startm as end,
-        'polya' type, 'alignseqfor' source,
+        'polya' type, 'alignseq' source,
         max(name) as name, 
         strand,
         'genome_matches='||min(genome_matches) || '$dlm' ||
-        'sample='||sample || '$dlm' ||
         'count='||count(*) atts
 FROM
-  (SELECT ra.rnaseq_align_id feature_id, ra.sample,
+  (SELECT ra.rnaseq_align_id feature_id, 
          ra.na_sequence_id as parent_id, 
          CASE WHEN strand = '+' THEN ra.end_a ELSE ra.start_a END as startm, 
          ra.query_id name, ra.strand||'1' as strand,
          ra.genome_matches
   FROM  apidb.rnaseq_align ra
   WHERE ra.na_sequence_id = $srcfeature_id
-   AND  ra.sample = 'gc_polyA_for'
+   AND  ra.sample in ('gc_polyA_for','gc_polyA_rev')
    AND  ra.start_a >= $base_start
    AND  ra.end_a <= $rend)
-GROUP BY parent_id,sample,strand,startm
-]]>
-    </sql>
-  </sqlQuery>
-
-      <sqlQuery name="polya:alignseqrev" includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-SELECT min(feature_id) as feature_id, parent_id, startm, startm as end,
-        'polya' type, 'alignseqrev' source,
-        max(name) as name, 
-        strand,
-        'genome_matches='||min(genome_matches) || '$dlm' ||
-        'sample='||sample || '$dlm' ||
-        'count='||count(*) atts
-FROM
-  (SELECT ra.rnaseq_align_id feature_id, ra.sample,
-         ra.na_sequence_id as parent_id, 
-         CASE WHEN strand = '+' THEN ra.end_a ELSE ra.start_a END as startm, 
-         ra.query_id name, ra.strand||'1' as strand,
-         ra.genome_matches
-  FROM  apidb.rnaseq_align ra
-  WHERE ra.na_sequence_id = $srcfeature_id
-   AND  ra.sample = 'gc_polyA_rev'
-   AND  ra.start_a >= $base_start
-   AND  ra.end_a <= $rend)
-GROUP BY parent_id,sample,strand,startm
-]]>
-    </sql>
-  </sqlQuery>
-
-      <sqlQuery name="polya:alignseqgc" includeProjects="TriTrypDB">
-     <sql>
-<![CDATA[
-SELECT min(feature_id) as feature_id, parent_id, startm, startm as end,
-        'polya' type, 'alignseqgc' source,
-        max(name) as name, 
-        strand,
-        'genome_matches='||min(genome_matches) || '$dlm' ||
-        'sample='||sample || '$dlm' ||
-        'count='||count(*) atts
-FROM
-  (SELECT ra.rnaseq_align_id feature_id, ra.sample,
-         ra.na_sequence_id as parent_id, 
-         CASE WHEN strand = '+' THEN ra.end_a ELSE ra.start_a END as startm, 
-         ra.query_id name, ra.strand||'1' as strand,
-         ra.genome_matches
-  FROM  apidb.rnaseq_align ra
-  WHERE ra.na_sequence_id = $srcfeature_id
-   AND  ra.sample = 'gc_polyA_from_gc'
-   AND  ra.start_a >= $base_start
-   AND  ra.end_a <= $rend)
-GROUP BY parent_id,sample,strand,startm
+GROUP BY parent_id,strand,startm
 ]]>
     </sql>
   </sqlQuery>
