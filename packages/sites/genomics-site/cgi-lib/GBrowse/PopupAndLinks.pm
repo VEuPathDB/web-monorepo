@@ -299,8 +299,10 @@ sub peakTitle {
   my $name = $f->name;
   my $score = $f->score;
   my ($analysis) = $f->get_tag_values("Analysis");
+  my ($a) = $f->get_tag_values('Antibody');
   my @data;
   push @data, [ 'Analysis:' => $analysis ];
+  push @data, [ 'Antibody:' => $a ];
   push @data, [ 'Score:' => $score ];
   hover( "ChIP-chip called peaks $name", \@data); 
 }
