@@ -118,7 +118,7 @@
 			<select name="blastOrganism" id="BlastOrganism" multiple="multiple" onChange="updateOrganism()">
 		           <option value="-">Select Target Data Type to display appropriate organisms</option>
 		        </select><br>
-			<input type="button" onClick="selectAll_None(true)" value="All"/>&nbsp;&nbsp;<input onClick="selectAll_None(false)" type="button" value="None"/><br>
+			<input type="button" onClick="selectAll_None_Blast(true)" value="All"/>&nbsp;&nbsp;<input onClick="selectAll_None_Blast(false)" type="button" value="None"/><br>
 		        <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
 
 
@@ -322,7 +322,7 @@
 			<select name="blastOrganism" id="BlastOrganism" multiple="multiple" onChange="updateOrganism()">
 		           <option value="-">Select Target Data Type to display appropriate organisms</option>
 		        </select><br>
-			<input type="button" onClick="selectAll_None(true)" value="All"/>&nbsp;&nbsp;<input onClick="selectAll_None(false)" type="button" value="None"/><br>
+			<input type="button" onClick="selectAll_None_Blast(true)" value="All"/>&nbsp;&nbsp;<input onClick="selectAll_None_Blast(false)" type="button" value="None"/><br>
 		        <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
 
 

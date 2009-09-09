@@ -461,7 +461,7 @@ function checkSequenceLength(){
 	}
 }
 
-function selectAll_None(val){
+function selectAll_None_Blast(val){
 	var orgSel = document.getElementById('BlastOrganism');
 	var orgs = orgSel.options;
 	for(i=0;i<orgs.length;i++){
