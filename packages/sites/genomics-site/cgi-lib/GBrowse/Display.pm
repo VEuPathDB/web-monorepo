@@ -394,7 +394,7 @@ sub fgColorForSpliceAndPaSites {
       return 'tomato' if $count == 1;
       return 'red';
     } 
-  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rm' || $sample eq 'gc_polyA_from_gc'){
+  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rev' || $sample eq 'gc_polyA_for'){
     if($strand eq '+1'){
       return 'green' if $count > 10;
       return 'lightgreen' if $count == 1;
@@ -426,7 +426,7 @@ sub bgColorForSpliceAndPaSites {
       return 'tomato' if $count == 1;
       return 'red';
     } 
-  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rm' || $sample eq 'gc_polyA_from_gc'){
+  }elsif($sample eq 'gc_curated_pas' || $sample eq 'gc_polyA_rev' || $sample eq 'gc_polyA_for'){
     if($strand eq '+1'){
       return 'green' if $count > 10;
       return 'lightgreen' if $count == 1;
