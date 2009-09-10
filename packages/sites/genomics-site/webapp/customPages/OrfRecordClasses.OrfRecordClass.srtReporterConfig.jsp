@@ -17,7 +17,7 @@
 <c:set var="site" value="${wdkModel.displayName}"/>
 
 <!-- display page header -->
-<site:header banner="Retrieve Orf Sequences" />
+<site:header refer="srt" banner="Retrieve Orf Sequences" />
 
 <!-- display description for page -->
 <p><b>This reporter will retrieve the sequences of the open reading frames in your result.</b></p>
@@ -25,17 +25,6 @@
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
 
-<script type="text/javascript" lang="JavaScript 1.2">
-<!-- //
-
-function setEnable(flag) {
-    var offsetOptions = document.getElementById("offsetOptions");
-    if (flag) offsetOptions.style.display = "block";
-    else offsetOptions.style.display = "none";   
-}
-
-// -->
-</script>
 
 <%--
 <c:choose>

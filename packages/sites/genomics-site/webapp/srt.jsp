@@ -7,6 +7,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <site:header title="${wdkModel.displayName} :: Retrieve Sequences"
+                 refer="srt"
                  banner="Retrieve Sequences"
                  parentDivision="PlasmoDB"
                  parentUrl="/home.jsp"
@@ -41,30 +42,6 @@
     <c:set var="oSrt" value="Api_orfSrt"/>
 </c:if>
 --%>
-
-<script type="text/javascript" lang="JavaScript 1.2">
-<!-- //
-
-function setEnable(flag) {
-    var offsetOptions = document.getElementById("offsetOptions");
-    if (flag) offsetOptions.style.display = "block";
-    else offsetOptions.style.display = "none";   
-}
-
-// -->
-</script>
-
-<script type="text/javascript" lang="JavaScript 1.2">
-<!-- //
-
-function setEnable2(flag) {
-    var offsetOptions2 = document.getElementById("offsetOptions2");
-    if (flag) offsetOptions2.style.display = "block";
-    else offsetOptions2.style.display = "none";   
-}
-
-// -->
-</script>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
  <tr>

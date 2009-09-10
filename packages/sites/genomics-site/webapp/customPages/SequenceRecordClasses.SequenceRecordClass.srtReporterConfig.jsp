@@ -17,7 +17,7 @@
 <c:set var="site" value="${wdkModel.displayName}"/>
 
 <!-- display page header -->
-<site:header banner="Retrieve Genome Sequences" />
+<site:header refer="srt" banner="Retrieve Genome Sequences" />
 
 <!-- display description for page -->
 <p><b>This reporter will retrieve the sequences of the genome records in your result.</b></p>

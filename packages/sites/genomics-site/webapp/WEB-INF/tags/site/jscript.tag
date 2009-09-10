@@ -106,6 +106,9 @@
 <script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
 
 
+<c:if test="${refer == 'srt'}">
+<script type="text/javascript" src="/assets/js/srt.js"></script>
+</c:if>
 
 <!-- js for popups in query grid and other.... -->
 <script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>

@@ -17,25 +17,13 @@
 <c:set var="site" value="${wdkModel.displayName}"/>
 
 <!-- display page header -->
-<site:header banner="Retrieve Gene Sequences" />
+<site:header refer="srt" banner="Retrieve Gene Sequences" />
 
 <!-- display description for page -->
 <p><b>This reporter will retrieve the sequences of the genes in your result.</b></p>
 
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
-
-<script type="text/javascript" lang="JavaScript 1.2">
-<!-- //
-
-function setEnable(flag) {
-    var offsetOptions = document.getElementById("offsetOptions");
-    if (flag) offsetOptions.style.display = "block";
-    else offsetOptions.style.display = "none";   
-}
-
-// -->
-</script>
 
 <%--
 <c:choose>
