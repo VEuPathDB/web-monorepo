@@ -14,11 +14,17 @@
 <c:set var="version" value="${applicationScope.wdkModel.version}" />
 <c:set var="date" value="September 2009" />
 
+
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
+     </div>  <%--  id="question_Form" in question.tag  --%>
+</c:if>
+
 <%------------ divs defined in header.tag for all pages but home/home2  -----------%>
 <c:if test="${refer != 'home' && refer != 'home2'}">
 </div> <%-- class="innertube"   --%>
 </div> <%-- id="contentcolumn2" --%>
 </div> <%-- id="contentwrapper" --%>
+
 </c:if>
 
 <%--------------------------------------------%>
