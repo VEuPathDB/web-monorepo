@@ -1,0 +1,20 @@
+--- arrow.pm.orig	2009-09-09 14:19:02.000000000 -0400
++++ arrow.pm	2009-09-10 12:08:37.000000000 -0400
+@@ -136,6 +136,7 @@
+ 
+     my $unit_label     = $self->option('units')        || '';
+     my $unit_divider   = $self->option('unit_divider') || 1;
++    my $unit_offset    = $self->option('unit_offset')  || 0;
+     my $units_in_label = $self->option('units_in_label');
+ 
+     my $units      = $self->calculate_units($start/$unit_divider,$self->feature->length/$unit_divider);
+@@ -200,7 +201,8 @@
+       $gd->line($tickpos,$center-$a2,$tickpos,$center+$a2,$tickpen)
+ 	unless $tickpos < $left or $tickpos > $right;
+ 
+-      my $label = $scale ? $i / $scale : $i;
++      #my $label = $scale ? $i / $scale : $i;
++      my $label = $scale ? $unit_offset + $i / $scale : $i;
+       my $scaled = $label/$divisor;
+       $label = sprintf($format,$scaled,$unit_label);
+ 
