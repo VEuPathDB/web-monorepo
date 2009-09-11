@@ -1479,6 +1479,7 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
              Patients with diverse sympotoms of malaria. <i>Plasmodium falciparum</i> directly from the blood of infected individuals was cultured to examine patterns of mature-stage gene expression in patient isolates. 
             <br><br>
             <b>y-axis (graph #1)</b><br>
+            log of the RMA normalized values
             <br><br>
             <b>y-axis (graph #2)</b><br>
             Percentiles are calculated for each sample within array.
@@ -1498,7 +1499,7 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Mature-stage gene expression of <i>Plasmodium falciparum</i> in malaria infected patients"
+               displayName="Ex vivo intraerythrocitic expression assays of <i>Plasmodium falciparum</i> in malaria infected patients"
                attribution="Pfalciparum_newbold_Gene_Expression"/>
 
   <!-- end Newbold microarry study -->
