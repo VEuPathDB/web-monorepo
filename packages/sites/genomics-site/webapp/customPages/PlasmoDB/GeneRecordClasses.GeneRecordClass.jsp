@@ -447,9 +447,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <c:param name="bulk" value="0" /> 
 </c:url>
 
-<!--
 <b><a href="${phenotypeCommentsUrl}">Add a phenotype comment on ${id}</a></b><br><br>
--->
 
 <%--
 <c:catch var="e">
@@ -1448,8 +1446,63 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Distinct physiological states of Plasmodium falciparum in malaria infected patients"
+               displayName="Distinct physiological states of <i>Plasmodium falciparum</i> in malaria infected patients"
                attribution="daily_expressionProfiles"/>
+
+  <!-- start Newbold microarry study --> 
+  <c:set var="secName" value="Newbold::Ver1"/>
+  <c:set var="imgId" value="img${secName}"/>
+  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}"/>
+  <c:set var="isOpen" value="false"/>
+
+  <c:set var="expressionContent">
+    <table cellspacing=3>
+ 
+      <tr>
+        <td rowspan="2" class="centered">
+          <c:choose>
+          <c:when test="${!async}">
+              <img src="${imgSrc}">
+          </c:when>
+          <c:otherwise>
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+          </c:otherwise>
+          </c:choose>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="centered"><image width="95%" src="<c:url value="/images/spacer.gif"/>" height="150" width="1"></td>
+        <td class="centered">
+          <div class="small">
+            <b>x-axis (all graphs)</b><br>
+             Patients with diverse sympotoms of malaria. <i>Plasmodium falciparum</i> directly from the blood of infected individuals was cultured to examine patterns of mature-stage gene expression in patient isolates. 
+            <br><br>
+            <b>y-axis (graph #1)</b><br>
+            <br><br>
+            <b>y-axis (graph #2)</b><br>
+            Percentiles are calculated for each sample within array.
+          </div>
+          <br><br> 
+        </td>
+      </tr>
+
+    </table>
+  </c:set>
+
+  <c:set var="noData" value="false"/>
+  <c:if test="${attrs['graph_cowman'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="Mature-stage gene expression of <i>Plasmodium falciparum</i> in malaria infected patients"
+               attribution="Pfalciparum_newbold_Gene_Expression"/>
+
+  <!-- end Newbold microarry study -->
+
 
   <site:wdkTable tblName="SageTags" attribution="SageTagArrayDesign,PlasmoSageTagFreqs"/>
 </c:if>
