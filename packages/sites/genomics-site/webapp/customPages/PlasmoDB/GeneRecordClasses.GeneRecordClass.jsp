@@ -1483,6 +1483,10 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
             <br><br>
             <b>y-axis (graph #2)</b><br>
             Percentiles are calculated for each sample within array.
+            <br/><br/>
+            <b>mild/severe disease (all graphs)</b><br>
+            <font color='red'>red color</font> represents patients with severe disease <br/>
+            <font color='lightskyblue'>blue color</font> represents patients with mild disease <br/>
           </div>
           <br><br> 
         </td>
