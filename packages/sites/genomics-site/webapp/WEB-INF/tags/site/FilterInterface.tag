@@ -113,7 +113,7 @@
       <c:forEach items="${t.transformParams}" var="tp">
 	<c:set var="tparams" value="${tparams}&${tp.name}=${prevStepNum}" />
       </c:forEach>
-      <li style="width:auto;"><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${t.fullName}${tparams}&partial=true', true)">${t.displayName}</a></li>
+      <li style="width:auto;z-index:40;"><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${t.fullName}${tparams}&partial=true', true)">${t.displayName}</a></li>
     </c:forEach>
   </ul>
 </td>
