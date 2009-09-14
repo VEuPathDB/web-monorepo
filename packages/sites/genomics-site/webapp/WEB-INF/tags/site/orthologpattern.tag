@@ -124,16 +124,8 @@ Ack, this form won't work at all without JavaScript support!
 <div class="params">
 <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
 
-<c:choose>
-<c:when test="${fn:containsIgnoreCase(wdkModel.displayName,'TriTrypDB')}">
-	<input name="myMultiProp(phyletic_term_map)" value="rno" type="hidden"/>
-	<input name="myMultiProp(phyletic_indent_map)" value="Archaea" type="hidden"/>
-</c:when>
-<c:otherwise>
 	<input name="myMultiProp(phyletic_term_map)" value="rnor" type="hidden"/>
 	<input name="myMultiProp(phyletic_indent_map)" value="Archaea" type="hidden"/>
-</c:otherwise>
-</c:choose>
 
 <table>
   <tr>
@@ -266,17 +258,8 @@ Ack, this form won't work at all without JavaScript support!
 <c:if test="${showParams == null}">
 <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
 
-<c:choose>
-<c:when test="${fn:containsIgnoreCase(wdkModel.displayName,'TriTrypDB')}">
-	<input name="myMultiProp(phyletic_term_map)" value="rno" type="hidden"/>
-	<input name="myMultiProp(phyletic_indent_map)" value="Archaea" type="hidden"/>
-</c:when>
-<c:otherwise>
 	<input name="myMultiProp(phyletic_term_map)" value="rnor" type="hidden"/>
 	<input name="myMultiProp(phyletic_indent_map)" value="Archaea" type="hidden"/>
-</c:otherwise>
-</c:choose>
-
 <table>
   <tr>
     <td><b>Show results from species:</b></td>
