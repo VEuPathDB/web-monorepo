@@ -243,17 +243,21 @@ ${headElement}
           <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.News'/>">News</a></li>
           <li><a href="#">Acknowledgements</a></li>
 --%>
-        	</ul>
+        </ul>
       </li>
       <li>
       <a href="#">Help<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       		<ul>
+
+
           <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a></li>
     	  <c:if test="${refer == 'customSummary'}">
 		  	<li><a href="javascript:void(0)" onclick="dykOpen()">Did You Know...</a></li>
           </c:if>
-		  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Community Links</a></li>
+          <li><a href="/workshop/2009/?page=schedule">2009 EuPathDB Workshop curriculum</a></li>
+<%--	  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Community Links</a></li> --%>
           <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
+          <li><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>
         	</ul>
       </li>
       <li>
