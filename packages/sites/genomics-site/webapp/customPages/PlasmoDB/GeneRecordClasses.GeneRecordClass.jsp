@@ -447,7 +447,9 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <c:param name="bulk" value="0" /> 
 </c:url>
 
+<!--
 <b><a href="${phenotypeCommentsUrl}">Add a phenotype comment on ${id}</a></b><br><br>
+-->
 
 <%--
 <c:catch var="e">
