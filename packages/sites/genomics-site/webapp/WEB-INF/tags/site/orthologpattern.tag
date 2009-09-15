@@ -25,10 +25,6 @@
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
 </c:if>
-<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
-     <div id="question_Form">
-</c:if>
-
 
 <c:set var="qParams" value="${wdkQuestion.paramsMap}"/>
 
@@ -327,10 +323,6 @@ toggle(7);
 
 <%-- display the question specific attribution list --%>
 <site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
-
-<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
-    </div><!--End Question Form Div-->
-</c:if>
 
 <hr>
 <%-- display description for wdkQuestion --%>

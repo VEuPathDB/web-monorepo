@@ -25,9 +25,7 @@
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
 </c:if>
-<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
-     <div id="question_Form">
-</c:if>
+
 <!-- <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1> -->
 <c:choose>
     <c:when test="${showParams == true}">
@@ -430,10 +428,6 @@
 								width: 360px;
 			"></span>
 </html:form>
-
-<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
-    </div><!--End Question Form Div-->
-</c:if>
 
 <hr>
 <%-- display description for wdkQuestion --%>

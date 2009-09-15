@@ -43,9 +43,6 @@
     <c:otherwise>
         <%-- display question section --%>
 
-<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
-     <div id="question_Form">
-</c:if>
 
 <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
@@ -290,9 +287,6 @@
 <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
 </html:form>
 
-<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
-    </div><!--End Question Form Div-->
-</c:if>
 
 <hr>
 
