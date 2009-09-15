@@ -329,12 +329,12 @@ G.lamblia_contigsGB
     < c:set var="expressionContent" value="none"/>
   </c:if>
 
-<site:toggle
-    displayName="Stress response in Trophozoites - Varying Incubation Time"
-    content="${expressionContent}"
-    name="StressResponse2"
-    isOpen="true"
-    attribution="GL_Spycher_metaData_2"/>
+<%--site:toggle--%>
+<%--    displayName="Stress response in Trophozoites - Varying Incubation Time"--%>
+<%--    content="${expressionContent}"--%>
+<%--    name="StressResponse2"--%>
+<%--    isOpen="true"--%>
+<%--    attribution="GL_Spycher_metaData_2"--%>
 
 
 <%-- SAGE tags ------------------------------------------------------%>
