@@ -628,7 +628,7 @@ span.closeStrategy {
 	position: absolute;
 	right: 5em; /* for Run tab */
 	top: 4em;   /* for Run tab */
-	width: 66em;   /* for Run tab */
+/*	width: 66em; */         /* for Run tab */
 }
 
 

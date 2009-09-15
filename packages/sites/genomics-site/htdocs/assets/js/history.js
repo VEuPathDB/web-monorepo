@@ -128,8 +128,8 @@ function showHistShare(ele, stratId, url) {
 	var perm_popup = $("div#hist_save_rename");
     var popup = perm_popup.clone();
 	popup.addClass('viewed-popup-box');
-	$("span.h3left", popup).text("Copy and paste URL below to email or bookmark");
-	$("input[name='name']", popup).attr("value",url).attr("readonly",true).attr("size",url.length - 12);
+	$("span.h3left", popup).text("Copy and paste URL below to email");
+	$("input[name='name']", popup).attr("value",url).attr("readonly",true).attr("size",url.length - 6);
 	$("input[type=submit]", popup).attr("value", "Ok").click(function(){
 		closeModal();
 		return false;
@@ -138,7 +138,7 @@ function showHistShare(ele, stratId, url) {
     var prntOffset = $("div#search_history").offset();
     popup.css("top", (btnOffset.top - prntOffset.top - 40) + "px");
     popup.css("right", "292px");
-    popup.css("width", "62.5em");
+    popup.css("width", "42.5em");
     popup.appendTo(perm_popup.parent()).show();
 }
 

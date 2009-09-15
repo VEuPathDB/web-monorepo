@@ -144,11 +144,7 @@
 <c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/im.do?s=" />
 
 <!-- popups for save/rename forms -->
-<%--<c:set var="unsavedStrategiesMap" value="${user.unsavedStrategiesByCategory}"/>
-<c:forEach items="${unsavedStrategiesMap}" var="strategyEntry">
-  <c:set var="strategies" value="${strategyEntry.value}"/>
-  <c:forEach items="${strategies}" var="strategy">
-    <c:set var="saveHeader" value="Unused"/>--%>
+
     <div class='modal_div save_strat' id="hist_save_rename">
       <div class='dragHandle' style='height:4px'>
         <div class="modal_name">
@@ -164,45 +160,7 @@
         <input  style='margin-left:5px;' type='submit' value='Save'/>
       </form>
     </div>
-<%--  </c:forEach>
-</c:forEach>
 
-<c:if test="${!wdkUser.guest}">
-<c:set var="savedStrategiesMap" value="${user.savedStrategiesByCategory}"/>
-<c:forEach items="${savedStrategiesMap}" var="strategyEntry">
-  <c:set var="strategies" value="${strategyEntry.value}"/>
-  <c:forEach items="${strategies}" var="strategy">
-    <c:set var="exportURL" value="${exportBaseUrl}${strategy.importId}" />
-    <div class='modal_div export_link' id="hist_share_${strategy.strategyId}" >
-      <div class='dragHandle'  style='height:4px'>
-	 <div class="modal_name">
-		<span class="h3left">Copy and paste URL below to email or bookmark</span>
-	 </div>
-         <a class='close_window' href='javascript:closeModal()'>
-         <img alt='Close' src='/assets/images/Close-X.png'  height='16'/>
-         </a>
-      </div>
-      <input type='text' size="${fn:length(exportURL)-12}" value="${exportURL}"/>
-    </div>
-    <c:set var="saveHeader" value="Save As"/>
-    <div class='modal_div save_strat' id="hist_save_${strategy.strategyId}">
-      <div class='dragHandle'  style='height:4px'>
-        <div class="modal_name">
-          <span class='h3left'>${saveHeader}</span>
-        </div>
-        <a class='close_window' href='javascript:closeModal()'>
-          <img alt='Close' src='/assets/images/Close-X.png'  height='16'/>
-        </a>
-      </div>
-      <form onsubmit='return validateSaveForm(this);' action="javascript:saveStrategy('${strategy.strategyId}', true, true)">
-        <input type='hidden' value="${strategy.strategyId}" name='strategy'/>
-        <input type='text' value="${strategy.name}" name='name'/>
-        <input  style='margin-left:5px' type='submit' value='Save'/>
-      </form>
-    </div>
-  </c:forEach>
-</c:forEach>
-</c:if>--%>
 
 <%-- invalid strategies, if any --%>
 <c:if test="${fn:length(invalidStrategies) > 0}">

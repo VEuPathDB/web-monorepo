@@ -501,37 +501,18 @@ function createStrategyName(strat){
 	var exportURL = exportBaseURL + json.importId;
 	var share = "";
 
-/*
-	if(json.saved){
-		share = "<a title='Email this URL to your best friend.' href=\"javascript:showExportLink('" + id + "')\"><b>SHARE</b></a>"+
-		"<div class='modal_div export_link' id='export_link_div_" + id + "'>" +
-	        "<div class='dragHandle'>" +
-	        "<a class='close_window' href='javascript:closeModal()'>" +
-		"<img alt='Close' src='/assets/images/Close-X.png' height='16'/>" +
-		"</a>"+
-	        "</div>" +
-		"<span class='h3left'>Copy and paste URL below to email or bookmark</span>" +
-		"<input type='text' size=" + exportURL.length + " value=" + exportURL + " readonly='true' />" +
-		"</div>";
-	}else if(guestUser == 'true'){
-		share = "<a title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' href='javascript:void(0)' onclick='popLogin()'><b>SHARE</b></a>";
-	}else{
-		share = "<a title='SAVE this strategy so you can SHARE it (email its URL).' href='javascript:void(0)' onclick=\"showSaveForm('" + id + "', true,true)\"><b>SHARE</b></a>";
-	}
-*/
-
 	if(json.saved){
 		share = "<a title='Email this URL to your best friend.' href=\"javascript:showExportLink('" + id + "')\"><b>SHARE</b></a>"+
 		"<div class='modal_div export_link' id='export_link_div_" + id + "'>" +
 	        "<div class='dragHandle'>" +
 		"<div class='modal_name'>"+
-		"<span class='h3left'>Copy and paste URL below to email or bookmark</span>" + 
+		"<span class='h3left'>Copy and paste URL below to email</span>" + 
 		"</div>"+ 
 		"<a class='close_window' href='javascript:closeModal()'>"+
 		"<img alt='Close' src='/assets/images/Close-X.png' height='16' />" +
 		"</a>"+
 		"</div>"+
-		"<input type='text' size=" + (exportURL.length-13) + " value=" + exportURL + " readonly='true' />" +
+		"<input type='text' size=" + (exportURL.length-6) + " value=" + exportURL + " readonly='true' />" +
 		"</div>";
 	}else if(guestUser == 'true'){
 		share = "<a title='Please LOGIN so you can SAVE and then SHARE (email) your strategy.' href='javascript:void(0)' onclick='popLogin()'><b>SHARE</b></a>";
