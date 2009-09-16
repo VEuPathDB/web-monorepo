@@ -78,12 +78,12 @@
 <ul>
     <li><a href="#">Data Sources</a>
   	<ul>
+   	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods'/>">Understanding Data</a></li>	
+<c:if test="${project != 'EuPathDB'}">
    	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.DataSources'/>">Data Detail</a></li>
  	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.Methods'/>">Analysis Methods</a></li>
-<%--
-   		<li><a href="#">Data Statistics</a></li>
-                <li><a href="#">Standard Operating Procedures (SOPs)</a></li>
---%>
+</c:if>
+
   	</ul>
     </li>
 </ul>
@@ -91,10 +91,10 @@
 <ul>
     <li><a href="#">Downloads</a>
  	<ul>
-    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#download"/>">Understanding Downloads</a></li>
+    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#downloads"/>">Understanding Downloads</a></li>
     	    <li><a href="/common/downloads">Data Files</a></li>
-    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#doc-prot"/>">Documents and Publications</a></li> 
-    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#doc-prot"/>">Protocols and Methods</a></li>
+    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#docs_pubs"/>">Documents and Publications</a></li> 
+    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods"/>">Protocols and Methods</a></li>
     	    <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
     	    <li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
   	</ul>
