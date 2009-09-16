@@ -67,7 +67,7 @@ function moveAttr(col_ix) {
 	var step = getStep(stratfId, stepfId);
 	// build url.
 	var url = "processSummary.do?strategy=" + strat.backId + "&step=" + step.back_step_Id + "&command=arrange&attribute=" + attr + "&left=" + left;
-	GetResultsPage(url, false);
+	GetResultsPage(url, false, true);
 }
 
 // FOLLOWING TAKEN FROM OLD CUSTOMSUMMARY
@@ -80,7 +80,7 @@ function addAttr(url) {
     if (attribute.length == 0) return;
 
     var url = url + "&command=add&attribute=" + attribute;
-    GetResultsPage(url, true, false);
+    GetResultsPage(url, true, true);
 	//window.location.href = url;
 }
 
@@ -88,7 +88,7 @@ function addAttr(url) {
 function resetAttr(url) {
     if (confirm("Are you sure you want to reset the column configuration back to the default?")) {
         var url = url + "&command=reset";
-        GetResultsPage(url, true, false);
+        GetResultsPage(url, true, true);
 		//window.location.href = url;
     }
 }

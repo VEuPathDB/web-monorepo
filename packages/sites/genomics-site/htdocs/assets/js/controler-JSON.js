@@ -5,8 +5,6 @@ var sidIndex = 0;
 var recordType= new Array();   //stratid, recordType which is the type of the last step
 var state = null;
 var p_state = null;
-var init_view_strat;
-var init_view_step;
 $(document).ready(function(){
 	initDisplay();
 });
@@ -23,17 +21,16 @@ function initDisplay(){
 		},
 		success: function(data){
 		//	data = eval("(" + data + ")");
-			updateStrategies(data, init_view_strat, init_view_step, false);
-			init_view_strat_front = getStrategyFromBackId(init_view_strat).frontId;
+			updateStrategies(data);
 		}
 	});
 }
 
-function highlightStep(str, stp, v, pagerOffset){
+function highlightStep(str, stp, v, pagerOffset, ignoreFilters){
 	if(!str || stp == null){
 		NewResults(-1);
 	}else{
-		NewResults(str.frontId, stp.frontId, v, pagerOffset);
+		NewResults(str.frontId, stp.frontId, v, pagerOffset, ignoreFilters);
 		//var stepBox = null;
 		//if(!v || stp.isTransform)
 		//	stepBox = $("#diagram_" + str.frontId + " div[id='step_" + stp.frontId + "_sub']");
@@ -43,7 +40,7 @@ function highlightStep(str, stp, v, pagerOffset){
 	}
 }
 
-function updateStrategies(data){	
+function updateStrategies(data, ignoreFilters){	
 	state = data.state;
 	p_state = $.json.serialize(state);
 	removeClosedStrategies();
@@ -61,7 +58,7 @@ function updateStrategies(data){
 		}
 	  }
 	}
-	showStrategies(data.currentView);
+	showStrategies(data.currentView, ignoreFilters);
 }
 
 function removeClosedStrategies(){
@@ -113,7 +110,7 @@ function removeSubStrategies(ord1, ord2){
 	}
 }
 
-function showStrategies(view){
+function showStrategies(view, ignoreFilters){
 	var sC = 0;
 	for(s in strats){
 		if(s.indexOf(".") == -1)
@@ -133,7 +130,7 @@ function showStrategies(view){
 		}else{
 			var isVenn = (initStp.back_boolean_Id == view.step);
 			var pagerOffset = view.pagerOffset;
-			highlightStep(initStr, initStp, isVenn, pagerOffset);
+			highlightStep(initStr, initStp, isVenn, pagerOffset, ignoreFilters);
 		}
 	}else{
 		NewResults(-1);
@@ -228,7 +225,7 @@ function unloadStrategy(id){
 }
 
 
-function NewResults(f_strategyId, f_stepId, bool, pagerOffset){
+function NewResults(f_strategyId, f_stepId, bool, pagerOffset, ignoreFilters){
 	if(f_strategyId == -1){
 		$("div#Workspace").html("");
 		return;
@@ -263,7 +260,7 @@ function NewResults(f_strategyId, f_stepId, bool, pagerOffset){
 					$("#Strategies div#diagram_" + strategy.frontId + " div[id='step_" + step.frontId + "_sub']").addClass("selectedarrow");
 					init_view_step = step.back_step_Id;
 				}
-			    ResultsToGrid(data, true);
+			    ResultsToGrid(data, ignoreFilters);
 			    $("span#text_strategy_number").html(strategy.JSON.name);
 			    $("span#text_step_number").html(step.frontId);
 			    $("span#text_strategy_number").parent().show();
@@ -633,7 +630,8 @@ function saveOrRenameStrategy(stratId, checkName, save, fromHist){
 	});
 }
 
-function ChangeFilter(strategyId, stepId, url) {
+function ChangeFilter(strategyId, stepId, url, filter) {
+	var filterElt = filter;
         b_strategyId = strategyId;
         strategy = getStrategyFromBackId(b_strategyId); 
         f_strategyId = strategy.frontId;
@@ -654,8 +652,10 @@ function ChangeFilter(strategyId, stepId, url) {
                 },
                 success: function(data){
                         if(ErrorHandler("ChangeFilter", data, strategy, null)){
-                        	updateStrategies(data);
-						}
+                        	updateStrategies(data, true);
+				$("div.layout-detail td div.filter-instance div.current").removeClass('current');
+				$(filterElt).parent('div').addClass('current');
+			}
                 },
                 error: function(data, msg, e){
                         //$("#Strategies").append(currentDiv);
