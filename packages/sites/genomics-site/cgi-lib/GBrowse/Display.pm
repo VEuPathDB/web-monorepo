@@ -549,6 +549,12 @@ sub synSpanScale {
   return $scale;
 }
 
+sub synSpanOffset { 
+  my $f = shift; 
+  my ($syn_start) = $f->get_tag_values("SynStart");
+  return $syn_start;
+}
+
 
 
 1;
