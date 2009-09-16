@@ -270,6 +270,7 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
             <li id='h-5'><a href="/common/cosmid-BAC-tutorial/CosmidandBAC-Tutorial.html"/>Viewing Cosmid and BAC Alignments</a></li>
             <li id='h-4'><a href="/common/array-tutorial/Array-Tutorial.html"/>Viewing Microarray Probes</a></li>
          </c:if>
+            <li id='h-6'><a href="<c:url value="/eupathGenomeTable.jsp"/>">EuPathDB GenomeTable</a></li>
             <li id='h-6'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
             <li id='h-6'><a href="/workshop/2009/?page=schedule">2009 EuPathDB Workshop curriculum</a></li>
 
