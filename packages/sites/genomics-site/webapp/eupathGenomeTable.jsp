@@ -4,7 +4,16 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
-<site:header/>
+<site:header refer="home"/>
+
+<site:sidebar />
+
+<div id="contentwrapper">
+<div id="contentcolumn">
+<div class="innertube">
+
+
+
 
 <c:set var="cryptoDate" value="01/2009"/>
 <c:set var="plasmoDate" value="09/2008"/>
@@ -31,16 +40,15 @@ http://www.bosrup.com/web/overlib/?Documentation
 
  --%>
 
+<h2>Genomes in EuPathDB</h2>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-<tr>
-<td class="bckgrnd_blue"  colspan="20" valign="top"><b>Genomes in EuPathDB</b></td>
-</tr>
-
 <tr valign="bottom">
 
-	<td align="left" valign="top" colspan="3"><font size = "-2">(Mouse over organism for more information)</font></td>
+	<td align="left" valign="top" colspan="3">
+<%-- <font size = "-2">(Mouse over organism for more information)</font> --%>
+ 	</td>
 
 	<td align="right" valign="top"  colspan="20" ><font size = "-2">(<b>M</b>=Microarray, <b>Pr</b>=Proteomics, <b>Pa</b>=Pathway)</td>
 
@@ -712,6 +720,10 @@ http://www.bosrup.com/web/overlib/?Documentation
       
 </table>                                                          <%-- end of GENOME table --%>
 
+</div>
+</div>
+</div>
 
-<site:footer/>
+
+<site:footer refer="home"/>
 
