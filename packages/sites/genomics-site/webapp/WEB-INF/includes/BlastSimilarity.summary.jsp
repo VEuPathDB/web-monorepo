@@ -28,7 +28,7 @@
 <c:set var="showParam" value="${global['preference_global_show_param']}"/>
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
-<c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
+<c:set value="${wdkAnswer.recordClass.type}" var="type"/>
 
 <!-- handle empty result set situation -->
 <c:choose>
@@ -37,10 +37,16 @@
   </c:when>
   <c:otherwise>
 
-<h2><table width="100%"><tr><td><span id="text_strategy_number">${strategy.name}</span> 
-    (step <span id="text_step_number">${strategy.length}</span>) 
-    - ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span></td><td align="right"><a href="downloadStep.do?step_id=${wdkHistory.stepId}">Download Result</a></td></tr></table>
-</h2>
+<h2><table width="100%"><tr>
+	<td>
+		<span id="text_strategy_number">${strategy.name}</span> 
+    		(step 
+		<span id="text_step_number">${strategy.length}</span>) 
+    		- ${wdkAnswer.resultSize}
+		<span id="text_data_type">${type}s</span>
+	</td>
+	<td align="right"><a href="downloadStep.do?step_id=${wdkHistory.stepId}">Download Result</a></td>
+</tr></table></h2>
 
 <!-- content of blast result -->
 <table width="100%" border="0" cellpadding="8" cellspacing="0">
