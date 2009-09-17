@@ -246,7 +246,7 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 		var tms = topMenu_script.substring(topMenu_script.indexOf("{")+1,topMenu_script.indexOf("}"));
 		eval(tms);
 	}
-	initParamHandlers();
+	initParamHandlers(true);
 }
 
 function validateAndCall(type, url, proto, rs){
@@ -264,6 +264,7 @@ function validateAndCall(type, url, proto, rs){
 		alert("Please select Intersect, Union or Minus operator.");
 		return;
 	}
+	mapTypeAheads();
 	window.scrollTo(0,0);
 	if(type == 'add'){
 		AddStepToStrategy(url, proto, rs);
