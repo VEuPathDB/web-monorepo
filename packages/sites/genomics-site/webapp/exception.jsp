@@ -33,7 +33,19 @@ ${scheme}://${serverName}${request_uri}?${query_string}
 <%-- http://www-128.ibm.com/developerworks/java/library/j-jstl0211.html --%>
 <c:forEach var='parameter' items='${paramValues}'> 
 <c:out value='${parameter.key}'/>:
-      <c:forEach var='value' items='${parameter.value}'><c:out value='${value}'/></c:forEach>
+  <c:forEach var='value' items='${parameter.value}'>
+    <c:choose>
+    <c:when test="${fn:startsWith(fn:toLowerCase(parameter.key), 'passw')}">
+      <c:out value='********'/>
+    </c:when>
+    <c:when test="${fn:startsWith(fn:toLowerCase(parameter.key), 'email')}">
+      <c:out value='********'/>
+    </c:when>
+    <c:otherwise>
+      <c:out value='${value}'/>
+    </c:otherwise>
+    </c:choose>
+  </c:forEach>
 </c:forEach>
 ************************************************
 
