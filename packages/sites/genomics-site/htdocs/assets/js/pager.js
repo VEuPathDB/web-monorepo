@@ -33,8 +33,8 @@ function ResultsToGrid(data, ignoreFilters) {
         // the html() doesn't work in IE 7/8 sometimes (but not always.
         // $("div#Workspace").html(data);
 	if (ignoreFilters) {
-		$("#Results_Pane").html($("#Results_Pane",data));
-		$("#Workspace span.h4left").html($("#Workspace span.h4left",data));
+		$("#Results_Pane").html($("#Results_Pane",data).html());
+		$("#Workspace span.h4left").html($("#Workspace span.h4left",data).html());
 		$("div.layout-detail td div.filter-instance div a.link-url",data).each(function() {
 			var link = $(this);
 			$("#"+link.attr('id')).unbind('click');
@@ -43,8 +43,7 @@ function ResultsToGrid(data, ignoreFilters) {
 			});
 		});
 	} else {
-	        //document.getElementById('Workspace').innerHTML = data;
-		$("#Workspace").html($("#Workspace",data));
+		$("#Workspace").html($("#Workspace",data).html());
 
         	// invoke filters
         	var wdkFilter = new WdkFilter();
