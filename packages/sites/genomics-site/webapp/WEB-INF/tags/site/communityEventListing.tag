@@ -30,17 +30,14 @@ http://${pageContext.request.serverName}${feedPath}
   />
 </c:if>
 </ul>
+
 <c:choose>
-<c:when test="${fn:length(allFeeds.entries) > 0}">
-	<c:choose>
-	<c:when test="${project == 'EuPathDB'}">
+<c:when test="${project == 'EuPathDB'}">
       		<a style="margin-left:0px" href='<c:url value="/eupathEvents.jsp"/>'>Full Events Page</a>
-	</c:when>
-	<c:otherwise>
-	 	<a style="margin-left:0px" href='<c:url value="/communityEvents.jsp"/>'>Full Events Page</a>
-	</c:otherwise>
-	</c:choose>
 </c:when>
 <c:otherwise>
+	<c:if test="${fn:length(allFeeds.entries) > 0}">
+		<a style="margin-left:0px" href='<c:url value="/communityEvents.jsp"/>'>Full Events Page</a>
+	</c:if>
 </c:otherwise>
 </c:choose>
