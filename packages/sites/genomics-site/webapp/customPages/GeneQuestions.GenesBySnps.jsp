@@ -11,7 +11,7 @@
 	<jsp:include page="/customPages/${projectId}/GeneQuestions.GenesBySnps.jsp"/>
     </c:when>
     <c:otherwise>
-	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesBySnps" /> 
+	<jsp:include page="/customPages/customQuestion.jsp"/>
     </c:otherwise>
 
   </c:choose>
