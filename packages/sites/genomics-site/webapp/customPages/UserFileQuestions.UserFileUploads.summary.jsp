@@ -26,7 +26,8 @@
 <c:set var="global" value="${wdkUser.globalPreferences}"/>
 <c:set var="showParam" value="${global['preference_global_show_param']}"/>
 <c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
-
+<div> <!-- Wrapper div so jQuery can find Workspace div -->
+<div id="Workspace">
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>
     <pre>${wdkAnswer.resultMessage}</pre>
@@ -238,3 +239,5 @@
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table>
+</div>
+</div>
