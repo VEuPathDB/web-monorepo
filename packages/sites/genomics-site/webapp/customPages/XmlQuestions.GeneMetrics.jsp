@@ -62,7 +62,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
   <c:otherwise>
 
 <table align="center" width="100%" border="1" cellpadding="2" cellspacing="2">
-<tr valign="top" align="center">
+<tr valign="top" align="center" style="background-color:#507494;">
     <td valign="middle"   bgcolor="#507494"><font color="white" face="Arial,Helvetica" size="+1">Genes</font></td>
     <td valign="middle" width=${orgWidth} bgcolor=${cryptoColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Ch</i></font></td>
     <td valign="middle" width=${orgWidth} bgcolor=${cryptoColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Cm</i></font></td>
