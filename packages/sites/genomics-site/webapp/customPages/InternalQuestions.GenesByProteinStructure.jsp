@@ -4,7 +4,15 @@
 
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
-<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesByProteinStructure.jsp"/>
+
+<c:choose>
+<c:when test="${projectId == 'GiardiaDB' || projectId == 'TrichDB' }">
+        <jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByProteinStructure" /> 
+    </c:when>
+<c:otherwise>
+	<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesByProteinStructure.jsp"/>
+</c:otherwise>
+</c:choose>
 
 
 
