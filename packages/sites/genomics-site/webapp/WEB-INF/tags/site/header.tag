@@ -224,7 +224,15 @@ ${headElement}
       	<ul>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">${siteName} News</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li>
+<c:choose>
+<c:when test="${project == 'EuPathDB'}" >
+	<li><a href="<c:url value="/eupathGenomeTable.jsp"/>">Organisms in ${project}</a></li>
+</c:when>
+<c:otherwise>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#organisms"/>">Organisms in ${project}</a></li>
+</c:otherwise>
+</c:choose>
+
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#stats"/>">Data Statistics</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#advisors"/>">Scientific Advisory Team</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#acks"/>">Acknowledgements</a></li>
