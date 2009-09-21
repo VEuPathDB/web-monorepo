@@ -32,6 +32,7 @@ function GetResultsPage(url, update, ignoreFilters){
 function ResultsToGrid(data, ignoreFilters) {
         // the html() doesn't work in IE 7/8 sometimes (but not always.
         // $("div#Workspace").html(data);
+	try {
 	if (ignoreFilters) {
 		$("#Results_Pane").html($("#Results_Pane",data).html());
 		$("#Workspace span.h4left").html($("#Workspace span.h4left",data).html());
@@ -49,7 +50,10 @@ function ResultsToGrid(data, ignoreFilters) {
         	var wdkFilter = new WdkFilter();
         	wdkFilter.initialize();
 	}
-
+	} catch(err) {
+		// assume this is blast and we just ran out of stack space?
+		$("#Workspace").html(data);
+	}
 	$("#Results_Table").flexigrid({height : 'auto',
 				       showToggleBtn : false,
 				       useRp : false,
