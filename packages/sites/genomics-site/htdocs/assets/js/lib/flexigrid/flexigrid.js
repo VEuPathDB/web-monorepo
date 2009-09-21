@@ -227,7 +227,7 @@
 					}
 					else 
 					$('body').css('cursor','pointer');
-					$(this.colCopy).css({top:e.pageY + 10,left:e.pageX + 20, display: 'block'});
+					$(this.colCopy).css({top:e.pageY + 5,left:e.pageX - (0.5 * $(this.colCopy).width()), display: 'block'});
 				}													
 			
 			},
