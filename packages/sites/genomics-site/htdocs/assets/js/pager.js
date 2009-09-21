@@ -32,28 +32,30 @@ function GetResultsPage(url, update, ignoreFilters){
 function ResultsToGrid(data, ignoreFilters) {
         // the html() doesn't work in IE 7/8 sometimes (but not always.
         // $("div#Workspace").html(data);
-	try {
+	var oldFilters;
 	if (ignoreFilters) {
-		$("#Results_Pane").html($("#Results_Pane",data).html());
-		$("#Workspace span.h4left").html($("#Workspace span.h4left",data).html());
-		$("div.layout-detail td div.filter-instance div a.link-url",data).each(function() {
-			var link = $(this);
-			$("#"+link.attr('id')).unbind('click');
-			$("#"+link.attr('id')).click(function() {
-				ChangeFilter(link.attr('strId'),link.attr('stpId'),link.attr('linkUrl'), this);
-			});
-		});
-	} else {
-		$("#Workspace").html($("#Workspace",data).html());
+		oldFilters = $("#Workspace div.layout-detail div.filter-instance a.link-url");
+	}
 
-        	// invoke filters
-        	var wdkFilter = new WdkFilter();
+        document.getElementById('Workspace').innerHTML = data;
+
+	// invoke filters
+        var wdkFilter = new WdkFilter();
+	
+	if (ignoreFilters) {
+		wdkFilter.addShowHide();
+		wdkFilter.displayFilters();
+		oldFilters.each(function() {
+			var id = $(this).attr("id");
+			var count = $(this).text();
+			$("#" + id).html(count);
+		});
+	}
+	else {
         	wdkFilter.initialize();
 	}
-	} catch(err) {
-		// assume this is blast and we just ran out of stack space?
-		$("#Workspace").html(data);
-	}
+
+	// specify column sizes so flexigrid generates columns properly.
 	$("#Results_Table").flexigrid({height : 'auto',
 				       showToggleBtn : false,
 				       useRp : false,
@@ -61,6 +63,7 @@ function ResultsToGrid(data, ignoreFilters) {
 				       onMoveColumn : moveAttr,
                                        nowrap : false,
 				       resizable : false});
+	//flexifluid.init();
 }
 
 function updatePageCount(pager_id) {
