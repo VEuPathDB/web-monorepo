@@ -29,7 +29,8 @@
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="type"/>
-
+<div> <!-- Wrapper div so jquery can find the elements it needs -->
+<div id="Workspace">
 <!-- handle empty result set situation -->
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>
@@ -117,3 +118,5 @@
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table>
+</div>
+</div>
