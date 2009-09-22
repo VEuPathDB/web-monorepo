@@ -193,10 +193,13 @@ tr.headerrow {
 	color: #282868;
 }
 
-tr.headerrow th {
+tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
 	background-image: url(../images/GiardiaDB/trheader.png);
 }
 
+.flexigrid tr.headerrow th:hover {
+	background-image: url(../images/GiardiaDB/trhover.png);
+}
 
 td.subheaderrow {
 	background-image: url(../images/GiardiaDB/trsubhead.png);

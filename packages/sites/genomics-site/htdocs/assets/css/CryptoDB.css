@@ -196,8 +196,12 @@ tr.headerrow {
 	color: #5f140e;
 }
 
-tr.headerrow th {
+tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
 	background-image: url(../images/CryptoDB/trheader.png);
+}
+
+.flexigrid tr.headerrow th:hover {
+	background-image: url(../images/CryptoDB/trhover.png);
 }
 
 td.subheaderrow {

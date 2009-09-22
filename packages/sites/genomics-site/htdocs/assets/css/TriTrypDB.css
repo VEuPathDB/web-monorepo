@@ -203,10 +203,13 @@ tr.headerrow {
 	color: #0c3f60;
 }
 
-tr.headerrow th {
+tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
 	background-image: url(../images/TriTrypDB/trheader.png);
 }
 
+.flexigrid tr.headerrow th:hover {
+	background-image: url(../images/TriTrypDB/trhover.png);
+}
 
 td.subheaderrow {
 	background-image: url(../images/TriTrypDB/trsubhead.png);
