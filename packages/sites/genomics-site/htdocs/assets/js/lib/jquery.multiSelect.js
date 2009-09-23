@@ -227,6 +227,14 @@ if(jQuery) (function($){
 					if( e.keyCode == 13 ) return false;
 				});
 				
+				// Bind to window resize event, so dropdown position updates properly
+				$(window).bind('resize',function () {
+					var openOptions = $(".multiSelectOptions:visible").prev(".multiSelect.display");
+					$(openOptions).each(function() {
+						$(this).multiSelectOptionsPosition();
+					});
+				});
+
 				// Eliminate the original form element
 				$(select).remove();
 			});
@@ -246,10 +254,7 @@ if(jQuery) (function($){
 			$(this).next('.multiSelectOptions').find('LABEL').removeClass('hover');
 			$(this).addClass('active').next('.multiSelectOptions').show();
 			
-			// Position it
-			var offset = $(this).position();
-			$(this).next('.multiSelectOptions').css({ top:  offset.top + $(this).outerHeight() + 'px' });
-			$(this).next('.multiSelectOptions').css({ left: offset.left + 'px' });
+			$(this).multiSelectOptionsPosition();
 			
 			// Disappear on hover out
 			multiSelectCurrent = $(this);
@@ -262,6 +267,13 @@ if(jQuery) (function($){
 			
 		},
 		
+		// Position the dropdown
+		multiSelectOptionsPosition: function() {
+			var offset = $(this).position();
+			$(this).next('.multiSelectOptions').css({ top:  offset.top + $(this).outerHeight() + 'px' });
+			$(this).next('.multiSelectOptions').css({ left: offset.left + 'px' });
+		},
+
 		// Update the textbox with the total number of selected items
 		multiSelectUpdateSelected: function(o) {
 			var i = 0, s = '';

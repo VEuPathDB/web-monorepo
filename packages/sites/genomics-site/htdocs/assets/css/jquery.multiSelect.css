@@ -24,7 +24,7 @@
 	width: auto;
 	max-height: 150px;
 	margin-top: -1px;
-	overflow: auto;
+	overflow-y: scroll;
 	border: solid 1px #B2B2B2;
 	background: #FFF;
 	text-align: left;
