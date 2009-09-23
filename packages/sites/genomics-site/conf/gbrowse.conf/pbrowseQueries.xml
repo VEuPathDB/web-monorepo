@@ -454,6 +454,7 @@ SELECT
        '.' strand,
        'DScore=' || ((spf.means_score + spf.maxy_score) / 2) || '$dlm' ||
        'SignalProb=' || spf.signal_probability || '$dlm' ||
+       'Algorithm=' || spf.algorithm_name || '$dlm' ||
        'ConclusionScore=' || (spf.maxy_conclusion +
                spf.maxc_conclusion +
                spf.maxs_conclusion +

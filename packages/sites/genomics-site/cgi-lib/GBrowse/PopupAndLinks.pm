@@ -826,10 +826,14 @@ sub signalpTitle {
   my ($d_score) = $f->get_tag_values("DScore");
   my ($signal_prob) = $f->get_tag_values("SignalProb");
   my ($conclusion_score) = $f->get_tag_values("ConclusionScore");
+  my ($algorithm) = $f->get_tag_values("Algorithm"); # 'SignalPhmm' or 'SignalPnn'
+  $algorithm = ($algorithm eq 'SignalPhmm')? 'SP-HMM':'SP-NN';
+
   push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
   push @data, [ 'NN Conclusion Score:' => $conclusion_score ];
   push @data, [ 'NN D-Score:' => $d_score ];
   push @data, [ 'HMM Signal Probability:' => $signal_prob ];
+  push @data, [ 'Algorithm:' => $algorithm ];
   hover("Signal peptide", \@data);
 }
 
