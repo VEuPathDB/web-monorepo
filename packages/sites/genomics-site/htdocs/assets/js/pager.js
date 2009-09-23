@@ -55,7 +55,13 @@ function ResultsToGrid(data, ignoreFilters) {
         	wdkFilter.initialize();
 	}
 
-	// specify column sizes so flexigrid generates columns properly.
+	// create multi select control for adding columns
+	$("#addAttributes").multiSelect({noneSelected: '--- Add Column ---', oneOrMoreSelected: '*',},
+				function() {
+					addAttr($("#addAttributes").attr('commandUrl'));
+				});
+
+	// convert results table to drag-and-drop flex grid
 	$("#Results_Table").flexigrid({height : 'auto',
 				       showToggleBtn : false,
 				       useRp : false,
@@ -63,7 +69,6 @@ function ResultsToGrid(data, ignoreFilters) {
 				       onMoveColumn : moveAttr,
                                        nowrap : false,
 				       resizable : false});
-	//flexifluid.init();
 }
 
 function updatePageCount(pager_id) {

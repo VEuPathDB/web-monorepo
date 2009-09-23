@@ -74,14 +74,14 @@ function moveAttr(col_ix) {
 
 function addAttr(url) {
     var attributeSelect = document.getElementById("addAttributes");
-    var index = attributeSelect.selectedIndex;
-    var attribute = attributeSelect.options[index].value;
+    var attributes = attributeSelect.value;
     
-    if (attribute.length == 0) return;
+    if (attributes.length == 0) return;
 
-    var url = url + "&command=add&attribute=" + attribute;
+    attributes = attributes.split(',').join("&attribute=");
+
+    var url = url + "&command=add&attribute=" + attributes;
     GetResultsPage(url, true, true);
-	//window.location.href = url;
 }
 
 
