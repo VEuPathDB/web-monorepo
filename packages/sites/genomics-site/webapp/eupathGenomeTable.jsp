@@ -102,8 +102,8 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="center"></td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://cryptodb.org/cryptodb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://cryptocyc.cryptodb.org/"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://cryptodb.org/cryptodb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://cryptocyc.cryptodb.org/"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 
 </tr>
 
@@ -127,7 +127,7 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2"></td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://qa.cryptodb.org/cryptodb3.7/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=CparvumESTs,WatanabeCpHNJ-1_EstLibrary,dbEST&title=Query#dbEST"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://qa.cryptodb.org/cryptodb3.7/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=CparvumESTs,WatanabeCpHNJ-1_EstLibrary,dbEST&title=Query#dbEST"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
              <td align="center"></td>
              <td align="center"></td>
@@ -153,11 +153,11 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">9.09</td>
              <td align="right"><font size = "-2">3886</td>
             <td align="center"></td>
-             <td align="center"><a href="http://cryptodb.org/cryptodb/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Widmer_SNPs&title=Query#Widmer_SNPs"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://qa.cryptodb.org/cryptodb3.7/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=CparvumESTs,WatanabeCpHNJ-1_EstLibrary,dbEST&title=Query#dbEST"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://cryptodb.org/cryptodb/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Widmer_SNPs&title=Query#Widmer_SNPs"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://qa.cryptodb.org/cryptodb3.7/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=CparvumESTs,WatanabeCpHNJ-1_EstLibrary,dbEST&title=Query#dbEST"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://cryptodb.org/cryptodb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://cryptocyc.cryptodb.org/"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://cryptodb.org/cryptodb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://cryptocyc.cryptodb.org/"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
             
 </tr>
 
@@ -188,7 +188,7 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">4969*</td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://giardiadb.org/giardiadb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://giardiadb.org/giardiadb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
              <td align="center"></td>
              <td align="center"></td>
@@ -223,9 +223,9 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">8278</td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
 
 </tr>
@@ -248,9 +248,9 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">8387</td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
 
 </tr>
@@ -273,9 +273,9 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">9251</td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
 
 </tr>
@@ -298,9 +298,9 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">10682</td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
 
 </tr>
@@ -323,9 +323,9 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">23559</td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteoome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
 
 </tr>
@@ -354,10 +354,10 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">12345</td>
 	     <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=dbEST&title=EST%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=berghei_gss_time_series,berghei_gss_time_seriesHPE&title=P.%20berghei%20Expression"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Pberghei_Protein_Expression&title=Protein%20Expression&title=Proteome%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=dbEST&title=EST%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=berghei_gss_time_series,berghei_gss_time_seriesHPE&title=P.%20berghei%20Expression"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Pberghei_Protein_Expression&title=Protein%20Expression&title=Proteome%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 
          </tr>
 
@@ -383,7 +383,7 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="center"></td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
          
           </tr>
 
@@ -408,15 +408,15 @@ http://www.bosrup.com/web/overlib/?Documentation
 
 
              <td align="right"><font size = "-2">5595</td>
-	     <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=P.falciparum_chromosomes,P.falciparum_wholeGenomeShotgunSequence,P.falciparum_Annotation,P.falciparum_firstAnnotationSalvador,falciparum_falciparum_synteny,TIGRGeneIndices_Pfalciparum,Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps,P.falciparum_plastid&title=Genomic%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Pfalciparum,dbEST&title=EST%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+	     <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=P.falciparum_chromosomes,P.falciparum_wholeGenomeShotgunSequence,P.falciparum_Annotation,P.falciparum_firstAnnotationSalvador,falciparum_falciparum_synteny,TIGRGeneIndices_Pfalciparum,Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps,P.falciparum_plastid&title=Genomic%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Pfalciparum,dbEST&title=EST%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 <%-- M --%>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=WinzelerGeneticVariationArray,DeRisi_oligos,winzeler_gametocyte_expression&title=Microarray%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=WinzelerGeneticVariationArray,DeRisi_oligos,winzeler_gametocyte_expression&title=Microarray%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 <%-- Pr --%>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=FlorensMassSpecData&title=Mass%20Spec.-based%20Expression%20Evidence&title=Proteome%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=FlorensMassSpecData&title=Mass%20Spec.-based%20Expression%20Evidence&title=Proteome%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 <%-- Pa --%>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 
          
           </tr>
@@ -492,7 +492,7 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">7.38</td>
              <td align="right"></td>
 	     <td align="center"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
              <td align="center"></td>
              <td align="center"></td>
@@ -520,10 +520,10 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">5507</td>
 	     <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Pvivax,dbEST&title=EST%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Pvivax,dbEST&title=EST%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 
           </tr>
 
@@ -545,10 +545,10 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">7971</td>
 	     <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Pyoelii,dbEST&title=EST%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Pyoelii,dbEST&title=EST%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=pathwayMappings_Hagai&title=Metabolic%20Pathway"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
           </tr>
 
 
@@ -577,7 +577,7 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"></td>
             <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://apidb.org/static/sources.shtml"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://apidb.org/static/sources.shtml"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
              <td align="center"></td>
              <td align="center"></td>
@@ -603,7 +603,7 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"></td>
             <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://apidb.org/static/sources.shtml"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://apidb.org/static/sources.shtml"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
              <td align="center"></td>
              <td align="center"></td>
@@ -634,15 +634,15 @@ http://www.bosrup.com/web/overlib/?Documentation
                 <a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.News" style="color:#660000">02/2009</a></td>
              <td align="right"><font size = "-2">63.00</td>
              <td align="right"><font size = "-2">9239**</td>
-            <td align="center"><a href="http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,TgondiiRHChromosome1,TgondiiApicoplast,GeneticMarkers_Sibley,ME49_SNPs,AmitAlignmentSnps,AmitNucmerHSPs,AffymetrixProbes,TIGRGeneIndices_Tgondii,dbEST,ESTAlignments_Tgondii,ME49_GLEAN,ME49_GlimmerHMM,ME49_TigrScan,ME49_TwinScan,ME49_TwinScanEt,tRNAPredictions,3primeToxoSageTags,5primeToxoSageTags&title=Genomic%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
-             <td align="center"><a href="http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Tgondii,dbEST&title=EST%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+            <td align="center"><a href="http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,TgondiiRHChromosome1,TgondiiApicoplast,GeneticMarkers_Sibley,ME49_SNPs,AmitAlignmentSnps,AmitNucmerHSPs,AffymetrixProbes,TIGRGeneIndices_Tgondii,dbEST,ESTAlignments_Tgondii,ME49_GLEAN,ME49_GlimmerHMM,ME49_TigrScan,ME49_TwinScan,ME49_TwinScanEt,tRNAPredictions,3primeToxoSageTags,5primeToxoSageTags&title=Genomic%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Tgondii,dbEST&title=EST%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 <%-- M --%>
-             <td align="center"><a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 <%-- Pr --%>
-             <td align="center"><a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources#Proteome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 <%-- Pa --%>
-             <td align="center"><a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=MetabolicDbXRefs_Feng&title=Metabolic%20Pathway"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=MetabolicDbXRefs_Feng&title=Metabolic%20Pathway"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 
 </tr>
 
@@ -667,7 +667,7 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">5761</td>
             <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Tgondii,dbEST&title=EST%20Context"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ESTAlignments_Tgondii,dbEST&title=EST%20Context"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 <%-- M --%>
              <td align="center"></td>
 <%-- Pr --%>
@@ -705,10 +705,10 @@ http://www.bosrup.com/web/overlib/?Documentation
              <td align="right"><font size = "-2">60808</td>
              <td align="center"></td>
              <td align="center"></td>
-             <td align="center"><a href="http://trichdb.org/trichdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+             <td align="center"><a href="http://trichdb.org/trichdb/showXmlDataContent.do?name=XmlQuestions.DataSources#Transcriptome"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
              <td align="center"></td>
              <td align="center"></td>
- <td align="center"><a href="http://pathema.tigr.org:1555/"><img border=0 src="/images/reddot.gif" width="8" alt="yes"></td>
+ <td align="center"><a href="http://pathema.tigr.org:1555/"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 
 
 </tr>
