@@ -28,6 +28,8 @@
 
 <c:set var="prd" value="${attrs['product'].value}"/>
 
+<c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
+
 <c:set var="parvumOrganism" value="Cryptosporidium parvum Iowa II"/>
 <c:set var="parvumChr6Organism" value="Cryptosporidium parvum"/>
 <c:set var="hominisOrganism" value="Cryptosporidium hominis"/>
@@ -318,24 +320,16 @@ CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
 <%-- ORTHOMCL ------------------------------------------------------%>
 <c:if test="${organism ne parvumChr6Organism && attrs['so_term_name'].value eq 'protein_coding'}">
 
-<dl>
-<dt>
+
+  <c:set var="orthomclLink">
+    <div align="center">
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
+    </div>
+  </c:set>
+  <site:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_Phyletic,OrthoMCL"
+                 postscript="${orthomclLink}"/>
 
 
-
-<site:wdkTable tblName="Orthologs" isOpen="true"
-     attribution="OrthoMCL_Phyletic,OrthoMCL"/>
-
-
-<c:set var="orthomcltxt">
-<a href="http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=${wdkRecord.primaryKey}"><font size='-2'>Find ${wdkRecord.primaryKey} in OrthoMCL DB</font></a>
-</c:set>
-
-</dt>
-<dd>
-${orthomcltxt}
-</dd>
-</dl>
 
 <c:set var="attribution">
 </c:set>

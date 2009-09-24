@@ -39,6 +39,8 @@
 <c:set var="context_start_range" value="${attrs['context_start'].value}" />
 <c:set var="context_end_range" value="${attrs['context_end'].value}" />
 
+<c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
+
 <c:set value="${wdkRecord.tables['CategoryLink']}" var="ctgLinks"/>
 
 <c:forEach var="row" items="${ctgLinks}">
@@ -479,7 +481,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${isCodingGene}">
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=${id}">Find ${id} in the OrthoMCL database</a>
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
   <site:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"

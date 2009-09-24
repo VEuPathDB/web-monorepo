@@ -37,6 +37,8 @@
 <c:set var="context_start_range" value="${attrs['context_start'].value}" />
 <c:set var="context_end_range" value="${attrs['context_end'].value}" />
 
+<c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
+
 <site:header title="${wdkModel.displayName} : gene ${id} (${prd})"
              banner="${id}<br>${prd}"
              divisionName="Gene Record"
@@ -241,7 +243,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <c:if test="${isCodingGene}">
   <c:set var="orthomclLink">
     <div align="center">
-      Please see the Release 4 Genes table for a link to OrthoMCL
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
   <site:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"

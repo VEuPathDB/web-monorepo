@@ -41,6 +41,8 @@
 <c:set var="end" value="${attrs['end_max_text'].value}"/>
 <c:set var="sequence_id" value="${attrs['sequence_id'].value}"/>
 
+<c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
+
 <c:set var="strand" value="+"/>
 <c:if test="${attrs['strand'].value == 'reverse'}">
   <c:set var="strand" value="-"/>
@@ -293,11 +295,9 @@ LmajorChromosomesAndAnnotations,Tbrucei927ChromosomesAndAnnotations,TcruziContig
 
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
   <c:set var="orthomclLink">
-    <div align="left">
-    <br><small>While the <a href="http://orthomcl.org">OrthoMCL</a>
-     algorithm was 
-used to identify ortholgy groups in the different TriTrypDB organisms, 
-the current version of OrthoMCL does not include these groups. </small></div>
+    <div align="center">
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
+    </div>
   </c:set>
   <site:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_TrypDB"
                  postscript="${orthomclLink}"/>
