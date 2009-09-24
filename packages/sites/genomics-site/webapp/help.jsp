@@ -73,7 +73,13 @@
               </form>
               </table>
  
-</td></tr></table>
+</td></tr>
+
+<tr><td><br><b>If you would like to attach a screenshot, please email directly to <a href="mailto:help@${site}.org">help@${site}.org</a>.</b></td></tr>
+
+
+
+</table>
 
  
 
