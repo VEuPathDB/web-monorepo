@@ -355,7 +355,7 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 				$("#query_form h1#query_form_title").html("Insert&nbsp;Step");
 			if(isFirst){
 				$("#query_form #selected_strategy,#continue_button").attr("disabled","disabled");
-				$("#query_form #transforms,#continue_button_transforms").attr("disabled","disabled");
+				$("#query_form #transforms a").attr('href',"javascript:void(0);").addClass("disabled");
 			}else{
 				$("#query_form #continue_button").click(function(){
 				original_Query_Form_Text = $("#query_form").html();
@@ -372,19 +372,21 @@ function openFilter(dtype,strat_id,step_id,isAdd){
 				});
 			}
 			if(!isAdd){
-			$("#query_form select#transforms option").each(function(){
+			$("#query_form ul#transforms a").each(function(){
 				stp = getStrategy(strat_id).getStep(step_id,false);
 				fid = parseInt(stp.frontId);
 				if(fid > 1){
-					value = $(this).val();
-					stpId = value.split("gene_result=");
+					var value = $(this).attr('href');
+					value = value.split("gene_result=");
+					var stpId = value[1].split("&");
 					prevStp = getStrategy(strat_id).getStep(fid-1,true);
 					if(prevStp.back_boolean_Id != null && prevStp.back_boolean_Id != "")
-						stpId[1] = prevStp.back_boolean_Id;
+						stpId[0] = prevStp.back_boolean_Id;
 					else
-						stpId[1] = prevStp.back_step_Id;
-						value = stpId.join("gene_result=") + "&partial=true";
-					$(this).val(value);
+						stpId[0] = prevStp.back_step_Id;
+					value[1] = stpId.join("&");
+					value = value.join("gene_result=");
+					$(this).attr('href',value);
 				}
 			});
 			}

@@ -106,7 +106,7 @@
 
 <c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass' && fn:length(transformQuestions) > 0}">
 <td>
-  <ul class="top_nav">
+  <ul id="transforms" class="top_nav">
     <c:forEach items="${transformQuestions}" var="t">
       <jsp:setProperty name="t" property="inputType" value="${recClass}" />
       <c:set var="tparams" value="" />
