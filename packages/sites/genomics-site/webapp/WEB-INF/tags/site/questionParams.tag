@@ -137,7 +137,13 @@
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-                            <td width="30%" align="right" style="vertical-align:top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
+                            <td width="30%" align="right" style="vertical-align:top">
+								<c:if test="${wdkQuestion.fullName == 'GeneQuestions.GenesByLocation' && pNam == 'organism'}">
+									<input type="hidden" name="holder" id="organism_holder" value=""/>
+									<input type="hidden" name="holder" id="chromosomeOptional_holder" value=""/>
+									<input id="${pNam}_radio" type="radio" name="location_radio" onclick="changeType('${pNam}')"/>
+								</c:if>
+								<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
 				
 
 
@@ -169,9 +175,13 @@
                                     </td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
+                                    <td width="30%" align="right" valign="top">
+										<c:if test="${wdkQuestion.fullName == 'GeneQuestions.GenesByLocation' && pNam == 'sequenceId'}">
+											<input id="${pNam}_radio" type="radio" name="location_radio" onclick="changeType('${pNam}')"/>
+										</c:if>
+										<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
-                                        <html:text property="myProp(${pNam})" size="35" />
+                                        <html:text styleId="${pNam}" property="myProp(${pNam})" size="35" />
                                     </td>
                                 </c:otherwise>
                             </c:choose>
