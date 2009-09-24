@@ -17,6 +17,7 @@
 
 <c:set var="start" value="${attrs['start_min_text'].value}"/>
 <c:set var="end" value="${attrs['end_max_text'].value}"/> 
+<c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
 <c:set var="recordType" value="${wdkRecord.recordClass.type}"/> 
 
@@ -217,10 +218,15 @@ G.lamblia_contigsGB
 <%-- ORTHOMCL ------------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
-<site:panel 
-    displayName="Giardia lamblia Paralogs (<a href='http://orthomcl.org/'>OrthoMCL DB</a>)"
-    content=""
-    attribution="OrthoMCLV2"/>
+  <c:set var="orthomcl_content">
+    <site:dataTable tblName="Orthologs" />
+     <div align="center">
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=${id}">Find the group containing ${id} in the OrthoMCL database</a>
+    </div>
+  </c:set>
+
+  <site:panel displayName="Orthologs and Paralogs within ${projectId}"
+              content="${orthomcl_content}"/>
 
 </c:if>
 <br>
