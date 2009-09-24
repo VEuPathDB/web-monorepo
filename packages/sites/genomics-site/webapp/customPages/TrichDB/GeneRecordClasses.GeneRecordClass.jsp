@@ -17,6 +17,8 @@
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 <c:set var="organism" value="${attrs['organism'].value}"/>
 
+<c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
+
 <c:choose>
 <c:when test="${organism eq null || !wdkRecord.validRecord}">
 <site:header title="TrichDB : gene ${id} (${prd})"
@@ -237,26 +239,23 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <br>
 </c:if>
 <%-- ORTHOMCL ------------------------------------------------------%>
-<%--
+
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
-<c:set var="table">
+  <c:set var="orthomcl_content">
     <site:dataTable tblName="Orthologs" />
-<br>
-<a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Keyword&q=${fn:substring(attrs['cyc_gene_id'].value, 0, 8)}"><font size='-2'>Find ${id} in OrthoMCL DB</font></a>
-</c:set>
+     <div align="center">
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=${id}">Find the group containing ${id} in the OrthoMCL database</a>
+    </div>
+  </c:set>
 
-<c:set var="attribution">
-</c:set>
+  <site:panel displayName="Orthologs and Paralogs within ${projectId}"
+              content="${orthomcl_content}"/>
 
-<site:panel 
-    displayName="Trichomonas Orthologs and Paralogs(<a href='http://orthomcl.cbil.upenn.edu'>OrthoMCL DB</a>)"
-    content="${table}"
-    attribution="${attribution}"/>
+
+
 <br>
 </c:if>
---%>
-
 
 <p>
 <table border='0' width='100%'><tr class="secondary3">
