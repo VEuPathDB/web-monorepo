@@ -47,7 +47,8 @@
   <c:set var="ctgLink" value="${row['category_link'].value}"/>
   <c:set var="category" value="${fn:substringBefore(ctgLink, ':')}"/>
   <c:set var="num" value="${fn:substringAfter(ctgLink, ':')}"/>
-  <c:set var="cmtLink" value="<a href='#user-comment'>[Link to User Comment]</a>"/>
+  <!-- c:set var="cmtLink" value="<a href='#user-comment'>[Link to User Comment]</a>"/ -->
+  <c:set var="cmtLink" value=""/>
 
   <c:choose>
     <c:when test="${category eq 'name/product' || category eq 'function'}">
