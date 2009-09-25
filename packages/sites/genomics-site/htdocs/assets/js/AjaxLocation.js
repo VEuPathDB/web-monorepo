@@ -12,7 +12,8 @@ var sendReqUrlEnum = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&p
 var sendReqUrlFlat = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=SharedVQ.TrypChromosomePortal:';
 
 // If site is TriTrypDB, use the flat vocab ajax call
-window.onload = function() {
+//window.onload = function() { initLocation(); }
+function initLocation() {
 	for(var i=0;i<sites.length;i++){
 		dataArray[i] = new Array();
 	//	alert(sites[i]);
@@ -22,28 +23,36 @@ window.onload = function() {
 			AjaxCall(sendReqUrlEnum + sites[i],dataArray[i]);
 	}
 	loadOrganisms('showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=organismVQ.withChromosomes:'+all_sites,'orgSelect', dataArray, sites);
-	document.getElementById('sequenceId_chromo').disabled = true;
-	chooseType('sequenceId','CHROMOSOME');
+//	document.getElementById('sequenceId_chromo').disabled = true;
+//	chooseType('sequenceId','CHROMOSOME');
 }
 
 function chooseType(paramName, type) {
    if (type == 'CHROMOSOME') {
         var org = document.getElementById('orgSelect');
 		var chromo = document.getElementById(paramName + '_chromo');
-        var organism = document.getElementById('organism');
+        var organism = $("input#organism");
+		if(organism == undefined) 
+			organism = document.getElementById('organism');
+		else
+			organism = organism[0];
 		var chromosome = document.getElementById('chromosomeOptional');
 		var contig = document.getElementById(paramName + '_contig');
         var genomicSeq = document.getElementById('sequenceId');
 		chromo.disabled = false;
         org.disabled = false;       
 		contig.disabled = true;
-		organism.value = org.options[org.selectedIndex].value;// alert("1 done");
+		organism.value = org.options[org.selectedIndex].text;// alert("1 done");
 		genomicSeq.value = "choose one";
-		chromosome.value = chromo.options[chromo.selectedIndex].value; //alert("2 done");
+		chromosome.value = chromo.options[chromo.selectedIndex].text; //alert("2 done");
     } else if (type == 'CONTIG') {
         var org = document.getElementById('orgSelect');
 		var chromo = document.getElementById(paramName + '_chromo');
-        var organism = document.getElementById('organism');
+        var organism = $("input#organism");
+		if(organism == undefined) 
+			organism = document.getElementById('organism');
+		else
+			organism = organism[0];
 		var chromosome = document.getElementById('chromosomeOptional');
 		var contig = document.getElementById(paramName + '_contig');
         var genomicSeq = document.getElementById('sequenceId');

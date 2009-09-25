@@ -61,7 +61,7 @@ function fillSelectFromArray(arr, id)
 			sA.options[x] = option;
 		}
 	}else{
-		alert("No Data Returned From the Server!!");
+		//alert("fillSelectFromArray() : No Data Returned From the Server!!");
 	}	
 }
 
@@ -88,7 +88,7 @@ function fillOrganisms(arr, id, dataArr, sites)
 		}
 	   }
 	}else{
-		alert("No Data Returned From the Server!!");
+		//alert("fillOrganisms() : No Data Returned From the Server!!");
 	}	
 }
 
