@@ -16,52 +16,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
 
-<c:set var="headElement">
-  
-  
-  <script src="js/prototype.js" type="text/javascript"></script>
-  <script src="js/scriptaculous.js" type="text/javascript"></script>
-</c:set>
-<site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
-                 banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
-                 parentDivision="Queries & Tools"
-                 parentUrl="/showQuestionSetsFlat.do"
-                 divisionName="Question"
-                 division="queries_tools"
-		 headElement="${headElement}"/>
 
-
-
-<script language="JavaScript" type="text/javascript">
-<!--
-
-function showParamGroup(group, isShow) 
-{
-    var groupLink = document.getElementById(group + "_link");
-    var groupArea = document.getElementById(group + "_area");
-
-    if (isShow == "yes") {
-        groupLink.innerHTML = "<a href=\"#\" onclick=\"return showParamGroup('" + group + "', 'no');\">Hide</a>";
-        groupArea.style.display = "block";
-    } else {
-        groupLink.innerHTML = "<a href=\"#\" onclick=\"return showParamGroup('" + group + "', 'yes');\">Show</a>";
-        groupArea.style.display = "none";
-    }
-    
-    return false;
-}
-
-//-->
-</script>
-
-<c:if test="${wdkModel.displayName eq 'EuPathDB.org'}">
-     <div id="question_Form">
-</c:if>
-
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
-
- <tr>
-  <td bgcolor=white valign=top>
 
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
@@ -82,6 +37,7 @@ function showParamGroup(group, isShow)
 <wdk:errors/>
 
 <div class="params">
+<c:if test="${showParams == true || showParams == null}">
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
@@ -260,6 +216,7 @@ function showParamGroup(group, isShow)
     </c:choose>
     
 </c:forEach>
+</c:if>
 </div>
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
@@ -274,6 +231,3 @@ function showParamGroup(group, isShow)
   <td valign=top class=dottedLeftBorder></td> 
 </tr>
 </table> 
-
-
-<site:footer/>
