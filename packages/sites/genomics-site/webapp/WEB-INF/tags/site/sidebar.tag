@@ -102,7 +102,7 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
 </c:if>
 
 <c:if test="${project != 'EuPathDB'}">
-
+    	<c:catch var="newsErr">
           <c:set var="i" value="1"/>
           <ul>
           <c:forEach items="${newsAnswer.recordInstances}" var="record">
@@ -129,7 +129,10 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
           <c:set var="i" value="${i+1}"/>
           </c:forEach>
           </ul>
-
+        </c:catch>
+    	<c:if test="${newsErr != null}">
+		 <i>News temporarily unavailable<br></i>
+	    </c:if>
 	  <a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News</a>
 
 </c:if>
