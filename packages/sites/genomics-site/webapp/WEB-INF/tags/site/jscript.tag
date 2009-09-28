@@ -45,6 +45,10 @@
         <script type="text/javascript" src="<c:url value='/assets/js/wdkFilter.js' />"></script>
 </c:if>
 
+
+<script type="text/javascript">
+     var sites = new Array(${used_sites});
+  </script>
 <script type="text/javascript" src="/assets/js/ApiDB_Ajax_Utils.js"></script>
 <script type="text/javascript" src="/assets/js/AjaxLocation.js"></script>
 <script type="text/javascript" src="/assets/js/AjaxAssemLocation.js"></script
