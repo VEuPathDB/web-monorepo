@@ -47,6 +47,12 @@
 
 <script type="text/javascript" src="/assets/js/ApiDB_Ajax_Utils.js"></script>
 <script type="text/javascript" src="/assets/js/AjaxLocation.js"></script>
+<script type="text/javascript" src="/assets/js/AjaxAssemLocation.js"></script
+<script type="text/javascript" src="/assets/js/AjaxESTsLocation.js"></script>
+<script type="text/javascript" src="/assets/js/AjaxSageTagLocationORF.js"></script>
+<script type="text/javascript" src="/assets/js/AjaxSnpLocation.js"></script>
+<script type="text/javascript" src="/assets/js/AjaxSnp.js"></script>
+
 
 <c:if test="${refer == 'customSummary' || refer == 'customQuestion'}">
   <script src="js/lib/jquery.autocomplete.js" type="text/javascript"></script>
