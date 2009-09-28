@@ -45,6 +45,7 @@
         <script type="text/javascript" src="<c:url value='/assets/js/wdkFilter.js' />"></script>
 </c:if>
 
+<c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
 
 <script type="text/javascript">
      var sites = new Array(${used_sites});
