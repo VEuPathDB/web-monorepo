@@ -37,7 +37,7 @@
 			    <c:if test="${current}"><div class="current"></c:if>
 			        <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&revise=${stepId}&filter=${instance.name}" />
 			        <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
-			        <a class="link-url" href="javascript:void(0)" countref="${countUrl}" onclick="ChangeFilter(${strategyId}, ${stepId}, '${linkUrl}');">
+			        <a id="link-${instanceName}" class="link-url" href="javascript:void(0)" countref="${countUrl}" onclick="ChangeFilter(${strategyId}, ${stepId}, '${linkUrl}');">
 						<c:choose>
 							<c:when test="${current}">
 								<c:choose>
