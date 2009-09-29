@@ -245,7 +245,7 @@ ${headElement}
 <%--    <c:if test="${project == 'EuPathDB'}" >  --%>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#docs_pubs"/>">EuPathDB Publications</a></li>
 <%-- </c:if> --%>
-        <li><a href="/awstats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>         
+        <li><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>         
 
 <%-- 
           <li><a href="#">Who We Are</a></li>
