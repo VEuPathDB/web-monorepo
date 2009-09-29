@@ -17,10 +17,7 @@
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
 
 <c:set var="headElement">
-  
-  
-  <script src="js/prototype.js" type="text/javascript"></script>
-  <script src="js/scriptaculous.js" type="text/javascript"></script>
+
 </c:set>
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
@@ -73,6 +70,7 @@ function showParamGroup(group, isShow)
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
  <%-- <script src="/assets/js/ApiDB_Ajax_Utils.js" type="text/javascript"></script>
   <script src="/assets/js/AjaxLocation.js" type="text/javascript"></script>--%>
+  <script id="import_script" src="/assets/js/AjaxLocation.js" type="text/javascript"></script>
   <script id="initscript" language="javascript">
 	initLocation();
   </script>
@@ -264,6 +262,9 @@ function showParamGroup(group, isShow)
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
   <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
+<script language="javascript">
+	chooseType('sequenceId','CHROMOSOME');
+</script>
 </html:form>
 
 <hr>
