@@ -63,6 +63,7 @@ function fillSelectFromArray(arr, id)
 	}else{
 		//alert("fillSelectFromArray() : No Data Returned From the Server!!");
 	}	
+	updateSelectInput('chromosomeOptional',id);
 }
 
 //Moves data from an array into select object, id.
@@ -89,7 +90,8 @@ function fillOrganisms(arr, id, dataArr, sites)
 	   }
 	}else{
 		//alert("fillOrganisms() : No Data Returned From the Server!!");
-	}	
+	}
+	updateSelectInput('organism',id);	
 }
 
 //Copies values selected from a Select Box to a hidden text field
@@ -97,9 +99,9 @@ function fillOrganisms(arr, id, dataArr, sites)
 //inputId -- String [id of the Select Box]
 function updateSelectInput(paramId, inputId){
    	var sel = document.getElementById(inputId);
-	var hid = document.getElementById(paramId);
+	var hid = $("input#" + paramId)[0];//document.getElementById(paramId);
 	if(sel.multiple == false){
-		hid.value = sel.options[sel.selectedIndex].value;
+		hid.value = sel.options[sel.selectedIndex].text;//value;
 	}else {
 		var t = ",";
 		for (i=0;i<sel.length;i++){
@@ -173,7 +175,7 @@ function getAllOrgs(sites){
 	var orgs = "";
 	for(i=0;i<sites.length;i++){
 		if(sites[i].indexOf('Crypto') != -1)
-			orgs = orgs+","+sites[i]+" hominis";
+			orgs = orgs+","+sites[i]+" parvum";
 		if(sites[i].indexOf('Giardia') != -1)
 			orgs = orgs+","+sites[i]+" lamblia";
 		if(sites[i].indexOf('Plasmo') != -1)
@@ -182,6 +184,11 @@ function getAllOrgs(sites){
 			orgs = orgs+","+"Neospora caninum";
 		if(sites[i].indexOf('Trich') != -1)
 			orgs = orgs+","+sites[i]+" vaginalis";
+		if(sites[i].indexOf('Trypa') != -1)
+			orgs = orgs+","+sites[i]+" cruzi";
+		if(sites[i].indexOf('Leish') != -1)
+			orgs = orgs+","+sites[i]+" major";
+		
 	}
 	return orgs.substring(1);
 }

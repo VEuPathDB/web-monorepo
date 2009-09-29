@@ -84,7 +84,9 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 	//edit = 0 ::: adding a new step
 	//edit = 1 ::: editing a current step
 	var ps = document.createElement('div');
+	var qf = document.createElement('div');
 	var topMenu_script = null;
+	qf.innerHTML = data;
 	ps.innerHTML = params.substring(params.indexOf("<form"),params.indexOf("</form>") + 6);
 	if($("script#initScript", ps).length > 0)
 		topMenu_script = $("script#initScript", ps).text();
@@ -130,9 +132,9 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 
 	var quesTitle = data.substring(data.indexOf("<h1>") + 4,data.indexOf("</h1>")).replace(/Identify \w+ based on/,"");
 	
-	var quesForm = $("form#form_question",data);
-	var quesDescription = $("#query-description-section",data);
-	var tooltips = $("div.htmltooltip",data);
+	var quesForm = $("form#form_question",qf);//data);
+	var quesDescription = $("#query-description-section",qf);//data);
+	var tooltips = $("div.htmltooltip",qf);//data);
 	$("input[value=Get Answer]",quesForm).val("Run Step");
 	$("input[value=Run Step]",quesForm).attr("id","executeStepButton");
 	$(".params", quesForm).wrap("<div class='filter params'></div>");
