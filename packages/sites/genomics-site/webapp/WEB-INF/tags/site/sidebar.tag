@@ -75,7 +75,7 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
 
 
 	<c:catch var="feedex">
- 	<synd:feed feed="allFeeds" timeout="2000">
+ 	<synd:feed feed="allFeeds" timeout="7000">
      		${rss_Url}
 	</synd:feed>
 	<synd:sort feed="allFeeds" direction="desc" value="date"/>
