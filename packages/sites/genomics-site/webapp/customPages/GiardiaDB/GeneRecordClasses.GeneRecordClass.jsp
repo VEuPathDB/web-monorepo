@@ -14,6 +14,8 @@
 <c:set var="id" value="${pkValues['source_id']}" />
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="organism" value="${attrs['organism'].value}"/>
+<c:set var="organismFull" value="${attrs['organism_full'].value}"/>
+
 
 <c:set var="start" value="${attrs['start_min_text'].value}"/>
 <c:set var="end" value="${attrs['end_max_text'].value}"/> 
@@ -110,11 +112,33 @@ ${attrs['organism'].value}<br>
 -->
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
-<c:set var="gtracks">
+<%-- <c:set var="gtracks"> --%>
 <%-- Alternate Gene Models are taking time and hence are being avoided in the record page --%>
 <%-- Contigs+Gene+DeprecatedGene+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX --%>
-Contigs+Gene+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX
-</c:set>
+<%-- Contigs+Gene+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX --%>
+<%-- </c:set> --%>
+
+
+
+<c:choose>  
+  <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpanAssemblageB+SyntenyAssemblageB+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX
+    </c:set>
+  </c:when>
+  <c:when test='${organismFull eq "Giardia intestinalis ATCC 50581"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX
+    </c:set>
+  </c:when>
+  <c:when test='${organismFull eq "Giardia lamblia P15"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageB+SyntenyAssemblageB+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX
+    </c:set>
+  </c:when>
+</c:choose>
+
+
 
 <c:set var="attribution">
 G.lamblia_contigsGB
