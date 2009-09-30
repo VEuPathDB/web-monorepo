@@ -186,8 +186,8 @@ function getAllOrgs(sites){
 			orgs = orgs+","+sites[i]+" vaginalis";
 		if(sites[i].indexOf('Trypa') != -1)
 			orgs = orgs+","+sites[i]+" cruzi";
-		if(sites[i].indexOf('Leish') != -1)
-			orgs = orgs+","+sites[i]+" major";
+//		if(sites[i].indexOf('Leish') != -1)
+//			orgs = orgs+","+sites[i]+" major";
 		
 	}
 	return orgs.substring(1);
