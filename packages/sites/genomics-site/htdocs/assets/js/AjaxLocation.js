@@ -70,7 +70,9 @@ function loadStrains(){
 	var id = document.getElementById('orgSelect').value;
 	var text = document.getElementById('orgSelect').options[document.getElementById('orgSelect').selectedIndex].text;
 	if(document.getElementById('orgSelect').options[0].value == '--') {document.getElementById('orgSelect').remove(0);}
-	document.getElementById('organism').value = text;
-	
+	var o = $("input#organism")[0];
+	if(o == undefined) 
+		o = document.getElementById('organism');
+	o.value = text;
 	fillSelectFromArray(dataArray[id],'sequenceId_chromo');
 }
