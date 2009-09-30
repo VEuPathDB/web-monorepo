@@ -437,7 +437,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="gene:syntenyMC" excludeProjects="GiardiaDB,TrichDB">
+  <sqlQuery name="gene:syntenyMC" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
 SELECT * FROM (
@@ -1492,7 +1492,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:syntenySpanMC" includeProjects="TriTrypDB,PlasmoDB,CryptoDB">
+  <sqlQuery name="match:syntenySpanMC" includeProjects="TriTrypDB,PlasmoDB,CryptoDB,GiardiaDB">
      <sql>
 <![CDATA[
 SELECT
@@ -3253,7 +3253,7 @@ and sa.organism != sb.organism
  </sql>
  </sqlQuery>
 
- <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  excludeProjects="ToxoDB,GiardiaDB,TrichDB">
+ <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  excludeProjects="ToxoDB,TrichDB">
   <testParamValues project="TriTrypDB">
       <param name="name" value="LmjF05.1010"/>
   </testParamValues>
@@ -3380,7 +3380,7 @@ and sa.organism != sb.organism
   </sql>
  </sqlQuery>
 
-  <sqlQuery name="gene:annotation:attribute:Ortholog"   excludeProjects="ToxoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="gene:annotation:attribute:Ortholog"   excludeProjects="ToxoDB,TrichDB">
    <testParamValues project="TriTrypDB">
     <param name="name" value="LmjF05.1010"/>
    </testParamValues>
@@ -3721,7 +3721,7 @@ AND ed.name in ('L.major Cosmid Ends from Sanger',
   </sqlQuery>
   
   
-  <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="GiardiaDB,TrichDB">
+  <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
 SELECT * FROM (
@@ -3992,7 +3992,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:syntenySpanMC:bulksubfeatures" excludeProjects="CryptoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="match:syntenySpanMC:bulksubfeatures" excludeProjects="CryptoDB,TrichDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_TcChr7-S$$"/>
       <param name="rend" value="564285"/>
