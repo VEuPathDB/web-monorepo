@@ -82,6 +82,26 @@ ${id} <br /> ${prd}
 
 
 <c:set var="attr" value="${attrs['overview']}" />
+
+<c:choose>
+  <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
+     <c:set var="assemblage">
+       <b>Assemblage A, isolate GS</b>
+     </c:set>
+  </c:when>
+  <c:when test='${organismFull eq "Giardia intestinalis ATCC 50581 "}'>
+     <c:set var="assemblage">
+      <b>Assemblage B, isolate WGS</b>
+     </c:set> 
+  </c:when>
+  <c:when test='${organismFull eq "Giardia lamblia P15"}'>
+     <c:set var="assemblage">
+     <b>Assemblage E, isolate P15</b>
+     </c:set>  
+  </c:when>
+</c:choose>
+
+
 <c:if test="${attrs['is_deprecated'].value eq 'Yes'}">
    <c:set var="isdeprecated">
      **<b>Deprecated</b>**
@@ -90,7 +110,7 @@ ${id} <br /> ${prd}
 
 <site:panel 
     displayName="${attr.displayName}"
-    content="${attr.value}${append} ${isdeprecated}" />
+    content="${attr.value}${append}   ${assemblage} ${isdeprecated}" />
 <br>
 
 <c:set var="content">
