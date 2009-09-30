@@ -356,7 +356,7 @@ G.lamblia_contigsGB
         </td>
         <td class="centered">
           <div class="small">
-          <b>Percentage profile of the <i>Giardia lamblia</i> SAGE Tags counts</b>:  
+          <b><i>Giardia lamblia</i> SAGE Tags counts</b>:  
           </div>
         </td>
         <td class="centered"><image src="<c:url value="/images/spacer.gif"/>" height="150" width="150"></td>
@@ -370,7 +370,7 @@ G.lamblia_contigsGB
   </c:if>
 
 <site:toggle
-    displayName="Percentage profile of the <i>Giardia lamblia</i> SAGE Tags counts"
+    displayName="<i>Giardia lamblia</i> SAGE Tags Counts"
     content="${expressionContent}"
     name="SageCountPct"
     isOpen="true"
