@@ -63,6 +63,7 @@
       <c:set var="expanded" value="f58790bf857161c3" />
       <c:set var="expressed" value="55b70c857bee1bfa" />
       <c:set var="expressedLbrazilliensis" value="36217c6cc264ac15" />
+			<c:set var="SecretedAmastigoteKin" value="c867cab6ad4645a0" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
@@ -120,6 +121,14 @@
 	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressedLbrazilliensis}"/>"><i>L. brazilliensis</i> Expressed Genes</a> </td>
 	<td>Strategy with an ortholog transform</td>
 	<td>Find all genes from <i>L. brazilliensis</i> that have any evidence for expression based on direct evidence or using orthology</td>
+</tr>
+</c:if>
+
+<c:if test="${SecretedAmastigoteKin != null}">
+<tr align = "left">
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${SecretedAmastigoteKin}"/>">Secreted Amastigote Kinases</a> </td>
+	<td>Strategy with nested strategies and an ortholog transform</td>
+	<td>Find all genes in TriTrypDB (based on orthology) that are kinases (based on text search), are likely secreted (signal peptide and transmembrane domain prediction) and have any evidence for expression in the amastigote stage of <i>T. cruzi</i> (proteomics and EST)</td>
 </tr>
 </c:if>
 
