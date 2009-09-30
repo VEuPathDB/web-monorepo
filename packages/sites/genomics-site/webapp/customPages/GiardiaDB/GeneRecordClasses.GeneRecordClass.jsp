@@ -342,6 +342,39 @@ G.lamblia_contigsGB
 <%--    isOpen="true"--%>
 <%--    attribution="GL_Spycher_metaData_2"--%>
 
+<%-- sage count percentage graph --%>
+
+  <c:set var="secName1" value="Sage::Ver1"/>
+
+  <c:set var="imgSrc1" value="${plotBaseUrl}?type=${secName1}&project_id=${projectId}&model=giardia&fmt=png&id=${id}"/>
+
+  <c:set var="expressionContent">
+    <table border=0>
+      <tr>
+        <td class="centered">
+              <img src="${imgSrc1}">
+        </td>
+        <td class="centered">
+          <div class="small">
+          <b>Percentage profile of the <i>Giardia lamblia</i> SAGE Tags counts</b>:  
+          </div>
+        </td>
+        <td class="centered"><image src="<c:url value="/images/spacer.gif"/>" height="150" width="150"></td>
+      </tr>
+
+    </table>
+  </c:set>
+
+  <c:if test="${attrs['graph_sage_pct'].value == 0}">
+    < c:set var="expressionContent" value="none"/>
+  </c:if>
+
+<site:toggle
+    displayName="Percentage profile of the <i>Giardia lamblia</i> SAGE Tags counts"
+    content="${expressionContent}"
+    name="SageCountPct"
+    isOpen="true"
+    attribution="Giardia_SageTag_Count_percentages"/>
 
 <%-- SAGE tags ------------------------------------------------------%>
 
