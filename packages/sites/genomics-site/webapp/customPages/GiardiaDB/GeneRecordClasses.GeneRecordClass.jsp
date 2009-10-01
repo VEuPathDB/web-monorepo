@@ -85,19 +85,19 @@ ${id} <br /> ${prd}
 
 <c:choose>
   <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
-     <c:set var="assemblage">
-       <b>Assemblage A isolate GS</b>
-     </c:set>
+     <c:set var="assemblage" value="<b>Assemblage A isolate GS</b>"/>
+     <c:set var="gtracks"  value="Gene+SyntenySpanAssemblageB+SyntenyAssemblageB+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX"/>
+     <c:set var="ptracks" value="RatnerMassSpecPeptides+TachezyMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP"/>
   </c:when>
-  <c:when test='${organismFull eq "Giardia intestinalis ATCC 50581 "}'>
-     <c:set var="assemblage">
-      <b>Assemblage B isolate WGS</b>
-     </c:set> 
+  <c:when test='${organismFull eq "Giardia intestinalis ATCC 50581"}'>
+     <c:set var="assemblage" value="<b>Assemblage B isolate WGS</b>" />
+     <c:set var="gtracks" value="Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+EST+BLASTX" />
+     <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/> 
   </c:when>
   <c:when test='${organismFull eq "Giardia lamblia P15"}'>
-     <c:set var="assemblage">
-     <b>Assemblage E isolate P15</b>
-     </c:set>  
+     <c:set var="assemblage" value="<b>Assemblage E isolate P15</b>" /> 
+     <c:set var="gtracks" value="Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageB+SyntenyAssemblageB+UnifiedMassSpecPeptides+EST+BLASTX" /> 
+     <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP" /> 
   </c:when>
 </c:choose>
 
@@ -137,26 +137,6 @@ ${attrs['organism'].value}<br>
 <%-- Contigs+Gene+DeprecatedGene+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX --%>
 <%-- Contigs+Gene+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX --%>
 <%-- </c:set> --%>
-
-
-
-<c:choose>  
-  <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpanAssemblageB+SyntenyAssemblageB+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX
-    </c:set>
-  </c:when>
-  <c:when test='${organismFull eq "Giardia intestinalis ATCC 50581"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX
-    </c:set>
-  </c:when>
-  <c:when test='${organismFull eq "Giardia lamblia P15"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageB+SyntenyAssemblageB+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX
-    </c:set>
-  </c:when>
-</c:choose>
 
 
 
@@ -430,11 +410,7 @@ G.lamblia_contigsGB
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
 <site:pageDivider name="Protein Features"/>
-
-    <c:set var="ptracks">
-     RatnerMassSpecPeptides+TachezyMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP
-    </c:set>
-    
+   
     <c:set var="attribution">
     InterproscanData
     </c:set>
