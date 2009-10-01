@@ -3,15 +3,22 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
-
+<c:set var="partial" value="${requestScope.partial}" />
 
  <c:choose>
    
     <c:when test="${projectId == 'EuPathDB'}">
-	<jsp:include page="/customPages/${projectId}/GeneQuestions.GenesByLocation.jsp"/>
+		<c:choose>
+			<c:when test="${partial == true}">
+				<jsp:include page="/customPages/${projectId}/GeneQuestions.GenesByLocation.partial.jsp"/>
+			</c:when>
+			<c:otherwise>
+				<jsp:include page="/customPages/${projectId}/GeneQuestions.GenesByLocation.jsp"/>
+			</c:otherwise>
+		</c:choose>
     </c:when>
     <c:otherwise>
-	<jsp:include page="/customPages/customQuestion.jsp"/>
+		<jsp:include page="/customPages/customQuestion.jsp"/>
     </c:otherwise>
 
   </c:choose>
