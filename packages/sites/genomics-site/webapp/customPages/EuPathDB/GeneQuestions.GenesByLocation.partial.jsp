@@ -27,10 +27,11 @@
 
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
  <%-- <script src="/assets/js/ApiDB_Ajax_Utils.js" type="text/javascript"></script>--%>
-<c:if test="${showParams == false || showParams == null}">  <script src="/assets/js/AjaxLocation.js" type="text/javascript"></script></c:if>
+<c:if test="${showParams == false || showParams == null}">  <script src="/assets/js/AjaxLocation.js" type="text/javascript"></script>
   <script id="initscript" language="javascript">
 	initLocation();
   </script>
+</c:if>
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 <!-- show error messages, if any -->
@@ -221,10 +222,10 @@
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
  <c:if test="${showParams == false || showParams == null}"> <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div></c:if>
-<script language="javascript">
+<c:if test="${showParams == true || showParams == null}"><script language="javascript">
 	chooseType('sequenceId','CHROMOSOME');
 </script>
-
+</c:if>
 </html:form>
 
 <hr>
