@@ -33,7 +33,7 @@ function chooseType(paramName, type) {
 		var chromo = document.getElementById(paramName + '_chromo');
         var organism = $("input#organism");
 		if(organism == undefined) 
-			organism = document.getElementById('organism');
+			organism = document.getElementsByName('myProp(organism)')[0];
 		else
 			organism = organism[0];
 		var chromosome = document.getElementById('chromosomeOptional');
@@ -50,7 +50,7 @@ function chooseType(paramName, type) {
 		var chromo = document.getElementById(paramName + '_chromo');
         var organism = $("input#organism");
 		if(organism == undefined) 
-			organism = document.getElementById('organism');
+			organism = document.getElementsByName('myProp(organism)')[0];
 		else
 			organism = organism[0];
 		var chromosome = document.getElementById('chromosomeOptional');
@@ -72,7 +72,7 @@ function loadStrains(){
 	if(document.getElementById('orgSelect').options[0].value == '--') {document.getElementById('orgSelect').remove(0);}
 	var o = $("input#organism")[0];
 	if(o == undefined) 
-		o = document.getElementById('organism');
+		o = document.getElementsByName('myProp(organism)')[0];
 	o.value = text;
 	fillSelectFromArray(dataArray[id],'sequenceId_chromo');
 }
