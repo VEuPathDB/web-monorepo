@@ -86,17 +86,17 @@ ${id} <br /> ${prd}
 <c:choose>
   <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
      <c:set var="assemblage">
-       <b>Assemblage A, isolate GS</b>
+       <b>Assemblage A isolate GS</b>
      </c:set>
   </c:when>
   <c:when test='${organismFull eq "Giardia intestinalis ATCC 50581 "}'>
      <c:set var="assemblage">
-      <b>Assemblage B, isolate WGS</b>
+      <b>Assemblage B isolate WGS</b>
      </c:set> 
   </c:when>
   <c:when test='${organismFull eq "Giardia lamblia P15"}'>
      <c:set var="assemblage">
-     <b>Assemblage E, isolate P15</b>
+     <b>Assemblage E isolate P15</b>
      </c:set>  
   </c:when>
 </c:choose>
