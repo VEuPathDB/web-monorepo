@@ -282,6 +282,31 @@ http://www.bosrup.com/web/overlib/?Documentation
 
 <tr>
              <td  align="left"><a href="javascript:void(0);" class='no_underline' 
+	       onmouseover = "return overlib('<TABLE><TR><TD valign=\'top\'>Taxon ID:</TD><TD valign=\'top\'><a href=\'http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=5664&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock\'  target=\'_blank\' style=\'color:#660000\'>5664</a></TD></TR><TR><TD valign=\'top\'>Genome Version:</TD><TD valign=\'top\'>11/2009</TD></TR><TR><TD valign=\'top\'>Data Source:</TD><TD valign=\'top\'>Genbank <a href=\'http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources\' style=\'color:#660000\'>(TriTrypDB)</a></TD></TR><TR><TD valign=\'top\'>Reference Strain:</TD><TD valign=\'top\'></TD></TR><TR><TD valign=\'top\'>Additional Strains:</TD><TD valign=\'top\'></TD></TR><TR><TD valign=\'top\'>Organellar Genomes:</TD><TD valign=\'top\'>N.A.</TD></TR></TABLE>',
+		CAPTION, '<i>L. tarantolae</i>',
+		FGCOLOR, 'white',
+		BGCOLOR, '#7F0707',
+		TEXTCOLOR, '#003366',
+		TEXTSIZE, '9px',
+		STICKY,MOUSEOFF,TIMEOUT,4000,
+		ANCHOR, 'refmark', ANCHORX,-120 ,ANCHORY,-75 ,NOANCHORWARN)" 		
+               onmouseout = "return nd();"><font size = "-2">&nbsp;&nbsp;&nbsp;<i>L. tarantolae</i></a></td>
+
+             <td align="center"><font size = "-2">
+		<a href="http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.News" style="color:#660000">02/2009</a></td>
+             <td align="right"><font size = "-2"></td>
+             <td align="right"><font size = "-2"></td>
+             <td align="center"></td>
+             <td align="center"></td>
+             <td align="center"></td>
+             <td align="center"></td>
+             <td align="center"></td>
+             <td align="center"></td>
+
+</tr>
+
+<tr>
+             <td  align="left"><a href="javascript:void(0);" class='no_underline' 
 	       onmouseover = "return overlib('<TABLE><TR><TD valign=\'top\'>Taxon ID:</TD><TD valign=\'top\'><a href=\'http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=5691&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock\'  target=\'_blank\' style=\'color:#660000\'>5691</a></TD></TR><TR><TD valign=\'top\'>Genome Version:</TD><TD valign=\'top\'>11/2009</TD></TR><TR><TD valign=\'top\'>Data Source:</TD><TD valign=\'top\'>Genbank <a href=\'http://tritrypdb.org/tritrypdb/showXmlDataContent.do?name=XmlQuestions.DataSources\' style=\'color:#660000\'>(TriTrypDB)</a></TD></TR><TR><TD valign=\'top\'>Reference Strain:</TD><TD valign=\'top\'></TD></TR><TR><TD valign=\'top\'>Additional Strains:</TD><TD valign=\'top\'></TD></TR><TR><TD valign=\'top\'>Organellar Genomes:</TD><TD valign=\'top\'>N.A.</TD></TR></TABLE>',
 		CAPTION, '<i>T. brucei</i>',
 		FGCOLOR, 'white',
@@ -620,7 +645,7 @@ http://www.bosrup.com/web/overlib/?Documentation
 
        <tr class="genomeTable3">
               <td align="left"><a href="javascript:void(0);" class='no_underline' 
-			 onmouseover = "return overlib('<TABLE><TR><TD valign=\'top\'>Taxon ID:</TD><TD valign=\'top\'><a href=\'http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=5811&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock\'  target=\'_blank\' style=\'color:#660000\'>5811</TD></TR><TR><TD valign=\'top\'>Genome Version:</TD><TD valign=\'top\'>Draft 3 (08/2003)</TD></TR><TR><TD valign=\'top\'>Data Source:</TD><TD valign=\'top\'>Toxo Genome Consortium <a href=\'http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,TgondiiRHChromosome1,TgondiiApicoplast,GeneticMarkers_Sibley,ME49_SNPs,AmitAlignmentSnps,AmitNucmerHSPs,AffymetrixProbes,TIGRGeneIndices_Tgondii,dbEST,ESTAlignments_Tgondii,ME49_GLEAN,ME49_GlimmerHMM,ME49_TigrScan,ME49_TwinScan,ME49_TwinScanEt,tRNAPredictions,3primeToxoSageTags,5primeToxoSageTags&title=Genomic%20Context\' style=\'color:#660000\'>(ToxoDB)</TD></TR><TR><TD valign=\'top\'>Reference Strain:</TD><TD valign=\'top\'>ME49</TD></TR><TR><TD valign=\'top\'>Additional Strains:</TD><TD valign=\'top\'>VEG,GT1,RH</TD></TR><TR><TD valign=\'top\'>Organellar Genomes:</TD><TD valign=\'top\'>apicoplast</TD></TR></TABLE>',
+			 onmouseover = "return overlib('<TABLE><TR><TD valign=\'top\'>Taxon ID:</TD><TD valign=\'top\'><a href=\'http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=5811&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock\'  target=\'_blank\' style=\'color:#660000\'>5811</TD></TR><TR><TD valign=\'top\'>Genome Version:</TD><TD valign=\'top\'>Draft 3 (08/2003)</TD></TR><TR><TD valign=\'top\'>Data Source:</TD><TD valign=\'top\'>Toxo Genome Consortium <a href=\'http://www.toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,TgondiiRHChromosome1,TgondiiApicoplast,GeneticMarkers_Sibley,ME49_SNPs,AmitAlignmentSnps,AmitNucmerHSPs,AffymetrixProbes,TIGRGeneIndices_Tgondii,dbEST,ESTAlignments_Tgondii,ME49_GLEAN,ME49_GlimmerHMM,ME49_TigrScan,ME49_TwinScan,ME49_TwinScanEt,tRNAPredictions,3primeToxoSageTags,5primeToxoSageTags&title=Genomic%20Context\' style=\'color:#660000\'>(ToxoDB)</TD></TR><TR><TD valign=\'top\'>Reference Strain:</TD><TD valign=\'top\'>ME49</TD></TR><TR><TD valign=\'top\'>Additional Strains:</TD><TD valign=\'top\'>VEG,GT1,CKUg2,RH</TD></TR><TR><TD valign=\'top\'>Organellar Genomes:</TD><TD valign=\'top\'>apicoplast</TD></TR></TABLE>',
 		CAPTION, '<i>T. gondii</i>',
 		FGCOLOR, 'white',
 		BGCOLOR, '#7F0707',
