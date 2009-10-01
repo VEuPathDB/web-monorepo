@@ -9,6 +9,9 @@
 <c:set var="all_results" value=""/>
 <c:set var="all_genes" value=""/>
 <c:set var="deprecated_genes" value=""/>
+<c:set var="assemblage_a_genes" value=""/>
+<c:set var="assemblage_b_genes" value=""/>
+<c:set var="assemblage_e_genes" value=""/>
 
 <%-- check for filter link cache --%>
 <c:set var="answerCache" value="${sessionScope.answer_cache}"/>
@@ -32,6 +35,15 @@
       <c:when test="${cacheItem.key == 'deprecated_genes'}">
         <c:set var="deprecated_genes" value="${cacheItem.value}"/>
       </c:when>
+      <c:when test="${cacheItem.key == 'assemblage_a_genes'}">
+        <c:set var="assemblage_a_genes" value="${cacheItem.value}"/>
+      </c:when>
+      <c:when test="${cacheItem.key == 'assemblage_b_genes'}">
+        <c:set var="assemblage_b_genes" value="${cacheItem.value}"/>
+      </c:when>
+      <c:when test="${cacheItem.key == 'assemblage_e_genes'}">
+        <c:set var="assemblage_e_genes" value="${cacheItem.value}"/>
+      </c:when>
     </c:choose>
     </c:forEach>
   </c:if>
@@ -42,6 +54,9 @@
 <table cellpadding="5" border="1">
   <tr>
     <th>All Results</th>
+    <th>Assmb. A Genes</th>
+    <th>Assmb. B Genes</th>
+    <th>Assmb. E Genes</th>
     <th>Genes</th>
     <th>Deprecated Genes</th>
   </tr>
@@ -62,11 +77,56 @@
       </c:otherwise>
     </c:choose></td>
     <c:choose>
+      <c:when test="${curFilter eq 'assemblage_a_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <c:choose>
+          <c:when test="${assemblage_a_genes != ''}">
+            <td>${assemblage_a_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=assemblage_a_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'assemblage_b_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <c:choose>
+          <c:when test="${assemblage_b_genes != ''}">
+            <td>${assemblage_b_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=assemblage_b_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
+      <c:when test="${curFilter eq 'assemblage_e_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+        <c:choose>
+          <c:when test="${assemblage_e_genes != ''}">
+            <td>${assemblage_e_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=assemblage_e_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+    <c:choose>
       <c:when test="${curFilter eq 'all_genes'}">
         <td class="selected">${wdkHistory.filterSize}
       </c:when>
       <c:otherwise>
-	<c:choose>
+        <c:choose>
           <c:when test="${all_genes != ''}">
             <td>${all_genes}
           </c:when>
