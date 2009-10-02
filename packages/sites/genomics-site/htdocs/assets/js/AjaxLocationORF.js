@@ -13,7 +13,8 @@ var sendReqUrlEnum = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&p
 var sendReqUrlFlat = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=SharedVQ.TrypChromosomePortal:';
 
 // If site is TriTrypDB, use the flat vocab ajax call
-window.onload = function() {
+//window.onload = 
+function initOrfLoc() {
 	for(var i=0;i<sites.length;i++){
 		dataArray[i] = new Array();
 	//	alert(sites[i]);
