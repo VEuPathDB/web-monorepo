@@ -14,21 +14,6 @@
 <%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
-<c:set var="headElement">
-  <script src="/assets/js/AjaxLocationORF.js" type="text/javascript"></script>
-  <script>
-		initOrfLoc();
-  </script>
-</c:set>
-<site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
-                 banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
-                 parentDivision="Queries & Tools"
-                 parentUrl="/showQuestionSetsFlat.do"
-                 divisionName="Question"
-                 division="queries_tools"
-		 headElement="${headElement}"/>
-
-
 
 <script language="JavaScript" type="text/javascript">
 <!--
@@ -68,11 +53,18 @@ function showParamGroup(group, isShow)
 <A name="${fromAnchorQ}"></A>
 <!--html:form method="get" action="/processQuestion.do" -->
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
+<c:if test="${showParams == false || showParams == null}">
+	<script src="/assets/js/AjaxLocationORF.js" type="text/javascript"></script>
+	<script>
+		initOrfLoc();
+  	</script>
+</c:if>
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 <!-- show error messages, if any -->
 <wdk:errors/>
 <div class="params">
+	<c:if test="${showParams == true || showParams == null}">
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
@@ -246,7 +238,7 @@ function showParamGroup(group, isShow)
     </c:choose>
     
 </c:forEach>
-</div>
+</c:if></div>
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
   <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
@@ -261,5 +253,3 @@ function showParamGroup(group, isShow)
 </tr>
 </table> 
 
-
-<site:footer/>
