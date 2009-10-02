@@ -8,7 +8,14 @@
  <c:choose>
    
     <c:when test="${projectId == 'EuPathDB'}">
-	<jsp:include page="/customPages/${projectId}/SageTagQuestions.SageTagByLocation.jsp"/>
+	<c:choose>
+		<c:when test="${partial == true}">
+			<jsp:include page="/customPages/${projectId}/SageTagQuestions.SageTagByLocation.partial.jsp"/>
+		</c:when>
+		<c:otherwise>
+			<jsp:include page="/customPages/${projectId}/SageTagQuestions.SageTagByLocation.jsp"/>
+		</c:otherwise>
+	</c:choose>
     </c:when>
     <c:otherwise>
 	<jsp:include page="/customPages/customQuestion.jsp"/>
@@ -17,7 +24,7 @@
   </c:choose>
 
 
-
+	
 
 
 
