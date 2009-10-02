@@ -31,7 +31,7 @@
 
 <c:choose>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
-		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris,Giardia Assemblage A isolate WGS,Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii,Neospora caninum,Trichomonas vaginalis,Leishmania braziliensis,Leishmania infantum,Leishmania major,Trypanosoma brucei,Trypanosoma cruzi"/>
+		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris,Giardia Assemblage A isolate WGS, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii,Neospora caninum,Trichomonas vaginalis,Leishmania braziliensis,Leishmania infantum,Leishmania major,Trypanosoma brucei,Trypanosoma cruzi"/>
 	</c:when>
         <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
 		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris"/>
@@ -44,7 +44,7 @@
 		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii"/>
 	</c:when>
  <c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
-		<c:set var="listOrganisms" value="Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15"/>
+		<c:set var="listOrganisms" value="Giardia Assemblage A isolate WGS, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15"/>
 	</c:when>
  <c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
 		<c:set var="listOrganisms" value="Trichomonas vaginalis"/>
