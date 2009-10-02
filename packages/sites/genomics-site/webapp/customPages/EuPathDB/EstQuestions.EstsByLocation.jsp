@@ -73,7 +73,7 @@ function showParamGroup(group, isShow)
 
 <!-- show error messages, if any -->
 <wdk:errors/>
-
+<div class="params">
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
