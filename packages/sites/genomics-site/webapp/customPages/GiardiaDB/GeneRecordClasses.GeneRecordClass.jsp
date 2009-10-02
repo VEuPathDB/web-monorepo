@@ -183,6 +183,7 @@ G.lamblia_contigsGB
 <site:wdkTable tblName="Genbank" isOpen="true"
                attribution=""/>
 
+<site:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
 
 <c:set var="notes">
@@ -210,24 +211,22 @@ G.lamblia_contigsGB
   <c:param name="contig" value="${contig}" />
   <c:param name="flag" value="0" /> 
 </c:url>
+<b><a href="${commentsUrl}">Add a comment on ${id}</a></b><br><br>
 
-<c:set var='commentLegend'>
-    <c:catch var="e">
-      <site:dataTable tblName="UserComments"/>
-      <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
-    </c:catch>
-    <c:if test="${e != null}">
+<c:catch var="e">
+<site:wdkTable tblName="UserComments"  isOpen="true"/>
+</c:catch>
+<c:if test="${e != null}">
+ <table  width="100%" cellpadding="3">
+      <tr><td><b>User Comments</b>
      <site:embeddedError 
-         msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
+         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}" 
      />
-    </c:if>
-    
-</c:set>
-<site:panel 
-    displayName="User Comments"
-    content="${commentLegend}" />
-<br>
+     </td></tr>
+ </table>
+</c:if>
+
 
 <c:if test="${tree_source_id ne null}">
   <c:set var='treeLink'>
@@ -242,18 +241,15 @@ G.lamblia_contigsGB
 <%-- ORTHOMCL ------------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
-  <c:set var="orthomcl_content">
-    <site:dataTable tblName="Orthologs" />
-     <div align="center">
-      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=${id}">Find the group containing ${id} in the OrthoMCL database</a>
+  <c:set var="orthomclLink">
+    <div align="center">
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-
-  <site:panel displayName="Orthologs and Paralogs within ${projectId}"
-              content="${orthomcl_content}"/>
+  <site:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+                 postscript="${orthomclLink}"/>
 
 </c:if>
-<br>
 
 <%-- Microarray Data ------------------------------------------------------%>
 
