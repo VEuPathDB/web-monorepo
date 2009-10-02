@@ -99,7 +99,12 @@ function fillOrganisms(arr, id, dataArr, sites)
 //inputId -- String [id of the Select Box]
 function updateSelectInput(paramId, inputId){
    	var sel = document.getElementById(inputId);
-	var hid = document.getElementsByName("myProp(" + paramId + ")")[0];
+	
+	var hid = null;
+	hid = document.getElementById(paramId);
+	if(hid.tagName != "INPUT")
+		hid = document.getElementsByName("myProp(" + paramId + ")")[0];
+	
 	if(sel.multiple == false){
 		hid.value = sel.options[sel.selectedIndex].text;//value;
 	}else {

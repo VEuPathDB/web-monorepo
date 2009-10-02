@@ -16,13 +16,14 @@ window.onload = function (){
 
 function fillArrays(){
 //	var sendReqUrl= 'Snp.xml';
-	var libUrl = 'showRecord.do?name=AjaxRecordClasses.ESTTermClass&primary_key=SharedVQ.EstLibraries:';
+	var libUrl = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=SharedVQ.EstLibraries:';
 	var chromoUrlEnum = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=sharedParams.chromosomeOptional:';
 	var chromoUrlFlat = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=SharedVQ.TrypChromosomePortal:';
 	for(var i=0;i<sites.length;i++){
 		all_libs[i] = new Array();
 		//alert (sites[i] + ": getting libraries");
-		AjaxCall(libUrl + sites[i], all_libs[i]);
+		if(sites[i] != "Leishmania" && sites[i] != "Trypanosoma")
+			AjaxCall(libUrl + sites[i], all_libs[i]);
 		chromosome_Array[i] = new Array();
 		if ( (sites[i] == "Leishmania") || (sites[i] == "Trypanosoma") )
 			AjaxCall(chromoUrlFlat + sites[i],chromosome_Array[i]);
