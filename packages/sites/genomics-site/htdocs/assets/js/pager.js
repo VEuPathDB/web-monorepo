@@ -60,10 +60,13 @@ function ResultsToGrid(data, ignoreFilters) {
 	}
 
 	// create multi select control for adding columns
-	$("#addAttributes").multiSelect({noneSelected: '--- Add Column ---', oneOrMoreSelected: '*',},
+	var attrSelect = $("#addAttributes");
+	if (attrSelect.length > 0) { 
+		attrSelect.multiSelect({selectAll: false, noneSelected: '--- Add Column ---'},
 				function() {
-					addAttr($("#addAttributes").attr('commandUrl'));
+					addAttr(attrSelect.attr('commandUrl'));
 				});
+	}
 
 	// convert results table to drag-and-drop flex grid
 	$("#Results_Table").flexigrid({height : 'auto',

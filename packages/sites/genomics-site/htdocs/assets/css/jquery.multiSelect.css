@@ -1,3 +1,7 @@
+.multiSelect {
+	font-weight: normal;
+}
+
 .multiSelect.display {
 	width: 182px;
 	border: solid 1px #BBB;
@@ -28,10 +32,11 @@
 	border: solid 1px #B2B2B2;
 	background: #FFF;
 	text-align: left;
+	font-weight: normal;
 }
 
 .multiSelectOptions LABEL {
-	padding: 2px 5px;
+	padding: 1px 2px;
 	display: block;
 }
 
