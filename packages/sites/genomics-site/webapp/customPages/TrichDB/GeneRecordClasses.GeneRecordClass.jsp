@@ -135,6 +135,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
   />
 </c:if>
 
+<site:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
 
 <c:set var="notes">
@@ -152,42 +153,83 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 </c:if>
 
 <%--- Comments -----------------------------------------------------%>
-<c:url var="commentsUrl" value="showAddComment.do">
+<a name="user-comment"/>
+
+<c:set var="externalDbName" value="${attrs['external_db_name']}"/>
+<c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
+<c:url var="commentsUrl" value="addComment.do">
   <c:param name="stableId" value="${id}"/>
   <c:param name="commentTargetId" value="gene"/>
-  <c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
-  <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
+  <c:param name="externalDbName" value="${externalDbName.value}" />
+  <c:param name="externalDbVersion" value="${externalDbVersion.value}" />
+  <c:param name="organism" value="${binomial}" />
+  <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
+  <c:param name="contig" value="${attrs['sequence_id'].value}" /> 
+  <c:param name="strand" value="${strand}" />
+  <c:param name="flag" value="0" /> 
+  <c:param name="bulk" value="0" /> 
 </c:url>
-<c:set var='commentLegend'>
-    <c:catch var="e">
-      <site:dataTable tblName="UserComments"/>
-      <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
-    </c:catch>
-    <c:if test="${e != null}">
+<b><a href="${commentsUrl}">Add a comment on ${id}</a></b><br><br>
+
+<c:catch var="e">
+
+<site:wdkTable tblName="UserComments"  isOpen="true"/>
+
+
+</c:catch>
+<c:if test="${e != null}">
+ <table  width="100%" cellpadding="3">
+      <tr><td><b>User Comments</b>
      <site:embeddedError 
-         msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
+         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}" 
      />
-    </c:if>
-    
+     </td></tr>
+ </table>
+</c:if>
+
+
+<%-- EC ------------------------------------------------------------%>
+<c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
+
+
+  <c:set var="attribution">
+    enzymeDB,T.vaginalis_scaffolds,T.vaginalis_Annotation
+  </c:set>
+
+<site:wdkTable tblName="EcNumber" isOpen="true"
+               attribution="${attribution}"/>
+
+</c:if>
+
+<%-- GO ------------------------------------------------------------%>
+<c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
+
+<c:set var="attribution">
+GO,InterproscanData,
+T.vaginalis_scaffolds,T.vaginalis_Annotation
 </c:set>
-<site:panel 
-    displayName="User Comments"
-    content="${commentLegend}" />
-<br>
+
+<site:wdkTable tblName="GoTerms" isOpen="true"
+               attribution="${attribution}"/>
+
+</c:if>
+<%-- ORTHOMCL ------------------------------------------------------%>
 
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-<p>
-<table border='0' width='100%'><tr class="secondary3">
-  <th align="center"><font face="Arial,Helvetica" size="+1">
-  Protein Features
-</font></th></tr></table>
-<p>
+  <c:set var="orthomclLink">
+    <div align="center">
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
+    </div>
+  </c:set>
+  <site:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+                 postscript="${orthomclLink}"/>
+
 </c:if>
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
-
+  <site:pageDivider name="Protein"/>
     <c:set var="ptracks">
     InterproDomains+SignalP+TMHMM+BLASTP
     </c:set>
@@ -218,56 +260,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${i
              content="${proteinFeaturesImg}"
              attribution="${attribution}"/>
       <!-- ${proteinFeaturesUrl} -->
-   <br>
-</c:if>
-</c:if>
-
-<%-- EC ------------------------------------------------------------%>
-<c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
-
-
-  <c:set var="attribution">
-    enzymeDB,T.vaginalis_scaffolds,T.vaginalis_Annotation
-  </c:set>
-
-<site:wdkTable tblName="EcNumber" isOpen="true"
-               attribution="${attribution}"/>
 
 </c:if>
-
-<%-- GO ------------------------------------------------------------%>
-<c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
-
-<c:set var="attribution">
-GO,InterproscanData,
-T.vaginalis_scaffolds,T.vaginalis_Annotation
-</c:set>
-
-<site:wdkTable tblName="GoTerms" isOpen="true"
-               attribution="${attribution}"/>
-
-<br>
-</c:if>
-<%-- ORTHOMCL ------------------------------------------------------%>
-
-<c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-  <c:set var="orthomclLink">
-    <div align="center">
-      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
-    </div>
-  </c:set>
-  <site:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
-                 postscript="${orthomclLink}"/>
-
-
-<br>
 </c:if>
 
-<p>
-<table border='0' width='100%'><tr class="secondary3">
-  <th align="center"><font face="Arial,Helvetica" size="+1">
-  Sequences
-</font></th></tr>
+<site:pageDivider name="Sequence"/>
 
 <tr><td><font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font></td></tr>
 
@@ -285,8 +282,6 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 </c:set>
 <site:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
              content="${proteinSequenceContent}" isOpen="false"/>
-
-<br>
 </c:if>
 <%------------------------------------------------------------------%>
 
@@ -301,8 +296,6 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
              displayName="${transcriptSequence.displayName}"
              content="${transcriptSequenceContent}" isOpen="false"/>
 
-
-<br>
 <%------------------------------------------------------------------%>
 
 <!-- CDS -->
@@ -315,7 +308,6 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <site:toggle name="cds" displayName="${cds.displayName}"
              content="${cdsContent}" isOpen="false"/>
 
-<br>
 </c:if>
 <%------------------------------------------------------------------%> 
 
