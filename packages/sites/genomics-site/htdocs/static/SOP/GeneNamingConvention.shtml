@@ -1,0 +1,126 @@
+<html>
+
+<head>
+<title>
+CryptoDB.org - Annotation SOP 
+</title>
+<link href="/misc/style.css" rel=stylesheet type="text/css" />
+<link href="sop_style.css" rel=stylesheet type="text/css" />
+
+</head> 
+
+<body>
+
+<table align=center width=640 border=0 cellpadding=3 cellspacing=3>
+
+<tr>
+<!--#include virtual="/include/left-image.html" -->
+<td><span class=title>Gene Model and Functional Curation</span><br />
+<span class=smalltitle>Standard Operational Procedures (SOP)</span>
+</span></td>
+
+<tr>
+<td colspan=2><!--#include virtual="/include/toolbar.html"--></td>
+</tr>
+
+<tr><td align=center colspan=2>
+  <span class=title>ApiDB Gene Naming Convention</span>
+  <hr>
+</td></tr>
+
+  <tr>
+    <td>Title:</td>
+    <td>Gene Naming Convention</td>
+  </tr>
+
+  <tr>
+    <td>Author:</td>
+    <td><a href=/>CryptoDB</a> and <a href=apidb.org>ApiDB</a></td>
+  </tr>
+
+  <tr>
+    <td>Version:</td>
+    <td>v1.0
+  </tr>
+
+  <tr>
+    <td>SOP #:</td>
+    <td>AP_F03
+  </tr>
+
+  <tr>
+    <td>Effective Date:</td>
+    <td>January, 2007</td>
+  </tr>
+
+  <tr>
+    <td>Other SOPs:</td>
+    <td><a href=/static/SOP/index.shtml><i>C. parvum</i> Annotation SOP Main Page</a></td>
+  </tr>
+
+  <tr><td colspan=2><hr></td></tr>
+
+  <tr><td colspan=2>
+
+<p><span class=title>1. Overview</span>
+
+
+<p>We inherited the gene naming convention from the sequencing center which originally sequenced the genome and submitted to the GenBank. The following is an example:
+
+<pre class=programinput>
+LOCUS       AAEE01000011  177983 bp   DNA  linear   INV 16-JUN-2006
+DEFINITION  Cryptosporidium parvum chromosome 8 chr8.s1, 
+            whole genome shotgun sequence.
+ACCESSION   AAEE01000011 AAEE01000000
+VERSION     AAEE01000011.1  GI:46226459
+PROJECT     GenomeProject:144
+KEYWORDS    WGS.
+SOURCE      Cryptosporidium parvum
+ORGANISM    Cryptosporidium parvum
+            Eukaryota; Alveolata; Apicomplexa; Coccidia; Eimeriida;
+            Cryptosporidiidae; Cryptosporidium.
+
+              ......
+
+  gene        <1686..>2558
+              /locus_tag="cgd8_10"
+  CDS         1686..2558
+              /locus_tag="cgd8_10"
+              /codon_start=1
+              /product="uncharacterized protein with paralogs in
+              cryptosporidium"
+              /protein_id="EAK87454.1"
+              /db_xref="GI:46226460"
+              /translation="MSSTSRNPGPGGEIRPIPSFPMFDEERGNREFLVVTIEKEMEIS
+              VPFLANYETAVDAGKFKRLIAYEHKADMYHIVKIENQTSDVQIFNENGKLKFVFSTHV
+              FGINTEKILEKMSGYQDDLNKVVVEEFPFENIPNKPQYYNRGYKILIPENFDVFRDQQ
+              YIEVTGQDGVEFKGIFSLDQPELKLPTEHTGDTYEFYTTSGTYAVFRGYENKRIYAIP
+              VLEKVKCYVDTNYGRVRMANVCNLTFNVNYGILSVGEMEINTVNICGKRAIIGNTIEE
+              VINIGISRLNEGSD"
+</pre>
+
+<p>The organism has been registered as 'cgd' at NCBI. Therefore, every gene starts with 'cgd' + chromosome number  + '_' + sequential number. The sequential number is increased by 10 and is unique on a chromsome. 
+
+<p>If there is a new gene identified between two adjacent genes, such as cgd8_350, cgd8_360. Therefore, the new seqential number will choose the median and the new gene name will be cgd8_355.
+
+
+<p><span class=title>2. Procedure</span>
+
+<p><span class=title>3. Related Documentation</span>
+
+<p><span class=title>4. Revision History</span>
+
+<p><span class=title>5. References</span>
+
+<!--#include file="reference.html"-->
+</td></tr>
+<tr><td colspan=2>
+<hr>
+<!--#include virtual="/include/footer.html" -->
+</td></tr>
+
+
+
+</table>
+</body>
+</html>

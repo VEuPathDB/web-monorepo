@@ -1,0 +1,63 @@
+.title {
+  font-family: Arial,Helvetica,sans-serif;
+	font-size: 18px;
+	color: #0d3059;
+	text-align: left;
+	margin-bottom: 6px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-left: 0px;
+}
+
+.subtitle {
+  font-family: Arial,Helvetica,sans-serif;
+	font-size: 16px;
+	color: #0d3059;
+	text-align: left;
+	margin-bottom: 3px;
+	margin-top: 3px;
+	margin-right: 5px;
+	margin-left: 10px;
+}
+
+.subsubtitle {
+  font-family: Arial,Helvetica,sans-serif;
+	font-size: 16px;
+	color: #000000;
+	text-align: left;
+	margin-bottom: 3px;
+	margin-top: 3px;
+	margin-right: 10px;
+	margin-left: 20px;
+	padding: 10px;
+}
+
+.smalltitle {
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 16px;
+	color: #0d3059;
+	text-align: left;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-left: 0px;
+}
+
+.programinput {
+  background: #eeffee;
+	border: solid 1px #aaffaa;
+	padding: 0.5em;
+}
+
+.programoutput {
+  background: #eeeeff;
+	border: solid 1px #aaaaff;
+	padding: 0.5em;
+}
+
+.programdata {
+  background: #eeeeee;
+  border: solid 1px #aaaaaa;
+  padding: 0.5em;
+}
+
