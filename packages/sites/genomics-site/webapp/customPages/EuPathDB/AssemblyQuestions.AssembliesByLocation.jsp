@@ -71,6 +71,9 @@ function showParamGroup(group, isShow)
 <A name="${fromAnchorQ}"></A>
 <!--html:form method="get" action="/processQuestion.do" -->
 <html:form method="post" enctype='multipart/form-data' action="/processQuestion.do">
+<script>
+	initAssemLoc();
+</script>
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 <!-- show error messages, if any -->
