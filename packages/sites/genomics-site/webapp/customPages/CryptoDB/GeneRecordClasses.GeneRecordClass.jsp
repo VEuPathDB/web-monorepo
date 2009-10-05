@@ -241,36 +241,32 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 </c:choose>
 
 <c:if test="${gtracks ne ''}">
-    <c:set var="genomeContextUrl">
-    http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${wdkRecord.primaryKey}@yellow
-    </c:set>
-    <c:set var="genomeContextImg">
-        <noindex follow><center>
-        <c:catch var="e">
-           <c:import url="${genomeContextUrl}"/>
-        </c:catch>
-        <c:if test="${e!=null}"> 
-            <site:embeddedError 
-                msg="<font size='-2'>temporarily unavailable</font>" 
-                e="${e}" 
-            />
-        </c:if>
-        </center>
-        </noindex>
-        
-        <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
-        <c:set var="gbrowseUrl">
-            http://${pageContext.request.serverName}/cgi-bin/gbrowse/cryptodb/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${wdkRecord.primaryKey}@yellow
-        </c:set>
-        <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
-    </c:set>
+  <c:set var="gnCtxUrl">
+     /cgi-bin/gbrowse_img/cryptodb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
+  </c:set>
 
-    <site:panel 
-        displayName="Genomic Context"
-        content="${genomeContextImg}"
-        attribution="${attribution}"/>
-     <!-- ${genomeContextUrl} -->
-    <br>
+  <c:set var="gnCtxDivId" value="gnCtx"/>
+
+  <c:set var="gnCtxImg">
+    <center><div id="${gnCtxDivId}"></div></center>
+    
+    <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
+    <c:set var="gbrowseUrl">
+        /cgi-bin/gbrowse/cryptodb/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow
+    </c:set>
+    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
+  </c:set>
+
+  <site:toggle 
+    name="dnaContextSyn" displayName="Genomic Context"
+    displayLink="${has_model_comment}"
+    content="${gnCtxImg}" isOpen="true" 
+    imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
+    postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
+    attribution="${attribution}"
+  />
+
+
 </c:if>
 
 <%-- SNPs  ---------------------------------------------------%>
@@ -438,11 +434,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
         </center></noindex>
     </c:set>
 
-    <site:panel 
-        displayName="Predicted Protein Features"
-        content="${proteinFeaturesImg}"
-        attribution="${attribution}"/>
-      <!-- ${proteinFeaturesUrl} -->
+    <site:toggle name="proteinContext"  displayName="Protein Features"
+             content="${proteinFeaturesImg}"
+             attribution="${attribution}"/>
 
 </c:if>
 
