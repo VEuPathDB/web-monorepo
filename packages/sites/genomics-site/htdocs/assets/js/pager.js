@@ -64,7 +64,7 @@ function ResultsToGrid(data, ignoreFilters) {
 	if (attrSelect.length > 0) { 
 		attrSelect.multiSelect({selectAll: false, noneSelected: '--- Add Column ---'},
 				function() {
-					addAttr(attrSelect.attr('commandUrl'));
+					addAttr($("#addAttributes").attr('commandUrl'));
 				});
 	}
 

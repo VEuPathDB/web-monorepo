@@ -164,7 +164,7 @@
 	<th nowrap align="right">
 		           <%-- display a list of sortable attributes --%>
 		           <c:set var="addAttributes" value="${wdkAnswer.displayableAttributes}" />
-		           <select id="addAttributes" commandUrl="${commandUrl}" multiple="multiple">
+		           <select id="addAttributes" style="display:none;" commandUrl="${commandUrl}" multiple="multiple">
 		               <option value="">--- Add Column ---</option>
 		               <c:forEach items="${addAttributes}" var="attribute">
 		                 <option value="${attribute.name}" title="${attribute.help}">${attribute.displayName}</option>
