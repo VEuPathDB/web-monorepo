@@ -264,6 +264,41 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${i
 </c:if>
 </c:if>
 
+<!-- Molecular weight -->
+
+<c:set var="mw" value="${attrs['molecular_weight'].value}"/>
+<c:set var="min_mw" value="${attrs['min_molecular_weight'].value}"/>
+<c:set var="max_mw" value="${attrs['max_molecular_weight'].value}"/>
+
+ <c:choose>
+  <c:when test="${min_mw != null && max_mw != null && min_mw != max_mw}">
+   <site:panel 
+      displayName="Molecular Weight"
+      content="${min_mw} to ${max_mw} Da" />
+    </c:when>
+    <c:otherwise>
+   <site:panel 
+      displayName="Molecular Weight"
+      content="${mw} Da" />
+    </c:otherwise>
+  </c:choose>
+
+<!-- Isoelectric Point -->
+<c:set var="ip" value="${attrs['isoelectric_point']}"/>
+
+        <c:choose>
+            <c:when test="${ip.value != null}">
+             <site:panel 
+                displayName="${ip.displayName}"
+                 content="${ip.value}" />
+            </c:when>
+            <c:otherwise>
+             <site:panel 
+                displayName="${ip.displayName}"
+                 content="N/A" />
+            </c:otherwise>
+        </c:choose>
+
 <site:pageDivider name="Sequence"/>
 
 <tr><td><font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font></td></tr>
