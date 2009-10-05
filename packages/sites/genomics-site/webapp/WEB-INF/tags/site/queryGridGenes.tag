@@ -110,7 +110,7 @@
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByChIPchip" linktext="ChIP chip Evidence" existsOn="A T"/> 
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByRNASeqExpressionTiming" linktext="RNA Seq Evidence" existsOn="A P E"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByRNASeqExpressionTiming" linktext="RNA Seq Evidence" existsOn=""/>
                 </tr>
             </table>
 </div>
