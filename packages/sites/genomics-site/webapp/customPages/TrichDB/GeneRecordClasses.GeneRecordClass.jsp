@@ -109,36 +109,30 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 </c:set>
 
 <c:if test="${gtracks ne ''}">
-    <c:set var="genomeContextUrl">
-    http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
-    </c:set>
-    <c:set var="genomeContextImg">
-        <noindex follow><center>
-        <c:catch var="e">
-           <c:import url="${genomeContextUrl}"/>
-        </c:catch>
-        <c:if test="${e!=null}"> 
-            <site:embeddedError 
-                msg="<font size='-2'>temporarily unavailable</font>" 
-                e="${e}" 
-            />
-        </c:if>
-        </center>
-        </noindex>
-        
-        <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
-        <c:set var="gbrowseUrl">
-            http://${pageContext.request.serverName}/cgi-bin/gbrowse/trichdb/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow
-        </c:set>
-        <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
-    </c:set>
+  <c:set var="gnCtxUrl">
+     /cgi-bin/gbrowse_img/trichdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow
+  </c:set>
 
-    <site:panel 
-        displayName="Genomic Context"
-        content="${genomeContextImg}"
-        attribution="${attribution}"/>
-     <!-- ${genomeContextUrl} -->
-    <br>
+  <c:set var="gnCtxDivId" value="gnCtx"/>
+
+  <c:set var="gnCtxImg">
+    <center><div id="${gnCtxDivId}"></div></center>
+    
+    <c:set var="labels" value="${fn:replace(tracks, '+', ';label=')}" />
+    <c:set var="gbrowseUrl">
+        /cgi-bin/gbrowse/trichdb/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow
+    </c:set>
+    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
+  </c:set>
+
+  <site:toggle 
+    name="dnaContextSyn" displayName="Genomic Context"
+    displayLink="${has_model_comment}"
+    content="${gnCtxImg}" isOpen="true" 
+    imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
+    postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
+    attribution="${attribution}"
+  />
 </c:if>
 
 <%--- Notes --------------------------------------------------------%>
@@ -220,10 +214,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${i
         </center></noindex>
     </c:set>
 
-    <site:panel 
-        displayName="Predicted Protein Features"
-        content="${proteinFeaturesImg}"
-        attribution="${attribution}"/>
+    <site:toggle name="proteinContext"  displayName="Protein Features"
+             content="${proteinFeaturesImg}"
+             attribution="${attribution}"/>
       <!-- ${proteinFeaturesUrl} -->
    <br>
 </c:if>
@@ -258,17 +251,13 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <%-- ORTHOMCL ------------------------------------------------------%>
 
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-
-  <c:set var="orthomcl_content">
-    <site:dataTable tblName="Orthologs" />
-     <div align="center">
-      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=${id}">Find the group containing ${id} in the OrthoMCL database</a>
+  <c:set var="orthomclLink">
+    <div align="center">
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-
-  <site:panel displayName="Orthologs and Paralogs within ${projectId}"
-              content="${orthomcl_content}"/>
-
+  <site:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+                 postscript="${orthomclLink}"/>
 
 
 <br>
@@ -286,49 +275,46 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <p>
 
 <%------------------------------------------------------------------%>
+<!-- protein sequence -->
+
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-<c:set var="attr" value="${attrs['protein_sequence']}" />
-<c:set var="seq">
-    <noindex> <%-- exclude htdig --%>
-    <font class="fixed">
-    <w:wrap size="60" break="<br>">${attr.value}</w:wrap>
-    </font><br/><br/>
-	<font size="-1">Sequence Length: ${fn:length(attr.value)} aa</font><br/>
-    </noindex>
+<c:set var="proteinSequence" value="${attrs['protein_sequence']}"/>
+<c:set var="proteinSequenceContent">
+  <pre><w:wrap size="60">${attrs['protein_sequence'].value}</w:wrap></pre>
+  <font size="-1">Sequence Length: ${fn:length(proteinSequence.value)} aa</font><br/>
 </c:set>
-<site:panel 
-    displayName="${attr.displayName}"
-    content="${seq}" />
+<site:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
+             content="${proteinSequenceContent}" isOpen="false"/>
+
 <br>
 </c:if>
 <%------------------------------------------------------------------%>
+
+<!-- transcript sequence -->
 <c:set var="attr" value="${attrs['transcript_sequence']}" />
-<c:set var="seq">
-    <noindex> <%-- exclude htdig --%>
-    <font class="fixed">
-    <w:wrap size="60" break="<br>">${attr.value}</w:wrap>
-    </font><br/><br/>
-	<font size="-1">Sequence Length: ${fn:length(attr.value)} bp</font><br/>
-    </noindex>
+<c:set var="transcriptSequence" value="${attrs['transcript_sequence']}"/>
+<c:set var="transcriptSequenceContent">
+  <pre><w:wrap size="60">${transcriptSequence.value}</w:wrap></pre>
+  <font size="-1">Sequence Length: ${fn:length(transcriptSequence.value)} bp</font><br/>
 </c:set>
-<site:panel 
-    displayName="${attr.displayName}"
-    content="${seq}" />
+<site:toggle name="transcriptSequence"
+             displayName="${transcriptSequence.displayName}"
+             content="${transcriptSequenceContent}" isOpen="false"/>
+
+
 <br>
 <%------------------------------------------------------------------%>
+
+<!-- CDS -->
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-<c:set var="attr" value="${attrs['cds']}" />
-<c:set var="seq">
-    <noindex> <%-- exclude htdig --%>
-    <font class="fixed">
-    <w:wrap size="60" break="<br>">${attr.value}</w:wrap><br/><br/>
-    </font>
-	<font size="-1">Sequence Length: ${fn:length(attr.value)} bp</font><br/>
-    </noindex>
+<c:set var="cds" value="${attrs['cds']}"/>
+<c:set var="cdsContent">
+  <pre><w:wrap size="60">${cds.value}</w:wrap></pre>
+  <font size="-1">Sequence Length: ${fn:length(cds.value)} bp</font><br/>
 </c:set>
-<site:panel 
-    displayName="${attr.displayName}"
-    content="${seq}" />
+<site:toggle name="cds" displayName="${cds.displayName}"
+             content="${cdsContent}" isOpen="false"/>
+
 <br>
 </c:if>
 <%------------------------------------------------------------------%> 
