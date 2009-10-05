@@ -16,9 +16,6 @@
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
 <c:set var="headElement">
   <script src="/assets/js/AjaxESTsLocation.js" type="text/javascript"></script>
-  	<script>
-		initEstLoc();
-	</script>
 </c:set>
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
@@ -147,15 +144,15 @@ function showParamGroup(group, isShow)
                             </c:when> 
                             
 			    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-				<c:choose>   
+				<%--<c:choose>   
 					<c:when test="${pNam == 'libraryId'}">
 				   		<input name="myProp(${pNam})" type="hidden" id="text${pNam}"/>
 				    		<select name="select_${pNam}" multiple="multiple" id="${pNam}" onchange="updateSelectInput('text${pNam}','${pNam}')"></select>	
                                         </c:when>
-					<c:otherwise>
+					<c:otherwise>--%>
                                 		<wdk:enumParamInput qp="${qP}" />
-					</c:otherwise>
-				</c:choose>   
+<%--					</c:otherwise>
+				</c:choose>   --%>
                             </c:when>
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.AnswerParamBean'}">
                                 <wdk:answerParamInput qp="${qP}" />
@@ -171,10 +168,10 @@ function showParamGroup(group, isShow)
                                     </c:when>
                                     <c:otherwise>
 					<c:choose>   
-						<c:when test="${pNam == 'libraryId'}">
+				<%--		<c:when test="${pNam == 'libraryId'}">
 					   		<input name="myProp(${pNam})" type="hidden" id="text${pNam}"/>
 					    		<select name="select_${pNam}" multiple="multiple" id="${pNam}" onchange="updateSelectInput('text${pNam}','${pName}')"></select>	
-                                           	 </c:when>
+                                           	 </c:when>--%>
 						<c:when test="${fn:containsIgnoreCase(pNam,'chromosomeOptional')}">
 							<input name="myProp(${pNam})" id="chromosomeOptional" type="hidden"/>
                              			</c:when> 
@@ -262,6 +259,9 @@ function showParamGroup(group, isShow)
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
   <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
+	<script>
+		initEstLoc();
+	</script>
 </html:form>
 
 <hr>

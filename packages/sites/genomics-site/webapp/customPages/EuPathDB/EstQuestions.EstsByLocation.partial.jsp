@@ -138,15 +138,9 @@ function showParamGroup(group, isShow)
                             </c:when> 
                             
 			    <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-				<c:choose>   
-					<c:when test="${pNam == 'libraryId'}">
-				   		<input name="myProp(${pNam})" type="hidden" id="text${pNam}"/>
-				    		<select name="select_${pNam}" multiple="multiple" id="${pNam}" onchange="updateSelectInput('text${pNam}','${pNam}')"></select>	
-                                        </c:when>
-					<c:otherwise>
+				
                                 		<wdk:enumParamInput qp="${qP}" />
-					</c:otherwise>
-				</c:choose>   
+				
                             </c:when>
                             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.AnswerParamBean'}">
                                 <wdk:answerParamInput qp="${qP}" />
@@ -162,10 +156,7 @@ function showParamGroup(group, isShow)
                                     </c:when>
                                     <c:otherwise>
 					<c:choose>   
-						<c:when test="${pNam == 'libraryId'}">
-					   		<input name="myProp(${pNam})" type="hidden" id="text${pNam}"/>
-					    		<select name="select_${pNam}" multiple="multiple" id="${pNam}" onchange="updateSelectInput('text${pNam}','${pName}')"></select>	
-                                           	 </c:when>
+						
 						<c:when test="${fn:containsIgnoreCase(pNam,'chromosomeOptional')}">
 							<input name="myProp(${pNam})" id="chromosomeOptional" type="hidden"/>
                              			</c:when> 
