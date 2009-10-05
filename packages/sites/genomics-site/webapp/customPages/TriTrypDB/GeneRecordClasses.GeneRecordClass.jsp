@@ -239,40 +239,43 @@ LmajorChromosomesAndAnnotations,Tbrucei927ChromosomesAndAnnotations,TcruziContig
 
 
 
-
+<site:pageDivider name="Annotation"/>
 
 <%--- Comments -----------------------------------------------------%>
+<a name="user-comment"/>
+
+<c:set var="externalDbName" value="${attrs['external_db_name']}"/>
+<c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
 <c:url var="commentsUrl" value="addComment.do">
   <c:param name="stableId" value="${id}"/>
   <c:param name="commentTargetId" value="gene"/>
-  <c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
-  <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
+  <c:param name="externalDbName" value="${externalDbName.value}" />
+  <c:param name="externalDbVersion" value="${externalDbVersion.value}" />
   <c:param name="organism" value="${binomial}" />
   <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
-  <c:param name="contig" value="${contig}" />
-  <c:param name="flag" value="0" />
+  <c:param name="contig" value="${attrs['sequence_id'].value}" /> 
+  <c:param name="strand" value="${strand}" />
+  <c:param name="flag" value="0" /> 
+  <c:param name="bulk" value="0" /> 
 </c:url>
+<b><a href="${commentsUrl}">Add a comment on ${id}</a></b><br><br>
 
-<c:set var='commentLegend'>
-    <c:catch var="e">
-      <site:dataTable tblName="UserComments"/>
-      <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
-      <c:if test="${attrs['updated_annotation'].value != null}">
-        &nbsp;&nbsp;<b>Note: record updated</b> (${genedb_annot_link})
-      </c:if>
-    </c:catch>
-    <c:if test="${e != null}">
+<c:catch var="e">
+
+<site:wdkTable tblName="UserComments"  isOpen="true"/>
+
+
+</c:catch>
+<c:if test="${e != null}">
+ <table  width="100%" cellpadding="3">
+      <tr><td><b>User Comments</b>
      <site:embeddedError 
-         msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
+         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}" 
      />
-    </c:if>
-    
-</c:set>
-<site:panel 
-    displayName="User Comments"
-    content="${commentLegend}" />
-<br>
+     </td></tr>
+ </table>
+</c:if>
 
 <%--- Notes --------------------------------------------------------%>
   <c:set var="geneDbLink">
@@ -326,21 +329,12 @@ GO,InterproscanData
 <site:wdkTable tblName="GoTerms" isOpen="true"
                attribution="${attribution}"/>
 
-<br>
 </c:if>
 
-
-<c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-<p>
-<table border='0' width='100%'><tr class="secondary3">
-  <th align="center"><font face="Arial,Helvetica" size="+1">
-  Protein Features
-</font></th></tr></table>
-<p>
-</c:if>
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
-<c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
+<c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
+<site:pageDivider name="Protein"/>
 
  <c:choose>
   <c:when test='${organismFull eq "Trypanosoma cruzi strain CL Brener"}'>
@@ -412,7 +406,6 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
              content="${proteinFeaturesImg}"
              attribution="${attribution}"/>
 
-   <br>
 </c:if> <%-- ptracks ne '' --%>
 </c:if> <%-- so_term_name eq 'protein_coding --%>
 
@@ -466,12 +459,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <c:if test='${organismFull eq "Leishmania infantum"}'>
 
-<p><table border='0' width='100%'><tr class="secondary3">
-  <th align="center"><font face="Arial,Helvetica" size="+1">
-Expression
-</font></th></tr>
-</table></p>
-<br />
+  <site:pageDivider name="Expression ${has_expression_comment}"/>
 
   <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
   <c:set var="secName" value="MylerLinfantum::Ver1"/>
@@ -510,16 +498,7 @@ Expression
 
 <%-- Sequence Data ------------------------------------------------------%>
 
-<p>
-<table border='0' width='100%'><tr class="secondary3">
-  <th align="center"><font face="Arial,Helvetica" size="+1">
-  Sequences
-</font></th></tr>
-
-<tr><td><font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font></td></tr>
-
-</table>
-<p>
+<site:pageDivider name="Sequence"/>
 
 <%------------------------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
