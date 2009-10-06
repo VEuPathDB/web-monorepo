@@ -21,6 +21,11 @@
 <c:set var="end" value="${attrs['end_max_text'].value}"/> 
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
+<c:set var="strand" value="+"/>
+<c:if test="${attrs['strand'].value == 'reverse'}">
+  <c:set var="strand" value="-"/>
+</c:if>
+
 <c:set var="recordType" value="${wdkRecord.recordClass.type}"/> 
 
 <c:choose>
@@ -33,8 +38,10 @@
 </c:when>
 <c:otherwise>
 
+
+
+<c:set var="sequence_id" value="${attrs['sequence_id'].value}"/>
 <c:set var="extdbname" value="${attrs['external_db_name'].value}" />
-<c:set var="contig" value="${attrs['sequence_id'].value}" />
 <c:set var="context_start_range" value="${attrs['context_start'].value}" />
 <c:set var="context_end_range" value="${attrs['context_end'].value}" />
 <c:set var="binomial" value="${attrs['genus_species'].value}"/>
@@ -148,7 +155,7 @@ G.lamblia_contigsGB
 
 <c:if test="${gtracks ne ''}">
     <c:set var="genomeContextUrl">
-    http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${wdkRecord.primaryKey}@yellow
+    http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${wdkRecord.primaryKey}@yellow
     </c:set>
     <c:set var="genomeContextImg">
         <noindex follow><center>
@@ -165,7 +172,7 @@ G.lamblia_contigsGB
         </noindex>
         <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
         <c:set var="gbrowseUrl">
-            http://${pageContext.request.serverName}/cgi-bin/gbrowse/giardiadb/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${wdkRecord.primaryKey}@yellow
+            http://${pageContext.request.serverName}/cgi-bin/gbrowse/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};label=${labels};h_feat=${wdkRecord.primaryKey}@yellow
         </c:set>
         <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
     </c:set>
@@ -182,6 +189,28 @@ G.lamblia_contigsGB
 <%-- Gene Location ------------------------------------------------------%>
 <site:wdkTable tblName="Genbank" isOpen="true"
                attribution=""/>
+
+
+  <c:if test="${strand eq '-'}">
+   <c:set var="revCompOn" value="1"/>
+  </c:if>
+
+<!-- Mercator / Mavid alignments -->
+<c:set var="mercatorAlign">
+<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+                    contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
+                    availableGenomes=""/>
+</c:set>
+
+<site:toggle isOpen="true"
+  name="mercatorAlignment"
+  displayName="Multiple Sequence Alignment"
+  content="${mercatorAlign}"
+  attribution=""/>
+
+
+
+
 
 <site:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
@@ -208,7 +237,7 @@ G.lamblia_contigsGB
   <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
   <c:param name="organism" value="${binomial}" />
   <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
-  <c:param name="contig" value="${contig}" />
+  <c:param name="contig" value="${sequence_id}" />
   <c:param name="flag" value="0" /> 
 </c:url>
 <b><a href="${commentsUrl}">Add a comment on ${id}</a></b><br><br>
