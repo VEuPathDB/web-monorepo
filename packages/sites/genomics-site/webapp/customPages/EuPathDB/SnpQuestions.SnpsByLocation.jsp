@@ -17,13 +17,10 @@
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
 
 <c:set var="headElement">
-  <script type="text/javascript">
-     var sites = new Array(${used_sites});
-  </script>
-  <script src="/assets/js/ApiDB_Ajax_Utils.js" type="text/javascript"></script>
   <script src="/assets/js/AjaxSnpLocation.js" type="text/javascript"></script>
-  <script src="js/prototype.js" type="text/javascript"></script>
-  <script src="js/scriptaculous.js" type="text/javascript"></script>
+  <script type="text/javascript">
+     initSNPLoc();
+  </script>
 </c:set>
 <site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
                  banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
