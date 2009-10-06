@@ -3,7 +3,8 @@ var chromosome_Array = new Array();
 var strain_A_Array = new Array();
 var strain_B_Array = new Array();
 
-window.onload = function(){
+//window.onload = 
+function initSNPLoc(){
 	fillArrays();
 	loadOrganisms('showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=organismVQ.withChromosomesSNPs:Cryptosporidium parvum,Plasmodium falciparum,Toxoplasma gondii','orgSelect',chromosome_Array,sites);
 }
