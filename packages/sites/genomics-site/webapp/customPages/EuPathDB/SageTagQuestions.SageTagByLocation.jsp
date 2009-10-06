@@ -164,8 +164,8 @@ function showParamGroup(group, isShow)
                                     <c:otherwise>
 					<c:choose>  
 						<c:when test="${pNam eq 'chromosomeOptional2'}">
-							<input name="myProp(${pNam})" type="hidden" id="organism"/>
-							<input name="myProp(${pNam})" id="${pNam}" type="hidden"/>
+							<input name="organism" type="hidden" id="organism"/>
+							<input name="myProp(${pNam})" id="chromosomeOptional" type="hidden"/>
                             			</c:when> 
 						<c:when test="${pNam == 'sequenceId'}">
 							<input name="myProp(${pNam})" id="${pNam}" type="hidden" />
@@ -192,7 +192,7 @@ function showParamGroup(group, isShow)
 									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chromosomes:&nbsp;
 							         </td>
 							         <td>
-							       	        <select name="CHRO" id="${pNam}_chromo" onchange="updateSelectInput('chromosomeOptional2', '${pNam}_chromo')"></select>
+							       	        <select name="CHRO" id="${pNam}_chromo" onchange="updateSelectInput('chromosomeOptional', '${pNam}_chromo')"></select>
 							         </td>
 							   </tr>
 							   <tr>
