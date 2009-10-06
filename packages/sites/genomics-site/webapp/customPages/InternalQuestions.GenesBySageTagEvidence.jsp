@@ -1,20 +1,53 @@
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
-
-
- <c:choose>
-
-    <c:when test="${ projectId == 'EuPathDB' || projectId == 'GiardiaDB' || projectId == 'PlasmoDB' || projectId == 'ToxoDB'}">
-	<jsp:include page="/customPages/${projectId}/InternalQuestions.GenesBySageTagEvidence.jsp"/>
-    </c:when>
-
-  </c:choose>
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set value="${wdkModel.displayName}" var="project"/>
+<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
+<c:set value="${wdkQuestion.name}" var="qname"/>
 
 
+<c:choose>
+<c:when test="${fn:containsIgnoreCase(qname, 'sagetag')}">
+
+<site:header title="Sage Tag evidence"
+                 banner="Identify Genes by SAGE Tag Evidence"
+                 parentDivision=""
+                 parentUrl="/home.jsp"
+                 divisionName=""
+                 division=""/>
 
 
+<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+<tr>
+<td bgcolor=white valign=top>
 
+<!-- show error messages, if any -->
+<wdk:errors/>
 
+<table width="100%" cellpadding="4">
+<tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
+
+<c:choose>
+<c:when test = "${project == 'EuPathDB'}">
+	<site:queryList2 questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
+</c:when>
+<c:when test = "${project == 'GiardiaDB' || project == 'PlasmoDB' || project == 'ToxoDB'}">
+	<site:queryList questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
+</c:when>
+</c:choose>
+
+</table>
+
+</td>
+<td valign=top class=dottedLeftBorder></td> 
+</tr>
+</table> 
+
+</c:when>
+</c:choose>
+
+<site:footer/>
