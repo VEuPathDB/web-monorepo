@@ -4,7 +4,8 @@ all_sites = sites.toString();
 var strain_A_Array = new Array();
 var strain_B_Array = new Array();
 
-window.onload = function(){
+//window.onload = 
+function initGeneSNP(){
 	loadArrays();
 	loadOrganisms('showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=organismVQ.withChromosomesSNPs:'+all_sites,'orgSelect',strain_A_Array, sites);
 }
