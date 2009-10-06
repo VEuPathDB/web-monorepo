@@ -102,6 +102,7 @@ function updateSelectInput(paramId, inputId){
 	
 	var hid = null;
 	hid = document.getElementById(paramId);
+	if(hid == null) return;
 	if(hid.tagName != "INPUT")
 		hid = document.getElementsByName("myProp(" + paramId + ")")[0];
 	
