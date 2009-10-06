@@ -7,7 +7,8 @@ var dataArray = new Array(sites.length);
 
 var sendReqUrl = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=sharedParams.chromosomeOptional2:';
 
-window.onload = function() {
+//window.onload = 
+function initSTLoc() {
 	for(var i=0;i<sites.length;i++){
 		dataArray[i] = new Array();
 		AjaxCall(sendReqUrl + sites[i],dataArray[i]);
