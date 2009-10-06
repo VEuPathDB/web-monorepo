@@ -33,8 +33,8 @@
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'GiardiaDB')}">
-      <c:set var="simple" value="1aae5898da478e93" />
-      <c:set var="expanded" value="371bdee08100f6f5" />
+      <c:set var="simple" value="5fc25f999a67cecc" />
+      <c:set var="expanded" value="47f645300660d5c3" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
