@@ -68,7 +68,7 @@
 
  <c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
       <c:set var="simple" value="4961f7629e7950c9" />
-      <c:set var="expanded" value="1fb4107e239e7e13" />
+      <c:set var="expanded" value="c8badd7f483025f8" />
    </c:when>
 
 
