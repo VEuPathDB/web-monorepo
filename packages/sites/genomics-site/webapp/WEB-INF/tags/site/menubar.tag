@@ -105,7 +105,7 @@
     <li><a href="#">Community</a>
 	<ul>
     	    <li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>
-    	    <li><a href="https://community.eupathdb.org/forum">Discussion Forums</a></li>
+    	    <li><a href="https://community.eupathdb.org">Discussion Forums</a></li>
     	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Related Sites</a>
     	<%--	<ul>
                     <c:forEach items="${extlAnswer.recordInstances}" var="record">
