@@ -151,40 +151,31 @@ ${attrs['organism'].value}<br>
 G.lamblia_contigsGB
 </c:set>
 
-<script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
+  <c:set var="gnCtxUrl">
+     /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow
+  </c:set>
 
-<c:if test="${gtracks ne ''}">
-    <c:set var="genomeContextUrl">
-    http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${wdkRecord.primaryKey}@yellow
-    </c:set>
-    <c:set var="genomeContextImg">
-        <noindex follow><center>
-        <c:catch var="e">
-           <c:import url="${genomeContextUrl}"/>
-        </c:catch>
-        <c:if test="${e!=null}"> 
-            <site:embeddedError 
-                msg="<font size='-2'>temporarily unavailable</font>" 
-                e="${e}" 
-            />
-        </c:if>
-        </center>
-        </noindex>
-        <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
-        <c:set var="gbrowseUrl">
-            http://${pageContext.request.serverName}/cgi-bin/gbrowse/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};label=${labels};h_feat=${wdkRecord.primaryKey}@yellow
-        </c:set>
-        <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
-    </c:set>
+  <c:set var="gnCtxDivId" value="gnCtx"/>
 
-    <site:toggle 
-        displayName="Genomic Context"
-        content="${genomeContextImg}"
-        isOpen="true"
-        name="Genomic Context"
-        attribution="${attribution}"/>
-    <br>
-</c:if>
+  <c:set var="gnCtxImg">
+    <center><div id="${gnCtxDivId}"></div></center>
+    
+    <c:set var="labels" value="${fn:replace(tracks, '+', ';label=')}" />
+    <c:set var="gbrowseUrl">
+        /cgi-bin/gbrowse/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow
+    </c:set>
+    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+  </c:set>
+
+  <site:toggle 
+    name="dnaContextSyn" displayName="Genomic Context"
+    content="${gnCtxImg}" isOpen="true" 
+    imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
+    postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
+    attribution="${attribution}"
+  />
+
+<%-- END DNA CONTEXT --------------------------------------------%>
 
 <%-- Gene Location ------------------------------------------------------%>
 <site:wdkTable tblName="Genbank" isOpen="true"
@@ -607,4 +598,6 @@ Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Kar
      + screen.width + 'x' + screen.height + '" border="0">'
   );
 </script>
+
+<script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
