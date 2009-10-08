@@ -92,7 +92,7 @@ ${id} <br /> ${prd}
 
 <c:choose>
   <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
-     <c:set var="assemblage" value="<b>Assemblage A isolate WGS</b>"/>
+     <c:set var="assemblage" value="<b>Assemblage A isolate WB</b>"/>
      <c:set var="gtracks"  value="Gene+SyntenySpanAssemblageB+SyntenyAssemblageB+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX"/>
      <c:set var="ptracks" value="RatnerMassSpecPeptides+TachezyMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP"/>
   </c:when>
@@ -148,7 +148,7 @@ ${attrs['organism'].value}<br>
 
 
 <c:set var="attribution">
-G.lamblia_contigsGB
+G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblageE_contigsGB
 </c:set>
 
   <c:set var="gnCtxUrl">
@@ -160,9 +160,9 @@ G.lamblia_contigsGB
   <c:set var="gnCtxImg">
     <center><div id="${gnCtxDivId}"></div></center>
     
-    <c:set var="labels" value="${fn:replace(tracks, '+', ';label=')}" />
+    <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
     <c:set var="gbrowseUrl">
-        /cgi-bin/gbrowse/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow
+        /cgi-bin/gbrowse/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
     </c:set>
     <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
   </c:set>
