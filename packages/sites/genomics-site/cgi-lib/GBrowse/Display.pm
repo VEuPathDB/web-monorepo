@@ -279,6 +279,16 @@ sub glyphFlipBgColor {
   $f->strand == ($flip ? -1 : 1) ? "navy" : "maroon";
 }
 
+sub bgColorFromStrandAndDeprecated {
+  my ($f, $forward, $rev, $forDep, $revDep) = @_;
+  my ($dep) = $f->get_tag_values('isDeprecated');
+  if($dep){
+    return $f->strand == +1 ? $forDep : $revDep;
+  }else{
+    return $f->strand == +1 ? $forward : $rev;
+  }
+}
+
 sub simpleBgColorFromStrand {
   my ($f, $first, $second) = @_;
   simpleColorFromStrand($f, $first, $second);

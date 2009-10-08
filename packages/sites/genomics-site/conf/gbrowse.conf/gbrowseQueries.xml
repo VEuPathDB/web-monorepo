@@ -310,6 +310,7 @@ WHERE  ens.na_sequence_id = $srcfeature_id
        'soTerm=' || ga.so_term_name || '$dlm' ||
        'product=' || replace(ga.product,'''','&#146;') || '$dlm' ||
        'taxon=' || ga.organism || '$dlm' ||
+       'isDeprecated=' || ga.is_deprecated || '$dlm' ||
        'isPseudo=' || ga.is_pseudo
          as atts
 FROM
@@ -320,7 +321,6 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.na_feature_id = ga.na_feature_id
   AND  fl.start_min <= $rend
   AND  fl.end_max >= $base_start
-  AND ga.is_deprecated = 0
 ORDER BY 
        fl.start_min
 ]]>
