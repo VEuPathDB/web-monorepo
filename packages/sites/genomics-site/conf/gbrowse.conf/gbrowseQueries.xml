@@ -308,7 +308,7 @@ WHERE  ens.na_sequence_id = $srcfeature_id
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'Note=' || ga.product  || '$dlm' ||
        'soTerm=' || ga.so_term_name || '$dlm' ||
-       'product=' || replace(ga.product,'''','&#146;') || '$dlm' ||
+       'product=' || replace(ga.product,'''','&#146;') || decode(ga.is_deprecated,1,' (deprecated)') || '$dlm' ||
        'taxon=' || ga.organism || '$dlm' ||
        'isDeprecated=' || ga.is_deprecated || '$dlm' ||
        'isPseudo=' || ga.is_pseudo
