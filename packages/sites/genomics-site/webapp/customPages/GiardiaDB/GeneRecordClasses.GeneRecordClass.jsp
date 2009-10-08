@@ -152,7 +152,7 @@ G.lamblia_contigsGB
 </c:set>
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -162,7 +162,7 @@ G.lamblia_contigsGB
     
     <c:set var="labels" value="${fn:replace(tracks, '+', ';label=')}" />
     <c:set var="gbrowseUrl">
-        /cgi-bin/gbrowse/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow
+        /cgi-bin/gbrowse/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow
     </c:set>
     <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
   </c:set>
