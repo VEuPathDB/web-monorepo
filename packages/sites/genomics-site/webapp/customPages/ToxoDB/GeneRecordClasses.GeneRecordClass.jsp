@@ -419,7 +419,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
         <c:if test="${attrs['graph_archetypal'].value != 0}">
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="1"></td>
 
-	<td valign=top><image src="<c:url value="/images/percentile_lineages.PNG"/>">  </td>
+	<td valign=top><image src="<c:url value="/images/toxo_percentile_lineages.PNG"/>">  </td>
 
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
         <td>
