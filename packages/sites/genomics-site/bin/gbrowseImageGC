@@ -14,7 +14,7 @@ usage() {
     echo "usage:"
     echo "$this <days_old> <tmpimages>"
     echo
-    echo "where <days_old> is an *interger* expiration age for image deletion"
+    echo "where <days_old> is an integer expiration age for image deletion"
     echo "and <tmpimages> is the gbrowse temporary directory (fullpath to"
     echo "the 'tmpimages' defined in the gbrowse config file)."
 }
@@ -45,8 +45,6 @@ garbage_collect() {
     done
 }
 
-
-
 ######################################################
 ##      Main                                        ##
 ######################################################
@@ -74,3 +72,5 @@ configs=( $(find "$tmpdir" -mindepth 1 -maxdepth 1 -not -name sessions -type d) 
 for config in ${configs[@]}; do
     garbage_collect "$age" "$config"
 done
+
+
