@@ -457,11 +457,12 @@ SELECT
          ELSE anch_left.ref_loc + ((fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
        END end,
        CASE WHEN (fl.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
-       'Note=' || gattr.product || '$dlm' ||
+       'Note=' || gattr.product || decode(gattr.is_deprecated,1,' (deprecated)') || '$dlm' ||
        'SOTerm=' || gattr.so_term_name || '$dlm' ||
        'SyntenyID=' || syn.synteny_id || '$dlm' ||
        'Contig=' || gattr.sequence_id || '$dlm' ||
        'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
+       'IsDeprecated=' || gattr.is_deprecated || '$dlm' ||
        'Start=' || gattr.start_min || '$dlm' ||
        'End=' || gattr.end_max || '$dlm' ||
        'Taxon=' || gattr.organism atts
