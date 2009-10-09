@@ -3162,7 +3162,7 @@ SELECT
        CASE WHEN exon_loc.is_reversed = 0 THEN
        exon_loc.coding_end ELSE exon_loc.coding_start END as end,
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       '' atts 
+       'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
        ApiDB.FeatureLocation exon_loc, Apidb.GeneAttributes ga
 WHERE  exon_loc.na_sequence_id = $srcfeature_id
@@ -3170,7 +3170,6 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
   AND  (( exon_loc.is_reversed = 0 AND exon_loc.coding_start <= $rend AND  exon_loc.coding_end >= $base_start)
     OR   (exon_loc.is_reversed = 1 AND exon_loc.coding_end <= $rend AND  exon_loc.coding_start >= $base_start))
   AND ga.na_feature_id = exon_loc.parent_id
-  and ga.is_deprecated = 0
 UNION
 SELECT 
        exon_loc.na_feature_id feature_id, 
@@ -3181,7 +3180,7 @@ SELECT
        exon_loc.start_min as startm,
        CASE WHEN exon_loc.is_reversed = 0 THEN exon_loc.coding_start ELSE exon_loc.coding_end END end,
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       '' atts 
+       'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
        ApiDB.FeatureLocation exon_loc, Apidb.GeneAttributes ga
 WHERE  exon_loc.na_sequence_id = $srcfeature_id
@@ -3191,7 +3190,6 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
   AND ga.na_feature_id = exon_loc.parent_id
   AND ((exon_loc.is_reversed = 0 AND exon_loc.coding_start - exon_loc.start_min  != 0)
       OR (exon_loc.is_reversed = 1 AND exon_loc.coding_end - exon_loc.start_min  != 0))
-  and ga.is_deprecated = 0
 UNION
 SELECT 
        exon_loc.na_feature_id feature_id, 
@@ -3202,7 +3200,7 @@ SELECT
        CASE WHEN exon_loc.is_reversed = 0 THEN exon_loc.coding_end ELSE exon_loc.coding_start END startm,
        exon_loc.end_max as end,
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       '' atts 
+       'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
        ApiDB.FeatureLocation exon_loc, Apidb.GeneAttributes ga
 WHERE  exon_loc.na_sequence_id = $srcfeature_id
@@ -3212,7 +3210,6 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
   AND ga.na_feature_id = exon_loc.parent_id
   AND ((exon_loc.is_reversed = 0 AND exon_loc.end_max - exon_loc.coding_end  != 0)
       OR (exon_loc.is_reversed = 1 AND exon_loc.end_max - exon_loc.coding_start  != 0))
-  and ga.is_deprecated = 0
 UNION
 SELECT 
        exon_loc.na_feature_id feature_id, 
@@ -3223,7 +3220,7 @@ SELECT
        exon_loc.start_min as startm,
        exon_loc.end_max as end,
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       '' atts 
+       'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
        ApiDB.FeatureLocation exon_loc, Apidb.GeneAttributes ga
 WHERE  exon_loc.na_sequence_id = $srcfeature_id
@@ -3232,7 +3229,6 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
   AND  exon_loc.end_max >= $base_start
   AND ga.na_feature_id = exon_loc.parent_id
   AND exon_loc.coding_start is null
-  and ga.is_deprecated = 0
 ) order by startm
 ]]>
     </sql>
@@ -3730,6 +3726,7 @@ SELECT
        exfloc.na_feature_id feature_id,
        'exon' type, 
        'syntenyMC' source, 
+       exfloc.na_feature_id as name,
        exfloc.parent_id,
        CASE WHEN (syn.is_reversed = 1) 
          THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
@@ -3739,13 +3736,16 @@ SELECT
          THEN anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
          ELSE anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
        END end,
-       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand
+       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'isDeprecated=' ||  ga.is_deprecated atts 
 FROM 
        apidb.synteny syn,
        apidb.syntenyAnchor anch_left,
        apidb.syntenyAnchor anch_right,
-       apidb.featurelocation exfloc
-WHERE syn.a_na_sequence_id = $srcfeature_id
+       apidb.featurelocation exfloc,
+       apidb.geneattributes ga
+WHERE ga.na_feature_id = exfloc.parent_id
+  AND syn.a_na_sequence_id = $srcfeature_id
   AND syn.a_start <= $rend 
   AND syn.a_end >= $base_start 
   AND anch_left.synteny_id = syn.synteny_id 
