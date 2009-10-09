@@ -282,7 +282,7 @@ sub glyphFlipBgColor {
 sub bgColorFromStrandAndDeprecated {
   my ($f, $forward, $rev, $forDep, $revDep) = @_;
   my ($dep) = $f->get_tag_values('isDeprecated');
-  if($dep){
+  if($dep == 1){
     return $f->strand == +1 ? $forDep : $revDep;
   }else{
     return $f->strand == +1 ? $forward : $rev;

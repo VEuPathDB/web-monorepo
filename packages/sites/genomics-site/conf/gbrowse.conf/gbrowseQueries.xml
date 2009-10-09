@@ -462,7 +462,7 @@ SELECT
        'SyntenyID=' || syn.synteny_id || '$dlm' ||
        'Contig=' || gattr.sequence_id || '$dlm' ||
        'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
-       'IsDeprecated=' || gattr.is_deprecated || '$dlm' ||
+       'isDeprecated=' || gattr.is_deprecated || '$dlm' ||
        'Start=' || gattr.start_min || '$dlm' ||
        'End=' || gattr.end_max || '$dlm' ||
        'Taxon=' || gattr.organism atts
