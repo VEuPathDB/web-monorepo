@@ -98,3 +98,6 @@
 
         <li><a href="<c:url value="/queries_tools.jsp"/>">View all available searches</a></li>
 	</ul>
+
+
+<%-- TEST, you can remove this line any time --%>
