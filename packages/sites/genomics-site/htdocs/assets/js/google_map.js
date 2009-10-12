@@ -40,6 +40,8 @@ jQuery(document).ready(function(){
     type = '';
   } else if(dd.match('plasmodb')) {
     type = '';
+  } else if(dd.match('cryptodb')) {
+    type = '';
   } 
 
   jQuery.get("/country.xml",{},function(xml){
