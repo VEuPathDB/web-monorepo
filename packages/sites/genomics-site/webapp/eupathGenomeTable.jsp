@@ -40,7 +40,7 @@ http://www.bosrup.com/web/overlib/?Documentation
 
  --%>
 
-<h2>Genomes in EuPathDB</h2>
+<h2>EuPathDB Genomes and Data Types</h2>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
