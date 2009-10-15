@@ -76,6 +76,11 @@
 </ul>
 
 <ul>
+    <li><a title="Table summarizing all the genomes and their different data types available in EuPathDB" href="<c:url value="/eupathGenomeTable.jsp"/>">Data Summary</a></li>
+</ul>
+
+
+<ul>
     <li><a href="#">Data Sources</a>
   	<ul>
 <c:if test="${project == 'EuPathDB'}">
@@ -104,6 +109,10 @@
     </li>
 </ul>
     
+
+
+
+
 <ul>
     <li><a href="#">Community</a>
 	<ul>
@@ -134,9 +143,6 @@
     </li>
 </ul>
 
-<ul>
-    <li><a href="<c:url value="/eupathGenomeTable.jsp"/>">Data Summary</a></li>
-</ul>
 
 
 </div>
