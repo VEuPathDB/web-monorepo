@@ -163,6 +163,16 @@
        <forward name="pq_start_boolean" path="/startBoolean.do"/>
        <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
+
+	<action
+       path="/*/*.*"
+       type="org.gusdb.wdk.controller.action.ProcessRESTAction"
+       scope="request"
+	   validate="false"
+	   parameter="{1}.{2}::{3}">
+       <forward name="show_result" path="/downloadResult.jsp"/>
+    </action>
+
     <action
       path="/showSummary"
       type="org.gusdb.wdk.controller.action.ShowSummaryAction"
