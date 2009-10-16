@@ -1847,13 +1847,19 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-ExonIb'
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
-FROM   ApiDB.ChIPFeature f
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   ApiDB.ChIPFeature f,
+       Rad.Protocol p,
+       Rad.Analysis a,
+       ApiDB.ChIPProtocolParams cpp
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
    AND f.end_max >= $base_start
-   AND f.protocol_name = 'ChIP_chip_Einstein_called_peaks'
-   AND f.strain = 'CTG'
+   AND f.analysis_id = a.analysis_id
+   AND a.protocol_id = p.protocol_id
+   AND a.analysis_id = cpp.analysis_id
+   AND p.name = 'ChIP_chip_Einstein_called_peaks'
+   AND cpp.strain = 'CTG'
 ]]>
     </sql>
   </sqlQuery>
@@ -2356,13 +2362,19 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearNonCoding'
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
-FROM   ApiDB.ChIPFeature f
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   ApiDB.ChIPFeature f,
+       Rad.Protocol p,
+       Rad.Analysis a,
+       ApiDB.ChIPProtocolParams cpp
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
    AND f.end_max >= $base_start
-   AND f.protocol_name = 'ChIP_chip_Einstein_called_peaks'
-   AND f.strain = 'RH'
+   AND f.analysis_id = a.analysis_id
+   AND a.protocol_id = p.protocol_id
+   AND a.analysis_id = cpp.analysis_id
+   AND p.name = 'ChIP_chip_Einstein_called_peaks'
+   AND cpp.strain = 'RH'
 ]]>
     </sql>
   </sqlQuery>
@@ -2379,13 +2391,19 @@ WHERE  f.na_sequence_id = $srcfeature_id
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
-FROM   ApiDB.ChIPFeature f
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   ApiDB.ChIPFeature f,
+       Rad.Protocol p,
+       Rad.Analysis a,
+       ApiDB.ChIPProtocolParams cpp
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
    AND f.end_max >= $base_start
-   AND f.protocol_name = 'ChIP_chip_Einstein_called_peaks'
-   AND f.strain = 'PLK'
+   AND f.analysis_id = a.analysis_id
+   AND a.protocol_id = p.protocol_id
+   AND a.analysis_id = cpp.analysis_id
+   AND p.name = 'ChIP_chip_Einstein_called_peaks'
+   AND cpp.strain = 'PLK'
 ]]>
     </sql>
   </sqlQuery>
@@ -2401,13 +2419,19 @@ WHERE  f.na_sequence_id = $srcfeature_id
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Treatment=' || f.treatment || '$dlm' || 'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
-FROM   ApiDB.ChIPFeature f
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   ApiDB.ChIPFeature f,
+       Rad.Protocol p,
+       Rad.Analysis a,
+       ApiDB.ChIPProtocolParams cpp
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
    AND f.end_max >= $base_start
-   AND f.protocol_name = 'NimbleScan_ChIP_Hakimi_called_peaks'
-   AND f.strain = 'RH'
+   AND f.analysis_id = a.analysis_id
+   AND a.protocol_id = p.protocol_id
+   AND a.analysis_id = cpp.analysis_id
+   AND p.name = 'NimbleScan_ChIP_Hakimi_called_peaks'
+   AND cpp.strain = 'RH'
 ]]>
     </sql>
   </sqlQuery>
@@ -4144,13 +4168,19 @@ SELECT f.na_feature_id   as feature_id,
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
-FROM   ApiDB.ChIPFeature f
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   ApiDB.ChIPFeature f,
+       Rad.Protocol p,
+       Rad.Analysis a,
+       ApiDB.ChIPProtocolParams cpp
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
    AND f.end_max >= $base_start
-   AND f.protocol_name = 'ChIP_chip_Einstein'
-   AND f.strain = 'RH'
+   AND f.analysis_id = a.analysis_id
+   AND a.protocol_id = p.protocol_id
+   AND a.analysis_id = cpp.analysis_id
+   AND p.name = 'ChIP_chip_Einstein'
+   AND cpp.strain = 'RH'
 ]]>
     </sql>
   </sqlQuery>
@@ -4166,13 +4196,19 @@ SELECT f.na_feature_id   as feature_id,
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Treatment=' || f.treatment || '$dlm' || 'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
-FROM   ApiDB.ChIPFeature f
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   ApiDB.ChIPFeature f,
+       Rad.Protocol p,
+       Rad.Analysis a,
+       ApiDB.ChIPProtocolParams cpp
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
    AND f.end_max >= $base_start
-   AND f.protocol_name = 'NimbleScan_ChIP_Hakimi'
-   AND f.strain = 'RH'
+   AND f.analysis_id = a.analysis_id
+   AND a.protocol_id = p.protocol_id
+   AND a.analysis_id = cpp.analysis_id
+   AND p.name = 'NimbleScan_ChIP_Hakimi'
+   AND cpp.strain = 'RH'
 ]]>
     </sql>
   </sqlQuery>
@@ -4187,12 +4223,18 @@ SELECT f.na_feature_id   as feature_id,
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Treatment=' || f.treatment || '$dlm' || 'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
-FROM   ApiDB.ChIPFeature f
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   ApiDB.ChIPFeature f, 
+       Rad.Protocol p,
+       Rad.Analysis a,
+       ApiDB.ChIPProtocolParams cpp
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
    AND f.end_max >= $base_start
-   AND f.protocol_name = 'ChIP_chip_Einstein_centromere'
+   AND f.analysis_id = a.analysis_id
+   AND a.protocol_id = p.protocol_id
+   AND a.analysis_id = cpp.analysis_id
+   AND p.name = 'ChIP_chip_Einstein_centromere'
 ]]>
     </sql>
   </sqlQuery>
@@ -4237,13 +4279,19 @@ SELECT f.na_feature_id   as feature_id,
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
-FROM   ApiDB.ChIPFeature f
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   ApiDB.ChIPFeature f,
+       Rad.Protocol p,
+       Rad.Analysis a,
+       ApiDB.ChIPProtocolParams cpp
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
    AND f.end_max >= $base_start
-   AND f.protocol_name = 'ChIP_chip_Einstein'
-   AND f.strain = 'PLK'
+   AND f.analysis_id = a.analysis_id
+   AND a.protocol_id = p.protocol_id
+   AND a.analysis_id = cpp.analysis_id
+   AND p.name = 'ChIP_chip_Einstein'
+   AND cpp.strain = 'PLK'
 ]]>
     </sql>
   </sqlQuery>
@@ -4259,13 +4307,19 @@ SELECT f.na_feature_id   as feature_id,
        f.na_sequence_id  as parent_id, 
        f.start_min       as startm, 
        f.end_max         as end,
-       'Antibody=' || f.antibody || '$dlm' || 'Rep=' || f.rep as atts
-FROM   ApiDB.ChIPFeature f
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   ApiDB.ChIPFeature f,
+       Rad.Protocol p,
+       Rad.Analysis a,
+       ApiDB.ChIPProtocolParams cpp
 WHERE  f.na_sequence_id = $srcfeature_id
    AND f.start_min <= $rend
    AND f.end_max >= $base_start
-   AND f.protocol_name = 'ChIP_chip_Einstein'
-   AND f.strain = 'CTG'
+   AND f.analysis_id = a.analysis_id
+   AND a.protocol_id = p.protocol_id
+   AND a.analysis_id = cpp.analysis_id
+   AND p.name = 'ChIP_chip_Einstein'
+   AND cpp.strain = 'CTG'
 ]]>
     </sql>
   </sqlQuery>
