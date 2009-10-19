@@ -19,15 +19,6 @@
                  divisionName="allSites"
                  division="geneMetrics"/>
 
-<%--  title="${wdkModel.displayName} : Gene Metrics"
-                 banner="${banner}"
-                 parentDivision="${wdkModel.displayName}"
-                 parentUrl="/home.jsp"
-                 divisionName="GeneMetrics"
-                 division="genemetrics"
-                 headElement="${headElement}" />
---%>
-
 
 <c:set var="cryptoColorHeader" value="#507494"/>
 <c:set var="plasmoColorHeader" value="#507494"/>
@@ -46,10 +37,13 @@
 
 <c:set var="orgWidth" value="4%"/>
 
+<c:set var="ncbiTaxPage" value="http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=237895&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock"/>
 
 
 <table align="center" width="100%" border="0" cellpadding="2" cellspacing="2">
-<tr><td><font face="Arial,Helvetica">The <a href="http://eupathdb.org"><b>EuPathDB Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> and <a href="http://tritrypdb.org">TriTrypDB</a> websites. <br><br>
+<tr><td><h2>EuPathDB Gene Metrics</h2></td></tr>
+
+<tr><td><font face="Arial,Helvetica">The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> and <a href="http://tritrypdb.org">TriTrypDB</a> websites. <br><br>
 The Gene Metrics table summarizes the number of genes for the organisms currently available in EuPathDB, by various datatypes. High gene numbers for rodent malaria parasites Pb, Pc & Py reflect incomplete sequence assembly and redundant gene models. <br></font>
 </td></tr>
 </table>
@@ -61,31 +55,31 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
   </c:when>
   <c:otherwise>
 
-<table align="center" width="100%" border="1" cellpadding="2" cellspacing="2">
-<tr valign="top" align="center" style="background-color:#507494;">
-    <td valign="middle"   bgcolor="#507494"><font color="white" face="Arial,Helvetica" size="+1">Genes</font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${cryptoColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Ch</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${cryptoColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Cm</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${cryptoColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Cp</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${giardiaColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Gl</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${tritrypColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Lb</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${tritrypColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Li</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${tritrypColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Lm</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${toxoColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Nc</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${plasmoColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Pb</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${plasmoColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Pc</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${plasmoColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Pf</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${plasmoColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Pk</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${plasmoColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Pv</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${plasmoColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Py</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${toxoColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Tg</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${trichColorHeader}><font color="white" face="Arial,Helvetica" size="+1"><i>Tv</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${tritrypColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Tb</i></font></td>
-    <td valign="middle" width=${orgWidth} bgcolor=${tritrypColorHeader}><font color="white"  face="Arial,Helvetica" size="+1"><i>Tc</i></font></td>
+
+<c:set var="myStyle" value="border-width:0.5px;padding:3px;border-style:inset;border-color:gray;-moz-border-radius:0px;"/>
+
+<table align="center" width="100%" style="border-width:1px;border-spacing:2px;border-style:outset;border-color:gray;border-collapse:separate;background-color:white">
+<tr valign="top" align="center" style="${myStyle}">
+    <td valign="middle" style="background-color:#507494;color:white;${myStyle}">Genes</td>
+    <td valign="middle" width=${orgWidth} style="background-color:${cryptoColorHeader};color:white;${myStyle}" <i>Ch</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${cryptoColorHeader};color:white;${myStyle}"><i>Cm</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${cryptoColorHeader};color:white;${myStyle}"><i>Cp</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${giardiaColorHeader};color:white;${myStyle}"><i>Gl</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${tritrypColorHeader};color:white;${myStyle}"><i>Lb</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${tritrypColorHeader};color:white;${myStyle}"><i>Li</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${tritrypColorHeader};color:white;${myStyle}"><i>Lm</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${toxoColorHeader};color:white;${myStyle}"><i>Nc</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${plasmoColorHeader};color:white;${myStyle}"><i>Pb</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${plasmoColorHeader};color:white;${myStyle}"><i>Pc</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${plasmoColorHeader};color:white;${myStyle}"><i>Pf</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${plasmoColorHeader};color:white;${myStyle}"><i>Pk</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${plasmoColorHeader};color:white;${myStyle}"><i>Pv</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${plasmoColorHeader};color:white;${myStyle}"><i>Py</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${toxoColorHeader};color:white;${myStyle}"><i>Tg</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${trichColorHeader};color:white;${myStyle}"><i>Tv</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${tritrypColorHeader};color:white;${myStyle}"><i>Tb</i></td>
+    <td valign="middle" width=${orgWidth} style="background-color:${tritrypColorHeader};color:white;${myStyle}"><i>Tc</i></td>
 </tr>
-
-
-
 
   <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
@@ -111,28 +105,27 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 
 
-    <tr valign="top" align="left">
-    <td valign="top"><font face="Arial,Helvetica">${Metric_Type}</a></font></td>
-    <td valign="top" align="right" bgcolor=${cryptoColor}><font face="Arial,Helvetica">${Ch}</font></td>
-    <td valign="top" align="right" bgcolor=${cryptoColor}><font face="Arial,Helvetica">${Cm}</font></td>
-    <td valign="top" align="right" bgcolor=${cryptoColor}><font face="Arial,Helvetica">${Cp}</font></td>
-    <td valign="top" align="right" bgcolor=${giardiaColor}><font face="Arial,Helvetica">${Gl}</font></td>
-    <td valign="top" align="right" bgcolor=${tritrypColor}><font face="Arial,Helvetica">${Lb}</font></td>
-    <td valign="top" align="right" bgcolor=${tritrypColor}><font face="Arial,Helvetica">${Li}</font></td>
-    <td valign="top" align="right" bgcolor=${tritrypColor}><font face="Arial,Helvetica">${Lm}</font></td>
- <td valign="top" align="right" bgcolor=${toxoColor}><font face="Arial,Helvetica">${Nc}</font></td>
-    <td valign="top" align="right" bgcolor=${plasmoColor}><font face="Arial,Helvetica">${Pb}</font></td>
-    <td valign="top" align="right" bgcolor=${plasmoColor}><font face="Arial,Helvetica">${Pc}</font></td>
-    <td valign="top" align="right" bgcolor=${plasmoColor}><font face="Arial,Helvetica">${Pf}</font></td>
-    <td valign="top" align="right" bgcolor=${plasmoColor}><font face="Arial,Helvetica">${Pk}</font></td>    
-    <td valign="top" align="right" bgcolor=${plasmoColor}><font face="Arial,Helvetica">${Pv}</font></td>
-    <td valign="top" align="right" bgcolor=${plasmoColor}><font face="Arial,Helvetica">${Py}</font></td>
-    <td valign="top" align="right" bgcolor=${toxoColor}><font face="Arial,Helvetica">${Tg}</font></td>
-    <td valign="top" align="right" bgcolor=${trichColor}><font face="Arial,Helvetica">${Tv}</font></td>
- <td valign="top" align="right" bgcolor=${tritrypColor}><font face="Arial,Helvetica">${Tb}</font></td>
- <td valign="top" align="right" bgcolor=${tritrypColor}><font face="Arial,Helvetica">${Tc}</font></td>
-    </tr>
-
+<tr valign="top" align="right" style="${myStyle}">
+    <td valign="top" align="left" style="${myStyle}">${Metric_Type}</td>
+    <td valign="top" style="background-color:${cryptoColor};${myStyle}">${Ch}</td>
+    <td valign="top" style="background-color:${cryptoColor};${myStyle}">${Cm}</td>
+    <td valign="top" style="background-color:${cryptoColor};${myStyle}">${Cp}</td>
+    <td valign="top" style="background-color:${giardiaColor};${myStyle}">${Gl}</td>
+    <td valign="top" style="background-color:${tritrypColor};${myStyle}">${Lb}</td>
+    <td valign="top" style="background-color:${tritrypColor};${myStyle}">${Li}</td>
+    <td valign="top" style="background-color:${tritrypColor};${myStyle}">${Lm}</td>
+    <td valign="top" style="background-color:${toxoColor};${myStyle}">${Nc}</td>
+    <td valign="top" style="background-color:${plasmoColor};${myStyle}">${Pb}</td>
+    <td valign="top" style="background-color:${plasmoColor};${myStyle}">${Pc}</td>
+    <td valign="top" style="background-color:${plasmoColor};${myStyle}">${Pf}</td>
+    <td valign="top" style="background-color:${plasmoColor};${myStyle}">${Pk}</td>    
+    <td valign="top" style="background-color:${plasmoColor};${myStyle}">${Pv}</td>
+    <td valign="top" style="background-color:${plasmoColor};${myStyle}">${Py}</td>
+    <td valign="top" style="background-color:${toxoColor};${myStyle}">${Tg}</td>
+    <td valign="top" style="background-color:${trichColor};${myStyle}">${Tv}</td>
+    <td valign="top" style="background-color:${tritrypColor};${myStyle}">${Tb}</td>
+    <td valign="top" style="background-color:${tritrypColor};${myStyle}">${Tc}</td>
+</tr>
  
   </c:forEach>
 
