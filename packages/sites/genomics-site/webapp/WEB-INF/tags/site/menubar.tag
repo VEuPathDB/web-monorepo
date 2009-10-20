@@ -76,15 +76,18 @@
 </ul>
 
 <ul>
-    <li><a title="Table summarizing all the genomes and their different data types available in EuPathDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Data Summary</a></li>
+	<li><a href="#">Data Summary</a>
+  	<ul>
+    		<li><a title="Table summarizing all the genomes and their different data types available in EuPathDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Genomes and Data Types</a></li>
+	<li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
+	</ul>
+	</li>
 </ul>
-
 
 <ul>
     <li><a href="#">Data Sources</a>
   	<ul>
 <c:if test="${project == 'EuPathDB'}">
-   	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.GenomeDataType'/>">Data Summary</a></li>	   	    
 	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods'/>">Data Sources and Methods</a></li>	
 </c:if>
 <c:if test="${project != 'EuPathDB'}">
