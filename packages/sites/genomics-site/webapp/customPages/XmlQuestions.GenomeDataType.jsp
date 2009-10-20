@@ -27,7 +27,10 @@
 <c:set var="mythStyle" value="background-color:#eaeaea;vertical-align:middle;text-align:center;font-weight:bold;border-width:0.5px;padding:3px;border-style:inset;border-color:gray;-moz-border-radius:0px;"/>
 
 <table width="100%">
-<tr><td><h2>EuPathDB Data Summary</h2></td></tr>
+<tr><td><h2>EuPathDB Data Summary</h2></td>
+    <td align="right" colspan="5"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></td>
+</tr>
+
 <tr><td><h3>Genomes and Data Types</h3></td>
      <td align="right" style="font-size:10px;">(<b>Micrry</b>=Microarray,  <b>Protmc</b>=Proteomics,  <b>Ch_ch</b>=ChIP chip,  <b>SageTg</b>=Sage Tags, <b>Pathw</b>=Pathway)</td></tr>
 </table>

@@ -41,8 +41,12 @@
 
 
 <table align="center" width="100%" border="0" cellpadding="2" cellspacing="2">
-<tr><td><h2>EuPathDB Gene Metrics</h2></td></tr>
+<tr><td><h2>EuPathDB Gene Metrics</h2></td>
+    <td align="right" colspan="5"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Data Summary</a></td>
+</tr>
+</table>
 
+<table align="center" width="100%" border="0" cellpadding="2" cellspacing="2">
 <tr><td><font face="Arial,Helvetica">The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> and <a href="http://tritrypdb.org">TriTrypDB</a> websites. <br><br>
 The Gene Metrics table summarizes the number of genes for the organisms currently available in EuPathDB, by various datatypes. High gene numbers for rodent malaria parasites Pb, Pc & Py reflect incomplete sequence assembly and redundant gene models. <br></font>
 </td></tr>
