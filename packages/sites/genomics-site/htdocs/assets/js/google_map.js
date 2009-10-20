@@ -44,7 +44,7 @@ jQuery(document).ready(function(){
     type = '';
   } 
 
-  jQuery.get("/country.xml",{},function(xml){
+  jQuery.get("showRecord.do?name=IsolateRecordClasses.CountryCountClass&source_id=test",{},function(xml){
     jQuery('country',xml).slowEach(200, function(i) {
        name = jQuery(this).find("name").text();
        count = jQuery(this).find("count").text();
