@@ -453,11 +453,11 @@ sub chipColor {
   return '#4B0082' if($t =~ /DMSO/ );
   return '#F08080' if($t =~ /FR235222/ );
 
-  return '#000080' if($a =~ /H3K4me3/i);
-  return '#C86400' if($a =~ /H3K9Ac/i);
-  return '#FA9600' if($a =~ /H3K9me3/i );
-  return '#F08080' if($a =~ /H3/i );
-  return '#4B0082';
+  return '#FA9600' if($a =~ /H3K4me3/i);
+  return '#B45AB4' if($a =~ /H3K9Ac/i);
+  return '#660000' if($a =~ /H3K9me3/i );
+  return '#0F820F' if($a =~ /H3/i );
+  return '#4747B8';
 }
 
 
