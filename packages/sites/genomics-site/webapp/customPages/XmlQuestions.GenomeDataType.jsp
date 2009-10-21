@@ -28,8 +28,13 @@
 
 <table width="100%">
 <tr><td><h2>EuPathDB Data Summary</h2></td>
-    <td align="right" colspan="5"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></td>
+    <td align="right" colspan="5"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics >>></a></td>
 </tr>
+
+<tr><td colspan="2"><font face="Arial,Helvetica">The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> and <a href="http://tritrypdb.org">TriTrypDB</a> websites. <br><br>
+
+</font>
+</td></tr>
 
 <tr><td><h3>Genomes and Data Types</h3></td>
      <td align="right" style="font-size:10px;">(<b>Micrry</b>=Microarray,  <b>Protmc</b>=Proteomics,  <b>Ch_ch</b>=ChIP chip,  <b>SageTg</b>=Sage Tags, <b>Pathw</b>=Pathway)</td></tr>
@@ -38,19 +43,19 @@
 
 <table  width="100%">
 <tr>
-    <td style="${mythStyle}">Organisms</td>
-    <td style="${mythStyle}">Taxon ID</td>
-    <td style="${mythStyle}">Strain</td>
-    <td style="${mythStyle}">Genome<br>Version</td>
-    <td style="${mythStyle}">Data<br>Source</td>
+    <td style="${mythStyle}" title="">Organism</td>
+    <td style="${mythStyle}" title="Click to access this Taxon ID in NCBI">Taxon ID</td>
+    <td style="${mythStyle}" title="">Strain</td>
+    <td style="${mythStyle}" title="Provided by Data Source">Genome<br>Version</td>
+    <td style="${mythStyle}" title="">Data<br>Source</td>
     <td style="${mythStyle}" title="Size in Mega bases">Genome<br>Size</td>
-    <td style="${mythStyle}">Gene<br>Count</td>
-    <td style="${mythStyle}">Multiple<br>Strains</td>
+    <td style="${mythStyle}" title="">Gene<br>Count</td>
+    <td style="${mythStyle}" title="">Multiple<br>Strains</td>
 <!--    <td style="${mythStyle}">Additional<br>Strains</td>    -->
-    <td style="${mythStyle}">Organellar<br>Genomes</td>
-    <td style="${mythStyle}">Isolates</td>
-    <td style="${mythStyle}">SNPs</td>
-    <td style="${mythStyle}">ESTs</td>
+    <td style="${mythStyle}" title="">Organellar<br>Genomes</td>
+    <td style="${mythStyle}" title="">Isolates</td>
+    <td style="${mythStyle}" title="">SNPs</td>
+    <td style="${mythStyle}" title="">ESTs</td>
     <td style="${mythStyle}" title="Microarray">Micrry</td>
     <td style="${mythStyle}" title="Proteomics">Protmc</td>
     <td style="${mythStyle}" title="ChIP Chip">Ch_ch</td>
