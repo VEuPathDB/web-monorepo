@@ -63,6 +63,8 @@
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 <c:set var="version" value="${applicationScope.wdkModel.version}" />
 
+
+<%--- Google keys to access the maps for Isolate questions (check with Haiming) ---%>
 <c:if test="${project == 'CryptoDB'}">
   <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahTMrNE2G2Bled15vogCImXw6TjMNBQeKxJGr2lD8yC0v8vilAhNZXuKjQ" />
 </c:if>
@@ -80,6 +82,7 @@
 </c:if>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <%------------------ setting title --------------%>
 
 <c:if test="${banner == null}">
@@ -337,13 +340,11 @@ ${headElement}
    </div>  <%-- id="header_rt" --%>
 
 <%------------- TOP HEADER:  SITE logo and DATE _______  is a EuPathDB Project  ----------------%>
-  <c:set var="width" value="320" />
-  <c:set var="height" value="72" />
-  <c:set var="date" value="Sep.2009" />
+   <c:set var="date" value="Nov.2009" />
 
 
-   <p><a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" 
-	width="${width}" height="${height}" align="left" /></a></p>
+   <p><a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a></p>
+
    <p>&nbsp;</p>
    <p>Version ${version}<br />
    ${date}</p>
