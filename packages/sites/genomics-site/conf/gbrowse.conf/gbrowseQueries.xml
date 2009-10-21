@@ -1993,6 +1993,58 @@ WHERE  sv.external_database_release_id = edr.external_database_release_id and
     </sql>
   </sqlQuery>
   
+  <sqlQuery name="ChIP:Hp1" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'Hp1'              as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP:wt" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'wt'         as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="ChIP:sir2KO" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'sir2KO'           as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
  
   <sqlQuery name="ChIP:Schizont" includeProjects="PlasmoDB">
      <sql>
@@ -4404,7 +4456,100 @@ AND    cpp.strain = 'PLK'
 ]]>
     </sql>
   </sqlQuery>
+
+
+  <sqlQuery name="ChIP:Hp1:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT  fl.na_feature_id   as feature_id,
+       'ChIP'              as type,
+       'Hp1'               as source,
+        dtf.float_value    as score,
+        fl.na_sequence_id  as parent_id,
+        fl.start_min       as startm,
+        fl.end_max         as end,
+       'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Antibody='     || cpp.antibody  as atts
+FROM   rad.analysis a,rad.protocol p,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
+AND    a.analysis_id = dtf.analysis_id
+AND    dtf.row_id = fl.na_feature_id
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(p.name) like '%voss%'
+AND    cpp.protocol_type = 'raw'
+   ]]>
+    </sql>
+  </sqlQuery>
   
+
+
+
+  <sqlQuery name="ChIP:sir2KO:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT  fl.na_feature_id   as feature_id,
+       'ChIP'              as type,
+       'sir2KO'                as source,
+        dtf.float_value    as score,
+        fl.na_sequence_id  as parent_id,
+        fl.start_min       as startm,
+        fl.end_max         as end,
+       'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Antibody='     || cpp.antibody  as atts
+FROM   rad.analysis a,rad.protocol p,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
+AND    a.analysis_id = dtf.analysis_id
+AND    dtf.row_id = fl.na_feature_id
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(p.name) like '%scherf%' and lower(a.name) like '%sir2ko%'
+AND    cpp.protocol_type = 'raw'
+   ]]>
+    </sql>
+  </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP:wt:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT  fl.na_feature_id   as feature_id,
+       'ChIP'              as type,
+       'wt'                as source,
+        dtf.float_value    as score,
+        fl.na_sequence_id  as parent_id,
+        fl.start_min       as startm,
+        fl.end_max         as end,
+       'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Antibody='     || cpp.antibody  as atts
+FROM   rad.analysis a,rad.protocol p,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
+AND    a.analysis_id = dtf.analysis_id
+AND    dtf.row_id = fl.na_feature_id
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(p.name) like '%scherf%' and lower(a.name) like '%wt%'
+AND    cpp.protocol_type = 'raw'
+   ]]>
+    </sql>
+  </sqlQuery>
+
  
   <sqlQuery name="ChIP:Schizont:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
@@ -4429,6 +4574,7 @@ AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
 AND    a.name like '%Schizont%'
+AND    cpp.protocol_type = 'raw'
 ]]>
     </sql>
   </sqlQuery>
@@ -4457,6 +4603,7 @@ AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
 AND    a.name like '%Ring%'
+AND    cpp.protocol_type = 'raw'
 ]]>
     </sql>
   </sqlQuery>
@@ -4486,6 +4633,7 @@ AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
 AND    a.name not like '%Schizont%' and a.name not like '%Ring%'  and lower(p.name) like '%stunnenberg%' and lower(a.name) like '%h3k9%'
+AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>
@@ -4516,6 +4664,7 @@ AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
 AND    a.name not like '%Schizont%' and a.name not like '%Ring%'  and lower(p.name) like '%stunnenberg%' and lower(a.name) like '%h3%' and lower (a.name) not like '%h3k9%'
+AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>
@@ -4546,6 +4695,7 @@ AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
 AND    a.name not like '%Schizont%' and a.name not like '%Ring%'  and lower(p.name) like '%stunnenberg%' and lower(a.name) like '%cdna%'
+AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>

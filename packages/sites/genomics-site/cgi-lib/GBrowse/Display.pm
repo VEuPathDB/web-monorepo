@@ -457,6 +457,7 @@ sub chipColor {
   return '#B45AB4' if($a =~ /H3K9Ac/i);
   return '#660000' if($a =~ /H3K9me3/i );
   return '#0F820F' if($a =~ /H3/i );
+  return '#455E45' if($a =~ /H4K20me3/i);
   return '#4747B8';
 }
 
