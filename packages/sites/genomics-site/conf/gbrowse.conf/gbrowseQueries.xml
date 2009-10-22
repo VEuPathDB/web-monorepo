@@ -1866,7 +1866,203 @@ AND    cpp.strain = 'CTG'
     </sql>
   </sqlQuery>
   
-  
+ 
+  <sqlQuery name="ChIP_peaks:Schizont"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT aef.na_feature_id   as feature_id,
+       'ChIP_peaks'         as type,
+       'Schizont'           as source,
+       aef.source_id        as name,
+       dtf.float_value      as score,
+       aef.na_sequence_id   as parent_id,
+       fl.start_min         as startm,
+       fl.end_max           as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       dots.arrayelementfeature aef,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  aef.na_feature_id = dtf.row_id
+AND    aef.na_feature_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like  '%stunnenberg%'
+AND    lower(a.name) like '%schizont%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    cpp.protocol_type = 'called_peaks'
+]]>
+    </sql>
+  </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP_peaks:Ring"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT aef.na_feature_id   as feature_id,
+       'ChIP_peaks'         as type,
+       'Ring'           as source,
+       aef.source_id        as name,
+       dtf.float_value      as score,
+       aef.na_sequence_id   as parent_id,
+       fl.start_min         as startm,
+       fl.end_max           as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       dots.arrayelementfeature aef,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  aef.na_feature_id = dtf.row_id
+AND    aef.na_feature_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like  '%stunnenberg%'
+AND    lower(a.name) like '%ring%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    cpp.protocol_type = 'called_peaks'
+]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP_peaks:Mixed"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT aef.na_feature_id   as feature_id,
+       'ChIP_peaks'         as type,
+       'Mixed'               as source,
+       aef.source_id        as name,
+       dtf.float_value      as score,
+       aef.na_sequence_id   as parent_id,
+       fl.start_min         as startm,
+       fl.end_max           as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       dots.arrayelementfeature aef,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  aef.na_feature_id = dtf.row_id
+AND    aef.na_feature_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like  '%stunnenberg%'
+AND    lower(a.name) not like '%ring%' and lower(a.name) not like '%schizont%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    cpp.protocol_type = 'called_peaks'
+]]>
+    </sql>
+  </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP_peaks:wt"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT aef.na_feature_id   as feature_id,
+       'ChIP_peaks'         as type,
+       'wt'               as source,
+       aef.source_id        as name,
+       dtf.float_value      as score,
+       aef.na_sequence_id   as parent_id,
+       fl.start_min         as startm,
+       fl.end_max           as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       dots.arrayelementfeature aef,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  aef.na_feature_id = dtf.row_id
+AND    aef.na_feature_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like  '%scherf%'
+AND    lower(a.name) like '%wt%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    cpp.protocol_type = 'called_peaks'
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="ChIP_peaks:sir2KO"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT aef.na_feature_id   as feature_id,
+       'ChIP_peaks'         as type,
+       'sir2KO'             as source,
+       aef.source_id        as name,
+       dtf.float_value      as score,
+       aef.na_sequence_id   as parent_id,
+       fl.start_min         as startm,
+       fl.end_max           as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       dots.arrayelementfeature aef,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  aef.na_feature_id = dtf.row_id
+AND    aef.na_feature_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like  '%scherf%'
+AND    lower(a.name) like '%sir2ko%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    cpp.protocol_type = 'called_peaks'
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="ChIP_peaks:Hp1"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT aef.na_feature_id   as feature_id,
+       'ChIP_peaks'         as type,
+       'Hp1'                as source,
+       aef.source_id        as name,
+       dtf.float_value      as score,
+       aef.na_sequence_id   as parent_id,
+       fl.start_min         as startm,
+       fl.end_max           as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,
+       rad.datatransformationresult dtf,
+       dots.arrayelementfeature aef,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  aef.na_feature_id = dtf.row_id
+AND    aef.na_feature_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    lower(p.name) like  '%voss%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    cpp.protocol_type = 'called_peaks'
+]]>
+    </sql>
+  </sqlQuery>
+
+
   <sqlQuery name="ChIP_PLK:Einstein"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
