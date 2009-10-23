@@ -3,6 +3,7 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@ attribute name="title"
               description="Value to appear in page's title"
@@ -62,6 +63,13 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 <c:set var="version" value="${applicationScope.wdkModel.version}" />
+
+<c:set var="releaseDate" value="${applicationScope.wdkModel.releaseDate}" />
+<c:set var="inputDateFormat" value="dd MMMM yyyy HH:mm"/>
+<fmt:setLocale value="en-US"/><%-- req. for date parsing when client browser (e.g. curl) doesn't send locale --%>
+<fmt:parseDate pattern="${inputDateFormat}" var="rlsDate" value="${releaseDate}"/> 
+<fmt:formatDate var="releaseDate_formatted" value="${rlsDate}" pattern="d MMM yy"/>
+  
 
 
 <%--- Google keys to access the maps for Isolate questions (check with Haiming) ---%>
@@ -340,14 +348,11 @@ ${headElement}
    </div>  <%-- id="header_rt" --%>
 
 <%------------- TOP HEADER:  SITE logo and DATE _______  is a EuPathDB Project  ----------------%>
-   <c:set var="date" value="Nov.2009" />
-
-
    <p><a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a></p>
 
    <p>&nbsp;</p>
    <p>Version ${version}<br />
-   ${date}</p>
+   ${releaseDate_formatted}</p>
 
 </div>  <%-- id="header2" --%>
 
