@@ -37,10 +37,6 @@
               required="false"
 %>
 
-<%@ attribute name="releaseDate"
-              required="false"
-%>
-
 <%@ attribute name="summary"
               required="false"
               description="short text description of the page"
