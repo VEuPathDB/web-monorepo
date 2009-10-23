@@ -2,6 +2,7 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%--  if we want to have footer spanning only under buckets --%>
 <%@ attribute name="refer" 
@@ -12,7 +13,12 @@
 
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 <c:set var="version" value="${applicationScope.wdkModel.version}" />
-<c:set var="date" value="Nov. 2009" />
+
+<c:set var="releaseDate" value="${applicationScope.wdkModel.releaseDate}" />
+<c:set var="inputDateFormat" value="dd MMMM yyyy HH:mm"/>
+<fmt:setLocale value="en-US"/><%-- req. for date parsing when client browser (e.g. curl) doesn't send locale --%>
+<fmt:parseDate pattern="${inputDateFormat}" var="rlsDate" value="${releaseDate}"/> 
+<fmt:formatDate var="releaseDate_formatted" value="${rlsDate}" pattern="MMMM d, yyyy"/>
 
 
 <%------------ divs defined in header.tag for all pages but home/home2  -----------%>
@@ -27,7 +33,7 @@
 
 <div id="footer" >
 	<div style="float:left;padding-left:9px;padding-top:9px;">
- 	 	<a href="http://${fn:toLowerCase(siteName)}.org">${siteName}</a> ${version}&nbsp;&nbsp;&nbsp;&nbsp;${date}
+ 	 	<a href="http://${fn:toLowerCase(siteName)}.org">${siteName}</a> ${version}&nbsp;&nbsp;&nbsp;&nbsp;${releaseDate_formatted}
 		<br>&copy;2009 The EuPathDB Project Team
 	</div>
 
