@@ -50,6 +50,12 @@
 
   <action-mappings>
     <action
+      path="/processBasket"
+      type="org.gusdb.wdk.controller.action.ProcessBasketAction"
+      scope="request"
+      validate="false">
+    </action>
+	<action
       path="/expandStep"
       type="org.gusdb.wdk.controller.action.ExpandStepAction"
       scope="request"
