@@ -399,6 +399,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
 
+ <%-- ------------------------------------------------------------------ --%>
+
   <c:set var="secName" value="Roos::ToxoLineages::Ver1"/>
   <c:set var="imgId" value="img${secName}"/>
   <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
@@ -443,6 +445,161 @@ experimental condition.
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Expression profiling of three archetypal T. gondii lineages"
                attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
+
+
+ <%-- ------------------------------------------------------------------ --%>
+
+  <c:set var="secName" value="Roos::TzBz"/>
+  <c:set var="imgId" value="img${secName}"/>
+  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
+  <c:set var="isOpen" value="true"/>
+
+  <c:set var="noData" value="false"/>
+  <c:if test="${attrs['graph_bradyzoite'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <c:set var="expressionContent">
+    <table>
+      <tr>
+        <td rowspan="2">
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+        </td>
+
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+
+        <td class="centered">
+          <div class="small">The Description Goes here
+          </div>
+        </td>
+
+      </tr>
+    </table>
+  </c:set>
+
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="Tachyzoites under Bradyzoite-inducing conditions (Pru and RH)"
+               attribution="Brady_Time_Series"/>
+
+
+ <%-- ------------------------------------------------------------------ --%>
+
+  <c:set var="secName" value="Dzierszinski::TzBz"/>
+  <c:set var="imgId" value="img${secName}"/>
+  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
+  <c:set var="isOpen" value="true"/>
+
+  <c:set var="noData" value="false"/>
+  <c:if test="${attrs['graph_bradyzoite'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <c:set var="expressionContent">
+    <table>
+      <tr>
+        <td rowspan="2">
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+        </td>
+
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+
+        <td class="centered">
+          <div class="small">The Description Goes here
+          </div>
+        </td>
+
+      </tr>
+    </table>
+  </c:set>
+
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="CO2-starvation Bradyzoite Inducing Conditions (Pru and VEG)"
+               attribution="Brady_Time_Series"/>
+
+
+ <%-- ------------------------------------------------------------------ --%>
+
+  <c:set var="secName" value="White::TzBz"/>
+  <c:set var="imgId" value="img${secName}"/>
+  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
+  <c:set var="isOpen" value="true"/>
+
+  <c:set var="noData" value="false"/>
+  <c:if test="${attrs['graph_bradyzoite'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <c:set var="expressionContent">
+    <table>
+      <tr>
+        <td rowspan="2">
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+        </td>
+
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+
+        <td class="centered">
+          <div class="small">The Description Goes here
+          </div>
+        </td>
+
+      </tr>
+    </table>
+  </c:set>
+
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="Normal-tachyzoite vs. Induced-bradyzoite - 3 Tgondii Strains"
+               attribution="Compound1_pH_avg_pct"/>
+
+
+ <%-- ------------------------------------------------------------------ --%>
+
+  <c:set var="secName" value="Boothroyd::TzBz"/>
+  <c:set var="imgId" value="img${secName}"/>
+  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
+  <c:set var="isOpen" value="true"/>
+
+  <c:set var="noData" value="false"/>
+  <c:if test="${attrs['graph_bradyzoite'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <c:set var="expressionContent">
+    <table>
+      <tr>
+        <td rowspan="2">
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+        </td>
+
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+
+        <td class="centered">
+          <div class="small">The Description Goes here
+          </div>
+        </td>
+
+      </tr>
+    </table>
+  </c:set>
+
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="Tacyzoite to Bradyzoite Differentiation Time Series"
+               attribution="Matt_Tz-Bz_Time_Series"/>
+
+
+ <%-- ------------------------------------------------------------------ --%>
 
 <site:wdkTable tblName="ToxoStrainsMicroarrayPercentile" isOpen="true"
                    attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
