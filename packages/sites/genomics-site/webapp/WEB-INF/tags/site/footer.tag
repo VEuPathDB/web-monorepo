@@ -19,6 +19,8 @@
 <fmt:setLocale value="en-US"/><%-- req. for date parsing when client browser (e.g. curl) doesn't send locale --%>
 <fmt:parseDate pattern="${inputDateFormat}" var="rlsDate" value="${releaseDate}"/> 
 <fmt:formatDate var="releaseDate_formatted" value="${rlsDate}" pattern="MMMM d, yyyy"/>
+<%-- http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html --%>
+<fmt:formatDate var="copyrightYear" value="${rlsDate}" pattern="yyyy"/>
 
 
 <%------------ divs defined in header.tag for all pages but home/home2  -----------%>
@@ -34,7 +36,7 @@
 <div id="footer" >
 	<div style="float:left;padding-left:9px;padding-top:9px;">
  	 	<a href="http://${fn:toLowerCase(siteName)}.org">${siteName}</a> ${version}&nbsp;&nbsp;&nbsp;&nbsp;${releaseDate_formatted}
-		<br>&copy;2009 The EuPathDB Project Team
+		<br>&copy;${copyrightYear} The EuPathDB Project Team
 	</div>
 
 	<div style="float:right;padding-right:9px;padding-top:9px;font-size:1.4em;line-height:2;">
