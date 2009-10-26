@@ -199,6 +199,11 @@
     <th id="${attrName}" align="left" valign="middle">
 	<table>
           <tr>
+				<c:if test="${j == 0}">
+					<td style="padding:0;"><a href="javascript:void(0)" onclick="updateBasket(this,'${answer.checksum}', '0', '0', '${answer.recordClass.fullName}')">
+						<img src="/assets/images/basket_gray.png" height="20px" width="20px"/>
+					</a></td>
+				</c:if>
             <td>
 		<table>
                   <tr>
@@ -219,7 +224,7 @@
           </c:choose>
                  </td>
                </tr>
-               <tr>
+               <tr>	
                  <td style="padding:0;">
 	  <c:choose>
             <c:when test="${!sumAttrib.sortable}">
@@ -239,7 +244,9 @@
                  </tr>
                </table>
              </td>
-        <td nowrap>${sumAttrib.displayName}</td>
+        <td nowrap>
+			${sumAttrib.displayName}
+		</td>
         <%-- <c:if test="${j != 0}">
           <div style="float:left;">
             <a href="javascript:void(0)">
@@ -300,6 +307,11 @@
     </c:set>
 
     <c:set value="${record.primaryKey}" var="primaryKey"/>
+	<c:set value="${record.attributes['in_basket']}" var="is_basket"/>
+	<c:set var="basket_img" value="basket_gray.png"/>
+	<c:if test="${is_basket == '1'}">
+		<c:set var="basket_img" value="basket_color.png"/>
+	</c:if>
     <c:set var="pkValues" value="${primaryKey.values}" />
     <c:set var="projectId" value="${pkValues['project_id']}" />
     <c:set var="id" value="${pkValues['source_id']}" />
@@ -330,7 +342,10 @@
 
 
               <%-- display a link to record page --%>
-              <a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
+
+              <a href="javascript:void(0)" onclick="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')"><img value="${is_basket}" src="/assets/images/${basket_img}" width="20px" height="20px"/></a>&nbsp;&nbsp;&nbsp;<a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
+
+
               <%--   <span id="gene_id_${fieldVal}"> <a href="javascript:ToggleGenePageView('gene_id_${fieldVal}', 'showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}')">${fieldVal}</a></span> --%>
 
 
