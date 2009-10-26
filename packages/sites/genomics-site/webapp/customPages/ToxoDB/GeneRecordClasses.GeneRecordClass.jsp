@@ -437,6 +437,8 @@ experimental condition.
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>
       </tr>
     </table>
+
+    <site:dataTable tblName="ToxoStrainsMicroarrayPercentile" />
   </c:set>
 
 
@@ -601,8 +603,7 @@ experimental condition.
 
  <%-- ------------------------------------------------------------------ --%>
 
-<site:wdkTable tblName="ToxoStrainsMicroarrayPercentile" isOpen="true"
-                   attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
+
 
 </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1' || organism_full eq 'Toxoplasma gondii VEG'}">
