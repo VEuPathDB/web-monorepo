@@ -200,8 +200,8 @@
 	<table>
           <tr>
 				<c:if test="${j == 0}">
-					<td style="padding:0;"><a href="javascript:void(0)" onclick="updateBasket(this,'${answer.checksum}', '0', '0', '${answer.recordClass.fullName}')">
-						<img src="/assets/images/basket_gray.png" height="20px" width="20px"/>
+					<td style="padding:0;"><a href="javascript:void(0)" onclick="updateBasket(this,'${wdkAnswer.checksum}', '0', '0', '${wdkAnswer.recordClass.fullName}')">
+						<img src="/assets/images/basket_gray.png" height="20px" width="20px" value="0"/>
 					</a></td>
 				</c:if>
             <td>
