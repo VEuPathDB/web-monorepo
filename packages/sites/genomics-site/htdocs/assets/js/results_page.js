@@ -92,4 +92,40 @@ function resetAttr(url) {
 		//window.location.href = url;
     }
 }
+
+//Shopping basket on clickFunction
+function updateBasket(ele, type, pk, pid,recordType) {
+	var i = $("img",ele);
+	var a = new Array();
+	var o = new Object();
+	o.source_id = pk;
+	o.project_id = pid;
+	a[0] = o;
+	var action = null;
+	action = (i.attr("value") == '0') ? "add" : "remove";
+	var da = null;
+	if(type == "single")
+		da = $.json.serialize(a);
+	else
+		da == type;
+	var d = "action="+action+"&type="+recordType+"&data="+da;
+		$.ajax({
+			url: "processBasket.do",
+			type: "post",
+			data: d,
+			dataType: "html",
+			success: function(data){
+				if(action == "add") {
+					i.attr("src","/assets/images/basket_color.png");
+					i.attr("value", "1");
+				}else{
+					i.attr("src","/assets/images/basket_gray.png");
+					i.attr("value", "0");
+				}
+			},
+			error: function(){
+				alert("Error adding Gene to basket!");
+			}
+		});
+}
 		
