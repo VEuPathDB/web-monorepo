@@ -1878,7 +1878,7 @@ AND    cpp.strain = 'CTG'
        aef.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        dots.arrayelementfeature aef,
@@ -1913,7 +1913,7 @@ AND    cpp.protocol_type = 'called_peaks'
        aef.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts       
 FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        dots.arrayelementfeature aef,
@@ -1947,7 +1947,7 @@ AND    cpp.protocol_type = 'called_peaks'
        aef.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+      'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts 
 FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        dots.arrayelementfeature aef,
@@ -1982,7 +1982,7 @@ AND    cpp.protocol_type = 'called_peaks'
        aef.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment ||  '$dlm' || 'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment ||  '$dlm' || 'Analysis=' || a.name ||  '$dlm' ||'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        dots.arrayelementfeature aef,
@@ -2014,7 +2014,7 @@ AND    cpp.protocol_type = 'called_peaks'
        aef.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Genotype=' || cpp.genotype || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+      'Treatment=' || cpp.treatment ||  '$dlm' || 'Analysis=' || a.name ||  '$dlm' ||'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts 
 FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        dots.arrayelementfeature aef,
@@ -2046,8 +2046,8 @@ AND    cpp.protocol_type = 'called_peaks'
        aef.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' ||'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        dots.arrayelementfeature aef,
        apidb.featurelocation fl,
@@ -2056,6 +2056,7 @@ WHERE  aef.na_feature_id = dtf.row_id
 AND    aef.na_feature_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
+AND    p.protocol_id  = a.protocol_id
 AND    lower(p.name) like  '%voss%'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
@@ -4728,6 +4729,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.start_min       as startm,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Analysis='     || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
@@ -4759,6 +4761,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
@@ -4790,6 +4793,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
@@ -4821,6 +4825,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
@@ -4852,6 +4857,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
@@ -4882,6 +4888,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.start_min       as startm, 
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Analysis=' || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p, 
        rad.datatransformationresult dtf,
@@ -4914,6 +4921,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.start_min       as startm,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Analysis=' || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
@@ -4948,6 +4956,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.start_min       as startm,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
@@ -4981,6 +4990,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.start_min       as startm,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
@@ -5013,6 +5023,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.start_min       as startm,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
@@ -5045,6 +5056,7 @@ SELECT  fl.na_feature_id   as feature_id,
         fl.start_min       as startm,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
