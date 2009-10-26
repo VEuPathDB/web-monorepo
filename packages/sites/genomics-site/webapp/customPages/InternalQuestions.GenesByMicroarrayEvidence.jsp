@@ -43,7 +43,7 @@
 </table>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
-<site:queryList questions="GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByExpressionTimingOne,GeneQuestions.GenesByExpressionTimingTwo,GeneQuestions.GenesByExpressionTimingThree,GeneQuestions.GenesByDifferentialMeanExpression"/>
+<site:queryList questions="GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByExpressionTimingOne,GeneQuestions.GenesByExpressionTimingTwo,GeneQuestions.GenesByExpressionTimingThree,GeneQuestions.ToxoGenesByDifferentialMeanExpression"/>
 </c:when>
 </c:choose>
 
