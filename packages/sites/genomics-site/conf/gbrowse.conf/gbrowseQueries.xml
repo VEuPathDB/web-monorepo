@@ -1891,7 +1891,7 @@ AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%stunnenberg%'
 AND    lower(a.name) like '%schizont%'
-AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) like 'h3k9ac' or lower(a.name) like '%cdna%')
+AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac' or lower(a.name) like '%cdna%')
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -1926,7 +1926,7 @@ AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%stunnenberg%'
 AND    lower(a.name) like '%ring%'
-AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) like 'h3k9ac' or lower(a.name) like '%cdna%')
+AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac' or lower(a.name) like '%cdna%')
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -1960,7 +1960,7 @@ AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%stunnenberg%'
 AND    lower(a.name) not like '%ring%' and lower(a.name) not like '%schizont%'
-AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) like 'h3k9ac' or lower(a.name) like '%cdna%')
+AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac' or lower(a.name) like '%cdna%')
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -1994,7 +1994,7 @@ AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%scherf%'
-AND    lower(cpp.antibody) like '%h3k9me3%'
+AND    lower(cpp.antibody) = 'h3k9me3'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -2026,7 +2026,7 @@ AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%scherf%'
-AND    lower(cpp.antibody) like '%h3k9ac%'
+AND    lower(cpp.antibody) = 'h3k9ac'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -4926,6 +4926,7 @@ AND    dtf.row_id = fl.na_feature_id
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
+AND    lower(p.name) like '%stunnenberg%'
 AND    a.name like '%Schizont%' and (lower(cpp.antibody) = 'h3' or lower(a.name) like '%cdna%')
 AND    cpp.protocol_type = 'raw'
 ]]>
@@ -4992,7 +4993,7 @@ AND    dtf.row_id = fl.na_feature_id
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    lower(p.name) like '%stunnenberg'
+AND    lower(p.name) like '%stunnenberg%'
 AND    a.name like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(a.name) like '%cdna%')
 AND    cpp.protocol_type = 'raw'
 ]]>
@@ -5025,7 +5026,7 @@ AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
 AND    lower(p.name) like '%stunnenberg%'
-AND    a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) like '%h3k4me3%' or lower(cpp.antibody) like '%h3k9ac%')
+AND    a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac')
 AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
