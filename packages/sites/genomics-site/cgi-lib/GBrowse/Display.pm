@@ -441,6 +441,7 @@ sub chipColor {
   my ($a) = $f->get_tag_values('Antibody');
   my ($t) = $f->get_tag_values('Treatment');
   my ($r) = $f->get_tag_values('Rep');
+  my ($g) = $f->get_tag_values('Genotype');
 
   return '#000080' if($a eq 'CenH3_H3K9me2');
   return '#B0E0E6' if($a eq 'CenH3');
@@ -452,13 +453,23 @@ sub chipColor {
 
   return '#4B0082' if($t =~ /DMSO/ );
   return '#F08080' if($t =~ /FR235222/ );
+ 
+  return '#175487' if ($a =~ /H3K4me3/i && $g =~ /wild_type/i);
+  return '#175487' if ($a =~ /H3K9ac/i && $g =~ /wild_type/i);
+  return '#175487' if ($a =~ /H3K9me3/i && $g =~ /wild_type/i);
+  return '#175487' if ($a =~ /H4K20me3/i && $g =~ /wild_type/i);
+  return '#54B5B5' if ($a =~ /H3K9ac/i && $g =~ /sir2KO/i);
+  return '#54B5B5' if ($a =~ /H3K4me3/i && $g =~ /sir2KO/i);
+  return '#54B5B5' if ($a =~ /H3K9me3/i && $g =~ /sir2KO/i);
+  return '#54B5B5' if ($a =~ /H4K20me3/i && $g =~ /sir2KO/i);
 
-  return '#FA9600' if($a =~ /H3K4me3/i);
-  return '#B45AB4' if($a =~ /H3K9Ac/i);
-  return '#660000' if($a =~ /H3K9me3/i );
-  return '#0F820F' if($a =~ /H3/i );
-  return '#455E45' if($a =~ /H4K20me3/i);
-  return '#4747B8';
+  return '#00C800' if($a =~ /H3K4me3/i);
+  return '#FA9600' if($a =~ /H3K9Ac/i);
+  return '#57178F' if($a =~ /H3K9me3/i );
+  return '#E6E600' if($a =~ /H3/i );
+  return '#F00000' if($a =~ /H4K20me3/i);
+
+  return '#B84C00';
 }
 
 
@@ -520,9 +531,10 @@ sub snpHeight {
 }
 
 sub peakHeight {
-  my $f = shift;
+  my ($f,$addBase) = @_;
   my $score = $f->score;
-  return $score; 
+  return $score unless $addBase;
+  return (2 + $score);
 }
 
 sub heightBySOTerm {

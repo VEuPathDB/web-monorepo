@@ -1891,6 +1891,7 @@ AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%stunnenberg%'
 AND    lower(a.name) like '%schizont%'
+AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) like 'h3k9ac' or lower(a.name) like '%cdna%')
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -1925,6 +1926,7 @@ AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%stunnenberg%'
 AND    lower(a.name) like '%ring%'
+AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) like 'h3k9ac' or lower(a.name) like '%cdna%')
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -1958,6 +1960,7 @@ AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%stunnenberg%'
 AND    lower(a.name) not like '%ring%' and lower(a.name) not like '%schizont%'
+AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) like 'h3k9ac' or lower(a.name) like '%cdna%')
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -1968,18 +1971,18 @@ AND    cpp.protocol_type = 'called_peaks'
 
 
 
-  <sqlQuery name="ChIP_peaks:wt"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP_peaks:H3K9me3_genotype_peaks"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT aef.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
-       'wt'               as source,
+       'H3K9me3_genotype_peaks'               as source,
        aef.source_id        as name,
        dtf.float_value      as score,
        aef.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment ||  '$dlm' || 'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        dots.arrayelementfeature aef,
@@ -1991,7 +1994,7 @@ AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%scherf%'
-AND    lower(a.name) like '%wt%'
+AND    lower(cpp.antibody) like '%h3k9me3%'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -2000,18 +2003,18 @@ AND    cpp.protocol_type = 'called_peaks'
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="ChIP_peaks:sir2KO"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP_peaks:H3K9ac_genotype_peaks"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT aef.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
-       'sir2KO'             as source,
+       'H3K9ac_genotype_peaks'             as source,
        aef.source_id        as name,
        dtf.float_value      as score,
        aef.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Genotype=' || cpp.genotype || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        dots.arrayelementfeature aef,
@@ -2023,7 +2026,7 @@ AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%scherf%'
-AND    lower(a.name) like '%sir2ko%'
+AND    lower(cpp.antibody) like '%h3k9ac%'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
@@ -2208,12 +2211,13 @@ WHERE
 
 
 
-  <sqlQuery name="ChIP:wt" includeProjects="PlasmoDB">
+
+  <sqlQuery name="ChIP:H3K4me3_genotype" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
        'ChIP'             as type,
-       'wt'         as source,
+       'H3K4me3_genotype'         as source,
        e.source_id        as name,
        e.source_id        as parent_id,
        $base_start        as startm,
@@ -2225,12 +2229,14 @@ WHERE
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="ChIP:sir2KO" includeProjects="PlasmoDB">
+
+
+  <sqlQuery name="ChIP:H3K9ac_genotype" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
        'ChIP'             as type,
-       'sir2KO'           as source,
+       'H3K9ac_genotype'         as source,
        e.source_id        as name,
        e.source_id        as parent_id,
        $base_start        as startm,
@@ -2241,13 +2247,50 @@ WHERE
 ]]>
     </sql>
   </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP:H3K9me3_genotype" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'H3K9me3_genotype'         as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="ChIP:H4K20me3_genotype" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'H4K20me3_genotype'         as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
  
-  <sqlQuery name="ChIP:Schizont" includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:Schizont_H3K4me3_H3K9ac" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
        'ChIP'             as type, 
-       'Schizont'         as source, 
+       'Schizont_H3K4me3_H3K9ac'         as source, 
        e.source_id        as name, 
        e.source_id        as parent_id, 
        $base_start        as startm, 
@@ -2260,48 +2303,12 @@ WHERE
   </sqlQuery>
 
 
-  <sqlQuery name="ChIP:Ring" includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:Schizont_H3_cDNA" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
        'ChIP'             as type,
-       'Ring'             as source,
-       e.source_id        as name,
-       e.source_id        as parent_id,
-       $base_start        as startm,
-       $rend              as end
-FROM   DoTS.Nasequence e
-WHERE
-       e.na_sequence_id = $srcfeature_id
-]]>
-    </sql>
-  </sqlQuery>
-
-
-  <sqlQuery name="ChIP:Mixed_H3K9" includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
- SELECT e.na_sequence_id  as feature_id,
-       'ChIP'             as type,
-       'Mixed_H3K9'        as source,
-       e.source_id        as name,
-       e.source_id        as parent_id,
-       $base_start        as startm,
-       $rend              as end
-FROM   DoTS.Nasequence e
-WHERE
-       e.na_sequence_id = $srcfeature_id
-]]>
-    </sql>
-  </sqlQuery>
-
-
-  <sqlQuery name="ChIP:Mixed_H3_H3K4" includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
- SELECT e.na_sequence_id  as feature_id,
-       'ChIP'             as type,
-       'Mixed_H3_H3K4'    as source,
+       'Schizont_H3_cDNA'         as source,
        e.source_id        as name,
        e.source_id        as parent_id,
        $base_start        as startm,
@@ -2315,12 +2322,12 @@ WHERE
 
 
 
-  <sqlQuery name="ChIP:Mixed_cDNA" includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:Ring_H3K4me3_H3K9ac" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
        'ChIP'             as type,
-       'Mixed_cDNA'    as source,
+       'Ring_H3K4me3_H3K9ac'             as source,
        e.source_id        as name,
        e.source_id        as parent_id,
        $base_start        as startm,
@@ -2331,6 +2338,62 @@ WHERE
 ]]>
     </sql>
   </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP:Ring_H3_cDNA" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'Ring_H3_cDNA'             as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP:Mixed_H3K4me3_H3K9ac" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'Mixed_H3K4me3_H3K9ac'        as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP:Mixed_H3K9me3_H3_cDNA" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'Mixed_H3K9me3_H3_cDNA'    as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
 
 
 
@@ -4684,20 +4747,19 @@ AND    cpp.protocol_type = 'raw'
   </sqlQuery>
   
 
-
-
-  <sqlQuery name="ChIP:sir2KO:bulksubfeatures"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:H3K4me3_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT  fl.na_feature_id   as feature_id,
        'ChIP'              as type,
-       'sir2KO'                as source,
+       'H3K4me3_genotype'                as source,
         dtf.float_value    as score,
         fl.na_sequence_id  as parent_id,
         fl.start_min       as startm,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
-       'Antibody='     || cpp.antibody  as atts
+       'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
@@ -4709,26 +4771,26 @@ AND    dtf.row_id = fl.na_feature_id
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    lower(p.name) like '%scherf%' and lower(a.name) like '%sir2ko%'
+AND    lower(p.name) like '%scherf%' and lower(cpp.antibody) = 'h3k4me3'
 AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>
 
 
-
-  <sqlQuery name="ChIP:wt:bulksubfeatures"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:H3K9ac_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT  fl.na_feature_id   as feature_id,
        'ChIP'              as type,
-       'wt'                as source,
+       'H3K9ac_genotype'  as source,
         dtf.float_value    as score,
         fl.na_sequence_id  as parent_id,
         fl.start_min       as startm,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
-       'Antibody='     || cpp.antibody  as atts
+       'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
@@ -4740,77 +4802,179 @@ AND    dtf.row_id = fl.na_feature_id
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    lower(p.name) like '%scherf%' and lower(a.name) like '%wt%'
+AND    lower(p.name) like '%scherf%' and lower(cpp.antibody) = 'h3k9ac'
 AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>
 
- 
-  <sqlQuery name="ChIP:Schizont:bulksubfeatures"  includeProjects="PlasmoDB">
+
+  <sqlQuery name="ChIP:H3K9me3_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT  fl.na_feature_id   as feature_id,
+       'ChIP'              as type,
+       'H3K9me3_genotype'  as source,
+        dtf.float_value    as score,
+        fl.na_sequence_id  as parent_id,
+        fl.start_min       as startm,
+        fl.end_max         as end,
+       'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Genotype='     || cpp.genotype as atts
+FROM   rad.analysis a,rad.protocol p,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
+AND    a.analysis_id = dtf.analysis_id
+AND    dtf.row_id = fl.na_feature_id
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(p.name) like '%scherf%' and lower(cpp.antibody) = 'h3k9me3'
+AND    cpp.protocol_type = 'raw'
+   ]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP:H4K20me3_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT  fl.na_feature_id   as feature_id,
+       'ChIP'              as type,
+       'H4K20me3_genotype'  as source,
+        dtf.float_value    as score,
+        fl.na_sequence_id  as parent_id,
+        fl.start_min       as startm,
+        fl.end_max         as end,
+       'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Genotype='     || cpp.genotype as atts
+FROM   rad.analysis a,rad.protocol p,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
+AND    a.analysis_id = dtf.analysis_id
+AND    dtf.row_id = fl.na_feature_id
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(p.name) like '%scherf%' and lower(cpp.antibody) = 'h4k20me3'
+AND    cpp.protocol_type = 'raw'
+   ]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP:Schizont_H3K4me3_H3K9ac:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT  fl.na_feature_id   as feature_id,
        'ChIP'              as type, 
-       'Schizont'          as source, 
+       'Schizont_H3K4me3_H3K9ac'          as source, 
         dtf.float_value    as score, 
         fl.na_sequence_id  as parent_id, 
         fl.start_min       as startm, 
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
-FROM   rad.analysis a, 
+FROM   rad.analysis a,rad.protocol p, 
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = dtf.analysis_id
 AND    dtf.row_id = fl.na_feature_id
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    a.name like '%Schizont%'
+AND    lower(p.name) like '%stunnenberg%'
+AND    a.name like '%Schizont%' and (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac')
 AND    cpp.protocol_type = 'raw'
 ]]>
     </sql>
   </sqlQuery>
 
 
-  <sqlQuery name="ChIP:Ring:bulksubfeatures"  includeProjects="PlasmoDB">
+
+  <sqlQuery name="ChIP:Schizont_H3_cDNA:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT  fl.na_feature_id   as feature_id,
        'ChIP'              as type,
-       'Ring'              as source,
+       'Schizont_H3_cDNA'          as source,
         dtf.float_value    as score,
         fl.na_sequence_id  as parent_id,
         fl.start_min       as startm,
         fl.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
-FROM   rad.analysis a,
+FROM   rad.analysis a,rad.protocol p,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = dtf.analysis_id
 AND    dtf.row_id = fl.na_feature_id
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    a.name like '%Ring%'
+AND    a.name like '%Schizont%' and (lower(cpp.antibody) = 'h3' or lower(a.name) like '%cdna%')
 AND    cpp.protocol_type = 'raw'
 ]]>
     </sql>
   </sqlQuery>
 
 
-  <sqlQuery name="ChIP:Mixed_H3K9:bulksubfeatures"  includeProjects="PlasmoDB">
+
+
+
+  <sqlQuery name="ChIP:Ring_H3K4me3_H3K9ac:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT  fl.na_feature_id   as feature_id,
        'ChIP'              as type,
-       'Mixed_H3K9'        as source,
+       'Ring_H3K4me3_H3K9ac'              as source,
+        dtf.float_value    as score,
+        fl.na_sequence_id  as parent_id,
+        fl.start_min       as startm,
+        fl.end_max         as end,
+       'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Antibody='     || cpp.antibody  as atts
+FROM   rad.analysis a,rad.protocol p,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
+AND    a.protocol_id = p.protocol_id
+AND    a.analysis_id = dtf.analysis_id
+AND    dtf.row_id = fl.na_feature_id
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(p.name) like '%stunnenberg%'
+AND    a.name like '%Ring%' and (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac')
+AND    cpp.protocol_type = 'raw'
+]]>
+    </sql>
+  </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP:Ring_H3_cDNA:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT  fl.na_feature_id   as feature_id,
+       'ChIP'              as type,
+       'Ring_H3_cDNA'              as source,
         dtf.float_value    as score,
         fl.na_sequence_id  as parent_id,
         fl.start_min       as startm,
@@ -4828,20 +4992,21 @@ AND    dtf.row_id = fl.na_feature_id
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    a.name not like '%Schizont%' and a.name not like '%Ring%'  and lower(p.name) like '%stunnenberg%' and lower(a.name) like '%h3k9%'
+AND    lower(p.name) like '%stunnenberg'
+AND    a.name like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(a.name) like '%cdna%')
 AND    cpp.protocol_type = 'raw'
-   ]]>
+]]>
     </sql>
   </sqlQuery>
 
 
 
-  <sqlQuery name="ChIP:Mixed_H3_H3K4:bulksubfeatures"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:Mixed_H3K4me3_H3K9ac:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT  fl.na_feature_id   as feature_id,
        'ChIP'              as type,
-       'Mixed_H3_H3K4'        as source,
+       'Mixed_H3K4me3_H3K9ac'        as source,
         dtf.float_value    as score,
         fl.na_sequence_id  as parent_id,
         fl.start_min       as startm,
@@ -4859,7 +5024,8 @@ AND    dtf.row_id = fl.na_feature_id
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    a.name not like '%Schizont%' and a.name not like '%Ring%'  and lower(p.name) like '%stunnenberg%' and lower(a.name) like '%h3%' and lower (a.name) not like '%h3k9%'
+AND    lower(p.name) like '%stunnenberg%'
+AND    a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) like '%h3k4me3%' or lower(cpp.antibody) like '%h3k9ac%')
 AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
@@ -4867,12 +5033,12 @@ AND    cpp.protocol_type = 'raw'
 
 
 
-  <sqlQuery name="ChIP:Mixed_cDNA:bulksubfeatures"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:Mixed_H3K9me3_H3_cDNA:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT  fl.na_feature_id   as feature_id,
        'ChIP'              as type,
-       'Mixed_cDNA'        as source,
+       'Mixed_H3K9me3_H3_cDNA'        as source,
         dtf.float_value    as score,
         fl.na_sequence_id  as parent_id,
         fl.start_min       as startm,
@@ -4890,11 +5056,13 @@ AND    dtf.row_id = fl.na_feature_id
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    a.name not like '%Schizont%' and a.name not like '%Ring%'  and lower(p.name) like '%stunnenberg%' and lower(a.name) like '%cdna%'
+AND    lower(p.name) like '%stunnenberg%'
+AND    a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(cpp.antibody) = 'h3k9me3' or lower(a.name) like '%cdna%')
 AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>
+
 
 
  
