@@ -102,12 +102,14 @@ function updateBasket(ele, type, pk, pid,recordType) {
 	o.project_id = pid;
 	a[0] = o;
 	var action = null;
-	action = (i.attr("value") == '0') ? "add" : "remove";
 	var da = null;
-	if(type == "single")
+	if(type == "single"){
 		da = $.json.serialize(a);
-	else
-		da == type;
+		action = (i.attr("value") == '0') ? "add" : "remove";
+	}else{
+		da = type;
+		action = (i.attr("value") == '0') ? "add-all" : "remove-all";
+	}
 	var d = "action="+action+"&type="+recordType+"&data="+da;
 		$.ajax({
 			url: "processBasket.do",
@@ -115,12 +117,22 @@ function updateBasket(ele, type, pk, pid,recordType) {
 			data: d,
 			dataType: "html",
 			success: function(data){
-				if(action == "add") {
-					i.attr("src","/assets/images/basket_color.png");
-					i.attr("value", "1");
+				if(type == "single"){
+					if(action == "add") {
+						i.attr("src","/assets/images/basket_color.png");
+						i.attr("value", "1");
+					}else{
+						i.attr("src","/assets/images/basket_gray.png");
+						i.attr("value", "0");
+					}
 				}else{
-					i.attr("src","/assets/images/basket_gray.png");
-					i.attr("value", "0");
+					if(action == "add-all") {
+						$("img.basket").attr("src","/assets/images/basket_color.png");
+						$("img.basket").attr("value", "1");
+					}else{
+						$("img.basket").attr("src","/assets/images/basket_gray.png");
+						$("img.basket").attr("value", "0");
+					}
 				}
 			},
 			error: function(){
