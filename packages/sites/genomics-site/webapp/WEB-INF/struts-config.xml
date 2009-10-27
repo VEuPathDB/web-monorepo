@@ -187,6 +187,7 @@
       input="/showQuestion.do">
       <forward name="show_error" path="/summaryError.jsp"/>
       <forward name="show_application" path="/showApplication.do"/>
+      <forward name="show_strategy" path="/showStrategy.do"/>
       <forward name="results_only" path="/resultsPage.jsp"/>
       <forward name="skip_to_record" path="/showRecord.do"/>
       <forward name="skip_to_download" path="/downloadStep.do"/>
