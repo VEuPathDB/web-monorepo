@@ -487,15 +487,13 @@ experimental condition.
             <b>x-axis (both graphs)</b><br>
             Time in hours<br>
             <br><br>
-            <b>y-axis (graph #1) </b><br>
-            Log (base 2) of RMA value (generated with RMAExpress v1.0.3)
-            <br><br>            
-            <b>y-axis (graph #2) </b><br>
-            Expression percentile value
+            <b>y-axis</b><br>
+            RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.  Choose your view below:
+            <br><br>
           </div>
 <SELECT NAME="RoosBradyList"
 OnChange="javascript:updateImage('${imgId}', RoosBradySort.RoosBradyList.options[selectedIndex].value)">
-<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">rma</OPTION>
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
 <OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
 <OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
 </select>
@@ -551,15 +549,13 @@ OnChange="javascript:updateImage('${imgId}', RoosBradySort.RoosBradyList.options
             <b>x-axis (both graphs)</b><br>
             Time in days<br>
             <br><br>
-            <b>y-axis (graph #1) </b><br>
-            Log (base 2) of RMA value
-            <br><br>            
-            <b>y-axis (graph #2) </b><br>
-            Expression percentile value
+            <b>y-axis</b><br>
+            RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.  Choose your view below:
+            <br><br>
           </div>
 <SELECT NAME="BoothroydBradyList"
 OnChange="javascript:updateImage('${imgId}', BoothroydBradySort.BoothroydBradyList.options[selectedIndex].value)">
-<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">rma</OPTION>
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
 <OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
 <OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
 </SELECT>
@@ -610,15 +606,13 @@ OnChange="javascript:updateImage('${imgId}', BoothroydBradySort.BoothroydBradyLi
             <b>x-axis (both graphs)</b><br>
             Time in days<br>
             <br><br>
-            <b>y-axis (graph #1) </b><br>
-            Log (base 2) of RMA value (generated with RMAExpress v1.0.3)
-            <br><br>            
-            <b>y-axis (graph #2) </b><br>
-            Expression percentile value
+            <b>y-axis</b><br>
+            RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.  Choose your view below:
+            <br><br>
           </div>
 <SELECT NAME="DzierszinskiBradyList"
 OnChange="javascript:updateImage('${imgId}', DzierszinskiBradySort.DzierszinskiBradyList.options[selectedIndex].value)">
-<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">rma</OPTION>
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
 <OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
 <OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
 </SELECT>
@@ -666,15 +660,13 @@ OnChange="javascript:updateImage('${imgId}', DzierszinskiBradySort.DzierszinskiB
            with compound 1 or alkaline condition.  Strains used in this study:  Type I-GT1,
            Type II-Me49B7 and Type III-CTG.
             <br><br><br>
-            <b>y-axis (graph #1) </b><br>
-            Log (base 2) of RMA value
-            <br><br><br> 
-            <b>y-axis (graph #2) </b><br>
-            Expression percentile value
+            <b>y-axis</b><br>
+            RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.  Choose your view below:
+            <br><br>
           </div>
 <SELECT NAME="WhiteBradyList"
 OnChange="javascript:updateImage('${imgId}', WhiteBradySort.WhiteBradyList.options[selectedIndex].value)">
-<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">rma</OPTION>
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
 <OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
 <OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
 </SELECT>
