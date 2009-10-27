@@ -445,7 +445,7 @@ experimental condition.
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Expression profiling of three archetypal T. gondii lineages"
+               displayName="Tachyzoite differential expression profiling of three archetypal T. gondii lineages"
                attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
 
 
@@ -471,7 +471,23 @@ experimental condition.
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
 
         <td class="centered">
-          <div class="small">The Description Goes here
+          <div class="small">Two strains of <i>T. gondii</i> parasites were used in this 
+           analysis: type II Prugniaud lacking HXGPRT, and type I RH lacking HXGPRT and 
+           UPRT. A total of three experimental conditions were used to promote in vitro
+           bradyzoite differentiation: Alkaline conditions (D10 media adjusted to
+           pH 8.2), CO<sub>2</sub> starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown
+           without CO<sub>2</sub>), and sodium nitroprusside (SNP) exposure (D10 with 100uM
+           SNP). All conditions were applied 6hr post-inoculation and each media
+           was exchanged every twelve hours post-inoculation.
+            <br><br><br>
+            <b>x-axis (both graphs)</b><br>
+            Time in hours<br>
+            <br><br>
+            <b>y-axis (graph #1) </b><br>
+            Log (base 2) of RMA value (generated with RMAExpress v1.0.3)
+            <br><br>            
+            <b>y-axis (graph #2) </b><br>
+            Expression percentile value
           </div>
         </td>
 
@@ -483,9 +499,61 @@ experimental condition.
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Tachyzoites under Bradyzoite-inducing conditions (Pru and RH)"
+               displayName="Bradyzoite Differentiation (Multiple 6-hr Time Points)"
                attribution="Brady_Time_Series"/>
 
+
+
+ <%-- ------------------------------------------------------------------ --%>
+
+  <c:set var="secName" value="Boothroyd::TzBz"/>
+  <c:set var="imgId" value="img${secName}"/>
+  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
+  <c:set var="isOpen" value="true"/>
+
+  <c:set var="noData" value="false"/>
+  <c:if test="${attrs['graph_bradyzoite'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <c:set var="expressionContent">
+    <table>
+      <tr>
+        <td rowspan="2">
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+        </td>
+
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+
+        <td class="centered">
+          <div class="small">
+            <i>T. gondii</i> Type II Prugniaud parasites lacking HXGPRT were inoculated
+            at and MOI of 2 and differentiated in RPMI 1640 lacking sodium bicarbonate,
+            low FCS, and high pH (8.1).  RNA was collected from either tachyzoite (2 days 
+            post inoculation before monolayer lysis) or bradyzoite cultures (2-days, 
+            3-days and 4-days of induction).
+            <br><br><br>
+            <b>x-axis (both graphs)</b><br>
+            Time in days<br>
+            <br><br>
+            <b>y-axis (graph #1) </b><br>
+            Log (base 2) of RMA value
+            <br><br>            
+            <b>y-axis (graph #2) </b><br>
+            Expression percentile value
+          </div>
+        </td>
+
+      </tr>
+    </table>
+  </c:set>
+
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="Bradyzoite Differentiation (3-day time series)"
+               attribution="Matt_Tz-Bz_Time_Series"/>
 
  <%-- ------------------------------------------------------------------ --%>
 
@@ -509,7 +577,19 @@ experimental condition.
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
 
         <td class="centered">
-          <div class="small">The Description Goes here
+          <div class="small">Two strains of <i>T. gondii</i> parasites were used in this 
+           analysis: type II Prugniaud lacking HXGPRT, and type III VEG.  CO<sub>2</sub> 
+           starvation  (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO<sub>2</sub>) 
+           was used to induce in vitro bradyzoite differentiation.
+            <br><br><br>
+            <b>x-axis (both graphs)</b><br>
+            Time in days<br>
+            <br><br>
+            <b>y-axis (graph #1) </b><br>
+            Log (base 2) of RMA value (generated with RMAExpress v1.0.3)
+            <br><br>            
+            <b>y-axis (graph #2) </b><br>
+            Expression percentile value
           </div>
         </td>
 
@@ -521,7 +601,7 @@ experimental condition.
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="CO2-starvation Bradyzoite Inducing Conditions (Pru and VEG)"
+               displayName="Bradyzoite Differentiation (Extended time series)"
                attribution="Brady_Time_Series"/>
 
 
@@ -547,7 +627,15 @@ experimental condition.
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
 
         <td class="centered">
-          <div class="small">The Description Goes here
+          <div class="small">Bradyzoite genes were induced following a 48 hour treatment 
+           with compound 1 or alkaline condition.  Strains used in this study:  Type I-GT1,
+           Type II-Me49B7 and Type III-CTG.
+            <br><br><br>
+            <b>y-axis (graph #1) </b><br>
+            Log (base 2) of RMA value
+            <br><br><br> 
+            <b>y-axis (graph #2) </b><br>
+            Expression percentile value
           </div>
         </td>
 
@@ -559,47 +647,8 @@ experimental condition.
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Normal-tachyzoite vs. Induced-bradyzoite - 3 Tgondii Strains"
+               displayName="Bradyzoite Differentiation (Single Time-Point)"
                attribution="Compound1_pH_avg_pct"/>
-
-
- <%-- ------------------------------------------------------------------ --%>
-
-  <c:set var="secName" value="Boothroyd::TzBz"/>
-  <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
-  <c:set var="isOpen" value="true"/>
-
-  <c:set var="noData" value="false"/>
-  <c:if test="${attrs['graph_bradyzoite'].value == 0}">
-    <c:set var="noData" value="true"/>
-  </c:if>
-
-  <c:set var="expressionContent">
-    <table>
-      <tr>
-        <td rowspan="2">
-              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
-        </td>
-
-        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
-
-        <td class="centered">
-          <div class="small">The Description Goes here
-          </div>
-        </td>
-
-      </tr>
-    </table>
-  </c:set>
-
-
-  <site:toggle name="${secName}" isOpen="${isOpen}"
-               content="${expressionContent}" noData="${noData}"
-               imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Tacyzoite to Bradyzoite Differentiation Time Series"
-               attribution="Matt_Tz-Bz_Time_Series"/>
-
 
  <%-- ------------------------------------------------------------------ --%>
 
