@@ -453,15 +453,13 @@ sub chipColor {
 
   return '#4B0082' if($t =~ /DMSO/ );
   return '#F08080' if($t =~ /FR235222/ );
+
+  #return '#175487' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
+  #return '#54B5B5' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
+
+  return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
+  return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
  
-  return '#175487' if ($a =~ /H3K4me3/i && $g =~ /wild_type/i);
-  return '#175487' if ($a =~ /H3K9ac/i && $g =~ /wild_type/i);
-  return '#175487' if ($a =~ /H3K9me3/i && $g =~ /wild_type/i);
-  return '#175487' if ($a =~ /H4K20me3/i && $g =~ /wild_type/i);
-  return '#54B5B5' if ($a =~ /H3K9ac/i && $g =~ /sir2KO/i);
-  return '#54B5B5' if ($a =~ /H3K4me3/i && $g =~ /sir2KO/i);
-  return '#54B5B5' if ($a =~ /H3K9me3/i && $g =~ /sir2KO/i);
-  return '#54B5B5' if ($a =~ /H4K20me3/i && $g =~ /sir2KO/i);
 
   return '#00C800' if($a =~ /H3K4me3/i);
   return '#FA9600' if($a =~ /H3K9Ac/i);
