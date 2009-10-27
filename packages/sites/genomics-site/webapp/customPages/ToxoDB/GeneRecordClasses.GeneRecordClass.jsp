@@ -453,8 +453,11 @@ experimental condition.
 
   <c:set var="secName" value="Roos::TzBz"/>
   <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
+
   <c:set var="isOpen" value="true"/>
+
+  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=toxo&fmt=png&id=${id}&vp=_LEGEND,"/>
+  <c:set var="imgSrc" value="${preImgSrc}rma"/>
 
   <c:set var="noData" value="false"/>
   <c:if test="${attrs['graph_bradyzoite'].value == 0}">
@@ -463,6 +466,7 @@ experimental condition.
 
   <c:set var="expressionContent">
     <table>
+    <FORM NAME="RoosBradySort">
       <tr>
         <td rowspan="2">
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -489,9 +493,17 @@ experimental condition.
             <b>y-axis (graph #2) </b><br>
             Expression percentile value
           </div>
+<SELECT NAME="RoosBradyList"
+OnChange="javascript:updateImage('${imgId}', RoosBradySort.RoosBradyList.options[selectedIndex].value)">
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">rma</OPTION>
+<OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
+<OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
+</select>
+
         </td>
 
       </tr>
+</FORM>
     </table>
   </c:set>
 
@@ -508,8 +520,10 @@ experimental condition.
 
   <c:set var="secName" value="Boothroyd::TzBz"/>
   <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
   <c:set var="isOpen" value="true"/>
+
+  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=toxo&fmt=png&id=${id}&vp="/>
+  <c:set var="imgSrc" value="${preImgSrc}rma"/>
 
   <c:set var="noData" value="false"/>
   <c:if test="${attrs['graph_bradyzoite'].value == 0}">
@@ -518,6 +532,7 @@ experimental condition.
 
   <c:set var="expressionContent">
     <table>
+    <FORM NAME="BoothroydBradySort">
       <tr>
         <td rowspan="2">
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -542,9 +557,16 @@ experimental condition.
             <b>y-axis (graph #2) </b><br>
             Expression percentile value
           </div>
+<SELECT NAME="BoothroydBradyList"
+OnChange="javascript:updateImage('${imgId}', BoothroydBradySort.BoothroydBradyList.options[selectedIndex].value)">
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">rma</OPTION>
+<OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
+<OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
+</SELECT>
         </td>
 
       </tr>
+    </FORM>
     </table>
   </c:set>
 
@@ -559,8 +581,10 @@ experimental condition.
 
   <c:set var="secName" value="Dzierszinski::TzBz"/>
   <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
   <c:set var="isOpen" value="true"/>
+
+  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=toxo&fmt=png&id=${id}&vp=_LEGEND,"/>
+  <c:set var="imgSrc" value="${preImgSrc}rma"/>
 
   <c:set var="noData" value="false"/>
   <c:if test="${attrs['graph_bradyzoite'].value == 0}">
@@ -569,6 +593,7 @@ experimental condition.
 
   <c:set var="expressionContent">
     <table>
+    <FORM NAME="DzierszinskiBradySort">
       <tr>
         <td rowspan="2">
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -591,9 +616,16 @@ experimental condition.
             <b>y-axis (graph #2) </b><br>
             Expression percentile value
           </div>
+<SELECT NAME="DzierszinskiBradyList"
+OnChange="javascript:updateImage('${imgId}', DzierszinskiBradySort.DzierszinskiBradyList.options[selectedIndex].value)">
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">rma</OPTION>
+<OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
+<OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
+</SELECT>
         </td>
 
       </tr>
+    </FORM>
     </table>
   </c:set>
 
@@ -609,8 +641,10 @@ experimental condition.
 
   <c:set var="secName" value="White::TzBz"/>
   <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
   <c:set var="isOpen" value="true"/>
+
+  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=toxo&fmt=png&id=${id}&vp="/>
+  <c:set var="imgSrc" value="${preImgSrc}rma"/>
 
   <c:set var="noData" value="false"/>
   <c:if test="${attrs['graph_bradyzoite'].value == 0}">
@@ -619,6 +653,7 @@ experimental condition.
 
   <c:set var="expressionContent">
     <table>
+    <FORM NAME="WhiteBradySort">
       <tr>
         <td rowspan="2">
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -637,9 +672,16 @@ experimental condition.
             <b>y-axis (graph #2) </b><br>
             Expression percentile value
           </div>
+<SELECT NAME="WhiteBradyList"
+OnChange="javascript:updateImage('${imgId}', WhiteBradySort.WhiteBradyList.options[selectedIndex].value)">
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">rma</OPTION>
+<OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
+<OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
+</SELECT>
         </td>
 
       </tr>
+    </FORM>
     </table>
   </c:set>
 
