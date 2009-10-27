@@ -442,6 +442,7 @@ sub chipColor {
   my ($t) = $f->get_tag_values('Treatment');
   my ($r) = $f->get_tag_values('Rep');
   my ($g) = $f->get_tag_values('Genotype');
+  my ($anls) = $f->get_tag_values('Analysis');
 
   return '#000080' if($a eq 'CenH3_H3K9me2');
   return '#B0E0E6' if($a eq 'CenH3');
@@ -459,7 +460,13 @@ sub chipColor {
 
   return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
   return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
- 
+
+  return '#00C800' if($anls =~ /replicate/i && $r =~ /replicate1/i);
+  return '#FA9600' if($anls =~ /replicate/i && $r =~ /replicate2/i);
+  return '#884C00' if($anls =~ /replicate/i && $r =~ /replicate3/i);
+
+  return '#EB0026' if($anls =~ /early_log/i);
+  return '#006BFF' if($anls =~ /stationary/i);
 
   return '#00C800' if($a =~ /H3K4me3/i);
   return '#FA9600' if($a =~ /H3K9Ac/i);

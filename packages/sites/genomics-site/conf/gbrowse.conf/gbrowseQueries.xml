@@ -2192,7 +2192,96 @@ WHERE  sv.external_database_release_id = edr.external_database_release_id and
 ]]>
     </sql>
   </sqlQuery>
-  
+
+
+  <sqlQuery name="ChIP:TBP_Promastigotes" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'TBP_Promastigotes'              as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+ 
+  <sqlQuery name="ChIP:SNAP50_Promastigotes" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'SNAP50_Promastigotes' as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="ChIP:AcetylH3_Promastigotes" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'AcetylH3_Promastigotes' as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP:AcetylH3_Log_vs_Stationary" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'AcetylH3_Log_vs_Stationary' as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP:TBP_Log_vs_Stationary" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       'TBP_Log_vs_Stationary' as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+ 
   <sqlQuery name="ChIP:Hp1" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -4713,6 +4802,153 @@ AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
 AND    cpp.strain = 'PLK'
+]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP:TBP_Promastigotes:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT fl.na_feature_id   as feature_id,
+       'ChIP_sub'          as type,
+       'TBP_Promastigotes'               as source,
+       dtf.float_value        as score,
+       fl.na_sequence_id     as parent_id,
+       fl.start_min           as startm,
+       fl.end_max             as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  dtf.row_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like '%myler%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(a.name) like '%tbp-replicate%'
+]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP:SNAP50_Promastigotes:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT fl.na_feature_id   as feature_id,
+       'ChIP_sub'          as type,
+       'SNAP50_Promastigotes'               as source,
+       dtf.float_value        as score,
+       fl.na_sequence_id     as parent_id,
+       fl.start_min           as startm,
+       fl.end_max             as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  dtf.row_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like '%myler%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(a.name) like '%snap50-replicate%'
+]]>
+    </sql>
+  </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP:AcetylH3_Promastigotes:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT fl.na_feature_id   as feature_id,
+       'ChIP_sub'          as type,
+       'AcetylH3_Promastigotes' as source,
+       dtf.float_value        as score,
+       fl.na_sequence_id     as parent_id,
+       fl.start_min           as startm,
+       fl.end_max             as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  dtf.row_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like '%myler%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(a.name) like '%acetylh3-replicate%'
+]]>
+    </sql>
+  </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP:AcetylH3_Log_vs_Stationary:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT fl.na_feature_id   as feature_id,
+       'ChIP_sub'          as type,
+       'AcetylH3_Log_vs_Stationary' as source,
+       dtf.float_value        as score,
+       fl.na_sequence_id     as parent_id,
+       fl.start_min           as startm,
+       fl.end_max             as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  dtf.row_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like '%myler%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(a.name) like '%acetylh3%' AND lower(a.name) not like '%replicate%'
+]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="ChIP:TBP_Log_vs_Stationary:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT fl.na_feature_id   as feature_id,
+       'ChIP_sub'          as type,
+       'TBP_Log_vs_Stationary' as source,
+       dtf.float_value        as score,
+       fl.na_sequence_id     as parent_id,
+       fl.start_min           as startm,
+       fl.end_max             as end,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl,
+       apidb.chipprotocolparams cpp
+WHERE  dtf.row_id = fl.na_feature_id
+AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
+AND    lower(p.name) like '%myler%'
+AND    fl.na_sequence_id = $srcfeature_id
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+AND    lower(a.name) like '%tbp%' AND lower(a.name) not like '%replicate%'
 ]]>
     </sql>
   </sqlQuery>
