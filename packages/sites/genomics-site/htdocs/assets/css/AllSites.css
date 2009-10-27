@@ -1,6 +1,9 @@
 
 @import url("reset.css");	
 
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       Stylesheet for styles that are the same across all sites 
      Definitions here get overriden by entries in (project).css
@@ -57,6 +60,34 @@ td {
 /* used by Expression graphs (fix for text alignment bug) */
 .centered {
        vertical-align: middle;
+}
+
+
+table.mytableStyle {
+	empty-cells:show;
+	border-width:0.5px;
+	border-style:solid;	   /* solid, none, inset, outset, dashed, solid, */
+	border-color:black;
+	border-collapse:collapse;  /*separate */
+/*	border-spacing:2px;  */    /* only makes sense when border-collapse is separate
+	table-layout: auto;        /* fixed */
+}
+tr.mytdStyle {
+	text-align:center;
+
+}
+tr.mythStyle {
+	background-color:#eaeaea;
+	text-align:center;
+	font-weight:bold;
+}
+td.mythStyle,td.mytdStyle {
+	vertical-align:middle;
+	border-width:0.5px;
+	border-style:inset;
+	border-color:gray;
+	-moz-border-radius:0px;
+	padding:3px;
 }
 
 

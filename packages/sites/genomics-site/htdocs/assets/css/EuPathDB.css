@@ -15,6 +15,14 @@ a:hover, a:active {
 	color: #610b0b;   /* red like in crypto */     /*    #88a3bc;  */
 }
 
+a.opposite:link, a.opposite:visited {
+	color: #610b0b; 
+}
+
+a.opposite:hover, a.opposite:active {
+	color: #2c5986;
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	

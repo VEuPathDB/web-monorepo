@@ -22,148 +22,142 @@
 
 <c:set var="ncbiTaxPage" value="http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=237895&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock"/>
 
-<c:set var="mytableStyle" value="empty-cells:show;border-width:1px;border-spacing:2px;border-style:outset;border-color:gray;border-collapse:separate;background-color:white" />
-<c:set var="mytdStyle" value="vertical-align:middle;border-width:0.5px;padding:3px;border-style:inset;border-color:gray;-moz-border-radius:0px;"/>
-<c:set var="mythStyle" value="background-color:#eaeaea;vertical-align:middle;text-align:center;font-weight:bold;border-width:0.5px;padding:3px;border-style:inset;border-color:gray;-moz-border-radius:0px;"/>
 
+<%------------------------------------%>
 <table width="100%">
-<tr><td><h2>EuPathDB Data Summary</h2></td>
-    <td align="right" colspan="5"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics >>></a></td>
+
+<tr><td><h2>EuPathDB Genomes and Data Types</h2></td>
+    <td align="right"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics >>></a></td>
 </tr>
 
-<tr><td colspan="2"><font face="Arial,Helvetica">The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> and <a href="http://tritrypdb.org">TriTrypDB</a> websites. <br><br>
-
-</font>
-</td></tr>
-
-<tr><td><h3>Genomes and Data Types</h3></td>
-     <td align="right" style="font-size:10px;">(<b>Micrry</b>=Microarray,  <b>Protmc</b>=Proteomics,  <b>Ch_ch</b>=ChIP chip,  <b>SageTg</b>=Sage Tags, <b>Pathw</b>=Pathway)</td></tr>
+<tr><td colspan="2">The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> and <a href="http://tritrypdb.org">TriTrypDB</a> websites. <br><br></td>
+</tr>
 </table>
 
-
-<table  width="100%">
-<tr>
-    <td style="${mythStyle}" title="">Organism</td>
-    <td style="${mythStyle}" title="Click to access this Taxon ID in NCBI">Taxon ID</td>
-    <td style="${mythStyle}" title="">Strain</td>
-    <td style="${mythStyle}" title="Provided by Data Source">Genome<br>Version</td>
-    <td style="${mythStyle}" title="">Data<br>Source</td>
-    <td style="${mythStyle}" title="Size in Mega bases">Genome<br>Size</td>
-    <td style="${mythStyle}" title="">Gene<br>Count</td>
-    <td style="${mythStyle}" title="">Multiple<br>Strains</td>
-<!--    <td style="${mythStyle}">Additional<br>Strains</td>    -->
-    <td style="${mythStyle}" title="">Organellar<br>Genomes</td>
-    <td style="${mythStyle}" title="">Isolates</td>
-    <td style="${mythStyle}" title="">SNPs</td>
-    <td style="${mythStyle}" title="">ESTs</td>
-    <td style="${mythStyle}" title="Microarray">Micrry</td>
-    <td style="${mythStyle}" title="Proteomics">Protmc</td>
-    <td style="${mythStyle}" title="ChIP Chip">Ch_ch</td>
-    <td style="${mythStyle}" title="Sage Tags">SageTg</td>
-    <td style="${mythStyle}" title="Metabolic Pathways">Pathw</td>
+<%------------------------------------%>
+<table class="mytableStyle" width="100%">
+<tr class="mythStyle">
+    <td class="mythStyle" title="Species">Species</td>
+    <td class="mythStyle" title="Click to access this Taxon ID in NCBI">Taxon ID</td>
+    <td class="mythStyle" title="Strain">Strain</td>
+    <td class="mythStyle" title="Provided by Data Source">Genome<br>Version</td>
+    <td class="mythStyle" title="Data Source">Data<br>Source</td>
+    <td class="mythStyle" title="Size in Mega bases">Genome<br>Size</td>
+    <td class="mythStyle" title="Gene Count">Gene<br>Count</td>
+    <td class="mythStyle" title="Multiple Strains">Multiple<br>Strains</td>
+<!--    <td class="mythStyle" title="Additional Strains">Additional<br>Strains</td>    -->
+    <td class="mythStyle" title="Organellar Genomes">Organellar<br>Genomes</td>
+    <td class="mythStyle" title="Isolates">Isolates</td>
+    <td class="mythStyle" title="Single Nucleotide Polymorphisms">SNPs</td>
+    <td class="mythStyle" title="Expressed Sequence Tags">ESTs</td>
+    <td class="mythStyle" title="Microarray">Micro<br>array</td>
+    <td class="mythStyle" title="Proteomics">Prote<br>omics</td>
+    <td class="mythStyle" title="ChIP Chip">ChIP<br>chip</td>
+    <td class="mythStyle" title="Sage Tags">Sage<br>Tags</td>
+    <td class="mythStyle" title="Metabolic Pathways">Path<br>ways</td>
 </tr>
 
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
-<c:set var="title" value="${record.attributesMap['Family']}"/>
+<c:set var="family" value="${record.attributesMap['Family']}"/>
+<c:set var="website" value="${record.attributesMap['Website']}"/>
 
-<tr>
-
-    <td title="${title}" style="text-align:left;${mytdStyle}"><i>${record.attributesMap['Organism']}</i></td>
-    <td title="Click to access this Taxon ID in NCBI" style="text-align:center;${mytdStyle}"><a href="${ncbiTaxPage}">${record.attributesMap['Taxon_ID']}</a></td>
-    <td style="text-align:center;${mytdStyle}">${record.attributesMap['Strain']}</td>
-    <td style="text-align:center;${mytdStyle}">${record.attributesMap['Genome_Version']}</td>
-    <td style="text-align:center;${mytdStyle}">${record.attributesMap['Data_Source']}</td>
-    <td style="text-align:right;${mytdStyle}">${record.attributesMap['Genome_Size']}</td>
-    <td style="text-align:right;${mytdStyle}">${record.attributesMap['Gene_Count']}</td>
+<tr class="mytdStyle">
+    <td class="mytdStyle" style="text-align:left;" title="${family}, in ${website}">			<i>${record.attributesMap['Organism']}</i></td>
+    <td class="mytdStyle" 			   title="Click to access this Taxon ID in NCBI">	<a href="${ncbiTaxPage}">${record.attributesMap['Taxon_ID']}</a></td>
+    <td class="mytdStyle">										${record.attributesMap['Strain']}</td>
+    <td class="mytdStyle">										${record.attributesMap['Genome_Version']}</td>
+    <td class="mytdStyle">										${record.attributesMap['Data_Source']}</td>
+    <td class="mytdStyle" style="text-align:right;">							${record.attributesMap['Genome_Size']}</td>
+    <td class="mytdStyle" style="text-align:right;">							${record.attributesMap['Gene_Count']}</td>
 
 <c:choose>
 <c:when test="${record.attributesMap['Multiple_Strains'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Organellar_Genomes'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Isolates'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['SNPs'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['ESTs'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Microarray'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Proteomics'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['ChIP_chip'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['SageTags'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Pathways'] == 'yes'}">
-    <td style="text-align:center;${mytdStyle}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td style="${mytdStyle}"></td>
+    <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
 
@@ -173,7 +167,7 @@
 </table>
 
 
-<table align="center" width="100%" border="0" cellpadding="2" cellspacing="2">
+<table width="100%">
 <tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 4778 deprecated genes that are not included in the official gene count.</font
 ></td></tr>
 <tr><td colspan="10"><font size="-2">** <i>T. gondii</i> gene groups identified in ToxoDB across the three strains (ME49, GT1, VEG) and the Apicoplast.</fo
