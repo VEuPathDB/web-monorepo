@@ -20,7 +20,8 @@ $.fn.extend({
 			url: isUrl ? urlOrData : null,
 			data: isUrl ? null : urlOrData,
 			delay: isUrl ? $.Autocompleter.defaults.delay : 10,
-			max: options && !options.scroll ? 10 : 150
+			// Charles Treatman:  if data array was provided, increase max matches to array length
+			max: isUrl ? (options && !options.scroll ? 10 : 150) : urlOrData.length
 		}, options);
 		
 		// if highlight is set to false, replace it with a do-nothing function
@@ -389,7 +390,7 @@ $.Autocompleter.defaults = {
 	inputClass: "ac_input",
 	resultsClass: "ac_results",
 	loadingClass: "ac_loading",
-	minChars: 1,
+	minChars: 3,
 	delay: 400,
 	matchCase: false,
 	matchSubset: true,
@@ -638,7 +639,9 @@ $.Autocompleter.Select = function (options, input, select, config) {
 	
 	function fillList() {
 		list.empty();
-		var max = limitNumberOfItems(data.length);
+		//Charles Treatman:  fill list with all matches
+		//var max = limitNumberOfItems(data.length);
+		var max = data.length;
 		for (var i=0; i < max; i++) {
 			if (!data[i])
 				continue;
