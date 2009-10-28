@@ -556,7 +556,6 @@ OnChange="javascript:updateImage('${imgId}', RoosBradySort.RoosBradyList.options
 <SELECT NAME="BoothroydBradyList"
 OnChange="javascript:updateImage('${imgId}', BoothroydBradySort.BoothroydBradyList.options[selectedIndex].value)">
 <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
-<OPTION  VALUE="${preImgSrc}rma">RMA</OPTION>
 <OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
 <OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
 </SELECT>
@@ -614,7 +613,6 @@ OnChange="javascript:updateImage('${imgId}', BoothroydBradySort.BoothroydBradyLi
 <SELECT NAME="DzierszinskiBradyList"
 OnChange="javascript:updateImage('${imgId}', DzierszinskiBradySort.DzierszinskiBradyList.options[selectedIndex].value)">
 <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
-<OPTION  VALUE="${preImgSrc}rma">RMA</OPTION>
 <OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
 <OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
 </SELECT>
@@ -669,7 +667,6 @@ OnChange="javascript:updateImage('${imgId}', DzierszinskiBradySort.DzierszinskiB
 <SELECT NAME="WhiteBradyList"
 OnChange="javascript:updateImage('${imgId}', WhiteBradySort.WhiteBradyList.options[selectedIndex].value)">
 <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
-<OPTION  VALUE="${preImgSrc}rma">RMA</OPTION>
 <OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
 <OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
 </SELECT>
