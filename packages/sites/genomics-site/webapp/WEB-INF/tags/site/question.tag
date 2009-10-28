@@ -308,6 +308,7 @@
 
 <hr>
 
+<c:set var="attrId" value="attributions-section"/>
 <c:set var="descripId" value="query-description-section"/>
 <c:if test="${wdkQuestion.fullName == 'IsolateQuestions.IsolateByCountry'}">
 	<c:set var="descripId" value="query-description-noShowOnForm"/>
@@ -318,19 +319,15 @@
 <div id="${descripId}"><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
 
 
-
 <%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB'}">
 <hr>
-<%-- get the property list map of the question --%>
-<c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
-
-<%-- display the question specific attribution list --%>
-<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+<div id="${attrId}">
+	<c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
+	<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+</div>
 </c:if>
 
- <%-- </td>--%>
-  <td valign=top class=dottedLeftBorder></td> 
 
 </tr>
 </table> 

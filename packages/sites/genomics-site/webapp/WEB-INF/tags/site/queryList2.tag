@@ -21,6 +21,7 @@ function writeData(page, div, quesName){
 			var qf = $("form#form_question",q);
 			var qt = $("div#question_Form", q).children("h1");
 			var qd = $("div#query-description-section", q);
+			var qa = $("div#attributions-section", q);
 
 
 			$("#" + div).html(qt);
@@ -28,6 +29,8 @@ document.getElementById(div).innerHTML = "<h1>" + quesName + "</h1><br/>";
 			$("#" + div).append(qf);
  document.getElementById(div).innerHTML += "<hr/>"
 			$("#" + div).append(qd);
+document.getElementById(div).innerHTML += "<hr/>"
+			$("#" + div).append(qa);
 		}
 	});
 }	
