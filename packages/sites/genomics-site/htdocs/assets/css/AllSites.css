@@ -58,8 +58,11 @@ td {
 
 
 /* used by Expression graphs (fix for text alignment bug) */
-.centered {
+td.centered {
        vertical-align: middle;
+}
+td.top {
+       vertical-align: top;
 }
 
 
