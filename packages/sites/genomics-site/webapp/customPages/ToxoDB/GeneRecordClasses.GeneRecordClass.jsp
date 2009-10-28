@@ -414,17 +414,15 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
   <c:set var="expressionContent">
     <table>
       <tr>
-        <td rowspan="2">
+        <td>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
         </td>
 
-        <c:if test="${attrs['graph_archetypal'].value != 0}">
-        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="1"></td>
-
-	<td valign=top><image src="<c:url value="/images/toxo_percentile_lineages.PNG"/>">  </td>
-
+	<td class="centered">  
+          <site:dataTable tblName="ToxoStrainsMicroarrayPercentile" />
+        </td>
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
-        <td>
+        <td class="centered">
           <div class="small">
              	<!-- DESCRIPTION?? -->
 The percentile graph on the right represents the percentiles of each expression value across the
@@ -432,13 +430,11 @@ dymanic range of the microarray log(2) intensities.
 experimental condition.
           </div>
         </td>
-        </c:if>
 
-        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>
       </tr>
     </table>
 
-    <site:dataTable tblName="ToxoStrainsMicroarrayPercentile" />
+
   </c:set>
 
 
