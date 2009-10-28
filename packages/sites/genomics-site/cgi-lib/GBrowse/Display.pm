@@ -465,8 +465,8 @@ sub chipColor {
   return '#FA9600' if($anls =~ /replicate/i && $r =~ /replicate2/i);
   return '#884C00' if($anls =~ /replicate/i && $r =~ /replicate3/i);
 
-  return '#EB0026' if($anls =~ /early_log/i);
-  return '#006BFF' if($anls =~ /stationary/i);
+  return '#B22222' if($anls =~ /early_log/i);
+  return '#4682B4' if($anls =~ /stationary/i);
 
   return '#00C800' if($a =~ /H3K4me3/i);
   return '#FA9600' if($a =~ /H3K9Ac/i);
