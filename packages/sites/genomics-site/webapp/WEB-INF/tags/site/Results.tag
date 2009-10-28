@@ -8,7 +8,7 @@
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="recordName" value="${wdkAnswer.question.recordClass.fullName}" />
-
+<c:set var="recHasBasket" value="${wdkAnswer.question.recordClass.hasBasket}" />
 <c:set var="clustalwIsolatesCount" value="0" />
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 <c:set var="eupathIsolatesQuestion" value="${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
@@ -199,7 +199,7 @@
     <th id="${attrName}" align="left" valign="middle">
 	<table>
           <tr>
-				<c:if test="${j == 0}">
+				<c:if test="${recHasBasket && j == 0}">
 					<td style="padding:0;"><a href="javascript:void(0)" onclick="updateBasket(this,'${wdkAnswer.checksum}', '0', '0', '${wdkAnswer.recordClass.fullName}')">
 						<img src="/assets/images/basket_gray.png" height="20px" width="20px" value="0"/>
 					</a></td>
@@ -307,7 +307,7 @@
     </c:set>
 
     <c:set value="${record.primaryKey}" var="primaryKey"/>
-	<c:if test="${record.hasBasket}">
+	<c:if test="${recHasBasket}">
 		<c:set value="${record.attributes['in_basket']}" var="is_basket"/>
 		<c:set var="basket_img" value="basket_gray.png"/>
 		<c:if test="${is_basket == '1'}">
