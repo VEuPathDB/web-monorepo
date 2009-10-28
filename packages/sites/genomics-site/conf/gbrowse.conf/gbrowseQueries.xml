@@ -1839,22 +1839,20 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-ExonIb'
   <sqlQuery name="ChIP_peaks_TypeIII:Einstein"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
- SELECT aef.na_feature_id   as feature_id,
+ SELECT fl.na_feature_id   as feature_id,
        'ChIP_peaks_TypeIII' as type, 
        'Einstein'           as source, 
-       aef.source_id        as name, 
+       fl.feature_source_id        as name, 
        dtf.float_value      as score, 
-       aef.na_sequence_id   as parent_id, 
+       fl.na_sequence_id   as parent_id, 
        fl.start_min         as startm, 
        fl.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name =  'ChIP_chip_Einstein_called_peaks'
@@ -2038,22 +2036,20 @@ AND    cpp.protocol_type = 'called_peaks'
   <sqlQuery name="ChIP_peaks:Hp1"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT aef.na_feature_id   as feature_id,
+ SELECT fl.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
        'Hp1'                as source,
-       aef.source_id        as name,
+       fl.feature_source_id        as name,
        dtf.float_value      as score,
-       aef.na_sequence_id   as parent_id,
+       fl.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' ||'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.protocol_id  = a.protocol_id
@@ -2850,22 +2846,20 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearNonCoding'
   <sqlQuery name="ChIP_peaks_RH:Einstein"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
- SELECT aef.na_feature_id   as feature_id,
+ SELECT fl.na_feature_id   as feature_id,
        'ChIP_peaks_RH'      as type,
        'Einstein'           as source,
-       aef.source_id        as name,
+       fl.feature_source_id        as name,
        dtf.float_value      as score,
-       aef.na_sequence_id   as parent_id,
+       fl.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name =  'ChIP_chip_Einstein_called_peaks'
@@ -2881,22 +2875,20 @@ AND    cpp.strain = 'RH'
   <sqlQuery name="ChIP_peaks_PLK:Einstein"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
- SELECT aef.na_feature_id   as feature_id,
+ SELECT fl.na_feature_id   as feature_id,
        'ChIP_peaks_PLK'      as type,
        'Einstein'           as source,
-       aef.source_id        as name,
+       fl.feature_source_id        as name,
        dtf.float_value      as score,
-       aef.na_sequence_id   as parent_id,
+       fl.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name =  'ChIP_chip_Einstein_called_peaks'
@@ -2911,22 +2903,20 @@ AND    cpp.strain = 'PLK'
   <sqlQuery name="ChIP_peaks_RH:Hakimi"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
- SELECT aef.na_feature_id   as feature_id,
+ SELECT fl.na_feature_id   as feature_id,
        'ChIP_peaks_RH'      as type,
        'Hakimi'           as source,
-       aef.source_id        as name,
+       fl.feature_source_id        as name,
        dtf.float_value      as score,
-       aef.na_sequence_id   as parent_id,
+       fl.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name =  'NimbleScan_ChIP_Hakimi_called_peaks'
@@ -4673,11 +4663,9 @@ GROUP BY interval
        'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name = 'ChIP_chip_Einstein' 
@@ -4703,11 +4691,9 @@ AND    cpp.strain = 'RH'
        'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name = 'NimbleScan_ChIP_Hakimi' 
@@ -4732,11 +4718,9 @@ AND    cpp.strain = 'RH'
        'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name = 'ChIP_chip_Einstein_centromere'
@@ -4781,20 +4765,18 @@ WHERE fl.na_sequence_id = $srcfeature_id
      <sql>
 <![CDATA[
  SELECT fl.na_feature_id   as feature_id,
-       'ChIP_sub' as type,
-       'Einstein'               as source,
-       dtf.float_value        as score,
-       fl.na_sequence_id     as parent_id,
-       fl.start_min           as startm,
-       fl.end_max             as end,
+       'ChIP_sub'          as type,
+       'Einstein'          as source,
+       dtf.float_value     as score,
+       fl.na_sequence_id   as parent_id,
+       fl.start_min        as startm,
+       fl.end_max          as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name = 'ChIP_chip_Einstein'
@@ -5319,7 +5301,7 @@ AND    cpp.protocol_type = 'raw'
      <sql>
 <![CDATA[
  SELECT fl.na_feature_id   as feature_id,
-       'ChIP_sub' as type,
+       'ChIP_sub'          as type,
        'Einstein'               as source,
        dtf.float_value        as score,
        fl.na_sequence_id     as parent_id,
@@ -5328,11 +5310,9 @@ AND    cpp.protocol_type = 'raw'
        'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.datatransformationresult dtf,
-       dots.arrayelementfeature aef,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
-WHERE  aef.na_feature_id = dtf.row_id
-AND    aef.na_feature_id = fl.na_feature_id
+WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name = 'ChIP_chip_Einstein'
