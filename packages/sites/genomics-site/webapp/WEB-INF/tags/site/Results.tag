@@ -199,11 +199,13 @@
     <th id="${attrName}" align="left" valign="middle">
 	<table>
           <tr>
+<%-- REMOVE TO ADD BASKET
 				<c:if test="${recHasBasket && j == 0}">
 					<td style="padding:0;"><a href="javascript:void(0)" onclick="updateBasket(this,'${wdkAnswer.checksum}', '0', '0', '${wdkAnswer.recordClass.fullName}')">
 						<img class="basket" src="/assets/images/basket_gray.png" height="20px" width="20px" value="0"/>
 					</a></td>
 				</c:if>
+--%>
             <td>
 		<table>
                   <tr>
