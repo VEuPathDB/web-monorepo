@@ -418,9 +418,13 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
         </td>
 
-	<td class="centered">  
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+
+	<td class="top">  
           <site:dataTable tblName="ToxoStrainsMicroarrayPercentile" />
+
         </td>
+
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
         <td class="centered">
           <div class="small">
