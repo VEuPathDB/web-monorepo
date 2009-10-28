@@ -307,10 +307,12 @@
     </c:set>
 
     <c:set value="${record.primaryKey}" var="primaryKey"/>
-	<c:set value="${record.attributes['in_basket']}" var="is_basket"/>
-	<c:set var="basket_img" value="basket_gray.png"/>
-	<c:if test="${is_basket == '1'}">
-		<c:set var="basket_img" value="basket_color.png"/>
+	<c:if test="${record.hasBasket}">
+		<c:set value="${record.attributes['in_basket']}" var="is_basket"/>
+		<c:set var="basket_img" value="basket_gray.png"/>
+		<c:if test="${is_basket == '1'}">
+			<c:set var="basket_img" value="basket_color.png"/>
+		</c:if>
 	</c:if>
     <c:set var="pkValues" value="${primaryKey.values}" />
     <c:set var="projectId" value="${pkValues['project_id']}" />
@@ -343,7 +345,13 @@
 
               <%-- display a link to record page --%>
 
-              <a href="javascript:void(0)" onclick="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')"><img value="${is_basket}" src="/assets/images/${basket_img}" width="20px" height="20px"/></a>&nbsp;&nbsp;&nbsp;<a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
+           
+				<a href="javascript:void(0)" onclick="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')">
+					<img value="${is_basket}" src="/assets/images/${basket_img}" width="20px" height="20px"/>
+				</a>
+		
+				&nbsp;&nbsp;&nbsp;
+				<a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
 
 
               <%--   <span id="gene_id_${fieldVal}"> <a href="javascript:ToggleGenePageView('gene_id_${fieldVal}', 'showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}')">${fieldVal}</a></span> --%>
