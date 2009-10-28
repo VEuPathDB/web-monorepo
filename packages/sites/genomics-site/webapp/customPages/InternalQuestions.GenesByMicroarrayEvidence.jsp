@@ -21,14 +21,10 @@
                  divisionName=""
                  division=""/>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
-<tr>
-<td bgcolor=white valign=top>
 
-<!-- show error messages, if any -->
 <wdk:errors/>
 
-<table width="100%" cellpadding="4">
+<table width="100%">
 <tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
 
 <c:choose>
@@ -39,7 +35,7 @@
 <site:queryList2 questions="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByIntraerythrocyticExpression,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming,GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByExpressionTimingOne,GeneQuestions.GenesByExpressionTimingTwo,GeneQuestions.GenesByExpressionTimingThree,GeneQuestions.ToxoGenesByDifferentialMeanExpression,GeneQuestions.GenesByPromastigoteTimeSeries"/>
 </c:when>
 <c:when test = "${project == 'PlasmoDB'}">
-<site:queryList questions="GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByIntraerythrocyticExpression,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming"/>
+<site:queryList2 questions="GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByIntraerythrocyticExpression,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming"/>
 </table>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
@@ -49,21 +45,5 @@
 
 </table>
 
-<%-- get the attributions of the question if not EuPathDB : 
-	here it serves no purpose;
-	it gets done in queryList (normal question page) and should be done in queryList2
-
-<c:if test = "${project != 'EuPathDB'}">
-<hr>
-<c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
-<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
-</c:if>
---%>
-
-
-</td>
-<td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table> 
 
 <site:footer/>
