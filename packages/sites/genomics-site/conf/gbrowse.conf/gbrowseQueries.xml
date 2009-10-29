@@ -1859,7 +1859,7 @@ AND    p.name =  'ChIP_chip_Einstein_called_peaks'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    cpp.strain = 'CTG'
+AND    cpp.strain = 'TypeIII'
 ]]>
     </sql>
   </sqlQuery>
@@ -5289,7 +5289,7 @@ AND    cpp.protocol_type = 'raw'
      <sql>
 <![CDATA[
  SELECT fl.na_feature_id   as feature_id,
-       'ChIP_sub'          as type,
+       'ChIP_TypeIII'          as type,
        'Einstein'               as source,
        dtf.float_value        as score,
        fl.na_sequence_id     as parent_id,
@@ -5307,7 +5307,7 @@ AND    p.name = 'ChIP_chip_Einstein'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    cpp.strain = 'CTG'
+AND    cpp.strain = 'TypeIII'
 ]]>
     </sql>
   </sqlQuery>
