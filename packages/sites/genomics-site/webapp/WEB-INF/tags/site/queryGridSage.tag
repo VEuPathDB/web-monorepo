@@ -51,7 +51,7 @@
 
  
  <tr>
-                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByLocation" linktext="Chromosomal Location" existsOn="A G P T"/>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByLocation" linktext="Genomic Location" existsOn="A G P T"/>
                 </tr>
 
  <tr>

@@ -21,7 +21,7 @@
                     <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="A C P T"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByLocation" linktext="Chromosomal Location" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByLocation" linktext="Genomic Location" existsOn="A C P T"/>
                 </tr>
             </table>
         </td>

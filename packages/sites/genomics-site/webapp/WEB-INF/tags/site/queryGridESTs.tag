@@ -39,7 +39,7 @@
                     <site:queryGridMakeUrl qset="EstQuestions" qname="NA" linktext="EST Motif" existsOn=""/>
                 </tr>           
 <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Chromosomal Location" existsOn="A G C P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Genomic Location" existsOn="A G C P T Tr Tt"/>
                 </tr>
 
             </table>

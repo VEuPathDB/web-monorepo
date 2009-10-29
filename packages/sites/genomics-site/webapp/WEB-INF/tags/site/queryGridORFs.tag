@@ -39,7 +39,7 @@
                     <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="Protein Motif" existsOn="A G C P T Tr Tt"/>
                 </tr>
  <tr>
-                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Chromosomal Location" existsOn="A G C P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Genomic Location" existsOn="A G C P T Tr Tt"/>
                 </tr>
             </table>
 </div>

@@ -34,7 +34,7 @@
                     <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByGeneIDs" linktext="Gene IDs" existsOn="A C G P T Tt"/>
                 </tr>           
 <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLocation" linktext="Chromosomal Location" existsOn="A C G P T Tt"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLocation" linktext="Genomic Location" existsOn="A C G P T Tt"/>
                 </tr>
 
                 <tr>

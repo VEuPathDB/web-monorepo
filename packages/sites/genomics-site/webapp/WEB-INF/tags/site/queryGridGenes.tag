@@ -16,10 +16,10 @@
                 
                 </td></tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByLocation" linktext="Chromosomal Location" existsOn="A C G P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByLocation" linktext="Genomic Location" existsOn="A C G P T Tr Tt"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByNonnuclearLocation" linktext="Chromosomal Location (Non-nuclear)" existsOn="A E E P T E"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByNonnuclearLocation" linktext="Genomic Location (Non-nuclear)" existsOn="A E E P T E"/>
 
                 </tr>
                 <tr>
