@@ -42,7 +42,16 @@
 <table width="100%">
 <tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
 
-<site:queryList questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesWithStructurePrediction,GeneQuestions.GenesBySecondaryStructure"/>
+
+<c:choose>
+<c:when test = "${project == 'CryptoDB' || projectId == 'TriTrypDB'}">
+	<site:queryList questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesBySecondaryStructure"/>
+</c:when>
+<c:otherwise>
+	<site:queryList questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesWithStructurePrediction,GeneQuestions.GenesBySecondaryStructure"/>
+</c:otherwise>
+</c:choose>
+
 
 </table>
 
