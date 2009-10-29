@@ -5244,13 +5244,13 @@ AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
 AND    lower(p.name) like '%stunnenberg%'
-AND    a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac')
+AND    a.name in ('77620-H3K9ac','79483-H3K4me3','89274-H3K9ac','89876-H3K4me3','96461-H3K9ac')
 AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>
-
-
+<!--    Using the analysis names directly in the WHERE clause to filter out the probes for each antibody in the above query is probably a little clumsy, but this direct specification is giving a 4 fold improvement in the time taken when compared to using nested WHERE clauses with ORs and AND logicals (see below) -->
+<! -- AND    a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac') -->
 
   <sqlQuery name="ChIP:Mixed_H3K9me3_H3_cDNA:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
@@ -5277,14 +5277,13 @@ AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
 AND    lower(p.name) like '%stunnenberg%'
-AND    a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(cpp.antibody) = 'h3k9me3' or lower(a.name) like '%cdna%')
+AND    a.name in ('116550-cDNA','4944702-H3K9me3','89272-H3','89877-H3','96481-H3') 
 AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>
-
-
-
+<!--    Using the analysis names directly in the WHERE clause to filter out the probes for each antibody in the above query is probably a little clumsy, but this direct specification is giving a 4 fold improvement in the time taken when compared to using nested WHERE clauses with ORs and AND logicals (see below) -->
+<!-- a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(cpp.antibody) = 'h3k9me3' or lower(a.name) like '%cdna%') -->
  
   <sqlQuery name="ChIP_TypeIII:Einstein:bulksubfeatures"  includeProjects="ToxoDB">
      <sql>
