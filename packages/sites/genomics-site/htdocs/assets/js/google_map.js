@@ -64,7 +64,7 @@ function createMarker(country, total, type) {
           marker = new GMarker(point);
           map.addOverlay(marker);
           GEvent.addListener(marker, "click", function() {
-            marker.openInfoWindowHtml(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&myMultiProp(country)="+country+type+"' target='_blank'> Click for Details</a>");
+            marker.openInfoWindowHtml(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&myMultiProp(country)="+country+type+"'> Click for Details</a>");
           });
         }
       }
