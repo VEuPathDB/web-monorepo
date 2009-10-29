@@ -5250,7 +5250,7 @@ AND    cpp.protocol_type = 'raw'
     </sql>
   </sqlQuery>
 <!--    Using the analysis names directly in the WHERE clause to filter out the probes for each antibody in the above query is probably a little clumsy, but this direct specification is giving a 4 fold improvement in the time taken when compared to using nested WHERE clauses with ORs and AND logicals (see below) -->
-<! -- AND    a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac') -->
+<!-- AND    a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac') -->
 
   <sqlQuery name="ChIP:Mixed_H3K9me3_H3_cDNA:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
