@@ -29,7 +29,7 @@
 
 <c:choose>
 <c:when test = "${project == 'GiardiaDB'}">
-<site:queryList questions="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile"/>
+<site:queryList2 questions="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile"/>
 </c:when>
 <c:when test = "${project == 'EuPathDB'}">
 <site:queryList2 questions="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByIntraerythrocyticExpression,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming,GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByExpressionTimingOne,GeneQuestions.GenesByExpressionTimingTwo,GeneQuestions.GenesByExpressionTimingThree,GeneQuestions.ToxoGenesByDifferentialMeanExpression,GeneQuestions.GenesByPromastigoteTimeSeries"/>
@@ -39,7 +39,7 @@
 </table>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
-<site:queryList questions="GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByExpressionTimingOne,GeneQuestions.GenesByExpressionTimingTwo,GeneQuestions.GenesByExpressionTimingThree,GeneQuestions.ToxoGenesByDifferentialMeanExpression"/>
+<site:queryList2 questions="GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByExpressionTimingOne,GeneQuestions.GenesByExpressionTimingTwo,GeneQuestions.GenesByExpressionTimingThree,GeneQuestions.ToxoGenesByDifferentialMeanExpression"/>
 </c:when>
 </c:choose>
 

@@ -21,11 +21,6 @@
                  division=""/>
 
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
-<tr>
-<td bgcolor=white valign=top>
-
-<!-- show error messages, if any -->
 <wdk:errors/>
 
 <table width="100%" cellpadding="4">
@@ -36,16 +31,11 @@
 	<site:queryList2 questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
 </c:when>
 <c:when test = "${project == 'GiardiaDB' || project == 'PlasmoDB' || project == 'ToxoDB'}">
-	<site:queryList questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
+	<site:queryList2 questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
 </c:when>
 </c:choose>
 
 </table>
-
-</td>
-<td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table> 
 
 </c:when>
 </c:choose>
