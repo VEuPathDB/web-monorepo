@@ -88,7 +88,7 @@
 
 #query_selection .top_nav li ul li {
 	text-align:left;
-	width: 288px;/*250px;*/
+	width: 350px;  /*  288px;  *//*250px;*/
 }
 
 #query_selection .top_nav li:hover ul{

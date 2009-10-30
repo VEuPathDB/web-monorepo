@@ -90,7 +90,12 @@
 	<c:forEach items="${cat.questions}" var="q">
     	<c:if test="${ !fn:contains(recordClass, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
               <c:if test="${!( (siteName == 'PlasmoDB' || siteName == 'GiardiaDB' || siteName == 'ToxoDB') && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">
-    		<li><a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&target=${target}&partial=true')">${q.displayName}</a></li>			
+    		<li>
+<%-- for the text to wrap in thsi Add Step popup menus....
+     you need to apply the following to <a>   : 
+     style="width:250px;white-space:pre-wrap;"
+--%>
+<a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&target=${target}&partial=true')">${q.displayName}</a></li>			
               </c:if>
     	</c:if>
 	</c:forEach>
