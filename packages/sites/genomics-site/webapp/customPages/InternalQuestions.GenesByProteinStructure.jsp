@@ -44,7 +44,7 @@
 
 
 <c:choose>
-<c:when test = "${project == 'CryptoDB' || projectId == 'TriTrypDB'}">
+<c:when test = "${projectId == 'CryptoDB' || projectId == 'TriTrypDB'}">
 	<site:queryList2 questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesBySecondaryStructure"/>
 </c:when>
 <c:otherwise>
