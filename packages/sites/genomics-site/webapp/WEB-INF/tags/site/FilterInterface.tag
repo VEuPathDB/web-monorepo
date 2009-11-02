@@ -83,7 +83,7 @@
 			<c:set var="target" value="GENE"/>
 		</c:otherwise>
 	</c:choose>
-	<c:if test="${rootCat.multiCategory}">
+	<c:if test="${rootCat.multiCategory && fn:length(cat.questions) > 0}">
     	<li><a class="category" href="javascript:void(0)">${cat.displayName}</a>
     	<ul>
 	</c:if>
