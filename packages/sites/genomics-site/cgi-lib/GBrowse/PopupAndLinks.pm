@@ -82,6 +82,8 @@ sub synGeneTitle {
   my ($isPseudo) = $f->get_tag_values("IsPseudo");
   my ($contig) = $f->get_tag_values("Contig");
   my ($soTerm) = $f->get_tag_values("SOTerm");
+  my ($trunc) = $f->get_tag_values("Truncated");
+  my ($isrev) = $f->get_tag_values("isReversed");
   my ($start) = $f->get_tag_values("Start");
   my ($end) = $f->get_tag_values("End");
   $soTerm =~ s/\_/ /g;
@@ -91,7 +93,7 @@ sub synGeneTitle {
   push @data, [ 'Name:'  => $name ];
   push @data, [ 'Gene Type:' => ($isPseudo ? "Pseudogenic " : "") . $soTerm  ];
   push @data, [ 'Description:' => $desc ];
-  push @data, [ 'Location:'  => "$contig: $start - $end" ];
+  push @data, [ 'Location:'  => "$contig: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "") ];
   hover("Syntenic Gene: $name", \@data);
 }
 

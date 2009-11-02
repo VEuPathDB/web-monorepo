@@ -465,6 +465,10 @@ SELECT
        'isDeprecated=' || gattr.is_deprecated || '$dlm' ||
        'Start=' || gattr.start_min || '$dlm' ||
        'End=' || gattr.end_max || '$dlm' ||
+       'isReversed=' || gattr.is_reversed || '$dlm' ||
+       'Truncated=' || CASE WHEN fl.end_max > syn.b_end THEN syn.b_end 
+                           WHEN fl.start_min < syn.b_start THEN syn.b_start 
+                           END || '$dlm' ||
        'Taxon=' || gattr.organism atts
 FROM 
        apidb.synteny syn,
