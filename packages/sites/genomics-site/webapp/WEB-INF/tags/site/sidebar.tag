@@ -39,14 +39,39 @@
 <div id="leftcolumn">
   <div class="innertube3">
     <div id="menu_lefttop">
-        <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-        <a class="heading" id='news' href="#">News</a>
+
+
+
+<%--------------  EUPATHDB DATA STATS---------------------------------------------%>
+    
+	
+	<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+        <a class="heading" id='stats'  href="#">Data Summary</a>
+
+        <div class="menu_lefttop_drop" style="text-align:center;">
+
+
+<table width="90%" style="text-align:center;margin-left: auto;margin-right: auto;">
+<tr><td>
+	<a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">
+	<img style="border: 2px solid #666666;" src="./genomeTable10.png" width="150" height="70"></a>
+</td><tr>
+<tr><td style="text-align:left;">
+	<a style="white-space:nowrap;" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMrtrics"/>">
+		>>also check our Gene Metrics......</a>
+    </td>
+ </tr></table>
+
+	</div>
+
+
 
 
 <%--------------  NEWS ---------------------------------------------%>
+        <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+        <a class="heading"  href="#">News</a>
 
-
-   <div class="menu_lefttop_drop">
+   <div class="menu_lefttop_drop" id="News">
       <c:choose>
         <c:when test="${newsAnswer.resultSize < 1}">
           No news now, please check back later.<br>
@@ -255,9 +280,9 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
 				</c:forEach>
  			</c:forEach>
                         </ul>
-						<c:if test="${count >= SidebarLimit}">
-							<a style="margin-left:0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">All Tutorials</a>
-						</c:if>
+				<c:if test="${count >= SidebarLimit}">
+					<a style="margin-left:0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">All Tutorials</a>
+				</c:if>
                       </c:otherwise>
     </c:choose>
 

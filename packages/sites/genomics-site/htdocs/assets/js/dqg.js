@@ -60,8 +60,9 @@ $(document).ready(function(){
 	
 	var top_div = $("div#menu_lefttop");
 	$("div", top_div).hide();
-	var op = $("div:first", top_div);
-	$("div:first", top_div).show();
+	var op = $("div#News",top_div);
+	$("div#News",top_div).show();
+
     $("a.heading, a.heading p", top_div).click(function(){
         me = this;
         if(me.nodeName == "P")
