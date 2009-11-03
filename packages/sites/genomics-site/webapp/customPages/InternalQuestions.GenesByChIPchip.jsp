@@ -13,9 +13,7 @@
 <c:if test="${project == 'ToxoDB'}">
 	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByChIPchipToxo" /> 
 </c:if>
-<c:if test="${project == 'PlasmoDB'}">
-        <jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByChIPchipPlasmo" />
-</c:if>
+
 
 <site:header title="ChIP chip Evidence"
                  banner="Identify Genes by ChIp on chip Evidence"
@@ -32,7 +30,7 @@
 
 <c:choose>
 <c:when test = "${project == 'EuPathDB'}">
-<site:queryList2 questions="GeneQuestions.GenesByChIPchipToxo,GeneQuestions.GenesByChIPchipPlasmo"/>
+<site:queryList2 questions="GeneQuestions.GenesByChIPchipToxo"/>
 </c:when>
 </c:choose>
 
