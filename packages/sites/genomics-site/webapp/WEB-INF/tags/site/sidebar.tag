@@ -57,7 +57,7 @@
 	<img style="border: 2px solid #666666;" src="./genomeTable10.png" width="150" height="70"></a>
 </td><tr>
 <tr><td style="text-align:left;">
-	<a style="white-space:nowrap;" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMrtrics"/>">
+	<a style="white-space:nowrap;" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">
 		>>also check our Gene Metrics......</a>
     </td>
  </tr></table>
