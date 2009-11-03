@@ -27,7 +27,7 @@
           <c:otherwise><tr class="rowMedium"></c:otherwise>
         </c:choose>
   
-        <td colspan="3">
+        <td colspan="3" nowrap>
             <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">
             <font color="#000066"><b>${q.displayName}</b></font></a>
         </td>
