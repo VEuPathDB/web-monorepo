@@ -20,7 +20,8 @@
                  division="genomeDataType"/>
 
 
-<c:set var="ncbiTaxPage" value="http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=237895&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock"/>
+<c:set var="ncbiTaxPage1" value="http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="/>
+<c:set var="ncbiTaxPage2" value="&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock"/>
 
 
 <%------------------------------------%>
@@ -53,7 +54,7 @@
     <td class="mythStyle" title="Microarray">Micro<br>array</td>
     <td class="mythStyle" title="Proteomics">Prote<br>omics</td>
     <td class="mythStyle" title="ChIP Chip">ChIP<br>chip</td>
-    <td class="mythStyle" title="Sage Tags">Sage<br>Tags</td>
+    <td class="mythStyle" title="Sage Tags">SAGE<br>Tags</td>
     <td class="mythStyle" title="Metabolic Pathways">Path<br>ways</td>
 </tr>
 
@@ -63,13 +64,13 @@
 <c:set var="website" value="${record.attributesMap['Website']}"/>
 
 <tr class="mytdStyle">
-    <td class="mytdStyle" style="text-align:left;" title="${family}, in ${website}">			<i>${record.attributesMap['Organism']}</i></td>
-    <td class="mytdStyle" 			   title="Click to access this Taxon ID in NCBI">	<a href="${ncbiTaxPage}">${record.attributesMap['Taxon_ID']}</a></td>
-    <td class="mytdStyle">										${record.attributesMap['Strain']}</td>
-    <td class="mytdStyle">										${record.attributesMap['Genome_Version']}</td>
-    <td class="mytdStyle">										${record.attributesMap['Data_Source']}</td>
-    <td class="mytdStyle" style="text-align:right;">							${record.attributesMap['Genome_Size']}</td>
-    <td class="mytdStyle" style="text-align:right;">							${record.attributesMap['Gene_Count']}</td>
+    <td class="mytdStyle" style="text-align:left;" title="${family}, in ${website}">	<i>${record.attributesMap['Organism']}</i></td>
+    <td class="mytdStyle" 		title="Click to access this Taxon ID in NCBI">	<a href="${ncbiTaxPage1}${record.attributesMap['Taxon_ID']}${ncbiTaxPage2}">${record.attributesMap['Taxon_ID']}</a></td>
+    <td class="mytdStyle">								${record.attributesMap['Strain']}</td>
+    <td class="mytdStyle">								${record.attributesMap['Genome_Version']}</td>
+    <td class="mytdStyle">								${record.attributesMap['Data_Source']}</td>
+    <td class="mytdStyle" style="text-align:right;">					${record.attributesMap['Genome_Size']}</td>
+    <td class="mytdStyle" style="text-align:right;">					${record.attributesMap['Gene_Count']}</td>
 
 <c:choose>
 <c:when test="${record.attributesMap['Multiple_Strains'] == 'yes'}">
@@ -81,8 +82,8 @@
 </c:choose>
 
 <c:choose>
-<c:when test="${record.attributesMap['Organellar_Genomes'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+<c:when test="${not empty record.attributesMap['Organellar_Genomes']}">
+    <td class="mytdStyle">${record.attributesMap['Organellar_Genomes']}</td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle"></td>
