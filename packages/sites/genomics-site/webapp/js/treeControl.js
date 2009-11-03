@@ -1,13 +1,24 @@
 //jQuery.noConflict();
 $(document).ready(function(){
-	var root = $(".tree");
-	if (root.length > 0) {
+	var root = $(".param-tree");
+	initTreeState(root);
+/*	if (root.length > 0) {
 		var fNode = $(".term-node:first input");
 		toggleChildrenCheck(fNode);
 		var children = $(".term-children").hide();
-		var x = 1;
-	}
+	}*/
 });
+
+function initTreeState(rootNode){
+	if (rootNode.length > 0) {
+		var topNodes = $(rootNode).children(".term-node");
+		for(var n = 0; n < topNodes.length; n++){
+			var subnodes = $(topNodes[n]).children(".term-children").children(".term-node").children("input[type='checkbox']");
+			for(var m = 0; m < subnodes.length; m++)
+				toggleChildrenCheck(subnodes[m]);
+		}
+	}
+}
 
 function toggleChildren(ele){
 	if($(ele).hasClass("plus")){
@@ -102,4 +113,3 @@ function expandCollapseAll2(ele, flag, name) {
         }
     });
 }
-
