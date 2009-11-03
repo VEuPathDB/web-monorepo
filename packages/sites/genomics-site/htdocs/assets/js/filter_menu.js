@@ -248,6 +248,8 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 		var tms = topMenu_script.substring(topMenu_script.indexOf("{")+1,topMenu_script.indexOf("}"));
 		eval(tms);
 	}
+	var root = $(".param-tree", $("#query_form")[0]);
+	initTreeState(root);
 	initParamHandlers(true);
 }
 
