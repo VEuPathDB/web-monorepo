@@ -680,7 +680,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 
 <c:if test="${binomial eq 'Plasmodium falciparum' || binomial eq 'Plasmodium yoelii' || binomial eq 'Plasmodium berghei'}">
-  <site:pageDivider name="Expression ${has_expression_comment}"/>
+  <site:pageDivider name="Expression"/>
 
   <site:wdkTable tblName="ArrayElements" attribution="Vaidya_Bergman_oligos,DeRisi_oligos,berghei_gss_oligos"/>
 </c:if>
@@ -1727,7 +1727,7 @@ The overall expression percentile of each condition is the average percentile ov
 
 <%--</c:if><!-- this is for the test for new genes before aliases -->--%>
 
-<site:pageDivider name="Sequence ${has_sequence_comment}"/>
+<site:pageDivider name="Sequence"/>
 <font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font>
 <c:if test="${isCodingGene}">
 <!-- protein sequence -->
