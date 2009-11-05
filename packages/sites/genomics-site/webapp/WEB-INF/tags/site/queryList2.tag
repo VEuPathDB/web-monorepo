@@ -7,7 +7,9 @@
               required="true"
               description="list of question full names"
 %>
+<script src="assets/js/parameterHandlers.js" type="text/javascript"></script>
 <SCRIPT type="text/javascript" >
+
 
 function writeData(page, div, quesName){
     if(page=="") {document.getElementById(div).innerHTML = ""; return;}
@@ -31,6 +33,8 @@ document.getElementById(div).innerHTML = "<h1>" + quesName + "</h1><br/>";
 			$("#" + div).append(qd);
 document.getElementById(div).innerHTML += "<hr/>"
 			$("#" + div).append(qa);
+			htmltooltip.render();
+			initParamHandlers(true);
 		}
 	});
 }	
