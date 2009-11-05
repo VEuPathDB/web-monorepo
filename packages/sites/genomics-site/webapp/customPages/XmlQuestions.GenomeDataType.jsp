@@ -46,7 +46,7 @@
     <td class="mythStyle" title="Size in Mega bases">Genome<br>Size</td>
     <td class="mythStyle" title="Gene Count">Gene<br>Count</td>
     <td class="mythStyle" title="Multiple Strains">Multiple<br>Strains</td>
-<!--    <td class="mythStyle" title="Additional Strains">Additional<br>Strains</td>    -->
+    <td class="mythStyle" title="Additional Strains">Additional<br>Strains</td>   
     <td class="mythStyle" title="Organellar Genomes">Organellar<br>Genomes</td>
     <td class="mythStyle" title="Isolates">Isolates</td>
     <td class="mythStyle" title="Single Nucleotide Polymorphisms">SNPs</td>
@@ -80,6 +80,16 @@
     <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
+
+<c:choose>
+<c:when test="${not empty record.attributesMap['Additional_Strains']}">
+    <td class="mytdStyle">${record.attributesMap['Additional_Strains']}</td>
+</c:when>
+<c:otherwise>
+    <td class="mytdStyle"></td>
+</c:otherwise>
+</c:choose>
+
 
 <c:choose>
 <c:when test="${not empty record.attributesMap['Organellar_Genomes']}">
