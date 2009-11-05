@@ -45,9 +45,9 @@
     <td class="mythStyle" title="Data Source">Data<br>Source</td>
     <td class="mythStyle" title="Size in Mega bases">Genome<br>Size</td>
     <td class="mythStyle" title="Gene Count">Gene<br>Count</td>
-    <td class="mythStyle" title="Multiple Strains">Multiple<br>Strains</td>
-    <td class="mythStyle" title="Additional Strains">Additional<br>Strains</td>   
-    <td class="mythStyle" title="Organellar Genomes">Organellar<br>Genomes</td>
+    <td class="mythStyle" title="For the species that we have multiple strains, the row represents the main strain. Please mouseover the red dot to read the additional strains we cover">Multiple<br>Strains</td>
+ <%--   <td class="mythStyle" title="Additional Strains">Additional<br>Strains</td>    --%>
+    <td class="mythStyle" title="For the species that we have organellar genomes, please mouseover the red dot to read them">Organellar<br>Genomes</td>
     <td class="mythStyle" title="Isolates">Isolates</td>
     <td class="mythStyle" title="Single Nucleotide Polymorphisms">SNPs</td>
     <td class="mythStyle" title="Expressed Sequence Tags">ESTs</td>
@@ -62,6 +62,8 @@
 
 <c:set var="family" value="${record.attributesMap['Family']}"/>
 <c:set var="website" value="${record.attributesMap['Website']}"/>
+<c:set var="add_strains" value="${record.attributesMap['Additional_Strains']}"/>
+<c:set var="org_genomes" value="${record.attributesMap['Organellar_Genomes']}"/>
 
 <tr class="mytdStyle">
     <td class="mytdStyle" style="text-align:left;" title="${family}, in ${website}">	<i>${record.attributesMap['Organism']}</i></td>
@@ -74,13 +76,13 @@
 
 <c:choose>
 <c:when test="${record.attributesMap['Multiple_Strains'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" title="${add_strains}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
-
+<%--
 <c:choose>
 <c:when test="${not empty record.attributesMap['Additional_Strains']}">
     <td class="mytdStyle">${record.attributesMap['Additional_Strains']}</td>
@@ -89,11 +91,11 @@
     <td class="mytdStyle"></td>
 </c:otherwise>
 </c:choose>
-
-
+--%>
+<%-- <td class="mytdStyle">${record.attributesMap['Organellar_Genomes']}</td> --%>
 <c:choose>
 <c:when test="${not empty record.attributesMap['Organellar_Genomes']}">
-    <td class="mytdStyle">${record.attributesMap['Organellar_Genomes']}</td>
+     <td class="mytdStyle" title="${org_genomes}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle"></td>
