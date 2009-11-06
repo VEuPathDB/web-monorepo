@@ -1851,14 +1851,15 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-ExonIb'
        fl.na_sequence_id   as parent_id, 
        fl.start_min         as startm, 
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' ||'Analysis=' || a.name ||'$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
 AND    p.name =  'ChIP_chip_Einstein_called_peaks'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
@@ -2848,14 +2849,15 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearNonCoding'
        fl.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis='|| a.name || '$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
 AND    p.name =  'ChIP_chip_Einstein_called_peaks'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
@@ -2877,14 +2879,15 @@ AND    cpp.strain = 'RH'
        fl.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' ||'Analysis=' || a.name ||'$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
 AND    p.name =  'ChIP_chip_Einstein_called_peaks'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
@@ -2905,14 +2908,15 @@ AND    cpp.strain = 'PLK'
        fl.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' ||'Analysis=' || a.name ||'$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
 AND    p.name =  'NimbleScan_ChIP_Hakimi_called_peaks'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
@@ -4654,14 +4658,15 @@ GROUP BY interval
        fl.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+AND    dtf.analysis_id =  cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id =  a.analysis_id
 AND    p.name = 'ChIP_chip_Einstein' 
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
@@ -4682,14 +4687,15 @@ AND    cpp.strain = 'RH'
        fl.na_sequence_id   as parent_id,
        fl.start_min         as startm,
        fl.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' ||'Analysis=' || a.name ||'$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
 AND    p.name = 'NimbleScan_ChIP_Hakimi' 
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
@@ -4709,14 +4715,15 @@ AND    cpp.strain = 'RH'
        fl.na_sequence_id     as parent_id,
        fl.start_min           as startm,
        fl.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
 AND    p.name = 'ChIP_chip_Einstein_centromere'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
@@ -4765,14 +4772,15 @@ WHERE fl.na_sequence_id = $srcfeature_id
        fl.na_sequence_id   as parent_id,
        fl.start_min        as startm,
        fl.end_max          as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' ||'Analysis=' || a.name ||'$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
+AND    cpp.analysis_id = a.analysis_id
 AND    p.name = 'ChIP_chip_Einstein'
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
@@ -5299,13 +5307,14 @@ AND    cpp.protocol_type = 'raw'
        fl.na_sequence_id     as parent_id,
        fl.start_min           as startm,
        fl.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
+       'Treatment=' || cpp.treatment || '$dlm' ||'Analysis=' ||a.name ||'$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+FROM   rad.protocol p,rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
 WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =   cpp.analysis_id
+AND    cpp.analysis_id = a.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.name = 'ChIP_chip_Einstein'
 AND    fl.na_sequence_id = $srcfeature_id
