@@ -10,7 +10,7 @@
 <!-- get wdkModel name to display as page header -->
 <c:set value="${wdkModel.displayName}" var="project"/>
 
-<c:if test="${project == 'ToxoDB'}">
+<c:if test="${project == 'ToxoDB' || project == 'EuPathDB'}">
 	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByChIPchipToxo" /> 
 </c:if>
 
@@ -28,11 +28,13 @@
 <table width="100%">
 <tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
 
+<%--
 <c:choose>
 <c:when test = "${project == 'EuPathDB'}">
 <site:queryList2 questions="GeneQuestions.GenesByChIPchipToxo"/>
 </c:when>
 </c:choose>
+--%>
 
 </table>
 
