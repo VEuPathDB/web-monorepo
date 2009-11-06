@@ -33,7 +33,6 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 </td></tr>
 </table>
 
-
 <table  class="mytableStyle" width="100%">
 <c:choose>
   <c:when test='${xmlAnswer.resultSize == 0}'>
@@ -44,11 +43,13 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <%-- Organisms/species grouped by websites, alphabetically in each group --%>
 
 <tr class="mythStyle">
-    <td class="mythStyle">Gene Metric</td>
-    <td class="mythStyle" width=${orgWidth} title="Cryptosporidium hominis"><i>Ch</i></td>
-    <td class="mythStyle" width=${orgWidth} title="Cryptosporidium muris"><i>Cm</i></td>
-    <td class="mythStyle" width=${orgWidth} title="Cryptosporidium parvum"><i>Cp</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Gl</i></td>
+    <td class="mythStyle" title="">Gene Metric</td>
+    <td class="mythStyle" title="Cryptosporidium hominis, CryptoDB"><i>Ch</i></td>
+    <td class="mythStyle" title="Cryptosporidium muris, CryptoDB"  ><i>Cm</i></td>
+    <td class="mythStyle" title="Cryptosporidium parvum, CryptoDB" ><i>Cp</i></td>
+    <td class="mythStyle" title="Giardia_Assemblage_A_isolate_WB, GiardiaDB" ><i>GA</i></td>
+    <td class="mythStyle" title="Giardia_Assemblage_B_isolate_GS, GiardiaDB" ><i>GB</i></td>
+    <td class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>GE</i></td>
     <td class="mythStyle" width=${orgWidth} title=""><i>Pb</i></td>
     <td class="mythStyle" width=${orgWidth} title=""><i>Pc</i></td>
     <td class="mythStyle" width=${orgWidth} title=""><i>Pf</i></td>
@@ -71,7 +72,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 	 <c:set var="Ch" value="${record.attributesMap['Cryptosporidium_hominis']}"/>
  	 <c:set var="Cm" value="${record.attributesMap['Cryptosporidium_muris']}"/>
 	 <c:set var="Cp" value="${record.attributesMap['Cryptosporidium_parvum']}"/>
-	 <c:set var="Gl" value="${record.attributesMap['Giardia_lamblia']}"/>
+	 <c:set var="GA" value="${record.attributesMap['Giardia_Assemblage_A_isolate_WB']}"/>
+	 <c:set var="GB" value="${record.attributesMap['Giardia_Assemblage_B_isolate_GS']}"/>
+	 <c:set var="GE" value="${record.attributesMap['Giardia_Assemblage_E_isolate_P15']}"/>
 	 <c:set var="Lb" value="${record.attributesMap['Leishmania_braziliensis']}"/>
 	 <c:set var="Li" value="${record.attributesMap['Leishmania_infantum']}"/>
 	 <c:set var="Lm" value="${record.attributesMap['Leishmania_major']}"/>
@@ -94,7 +97,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mytdStyle" align="right">${Ch}</td>
     <td class="mytdStyle" align="right">${Cm}</td>
     <td class="mytdStyle" align="right">${Cp}</td>
-    <td class="mytdStyle" align="right">${Gl}</td>
+    <td class="mytdStyle" align="right">${GA}</td>
+    <td class="mytdStyle" align="right">${GB}</td>
+    <td class="mytdStyle" align="right">${GE}</td>
     <td class="mytdStyle" align="right">${Pb}</td>
     <td class="mytdStyle" align="right">${Pc}</td>
     <td class="mytdStyle" align="right">${Pf}</td>
@@ -120,7 +125,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 <table width="100%">
 <tr><td>
-<font size="-1"><i><b>Cryptosporidium</b>: Cp, C. parvum; Ch, C. hominis; <b>Giardia</b> Gl, G. lamblia; <b>Neospora</b>: Nc, N. caninum; <b>Leishmania</b>: Lb, L. braziliensis; Li, L. infantum; Lm, L. major;  <b>Plasmodium</b>: Pb, P. berghei; Pc, P. chabaudi; Pf, P. falciparum; Pk, P. knowlesi; Pv, P. vivax; Py, P. yoelii; <b>Toxoplasma</b>: Tg, T. gondii; <b>Trichomonas</b>: Tv, T. vaginalis; <b>Trypanosoma</b>: Tb, T. brucei; Tc, T. cruzi.)</i></font><br>
+<font size="-1"><i><b>Cryptosporidium</b>: Cp, C. parvum; Ch, C. hominis; <b>Giardia</b> GA, G.Assemblage_A_isolate_WB; GB, G.Assemblage_B_isolate_GS; GE, G.Assemblage_E_isolate_P15; <b>Neospora</b>: Nc, N. caninum; <b>Leishmania</b>: Lb, L. braziliensis; Li, L. infantum; Lm, L. major;  <b>Plasmodium</b>: Pb, P. berghei; Pc, P. chabaudi; Pf, P. falciparum; Pk, P. knowlesi; Pv, P. vivax; Py, P. yoelii; <b>Toxoplasma</b>: Tg, T. gondii; <b>Trichomonas</b>: Tv, T. vaginalis; <b>Trypanosoma</b>: Tb, T. brucei; Tc, T. cruzi.)</i></font><br>
 </td></tr>
 </table>
 
