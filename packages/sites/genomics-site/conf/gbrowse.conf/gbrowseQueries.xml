@@ -1465,7 +1465,6 @@ SELECT
        'SecondaryScore=' || gf.secondary_score || '$dlm' ||
        'score=' || round(gf.score,4) || '$dlm' ||
        'isPseudo=' || gf.is_pseudo || '$dlm' ||
-       'isDeprecated=' ||  ga.is_deprecated || '$dlm' ||
        'ExtDbName=' ||  ed.name || '$dlm' ||
        'Version=' ||  edr.version || '$dlm' ||
        'FeatureType=' || fl.feature_type
@@ -1477,8 +1476,7 @@ FROM
        sres.TaxonName tn,
        sres.SequenceOntology so,
        sres.ExternalDatabaseRelease edr,
-       sres.ExternalDatabase ed,
-       apidb.geneattributes ga
+       sres.ExternalDatabase ed
 WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.na_sequence_id = ns.na_sequence_id
   AND  fl.na_feature_id = gf.na_feature_id 
@@ -1489,7 +1487,6 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  tn.name_class = 'scientific name' 
   AND  gf.external_database_release_id = edr.external_database_release_id
   AND  edr.external_database_id = ed.external_database_id
-  AND  ga.source_id (+) = gf.source_id
 ORDER BY 
        fl.start_min
 ]]>
