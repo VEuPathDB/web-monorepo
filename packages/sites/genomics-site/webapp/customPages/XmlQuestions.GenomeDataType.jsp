@@ -38,6 +38,7 @@
 <%------------------------------------%>
 <table class="mytableStyle" width="100%">
 <tr class="mythStyle">
+    <td class="mythStyle" title="Website">Website</td>
     <td class="mythStyle" title="Species">Species</td>
     <td class="mythStyle" title="Click to access this Taxon ID in NCBI">Taxon ID</td>
     <td class="mythStyle" title="Strain">Strain</td>
@@ -47,8 +48,8 @@
     <td class="mythStyle" title="Gene Count">Gene<br>Count</td>
     <td class="mythStyle" title="For the species that we have multiple strains, the row represents the main strain. Please mouseover the red dot to read the additional strains we cover">Multiple<br>Strains</td>
  <%--   <td class="mythStyle" title="Additional Strains">Additional<br>Strains</td>    --%>
-    <td class="mythStyle" title="For the species that we have organellar genomes, please mouseover the red dot to read them">Organellar<br>Genomes</td>
-    <td class="mythStyle" title="Isolates">Isolates</td>
+    <td class="mythStyle" title="Mouseover the red dot to read the organellar genomes">Organ<br>ellar</td>
+    <td class="mythStyle" title="Isolates">Isol<br>ates</td>
     <td class="mythStyle" title="Single Nucleotide Polymorphisms">SNPs</td>
     <td class="mythStyle" title="Expressed Sequence Tags">ESTs</td>
     <td class="mythStyle" title="Microarray">Micro<br>array</td>
@@ -66,20 +67,42 @@
 <c:set var="org_genomes" value="${record.attributesMap['Organellar_Genomes']}"/>
 
 <tr class="mytdStyle">
-    <td class="mytdStyle" style="text-align:left;" title="${family}, in ${website}">	<i>${record.attributesMap['Organism']}</i></td>
-    <td class="mytdStyle" 		title="Click to access this Taxon ID in NCBI">	<a href="${ncbiTaxPage1}${record.attributesMap['Taxon_ID']}${ncbiTaxPage2}">${record.attributesMap['Taxon_ID']}</a></td>
-    <td class="mytdStyle">								${record.attributesMap['Strain']}</td>
-    <td class="mytdStyle">								${record.attributesMap['Genome_Version']}</td>
-    <td class="mytdStyle">								${record.attributesMap['Data_Source']}</td>
-    <td class="mytdStyle" style="text-align:right;">					${record.attributesMap['Genome_Size']}</td>
-    <td class="mytdStyle" style="text-align:right;">					${record.attributesMap['Gene_Count']}</td>
+<c:choose>
+<c:when test="${curWebsite != website}" >
+	<td style="border-top:2px solid grey">${website}</td>
+        <c:set var="curWebsite" value="${website}"/>
+        <c:set var="separation" value="border-top:2px solid grey"/>
+	<c:if test="${website != 'EuPathDB'}"> 
+		<c:set var="portalToo" value="EuPathDB"/>   
+	</c:if>
+</c:when>
+<c:when test="${portalToo == 'EuPathDB'}">
+	<c:set var="separation" value=""/>
+	<c:set var="portalToo" value=""/>
+        <td>EuPathDB</td>
+</c:when>
+<c:otherwise>
+	<td></td>
+</c:otherwise>
+</c:choose>
+
+
+
+    <td class="mytdStyle" style="text-align:left;${separation}" title="${family}, in ${website}"><i>${record.attributesMap['Organism']}</i></td>
+    <td class="mytdStyle" style="${separation}" title="Click to access this Taxon ID in NCBI">
+	<a href="${ncbiTaxPage1}${record.attributesMap['Taxon_ID']}${ncbiTaxPage2}">${record.attributesMap['Taxon_ID']}</a></td>
+    <td class="mytdStyle" style="${separation}">					${record.attributesMap['Strain']}</td>
+    <td class="mytdStyle" style="${separation}">					${record.attributesMap['Genome_Version']}</td>
+    <td class="mytdStyle" style="${separation}">					${record.attributesMap['Data_Source']}</td>
+    <td class="mytdStyle" style="text-align:right;${separation}">			${record.attributesMap['Genome_Size']}</td>
+    <td class="mytdStyle" style="text-align:right;${separation}">			${record.attributesMap['Gene_Count']}</td>
 
 <c:choose>
 <c:when test="${record.attributesMap['Multiple_Strains'] == 'yes'}">
-    <td class="mytdStyle" title="${add_strains}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" style="${separation}" title="${add_strains}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 <%--
@@ -95,82 +118,82 @@
 <%-- <td class="mytdStyle">${record.attributesMap['Organellar_Genomes']}</td> --%>
 <c:choose>
 <c:when test="${not empty record.attributesMap['Organellar_Genomes']}">
-     <td class="mytdStyle" title="${org_genomes}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+     <td class="mytdStyle" style="${separation}" title="${org_genomes}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Isolates'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['SNPs'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['ESTs'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Microarray'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Proteomics'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['ChIP_chip'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['SageTags'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Pathways'] == 'yes'}">
-    <td class="mytdStyle"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+    <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
-    <td class="mytdStyle"></td>
+    <td class="mytdStyle" style="${separation}"></td>
 </c:otherwise>
 </c:choose>
 

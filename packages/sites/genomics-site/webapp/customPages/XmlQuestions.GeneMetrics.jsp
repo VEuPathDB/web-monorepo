@@ -50,20 +50,20 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Giardia_Assemblage_A_isolate_WB, GiardiaDB" ><i>GA</i></td>
     <td class="mythStyle" title="Giardia_Assemblage_B_isolate_GS, GiardiaDB" ><i>GB</i></td>
     <td class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>GE</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Pb</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Pc</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Pf</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Pk</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Pv</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Py</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Nc</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Tg</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Tv</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Lb</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Li</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Lm</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Tb</i></td>
-    <td class="mythStyle" width=${orgWidth} title=""><i>Tc</i></td>
+    <td class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pb</i></td>
+    <td class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pc</i></td>
+    <td class="mythStyle" title="Plasmodium falciparum, PlasmoDB"><i>Pf</i></td>
+    <td class="mythStyle" title="Plasmodium knowlesi, PlasmoDB"><i>Pk</i></td>
+    <td class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pv</i></td>
+    <td class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Py</i></td>
+    <td class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nc</i></td>
+    <td class="mythStyle" title="Toxoplasma gondii"><i>Tg</i></td>
+    <td class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tv</i></td>
+    <td class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lb</i></td>
+    <td class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></td>
+    <td class="mythStyle" title="Leishmania major, TriTrypDB"><i>Lm</i></td>
+    <td class="mythStyle" title="Trypanosoma brucei, TriTrypDB"><i>Tb</i></td>
+    <td class="mythStyle" title="Trypanosoma cruzi, TriTrypDB"><i>Tc</i></td>
 </tr>
 
   <c:forEach items="${xmlAnswer.recordInstances}" var="record">
@@ -93,7 +93,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 
 <tr class="mytdStyle">
-    <td class="mytdStyle" align="left">${Metric_Type}</td>
+    <td class="mytdStyle" align="left" title="${record.attributesMap['Description']}">${Metric_Type}</td>
     <td class="mytdStyle" align="right">${Ch}</td>
     <td class="mytdStyle" align="right">${Cm}</td>
     <td class="mytdStyle" align="right">${Cp}</td>
