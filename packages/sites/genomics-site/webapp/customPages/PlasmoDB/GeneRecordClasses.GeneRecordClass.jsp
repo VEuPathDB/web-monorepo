@@ -276,12 +276,12 @@ ${id} <br /> ${prd}
 <c:choose>
   <c:when test="${species eq 'falciparum'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+CombinedSNPs
+      AnnotatedGenes+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+CombinedSNPs
     </c:set>
   </c:when>
   <c:when test="${species eq 'yoelii'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC
     </c:set>
   </c:when>
   <c:when test="${species eq 'chabaudi'}">
@@ -291,17 +291,17 @@ ${id} <br /> ${prd}
   </c:when>
   <c:when test="${species eq 'berghei'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
     </c:set>
   </c:when>
   <c:when test="${species eq 'knowlesi'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC
     </c:set>
   </c:when>
   <c:when test="${species eq 'vivax'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC
     </c:set>
   </c:when>
   <c:otherwise>
