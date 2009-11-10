@@ -359,6 +359,10 @@ function fillDivFromXML(obj, id, index)
 			var radio = getArrayElement(term,'algorithm');
 			if(radio.id == 'BlastAlgorithm_'+term){
 				radio.disabled = false;
+				if(i==0){
+					radio.checked = true;
+					changeLabel();
+				}
 				document.getElementById(term+'_font').style.color="black";
 				document.getElementById(term+'_font').style.fontWeight="bold";
 			}
