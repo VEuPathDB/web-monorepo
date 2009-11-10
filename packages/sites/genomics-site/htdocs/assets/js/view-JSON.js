@@ -573,7 +573,7 @@ var deleteStrat = "<a id='delete_" + strat.frontId + "' href='javascript:void(0)
 	}else{
 		$(div_sn).html("<span style='font-size:14px;font-weight:bold' title='Name of this substrategy. To rename, click on the corresponding step name in the parent strategy'>" + name + "</span>" + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 
 	}
-	$(div_sn).css({'z-index' : 90}); // DO NOT DELETE, needed for IE7
+	$(div_sn).css({'z-index' : 75}); // DO NOT DELETE, needed for IE7 (was 90 -- cris: I reduce to 75 so a long name does not affect access to step box; tested on IE7 on XP and Vista
 	$(div_sn).css("top","0px");     // to have the strategy name closer to the top
 	return div_sn;
 }
