@@ -127,6 +127,8 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 	// Create the boolean venn diagram box
 	var filterImg = "";
 	if(jsonstep.filtered)
+		bool_link = "";
+		if(jsonstep.isValid) bool_link = "NewResults(" + sid + "," + modelstep.frontId + ", true)";
 		filterImg = "<span class='filterImg'><img src='/assets/images/filter.gif' height='10px' width='10px'/></span>";
 	boolinner = ""+
 		"			<a id='" + sid + "|" + modelstep.back_boolean_Id + "|" + jsonstep.operation + "' title='CLICK to modify this boolean operation.' class='operation' href='javascript:void(0)' onclick='showDetails(this)'>"+
@@ -134,7 +136,7 @@ function booleanStep(modelstep, jsonstep, sid, zIndex){
 		"			</a>"+
 		"			<div class='crumb_details'></div>"+
 		"			<h6 class='resultCount'>"+
-		"				<a title='CLICK to show these results in the area below.' class='operation' onclick='NewResults(" + sid + "," + modelstep.frontId + ", true)' href='javascript:void(0)'>" + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType, jsonstep.results) + "</a>"+
+		"				<a title='CLICK to show these results in the area below.' class='operation' onclick='" + bool_link + "' href='javascript:void(0)'>" + jsonstep.results + "&nbsp;" + getDataType(jsonstep.dataType, jsonstep.results) + "</a>"+
 		"			</h6>" + filterImg;
 		if(!modelstep.isLast){
 			if(modelstep.nextStepType == "transform"){
