@@ -41,24 +41,33 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
   <c:otherwise>
 
 <%-- Organisms/species grouped by websites, alphabetically in each group --%>
-
+<c:set var="bgcolor" value="#efefef"/> 
 <tr class="mythStyle">
-    <td class="mythStyle" title="">Gene Metric</td>
+    <td style="background-color:white;border-right:3px solid grey;border-top:0px none;border-left:0 none;"></td>
+    <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://cryptodb.org">CryptoDB</a></td>
+    <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></td>
+    <td style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></td>
+    <td style="border-right:3px solid grey" colspan="2" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></td>
+    <td style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></td>
+    <td colspan="5" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></td>
+</tr>
+<tr class="mythStyle">
+    <td style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</td>
     <td class="mythStyle" title="Cryptosporidium hominis, CryptoDB"><i>Ch</i></td>
     <td class="mythStyle" title="Cryptosporidium muris, CryptoDB"  ><i>Cm</i></td>
-    <td class="mythStyle" title="Cryptosporidium parvum, CryptoDB" ><i>Cp</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Cryptosporidium parvum, CryptoDB" ><i>Cp</i></td>
     <td class="mythStyle" title="Giardia_Assemblage_A_isolate_WB, GiardiaDB" ><i>GA</i></td>
     <td class="mythStyle" title="Giardia_Assemblage_B_isolate_GS, GiardiaDB" ><i>GB</i></td>
-    <td class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>GE</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>GE</i></td>
     <td class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pb</i></td>
     <td class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pc</i></td>
     <td class="mythStyle" title="Plasmodium falciparum, PlasmoDB"><i>Pf</i></td>
     <td class="mythStyle" title="Plasmodium knowlesi, PlasmoDB"><i>Pk</i></td>
     <td class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pv</i></td>
-    <td class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Py</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Py</i></td>
     <td class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nc</i></td>
-    <td class="mythStyle" title="Toxoplasma gondii"><i>Tg</i></td>
-    <td class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tv</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Toxoplasma gondii"><i>Tg</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tv</i></td>
     <td class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lb</i></td>
     <td class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></td>
     <td class="mythStyle" title="Leishmania major, TriTrypDB"><i>Lm</i></td>
@@ -93,22 +102,22 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 
 <tr class="mytdStyle">
-    <td class="mytdStyle" align="left" title="${record.attributesMap['Description']}">${Metric_Type}</td>
-    <td class="mytdStyle" align="right">${Ch}</td>
-    <td class="mytdStyle" align="right">${Cm}</td>
-    <td class="mytdStyle" align="right">${Cp}</td>
+    <td style="border-right:3px solid grey" class="mytdStyle" align="left" title="${record.attributesMap['Description']}">${Metric_Type}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ch}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cm}</td>
+    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Cp}</td>
     <td class="mytdStyle" align="right">${GA}</td>
     <td class="mytdStyle" align="right">${GB}</td>
-    <td class="mytdStyle" align="right">${GE}</td>
-    <td class="mytdStyle" align="right">${Pb}</td>
-    <td class="mytdStyle" align="right">${Pc}</td>
-    <td class="mytdStyle" align="right">${Pf}</td>
-    <td class="mytdStyle" align="right">${Pk}</td>    
-    <td class="mytdStyle" align="right">${Pv}</td>
-    <td class="mytdStyle" align="right">${Py}</td>
+    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${GE}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pb}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pc}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pf}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pk}</td>    
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pv}</td>
+    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Py}</td>
     <td class="mytdStyle" align="right">${Nc}</td>
-    <td class="mytdStyle" align="right">${Tg}</td>
-    <td class="mytdStyle" align="right">${Tv}</td>
+    <td style="border-right:3px solid grey"class="mytdStyle" align="right">${Tg}</td>
+    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Tv}</td>
     <td class="mytdStyle" align="right">${Lb}</td>
     <td class="mytdStyle" align="right">${Li}</td>
     <td class="mytdStyle" align="right">${Lm}</td>

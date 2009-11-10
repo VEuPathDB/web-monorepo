@@ -38,7 +38,7 @@
 <%------------------------------------%>
 <table class="mytableStyle" width="100%">
 <tr class="mythStyle">
-    <td class="mythStyle" title="Website">Website</td>
+    <td width="7%" class="mythStyle" title="Website">Website</td>
     <td class="mythStyle" title="Species">Species</td>
     <td class="mythStyle" title="Click to access this Taxon ID in NCBI">Taxon ID</td>
     <td class="mythStyle" title="Strain">Strain</td>
@@ -69,19 +69,12 @@
 <tr class="mytdStyle">
 <c:choose>
 <c:when test="${curWebsite != website}" >
-	<td style="border-top:2px solid grey">${website}</td>
         <c:set var="curWebsite" value="${website}"/>
-        <c:set var="separation" value="border-top:2px solid grey"/>
-	<c:if test="${website != 'EuPathDB'}"> 
-		<c:set var="portalToo" value="EuPathDB"/>   
-	</c:if>
-</c:when>
-<c:when test="${portalToo == 'EuPathDB'}">
-	<c:set var="separation" value=""/>
-	<c:set var="portalToo" value=""/>
-        <td>EuPathDB</td>
+        <c:set var="separation" value="border-top:3px solid grey"/>
+	<td style="${separation}">${website}</td>
 </c:when>
 <c:otherwise>
+	<c:set var="separation" value=""/>
 	<td></td>
 </c:otherwise>
 </c:choose>
@@ -204,7 +197,7 @@
 
 
 <table width="100%">
-<tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 4778 deprecated genes that are not included in the official gene count.</font
+<tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font
 ></td></tr>
 <tr><td colspan="10"><font size="-2">** <i>T. gondii</i> gene groups identified in ToxoDB across the three strains (ME49, GT1, VEG) and the Apicoplast.</fo
 nt></td></tr>
