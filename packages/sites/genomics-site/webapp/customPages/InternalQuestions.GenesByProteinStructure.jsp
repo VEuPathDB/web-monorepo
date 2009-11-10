@@ -7,23 +7,11 @@
 
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
-<c:set var="props" value="${applicationScope.wdkModel.properties}" />
-<c:set var="project" value="${props['PROJECT_ID']}" />
 
 <!-- get wdkModel name to display as page header -->
-<c:set value="${wdkModel.displayName}" var="wdkModelDispName"/>
+<c:set value="${wdkModel.displayName}" var="projectId"/>
 
-<c:set var="headElement">
-  <script src="js/prototype.js" type="text/javascript"></script>
-<%--  <script src="js/scriptaculous.js" type="text/javascript"></script>
-  <script src="js/Top_menu.js" type="text/javascript"></script>--%>
-  <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
-</c:set>
-
-<c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
-
-
-<c:choose>
+<<c:choose>
 <c:when test="${projectId == 'GiardiaDB' || projectId == 'TrichDB' }">
         <jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByProteinStructure" /> 
     </c:when>
