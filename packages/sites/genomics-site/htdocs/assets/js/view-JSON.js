@@ -277,12 +277,12 @@ function singleStep(modelstep, jsonstep, sid, zIndex){
 	$(singleDiv).css({'z-index' : zIndex}); // DO NOT DELETE, needed for correct display in IE7.
 	$(".crumb_details", singleDiv).replaceWith(createDetails(modelstep,jsonstep, sid));
 	var step_invalid = null;
-	if(!jsonstep.isValid){
+	if(!modelstep.isTransform && !jsonstep.isValid){
 		step_invalid = createInvalidDiv();
-		if(modelstep.isTransform)
-			$(step_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(transformClasses).css({left: leftOffset + "px"});
-		else
-			$(step_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(firstClasses).css({left: leftOffset + "px"});
+		//if(modelstep.isTransform)
+		//	$(step_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(transformClasses).css({left: leftOffset + "px"});
+		//else
+		//	$(step_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(firstClasses).css({left: leftOffset + "px"});
 	}
 	stepdivs.push(singleDiv);
 	if(step_invalid != null)
@@ -573,7 +573,7 @@ var deleteStrat = "<a id='delete_" + strat.frontId + "' href='javascript:void(0)
 	}else{
 		$(div_sn).html("<span style='font-size:14px;font-weight:bold' title='Name of this substrategy. To rename, click on the corresponding step name in the parent strategy'>" + name + "</span>" + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 
 	}
-	$(div_sn).css({'z-index' : 75}); // DO NOT DELETE, needed for IE7 (was 90 -- cris: I reduce to 75 so a long name does not affect access to step box; tested on IE7 on XP and Vista
+	$(div_sn).css({'z-index' : 90}); // DO NOT DELETE, needed for IE7
 	$(div_sn).css("top","0px");     // to have the strategy name closer to the top
 	return div_sn;
 }
@@ -648,11 +648,10 @@ function createInvalidDiv(){
 	     attr("height","36").
 		 attr("width","98").
 		 attr("onclick","reviseInvalidSteps(this)").
-		 addClass("invalid-image");
 	$(inval).css({
 				background: "none",
 				position: "absolute",
-				"z-index": 499,           // lower than the z-index for drop down menus 500
+				"z-index": 999,
 				opacity: 0.6,
 				border: "none",
 				"padding-top":"2px"
