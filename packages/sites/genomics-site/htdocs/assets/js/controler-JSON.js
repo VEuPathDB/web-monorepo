@@ -648,6 +648,7 @@ function ChangeFilter(strategyId, stepId, url, filter) {
                 dataType:"json",
 				data:"state=" + p_state,
                 beforeSend: function(){
+			$("body").block();
                         showLoading(f_strategyId);
                 },
                 success: function(data){
@@ -655,6 +656,7 @@ function ChangeFilter(strategyId, stepId, url, filter) {
                         	updateStrategies(data, true);
 				$("div.layout-detail td div.filter-instance div.current").removeClass('current');
 				$(filterElt).parent('div').addClass('current');
+				$("body").unblock();
 			}
                 },
                 error: function(data, msg, e){
