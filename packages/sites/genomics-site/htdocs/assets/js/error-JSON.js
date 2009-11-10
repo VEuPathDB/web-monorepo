@@ -6,8 +6,18 @@ function ErrorHandler(evt, data, strategy, qform, name, fromHist){
 	if(evt == "Results") {
             if (data.substring(0,1) != "{") return true;
             data = eval("(" + data + ")");
+			for(var v in data.state){
+				if(data.state[v].id == strategy.backId)
+					break;
+			}
+			loadModel(data.strategies[data.state[v].checksum], v);
+			x = new Object();
+			x.strategy = undefined;
+			x.step = undefined;
+			showStrategies(x);
+			return;
 	}
-        if(data.type == "success"){
+    if(data.type == "success"){
 		return true;
 	}else{
 		type = data.type;
