@@ -62,7 +62,9 @@ function ResultsToGrid(data, ignoreFilters) {
 	// create multi select control for adding columns
 	var attrSelect = $("#addAttributes");
 	if (attrSelect.length > 0) { 
-		attrSelect.multiSelect({selectAll: false, noneSelected: '--- Add Column ---'},
+		attrSelect.multiSelect({selectAll: false,
+				noneSelected: '--- Add Column ---',
+				oneOrMoreSelected: '% selected: leave menu to submit'},
 				function() {
 					addAttr($("#addAttributes").attr('commandUrl'));
 				});
