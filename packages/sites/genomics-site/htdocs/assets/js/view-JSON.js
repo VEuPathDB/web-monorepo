@@ -283,7 +283,7 @@ function singleStep(modelstep, jsonstep, sid, zIndex){
 		//if(modelstep.isTransform)
 		//	$(step_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(transformClasses).css({left: leftOffset + "px"});
 		//else
-		//	$(step_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(firstClasses).css({left: leftOffset + "px"});
+		$(step_invalid).attr("id",sid+"_"+modelstep.frontId).addClass(firstClasses).css({left: leftOffset + "px"});
 	}
 	stepdivs.push(singleDiv);
 	if(step_invalid != null)
