@@ -56,7 +56,7 @@ if(jQuery) (function($){
 				if( o.selectAll ) html += '<label class="selectAll"><input type="checkbox" class="selectAll" />' + o.selectAllText + '</label>';
 				$(select).find('OPTION').each( function() {
 					if( $(this).val() != '' ) {
-						html += '<label><input type="checkbox" title="' + $(this).attr('title') + '" name="' + $(select).attr('name') + '" value="' + $(this).val() + '"';
+						html += '<label title="' + $(this).attr('title') + '"><input type="checkbox" name="' + $(select).attr('name') + '" value="' + $(this).val() + '"';
 						if( $(this).attr('selected') ) html += ' checked="checked"';
 						html += ' />' + $(this).html() + '</label>';
 					}
