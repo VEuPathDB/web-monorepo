@@ -648,7 +648,6 @@ function ChangeFilter(strategyId, stepId, url, filter) {
                 dataType:"json",
 				data:"state=" + p_state,
                 beforeSend: function(){
-			$("body").block();
                         showLoading(f_strategyId);
                 },
                 success: function(data){
@@ -656,7 +655,6 @@ function ChangeFilter(strategyId, stepId, url, filter) {
                         	updateStrategies(data, true);
 				$("div.layout-detail td div.filter-instance div.current").removeClass('current');
 				$(filterElt).parent('div').addClass('current');
-				$("body").unblock();
 			}
                 },
                 error: function(data, msg, e){
@@ -668,9 +666,5 @@ function ChangeFilter(strategyId, stepId, url, filter) {
         });
 }
 
-function reviseInvalidSteps(ele){
-	var iv_id = $(ele).parent().attr("id").split("_");
-//	$("div#diagram_" + iv_id[0] + " div#step_" + iv_id[1] + "_sub div.crumb_menu a.edit_step_link").click();
-	$("div#diagram_" + iv_id[0] + " div#step_" + iv_id[1] + "_sub h3 a#stepId_" + iv_id[1]).click();
-}
+
 

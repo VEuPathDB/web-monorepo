@@ -660,3 +660,8 @@ function createInvalidDiv(){
 	return inval;
 }
 
+function reviseInvalidSteps(ele){
+	var iv_id = $(ele).parent().attr("id").split("_");
+//	$("div#diagram_" + iv_id[0] + " div#step_" + iv_id[1] + "_sub div.crumb_menu a.edit_step_link").click();
+	$("div#diagram_" + iv_id[0] + " div#step_" + iv_id[1] + "_sub h3 a#stepId_" + iv_id[1]).click();
+}
