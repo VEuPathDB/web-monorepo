@@ -89,7 +89,7 @@
 	</c:if>
 	<c:forEach items="${cat.questions}" var="q">
     	<c:if test="${ !fn:contains(recordClass, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
-              <c:if test="${!( (siteName == 'PlasmoDB' || siteName == 'GiardiaDB' || siteName == 'ToxoDB') && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">
+              <c:if test="${!( (siteName == 'PlasmoDB' || siteName == 'GiardiaDB' || siteName == 'ToxoDB' || siteName == 'EuPathDB') && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">
     		<li>
 <%-- for the text to wrap in thsi Add Step popup menus....
      you need to apply the following to <a>   : 
