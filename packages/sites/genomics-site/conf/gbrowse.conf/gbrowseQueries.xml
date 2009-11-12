@@ -1528,7 +1528,7 @@ SELECT
              ELSE ''
              END) || 
        'ExtDBName=' || ed.name || '$dlm' ||
-       'Taxon=' || tn.name ||  '$dlm' ||
+       'Taxon=' || b.organism ||  '$dlm' ||
        'Scale=' || 
        CASE WHEN (is_reversed = 1) 
          THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
@@ -1541,8 +1541,7 @@ FROM
       apidb.sequenceattributes a,
       apidb.sequenceattributes b,
       sres.externaldatabaserelease edr,
-      sres.externaldatabase ed, 
-      Sres.TaxonName tn
+      sres.externaldatabase ed
 WHERE edr.external_database_id = ed.external_database_id
   AND syn.external_database_release_id = edr.external_database_release_id
   AND syn.a_start <= $rend 
@@ -1556,7 +1555,6 @@ WHERE edr.external_database_id = ed.external_database_id
   AND anch_right.synteny_id = syn.synteny_id
   AND anch_right.ref_loc < $rend
   AND anch_right.next_ref_loc >= $rend
-  AND b.organism = tn.name
   AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc) > 1
 ]]>
     </sql>
