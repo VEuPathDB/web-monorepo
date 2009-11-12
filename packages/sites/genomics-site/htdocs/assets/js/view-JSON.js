@@ -469,7 +469,11 @@ function createRecordTypeName(strat){
 	if (strat.subStratOf == null){
 		var div_sn = document.createElement("div");
 	//	$(div_sn).attr("id","record_name").addClass("strategy_small_text").text(getDataType(strat.dataType, 1) + "Strategy");
+	if (getDataType(strat.dataType) != "Sequences"){
+		$(div_sn).attr("id","record_name").addClass("strategy_small_text").text("(" + getDataType(strat.dataType) + ")"   );
+	}else{
 		$(div_sn).attr("id","record_name").addClass("strategy_small_text").text("(Genomic " + getDataType(strat.dataType) + ")"   );
+	}
 		return div_sn;
    	}
 }
