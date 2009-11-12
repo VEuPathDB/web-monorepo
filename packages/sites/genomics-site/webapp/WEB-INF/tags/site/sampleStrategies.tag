@@ -62,7 +62,7 @@
       <c:set var="simple" value="6d18cc017993d226" />
       <c:set var="expanded" value="8699257e6a988b74" />
       <c:set var="expressed" value="a9bcc63ae545fdf7" />
-      <c:set var="expressedLbrazilliensis" value="266c0de19cd8f91c" />
+      <c:set var="expressedLbrazilliensis" value="15bf7913bd87fdf1" />
       <c:set var="SecretedAmastigoteKin" value="c867cab6ad4645a0" />
    </c:when>
 
