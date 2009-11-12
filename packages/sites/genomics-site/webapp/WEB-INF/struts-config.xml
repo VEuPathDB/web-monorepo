@@ -171,6 +171,15 @@
     </action>
 
 	<action
+		path="/*.wadl"
+		type="org.gusdb.wdk.controller.action.ProcessRESTAction"
+		scope="request"
+		validate="false" 
+		parameter="{1}.all::wadl">
+		<forward name="show_result" path="downloadResult.jsp"/>
+	</action>
+
+	<action
        path="/*/*.*"
        type="org.gusdb.wdk.controller.action.ProcessRESTAction"
        scope="request"
