@@ -119,7 +119,7 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
 	</c:catch>
 
 	<c:if test="${feedex != null}">
-		 <i>Specific-Organism Site News temporarily unavailable</i>
+		 <i>Specific-Organism Site News temporarily unavailable</i><br>
 	</c:if>
 
 	 <a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News</a>
