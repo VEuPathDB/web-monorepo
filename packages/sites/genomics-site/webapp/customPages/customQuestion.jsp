@@ -15,7 +15,7 @@
   	</c:when>
 
   	<c:otherwise>
-    		<site:header title="Search for ${wdkQuestion.recordClass.type}s by ${wdkQuestion.displayName}" refer="customQuestion" />
+    		<site:header title="Search by ${wdkQuestion.displayName}" refer="customQuestion" />
 		<site:blast/>
     		<site:footer />
   	</c:otherwise>
