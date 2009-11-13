@@ -10,7 +10,12 @@
 <c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>
 <c:set var="xqMap" value="${xqSet.questionsMap}"/>
 <c:set var="extlQuestion" value="${xqMap['ExternalLinks']}"/>
-<c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
+<c:catch var="e">
+    <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
+</c:catch>
+<c:if test="${e!=null}">
+    <font size="-1" color="#CC0033">external links xml parsing error</font>
+</c:if>
 
 <c:choose>
 <c:when test="${wdkUser.stepCount == null}">
