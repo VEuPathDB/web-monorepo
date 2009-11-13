@@ -31,7 +31,9 @@
 
 <c:set var="newsAnswer" value="${newsQuestion.fullAnswer}"/>
 <c:set var="tutAnswer" value="${tutQuestion.fullAnswer}"/>
-<c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
+<c:catch var="extlAnswer_exception">
+    <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
+</c:catch>
 
 <c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
 
@@ -178,6 +180,9 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
     <hr>
     Related Sites
     <c:choose>
+      <c:when test="${extlAnswer_exception != null}">
+        <br><font size="-1" color="#CC0033"><i>Error. related sites temporarily unavailable</i></font><br>
+      </c:when>
       <c:when test="${extlAnswer.resultSize < 1}">
         No links.
       </c:when>

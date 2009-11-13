@@ -10,12 +10,9 @@
 <c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>
 <c:set var="xqMap" value="${xqSet.questionsMap}"/>
 <c:set var="extlQuestion" value="${xqMap['ExternalLinks']}"/>
-<c:catch var="e">
+<c:catch var="extlAnswer_exception">
     <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
 </c:catch>
-<c:if test="${e!=null}">
-    <font size="-1" color="#CC0033">external links xml parsing error</font>
-</c:if>
 
 <c:choose>
 <c:when test="${wdkUser.stepCount == null}">
@@ -126,6 +123,12 @@
 	<ul>
     	    <li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>
     	    <li><a href="https://community.eupathdb.org">Discussion Forums</a></li>
+    	    
+    	    <c:choose>
+    	    <c:when test="${extlAnswer_exception != null}">
+    	    <li><a href="#"><font color="#CC0033"><i>Error. related sites temporarily unavailable</i></font></a></li>
+    	    </c:when>
+    	    <c:otherwise>
     	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Related Sites</a>
     	<%--	<ul>
                     <c:forEach items="${extlAnswer.recordInstances}" var="record">
@@ -145,6 +148,9 @@
                     </c:forEach> 
     		</ul>--%>
     	    </li>
+    	    </c:otherwise>
+    	    </c:choose>
+    	    
     	    <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
     	    <li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
   	</ul>
