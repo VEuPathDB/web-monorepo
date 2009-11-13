@@ -349,7 +349,7 @@ function createDetails(modelstep, jsonstep, sid){
 
 	    disab = "";
 		ocExp = "onclick='ExpandStep(this," + sid + "," + modelstep.frontId + ",\"" + collapsedName + "\");hideDetails(this)'";
-		oM = "Open Nested Strategy";
+		oM = "Show Nested Strategy";
 		moExp = sub_expand_popup;
 		moEdit = sub_edit_popup;
 		if(jsonstep.strategy.order > 0){
