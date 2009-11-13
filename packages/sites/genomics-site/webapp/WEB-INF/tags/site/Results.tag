@@ -247,9 +247,7 @@
                  </tr>
                </table>
              </td>
-        <td nowrap>
-			${sumAttrib.displayName}
-		</td>
+        <td nowrap><span title="${sumAttrib.help}">${sumAttrib.displayName}</span></td>
         <%-- <c:if test="${j != 0}">
           <div style="float:left;">
             <a href="javascript:void(0)">
