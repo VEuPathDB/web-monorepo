@@ -11,10 +11,11 @@
 <c:set var="banner" value="${xmlAnswer.question.displayName}"/>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set value="${wdkModel.displayName}" var="project"/>
 
-<site:header  title="EuPathDB :: Gene Metrics"
-                 banner="EuPathDB Gene Metrics"
-                 parentDivision="EuPathDB"
+<site:header  title="${project} :: Gene Metrics"
+                 banner="${project} Gene Metrics"
+                 parentDivision="${project}"
                  parentUrl="/home.jsp"
                  divisionName="allSites"
                  division="geneMetrics"/>
