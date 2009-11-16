@@ -25,12 +25,12 @@
 	</tr>
 
 	<tr>
-	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#a03f43">CryptoDB<br>Rel.4.2</td>
-	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#67678d">GiardiaDB<br>Rel.1.3</td
-	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#ad448e">PlasmoDB<br>Rel.6.1</td
-	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#af5672">ToxoDB<br>Rel.5.2</td
-	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#8d7658">TrichDB<br>Rel.1.1</td
-	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#4f9cce">TriTrypDB<Br>Rel.1.2</td
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#a03f43">CryptoDB</td>
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#67678d">GiardiaDB</td>
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#ad448e">PlasmoDB</td>
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#af5672">ToxoDB</td>
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#8d7658">TrichDB</td>
+	<td align="center" width="17%" style="font-weight:bold;font-style: italic;color:#4f9cce">TriTrypDB</td>
 	</tr>
 	</table>
 
