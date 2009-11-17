@@ -44,7 +44,9 @@ table.threecolumn td {
 }
 
 table.paneltoggle {
-        background:#dddddd;
+	font-size:110%;
+	border-top:2px solid white;
+        background:#cccccc;
         margin-bottom:0px;
         padding-top: 2.5px;
         padding-right: 3px;
@@ -352,7 +354,11 @@ ul#strategy_tabs {
 }
 
 .toggle {display: none;}
-.boggle {margin: 6px 20px 6px 20px; display: none;}
+.boggle {
+	border: 0.5px solid grey;
+	margin: 6px 20px 6px 20px; 
+	display: none;
+	}
 
 
 
@@ -1599,7 +1605,7 @@ td.strat_inactive {
 
 /* used still in some tables in record pages */
 tr.rowMedium {
-    background-color: #DDDDDD;
+    background-color: #efefef;
     color: black;
     font-family: arial;
 	font-size: 10pt;
@@ -1631,18 +1637,18 @@ td.recordClassTitle{
     border-style:solid;
 }
 
-
+/* used in gene record pages for section titles (top/bottom border look */
 tr.headerRow {
 	background: #EFEFEF;
 }
-
-
-/* used in gene record pages for section titles (top/bottom border look */
 tr.headerRow  td,th {
-   border-width:2px 0;
-   border-style:solid;
+   border-bottom:1px solid grey;
+   border-right:1px solid grey;
+/*   border-style:solid; */
    padding: 3px;
    vertical-align: middle;
+   text-align: center;
+   white-space:nowrap;
 }
 
 .vennFilter {

@@ -66,23 +66,25 @@ return true;
 <c:if test="${availableGenomes == null || availableGenomes == ''}">
  <c:set var="availableGenomes" value="available genomes"/>
 </c:if>
-
-
-
-
+<!--
+<table  class="paneltoggle" width="100%" cellpadding="3" bgcolor="#dddddd">
+<tr><td>
+    <b><font size="+1">Multiple Sequence Alignment ${headerFiller} across ${availableGenomes}.</font></b>
+</td></tr>
+</table>
+-->
 <form action="${cgiUrl}/mavidAlign" onSubmit="popupform(this, 'mavidAlign')">
  <table border="0" cellpadding="${cellPadding}" cellspacing="1">
   <tr class="${bkgClass}"><td>
    <table border="0" cellpadding="${cellPadding}">
     <tr><td colspan="2">
-    <b><font size="+1">Retrieve <a href="http://www.biostat.wisc.edu/~cdewey/mercator/">Multiple Sequence Alignment</a>  
-    ${headerFiller} across ${availableGenomes}.</font></b>
-<br><br>
         <input name='project_id' value='${projectId}' size='20' type='hidden' />
         <c:if test="${inputContig == null}">
           <input name='contig' value='${contigId}' size='20' type='hidden' />
         </c:if>
     </td></tr>
+
+
     <c:if test="${inputContig != null}">
       <tr><td align="left"><b>Enter a Contig ID:</b>&nbsp;&nbsp;
           <input type="text" name="contig" value="${contigId}">
@@ -97,8 +99,12 @@ return true;
         <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
         <input type="radio" name="type" value="fasta_ungapped">multi fasta
      </td></tr>
-    <tr><td align="left"><input type="submit" name='go' value='Get Alignment' /></td>
+    <tr><td align="left"><br><input type="submit" name='go' value='Get Alignment' />
+	<span style="font-size:90%;">&nbsp;&nbsp;&nbsp;(Alignments made with <a href="http://www.biostat.wisc.edu/~cdewey/mercator/">Mercator</a>)</span>
+	</td>
      </tr>
     </table>
    </td></tr></table>
 </form>
+
+

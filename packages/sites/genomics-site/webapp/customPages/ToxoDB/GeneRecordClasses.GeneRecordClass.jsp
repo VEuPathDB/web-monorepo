@@ -50,32 +50,6 @@
  <tr>
   <td bgcolor=white valign=top>
 
-
-
-<table width="100%">
-<tr>
-  <td align="center"><a href="#Annotation">Annotation</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
-  </td>
-
-  <td align="center"><a href="#Protein">Protein</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
-  </td>
-
-  <td align="center"><a href="#Expression">Expression</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
-  </td>
-
-  <td align="center"><a href="#Sequence">Sequence</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
-  </td>
-
-</tr>
-</table>
-
-
-<hr>
-
 <%-- quick tool-box for the record --%>
 <div id="record-toolbox">
   <ul>
@@ -92,11 +66,40 @@
   </ul>
 </div>
 
+<a name = "top">
 <h2>
 <center>
 ${id} <br /> ${prd}
 </center>
 </h2>
+</a>
+<%----------------------------------------------------------%>
+
+<table width="100%"  style="font-size:150%;background-image: url(/assets/images/${projectId}/footer.png);">
+<tr>
+  <td align="center" style="padding:6px;"><a href="#Annotation">Annotation</a>
+     <img src="<c:url value='/images/arrow.gif'/>">
+  </td>
+
+  <td align="center"><a href="#Protein">Protein</a>
+     <img src="<c:url value='/images/arrow.gif'/>">
+  </td>
+
+  <td align="center"><a href="#Expression">Expression</a>
+     <img src="<c:url value='/images/arrow.gif'/>">
+  </td>
+
+  <td align="center"><a href="#Sequence">Sequence</a>
+     <img src="<c:url value='/images/arrow.gif'/>">
+  </td>
+</tr>
+</table>
+
+
+<hr>
+<%----------------------------------------------------------%>
+
+
 <c:set var="attr" value="${attrs['overview']}" />
 <site:panel 
     displayName="${attr.displayName}"
@@ -173,8 +176,17 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
    <c:set var="revCompOn" value="1"/>
   </c:if>
 
+<c:set var="mercatorAlign">
   <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
                       contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="secondary2" cellPadding="0"/>
+</c:set>
+
+<site:toggle isOpen="false"
+  name="mercatorAlignment"
+  displayName="Multiple Sequence Alignment of ${sequence_id} across available genomes"
+  content="${mercatorAlign}"
+  attribution=""/>
+
 </c:if>
 
 <site:pageDivider name="Annotation"/>
