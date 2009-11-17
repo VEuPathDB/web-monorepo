@@ -171,7 +171,7 @@ ${attrs['linkout'].value}
 <c:choose>
 <c:when test="${organism eq parvumOrganism}">
     <c:set var="gtracks">
-    ${snptrack}Gene+SyntenySpanParvumChr6+SyntenyParvumChr6+SyntenySpanHominis+SyntenyHominis+SyntenySpanMuris+SyntenyMuris+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX+Cluster
+    ${snptrack}Gene+SyntenySpanParvumChr6+SyntenyParvumChr6+SyntenySpanHominis+SyntenyHominis+SyntenySpanMuris+SyntenyMuris+UnifiedMassSpecPeptides+EST+BLASTX+Cluster
     </c:set>
 
     <c:set var="attribution">
