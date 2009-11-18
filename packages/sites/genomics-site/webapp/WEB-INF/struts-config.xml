@@ -470,8 +470,7 @@
     <action
       path="/showResultSize"
       type="org.gusdb.wdk.controller.action.ShowResultSizeAction"
-      scope="request"
-      name="resultSizeForm">
+      scope="request">
    </action>
     <action
       path="/copyStrategy"
