@@ -911,13 +911,13 @@ P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle. Y-axis is the log2
     <c:set var="noData" value="true"/>
   </c:if>
 
-<%--  NOTE: uncomment here to activate RNAseq
+
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle"
                attribution="Pfalciparum_RNA_Seq"/> 
---%>
+
 
   <c:set var="secName" value="Winzeler::Cc"/>
   <c:set var="imgId" value="img${secName}"/>
