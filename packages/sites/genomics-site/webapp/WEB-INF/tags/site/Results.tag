@@ -200,13 +200,13 @@
     <th id="${attrName}" align="left" valign="middle">
 	<table>
           <tr>
-<%-- REMOVE TO ADD BASKET
+
 				<c:if test="${recHasBasket && j == 0}">
 					<td style="padding:0;"><a href="javascript:void(0)" onclick="updateBasket(this,'${wdkAnswer.checksum}', '0', '0', '${wdkAnswer.recordClass.fullName}')">
 						<img class="basket" src="/assets/images/basket_gray.png" height="20px" width="20px" value="0"/>
 					</a></td>
 				</c:if>
---%>
+
             <td>
 		<table>
                   <tr>
@@ -308,7 +308,7 @@
     </c:set>
 
     <c:set value="${record.primaryKey}" var="primaryKey"/>
-<%-- REMOVE COMMENT TO ADD BASKET 
+
 	<c:if test="${recHasBasket}">
 		<c:set value="${record.attributes['in_basket']}" var="is_basket"/>
 		<c:set var="basket_img" value="basket_gray.png"/>
@@ -316,7 +316,7 @@
 			<c:set var="basket_img" value="basket_color.png"/>
 		</c:if>
 	</c:if>
---%>
+
     <c:set var="pkValues" value="${primaryKey.values}" />
     <c:set var="projectId" value="${pkValues['project_id']}" />
     <c:set var="id" value="${pkValues['source_id']}" />
@@ -348,13 +348,13 @@
 
               <%-- display a link to record page --%>
 
- <%-- REMOVE COMMENTS TO ADD BASKET          
+
 				<a href="javascript:void(0)" onclick="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')">
 					<img class="basket" value="${is_basket}" src="/assets/images/${basket_img}" width="20px" height="20px"/>
 				</a>
 		
 				&nbsp;&nbsp;&nbsp;
---%>
+
 				<a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
 
 
