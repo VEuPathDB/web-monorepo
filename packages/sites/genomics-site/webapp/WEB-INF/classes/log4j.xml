@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration>
+	<appender name="warn-log"
+		class="org.apache.log4j.RollingFileAppender">
+		<param name="maxFileSize" value="10MB" />
+		<param name="maxBackupIndex" value="1" />
+		<param name="File" value="${catalina.base}/logs/@WEBAPP@/wdk-warn.log4j" />
+		<param name="threshold" value="warn" />
+		<layout class="org.apache.log4j.PatternLayout">
+    		<!-- ipAddress provided by org.apidb.apicommon.controller.log4j.MDCServletFilter -->
+			<param name="ConversionPattern"
+			       value="%-4r [%-5p] %C:%L - %X{ipAddress} - [%d{dd/MMM/yyyy:HH:mm:ss Z}] %m%n" />
+		</layout>
+	</appender>
+	<appender name="debug-log"
+		class="org.apache.log4j.RollingFileAppender">
+		<param name="maxFileSize" value="10MB" />
+		<param name="maxBackupIndex" value="1" />
+		<param name="File" value="${catalina.base}/logs/@WEBAPP@/wdk.log4j" />
+		<layout class="org.apache.log4j.PatternLayout">
+    		<!-- ipAddress provided by org.apidb.apicommon.controller.log4j.MDCServletFilter -->
+			<param name="ConversionPattern"
+			       value="%-4r [%-5p] %C:%L - %X{ipAddress} - [%d{dd/MMM/yyyy:HH:mm:ss Z}] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="trace" />
+			<param name="LevelMax" value="info" />
+		</filter>
+	</appender>
+
+    <logger name="org.gusdb"><level value="info"/></logger>
+    <logger name="org.apidb"><level value="info"/></logger>
+    <logger name="org.apache.catalina"><level value="warn"/></logger>
+
+	<root>
+		<priority value="warn"></priority>
+		<appender-ref ref="debug-log" />
+		<appender-ref ref="warn-log" />
+	</root>
+</log4j:configuration>
