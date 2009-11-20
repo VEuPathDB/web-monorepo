@@ -1514,6 +1514,134 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
   <!-- end Newbold microarry study -->
 
 
+ <%-- ------------------------------------------------------------------ --%>
+
+  <c:set var="secName" value="Cowman::Sir2KO"/>
+  <c:set var="imgId" value="img${secName}"/>
+
+  <c:set var="isOpen" value="true"/>
+
+  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}&vp="/>
+  <c:set var="imgSrc" value="${preImgSrc}rma"/>
+
+  <c:set var="noData" value="false"/>
+
+  <c:if test="${attrs['graph_cowman_sir2'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <c:set var="expressionContent">
+    <table>
+    <FORM NAME="CowmanSir2Sort">
+      <tr>
+        <td rowspan="2">
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+        </td>
+
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+
+        <td class="centered">
+          <div class="small">
+Pfsir2A and Pfsir2B KOs expression profiling in intra-erythrocytic stages
+            <br><br><br>
+            <b>x-axis</b><br>
+            intra-erythrocytic stage<br>
+            <br><br>
+            <b>y-axis</b><br>
+            RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.
+            <br><br>
+          </div>
+<SELECT NAME="CowmanSir2List"
+OnChange="javascript:updateImage('${imgId}', CowmanSir2Sort.CowmanSir2List.options[selectedIndex].value)">
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
+<OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
+<OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
+</select>
+
+        </td>
+
+      </tr>
+</FORM>
+    </table>
+  </c:set>
+
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="Transcription profiling of wild type, Pfsir2A knock-out and Pfsir2B knock-out Plasmodium falciparum intra-erythrocytic stages"
+               attribution="New_Cowman_Sir2_KO"/>
+
+
+
+ <%-- ------------------------------------------------------------------ --%>
+
+  <c:set var="secName" value="Su::CQTreatment"/>
+  <c:set var="imgId" value="img${secName}"/>
+
+  <c:set var="isOpen" value="true"/>
+
+  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}&vp=_LEGEND,"/>
+  <c:set var="imgSrc" value="${preImgSrc}rma"/>
+
+  <c:set var="noData" value="false"/>
+
+  <c:if test="${attrs['graph_su_cq'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <c:set var="expressionContent">
+    <table>
+    <FORM NAME="SuCQSort">
+      <tr>
+        <td rowspan="2">
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+        </td>
+
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+
+        <td class="centered">
+          <div class="small">
+Mutations in PfCRT confer chloroquine (CQ) resistance in P. falciparum. Point mutations in the homolog of the mammalian multidrug resistance gene (pfmdr1) can also modulate the levels of CQ response. However, parasites with the same pfcrt and pfmdr1 alleles exhibit a wide range of drug sensitivity, suggesting that additional genes contribute to levels of CQ resistance (CQR).<br>
+3 isogenic lines which have different drug resistance profiles corresponding to unique mutations in the pfcrt gene (106/1K76, 106/176I, and 106/76I-352K) were used to study changes in gene expression with and without chloroquine  and genomic variations, i.e. copy number (CN) changes.
+            <br><br><br>
+            <b>x-axis</b><br>
+            isogenic line<br>
+            <br><br>
+            <b>y-axis</b><br>
+            RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.
+            <br><br>
+          </div>
+<SELECT NAME="SuCQList"
+OnChange="javascript:updateImage('${imgId}', SuCQSort.SuCQList.options[selectedIndex].value)">
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
+<OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
+<OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
+</select>
+
+        </td>
+
+      </tr>
+</FORM>
+    </table>
+  </c:set>
+
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="Expression and genomic changes after exposing drug-selected mutants to short term CQ treatment in Plasmodium falciparum"
+               attribution="E-GEOD-10022_array"/>
+
+
+
+ <%-- ------------------------------------------------------------------ --%>
+
+
+
+
+
+
   <site:wdkTable tblName="SageTags" attribution="SageTagArrayDesign,PlasmoSageTagFreqs"/>
 </c:if>
 
