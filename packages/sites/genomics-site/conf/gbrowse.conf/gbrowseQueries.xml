@@ -3750,11 +3750,11 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
     </testParamValues>
       <sql>
 <![CDATA[
-select sb.source_id
-from apidb.SYNTENICORTHOLOGS sa, apidb.SYNTENICORTHOLOGS sb
-where sa.SOURCE_ID = '$name'
-and sa.group_id = sb.GROUP_ID
-and sa.organism != sb.organism
+select ga2.source_id 
+from apidb.geneattributes ga1, apidb.geneattributes ga2
+where ga1.source_id = '$name'
+and ga1.orthomcl_name = ga2.orthomcl_name
+and not ga2.source_id = ga1.source_id
 ]]>
  </sql>
  </sqlQuery>
@@ -3877,11 +3877,11 @@ WHERE
     </testParamValues>
       <sql>
 <![CDATA[
-select sb.source_id
-from apidb.SYNTENICORTHOLOGS sa, apidb.SYNTENICORTHOLOGS sb
-where sa.SOURCE_ID = '$name'
-and sa.group_id = sb.GROUP_ID
-and sa.organism != sb.organism
+select ga2.source_id 
+from apidb.geneattributes ga1, apidb.geneattributes ga2
+where ga1.source_id = '$name'
+and ga1.orthomcl_name = ga2.orthomcl_name
+and not ga2.source_id = ga1.source_id
 ]]>
   </sql>
  </sqlQuery>
