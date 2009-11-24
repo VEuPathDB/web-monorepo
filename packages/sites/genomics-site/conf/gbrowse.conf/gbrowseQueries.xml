@@ -3744,11 +3744,20 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  includeProjects="ToxoDB">
+  <sqlQuery name="gene:syntenyMC:attribute:Ortholog" excludeProjects="TrichDB">
     <testParamValues project="ToxoDB">
-       <param name="name" value="TGME49_039250"/> 
+      <param name="name" value="TGME49_039250"/> 
     </testParamValues>
-      <sql>
+    <testParamValues project="TriTrypDB">
+      <param name="name" value="LmjF05.1010"/>
+    </testParamValues>
+    <testParamValues project="PlasmoDB">
+      <param name="name" value="PF11_0344"/>
+    </testParamValues>
+    <testParamValues project="CryptoDB">
+      <param name="name" value="cgd7_230"/>
+    </testParamValues>
+    <sql>
 <![CDATA[
 select ga2.source_id 
 from apidb.geneattributes ga1, apidb.geneattributes ga2
@@ -3758,50 +3767,6 @@ and not ga2.source_id = ga1.source_id
 ]]>
  </sql>
  </sqlQuery>
-
- <sqlQuery name="gene:syntenyMC:attribute:Ortholog"  excludeProjects="ToxoDB,TrichDB">
-  <testParamValues project="TriTrypDB">
-      <param name="name" value="LmjF05.1010"/>
-  </testParamValues>
-  <testParamValues project="PlasmoDB">
-      <param name="name" value="PF11_0344"/>
-  </testParamValues>
-  <testParamValues project="CryptoDB">
-      <param name="name" value="cgd7_230"/>
-  </testParamValues>
-     <sql>
-<![CDATA[
-select gb.SOURCE_ID
-from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb
-where ga.source_id = '$name'
-and ga.gene_id = gb.GENE_ID
-and ga.ORGANISM != gb.organism
-UNION
-SELECT
-ogf.source_id
-FROM 
-dots.GENEFEATURE gf,
-dots.GENEFEATURE ogf,
-dots.SequenceSequenceGroup ssg,
-dots.SequenceSequenceGroup ossg
-WHERE 
-gf.source_id = '$name'
-AND ogf.source_id != '$name'
-AND ssg.sequence_id = gf.na_feature_id
-AND ossg.sequence_group_id = ssg.sequence_group_id
-AND ogf.na_feature_id = ossg.sequence_id
-UNION
-select og.source_id
-from apidb.CHROMOSOME6ORTHOLOGY cog, ApiDB.CHROMOSOME6ORTHOLOGY ocog,
-dots.GENEFEATURE g, dots.GENEFEATURE og
-where g.source_id = '$name'
-and og.source_id != '$name'
-and cog.source_id = g.source_id
-and ocog.group_id = cog.group_id
-and og.source_id = ocog.source_id
-]]>
-    </sql>
-  </sqlQuery>
   
   
   <sqlQuery name="alignment:DoTSAssemblies:bulksubfeatures" excludeProjects="TrichDB">
@@ -3871,11 +3836,20 @@ WHERE
   </sqlQuery>
   
   
-  <sqlQuery name="gene:annotation:attribute:Ortholog"  includeProjects="ToxoDB">
+  <sqlQuery name="gene:annotation:attribute:Ortholog" excludeProjects="TrichDB">
     <testParamValues project="ToxoDB">
-       <param name="name" value="TGME49_039250"/>           
+      <param name="name" value="TGME49_039250"/>           
     </testParamValues>
-      <sql>
+    <testParamValues project="TriTrypDB">
+      <param name="name" value="LmjF05.1010"/>
+    </testParamValues>
+    <testParamValues project="PlasmoDB">
+      <param name="name" value="PF11_0344"/>
+    </testParamValues>
+    <testParamValues project="CryptoDB">
+      <param name="name" value="cgd7_230"/>
+    </testParamValues>
+    <sql>
 <![CDATA[
 select ga2.source_id 
 from apidb.geneattributes ga1, apidb.geneattributes ga2
@@ -3885,62 +3859,6 @@ and not ga2.source_id = ga1.source_id
 ]]>
   </sql>
  </sqlQuery>
-
-  <sqlQuery name="gene:annotation:attribute:Ortholog"   excludeProjects="ToxoDB,TrichDB">
-   <testParamValues project="TriTrypDB">
-    <param name="name" value="LmjF05.1010"/>
-   </testParamValues>
-  <testParamValues project="PlasmoDB">
-      <param name="name" value="PF11_0344"/>
-  </testParamValues>
-  <testParamValues project="CryptoDB">
-      <param name="name" value="cgd7_230"/>
-  </testParamValues>
-     <sql>
-<![CDATA[
-select gf.SOURCE_ID,
-'ExtDbName=' || ed.name || '$dlm' ||
-'Version=' || edr.version
-         as atts
-FROM
-(select gb.SOURCE_ID as source_id
-from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb
-where ga.source_id = '$name'
-and ga.gene_id = gb.GENE_ID
-and ga.ORGANISM != gb.organism
-UNION
-SELECT
-ogf.source_id as source_id
-FROM 
-dots.GENEFEATURE gf,
-dots.GENEFEATURE ogf,
-dots.SequenceSequenceGroup ssg,
-dots.SequenceSequenceGroup ossg
-WHERE 
-gf.source_id = '$name'
-AND ogf.source_id != '$name'
-AND ssg.sequence_id = gf.na_feature_id
-AND ossg.sequence_group_id = ssg.sequence_group_id
-AND ogf.na_feature_id = ossg.sequence_id
-UNION
-select og.source_id as source_id
-from apidb.CHROMOSOME6ORTHOLOGY cog, ApiDB.CHROMOSOME6ORTHOLOGY ocog,
-dots.GENEFEATURE g, dots.GENEFEATURE og
-where g.source_id = '$name'
-and og.source_id != '$name'
-and cog.source_id = g.source_id
-and ocog.group_id = cog.group_id
-and og.source_id = ocog.source_id) ortho,
-dots.GENEFEATURE gf,
-SRes.ExternalDatabaseRelease edr,
-SRes.ExternalDatabase ed 
-WHERE
-ortho.source_id = gf.source_id
-and gf.external_database_release_id = edr.external_database_release_id 
-AND  edr.external_database_id = ed.external_database_id 
-]]>
-    </sql>
-  </sqlQuery>
 
   <sqlQuery name="domain:MassSpecPeptides:bulksubfeatures" excludeProjects="TrichDB">
      <sql>
