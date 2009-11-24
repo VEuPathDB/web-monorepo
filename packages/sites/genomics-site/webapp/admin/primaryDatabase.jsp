@@ -4,8 +4,9 @@
     taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions"
 %><%@
     taglib prefix="api" uri="http://apidb.org/taglib"
-%><api:wdkRecord 
+%><c:catch
+><api:wdkRecord 
     name="UtilityRecordClasses.SiteInfo"
 /><api:modelConfig 
     var="modelConfig"
-/>${fn:substringAfter(modelConfig.props['appDb']['connectionUrl'], "@")}
+/>${fn:substringAfter(modelConfig.props['appDb']['connectionUrl'], "@")}</c:catch>
