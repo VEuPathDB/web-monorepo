@@ -31,7 +31,7 @@
 
     <logger name="org.gusdb"><level value="info"/></logger>
     <logger name="org.apidb"><level value="info"/></logger>
-    <logger name="org.apache.catalina"><level value="warn"/></logger>
+    <logger name="org.apache"><level value="warn"/></logger>
 
 	<root>
 		<priority value="warn"></priority>
