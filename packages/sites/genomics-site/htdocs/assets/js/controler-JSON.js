@@ -232,16 +232,24 @@ function NewResults(f_strategyId, f_stepId, bool, pagerOffset, ignoreFilters){
 	}
 	var strategy = getStrategy(f_strategyId);
 	var step = strategy.getStep(f_stepId,true);
+	url = "showSummary.do";
+	var d = new Object();
+	d.strategy = strategy.backId;
+	d.step = step.back_step_Id;
+	d.resultsOnly = true;
+	d.checksum = strategy.checksum;
 	if(bool){
-		url = "showSummary.do?strategy=" + strategy.backId + "&step=" + step.back_boolean_Id + "&resultsOnly=true";
-	}else{
-		url = "showSummary.do?strategy=" + strategy.backId + "&step=" + step.back_step_Id + "&resultsOnly=true";
+		d.step = step.back_boolean_Id;
 	}
-        if (!pagerOffset) url += "&noskip=1";
-	else url += "&pager.offset=" + pagerOffset;
+	if (!pagerOffset) 
+		d.noskip = 1;
+	else 
+		d.pager.offset = pagerOffset;    
 	$.ajax({
 		url: url,
 		dataType: "html",
+		type: "post",
+		data: d,
 		beforeSend: function(){
 			showLoading(f_strategyId);
 		},
