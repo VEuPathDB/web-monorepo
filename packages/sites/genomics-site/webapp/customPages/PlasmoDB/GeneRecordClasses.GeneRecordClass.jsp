@@ -1915,21 +1915,15 @@ The overall expression percentile of each condition is the average percentile ov
 <%--</c:if> --%>
 
 <!-- genomic sequence -->
-<c:set value="${wdkRecord.tables['GeneModel']}" var="geneModelTable"/>
-
-<c:set var="i" value="0"/>
-<c:forEach var="row" items="${geneModelTable}">
-  <c:set var="totSeq" value="${totSeq}${row['sequence'].value}"/>
-  <c:set var="i" value="${i +  1}"/>
-</c:forEach>
-
-<c:set var="seq">
- <pre><w:wrap size="60" break="<br>">${totSeq}</w:wrap></pre>
-  <font size="-1">Sequence Length: ${fn:length(totSeq)} bp</font><br/>
+<c:set var="genomicSequence" value="${attrs['highlighted_genomic']}"/>
+<c:set var="genomicSequenceContent">
+  <pre><w:wrap size="60">${genomicSequence.value}</w:wrap></pre>
+  <font size="-1">Sequence Length: ${fn:length(genomicSequence.value)} bp</font><br/>
 </c:set>
+
 <site:toggle name="genomicSequence" isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
-    content="${seq}" />
+    content="${genomicSequenceContent}" />
 
 
 <c:if test="${isCodingGene}">
