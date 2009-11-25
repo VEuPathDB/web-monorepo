@@ -497,8 +497,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 <%------------------------------------------------------------------%>
 <c:set var="genomicSequence" value="${attrs['highlighted_genomic']}"/>
 <c:set var="genomicSequenceContent">
-  <pre><w:wrap size="60">${genomicSequence.value}</w:wrap></pre>
+    <noindex>
+    <font class="fixed">
+  <w:wrap size="60"  break="<br>">${genomicSequence.value}</w:wrap>
+    </font><br/><br/>
   <font size="-1">Sequence Length: ${fn:length(genomicSequence.value)} bp</font><br/>
+    </noindex>
 </c:set>
 
 <site:toggle name="genomicSequence" isOpen="false"

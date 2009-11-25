@@ -533,14 +533,17 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <c:set var="genomicSequence" value="${attrs['highlighted_genomic']}"/>
 <c:set var="genomicSequenceContent">
-  <pre><w:wrap size="60">${genomicSequence.value}</w:wrap></pre>
+    <noindex>
+    <font class="fixed">
+  <w:wrap size="60"  break="<br>">${genomicSequence.value}</w:wrap>
+    </font><br/><br/>
   <font size="-1">Sequence Length: ${fn:length(genomicSequence.value)} bp</font><br/>
+    </noindex>
 </c:set>
 
 <site:toggle name="genomicSequence" isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
     content="${genomicSequenceContent}" />
-
 <%------------------------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 <c:set var="attr" value="${attrs['cds']}" />
