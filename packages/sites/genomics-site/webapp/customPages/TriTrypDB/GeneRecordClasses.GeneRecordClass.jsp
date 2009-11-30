@@ -49,8 +49,8 @@
 </c:if>
 
 
-<c:set var="esmeraldoDatabaseName" value="Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton"/>
-<c:set var="nonEsmeraldoDatabaseName" value="Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton"/>
+<c:set var="esmeraldoDatabaseName" value="Sanger T.cruzi Esmeraldo chromosomes"/>
+<c:set var="nonEsmeraldoDatabaseName" value="Sanger T.cruzi Non-Esmeraldo contigs and chromosomes"/>
 
 
 <%-- display page header with recordClass type in banner --%>
@@ -64,18 +64,9 @@
 
 
 <c:choose>
-  <c:when test='${sequenceDatabaseName eq nonEsmeraldoDatabaseName}'>
-    <c:set var="append" value=" - (non-esmeraldo)" />
+  <c:when test='${(binomial eq "Trypanosoma cruzi" && sequenceDatabaseName ne esmeraldoDatabaseName && sequenceDatabaseName ne nonEsmeraldoDatabaseName}'>
+    <c:set var="append" value=" - (this contig could not be assigned to Esmeraldo or Non-Esmeraldo)" />
   </c:when>
-  <c:when test='${sequenceDatabaseName eq esmeraldoDatabaseName}'>
-    <c:set var="append" value=" - (esmeraldo)" />
-  </c:when>
-
-  <c:when test='${organismFull eq "Trypanosoma cruzi strain CL Brener" && sequenceDatabaseName ne esmeraldoDatabaseName && sequenceDatabaseName ne nonEsmeraldoDatabaseName}'>
-    <c:set var="append" value=" - (this contig could not be assigned to esmeraldo or non-esmeraldo)" />
-  </c:when>
-
-
   <c:otherwise>
     <c:set var="append" value="" />
   </c:otherwise>
