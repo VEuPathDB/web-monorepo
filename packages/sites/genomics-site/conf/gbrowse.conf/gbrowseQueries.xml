@@ -4678,7 +4678,8 @@ WHERE fl.na_sequence_id = $srcfeature_id
   <sqlQuery name="ChIP_PLK:Einstein:bulksubfeatures"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT /*+ no_star_transformation use_nl(fl dtf) */
+       fl.na_feature_id   as feature_id,
        'ChIP_sub'          as type,
        'Einstein'          as source,
        dtf.float_value     as score,
