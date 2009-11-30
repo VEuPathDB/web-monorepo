@@ -273,7 +273,7 @@ ${headElement}
     	  <c:if test="${refer == 'customSummary'}">
 		  	<li><a href="javascript:void(0)" onclick="dykOpen()">Did You Know...</a></li>
           </c:if>
-          <li><a href="/workshop/2009/?page=schedule">2009 EuPathDB Workshop curriculum</a></li>
+          <li><a href="http://workshop.eupathdb.org/2010/">2010 EuPathDB Workshop</a></li>
 <%--	  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Community Links</a></li> --%>
           <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
           <li><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>

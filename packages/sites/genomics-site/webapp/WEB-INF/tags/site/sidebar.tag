@@ -305,7 +305,7 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
          </c:if>
             <li id='h-6'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Data Summary</a></li>
             <li id='h-6'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
-            <li id='h-6'><a href="/workshop/2009/?page=schedule">2009 EuPathDB Workshop curriculum</a></li>
+            <li id='h-6'><a href="http://workshop.eupathdb.org/2010/">2010 EuPathDB Workshop</a></li>
 
             <li id='h-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
             <li id='h-7'><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>
