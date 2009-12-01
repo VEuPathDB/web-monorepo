@@ -179,7 +179,7 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
   </form>
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
-<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB' || wdkModel.name eq 'PlasmoDB' || wdkModel.name eq 'TriTrypDB'}">
+<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB' || wdkModel.name eq 'PlasmoDB' || wdkModel.name eq 'TriTrypDB' || wdkModel.name eq 'GiardiaDB'}">
 
   <hr>
 <a name="mercator"></a>
