@@ -15,13 +15,15 @@
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
     <th colspan=3 align="center"><i>Leishmania </i></th>
-    <th rowspan=2 align="center"><i>Trypanosoma<br>brucei</i></th>
+    <th colspan=2 align="center"><i>Trypanosoma brucei</i></th>
     <th colspan=4 align="center"><i>Trypanosoma cruzi</i></th>
   </tr>
   <tr>
     <th><i>braziliensis</i></th>
     <th><i>infantum</i></th>
     <th><i>major</i></th>
+    <th><i>TREU927</i></th>
+    <th><i>gambiense</i></th>
     <th>Distinct genes</th>
     <th>esmeraldo</th>
     <th>non-esmeraldo</th>
@@ -62,7 +64,13 @@
       <wdk:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tbr_genes" />  
+                          instanceName="tbr927_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tbrgamb_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 

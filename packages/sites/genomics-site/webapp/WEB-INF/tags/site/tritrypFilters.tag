@@ -10,7 +10,8 @@
 <c:set var="lbr_genes" value=""/>
 <c:set var="lin_genes" value=""/>
 <c:set var="lma_genes" value=""/>
-<c:set var="tbr_genes" value=""/>
+<c:set var="tbr927_genes" value=""/>
+<c:set var="tbrgamb_genes" value=""/>
 <c:set var="tce_genes" value=""/>
 <c:set var="tcne_genes" value=""/>
 <c:set var="tcu_genes" value=""/>
@@ -45,8 +46,11 @@
       <c:when test="${cacheItem.key == 'lma_genes'}">
         <c:set var="lma_genes" value="${cacheItem.value}"/>
       </c:when>
-      <c:when test="${cacheItem.key == 'tbr_genes'}">
-        <c:set var="tbr_genes" value="${cacheItem.value}"/>
+      <c:when test="${cacheItem.key == 'tbr927_genes'}">
+        <c:set var="tbr927_genes" value="${cacheItem.value}"/>
+      </c:when>
+      <c:when test="${cacheItem.key == 'tbrgamb_genes'}">
+        <c:set var="tbrgamb_genes" value="${cacheItem.value}"/>
       </c:when>
       <c:when test="${cacheItem.key == 'tce_genes'}">
         <c:set var="tce_genes" value="${cacheItem.value}"/>
@@ -72,13 +76,15 @@
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
     <th colspan=3 align="center"><i>Leishmania </i></th>
-    <th rowspan=2 align="center"><i>Trypanosoma<br>brucei</i></th>
+    <th colspan=2 align="center"><i>Trypanosoma<br>brucei</i></th>
     <th colspan=4 align="center"><i>Trypanosoma cruzi</i></th>
   </tr>
   <tr>
     <th><i>braziliensis</i></th>
     <th><i>infantum</i></th>
     <th><i>major</i></th>
+    <th><i>TREU927</i></th>
+    <th><i>gambiense</i></th>
     <th>Distinct genes</th>
     <th>esmeraldo</th>
     <th>non-esmeraldo</th>
@@ -167,16 +173,32 @@
     </c:choose></td>
 
     <c:choose>
-      <c:when test="${curFilter eq 'tbr_genes'}">
+      <c:when test="${curFilter eq 'tbr927_genes'}">
         <td class="selected">${wdkHistory.filterSize}
       </c:when>
       <c:otherwise>
 	<c:choose>
-          <c:when test="${tbr_genes != ''}">
-            <td>${tbr_genes}
+          <c:when test="${tbr927_genes != ''}">
+            <td>${tbr927_genes}
           </c:when>
           <c:otherwise>
-            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=tbr_genes">&nbsp;</a>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=tbr927_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+    <c:choose>
+      <c:when test="${curFilter eq 'tbrgamb_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${tbrgamb_genes != ''}">
+            <td>${tbrgamb_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=tbrgamb_genes">&nbsp;</a>
           </c:otherwise>
         </c:choose>
       </c:otherwise>
