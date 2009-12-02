@@ -126,8 +126,8 @@
 <sanityTestInfo project="PlasmoDB">
     <defaultParamValue name="name" value="Pf3D7_11"/>
     <defaultParamValue name="srcfeature_id" value="$$na_seq_id_Pf3D7_11$$"/>
-    <defaultParamValue name="base_start" value="1279000"/>
-    <defaultParamValue name="rend" value="1314000"/>
+    <defaultParamValue name="base_start" value="1278854"/>
+    <defaultParamValue name="rend" value="1310722"/>
     <defaultParamValue name="dlm" value=","/>
 
     <sqlValue name="na_seq_id_Pf3D7_11">
@@ -440,8 +440,21 @@ ORDER BY
   <sqlQuery name="gene:syntenyMC" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
-SELECT * FROM (
-SELECT
+with materialized_query as
+     (select organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, atts
+      from apidb.GeneContextSyntenicGenes
+      where organism = 'Plasmodium yoelii yoelii str. 17XNL'
+        and na_sequence_id = $srcfeature_id
+        and context_start = $base_start
+        and context_end = $rend)
+select 'fast' query_style, syntenic_na_feature_id feature_id, 'gene' type,
+       'syntenyMC' source,  syntenic_source_id name, '.' score, synteny_id parent_id,
+       startm, end, strand, atts
+from materialized_query
+union
+select * from (
+select
+       'slow' query_style,
        gattr.na_feature_id feature_id,
        'gene' type, 
        'syntenyMC' source, 
@@ -476,7 +489,9 @@ FROM
        apidb.syntenyAnchor anch_right,
        apidb.geneattributes gattr,
        apidb.featurelocation fl
-WHERE syn.a_na_sequence_id = $srcfeature_id
+WHERE (select count(*) from materialized_query) = 0
+  and gattr.organism = 'Plasmodium yoelii yoelii str. 17XNL'
+  AND syn.a_na_sequence_id = $srcfeature_id
   AND syn.a_start <= $rend 
   AND syn.a_end >= $base_start 
   AND anch_left.synteny_id = syn.synteny_id 
