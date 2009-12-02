@@ -319,7 +319,7 @@ sub features {
   my ($sql, @features, $base_start, $rend);
 
   my ($type, $types,$attributes,$rangetype,$iterator,$callback,$start,
-      $stop,$feature_id,$factory) = $self->_rearrange([qw(TYPE
+      $stop,$feature_id,$factory,$sqlParam) = $self->_rearrange([qw(TYPE
                 TYPES
                 ATTRIBUTES
                 RANGETYPE
@@ -329,8 +329,8 @@ sub features {
                 STOP
                 FEATURE_ID
                 FACTORY
-                                                         )
-                  ], @_);
+                SQLPARAM
+                ) ], @_);
   $types ||= $type;
 
   my $srcfeature_id = $self->srcfeature_id;
@@ -354,10 +354,12 @@ sub features {
   #
   ###########################################################
 
-  foreach my $typeHash ( _getUniqueTypes($types) ) {
+  foreach my $typeHash ( _getUniqueTypes($types, $sqlParam) ) {
     my @types = keys(%$typeHash);
     my $type = shift @types;
-    my $typeString = $typeHash->{$type};
+    #my $typeString = $typeHash->{$type};
+    my $typeString = $type;
+    my $sqlParamString = $typeHash->{$type};
 
     $sql = $factory->parser->getSQL("Segment.pm", $type);
 
@@ -498,12 +500,14 @@ find the corresponding element in SQL xml files.
 
 sub _getUniqueTypes() {
 
-    my $types = shift;
+    my ($types, $sqlParam) = @_;
     my @uniqtypes = ();
 
     my %seen;
+    my $i = 0;
     for my $type (@{$types || []}) {
-  push(@uniqtypes, { $type => $type }) unless $seen{$type}++;
+      push(@uniqtypes, { $type => $sqlParam->[$i] }) unless $seen{$type}++;
+      $i++; 
     }
 
     return @uniqtypes;
