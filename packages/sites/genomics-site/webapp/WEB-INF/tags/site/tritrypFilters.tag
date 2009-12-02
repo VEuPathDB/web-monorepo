@@ -12,10 +12,12 @@
 <c:set var="lma_genes" value=""/>
 <c:set var="tbr927_genes" value=""/>
 <c:set var="tbrgamb_genes" value=""/>
+<c:set var="tcongolense_genes" value=""/>
 <c:set var="tce_genes" value=""/>
 <c:set var="tcne_genes" value=""/>
 <c:set var="tcu_genes" value=""/>
 <c:set var="tc_distinct_genes" value=""/>
+<c:set var="tvivax_genes" value=""/>
 <c:set var="tritryp_distinct_genes" value=""/>
 
 <%-- check for filter link cache --%>
@@ -52,6 +54,9 @@
       <c:when test="${cacheItem.key == 'tbrgamb_genes'}">
         <c:set var="tbrgamb_genes" value="${cacheItem.value}"/>
       </c:when>
+      <c:when test="${cacheItem.key == 'tcongolense_genes'}">
+        <c:set var="tcongolense_genes" value="${cacheItem.value}"/>
+      </c:when>
       <c:when test="${cacheItem.key == 'tce_genes'}">
         <c:set var="tce_genes" value="${cacheItem.value}"/>
       </c:when>
@@ -60,6 +65,9 @@
       </c:when>
       <c:when test="${cacheItem.key == 'tcu_genes'}">
         <c:set var="tcu_genes" value="${cacheItem.value}"/>
+      </c:when>
+      <c:when test="${cacheItem.key == 'tvivax_genes'}">
+        <c:set var="tvivax_genes" value="${cacheItem.value}"/>
       </c:when>
       <c:when test="${cacheItem.key == 'tc_distinct_genes'}">
         <c:set var="tc_distinct_genes" value="${cacheItem.value}"/>
@@ -77,7 +85,9 @@
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
     <th colspan=3 align="center"><i>Leishmania </i></th>
     <th colspan=2 align="center"><i>Trypanosoma<br>brucei</i></th>
+    <th rowspan=2 align="center"><i>Trypanosoma congolense</i></th>
     <th colspan=4 align="center"><i>Trypanosoma cruzi</i></th>
+    <th rowspan=2 align="center"><i>Trypanosoma vivax</i></th>
   </tr>
   <tr>
     <th><i>braziliensis</i></th>
@@ -205,6 +215,22 @@
     </c:choose></td>
 
     <c:choose>
+      <c:when test="${curFilter eq 'tcongolense_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${tcongolense_genes != ''}">
+            <td>${tcongolense_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=tcongolense_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
+
+    <c:choose>
       <c:when test="${curFilter eq 'tc_distinct_genes'}">
         <td class="selected">${wdkHistory.filterSize}
       </c:when>
@@ -268,6 +294,21 @@
       </c:otherwise>
     </c:choose></td>
 
+    <c:choose>
+      <c:when test="${curFilter eq 'tvivax_genes'}">
+        <td class="selected">${wdkHistory.filterSize}
+      </c:when>
+      <c:otherwise>
+	<c:choose>
+          <c:when test="${tvivax_genes != ''}">
+            <td>${tvivax_genes}
+          </c:when>
+          <c:otherwise>
+            <td><a class="filter_link" href="getFilterLink.do?wdk_history_id=${historyId}&filter=tvivax_genes">&nbsp;</a>
+          </c:otherwise>
+        </c:choose>
+      </c:otherwise>
+    </c:choose></td>
 
 
 
