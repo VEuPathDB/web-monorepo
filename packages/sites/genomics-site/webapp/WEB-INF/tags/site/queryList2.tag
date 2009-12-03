@@ -18,17 +18,21 @@ function writeData(page, div, quesName){
 		url: page,
 		dataType: 'html',
 		success: function(data){
+			if(location.href.indexOf("showApplication") != -1){
+				formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, "", false, false, false);
+			}
 			var q = document.createElement('div');
 			$(q).html(data);
 			var qf = $("form#form_question",q);
 			var qt = $("div#question_Form", q).children("h1");
 			var qd = $("div#query-description-section", q);
 			var qa = $("div#attributions-section", q);
-
-
+			var qops = "";
+			
 			$("#" + div).html(qt);
 document.getElementById(div).innerHTML = "<h1>" + quesName + "</h1><br/>";
 			$("#" + div).append(qf);
+			$("#" + div).append(qops);
  document.getElementById(div).innerHTML += "<hr/>"
 			$("#" + div).append(qd);
 document.getElementById(div).innerHTML += "<hr/>"
