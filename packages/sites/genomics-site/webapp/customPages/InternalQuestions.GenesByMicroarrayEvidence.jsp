@@ -23,7 +23,7 @@
 
 
 <wdk:errors/>
-
+<form id="form_question">
 <table width="100%">
 <tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
 
@@ -45,5 +45,5 @@
 
 </table>
 
-
+</form>
 <site:footer/>
