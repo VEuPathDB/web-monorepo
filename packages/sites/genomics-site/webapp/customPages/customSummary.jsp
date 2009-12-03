@@ -125,16 +125,15 @@ My Search Strategies Workspace
 <%-- showPanel() is in filter_menu.js --%>
 
    <li><a id="tab_strategy_new" title="START a NEW strategy, or CLICK to access the page with all available searches"   
-	href="javascript:showPanel('strategy_new')" >New Strategy</a></li>
+	href="javascript:showPanel('strategy_new')" >New</a></li>
    <li><a id="tab_strategy_results" title="Graphical display of your opened strategies. To close a strategy click on the right top corner X." 
-	onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run Strategies</a></li>
+	onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run</a></li>
    <li><a id="tab_search_history" title="Summary of all your strategies. From here you can open/close strategies on the 'Run Strategies' tab, our graphical display." 
-	onclick="this.blur()" href="javascript:showPanel('search_history')">Browse Strategies</a></li>
+	onclick="this.blur()" href="javascript:showPanel('search_history')">Browse</a></li>
    <li><a id="tab_sample_strat"  onclick="this.blur()" title="View some examples of linear and non-linear strategies." 
-	href="javascript:showPanel('sample_strat')">Sample Strategies</a></li>
-   <li><a id="tab_help" 
-	href="javascript:showPanel('help')">Help</a></li>
-
+	href="javascript:showPanel('sample_strat')">Samples</a></li>
+   <li><a id="tab_basket" title="Hand picked Features" onclick="this.blur()" href="javascript:showPanel('basket:::${wdkUser.signature}')">Baskets</a></li>
+   <li><a id="tab_help" href="javascript:showPanel('help')">Help</a></li>
 
 </ul>
 
@@ -161,6 +160,9 @@ My Search Strategies Workspace
 </div>
 
 <div id="search_history">
+</div>
+
+<div id="basket">
 </div>
 
 <div id="sample_strat">
