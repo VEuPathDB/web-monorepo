@@ -161,7 +161,7 @@
 
   <sqlValue name="na_seq_id_CH991767">
     <sql>
-      select na_sequence_id from dots.nasequence where source_id = 'CH991767'
+      select na_sequence_id from dots.GeneFeature where source_id = 'GL50803_102438'
     </sql> 
   </sqlValue>
 </sanityTestInfo>
@@ -443,8 +443,8 @@ ORDER BY
 with materialized_query as
      (select organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, atts
       from apidb.GeneContextSyntenicGenes
-      where organism = 'Plasmodium yoelii yoelii str. 17XNL'
-        and na_sequence_id = $srcfeature_id
+      where -- organism = 'Plasmodium yoelii yoelii str. 17XNL' and
+            na_sequence_id = $srcfeature_id
         and context_start = $base_start
         and context_end = $rend)
 select 'fast' query_style, syntenic_na_feature_id feature_id, 'gene' type,
@@ -490,7 +490,7 @@ FROM
        apidb.geneattributes gattr,
        apidb.featurelocation fl
 WHERE (select count(*) from materialized_query) = 0
-  and gattr.organism = 'Plasmodium yoelii yoelii str. 17XNL'
+--AND gattr.organism = 'Plasmodium yoelii yoelii str. 17XNL'
   AND syn.a_na_sequence_id = $srcfeature_id
   AND syn.a_start <= $rend 
   AND syn.a_end >= $base_start 
