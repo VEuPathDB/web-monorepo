@@ -674,5 +674,37 @@ function ChangeFilter(strategyId, stepId, url, filter) {
         });
 }
 
+function showBasket(sig){
+	//showSummary.do?
+	//	questionFullName=InternalQuestions.GeneRecordClasses_GeneRecordClassByBasket&
+	//	myProp%28user_signature%29=ab4d3f5d505335cdd529be306fc28ceb&
+	//	resultsOnly=true&
+	//	myProp%28timestamp%29=1
+	
+	var url = "showSummary.do";
+	var d = new Object();
+	d.questionFullName = "InternalQuestions.GeneRecordClasses_GeneRecordClassByBasket";
+	d.user_signature = sig;
+	d.resultsOnly = true;
+	d.timestamp = 1;
+//	d.checksum = "18837a74129e71e5eef724f59e0a01c9";
+//	d.noskip = 1;
+//	d.resultsOnly = true;
+//	d.step = 1;
+//	d.strategy = 1;
+	$.ajax({
+		url: url,
+		data: d,
+		type: "post",
+		dataType: "html",
+		success: function(data){
+			$("div#basket").html(data);
+		},
+		error: function(data,msg,e){
+			alert("Error occured in showBasket() function!!");
+		}
+	});
+}
+
 
 

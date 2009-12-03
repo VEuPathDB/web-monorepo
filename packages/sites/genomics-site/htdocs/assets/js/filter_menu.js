@@ -10,6 +10,11 @@ function showExportLink(stratId){
 }
 
 function showPanel(panel) {
+	var sig = null;
+	if(panel.indexOf(":::") != -1){
+		sig = panel.split(":::")[1];
+		panel = panel.split(":::")[0];
+	}
 	if(panel == 'strategy_results'){
 		if($("div#Strategies").attr("newstrategy") == 'true')
 			initDYK(true);
@@ -31,6 +36,7 @@ function showPanel(panel) {
 	}
 	else {
 		if (panel == 'search_history') updateHistory();
+		if (panel == 'basket') showBasket(sig);
 		$("body > #query_form").hide();
 		$("body > .crumb_details").hide();
 	}
