@@ -366,7 +366,7 @@ sub features {
     
     my $queryName = $sqlName||$type;
 
-    $sql = $factory->parser->getSQL("Segment.pm", $queryName);
+    $sql = $factory->parser->getSQL("Segment.pm", $queryName, $sqlParamString);
 
     warn "Couldn't find Segment.pm sql for $type\n" unless $sql;
     next unless $sql;
@@ -393,7 +393,7 @@ sub features {
 
     push(@features, @tempfeats);
 
-  my $bulkSubFeatureSql = $factory->parser->getSQL("Feature.pm", "$queryName:bulksubfeatures");
+  my $bulkSubFeatureSql = $factory->parser->getSQL("Feature.pm", "$queryName:bulksubfeatures", $sqlParamString);
   if($bulkSubFeatureSql) {
     $bulkSubFeatureSql =~ s/(\$\w+)/eval $1/eg;
 
