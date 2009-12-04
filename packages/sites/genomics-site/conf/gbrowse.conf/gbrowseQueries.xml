@@ -1465,7 +1465,7 @@ FROM DUAL
 SELECT
        gf.na_feature_id feature_id,
        'gene' type, 
-       'AlternateModels' source, 
+       '$source' source, 
        gf.source_id name, 
        '.' score, 
        gf.na_sequence_id parent_id, 
@@ -1494,6 +1494,7 @@ FROM
        sres.ExternalDatabase ed
 WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.na_sequence_id = ns.na_sequence_id
+  AND  fl.feature_type = 'GenePrediction'
   AND  fl.na_feature_id = gf.na_feature_id 
   AND  so.sequence_ontology_id = gf.sequence_ontology_id
   AND  fl.start_min <= $rend 
@@ -1502,6 +1503,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  tn.name_class = 'scientific name' 
   AND  gf.external_database_release_id = edr.external_database_release_id
   AND  edr.external_database_id = ed.external_database_id
+       $sqlParamString
 ORDER BY 
        fl.start_min
 ]]>
@@ -4401,7 +4403,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
 SELECT
        fl.na_feature_id feature_id, 
        'exon' type, 
-       'AlternateModels' source, 
+       '$source' source, 
        fl.na_feature_id name,
        gf.na_feature_id parent_id, 
        '.' score, 
@@ -4428,6 +4430,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  edr.external_database_id = ed.external_database_id 
   AND  fl_gf.na_sequence_id = fl.na_sequence_id
   AND  ga.na_feature_id (+) = fl.parent_id
+       $sqlParamString
 ORDER BY 
        fl.start_min
 ]]>
