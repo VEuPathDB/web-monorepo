@@ -256,7 +256,10 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 	}
 	var root = $(".param-tree", $("#query_form")[0]);
 	initTreeState(root);
-	initParamHandlers(true);
+	if(edit == 1)
+		initParamHandlers(true, true);
+	else
+		initParamHandlers(true);
 }
 
 function validateAndCall(type, url, proto, rs){
