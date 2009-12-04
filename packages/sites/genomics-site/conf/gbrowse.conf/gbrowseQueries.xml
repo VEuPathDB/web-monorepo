@@ -2978,42 +2978,22 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-Markers'
     </sql>
   </sqlQuery>
   
-  
-  <sqlQuery name="ChIP_RH:Einstein"  includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_chip:Assay"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
  SELECT e.na_sequence_id  as feature_id,
-       'ChIP_RH'         as type, 
-       'Einstein'        as source, 
-       e.source_id       as name, 
-       e.source_id       as parent_id, 
-       $base_start       as startm, 
-       $rend             as end
+       'ChIP_chip'        as type, 
+       '$source'          as source, 
+       e.source_id        as name, 
+       e.source_id        as parent_id, 
+       $base_start        as startm, 
+       $rend              as end
 FROM   DoTS.NASequence e
 WHERE  
        e.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
-
-
-  <sqlQuery name="ChIP_Centromere:Einstein"  includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT e.na_sequence_id  as feature_id,
-       'ChIP_Centromere'         as type, 
-       'Einstein'        as source, 
-       e.source_id       as name, 
-       e.source_id       as parent_id, 
-       $base_start       as startm, 
-       $rend             as end
-FROM   DoTS.NASequence e
-WHERE  
-       e.na_sequence_id = $srcfeature_id
-]]>
-    </sql>
-  </sqlQuery>
-
   
   <sqlQuery name="ChIP_RH:Hakimi"  includeProjects="ToxoDB">
      <sql>
@@ -4578,19 +4558,19 @@ GROUP BY interval
     </sql>
   </sqlQuery>
   
-  
-  <sqlQuery name="ChIP_RH:Einstein:bulksubfeatures"  includeProjects="ToxoDB">
+  <sqlQuery name="ChIP_chip:Assay:bulksubfeatures"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
  SELECT fl.na_feature_id   as feature_id,
-       'ChIP_sub'      as type,
-       'Einstein'           as source,
-       dtf.float_value      as score,
+       'ChIP_sub'          as type,
+       '$source'           as source,
+       dtf.float_value     as score,
        fl.na_sequence_id   as parent_id,
-       fl.start_min         as startm,
-       fl.end_max           as end,
+       fl.start_min        as startm,
+       fl.end_max          as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,rad.analysis a,
+FROM   rad.protocol p,
+       rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
@@ -4598,15 +4578,13 @@ WHERE  dtf.row_id = fl.na_feature_id
 AND    dtf.analysis_id =  cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id =  a.analysis_id
-AND    p.name = 'ChIP_chip_Einstein' 
 AND    fl.na_sequence_id = $srcfeature_id
 AND    fl.start_min <= $rend
 AND    fl.end_max >= $base_start
-AND    cpp.strain = 'RH'
+AND    $sqlParamString
 ]]>
     </sql>
   </sqlQuery>
-  
   
   <sqlQuery name="ChIP_RH:Hakimi:bulksubfeatures" includeProjects="ToxoDB">
      <sql>
@@ -4619,7 +4597,8 @@ AND    cpp.strain = 'RH'
        fl.start_min         as startm,
        fl.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' ||'Analysis=' || a.name ||'$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,rad.analysis a,
+FROM   rad.protocol p,
+       rad.analysis a,
        rad.datatransformationresult dtf,
        apidb.featurelocation fl,
        apidb.chipprotocolparams cpp
@@ -4635,34 +4614,6 @@ AND    cpp.strain = 'RH'
 ]]>
     </sql>
   </sqlQuery>
-
-  <sqlQuery name="ChIP_Centromere:Einstein:bulksubfeatures" includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT fl.na_feature_id   as feature_id,
-       'ChIP_Centromere_sub' as type,
-       'Einstein'               as source,
-       dtf.float_value        as score,
-       fl.na_sequence_id     as parent_id,
-       fl.start_min           as startm,
-       fl.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
-       apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
-AND    cpp.protocol_id =  p.protocol_id
-AND    cpp.analysis_id = a.analysis_id
-AND    p.name = 'ChIP_chip_Einstein_centromere'
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
-]]>
-    </sql>
-  </sqlQuery>
-
 
   <sqlQuery name="GeneticMarkers:Sibley:bulkAttribute"  includeProjects="ToxoDB">
     <testParamValues project="ToxoDB">
