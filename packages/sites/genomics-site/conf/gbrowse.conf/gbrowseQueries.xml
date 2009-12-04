@@ -1610,7 +1610,7 @@ WHERE edr.external_database_id = ed.external_database_id
        'Scale=' || 
        CASE WHEN (is_reversed = 1) 
          THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
-         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) 
+         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)
          END atts
 FROM 
       apidb.synteny syn,
@@ -1635,7 +1635,8 @@ WHERE edr.external_database_id = ed.external_database_id
   AND anch_right.ref_loc < $rend
   AND anch_right.next_ref_loc >= $rend
   AND b.taxon_id = tn.taxon_id
-  AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc) > 1
+  AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1) > 0
+  AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc + 1) > 0
 UNION
 SELECT
        syn.synteny_id || '_gap' feature_id,
@@ -4003,11 +4004,11 @@ SELECT
        exfloc.na_feature_id as name,
        exfloc.parent_id,
        CASE WHEN (syn.is_reversed = 1) 
-         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
          ELSE anch_left.ref_loc + (((CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END) - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
        END startm,
        CASE WHEN (syn.is_reversed = 1) 
-         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
          ELSE anch_left.ref_loc + (((CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END) - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
        END end,
        CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
@@ -4038,9 +4039,9 @@ WHERE ga.na_feature_id = exfloc.parent_id
        ) 
        OR
        (syn.is_reversed = 1 
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
         AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
-        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) >= $base_start 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
         )
   )
   AND exfloc.start_min <= syn.b_end
