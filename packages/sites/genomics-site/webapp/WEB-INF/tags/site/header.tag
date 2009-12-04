@@ -54,6 +54,12 @@
 
 <%---------------------------%>
 
+<%-- flag incoming galaxy.psu.edu users  --%>
+<c:if test="${!empty param.GALAXY_URL}">
+  <c:set var="GALAXY_URL" value="${param.GALAXY_URL}" scope="session" />
+</c:if>
+<%-- end Galaxy flag --%>
+
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />

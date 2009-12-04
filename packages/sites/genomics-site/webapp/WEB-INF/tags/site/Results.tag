@@ -94,6 +94,9 @@
 <td  style="vertical-align:middle;text-align:right" nowrap>
   <div style="float:right">
     <a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT</b></a>
+  <c:if test="${!empty sessionScope.GALAXY_URL}">
+    &nbsp;|&nbsp;<a href="downloadStep.do?step_id=${wdkHistory.stepId}&wdkReportFormat=tabular"><b>SEND TO GALAXY</b></a>
+  </c:if>
   </div>
 </td>
 </tr></table>
