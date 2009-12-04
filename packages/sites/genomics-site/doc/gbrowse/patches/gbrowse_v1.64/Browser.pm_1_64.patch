@@ -1,6 +1,6 @@
 --- Browser.pm.orig	2005-11-07 11:44:19.000000000 -0500
-+++ Browser.pm	2009-12-02 16:41:50.000000000 -0500
-@@ -535,6 +535,11 @@
++++ Browser.pm	2009-12-03 23:22:53.000000000 -0500
+@@ -535,6 +535,16 @@
    $self->config->label2type(@_);
  }
  
@@ -9,10 +9,15 @@
 +  $self->config->label2sqlParam(@_);
 +}
 +
++sub label2sqlName {
++  my $self = shift;
++  $self->config->label2sqlName(@_);
++}
++
  =head2 type2label()
  
    $label = $browser->type2label($type);
-@@ -957,6 +962,9 @@
+@@ -957,6 +967,9 @@
    foreach (@$boxes){
      next unless $_->[0]->can('primary_tag');
  
@@ -22,7 +27,7 @@
      # use the scale as a centering mechanism
      # potential fragility here: we are depending on the arrow being
      # the very first box that is returned to us.
-@@ -1073,9 +1081,11 @@
+@@ -1073,9 +1086,12 @@
    my $conf  = $self->config;
    my $max_labels     = $self->label_density;
    my $max_bump       = $self->bump_density;
@@ -31,19 +36,20 @@
  
    my @feature_types = map { $conf->label2type($_,$length) } @$tracks;
 +  my @feature_sqlParams = map { $conf->label2sqlParam($_,$length) } @$tracks;
++  my @feature_sqlNames = map { $conf->label2sqlName($_,$length) } @$tracks;
    my %filters = map { my %conf =  $conf->style($_); 
  		      $conf{'-filter'} ? ($_ => $conf{'-filter'})
  			               : ($_ => \&true)
-@@ -1157,7 +1167,7 @@
+@@ -1157,7 +1173,7 @@
  
    if (@feature_types) {  # don't do anything unless we have features to fetch!
  
 -    my $iterator = $segment->get_feature_stream(-type=>\@feature_types);
-+    my $iterator = $segment->get_feature_stream(-type=>\@feature_types,-sqlParam=>\@feature_sqlParams);
++    my $iterator = $segment->get_feature_stream(-type=>\@feature_types,-sqlParam=>\@feature_sqlParams,-sqlName=>\@feature_sqlNames);
      warn "feature types = @feature_types\n" if DEBUG;
      my (%groups,%feature_count,%group_pattern);
  
-@@ -1214,13 +1224,16 @@
+@@ -1214,13 +1230,16 @@
        my $count = $feature_count{$label};
        $count    = $limit->{$label} if $limit->{$label} && $limit->{$label} < $count;
  
@@ -63,7 +69,7 @@
  				);
        $tracks{$label}->configure(-connector  => 'none') if !$do_bump;
        $tracks{$label}->configure(-bump_limit => $limit->{$label}) 
-@@ -1627,6 +1640,15 @@
+@@ -1627,6 +1646,15 @@
        || 50;
  }
  
@@ -79,7 +85,7 @@
  sub label_density {
    my $self = shift;
    my $conf = $self->config;
-@@ -1695,6 +1717,17 @@
+@@ -1695,6 +1723,17 @@
          : 0;
  }
  
@@ -97,13 +103,18 @@
  # fetch a list of Segment objects given a name or range
  # (this used to be in gbrowse executable itself)
  sub name2segments {
-@@ -2192,6 +2225,11 @@
+@@ -2192,6 +2231,16 @@
    return shellwords($self->setting($l,'feature')||$self->setting($label,'feature')||'');
  }
  
 +sub label2sqlParam {
 +  my ($self,$label,$length) = @_;
 +  return $self->setting($label,'sqlparam')||'';
++}
++
++sub label2sqlName {
++  my ($self,$label,$length) = @_;
++  return $self->setting($label,'sqlname')||'';
 +}
 +
  sub style {
