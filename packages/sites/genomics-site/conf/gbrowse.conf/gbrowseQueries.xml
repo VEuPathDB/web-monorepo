@@ -58,7 +58,7 @@
     <defaultParamValue name="dlm" value=","/>
 
   <sqlValue name="na_seq_id_CM000435">
-	  <sql>
+    <sql>
       select na_sequence_id from dots.nasequence where source_id = 'CM000435'
     </sql> 
   </sqlValue>
@@ -76,7 +76,7 @@
   </sqlValue>
 
   <sqlValue name="na_feat_id_cgd7_230">
-	  <sql>
+    <sql>
       select na_feature_id from dots.genefeature where source_id = 'cgd7_230'
     </sql> 
   </sqlValue>
@@ -378,7 +378,7 @@ WHERE
        blat.target_start <= $rend and 
        blat.target_end >= $base_start and 
        (blat.target_end - blat.target_start ) < 5000 and 
-			 blat.is_best_alignment = 1 and
+       blat.is_best_alignment = 1 and
        etn.na_sequence_id = $srcfeature_id 
 ORDER BY blat.target_start asc, blat.score desc
 ]]>
@@ -1503,7 +1503,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  tn.name_class = 'scientific name' 
   AND  gf.external_database_release_id = edr.external_database_release_id
   AND  edr.external_database_id = ed.external_database_id
-       $sqlParamString
+  AND  $sqlParamString
 ORDER BY 
        fl.start_min
 ]]>
@@ -3220,13 +3220,13 @@ WHERE  sa.dataset =  'NIH SNPs'
        'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
        'IsCoding=' || sa.is_coding || '$dlm' ||
        'Gene=' || sa.gene_source_id || '$dlm' ||
-			 'params=' || sa.position_in_CDS || '&' ||
-			 sa.position_in_protein || '&' ||
-			 sa.reference_strain || '&' ||
-			 sa.reference_aa || '&' ||
-			 sa.gene_strand || '&' ||
-			 sa.reference_na || '&' ||
-			 sa.source_id
+       'params=' || sa.position_in_CDS || '&' ||
+       sa.position_in_protein || '&' ||
+       sa.reference_strain || '&' ||
+       sa.reference_aa || '&' ||
+       sa.gene_strand || '&' ||
+       sa.reference_na || '&' ||
+       sa.source_id
        as atts
 FROM   apidb.featurelocation fl,
        apidb.SnpAttributes sa
@@ -3675,7 +3675,7 @@ WHERE
        blat.target_start <= $rend and 
        blat.target_end >= $base_start and 
        (blat.target_end - blat.target_start ) < 5000 and 
-			 blat.is_best_alignment = 1 and
+       blat.is_best_alignment = 1 and
        etn.na_sequence_id = $srcfeature_id 
        ORDER BY blat.target_start
 ]]>
@@ -3822,7 +3822,7 @@ WHERE  blat.query_na_sequence_id = asbl.na_sequence_id and
        blat.target_start <= $rend and 
        blat.target_end >= $base_start and 
        (blat.target_end - blat.target_start ) < 5000 and 
-			 blat.is_best_alignment = 1 and
+       blat.is_best_alignment = 1 and
        etn.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
@@ -4260,7 +4260,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  edr.external_database_id = ed.external_database_id 
   AND  fl_gf.na_sequence_id = fl.na_sequence_id
   AND  ga.na_feature_id (+) = fl.parent_id
-       $sqlParamString
+  AND  $sqlParamString
 ORDER BY 
        fl.start_min
 ]]>
