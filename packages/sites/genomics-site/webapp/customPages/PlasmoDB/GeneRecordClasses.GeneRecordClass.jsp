@@ -1798,7 +1798,46 @@ The overall expression percentile of each condition is the average percentile ov
 
 <c:if test="${binomial eq 'Plasmodium berghei'}">
 
-<site:wdkTable tblName="TwoChannelDiffExpr" attribution="Agilent_P_Berghei_Array,Waters_arrayData,Waters_radAnalysis"/>
+  <c:set var="secName" value="Waters::Dozi"/>
+  <c:set var="imgId" value="img${secName}"/>
+  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=plasmo&fmt=png"/>
+  <c:set var="isOpen" value="true"/>
+
+  <c:set var="noData" value="false"/>
+  <c:if test="${attrs['graph_waters_dozi'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+  <c:set var="expressionContent">
+    <table>
+      <tr>
+        <td>
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+        </td>
+
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+
+	<td class="top">  
+          <site:dataTable tblName="TwoChannelDiffExpr" />
+
+        </td>
+
+        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
+        <td class="centered">
+          <div class="small">
+             	<!-- DESCRIPTION GOES HERE -->
+          </div>
+        </td>
+      </tr>
+    </table>
+  </c:set>
+
+  <site:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="P.Berghei Differential Expression - DOZI KO vs. WT"
+               attribution="DOZI_page"/>
+
 
 <%-- berghei expression --%>
 <c:set var="secName" value="Waters::Ver1"/>
