@@ -319,7 +319,7 @@ sub features {
   my ($sql, @features, $base_start, $rend);
 
   my ($type, $types,$attributes,$rangetype,$iterator,$callback,$start,
-      $stop,$feature_id,$factory,$sqlParam) = $self->_rearrange([qw(TYPE
+      $stop,$feature_id,$factory,$sqlParam,$sqlName) = $self->_rearrange([qw(TYPE
                 TYPES
                 ATTRIBUTES
                 RANGETYPE
@@ -330,6 +330,7 @@ sub features {
                 FEATURE_ID
                 FACTORY
                 SQLPARAM
+                SQLNAME
                 ) ], @_);
   $types ||= $type;
 
@@ -354,14 +355,18 @@ sub features {
   #
   ###########################################################
 
-  foreach my $typeHash ( _getUniqueTypes($types, $sqlParam) ) {
+  foreach my $typeHash ( _getUniqueTypes($types, $sqlParam, $sqlName) ) {
     my @types = keys(%$typeHash);
     my $type = shift @types;
     #my $typeString = $typeHash->{$type};
+    my ($so, $source) = split /:/, $type;
     my $typeString = $type;
-    my $sqlParamString = $typeHash->{$type};
+    my $sqlParamString = $typeHash->{$type}->{param};
+    my $sqlName = $typeHash->{$type}->{name};
+    
+    my $queryName = $sqlName||$type;
 
-    $sql = $factory->parser->getSQL("Segment.pm", $type);
+    $sql = $factory->parser->getSQL("Segment.pm", $queryName);
 
     warn "Couldn't find Segment.pm sql for $type\n" unless $sql;
     next unless $sql;
@@ -388,7 +393,7 @@ sub features {
 
     push(@features, @tempfeats);
 
-  my $bulkSubFeatureSql = $factory->parser->getSQL("Feature.pm", "$type:bulksubfeatures");
+  my $bulkSubFeatureSql = $factory->parser->getSQL("Feature.pm", "$queryName:bulksubfeatures");
   if($bulkSubFeatureSql) {
     $bulkSubFeatureSql =~ s/(\$\w+)/eval $1/eg;
 
@@ -500,13 +505,16 @@ find the corresponding element in SQL xml files.
 
 sub _getUniqueTypes() {
 
-    my ($types, $sqlParam) = @_;
+    my ($types, $sqlParam, $sqlName) = @_;
     my @uniqtypes = ();
 
     my %seen;
     my $i = 0;
     for my $type (@{$types || []}) {
-      push(@uniqtypes, { $type => $sqlParam->[$i] }) unless $seen{$type}++;
+      my $alias = $sqlName->[$i];
+      push(@uniqtypes, { $type => { param => $sqlParam->[$i], 
+                                    name  => $sqlName->[$i] } 
+                       }) unless $seen{$type}++;
       $i++; 
     }
 
