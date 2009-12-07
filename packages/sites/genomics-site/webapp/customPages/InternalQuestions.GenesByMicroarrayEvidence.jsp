@@ -23,7 +23,7 @@
 
 
 <wdk:errors/>
-<form id="form_question">
+<div id="form_question">
 <table width="100%">
 <tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
 
@@ -32,10 +32,10 @@
 <site:queryList2 questions="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile"/>
 </c:when>
 <c:when test = "${project == 'EuPathDB'}">
-<site:queryList2 questions="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByIntraerythrocyticExpression,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.GenesByCowmanSir2FoldChange,GeneQuestions.GenesByCowmanSir2Percentile,GeneQuestions.GenesBySuCqPage,GeneQuestions.GenesBySuCqPercentile,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming,GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.GenesByTimeSeriesFoldChangeBradyRoos,GeneQuestions.GenesByTimeSeriesFoldChangeBradyFl,GeneQuestions.GenesByTimeSeriesFoldChangeBradyBoothroyd,GeneQuestions.ToxoGenesByDifferentialMeanExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByPromastigoteTimeSeries"/>
+<site:queryList2 questions="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByIntraerythrocyticExpression,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming,GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByTimeSeriesFoldChangeBradyRoos,GeneQuestions.GenesByTimeSeriesFoldChangeBradyFl,GeneQuestions.GenesByTimeSeriesFoldChangeBradyBoothroyd,GeneQuestions.ToxoGenesByDifferentialMeanExpression,GeneQuestions.GenesByPromastigoteTimeSeries"/>
 </c:when>
 <c:when test = "${project == 'PlasmoDB'}">
-<site:queryList2 questions="GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByIntraerythrocyticExpression,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.GenesByCowmanSir2FoldChange,GeneQuestions.GenesByCowmanSir2Percentile,GeneQuestions.GenesBySuCqPage,GeneQuestions.GenesBySuCqPercentile,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming"/>
+<site:queryList2 questions="GeneQuestions.GenesByExpressionTiming,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByIntraerythrocyticExpression,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming"/>
 </table>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
@@ -45,5 +45,5 @@
 
 </table>
 
-</form>
+</div>
 <site:footer/>
