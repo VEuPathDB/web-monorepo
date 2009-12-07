@@ -1592,7 +1592,9 @@ td.strat_inactive {
     clear: both;
 }
 
-
+img.basket {
+	margin:-1px 3px -2px -1px;
+}
 
 
 
