@@ -70,25 +70,27 @@
 </c:forEach>
 <c:set var="commandUrl"><c:url value="/processSummary.do?${commandUrl}" /></c:set>
 
-<wdk:filterLayouts strategyId="${strategy.strategyId}" 
-                   stepId="${wdkHistory.stepId}"
-                   answerValue="${wdkAnswer}" />
+<c:if test="${strategy != null}">
+    <wdk:filterLayouts strategyId="${strategy.strategyId}" 
+                       stepId="${wdkHistory.stepId}"
+                       answerValue="${wdkAnswer}" />
+</c:if>
 
 <!-- handle empty result set situation -->
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>
-    No results for your query
+    No results are retrieved
   </c:when>
   <c:otherwise>
 
 
 <table width="100%"><tr>
-<td  style="vertical-align:middle;padding-bottom:7px;">
-	<span class="h4left" style="display:none">
-		<span id="text_strategy_number">${strategy.name}</span> 
-    		(step <span id="text_step_number">${strategy.length}</span>) 
-    		- ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span>
-	</span>
+<td class="h4left" style="vertical-align:middle;padding-bottom:7px;">
+    <c:if test="${strategy != null}">
+        <span id="text_strategy_number">${strategy.name}</span> 
+        (step <span id="text_step_number">${strategy.length}</span>) - 
+    </c:if>
+    ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span>
 </td>
 
 <td  style="vertical-align:middle;text-align:right" nowrap>

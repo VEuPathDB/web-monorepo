@@ -54,12 +54,14 @@
       type="org.gusdb.wdk.controller.action.ProcessBasketQuestionAction"
       scope="request"
       validate="false">
+      <forward name="processQuestion" path="/processFilter.do"/>
     </action>
     <action
       path="/showBasket"
       type="org.gusdb.wdk.controller.action.ShowBasketAction"
       scope="request"
       validate="false">
+      <forward name="showBasket" path="/resultsPage.jsp"/>
     </action>
     <action
       path="/processBasket"
