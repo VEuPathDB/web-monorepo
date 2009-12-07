@@ -651,8 +651,8 @@ function createInvalidDiv(){
 	var i = document.createElement('img');
 	$(i).attr("src","/assets/images/InvalidStep.png").
 	     attr("height","36").
-		 attr("width","98").
-		 attr("onclick","reviseInvalidSteps(this)");
+		 attr("width","98");
+	$(i).attr("onClick","reviseInvalidSteps(this)");
 	$(inval).css({
 				background: "none",
 				position: "absolute",
