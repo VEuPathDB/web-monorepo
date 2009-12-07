@@ -130,7 +130,7 @@ My Search Strategies Workspace
 	onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run</a></li>
    <li><a id="tab_search_history" title="Summary of all your strategies. From here you can open/close strategies on the 'Run Strategies' tab, our graphical display." 
 	onclick="this.blur()" href="javascript:showPanel('search_history')">Browse</a></li>
-   <li><a id="tab_basket" title="Hand picked Features" onclick="this.blur()" href="javascript:showPanel('basket:::${wdkUser.signature}')"><img class="basket" src="/assets/images/basket_gray.png" width="16" height="16"/>Gene Basket</a></li>
+   <li><a id="tab_basket" title="Hand picked Features" onclick="this.blur()" href="javascript:showPanel('basket')"><img class="basket" src="/assets/images/basket_gray.png" width="16" height="16"/>Gene Basket</a></li>
    <li><a id="tab_sample_strat"  onclick="this.blur()" title="View some examples of linear and non-linear strategies." 
 	href="javascript:showPanel('sample_strat')">Samples</a></li>
    <li><a id="tab_help" href="javascript:showPanel('help')">Help</a></li>
