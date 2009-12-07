@@ -249,7 +249,7 @@ $(document).ready(function(){
 
       <tr class="medium">
         <td width=10>&nbsp;</td>
-        <td>Headline <font color=red>*</font></td>
+        <td width=170>Headline <font color=red>*</font></td>
         <td>
           <html:text property="headline" size="70"/>
         </td>
@@ -257,7 +257,7 @@ $(document).ready(function(){
 
       <tr class="medium">
         <td>&nbsp;</td>
-        <td>Category<br/></td>
+        <td>Category (check all that apply)<br/></td>
         <td> 
           <logic:iterate id="category" property="categoryList" name="commentForm"> 
             <bean:define id="categorybean" name="category" type="org.apache.struts.util.LabelValueBean"/>
