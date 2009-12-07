@@ -10,11 +10,6 @@ function showExportLink(stratId){
 }
 
 function showPanel(panel) {
-	var sig = null;
-	if(panel.indexOf(":::") != -1){
-		sig = panel.split(":::")[1];
-		panel = panel.split(":::")[0];
-	}
 	if(panel == 'strategy_results'){
 		if($("div#Strategies").attr("newstrategy") == 'true')
 			initDYK(true);
@@ -36,7 +31,6 @@ function showPanel(panel) {
 	}
 	else {
 		if (panel == 'search_history') updateHistory();
-		if (panel == 'basket') showBasket(sig);
 		$("body > #query_form").hide();
 		$("body > .crumb_details").hide();
 	}
@@ -138,7 +132,13 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 
 	var quesTitle = data.substring(data.indexOf("<h1>") + 4,data.indexOf("</h1>")).replace(/Identify \w+ based on/,"");
 	
-	var quesForm = $("form#form_question",qf);//data);
+	var quesForm = $("#form_question",qf);//data);
+	if(quesForm[0].tagName != "FORM"){
+		var f = document.createElement('form');
+		$(f).attr("id",$(quesForm).attr("id"));
+		$(f).html($(quesForm).html());
+		quesForm = $(f);
+	}
 	var quesDescription = $("#query-description-section",qf);//data);
 	var tooltips = $("div.htmltooltip",qf);//data);
 	$("input[value=Get Answer]",quesForm).val("Run Step");
