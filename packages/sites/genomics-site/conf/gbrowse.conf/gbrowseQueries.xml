@@ -635,10 +635,10 @@ WHERE  fl.feature_type ='SAGETagFeature'
   <sqlQuery name="ChIPseq:coverage"  includeProjects="TriTrypDB">
      <sql>
        <![CDATA[
-        SELECT 'ChIP_Seq' as feature_id,
-               'ChIPseq' type,
-               'coverage' source
-        FROM   dual
+    SELECT 'ChIP_Seq' as feature_id,
+          'ChIPseq'        as type, 
+          '$source'          as source 
+  FROM   dual 
        ]]>
     </sql>
   </sqlQuery>
@@ -5204,12 +5204,12 @@ WHERE fl.na_sequence_id = $srcfeature_id
    <sqlQuery name="ChIPseq:coverage:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
-      SELECT interval feature_id, 
-             'ChIPseq' type, 
-             'coverage' source, 
-             max(coverage) score, 
-             'ChIP_Seq' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
+      SELECT interval feature_id,
+             'ChIPseq' type,
+             '$source' source,
+             max(coverage) score,
+             'ChIP_Seq' parent_id,
+             interval * (($rend - $base_start + 1) / 800) startm,
              (interval + 1) * (($rend - $base_start + 1) / 800) end
     FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample
        FROM  apidb.nextgenseq_coverage csc,
@@ -5217,7 +5217,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
          AND edr.external_database_id = ed.external_database_id
-         AND ed.name = $$edname$$
+         AND ed.name = $$edname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$sample$$
          AND csc.location <= $rend
@@ -5226,6 +5226,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
+
 
 
 <!-- RNA seq bulksubfeature queries. Need one / track as too much data to use filters -->
