@@ -471,7 +471,6 @@ function openStrategy(stratId){
                                       + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
-	$("#eye_" + stratId).removeClass("strat_inactive").addClass("strat_active");
 }
 
 function deleteStrategy(stratId, fromHist){
@@ -519,7 +518,10 @@ function deleteStrategy(stratId, fromHist){
 
 function closeStrategy(stratId, isBackId){
 	var strat = getStrategy(stratId);
-	if (isBackId) strat = getStrategyFromBackId(stratId);
+	if (isBackId) {
+		strat = getStrategyFromBackId(stratId);
+		stratId = strat.frontId;
+	}
 	var cs = strat.checksum;
 	if(strat.subStratOf != null)
 		cs = getStrategy(strat.subStratOf).checksum;
@@ -546,7 +548,6 @@ function closeStrategy(stratId, isBackId){
                                       + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
 		}
 	});
-	$("#eye_" + strat.backId).removeClass("strat_active").addClass("strat_inactive");
 }
 
 function hideStrat(id){
