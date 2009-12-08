@@ -163,6 +163,11 @@ My Search Strategies Workspace
 </div>
 
 <div id="basket">
+	<table class="basket"><tr>
+		<td><input type="button" value="Refresh" onClick="showBasket();"/></td>
+		<td><input type="button" value="Empty Basket"/></td>
+	</tr></table>
+	<div id="basket-data"></div>
 </div>
 
 <div id="sample_strat">
