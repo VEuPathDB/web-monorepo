@@ -10,6 +10,9 @@
      (after the order set up in header.tag)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+div#quick-search td {
+  white-space: nowrap;
+}
 
 div.htmltooltip{
   background-color:#FFFFC3;
