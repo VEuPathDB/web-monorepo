@@ -1784,3 +1784,12 @@ span#toggle_filter {
 #browser-info input {
 	margin-bottom: 15px;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      = Basket Tab Styles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+table.basket {
+	margin-top: 3px;
+	margin-left:2px;
+}
