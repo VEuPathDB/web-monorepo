@@ -31,6 +31,7 @@ function showPanel(panel) {
 	}
 	else {
 		if (panel == 'search_history') updateHistory();
+		if (panel == 'basket') showBasket();
 		$("body > #query_form").hide();
 		$("body > .crumb_details").hide();
 	}
