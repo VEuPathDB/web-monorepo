@@ -659,7 +659,7 @@ function ChangeFilter(strategyId, stepId, url, filter) {
                 beforeSend: function(){
                         showLoading(f_strategyId);
                 },
-                success: function(data){
+                success: function(data){ 
                         if(ErrorHandler("ChangeFilter", data, strategy, null)){
                         	updateStrategies(data, true);
 				$("div.layout-detail td div.filter-instance div.current").removeClass('current');
@@ -675,31 +675,23 @@ function ChangeFilter(strategyId, stepId, url, filter) {
         });
 }
 
-function showBasket(sig){
+function showBasket(){
 	//showSummary.do?
 	//	questionFullName=InternalQuestions.GeneRecordClasses_GeneRecordClassByBasket&
 	//	myProp%28user_signature%29=ab4d3f5d505335cdd529be306fc28ceb&
 	//	resultsOnly=true&
 	//	myProp%28timestamp%29=1
 	
-	var url = "showSummary.do";
+	var url = "showBasket.do";
 	var d = new Object();
-	d.questionFullName = "InternalQuestions.GeneRecordClasses_GeneRecordClassByBasket";
-	d.user_signature = sig;
-	d.resultsOnly = true;
-	d.timestamp = 1;
-//	d.checksum = "18837a74129e71e5eef724f59e0a01c9";
-//	d.noskip = 1;
-//	d.resultsOnly = true;
-//	d.step = 1;
-//	d.strategy = 1;
+	d.recordClass = "GeneRecordClasses.GeneRecordClass";
 	$.ajax({
 		url: url,
 		data: d,
 		type: "post",
 		dataType: "html",
 		success: function(data){
-			$("div#basket").html(data);
+			$("div#basket-data").html(data);
 		},
 		error: function(data,msg,e){
 			alert("Error occured in showBasket() function!!");
