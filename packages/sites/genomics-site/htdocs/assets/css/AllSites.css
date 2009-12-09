@@ -222,9 +222,9 @@ height: 240px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in help.jsp, classic bullet list
+	 =not sure where it is used, classic bullet list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#cirbulletlist ul, #cirbulletlist ol {
+#cirbulletlist ol {
 	list-style-type: disc;
 	margin-left:  1em;
 	padding-left: 1em;
@@ -1518,7 +1518,15 @@ a.redbutton:active span {
 	padding-left: 1em;
 	list-style-position: outside;
 }
-
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =used in serviceList.jsp, classic bullet list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+ul.cirbulletlist {
+	list-style-type: disc;
+	margin-left:  1em;
+	padding-left: 1em;
+	list-style-position: outside;
+}
 
 
 

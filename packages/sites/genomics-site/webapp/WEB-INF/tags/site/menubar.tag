@@ -3,6 +3,9 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
+
+
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
@@ -31,7 +34,7 @@
 
 <ul>
     <li><a href="<c:url value="/queries_tools.jsp"/>" title="START a NEW search strategy, or CLICK to access the page with all available searches (last option in the dropdown menu)." >New Search</a>
-  	<site:drop_down_QG />
+  	<site:drop_down_QG2 />
     </li>
 </ul>
 
@@ -46,6 +49,7 @@
 <ul>
     <li><a href="#">Tools</a>
 	<ul>
+
 	    <li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"> BLAST</a></li>
   	    <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
             <li><a href="/common/PubCrawler/"> PubMed and Entrez</a></li>
@@ -70,7 +74,7 @@
 		<li><a href="http://ancillary.toxodb.org">Ancillary Genome Browser</a></li>
             	<li><a href="http://apicyc.apidb.org/TOXO/server.html">ToxoCyc</a></li>
             </c:if>
-
+	    <li><a href="<c:url value="/serviceList.jsp"/>"> Searches via Web Services</a></li>
 
     	</ul>
 
