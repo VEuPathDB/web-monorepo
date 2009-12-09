@@ -28,9 +28,10 @@
 
 <wdk:errors/>
 
+<%-- div needed for Add Step --%>
+<div id="form_question">
 <table width="100%">
-<tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query</b></td></tr>
-
+<tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query ---- Mouse over a query to get its description</b></td></tr>
 
 <c:choose>
 <c:when test = "${project == 'EuPathDB'}">
@@ -39,6 +40,6 @@
 </c:choose>
 
 </table>
-
+</div>
 
 <site:footer/>
