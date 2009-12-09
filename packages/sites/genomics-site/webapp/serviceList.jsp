@@ -56,8 +56,9 @@ In it, we have used a "<b>?</b>" to indicate the beginning of data, and a "<b>&<
 <h2>Access to the web service WADLs</h2>
 <ul class="cirbulletlist">
  <li> Below is the list of <b>all available searches</b> in ${wdkModelDispName}, sorted by the <b>type of entity</b> they return (genes, genomic sequences, ESTs, etc) --in the same order used in the "New Search" menu.</li>
-<li>By clicking on a search below, you access its <a href="http://www.w3.org/Submission/wadl/">WADL</a> (Web Application Description Language) document, an XML document.
+<li>By clicking on a search below, you access its <a href="http://www.w3.org/Submission/wadl/">WADL</a> (Web Application Description Language) document, an <b>XML</b> document.
 <br>   ***The link to a search below provides <b>documentation</b>; it does <b>NOT</b> execute the service.***</li>
+<li>Be aware that some browsers (e.g.: Safari) do not know how to render an <b>XML</b> file properly (you will see a page full of terms with no structure).</li>
 <li>For more details on how to read the WADL, and generate the URL, <a href="#moreWADL">see below</a>.</li>
 </ul>
 
