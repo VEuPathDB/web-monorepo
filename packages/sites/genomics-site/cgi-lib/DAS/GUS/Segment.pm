@@ -384,7 +384,7 @@ sub features {
     my @tempfeats = ();
 
     while (my $featureRow = $sth->fetchrow_hashref) {
-      push @tempfeats, $self->_makeFeature($featureRow, $factory);
+      push @tempfeats, $self->_makeFeature($featureRow, $factory, $queryName);
     }
 
     if($typeString =~ /blat/i) { 
@@ -397,9 +397,9 @@ sub features {
   if($bulkSubFeatureSql) {
     $bulkSubFeatureSql =~ s/(\$\w+)/eval $1/eg;
 
-    print "<pre>vvvvvvvvvv $type:bulksubfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
+    print "<pre>vvvvvvvvvv $queryName:bulksubfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
     print "<pre>$bulkSubFeatureSql</pre>" if DEBUG;
-    print "<pre>^^^^^^^^^^ End $type:bulksubfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
+    print "<pre>^^^^^^^^^^ End $queryName:bulksubfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
 
     $self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory) 
   } 
@@ -523,7 +523,7 @@ sub _getUniqueTypes() {
 
 sub _makeFeature() {
 
-  my ($self, $featureRow, $factory) = @_;
+  my ($self, $featureRow, $factory, $queryName) = @_;
 
   my $type = $$featureRow{'TYPE'};
   my $source = $$featureRow{'SOURCE'};
@@ -544,6 +544,7 @@ sub _makeFeature() {
           $$featureRow{'NAME'},      # group
           $$featureRow{'ATTS'},      # attributes
           $unique_name,
+          $queryName,
           $$featureRow{'FEATURE_ID'}, # feature_id
         );
 

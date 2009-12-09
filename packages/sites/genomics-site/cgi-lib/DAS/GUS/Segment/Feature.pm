@@ -101,6 +101,7 @@ sub new {
       $group,
       $atts,
       $uniquename,
+      $sqlName,
       $feature_id) = @_;
   
   my $self = bless { }, $package;
@@ -119,6 +120,7 @@ sub new {
   $self->uniquename($uniquename);
   $self->absolute(1);
   $self->feature_id($feature_id);
+  $self->sqlName($sqlName);
 
   $self->srcfeature_id($parent->srcfeature_id() )
   if (defined $parent && $parent->can('srcfeature_id'));
@@ -219,6 +221,12 @@ sub uniquename {
   my $self = shift;
   return $self->{'uniquename'} = shift if @_;
   return $self->{'uniquename'};
+}
+
+sub sqlName {
+  my $self = shift;
+  return $self->{'sqlName'} = shift if @_;
+  return $self->{'sqlName'};
 }
 
 ##########################################################################
@@ -706,6 +714,8 @@ sub sub_SeqFeature {
 
   my ($self, $type) = @_;
 
+  my $sqlName = $self->sqlName;
+
   $type ||= $self->type;
 
   if ($self->{acquiredSubFeaturesByBulk}) {
@@ -713,7 +723,7 @@ sub sub_SeqFeature {
   return @{$subfeats};
   }
 
-  my $query = $self->factory->parser->getSQL("Feature.pm", "$type:subfeatures");
+  my $query = $self->factory->parser->getSQL("Feature.pm", "$sqlName:subfeatures");
   return unless $query;
 
   my $parent_id = $self->feature_id();
@@ -727,9 +737,9 @@ sub sub_SeqFeature {
     # $query =~ s/(\$\w+)/eval "$1"/eg;
     $query = eval qq{"$query"};
 
-    print "<pre>vvvvvvvvvvvvvv $type:subfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
+    print "<pre>vvvvvvvvvvvvvv $sqlName:subfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
     print "<pre>$query</pre>" if DEBUG;
-    print "<pre>^^^^^^^^^^^^^^ $type:subfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
+    print "<pre>^^^^^^^^^^^^^^ $sqlName:subfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
 
   }
 
@@ -1106,14 +1116,21 @@ sub attributes {
   }
 
   if ($tag) {
+
     return @{$result{$tag} || []} if exists $result{$tag};
     my $type = $self->type();
+    my $sqlName = $self->sqlName();
     my $name = $self->name();
     my $feature_id = $self->feature_id();
-    my $sql = $self->factory->parser->getSQL("Feature.pm", "$type:attribute:$tag");
+    my $sql = $self->factory->parser->getSQL("Feature.pm", "$sqlName:attribute:$tag");
     return unless $sql;
     $sql =~ s/(\$\w+)/eval "$1"/eg;
   #return @{$self->factory->dbh->selectcol_arrayref($sql)};
+
+    print "<pre>vvvvvvvvvvvvvv $sqlName:attribute:$tag vvvvvvvvvvvvv</pre>" if DEBUG;
+    print "<pre>$sql</pre>" if DEBUG;
+    print "<pre>^^^^^^^^^^^^^^ $sqlName:attribute:$tag ^^^^^^^^^^^^^</pre>" if DEBUG;
+
   return @{$self->factory->dbh->selectall_arrayref($sql)};
   }
 
@@ -1186,13 +1203,14 @@ sub protein {
 sub seq {
   my $self = shift;
   my $type = $self->type;
+  my $sqlName = $self->sqlName;
 
-  my $query = $self->factory->parser->getSQL("Feature.pm", "$type:seq");
+  my $query = $self->factory->parser->getSQL("Feature.pm", "$sqlName:seq");
   return unless $query;
 
   $query =~ s/(\$\w+)/eval $1/eg;
   my $sth = $self->factory->dbh->prepare($query);
-  $sth->execute or $self->throw("feature $type:seq sequence query failed");
+  $sth->execute or $self->throw("feature $sqlName:seq sequence query failed");
   while (my $hashref = $sth->fetchrow_hashref) {
     return [ $$hashref{'SOURCE_ID'}, $$hashref{'SEQUENCE'} ];
   }
