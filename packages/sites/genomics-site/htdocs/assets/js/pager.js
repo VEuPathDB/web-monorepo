@@ -3,14 +3,21 @@ function GetResultsPage(url, update, ignoreFilters){
 	var s = parseUrlUtil("strategy", url);
 	var st = parseUrlUtil("step", url);
 	var strat = getStrategyFromBackId(s[0]);
-	var step = strat.getStep(st[0], false);
+	var step = null;
+	if(strat == false){
+		strat = new Object();
+		step = new Object();
+		strat.JSON.name = "";
+		step.frontId = "n/a";
+	}else
+		step = strat.getStep(st[0], false);
 	url = url + "&resultsOnly=true";
 	if (update){$("#Workspace").block();}
 	$.ajax({
 		url: url,
 		dataType: "html",
 		beforeSend: function(){
-			showLoading(strat.frontId);
+			if(strat != false) showLoading(strat.frontId);
 		},
 		success: function(data){
 			if (update) {
@@ -20,7 +27,7 @@ function GetResultsPage(url, update, ignoreFilters){
 				$("span#text_strategy_number").parent().show();
 				$("#Workspace").unblock();
 			}
-			removeLoading(strat.frontId);
+			if(strat != false) removeLoading(strat.frontId);
 		},
 		error : function(data, msg, e){
 			  alert("ERROR \n "+ msg + "\n" + e
