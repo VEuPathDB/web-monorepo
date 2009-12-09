@@ -308,6 +308,7 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
             <li id='h-6'><a href="http://workshop.eupathdb.org/2010/">2010 EuPathDB Workshop</a></li>
 
             <li id='h-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
+	    <li id='h-3'><a href="<c:url value="/helpDYK.jsp"/>">Help about Strategies Graphical Interface</a></li>
             <li id='h-7'><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>
 
             <li id='h-2'><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
