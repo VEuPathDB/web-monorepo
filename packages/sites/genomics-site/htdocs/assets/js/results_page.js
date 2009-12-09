@@ -97,15 +97,25 @@ function resetAttr(url) {
 function updateBasket(ele, type, pk, pid,recordType) {
 	var i = $("img",ele);
 	var a = new Array();
-	var o = new Object();
-	o.source_id = pk;
-	o.project_id = pid;
-	a[0] = o;
 	var action = null;
 	var da = null;
 	if(type == "single"){
+		var o = new Object();
+		o.source_id = pk;
+		o.project_id = pid;
+		a.push(o);
 		da = $.json.serialize(a);
 		action = (i.attr("value") == '0') ? "add" : "remove";
+	}else if(type == "page"){
+		$("a[class^='primaryKey_']").each(function(){
+			var o = new Object();
+			sid = $(this).attr("class").split("_")[1];
+			o.source_id = sid;
+			o.project_id = pid;
+			a.push(o);
+		});
+		action = (i.attr("value") == '0') ? "add" : "remove";
+		da = $.json.serialize(a);
 	}else{
 		da = type;
 		action = (i.attr("value") == '0') ? "add-all" : "remove-all";
@@ -130,7 +140,7 @@ function updateBasket(ele, type, pk, pid,recordType) {
 						i.attr("value", "0");
 					}
 				}else{
-					if(action == "add-all") {
+					if(action == "add-all" || action == "add") {
 						$("img.basket").attr("src","/assets/images/basket_color.png");
 						$("img.basket").attr("value", "1");
 					}else{
@@ -138,11 +148,30 @@ function updateBasket(ele, type, pk, pid,recordType) {
 						$("img.basket").attr("value", "0");
 					}
 				}
+				checkPageBasket();
 			},
 			error: function(){
 				$("body").unblock();
 				alert("Error adding Gene to basket!");
 			}
 		});
+}
+
+function checkPageBasket(){
+	allIn = true;
+	$("img.basket").each(function(){
+		if(!($(this).hasClass("head"))){
+			if($(this).attr("value") == 0){
+				allIn = false;
+			}
+		}
+	});
+	if(allIn){
+		$("img.head.basket").attr("src","/assets/images/basket_color.png");
+		$("img.head.basket").attr("value", "1");
+	}else{
+		$("img.head.basket").attr("src","/assets/images/basket_gray.png");
+		$("img.head.basket").attr("value", "0");
+	}
 }
 		

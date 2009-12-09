@@ -273,7 +273,8 @@ function NewResults(f_strategyId, f_stepId, bool, pagerOffset, ignoreFilters){
 			    $("span#text_step_number").html(step.frontId);
 			    $("span#text_strategy_number").parent().show();
                         } 
-                        removeLoading(f_strategyId);
+                removeLoading(f_strategyId);
+				checkPageBasket();
 		},
 		error : function(data, msg, e){
 			  alert("ERROR \n "+ msg + "\n" + e
@@ -692,6 +693,7 @@ function showBasket(){
 		dataType: "html",
 		success: function(data){
 			$("div#basket-data").html(data);
+			checkPageBasket();
 		},
 		error: function(data,msg,e){
 			alert("Error occured in showBasket() function!!");
