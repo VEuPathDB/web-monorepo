@@ -21,7 +21,7 @@
         <c:set var="organism" value="Toxoplasma gondii,Neospora caninum"/>
 </c:if>
 <c:if test="${wdkModelDispName eq 'GiardiaDB'}">
-        <c:set var="organism" value="Giardia lamblia"/>
+        <c:set var="organism" value="Giardia Assemblage A isolate WB,Giardia Assemblage B isolate GS"/>
 </c:if>
 <c:if test="${wdkModelDispName eq 'TrichDB'}">
         <c:set var="organism" value="Trichomonas vaginalis"/>
