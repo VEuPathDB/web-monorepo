@@ -116,7 +116,11 @@ function updateBasket(ele, type, pk, pid,recordType) {
 			type: "post",
 			data: d,
 			dataType: "html",
+			beforeSend: function(){
+				$("body").block();
+			},
 			success: function(data){
+				$("body").unblock();
 				if(type == "single"){
 					if(action == "add") {
 						i.attr("src","/assets/images/basket_color.png");
@@ -136,6 +140,7 @@ function updateBasket(ele, type, pk, pid,recordType) {
 				}
 			},
 			error: function(){
+				$("body").unblock();
 				alert("Error adding Gene to basket!");
 			}
 		});
