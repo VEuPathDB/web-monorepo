@@ -216,7 +216,7 @@
                                     </c:otherwise>
                                   </c:choose>
 					<td style="padding:0;"><a href="javascript:void(0)" onclick="${basketClick}">
-						<img class="basket" src="/assets/images/basket_gray.png" height="16" width="16" value="0"/>
+						<img title="Please login to use the basket" class="basket" src="/assets/images/basket_gray.png" height="16" width="16" value="0"/>
 					</a></td>
 				</c:if>
 
@@ -371,7 +371,7 @@
                                     </c:otherwise>
                                   </c:choose>
 				<a href="javascript:void(0)" onclick="${basketClick}">
-					<img class="basket" value="${is_basket}" src="/assets/images/${basket_img}" width="16" height="16"/>
+					<img title="Please login to use the basket" class="basket" value="${is_basket}" src="/assets/images/${basket_img}" width="16" height="16"/>
 				</a>
 		
 				&nbsp;&nbsp;&nbsp;

@@ -130,7 +130,7 @@ My Search Strategies Workspace
 	onclick="this.blur()" href="javascript:showPanel('strategy_results')">Run</a></li>
    <li><a id="tab_search_history" title="Summary of all your strategies. From here you can open/close strategies on the 'Run Strategies' tab, our graphical display." 
 	onclick="this.blur()" href="javascript:showPanel('search_history')">Browse</a></li>
-   <li><a style="padding-left:5px;" id="tab_basket" title="Where to store your GENES of interest. In the future you will be able to have baskets for other feature types such as ESTs, SNPs, genomic sequences, etc." onclick="this.blur()" href="javascript:showPanel('basket')"><img class="basket" src="/assets/images/basket_gray.png" width="15" height="15"/>&nbsp;My Basket</a></li>
+   <li><a style="padding-left:5px;" id="tab_basket" title="Where to store your GENES of interest. YOU NEED TO LOGIN to use the basket. In the future you will be able to have baskets for other feature types such as ESTs, SNPs, genomic sequences, etc." onclick="this.blur()" href="javascript:showPanel('basket')"><img class="basket" src="/assets/images/basket_gray.png" width="15" height="15"/>&nbsp;My Basket</a></li>
    <li><a id="tab_sample_strat"  onclick="this.blur()" title="View some examples of linear and non-linear strategies." 
 	href="javascript:showPanel('sample_strat')">Examples</a></li>
    <li><a id="tab_help" href="javascript:showPanel('help')"  title="List of hints on how to use our website, also available in the Did You Know popup">Help</a></li>
