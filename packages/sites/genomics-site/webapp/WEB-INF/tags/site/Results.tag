@@ -207,8 +207,8 @@
           <tr>
 
 				<c:if test="${recHasBasket && j == 0}">
-					<td style="padding:0;"><a href="javascript:void(0)" onclick="updateBasket(this,'${wdkAnswer.checksum}', '0', '0', '${wdkAnswer.recordClass.fullName}')">
-						<img class="basket" src="/assets/images/basket_gray.png" height="16" width="16" value="0"/>
+					<td style="padding:0;"><a href="javascript:void(0)" onclick="updateBasket(this,'page', '0', '${modelName}', '${wdkAnswer.recordClass.fullName}')">
+						<img class="head basket" src="/assets/images/basket_gray.png" height="16" width="16" value="0"/>
 					</a></td>
 				</c:if>
 
@@ -360,7 +360,7 @@
 		
 				&nbsp;&nbsp;&nbsp;
 
-				<a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
+				<a class="primaryKey_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
 
 
               <%--   <span id="gene_id_${fieldVal}"> <a href="javascript:ToggleGenePageView('gene_id_${fieldVal}', 'showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}')">${fieldVal}</a></span> --%>
