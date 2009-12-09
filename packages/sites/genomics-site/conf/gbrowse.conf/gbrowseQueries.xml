@@ -5209,7 +5209,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
       SELECT interval feature_id,
              'ChIPseq' type,
              '$source' source,
-             max(coverage) score,
+              power(2,max(coverage)) score, 
              'ChIP_Seq' parent_id,
              interval * (($rend - $base_start + 1) / 800) startm,
              (interval + 1) * (($rend - $base_start + 1) / 800) end
