@@ -39,7 +39,7 @@
 </ul>
 
 <ul>
-    <li><a id="mysearch" href="<c:url value="/showApplication.do"/>" title="Access a summary with all your searches">
+    <li><a id="mysearch" href="<c:url value="/showApplication.do"/>" title="Access your Search Strategies Workspace">
 <%-- 	<div id="mysearch">My Searches: ${count}</div>   --%>
 	My Searches: ${count} 
         </a>
