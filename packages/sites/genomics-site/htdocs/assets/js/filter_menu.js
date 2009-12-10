@@ -26,6 +26,11 @@ function showPanel(panel) {
 	$("#tab_" + panel).parent().attr("id", "selected");
 	$("#" + panel).css({'position':'relative','left':'auto','display':'block'});
 	if (panel == 'strategy_results') {
+		if(getCurrentTabCookie(false) == 'basket'){
+			var stgy = getStrategyFromBackId(init_view_strat);
+			var stp = stgy.getStep(init_view_step, false);
+			NewResults(stgy.frontId, stp.frontId, stp.isboolean);
+		}
 		$("body > #query_form").show();
 		$("body > .crumb_details").show();
 	}
