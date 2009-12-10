@@ -88,7 +88,11 @@
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
 	</c:when>
-	<c:otherwise>   <%----- fill in 2 empty lines to keep buckets aligned -----%>
+	<c:otherwise>   <%----- Giardia, Trich and TriTryp:  fill in 2 empty lines to keep buckets aligned -----%>
+
+		<li><a href="<c:url value="/serviceList.jsp"/>"><strong>Searches via Web Services</strong></a>
+			<ul><li style="border:0">Learn about web service access to our data</li></ul>
+		</li>
                 <li>&nbsp;<ul><li  style="border:0">&nbsp;</li></ul></li> 
 
 	</c:otherwise>
