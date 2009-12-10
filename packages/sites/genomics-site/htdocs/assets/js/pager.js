@@ -6,6 +6,7 @@ function GetResultsPage(url, update, ignoreFilters){
 	var step = null;
 	if(strat == false){
 		strat = new Object();
+		strat.JSON = new Object();
 		step = new Object();
 		strat.JSON.name = "";
 		step.frontId = "n/a";
