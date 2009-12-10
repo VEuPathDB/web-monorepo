@@ -116,6 +116,8 @@ function updateBasket(ele, type, pk, pid,recordType) {
 		});
 		action = (i.attr("value") == '0') ? "add" : "remove";
 		da = $.json.serialize(a);
+	}else if(type == "clear"){
+		action = "clear";
 	}else{
 		da = type;
 		action = "add-all";//(i.attr("value") == '0') ? "add-all" : "remove-all";
@@ -139,6 +141,8 @@ function updateBasket(ele, type, pk, pid,recordType) {
 						i.attr("src","/assets/images/basket_gray.png");
 						i.attr("value", "0");
 					}
+				}else if(type == "clear"){
+					showBasket();
 				}else{
 					if(action == "add-all" || action == "add") {
 						$("img.basket").attr("src","/assets/images/basket_color.png");
