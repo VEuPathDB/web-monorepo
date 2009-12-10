@@ -145,11 +145,11 @@ function updateBasket(ele, type, pk, pid,recordType) {
 					showBasket();
 				}else{
 					if(action == "add-all" || action == "add") {
-						$("img.basket").attr("src","/assets/images/basket_color.png");
-						$("img.basket").attr("value", "1");
+						$("div#" + getCurrentTabCookie(false) + " div#Results_Div img.basket").attr("src","/assets/images/basket_color.png");
+						$("div#" + getCurrentTabCookie(false) + " div#Results_Div img.basket").attr("value", "1");
 					}else{
-						$("img.basket").attr("src","/assets/images/basket_gray.png");
-						$("img.basket").attr("value", "0");
+						$("div#" + getCurrentTabCookie(false) + " div#Results_Div img.basket").attr("src","/assets/images/basket_gray.png");
+						$("div#" + getCurrentTabCookie(false) + " div#Results_Div img.basket").attr("value", "0");
 					}
 				}
 				checkPageBasket();
@@ -171,11 +171,11 @@ function checkPageBasket(){
 		}
 	});
 	if(allIn){
-		$("img.head.basket").attr("src","/assets/images/basket_color.png");
-		$("img.head.basket").attr("value", "1");
+		$("div#" + getCurrentTabCookie(false) + " div#Results_Div img.head.basket").attr("src","/assets/images/basket_color.png");
+		$("div#" + getCurrentTabCookie(false) + " div#Results_Div img.head.basket").attr("value", "1");
 	}else{
-		$("img.head.basket").attr("src","/assets/images/basket_gray.png");
-		$("img.head.basket").attr("value", "0");
+		$("div#" + getCurrentTabCookie(false) + " div#Results_Div img.head.basket").attr("src","/assets/images/basket_gray.png");
+		$("div#" + getCurrentTabCookie(false) + " div#Results_Div img.head.basket").attr("value", "0");
 	}
 }
 		
