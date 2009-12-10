@@ -61,7 +61,7 @@
       type="org.gusdb.wdk.controller.action.ShowBasketAction"
       scope="request"
       validate="false">
-      <forward name="showBasket" path="/resultsPage.jsp"/>
+      <forward name="showBasket" path="/showSummary.do"/>
     </action>
     <action
       path="/processBasket"
