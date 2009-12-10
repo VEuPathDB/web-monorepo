@@ -165,9 +165,9 @@ My Search Strategies Workspace
 <div id="basket">
 	<table class="basket"><tr>
 		<td><input type="button" value="Refresh" onClick="showBasket();"/></td>
-		<td><input type="button" value="Empty Basket"/></td>
+		<td><input type="button" value="Empty Basket" onClick="updateBasket(this,'clear',0,0,'GeneRecordClasses.GeneRecordClass')"/></td>
 	</tr></table>
-	<div id="basket-data"></div>
+	<div id="Workspace">&nbsp;</div>
 </div>
 
 <div id="sample_strat">
