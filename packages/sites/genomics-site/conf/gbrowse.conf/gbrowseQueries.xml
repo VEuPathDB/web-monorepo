@@ -5206,14 +5206,15 @@ WHERE fl.na_sequence_id = $srcfeature_id
    <sqlQuery name="ChIPseq:coverage:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
-      SELECT interval feature_id,
+     SELECT interval feature_id,
              'ChIPseq' type,
              '$source' source,
-              power(2,max(coverage)) score, 
+              max(coverage) score, 
              'ChIP_Seq' parent_id,
              interval * (($rend - $base_start + 1) / 800) startm,
-             (interval + 1) * (($rend - $base_start + 1) / 800) end
-    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
+    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
        FROM  apidb.nextgenseq_coverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
@@ -5224,7 +5225,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND csc.sample = $$sample$$
          AND csc.location <= $rend
          AND csc.location >= $base_start - 1)
-       GROUP BY interval,sample
+       GROUP BY interval,sample,multiple
 ]]>
     </sql>
   </sqlQuery>
