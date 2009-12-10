@@ -45,8 +45,9 @@ function ResultsToGrid(data, ignoreFilters) {
 		oldFilters = $("#Workspace div.layout-detail div.filter-instance .link-url");
 	}
 
-        document.getElementById('Workspace').innerHTML = data;
-
+   //     document.getElementById('Workspace').innerHTML = data;
+	$("div#" + getCurrentTabCookie(false) + " div#Workspace").html(data);
+	
 	// invoke filters
         var wdkFilter = new WdkFilter();
 	
