@@ -691,15 +691,19 @@ function showBasket(){
 		data: d,
 		type: "post",
 		dataType: "html",
+		beforeSend:function(){
+			$("body").block();
+		},
 		success: function(data){
-			$("div#basket-data").html(data);
+			$("div#basket div#Workspace").html(data);
 			checkPageBasket();
+			$("body").unblock();
 		},
 		error: function(data,msg,e){
 			alert("Error occured in showBasket() function!!");
+			$("body").unblock();
 		}
 	});
 }
-
 
 
