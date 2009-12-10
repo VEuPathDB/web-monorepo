@@ -62,14 +62,17 @@ In it, we have used a "<b>?</b>" to indicate the beginning of data, and a "<b>&<
 <li>For more details on how to read the WADL, and generate the URL, <a href="#moreWADL">see below</a>.</li>
 </ul>
 
-<br><br>
-
+<br>
+<hr>
+<br>
 
 <!-- show all questionSets in model, driven by categories as in menubar -->
 <site:drop_down_QG2 from="webservices" />
 
+<br>
+<hr>
+<br
 
-<br><br>
 <a name="moreWADL"></a>
 <h2>How to read a WADL</h2>
  In a WADL document you can find out the following:

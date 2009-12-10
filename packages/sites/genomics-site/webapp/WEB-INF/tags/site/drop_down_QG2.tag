@@ -31,7 +31,7 @@
 			<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
-	<a href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h2 style="font-size:120%;margin-bottom:5px;">Search for Genes</h2></a>
+	<a href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Genes</h2></a>
 </c:when>
 <c:otherwise>
 	<a href="#">Search for Genes</a>
@@ -43,7 +43,6 @@
 					<c:set var="cat" value="${catEntry.value}" />
 					<c:if test="${fn:length(cat.questions) > 0}">
 						<li>
-
 <c:choose>
 <c:when test="${from == 'webservices'}">
 	&nbsp;&nbsp;${cat.displayName}
@@ -53,12 +52,9 @@
 </c:otherwise>
 </c:choose>
 
-
-
 							<ul>
 							<c:forEach items="${cat.questions}" var="q">
 								<li>
-
 <c:choose>
 <c:when test="${from == 'webservices'}">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}</a>
@@ -67,8 +63,6 @@
 	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=GENE"/>">${q.displayName}</a>
 </c:otherwise>
 </c:choose>
-
-
 
 								</li>
 							</c:forEach>
@@ -80,10 +74,6 @@
 			</li>
 		</c:when>
 		<c:otherwise>
-
-
-
-
 			<c:set var="qByCat" value="${catByRec.value}" />
 
 			<c:forEach items="${rootCat.children}" var="catEntry">
@@ -93,25 +83,23 @@
 <c:choose>
 <c:when test="${from == 'webservices'}">
 
-<ul>
-<c:forEach items="${questionSets}" var="qSet">
-  <c:if test="${qSet.internal == false}">
+	<ul>
+	<c:forEach items="${questionSets}" var="qSet">
+  		<c:if test="${qSet.internal == false}">
 
-  <c:if test="${qSet.displayName == cat.displayName}">
-<br><br>
-	<li><a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h2 style="font-size:120%;margin-bottom:5px;">${qSet.displayName}</h2></a></li>
-		<ul>
-           	<c:forEach items="${qSet.questions}" var="q">
-             	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}</a></li>
-           	</c:forEach>
-		</ul>
-	</li>
-  </c:if>
-	
-  </c:if>
-</c:forEach>
-</ul>
-
+  			<c:if test="${qSet.displayName == cat.displayName}">
+			<br><br>
+			<li><a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h2></a>
+				<ul>
+           			<c:forEach items="${qSet.questions}" var="q">
+             				<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}</a></li>
+           			</c:forEach>
+				</ul>
+			</li>
+  			</c:if>
+		</c:if>
+	</c:forEach>
+	</ul>
 
 </c:when>
 <c:otherwise>
