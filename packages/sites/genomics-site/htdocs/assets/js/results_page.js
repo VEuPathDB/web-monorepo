@@ -163,7 +163,7 @@ function updateBasket(ele, type, pk, pid,recordType) {
 
 function checkPageBasket(){
 	allIn = true;
-	$("img.basket").each(function(){
+	$("div#" + getCurrentTabCookie(false) + " div#Results_Div img.basket").each(function(){
 		if(!($(this).hasClass("head"))){
 			if($(this).attr("value") == 0){
 				allIn = false;
