@@ -377,7 +377,7 @@
 		
 				&nbsp;&nbsp;&nbsp;
 
-				<a class="primaryKey_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
+				<a class="primaryKey_||_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
 
 
               <%--   <span id="gene_id_${fieldVal}"> <a href="javascript:ToggleGenePageView('gene_id_${fieldVal}', 'showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}')">${fieldVal}</a></span> --%>
