@@ -141,6 +141,7 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 		quesForm = $(f);
 	}
 	var quesDescription = $("#query-description-section",qf);//data);
+	var dataSources = $("#attributions-section",qf);
 	var tooltips = $("div.htmltooltip",qf);//data);
 	$("input[value=Get Answer]",quesForm).val("Run Step");
 	$("input[value=Run Step]",quesForm).attr("id","executeStepButton");
@@ -246,7 +247,10 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 	
 	if(quesDescription.length > 0)
 		$("#query_form").append("<div style='padding:5px;margin:5px 15px 5px 15px;border-top:1px solid grey;border-bottom:1px solid grey'>" + quesDescription.html() + "</div>");
-		//$("#query_form .filter.params").append("<div style='padding:5px;margin:5px 15px 5px 15px;border-top:1px solid grey;border-bottom:1px solid grey'>" + quesDescription.html() + "</div>");
+
+	if(dataSources.length > 0)
+		$("#query_form").append("<div style='padding:5px;margin:5px 15px 5px 15px;border-top:1px solid grey;border-bottom:1px solid grey'>" + dataSources.html() + "</div>");
+
 	$("#query_form").append("<div class='bottom-close'><a href='javascript:closeAll(false)' class='close_window'>Close</a></div>");
 	htmltooltip.render();
 	setDraggable($("#query_form"), ".dragHandle");
