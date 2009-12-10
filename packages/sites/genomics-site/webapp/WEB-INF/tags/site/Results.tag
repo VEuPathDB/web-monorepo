@@ -5,6 +5,7 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
 <c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
+<c:set var="wdkStep" value="${requestScope.wdkStep}"/>
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="recordName" value="${wdkAnswer.question.recordClass.fullName}" />
@@ -95,7 +96,7 @@
 
 <td  style="vertical-align:middle;text-align:right" nowrap>
   <div style="float:right">
-    <a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT</b></a>
+    <a href="javascript:void(0)" onClick="updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}')"><b>ADD RESULT TO BASKET</b></a>&nbsp;|&nbsp;<a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT</b></a>
   <c:if test="${!empty sessionScope.GALAXY_URL}">
     &nbsp;|&nbsp;<a href="downloadStep.do?step_id=${wdkHistory.stepId}&wdkReportFormat=tabular"><b>SEND TO GALAXY</b></a>
   </c:if>
