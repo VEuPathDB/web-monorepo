@@ -37,10 +37,16 @@
 	<div style="float:left;padding-left:9px;padding-top:9px;">
  	 	<a href="http://${fn:toLowerCase(siteName)}.org">${siteName}</a> ${version}&nbsp;&nbsp;&nbsp;&nbsp;${releaseDate_formatted}
 		<br>&copy;${copyrightYear} The EuPathDB Project Team
+	
 	</div>
 
-	<div style="float:right;padding-right:9px;padding-top:9px;font-size:1.4em;line-height:2;">
+	<div style="float:right;padding-right:9px;padding-top:2px;font-size:1.4em;line-height:2;">
 		Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments
+		<br>
+		<a style="position:relative;right:-85px;top:-10px;" href="http://gusdb.org/wdk/">
+			<span style="position:relative;bottom:8px;color:grey;font-weight:bold;font-size:80%">Powered by </span>
+			<img src="/assets/images/wdkFooter-transparent.png" alt="Powered by StrategiesWDK" />
+		</a>
 	</div>
 
 	<span style="position: relative; top: -9px;">
@@ -51,7 +57,11 @@
         	<a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb_w50.png"           	width=30></a>&nbsp;&nbsp;
         	<a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb_w65.png"        	height=30></a>&nbsp;&nbsp;
         	<a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb_w40.png"	width=25></a>
-	</span>
+	</span>	
+
+
+
+
 
 </div>
 
