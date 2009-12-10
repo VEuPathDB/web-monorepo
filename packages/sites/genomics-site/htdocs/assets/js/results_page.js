@@ -109,7 +109,7 @@ function updateBasket(ele, type, pk, pid,recordType) {
 	}else if(type == "page"){
 		$("a[class^='primaryKey_']").each(function(){
 			var o = new Object();
-			sid = $(this).attr("class").split("_")[1];
+			sid = $(this).attr("class").split("_||_")[1];
 			o.source_id = sid;
 			o.project_id = pid;
 			a.push(o);
