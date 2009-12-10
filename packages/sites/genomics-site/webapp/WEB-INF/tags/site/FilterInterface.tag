@@ -6,33 +6,28 @@
 
 <%@ attribute name="model"
 	      type="org.gusdb.wdk.model.jspwrap.WdkModelBean"
-              required="false"
+              required="true"
               description="Wdk Model Object for this site"
 %>
 
-<%@ attribute name="recordClass"
-	          required="false"
+<%@ attribute name="rcName"
+	      required="true"
               description="RecordClass Object for the Answer"
 %>
 
 <%@ attribute name="prevStepNum"
-				required="false"
-				description="Step number for transform param urls"
+	      required="false"
+	      description="Step number for transform param urls"
 %>
 
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
-<c:set var="recClass" value="${recordClass}" />
 <c:set var="qSetName" value="none" />
 <c:set var="qSets" value="${model.questionSetsMap}" />
 <c:set var="qSet" value="${qSets[qSetName]}" />
 <c:set var="user" value="${sessionScope.wdkUser}"/>
+<c:set var="recordClass" value="${model.recordClassMap[rcName]" />
 
-<%--<jsp:useBean id="modelBean" scope="request" class="org.gus.wdk.model.jspwrap.WdkModelBean" >--%>
-<jsp:setProperty name="model" property="inputType" value="${recClass}" />
-<jsp:setProperty name="model" property="outputType" value="" />
-<%--</jsp:useBean>--%>
-
-<c:set var="transformQuestions" value="${model.transformQuestions}" />
+<c:set var="transformQuestions" value="${recordClass.transformQuestions}" />
 
 
 
@@ -47,7 +42,12 @@
 		<tr><th title="This search will be combined (AND,OR,NOT) with the previous step.">Select a Search</th>
                     <th>--or--</th>
 
-<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass' && fn:length(transformQuestions) > 0}">
+<c:if test="${recordClass.hasBasket}">
+                    <th title="">Use current ${recordClass.type} records from Basket as a Snapshot.">Select Basket</th>
+                    <th>--or--</th>
+</c:if>
+
+<c:if test="${fn:length(transformQuestions) > 0}">
                     <th title="The transform converts the input set of IDs (from the previous step) into a new set of IDs">Select a Transform</th>
                     <th>--or--</th>
 </c:if>
@@ -57,7 +57,7 @@
 		<tr>
 				<td>
 <ul class="top_nav">
-<c:set var="rootCat" value="${model.rootCategoryMap[recordClass]}" />
+<c:set var="rootCat" value="${model.rootCategoryMap[rcName]}" />
 <c:forEach items="${rootCat.children}" var="catEntry">
     <c:set var="cat" value="${catEntry.value}" />
 	<c:choose>
@@ -88,7 +88,7 @@
     	<ul>
 	</c:if>
 	<c:forEach items="${cat.questions}" var="q">
-    	<c:if test="${ !fn:contains(recordClass, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
+    	<c:if test="${ !fn:contains(rcName, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
          <%--     <c:if test="${!(siteName == 'PlasmoDB' || siteName == 'GiardiaDB' || siteName == 'ToxoDB' || siteName == 'EuPathDB') && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">--%>
     		<li>
 <%-- for the text to wrap in thsi Add Step popup menus....
@@ -109,7 +109,16 @@
 </td>
 <td></td>
 
-<c:if test="${recClass == 'GeneRecordClasses.GeneRecordClass' && fn:length(transformQuestions) > 0}">
+<c:if test="${recordClass.hasBasket}">
+<td>
+    <c:set var="q" value="${recordClass.snapshotBasketQuestion}" />
+    <a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&target=${target}&partial=true')">${q.displayName}</a>
+</td>
+
+<td></td>
+</c:if>
+
+<c:if test="${fn:length(transformQuestions) > 0}">
 <td>
   <ul id="transforms" class="top_nav">
     <c:forEach items="${transformQuestions}" var="t">
@@ -133,7 +142,7 @@
 		<option value="--">----Opened strategies----</option>
 		<c:forEach items="${user.activeStrategies}" var="storedStrategy">
 			<c:set var="l" value="${storedStrategy.length-1}"/>
-		 	<c:if test="${storedStrategy.allSteps[l].dataType == recordClass}">
+		 	<c:if test="${storedStrategy.allSteps[l].dataType == rcName}">
 				<c:set var="displayName" value="${storedStrategy.name}" />
 				<c:if test="${fn:length(displayName) > 30}">
                                     <c:set var="displayName" value="${fn:substring(displayName,0,27)}..." />
@@ -143,7 +152,7 @@
 		</c:forEach>
 		<!-- Display the Saved Strategies -->
 		<option value="--">----Saved strategies----</option>
-		<c:forEach items="${user.savedStrategiesByCategory[recordClass]}" var="storedStrategy">
+		<c:forEach items="${user.savedStrategiesByCategory[rcName]}" var="storedStrategy">
 				<c:set var="displayName" value="${storedStrategy.name}" />
 				<c:if test="${fn:length(displayName) > 30}">
                                     <c:set var="displayName" value="${fn:substring(displayName,0,27)}..." />
@@ -152,7 +161,7 @@
 		</c:forEach>
 		<!-- Display the recent Strategies (Opened  viewed in the last 24 hours) -->
 		<option value="--">----Recent strategies----${currentTime}</option>
-		<c:forEach items="${user.recentStrategiesByCategory[recordClass]}" var="storedStrategy">
+		<c:forEach items="${user.recentStrategiesByCategory[rcName]}" var="storedStrategy">
 				<c:set var="displayName" value="${storedStrategy.name}" />
 				<c:if test="${fn:length(displayName) > 30}">
                                     <c:set var="displayName" value="${fn:substring(displayName,0,27)}..." />
