@@ -53,7 +53,7 @@
 </c:if>
 
 
-                    <th title="Adding a strategy as a step allows you to generate non-linear strategies (trees).">Select a Opened Strategy</th></tr>
+                    <th title="Adding a strategy as a step allows you to generate non-linear strategies (trees).">Select a Strategy</th></tr>
 		<tr>
 				<td>
 <ul class="top_nav">
