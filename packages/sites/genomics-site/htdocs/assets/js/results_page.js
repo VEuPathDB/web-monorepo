@@ -118,7 +118,7 @@ function updateBasket(ele, type, pk, pid,recordType) {
 		da = $.json.serialize(a);
 	}else{
 		da = type;
-		action = (i.attr("value") == '0') ? "add-all" : "remove-all";
+		action = "add-all";//(i.attr("value") == '0') ? "add-all" : "remove-all";
 	}
 	var d = "action="+action+"&type="+recordType+"&data="+da;
 		$.ajax({
