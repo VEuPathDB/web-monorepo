@@ -25,7 +25,7 @@
 <c:set var="qSets" value="${model.questionSetsMap}" />
 <c:set var="qSet" value="${qSets[qSetName]}" />
 <c:set var="user" value="${sessionScope.wdkUser}"/>
-<c:set var="recordClass" value="${model.recordClassMap[rcName]" />
+<c:set var="recordClass" value="${model.recordClassMap[rcName]}" />
 
 <c:set var="transformQuestions" value="${recordClass.transformQuestions}" />
 
@@ -43,7 +43,7 @@
                     <th>--or--</th>
 
 <c:if test="${recordClass.hasBasket}">
-                    <th title="">Use current ${recordClass.type} records from Basket as a Snapshot.">Select Basket</th>
+                    <th title="Use current ${recordClass.type} records from Basket as a Snapshot.">Select Basket</th>
                     <th>--or--</th>
 </c:if>
 
@@ -112,7 +112,11 @@
 <c:if test="${recordClass.hasBasket}">
 <td>
     <c:set var="q" value="${recordClass.snapshotBasketQuestion}" />
-    <a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&target=${target}&partial=true')">${q.displayName}</a>
+    <ul class="top_nav">
+      <li style="width:auto;z-index:40;">
+        <a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&target=${target}&partial=true')">${q.displayName}</a>
+      </li>
+    </ul>
 </td>
 
 <td></td>
@@ -122,7 +126,7 @@
 <td>
   <ul id="transforms" class="top_nav">
     <c:forEach items="${transformQuestions}" var="t">
-      <jsp:setProperty name="t" property="inputType" value="${recClass}" />
+      <jsp:setProperty name="t" property="inputType" value="${rcName}" />
       <c:set var="tparams" value="" />
       <c:forEach items="${t.transformParams}" var="tp">
 	<c:set var="tparams" value="${tparams}&${tp.name}=${prevStepNum}" />
