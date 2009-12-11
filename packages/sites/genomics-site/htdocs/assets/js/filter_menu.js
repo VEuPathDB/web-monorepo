@@ -216,11 +216,11 @@ function formatFilterForm(params, data, edit, reviseStep, hideQuery, hideOp, isO
 	var formtitle = "";
 	if(edit == 0){
 		if(insert == "")
-			formtitle = "<h1>Add&nbsp;Step</h1>";
+			formtitle = "<h1 style='font-size:130%;position:relative;top:-7px;'>Add&nbsp;Step</h1>";
 		else
-			formtitle = "<h1>Insert&nbsp;Step</h1>";
+			formtitle = "<h1  style='font-size:130%;position:relative;top:-7px;'>Insert&nbsp;Step</h1>";
 	}else{
-		formtitle = "<h1>Revise&nbsp;Step</h1>";
+		formtitle = "<h1  style='font-size:130%;position:relative;top:-7px;'>Revise&nbsp;Step</h1>";
 	}
 	quesForm.attr("action",action);
 	if(edit == 0)

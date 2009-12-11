@@ -138,7 +138,7 @@ function showHistShare(ele, stratId, url) {
     var prntOffset = $("div#search_history").offset();
     popup.css("top", (btnOffset.top - prntOffset.top - 40) + "px");
     popup.css("right", "292px");
-    popup.css("width", "42.5em");
+    popup.css("width", "43.5em");
     popup.appendTo(perm_popup.parent()).show();
 }
 

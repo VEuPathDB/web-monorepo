@@ -15,7 +15,7 @@
 #query_selection {
 /*	left: 40px;*/
 	position:relative;
-	margin-top: 36px;
+	margin-top: 28px;  /* thiner Add Step   36px; */
 	width: 100%;
 }
 
@@ -30,7 +30,7 @@
 	background-image: url(../images/filter_top.gif);
 /*	background-image: url(../images/CryptoDB/footer.png);*/
 	background-repeat: repeat-x;
-	background-position: 0 36px;
+	background-position: 0 26px;   /* was 36px, decreased to have Add Step title thiner */
 	border: 1px solid #888888;	
 	padding: 0 8px 8px 8px;
 	z-index: 1000;
@@ -136,7 +136,7 @@
 	position: absolute;
 	left: -1px;
 	background-color: Grey;
-	height: 25px;
+	height: 14px;   /* thiner Add Step 25px; */
 	width: 100%;
 	background-image: url(../images/handbar.jpg);
 	cursor: move;
