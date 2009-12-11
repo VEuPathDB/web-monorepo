@@ -446,13 +446,14 @@ with materialized_query as
             na_sequence_id = $srcfeature_id
         and context_start = $base_start
         and context_end = $rend)
-select 'fast' query_style, syntenic_na_feature_id feature_id, 'gene' type,
+select  -- fast query uses pre-calculated values for gene-page views
+       'fast' query_style, syntenic_na_feature_id feature_id, 'gene' type,
        '$source' source,  syntenic_source_id name, '.' score, synteny_id parent_id,
        startm, end, strand, atts
 from materialized_query
 union
-select * from (
-select
+select -- slow query for all other views
+* from (select
        'slow' query_style,
        gattr.na_feature_id feature_id,
        'gene' type, 
@@ -4184,8 +4185,27 @@ WHERE startm <= $rend
   <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
-SELECT * FROM (
-SELECT
+WITH materialized_query AS
+     (SELECT organism, na_sequence_id, feature_id, context_start, context_end,
+             context_source_id, project_id, syntenic_na_feature_id,
+             syntenic_exon_feature_id, syntenic_gene_feature_id, startm, end,
+             strand, atts
+      FROM apidb.SyntenicExonCache
+      WHERE na_sequence_id = $srcfeature_id
+        AND context_start = $base_start
+        AND context_end = $rend
+        -- AND organism = $organism
+     )
+SELECT -- fast query uses pre-calculated values for gene-page views
+       'fast' query_style, syntenic_exon_feature_id feature_id,
+       'exon' type,
+       'syntenyMC' source, syntenic_exon_feature_id name, syntenic_gene_feature_id parent_id,
+       startm, end, strand, atts
+FROM materialized_query
+UNION
+SELECT -- slow query for all other views
+* FROM (SELECT
+       'slow' query_style,
        exfloc.na_feature_id feature_id,
        'exon' type, 
        'syntenyMC' source, 
@@ -4207,7 +4227,8 @@ FROM
        apidb.syntenyAnchor anch_right,
        apidb.featurelocation exfloc,
        apidb.geneattributes ga
-WHERE ga.na_feature_id = exfloc.parent_id
+WHERE (select count(*) from materialized_query) = 0
+  AND ga.na_feature_id = exfloc.parent_id
   AND syn.a_na_sequence_id = $srcfeature_id
   AND syn.a_start <= $rend 
   AND syn.a_end >= $base_start 
