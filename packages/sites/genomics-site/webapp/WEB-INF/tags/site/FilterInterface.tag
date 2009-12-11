@@ -40,16 +40,16 @@
 
 	<table width="90%">
 		<tr><th title="This search will be combined (AND,OR,NOT) with the previous step.">Select a Search</th>
-                    <th>--or--</th>
+                    <th>-or-</th>
 
 <c:if test="${recordClass.hasBasket}">
-                    <th title="Use current ${recordClass.type} records from Basket as a Snapshot.">Select Basket</th>
-                    <th>--or--</th>
+                    <th title="Use current ${recordClass.type} records from Basket as a Snapshot. The effect is as if you run the search -${recordClass.type}s by ID- and provide the IDs in your basket">Select Basket</th>
+                    <th>-or-</th>
 </c:if>
 
 <c:if test="${fn:length(transformQuestions) > 0}">
                     <th title="The transform converts the input set of IDs (from the previous step) into a new set of IDs">Select a Transform</th>
-                    <th>--or--</th>
+                    <th>-or-</th>
 </c:if>
 
 
@@ -181,6 +181,9 @@
 </div><!-- End of Query Selection Div -->
 <!--</div> End of Filter div -->
 <!--<div id="query_form" class="jqDnR">-->
+
+<%--
 	<div class="bottom-close"><a class='close_window' href='javascript:closeAll(false)'>Close</a>
-</div><!-- End of Query Form Div -->
+</div>
+--%>
 
