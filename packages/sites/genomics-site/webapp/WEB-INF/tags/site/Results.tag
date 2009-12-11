@@ -28,7 +28,7 @@
 %>
 
 <c:set var="type" value="Results" />
-<c:set var="step_dataType" value="${strategy.latestStep.dataType}" />
+<c:set var="step_dataType" value="${wdkStep.dataType}" />
 <c:choose>
 	<c:when test="${step_dataType == 'GeneRecordClasses.GeneRecordClass'}">
 		<c:set var="type" value="Genes" />
@@ -96,7 +96,11 @@
 
 <td  style="vertical-align:middle;text-align:right" nowrap>
   <div style="float:right">
-    <a href="javascript:void(0)" onClick="updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}')"><b>ADD RESULT TO BASKET</b></a>&nbsp;|&nbsp;<a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT</b></a>
+   <c:if test="${strategy != null}">
+    <a href="javascript:void(0)" onClick="updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}')"><b>ADD RESULT TO BASKET</b></a>
+    &nbsp;|&nbsp;
+   </c:if>
+    <a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT</b></a>
   <c:if test="${!empty sessionScope.GALAXY_URL}">
     &nbsp;|&nbsp;<a href="downloadStep.do?step_id=${wdkHistory.stepId}&wdkReportFormat=tabular"><b>SEND TO GALAXY</b></a>
   </c:if>

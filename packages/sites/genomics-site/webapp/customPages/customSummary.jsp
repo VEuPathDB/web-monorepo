@@ -162,10 +162,19 @@ My Search Strategies Workspace
 <div id="search_history">
 </div>
 
+<c:set var="rcName" value="GeneRecordClasses.GeneRecordClass" />
+<c:set var="recordClass" value="${wdkModel.recordClassMap[rcName]}" />
+<c:set var="basketQuestion" value="${recordClass.snapshotBasketQuestion}" />
+<c:set var="pvalues" value="" />
+<c:forEach items="${basketQuestion.paramsMap}" var="entry">
+    <c:set var="pvalues" value="${pvalues}&${entry.key}_type=basket" />
+</c:forEach>
+<c:url var="url" value="/processQuestion.do?questionFullName=${basketQuestion.fullName}${pvalues}&questionSubmit=Run+Step" />
 <div id="basket">
 	<table class="basket"><tr>
 		<td><input type="button" value="Refresh" onClick="showBasket();"/></td>
 		<td><input type="button" value="Empty Basket" onClick="updateBasket(this,'clear',0,0,'GeneRecordClasses.GeneRecordClass')"/></td>
+                <td><input type="button" value="Save as Strategy" onClick="window.location='${url}'"/></td>
 	</tr></table>
 	<div id="Workspace">&nbsp;</div>
 </div>
