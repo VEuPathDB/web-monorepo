@@ -97,8 +97,15 @@
 <td  style="vertical-align:middle;text-align:right" nowrap>
   <div style="float:right">
    <c:if test="${strategy != null}">
-    <a href="javascript:void(0)" onClick="updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}')"><b>ADD RESULT TO BASKET</b></a>
-    &nbsp;|&nbsp;
+    <c:choose>
+      <c:when test="${wdkUser.guest}">
+        <c:set var="basketClick" value="popLogin()" />
+      </c:when>
+      <c:otherwise>
+        <c:set var="basketClick" value="updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}')" />
+      </c:otherwise>
+    </c:choose>
+    <a href="javascript:void(0)" onClick="${basketClick}"><b>ADD RESULT TO BASKET</b></a>&nbsp;|&nbsp;
    </c:if>
     <a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT</b></a>
   <c:if test="${!empty sessionScope.GALAXY_URL}">
@@ -215,13 +222,14 @@
                                   <c:choose>
                                     <c:when test="${wdkUser.guest}">
                                       <c:set var="basketClick" value="popLogin()" />
+                                      <c:set var="basketTitle" value="Please log in to use the basket." />
                                     </c:when>
                                     <c:otherwise>
                                       <c:set var="basketClick" value="updateBasket(this,'page', '0', '${modelName}', '${wdkAnswer.recordClass.fullName}')" />
                                     </c:otherwise>
                                   </c:choose>
 					<td style="padding:0;"><a href="javascript:void(0)" onclick="${basketClick}">
-						<img title="Please login to use the basket" class="head basket" src="/assets/images/basket_gray.png" height="16" width="16" value="0"/>
+						<img title="${basketTitle}" class="head basket" src="/assets/images/basket_gray.png" height="16" width="16" value="0"/>
 					</a></td>
 				</c:if>
 
@@ -370,13 +378,18 @@
                                   <c:choose>
                                     <c:when test="${wdkUser.guest}">
                                       <c:set var="basketClick" value="popLogin()" />
+                                      <c:set var="basketTitle" value="Please log in to use the basket." />
                                     </c:when>
                                     <c:otherwise>
                                       <c:set var="basketClick" value="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')" />
+                                      <c:set var="basketTitle" value="Click to add this item to the basket." />
+                                      <c:if test="${is_basket == '1'}">
+                                        <c:set var="basketTitle" value="Click to remove this item from the basket." />
+                                      </c:if>
                                     </c:otherwise>
                                   </c:choose>
 				<a href="javascript:void(0)" onclick="${basketClick}">
-					<img title="Please login to use the basket" class="basket" value="${is_basket}" src="/assets/images/${basket_img}" width="16" height="16"/>
+					<img title="${basketTitle}" class="basket" value="${is_basket}" src="/assets/images/${basket_img}" width="16" height="16"/>
 				</a>
 		
 				&nbsp;&nbsp;&nbsp;
