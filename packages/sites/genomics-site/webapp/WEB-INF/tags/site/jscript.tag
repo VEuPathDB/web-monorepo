@@ -17,11 +17,15 @@
 
 <!-- JQuery Drag And Drop Plugin -->
 <script type="text/javascript" src="/assets/js/js-utils.js"></script>
+
+<script type="text/javascript" src="/assets/js/lib/json.js"></script>
+<script type="text/javascript" src="/assets/js/results_page.js"></script>
+
 <c:if test="${refer == 'customSummary'}">
   <script type="text/javascript" src="/assets/js/dyk.js"></script>
 	<!-- JQuery Drag And Drop Plugin -->
 	<!--<script type="text/javascript" src="/assets/js/lib/jqDnR.js"></script>-->
-	<script type="text/javascript" src="/assets/js/lib/json.js"></script>
+<!--	<script type="text/javascript" src="/assets/js/lib/json.js"></script>-->
 	<script type="text/javascript" src="/assets/js/lib/jquery.multiSelect.js"></script>
 
 <%--	<script type="text/javascript" src="/assets/js/lib/ui/ui.core.js"></script>
@@ -40,7 +44,7 @@
 	<script type="text/javascript" src="/assets/js/pager.js"></script>
 	<script type="text/javascript" src="/assets/js/lib/flexigrid/flexigrid.js"></script>
 	<!-- Results Page AJAX Javascript code -->
-	<script type="text/javascript" src="/assets/js/results_page.js"></script>
+	<!--<script type="text/javascript" src="/assets/js/results_page.js"></script>-->
 	
         <script type="text/javascript" src="<c:url value='/assets/js/wdkFilter.js' />"></script>
 </c:if>
