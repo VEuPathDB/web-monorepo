@@ -696,7 +696,10 @@ function showBasket(){
 		},
 		success: function(data){
 			$("div#basket div#Workspace").html(data);
+			// create multi select control for adding columns
 			checkPageBasket();
+			createMultiSelectAttributes($("#basket #addAttributes"));
+			createFlexigridFromTable($("#basket #Results_Table"));
 			$("body").unblock();
 		},
 		error: function(data,msg,e){

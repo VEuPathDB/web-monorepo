@@ -69,7 +69,13 @@ function ResultsToGrid(data, ignoreFilters) {
 	}
 
 	// create multi select control for adding columns
-	var attrSelect = $("#addAttributes");
+	createMultiSelectAttributes($("#strategy_results #addAttributes"));
+
+	// convert results table to drag-and-drop flex grid
+	createFlexigridFromTable($("#strategy_results #Results_Table"));
+}
+
+function createMultiSelectAttributes(attrSelect) {
 	if (attrSelect.length > 0) { 
 		attrSelect.multiSelect({selectAll: false,
 				noneSelected: '--- Add Column ---',
@@ -78,15 +84,16 @@ function ResultsToGrid(data, ignoreFilters) {
 					addAttr($("#addAttributes").attr('commandUrl'));
 				});
 	}
+}
 
-	// convert results table to drag-and-drop flex grid
-	$("#Results_Table").flexigrid({height : 'auto',
-				       showToggleBtn : false,
-				       useRp : false,
-				       singleSelect : true,
-				       onMoveColumn : moveAttr,
-                                       nowrap : false,
-				       resizable : false});
+function createFlexigridFromTable(table) {
+	table.flexigrid({height : 'auto',
+			showToggleBtn : false,
+			useRp : false,
+			singleSelect : true,
+			onMoveColumn : moveAttr,
+                        nowrap : false,
+			resizable : false});
 }
 
 function updatePageCount(pager_id) {
