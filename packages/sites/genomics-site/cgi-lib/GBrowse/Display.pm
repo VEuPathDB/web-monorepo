@@ -447,6 +447,9 @@ sub chipColor {
   return '#000080' if($a eq 'CenH3_H3K9me2');
   return '#B0E0E6' if($a eq 'CenH3');
 
+  return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
+  return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
+
   return '#00C800' if($a =~ /H3K4/ && $r == 1);
   return '#00C896' if($a =~ /H3K4/ && $r == 2);
   return '#C86400' if($a =~ /H3K9/ && $r == 1);
@@ -457,9 +460,6 @@ sub chipColor {
 
   #return '#175487' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
   #return '#54B5B5' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
-
-  return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
-  return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
 
   return '#00C800' if($anls =~ /replicate/i && $r =~ /replicate1/i);
   return '#FA9600' if($anls =~ /replicate/i && $r =~ /replicate2/i);
