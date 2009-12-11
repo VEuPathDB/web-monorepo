@@ -240,6 +240,9 @@ div.innertube #record-toolbox {
     float: right;
     border-style: double;
     border-width: 3px;
+    margin: 3px;
+    padding: 5px;
+    text-align: center;
 }
 
 

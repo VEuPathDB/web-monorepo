@@ -11,7 +11,7 @@
     <li>
         <c:set var="image" value="${wdkRecord.inBasket ? 'color' : 'gray'}" />
         <img src='/assets/images/basket_${image}.png' />
-        <a class="basket" href="">${wdkRecord.inBasket ? "Remove from Basket" : "Add into Basket"}</a>
+        <a class="basket" href="">${wdkRecord.recordClass.type} Basket</a>
     </li>
     <li>
         <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&skip_to_download=1&myProp(single_gene_id)=${id}" />
