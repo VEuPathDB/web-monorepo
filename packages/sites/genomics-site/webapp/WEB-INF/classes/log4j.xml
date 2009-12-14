@@ -32,6 +32,9 @@
     <logger name="org.gusdb"><level value="info"/></logger>
     <logger name="org.apidb"><level value="info"/></logger>
     <logger name="org.apache"><level value="warn"/></logger>
+    <logger name="org.apache.catalina.core">
+        <level value="info"/><!-- info level required to log stdout/stderr -->
+    </logger>
 
 	<root>
 		<priority value="warn"></priority>
