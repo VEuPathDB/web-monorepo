@@ -152,7 +152,7 @@
 
 <h2>
 <center>
-${id} <br /> ${prd}
+<site:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
 </center>
 </h2>
 <c:set var="attr" value="${attrs['overview']}" />

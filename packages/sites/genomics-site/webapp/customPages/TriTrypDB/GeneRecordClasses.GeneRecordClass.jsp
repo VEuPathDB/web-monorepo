@@ -81,7 +81,7 @@
 
 <h2>
 <center>
-${id} <br /> ${prd}
+<site:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
 <c:if test="${attrs['updated_annotation'].value != null}">
 <br>${genedb_annot_link}
 </c:if>
