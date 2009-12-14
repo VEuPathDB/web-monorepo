@@ -130,10 +130,12 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
 
 <%-- REFERENCE ----------------------------------------------------%>
 
+<site:panel 
+    displayName="Attributions"
+    content=" CAP4 clustering and alignments by EuPathDB. EST sequences as individually attributed." />
+<br>
+
 <hr>
-<div align="center">
- CAP4 clustering and alignments by EuPathDB. EST sequences as individually attributed.
-</div>
  
 </td></tr>
 </table>
