@@ -23,7 +23,7 @@
 %>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
-<c:set var="rootCats" value="${wdkModel.rootCategoryMap}" />
+<c:set var="rootCats" value="${wdkModel.websiteRootCategories}" />
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
@@ -56,7 +56,7 @@
 				<c:forEach items="${rootCats}" var="rootCatEntry">
 				    <c:if test="${rootCatEntry.key != 'GeneRecordClasses.GeneRecordClass'}">
 				      <c:set var="rootCat" value="${rootCatEntry.value}" />
-				      <c:forEach items="${rootCat.children}" var="catEntry">
+				      <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
 				          <c:set var="cat" value="${catEntry.value}" />
 				          <c:if test="${fn:length(cat.questions) > 0}">
 <%-- SAME CODE AS IN drop_down_QG.tag --%>
@@ -92,7 +92,7 @@
 											</c:choose>
 						<div class="sub_list">
 							<ul>
-								<c:forEach items="${cat.questions}" var="q">
+								<c:forEach items="${cat.websiteQuestions}" var="q">
 									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=${target}">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
@@ -118,7 +118,7 @@
 			<ul class="heading_list">
 				
 				<c:set var="rootCat" value="${rootCats['GeneRecordClasses.GeneRecordClass']}" />
-				<c:forEach items="${rootCat.children}" var="catEntry">
+				<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
 				    <c:set var="cat" value="${catEntry.value}" />
                                     <c:if test="${fn:length(cat.questions) > 0}">
 					<li>
@@ -127,7 +127,7 @@
 						<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.name}">details</a>
 						<div class="sub_list">
 							<ul>
-								<c:forEach items="${cat.questions}" var="q">
+								<c:forEach items="${cat.websiteQuestions}" var="q">
 									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=GENE">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>

@@ -56,8 +56,8 @@
 		<tr>
 				<td>
 <ul class="top_nav">
-<c:set var="rootCat" value="${model.rootCategoryMap[rcName]}" />
-<c:forEach items="${rootCat.children}" var="catEntry">
+<c:set var="rootCat" value="${model.websiteRootCategories[rcName]}" />
+<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
     <c:set var="cat" value="${catEntry.value}" />
 	<c:choose>
 		<c:when test="${cat.name == 'isolates'}">
@@ -82,11 +82,11 @@
 			<c:set var="target" value="GENE"/>
 		</c:otherwise>
 	</c:choose>
-	<c:if test="${rootCat.multiCategory && fn:length(cat.questions) > 0}">
+	<c:if test="${rootCat.multiCategory && fn:length(cat.websiteQuestions) > 0}">
     	<li><a class="category" href="javascript:void(0)">${cat.displayName}</a>
     	<ul>
 	</c:if>
-	<c:forEach items="${cat.questions}" var="q">
+	<c:forEach items="${cat.websiteQuestions}" var="q">
     	<c:if test="${ !fn:contains(rcName, 'Isolate') || (!fn:contains(q.displayName, 'RFLP') && !fn:contains(q.displayName, 'Clustering') )}">
          <%--     <c:if test="${!(siteName == 'PlasmoDB' || siteName == 'GiardiaDB' || siteName == 'ToxoDB' || siteName == 'EuPathDB') && fn:containsIgnoreCase(q.displayName, 'Microarray'))}">--%>
     		<li>
