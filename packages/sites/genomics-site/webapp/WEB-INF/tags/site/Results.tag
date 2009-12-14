@@ -105,9 +105,9 @@
         <c:set var="basketClick" value="updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}')" />
       </c:otherwise>
     </c:choose>
-    <a href="javascript:void(0)" onClick="${basketClick}"><b>ADD RESULT TO BASKET</b></a>&nbsp;|&nbsp;
+    <a href="javascript:void(0)" onClick="${basketClick}"><b>ADD RESULTS TO BASKET</b></a>&nbsp;|&nbsp;
    </c:if>
-    <a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULT</b></a>
+    <a href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>DOWNLOAD RESULTS</b></a>
   <c:if test="${!empty sessionScope.GALAXY_URL}">
     &nbsp;|&nbsp;<a href="downloadStep.do?step_id=${wdkHistory.stepId}&wdkReportFormat=tabular"><b>SEND TO GALAXY</b></a>
   </c:if>
