@@ -8,7 +8,7 @@
 %>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
-<c:set var="rootCatMap" value="${wdkModel.rootCategoryMap}" />
+<c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
 
 <!- used by webservices, below -->
 <c:set value="${wdkModel.questionSets}" var="questionSets"/>
@@ -39,9 +39,9 @@
 </c:choose>
 
 				<ul>
-				<c:forEach items="${rootCat.children}" var="catEntry">
+				<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
 					<c:set var="cat" value="${catEntry.value}" />
-					<c:if test="${fn:length(cat.questions) > 0}">
+					<c:if test="${fn:length(cat.websiteQuestions) > 0}">
 						<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
@@ -53,7 +53,7 @@
 </c:choose>
 
 							<ul>
-							<c:forEach items="${cat.questions}" var="q">
+							<c:forEach items="${cat.websiteQuestions}" var="q">
 								<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
@@ -76,9 +76,9 @@
 		<c:otherwise>
 			<c:set var="qByCat" value="${catByRec.value}" />
 
-			<c:forEach items="${rootCat.children}" var="catEntry">
+			<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
 			    	<c:set var="cat" value="${catEntry.value}" />
-                            	<c:if test="${fn:length(cat.questions) > 0}">
+                            	<c:if test="${fn:length(cat.websiteQuestions) > 0}">
 
 <c:choose>
 <c:when test="${from == 'webservices'}">
@@ -130,7 +130,7 @@
 					</c:otherwise>
 					</c:choose>
 						<ul>
-						<c:forEach items="${cat.questions}" var="q">
+						<c:forEach items="${cat.websiteQuestions}" var="q">
 				    			<li>
 								<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=${target}"/>">${q.displayName}</a>
 							</li>

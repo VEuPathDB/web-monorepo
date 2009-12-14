@@ -58,7 +58,7 @@
 				      <c:set var="rootCat" value="${rootCatEntry.value}" />
 				      <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
 				          <c:set var="cat" value="${catEntry.value}" />
-				          <c:if test="${fn:length(cat.questions) > 0}">
+				          <c:if test="${fn:length(cat.websiteQuestions) > 0}">
 <%-- SAME CODE AS IN drop_down_QG.tag --%>
 <%-- fixing plural and uppercase and setting target for BLAST--%>
 <%-- target is used for blast to know which target data type option should be clicked --%>
@@ -120,7 +120,7 @@
 				<c:set var="rootCat" value="${rootCats['GeneRecordClasses.GeneRecordClass']}" />
 				<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
 				    <c:set var="cat" value="${catEntry.value}" />
-                                    <c:if test="${fn:length(cat.questions) > 0}">
+                                    <c:if test="${fn:length(cat.websiteQuestions) > 0}">
 					<li>
 						<img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
 						<a class="heading" href="javascript:void(0)">${cat.displayName}</a>
