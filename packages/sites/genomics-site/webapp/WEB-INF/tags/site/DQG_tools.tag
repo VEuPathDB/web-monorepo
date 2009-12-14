@@ -83,10 +83,16 @@
 		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary Genome Browse</strong></a>
                         <ul><li  style="border:0">Access Additional info like Probeset data and <i>Toxoplasma</i> Array info</li></ul>
                 </li>
-          
+
+		<li><p class="coloredtext" style="padding-top:6px;line-height:1em;">
+			<i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
+		</li>
+
+<%--          
                 <li><a href="http://apicyc.apidb.org/${sName}/server.html"><strong>${cycName}</strong></a>
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
+--%>
 	</c:when>
 	<c:otherwise>   <%----- Giardia, Trich and TriTryp:  fill in 2 empty lines to keep buckets aligned -----%>
 
@@ -102,7 +108,7 @@
 </c:when>
 <c:otherwise>   <%-- PLASMO: LOTS OF TOOLS, add descriptions as mouseovers --%>
 
-  		<li><p style="color:#6600cc;padding-top:16px;"><i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
+  		<li><p class="coloredtext" style="padding-top:16px;"><i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
 		</li>
 
 	</ul>

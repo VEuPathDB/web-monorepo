@@ -7,6 +7,10 @@ body {
 	background-image: url(/assets/images/ToxoDB/background_s.jpg);
 }
 
+.coloredtext {         /* no link */
+	color: #206910;
+}
+
 a:link, a:visited {
 	color: #772841;
 }

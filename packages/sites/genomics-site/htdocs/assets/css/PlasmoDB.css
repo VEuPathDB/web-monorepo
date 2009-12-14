@@ -7,6 +7,10 @@ body {
 	background-image: url(/assets/images/PlasmoDB/background_s.jpg);
 }
 
+.coloredtext {         /* no link */
+	color: #8f0165;
+}
+
 a:link, a:visited {
 	color: #6600CC;
 }
