@@ -695,11 +695,11 @@ function showBasket(){
 			$("body").block();
 		},
 		success: function(data){
-			$("div#basket div#Workspace").html(data);
+			$("div#basket").find("div#Workspace").html(data);
 			// create multi select control for adding columns
 			checkPageBasket();
-			createMultiSelectAttributes($("#basket #addAttributes"));
-			createFlexigridFromTable($("#basket #Results_Table"));
+			createMultiSelectAttributes($("#basket").find("#addAttributes"));
+			createFlexigridFromTable($("#basket").find("#Results_Table"));
 			$("body").unblock();
 		},
 		error: function(data,msg,e){
