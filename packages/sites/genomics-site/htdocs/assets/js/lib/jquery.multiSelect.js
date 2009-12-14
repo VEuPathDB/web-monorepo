@@ -244,7 +244,7 @@ if(jQuery) (function($){
 		// Hide the dropdown
 		multiSelectOptionsHide: function(callback) {
 			$(this).removeClass('active').next('.multiSelectOptions').hide();
-			if (callback) callback();
+			if (callback) callback(this);
 		},
 		
 		// Show the dropdown

@@ -50,47 +50,79 @@ function LoadGenePage(url,dest_id) {
 
 }
 
-function moveAttr(col_ix) {
+function moveAttr(col_ix, table) {
 	// Get name of target attribute & attribute to left (if any)
 	// NOTE:  Have to convert these from frontId to backId!!!
-	var headers = $("div.flexigrid tr.headerrow th");
+	var headers = $("tr.headerrow th", table);
 	var attr = $(headers[col_ix]).attr("id");
-	var left;
+	var left, strat, step;
 	if (col_ix > 0) left = $(headers[col_ix-1]).attr("id");
 	// Figure out what step/strategy is currently displayed in results panel
-	var step = $("div.selectedarrow");
-        if (step.length == 0) step = $("div.selectedtransform");
-	if (step.length == 0) step = $("div.selected");
-	var stepfId = step.attr("id").split('_')[1];
-	var stratfId = step.parent().attr("id").split('_')[1];
-	var strat = getStrategy(stratfId);
-	var step = getStep(stratfId, stepfId);
+	if (table.parents("#strategy_results").length > 0) {
+		var step = $("div.selectedarrow");
+	        if (step.length == 0) step = $("div.selectedtransform");
+		if (step.length == 0) step = $("div.selected");
+		var stepfId = step.attr("id").split('_')[1];
+		var stratfId = step.parent().attr("id").split('_')[1];
+		strat = getStrategy(stratfId).backId;
+		step = getStep(stratfId, stepfId).back_step_Id;
+	}
+	else {
+		step = table.attr('step');
+	}
 	// build url.
-	var url = "processSummary.do?strategy=" + strat.backId + "&step=" + step.back_step_Id + "&command=arrange&attribute=" + attr + "&left=" + left;
-	GetResultsPage(url, false, true);
+	var url = "processSummary.do?strategy=" + strat + "&step=" + step + "&command=arrange&attribute=" + attr + "&left=" + left;
+	if (table.parents("#strategy_results").length > 0) {
+		GetResultsPage(url, false, true);
+	}
+	else {
+		ChangeBasket(url + "&results_only=true");
+	}
 }
 
 // FOLLOWING TAKEN FROM OLD CUSTOMSUMMARY
 
-function addAttr(url) {
-    var attributeSelect = document.getElementById("addAttributes");
-    var attributes = attributeSelect.value;
-    
-    if (attributes.length == 0) return;
+function addAttr(attrSelector) {
+	var attributes = attrSelector.val();
 
-    attributes = attributes.split(',').join("&attribute=");
+	if (attributes.length == 0) return;
 
-    var url = url + "&command=add&attribute=" + attributes;
-    GetResultsPage(url, true, true);
+	attributes = attributes.split(',').join("&attribute=");
+
+	var url = attrSelector.attr('commandurl') + "&command=add&attribute=" + attributes;
+	if (attrSelector.parents("div#strategy_results").length > 0) {
+		GetResultsPage(url, true, true);
+	}
+	else {
+		ChangeBasket(url + "&results_only=true");
+	}
 }
 
 
-function resetAttr(url) {
+function resetAttr(url, button) {
     if (confirm("Are you sure you want to reset the column configuration back to the default?")) {
         var url = url + "&command=reset";
-        GetResultsPage(url, true, true);
-		//window.location.href = url;
+	if ($(button).parents("#strategy_results").length > 0) {
+	        GetResultsPage(url, true, true);
+	}
+	else {
+		ChangeBasket(url + "&results_only=true");
+	}
     }
+}
+
+function ChangeBasket(url) {
+	$.ajax({
+		url: url,
+		dataType: "html",
+		success: function(data){
+			showBasket();
+		},
+		error : function(data, msg, e){
+			  alert("ERROR \n "+ msg + "\n" + e
+                                      + ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
+		}
+	});
 }
 
 //Shopping basket on clickFunction

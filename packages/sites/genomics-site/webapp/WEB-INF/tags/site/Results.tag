@@ -176,10 +176,10 @@
 	   <input id="summary_view_button" disabled="disabled" type="submit" value="Summary View" onclick="ToggleGenePageView('')" />
 	</th>
 --%>
-	<th align="left" nowrap> 
+	<th style="text-align: left" nowrap> 
 	       <wdk:pager pager_id="top"/> 
 	</th>
-	<th nowrap align="right">
+	<th nowrap style="text-align: right">
 		           <%-- display a list of sortable attributes --%>
 		           <c:set var="addAttributes" value="${wdkAnswer.displayableAttributes}" />
 		           <select id="addAttributes" style="display:none;" commandUrl="${commandUrl}" multiple="multiple">
@@ -189,9 +189,9 @@
 		               </c:forEach>
 		           </select>
 	</th>
-	<th nowrap align="right" width="5%">
+	<th nowrap style="text-align: right" width="5%">
 	    &nbsp;
-	   <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}')" />
+	   <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}', this)" />
 	</th>
 	</tr>
 </table>
@@ -208,7 +208,7 @@
 <div id="Results_Div" class="flexigrid">
 <div class="bDiv">
 <div class="bDivBox">
-<table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
+<table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0" step="wdkStep.stepId">
 <thead>
 <tr class="headerrow">
   <c:set var="j" value="0"/>

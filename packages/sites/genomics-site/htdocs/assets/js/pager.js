@@ -80,8 +80,8 @@ function createMultiSelectAttributes(attrSelect) {
 		attrSelect.multiSelect({selectAll: false,
 				noneSelected: '--- Add Column ---',
 				oneOrMoreSelected: '% selected: leave menu to submit'},
-				function() {
-					addAttr($("#addAttributes").attr('commandUrl'));
+				function(selector) {
+					addAttr(selector.prev("input#addAttributes"));
 				});
 	}
 }

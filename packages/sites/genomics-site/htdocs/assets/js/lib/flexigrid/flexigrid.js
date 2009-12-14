@@ -359,7 +359,7 @@
 						
 					if ($.browser.msie&&$.browser.version<7.0) $('tr:eq('+cdrop+') input',this.nDiv)[0].checked = true;	
 					
-					if (p.onMoveColumn) p.onMoveColumn(cdrop);
+					if (p.onMoveColumn) p.onMoveColumn(cdrop, t);
 					
 					this.hDiv.scrollLeft = this.bDiv.scrollLeft;
 			},			
@@ -858,7 +858,7 @@
 
 		// GDIV ALREADY EXISTS, NEED TO FIND IT!
 		//set gDiv
-		g.gDiv = $(".flexigrid").eq(0);
+		g.gDiv = $(t).parent("div.bDivBox").parent("div.bDiv").parent("div.flexigrid").eq(0);
 		/*
 		g.gDiv.className = 'flexigrid';
 		if (p.width!='auto') g.gDiv.style.width = p.width + 'px';
@@ -934,8 +934,8 @@
 
 		// FIND HDIV INSTEAD OF CREATING
 		//set hDiv
-		g.hDiv = $(".bDiv", g.gDiv).eq(0);
-		g.hTable = $(".bDivBox > table").eq(0);
+		g.hDiv = $(t).parent("div.bDivBox").parent("div.bDiv").eq(0);
+		g.hTable = t;
 
 		if (!p.colmodel) var ci = 0;
 
