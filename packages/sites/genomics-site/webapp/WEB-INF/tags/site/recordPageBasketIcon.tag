@@ -9,6 +9,7 @@
 <c:set value="${vals['project_id']}" var="pid"/>
         <c:set var="image" value="${wdkRecord.inBasket ? 'color' : 'gray'}" />
 		<c:set var="imagevalue" value="${wdkRecord.inBasket ? '1' : '0'}"/>
+		<c:set var="imagetitle" value="${wdkRecord.inBasket ? 'Click to remove this item from the basket.' : 'Click to add this item to the basket.'}"/>
         <a class="basket" href="javascript:void(0)" onClick="updateBasket(this, 'single', '${id}', '${pid}', '${wdkRecord.recordClass.fullName}')">
-			<img src='/assets/images/basket_${image}.png' value="${imagevalue}"/>
+			<img src='/assets/images/basket_${image}.png' value="${imagevalue}" title="${imagetitle}"/>
 		</a>
