@@ -380,7 +380,7 @@
     <c:set var="projectId" value="${pkValues['project_id']}" />
     <c:set var="id" value="${pkValues['source_id']}" />
 
-    <td ${align} ${nowrap} style="padding:3px 2px"><div>
+    <td ${align} ${nowrap} style="white-space:nowrap; padding:3px 2px"><div>
       <c:set var="recNam" value="${record.recordClass.fullName}"/>
       <c:set var="fieldVal" value="${recAttr.briefValue}"/>
       <c:choose>
