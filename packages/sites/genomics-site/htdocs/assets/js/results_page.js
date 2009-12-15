@@ -169,9 +169,11 @@ function updateBasket(ele, type, pk, pid,recordType) {
 					if(action == "add") {
 						i.attr("src","/assets/images/basket_color.png");
 						i.attr("value", "1");
+						i.attr("title","Click to remove this item from the basket.");
 					}else{
 						i.attr("src","/assets/images/basket_gray.png");
 						i.attr("value", "0");
+						i.attr("title","Click to add this item to the basket.");
 					}
 				}else if(type == "clear"){
 					showBasket();
