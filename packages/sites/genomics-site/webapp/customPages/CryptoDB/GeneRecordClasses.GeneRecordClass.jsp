@@ -482,19 +482,29 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
     content="${seq}" />
 
 <%------------------------------------------------------------------%>
-<c:set var="genomicSequence" value="${attrs['highlighted_genomic']}"/>
-<c:set var="genomicSequenceContent">
+<c:set value="${wdkRecord.tables['GeneModel']}" var="geneModelTable"/>
+
+<c:set var="i" value="0"/>
+<c:forEach var="row" items="${geneModelTable}">
+  <c:set var="totSeq" value="${totSeq}${row['sequence'].value}"/>
+  <c:set var="i" value="${i +  1}"/>
+</c:forEach>
+
+<c:set var="seq">
     <noindex>
     <font class="fixed">
-  <w:wrap size="60"  break="<br>">${genomicSequence.value}</w:wrap>
+    <w:wrap size="60" break="<br>">${totSeq}</w:wrap>
     </font><br/><br/>
-  <font size="-1">Sequence Length: ${fn:length(genomicSequence.value)} bp</font><br/>
+    <font size="-1">Sequence Length: ${fn:length(totSeq)} bp</font><br/>
     </noindex>
 </c:set>
 
-<site:toggle name="genomicSequence" isOpen="false"
+<site:toggle
+    name="GenomicSequence" 
+    isOpen="fales"
     displayName="Genomic Sequence (introns shown in lower case)"
-    content="${genomicSequenceContent}" />
+    content="${seq}" />
+
 <%------------------------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 <c:set var="attr" value="${attrs['cds']}" />

@@ -319,17 +319,6 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${i
              content="${transcriptSequenceContent}" isOpen="false"/>
 
 <%------------------------------------------------------------------%>
-<!-- genomic sequence -->
-<c:set var="genomicSequence" value="${attrs['highlighted_genomic']}"/>
-<c:set var="genomicSequenceContent">
-  <pre><w:wrap size="60">${genomicSequence.value}</w:wrap></pre>
-  <font size="-1">Sequence Length: ${fn:length(genomicSequence.value)} bp</font><br/>
-</c:set>
-
-<site:toggle name="genomicSequence" isOpen="false"
-    displayName="Genomic Sequence (introns shown in lower case)"
-    content="${genomicSequenceContent}" />
-<%------------------------------------------------------------------%>
 
 <!-- CDS -->
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
