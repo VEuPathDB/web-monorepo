@@ -42,7 +42,7 @@
                     <th>-or-</th>
 
 <c:if test="${recordClass.hasBasket}">
-                    <th title="Use current ${recordClass.type} records from Basket as a Snapshot. The effect is as if you run the search -${recordClass.type}s by ID- and provide the IDs in your basket">Select Basket</th>
+                    <th title="Use a copy of your ${recordClass.type} Basket. The effect is as if you run the search -${recordClass.type}s by ID- and provide the IDs in your basket">From Basket</th>
                     <th>-or-</th>
 </c:if>
 
@@ -113,7 +113,7 @@
     <c:set var="q" value="${recordClass.snapshotBasketQuestion}" />
     <ul class="top_nav">
       <li style="width:auto;z-index:40;">
-        <a href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&target=${target}&partial=true')">${q.displayName}</a>
+        <a title="Make sure your basket is not empty!" href="javascript:getQueryForm('showQuestion.do?questionFullName=${q.fullName}&target=${target}&partial=true')">${q.displayName}</a>
       </li>
     </ul>
 </td>
