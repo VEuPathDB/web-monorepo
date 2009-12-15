@@ -383,7 +383,7 @@
                                     <c:otherwise>
                                       <c:set var="basketClick" value="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')" />
                                       <c:set var="basketTitle" value="Click to add this item to the basket." />
-                                      <c:if test="${is_basket == '1'}">
+                                      <c:if test="${record.attributes['in_basket'] == '1'}">
                                         <c:set var="basketTitle" value="Click to remove this item from the basket." />
                                       </c:if>
                                     </c:otherwise>
