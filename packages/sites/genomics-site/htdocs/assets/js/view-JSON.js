@@ -656,7 +656,7 @@ function createInvalidDiv(){
 	$(inval).css({
 				background: "none",
 				position: "absolute",
-				"z-index": 999,
+				"z-index": 499,
 				opacity: 0.6,
 				border: "none",
 				"padding-top":"2px"
