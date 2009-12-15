@@ -112,10 +112,12 @@ function resetAttr(url, button) {
 }
 
 function ChangeBasket(url) {
+	$("body").block();
 	$.ajax({
 		url: url,
 		dataType: "html",
 		success: function(data){
+			$("body").unblock();  //Gets blocked again by the next line anyway
 			showBasket();
 		},
 		error : function(data, msg, e){

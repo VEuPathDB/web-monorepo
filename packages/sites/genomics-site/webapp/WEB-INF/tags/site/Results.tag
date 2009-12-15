@@ -257,7 +257,7 @@
             <c:otherwise>
               <%-- display sorting buttons --%>
               <c:choose>
-                <c:when test="${strategy == null}">
+                <c:when test="${strategy != null}">
                   <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" />
                 </c:when>
                 <c:otherwise>
@@ -283,7 +283,7 @@
             <c:otherwise>
               <%-- display sorting buttons --%>
               <c:choose>
-                <c:when test="${strategy == null}">
+                <c:when test="${strategy != null}">
                   <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" />
                 </c:when>
                 <c:otherwise>
@@ -309,7 +309,7 @@
           <td style="width:20px;">
             <%-- display remove attribute button --%>
               <c:choose>
-                <c:when test="${strategy == null}">
+                <c:when test="${strategy != null}">
                   <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
                 </c:when>
                 <c:otherwise>
