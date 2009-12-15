@@ -696,10 +696,17 @@ function showBasket(){
 		},
 		success: function(data){
 			$("div#basket").find("div#Workspace").html(data);
-			// create multi select control for adding columns
-			checkPageBasket();
-			createMultiSelectAttributes($("#basket").find("#addAttributes"));
-			createFlexigridFromTable($("#basket").find("#Results_Table"));
+			if($("div#basket").find("div#Workspace").find("table").length > 0){
+				$("input#empty-basket-button").attr("disabled",false);
+				$("input#make-strategy-from-basket-button").attr("disabled",false);
+				// create multi select control for adding columns
+				checkPageBasket();
+				createMultiSelectAttributes($("#basket").find("#addAttributes"));
+				createFlexigridFromTable($("#basket").find("#Results_Table"));
+			}else{
+				$("input#empty-basket-button").attr("disabled",true);
+				$("input#make-strategy-from-basket-button").attr("disabled",true);
+			}
 			$("body").unblock();
 		},
 		error: function(data,msg,e){
