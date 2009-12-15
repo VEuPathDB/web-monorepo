@@ -69,6 +69,9 @@
     <c:set var="commandUrl" value="${commandUrl}${prm}&" />
   </c:if>
 </c:forEach>
+<c:if test="${strategy != null}">
+  <c:set var="commandUrl" value="${commandUrl}strategy_checksum=${strategy.checksum}" />
+</c:if>
 <c:set var="commandUrl"><c:url value="/processSummary.do?${commandUrl}" /></c:set>
 
 <c:if test="${strategy != null}">
@@ -253,7 +256,15 @@
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
-              <a href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" title="Sort by ${sumAttrib}">
+              <c:choose>
+                <c:when test="${strategy == null}">
+                  <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" />
+                </c:when>
+                <c:otherwise>
+                  <c:set var="resultsAction" value="javascript:ChangeBasket('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc')" />
+                </c:otherwise>
+              </c:choose>
+              <a href="${resultsAction}" title="Sort by ${sumAttrib}">
                   <img src="/assets/images/results_arrw_up.png" alt="Sort up" border="0" /></a>
             </c:otherwise>
           </c:choose>
@@ -271,7 +282,15 @@
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
-              <a href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" title="Sort by ${sumAttrib}">
+              <c:choose>
+                <c:when test="${strategy == null}">
+                  <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" />
+                </c:when>
+                <c:otherwise>
+                  <c:set var="resultsAction" value="javascript:ChangeBasket('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc')" />
+                </c:otherwise>
+              </c:choose>
+              <a href="${resultsAction}" title="Sort by ${sumAttrib}">
               <img src="/assets/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
             </c:otherwise>
           </c:choose>
@@ -289,7 +308,15 @@
         <c:if test="${j != 0}">
           <td style="width:20px;">
             <%-- display remove attribute button --%>
-            <a href="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)"
+              <c:choose>
+                <c:when test="${strategy == null}">
+                  <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
+                </c:when>
+                <c:otherwise>
+                  <c:set var="resultsAction" value="javascript:ChangeBasket('${commandUrl}&command=remove&attribute=${attrName}')" />
+                </c:otherwise>
+              </c:choose>
+            <a href="${resultsAction}"
                         title="Remove ${sumAttrib} column">
               <img src="/assets/images/results_x.png" alt="Remove" border="0" /></a>
           </td>
