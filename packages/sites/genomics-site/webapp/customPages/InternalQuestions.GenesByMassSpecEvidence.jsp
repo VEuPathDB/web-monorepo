@@ -31,7 +31,7 @@
 <div id="form_question">
 <table width="100%">
 
-<tr class="headerRow"><td colspan="4" align="center"><b>Choose a Query ---- Mouse over a query to get its description</b></td></tr>
+<tr class="headerRow"><td colspan="4" align="center"><b>Choose a Search ---- Mouse over to read description</b></td></tr>
 
 	<site:queryList2 questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
 
