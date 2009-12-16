@@ -388,8 +388,24 @@
 
         <c:choose>
            <c:when test="${fn:containsIgnoreCase(dispModelName, 'EuPathDB')}">
-               
-              <a href="javascript:create_Portal_Record_Url('${recNam}', '${projectId}', '${id}','')">
+				<c:choose>
+                    <c:when test="${wdkUser.guest}">
+                      <c:set var="basketClick" value="popLogin()" />
+                      <c:set var="basketTitle" value="Please log in to use the basket." />
+                    </c:when>
+                    <c:otherwise>
+                      <c:set var="basketClick" value="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')" />
+                      <c:set var="basketTitle" value="Click to add this item to the basket." />
+                      <c:if test="${record.attributes['in_basket'] == '1'}">
+                        <c:set var="basketTitle" value="Click to remove this item from the basket." />
+                      </c:if>
+                    </c:otherwise>
+                  </c:choose>
+				<a href="javascript:void(0)" onclick="${basketClick}">
+					<img title="${basketTitle}" class="basket" value="${is_basket}" src="/assets/images/${basket_img}" width="16" height="16"/>
+				</a>
+
+				<a href="javascript:create_Portal_Record_Url('${recNam}', '${projectId}', '${id}','')">
                    ${primaryKey.value}</a>
            </c:when>
 
