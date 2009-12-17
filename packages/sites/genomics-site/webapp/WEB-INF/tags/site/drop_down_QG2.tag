@@ -31,29 +31,33 @@
 			<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
-	<a href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Genes</h2></a>
+    <a href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Genes</h2></a>
+    <c:set var="children" value="${rootCat.webserviceChildren}" />
 </c:when>
 <c:otherwise>
-	<a href="#">Search for Genes</a>
+    <a href="#">Search for Genes</a>
+    <c:set var="children" value="${rootCat.websiteChildren}" />
 </c:otherwise>
 </c:choose>
 
 				<ul>
-				<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
+				<c:forEach items="${children}" var="catEntry">
 					<c:set var="cat" value="${catEntry.value}" />
 					<c:if test="${fn:length(cat.websiteQuestions) > 0}">
 						<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
-	&nbsp;&nbsp;${cat.displayName}
+    &nbsp;&nbsp;${cat.displayName}
+    <c:set var="questions" value="${cat.webserviceQuestions}" />
 </c:when>
 <c:otherwise>
-	<a href="javascript:void(0)">${cat.displayName}</a>
+    <a href="javascript:void(0)">${cat.displayName}</a>
+    <c:set var="questions" value="${cat.websiteQuestions}" />
 </c:otherwise>
 </c:choose>
 
 							<ul>
-							<c:forEach items="${cat.websiteQuestions}" var="q">
+							<c:forEach items="${questions}" var="q">
 								<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
@@ -75,13 +79,20 @@
 		</c:when>
 		<c:otherwise>
 			<c:set var="qByCat" value="${catByRec.value}" />
-
-			<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
+<c:choose>
+    <c:when test="${from == 'webservices'}">
+        <c:set var="children" value="${rootCat.webserviceChildren}" />
+    </c:when>
+    <c:otherwise>
+        <c:set var="children" value="${rootCat.websiteChildren}" />
+    </c:otherwise>
+</c:choose>
+			<c:forEach items="${children}" var="catEntry">
 			    	<c:set var="cat" value="${catEntry.value}" />
                             	<c:if test="${fn:length(cat.websiteQuestions) > 0}">
 
 <c:choose>
-<c:when test="${from == 'webservices'}">
+    <c:when test="${from == 'webservices'}">
 
 	<ul>
 	<c:forEach items="${questionSets}" var="qSet">
@@ -101,8 +112,8 @@
 	</c:forEach>
 	</ul>
 
-</c:when>
-<c:otherwise>
+    </c:when>
+    <c:otherwise>
 
 					<li>
 						<a href="#">${cat.displayName}</a> 
@@ -138,7 +149,7 @@
 						</ul>
 					</li>
 
-</c:otherwise>
+    </c:otherwise>
 </c:choose>
 
                             	</c:if>
