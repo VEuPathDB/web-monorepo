@@ -533,7 +533,7 @@ WHERE startm <= $rend
 with materialized_query as
      (select organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, atts
       from apidb.GeneContextSyntenicGenes
-      where -- organism = 'Plasmodium yoelii yoelii str. 17XNL' and
+      where -- organism = $$taxon$$ and
             na_sequence_id = $srcfeature_id
         and context_start = $base_start
         and context_end = $rend)
@@ -601,9 +601,9 @@ WHERE (select count(*) from materialized_query) = 0
        ) 
        OR
        (syn.is_reversed = 1 
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
-        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) <= $rend 
-        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) >= $base_start 
+        AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc + 1)>0
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) >= $base_start 
        )
   )
   AND fl.start_min <= syn.b_end
