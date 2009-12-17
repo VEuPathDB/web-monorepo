@@ -5,7 +5,6 @@ require Exporter;
 @EXPORT_OK = qw(executeQuery); 
 
 use Time::HiRes qw ( time );
-$now_fractions = time;
 
 sub executeQuery {
     my ($sth, $sql, $queryName, $logging);
