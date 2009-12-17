@@ -50,7 +50,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></td>
     <td style="border-right:3px solid grey" colspan="2" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></td>
     <td style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></td>
-    <td colspan="5" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></td>
+    <td colspan="10" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></td>
 </tr>
 <tr class="mythStyle">
     <td style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</td>
@@ -73,7 +73,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></td>
     <td class="mythStyle" title="Leishmania major, TriTrypDB"><i>Lm</i></td>
     <td class="mythStyle" title="Trypanosoma brucei, TriTrypDB"><i>Tb</i></td>
+   <td class="mythStyle" title="Trypanosoma congolense, TriTrypDB"><i>Tco</i></td>
     <td class="mythStyle" title="Trypanosoma cruzi, TriTrypDB"><i>Tc</i></td>
+   <td class="mythStyle" title="Trypanosoma vivax, TriTrypDB"><i>Tvi</i></td>
 </tr>
 
   <c:forEach items="${xmlAnswer.recordInstances}" var="record">
@@ -98,7 +100,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 	 <c:set var="Tg" value="${record.attributesMap['Toxoplasma_gondii']}"/>
 	 <c:set var="Tv" value="${record.attributesMap['Trichomonas_vaginalis']}"/>
          <c:set var="Tb" value="${record.attributesMap['Trypanosoma_brucei']}"/> 
+         <c:set var="Tco" value="${record.attributesMap['Trypanosoma_congolense']}"/> 
          <c:set var="Tc" value="${record.attributesMap['Trypanosoma_cruzi']}"/> 
+         <c:set var="Tvi" value="${record.attributesMap['Trypanosoma_vivax']}"/> 
 
 
 
@@ -123,7 +127,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mytdStyle" align="right">${Li}</td>
     <td class="mytdStyle" align="right">${Lm}</td>
     <td class="mytdStyle" align="right">${Tb}</td>
+    <td class="mytdStyle" align="right">${Tco}</td>
     <td class="mytdStyle" align="right">${Tc}</td>
+    <td class="mytdStyle" align="right">${Tvi}</td>
 </tr>
  
   </c:forEach>
@@ -135,7 +141,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 <table width="100%">
 <tr><td>
-<font size="-1"><i><b>Cryptosporidium</b>: Cp, C. parvum; Ch, C. hominis; <b>Giardia</b> GA, G.Assemblage_A_isolate_WB; GB, G.Assemblage_B_isolate_GS; GE, G.Assemblage_E_isolate_P15; <b>Neospora</b>: Nc, N. caninum; <b>Leishmania</b>: Lb, L. braziliensis; Li, L. infantum; Lm, L. major;  <b>Plasmodium</b>: Pb, P. berghei; Pc, P. chabaudi; Pf, P. falciparum; Pk, P. knowlesi; Pv, P. vivax; Py, P. yoelii; <b>Toxoplasma</b>: Tg, T. gondii; <b>Trichomonas</b>: Tv, T. vaginalis; <b>Trypanosoma</b>: Tb, T. brucei; Tc, T. cruzi.)</i></font><br>
+<font size="-1"><i><b>Cryptosporidium</b>: Cp, C. parvum; Ch, C. hominis; <b>Giardia</b> GA, G.Assemblage_A_isolate_WB; GB, G.Assemblage_B_isolate_GS; GE, G.Assemblage_E_isolate_P15; <b>Leishmania</b>: Lb, L. braziliensis; Li, L. infantum; Lm, L. major;  <b>Neospora</b>: Nc, N. caninum; <b>Plasmodium</b>: Pb, P. berghei; Pc, P. chabaudi; Pf, P. falciparum; Pk, P. knowlesi; Pv, P. vivax; Py, P. yoelii; <b>Toxoplasma</b>: Tg, T. gondii; <b>Trichomonas</b>: Tv, T. vaginalis; <b>Trypanosoma</b>: Tb, T. brucei; Tco, T. congolense; Tc, T. cruzi; Tvi, T. vivax.)</i></font><br>
 </td></tr>
 </table>
 

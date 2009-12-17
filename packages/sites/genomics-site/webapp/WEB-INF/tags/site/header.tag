@@ -239,16 +239,17 @@ ${headElement}
       	<ul>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">${siteName} News</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li>
-<c:choose>
-<c:when test="${project == 'EuPathDB'}" >
+<%-- all sites go to the Data Summary page --%>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
+<c:choose>
+<c:when test="${project == 'EuPathDB' || project == 'CryptoDB'}">
+	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Data Statistics</a></li>
 </c:when>
-<c:otherwise>
-	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#organisms"/>">Organisms in ${project}</a></li>
+ <%-- if the site has statistics on its own, not covered in the Portal Data SUmmary table, such as Giardia --%>
+<c:otherwise> 
+	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#stats"/>">Data Statistics</a></li>
 </c:otherwise>
 </c:choose>
-
-	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#stats"/>">Data Statistics</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#advisors"/>">Scientific Advisory Team</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#acks"/>">Acknowledgements</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#funding"/>">Funding</a></li>
@@ -256,9 +257,8 @@ ${headElement}
 
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">How to use this resource</a></li>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to cite us</a></li>
-<%--    <c:if test="${project == 'EuPathDB'}" >  --%>
-        <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#docs_pubs"/>">EuPathDB Publications</a></li>
-<%-- </c:if> --%>
+
+        <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#docs_pubs"/>">${project} Publications</a></li>
         <li><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>         
 
 <%-- 
