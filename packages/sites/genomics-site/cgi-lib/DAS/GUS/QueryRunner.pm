@@ -24,10 +24,11 @@ sub executeQuery {
     my $start_time = time();
     $sth->execute();
     if ($self->{logHandle}) {
+        my $fh = $self->{logHandle};
 	my $elapsed_time = time() - $start_time;
-	print $self->{logHandle} "=========================================================\n";
-	print $self->{logHandle} "QUERYTIME\t" . localtime() . "\t$queryName\t" . sprintf("%.2f sec", $elapsed_time) . "\n";
-	print $self->{logHandle} "=========================================================\n";
-	print $self->{logHandle} "$sql\n\n"
+	print $fh "=========================================================\n";
+	print $fh "QUERYTIME\t" . localtime() . "\t$queryName\t" . sprintf("%.2f sec", $elapsed_time) . "\n";
+	print $fh "=========================================================\n";
+	print $fh "$sql\n\n"
     }
 }
