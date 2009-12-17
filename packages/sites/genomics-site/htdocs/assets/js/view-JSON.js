@@ -491,7 +491,7 @@ function createParentStep(strat){
 //		currentColor = (currentColor + 1) > colors.length ? 1 : currentColor + 1;
 //		strat.color = currentColor;
 		$(pstp).attr("id","record_name").css("width","85px");
-		$(pstp).append("Expanded View of Step " + parentStep.stp.frontId);
+		$(pstp).append("Expanded View of Step <i>" + strat.JSON.name + "</i>");//parentStep.stp.frontId);
 		return pstp;
 	}
 }
@@ -575,9 +575,9 @@ var deleteStrat = "<a id='delete_" + strat.frontId + "' href='javascript:void(0)
 	"<br/>"+
 	deleteStrat +
 	"</span>");
-	}else{
-		$(div_sn).html("<span style='font-size:14px;font-weight:bold' title='Name of this substrategy. To rename, click on the corresponding step name in the parent strategy'>" + name + "</span>" + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 
-	}
+	}//else{
+		//$(div_sn).html("<span style='font-size:14px;font-weight:bold' title='Name of this substrategy. To rename, click on the corresponding step name in the parent strategy'>" + name + "</span>" + "<span id='strategy_id_span' style='display: none;'>" + id + "</span>"); 
+	//}
 	$(div_sn).css({'z-index' : 90}); // DO NOT DELETE, needed for IE7
 	$(div_sn).css("top","0px");     // to have the strategy name closer to the top
 	return div_sn;
