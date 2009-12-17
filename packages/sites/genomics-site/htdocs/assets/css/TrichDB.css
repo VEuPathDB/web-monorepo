@@ -195,7 +195,7 @@ tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/PlasmoDB/trhover.png);
+	background-image: url(../images/TrichDB/trhover.png);
 }
 
 td.subheaderrow {
