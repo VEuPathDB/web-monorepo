@@ -1323,7 +1323,7 @@ trophozite and schizont stage.
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Intraerythrocytic comparison of antigenic and adherent variant clones of P. falciparum 3D7"
+               displayName="Intraerythrocytic comparison of antigenic and adherent variant clones of <i>P. falciparum 3D7</i>"
                attribution="E-MEXP-128_arrayData"/> 
 
   <c:set var="secName" value="Cowman::Ver1"/>
@@ -1556,7 +1556,7 @@ OnChange="javascript:updateImage('${imgId}', CowmanSir2Sort.CowmanSir2List.optio
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Transcription profiling of wild type, Pfsir2A knock-out and Pfsir2B knock-out Plasmodium falciparum intra-erythrocytic stages"
+               displayName="Transcription profiling of wild type, Pfsir2A knock-out and Pfsir2B knock-out <i>Plasmodium falciparum</i> intra-erythrocytic stages"
                attribution="New_Cowman_Sir2_KO"/>
 
 
@@ -1617,7 +1617,7 @@ OnChange="javascript:updateImage('${imgId}', SuCQSort.SuCQList.options[selectedI
   <site:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Expression and genomic changes after exposing drug-selected mutants to short term CQ treatment in Plasmodium falciparum"
+               displayName="Expression and genomic changes after exposing drug-selected mutants to short term CQ treatment in <i>Plasmodium falciparum</i>"
                attribution="E-GEOD-10022_array"/>
 
 
