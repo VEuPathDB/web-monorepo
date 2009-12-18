@@ -265,6 +265,9 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
      attribution="Widmer_SNPs"/>
 </c:if>
 
+<!-- External Links --> 
+<site:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
+
 
 <%-- Mercator/Mavid form ---------------------------------------------------%>
 

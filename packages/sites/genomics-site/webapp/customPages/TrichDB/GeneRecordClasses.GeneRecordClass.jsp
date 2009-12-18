@@ -162,6 +162,8 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 
 <site:wdkTable tblName="UserComments"  isOpen="true"/>
 
+<!-- External Links --> 
+<site:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 </c:catch>
 <c:if test="${e != null}">

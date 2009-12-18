@@ -173,6 +173,9 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
    <c:set var="revCompOn" value="1"/>
   </c:if>
 
+<!-- External Links --> 
+<site:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
+
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">
 <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
