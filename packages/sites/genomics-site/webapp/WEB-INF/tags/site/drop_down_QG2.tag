@@ -62,6 +62,7 @@
 <c:otherwise>
     <a href="javascript:void(0)">${cat.displayName}</a>
     <c:set var="questions" value="${cat.websiteQuestions}" />
+    <c:set var="categories" value="${cat.websiteChildren}" /> 
 
 </c:otherwise>
 </c:choose>
