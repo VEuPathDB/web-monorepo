@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<title>ApiDB - Annotation SOPs</title>
+<title>EuPathDB - Annotation SOPs</title>
 <link href="/misc/style.css" rel=stylesheet type="text/css" />
 <link href="sop_style.css" rel=stylesheet type="text/css" />
 
@@ -9,10 +9,21 @@
 
 <body>
 
+
+<table align="center" WIDTH='640' cellpadding='0' cellspacing='0'>
+<tr>
+<td align='center' width="20"><a href='/'><img src="/assets/images/<!--#echo var="PROJECT_ID" -->/title_s.png"></a></td>
+</tr>
+</table>
+
+
+
 <table width=640 align="center" border=0 cellpadding=3 cellspacing=3>
 
 <tr>
-<!--#include virtual="/include/left-image.html" -->
+<!--
+         <!--#include virtual="/include/left-image.html" -->
+-->
 <td>
 <span class=title>Gene Model and Functional Curation</span><br />
 <span class=smalltitle>Standard Operational Procedures (SOP)</span>
@@ -20,10 +31,13 @@
 
 </tr>
 
+<!--
 <tr>
-<td colspan=2><!--#include virtual="/include/toolbar.html"--></td>
+<td colspan=2>
+         <!--#include virtual="/include/toolbar.html"-->
+</td>
 </tr>
-
+-->
 <tr><td colspan=2> 
 
 <span class=title>Overview</span>
@@ -103,10 +117,14 @@ annotation to each gene model.
 
 </td></tr>
 
+<!--
 <tr><td colspan=2>
 <hr>
 <!--#include virtual="/include/footer.html" -->
 </td></tr>
+-->
+
+
 
 </table>
 
