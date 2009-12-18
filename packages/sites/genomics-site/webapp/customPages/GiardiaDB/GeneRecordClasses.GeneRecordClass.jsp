@@ -521,6 +521,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 
 <site:toggle
     name="GenomicSequence"
+    displayName="Genomic Sequence (introns shown in lower case)"
     isOpen="false"
     content="${seq}" />
 
