@@ -55,6 +55,11 @@ return true;
 //-->
 </SCRIPT>
 
+<c:set var="cgiScript" value='mavidAlign'/>
+<c:if test="${projectId eq 'TriTrypDB'}">
+  <c:set var="cgiScript" value='pairwiseMercator'/>
+</c:if>
+
 <c:if test="${inputContig == null}">
  <c:set var="headerFiller" value="of <i>${contigId}</i>"/>
 </c:if>
@@ -73,7 +78,7 @@ return true;
 </td></tr>
 </table>
 -->
-<form action="${cgiUrl}/mavidAlign" onSubmit="popupform(this, 'mavidAlign')">
+<form action="${cgiUrl}/${cgiScript}" onSubmit="popupform(this, ${cgiScript})">
  <table border="0" cellpadding="${cellPadding}" cellspacing="1">
   <tr class="${bkgClass}"><td>
    <table border="0" cellpadding="${cellPadding}">
@@ -94,9 +99,52 @@ return true;
      to <input type="text" name="stop" value="${end}" maxlength="10" size="10"/>
      &nbsp;&nbsp;&nbsp;&nbsp;
          <input type="checkbox" name="revComp" ${initialCheckBox}>Reverse & Complement</td></tr>
+
+<c:if test="${projectId eq 'TriTrypDB'}">
+
+   <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
+        <table>
+          <tr>
+            <td>
+              <input type="checkbox" name="genomes" value="l_infantum" checked>L.infantum
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="l_major" checked>L.major
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="l_braziliensis" checked>L.braziliensis
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="t_cruzinonesmeraldo" checked>T.cruzi non-esmeraldo
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="t_cruziesmeraldo" checked>T.cruzi esmeraldo
+            </td>
+           </tr>
+           </tr>
+            <td>
+              <input type="checkbox" name="genomes" value="t_vivax" checked>T.vivax
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="t_congolense" checked>T.congolense
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="t_brucei927" checked>T.brucei927
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="t_bruceigambiense" checked>T.brucei gambiense
+            </td>
+          </tr>
+         </table>
+
+     </td></tr>
+</c:if>
     <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
         <input type="radio" name="type" value="clustal" checked>clustal
+
+<c:if test="${projectId ne 'TriTrypDB'}">
         <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
+</c:if>
         <input type="radio" name="type" value="fasta_ungapped">multi fasta
      </td></tr>
     <tr><td align="left"><br><input type="submit" name='go' value='Get Alignment' />
