@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+use strict;
+
+use lib "@targetDir@/lib/perl";
+$ENV{GUS_HOME} = '@targetDir@';
+
+use ApiCommonWebsite::View::CgiApp::PairwiseMercatorMavidMSA;
+
+my $app =
+  ApiCommonWebsite::View::CgiApp::PairwiseMercatorMavidMSA->new();
+
+$app->go();
