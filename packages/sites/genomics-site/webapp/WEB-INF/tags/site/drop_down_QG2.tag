@@ -10,7 +10,14 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
 
-<!- used by webservices, below -->
+<!- model questions used by webservices, for recordClass other than gene. Two reasons why the model was used -instead of the categories.xml:
+    - to avoid fake questions; 
+      now with teh new flag "usedBy" we could read from categories.xml, using "usedBy='website'" on fake questions.
+    - categories.xml does not provide the questionSet name (e.g. EstQuestions) that is needed to form the WS URL.
+      one could obtain the questionSet name either by 
+          - hardcoding it below (there is already an if that could be used)
+          - reading from the question object (question.questionSetName) ?
+ -->
 <c:set value="${wdkModel.questionSets}" var="questionSets"/>
 
 <ul>
@@ -44,15 +51,18 @@
 				<c:forEach items="${children}" var="catEntry">
 					<c:set var="cat" value="${catEntry.value}" />
 					<c:if test="${fn:length(cat.websiteQuestions) > 0}">
+
 						<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
-    &nbsp;&nbsp;${cat.displayName}
+    &nbsp;&nbsp;<b>${cat.displayName}</b>
     <c:set var="questions" value="${cat.webserviceQuestions}" />
+   <c:set var="categories" value="${cat.webserviceChildren}" /> 
 </c:when>
 <c:otherwise>
     <a href="javascript:void(0)">${cat.displayName}</a>
     <c:set var="questions" value="${cat.websiteQuestions}" />
+
 </c:otherwise>
 </c:choose>
 
@@ -70,6 +80,40 @@
 
 								</li>
 							</c:forEach>
+
+							<c:forEach items="${categories}" var="cEntry">
+								<c:set var="cat" value="${cEntry.value}" />
+								<li>
+<c:choose>
+<c:when test="${from == 'webservices'}">
+ 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${cat.displayName} 
+	 <c:set var="questions" value="${cat.webserviceQuestions}" />
+</c:when>
+<c:otherwise>
+	<a href="javascript:void(0)">${cat.displayName}</a>
+</c:otherwise>
+</c:choose>
+
+								<ul>
+								<c:forEach items="${questions}" var="q">
+									<li>
+<c:choose>
+<c:when test="${from == 'webservices'}">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}</a>
+</c:when>
+<c:otherwise>
+	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=GENE"/>">${q.displayName}</a>
+</c:otherwise>
+</c:choose>
+
+									</li>
+								</c:forEach>
+								</ul>
+
+
+								</li>
+							</c:forEach>   
+
 							</ul>
 						</li>
 					</c:if>
