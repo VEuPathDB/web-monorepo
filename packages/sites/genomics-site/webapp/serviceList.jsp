@@ -15,7 +15,7 @@
 </c:if>
 
 <c:if test="${wdkModelDispName eq 'PlasmoDB'}">
-        <c:set var="organism" value="Plasmodium falciparum,Plasmdium knowlesi"/>
+        <c:set var="organism" value="Plasmodium falciparum,Plasmodium knowlesi"/>
 </c:if>
 <c:if test="${wdkModelDispName eq 'ToxoDB'}">
         <c:set var="organism" value="Toxoplasma gondii,Neospora caninum"/>
