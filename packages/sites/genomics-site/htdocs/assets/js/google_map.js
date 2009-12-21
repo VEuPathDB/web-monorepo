@@ -31,11 +31,11 @@ jQuery(document).ready(function(){
   initialize();
 
   var dd   = document.domain;
-  var type = "&myMultiProp(type)=3kChip,75kChip,Barcode,Sequencing Typed";
+  var type = "&myMultiProp(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
   if(dd.match('toxodb')) {
     type = "&myMultiProp(type)=RFLP Typed,Sequencing Typed";
   } else if(dd.match('plasmodb')) {
-    type = "&myMultiProp(type)=3kChip,75kChip,Barcode,Sequencing Typed";
+    type = "&myMultiProp(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
   } else if(dd.match('giardiadb')) {
     type = '';
   } else if(dd.match('plasmodb')) {
