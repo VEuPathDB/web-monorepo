@@ -123,6 +123,12 @@ Tuning Tables &#8593;&#8595;</a> below for details</c:when>
 
 <b>Database family name</b>: ${wdkRecord.attributes['family_name'].value}<br>
 <b>Subversion url</b>: <a href="${wdkRecord.attributes['subversion_url'].value}">${wdkRecord.attributes['subversion_url'].value}</a><br>
+<c:if test="${wdkRecord.attributes['is_live'].value == 0 || wdkRecord.attributes['is_live'].value == 1}"><b>Portal database is_live</b>: </c:if>
+<c:choose>
+  <c:when test="${wdkRecord.attributes['is_live'].value == 0}">${wdkRecord.attributes['is_live'].value}; using *build dblinks to component databases</c:when>
+  <c:when test="${wdkRecord.attributes['is_live'].value == 1}">${wdkRecord.attributes['is_live'].value}; using dblinks to component production databases</c:when>
+  <c:otherwise></c:otherwise>
+</c:choose>
 </c:catch>
 <c:if test="${e!=null}"> 
     <tr><td><font color="red">information not available</font><br><font size='-2'>${fn:replace(e, fn:substring(e, 175, -1), '...')}</font></td></tr>
