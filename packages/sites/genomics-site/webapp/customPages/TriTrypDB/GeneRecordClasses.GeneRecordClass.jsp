@@ -588,7 +588,7 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
 </c:when>
 <c:when test='${organismFull eq "Trypanosoma brucei gambiense"}'>
   <c:set var="reference">
-  Chromosome sequences and annotations for <i>Trypanosoma brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+  Chromosome sequences and annotations for <i>Trypanosoma brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tbruceigambiense">GeneDB</a> for project details and data release policies.
   </c:set>
 </c:when>
 <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
@@ -599,12 +599,12 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
 </c:when>
 <c:when test='${organismFull eq "Trypanosoma congolense"}'>
   <c:set var="reference">
-Chromosome and unassigned contig sequences and annotations for <i>Trypanosoma congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+Chromosome and unassigned contig sequences and annotations for <i>Trypanosoma congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tcongolense">GeneDB</a> for project details and data release policies.
   </c:set>
 </c:when>
 <c:when test='${organismFull eq "Trypanosoma vivax"}'>
   <c:set var="reference">
-   Chromosome sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.
+   Chromosome sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
   </c:set>
 </c:when>
 

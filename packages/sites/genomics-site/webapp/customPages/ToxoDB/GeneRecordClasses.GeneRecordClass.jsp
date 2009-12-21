@@ -776,7 +776,7 @@ OnChange="javascript:updateImage('${imgId}', WhiteBradySort.WhiteBradyList.optio
 
 <c:when test='${organism_full eq "Neospora caninum" }'>
   <c:set var="reference">
-<b>Chromosome sequences and annotation for <i>Neospora caninum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.</b>
+Chromosome sequences and annotation for <i>Neospora caninum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.  Please visit <a href="http://www.genedb.org/Homepage/Ncaninum">GeneDB</a> for project details and data release policies. 
   </c:set>
 </c:when>
 
