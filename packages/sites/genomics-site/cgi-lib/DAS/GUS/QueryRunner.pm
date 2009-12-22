@@ -1,37 +1,42 @@
 package  DAS::GUS::QueryRunner;
 
-require Exporter;
-@ISA = qw(Exporter);
-@EXPORT_OK = qw(executeQuery);
-
 use Time::HiRes qw ( time );
-use Fcntl qw(:flock SEEK_END);;
+use Fcntl qw(:flock SEEK_END);
+use File::Path qw(make_path);
+
+# Log gbrowse queries.
+# file locking is commented out, as it is probably overkill and a bit dangerous.
 
 sub new {
-    my ($class) = @_;
+    my ($class, $logFileDirectory) = @_;
     my $self = {};
 
-    if ($ENV{GBROWSE_SQL_LOG}) {
-	open($self->{logHandle},">> $ENV{GBROWSE_SQL_LOG}") ||
-	  die "Can't open gbrowse log file (as set in env variable \$GBROWSE_SQL_LOG)\n";
+    if ($logFileDirectory) {
+      make_path($logFileDirectory);
+      my $logFile = "$logFileDirectory/log1";
+      open($self->{logHandle},">> $logFile") ||
+	die "Can't open gbrowse log file '$logFile'\n";
     }
     bless($self,$class);
     return $self;
 }
 
 sub executeQuery {
-    my ($self, $sth, $sql, $queryName) = @_;
+    my ($self, $sth, $sql, $moduleName, $queryName, $range, $inGenePage) = @_;
     my $start_time = time();
     $sth->execute();
+
     if ($self->{logHandle}) {
+      my $elapsed_time = time() - $start_time;
+      if ($elapsed_time > .01) {
         my $fh = $self->{logHandle};
-	my $elapsed_time = time() - $start_time;
-        lock($fh);
+#        lock($fh);
 	print $fh "============================================================================\n";
-	print $fh "QUERYTIME\t" . localtime() . "\t$queryName\t" . sprintf("%.2f sec", $elapsed_time) . "\n";
+	print $fh "QUERYTIME\t" . localtime() . "\t$moduleName\t$queryName\t" . sprintf("%.2f sec", $elapsed_time) . "\n";
 	print $fh "============================================================================\n";
 	print $fh "$sql\n\n";
-	unlock($fh);
+#	unlock($fh);
+      }
     }
 }
 
