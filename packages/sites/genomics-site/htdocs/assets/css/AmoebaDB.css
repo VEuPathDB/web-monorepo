@@ -1,0 +1,379 @@
+	
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	background-image: url(/assets/images/AmoebaDB/background_s.jpg);
+}
+
+.coloredtext {         /* no link */
+	color: #6A5329;
+}
+
+a:link, a:visited {
+	color: #4F3D1B;
+}
+
+a:hover, a:active {
+	color: #6A5329;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header {
+	background-image: url(../images/AmoebaDB/backgroundtop_s.jpg);
+}
+
+#header2 {
+	background-image: url(../images/AmoebaDB/backgroundtop_s.jpg);
+}
+
+
+#header_rt {
+   color: #58441F;
+}
+
+#header_rt a:link, #header_rt a:visited {
+   color: #58441F;
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER DROPDOWN MENU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+#nav_top {
+	color: #58441F;
+}
+
+#nav_top a:link, #nav_top a:visited {
+	color: #58441F;
+}
+#nav_top li ul {  /* second-level lists */
+	background-image: url(../images/AmoebaDB/footer.png);
+	border-color:#58441F;
+	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
+}
+
+#nav_top li ul a:link, #nav_top li ul a:visited {
+	color: #58441F;
+}
+
+#nav_top li ul a:hover, #nav_top li ul a:active {
+	color: #8f0165;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =STRUCTURE 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+/* #menubar #mysearch {
+	background-image: url(../images/AmoebaDB/my_hist_menubar.png);
+	border: 1px solid #792861;
+} */
+ 
+
+#contentcolumn {
+	background-image: url(../images/AmoebaDB/footer.png);
+	border: 1px solid #4F3D1B;
+}
+
+#contentcolumn2 {
+	background-image: url(../images/AmoebaDB/footer.png);
+	border: 1px solid #4F3D1B;
+}
+
+#mysearchhist {
+	background-image: url(../images/AmoebaDB/bubble_my_searchbox.png);
+	border: 1px solid #b5a3d4;
+}
+
+
+
+
+#main_tools {
+	background-image: url(../images/AmoebaDB/tools_bckgnd.jpg);
+}
+
+#about_us_left {
+	background-color: #cdc3de;
+	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
+}
+
+#pink_title {
+	color: #5f0f47;
+	background-image: url(../images/AmoebaDB/trheader.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Top Menu Bar Dropdown List
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#menu a:hover, #menu a:active {
+	color:#5c0141;
+}
+
+#menu ul ul a:link, #menu ul ul a:visited{
+	border-bottom-color: #5f0f47;
+}
+#menu ul ul a:hover, #menu ul ul a:active{
+	border-bottom-color: #5f0f47;
+	color: #8f0165;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Menu Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.menu_lefttop_drop {
+   border-color:  #4F3D1B;  /* color as in contentcolumn border */
+}
+
+#menu_lefttop a.heading {
+	background-image: url(../images/AmoebaDB/menu_lft2.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Search Boxes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.search-box{
+    border: solid 1px #634697;
+ } 
+
+
+.search-box .textbox{
+	border: solid 1px #634697;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Arrow Chains 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+/* NOT used in TriTryp, maybe not needed here either */
+.selectedarrow {
+   border-color: #b16565;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Fonts 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+h1 {
+	color: #58441F;
+}
+h2 {
+  	color: #58441F;
+}
+
+
+.h2center, .h3left,.h3center, .h4left {
+  	color: #58441F;
+}
+
+
+.subcolor {
+	color: #714782
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOOTER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
+#footer{
+   background-image: url(../images/AmoebaDB/footer.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TABLES 
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+td.headerrow {
+	color: #4F3D1B;
+	background-image: url(../images/AmoebaDB/trheader.png);
+}
+
+
+tr.headerrow {
+	color: #4F3D1B;
+}
+
+tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
+	background-image: url(../images/AmoebaDB/trheader.png);
+}
+
+.flexigrid tr.headerrow th:hover {
+	background-image: url(../images/AmoebaDB/trhover.png);
+}
+
+td.subheaderrow {
+	background-image: url(../images/AmoebaDB/trsubhead.png);
+}
+
+tr.subheaderrow th {
+	background-image: url(../images/AmoebaDB/trsubhead.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.headerrow2 td{
+        color: #5f0f47;
+	background-image: url(../images/AmoebaDB/trheader.png);
+}
+
+tr.subheaderrow2 td{
+	background-image: url(../images/AmoebaDB/trsubhead.png);
+}
+
+a.queryGridInactive {
+        color:               #C8C8C8;
+}
+
+a.queryGridActive {
+        color:              #440c94;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =END OF TABLES FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.subheaderrow th {
+	border-color: #4F3D1B;
+}
+
+tr.headerrow th { 
+	border-color: #4F3D1B;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =RED BUTTON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WorkSpace Divs 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ABOUT US and HELP PAGES SIDEBAR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.twoColHybLt #sidebar1 {
+	background-image: url(../images/AmoebaDB/aboutus.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WARNING BOXES 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ADVANCED STRATEGY PAGING 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =used in help.jsp, classic bullet list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =MISC 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+span.marker a:link, span.marker a:visited {
+	color: #800158;
+}
+
+
+
+/* APPLICATION PAGE STYLES */
+
+#strategy_tabs a:link, #strategy_tabs a:visited {
+    background-color: #e9e6ee;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  = for old UI with new graphics (deprecated)  
+        RETHINK this section, CryptoDB.css does not have it
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
+td.recordClassTitle{
+    border-color:#330099;
+}
+
+
+tr.headerRow  td,th {
+   border-color:#330099;  
+}
+
+*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	border: 2px solid #634697;
+}
+
+.blockPage{
+	background-image: url(/assets/images/AmoebaDB/footer.png);
+}
+
+.flexigrid div.hDiv
+{
+	background-image:url(/assets/images/AmoebaDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/AmoebaDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/AmoebaDB/trheader.png);
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 history.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Strategy.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter_menu.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#query_form {
+	border: 1px solid #634697;	
+}
+
+
+
+/*THE END */
