@@ -722,11 +722,11 @@ WHERE  fl.feature_type ='SAGETagFeature'
   </sqlQuery>
 
 
-  <sqlQuery name="ChIPseq:coverage"  includeProjects="TriTrypDB">
+  <sqlQuery name="NextGenSeq:coverage"  includeProjects="TriTrypDB">
      <sql>
        <![CDATA[
-    SELECT 'ChIP_Seq' as feature_id,
-          'ChIPseq'        as type, 
+    SELECT $$sample$$ as feature_id,
+          'NextGenSeq'        as type, 
           '$source'          as source 
   FROM   dual 
        ]]>
@@ -5397,14 +5397,14 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-   <sqlQuery name="ChIPseq:coverage:bulksubfeatures"  includeProjects="TriTrypDB">
+   <sqlQuery name="NextGenSeq:coverage:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
      SELECT interval feature_id,
-             'ChIPseq' type,
+             'NextGenSeq' type,
              '$source' source,
               max(coverage) score, 
-             'ChIP_Seq' parent_id,
+             $$sample$$ parent_id,
              interval * (($rend - $base_start + 1) / 800) startm,
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
