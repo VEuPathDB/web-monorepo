@@ -396,17 +396,17 @@
                     <c:otherwise>
                       <c:set var="basketClick" value="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')" />
                       <c:set var="basketTitle" value="Click to add this item to the basket." />
-                      <c:if test="${record.attributes['in_basket'] == '1'}">
+                      <c:if test="${recHasBasket && record.attributes['in_basket'] == '1'}">
                         <c:set var="basketTitle" value="Click to remove this item from the basket." />
                       </c:if>
                     </c:otherwise>
                   </c:choose>
+                  <c:if test="${recHasBasket}">
 				<a href="javascript:void(0)" onclick="${basketClick}">
 					<img title="${basketTitle}" class="basket" value="${is_basket}" src="/assets/images/${basket_img}" width="16" height="16"/>
 				</a>
-
-				<a href="javascript:create_Portal_Record_Url('${recNam}', '${projectId}', '${id}','')">
-                   ${primaryKey.value}</a>
+                 </c:if>
+	         <a href="javascript:create_Portal_Record_Url('${recNam}', '${projectId}', '${id}','')">${primaryKey.value}</a>
            </c:when>
 
            <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Sequencing Typed'}">
@@ -432,15 +432,16 @@
                                     <c:otherwise>
                                       <c:set var="basketClick" value="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')" />
                                       <c:set var="basketTitle" value="Click to add this item to the basket." />
-                                      <c:if test="${record.attributes['in_basket'] == '1'}">
+                                      <c:if test="${recHasBasket &&  record.attributes['in_basket'] == '1'}">
                                         <c:set var="basketTitle" value="Click to remove this item from the basket." />
                                       </c:if>
                                     </c:otherwise>
                                   </c:choose>
+                              <c:if test="${recHasBasket}">
 				<a href="javascript:void(0)" onclick="${basketClick}">
 					<img title="${basketTitle}" class="basket" value="${is_basket}" src="/assets/images/${basket_img}" width="16" height="16"/>
 				</a>
-		
+		              </c:if>
 				&nbsp;&nbsp;&nbsp;
 
 				<a class="primaryKey_||_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
