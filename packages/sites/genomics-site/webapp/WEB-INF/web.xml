@@ -19,10 +19,6 @@
     <param-name>wdkAlwaysGoToSummary_param</param-name>
     <param-value>yes</param-value>
   </context-param>
-  <context-param>
-    <param-name>wdkCustomViewDir_param</param-name>
-    <param-value>/customPages/</param-value>
-  </context-param>
   <listener>
     <listener-class>org.gusdb.wdk.controller.ApplicationInitListener</listener-class>
   </listener>
@@ -113,15 +109,15 @@
   <!-- Error Page Mappings -->
   <error-page>
     <exception-type>java.lang.RuntimeException</exception-type>
-    <location>/exception.jsp</location>
+    <location>/wdkCustomization/jsp/Error.jsp</location>
   </error-page>
   <error-page>
     <exception-type>java.lang.IOException</exception-type>
-    <location>/exception.jsp</location>
+    <location>/wdkCustomization/jsp/Error.jsp</location>
   </error-page>
   <error-page>
     <exception-type>javax.servlet.ServletException</exception-type>
-    <location>/exception.jsp</location>
+    <location>/wdkCustomization/jsp/Error.jsp</location>
   </error-page>
 
   <error-page>

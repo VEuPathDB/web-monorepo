@@ -152,16 +152,23 @@
 <%-- We need to figure out which styles we are using from this old file and set them in the project.css file --%>
 <%-------  keep it for generecordpage while we do that --%>
 <%-- <link rel="stylesheet" href="<c:url value='/misc/style.css'/>"   type="text/css" />   --%>
-<link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" />
-<link rel="stylesheet" href="/assets/css/jquery-ui-1.7.2.custom.css"           type="text/css" />
-<link rel="stylesheet" href="/assets/css/history.css"            type="text/css"/>
-<link rel="stylesheet" href="/assets/css/dyk.css"            type="text/css"/>
-<link rel="stylesheet" href="/assets/css/Strategy.css"           type="text/css" />
-<link rel="StyleSheet" href="/assets/css/filter_menu.css"        type="text/css"/>
+
+<%-- NOW PROVIDED IN WDK wdkSite.css
+<link rel="stylesheet" href="wdk/css/jquery-ui-1.7.2.custom.css"           type="text/css" />
+<link rel="stylesheet" href="wdk/css/history.css"            type="text/css"/>
+<link rel="stylesheet" href="wdk/css/dyk.css"            type="text/css"/>
+<link rel="stylesheet" href="wdk/css/Strategy.css"           type="text/css" />
+<link rel="StyleSheet" href="wdk/css/filter_menu.css"        type="text/css"/>
+<link rel="stylesheet" href="wdk/css/flexigrid.css" type="text/css"/>
+<link rel="StyleSheet" href="wdk/css/jquery.autocomplete.css" type="text/css"/>
+<link rel="StyleSheet" href="wdk/css/jquery.multiSelect.css" type="text/css"/>
+--%>
+
+<link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 
 <link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
-<link rel="StyleSheet" href="/assets/css/jquery.autocomplete.css" type="text/css"/>
-<link rel="StyleSheet" href="/assets/css/jquery.multiSelect.css" type="text/css"/>
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
+
+
 <%-- temporary:  generate url for old version of site --%>
 <script type="text/javascript">
    var oldSiteUrl = 'http://old.${project}.org';
@@ -202,7 +209,7 @@ ${headElement}
 
    <div align="right"><div id="toplink">
     <%------ skip skips to menubar.tag ----%>
-   <a href="#skip"><img src="/assets/images/transparent1.gif" alt="Skip navigational links" width="1" height="1" border="0" /></a>
+   <a href="#skip"><img src="<c:url value='/wdk/images/transparent1.gif'/>" alt="Skip navigational links" width="1" height="1" border="0" /></a>
 
 
    <c:if test="${project == 'TriTrypDB'}">
@@ -290,14 +297,14 @@ ${headElement}
 		Contact Us<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a></li>
  
  
- <site:requestURL/>
+ <wdk:requestURL/>
  <c:choose>
     <c:when test="${wdkUser == null || wdkUser.guest == true}">
     
       <%--------------- Construct links to login/register/profile/logout pages -------------%>  
         <%-- 
             urlencode the enclosing page's URL and append as a parameter 
-            in the queryString. site:requestURL compensates
+            in the queryString. wdk:requestURL compensates
             for Struts' url mangling when forward in invoked.
         --%>
         <c:url value="/login.jsp" var="loginUrl">
@@ -371,7 +378,7 @@ ${headElement}
 
 
 
-<c:if test="${refer != 'home' && refer != 'home2'}">
+<c:if test="${refer != 'home' && refer != 'home2' && refer != 'customSummary'}">
 	<div id="contentwrapper">
 	<div id="contentcolumn2">
 	<div class="innertube">

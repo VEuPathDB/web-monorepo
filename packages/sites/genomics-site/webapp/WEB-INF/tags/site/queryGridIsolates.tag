@@ -52,7 +52,7 @@
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Geographic Location" existsOn="A C P T G"/>
     </tr>
      <tr>
-       <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST/Reference Typing Tool" type="ISOLATE" existsOn="A C P T G"  />
+       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolatesBySimilarity" linktext="BLAST/Reference Typing Tool" type="ISOLATE" existsOn="A C P T G"  />
      </tr>
     <tr>
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolatesByTextSearch" linktext="Text" existsOn="A C T G P"/>

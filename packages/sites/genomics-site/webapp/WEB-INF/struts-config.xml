@@ -45,7 +45,7 @@
   </global-exceptions>
 
   <global-forwards type="org.apache.struts.action.ActionForward">
-    <forward   name="home" path="/index.jsp"/>
+    <forward name="home" path="/home.jsp"/>
   </global-forwards>
 
   <action-mappings>
@@ -147,7 +147,6 @@
       scope="request"
       validate="false"
       name="questionForm">
-      <forward name="show_question" path="/question.jsp"/>
       <forward name="skip_to_summary" path="/showSummary.do"/>
     </action>
     <action
@@ -208,10 +207,7 @@
       scope="request"
       name="questionForm"
       input="/showQuestion.do">
-      <forward name="show_error" path="/summaryError.jsp"/>
       <forward name="show_application" path="/showApplication.do"/>
-      <forward name="show_strategy" path="/showStrategy.do"/>
-      <forward name="results_only" path="/resultsPage.jsp"/>
       <forward name="skip_to_record" path="/showRecord.do"/>
       <forward name="skip_to_download" path="/downloadStep.do"/>
     </action>
@@ -220,7 +216,6 @@
       type="org.gusdb.wdk.controller.action.ShowApplicationAction"
       scope="request"
       input="/showSummary.do">
-      <forward name="show_application" path="/customPages/customSummary.jsp"/>
     </action>
     <action
       path="/processSummary"
@@ -228,15 +223,7 @@
       scope="request"
       input="/showSummary.do">
       <forward name="pq_show_summary" path="/showSummary.do"/>
-    </action>
-    <action
-      path="/startBoolean"
-      type="org.gusdb.wdk.controller.action.StartBooleanAction"
-      scope="session"
-      name="questionForm"
-      input="/showQuestion.do">
-      <forward name="grow_boolean" path="/booleanQuestion.jsp"/>
-    </action>    
+    </action>  
     <action
        path="/processBooleanQuestion"
        type="org.gusdb.wdk.controller.action.ProcessBooleanQuestionAction"
@@ -245,22 +232,6 @@
        input="/startBoolean.do">
        <forward name="pbq_get_boolean_answer" path="/getBooleanAnswer.do"/>
        <forward name="pbq_grow_boolean" path="/growBoolean.do"/>
-    </action>
-    <action
-      path="/growBoolean"
-      type="org.gusdb.wdk.controller.action.GrowBooleanAction"
-      scope="session"
-      name="booleanQuestionForm"
-      input="/startBoolean.do">
-      <forward name="grow_boolean" path="/booleanQuestion.jsp"/>
-    </action>
-    <action
-      path="/getBooleanAnswer"
-      type="org.gusdb.wdk.controller.action.GetBooleanAnswerAction"
-      scope="session"
-      name="booleanQuestionForm"
-      input="/startBoolean.do">
-      <forward name="get_boolean_answer" path="/summary.jsp"/>
     </action>
     <action
       path="/showRecord"
@@ -280,20 +251,16 @@
       type="org.gusdb.wdk.controller.action.GetDownloadResultAction"
       name="downloadConfigForm"
       scope="request">
-      <forward name="get_download_result" path="/downloadResult.jsp"/>
     </action>
     <action
       path="/showQueryHistory"
       type="org.gusdb.wdk.controller.action.ShowQueryHistoryAction"
       scope="request">
-      <forward name="show_strat_history" path="/strategyHistory.jsp"/>
-      <forward name="show_step_history" path="/stepHistory.jsp"/>
     </action>
     <action
       path="/downloadStep"
       type="org.gusdb.wdk.controller.action.DownloadStepAnswerValueAction"
       scope="request">
-      <forward name="get_download_config" path="/reporterConfig.jsp"/>
     </action>
     <action
       path="/renameStep"
@@ -323,13 +290,11 @@
       path="/showXmlDataList"
       type="org.gusdb.wdk.controller.action.ShowXmlDataListAction"
       scope="request">
-      <forward name="show_xmldata_list" path="/xmlDataList.jsp"/>
     </action>
     <action
       path="/showXmlDataContent"
       type="org.gusdb.wdk.controller.action.ShowXmlDataContentAction"
       scope="request">
-      <forward name="show_xmldata_content" path="/xmlDataContent.jsp"/>
     </action>
     <action
       path="/processTestForm"
@@ -337,14 +302,12 @@
       name="testForm"
       input="/testForm.jsp"
       scope="request">
-      <forward name="process_test_form" path="/testFormResult.jsp"/>
+      <forward name="process_test_form" path="/wdk/testFormResult.jsp"/>
     </action>
     <action
       path="/showErrorPage"
       type="org.gusdb.wdk.controller.action.ShowErrorPageAction"
       scope="request">
-      <forward name="show_error_page_user" path="/exception.jsp"/>
-      <forward name="show_error_page_model" path="/exception.jsp"/>
     </action>
     <action
       path="/processLogin"
@@ -498,8 +461,6 @@
       scope="request"
       name="questionForm"
       validate="false">
-      <forward name="vocab_xml" path="/vocabXml.jsp"/>
-      <forward name="vocab_html" path="/vocabHtml.jsp"/>
     </action>
   </action-mappings>
 

@@ -33,7 +33,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 <tr>
-                    <site:queryGridMakeUrl qset="UniversalQuestions" qname="UnifiedBlast" linktext="BLAST Similarity" type="ORF" existsOn="A G C P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsBySimilarity" linktext="BLAST Similarity" type="ORF" existsOn="A G C P T Tr Tt"/>
                 </tr>  
  <tr>
                     <site:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="Protein Motif" existsOn="A G C P T Tr Tt"/>

@@ -41,7 +41,7 @@ window.onload = function(){
 
 function initBlastQuestion(url){
 	revise = false;
-	var target = parseUrlUtil('target',url);
+	var target = parseUrlUtil('questionFullName',url)[0];
 	if(window.location.href.indexOf("showApplication.do") != -1){
 		restrictTypes(target);
 	}
@@ -53,23 +53,23 @@ function initBlastQuestion(url){
 	   clickDefault(Rtype, 'type'); 
 	   enableRadioArray('algorithm', Rprogram);
 	}else{
-		if(target == 'GENE') clickDefault('Transcripts','type');
-		else if(target == 'ORF') clickDefault('ORF','type');
-		else if(target == 'EST') clickDefault('EST','type');
-		else if(target == 'SEQ') clickDefault('Genome','type');
-		else if(target == 'ISOLATE') clickDefault('Isolates','type');
-		else if(target == 'ASSEMBLIES') clickDefault('Assemblies','type');
+		if(target.search(/Gene/i) >= 0) clickDefault('Transcripts','type');
+		else if(target.search(/ORF/i) >= 0) clickDefault('ORF','type');
+		else if(target.search(/ESTsBy/i) >= 0) clickDefault('EST','type');
+		else if(target.search(/Genomic/i) >= 0) clickDefault('Genome','type');
+		else if(target.search(/Isolate/i) >= 0) clickDefault('Isolates','type');
+		else if(target.search(/Assembly/i) >= 0) clickDefault('Assemblies','type');
 	}
 }
 
 function restrictTypes(type){
 	var n = "";
-	if(type == "GENE") n = "0,1";
-	else if(type == "ISOLATE") n = "6";
-	else if(type == "ASSEMBLIES") n = "5";
-	else if(type == "EST") n = "4";
-	else if(type == "ORF") n = "3";
-	else if(type == "SEQ") n = "2";
+	if(type.search(/Gene/i) >= 0) n = "0,1";
+	else if(type.search(/Isolate/i) >= 0) n = "6";
+	else if(type.search(/Assembly/i) >= 0) n = "5";
+	else if(type.search(/ESTsBy/i) >= 0) n = "4";
+	else if(type.search(/ORF/i) >= 0) n = "3";
+	else if(type.search(/Genomic/i) >= 0) n = "2";
 	var y = document.getElementsByName("type");
 	n = n.split(",");
 	for(var x=0; x < y.length;x++){

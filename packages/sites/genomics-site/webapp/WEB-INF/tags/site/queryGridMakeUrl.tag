@@ -76,7 +76,7 @@
 
 <c:choose>
 <c:when test="${qname == 'UnifiedBlast'}">
-<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}&target=${type}" />
+<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
 </c:when>
 <c:otherwise>
 <c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />

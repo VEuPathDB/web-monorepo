@@ -60,40 +60,16 @@
 				          <c:set var="cat" value="${catEntry.value}" />
 				          <c:if test="${fn:length(cat.websiteQuestions) > 0}">
 <%-- SAME CODE AS IN drop_down_QG.tag --%>
-<%-- fixing plural and uppercase and setting target for BLAST--%>
-<%-- target is used for blast to know which target data type option should be clicked --%>
+<%-- fixing plural and uppercase --%>
 
                                         <c:set var="display" value="${fn:substring(cat.displayName, 11, -1)}" />
 					<li>
                                             <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
                                             <a class="heading" href="javascript:void(0)">&nbsp;${display}</a><a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}">details</a>
-											<c:choose>
-												<c:when test="${cat.name == 'isolates'}">
-													<c:set var="target" value="ISOLATE"/>
-												</c:when>
-												<c:when test="${cat.name == 'genomic'}">
-													<c:set var="target" value="SEQ"/>
-												</c:when>
-												<c:when test="${cat.name == 'snp'}">
-													<c:set var="target" value="SNP"/>
-												</c:when>
-												<c:when test="${cat.name == 'orf'}">
-													<c:set var="target" value="ORF"/>
-												</c:when>
-												<c:when test="${cat.name == 'est'}">
-													<c:set var="target" value="EST"/>
-												</c:when>
-												<c:when test="${cat.name == 'assembly'}">
-													<c:set var="target" value="ASSEMBLIES"/>
-												</c:when>
-												<c:otherwise>
-													<c:set var="target" value=""/>
-												</c:otherwise>
-											</c:choose>
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.websiteQuestions}" var="q">
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=${target}">${q.displayName}</a></li>
+									<li><a href="showQuestion.do?questionFullName=${q.fullName}">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
 						</div>
@@ -128,7 +104,7 @@
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.websiteQuestions}" var="q">
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}&target=GENE">${q.displayName}</a></li>
+									<li><a href="showQuestion.do?questionFullName=${q.fullName}">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
 						</div>

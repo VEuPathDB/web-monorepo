@@ -24,7 +24,7 @@
 
 
 <%------------ divs defined in header.tag for all pages but home/home2  -----------%>
-<c:if test="${refer != 'home' && refer != 'home2'}">
+<c:if test="${refer != 'home' && refer != 'home2' && refer != 'customSummary'}">
 </div> <%-- class="innertube"   --%>
 </div> <%-- id="contentcolumn2" --%>
 </div> <%-- id="contentwrapper" --%>
