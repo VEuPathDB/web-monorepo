@@ -33,6 +33,9 @@ ${id}
 </center>
 </h2>
 
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <%--#############################################################--%>
 
 <c:set var="append" value="" />

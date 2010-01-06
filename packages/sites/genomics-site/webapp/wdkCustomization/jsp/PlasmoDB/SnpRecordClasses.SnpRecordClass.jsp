@@ -31,6 +31,10 @@ ${id}<br>
 </center>
 </h2>
 
+
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <table border=0 width=100% cellpadding=7 cellspacing=0 bgcolor=white
        class=thinTopBorders>
  <tr>

@@ -23,6 +23,10 @@
 </c:when>
 <c:otherwise>
 
+
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <br>
 <%--#############################################################--%>
 

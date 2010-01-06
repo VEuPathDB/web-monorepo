@@ -27,6 +27,9 @@
 <c:otherwise>
 <c:set var="data_type" value="${attrs['data_type']}" />
 
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <%--#############################################################--%>
 
 <c:set var="attr" value="${attrs['overview']}" />

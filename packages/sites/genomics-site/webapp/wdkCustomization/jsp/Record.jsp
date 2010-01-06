@@ -10,6 +10,9 @@
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 <site:header banner="${recordType}"/>
 
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <table width="100%">
 
   <!-- Added by Jerric - Display primary key content -->

@@ -18,6 +18,10 @@
 
 <%----c:set value="${wdkRecord.recordClass.type}" var="recordType"/----%>
 
+
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white
        class=thinTopBorders>
  <tr>
