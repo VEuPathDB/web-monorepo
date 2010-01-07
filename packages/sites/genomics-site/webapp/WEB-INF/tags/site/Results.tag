@@ -31,7 +31,7 @@
 <c:set var="step_dataType" value="${wdkStep.dataType}" />
 <c:choose>
 	<c:when test="${fn:endsWith(step_dataType,'y')}">
-		<c:set var="type" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies'" />
+		<c:set var="type" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies" />
 	</c:when>
 	<c:otherwise>
 		<c:set var="type" value="${step_dataType}s" />
@@ -233,10 +233,10 @@
                     <td style="padding:0;">
           <c:choose>
             <c:when test="${!sumAttrib.sortable}">
-              <img src="/assets/images/results_arrw_up_blk.png" border="0" alt="Sort up"/>
+              <img src="<c:url value='/wdk/images/results_arrw_up_blk.png'/>" border="0" alt="Sort up"/>
             </c:when>
             <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
-              <img src="/assets/images/results_arrw_up_gr.png"  alt="Sort up" 
+              <img src="<c:url value='/wdk/images/results_arrw_up_gr.png'/>"  alt="Sort up" 
                   title="Result is sorted by ${sumAttrib}" />
             </c:when>
             <c:otherwise>
@@ -259,10 +259,10 @@
                  <td style="padding:0;">
 	  <c:choose>
             <c:when test="${!sumAttrib.sortable}">
-	      <img src="/assets/images/results_arrw_dwn_blk.png" border="0" />
+	      <img src="<c:url value='/wdk/images/results_arrw_dwn_blk.png'/>" border="0" />
 	    </c:when>
             <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
-              <img src="/assets/images/results_arrw_dwn_gr.png" alt="Sort down" 
+              <img src="<c:url value='/wdk/images/results_arrw_dwn_gr.png'/>" alt="Sort down" 
 	                    title="Result is sorted by ${sumAttrib}" />
             </c:when>
             <c:otherwise>
@@ -287,7 +287,7 @@
         <%-- <c:if test="${j != 0}">
           <div style="float:left;">
             <a href="javascript:void(0)">
-              <img src="/assets/images/results_grip.png" alt="" border="0" /></a>
+              <img src="<c:url value='/wdk/images/results_grip.png'/>" alt="" border="0" /></a>
           </div>
         </c:if> --%>
         <c:if test="${j != 0}">
@@ -303,7 +303,7 @@
               </c:choose>
             <a href="${resultsAction}"
                         title="Remove ${sumAttrib} column">
-              <img src="/assets/images/results_x.png" alt="Remove" border="0" /></a>
+              <img src="<c:url value='/wdk/images/results_x.png'/>" alt="Remove" border="0" /></a>
           </td>
         </c:if>
          </tr>
