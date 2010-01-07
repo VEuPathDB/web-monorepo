@@ -69,7 +69,7 @@
 
 <h2>
 <center>
-<site:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
+<wdk:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
 </center>
 </h2>
 
