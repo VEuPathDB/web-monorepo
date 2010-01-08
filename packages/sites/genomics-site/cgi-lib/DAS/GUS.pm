@@ -55,6 +55,7 @@ package DAS::GUS;
 
 use strict;
 use DAS::GUS::Segment;
+use DAS::GUS::QueryLogger;
 use Bio::Root::Root;
 use Bio::DasI;
 use Bio::PrimarySeq;
@@ -92,6 +93,7 @@ sub new {
   my $username  = $arg{-user};
   my $password  = $arg{-pass};
   my $sqlfile   = $arg{-sqlfile};
+  my $docroot   = $arg{-docroot};
   my $dbh = DBI->connect( $dsn, $username, $password )
       or $self->throw("unable to open db handle");
   
@@ -101,6 +103,10 @@ sub new {
 
   $self->dbh($dbh);
   $self->parser(ApiCommonWebsite::Model::SqlXmlParser->new($sqlfile, $projectId, 0));
+
+  my @path = split(/\//, $docroot); # /var/www/sfischer.plasmodb.org/..."
+  my $site = $path[3]; # sfischer.plasmodb.org
+  $self->{queryLogger} = DAS::GUS::QueryLogger->new("/var/www/Common/tmp/gbrowseLogs/$site", $site);
 
   return $self;
 }
@@ -120,6 +126,11 @@ sub dbh {
 
   return $self->{'dbh'} = shift if @_;
   return $self->{'dbh'};
+}
+
+sub getQueryLogger {
+  my $self = shift;
+  return $self->{queryLogger};
 }
 
 =head2 parser
@@ -309,7 +320,9 @@ sub get_feature_by_name {
     #my $un = uc($name);
     #$query =~ s/\?/\'\%$un\%\'/g;
     $sth = $self->dbh->prepare($query);
-    $sth->execute();
+    print STDERR "\n\nHELLO!!!!!!!!!!!!!\n\n";
+    $self->{queryLogger}->execute($sth, $query, "GUS.pm", "get_feature_by_name");
+#    $sth->execute();
 
     while(my $hashref = $sth->fetchrow_hashref) {
       $seg_name = $$hashref{'CTG_NAME'};

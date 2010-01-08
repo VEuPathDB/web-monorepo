@@ -32,7 +32,8 @@ sub init {
       -dsn     => $resolvedDsn,
         -user    => $c->appDb->login,
           -pass    => $c->appDb->password,
-            -projectId => $projectId
+            -projectId => $projectId,
+	      -docroot => $docRoot
           }
 }
 

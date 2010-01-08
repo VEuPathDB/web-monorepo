@@ -72,7 +72,8 @@ sub new {
     die "Couldn't find Segment.pm sql for new:Segment\n" unless $query;
     $query =~ s/(\$\w+)/eval $1/eg;
     my $sth = $factory->dbh->prepare($query);
-    $sth->execute();
+    # use 1000 as approximate range
+    $factory->getQueryLogger()->execute($sth, $query, "Segment.pm", "new:Segment");
 
     my $hashref = $sth->fetchrow_hashref;
     warn "END or STARTM of $name could not be determined by sql: $query\n" 
@@ -378,7 +379,7 @@ sub features {
     print "<pre>^^^^^^^^^^ End $typeString ^^^^^^^^^^^^^</pre>" if DEBUG;
 
     my $sth = $factory->dbh->prepare($sql);
-    $sth->execute()
+    $factory->getQueryLogger()->execute($sth, $sql, "Segment.pm", $queryName, $rend - $base_start)
       or $self->throw("getting feature query failed");
 
     my @tempfeats = ();
@@ -401,7 +402,7 @@ sub features {
     print "<pre>$bulkSubFeatureSql</pre>" if DEBUG;
     print "<pre>^^^^^^^^^^ End $queryName:bulksubfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
 
-    $self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory) 
+    $self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory, "$queryName:bulksubfeatures", $rend - $base_start);
   } 
   
   my $bulkAttributeSql = $factory->parser->getSQL("Feature.pm", "$queryName:bulkAttribute");
@@ -412,7 +413,7 @@ sub features {
   print "<pre>$bulkAttributeSql</pre>" if DEBUG;
   print "<pre>^^^^^^^^^^ End $type:bulkAttribute ^^^^^^^^^^^^^</pre>" if DEBUG;
 
-  $self->_addBulkAttribute(\@features, $bulkAttributeSql, $factory);
+  $self->_addBulkAttribute(\@features, $bulkAttributeSql, $factory, "$queryName:bulkAttribute", $rend-$base_start);
 
   }
 
@@ -427,11 +428,11 @@ sub features {
 
 sub _addBulkAttribute {
 
-  my($self, $features, $bulkAttributeSql, $factory) = @_;
+  my($self, $features, $bulkAttributeSql, $factory, $queryName, $range) = @_;
   my %featuresById;
   map { $featuresById{$_->feature_id} = $_ } @$features;
   my $sth = $factory->dbh->prepare($bulkAttributeSql);
-  $sth->execute()
+  $factory->getQueryLogger()->execute($sth, $bulkAttributeSql, "Segment.pm", $queryName, $range)
     or $self->throw("getting bulk attribute query failed");
 
   my @bulkAtts;
@@ -444,12 +445,12 @@ sub _addBulkAttribute {
 }
 
 sub _addBulkSubFeatures {
-  my ($self, $features, $subFeatureSql, $factory) = @_;
+  my ($self, $features, $subFeatureSql, $factory, $queryName, $range) = @_;
 
   my %featuresById;
   map { $featuresById{$_->feature_id} = $_ } @$features;
   my $sth = $factory->dbh->prepare($subFeatureSql);
-  $sth->execute()
+  $factory->getQueryLogger()->execute($sth, $subFeatureSql, "Segment.pm", $queryName, $range)
     or $self->throw("getting bulk subfeature query failed");
 
   while (my $featureRow = $sth->fetchrow_hashref) {
@@ -649,7 +650,7 @@ sub seq {
   $seqQuery =~ s/(\$\w+)/eval $1/eg;
 
   my $sth = $self->factory->dbh->prepare($seqQuery);
-  $sth->execute();
+  $self->factory->getQueryLogger()->execute($sth, $seqQuery, "Segment.pm", "get_sequence");
   my ($seq) = $sth->fetchrow_array();
 
   if (!$has_start && !$has_stop) {
@@ -698,7 +699,7 @@ sub secondary_structure_encodings {
   $strucQuery =~ s/(\$\w+)/eval $1/eg;
 
   my $sth = $self->factory->dbh->prepare($strucQuery);
-  $sth->execute();
+  $self->factory->getQueryLogger()->execute($sth, $strucQuery, "Segment.pm", "get_2d_struc");
 
   my $encodings = undef;
   while (my ($type, $encoding) = $sth->fetchrow_array()) {
