@@ -20,7 +20,7 @@ function toggleAdvanced() {
 		$("a#toggle_filter").html("Hide");
 		$("div#advanced_filters").removeClass("hidden");
 		$("a.filter_link.hidden").removeClass("hidden");
-		$("#toggle_filter").parent("div.clear_all").html("<span id='toggle_filter'>Hide</span> comparison of similarities and differences between strains.</div>");
+		$("#toggle_filter").parent("div.clear").html("<span id='toggle_filter'>Hide</span> comparison of similarities and differences between strains.</div>");
 		translateFilterLinks();
 	}
 	else {
@@ -51,7 +51,7 @@ function translateFilterLinks() {
 		});
 	}
 	else {
-		$("#toggle_filter").parent("div.clear_all").html("<a id='toggle_filter' href='javascript:void(0);' onclick='toggleAdvanced();'>" + $("#toggle_filter").text() + "</a> comparison of similarities and differences between strains.</div>");
+		$("#toggle_filter").parent("div.clear").html("<a id='toggle_filter' href='javascript:void(0);' onclick='toggleAdvanced();'>" + $("#toggle_filter").text() + "</a> comparison of similarities and differences between strains.</div>");
 	}
 }
 

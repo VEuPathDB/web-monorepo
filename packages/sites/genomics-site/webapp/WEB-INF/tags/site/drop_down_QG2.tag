@@ -75,7 +75,7 @@
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}</a>
 </c:when>
 <c:otherwise>
-	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=GENE"/>">${q.displayName}</a>
+	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a>
 </c:otherwise>
 </c:choose>
 
@@ -103,7 +103,7 @@
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}</a>
 </c:when>
 <c:otherwise>
-	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=GENE"/>">${q.displayName}</a>
+	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a>
 </c:otherwise>
 </c:choose>
 
@@ -162,33 +162,10 @@
 
 					<li>
 						<a href="#">${cat.displayName}</a> 
-					<c:choose>
-					<c:when test="${cat.name == 'isolates'}">
-						<c:set var="target" value="ISOLATE"/>
-					</c:when>
-					<c:when test="${cat.name == 'genomic'}">
-						<c:set var="target" value="SEQ"/>
-					</c:when>
-					<c:when test="${cat.name == 'snp'}">
-						<c:set var="target" value="SNP"/>
-					</c:when>
-					<c:when test="${cat.name == 'orf'}">
-						<c:set var="target" value="ORF"/>
-					</c:when>
-					<c:when test="${cat.name == 'est'}">
-						<c:set var="target" value="EST"/>
-					</c:when>
-					<c:when test="${cat.name == 'assembly'}">
-						<c:set var="target" value="ASSEMBLIES"/>
-					</c:when>
-					<c:otherwise>
-						<c:set var="target" value=""/>
-					</c:otherwise>
-					</c:choose>
 						<ul>
 						<c:forEach items="${cat.websiteQuestions}" var="q">
 				    			<li>
-								<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}&target=${target}"/>">${q.displayName}</a>
+								<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a>
 							</li>
 						</c:forEach>
 						</ul>

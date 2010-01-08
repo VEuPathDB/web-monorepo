@@ -312,11 +312,11 @@
 <!-- display "advanced" filters -->
 <c:choose>
   <c:when test="${filtersParam == 'Hide'}">
-    <div class="clear_all"><span id="toggle_filter">Show</span> comparison of similarities and differences between strains.</div>
+    <div class="clear"><span id="toggle_filter">Show</span> comparison of similarities and differences between strains.</div>
     <div id="advanced_filters" class="hidden">
   </c:when>
   <c:otherwise>
-    <div class="clear_all"><span id="toggle_filter">Hide</span> comparison of similarities and differences between strains.</div>
+    <div class="clear"><span id="toggle_filter">Hide</span> comparison of similarities and differences between strains.</div>
     <div id="advanced_filters">
   </c:otherwise>
 </c:choose>
