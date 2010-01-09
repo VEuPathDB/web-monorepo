@@ -601,9 +601,9 @@ WHERE (select count(*) from materialized_query) = 0
        ) 
        OR
        (syn.is_reversed = 1 
-        AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc + 1)>0
-        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) <= $rend 
-        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)) >= $base_start 
+        AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc - 1)>0
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) >= $base_start 
        )
   )
   AND fl.start_min <= syn.b_end
@@ -4212,11 +4212,11 @@ SELECT -- slow query for all other views
        exfloc.na_feature_id as name,
        exfloc.parent_id,
        CASE WHEN (syn.is_reversed = 1) 
-         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
          ELSE anch_left.ref_loc + (((CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END) - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
        END startm,
        CASE WHEN (syn.is_reversed = 1) 
-         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
          ELSE anch_left.ref_loc + (((CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END) - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
        END end,
        CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
