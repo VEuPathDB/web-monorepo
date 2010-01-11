@@ -171,7 +171,7 @@
 
 <%-- temporary:  generate url for old version of site --%>
 <script type="text/javascript">
-   var oldSiteUrl = 'http://old.${project}.org';
+   var helpEmail = 'help@${project}.org';
 </script>
 
 <site:jscript refer="${refer}"/>
