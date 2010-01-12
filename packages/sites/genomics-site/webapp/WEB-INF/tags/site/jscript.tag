@@ -9,10 +9,6 @@
 
 <%-- JQuery library is included by WDK --%>
 
-
-<script type="text/javascript" src="/assets/js/lib/json.js"></script>
-<script type="text/javascript" src="/assets/js/results_page.js"></script>
-
 <c:if test="${refer == 'customSummary'}">
 	<wdk:strategyScript />
 
