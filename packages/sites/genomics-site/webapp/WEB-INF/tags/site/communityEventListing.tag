@@ -28,8 +28,8 @@ http://${pageContext.request.serverName}${feedPath}
       msg="<font size='-1'><i>temporarily unavailable.</i></font>"
       e="${feedex}" 
   />
-</c:if>
 </ul>
+</c:if>
 
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">

@@ -32,6 +32,7 @@
 <c:remove var="originUrl"  scope="session"/>
 <c:remove var="refererUrl" scope="session"/>
 
+<html:form method="POST" action='/processLogin.do' >
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <c:choose>
   <c:when test="${wdkUser != null && wdkUser.guest != true}">
@@ -68,7 +69,6 @@
           </td>
        </tr>
      </c:if>
-     <html:form method="POST" action='/processLogin.do' >
      <tr>
        <td align="right" width="45%"><div class="small"><b>Email:</b></div></td>
        <td align="left"><div class="small"><input id="email" type="text" name="email" size="20"></div></td>
@@ -99,17 +99,14 @@
            </c:if>
        </td>
      </tr>
-    </html:form>
-
-    <html:form method="POST" action='/showRegister.do' >
      <tr>
        <td colspan="2" align="center" valign="top">
           <span class="small"><a href="<c:url value='/showResetPassword.do'/>">Forgot Password?</a>&nbsp;&nbsp;<a href="showRegister.do">Register/Subscribe</a></span>
        </td>
      </tr>
-    </html:form>
   </c:otherwise>
 
 </c:choose>
 
 </table>
+</html:form>
