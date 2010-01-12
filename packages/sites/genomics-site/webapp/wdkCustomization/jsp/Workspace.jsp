@@ -121,4 +121,4 @@ function parse_Url( url, parameter_name )
 
 <wdk:strategyWorkspace includeDYK="true" />
 
-<site:footer />
+<site:footer  refer="customSummary" />
