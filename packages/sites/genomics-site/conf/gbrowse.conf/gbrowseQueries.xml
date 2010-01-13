@@ -588,6 +588,7 @@ WHERE (select count(*) from materialized_query) = 0
   AND anch_left.prev_ref_loc < $base_start 
   AND anch_left.ref_loc >= $base_start
   AND anch_right.synteny_id = syn.synteny_id
+  AND anch_left.ref_loc != anch_right.ref_loc
   AND anch_right.ref_loc < $rend
   AND anch_right.next_ref_loc >= $rend
   AND fl.na_sequence_id = syn.b_na_sequence_id 
@@ -4238,6 +4239,7 @@ WHERE (select count(*) from materialized_query) = 0
   AND anch_right.synteny_id = syn.synteny_id
   AND anch_right.ref_loc < $rend
   AND anch_right.next_ref_loc >= $rend
+  AND anch_left.ref_loc != anch_right.ref_loc
   AND exfloc.feature_type = 'ExonFeature'
   AND exfloc.na_sequence_id = syn.b_na_sequence_id 
   AND (
@@ -4248,9 +4250,9 @@ WHERE (select count(*) from materialized_query) = 0
        ) 
        OR
        (syn.is_reversed = 1 
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
-        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
-        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) <= $rend 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) >= $base_start
         )
   )
   AND exfloc.start_min <= syn.b_end
