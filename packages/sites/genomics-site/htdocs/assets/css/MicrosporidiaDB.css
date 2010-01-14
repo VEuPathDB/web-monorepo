@@ -1,0 +1,382 @@
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	background-image: url(/assets/images/MicrosporidiaDB/background_s.jpg);
+}
+
+
+a:link, a:visited {
+	color: #015f9a;
+}
+
+a:hover, a:active {
+	color: #b45f04;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header {
+	background-image: url(../images/MicrosporidiaDB/backgroundtop_s.jpg);
+}
+
+#header2 {
+	background-image: url(../images/MicrosporidiaDB/backgroundtop_s.jpg);
+}
+
+
+#header_rt {
+   color: #3B1870;
+}
+
+#header_rt a:link, #header_rt a:visited {
+   color: #3B1870;
+}
+
+
+/* only used in tritryp (genedb link)  */
+#toplink a:link, #toplink a:visited{
+	width: 381px;
+}
+#toplink a:hover {
+	width: 381px;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER DROPDOWN MENU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+#nav_top {
+	color: #395b8e;
+}
+
+#nav_top a:link, #nav_top a:visited {
+	color: #4D2A82;
+}
+
+#nav_top li ul {  /* second-level lists */
+	background-image: url(../images/MicrosporidiaDB/footer.png);
+	border-color:#4D2A82;
+	list-style-image: url(../images/MicrosporidiaDB/bullet_arrow.gif);
+}
+
+#nav_top li ul a:link, #nav_top li ul a:visited {
+	color: #4D2A82;
+}
+
+#nav_top li ul a:hover, #nav_top li ul a:active {
+	color: #013c63;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =STRUCTURE 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+/* #menubar #mysearch {
+	background-image: url(../images/MicrosporidiaDB/my_hist_menubar.png);
+	border: 1px solid #175982;
+} */
+ 
+#contentcolumn {
+	background-image: url(../images/MicrosporidiaDB/footer.png);
+	border: 1px solid #634697;
+}
+
+#contentcolumn2 {
+	background-image: url(../images/MicrosporidiaDB/footer.png);
+	border: 1px solid #634697;
+}
+
+#mysearchhist {
+	background-image: url(../images/MicrosporidiaDB/bubble_my_searchbox.png);
+	border: 1px solid #dfbba6;
+}
+
+#main_tools {
+	background-image: url(../images/MicrosporidiaDB/tools_bckgnd.jpg);
+}
+
+#about_us_left {
+	background-color: #edd9cd;
+	list-style-image: url(../images/MicrosporidiaDB/bullet_arrow.gif);
+}
+#pink_title {
+	color: #0f3e5c;
+	background-image: url(../images/MicrosporidiaDB/trheader.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Top Menu Bar Dropdown List
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+#menu a:hover, #menu a:active {
+	color:#003658;
+}
+
+#menu ul ul a:link, #menu ul ul a:visited{
+	border-bottom-color: #a45d35;
+}
+
+#menu ul ul a:hover, #menu ul ul a:active{
+	border-bottom-color: #a45d35;
+	color: #0276be;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Menu Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.menu_lefttop_drop {
+   border-color: #634697;  /* color as in contentcolumn border */
+}
+
+#menu_lefttop a.heading {
+	background-image: url(../images/MicrosporidiaDB/menu_lft2.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Search Boxes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.search-box{
+   border: solid 1px #4D2A82;
+} 
+
+.search-box .textbox{
+	border: solid 1px #b3b3b3;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Arrow Chains 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Fonts 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+h1 {
+	color: #a45d35;
+}
+h2 {
+  	color: #a45d35;
+}
+
+.h2center, .h3left,.h3center, .h4left {
+  	color: #a45d35;
+}
+
+.subcolor {
+	color: #4a8047
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOOTER  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
+#footer{
+    background-image: url(../images/MicrosporidiaDB/footer.png);
+ }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TABLES 
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+td.headerrow {
+	color: #0c3f60;
+	background-image: url(../images/MicrosporidiaDB/trheader.png);
+}
+
+
+tr.headerrow {
+	color: #0c3f60;
+}
+
+tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
+	background-image: url(../images/MicrosporidiaDB/trheader.png);
+}
+
+.flexigrid tr.headerrow th:hover {
+	background-image: url(../images/MicrosporidiaDB/trhover.png);
+}
+
+td.subheaderrow {
+	background-image: url(../images/MicrosporidiaDB/trsubhead.png);
+}
+
+tr.subheaderrow th {
+	background-image: url(../images/MicrosporidiaDB/trsubhead.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.headerrow2 td{
+        color: #0c3f60;
+	background-image: url(../images/MicrosporidiaDB/trheader.png);
+}
+
+tr.subheaderrow2 td{
+	background-image: url(../images/MicrosporidiaDB/trsubhead.png);
+}
+
+a.queryGridInactive {
+        color:              #C8C8C8;
+}
+
+a.queryGridActive {
+        color:              #9f4510;
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =END OF TABLES FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.subheaderrow th {
+	border-color: #0c3f60;
+}
+
+tr.headerrow th { 
+	border-color: #0c3f60;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =RED BUTTON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WorkSpace Divs 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ABOUT US and HELP PAGES SIDEBAR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.twoColHybLt #sidebar1 {
+	background-image: url(../images/MicrosporidiaDB/aboutus.jpg);
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WARNING BOXES 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ADVANCED STRATEGY PAGING 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =used in help.jsp, classic bullet list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =MISC 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+span.marker a:link, span.marker a:visited {
+	color: #014c7c;
+}
+
+/* APPLICATION PAGE STYLES */
+
+#strategy_tabs a:link, #strategy_tabs a:visited {
+    background-color: #f2e9e4;
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  = for old UI with new graphics (deprecated)  
+        RETHINK this section, CryptoDB.css does not have it
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/*
+td.recordClassTitle{
+     border-color:#6b7d70;
+}
+
+
+tr.headerRow  td,th {
+   border-color:#175982;  /*#6b7d70;*/
+}
+*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	border: 2px solid #634697;
+}
+
+.blockPage{
+	background-image: url(/assets/images/MicrosporidiaDB/footer.png);
+}
+
+.flexigrid div.hDiv
+{
+	background-image:url(/assets/images/MicrosporidiaDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/MicrosporidiaDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/MicrosporidiaDB/trheader.png);
+}
+
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 history.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Strategy.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter_menu.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#query_form {
+	border: 1px solid #015f9a;
+}
+
+
+
+/*THE END */
