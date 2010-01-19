@@ -111,7 +111,7 @@
     	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#downloads"/>">Understanding Downloads</a></li>
     	    <li><a href="/common/downloads">Data Files</a></li>
     	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#docs_pubs"/>">Documents and Publications</a></li> 
-    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods"/>">Protocols and Methods</a></li>
+    	  <%--  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods"/>">Protocols and Methods</a></li> --%>
     	    <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
     	    <li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
   	</ul>
