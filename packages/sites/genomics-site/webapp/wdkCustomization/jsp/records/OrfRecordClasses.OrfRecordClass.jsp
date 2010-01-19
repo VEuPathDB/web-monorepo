@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
+<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>

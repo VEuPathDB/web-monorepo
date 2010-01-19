@@ -66,15 +66,8 @@
 
 <c:set var="append" value="" />
 
-<c:set var="notes">
-    <site:dataTable tblName="Notes" align="left" />
-</c:set>
+<wdk:wdkTable tblName="Notes" isOpen="true" />
 
-<c:if test="${notes ne 'none'}">
-    <c:set var="append">
-        ${append}<br><br><site:dataTable tblName="Notes" />
-    </c:set>
-</c:if>
 
 <h2>
 <center>

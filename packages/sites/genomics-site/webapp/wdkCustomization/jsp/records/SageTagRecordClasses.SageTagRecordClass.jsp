@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
+<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
@@ -38,28 +40,13 @@
     content="${attr.value}" />
 <br>
 
-<c:set var="rawdata">
-<site:dataTable tblName="AllCounts" align="left" />
-</c:set>
-<site:panel 
-    displayName="Raw and Normalized Data"
-    content="${rawdata}" />
+<wdk:wdkTable tblName="AllCounts" isOpen="true" />
 <br>
 
-<c:set var="alignedGenes">
-<site:dataTable tblName="Genes" align="left" />
-</c:set>
-<site:panel 
-    displayName="All Genes in proximity of this Sage Tag Alignment"
-    content="${alignedGenes}" />
+<wdk:wdkTable tblName="Genes" isOpen="true" />
 <br>
 
-<c:set var="locations">
-<site:dataTable tblName="Locations" align="left" />
-</c:set>
-<site:panel 
-    displayName="Genomic Locations"
-    content="${locations}" />
+<wdk:wdkTable tblName="Locations" isOpen="true" />
 
 <br>
 

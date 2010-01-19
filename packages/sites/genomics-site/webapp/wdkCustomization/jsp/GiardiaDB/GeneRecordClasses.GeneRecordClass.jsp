@@ -197,18 +197,8 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <site:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
 
-<c:set var="notes">
-    <site:dataTable tblName="Notes" align="left" />
-</c:set>
+<wdk:wdkTable tblName="Notes" isOpen="true" />
 
-<c:if test="${notes ne 'none'}">
-    <c:set var="append">
-        <site:dataTable tblName="Notes" />
-    </c:set>
-    <site:panel 
-        displayName="Notes"
-        content="${append}" />
-    <br>
 </c:if>
 
 <%--- Comments -----------------------------------------------------%>

@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
+<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -65,22 +66,17 @@ ${id}
   <c:param name="externalDbVersion" value="${attrs['externalDbVersion'].value}" />
   <c:param name="flag" value="0" /> 
 </c:url>
-<c:set var='commentLegend'>
-    <c:catch var="e">
-      <site:dataTable tblName="SequenceComments"/>
+<c:catch var="e">
+      <wdk:wdkTable tblName="SequenceComments" isOpen="true"/>
       <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
-    </c:catch>
-    <c:if test="${e != null}">
+</c:catch>
+<c:if test="${e != null}">
      <site:embeddedError 
          msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
          e="${e}" 
      />
-    </c:if>
+</c:if>
     
-</c:set>
-<site:panel 
-    displayName="User Comments"
-    content="${commentLegend}" />
 <br>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>

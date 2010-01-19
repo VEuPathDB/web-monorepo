@@ -1806,7 +1806,7 @@ The overall expression percentile of each condition is the average percentile ov
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
 
 	<td class="top">  
-          <site:dataTable tblName="TwoChannelDiffExpr" />
+          <wdk:wdkTable tblName="TwoChannelDiffExpr" isOpen="true"/>
 
         </td>
 

@@ -126,18 +126,8 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <site:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
 
-<c:set var="notes">
-    <site:dataTable tblName="Notes" align="left" />
-</c:set>
-
 <c:if test="${notes ne 'none'}">
-    <c:set var="append">
-        <site:dataTable tblName="Notes" />
-    </c:set>
-    <site:panel 
-        displayName="Notes"
-        content="${append}" />
-    <br>
+    <site:wdkTable tblName="Notes" isOpen="true" />
 </c:if>
 
 <%--- Comments -----------------------------------------------------%>
