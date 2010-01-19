@@ -323,6 +323,7 @@
       scope="request"
       name="registerForm">
       <forward name="process_register" path="/processRegister.do"/>
+      <forward name="show_register" path="/register.jsp"/>
     </action>
     <action
       path="/processLogout"
@@ -344,6 +345,7 @@
       scope="session"
       name="passwordForm">
       <forward name="process_password" path="/processPassword.do" redirect="false"/>
+      <forward name="show_password" path="/password.jsp"/>
     </action>
     <action
       path="/processResetPassword"
