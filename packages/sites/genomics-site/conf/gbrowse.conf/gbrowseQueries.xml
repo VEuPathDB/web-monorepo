@@ -1616,7 +1616,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:syntenySpanMC" includeProjects="TriTrypDB,PlasmoDB,CryptoDB,GiardiaDB">
+  <sqlQuery name="match:syntenySpanMC" includeProjects="TriTrypDB,PlasmoDB,CryptoDB,GiardiaDB, AmoebaDB">
      <sql>
 <![CDATA[
 SELECT
