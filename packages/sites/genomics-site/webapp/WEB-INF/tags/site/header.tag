@@ -270,8 +270,9 @@ ${headElement}
 
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">How to use this resource</a></li>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to cite us</a></li>
-
-        <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#docs_pubs"/>">${project} Publications</a></li>
+<c:if test="${project == 'EuPathDB'}">
+        <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li>
+</c:if>
         <li><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>         
 
 <%-- 

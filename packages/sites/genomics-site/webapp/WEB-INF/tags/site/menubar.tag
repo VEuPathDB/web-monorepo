@@ -100,6 +100,9 @@
    	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.DataSources'/>">Data Detail</a></li>
  	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.Methods'/>">Analysis Methods</a></li>
 </c:if>
+<c:if test="${project == 'CryptoDB'}">
+	 <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
+</c:if>
 
   	</ul>
     </li>
@@ -110,10 +113,11 @@
  	<ul>
     	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#downloads"/>">Understanding Downloads</a></li>
     	    <li><a href="/common/downloads">Data Files</a></li>
-    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#docs_pubs"/>">Documents and Publications</a></li> 
+
     	  <%--  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods"/>">Protocols and Methods</a></li> --%>
     	    <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
     	    <li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+    	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li> 
   	</ul>
     </li>
 </ul>
