@@ -254,25 +254,22 @@ ${headElement}
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li>
 <%-- all sites go to the Data Summary page --%>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
+
+<%-- if the site has statistics on its own, not covered in the Portal Data SUmmary table, such as Giardia and Trich, show them, otherwise show the genome table --%>
 <c:choose>
-<c:when test="${project == 'EuPathDB' || project == 'CryptoDB'}">
-	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Data Statistics</a></li>
-</c:when>
- <%-- if the site has statistics on its own, not covered in the Portal Data SUmmary table, such as Giardia --%>
-<c:otherwise> 
+<c:when test="${project == 'GiardiaDB' || project == 'TrichDB'}">
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#stats"/>">Data Statistics</a></li>
+</c:when>
+<c:otherwise> 
+	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Data Statistics</a></li>
 </c:otherwise>
 </c:choose>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#advisors"/>">Scientific Advisory Team</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#acks"/>">Acknowledgements</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#funding"/>">Funding</a></li>
-
-
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">How to use this resource</a></li>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to cite us</a></li>
-<c:if test="${project == 'EuPathDB'}">
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li>
-</c:if>
         <li><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>         
 
 <%-- 
