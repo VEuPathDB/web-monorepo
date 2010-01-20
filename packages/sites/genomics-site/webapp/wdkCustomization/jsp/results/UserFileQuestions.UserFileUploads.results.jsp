@@ -102,32 +102,32 @@
         <div style="float:left; min-height:20px; width:20px;">
           <c:choose>
             <c:when test="${!sumAttrib.sortable}">
-              <img style="float:left;" src="/assets/images/results_arrw_up_blk.png" border="0" alt="Sort up"/>
+              <img style="float:left;" src="<c:url value='/wdk/images/results_arrw_up_blk.png'/>" border="0" alt="Sort up"/>
             </c:when>
             <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
-              <img style="float:left;" src="/assets/images/results_arrw_up_gr.png"  alt="Sort up" 
+              <img style="float:left;" src="<c:url value='/wdk/images/results_arrw_up_gr.png'/>"  alt="Sort up" 
                   title="Result is sorted by ${sumAttrib}" />
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
               <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true)"
                   title="Sort by ${sumAttrib}">
-                  <img src="/assets/images/results_arrw_up.png" alt="Sort up" border="0" /></a>
+                  <img src="<c:url value='/wdk/images/results_arrw_up.png'/>" alt="Sort up" border="0" /></a>
             </c:otherwise>
           </c:choose>
 	  <c:choose>
             <c:when test="${!sumAttrib.sortable}">
-	      <img style="float:left;" src="/assets/images/results_arrw_dwn_blk.png" border="0" />
+	      <img style="float:left;" src="<c:url value='/wdk/images/results_arrw_dwn_blk.png'/>" border="0" />
 	    </c:when>
             <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
-              <img style="float:left;" src="/assets/images/results_arrw_dwn_gr.png" alt="Sort down" 
+              <img style="float:left;" src="<c:url value='/wdk/images/results_arrw_dwn_gr.png'/>" alt="Sort down" 
 	                    title="Result is sorted by ${sumAttrib}" />
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
               <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true)"
 	                    title="Sort by ${sumAttrib}">
-              <img src="/assets/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
+              <img src="<c:url value='/wdk/images/results_arrw_dwn.png'/>" alt="Sort down" border="0" /></a>
             </c:otherwise>
           </c:choose>
         </div>
@@ -137,7 +137,7 @@
             <%-- display remove attribute button --%>
             <a href="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true)"
                         title="Remove ${sumAttrib} column">
-              <img src="/assets/images/results_x.png" alt="Remove" border="0" /></a>
+              <img src="<c:url value='/wdk/images/results_x.png'/>" alt="Remove" border="0" /></a>
           </div>
         </c:if>
 
