@@ -9,9 +9,6 @@
 <c:set var="stepId" value="${requestScope.step_id}"/>
 <c:set var="layout" value="${requestScope.filter_layout}"/>
 
-
-Encephalitozoon intestinalis
-
 <!-- display basic filters -->
 <table border="1">
   <tr>
