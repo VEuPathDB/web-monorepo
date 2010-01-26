@@ -248,8 +248,7 @@ ${headElement}
       <div id="nav_topdiv">
            <ul id="nav_top">
       <li>
-      <a href="#">About ${siteName}</a>
-      <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+      <a href="#">About ${siteName}<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       	<ul>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">${siteName} News</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li>
@@ -283,8 +282,7 @@ ${headElement}
         </ul>
       </li>
       <li>
-      <a href="#">Help</a>
-      <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+      <a href="#">Help<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       		<ul>
 
 
@@ -300,8 +298,7 @@ ${headElement}
       </li>
       <li>
       <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-		Contact Us</a>
-      <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+		Contact Us<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       </li>
  
  
@@ -311,8 +308,7 @@ ${headElement}
     
       <%--------------- Construct popups to login/register -------------%>  
       <li>
-        <a href="javascript:void(0)" onclick="popLogin()">Login</a>
-        <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+        <a href="javascript:void(0)" onclick="popLogin()">Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
         <div id="loginForm" style="display:none;">
           <h2 style="text-align: center">EuPathDB Account Login</h2>
           <site:login includeCancel="true" />
@@ -337,8 +333,7 @@ ${headElement}
       </c:url>
 
       <li>
-        <a href="<c:url value='/showProfile.do'/>" id='profile'>${wdkUser.firstName} ${wdkUser.lastName}'s Profile</a>
-        <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+        <a href="<c:url value='/showProfile.do'/>" id='profile'>${wdkUser.firstName} ${wdkUser.lastName}'s Profile<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       </li>
 
       <li>

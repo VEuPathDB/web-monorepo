@@ -3,7 +3,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<!-- get wdkModel saved in application scope -->
+<%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <site:header title="${wdkModel.displayName} :: Retrieve Sequences"

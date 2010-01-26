@@ -428,13 +428,13 @@ div.innertube #record-toolbox li {
 } 
 
 #nav_top a:link, #nav_top a:visited {
-	display: inline;
+	display: block;
 	width: auto;
 	text-decoration: none;
 	z-index: 520;
 }
 #nav_top a:hover, #nav_top a:active {
-	display: inline;
+	display: block;
 	width: auto;
 	color: #FFFFFF;
 	text-decoration: none;
