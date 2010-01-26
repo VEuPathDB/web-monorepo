@@ -33,9 +33,6 @@
         </td>
 
 
-
-
-<span style="vertical-align: top">
         <td width="34%" valign="top">
 <div class="innertube2">
 
@@ -58,9 +55,6 @@
 
 </div>
         </td>
-</span>
-
-
 
 
        <td  width="33%" valign="top">
