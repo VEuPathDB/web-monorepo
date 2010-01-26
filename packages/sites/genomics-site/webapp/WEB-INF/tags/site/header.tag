@@ -248,7 +248,8 @@ ${headElement}
       <div id="nav_topdiv">
            <ul id="nav_top">
       <li>
-      <a href="#">About ${siteName}<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+      <a href="#">About ${siteName}</a>
+      <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
       	<ul>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">${siteName} News</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li>
@@ -282,7 +283,8 @@ ${headElement}
         </ul>
       </li>
       <li>
-      <a href="#">Help<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+      <a href="#">Help</a>
+      <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
       		<ul>
 
 
@@ -298,57 +300,50 @@ ${headElement}
       </li>
       <li>
       <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-		Contact Us<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a></li>
+		Contact Us</a>
+      <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+      </li>
  
  
  <wdk:requestURL/>
  <c:choose>
     <c:when test="${wdkUser == null || wdkUser.guest == true}">
     
-      <%--------------- Construct links to login/register/profile/logout pages -------------%>  
-        <%-- 
-            urlencode the enclosing page's URL and append as a parameter 
-            in the queryString. wdk:requestURL compensates
-            for Struts' url mangling when forward in invoked.
-        --%>
-        <c:url value="/login.jsp" var="loginUrl">
-           <c:param name="originUrl" value="${originRequestUrl}"/> 
-        </c:url>
-        <%-- 
-            urlencode the login page;s URL and append as a parameter 
-            in the queryString.
-            If login fails, user returns to the refererUrl. If login
-            succeeds, user should return to originUrl.
-        --%>
+      <%--------------- Construct popups to login/register -------------%>  
+      <li>
+        <a href="javascript:void(0)" onclick="popLogin()">Login</a>
+        <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+        <div id="loginForm" style="display:none;">
+          <h2 style="text-align: center">EuPathDB Account Login</h2>
+          <site:login includeCancel="true" />
+        </div>
+      </li>
 
-          <li>
-            <a href="javascript:void(0)" onclick="popLogin()">Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
-	    <div id="loginForm" style="display:none;"><h2 style="text-align: center">EuPathDB Account Login</h2><site:login includeCancel="true" /></div>
-              <%-- <ul class="login">
-                    <li><site:login /></li>
-              </ul> --%>
-
-         </li>
-          <li>
-<%--          <a href="<c:url value='/showRegister.do'/>" id='register'>Register</a> --%>
-
- <a href="javascript:void(0)" onclick="popRegister()">Register</a>
-	    <div id="registerForm" style="display:none;"><h2 style="text-align: center">EuPathDB Account Registration</h2><site:register includeCancel="true" /></div>
-
-       </li>
-
+      <li>
+        <a href="javascript:void(0)" onclick="popRegister()">Register</a>
+        <div id="registerForm" style="display:none;">
+          <h2 style="text-align: center">EuPathDB Account Registration</h2>
+          <site:register includeCancel="true" />
+        </div>
+      </li>
         
     </c:when>
 
     <c:otherwise>
-       <c:url value="processLogout.do" var="logoutUrl">
-          <c:param name="refererUrl" value="${originRequestUrl}"/> 
-       </c:url>
 
-          <li>
-            <a href="<c:url value='/showProfile.do'/>" id='profile'>${wdkUser.firstName} ${wdkUser.lastName}'s Profile<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a></li>
-          <li>
-            <a href="<c:url value='/${logoutUrl}' />" id='logout'>Logout</a></li>
+      <%--------------- Construct links to profile/logout -------------%>   
+      <c:url value="processLogout.do" var="logoutUrl">
+        <c:param name="refererUrl" value="${originRequestUrl}"/> 
+      </c:url>
+
+      <li>
+        <a href="<c:url value='/showProfile.do'/>" id='profile'>${wdkUser.firstName} ${wdkUser.lastName}'s Profile</a>
+        <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+      </li>
+
+      <li>
+        <a href="<c:url value='/${logoutUrl}' />" id='logout'>Logout</a>
+      </li>
 
     </c:otherwise>
   </c:choose>

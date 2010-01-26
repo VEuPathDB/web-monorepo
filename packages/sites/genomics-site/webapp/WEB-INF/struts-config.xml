@@ -315,7 +315,6 @@
       scope="session"
       name="loginForm">
       <forward name="show_query_history" path="/showApplication.do"/>
-      <forward name="show_login_page" path="/login.jsp"/>
     </action>
     <action
       path="/processRegister"
@@ -323,7 +322,6 @@
       scope="request"
       name="registerForm">
       <forward name="process_register" path="/processRegister.do"/>
-      <forward name="show_register" path="/register.jsp"/>
     </action>
     <action
       path="/processLogout"
@@ -345,7 +343,6 @@
       scope="session"
       name="passwordForm">
       <forward name="process_password" path="/processPassword.do" redirect="false"/>
-      <forward name="show_password" path="/password.jsp"/>
     </action>
     <action
       path="/processResetPassword"
@@ -353,35 +350,30 @@
       scope="session"
       name="resetPasswordForm">
       <forward name="show_password" path="/showPassword.do"/>
-      <forward name="show_reset_password" path="/resetpwd.jsp"/>
     </action>
     <action
       path="/showRegister"
       type="org.gusdb.wdk.controller.action.ShowRegisterAction"
       scope="session"
       name="showRegisterForm">
-      <forward name="show_register" path="/register.jsp"/>
     </action>
     <action
       path="/showProfile"
       type="org.gusdb.wdk.controller.action.ShowProfileAction"
       scope="session"
       name="showProfileForm">
-      <forward name="show_profile" path="/profile.jsp"/>
     </action>
     <action
       path="/showPassword"
       type="org.gusdb.wdk.controller.action.ShowPasswordAction"
       scope="session"
       name="showPasswordForm">
-      <forward name="show_password" path="/password.jsp"/>
     </action>
     <action
       path="/showResetPassword"
       type="org.gusdb.wdk.controller.action.ShowResetPasswordAction"
       scope="session"
       name="showResetPasswordForm">
-      <forward name="show_reset_password" path="/resetpwd.jsp"/>
     </action>
    <action
       path="/addComment"
