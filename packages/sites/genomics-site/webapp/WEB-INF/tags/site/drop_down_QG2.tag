@@ -38,7 +38,7 @@
 			<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
-    <a href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Genes</h2></a>
+    <a title="This one WADL contains documentation for all gene web service searches"  href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Genes</h2></a>
     <c:set var="children" value="${rootCat.webserviceChildren}" />
 </c:when>
 <c:otherwise>
