@@ -1608,6 +1608,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  tn.name_class = 'scientific name' 
   AND  gf.external_database_release_id = edr.external_database_release_id
   AND  edr.external_database_id = ed.external_database_id
+  AND  ed.name = $$extDbName$$ 
 ORDER BY 
        fl.start_min
 ]]>
@@ -4471,6 +4472,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  edr.external_database_id = ed.external_database_id 
   AND  fl_gf.na_sequence_id = fl.na_sequence_id
   AND  ga.na_feature_id (+) = fl.parent_id
+  AND  ed.name = $$extDbName$$ 
 ORDER BY 
        fl.start_min
 ]]>
