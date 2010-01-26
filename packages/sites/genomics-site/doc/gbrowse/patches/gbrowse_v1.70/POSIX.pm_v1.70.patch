@@ -1,0 +1,15 @@
+--- POSIX.pm.1.70	2010-01-26 16:59:10.000000000 -0500
++++ POSIX.pm	2010-01-26 17:00:29.000000000 -0500
+@@ -141,6 +141,12 @@
+ 
+    TRACKS   => 'Tracks',
+ 
++   PRESET_TRACKS    => 'Built-in Track Configurations',
++   MY_PRESET_TRACKS => 'My Track Configurations',
++   MY_REGIONS       => 'My Regions of Interest',
++   SAVE_MY_TRACKS   => 'Save current tracks as',
++   SAVE_MY_REGION   => 'Save current region as',
++
+    EXTERNAL_TRACKS => '<i>External tracks italicized</i>',
+ 
+    OVERVIEW_TRACKS => '<sup>*</sup>Overview track',
