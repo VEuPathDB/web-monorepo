@@ -17,6 +17,7 @@
 
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 <c:set var="organism" value="${attrs['organism'].value}"/>
+<c:set var="organism_full" value="${attrs['organism_full'].value}"/>
 
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
@@ -80,7 +81,7 @@ Gene+Repeat+EST+BLASTX
 </c:set>
 
 <c:set var="attribution">
-T.vaginalis_scaffolds,T.vaginalis_Annotation
+E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 </c:set>
 
 <c:if test="${gtracks ne ''}">
@@ -160,7 +161,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
 
 <c:set var="attribution">
-GO,InterproscanData,FILL
+GO,InterproscanData
 </c:set>
 
 <wdk:wdkTable tblName="GoTerms" isOpen="true" attribution="${attribution}"/>
@@ -297,10 +298,23 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 </c:if>
 <%------------------------------------------------------------------%> 
 
-
-<c:set var="reference">
-FILL 
-</c:set>
+<c:choose>
+<c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>E. dispar</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+  </c:set>
+</c:when>
+<c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>E. histolytica</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+  </c:set>
+</c:when>
+<c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>E. invadens</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+  </c:set>
+</c:when>
+</c:choose>
 
 <site:panel 
     displayName="Genome Sequencing and Annotation by:"

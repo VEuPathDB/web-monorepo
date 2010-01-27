@@ -17,6 +17,7 @@
 
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 <c:set var="organism" value="${attrs['organism'].value}"/>
+<c:set var="organism_full" value="${attrs['organism_full'].value}"/>
 
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
@@ -80,7 +81,7 @@ Gene+Repeat+EST+BLASTX
 </c:set>
 
 <c:set var="attribution">
-T.vaginalis_scaffolds,T.vaginalis_Annotation
+EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations
 </c:set>
 
 <c:if test="${gtracks ne ''}">
@@ -160,7 +161,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
 
 <c:set var="attribution">
-GO,InterproscanData,FILL
+GO,InterproscanData
 </c:set>
 
 <wdk:wdkTable tblName="GoTerms" isOpen="true" attribution="${attribution}"/>
@@ -298,9 +299,18 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 <%------------------------------------------------------------------%> 
 
 
-<c:set var="reference">
-FILL 
-</c:set>
+<c:choose>
+<c:when test='${organism_full eq "Encephalitozoon cuniculi GB-M1"}'>
+  <c:set var="reference">
+   Sequence and annotations from BioHealthBase for <i>Encephalitozoon cuniculi GB-M1</i> chromosomes in Genbank (sequence and annotated features) format. 
+  </c:set>
+</c:when>
+<c:when test='${organism_full eq "Encephalitozoon intestinalis"}'>
+  <c:set var="reference">
+   Sequence and annotations from Patrick Keeling(pkeeling@interchange.ubc.ca)at Canadian Institute for Advanced Research, Evolutionary Biology Program, Department of Botany, University of British Columbia for <i>Encephalitozoon intestinalis</i> chromosomes in EMBL (sequence and annotated features) format. 
+  </c:set>
+</c:when>
+</c:choose>
 
 <site:panel 
     displayName="Genome Sequencing and Annotation by:"
