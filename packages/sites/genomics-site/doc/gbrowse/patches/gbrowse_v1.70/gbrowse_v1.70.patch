@@ -1,0 +1,249 @@
+--- gbrowse_v1.70	2010-01-26 17:04:05.000000000 -0500
++++ gbrowse	2010-01-26 19:11:59.000000000 -0500
+@@ -31,6 +31,7 @@
+ use CGI qw(:standard unescape escape escapeHTML center *table *dl *TR *td script);
+ use CGI::Toggle;
+ use CGI::Cookie;
++use CGI::Session;
+ 
+ use vars qw($CONFIG $MAX_SEGMENT $DEFAULT_SEGMENT
+ 	    $HEADER $HTML $UA $VERSION $BIOGRAPHICS_VERSION $CONF_DIR
+@@ -151,6 +152,10 @@
+ my $cookies;
+ if (param('reset')) {
+   $cookies = reset_cookies($page_settings);
++} elsif (param('save')) {
++  $cookies = save_user_settings($page_settings,$session, param('setting_name'), param('setting_options'));
++} elsif (param('delete')) {
++  delete_settings(param('delete'), $session);
+ } else {
+   $cookies = [$cookie];
+ }
+@@ -351,7 +356,9 @@
+ else {
+   my $header = $CONFIG->header;
+   print $header || h1($description) if $page_settings->{head};
+-  main_display($segments,$features,$page_settings);
++  #main_display($segments,$features,$page_settings);
++	main_display($segments,$features,$page_settings,$session);
++
+ }
+ 
+ print_bottom($VERSION);
+@@ -405,7 +412,8 @@
+ }
+ 
+ sub main_display {
+-  my ($segments,$features,$page_settings) = @_;
++  #my ($segments,$features,$page_settings) = @_;
++	my ($segments,$features,$page_settings,$session) = @_;
+   my ($segment,$whole_segment);
+ 
+   # first of all, if there are no segments, then try a keyword search and store the results
+@@ -533,6 +541,10 @@
+   print html_frag('html6',$segment,$page_settings);
+   print end_form();
+ 
++  print my_preset_table($page_settings, $session);
++  print preset_table($page_settings, $session);
++  print my_regions_table($page_settings, $session);
++
+   unless ($CONFIG->section_setting('upload_tracks') eq 'off') {
+     print start_multipart_form(-name=>'externalform');
+     print external_table($page_settings,$feature_files);
+@@ -3792,3 +3804,195 @@
+ END
+ }
+ 
++sub my_preset_table {
++
++  my $settings = shift;
++  my $session = shift;
++
++  my $hash = $session->session->param('user_tracks');
++  my $track_lists .= qq(<table border=0 >);
++  foreach(keys %$hash) {
++
++    my $my_setting = $$hash{$_};
++    my ($tracks, $name, $region);
++    if($my_setting =~ /^(.*?)######(.*?)$/) {
++      $tracks = $1;
++      $name = $2;
++      $track_lists .= qq(<tr>
++      <td width=30%>&nbsp;&nbsp;&nbsp;<a href="?name=$settings->{name};label=$tracks">$name</a></td>
++      <td width=70% align=left><a href="?delete=$_"><font color=red>Delete</font></a></td>
++      </tr>);
++     } 
++  }
++  $track_lists .= qq(</table>);
++
++  autoEscape(0);
++
++ my $save = join('',
++            start_form(-name=>'trackform', -method=>'GET'),
++            table({-class=>'searchbody',-border=>0,-width=>'100%'},
++            TR( td({-align=>'left',-valign=>'bottom'},
++              submit(-value => $CONFIG->tr('SAVE_MY_TRACKS'), -name=>'save'),
++              hidden(-value => 'Tracks', -name=>"setting_options", -override=>1),
++              textfield(-name  => 'setting_name',
++                        -value => 'My Gene Track',
++                        -size  => 25,
++                        -override=>1,
++             )))),
++            end_form());
++ my $content =
++   table({-class=>'searchbody',-border=>0,-width=>'100%'},
++   TR( td($track_lists),
++   ),
++   );
++
++   return toggle($settings, 'MY_PRESET_TRACKS',$content.$save);
++}
++
++sub my_regions_table {
++ 
++  my $settings = shift;
++  my $session = shift;
++ 
++  my $hash = $session->session->param('user_tracks');
++  my $region_lists .= qq(<table border=0 >);
++  foreach(keys %$hash) {
++ 
++     my $my_setting = $$hash{$_};
++    my ($tracks, $name, $region);
++     if($my_setting =~ /^(.*?)######(.*?)$/) {
++    } else {
++      # a hack, check it later
++      my $display = $my_setting;
++      $my_setting =~ s/\((.*?)\)$//ig;
++      $region_lists .= qq(<tr>
++        <td width=50%>&nbsp;&nbsp;&nbsp;<a href="?name=$my_setting">$display</a></td>
++        <td width=50% align=left><a href="?delete=$_"><font color=red>Delete</font></a></td>
++        </tr>);
++    }
++  }
++  $region_lists .= qq(</table>);
++ 
++  autoEscape(0);
++
++   my $save = join('',
++          start_form(-name=>'regionform', -method=>'GET'),
++          table({-class=>'searchbody',-border=>0,-width=>'100%'},
++          TR( td({-align=>'left',-valign=>'bottom'},
++             submit(-value => $CONFIG->tr('SAVE_MY_REGION'), -name=>'save'),
++             hidden(-value => 'Region', -name=>"setting_options", -override=>1),
++           textfield(-name  => 'setting_name',
++             -value => 'chr 1 centromeric',
++             -size  => 25,
++             -override=>1,
++            )))),
++          end_form());
++ 
++  my $content =
++    table({-class=>'searchbody',-border=>0,-width=>'100%'},
++    TR(
++      td($region_lists),
++    )
++    );
++ 
++    return toggle($settings, 'MY_REGIONS',$content.$save);
++}
++
++sub preset_table {
++ 
++  my $settings = shift;
++  my @labels = @{$settings->{tracks}};
++  my %preset_tracks;
++ 
++  foreach (@labels) {
++    my $preset = $CONFIG->setting($_ => 'preset');
++    if($preset) {
++      my @sets = split /\s+/, $preset;
++      foreach my $name (@sets) {
++        push @{$preset_tracks{$name}}, $_;
++      }
++    }
++  }
++ 
++  my @preset_lists = ();
++  while(my ($k,$v) = each %preset_tracks) {
++ 
++    my $str = "";
++    foreach(@$v) {
++      $str .= $_. "-";
++    }
++    $str =~ s/\-$//ig;
++    $str = qq|&nbsp;&nbsp;&nbsp;<a href="?name=$  settings->{name};label=$str">$k</a><br />|;
++    push @preset_lists, $str;
++  }
++ 
++  autoEscape(0);
++
++  my $content =
++    table({-class=>'searchbody',-border=>0,-width=>'100%'},
++    TR(
++      td(@preset_lists,),
++      )
++    );
++ 
++    return toggle($settings, 'PRESET_TRACKS',$content);
++}
++
++# Save current user settings (tracks/regions)
++sub save_user_settings {
++ 
++  my $settings = shift;
++  my $session = shift;
++  my $name = shift;
++  my $type = shift;
++ 
++  my $region = $settings->{name};
++  $name  = $name || 'My Setting';
++  my @labels = $CONFIG->labels;
++  my $str = "";
++ 
++  foreach (@labels) {
++    if( $settings->{features}{$_}{visible} == 1) {
++      $str .= $_."-";
++    }
++  }
++  $str =~ s/\-$//i;
++ 
++   if($type =~ /Tracks/i) {
++    $str .= "######". $name;
++  } elsif ($type =~ /Region/i) {
++    $str =  "$region ($name)";
++  }
++
++  my $user_session = new CGI::Session("driver:File", undef, {Directory=>'/tmp'});
++ 
++  my $hash = $session->session->param('user_tracks');
++  my $uid = $user_session->id;
++  if ($hash) {
++    my $flag = 0;
++    foreach(keys %$hash) {
++      if($str eq $$hash{$_}) {
++        $flag = 1;
++      }
++    }
++    if($flag == 0) {
++    $$hash{$uid} = $str;
++    }
++    $session->session->param(-name => 'user_tracks', -value => $hash);
++  } else {
++    my %hash = ($uid => $str);
++    $session->session->param(-name => 'user_tracks', -value => \%hash);
++  }
++}
++
++sub delete_settings {
++ 
++  my $uid = shift;
++  my $session = shift;
++ 
++  my $hash = $session->session->param('user_tracks');
++  if (exists $$hash{$uid}) {
++    delete($$hash{$uid});
++    $session->session->param(-name => 'user_tracks', -value => $hash);
++  }
++}
