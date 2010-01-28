@@ -76,9 +76,23 @@ ${attrs['organism'].value}<br>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
-<c:set var="gtracks">
-Gene+Repeat+EST+BLASTX
-</c:set>
+<c:choose>
+  <c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpansEinvadens+SyntenyGenesEinvadens+SyntenySpansEhistolytica+SyntenyGenesEhistolytica+Repeat+EST+BLASTX
+    </c:set>
+  </c:when>
+  <c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpansEinvadens+SyntenyGenesEinvadens+SyntenySpansEdispar+SyntenyGenesEdispar+Repeat+EST+BLASTX
+    </c:set> 
+  </c:when>
+  <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpansEdispar+SyntenyGenesEdispar+SyntenySpansEhistolytica+SyntenyGenesEhistolytica+Repeat+EST+BLASTX
+    </c:set>
+  </c:when>
+</c:choose>
 
 <c:set var="attribution">
 E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
@@ -86,7 +100,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 
 <c:if test="${gtracks ne ''}">
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -94,7 +108,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
   <c:set var="gnCtxImg">
     <center><div id="${gnCtxDivId}"></div></center>
     
-    <c:set var="labels" value="${fn:replace(tracks, '+', ';label=')}" />
+    <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
     <c:set var="gbrowseUrl">
         /cgi-bin/gbrowse/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
     </c:set>
