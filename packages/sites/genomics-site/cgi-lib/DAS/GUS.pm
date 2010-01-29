@@ -106,7 +106,8 @@ sub new {
 
   my @path = split(/\//, $docroot); # /var/www/sfischer.plasmodb.org/..."
   my $site = $path[3]; # sfischer.plasmodb.org
-  $self->{queryLogger} = DAS::GUS::QueryLogger->new("/var/www/Common/tmp/gbrowseLogs/$site", $site);
+  my $inGenePage = $ENV{QUERY_STRING} =~ 'genepage';
+  $self->{queryLogger} = DAS::GUS::QueryLogger->new("/var/www/Common/tmp/gbrowseLogs/$site", $site, $inGenePage);
 
   return $self;
 }
@@ -320,7 +321,7 @@ sub get_feature_by_name {
     #my $un = uc($name);
     #$query =~ s/\?/\'\%$un\%\'/g;
     $sth = $self->dbh->prepare($query);
-    print STDERR "\n\nHELLO!!!!!!!!!!!!!\n\n";
+
     $self->{queryLogger}->execute($sth, $query, "GUS.pm", "get_feature_by_name");
 #    $sth->execute();
 

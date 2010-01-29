@@ -27,10 +27,11 @@ my $LOGSIZES = {'w1' => 250, 'q1' => 25, 'b1' => 25,
 #####################################################
 
 sub new {
-    my ($class, $logFileDirectory, $site) = @_;
+    my ($class, $logFileDirectory, $site, $inGenePage) = @_;
     my $self = {};
 
     if ($logFileDirectory) {
+      $self->{inGenePage} = $inGenePage;
       $self->{logFileDir} = $logFileDirectory;
       mkpath($logFileDirectory);
       my @siteparts = split(/\./, $site);
@@ -56,7 +57,7 @@ sub new {
 
 # execute a query, and log if we have a handle
 sub execute {
-    my ($self, $sth, $sql, $moduleName, $queryName, $range, $inGenePage) = @_;
+    my ($self, $sth, $sql, $moduleName, $queryName, $range) = @_;
     my $start_time = time();
     my $status = $sth->execute();
 
@@ -87,9 +88,10 @@ sub execute {
 	$howSlow = 's';
       }
       if ($fh) {
+        my $inGenePage = $self->{inGenePage}? 'GENEPAGE ' : ''; 
 #        lock($fh);
 	print $fh "============================================================================\n";
-	print $fh "QUERYTIME\t" . localtime() . "\t" . time() . "\t$howSlow\t$moduleName\t" . sprintf("%.2f", $elapsed_time) . "\t$reportedRange\t$queryName\n";
+	print $fh "${inGenePage}QUERYTIME\t" . localtime() . "\t" . time() . "\t$howSlow\t$moduleName\t" . sprintf("%.2f", $elapsed_time) . "\t$reportedRange\t$queryName\n";
 	print $fh "============================================================================\n";
 	print $fh "$sql\n\n";
 #	unlock($fh);
