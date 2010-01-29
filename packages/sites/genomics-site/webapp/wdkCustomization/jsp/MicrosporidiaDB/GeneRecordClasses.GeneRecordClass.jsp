@@ -76,9 +76,18 @@ ${attrs['organism'].value}<br>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
-<c:set var="gtracks">
-Gene+Repeat+EST+BLASTX
-</c:set>
+<c:choose>
+  <c:when test='${organism_full eq "Encephalitozoon cuniculi GB-M1"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+Repeat+EST+BLASTX
+    </c:set>
+  </c:when>
+  <c:when test='${organism_full eq "Encephalitozoon intestinalis"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+Repeat+EST+BLASTX
+    </c:set>
+  </c:when>
+</c:choose>
 
 <c:set var="attribution">
 EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations
@@ -86,7 +95,7 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations
 
 <c:if test="${gtracks ne ''}">
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/microsporidiadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/microsporidiadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -94,9 +103,9 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations
   <c:set var="gnCtxImg">
     <center><div id="${gnCtxDivId}"></div></center>
     
-    <c:set var="labels" value="${fn:replace(tracks, '+', ';label=')}" />
+    <c:set var="labels" value="${fn:replace(gtracks, '+', '-')}" />
     <c:set var="gbrowseUrl">
-        /cgi-bin/gbrowse/microsporidiadb/?name=${contig}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
+        /cgi-bin/gbrowse/microsporidiadb/?name=${contig}:${context_start_range}..${context_end_range};label=${labels};h_feat=${id}@yellow
     </c:set>
     <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
   </c:set>
