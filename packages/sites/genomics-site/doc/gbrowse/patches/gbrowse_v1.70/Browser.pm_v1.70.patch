@@ -1,0 +1,99 @@
+--- Browser.pm.1.70	2010-02-01 10:15:36.000000000 -0500
++++ Browser.pm	2010-02-01 11:41:37.000000000 -0500
+@@ -652,6 +652,16 @@
+   $self->config->label2type(@_);
+ }
+ 
++sub label2sqlParam {
++  my $self = shift;
++  $self->config->label2sqlParam(@_);
++}
++   
++sub label2sqlName {
++  my $self = shift;
++  $self->config->label2sqlName(@_);
++}
++
+ =head2 type2label()
+ 
+   $label = $browser->type2label($type);
+@@ -1126,6 +1136,7 @@
+   # The javascript functions for rubber-band selection
+   # need this ID as a hook, please do not change it
+   my $id = "${section}_image";
++  my $image_id = $self->setting('image_id');
+ 
+   my $img = $button
+       ? image_button(-src   => $url,
+@@ -1135,14 +1146,15 @@
+       : img({-src=>$url,
+ 	     -usemap=>'#'.$map_name,
+ 	     -width => $width,
+-	     -id    => $id,
++	     -id    => $id. $image_id,
+ 	     -height=> $height,
+ 	     -border=> 0,
+ 	     -name  => $section,
+ 	     -alt   => $section});
+ 
+   my $html    = div({-align=>'center'},$img);
+-  $map        = "<noscript>\n<map name=\"$map_name\">$map</map>\n</noscript>" if $css_map;
++  #$map        = "<noscript>\n<map name=\"$map_name\">$map</map>\n</noscript>" if $css_map;
++  $map        = "<map name=\"$map_name\">$map</map>"; #if $css_map;
+   $css_map  ||= '';
+   $html      .= $css_map . $map;
+ 
+@@ -1333,6 +1345,8 @@
+   #---------------------------------------------------------------------------------
+   # Add features to the database
+   my @feature_types = map { $conf->label2type($_,$length) } grep {!$cached{$_}} @$labels;
++  my @feature_sqlParams = map { $conf->label2sqlParam($_,$length) } grep {!$cached{$_}} @$labels;
++  my @feature_sqlNames = map { $conf->label2sqlName($_,$length) } grep {!$cached{$_}} @$labels;
+   my %filters = map { my %conf =  $conf->style($_); 
+ 		      $conf{'-filter'} ? ($_ => $conf{'-filter'})
+ 			               : ()
+@@ -1343,6 +1357,8 @@
+ 			       -segment => $segment,
+ 			       -options => $options,
+ 			       -limits  => $limits,
++			       -sqlParams  => \@feature_sqlParams,
++			       -sqlNames   => \@feature_sqlNames,
+ 			      ) if @feature_types;
+ 
+   # ------------------------------------------------------------------------------------------
+@@ -1457,6 +1473,8 @@
+   my $filters         = $args{-filters} or die "programming error";
+   my $options         = $args{-options} or die "programming error";
+   my $limits          = $args{-limits}  or die "programming error";
++  my $sqlParams       = $args{-sqlParams}  or die "programming error";
++  my $sqlNames        = $args{-sqlNames}   or die "programming error";
+ 
+   my $max_labels      = $self->label_density;
+   my $max_bump        = $self->bump_density;
+@@ -1465,7 +1483,8 @@
+   my $conf    = $self->config;
+ 
+   my (%groups,%feature_count,%group_pattern,%group_field);
+-  my $iterator = $segment->get_feature_stream(-type=>$feature_types);
++  #my $iterator = $segment->get_feature_stream(-type=>$feature_types);
++  my $iterator = $segment->get_feature_stream(-type=>$feature_types,-sqlParam=>$sqlParams,-sqlName=>$sqlNames);
+ 
+   while (my $feature = $iterator->next_seq) {
+ 
+@@ -3247,6 +3266,16 @@
+   return Bio::Graphics::Browser::Util::shellwords($self->setting($l,'feature')||$self->setting($label,'feature')||'');
+ }
+ 
++sub label2sqlParam {
++  my ($self,$label,$length) = @_;
++  return $self->setting($label,'sqlparam')||'';
++}
++
++sub label2sqlName {
++  my ($self,$label,$length) = @_;
++  return $self->setting($label,'sqlname')||'';
++}
++
+ sub style {
+   my ($self,$label,$length) = @_;
+   my $l = $self->semantic_label($label,$length);
