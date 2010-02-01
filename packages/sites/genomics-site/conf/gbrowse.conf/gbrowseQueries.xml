@@ -740,19 +740,22 @@ WHERE  fl.feature_type ='SAGETagFeature'
      <sql>
 <![CDATA[
 SELECT 
-       ra.rnaseq_align_id feature_id,
+       ra.nextgenseq_align_id feature_id,
        'splice' type,
        'curated' source,
        ra.na_sequence_id as parent_id, ra.start_a as startm, ra.end_a as end,
-       ra.query_id||'-'||ra.end_b||'('||ra.intron_size||')' name, ra.strand||'1' as strand, 
-       'genome_matches=1' || '$dlm' ||
+       ra.query_id as name, ra.strand||'1' as strand, 
+       'genome_matches=' || ra.genome_matches || '$dlm' ||
        'count='|| ra.intron_size || '$dlm' ||
        'utr_length='|| ra.end_b || '$dlm' || 
        'sample='|| ra.sample || '$dlm' || 
        'gene_id=' || ra.query_id atts
-FROM  apidb.rnaseq_align ra
-WHERE ra.na_sequence_id = $srcfeature_id
- AND  ra.sample = 'gc_curated_ss'
+FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
+WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+ AND  rel.external_database_id = rel.external_database_id
+ AND  ra.external_database_release_id = rel.external_database_release_id
+ AND  ra.na_sequence_id = $srcfeature_id
+ AND  ra.sample = 'curated_splice'
  AND  ra.start_a >= $base_start 
  AND  ra.end_a <= $rend
 ]]>
@@ -763,19 +766,22 @@ WHERE ra.na_sequence_id = $srcfeature_id
      <sql>
 <![CDATA[
 SELECT 
-       ra.rnaseq_align_id feature_id,
+       ra.nextgenseq_align_id feature_id,
        'polya' type,
        'curated' source,
        ra.na_sequence_id as parent_id, ra.start_a as startm, ra.end_a as end,
-       ra.query_id||'-'||ra.end_b||'('||ra.intron_size||')' name, ra.strand||'1' as strand, 
+       ra.query_id as name, ra.strand||'1' as strand, 
        'genome_matches=1' || '$dlm' ||
        'count='|| ra.intron_size || '$dlm' ||
        'utr_length='|| ra.end_b || '$dlm' || 
        'sample='|| ra.sample || '$dlm' || 
        'gene_id=' || ra.query_id atts
-FROM  apidb.rnaseq_align ra
-WHERE ra.na_sequence_id = $srcfeature_id
- AND  ra.sample = 'gc_curated_pas'
+FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
+WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+ AND  rel.external_database_id = rel.external_database_id
+ AND  ra.external_database_release_id = rel.external_database_release_id
+ AND  ra.na_sequence_id = $srcfeature_id
+ AND  ra.sample = 'curated_polyA'
  AND  ra.start_a >= $base_start 
  AND  ra.end_a <= $rend
 ]]>
