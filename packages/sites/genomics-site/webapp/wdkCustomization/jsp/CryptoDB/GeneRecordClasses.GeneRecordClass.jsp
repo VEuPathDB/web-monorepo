@@ -152,12 +152,12 @@ ${attrs['linkout'].value}
 <c:choose>
 <c:when test="${organism eq parvumOrganism}">
     <c:set var="gtracks">
-    ${snptrack}Gene+SyntenySpanParvumChr6+SyntenyParvumChr6+SyntenySpanHominis+SyntenyHominis+SyntenySpanMuris+SyntenyMuris+UnifiedMassSpecPeptides+EST+BLASTX+Cluster
+    ${snptrack}Gene+SyntenySpanParvumChr6+SyntenyParvumChr6+SyntenySpanHominis+SyntenyHominis+SyntenySpanMuris+SyntenyMuris+UnifiedMassSpecPeptides+BLASTX+Cluster
     </c:set>
 
     <c:set var="attribution">
     C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,
-    C.parvumChr6_scaffoldsGB,dbEST,Wastling2DGelLSMassSpec, NRDB,
+    C.parvumChr6_scaffoldsGB,Wastling2DGelLSMassSpec, NRDB,
     Wastling1DGelLSMassSpec,
     WastlingMudPitSolMassSpec,
     WastlingMudPitInsolMassSpec,
