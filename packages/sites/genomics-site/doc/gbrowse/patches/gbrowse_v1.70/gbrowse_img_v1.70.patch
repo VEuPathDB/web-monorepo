@@ -1,0 +1,12 @@
+--- gbrowse_img_1_70	2010-02-01 11:47:25.000000000 -0500
++++ gbrowse_img	2010-02-01 11:57:53.000000000 -0500
+@@ -236,7 +236,8 @@
+ 				drag_n_drop   => 0,
+ 				cache_extra   => [map {$_->mtime} values %$feature_list],
+ 				$feature_hilighting ? (hilite_callback => $feature_hilighting) : (),
+-				$region_hilighting  ? (postgrid        => $region_hilighting)  : (),
++				$region_hilighting  ? (postgrid        => $region_hilighting)  : 
++				  (postgrid => $CONFIG->setting('postgrid')),
+ 				-truecolor    => $CONFIG->setting('truecolor') || 0,
+ 				-grid         => $grid,
+ 			       }
