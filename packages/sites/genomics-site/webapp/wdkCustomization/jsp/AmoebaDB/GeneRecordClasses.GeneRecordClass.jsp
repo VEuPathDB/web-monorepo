@@ -40,6 +40,16 @@
 <c:set var="prd" value="${attrs['product'].value}"/>
 <c:set var="overview" value="${attrs['overview']}"/>
 <c:set var="length" value="${attrs['transcript_length']}"/>
+
+<c:set var="start" value="${attrs['start_min_text'].value}"/>
+<c:set var="end" value="${attrs['end_max_text'].value}"/>
+<c:set var="strand" value="+"/>
+<c:if test="${attrs['strand'].value == 'reverse'}">
+  <c:set var="strand" value="-"/>
+</c:if>
+
+
+
 <%-- display page header with recordClass type in banner --%>
 
 <site:header title="AmoebaDB : gene ${id} (${prd})"
@@ -124,6 +134,30 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
     attribution="${attribution}"
   />
 </c:if>
+
+
+<!-- Mercator / Mavid alignments -->
+
+ <c:if test="${strand eq '-'}">
+   <c:set var="revCompOn" value="1"/>
+  </c:if>
+
+<c:set var="mercatorAlign">
+<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+                    contigId="${contig}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
+                    availableGenomes=""/>
+</c:set>
+
+<wdk:toggle isOpen="false"
+  name="mercatorAlignment"
+  displayName="Multiple Sequence Alignment"
+  content="${mercatorAlign}"
+  attribution=""/>
+
+
+
+
+
 
 <site:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>

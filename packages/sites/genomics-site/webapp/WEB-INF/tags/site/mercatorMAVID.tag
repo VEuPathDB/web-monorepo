@@ -56,7 +56,7 @@ return true;
 </SCRIPT>
 
 <c:set var="cgiScript" value='mavidAlign'/>
-<c:if test="${projectId eq 'TriTrypDB'}">
+<c:if test="${projectId eq 'TriTrypDB' || projectId eq 'AmoebaDB'}">
   <c:set var="cgiScript" value='pairwiseMercator'/>
 </c:if>
 
@@ -121,7 +121,7 @@ return true;
               <input type="checkbox" name="genomes" value="t_cruziesmeraldo" checked>T.cruzi esmeraldo
             </td>
            </tr>
-           </tr>
+           <tr>
             <td>
               <input type="checkbox" name="genomes" value="t_vivax" checked>T.vivax
             </td>
@@ -139,10 +139,29 @@ return true;
 
      </td></tr>
 </c:if>
+<c:if test="${projectId eq 'AmoebaDB'}">
+
+   <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
+        <table>
+          <tr>
+            <td>
+              <input type="checkbox" name="genomes" value="e_dispar" checked>E.dispar
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="e_histolytica" checked>E.histolytica
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="e_invadens" checked>E.invadens
+            </td>
+           </tr>
+         </table>
+     </td></tr>
+</c:if>
+
     <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
         <input type="radio" name="type" value="clustal" checked>clustal
 
-<c:if test="${projectId ne 'TriTrypDB'}">
+<c:if test="${projectId ne 'TriTrypDB' && projectId ne 'AmoebaDB'}">
         <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
 </c:if>
         <input type="radio" name="type" value="fasta_ungapped">multi fasta

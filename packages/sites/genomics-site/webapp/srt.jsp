@@ -56,7 +56,7 @@
 <a href="#gene">Gene IDs</a> | 
 <a href="#contig">Contig IDs</a> |  
 <c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB' || wdkModel.name eq 'TriTrypDB'}">
-<a href="#mercator">Alignments</a> |
+<a href="#msa">Alignments</a> |
 </c:if>
 <a href="#orf">ORF IDs</a> </center></b><hr>
   </td>
@@ -179,10 +179,11 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
   </form>
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
-<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB' || wdkModel.name eq 'PlasmoDB' || wdkModel.name eq 'TriTrypDB' || wdkModel.name eq 'GiardiaDB'}">
+<c:if test="${wdkModel.name ne 'TrichDB' || wdkModel.name ne 'EuPathDB'}">
 
   <hr>
-<a name="mercator"></a>
+<h3><a name="msa">Retrieve Multiple Sequence Alignments by Contig / Genomic Sequence IDs</a></h3>
+
   <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${wdkModel.name}" start="15,000" 
                       end="30,000" inputContig="1" contigId="${contigsIds.default}" cellPadding="2"/>
 

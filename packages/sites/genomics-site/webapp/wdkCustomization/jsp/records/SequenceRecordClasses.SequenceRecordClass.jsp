@@ -164,9 +164,10 @@ ${externalLinks}
  </table>
 </form>
 
-<c:if test="${is_top_level eq '1' && ((projectId eq 'PlasmoDB' && fn:containsIgnoreCase(organism, 'falciparum')) || projectId eq 'TriTrypDB' || projectId eq 'CryptoDB' || projectId eq 'ToxoDB')}">
+<c:if test="${is_top_level eq '1' && ((projectId eq 'PlasmoDB' && fn:containsIgnoreCase(organism, 'falciparum')) || projectId eq 'TriTrypDB' || projectId eq 'CryptoDB' || projectId eq 'ToxoDB' || projectId eq 'AmoebaDB' || projectId eq 'MicrosporidiaDB')}">
 
   <br />
+<h3>Retrieve Multiple Sequence Alignments by Contig / Genomic Sequence IDs</h3>
   <c:if test="${attrs['has_msa'].value == 1}">
    <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" contigId="${id}"
       start="1" end="${attrs['length'].value}" bkgClass="secondary3" cellPadding="0"/>
