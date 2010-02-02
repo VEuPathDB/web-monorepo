@@ -29,8 +29,10 @@
 <div id="menubar">
 <div id="menu">
 
-
+<%--
 <ul><li><a href="<c:url value="/"/>">Home</a></li></ul>
+--%>
+
 
 <ul>
     <li><a href="<c:url value="/queries_tools.jsp"/>" title="START a NEW search strategy, or CLICK to access the page with all available searches (last option in the dropdown menu)." >New Search</a>
@@ -45,6 +47,24 @@
         </a>
     </li>
 </ul>
+
+
+<%--
+<ul>
+    <li><a href="<c:url value="/queries_tools.jsp"/>" title="CLICK to access all selected gene IDs, available for further work." >My Baskets:0</a>
+  
+    </li>
+</ul>
+
+
+<ul>
+    <li><a href="<c:url value="/queries_tools.jsp"/>" title="CLICK to access all your favorite genes" >My Favorites:0</a>
+  
+    </li>
+</ul>
+--%>
+
+
 
 <ul>
     <li><a href="#">Tools</a>
@@ -84,28 +104,27 @@
 <ul>
 	<li><a href="#">Data Summary</a>
   	<ul>
-    		<li><a title="Table summarizing all the genomes and their different data types available in EuPathDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Genomes and Data Types</a></li>
-	<li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
-	</ul>
-	</li>
-</ul>
 
-<ul>
-    <li><a href="#">Data Sources</a>
-  	<ul>
 <c:if test="${project == 'EuPathDB'}">
 	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods'/>">Data Sources and Methods</a></li>	
 </c:if>
 <c:if test="${project != 'EuPathDB'}">
-   	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.DataSources'/>">Data Detail</a></li>
+   	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.DataSources'/>">Data Sources</a></li>
  	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.Methods'/>">Analysis Methods</a></li>
 </c:if>
 <c:if test="${project == 'CryptoDB'}">
 	 <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
 </c:if>
 
-  	</ul>
-    </li>
+
+    	<li><a title="Table summarizing all the genomes and their different data types available in EuPathDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Genomes and Data Types</a></li>
+	<li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
+
+
+	</ul>
+	</li>
+
+
 </ul>
 
 <ul>
