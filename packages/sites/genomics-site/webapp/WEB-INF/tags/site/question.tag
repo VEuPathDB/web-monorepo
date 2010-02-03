@@ -305,6 +305,15 @@
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
+<%-- set the weight --%>
+<hr class="clear" />
+<div align="center">
+  <p><b>Assign Weight to results:</b> <input type="text" name="weight" value="0"> 
+  <p>You can assign an integral weight to the results, and the weight will be summed up when union with other search results.</p>
+  <p>sample weights are 10, 200, -50, etc.</p>
+</div>
+
+<hr class="clear" />
 <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
 
 <%--
