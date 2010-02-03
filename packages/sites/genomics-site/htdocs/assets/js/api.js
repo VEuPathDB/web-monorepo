@@ -58,7 +58,7 @@ function hideLayer(whichLayer) {
     //alert("hideLayer: " + whichLayer);
     if (document.getElementById) {
         // this is the way the standards work
-       	var style2 = document.getElementById(whichLayer).style;
+         var style2 = document.getElementById(whichLayer).style;
         style2.display = "";
     }
     else if (document.all) {
@@ -78,19 +78,19 @@ function getCookie(name) {
     var start = document.cookie.indexOf(name + "=");
 
     if ( (!start) && name != document.cookie.substring(0,name.length) ) {
-	return null;
+  return null;
     }
 
     if (start == -1) {
-	return null;
+  return null;
     }
 
     var len = start + name.length + 1;
     var end = document.cookie.indexOf(";",len);
     if (end == -1) {
-	end = document.cookie.length;
+  end = document.cookie.length;
     }
-	
+  
     return unescape(document.cookie.substring(len,end));
 }
 
@@ -110,10 +110,10 @@ function setCookie(name, value, expires, path, domain, secure) {
 
 function deleteCookie(name, path, domain) {
     if (getCookie(name)) {
-	document.cookie = name + "=" +
-	    ( (path) ? ";path=" + path : "") +
-	    ( (domain) ? ";domain=" + domain : "") +
-	    ";expires=Thu, 01-Jan-70 00:00:01 GMT";
+  document.cookie = name + "=" +
+      ( (path) ? ";path=" + path : "") +
+      ( (domain) ? ";domain=" + domain : "") +
+      ";expires=Thu, 01-Jan-70 00:00:01 GMT";
     }
 }
 
@@ -122,9 +122,9 @@ var zeroDate = new Date(0,0,0);
 today.setTime(today.getTime() - zeroDate.getTime());
 
 var todaysDate = new Date(today.getYear(),
-			   today.getMonth(),
-			   today.getDate(),
-			   0, 0, 0);
+         today.getMonth(),
+         today.getDate(),
+         0, 0, 0);
 var expiresDate = new Date(todaysDate.getTime() + (8 * 7 * 86400000));
 
 function storeMasterCookie() {
@@ -143,7 +143,7 @@ function storeIntelligentCookie(name, value, expires, path, domain, secure) {
         var IntelligentCookie = getCookie(name);
         if ((!IntelligentCookie) || (IntelligentCookie != value)) {
             deleteCookie('MasterCookie');
-	}
+  }
     }
 }
 
@@ -257,23 +257,26 @@ function updateImageMapDiv(imgMapDivId, imgMapSrc, postLoadJS) {
           append("<br>Loading...");
 
     if (!isWorking && http) {
-      $(slot).append(loadingImg);
+      jQuery(slot).append(loadingImg);
       
-      $(slot).load(imgMapSrc, null, 
+      jQuery(slot).load(imgMapSrc, null, 
               function(responseText, status, XMLHttpRequest) {
-         $(postLoadJS.split(',')).each(function (i, val) {
+         jQuery.each(postLoadJS.split(','), function (i, val) {
             if (val.indexOf("wz_tooltip") != -1) {
-              $("div[id^=tOoLtIp]").remove(); // previously loaded wz_tooltips
+              jQuery("div[id^=tOoLtIp]").remove(); // previously loaded wz_tooltips
             }
-            js = $("<script>").
-                   attr("type", "text/javascript").
-                   attr("src", val);
-            $(slot).append(js);
+            js = document.createElement('script');
+            //js.setAttribute("type","text/javascript");
+            //js.setAttribute("src", val);
+            js = jQuery(document.createElement('script')).
+                 attr("type", "text/javascript").
+                 attr("src", val);
+            jQuery(slot).append(js);
          });
       });
        
       $().ajaxError(function(info,xhr){
-        $(imgMapDivId).append("Oops: " +  xhr.status + ' ' + xhr.statusText);
+        jQuery(imgMapDivId).append("Oops: " +  xhr.status + ' ' + xhr.statusText);
       });
       
     }
