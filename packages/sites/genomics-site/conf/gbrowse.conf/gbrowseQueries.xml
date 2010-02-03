@@ -743,7 +743,9 @@ SELECT
        ra.nextgenseq_align_id feature_id,
        'splice' type,
        'curated' source,
-       ra.na_sequence_id as parent_id, ra.start_a as startm, ra.end_a as end,
+       ra.na_sequence_id as parent_id, 
+       CASE WHEN ra.strand = '+' THEN ra.start_a + 2 ELSE ra.end_a - 2 END as startm, 
+       CASE WHEN ra.strand = '+' THEN ra.start_a + 2 ELSE ra.end_a - 2 END as end, 
        ra.query_id as name, ra.strand||'1' as strand, 
        'genome_matches=' || ra.genome_matches || '$dlm' ||
        'count='|| ra.intron_size || '$dlm' ||
@@ -769,7 +771,9 @@ SELECT
        ra.nextgenseq_align_id feature_id,
        'polya' type,
        'curated' source,
-       ra.na_sequence_id as parent_id, ra.start_a as startm, ra.end_a as end,
+       ra.na_sequence_id as parent_id, 
+       CASE WHEN ra.strand = '+' THEN ra.end_a ELSE ra.start_a END as startm, 
+       CASE WHEN ra.strand = '+' THEN ra.end_a ELSE ra.start_a END as end, 
        ra.query_id as name, ra.strand||'1' as strand, 
        'genome_matches=1' || '$dlm' ||
        'count='|| ra.intron_size || '$dlm' ||
