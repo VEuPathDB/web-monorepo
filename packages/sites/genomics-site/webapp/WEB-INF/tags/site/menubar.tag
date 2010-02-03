@@ -42,29 +42,24 @@
 
 <ul>
     <li><a id="mysearch" href="<c:url value="/showApplication.do"/>" title="Access your Search Strategies Workspace">
-<%-- 	<div id="mysearch">My Searches: ${count}</div>   --%>
 	My Searches: ${count} 
         </a>
     </li>
 </ul>
 
-
-<%--
+<%--  <c:if test = "${wdkUser.guest}">   --%>
 <ul>
-    <li><a href="<c:url value="/queries_tools.jsp"/>" title="CLICK to access all selected gene IDs, available for further work." >My Baskets:0</a>
-  
+    <li><a title="Here you store your IDs to do further work on them. In the future you will be able to keep selected IDs for other feature types such as ESTs, SNPs, genomic sequences, etc." onclick="this.blur()" href="javascript:showPanel('basket')">My Selected IDs:0</a>
     </li>
 </ul>
 
 
 <ul>
-    <li><a href="<c:url value="/queries_tools.jsp"/>" title="CLICK to access all your favorite genes" >My Favorites:0</a>
+    <li><a href="#" title="Here you store all your favorite IDs for easy access to their data" >My Favorites:0</a>
   
     </li>
 </ul>
---%>
-
-
+<%--  </c:if>  --%>
 
 <ul>
     <li><a href="#">Tools</a>
