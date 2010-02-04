@@ -54,7 +54,7 @@
   <td bgcolor="white" valign="top">
 <b><center>Download Sequences By <br>
 <a href="#gene">Gene IDs</a> | 
-<a href="#contig">Contig IDs</a> |  
+<a href="#sequence">Genomic Sequence IDs</a> |  
 <c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB' || wdkModel.name eq 'TriTrypDB'}">
 <a href="#msa">Alignments</a> |
 </c:if>
@@ -147,11 +147,11 @@
 
 <hr>
 
-<h3><a name="contig">Retrieve Sequences By Contig IDs</a></h3>
+<h3><a name="sequence">Retrieve Sequences By Genomic Sequence IDs</a></h3>
   <form action="/cgi-bin/${cSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
-    <tr><td colspan="2" valign="top"><b>Enter a list of Contig IDs (each ID on a separate line):</b></td><tr>
+    <tr><td colspan="2" valign="top"><b>Enter a list of Genomic Sequence IDs (each ID on a separate line):</b></td><tr>
     <tr><td colspan="2">
             <textarea name="ids" rows="4" cols="60">${contigsIds.default}
 ${contigsIds2.default} (14..700)
