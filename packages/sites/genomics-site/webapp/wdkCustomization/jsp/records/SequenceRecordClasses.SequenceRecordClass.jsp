@@ -479,6 +479,31 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
    Chromosome sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.
   </c:set>
 </c:when>
+<c:when test="${fn:contains(organism,'Entamoeba dispar') && projectId eq 'AmoebaDB'}">
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>E. dispar</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+  </c:set>
+</c:when>
+<c:when test="${fn:contains(organism,'Entamoeba histolytica') && projectId eq 'AmoebaDB'}">
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>E. histolytica</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+  </c:set>
+</c:when>
+<c:when test="${fn:contains(organism,'Entamoeba invadens') && projectId eq 'AmoebaDB'}">
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>E. invadens</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+  </c:set>
+</c:when>
+<c:when test="${fn:contains(organism,'Encephalitozoon cuniculi') && projectId eq 'MicrosporidiaDB'}">
+  <c:set var="reference">
+   Sequence and annotations from BioHealthBase for <i>Encephalitozoon cuniculi GB-M1</i> chromosomes in Genbank (sequence and annotated features) format. 
+  </c:set>
+</c:when>
+<c:when test="${fn:contains(organism,'Encephalitozoon intestinalis') && projectId eq 'MicrosporidiaDB'}">
+  <c:set var="reference">
+   Sequence and annotations from Patrick Keeling(pkeeling@interchange.ubc.ca)at Canadian Institute for Advanced Research, Evolutionary Biology Program, Department of Botany, University of British Columbia for <i>Encephalitozoon intestinalis</i> chromosomes in EMBL (sequence and annotated features) format. 
+  </c:set>
+</c:when>
 <c:otherwise>
     <c:set var="reference">
   <b>ERROR: can't find attribution information for organism "${organism}",
