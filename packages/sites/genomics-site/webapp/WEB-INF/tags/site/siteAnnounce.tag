@@ -75,9 +75,12 @@
 </c:set>
 
 <c:if test="${siteDown != ''}">
-<div class="errorbox">
-  <div class="downIcon"><img src="/images/stopSign.png" alt="stopSign" /></div>
-  <div class="downMessage">${siteDown}</div>
+<div class="error announcebox ${homeClass}">
+  <table><tr><td>
+               <img src="/images/stopSign.png" alt="stopSign" /></td>
+             <td>
+               <span class="warningMessage">${siteDown}</span>
+   </td></tr></table>
 </div>
 </c:if>
 
