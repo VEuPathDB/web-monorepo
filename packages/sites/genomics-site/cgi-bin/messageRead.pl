@@ -42,7 +42,8 @@ my $sql=q(SELECT m.message_text, c.category_name
             AND mp.message_id = m.message_id 
             AND m.message_category  =  c.category_name 
             AND CURRENT_TIMESTAMP BETWEEN START_DATE AND STOP_DATE
-            AND m.message_category = ? );
+            AND m.message_category = ?
+            ORDER BY m.message_id DESC);
 
 
 my $sth=$dbh->prepare($sql) or
