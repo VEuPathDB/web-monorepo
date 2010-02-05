@@ -228,4 +228,25 @@
     </div> <%-- end of param-group div --%>
 
 </c:forEach> <%-- end of foreach on paramGroups --%>
+<br/>
+<div name="All_weighting"
+     class="param-group" 
+     type="ShowHide">
+<c:set var="display" value="none"/>
+<c:set var="image" value="plus.gif"/>
+<div class="group-title">
+    <img class="group-handle" src='<c:url value="/images/${image}" />' />
+    Weighting Results
+</div>
+<div class="group-detail" style="display:${display};">
+    <div class="group-description">
+    	<p>You can assign an integral weight to the results, and the weight will be summed up when union with other search results.</p>
+		<p>sample weights are 10, 200, -50, etc.</p>
+    </div>
+  <p><b>Assign Weight to results:</b> <input type="text" name="weight" value="0">   
+</div>
+</div>
+<br/>
+
+
 </html:form>
