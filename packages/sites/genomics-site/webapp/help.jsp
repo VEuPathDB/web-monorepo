@@ -63,6 +63,7 @@
                     <tr><td colspan='3'><i>(maximum 10 Cc addresses, comma separated.)</i></td</tr>
                 <tr><td valign="top"><div class="medium">Message:</div></td>
                     <td><textarea name="message" cols="75" rows="8"></textarea>
+                        <input type="hidden" name="uid"     value="${wdkUser.userId}">
                         <input type="hidden" name="website" value="${site}">
                         <input type="hidden" name="version" value="${version}">
                         <input type="hidden" name="browser" value="${header['User-Agent']}">
