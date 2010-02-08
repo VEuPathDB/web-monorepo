@@ -99,17 +99,17 @@
 <!-- deal with specific contexts depending on organism -->
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
  <!--Alternate Gene Models are taking time are hence being currently avoided in the record page -->
- <!-- c:set var="tracks" value="Version4Genes+AnnotatedGenes+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+ChIPEinsteinPLK+ChIPEinsteinRHPeaks+ChIPEinsteinPLKPeaks+ChIPEinsteinTypeIIIPeaks" -->
- <c:set var="tracks" value="AnnotatedGenes+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+ChIPEinsteinPLK+ChIPEinsteinRHPeaks+ChIPEinsteinPLKPeaks+ChIPEinsteinTypeIIIPeaks"/>
+ <!-- c:set var="tracks" value="Version4Genes+Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+ChIPEinsteinPLK+ChIPEinsteinRHPeaks+ChIPEinsteinPLKPeaks+ChIPEinsteinTypeIIIPeaks" -->
+ <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+ChIPEinsteinPLK+ChIPEinsteinRHPeaks+ChIPEinsteinPLKPeaks+ChIPEinsteinTypeIIIPeaks"/>
 </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1'}">
-     <c:set var="tracks" value="AnnotatedGenes+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora"/>
+     <c:set var="tracks" value="Gene+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora"/>
 </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii VEG'}">
-     <c:set var="tracks" value="AnnotatedGenes+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanNeospora+SyntenyNeospora"/>
+     <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanNeospora+SyntenyNeospora"/>
 </c:if>
 <c:if test="${organism_full eq 'Neospora caninum'}">
-     <c:set var="tracks" value="AnnotatedGenes+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG"/>
+     <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG"/>
 </c:if>
 
 <c:set var="attribution">
