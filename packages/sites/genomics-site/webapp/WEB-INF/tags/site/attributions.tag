@@ -18,6 +18,7 @@ display the attributions.
               type="java.lang.String[]"
               description="an array of attribution objects"
 %>
+<c:catch var="error">
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="xqSet" value="${wdkModel.xmlQuestionSetsMap['XmlQuestions']}"/>
@@ -58,3 +59,7 @@ display the attributions.
     </div>
 </c:if>
 
+</c:catch>
+<c:if test="${error != null}">
+<b>Data sources:</b> not available (parsing error)
+</c:if>
