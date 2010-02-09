@@ -47,11 +47,11 @@
     </li>
 </ul>
 
-<c:if test = "${!wdkUser.guest}">   
+<%--<c:if test = "${!wdkUser.guest}">--%>
 	<ul>
     	<li><a href="#" title="Here you store all your favorite IDs for easy access to their data" >My Favorites:0</a></li>
 	</ul>
-</c:if>
+<%--</c:if>--%>
 
 <ul>
     <li><a href="#">Tools</a>
