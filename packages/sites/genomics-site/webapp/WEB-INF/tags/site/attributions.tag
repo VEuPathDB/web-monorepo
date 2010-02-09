@@ -61,5 +61,5 @@ display the attributions.
 
 </c:catch>
 <c:if test="${error != null}">
-<b>Data sources:</b> not available (parsing error)
+<b>Data sources:</b> <span style="color:red">Not available (Parsing Error)</span>
 </c:if>
