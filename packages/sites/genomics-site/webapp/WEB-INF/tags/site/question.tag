@@ -309,8 +309,9 @@
 <hr class="clear" />
 <div align="center">
   <p><b>Assign Weight to results:</b> <input type="text" name="weight" value="0"> 
-  <p>You can assign an integral weight to the results, and the weight will be summed up when union with other search results.</p>
-  <p>sample weights are 10, 200, -50, etc.</p>
+
+	<p>Optionally give this search a "weight" (for example 10, 200, -50). In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
+
 </div>
 
 <hr class="clear" />
