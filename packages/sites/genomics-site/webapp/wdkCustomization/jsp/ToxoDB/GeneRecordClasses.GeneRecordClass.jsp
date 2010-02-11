@@ -147,6 +147,10 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <wdk:wdkTable tblName="Strains" isOpen="true"
                attribution="T.gondiiGT1_contigsGB,T.gondiiME49_contigsGB,T.gondiiVEG_contigsGB"/>
 
+<!-- gene alias table -->
+<wdk:wdkTable tblName="Alias" isOpen="true"
+               attribution=""/>
+
 <!-- snps between strains -->
 <wdk:wdkTable tblName="SNPs" isOpen="false"
                    attribution="ME49_SNPs,AmitAlignmentSnps,Lindstrom454Snps"/>
