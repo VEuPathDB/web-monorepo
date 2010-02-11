@@ -32,7 +32,7 @@
 <%--
 <ul><li><a href="<c:url value="/"/>">Home</a></li></ul>
 --%>
-
+<ul style="width:0.5em;border:0"><li></li></ul>
 
 <ul>
     <li><a href="<c:url value="/queries_tools.jsp"/>" title="START a NEW search strategy, or CLICK to access the page with all available searches (last option in the dropdown menu)." >New Search</a>
@@ -42,7 +42,7 @@
 
 <ul>
     <li><a id="mysearch" href="<c:url value="/showApplication.do"/>" title="Access your Search Strategies Workspace">
-	My Strategies <span class="subscriptCount">${count}</span> 
+	My Strategies <span title="You have ${count} strategies" class="subscriptCount">${count}</span> 
         </a>
     </li>
 </ul>
