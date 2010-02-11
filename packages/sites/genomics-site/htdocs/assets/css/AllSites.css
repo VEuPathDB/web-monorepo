@@ -375,7 +375,7 @@ div.innertube #record-toolbox li {
 
 #header_rt {
    font-size: 12px;
-   width: 446px;   /* if shorter, long usernames will not fit */
+ /*  width: 446px;*/   /* it was making safari wrap with long usernames */
    float: right;
    text-align: right;
    margin-right: 25px;
