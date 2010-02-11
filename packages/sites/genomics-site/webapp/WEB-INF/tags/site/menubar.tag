@@ -42,14 +42,14 @@
 
 <ul>
     <li><a id="mysearch" href="<c:url value="/showApplication.do"/>" title="Access your Search Strategies Workspace">
-	My Strategies<span class="subscriptCount">${count}</span> 
+	My Strategies <span class="subscriptCount">${count}</span> 
         </a>
     </li>
 </ul>
 
 <%--<c:if test = "${!wdkUser.guest}">--%>
 	<ul>
-    	<li><a href="#" title="Here you store all your favorite IDs for easy access to their data" >My Favorites<span class="subscriptCount">0</span></a></li>
+    	<li><a id="mybasket" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">0</span></a></li>
 	</ul>
 <%--</c:if>--%>
 
