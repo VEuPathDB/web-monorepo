@@ -10,9 +10,6 @@
 <!-- get wdkModel name to display as page header -->
 <c:set value="${wdkModel.displayName}" var="project"/>
 
-<c:if test="${project == 'TriTrypDB'}">
-	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByPromastigoteTimeSeries" /> 
-</c:if>
 
 <wdk:errors/>
 
@@ -34,6 +31,9 @@
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
 <site:queryList2 questions="GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByTimeSeriesFoldChangeBradyRoos,GeneQuestions.GenesByTimeSeriesFoldChangeBradyFl,GeneQuestions.GenesByTimeSeriesFoldChangeBradyBoothroyd,GeneQuestions.ToxoGenesByDifferentialMeanExpression"/>
+</c:when>
+<c:when test = "${project == 'TriTrypDB'}">
+<site:queryList2 questions="GeneQuestions.GenesByPromastigoteTimeSeries,GeneQuestions.GenesByTbruceiTimeSeries"/>
 </c:when>
 </c:choose>
 
