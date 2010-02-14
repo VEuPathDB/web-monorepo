@@ -108,7 +108,7 @@ a:hover, a:active {
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu a:hover, #menu a:active, span.subscriptCount, span#stratTitle, #strategy_tabs #selected a {
+#menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
 	color:#560000;
 }
 #menu ul ul a:link, #menu ul ul a:visited{

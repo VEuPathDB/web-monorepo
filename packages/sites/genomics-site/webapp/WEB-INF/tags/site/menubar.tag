@@ -51,7 +51,7 @@
 
 
 <ul>
-    	<li><a id="mybasket" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(10)</span></a></li>
+    	<li><a id="mybasket" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(0)</span></a></li>
 </ul>
 
 
