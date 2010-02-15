@@ -615,7 +615,7 @@ div.innertube #record-toolbox li {
 
 #menu a:hover, #menu a:active {
 	display: block;
-	line-height: 14px;
+	line-height: 13px;
 	width: auto;
 	text-decoration: none;
 	z-index: 500;
