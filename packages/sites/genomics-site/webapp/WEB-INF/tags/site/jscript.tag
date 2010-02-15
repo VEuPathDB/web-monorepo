@@ -16,7 +16,8 @@
 	<script type="text/javascript" src="/assets/js/customStrategy.js"></script>
 	<script type="text/javascript" src="/assets/js/ortholog.js"></script>
 </c:if>
-
+<script type="text/javascript" src="<c:url value='/wdk/js/stratTabCookie.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/wdk/js/menuItems.js'/>"></script>
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
 
 <script type="text/javascript">
