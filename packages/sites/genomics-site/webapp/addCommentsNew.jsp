@@ -430,6 +430,8 @@ $(document).ready(function(){
       <tr class="medium">
         <td colspan=3 align=center>
         <br/>
+        <html:hidden property="authors" />
+        <html:hidden property="sequence" /> 
         <html:submit property="submit" value="Add Comment"/></td>
         </tr>
       
