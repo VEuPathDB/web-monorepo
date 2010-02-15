@@ -163,7 +163,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 <%--- Notes --------------------------------------------------------%>
 
 <c:if test="${notes ne 'none'}">
-    <%--- site:wdkTable tblName="Notes" isOpen="true" / ---%>
+    <%--- wdk:wdkTable tblName="Notes" isOpen="true" / ---%>
 </c:if>
 
 <%--- Comments -----------------------------------------------------%>

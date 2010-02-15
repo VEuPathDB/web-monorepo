@@ -126,7 +126,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <%--- Notes --------------------------------------------------------%>
 
 <c:if test="${notes ne 'none'}">
-    <site:wdkTable tblName="Notes" isOpen="true" />
+    <wdk:wdkTable tblName="Notes" isOpen="true" />
 </c:if>
 
 <%--- Comments -----------------------------------------------------%>
