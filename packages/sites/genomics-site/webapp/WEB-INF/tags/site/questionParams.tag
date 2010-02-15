@@ -230,7 +230,7 @@
 </c:forEach> <%-- end of foreach on paramGroups --%>
 
 <%-- set the weight --%>
-
+<c:if test="${!(wdkQuestion.isTransform)}">
 <div name="All_weighting"
      class="param-group" 
      type="ShowHide">
@@ -248,6 +248,7 @@
     </div><br>
 </div>
 </div>
+</c:if>
 
 
 
