@@ -17,7 +17,7 @@
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
 <c:choose>
-<c:when test="${wdkRecord.attributes['organism'].value eq null || !wdkRecord.validRecord}">
+<c:when test="${!wdkRecord.validRecord}">
 <site:header title="TriTrypDB : gene ${id} (${prd})"
              divisionName="Gene Record"
              division="queries_tools" />

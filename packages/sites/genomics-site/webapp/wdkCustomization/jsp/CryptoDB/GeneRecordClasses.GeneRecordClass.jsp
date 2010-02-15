@@ -22,7 +22,7 @@
              division="queries_tools"/>
 
 <c:choose>
-<c:when test="${wdkRecord.attributes['organism'].value eq null || !wdkRecord.validRecord}">
+<c:when test="${!wdkRecord.validRecord}">
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>

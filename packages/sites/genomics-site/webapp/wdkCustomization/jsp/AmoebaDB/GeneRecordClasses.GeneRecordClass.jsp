@@ -16,13 +16,9 @@
 <c:set var="id" value="${pkValues['source_id']}" />
 
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
-<c:set var="organism" value="${attrs['organism'].value}"/>
-<c:set var="organism_full" value="${attrs['organism_full'].value}"/>
-
-<c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
 <c:choose>
-<c:when test="${organism eq null || !wdkRecord.validRecord}">
+<c:when test="${!wdkRecord.validRecord}">
 <site:header title="AmoebaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
@@ -30,6 +26,10 @@
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>
+<c:set var="organism" value="${attrs['organism'].value}"/>
+<c:set var="organism_full" value="${attrs['organism_full'].value}"/>
+
+<c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 <c:set var="extdbname" value="${attrs['external_db_name'].value}" />
 <c:set var="contig" value="${attrs['sequence_id'].value}" />
 <c:set var="context_start_range" value="${attrs['context_start'].value}" />
