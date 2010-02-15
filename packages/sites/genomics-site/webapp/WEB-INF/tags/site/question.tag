@@ -4,6 +4,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
 
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
@@ -63,7 +64,7 @@
 --%>
 
 <!-- show error messages, if any -->
-<wdk:errors/>
+<api:errors/>
 
 <%-- the js has to be included here in order to appear in the step form --%>
 <script type="text/javascript" src='<c:url value="/wdk/js/wdkQuestion.js"/>'></script>

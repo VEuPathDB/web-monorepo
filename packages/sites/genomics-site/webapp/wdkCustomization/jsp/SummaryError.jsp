@@ -30,6 +30,7 @@
     ${exception.message}
     </pre>
 </div>
+<api:errors showStacktrace="false"/>
 
 
 
