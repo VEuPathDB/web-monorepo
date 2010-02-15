@@ -118,6 +118,19 @@ $(document).ready(function() {
                 <td>${comment.userName}, ${comment.organization} </td>
             </tr>
 
+            <c:choose>
+            <c:when test="${comment.authors ne null}">
+            <tr>
+               <td>Other Author(s):</td>
+                <td> <c:forEach items="${comment.authors}" var="row">
+                          ${row} 
+                      </c:forEach>
+                </td>
+            </tr> 
+            </c:when>
+            </c:choose>
+
+
             <tr>
                <td>Project:</td>
                 <td>${comment.projectName}, version ${comment.projectVersion} </td>
