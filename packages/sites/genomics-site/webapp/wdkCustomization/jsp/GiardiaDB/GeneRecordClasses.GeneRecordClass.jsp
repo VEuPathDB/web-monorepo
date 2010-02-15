@@ -437,7 +437,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 </c:if>
 
 
-<site:pageDivider name="Protein Features"/>
+<site:pageDivider name="Sequences"/>
 
 <p>
 <table border='0' width='100%'>
