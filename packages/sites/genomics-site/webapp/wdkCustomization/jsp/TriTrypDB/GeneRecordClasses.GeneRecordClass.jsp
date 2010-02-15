@@ -452,45 +452,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <br />
 
-<%-- Microarray Data ------------------------------------------------------%>
+<%-- Expression Graphs ------------------------------------------------------%>
 
-<c:if test='${organismFull eq "Leishmania infantum"}'>
-
-  <site:pageDivider name="Expression ${has_expression_comment}"/>
-
-  <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
-  <c:set var="secName" value="MylerLinfantum::Ver1"/>
-  <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=tritryp&fmt=png&id=${id}"/>
-
-  <c:set var="expressionContent">
-    <table>
-      <tr valign="top">
-        <td>
-              <img src="${imgSrc}">
-        </td>
-
-        <td style="vertical-align: middle">
-<div class="small">Time series data are shown as Fold Induction compared to the 0 hr.  Positive values are upregulated relative to the 0 hour and negative values are downregulated relative to the 0 hour.  The Percentile graph (below) shows the level of expression relative to other genes for the same experiment.</div>
-      </td>
-     </tr>
-
-    </table>
-  </c:set>
-
-  <c:if test="${attrs['graph_infantum_promastigote'].value == 0}">
-    < c:set var="expressionContent" value="none"/>
-  </c:if>
-
-
-<wdk:toggle
-    name="LinfantumPromastigoteExpression"
-    isOpen="true"
-    displayName="Differentiation Time Series: Promastigote to Amastigote"
-    content="${expressionContent}"
-    attribution="Linfantum_promastigote_ExpressionData"/>
-<br>
-
+<c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi'}">
+<site:pageDivider name="Expression"/>
+  <site:expressionGraphs species="${binomial}" model="tritryp"/>
 </c:if>
 
 <%-- Sequence Data ------------------------------------------------------%>
