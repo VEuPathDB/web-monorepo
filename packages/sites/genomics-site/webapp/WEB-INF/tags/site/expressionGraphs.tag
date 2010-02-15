@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%@ attribute name="species"
               description="Restricts output to only this species"
@@ -20,15 +21,21 @@
 
   <c:if test="${species eq row['species'].value}">
 
+    <c:set var="name" value="${fn:replace(row['module'].value, '::', '')}"/>
+
     <c:set var="secName" value="${row['module'].value}"/>
-    <c:set var="imgSrc"
-    value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=png&id=${row['source_id'].value}"/>
+    <c:set var="imgId" value="img${secName}"/>
+    <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=png&id=${row['source_id'].value}"/>
+    <c:set var="imgSrc" value="${preImgSrc}"/>
 
     <c:set var="expressionContent">
       <table>
+
+      <FORM NAME="${name}Pick">
+
         <tr valign="top">
           <td>
-            <img src="${imgSrc}">
+            <img  id="${imgId}" src="${imgSrc}">
           </td>
 
         <td style="vertical-align: middle">
@@ -41,19 +48,29 @@
         ${row['y_axis'].value} 
 
        </div>
+       <br /><br />
+
+<SELECT NAME="${name}List"
+OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[selectedIndex].value)">
+
+<c:forEach var="vp" items="${fn:split(row['visual_parts'].value, ',')}">
+<OPTION  VALUE="${preImgSrc}&vp=${vp}">${vp}</OPTION>
+</c:forEach>
+
+<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}">ALL</OPTION>
+
+</select>
+
       </td>
      </tr>
 
+      </FORM>
     </table>
   </c:set>
 
   <c:if test="${row['has_profile'].value eq '0'}">
     < c:set var="expressionContent" value="none"/>
   </c:if>
-
-
-
-
 
 <wdk:toggle
     name="${row['profile_name'].value}"
