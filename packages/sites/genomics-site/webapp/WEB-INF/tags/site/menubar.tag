@@ -29,10 +29,11 @@
 <div id="menubar">
 <div id="menu">
 
-<%--
-<ul><li><a href="<c:url value="/"/>">Home</a></li></ul>
---%>
+
+<ul style="width:7em;"><li><a href="<c:url value="/"/>">Home</a></li></ul>
+<%-- was needed when New Search was first choice 
 <ul style="width:0.5em;border:0"><li></li></ul>
+--%>
 
 <ul>
     <li><a href="<c:url value="/queries_tools.jsp"/>" title="START a NEW search strategy, or CLICK to access the page with all available searches (last option in the dropdown menu)." >New Search</a>
