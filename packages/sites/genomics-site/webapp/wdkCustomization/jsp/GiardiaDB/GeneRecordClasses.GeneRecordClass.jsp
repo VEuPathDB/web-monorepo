@@ -109,19 +109,6 @@
 ${attrs['organism'].value}<br>
 </c:set>
 
-<!--
-<c:if test="${attrs['cyc_gene_id'].value ne 'null'}">
-  <c:set var="content">
-    ${content}<br>
-    ${attrs['cyc_db'].value}
-  </c:set>
-</c:if>
-
-<site:panel 
-    displayName="Links to Other Web Pages"
-    content="${content}" />
-<br>
--->
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
 <%-- <c:set var="gtracks"> --%>
@@ -195,8 +182,6 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <%--- Notes --------------------------------------------------------%>
 
 <wdk:wdkTable tblName="Notes" isOpen="true" />
-
-</c:if>
 
 <%--- Comments -----------------------------------------------------%>
 <c:url var="commentsUrl" value="addComment.do">
