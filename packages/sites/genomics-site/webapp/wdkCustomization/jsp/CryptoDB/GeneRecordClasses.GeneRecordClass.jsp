@@ -66,9 +66,6 @@
 
 <c:set var="append" value="" />
 
-<wdk:wdkTable tblName="Notes" isOpen="true" />
-
-
 <h2>
 <center>
 <wdk:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
@@ -82,68 +79,6 @@
     displayName="${attr.displayName}"
     content="${attr.value}${append}" />
 <br>
-
-<%------------------------------------------------------------------%>
-
-<c:set var="attr" value="${attrs['product']}" />
-<site:panel 
-    displayName="${attr.displayName}"
-    content="${attr.value}" />
-<br>
-<%------------------------------------------------------------------%>
-<c:set var="content">
-<c:if test="${extdbname eq CPARVUMCONTIGS || extdbname eq CHOMINISCONTIGS}">
-<a href="http://apicyc.apidb.org/${attrs['cyc_db'].value}/new-image?type=GENE-IN-CHROM-BROWSER&object=${wdkRecord.primaryKey}">CryptoCyc Metabolic Pathway Database</a>
-<br>
-</c:if>
-${attrs['linkout'].value}
-</c:set>
-
-<site:panel 
-    displayName="Links to Other Web Pages"
-    content="${content}" />
-<br>
-
-<%------------------------------------------------------------------%>
-<c:url var="commentsUrl" value="addComment.do">
-  <c:param name="stableId" value="${id}"/>
-  <c:param name="commentTargetId" value="gene"/>
-  <c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
-  <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
-  <c:param name="organism" value="${genus_species}" />
-  <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
-  <c:param name="contig" value="${contig}" />
-  <c:param name="strand" value="${strand}" />
-  <c:param name="flag" value="0" />
-</c:url>
-<c:set var='commentLegend'>
-    <c:catch var="e">
-      <site:dataTable tblName="UserComments"/>
-      <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
-    </c:catch>
-    <c:if test="${e != null}">
-     <site:embeddedError 
-         msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
-         e="${e}" 
-     />
-    </c:if>
-    
-</c:set>
-<site:panel 
-    displayName="User Comments"
-    content="${commentLegend}" />
-<br>
-
-<%------------------------------------------------------------------%>
-<c:url var="addPhenotypeUrl" value="addPhenotype.do">
-  <c:param name="stableId" value="${id}"/>
-  <c:param name="commentTargetId" value="phenotype"/>
-  <c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
-  <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
-  <c:param name="organism" value="${genus_species}" />
-  <c:param name="flag" value="0" />
-</c:url>
-
 <%-- DNA CONTEXT ---------------------------------------------------%>
 <c:if test="${snps ne 'none'}">
     <c:set var="snptrack" value="SNPs+"/>
@@ -259,27 +194,85 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
      attribution="Widmer_SNPs"/>
 </c:if>
 
-<!-- External Links --> 
-<wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
-
-
-<%-- Mercator/Mavid form ---------------------------------------------------%>
-
+<!-- Mercator / Mavid alignments -->
 <c:if test="${strand eq '-'}">
  <c:set var="revCompOn" value="1"/>
 </c:if>
 
+<c:set var="mercatorAlign">
+<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+                    contigId="${contig}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"/>
+</c:set>
 
-<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" 
-                    revCompOn="${revCompOn}"
-                    contigId="${contig}" start="${start}" end="${end}" 
-                    bkgClass="secondary3" cellPadding="0"/>
+<wdk:toggle isOpen="false"
+  name="mercatorAlignment"
+  displayName="Multiple Sequence Alignment"
+  content="${mercatorAlign}"
+  attribution=""/>
 
 
-<%-- Protein Features ---------------------------------------------------%>
 
-<c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-<site:pageDivider name="Protein Features"/>
+<site:pageDivider name="Annotation"/>
+
+<%------------------------------------------------------------------%>
+<c:url var="commentsUrl" value="addComment.do">
+  <c:param name="stableId" value="${id}"/>
+  <c:param name="commentTargetId" value="gene"/>
+  <c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
+  <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
+  <c:param name="organism" value="${genus_species}" />
+  <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
+  <c:param name="contig" value="${contig}" />
+  <c:param name="strand" value="${strand}" />
+  <c:param name="flag" value="0" />
+</c:url>
+<c:set var='commentLegend'>
+    <c:catch var="e">
+      <site:dataTable tblName="UserComments"/>
+      <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
+    </c:catch>
+    <c:if test="${e != null}">
+     <site:embeddedError 
+         msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
+         e="${e}" 
+     />
+    </c:if>
+    
+</c:set>
+<site:panel 
+    displayName="User Comments"
+    content="${commentLegend}" />
+<br>
+
+<%------------------------------------------------------------------%>
+<c:url var="addPhenotypeUrl" value="addPhenotype.do">
+  <c:param name="stableId" value="${id}"/>
+  <c:param name="commentTargetId" value="phenotype"/>
+  <c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
+  <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
+  <c:param name="organism" value="${genus_species}" />
+  <c:param name="flag" value="0" />
+</c:url>
+
+
+<!-- External Links --> 
+<wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
+
+
+<%-- ORTHOMCL ------------------------------------------------------%>
+<c:if test="${organism ne parvumChr6Organism && attrs['so_term_name'].value eq 'protein_coding'}">
+
+
+  <c:set var="orthomclLink">
+    <div align="center">
+      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
+    </div>
+  </c:set>
+  <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_Phyletic,OrthoMCL"
+                 postscript="${orthomclLink}"/>
+
+  <c:set var="attribution">
+  </c:set>
 </c:if>
 
 <%-- EC ------------------------------------------------------------%>
@@ -313,24 +306,64 @@ CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
      attribution="${attribution}"/>
 </c:if>
 
-<%-- ORTHOMCL ------------------------------------------------------%>
-<c:if test="${organism ne parvumChr6Organism && attrs['so_term_name'].value eq 'protein_coding'}">
 
+<wdk:wdkTable tblName="Notes" isOpen="true" />
 
-  <c:set var="orthomclLink">
-    <div align="center">
-      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
-    </div>
-  </c:set>
-  <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_Phyletic,OrthoMCL"
-                 postscript="${orthomclLink}"/>
-
-
-
-<c:set var="attribution">
+<%------------------------------------------------------------------%>
+<c:set var="content">
+<c:if test="${extdbname eq CPARVUMCONTIGS || extdbname eq CHOMINISCONTIGS}">
+<a href="http://apicyc.apidb.org/${attrs['cyc_db'].value}/new-image?type=GENE-IN-CHROM-BROWSER&object=${wdkRecord.primaryKey}">CryptoCyc Metabolic Pathway Database</a>
+<br>
+</c:if>
+${attrs['linkout'].value}
 </c:set>
 
+<site:panel 
+    displayName="Links to Other Web Pages"
+    content="${content}" />
+<br>
+
+<%-- Protein Features ---------------------------------------------------%>
+
+<c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
+  <site:pageDivider name="Protein"/>
 </c:if>
+
+<%-- PROTEIN FEATURES -------------------------------------------------%>
+<c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
+
+    <c:set var="ptracks">
+    InterproDomains+SignalP+TMHMM+WastlingMassSpecPeptides+LoweryMassSpecPeptides+EinsteinMassSpecPeptides+FerrariMassSpecPeptides+PutignaniMassSpecPeptides+HydropathyPlot+SecondaryStructure+BLASTP
+    </c:set>
+    
+    <c:set var="attribution">
+     InterproscanData,NRDB
+    </c:set>
+
+<c:set var="proteinFeaturesUrl">
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${wdkRecord.primaryKey};type=${ptracks};width=640;embed=1
+</c:set>
+<c:if test="${ptracks ne ''}">
+    <c:set var="proteinFeaturesImg">
+        <noindex follow><center>
+        <c:catch var="e">
+           <c:import url="${proteinFeaturesUrl}"/>
+        </c:catch>
+        <c:if test="${e!=null}">
+            <site:embeddedError 
+                msg="<font size='-2'>temporarily unavailable</font>" 
+                e="${e}" 
+            />
+        </c:if>
+        </center></noindex>
+    </c:set>
+
+    <wdk:toggle name="proteinContext"  displayName="Protein Features"
+             content="${proteinFeaturesImg}"
+             attribution="${attribution}"/>
+
+</c:if>
+
 
 <!-- Molecular weight -->
 
@@ -389,40 +422,6 @@ CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
 
 </c:if>
 
-<%-- PROTEIN FEATURES -------------------------------------------------%>
-<c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-
-    <c:set var="ptracks">
-    InterproDomains+SignalP+TMHMM+WastlingMassSpecPeptides+LoweryMassSpecPeptides+EinsteinMassSpecPeptides+FerrariMassSpecPeptides+PutignaniMassSpecPeptides+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    
-    <c:set var="attribution">
-     InterproscanData,NRDB
-    </c:set>
-
-<c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${wdkRecord.primaryKey};type=${ptracks};width=640;embed=1
-</c:set>
-<c:if test="${ptracks ne ''}">
-    <c:set var="proteinFeaturesImg">
-        <noindex follow><center>
-        <c:catch var="e">
-           <c:import url="${proteinFeaturesUrl}"/>
-        </c:catch>
-        <c:if test="${e!=null}">
-            <site:embeddedError 
-                msg="<font size='-2'>temporarily unavailable</font>" 
-                e="${e}" 
-            />
-        </c:if>
-        </center></noindex>
-    </c:set>
-
-    <wdk:toggle name="proteinContext"  displayName="Protein Features"
-             content="${proteinFeaturesImg}"
-             attribution="${attribution}"/>
-
-</c:if>
 
 
 <c:set var="pdbLink">
