@@ -89,6 +89,7 @@ p.unreadlabel {
 /* used by Expression graphs (fix for text alignment bug) */
 td.centered {
        vertical-align: middle;
+       padding: 20px;
 }
 td.top {
        vertical-align: top;
