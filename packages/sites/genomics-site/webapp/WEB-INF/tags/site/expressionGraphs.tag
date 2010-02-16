@@ -92,8 +92,11 @@
         <b>y-axis</b><br />
         ${row['y_axis'].value} 
 
-       </div>
        <br /><br />
+        <b>Choose Graph to Display</b><br />
+
+
+
 
 <SELECT NAME="${name}List"
 OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[selectedIndex].value)">
@@ -105,7 +108,7 @@ OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[sel
 <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}">ALL</OPTION>
 
 </select>
-
+       </div>
       </td>
      </tr>
 
