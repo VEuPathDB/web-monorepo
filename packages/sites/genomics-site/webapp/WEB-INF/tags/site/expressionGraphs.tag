@@ -12,11 +12,12 @@
 %>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
+
 <c:set value="${wdkRecord.tables['ExpressionGraphs']}" var="tbl"/>
+<c:set value="${wdkRecord.tables['ExpressionGraphsData']}" var="dat"/>
 
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 
-<c:set var="i" value="0"/>
 <c:forEach var="row" items="${tbl}">
 
   <c:if test="${species eq row['species'].value}">
@@ -33,12 +34,56 @@
 
       <FORM NAME="${name}Pick">
 
-        <tr valign="top">
-          <td>
+        <tr>
+        <td>
             <img  id="${imgId}" src="${imgSrc}">
-          </td>
 
-        <td style="vertical-align: middle">
+        </td>
+
+
+      <c:set var="expressionDataTable">
+            <table>
+              <tr class="headerRow">
+               <th style="padding: 10px; align: left">Sample</th>
+               <th style="padding: 10px;align: left">Expression Value</th>
+               </tr>
+
+            <c:set var="i" value="0"/>
+            <c:forEach var="drow" items="${dat}">
+              <c:if test="${drow['profile_name'].value eq row['profile_name']}">
+
+        <c:choose>
+            <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
+            <c:otherwise><tr class="rowMedium"></c:otherwise>
+        </c:choose>
+
+                  <td>
+                    ${drow['name'].value}
+                  </td>
+                  <td>
+                    ${drow['value'].value}
+                  </td>
+                </tr>
+              </c:if>
+
+               <c:set var="i" value="${i +  1}"/>
+            </c:forEach>
+            </table>
+     </c:set>
+
+        <td class="centered">
+
+<wdk:toggle
+    name="${row['profile_name'].value}Data"
+    displayName="Data Table"
+    content="${expressionDataTable}"
+    isOpen="false"
+    attribution=""/>         
+
+       <br /><br />
+
+
+
        <div class="small">
         <b>Description</b><br />
         ${row['description'].value}<br /><br /><br /> 
