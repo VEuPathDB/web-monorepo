@@ -364,7 +364,7 @@ ${headElement}
 
 <%------------- REST OF PAGE  ----------------%>
 
-<site:menubar />
+<site:menubar refer="${refer}"/>
 <site:siteAnnounce  refer="${refer}"/>
 
 

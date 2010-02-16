@@ -4,7 +4,11 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-
+<%@ attribute name="refer" 
+ 			  type="java.lang.String"
+			  required="false" 
+			  description="Page calling this tag"
+%>
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
@@ -52,7 +56,21 @@
 
 
 <ul>
-    	<li><a id="mybasket" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(0)</span></a></li>
+<c:choose>
+  <c:when test="${wdkUser.guest}">
+    <li><a id="mybasket" href="javascript:popLogin();" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(0)</span></a></li>
+  </c:when>
+  <c:otherwise>
+    <c:choose>
+      <c:when test="${refer == 'customSummary'}">
+    	<li><a id="mybasket" onclick="showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(0)</span></a></li>
+      </c:when>
+      <c:otherwise>
+    	<li><a id="mybasket" onclick="setCurrentTabCookie('basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(0)</span></a></li>
+      </c:otherwise>
+    </c:choose>
+  </c:otherwise>
+</c:choose>
 </ul>
 
 
