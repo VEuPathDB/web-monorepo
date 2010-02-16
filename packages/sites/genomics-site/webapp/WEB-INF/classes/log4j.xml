@@ -25,7 +25,7 @@
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelRangeFilter">
 			<param name="LevelMin" value="trace" />
-			<param name="LevelMax" value="info" />
+			<param name="LevelMax" value="fatal" />
 		</filter>
 	</appender>
 
