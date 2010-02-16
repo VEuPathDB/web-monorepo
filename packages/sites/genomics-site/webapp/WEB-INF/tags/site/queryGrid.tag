@@ -46,13 +46,16 @@
 <div style="padding-top:5px;position: relative;left: 1.5em;" class="h3left">
 --%>
 <div style="padding-top:5px;" class="h3center">
-	Select a search to start a new strategy
+	Select a Search, which will be the first step in you new strategy.
+
+<%--
 <c:if test="${from != 'tab'}">
- 	or  click on "My Searches: " to enter your strategy workspace.</div>
+ 	or  click on "My Strategies" to enter your strategy workspace.</div>
 </c:if>
 <c:if test="${from == 'tab'}">
- 	or  click on the "Run" or "Browse" tabs above, to access your strategies.</div>
+ 	or  click on the "Opened" or "All" tabs above, to access your strategies.</div>
 </c:if>
+--%>
 
 
 <c:if test="${PORTAL}">

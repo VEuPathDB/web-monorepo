@@ -125,7 +125,7 @@
                 </c:choose>
             </c:set>
             <div class="group-title">
-                <img class="group-handle" src='<c:url value="/images/${image}" />' />
+                <img style="position:relative;top:5px;" class="group-handle" src='<c:url value="/images/${image}" />' />
                 ${groupName}
             </div>
             <div class="group-detail" style="display:${display};">
@@ -303,8 +303,8 @@
 <c:set var="display" value="none"/>
 <c:set var="image" value="plus.gif"/>
 <div class="group-title">
-    <img class="group-handle" src='<c:url value="/images/${image}" />' />
-    Add Weight To Results
+    <img style="position:relative;top:5px;"  class="group-handle" src='<c:url value="/images/${image}" />' />
+    Give this search a weight
 </div>
 <div class="group-detail" style="display:${display};text-align:center">
     <div class="group-description">
