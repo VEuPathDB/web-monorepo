@@ -386,7 +386,7 @@
 
     <td ${align} style="${nowrap}padding:3px 2px"><div>
       <c:set var="recNam" value="${record.recordClass.fullName}"/>
-      <c:set var="fieldVal" value="${recAttr.briefValue}"/>
+      <c:set var="fieldVal" value="${recAttr.briefDisplay}"/>
       <c:choose>
         <c:when test="${j == 0}">
 

@@ -58,7 +58,7 @@
     <c:if test="${!recAttr.internal}">
  	<tr>
           <td><b>${recAttr.displayName}</b></td>         
-          <c:set var="fieldVal" value="${recAttr.briefValue}"/>
+          <c:set var="fieldVal" value="${recAttr.briefDisplay}"/>
           <td>
             <!-- need to know if fieldVal should be hot linked -->
             <c:choose>
@@ -112,7 +112,7 @@
         <c:if test="${!recAttr.internal}">
           <td>
             <c:set var="recNam" value="${nextRecord.recordClass.fullName}"/>
-            <c:set var="fieldVal" value="${recAttr.briefValue}"/>
+            <c:set var="fieldVal" value="${recAttr.briefDisplay}"/>
             <c:choose>
                <c:when test="${j == 0}">
                   <!-- Added by Jerric - Display primary key content -->

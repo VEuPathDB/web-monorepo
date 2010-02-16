@@ -17,7 +17,7 @@
 <c:if test="${j != 0}">
 <c:set var="recAttr" value="${record.summaryAttributes[attrName]}" />
 <td align="left">
-   <c:set value="${recAttr.briefValue}" var="fieldVal"/>
+   <c:set value="${recAttr.briefDisplay}" var="fieldVal"/>
      ${fieldVal}
 </td>
 </c:if>
