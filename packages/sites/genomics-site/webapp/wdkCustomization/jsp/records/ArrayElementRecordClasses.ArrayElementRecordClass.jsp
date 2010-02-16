@@ -7,41 +7,46 @@
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
-<c:set var="organism" value="${attrs['organism'].value}"/>
-<c:set var="provider" value="${attrs['provider'].value}"/>
-<c:set var="sequence" value="${attrs['sequence'].value}"/>
-<c:set var="async" value="${param.sync != '1'}"/>
 
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
 <c:set var="pkValues" value="${primaryKey.values}" />
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
+<c:catch var="err">
 
-<c:choose>
-  <c:when test="${fn:contains(organism,'vivax')}">
-    <c:set var="species" value="vivax"/>
-  </c:when>
-  <c:when test="${fn:contains(organism,'yoelii')}">
-    <c:set var="species" value="yoelii"/>
-  </c:when>
-  <c:when test="${fn:contains(organism,'falciparum')}">
-    <c:set var="species" value="falciparum"/>
-  </c:when>
-  <c:when test="${fn:contains(organism,'berghei')}">
-    <c:set var="species" value="berghei"/>
-  </c:when>
-  <c:when test="${fn:contains(organism,'chabaudi')}">
-    <c:set var="species" value="chabaudi"/>
-  </c:when>
-  <c:when test="${fn:contains(organism,'knowlesi')}">
-    <c:set var="species" value="knowlesi"/>
-  </c:when>
-  <c:otherwise>
-    <b>ERROR: setting species for organism "${organism}"</b>
-  </c:otherwise>
-</c:choose>
+  <c:set var="organism" value="${attrs['organism'].value}"/>
+  <c:set var="provider" value="${attrs['provider'].value}"/>
+  <c:set var="sequence" value="${attrs['sequence'].value}"/>
+  <c:set var="async" value="${param.sync != '1'}"/>
 
+  <c:choose>
+    <c:when test="${fn:contains(organism,'vivax')}">
+      <c:set var="species" value="vivax"/>
+    </c:when>
+    <c:when test="${fn:contains(organism,'yoelii')}">
+      <c:set var="species" value="yoelii"/>
+    </c:when>
+    <c:when test="${fn:contains(organism,'falciparum')}">
+      <c:set var="species" value="falciparum"/>
+    </c:when>
+    <c:when test="${fn:contains(organism,'berghei')}">
+      <c:set var="species" value="berghei"/>
+    </c:when>
+    <c:when test="${fn:contains(organism,'chabaudi')}">
+      <c:set var="species" value="chabaudi"/>
+    </c:when>
+    <c:when test="${fn:contains(organism,'knowlesi')}">
+      <c:set var="species" value="knowlesi"/>
+    </c:when>
+    <c:otherwise>
+      <c:set var="species_error">
+        <b>ERROR: setting species for organism "${organism}"</b>
+      </c:set>
+    </c:otherwise>
+  </c:choose>
+  
+</c:catch>
 
 
 <site:header title="PlasmoDB : Array element ${id}"
@@ -49,6 +54,14 @@
              divisionName="Array Element Record"
              division="queries_tools"
              summary=""/>
+
+<c:choose>
+<c:when test="${!wdkRecord.validRecord}">
+  <h2 style="text-align:center;color:#CC0000;">The Array Element '${id}' was not found.</h2>
+</c:when>
+<c:otherwise>
+
+<c:if test="${species_error != null}">${species_error}</c:if>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white
        class=thinTopBottomBorders>
@@ -279,5 +292,7 @@ Also see <a href="http://malaria.ucsf.edu/comparison/comp_oligolink.php?OLIGO=${
 
 </c:if>
 
+</c:otherwise>
+</c:choose>
 
 <site:footer/>

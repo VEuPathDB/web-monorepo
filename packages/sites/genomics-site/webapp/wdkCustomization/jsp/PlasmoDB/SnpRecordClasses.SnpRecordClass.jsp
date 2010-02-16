@@ -7,13 +7,15 @@
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 
-<c:set var="snp_position" value="${attrs['start_min'].value}"/>
-<c:set var="start" value="${snp_position-25}"/>
-<c:set var="end"   value="${snp_position+25}"/>
- <c:if test="${attrs['gene_strand'].value == 'reverse'}">
-  <c:set var="revCompOn" value="1"/>
- </c:if>
-<c:set var="sequence_id" value="${attrs['seq_source_id'].value}"/>
+<c:catch var="err">
+  <c:set var="snp_position" value="${attrs['start_min'].value}"/>
+  <c:set var="start" value="${snp_position-25}"/>
+  <c:set var="end"   value="${snp_position+25}"/>
+   <c:if test="${attrs['gene_strand'].value == 'reverse'}">
+    <c:set var="revCompOn" value="1"/>
+   </c:if>
+  <c:set var="sequence_id" value="${attrs['seq_source_id'].value}"/>
+</c:catch>
 
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
 <c:set var="pkValues" value="${primaryKey.values}" />
@@ -25,7 +27,12 @@
              divisionName="SNP Record"
              division="queries_tools"/>
 
-<%----c:set value="${wdkRecord.recordClass.type}" var="recordType"/----%>
+<c:choose>
+<c:when test="${!wdkRecord.validRecord}">
+  <h2 style="text-align:center;color:#CC0000;">The SNP '${id}' was not found.</h2>
+</c:when>
+<c:otherwise>
+
 <h2>
 <center>
 ${id}<br> 
@@ -91,5 +98,9 @@ ${id}<br>
 
 </td></tr>
 </table>
+
+
+</c:otherwise>
+</c:choose>
 
 <site:footer/>

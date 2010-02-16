@@ -13,14 +13,23 @@
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 
+<c:catch var="err">
+<%-- force RecordInstance.fillColumnAttributeValues() to run
+      and set isValidRecord to false if appropriate. 
+      wdkRecord.isValidRecord is tested in the project's RecordClass --%>
+<c:set var="junk" value="${attrs['organism']}"/>
+</c:catch>
 
 <site:header title="${wdkModel.displayName} : SNP ${id}"
              banner="SNP ${id}"
              divisionName="SNP Record"
              division="queries_tools"/>
 
-<%----c:set value="${wdkRecord.recordClass.type}" var="recordType"/----%>
-
+<c:choose>
+<c:when test="${!wdkRecord.validRecord}">
+  <h2 style="text-align:center;color:#CC0000;">The SNP '${id}' was not found.</h2>
+</c:when>
+<c:otherwise>
 
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
@@ -54,5 +63,8 @@
 
 </td></tr>
 </table>
+
+</c:otherwise>
+</c:choose>
 
 <site:footer/>
