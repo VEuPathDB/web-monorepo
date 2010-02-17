@@ -33,7 +33,7 @@
 <site:queryList2 questions="GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByTimeSeriesFoldChangeBradyRoos,GeneQuestions.GenesByTimeSeriesFoldChangeBradyFl,GeneQuestions.GenesByTimeSeriesFoldChangeBradyBoothroyd,GeneQuestions.ToxoGenesByDifferentialMeanExpression"/>
 </c:when>
 <c:when test = "${project == 'TriTrypDB'}">
-<site:queryList2 questions="GeneQuestions.GenesByPromastigoteTimeSeries,GeneQuestions.GenesByTbruceiTimeSeries"/>
+<site:queryList2 questions="GeneQuestions.GenesByPromastigoteTimeSeries,GeneQuestions.GenesByTbruceiTimeSeries,GeneQuestions.GenesByMicroArrPaGETcruzi,GeneQuestions.GenesByMicroArrPaGETbrucei,GeneQuestions.GenesByMicroArrPaGELmajor,GeneQuestions.GenesByMicroArr_TbDRBD3"/>
 </c:when>
 </c:choose>
 
