@@ -49,6 +49,7 @@
                </tr>
 
             <c:set var="i" value="0"/>
+
             <c:forEach var="drow" items="${dat}">
               <c:if test="${drow['profile_name'].value eq row['profile_name']}">
 
@@ -64,9 +65,8 @@
                     ${drow['value'].value}
                   </td>
                 </tr>
-              </c:if>
-
                <c:set var="i" value="${i +  1}"/>
+              </c:if>
             </c:forEach>
             </table>
      </c:set>
@@ -76,7 +76,7 @@
 
 <c:if test="${i > 0}">
 <wdk:toggle
-    name="${row['profile_name'].value}Data"
+    name="${row['module'].value}Data"
     displayName="Data Table"
     content="${expressionDataTable}"
     isOpen="false"
@@ -122,7 +122,7 @@ OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[sel
   </c:if>
 
 <wdk:toggle
-    name="${row['profile_name'].value}"
+    name="${row['module'].value}"
     isOpen="true"
     displayName="${row['display_name'].value}"
     content="${expressionContent}"
