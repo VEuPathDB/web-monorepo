@@ -9,7 +9,7 @@
 <%-- force RecordInstance.fillColumnAttributeValues() to run
       and set isValidRecord to false if appropriate. 
       wdkRecord.isValidRecord is tested in the project's RecordClass --%>
-<c:set var="junk" value="${wdkRecord.attributes['organism']}"/>
+<c:set var="junk" value="${wdkRecord.attributes['project_id']}"/>
 </c:catch>
 
 <jsp:include page="/wdkCustomization/jsp/${projectId}/GeneRecordClasses.GeneRecordClass.jsp"/>
