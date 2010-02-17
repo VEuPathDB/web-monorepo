@@ -123,6 +123,7 @@ function appendchecked(url) {
           <input type="radio" name="downloadType" value="plain" checked>Show in Browser
         </td></tr>
   <tr><td colspan="2">&nbsp;</td></tr>
+  <tr><td colspan="2">Please note: if you choose Excel as download type, you can only download maximum 10M (in bytes) of the results, and the rest are discarded. Opening huge Excel file may crash you system. If you need to get the complete results, please choose the Download Type is Text File, or Show in Browser.</td></tr>
   <tr><td></td>
       <td><html:submit property="downloadConfigSubmit" value="Get Report"/>
       </td></tr></table>
