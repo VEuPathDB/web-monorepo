@@ -29,7 +29,7 @@
 <c:set var="count" value="${wdkUser.strategyCount}"/>
 </c:otherwise>
 </c:choose>
-
+<c:set var="basketCount" value="${wdkUser.basketCount}"/>
 <div id="menubar">
 <div id="menu">
 
@@ -55,18 +55,18 @@
 </ul>
 
 
-<ul>
+<ul>	
 <c:choose>
   <c:when test="${wdkUser.guest}">
-    <li><a id="mybasket" href="javascript:popLogin();" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(0)</span></a></li>
+    <li><a id="mybasket" href="javascript:popLogin();" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(${basketCount['GeneRecordClasses.GeneRecordClass']})</span></a></li>
   </c:when>
   <c:otherwise>
     <c:choose>
       <c:when test="${refer == 'customSummary'}">
-    	<li><a id="mybasket" onclick="showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(0)</span></a></li>
+    	<li><a id="mybasket" onclick="showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(${basketCount['GeneRecordClasses.GeneRecordClass']})</span></a></li>
       </c:when>
       <c:otherwise>
-    	<li><a id="mybasket" onclick="setCurrentTabCookie('basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(0)</span></a></li>
+    	<li><a id="mybasket" onclick="setCurrentTabCookie('basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount">(${basketCount['GeneRecordClasses.GeneRecordClass']})</span></a></li>
       </c:otherwise>
     </c:choose>
   </c:otherwise>
