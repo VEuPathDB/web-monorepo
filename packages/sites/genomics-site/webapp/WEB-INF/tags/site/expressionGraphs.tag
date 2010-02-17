@@ -73,6 +73,8 @@
 
         <td class="centered">
 
+
+<c:if test="${i > 0}">
 <wdk:toggle
     name="${row['profile_name'].value}Data"
     displayName="Data Table"
@@ -81,8 +83,7 @@
     attribution=""/>         
 
        <br /><br />
-
-
+</c:if>
 
        <div class="small">
         <b>Description</b><br />
