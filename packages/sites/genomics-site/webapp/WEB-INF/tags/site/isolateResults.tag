@@ -211,7 +211,6 @@
       <c:choose>
         <c:when test="${wdkUser.guest}">
           <c:set var="basketClick" value="popLogin()" />
-          <c:set var="basketTitle" value="Please log in to use the basket." />
         </c:when>
         <c:otherwise>
           <c:set var="basketClick" value="updateBasket(this,'page', '0', '${modelName}', '${wdkAnswer.recordClass.fullName}')" />
@@ -349,8 +348,10 @@
           <td>
 	    <c:set value="${record.attributes['in_basket']}" var="is_basket"/>
 	    <c:set var="basket_img" value="basket_gray.png"/>
+              <c:set var="basketTitle" value="Click to add this item to the basket." />
 	    <c:if test="${is_basket == '1'}">
 	      <c:set var="basket_img" value="basket_color.png"/>
+              <c:set var="basketTitle" value="Click to remove this item from the basket." />
             </c:if>
             <c:choose>
               <c:when test="${wdkUser.guest}">
