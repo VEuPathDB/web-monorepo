@@ -107,43 +107,43 @@
   </c:if>
 <c:if test="${token eq 'Tt'}">
         <c:set var="Tt_image">
-            <c:url value="/images/tritrypdb_letter.gif" />
+            /assets/images/tritrypdb_letter.gif
         </c:set>
         <c:set var="Tt" value="<a href='${tritrypRoot}${link}'><img src='${Tt_image}' border='0' alt='tritrypdb' /></a>" />
   </c:if>
   <c:if test="${token eq 'G'}">
         <c:set var="G_image">
-            <c:url value="/images/giardiadb_letter.gif" />
+            /assets/images/giardiadb_letter.gif
         </c:set>
         <c:set var="G" value="<a href='${giardiaRoot}${link}'><img src='${G_image}' border='0' alt='giardiadb' /></a>" />
   </c:if>
 <c:if test="${token eq 'Tr'}">
         <c:set var="Tr_image">
-            <c:url value="/images/trichdb_letter.gif" />
+            /assets/images/trichdb_letter.gif
         </c:set>
         <c:set var="Tr" value="<a href='${trichRoot}${link}'><img src='${Tr_image}' border='0' alt='trichdb' /></a>" />
   </c:if>
 <c:if test="${token eq 'P'}">
         <c:set var="P_image">
-            <c:url value="/images/plasmodb_letter.gif" />
+            /assets/images/plasmodb_letter.gif
         </c:set>
         <c:set var="P" value="<a href='${plasmoRoot}${link}'><img src='${P_image}' border='0' alt='plasmodb' /></a>" />
   </c:if>
   <c:if test="${token eq 'T'}">
         <c:set var="T_image">
-            <c:url value="/images/toxodb_letter.gif" />
+            /assets/images/toxodb_letter.gif
         </c:set>
         <c:set var="T" value="<a href='${toxoRoot}${link}'><img src='${T_image}' border='0' alt='toxodb' /></a>" />
   </c:if>
   <c:if test="${token eq 'C'}">
         <c:set var="C_image">
-            <c:url value="/images/cryptodb_letter.gif" />
+            /assets/images/cryptodb_letter.gif
         </c:set>
         <c:set var="C" value="<a href='${cryptoRoot}${link}'><img src='${C_image}' border='0' alt='cryptodb' /></a>" />
   </c:if>
   <c:if test="${token eq 'A'}">
         <c:set var="A_image">
-             /images/eupath_e.gif 
+             /assets/images/eupathdb_letter.gif 
         </c:set>
         <c:set var="A" value="<a href='${apiRoot}${link}'><img src='${A_image}' border='0' alt='apidb' /></a>" />
   </c:if>
