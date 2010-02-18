@@ -27,10 +27,10 @@
 	</tr>
 
 	<tr>
-	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:black">AmoebaDB</td>
+	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#76c9ab">AmoebaDB</td>
 	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#a03f43">CryptoDB</td>
 	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#67678d">GiardiaDB</td>
-	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:black">MicrosporidiaDB</td>
+	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#013c63">MicrosporidiaDB</td>
 	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#ad448e">PlasmoDB</td>
 	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#af5672">ToxoDB</td>
 	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#8d7658">TrichDB</td>
