@@ -13,11 +13,11 @@
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="Sequence ID(s)"  existsOn="A G C P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="Sequence ID(s)"  existsOn="A Am G C M P T Tr Tt"/>
                 </tr>
 
                  <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A G C P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A Am G C M P T Tr Tt"/>
                 </tr>
             </table>
 </div>
@@ -30,7 +30,7 @@
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST Similarity" type="SEQ" existsOn="A G C P T Tr Tt"  />
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST Similarity" type="SEQ" existsOn="A Am G C M P T Tr Tt"  />
                 </tr>
 
 

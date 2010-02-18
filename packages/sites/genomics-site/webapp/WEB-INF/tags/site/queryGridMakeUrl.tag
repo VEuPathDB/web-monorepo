@@ -35,12 +35,15 @@
 </style>
 
 
+
 <c:set var="E_image">
-   <c:url value="/images/empty_space.gif" /> 
+   /assets/images/empty_letter.gif
 </c:set>
 <c:set var="E" value="<img src='${E_image}' border='0' alt='' />" />
  
 
+<c:set var="Am" value="${E}" />
+<c:set var="M" value="${E}" />
 <c:set var="P" value="${E}" />
 <c:set var="T" value="${E}" />
 <c:set var="C" value="${E}" />
@@ -51,6 +54,8 @@
 
 
 
+<c:set var="amoebaRoot" value="http://www.amoebadb.org/amoeba/" />
+<c:set var="microRoot" value="http://www.microsporidiadb.org/micro/" />
 <c:set var="plasmoRoot" value="http://www.plasmodb.org/plasmo/" />
 <c:set var="toxoRoot" value="http://www.toxodb.org/toxo/" />
 <c:set var="cryptoRoot" value="http://www.cryptodb.org/cryptodb/" />
@@ -64,28 +69,42 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
-
-<c:set var="API" value="${fn:containsIgnoreCase(modelName, 'eupath')    }"     />
-
-
-<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')  || fn:containsIgnoreCase(modelName, 'tritryp')    }"     />
-
-<%--
-<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')     }"     />
---%>
-
 <c:choose>
-<c:when test="${qname == 'UnifiedBlast'}">
-<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
+<c:when test="${fn:containsIgnoreCase(modelName, 'eupath')    }">
+	<c:set var="API" value="true"     />
 </c:when>
 <c:otherwise>
-<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
+	<c:set var="COMPONENT" value="true" />
 </c:otherwise>
 </c:choose>
+
+<%-- do not see the need....
+<c:choose>
+<c:when test="${qname == 'UnifiedBlast'}">
+	<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
+</c:when>
+<c:otherwise>
+	<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
+</c:otherwise>
+</c:choose>
+--%>
+
 
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
   
+<c:if test="${token eq 'Am'}">
+        <c:set var="Am_image">
+            /assets/images/empty_letter.gif
+        </c:set>
+        <c:set var="Am" value="<a href='${amoebaRoot}${link}'><img src='${Am_image}' border='0' alt='amoebadb' /></a>" />
+  </c:if>
+<c:if test="${token eq 'M'}">
+        <c:set var="M_image">
+            /assets/images/empty_letter.gif
+        </c:set>
+        <c:set var="M" value="<a href='${microRoot}${link}'><img src='${M_image}' border='0' alt='microdb' /></a>" />
+  </c:if>
 <c:if test="${token eq 'Tt'}">
         <c:set var="Tt_image">
             <c:url value="/images/tritrypdb_letter.gif" />
@@ -131,6 +150,12 @@
 </c:forEach>
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
+<c:if test="${modelName eq 'AmoebaDB'}">
+    <c:set var="orgnismName" value="Entamoeba"/>
+</c:if>
+<c:if test="${modelName eq 'MicrosporidiaDB'}">
+    <c:set var="orgnismName" value="Encephalitozoon"/>
+</c:if>
 <c:if test="${modelName eq 'CryptoDB'}">
     <c:set var="orgnismName" value="Cryptosporidium"/>
 </c:if>
@@ -158,21 +183,6 @@
 <%-- LINK ACTIVE --%>
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
-<%--
-    <td align="left" valign="bottom"><a href='${link}' class='queryGridActive' 
-        onmouseover="return overlib('${popup}',
-                FGCOLOR, 'white',
-                BGCOLOR, '#003366',
-                BORDER, 5,
-                TEXTCOLOR, '#003366',
-                TEXTSIZE, '11px',
-                WIDTH, 300,
-                CELLPAD, 5)"
-        onmouseout = "return nd();">
-        ${linktext}</a> 
-    </td>
---%>
-
      <td align="left" valign="bottom" ><a id="${qset}_${qname}_${type}" href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
      <div id="${qset}_${qname}_${type}_tip" class="htmltooltip">${popup}</div>
 
@@ -181,37 +191,28 @@
 <%-- LINK INACTIVE --%>
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
-<%--
-    <td align="left" valign="bottom"  ><a href="javascript:void(0);" class='queryGridInactive' 
-        onmouseover="return overlib('This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).',
-                FGCOLOR, 'white',
-                BGCOLOR, '#003366',
-                TEXTCOLOR, '#003366',
-                TEXTSIZE, '11px',
-                WIDTH, 200,
-                CELLPAD, 5)"
-        onmouseout = "return nd();">
-        ${linktext}</a>
-    </td>
---%>
+<%--  do not think this is needed ....
 <c:if test="${API}">
    <c:set var="modelName" value="EuPathDB"/>
 </c:if>
+--%>
+
      <td align="left" valign="bottom"><a id="${qset}_${qname}_${type}" href='javascript:void(0);' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
      <div id="${qset}_${qname}_${type}_tip" class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
 
-
 </c:if>
 
-    <td  width="56" nowrap align="right"  valign="bottom">
+    <td  width="84" nowrap align="right"  valign="bottom">
 
 <c:if test="${API}">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr nowrap>
 
+	<td width="14">${Am}</td>
 	<td width="14">${C}</td>
-	<td width="14">${G}</td>	
+	<td width="14">${G}</td>
+	<td width="14">${M}</td>	
 	<td width="14">${P}</td>	
 	<td width="14">${T}</td>
 	<td width="14">${Tr}</td>
@@ -232,4 +233,7 @@
 </table>
 </c:if>
 
+
+
     </td>
+
