@@ -54,9 +54,9 @@
 
 
 <table width="90%" style="text-align:center;margin-left: auto;margin-right: auto;">
-<tr><td>
+<tr><td style="padding:0;">
 	<a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">
-	<img style="border: 2px solid #666666;" src="/assets/images/genomeTable10.png" width="150" height="70"></a>
+	<img style="border: 2px solid #666666;" src="/assets/images/genomeTable.png" width="190" height="100"></a>
 </td><tr>
 <tr><td style="text-align:left;">
 	<a style="white-space:nowrap;" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">
