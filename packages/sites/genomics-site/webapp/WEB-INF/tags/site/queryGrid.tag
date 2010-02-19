@@ -47,10 +47,10 @@
 <tr><td colspan="3">  
     <div class="smallBlack" align="middle">
 	<b>Query Availability in Organism Specific Sites:</b> &nbsp;&nbsp; &nbsp;
-	<img src="/assets/images/empty_letter.gif" border='0' alt='amoeba' /> = AmoebaDB &nbsp;&nbsp;
+	<img src="/assets/images/apidb_letter.gif" border='0' alt='amoeba' /> = AmoebaDB &nbsp;&nbsp;
 	<img src="/assets/images/cryptodb_letter.gif" border='0' alt='crypto' /> = CryptoDB &nbsp;&nbsp;
 	<img src="/assets/images/giardiadb_letter.gif" border='0' alt='giardia' /> = GiardiaDB &nbsp; &nbsp;
-	<img src="/assets/images/empty_letter.gif" border='0' alt='micro' /> = MicrosporidiaDB &nbsp; &nbsp;
+	<img src="/assets/images/apidb_letter.gif" border='0' alt='micro' /> = MicrosporidiaDB &nbsp; &nbsp;
 	<img src="assets/images/plasmodb_letter.gif" border='0' alt='plasmo' /> = PlasmoDB &nbsp;&nbsp;
 	<img src="/assets/images/toxodb_letter.gif" border='0' alt='toxo' /> = ToxoDB &nbsp; &nbsp;
 	<img src="/assets/images/trichdb_letter.gif" border='0' alt='trich' /> = TrichDB &nbsp; &nbsp;

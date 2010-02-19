@@ -85,13 +85,13 @@
   
 <c:if test="${token eq 'Am'}">
         <c:set var="Am_image">
-            /assets/images/empty_letter.gif
+            /assets/images/apidb_letter.gif
         </c:set>
         <c:set var="Am" value="<a href='${amoebaRoot}${link}'><img src='${Am_image}' border='0' alt='amoebadb' /></a>" />
   </c:if>
 <c:if test="${token eq 'M'}">
         <c:set var="M_image">
-            /assets/images/empty_letter.gif
+            /assets/images/apidb_letter.gif
         </c:set>
         <c:set var="M" value="<a href='${microRoot}${link}'><img src='${M_image}' border='0' alt='microdb' /></a>" />
   </c:if>

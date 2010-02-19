@@ -37,10 +37,7 @@
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByRFLPGenotype" linktext="RFLP Genotype" existsOn="A T"/>
     </tr>
     <tr>
-<%--
-      <site:queryGridMakeEEasyUrl  linkid="RFLP" link="/common/community/lxiao/RFLP_reference_images/Actual&#32;RFLP.htm" linktext="Reference RFLP Gel Images" linkdesc="RFLP images provided by Dr. Lihua Xiao from Centers for Disease Control and Prevention, Atlanta, Georgia, USA" existsOn="A C"  />
---%>
-	      <site:queryGridMakeUrl qset="IsolateInternalQuestions" qname="IsolatesByRFLP" linktext="Reference RFLP Gel Images" existsOn="C"/>
+	<site:queryGridMakeUrl qset="IsolateInternalQuestions" qname="IsolatesByRFLP" linktext="Reference RFLP Gel Images" existsOn="C"/>
     </tr>
 
     </table>
@@ -62,9 +59,11 @@
        <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateBySubmitter" linktext="Submitter" existsOn="A P"  />
      </tr>
 --%>
+
      <tr>
-     <site:queryGridMakeEasyUrl linkid="treeview" link="isolateClustering.jsp" linktext="Isolate Clustering" linkdesc="View Isolates in a treeview applet" existsOn="P"  />
+         <site:queryGridMakeUrl qset="IsolateInternalQuestions" qname="IsolatesByClustering" linktext="Isolate Clustering" existsOn="P"  />
     </tr>
+
     
     </table>
 </td>
