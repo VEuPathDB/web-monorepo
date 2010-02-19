@@ -16,10 +16,10 @@
 	<br>
 
 	<table class="center" style="padding:2px;" width="95%"><tr>
-	<td align="center" width="12.5%"><a href="http://amoebadb.org"><img border=0 src="/assets/images/AmoebaDB/amoebadb_w50.png" alt="AmoebaDB logo"></a></td>
+	<td align="center" width="12.5%"><a href="http://amoebadb.org"><img border=0 src="/assets/images/newSite.png" alt="AmoebaDB logo"></a></td>
 	<td align="center" width="12.5%"><a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb_w50.png" alt="CryptoDB logo"></a></td>
         <td align="center" width="12.5%"><a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb_w50.png" alt="GiardiaDB logo"></a></td>
-        <td align="center" width="12.5%"><a href="http://microsporidiadb.org"><img border=0 src="/assets/images/MicrosporidiaDB/microdb_w50.png" alt="Microsporidia logo"></a></td>
+        <td align="center" width="12.5%"><a href="http://microsporidiadb.org"><img border=0 src="/assets/images/newSite.png" alt="MicrosporidiaDB logo"></a></td>
         <td align="center" width="12.5%"><a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb_w50.png" alt="PlasmoDB logo"></a></td>
         <td align="center" width="12.5%"><a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb_w50.png" alt="ToxoDB logo"></a></td>
         <td align="center" width="12.5%"><a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb_w65.png" alt="TrichDB logo"></a></td>
@@ -27,7 +27,7 @@
 	</tr>
 
 	<tr>
-	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#76c9ab">AmoebaDB</td>
+	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#67a790">AmoebaDB</td>
 	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#a03f43">CryptoDB</td>
 	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#67678d">GiardiaDB</td>
 	<td align="center" width="12.5%" style="font-weight:bold;font-style: italic;color:#013c63">MicrosporidiaDB</td>

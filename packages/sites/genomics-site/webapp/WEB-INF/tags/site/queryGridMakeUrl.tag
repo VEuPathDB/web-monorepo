@@ -78,17 +78,7 @@
 </c:otherwise>
 </c:choose>
 
-<%-- do not see the need....
-<c:choose>
-<c:when test="${qname == 'UnifiedBlast'}">
-	<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
-</c:when>
-<c:otherwise>
-	<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
-</c:otherwise>
-</c:choose>
---%>
-
+<c:set var="link" value="showQuestion.do?questionFullName=${qset}.${qname}" />
 
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
