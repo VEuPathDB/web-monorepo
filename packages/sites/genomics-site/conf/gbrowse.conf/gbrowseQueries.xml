@@ -804,14 +804,17 @@ SELECT min(feature_id) as feature_id, parent_id, startm, startm as end,
         'sample='||sample || '$dlm' ||
         'count='||count(*) atts
 FROM
-  (SELECT ra.rnaseq_align_id feature_id,
+  (SELECT ra.nextgenseq_align_id feature_id,
          ra.na_sequence_id as parent_id, 
          CASE WHEN strand = '+' THEN ra.start_a + 2 ELSE ra.end_a - 2 END as startm, 
          ra.query_id name, ra.strand||'1' as strand,
          ra.genome_matches,ra.sample
-  FROM  apidb.rnaseq_align ra
-  WHERE ra.na_sequence_id = $srcfeature_id
-   AND  ra.sample = 'gc_splice_reads'
+  FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
+  WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+   AND  rel.external_database_id = rel.external_database_id
+   AND  ra.external_database_release_id = rel.external_database_release_id
+   AND  ra.na_sequence_id = $srcfeature_id
+   AND  ra.sample = 'raw_splice'
    AND  ra.start_a >= $base_start
    AND  ra.end_a <= $rend )
 GROUP BY parent_id,sample,strand,startm
@@ -829,14 +832,16 @@ SELECT min(feature_id) as feature_id, parent_id, startm, startm as end,
         'genome_matches='||min(genome_matches) || '$dlm' ||
         'count='||count(*) atts
 FROM
-  (SELECT ra.rnaseq_align_id feature_id, 
+  (SELECT ra.nextgenseq_align_id feature_id, 
          ra.na_sequence_id as parent_id, 
          CASE WHEN strand = '+' THEN ra.end_a ELSE ra.start_a END as startm, 
          ra.query_id name, ra.strand||'1' as strand,
          ra.genome_matches
-  FROM  apidb.rnaseq_align ra
-  WHERE ra.na_sequence_id = $srcfeature_id
-   AND  ra.sample in ('gc_polyA_for','gc_polyA_rev')
+  FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
+  WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+   AND  rel.external_database_id = rel.external_database_id
+   AND  ra.external_database_release_id = rel.external_database_release_id
+   AND  ra.sample = 'raw_polyA'
    AND  ra.start_a >= $base_start
    AND  ra.end_a <= $rend)
 GROUP BY parent_id,strand,startm
