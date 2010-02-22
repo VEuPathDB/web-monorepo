@@ -13,9 +13,11 @@
 
 <c:choose>
 <c:when test="${projectId == 'GiardiaDB' || projectId == 'TrichDB' }">
-        <jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByProteinStructure" /> 
+	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByProteinStructure" />
     </c:when>
 <c:otherwise>
+
+${Question_Header}
 
 <wdk:errors/>
 <%-- div needed for Add Step --%>

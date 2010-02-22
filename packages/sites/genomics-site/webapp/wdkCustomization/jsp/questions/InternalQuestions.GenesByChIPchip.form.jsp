@@ -18,6 +18,8 @@
         <jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByChIPchipPlasmo" />
 </c:if>
 
+${Question_Header}
+
 <wdk:errors/>
 
 <%-- div needed for Add Step --%>

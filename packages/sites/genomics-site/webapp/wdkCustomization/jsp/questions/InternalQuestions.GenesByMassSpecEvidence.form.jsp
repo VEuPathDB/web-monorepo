@@ -15,6 +15,9 @@
     </c:when>
 
     <c:otherwise>
+
+
+${Question_Header}
 <wdk:errors/>
 
 <%-- div needed for Add Step --%>
