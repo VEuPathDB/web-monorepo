@@ -31,7 +31,7 @@ function sayShowOrHide(controllingLayerName, textLayerName, style) {
     // don't use # shortcut for id lookup here...special characters
     // in element id cause problems, and for some reason escaping
     // with \\ (as spec'd in jquery docs) is not working.
-    $("div[id='" + textLayerName + "'] a").text(content);
+    jQuery("div[id='" + textLayerName + "'] a").text(content);
     return true;
 }
 
@@ -251,8 +251,8 @@ function updateImageMapDiv(imgMapDivId, imgMapSrc, postLoadJS) {
     var isWorking = false;
     workStates[imgMapDivId] = isWorking;
 
-    var loadingImg = ($("<div>").attr("id", "imgMapDivId_loading")).attr("class", "gbGnCtx").
-          append($("<img/>").
+    var loadingImg = (jQuery("<div></div>").attr("id", "imgMapDivId_loading")).attr("class", "gbGnCtx").
+          append(jQuery("<img/>").
             attr("src", "/assets/images/loading2.gif")).
           append("<br>Loading...");
 
@@ -275,7 +275,7 @@ function updateImageMapDiv(imgMapDivId, imgMapSrc, postLoadJS) {
          });
       });
        
-      $().ajaxError(function(info,xhr){
+      jQuery().ajaxError(function(info,xhr){
         jQuery(imgMapDivId).append("Oops: " +  xhr.status + ' ' + xhr.statusText);
       });
       
