@@ -12,12 +12,12 @@
 <c:set var="recHasBasket" value="${wdkAnswer.question.recordClass.hasBasket}" />
 <c:set var="clustalwIsolatesCount" value="0" />
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
-<c:set var="eupathIsolatesQuestion" value="${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
+<c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
   && (fn:containsIgnoreCase(modelName, 'CryptoDB') 
   || fn:containsIgnoreCase(modelName, 'ToxoDB') 
   || fn:containsIgnoreCase(modelName, 'EuPathDB') 
   || fn:containsIgnoreCase(modelName, 'GiardiaDB') 
-  || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}" /> 
+  || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}</c:set> 
 
 <%-- When implement visualizing multiple strategies, the name of the strategy (for the title) could cme from the step object probably --%>
 
@@ -316,7 +316,7 @@
 </thead>
 <tbody id="rootBody">
 
-<!--
+<%--
 <c:if test = "${eupathIsolatesQuestion}">
    <tr><td colspan="10" align="center"> 
        
@@ -332,7 +332,7 @@
    </td></tr>
 
 </c:if>
--->
+--%>
 
 <c:set var="i" value="0"/>
 
@@ -346,8 +346,8 @@
 
 	<c:if test="${recHasBasket}">
           <td>
+            <c:set var="basket_img" value="basket_gray.png"/>
             <c:choose>
-	      <c:set var="basket_img" value="basket_gray.png"/>
               <c:when test="${!wdkUser.guest}">
 	        <c:set value="${record.attributes['in_basket']}" var="is_basket"/>
                 <c:set var="basketTitle" value="Click to add this item to the basket." />
