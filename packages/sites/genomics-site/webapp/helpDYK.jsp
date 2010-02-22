@@ -13,7 +13,7 @@
 
 <site:header refer="customSummary" headElement=""/>
 
-<site:dyk />
+<wdk:dyk />
 
 <script type="text/javascript" language="javascript">
 	window.onload = function(){ showPanel('help') }
