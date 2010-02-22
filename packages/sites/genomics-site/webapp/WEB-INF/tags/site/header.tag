@@ -182,6 +182,14 @@
 
 <site:jscript refer="${refer}"/>
 
+<!--[if lte IE 8]>
+<style>
+   #header_rt {
+      width:50%;
+   }
+</style>
+<![endif]-->
+
 <!--[if lt IE 8]>
 <link rel="stylesheet" href="/assets/css/ie7.css" type="text/css" />
 <![endif]-->
