@@ -58,7 +58,7 @@
   }
 </script>
 
-<c:if test="${fn:containsIgnoreCase(dispModelName, 'EuPathDB')}">
+<c:if test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
 <script>
 
 // Fix record links in results page on EuPathDB
