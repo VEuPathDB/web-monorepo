@@ -9,6 +9,9 @@
 <!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->
 <c:set value="${sessionScope.wdkQuestion}" var="wdkQuestion"/>
 
+
+${Question_Header}
+
 <h1>Identify Isolates based on RFLP Genotype Number</h1> 
 
 <hr>
@@ -139,3 +142,6 @@
 </div> 
 
 </html:form>
+
+
+${Footer}
