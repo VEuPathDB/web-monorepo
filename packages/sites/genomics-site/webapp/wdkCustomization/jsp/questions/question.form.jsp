@@ -6,9 +6,6 @@
   <c:when test = "${fn:containsIgnoreCase(wdkQuestion.name, 'Blast') || fn:containsIgnoreCase(wdkQuestion.name, 'BySimilarity')}">
     <site:blast/>
   </c:when>
-  <c:when test = "${fn:containsIgnoreCase(wdkQuestion.name, 'OrthologPattern')}">
-    <site:orthologpattern/>
-  </c:when>
   <c:otherwise>
     <site:question/>
   </c:otherwise>

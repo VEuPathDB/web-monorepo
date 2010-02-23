@@ -5,6 +5,7 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+${Question_Header}
 
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
 
@@ -446,3 +447,6 @@
 
   </c:otherwise> <%-- otherwise of showParams == true --%>
 </c:choose>
+
+
+${Footer}
