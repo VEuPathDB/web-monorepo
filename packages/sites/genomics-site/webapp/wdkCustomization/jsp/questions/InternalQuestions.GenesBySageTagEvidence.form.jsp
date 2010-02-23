@@ -9,6 +9,7 @@
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 <c:set value="${wdkQuestion.name}" var="qname"/>
 
+${Question_Header}
 <wdk:errors/>
 
 <%-- div needed for Add Step --%>
