@@ -371,3 +371,5 @@ ${Question_Header}
 
     </c:otherwise> <%-- otherwise of showParams == true --%>
 </c:choose>
+
+${Question_Footer}

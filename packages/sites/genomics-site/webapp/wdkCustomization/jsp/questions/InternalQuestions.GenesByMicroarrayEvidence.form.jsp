@@ -40,3 +40,5 @@ ${Question_Header}
 </table>
 
 </div>
+
+${Question_Footer}

@@ -33,3 +33,5 @@ ${Question_Header}
     </c:otherwise>
 
 </c:choose>
+
+${Question_Footer}

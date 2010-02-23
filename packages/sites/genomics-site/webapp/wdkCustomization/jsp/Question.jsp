@@ -4,10 +4,11 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
 <c:set var="Question_Header" scope="request">
-<site:header title="Search for ${wdkQuestion.recordClass.type}s by ${wdkQuestion.displayName}" refer="customQuestion" />
+  <site:header title="Search for ${wdkQuestion.recordClass.type}s by ${wdkQuestion.displayName}" refer="customQuestion" />
 </c:set>
-
 
 <jsp:include page="/wdk/jsp/question.form.jsp" />
 
-<site:footer />
+<c:set var="Question_Footer" scope="request">
+  <site:footer />
+</c:set>
