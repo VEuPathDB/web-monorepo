@@ -333,7 +333,7 @@ sub spliceSiteCuratedTitle {
   my ($utr_len) = $f->get_tag_values('utr_length');
   my ($gene_id) = $f->get_tag_values('gene_id');
   my ($sample) = $f->get_tag_values('sample');
-  my $sampleName = $sample eq 'curated_splice' ? 'Splice Leader Site' : 'Polyadenylation Site';
+  my $sampleName = $sample eq 'curated_long_splice' ? 'Splice Leader Site' : 'Polyadenylation Site';
   my @data;
   push(@data, [$sampleName => '']);
   push(@data, ['Location:' => $loc]);
