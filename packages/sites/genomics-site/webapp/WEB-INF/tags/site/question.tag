@@ -353,7 +353,7 @@ ${Question_Header}
 
 
 <%-- display description for wdkQuestion --%>
-<div id="${descripId}"><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
+<div id="${descripId}"><b>Description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
 
 
 <%-- get the attributions of the question if not EuPathDB --%>

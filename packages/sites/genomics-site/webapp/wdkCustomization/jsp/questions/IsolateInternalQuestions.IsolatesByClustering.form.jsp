@@ -92,7 +92,7 @@ ${Question_Header}
 
 
 <tr><td>
-<b>Query Description:</b>Isolate Strains were clustered based on their snp sequences and are presented in the <a href="http://sourceforge.net/projects/jtreeview/">jtreeview</a> applet.  Displayed is a row for each snp and a column for each available isolate.  The Snps are ordered by Chromosome location while the isolates are ordered by the result of hierarchical clustering (Michiel de Hoon's implementation (<a href="http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/">Cluster 3.0</a>) of Michael Eisen's <a href="http://rana.lbl.gov/EisenSoftware.htm">cluster</a> algorithms).
+<b>Description:</b>Isolate Strains were clustered based on their snp sequences and are presented in the <a href="http://sourceforge.net/projects/jtreeview/">jtreeview</a> applet.  Displayed is a row for each snp and a column for each available isolate.  The Snps are ordered by Chromosome location while the isolates are ordered by the result of hierarchical clustering (Michiel de Hoon's implementation (<a href="http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/">Cluster 3.0</a>) of Michael Eisen's <a href="http://rana.lbl.gov/EisenSoftware.htm">cluster</a> algorithms).
 <br/><br/>
 The Dendrogram view (default) shows light tan pixels for a Major allele, black pixels for a Minor allele, and grey pixels to indicate no available data.  (NOTE:  Major and Minor alleles are calculated within each experiment).  Click "Analysis > Alignment" from the menu bar to see the actual nucleotide sequences.
 <br/><br/>

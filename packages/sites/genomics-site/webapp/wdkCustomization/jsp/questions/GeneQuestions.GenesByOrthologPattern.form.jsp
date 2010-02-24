@@ -327,7 +327,7 @@ toggle(7);
 
 <hr>
 <%-- display description for wdkQuestion --%>
-<div id="query-description-section"><p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p></div>
+<div id="query-description-section"><p><b>Description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p></div>
 
 <%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB'}">

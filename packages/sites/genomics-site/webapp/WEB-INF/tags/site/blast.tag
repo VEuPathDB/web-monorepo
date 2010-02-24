@@ -426,7 +426,7 @@ ${Question_Header}
 
 <hr>
 <%-- display description for wdkQuestion --%>
-<p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
+<p><b>Description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
 <%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB'}">
