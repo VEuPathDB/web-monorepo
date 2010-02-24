@@ -644,7 +644,7 @@ OnChange="javascript:updateImage('${imgId}', DzierszinskiBradySort.DzierszinskiB
   <c:set var="imgId" value="img${secName}"/>
   <c:set var="isOpen" value="true"/>
 
-  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=toxo&fmt=png&id=${id}&vp="/>
+  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=toxo&fmt=png&id=${id}&vp=_LEGEND,"/>
   <c:set var="imgSrc" value="${preImgSrc}rma"/>
 
   <c:set var="noData" value="false"/>
