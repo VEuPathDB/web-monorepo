@@ -46,7 +46,7 @@
 <c:if test="${PORTAL}">
 <tr><td colspan="3">  
     <div class="smallBlack" align="middle">
-	<b>Query Availability in Organism Specific Sites:</b> &nbsp;&nbsp; &nbsp;
+	<b>Search Availability in Organism Specific Sites:</b> &nbsp;&nbsp; &nbsp;
 	<img src="/assets/images/A_letter.gif" border='0' alt='amoeba' width="10" height="10"/> = AmoebaDB &nbsp;&nbsp;
 	<img src="/assets/images/cryptodb_letter.gif" border='0' alt='crypto' /> = CryptoDB &nbsp;&nbsp;
 	<img src="/assets/images/giardiadb_letter.gif" border='0' alt='giardia' /> = GiardiaDB &nbsp; &nbsp;

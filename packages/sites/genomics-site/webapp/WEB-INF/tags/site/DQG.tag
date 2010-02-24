@@ -12,7 +12,7 @@
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
 
-	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens</b> (<i>Cryptosporidium</i>, <i>Giardia</i>, <i>Entamoeba</i>, <i>Encephalitozoon</i>, <i>Leishmania</i>, <i>Neospora</i>, <i>Plasmodium</i>, <i>Toxoplasma</i>, <i>Trichomonas</i> and <i>Trypanosoma</i>).
+	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens</b> (<i>Cryptosporidium</i>,  <i>Encephalitozoon</i>, <i>Entamoeba</i>, <i>Giardia</i>, <i>Leishmania</i>, <i>Neospora</i>, <i>Plasmodium</i>, <i>Toxoplasma</i>, <i>Trichomonas</i> and <i>Trypanosoma</i>).
 	<br>
 
 	<table class="center" style="padding:2px;" width="95%"><tr>
