@@ -24,6 +24,7 @@
     <th><i>braziliensis</i></th>
     <th><i>infantum</i></th>
     <th><i>major</i></th>
+    <th><i>mexicana</i></th>
     <th><i>TREU927</i></th>
     <th><i>gambiense</i></th>
     <th>Distinct genes</th>
@@ -61,6 +62,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="lma_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="lme_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 
