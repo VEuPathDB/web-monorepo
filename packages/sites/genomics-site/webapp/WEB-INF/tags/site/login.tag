@@ -87,7 +87,7 @@
             <span class="small">
                <input type="submit" value="Login" id="login" style="width:76px;"/>
                <c:if test="${includeCancel}">
-                 <input type="submit" value="Cancel" style="width:76px;" onclick="$.unblockUI();return false;"/>
+                 <input type="submit" value="Cancel" style="width:76px;" onclick="jQuery.unblockUI();return false;"/>
                </c:if>
             </span>
     
