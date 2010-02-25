@@ -5,6 +5,17 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
+<c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
+
+
+ <c:choose>
+    <c:when test="${projectId != 'CryptoDB' }">
+        <site:question/>
+    </c:when>
+
+    <c:otherwise>
+
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
@@ -38,3 +49,9 @@ the <a href="http://bioinformatics.oxfordjournals.org/cgi/content/abstract/18/su
 <p>
 Queries issued at CryptoCyc will <b>not</b> be recorded in your Query History.
 <site:footer/>
+
+   </c:otherwise>
+
+</c:choose>
+
+
