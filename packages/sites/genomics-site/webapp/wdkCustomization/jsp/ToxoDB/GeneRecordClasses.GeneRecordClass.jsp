@@ -439,7 +439,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
           <div class="small">
              	<!-- DESCRIPTION?? -->
 The percentile graph on the right represents the percentiles of each expression value across the
-dymanic range of the microarray log(2) intensities.
+dynamic range of the microarray log(2) intensities.
 experimental condition.
           </div>
         </td>
