@@ -117,8 +117,11 @@ OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[sel
     </table>
   </c:set>
 
+
+<c:set var="noData" value="false"/>
   <c:if test="${row['has_profile'].value eq '0'}">
     < c:set var="expressionContent" value="none"/>
+    <c:set var="noData" value="true"/>
   </c:if>
 
 <wdk:toggle
@@ -126,6 +129,7 @@ OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[sel
     isOpen="true"
     displayName="${row['display_name'].value}"
     content="${expressionContent}"
+    noData="${noData}"
     attribution="${row['attribution'].value}"/>
 
 </c:if>
