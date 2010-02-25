@@ -15,7 +15,7 @@ function getReadFromCookie() {
 
   if (cookie == null) return readMap;
   
-  $(cookie.split(',')).each(function(i, val){
+  jQuery(cookie.split(',')).each(function(i, val){
     readMap[val] = 1;
   });
 
@@ -38,14 +38,14 @@ function flagUnreadListItems() {
   var totalUnreadCount = 0;
   var open = new Array();
   
-  $('a.heading').each(function(j){
+  jQuery('a.heading').each(function(j){
     
     var sectUnreadCount = 0
 
-    var section = $(this).next('div.menu_lefttop_drop:first');
+    var section = jQuery(this).next('div.menu_lefttop_drop:first');
     var display = section.css("display");
     
-    $(section).
+    jQuery(section).
       children('ul').children('li[id]').each(function(k){
         
         listItems.push(this.id);
@@ -68,9 +68,9 @@ function flagUnreadListItems() {
       label = label + sectUnreadCount + " new item" +
           ((listItems.length > 1) ? "s" : "") + "</p>"
 
-      oldHeadingPadBot = $(this).css('padding-bottom');
-      $(this).css({'padding-bottom' : '8px'});
-      $(this).append(label);
+      oldHeadingPadBot = jQuery(this).css('padding-bottom');
+      jQuery(this).css({'padding-bottom' : '8px'});
+      jQuery(this).append(label);
     }
 
     // div content is visible, consider them read without requiring user interaction.
@@ -78,7 +78,7 @@ function flagUnreadListItems() {
     
   });
   
-  $(open).each(function(){ putReadInCookie(this); });
+  jQuery(open).each(function(){ putReadInCookie(this); });
   //console.log('totalUnreadCount ' + totalUnreadCount);
 }
 
@@ -93,19 +93,19 @@ function flagUnreadListItems() {
 function putReadInCookie(headernode) {
   var newCookieVal = new Array();
   var readMap = getReadFromCookie();
-  $(headernode).next('div.menu_lefttop_drop:first').
+  jQuery(headernode).next('div.menu_lefttop_drop:first').
     children('ul').children('li[id]').each(function(k){
        readMap[this.id] = 1;
   });
 
   for(key in readMap) {
       if (key == null || key == "") continue;
-      if ($.inArray(key, listItems) < 0) continue;
+      if (jQuery.inArray(key, listItems) < 0) continue;
       newCookieVal.push(key);
   }
   
-  $(headernode).children('p:first').remove();
-  $(headernode).css({'padding-bottom' : oldHeadingPadBot})
+  jQuery(headernode).children('p:first').remove();
+  jQuery(headernode).css({'padding-bottom' : oldHeadingPadBot})
   var expiresDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * 24 * 365);
   storeIntelligentCookie(readListCookieName, newCookieVal, expiresDate, '/', secondLevelDomain());
 }
