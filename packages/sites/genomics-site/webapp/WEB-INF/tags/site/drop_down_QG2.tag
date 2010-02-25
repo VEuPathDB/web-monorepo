@@ -38,7 +38,7 @@
 			<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
-    <a title="This one WADL contains documentation for all gene web service searches"  href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Genes</h2></a>
+    <a title="This one WADL contains documentation for all gene web service searches"  href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Genes</h3></a>
     <c:set var="children" value="${rootCat.webserviceChildren}" />
 </c:when>
 <c:otherwise>
@@ -145,7 +145,7 @@
 
   			<c:if test="${qSet.displayName == cat.displayName}">
 			<br><br>
-			<li><a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h2></a>
+			<li><a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
 				<ul>
            			<c:forEach items="${qSet.questions}" var="q">
              				<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}</a></li>
