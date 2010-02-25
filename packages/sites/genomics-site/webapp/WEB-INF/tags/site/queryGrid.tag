@@ -38,7 +38,7 @@
 <%-- with new UI design the cellspacing/cellpdding of the table seems useless, innertube2 class provdes the padding --%>
 
 <div style="padding-top:5px;" class="h3center">
-	Select a Search, which will be the first step in you new strategy.
+	Select a search, which will be the first step in you new strategy.
 </div>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -63,7 +63,7 @@
 <tr><td colspan="3">  
     <div class="smallBlack" align="middle">
 	(Click on &nbsp; 
-	<img src="/assets/images/eupathdb_letter.gif" border='0' alt='eupathdb'/> &nbsp; to access a query in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>)
+	<img src="/assets/images/eupathdb_letter.gif" border='0' alt='eupathdb'/> &nbsp; to access a search in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>)
 	</div>
 </td></tr>
 </c:if>
