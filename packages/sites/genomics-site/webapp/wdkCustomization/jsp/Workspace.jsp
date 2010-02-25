@@ -63,18 +63,16 @@
 
 // Fix record links in results page on EuPathDB
 function customResultsPage() {
-   var keepTrying = true;
-   $("#Results_Table tr").each(function() {
-      var projectId;
-      $("td a",this).each(function() {
+   $("#Results_Table #rootBody tr td a").each(function() {
          var currentUrl = $(this).attr('href');
          var recordName = parse_Url(currentUrl, "name");
          var primaryKey = parse_Url(currentUrl, "source_id");
-         if (!projectId) projectId = parse_Url(currentUrl, "project_id");
+         var projectId = parse_Url(currentUrl, "project_id");
          primaryKey = parse_Url(currentUrl, "source_id");
-         create_Portal_Record_Url(recordName,projectId,primaryKey,"");
-         $(this).attr('href',"javascript:create_Portal_Record_Url('" + recordName + "', '" + projectId + "', '" + primaryKey + "', '');");
-      });
+         $(this).attr('href','javascript:void(0)');
+	 $(this).click(function() {
+		create_Portal_Record_Url(recordName, projectId, primaryKey, '');
+	 });
    });
 }
 
