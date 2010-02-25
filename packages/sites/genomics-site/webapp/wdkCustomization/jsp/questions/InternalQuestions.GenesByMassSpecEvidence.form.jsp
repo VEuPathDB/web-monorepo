@@ -23,10 +23,10 @@ ${Question_Header}
 <%-- div needed for Add Step --%>
 <div id="form_question">
 <table width="100%">
+<c:set value="1" var="columns"/>
+<tr class="headerRow"><td colspan="${columns}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
-<tr class="headerRow"><td colspan="4" align="center"><b>Choose a Search ---- Mouse over to read description</b></td></tr>
-
-	<site:queryList2 questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
+	<site:queryList2 columns="${columns}" questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
 
 </table>
 </div>

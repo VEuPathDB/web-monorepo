@@ -78,12 +78,21 @@ function getComboElement()
         <c:set var="qSet" value="${wdkModel.questionSetsMap[qSetName]}"/>
         <c:set var="q" value="${qSet.questionsMap[qName]}"/>
 
+        <c:set var="prefix" value="${fn:substring(q.displayName,0,4)}" />    <!-- THIS CORRESPONDS TO THE ORGANISM P.F. -->
+        <c:if test="${oldprefix != prefix && i != 1}">
+		</tr>
+		<tr><td colspan="${columns}" style="padding:0"><hr style="color:lightgrey"></td></tr>
+		<tr>
+		<c:set var="i" value="1"/>
+	</c:if>
+        
 <td align="left">&#8226;<a title="${q.summary}" 
 	href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${q.displayName}' )">
 		<font color="#000066" size="3"><b>${q.displayName}</b>${url}</font></a>
 </td> 
 
         <c:if test="${i % columns == 0}"></tr><tr></c:if>
+        <c:set var="oldprefix" value="${prefix}" />
 
       </c:forEach> <%-- forEach items=questions --%>
 	

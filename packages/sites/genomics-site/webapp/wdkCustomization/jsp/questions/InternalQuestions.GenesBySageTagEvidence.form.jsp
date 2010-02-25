@@ -15,11 +15,13 @@ ${Question_Header}
 <%-- div needed for Add Step --%>
 <div id="form_question">
 <table width="100%" cellpadding="4">
-<tr class="headerRow"><td colspan="4" align="center"><b>Choose a Search ---- Mouse over to read description</b></td></tr>
+<c:set value="1" var="columns"/>
+
+<tr class="headerRow"><td colspan="${columns}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
 <c:choose>
 <c:when test = "${project == 'EuPathDB' || project == 'GiardiaDB' || project == 'PlasmoDB' || project == 'ToxoDB'}">
-	<site:queryList2 questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
+	<site:queryList2  columns="${columns}" questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
 </c:when>
 </c:choose>
 
