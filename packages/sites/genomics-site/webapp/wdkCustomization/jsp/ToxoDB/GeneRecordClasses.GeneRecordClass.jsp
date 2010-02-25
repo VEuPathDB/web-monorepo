@@ -19,6 +19,7 @@
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
 <site:header title="${wdkModel.displayName} : gene ${id}"
+			 refer="recordPage"
              divisionName="Gene Record"
              division="queries_tools"/>
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
@@ -41,6 +42,7 @@
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
 <site:header title="${wdkModel.displayName} : gene ${id} (${prd})"
+			 refer="recordPage"
              banner="${id}<br>${prd}"
              divisionName="Gene Record"
              division="queries_tools"
