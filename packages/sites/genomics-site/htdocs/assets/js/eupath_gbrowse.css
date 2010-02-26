@@ -1,0 +1,23 @@
+.reset_button     { background-color: red;
+                     color: yellow;
+                  }
+.datatitle        { background-color: #BBCCFF; }
+.databody         { background-color: #E3E9FF; }
+.searchtitle      { background-color: #BBCCFF;
+                     font-size: small;
+                     }
+.searchbody       { background-color: #E3E9FF;
+                     font-size: small;
+                     }
+.settingstitle    { background-color: Darkkhaki;
+                     font-size: small;
+                     }
+.settingsbody     { background-color: #E3E9FF;
+                     font-size: small;
+                     }
+.uploadtitle      { background-color: #BBCCFF;
+                     font-size: small;
+                     }
+.uploadbody       { background-color: #BBCCFF;
+                     font-size: small;
+                     }
