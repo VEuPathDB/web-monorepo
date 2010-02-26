@@ -104,13 +104,13 @@
                     <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByChIPchip" linktext="ChIP chip Evidence" existsOn="A T P"/> 
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByRNASeqExpressionTiming" linktext="RNA Seq Evidence" existsOn=""/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByRNASeqEvidence" linktext="RNA Seq Evidence" existsOn=""/>
                 </tr>
             </table>
 </div>
         </td>
 
-        
+
 
         <td valign="top">
 <div class="innertube2">
