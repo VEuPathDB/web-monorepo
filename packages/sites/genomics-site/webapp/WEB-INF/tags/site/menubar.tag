@@ -46,7 +46,7 @@
 </ul>
 
 <%-- some javascript fills the count in the span --%>
-<ul style="width:11em;">
+<ul>
     <li><a id="mysearch" onclick="setCurrentTabCookie('strategy_results');" href="<c:url value="/showApplication.do"/>" title="Access your Search Strategies Workspace">
 	My Strategies <%--<span title="You have ${count} strategies" class="subscriptCount">
 		(${count})</span>--%>
