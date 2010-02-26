@@ -348,4 +348,4 @@ toggle(7);
   </c:otherwise> <%-- otherwise of showParams == true --%>
 </c:choose>
 
-${Footer}
+${Question_Footer}

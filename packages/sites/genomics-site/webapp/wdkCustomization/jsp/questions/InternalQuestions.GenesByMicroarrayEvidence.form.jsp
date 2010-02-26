@@ -15,7 +15,7 @@ ${Question_Header}
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
-<table width="100%">
+<center><table width="90%">
 
 <c:set value="2" var="columns"/>
 
@@ -31,17 +31,17 @@ ${Question_Header}
 
 <c:choose>
 <c:when test = "${project == 'GiardiaDB'}">
-<site:queryList2 columns="${columns}" questions="${giardiaQuestions}"/>
+<site:queryList3 columns="${columns}" questions="${giardiaQuestions}"/>
 </c:when>
 <c:when test = "${project == 'EuPathDB'}">
 <site:queryList3 columns="${columns}" questions="${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
 </c:when>
 <c:when test = "${project == 'PlasmoDB'}">
-<site:queryList3 columns="${columns}" questions="${plasmoQuestions}"/>
+<site:queryList3  columns="${columns}"  questions="${plasmoQuestions}"/>
 </table>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
-<site:queryList2 columns="${columns}" questions="${toxoQuestions}"/>
+<site:queryList3 columns="${columns}" questions="${toxoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'TriTrypDB'}">
 <site:queryList3 columns="${columns}" questions="${tritrypQuestions}"/>
@@ -49,7 +49,9 @@ ${Question_Header}
 </c:choose>
 
 </table>
+</center>
 
 </div>
+
 
 ${Question_Footer}

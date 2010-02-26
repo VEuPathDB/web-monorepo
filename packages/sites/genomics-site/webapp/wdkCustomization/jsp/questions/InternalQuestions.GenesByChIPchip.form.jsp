@@ -29,7 +29,7 @@ ${Question_Header}
 
 <c:choose>
 <c:when test = "${project == 'EuPathDB'}">
-<site:queryList2 questions="GeneQuestions.GenesByChIPchipToxo,GeneQuestions.GenesByChIPchipPlasmo"/>
+<site:queryList3 questions="GeneQuestions.GenesByChIPchipToxo,GeneQuestions.GenesByChIPchipPlasmo"/>
 </c:when>
 </c:choose>
 

@@ -449,4 +449,4 @@ ${Question_Header}
 </c:choose>
 
 
-${Footer}
+${Question_Footer}

@@ -105,4 +105,6 @@ Highlighting areas of the dendrogram or clicking the above nodes will create a "
 
 </table> 
 
-${Footer}
+
+
+${Question_Footer}

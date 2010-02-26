@@ -30,10 +30,10 @@ ${Question_Header}
 
 <c:choose>
 <c:when test = "${projectId == 'CryptoDB' || projectId == 'TriTrypDB'}">
-	<site:queryList2 columns="${columns}"  questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesBySecondaryStructure"/>
+	<site:queryList3 columns="${columns}"  questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesBySecondaryStructure"/>
 </c:when>
 <c:otherwise>  <%-- EuPathDB and PlasmoDB, Toxo still does not have this kind of data --%>
-	<site:queryList2 columns="${columns}" questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesWithStructurePrediction,GeneQuestions.GenesBySecondaryStructure"/>
+	<site:queryList3 columns="${columns}" questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesWithStructurePrediction,GeneQuestions.GenesBySecondaryStructure"/>
 </c:otherwise>
 </c:choose>
 

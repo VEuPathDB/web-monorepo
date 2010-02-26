@@ -24,9 +24,10 @@ ${Question_Header}
 <div id="form_question">
 <table width="100%">
 <c:set value="1" var="columns"/>
+
 <tr class="headerRow"><td colspan="${columns}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
-	<site:queryList2 columns="${columns}" questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
+	<site:queryList3 columns="${columns}" questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
 
 </table>
 </div>

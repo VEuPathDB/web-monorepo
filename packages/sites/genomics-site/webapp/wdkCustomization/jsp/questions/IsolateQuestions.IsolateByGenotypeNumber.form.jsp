@@ -144,4 +144,4 @@ ${Question_Header}
 </html:form>
 
 
-${Footer}
+${Question_Footer}

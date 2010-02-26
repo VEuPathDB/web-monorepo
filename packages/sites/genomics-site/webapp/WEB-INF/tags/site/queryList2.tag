@@ -13,6 +13,7 @@
 %>
 
 <script src="assets/js/parameterHandlers.js" type="text/javascript"></script>
+<script src="<c:url value='wdk/js/wdkQuestion.js'/>" type="text/javascript"></script>
 <SCRIPT type="text/javascript" >
 
 
@@ -44,6 +45,8 @@ document.getElementById(div).innerHTML += "<hr/>"
 			$("#" + div).append(qa);
 			htmltooltip.render();
 			initParamHandlers(true);
+ 			var question = new WdkQuestion();
+			question.registerGroups();
 		}
 	});
 }	

@@ -21,7 +21,7 @@ ${Question_Header}
 
 <c:choose>
 <c:when test = "${project == 'EuPathDB' || project == 'GiardiaDB' || project == 'PlasmoDB' || project == 'ToxoDB'}">
-	<site:queryList2  columns="${columns}" questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
+	<site:queryList3  columns="${columns}" questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
 </c:when>
 </c:choose>
 

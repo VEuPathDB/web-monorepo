@@ -11,8 +11,11 @@
               required="true"
               description="number of columns in the question table"
 %>
-
+<%-- test without, location seem not to exist, used for dep params in internal pages 
 <script src="assets/js/parameterHandlers.js" type="text/javascript"></script>
+--%>
+<script src="<c:url value='wdk/js/wdkQuestion.js'/>" type="text/javascript"></script>
+
 <SCRIPT type="text/javascript" >
 
 
@@ -44,6 +47,8 @@ document.getElementById(div).innerHTML += "<hr/>"
 			$("#" + div).append(qa);
 			htmltooltip.render();
 			initParamHandlers(true);
+			var question = new WdkQuestion();
+			question.registerGroups();
 		}
 	});
 }	
@@ -81,15 +86,35 @@ function getComboElement()
         <c:set var="prefix" value="${fn:substring(q.displayName,0,4)}" />    <!-- THIS CORRESPONDS TO THE ORGANISM P.F. -->
         <c:if test="${oldprefix != prefix && i != 1}">
 		</tr>
-		<tr><td colspan="${columns}" style="padding:0"><hr style="color:lightgrey"></td></tr>
+	<%--	<tr><td colspan="${columns}" style="padding:0"><hr style="color:lightgrey"/></td></tr> --%>
+		<tr><td colspan="${columns}" style="padding:0">&nbsp;</td></tr>
+
 		<tr>
 		<c:set var="i" value="1"/>
 	</c:if>
         
-<td align="left">&#8226;<a title="${q.summary}" 
-	href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${q.displayName}' )">
-		<font color="#000066" size="3"><b>${q.displayName}</b>${url}</font></a>
+	 <c:set var="width" value="30%"/>
+	<c:if test="${i % columns == 0}"> <c:set var="width" value="70%"/></c:if>
+
+
+<!-- if only one column, use space for the description -->
+ <c:set var="question" value="<b>${q.displayName}</b>"/>
+ <c:if test="${columns == 1}"> <c:set var="question" value="<b>${q.displayName}</b>:&nbsp;<font style='font-size:90%'>${q.summary}</font>" /></c:if>
+
+
+<%--
+<td width="${width}" align="left">&#8226;
+	<a title="${q.summary}" href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${q.displayName}' )">
+	<font color="#000066" size="3"><b>${q.displayName}$</b>{url}</font></a>
 </td> 
+--%>
+
+<td width="${width}" align="left">&#8226;
+	<a id="${qName}" href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${q.displayName}' )" rel="htmltooltip">
+	<font color="#000066" size="3">${question}${url}</font></a>
+</td>
+<div id="${qName}_tip" class="htmltooltip">${q.summary}</div>
+
 
         <c:if test="${i % columns == 0}"></tr><tr></c:if>
         <c:set var="oldprefix" value="${prefix}" />
@@ -98,7 +123,10 @@ function getComboElement()
 	
 </tr>
 
-<tr><td colspan="${columns}"><hr/><td></tr>
+
+<tr><td colspan="${columns}"><hr/></td></tr>
+
+
 <tr><td colspan="${columns}" align="left">
 	<div id="des"></div>
      </td>
