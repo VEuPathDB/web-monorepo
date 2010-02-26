@@ -12,14 +12,14 @@
         <td width="50%" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
-                <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByEstAccession" linktext="EST Accession(s)" existsOn="A Am C G M P T Tt"/>
+                <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByEstAccession" linktext="EST Accession(s)" existsOn="A Am G M P T Tt"/>
                 </tr>
 
                 <tr>
-                   <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="A Am C G M P T Tt"/> 
+                   <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesWithGeneOverlap" linktext="Extent of Gene Overlap" existsOn="A Am G M P T Tt"/> 
                 </tr>
  <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLibrary" linktext="Library" existsOn="A Am C G M P T Tt"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLibrary" linktext="Library" existsOn="A Am G M P T Tt"/>
                 </tr>
 
             </table>
@@ -31,14 +31,14 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
                  <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByGeneIDs" linktext="Gene IDs" existsOn="A Am C G M P T Tt"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByGeneIDs" linktext="Gene IDs" existsOn="A Am G M P T Tt"/>
                 </tr>           
 <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLocation" linktext="Genomic Location" existsOn="A Am C G M P T Tt"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByLocation" linktext="Genomic Location" existsOn="A Am G M P T Tt"/>
                 </tr>
 
                 <tr>
-                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesBySimilarity" linktext="BLAST similarity" type="ASSEMBLIES" existsOn="A Am C G M P T Tt"/>
+                    <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesBySimilarity" linktext="BLAST similarity" type="ASSEMBLIES" existsOn="A Am G M P T Tt"/>
                 </tr>
             </table>
         </td>
