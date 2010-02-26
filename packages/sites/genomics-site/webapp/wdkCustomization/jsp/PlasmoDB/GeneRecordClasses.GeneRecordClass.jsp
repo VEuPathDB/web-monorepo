@@ -19,6 +19,7 @@
 <c:when test="${!wdkRecord.validRecord}">
 <site:header title="${wdkModel.displayName} : gene ${id}"
              divisionName="Gene Record"
+		refer="recordPage" 
              division="queries_tools"/>
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
 </c:when>
@@ -96,6 +97,7 @@
 
 <site:header title="${wdkModel.displayName} : gene ${id} (${prd})"
              divisionName="Gene Record"
+		refer="recordPage" 
              division="queries_tools"
              summary="${overview.value} (${length.value} bp)"/>
 

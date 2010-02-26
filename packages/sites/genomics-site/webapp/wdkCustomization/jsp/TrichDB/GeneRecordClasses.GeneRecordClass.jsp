@@ -19,6 +19,7 @@
 <c:when test="${!wdkRecord.validRecord}">
 <site:header title="TrichDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
+		refer="recordPage" 
              divisionName="Gene Record"
              division="queries_tools" />
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>

@@ -17,7 +17,8 @@
 
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 
-<site:header title="${wdkRecord.primaryKey}"
+<site:header title="${wdkRecord.primaryKey}" 
+		refer="recordPage" 
              divisionName="Gene Record"
              division="queries_tools"/>
 
