@@ -10,11 +10,12 @@
 <%@ attribute name="model"
               description="Param used in the cgi (plasmo, tritryp, toxo)"
 %>
-
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
+<c:catch var="tagError">
 
 <c:set value="${wdkRecord.tables['ExpressionGraphs']}" var="tbl"/>
 <c:set value="${wdkRecord.tables['ExpressionGraphsData']}" var="dat"/>
+
 
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 
@@ -72,7 +73,6 @@
      </c:set>
 
         <td class="centered">
-
 
 <c:if test="${i > 0}">
 <wdk:toggle
@@ -136,5 +136,10 @@ OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[sel
 
 </c:forEach>
 
+</c:catch>
+<c:if test="${tagError != null}">
+    <c:set var="exception" value="${tagError}" scope="request"/>
+    <i>Error. Data is temporarily unavailable</i>
+</c:if>
 
 
