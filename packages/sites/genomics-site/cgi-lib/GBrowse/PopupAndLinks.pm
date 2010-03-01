@@ -350,13 +350,12 @@ sub spliceSiteAlignTitle {
   my ($seqNum) = $f->get_tag_values('count');
   my ($genMatches) = $f->get_tag_values('genome_matches');
   my ($sample) = $f->get_tag_values('sample');
-  my $sampleName = $sample eq 'gc_splice_reads' ? 'Splice Site' : 'Polyadenylation Site';
   my @data;
   push(@data, ['Location:' => $loc]);
   push(@data, ['Longest Sequence:' => $seq]);
   push(@data, ['Number of Sequences:' => $seqNum]);
   push(@data, ['Genome Matches:' => $genMatches]);
-  return hover("$sampleName: $loc",\@data);
+  return hover("Splice Site: $loc",\@data);
 }
 
 sub polyASiteAlignTitle {
