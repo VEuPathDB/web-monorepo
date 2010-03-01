@@ -13,7 +13,9 @@
 <c:set var="step" value="${requestScope.wdkHistory}"/>
 <c:set var="stepId" value="${step.stepId}"/>
 <c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
+<c:set var="recHasBasket" value="${wdkAnswer.question.recordClass.hasBasket}" />
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
+<c:set var="recordName" value="${wdkAnswer.question.recordClass.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="summaryUrl" value="${wdk_summary_url}" />
 <c:set var="commandUrl">
@@ -45,7 +47,20 @@
     		- ${wdkAnswer.resultSize}
 		<span id="text_data_type">${type}s</span>
 	</td>
-	<td align="right"><a href="downloadStep.do?step_id=${wdkHistory.stepId}">Download Result</a></td>
+	<td align="right">
+          <c:if test="${recHasBasket}">
+            <c:choose>
+              <c:when test="${wdkUser.guest}">
+                <c:set var="basketClick" value="popLogin()" />
+              </c:when>
+              <c:otherwise>
+                <c:set var="basketClick" value="updateBasket(this, '${step.stepId}', '0', '${modelName}', '${recordName}')" />
+              </c:otherwise>
+            </c:choose>
+            <a style="font-size:120%" href="javascript:void(0)" onClick="${basketClick}"><b>Add Results to Basket</b></a>&nbsp;|&nbsp;
+          </c:if>
+          <a href="downloadStep.do?step_id=${step.stepId}">Download Result</a>
+        </td>
 </tr></table></h2>
 
 <!-- content of blast result -->
