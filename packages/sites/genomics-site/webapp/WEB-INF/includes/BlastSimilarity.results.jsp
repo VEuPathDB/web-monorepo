@@ -57,7 +57,7 @@
                 <c:set var="basketClick" value="updateBasket(this, '${step.stepId}', '0', '${modelName}', '${recordName}')" />
               </c:otherwise>
             </c:choose>
-            <a style="font-size:120%" href="javascript:void(0)" onClick="${basketClick}"><b>Add Results to Basket</b></a>&nbsp;|&nbsp;
+            <a href="javascript:void(0)" onClick="${basketClick}"><b>Add Results to Basket</b></a>&nbsp;|&nbsp;
           </c:if>
           <a href="downloadStep.do?step_id=${step.stepId}">Download Result</a>
         </td>
