@@ -27,6 +27,10 @@
 
 <%-------------  Set sample strategy signatures in all sites  ----------------%>
 <c:choose>
+   <c:when test="${fn:containsIgnoreCase(site, 'AmoebaDB')}">
+      <c:set var="secKin" value="95ac3b1a4f6acfd4" />
+   </c:when>
+
    <c:when test="${fn:containsIgnoreCase(site, 'CryptoDB')}">
       <c:set var="simple" value="be21be3fa78e67fa" />
       <c:set var="expanded" value="645f96ff3792dcd8" />
@@ -38,8 +42,8 @@
    </c:when>
 
    <c:when test="${fn:containsIgnoreCase(site, 'MicrosporidiaDB')}">
-      <c:set var="mspHypoGeneGO" value="7bfe49ad88a1c3d3" />
-      <c:set var="fungiNotAnimal" value="ffdb5df9c6305f7f" />
+      <c:set var="mspHypoGeneGO" value="f4bd3039772ccc43" />
+      <c:set var="fungiNotAnimal" value="0f3e27c0bf3b1540" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
@@ -174,7 +178,15 @@
 <tr align = "left">
 	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${fungiNotAnimal}"/>">Conservered Fungi/secr.TM</a> </td>
 	<td>Secreted genes conserved in Fungi and absent from animals.</td>
-	<td>Find <i>Encephalitozoon</i> genes which have characteristics of encoding secreted proteins (have signal peptide and have a transmembrane domain) and which lack detectable orthology with animals.</td>
+	<td>Find signal peptide and transmembrane domain-containing proteins conserved in fungi and which lack detectable orthologs in animals.</td>
+</tr>
+</c:if>
+
+<c:if test="${secKin != null}">
+<tr align = "left">
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${secKin}"/>">Secreted kinases</a> </td>
+	<td>Secreted kinases not conserved in mammals.</td>
+	<td>Find <i>Entamoeba</i> genes which have characteristics of encoding secretory-pathway proteins (have signal peptide and have a transmembrane domain) and which lack detectable orthologs in mammals.</td>
 </tr>
 </c:if>
 
