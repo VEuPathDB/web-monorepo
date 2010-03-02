@@ -122,7 +122,7 @@ Ack, this form won't work at all without JavaScript support!
 <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
 
 	<input name="myMultiProp(phyletic_term_map)" value="rnor" type="hidden"/>
-	<input name="myMultiProp(phyletic_indent_map)" value="Archaea" type="hidden"/>
+	<input name="myMultiProp(phyletic_indent_map)" value="ARCH" type="hidden"/>
 
 <table>
   <tr>
@@ -256,7 +256,7 @@ Ack, this form won't work at all without JavaScript support!
 <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
 
 	<input name="myMultiProp(phyletic_term_map)" value="rnor" type="hidden"/>
-	<input name="myMultiProp(phyletic_indent_map)" value="Archaea" type="hidden"/>
+	<input name="myMultiProp(phyletic_indent_map)" value="ARCH" type="hidden"/>
 <table>
   <tr>
     <td><b>Show results from species:</b></td>
