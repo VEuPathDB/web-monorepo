@@ -16,10 +16,12 @@
 --%>
 <script src="<c:url value='wdk/js/wdkQuestion.js'/>" type="text/javascript"></script>
 
+<c:set var="isInsert" value="${param.isInsert}" />
+
 <SCRIPT type="text/javascript" >
 
 
-function writeData(page, div, quesName){
+function writeData(page, div, quesName, insertStep){
     if(page=="") {document.getElementById(div).innerHTML = ""; return;}
 	var t = $("#"+div);
 	$.ajax({
@@ -27,7 +29,7 @@ function writeData(page, div, quesName){
 		dataType: 'html',
 		success: function(data){
 			if(location.href.indexOf("showApplication") != -1){
-				formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, "", false, false, false);
+				formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, insertStep, false, false, false);
 			}
 			var q = document.createElement('div');
 			$(q).html(data);
@@ -104,13 +106,13 @@ function getComboElement()
 
 <%--
 <td width="${width}" align="left">&#8226;
-	<a title="${q.summary}" href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${q.displayName}' )">
+	<a title="${q.summary}" href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${q.displayName}' ,'${isInsert}')">
 	<font color="#000066" size="3"><b>${q.displayName}$</b>{url}</font></a>
 </td> 
 --%>
 
 <td width="${width}" align="left">&#8226;
-	<a id="${qName}" href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${q.displayName}' )" rel="htmltooltip">
+	<a id="${qName}" href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${q.displayName}','${isInsert}')" rel="htmltooltip">
 	<font color="#000066" size="3">${question}${url}</font></a>
 </td>
 <div id="${qName}_tip" class="htmltooltip">${q.summary}</div>
