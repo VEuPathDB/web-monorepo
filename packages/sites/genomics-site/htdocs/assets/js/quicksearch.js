@@ -13,15 +13,16 @@ function QuickSearch() {
            var form = this;
            // load previous input, if have any
            jQuery(form).find("input[type='text']").each(function() {
-               var name = session + "_" + quickSearch.getName(this.name);
+               var name = quickSearch.getName(this.name);
                var value = wdk.readCookie(name);
                if (value != null) this.value = value; 
            });
            jQuery(form).submit(function() {
                jQuery(form).find("input[type=text]").each(function() {
-                   var name = session + "_" +  quickSearch.getName(this.name);
+                   var name = quickSearch.getName(this.name);
                    var value = this.value;
-                   wdk.createCookie(name, value, 365);
+                   // if the value is too big, do not save the cookie.
+                   if (value.length <= 50) wdk.createCookie(name, value, 30);
                    return true;
                });
            });
