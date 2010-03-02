@@ -92,7 +92,7 @@ function validateFields(e)
        <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
     </c:if>
 
-    <p> <b>IMPORTANT</b>: If you already registered in another site (EuPathDB, CryptoDB ,GiardiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.</p>
+    <p> <b>IMPORTANT</b>: If you already registered in another site (AmoebaDB, EuPathDB, CryptoDB ,GiardiaDB, MicrosporidiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.</p>
 
     <div align="left" style="font-size:1.2em;width:700px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
 
@@ -163,6 +163,14 @@ function validateFields(e)
     </td>
     <td nowrap>
         <c:choose>
+           <c:when test="${requestScope.preference_global_email_amoebadb != null}">
+              <input type="checkbox" name="preference_global_email_amoebadb" checked>AmoebaDB</input>
+           </c:when>
+           <c:otherwise>
+              <input type="checkbox" name="preference_global_email_amoebadb">AmoebaDB</input>
+           </c:otherwise>
+        </c:choose>
+        <c:choose>
            <c:when test="${requestScope.preference_global_email_apidb != null}">
               <input type="checkbox" name="preference_global_email_apidb" checked>EuPathDB</input>
            </c:when>
@@ -186,6 +194,17 @@ function validateFields(e)
               <input type="checkbox" name="preference_global_email_giardiadb">GiardiaDB</input>
            </c:otherwise>
         </c:choose>
+        <c:choose>
+           <c:when test="${requestScope.preference_global_email_microsporidiadb != null}">
+              <input type="checkbox" name="preference_global_email_microsporidiadb" checked>MicrosporidiaDB</input>
+           </c:when>
+           <c:otherwise>
+              <input type="checkbox" name="preference_global_email_microsporidiadb">MicrosporidiaDB</input>
+           </c:otherwise>
+        </c:choose>
+    </td></tr>
+    <td align="right" width="50%" nowrap>
+    <td nowrap>
         <c:choose>
            <c:when test="${requestScope.preference_global_email_plasmodb != null}">
               <input type="checkbox" name="preference_global_email_plasmodb" checked>PlasmoDB</input>
