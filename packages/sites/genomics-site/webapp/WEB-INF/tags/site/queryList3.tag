@@ -7,7 +7,7 @@
               required="true"
               description="list of question full names"
 %>
-[<%@ attribute name="columns"
+<%@ attribute name="columns"
               required="false"
               description="number of columns in the question table"
 %>
