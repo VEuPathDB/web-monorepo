@@ -18,7 +18,7 @@
 function makeSelection(state)
 {
     var form = document.downloadConfigForm;
-    var cb = form.selectedFields;
+    var cb = form.elements;
     for (var i=0; i<cb.length; i++) {
         if (state == 1) cb[i].checked = 'checked';
         else if (state == 0) cb[i].checked = null;
