@@ -10,12 +10,16 @@
 <!-- get wdkModel name to display as page header -->
 <c:set value="${wdkModel.displayName}" var="project"/>
 
+<%-- QUESTIONS --%>
+<c:set var="plasmoQuestions" value="GeneQuestions.GenesByChIPchipPlasmo" />
+<c:set var="toxoQuestions" value="GeneQuestions.GenesByChIPchipToxo"/>
+
 <c:if test="${project == 'ToxoDB'}">
-	<jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByChIPchipToxo" /> 
+	<jsp:forward page="/showQuestion.do?questionFullName=${toxoQuestions}" /> 
 </c:if>
 
 <c:if test="${project == 'PlasmoDB'}">
-        <jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByChIPchipPlasmo" />
+        <jsp:forward page="/showQuestion.do?questionFullName=${plasmoQuestions}" />
 </c:if>
 
 ${Question_Header}
@@ -24,16 +28,21 @@ ${Question_Header}
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
-<table width="100%">
-<tr class="headerRow"><td colspan="4" align="center"><b>Choose a Search ---- Mouse over to read description</b></td></tr>
+<center><table width="90%">
+
+<c:set value="2" var="columns"/>
+
+<tr class="headerRow"><td colspan="${columns}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
+
 
 <c:choose>
 <c:when test = "${project == 'EuPathDB'}">
-<site:queryList3 questions="GeneQuestions.GenesByChIPchipToxo,GeneQuestions.GenesByChIPchipPlasmo"/>
+<site:queryList3 columns="${columns}" questions="${plasmoQuestions},${toxoQuestions}"/>
 </c:when>
 </c:choose>
 
 </table>
+</center>
 </div>
 
 ${Question_Footer}
