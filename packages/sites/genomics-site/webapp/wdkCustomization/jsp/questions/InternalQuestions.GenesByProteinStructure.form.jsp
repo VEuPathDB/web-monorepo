@@ -25,7 +25,7 @@ ${Question_Header}
 <table width="100%">
 <c:set value="1" var="columns"/>
 
-<tr class="headerRow"><td colspan="${columns}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
+<tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
 
 <c:choose>
