@@ -11,13 +11,13 @@ var dataArray = new Array(sites.length);
 var sendReqUrlEnum = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=sharedParams.chromosomeOptional:';
 var sendReqUrlFlat = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=SharedVQ.TrypChromosomePortal:';
 
-// If site is TriTrypDB, use the flat vocab ajax call
+// If site is TriTrypDB, or Micro  use the flat vocab ajax call
 //window.onload = function() { initLocation(); }
 function initLocation() {
 	for(var i=0;i<sites.length;i++){
 		dataArray[i] = new Array();
 	//	alert(sites[i]);
-		if ( (sites[i] == "Leishmania") || (sites[i] == "Trypanosoma") )
+		if ( (sites[i] == "Leishmania") || (sites[i] == "Trypanosoma" ) || (sites[i] == "Encephalitozoon" ) )
 			AjaxCall(sendReqUrlFlat + sites[i],dataArray[i]);
 		else
 			AjaxCall(sendReqUrlEnum + sites[i],dataArray[i]);

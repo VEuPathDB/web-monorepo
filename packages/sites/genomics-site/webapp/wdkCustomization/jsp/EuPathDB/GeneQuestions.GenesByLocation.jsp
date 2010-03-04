@@ -8,7 +8,7 @@
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
-
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 <c:set value="${requestScope.questionForm}" var="qForm"/>
 <c:set var="showParams" value="${requestScope.showParams}"/>
 <c:set var="partial" value="${requestScope.partial}"/>
@@ -16,18 +16,9 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
 
-<c:set var="headElement">
+<c:set value="${wdkModel.displayName}" var="project"/>
 
-</c:set>
-<site:header title="${wdkModel.displayName} : ${wdkQuestion.displayName}"
-                 banner="Identify ${wdkQuestion.recordClass.type}s based on ${wdkQuestion.displayName}"
-                 parentDivision="Queries & Tools"
-                 parentUrl="/showQuestionSetsFlat.do"
-                 divisionName="Question"
-                 division="queries_tools"
-		 headElement="${headElement}"/>
-
-
+${Question_Header}
 
 <script language="JavaScript" type="text/javascript">
 <!--
@@ -51,9 +42,14 @@ function showParamGroup(group, isShow)
 //-->
 </script>
 
+<%--
 <c:if test="${wdkModel.displayName eq 'EuPathDB.org'}">
      <div id="question_Form">
 </c:if>
+--%>
+
+<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
+<div id="form_question">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -276,5 +272,7 @@ function showParamGroup(group, isShow)
 </tr>
 </table> 
 
+</div>
 
-<site:footer/>
+${Question_Footer}
+
