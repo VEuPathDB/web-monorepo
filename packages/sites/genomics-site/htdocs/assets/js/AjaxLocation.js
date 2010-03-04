@@ -9,7 +9,8 @@ var dataArray = new Array(sites.length);
 //        here we need to be explicit with flat vocabs: indicate the queryRef
 //        the model defines a flatvocab for TriTryp for chromosomeOptional (to obtain the chromosome values)
 var sendReqUrlEnum = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=sharedParams.chromosomeOptional:';
-var sendReqUrlFlat = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=SharedVQ.TrypChromosomePortal:';
+var sendReqUrlFlatTryp = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=SharedVQ.TrypChromosomePortal:';
+var sendReqUrlFlatMicro = 'showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=SharedVQ.MicroChromosomePortal:';
 
 // If site is TriTrypDB, or Micro  use the flat vocab ajax call
 //window.onload = function() { initLocation(); }
@@ -17,9 +18,11 @@ function initLocation() {
 	for(var i=0;i<sites.length;i++){
 		dataArray[i] = new Array();
 	//	alert(sites[i]);
-		if ( (sites[i] == "Leishmania") || (sites[i] == "Trypanosoma" ) || (sites[i] == "Encephalitozoon" ) )
-			AjaxCall(sendReqUrlFlat + sites[i],dataArray[i]);
-		else
+		if ( (sites[i] == "Leishmania") || (sites[i] == "Trypanosoma" ) )
+			AjaxCall(sendReqUrlFlatTryp + sites[i],dataArray[i]);
+		else 	if ( (sites[i] == "Encephalitozoon" ) )
+			AjaxCall(sendReqUrlFlatMicro + sites[i],dataArray[i]);
+		else 
 			AjaxCall(sendReqUrlEnum + sites[i],dataArray[i]);
 	}
 	loadOrganisms('showRecord.do?name=AjaxRecordClasses.ChromosomeTermClass&primary_key=organismVQ.withChromosomes:'+all_sites,'orgSelect', dataArray, sites);
