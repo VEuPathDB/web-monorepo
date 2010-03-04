@@ -180,10 +180,14 @@ function loadOrganisms(sendReqUrl, id, dataArr, sites){
 function getAllOrgs(sites){
 	var orgs = "";
 	for(i=0;i<sites.length;i++){
+    		if(sites[i].indexOf('Entamoeba') != -1)
+			orgs = orgs+","+sites[i]+" invadens";
+		if(sites[i].indexOf('Encephalitozoon') != -1)
+			orgs = orgs+","+sites[i]+" intestinalis";
 		if(sites[i].indexOf('Crypto') != -1)
 			orgs = orgs+","+sites[i]+" parvum";
 		if(sites[i].indexOf('Giardia') != -1)
-			orgs = orgs+","+sites[i]+" lamblia";
+			orgs = orgs+","+sites[i]+" Assemblage A isolate WB";
 		if(sites[i].indexOf('Plasmo') != -1)
 			orgs = orgs+","+sites[i]+" falciparum";
 		if(sites[i].indexOf('Toxo') != -1)
