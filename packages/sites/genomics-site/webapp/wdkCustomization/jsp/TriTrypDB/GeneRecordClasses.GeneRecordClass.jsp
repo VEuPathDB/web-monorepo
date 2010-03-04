@@ -283,7 +283,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 </small></div>
   </c:set>
 
-<wdk:wdkTable tblName="Notes" isOpen="true"
+<wdk:wdkTable tblName="Notes" isOpen="false"
                attribution="" postscript="${geneDbLink}"/>
 
 <%-- Phenotype ------------------------------------------------------------%>
