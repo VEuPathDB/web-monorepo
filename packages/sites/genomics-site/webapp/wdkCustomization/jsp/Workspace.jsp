@@ -81,6 +81,10 @@ function create_Portal_Record_Url(recordName, projectId, primaryKey, portal_url)
   if(portal_url.length == 0){
     if(projectId == 'CryptoDB'){
       portal_url = "http://cryptodb.org/cryptodb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
+    } else  if(projectId == 'AmoebaDB'){
+      portal_url = "http://amoebadb.org/amoeba/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
+    } else if(projectId == 'MicrosporidiaDB'){
+      portal_url = "http://microsporidiadb.org/micro/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
     } else if(projectId == 'PlasmoDB'){
       portal_url = "http://plasmodb.org/plasmo/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
     } else if(projectId == 'ToxoDB'){
