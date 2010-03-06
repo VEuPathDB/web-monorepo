@@ -388,13 +388,13 @@
 
         <c:choose>
            <c:when test="${fn:containsIgnoreCase(dispModelName, 'EuPathDB')}">
-	         <a href="javascript:create_Portal_Record_Url('${recNam}', '${projectId}', '${id}','')">${primaryKey.value}</a>
+	         <a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a>
            </c:when>
 
            <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Sequencing Typed'}">
 
               <%-- add checkbox --%>
-              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}"></nobr>
+              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}"></nobr>
 
             <c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
 
@@ -405,7 +405,7 @@
 
               <%-- display a link to record page --%>
 
-				<a class="primaryKey_||_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}">${fieldVal}</a>
+				<a class="primaryKey_||_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a>
 
 
 
