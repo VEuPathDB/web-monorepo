@@ -2,7 +2,9 @@
 
 var all_sites = sites.toString();
 
-var all_orgs = getAllOrgs(sites);
+var all_orgs = getAllOrgsORFs(sites);
+
+
 
 var dataArray = new Array(sites.length);
 
