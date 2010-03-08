@@ -6,7 +6,7 @@
 
 <c:choose>   
   <c:when test="${projectId == 'EuPathDB'}">
-    <jsp:include page="/wdkCustomization/jsp/${projectId}/SageTagQuestions.SageTagByLocation.partial.jsp"/>
+    <jsp:include page="/wdkCustomization/jsp/${projectId}/SageTagQuestions.SageTagByLocation.jsp"/>
   </c:when>
   <c:otherwise>
     <jsp:include page="/wdkCustomization/jsp/questions/question.form.jsp"/>
