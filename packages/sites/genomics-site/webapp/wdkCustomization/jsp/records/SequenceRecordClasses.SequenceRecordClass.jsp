@@ -141,6 +141,10 @@ ${id}
 
 <br>
 
+<c:if test="${projectId eq 'GiardiaDB' || projectId eq 'PlasmoDB' || projectId eq 'ToxoDB' || projectId eq 'TriTrypDB'}">
+	<wdk:wdkTable tblName="Aliases" isOpen="true" attribution=""/>
+</c:if>
+
 <wdk:wdkTable tblName="Centromere" isOpen="true"
                  attribution=""/>
 
