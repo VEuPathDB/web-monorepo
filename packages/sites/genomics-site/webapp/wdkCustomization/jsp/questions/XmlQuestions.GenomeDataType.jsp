@@ -56,6 +56,7 @@
     <td class="mythStyle" title="Microarray">Micro<br>array</td>
     <td class="mythStyle" title="Proteomics">Prote<br>omics</td>
     <td class="mythStyle" title="ChIP Chip">ChIP<br>chip</td>
+    <td class="mythStyle" title="RNA Seq">RNA<br>Seq</td>
     <td class="mythStyle" title="Sage Tags">SAGE<br>Tags</td>
     <td class="mythStyle" title="Metabolic Pathways">Path<br>ways</td>
 </tr>
@@ -166,6 +167,15 @@
 
 <c:choose>
 <c:when test="${record.attributesMap['ChIP_chip'] == 'yes'}">
+    <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+</c:when>
+<c:otherwise>
+    <td class="mytdStyle" style="${separation}"></td>
+</c:otherwise>
+</c:choose>
+
+<c:choose>
+<c:when test="${record.attributesMap['RNA_Seq'] == 'yes'}">
     <td class="mytdStyle" style="${separation}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
 </c:when>
 <c:otherwise>
