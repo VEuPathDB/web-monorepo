@@ -15,7 +15,7 @@
 	<c:when test="${empty wdkUser || wdkUser.guest}">
     		<body>
 		<div class="h2center" style="font-size: 18px;">Please login to upload files</div>
-		<table style="margin-left: auto; margin-right: auto;" width="90%"><tr><td><wdk:login/></td></tr></table>
+		<table style="margin-left: auto; margin-right: auto;" width="90%"><tr><td><site:login/></td></tr></table>
 	</c:when>
 <c:otherwise>
 
