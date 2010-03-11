@@ -56,7 +56,7 @@ return true;
 </SCRIPT>
 
 <c:set var="cgiScript" value='mavidAlign'/>
-<c:if test="${projectId eq 'TriTrypDB' || projectId eq 'AmoebaDB'}">
+<c:if test="${projectId eq 'TriTrypDB'}">
   <c:set var="cgiScript" value='pairwiseMercator'/>
 </c:if>
 
@@ -115,12 +115,9 @@ return true;
               <input type="checkbox" name="genomes" value="l_braziliensis" checked>L.braziliensis
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="t_cruzinonesmeraldo" checked>T.cruzi non-esmeraldo
+              <input type="checkbox" name="genomes" value="l_mexicana" checked>L.mexicana
             </td>
-            <td>
-              <input type="checkbox" name="genomes" value="t_cruziesmeraldo" checked>T.cruzi esmeraldo
-            </td>
-           </tr>
+            </tr>
            <tr>
             <td>
               <input type="checkbox" name="genomes" value="t_vivax" checked>T.vivax
@@ -135,11 +132,19 @@ return true;
               <input type="checkbox" name="genomes" value="t_bruceigambiense" checked>T.brucei gambiense
             </td>
           </tr>
+            <tr>
+            <td colspan="2">
+              <input type="checkbox" name="genomes" value="t_cruzinonesmeraldo" checked>T.cruzi non-esmeraldo like
+            </td>
+            <td colspan="2">
+              <input type="checkbox" name="genomes" value="t_cruziesmeraldo" checked>T.cruzi esmeraldo like
+            </td>
+           </tr>
          </table>
 
      </td></tr>
 </c:if>
-<c:if test="${projectId eq 'AmoebaDB'}">
+<c:if test="${projectId eq 'AmoebaDB_'}">
 
    <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
         <table>
@@ -161,7 +166,7 @@ return true;
     <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
         <input type="radio" name="type" value="clustal" checked>clustal
 
-<c:if test="${projectId ne 'TriTrypDB' && projectId ne 'AmoebaDB'}">
+<c:if test="${projectId ne 'TriTrypDB'}">
         <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
 </c:if>
         <input type="radio" name="type" value="fasta_ungapped">multi fasta
