@@ -14,8 +14,8 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set value="${wdkModel.displayName}" var="project"/>
 
-<site:header  title="${project} :: Genome & Data Type Summary"
-                 banner="${project} Genome & Data Type Summary"
+<site:header  title="${project} :: Genomes & Data Types"
+                 banner="${project} Genomes & Data Types"
                  parentDivision="${project}"
                  parentUrl="/home.jsp"
                  divisionName="allSites"
