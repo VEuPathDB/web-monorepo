@@ -124,7 +124,7 @@ OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[sel
     <c:set var="noData" value="true"/>
 
     <c:if test="${row['profile_name'] eq 'Expression profiling of Tbrucei five life cycle stages'}">
-        <c:set var="expressionContent" value="<i>None</i>  NOTE: For this experiment, some data has only been assigned to a single representative gene in the case where oligos mapped to near-identical genes."/>
+        <c:set var="expressionContent" value="<i>None</i>  NOTE: For this experiment, in the cases where the probe set mapped to near-identical genes, data was assigned to a single representative gene."/>
         <c:set var="noData" value="false"/>
     </c:if>
 
