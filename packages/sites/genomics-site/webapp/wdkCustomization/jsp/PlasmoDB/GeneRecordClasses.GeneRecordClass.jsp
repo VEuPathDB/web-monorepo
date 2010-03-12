@@ -133,7 +133,8 @@
      <img src="<c:url value='/images/arrow.gif'/>">
   </td>
 
-  <c:if test="${species eq 'falciparum'}">
+<%-- These links have become obsolete as these serivces have been discontinued --%>
+<%-- <c:if test="${species eq 'falciparum'}">
     <td align="center"><a href="http://v4-4.plasmodb.org/plasmodb/servlet/sv?page=gene&source_id=${id}">${id} in PlasmoDB 4.4</a>
        <img src="<c:url value='/images/arrow.gif'/>">
     </td>
@@ -142,7 +143,7 @@
     <td align="center"><a href="http://v4-4.plasmodb.org/plasmodb/servlet/sv?page=pyGene&source_id=${id}">${id} in PlasmoDB 4.4</a>
        <img src="<c:url value='/images/arrow.gif'/>">
     </td>
-  </c:if>
+  </c:if> --%>
 
 </tr>
 </table>
