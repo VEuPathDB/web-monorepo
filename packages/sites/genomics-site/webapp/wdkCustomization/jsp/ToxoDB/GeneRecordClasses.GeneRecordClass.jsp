@@ -56,6 +56,7 @@
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
+
 <a name = "top">
 <h2>
 <center>
@@ -63,6 +64,8 @@
 ${fn:length(wdkRecord.tables['CommunityExpComments'])}
 </center>
 </h2>
+
+<!--
 <c:if test="${fn:length(wdkRecord.tables['CommunityExpComments']) gt 0}">
 <div style="font-size:large; text-align:center; font-weight:bold"> 
 <a href=<c:url value="showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>>Community Annotation Available</a>
@@ -70,6 +73,29 @@ ${fn:length(wdkRecord.tables['CommunityExpComments'])}
 <br>
 </c:if>
 </a>
+-->
+
+<site:panel 
+    displayName="Community Annotation"
+    content="" />
+
+<c:catch var="e">
+<site:dataTable tblName="CommunityExpComments"/>
+</c:catch>
+
+<c:if test="${e != null}">
+ <table  width="100%" cellpadding="3">
+      <tr><td><b>User Comments</b>
+     <site:embeddedError
+         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
+         e="${e}"
+     />
+      </td></tr>
+ </table>
+</c:if>
+
+<br/>
+
 <%----------------------------------------------------------%>
 
 <table width="100%"  style="font-size:150%;background-image: url(/assets/images/${projectId}/footer.png);">
@@ -220,20 +246,6 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
  </table>
 </c:if>
 
-<c:catch var="e">
-<wdk:wdkTable tblName="CommunityExpComments"/>
-</c:catch>
-
-<c:if test="${e != null}">
- <table  width="100%" cellpadding="3">
-      <tr><td><b>User Comments</b>
-     <site:embeddedError
-         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
-         e="${e}"
-     />
-      </td></tr>
- </table>
-</c:if>
 
 <c:catch var="e">
   <wdk:wdkTable tblName="TaskComments" isOpen="true"
