@@ -76,7 +76,7 @@ ${fn:length(wdkRecord.tables['CommunityExpComments'])}
 -->
 
 <site:panel 
-    displayName="Community Annotation"
+    displayName="Community Expert Annotation"
     content="" />
 
 <c:catch var="e">
