@@ -12,7 +12,11 @@
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}" />
 <c:set var="history_id" value="${requestScope.step_id}"/>
 <c:set var="format" value="${requestScope.wdkReportFormat}"/>
-<c:set var="allRecordIds" value="${wdkAnswer.allIdList}"/>
+<c:set var="allRecordIds" value="" />
+<c:forEach items="${wdkAnswer.allIds}" var="id">
+    <c:if test="${allRecordIds != ''}"><c:set var="allRecordIds" value="${allRecordIds}," /></c:if>
+    <c:set var="allRecordIds" value="${allRecordIds}${id[0]}" />
+</c:forEach>
 
 <c:set var="site" value="${wdkModel.displayName}"/>
 
