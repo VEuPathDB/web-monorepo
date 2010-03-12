@@ -127,9 +127,9 @@
 
 <c:if test="${expressedLbrazilliensis != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressedLbrazilliensis}"/>"><i>L.b.</i> Proteins with epitopes and direct expression evidence</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressedLbrazilliensis}"/>"><i>L.b.</i> Proteins with epitopes and expression evidence</a> </td>
 	<td>Strategy with an ortholog transform</td>
-	<td>Find all genes from <i>L. brazilliensis</i> whose protein product has epitope and expression evidence based on direct evidence or using orthology</td>
+	<td>Find all genes from <i>L. brazilliensis</i> whose protein product has epitope and expression evidence using orthology</td>
 </tr>
 </c:if>
 
