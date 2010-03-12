@@ -387,10 +387,11 @@
         <c:when test="${j == 0}">
 
         <c:choose>
+<%--
            <c:when test="${fn:containsIgnoreCase(dispModelName, 'EuPathDB')}">
 	         <a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a>
            </c:when>
-
+--%>
            <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Sequencing Typed'}">
 
               <%-- add checkbox --%>
