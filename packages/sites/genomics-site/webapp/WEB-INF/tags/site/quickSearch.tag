@@ -85,6 +85,9 @@
           <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
              <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Phenotype"/>
           </c:when>
+          <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
+             <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Community annotation"/>
+          </c:when>
     </c:choose> 
            		<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch"/>
 		        <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}"/>
