@@ -117,7 +117,7 @@
 </tr>
 </c:if>
 
-<c:if test="${expressed != null}">
+<!-- <c:if test="${expressed != null}">
 <tr align = "left">
 	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressed}"/>">Expressed Genes</a> </td>
 	<td>Strategy with a nested strategy</td>
@@ -131,7 +131,7 @@
 	<td>Strategy with an ortholog transform</td>
 	<td>Find all genes from <i>L. brazilliensis</i> that have any evidence for expression based on direct evidence or using orthology</td>
 </tr>
-</c:if>
+</c:if> -->
 
 <c:if test="${SecretedAmastigoteKin != null}">
 <tr align = "left">
