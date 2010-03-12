@@ -60,8 +60,15 @@
 <h2>
 <center>
 <wdk:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
+${fn:length(wdkRecord.tables['CommunityExpComments'])}
 </center>
 </h2>
+<c:if test="${fn:length(wdkRecord.tables['CommunityExpComments']) gt 0}">
+<div style="font-size:large; text-align:center; font-weight:bold"> 
+<a href=<c:url value="showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>>Community Annotation Available</a>
+</div>
+<br>
+</c:if>
 </a>
 <%----------------------------------------------------------%>
 
