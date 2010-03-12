@@ -70,8 +70,8 @@
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
       <c:set var="simple" value="6d18cc017993d226" />
       <c:set var="expanded" value="8699257e6a988b74" />
-      <c:set var="expressed" value="a9bcc63ae545fdf7" />
-      <c:set var="expressedLbrazilliensis" value="15bf7913bd87fdf1" />
+      <c:set var="TcAllexpressed" value="4abe1d668c3cc290" />
+      <c:set var="expressedLbrazilliensis" value="edf8019a9b1c938f" />
       <c:set var="SecretedAmastigoteKin" value="c867cab6ad4645a0" />
    </c:when>
 
@@ -117,21 +117,21 @@
 </tr>
 </c:if>
 
-<!-- <c:if test="${expressed != null}">
+<c:if test="${TcAllexpressed != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressed}"/>">Expressed Genes</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${TcAllexpressed}"/>"><i>T.c.</i> Expressed Genes</a> </td>
 	<td>Strategy with a nested strategy</td>
-	<td>Find all genes in the database that have any direct evidence for expression</td>
+	<td>Find all <i> T. cruzi</i> genes in the database that have direct evidence for expression</td>
 </tr>
 </c:if>
 
 <c:if test="${expressedLbrazilliensis != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressedLbrazilliensis}"/>"><i>L. brazilliensis</i> Expressed Genes</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" href="<c:url value="/im.do?s=${expressedLbrazilliensis}"/>"><i>L.b.</i> Proteins with epitopes and direct expression evidence</a> </td>
 	<td>Strategy with an ortholog transform</td>
-	<td>Find all genes from <i>L. brazilliensis</i> that have any evidence for expression based on direct evidence or using orthology</td>
+	<td>Find all genes from <i>L. brazilliensis</i> whose protein product has epitope and expression evidence based on direct evidence or using orthology</td>
 </tr>
-</c:if> -->
+</c:if>
 
 <c:if test="${SecretedAmastigoteKin != null}">
 <tr align = "left">
