@@ -35,6 +35,10 @@
 <c:set var="context_end_range" value="${attrs['context_end'].value}" />
 <c:set var="binomial" value="${attrs['genus_species'].value}"/>
 
+<c:set var="start" value="${attrs['start_min_text'].value}"/>
+<c:set var="end" value="${attrs['end_max_text'].value}"/>
+<c:set var="strand" value="${attrs['strand_plus_minus'].value}"/>
+
 <c:set var="so_term_name" value="${attrs['so_term_name'].value}"/>
 <c:set var="prd" value="${attrs['product'].value}"/>
 <c:set var="overview" value="${attrs['overview']}"/>
