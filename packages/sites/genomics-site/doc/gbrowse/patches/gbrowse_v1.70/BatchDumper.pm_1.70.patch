@@ -1,0 +1,28 @@
+--- BatchDumper.pm.orig	2010-03-13 00:29:06.000000000 -0500
++++ BatchDumper.pm	2010-03-13 00:30:12.000000000 -0500
+@@ -84,14 +84,13 @@
+   }
+ 
+   foreach my $segment ( @segments ) {
+-    my $seq  = new Bio::Seq::RichSeq(-display_id       => $segment->display_name,
++    my $seq  = new Bio::Seq::RichSeq(-display_id       => $segment->display_id,
+ 				     -desc             => $segment->desc,
+ 				     -accession_number => $segment->accession_number,
+ 				     -alphabet         => $segment->alphabet || 'dna',
+ 				    );
+     $seq->add_date(strftime("%d-%b-%Y",localtime));
+-    my $primary_seq = $segment->seq;
+-    $seq->primary_seq($primary_seq);
++    $seq->primary_seq($segment->primary_seq);
+     $segment->absolute(1);
+     my $offset     = $segment->start - 1;
+     my $segmentend = $segment->length;
+@@ -136,7 +135,7 @@
+ 	}
+ 	$nf->location( new Bio::Location::Split(-locations => \@locs,
+ 						-seq_id    =>
+-						$segment->display_name));
++						$segment->display_id));
+       } else { 
+ 	$nf->location(shift @locs);
+       }
