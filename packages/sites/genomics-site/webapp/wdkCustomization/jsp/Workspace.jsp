@@ -63,7 +63,7 @@
 
 // Fix record links in results page on EuPathDB
 function customResultsPage() {
-   $("#Results_Table #rootBody tr td a").each(function() {
+   $("#Results_Table #rootBody tr td div a").each(function() {
          var currentUrl = $(this).attr('href');
          var recordName = parse_Url(currentUrl, "name");
          var primaryKey = parse_Url(currentUrl, "source_id");
