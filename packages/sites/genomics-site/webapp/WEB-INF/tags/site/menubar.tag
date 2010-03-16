@@ -63,10 +63,10 @@
   <c:otherwise>
     <c:choose>
       <c:when test="${refer == 'customSummary'}">
-    	<li><a id="mybasket" onclick="showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount"><font style="vertical-align:top">(</font><v>${basketCount['GeneRecordClasses.GeneRecordClass']}</v><font style="vertical-align:top">)</font></span></a></li>
+    	<li><a id="mybasket" onclick="showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount"><font style="vertical-align:top">(</font><var>${basketCount['GeneRecordClasses.GeneRecordClass']}</var><font style="vertical-align:top">)</font></span></a></li>
       </c:when>
       <c:otherwise>
-    	<li><a id="mybasket" onclick="setCurrentTabCookie('basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount"><font style="vertical-align:top">(</font><v>${basketCount['GeneRecordClasses.GeneRecordClass']}</v><font style="vertical-align:top">)</font></span></a></li>
+    	<li><a id="mybasket" onclick="setCurrentTabCookie('basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount"><font style="vertical-align:top">(</font><var>${basketCount['GeneRecordClasses.GeneRecordClass']}</var><font style="vertical-align:top">)</font></span></a></li>
       </c:otherwise>
     </c:choose>
   </c:otherwise>
