@@ -42,14 +42,9 @@ function showParamGroup(group, isShow)
 //-->
 </script>
 
-<%--
-<c:if test="${wdkModel.displayName eq 'EuPathDB.org'}">
-     <div id="question_Form">
-</c:if>
---%>
 
 <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
-<div id="form_question">
+
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -272,7 +267,7 @@ function showParamGroup(group, isShow)
 </tr>
 </table> 
 
-</div>
+
 
 ${Question_Footer}
 

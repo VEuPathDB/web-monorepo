@@ -24,6 +24,7 @@
                  parentUrl="/showQuestionSetsFlat.do"
                  divisionName="Question"
                  division="queries_tools"
+		 refer="customQuestion"  
 		 headElement="${headElement}"/>
 
 
@@ -49,9 +50,6 @@ function showParamGroup(group, isShow)
 
 //-->
 </script>
-<c:if test="${wdkModel.displayName eq 'EuPathDB.org'}">
-     <div id="question_Form">
-</c:if>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
