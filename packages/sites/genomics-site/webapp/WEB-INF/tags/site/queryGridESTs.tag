@@ -36,7 +36,7 @@
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstsBySimilarity" linktext="BLAST Similarity" type="EST" existsOn="A Am G C M P T Tr Tt"/>
                 </tr>
                  <tr>
-                    <site:queryGridMakeUrl qset="EstQuestions" qname="NA" linktext="EST Motif" existsOn=""/>
+                    <site:queryGridMakeUrl qset="EstQuestions" qname="ESTsByGeneIDs" linktext="Gene ID" existsOn="A Am G C M P T Tr Tt"/>
                 </tr>           
 <tr>
                     <site:queryGridMakeUrl qset="EstQuestions" qname="EstsByLocation" linktext="Genomic Location" existsOn="A Am G C M P T Tr Tt"/>
