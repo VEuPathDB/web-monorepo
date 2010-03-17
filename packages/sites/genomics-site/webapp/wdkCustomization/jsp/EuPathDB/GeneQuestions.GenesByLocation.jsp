@@ -4,19 +4,36 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
+
+<%-- bringing what is in question.tag instead (below).........
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 <c:set value="${requestScope.questionForm}" var="qForm"/>
 <c:set var="showParams" value="${requestScope.showParams}"/>
 <c:set var="partial" value="${requestScope.partial}"/>
-<%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
-
 <c:set value="${wdkModel.displayName}" var="project"/>
+--%>
+
+<c:set var="qForm" value="${requestScope.questionForm}"/>
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+<c:set var="showParams" value="${requestScope.showParams}"/>
+
+<%--CODE TO SET UP THE SITE VARIABLES --%>
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
+    <c:set var="portalsProp" value="${props['PORTALS']}" />
+</c:if>
+<c:if test="${fn:contains(recordType, 'Assem') }">
+        <c:set var="recordType" value="Transcript Assemblie" />
+</c:if>
 
 ${Question_Header}
 
@@ -42,36 +59,70 @@ function showParamGroup(group, isShow)
 //-->
 </script>
 
+<%-- show all params of question, collect help info along the way --%>
+<c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
+<jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
+
+
+<c:choose>
+    <c:when test="${showParams == true}">
+        <%-- display params section only --%>
+        <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
+            <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
+            <jsp:include page="GeneQuestions.GenesByLocation.partial.jsp" />
+        </html:form>
+    </c:when>
+    <c:otherwise>
+        <%-- display question section --%>
+
 
 <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
-
-
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
  <tr>
   <td bgcolor=white valign=top>
 
-<%-- show all params of question, collect help info along the way --%>
-<c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
-<jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 <%-- put an anchor here for linking back from help sections --%>
 <A name="${fromAnchorQ}"></A>
-<!--html:form method="get" action="/processQuestion.do" -->
+
+
 
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
- <%-- <script src="/assets/js/ApiDB_Ajax_Utils.js" type="text/javascript"></script>
-  <script src="/assets/js/AjaxLocation.js" type="text/javascript"></script>--%>
-  <script id="import_script" src="/assets/js/AjaxLocation.js" type="text/javascript"></script>
-  <script id="initscript" language="javascript">
+<script id="import_script" src="/assets/js/AjaxLocation.js" type="text/javascript"></script>
+<script id="initscript" language="javascript">
 	initLocation();
-  </script>
+</script>
+
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 <!-- show error messages, if any -->
-<wdk:errors/>
+<api:errors/>
+
+<%-- this comes from question.tag,   --%>
+<script type="text/javascript" src='<c:url value="/wdk/js/wdkQuestion.js"/>'></script>
+<c:if test="${showParams == null}">
+            <script type="text/javascript">
+              $(document).ready(function() { initParamHandlers(); });
+            </script>
+</c:if>
+
+
 
 <div class="params">
+
+<%-- comes from question.tag,not sure it is relevant ..... --%>
+<c:if test="${showParams == null}">
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
+    <c:set var="portalsProp" value="${props['PORTALS']}" />
+</c:if>
+<c:if test="${fn:contains(recordType, 'Assem') }">
+        <c:set var="recordType" value="Assemblie" />
+</c:if>
+
+
+<c:set var="hasOrganism" value="false"/>
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
+
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
     <c:set var="paramGroup" value="${paramGroupItem.value}" />
@@ -79,6 +130,8 @@ function showParamGroup(group, isShow)
     <%-- detemine starting display style by displayType of the group --%>
     <c:set var="groupName" value="${group.displayName}" />
     <c:set var="displayType" value="${group.displayType}" />
+
+
     <c:choose>
         <c:when test="${displayType eq 'empty'}">    
             <table border="0">
@@ -112,7 +165,6 @@ function showParamGroup(group, isShow)
   
         <%-- hide invisible params --%>
         <c:choose>
-            <%--<c:when test="${isHidden}"><html:hidden property="myProp(${qP.class.name})"/></c:when>--%>
             <c:when test="${isHidden}">
 		<c:choose>
 		   <c:when test="${fn:containsIgnoreCase(wdkModel.displayName, 'EuPathDB')}">
@@ -134,8 +186,10 @@ function showParamGroup(group, isShow)
 
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
-		  <c:if test="${pNam != 'chromosomeOptional'}"> <c:if test="${pNam != 'organism'}"><td align="right" valign="top"><b>${qP.prompt}</b></td></c:if></c:if>
-                    <td>
+		   <c:if test="${pNam != 'chromosomeOptional'}"> <c:if test="${pNam != 'organism'}">
+			<td align="right" valign="top"><b>${qP.prompt}</b></td>
+		   </c:if></c:if>
+                   <td>
                         <%-- choose between enum param and straight text or number param --%>
                         <c:choose>
 			   
@@ -180,9 +234,6 @@ function showParamGroup(group, isShow)
 							        <td align="left">
 							            <select id="orgSelect" onchange="loadStrains()">
 									<option value="--">---Choose Organism---</option>
-							                <!--<option value="Cryptosporidium parvum">Cryptosporidium parvum</option>
-							                <option value="Plasmodium falciparum">Plasmodium falciparum</option>
-									<option value="Toxoplasma gondii">Toxoplasma gondii</option>-->
 								    </select>
 								</td>
 							   </tr>
@@ -217,6 +268,8 @@ function showParamGroup(group, isShow)
                             </c:otherwise>
                         </c:choose>
                     </td>
+
+
 		<c:if test="${pNam != 'chromosomeOptional'}">	<c:if test="${pNam != 'organism'}">
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td valign="top" width="50" nowrap>
@@ -249,25 +302,64 @@ function showParamGroup(group, isShow)
     </c:choose>
     
 </c:forEach>
+
+
+
+<%-- set the weight --%>
+
+<div name="All_weighting" class="param-group" type="ShowHide">
+	<c:set var="display" value="none"/>
+	<c:set var="image" value="plus.gif"/>
+	<div class="group-title">
+    		<img style="position:relative;top:5px;"  class="group-handle" src='<c:url value="/images/${image}" />' />
+    			Give this search a weight
+	</div>
+	<div class="group-detail" style="display:${display};text-align:center">
+    		<div class="group-description">
+			<p><input type="text" name="weight" value="0">  </p> 
+			<p>Optionally give this search a "weight" (for example 10, 200, -50).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
+	
+    		</div><br>
+	</div>
 </div>
+
+
+
+</c:if>    <%--  <c:if test="${showParams == null}"> --%>
+</div>     <%-- end of params div --%>
+
+
+
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-  <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
+
+<div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
+
+
 <script language="javascript">
 	chooseType('sequenceId','CHROMOSOME');
 </script>
+
+
 </html:form>
 
-<hr>
-<%-- display description for wdkQuestion --%>
-<p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
 
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
+
+<hr>
+
+<%-- display description for wdkQuestion --%>
+<div id="${descripId}"><b>Description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
+
+
+
+</td>
 </tr>
 </table> 
 
 
+
+</c:otherwise> <%-- otherwise of showParams == true --%>
+</c:choose>
 
 ${Question_Footer}
 

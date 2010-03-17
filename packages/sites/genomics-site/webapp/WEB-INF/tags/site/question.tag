@@ -14,8 +14,8 @@ ${Question_Header}
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
+
 <c:set var="qForm" value="${requestScope.questionForm}"/>
-<%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
@@ -54,15 +54,11 @@ ${Question_Header}
 
 <%-- put an anchor here for linking back from help sections --%>
 <A name="${fromAnchorQ}"></A>
-<!--html:form method="get" action="/processQuestion.do" -->
+
+
+
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
-
-<%--
-<c:if test="${wdkQuestion.fullName == 'GeneQuestions.GenesByLocation'}">
-	<script src="/assets/js/LocationSelector.js"></script>
-</c:if>
---%>
 
 <!-- show error messages, if any -->
 <api:errors/>
@@ -75,15 +71,12 @@ ${Question_Header}
             </script>
 </c:if>
 
+
+
 <div class="params">
-
-<%-- enter from original question page, display params here 
 <c:if test="${showParams == null}">
-    <site:questionParams />
-</c:if>
---%>
 
-<c:if test="${showParams == null}">
+
 <%--CODE TO SET UP THE SITE VARIABLES --%>
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
@@ -91,7 +84,6 @@ ${Question_Header}
 <c:if test="${fn:contains(recordType, 'Assem') }">
         <c:set var="recordType" value="Assemblie" />
 </c:if>
-
 
 
 <c:set var="hasOrganism" value="false"/>
@@ -185,11 +177,7 @@ ${Question_Header}
                                     <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
                                     <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                                     <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-<%--
-                                    <a href="#${anchorQp}">
-                                    <img valign="bottom" src="/assets/images/help.png" border="0" alt="Help"></a><br>
---%>
-                                    <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
+	                                    <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
                                     </td>
                                     </tr>
                                 </table>
@@ -200,13 +188,6 @@ ${Question_Header}
 
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
                             <td width="30%" align="right" style="vertical-align:top">
-<%--
-					<c:if test="${wdkQuestion.fullName == 'GeneQuestions.GenesByLocation' && pNam == 'organism'}">
-						<input type="hidden" name="holder" id="organism_holder" value=""/>
-						<input type="hidden" name="holder" id="chromosomeOptional_holder" value=""/>
-						<input id="${pNam}_radio" type="radio" name="location_radio" onclick="changeType('${pNam}')"/>
-					</c:if>
---%>
 					<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
 			    </td>
                             <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
@@ -240,11 +221,6 @@ ${Question_Header}
                                 <c:otherwise>
 									
                                     <td width="30%" align="right" valign="top">
-<%--
-					<c:if test="${wdkQuestion.fullName == 'GeneQuestions.GenesByLocation' && pNam == 'sequenceId'}">
-						<input id="${pNam}_radio" type="radio" name="location_radio" onclick="changeType('${pNam}')"/>
-					</c:if>
---%>
 					<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
 				    </td>
                                     <td align="left" valign="top">
@@ -296,52 +272,36 @@ ${Question_Header}
 
 </c:forEach> <%-- end of foreach on paramGroups --%>
 
+
 <%-- set the weight --%>
 
-<div name="All_weighting"
-     class="param-group" 
-     type="ShowHide">
-<c:set var="display" value="none"/>
-<c:set var="image" value="plus.gif"/>
-<div class="group-title">
-    <img style="position:relative;top:5px;"  class="group-handle" src='<c:url value="/images/${image}" />' />
-    Give this search a weight
-</div>
-<div class="group-detail" style="display:${display};text-align:center">
-    <div class="group-description">
-	<p><input type="text" name="weight" value="0">  </p> 
-	<p>Optionally give this search a "weight" (for example 10, 200, -50).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
+<div name="All_weighting" class="param-group" type="ShowHide">
+	<c:set var="display" value="none"/>
+	<c:set var="image" value="plus.gif"/>
+	<div class="group-title">
+    		<img style="position:relative;top:5px;"  class="group-handle" src='<c:url value="/images/${image}" />' />
+    			Give this search a weight
+	</div>
+	<div class="group-detail" style="display:${display};text-align:center">
+    		<div class="group-description">
+			<p><input type="text" name="weight" value="0">  </p> 
+			<p>Optionally give this search a "weight" (for example 10, 200, -50).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
 	
-    </div><br>
+    		</div><br>
+	</div>
 </div>
-</div>
 
 
-</c:if>
+</c:if>  <%--  <c:if test="${showParams == null}"> --%>
+</div>   <%-- end of params div --%>
 
 
-
-</div> <%-- end of params div --%>
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-
-
-
-
-
 <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
 
-<%--
-<c:if test="${wdkQuestion.fullName == 'GeneQuestions.GenesByLocation'}">
-<script>
-	$("input#organism_radio").click();
-</script>
-</c:if>
---%>
-
 </html:form>
-
 
 <hr>
 
@@ -351,10 +311,8 @@ ${Question_Header}
 	<c:set var="descripId" value="query-description-noShowOnForm"/>
 </c:if>
 
-
 <%-- display description for wdkQuestion --%>
 <div id="${descripId}"><b>Description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
-
 
 <%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB'}">
@@ -366,10 +324,11 @@ ${Question_Header}
 </c:if>
 
 
+
 </tr>
 </table> 
 
-    </c:otherwise> <%-- otherwise of showParams == true --%>
+</c:otherwise> <%-- otherwise of showParams == true --%>
 </c:choose>
 
 ${Question_Footer}

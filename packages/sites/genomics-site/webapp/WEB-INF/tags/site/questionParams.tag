@@ -5,13 +5,12 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
-
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 <c:set var="qForm" value="${requestScope.questionForm}"/>
+
 <%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
@@ -26,6 +25,8 @@
 <c:if test="${fn:contains(recordType, 'Assem') }">
         <c:set var="recordType" value="Assemblie" />
 </c:if>
+
+
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
 
 <%-- show all params of question, collect help info along the way --%>
@@ -45,6 +46,7 @@
     <div name="${wdkQuestion.name}_${group.name}"
          class="param-group" 
          type="${displayType}">
+
     <c:choose>
         <c:when test="${displayType eq 'empty'}">
             <%-- output nothing else --%> 
@@ -123,11 +125,7 @@
                                     <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
                                     <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                                     <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-<%--
-                                    <a href="#${anchorQp}">
-                                    <img valign="bottom" src="/assets/images/help.png" border="0" alt="Help"></a><br>
---%>
-                                    <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
+	                                    <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
                                     </td>
                                     </tr>
                                 </table>
@@ -138,13 +136,6 @@
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
                             <td width="30%" align="right" style="vertical-align:top">
-<%--
-				<c:if test="${wdkQuestion.fullName == 'GeneQuestions.GenesByLocation' && pNam == 'organism'}">
-					<input type="hidden" name="holder" id="organism_holder" value=""/>
-					<input type="hidden" name="holder" id="chromosomeOptional_holder" value=""/>
-					<input id="${pNam}_radio" type="radio" name="location_radio" onclick="changeType('${pNam}')"/>
-				</c:if>
---%>
 				<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
 			    </td>
                             <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
@@ -174,11 +165,6 @@
                                 </c:when>
                                 <c:otherwise>
                                     <td width="30%" align="right" valign="top">
-<%--
-					<c:if test="${wdkQuestion.fullName == 'GeneQuestions.GenesByLocation' && pNam == 'sequenceId'}">
-						<input id="${pNam}_radio" type="radio" name="location_radio" onclick="changeType('${pNam}')"/>
-					</c:if>
---%>
 					<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <html:text styleId="${pNam}" property="myProp(${pNam})" size="35" />
@@ -229,27 +215,25 @@
 
 </c:forEach> <%-- end of foreach on paramGroups --%>
 
+
 <%-- set the weight --%>
 <c:if test="${!(wdkQuestion.isTransform)}">
-<div name="All_weighting"
-     class="param-group" 
-     type="ShowHide">
-<c:set var="display" value="none"/>
-<c:set var="image" value="plus.gif"/>
-<div class="group-title">
-    <img style="position:relative;top:5px;"  class="group-handle" src='<c:url value="/images/${image}" />' />
-	Give this step a weight
-</div>
-<div class="group-detail" style="display:${display};text-align:center">
-    <div class="group-description">
-	<p><input type="text" name="weight" value="${weight}">  </p> 
-	<p>Optionally give this search a "weight" (for example 10, 200, -50).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
+	<div name="All_weighting" class="param-group" type="ShowHide">
+		<c:set var="display" value="none"/>
+		<c:set var="image" value="plus.gif"/>
+		<div class="group-title">
+    			<img style="position:relative;top:5px;" class="group-handle" src='<c:url value="/images/${image}" />'/>
+				Give this step a weight
+		</div>
+		<div class="group-detail" style="display:${display};text-align:center">
+    			<div class="group-description">
+				<p><input type="text" name="weight" value="${weight}">  </p> 
+				<p>Optionally give this search a "weight" (for example 10, 200, -50).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
 	
-    </div><br>
-</div>
-</div>
+    			</div><br>
+		</div>
+	</div>
 </c:if>
-
 
 
 </html:form>
