@@ -231,11 +231,11 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   content="${mercatorAlign}"
   attribution=""/>
 
+<!-- gene alias table -->
+<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
 
 <!-- External Links --> 
 <wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
-
-
 
 <site:pageDivider name="Annotation"/>
 

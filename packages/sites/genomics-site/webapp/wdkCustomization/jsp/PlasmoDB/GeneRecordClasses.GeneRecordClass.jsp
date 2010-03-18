@@ -360,6 +360,8 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
    <c:set var="revCompOn" value="1"/>
   </c:if>
 
+<!-- gene alias table -->
+<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
 
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">

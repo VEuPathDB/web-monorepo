@@ -161,6 +161,9 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <!-- External Links --> 
 <wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
+<!-- gene alias table -->
+<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
+
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">
 <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
