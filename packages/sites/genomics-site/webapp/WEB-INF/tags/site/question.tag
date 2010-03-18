@@ -280,7 +280,7 @@ ${Question_Header}
 	<c:set var="image" value="plus.gif"/>
 	<div class="group-title">
     		<img style="position:relative;top:5px;"  class="group-handle" src='<c:url value="/images/${image}" />' />
-    			Give this search a weight
+    			<span title="This is an optional number that will be assigned to all the results of this search; this 'weight' might later be used for sorting when doing unions in a strategy."> Give this search a weight</span>
 	</div>
 	<div class="group-detail" style="display:${display};text-align:center">
     		<div class="group-description">
