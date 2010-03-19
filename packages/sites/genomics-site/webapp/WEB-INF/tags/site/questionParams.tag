@@ -26,8 +26,10 @@
         <c:set var="recordType" value="Assemblie" />
 </c:if>
 
-
+<%--
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
+--%>
+
 
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
@@ -235,5 +237,6 @@
 	</div>
 </c:if>
 
-
+<%--
 </html:form>
+--%>
