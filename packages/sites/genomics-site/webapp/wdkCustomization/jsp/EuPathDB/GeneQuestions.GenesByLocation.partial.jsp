@@ -17,8 +17,9 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 <c:set var="showParams" value="${requestScope.showParams}"/>
-
+<%--
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
+--%>
 
 <%--CODE TO SET UP THE SITE VARIABLES --%>
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">

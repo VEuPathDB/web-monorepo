@@ -10,16 +10,6 @@
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
-<%-- bringing what is in question.tag instead (below).........
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
-<c:set value="${requestScope.questionForm}" var="qForm"/>
-<c:set var="showParams" value="${requestScope.showParams}"/>
-<c:set var="partial" value="${requestScope.partial}"/>
-<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
-<c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
-<c:set value="${wdkModel.displayName}" var="project"/>
---%>
-
 <c:set var="qForm" value="${requestScope.questionForm}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
@@ -99,7 +89,8 @@ function showParamGroup(group, isShow)
 <api:errors/>
 
 <%-- this comes from question.tag,   --%>
-<script type="text/javascript" src='<c:url value="/wdk/js/wdkQuestion.js"/>'></script>
+<script type="text/javascript" src='<c:url value="/w
+dk/js/wdkQuestion.js"/>'></script>
 <c:if test="${showParams == null}">
             <script type="text/javascript">
               $(document).ready(function() { initParamHandlers(); });
@@ -110,8 +101,9 @@ function showParamGroup(group, isShow)
 
 <div class="params">
 
-<%-- comes from question.tag,not sure it is relevant ..... --%>
+<%-- comes from question.tag ..... this first if is close at the end --%>
 <c:if test="${showParams == null}">
+
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
 </c:if>

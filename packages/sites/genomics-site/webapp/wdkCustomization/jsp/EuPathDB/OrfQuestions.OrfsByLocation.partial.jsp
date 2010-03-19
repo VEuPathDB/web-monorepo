@@ -7,43 +7,27 @@
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set value="${requestScope.wdkQuestion}" var="wdkQuestion"/>
-<jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
-
-<c:set value="${requestScope.questionForm}" var="qForm"/>
 
 <%-- display page header with wdkQuestion displayName as banner --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+<c:set var="showParams" value="${requestScope.showParams}"/>
+<%--
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
+--%>
 
-<script language="JavaScript" type="text/javascript">
-<!--
-
-function showParamGroup(group, isShow) 
-{
-    var groupLink = document.getElementById(group + "_link");
-    var groupArea = document.getElementById(group + "_area");
-
-    if (isShow == "yes") {
-        groupLink.innerHTML = "<a href=\"#\" onclick=\"return showParamGroup('" + group + "', 'no');\">Hide</a>";
-        groupArea.style.display = "block";
-    } else {
-        groupLink.innerHTML = "<a href=\"#\" onclick=\"return showParamGroup('" + group + "', 'yes');\">Show</a>";
-        groupArea.style.display = "none";
-    }
-    
-    return false;
-}
-
-//-->
-</script>
-<c:if test="${wdkModel.displayName eq 'EuPathDB.org'}">
-     <div id="question_Form">
+<%--CODE TO SET UP THE SITE VARIABLES --%>
+<c:if test="${wdkModel.displayName eq 'EuPathDB'}">
+    <c:set var="portalsProp" value="${props['PORTALS']}" />
+</c:if>
+<c:if test="${fn:contains(recordType, 'Assem') }">
+        <c:set var="recordType" value="Assemblie" />
 </c:if>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
- <tr>
-  <td bgcolor=white valign=top>
+<html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
 
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
@@ -51,21 +35,10 @@ function showParamGroup(group, isShow)
 
 <%-- put an anchor here for linking back from help sections --%>
 <A name="${fromAnchorQ}"></A>
-<!--html:form method="get" action="/processQuestion.do" -->
-<html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
-<c:if test="${showParams == false || showParams == null}">
-	<script src="/assets/js/AjaxLocationORF.js" type="text/javascript"></script>
-	<script>
-		initOrfLoc();
-  	</script>
-</c:if>
-<input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
-<!-- show error messages, if any -->
-<wdk:errors/>
-<div class="params">
-	<c:if test="${showParams == true || showParams == null}">
+<c:set var="hasOrganism" value="false"/>
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
+
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
     <c:set var="paramGroup" value="${paramGroupItem.value}" />
@@ -73,6 +46,8 @@ function showParamGroup(group, isShow)
     <%-- detemine starting display style by displayType of the group --%>
     <c:set var="groupName" value="${group.displayName}" />
     <c:set var="displayType" value="${group.displayType}" />
+
+
     <c:choose>
         <c:when test="${displayType eq 'empty'}">    
             <table border="0">
@@ -206,6 +181,9 @@ function showParamGroup(group, isShow)
                             </c:otherwise>
                         </c:choose>
                     </td>
+
+
+
 		<c:if test="${pNam != 'chromosomeOptional'}">	<c:if test="${pNam != 'organism'}">
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td valign="top" width="50" nowrap>
@@ -238,18 +216,30 @@ function showParamGroup(group, isShow)
     </c:choose>
     
 </c:forEach>
-</c:if></div>
+
+
+<%-- set the weight --%>
+<c:if test="${!(wdkQuestion.isTransform)}">
+	<div name="All_weighting" class="param-group" type="ShowHide">
+		<c:set var="display" value="none"/>
+		<c:set var="image" value="plus.gif"/>
+		<div class="group-title">
+    			<img style="position:relative;top:5px;" class="group-handle" src='<c:url value="/images/${image}" />'/>
+				Give this step a weight
+		</div>
+		<div class="group-detail" style="display:${display};text-align:center">
+    			<div class="group-description">
+				<p><input type="text" name="weight" value="${weight}">  </p> 
+				<p>Optionally give this search a "weight" (for example 10, 200, -50).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
+	
+    			</div><br>
+		</div>
+	</div>
+</c:if>
+
+
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-  <div align="center"><html:submit property="questionSubmit" value="Get Answer"/></div>
+
 </html:form>
-
-<hr>
-<%-- display description for wdkQuestion --%>
-<p><b>Query description: </b><jsp:getProperty name="wdkQuestion" property="description"/></p>
-
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table> 
 
