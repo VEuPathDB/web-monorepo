@@ -10,7 +10,7 @@
 
 
  <c:choose>
-    <c:when test="${projectId == 'CryptoDB' || projectId == 'GiardiaDB' || projectId == 'ToxoDB' || projectId == 'TriTrypDB'}">
+    <c:when test="${projectId == 'CryptoDB' || projectId == 'GiardiaDB' || projectId == 'ToxoDB' || projectId == 'TriTrypDB' || projectId == 'TrichDB'}">
         <jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByMassSpec" /> 
     </c:when>
 
