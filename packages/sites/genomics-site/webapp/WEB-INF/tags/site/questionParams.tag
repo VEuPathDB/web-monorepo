@@ -229,8 +229,8 @@
 		</div>
 		<div class="group-detail" style="display:${display};text-align:center">
     			<div class="group-description">
-				<p><input type="text" name="weight" value="${weight}">  </p> 
-				<p>Optionally give this search a "weight" (for example 10, 200, -50).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
+				<p><html:text property="weight" maxlength="9" />  </p> 
+				<p>Optionally give this search a "weight" (for example 10, 200, -50, integer only).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
 	
     			</div><br>
 		</div>
