@@ -849,7 +849,7 @@ GROUP BY parent_id,strand,startm
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="domain:MassSpecPeptides" excludeProjects="TrichDB">
+  <sqlQuery name="domain:MassSpecPeptides">
      <sql>
 <![CDATA[
 SELECT 
@@ -3852,7 +3852,7 @@ and not ga2.source_id = ga1.source_id
   </sql>
  </sqlQuery>
 
-  <sqlQuery name="domain:MassSpecPeptides:bulksubfeatures" excludeProjects="TrichDB">
+  <sqlQuery name="domain:MassSpecPeptides:bulksubfeatures">
      <sql>
 <![CDATA[
 SELECT  msf.na_feature_id as feature_id,
