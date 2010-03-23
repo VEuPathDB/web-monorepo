@@ -86,7 +86,7 @@ function showParamGroup(group, isShow)
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 <!-- show error messages, if any -->
-<api:errors/>
+<div class='usererror'><api:errors/></div>
 
 <%-- this comes from question.tag,   --%>
 <script type="text/javascript" src='<c:url value="/w

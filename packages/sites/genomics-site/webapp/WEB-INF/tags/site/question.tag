@@ -63,7 +63,8 @@ ${Question_Header}
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 <!-- show error messages, if any -->
-<api:errors/>
+
+<div class='usererror'><api:errors/></div>
 
 <%-- the js has to be included here in order to appear in the step form --%>
 <script type="text/javascript" src='<c:url value="/wdk/js/wdkQuestion.js"/>'></script>
