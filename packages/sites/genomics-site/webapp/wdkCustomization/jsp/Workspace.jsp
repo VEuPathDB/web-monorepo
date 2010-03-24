@@ -55,12 +55,12 @@
       return false;
     }
 
-/* code if we want to popup a new window
+/* code if we want to popup a new window */
 var w = open ('', 'clustalwResult', 'width=800,height=500,titlebar=1,menubar=1,resizable=1,scrollbars=1,toolbar=1');
 w.document.open();
 w.location.href=url;
-*/
-    window.location.href = url;
+
+//    window.location.href = url;
   }
 </script>
 
