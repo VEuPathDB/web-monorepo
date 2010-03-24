@@ -896,7 +896,7 @@ WHERE msf.na_feature_id = x.feat_id
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="domain:UnifiedMassSpecPeptides" excludeProjects="TrichDB">
+  <sqlQuery name="domain:UnifiedMassSpecPeptides">
       <sql>
 <![CDATA[
 SELECT 
@@ -3875,7 +3875,7 @@ SELECT  msf.na_feature_id as feature_id,
     </sql>
   </sqlQuery>
   
-   <sqlQuery name="UnifiedMassSpecPeptides:density:bulksubfeatures" excludeProjects="TrichDB"> 
+   <sqlQuery name="UnifiedMassSpecPeptides:density:bulksubfeatures"> 
    <sql> 
 <![CDATA[ 
 SELECT interval feature_id, 
