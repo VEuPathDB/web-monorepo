@@ -158,6 +158,9 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
    <c:set var="revCompOn" value="1"/>
   </c:if>
 
+<!-- Gene Deprecation --> 
+<wdk:wdkTable tblName="GeneDeprecation" isOpen="true" attribution=""/>
+
 <!-- External Links --> 
 <wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
