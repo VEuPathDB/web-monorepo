@@ -303,7 +303,7 @@ WHERE  tas.aa_sequence_id = $srcfeature_id
       </sql>
     </sqlQuery>
 
-    <sqlQuery name="domain:MassSpecPeptides" excludeProjects="TrichDB">
+    <sqlQuery name="domain:MassSpecPeptides">
       <sql>
 <![CDATA[
 SELECT msf.aa_feature_id feature_id,
