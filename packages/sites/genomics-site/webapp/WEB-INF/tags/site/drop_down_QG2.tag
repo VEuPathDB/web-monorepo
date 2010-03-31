@@ -32,6 +32,7 @@
 				recType == 'IsolateRecordClasses.IsolateRecordClass' || 
 				recType == 'SnpRecordClasses.SnpRecordClass' || 
 				recType == 'AssemblyRecordClasses.AssemblyRecordClass' || 
+				recType == 'DynSpanRecordClasses.DynSpanRecordClass' || 
 				recType == 'SageTagRecordClasses.SageTagRecordClass' }">
 		<c:choose>
 		<c:when test="${recType=='GeneRecordClasses.GeneRecordClass'}">
