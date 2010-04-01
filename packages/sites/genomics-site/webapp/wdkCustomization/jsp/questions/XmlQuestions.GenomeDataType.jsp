@@ -82,11 +82,40 @@
 </c:otherwise>
 </c:choose>
 
+<!-- website/webapp for links to data sources -->
+<c:set var="website" value="${fn:substringBefore(website, ',')}"/>
+<c:if test="${empty website}" >
+        <c:set var="website" value="EuPathDB"/>
+</c:if>
+<c:set var="website" value="${fn:toLowerCase(website)}"/>
+
+<c:choose>
+<c:when test="${website eq 'amoebadb' || website eq 'plasmodb' || website eq 'toxodb'}" >
+        <c:set var="webapp" value="${fn:substringBefore(website, 'db')}"/>
+</c:when>
+<c:when test="${website eq 'microsporidiadb'}" >
+        <c:set var="webapp" value="micro"/>
+</c:when>
+<c:otherwise>
+        <c:set var="webapp" value="${website}"/>
+</c:otherwise>
+</c:choose>
+
+
     <td class="mytdStyle" style="text-align:left;${separation}" title="${family}, in ${website}"><i>${record.attributesMap['Organism']}</i></td>
     <td class="mytdStyle" style="${separation}" title="Click to access this Taxon ID in NCBI">
 	<a href="${ncbiTaxPage1}${record.attributesMap['Taxon_ID']}${ncbiTaxPage2}">${record.attributesMap['Taxon_ID']}</a></td>
     <td class="mytdStyle" style="${separation}">					${record.attributesMap['Strain']}</td>
-    <td class="mytdStyle" style="${separation}">					${record.attributesMap['Genome_Version']}</td>
+    <td class="mytdStyle" style="${separation}">
+  	<c:choose>
+  	<c:when test="${website == 'eupathdb'}">
+        	<a href="/common/downloads/">
+  	</c:when>
+  	<c:otherwise>
+        	<a href="http://${website}.org/${webapp}/showXmlDataContent.do?name=XmlQuestions.DataSources">
+  	</c:otherwise>
+  	</c:choose>
+		${record.attributesMap['Genome_Version']}</a></td>
     <td class="mytdStyle" style="${separation}">					${record.attributesMap['Data_Source']}</td>
     <td class="mytdStyle" style="text-align:right;${separation}">			${record.attributesMap['Genome_Size']}</td>
     <td class="mytdStyle" style="text-align:right;${separation}">			${record.attributesMap['Gene_Count']}</td>
@@ -116,25 +145,6 @@
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
-</c:otherwise>
-</c:choose>
-
-<!-- website/webapp for links to data sources -->
-<c:set var="website" value="${fn:substringBefore(website, ',')}"/> 
-<c:if test="${empty website}" >
-	<c:set var="website" value="EuPathDB"/>
-</c:if>
-<c:set var="website" value="${fn:toLowerCase(website)}"/> 
-
-<c:choose>
-<c:when test="${website eq 'amoebadb' || website eq 'plasmodb' || website eq 'toxodb'}" >
-	<c:set var="webapp" value="${fn:substringBefore(website, 'db')}"/> 
-</c:when>
-<c:when test="${website eq 'microsporidiadb'}" >
-	<c:set var="webapp" value="micro"/> 
-</c:when>
-<c:otherwise>
-	<c:set var="webapp" value="${website}"/> 
 </c:otherwise>
 </c:choose>
 
