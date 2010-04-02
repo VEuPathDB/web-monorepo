@@ -41,7 +41,7 @@ The result of a web service request is a list of records (genes, ESTs, etc) in e
 REST services can be executed in a browser by typing a specific URL. 
 
 <br><br>For example, this URL: 
-<br><span style="position:relative;left:${margin};"><a href="<c:url value="/webservices/GeneQuestions/GenesByMolecularWeight.xml?min_molecular_weight=10000&max_molecular_weight=50000&organism=${organism}&o-fields=gene_type,organism_full"/>">http://${wdkModelDispName}.org/webservices/GeneQuestions/GenesByMolecularWeight.xml?min_molecular_weight=10000&max_molecular_weight=50000&organism=${organism}&o-fields=gene_type,organism_full&o-tables=EcNumber</a></span>
+<br><span style="position:relative;left:${margin};"><a href="<c:url value="/webservices/GeneQuestions/GenesByMolecularWeight.xml?min_molecular_weight=10000&max_molecular_weight=50000&organism=${organism}&o-fields=gene_type,organism"/>">http://${wdkModelDispName}.org/webservices/GeneQuestions/GenesByMolecularWeight.xml?min_molecular_weight=10000&max_molecular_weight=50000&organism=${organism}&o-fields=gene_type,organism</a></span>
 
 <br><br>Corresponds to this request: 
 <br><span style="font-style:italic;font-weight:bold;position:relative;left:${margin};">
