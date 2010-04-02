@@ -460,6 +460,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
   <site:expressionGraphs species="${binomial}" model="tritryp"/>
 </c:if>
 
+
+<%-- SAGE Tag table ------------------------------------------------------%>
+<c:if test="${binomial eq 'Trypanosoma brucei' }">
+<wdk:wdkTable tblName="SageTags" attribution="TrypSageTagFreqs"/>
+</c:if>
+
 <%-- Sequence Data ------------------------------------------------------%>
 
 <site:pageDivider name="Sequence"/>

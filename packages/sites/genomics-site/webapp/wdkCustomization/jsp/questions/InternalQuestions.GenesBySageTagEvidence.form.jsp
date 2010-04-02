@@ -20,7 +20,7 @@ ${Question_Header}
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
 <c:choose>
-<c:when test = "${project == 'EuPathDB' || project == 'GiardiaDB' || project == 'PlasmoDB' || project == 'ToxoDB'}">
+<c:when test = "${project == 'EuPathDB' || project == 'GiardiaDB' || project == 'TriTrypDB' || project == 'PlasmoDB' || project == 'ToxoDB'}">
 	<site:queryList3  columns="${columns}" questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
 </c:when>
 </c:choose>
