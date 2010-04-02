@@ -59,6 +59,7 @@ function initBlastQuestion(url){
 		else if(target.search(/Genomic/i) >= 0) clickDefault('Genome','type');
 		else if(target.search(/Isolate/i) >= 0) clickDefault('Isolates','type');
 		else if(target.search(/Assembly/i) >= 0) clickDefault('Assemblies','type');
+		else $("input.blast-type:checked").click();
 	}
 }
 
