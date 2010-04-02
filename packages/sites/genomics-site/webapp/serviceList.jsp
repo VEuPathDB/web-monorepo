@@ -40,13 +40,13 @@ The result of a web service request is a list of records (genes, ESTs, etc) in e
 <a href="http://www.w3.org/XML/">XML</a> or <a href="http://json.org/">JSON</a> format. 
 REST services can be executed in a browser by typing a specific URL. 
 
-<br><br>For example, this URL: 
-<br><span style="position:relative;left:${margin};"><a href="<c:url value="/webservices/GeneQuestions/GenesByMolecularWeight.xml?min_molecular_weight=10000&max_molecular_weight=50000&organism=${organism}&o-fields=gene_type,organism"/>">http://${wdkModelDispName}.org/webservices/GeneQuestions/GenesByMolecularWeight.xml?min_molecular_weight=10000&max_molecular_weight=50000&organism=${organism}&o-fields=gene_type,organism</a></span>
+<br><br>For example, this URL:
+<br><span style="position:relative;left:${margin};font-size:150%"><a href="<c:url value="/webservices/GeneQuestions/GenesByMolecularWeight.xml?min_molecular_weight=10000&max_molecular_weight=50000&organism=${organism}&o-fields=gene_type,organism"/>">http://${wdkModelDispName}.org/webservices/GeneQuestions/GenesByMolecularWeight.xml?<br>min_molecular_weight=10000&<br>max_molecular_weight=50000&<br>organism=${organism}&<br>o-fields=gene_type,organism</a></span>
 
 <br><br>Corresponds to this request: 
 <br><span style="font-style:italic;font-weight:bold;position:relative;left:${margin};">
 Find all (${organism}) genes that have molecular weight between 10,000 and 50,000. 
-<br>For each gene ID in the result, return its organism, gene type and <a href="http://www.chem.qmul.ac.uk/iubmb/enzyme/">EC (Enzyme Commission)</a> numbers.
+<br>For each gene ID in the result, return its gene type and organism.
 <br>Provide the result in an XML document.
 </span>
 
@@ -60,7 +60,7 @@ Click on a search below to access its <a href="http://www.w3.org/Submission/wadl
 
 <span style="position:relative;left:${margin};">
 <ul class="cirbulletlist">
-<li>A WADL is an XML document that describes in detail how to form a URL to call the search as a web service request. For more details go to <a href="#moreWADL">How to read a WADL</a> at the botom of this page.</li>
+<li>A WADL is an XML document that describes in detail how to form a URL to call the search as a web service request. For more details go to <a style="font-size:120%;font-weight:bold" href="#moreWADL">How to read a WADL</a> at the botom of this page.</li>
 <li>Note: some browsers (e.g.: Safari) do not know how to render an XML file properly (you will see a page full of terms with no structure).</li>
 <li>To construct the URL in the example above, you would check the <a href="/webservices/GeneQuestions/GenesByMolecularWeight.wadl">Molecular Weight</a> WADL located below under <b>Protein Attributes</b></li>
 </ul>
