@@ -1627,9 +1627,12 @@ OnChange="javascript:updateImage('${imgId}', SuCQSort.SuCQList.options[selectedI
 
 
 
+<c:if test="${binomial eq 'Plasmodium falciparum'}">
+  <site:expressionGraphs species="${binomial}" model="plasmo"/>
+</c:if>
+
+
  <%-- ------------------------------------------------------------------ --%>
-
-
 
 
 
