@@ -276,6 +276,7 @@ ${headElement}
 </c:otherwise>
 </c:choose>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#advisors"/>">Scientific Advisory Team</a></li>
+	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#swg"/>">Scientific Working Group</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#acks"/>">Acknowledgements</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#funding"/>">Funding</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">How to use this resource</a></li>
