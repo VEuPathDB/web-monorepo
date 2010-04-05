@@ -17,17 +17,17 @@
 
 
 <tr>
-                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByRadSourceId" linktext="Sage Tag ID(s)" existsOn="A G P T"/>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByRadSourceId" linktext="Sage Tag ID(s)" existsOn="A G P T Tt"/>
                 </tr>
 
 
 <tr>
-	             <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByGeneSourceId" linktext="Gene ID" existsOn="A G P T"/>
+	             <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByGeneSourceId" linktext="Gene ID" existsOn="A G P T Tt"/>
             	</tr>
 
  
 <tr>
-                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByExpressionLevel" linktext="Expression Level" existsOn="A G P T"/>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByExpressionLevel" linktext="Expression Level" existsOn="A G P T Tt"/>
                 </tr>  
              
 
@@ -45,17 +45,17 @@
 
 
 <tr>
-                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagBySequence" linktext="Sequence" existsOn="A G P T"/>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagBySequence" linktext="Sequence" existsOn="A G P T Tt"/>
                 </tr>
 
 
  
  <tr>
-                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByLocation" linktext="Genomic Location" existsOn="A G P T"/>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByLocation" linktext="Genomic Location" existsOn="A G P T Tt"/>
                 </tr>
 
  <tr>
-                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByRStat" linktext="Differential Expression" existsOn="A G P T"/>
+                    <site:queryGridMakeUrl qset="SageTagQuestions" qname="SageTagByRStat" linktext="Differential Expression" existsOn="A G P T Tt"/>
                 </tr>
         	
 
