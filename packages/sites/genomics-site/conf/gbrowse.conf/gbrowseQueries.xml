@@ -692,7 +692,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="SAGE:3-5prime" excludeProjects="TriTrypDB,CryptoDB,TrichDB">
+  <sqlQuery name="SAGE:3-5prime" excludeProjects="CryptoDB,TrichDB">
      <sql>
 <![CDATA[
 SELECT distinct * from
@@ -4373,7 +4373,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="SAGE:3-5prime:bulkAttribute" excludeProjects="TriTrypDB,CryptoDB,TrichDB">
+  <sqlQuery name="SAGE:3-5prime:bulkAttribute" excludeProjects="CryptoDB,TrichDB">
      <sql>
 <![CDATA[
  SELECT fl.na_feature_id as feature_id,
