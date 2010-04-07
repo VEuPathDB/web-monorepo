@@ -28,14 +28,6 @@
               description="GENE,SEQ,ORF or EST"
 %>
 
-<style type="text/css">
-  td { 
-    padding: 1px;
-}
-</style>
-
-
-
 <c:set var="E_image">
    /assets/images/empty_letter.gif
 </c:set>
@@ -197,7 +189,7 @@
 <c:if test="${API}">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr nowrap>
+<tr>
 
 	<td width="14">${Am}</td>
 	<td width="14">${C}</td>
@@ -215,7 +207,7 @@
 <c:if test="${COMPONENT}">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr nowrap>
+<tr>
 
 	<td align="right">${A}</td>
 
