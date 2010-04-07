@@ -187,7 +187,10 @@
 
 </table>
 
+<%-- these divs need to be closed because they do NOT come from header.... problem associated with having a sidebar --%>
 
-	</div>
-  	</div>
+<c:if test="${from != 'tab'}">
+    </div>
+  </div>
 </div>
+</c:if>
