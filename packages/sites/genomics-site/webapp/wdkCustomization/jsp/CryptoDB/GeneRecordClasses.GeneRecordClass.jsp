@@ -55,10 +55,6 @@
 <%-- display page header with recordClass type in banner --%>
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
-<c:set var="snps">
-    <site:dataTable tblName="SNPs" />
-</c:set>
-
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
