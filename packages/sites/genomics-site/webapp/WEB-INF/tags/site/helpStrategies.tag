@@ -6,22 +6,9 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
-<%@ attribute name="wdkModel"
-             type="org.gusdb.wdk.model.jspwrap.WdkModelBean"
-             required="false"
-             description="Wdk Model Object for this site"
-%>
-
-<%@ attribute name="wdkUser"
-    type="org.gusdb.wdk.model.jspwrap.UserBean"
-    required="true"
-    description="Currently active user object"
-%>
-
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="version" value="${wdkModel.version}"/>
 <c:set var="site" value="${wdkModel.displayName}"/>
-
 
 <br><br>
 

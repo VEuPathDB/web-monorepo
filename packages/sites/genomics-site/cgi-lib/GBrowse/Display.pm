@@ -444,6 +444,11 @@ sub chipColor {
   my ($g) = $f->get_tag_values('Genotype');
   my ($anls) = $f->get_tag_values('Analysis');
 
+  return '#D80000' if($anls eq 'H4_schizont');
+  return '#006633' if($anls eq 'H4_trophozoite');
+  return '#27408B' if($anls eq 'H4_ring');
+  return '#524818' if($anls eq 'H3K9ac_troph');
+
   return '#000080' if($a eq 'CenH3_H3K9me2');
   return '#B0E0E6' if($a eq 'CenH3');
 

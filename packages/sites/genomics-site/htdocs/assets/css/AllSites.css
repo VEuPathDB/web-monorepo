@@ -88,9 +88,6 @@ div.usererror {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TABLES 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-
 /* used by Expression graphs (fix for text alignment bug) */
 td.centered {
        vertical-align: middle;
@@ -127,7 +124,6 @@ td.mythStyle,td.mytdStyle {
 	-moz-border-radius:0px;
 	padding:3px;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Main Page Bubble Lists
@@ -808,10 +804,15 @@ div#menu ul ul ul li:hover ul {
 	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+#queryGrid td {
+	padding: 1px;
+}
+
 .innertube2{
 	margin: 2px; /*Margins for inner DIV inside each column (to provide padding)*/
 }
-tr.headerrow2 td{
+tr.headerrow2 td, #queryGrid tr.headerrow2 td {
 	font-size: 14px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background-repeat: repeat-x;
@@ -820,7 +821,7 @@ tr.headerrow2 td{
 	background-color: #EEEEEE;
 }
 
-tr.subheaderrow2 td{
+tr.subheaderrow2 td, #queryGrid tr.subheaderrow2 td {
 	font-size: 12px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #474747;
@@ -842,7 +843,7 @@ a.queryGridActive {
         font-family:        Helvetica;
         font-size:          10pt;
 }
-td.lines2 {
+td.lines2, #queryGrid td.lines2 {
 	padding-top: 3px;
 }
 

@@ -41,11 +41,11 @@
 	Select a search, which will be the first step in you new strategy.
 </div>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table id="queryGrid" width="100%" border="0" cellspacing="0" cellpadding="0">
 
 <c:if test="${PORTAL}">
 <tr><td colspan="3">  
-    <div class="smallBlack" align="middle">
+    <div class="smallBlack" align="center">
 	<b>Search Availability in Organism Specific Sites:</b> &nbsp;&nbsp; &nbsp;
 	<img src="/assets/images/A_letter.gif" border='0' alt='amoeba' width="10" height="10"/> = AmoebaDB &nbsp;&nbsp;
 	<img src="/assets/images/cryptodb_letter.gif" border='0' alt='crypto' /> = CryptoDB &nbsp;&nbsp;
@@ -61,7 +61,7 @@
 
 <c:if test="${COMPONENT}">
 <tr><td colspan="3">  
-    <div class="smallBlack" align="middle">
+    <div class="smallBlack" align="center">
 	(Click on &nbsp; 
 	<img src="/assets/images/eupathdb_letter.gif" border='0' alt='eupathdb'/> &nbsp; to access a search in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>)
 	</div>
@@ -187,7 +187,10 @@
 
 </table>
 
+<%-- these divs need to be closed because they do NOT come from header.... problem associated with having a sidebar --%>
 
-	</div>
-  	</div>
+<c:if test="${from != 'tab'}">
+    </div>
+  </div>
 </div>
+</c:if>

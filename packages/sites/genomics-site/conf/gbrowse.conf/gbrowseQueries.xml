@@ -1203,6 +1203,37 @@ ORDER BY
 ]]>
     </sql>
   </sqlQuery>
+
+
+  <sqlQuery name="feature:TransposableElement">
+     <sql>
+<![CDATA[
+ SELECT
+       fl.na_feature_id feature_id,
+       'feature' type, 
+       'TransposableElement' source, 
+       tr.name name, 
+       '.' score, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=here to work around Feature.pm bug of splitting null atts' atts
+FROM 
+       dots.TransposableElement tr,
+       apidb.FeatureLocation fl
+WHERE
+       tr.na_feature_id = fl.na_feature_id and
+       fl.feature_type = 'TransposableElement' and
+       fl.start_min <= $rend and 
+       fl.end_max >= $base_start and 
+       fl.na_sequence_id = $srcfeature_id
+ORDER BY 
+       fl.start_min
+]]>
+    </sql>
+  </sqlQuery>
+
  
   <sqlQuery name="repeat_region:Genbank" includeProjects="TrichDB">
     <testParamValues project="TrichDB">
@@ -2425,7 +2456,6 @@ WHERE
   </sqlQuery>
 
 
-
   <sqlQuery name="ChIP:H3K9me3_genotype" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -2569,6 +2599,27 @@ WHERE
 ]]>
     </sql>
   </sqlQuery>
+
+
+
+  <sqlQuery name="ChIP:Nucleosome" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT e.na_sequence_id  as feature_id,
+       'ChIP'             as type,
+       $$sample$$         as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end
+FROM   DoTS.Nasequence e
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
+
   
   <sqlQuery name="AffymetrixProbes:GenotypingEstSNPs"  includeProjects="ToxoDB">
     <testParamValues project="ToxoDB">
@@ -4913,7 +4964,6 @@ AND    cpp.protocol_type = 'raw'
     </sql>
   </sqlQuery>
 
-
   <sqlQuery name="ChIP:H3K9ac_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -4944,6 +4994,7 @@ AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>
+
 
 
   <sqlQuery name="ChIP:H3K9me3_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
@@ -5209,6 +5260,35 @@ AND    cpp.protocol_type = 'raw'
   </sqlQuery>
 <!--    Using the analysis names directly in the WHERE clause to filter out the probes for each antibody in the above query is probably a little clumsy, but this direct specification is giving a 4 fold improvement in the time taken when compared to using nested WHERE clauses with ORs and AND logicals (see below) -->
 <!-- a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(cpp.antibody) = 'h3k9me3' or lower(a.name) like '%cdna%') -->
+
+
+
+
+  <sqlQuery name="ChIP:Nucleosome:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT  fl.na_feature_id   as feature_id,
+        'ChIP'             as type,
+        $$sample$$         as source, 
+        dtf.float_value    as score,
+        fl.na_sequence_id  as parent_id,
+        fl.start_min       as startm,
+        fl.end_max         as end, 
+       'Analysis='     || a.name   as atts
+FROM   rad.analysis a,
+       rad.datatransformationresult dtf,
+       apidb.featurelocation fl 
+WHERE  a.analysis_id = dtf.analysis_id
+AND    dtf.row_id = fl.na_feature_id
+AND    fl.na_sequence_id = $srcfeature_id
+AND    a.name =  $$analysis$$
+AND    fl.start_min <= $rend
+AND    fl.end_max >= $base_start
+   ]]>
+    </sql>
+  </sqlQuery>
+
+
  
   <sqlQuery name="SNP:Alignment:bulkAttribute" includeProjects="ToxoDB">
      <sql>
