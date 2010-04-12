@@ -1205,6 +1205,38 @@ ORDER BY
   </sqlQuery>
 
 
+  <sqlQuery name="feature:BindingSite">
+     <sql>
+<![CDATA[
+ SELECT
+       fl.na_feature_id feature_id,
+       'feature' type, 
+       'BindingSite' source, 
+       BS.name name, 
+       '.' score, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Name=' || BS.name || '$dlm' ||       
+       'Score=' || BS.primary_score as atts
+FROM 
+       dots.BindingSiteFeature BS,
+       apidb.FeatureLocation fl
+WHERE
+       BS.na_feature_id = fl.na_feature_id and
+       fl.feature_type = 'BindingSiteFeature' and
+       fl.start_min <= $rend and 
+       fl.end_max >= $base_start and 
+       fl.na_sequence_id = $srcfeature_id
+ORDER BY 
+       fl.start_min
+]]>
+    </sql>
+  </sqlQuery>
+
+ 
+
   <sqlQuery name="feature:TransposableElement">
      <sql>
 <![CDATA[
