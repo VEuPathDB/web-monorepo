@@ -728,7 +728,9 @@ WHERE  fl.feature_type ='SAGETagFeature'
        <![CDATA[
     SELECT $$sample$$ as feature_id,
           'NextGenSeq'        as type, 
-          '$source'          as source 
+          '$source'          as source,
+           $base_start        as startm,
+           $rend              as end 
   FROM   dual 
        ]]>
     </sql>
