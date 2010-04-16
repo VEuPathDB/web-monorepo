@@ -55,8 +55,9 @@
 <%-- display page header with recordClass type in banner --%>
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
+
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+  <site:recordToolbox /> 
 
 <br>
 <%--#############################################################--%>
@@ -65,7 +66,7 @@
 
 <h2>
 <center>
-<wdk:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
+	<wdk:recordPageBasketIcon  desc="${prd}" />
 </center>
 </h2>
 

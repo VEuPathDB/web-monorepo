@@ -60,8 +60,8 @@
 <a name = "top">
 <h2>
 <center>
-<wdk:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
-${fn:length(wdkRecord.tables['CommunityExpComments'])}
+	<wdk:recordPageBasketIcon desc="${prd}"/>
+	${fn:length(wdkRecord.tables['CommunityExpComments'])}
 </center>
 </h2>
 

@@ -50,6 +50,19 @@
 
   <action-mappings>
     <action
+      path="/showFavorite"
+      type="org.gusdb.wdk.controller.action.ShowFavoriteAction"
+      scope="request"
+      validate="false">
+      <forward name="showFavorite" path="/wdkCustomization/jsp/Favorite.jsp"/>
+    </action>
+    <action
+      path="/processFavorite"
+      type="org.gusdb.wdk.controller.action.ProcessFavoriteAction"
+      scope="request"
+      validate="false">
+    </action>
+    <action
       path="/processBasketQuestion"
       type="org.gusdb.wdk.controller.action.ProcessBasketQuestionAction"
       scope="request"

@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -30,10 +31,12 @@
 </c:otherwise>
 </c:choose>
 <c:set var="basketCount" value="${wdkUser.basketCount}"/>
+
 <div id="menubar">
+
 <div id="menu">
 
-
+<!-- default style for this ul establishes 9em -->
 <ul style="width:7em;"><li><a href="<c:url value="/"/>">Home</a></li></ul>
 <%-- was needed when New Search was first choice 
 <ul style="width:0.5em;border:0"><li></li></ul>
@@ -54,11 +57,11 @@
     </li>
 </ul>
 
-
-<ul>	
+<ul style="width:10em;white-space:nowrap">	
 <c:choose>
   <c:when test="${wdkUser == null || wdkUser.guest}">
-    <li><a id="mybasket" href="javascript:popLogin();" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount"><font style="vertical-align:top">(</font>0<font style="vertical-align:top">)</font></span></a></li>
+    <wdk:requestURL path="/showApplication.do" />
+    <li><a id="mybasket" onclick="setCurrentTabCookie('basket');popLogin('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount"><font style="vertical-align:top">(</font>0<font style="vertical-align:top">)</font></span></a></li>
   </c:when>
   <c:otherwise>
     <c:choose>
@@ -72,7 +75,6 @@
   </c:otherwise>
 </c:choose>
 </ul>
-
 
 <ul style="width:7em;">
     <li><a href="#">Tools</a>
@@ -122,16 +124,11 @@
 <c:if test="${project == 'CryptoDB'}">
 	 <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
 </c:if>
-
-
     	<li><a title="Table summarizing all the genomes and their different data types available in EuPathDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Genomes and Data Types</a></li>
 	<li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
 
-
 	</ul>
 	</li>
-
-
 </ul>
 
 <ul>
@@ -151,10 +148,6 @@
     </li>
 </ul>
     
-
-
-
-
 <ul>
     <li><a href="#">Community</a>
 	<ul>
@@ -177,8 +170,27 @@
     </li>
 </ul>
 
+<ul style="padding:0px;width:11em;float:right">
+<c:choose>
+  <c:when test="${wdkUser == null || wdkUser.guest}">
+    <wdk:requestURL path="/showFavorite.do" />
+    <li><a id="mybasket" onclick="popLogin('${originRequestUrl}');" href="javascript:void(0)">
+			<img style="vertical-align:bottom"  height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
+			<span style="vertical-align:text-top">My Favorites</span>
+        </a>
+    </li>
+  </c:when>
+  <c:otherwise>
+    <li><a href="<c:url value="/showFavorite.do"/>">
+			<img style=""  height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
+			<span style="vertical-align:text-top">My Favorites</span>
+	</a>
+    </li>
+  </c:otherwise>
+</c:choose>
+</ul>
 
+</div
 
-</div>
 </div>
 <a name="skip" id="skip"></a>
