@@ -4,6 +4,29 @@
      (after the order set up in header.tag)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#record_page_cell_div {
+	margin-left: 20px;
+}
+
+#graphic_span {
+	width: 289px;
+	height: 20px;
+	font-weight: bold;
+	color: #FFFFFF;
+	padding-top: 1px;
+	font-size: 16px;
+	text-align: center;
+	position: absolute;
+}
+
+#contentcolumn {
+	min-width: 780px;
+	margin: 0 5px 0 220px;
+	background-color: #FFFFFF;
+	background-repeat: repeat-x;
+	text-align: left;
+}
+
 #strat-instructions {
 	background-color:#EDEDED;
 	border-color:#FFFFFF #CCCCCC #666677 #AAAAAA;
@@ -133,6 +156,14 @@ th.mythStyle {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Main Page Bubble Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+table.threecolumn {
+	clear: both;
+}
+
+table.threecolumn td {
+        vertical-align: top;
+}
 
 .threecolumndiv {
 	width: 247px;
@@ -941,6 +972,24 @@ tr.lines td, tr.linesalt td {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#leftcolumn {
+	float: left;
+	width: 220px; /*Width of left column*/
+	margin-left: -100%;
+}
+
+#rightcolumn { /* Not needed? */
+	float: left;
+	width: 25px; /*Width of right column*/
+	margin-left: -25px; /*Set left marginto -(RightColumnWidth)*/
+}
+
+/* used by sidebar */
+.innertube3{
+	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
+
+}
 
 .twoColHybLt #container_au { 
 	width: 100%;  /* this will create a container 100% of the browser width */
