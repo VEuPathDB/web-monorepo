@@ -65,7 +65,7 @@
 </c:choose> 
 
 
-<div id="quick-search" session-id="${sessionId}">
+<div  style="width:460px;" id="quick-search" session-id="${sessionId}">
          <table style="width:460px;margin-left: auto;margin-right: auto;">
            <tr>
              <td><div align="right">
