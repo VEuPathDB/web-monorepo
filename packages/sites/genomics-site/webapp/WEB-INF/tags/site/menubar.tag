@@ -175,15 +175,15 @@
 <c:when test="${wdkUser == null || wdkUser.guest}">
 	<wdk:requestURL path="/showFavorite.do" />
 	<li><a id="mybasket" onclick="popLogin('${originRequestUrl}');" href="javascript:void(0)">
-		<img height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
-		<span style="vertical-align:super">My Favorites</span>
+		<img style="vertical-align:middle" height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
+		<span style="vertical-align:middle">My Favorites</span>
        	    </a>
     	</li></ul>
 </c:when>
 <c:otherwise>
     	<li><a href="<c:url value="/showFavorite.do"/>">
-		<img height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
-		<span style="vertical-align:super">My Favorites</span>
+		<img style="vertical-align:middle" height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
+		<span style="vertical-align:middle">My Favorites</span>
 	    </a>
 	</li></ul>	
 </c:otherwise>
