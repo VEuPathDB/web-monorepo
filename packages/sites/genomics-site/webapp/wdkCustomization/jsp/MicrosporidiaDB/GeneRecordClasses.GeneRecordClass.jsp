@@ -54,7 +54,8 @@
 <site:header title="MicrosporidiaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
-             division="queries_tools" />
+             division="queries_tools" 
+			 refer="recordPage" />
 
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
