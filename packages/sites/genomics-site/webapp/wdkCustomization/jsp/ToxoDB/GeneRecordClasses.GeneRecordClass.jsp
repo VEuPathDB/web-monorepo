@@ -57,11 +57,11 @@
 <site:recordToolbox />
 
 
-<a name = "top">
+<!--<a name = "top">-->
 <h2>
 <center>
 	<wdk:recordPageBasketIcon desc="${prd}"/>
-	${fn:length(wdkRecord.tables['CommunityExpComments'])}
+	<%--${fn:length(wdkRecord.tables['CommunityExpComments'])}--%>
 </center>
 </h2>
 
