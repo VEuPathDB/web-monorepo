@@ -404,7 +404,7 @@ div.innertube #record-toolbox li {
 	color: #666666;
 	font-size: 10px;  /*version,date*/
 	width: 100%;
-	min-width: 950px;
+	min-width: 970px;
 	height: 104px;
 	text-align: left;
 	background-repeat: no-repeat;
@@ -553,7 +553,7 @@ div.innertube #record-toolbox li {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #menubar {
-	min-width: 910px; //to make space for My Favorites
+	min-width: 935px; //to make space for My Favorites
 	height: 19px;
 	text-align: left;
 	background-image: url(../images/menu_bar.png);
