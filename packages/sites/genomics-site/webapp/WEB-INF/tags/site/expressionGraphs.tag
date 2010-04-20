@@ -101,7 +101,7 @@
 <SELECT NAME="${name}List"
 OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[selectedIndex].value)">
 
-<c:forEach var="vp" items="${fn:split(row['visual_parts'].value, ',')}">
+<c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
 <OPTION  VALUE="${preImgSrc}&vp=${vp}">${vp}</OPTION>
 </c:forEach>
 
