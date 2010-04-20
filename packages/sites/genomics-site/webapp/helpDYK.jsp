@@ -20,7 +20,7 @@
 </script>
 
 <div id="help" style="display:none">
-        <site:helpStrategies wdkModel="${wdkModel}" wdkUser="${wdkUser}" />
+        <site:helpStrategies />
 </div>
 
 <site:footer />
