@@ -316,46 +316,6 @@ div.innertube #record-toolbox li {
     margin-top: 2px;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         =WARNING BOXES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.announcebox {
-        min-height: 35px;
-        height:auto !important;
-        height:35px;
-        margin: 12px 25px 0 6px;
-        padding: 6px;
-        background-repeat: repeat-x;
-        text-align: left;
-        border: 1px solid #345d9b;
-        vertical-align: middle;
-}
-.announcebox.home {
-        min-width: 738px;  /*780px;  */
-        margin: 12px 5px 0 220px;
-}
-.announcebox img {
-        margin-right: 3px;
-}
-.announcebox td {
-        vertical-align:middle;
-}
-.announcebox.info {
-        background-image: url(../images/infobox.jpg);
-        color: #093c8a;
-        background-color: #cdd9eb;
-}
-.announcebox.error {
-        color: #c4000e;
-        background-color: #eec1c2;
-        background-image: url(../images/errorbox.jpg);
-}
-.announcebox.warn {
-        color: #c4000e;
-        background-color: #edf0ac;
-        background-image: url(../images/warnbox.jpg);
-}
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1062,9 +1022,10 @@ tr.lines td, tr.linesalt td {
 }
 
 .announcebox.home {
-	min-width: 780px;	
-	margin: 12px 25px 0 226px;
+        min-width: 738px;  /*780px;  */
+        margin: 12px 5px 0 220px;
 }
+
 
 .announcebox img {
 	margin-right: 3px;
@@ -1081,39 +1042,17 @@ tr.lines td, tr.linesalt td {
 }
 
 .announcebox.error {
-/*	min-width: 900px;
-	margin: 6px 25px 0 6px; */
 	color: #c4000e;
 	background-color: #eec1c2;
-/*	padding: 6px;*/
 	background-image: url(../images/errorbox.jpg);
-/*	background-repeat: repeat-x;
-	text-align: left;
-	border: 1px solid #c4000d;
-	vertical-align: middle;*/
 }
-/*
-.eannouncebox.error img {
-	margin-right: 12px;
-}
-*/
+
 .announcebox.warn {
-/*	min-width: 900px;
-	margin: 6px 25px 0 6px; */
 	color: #c4000e;
 	background-color: #edf0ac;
-/*	padding: 6px;*/
 	background-image: url(../images/warnbox.jpg);
-/*	background-repeat: repeat-x;
-	text-align: left;
-	border: 1px solid #f56614;
-	vertical-align: middle;*/
 }
-/*
-.warnbox img {
-	margin-right: 12px;
-}
-*/
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =used in help.jsp, classic bullet list
