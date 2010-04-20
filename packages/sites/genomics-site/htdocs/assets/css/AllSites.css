@@ -1022,7 +1022,7 @@ tr.lines td, tr.linesalt td {
 }
 
 .announcebox.home {
-        min-width: 738px;  /*780px;  */
+        min-width: 770px;  
         margin: 12px 5px 0 220px;
 }
 

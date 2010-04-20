@@ -170,7 +170,7 @@
     </li>
 </ul>
 
-<ul style="padding-top:3px;width:11em;float:right">
+<ul style="padding-top:3px;width:11em;border-width:0;float:right">
 <c:choose>
 <c:when test="${wdkUser == null || wdkUser.guest}">
 	<wdk:requestURL path="/showFavorite.do" />
