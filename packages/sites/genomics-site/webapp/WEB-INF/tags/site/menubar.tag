@@ -83,7 +83,7 @@
   	    <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
             <li><a href="/common/PubCrawler/"> PubMed and Entrez</a></li>
  	    <c:if test="${project != 'EuPathDB'}" >
-            	<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(project)}/"> GMOD Genome Browser </a></li>
+            	<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(project)}/">Genome Browser </a></li>
  	    </c:if>
 	    <c:if test="${project == 'PlasmoDB'}" >
 		<li><a href="http://v4-4.plasmodb.org/restricted/PlasmoAPcgi.shtml">PlasmoAP</a>
