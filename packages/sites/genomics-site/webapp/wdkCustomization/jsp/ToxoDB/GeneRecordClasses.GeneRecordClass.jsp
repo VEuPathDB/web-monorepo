@@ -48,16 +48,11 @@
              division="queries_tools"
              summary="${overview.value}"/>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white  class=thinTopBorders>
-
- <tr>
-  <td bgcolor=white valign=top>
+<a name = "top"></a>
 
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
-
-<!--<a name = "top">-->
 <h2>
 <center>
 	<wdk:recordPageBasketIcon desc="${prd}"/>
@@ -774,9 +769,6 @@ OnChange="javascript:updateImage('${imgId}', WhiteBradySort.WhiteBradyList.optio
 <wdk:toggle name="cds" displayName="${cds.displayName}"
              content="${cdsContent}" isOpen="false"/>
 </c:if>
-
-
-</td></tr></table>
 
 
 <hr>
