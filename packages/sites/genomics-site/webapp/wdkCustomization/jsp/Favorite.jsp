@@ -16,7 +16,7 @@
     </c:when>
     <c:otherwise> <%-- has favorites --%>
         <input type="button" value="Refresh" onclick="window.location.reload();"/>
-<span style="font-weight:bold;font-style:italic;font-size:100%;padding-left:100px;" >Click on the star to remove/add an ID in Favorites --- Use "Project" to group IDs; in a future release you will be able to sort by Project</span>
+<span style="font-style:italic;font-size:100%;padding-left:100px;" >Click on the star to remove an ID from Favorites --- Use "Project" to group IDs; in the future you will be able to sort by Project</span>
 	<div id="favorites">
             <c:forEach var="fav_item" items="${allFavorites}">
                 <c:set var="favorites" value="${fav_item.value}" /> <%-- a list of favorites of a record type --%>
@@ -47,7 +47,7 @@
                                     </c:forEach>
                                 </span>
                                 <img class="clickable" src="<c:url value='/wdk/images/favorite_color.gif'/>" 
-                                     title="Click to remove this item from the Favorite."
+                                     title="Click to remove this item from Favorites"
 				     height="16px" style="vertical-align:text-bottom"
                                      onClick="updateFavorite(this, 'remove')"/>&nbsp;
                                 <img class="clickable" src="<c:url value='/wdk/images/basket_${basketColor}.png'/>" 
