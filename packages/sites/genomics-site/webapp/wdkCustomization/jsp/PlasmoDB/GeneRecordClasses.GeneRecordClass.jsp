@@ -95,22 +95,19 @@
   </c:otherwise>
 </c:choose>
 
+
 <site:header title="${wdkModel.displayName} : gene ${id} (${prd})"
              divisionName="Gene Record"
 		refer="recordPage" 
              division="queries_tools"
              summary="${overview.value} (${length.value} bp)"/>
 
+<a name="top" />
 <c:set var="strand" value="+"/>
 <c:if test="${attrs['strand'].value == 'reverse'}">
   <c:set var="strand" value="-"/>
 </c:if>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white
-       class=thinTopBorders>
-
- <tr>
-  <td bgcolor=white valign=top>
 
 <table width="100%">
 <tr>
@@ -1890,7 +1887,7 @@ The overall expression percentile of each condition is the average percentile ov
 <%--</c:if><!-- this is for the test for new genes before aliases -->--%>
 
 <site:pageDivider name="Sequence"/>
-<font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font>
+<i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
 <c:if test="${isCodingGene}">
 <!-- protein sequence -->
 <c:set var="proteinSequence" value="${attrs['protein_sequence']}"/>
