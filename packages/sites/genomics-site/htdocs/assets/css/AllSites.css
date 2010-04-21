@@ -27,6 +27,13 @@
 	text-align: left;
 }
 
+#contentcolumn2 {
+	background-color: #FFFFFF;
+	background-position: 0 -25px;
+	background-repeat: repeat-x;
+	margin: 0 5px 0 6px;
+}
+
 #strat-instructions {
 	background-color:#EDEDED;
 	border-color:#FFFFFF #CCCCCC #666677 #AAAAAA;
