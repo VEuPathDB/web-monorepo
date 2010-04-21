@@ -109,7 +109,7 @@
 </c:if>
 
 
-<table width="100%">
+<table width="100%" style="font-size:150%;background-image: url(/assets/images/${projectId}/footer.png);">
 <tr>
   <td align="center"><a href="#Annotation">Annotation</a>
      <img src="<c:url value='/images/arrow.gif'/>">
