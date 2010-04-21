@@ -102,7 +102,7 @@
              division="queries_tools"
              summary="${overview.value} (${length.value} bp)"/>
 
-<a name="top" />
+<a name="top"></a>
 <c:set var="strand" value="+"/>
 <c:if test="${attrs['strand'].value == 'reverse'}">
   <c:set var="strand" value="-"/>
