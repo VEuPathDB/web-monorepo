@@ -18,7 +18,7 @@
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 
 <site:header title="${wdkRecord.primaryKey}" 
-		refer="recordPage" 
+	     refer="recordPage" 
              divisionName="Gene Record"
              division="queries_tools"/>
 
@@ -27,6 +27,8 @@
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>
+
+<a name="top"></a>
 
 <c:set var="prd" value="${attrs['product'].value}"/>
 
@@ -439,8 +441,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 
 <p>
 <table border='0' width='100%'>
-<tr><td><font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font></td></tr>
-</table>
+<i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
+
 <p>
 
 
@@ -520,6 +522,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 </c:if>
 <%------------------------------------------------------------------%> 
 
+
+<hr>
 <c:choose>
 <c:when test="${organism eq parvumOrganism}">
     <c:set var="reference">
@@ -573,7 +577,6 @@ Teichmann SA, Ivens A, Dear PH.
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
-<hr>
 
 <site:footer/>
 

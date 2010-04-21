@@ -20,7 +20,7 @@
 <c:when test="${!wdkRecord.validRecord}">
 <site:header title="GiardiaDB: gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
-		refer="recordPage" 
+	     refer="recordPage" 
              divisionName="Gene Record"
              division="queries_tools" />
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
@@ -57,10 +57,12 @@
 <site:header title="GiardiaDB: gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
+             refer="recordPage" 
              division="queries_tools" />
 
 <br>
 <%--#############################################################--%>
+<a name="top"></a>
 
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
@@ -447,8 +449,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 
 <p>
 <table border='0' width='100%'>
-<tr><td><font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font></td></tr>
-</table>
+<i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i
+
 <p>
 
 <%--- Sequence -----------------------------------------------------%>
@@ -526,6 +528,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 <c:set var="reference" value="${extdbname}" />
 --%>
 
+<hr>
 <c:choose>
   <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
      <c:set var="reference">
