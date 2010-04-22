@@ -54,8 +54,10 @@
 <site:header title="MicrosporidiaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
-             division="queries_tools" />
+             division="queries_tools" 
+			 refer="recordPage" />
 
+<a name="top"></a>
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
@@ -64,7 +66,7 @@
 
 <h2>
 <center>
-<wdk:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
+	<wdk:recordPageBasketIcon desc="${prd}"/>
 </center>
 </h2>
 
@@ -296,9 +298,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 
 <site:pageDivider name="Sequence"/>
 
-<tr><td><font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font></td></tr>
+<i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
 
-</table>
 <p>
 
 <%------------------------------------------------------------------%>
@@ -341,7 +342,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 </c:if>
 <%------------------------------------------------------------------%> 
 
-
+<hr>
 <c:choose>
 <c:when test='${organism_full eq "Encephalitozoon cuniculi GB-M1"}'>
   <c:set var="reference">
@@ -363,12 +364,6 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 <%------------------------------------------------------------------%>
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
-<hr>
-
-<%--
-<jsp:include page="/include/footer.html"/>
---%>
-
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>

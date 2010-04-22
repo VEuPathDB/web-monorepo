@@ -68,6 +68,7 @@ sub ArrayElementLink {
   return $link;
 }
 
+
 #--------------------------------------------------------------------------------
 #  Methods for Titles (Popups)
 #--------------------------------------------------------------------------------
@@ -774,6 +775,23 @@ sub affyProbesTitle {
   push @data, ['Stop:'         => $stop];
   push @data, ['Count:' => $count];
   hover( $type, \@data);   
+}
+
+
+sub bindingSiteTitle {
+  my $f = shift;
+  my $name = $f->name;
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my ($score) = $f->get_tag_values("Score");
+  my $link = qq(<img src="/a/images/pf_tfbs/$name.png"  height="80%" width="70%" align=left/>);
+  my @data;
+  push @data, [ 'Name:'  => $name ];
+  push @data, ['Start:'  => $start];
+  push @data, ['Stop:'   => $stop];
+  push @data, [ 'Score:' => $score ];  
+  push @data, [ ''  => $link];
+  hover("Binding Site $name", \@data);
 }
 
 

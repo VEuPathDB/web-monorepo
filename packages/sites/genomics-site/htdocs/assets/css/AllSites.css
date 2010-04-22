@@ -4,6 +4,36 @@
      (after the order set up in header.tag)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#record_page_cell_div {
+	margin-left: 20px;
+}
+
+#graphic_span {
+	width: 289px;
+	height: 20px;
+	font-weight: bold;
+	color: #FFFFFF;
+	padding-top: 1px;
+	font-size: 16px;
+	text-align: center;
+	position: absolute;
+}
+
+#contentcolumn {
+	min-width: 780px;
+	margin: 0 5px 0 220px;
+	background-color: #FFFFFF;
+	background-repeat: repeat-x;
+	text-align: left;
+}
+
+#contentcolumn2 {
+	background-color: #FFFFFF;
+	background-position: 0 -25px;
+	background-repeat: repeat-x;
+	margin: 0 5px 0 6px;
+}
+
 #strat-instructions {
 	background-color:#EDEDED;
 	border-color:#FFFFFF #CCCCCC #666677 #AAAAAA;
@@ -100,7 +130,7 @@ td.top {
 
 table.mytableStyle {
 	empty-cells:show;
-	border-width:0.5px;
+	border-width:1px;
 	border-style:solid;	   /* solid, none, inset, outset, dashed, solid, */
 	border-color:black;
 	border-collapse:collapse;  /*separate */
@@ -116,18 +146,31 @@ tr.mythStyle {
 	text-align:center;
 	font-weight:bold;
 }
-td.mythStyle,td.mytdStyle {
+td.mythStyle,td.mytdStyle,th.mythStyle {
 	vertical-align:middle;
-	border-width:0.5px;
+	border-width:1px;
 	border-style:inset;
 	border-color:gray;
 	-moz-border-radius:0px;
 	padding:3px;
 }
+th.mythStyle {
+	font-weight:bold;
+	background-color:lightgrey;
+	border-bottom: 3px solid grey;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Main Page Bubble Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+table.threecolumn {
+	clear: both;
+}
+
+table.threecolumn td {
+        vertical-align: top;
+}
 
 .threecolumndiv {
 	width: 247px;
@@ -280,46 +323,6 @@ div.innertube #record-toolbox li {
     margin-top: 2px;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         =WARNING BOXES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.announcebox {
-        min-height: 35px;
-        height:auto !important;
-        height:35px;
-        margin: 12px 25px 0 6px;
-        padding: 6px;
-        background-repeat: repeat-x;
-        text-align: left;
-        border: 1px solid #345d9b;
-        vertical-align: middle;
-}
-.announcebox.home {
-        min-width: 738px;  /*780px;  */
-        margin: 12px 5px 0 220px;
-}
-.announcebox img {
-        margin-right: 3px;
-}
-.announcebox td {
-        vertical-align:middle;
-}
-.announcebox.info {
-        background-image: url(../images/infobox.jpg);
-        color: #093c8a;
-        background-color: #cdd9eb;
-}
-.announcebox.error {
-        color: #c4000e;
-        background-color: #eec1c2;
-        background-image: url(../images/errorbox.jpg);
-}
-.announcebox.warn {
-        color: #c4000e;
-        background-color: #edf0ac;
-        background-image: url(../images/warnbox.jpg);
-}
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -368,7 +371,7 @@ div.innertube #record-toolbox li {
 	color: #666666;
 	font-size: 10px;  /*version,date*/
 	width: 100%;
-	min-width: 950px;
+	min-width: 970px;
 	height: 104px;
 	text-align: left;
 	background-repeat: no-repeat;
@@ -517,7 +520,7 @@ div.innertube #record-toolbox li {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #menubar {
-	min-width: 900px;
+	min-width: 935px; //to make space for My Favorites
 	height: 19px;
 	text-align: left;
 	background-image: url(../images/menu_bar.png);
@@ -578,7 +581,7 @@ div.innertube #record-toolbox li {
 	margin:0pt;
 	padding:0pt;
 	padding-top: 6px;
-	width: 9.5em;            /* supports up to 9999 searches */
+	width: 9.0em;         
 	border-top-width: 0px;
 	border-right-width: 2px;
 	border-bottom-width: 0px;
@@ -937,6 +940,24 @@ tr.lines td, tr.linesalt td {
 	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#leftcolumn {
+	float: left;
+	width: 220px; /*Width of left column*/
+	margin-left: -100%;
+}
+
+#rightcolumn { /* Not needed? */
+	float: left;
+	width: 25px; /*Width of right column*/
+	margin-left: -25px; /*Set left marginto -(RightColumnWidth)*/
+}
+
+/* used by sidebar */
+.innertube3{
+	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
+
+}
+
 .twoColHybLt #container_au { 
 	width: 100%;  /* this will create a container 100% of the browser width */
 	background-color: #FFFFFF;
@@ -1008,9 +1029,10 @@ tr.lines td, tr.linesalt td {
 }
 
 .announcebox.home {
-	min-width: 780px;	
-	margin: 12px 25px 0 226px;
+        min-width: 770px;  
+        margin: 12px 5px 0 220px;
 }
+
 
 .announcebox img {
 	margin-right: 3px;
@@ -1027,39 +1049,17 @@ tr.lines td, tr.linesalt td {
 }
 
 .announcebox.error {
-/*	min-width: 900px;
-	margin: 6px 25px 0 6px; */
 	color: #c4000e;
 	background-color: #eec1c2;
-/*	padding: 6px;*/
 	background-image: url(../images/errorbox.jpg);
-/*	background-repeat: repeat-x;
-	text-align: left;
-	border: 1px solid #c4000d;
-	vertical-align: middle;*/
 }
-/*
-.eannouncebox.error img {
-	margin-right: 12px;
-}
-*/
+
 .announcebox.warn {
-/*	min-width: 900px;
-	margin: 6px 25px 0 6px; */
 	color: #c4000e;
 	background-color: #edf0ac;
-/*	padding: 6px;*/
 	background-image: url(../images/warnbox.jpg);
-/*	background-repeat: repeat-x;
-	text-align: left;
-	border: 1px solid #f56614;
-	vertical-align: middle;*/
 }
-/*
-.warnbox img {
-	margin-right: 12px;
-}
-*/
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =used in help.jsp, classic bullet list

@@ -7,7 +7,7 @@
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 
 <br><br>
-<a name="${name}">
+<a name="${name}"></a>
 
 <%-- class secondary3 does not seem to exist --%>
 <table border='0' width='100%' style="background-image: url(/assets/images/${project}/footer.png);">

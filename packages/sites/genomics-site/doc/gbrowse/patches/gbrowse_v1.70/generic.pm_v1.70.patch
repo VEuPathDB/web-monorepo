@@ -1,0 +1,26 @@
+--- generic.pm.orig	2010-04-09 12:33:27.000000000 -0400
++++ generic.pm	2010-04-09 15:14:35.000000000 -0400
+@@ -379,6 +379,15 @@
+   $strand *= -1 if $self->{flip};
+ 
+   # have to remap feature start and end into pixel coords in order to:
++  my $seq;
++  my $feature = $self->feature;
++  if($feature->parent->parent && $feature->isa('DAS::GUS::Segment::Feature')) {
++    $feature = $feature->parent->parent;
++    $seq = $feature;
++  } else { 
++    $seq   = $self->get_seq($self->feature->seq);
++  }
++
+   my $start = $self->map_no_trunc($feature->start);
+   my $stop  = $self->map_no_trunc($feature->end);
+ 
+@@ -387,7 +396,6 @@
+   my $right      = $self->panel->right;
+   my $left       = $self->panel->left;
+ 
+-  my $seq   = $self->get_seq($self->feature->seq);
+   $seq      = $seq->seq if $seq;   # get the dna
+ 
+   my $canonical = $self->option('canonical_strand');

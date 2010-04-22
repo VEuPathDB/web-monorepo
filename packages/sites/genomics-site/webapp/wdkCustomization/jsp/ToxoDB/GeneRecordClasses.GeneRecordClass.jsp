@@ -48,55 +48,17 @@
              division="queries_tools"
              summary="${overview.value}"/>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white  class=thinTopBorders>
-
- <tr>
-  <td bgcolor=white valign=top>
+<a name = "top"></a>
 
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
-
-<a name = "top">
 <h2>
 <center>
-<wdk:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
-${fn:length(wdkRecord.tables['CommunityExpComments'])}
+	<wdk:recordPageBasketIcon desc="${prd}"/>
+	<%--${fn:length(wdkRecord.tables['CommunityExpComments'])}--%>
 </center>
 </h2>
-
-<!--
-<c:if test="${fn:length(wdkRecord.tables['CommunityExpComments']) gt 0}">
-<div style="font-size:large; text-align:center; font-weight:bold"> 
-<a href=<c:url value="showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>>Community Annotation Available</a>
-</div>
-<br>
-</c:if>
-</a>
--->
-
-<site:panel 
-    displayName="Community Expert Annotation"
-    content="" />
-
-<c:catch var="e">
-<site:dataTable tblName="CommunityExpComments"/>
-</c:catch>
-
-<c:if test="${e != null}">
- <table  width="100%" cellpadding="3">
-      <tr><td><b>User Comments</b>
-     <site:embeddedError
-         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
-         e="${e}"
-     />
-      </td></tr>
- </table>
-</c:if>
-
-<br/>
-
-<%----------------------------------------------------------%>
 
 <table width="100%"  style="font-size:150%;background-image: url(/assets/images/${projectId}/footer.png);">
 <tr>
@@ -118,16 +80,45 @@ ${fn:length(wdkRecord.tables['CommunityExpComments'])}
 </tr>
 </table>
 
-
 <hr>
+
 <%----------------------------------------------------------%>
-
-
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<site:panel
     displayName="${attr.displayName}"
     content="${attr.value}${append}" />
 <br>
+
+
+<!--
+<c:if test="${fn:length(wdkRecord.tables['CommunityExpComments']) gt 0}">
+<div style="font-size:large; text-align:center; font-weight:bold"> 
+<a href=<c:url value="showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>>Community Annotation Available</a>
+</div>
+<br>
+</c:if>
+</a>
+-->
+
+<site:panel 
+    displayName="Community Expert Annotation"
+    content="" />
+
+<c:catch var="e">
+  <site:dataTable tblName="CommunityExpComments"/>
+</c:catch>
+<c:if test="${e != null}">
+ <table  width="100%" cellpadding="3">
+      <tr><td><b>User Comments</b>
+     <site:embeddedError
+         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
+         e="${e}"
+     />
+      </td></tr>
+ </table>
+</c:if>
+
+<br/><br/>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
@@ -725,7 +716,7 @@ OnChange="javascript:updateImage('${imgId}', WhiteBradySort.WhiteBradyList.optio
 </c:if>
 
 <site:pageDivider name="Sequence"/>
-<font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font>
+<i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
 <c:if test="${isCodingGene}">
 <!-- protein sequence -->
 <c:set var="proteinSequence" value="${attrs['protein_sequence']}"/>
@@ -774,9 +765,6 @@ OnChange="javascript:updateImage('${imgId}', WhiteBradySort.WhiteBradyList.optio
 <wdk:toggle name="cds" displayName="${cds.displayName}"
              content="${cdsContent}" isOpen="false"/>
 </c:if>
-
-
-</td></tr></table>
 
 
 <hr>

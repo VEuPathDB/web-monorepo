@@ -20,6 +20,7 @@ function makeSelection(state)
     var form = document.downloadConfigForm;
     var cb = form.elements;
     for (var i=0; i<cb.length; i++) {
+        if (cb[i].disabled) continue;
         if (state == 1) cb[i].checked = 'checked';
         else if (state == 0) cb[i].checked = null;
         else if (state == -1) {
@@ -67,16 +68,16 @@ function makeSelection(state)
           <tr>
             <td nowrap>
               <c:forEach items="${attributeFields}" var="rmAttr">
-                <input type="checkbox" name="o-fields" value="${rmAttr.name}">
                 <c:choose>
-                  <c:when test="${rmAttr.displayName == null || rmAttr.displayName == ''}">
-                    ${rmAttr.name}
-                  </c:when>
-                  <c:otherwise>
-                    ${rmAttr.displayName}
-                  </c:otherwise>
+                      <c:when test="${rmAttr.name eq 'primary_key'}">
+                        <input type="checkbox" checked="checked" disabled="true" >
+                        <input type="hidden" name="o-fields" value="${rmAttr.name}" >
+                      </c:when>
+                      <c:otherwise>
+                        <input type="checkbox" name="o-fields" value="${rmAttr.name}">
+                      </c:otherwise>
                 </c:choose>
-                <c:if test="${rmAttr.name == 'primaryKey'}">ID</c:if>
+                ${rmAttr.displayName}
                 <c:set var="i" value="${i+1}"/>
                 <c:choose>
                   <c:when test="${i >= numPerColumn}">

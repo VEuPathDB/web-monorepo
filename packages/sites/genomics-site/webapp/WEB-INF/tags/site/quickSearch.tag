@@ -65,8 +65,8 @@
 </c:choose> 
 
 
-<div id="quick-search" session-id="${sessionId}">
-         <table width="460" border="0" cellpadding="3">
+<div  style="width:460px;" id="quick-search" session-id="${sessionId}">
+         <table style="width:460px;">
            <tr>
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">

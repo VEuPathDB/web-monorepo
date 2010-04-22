@@ -41,6 +41,7 @@
 	Select a search, which will be the first step in you new strategy.
 </div>
 
+
 <table id="queryGrid" width="100%" border="0" cellspacing="0" cellpadding="0">
 
 <c:if test="${PORTAL}">

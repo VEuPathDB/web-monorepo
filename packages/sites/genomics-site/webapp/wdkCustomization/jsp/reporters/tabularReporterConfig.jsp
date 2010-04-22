@@ -75,16 +75,16 @@ function appendchecked(url) {
                 <%-- this is a hack, why some reportMakerAttributes have no name? --%>
                 <c:choose>
                   <c:when test="${rmAttr.name != null && rmAttr.name != ''}">
-                    <input type="checkbox" name="selectedFields" value="${rmAttr.name}" onclick="uncheckFields(0);">
                     <c:choose>
-                      <c:when test="${rmAttr.displayName == null || rmAttr.displayName == ''}">
-                        ${rmAttr.name}
+                      <c:when test="${rmAttr.name eq 'primary_key'}">
+                        <input type="checkbox" checked="checked" disabled="true" >
+                        <input type="hidden" name="selectedFields" value="${rmAttr.name}" >
                       </c:when>
                       <c:otherwise>
-                        ${rmAttr.displayName}
+                        <input type="checkbox" name="selectedFields" value="${rmAttr.name}" onclick="uncheckFields(0);">
                       </c:otherwise>
                     </c:choose>
-                    <c:if test="${rmAttr.name == 'primaryKey'}">ID</c:if>
+                        ${rmAttr.displayName}
                     <c:set var="i" value="${i+1}"/>
                     <c:choose>
                       <c:when test="${i >= numPerColumn}">

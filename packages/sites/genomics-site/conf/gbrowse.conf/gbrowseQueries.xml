@@ -728,7 +728,9 @@ WHERE  fl.feature_type ='SAGETagFeature'
        <![CDATA[
     SELECT $$sample$$ as feature_id,
           'NextGenSeq'        as type, 
-          '$source'          as source 
+          '$source'          as source,
+           $base_start        as startm,
+           $rend              as end 
   FROM   dual 
        ]]>
     </sql>
@@ -739,7 +741,9 @@ WHERE  fl.feature_type ='SAGETagFeature'
        <![CDATA[
     SELECT $$sample$$ as feature_id,
           'NextGenSeq'        as type, 
-          '$source'          as source 
+          '$source'          as source,
+           $base_start        as startm,
+           $rend              as end  
   FROM   dual 
        ]]>
     </sql>
@@ -1204,6 +1208,38 @@ ORDER BY
     </sql>
   </sqlQuery>
 
+
+  <sqlQuery name="feature:BindingSite">
+     <sql>
+<![CDATA[
+ SELECT
+       fl.na_feature_id feature_id,
+       'feature' type, 
+       'BindingSite' source, 
+       BS.name name, 
+       '.' score, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Name=' || BS.name || '$dlm' ||       
+       'Score=' || BS.primary_score as atts
+FROM 
+       dots.BindingSiteFeature BS,
+       apidb.FeatureLocation fl
+WHERE
+       BS.na_feature_id = fl.na_feature_id and
+       fl.feature_type = 'BindingSiteFeature' and
+       fl.start_min <= $rend and 
+       fl.end_max >= $base_start and 
+       fl.na_sequence_id = $srcfeature_id
+ORDER BY 
+       fl.start_min
+]]>
+    </sql>
+  </sqlQuery>
+
+ 
 
   <sqlQuery name="feature:TransposableElement">
      <sql>
@@ -3430,7 +3466,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'gcpfwt_id' as feature_id,
                'rnaseq' type,
-               'gcpfwt' source
+               'gcpfwt' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3441,7 +3479,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'gcbfall_id' as feature_id,
                'rnaseq' type,
-               'gcbfall' source
+               'gcbfall' source,
+                $base_start as startm,
+                $rend       as end
         FROM   dual
        ]]>
     </sql>
@@ -3453,7 +3493,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
         SELECT 'cn_three_sample' as feature_id,
                'rnaseq' type,
                sample as name,
-               'cn_three_samples' source
+               'cn_three_samples' source,
+                $base_start as startm,
+                $rend       as end
         FROM   apidb.rnaseq_coverage rc
         WHERE   rc.na_sequence_id = $srcfeature_id
          AND rc.sample in ('24h','8h','40h')
@@ -3471,7 +3513,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
         SELECT 'cn_four_sample' as feature_id,
                'rnaseq' type,
                sample as name,
-               'cn_four_samples' source
+               'cn_four_samples' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   apidb.rnaseq_coverage rc
         WHERE   rc.na_sequence_id = $srcfeature_id
          AND rc.sample in ('0h','16h','32h','48h')
@@ -3489,7 +3533,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
         SELECT 'cn_seven_sample' as feature_id,
                'rnaseq' type,
                sample as name,
-               'cn_seven_samples' source
+               'cn_seven_samples' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   apidb.rnaseq_coverage rc
         WHERE   rc.na_sequence_id = $srcfeature_id
          AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
@@ -3507,7 +3553,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
         SELECT 'cn_seven_sample_log' as feature_id,
                'rnaseq' type,
                sample as name,
-               'cn_seven_samples_log' source
+               'cn_seven_samples_log' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   apidb.rnaseq_coverage rc
         WHERE   rc.na_sequence_id = $srcfeature_id
          AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
@@ -3525,7 +3573,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_0h' as feature_id,
                'rnaseq' type,
-               'cn_pf0h' source
+               'cn_pf0h' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3536,7 +3586,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_0h_lin' as feature_id,
                'rnaseq' type,
-               'cn_pf0h_lin' source
+               'cn_pf0h_lin' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3547,7 +3599,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_8h' as feature_id,
                'rnaseq' type,
-               'cn_pf8h' source
+               'cn_pf8h' source,
+                $base_start as startm,
+                $rend       as end
         FROM   dual
        ]]>
     </sql>
@@ -3558,7 +3612,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_8h_lin' as feature_id,
                'rnaseq' type,
-               'cn_pf8h_lin' source
+               'cn_pf8h_lin' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3569,7 +3625,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_16h' as feature_id,
                'rnaseq' type,
-               'cn_pf16h' source
+               'cn_pf16h' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3580,7 +3638,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_16h_lin' as feature_id,
                'rnaseq' type,
-               'cn_pf16h_lin' source
+               'cn_pf16h_lin' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3592,7 +3652,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_24h' as feature_id,
                'rnaseq' type,
-               'cn_pf24h' source
+               'cn_pf24h' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3603,7 +3665,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_24h_lin' as feature_id,
                'rnaseq' type,
-               'cn_pf24h_lin' source
+               'cn_pf24h_lin' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3614,7 +3678,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_32h' as feature_id,
                'rnaseq' type,
-               'cn_pf32h' source
+               'cn_pf32h' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3625,7 +3691,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_32h_lin' as feature_id,
                'rnaseq' type,
-               'cn_pf32h_lin' source
+               'cn_pf32h_lin' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3636,7 +3704,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_40h' as feature_id,
                'rnaseq' type,
-               'cn_pf40h' source
+               'cn_pf40h' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3647,7 +3717,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_40h_lin' as feature_id,
                'rnaseq' type,
-               'cn_pf40h_lin' source
+               'cn_pf40h_lin' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3658,7 +3730,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_48h' as feature_id,
                'rnaseq' type,
-               'cn_pf48h' source
+               'cn_pf48h' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>
@@ -3669,7 +3743,9 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        <![CDATA[
         SELECT 'rnaseq_48h_lin' as feature_id,
                'rnaseq' type,
-               'cn_pf48h_lin' source
+               'cn_pf48h_lin' source,
+                $base_start as startm,
+                $rend       as end 
         FROM   dual
        ]]>
     </sql>

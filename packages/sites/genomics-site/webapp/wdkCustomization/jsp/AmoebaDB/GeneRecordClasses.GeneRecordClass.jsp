@@ -24,8 +24,10 @@
 		refer="recordPage" 
              divisionName="Gene Record"
              division="queries_tools" />
-  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+
+<h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
 </c:when>
+
 <c:otherwise>
 <c:set var="organism" value="${attrs['organism'].value}"/>
 <c:set var="organism_full" value="${attrs['organism_full'].value}"/>
@@ -56,8 +58,10 @@
 <site:header title="AmoebaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
-             division="queries_tools" />
+             division="queries_tools" 
+             refer="recordPage" />
 
+<a name="top"></a>
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
@@ -66,7 +70,7 @@
 
 <h2>
 <center>
-<wdk:recordPageBasketIcon />&nbsp;${id} <br /> ${prd}
+	<wdk:recordPageBasketIcon  desc="${prd}"/>
 </center>
 </h2>
 
@@ -304,9 +308,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 
 <site:pageDivider name="Sequence"/>
 
-<tr><td><font size ="-1">Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</font></td></tr>
+<i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
 
-</table>
 <p>
 
 <%------------------------------------------------------------------%>
@@ -348,6 +351,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 
 </c:if>
 <%------------------------------------------------------------------%> 
+<hr>
 
 <c:choose>
 <c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
@@ -375,7 +379,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 <%------------------------------------------------------------------%>
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
-<hr>
+
+
+
 
 <%--
 <jsp:include page="/include/footer.html"/>

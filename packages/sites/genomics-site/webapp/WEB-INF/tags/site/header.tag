@@ -219,7 +219,7 @@ ${headElement}
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 
 <div id="header2">
-   <div id="header_rt">
+   <div style="width:460px;" id="header_rt">
 
    <div align="right"><div id="toplink">
     <%------ skip skips to menubar.tag ----%>
@@ -249,7 +249,7 @@ ${headElement}
    </div></div>
        
 
-    <div id="bottom">
+    <div style="width:460px;" id="bottom">
       <site:quickSearch /><br />
 
 <%---------------------- Small Menu Options on Header  ------------------%>

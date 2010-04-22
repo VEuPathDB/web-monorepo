@@ -12,10 +12,19 @@
 
 <c:set var="margin" value="15px"/>
 
+<!-- this should be read from the model -->
+<c:if test="${wdkModelDispName eq 'AmoebaDB'}">
+    	<c:set var="organism" value="Entamoeba dispar"/>
+</c:if>
 <c:if test="${wdkModelDispName eq 'CryptoDB'}">
     	<c:set var="organism" value="Cryptosporidium parvum,Cryptosporidium hominis"/>
 </c:if>
-
+<c:if test="${wdkModelDispName eq 'EuPathDB'}">
+    	<c:set var="organism" value="Cryptosporidium parvum,Leishmania major,Toxoplasma gondii"/>
+</c:if>
+<c:if test="${wdkModelDispName eq 'MicrosporidiaDB'}">
+        <c:set var="organism" value="Encephalitozoon cuniculi"/>
+</c:if>
 <c:if test="${wdkModelDispName eq 'PlasmoDB'}">
         <c:set var="organism" value="Plasmodium falciparum,Plasmodium knowlesi"/>
 </c:if>

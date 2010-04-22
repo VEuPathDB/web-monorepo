@@ -139,6 +139,9 @@
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySimilarity" linktext="BLAST similarity" type="GENE" existsOn="A Am C G M P T Tr Tt"/>
                 </tr>
+                <tr>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByBindingSiteFeature" linktext="Transcription Factor Binding Sites" type="GENE" existsOn="P"/>
+                </tr>
             </table>
 </div>
         </td>

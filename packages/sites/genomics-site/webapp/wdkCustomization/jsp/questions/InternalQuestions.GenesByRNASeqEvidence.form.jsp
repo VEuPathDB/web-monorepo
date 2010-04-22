@@ -7,7 +7,7 @@
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
 <%-- QUESTIONS --%>
-<c:set var="plasmoQuestions" value="GeneQuestions.GenesByRNASeqExpressionTiming,GeneQuestions.GenesByRNASeqPfExpressionPercentile,GeneQuestions.GenesByRNASeqPfExpressionFoldChange" />
+<c:set var="plasmoQuestions" value="GeneQuestions.GenesByRNASeqPfExpressionFoldChange,GeneQuestions.GenesByRNASeqPfExpressionPercentile,GeneQuestions.GenesByRNASeqExpressionTiming" />
 <c:set var="tritrypQuestions" value="GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile"/>
 
 ${Question_Header}
