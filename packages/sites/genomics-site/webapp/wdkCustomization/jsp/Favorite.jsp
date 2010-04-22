@@ -15,8 +15,8 @@
         <p>You don't have any favorite IDs. You can add IDs to Favorites from the ID record page.</p>
     </c:when>
     <c:otherwise> <%-- has favorites --%>
-        <input type="button" value="Refresh" onclick="window.location.reload();"/>
-<span style="font-style:italic;font-size:100%;padding-left:100px;" >Click on the star to remove an ID from Favorites --- Use "Project" to group IDs (IDs are sorted by project name)</span>
+        <input title="Reload the page after you remove some IDs, or add a new project name." type="button" value="Refresh" onclick="window.location.reload();"/>
+<span style="font-style:italic;font-size:100%;padding-left:200px;" >(Place your cursor over column headings or icons to get help pop-ups)</span>
 	<div id="favorites">
             <c:forEach var="fav_item" items="${allFavorites}">
                 <c:set var="favorites" value="${fav_item.value}" /> <%-- a list of favorites of a record type --%>
@@ -25,7 +25,9 @@
 
                 <table class="favorite-list mytableStyle" width="93%">
                     <tr>
-			<th title="Click on the star to remove an ID from Favorites. It will not be removed from this page until you hit 'Refresh' or reload the page." class="mythStyle">${recordClass.type}s</th><th title="Use this column to add notes.  Click Edit to change this field"  class="mythStyle">Notes</th><th title="Organize your favorites by project names of your own creation.  Favorites are sorted by project name.  Click Edit to change this field."  class="mythStyle">Project</th>
+			<th title="Click on the star to remove an ID from Favorites. It will not be removed from this page until you hit 'Refresh' or reload the page." class="mythStyle">${recordClass.type}s</th>
+			<th title="Use this column to add notes (click Edit to change this field). Initially it contains the product name associated with the ID."  class="mythStyle">Notes</th>
+			<th title="Organize your favorites by project names. Click Edit to add/change it; IDs with the same project name will be sorted together once the page is refreshed."  class="mythStyle">Project</th>
 		    </tr>
                     <c:forEach var="favorite" items="${favorites}">
                         <c:set var="record" value="${favorite.recordInstance}" />
