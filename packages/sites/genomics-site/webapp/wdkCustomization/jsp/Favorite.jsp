@@ -25,7 +25,7 @@
 
                 <table class="favorite-list mytableStyle" width="93%">
                     <tr>
-			<th  class="mythStyle">${recordClass.type}s</th><th  class="mythStyle">Notes</th><th  class="mythStyle">Project</th>
+			<th title="Click on the star to remove an ID from Favorites. It will not be removed from this page until you hit 'Refresh' or reload the page." class="mythStyle">${recordClass.type}s</th><th title="Use this column to add notes.  Click Edit to change this field"  class="mythStyle">Notes</th><th title="Organize your favorites by project names of your own creation.  Favorites are sorted by project name.  Click Edit to change this field."  class="mythStyle">Project</th>
 		    </tr>
                     <c:forEach var="favorite" items="${favorites}">
                         <c:set var="record" value="${favorite.recordInstance}" />
@@ -61,7 +61,7 @@
                                 <c:forEach var="pk_item" items="${pkValues}">
                                     <c:set var="url" value="${url}&${pk_item.key}=${pk_item.value}" />
                                 </c:forEach>
-                                <a href="<c:url value='${url}' />">${primaryKey.value}</a>
+                                <a title="Click to access this ID's page" href="<c:url value='${url}' />">${primaryKey.value}</a>
                             </td>
                             <td width="60%"  class="mytdStyle" >
 								<c:set var="favNote" value="${favorite.note}"/>
