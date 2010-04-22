@@ -50,17 +50,7 @@
 
 <a name = "top"></a>
 
-<%-- quick tool-box for the record --%>
-<site:recordToolbox />
-
-<h2>
-<center>
-	<wdk:recordPageBasketIcon desc="${prd}"/>
-	<%--${fn:length(wdkRecord.tables['CommunityExpComments'])}--%>
-</center>
-</h2>
-
-<table width="100%"  style="font-size:150%;background-image: url(/assets/images/${projectId}/footer.png);">
+<table width="100%">
 <tr>
   <td align="center" style="padding:6px;"><a href="#Annotation">Annotation</a>
      <img src="<c:url value='/images/arrow.gif'/>">
@@ -82,13 +72,16 @@
 
 <hr>
 
-<%----------------------------------------------------------%>
-<c:set var="attr" value="${attrs['overview']}" />
-<site:panel
-    displayName="${attr.displayName}"
-    content="${attr.value}${append}" />
-<br>
+<%--  TITLE  --------------------------%>
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+<h2><center>
+        <wdk:recordPageBasketIcon desc="${prd}"/>
+        <%--${fn:length(wdkRecord.tables['CommunityExpComments'])}--%>
+</center></h2>
 
+
+<%--- COMMUNITY EXPERT ANNOTATION -----------%>
 
 <!--
 <c:if test="${fn:length(wdkRecord.tables['CommunityExpComments']) gt 0}">
@@ -120,7 +113,16 @@
 
 <br/><br/>
 
-<%-- DNA CONTEXT ---------------------------------------------------%>
+<%-- OVERVIEW ---------------%>
+
+<c:set var="attr" value="${attrs['overview']}" />
+<site:panel
+    displayName="${attr.displayName}"
+    content="${attr.value}${append}" />
+<br>
+
+
+<%-- DNA CONTEXT ---------------%>
 
 <!-- deal with specific contexts depending on organism -->
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">

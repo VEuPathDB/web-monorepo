@@ -95,6 +95,10 @@
   </c:otherwise>
 </c:choose>
 
+<c:set var="strand" value="+"/>
+<c:if test="${attrs['strand'].value == 'reverse'}">
+  <c:set var="strand" value="-"/>
+</c:if>
 
 <site:header title="${wdkModel.displayName} : gene ${id} (${prd})"
              divisionName="Gene Record"
@@ -103,21 +107,8 @@
              summary="${overview.value} (${length.value} bp)"/>
 
 <a name="top"></a>
-<c:set var="strand" value="+"/>
-<c:if test="${attrs['strand'].value == 'reverse'}">
-  <c:set var="strand" value="-"/>
-</c:if>
 
-<%-- quick tool-box for the record --%>
-<site:recordToolbox />
-
-<h2>
-<center>
-        <wdk:recordPageBasketIcon  desc="${prd}"/>
-</center>
-</h2>
-
-<table width="100%" style="font-size:150%;background-image: url(/assets/images/${projectId}/footer.png);">
+<table width="100%">
 <tr>
   <td align="center" style="padding:6px"><a href="#Annotation">Annotation</a>
      <img src="<c:url value='/images/arrow.gif'/>">
@@ -155,12 +146,12 @@
 
 <hr>
 
-<c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
-    displayName="${attr.displayName} ${has_namefun_comment}" 
-    content="${attr.value}${append}" />
-<br>
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
 
+<h2><center>
+    <wdk:recordPageBasketIcon  desc="${prd}"/>
+</center></h2>
 
 <!-- note moved comments url stuff here so can use in plasmo new annotation section -->
 <c:set var="externalDbName" value="${attrs['external_db_name']}"/>
@@ -173,92 +164,16 @@
         <c:param name="organism" value="${binomial}" />
 </c:url>
 
-<%-- "new annotation attributes have become obsolete as the new (re) annotation has become the official annotation"
- 
-<c:if test="${species eq 'falciparum'}">
-<!-- new annotation attributes -->
-<c:set var="annotationStatus" value="${attrs['annotation_status'].value}"/>
-<c:set var="hasNewGo" value="${attrs['new_go'].value}"/>
-<c:set var="hasNewEc" value="${attrs['new_ec'].value}"/>
-<c:set var="hasNewProduct" value="${attrs['new_product'].value}"/>
-<c:set var="hasNewProtein" value="${attrs['new_protein'].value}"/>
-<c:set var="newProductString" value="${attrs['new_product_string'].value}"/>
+<%-- OVERVIEW ------------%>
 
-<table border=0 width=100% cellpadding=2 cellspacing=0 bgcolor=#98FB98> --%>
-<%--  <c:choose>
-  <c:when test="${annotationStatus eq 'new'}">
-    <tr><td colspan="4">This is a <b>new gene</b> identified in the course of the <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">reannotation workshop and ongoing reannotation efforts</a>.</td></tr>
-  </c:when>
-  <c:when test="${annotationStatus eq 'new_organellar'}">
-    <tr><td colspan="4">Organellar Genes were annotated on alternative genomic sequences at the <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">reannotation workshop</a>.  This appears to be a <b>new gene</b> but it may correspond to an existing gene with a different identifier.  (ie.  Some Genes on <a href="/a/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=PlasmoDB&primary_key=API_IRAB">API_IRAB</a> will map to  <a href="/a/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=PlasmoDB&primary_key=X95275">X95275</a> or <a href="/a/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=PlasmoDB&primary_key=X95276">X95276</a>)</td></tr>
-  </c:when>
-  <c:when test="${annotationStatus eq 'deleted_organellar'}">
-    <tr><td colspan="4">Organellar Genes were annotated on alternative genomic sequences at the <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">reannotation workshop</a>.  This appears to be a <b>deleted gene</b> but it may have a corresponding gene in the New Workshop Annotation with a different identifier.  (ie.  Some Genes on <a href="/a/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=PlasmoDB&primary_key=API_IRAB">API_IRAB</a> will map to  <a href="/a/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=PlasmoDB&primary_key=X95275">X95275</a> or <a href="/a/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=PlasmoDB&primary_key=X95276">X95276</a>)</td></tr>
-  </c:when>
-  <c:when test="${annotationStatus eq 'reviewed'}">
-    <tr><td colspan="4">This gene was <b>reviewed</b> (but not modified) in the course of the <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">reannotation workshop and ongoing reannotation efforts</a>.</td></tr>
-  </c:when>
-  <c:when test="${annotationStatus eq 'changed'}">
-    <tr><td colspan="4">This gene has been <b>modified</b> in the course of the <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">reannotation workshop and ongoing reannotation efforts</a>.</td></tr>
-  </c:when>
-  <c:when test="${annotationStatus eq 'deleted'}">
-    <tr><td colspan="4">This gene identifier was <b>deleted</b> in the course of the <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">reannotation workshop and ongoing reannotation efforts</a>.</td></tr>
-  </c:when>
-  <c:otherwise>
-    <tr><td colspan="4">This gene has not yet been reviewed in the <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">reannotation effort</a>.</td></tr>
-  </c:otherwise>
-
-  </c:choose>
-    <c:if test="${hasNewProduct == 1}">
-      <tr><td><b>New Product:</b></td>
-          <td colspan="3"><b><font color="CC0000">${newProductString}</font></b></td>
-      </tr>
-    </c:if>
-
-    <c:if test="${annotationStatus eq 'changed' || annotationStatus eq 'new' || annotationStatus eq 'new_organellar'}">
-      <tr><td><b>New information available:</b></td>
-        <c:choose>
-          <c:when test="${hasNewProtein == 1}">
-            <td><b><a href="#geneModel"><font color="CC0000">Gene Model</font></a></b>
-             <img src="<c:url value='/images/arrow.gif'/>">
-            </td>
-          </c:when>
-          <c:otherwise>
-            <td><font color="999999">Gene Model</font></td>
-          </c:otherwise>
-        </c:choose>
-        <c:choose>
-          <c:when test="${hasNewGo == 1}">
-            <td><b><a href="#goTerm"><font color="CC0000">GO Terms</font></a></b>
-             <img src="<c:url value='/images/arrow.gif'/>">
-            </td>
-          </c:when>
-          <c:otherwise>
-            <td><font color="999999">GO Terms</font></td>
-          </c:otherwise>
-        </c:choose>
-        <c:choose>
-          <c:when test="${hasNewEc == 1}">
-            <td><b><a href="#ecNumber"><font color="CC0000">EC Number</font></a></b>
-             <img src="<c:url value='/images/arrow.gif'/>">
-            </td>
-          </c:when>
-          <c:otherwise>
-            <td><font color="999999">EC Number</font></td>                                                                            
-          </c:otherwise>
-        </c:choose>
-      </tr>
-    </c:if>
-
-  <tr><td colspan="4"><b>Re-annotation is ongoing</b>.  Please <b><a href="${commentsUrl}">add a user comment</a></b> if you can provide further information.</td></tr>
-
-</table>
-
-<hr>
-</c:if> --%>
+<c:set var="attr" value="${attrs['overview']}" />
+<site:panel
+    displayName="${attr.displayName} ${has_namefun_comment}"
+    content="${attr.value}${append}" />
+<br>
 
 
-<%-- DNA CONTEXT ---------------------------------------------------%>
+<%-- DNA CONTEXT ------------%>
 
 <c:choose>
   <c:when test="${species eq 'falciparum'}">
