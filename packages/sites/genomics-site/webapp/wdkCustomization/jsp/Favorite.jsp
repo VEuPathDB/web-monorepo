@@ -16,7 +16,7 @@
     </c:when>
     <c:otherwise> <%-- has favorites --%>
         <input type="button" value="Refresh" onclick="window.location.reload();"/>
-<span style="font-style:italic;font-size:100%;padding-left:100px;" >Click on the star to remove an ID from Favorites --- Use "Project" to group IDs; in the future you will be able to sort by Project</span>
+<span style="font-style:italic;font-size:100%;padding-left:100px;" >Click on the star to remove an ID from Favorites --- Use "Project" to group IDs and have them sorted by Project</span>
 	<div id="favorites">
             <c:forEach var="fav_item" items="${allFavorites}">
                 <c:set var="favorites" value="${fav_item.value}" /> <%-- a list of favorites of a record type --%>
