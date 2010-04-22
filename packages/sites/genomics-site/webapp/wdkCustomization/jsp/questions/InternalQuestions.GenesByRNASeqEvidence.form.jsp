@@ -7,8 +7,14 @@
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
 <%-- QUESTIONS --%>
-<c:set var="plasmoQuestions" value="GeneQuestions.GenesByRNASeqPfExpressionFoldChange,GeneQuestions.GenesByRNASeqPfExpressionPercentile,GeneQuestions.GenesByRNASeqExpressionTiming" />
+<c:set var="plasmoQuestions" value="GeneQuestions.GenesByRNASeqExpressionTiming" />
 <c:set var="tritrypQuestions" value="GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile"/>
+
+ <c:choose>
+    <c:when test="${projectId == 'PlasmoDB'}">
+        <jsp:forward page="/showQuestion.do?questionFullName=${plasmoQuestions}" /> 
+    </c:when>
+    <c:otherwise>
 
 ${Question_Header}
 <wdk:errors/>
@@ -22,9 +28,6 @@ ${Question_Header}
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
   <c:choose>
-    <c:when test="${projectId == 'PlasmoDB'}">
-	<site:queryList3 columns="${columns}" questions="${plasmoQuestions}"/>
-    </c:when>
     <c:when test="${projectId == 'TriTrypDB'}">
 	<site:queryList3 columns="${columns}" questions="${tritrypQuestions}"/>
     </c:when>
@@ -37,6 +40,7 @@ ${Question_Header}
 </table>
 </center>
 </div>
-
+    </c:otherwise>
+</c:choose>
 
 ${Question_Footer}
