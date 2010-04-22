@@ -60,39 +60,6 @@
 </center>
 </h2>
 
-<!--
-<c:if test="${fn:length(wdkRecord.tables['CommunityExpComments']) gt 0}">
-<div style="font-size:large; text-align:center; font-weight:bold"> 
-<a href=<c:url value="showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>>Community Annotation Available</a>
-</div>
-<br>
-</c:if>
-</a>
--->
-
-<site:panel 
-    displayName="Community Expert Annotation"
-    content="" />
-
-<c:catch var="e">
-<site:dataTable tblName="CommunityExpComments"/>
-</c:catch>
-
-<c:if test="${e != null}">
- <table  width="100%" cellpadding="3">
-      <tr><td><b>User Comments</b>
-     <site:embeddedError
-         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
-         e="${e}"
-     />
-      </td></tr>
- </table>
-</c:if>
-
-<br/>
-
-<%----------------------------------------------------------%>
-
 <table width="100%"  style="font-size:150%;background-image: url(/assets/images/${projectId}/footer.png);">
 <tr>
   <td align="center" style="padding:6px;"><a href="#Annotation">Annotation</a>
@@ -113,16 +80,45 @@
 </tr>
 </table>
 
-
 <hr>
+
 <%----------------------------------------------------------%>
-
-
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<site:panel
     displayName="${attr.displayName}"
     content="${attr.value}${append}" />
 <br>
+
+
+<!--
+<c:if test="${fn:length(wdkRecord.tables['CommunityExpComments']) gt 0}">
+<div style="font-size:large; text-align:center; font-weight:bold"> 
+<a href=<c:url value="showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>>Community Annotation Available</a>
+</div>
+<br>
+</c:if>
+</a>
+-->
+
+<site:panel 
+    displayName="Community Expert Annotation"
+    content="" />
+
+<c:catch var="e">
+  <site:dataTable tblName="CommunityExpComments"/>
+</c:catch>
+<c:if test="${e != null}">
+ <table  width="100%" cellpadding="3">
+      <tr><td><b>User Comments</b>
+     <site:embeddedError
+         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
+         e="${e}"
+     />
+      </td></tr>
+ </table>
+</c:if>
+
+<br/><br/>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 

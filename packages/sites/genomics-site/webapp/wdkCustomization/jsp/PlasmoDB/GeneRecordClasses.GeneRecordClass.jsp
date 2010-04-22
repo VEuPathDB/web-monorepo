@@ -108,10 +108,18 @@
   <c:set var="strand" value="-"/>
 </c:if>
 
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
+<h2>
+<center>
+        <wdk:recordPageBasketIcon  desc="${prd}"/>
+</center>
+</h2>
 
 <table width="100%" style="font-size:150%;background-image: url(/assets/images/${projectId}/footer.png);">
 <tr>
-  <td align="center"><a href="#Annotation">Annotation</a>
+  <td align="center" style="padding:6px"><a href="#Annotation">Annotation</a>
      <img src="<c:url value='/images/arrow.gif'/>">
   </td>
   <c:if test="${isCodingGene}">
@@ -147,15 +155,6 @@
 
 <hr>
 
-
-<%-- quick tool-box for the record --%>
-<site:recordToolbox />
-
-<h2>
-<center>
-	<wdk:recordPageBasketIcon  desc="${prd}"/>
-</center>
-</h2>
 <c:set var="attr" value="${attrs['overview']}" />
 <site:panel 
     displayName="${attr.displayName} ${has_namefun_comment}" 
