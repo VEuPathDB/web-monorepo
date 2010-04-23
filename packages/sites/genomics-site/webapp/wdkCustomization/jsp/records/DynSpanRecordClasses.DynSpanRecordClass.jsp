@@ -30,19 +30,13 @@
 </c:when>
 <c:otherwise>
 
-<h2><center>${id}</center></h2>
 
-<%-- quick tool-box for the record --%>
+<%-- download box  and title  ----%>
 <site:recordToolbox />
+<h2><center>${id}</center></h2>
+<br><br>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white
-       class=thinTopBorders>
- <tr>
-  <td bgcolor=white valign=top>
-
-
-
-<table width="90%" align="center" cellspacing="5">
+<table width="100%">
 <tr><td>
 
 <!-- Overview -->
@@ -51,6 +45,12 @@
     displayName="${attr.displayName}" isOpen="true"
     content="${attr.value}" />
 
+<br><br>
+<!-- SRT -->
+<c:set var="attr" value="${attrs['otherInfo']}" />
+<wdk:toggle name="${attr.displayName}"
+    displayName="${attr.displayName}" isOpen="true"
+    content="${attr.value}" />
 
 </td></tr>
 </table>
