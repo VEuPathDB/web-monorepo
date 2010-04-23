@@ -722,11 +722,23 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-
   <sqlQuery name="NextGenSeq:coverage"  includeProjects="TriTrypDB,PlasmoDB">
      <sql>
        <![CDATA[
     SELECT $$sample$$ as feature_id,
+          'NextGenSeq'        as type, 
+          '$source'          as source,
+           $base_start        as startm,
+           $rend              as end 
+  FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="NextGenSeq:coverageComb"  includeProjects="TriTrypDB,PlasmoDB">
+     <sql>
+       <![CDATA[
+    SELECT $$sample1$$ || $$sample2$$ as feature_id,
           'NextGenSeq'        as type, 
           '$source'          as source,
            $base_start        as startm,
@@ -5631,6 +5643,36 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND ed.name = $$edname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$sample$$
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_end >= $base_start - 1)
+       GROUP BY start_interval,end_interval,sample,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="NextGenSeq:coverageComb:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+     SELECT start_interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              max(coverage) score, 
+             $$sample1$$ || $$sample2$$ parent_id,
+             start_interval * (($rend - $base_start + 1) / 800) startm,
+             end_interval * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN sample = $$sample1$$ THEN 0 ELSE 1 END atts
+    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) start_interval, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
+                 csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.nextgenseq_coverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$edname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND (csc.sample = $$sample1$$
+          OR csc.sample = $$sample2$$)
          AND csc.mapping_start <= $rend
          AND csc.mapping_end >= $base_start - 1)
        GROUP BY start_interval,end_interval,sample,multiple
