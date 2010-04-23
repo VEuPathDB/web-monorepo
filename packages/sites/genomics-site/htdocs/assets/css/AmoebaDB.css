@@ -311,27 +311,12 @@ span.marker a:link, span.marker a:visited {
     background-color: #e9e6ee;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  = for old UI with new graphics (deprecated)  
-        RETHINK this section, CryptoDB.css does not have it
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
-td.recordClassTitle{
-    border-color:#330099;
-}
-
-
-tr.headerRow  td,th {
-   border-color:#330099;  
-}
-
-*/
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = styles for blockUI popups
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 2px solid #4F3D1B;
+	border: 1px solid #4F3D1B;
 }
 
 .blockPage{
