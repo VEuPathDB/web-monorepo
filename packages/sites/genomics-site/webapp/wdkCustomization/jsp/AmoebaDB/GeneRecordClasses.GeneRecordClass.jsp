@@ -140,7 +140,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 </c:if>
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
+<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
 
 
 <!-- Mercator / Mavid alignments -->
