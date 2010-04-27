@@ -1235,11 +1235,14 @@ ORDER BY
        fl.end_max end, 
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'Name=' || BS.name || '$dlm' ||       
+       'Sequence=' || substr(s.sequence, fl.start_min, fl.end_max - fl.start_min + 1)  || '$dlm' ||
        'Score=' || BS.primary_score as atts
 FROM 
        dots.BindingSiteFeature BS,
-       apidb.FeatureLocation fl
+       apidb.FeatureLocation fl,
+       dots.nasequence s
 WHERE
+       fl.na_sequence_id = s.na_sequence_id and
        BS.na_feature_id = fl.na_feature_id and
        fl.feature_type = 'BindingSiteFeature' and
        fl.start_min <= $rend and 

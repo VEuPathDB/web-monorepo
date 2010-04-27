@@ -783,14 +783,30 @@ sub bindingSiteTitle {
   my $name = $f->name;
   my $start = $f->start;
   my $stop  = $f->stop;
+  my $strand  = $f->strand;
   my ($score) = $f->get_tag_values("Score");
-  my $link = qq(<img src="/a/images/pf_tfbs/$name.png"  height="80%" width="70%" align=left/>);
+  my ($sequence) = $f->get_tag_values("Sequence");
+  my $revComp = reverse $sequence;
+  $revComp =~ tr/ACGTacgt/TGCAtgca/;
+
+  if($strand eq '+1') {
+    $strand = 'FORWARD';
+  }
+  else {
+    $strand = 'REVERSE';
+    $sequence = $revComp;
+  }
+
+  my $pvalue = exp($score);
+  my $link = qq(<a href="/a/images/pf_tfbs/$name.png">Binding Motif Image</a>);
   my @data;
   push @data, [ 'Name:'  => $name ];
   push @data, ['Start:'  => $start];
   push @data, ['Stop:'   => $stop];
-  push @data, [ 'Score:' => $score ];  
-  push @data, [ ''  => $link];
+  push @data, ['Strand:'   => $strand];
+  push @data, [ 'p value:' => $pvalue ];  
+  push @data, [ 'Sequence:' => $sequence ];  
+  push @data, [ 'Motif'  => $link];
   hover("Binding Site $name", \@data);
 }
 
