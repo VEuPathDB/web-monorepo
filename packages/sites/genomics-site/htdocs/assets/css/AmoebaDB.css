@@ -115,7 +115,7 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
-	color:#5c0141;
+	color:#58441F;
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
