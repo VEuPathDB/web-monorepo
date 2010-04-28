@@ -798,7 +798,8 @@ sub bindingSiteTitle {
   }
 
   my $pvalue = exp($score);
-  my $link = qq(<a href="/a/images/pf_tfbs/$name.png">Binding Motif Image</a>);
+
+  my $link = qq(<a href="/a/images/pf_tfbs/$name.png"><img src="/a/images/pf_tfbs/$name.png"  height="80%" width="70%" align=left/></a>);
   my @data;
   push @data, [ 'Name:'  => $name ];
   push @data, ['Start:'  => $start];
@@ -806,7 +807,7 @@ sub bindingSiteTitle {
   push @data, ['Strand:'   => $strand];
   push @data, [ 'p value:' => $pvalue ];  
   push @data, [ 'Sequence:' => $sequence ];  
-  push @data, [ 'Motif'  => $link];
+  push @data, [ 'Motif Link'  => $link];
   hover("Binding Site $name", \@data);
 }
 
