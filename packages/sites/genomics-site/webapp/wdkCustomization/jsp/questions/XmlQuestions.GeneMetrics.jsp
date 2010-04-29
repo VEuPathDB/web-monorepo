@@ -62,7 +62,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Cryptosporidium hominis, CryptoDB"><i>Ch</i></td>
     <td class="mythStyle" title="Cryptosporidium muris, CryptoDB"  ><i>Cm</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Cryptosporidium parvum, CryptoDB" ><i>Cp</i></td>
-    <td class="mythStyle" title="Giardia_Assemblage_A_isolate_WB, GiardiaDB" ><i>GA</i></td>
+    <td class="mythStyle" title="Giardia_Assemblage_A_isolate_WB, GiardiaDB" ><i>GA*</i></td>
     <td class="mythStyle" title="Giardia_Assemblage_B_isolate_GS, GiardiaDB" ><i>GB</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>GE</i></td>
     <td class="mythStyle" title="Encephalitozoon cuniculi, MicrosporidiaDB"><i>Ec</i></td>
@@ -74,7 +74,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pv</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Py</i></td>
     <td class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nc</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Toxoplasma gondii"><i>Tg</i></td>
+    <td  style="border-right:3px solid grey" class="mythStyle" title="Toxoplasma gondii"><i>Tg**</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tva</i></td>
     <td class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lb</i></td>
     <td class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></td>
@@ -82,7 +82,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Leishmania mexicana, TriTrypDB"><i>Lme</i></td>
     <td class="mythStyle" title="Trypanosoma brucei, TriTrypDB"><i>Tb</i></td>
     <td class="mythStyle" title="Trypanosoma congolense, TriTrypDB"><i>Tco</i></td>
-    <td class="mythStyle" title="Trypanosoma cruzi, TriTrypDB"><i>Tcr</i></td>
+    <td class="mythStyle" title="Trypanosoma cruzi, TriTrypDB"><i>Tcr***</i></td>
    <td class="mythStyle" title="Trypanosoma vivax, TriTrypDB"><i>Tvi</i></td>
 </tr>
 
@@ -163,6 +163,12 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <tr><td>
 <font size="-1"><i><b>Cryptosporidium</b>: Ch, C. hominis; Cm, C. muris; Cp, C. parvum; <b>Entamoeba</b>: Ed, E. dispar; Eh, E. histolytica; Einv, E. invadens; <b>Encephalitozoon</b>: Ec, E. cuniculi; Eint, E. intestinalis; <b>Giardia</b> GA, G.Assemblage_A_isolate_WB; GB, G.Assemblage_B_isolate_GS; GE, G.Assemblage_E_isolate_P15; <b>Leishmania</b>: Lb, L. braziliensis; Li, L. infantum; Lma, L. major; Lme, L. mexicana; <b>Neospora</b>: Nc, N. caninum; <b>Plasmodium</b>: Pb, P. berghei; Pc, P. chabaudi; Pf, P. falciparum; Pk, P. knowlesi; Pv, P. vivax; Py, P. yoelii; <b>Toxoplasma</b>: Tg, T. gondii; <b>Trichomonas</b>: Tva, T. vaginalis; <b>Trypanosoma</b>: Tb, T. brucei; Tco, T. congolense; Tcr, T. cruzi; Tvi, T. vivax.)</i></font><br>
 </td></tr>
+<br>
+<tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
+<tr><td colspan="10"><font size="-2">** <i>T.gondii</i> gene groups identified in ToxoDB across the three strains (ME49, GT1, VEG) and the A
+picoplast.</font></td></tr>
+<tr><td colspan="10"><font size="-2">*** <i>T.cruzi</i> shows the number of distinct genes among the Esmeraldo like and Non-Esmeraldo like genes, plus the unassigned.</font></td></tr>
+
 </table>
 
   </c:otherwise>

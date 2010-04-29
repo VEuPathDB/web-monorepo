@@ -170,6 +170,9 @@
     </li>
 </ul>
 
+
+ <c:if test="${project != 'EuPathDB'}" >
+
 <ul style="padding-top:3px;width:11em;border-width:0;float:right">
 <c:choose>
 <c:when test="${wdkUser == null || wdkUser.guest}">
@@ -189,6 +192,7 @@
 </c:otherwise>
 </c:choose>
 
+</c:if>
 
 </div>
 
