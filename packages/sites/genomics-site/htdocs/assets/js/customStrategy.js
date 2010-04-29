@@ -82,6 +82,12 @@ function showBasket(){
 				checkPageBasket();
 				createMultiSelectAttributes($("#basket").find("#addAttributes"));
 				createFlexigridFromTable($("#basket").find("#Results_Table"));
+				try {
+					customBasketPage();
+				}
+				catch(err) {
+					//Do nothing
+				}
 			}else{
 				$("input#empty-basket-button").attr("disabled",true);
 				$("input#make-strategy-from-basket-button").attr("disabled",true);
