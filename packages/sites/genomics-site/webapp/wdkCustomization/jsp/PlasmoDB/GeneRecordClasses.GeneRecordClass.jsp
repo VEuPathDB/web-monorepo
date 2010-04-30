@@ -1,3 +1,4 @@
+
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -1537,12 +1538,12 @@ OnChange="javascript:updateImage('${imgId}', SuCQSort.SuCQList.options[selectedI
                attribution="E-GEOD-10022_array"/>
 
 
-
+<%--
 <c:if test="${binomial eq 'Plasmodium falciparum'}">
   <site:expressionGraphs species="${binomial}" model="plasmo"/>
 </c:if>
 
-
+--%>
  <%-- ------------------------------------------------------------------ --%>
 
 
