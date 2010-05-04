@@ -12,7 +12,9 @@
     taglib prefix="api" uri="http://apidb.org/taglib"
 %><%@
     taglib prefix="synd" uri="http://crashingdaily.com/taglib/syndication"
-%><%-- 
+%><c:catch 
+    var="error"
+><%-- 
     setLocale req. for date parsing when client browser (e.g. curl) doesn't send locale 
 --%><fmt:setLocale 
     value="en-US"
@@ -44,3 +46,4 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 </synd:feed><synd:sort
     feed="allFeeds" direction="desc" value="date"
 /><synd:xmlout feed="allFeeds" />
+</c:catch>
