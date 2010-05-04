@@ -5366,33 +5366,34 @@ AND    cpp.protocol_type = 'raw'
 <!-- a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(cpp.antibody) = 'h3k9me3' or lower(a.name) like '%cdna%') -->
 
 
-
-
   <sqlQuery name="ChIP:Nucleosome:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  start_interval   as feature_id,
         'ChIP'             as type,
         $$sample$$         as source, 
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end, 
-       'Analysis='     || a.name   as atts
-FROM   rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl 
-WHERE  a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    a.name =  $$analysis$$
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+        avg(score)         as score,
+        na_sequence_id  as parent_id,
+         start_interval * (($rend - $base_start + 1) / 800) startm,
+         end_interval * (($rend - $base_start + 1) / 800) end, 
+        'Analysis='     || name   as atts
+FROM   (select ceil(fl.start_min / (($rend - $base_start + 1) / 800)) start_interval,
+               ceil(fl.end_max / (($rend - $base_start + 1) / 800)) end_interval,
+               dtf.float_value as score,fl.na_feature_id,
+               fl.na_sequence_id,a.name as name 
+        from rad.analysis a,
+             rad.datatransformationresult dtf,
+             apidb.featurelocation fl 
+        WHERE  a.analysis_id = dtf.analysis_id
+        AND    dtf.row_id = fl.na_feature_id
+        AND    fl.na_sequence_id = $srcfeature_id
+        AND    a.name =  $$analysis$$
+        AND    fl.start_min <= $rend
+        AND    fl.end_max >= $base_start)
+GROUP BY start_interval,end_interval,na_sequence_id,name
    ]]>
     </sql>
   </sqlQuery>
-
-
  
   <sqlQuery name="SNP:Alignment:bulkAttribute" includeProjects="ToxoDB">
      <sql>
