@@ -150,8 +150,15 @@
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
+<c:set var="genedb_annot_link">
+  ${attrs['GeneDB_updated'].value}
+</c:set>
+
 <h2><center>
     <wdk:recordPageBasketIcon  desc="${prd}"/>
+    <c:if test="${attrs['updated_annotation'].value != null}">
+       <br>${genedb_annot_link}
+    </c:if>
 </center></h2>
 
 <!-- note moved comments url stuff here so can use in plasmo new annotation section -->
