@@ -19,6 +19,21 @@
                  divisionName="Publications"
                  division="about"/>
 
+<style type="text/css">
+  .thinTopBottomBorders ul { 
+    list-style: inside disc;
+	padding-left: 2em;
+    text-indent: -1em;
+  }
+  .thinTopBottomBorders ul ul {
+    list-style-type: circle;
+  }
+  .thinTopBottomBorders p {
+	margin-top: 1em;
+	margin-bottom: 1em;
+  }
+</style>
+
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
  <tr>
@@ -35,7 +50,6 @@
 
 <c:set var="i" value="1"/>
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
-  <c:set var="title" value="${record.attributesMap['title']}"/>
   <c:set var="tag" value="${record.attributesMap['tag']}"/>
   <c:set var="text" value="${record.attributesMap['text']}"/>
 
@@ -45,7 +59,7 @@
 
   <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
   <tr class="rowLight"><td>
-    <b>${title}</b><br><br>${text}</td></tr></table>
+    ${text}</td></tr></table>
   <c:set var="i" value="${i+1}"/>
 </c:forEach>
 
