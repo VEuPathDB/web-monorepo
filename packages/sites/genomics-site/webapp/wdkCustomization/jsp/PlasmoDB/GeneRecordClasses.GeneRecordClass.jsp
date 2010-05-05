@@ -159,6 +159,9 @@
     <c:if test="${attrs['updated_annotation'].value != null}">
        <br>${genedb_annot_link}
     </c:if>
+    <c:if test="${fn:contains(organism,'berghei')}">
+       <br> <a href="http://www.genedb.org/Homepage/Pberghei"><i>P. berghei</i> Sequencing and Assembly Update at GeneDB</a>
+    </c:if>
 </center></h2>
 
 <!-- note moved comments url stuff here so can use in plasmo new annotation section -->
