@@ -137,12 +137,30 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<c:url var='eventsRss' value='/communityEventsRss.jsp'/>
-<c:url var='newsRss' value='/showXmlDataContent.do?name=XmlQuestions.NewsRss'/>
+<c:choose>
+  <c:when test = "${project == 'EuPathDB'}">
+    <c:set var='eventsRss' value='/ebrcevents.rss'/>
+    <c:set var='newsRss'   value='/ebrcnews.rss'/>
+    <c:set var='releasesRss' value='/ebrcreleases.rss'/>
+    <c:set var='publicationsRss' value='/ebrcpublications.rss'/>
+    <c:set var='rssorigin' value='EuPathDB BRC' />
+  </c:when>
+  <c:otherwise>
+    <c:set var='eventsRss' value='/events.rss'/>
+    <c:set var='newsRss'   value='/news.rss'/>
+    <c:set var='releasesRss' value='/releases.rss'/>
+    <c:set var='publicationsRss' value='/publications.rss'/>
+    <c:set var='rssorigin' value="${project}" />
+  </c:otherwise>
+</c:choose>
 <link rel="alternate" type="application/rss+xml" 
-      title="${wdkModel.displayName} News" href="${newsRss}" />
+      title="${rssorigin} News" href="${newsRss}" />
 <link rel="alternate" type="application/rss+xml" 
-      title="${wdkModel.displayName} Community Events" href="${eventsRss}" />
+      title="${rssorigin} Community Events" href="${eventsRss}" />
+<link rel="alternate" type="application/rss+xml" 
+      title="${rssorigin} Releases" href="${releasesRss}" />
+<link rel="alternate" type="application/rss+xml" 
+      title="EuPathDB BRC Publications" href="${publicationsRss}" />
 
 <title>
 <c:out value="${title}" default="${banner}" />
