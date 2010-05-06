@@ -38,9 +38,24 @@
     value="${scheme}://${serverName}${contextPath}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"
 /><c:set
     var="dateStringPattern" value="dd MMMM yyyy HH:mm"
-/><?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+/><c:choose><c:when 
+    test="${wdkModel.projectId eq 'EuPathDB'}"
+><c:set 
+    var="self" value="${scheme}://${serverName}/ebrcpublications.rss"
+/></c:when
+><c:otherwise
+><c:set
+    var="self" value="${scheme}://${serverName}/publications.rss"
+/></c:otherwise
+></c:choose><?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+     xmlns:taxo="http://purl.org/rss/1.0/modules/taxonomy/" 
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom" 
+     version="2.0">
 <channel>
+    <atom:link href="${self}" rel="self" type="application/rss+xml" />
     <title>${xmlAnswer.question.displayName}</title>
     <link>${linkTmpl}</link>
     <description>Publications from the EuPathDB Bioinformatics Resource Center</description>
@@ -49,7 +64,12 @@
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
   <fmt:parseDate pattern="${dateStringPattern}" var="pdate" value="${record.attributesMap['record_date']}" parseLocale="en_US"/> 
   <fmt:formatDate value="${pdate}" pattern="EEE, dd MMM yyyy HH:mm:ss zzz" var="fdate"/>
-  <c:set var="title" value="${ fn:escapeXml( record.attributesMap['title'] ) }"/>
+  <c:set var="title" value="${record.attributesMap['title']}"/>
+  <% 
+      String rawtitle = (String)pageContext.getAttribute("title");
+      String cleantitle = rawtitle.replaceAll("\\<.*?\\>", ""); 
+      pageContext.setAttribute("title", cleantitle);
+  %>
   <c:set var="tag"       value="${ fn:escapeXml( record.attributesMap['tag']      ) }"/>
   <c:set var="reference" value="${ fn:escapeXml( record.attributesMap['reference']     ) }"/>
   <c:set var="authors"   value="${ fn:escapeXml( record.attributesMap['authors']     ) }"/>
@@ -77,7 +97,7 @@
         </description>
         <guid isPermaLink="false">${tag}</guid>
         <pubDate>${fdate}</pubDate>
-        <author>${authors}</author>
+        <dc:creator>${authors}</dc:creator>
     </item>
 </c:forEach>
 </channel>
