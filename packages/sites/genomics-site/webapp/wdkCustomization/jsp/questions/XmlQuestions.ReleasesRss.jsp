@@ -39,12 +39,18 @@
 /><c:set
     var="dateStringPattern" value="dd MMMM yyyy HH:mm"
 /><?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+     xmlns:taxo="http://purl.org/rss/1.0/modules/taxonomy/" 
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom" 
+     version="2.0">
 <channel>
     <title>${xmlAnswer.question.displayName}</title>
     <link>${linkTmpl}</link>
     <description>Releases from ${wdkModel.displayName}</description>
     <language>en</language>
+    <atom:link href="${scheme}://${serverName}/releases.rss" rel="self" type="application/rss+xml" />
     
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
   <c:if test="${record.attributesMap['category'] eq 'release'}">
@@ -63,9 +69,9 @@
         &lt;br /&gt;
         <fmt:formatDate value="${pdate}" pattern="d MMMM yyyy"/>
         </description>
-        <guid>${tag}</guid>
+        <guid isPermaLink="false">${tag}</guid>
         <pubDate>${fdate}</pubDate>
-        <author>${wdkModel.displayName}</author>
+        <dc:creator>${wdkModel.displayName}</dc:creator>
     </item>
     </c:if>
 </c:forEach>
