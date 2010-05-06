@@ -29,7 +29,16 @@
     doc="${xml}" var="doc"
 /><c:set
     var="dateStringPattern" value="dd MMMM yyyy HH:mm"
-/><?xml version="1.0" encoding="UTF-8"?>
+/><c:choose><c:when 
+    test="${wdkModel.projectId eq 'EuPathDB'}"
+><c:set 
+    var="self" value="${scheme}://${serverName}/ebrcevents.rss"
+/></c:when
+><c:otherwise
+><c:set
+    var="self" value="${scheme}://${serverName}/events.rss"
+/></c:otherwise
+></c:choose><?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:content="http://purl.org/rss/1.0/modules/content/" 
      xmlns:taxo="http://purl.org/rss/1.0/modules/taxonomy/" 
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
@@ -41,7 +50,7 @@
     <link>${linkTmpl}</link>
     <description>${wdkModel.displayName} Community Events</description>
     <language>en</language>
-    <atom:link href="${scheme}://${serverName}/events.rss" rel="self" type="application/rss+xml" />
+    <atom:link href="${self}" rel="self" type="application/rss+xml" />
 
 <x:forEach var="r" select="$doc/records/record">
   <c:set var="date"><x:out select="submissionDate"/></c:set>
