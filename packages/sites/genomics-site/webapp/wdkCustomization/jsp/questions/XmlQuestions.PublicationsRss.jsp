@@ -10,7 +10,7 @@
     in the server's web.xml but that's for Tomcat 5.5+ only.
     
 --%><%@
-    page contentType="text/xml" 
+    page contentType="application/rss+xml; charset=UTF-8" 
 %><%@
     taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" 
 %><%@ 
@@ -61,7 +61,6 @@
     <c:set var="refid"    value="ISBN: ${ fn:escapeXml( record.attributesMap['isbn']     ) }"/>
   </c:if>
   <c:set var="tag"      value="${ fn:replace(tag, ' ', '%20') }"/>
-  <fmt:formatDate value="${pdate}" pattern="d MMMM yyyy"/>
     <item>
         <title>${title}</title>
         <link>${linkTmpl}&amp;tag=${tag}</link>
