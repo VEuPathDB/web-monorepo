@@ -18,9 +18,12 @@ function TableToggler() {
     this.showAll = function() {
         jQuery(".toggle, .toggle-handle").each(function() {
                             var name = jQuery(this).attr("name");
-                            showLayer(name);
-                            jQuery(this).find("a").text("Hide");
-                            storeIntelligentCookie('show' + name, 1);
+                            var display = jQuery('#' + name.replace(/:/g,"\\:")).css('display');
+                            if (display != 'block') {
+                               var onclick = jQuery(this).find('a').attr('href');
+                               onclick = onclick.substring(11);
+                               eval(onclick);
+                            }
                         });
         return 0;
     }
@@ -28,9 +31,13 @@ function TableToggler() {
     this.hideAll = function() {
         jQuery(".toggle, .toggle-handle").each(function() {
                             var name = jQuery(this).attr("name");
-                            hideLayer(name);
-                            jQuery(this).find("a").text("Show");
-                            storeIntelligentCookie('show' + name, 0);
+                            var display = jQuery('#' + name.replace(/:/g,"\\:")).css('display');
+                            var controlName = jQuery(this).attr('id');
+                            if (display != 'none') {
+                               var onclick = jQuery(this).find('a').attr('href');
+                               onclick = onclick.substring(11);
+                               eval(onclick);
+                            }
                         });
         return 0;
     }

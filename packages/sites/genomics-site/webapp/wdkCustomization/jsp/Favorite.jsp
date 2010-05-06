@@ -16,7 +16,7 @@
     </c:when>
     <c:otherwise> <%-- has favorites --%>
         <input title="Reload the page after you remove some IDs, or add a new project name." type="button" value="Refresh" onclick="window.location.reload();"/>
-<span style="font-style:italic;font-size:100%;padding-left:200px;" >(Place your cursor over column headings or icons to get help pop-ups)</span>
+<span style="font-style:italic;font-size:100%;padding-left:200px;" >(For Help, place your cursor over column headings or icons)</span>
 	<div id="favorites">
             <c:forEach var="fav_item" items="${allFavorites}">
                 <c:set var="favorites" value="${fav_item.value}" /> <%-- a list of favorites of a record type --%>

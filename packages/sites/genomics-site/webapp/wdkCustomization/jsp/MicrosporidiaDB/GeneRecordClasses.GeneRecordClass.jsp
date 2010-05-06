@@ -132,7 +132,7 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations
 
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
+<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
 
 
 <!-- Mercator / Mavid alignments -->

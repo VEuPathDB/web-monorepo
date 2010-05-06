@@ -130,7 +130,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 </c:if>
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
+<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
 
 
 <site:pageDivider name="Annotation"/>

@@ -10,7 +10,7 @@
     in the server's web.xml but that's for Tomcat 5.5+ only.
     
 --%><%@
-    page contentType="text/xml" 
+    page contentType="application/rss+xml; charset=UTF-8" 
 %><%@
     taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" 
 %><%@ 
@@ -39,17 +39,30 @@
 /><c:set
     var="dateStringPattern" value="dd MMMM yyyy HH:mm"
 /><?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+     xmlns:taxo="http://purl.org/rss/1.0/modules/taxonomy/" 
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom" 
+     version="2.0">
 <channel>
     <title>${xmlAnswer.question.displayName}</title>
     <link>${linkTmpl}</link>
     <description>News from ${wdkModel.displayName}</description>
     <language>en</language>
+    <atom:link href="${scheme}://${serverName}/news.rss" rel="self" type="application/rss+xml" />
     
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
   <fmt:parseDate pattern="${dateStringPattern}" var="pdate" value="${record.attributesMap['date']}" parseLocale="en_US"/> 
   <fmt:formatDate value="${pdate}" pattern="EEE, dd MMM yyyy HH:mm:ss zzz" var="fdate"/>
-  <c:set var="headline" value="${ fn:escapeXml( record.attributesMap['headline'] ) }"/>
+  <c:set var="headline" value="${record.attributesMap['headline']}"/>
+  <% 
+      /** crudely strip html markup **/
+      String raw = (String)pageContext.getAttribute("headline");
+      String clean = raw.replaceAll("\\<.*?\\>", ""); 
+      pageContext.setAttribute("headline", clean);
+  %>
+  <c:set var="headline" value="${ fn:escapeXml(headline) }"/>
   <c:set var="tag"      value="${ fn:escapeXml( record.attributesMap['tag']      ) }"/>
   <c:set var="date"     value="${ fn:escapeXml( record.attributesMap['date']     ) }"/>
   <c:set var="item"     value="${ fn:escapeXml( record.attributesMap['item']     ) }"/>
@@ -62,9 +75,9 @@
         &lt;br /&gt;
         <fmt:formatDate value="${pdate}" pattern="d MMMM yyyy"/>
         </description>
-        <guid>${tag}</guid>
+        <guid isPermaLink="false">${tag}</guid>
         <pubDate>${fdate}</pubDate>
-        <author>${wdkModel.displayName}</author>
+        <dc:creator>${wdkModel.displayName}</dc:creator>
     </item>
 </c:forEach>
 

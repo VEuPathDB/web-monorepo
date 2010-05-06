@@ -1,5 +1,5 @@
 <%@
-    page contentType="text/xml" 
+    page contentType="application/rss+xml; charset=UTF-8" 
 %><%@
     taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
 %><%@ 
@@ -29,13 +29,28 @@
     doc="${xml}" var="doc"
 /><c:set
     var="dateStringPattern" value="dd MMMM yyyy HH:mm"
-/><?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+/><c:choose><c:when 
+    test="${wdkModel.projectId eq 'EuPathDB'}"
+><c:set 
+    var="self" value="${scheme}://${serverName}/ebrcevents.rss"
+/></c:when
+><c:otherwise
+><c:set
+    var="self" value="${scheme}://${serverName}/events.rss"
+/></c:otherwise
+></c:choose><?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+     xmlns:taxo="http://purl.org/rss/1.0/modules/taxonomy/" 
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom" 
+     version="2.0">
 <channel>
     <title>${wdkModel.displayName} Community Events</title>
     <link>${linkTmpl}</link>
     <description>${wdkModel.displayName} Community Events</description>
     <language>en</language>
+    <atom:link href="${self}" rel="self" type="application/rss+xml" />
 
 <x:forEach var="r" select="$doc/records/record">
   <c:set var="date"><x:out select="submissionDate"/></c:set>
@@ -51,9 +66,9 @@
       <description>  
       ${item}
       </description>
-      <guid>${tag}</guid>
+      <guid isPermaLink="false">${tag}</guid>
       <pubDate>${fdate}</pubDate>
-      <author>${wdkModel.displayName}</author>
+      <dc:creator>${wdkModel.displayName}</dc:creator>
   </item>
 </x:forEach>
 

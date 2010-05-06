@@ -101,6 +101,7 @@ function validateFields(e)
 	<ul>
 	<li>Have your strategies back the next time you login
 	<li>Add a comment on genes and sequences
+	<li>Use your baskets and favorites
 	<li>Set site preferences, such as items per page displayed in the query result
 	<li>Opt to receive infrequent alerts (at most monthly), by selecting (below) from which EuPathDB sites
 	</ul>

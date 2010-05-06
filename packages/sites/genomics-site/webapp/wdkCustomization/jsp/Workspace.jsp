@@ -69,12 +69,19 @@ w.location.href=url;
 
 // Fix record links in results page on EuPathDB
 function customResultsPage() {
-   $("#Results_Table #rootBody tr td div a").each(function() {
+   fixRecordPageLinks("#strategy_results");
+}
+
+function customBasketPage() {
+   fixRecordPageLinks("#basket");
+}
+
+function fixRecordPageLinks(page) {
+   $(page + " .Results_Table .rootBody tr td div a").each(function() {
          var currentUrl = $(this).attr('href');
          var recordName = parse_Url(currentUrl, "name");
          var primaryKey = parse_Url(currentUrl, "source_id");
          var projectId = parse_Url(currentUrl, "project_id");
-         primaryKey = parse_Url(currentUrl, "source_id");
          $(this).attr('href','javascript:void(0)');
 	 $(this).click(function() {
 		create_Portal_Record_Url(recordName, projectId, primaryKey, '');

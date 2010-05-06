@@ -49,6 +49,9 @@
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOldAnnotation" linktext="Old Annotation (v 5.5)"  existsOn="A P"/>
                 </tr>
+                <tr>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithUpdatedAnnotation" linktext="Updated Annotation"  existsOn="A P Tr"/>
+                </tr>
                 <tr><td class="lines2">&nbsp;</td></tr>
 
             </table>
@@ -101,10 +104,10 @@
                     <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySageTagEvidence" linktext="SAGE Tag Evidence" existsOn="A G P T Tt"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByChIPchip" linktext="ChIP chip Evidence" existsOn="A T P"/> 
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByChIPchip" linktext="ChIP chip Evidence" existsOn="A P T"/> 
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByRNASeqEvidence" linktext="RNA Seq Evidence" existsOn=""/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByRNASeqEvidence" linktext="RNA Seq Evidence" existsOn="A P Tt"/>
                 </tr>
             </table>
 </div>
@@ -117,7 +120,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="5">Protein Expression</td></tr>
                 <tr><td>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="A C G P T Tt"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="A C G P T Tr Tt"/>
                 </td></tr>
 
             </table>
@@ -140,7 +143,7 @@
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySimilarity" linktext="BLAST similarity" type="GENE" existsOn="A Am C G M P T Tr Tt"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByBindingSiteFeature" linktext="Transcription Factor Binding Sites" type="GENE" existsOn="P"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByBindingSiteFeature" linktext="Transcription Factor Binding Sites" type="GENE" existsOn="A P"/>
                 </tr>
             </table>
 </div>

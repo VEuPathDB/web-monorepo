@@ -263,10 +263,9 @@
 
 
 <table width="100%">
-<tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font
-></td></tr>
-<tr><td colspan="10"><font size="-2">** <i>T. gondii</i> gene groups identified in ToxoDB across the three strains (ME49, GT1, VEG) and the Apicoplast.</fo
-nt></td></tr>
+<tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
+<tr><td colspan="10"><font size="-2">** <i>T.gondii</i> gene groups identified in ToxoDB across the three strains (ME49, GT1, VEG) and the Apicoplast.</font></td></tr>
+<tr><td colspan="10"><font size="-2">*** <i>T.cruzi</i> shows the number of distinct genes among the Esmeraldo like and Non-Esmeraldo like genes, plus the unassigned.</font></td></tr>
 </table>
 
 

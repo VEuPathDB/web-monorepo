@@ -73,6 +73,29 @@
 </center>
 </h2>
 
+
+<site:panel 
+    displayName="Community Expert Annotation"
+    content="" />
+
+<c:catch var="e">
+  <site:dataTable tblName="CommunityExpComments"/>
+</c:catch>
+<c:if test="${e != null}">
+  <table  width="100%" cellpadding="3">
+    <tr><td><b>User Comments</b>
+    <site:embeddedError
+    msg="<font size='-1'><i>temporarily unavailable.</i></font>"
+    e="${e}"
+    />
+    </td></tr>
+  </table>
+</c:if>
+<br/><br/>
+
+<%-- OVERVIEW ---------------%>
+
+
 <c:set var="append" value="" />
 
 
@@ -167,7 +190,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
+<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
 
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">

@@ -110,7 +110,7 @@
 </tr></table>
 
 
-<div id='Results_Pane'>
+<div class='Results_Pane'>
 <!-- pager -->
 <pg:pager isOffset="true"
           scope="request"
@@ -128,39 +128,6 @@
   <c:if test="${wdk_sorting_checksum != null}">
     <pg:param name="sort" id="pager" />
   </c:if>
-
-
-<%--
-<div id="primaryKey_div" style="display:none">
-<table cellspacing="0" cellpadding="0" border="0" width="100%">
-<tr><td valign="top" width="75px" style="background-color: #DDDDDD">
-<site:IdList />
-</td><td valign="top" >
-
-<div id="Record_Page_Div" style="display: none">
-<table cellspacing="0" cellpadding="0" border="0" width="100%">
-	<c:set value="${wdkAnswer.summaryAttributes[0]}" var="sumAttrib"/>
-	<c:set var="attrName" value="${sumAttrib.name}" />
-	<tr class="subheaderrow">
-   		<th align="center" valign="middle">
-      		${sumAttrib.displayName} Record Page
-    	</th>
-	</tr>
-
-
-	<tr class="headerrow">
-   		<th align="center" valign="middle">
-      		<span id="record_cell_header" style="font-size: 18px;" >Gene ID </span>
-    	</th>
-	</tr>
-	<tr><td><div id="record_page_cell_div"></div></td></tr>
-</table>
-</div>
-
-</td></tr>
-</table>
-</div>
--%>
 
 <%--------- PAGING TOP BAR ----------%>
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
@@ -199,10 +166,10 @@
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
 
 <%--------- RESULTS  ----------%>
-<div id="Results_Div" class="flexigrid">
+<div class="Results_Div" class="flexigrid">
 <div class="bDiv">
 <div class="bDivBox">
-<table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0" step="wdkStep.stepId">
+<table class="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0" step="wdkStep.stepId">
 <thead>
 <tr class="headerrow">
 
@@ -314,7 +281,7 @@
   </c:forEach>
 </tr>
 </thead>
-<tbody id="rootBody">
+<tbody class="rootBody">
 
 <%--
 <c:if test = "${eupathIsolatesQuestion}">

@@ -722,11 +722,36 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-
   <sqlQuery name="NextGenSeq:coverage"  includeProjects="TriTrypDB,PlasmoDB">
      <sql>
        <![CDATA[
     SELECT $$sample$$ as feature_id,
+          'NextGenSeq'        as type, 
+          '$source'          as source,
+           $base_start        as startm,
+           $rend              as end 
+  FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="NextGenSeq:coverageComb"  includeProjects="TriTrypDB,PlasmoDB">
+     <sql>
+       <![CDATA[
+    SELECT $$sample1$$ || $$sample2$$ as feature_id,
+          'NextGenSeq'        as type, 
+          '$source'          as source,
+           $base_start        as startm,
+           $rend              as end 
+  FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="NextGenSeq:coverageCombNorm"  includeProjects="TriTrypDB,PlasmoDB">
+     <sql>
+       <![CDATA[
+    SELECT $$sample1$$ || $$sample2$$ as feature_id,
           'NextGenSeq'        as type, 
           '$source'          as source,
            $base_start        as startm,
@@ -1223,11 +1248,14 @@ ORDER BY
        fl.end_max end, 
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'Name=' || BS.name || '$dlm' ||       
+       'Sequence=' || substr(s.sequence, fl.start_min, fl.end_max - fl.start_min + 1)  || '$dlm' ||
        'Score=' || BS.primary_score as atts
 FROM 
        dots.BindingSiteFeature BS,
-       apidb.FeatureLocation fl
+       apidb.FeatureLocation fl,
+       dots.nasequence s
 WHERE
+       fl.na_sequence_id = s.na_sequence_id and
        BS.na_feature_id = fl.na_feature_id and
        fl.feature_type = 'BindingSiteFeature' and
        fl.start_min <= $rend and 
@@ -5338,33 +5366,34 @@ AND    cpp.protocol_type = 'raw'
 <!-- a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(cpp.antibody) = 'h3k9me3' or lower(a.name) like '%cdna%') -->
 
 
-
-
   <sqlQuery name="ChIP:Nucleosome:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  start_interval   as feature_id,
         'ChIP'             as type,
         $$sample$$         as source, 
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end, 
-       'Analysis='     || a.name   as atts
-FROM   rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl 
-WHERE  a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    a.name =  $$analysis$$
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+        avg(score)         as score,
+        na_sequence_id  as parent_id,
+         start_interval * (($rend - $base_start + 1) / 800) startm,
+         end_interval * (($rend - $base_start + 1) / 800) end, 
+        'Analysis='     || name   as atts
+FROM   (select ceil(fl.start_min / (($rend - $base_start + 1) / 800)) start_interval,
+               ceil(fl.end_max / (($rend - $base_start + 1) / 800)) end_interval,
+               dtf.float_value as score,fl.na_feature_id,
+               fl.na_sequence_id,a.name as name 
+        from rad.analysis a,
+             rad.datatransformationresult dtf,
+             apidb.featurelocation fl 
+        WHERE  a.analysis_id = dtf.analysis_id
+        AND    dtf.row_id = fl.na_feature_id
+        AND    fl.na_sequence_id = $srcfeature_id
+        AND    a.name =  $$analysis$$
+        AND    fl.start_min <= $rend
+        AND    fl.end_max >= $base_start)
+GROUP BY start_interval,end_interval,na_sequence_id,name
    ]]>
     </sql>
   </sqlQuery>
-
-
  
   <sqlQuery name="SNP:Alignment:bulkAttribute" includeProjects="ToxoDB">
      <sql>
@@ -5634,6 +5663,67 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND csc.mapping_start <= $rend
          AND csc.mapping_end >= $base_start - 1)
        GROUP BY start_interval,end_interval,sample,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="NextGenSeq:coverageComb:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+     SELECT start_interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              max(coverage) score, 
+             $$sample1$$ || $$sample2$$ parent_id,
+             start_interval * (($rend - $base_start + 1) / 800) startm,
+             end_interval * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN sample = $$sample1$$ THEN 0 ELSE 1 END atts
+    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) start_interval, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
+                 csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.nextgenseq_coverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$edname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND (csc.sample = $$sample1$$
+          OR csc.sample = $$sample2$$)
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_end >= $base_start - 1)
+       GROUP BY start_interval,end_interval,sample,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="NextGenSeq:coverageCombNorm:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+     SELECT start_interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              max(round(c.coverage * s.sum_span_length / 15000000,1)) score, 
+             $$sample1$$ || $$sample2$$ parent_id,
+             c.start_interval * (($rend - $base_start + 1) / 800) startm,
+             c.end_interval * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN c.sample = $$sample1$$ THEN 0 ELSE 1 END atts
+    FROM apidb.nextgenseq_stats s, (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) start_interval, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
+                 csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.nextgenseq_coverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$edname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND (csc.sample = $$sample1$$
+          OR csc.sample = $$sample2$$)
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_end >= $base_start - 1) c
+         where c.sample = s.sample
+       GROUP BY c.start_interval,c.end_interval,c.sample,c.multiple,s.sum_span_length
 ]]>
     </sql>
   </sqlQuery>

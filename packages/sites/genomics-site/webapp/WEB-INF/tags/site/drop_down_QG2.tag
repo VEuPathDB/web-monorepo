@@ -43,7 +43,7 @@
     <c:set var="children" value="${rootCat.webserviceChildren}" />
 </c:when>
 <c:otherwise>
-    <a href="#">Search for Genes</a>
+    <a href="#" class="dropdown">Search for Genes</a>
     <c:set var="children" value="${rootCat.websiteChildren}" />
 </c:otherwise>
 </c:choose>
@@ -61,7 +61,7 @@
    <c:set var="categories" value="${cat.webserviceChildren}" /> 
 </c:when>
 <c:otherwise>
-    <a href="javascript:void(0)">${cat.displayName}</a>
+    <a href="javascript:void(0)" class="dropdown">${cat.displayName}</a>
     <c:set var="questions" value="${cat.websiteQuestions}" />
     <c:set var="categories" value="${cat.websiteChildren}" /> 
 
@@ -92,7 +92,7 @@
 	 <c:set var="questions" value="${cat.webserviceQuestions}" />
 </c:when>
 <c:otherwise>
-	<a href="javascript:void(0)">${cat.displayName}</a>
+	<a href="javascript:void(0)" class="dropdown">${cat.displayName}</a>
 </c:otherwise>
 </c:choose>
 
@@ -162,7 +162,7 @@
     <c:otherwise>
 
 					<li>
-						<a href="#">${cat.displayName}</a> 
+						<a href="#" class="dropdown">${cat.displayName}</a> 
 						<ul>
 						<c:forEach items="${cat.websiteQuestions}" var="q">
 				    			<li>

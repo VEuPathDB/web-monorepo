@@ -194,7 +194,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 </c:if>
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
+<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
 
 <!-- Mercator / Mavid alignments -->
 <c:if test="${strand eq '-'}">
