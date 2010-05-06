@@ -55,21 +55,23 @@
      xmlns:atom="http://www.w3.org/2005/Atom" 
      version="2.0">
 <channel>
-    <atom:link href="${self}" rel="self" type="application/rss+xml" />
     <title>${xmlAnswer.question.displayName}</title>
     <link>${linkTmpl}</link>
     <description>Publications from the EuPathDB Bioinformatics Resource Center</description>
     <language>en</language>
+    <atom:link href="${self}" rel="self" type="application/rss+xml" />
     
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
   <fmt:parseDate pattern="${dateStringPattern}" var="pdate" value="${record.attributesMap['record_date']}" parseLocale="en_US"/> 
   <fmt:formatDate value="${pdate}" pattern="EEE, dd MMM yyyy HH:mm:ss zzz" var="fdate"/>
   <c:set var="title" value="${record.attributesMap['title']}"/>
   <% 
-      String rawtitle = (String)pageContext.getAttribute("title");
-      String cleantitle = rawtitle.replaceAll("\\<.*?\\>", ""); 
-      pageContext.setAttribute("title", cleantitle);
+      /** crudely strip html markup **/
+      String raw = (String)pageContext.getAttribute("title");
+      String clean = raw.replaceAll("\\<.*?\\>", ""); 
+      pageContext.setAttribute("title", clean);
   %>
+  <c:set var="title"     value="${ fn:escapeXml(title) }"/>
   <c:set var="tag"       value="${ fn:escapeXml( record.attributesMap['tag']      ) }"/>
   <c:set var="reference" value="${ fn:escapeXml( record.attributesMap['reference']     ) }"/>
   <c:set var="authors"   value="${ fn:escapeXml( record.attributesMap['authors']     ) }"/>
