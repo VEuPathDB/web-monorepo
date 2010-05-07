@@ -160,7 +160,7 @@
        <br>${genedb_annot_link}
     </c:if>
     <c:if test="${fn:contains(organism,'berghei')}">
-       <br> <a href="http://www.genedb.org/Homepage/Pberghei"><i>P. berghei</i> Sequencing and Assembly Update at GeneDB</a>
+       <br> <a href="http://www.genedb.org/Homepage/Pberghei">New <i>P. berghei</i> assembly and annotation at GeneDB</a>
     </c:if>
 </center></h2>
 
