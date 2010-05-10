@@ -316,6 +316,12 @@ sub geneTitle {
   my $projectId = $ENV{PROJECT_ID};
   my $sourceId = $f->name;
   my $chr = $f->seq_id;
+  my @utrs = $f->sub_SeqFeature("UTR");
+  my $utr = '';
+  foreach (@utrs) {
+    next if $_->type !~ /utr/i;
+    $utr .= $_->location->to_FTstring. " ";
+  }
   my $loc = $f->location->to_FTstring;
   my ($soTerm) = $f->get_tag_values("soTerm");
   my ($product) = $f->get_tag_values("product");
@@ -323,7 +329,7 @@ sub geneTitle {
   my ($isPseudo) = $f->get_tag_values("isPseudo");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
-  return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo'))"};
+  return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo', '$utr'))"};
 } 
 
 sub spliceSiteCuratedTitle {
