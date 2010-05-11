@@ -36,9 +36,6 @@
 <h2><center>${id}</center></h2>
 <br><br>
 
-<table width="100%">
-<tr><td>
-
 <!-- Overview -->
 <c:set var="attr" value="${attrs['overview']}" />
 <wdk:toggle name="${attr.displayName}"
@@ -52,8 +49,9 @@
     displayName="${attr.displayName}" isOpen="true"
     content="${attr.value}" />
 
-</td></tr>
-</table>
+<br>
+<wdk:wdkTable tblName="Genes" isOpen="true"
+                 attribution=""/>
 
 </c:otherwise>
 </c:choose>
