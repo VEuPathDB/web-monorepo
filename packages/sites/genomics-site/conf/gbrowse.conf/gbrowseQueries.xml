@@ -436,6 +436,7 @@ ORDER BY
     </sql>
   </sqlQuery>
 
+<!--
   <sqlQuery name="gene:syntenyMC2" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
@@ -524,6 +525,7 @@ WHERE startm <= $rend
 ]]>
     </sql>
   </sqlQuery>
+-->
   
   
   
@@ -3879,6 +3881,7 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
+<!--
   <sqlQuery name="gene:syntenyMC2:attribute:Ortholog" excludeProjects="TrichDB">
     <testParamValues project="ToxoDB">
       <param name="name" value="TGME49_039250"/> 
@@ -3902,6 +3905,7 @@ and not ga2.source_id = ga1.source_id and 1=1
 ]]>
  </sql>
  </sqlQuery>
+-->
   
   <sqlQuery name="gene:syntenyMC:attribute:Ortholog" excludeProjects="TrichDB">
     <testParamValues project="ToxoDB">
@@ -4303,6 +4307,7 @@ AND ed.name in ('L.major Cosmid Ends from Sanger',
     </sql>
   </sqlQuery>
   
+<!--
   <sqlQuery name="gene:syntenyMC2:bulksubfeatures" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
@@ -4363,6 +4368,7 @@ WHERE startm <= $rend
 ]]>
     </sql>
   </sqlQuery>
+-->
   
   
   <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="TrichDB">
