@@ -61,14 +61,15 @@ function noop(){}
 
 	<c:set var="v" value="0"/>
 	<c:forEach items="${portalsArr}" var="portal">
-		<c:set var="portalArr" value="${fn:split(portal,',')}" />
-		<c:set var="top" value="${fn:replace(portalArr[0],'\"','')}"/>
+		<c:set var="portalArr" value="${fn:split(portal,',')}" /> <%-- "Apicomplexan","Cryptosporidium","Plasmodium","Toxoplasma","Neospora" --%>
+		<c:set var="groupArr" value="${fn:split(fn:substringAfter(portal, ','), ',')}" /> <%-- "Cryptosporidium","Plasmodium","Toxoplasma","Neospora" --%>
+		<c:set var="top" value="${fn:replace(portalArr[0],'\"','')}"/> <%-- "Apicomplexan" --%>
 		<div id="${top}_area" style="display:none">
 			<ul>
                         	<li><i class="all_none" onclick="selectAll_None('${top}',true)">All</i>&nbsp;&nbsp;<i class="all_none" onclick="selectAll_None('${top}',false)">None</i></li>
 			<c:set var="z" value="0"/>
-			<c:forEach items="${portal}" var="site">
-			<c:set var="site" value="${fn:replace(site,'\"','')}" />
+			<c:forEach items="${groupArr}" var="group">
+			<c:set var="group" value="${fn:replace(group,'\"','')}" />
 			<c:choose>
 				<c:when test="${v eq 0}">
 					    <c:set var="i" value="0"/>
@@ -80,7 +81,7 @@ function noop(){}
 				<c:otherwise>
 					<c:set var="i" value="0"/>
 					<c:forEach items="${qP.vocab}" var="flatVoc">
-					  <c:if test="${fn:containsIgnoreCase(flatVoc,site)}">
+					  <c:if test="${fn:startsWith(flatVoc,group)}">
 						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input></li>
 					  </c:if>
 					  <c:set var="i" value="${i+1}"/>
