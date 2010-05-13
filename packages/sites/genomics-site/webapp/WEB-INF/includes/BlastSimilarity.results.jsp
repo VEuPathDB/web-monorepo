@@ -22,7 +22,6 @@
     <c:url value="/processSummary.do?${wdk_query_string}" />
 </c:set>
 
-
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 <c:set var="showOrthoLink" value="${fn:containsIgnoreCase(modelName, 'plasmodb') || fn:containsIgnoreCase(modelName, 'apidb')}" />
 
@@ -31,6 +30,11 @@
 
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:set value="${wdkAnswer.recordClass.type}" var="type"/>
+
+<c:if test="${fn:contains(type, 'Assem') && (wdkAnswer.resultSize > 1)  }">
+        <c:set var="type" value="Assemblie" />
+</c:if>
+
 
 <!-- handle empty result set situation -->
 <c:choose>
