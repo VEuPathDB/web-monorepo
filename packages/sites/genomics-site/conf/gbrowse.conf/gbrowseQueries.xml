@@ -326,6 +326,36 @@ ORDER BY
 ]]>
     </sql>
   </sqlQuery>
+
+  <sqlQuery name="feature:TransposableElement" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT
+       fl.na_feature_id feature_id,
+       'feature' type, 
+       'TransposableElement' source, 
+       tr.name name, 
+       '.' score, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Note=here to work around Feature.pm bug of splitting null atts' atts
+FROM 
+       dots.TransposableElement tr,
+       apidb.FeatureLocation fl
+WHERE
+       tr.na_feature_id = fl.na_feature_id and
+       fl.feature_type = 'TransposableElement' and
+       fl.start_min <= $rend and 
+       fl.end_max >= $base_start and 
+       fl.na_sequence_id = $srcfeature_id
+ORDER BY 
+       fl.start_min
+]]>
+    </sql>
+  </sqlQuery>
+
   
   
   <sqlQuery name="alignment:ORF">
@@ -1270,35 +1300,6 @@ ORDER BY
   </sqlQuery>
 
  
-
-  <sqlQuery name="feature:TransposableElement">
-     <sql>
-<![CDATA[
- SELECT
-       fl.na_feature_id feature_id,
-       'feature' type, 
-       'TransposableElement' source, 
-       tr.name name, 
-       '.' score, 
-       fl.na_sequence_id parent_id, 
-       fl.start_min startm, 
-       fl.end_max end, 
-       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       'Note=here to work around Feature.pm bug of splitting null atts' atts
-FROM 
-       dots.TransposableElement tr,
-       apidb.FeatureLocation fl
-WHERE
-       tr.na_feature_id = fl.na_feature_id and
-       fl.feature_type = 'TransposableElement' and
-       fl.start_min <= $rend and 
-       fl.end_max >= $base_start and 
-       fl.na_sequence_id = $srcfeature_id
-ORDER BY 
-       fl.start_min
-]]>
-    </sql>
-  </sqlQuery>
 
  
   <sqlQuery name="repeat_region:Genbank" includeProjects="TrichDB">
