@@ -337,6 +337,27 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
              displayName="${transcriptSequence.displayName}"
              content="${transcriptSequenceContent}" isOpen="false"/>
 
+
+<%------------------------------------------------------------------%>
+<!-- genomic sequence -->
+<c:set value="${wdkRecord.tables['GeneModel']}" var="geneModelTable"/>
+
+<c:set var="i" value="0"/>
+<c:forEach var="row" items="${geneModelTable}">
+  <c:set var="totSeq" value="${totSeq}${row['sequence'].value}"/>
+  <c:set var="i" value="${i +  1}"/>
+</c:forEach>
+
+<c:set var="seq">
+ <pre><w:wrap size="60" break="<br>">${totSeq}</w:wrap></pre>
+  <font size="-1">Sequence Length: ${fn:length(totSeq)} bp</font><br/>
+</c:set>
+
+<wdk:toggle name="genomicSequence" isOpen="false"
+    displayName="Genomic Sequence (introns shown in lower case)"
+    content="${seq}" />
+
+
 <%------------------------------------------------------------------%>
 
 <!-- CDS -->
