@@ -221,6 +221,14 @@
   <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${gkey}" type="text/javascript"></script>
 </c:if>
 
+<c:if test="${refer == 'home'}">
+  <style>  <%-- extra styling to get around the sidebar on home page. --%>
+    noscript .announcebox.warn {
+      margin-left: 220px;
+    }
+  </style>
+</c:if>
+
 <%-- not in use currently --%>
 ${headElement}
 
@@ -397,7 +405,7 @@ ${headElement}
 
 </c:if>  <%-- page was not the "Contact Us" page --%>
 
-
+<wdk:noscript /> <%-- include noscript tag on all pages to check if javascript enabled --%>
 
 <c:if test="${refer != 'home' && refer != 'home2' && refer != 'customSummary'}">
 	<div id="contentwrapper">
