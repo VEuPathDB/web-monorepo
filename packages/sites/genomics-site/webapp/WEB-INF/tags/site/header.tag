@@ -179,10 +179,8 @@
 
 <%-- NOW PROVIDED IN WDK via includes.tag
 <link rel="stylesheet" href="wdk/css/jquery-ui-1.7.2.custom.css"           type="text/css" />
-<link rel="stylesheet" href="wdk/css/history.css"            type="text/css"/>
 <link rel="stylesheet" href="wdk/css/dyk.css"            type="text/css"/>
 <link rel="stylesheet" href="wdk/css/Strategy.css"           type="text/css" />
-<link rel="StyleSheet" href="wdk/css/filter_menu.css"        type="text/css"/>
 <link rel="stylesheet" href="wdk/css/flexigrid.css" type="text/css"/>
 <link rel="StyleSheet" href="wdk/css/jquery.autocomplete.css" type="text/css"/>
 <link rel="StyleSheet" href="wdk/css/jquery.multiSelect.css" type="text/css"/>
