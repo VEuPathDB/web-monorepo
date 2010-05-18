@@ -8,7 +8,7 @@
 %>
 
 <%@ attribute name="model"
-              description="Param used in the cgi (plasmo, tritryp, toxo)"
+              description="Param used in the cgi (plasmo, tritryp, toxo, giardia)"
 %>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>

@@ -376,6 +376,9 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
     isOpen="true"
     attribution="GL_Spycher_metaData_2"/>
 
+<site:expressionGraphs species="${binomial}" model="giardia"/>
+
+
 <%-- sage count percentage graph --%>
 
   <c:set var="secName1" value="Sage::Ver1"/>
