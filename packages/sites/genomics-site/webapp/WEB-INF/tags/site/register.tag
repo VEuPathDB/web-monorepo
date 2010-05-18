@@ -119,6 +119,8 @@ function validateFields(e)
   <div id="cirbulletlist">
   <ul>
   <li>Have your strategies back the next time you login
+  <li>Use your basket to store temporarily IDs of interest, and either save, or download or access other tools
+  <li>Use your favorites to store IDs of permanent interest, for faster access to its record page
   <li>Add a comment on genes and sequences
   <li>Set site preferences, such as items per page displayed in the query result
   <li>Opt to receive infrequent alerts (at most monthly), by selecting (below) from which EuPathDB sites
