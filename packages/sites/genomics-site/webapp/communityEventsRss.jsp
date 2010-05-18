@@ -30,7 +30,7 @@
     var="linkTmpl" value="${scheme}://${serverName}${contextPath}/communityEvents.jsp"
 /></c:otherwise
 ></c:choose><c:import
-    url="http://${serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}" var="xml"
+    url="http://${serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}&range=all&stopDateSort=DESC" var="xml"
 /><x:parse
     doc="${xml}" var="doc"
 /><c:set
@@ -61,16 +61,22 @@
 <x:forEach var="r" select="$doc/records/record">
   <c:set var="date"><x:out select="submissionDate"/></c:set>
   <c:set var="headline"><x:out select="event/name" escapeXml="true"/></c:set>
+  <c:set var="eventDate"><x:out select="event/date"/></c:set>
+  <c:set var="presence"><x:out select="event/presence/type"/></c:set>
   <c:set var="tag">ev-<x:out select="recid"/></c:set>
   <c:set var="exturl"><x:out select="event/url"/></c:set>
   <c:set var="item"><x:out select="event/description" escapeXml="true"/></c:set>
   <fmt:parseDate  var="pdate" pattern="${dateStringPattern}" value="${date}" parseLocale="en_US"/> 
   <fmt:formatDate value="${pdate}" pattern="EEE, dd MMM yyyy HH:mm:ss zzz" var="fdate"/>
   <item>
-      <title>${headline}</title>
+      <title>${headline} - ${eventDate}</title>
       <link>${exturl}</link>
       <description>  
-      ${item}
+      ${item}&lt;br&gt;
+      <c:if test="${fn:length(presence) > 0}">
+       ${presence}&lt;br&gt;
+      </c:if>
+      ${eventDate}
       </description>
       <guid isPermaLink="false">${tag}</guid>
       <pubDate>${fdate}</pubDate>
