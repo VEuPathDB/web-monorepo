@@ -11,6 +11,10 @@
 <tr><td>&nbsp;</td></tr>
 <tr><td><b>Webapp:</b> </td><td class="p">${app.contextPath}</td></tr>
 <tr><td><b>Webapp uptime:</b></td><td class="p">${app.webappUptimeText}</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td><b>Servlet container:</b> </td><td class="p">${app.serverInfo}</td></tr>
+<tr><td><b>Servlet info:</b> </td><td class="p">${app.servletInfo}</td></tr>
+<tr><td><b>Servlet API version:</b> </td><td class="p">${app.servletApiVersion}</td></tr>
 </table>
 <p>
 <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('classpathlist','blind'); return false">Webapp Classpath &#8593;&#8595;</a></b>
