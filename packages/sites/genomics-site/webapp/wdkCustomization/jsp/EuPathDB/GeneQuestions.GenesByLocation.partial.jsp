@@ -29,15 +29,14 @@
         <c:set var="recordType" value="Assemblie" />
 </c:if>
 
-
+<%--
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
+--%>
+
 
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
 <jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
-
-<%-- put an anchor here for linking back from help sections --%>
-<A name="${fromAnchorQ}"></A>
 
 <c:set var="hasOrganism" value="false"/>
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
@@ -50,7 +49,7 @@
     <c:set var="groupName" value="${group.displayName}" />
     <c:set var="displayType" value="${group.displayType}" />
 
-
+<%--------------------------------------------%>
     <c:choose>
         <c:when test="${displayType eq 'empty'}">    
 		<table border="0">
@@ -74,7 +73,7 @@
     <%-- display parameter list --%>
 
 
-
+<%--------------------------------------------%>
     <c:forEach items="${paramGroup}" var="paramItem">
         <c:set var="pNam" value="${paramItem.key}" />
         <c:set var="qP" value="${paramItem.value}" />
@@ -101,6 +100,8 @@
 		   </c:otherwise>
 		</c:choose>
 	    </c:when>
+
+<%--------------------------------------------%>
             <c:otherwise> <%-- visible param --%>
 
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
@@ -189,21 +190,31 @@
                     </td>
 
 
-		<c:if test="${pNam != 'chromosomeOptional'}">	<c:if test="${pNam != 'organism'}">
+		<c:if test="${pNam != 'chromosomeOptional'}">	
+
+
+<%--------------------------------------------%>
+                  <c:if test="${pNam != 'organism'}">
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td valign="top" width="50" nowrap>
                         <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                         <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
                         <a href="#${anchorQp}">
                         <img src='<c:url value="/images/toHelp.jpg"/>' border="0" alt="Help!"></a>
-                    </td></c:if></c:if>
-                </tr>
+                    </td>
+                 </c:if>
+
+                </c:if>
+              </tr>
  
-            </c:otherwise> <%-- end visible param --%>
+           </c:otherwise> <%-- end visible param --%>
         </c:choose>
         
-    </c:forEach>
+    </c:forEach>    <%-- end of forEach params --%>
     
+
+<%--------------------------------------------%>
+
     <%-- detemine ending display style by displayType of the group --%>
     <c:choose>
         <c:when test="${group.name eq 'empty'}">
@@ -220,9 +231,7 @@
         </c:otherwise>
     </c:choose>
     
-</c:forEach>
-
-
+</c:forEach> <%-- end of foreach on paramGroups --%>
 
 
 <%-- set the weight --%>
@@ -232,12 +241,12 @@
 		<c:set var="image" value="plus.gif"/>
 		<div class="group-title">
     			<img style="position:relative;top:5px;" class="group-handle" src='<c:url value="/images/${image}" />'/>
-				Give this step a weight
+				<span title="This is an optional number that will be assigned to all the results of this search; this 'weight' might later be used for sorting when doing unions in a strategy."> Give this step a weight</span>
 		</div>
 		<div class="group-detail" style="display:${display};text-align:center">
     			<div class="group-description">
-				<p><input type="text" name="weight" value="${weight}">  </p> 
-				<p>Optionally give this search a "weight" (for example 10, 200, -50).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. </p>
+				<p><html:text property="weight" maxlength="9" />  </p> 
+				<p>Optionally give this search a "weight" (for example 10, 200, -50, integer only).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches.</p>
 	
     			</div><br>
 		</div>
@@ -245,13 +254,13 @@
 </c:if>
 
 
-<c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
+<%--
+<c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
 <script language="javascript">
 	chooseType('sequenceId','CHROMOSOME');
 </script>
 
-
 </html:form>
-
+--%>

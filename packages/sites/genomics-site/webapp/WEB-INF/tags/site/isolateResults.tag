@@ -166,7 +166,7 @@
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
 
 <%--------- RESULTS  ----------%>
-<div class="Results_Div" class="flexigrid">
+<div class="Results_Div flexigrid">
 <div class="bDiv">
 <div class="bDivBox">
 <table class="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0" step="wdkStep.stepId">

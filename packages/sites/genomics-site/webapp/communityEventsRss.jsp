@@ -20,10 +20,16 @@
     var="serverName" value="${pageContext.request.serverName}"
 /><c:set 
     var="contextPath" value="${pageContext.request.contextPath}" 
-/><c:set
-    var="linkTmpl" 
-    value="${scheme}://${serverName}${contextPath}/communityEvents.jsp"
-/><c:import
+/><c:choose><c:when 
+    test="${wdkModel.projectId eq 'EuPathDB'}"
+><c:set 
+    var="linkTmpl" value="${scheme}://${serverName}${contextPath}/eupathEvents.jsp"
+/></c:when
+><c:otherwise
+><c:set
+    var="linkTmpl" value="${scheme}://${serverName}${contextPath}/communityEvents.jsp"
+/></c:otherwise
+></c:choose><c:import
     url="http://${serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}" var="xml"
 /><x:parse
     doc="${xml}" var="doc"

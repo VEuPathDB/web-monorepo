@@ -179,10 +179,8 @@
 
 <%-- NOW PROVIDED IN WDK via includes.tag
 <link rel="stylesheet" href="wdk/css/jquery-ui-1.7.2.custom.css"           type="text/css" />
-<link rel="stylesheet" href="wdk/css/history.css"            type="text/css"/>
 <link rel="stylesheet" href="wdk/css/dyk.css"            type="text/css"/>
 <link rel="stylesheet" href="wdk/css/Strategy.css"           type="text/css" />
-<link rel="StyleSheet" href="wdk/css/filter_menu.css"        type="text/css"/>
 <link rel="stylesheet" href="wdk/css/flexigrid.css" type="text/css"/>
 <link rel="StyleSheet" href="wdk/css/jquery.autocomplete.css" type="text/css"/>
 <link rel="StyleSheet" href="wdk/css/jquery.multiSelect.css" type="text/css"/>
@@ -219,6 +217,14 @@
 <c:if test="${param.questionFullName eq 'IsolateQuestions.IsolateByCountry'}">
   <script type="text/javascript" src="/assets/js/google_map.js"></script>
   <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${gkey}" type="text/javascript"></script>
+</c:if>
+
+<c:if test="${refer == 'home'}">
+  <style>  <%-- extra styling to get around the sidebar on home page. --%>
+    noscript .announcebox.warn {
+      margin-left: 220px;
+    }
+  </style>
 </c:if>
 
 <%-- not in use currently --%>
@@ -397,7 +403,7 @@ ${headElement}
 
 </c:if>  <%-- page was not the "Contact Us" page --%>
 
-
+<wdk:noscript /> <%-- include noscript tag on all pages to check if javascript enabled --%>
 
 <c:if test="${refer != 'home' && refer != 'home2' && refer != 'customSummary'}">
 	<div id="contentwrapper">

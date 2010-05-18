@@ -76,7 +76,7 @@ ${id}
 
 <!-- Assembly -->
 
-<c:if test="${projectId != 'TrichDB'}">
+<c:if test="${projectId != 'TrichDB' && projectId != 'CryptoDB'}">
   <wdk:wdkTable tblName="AssemblyInfo" isOpen="true" attribution=""/>
 </c:if>
 
