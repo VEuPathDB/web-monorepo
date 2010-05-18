@@ -33,8 +33,9 @@
 
 <h1 align="center">EuPathDB Account Login</div>
 <div align="center">
-<p><b>Login</b> so you can:
 
+<p><b>Login</b> so you can:
+<table><tr><td>
 <div id="cirbulletlist">
 <ul>
 <li>keep your strategies (unsaved and saved) from session to session
@@ -42,8 +43,8 @@
 <li>set site preferences
 </ul>
 </div>
+</td></tr></table>
 
-<p>
 
 <site:login showError="true" />
 </div>
