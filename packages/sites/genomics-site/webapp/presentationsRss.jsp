@@ -71,7 +71,9 @@
   <c:if test="${fn:length(presence) > 0}">
   <item>
       <title>${headline} - ${eventDate}</title>
+      <c:if test="${fn:length(exturl) > 0}">
       <link>${exturl}</link>
+      </c:if>
       <description>  
       ${item}&lt;br&gt;
       ${presence}&lt;br&gt;

@@ -70,7 +70,9 @@
   <fmt:formatDate value="${pdate}" pattern="EEE, dd MMM yyyy HH:mm:ss zzz" var="fdate"/>
   <item>
       <title>${headline} - ${eventDate}</title>
+      <c:if test="${fn:length(exturl) > 0}">
       <link>${exturl}</link>
+      </c:if>
       <description>  
       ${item}&lt;br&gt;
       <c:if test="${fn:length(presence) > 0}">
