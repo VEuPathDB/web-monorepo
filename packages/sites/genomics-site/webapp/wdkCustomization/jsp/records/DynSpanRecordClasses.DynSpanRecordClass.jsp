@@ -52,12 +52,17 @@
 <br>
 <wdk:wdkTable tblName="Genes" isOpen="true"
                  attribution=""/>
-<br>
-<wdk:wdkTable tblName="SageTags" isOpen="true"
-                 attribution=""/>
 
 <br>
 <wdk:wdkTable tblName="Orfs" isOpen="true"
+                 attribution=""/>
+
+<br>
+<wdk:wdkTable tblName="SNPs" isOpen="true"
+                 attribution=""/>
+
+<br>
+<wdk:wdkTable tblName="SageTags" isOpen="true"
                  attribution=""/>
 
 </c:otherwise>
