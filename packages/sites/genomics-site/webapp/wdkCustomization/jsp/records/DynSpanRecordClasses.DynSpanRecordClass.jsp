@@ -54,7 +54,7 @@
                  attribution=""/>
 
 <br>
-<wdk:wdkTable tblName="Orfs" isOpen="true"
+<wdk:wdkTable tblName="ORFs" isOpen="true"
                  attribution=""/>
 
 <br>
@@ -65,6 +65,9 @@
 <wdk:wdkTable tblName="SageTags" isOpen="true"
                  attribution=""/>
 
+<br>
+<wdk:wdkTable tblName="ESTs" isOpen="true"
+                 attribution=""/>
 </c:otherwise>
 </c:choose>
 
