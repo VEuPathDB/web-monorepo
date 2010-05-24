@@ -68,6 +68,7 @@
   <c:set var="item"><x:out select="event/description" escapeXml="true"/></c:set>
   <fmt:parseDate  var="pdate" pattern="${dateStringPattern}" value="${date}" parseLocale="en_US"/> 
   <fmt:formatDate value="${pdate}" pattern="EEE, dd MMM yyyy HH:mm:ss zzz" var="fdate"/>
+  <c:if test="${fn:length(presence) > 0}">
   <item>
       <title>${headline} - ${eventDate}</title>
       <c:if test="${fn:length(exturl) > 0}">
@@ -75,15 +76,14 @@
       </c:if>
       <description>  
       ${item}&lt;br&gt;
-      <c:if test="${fn:length(presence) > 0}">
-       ${presence}&lt;br&gt;
-      </c:if>
+      ${presence}&lt;br&gt;
       ${eventDate}
       </description>
       <guid isPermaLink="false">${tag}</guid>
       <pubDate>${fdate}</pubDate>
       <dc:creator>${wdkModel.displayName}</dc:creator>
   </item>
+  </c:if>
 </x:forEach>
 
 </channel>

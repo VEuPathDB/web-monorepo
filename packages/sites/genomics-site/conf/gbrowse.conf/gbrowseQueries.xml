@@ -873,6 +873,57 @@ WHERE msf.na_feature_id = x.feat_id
 ]]>
     </sql>
   </sqlQuery>
+
+  <sqlQuery name="domain:MassSpecPeptide">
+     <sql>
+<![CDATA[
+SELECT 
+       msf.na_feature_id feature_id,
+       'domain' type,
+       '$source' source,
+       x.parent_id, startm, end,
+       msf.source_id name, x.strand,
+       'Description=' || msf.description || '$dlm' ||
+       'Count=' || match_count || '$dlm' ||
+       'ExtDbName=' || ed_name || '$dlm' ||
+       'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
+       'SOTerm=' || fs.term_name atts
+FROM  dots.massspecfeature msf,
+      dots.translatedaafeature taaf,
+      apidb.FeatureSo fs,
+      dots.aasequence aas, dots.aalocation aal,
+(SELECT count(*) as match_count, 
+       min(msf.na_feature_id) as feat_id,
+       enas.na_sequence_id parent_id,
+       nal.start_min startm,
+       nal.end_max end,
+       decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       ed.name as ed_name
+FROM  dots.massspecfeature msf,
+      apidb.FeatureLocation nal,
+      dots.nasequence enas,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE msf.na_feature_id = nal.na_feature_id
+ AND  nal.na_sequence_id = $srcfeature_id
+ AND  enas.na_sequence_id = $srcfeature_id
+ AND  nal.start_min >= $base_start 
+ AND  nal.end_max <= $rend
+ AND  msf.external_database_release_id = edr.external_database_release_id
+ AND  ed.name $$edName$$
+ AND  edr.external_database_id = ed.external_database_id
+GROUP BY ed.name,enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x
+WHERE msf.na_feature_id = x.feat_id
+ AND  taaf.aa_sequence_id = msf.aa_sequence_id
+ AND  taaf.na_feature_id = fs.na_feature_id
+ AND  aal.aa_feature_id = msf.aa_feature_id
+ AND  aas.aa_sequence_id = to_number(msf.aa_sequence_id)
+]]>
+    </sql>
+  </sqlQuery>
+  
+
+
   
   <sqlQuery name="domain:UnifiedMassSpecPeptides">
       <sql>
@@ -3924,6 +3975,30 @@ SELECT  msf.na_feature_id as feature_id,
   AND  fl.na_sequence_id = $srcfeature_id
   AND  msf.external_database_release_id = edr.external_database_release_id
   AND  edr.external_database_id = ed.external_database_id
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="domain:MassSpecPeptide:bulksubfeatures">
+     <sql>
+<![CDATA[
+SELECT  msf.na_feature_id as feature_id,
+        'Peptide' type,
+        '$source' as source,
+        fl.start_min as startm,
+        fl.end_max as end,
+        fl.na_feature_id as parent_id,
+        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+        'ExtDbName=' || ed.name atts
+ FROM dots.MassSpecFeature msf, apidb.FeatureLocation fl,
+       sres.externaldatabaserelease edr, sres.externaldatabase ed
+ WHERE msf.na_feature_id = fl.na_feature_id
+  AND  fl.start_min >= $base_start 
+  AND  fl.end_max <= $rend
+  AND  fl.na_sequence_id = $srcfeature_id
+  AND  msf.external_database_release_id = edr.external_database_release_id
+  AND  edr.external_database_id = ed.external_database_id
+	AND  ed.name $$edName$$
 ]]>
     </sql>
   </sqlQuery>
