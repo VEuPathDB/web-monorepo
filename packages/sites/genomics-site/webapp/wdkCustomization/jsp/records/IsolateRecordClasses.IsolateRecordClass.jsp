@@ -24,6 +24,7 @@
 
 <site:header title="${wdkRecord.primaryKey}"
              divisionName="${recordType} Record"
+             refer="recordPage"
              division="queries_tools"/>
 
 
@@ -35,6 +36,10 @@
 
 <c:otherwise>
 <c:set var="data_type" value="${attrs['data_type']}" />
+
+<h2 style="text-align:center;">
+<wdk:recordPageBasketIcon />
+</h2>
 
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />

@@ -38,7 +38,7 @@
 
 <h2>
 <center>
-${id}
+<wdk:recordPageBasketIcon />
 </center>
 </h2>
 

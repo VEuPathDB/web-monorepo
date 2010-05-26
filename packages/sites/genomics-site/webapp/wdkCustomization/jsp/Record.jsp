@@ -10,6 +10,10 @@
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 <site:header banner="${recordType}"/>
 
+<h2 style="text-align: center;">
+<wdk:recordPageBasketIcon />
+</h2>
+
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 

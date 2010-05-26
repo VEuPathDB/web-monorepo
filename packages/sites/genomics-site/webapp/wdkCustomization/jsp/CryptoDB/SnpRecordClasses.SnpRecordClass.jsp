@@ -30,7 +30,9 @@
 </c:when>
 <c:otherwise>
 
-<h2><center>${id}</center></h2>
+<h2><center>
+<wdk:recordPageBasketIcon />
+</center></h2>
 
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
