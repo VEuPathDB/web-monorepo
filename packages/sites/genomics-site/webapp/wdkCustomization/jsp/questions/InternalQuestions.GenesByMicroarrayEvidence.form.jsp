@@ -19,7 +19,7 @@ ${Question_Header}
     <table width="90%">
 <c:set value="2" var="columns"/>
 
-<c:set var="giardiaQuestions" value="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,GeneQuestions.GenesByRingqvistFoldChange" />
+<c:set var="giardiaQuestions" value="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,GeneQuestions.GenesByRingqvistFoldChange,GeneQuestions.GenesByRingqvistPercentile" />
 
 <c:set var="plasmoQuestions" value="GeneQuestions.GenesByExpressionTiming,InternalQuestions.GenesByIntraerythrocyticExpression,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByCowmanSir2FoldChange,GeneQuestions.GenesByCowmanSir2Percentile,GeneQuestions.GenesBySuCqPage,GeneQuestions.GenesBySuCqPercentile,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming" />
 
