@@ -38,7 +38,7 @@
     <c:set var="group" value="${paramGroupItem.key}" />
     <c:set var="paramGroup" value="${paramGroupItem.value}" />
   
-    <%-- detemine starting display style by displayType of the group --%>
+    <%-- determine starting display style by displayType of the group --%>
     <c:set var="groupName" value="${group.displayName}" />
     <c:set var="displayType" value="${group.displayType}" />
     <div name="${wdkQuestion.name}_${group.name}"
@@ -116,6 +116,20 @@
                 <tr>
                     <c:choose>
                         <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'EuPathDB'}">
+
+<c:choose>
+<c:when test="${fn:contains(wdkQuestion.name, 'Location') }">  <!-- as it happens in component sites  under choice below EnumParamBean -->
+
+                           <td width="30%" align="right" style="vertical-align:top">
+				<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
+			    </td>
+                            <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
+                                <wdk:enumParamInput qp="${qP}" />
+                            </td>
+                           
+</c:when>
+<c:otherwise>
+
                             <c:set var="hasOrganism" value="true"/>
                             <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5">
                                 <table border="0">
@@ -130,6 +144,9 @@
                              </td>
                              <td valign="top" align="center">
 			         <table border="0">
+
+</c:otherwise>
+</c:choose>
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
@@ -162,6 +179,7 @@
                                     </td>
                                 </c:when>
                                 <c:otherwise>
+
                                     <td width="30%" align="right" valign="top">
 					<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
