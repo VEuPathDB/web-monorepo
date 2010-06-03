@@ -10,7 +10,6 @@
 <jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
 <c:set value="${requestScope.wdkStep}" var="wdkStep"/>
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}" />
-<c:set var="history_id" value="${requestScope.wdk_history_id}"/>
 <c:set var="format" value="${requestScope.wdkReportFormat}"/>
 
 
@@ -53,7 +52,7 @@ function appendchecked(url) {
   <table>
   <tr><td valign="top"><b>Columns:</b></td>
       <td>
-        <input type="hidden" name="wdk_history_id" value="${step_id}">
+        <input type="hidden" name="step" value="${step_id}">
         <input type="hidden" name="wdkReportFormat" value="${format}">
         <c:set var="attributeFields" value="${wdkAnswer.allReportMakerAttributes}"/>
         <c:set var="numPerLine" value="2"/>
@@ -133,7 +132,7 @@ function appendchecked(url) {
   <c:if test="${!empty sessionScope.GALAXY_URL}">
     <div style="text-align:center;background-color:#FFCCFF;border-style:double; width:300px">
     <c:url var='downloadPath' 
-           value='/getDownloadResult.do;jsessionid=${pageContext.session.id}?wdk_history_id=${step_id}&includeHeader=yes&downloadType=plain&wdkReportFormat=tabular&selectedFields='/>
+           value='/getDownloadResult.do;jsessionid=${pageContext.session.id}?step=${step_id}&includeHeader=yes&downloadType=plain&wdkReportFormat=tabular&selectedFields='/>
     <c:set var='downloadUrl'>
       ${pageContext.request.scheme}://${pageContext.request.serverName}${downloadPath}
     </c:set>

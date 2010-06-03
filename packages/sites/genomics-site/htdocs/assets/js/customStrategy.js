@@ -55,52 +55,6 @@ function showInstructions(){
 	$("#Strategies").append(instr);
 }
 
-function showBasket(){
-	//showSummary.do?
-	//	questionFullName=InternalQuestions.GeneRecordClasses_GeneRecordClassByBasket&
-	//	myProp%28user_signature%29=ab4d3f5d505335cdd529be306fc28ceb&
-	//	resultsOnly=true&
-	//	myProp%28timestamp%29=1
-	
-	var url = "showBasket.do";
-	var d = new Object();
-	d.recordClass = "GeneRecordClasses.GeneRecordClass";
-	$.ajax({
-		url: url,
-		data: d,
-		type: "post",
-		dataType: "html",
-		beforeSend:function(){
-			$("body").block();
-		},
-		success: function(data){
-			$("div#basket").find("div.Workspace").html(data);
-			if($("div#basket").find("div.Workspace").find("table").length > 0){
-				$("input#empty-basket-button").attr("disabled",false);
-				$("input#make-strategy-from-basket-button").attr("disabled",false);
-				// create multi select control for adding columns
-				checkPageBasket();
-				createMultiSelectAttributes($("#basket").find("#addAttributes"));
-				createFlexigridFromTable($("#basket").find("#Results_Table"));
-				try {
-					customBasketPage();
-				}
-				catch(err) {
-					//Do nothing
-				}
-			}else{
-				$("input#empty-basket-button").attr("disabled",true);
-				$("input#make-strategy-from-basket-button").attr("disabled",true);
-			}
-			$("body").unblock();
-		},
-		error: function(data,msg,e){
-			alert("Error occured in showBasket() function!!");
-			$("body").unblock();
-		}
-	});
-}
-
 function loadSampleStrat(url) {
 	$.blockUI();
 	window.location = url;
