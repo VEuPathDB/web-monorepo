@@ -10,6 +10,7 @@
 <jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
 <c:set value="${requestScope.wdkStep}" var="wdkStep"/>
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}" />
+<c:set var="history_id" value="${requestScope.step_id}"/>
 <c:set var="format" value="${requestScope.wdkReportFormat}"/>
 <c:set var="allRecordIds" value="${wdkAnswer.allIdList}" />
 
@@ -24,91 +25,7 @@
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
 
-<%--
-<c:choose>
-<c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
-  <form action="/cgi-bin/Api_geneSrt" method="post">
-</c:when>
-<c:otherwise>
---%>
-  <form action="/cgi-bin/geneSrt" method="post">
-<%--
-</c:otherwise>
-</c:choose>
---%>
-
-
-    <input type="hidden" name="ids" value="${allRecordIds}">
-    <input type="hidden" name="project_id" value="${wdkModel.name}"/>
-    
-    <table border="0" width="100%" cellpadding="4">
-
-    <tr><td colspan="2">
-    <b>Choose the type of sequence:</b>
-        <input type="radio" name="type" value="genomic" checked onclick="setEnable(true)">genomic
-        <input type="radio" name="type" value="protein" onclick="setEnable(false)">protein
-        <input type="radio" name="type" value="CDS" onclick="setEnable(false)">CDS
-        <input type="radio" name="type" value="processed_transcript" onclick="setEnable(false)">transcript
-    </td></tr>
-
-    <tr>
-        <td colspan="2">
-<table id="offsetOptions" cellpadding="2">
-        <tr><td colspan="3">
-                <b>Choose the region of the sequence(s):</b>
-            </td>
-        </tr>
-        <tr>
-            <td>begin at</td>
-            <td align="left">
-		<select name="upstreamAnchor">
-                    <option value="Start" selected>Start</option>
-                    <option value="CodeStart">translation start (ATG)</option>
-                    <option value="CodeEnd">translation stop codon</option>
-                    <option value="End">Stop</option>
-                </select>
-            </td>
-            <td align="left">
-                <select name="upstreamSign">
-		    <option value="plus" selected>+</option>
-                    <option value="minus">-</option>
-                </select>
-	    </td>
-            <td align="left">
-                <input id="upstreamOffset" name="upstreamOffset" value="0" size="6"/> nucleotides
-            </td>
-        </tr>
-        <tr>
-            <td>end at</td>
-            <td align="left">
-		<select name="downstreamAnchor">
-                    <option value="Start">Start</option>
-                    <option value="CodeStart">translation start (ATG)</option>
-                    <option value="CodeEnd">translation stop codon</option>
-                    <option value="End" selected>Stop</option>
-                </select>
-            </td>
-            <td align="left">
-                <select name="downstreamSign">
-		    <option value="plus" selected>+</option>
-                    <option value="minus">-</option>
-                </select>
-	    </td>
-            <td align="left">
-                <input id="downstreamOffset" name="downstreamOffset" value="0" size="6"> nucleotides
-            </td>
-        </tr>
-       </table>
-      </td>
-    </tr>
-    <tr><td valign="top" nowrap><b>Download Type</b>:
-            <input type="radio" name="downloadType" value="text">Save to File</input>
-            <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
-        </td></tr>
-    <tr><td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
-
-    </table>
-  </form>
+<site:geneSrt allRecordIds="${allRecordIds}" />
 
 <hr>
 
