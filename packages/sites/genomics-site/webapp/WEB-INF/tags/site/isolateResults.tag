@@ -4,8 +4,8 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 
-<c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
 <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
+<c:set var="wdkAnswer" value="${wdkStep.answerValue}"/>
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="recordName" value="${wdkAnswer.question.recordClass.fullName}" />
@@ -22,13 +22,12 @@
 <%-- When implement visualizing multiple strategies, the name of the strategy (for the title) could cme from the step object probably --%>
 
 <%@ attribute name="strategy"
-			  type="org.gusdb.wdk.model.jspwrap.StrategyBean"
+	      type="org.gusdb.wdk.model.jspwrap.StrategyBean"
               required="true"
               description="Strategy Id we are looking at"
 %>
 
-<c:set var="type" value="Results" />
-<c:set var="step_dataType" value="${wdkStep.dataType}" />
+<c:set var="step_dataType" value="${wdkStep.displayType}" />
 <c:choose>
 	<c:when test="${fn:endsWith(step_dataType,'y')}">
 		<c:set var="type" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies" />
@@ -352,6 +351,12 @@
       <c:set var="fieldVal" value="${recAttr.briefDisplay}"/>
       <c:choose>
         <c:when test="${j == 0}">
+
+      <div class="primaryKey" fvalue="${fieldVal}" style="display:none;">
+        <c:forEach items="${pkValues}" var="pkValue">
+          <span key="${pkValue.key}">${pkValue.value}</span>
+        </c:forEach>
+      </div>
 
         <c:choose>
 <%--

@@ -30,7 +30,7 @@
 
 <!-- content of current page -->
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />">
-        <input type="hidden" name="wdk_history_id" value="${wdkStep.stepId}"/>
+        <input type="hidden" name="step" value="${wdkStep.stepId}"/>
         <input type="hidden" name="wdkReportFormat" value="${format}"/>
     <table>
         <tr>

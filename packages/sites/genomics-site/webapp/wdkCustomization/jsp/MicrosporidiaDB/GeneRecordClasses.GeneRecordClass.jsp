@@ -90,14 +90,21 @@ ${attrs['organism'].value}<br>
 <c:choose>
   <c:when test='${organism_full eq "Encephalitozoon cuniculi GB-M1"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+Repeat+EST+BLASTX
+      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+Repeat+EST+BLASTX
     </c:set>
   </c:when>
   <c:when test='${organism_full eq "Encephalitozoon intestinalis"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+Repeat+EST+BLASTX
+      Gene+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+Repeat+EST+BLASTX
     </c:set>
   </c:when>
+  <c:when test='${organism_full eq "Enterocytozoon bieneusi H348"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEcuniculi+SyntenyGenesEcuniculi++Repeat+EST+BLASTX
+    </c:set>
+  </c:when>
+
+
 </c:choose>
 
 <c:set var="attribution">

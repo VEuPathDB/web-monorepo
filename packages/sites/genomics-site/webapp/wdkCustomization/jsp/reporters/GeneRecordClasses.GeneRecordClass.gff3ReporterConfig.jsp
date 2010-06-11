@@ -9,7 +9,6 @@
 <jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
 <c:set value="${requestScope.wdkStep}" var="wdkStep"/>
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}" />
-<c:set var="history_id" value="${requestScope.wdk_history_id}"/>
 <c:set var="format" value="${requestScope.wdkReportFormat}"/>
 
 
@@ -31,7 +30,7 @@
 
 <!-- content of current page -->
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />">
-        <input type="hidden" name="wdk_history_id" value="${step_id}"/>
+        <input type="hidden" name="step" value="${step_id}"/>
         <input type="hidden" name="wdkReportFormat" value="${format}"/>
     <table>
         <tr>

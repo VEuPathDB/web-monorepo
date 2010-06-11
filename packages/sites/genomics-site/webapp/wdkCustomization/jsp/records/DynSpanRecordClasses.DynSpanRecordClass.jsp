@@ -30,6 +30,9 @@
 </c:when>
 <c:otherwise>
 
+<h2><center>
+<wdk:recordPageBasketIcon />
+</center></h2>
 
 <%-- download box  and title  ----%>
 <site:recordToolbox />

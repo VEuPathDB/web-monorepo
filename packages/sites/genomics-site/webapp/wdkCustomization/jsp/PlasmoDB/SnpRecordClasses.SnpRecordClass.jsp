@@ -35,10 +35,9 @@
 
 <h2>
 <center>
-${id}<br> 
+<wdk:recordPageBasketIcon />
 </center>
 </h2>
-
 
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />

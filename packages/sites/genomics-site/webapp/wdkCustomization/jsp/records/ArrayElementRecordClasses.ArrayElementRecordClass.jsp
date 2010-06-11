@@ -63,6 +63,10 @@
 
 <c:if test="${species_error != null}">${species_error}</c:if>
 
+<h2 style="text-align:center;">
+<wdk:recordPageBasketIcon />
+</h2>
+
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white
        class=thinTopBottomBorders>
 
