@@ -65,6 +65,22 @@ ${wdkRecord.attributes['service_name'].value}
 </table>
 
 <br>
+
+<c:catch var="e">
+<api:orclSvcAliases servicename="${wdkRecord.attributes['service_name'].value}" var='srv'/>
+</c:catch>
+<c:choose>
+<c:when test="${e!=null}">
+<font color='red'>Aliases Information not available</font><br>
+<font size='-2'>${fn:replace(e, fn:substring(e, 175, -1), '...')}</font>
+</c:when>
+<c:otherwise>
+<b>Aliases</b> (from LDAP): ${srv.names}
+</c:otherwise>
+</c:choose>
+
+
+<br><br>
 <b>Hosted on</b>: ${wdkRecord.attributes['server_name'].value} (${wdkRecord.attributes['server_ip'].value})<br>
 <b>Oracle Version</b>: ${wdkRecord.attributes['version'].value}
 <p>
