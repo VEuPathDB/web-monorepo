@@ -4,6 +4,20 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
+<c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
+
+<%-- QUESTIONS --%>
+<c:set var="amoebaQuestions" value="GeneQuestions.GenesByEHistolyticaExpressionTiming" />
+
+
+ <c:choose>
+    <c:when test="${projectId == 'AmoebaDB'}">
+        <jsp:forward page="/showQuestion.do?questionFullName=${amoebaQuestions}" /> 
+    </c:when>
+    <c:otherwise>
+
+
 ${Question_Header}
 
 <!-- get wdkModel saved in application scope -->
@@ -40,7 +54,7 @@ ${Question_Header}
     <site:queryList3 columns="${columns}" questions="${giardiaQuestions}"/>
   </c:when>
   <c:when test = "${project == 'EuPathDB'}">
-    <site:queryList3 columns="${columns}" questions="${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
+    <site:queryList3 columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
   </c:when>
   <c:when test = "${project == 'PlasmoDB'}">
     <site:queryList3  columns="${columns}"  questions="${plasmoQuestions}"/>
@@ -55,5 +69,10 @@ ${Question_Header}
     </table>
   </center>
 </div>
+
+
+ </c:otherwise>
+</c:choose>
+
 
 ${Question_Footer}
