@@ -57,10 +57,6 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 </c:catch>
 
 
-
-
-
-
 <c:set var="rssUrl" value="showXmlDataContent.do?name=XmlQuestions.NewsRss"/>
 <c:set var="headElement">
 <link rel="alternate" type="application/rss+xml" 
@@ -90,6 +86,12 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 	margin-bottom: 1em;
   }
 </style>
+
+<c:choose>
+<c:when test="${error != null}">
+<i>News is temporarily unavailable</i>
+</c:when>
+<c:otherwise>
 
 <table border='0' width='100%' cellpadding='3' cellspacing='0' 
        bgcolor='white' class='thinTopBottomBorders'> 
@@ -142,4 +144,6 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 </tr>
 </table> 
 
+</c:otherwise>
+</c:choose>
 <site:footer/>
