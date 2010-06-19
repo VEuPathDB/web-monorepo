@@ -72,8 +72,6 @@
         <link>${linkTmpl}&amp;tag=${tag}</link>
         <description>  
         ${item}
-        &lt;br /&gt;
-        <fmt:formatDate value="${pdate}" pattern="d MMMM yyyy"/>
         </description>
         <guid isPermaLink="false">${tag}</guid>
         <pubDate>${fdate}</pubDate>
