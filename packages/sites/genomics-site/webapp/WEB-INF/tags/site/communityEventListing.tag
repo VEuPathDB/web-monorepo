@@ -31,6 +31,8 @@ http://${pageContext.request.serverName}${feedPath}
 </ul>
 </c:if>
 
+</ul>
+
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
       		<a style="margin-left:0px" href='<c:url value="/eupathEvents.jsp"/>'>Full Events Page</a>
