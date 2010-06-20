@@ -57,20 +57,12 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 </c:catch>
 
 
-<c:set var="rssUrl" value="showXmlDataContent.do?name=XmlQuestions.NewsRss"/>
-<c:set var="headElement">
-<link rel="alternate" type="application/rss+xml" 
-  title="RSS Feed for ${wdkModel.displayName}" 
-  href="${rssUrl}" />
-</c:set>
-
 <site:header title="${wdkModel.displayName} : News"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="News"
                  division="news"
-                 headElement="${headElement}" 
 />
 <style type="text/css">
   .thinTopBottomBorders ul { 
@@ -106,19 +98,18 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
   <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
 
   <c:set var="headline" value="${e.title}"/>
-  <c:set var="tag" value="${e.author}"/>
+  <c:set var="tag" value="${e.uri}"/>
   <c:set var="item" value="${e.description.value}"/>
-
   <c:if test="${param.tag == null or param.tag eq tag or param.tag == ''}">
-    <a name="newsItem${i}"/>
-    <a name="${e.author}"/>
+    <a name="${tag}"/>
     <table border="0" cellpadding="2" cellspacing="0" width="100%">
   
     <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
     <tr class="rowLight"><td>
-      <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${tag}">
+      <a href="aggregateNews.jsp?tag=${tag}">
       <font color='black'><b>${headline}</b></font></a> (${fdate})<br><br>
-      ${item}</td></tr></table>
+      ${item}</td></tr>
+      </table>
     <c:set var="i" value="${i+1}"/>
   </c:if>
 
@@ -129,7 +120,7 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 <table width='100%'>
 <tr><td>
 <c:if test="${param.tag != null and param.tag != ''}">
- <a href="showXmlDataContent.do?name=XmlQuestions.News" id='allnews'>All EuPathDB News</a>
+ <a href="aggregateNews.jsp" id='allnews'>All EuPathDB News</a>
 </c:if>
 </td><td align="right">
 <a href="${rssUrl}">
