@@ -307,6 +307,18 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
             </c:otherwise>
         </c:choose>
 
+<%-- Expression Graphs ------------------------------------------------------%>
+
+<c:if test="${binomial eq 'Entamoeba histolytica'}">
+<site:pageDivider name="Expression"/>
+  <site:expressionGraphs species="${binomial}" model="amoeba"/>
+</c:if>
+
+
+
+
+<%-- Sequence Data ------------------------------------------------------%>
+
 <site:pageDivider name="Sequence"/>
 
 <i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
