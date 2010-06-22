@@ -62,7 +62,7 @@
              refer="recordPage" />
 
 <a name="top"></a>
-<wdk:recordPageBasketIcon />
+
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
