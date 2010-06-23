@@ -40,7 +40,7 @@
 
         </td>
 
-
+      <c:set var="noExpressionDataTable" value="true"/>
       <c:set var="expressionDataTable">
             <table>
               <tr class="headerRow">
@@ -51,7 +51,7 @@
             <c:set var="i" value="0"/>
             <c:forEach var="drow" items="${dat}">
               <c:if test="${drow['profile_name'].value eq row['profile_name']}">
-
+      <c:set var="noExpressionDataTable" value="false"/>
         <c:choose>
             <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
             <c:otherwise><tr class="rowMedium"></c:otherwise>
@@ -78,6 +78,7 @@
     displayName="Data Table"
     content="${expressionDataTable}"
     isOpen="false"
+    noData="${noExpressionDataTable}"
     attribution=""/>         
 
        <br /><br />
