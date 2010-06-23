@@ -29,6 +29,33 @@
     <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=png&id=${row['source_id'].value}"/>
     <c:set var="imgSrc" value="${preImgSrc}"/>
 
+    <c:set var="selectList">
+        <SELECT NAME="${name}List"
+        OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[selectedIndex].value)">
+
+        <c:set var="vp_i" value="0"/>
+        <c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
+
+          <c:choose>
+            <c:when test="${vp_i == 0}">
+              <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}&vp=${vp}">${vp}</OPTION>
+              <c:set var="imgSrc" value="${imgSrc}&vp=${vp}"/>
+            </c:when>
+            <c:otherwise>
+              <OPTION  VALUE="${preImgSrc}&vp=${vp}">${vp}</OPTION>
+            </c:otherwise>
+          </c:choose>
+
+
+          <c:set var="vp_i" value="${vp_i +  1}"/>
+        </c:forEach>
+
+          <OPTION VALUE="${preImgSrc}">ALL</OPTION>
+
+        </select>
+    </c:set>
+
+
     <c:set var="expressionContent">
       <table>
 
@@ -98,17 +125,8 @@
 
 
 
+        ${selectList}
 
-<SELECT NAME="${name}List"
-OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[selectedIndex].value)">
-
-<c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
-<OPTION  VALUE="${preImgSrc}&vp=${vp}">${vp}</OPTION>
-</c:forEach>
-
-<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}">ALL</OPTION>
-
-</select>
        </div>
       </td>
      </tr>
