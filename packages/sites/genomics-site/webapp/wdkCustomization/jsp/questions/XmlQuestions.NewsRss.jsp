@@ -53,6 +53,14 @@
     <atom:link href="${scheme}://${serverName}/news.rss" rel="self" type="application/rss+xml" />
     
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
+  <c:choose>
+    <c:when test="${fn:length(record.attributesMap['category']) > 0}">
+        <c:set var="dctype" value="${record.attributesMap['category']}"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="dctype" value="general"/>
+    </c:otherwise>
+  </c:choose>
   <fmt:parseDate pattern="${dateStringPattern}" var="pdate" value="${record.attributesMap['date']}" parseLocale="en_US"/> 
   <fmt:formatDate value="${pdate}" pattern="EEE, dd MMM yyyy HH:mm:ss zzz" var="fdate"/>
   <c:set var="headline" value="${record.attributesMap['headline']}"/>
@@ -76,6 +84,7 @@
         <guid isPermaLink="false">${tag}</guid>
         <pubDate>${fdate}</pubDate>
         <dc:creator>${wdkModel.displayName}</dc:creator>
+        <dc:type>${dctype}</dc:type>
     </item>
 </c:forEach>
 

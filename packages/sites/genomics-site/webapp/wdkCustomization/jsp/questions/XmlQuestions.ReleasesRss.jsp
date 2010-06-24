@@ -72,6 +72,7 @@
         <guid isPermaLink="false">${tag}</guid>
         <pubDate>${fdate}</pubDate>
         <dc:creator>${wdkModel.displayName}</dc:creator>
+        <dc:type>${record.attributesMap['category']}</dc:type>
     </item>
     </c:if>
 </c:forEach>
