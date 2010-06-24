@@ -441,6 +441,10 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
             </c:otherwise>
         </c:choose>
 
+
+<wdk:wdkTable tblName="MassSpec" isOpen="true"
+               attribution=""/>
+
 <c:set var="pdbLink">
   <br><a href="http://www.rcsb.org/pdb/smartSubquery.do?smartSearchSubtype=SequenceQuery&inputFASTA_USEstructureId=false&sequence=${attrs['protein_sequence'].value}&eCutOff=10&searchTool=blast">Search
     PDB by the protein sequence of ${id}</a>

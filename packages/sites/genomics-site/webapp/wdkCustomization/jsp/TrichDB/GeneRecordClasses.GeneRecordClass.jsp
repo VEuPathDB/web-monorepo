@@ -289,6 +289,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${i
             </c:otherwise>
         </c:choose>
 
+<wdk:wdkTable tblName="MassSpec" isOpen="true"
+               attribution="Hayes_Johnson_Tvag_MassSpec"/>
+
+
+
 <site:pageDivider name="Sequence"/>
 
 <i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>

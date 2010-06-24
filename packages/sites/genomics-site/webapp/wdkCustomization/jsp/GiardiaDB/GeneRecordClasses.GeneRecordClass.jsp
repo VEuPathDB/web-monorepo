@@ -363,6 +363,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
                  attribution="IEDB_Epitopes"/>
 </c:if>
 
+<wdk:wdkTable tblName="MassSpec" isOpen="true"
+               attribution="DTASelect-filter_032108_Proteomics,Giardia_Proteomics_From_Tachezy"/>
+
 
 <site:pageDivider name="Sequences"/>
 
