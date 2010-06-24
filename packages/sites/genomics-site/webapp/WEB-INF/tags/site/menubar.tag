@@ -30,11 +30,7 @@
 <c:set var="count" value="${wdkUser.strategyCount}"/>
 </c:otherwise>
 </c:choose>
-<c:set var="basketCounts" value="${wdkUser.basketCount}"/>
-<c:set var="basketCount" value="0" />
-<c:forEach items="${basketCounts}" var="basket">
-  <c:set var="basketCount" value="${basketCount + basket.value}" />
-</c:forEach>
+<c:set var="basketCount" value="${wdkUser.basketCount}"/>
 <div id="menubar">
 
 <div id="menu">
