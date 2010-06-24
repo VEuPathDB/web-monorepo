@@ -92,6 +92,9 @@ function getComboElement()
   <c:when test="${prefix == 'E.hi'}">    
       <c:set var="org" value="Entamoeba histolytica"/>
   </c:when>
+<c:when test="${prefix == 'G.i.'}">    
+      <c:set var="org" value="Giardia intestinalis"/>
+  </c:when>
 <c:when test="${prefix == 'G.l.'}">    
       <c:set var="org" value="Giardia lamblia"/>
   </c:when>
