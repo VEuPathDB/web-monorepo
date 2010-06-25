@@ -463,7 +463,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value}"/>
 
   <c:if test="${species eq 'falciparum'}">
-      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
+      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+PfBowyerMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
   </c:if>
   <c:if test="${species eq 'berghei'}">
       <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=WatersMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
