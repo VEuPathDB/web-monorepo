@@ -591,7 +591,7 @@ sub ArrayElementTitle {
 }
 
 sub massSpecTitle {  
-  my ($f, $replaceString,$replaceString2,$val2) = @_;
+  my ($f, $replaceString,$replaceString2,$val2, $link) = @_;
   my ($desc) = $f->get_tag_values('Description');
   $desc =~s/\nreport:(.*)$//;
   $desc =~s/\nscore:(.*)$//; 
@@ -613,6 +613,8 @@ my ($count) = $f->get_tag_values('Count');
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
+  push @data, [ "Link to ProtoMap", "Please click each proteomics data" ] unless !$link;
+
   hover('Mass Spec', \@data);
 }
 
