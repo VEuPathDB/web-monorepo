@@ -311,6 +311,12 @@ CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
 
 <wdk:wdkTable tblName="Notes" isOpen="true" />
 
+
+<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+
+<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
+
+
 <%------------------------------------------------------------------%>
 <c:set var="content">
 <c:if test="${extdbname eq CPARVUMCONTIGS || extdbname eq CHOMINISCONTIGS}">

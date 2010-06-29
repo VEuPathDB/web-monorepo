@@ -423,6 +423,14 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${species ne 'falciparum' || (species eq 'falciparum' && attrs['annotation_status'].value ne 'new' &&attrs['annotation_status'].value ne 'new_organellar')}">
 --%>
 
+
+
+<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+
+<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
+
+
+
 <c:if test="${binomial eq 'Plasmodium falciparum'}">
   <wdk:wdkTable tblName="Aliases" isOpen="true"
                  attribution="P.falciparum_chromosomes"/>

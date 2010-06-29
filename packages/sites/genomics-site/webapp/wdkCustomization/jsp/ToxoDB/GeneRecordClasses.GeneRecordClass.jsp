@@ -276,6 +276,10 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
   <wdk:wdkTable tblName="GoTerms" isOpen="true"
                  attribution="GO,GOAssociations,InterproscanData"/>
 
+<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+
+<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
+
 <c:set var="externalDbName" value="${attrs['external_db_name']}"/>
 <c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
 

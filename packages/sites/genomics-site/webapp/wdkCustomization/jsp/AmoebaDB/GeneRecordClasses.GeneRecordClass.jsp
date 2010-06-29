@@ -223,6 +223,11 @@ GO,InterproscanData
 <wdk:wdkTable tblName="GoTerms" isOpen="true" attribution="${attribution}"/>
 
 </c:if>
+
+<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+
+<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
+
 <%-- ORTHOMCL ------------------------------------------------------%>
 
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">

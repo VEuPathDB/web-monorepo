@@ -358,6 +358,10 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
   <wdk:wdkTable tblName="GoTerms" isOpen="true"
                attribution="GO,InterproscanData,G.lamblia_contigs"/>
 
+<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+
+<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
+
 <%-- EPITOPES ------------------------------------------------------%>
   <wdk:wdkTable tblName="Epitopes" isOpen="true"
                  attribution="IEDB_Epitopes"/>

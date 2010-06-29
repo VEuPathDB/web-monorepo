@@ -329,6 +329,10 @@ GO,InterproscanData
 
 </c:if>
 
+<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+
+<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
+
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
