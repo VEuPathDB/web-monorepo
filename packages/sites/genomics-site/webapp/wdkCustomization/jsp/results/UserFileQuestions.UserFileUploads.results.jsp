@@ -16,9 +16,25 @@
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="summaryUrl" value="${wdk_summary_url}" />
-<c:set var="commandUrl">
-    <c:url value="/processSummary.do?${wdk_query_string}" />
-</c:set>
+
+<c:set var="qsp" value="${fn:split(wdk_query_string,'&')}" />
+<c:set var="commandUrl" value="" />
+<c:forEach items="${qsp}" var="prm">
+  <c:if test="${fn:split(prm, '=')[0] eq 'strategy'}">
+    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
+  </c:if>
+  <c:if test="${fn:split(prm, '=')[0] eq 'step'}">
+    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
+  </c:if>
+  <c:if test="${fn:split(prm, '=')[0] eq 'subquery'}">
+    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
+  </c:if>
+  <c:if test="${fn:split(prm, '=')[0] eq 'summary'}">
+    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
+  </c:if>
+</c:forEach>
+    <c:set var="commandUrl" value="${commandUrl}strategy_checksum=${strategy.checksum}" />
+<c:set var="commandUrl"><c:url value="/processSummary.do?${commandUrl}" /></c:set>
 
 
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
@@ -38,6 +54,8 @@
     (step <span id="text_step_number">${strategy.length}</span>) 
     - ${wdkAnswer.resultSize} <span id="text_data_type">Files</span></td></tr></table>
 </h2>
+
+<div class='Results_Pane'>
 
 <pg:pager isOffset="true"
           scope="request"
@@ -88,9 +106,15 @@
 
 <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
+
+<%--------- RESULTS  ----------%>
+<div class="Results_Div flexigrid">
+<div class="bDiv">
+<div class="bDivBox">
+
 <table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
 <thead>
-<tr class="headerrow">
+<tr class="headerrow" val="${fn:length(wdkAnswer.records)}">
   <c:set var="j" value="0"/>
   <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
 
@@ -224,17 +248,32 @@
 </tr>
 <c:set var="i" value="${i+1}"/>
 </c:forEach>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<%--------- END OF RESULTS  ----------%>
 
-
-  <wdk:pager pager_id="bottom"/>
+  <%--------- PAGING BOTTOM BAR ----------%>
+<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<tr class="subheaderrow">
+	<th style="text-align:left;white-space:nowrap;"> 
+	       <wdk:pager pager_id="bottom"/> 
+	</th>
+	<th style="text-align:right;white-space:nowrap;">
+		&nbsp;
+	</th>
+	<th style="text-align:right;white-space:nowrap;width:5%;">
+	    &nbsp;
+	</th>
+	</tr>
+</table>
+<%--------- END OF PAGING BOTTOM BAR ----------%>
 </pg:pager>
-
+</div><!-- END OF THE RESULTS PANE -->
 
 
   </c:otherwise>
 </c:choose>
 
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table>
