@@ -10,9 +10,9 @@
 <!-- get wdkAnswer from requestScope -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="strategy" value="${requestScope.wdkStrategy}"/>
-<c:set var="step" value="${requestScope.wdkHistory}"/>
+<c:set var="step" value="${requestScope.wdkStep}"/>
 <c:set var="stepId" value="${step.stepId}"/>
-<c:set var="wdkAnswer" value="${requestScope.wdkAnswer}"/>
+<c:set var="wdkAnswer" value="${step.answerValue}"/>
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="summaryUrl" value="${wdk_summary_url}" />
