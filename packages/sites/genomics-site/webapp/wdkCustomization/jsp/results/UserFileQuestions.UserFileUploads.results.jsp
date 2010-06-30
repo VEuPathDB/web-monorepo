@@ -114,7 +114,7 @@
 
 <table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
 <thead>
-<tr class="headerrow" val="${fn:length(wdkAnswer.records)}">
+<tr class="headerrow">
   <c:set var="j" value="0"/>
   <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
 
