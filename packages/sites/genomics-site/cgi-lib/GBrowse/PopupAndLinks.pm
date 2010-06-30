@@ -613,7 +613,7 @@ my ($count) = $f->get_tag_values('Count');
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
-  push @data, [ "Link to ProtoMap", "Please click each proteomics data" ] unless !$link;
+  push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
 
   hover('Mass Spec', \@data);
 }
