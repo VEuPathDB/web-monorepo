@@ -274,6 +274,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 
 <%-- sage count percentage graph --%>
 
+  <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl" />
   <c:set var="secName1" value="Sage::Ver1"/>
 
   <c:set var="imgSrc1" value="${plotBaseUrl}?type=${secName1}&project_id=${projectId}&model=giardia&fmt=png&id=${id}"/>
