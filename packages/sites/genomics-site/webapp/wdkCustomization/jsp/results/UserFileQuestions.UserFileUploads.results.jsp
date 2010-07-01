@@ -88,12 +88,12 @@
         <th nowrap align="right">
            <%-- display a list of sortable attributes --%>
            <c:set var="addAttributes" value="${wdkAnswer.displayableAttributes}" />
-           <select id="addAttributes" onChange="addAttr('${commandUrl}')">
-               <option value="">--- Add Column ---</option>
-               <c:forEach items="${addAttributes}" var="attribute">
-                 <option value="${attribute.name}">${attribute.displayName}</option>
-               </c:forEach>
-           </select>
+           	<select id="addAttributes" style="display:none;" commandUrl="${commandUrl}" multiple="multiple">
+	               <option value="">--- Add Column ---</option>
+	               <c:forEach items="${addAttributes}" var="attribute">
+	                 <option value="${attribute.name}" title="${attribute.help}">${attribute.displayName}</option>
+	               </c:forEach>
+	           </select>
         </th>
         <th nowrap align="right" width="5%">
              &nbsp;
