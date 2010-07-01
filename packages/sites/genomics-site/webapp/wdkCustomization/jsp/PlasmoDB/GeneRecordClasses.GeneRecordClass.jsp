@@ -159,7 +159,11 @@
     <c:if test="${attrs['updated_annotation'].value != null}">
        <br>${genedb_annot_link}
     </c:if>
-    <c:if test="${fn:contains(organism,'berghei')}">
+ <%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+    <c:if test="${attrs['new_product_name'].value != null}">
+       <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
+   <c:if test="${fn:contains(organism,'berghei')}">
        <br> <a href="http://www.genedb.org/Homepage/Pberghei">New <i>P. berghei</i> assembly and annotation at GeneDB</a>
     </c:if>
 </center></h2>
@@ -422,12 +426,6 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <%-- "This if clause is redundant as the new (re) annotation has become the official annotation"
 <c:if test="${species ne 'falciparum' || (species eq 'falciparum' && attrs['annotation_status'].value ne 'new' &&attrs['annotation_status'].value ne 'new_organellar')}">
 --%>
-
-
-
-<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
-
-<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
 
 
 

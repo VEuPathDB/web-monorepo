@@ -69,6 +69,10 @@
 <h2>
 <center>
 	<wdk:recordPageBasketIcon  desc="${prd}" />
+ <%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+    <c:if test="${attrs['new_product_name'].value != null}">
+       <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
 </center>
 </h2>
 
@@ -310,11 +314,6 @@ CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
 
 
 <wdk:wdkTable tblName="Notes" isOpen="true" />
-
-
-<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
-
-<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
 
 
 <%------------------------------------------------------------------%>

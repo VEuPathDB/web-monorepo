@@ -88,6 +88,10 @@
 	<c:if test="${attrs['updated_annotation'].value != null}">
 		<br>${genedb_annot_link}
 	</c:if>
+ <%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+    <c:if test="${attrs['new_product_name'].value != null}">
+       <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
 </center>
 </h2>
 
@@ -329,9 +333,6 @@ GO,InterproscanData
 
 </c:if>
 
-<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
-
-<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
 
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>

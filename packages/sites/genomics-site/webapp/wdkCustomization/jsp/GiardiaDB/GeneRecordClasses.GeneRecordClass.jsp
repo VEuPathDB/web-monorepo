@@ -70,6 +70,10 @@
 <h2>
 <center>
 <wdk:recordPageBasketIcon  desc="${prd}" />
+ <%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+    <c:if test="${attrs['new_product_name'].value != null}">
+       <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
 </center>
 </h2>
 
@@ -358,10 +362,6 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 <%-- GO ------------------------------------------------------------%>
   <wdk:wdkTable tblName="GoTerms" isOpen="true"
                attribution="GO,InterproscanData,G.lamblia_contigs"/>
-
-<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
-
-<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
 
 <%-- EPITOPES ------------------------------------------------------%>
   <wdk:wdkTable tblName="Epitopes" isOpen="true"

@@ -67,6 +67,10 @@
 <h2>
 <center>
 	<wdk:recordPageBasketIcon desc="${prd}"/>
+ <%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+    <c:if test="${attrs['new_product_name'].value != null}">
+       <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
 </center>
 </h2>
 
@@ -219,11 +223,6 @@ GO,InterproscanData
 <wdk:wdkTable tblName="GoTerms" isOpen="true" attribution="${attribution}"/>
 
 </c:if>
-
-
-<%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
-
-<wdk:wdkTable tblName="ChangedProductName" isOpen="true"/>
 
 
 <%-- ORTHOMCL ------------------------------------------------------%>
