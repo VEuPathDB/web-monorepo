@@ -135,6 +135,7 @@
     </table>
   </c:set>
 
+  <c:set var="noData" value="false"/>
   <c:if test="${row['has_profile'].value eq '0'}">
     <c:set var="expressionContent" value="none"/>
     <c:set var="noData" value="true"/>
@@ -150,6 +151,7 @@
 <wdk:toggle
     name="${row['profile_name'].value}"
     isOpen="true"
+    noData="${noData}"
     displayName="${row['display_name'].value}"
     content="${expressionContent}"
     attribution="${row['attribution'].value}"/>
