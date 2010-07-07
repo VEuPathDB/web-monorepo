@@ -38,11 +38,11 @@
 
           <c:choose>
             <c:when test="${vp_i == 0}">
-              <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}&vp=${vp}">${vp}</OPTION>
+              <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}&vp=_LEGEND,${vp}">${vp}</OPTION>
               <c:set var="imgSrc" value="${imgSrc}&vp=_LEGEND,${vp}"/>
             </c:when>
             <c:otherwise>
-              <OPTION  VALUE="${preImgSrc}&vp=${vp}">${vp}</OPTION>
+              <OPTION  VALUE="${preImgSrc}&vp=_LEGEND,${vp}">${vp}</OPTION>
             </c:otherwise>
           </c:choose>
 
