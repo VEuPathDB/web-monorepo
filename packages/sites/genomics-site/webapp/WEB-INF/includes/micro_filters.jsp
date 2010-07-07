@@ -15,6 +15,7 @@
     <th align="center">All Results</th>
     <th align="center"><i>Encephalitozoon cuniculi </i></th>
     <th align="center"><i>Encephalitozoon intestinalis</i></th>
+    <th align="center"><i>Enterocytozoon bieneusi</i></th>
   </tr>
   <tr align="center">
     <td>
@@ -34,6 +35,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="eint_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="ebie_genes" />  
     </td>
   </tr>
 </table>
