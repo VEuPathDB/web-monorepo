@@ -56,7 +56,7 @@ return true;
 </SCRIPT>
 
 <c:set var="cgiScript" value='mavidAlign'/>
-<c:if test="${(projectId eq 'TriTrypDB') || (projectId eq 'MicrosporidiaDB')}">
+<c:if test="${(projectId eq 'TriTrypDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PlasmoDB')}">
   <c:set var="cgiScript" value='pairwiseMercator'/>
 </c:if>
 
@@ -144,6 +144,36 @@ return true;
 
      </td></tr>
 </c:if>
+
+<c:if test="${projectId eq 'PlasmoDB'}">
+
+   <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
+        <table>
+          <tr>
+          <tr>
+            <td>
+              <input type="checkbox" name="genomes" value="p_falciparum" checked>P.falciparum
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="p_vivax" checked>P.vivax
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="p_yoelii" checked>P.yoelii
+            </td>
+           </tr>
+            <td>
+              <input type="checkbox" name="genomes" value="p_berghei" checked>P.berghei
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="p_chabaudi" checked>P.chabaudi
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="p_knowlesi" checked>P.knowlesi
+            </td>
+           </tr>
+         </table>
+     </td></tr>
+</c:if>
 <c:if test="${projectId eq 'MicrosporidiaDB'}">
 
    <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
@@ -185,7 +215,7 @@ return true;
     <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
         <input type="radio" name="type" value="clustal" checked>clustal
 
-<c:if test="${(projectId ne 'TriTrypDB') || (projectId ne 'MicrosporidiaDB')}">
+<c:if test="${(projectId ne 'TriTrypDB') || (projectId ne 'MicrosporidiaDB') || (projectId ne 'PlasmoDB')}">
         <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
 </c:if>
         <input type="radio" name="type" value="fasta_ungapped">multi fasta
