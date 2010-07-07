@@ -678,7 +678,7 @@ sub blastxTitle {
 
 # TODO:  There is a link to a ToxoDB specific Database... is this needed?  can we get this from the sage tag record page?  Want to make the popup as generic as possible so all sites can use
 sub sageTagTitle { 
-  my $f            = shift;
+  my ($f, $note) = @_;
   my $name         = $f->name;
   my ($sourceId)    = $f->get_tag_values('SourceID'); 
   my $start        = $f->start; 
@@ -695,6 +695,7 @@ sub sageTagTitle {
   push @data, [ 'Location:'        => "$start..$stop" ];
   push @data, [ 'Sequence:'        => $tag ];
   push @data, [ 'Found in genome:' => $occurrence ];
+  push @data, [ 'Note:'            => $note ] if $note;
 #  push @data, [ 'Link'             => $sageDb_url];
   my $bulkEntries = $f->bulkAttributes();
   push @data, [ "<b>Library</b>" => "<b>Percent | RawCount</b>" ];
