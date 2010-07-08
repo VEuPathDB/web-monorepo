@@ -88,6 +88,10 @@
 	<c:if test="${attrs['updated_annotation'].value != null}">
 		<br>${genedb_annot_link}
 	</c:if>
+ <%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+    <c:if test="${attrs['new_product_name'].value != null}">
+       <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
 </center>
 </h2>
 
@@ -330,6 +334,7 @@ GO,InterproscanData
 </c:if>
 
 
+
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 <site:pageDivider name="Protein"/>
@@ -440,6 +445,23 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
                  content="N/A" />
             </c:otherwise>
         </c:choose>
+
+
+<c:choose>
+  <c:when test='${organismFull eq "Leishmania infantum"}'>
+     <wdk:wdkTable tblName="MassSpec" isOpen="true" 
+          attribution="Linfantum_Proteomics_glycosylation,Linfantum_Proteomics_SDS_Amastigote,Linfantum_Proteomics_OuelletteM"/>
+  </c:when>
+
+  <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
+     <wdk:wdkTable tblName="MassSpec" isOpen="true" attribution="Tbrucei_Proteomics_Procyclic_Form"/>
+  </c:when>
+
+  <c:when test='${binomial eq "Trypanosoma cruzi"}'>
+     <wdk:wdkTable tblName="MassSpec" isOpen="true" 
+          attribution="Tcruzi_Proteomics_Amastigote,Tcruzi_Proteomics_Membrane_Protein,Tcruzi_Proteomics_Reservosomes_B1TU"/>
+  </c:when>
+</c:choose>
 
 <c:set var="pdbLink">
   <br><a href="http://www.rcsb.org/pdb/smartSubquery.do?smartSearchSubtype=SequenceQuery&inputFASTA_USEstructureId=false&sequence=${attrs['protein_sequence'].value}&eCutOff=10&searchTool=blast">Search

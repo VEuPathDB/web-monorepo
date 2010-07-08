@@ -62,7 +62,7 @@
              refer="recordPage" />
 
 <a name="top"></a>
-<wdk:recordPageBasketIcon />
+
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
@@ -223,6 +223,8 @@ GO,InterproscanData
 <wdk:wdkTable tblName="GoTerms" isOpen="true" attribution="${attribution}"/>
 
 </c:if>
+
+
 <%-- ORTHOMCL ------------------------------------------------------%>
 
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
@@ -306,6 +308,18 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
                  content="N/A" />
             </c:otherwise>
         </c:choose>
+
+<%-- Expression Graphs ------------------------------------------------------%>
+
+<c:if test="${binomial eq 'Entamoeba histolytica'}">
+<site:pageDivider name="Expression"/>
+  <site:expressionGraphs species="${binomial}" model="amoeba"/>
+</c:if>
+
+
+
+
+<%-- Sequence Data ------------------------------------------------------%>
 
 <site:pageDivider name="Sequence"/>
 

@@ -87,10 +87,56 @@ function getComboElement()
         <c:set var="q" value="${qSet.questionsMap[qName]}"/>
 
         <c:set var="prefix" value="${fn:substring(q.displayName,0,4)}" />    <!-- THIS CORRESPONDS TO THE ORGANISM P.F. -->
-        <c:if test="${oldprefix != prefix && i != 1}">
+
+<c:choose>
+  <c:when test="${prefix == 'E.hi'}">    
+      <c:set var="org" value="Entamoeba histolytica"/>
+  </c:when>
+<c:when test="${prefix == 'G.i.'}">    
+      <c:set var="org" value="Giardia intestinalis"/>
+  </c:when>
+<c:when test="${prefix == 'G.l.'}">    
+      <c:set var="org" value="Giardia lamblia"/>
+  </c:when>
+<c:when test="${prefix == 'P.f.'}">    
+      <c:set var="org" value="Plasmodium falciparum"/>
+  </c:when>
+ <c:when test="${prefix == 'P.b.'}">    
+      <c:set var="org" value="Plasmodium berghei"/>
+  </c:when>
+ <c:when test="${prefix == 'P.v.'}">    
+      <c:set var="org" value="Plasmodium vivax"/>
+  </c:when>
+ <c:when test="${prefix == 'P.y.'}">    
+      <c:set var="org" value="Plasmodium yoelii"/>
+  </c:when>
+ <c:when test="${prefix == 'T.g.'}">    
+      <c:set var="org" value="Toxoplasma gondii"/>
+  </c:when>
+ <c:when test="${prefix == 'L.d.'}">    
+      <c:set var="org" value="Leishmania infantum"/>
+  </c:when>
+ <c:when test="${prefix == 'T.c.'}">    
+      <c:set var="org" value="Trypanosoma cruzi"/>
+  </c:when>
+ <c:when test="${prefix == 'T.b.'}">    
+      <c:set var="org" value="Trypanosoma brucei"/>
+  </c:when>
+<c:when test="${prefix == 'L.m.'}">    
+      <c:set var="org" value="Leishmania major"/>
+  </c:when>
+  <c:otherwise>
+       <c:set var="org" value=""/>
+</c:otherwise>
+</c:choose>
+
+    <%--    <c:if test="${oldprefix != prefix && i != 1}"> --%>
+    <c:if test="${oldprefix != prefix}">
 		</tr>
-	<%--	<tr><td colspan="${columns}" style="padding:0"><hr style="color:lightgrey"/></td></tr> --%>
+
 		<tr><td colspan="${columns+2}" style="padding:0">&nbsp;</td></tr>
+	<%--	<tr><td colspan="${columns}" style="padding:0"><hr style="color:lightgrey"/></td></tr>  --%>
+		<tr><td colspan="${columns+2}" style="padding:0"><i>${org}</i></td></tr> 
 
 		<tr>
 		<c:set var="i" value="1"/>

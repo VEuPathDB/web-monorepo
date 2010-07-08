@@ -245,7 +245,9 @@ sub massSpecBgColorFromExtDbName {
                 'Florens Life Cycle MassSpec-Trophozoites' =>'tan',
                 'Florens PIESPs MassSpec' => 'khaki',
                 'Florens Life Cycle MassSpec-Gametocytes' =>'yellow',
-                'Florens Life Cycle MassSpec-Sporozoite' => 'brown'
+                'Florens Life Cycle MassSpec-Sporozoite' => 'brown',
+                'Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection' => 'yellow',
+                'Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection' => 'orange'
                );
 
   $f = $f->parent if (! $f->get_tag_values('ExtDbName'));

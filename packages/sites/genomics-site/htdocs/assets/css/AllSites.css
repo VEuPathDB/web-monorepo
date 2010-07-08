@@ -34,62 +34,8 @@
 	margin: 0 5px 0 6px;
 }
 
-#strat-instructions {
-	background-color:#EDEDED;
-	border-color:#FFFFFF #CCCCCC #666677 #AAAAAA;
-	border-style:solid;
-	border-width:2px;
-	font-size:11pt;
-	height:49px;
-	left:125px;
-	padding:0 5px;
-	position:absolute;
-	text-align:center;
-	top:38px;
-	width:125px;
-}
-
 div#quick-search td {
   white-space: nowrap;
-}
-
-#strat-instructions img#ns-arrow{
-	height:64px;
-	margin:0 0 -56px;
-	position:relative;
-	top:-50px;
-}
-
-#strat-instructions-2 {
-	background-color:#EDEDED;
-	border-color:#FFFFFF #CCCCCC #666677 #AAAAAA;
-	border-style:solid;
-	border-width:2px;
-	font-size:11pt;
-	height:78px;
-	left:141px;
-	padding:0 5px;
-	position:absolute;
-	text-align:center;
-	top:10px;
-	width:187px;
-}
-
-#strat-instructions-2 img#ns-arrow {
-	height:46px;
-	left:-26px;
-	margin:0 0 -74px;
-	position:relative;
-	top:-57px;
-	width:45px;
-}
-
-#strat-instructions-2 img#bs-arrow {
-	height:86px;
-	left:73px;
-	margin:0 0 -79px;
-	position:relative;
-	top:-22px;
 }
 
 div.htmltooltip{

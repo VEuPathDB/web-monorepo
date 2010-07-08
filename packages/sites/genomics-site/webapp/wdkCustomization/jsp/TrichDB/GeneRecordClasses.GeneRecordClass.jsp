@@ -204,6 +204,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
                attribution="${attribution}"/>
 
 </c:if>
+
 <%-- ORTHOMCL ------------------------------------------------------%>
 
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
@@ -288,6 +289,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${i
                  content="N/A" />
             </c:otherwise>
         </c:choose>
+
+<wdk:wdkTable tblName="MassSpec" isOpen="true"
+               attribution="Hayes_Johnson_Tvag_MassSpec"/>
+
+
 
 <site:pageDivider name="Sequence"/>
 

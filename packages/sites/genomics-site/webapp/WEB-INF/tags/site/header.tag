@@ -282,7 +282,14 @@ ${headElement}
       <li>
       <a href="#">About ${siteName}<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       	<ul>
+    <c:choose>
+    <c:when test="${project == 'EuPathDB'}">
+	<li><a href="<c:url value="/aggregateNews.jsp"/>">${siteName} News</a></li>
+	</c:when>
+	<c:otherwise>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">${siteName} News</a></li>
+	</c:otherwise>
+	</c:choose>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li>
 <%-- all sites go to the Data Summary page --%>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>

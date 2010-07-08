@@ -31,18 +31,6 @@
 <c:set var="cSrt" value="contigSrt"/>
 <c:set var="oSrt" value="orfSrt"/>
 
-<%--
-<c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'EuPathDB')}">
-    <c:set var="cSrt" value="Api_contigSrt"/>
-</c:if>
---%>
-<%--
-<c:if test="${fn:containsIgnoreCase(wdkModel.displayName, 'EuPathDB')}">
-    <c:set var="gSrt" value="Api_geneSrt"/>
-    <c:set var="cSrt" value="Api_contigSrt"/>
-    <c:set var="oSrt" value="Api_orfSrt"/>
-</c:if>
---%>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
  <tr>
@@ -67,83 +55,8 @@
 
 <h3><a name="gene">Retrieve Sequences By Gene IDs</a></h3>
 
-  <form action="/cgi-bin/${gSrt}" method="post">
-    <input type="hidden" name="project_id" value="${wdkModel.name}"/>
-    <table border="0" width="100%" cellpadding="2">
-    <tr><td colspan="2" valign="top"><b>Enter a list of Gene IDs (each ID on a separate line):</b></td><tr>
-    <tr><td colspan="2">
-            <textarea name="ids" rows="4" cols="60">${genesIds.default}</textarea>
-    </td></tr>
+<site:geneSrt />
 
-    <tr><td colspan="2">
-    <b>Choose the type of sequence:</b>
-        <input type="radio" name="type" value="genomic" checked onclick="setEnable(true)">genomic
-        <input type="radio" name="type" value="protein" onclick="setEnable(false)">protein
-        <input type="radio" name="type" value="CDS" onclick="setEnable(false)">CDS
-        <input type="radio" name="type" value="processed_transcript" onclick="setEnable(false)">transcript
-    </td></tr>
-
-    <tr>
-        <td colspan="2">
-    <table id="offsetOptions" cellpadding="2">
-        <tr><td colspan="3">
-                <b>Choose the region of the sequence(s):</b>
-            </td>
-        </tr>
-        <tr>
-            <td>begin at</td>
-            <td align="left">
-		<select name="upstreamAnchor">
-                    <option value="Start">Start</option>
-                    <!--
-                    <option value="cStart" selected>translation start (ATG)</option>
-                    <option value="cEnd">translation stop codon</option>
-                    -->
-                    <option value="End">Stop</option>
-                </select>
-            </td>
-            <td align="left">
-                <select name="upstreamSign">
-		    <option value="plus" selected>+</option>
-                    <option value="minus">-</option>
-                </select>
-	    </td>
-            <td align="left">
-                <input id="upstreamOffset" name="upstreamOffset" value="0" size="6"/> nucleotides
-            </td>
-        </tr>
-        <tr>
-            <td>end at</td>
-            <td align="left">
-		<select name="downstreamAnchor">
-                    <option value="Start">Start</option>
-                    <!--
-                    <option value="cStart">translation start (ATG)</option>
-                    <option value="cEnd" selected>translation stop codon</option>
-                    -->
-                    <option value="End" selected>Stop</option>
-                </select>
-            </td>
-            <td align="left">
-                <select name="downstreamSign">
-		    <option value="plus" selected>+</option>
-                    <option value="minus">-</option>
-                </select>
-	    </td>
-            <td align="left">
-                <input id="downstreamOffset" name="downstreamOffset" value="0" size="6"> nucleotides
-            </td>
-        </tr>
-       </table></td></tr>
-
-    <tr><td valign="top" nowrap><b>Download Type</b>:
-            <input type="radio" name="downloadType" value="text">Save to File</input>
-            <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
-        </td></tr>
-
-      <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
-    </table>
-  </form>
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
 <hr>

@@ -159,7 +159,11 @@
     <c:if test="${attrs['updated_annotation'].value != null}">
        <br>${genedb_annot_link}
     </c:if>
-    <c:if test="${fn:contains(organism,'berghei')}">
+ <%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
+    <c:if test="${attrs['new_product_name'].value != null}">
+       <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
+   <c:if test="${fn:contains(organism,'berghei')}">
        <br> <a href="http://www.genedb.org/Homepage/Pberghei">New <i>P. berghei</i> assembly and annotation at GeneDB</a>
     </c:if>
 </center></h2>
@@ -423,6 +427,8 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${species ne 'falciparum' || (species eq 'falciparum' && attrs['annotation_status'].value ne 'new' &&attrs['annotation_status'].value ne 'new_organellar')}">
 --%>
 
+
+
 <c:if test="${binomial eq 'Plasmodium falciparum'}">
   <wdk:wdkTable tblName="Aliases" isOpen="true"
                  attribution="P.falciparum_chromosomes"/>
@@ -463,7 +469,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value}"/>
 
   <c:if test="${species eq 'falciparum'}">
-      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
+      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+PfBowyerMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
   </c:if>
   <c:if test="${species eq 'berghei'}">
       <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=WatersMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
@@ -566,7 +572,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
   <c:if test="${binomial eq 'Plasmodium falciparum'}">
       <wdk:wdkTable tblName="MassSpec" isOpen="true"
-                    attribution="FlorensMassSpecData2002,FlorensMassSpecData2004"/>
+                    attribution="Waters_female_gametes,Waters_male_gametes,Waters_mixed_gametes,Pyoelii_LiverStage_LS40,Pyoelii_LiverStage_LS50,FlorensMassSpecData2002,FlorensMassSpecData2004,Pf_Merozoite_Peptides,Lasonder_Mosquito_Oocysts,Lasonder_Mosquito_oocyst_derived_sporozoites,Lasonder_Mosquito_salivary_gland_sporozoites,P.falciparum_Clinical_Proteomics,Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection,Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection,P.vivax_Clinical_Proteomics"/>
   </c:if>
 
   <c:if test="${binomial eq 'Plasmodium berghei'}">

@@ -124,7 +124,7 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
 		 <i>Specific-Organism Site News temporarily unavailable</i><br>
 	</c:if>
 
-	 <a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News</a>
+	 <a style="margin-left: 0px" href="<c:url value="/aggregateNews.jsp"/>">All ${project} News</a>
 
 </c:if>
 

@@ -46,7 +46,7 @@
     <td class="mythStyle" title="Strain">Strain</td>
     <td class="mythStyle" title="Provided by Data Source">Genome<br>Version</td>
     <td class="mythStyle" title="Data Source">Data<br>Source</td>
-    <td class="mythStyle" title="Size in Mega bases">Available<br>Base Pairs</td>
+    <td class="mythStyle" title="Size in Mega bases">Available<br>MegaBase Pairs</td>
     <td class="mythStyle" title="Gene Count">Gene<br>Count</td>
     <td class="mythStyle" title="For the species that we have multiple strains, the row represents the main strain. Please mouseover the red dot to read the additional strains we cover">Multiple<br>Strains</td>
  <%--   <td class="mythStyle" title="Additional Strains">Additional<br>Strains</td>    --%>

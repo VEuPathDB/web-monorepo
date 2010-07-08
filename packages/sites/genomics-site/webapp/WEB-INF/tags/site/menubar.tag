@@ -31,7 +31,6 @@
 </c:otherwise>
 </c:choose>
 <c:set var="basketCount" value="${wdkUser.basketCount}"/>
-
 <div id="menubar">
 
 <div id="menu">
@@ -66,10 +65,10 @@
   <c:otherwise>
     <c:choose>
       <c:when test="${refer == 'customSummary'}">
-    	<li><a id="mybasket" onclick="showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount['GeneRecordClasses.GeneRecordClass']})</span></a></li>
+    	<li><a id="mybasket" onclick="showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
       </c:when>
       <c:otherwise>
-    	<li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount['GeneRecordClasses.GeneRecordClass']})</span></a></li>
+    	<li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
       </c:otherwise>
     </c:choose>
   </c:otherwise>

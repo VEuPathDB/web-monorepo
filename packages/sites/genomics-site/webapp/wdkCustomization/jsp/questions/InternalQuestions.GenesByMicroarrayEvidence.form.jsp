@@ -4,6 +4,20 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
+<c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
+
+<%-- QUESTIONS --%>
+<c:set var="amoebaQuestions" value="GeneQuestions.GenesByEHistolyticaExpressionTiming" />
+
+
+ <c:choose>
+    <c:when test="${projectId == 'AmoebaDB'}">
+        <jsp:forward page="/showQuestion.do?questionFullName=${amoebaQuestions}" /> 
+    </c:when>
+    <c:otherwise>
+
+
 ${Question_Header}
 
 <!-- get wdkModel saved in application scope -->
@@ -23,7 +37,7 @@ ${Question_Header}
 
 <c:set var="plasmoQuestions" value="GeneQuestions.GenesByExpressionTiming,InternalQuestions.GenesByIntraerythrocyticExpression,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByCowmanSir2FoldChange,GeneQuestions.GenesByCowmanSir2Percentile,GeneQuestions.GenesBySuCqPage,GeneQuestions.GenesBySuCqPercentile,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming" />
 
-<c:set var="toxoQuestions" value="GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.ToxoGenesByExpressionPercentile,GeneQuestions.GenesByTimeSeriesFoldChangeBradyRoos,GeneQuestions.GenesByTimeSeriesFoldChangeBradyFl,GeneQuestions.GenesByTimeSeriesFoldChangeBradyBoothroyd,GeneQuestions.ToxoGenesByDifferentialMeanExpression" />
+<c:set var="toxoQuestions" value="GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.GenesByTimeSeriesFoldChangeBradyRoos,GeneQuestions.GenesByTimeSeriesFoldChangeBradyFl,GeneQuestions.GenesByTimeSeriesFoldChangeBradyBoothroyd,GeneQuestions.ToxoGenesByDifferentialMeanExpression,GeneQuestions.ToxoGenesByExpressionPercentile" />
 
 <c:set var="tritrypQuestions" value="GeneQuestions.GenesByPromastigoteTimeSeries,GeneQuestions.GenesByExpressionPercentileLinfantum,GeneQuestions.GenesByMicroArrPaGETcruzi,GeneQuestions.GenesByExpressionPercentileTcruzi,GeneQuestions.GenesByTbruceiTimeSeries,GeneQuestions.GenesByExpressionPercentileTbrucei,GeneQuestions.GenesByMicroArrPaGETbrucei,GeneQuestions.GenesByExpressionPercentileBrucei5stg,GeneQuestions.GenesByMicroArr_TbDRBD3,GeneQuestions.GenesByMicroArrPaGELmajor" />
 
@@ -40,7 +54,7 @@ ${Question_Header}
     <site:queryList3 columns="${columns}" questions="${giardiaQuestions}"/>
   </c:when>
   <c:when test = "${project == 'EuPathDB'}">
-    <site:queryList3 columns="${columns}" questions="${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
+    <site:queryList3 columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
   </c:when>
   <c:when test = "${project == 'PlasmoDB'}">
     <site:queryList3  columns="${columns}"  questions="${plasmoQuestions}"/>
@@ -55,5 +69,10 @@ ${Question_Header}
     </table>
   </center>
 </div>
+
+
+ </c:otherwise>
+</c:choose>
+
 
 ${Question_Footer}

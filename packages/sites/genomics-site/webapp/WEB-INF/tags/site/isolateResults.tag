@@ -60,7 +60,7 @@
 
 <c:if test="${strategy != null}">
     <wdk:filterLayouts strategyId="${strategy.strategyId}" 
-                       stepId="${wdkHistory.stepId}"
+                       stepId="${wdkStep.stepId}"
                        answerValue="${wdkAnswer}" />
 </c:if>
 
@@ -100,9 +100,9 @@
     </c:choose>
     <c:if test="${recHasBasket}"><a style="font-size:120%" href="javascript:void(0)" onClick="${basketClick}"><b>Add Results to Basket</b></a>&nbsp;|&nbsp;</c:if>
    </c:if>
-    <a style="font-size:120%" href="downloadStep.do?step_id=${wdkHistory.stepId}"><b>Download Results</b></a>
+    <a style="font-size:120%" href="downloadStep.do?step_id=${wdkStep.stepId}"><b>Download Results</b></a>
   <c:if test="${!empty sessionScope.GALAXY_URL}">
-    &nbsp;|&nbsp;<a href="downloadStep.do?step_id=${wdkHistory.stepId}&wdkReportFormat=tabular"><b>SEND TO GALAXY</b></a>
+    &nbsp;|&nbsp;<a href="downloadStep.do?step_id=${wdkStep.stepId}&wdkReportFormat=tabular"><b>SEND TO GALAXY</b></a>
   </c:if>
   </div>
 </td>
@@ -321,7 +321,7 @@
 	          <c:set var="basket_img" value="basket_color.png"/>
                   <c:set var="basketTitle" value="Click to remove this item from the basket." />
                 </c:if>
-                <c:set var="basketClick" value="updateBasket(this, 'single', '${primaryKey.value}', '${projectId}', '${recNam}')" />
+                <c:set var="basketClick" value="updateBasket(this, 'single', '${primaryKey.value}', '${modelName}', '${recordName}')" />
               </c:when>
               <c:otherwise>
                 <c:set var="basketTitle" value="Please log in to use the basket." />

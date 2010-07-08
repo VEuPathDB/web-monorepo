@@ -311,6 +311,7 @@ CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
 
 <wdk:wdkTable tblName="Notes" isOpen="true" />
 
+
 <%------------------------------------------------------------------%>
 <c:set var="content">
 <c:if test="${extdbname eq CPARVUMCONTIGS || extdbname eq CHOMINISCONTIGS}">
@@ -424,7 +425,10 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 
 </c:if>
 
-
+<c:if test="${organism eq parvumOrganism}">
+<wdk:wdkTable tblName="MassSpec" isOpen="true"
+               attribution="Wastling1DGelLSMassSpec,Wastling2DGelLSMassSpec,WastlingMudPitSolMassSpec,WastlingMudPitInsolMassSpec,CryptoLoweryLCMSMSInsolExcystedMassSpec,CryptoLoweryLCMSMSInsolNonExcystedMassSpec,CryptoLoweryLCMSMSSolMassSpec,Ferrari_Proteomics_LTQ_Oocyst_walls,Ferrari_Proteomics_LTQ_intact_oocysts_merged,Ferrari_Proteomics_LTQ_Sporozoites_merged,Fiser_Proteomics_16May2006_1D_gel,Fiser_Proteomics_24Jun2006_1D_gel,Fiser_Proteomics_14Aug2006_1D_gel,Crypto_Proteomics_from_Lorenza_Putignani"/>
+</c:if>
 
 <c:set var="pdbLink">
   <br><a href="http://www.rcsb.org/pdb/smartSubquery.do?smartSearchSubtype=SequenceQuery&inputFASTA_USEstructureId=false&sequence=${attrs['protein_sequence'].value}&eCutOff=10&searchTool=blast">Search

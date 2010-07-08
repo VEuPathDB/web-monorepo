@@ -12,14 +12,15 @@
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
 
-	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens</b> (<i>Cryptosporidium</i>,  <i>Encephalitozoon</i>, <i>Entamoeba</i>, <i>Giardia</i>, <i>Leishmania</i>, <i>Neospora</i>, <i>Plasmodium</i>, <i>Toxoplasma</i>, <i>Trichomonas</i> and <i>Trypanosoma</i>).
+	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens</b> (<i>Cryptosporidium</i>,  <i>Encephalitozoon</i>, <i>Entamoeba</i>, <i>Enterocytozoon</i>, <i>Giardia</i>, <i>Leishmania</i>, <i>Neospora</i>, <i>Plasmodium</i>, <i>Toxoplasma</i>, <i>Trichomonas</i> and <i>Trypanosoma</i>).
 	<br>
 
 	<table class="center" style="padding:2px;" width="95%"><tr>
-	<td align="center" width="12.5%"><a href="http://amoebadb.org"><img border=0 src="/assets/images/newSite.png" width="55" alt="AmoebaDB logo"></a></td>
+<%--	<td align="center" width="12.5%"><a href="http://amoebadb.org"><img border=0 src="/assets/images/newSite.png" width="55" alt="AmoebaDB logo"></a></td> --%>
+	<td align="center" width="12.5%"><a href="http://amoebadb.org"><img border=0 src="/assets/images/AmoebaDB/amoebadb_w50.png" alt="AmoebaDB logo"></a></td>
 	<td align="center" width="12.5%"><a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb_w50.png" alt="CryptoDB logo"></a></td>
         <td align="center" width="12.5%"><a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb_w50.png" alt="GiardiaDB logo"></a></td>
-        <td align="center" width="12.5%"><a href="http://microsporidiadb.org"><img border=0 src="/assets/images/newSite.png" width="55" alt="MicrosporidiaDB logo"></a></td>
+        <td align="center" width="12.5%"><a href="http://microsporidiadb.org"><img border=0 src="/assets/images/MicrosporidiaDB/microdb_w50.png" alt="MicrosporidiaDB logo"></a></td>
         <td align="center" width="12.5%"><a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb_w50.png" alt="PlasmoDB logo"></a></td>
         <td align="center" width="12.5%"><a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb_w50.png" alt="ToxoDB logo"></a></td>
         <td align="center" width="12.5%"><a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb_w65.png" alt="TrichDB logo"></a></td>

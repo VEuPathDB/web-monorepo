@@ -515,6 +515,11 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
    Sequence and annotations from Patrick Keeling(pkeeling@interchange.ubc.ca)at Canadian Institute for Advanced Research, Evolutionary Biology Program, Department of Botany, University of British Columbia. Please note that the <i>E. intestinalis</i> genome sequence has not yet been published. You are welcome to browse this data and use information on individual genes for your research ... but using this site constitutes your implicit agreement to refrain from genome-wide analysis pending publication of the <i>E. intestinalis</i> genome. Please contact Patrick Keeling (pkeeling@interchange.ubc.ca) with any questions.
   </c:set>
 </c:when>
+<c:when test="${fn:contains(organism,'Enterocytozoon bieneusi H348') && projectId eq 'MicrosporidiaDB'}">
+  <c:set var="reference">
+   Sequence and annotations from Genbank for Enterocytozoon bieneusi H348 contigs.
+  </c:set>
+</c:when>
 <c:otherwise>
     <c:set var="reference">
   <b>ERROR: can't find attribution information for organism "${organism}",

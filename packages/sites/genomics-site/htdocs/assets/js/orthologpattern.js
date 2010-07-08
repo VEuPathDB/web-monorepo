@@ -16,11 +16,11 @@ function initOrthologQuestion(url){
 	$("form#form_question input:hidden[name='myProp(profile_pattern)']").attr('value',pattern);
 
 	for (var i = 0, len = include.length; i < len; ++i) {
-		$("form#form_question div.params td b:contains(" + include[i] + ")").parent().find("a").click();
+		$("form#form_question div.params td code:contains(" + include[i] + ")").parent().find("a").click();
 	}
 
 	for (var i = 0, len = exclude.length; i < len; ++i) {
-		$("form#form_question div.params td b:contains(" + exclude[i] + ")").parent().find("a").click().click();
+		$("form#form_question div.params td code:contains(" + exclude[i] + ")").parent().find("a").click().click();
 	}
 }
 
