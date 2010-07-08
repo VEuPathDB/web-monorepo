@@ -469,6 +469,12 @@
       name="questionForm"
       validate="false">
     </action>
+    <action path="/wizard"
+      type="org.gusdb.wdk.controller.action.WizardAction"
+      scope="request"
+      validate="false">
+      <forward name="show_wizards" path="/wdk/jsp/wizard/wizards.jsp"/>
+    </action>
   </action-mappings>
 
   <controller maxFileSize="10M" />
