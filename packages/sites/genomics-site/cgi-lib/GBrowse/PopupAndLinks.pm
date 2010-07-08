@@ -68,6 +68,12 @@ sub ArrayElementLink {
   return $link;
 }
 
+sub snpLink {
+  my $f = shift;
+  my $name = $f->name;
+  my $link = "/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$name";
+  return $link;
+}
 
 #--------------------------------------------------------------------------------
 #  Methods for Titles (Popups)
