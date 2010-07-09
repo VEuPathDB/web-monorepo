@@ -305,7 +305,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
     content="${expressionContent}"
     name="SageCountPct"
     isOpen="true"
-    attribution="Giardia_SageTag_Count_percentages"/>
+    attribution="GiardiaSageTagArrayDesign,GiardiaSageTagFreqs"/>
 
 <%-- SAGE tags ------------------------------------------------------%>
 
