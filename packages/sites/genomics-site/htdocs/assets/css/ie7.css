@@ -67,6 +67,13 @@
 	z-index: -1;
 }
 
+.operation.INTERSECT,
+.operation.MINUS,
+.operation.RMINUS,
+.operation.UNION {
+	height: 27px;
+}
+
 a.redbutton {
 	z-index: -1;
 }
