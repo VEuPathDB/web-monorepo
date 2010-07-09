@@ -25,6 +25,7 @@
 
 <site:header title="${wdkModel.displayName} : SNP ${id}"
              banner="SNP ${id}"
+             refer="recordPage"
              divisionName="SNP Record"
              division="queries_tools"/>
 

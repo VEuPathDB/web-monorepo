@@ -16,6 +16,7 @@
 <site:header title="${wdkModel.displayName} : Assembly ${id}"
              divisionName="Assembly Record"
              division="queries_tools"
+             refer="recordPage"
              summary="EST Assembly Record"/>
 
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />

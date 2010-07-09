@@ -29,6 +29,7 @@
 
 <site:header title="${id}"
              divisionName="Genomic Sequence Record"
+             refer="recordPage"
              division="queries_tools"/>
 
 <c:choose>

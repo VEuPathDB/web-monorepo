@@ -25,6 +25,7 @@
 
 <site:header title="${wdkModel.displayName} : EST ${id}"
              divisionName="EST Record"
+             refer="recordPage"
              division="queries_tools"/>
 
 

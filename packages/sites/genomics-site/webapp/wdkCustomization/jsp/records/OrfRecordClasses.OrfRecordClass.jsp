@@ -24,6 +24,7 @@
 </c:catch>
 
 <site:header title="${id}"
+             refer="recordPage"
              divisionName="${recordType} Record"
              division="queries_tools"/>
 

@@ -24,6 +24,7 @@
 
 <site:header title="${wdkRecord.primaryKey}"
              divisionName="Sage Tag Record"
+             refer="recordPage"
              division="queries_tools"/>
 
 <c:choose>
