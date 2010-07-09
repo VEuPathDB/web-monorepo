@@ -760,6 +760,11 @@ div#menu ul ul ul li:hover ul {
 
 #queryGrid td {
 	padding: 1px;
+	vertical-align: top;
+}
+
+#queryGrid .queryGridBullet, #queryGrid .queryGridLink, #queryGrid .queryGridIcons {
+	vertical-align: middle;
 }
 
 .innertube2{
