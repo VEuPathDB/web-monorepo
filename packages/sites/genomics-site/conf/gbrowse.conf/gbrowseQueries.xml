@@ -4570,7 +4570,8 @@ ORDER BY
   <sql>
 <![CDATA[
 SELECT * FROM (
-SELECT fl.na_feature_id feature_id,
+SELECT /*+ ordered */
+       fl.na_feature_id feature_id,
        'gap' type,
        'syntenyGap' source,
        fl.na_feature_id name,
@@ -4586,14 +4587,10 @@ SELECT fl.na_feature_id feature_id,
         '0' strand,
         'Type=sgap' atts
 FROM    apidb.synteny syn,
-        apidb.syntenyAnchor anch_left,
         apidb.syntenyAnchor anch_right,
-        sres.externaldatabaserelease edr,
-        sres.externaldatabase ed,
-        apidb.featurelocation fl
-WHERE  edr.external_database_id = ed.external_database_id 
-   AND syn.external_database_release_id = edr.external_database_release_id
-   AND syn.a_na_sequence_id = $srcfeature_id
+        apidb.featurelocation fl,
+        apidb.syntenyAnchor anch_left
+WHERE  syn.a_na_sequence_id = $srcfeature_id
    AND syn.a_start <= $rend
    AND syn.a_end >= $base_start
    AND anch_left.synteny_id = syn.synteny_id
