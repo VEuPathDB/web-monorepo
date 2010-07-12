@@ -836,6 +836,7 @@ sub interproTitle {
   my ($db) = $f->get_tag_values("Db");
   my ($url) = $f->get_tag_values("Url");
   my ($evalue) = $f->get_tag_values("Evalue");
+  my ($interproId) = $f->get_tag_values("InterproId");
   $evalue = sprintf("%.2E", $evalue);
   my @data;
   push @data, [ 'Accession:'  => $name ];
@@ -843,6 +844,7 @@ sub interproTitle {
   push @data, [ 'Database:'  => $db ];
   push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
   push @data, [ 'Evalue:' => $evalue ];
+  push @data, [ 'Interpro:' => $interproId ];
   hover("InterPro Domain: $name", \@data);
 }
 

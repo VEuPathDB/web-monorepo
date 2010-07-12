@@ -573,37 +573,43 @@ SELECT df.aa_feature_id feature_id,
        dr.primary_identifier name, 
        df.score score, 
        df.parent_id parent_id, 
-       min(aal.start_min) startm, 
-       max(aal.end_max) end, 
+       al.start_min startm, 
+       al.end_max end, 
        'Note=' || dr.secondary_identifier || ' ' || dr.remark || '$dlm' || 
-       'Db=' || ed.name || '$dlm' || 
+       'Db=' || xd1.name || '$dlm' || 
+       'InterproId=' || df2.source_id || '$dlm' || 
        'Evalue=' || df.e_value || '$dlm' || 
        'Pi=' || dr.primary_identifier atts
-FROM   dots.DomainFeature df, 
-       dots.DbRefAaFeature draf, 
-       dots.AaLocation aal, 
-       sres.DbRef dr, 
-       sres.ExternalDatabaseRelease edr, 
-       sres.ExternalDatabase ed, 
-       core.AlgorithmInvocation ainv, 
-       core.AlgorithmImplementation aimp 
-WHERE  df.aa_sequence_id = $srcfeature_id and 
-       aal.end_max > $base_start and 
-       aal.start_min < $rend and 
-       aal.aa_feature_id = df.aa_feature_id and 
-       df.aa_feature_id = draf.aa_feature_id and 
-       draf.db_ref_id = dr.db_ref_id and 
-       dr.external_database_release_id = edr.external_database_release_id and 
-       edr.external_database_id = ed.external_database_id and 
-       df.row_alg_invocation_id = ainv.algorithm_invocation_id and 
-       ainv.algorithm_implementation_id = aimp.algorithm_implementation_id and 
-       aimp.executable = 'ApiCommonData::Load::Plugin::InsertInterproscanResults' 
-       GROUP BY df.aa_feature_id, 'domain', 'interpro', dr.primary_identifier, 
-                df.score, df.parent_id, '.', 
-                'Note=' || dr.secondary_identifier || ' ' || dr.remark || '$dlm' || 
-                'Db=' || ed.name || '$dlm' || 
-                'Evalue=' || df.e_value || '$dlm' ||
-                'Pi=' || dr.primary_identifier 
+             from
+             dots.aalocation al,
+             sres.externaldatabaserelease xdr1,
+             sres.externaldatabase xd1,
+             sres.externaldatabaserelease xdr3,
+             sres.externaldatabase xd3,
+             sres.dbref dr,
+             dots.DbRefAAFeature draf,
+             dots.domainfeature df,
+             dots.genefeature gf,
+             dots.transcript t,
+             dots.translatedaafeature taf,
+             dots.translatedaasequence tas,
+             dots.domainfeature df2
+             where  df.aa_sequence_id = $srcfeature_id 
+             and al.end_max > $base_start
+             and al.start_min < $rend 
+             and xd3.name = 'INTERPRO'
+             and gf.na_feature_id = t.parent_id
+             and t.na_feature_id = taf.na_feature_id
+             and taf.aa_sequence_id = tas.aa_sequence_id
+             and tas.aa_sequence_id = df.aa_sequence_id
+             and df.aa_feature_id = draf.aa_feature_id
+             and df.aa_feature_id = al.aa_feature_id
+             and draf.db_ref_id = dr.db_ref_id
+             and dr.external_database_release_id = xdr1.external_database_release_id
+             and xdr1.external_database_id = xd1.external_database_id
+             and df.external_database_release_id = xdr3.external_database_release_id
+             and xdr3.external_database_id = xd3.external_database_id
+             and df.parent_id = df2.aa_feature_id (+)
       ]]> 
       </sql>
   </sqlQuery>
@@ -705,7 +711,7 @@ ORDER BY aal.start_min
       </sql>
     </sqlQuery>
 
--->
+
 
     <sqlQuery name="domain:interpro:bulksubfeatures">
       <sql>
@@ -744,6 +750,8 @@ WHERE
 ]]>
       </sql>
     </sqlQuery>
+
+-->
 
     <sqlQuery name="match:BLASTP:subfeatures">
     <testParamValues project="TriTrypDB">
