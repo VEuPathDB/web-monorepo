@@ -219,6 +219,7 @@ function tt_EvY(t_e)
 	else if(t_y > ylim || !tt_sub && t_y > ylim-24)
 	{
 		t_y -= (tt_objH + 5);
+		t_y = (t_y < 0) ? 0 : t_y;
 		tt_sub = false;
 	}
 	else
