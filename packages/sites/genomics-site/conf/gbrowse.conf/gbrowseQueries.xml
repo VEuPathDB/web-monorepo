@@ -4587,8 +4587,8 @@ SELECT /*+ ordered */
         '0' strand,
         'Type=sgap' atts
 FROM    apidb.synteny syn,
-        apidb.syntenyAnchor anch_right,
         apidb.featurelocation fl,
+        apidb.syntenyAnchor anch_right,
         apidb.syntenyAnchor anch_left
 WHERE  syn.a_na_sequence_id = $srcfeature_id
    AND syn.a_start <= $rend
