@@ -272,41 +272,6 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <site:expressionGraphs species="${binomial}" model="giardia"/>
 
 
-<%-- sage count percentage graph --%>
-
-  <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl" />
-  <c:set var="secName1" value="Sage::Ver1"/>
-
-  <c:set var="imgSrc1" value="${plotBaseUrl}?type=${secName1}&project_id=${projectId}&model=giardia&fmt=png&id=${id}"/>
-
-  <c:set var="expressionContent">
-    <table border=0>
-      <tr>
-        <td class="centered">
-              <img src="${imgSrc1}">
-        </td>
-        <td class="centered">
-          <div class="small">
-          <b><i>Giardia lamblia</i> SAGE Tags counts</b>:  
-          </div>
-        </td>
-        <td class="centered"><image src="<c:url value="/images/spacer.gif"/>" height="150" width="150"></td>
-      </tr>
-
-    </table>
-  </c:set>
-
-  <c:if test="${attrs['graph_sage_pct'].value == 0}">
-    < c:set var="expressionContent" value="none"/>
-  </c:if>
-
-<wdk:toggle
-    displayName="<i>Giardia lamblia</i> SAGE Tags Counts"
-    content="${expressionContent}"
-    name="SageCountPct"
-    isOpen="true"
-    attribution="GiardiaSageTagArrayDesign,GiardiaSageTagFreqs"/>
-
 <%-- SAGE tags ------------------------------------------------------%>
 
 <wdk:wdkTable tblName="SageTags" isOpen="true"
