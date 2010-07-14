@@ -645,7 +645,6 @@ SELECT fl.na_feature_id as feature_id,
        fl.end_max end, 
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'SourceID=' || sta.feature_source_id || '$dlm' ||
-       'RawCount=' || staa.raw_count || '$dlm' ||
        'Sequence=CATG' || staa.sequence || '$dlm' ||
        'Occurrence=' || staa.occurrence atts
 FROM   apidb.FeatureLocation fl,
