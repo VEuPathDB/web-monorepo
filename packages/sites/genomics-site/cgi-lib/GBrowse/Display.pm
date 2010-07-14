@@ -320,9 +320,13 @@ sub simpleColorFromSoTerm {
 }
 
 sub colorFromBinaryColor {
-  my ($f, $first, $second) = @_;
+  my ($f, $first, $second, $third) = @_;
   my ($binColor) = $f->get_tag_values('binaryColor');
-  $binColor == 1 ? $second : $first;
+  if(!$third) {
+    $binColor == 1 ? $second : $first; 
+  } else {
+    $binColor == 1 ? $second : ($f->strand == +1 ? $first : $third); 
+  }
 }
 
 sub colorForSpliceSites {
