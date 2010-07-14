@@ -645,6 +645,7 @@ SELECT fl.na_feature_id as feature_id,
        fl.end_max end, 
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'SourceID=' || sta.feature_source_id || '$dlm' ||
+       'RawCount=' || staa.raw_count || '$dlm' ||
        'Sequence=CATG' || staa.sequence || '$dlm' ||
        'Occurrence=' || staa.occurrence atts
 FROM   apidb.FeatureLocation fl,
@@ -670,6 +671,19 @@ WHERE  fl.feature_type ='SAGETagFeature'
            $base_start        as startm,
            $rend              as end 
   FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="DGE:coverage"  includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+    SELECT $$sample$$  as feature_id,
+          'DGE'        as type, 
+          '$source'    as source,
+           $base_start as startm,
+           $rend       as end 
+    FROM   dual 
        ]]>
     </sql>
   </sqlQuery>
@@ -5503,6 +5517,33 @@ WHERE fl.na_sequence_id = $srcfeature_id
   AND var.parent_id = fl.na_feature_id
  ORDER BY var.strain
  
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="DGE:coverage:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+SELECT fl.na_feature_id as feature_id,
+       'DGE' type, 
+       '$source' source, 
+       sta.source_id name, 
+       $$sample$$ parent_id, 
+       CASE WHEN staa.occurrence > 1 THEN -(staa.raw_count)
+       ELSE staa.raw_count END score,
+       fl.start_min startm, 
+       fl.end_max end, 
+       'binaryColor='||CASE WHEN staa.occurrence > 1 THEN 1 ELSE 0 END atts
+FROM   apidb.FeatureLocation fl,
+       apidb.sagetaganalysisattributes staa,
+       apidb.sagetagattributes sta
+WHERE  fl.feature_type ='SAGETagFeature'
+  AND  fl.na_sequence_id = $srcfeature_id 
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+  AND  fl.na_feature_id = sta.na_feature_id
+	AND  staa.library_name = $$libName$$
+  AND  to_number(fl.feature_source_id) = staa.composite_element_id
 ]]>
     </sql>
   </sqlQuery>
