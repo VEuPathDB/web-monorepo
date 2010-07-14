@@ -163,6 +163,13 @@ sub sageTagFgColor {
   }
 }
 
+sub sageTagUniqueMapFgColor { 
+  my $f            = shift;
+  my $strand       = $f->strand; 
+  my ($occurrence) = $f->get_tag_values('Occurrence'); 
+	return "grey" if ($occurrence > 1);
+	($strand eq "+1") ? "blue" : "darkred";
+}
 
 sub massSpecBgColorFromExtDbName {
   my $f = shift;
