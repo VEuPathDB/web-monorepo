@@ -40,14 +40,15 @@ function writeData(page, div, quesName, insertStep){
 			var qa = $("div#attributions-section", q);
 			var qops = "";
 			
-			$("#" + div).html(qt);
+			t.html(qt);
 document.getElementById(div).innerHTML = "<h1>" + quesName + "</h1><br/>";
-			$("#" + div).append(qf);
-			$("#" + div).append(qops);
+			t.append(qf);
+			t.append(qops);
  document.getElementById(div).innerHTML += "<hr/>"
-			$("#" + div).append(qd);
+			t.append(qd);
 document.getElementById(div).innerHTML += "<hr/>"
-			$("#" + div).append(qa);
+			t.append(qa);
+			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
 			htmltooltip.render();
 			initParamHandlers(true);
 			var question = new WdkQuestion();
