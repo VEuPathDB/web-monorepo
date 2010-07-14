@@ -5529,8 +5529,8 @@ SELECT fl.na_feature_id as feature_id,
        '$source' source, 
        sta.source_id name, 
        $$sample$$ parent_id, 
-       CASE WHEN staa.occurrence > 1 THEN -(staa.raw_count)
-       ELSE staa.raw_count END score,
+       CASE WHEN staa.occurrence > 1 THEN -(log(2,staa.raw_count))
+       ELSE log(2,staa.raw_count) END score,
        fl.start_min startm, 
        fl.end_max end, 
        'binaryColor='||CASE WHEN staa.occurrence > 1 THEN 1 ELSE 0 END atts
