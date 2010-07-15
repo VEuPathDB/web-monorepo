@@ -656,6 +656,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.end_max >= $base_start
   AND  fl.na_feature_id = sta.na_feature_id
   AND  to_number(fl.feature_source_id) = staa.composite_element_id
+  AND  staa.raw_count > $$rawCount$$
 )
 ]]>
     </sql>
