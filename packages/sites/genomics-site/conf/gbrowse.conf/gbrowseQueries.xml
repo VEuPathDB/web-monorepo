@@ -656,7 +656,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.end_max >= $base_start
   AND  fl.na_feature_id = sta.na_feature_id
   AND  to_number(fl.feature_source_id) = staa.composite_element_id
-  AND  staa.raw_count > $$rawCount$$
 )
 ]]>
     </sql>
@@ -5529,8 +5528,10 @@ SELECT fl.na_feature_id as feature_id,
        '$source' source, 
        sta.source_id name, 
        $$sample$$ parent_id, 
-       CASE WHEN staa.occurrence > 1 THEN -(log(2,staa.tag_count))
-       ELSE log(2,staa.tag_count) END score,
+       CASE WHEN staa.occurrence > 1 
+            THEN decode(log(2,staa.tag_count),0,-0.5,-(log(2,staa.tag_count)))
+            ELSE decode(log(2,staa.tag_count),0,0.5,log(2,staa.tag_count))
+       END score,
        fl.start_min startm, 
        fl.end_max end, 
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
