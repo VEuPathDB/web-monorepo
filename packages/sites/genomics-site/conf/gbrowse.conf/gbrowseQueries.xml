@@ -5529,8 +5529,8 @@ SELECT fl.na_feature_id as feature_id,
        sta.source_id name, 
        $$sample$$ parent_id, 
        CASE WHEN staa.occurrence > 1 
-            THEN decode(log(2,staa.tag_count),0,-0.5,-(log(2,staa.tag_count)))
-            ELSE decode(log(2,staa.tag_count),0,0.5,log(2,staa.tag_count))
+            THEN decode(log(2,staa.raw_count),0,-0.5,-(log(2,staa.raw_count)))
+            ELSE decode(log(2,staa.raw_count),0,0.5,log(2,staa.raw_count))
        END score,
        fl.start_min startm, 
        fl.end_max end, 
