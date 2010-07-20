@@ -6,7 +6,7 @@
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 
-<c:url var="feedPath" value="/communityEventsRss.jsp" />
+<c:url var="feedPath" value="/communityEventsRss.jsp?upcoming=1" />
 <c:set var="rss_Url">
 http://${pageContext.request.serverName}${feedPath}
 </c:set>

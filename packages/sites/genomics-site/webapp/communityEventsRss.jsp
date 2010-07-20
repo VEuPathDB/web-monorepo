@@ -29,9 +29,18 @@
 ><c:set
     var="linkTmpl" value="${scheme}://${serverName}${contextPath}/communityEvents.jsp"
 /></c:otherwise
-></c:choose><c:import
+></c:choose
+><c:choose
+><c:when test="${param.upcoming == 1}"
+><c:import
+    url="http://${serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}" var="xml"
+/></c:when
+><c:otherwise
+><c:import
     url="http://${serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}&range=all&stopDateSort=DESC" var="xml"
-/><x:parse
+/></c:otherwise
+></c:choose
+><x:parse
     doc="${xml}" var="doc"
 /><c:set
     var="dateStringPattern" value="dd MMMM yyyy HH:mm"
