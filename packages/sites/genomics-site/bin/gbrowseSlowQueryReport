@@ -1,0 +1,81 @@
+#!/usr/bin/perl
+use strict;
+use Getopt::Long;
+
+my ($threshold, $genepage, $width_filter, $time_filter, $sort_column);
+$sort_column=2;
+&GetOptions('s=s' => \$threshold,
+            'g' => \$genepage,
+            'w=s' => \$width_filter,
+            't=s' => \$time_filter,
+            'c=s' => \$sort_column,
+            );
+
+
+usage() unless $threshold;
+
+my ($width_min, $width_max);
+if ($width_filter) {
+  ($width_min, $width_max) = split(/,\s*/, $width_filter);
+}
+
+my ($time_min, $time_max);
+if ($time_filter) {
+  ($time_min, $time_max) = split(/,\s*/, $time_filter);
+}
+
+# QUERYTIME       Fri Mar 12 22:26:49 2010        1268450809.72195        v       Segment.pm      7.12     5792    alignment:dbEST
+my $h;
+
+while(<STDIN>) {
+  next unless /QUERYTIME/;
+  next if /\=\=/;  # some lines in the log are mangled, with missing newlines
+                   # the symptom is that the next log entry is mashed in
+                   # these are delimited by ========, so dodge that
+  next if ($genepage && !/GENEPAGE/);
+  chomp;
+  my ($qt, $timestamp, $absoluteTime, $tag, $module, $seconds, $width, $name) = split(/\t/);
+  next if ($time_min && $absoluteTime < $time_min);
+  next if ($time_max && $absoluteTime > $time_max);
+  next if ($width_min && $width < $width_min);
+  next if ($width_max && $width > $width_max);
+  if (!$h->{$name}) {
+    $h->{$name} = [$name, 0, 0, 0, 0, 0];
+  }
+  $h->{$name}->[1] += $seconds;      # total secs
+  $h->{$name}->[2] += 1;             # count
+  if ($seconds > $threshold) {
+    $h->{$name}->[3] += $seconds;    # total secs over threshold
+    $h->{$name}->[4] += 1;           # count over threshold
+  }
+  $h->{$name}->[5] = $seconds if ($seconds > $h->{$name}->[5]); # max secs
+}
+
+my @sorted = sort {$b->[$sort_column-1] <=> $a->[$sort_column-1]} values(%$h);
+
+
+# name total_secs count avg_secs total_secs_over count_over  worst_secs
+  print sprintf("%50s%12s%8s%10s%12s%8s%6s\n",('Name','TotSecs','#','AvgSecs','SlowSecs','Slow_#','Worst'));
+
+foreach my $a (@sorted) {
+  my $avg = $a->[1] / $a->[2];
+  print sprintf("%50s%12.2f%8d%10.2f%12.2f%8d%6.2f\n",($a->[0],$a->[1],$a->[2],$avg,$a->[3],$a->[4],$a->[5]));
+}
+
+sub usage {
+  print STDERR "
+
+Print a report summarizing the gbrowse slow query logs.
+
+usage:  gbrowseSlowQueryReport --s secs [--g] [--w width_min[,length_max]] [--s starttime[,endtime]] [--c colnum]
+
+where:
+  --s:  slowness threshold in seconds.  run times over secs is considered slow
+  --g:  genepage only flag
+  --w:  width filter
+  --t:  time filter (use seconds since epoch, which is a column in gbrowse log)
+  --c:  column to sort on (default is 2, the total time)
+
+";
+  exit(1);
+}
