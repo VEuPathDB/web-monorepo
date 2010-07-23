@@ -67,6 +67,8 @@ sub usage {
 
 Print a report summarizing the gbrowse slow query logs.
 
+Takes one or more logs on standard input.
+
 usage:  gbrowseSlowQueryReport --s secs [--g] [--w width_min[,length_max]] [--s starttime[,endtime]] [--c colnum]
 
 where:
