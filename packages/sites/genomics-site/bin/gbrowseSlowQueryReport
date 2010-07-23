@@ -70,7 +70,7 @@ Print a report summarizing the gbrowse slow query logs.
 usage:  gbrowseSlowQueryReport --s secs [--g] [--w width_min[,length_max]] [--s starttime[,endtime]] [--c colnum]
 
 where:
-  --s:  slowness threshold in seconds.  run times over secs is considered slow
+  --s:  slowness threshold in seconds.  run times over secs are reported in Slow columns
   --g:  genepage only flag
   --w:  width filter
   --t:  time filter (use seconds since epoch, which is a column in gbrowse log)
