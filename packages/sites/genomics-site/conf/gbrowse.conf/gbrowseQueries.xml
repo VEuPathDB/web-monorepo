@@ -2204,7 +2204,8 @@ AND    cpp.protocol_type = 'called_peaks'
   <sqlQuery name="ChIP_peaks:Hp1"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT ee.na_feature_id   as feature_id,
+ SELECT /*+ use_nl(cpp ee) */
+       ee.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
        'Hp1'                as source,
        ee.feature_source_id        as name,
