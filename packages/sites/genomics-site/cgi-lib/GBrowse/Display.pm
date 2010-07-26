@@ -254,8 +254,14 @@ sub massSpecBgColorFromExtDbName {
                 'Florens Life Cycle MassSpec-Gametocytes' =>'yellow',
                 'Florens Life Cycle MassSpec-Sporozoite' => 'brown',
                 'Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection' => 'yellow',
-                'Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection' => 'orange'
-               );
+                'Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection' => 'orange',
+                #AmoebaDB
+                'Phagosome Proteomics data from Huston - 0 mins' => 'yellow',
+                'Phagosome Proteomics data from Huston - 30 mins' => 'tan',
+                'Phagosome Proteomics data from Huston - 5 mins' => 'khaki',
+                'Phagosome Proteomics data from Huston - 10 mins' => 'orange',
+                'Phagosome Proteomics data from Huston - 60 mins' => 'sandybrown'
+                   );
 
   $f = $f->parent if (! $f->get_tag_values('ExtDbName'));
   my ($extdbname) = $f->get_tag_values('ExtDbName');

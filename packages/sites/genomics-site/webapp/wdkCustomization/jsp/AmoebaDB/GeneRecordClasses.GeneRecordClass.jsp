@@ -240,10 +240,25 @@ GO,InterproscanData
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
   <site:pageDivider name="Protein"/>
+
+<c:choose>
+  <c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
+    <c:set var="ptracks">
+    InterproDomains+SignalP+TMHMM+BLASTP      
+    </c:set>
+  </c:when>
+  <c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
+    <c:set var="ptracks">
+    InterproDomains+SignalP+TMHMM+BLASTP+HustonMassSpecPeptides      
+    </c:set>
+  </c:when>
+  <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
     <c:set var="ptracks">
     InterproDomains+SignalP+TMHMM+BLASTP
     </c:set>
-    
+  </c:when>
+</c:choose>
+
     <c:set var="attribution">
     InterproscanData
     </c:set>
