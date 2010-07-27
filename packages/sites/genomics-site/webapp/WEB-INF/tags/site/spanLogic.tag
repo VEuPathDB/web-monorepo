@@ -12,6 +12,10 @@
   #spanLogicParams fieldset:first-of-type {
     margin-bottom: 5px;
   }
+ 
+  #spanLogicParams fieldset:nth-of-type(2) {
+    margin-top: 5px;
+  }
 
   .invisible {
     visibility: hidden;
@@ -30,6 +34,14 @@
   .roundLabel span {
     font-size:2em;
     line-height: 1.5;
+  }
+
+  ul.horizontal.center {
+    text-align: center;
+  }
+ 
+  ul.horizontal li {
+    display: inline;
   }
 </style>
 
@@ -80,10 +92,10 @@
         </tr>
       </table>
     </fieldset>
-    <ul class="clear">
-      <li style="float:left;margin-bottom:5px;"><input type="radio" name="relationship" value="overlaps">Overlaps with</input></li>
-      <li style="float:left;"><input type="radio" name="relationship" value="contains">Containing</input></li>
-      <li style="float:left;"><input type="radio" name="relationship" value="contained">Contained within</input></li>
+    <ul class="horizontal center clear">
+      <li style="margin-bottom:5px;"><input type="radio" name="relationship" value="overlaps">Overlaps with</input></li>
+      <li style=""><input type="radio" name="relationship" value="contains">Containing</input></li>
+      <li style=""><input type="radio" name="relationship" value="contained">Contained within</input></li>
     </ul>
     <div class="roundLabel clear"><span>B</span></div>
     <fieldset id="setBFields">
@@ -133,16 +145,16 @@
   </div>
   <div id="spanLogicGraphics">&nbsp;</div>
   <hr class="clear" />
-  <ul>
-    <li style="float:left;line-height:1.5">Select Strand:&nbsp;</li>
-    <li style="float:left;margin-bottom:5px;"><input type="radio" name="strand" value="either">Either</input></li>
-    <li style="float:left;"><input type="radio" name="strand" value="both">Both</input></li>
-    <li style="float:left;"><input type="radio" name="strand" value="same">Same</input></li>
+  <ul class="horizontal">
+    <li style="line-height:1.5">Select Strand:&nbsp;</li>
+    <li><input type="radio" name="strand" value="either">Either</input></li>
+    <li><input type="radio" name="strand" value="both">Both</input></li>
+    <li><input type="radio" name="strand" value="same">Same</input></li>
   </ul>
-  <ul class="clear">
-    <li style="float:left;line-height:1.5">Select Output Set:&nbsp;</li>
-    <li style="float:left;"><input type="radio" name="output" value="A">Set A</input></li>
-    <li style="float:left;"><input type="radio" name="output" value="B">Set B</input></li>
+  <ul class="horizontal clear">
+    <li style="line-height:1.5">Select Output Set:&nbsp;</li>
+    <li><input type="radio" name="output" value="A">Set A</input></li>
+    <li><input type="radio" name="output" value="B">Set B</input></li>
   </ul>
   <hr class="clear invisible" />
 </form>
