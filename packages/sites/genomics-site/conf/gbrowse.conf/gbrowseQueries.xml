@@ -674,6 +674,19 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="NextGenSeq:coverageRatio"  includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+    SELECT $$numSample$$ as feature_id,
+          'NextGenSeq'        as type, 
+          '$source'          as source,
+           $base_start        as startm,
+           $rend              as end 
+  FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="DGE:coverage"  includeProjects="TriTrypDB">
      <sql>
        <![CDATA[
@@ -5524,6 +5537,61 @@ WHERE  fl.feature_type ='SAGETagFeature'
          AND csc.location <= $rend
          AND csc.location >= $base_start - 1)
        GROUP BY interval,sample,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="NextGenSeq:coverageRatio:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+     SELECT num.feature_id, num.type, num.source,
+              CASE WHEN num.multiple = 1 then -1 * power(2,-1*num.score) / power(2,-1*den.score) 
+              ELSE power(2,num.score) / power(2,den.score) END score, 
+             num.parent_id,
+             num.startm, num.end, num.atts
+     FROM
+     (SELECT interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              max(coverage) score, 
+             $$numSample$$ parent_id,
+             interval * (($rend - $base_start + 1) / 800) startm,
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
+    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.nextgenseq_coverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$numEdname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.sample = $$numSample$$
+         AND csc.location <= $rend
+         AND csc.location >= $base_start - 1)
+       GROUP BY interval,sample,multiple) num,
+     (SELECT interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              max(coverage) score, 
+             $$denSample$$ parent_id,
+             interval * (($rend - $base_start + 1) / 800) startm,
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
+    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.nextgenseq_coverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$denEdname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.sample = $$denSample$$
+         AND csc.location <= $rend
+         AND csc.location >= $base_start - 1)
+       GROUP BY interval,sample,multiple) den
+    WHERE den.feature_id = num.feature_id
+      AND den.multiple = num.multiple 
 ]]>
     </sql>
   </sqlQuery>
