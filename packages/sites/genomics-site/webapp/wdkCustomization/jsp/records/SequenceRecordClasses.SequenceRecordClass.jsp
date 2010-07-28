@@ -93,12 +93,16 @@
 <c:set var="gtracks" value="${attrs['gbrowseTracks'].value}" />
 
 
-<c:if test="${fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB'}">
+<c:if test="${(fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB') || ((fn:contains(organism,'gallinaceum') || fn:contains(organism,'tarentolae')) && projectId eq 'PlasmoDB')}">
   <c:set var="gtracks" value="BLASTX+ORF300" />
 </c:if>
 
 <c:if test="${fn:contains(organism,'Crithidia') && projectId eq 'TriTrypDB'}">
   <c:set var="gtracks" value="BLASTX+ORF600" />
+</c:if>
+
+<c:if test="${ (fn:contains(organism,'gallinaceum') || fn:contains(organism,'reichenowi')) && projectId eq 'PlasmoDB'}">
+  <c:set var="gtracks" value="BLASTX+ORF" />
 </c:if>
 
 <c:if test="${fn:contains(organism,'TgCkUg2') && projectId eq 'ToxoDB'}">
