@@ -44,6 +44,9 @@
 
 <br/>
 
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <h2>
 <center>
 <wdk:recordPageBasketIcon />
@@ -53,8 +56,6 @@
 <%--#############################################################--%>
 
 
-<%-- quick tool-box for the record --%>
-<site:recordToolbox />
 
 
 <c:set var="append" value="" />
@@ -93,7 +94,7 @@
 
 
 <c:if test="${fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB'}">
-  <c:set var="gtracks" value="BLASTX+ORF" />
+  <c:set var="gtracks" value="BLASTX+ORF300" />
 </c:if>
 
 <c:if test="${fn:contains(organism,'Crithidia') && projectId eq 'TriTrypDB'}">
