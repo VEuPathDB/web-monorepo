@@ -1554,12 +1554,10 @@ OnChange="javascript:updateImage('${imgId}', SuCQSort.SuCQList.options[selectedI
                attribution="E-GEOD-10022_array"/>
 
 
-<%--
 <c:if test="${binomial eq 'Plasmodium falciparum'}">
   <site:expressionGraphs species="${binomial}" model="plasmo"/>
 </c:if>
 
---%>
  <%-- ------------------------------------------------------------------ --%>
 
 
