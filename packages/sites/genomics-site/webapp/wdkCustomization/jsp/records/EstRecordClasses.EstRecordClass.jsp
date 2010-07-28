@@ -37,14 +37,14 @@
 
 <br/>
 
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <h2>
 <center>
 <wdk:recordPageBasketIcon />
 </center>
 </h2>
-
-<%-- quick tool-box for the record --%>
-<site:recordToolbox />
 
 <%--#############################################################--%>
 

@@ -34,12 +34,12 @@
 </c:when>
 <c:otherwise>
 
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <h2 style="text-align:center;">
 <wdk:recordPageBasketIcon />
 </h2>
-
-<%-- quick tool-box for the record --%>
-<site:recordToolbox />
 
 <br>
 <%--#############################################################--%>

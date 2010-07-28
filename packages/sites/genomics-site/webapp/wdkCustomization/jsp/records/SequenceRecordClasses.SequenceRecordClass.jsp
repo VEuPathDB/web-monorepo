@@ -93,7 +93,7 @@
 <c:set var="gtracks" value="${attrs['gbrowseTracks'].value}" />
 
 
-<c:if test="${(fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB') || ((fn:contains(organism,'gallinaceum') || fn:contains(organism,'tarentolae')) && projectId eq 'PlasmoDB')}">
+<c:if test="${fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB'}">
   <c:set var="gtracks" value="BLASTX+ORF300" />
 </c:if>
 
