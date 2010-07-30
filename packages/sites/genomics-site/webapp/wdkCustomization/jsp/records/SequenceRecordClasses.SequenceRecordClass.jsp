@@ -185,7 +185,8 @@ ${externalLinks}
  </table>
 </form>
 
-<c:if test="${is_top_level eq '1' && ((projectId eq 'PlasmoDB' && fn:containsIgnoreCase(organism, 'falciparum')) || projectId eq 'TriTrypDB' || projectId eq 'CryptoDB' || projectId eq 'ToxoDB' || projectId eq 'AmoebaDB' || projectId eq 'MicrosporidiaDB')}">
+<c:if test="${is_top_level eq '1' && ((projectId eq 'PlasmoDB' && fn:containsIgnoreCase(organism, 'falciparum')) || (projectId eq 'TriTrypDB' && !fn:contains(organism,'Crithidia') && !fn:contains(organism,'tarentolae')) || projectId eq 'CryptoDB' || projectId eq 'ToxoDB' || projectId eq 'AmoebaDB' || projectId eq 'MicrosporidiaDB')}">
+
 
   <br />
 <h3>Retrieve Multiple Sequence Alignments by Contig / Genomic Sequence IDs</h3>
