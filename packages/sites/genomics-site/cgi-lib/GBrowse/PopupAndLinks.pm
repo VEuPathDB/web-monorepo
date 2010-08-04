@@ -814,7 +814,7 @@ sub bindingSiteTitle {
 
   my $pvalue = exp($score);
 
-  my $link = qq(<a href="/a/images/pf_tfbs/$name.png"><img src="/a/images/pf_tfbs/$name.png"  height="80%" width="70%" align=left/></a>);
+  my $link = qq(<a href="/a/images/pf_tfbs/$name.png"><img src="/a/images/pf_tfbs/$name.png"  height="125" width="200" align=left/></a>);
   my @data;
   push @data, [ 'Name:'  => $name ];
   push @data, ['Start:'  => $start];
