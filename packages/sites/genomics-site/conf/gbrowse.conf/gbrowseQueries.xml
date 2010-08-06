@@ -3618,20 +3618,6 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-
-  <sqlQuery name="rnaseq:cn_pf0h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_0h' as feature_id,
-               'rnaseq' type,
-               'cn_pf0h' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="rnaseq:cn_pf0h_lin"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
@@ -3645,38 +3631,12 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="rnaseq:cn_pf8h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_8h' as feature_id,
-               'rnaseq' type,
-               'cn_pf8h' source,
-                $base_start as startm,
-                $rend       as end
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="rnaseq:cn_pf8h_lin"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
         SELECT 'rnaseq_8h_lin' as feature_id,
                'rnaseq' type,
                'cn_pf8h_lin' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:cn_pf16h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_16h' as feature_id,
-               'rnaseq' type,
-               'cn_pf16h' source,
                 $base_start as startm,
                 $rend       as end 
         FROM   dual
@@ -3697,39 +3657,12 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-
-  <sqlQuery name="rnaseq:cn_pf24h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_24h' as feature_id,
-               'rnaseq' type,
-               'cn_pf24h' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="rnaseq:cn_pf24h_lin"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
         SELECT 'rnaseq_24h_lin' as feature_id,
                'rnaseq' type,
                'cn_pf24h_lin' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:cn_pf32h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_32h' as feature_id,
-               'rnaseq' type,
-               'cn_pf32h' source,
                 $base_start as startm,
                 $rend       as end 
         FROM   dual
@@ -3750,38 +3683,12 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="rnaseq:cn_pf40h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_40h' as feature_id,
-               'rnaseq' type,
-               'cn_pf40h' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="rnaseq:cn_pf40h_lin"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
         SELECT 'rnaseq_40h_lin' as feature_id,
                'rnaseq' type,
                'cn_pf40h_lin' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:cn_pf48h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_48h' as feature_id,
-               'rnaseq' type,
-               'cn_pf48h' source,
                 $base_start as startm,
                 $rend       as end 
         FROM   dual
@@ -5927,29 +5834,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq:cn_pf0h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf0h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_0h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
     <sqlQuery name="rnaseq:cn_pf0h_lin:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -5972,30 +5856,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq:cn_pf8h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf8h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_8h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('8h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
-
     <sqlQuery name="rnaseq:cn_pf8h_lin:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -6014,29 +5874,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
        GROUP BY interval
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_pf16h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf16h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_16h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('16h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -6063,29 +5900,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq:cn_pf24h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf24h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_24h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('24h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
     <sqlQuery name="rnaseq:cn_pf24h_lin:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -6104,29 +5918,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
        GROUP BY interval
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_pf32h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf32h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_32h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('32h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -6153,29 +5944,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq:cn_pf40h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf40h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_40h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('40h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
     <sqlQuery name="rnaseq:cn_pf40h_lin:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -6194,29 +5962,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
        GROUP BY interval
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_pf48h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf48h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_48h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('48h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
