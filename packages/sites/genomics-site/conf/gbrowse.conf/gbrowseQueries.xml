@@ -697,7 +697,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="NextGenSeq:coverageRatio"  includeProjects="TriTrypDB">
+  <sqlQuery name="NextGenSeq:coverageRatio"  includeProjects="TriTrypDB,PlasmoDB">
      <sql>
        <![CDATA[
     SELECT $$numSample$$ as feature_id,
@@ -752,12 +752,12 @@ WHERE  fl.feature_type ='SAGETagFeature'
   <sqlQuery name="NextGenSeq:coverageLog"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
-    SELECT $$sample$$ as feature_id,
-          'NextGenSeq'        as type, 
-          '$source'          as source,
-           $base_start        as startm,
-           $rend              as end  
-  FROM   dual 
+    SELECT $$sample$$   as feature_id,
+          'NextGenSeq'  as type, 
+          '$source'     as source,
+           $base_start  as startm,
+           $rend        as end  
+    FROM   dual 
        ]]>
     </sql>
   </sqlQuery>
@@ -5590,7 +5590,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-   <sqlQuery name="NextGenSeq:coverageRatio:bulksubfeatures"  includeProjects="TriTrypDB">
+   <sqlQuery name="NextGenSeq:coverageRatio:bulksubfeatures"  includeProjects="TriTrypDB,PlasmoDB">
      <sql>
 <![CDATA[
      SELECT num.feature_id, num.type, num.source,
@@ -5741,7 +5741,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
      SELECT start_interval feature_id,
              'NextGenSeq' type,
              '$source' source,
-              log(2,max(coverage)) score, 
+              decode(multiple, 1, -1, 1)*log(2,max(coverage)) score, 
              $$sample$$ parent_id,
              start_interval * (($rend - $base_start + 1) / 800) startm,
              end_interval * (($rend - $base_start + 1) / 800) end,
