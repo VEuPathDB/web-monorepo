@@ -812,13 +812,13 @@ sub bindingSiteTitle {
     $sequence = $revComp;
   }
 
-  my $link = qq(<a href="/a/images/pf_tfbs/$name.png"><img src="/a/images/pf_tfbs/$name.png"  height="125" width="200" align=left/></a>);
+  my $link = qq(<a href="/a/images/pf_tfbs/$name.png"><img src="/a/images/pf_tfbs/$name.png"  height="140" width="224" align=left/></a>);
   my @data;
   push @data, [ 'Name:'  => $name ];
   push @data, ['Start:'  => $start];
   push @data, ['Stop:'   => $stop];
   push @data, ['Strand:'   => $strand];
-  push @data, [ 'P value:' => sprintf("%e",exp($score))];  
+  push @data, [ 'P value:' => $score];  
   push @data, [ 'Sequence:' => $sequence ];  
   push @data, [ 'Motif Link'  => $link];
   hover("Binding Site $name", \@data);

@@ -442,6 +442,24 @@ sub bgColorForSpliceAndPaSites {
   return 'lightslategray';
 }
 
+sub colorForBindingSitesByPvalue{
+  my ($f) = @_;
+  my $strand = $f->strand;
+  my ($pvalue) = $f->get_tag_values('Score');
+  if($strand eq '+1'){
+    return 'mediumblue' if $pvalue <= 1e-5;
+    return 'royalblue' if $pvalue <= 5e-5;
+    return 'dodgerblue' if $pvalue <= 1e-4;
+    return 'skyblue';
+  }else{
+    return 'darkred' if $pvalue <= 1e-5;
+    return 'crimson' if $pvalue <= 5e-5;
+    return 'red' if $pvalue <= 1e-4;
+    return 'tomato';
+  }
+  return 'lightslategray';
+}
+
 sub colorForSevenSampleRNASeq{
   my $f = shift;
   my ($sample) = $f->get_tag_values('sample');
