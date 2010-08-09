@@ -762,6 +762,20 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="NextGenSeq:coverageLog7"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+    SELECT $$feature_id$$   as feature_id,
+          'NextGenSeq'  as type, 
+          '$source'     as source,
+           $base_start  as startm,
+           $rend        as end  
+    FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
+
 
       <sqlQuery name="splice:curated" includeProjects="TriTrypDB">
      <sql>
@@ -3578,46 +3592,6 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="rnaseq:cn_seven_samples"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'cn_seven_sample' as feature_id,
-               'rnaseq' type,
-               sample as name,
-               'cn_seven_samples' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   apidb.rnaseq_coverage rc
-        WHERE   rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
-         AND rc.type = 'p'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1
-         GROUP BY rc.sample
-       ]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:cn_seven_samples_log"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'cn_seven_sample_log' as feature_id,
-               'rnaseq' type,
-               sample as name,
-               'cn_seven_samples_log' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   apidb.rnaseq_coverage rc
-        WHERE   rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
-         AND rc.type = 'p'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1
-         GROUP BY rc.sample
-       ]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="rnaseq:cn_pf0h_lin"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
@@ -5671,6 +5645,35 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
+   <sqlQuery name="NextGenSeq:coverageLog7:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+     SELECT start_interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              decode(multiple, 1, -1, 1)*$$score$$ score, 
+             $$feature_id$$ parent_id,
+             start_interval * (($rend - $base_start + 1) / 800) startm,
+             end_interval * (($rend - $base_start + 1) / 800) end,
+             'sample='||sample atts
+    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) start_interval, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
+                 csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.nextgenseq_coverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$edname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.sample $$samples$$
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_end >= $base_start - 1)
+       GROUP BY start_interval,end_interval,sample,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
 <!-- RNA seq bulksubfeature queries. Need one / track as too much data to use filters -->
 
     <sqlQuery name="rnaseq:gcsample_blat:bulksubfeatures"  includeProjects="TriTrypDB">
@@ -5780,52 +5783,6 @@ WHERE  fl.feature_type ='SAGETagFeature'
        FROM  apidb.rnaseq_coverage rc
        WHERE rc.na_sequence_id = $srcfeature_id
          AND rc.sample in ('0h','16h','32h','48h')
-         AND rc.type = 'p'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_seven_samples:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT sample||interval feature_id, 
-             'rnaseq' type, 
-             'cn_seven_samples' source, 
-             power(2,max(coverage)) score, 
-             'cn_seven_sample' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'sample='||sample atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
-         AND rc.type = 'p'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_seven_samples_log:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT sample||interval feature_id, 
-             'rnaseq' type, 
-             'cn_seven_samples_log' source, 
-             max(coverage) score, 
-             'cn_seven_sample_log' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'sample='||sample atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
          AND rc.type = 'p'
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
