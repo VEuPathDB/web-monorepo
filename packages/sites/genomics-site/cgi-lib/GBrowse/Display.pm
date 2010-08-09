@@ -463,13 +463,13 @@ sub colorForBindingSitesByPvalue{
 sub colorForSevenSampleRNASeq{
   my $f = shift;
   my ($sample) = $f->get_tag_values('sample');
-  return 'orange' if $sample eq '0h';
-  return 'aqua' if $sample eq '8h';
-  return 'blue' if $sample eq '16h';
-  return 'lawngreen' if $sample eq '24h';
-  return 'forestgreen' if $sample eq '32h';
-  return 'magenta' if $sample eq '40h';
-  return 'firebrick' if $sample eq '48h';
+  return 'orange' if $sample eq 'Hour0';
+  return 'aqua' if $sample eq 'Hour8';
+  return 'blue' if $sample eq 'Hour16';
+  return 'lawngreen' if $sample eq 'Hour24';
+  return 'forestgreen' if $sample eq 'Hour32';
+  return 'magenta' if $sample eq 'Hour40';
+  return 'firebrick' if $sample eq 'Hour48';
   return 'lightslategray';
 }
 
