@@ -1022,7 +1022,6 @@ WHERE msf.na_feature_id = nal.na_feature_id
  AND  nal.start_min >= $base_start 
  AND  nal.end_max <= $rend
  AND  msf.external_database_release_id = edr.external_database_release_id
- AND NOT ed.name ='Pfalciparum_Lasonder_Proteomics_Blood_Stages'
  AND  edr.external_database_id = ed.external_database_id
 GROUP BY enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x,
 (select apidb.tab_to_string(CAST(COLLECT(y.db_info)
@@ -1038,7 +1037,6 @@ FROM  dots.massspecfeature msf,
   AND  nal.na_sequence_id = $srcfeature_id
   AND  enas.na_sequence_id = $srcfeature_id
   AND  msf.external_database_release_id = edr.external_database_release_id
-  AND NOT ed.name ='Pfalciparum_Lasonder_Proteomics_Blood_Stages'
   AND  edr.external_database_id = ed.external_database_id
  GROUP BY enas.na_sequence_id, ed.name, edr.external_database_release_id) y
 ) z
