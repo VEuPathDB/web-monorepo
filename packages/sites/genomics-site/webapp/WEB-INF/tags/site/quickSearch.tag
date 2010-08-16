@@ -31,7 +31,7 @@
 
 <c:choose>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
-		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris,Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii,Neospora caninum,Trichomonas vaginalis,Leishmania braziliensis,Leishmania infantum,Leishmania major,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax,Entamoeba dispar,Entamoeba histolytica,Entamoeba invadens,Encephalitozoon cuniculi,Encephalitozoon intestinalis"/>
+		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris,Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii,Neospora caninum,Trichomonas vaginalis,Leishmania braziliensis,Leishmania infantum,Leishmania major,Leishmania mexicana,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax,Entamoeba dispar,Entamoeba histolytica,Entamoeba invadens,Encephalitozoon cuniculi,Encephalitozoon intestinalis"/>
 	</c:when>
         <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
 		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris"/>
@@ -51,7 +51,7 @@
 	</c:when>
 
  <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
-		<c:set var="listOrganisms" value="Leishmania braziliensis,Leishmania infantum,Leishmania major,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax"/>
+		<c:set var="listOrganisms" value="Leishmania braziliensis,Leishmania infantum,Leishmania major,Leishmania mexicana,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax"/>
 	</c:when>
 
  <c:when test="${fn:containsIgnoreCase(modelName, 'AmoebaDB')}">
