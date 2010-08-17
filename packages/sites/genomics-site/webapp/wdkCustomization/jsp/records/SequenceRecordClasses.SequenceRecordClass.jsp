@@ -109,6 +109,9 @@
   <c:set var="gtracks" value="BLASTX+ORF+TandemRepeat+LowComplexity" />
 </c:if>
 
+<c:if test="${ (fn:contains(organism,'Anncaliia') || fn:contains(organism,'Edhazardia') || fn:contains(organism,'Nosema') || fn:contains(organism,'Vittaforma')) && projectId eq 'MicrosporidiaDB'}">
+  <c:set var="gtracks" value="" />
+</c:if>
 
 <c:set var="attribution">
 </c:set>
