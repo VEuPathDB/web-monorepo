@@ -5530,7 +5530,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
      SELECT start_interval feature_id,
              'NextGenSeq' type,
              '$source' source,
-              max(coverage) score, 
+              CASE WHEN multiple = 1 THEN -1 * max(coverage) ELSE max(coverage) END score, 
              $$sample$$ parent_id,
              start_interval * (($rend - $base_start + 1) / 800) startm,
              end_interval * (($rend - $base_start + 1) / 800) end,
