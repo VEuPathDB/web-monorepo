@@ -539,6 +539,12 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
    Sequence and annotations from Genbank for Enterocytozoon bieneusi H348 contigs.
   </c:set>
 </c:when>
+<c:when test="${(fn:contains(organism,'Anncaliia') || fn:contains(organism,'Edhazardia') || fn:contains(organism,'Nosema') || fn:contains(organism,'Vittaforma')) && projectId eq 'MicrosporidiaDB'}">
+  <c:set var="reference">
+   Microsporidia sequences from the Genome Survey Sequences Database (GSS) division of Genbank  
+  </c:set>
+</c:when>
+
 <c:otherwise>
     <c:set var="reference">
   <b>ERROR: can't find attribution information for organism "${organism}",
