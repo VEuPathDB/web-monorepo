@@ -799,46 +799,6 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
                displayName="Overlay of Intraerythrocytic Expression Profiles"
                attribution="winzeler_cell_cycle,derisi_Dd2_time_series,derisi_HB3_time_series,derisi_3D7_time_series,DeRisi_oligos"/>
 
-  <c:set var="secName" value="PfRNASeq::Ver1"/>
-  <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}"/>
-  <c:set var="isOpen" value="true"/>
-
-  <c:set var="expressionContent">
-    <table width="90%" cellpadding=3>
-      <tr>
-        <td class="centered">
-          <c:choose>
-          <c:when test="${!async}">
-              <img src="${imgSrc}">
-          </c:when>
-          <c:otherwise>
-              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
-          </c:otherwise>
-          </c:choose>
-        </td>
-        <td class="centered">
-         <div class="small">            
-P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle. Y-axis is the log2 of the geometric mean of coverage / kb of unique sequence (GMC/kb). 
-         </div>
-        </td>
-      </tr>
-    </table>
-  </c:set>
-
-  <c:set var="noData" value="false"/>
-  <c:if test="${attrs['graph_pf_rna_seq'].value == 0}">
-    <c:set var="noData" value="true"/>
-  </c:if>
-
-
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
-               content="${expressionContent}" noData="${noData}"
-               imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle"
-               attribution="Pfalciparum_RNA_Seq"/> 
-
-
   <c:set var="secName" value="Winzeler::Cc"/>
   <c:set var="imgId" value="img${secName}"/>
   <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}"/>
@@ -1552,6 +1512,51 @@ OnChange="javascript:updateImage('${imgId}', SuCQSort.SuCQList.options[selectedI
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Expression and genomic changes after exposing drug-selected mutants to short term CQ treatment in <i>Plasmodium falciparum</i>"
                attribution="E-GEOD-10022_array"/>
+
+
+
+
+  <c:set var="secName" value="PfRNASeq::Ver1"/>
+  <c:set var="imgId" value="img${secName}"/>
+  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}"/>
+  <c:set var="isOpen" value="true"/>
+
+  <c:set var="expressionContent">
+    <table width="90%" cellpadding=3>
+      <tr>
+        <td class="centered">
+          <c:choose>
+          <c:when test="${!async}">
+              <img src="${imgSrc}">
+          </c:when>
+          <c:otherwise>
+              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+          </c:otherwise>
+          </c:choose>
+        </td>
+        <td class="centered">
+         <div class="small">            
+P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle. Y-axis is the log2 of the geometric mean of coverage / kb of unique sequence (GMC/kb). 
+         </div>
+        </td>
+      </tr>
+    </table>
+  </c:set>
+
+  <c:set var="noData" value="false"/>
+  <c:if test="${attrs['graph_pf_rna_seq'].value == 0}">
+    <c:set var="noData" value="true"/>
+  </c:if>
+
+
+  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+               content="${expressionContent}" noData="${noData}"
+               imageId="${imgId}" imageSource="${imgSrc}"
+               displayName="P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle"
+               attribution="Pfalciparum_RNA_Seq"/> 
+
+
+
 
 
 <c:if test="${binomial eq 'Plasmodium falciparum'}">
