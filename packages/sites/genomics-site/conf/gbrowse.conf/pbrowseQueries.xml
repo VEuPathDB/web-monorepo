@@ -597,7 +597,7 @@ SELECT df.aa_feature_id feature_id,
              where  df.aa_sequence_id = $srcfeature_id 
              and al.end_max > $base_start
              and al.start_min < $rend 
-             and xd3.name = 'INTERPRO'
+             and xd3.name = 'InterproscanData_RSRC'
              and gf.na_feature_id = t.parent_id
              and t.na_feature_id = taf.na_feature_id
              and taf.aa_sequence_id = tas.aa_sequence_id

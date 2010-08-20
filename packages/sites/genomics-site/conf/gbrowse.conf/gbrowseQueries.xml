@@ -646,7 +646,7 @@ WHERE  sim.min_subject_start <= $rend and
        query.na_sequence_id = sim.query_id and
        query.external_database_release_id = edbr.external_database_release_id and
        edb.external_database_id = edbr.external_database_id and 
-       edb.name in ('TgGI','Sanger P. falciparum chromosomes','P.vivax contigs from Genbank','P. berghei genome','Jane Carlton P. yoelii chromosomes')
+       edb.name in ('TgGI','Pfalciparum_chromosomes_RSRC','Pvivax_contigsGB_RSRC','Pberghei_chromosomes_RSRC','Pyoelii_Contigs_RSRC')
 ORDER BY 
        sim.min_subject_start
 ]]>
@@ -1656,7 +1656,7 @@ FROM
 WHERE  
        extq.external_database_release_id = edr.external_database_release_id and
        ed.external_database_id = edr.external_database_id and
-       ed.name in ('C. parvum isolate data','Plasmodium isolates From Genbank','Toxoplasma isolates From David Sibley','Toxoplasma isolates From Genbank') and
+       ed.name in ('C. parvum isolate data','PlasmodiumGenbankIsolates_RSRC','Toxoplasma isolates From David Sibley','Toxoplasma isolates From Genbank') and
        sim.query_id = extq.na_sequence_id and 
        sim.subject_id = extt.na_sequence_id and 
        sim.pvalue_mant is not null and
@@ -3173,7 +3173,7 @@ WHERE
        sa.source_id 
         as atts
 FROM   apidb.SnpAttributes sa
-WHERE  sa.dataset =  'Broad SNPs'
+WHERE  sa.dataset =  'Pf_Broad_SNPs_RSRC'
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
@@ -3209,7 +3209,7 @@ FROM   dots.ExternalNaSequence s,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr,
        apidb.geneattributes gene_info
-WHERE  ed.name = 'Winzeler Array - Plasmodium Genetic Variation'  
+WHERE  ed.name = 'WinzelerGeneticVariationArray_RSRC'  
   AND  edr.external_database_id = ed.external_database_id
   AND  snp.external_database_release_id = edr.external_database_release_id
   AND  s.na_sequence_id = $srcfeature_id
@@ -3247,7 +3247,7 @@ WHERE  swi.snp_source_id = sa.source_id
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
-  AND  sa.dataset='PlasmoDB combined SNPs'
+  AND  sa.dataset='Pf_plasmoDbCombinedSnps_RSRC'
 ]]>
     </sql>
   </sqlQuery> 
@@ -3279,7 +3279,7 @@ WHERE  swi.snp_source_id = sa.source_id
        sa.source_id 
         as atts
 FROM   apidb.SnpAttributes sa
-WHERE  sa.dataset = 'Sanger falciparum SNPs'
+WHERE  sa.dataset = 'sangerItGhanaSnps_RSRC'
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
@@ -3315,7 +3315,7 @@ WHERE  sa.dataset = 'Sanger falciparum SNPs'
        sa.source_id 
         as atts
 FROM   apidb.SnpAttributes sa
-WHERE  sa.dataset = 'Sanger reichenowi SNPs'  
+WHERE  sa.dataset = 'sangerPReichenowiSnps_RSRC'  
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
@@ -3370,8 +3370,8 @@ WHERE
        qry.external_database_release_id = edr2.external_database_release_id and
        edr1.external_database_id = ed1.external_database_id and
        edr2.external_database_id = ed2.external_database_id and
-       ed1.name = 'Jane Carlton P. yoelii chromosomes' and
-       ed2.name = 'Vaidya Bergman oligos'
+       ed1.name = 'Pyoelii_Contigs_RSRC' and
+       ed2.name = 'Pyoelii_Vaidya_Bergman_oligos_RSRC'
 ORDER BY 
        sim.min_query_start
 ]]>
@@ -3406,7 +3406,7 @@ ORDER BY
        sa.source_id 
         as atts
 FROM   apidb.SnpAttributes sa
-WHERE  sa.dataset = 'PlasmoDB combined SNPs'  
+WHERE  sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'  
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
@@ -5228,7 +5228,7 @@ SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM apidb.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'Sanger reichenowi SNPs'
+WHERE sa.dataset = 'sangerPReichenowiSnps_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
@@ -5303,7 +5303,7 @@ SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM apidb.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'Broad SNPs'
+WHERE sa.dataset = 'Pf_Broad_SNPs_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
@@ -5321,7 +5321,7 @@ SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM apidb.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'Sanger falciparum SNPs'
+WHERE sa.dataset = 'sangerItGhanaSnps_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
@@ -5339,7 +5339,7 @@ SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM apidb.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'Winzeler Array - Plasmodium Genetic Variation'
+WHERE sa.dataset = 'WinzelerGeneticVariationArray_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
@@ -5358,7 +5358,7 @@ SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM apidb.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'PlasmoDB combined SNPs'
+WHERE sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
