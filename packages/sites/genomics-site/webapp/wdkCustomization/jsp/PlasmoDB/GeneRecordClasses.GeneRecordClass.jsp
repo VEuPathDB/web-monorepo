@@ -281,7 +281,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
                attribution="" />
 </c:if>
 
-<c:if test="${externalDbName.value eq 'Sanger P. falciparum chromosomes'}">
+<c:if test="${externalDbName.value eq 'Pfalciparum_chromosomes_RSRC'}">
   <c:if test="${strand eq '-'}">
    <c:set var="revCompOn" value="1"/>
   </c:if>
