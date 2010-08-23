@@ -48,7 +48,6 @@
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
       <c:set var="simple" value="cc5c9876caa70f82" />
       <c:set var="expanded" value="7d1b3f3e66521bea" />
-      <c:set var="mwhiteboth" value="999efc4e343b8410" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'TrichDB')}">
@@ -97,15 +96,6 @@
 	<td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td>
 </tr>
 </c:if>
-
-<c:if test="${mwhiteboth != null}">
-<tr align = "left">
-	<td><a title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${mwhiteboth}"/>');" href="javascript:void(0);">Cell Cycle Regulated Transcriptome (Michael White)</a> </td>
-	<td>Simple strategy</td>
-	<td>Find all cell cycle regulated protein coding genes</td>
-</tr>
-</c:if>
-
 
 <c:if test="${expandedTmOrSP!= null}">
   <tr align = "left">
