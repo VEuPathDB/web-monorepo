@@ -29,13 +29,14 @@ ${Question_Header}
 <wdk:errors/>
 
 <div id="form_question">
-  <center>
-    <table width="90%">
-<c:set value="2" var="columns"/>
 
-<c:set var="giardiaQuestions" value="GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,GeneQuestions.GiardiaGenesByDifferentialExpressionTwo,GeneQuestions.GiardiaGenesByExpressionPercentileProfileTwo,GeneQuestions.GiardiaGenesFoldChangeTwo,GeneQuestions.GenesByRingqvistFoldChange,GeneQuestions.GenesByRingqvistPercentile" />
+<center><table width="90%">
+     
+<c:set value="2" var="columns"/>    <%-- affects display of questions --%>
 
-<c:set var="plasmoQuestions" value="GeneQuestions.GenesByExpressionTiming,InternalQuestions.GenesByIntraerythrocyticExpression,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByDifferentialMeanExpression,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByCowmanSir2FoldChange,GeneQuestions.GenesByCowmanSir2Percentile,GeneQuestions.GenesBySuCqPage,GeneQuestions.GenesBySuCqPercentile,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming" />
+<c:set var="giardiaQuestions" value="G.l.study:Stress Response (Hehl),GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,G.l.study:Encystation (Hehl),GeneQuestions.GiardiaGenesByDifferentialExpressionTwo,GeneQuestions.GiardiaGenesByExpressionPercentileProfileTwo,GeneQuestions.GiardiaGenesFoldChangeTwo,G.l.study:Host Parasite Interaction (Svard),GeneQuestions.GenesByRingqvistFoldChange,GeneQuestions.GenesByRingqvistPercentile" />
+
+<c:set var="plasmoQuestions" value="P.f.study:study1,GeneQuestions.GenesByExpressionTiming,InternalQuestions.GenesByIntraerythrocyticExpression,P.f.study:study2,GeneQuestions.GenesByProfileSimilarity,InternalQuestions.GenesByExtraerythrocyticExpression,GeneQuestions.GenesByDifferentialMeanExpression,P.f.study:study3,GeneQuestions.GenesByExpressionPercentileA,GeneQuestions.GenesByCowmanSir2FoldChange,GeneQuestions.GenesByCowmanSir2Percentile,GeneQuestions.GenesBySuCqPage,GeneQuestions.GenesBySuCqPercentile,GeneQuestions.GenesByGametocyteExpression,GeneQuestions.GenesByWatersDifferentialExpression,GeneQuestions.BergheiGenesByExpressionPercentile,GeneQuestions.GenesByKappeFoldChange,GeneQuestions.GenesByVivaxExpressionTiming" />
 
 
 <c:set var="toxoQuestions" value="GeneQuestions.ToxoGenesByDifferentialExpressionChooseComparisons,GeneQuestions.ToxoGenesByDifferentialExpression,GeneQuestions.GenesByTimeSeriesFoldChangeBradyRoos,GeneQuestions.GenesByTimeSeriesFoldChangeBradyFl,GeneQuestions.GenesByTimeSeriesFoldChangeBradyBoothroyd,GeneQuestions.ToxoGenesByDifferentialMeanExpression,GeneQuestions.GenesByToxoCellCycleFoldChange,GeneQuestions.GenesByToxoCellCycleSpline,GeneQuestions.GenesByToxoProfileSimilarity,GeneQuestions.ToxoGenesByExpressionPercentile" />
@@ -52,23 +53,25 @@ ${Question_Header}
 
 <c:choose>
   <c:when test = "${project == 'GiardiaDB'}">
-    <site:queryList3 columns="${columns}" questions="${giardiaQuestions}"/>
+    <site:queryList4 columns="${columns}" questions="${giardiaQuestions}"/>
   </c:when>
   <c:when test = "${project == 'EuPathDB'}">
-    <site:queryList3 columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
+    <site:queryList4 columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
   </c:when>
   <c:when test = "${project == 'PlasmoDB'}">
-    <site:queryList3  columns="${columns}"  questions="${plasmoQuestions}"/>
+    <site:queryList4  columns="${columns}"  questions="${plasmoQuestions}"/>
   </c:when>
   <c:when test = "${project == 'ToxoDB'}">
-    <site:queryList3 columns="${columns}" questions="${toxoQuestions}"/>
+    <site:queryList4 columns="${columns}" questions="${toxoQuestions}"/>
   </c:when>
   <c:when test = "${project == 'TriTrypDB'}">
-    <site:queryList3 columns="${columns}" questions="${tritrypQuestions}"/>
+    <site:queryList4 columns="${columns}" questions="${tritrypQuestions}"/>
   </c:when>
 </c:choose>
-    </table>
-  </center>
+    
+
+</table></center>
+
 </div>
 
 
