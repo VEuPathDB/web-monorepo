@@ -77,7 +77,6 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nc</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Toxoplasma gondii"><i>Tg**</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tva</i></td>
-    <td class="mythStyle" title="Crithidia fasciculata, TriTrypDB"><i>Cf</i></td>
     <td class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lb</i></td>
     <td class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></td>
     <td class="mythStyle" title="Leishmania major, TriTrypDB"><i>Lma</i></td>
@@ -112,7 +111,6 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 	 <c:set var="Py" value="${record.attributesMap['Plasmodium_yoelii']}"/>
 	 <c:set var="Tg" value="${record.attributesMap['Toxoplasma_gondii']}"/>
 	 <c:set var="Tva" value="${record.attributesMap['Trichomonas_vaginalis']}"/>
-         <c:set var="Cf" value="${record.attributesMap['Crithidia_fasciculata']}"/>
          <c:set var="Lb" value="${record.attributesMap['Leishmania_braziliensis']}"/>
 	 <c:set var="Li" value="${record.attributesMap['Leishmania_infantum']}"/>
 	 <c:set var="Lma" value="${record.attributesMap['Leishmania_major']}"/>
@@ -147,7 +145,6 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Nc}</td>
     <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Tg}</td>
     <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tva}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cf}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lb}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Li}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lma}</td>
@@ -167,7 +164,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 <table width="100%">
 <tr><td>
-<font size="-1"><i><b>Crithidia</b>: Cf, C. fasciculata; <b>Cryptosporidium</b>: Ch, C. hominis; Cm, C. muris; Cp, C. parvum; <b>Encephalitozoon</b>: Ec, E. cuniculi; Eint, E. intestinalis;  <b>Entamoeba</b>: Ed, E. dispar; Eh, E. histolytica; Einv, E. invadens; <b>Enterocytozoon</b>: Eb, E. bieneusi; <b>Giardia</b> GA, G.Assemblage_A_isolate_WB; GB, G.Assemblage_B_isolate_GS; GE, G.Assemblage_E_isolate_P15; <b>Leishmania</b>: Lb, L. braziliensis; Li, L. infantum; Lma, L. major; Lme, L. mexicana; <b>Neospora</b>: Nc, N. caninum; <b>Plasmodium</b>: Pb, P. berghei; Pc, P. chabaudi; Pf, P. falciparum; Pk, P. knowlesi; Pv, P. vivax; Py, P. yoelii; <b>Toxoplasma</b>: Tg, T. gondii; <b>Trichomonas</b>: Tva, T. vaginalis; <b>Trypanosoma</b>: Tb, T. brucei; Tco, T. congolense; Tcr, T. cruzi; Tvi, T. vivax.)</i></font><br>
+<font size="-1"><b>Cryptosporidium</b>: Ch, C. hominis; Cm, C. muris; Cp, C. parvum; <b>Encephalitozoon</b>: Ec, E. cuniculi; Eint, E. intestinalis;  <b>Entamoeba</b>: Ed, E. dispar; Eh, E. histolytica; Einv, E. invadens; <b>Enterocytozoon</b>: Eb, E. bieneusi; <b>Giardia</b> GA, G.Assemblage_A_isolate_WB; GB, G.Assemblage_B_isolate_GS; GE, G.Assemblage_E_isolate_P15; <b>Leishmania</b>: Lb, L. braziliensis; Li, L. infantum; Lma, L. major; Lme, L. mexicana; <b>Neospora</b>: Nc, N. caninum; <b>Plasmodium</b>: Pb, P. berghei; Pc, P. chabaudi; Pf, P. falciparum; Pk, P. knowlesi; Pv, P. vivax; Py, P. yoelii; <b>Toxoplasma</b>: Tg, T. gondii; <b>Trichomonas</b>: Tva, T. vaginalis; <b>Trypanosoma</b>: Tb, T. brucei; Tco, T. congolense; Tcr, T. cruzi; Tvi, T. vivax.)</i></font><br>
 </td></tr>
 <br>
 <tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
