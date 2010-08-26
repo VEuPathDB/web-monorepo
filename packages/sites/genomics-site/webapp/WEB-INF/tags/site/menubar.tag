@@ -163,7 +163,7 @@
     	    </c:choose>
  	    <c:if test="${project != 'EuPathDB'}" >    	    
 	    	<li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
-    		<li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+    		<li><a onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
 	    </c:if>
   	</ul>
     </li>
