@@ -60,7 +60,7 @@
 <c:choose>
   <c:when test="${wdkUser == null || wdkUser.guest}">
     <wdk:requestURL path="/showApplication.do" />
-    <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');popLogin('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
+    <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');popLogin('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
   </c:when>
   <c:otherwise>
     <c:choose>
@@ -177,15 +177,15 @@
 <c:when test="${wdkUser == null || wdkUser.guest}">
 	<wdk:requestURL path="/showFavorite.do" />
 	<li><a id="mybasket" onclick="popLogin('${originRequestUrl}');" href="javascript:void(0)">
-		<img style="vertical-align:middle" height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
-		<span style="vertical-align:middle">My Favorites</span>
+		<img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
+		<span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
        	    </a>
     	</li></ul>
 </c:when>
 <c:otherwise>
     	<li><a href="<c:url value="/showFavorite.do"/>">
-		<img style="vertical-align:middle" height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
-		<span style="vertical-align:middle">My Favorites</span>
+		<img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
+		<span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
 	    </a>
 	</li></ul>	
 </c:otherwise>
