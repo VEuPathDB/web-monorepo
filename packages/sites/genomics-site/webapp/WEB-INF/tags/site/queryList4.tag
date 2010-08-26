@@ -161,9 +161,10 @@ function getComboElement()
     <c:if test="${oldprefix != prefix}">  
                 </tr>
 		<tr><td colspan="${columns+2}" style="padding:0">&nbsp;</td></tr>
-		<tr><td colspan="${columns+2}" style="padding:0"><i><b>${org}</b></i></td></tr> 
+		<tr class="subheaderrow2"><td colspan="${columns+2}" style="padding:0;padding-bottom: .5em;"><i><b>${org}</b></i></td></tr> 
                 <c:set var="i" value="1"/>  <!-- i represents the column where to write (1 or 2) -->   
-                <tr>     
+                <tr>
+
     </c:if>
 
 
@@ -175,7 +176,7 @@ function getComboElement()
 
     <%-- access the study Name, to display --%>
     <c:set var="studyNameArray" value="${fn:split(qFullName, ':')}" />
-    <td colspan="${columns+2}" style="padding:0">--${studyNameArray[1]}</td></tr>
+    <td colspan="${columns+2}" style="padding:0"><i>${studyNameArray[1]}</i></td></tr>
 
     <tr>
 </c:when>
