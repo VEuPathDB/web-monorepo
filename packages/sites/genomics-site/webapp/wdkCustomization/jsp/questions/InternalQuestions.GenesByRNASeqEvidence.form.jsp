@@ -7,8 +7,10 @@
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
 <%-- QUESTIONS --%>
-<c:set var="plasmoQuestions" value="GeneQuestions.GenesByRNASeqPfExpressionFoldChange,GeneQuestions.GenesByRNASeqPfExpressionPercentile,GeneQuestions.GenesByRNASeqPfRBCFoldChange,GeneQuestions.GenesByRNASeqPfRBCExprnPercentile,GeneQuestions.GenesByRNASeqExpressionTiming" />
+<c:set var="plasmoQuestions" value="P.f.study:Field Parasites from Mothers and Children (Duffy),GeneQuestions.GenesByRNASeqPfExpressionFoldChange,GeneQuestions.GenesByRNASeqPfExpressionPercentile,P.f.study:Post Infection Time Series (Stunnenberg),GeneQuestions.GenesByRNASeqPfRBCFoldChange,GeneQuestions.GenesByRNASeqPfRBCExprnPercentile,P.f.study:Intraerythrocytic infection cycle (Newbold/Llinas),GeneQuestions.GenesByRNASeqExpressionTiming" />
 <c:set var="tritrypQuestions" value="GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile"/>
+
+
 
 ${Question_Header}
 <wdk:errors/>
@@ -23,12 +25,12 @@ ${Question_Header}
 
   <c:choose>
     <c:when test="${projectId == 'PlasmoDB'}">
-	<site:queryList3 columns="${columns}" questions="${plasmoQuestions}"/>
+	<site:queryList4 columns="${columns}" questions="${plasmoQuestions}"/>
     </c:when>    <c:when test="${projectId == 'TriTrypDB'}">
 	<site:queryList3 columns="${columns}" questions="${tritrypQuestions}"/>
     </c:when>
     <c:otherwise>  <%-- it must be the portal --%>
-	<site:queryList3 columns="${columns}" questions="${plasmoQuestions},${tritrypQuestions}"/>
+	<site:queryList4 columns="${columns}" questions="${plasmoQuestions},${tritrypQuestions}"/>
     </c:otherwise>
    </c:choose>
 
