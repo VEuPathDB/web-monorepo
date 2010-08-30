@@ -118,7 +118,7 @@
                         <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'EuPathDB'}">
 
 <c:choose>
-<c:when test="${fn:contains(wdkQuestion.name, 'Location') }">  <!-- as it happens in component sites  under choice below EnumParamBean -->
+<c:when test="${fn:contains(wdkQuestion.name, 'Location') || fn:contains(wdkQuestion.name, 'Snp') }">  <!-- as it happens in component sites  under choice below EnumParamBean -->
 
                            <td width="30%" align="right" style="vertical-align:top">
 				<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
