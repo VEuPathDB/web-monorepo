@@ -176,7 +176,7 @@ function getComboElement()
 
     <%-- access the study Name, to display --%>
     <c:set var="studyNameArray" value="${fn:split(qFullName, ':')}" />
-    <td colspan="${columns+2}" style="padding:0;padding-top: .5em;"><i>${studyNameArray[1]}</i></td></tr>
+    <td colspan="${columns+2}" style="padding:0;padding-top: .5em;"><i><b>${studyNameArray[1]}</b></i></td></tr>
 
     <tr>
 </c:when>
