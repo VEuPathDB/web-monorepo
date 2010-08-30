@@ -602,7 +602,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${binomial eq 'Plasmodium falciparum' || binomial eq 'Plasmodium yoelii' || binomial eq 'Plasmodium berghei'}">
   <site:pageDivider name="Expression"/>
 
-  <wdk:wdkTable tblName="ArrayElements" attribution="Vaidya_Bergman_oligos,DeRisi_oligos,berghei_gss_oligos"/>
+  <%-- wdk:wdkTable tblName="ArrayElements" attribution="Vaidya_Bergman_oligos,DeRisi_oligos,berghei_gss_oligos"/ --%>
 </c:if>
 
 <c:if test="${binomial eq 'Plasmodium vivax'}">
