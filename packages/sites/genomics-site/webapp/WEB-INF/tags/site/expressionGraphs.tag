@@ -104,7 +104,7 @@
     name="${row['profile_name'].value}Data"
     displayName="Data Table"
     content="${expressionDataTable}"
-    isOpen="false"
+    isOpen="${row['dataOpen'].value}"
     noData="${noExpressionDataTable}"
     attribution=""/>         
 
@@ -150,7 +150,7 @@
 
 <wdk:toggle
     name="${row['profile_name'].value}"
-    isOpen="true"
+    isOpen="${row['mainOpen'].value}"
     noData="${noData}"
     displayName="${row['display_name'].value}"
     content="${expressionContent}"
