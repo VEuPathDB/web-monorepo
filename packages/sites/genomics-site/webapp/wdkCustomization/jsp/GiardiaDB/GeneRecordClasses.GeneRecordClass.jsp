@@ -274,7 +274,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 
 <%-- SAGE tags ------------------------------------------------------%>
 
-<wdk:wdkTable tblName="SageTags" isOpen="true"
+<wdk:wdkTable tblName="SageTags" isOpen="FALSE"
                attribution="GiardiaSageTagArrayDesign,GiardiaSageTagFreqs"/>
 
 
