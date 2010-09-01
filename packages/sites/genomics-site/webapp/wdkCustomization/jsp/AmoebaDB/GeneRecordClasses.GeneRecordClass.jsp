@@ -95,17 +95,17 @@ ${attrs['organism'].value}<br>
 <c:choose>
   <c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEinvadens+SyntenyGenesEinvadens+SyntenySpansEhistolytica+SyntenyGenesEhistolytica+Repeat+EST+BLASTX
+      Gene+SyntenySpansEhistolytica+SyntenyGenesEhistolytica+Repeat+EST+BLASTX
     </c:set>
   </c:when>
   <c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEinvadens+SyntenyGenesEinvadens+SyntenySpansEdispar+SyntenyGenesEdispar+Repeat+EST+BLASTX
+      Gene+SyntenySpansEdispar+SyntenyGenesEdispar+Repeat+EST+BLASTX
     </c:set> 
   </c:when>
   <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEdispar+SyntenyGenesEdispar+SyntenySpansEhistolytica+SyntenyGenesEhistolytica+Repeat+EST+BLASTX
+      Gene+Repeat+EST+BLASTX
     </c:set>
   </c:when>
 </c:choose>
