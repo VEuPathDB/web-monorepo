@@ -338,6 +338,12 @@ sub colorFromBinaryColor {
   }
 }
 
+sub colorFromTriColor {
+  my ($f, @colors) = @_;
+  my ($triColor) = $f->get_tag_values('triColor');
+  return $colors[$triColor];
+}
+
 sub colorForSpliceSites {
   my ($f, $first, $second, $third, $fourth) = @_;
   my $strand = $f->strand;
