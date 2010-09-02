@@ -7,7 +7,6 @@
 <struts-config>
 
   <form-beans>
-    <form-bean name="questionSetForm" type="org.gusdb.wdk.controller.action.QuestionSetForm"/>
     <form-bean name="questionForm" type="org.gusdb.wdk.controller.action.QuestionForm"/>
     <form-bean name="booleanQuestionForm" type="org.gusdb.wdk.controller.action.BooleanQuestionForm"/>
     <form-bean name="downloadConfigForm" type="org.gusdb.wdk.controller.action.DownloadConfigForm"/>
@@ -31,6 +30,7 @@
     <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.action.RenameStepForm"/>
     <form-bean name="renameStrategyForm" type="org.gusdb.wdk.controller.action.RenameStrategyForm"/>
     <form-bean name="userFileUploadForm" type="org.apidb.apicommon.controller.UserFileUploadForm"/>
+    <form-bean name="wizardForm" type="org.apidb.apicommon.controller.WizardForm"/>
   </form-beans>
 
   <global-exceptions>
@@ -166,14 +166,14 @@
       path="/showQuestionSets"
       type="org.gusdb.wdk.controller.action.ShowQuestionSetsAction"
       scope="request"
-      name="questionSetForm">
+      name="questionForm">
       <forward name="show_questionsets" path="/questionSets.jsp"/>
     </action>
     <action
       path="/showQuestionSetsFlat"
       type="org.gusdb.wdk.controller.action.ShowQuestionSetsFlatAction"
       scope="request"
-      name="questionSetForm"
+      name="questionForm"
       input="/showQuestion.do">
       <forward name="show_questionsetsflat" path="/questionSetsFlat.jsp"/>
     </action>
@@ -181,7 +181,7 @@
       path="/processQuestionSetsFlat"
       type="org.gusdb.wdk.controller.action.ProcessQuestionSetsFlatAction"
       scope="request"
-      name="questionSetForm"
+      name="questionForm"
       input="/showQuestion.do">
       <forward name="process_questionsetsflat" path="/processQuestion.do?fromQuestionSet=1"/>
     </action>
@@ -472,6 +472,7 @@
     <action path="/wizard"
       type="org.gusdb.wdk.controller.action.WizardAction"
       scope="request"
+      name="wizardForm"
       validate="false">
       <forward name="show_wizards" path="/wdk/jsp/wizard/wizards.jsp"/>
     </action>

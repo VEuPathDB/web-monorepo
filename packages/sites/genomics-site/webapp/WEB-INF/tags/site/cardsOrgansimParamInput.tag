@@ -74,7 +74,7 @@ function noop(){}
 				<c:when test="${v eq 0}">
 					    <c:set var="i" value="0"/>
 					    <c:forEach items="${qP.vocab}" var="flatVoc">
-						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" id="${v}_${i}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input></li>
+						<li><input name="array(${pNam})" value="${flatVoc}" id="${v}_${i}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input></li>
 						<c:set var="i" value="${i+1}"/>
 					    </c:forEach>
 				</c:when>
@@ -82,7 +82,7 @@ function noop(){}
 					<c:set var="i" value="0"/>
 					<c:forEach items="${qP.vocab}" var="flatVoc">
 					  <c:if test="${fn:startsWith(flatVoc,group)}">
-						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input></li>
+						<li><input name="array(${pNam})" value="${flatVoc}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input></li>
 					  </c:if>
 					  <c:set var="i" value="${i+1}"/>
 					</c:forEach>

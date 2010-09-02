@@ -129,7 +129,7 @@ function showParamGroup(group, isShow)
   
   <%-- hide invisible params --%>
   <c:choose>
-  <c:when test="${isHidden}"><html:hidden property="myProp(${pNam})"/></c:when>
+  <c:when test="${isHidden}"><html:hidden property="value(${pNam})"/></c:when>
   <c:otherwise>
 
   <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
@@ -149,15 +149,15 @@ function showParamGroup(group, isShow)
 		      <option value="Tg">Toxoplasma gondii</optioin>
 		      -->
                   </select>
-		        <input name="myProp(${pNam})" type="hidden" id="myOrg"/>
+		        <input name="value(${pNam})" type="hidden" id="myOrg"/>
             </c:when>
 	        <c:when test="${pNam eq 'snp_strain_a'}">
-	          <select name="myMultiProp(${pNam})" id="StrainA" >
+	          <select name="array(${pNam})" id="StrainA" >
                       
                   </select>
             </c:when>
             <c:when test="${pNam eq 'snp_strain_m'}">
-	          <select name="myMultiProp(${pNam})" id="StrainB">
+	          <select name="array(${pNam})" id="StrainB">
                      
                   </select>
             </c:when>
@@ -180,11 +180,11 @@ function showParamGroup(group, isShow)
     <c:otherwise>  <%-- string param --%>
       <td><c:choose>
               <c:when test="${isReadonly}">
-                  <bean:write name="qForm" property="myProp(${pNam})"/>
-                  <html:hidden property="myProp(${pNam})"/>
+                  <bean:write name="qForm" property="value(${pNam})"/>
+                  <html:hidden property="value(${pNam})"/>
               </c:when>
               <c:otherwise>
-			<html:text property="myProp(${pNam})" size="35" />
+			<html:text property="value(${pNam})" size="35" />
 		</c:otherwise>
           </c:choose>
     </c:otherwise>

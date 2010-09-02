@@ -90,7 +90,7 @@
   
         <%-- hide invisible params --%>
         <c:choose>
-            <%--<c:when test="${isHidden}"><html:hidden property="myProp(${qP.class.name})"/></c:when>--%>
+            <%--<c:when test="${isHidden}"><html:hidden property="value(${qP.class.name})"/></c:when>--%>
             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.TimestampParamBean'}">
                 <wdk:timestampParamInput qp="${qP}" />
             </c:when>
@@ -99,15 +99,15 @@
                    <c:when test="${fn:containsIgnoreCase(wdkModel.displayName,'EuPathDB')}">
                         <c:choose>
                            <c:when test="${pNam eq 'signature'}">
-                            <html:hidden property="myProp(${pNam})" value="${wdkUser.signature}"/>
+                            <html:hidden property="value(${pNam})" value="${wdkUser.signature}"/>
                            </c:when>
                            <c:otherwise>
-                                <html:hidden property="myProp(${pNam})"/>
+                                <html:hidden property="value(${pNam})"/>
                            </c:otherwise>
                         </c:choose>
                    </c:when>
                    <c:otherwise>
-                        <html:hidden property="myProp(${pNam})"/>
+                        <html:hidden property="value(${pNam})"/>
                    </c:otherwise>
                 </c:choose>
             </c:when>
@@ -174,8 +174,8 @@
                                 <c:when test="${isReadonly}">
                                     <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
-                                        <bean:write name="qForm" property="myProp(${pNam})"/>
-                                        <html:hidden property="myProp(${pNam})"/>
+                                        <bean:write name="qForm" property="value(${pNam})"/>
+                                        <html:hidden property="value(${pNam})"/>
                                     </td>
                                 </c:when>
                                 <c:otherwise>
@@ -183,7 +183,7 @@
                                     <td width="30%" align="right" valign="top">
 					<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
-                                        <html:text styleId="${pNam}" property="myProp(${pNam})" size="35" />
+                                        <html:text styleId="${pNam}" property="value(${pNam})" size="35" />
                                     </td>
                                 </c:otherwise>
                             </c:choose>

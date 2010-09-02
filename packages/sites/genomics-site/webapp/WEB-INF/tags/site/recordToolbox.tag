@@ -14,7 +14,7 @@
     <c:choose>
       <c:when test="${type == 'GeneRecordClasses.GeneRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&skip_to_download=1&myProp(single_gene_id)=${id}" />
+          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&skip_to_download=1&value(single_gene_id)=${id}" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>

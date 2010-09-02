@@ -109,7 +109,7 @@ ${Question_Header}
 		              <span id="${flatVoc}_font" style="color:gray;"><input type="radio" name="algorithm" value="${flatVoc}" id="BlastAlgorithm_${flatVoc}" onClick="changeLabel();checkSequenceLength()" disabled />${flatVoc}</span>
 			      <c:set var="counter" value="${counter+1}"/>
 		       </c:forEach>
-		        <input type="hidden" name="myMultiProp(${pNam})" id="blastAlgo"/>
+		        <input type="hidden" name="array(${pNam})" id="blastAlgo"/>
 		      </td>
 		    </c:when>
 		    <c:when test="${pNam eq 'BlastDatabaseOrganism'}">
@@ -118,7 +118,7 @@ ${Question_Header}
 		           <option value="-">Select Target Data Type to display appropriate organisms</option>
 		        </select><br>
 			<input type="button" onClick="selectAll_None_Blast(true)" value="All"/>&nbsp;&nbsp;<input onClick="selectAll_None_Blast(false)" type="button" value="None"/><br>
-		        <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
+		        <input name="array(${pNam})" type="hidden" id="blastOrg"/> 
 
 
 
@@ -135,7 +135,7 @@ ${Question_Header}
                               <span id="type_BlastType_${counter}">${flatVoc}</span>
 			      <c:set var="counter" value="${counter+1}"/>	
 		       </c:forEach>
-		       <input type="hidden" name="myMultiProp(${pNam})" id="blastType"/>
+		       <input type="hidden" name="array(${pNam})" id="blastType"/>
 
 		     </td>
 
@@ -153,16 +153,16 @@ ${Question_Header}
 		          <td>
 		            <c:choose>
 		              <c:when test="${pNam == 'BlastQuerySequence'}">
-		                  <html:textarea property="myProp(${pNam})" styleId="sequence" cols="50" rows="4" onchange="checkSequenceLength()"/>
+		                  <html:textarea property="value(${pNam})" styleId="sequence" cols="50" rows="4" onchange="checkSequenceLength()"/>
 				  <br>
 
 		              </td> 
 			      </c:when>
 		              <c:when test="${pNam == '-e'}">
-		                  <html:text property="myProp(${pNam})" styleId="e"/></td>
+		                  <html:text property="value(${pNam})" styleId="e"/></td>
 		              </c:when>
 		              <c:otherwise>
-		                <html:text property="myProp(${pNam})" styleId="${qP.id}" /></td>
+		                <html:text property="value(${pNam})" styleId="${qP.id}" /></td>
 		              </c:otherwise>
 		            </c:choose>
 		          <!--</td>-->
@@ -309,7 +309,7 @@ ${Question_Header}
 		              <span id="${flatVoc}_font" style="color:gray;"><input type="radio" name="algorithm" value="${flatVoc}" id="BlastAlgorithm_${flatVoc}" onClick="changeLabel();checkSequenceLength()" disabled />${flatVoc}</span>
 			      <c:set var="counter" value="${counter+1}"/>
 		       </c:forEach>
-		        <input type="hidden" name="myMultiProp(${pNam})" id="blastAlgo"/>
+		        <input type="hidden" name="array(${pNam})" id="blastAlgo"/>
 		      </td>
 		    </c:when>
 		    <c:when test="${pNam eq 'BlastDatabaseOrganism'}">
@@ -318,7 +318,7 @@ ${Question_Header}
 		           <option value="-">Select Target Data Type to display appropriate organisms</option>
 		        </select><br>
 			<input type="button" onClick="selectAll_None_Blast(true)" value="All"/>&nbsp;&nbsp;<input onClick="selectAll_None_Blast(false)" type="button" value="None"/><br>
-		        <input name="myMultiProp(${pNam})" type="hidden" id="blastOrg"/> 
+		        <input name="array(${pNam})" type="hidden" id="blastOrg"/> 
 
 
 
@@ -335,7 +335,7 @@ ${Question_Header}
                               <span id="type_${counter}">${flatVoc}</span>
 			      <c:set var="counter" value="${counter+1}"/>	
 		       </c:forEach>
-		       <input type="hidden" name="myMultiProp(${pNam})" id="blastType"/>
+		       <input type="hidden" name="array(${pNam})" id="blastType"/>
 
 		     </td>
 
@@ -353,16 +353,16 @@ ${Question_Header}
 		          <td>
 		            <c:choose>
 		              <c:when test="${pNam == 'BlastQuerySequence'}">
-		                  <html:textarea property="myProp(${pNam})" styleId="sequence" cols="50" rows="4" onchange="checkSequenceLength()"/>
+		                  <html:textarea property="value(${pNam})" styleId="sequence" cols="50" rows="4" onchange="checkSequenceLength()"/>
 				  <br>
 
 		              </td> 
 			      </c:when>
 		              <c:when test="${pNam == '-e'}">
-		                  <html:text property="myProp(${pNam})" styleId="e"/></td>
+		                  <html:text property="value(${pNam})" styleId="e"/></td>
 		              </c:when>
 		              <c:otherwise>
-		                <html:text property="myProp(${pNam})" styleId="${qP.id}" /></td>
+		                <html:text property="value(${pNam})" styleId="${qP.id}" /></td>
 		              </c:otherwise>
 		            </c:choose>
 		          <!--</td>-->
