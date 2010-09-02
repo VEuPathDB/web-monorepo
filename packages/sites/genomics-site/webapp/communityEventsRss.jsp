@@ -72,22 +72,24 @@
   <c:set var="headline"><x:out select="event/name" escapeXml="true"/></c:set>
   <c:set var="eventDate"><x:out select="event/date"/></c:set>
   <c:set var="presence"><x:out select="event/presence/type"/></c:set>
-  <c:set var="tag">ev-<x:out select="recid"/></c:set>
+  <c:set var="recid"><x:out select="recid"/></c:set>
+  <c:set var="tag">ev-${recid}</c:set>
   <c:set var="exturl"><x:out select="event/url"/></c:set>
   <c:set var="item"><x:out select="event/description" escapeXml="true"/></c:set>
   <fmt:parseDate  var="pdate" pattern="${dateStringPattern}" value="${date}" parseLocale="en_US"/> 
   <fmt:formatDate value="${pdate}" pattern="EEE, dd MMM yyyy HH:mm:ss zzz" var="fdate"/>
   <item>
       <title>${headline} - ${eventDate}</title>
-      <c:if test="${fn:length(exturl) > 0}">
-      <link>${exturl}</link>
-      </c:if>
+      <link>${linkTmpl}?tag=${recid}</link>
       <description>  
       ${item}&lt;br&gt;
       <c:if test="${fn:length(presence) > 0}">
        ${presence}&lt;br&gt;
       </c:if>
       ${eventDate}
+      <c:if test="${fn:length(exturl) > 0}">
+      <a href='${exturl}'>Event Website</a>
+      </c:if>
       </description>
       <guid isPermaLink="false">${tag}</guid>
       <pubDate>${fdate}</pubDate>

@@ -45,14 +45,19 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
 
 <h2 align='center'>${projectName} Community Events</h2>
 
-
 <c:catch var='e'>
 
 <c:import var="currentData" url="${currentDataUrl}" />
 <c:import var="xslt" url="${xsltUrl}" />
 
 <div class='events'>
-<x:transform xml="${currentData}" xslt="${xslt}" />
+<x:transform xml="${currentData}" xslt="${xslt}">
+    <x:param name="tag" value="${param.tag}"/>
+</x:transform>
+<c:if test="${param.tag != null && param.tag ne ''}">
+<br/><br/>
+<a href='${pageContext.request.requestURI}'>All ${project} Community Events</a>
+</c:if>
 </div>
 </c:catch>
 <c:if test="${e != null}">
