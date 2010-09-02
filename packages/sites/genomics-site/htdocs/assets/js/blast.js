@@ -50,7 +50,8 @@ function initBlastQuestion(url){
 	if(parseUrlUtil('-filter',url) != ""){
        revise = true;
        Rorganism = unescape(parseUrlUtil('BlastDatabaseOrganism',url)).replace(/\+/g," ").split(",");
-	   Rtype = parseUrlUtil('BlastDatabaseType',url);
+	   Rtype = parseUrlUtil('BlastDatabaseType',url)[0];
+	   if(Rtype.search(/\+/i) >= 0) Rtype = Rtype.replace(/\+/gi," ");
 	   Rprogram = parseUrlUtil('BlastAlgorithm',url);   
 	   clickDefault(Rtype, 'type'); 
 	   enableRadioArray('algorithm', Rprogram);
@@ -67,12 +68,19 @@ function initBlastQuestion(url){
 
 function restrictTypes(type){
 	var n = "";
-	if(type.search(/Gene/i) >= 0) n = "0,1";
+	/*if(type.search(/Gene/i) >= 0) n = "0,1";
 	else if(type.search(/Isolate/i) >= 0) n = "6";
 	else if(type.search(/Assembly/i) >= 0) n = "5";
 	else if(type.search(/ESTsBy/i) >= 0) n = "4";
 	else if(type.search(/ORF/i) >= 0) n = "3";
-	else if(type.search(/Genomic/i) >= 0) n = "2";
+	else if(type.search(/Genomic/i) >= 0) n = "2,7";*/
+	
+	if(type.search(/Gene/i) >= 0) n = "Transcripts,Proteins";
+	else if(type.search(/Isolate/i) >= 0) n = "Isolates";
+	else if(type.search(/Assembly/i) >= 0) n = "Assemblies";
+	else if(type.search(/ESTsBy/i) >= 0) n = "EST";
+	else if(type.search(/ORF/i) >= 0) n = "ORF";
+	else if(type.search(/Genomic/i) >= 0) n = "Genome,GenomeSurveySequences";
 
 	var y = document.getElementsByName("type");
 	n = n.split(",");
@@ -219,9 +227,14 @@ function getOrganismTerms(){
 function getBlastAlgorithm() {
 	var label = "";
   var type = "";
-	for(var x = 0; x < document.getElementsByName('type').length; x++){
+	/*for(var x = 0; x < document.getElementsByName('type').length; x++){
 		if(document.getElementById('BlastType_'+x).checked)
 			type = document.getElementById('BlastType_'+x).value;
+	}*/
+	types = document.getElementsByName('type');
+	for(t in types){
+		if(types[t].checked)
+			type = types[t].value;
 	}
 	document.getElementById('blastType').value = type;
 	if(type == 'EST' || type == 'Transcripts' || type == 'Genome' || type == 'Genome Survey Sequences') {
