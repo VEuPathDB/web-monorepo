@@ -1,6 +1,6 @@
-var chromoSel = "myMultiProp(chromosomeOptional)";
-var sequence = "myProp(sequenceId)";
-var org = "myMultiProp(organism)";
+var chromoSel = "array(chromosomeOptional)";
+var sequence = "value(sequenceId)";
+var org = "array(organism)";
 
 function changeType(type) {	
    	if (type == 'organism') {

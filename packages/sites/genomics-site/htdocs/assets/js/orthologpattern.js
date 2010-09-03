@@ -13,7 +13,7 @@ function initOrthologQuestion(url){
 	var exclude = unescape(parseUrlUtil('excluded_species', url)).replace(/\+/g," ").split(", ");
 	var pattern = unescape(parseUrlUtil('profile_pattern', url));
 
-	$("form#form_question input:hidden[name='myProp(profile_pattern)']").attr('value',pattern);
+	$("form#form_question input:hidden[name='value(profile_pattern)']").attr('value',pattern);
 
 	for (var i = 0, len = include.length; i < len; ++i) {
 		$("form#form_question div.params td code:contains(" + include[i] + ")").parent().find("a").click();
@@ -121,12 +121,12 @@ function calctext () {
 
     }
     var includedStr = 'n/a'; if (includeClause.length > 0) includedStr = includeClause.join(", ");
-    $("form[name='questionForm'] input:hidden[name='myProp(" + includedSpeciesName + ")']").attr('value', includedStr);
+    $("form[name='questionForm'] input:hidden[name='value(" + includedSpeciesName + ")']").attr('value', includedStr);
     var excludedStr = 'n/a'; if (excludeClause.length > 0) excludedStr = excludeClause.join(", ");
-    $("form[name='questionForm'] input:hidden[name='myProp(" + excludedSpeciesName + ")']").attr('value', excludedStr);
+    $("form[name='questionForm'] input:hidden[name='value(" + excludedSpeciesName + ")']").attr('value', excludedStr);
 
     var bothClauseSQL = includeClauseSQL.concat(excludeClauseSQL);
-    $("form[name='questionForm'] input:hidden[name='myProp(" + profilePatternName + ")']").attr('value',
+    $("form[name='questionForm'] input:hidden[name='value(" + profilePatternName + ")']").attr('value',
 	bothClauseSQL.length ? "%" + bothClauseSQL.sort().join("%") + "%" : "%");
 }
 

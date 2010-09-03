@@ -104,7 +104,7 @@ function updateSelectInput(paramId, inputId){
 	hid = document.getElementById(paramId);
 	if(hid == null) return;
 	if(hid.tagName != "INPUT")
-		hid = document.getElementsByName("myProp(" + paramId + ")")[0];
+		hid = document.getElementsByName("value(" + paramId + ")")[0];
 	
 	if(sel.multiple == false){
 		hid.value = sel.options[sel.selectedIndex].text;//value;
