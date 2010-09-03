@@ -30,7 +30,7 @@
     <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.action.RenameStepForm"/>
     <form-bean name="renameStrategyForm" type="org.gusdb.wdk.controller.action.RenameStrategyForm"/>
     <form-bean name="userFileUploadForm" type="org.apidb.apicommon.controller.UserFileUploadForm"/>
-    <form-bean name="wizardForm" type="org.apidb.apicommon.controller.WizardForm"/>
+    <form-bean name="wizardForm" type="org.apidb.apicommon.controller.action.WizardForm"/>
   </form-beans>
 
   <global-exceptions>
