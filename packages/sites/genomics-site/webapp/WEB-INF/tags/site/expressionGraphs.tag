@@ -34,12 +34,14 @@
         OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[selectedIndex].value)">
 
         <c:set var="vp_i" value="0"/>
+        <c:set var="defaultVp" value=""/>
         <c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
 
           <c:choose>
             <c:when test="${vp_i == 0}">
               <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}&vp=_LEGEND,${vp}">${vp}</OPTION>
               <c:set var="imgSrc" value="${imgSrc}&vp=_LEGEND,${vp}"/>
+              <c:set var="defaultVp" value="${vp}"/>
             </c:when>
             <c:otherwise>
               <OPTION  VALUE="${preImgSrc}&vp=_LEGEND,${vp}">${vp}</OPTION>
@@ -63,50 +65,26 @@
 
         <tr>
         <td>
+
             <img  id="${imgId}" src="${imgSrc}">
 
         </td>
 
-      <c:set var="noExpressionDataTable" value="true"/>
-      <c:set var="expressionDataTable">
-            <table>
-              <tr class="headerRow">
-               <th style="padding: 10px; align: left">Sample</th>
-               <th style="padding: 10px;align: left">Expression Value</th>
-               </tr>
 
-            <c:set var="i" value="0"/>
-            <c:forEach var="drow" items="${dat}">
+           <c:forEach var="drow" items="${dat}">
               <c:if test="${drow['profile_name'].value eq row['profile_name']}">
-      <c:set var="noExpressionDataTable" value="false"/>
-        <c:choose>
-            <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
-            <c:otherwise><tr class="rowMedium"></c:otherwise>
-        </c:choose>
 
-                  <td>
-                    ${drow['name'].value}
-                  </td>
-                  <td>
-                    ${drow['value'].value}
-                  </td>
-                </tr>
+                 <c:set var="expressionDataTable">TRUE</c:set>
               </c:if>
-
-               <c:set var="i" value="${i +  1}"/>
             </c:forEach>
-            </table>
-     </c:set>
+
 
         <td class="centered">
 
-<wdk:toggle
-    name="${row['profile_name'].value}Data"
-    displayName="Data Table"
-    content="${expressionDataTable}"
-    isOpen="${row['dataOpen'].value}"
-    noData="${noExpressionDataTable}"
-    attribution=""/>         
+         <c:if test="${expressionDataTable eq 'TRUE'}">
+         <c:set var="tableSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=table&id=${row['source_id'].value}&vp=${defaultVp}"/>
+          <b>For A Table of the Data Points <a href="${tableSrc}" target="_graphData">Click Here</a></b>
+         </c:if>
 
        <br /><br />
 
