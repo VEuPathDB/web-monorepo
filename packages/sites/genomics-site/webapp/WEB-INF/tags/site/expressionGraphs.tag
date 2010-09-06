@@ -11,7 +11,7 @@
               description="Param used in the cgi (plasmo, tritryp, toxo, giardia)"
 %>
 
-<c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
+        <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
 <c:set value="${wdkRecord.tables['ExpressionGraphs']}" var="tbl"/>
 <c:set value="${wdkRecord.tables['ExpressionGraphsData']}" var="dat"/>
@@ -71,20 +71,41 @@
         </td>
 
 
+      <c:set var="noExpressionDataTable" value="true"/>
            <c:forEach var="drow" items="${dat}">
               <c:if test="${drow['profile_name'].value eq row['profile_name']}">
-
-                 <c:set var="expressionDataTable">TRUE</c:set>
+                 <c:set var="noExpressionDataTable">false</c:set>
               </c:if>
             </c:forEach>
 
 
         <td class="centered">
 
-         <c:if test="${expressionDataTable eq 'TRUE'}">
-         <c:set var="tableSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=table&id=${row['source_id'].value}&vp=${defaultVp}"/>
-          <b>For A Table of the Data Points <a href="${tableSrc}" target="_graphData">Click Here</a></b>
-         </c:if>
+
+
+         <c:set var="expressionDataTable">
+           <c:set var="prefix" value="<%= request.getRequestURL() %>" />
+           <c:set var="tableSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=table&id=${row['source_id'].value}&vp=${defaultVp}"/>
+           <c:import url="${prefix}/../../../../../${tableSrc}"  />  
+         </c:set>
+
+
+<wdk:toggle
+    name="${row['profile_name'].value}Data"
+    displayName="Data Table"
+    content="${expressionDataTable}"
+    isOpen="${row['dataOpen'].value}"
+    noData="${noExpressionDataTable}"
+    attribution=""/>   
+
+
+
+
+
+
+
+
+
 
        <br /><br />
 
