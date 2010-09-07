@@ -5441,7 +5441,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
     FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5474,7 +5474,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
     FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5494,7 +5494,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
     FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5527,7 +5527,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
     FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
                  csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5557,7 +5557,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
     FROM apidb.nextgenseq_stats s, (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
                  csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5588,7 +5588,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
     FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
                  csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5617,7 +5617,7 @@ WHERE  fl.feature_type ='SAGETagFeature'
     FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
                  csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
