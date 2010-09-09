@@ -1025,6 +1025,7 @@ FROM  dots.massspecfeature msf,
   AND  enas.na_sequence_id = $srcfeature_id
   AND  msf.external_database_release_id = edr.external_database_release_id
   AND  edr.external_database_id = ed.external_database_id
+  AND NOT ed.name ='Pf_Lasonder_Proteomics_Blood_Stages_RSRC'
  GROUP BY enas.na_sequence_id, ed.name, edr.external_database_release_id) y
 ) z
 WHERE msf.na_feature_id = x.feat_id
