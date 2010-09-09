@@ -370,7 +370,6 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
         displayName="Protein Features"
         content="${proteinFeaturesImg}"
         attribution="${attribution}"/>
-      <!--${proteinFeaturesUrl} -->
    <br>
 </c:if>
 </c:if>
