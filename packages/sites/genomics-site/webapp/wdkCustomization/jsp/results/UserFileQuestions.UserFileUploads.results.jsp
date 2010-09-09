@@ -83,7 +83,7 @@
     <table width="100%" border="0" cellpadding="3" cellspacing="0">
       <tr class="subheaderrow">
         <th nowrap> 
-          <wdk:pager pager_id="top"/> 
+          <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
         </th>
         <th nowrap align="right">
            <%-- display a list of sortable attributes --%>
@@ -259,7 +259,7 @@
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
 	<tr class="subheaderrow">
 	<th style="text-align:left;white-space:nowrap;"> 
-	       <wdk:pager pager_id="bottom"/> 
+	       <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="bottom"/> 
 	</th>
 	<th style="text-align:right;white-space:nowrap;">
 		&nbsp;
