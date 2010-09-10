@@ -299,29 +299,6 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <c:if test="${isCodingGene}">
   <site:pageDivider name="Protein"/>
 
-  <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value}"/>
-  <c:if test="${! fn:startsWith(proteinFeatures, 'http')}">
-    <c:set var="proteinFeatures">
-      ${pageContext.request.scheme}://${pageContext.request.serverName}/${proteinFeatures}
-    </c:set>
-  </c:if>
-
-  <c:catch var="e">
-    <c:set var="proteinFeaturesContent">
-      <c:import url="${proteinFeatures}"/>
-    </c:set>
-  </c:catch>
-  <c:if test="${e!=null}"> 
-    <c:set var="proteinFeaturesContent">
-    <site:embeddedError 
-        msg="<font size='-2'>temporarily unavailable</font>" 
-        e="${e}" 
-    />
-    </c:set>
-  </c:if>
-  <!-- ${proteinFeatures} -->
-
-
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
    <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
