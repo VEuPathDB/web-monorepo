@@ -120,7 +120,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="5">Protein Expression</td></tr>
                 <tr><td>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="A C G P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="A Am C G P T Tr Tt"/>
                 </td></tr>
 
             </table>
