@@ -426,10 +426,10 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 
-<c:if test="${binomial eq 'Plasmodium falciparum'}">
   <wdk:wdkTable tblName="Aliases" isOpen="true"
-                 attribution="P.falciparum_chromosomes"/>
+                 attribution="P.falciparum_chromosomes,P.berghei_wholeGenomeShotgunSequence,P.chabaudi_chromosomes,P.knowlesi_chromosomes"/>
 
+<c:if test="${binomial eq 'Plasmodium falciparum'}">
   <wdk:wdkTable tblName="Notes" attribution="P.falciparum_chromosomes"/>
   
   <!-- publications -->
