@@ -58,6 +58,7 @@
     <td class="mythStyle" title="Proteomics">Prote<br>omics</td>
     <td class="mythStyle" title="ChIP Chip">ChIP<br>chip</td>
     <td class="mythStyle" title="RNA Seq">RNA<br>Seq</td>
+    <td class="mythStyle" title="Chip Seq">Chip<br>Seq</td>
     <td class="mythStyle" title="Sage Tags">SAGE<br>Tags</td>
     <td class="mythStyle" title="Metabolic Pathways">Path<br>ways</td>
 </tr>
@@ -225,6 +226,17 @@
 
 <c:choose>
 <c:when test="${record.attributesMap['RNA_Seq'] == 'yes'}">
+    <td class="mytdStyle" style="${separation}">
+	<a href="http://${website}.org/${webapp}/showXmlDataContent.do?name=XmlQuestions.DataSources">	
+		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+</c:when>
+<c:otherwise>
+    <td class="mytdStyle" style="${separation}"></td>
+</c:otherwise>
+</c:choose>
+
+<c:choose>
+<c:when test="${record.attributesMap['Chip_Seq'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/showXmlDataContent.do?name=XmlQuestions.DataSources">	
 		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
