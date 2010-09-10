@@ -463,63 +463,45 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${isCodingGene}">
   <site:pageDivider name="Protein"/>
 
-  <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value}"/>
-
   <c:if test="${species eq 'falciparum'}">
-      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+PfBowyerMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
+     <c:set var="ptracks"> 
+       FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+PfBowyerMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+     </c:set>
   </c:if>
   <c:if test="${species eq 'berghei'}">
-      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=WatersMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
+      <c:set var="ptracks"> 
+        WatersMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+     </c:set>
   </c:if>
   <c:if test="${species eq 'yoelii'}">
-      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=LiverStageMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
-  </c:if>
-
-  <c:if test="${! fn:startsWith(proteinFeatures, 'http')}">
-    <c:set var="proteinFeatures">
-      ${pageContext.request.scheme}://${pageContext.request.serverName}/${proteinFeatures}
+      <c:set var="ptracks">
+       LiverStageMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
     </c:set>
   </c:if>
 
-  <c:set var="imageMapDivId" value="proteinFeaturesDiv"/>
+  <c:set var="proteinFeaturesUrl">
+   http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/plasmodbaa/?name=${id};type=${ptracks};width=640;embed=1
+   </c:set>
 
-  <c:catch var="e">
-    <c:set var="proteinFeaturesContent">
-    <c:choose>
-    <c:when test="${okDOMInnerHtml}">
-      <div id="${imageMapDivId}"></div>
-    </c:when>
-    <c:otherwise>
-      <noindex follow><center>
-      <c:import url="${proteinFeatures}"/>
-      <!-- ${proteinFeatures} -->
-      </center></noindex>
-    </c:otherwise>
-    </c:choose>
+   <c:if test="${ptracks ne ''}">
+       <c:set var="proteinFeaturesImg">
+       <noindex follow><center>
+    <c:catch var="e">
+      <c:import url="${proteinFeaturesUrl}"/>
+    </c:catch>
+    <c:if test="${e!=null}">
+      <site:embeddedError 
+            msg="<font size='-2'>temporarily unavailable</font>" 
+            e="${e}" />
+    </c:if> 
+    </center></noindex>
     </c:set>
-  </c:catch>
-  <c:if test="${e!=null}"> 
-    <c:set var="proteinFeaturesContent">
-    <site:embeddedError 
-        msg="<font size='-2'>temporarily unavailable</font>" 
-        e="${e}" 
-    />
-    </c:set>
-  </c:if>
+    <wdk:toggle name="proteinContext"  displayName="Protein Features" 
+                content="${proteinFeaturesImg}" 
+                attribution="${attribution}"/>
 
-  <c:choose>
-  <c:when test="${okDOMInnerHtml}">
-    <wdk:toggle name="proteinFeatures" displayName="Protein Features"
-               content="${proteinFeaturesContent}" isOpen="true"
-               imageMapDivId="${imageMapDivId}" imageMapSource="${proteinFeatures}"
-               attribution="NRDB,InterproscanData"/>
-  </c:when>
-  <c:otherwise>
-    <wdk:toggle name="proteinFeatures" displayName="Protein Features"
-               content="${proteinFeaturesContent}" isOpen="true"
-               attribution="NRDB,InterproscanData"/>
-  </c:otherwise>
-  </c:choose>
+    </c:if> <%-- ptracks ne '' --%>
+
 
   <c:if test="${binomial eq 'Plasmodium falciparum'}">
   <wdk:wdkTable tblName="Y2hInteractions" isOpen="true"
