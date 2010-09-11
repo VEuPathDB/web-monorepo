@@ -608,7 +608,7 @@ div.innertube #record-toolbox li {
 	left:100%;
 	width: 16em;
 	font-weight: normal;
-	padding: 2px 0px;
+	padding: 5px 0px;
 	line-height: 14px;
 	z-index: 500;
   	color: #414141;
@@ -621,7 +621,7 @@ div.innertube #record-toolbox li {
 	font-weight: normal;
 	background-color: #FFFFFF;
 	text-decoration: none;
-	padding: 2px 0px;
+	padding: 5px 0px;
 	line-height: 14px;
 	display: block;
 	z-index: 500;
@@ -645,7 +645,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul {
 	display:block;
 	width: 15em;
 	text-decoration: none;
-	padding: 2px;
+	padding: 5px;
 	background-color: #FFFFFF;
 	z-index: 500;
 }
@@ -656,7 +656,7 @@ div#menu ul ul ul li:hover ul {
 	display:block;
 	width: 26em;
 	text-decoration: none;
-	padding: 2px;
+	padding: 5px;
 	background-color: #FFFFFF;
 	z-index: 500;
 }
@@ -667,7 +667,7 @@ div#menu ul ul ul li:hover ul {
 	left:100%;
 	width: 26em;
 	font-weight: normal;
-	padding: 2px;
+	padding: 5px;
 	line-height: 14px;
 	z-index: 500;
 }
