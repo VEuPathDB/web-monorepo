@@ -153,23 +153,23 @@ return true;
           <tr>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="p_falciparum" checked>P.falciparum
+              <input type="checkbox" name="genomes" value="Pfalciparum" checked>P.falciparum
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="p_vivax" checked>P.vivax
+              <input type="checkbox" name="genomes" value="Pvivax" checked>P.vivax
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="p_yoelii" checked>P.yoelii
+              <input type="checkbox" name="genomes" value="Pyoelii" checked>P.yoelii
             </td>
            </tr>
             <td>
-              <input type="checkbox" name="genomes" value="p_berghei" checked>P.berghei
+              <input type="checkbox" name="genomes" value="Pberghei" checked>P.berghei
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="p_chabaudi" checked>P.chabaudi
+              <input type="checkbox" name="genomes" value="Pchabaudi" checked>P.chabaudi
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="p_knowlesi" checked>P.knowlesi
+              <input type="checkbox" name="genomes" value="Pknowlesi" checked>P.knowlesi
             </td>
            </tr>
          </table>
