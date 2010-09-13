@@ -820,7 +820,7 @@ sub bindingSiteTitle {
   push @data, ['Strand:'   => $strand];
   push @data, [ 'P value:' => $score];  
   push @data, [ 'Sequence:' => $sequence ];  
-  push @data, [ 'Motif Link'  => $link];
+  push @data, [ 'Click logo for larger image'  => $link];
   hover("Binding Site $name", \@data);
 }
 
