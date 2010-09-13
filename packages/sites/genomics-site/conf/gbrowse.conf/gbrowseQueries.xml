@@ -1322,6 +1322,7 @@ FROM
 WHERE
        fl.na_sequence_id = s.na_sequence_id and
        BS.na_feature_id = fl.na_feature_id and
+       BS.name != 'PEAKS' and
        fl.feature_type = 'BindingSiteFeature' and
        fl.start_min <= $rend and 
        fl.end_max >= $base_start and 
