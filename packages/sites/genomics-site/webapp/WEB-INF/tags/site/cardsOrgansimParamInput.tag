@@ -30,7 +30,6 @@
 	<c:forEach items="${portalsArr}" var="portal">
 		<c:set var="portalArr" value="${fn:split(portal,',')}" />
 	</c:forEach>
-
 <script id="initScript" language="JavaScript" type="text/javascript">
 	window.onload = function(){
 <c:set var="v" value="0"/>
@@ -73,18 +72,32 @@ function noop(){}
 			<c:choose>
 				<c:when test="${v eq 0}">
 					    <c:set var="i" value="0"/>
-					    <c:forEach items="${qP.vocab}" var="flatVoc">
-						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" id="${v}_${i}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input></li>
+					    <c:forEach items="${qP.displayMap}" var="entity">
+					    <c:if test="${i == 0}"><c:set var="checked" value="checked"/></c:if>
+					    <%--<c:forEach items="${qP.vocab}" var="flatVoc">--%>
+						<li>
+							<%--<input name="myMultiProp(${pNam})" value="${flatVoc}" id="${v}_${i}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input>--%>
+							<html:multibox property="myMultiProp(${pNam})" value="${entity.key}" styleId="${v}_${i}" onclick="copySelection(this)" />
+								<i>${entity.value}</i>
+						</li>
 						<c:set var="i" value="${i+1}"/>
+						<c:set var="checked" value=""/>
 					    </c:forEach>
 				</c:when>
 				<c:otherwise>
 					<c:set var="i" value="0"/>
-					<c:forEach items="${qP.vocab}" var="flatVoc">
-					  <c:if test="${fn:startsWith(flatVoc,group)}">
-						<li><input name="myMultiProp(${pNam})" value="${flatVoc}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input></li>
+					<c:forEach items="${qP.displayMap}" var="entity">
+				    <c:if test="${i == 0}"><c:set var="checked" value="checked"/></c:if>
+					<%--<c:forEach items="${qP.vocab}" var="flatVoc">--%>
+					  <c:if test="${fn:startsWith(entity.value,group)}">
+						<li>
+							<%--<input name="myMultiProp(${pNam})" value="${flatVoc}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input>--%>
+							<html:multibox property="myMultiProp(${pNam})" value="${entity.key}" onclick="copySelection(this)"/>
+								<i>${entity.value}</i>
+						</li>
 					  </c:if>
 					  <c:set var="i" value="${i+1}"/>
+					  <c:set var="checked" value=""/>
 					</c:forEach>
 				</c:otherwise>
 			</c:choose>
