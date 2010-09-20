@@ -1318,11 +1318,15 @@ ORDER BY
 FROM 
        dots.BindingSiteFeature BS,
        apidb.FeatureLocation fl,
-       dots.nasequence s
+       dots.nasequence s,
+       sres.externaldatabase d,
+       sres.externaldatabaserelease rel
 WHERE
        fl.na_sequence_id = s.na_sequence_id and
        BS.na_feature_id = fl.na_feature_id and
-       BS.name != 'PEAKS' and
+       rel.external_database_release_id = BS.external_database_release_id and
+       d.external_database_id  = rel.external_database_id and
+       d.name like '%TransFactorBindingSites_Llinas_RSRC' and
        fl.feature_type = 'BindingSiteFeature' and
        fl.start_min <= $rend and 
        fl.end_max >= $base_start and 
