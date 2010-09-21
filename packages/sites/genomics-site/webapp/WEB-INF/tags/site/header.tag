@@ -290,7 +290,7 @@ ${headElement}
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">${siteName} News</a></li>
 	</c:otherwise>
 	</c:choose>
-	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li>
+<%--	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li> --%>
 <%-- all sites go to the Data Summary page --%>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
 
