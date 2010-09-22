@@ -14,7 +14,6 @@
         <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
 <c:set value="${wdkRecord.tables['ExpressionGraphs']}" var="tbl"/>
-<c:set value="${wdkRecord.tables['ExpressionGraphsData']}" var="dat"/>
 
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 
@@ -70,13 +69,7 @@
 
         </td>
 
-
-      <c:set var="noExpressionDataTable" value="true"/>
-           <c:forEach var="drow" items="${dat}">
-              <c:if test="${drow['profile_name'].value eq row['profile_name']}">
                  <c:set var="noExpressionDataTable">false</c:set>
-              </c:if>
-            </c:forEach>
 
 
         <td class="centered">
