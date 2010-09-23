@@ -232,11 +232,13 @@ function getBlastAlgorithm() {
 			type = document.getElementById('BlastType_'+x).value;
 	}*/
 	types = document.getElementsByName('type');
-	for(t in types){
+
+    for(var t = 0; t < document.getElementsByName('type').length; t++){
 		if(types[t].checked)
 			type = types[t].value;
 	}
 	document.getElementById('blastType').value = type;
+		
 	if(type == 'EST' || type == 'Transcripts' || type == 'Genome' || type == 'Genome Survey Sequences') {
 		sendReqUrl = tgeUrl; 
 		selectedArray = 'tge';
