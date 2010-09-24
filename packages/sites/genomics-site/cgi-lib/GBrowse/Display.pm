@@ -226,6 +226,8 @@ sub massSpecBgColorFromExtDbName {
                 'Linfantum Proteomics 2DGel 6-11 Promastigote' => 'blue',
                 'Lmajor Proteomics 2DGel 6-11 Promastigote' => 'blue',
                 'Linfantum Proteomics data from Marc Ouellette' => 'lightseagreen',
+                'L.major Proteomics-Exosomes' => 'crimson',
+                'L. braziliensis Proteomics-Promastigotes' => 'orange',              
                 # CryptoDB
                 'Ferrari_Proteomics_LTQ_Oocyst_walls' => 'sandybrown',
                 'Ferrari_Proteomics_LTQ_Sporozoites_merged' => 'tan',

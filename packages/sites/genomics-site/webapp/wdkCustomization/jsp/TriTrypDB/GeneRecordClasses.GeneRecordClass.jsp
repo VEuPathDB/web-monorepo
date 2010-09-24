@@ -111,12 +111,12 @@ ${organism}<br>
 <c:choose>
   <c:when test='${organismFull eq "Leishmania braziliensis"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
     </c:set>
   </c:when>
   <c:when test='${organismFull eq "Leishmania major"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
     </c:set>
   </c:when>
   <c:when test='${organismFull eq "Leishmania infantum"}'>
@@ -360,7 +360,7 @@ GO,InterproscanData
 
   <c:when test='${organismFull eq "Leishmania infantum"}'>
     <c:set var="ptracks">
-    LeishmaniaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    LinfantumMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
     InterproscanData,Linfantum_Proteomics_SDS_Amastigote,Linfantum_Proteomics_glycosylation
@@ -369,7 +369,7 @@ GO,InterproscanData
 
   <c:when test='${organismFull eq "Leishmania major"}'>
     <c:set var="ptracks">
-    LeishmaniaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    SilvermanMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
     InterproscanData,Linfantum_Proteomics_SDS_Amastigote
@@ -378,7 +378,7 @@ GO,InterproscanData
 
   <c:when test='${organismFull eq "Leishmania braziliensis"}'>
     <c:set var="ptracks">
-    LeishmaniaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    CuervoMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
     InterproscanData,Linfantum_Proteomics_SDS_Amastigote
