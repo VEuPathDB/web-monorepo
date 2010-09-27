@@ -15,6 +15,8 @@ $sort_column=2;
 
 usage() unless $threshold;
 
+print "filtering by timestamp to include only queries run since " . localtime($time_filter) . "\n"
+  if $time_filter;
 my $width;  # what's "width"?
 
 my ($width_min, $width_max);
@@ -44,7 +46,7 @@ while(<STDIN>) {
     my $monthNumber = index("JanFebMarAprMayJunJulAugSepOctNovDec", $mon) / 3;
     $absoluteTime = timegm($sec, $min, $hour, $day, $monthNumber, $year - 1900);
   } else {
-    die "can't match"
+    next;
   }
 
   next if ($time_min && $absoluteTime < $time_min);
