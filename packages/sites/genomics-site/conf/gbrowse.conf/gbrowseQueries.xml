@@ -3121,6 +3121,33 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-Markers'
 ]]>
     </sql>
   </sqlQuery>
+
+  <sqlQuery name="MicroArrayProbes:expression" includeProjects="PlasmoDB">
+    <testParamValues project="PlasmoDB">
+      <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_06$$"/>
+      <param name="base_start" value="469864"/> 
+      <param name="rend" value="470011"/> 
+    </testParamValues>
+    <sql>   
+<![CDATA[
+SELECT fl.na_feature_id as feature_id,
+       'MicroArrayProbes' type, 
+       '$source' source, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand
+FROM   apidb.featurelocation fl, dots.nafeature nf,
+       sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+WHERE  nf.na_feature_id=fl.na_feature_id  AND  edr.external_database_id = ed.external_database_id
+  AND  edr.external_database_release_id=fl.external_database_release_id
+  AND  nf.subclass_view='ArrayElementFeature'
+  AND  ed.name = $$edname$$
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+  AND  fl.na_sequence_id = $srcfeature_id]]>
+     </sql>
+  </sqlQuery>
   
   <sqlQuery name="ChIP_chip:Assay"  includeProjects="ToxoDB">
      <sql>
