@@ -480,7 +480,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   </c:if>
 
   <c:set var="proteinFeaturesUrl">
-   http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/plasmodbaa/?name=${id};type=${ptracks};width=640;embed=1
+   http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/plasmodbaa/?name=${id};type=${ptracks};width=640;embed=1;genepage=1
    </c:set>
 
    <c:if test="${ptracks ne ''}">
