@@ -2,13 +2,14 @@
 use strict;
 use Getopt::Long;
 
-my ($threshold, $genepage, $width_filter, $time_filter, $sort_column);
+my ($threshold, $genepage, $width_filter, $time_filter, $sort_column, $plotOutputFile);
 $sort_column=2;
 &GetOptions('s=s' => \$threshold,
             'g' => \$genepage,
             'w=s' => \$width_filter,
             't=s' => \$time_filter,
             'c=s' => \$sort_column,
+            'p=s' => \$plotOutputFile
             );
 
 
@@ -27,6 +28,11 @@ if ($time_filter) {
 # QUERYTIME       Fri Mar 12 22:26:49 2010        1268450809.72195        v       Segment.pm      7.12     5792    alignment:dbEST
 my $h;
 
+if ($plotOutputFile) {
+  open(P, ">$plotOutputFile") || die "Can't open plot output file '$plotOutputFile'\n";
+}
+
+my $startingAbsoluteTime;
 while(<STDIN>) {
   next unless /QUERYTIME/;
   next if /\=\=/;  # some lines in the log are mangled, with missing newlines
@@ -39,6 +45,9 @@ while(<STDIN>) {
   next if ($time_max && $absoluteTime > $time_max);
   next if ($width_min && $width < $width_min);
   next if ($width_max && $width > $width_max);
+
+  $startingAbsoluteTime = $absoluteTime unless $startingAbsoluteTime;
+
   if (!$h->{$name}) {
     $h->{$name} = [$name, 0, 0, 0, 0, 0];
   }
@@ -49,7 +58,15 @@ while(<STDIN>) {
     $h->{$name}->[4] += 1;           # count over threshold
   }
   $h->{$name}->[5] = $seconds if ($seconds > $h->{$name}->[5]); # max secs
+
+  # we are generating plot .png files too
+  if ($plotOutputFile) {
+    my $relativeTime = int($absoluteTime - $startingAbsoluteTime);
+    print P "$relativeTime\t$seconds\t$name\n";
+  }
 }
+
+close(P);
 
 my @sorted = sort {$b->[$sort_column-1] <=> $a->[$sort_column-1]} values(%$h);
 
@@ -62,6 +79,8 @@ foreach my $a (@sorted) {
   print sprintf("%50s%12.2f%8d%10.2f%12.2f%8d%6.2f\n",($a->[0],$a->[1],$a->[2],$avg,$a->[3],$a->[4],$a->[5]));
 }
 
+
+
 sub usage {
   print STDERR "
 
@@ -69,7 +88,7 @@ Print a report summarizing the gbrowse slow query logs.
 
 Takes one or more logs on standard input.
 
-usage:  gbrowseSlowQueryReport --s secs [--g] [--w width_min[,length_max]] [--s starttime[,endtime]] [--c colnum]
+usage:  gbrowseSlowQueryReport --s secs [--g] [--w width_min[,length_max]] [--s starttime[,endtime]] [--c colnum] [--p plotOutputFile]
 
 where:
   --s:  slowness threshold in seconds.  run times over secs are reported in Slow columns
@@ -77,6 +96,8 @@ where:
   --w:  width filter
   --t:  time filter (use seconds since epoch, which is a column in gbrowse log)
   --c:  column to sort on (default is 2, the total time)
+  --p:  optional output file: a tab delimited file to pass as input
+        to wdkSlowQueryPlot.  Used to visualize the query durations over time.
 
 ";
   exit(1);
