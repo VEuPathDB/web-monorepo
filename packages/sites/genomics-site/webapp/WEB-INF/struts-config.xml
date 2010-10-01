@@ -476,6 +476,22 @@
       validate="false">
       <forward name="show_wizards" path="/wdk/jsp/wizard/wizards.jsp"/>
     </action>
+    <action
+      path="/processBoolean"
+      type="org.gusdb.wdk.controller.action.ProcessBooleanAction"
+      scope="request"
+      validate="true"
+      name="questionForm">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/processStep"
+      type="org.gusdb.wdk.controller.action.ProcessBooleanAction"
+      scope="request"
+      validate="true"
+      name="questionForm">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
   </action-mappings>
 
   <controller maxFileSize="10M" />
