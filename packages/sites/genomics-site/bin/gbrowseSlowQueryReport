@@ -32,7 +32,6 @@ if ($plotOutputFile) {
   open(P, ">$plotOutputFile") || die "Can't open plot output file '$plotOutputFile'\n";
 }
 
-my $startingAbsoluteTime;
 while(<STDIN>) {
   next unless /QUERYTIME/;
   next if /\=\=/;  # some lines in the log are mangled, with missing newlines
@@ -46,8 +45,6 @@ while(<STDIN>) {
   next if ($width_min && $width < $width_min);
   next if ($width_max && $width > $width_max);
 
-  $startingAbsoluteTime = $absoluteTime unless $startingAbsoluteTime;
-
   if (!$h->{$name}) {
     $h->{$name} = [$name, 0, 0, 0, 0, 0];
   }
@@ -59,14 +56,13 @@ while(<STDIN>) {
   }
   $h->{$name}->[5] = $seconds if ($seconds > $h->{$name}->[5]); # max secs
 
-  # we are generating plot .png files too
+  # we are generating a plot data file too
   if ($plotOutputFile) {
-    my $relativeTime = int($absoluteTime - $startingAbsoluteTime);
-    print P "$relativeTime\t$seconds\t$name\n";
+    print P "$absoluteTime\t$seconds\t$name\n";
   }
 }
 
-close(P);
+close(P) if ($plotOutputFile);
 
 my @sorted = sort {$b->[$sort_column-1] <=> $a->[$sort_column-1]} values(%$h);
 
