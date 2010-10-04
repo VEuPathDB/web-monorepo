@@ -63,6 +63,9 @@
 	<c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
                 <c:set var="listOrganisms" value="${TriTrypDBOrgs}" />
         </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'AmoebaDB')}">
+                <c:set var="listOrganisms" value="${AmoebaDBOrgs}" />
+        </c:when>
 </c:choose> 
 
 <div  style="width:460px;" id="quick-search" session-id="${sessionId}">
