@@ -185,7 +185,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   </c:set>
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -388,7 +388,7 @@ GO,InterproscanData
  </c:choose>
     
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id};type=${ptracks};width=640;embed=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id};type=${ptracks};width=640;embed=1;genepage=1
 </c:set>
 <c:if test="${ptracks ne ''}">
     <c:set var="proteinFeaturesImg">

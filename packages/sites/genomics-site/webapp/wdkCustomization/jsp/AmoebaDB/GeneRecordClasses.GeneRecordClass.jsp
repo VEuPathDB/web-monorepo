@@ -116,7 +116,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 
 <c:if test="${gtracks ne ''}">
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -264,7 +264,7 @@ GO,InterproscanData
     </c:set>
 
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${id};type=${ptracks};width=640;embed=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${id};type=${ptracks};width=640;embed=1;genepage=1
 </c:set>
 <c:if test="${ptracks ne ''}">
     <c:set var="proteinFeaturesImg">
