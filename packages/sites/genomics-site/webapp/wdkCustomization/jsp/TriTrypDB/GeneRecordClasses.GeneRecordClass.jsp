@@ -453,6 +453,14 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
           attribution="Linfantum_Proteomics_glycosylation,Linfantum_Proteomics_SDS_Amastigote,Linfantum_Proteomics_OuelletteM"/>
   </c:when>
 
+  <c:when test='${organismFull eq "Leishmania major"}'>
+     <wdk:wdkTable tblName="MassSpec" isOpen="true" attribution="Lmajor_Proteomics_Exosomes"/>
+  </c:when>
+
+  <c:when test='${organismFull eq "Leishmania braziliensis"}'>
+     <wdk:wdkTable tblName="MassSpec" isOpen="true" attribution="Lbraziliensis_Proteomics_Promastigotes"/>
+  </c:when>
+
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
      <wdk:wdkTable tblName="MassSpec" isOpen="true" attribution="Tbrucei_Proteomics_Procyclic_Form"/>
   </c:when>
