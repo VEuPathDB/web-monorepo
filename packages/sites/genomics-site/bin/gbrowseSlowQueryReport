@@ -68,11 +68,11 @@ my @sorted = sort {$b->[$sort_column-1] <=> $a->[$sort_column-1]} values(%$h);
 
 
 # name total_secs count avg_secs total_secs_over count_over  worst_secs
-  print sprintf("%50s%12s%8s%10s%12s%8s%6s\n",('Name','TotSecs','#','AvgSecs','SlowSecs','Slow_#','Worst'));
+  print sprintf("%47s%12s%8s%10s%12s%8s%7s\n",('Name','TotSecs','#','AvgSecs','SlowSecs','Slow_#','Worst'));
 
 foreach my $a (@sorted) {
   my $avg = $a->[1] / $a->[2];
-  print sprintf("%50s%12.2f%8d%10.2f%12.2f%8d%6.2f\n",($a->[0],$a->[1],$a->[2],$avg,$a->[3],$a->[4],$a->[5]));
+  print sprintf("%47s%12.2f%8d%10.2f%12.2f%8d%7.2f\n",($a->[0],$a->[1],$a->[2],$avg,$a->[3],$a->[4],$a->[5]));
 }
 
 
