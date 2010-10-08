@@ -5374,16 +5374,14 @@ ORDER BY var.strain
   <sqlQuery name="SNP:Combined:bulkAttribute" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
-       var.phenotype, var.product
-FROM apidb.SnpAttributes sa,
-     dots.SeqVariation var
-WHERE sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
-  AND sa.na_sequence_id = $srcfeature_id
-  AND sa.start_min <= $rend
-  AND sa.start_min >= $base_start
-  AND var.parent_id = sa.na_feature_id
-ORDER BY var.strain
+SELECT sc.na_feature_id as feature_id, sc.strain, sc.allele,
+       sc.phenotype, sc.product
+FROM apidb.SnpCombined sc
+WHERE sc.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
+  AND sc.na_sequence_id = $srcfeature_id
+  AND sc.start_min <= $rend
+  AND sc.start_min >= $base_start
+ORDER BY sc.strain
 ]]>
     </sql>
   </sqlQuery>
