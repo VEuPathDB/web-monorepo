@@ -246,10 +246,6 @@ ${headElement}
    <div style="width:460px;" id="header_rt">
 
    <div align="right"><div id="toplink">
-    <%------ skip skips to menubar.tag ----%>
-   <a href="#skip"><img src="<c:url value='/wdk/images/transparent1.gif'/>" alt="Skip navigational links" width="1" height="1" border="0" /></a>
-
-
    <c:if test="${project == 'TriTrypDB'}">
      <map name="partof">
      <area shape=rect coords="0,0 172,22" href="http://eupathdb.org" alt="EuPathDB home page">

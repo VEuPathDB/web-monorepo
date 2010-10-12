@@ -4,6 +4,10 @@
      (after the order set up in header.tag)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#toplink {
+	padding-top: 1px;
+}
+
 #record_page_cell_div {
 	margin-left: 20px;
 }
