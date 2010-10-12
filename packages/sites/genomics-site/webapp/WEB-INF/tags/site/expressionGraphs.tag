@@ -64,9 +64,7 @@
 
         <tr>
         <td>
-
-            <img  id="${imgId}" src="${imgSrc}">
-
+          <img  id="${imgId}" src="">
         </td>
 
                  <c:set var="noExpressionDataTable">false</c:set>
@@ -147,8 +145,9 @@
     noData="${noData}"
     displayName="${row['display_name'].value}"
     content="${expressionContent}"
-    attribution="${row['attribution'].value}"/>
-
+    attribution="${row['attribution'].value}"
+    imageId="${imgId}"
+    imageSource="${imgSrc}" />
 </c:if>
 
 </c:forEach>
