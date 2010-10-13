@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+
+use strict;
+use CGI;
+
+my $cgi = new CGI;
+
+#my $ourCacheDir = "/var/www/Common/gbrowse/tmp/gbrowse_img_cache/";
+my $ourCacheDir = "/var/www/Common/tmp/gbrowseLogs/sfischer.plasmodb.org/";
+
+my $source = $cgi->param('gbrowse_source'); # eg, plasmodb or plasmodbaa
+
+my $geneId = ($source =~ /aa$/)? $cgi->param('name') : $cgi->param('h_feat');
+$geneId =~ s/\@.*//;  # lose trailing @yellow
+
+my $cacheFile = "$ourCacheDir/${geneId}_$source";
+
+my $gbrowseImgOutput;
+if (! -e $cacheFile) {
+  my $url = $cgi->url();
+  $url =~ s/_proxy//;
+  my $query_string = $cgi->query_string();
+  my $gbrowseImgUrl = "$url/$source/?$query_string";
+  my $cmd =  "curl \"$gbrowseImgUrl\"";
+  $gbrowseImgOutput = `$cmd`;
+  open(F, ">$cacheFile") || die "Can't open gbrowse_img_proxy cache file '$cacheFile' for writing ";
+  print F $gbrowseImgOutput;
+  close(F);
+} else {
+  open(F, "$cacheFile") || die "Can't open gbrowse_img_proxy cache file '$cacheFile'" ;
+  my @a = <F>;
+  $gbrowseImgOutput = join('', @a);
+#  print STDERR "cache hit\n";
+}
+
+print $cgi->header();
+print $gbrowseImgOutput;
+
