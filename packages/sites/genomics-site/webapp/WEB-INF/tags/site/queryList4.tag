@@ -139,7 +139,7 @@ function getComboElement()
  <c:when test="${prefix == 'T.g.'}">    
       <c:set var="org" value="Toxoplasma gondii"/>
   </c:when>
- <c:when test="${prefix == 'L.d.'}">    
+ <c:when test="${prefix == 'L.d.' || prefix == 'L.i.'}">    
       <c:set var="org" value="Leishmania infantum"/>
   </c:when>
  <c:when test="${prefix == 'T.c.'}">    
@@ -158,7 +158,7 @@ function getComboElement()
 
 <%--  if it is a new organism, write it and make a new line --%>
 
-    <c:if test="${oldprefix != prefix}">  
+    <c:if test="${oldorg != org}">  
                 </tr>
 		<tr><td colspan="${columns+2}" style="padding:0">&nbsp;</td></tr>
 		<tr class="subheaderrow2"><td colspan="${columns+2}" style="padding:0;"><i><b>${org}</b></i></td></tr> 
@@ -198,7 +198,7 @@ function getComboElement()
 </c:otherwise>
 </c:choose>
 
-<c:set var="oldprefix" value="${prefix}" />
+<c:set var="oldorg" value="${org}" />
       </c:forEach> <%-- forEach items=questions --%>
 
 </tr>
