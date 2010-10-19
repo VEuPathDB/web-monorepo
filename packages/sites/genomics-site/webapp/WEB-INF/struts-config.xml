@@ -476,7 +476,7 @@
     </action>
     <action
       path="/processStep"
-      type="org.gusdb.wdk.controller.action.ProcessBooleanAction"
+      type="org.gusdb.wdk.controller.action.ProcessStepAction"
       scope="request"
       validate="true"
       name="questionForm">
