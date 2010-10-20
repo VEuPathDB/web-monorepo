@@ -503,6 +503,7 @@ select 'fast' query_style, syntenic_na_feature_id feature_id, 'gene' type,
        'syntenyMC' source,  syntenic_source_id name, '.' score, synteny_id parent_id,
        startm, end, strand, atts
 from materialized_query
+where organism != 'placeholder'
 union
 select * from (
 select
@@ -4245,6 +4246,7 @@ SELECT -- fast query uses pre-calculated values for gene-page views
        'syntenyMC' source, syntenic_exon_feature_id name, syntenic_gene_feature_id parent_id,
        startm, end, strand, atts
 FROM materialized_query
+WHERE organism != 'placeholder'
 UNION
 SELECT -- slow query for all other views
 * FROM (SELECT
