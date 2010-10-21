@@ -1,0 +1,31 @@
+use Data::Dumper;
+use strict;
+my %h;
+
+=pod
+
+194.94.96.194 - - [24/Dec/2008:10:41:14 -0500] "GET /include/gbrowse.css HTTP/1.1" 200 3002 "http://www.plasmodb.org/cgi-bin/gbrowse/plasmodb/?start=101357;stop=121356;ref=MAL12;width=800;version=100;label=AnnotatedGenes-SyntenySpansVivaxMC-SyntenyGenesVivaxMC;id=9cf36ae32368b7ec3e3c516c08c358d4" "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.3) Gecko/2008092510 Ubuntu/8.04 (hardy) Firefox/3.0.3"
+
+=cut
+
+while(<>) {
+  next unless /GeneRecordClass/ && /Synteny/;
+  /\[(.*)\].*h_feat\=(.*)\@/;
+  $h{$2} += 1;
+}
+
+my %histogram;
+my $singleton;
+my $duplicated;
+foreach my $gene (keys(%h)) {
+  $histogram{$h{$gene}}++;
+#  print "$gene\n" if $h{$gene} == 21;
+  $singleton++;
+  $duplicated += $h{$gene} - 1;
+}
+
+foreach my $count (keys(%histogram)) {
+  print "$count $histogram{$count}\n";
+}
+
+print "genes: $singleton  cache hits: $duplicated\n";
