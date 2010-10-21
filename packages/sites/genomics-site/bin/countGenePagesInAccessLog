@@ -1,6 +1,24 @@
 use Data::Dumper;
 use strict;
-my %h;
+use Getopt::Long;
+
+my ($help, $time_filter);
+$sort_column=2;
+&GetOptions('h' => \$help,
+            't=s' => \$time_filter,
+            );
+
+usage() if $help;
+
+my ($time_min, $time_max);
+if ($time_filter) {
+  ($time_min, $time_max) = split(/,\s*/, $time_filter);
+  print "\nTime filter start: " . localtime($time_min) . " ($time_min)\n";
+  print   "Time filter end:   " . localtime($time_max) . " ($time_max)\n" if $time_max;
+  print "\n";
+}
+
+# use the call to embedded gbrowse as a unique event per gene page
 
 =pod
 
@@ -8,8 +26,24 @@ my %h;
 
 =cut
 
+my %h;
+my $min_absolute_time = 1000000000000000;
+my $max_absolute_time = 0;
 while(<>) {
   next unless /GeneRecordClass/ && /Synteny/;
+
+  if ($time_filter) {
+    m|\[(\d\d)/(\w\w\w)/(\d\d\d\d)\:(\d\d)\:(\d\d)\:(\d\d)|;
+    my ($day, $mon, $yr, $hr, $min, $sec) = ($1, $2, $3, $4, $5, $6);
+    my $absoluteTime = getEpoch($day, $mon, $yr, $hr, $min, $sec);
+    next if ($time_min && $absoluteTime < $time_min);
+    next if ($time_max && $absoluteTime > $time_max);
+  }
+
+  $min_absolute_time = $absoluteTime if $absoluteTime < $min_absolute_time;  # the first time we have included
+  $max_absolute_time = $absoluteTime if $absoluteTime > $max_absolute_time;  # the latest time we have included
+
+
   /\[(.*)\].*h_feat\=(.*)\@/;
   $h{$2} += 1;
 }
@@ -19,7 +53,6 @@ my $singleton;
 my $duplicated;
 foreach my $gene (keys(%h)) {
   $histogram{$h{$gene}}++;
-#  print "$gene\n" if $h{$gene} == 21;
   $singleton++;
   $duplicated += $h{$gene} - 1;
 }
@@ -28,4 +61,5 @@ foreach my $count (keys(%histogram)) {
   print "$count $histogram{$count}\n";
 }
 
-print "genes: $singleton  cache hits: $duplicated\n";
+my $total = $singleton + $duplicated;
+print "total pages: $total   unique genes: $singleton   cache hits: $duplicated\n";
