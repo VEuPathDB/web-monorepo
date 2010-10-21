@@ -93,7 +93,7 @@ Print a report summarizing the gbrowse slow query logs.
 
 Takes one or more logs on standard input.
 
-usage:  gbrowseSlowQueryReport -s secs [-g] [-w width_min[,length_max]] [-s starttime[,endtime]] [-c colnum] [-p plotOutputFile]
+usage:  gbrowseSlowQueryReport -s secs [-g] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile]
 
 where:
   -s:  slowness threshold in seconds.  run times over secs are reported in Slow columns
