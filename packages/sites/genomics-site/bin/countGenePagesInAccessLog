@@ -53,8 +53,9 @@ while(<>) {
   $max_absolute_time = $absoluteTime if $absoluteTime > $max_absolute_time;  # the latest time we have included
 
 
-  /\?name=([^;]+)/ || die "can't find gene id in line:\n $_\n";
-  $h{$1} += 1;
+  my $genename = "unknown";
+  if (/\?name=([^;]+)/) {$genename = $1};
+  $h{$genename} += 1;
 }
 
 my %histogram;
@@ -84,6 +85,8 @@ print "histogram:\n";
 foreach my $count (sort {$a <=> $b} (keys(%histogram))) {
   print "$count $histogram{$count}\n";
 }
+
+print "(requests with unknown gene names: $h{'unknown'})\n";
 
 
 sub usage {
