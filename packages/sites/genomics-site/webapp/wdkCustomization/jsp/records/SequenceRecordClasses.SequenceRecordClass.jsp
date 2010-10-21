@@ -89,29 +89,32 @@
 <br>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
-
+<%------------------------------------------------------------------%>
+<%-- Gbrowse tracks defaults  --------------------------------------%>
+<%------------------------------------------------------------------%>
 <c:set var="gtracks" value="${attrs['gbrowseTracks'].value}" />
-
-
-<c:if test="${fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB'}">
-  <c:set var="gtracks" value="BLASTX+ORF300" />
-</c:if>
-
-<c:if test="${fn:contains(organism,'Crithidia') && projectId eq 'TriTrypDB'}">
-  <c:set var="gtracks" value="BLASTX+ORF600" />
-</c:if>
-
-<c:if test="${ (fn:contains(organism,'gallinaceum') || fn:contains(organism,'reichenowi')) && projectId eq 'PlasmoDB'}">
-  <c:set var="gtracks" value="BLASTX+ORF" />
-</c:if>
-
-<c:if test="${fn:contains(organism,'TgCkUg2') && projectId eq 'ToxoDB'}">
+<%------------------------------------------------------------------%>
+<%-- Gbrowse tracks defaults For Unannotated genomes  --------------%>
+<%------------------------------------------------------------------%>
+<c:if test="${attrs['gene_count'].value == 0}">
   <c:set var="gtracks" value="BLASTX+ORF+TandemRepeat+LowComplexity" />
 </c:if>
-
+<%------------------------------------------------------------------%>
+<%-- Gbrowse tracks defaults For Specific Genomes   ----------------%>
+<%------------------------------------------------------------------%>
+<c:if test="${fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB'}">
+  <c:set var="gtracks" value="BLASTX+ORF300+TandemRepeat+LowComplexity" />
+</c:if>
+<c:if test="${fn:contains(organism,'Crithidia') && projectId eq 'TriTrypDB'}">
+  <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
+</c:if>
 <c:if test="${ (fn:contains(organism,'Anncaliia') || fn:contains(organism,'Edhazardia') || fn:contains(organism,'Nosema') || fn:contains(organism,'Vittaforma')) && projectId eq 'MicrosporidiaDB'}">
   <c:set var="gtracks" value="" />
 </c:if>
+<%------------------------------------------------------------------%>
+
+
+
 
 <c:set var="attribution">
 </c:set>
