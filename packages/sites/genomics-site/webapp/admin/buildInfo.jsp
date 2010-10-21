@@ -13,7 +13,7 @@
   <a href='javascript:void()' style="text-decoration:none"
         onmouseover="return overlib('A given build may not refresh all project components. ' + 
         'For example, a \'ApiCommonData/Model install\' does not build any WDK code.<br>' +
-        'See Build Details for a cummulative record of past builds.')"
+        'See Build Details for a cumulative record of past builds.')"
         onmouseout = "return nd();"><sup>[?]</sup></a>
 
   <br>
