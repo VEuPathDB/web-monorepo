@@ -259,9 +259,7 @@ FROM   dots.translatedaasequence tas,
        dots.transcript trp
 WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
        taf.na_feature_id = trp.na_feature_id and
-        ( upper(substr(trp.source_id, 1, instr(trp.source_id, '-1', 1, 1) - 1)) = upper('$name') or
-          upper(trp.protein_id) = upper('$name') or
-          upper(trp.product) like upper('%$name%') ) 
+        ( trp.source_id = '$name' or trp.source_id like '$name-%')
 ]]>
     </sql>
   </sqlQuery>
