@@ -284,9 +284,9 @@ FROM   dots.translatedaasequence tas,
 WHERE  tas.aa_sequence_id = taf.aa_sequence_id
        and taf.na_feature_id = trp.na_feature_id 
        and trp.parent_id = gf.na_feature_id
-       and (upper(trp.protein_id) = upper('$name') or
-            upper(trp.source_id) = upper('$name') or
-            upper(gf.source_id) = upper('$name') )
+       and (trp.protein_id = '$name' or
+            trp.source_id = '$name' or
+            gf.source_id = '$name' )
 ]]>
       </sql>
     </sqlQuery>
