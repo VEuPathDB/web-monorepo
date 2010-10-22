@@ -45,6 +45,13 @@
 
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
+
+<c:set var="gene_name" value="(${attrs['gene_name'].value})"/>
+<c:if test="${attrs['gene_name'].value == null}">
+  <c:set var="gene_name" value=""/>
+</c:if>
+
+
 <c:set var="strand" value="+"/>
 <c:if test="${attrs['strand'].value == 'reverse'}">
   <c:set var="strand" value="-"/>
@@ -56,7 +63,7 @@
 
 
 <%-- display page header with recordClass type in banner --%>
-<site:header title="TriTrypDB : gene ${id} (${prd})"
+<site:header title="TriTrypDB : gene ${id} (${prd} ${gene_name})"
              summary="${overview.value} (${length.value} bp)"
 		refer="recordPage" 
              divisionName="Gene Record"
@@ -84,7 +91,7 @@
 
 <h2>
 <center>
-	<wdk:recordPageBasketIcon desc="${prd}"/>
+	<wdk:recordPageBasketIcon desc="${prd} ${gene_name}"/>
 	<c:if test="${attrs['updated_annotation'].value != null}">
 		<br>${genedb_annot_link}
 	</c:if>
@@ -235,8 +242,12 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   content="${mercatorAlign}"
   attribution=""/>
 
+
+<wdk:wdkTable tblName="Aliases" isOpen="true" attribution=""/>
+
+
 <!-- gene alias table -->
-<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
+<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
 
 <!-- External Links --> 
 <wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
