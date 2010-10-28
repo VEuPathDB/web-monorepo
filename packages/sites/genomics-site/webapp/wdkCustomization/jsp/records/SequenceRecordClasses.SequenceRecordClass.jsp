@@ -97,16 +97,13 @@
 <%-- Gbrowse tracks defaults For Unannotated genomes  --------------%>
 <%------------------------------------------------------------------%>
 <c:if test="${attrs['gene_count'].value == 0}">
-  <c:set var="gtracks" value="BLASTX+ORF+TandemRepeat+LowComplexity" />
+  <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
 </c:if>
 <%------------------------------------------------------------------%>
 <%-- Gbrowse tracks defaults For Specific Genomes   ----------------%>
 <%------------------------------------------------------------------%>
 <c:if test="${fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB'}">
   <c:set var="gtracks" value="BLASTX+ORF300+TandemRepeat+LowComplexity" />
-</c:if>
-<c:if test="${fn:contains(organism,'Crithidia') && projectId eq 'TriTrypDB'}">
-  <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
 </c:if>
 <c:if test="${ (fn:contains(organism,'Anncaliia') || fn:contains(organism,'Edhazardia') || fn:contains(organism,'Nosema') || fn:contains(organism,'Vittaforma')) && projectId eq 'MicrosporidiaDB'}">
   <c:set var="gtracks" value="" />
