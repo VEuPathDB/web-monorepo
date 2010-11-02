@@ -469,6 +469,12 @@
       name="questionForm"
       validate="false">
     </action>
+    <action
+      path="/logging"
+      type="org.gusdb.wdk.controller.action.LoggingAction"
+      scope="request"
+      validate="false">
+    </action>
   </action-mappings>
 
   <controller maxFileSize="10M" />
