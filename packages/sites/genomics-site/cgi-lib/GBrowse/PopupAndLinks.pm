@@ -3,6 +3,28 @@ package GBrowse::PopupAndLinks;
 use strict;
 
 use GBrowse::Configuration;
+use XML::Simple;
+
+
+my %MS_EXTDB_NAME_MAP;
+
+BEGIN {
+  my $serverName = $ENV{SERVER_NAME};
+
+  my $xml = `wget wget -qO- "http://$serverName/a/getVocab.do?questionFullName=GeneQuestions.GenesByMassSpec&name=ms_assay&xml=TRUE"`;
+  my $string = XMLin($xml, ForceArray => 1);
+
+  my $terms = $string->{terms}->[0]->{term};
+
+  if(ref($terms) eq 'HASH') {
+
+    foreach my $name (keys %{$terms}) {
+
+      my $display = $terms->{$name}->{content};
+      $MS_EXTDB_NAME_MAP{$name} = $display;
+    }
+  }
+};
 
 #--------------------------------------------------------------------------------
 #  Methods for Links
@@ -606,16 +628,18 @@ my ($count) = $f->get_tag_values('Count');
   my ($extdbname) = $f->get_tag_values('ExtDbName');
   $desc =~ s/[\r\n]/<br>/g;
 
-  if($replaceString) {
-    $extdbname =~ s/$replaceString/assay: /i;
-  }
+#  if($replaceString) {
+#    $extdbname =~ s/$replaceString/assay: /i;
+#  }
 
- if($replaceString2) {
-    $extdbname =~ s/$replaceString2/$val2/i;
-  }
+# if($replaceString2) {
+#    $extdbname =~ s/$replaceString2/$val2/i;
+#  }
+  
+  my $displayName = $MS_EXTDB_NAME_MAP{$extdbname} ? $MS_EXTDB_NAME_MAP{$extdbname} : $extdbname;
 
   my @data;
-  push @data, [ 'Experiment:' => "$extdbname" ];
+  push @data, [ 'Experiment:' => $displayName ];
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
