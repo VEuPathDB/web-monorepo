@@ -21,7 +21,8 @@ BEGIN {
     foreach my $name (keys %{$terms}) {
 
       my $display = $terms->{$name}->{content};
-      $MS_EXTDB_NAME_MAP{$name} = $display;
+      my $extDbName = $terms->{$name}->{internal};
+      $MS_EXTDB_NAME_MAP{$extDbName} = $display;
     }
   }
 };
