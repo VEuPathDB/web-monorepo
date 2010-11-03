@@ -225,6 +225,10 @@ GO,InterproscanData
 </c:if>
 
 
+<!-- gene alias table -->
+<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+
+
 <%-- ORTHOMCL ------------------------------------------------------%>
 
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">

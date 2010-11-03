@@ -425,15 +425,8 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 --%>
 
 
-
-
-<%--
-  <wdk:wdkTable tblName="Aliases" isOpen="true"
-                 attribution="P.falciparum_chromosomes,P.berghei_wholeGenomeShotgunSequence,P.chabaudi_chromosomes,P.knowlesi_chromosomes"/>
---%>
-
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/>
+<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
 <c:if test="${binomial eq 'Plasmodium falciparum'}">
@@ -463,18 +456,6 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     content="" />
 
 </c:if>
-
-<c:set var="ec_numbers" value="${attrs['ec_numbers_string']}"/>  
-<c:set var="kegg_link" value="<a href='/cgi-bin/keggPathwaysFromEC?project_id=PlasmoDB&ec_numbers=${ec_numbers}'>View</a>"/>  
-
-<c:set var="kegg_display" value="Kegg Pathways ${kegg_link}"/>
-<c:if test="${ec_numbers.value == null}">
-  <c:set var="kegg_display" value="Kegg Pathways <i>none</i>"/>
-</c:if>
-
-<site:panel 
-    displayName="${kegg_display}"
-    content="" />
 
 <wdk:wdkTable tblName="Mr4Reagents" attribution="MR4Reagents"/>
 

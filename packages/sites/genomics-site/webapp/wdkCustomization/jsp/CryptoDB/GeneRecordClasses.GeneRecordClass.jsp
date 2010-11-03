@@ -309,6 +309,10 @@ CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
 </c:if>
 
 
+<!-- gene alias table -->
+<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+
+
 <wdk:wdkTable tblName="Notes" isOpen="true" />
 
 
