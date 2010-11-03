@@ -88,6 +88,7 @@
     
 <br>
 
+
 <%-- DNA CONTEXT ---------------------------------------------------%>
 <%------------------------------------------------------------------%>
 <%-- Gbrowse tracks defaults  --------------------------------------%>
@@ -98,17 +99,28 @@
 <%------------------------------------------------------------------%>
 <c:if test="${attrs['gene_count'].value == 0}">
   <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
+
+  <%------------------------------------------------------------------%>
+  <c:choose>
+    <c:when test="${projectId eq 'TriTrypDB' && attrs['length'].value > 300000}">
+      <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
+    </c:when>
+    <c:when test="${projectId ne 'TriTrypDB' && attrs['length'].value < 300000}">
+      <c:set var="gtracks" value="BLASTX+ORF+TandemRepeat+LowComplexity" />
+    </c:when>
+    <c:otherwise>
+      <c:set var="gtracks" value="BLASTX+ORF300+TandemRepeat+LowComplexity" />
+    </c:otherwise>
+  </c:choose>
+  <%------------------------------------------------------------------%>
+  <%-- Gbrowse tracks defaults For Specific Genomes   ----------------%>
+  <%------------------------------------------------------------------%>
+  <c:if test="${ (fn:contains(organism,'Anncaliia') || fn:contains(organism,'Edhazardia') || fn:contains(organism,'Nosema') || fn:contains(organism,'Vittaforma')) && projectId eq 'MicrosporidiaDB'}">
+    <c:set var="gtracks" value="" />
+  </c:if>
 </c:if>
 <%------------------------------------------------------------------%>
-<%-- Gbrowse tracks defaults For Specific Genomes   ----------------%>
-<%------------------------------------------------------------------%>
-<c:if test="${fn:contains(organism,'tarentolae') && projectId eq 'TriTrypDB'}">
-  <c:set var="gtracks" value="BLASTX+ORF300+TandemRepeat+LowComplexity" />
-</c:if>
-<c:if test="${ (fn:contains(organism,'Anncaliia') || fn:contains(organism,'Edhazardia') || fn:contains(organism,'Nosema') || fn:contains(organism,'Vittaforma')) && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="gtracks" value="" />
-</c:if>
-<%------------------------------------------------------------------%>
+
 
 
 
