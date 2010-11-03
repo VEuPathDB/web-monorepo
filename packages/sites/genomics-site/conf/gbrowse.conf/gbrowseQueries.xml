@@ -1224,7 +1224,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
-   
+<!--
   <sqlQuery name = "ORF300:density"> 
     <description>ORF density. bin size is 500bp.</description> 
     <sql> 
@@ -1250,7 +1250,9 @@ WHERE  etn.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
- 
+
+-->
+
   <sqlQuery name="Centromere:overview"  includeProjects="PlasmoDB">
     <testParamValues project="PlasmoDB">
        <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_09$$"/>
