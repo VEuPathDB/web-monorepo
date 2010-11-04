@@ -85,10 +85,10 @@ sub sageTagLink {
 }
 
 sub ArrayElementLink {
-  my $f = shift;
-  my $name = $f->name;
-  my $link = "/a/showRecord.do?name=ArrayElementRecordClasses.ArrayElementRecordClass&primary_key=$name";
-  return $link;
+#  my $f = shift;
+#  my $name = $f->name;
+#  my $link = "/a/showRecord.do?name=ArrayElementRecordClasses.ArrayElementRecordClass&primary_key=$name";
+  return "javascript:void(0)";
 }
 
 sub snpLink {
@@ -607,14 +607,11 @@ sub orfTitle {
 
 sub ArrayElementTitle {
      my $f = shift;
-     my $name = $f->name;
      my $chr = $f->seq_id;
      my $loc = $f->location->to_FTstring;
-     my ($desc) = $f->get_tag_values("Note");
+     my ($name) = $f->get_tag_values("SourceId");
      my @data;
      push @data, [ 'Name:'  => $name ];
-     push @data, [ 'Description:' => $desc ];
-     # push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
      push @data, [ 'Location:'  => "$chr $loc" ];
      hover("Glass Slide Oligo: $name", \@data);
 }
