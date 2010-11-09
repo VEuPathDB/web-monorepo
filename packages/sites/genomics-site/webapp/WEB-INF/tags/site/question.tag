@@ -34,19 +34,6 @@ ${Question_Header}
 <jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 
 
-<c:choose>
-<c:when test="${showParams == true}">
-<%-- display params section only --%>
-
-<html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
-<input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
-
-	<site:questionParams />
-
-</html:form>
-</c:when>
-
-<c:otherwise>
 <%-- display question section --%>
 
 <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
@@ -58,8 +45,6 @@ ${Question_Header}
 <A name="${fromAnchorQ}"></A>
 
 
-
-<html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 <!-- show error messages, if any -->
@@ -77,20 +62,13 @@ ${Question_Header}
 
 
 <div class="params">
-<c:if test="${showParams == null}">
-
 	<site:questionParams />
 
-</c:if>  <%--  <c:if test="${showParams == null}"> --%>
 </div>   <%-- end of params div --%>
 
 
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
-
-<div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
-
-</html:form>
 
 <hr>
 
@@ -117,7 +95,5 @@ ${Question_Header}
 </tr>
 </table> 
 
-</c:otherwise> <%-- otherwise of showParams == true --%>
-</c:choose>
 
 ${Question_Footer}
