@@ -491,7 +491,11 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
 Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_infantum/">The Sanger Institute pathogen sequencing unit</a>. 
   </c:set>
 </c:when>
-<c:when test="${fn:contains(organism,'major') && projectId eq 'TriTrypDB'}">
+<c:when test="${fn:contains(organism,'Seidman 75.1') && projectId eq 'TriTrypDB'}">
+  <c:set var="reference">   Sequence data for <i>Leishmania major strain Seidman 75.1</i> was provided by Washington University in St. Louis.
+  </c:set>
+</c:when>
+<c:when test="${}">
   <c:set var="reference">
    Sequence data for <i>Leishmania major</i> Friedlin (reference strain - MHOM/IL/80/Friedlin, zymodeme MON-103) were downloaded from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a> (sequence and annotated features).<br>
 Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_major/">The Sanger Institute pathogen sequencing unit</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://www.sanger.ac.uk/Projects/L_major/EUseqlabs.shtml">The European Leishmania major Friedlin Genome Sequencing Consortium</a>.
