@@ -551,7 +551,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
   <c:if test="${binomial eq 'Plasmodium falciparum'}">
       <wdk:wdkTable tblName="MassSpec" isOpen="true"
-                    attribution="Waters_female_gametes,Waters_male_gametes,Waters_mixed_gametes,Pyoelii_LiverStage_LS40,Pyoelii_LiverStage_LS50,FlorensMassSpecData2002,FlorensMassSpecData2004,Pf_Merozoite_Peptides,Lasonder_Mosquito_Oocysts,Lasonder_Mosquito_oocyst_derived_sporozoites,Lasonder_Mosquito_salivary_gland_sporozoites,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,P.falciparum_Clinical_Proteomics,Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection,Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection,P.vivax_Clinical_Proteomics"/>
+                    attribution="Waters_female_gametes,Waters_male_gametes,Waters_mixed_gametes,Pyoelii_LiverStage_LS40,Pyoelii_LiverStage_LS50,FlorensMassSpecData2002,FlorensMassSpecData2004,Pf_Merozoite_Peptides,Lasonder_Mosquito_Oocysts,Lasonder_Mosquito_oocyst_derived_sporozoites,Lasonder_Mosquito_salivary_gland_sporozoites,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,P.falciparum_Clinical_Proteomics,Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection,Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection,P.vivax_Clinical_Proteomics,Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC"/>
   </c:if>
 
   <c:if test="${binomial eq 'Plasmodium berghei'}">
