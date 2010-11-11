@@ -491,8 +491,8 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
 Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_infantum/">The Sanger Institute pathogen sequencing unit</a>. 
   </c:set>
 </c:when>
-<c:when test="${fn:contains(organism,'Seidman 75.1') && projectId eq 'TriTrypDB'}">
-  <c:set var="reference">   Sequence data for <i>Leishmania major strain Seidman 75.1</i> was provided by Washington University in St. Louis.
+<c:when test="${fn:contains(organism,'SD 75.1') && projectId eq 'TriTrypDB'}">
+  <c:set var="reference">   Sequence data for <i>Leishmania major strain SD 75.1</i> was provided by Washington University in St. Louis.
   </c:set>
 </c:when>
 <c:when test="${}">
