@@ -16,3 +16,5 @@
 <jsp:include page="/wdkCustomization/jsp/${projectId}/GeneRecordClasses.GeneRecordClass.jsp"/>
 
 <api:errors/>
+
+<site:pageLogger name="gene page" />

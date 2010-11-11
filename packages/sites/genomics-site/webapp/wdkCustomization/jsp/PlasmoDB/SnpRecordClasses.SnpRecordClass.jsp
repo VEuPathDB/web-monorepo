@@ -106,3 +106,5 @@
 </c:choose>
 
 <site:footer/>
+
+<site:pageLogger name="snp page" />

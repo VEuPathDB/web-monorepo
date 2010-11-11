@@ -1849,5 +1849,4 @@ Annotation of the P. chabaudi AS chromosomes was obtained from the Pathogen Sequ
 
 <site:footer/>
 
-<c:set var="logContent" value="page-id=${requestScope.wdkPageId} --- finished gene page loading." />
-<script src="<c:url value='/logging.do?content=${logContent}' />"></script>
+<site:pageLogger name="gene page" />

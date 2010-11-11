@@ -563,3 +563,5 @@ Chromosome sequences and annotation for <i>Neospora caninum</i> obtained from th
 </c:choose>
 
 <site:footer/>
+
+<site:pageLogger name="gene page" />

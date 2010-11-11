@@ -456,3 +456,4 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
   );
 </script>
 
+<site:pageLogger name="gene page" />

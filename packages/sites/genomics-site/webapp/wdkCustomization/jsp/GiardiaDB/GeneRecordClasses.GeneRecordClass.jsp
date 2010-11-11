@@ -463,3 +463,5 @@ Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Kar
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
+
+<site:pageLogger name="gene page" />

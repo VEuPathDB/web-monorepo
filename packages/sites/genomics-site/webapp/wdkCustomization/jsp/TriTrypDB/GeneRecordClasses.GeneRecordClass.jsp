@@ -649,3 +649,5 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
 
 
 <site:footer/>
+
+<site:pageLogger name="gene page" />

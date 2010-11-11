@@ -413,3 +413,4 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
   );
 </script>
 
+<site:pageLogger name="gene page" />
