@@ -416,7 +416,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 </c:when>
 <c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
   <c:set var="reference">
- Whole genome shotgun sequence and annotations for <i>E. histolytica</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+ Whole genome shotgun sequence and annotations for <i>E. histolytica</i>HM-1:IMSS obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
   </c:set>
 </c:when>
 <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>

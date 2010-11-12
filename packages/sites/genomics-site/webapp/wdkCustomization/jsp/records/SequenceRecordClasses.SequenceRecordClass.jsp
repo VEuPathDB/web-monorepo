@@ -105,7 +105,7 @@
     <c:when test="${projectId eq 'TriTrypDB' && attrs['length'].value > 300000}">
       <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
     </c:when>
-    <c:when test="${projectId ne 'TriTrypDB' && attrs['length'].value < 300000}">
+    <c:when test="${projectId ne 'TriTrypDB' && attrs['length'].value < 100000}">
       <c:set var="gtracks" value="BLASTX+ORF+TandemRepeat+LowComplexity" />
     </c:when>
     <c:otherwise>
@@ -531,9 +531,45 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
  Whole genome shotgun sequence and annotations for <i>E. dispar</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
   </c:set>
 </c:when>
-<c:when test="${fn:contains(organism,'Entamoeba histolytica') && projectId eq 'AmoebaDB'}">
+<c:when test='${organism eq "Entamoeba histolytica HM-1:IMSS"}'>
   <c:set var="reference">
  Whole genome shotgun sequence and annotations for <i>E. histolytica</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+  </c:set>
+</c:when>
+<c:when test='${organism eq "Entamoeba histolytica DS4"}'>
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>Entamoeba histolytica DS4</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+  </c:set>
+</c:when>
+<c:when test='${organism eq "Entamoeba histolytica MS96"}'>
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>Entamoeba histolytica MS96</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+  </c:set>
+</c:when>
+<c:when test='${organism eq "Entamoeba histolytica KU48"}'>
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>Entamoeba histolytica KU48</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+  </c:set>
+</c:when>
+<c:when test='${organism eq "Entamoeba histolytica KU50"}'>
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>Entamoeba histolytica KU50</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+  </c:set>
+</c:when>
+<c:when test='${organism eq "Entamoeba histolytica KU27"}'>
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>Entamoeba histolytica</i> KU27 obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+  </c:set>
+</c:when>
+<c:when test='${organism eq "Entamoeba histolytica HM-1:CA"}'>
+  <c:set var="reference">
+ Whole genome shotgun sequence and annotations for <i>Entamoeba histolytica HM-1:CA</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
   </c:set>
 </c:when>
 <c:when test="${fn:contains(organism,'Entamoeba invadens') && projectId eq 'AmoebaDB'}">
