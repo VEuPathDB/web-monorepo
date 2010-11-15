@@ -391,6 +391,16 @@ $(document).ready(function(){
 
       <tr class="medium">
         <td>&nbsp;</td>
+        <td valign=top>Digital Object Identifier (DOI) Name(s)</td>
+        <td>
+          <html:text property="dois" size="70"/>
+          <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>Enter one or more DOI names in the box above separated by \',\'</li><li><a>DOI homepage - http://www.doi.org/index.html</a></li></ul>')">
+          <img src="/assets/images/help.png" align=bottom border=0></a>
+        </td>
+      </tr>
+
+      <tr class="medium">
+        <td>&nbsp;</td>
         <td valign=top>Genbank Accession(s)</td>
         <td>
           <html:text property="accessions" size="70"/>
