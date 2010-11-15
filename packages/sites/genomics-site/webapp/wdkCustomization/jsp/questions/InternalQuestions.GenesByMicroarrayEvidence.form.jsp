@@ -4,7 +4,8 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
+<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
 <%-- QUESTIONS --%>
@@ -29,6 +30,9 @@ ${Question_Header}
 <wdk:errors/>
 
 <div id="form_question">
+
+<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
+
 
 <center><table width="90%">
      

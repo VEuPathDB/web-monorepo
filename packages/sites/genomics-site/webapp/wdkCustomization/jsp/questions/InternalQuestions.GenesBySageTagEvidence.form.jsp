@@ -7,13 +7,14 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set value="${wdkModel.displayName}" var="project"/>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
-<c:set value="${wdkQuestion.name}" var="qname"/>
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
 ${Question_Header}
 <wdk:errors/>
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
+<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
 <table width="100%" cellpadding="4">
 <c:set value="1" var="columns"/>
 

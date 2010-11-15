@@ -5,6 +5,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
+<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
 <%-- QUESTIONS --%>
 <c:set var="plasmoQuestions" value="P.f.study:Field Parasites from Pregnant Women and Children (Duffy),GeneQuestions.GenesByRNASeqPfExpressionFoldChange,P.f.study:Post Infection Time Series (Stunnenberg),GeneQuestions.GenesByRNASeqPfRBCFoldChange,GeneQuestions.GenesByRNASeqPfRBCExprnPercentile,P.f.study:Intraerythrocytic infection cycle (Newbold/Llinas),GeneQuestions.GenesByRNASeqExpressionTiming" />
@@ -17,6 +19,7 @@ ${Question_Header}
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
+<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
 <center><table width="90%">
 
 <c:set value="2" var="columns"/>

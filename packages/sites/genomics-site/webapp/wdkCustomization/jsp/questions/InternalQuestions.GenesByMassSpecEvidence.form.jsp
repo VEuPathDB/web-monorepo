@@ -5,7 +5,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-
+<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
 
@@ -22,6 +23,7 @@ ${Question_Header}
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
+<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
 <table width="100%">
 <c:set value="1" var="columns"/>
 

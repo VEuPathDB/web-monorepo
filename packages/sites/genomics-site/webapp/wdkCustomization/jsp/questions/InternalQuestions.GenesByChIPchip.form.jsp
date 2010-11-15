@@ -7,6 +7,10 @@
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
+<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+
+
 <!-- get wdkModel name to display as page header -->
 <c:set value="${wdkModel.displayName}" var="project"/>
 
@@ -28,6 +32,9 @@ ${Question_Header}
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
+
+<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
+
 <center><table width="90%">
 
 <c:set value="2" var="columns"/>
