@@ -44,6 +44,9 @@
 	<c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
 		<c:set var="listOrganisms" value="${EuPathDBOrgs}" />
 	</c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'AmoebaDB')}">
+		<c:set var="listOrganisms" value="${AmoebaDBOrgs}" />
+	</c:when>
         <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
 		<c:set var="listOrganisms" value="${CryptoDBOrgs}" />
 	</c:when>
