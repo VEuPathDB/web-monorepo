@@ -252,59 +252,59 @@ access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same
 navigation and querying capabilities as in TriTrypDB.org.<br>
 </c:if>
 -->
-                        <ul>
-	 <c:set var="count" value="0" />
-                        <c:forEach items="${tutAnswer.recordInstances}" var="record">
-         <c:set var="attrs" value="${record.attributesMap}"/>
-		 <c:forEach items="${record.tables}" var="table">
-           <c:forEach items="${table.rows}" var="row">
-             <c:set var="projects" value="${row[0].value}"/>
-            <c:if test="${fn:containsIgnoreCase(projects, project)}"> 
-                          <c:set var="urlMov" value="${row[1].value}"/>
-                          <c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
-                            <c:set var="urlMov">http://eupathdb.org/tutorials/${urlMov}</c:set>
-                          </c:if>
-                
-                          <c:set var="urlAvi" value="${row[2].value}"/>
-                          <c:if test="${urlAvi != 'unavailable' &&  ! fn:startsWith(urlAvi, 'http://')}">
-                            <c:set var="urlAvi">http://eupathdb.org/tutorials/${urlAvi}</c:set>
-                          </c:if>
-                
-                          <c:set var="urlFlv" value="${row[3].value}"/>
-                          <c:choose>
-                          <c:when test="${ ! fn:endsWith(urlFlv, 'flv')}">
-                            <c:set var="urlFlv">http://eupathdb.org/tutorials/${urlFlv}</c:set>
-                          </c:when>
-                          <c:when test="${urlFlv != 'unavailable' &&  ! fn:startsWith(urlFlv, 'http://')}">
-                            <c:set var="urlFlv">http://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&autostart=true</c:set>
-                          </c:when>
-                          </c:choose>
-                          <c:set var="duration" value="${row[4].value}"/>
-                          <c:set var="size" value="${row[5].value}"/>
-					<c:if test="${count < SidebarLimit}">	
-					  <c:set var="count" value="${count + 1}" />
-					  <li id='t-${attrs['uid']}'>${attrs['title']}<br />
-                             <c:if test="${urlMov != 'unavailable'}">
-                          		 (<a href="${urlMov}">Quick Time</a>)
-                             </c:if>
-                             <c:if test="${urlAvi != 'unavailable'}">
-                          		 (<a href="${urlAvi}">Windows media</a>)
-                             </c:if>
-                             <c:if test="${urlFlv != 'unavailable'}">
-                          		 (<a href="${urlFlv}">Flash</a>)
-                             </c:if>
+	<ul>
+	<c:set var="count" value="0" />
+	<c:forEach items="${tutAnswer.recordInstances}" var="record">
+        	<c:set var="attrs" value="${record.attributesMap}"/>
+		<c:forEach items="${record.tables}" var="table">
+          		<c:forEach items="${table.rows}" var="row">
+          		<c:set var="projects" value="${row[0].value}"/>
+          		<c:if test="${fn:containsIgnoreCase(projects, project)}"> 
+                          	<c:set var="urlMov" value="${row[1].value}"/>
+                          	<c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
+                            		<c:set var="urlMov">http://eupathdb.org/tutorials/${urlMov}</c:set>
+                          	</c:if>
+                          	<c:set var="urlAvi" value="${row[2].value}"/>
+                          	<c:if test="${urlAvi != 'unavailable' &&  ! fn:startsWith(urlAvi, 'http://')}">
+                            		<c:set var="urlAvi">http://eupathdb.org/tutorials/${urlAvi}</c:set>
+                          	</c:if>
+                          	<c:set var="urlFlv" value="${row[3].value}"/>
+                          	<c:choose>
+                          	<c:when test="${ ! fn:endsWith(urlFlv, 'flv')}">
+                            		<c:set var="urlFlv">http://eupathdb.org/tutorials/${urlFlv}</c:set>
+                          	</c:when>
+                          	<c:when test="${urlFlv != 'unavailable' &&  ! fn:startsWith(urlFlv, 'http://')}">
+                            		<c:set var="urlFlv">http://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&autostart=true</c:set>
+                          	</c:when>
+                          	</c:choose>
+                          	<c:set var="duration" value="${row[4].value}"/>
+                          	<c:set var="size" value="${row[5].value}"/>
+				<c:if test="${count < SidebarLimit}">	
+					<c:set var="count" value="${count + 1}" />
+					<li id='t-${attrs['uid']}'>${attrs['title']}<br />
+                             			<c:if test="${urlMov != 'unavailable'}">
+                          		 		(<a href="${urlMov}">Quick Time</a>)
+                             			</c:if>
+                             			<c:if test="${urlAvi != 'unavailable'}">
+                          		 		(<a href="${urlAvi}">Windows media</a>)
+                             			</c:if>
+                             			<c:if test="${urlFlv != 'unavailable'}">
+                          		 		(<a href="${urlFlv}">Flash</a>)
+                             			</c:if>
 					  </li>
-					</c:if>
-						</c:if>
-                              		</c:forEach> 
-				</c:forEach>
- 			</c:forEach>
-                        </ul>
-				<c:if test="${count >= SidebarLimit}">
-					<a style="margin-left:0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">All Tutorials</a>
 				</c:if>
+			</c:if>
+			</c:forEach> 
+		</c:forEach>
+ 	</c:forEach>
+	</ul>
+
+	<c:if test="${count >= SidebarLimit}">
+		<a style="margin-left:0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">All Tutorials</a>
+	</c:if>
+
                       </c:otherwise>
-    </c:choose>
+	</c:choose>
 
         </div>
 
