@@ -77,10 +77,6 @@
  	</c:forEach>
 	</ul>
 
-	<c:if test="${count >= SidebarLimit}">
-		<a style="margin-left:0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">All Tutorials</a>
-	</c:if>
-
                       </c:otherwise>
 	</c:choose>
 
