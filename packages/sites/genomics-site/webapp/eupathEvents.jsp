@@ -7,22 +7,34 @@ Transform XML message into Upcoming and Past events tables.
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib"%>
 
-
+<%-- obsolete method to fetch data via cgi
 <c:set var='currentDataUrl'>
 http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=Event
 </c:set>
 <c:set var='expiredDataUrl'>
 http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&range=expired&stopDateSort=DESC
 </c:set>
+--%>
+
+
 <c:set var='xsltUrl'>
 http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
 </c:set>
 
 <c:catch var='e'>
 
-<c:import var="currentData" url="${currentDataUrl}" />
-<c:import var="expiredData" url="${expiredDataUrl}" />
+<api:xmlMessages var="currentEvents" 
+    messageCategory="Event"
+    stopDateSort="DESC"
+/>
+
+<api:xmlMessages var="expiredEvents" 
+    messageCategory="Event"
+    stopDateSort="DESC"
+    range="expired"
+/>
 
 <c:import var="xslt" url="${xsltUrl}" />
 
@@ -78,14 +90,14 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
     <tr><td colspan="3"><font face="Arial,Helvetica" color="#003366" size="+2"><b>Upcoming Events</b></font></td></tr>
     <tr><td>
 
-    <x:transform xml="${currentData}" xslt="${xslt}" />
+    <x:transform xml="${currentEvents}" xslt="${xslt}" />
 
     </td></tr>
     <tr><td>&nbsp;</td></tr>
     <tr><td colspan="3"><font face="Arial,Helvetica" color="#003366" size="+2"><b>Past Events</b></font></td></tr>
     <tr><td>
 
-    <x:transform xml="${expiredData}" xslt="${xslt}" />
+    <x:transform xml="${expiredEvents}" xslt="${xslt}" />
     </td></tr>
 
 </table>

@@ -8,13 +8,16 @@ Transform XML message into events HTML page.
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib"%>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var='projectName' value='${applicationScope.wdkModel.name}'/>
 
+<%-- obsolete method to fetch data via cgi
 <c:set var='currentDataUrl'>
 http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}
 </c:set>
+--%>
 
 <c:set var='xsltUrl'>
 http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
@@ -47,11 +50,16 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
 
 <c:catch var='e'>
 
-<c:import var="currentData" url="${currentDataUrl}" />
+<api:xmlMessages var="currentEvents" 
+    messageCategory="Event"
+    projectName="${projectName}"
+    stopDateSort="DESC"
+/>
+
 <c:import var="xslt" url="${xsltUrl}" />
 
 <div class='events'>
-<x:transform xml="${currentData}" xslt="${xslt}">
+<x:transform xml="${currentEvents}" xslt="${xslt}">
     <x:param name="tag" value="${param.tag}"/>
 </x:transform>
 <c:if test="${param.tag != null && param.tag ne ''}">

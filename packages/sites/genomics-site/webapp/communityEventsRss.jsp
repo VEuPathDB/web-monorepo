@@ -8,6 +8,8 @@
     taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml"
 %><%@ 
     taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
+%><%@ 
+    taglib prefix="api" uri="http://apidb.org/taglib"
 %><fmt:setLocale 
     value="en-US"
 /><c:set
@@ -32,12 +34,16 @@
 ></c:choose
 ><c:choose
 ><c:when test="${param.upcoming == 1}"
-><c:import
-    url="http://${serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}" var="xml"
+><api:xmlMessages var="xml" 
+    messageCategory="Event"
+    projectName="${projectName}"
 /></c:when
 ><c:otherwise
-><c:import
-    url="http://${serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}&range=all&stopDateSort=DESC" var="xml"
+><api:xmlMessages var="xml" 
+    messageCategory="Event"
+    projectName="${projectName}"
+    range="all"
+    stopDateSort="DESC"
 /></c:otherwise
 ></c:choose
 ><x:parse

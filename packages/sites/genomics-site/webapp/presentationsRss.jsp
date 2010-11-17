@@ -8,6 +8,8 @@
     taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml"
 %><%@ 
     taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
+%><%@ 
+    taglib prefix="api" uri="http://apidb.org/taglib"
 %><fmt:setLocale 
     value="en-US"
 /><c:set
@@ -29,8 +31,11 @@
 ><c:set
     var="linkTmpl" value="${scheme}://${serverName}${contextPath}/communityEvents.jsp"
 /></c:otherwise
-></c:choose><c:import
-    url="http://${serverName}/cgi-bin/xmlMessageRead?messageCategory=Event&projectName=${projectName}&range=all&stopDateSort=DESC" var="xml"
+></c:choose><api:xmlMessages var="xml" 
+    messageCategory="Event"
+    projectName="${projectName}"
+    range="all"
+    stopDateSort="DESC"
 /><x:parse
     doc="${xml}" var="doc"
 /><c:set
