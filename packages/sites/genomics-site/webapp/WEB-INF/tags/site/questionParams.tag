@@ -262,7 +262,7 @@
   </div>
   <div class="group-detail" style="display:${display};text-align:center">
     <div class="group-description">
-      <p><html:text property="customName" maxlength="15" />  </p>
+      <p><html:text property="customName" maxlength="15" value="${customName}" />  </p>
     </div><br>
   </div>
 </div>
