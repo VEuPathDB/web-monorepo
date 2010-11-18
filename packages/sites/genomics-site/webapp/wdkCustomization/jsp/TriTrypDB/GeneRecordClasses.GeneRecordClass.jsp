@@ -118,17 +118,22 @@ ${organism}<br>
 <c:choose>
   <c:when test='${organismFull eq "Leishmania braziliensis"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
     </c:set>
   </c:when>
   <c:when test='${organismFull eq "Leishmania major"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
+      Gene+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
     </c:set>
   </c:when>
   <c:when test='${organismFull eq "Leishmania infantum"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+    </c:set>
+  </c:when>
+  <c:when test='${organismFull eq "Leishmania mexicana mexicana"}'>
+    <c:set var="tracks">
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
     </c:set>
   </c:when>
 
