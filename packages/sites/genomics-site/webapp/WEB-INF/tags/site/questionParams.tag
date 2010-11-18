@@ -251,3 +251,19 @@
 	</div>
 </c:if>
 
+
+<%-- set the custom name --%>
+<div name="All_weighting" class="param-group" type="ShowHide">
+  <c:set var="display" value="none"/>
+  <c:set var="image" value="plus.gif"/>
+  <div class="group-title">
+    <img style="position:relative;top:5px;" class="group-handle" src='<c:url value="/images/${image}" />'/>
+    <span title="This name will be the name of the step.">Give this search a name</span>
+  </div>
+  <div class="group-detail" style="display:${display};text-align:center">
+    <div class="group-description">
+      <p><html:text property="customName" maxlength="15" />  </p>
+    </div><br>
+  </div>
+</div>
+
