@@ -297,7 +297,7 @@ $(document).ready(function() {
             <tr>
                <td>Digital Object Identifier(DOI) Name(s):</td>
                 <td> <c:forEach items="${comment.dois}" var="row">
-                        <a href="http://www.doi.org?<c:out value="${row}"/>"><c:out value="${row}"/></a>
+                        <a href="http://dx.doi.org/<c:out value="${row}"/>"><c:out value="${row}"/></a>
                       </c:forEach>
                 </td>
             </tr>
