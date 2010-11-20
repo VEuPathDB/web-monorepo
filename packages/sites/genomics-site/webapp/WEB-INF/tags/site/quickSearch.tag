@@ -73,7 +73,7 @@
            <tr>
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
-          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" title="Enter a Gene ID. Use * as a wildcard to obtain more than one.">Gene ID:</a></b></label>
+          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" title="Enter a Gene ID. Use * as a wildcard (to obtain more than one). Click to enter multiple Gene IDs">Gene ID:</a></b></label>
          		<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
 	  			<input type="text" class="search-box" name="myProp(${geneIdParam.name})" value="${geneIdParam.default}" />  <!-- size is defined in class -->
 	  			<input type="hidden" name="questionSubmit" value="Get Answer"/>
@@ -82,7 +82,8 @@
 			 </div></td>
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
-          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" title="Enter a term to find genes. Use * as a wildcard.">Gene Text Search:</a></b></label>
+          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" 
+title="Enter a term to find genes. Use * as a wildcard. Use quotation marks to find phrase matches. Click to access the advanced gene search page">Gene Text Search:</a></b></label>
           <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions"/>
     <c:choose> 
           <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
