@@ -16,7 +16,7 @@ a:link, a:visited {
 }
 
 a:hover, a:active {
-	color: #6A5329;
+	color: #4f7f6d;  /*  #5E9F87;*/     /* #6A5329;*/
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,7 +63,7 @@ a:hover, a:active {
 }
 
 #nav_top li ul a:hover, #nav_top li ul a:active {
-	color: #8f0165;
+	color: #4f7f6d;   /*#8f0165; */
 }
 
 
@@ -105,7 +105,7 @@ a:hover, a:active {
 }
 
 #pink_title {
-	color: #5f0f47;
+	color: #4F3D1B;  /*  #5f0f47; */
 	background-image: url(../images/AmoebaDB/trheader.png);
 }
 
@@ -119,11 +119,11 @@ a:hover, a:active {
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #5f0f47;
+	border-bottom-color:  #4F3D1B; /* #5f0f47;*/
 }
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #5f0f47;
-	color: #8f0165;
+	border-bottom-color: #4F3D1B; /* #5f0f47;*/
+	color: #4f7f6d;   /* #8f0165; */
 }
 
 
@@ -219,7 +219,7 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #5f0f47;
+        color: #4F3D1B;  /* #5f0f47;*/
 	background-image: url(../images/AmoebaDB/trheader.png);
 }
 
@@ -232,7 +232,7 @@ a.queryGridInactive {
 }
 
 a.queryGridActive {
-        color:              #440c94;
+        color:              #4F3D1B;   /* #440c94; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
