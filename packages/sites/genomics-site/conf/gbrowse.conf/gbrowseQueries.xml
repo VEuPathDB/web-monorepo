@@ -685,6 +685,50 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="MicroArrayProbes:expressionH"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+SELECT $srcfeature_id as feature_id,
+       'MicroArrayProbes' as type, 
+       '$source'       as source,
+       $srcfeature_id as parent_id,
+       $base_start       as startm,
+       $rend             as end 
+FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="MicroArrayProbes:expressionD" includeProjects="PlasmoDB">
+    <testParamValues project="PlasmoDB">
+      <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_06$$"/>
+      <param name="base_start" value="469864"/> 
+      <param name="rend" value="470011"/> 
+    </testParamValues>
+    <sql>   
+<![CDATA[
+SELECT fl.na_feature_id as feature_id,
+       'MicroArrayProbes' type, 
+       '$source' source, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'SourceId='   || fl.feature_source_id || '$dlm'
+        as atts
+FROM   apidb.featurelocation fl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+WHERE  edr.external_database_id = ed.external_database_id
+  AND  edr.external_database_release_id=fl.external_database_release_id
+  AND  fl.feature_type = 'ArrayElementFeature'
+  AND  ed.name = $$edname$$
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+  AND  fl.na_sequence_id = $srcfeature_id]]>
+     </sql>
+  </sqlQuery>
+  
+
+
   <sqlQuery name="NextGenSeq:coverage"  includeProjects="TriTrypDB,PlasmoDB">
      <sql>
        <![CDATA[
@@ -3125,34 +3169,6 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-Markers'
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="MicroArrayProbes:expression" includeProjects="PlasmoDB">
-    <testParamValues project="PlasmoDB">
-      <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_06$$"/>
-      <param name="base_start" value="469864"/> 
-      <param name="rend" value="470011"/> 
-    </testParamValues>
-    <sql>   
-<![CDATA[
-SELECT fl.na_feature_id as feature_id,
-       'MicroArrayProbes' type, 
-       '$source' source, 
-       fl.na_sequence_id parent_id, 
-       fl.start_min startm, 
-       fl.end_max end, 
-       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       'SourceId='   || fl.feature_source_id || '$dlm'
-        as atts
-FROM   apidb.featurelocation fl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
-WHERE  edr.external_database_id = ed.external_database_id
-  AND  edr.external_database_release_id=fl.external_database_release_id
-  AND  fl.feature_type = 'ArrayElementFeature'
-  AND  ed.name = $$edname$$
-  AND  fl.start_min <= $rend
-  AND  fl.end_max >= $base_start
-  AND  fl.na_sequence_id = $srcfeature_id]]>
-     </sql>
-  </sqlQuery>
-  
   <sqlQuery name="ChIP_chip:Assay"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
@@ -5459,8 +5475,35 @@ WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.start_min <= $rend
   AND  fl.end_max >= $base_start
   AND  fl.na_feature_id = sta.na_feature_id
-	AND  staa.library_name = $$libName$$
+  AND  staa.library_name = $$libName$$
   AND  to_number(fl.feature_source_id) = staa.composite_element_id
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="MicroArrayProbes:expressionH:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT interval as feature_id,
+       $srcfeature_id as parent_id,
+       'MicroArrayProbes' type, 
+       '$source' source,
+       count(interval) score, 
+       (interval - 1) * 1000 startm, 
+       interval * 1000 end
+FROM
+(
+  SELECT ceil(fl.start_min / 1000) interval 
+  FROM   apidb.featurelocation fl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+  WHERE  edr.external_database_id = ed.external_database_id
+    AND  edr.external_database_release_id=fl.external_database_release_id
+    AND  fl.feature_type = 'ArrayElementFeature'
+    AND  ed.name = $$edname$$
+    AND  fl.start_min <= $rend
+    AND  fl.end_max >= $base_start
+    AND  fl.na_sequence_id = $srcfeature_id
+) 
+GROUP BY interval
 ]]>
     </sql>
   </sqlQuery>
