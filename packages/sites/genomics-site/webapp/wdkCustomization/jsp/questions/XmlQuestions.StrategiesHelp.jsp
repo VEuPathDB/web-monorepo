@@ -63,7 +63,9 @@
 
   <br><br>${text}
 
-  <br><c:if test="${image != null && image != ''}"><img src="${image}" alt=""/></c:if>
+  <br><c:if test="${image != null && image != ''}"><img src="<c:url value="/wdk"/>${image}" alt=""/></c:if>
+
+
 
   </td>
 </tr>
