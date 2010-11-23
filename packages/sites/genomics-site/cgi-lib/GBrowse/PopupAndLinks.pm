@@ -10,19 +10,23 @@ my %MS_EXTDB_NAME_MAP;
 
 BEGIN {
   my $serverName = $ENV{SERVER_NAME};
+  my $project_id = $ENV{PROJECT_ID};
 
-  my $xml = `wget wget -qO- "http://$serverName/a/getVocab.do?questionFullName=GeneQuestions.GenesByMassSpec&name=ms_assay&xml=TRUE"`;
-  my $string = XMLin($xml, ForceArray => 1);
+  if ($project_id !~ /Microsporidia/) {
 
-  my $terms = $string->{terms}->[0]->{term};
+    my $xml = `wget -qO- "http://$serverName/a/getVocab.do?questionFullName=GeneQuestions.GenesByMassSpec&name=ms_assay&xml=TRUE"`;
+    my $string = XMLin($xml, ForceArray => 1);
 
-  if(ref($terms) eq 'HASH') {
+    my $terms = $string->{terms}->[0]->{term};
 
-    foreach my $name (keys %{$terms}) {
+    if(ref($terms) eq 'HASH') {
 
-      my $display = $terms->{$name}->{content};
-      my $extDbName = $terms->{$name}->{internal};
-      $MS_EXTDB_NAME_MAP{$extDbName} = $display;
+      foreach my $name (keys %{$terms}) {
+
+        my $display = $terms->{$name}->{content};
+        my $extDbName = $terms->{$name}->{internal};
+        $MS_EXTDB_NAME_MAP{$extDbName} = $display;
+      }
     }
   }
 };
