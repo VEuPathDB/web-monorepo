@@ -37,7 +37,7 @@
   }  
 
   .span-step-text{
-	font-size:12pt;
+	font-size:11pt;
 	font-weight:bold;
 	padding:10px;
   }
@@ -90,8 +90,8 @@
 	<c:if test="${importStepResultSize > 1}"><c:set var="importStepRecType" value="${importStepRecType}s"/></c:if>
 
 	<div style="text-align:center;">
-	<span class="span-step-text">Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose region
-          <wdk:enumParamInput qp="${pMap['span_operation']}" />&nbsp;the region of a
+	<span class="span-step-text">Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="comparisonRegion">region</span>
+          <wdk:enumParamInput qp="${pMap['span_operation']}" />&nbsp;the <span class="outputRegion">region</span> of a
           <span class="selected_output_type"></span> in Step
           <span class="selected_output_num"</span> and is on
           <wdk:enumParamInput qp="${pMap['span_strand']}" />
