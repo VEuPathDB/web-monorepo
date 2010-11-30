@@ -2,6 +2,8 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <c:set var="question" value="${requestScope.wdkQuestion}"/>
 <c:set var="importStep" value="${requestScope.importStep}"/>
 <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
@@ -9,6 +11,10 @@
 
 
 <style>
+  #query_form {
+    max-width: auto;
+  }
+
   #spanLogicParams, #spanLogicGraphics {
  /*   float:left;  */
     margin:5px;
@@ -31,26 +37,56 @@
   #spanLogicParams fieldset:nth-of-type(2) {
     margin-top: 5px;
   }
-
+  #outputGroup,#comparisonGroup{
+    margin: 5px;
+  }
+  #outputGroup{
+    float: left;
+  }
+  #comparisonGroup{
+    float: right;
+  }
   .invisible {
     visibility: hidden;
   }  
-
+  .instructions {
+    text-align:center;
+    color:gray;
+  }
   .span-step-text{
 	font-size:11pt;
-	font-weight:bold;
-	padding:10px;
+	font-style:italic;
+	white-space:nowrap;
   }
 
   .span-step-text .param{
 	display: inline;
   }
 
+  .region {
+    font-weight: bold;
+  }
+
+  .span-step-text .comparisonRegion,
+  .span-step-text .outputRegion{
+	font-style:normal;
+  }
+  .comparisonRegion,
+  #comparisonGroup .region {
+    color: darkred;
+  }
+  .outputRegion,
+  #outputGroup .region  {
+    color: darkblue;
+  }
   .span-step-text select{
-	font-weight: inherit;
+	font-weight: bold;
 	font-size:10pt;
   }
 
+  ul.horizontal {
+    padding-right: 5px;
+  }
   ul.horizontal.center {
     text-align: center;
   }
@@ -58,10 +94,27 @@
   ul.horizontal li {
     display: inline;
   }
-  canvas, div#scaleA, div#scaleB{
+  .regionText {
+    width: 6em;
+  }
+  .regionParams {
+    background: #D0CFCF;
+    padding-top: 5px;
+  }
+  .regionGraphic {
+    background: #fff;
+  }
+  .regionHeader {
+    font-style: italic;
+    text-align: center;
+  }
+  .offsetOptions {
+    margin: auto;
+  }
+  canvas, div#scale_a, div#scale_b{
 /*	border:1px solid black; */
 	height:75px;
-	margin:auto;
+	margin:5px auto;
 	width:400px;
   }
 </style>
@@ -70,6 +123,27 @@
 
 <h2 style="text-align:center;">Combine Step <span class="current_step_num"></span> and Step <span class="new_step_num"></span></h2>
 
+<c:set var="step_dataType" value="${importStep.displayType}" />
+<c:choose>
+	<c:when test="${fn:endsWith(step_dataType,'y')}">
+		<c:set var="newPluralType" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="newPluralType" value="${step_dataType}s" />
+	</c:otherwise>	
+</c:choose>
+
+<c:set var="step_dataType" value="${wdkStep.displayType}" />
+<c:choose>
+	<c:when test="${fn:endsWith(step_dataType,'y')}">
+		<c:set var="oldPluralType" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="oldPluralType" value="${step_dataType}s" />
+	</c:otherwise>	
+</c:choose>
+
+<div class="instructions">Your ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).</div>
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
 <span style="display:none" id="stepId">${wdkStep.stepId}</span>
 <span style="display:none" id="span_a_num" class="current_step_num"></span>
@@ -90,20 +164,20 @@
 	<c:if test="${importStepResultSize > 1}"><c:set var="importStepRecType" value="${importStepRecType}s"/></c:if>
 
 	<div style="text-align:center;">
-	<span class="span-step-text">Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="comparisonRegion">region</span>
-          <wdk:enumParamInput qp="${pMap['span_operation']}" />&nbsp;the <span class="outputRegion">region</span> of a
-          <span class="selected_output_type"></span> in Step
-          <span class="selected_output_num"</span> and is on
+	<span class="span-step-text">Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion">region</span>
+          <wdk:enumParamInput qp="${pMap['span_operation']}" />&nbsp;the <span class="region comparisonRegion">region</span> of a
+          <span class="comparison_type"></span> in Step
+          <span class="comparison_num"</span> and is on
           <wdk:enumParamInput qp="${pMap['span_strand']}" />
         </span>
 	</div>
 
-        <div id="outputGroup" style="float: left">
-          <site:spanlogicGraph groupName="A" question="${question}" />
+        <div id="outputGroup">
+          <site:spanlogicGraph groupName="a" question="${question}" step="${wdkStep}" stepType="current_step"/>
         </div>
 
-        <div id="comparisonGroup" style="float: right">
-          <site:spanlogicGraph groupName="B" question="${question}" />
+        <div id="comparisonGroup">
+          <site:spanlogicGraph groupName="b" question="${question}" step="${importStep}" stepType="new_step" />
         </div>
 
     	<c:if test="allowBoolean == false">
