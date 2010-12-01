@@ -38,7 +38,7 @@
     margin-top: 5px;
   }
   #outputGroup,#comparisonGroup{
-    margin: 5px;
+    margin: 20px 10px 10px;
   }
   #outputGroup{
     float: left;
@@ -57,8 +57,20 @@
 	font-size:11pt;
 	font-style:italic;
 	white-space:nowrap;
+	text-align:center;
   }
-
+  .span-step-text.bottom{
+	padding-top:10px;
+	color:darkgreen;
+  }
+  .span-step-text.bottom .comparisonRegion,
+  .span-step-text.bottom .outputRegion{
+	background:none;
+	padding:0;
+	font-weight:inherit;
+	font-style:inherit;
+        color:inherit;
+  }
   .span-step-text .param{
 	display: inline;
   }
@@ -69,6 +81,8 @@
 
   .span-step-text .comparisonRegion,
   .span-step-text .outputRegion{
+	background-color:#d0cfcf;
+	padding-bottom:25px;
 	font-style:normal;
   }
   .comparisonRegion,
@@ -163,13 +177,12 @@
 	<c:if test="${wdkStepResultSize > 1}"><c:set var="wdkStepRecType" value="${wdkStepRecType}s"/></c:if>
 	<c:if test="${importStepResultSize > 1}"><c:set var="importStepRecType" value="${importStepRecType}s"/></c:if>
 
-	<div style="text-align:center;">
-	<span class="span-step-text">Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion">region</span>
+	<div class="span-step-text">
+	  Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion">region</span>
           <wdk:enumParamInput qp="${pMap['span_operation']}" />&nbsp;the <span class="region comparisonRegion">region</span> of a
           <span class="comparison_type"></span> in Step
-          <span class="comparison_num"</span> and is on
+          <span class="comparison_num"></span> and is on
           <wdk:enumParamInput qp="${pMap['span_strand']}" />
-        </span>
 	</div>
 
         <div id="outputGroup">
@@ -185,10 +198,16 @@
       	  <c:set var="selected" value="CHECKED" />
       	  You cannot select output because there are steps in the strategy after the current one you are working on.
     	</c:if>
-
+	<div class="span-step-text bottom clear">
+	  "Return each <span class="span_output"></span> whose <span class="region outputRegion">region</span>
+          <span class="span_operation"></span>&nbsp;the <span class="region comparisonRegion">region</span> of a
+          <span class="comparison_type"></span> in Step
+          <span class="comparison_num"></span> and is on
+          <span class="span_strand"></span>"
+	</div>
 </div>
 
-<div class="filter-button clear"><html:submit property="questionSubmit" value="Run Step" styleId="submitButton"/></div>
+<div class="filter-button"><html:submit property="questionSubmit" value="Run Step" styleId="submitButton"/></div>
 </html:form>
 
 <script>
