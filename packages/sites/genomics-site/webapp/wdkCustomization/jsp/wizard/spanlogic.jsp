@@ -11,31 +11,13 @@
 
 
 <style>
-  #query_form {
-    max-width: auto;
-  }
-
   #spanLogicParams, #spanLogicGraphics {
- /*   float:left;  */
     margin:5px;
   }
 
   #spanLogicParams fieldset {
- /*   float:left;  */
-  /*  border:1px solid gray; */
-/*	height:75px; */
-  }
-
-  #spanLogicGraphics {
-	
-  }
- 
-  #spanLogicParams fieldset:first-of-type {
-/*    margin-bottom: 5px; */
-  }
- 
-  #spanLogicParams fieldset:nth-of-type(2) {
-    margin-top: 5px;
+	padding: 0 30px;
+	width: 420px;
   }
   #outputGroup,#comparisonGroup{
     margin: 20px 10px 10px;
@@ -126,7 +108,6 @@
     margin: auto;
   }
   canvas, div#scale_a, div#scale_b{
-/*	border:1px solid black; */
 	height:75px;
 	margin:5px auto;
 	width:400px;
