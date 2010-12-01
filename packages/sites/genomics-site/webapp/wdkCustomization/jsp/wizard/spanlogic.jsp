@@ -81,7 +81,7 @@
 
   .span-step-text .comparisonRegion,
   .span-step-text .outputRegion{
-	background-color:#d0cfcf;
+	background-color:#efefef;
 	padding-bottom:25px;
 	font-style:normal;
   }
@@ -112,7 +112,7 @@
     width: 6em;
   }
   .regionParams {
-    background: #D0CFCF;
+    background: #efefef;  
     padding-top: 5px;
   }
   .regionGraphic {
@@ -157,7 +157,7 @@
 	</c:otherwise>	
 </c:choose>
 
-<div class="instructions">Your ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).</div>
+<div class="instructions" style="">Your ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).</div><br><br>
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
 <span style="display:none" id="stepId">${wdkStep.stepId}</span>
 <span style="display:none" id="span_a_num" class="current_step_num"></span>
