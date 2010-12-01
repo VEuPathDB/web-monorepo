@@ -45,8 +45,8 @@
 	padding-top:10px;
 	color:darkgreen;
   }
-  .span-step-text.bottom .comparisonRegion,
-  .span-step-text.bottom .outputRegion{
+  .span-step-text.bottom .region_a,
+  .span-step-text.bottom .region_b{
 	background:none;
 	padding:0;
 	font-weight:inherit;
@@ -61,18 +61,16 @@
     font-weight: bold;
   }
 
-  .span-step-text .comparisonRegion,
-  .span-step-text .outputRegion{
+  .span-step-text .region_a,
+  .span-step-text .region_b{
 	background-color:#efefef;
 	padding-bottom:25px;
 	font-style:normal;
   }
-  .comparisonRegion,
-  #comparisonGroup .region {
+  .region_b {
     color: darkred;
   }
-  .outputRegion,
-  #outputGroup .region  {
+  .region_a {
     color: darkblue;
   }
   .span-step-text select{
@@ -159,8 +157,8 @@
 	<c:if test="${importStepResultSize > 1}"><c:set var="importStepRecType" value="${importStepRecType}s"/></c:if>
 
 	<div class="span-step-text">
-	  Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion">region</span>
-          <wdk:enumParamInput qp="${pMap['span_operation']}" />&nbsp;the <span class="region comparisonRegion">region</span> of a
+	  Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span>
+          <wdk:enumParamInput qp="${pMap['span_operation']}" />&nbsp;the <span class="region comparisonRegion region_b">region</span> of a
           <span class="comparison_type"></span> in Step
           <span class="comparison_num"></span> and is on
           <wdk:enumParamInput qp="${pMap['span_strand']}" />
