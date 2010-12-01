@@ -5,7 +5,7 @@
 <h2>Build State</h2>
 <p>
   <c:catch var="e">
-  <api:properties var="build" propfile="WEB-INF/wdk-model/config/.build.info" />
+  <api:properties var="build" propfile="/WEB-INF/wdk-model/config/.build.info" />
   
   Last build  was a '<b>${build['!Last.build.component']}</b> 
   <b>${build['!Last.build.initialTarget']}</b>' 
