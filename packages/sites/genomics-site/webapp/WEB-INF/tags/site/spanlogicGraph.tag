@@ -47,6 +47,16 @@
       </li>
       <li><input type="radio" name="region_${groupName}" value="custom" onclick="${regionOnClick}">Custom</input></li>
     </ul>
+
+	<div name="custom_region_params" class="param-group" type="ShowHide">
+		<c:set var="display" value="block"/>
+		<c:set var="image" value="minus.gif"/>
+		<div class="group-title">
+    			<img style="position:relative;top:5px;" class="group-handle" src='<c:url value="/images/${image}" />'/>
+				<span>Selected Region</span>
+		</div>
+		<div class="group-detail" style="display:${display};text-align:center">
+    			<div class="group-description">
     <table class="offsetOptions" cellpadding="2">
       <tr>
         <c:set var="span_begin" value="span_begin_${groupName}"/>
@@ -69,5 +79,31 @@
         </td>
       </tr>
     </table>
+    			</div>
+		</div>
+	</div>
+
+<%--    <table class="offsetOptions" cellpadding="2">
+      <tr>
+        <c:set var="span_begin" value="span_begin_${groupName}"/>
+        <td style="text-align:right">begin at:</td><td><wdk:enumParamInput qp="${pMap[span_begin]}"/></td>
+        <c:set var="span_begin_direction" value="span_begin_direction_${groupName}"/>
+        <td><wdk:enumParamInput qp="${pMap[span_begin_direction]}"/></td>
+        <c:set var="span_begin_offset" value="span_begin_offset_${groupName}"/>
+        <td align="left" valign="top">
+          <html:text styleId="${span_begin_offset}" property="value(${span_begin_offset})" styleClass="regionText" />&nbsp;bp
+        </td>
+      </tr>
+      <tr>
+        <c:set var="span_end" value="span_end_${groupName}"/>
+        <td style="text-align:right">end at:</td><td><wdk:enumParamInput qp="${pMap[span_end]}"/></td>
+        <c:set var="span_end_direction" value="span_end_direction_${groupName}"/>
+        <td><wdk:enumParamInput qp="${pMap[span_end_direction]}"/></td>
+        <c:set var="span_end_offset" value="span_end_offset_${groupName}"/>
+        <td align="left" valign="top">
+          <html:text styleId="${span_end_offset}" property="value(${span_end_offset})" styleClass="regionText" />&nbsp;bp
+        </td>
+      </tr>
+    </table> --%>
   </fieldset>
 </div>

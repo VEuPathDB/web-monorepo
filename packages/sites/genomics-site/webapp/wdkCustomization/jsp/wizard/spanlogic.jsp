@@ -11,6 +11,10 @@
 
 
 <style>
+  .regionParams .param-group[type="ShowHide"]{
+    border:none;
+    background:none;
+  }
   #spanLogicParams, #spanLogicGraphics {
     margin:5px;
   }
@@ -34,6 +38,7 @@
   .instructions {
     text-align:center;
     color:gray;
+    margin-bottom:45px;
   }
   .span-step-text{
 	font-size:11pt;
@@ -110,6 +115,22 @@
 	margin:5px auto;
 	width:400px;
   }
+  .span-operations{
+    position:relative;
+    display: inline;
+  }
+  .span-operations .operation-help {
+    position:absolute;
+    display: inline;
+    width: 140px;
+    height: 40px;
+    top: -40px;
+    padding-top:2px;
+    background: url(/assets/images/operationHelp.png) no-repeat;
+  }
+  .span-operations .operation-help table {
+    margin: auto;
+  }
 </style>
 <c:set var="pMap" value="${question.paramsMap}"/>
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/wizard.do"  onsubmit="callWizard('wizard.do?action=${requestScope.action}&step=${wdkStep.stepId}&',this,null,null,'submit')">
@@ -125,7 +146,7 @@
 <wdk:getPlural pluralMap="${typeMap}"/>
 <c:set var="oldPluralType" value="${typeMap['plural']}"/>
 
-<div class="instructions" style="">Your ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).</div><br><br>
+<div class="instructions" style="">Your ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).</div>
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
 <span style="display:none" id="stepId">${wdkStep.stepId}</span>
 <span style="display:none" id="span_a_num" class="current_step_num"></span>
@@ -146,11 +167,21 @@
 	<c:if test="${importStepResultSize > 1}"><c:set var="importStepRecType" value="${importStepRecType}s"/></c:if>
 
 	<div class="span-step-text">
-	  Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span>
-          <wdk:enumParamInput qp="${pMap['span_operation']}" />&nbsp;the <span class="region comparisonRegion region_b">region</span> of a
+	  <span>Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span></span>
+          <div class="span-operations">
+            <div class="operation-help"><table>
+              <tr> 
+                <td class="operation SPAN overlap"></td>
+                <td class="operation SPAN a_contain_b"></td>
+                <td class="operation SPAN b_contain_a"></td>
+              </tr>
+            </table></div>
+            <wdk:enumParamInput qp="${pMap['span_operation']}" />
+          </div>
+          <span>&nbsp;the <span class="region comparisonRegion region_b">region</span> of a
           <span class="comparison_type"></span> in Step
           <span class="comparison_num"></span> and is on
-          <wdk:enumParamInput qp="${pMap['span_strand']}" />
+          <wdk:enumParamInput qp="${pMap['span_strand']}" /></span>
 	</div>
 
         <div id="outputGroup">
