@@ -1,0 +1,20 @@
+--- annotation_help.html.orig	2010-12-02 11:00:00.000000000 -0500
++++ annotation_help.html	2010-12-02 11:01:26.000000000 -0500
+@@ -106,7 +106,7 @@
+ format described here, and quantitative data using WIG format. For
+ quantitative data (such as microarray expression levels), please use
+ the UCSC Genome Browser's <a
+-href="http://genome.ucsc.edu/google/goldenPath/help/wiggle.html">"WIG"
++href="http://genome.ucsc.edu/goldenPath/help/wiggle.html">"WIG"
+ format</a>.
+ 
+ For qualitative data, annotation files must be <b>text only</b>.  Here
+@@ -230,7 +230,7 @@
+ 
+ In addition to this format, you may use the standard GFF format for
+ your data.  Details can be found <a
+-href="http://www.sanger.ac.uk/Users/rd/gff.html">at the Sanger
++href="http://www.sanger.ac.uk/resources/software/gff/spec.html">at the Sanger
+ Centre</a>.
+ 
+ <h3>Features and Subparts</h3>
