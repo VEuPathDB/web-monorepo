@@ -43,7 +43,7 @@
   }
   .span-step-text.bottom{
 	padding-top:10px;
-	color:darkgreen;
+	color:darkred;  /* darkgreen */
   }
   .span-step-text.bottom .region_a,
   .span-step-text.bottom .region_b{
@@ -68,7 +68,7 @@
 	font-style:normal;
   }
   .region_b {
-    color: darkred;
+    color: darkgreen;  /* darkred  */
   }
   .region_a {
     color: darkblue;
