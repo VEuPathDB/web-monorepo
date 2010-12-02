@@ -27,15 +27,10 @@
               description="Strategy Id we are looking at"
 %>
 
-<c:set var="step_dataType" value="${wdkStep.displayType}" />
-<c:choose>
-	<c:when test="${fn:endsWith(step_dataType,'y')}">
-		<c:set var="type" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies" />
-	</c:when>
-	<c:otherwise>
-		<c:set var="type" value="${step_dataType}s" />
-	</c:otherwise>	
-</c:choose>
+<jsp:useBean id="typeMap" class="java.util.HashMap"/>
+<c:set target="${typeMap}" property="singular" value="${wdkStep.displayType}"/>
+<wdk:getPlural pluralMap="${typeMap}"/>
+<c:set var="type" value="${typeMap['plural']}"/>
 
 <c:set var="qsp" value="${fn:split(wdk_query_string,'&')}" />
 <c:set var="commandUrl" value="" />

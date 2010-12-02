@@ -116,25 +116,14 @@
 
 <h2 style="text-align:center;">Combine Step <span class="current_step_num"></span> and Step <span class="new_step_num"></span></h2>
 
-<c:set var="step_dataType" value="${importStep.displayType}" />
-<c:choose>
-	<c:when test="${fn:endsWith(step_dataType,'y')}">
-		<c:set var="newPluralType" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies" />
-	</c:when>
-	<c:otherwise>
-		<c:set var="newPluralType" value="${step_dataType}s" />
-	</c:otherwise>	
-</c:choose>
+<jsp:useBean id="typeMap" class="java.util.HashMap"/>
+<c:set target="${typeMap}" property="singular" value="${importStep.displayType}"/>
+<wdk:getPlural pluralMap="${typeMap}"/>
+<c:set var="newPluralType" value="${typeMap['plural']}"/>
 
-<c:set var="step_dataType" value="${wdkStep.displayType}" />
-<c:choose>
-	<c:when test="${fn:endsWith(step_dataType,'y')}">
-		<c:set var="oldPluralType" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies" />
-	</c:when>
-	<c:otherwise>
-		<c:set var="oldPluralType" value="${step_dataType}s" />
-	</c:otherwise>	
-</c:choose>
+<c:set target="${typeMap}" property="singular" value="${wdkStep.displayType}"/>
+<wdk:getPlural pluralMap="${typeMap}"/>
+<c:set var="oldPluralType" value="${typeMap['plural']}"/>
 
 <div class="instructions" style="">Your ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).</div><br><br>
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>

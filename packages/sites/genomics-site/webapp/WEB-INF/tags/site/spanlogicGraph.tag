@@ -24,15 +24,10 @@
 %>
 <c:set var="pMap" value="${question.paramsMap}"/>
 
-<c:set var="step_dataType" value="${step.displayType}" />
-<c:choose>
-	<c:when test="${fn:endsWith(step_dataType,'y')}">
-		<c:set var="pluralType" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies" />
-	</c:when>
-	<c:otherwise>
-		<c:set var="pluralType" value="${step_dataType}s" />
-	</c:otherwise>	
-</c:choose>
+<jsp:useBean id="typeMap" class="java.util.HashMap"/>
+<c:set target="${typeMap}" property="singular" value="${step.displayType}"/>
+<wdk:getPlural pluralMap="${typeMap}"/>
+<c:set var="pluralType" value="${typeMap['plural']}"/>
 
 <c:set var="regionOnClick" value="updateRegionParams(this);" />
 
