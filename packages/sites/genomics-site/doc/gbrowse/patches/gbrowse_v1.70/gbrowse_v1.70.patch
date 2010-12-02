@@ -1,5 +1,5 @@
---- gbrowse_v1.70	2010-01-26 17:04:05.000000000 -0500
-+++ gbrowse	2010-01-26 19:11:59.000000000 -0500
+--- gbrowse.orig	2010-12-01 15:56:15.000000000 -0500
++++ gbrowse	2010-12-02 10:55:44.000000000 -0500
 @@ -31,6 +31,7 @@
  use CGI qw(:standard unescape escape escapeHTML center *table *dl *TR *td script);
  use CGI::Toggle;
@@ -51,6 +51,15 @@
    unless ($CONFIG->section_setting('upload_tracks') eq 'off') {
      print start_multipart_form(-name=>'externalform');
      print external_table($page_settings,$feature_files);
+@@ -3284,7 +3296,7 @@
+   while (<F>) { # fix up relative addressing of images
+     s/\$GBROWSE\b/$url/g
+      or
+-    s/(href|src)=\"([^\"\#\$]+)\"/$1=\"$root\/$2\"/g;
++    s/(href|src)=\"([^\"\#\$]+)\"/$1=\"$root\/$2\"/g unless /(http|ftp)/;
+     s/<!--\s*\#include-classes\s*-->/object_classes_for_help()/e;
+     print;
+   }
 @@ -3792,3 +3804,195 @@
  END
  }
