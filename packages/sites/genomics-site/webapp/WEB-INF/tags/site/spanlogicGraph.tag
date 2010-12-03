@@ -48,7 +48,7 @@
       <li><input type="radio" name="region_${groupName}" value="custom" onclick="${regionOnClick}">Custom</input></li>
     </ul>
 
-	<div name="custom_region_params" class="param-group" type="ShowHide">
+	<div name="custom_region_params_${groupName}" class="param-group" type="ShowHide">
 		<c:set var="display" value="block"/>
 		<c:set var="image" value="minus.gif"/>
 		<div class="group-title">
