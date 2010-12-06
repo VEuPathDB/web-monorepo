@@ -20,17 +20,11 @@
   }
 
   #spanLogicParams fieldset {
-	padding: 0 30px;
-	width: 420px;
+	padding: 0 10px;
+	width: 415px;
   }
   #outputGroup,#comparisonGroup{
-    margin: 20px 10px 10px;
-  }
-  #outputGroup{
-    float: left;
-  }
-  #comparisonGroup{
-    float: right;
+    margin: 15px 10px 10px;
   }
   .invisible {
     visibility: hidden;
@@ -41,7 +35,6 @@
     margin-bottom:45px;
   }
   .span-step-text{
-	font-size:11pt;
 	font-style:italic;
 	white-space:nowrap;
 	text-align:center;
@@ -80,21 +73,21 @@
   }
   .span-step-text select{
 	font-weight: bold;
-	font-size:10pt;
   }
 
   ul.horizontal {
-    padding-right: 5px;
+    text-align:center;
+    padding: 5px 0;
   }
-  ul.horizontal.center {
-    text-align: center;
-  }
- 
   ul.horizontal li {
     display: inline;
+    padding: 0 5px;
+  }
+  ul.horizontal.singleline {
+    white-space: nowrap;
   }
   .regionText {
-    width: 6em;
+    width: 3.2em;
   }
   .regionParams {
     background: #efefef;  
@@ -108,7 +101,7 @@
     text-align: center;
   }
   .offsetOptions {
-    margin: auto;
+    display: inline-table;
   }
   canvas, div#scale_a, div#scale_b{
 	height:75px;
@@ -128,7 +121,7 @@
     padding-top:2px;
     background: url(/assets/images/operationHelp.png) no-repeat;
   }
-  .span-operations .operation-help table {
+  #spanLogicParams table {
     margin: auto;
   }
 </style>
@@ -184,14 +177,15 @@
           <wdk:enumParamInput qp="${pMap['span_strand']}" /></span>
 	</div>
 
+        <table><tr><td>
         <div id="outputGroup">
           <site:spanlogicGraph groupName="a" question="${question}" step="${wdkStep}" stepType="current_step"/>
         </div>
-
+        </td><td>
         <div id="comparisonGroup">
           <site:spanlogicGraph groupName="b" question="${question}" step="${importStep}" stepType="new_step" />
         </div>
-
+        </td></tr></table>
     	<c:if test="allowBoolean == false">
       	  <c:set var="disabled" value="DISABLED"/>
       	  <c:set var="selected" value="CHECKED" />
