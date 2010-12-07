@@ -32,7 +32,7 @@
   .instructions {
     text-align:center;
     color:gray;
-    margin-bottom:45px;
+    margin-bottom:57px;
   }
   .span-step-text{
 	font-style:italic;
@@ -56,7 +56,7 @@
   }
 
   .region {
-    font-weight: bold;
+  //  font-weight: bold;
   }
 
   .span-step-text .region_a,
@@ -76,7 +76,7 @@
   }
 
   ul.horizontal {
-    text-align:center;
+   // text-align:center;
     padding: 5px 0;
   }
   ul.horizontal li {
@@ -200,7 +200,7 @@
 	</div>
 </div>
 
-<div class="filter-button"><html:submit property="questionSubmit" value="Run Step" styleId="submitButton"/></div>
+<div class="filter-button"><html:submit property="questionSubmit" value="Submit" styleId="submitButton"/></div>
 </html:form>
 
 <script>
