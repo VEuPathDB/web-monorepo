@@ -115,11 +115,12 @@
   .span-operations .operation-help {
     position:absolute;
     display: inline;
-    width: 140px;
+    width: 45px;
     height: 40px;
     top: -40px;
+    left: 35px;
     padding-top:2px;
-    background: url(/assets/images/operationHelp.png) no-repeat;
+    background: url(/assets/images/operationHelp.png) no-repeat scroll -48px 0;
   }
   #spanLogicParams table {
     margin: auto;
@@ -162,13 +163,9 @@
 	<div class="span-step-text">
 	  <span>Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span></span>
           <div class="span-operations">
-            <div class="operation-help"><table>
-              <tr> 
-                <td class="operation SPAN overlap"></td>
-                <td class="operation SPAN a_contain_b"></td>
-                <td class="operation SPAN b_contain_a"></td>
-              </tr>
-            </table></div>
+            <div class="operation-help">
+              <div></div><!-- This is where the operation icon will go.  -->
+            </div>
             <wdk:enumParamInput qp="${pMap['span_operation']}" />
           </div>
           <span>&nbsp;the <span class="region comparisonRegion region_b">region</span> of a
