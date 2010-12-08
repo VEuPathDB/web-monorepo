@@ -7,6 +7,7 @@
 <c:set var="question" value="${requestScope.wdkQuestion}"/>
 <c:set var="importStep" value="${requestScope.importStep}"/>
 <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
+<c:set var="action" value="${requestScope.action}"/>
 <c:set var="allowChooseOutput" value="${requestScope.allowChooseOutput}"/>
 
 
@@ -142,7 +143,15 @@
 
 <div class="instructions" style="">Your ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).</div>
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
-<span style="display:none" id="stepId">${wdkStep.stepId}</span>
+<c:choose>
+    <c:when test="${wdkStep.previousStep == null || action != 'revise'}">
+        <c:set var="stepId" value="${wdkStep.stepId}" />
+    </c:when>
+    <c:otherwise>
+        <c:set var="stepId" value="${wdkStep.previousStep.stepId}" />
+    </c:otherwise>
+</c:choose>
+<span style="display:none" id="stepId">${stepId}</span>
 <span style="display:none" id="span_a_num" class="current_step_num"></span>
 <span style="display:none" id="span_b_num" class="new_step_num"></span>
   
