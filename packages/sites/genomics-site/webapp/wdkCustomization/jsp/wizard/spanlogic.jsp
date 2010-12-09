@@ -117,6 +117,7 @@
 	height:75px;
 	margin:5px auto;
 	width:375px;  //400px;
+	border:1px solid gray;
   }
   .span-operations{
     position:relative;
