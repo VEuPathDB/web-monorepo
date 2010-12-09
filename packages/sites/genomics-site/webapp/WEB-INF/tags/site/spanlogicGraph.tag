@@ -75,3 +75,14 @@
     </ul>
   </fieldset>
 </div>
+       <c:choose>
+         <c:when test="${step.displayType eq 'SNP'}">
+            <c:set var="featureLength" value="1" />
+         </c:when>
+         <c:otherwise>
+            <c:set var="featureLength" value="2000" />
+         </c:otherwise>
+       </c:choose>
+<script>
+           feature_length_${groupName} = ${featureLength};
+</script>
