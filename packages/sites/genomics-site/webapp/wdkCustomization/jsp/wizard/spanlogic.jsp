@@ -21,8 +21,8 @@
   }
 
   #spanLogicParams fieldset {
-	padding: 0 10px;
-	width: 415px;
+	//padding: 0 10px;
+	width: 400px;    //415px;
   }
   #outputGroup,#comparisonGroup{
     margin: 15px 10px 10px;
@@ -33,12 +33,13 @@
   .instructions {
     text-align:center;
     color:gray;
-    margin-bottom:57px;
+    margin-bottom:35px;    //57px;
   }
   .span-step-text{
 	font-style:italic;
 	white-space:nowrap;
 	text-align:center;
+	padding: 23px;
   }
   .span-step-text.bottom{
 	padding-top:10px;
@@ -51,6 +52,7 @@
 	font-weight:inherit;
 	font-style:inherit;
         color:inherit;
+	border-color: white;
   }
   .span-step-text .param{
 	display: inline;
@@ -63,8 +65,15 @@
   .span-step-text .region_a,
   .span-step-text .region_b{
 	background-color:#efefef;
-	padding-bottom:25px;
+	padding-bottom:45px;   //25px;
 	font-style:normal;
+	padding-top: 3px;
+	padding-left: 3px;
+	padding-right: 3px;
+	border-top: 1px solid grey;
+	border-left: 1px solid grey;
+	border-right: 1px solid grey;
+
   }
   .region_b {
     color: darkgreen;  /* darkred  */
@@ -107,7 +116,7 @@
   canvas, div#scale_a, div#scale_b{
 	height:75px;
 	margin:5px auto;
-	width:400px;
+	width:375px;  //400px;
   }
   .span-operations{
     position:relative;
@@ -187,7 +196,9 @@
         <div id="outputGroup">
           <site:spanlogicGraph groupName="a" question="${question}" step="${wdkStep}" stepType="current_step"/>
         </div>
-        </td><td>
+        </td>
+	<td style="width:33px"></td>
+	<td>
         <div id="comparisonGroup">
           <site:spanlogicGraph groupName="b" question="${question}" step="${importStep}" stepType="new_step" />
         </div>
