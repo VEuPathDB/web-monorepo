@@ -42,7 +42,8 @@
 	padding: 23px;
   }
   .span-step-text.bottom{
-	padding-top:10px;
+	padding-top:40px;
+	padding-bottom: 0;
 	color:darkred;  /* darkgreen */
   }
   .span-step-text.bottom .region_a,
