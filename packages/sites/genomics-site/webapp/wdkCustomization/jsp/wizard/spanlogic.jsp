@@ -210,6 +210,8 @@
       	  <c:set var="selected" value="CHECKED" />
       	  You cannot select output because there are steps in the strategy after the current one you are working on.
     	</c:if>
+
+<%--
 	<div class="span-step-text bottom clear">
 	  "Return each <span class="span_output"></span> whose <span class="region outputRegion">region</span>
           <span class="span_operation"></span>&nbsp;the <span class="region comparisonRegion">region</span> of a
@@ -217,6 +219,7 @@
           <span class="comparison_num"></span> and is on
           <span class="span_strand"></span>"
 	</div>
+--%>
 </div>
 
 <div class="filter-button"><html:submit property="questionSubmit" value="Submit" styleId="submitButton"/></div>
