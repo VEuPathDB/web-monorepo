@@ -68,6 +68,7 @@
 	background-color:#efefef;
 	padding-bottom:45px;   //25px;
 	font-style:normal;
+	font-weight: bold;
 	padding-top: 3px;
 	padding-left: 3px;
 	padding-right: 3px;
@@ -80,7 +81,7 @@
     color: darkgreen;  /* darkred  */
   }
   .region_a {
-    color: darkblue;
+    color: #0000EE;   //darkblue;
   }
   .span-step-text select{
 	font-weight: bold;
@@ -110,7 +111,9 @@
   .regionHeader {
     font-style: italic;
     text-align: center;
+    font-size: 85%;
   }
+
   .offsetOptions {
     display: inline-table;
   }
@@ -180,6 +183,7 @@
 	<c:if test="${wdkStepResultSize > 1}"><c:set var="wdkStepRecType" value="${wdkStepRecType}s"/></c:if>
 	<c:if test="${importStepResultSize > 1}"><c:set var="importStepRecType" value="${importStepRecType}s"/></c:if>
 
+<%-- sentence --%>
 	<div class="span-step-text">
 	  <span>Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span></span>
           <div class="span-operations">
@@ -189,22 +193,30 @@
             <wdk:enumParamInput qp="${pMap['span_operation']}" />
           </div>
           <span>&nbsp;the <span class="region comparisonRegion region_b">region</span> of a
-          <span class="comparison_type"></span> in Step
-          <span class="comparison_num"></span> and is on
+          <b><span class="comparison_type"></span> in Step
+          <span class="comparison_num"></span></b> and is on
           <wdk:enumParamInput qp="${pMap['span_strand']}" /></span>
 	</div>
 
+
+<%-- region areas --%>
         <table><tr><td>
         <div id="outputGroup">
           <site:spanlogicGraph groupName="a" question="${question}" step="${wdkStep}" stepType="current_step"/>
         </div>
         </td>
-	<td style="width:33px"></td>
+
+	<%--  space in between areas --%>
+	<td style="width:33px"></td> 
+  
 	<td>
         <div id="comparisonGroup">
           <site:spanlogicGraph groupName="b" question="${question}" step="${importStep}" stepType="new_step" />
         </div>
-        </td></tr></table>
+        </td></tr>
+	</table>
+
+
     	<c:if test="allowBoolean == false">
       	  <c:set var="disabled" value="DISABLED"/>
       	  <c:set var="selected" value="CHECKED" />

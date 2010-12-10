@@ -32,7 +32,12 @@
 <c:set var="regionOnClick" value="updateRegionParams(this);" />
 
 <div id="group_${groupName}" class="regionParams">
+
+<%--
   <div class="regionHeader">Specify a <span class="region region_${groupName}">region</span> relative to each of the ${step.resultSize} ${pluralType} in Step <span class="${stepType}_num"></span></div>
+--%>
+ <div class="regionHeader">(${step.resultSize} ${pluralType} in Step <span class="${stepType}_num"></span>)</div>
+
   <div id="scale_${groupName}" class="regionGraphic"></div>
   <fieldset id="set_${groupName}Fields">
     <ul class="horizontal singeline">
