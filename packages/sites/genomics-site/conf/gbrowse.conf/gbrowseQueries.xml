@@ -781,7 +781,20 @@ WHERE  edr.external_database_id = ed.external_database_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="NextGenSeq:coverageLog"  includeProjects="PlasmoDB,ToxoDB">
+  <sqlQuery name="NextGenSeq:coverageLog"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+    SELECT $$sample$$   as feature_id,
+          'NextGenSeq'  as type, 
+          '$source'     as source,
+           $base_start  as startm,
+           $rend        as end  
+    FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="NextGenSeq:coverageLog2"  includeProjects="ToxoDB">
      <sql>
        <![CDATA[
     SELECT $$sample$$   as feature_id,
@@ -5653,7 +5666,7 @@ GROUP BY interval
     </sql>
   </sqlQuery>
 
-   <sqlQuery name="NextGenSeq:coverageLog:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB">
+   <sqlQuery name="NextGenSeq:coverageLog:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
      SELECT start_interval feature_id,
@@ -5681,6 +5694,37 @@ GROUP BY interval
 ]]>
     </sql>
   </sqlQuery>
+
+   <sqlQuery name="NextGenSeq:coverageLog2:bulksubfeatures"  includeProjects="ToxoDB">
+     <sql>
+<![CDATA[
+     SELECT start_interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              decode(multiple, 1, -1, 1)*log(2,max(coverage)) score, 
+             $$sample$$ parent_id,
+             start_interval * (($rend - $base_start + 1) / 800) startm,
+             end_interval * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
+    FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
+                 csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.NextGenSeqCoverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND (ed.name = $$edname1$$ OR ed.name = $$edname2$$) 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.sample = $$sample$$
+         AND csc.mapping_start + 1 <= $rend
+         AND csc.mapping_end >= $base_start - 1)
+       GROUP BY start_interval,end_interval,sample,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+
 
    <sqlQuery name="NextGenSeq:coverageLog7:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
