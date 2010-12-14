@@ -20,12 +20,8 @@
     margin:5px;
   }
 
-  #spanLogicParams fieldset {
-	//padding: 0 10px;
-	width: 400px;    //415px;
-  }
   #outputGroup,#comparisonGroup{
-    margin: 15px 10px 10px;
+    margin-top: 15px;
   }
   .invisible {
     visibility: hidden;
@@ -33,40 +29,29 @@
   .instructions {
     text-align:center;
     color:gray;
-    margin-bottom:35px;    //57px;
+    margin-bottom:35px;
   }
   .span-step-text{
 	font-style:italic;
 	white-space:nowrap;
-	text-align:center;
-	padding: 23px;
-  }
-  .span-step-text.bottom{
-	padding-top:40px;
-	padding-bottom: 0;
-	color:darkred;  /* darkgreen */
-  }
-  .span-step-text.bottom .region_a,
-  .span-step-text.bottom .region_b{
-	background:none;
-	padding:0;
-	font-weight:inherit;
-	font-style:inherit;
-        color:inherit;
-	border-color: white;
+	padding: 23px 0;
   }
   .span-step-text .param{
 	display: inline;
   }
-
-  .region {
-  //  font-weight: bold;
+  .span-step-text.left {
+    text-align:left;
   }
-
+  .span-step-text.center {
+    text-align:center;
+  }
+  .span-step-text.right {
+    text-align:right;
+  }
   .span-step-text .region_a,
   .span-step-text .region_b{
 	background-color:#efefef;
-	padding-bottom:45px;   //25px;
+	padding-bottom:45px;
 	font-style:normal;
 	font-weight: bold;
 	padding-top: 3px;
@@ -78,32 +63,34 @@
 
   }
   .region_b {
-    color: #1acd22;  //009900;   //darkgreen;  darkred 
+    color: #1acd22;
   }
   .region_a {
-    color: #0000EE;   //darkblue;
+    color: #0000EE;
   }
   .span-step-text select{
 	font-weight: bold;
   }
 
   ul.horizontal {
-   // text-align:center;
     padding: 5px 0;
   }
   ul.horizontal li {
-    display: inline;
-    padding: 0 5px;
+    padding: 2px 0;
   }
   ul.horizontal.singleline {
     white-space: nowrap;
+  }
+  ul.horizontal li input {
+    padding: 0;
   }
   .regionText {
     width: 3.2em;
   }
   .regionParams {
-    background: #efefef;  
-    padding-top: 5px;
+    background: #efefef; 
+    padding: 5px;
+    width:375px;
   }
   .regionGraphic {
     background: #fff;
@@ -120,7 +107,6 @@
   canvas, div#scale_a, div#scale_b{
 	height:75px;
 	margin:5px auto;
-	width:375px;  //400px;
 	border:1px solid gray;
   }
   .span-operations{
@@ -131,14 +117,27 @@
     position:absolute;
     display: inline;
     width: 45px;
-    height: 40px;
-    top: -40px;
-    left: 35px;
-    padding-top:2px;
-    background: url(/assets/images/operationHelp.png) no-repeat scroll -48px 0;
+    top: 100px;
+    left: 25px;
+    padding:10px;
+    background-color: #efefef;
   }
   #spanLogicParams table {
     margin: auto;
+  }
+  .triangle {
+    position:absolute;
+    top: 16px;
+    left: 41px;
+    border-width: 0 16px 100px;
+    border-style: solid;
+  }
+  .triangle.border {
+    border-color: transparent transparent #666;
+  }
+  .triangle.body {
+    border-color: transparent transparent #efefef;
+    padding-top: 5px
   }
 </style>
 <c:set var="pMap" value="${question.paramsMap}"/>
@@ -184,32 +183,40 @@
 	<c:if test="${importStepResultSize > 1}"><c:set var="importStepRecType" value="${importStepRecType}s"/></c:if>
 
 <%-- sentence --%>
-	<div class="span-step-text">
+        <table><tr><td>
+	<div class="span-step-text right">
 	  <span>Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span></span>
-          <div class="span-operations">
-            <div class="operation-help">
-              <div></div><!-- This is where the operation icon will go.  -->
-            </div>
-            <wdk:enumParamInput qp="${pMap['span_operation']}" />
-          </div>
-          <span>&nbsp;the <span class="region comparisonRegion region_b">region</span> of a
-          <b><span class="comparison_type"></span> in Step
-          <span class="comparison_num"></span></b> and is on
-          <wdk:enumParamInput qp="${pMap['span_strand']}" /></span>
-	</div>
+        </div>
 
 
 <%-- region areas --%>
-        <table><tr><td>
         <div id="outputGroup">
           <site:spanlogicGraph groupName="a" question="${question}" step="${wdkStep}" stepType="current_step"/>
         </div>
         </td>
 
 	<%--  space in between areas --%>
-	<td style="width:33px"></td> 
+	<td>
+	<div class="span-step-text center">
+          <div class="span-operations">
+            <div class="triangle border"></div>
+            <div class="triangle body"></div>
+            <div class="operation-help">
+              <div></div><!-- This is where the operation icon will go.  -->
+            </div>
+            <wdk:enumParamInput qp="${pMap['span_operation']}" />
+          </div>
+          &nbsp;the
+        </div>
+        </td> 
   
 	<td>
+	<div class="span-step-text left">
+          <span class="region comparisonRegion region_b">region</span> of a
+          <b><span class="comparison_type"></span> in Step
+          <span class="comparison_num"></span></b> and is on
+          <wdk:enumParamInput qp="${pMap['span_strand']}" /></span>
+	</div>
         <div id="comparisonGroup">
           <site:spanlogicGraph groupName="b" question="${question}" step="${importStep}" stepType="new_step" />
         </div>
