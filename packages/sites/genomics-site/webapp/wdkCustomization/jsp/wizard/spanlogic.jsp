@@ -78,7 +78,7 @@
 
   }
   .region_b {
-    color: darkgreen;  /* darkred  */
+    color: #1acd22;  //009900;   //darkgreen;  darkred 
   }
   .region_a {
     color: #0000EE;   //darkblue;
