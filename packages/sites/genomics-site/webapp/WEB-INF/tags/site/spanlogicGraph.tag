@@ -44,11 +44,11 @@
       <li><input type="radio" name="region_${groupName}" value="exact" onclick="${regionOnClick}">Exact</input></li>
       <li>
         <input type="radio" name="region_${groupName}" value="upstream" onclick="${regionOnClick}">Upstream:</input>
-        <input type="text" class="regionText" name="upstream_region_${groupName}" value="0"/>&nbsp;bp
+        <input type="text" class="regionText" name="upstream_region_${groupName}" value="1000"/>&nbsp;bp
       </li>
       <li>
         <input type="radio" name="region_${groupName}" value="downstream" onclick="${regionOnClick}">Downstream:</input>
-        <input type="text" class="regionText" name="downstream_region_${groupName}" value="0"/>&nbsp;bp
+        <input type="text" class="regionText" name="downstream_region_${groupName}" value="1000"/>&nbsp;bp
       </li>
     </ul>
     <ul class="horizontal">
