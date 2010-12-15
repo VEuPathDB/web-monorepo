@@ -76,7 +76,7 @@
     padding: 5px 0;
   }
   ul.horizontal li {
-    padding: 2px 0;
+    padding: 1px 4px;
   }
   ul.horizontal.singleline {
     white-space: nowrap;
@@ -103,10 +103,11 @@
 
   .offsetOptions {
     display: inline-table;
+    margin-left: 20px;
   }
   canvas, div#scale_a, div#scale_b{
 	height:75px;
-	margin:5px auto;
+	margin:2px 8px;
 	border:1px solid gray;
   }
   .span-operations{
@@ -117,19 +118,19 @@
     position:absolute;
     display: inline;
     width: 45px;
-    top: 100px;
-    left: 25px;
-    padding:10px;
+    top: 60px;
+    left: 27px;
+    padding:20px;
     background-color: #efefef;
   }
   #spanLogicParams table {
-    margin: auto;
+  //  margin: auto;
   }
   .triangle {
     position:absolute;
     top: 16px;
-    left: 41px;
-    border-width: 0 16px 100px;
+    left: 40px;
+    border-width: 0 30px 100px;
     border-style: solid;
   }
   .triangle.border {
@@ -137,7 +138,7 @@
   }
   .triangle.body {
     border-color: transparent transparent #efefef;
-    padding-top: 5px
+    padding-top: 2px
   }
 </style>
 <c:set var="pMap" value="${question.paramsMap}"/>

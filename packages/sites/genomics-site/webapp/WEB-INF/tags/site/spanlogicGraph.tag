@@ -41,7 +41,7 @@
   <div id="scale_${groupName}" class="regionGraphic"></div>
   <fieldset id="set_${groupName}Fields">
     <ul class="horizontal singeline">
-      <li><input type="radio" name="region_${groupName}" value="exact" onclick="${regionOnClick}">Exact</input></li>
+      <li style="padding-bottom:4px"><input type="radio" name="region_${groupName}" value="exact" onclick="${regionOnClick}">Exact</input></li>
       <li>
         <input type="radio" name="region_${groupName}" value="upstream" onclick="${regionOnClick}">Upstream:</input>
         <input type="text" class="regionText" name="upstream_region_${groupName}" value="1000"/>&nbsp;bp
@@ -54,24 +54,26 @@
     <ul class="horizontal">
       <li><input type="radio" name="region_${groupName}" value="custom" onclick="${regionOnClick}">Custom:</input></li>
       <li>
-    <table class="offsetOptions" cellpadding="2">
+    <table class="offsetOptions">
       <tr>
         <c:set var="span_begin" value="span_begin_${groupName}"/>
-        <td style="text-align:right">begin at:</td><td><wdk:enumParamInput qp="${pMap[span_begin]}"/></td>
+        <td style="text-align:right;padding-bottom:0px;">begin at:</td>
+	<td style="padding-bottom:0px;"><wdk:enumParamInput qp="${pMap[span_begin]}"/></td>
         <c:set var="span_begin_direction" value="span_begin_direction_${groupName}"/>
-        <td><wdk:enumParamInput qp="${pMap[span_begin_direction]}"/></td>
+        <td style="padding-bottom:0px;"><wdk:enumParamInput qp="${pMap[span_begin_direction]}"/></td>
         <c:set var="span_begin_offset" value="span_begin_offset_${groupName}"/>
-        <td align="left" valign="top">
+        <td style="padding-bottom:0px;" align="left" valign="top">
           <html:text styleId="${span_begin_offset}" property="value(${span_begin_offset})" styleClass="regionText" />&nbsp;bp
         </td>
       </tr>
       <tr>
         <c:set var="span_end" value="span_end_${groupName}"/>
-        <td style="text-align:right">end at:</td><td><wdk:enumParamInput qp="${pMap[span_end]}"/></td>
+        <td style="text-align:right;padding-top:0px;">end at:</td>
+	<td style="padding-top:0px;"><wdk:enumParamInput qp="${pMap[span_end]}"/></td>
         <c:set var="span_end_direction" value="span_end_direction_${groupName}"/>
-        <td><wdk:enumParamInput qp="${pMap[span_end_direction]}"/></td>
+        <td style="padding-top:0px;"><wdk:enumParamInput qp="${pMap[span_end_direction]}"/></td>
         <c:set var="span_end_offset" value="span_end_offset_${groupName}"/>
-        <td align="left" valign="top">
+        <td style="padding-top:0px;" align="left" valign="top">
           <html:text styleId="${span_end_offset}" property="value(${span_end_offset})" styleClass="regionText" />&nbsp;bp
         </td>
       </tr>
