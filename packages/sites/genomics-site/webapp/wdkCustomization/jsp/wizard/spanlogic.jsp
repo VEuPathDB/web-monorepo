@@ -29,7 +29,7 @@
   .instructions {
     text-align:center;
     color:gray;
-    margin-bottom:35px;
+    margin-bottom:16px;
   }
   .span-step-text{
 	font-style:italic;
