@@ -63,7 +63,7 @@
 
   }
   .region_b {
-    color: #1acd22;
+    color: #C80064;   //same as rgb(200,0,100);    light green: #1acd22;
   }
   .region_a {
     color: #0000EE;
