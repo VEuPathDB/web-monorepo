@@ -143,7 +143,9 @@
 </style>
 <c:set var="pMap" value="${question.paramsMap}"/>
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/wizard.do"  onsubmit="callWizard('wizard.do?action=${requestScope.action}&step=${wdkStep.stepId}&',this,null,null,'submit')">
-
+<c:if test="${action == 'revise' && wdkStep.previousStep != null}">
+  <c:set var="wdkStep" value="${wdkStep.previousStep}"/>
+</c:if>
 <h2 style="text-align:center;">Combine Step <span class="current_step_num"></span> and Step <span class="new_step_num"></span></h2>
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
@@ -157,15 +159,7 @@
 
 <div class="instructions" style="">Your ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).</div>
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
-<c:choose>
-    <c:when test="${wdkStep.previousStep == null || action != 'revise'}">
-        <c:set var="stepId" value="${wdkStep.stepId}" />
-    </c:when>
-    <c:otherwise>
-        <c:set var="stepId" value="${wdkStep.previousStep.stepId}" />
-    </c:otherwise>
-</c:choose>
-<span style="display:none" id="stepId">${stepId}</span>
+<span style="display:none" id="stepId">${wdkStep.stepId}</span>
 <span style="display:none" id="span_a_num" class="current_step_num"></span>
 <span style="display:none" id="span_b_num" class="new_step_num"></span>
   
