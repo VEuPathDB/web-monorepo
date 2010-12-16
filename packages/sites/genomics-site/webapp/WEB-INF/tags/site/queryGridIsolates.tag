@@ -8,7 +8,7 @@
 <table width="100%" border="0" cellspacing="2" cellpadding="2">
 <tr>
 
-<td width="33%" valign="top">
+<td width="33%" >
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr> 
         <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByIsolateId" linktext="Isolate ID(s)" existsOn="A C P T G"/>
@@ -25,7 +25,7 @@
     </table>
 </td>
 
-<td width="34%" valign="top">
+<td width="34%" >
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C T G P"/>
@@ -43,7 +43,7 @@
     </table>
 </td>
 
-<td width="33%" valign="top">
+<td width="33%" >
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByCountry" linktext="Geographic Location" existsOn="A C P T G"/>

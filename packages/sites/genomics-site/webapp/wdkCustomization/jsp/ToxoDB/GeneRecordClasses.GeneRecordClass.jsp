@@ -146,7 +146,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -175,7 +175,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
                attribution="T.gondiiGT1_contigsGB,T.gondiiME49_contigsGB,T.gondiiVEG_contigsGB"/>
 
 <!-- gene alias table -->
-<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
+<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 <!-- snps between strains -->
 <wdk:wdkTable tblName="SNPs" isOpen="false"
@@ -299,29 +299,6 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <c:if test="${isCodingGene}">
   <site:pageDivider name="Protein"/>
 
-  <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value}"/>
-  <c:if test="${! fn:startsWith(proteinFeatures, 'http')}">
-    <c:set var="proteinFeatures">
-      ${pageContext.request.scheme}://${pageContext.request.serverName}/${proteinFeatures}
-    </c:set>
-  </c:if>
-
-  <c:catch var="e">
-    <c:set var="proteinFeaturesContent">
-      <c:import url="${proteinFeatures}"/>
-    </c:set>
-  </c:catch>
-  <c:if test="${e!=null}"> 
-    <c:set var="proteinFeaturesContent">
-    <site:embeddedError 
-        msg="<font size='-2'>temporarily unavailable</font>" 
-        e="${e}" 
-    />
-    </c:set>
-  </c:if>
-  <!-- ${proteinFeatures} -->
-
-
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
    <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
@@ -349,7 +326,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     </c:set>
 
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wdkRecord.primaryKey};type=${ptracks};width=600;embed=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wdkRecord.primaryKey};type=${ptracks};width=600;embed=1;genepage=1
 </c:set>
 <c:if test="${ptracks ne ''}">
     <c:set var="proteinFeaturesImg">
@@ -370,7 +347,6 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
         displayName="Protein Features"
         content="${proteinFeaturesImg}"
         attribution="${attribution}"/>
-      <!--${proteinFeaturesUrl} -->
    <br>
 </c:if>
 </c:if>
@@ -568,6 +544,12 @@ Chromosome sequences and annotation for <i>Neospora caninum</i> obtained from th
   </c:set>
 </c:when>
 
+<c:when test='${organism_full eq "Toxoplasma gondii RH" }'>
+  <c:set var="reference">
+Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David Roos (University of Pennsylvania), Jessica Kissinger (University of Georgia).The apicoplast genome of <i>T. gondii</i> RH (Type I) strain is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799"TARGET="_blank">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html"TARGET="_blank">here</a> to view a map of the <i>T. gondii</i> apicoplast. 
+  </c:set>
+</c:when>
+
 <c:otherwise>
   <c:set var="reference">
   ERROR:  No reference found for this gene.
@@ -587,3 +569,5 @@ Chromosome sequences and annotation for <i>Neospora caninum</i> obtained from th
 </c:choose>
 
 <site:footer/>
+
+<site:pageLogger name="gene page" />

@@ -163,6 +163,13 @@ sub sageTagFgColor {
   }
 }
 
+sub sageTagUniqueMapFgColor { 
+  my $f            = shift;
+  my $strand       = $f->strand; 
+  my ($occurrence) = $f->get_tag_values('Occurrence'); 
+	return "grey" if ($occurrence > 1);
+	($strand eq "+1") ? "blue" : "darkred";
+}
 
 sub massSpecBgColorFromExtDbName {
   my $f = shift;
@@ -219,6 +226,8 @@ sub massSpecBgColorFromExtDbName {
                 'Linfantum Proteomics 2DGel 6-11 Promastigote' => 'blue',
                 'Lmajor Proteomics 2DGel 6-11 Promastigote' => 'blue',
                 'Linfantum Proteomics data from Marc Ouellette' => 'lightseagreen',
+                'L.major Proteomics-Exosomes' => 'crimson',
+                'L. braziliensis Proteomics-Promastigotes' => 'orange',              
                 # CryptoDB
                 'Ferrari_Proteomics_LTQ_Oocyst_walls' => 'sandybrown',
                 'Ferrari_Proteomics_LTQ_Sporozoites_merged' => 'tan',
@@ -235,20 +244,31 @@ sub massSpecBgColorFromExtDbName {
                 'Wastling MassSpec MudPit Soluble' => 'black',
                 'C. parvum mass spec data from Lorenza Putignani' => 'crimson',
                 #PlasmoDB
-                'Waters Female Gametes' => 'red',
-                'Waters Male Gametes' => 'blue',
-                'Lasonder Mosquito salivary gland sporozoite peptides' => 'yellow',
-                'Lasonder Mosquito oocyst-derived sporozoite peptides' =>  'orange',
-                'Lasonder Mosquito oocyst peptides' => 'mediumslateblue',
-                'Pyoelii LiverStage LS40' => 'red',
-                'Florens Life Cycle MassSpec-Merozoites' => 'sandybrown',
-                'Florens Life Cycle MassSpec-Trophozoites' =>'tan',
-                'Florens PIESPs MassSpec' => 'khaki',
-                'Florens Life Cycle MassSpec-Gametocytes' =>'yellow',
-                'Florens Life Cycle MassSpec-Sporozoite' => 'brown',
-                'Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection' => 'yellow',
-                'Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection' => 'orange'
-               );
+                'Waters_female_gametes_RSRC' => 'red',
+                'Waters_male_gametes_RSRC'   => 'blue',
+                'Waters_mixed_gametes_RSRC'  => 'yellow',
+                'Lasonder_Mosquito_salivary_gland_sporozoites_RSRC' => 'yellow',
+                'Lasonder_Mosquito_oocyst_derived_sporozoites_RSRC' => 'orange',
+                'Lasonder_Mosquito_Oocysts_Mass_Spec_RSRC'          => 'mediumslateblue',
+                'Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC' => 'lightblue',
+                'Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC' =>  'lightseagreen',
+                'Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC' => 'crimson',
+                'Pyoelii_LiverStage_LS40_RSRC' => 'red',
+                'Pyoelii_LiverStage_LS50_RSRC' => 'blue',
+                'Florens_Life_Cycle_MassSpec_Mrz_RSRC' => 'sandybrown',
+                'Florens_Life_Cycle_MassSpec_Tpz_RSRC' => 'tan',
+                'Florens_PIESPs_MassSpec_RSRC'         => 'khaki',
+                'Florens_Life_Cycle_MassSpec_Gmt_RSRC' => 'yellow',
+                'Florens_Life_Cycle_MassSpec_Spz_RSRC' => 'brown',
+                'Pf_Bowyer_Proteomics_42hrs_Post_Infection_RSRC' => 'yellow',
+                'Pf_Bowyer_Proteomics_48hrs_Post_Infection_RSRC' => 'orange',
+                #AmoebaDB
+                'Phagosome Proteomics data from Huston - 0 mins' => 'yellow',
+                'Phagosome Proteomics data from Huston - 30 mins' => 'tan',
+                'Phagosome Proteomics data from Huston - 5 mins' => 'khaki',
+                'Phagosome Proteomics data from Huston - 10 mins' => 'orange',
+                'Phagosome Proteomics data from Huston - 60 mins' => 'sandybrown'
+                   );
 
   $f = $f->parent if (! $f->get_tag_values('ExtDbName'));
   my ($extdbname) = $f->get_tag_values('ExtDbName');
@@ -313,9 +333,19 @@ sub simpleColorFromSoTerm {
 }
 
 sub colorFromBinaryColor {
-  my ($f, $first, $second) = @_;
+  my ($f, $first, $second, $third) = @_;
   my ($binColor) = $f->get_tag_values('binaryColor');
-  $binColor == 1 ? $second : $first;
+  if(!$third) {
+    $binColor == 1 ? $second : $first; 
+  } else {
+    $binColor == 1 ? $second : ($f->strand == +1 ? $first : $third); 
+  }
+}
+
+sub colorFromTriColor {
+  my ($f, @colors) = @_;
+  my ($triColor) = $f->get_tag_values('triColor');
+  return $colors[$triColor];
 }
 
 sub colorForSpliceSites {
@@ -425,16 +455,34 @@ sub bgColorForSpliceAndPaSites {
   return 'lightslategray';
 }
 
+sub colorForBindingSitesByPvalue{
+  my ($f) = @_;
+  my $strand = $f->strand;
+  my ($pvalue) = $f->get_tag_values('Score');
+  if($strand eq '+1'){
+    return 'mediumblue' if $pvalue <= 1e-5;
+    return 'royalblue' if $pvalue <= 5e-5;
+    return 'dodgerblue' if $pvalue <= 1e-4;
+    return 'skyblue';
+  }else{
+    return 'darkred' if $pvalue <= 1e-5;
+    return 'crimson' if $pvalue <= 5e-5;
+    return 'red' if $pvalue <= 1e-4;
+    return 'tomato';
+  }
+  return 'lightslategray';
+}
+
 sub colorForSevenSampleRNASeq{
   my $f = shift;
   my ($sample) = $f->get_tag_values('sample');
-  return 'orange' if $sample eq '0h';
-  return 'aqua' if $sample eq '8h';
-  return 'blue' if $sample eq '16h';
-  return 'lawngreen' if $sample eq '24h';
-  return 'forestgreen' if $sample eq '32h';
-  return 'magenta' if $sample eq '40h';
-  return 'firebrick' if $sample eq '48h';
+  return 'orange' if $sample eq 'Hour0';
+  return 'aqua' if $sample eq 'Hour8';
+  return 'blue' if $sample eq 'Hour16';
+  return 'lawngreen' if $sample eq 'Hour24';
+  return 'forestgreen' if $sample eq 'Hour32';
+  return 'magenta' if $sample eq 'Hour40';
+  return 'firebrick' if $sample eq 'Hour48';
   return 'lightslategray';
 }
 

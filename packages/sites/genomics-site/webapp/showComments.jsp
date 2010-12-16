@@ -295,6 +295,14 @@ $(document).ready(function() {
             </c:choose>
 
             <tr>
+               <td>Digital Object Identifier(DOI) Name(s):</td>
+                <td> <c:forEach items="${comment.dois}" var="row">
+                        <a href="http://dx.doi.org/<c:out value="${row}"/>"><c:out value="${row}"/></a>
+                      </c:forEach>
+                </td>
+            </tr>
+
+            <tr>
                <td>PMID(s):</td>
                 <td> <c:forEach items="${comment.pmIds}" var="row">
                         <c:import url="http://${pageContext.request.serverName}/cgi-bin/pmid2title">

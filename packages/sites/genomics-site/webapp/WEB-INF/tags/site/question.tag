@@ -34,8 +34,6 @@
 
 
 <%-- display question section --%>
-
-<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 <tr>
 <td bgcolor=white valign=top>

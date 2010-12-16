@@ -9,7 +9,7 @@
 <table width="100%" border="0" cellspacing="1" cellpadding="1">
 <tr>
 
-        <td width="50%" valign="top">
+        <td width="50%" >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
@@ -29,7 +29,7 @@
 
 	<td width="0.5"></td>
 
-        <td valign="top">
+        <td >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>

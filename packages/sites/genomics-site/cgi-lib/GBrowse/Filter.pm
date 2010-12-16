@@ -90,4 +90,10 @@ sub filterRepeatRegion {
   ($soterm ne 'repeat_region');
 }
 
+sub filterByTagCount {
+  my ($f, $cutoff) = @_;
+  my ($normalized_count) = $f->get_tag_values('RawCount');
+  ($normalized_count > $cutoff);
+}
+
 1;

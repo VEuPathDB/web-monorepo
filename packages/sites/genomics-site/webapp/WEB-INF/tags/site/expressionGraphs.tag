@@ -11,10 +11,9 @@
               description="Param used in the cgi (plasmo, tritryp, toxo, giardia)"
 %>
 
-<c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
+        <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
 <c:set value="${wdkRecord.tables['ExpressionGraphs']}" var="tbl"/>
-<c:set value="${wdkRecord.tables['ExpressionGraphsData']}" var="dat"/>
 
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 
@@ -34,12 +33,14 @@
         OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[selectedIndex].value)">
 
         <c:set var="vp_i" value="0"/>
+        <c:set var="defaultVp" value=""/>
         <c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
 
           <c:choose>
             <c:when test="${vp_i == 0}">
               <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}&vp=_LEGEND,${vp}">${vp}</OPTION>
               <c:set var="imgSrc" value="${imgSrc}&vp=_LEGEND,${vp}"/>
+              <c:set var="defaultVp" value="${vp}"/>
             </c:when>
             <c:otherwise>
               <OPTION  VALUE="${preImgSrc}&vp=_LEGEND,${vp}">${vp}</OPTION>
@@ -63,50 +64,40 @@
 
         <tr>
         <td>
-            <img  id="${imgId}" src="${imgSrc}">
-
+          <img  id="${imgId}" src="">
         </td>
 
-      <c:set var="noExpressionDataTable" value="true"/>
-      <c:set var="expressionDataTable">
-            <table>
-              <tr class="headerRow">
-               <th style="padding: 10px; align: left">Sample</th>
-               <th style="padding: 10px;align: left">Expression Value</th>
-               </tr>
+                 <c:set var="noExpressionDataTable">false</c:set>
 
-            <c:set var="i" value="0"/>
-            <c:forEach var="drow" items="${dat}">
-              <c:if test="${drow['profile_name'].value eq row['profile_name']}">
-      <c:set var="noExpressionDataTable" value="false"/>
-        <c:choose>
-            <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>
-            <c:otherwise><tr class="rowMedium"></c:otherwise>
-        </c:choose>
-
-                  <td>
-                    ${drow['name'].value}
-                  </td>
-                  <td>
-                    ${drow['value'].value}
-                  </td>
-                </tr>
-              </c:if>
-
-               <c:set var="i" value="${i +  1}"/>
-            </c:forEach>
-            </table>
-     </c:set>
 
         <td class="centered">
 
+
+
+         <c:set var="expressionDataTable">
+           <c:set var="prefix" value="<%= request.getRequestURL() %>" />
+           <c:set var="tableSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=table&id=${row['source_id'].value}&vp=${defaultVp}"/>
+           <c:import url="${prefix}/../../../../../${tableSrc}"  />  
+         </c:set>
+
+<c:set var="toggleName" value="${fn:replace(row['profile_name'].value, ' ', '')}"/>
+
 <wdk:toggle
-    name="${row['profile_name'].value}Data"
+    name="${toggleName}Data"
     displayName="Data Table"
     content="${expressionDataTable}"
-    isOpen="false"
+    isOpen="${row['dataOpen'].value}"
     noData="${noExpressionDataTable}"
-    attribution=""/>         
+    attribution=""/>   
+
+
+
+
+
+
+
+
+
 
        <br /><br />
 
@@ -149,13 +140,14 @@
   </c:if>
 
 <wdk:toggle
-    name="${row['profile_name'].value}"
-    isOpen="true"
+    name="${toggleName}"
+    isOpen="${row['mainOpen'].value}"
     noData="${noData}"
     displayName="${row['display_name'].value}"
     content="${expressionContent}"
-    attribution="${row['attribution'].value}"/>
-
+    attribution="${row['attribution'].value}"
+    imageId="${imgId}"
+    imageSource="${imgSrc}" />
 </c:if>
 
 </c:forEach>

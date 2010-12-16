@@ -95,17 +95,17 @@ ${attrs['organism'].value}<br>
 <c:choose>
   <c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEinvadens+SyntenyGenesEinvadens+SyntenySpansEhistolytica+SyntenyGenesEhistolytica+Repeat+EST+BLASTX
+      Gene+SyntenySpansEhistolytica+SyntenyGenesEhistolytica+Repeat+EST+BLASTX
     </c:set>
   </c:when>
   <c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEinvadens+SyntenyGenesEinvadens+SyntenySpansEdispar+SyntenyGenesEdispar+Repeat+EST+BLASTX
+      Gene+SyntenySpansEdispar+SyntenyGenesEdispar+Repeat+EST+BLASTX
     </c:set> 
   </c:when>
   <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEdispar+SyntenyGenesEdispar+SyntenySpansEhistolytica+SyntenyGenesEhistolytica+Repeat+EST+BLASTX
+      Gene+Repeat+EST+BLASTX
     </c:set>
   </c:when>
 </c:choose>
@@ -116,7 +116,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 
 <c:if test="${gtracks ne ''}">
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -225,6 +225,10 @@ GO,InterproscanData
 </c:if>
 
 
+<!-- gene alias table -->
+<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+
+
 <%-- ORTHOMCL ------------------------------------------------------%>
 
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
@@ -240,16 +244,31 @@ GO,InterproscanData
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
   <site:pageDivider name="Protein"/>
+
+<c:choose>
+  <c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
+    <c:set var="ptracks">
+    InterproDomains+SignalP+TMHMM+BLASTP      
+    </c:set>
+  </c:when>
+  <c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
+    <c:set var="ptracks">
+    InterproDomains+SignalP+TMHMM+BLASTP+HustonMassSpecPeptides      
+    </c:set>
+  </c:when>
+  <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
     <c:set var="ptracks">
     InterproDomains+SignalP+TMHMM+BLASTP
     </c:set>
-    
+  </c:when>
+</c:choose>
+
     <c:set var="attribution">
     InterproscanData
     </c:set>
 
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${id};type=${ptracks};width=640;embed=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${id};type=${ptracks};width=640;embed=1;genepage=1
 </c:set>
 <c:if test="${ptracks ne ''}">
     <c:set var="proteinFeaturesImg">
@@ -397,7 +416,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 </c:when>
 <c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
   <c:set var="reference">
- Whole genome shotgun sequence and annotations for <i>E. histolytica</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+ Whole genome shotgun sequence and annotations for <i>E. histolytica</i>HM-1:IMSS obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
   </c:set>
 </c:when>
 <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
@@ -437,3 +456,4 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
   );
 </script>
 
+<site:pageLogger name="gene page" />

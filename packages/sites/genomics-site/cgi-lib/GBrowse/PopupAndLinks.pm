@@ -3,6 +3,33 @@ package GBrowse::PopupAndLinks;
 use strict;
 
 use GBrowse::Configuration;
+use XML::Simple;
+
+
+my %MS_EXTDB_NAME_MAP;
+
+BEGIN {
+  my $serverName = $ENV{SERVER_NAME};
+  my $project_id = $ENV{PROJECT_ID};
+
+  if ($project_id !~ /Microsporidia/) {
+
+    my $xml = `wget -qO- "http://$serverName/a/getVocab.do?questionFullName=GeneQuestions.GenesByMassSpec&name=ms_assay&xml=TRUE"`;
+    my $string = XMLin($xml, ForceArray => 1);
+
+    my $terms = $string->{terms}->[0]->{term};
+
+    if(ref($terms) eq 'HASH') {
+
+      foreach my $name (keys %{$terms}) {
+
+        my $display = $terms->{$name}->{content};
+        my $extDbName = $terms->{$name}->{internal};
+        $MS_EXTDB_NAME_MAP{$extDbName} = $display;
+      }
+    }
+  }
+};
 
 #--------------------------------------------------------------------------------
 #  Methods for Links
@@ -62,12 +89,18 @@ sub sageTagLink {
 }
 
 sub ArrayElementLink {
-  my $f = shift;
-  my $name = $f->name;
-  my $link = "/a/showRecord.do?name=ArrayElementRecordClasses.ArrayElementRecordClass&primary_key=$name";
-  return $link;
+#  my $f = shift;
+#  my $name = $f->name;
+#  my $link = "/a/showRecord.do?name=ArrayElementRecordClasses.ArrayElementRecordClass&primary_key=$name";
+  return "javascript:void(0)";
 }
 
+sub snpLink {
+  my $f = shift;
+  my $name = $f->name;
+  my $link = "/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$name";
+  return $link;
+}
 
 #--------------------------------------------------------------------------------
 #  Methods for Titles (Popups)
@@ -578,14 +611,11 @@ sub orfTitle {
 
 sub ArrayElementTitle {
      my $f = shift;
-     my $name = $f->name;
      my $chr = $f->seq_id;
      my $loc = $f->location->to_FTstring;
-     my ($desc) = $f->get_tag_values("Note");
+     my ($name) = $f->get_tag_values("SourceId");
      my @data;
      push @data, [ 'Name:'  => $name ];
-     push @data, [ 'Description:' => $desc ];
-     # push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
      push @data, [ 'Location:'  => "$chr $loc" ];
      hover("Glass Slide Oligo: $name", \@data);
 }
@@ -600,16 +630,18 @@ my ($count) = $f->get_tag_values('Count');
   my ($extdbname) = $f->get_tag_values('ExtDbName');
   $desc =~ s/[\r\n]/<br>/g;
 
-  if($replaceString) {
-    $extdbname =~ s/$replaceString/assay: /i;
-  }
+#  if($replaceString) {
+#    $extdbname =~ s/$replaceString/assay: /i;
+#  }
 
- if($replaceString2) {
-    $extdbname =~ s/$replaceString2/$val2/i;
-  }
+# if($replaceString2) {
+#    $extdbname =~ s/$replaceString2/$val2/i;
+#  }
+  
+  my $displayName = $MS_EXTDB_NAME_MAP{$extdbname} ? $MS_EXTDB_NAME_MAP{$extdbname} : $extdbname;
 
   my @data;
-  push @data, [ 'Experiment:' => "$extdbname" ];
+  push @data, [ 'Experiment:' => $displayName ];
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
@@ -806,17 +838,15 @@ sub bindingSiteTitle {
     $sequence = $revComp;
   }
 
-  my $pvalue = exp($score);
-
-  my $link = qq(<a href="/a/images/pf_tfbs/$name.png"><img src="/a/images/pf_tfbs/$name.png"  height="80%" width="70%" align=left/></a>);
+  my $link = qq(<a href="/a/images/pf_tfbs/$name.png"><img src="/a/images/pf_tfbs/$name.png"  height="140" width="224" align=left/></a>);
   my @data;
   push @data, [ 'Name:'  => $name ];
   push @data, ['Start:'  => $start];
   push @data, ['Stop:'   => $stop];
   push @data, ['Strand:'   => $strand];
-  push @data, [ 'p value:' => $pvalue ];  
+  push @data, [ 'P value:' => $score];  
   push @data, [ 'Sequence:' => $sequence ];  
-  push @data, [ 'Motif Link'  => $link];
+  push @data, [ 'Click logo for larger image'  => $link];
   hover("Binding Site $name", \@data);
 }
 
@@ -830,6 +860,7 @@ sub interproTitle {
   my ($db) = $f->get_tag_values("Db");
   my ($url) = $f->get_tag_values("Url");
   my ($evalue) = $f->get_tag_values("Evalue");
+  my ($interproId) = $f->get_tag_values("InterproId");
   $evalue = sprintf("%.2E", $evalue);
   my @data;
   push @data, [ 'Accession:'  => $name ];
@@ -837,6 +868,7 @@ sub interproTitle {
   push @data, [ 'Database:'  => $db ];
   push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
   push @data, [ 'Evalue:' => $evalue ];
+  push @data, [ 'Interpro:' => $interproId ];
   hover("InterPro Domain: $name", \@data);
 }
 

@@ -1,5 +1,5 @@
---- Browser.pm.1.70	2010-02-01 10:15:36.000000000 -0500
-+++ Browser.pm	2010-02-01 11:41:37.000000000 -0500
+--- Browser.pm.orig	2009-07-06 11:46:17.000000000 -0400
++++ Browser.pm	2010-11-20 16:53:01.000000000 -0500
 @@ -652,6 +652,16 @@
    $self->config->label2type(@_);
  }
@@ -80,18 +80,24 @@
  
    while (my $feature = $iterator->next_seq) {
  
-@@ -3247,6 +3266,16 @@
+@@ -3247,6 +3266,22 @@
    return Bio::Graphics::Browser::Util::shellwords($self->setting($l,'feature')||$self->setting($label,'feature')||'');
  }
  
 +sub label2sqlParam {
 +  my ($self,$label,$length) = @_;
-+  return $self->setting($label,'sqlparam')||'';
++  my $l = $self->semantic_label($label,$length);
++  # Text::ParseWords::shellwords will trim off the single quote around the param
++  #return Bio::Graphics::Browser::Util::shellwords($self->setting($l,'sqlparam')||$self->setting($label,'sqlparam')||'');
++  return $self->setting($l,'sqlparam')||$self->setting($label,'sqlparam')||'';
 +}
 +
 +sub label2sqlName {
 +  my ($self,$label,$length) = @_;
-+  return $self->setting($label,'sqlname')||'';
++  my $l = $self->semantic_label($label,$length);
++  #return Bio::Graphics::Browser::Util::shellwords($self->setting($l,'sqlname')||$self->setting($label,'sqlname')||'');
++  return $self->setting($l,'sqlname')||$self->setting($label,'sqlname')||'';
++  #return $self->setting($label,'sqlname')||'';
 +}
 +
  sub style {

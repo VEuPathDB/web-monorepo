@@ -195,6 +195,7 @@
        <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
 
+    <!-- * is question set name -->
 	<action
 		path="/*.wadl"
 		type="org.gusdb.wdk.controller.action.ProcessRESTAction"
@@ -204,6 +205,11 @@
 		<forward name="show_result" path="downloadResult.jsp"/>
 	</action>
 
+    <!--
+        {1} question set name
+        {2} question name; if the name is "all" & {3} is wadl, it's equivalent to the action above.
+        {3} json|xml|wadl
+     -->
 	<action
        path="/*/*.*"
        type="org.gusdb.wdk.controller.action.ProcessRESTAction"
@@ -457,6 +463,12 @@
       type="org.gusdb.wdk.controller.action.GetVocabAction"
       scope="request"
       name="questionForm"
+      validate="false">
+    </action>
+    <action
+      path="/logging"
+      type="org.gusdb.wdk.controller.action.LoggingAction"
+      scope="request"
       validate="false">
     </action>
     <action path="/wizard"

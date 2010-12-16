@@ -160,12 +160,12 @@
 <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
 
 
-    <td width="5" align="left"  valign="top">&nbsp;&#8226;&nbsp; </td>
+    <td width="5" align="left" class="queryGridBullet">&nbsp;&#8226;&nbsp; </td>
 
 <%-- LINK ACTIVE --%>
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
-     <td align="left" valign="bottom" ><a id="${qset}_${qname}_${type}" href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
+     <td align="left" class="queryGridLink"><a id="${qset}_${qname}_${type}" href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
      <div id="${qset}_${qname}_${type}_tip" class="htmltooltip">${popup}</div>
 
 </c:if>
@@ -179,12 +179,12 @@
 </c:if>
 --%>
 
-     <td align="left" valign="bottom"><a id="${qset}_${qname}_${type}" href='javascript:void(0);' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
+     <td align="left" class="queryGridLink"><a id="${qset}_${qname}_${type}" href='javascript:void(0);' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
      <div id="${qset}_${qname}_${type}_tip" class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
 
 </c:if>
 
-    <td  width="84" nowrap align="right"  valign="bottom">
+    <td  width="84" nowrap align="right" class="queryGridIcons">
 
 <c:if test="${API}">
 

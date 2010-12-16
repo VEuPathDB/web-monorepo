@@ -9,7 +9,7 @@
 <table width="100%" border="0" cellspacing="20" cellpadding="20">
 
     <tr>
-        <td width="33%" valign="top">
+        <td width="33%" >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Genomic Position</td>
@@ -33,7 +33,7 @@
         </td>
 
 
-        <td width="34%" valign="top">
+        <td width="34%" >
 <div class="innertube2">
 
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -60,7 +60,7 @@
         </td>
 
 
-       <td  width="33%" valign="top">
+       <td  width="33%" >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Other Attributes
@@ -89,7 +89,7 @@
 
 
     <tr>
-        <td valign="top">
+        <td >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Transcript Expression
@@ -115,19 +115,19 @@
 
 
 
-        <td valign="top">
+        <td >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="5">Protein Expression</td></tr>
                 <tr><td>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="A C G P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="A Am C G P T Tr Tt"/>
                 </td></tr>
 
             </table>
 </div>
         </td>
 
-<td valign="top">
+<td >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Similarity/Pattern
@@ -154,7 +154,7 @@
 
 
     <tr>
-        <td valign="top">
+        <td >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Protein Features & Attributes
@@ -179,7 +179,7 @@
 </div>
         </td>
 
-        <td valign="top">
+        <td >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Putative Function
@@ -188,7 +188,7 @@
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByGoTerm" linktext="GO Term" existsOn="A Am C G M P T Tr Tt"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC Number" existsOn="A C G P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByEcNumber" linktext="EC Number" existsOn="A Am C G P T Tr Tt"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMetabolicPathway" linktext="Metabolic Pathway" existsOn="A C P T"/>
@@ -206,7 +206,7 @@
 </div>
         </td>
 
-        <td valign="top">
+        <td >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Cellular Location
@@ -234,7 +234,7 @@
 
 
     <tr>
-        <td valign="top">
+        <td >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Evolution
@@ -255,7 +255,7 @@
 </div>
         </td>
 
- <td width="33%"  valign="top">
+ <td width="33%"  >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Population Biology

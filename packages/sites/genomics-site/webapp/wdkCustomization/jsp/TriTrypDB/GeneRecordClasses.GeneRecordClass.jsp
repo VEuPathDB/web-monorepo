@@ -45,6 +45,13 @@
 
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
+
+<c:set var="gene_name" value="(${attrs['gene_name'].value})"/>
+<c:if test="${attrs['gene_name'].value == null}">
+  <c:set var="gene_name" value=""/>
+</c:if>
+
+
 <c:set var="strand" value="+"/>
 <c:if test="${attrs['strand'].value == 'reverse'}">
   <c:set var="strand" value="-"/>
@@ -56,7 +63,7 @@
 
 
 <%-- display page header with recordClass type in banner --%>
-<site:header title="TriTrypDB : gene ${id} (${prd})"
+<site:header title="TriTrypDB : gene ${id} (${prd} ${gene_name})"
              summary="${overview.value} (${length.value} bp)"
 		refer="recordPage" 
              divisionName="Gene Record"
@@ -84,7 +91,7 @@
 
 <h2>
 <center>
-	<wdk:recordPageBasketIcon desc="${prd}"/>
+	<wdk:recordPageBasketIcon desc="${prd} ${gene_name}"/>
 	<c:if test="${attrs['updated_annotation'].value != null}">
 		<br>${genedb_annot_link}
 	</c:if>
@@ -111,17 +118,22 @@ ${organism}<br>
 <c:choose>
   <c:when test='${organismFull eq "Leishmania braziliensis"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
     </c:set>
   </c:when>
   <c:when test='${organismFull eq "Leishmania major"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
     </c:set>
   </c:when>
   <c:when test='${organismFull eq "Leishmania infantum"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+    </c:set>
+  </c:when>
+  <c:when test='${organismFull eq "Leishmania mexicana mexicana"}'>
+    <c:set var="tracks">
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
     </c:set>
   </c:when>
 
@@ -185,7 +197,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   </c:set>
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -235,8 +247,9 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   content="${mercatorAlign}"
   attribution=""/>
 
+
 <!-- gene alias table -->
-<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
+<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 <!-- External Links --> 
 <wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
@@ -360,7 +373,7 @@ GO,InterproscanData
 
   <c:when test='${organismFull eq "Leishmania infantum"}'>
     <c:set var="ptracks">
-    LeishmaniaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    LinfantumMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
     InterproscanData,Linfantum_Proteomics_SDS_Amastigote,Linfantum_Proteomics_glycosylation
@@ -369,7 +382,7 @@ GO,InterproscanData
 
   <c:when test='${organismFull eq "Leishmania major"}'>
     <c:set var="ptracks">
-    LeishmaniaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    SilvermanMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
     InterproscanData,Linfantum_Proteomics_SDS_Amastigote
@@ -378,7 +391,7 @@ GO,InterproscanData
 
   <c:when test='${organismFull eq "Leishmania braziliensis"}'>
     <c:set var="ptracks">
-    LeishmaniaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    CuervoMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
     InterproscanData,Linfantum_Proteomics_SDS_Amastigote
@@ -388,7 +401,7 @@ GO,InterproscanData
  </c:choose>
     
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id};type=${ptracks};width=640;embed=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id};type=${ptracks};width=640;embed=1;genepage=1
 </c:set>
 <c:if test="${ptracks ne ''}">
     <c:set var="proteinFeaturesImg">
@@ -451,6 +464,14 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
   <c:when test='${organismFull eq "Leishmania infantum"}'>
      <wdk:wdkTable tblName="MassSpec" isOpen="true" 
           attribution="Linfantum_Proteomics_glycosylation,Linfantum_Proteomics_SDS_Amastigote,Linfantum_Proteomics_OuelletteM"/>
+  </c:when>
+
+  <c:when test='${organismFull eq "Leishmania major"}'>
+     <wdk:wdkTable tblName="MassSpec" isOpen="true" attribution="Lmajor_Proteomics_Exosomes"/>
+  </c:when>
+
+  <c:when test='${organismFull eq "Leishmania braziliensis"}'>
+     <wdk:wdkTable tblName="MassSpec" isOpen="true" attribution="Lbraziliensis_Proteomics_Promastigotes"/>
   </c:when>
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
@@ -633,3 +654,5 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
 
 
 <site:footer/>
+
+<site:pageLogger name="gene page" />

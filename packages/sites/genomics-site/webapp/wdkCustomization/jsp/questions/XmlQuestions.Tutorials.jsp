@@ -6,16 +6,12 @@
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<%-- get wdkXmlAnswer saved in request scope --%>
-<c:set var="xmlAnswer" value="${requestScope.wdkXmlAnswer}"/>
-
-<c:set var="banner" value="${wdkModel.displayName} ${xmlAnswer.question.displayName}"/>
-
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
-
+<c:set var="project" value="${applicationScope.wdkModel.name}" />
+<c:set var="banner" value="${wdkModel.displayName} ${xmlAnswer.question.displayName}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
-<c:set var="project" value="${props['PROJECT_ID']}" />
 
+<c:set var="tutAnswer" value="${requestScope.wdkXmlAnswer}"/>
 
 
 <site:header title="${wdkModel.displayName} : Tutorials"
@@ -26,95 +22,64 @@
                  division="tutorials"
                  headElement="${headElement}" />
 
-<c:if test = "${project == 'GiardiaDB'}">
-The ${project} tutorials will be here soon. In the meantime we provide you with access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same navigation and querying capabilities as in ${project}.org.
-<br>
-</c:if>
 
-<c:if test = "${project == 'TrichDB'}">
-We just updated the ${project} tutorials for Home Page and Queries and Tools!&nbsp;&nbsp;&nbsp; For the rest we still provide you with access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same navigation and querying capabilities as in ${project}.org.
-<br><br>
-</c:if>
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+       <c:choose>
+                      <c:when test="${tutAnswer.resultSize < 1}">
+                        No tutorials.
+                      </c:when>
+                      <c:otherwise>
 
-  <tr>
-    <td bgcolor=white valign=top>
+	<ul>
 
-    <c:set var="tutorialNumber" value="1"/>
+	<c:forEach items="${tutAnswer.recordInstances}" var="record">
+        	<c:set var="attrs" value="${record.attributesMap}"/>
+		<c:forEach items="${record.tables}" var="table">
+          		<c:forEach items="${table.rows}" var="row">
+          		<c:set var="projects" value="${row[0].value}"/>
+          		<c:if test="${fn:containsIgnoreCase(projects, project)}"> 
+                          	<c:set var="urlMov" value="${row[1].value}"/>
+                          	<c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
+                            		<c:set var="urlMov">http://eupathdb.org/tutorials/${urlMov}</c:set>
+                          	</c:if>
+                          	<c:set var="urlAvi" value="${row[2].value}"/>
+                          	<c:if test="${urlAvi != 'unavailable' &&  ! fn:startsWith(urlAvi, 'http://')}">
+                            		<c:set var="urlAvi">http://eupathdb.org/tutorials/${urlAvi}</c:set>
+                          	</c:if>
+                          	<c:set var="urlFlv" value="${row[3].value}"/>
+                          	<c:choose>
+                          	<c:when test="${ ! fn:endsWith(urlFlv, 'flv')}">
+                            		<c:set var="urlFlv">http://eupathdb.org/tutorials/${urlFlv}</c:set>
+                          	</c:when>
+                          	<c:when test="${urlFlv != 'unavailable' &&  ! fn:startsWith(urlFlv, 'http://')}">
+                            		<c:set var="urlFlv">http://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&autostart=true</c:set>
+                          	</c:when>
+                          	</c:choose>
+                          	<c:set var="duration" value="${row[4].value}"/>
+                          	<c:set var="size" value="${row[5].value}"/>
 
-<c:forEach items="${xmlAnswer.recordInstances}" var="record">
-  <%-- loop through tutorials --%>
 
-  <c:set var="title" value="${record.attributesMap['title']}"/>
-  <c:set var="description" value="${record.attributesMap['description']}"/>
-  <c:forEach items="${record.tables}" var="tblEntry">
-    <%-- loop through tables of record --%>
+				<li id='t-${attrs['uid']}'>${attrs['title']}<br />
+                             		<c:if test="${urlMov != 'unavailable'}">
+                          		 	(<a href="${urlMov}">Quick Time</a>)
+                             		</c:if>
+                             		<c:if test="${urlAvi != 'unavailable'}">
+                          		 	(<a href="${urlAvi}">Windows media</a>)
+                             		</c:if>
+                             		<c:if test="${urlFlv != 'unavailable'}">
+                          		 	(<a href="${urlFlv}">Flash</a>)
+                             		</c:if>
+				</li>
 
-    <c:set var="rows" value="${tblEntry.rows}"/>
-      <c:set var="fileNumber" value="0"/>
+			</c:if>
+			</c:forEach> 
+		</c:forEach>
+ 	</c:forEach>
+	</ul>
 
-      <c:forEach items="${rows}" var="row"> <%-- loop through files --%>
-        <c:set var="projects" value="${row[0].value}"/>
-        <c:if test="${fn:containsIgnoreCase(projects, wdkModel.displayName)}">
+                      </c:otherwise>
+	</c:choose>
 
-          <c:set var="urlMov" value="${row[1].value}"/>
-          <c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
-            <c:set var="urlMov">http://apidb.org/tutorials/${urlMov}</c:set>
-          </c:if>
 
-          <c:set var="urlAvi" value="${row[2].value}"/>
-          <c:if test="${urlAvi != 'unavailable' &&  ! fn:startsWith(urlAvi, 'http://')}">
-            <c:set var="urlAvi">http://apidb.org/tutorials/${urlAvi}</c:set>
-          </c:if>
-
-          <c:set var="urlFlv" value="${row[3].value}"/>
-          <c:if test="${urlFlv != 'unavailable' &&  ! fn:startsWith(urlFlv, 'http://')}">
-            <c:set var="urlFlv">http://apidb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&autostart=true</c:set>
-          </c:if>
-
-          <c:set var="duration" value="${row[4].value}"/>
-          <c:set var="size" value="${row[5].value}"/>
-
-          <c:if test="${fileNumber == 0}">
-            <c:if test="${tutorialNumber > 1}">
-              <hr>
-            </c:if>
- 
-                  <b>${title}</b>
-                  <br>${description}<br>
-          </c:if>
-
-          <c:if test="${fileNumber > 0}">
-            <br>
-          </c:if>
-
- <font size="-1">View in
-      <c:if test="${fileNameMov != 'unavailable'}">
-          <a href="${urlMov}" target="tutorial"> QuickTime format (.mov)</a> 
-      </c:if>
-      <c:if test="${urlAvi != 'unavailable'}">
-          ---&nbsp;<a href="${urlAvi}" target="tutorial"> Ms Windows format (.wmv)</a> 
-      </c:if>
-      <c:if test="${urlFlv != 'unavailable'}">
-          ---&nbsp;<a href="${urlFlv}"  
-			target="tutorial"> Flash Video format (.flv)</a>
-      </c:if>
-      <c:if test="${duration != 'unavailable' && size != 'unavailable'}">
-           ---&nbsp;Duration: ${duration}&nbsp;&nbsp;&nbsp;Size: ${size}
-      </c:if>
- </font>
-
-          <c:set var="fileNumber" value="${fileNumber+1}"/>
-        </c:if>
-      </c:forEach> <%-- files --%>
-  </c:forEach> <%-- tables of XML record --%>
-  <c:set var="tutorialNumber" value="${tutorialNumber+1}"/>
-</c:forEach> <%-- tutorials --%>
-
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
-  </tr>
-</table> 
 
 <site:footer/>

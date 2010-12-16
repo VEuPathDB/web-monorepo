@@ -43,6 +43,7 @@
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
+
 <SCRIPT TYPE="text/javascript">
 <!--
 function popupform(myform, windowname)
@@ -56,7 +57,7 @@ return true;
 </SCRIPT>
 
 <c:set var="cgiScript" value='mavidAlign'/>
-<c:if test="${(projectId eq 'TriTrypDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PlasmoDB')}">
+<c:if test="${(projectId eq 'TriTrypDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP')}">
   <c:set var="cgiScript" value='pairwiseMercator'/>
 </c:if>
 
@@ -145,30 +146,30 @@ return true;
      </td></tr>
 </c:if>
 
-<c:if test="${projectId eq 'PlasmoDB'}">
+<c:if test="${projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP'}">
 
    <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
         <table>
           <tr>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="p_falciparum" checked>P.falciparum
+              <input type="checkbox" name="genomes" value="Pfalciparum" checked>P.falciparum
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="p_vivax" checked>P.vivax
+              <input type="checkbox" name="genomes" value="Pvivax" checked>P.vivax
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="p_yoelii" checked>P.yoelii
+              <input type="checkbox" name="genomes" value="Pyoelii" checked>P.yoelii
             </td>
            </tr>
             <td>
-              <input type="checkbox" name="genomes" value="p_berghei" checked>P.berghei
+              <input type="checkbox" name="genomes" value="Pberghei" checked>P.berghei
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="p_chabaudi" checked>P.chabaudi
+              <input type="checkbox" name="genomes" value="Pchabaudi" checked>P.chabaudi
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="p_knowlesi" checked>P.knowlesi
+              <input type="checkbox" name="genomes" value="Pknowlesi" checked>P.knowlesi
             </td>
            </tr>
          </table>
@@ -215,7 +216,7 @@ return true;
     <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
         <input type="radio" name="type" value="clustal" checked>clustal
 
-<c:if test="${(projectId ne 'TriTrypDB') || (projectId ne 'MicrosporidiaDB') || (projectId ne 'PlasmoDB')}">
+<c:if test="${(projectId ne 'TriTrypDB') && (projectId ne 'MicrosporidiaDB') && (projectId ne 'PlasmoDB' || wdkRecord.recordClass.type eq 'SNP')}">
         <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
 </c:if>
         <input type="radio" name="type" value="fasta_ungapped">multi fasta

@@ -33,7 +33,7 @@
     <td align="right"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics >>></a></td>
 </tr>
 
-<tr><td colspan="2">The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://amoebadb.org">AmoebaDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://microsporidiadb.org">MicrosporidiaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> and <a href="http://tritrypdb.org">TriTrypDB</a> websites. <br><br></td>
+<tr><td colspan="2">The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://amoebadb.org">AmoebaDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://microsporidiadb.org">MicrosporidiaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> (currently unsupported) and <a href="http://tritrypdb.org">TriTrypDB</a> (supported by the Bill and Melinda Gates Foundation) websites. <br><br></td>
 </tr>
 </table>
 
@@ -46,7 +46,7 @@
     <td class="mythStyle" title="Strain">Strain</td>
     <td class="mythStyle" title="Provided by Data Source">Genome<br>Version</td>
     <td class="mythStyle" title="Data Source">Data<br>Source</td>
-    <td class="mythStyle" title="Size in Mega bases">Available<br>MegaBase Pairs</td>
+    <td class="mythStyle" title="Size in Mega bases">Available<br>Megabase Pairs</td>
     <td class="mythStyle" title="Gene Count">Gene<br>Count</td>
     <td class="mythStyle" title="For the species that we have multiple strains, the row represents the main strain. Please mouseover the red dot to read the additional strains we cover">Multiple<br>Strains</td>
  <%--   <td class="mythStyle" title="Additional Strains">Additional<br>Strains</td>    --%>
@@ -58,6 +58,7 @@
     <td class="mythStyle" title="Proteomics">Prote<br>omics</td>
     <td class="mythStyle" title="ChIP Chip">ChIP<br>chip</td>
     <td class="mythStyle" title="RNA Seq">RNA<br>Seq</td>
+    <td class="mythStyle" title="Chip Seq">Chip<br>Seq</td>
     <td class="mythStyle" title="Sage Tags">SAGE<br>Tags</td>
     <td class="mythStyle" title="Metabolic Pathways">Path<br>ways</td>
 </tr>
@@ -225,6 +226,17 @@
 
 <c:choose>
 <c:when test="${record.attributesMap['RNA_Seq'] == 'yes'}">
+    <td class="mytdStyle" style="${separation}">
+	<a href="http://${website}.org/${webapp}/showXmlDataContent.do?name=XmlQuestions.DataSources">	
+		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+</c:when>
+<c:otherwise>
+    <td class="mytdStyle" style="${separation}"></td>
+</c:otherwise>
+</c:choose>
+
+<c:choose>
+<c:when test="${record.attributesMap['Chip_Seq'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/showXmlDataContent.do?name=XmlQuestions.DataSources">	
 		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>

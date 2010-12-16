@@ -105,7 +105,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 
 <c:if test="${gtracks ne ''}">
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/trichdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/trichdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -130,7 +130,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 </c:if>
 
 <!-- gene alias table -->
-<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
+<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
 <site:pageDivider name="Annotation"/>
@@ -230,7 +230,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
     </c:set>
 
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${id};type=${ptracks};width=640;embed=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${id};type=${ptracks};width=640;embed=1;genepage=1
 </c:set>
 <c:if test="${ptracks ne ''}">
     <c:set var="proteinFeaturesImg">
@@ -371,3 +371,4 @@ Carlton J. et. al. <b>Draft Genome Sequence of the Sexually Transmitted Pathogen
   );
 </script>
 
+<site:pageLogger name="gene page" />

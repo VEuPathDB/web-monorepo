@@ -132,7 +132,7 @@
 	</th>
 --%>
 	<th style="text-align: left;white-space:nowrap;"> 
-	       <wdk:pager pager_id="top"/> 
+	       <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
 	</th>
 	<th style="text-align: right;white-space:nowrap;">
 		           <%-- display a list of sortable attributes --%>
@@ -461,7 +461,7 @@
 	</th>
 --%>
 	<th style="text-align:left;white-space:nowrap;"> 
-	       <wdk:pager pager_id="bottom"/> 
+	       <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="bottom"/> 
 	</th>
 	<th style="text-align:right;white-space:nowrap;">
 		&nbsp;

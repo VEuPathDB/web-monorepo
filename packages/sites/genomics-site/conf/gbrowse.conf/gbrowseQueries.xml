@@ -358,7 +358,31 @@ ORDER BY
 
   
   
-  <sqlQuery name="alignment:ORF">
+  <sqlQuery name="alignment:ORFlength">
+     <sql>
+<![CDATA[
+ SELECT na_feature_id feature_id, 
+             'alignment' type, 
+             '$source' source, 
+             feature_source_id name, 
+             '' score, 
+             na_sequence_id parent_id, 
+             start_min startm, 
+             end_max end, 
+             decode (is_reversed, 0, '+1', 1, '-1', '.') strand,
+             'Length=' || (end_max-start_min+1)/3 atts
+      FROM   apidb.featureLocation 
+      WHERE  na_sequence_id = $srcfeature_id 
+        AND  start_min <= $rend
+        AND  end_max >= $base_start - 1 
+        AND  feature_type='Miscellaneous'
+        AND  end_max - start_min + 1 >= $$minLength$$
+      ORDER BY start_min
+]]>
+    </sql>
+  </sqlQuery>
+  
+    <sqlQuery name="alignment:ORF">
      <sql>
 <![CDATA[
  SELECT na_feature_id feature_id, 
@@ -380,7 +404,6 @@ ORDER BY
 ]]>
     </sql>
   </sqlQuery>
-  
   
   <sqlQuery name="alignment:EST">
      <sql>
@@ -480,6 +503,7 @@ select 'fast' query_style, syntenic_na_feature_id feature_id, 'gene' type,
        'syntenyMC' source,  syntenic_source_id name, '.' score, synteny_id parent_id,
        startm, end, strand, atts
 from materialized_query
+where organism != 'placeholder'
 union
 select * from (
 select
@@ -623,7 +647,7 @@ WHERE  sim.min_subject_start <= $rend and
        query.na_sequence_id = sim.query_id and
        query.external_database_release_id = edbr.external_database_release_id and
        edb.external_database_id = edbr.external_database_id and 
-       edb.name in ('TgGI','Sanger P. falciparum chromosomes','P.vivax contigs from Genbank','P. berghei genome','Jane Carlton P. yoelii chromosomes')
+       edb.name in ('TgGI','Pfalciparum_chromosomes_RSRC','Pvivax_contigsGB_RSRC','Pberghei_chromosomes_RSRC','Pyoelii_Contigs_RSRC')
 ORDER BY 
        sim.min_subject_start
 ]]>
@@ -661,6 +685,50 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="MicroArrayProbes:expressionH"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+SELECT $srcfeature_id as feature_id,
+       'MicroArrayProbes' as type, 
+       '$source'       as source,
+       $srcfeature_id as parent_id,
+       $base_start       as startm,
+       $rend             as end 
+FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="MicroArrayProbes:expressionD" includeProjects="PlasmoDB">
+    <testParamValues project="PlasmoDB">
+      <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_06$$"/>
+      <param name="base_start" value="469864"/> 
+      <param name="rend" value="470011"/> 
+    </testParamValues>
+    <sql>   
+<![CDATA[
+SELECT fl.na_feature_id as feature_id,
+       'MicroArrayProbes' type, 
+       '$source' source, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'SourceId='   || fl.feature_source_id || '$dlm'
+        as atts
+FROM   apidb.featurelocation fl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+WHERE  edr.external_database_id = ed.external_database_id
+  AND  edr.external_database_release_id=fl.external_database_release_id
+  AND  fl.feature_type = 'ArrayElementFeature'
+  AND  ed.name = $$edname$$
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+  AND  fl.na_sequence_id = $srcfeature_id]]>
+     </sql>
+  </sqlQuery>
+  
+
+
   <sqlQuery name="NextGenSeq:coverage"  includeProjects="TriTrypDB,PlasmoDB">
      <sql>
        <![CDATA[
@@ -674,15 +742,28 @@ WHERE  fl.feature_type ='SAGETagFeature'
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="NextGenSeq:coverageComb"  includeProjects="TriTrypDB,PlasmoDB">
+  <sqlQuery name="NextGenSeq:coverageRatio"  includeProjects="TriTrypDB,PlasmoDB">
      <sql>
        <![CDATA[
-    SELECT $$sample1$$ || $$sample2$$ as feature_id,
+    SELECT $$numSample$$ as feature_id,
           'NextGenSeq'        as type, 
           '$source'          as source,
            $base_start        as startm,
            $rend              as end 
   FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="DGE:coverage"  includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+    SELECT $$sample$$  as feature_id,
+          'DGE'        as type, 
+          '$source'    as source,
+           $base_start as startm,
+           $rend       as end 
+    FROM   dual 
        ]]>
     </sql>
   </sqlQuery>
@@ -703,15 +784,29 @@ WHERE  fl.feature_type ='SAGETagFeature'
   <sqlQuery name="NextGenSeq:coverageLog"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
-    SELECT $$sample$$ as feature_id,
-          'NextGenSeq'        as type, 
-          '$source'          as source,
-           $base_start        as startm,
-           $rend              as end  
-  FROM   dual 
+    SELECT $$sample$$   as feature_id,
+          'NextGenSeq'  as type, 
+          '$source'     as source,
+           $base_start  as startm,
+           $rend        as end  
+    FROM   dual 
        ]]>
     </sql>
   </sqlQuery>
+
+  <sqlQuery name="NextGenSeq:coverageLog7"  includeProjects="PlasmoDB">
+     <sql>
+       <![CDATA[
+    SELECT $$feature_id$$   as feature_id,
+          'NextGenSeq'  as type, 
+          '$source'     as source,
+           $base_start  as startm,
+           $rend        as end  
+    FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
 
 
       <sqlQuery name="splice:curated" includeProjects="TriTrypDB">
@@ -959,7 +1054,6 @@ WHERE msf.na_feature_id = nal.na_feature_id
  AND  nal.start_min >= $base_start 
  AND  nal.end_max <= $rend
  AND  msf.external_database_release_id = edr.external_database_release_id
- AND NOT ed.name ='Pfalciparum_Lasonder_Proteomics_Blood_Stages'
  AND  edr.external_database_id = ed.external_database_id
 GROUP BY enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x,
 (select apidb.tab_to_string(CAST(COLLECT(y.db_info)
@@ -975,8 +1069,8 @@ FROM  dots.massspecfeature msf,
   AND  nal.na_sequence_id = $srcfeature_id
   AND  enas.na_sequence_id = $srcfeature_id
   AND  msf.external_database_release_id = edr.external_database_release_id
-  AND NOT ed.name ='Pfalciparum_Lasonder_Proteomics_Blood_Stages'
   AND  edr.external_database_id = ed.external_database_id
+  AND NOT ed.name ='Pf_Lasonder_Proteomics_Blood_Stages_RSRC'
  GROUP BY enas.na_sequence_id, ed.name, edr.external_database_release_id) y
 ) z
 WHERE msf.na_feature_id = x.feat_id
@@ -1174,7 +1268,35 @@ WHERE  etn.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
+<!--
+  <sqlQuery name = "ORF300:density"> 
+    <description>ORF density. bin size is 500bp.</description> 
+    <sql> 
+<![CDATA[ 
+SELECT etn.na_sequence_id feature_id, 
+       'ORF300' type, 
+       'density' source 
+FROM   dots.NASEQUENCE etn 
+WHERE  etn.na_sequence_id = $srcfeature_id 
+]]>
+    </sql>
+  </sqlQuery>
   
+  <sqlQuery name = "ORF600:density"> 
+    <description>ORF density. bin size is 500bp.</description> 
+    <sql> 
+<![CDATA[ 
+SELECT etn.na_sequence_id feature_id, 
+       'ORF' type, 
+       'density' source 
+FROM   dots.NASEQUENCE etn 
+WHERE  etn.na_sequence_id = $srcfeature_id 
+]]>
+    </sql>
+  </sqlQuery>
+
+-->
+
   <sqlQuery name="Centromere:overview"  includeProjects="PlasmoDB">
     <testParamValues project="PlasmoDB">
        <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_09$$"/>
@@ -1239,14 +1361,19 @@ ORDER BY
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'Name=' || BS.name || '$dlm' ||       
        'Sequence=' || substr(s.sequence, fl.start_min, fl.end_max - fl.start_min + 1)  || '$dlm' ||
-       'Score=' || BS.primary_score as atts
+       'Score=' || to_char(exp(BS.primary_score),'9.99EEEE') as atts
 FROM 
        dots.BindingSiteFeature BS,
        apidb.FeatureLocation fl,
-       dots.nasequence s
+       dots.nasequence s,
+       sres.externaldatabase d,
+       sres.externaldatabaserelease rel
 WHERE
        fl.na_sequence_id = s.na_sequence_id and
        BS.na_feature_id = fl.na_feature_id and
+       rel.external_database_release_id = BS.external_database_release_id and
+       d.external_database_id  = rel.external_database_id and
+       d.name like '%TransFactorBindingSites_Llinas_RSRC' and
        fl.feature_type = 'BindingSiteFeature' and
        fl.start_min <= $rend and 
        fl.end_max >= $base_start and 
@@ -1569,7 +1696,7 @@ FROM
 WHERE  
        extq.external_database_release_id = edr.external_database_release_id and
        ed.external_database_id = edr.external_database_id and
-       ed.name in ('C. parvum isolate data','Plasmodium isolates From Genbank','Toxoplasma isolates From David Sibley','Toxoplasma isolates From Genbank') and
+       ed.name in ('C. parvum isolate data','PlasmodiumGenbankIsolates_RSRC','Toxoplasma isolates From David Sibley','Toxoplasma isolates From Genbank') and
        sim.query_id = extq.na_sequence_id and 
        sim.subject_id = extt.na_sequence_id and 
        sim.pvalue_mant is not null and
@@ -2043,29 +2170,27 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-ExonIb'
   <sqlQuery name="ChIP_peaks:Schizont"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
        'Schizont'           as source,
-       fl.feature_source_id        as name,
-       dtf.float_value      as score,
-       fl.na_sequence_id   as parent_id,
-       fl.start_min         as startm,
-       fl.end_max           as end,
+       ee.feature_source_id        as name,
+       ee.score      as score,
+       ee.na_sequence_id   as parent_id,
+       ee.start_min         as startm,
+       ee.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%stunnenberg%'
 AND    lower(a.name) like '%schizont%'
 AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac' or lower(a.name) like '%cdna%')
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    cpp.protocol_type = 'called_peaks'
 ]]>
     </sql>
@@ -2076,29 +2201,27 @@ AND    cpp.protocol_type = 'called_peaks'
   <sqlQuery name="ChIP_peaks:Ring"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
        'Ring'           as source,
-       fl.feature_source_id        as name,
-       dtf.float_value      as score,
-       fl.na_sequence_id   as parent_id,
-       fl.start_min         as startm,
-       fl.end_max           as end,
+       ee.feature_source_id        as name,
+       ee.score      as score,
+       ee.na_sequence_id   as parent_id,
+       ee.start_min         as startm,
+       ee.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts       
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%stunnenberg%'
 AND    lower(a.name) like '%ring%'
 AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac' or lower(a.name) like '%cdna%')
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    cpp.protocol_type = 'called_peaks'
 ]]>
     </sql>
@@ -2108,29 +2231,27 @@ AND    cpp.protocol_type = 'called_peaks'
   <sqlQuery name="ChIP_peaks:Mixed"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
        'Mixed'               as source,
-       fl.feature_source_id        as name,
-       dtf.float_value      as score,
-       fl.na_sequence_id   as parent_id,
-       fl.start_min         as startm,
-       fl.end_max           as end,
+       ee.feature_source_id        as name,
+       ee.score      as score,
+       ee.na_sequence_id   as parent_id,
+       ee.start_min         as startm,
+       ee.end_max           as end,
       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts 
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%stunnenberg%'
 AND    lower(a.name) not like '%ring%' and lower(a.name) not like '%schizont%'
 AND    (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac' or lower(a.name) like '%cdna%')
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    cpp.protocol_type = 'called_peaks'
 ]]>
     </sql>
@@ -2141,28 +2262,26 @@ AND    cpp.protocol_type = 'called_peaks'
   <sqlQuery name="ChIP_peaks:H3K9me3_genotype_peaks"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
        'H3K9me3_genotype_peaks'               as source,
-       fl.feature_source_id        as name,
-       dtf.float_value      as score,
-       fl.na_sequence_id   as parent_id,
-       fl.start_min         as startm,
-       fl.end_max           as end,
+       ee.feature_source_id        as name,
+       ee.score      as score,
+       ee.na_sequence_id   as parent_id,
+       ee.start_min         as startm,
+       ee.end_max           as end,
        'Treatment=' || cpp.treatment ||  '$dlm' || 'Analysis=' || a.name ||  '$dlm' ||'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%scherf%'
 AND    lower(cpp.antibody) = 'h3k9me3'
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    cpp.protocol_type = 'called_peaks'
 ]]>
     </sql>
@@ -2171,28 +2290,26 @@ AND    cpp.protocol_type = 'called_peaks'
   <sqlQuery name="ChIP_peaks:H3K9ac_genotype_peaks"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
        'H3K9ac_genotype_peaks'             as source,
-       fl.feature_source_id        as name,
-       dtf.float_value      as score,
-       fl.na_sequence_id   as parent_id,
-       fl.start_min         as startm,
-       fl.end_max           as end,
+       ee.feature_source_id        as name,
+       ee.score      as score,
+       ee.na_sequence_id   as parent_id,
+       ee.start_min         as startm,
+       ee.end_max           as end,
       'Treatment=' || cpp.treatment ||  '$dlm' || 'Analysis=' || a.name ||  '$dlm' ||'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts 
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like  '%scherf%'
 AND    lower(cpp.antibody) = 'h3k9ac'
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    cpp.protocol_type = 'called_peaks'
 ]]>
     </sql>
@@ -2201,27 +2318,26 @@ AND    cpp.protocol_type = 'called_peaks'
   <sqlQuery name="ChIP_peaks:Hp1"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT /*+ use_nl(cpp ee) */
+       ee.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
        'Hp1'                as source,
-       fl.feature_source_id        as name,
-       dtf.float_value      as score,
-       fl.na_sequence_id   as parent_id,
-       fl.start_min         as startm,
-       fl.end_max           as end,
+       ee.feature_source_id        as name,
+       ee.score      as score,
+       ee.na_sequence_id   as parent_id,
+       ee.start_min         as startm,
+       ee.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' ||'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.protocol_id  = a.protocol_id
 AND    lower(p.name) like  '%voss%'
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    cpp.protocol_type = 'called_peaks'
 ]]>
     </sql>
@@ -2990,26 +3106,24 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearNonCoding'
   <sqlQuery name="ChIP_peaks:Assay"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_peaks'        as type,
        '$source'           as source,
-       fl.feature_source_id        as name,
-       dtf.float_value      as score,
-       fl.na_sequence_id   as parent_id,
-       fl.start_min         as startm,
-       fl.end_max           as end,
+       ee.feature_source_id        as name,
+       ee.score      as score,
+       ee.na_sequence_id   as parent_id,
+       ee.start_min         as startm,
+       ee.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis='|| a.name || '$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    p.name = $$protocol$$
 AND    cpp.strain = $$strain$$
 ]]>
@@ -3054,7 +3168,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-Markers'
 ]]>
     </sql>
   </sqlQuery>
-  
+
   <sqlQuery name="ChIP_chip:Assay"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
@@ -3099,7 +3213,7 @@ WHERE
        sa.source_id 
         as atts
 FROM   apidb.SnpAttributes sa
-WHERE  sa.dataset =  'Broad SNPs'
+WHERE  sa.dataset =  'Pf_Broad_SNPs_RSRC'
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
@@ -3135,7 +3249,7 @@ FROM   dots.ExternalNaSequence s,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr,
        apidb.geneattributes gene_info
-WHERE  ed.name = 'Winzeler Array - Plasmodium Genetic Variation'  
+WHERE  ed.name = 'WinzelerGeneticVariationArray_RSRC'  
   AND  edr.external_database_id = ed.external_database_id
   AND  snp.external_database_release_id = edr.external_database_release_id
   AND  s.na_sequence_id = $srcfeature_id
@@ -3173,7 +3287,7 @@ WHERE  swi.snp_source_id = sa.source_id
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
-  AND  sa.dataset='PlasmoDB combined SNPs'
+  AND  sa.dataset='Pf_plasmoDbCombinedSnps_RSRC'
 ]]>
     </sql>
   </sqlQuery> 
@@ -3205,7 +3319,7 @@ WHERE  swi.snp_source_id = sa.source_id
        sa.source_id 
         as atts
 FROM   apidb.SnpAttributes sa
-WHERE  sa.dataset = 'Sanger falciparum SNPs'
+WHERE  sa.dataset = 'sangerItGhanaSnps_RSRC'
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
@@ -3241,7 +3355,7 @@ WHERE  sa.dataset = 'Sanger falciparum SNPs'
        sa.source_id 
         as atts
 FROM   apidb.SnpAttributes sa
-WHERE  sa.dataset = 'Sanger reichenowi SNPs'  
+WHERE  sa.dataset = 'sangerPReichenowiSnps_RSRC'  
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
@@ -3296,8 +3410,8 @@ WHERE
        qry.external_database_release_id = edr2.external_database_release_id and
        edr1.external_database_id = ed1.external_database_id and
        edr2.external_database_id = ed2.external_database_id and
-       ed1.name = 'Jane Carlton P. yoelii chromosomes' and
-       ed2.name = 'Vaidya Bergman oligos'
+       ed1.name = 'Pyoelii_Contigs_RSRC' and
+       ed2.name = 'Pyoelii_Vaidya_Bergman_oligos_RSRC'
 ORDER BY 
        sim.min_query_start
 ]]>
@@ -3332,7 +3446,7 @@ ORDER BY
        sa.source_id 
         as atts
 FROM   apidb.SnpAttributes sa
-WHERE  sa.dataset = 'PlasmoDB combined SNPs'  
+WHERE  sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'  
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
@@ -3516,60 +3630,6 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="rnaseq:cn_seven_samples"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'cn_seven_sample' as feature_id,
-               'rnaseq' type,
-               sample as name,
-               'cn_seven_samples' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   apidb.rnaseq_coverage rc
-        WHERE   rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
-         AND rc.type = 'p'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1
-         GROUP BY rc.sample
-       ]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:cn_seven_samples_log"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'cn_seven_sample_log' as feature_id,
-               'rnaseq' type,
-               sample as name,
-               'cn_seven_samples_log' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   apidb.rnaseq_coverage rc
-        WHERE   rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
-         AND rc.type = 'p'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1
-         GROUP BY rc.sample
-       ]]>
-    </sql>
-  </sqlQuery>
-
-
-  <sqlQuery name="rnaseq:cn_pf0h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_0h' as feature_id,
-               'rnaseq' type,
-               'cn_pf0h' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="rnaseq:cn_pf0h_lin"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
@@ -3583,38 +3643,12 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="rnaseq:cn_pf8h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_8h' as feature_id,
-               'rnaseq' type,
-               'cn_pf8h' source,
-                $base_start as startm,
-                $rend       as end
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="rnaseq:cn_pf8h_lin"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
         SELECT 'rnaseq_8h_lin' as feature_id,
                'rnaseq' type,
                'cn_pf8h_lin' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:cn_pf16h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_16h' as feature_id,
-               'rnaseq' type,
-               'cn_pf16h' source,
                 $base_start as startm,
                 $rend       as end 
         FROM   dual
@@ -3635,39 +3669,12 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-
-  <sqlQuery name="rnaseq:cn_pf24h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_24h' as feature_id,
-               'rnaseq' type,
-               'cn_pf24h' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="rnaseq:cn_pf24h_lin"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
         SELECT 'rnaseq_24h_lin' as feature_id,
                'rnaseq' type,
                'cn_pf24h_lin' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:cn_pf32h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_32h' as feature_id,
-               'rnaseq' type,
-               'cn_pf32h' source,
                 $base_start as startm,
                 $rend       as end 
         FROM   dual
@@ -3688,38 +3695,12 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="rnaseq:cn_pf40h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_40h' as feature_id,
-               'rnaseq' type,
-               'cn_pf40h' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="rnaseq:cn_pf40h_lin"  includeProjects="PlasmoDB">
      <sql>
        <![CDATA[
         SELECT 'rnaseq_40h_lin' as feature_id,
                'rnaseq' type,
                'cn_pf40h_lin' source,
-                $base_start as startm,
-                $rend       as end 
-        FROM   dual
-       ]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="rnaseq:cn_pf48h"  includeProjects="PlasmoDB">
-     <sql>
-       <![CDATA[
-        SELECT 'rnaseq_48h' as feature_id,
-               'rnaseq' type,
-               'cn_pf48h' source,
                 $base_start as startm,
                 $rend       as end 
         FROM   dual
@@ -4284,6 +4265,7 @@ SELECT -- fast query uses pre-calculated values for gene-page views
        'syntenyMC' source, syntenic_exon_feature_id name, syntenic_gene_feature_id parent_id,
        startm, end, strand, atts
 FROM materialized_query
+WHERE organism != 'placeholder'
 UNION
 SELECT -- slow query for all other views
 * FROM (SELECT
@@ -4570,7 +4552,8 @@ ORDER BY
   <sql>
 <![CDATA[
 SELECT * FROM (
-SELECT fl.na_feature_id feature_id,
+SELECT /*+ ordered */
+       fl.na_feature_id feature_id,
        'gap' type,
        'syntenyGap' source,
        fl.na_feature_id name,
@@ -4586,14 +4569,10 @@ SELECT fl.na_feature_id feature_id,
         '0' strand,
         'Type=sgap' atts
 FROM    apidb.synteny syn,
-        apidb.syntenyAnchor anch_left,
+        apidb.featurelocation fl,
         apidb.syntenyAnchor anch_right,
-        sres.externaldatabaserelease edr,
-        sres.externaldatabase ed,
-        apidb.featurelocation fl
-WHERE  edr.external_database_id = ed.external_database_id 
-   AND syn.external_database_release_id = edr.external_database_release_id
-   AND syn.a_na_sequence_id = $srcfeature_id
+        apidb.syntenyAnchor anch_left
+WHERE  syn.a_na_sequence_id = $srcfeature_id
    AND syn.a_start <= $rend
    AND syn.a_end >= $base_start
    AND anch_left.synteny_id = syn.synteny_id
@@ -4704,26 +4683,24 @@ GROUP BY interval
   <sqlQuery name="ChIP_chip:Assay:bulksubfeatures"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_sub'          as type,
        '$source'           as source,
-       dtf.float_value     as score,
-       fl.na_sequence_id   as parent_id,
-       fl.start_min        as startm,
-       fl.end_max          as end,
+       ee.score     as score,
+       ee.na_sequence_id   as parent_id,
+       ee.start_min        as startm,
+       ee.end_max          as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =  cpp.analysis_id
+WHERE  ee.analysis_id =  cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id =  a.analysis_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    p.name = $$protocol$$
 AND    cpp.strain = $$strain$$
 ]]>
@@ -4761,26 +4738,24 @@ WHERE fl.na_sequence_id = $srcfeature_id
   <sqlQuery name="ChIP:TBP_Promastigotes:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_sub'          as type,
        'TBP_Promastigotes'               as source,
-       dtf.float_value        as score,
-       fl.na_sequence_id     as parent_id,
-       fl.start_min           as startm,
-       fl.end_max             as end,
+       ee.score        as score,
+       ee.na_sequence_id     as parent_id,
+       ee.start_min           as startm,
+       ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like '%myler%'
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(a.name) like '%tbp-replicate%'
 ]]>
     </sql>
@@ -4790,26 +4765,24 @@ AND    lower(a.name) like '%tbp-replicate%'
   <sqlQuery name="ChIP:SNAP50_Promastigotes:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_sub'          as type,
        'SNAP50_Promastigotes'               as source,
-       dtf.float_value        as score,
-       fl.na_sequence_id     as parent_id,
-       fl.start_min           as startm,
-       fl.end_max             as end,
+       ee.score        as score,
+       ee.na_sequence_id     as parent_id,
+       ee.start_min           as startm,
+       ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like '%myler%'
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(a.name) like '%snap50-replicate%'
 ]]>
     </sql>
@@ -4820,26 +4793,24 @@ AND    lower(a.name) like '%snap50-replicate%'
   <sqlQuery name="ChIP:AcetylH3_Promastigotes:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_sub'          as type,
        'AcetylH3_Promastigotes' as source,
-       dtf.float_value        as score,
-       fl.na_sequence_id     as parent_id,
-       fl.start_min           as startm,
-       fl.end_max             as end,
+       ee.score        as score,
+       ee.na_sequence_id     as parent_id,
+       ee.start_min           as startm,
+       ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like '%myler%'
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(a.name) like '%acetylh3-replicate%'
 ]]>
     </sql>
@@ -4850,26 +4821,24 @@ AND    lower(a.name) like '%acetylh3-replicate%'
   <sqlQuery name="ChIP:AcetylH3_Log_vs_Stationary:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_sub'          as type,
        'AcetylH3_Log_vs_Stationary' as source,
-       dtf.float_value        as score,
-       fl.na_sequence_id     as parent_id,
-       fl.start_min           as startm,
-       fl.end_max             as end,
+       ee.score        as score,
+       ee.na_sequence_id     as parent_id,
+       ee.start_min           as startm,
+       ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like '%myler%'
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(a.name) like '%acetylh3%' AND lower(a.name) not like '%replicate%'
 ]]>
     </sql>
@@ -4879,26 +4848,24 @@ AND    lower(a.name) like '%acetylh3%' AND lower(a.name) not like '%replicate%'
   <sqlQuery name="ChIP:TBP_Log_vs_Stationary:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
- SELECT fl.na_feature_id   as feature_id,
+ SELECT ee.na_feature_id   as feature_id,
        'ChIP_sub'          as type,
        'TBP_Log_vs_Stationary' as source,
-       dtf.float_value        as score,
-       fl.na_sequence_id     as parent_id,
-       fl.start_min           as startm,
-       fl.end_max             as end,
+       ee.score        as score,
+       ee.na_sequence_id     as parent_id,
+       ee.start_min           as startm,
+       ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
-WHERE  dtf.row_id = fl.na_feature_id
-AND    dtf.analysis_id =   cpp.analysis_id
+WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
 AND    lower(p.name) like '%myler%'
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(a.name) like '%tbp%' AND lower(a.name) not like '%replicate%'
 ]]>
     </sql>
@@ -4908,27 +4875,25 @@ AND    lower(a.name) like '%tbp%' AND lower(a.name) not like '%replicate%'
   <sqlQuery name="ChIP:Hp1:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'Hp1'               as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Analysis='     || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%voss%'
 AND    cpp.protocol_type = 'raw'
    ]]>
@@ -4939,28 +4904,26 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:H3K4me3_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'H3K4me3_genotype'                as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  || '$dlm' ||
        'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%scherf%' and lower(cpp.antibody) = 'h3k4me3'
 AND    cpp.protocol_type = 'raw'
    ]]>
@@ -4970,28 +4933,26 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:H3K9ac_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'H3K9ac_genotype'  as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  || '$dlm' ||
        'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%scherf%' and lower(cpp.antibody) = 'h3k9ac'
 AND    cpp.protocol_type = 'raw'
    ]]>
@@ -5003,28 +4964,26 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:H3K9me3_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'H3K9me3_genotype'  as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  || '$dlm' ||
        'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%scherf%' and lower(cpp.antibody) = 'h3k9me3'
 AND    cpp.protocol_type = 'raw'
    ]]>
@@ -5035,28 +4994,26 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:H4K20me3_genotype:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'H4K20me3_genotype'  as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Antibody='     || cpp.antibody  || '$dlm' ||
        'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%scherf%' and lower(cpp.antibody) = 'h4k20me3'
 AND    cpp.protocol_type = 'raw'
    ]]>
@@ -5067,27 +5024,25 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:Schizont_H3K4me3_H3K9ac:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type, 
        'Schizont_H3K4me3_H3K9ac'          as source, 
-        dtf.float_value    as score, 
-        fl.na_sequence_id  as parent_id, 
-        fl.start_min       as startm, 
-        fl.end_max         as end,
+        ee.score    as score, 
+        ee.na_sequence_id  as parent_id, 
+        ee.start_min       as startm, 
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Analysis=' || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p, 
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%stunnenberg%'
 AND    a.name like '%Schizont%' and (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac')
 AND    cpp.protocol_type = 'raw'
@@ -5100,27 +5055,25 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:Schizont_H3_cDNA:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'Schizont_H3_cDNA'          as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Analysis=' || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%stunnenberg%'
 AND    a.name like '%Schizont%' and (lower(cpp.antibody) = 'h3' or lower(a.name) like '%cdna%')
 AND    cpp.protocol_type = 'raw'
@@ -5135,27 +5088,25 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:Ring_H3K4me3_H3K9ac:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'Ring_H3K4me3_H3K9ac'              as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%stunnenberg%'
 AND    a.name like '%Ring%' and (lower(cpp.antibody) = 'h3k4me3' or lower(cpp.antibody) = 'h3k9ac')
 AND    cpp.protocol_type = 'raw'
@@ -5168,27 +5119,25 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:Ring_H3_cDNA:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'Ring_H3_cDNA'              as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%stunnenberg%'
 AND    a.name like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(a.name) like '%cdna%')
 AND    cpp.protocol_type = 'raw'
@@ -5201,27 +5150,25 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:Mixed_H3K4me3_H3K9ac:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'Mixed_H3K4me3_H3K9ac'        as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%stunnenberg%'
 AND    a.name in ('77620-H3K9ac','79483-H3K4me3','89274-H3K9ac','89876-H3K4me3','96461-H3K9ac')
 AND    cpp.protocol_type = 'raw'
@@ -5234,27 +5181,25 @@ AND    cpp.protocol_type = 'raw'
   <sqlQuery name="ChIP:Mixed_H3K9me3_H3_cDNA:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT  fl.na_feature_id   as feature_id,
+SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
        'Mixed_H3K9me3_H3_cDNA'        as source,
-        dtf.float_value    as score,
-        fl.na_sequence_id  as parent_id,
-        fl.start_min       as startm,
-        fl.end_max         as end,
+        ee.score    as score,
+        ee.na_sequence_id  as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       rad.datatransformationresult dtf,
-       apidb.featurelocation fl,
+       apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
-AND    a.analysis_id = dtf.analysis_id
-AND    dtf.row_id = fl.na_feature_id
-AND    fl.na_sequence_id = $srcfeature_id
-AND    fl.start_min <= $rend
-AND    fl.end_max >= $base_start
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
 AND    lower(p.name) like '%stunnenberg%'
 AND    a.name in ('116550-cDNA','4944702-H3K9me3','89272-H3','89877-H3','96481-H3') 
 AND    cpp.protocol_type = 'raw'
@@ -5276,19 +5221,17 @@ SELECT  start_interval   as feature_id,
          start_interval * (($rend - $base_start + 1) / 800) startm,
          end_interval * (($rend - $base_start + 1) / 800) end, 
         'Analysis='     || name   as atts
-FROM   (select ceil(fl.start_min / (($rend - $base_start + 1) / 800)) start_interval,
-               ceil(fl.end_max / (($rend - $base_start + 1) / 800)) end_interval,
-               dtf.float_value as score,fl.na_feature_id,
-               fl.na_sequence_id,a.name as name 
+FROM   (select ceil(ee.start_min / (($rend - $base_start + 1) / 800)) start_interval,
+               ceil(ee.end_max / (($rend - $base_start + 1) / 800)) end_interval,
+               ee.score as score,ee.na_feature_id,
+               ee.na_sequence_id,a.name as name 
         from rad.analysis a,
-             rad.datatransformationresult dtf,
-             apidb.featurelocation fl 
-        WHERE  a.analysis_id = dtf.analysis_id
-        AND    dtf.row_id = fl.na_feature_id
-        AND    fl.na_sequence_id = $srcfeature_id
+             apidb.ExpressionElement ee
+        WHERE  a.analysis_id = ee.analysis_id
+        AND    ee.na_sequence_id = $srcfeature_id
         AND    a.name =  $$analysis$$
-        AND    fl.start_min <= $rend
-        AND    fl.end_max >= $base_start)
+        AND    ee.start_min <= $rend
+        AND    ee.end_max >= $base_start)
 GROUP BY start_interval,end_interval,na_sequence_id,name
    ]]>
     </sql>
@@ -5326,7 +5269,7 @@ SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM apidb.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'Sanger reichenowi SNPs'
+WHERE sa.dataset = 'sangerPReichenowiSnps_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
@@ -5401,7 +5344,7 @@ SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM apidb.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'Broad SNPs'
+WHERE sa.dataset = 'Pf_Broad_SNPs_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
@@ -5419,7 +5362,7 @@ SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM apidb.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'Sanger falciparum SNPs'
+WHERE sa.dataset = 'sangerItGhanaSnps_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
@@ -5437,7 +5380,7 @@ SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM apidb.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'Winzeler Array - Plasmodium Genetic Variation'
+WHERE sa.dataset = 'WinzelerGeneticVariationArray_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
@@ -5452,16 +5395,14 @@ ORDER BY var.strain
   <sqlQuery name="SNP:Combined:bulkAttribute" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
-SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
-       var.phenotype, var.product
-FROM apidb.SnpAttributes sa,
-     dots.SeqVariation var
-WHERE sa.dataset = 'PlasmoDB combined SNPs'
-  AND sa.na_sequence_id = $srcfeature_id
-  AND sa.start_min <= $rend
-  AND sa.start_min >= $base_start
-  AND var.parent_id = sa.na_feature_id
-ORDER BY var.strain
+SELECT sc.na_feature_id as feature_id, sc.strain, sc.allele,
+       sc.phenotype, sc.product
+FROM apidb.SnpCombined sc
+WHERE sc.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
+  AND sc.na_sequence_id = $srcfeature_id
+  AND sc.start_min <= $rend
+  AND sc.start_min >= $base_start
+ORDER BY sc.strain
 ]]>
     </sql>
   </sqlQuery>
@@ -5510,6 +5451,63 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
+   <sqlQuery name="DGE:coverage:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+SELECT fl.na_feature_id as feature_id,
+       'DGE' type, 
+       '$source' source, 
+       sta.source_id name, 
+       $$sample$$ parent_id, 
+       CASE WHEN staa.occurrence > 1 
+            THEN decode(log(2,staa.raw_count),0,-0.5,-(log(2,staa.raw_count)))
+            ELSE decode(log(2,staa.raw_count),0,0.5,log(2,staa.raw_count))
+       END score,
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'binaryColor='||CASE WHEN staa.occurrence > 1 THEN 1 ELSE 0 END atts
+FROM   apidb.FeatureLocation fl,
+       apidb.sagetaganalysisattributes staa,
+       apidb.sagetagattributes sta
+WHERE  fl.feature_type ='SAGETagFeature'
+  AND  fl.na_sequence_id = $srcfeature_id 
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+  AND  fl.na_feature_id = sta.na_feature_id
+  AND  staa.library_name = $$libName$$
+  AND  to_number(fl.feature_source_id) = staa.composite_element_id
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="MicroArrayProbes:expressionH:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT interval as feature_id,
+       $srcfeature_id as parent_id,
+       'MicroArrayProbes' type, 
+       '$source' source,
+       count(interval) score, 
+       (interval - 1) * 1000 startm, 
+       interval * 1000 end
+FROM
+(
+  SELECT ceil(fl.start_min / 1000) interval 
+  FROM   apidb.featurelocation fl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+  WHERE  edr.external_database_id = ed.external_database_id
+    AND  edr.external_database_release_id=fl.external_database_release_id
+    AND  fl.feature_type = 'ArrayElementFeature'
+    AND  ed.name = $$edname$$
+    AND  fl.start_min <= $rend
+    AND  fl.end_max >= $base_start
+    AND  fl.na_sequence_id = $srcfeature_id
+) 
+GROUP BY interval
+]]>
+    </sql>
+  </sqlQuery>
+
    <sqlQuery name="NextGenSeq:coverage:bulksubfeatures"  includeProjects="TriTrypDB">
      <sql>
 <![CDATA[
@@ -5522,7 +5520,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
     FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5537,21 +5535,78 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
+   <sqlQuery name="NextGenSeq:coverageRatio:bulksubfeatures"  includeProjects="TriTrypDB,PlasmoDB">
+     <sql>
+<![CDATA[
+     SELECT num.feature_id, num.type, num.source,
+              CASE WHEN num.multiple = 1 then -1 * power(2,-1*num.score) / power(2,-1*den.score) 
+              ELSE power(2,num.score) / power(2,den.score) END score, 
+             num.parent_id,
+             num.startm, num.end, num.atts
+     FROM
+     (SELECT interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              max(coverage) score, 
+             $$numSample$$ parent_id,
+             interval * (($rend - $base_start + 1) / 800) startm,
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
+    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.NextGenSeqCoverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$numEdname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.sample = $$numSample$$
+         AND csc.location <= $rend
+         AND csc.location >= $base_start - 1)
+       GROUP BY interval,sample,multiple) num,
+     (SELECT interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              max(coverage) score, 
+             $$denSample$$ parent_id,
+             interval * (($rend - $base_start + 1) / 800) startm,
+             (interval + 1) * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
+    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.NextGenSeqCoverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$denEdname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.sample = $$denSample$$
+         AND csc.location <= $rend
+         AND csc.location >= $base_start - 1)
+       GROUP BY interval,sample,multiple) den
+    WHERE den.feature_id = num.feature_id
+      AND den.multiple = num.multiple 
+]]>
+    </sql>
+  </sqlQuery>
+
+<!-- NOTE: this query is 0 based half open as are all coverage plots generated by RUM -->
+
    <sqlQuery name="NextGenSeq:coverage:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
      SELECT start_interval feature_id,
              'NextGenSeq' type,
              '$source' source,
-              max(coverage) score, 
+              CASE WHEN multiple = 1 THEN -1 * max(coverage) ELSE max(coverage) END score, 
              $$sample$$ parent_id,
              start_interval * (($rend - $base_start + 1) / 800) startm,
              end_interval * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
-    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) start_interval, 
+    FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
                  csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5559,42 +5614,13 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND ed.name = $$edname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$sample$$
-         AND csc.mapping_start <= $rend
+         AND csc.mapping_start + 1 <= $rend
          AND csc.mapping_end >= $base_start - 1)
        GROUP BY start_interval,end_interval,sample,multiple
 ]]>
     </sql>
   </sqlQuery>
 
-   <sqlQuery name="NextGenSeq:coverageComb:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-     SELECT start_interval feature_id,
-             'NextGenSeq' type,
-             '$source' source,
-              max(coverage) score, 
-             $$sample1$$ || $$sample2$$ parent_id,
-             start_interval * (($rend - $base_start + 1) / 800) startm,
-             end_interval * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='||CASE WHEN sample = $$sample1$$ THEN 0 ELSE 1 END atts
-    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) start_interval, 
-                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
-                 csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
-             sres.externaldatabaserelease edr,
-             sres.externaldatabase ed
-       WHERE csc.external_database_release_id = edr.external_database_release_id
-         AND edr.external_database_id = ed.external_database_id
-         AND ed.name = $$edname$$ 
-         AND csc.na_sequence_id = $srcfeature_id
-         AND (csc.sample = $$sample1$$
-          OR csc.sample = $$sample2$$)
-         AND csc.mapping_start <= $rend
-         AND csc.mapping_end >= $base_start - 1)
-       GROUP BY start_interval,end_interval,sample,multiple
-]]>
-    </sql>
-  </sqlQuery>
 
    <sqlQuery name="NextGenSeq:coverageCombNorm:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
@@ -5602,15 +5628,15 @@ WHERE fl.na_sequence_id = $srcfeature_id
      SELECT start_interval feature_id,
              'NextGenSeq' type,
              '$source' source,
-              max(round(c.coverage * s.sum_span_length / 15000000,1)) score, 
+              CASE WHEN  multiple = 1 THEN -1 * max(round(c.coverage * s.sum_span_length / 15000000,1)) ELSE max(round(c.coverage * s.sum_span_length / 15000000,1)) END as score, 
              $$sample1$$ || $$sample2$$ parent_id,
              c.start_interval * (($rend - $base_start + 1) / 800) startm,
              c.end_interval * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='||CASE WHEN c.sample = $$sample1$$ THEN 0 ELSE 1 END atts
-    FROM apidb.nextgenseq_stats s, (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) start_interval, 
+             'triColor='||CASE WHEN c.sample = $$sample1$$ and c.multiple = 0 THEN 0 WHEN c.multiple = 0 THEN 1 ELSE 2 END atts
+    FROM apidb.nextgenseq_stats s, (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
                  csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5619,7 +5645,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND csc.na_sequence_id = $srcfeature_id
          AND (csc.sample = $$sample1$$
           OR csc.sample = $$sample2$$)
-         AND csc.mapping_start <= $rend
+         AND csc.mapping_start + 1 <= $rend
          AND csc.mapping_end >= $base_start - 1) c
          where c.sample = s.sample
        GROUP BY c.start_interval,c.end_interval,c.sample,c.multiple,s.sum_span_length
@@ -5633,15 +5659,15 @@ WHERE fl.na_sequence_id = $srcfeature_id
      SELECT start_interval feature_id,
              'NextGenSeq' type,
              '$source' source,
-              log(2,max(coverage)) score, 
+              decode(multiple, 1, -1, 1)*log(2,max(coverage)) score, 
              $$sample$$ parent_id,
              start_interval * (($rend - $base_start + 1) / 800) startm,
              end_interval * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
-    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) start_interval, 
+    FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
                  csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.nextgenseq_coverage csc,
+       FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
@@ -5649,7 +5675,36 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND ed.name = $$edname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$sample$$
-         AND csc.mapping_start <= $rend
+         AND csc.mapping_start + 1 <= $rend
+         AND csc.mapping_end >= $base_start - 1)
+       GROUP BY start_interval,end_interval,sample,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="NextGenSeq:coverageLog7:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+     SELECT start_interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+              decode(multiple, 1, -1, 1)*$$score$$ score, 
+             $$feature_id$$ parent_id,
+             start_interval * (($rend - $base_start + 1) / 800) startm,
+             end_interval * (($rend - $base_start + 1) / 800) end,
+             'sample='||sample atts
+    FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
+                 csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.NextGenSeqCoverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$edname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.sample $$samples$$
+         AND csc.mapping_start + 1 <= $rend
          AND csc.mapping_end >= $base_start - 1)
        GROUP BY start_interval,end_interval,sample,multiple
 ]]>
@@ -5773,75 +5828,6 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq:cn_seven_samples:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT sample||interval feature_id, 
-             'rnaseq' type, 
-             'cn_seven_samples' source, 
-             power(2,max(coverage)) score, 
-             'cn_seven_sample' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'sample='||sample atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
-         AND rc.type = 'p'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_seven_samples_log:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT sample||interval feature_id, 
-             'rnaseq' type, 
-             'cn_seven_samples_log' source, 
-             max(coverage) score, 
-             'cn_seven_sample_log' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'sample='||sample atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','8h','16h','24h','32h','40h','48h')
-         AND rc.type = 'p'
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_pf0h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf0h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_0h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('0h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
     <sqlQuery name="rnaseq:cn_pf0h_lin:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -5864,30 +5850,6 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq:cn_pf8h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf8h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_8h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('8h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
-
     <sqlQuery name="rnaseq:cn_pf8h_lin:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -5906,29 +5868,6 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
        GROUP BY interval
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_pf16h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf16h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_16h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('16h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -5955,29 +5894,6 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq:cn_pf24h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf24h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_24h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('24h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
     <sqlQuery name="rnaseq:cn_pf24h_lin:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -5996,29 +5912,6 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
        GROUP BY interval
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_pf32h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf32h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_32h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('32h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>
@@ -6045,29 +5938,6 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="rnaseq:cn_pf40h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf40h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_40h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('40h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
-]]>
-    </sql>
-  </sqlQuery>
-
     <sqlQuery name="rnaseq:cn_pf40h_lin:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -6086,29 +5956,6 @@ WHERE fl.na_sequence_id = $srcfeature_id
          AND rc.location <= $rend
          AND rc.location >= $base_start - 1)
        GROUP BY interval
-]]>
-    </sql>
-  </sqlQuery>
-
-    <sqlQuery name="rnaseq:cn_pf48h:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-      SELECT interval feature_id, 
-             'rnaseq' type, 
-             'cn_pf48h' source, 
-             CASE WHEN sample = 'map' THEN min(coverage) ELSE max(coverage) END score, 
-             'rnaseq_48h' parent_id, 
-             interval * (($rend - $base_start + 1) / 800) startm, 
-             (interval + 1) * (($rend - $base_start + 1) / 800) end,
-             'binaryColor='|| DECODE(sample,'map',1,0) atts
-       FROM (select ceil(rc.location / (($rend - $base_start + 1) / 800)) interval, rc.coverage, rc.sample
-       FROM  apidb.rnaseq_coverage rc
-       WHERE rc.na_sequence_id = $srcfeature_id
-         AND rc.sample in ('48h','map')
-         AND rc.type in ('p','m')
-         AND rc.location <= $rend
-         AND rc.location >= $base_start - 1)
-       GROUP BY interval,sample
 ]]>
     </sql>
   </sqlQuery>

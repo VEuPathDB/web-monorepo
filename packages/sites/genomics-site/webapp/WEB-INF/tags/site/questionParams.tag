@@ -118,7 +118,7 @@
                         <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'EuPathDB'}">
 
 <c:choose>
-<c:when test="${fn:contains(wdkQuestion.name, 'Location') }">  <!-- as it happens in component sites  under choice below EnumParamBean -->
+<c:when test="${fn:contains(wdkQuestion.name, 'Location') || fn:contains(wdkQuestion.name, 'Snp') }">  <!-- as it happens in component sites  under choice below EnumParamBean -->
 
                            <td width="30%" align="right" style="vertical-align:top">
 				<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
@@ -232,24 +232,7 @@
 </c:forEach> <%-- end of foreach on paramGroups --%>
 
 
-<%-- set the weight --%>
-<c:if test="${!(wdkQuestion.isTransform)}">
-	<div name="All_weighting" class="param-group" type="ShowHide">
-		<c:set var="display" value="none"/>
-		<c:set var="image" value="plus.gif"/>
-		<div class="group-title">
-			<img class="group-handle" src='<c:url value="/images/${image}" />'/>
-			<span title="This is an optional number that will be assigned to all the results of this search; this 'weight' might later be used for sorting when doing unions in a strategy."> Give this search a weight</span>
-		</div>
-		<div class="group-detail" style="display:${display};text-align:center">
-    			<div class="group-description">
-				<p><html:text property="weight" maxlength="9" />  </p> 
-				<p>Optionally give this search a "weight" (for example 10, 200, -50, integer only).<br>In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches.</p>
-	
-    			</div><br>
-		</div>
-	</div>
-</c:if>
+<wdk:weight wdkModel="${wdkModel}" wdkQuestion="${wdkQuestion}" />
 
 
 <%-- set the custom name --%>
@@ -257,7 +240,7 @@
 	  <c:set var="display" value="none"/>
   <c:set var="image" value="plus.gif"/>
   <div class="group-title">
-	 <img class="group-handle" src='<c:url value="/images/${image}" />'/>
+	 <img class="group-handle" src='<c:url value="wdk/images/${image}" />'/>
    	 <span title="This name will be the name of the step.">Give this search a name</span>
   </div>
   <div class="group-detail" style="display:${display};text-align:center">

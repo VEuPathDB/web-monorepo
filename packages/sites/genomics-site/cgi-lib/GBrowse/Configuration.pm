@@ -11,6 +11,8 @@ use HTML::Template;
 
 require Exporter;
 
+umask 002;
+
 # Export Static Methods
 @ISA = qw(Exporter);
 @EXPORT = qw(init hover myfooter myheader mypostgrid);  

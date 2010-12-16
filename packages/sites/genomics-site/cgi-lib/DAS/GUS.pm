@@ -320,6 +320,11 @@ sub get_feature_by_name {
     $query =~ s/\*/\%/g;
     #my $un = uc($name);
     #$query =~ s/\?/\'\%$un\%\'/g;
+
+    warn "vvvvvvvvvv Start get_feature_by_name vvvvvvvvvvvvv" if DEBUG;
+    warn "$query" if DEBUG;
+    warn "^^^^^^^^^^ End get_feature_by_name ^^^^^^^^^^^^^^^" if DEBUG;
+
     $sth = $self->dbh->prepare($query);
 
     $self->{queryLogger}->execute($sth, $query, "GUS.pm", "get_feature_by_name");

@@ -65,7 +65,8 @@
 <!-- handle empty result set situation -->
 <c:choose>
   <c:when test='${strategy != null && wdkAnswer.resultSize == 0}'>
-	No results are retrieved
+	No results are retrieved<br><br>
+  	<pre>${wdkAnswer.resultMessage}</pre>
   </c:when>
   <c:when test='${strategy == null && wdkUser.guest && wdkAnswer.resultSize == 0}'>
     Please login to use the basket

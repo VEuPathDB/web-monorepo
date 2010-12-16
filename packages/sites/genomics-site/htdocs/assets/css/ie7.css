@@ -11,23 +11,16 @@
 	background-color: #DDDDDD;
 }
 
-.rightarrow1 {
-	left: 7.3em;
+.arrow.right.size2 {
+  left: 4.8em;
 }
 
-.rightarrow2 {
-	left: 0.5em;
-	top: -3.3em;
-}
-
-.rightarrow3 {
-	left: 5px;
-	top: -3.3em;
+.arrow.right.size3 {
+  left: 3.7em;
 }
 
 .crumb_details {
 	border-width: 2px;
-	width: 500px;
 	z-index: 999;
 }
 
@@ -67,8 +60,16 @@
 	z-index: -1;
 }
 
+.operation.INTERSECT,
+.operation.MINUS,
+.operation.RMINUS,
+.operation.UNION {
+	height: 27px;
+}
+
 a.redbutton {
-	z-index: -1;
+  display: inline-block;
+  z-index: -1;
 }
 
 a.disabled {

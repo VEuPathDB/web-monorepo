@@ -12,7 +12,8 @@
 <!-- display basic filters -->
 <table border="1">
   <tr>
-    <th align="center">All Results</th>
+    <th align="center">All<br>Results</th>
+    <th align="center">Ortholog<br>Groups</th>
     <th align="center"><i>Encephalitozoon cuniculi </i></th>
     <th align="center"><i>Encephalitozoon intestinalis</i></th>
     <th align="center"><i>Enterocytozoon bieneusi</i></th>
@@ -23,6 +24,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_results" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="micro_distinct_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 

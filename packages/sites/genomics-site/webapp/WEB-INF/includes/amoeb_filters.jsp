@@ -14,6 +14,7 @@
 <table border="1">
   <tr>
     <th align="center">All Results</th>
+    <th align="center">Ortholog<br>Groups</th>
     <th align="center"><i>Entamoeba dispar</i></th>
     <th align="center"><i>Entamoeba histolytica</i></th>
     <th align="center"><i>Entamoeba invadens</i></th>
@@ -24,6 +25,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_results" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="amoeb_distinct_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 

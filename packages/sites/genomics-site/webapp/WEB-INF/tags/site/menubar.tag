@@ -12,8 +12,65 @@
 %>
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
+<c:set var="modelName" value="${applicationScope.wdkModel.name}" />
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
+<!-- for genes that have user comments -->
+<c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
+<c:set var="gqSet" value="${qSetMap['GeneQuestions']}"/>
+<c:set var="gqMap" value="${gqSet.questionsMap}"/>
+<c:set var="geneByTextQuestion" value="${gqMap['GenesByTextSearch']}"/>
+<c:set var="gkwqpMap" value="${geneByTextQuestion.paramsMap}"/>
+<c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
+<c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
+<c:set var="timestampParam" value="${gkwqpMap['timestamp']}"/>
+
+
+<!--  SETTING ORGANISMS for the genes in user comments 
+      (share with quick search!! some session variable or application scope -->
+
+<c:set var="AmoebaDBOrgs" value="Entamoeba dispar,Entamoeba histolytica,Entamoeba invadens" />
+<c:set var="CryptoDBOrgs" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris" />				
+<c:set var="GiardiaDBOrgs" value="Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15" />
+<c:set var="MicrosporidiaDBOrgs" value="Encephalitozoon cuniculi,Encephalitozoon intestinalis,Enterocytozoon bieneusi" />
+<c:set var="PlasmoDBOrgs" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii" />
+<c:set var="ToxoDBOrgs" value="Toxoplasma gondii,Neospora caninum" />
+<c:set var="TrichDBOrgs" value="Trichomonas vaginalis"/>
+<c:set var="TriTrypDBOrgs" value="Leishmania braziliensis,Leishmania infantum,Leishmania major,Leishmania mexicana,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax"/>
+<c:set var="EuPathDBOrgs" value="${AmoebaDBOrgs},${CryptoDBOrgs},${GiardiaDBOrgs},${MicrosporidiaDBOrgs},${PlasmoDBOrgs},${ToxoDBOrgs},${TrichDBOrgs},${TriTrypDBOrgs},"/>
+
+<c:choose>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
+		<c:set var="listOrganisms" value="${EuPathDBOrgs}" />
+	</c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'AmoebaDB')}">
+		<c:set var="listOrganisms" value="${AmoebaDBOrgs}" />
+	</c:when>
+        <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
+		<c:set var="listOrganisms" value="${CryptoDBOrgs}" />
+	</c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
+                <c:set var="listOrganisms" value="${GiardiaDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'MicrosporidiaDB')}">
+                <c:set var="listOrganisms" value="${MicrosporidiaDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
+                <c:set var="listOrganisms" value="${PlasmoDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
+                <c:set var="listOrganisms" value="${ToxoDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
+                <c:set var="listOrganisms" value="${TrichDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
+                <c:set var="listOrganisms" value="${TriTrypDBOrgs}" />
+        </c:when>
+</c:choose> 
+
+<!-- for external links -->
 <c:set var="xqSetMap" value="${wdkModel.xmlQuestionSetsMap}"/>
 <c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>
 <c:set var="xqMap" value="${xqSet.questionsMap}"/>
@@ -60,7 +117,7 @@
 <c:choose>
   <c:when test="${wdkUser == null || wdkUser.guest}">
     <wdk:requestURL path="/showApplication.do" />
-    <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');popLogin('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
+    <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');popLogin('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
   </c:when>
   <c:otherwise>
     <c:choose>
@@ -140,7 +197,7 @@
 
  <c:if test="${project != 'EuPathDB'}" >
     	    <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
-    	    <li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+    	    <li><a onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
 </c:if>
     	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li> 
   	</ul>
@@ -150,10 +207,18 @@
 <ul>
     <li><a href="#">Community</a>
 	<ul>
-    	    <li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>
+ 	    <c:if test="${project != 'EuPathDB'}" >    
+		<li><a title="Add your comments to your gene of interest: start at the gene page" onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesByTextSearch&myMultiProp(text_search_organism)=${listOrganisms}&myMultiProp(text_fields)=User comments&myMultiProp(whole_words)=no&myProp(max_pvalue)=-30&myProp(text_expression)=*&myProp(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
+
+	    <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
+
+    	    <li><a onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+	    </c:if>
+
     	    <li><a href="https://community.eupathdb.org">Discussion Forums</a></li>
-    	    
-    	    <c:choose>
+	    <li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>
+
+  	    <c:choose>
     	    <c:when test="${extlAnswer_exception != null}">
 	    	<li><a href="#"><font color="#CC0033"><i>Error. related sites temporarily unavailable</i></font></a></li>
     	    </c:when>
@@ -161,10 +226,6 @@
     		<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Related Sites</a></li>
     	    </c:otherwise>
     	    </c:choose>
- 	    <c:if test="${project != 'EuPathDB'}" >    	    
-	    	<li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
-    		<li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
-	    </c:if>
   	</ul>
     </li>
 </ul>
@@ -177,15 +238,15 @@
 <c:when test="${wdkUser == null || wdkUser.guest}">
 	<wdk:requestURL path="/showFavorite.do" />
 	<li><a id="mybasket" onclick="popLogin('${originRequestUrl}');" href="javascript:void(0)">
-		<img style="vertical-align:middle" height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
-		<span style="vertical-align:middle">My Favorites</span>
+		<img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
+		<span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
        	    </a>
     	</li></ul>
 </c:when>
 <c:otherwise>
     	<li><a href="<c:url value="/showFavorite.do"/>">
-		<img style="vertical-align:middle" height="20" src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
-		<span style="vertical-align:middle">My Favorites</span>
+		<img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
+		<span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
 	    </a>
 	</li></ul>	
 </c:otherwise>

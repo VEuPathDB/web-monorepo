@@ -10,7 +10,7 @@
 <tr>
 
 
-        <td  width="50%" valign="top">
+        <td  width="50%" >
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpBySourceId" linktext="SNP ID(s)" existsOn="A C P T"/>
@@ -31,7 +31,7 @@
 --%>
 	<td width="1"></td>
 
-        <td  width="50%" valign="top">
+        <td  width="50%" >
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
                 <tr>

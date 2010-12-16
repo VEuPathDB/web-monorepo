@@ -16,183 +16,96 @@ use Getopt::Long qw(GetOptions);
 use ApiCommonWebsite::Model::ModelConfig;
 use ApiCommonWebsite::Model::SqlXmlParser;
 $| = 1;
-my ($sanityFile, $model, $gbrowseFile, $indexOnly, $failuresOnly, $suggestOnly, $skipTo, $stopAfter, $showParseG, $showParseS, $showSql, $showCommentedSql, $sqlMode, $showDbInfo);
+my ($model, $gbrowseFile, $indexOnly, $failuresOnly, $skipTo, $stopAfter, $showParse, $showSql, $showCommentedSql, $sqlMode, $showDbInfo);
 
 $stopAfter = 1000;
-GetOptions("sanityFile=s" => \$sanityFile,
-           "model=s" => \$model,
+GetOptions("model=s" => \$model,
            "gbrowseFile=s" => \$gbrowseFile,
            "indexOnly!" => \$indexOnly,
            "failuresOnly!" => \$failuresOnly,
-           "suggestOnly!" => \$suggestOnly,
            "skipTo=i" => \$skipTo,
            "stopAfter=i" => \$stopAfter,
-           "showParseG!" => \$showParseG,
-           "showParseS!" => \$showParseS,
+           "showParse!" => \$showParse,
            "showSql!" => \$showSql,
            "showCommentedSql!" => \$showCommentedSql,
            "showDbInfo!" => \$showDbInfo,
 	  );
 
-&usage unless ($sanityFile && $gbrowseFile && $model);
-
-&usage if ($indexOnly && $suggestOnly);
+&usage unless ($gbrowseFile && $model);
 
 $sqlMode = $showSql;
 $sqlMode = 'commented' if $showCommentedSql;
 
-my ($sanityConfig, $defaultParams, $sqlValues) =
-  &parseSanityFile($sanityFile, $showParseS);
+my $parser = ApiCommonWebsite::Model::SqlXmlParser->new($gbrowseFile, $model, $showParse);
 
-my $sqlParser = ApiCommonWebsite::Model::SqlXmlParser->new($gbrowseFile);
-$sqlParser->setProjectId($model);
-$sqlParser->print() if($showParseG);
+exit(0) if $showParse;
+
+my $sqlQueryArray = $parser->getSqlQueryArray();
+my $sanityTestInfo = $parser->getSanityTestInfo();
+
+my ($sanityConfig, $defaultParams, $sqlValuesDecl) =
+  &getSanityConfig($sqlQueryArray, $sanityTestInfo, $model);
+
+#print Dumper $sanityConfig;
 
 if ($indexOnly) {
   &showIndex($sanityConfig);
   exit(0);
 }
 
-my ($queryNameHash, $queryNameArray) = &getQueryNameHash($sqlParser);
+my $sqlQueryHash = &getQueryNameHash($sqlQueryArray);
 
 my $parentFeatureTests = {};   # tests that subfeature queries refer to
 
-my $maxPrepareCounts = &validateTests($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams, $parentFeatureTests);
-
-exit(0) if ($suggestOnly);
+my $maxPrepareCounts = &validateTests($sqlQueryHash, $sqlQueryArray, $sanityConfig, $defaultParams, $parentFeatureTests);
 
 my $dbh = getDbHandle($showDbInfo);
 
-&runTests($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo,
-	  $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts);
-
-###################################################################
-
-sub usage {
-  die
-q{
-Test all sql in a gbrowse XML file
-
-Usage: gbrowseSanityTest --sanityFile sanityTestConfigFile --model PlasmoDB --gbrowseFile gbrowseXmlFile [--indexOnly | --suggestOnly | --failuresOnly] [--skipTo testnum] [--stopAfter testnum] [--showParseG] [--showParseS] [--showSql] [--showCommentedSql] [--showDbInfo]
-
-Where:
-  sanityFile       an xml file containing the configuration for the test
-  model            the name of the model in WDK parlance
-  gbrowseFile      the xml file that contains the queries used by gbrowse
-  indexOnly        don't run the test. only print tests and their test number
-  suggestOnly      don't run test. only print templates for missing tests
-  failuresOnly     run the test but only report the failures
-  skipTo           the index of the first test to run
-  stopAfter        the index of the last test to run
-  showParseG       show the data structure resulting from the parse of gbrowseFile
-  showParseS       show the data structure resulting from the parse of sanityFile
-  showSql          show the SQL even if the test passes
-  showCommentedSql like --showSql, but with macro names labelled in SQL comments
-                    (note that this can cause errors for macros inside quotes)
-  showDbInfo       show the database connection info (dsn and login)
+&runTests($dbh, $sqlQueryHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo,
+	  $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts, $parser);
 
 
-Sample sanity file XML:
-<gbrowseSanity>
-    <defaultParamValue name="rend" value="500000"/>
-    <defaultParamValue name="base_start" value="1000"/>
-    <defaultParamValue name="dlm" value=","/>
-    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_MAL3$$"/>
-
-    <sqlValue name="na_seq_id_MAL3">
-      <sql>
-      select na_sequence_id from dots.externalnasequence where source_id = 'MAL3'
-      </sql>
-    </sqlValue>
-
-    <sqlValue name="na_feat_id_PF11_0344">
-      <sql>
-      select na_feature_id from dots.genefeature where source_id = 'PF11_0344'
-      </sql>
-    </sqlValue>
-
-    <test name="get_feature_by_name" min="1" max="2000">
-      <param name="name" value="MAL1"/>
-    </test>
-
-    <test name="get_sequence" min="1" max="2000">
-    </test>
-
-    <test name="annotation:density:subfeatures" min="1" max="2000">
-      <param name="parent_id" value="$$na_feat_id_PF11_0344$$"/>
-    </test>
-
-    <test name="match:TGI" min="1" max="2000">
-    </test>
-
-    <test name="match:TGI:subfeatures" min="1" max="20">
-      <param name="parent_id" parentFeatureTest="match:TGI"/>
-    </test>
-
-</gbrowseSanity>
+###########################################################################
 
 
-Strategy for Making a Sanity Test File
+# make structure that has one element per test
+sub getSanityConfig {
+  my($sqlQueryArray, $sanityTestInfo, $model) = @_;
 
-Step 1: create an "empty" sanity test file with only the <gbrowseSanity> and
-        <defaultParamValue> tags filled in. The more <defaultParamValue> tags
-        you include, the easier it will be in following steps.
+  my $sanityConfig = {};
+  $sanityConfig->{test} = [];
 
-Step 2: run the test in --suggestOnly mode (and write the output to a temp file).
-        The file will contain templates for suggested tests to include in your
-        sanity test file.  Notice that tests do not include template <param> tags
-        if you have supplied a default for that type of param.
-
-Step 3: paste the suggested tests into your empty sanity test file.  Now it isn't
-        "empty" any more.
-
-Step 4: create <sqlValue> tags.  Use one of these when there is a <param> or 
-        <defaultParamValue> that expects an internal ID (eg, an na_sequence_id)
-        as a value.  Because your sanity test file will go into SVN, you do not
-        want to pollute it with hard-coded internal IDs.  Instead, use an
-        <sqlValue> tag to write sql that will produce an internal ID from a 
-        stable ID.  Give the <sqlValue> a unique name.  You can now refer to it
-        in any <param> or <defaultParamValue> by using the $$ macro syntax (see
-        the sample sanity file above).
-
-Step 5: for any <param> that still has a missing value, provide that value in
-        the <param> tag.
-
-Step 6: some subfeature queries are parameterized by a $parent_id which is
-        the ID of the parent feature. In those <param> tags, use the 
-        parentFeatureTest attribute to point to a parent test that can provide
-        the value for $parent_id.  (See the match:TGI example in the sample
-        sanity file above)
-
-Step 7: now you can run the test
-
-
-};
-}
-
-sub parseSanityFile {
-  my($sanityFile, $showParse) = @_;
-
-  open(FILE, $sanityFile) || die "can't open sanity file '$sanityFile' for reading\n";
-  my $simple = XML::Simple->new();
-
-  # use forcearray so elements with one child are still arrays
-  # and, use keyattr so that test are given as an ordered list
-  # rather than a hash with name as key.
-  my $data = $simple->XMLin($sanityFile,
-			    forcearray => 1,
-			    KeyAttr => {sqlValue=>'+name'});
-  if ($showParse) {
-    print Dumper($data);
-    print "\n\n\n";
+  foreach my $sqlQuery (@$sqlQueryArray) {
+    my $test = {name => $sqlQuery->{name}};  
+    if ($sqlQuery->{testParamValues}) {
+      foreach my $testParamValues (@{$sqlQuery->{testParamValues}}) {
+        die "<testParamValues> for $sqlQuery->{name} must include a 'project=' attribute\n" unless $testParamValues->{project};
+        next if $testParamValues->{project} ne $model;
+        $test->{param} = $testParamValues->{param};
+      }
+    }
+    push(@{$sanityConfig->{test}}, $test);
   }
+
+
+
+  my $testInfo;
+  foreach my $testInfoDecl (@$sanityTestInfo) {
+      if ($testInfoDecl->{project} eq $model) {
+	  die "Duplicate <sanityTestInfo model=\"$model\"" if $testInfo;
+	  $testInfo = $testInfoDecl;
+      }
+  }
+
+  die "Cannot find <sanityTestInfo project=\"$model\">" unless $testInfo;
+
   my $defaultParams = {};
-  foreach my $defaultParamValue (@{$data->{defaultParamValue}}) {
+  foreach my $defaultParamValue (@{$testInfo->{defaultParamValue}}) {
     $defaultParams->{$defaultParamValue->{name}} =
       {value=> $defaultParamValue->{value}, sql => $defaultParamValue->{value}};
   }
 
-  return ($data, $defaultParams);
+  return ($sanityConfig, $defaultParams, $testInfo->{sqlValue});
 }
 
 sub showIndex {
@@ -223,27 +136,17 @@ sub test2string {
 }
 
 sub validateTests {
-  my ($queryNameHash, $queryNameArray, $sanityConfig, $suggestOnly, $defaultParams, $parentFeatureTests) = @_;
+  my ($sqlQueryHash, $sqlQueryArray, $sanityConfig, $defaultParams, $parentFeatureTests) = @_;
 
   my %testedQueryNames =
     &getTestedQueryNames($sanityConfig, $parentFeatureTests);
 
   my $maxPrepareCnts={};
 
-  foreach my $queryName (@$queryNameArray) {
-    my $query = $queryNameHash->{$queryName};
+  foreach my $query (@$sqlQueryArray) {
+    my $queryName = $query->{name};
     if (!$testedQueryNames{$queryName}) {
-      if ($suggestOnly) {
-	my @paramNames = &getQueryParamNames($query->{sql}->[0]);
-	print qq{    <test name="$query->{name}->[0]" min="FIX_default_min" max="FIX_default_max">\n};
-	foreach my $paramName (@paramNames) {
-	  next if ($defaultParams->{$paramName});
-	  print qq{      <param name="$paramName" value=""/>\n};
-	}
-	print "    </test>\n\n";
-      } else {
 	print "NO TEST FOR: $queryName\n\n";
-      }
     }
     else {
       my $test = $testedQueryNames{$queryName};
@@ -255,7 +158,7 @@ sub validateTests {
 
   foreach my $testedQueryName (keys %testedQueryNames) {
     print "TEST OF NON-EXISTENT QUERY: '$testedQueryName'\n\n"
-      unless $queryNameHash->{$testedQueryName};
+      unless $sqlQueryHash->{$testedQueryName};
     ## make sure we have a name and value for the param
   }
   return $maxPrepareCnts;
@@ -275,23 +178,13 @@ sub findPrepareSql {
 
 
 sub getQueryNameHash {
-  my ($sqlParser) = @_;
-
-  my $queryNamesHash = $sqlParser->getQueryNamesHash();
+  my ($sqlQueryArray) = @_;
 
   my $qnh = {};
-  my @qna;
-
-  foreach my $module (keys %{$queryNamesHash}) {
-    foreach my $queryName (@{$queryNamesHash->{$module}}) {
-      my $sqlQuery = $sqlParser->getSQL($module, $queryName);
-
-      push(@qna, $queryName);
-      $qnh->{$queryName} = $sqlQuery;
-    }
+  foreach my $sqlQuery (@$sqlQueryArray) {
+    $qnh->{$sqlQuery->{name}} = $sqlQuery;
   }
-
-  return ($qnh,\@qna);
+  return ($qnh);
 }
 
 sub getTestedQueryNames {
@@ -301,8 +194,8 @@ sub getTestedQueryNames {
   my $count=0;
   foreach my $test (@{$sanityConfig->{test}}) {
     $count++;
-    die "test $count ($test->{name}) missing min\n" if $test->{min} eq "";
-    die "test $count ($test->{name}) missing max\n" if $test->{max} eq "";
+    $test->{min} = 1 if $test->{min} eq "";
+    $test->{max} = 10000000 if $test->{max} eq "";
     $testedNames{$test->{name}} = $test;
     foreach my $param (@{$test->{param}}) {
       if ($param->{parentFeatureTest}) {
@@ -351,9 +244,9 @@ sub getDbHandle {
 
 
 sub runTests {
-  my ($dbh, $queryNameHash, $sanityConfig, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts) = @_;
+  my ($dbh, $sqlQueryHash, $sanityConfig, $sqlValuesDecl, $failuresOnly, $skipTo, $stopAfter, $defaultParams, $parentFeatureTests, $sqlMode, $maxPrepareCounts, $parser) = @_;
 
-  my $sqlValues = &getSqlValues($dbh, $sanityConfig->{sqlValue}, $maxPrepareCounts);
+  my $sqlValues = &getSqlValues($dbh, $sqlValuesDecl, $maxPrepareCounts);
 
   my $count = 0;
   my $passed = 0;
@@ -370,12 +263,12 @@ sub runTests {
 
     my ($parentFeatureId, $parentFeatureRowCount) =
       &findParentFeatureId($dbh, $test->{param}, $defaultParams, $sqlValues,
-			   $parentFeatureTests);
+			   $parentFeatureTests, $parser);
 
     my $startTime = gettimeofday();
     my ($rowCount, $sqlString) = 
       &runSingleTest($dbh, $test, $defaultParams,
-		     $sqlValues, $parentFeatureTests, $parentFeatureId);
+		     $sqlValues, $parentFeatureTests, $parentFeatureId, $parser);
     my $time = gettimeofday() - $startTime;
     $time = int($time * 10000)/10000;
     $totalTime += $time;
@@ -409,14 +302,9 @@ Total time: $totalTime
 ";
 }
 sub runSingleTest {
-  my ($dbh, $test, $defaultParams, $sqlValues, $parentFeatureTests, $parentFeatureId) = @_;
+  my ($dbh, $test, $defaultParams, $sqlValues, $parentFeatureTests, $parentFeatureId, $parser) = @_;
 
-  my $queryName = $test->{name};
-  my $rawSqlString = $queryNameHash->{$queryName};
-
-  unless($rawSqlString) {
-    die "No sql found for query: $queryName";
-  }
+  my $rawSqlString = $parser->getSqlStringFromSqlQuery($sqlQueryHash->{$test->{name}});
 
   my $sqlString = &interpolateParams($rawSqlString, $defaultParams,
 				     $test->{name},
@@ -464,7 +352,7 @@ sub getPreparedInputs {
 }
 
 sub findParentFeatureId {
-  my ($dbh, $params, $defaultParams, $sqlValues, $parentFeatureTests) = @_;
+  my ($dbh, $params, $defaultParams, $sqlValues, $parentFeatureTests, $parser) = @_;
   my $parentFeatureId;
   my $parentFeatureRowCount;
 
@@ -474,7 +362,7 @@ sub findParentFeatureId {
     if (!$parentTestStuff->{featureId}) {
       print STDERR "(running test '$parentTestStuff->{test}->{name}' to get parent feature id)\n";
       &runSingleTest($dbh, $parentTestStuff->{test}, $defaultParams,
-		     $sqlValues, $parentFeatureTests);
+		     $sqlValues, $parentFeatureTests, undef, $parser);
     }
     $parentFeatureId = $parentTestStuff->{featureId};
     $parentFeatureRowCount = $parentTestStuff->{rowCount};
@@ -487,12 +375,11 @@ sub getSqlValues {
 
   my $answer = {};
 
-  foreach my $sqlValueName (keys(%$sqlValueElements)) {
-    my $sqlValue = $sqlValueElements->{$sqlValueName};
+  foreach my $sqlValue (@$sqlValueElements) {
     my $sql = $sqlValue->{sql}->[0];
 
     # here if running a query to get a bunch of rows to iterate test over
-    if (my $maxCount = $maxPrepareCounts->{$sqlValueName}) {
+    if (my $maxCount = $maxPrepareCounts->{$sqlValue->{name}}) {
       $sql =~ s/ROWNUM_COUNT/$maxCount/;
       my $stmt = $dbh->prepare($sql);
       $stmt->execute();
@@ -501,7 +388,7 @@ sub getSqlValues {
 	my @r = @$result;
 	push(@prepareResult, \@r);
       }
-      $answer->{$sqlValueName} = \@prepareResult;
+      $answer->{$sqlValue->{name}} = \@prepareResult;
     }
     # here to get just one row and one column 
     else {
@@ -514,7 +401,7 @@ sub getSqlValues {
 	my $columnCount = scalar(@result);
 	die ("sqlValue $sqlValue->{name} does not return 1 column ($columnCount)")
 	  unless $columnCount == 1;
-	$answer->{$sqlValueName} = $result[0];
+	$answer->{$sqlValue->{name}} = $result[0];
       }
     }
   }
@@ -572,6 +459,94 @@ sub substituteSqlValue {
   }
 
   return $val;
+}
+
+sub usage {
+  die
+q{
+Test all sql in a gbrowse XML file
+
+Usage: gbrowseSanityTest --model PlasmoDB --gbrowseFile gbrowseXmlFile [--indexOnly | --failuresOnly] [--skipTo testnum] [--stopAfter testnum] [--showParse] [--showSql] [--showCommentedSql] [--showDbInfo]
+
+Where:
+  model            the name of the model in WDK parlance
+  gbrowseFile      the xml file that contains the queries used by gbrowse
+  indexOnly        don't run the test. only print tests and their test number
+  failuresOnly     run the test but only report the failures
+  skipTo           the index of the first test to run
+  stopAfter        the index of the last test to run
+  showParse       show the data structure resulting from the parse of gbrowseFile
+  showSql          show the SQL even if the test passes
+  showCommentedSql like --showSql, but with macro names labelled in SQL comments
+                    (note that this can cause errors for macros inside quotes)
+  showDbInfo       show the database connection info (dsn and login)
+
+Sample test info in the gbrowse XML:
+<DAS>
+    <defaultParamValue name="rend" value="500000"/>
+    <defaultParamValue name="base_start" value="1000"/>
+    <defaultParamValue name="dlm" value=","/>
+    <defaultParamValue name="srcfeature_id" value="$$na_seq_id_MAL3$$"/>
+
+    <sqlValue name="na_seq_id_MAL3">
+      <sql>
+      select na_sequence_id from dots.externalnasequence where source_id = 'MAL3'
+      </sql>
+    </sqlValue>
+
+    <sqlValue name="na_feat_id_PF11_0344">
+      <sql>
+      select na_feature_id from dots.genefeature where source_id = 'PF11_0344'
+      </sql>
+    </sqlValue>
+
+  <module name="GUS.pm"> 
+    <sqlQuery> 
+      <name>get_feature_by_name</name>
+      <testParamSet>
+         <param name="name" value="MAL1"/>
+      </testParamSet>
+      <sql>
+       ...
+      </sql>
+     </sqlQuery>
+  </module>
+
+ <module name="Segment.pm">
+    <test name="annotation:density:subfeatures" min="1" max="2000">
+    </test>
+
+    <sqlQuery>
+      <name>annotation:density:subfeatures</name>
+      <testParamSet>
+        <param name="parent_id" value="$$na_feat_id_PF11_0344$$"/>
+      </testParamSet>
+    ...
+    </sqlQuery>
+
+
+  ...
+
+Strategy for adding tests to the gbrowse XML File
+
+Step 1: create <defaultParam> tags
+
+Step 2: create <sqlValue> tags.  Use one of these when there is a <param> or 
+        <defaultParamValue> that expects an internal ID (eg, an na_sequence_id)
+        as a value.  Because your sanity test file will go into SVN, you do not
+        want to pollute it with hard-coded internal IDs.  Instead, use an
+        <sqlValue> tag to write sql that will produce an internal ID from a 
+        stable ID.  Give the <sqlValue> a unique name.  You can now refer to it
+        in any <param> or <defaultParamValue> by using the $$ macro syntax (see
+        the sample sanity file above).
+
+Step 3: for any query that needs param values that are not provided by the defaults, 
+        add a <paramValuesSet> to provide the needed param values
+
+Step 4: to add additional tests (ie, to test different param values) add more 
+        <paramValuesSet>s
+
+};
 }
 
 

@@ -9,7 +9,7 @@
 <table width="100%" border="0" cellspacing="1" cellpadding="1">
 <tr>
 
-        <td width="50%" valign="top">
+        <td width="50%" >
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <tr>
                 <site:queryGridMakeUrl qset="AssemblyQuestions" qname="AssembliesByEstAccession" linktext="EST Accession(s)" existsOn="A Am G M P T Tt"/>
@@ -27,7 +27,7 @@
 
 	<td width="0.5"></td>
 
-        <td valign="top">
+        <td >
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
                  <tr>

@@ -163,9 +163,6 @@
     <c:if test="${attrs['new_product_name'].value != null}">
        <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
     </c:if>
-   <c:if test="${fn:contains(organism,'berghei')}">
-       <br> <a href="http://www.genedb.org/Homepage/Pberghei">New <i>P. berghei</i> assembly and annotation at GeneDB</a>
-    </c:if>
 </center></h2>
 
 <!-- note moved comments url stuff here so can use in plasmo new annotation section -->
@@ -193,7 +190,7 @@
 <c:choose>
   <c:when test="${species eq 'falciparum'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+CombinedSNPs
+      AnnotatedGenes+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+CombinedSNPs
     </c:set>
   </c:when>
   <c:when test="${species eq 'yoelii'}">
@@ -203,7 +200,7 @@
   </c:when>
   <c:when test="${species eq 'chabaudi'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
     </c:set>
   </c:when>
   <c:when test="${species eq 'berghei'}">
@@ -213,12 +210,12 @@
   </c:when>
   <c:when test="${species eq 'knowlesi'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
     </c:set>
   </c:when>
   <c:when test="${species eq 'vivax'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
     </c:set>
   </c:when>
   <c:otherwise>
@@ -281,13 +278,13 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
                attribution="" />
 </c:if>
 
-<c:if test="${externalDbName.value eq 'Sanger P. falciparum chromosomes'}">
+<c:if test="${externalDbName.value eq 'Pfalciparum_chromosomes_RSRC'}">
   <c:if test="${strand eq '-'}">
    <c:set var="revCompOn" value="1"/>
   </c:if>
 
-<!-- gene alias table -->
-<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
+
+
 
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">
@@ -428,11 +425,11 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 --%>
 
 
+<!-- gene alias table -->
+<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+
 
 <c:if test="${binomial eq 'Plasmodium falciparum'}">
-  <wdk:wdkTable tblName="Aliases" isOpen="true"
-                 attribution="P.falciparum_chromosomes"/>
-
   <wdk:wdkTable tblName="Notes" attribution="P.falciparum_chromosomes"/>
   
   <!-- publications -->
@@ -466,63 +463,45 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${isCodingGene}">
   <site:pageDivider name="Protein"/>
 
-  <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value}"/>
-
   <c:if test="${species eq 'falciparum'}">
-      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+PfBowyerMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
+     <c:set var="ptracks"> 
+       FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfBowyerMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+     </c:set>
   </c:if>
   <c:if test="${species eq 'berghei'}">
-      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=WatersMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
+      <c:set var="ptracks"> 
+        WatersMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+     </c:set>
   </c:if>
   <c:if test="${species eq 'yoelii'}">
-      <c:set var="proteinFeatures" value="${attrs['proteinFeatures'].value};type=LiverStageMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP"/>
-  </c:if>
-
-  <c:if test="${! fn:startsWith(proteinFeatures, 'http')}">
-    <c:set var="proteinFeatures">
-      ${pageContext.request.scheme}://${pageContext.request.serverName}/${proteinFeatures}
+      <c:set var="ptracks">
+       LiverStageMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
     </c:set>
   </c:if>
 
-  <c:set var="imageMapDivId" value="proteinFeaturesDiv"/>
+  <c:set var="proteinFeaturesUrl">
+   http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/plasmodbaa/?name=${id};type=${ptracks};width=640;embed=1;genepage=1
+   </c:set>
 
-  <c:catch var="e">
-    <c:set var="proteinFeaturesContent">
-    <c:choose>
-    <c:when test="${okDOMInnerHtml}">
-      <div id="${imageMapDivId}"></div>
-    </c:when>
-    <c:otherwise>
-      <noindex follow><center>
-      <c:import url="${proteinFeatures}"/>
-      <!-- ${proteinFeatures} -->
-      </center></noindex>
-    </c:otherwise>
-    </c:choose>
+   <c:if test="${ptracks ne ''}">
+       <c:set var="proteinFeaturesImg">
+       <noindex follow><center>
+    <c:catch var="e">
+      <c:import url="${proteinFeaturesUrl}"/>
+    </c:catch>
+    <c:if test="${e!=null}">
+      <site:embeddedError 
+            msg="<font size='-2'>temporarily unavailable</font>" 
+            e="${e}" />
+    </c:if> 
+    </center></noindex>
     </c:set>
-  </c:catch>
-  <c:if test="${e!=null}"> 
-    <c:set var="proteinFeaturesContent">
-    <site:embeddedError 
-        msg="<font size='-2'>temporarily unavailable</font>" 
-        e="${e}" 
-    />
-    </c:set>
-  </c:if>
+    <wdk:toggle name="proteinContext"  displayName="Protein Features" 
+                content="${proteinFeaturesImg}" 
+                attribution="${attribution}"/>
 
-  <c:choose>
-  <c:when test="${okDOMInnerHtml}">
-    <wdk:toggle name="proteinFeatures" displayName="Protein Features"
-               content="${proteinFeaturesContent}" isOpen="true"
-               imageMapDivId="${imageMapDivId}" imageMapSource="${proteinFeatures}"
-               attribution="NRDB,InterproscanData"/>
-  </c:when>
-  <c:otherwise>
-    <wdk:toggle name="proteinFeatures" displayName="Protein Features"
-               content="${proteinFeaturesContent}" isOpen="true"
-               attribution="NRDB,InterproscanData"/>
-  </c:otherwise>
-  </c:choose>
+    </c:if> <%-- ptracks ne '' --%>
+
 
   <c:if test="${binomial eq 'Plasmodium falciparum'}">
   <wdk:wdkTable tblName="Y2hInteractions" isOpen="true"
@@ -572,7 +551,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
   <c:if test="${binomial eq 'Plasmodium falciparum'}">
       <wdk:wdkTable tblName="MassSpec" isOpen="true"
-                    attribution="Waters_female_gametes,Waters_male_gametes,Waters_mixed_gametes,Pyoelii_LiverStage_LS40,Pyoelii_LiverStage_LS50,FlorensMassSpecData2002,FlorensMassSpecData2004,Pf_Merozoite_Peptides,Lasonder_Mosquito_Oocysts,Lasonder_Mosquito_oocyst_derived_sporozoites,Lasonder_Mosquito_salivary_gland_sporozoites,P.falciparum_Clinical_Proteomics,Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection,Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection,P.vivax_Clinical_Proteomics"/>
+                    attribution="Waters_female_gametes,Waters_male_gametes,Waters_mixed_gametes,Pyoelii_LiverStage_LS40,Pyoelii_LiverStage_LS50,FlorensMassSpecData2002,FlorensMassSpecData2004,Pf_Merozoite_Peptides,Lasonder_Mosquito_Oocysts,Lasonder_Mosquito_oocyst_derived_sporozoites,Lasonder_Mosquito_salivary_gland_sporozoites,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,P.falciparum_Clinical_Proteomics,Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection,Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection,P.vivax_Clinical_Proteomics,Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC"/>
   </c:if>
 
   <c:if test="${binomial eq 'Plasmodium berghei'}">
@@ -602,7 +581,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${binomial eq 'Plasmodium falciparum' || binomial eq 'Plasmodium yoelii' || binomial eq 'Plasmodium berghei'}">
   <site:pageDivider name="Expression"/>
 
-  <wdk:wdkTable tblName="ArrayElements" attribution="Vaidya_Bergman_oligos,DeRisi_oligos,berghei_gss_oligos"/>
+  <%-- wdk:wdkTable tblName="ArrayElements" attribution="Vaidya_Bergman_oligos,DeRisi_oligos,berghei_gss_oligos"/ --%>
 </c:if>
 
 <c:if test="${binomial eq 'Plasmodium vivax'}">
@@ -798,46 +777,6 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Overlay of Intraerythrocytic Expression Profiles"
                attribution="winzeler_cell_cycle,derisi_Dd2_time_series,derisi_HB3_time_series,derisi_3D7_time_series,DeRisi_oligos"/>
-
-  <c:set var="secName" value="PfRNASeq::Ver1"/>
-  <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}"/>
-  <c:set var="isOpen" value="true"/>
-
-  <c:set var="expressionContent">
-    <table width="90%" cellpadding=3>
-      <tr>
-        <td class="centered">
-          <c:choose>
-          <c:when test="${!async}">
-              <img src="${imgSrc}">
-          </c:when>
-          <c:otherwise>
-              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
-          </c:otherwise>
-          </c:choose>
-        </td>
-        <td class="centered">
-         <div class="small">            
-P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle. Y-axis is the log2 of the geometric mean of coverage / kb of unique sequence (GMC/kb). 
-         </div>
-        </td>
-      </tr>
-    </table>
-  </c:set>
-
-  <c:set var="noData" value="false"/>
-  <c:if test="${attrs['graph_pf_rna_seq'].value == 0}">
-    <c:set var="noData" value="true"/>
-  </c:if>
-
-
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
-               content="${expressionContent}" noData="${noData}"
-               imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="P.falciparum RNA Sequence Profiles - Intraerythrocytic Cycle"
-               attribution="Pfalciparum_RNA_Seq"/> 
-
 
   <c:set var="secName" value="Winzeler::Cc"/>
   <c:set var="imgId" value="img${secName}"/>
@@ -1433,133 +1372,12 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
 
   <!-- end Newbold microarry study -->
 
-
  <%-- ------------------------------------------------------------------ --%>
 
-  <c:set var="secName" value="Cowman::Sir2KO"/>
-  <c:set var="imgId" value="img${secName}"/>
-
-  <c:set var="isOpen" value="true"/>
-
-  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}&vp="/>
-  <c:set var="imgSrc" value="${preImgSrc}rma"/>
-
-  <c:set var="noData" value="false"/>
-
-  <c:if test="${attrs['graph_cowman_sir2'].value == 0}">
-    <c:set var="noData" value="true"/>
-  </c:if>
-
-  <c:set var="expressionContent">
-    <table>
-    <FORM NAME="CowmanSir2Sort">
-      <tr>
-        <td rowspan="2">
-              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
-        </td>
-
-        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
-
-        <td class="centered">
-          <div class="small">
-Pfsir2A and Pfsir2B KOs expression profiling in intra-erythrocytic stages
-            <br><br><br>
-            <b>x-axis</b><br>
-            intra-erythrocytic stage<br>
-            <br><br>
-            <b>y-axis</b><br>
-            RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.
-            <br><br>
-          </div>
-<SELECT NAME="CowmanSir2List"
-OnChange="javascript:updateImage('${imgId}', CowmanSir2Sort.CowmanSir2List.options[selectedIndex].value)">
-<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
-<OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
-<OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
-</select>
-
-        </td>
-
-      </tr>
-</FORM>
-    </table>
-  </c:set>
-
-
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
-               content="${expressionContent}" noData="${noData}"
-               imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Transcription profiling of wild type, Pfsir2A knock-out and Pfsir2B knock-out <i>Plasmodium falciparum</i> intra-erythrocytic stages"
-               attribution="New_Cowman_Sir2_KO"/>
-
-
-
- <%-- ------------------------------------------------------------------ --%>
-
-  <c:set var="secName" value="Su::CQTreatment"/>
-  <c:set var="imgId" value="img${secName}"/>
-
-  <c:set var="isOpen" value="true"/>
-
-  <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=plasmo&fmt=png&id=${id}&vp=_LEGEND,"/>
-  <c:set var="imgSrc" value="${preImgSrc}rma"/>
-
-  <c:set var="noData" value="false"/>
-
-  <c:if test="${attrs['graph_su_cq'].value == 0}">
-    <c:set var="noData" value="true"/>
-  </c:if>
-
-  <c:set var="expressionContent">
-    <table>
-    <FORM NAME="SuCQSort">
-      <tr>
-        <td rowspan="2">
-              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
-        </td>
-
-        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
-
-        <td class="centered">
-          <div class="small">
-Mutations in PfCRT confer chloroquine (CQ) resistance in P. falciparum. Point mutations in the homolog of the mammalian multidrug resistance gene (pfmdr1) can also modulate the levels of CQ response. However, parasites with the same pfcrt and pfmdr1 alleles exhibit a wide range of drug sensitivity, suggesting that additional genes contribute to levels of CQ resistance (CQR).<br>
-3 isogenic lines which have different drug resistance profiles corresponding to unique mutations in the pfcrt gene (106/1K76, 106/176I, and 106/76I-352K) were used to study changes in gene expression with and without chloroquine  and genomic variations, i.e. copy number (CN) changes.
-            <br><br><br>
-            <b>x-axis</b><br>
-            isogenic line<br>
-            <br><br>
-            <b>y-axis</b><br>
-            RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.
-            <br><br>
-          </div>
-<SELECT NAME="SuCQList"
-OnChange="javascript:updateImage('${imgId}', SuCQSort.SuCQList.options[selectedIndex].value)">
-<OPTION SELECTED="SELECTED" VALUE="${preImgSrc}rma">RMA</OPTION>
-<OPTION VALUE="${preImgSrc}pct">percentile</OPTION>
-<OPTION VALUE="${preImgSrc}rma,pct">both</OPTION>
-</select>
-
-        </td>
-
-      </tr>
-</FORM>
-    </table>
-  </c:set>
-
-
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
-               content="${expressionContent}" noData="${noData}"
-               imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Expression and genomic changes after exposing drug-selected mutants to short term CQ treatment in <i>Plasmodium falciparum</i>"
-               attribution="E-GEOD-10022_array"/>
-
-
-<%--
 <c:if test="${binomial eq 'Plasmodium falciparum'}">
   <site:expressionGraphs species="${binomial}" model="plasmo"/>
 </c:if>
 
---%>
  <%-- ------------------------------------------------------------------ --%>
 
 
@@ -2024,8 +1842,11 @@ Annotation of the P. chabaudi AS chromosomes was obtained from the Pathogen Sequ
   </c:choose>
 </div>
 
+<script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 </c:otherwise>
 </c:choose>
 
 <site:footer/>
+
+<site:pageLogger name="gene page" />

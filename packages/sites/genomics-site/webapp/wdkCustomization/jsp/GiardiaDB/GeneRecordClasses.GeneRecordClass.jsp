@@ -150,7 +150,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 </c:set>
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow
+     /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -190,7 +190,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 <!-- gene alias table -->
-<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
+<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">
@@ -272,44 +272,9 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <site:expressionGraphs species="${binomial}" model="giardia"/>
 
 
-<%-- sage count percentage graph --%>
-
-  <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl" />
-  <c:set var="secName1" value="Sage::Ver1"/>
-
-  <c:set var="imgSrc1" value="${plotBaseUrl}?type=${secName1}&project_id=${projectId}&model=giardia&fmt=png&id=${id}"/>
-
-  <c:set var="expressionContent">
-    <table border=0>
-      <tr>
-        <td class="centered">
-              <img src="${imgSrc1}">
-        </td>
-        <td class="centered">
-          <div class="small">
-          <b><i>Giardia lamblia</i> SAGE Tags counts</b>:  
-          </div>
-        </td>
-        <td class="centered"><image src="<c:url value="/images/spacer.gif"/>" height="150" width="150"></td>
-      </tr>
-
-    </table>
-  </c:set>
-
-  <c:if test="${attrs['graph_sage_pct'].value == 0}">
-    < c:set var="expressionContent" value="none"/>
-  </c:if>
-
-<wdk:toggle
-    displayName="<i>Giardia lamblia</i> SAGE Tags Counts"
-    content="${expressionContent}"
-    name="SageCountPct"
-    isOpen="true"
-    attribution="Giardia_SageTag_Count_percentages"/>
-
 <%-- SAGE tags ------------------------------------------------------%>
 
-<wdk:wdkTable tblName="SageTags" isOpen="true"
+<wdk:wdkTable tblName="SageTags" isOpen="FALSE"
                attribution="GiardiaSageTagArrayDesign,GiardiaSageTagFreqs"/>
 
 
@@ -323,7 +288,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
     </c:set>
 
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=${wdkRecord.primaryKey};type=${ptracks};width=640;embed=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=${wdkRecord.primaryKey};type=${ptracks};width=640;embed=1;genepage=1
 </c:set>
 <c:if test="${ptracks ne ''}">
     <c:set var="proteinFeaturesImg">
@@ -498,3 +463,5 @@ Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Kar
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
+
+<site:pageLogger name="gene page" />

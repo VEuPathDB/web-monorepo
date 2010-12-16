@@ -130,9 +130,10 @@ ${Question_Header}
 
 		       <c:set var="counter" value="0"/>
 		       <c:forEach items="${qP.vocab}" var="flatVoc">
-		              <input class="blast-type" type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" 
+					<c:set var="idStr" value="${fn:replace(flatVoc,' ', '')}"/>
+		              <input class="blast-type" type="radio" name="type" value="${flatVoc}" id="BlastType_${idStr}" 
                                      onClick="getBlastAlgorithm();changeQuestion();checkSequenceLength()" />
-                              <span id="type_BlastType_${counter}">${flatVoc}</span>
+                              <span id="type_BlastType_${idStr}">${flatVoc}</span>
 			      <c:set var="counter" value="${counter+1}"/>	
 		       </c:forEach>
 		       <input type="hidden" name="array(${pNam})" id="blastType"/>
@@ -330,9 +331,10 @@ ${Question_Header}
 
 		       <c:set var="counter" value="0"/>
 		       <c:forEach items="${qP.vocab}" var="flatVoc">
-		              <input class="blast-type" type="radio" name="type" value="${flatVoc}" id="BlastType_${counter}" 
+		              <c:set var="idStr" value="${fn:replace(flatVoc,' ', '')}"/>
+		              <input class="blast-type" type="radio" name="type" value="${flatVoc}" id="BlastType_${idStr}" 
                                      onClick="getBlastAlgorithm();changeQuestion();checkSequenceLength()" />
-                              <span id="type_${counter}">${flatVoc}</span>
+                              <span id="type_BlastType_${idStr}">${flatVoc}</span>
 			      <c:set var="counter" value="${counter+1}"/>	
 		       </c:forEach>
 		       <input type="hidden" name="array(${pNam})" id="blastType"/>

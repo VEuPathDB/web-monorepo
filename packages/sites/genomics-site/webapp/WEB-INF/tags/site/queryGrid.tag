@@ -91,11 +91,11 @@
 <%--  All Genomic and SNP  --%>
 <tr>
     <%-- All Genomic Sequences (CONTIG) Queries TABLE  --%>
-    <td valign="top">     
+    <td >     
 <div class="innertube2">
 	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
 		<tr class="headerrow2">
-			<td  valign="top" align="center"><b>Identify Genomic Sequences by:</b></td>
+			<td   align="center"><b>Identify Genomic Sequences by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridContigs/>
@@ -105,11 +105,11 @@
     </td>
 
     <%--  All SNP Queries TABLE --%>
-    <td valign="top">    
+    <td >    
 <div class="innertube2"> 
 	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
 		<tr class="headerrow2">
-			<td  valign="top" align="center"><b>Identify SNPs by:</b></td>
+			<td   align="center"><b>Identify SNPs by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridSNPs/>
@@ -123,11 +123,11 @@
 <%--  All EST and EST Assemblies --%>
 <tr>
     <%-- All EST Queries TABLE  --%>
-    <td valign="top">     
+    <td >     
 <div class="innertube2"> 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerrow2">
-			<td  valign="top" align="center"><b>Identify ESTs by:</b></td>
+			<td   align="center"><b>Identify ESTs by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridESTs/>
@@ -138,11 +138,11 @@
     </td>
 
     <%--  All EST Assemblies Queries TABLE --%>
-    <td valign="top"> 
+    <td > 
 <div class="innertube2">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerrow2">
-			<td  valign="top" align="center"><b>Identify Transcript Assemblies by:</b></td>
+			<td   align="center"><b>Identify Transcript Assemblies by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridAssem/>
@@ -157,11 +157,11 @@
 <%--  All Sage Tags and ORF --%>
 <tr>
     <%-- All SageTags Queries TABLE  --%>
-    <td valign="top"> 
+    <td > 
 <div class="innertube2">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerrow2">
-			<td  valign="top" align="center"><b>Identify Sage Tag Alignments by:</b></td>
+			<td   align="center"><b>Identify Sage Tag Alignments by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridSage/>
@@ -171,11 +171,11 @@
     </td>
 
     <%--  All ORF Queries TABLE --%>
-    <td valign="top">   
+    <td >   
 <div class="innertube2">   
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerrow2">
-			<td  valign="top" align="center"><b>Identify ORFs by:</b></td>
+			<td   align="center"><b>Identify ORFs by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<site:queryGridORFs/>

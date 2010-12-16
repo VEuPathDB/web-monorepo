@@ -37,12 +37,12 @@
 <c:otherwise>
 <c:set var="data_type" value="${attrs['data_type']}" />
 
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <h2 style="text-align:center;">
 <wdk:recordPageBasketIcon />
 </h2>
-
-<%-- quick tool-box for the record --%>
-<site:recordToolbox />
 
 <%--#############################################################--%>
 

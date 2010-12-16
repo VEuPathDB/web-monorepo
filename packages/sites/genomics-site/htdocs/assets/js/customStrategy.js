@@ -37,3 +37,14 @@ function loadSampleStrat(url) {
 	$.blockUI();
 	window.location = url;
 }
+
+function customShowError() {
+	alert("An error occurred. \n The EuPathDB Team is currently working to resolve this issue.");
+}
+
+function customNewTab() {
+	var tooltips = $("#queryGrid div.htmltooltip");
+	tooltips.remove();
+	$('body').append(tooltips);
+	htmltooltip.render();
+}

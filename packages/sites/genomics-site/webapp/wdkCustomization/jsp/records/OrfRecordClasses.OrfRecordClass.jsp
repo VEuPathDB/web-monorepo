@@ -24,6 +24,7 @@
 </c:catch>
 
 <site:header title="${id}"
+             refer="recordPage"
              divisionName="${recordType} Record"
              division="queries_tools"/>
 
@@ -35,6 +36,9 @@
 
 
 <br/>
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 
 <h2>
 <center>
@@ -42,9 +46,6 @@
 </center>
 </h2>
 
-
-<%-- quick tool-box for the record --%>
-<site:recordToolbox />
 
 <%--#############################################################--%>
 

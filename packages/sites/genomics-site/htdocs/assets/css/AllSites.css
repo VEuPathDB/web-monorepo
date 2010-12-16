@@ -4,6 +4,10 @@
      (after the order set up in header.tag)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#toplink {
+	padding-top: 1px;
+}
+
 #record_page_cell_div {
 	margin-left: 20px;
 }
@@ -466,7 +470,7 @@ div.innertube #record-toolbox li {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #menubar {
-	min-width: 935px; //to make space for My Favorites
+	min-width: 935px; /* to make space for My Favorites */
 	height: 19px;
 	text-align: left;
 	background-image: url(../images/menu_bar.png);
@@ -608,7 +612,7 @@ div.innertube #record-toolbox li {
 	left:100%;
 	width: 16em;
 	font-weight: normal;
-	padding: 2px 0px;
+	padding: 5px 0px;
 	line-height: 14px;
 	z-index: 500;
   	color: #414141;
@@ -621,7 +625,7 @@ div.innertube #record-toolbox li {
 	font-weight: normal;
 	background-color: #FFFFFF;
 	text-decoration: none;
-	padding: 2px 0px;
+	padding: 5px 0px;
 	line-height: 14px;
 	display: block;
 	z-index: 500;
@@ -645,7 +649,7 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul {
 	display:block;
 	width: 15em;
 	text-decoration: none;
-	padding: 2px;
+	padding: 5px;
 	background-color: #FFFFFF;
 	z-index: 500;
 }
@@ -656,7 +660,7 @@ div#menu ul ul ul li:hover ul {
 	display:block;
 	width: 26em;
 	text-decoration: none;
-	padding: 2px;
+	padding: 5px;
 	background-color: #FFFFFF;
 	z-index: 500;
 }
@@ -667,7 +671,7 @@ div#menu ul ul ul li:hover ul {
 	left:100%;
 	width: 26em;
 	font-weight: normal;
-	padding: 2px;
+	padding: 5px;
 	line-height: 14px;
 	z-index: 500;
 }
@@ -760,6 +764,11 @@ div#menu ul ul ul li:hover ul {
 
 #queryGrid td {
 	padding: 1px;
+	vertical-align: top;
+}
+
+#queryGrid .queryGridBullet, #queryGrid .queryGridLink, #queryGrid .queryGridIcons {
+	vertical-align: middle;
 }
 
 .innertube2{
@@ -1088,39 +1097,50 @@ ul.cirbulletlist {
    margin-top: 24px;
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Fonts 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-/*
-.selected_filter {
-   position: absolute;
-   display: block;
+h1 {
+	font-size: 20px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 14px;
 }
 
-.selected {
-   color: #000000;
+h2 {
+	font-size: 18px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	margin-bottom: 11px;
+ 	text-align: left;
+	margin-left: 11px;
 }
 
-td.selected {
-   background-color: #fffd60;
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	text-align: left;
+	color: #000000;
+	background-color: #ffffff;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	white-space: normal;
+	background-repeat: repeat-x;
 }
 
-div.filter_details {
-   position: absolute;
-   background: #ffffCC;
-   border: 1px solid black;
-   padding: 0 3px;
+
+a:link, a:visited {
+	text-decoration: none;
 }
 
-span#toggle_filter {
-   font-family: Arial,Helvetica,Verdana;
-   color: #999999;
-   text-decoration: underline;
+a:hover, a:active {
+	text-decoration: none;
 }
 
-.hidden {
-    display: none;
+td { 
+    padding: 3px 3px 3px 3px;
 }
-
-.fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
-
-*/
-

@@ -29,48 +29,51 @@
 <c:set var="sessionId" value="${sessionScope['sessionId']}"/>
 
 
+<c:set var="AmoebaDBOrgs" value="Entamoeba dispar,Entamoeba histolytica,Entamoeba invadens" />
+<c:set var="CryptoDBOrgs" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris" />				
+<c:set var="GiardiaDBOrgs" value="Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15" />
+<c:set var="MicrosporidiaDBOrgs" value="Encephalitozoon cuniculi,Encephalitozoon intestinalis,Enterocytozoon bieneusi" />
+<c:set var="PlasmoDBOrgs" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii" />
+<c:set var="ToxoDBOrgs" value="Toxoplasma gondii,Neospora caninum" />
+<c:set var="TrichDBOrgs" value="Trichomonas vaginalis"/>
+<c:set var="TriTrypDBOrgs" value="Leishmania braziliensis,Leishmania infantum,Leishmania major,Leishmania mexicana,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax"/>
+<c:set var="EuPathDBOrgs" value="${AmoebaDBOrgs},${CryptoDBOrgs},${GiardiaDBOrgs},${MicrosporidiaDBOrgs},${PlasmoDBOrgs},${ToxoDBOrgs},${TrichDBOrgs},${TriTrypDBOrgs},"/>
 <c:choose>
+  	 <c:when test="${fn:containsIgnoreCase(modelName, 'AmoebaDB')}">
+                 <c:set var="listOrganisms" value="${AmoebaDBOrgs}" />
+         </c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
-		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris,Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii,Neospora caninum,Trichomonas vaginalis,Leishmania braziliensis,Leishmania infantum,Leishmania major,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax,Entamoeba dispar,Entamoeba histolytica,Entamoeba invadens,Encephalitozoon cuniculi,Encephalitozoon intestinalis"/>
+		<c:set var="listOrganisms" value="${EuPathDBOrgs}" />
 	</c:when>
         <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
-		<c:set var="listOrganisms" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris"/>
+		<c:set var="listOrganisms" value="${CryptoDBOrgs}" />
 	</c:when>
-<c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
-                <c:set var="listOrganisms" value="Toxoplasma gondii,Neospora caninum"/>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
+                <c:set var="listOrganisms" value="${GiardiaDBOrgs}" />
         </c:when>
-
+	<c:when test="${fn:containsIgnoreCase(modelName, 'MicrosporidiaDB')}">
+                <c:set var="listOrganisms" value="${MicrosporidiaDBOrgs}" />
+        </c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
-		<c:set var="listOrganisms" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii"/>
-	</c:when>
- <c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
-		<c:set var="listOrganisms" value="Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15"/>
-	</c:when>
- <c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
-		<c:set var="listOrganisms" value="Trichomonas vaginalis"/>
-	</c:when>
-
- <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
-		<c:set var="listOrganisms" value="Leishmania braziliensis,Leishmania infantum,Leishmania major,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax"/>
-	</c:when>
-
- <c:when test="${fn:containsIgnoreCase(modelName, 'AmoebaDB')}">
-		<c:set var="listOrganisms" value="Entamoeba dispar,Entamoeba histolytica,Entamoeba invadens"/>
-	</c:when>
-
- <c:when test="${fn:containsIgnoreCase(modelName, 'MicrosporidiaDB')}">
-		<c:set var="listOrganisms" value="Encephalitozoon cuniculi,Encephalitozoon intestinalis"/>
-	</c:when>
-
+                <c:set var="listOrganisms" value="${PlasmoDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
+                <c:set var="listOrganisms" value="${ToxoDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
+                <c:set var="listOrganisms" value="${TrichDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
+                <c:set var="listOrganisms" value="${TriTrypDBOrgs}" />
+        </c:when>
 </c:choose> 
-
 
 <div  style="width:460px;" id="quick-search" session-id="${sessionId}">
          <table style="width:460px;">
            <tr>
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
-          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" title="Click to input several Gene IDs">Gene ID:</a></b></label>
+          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" title="Enter a Gene ID. Use * as a wildcard (to obtain more than one). Click to enter multiple Gene IDs">Gene ID:</a></b></label>
          		<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
 	  			<input type="text" class="search-box" name="value(${geneIdParam.name})" value="${geneIdParam.default}" />  <!-- size is defined in class -->
 	  			<input type="hidden" name="questionSubmit" value="Get Answer"/>
@@ -79,16 +82,22 @@
 			 </div></td>
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
-          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" title="Click to access an advanced gene search">Gene Text Search:</a></b></label>
-          <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions"/>
-    <c:choose> 
-          <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
-             <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Phenotype"/>
-          </c:when>
-          <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
-             <c:set var="textFields" value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Community annotation"/>
-          </c:when>
-    </c:choose> 
+          		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" 
+title="Enter a term to find genes. Use * as a wildcard. Use quotation marks to find phrase matches. Click to access the advanced gene search page">Gene Text Search:</a></b></label>
+
+          <c:set var="textFields" value="Gene ID,Alias,Gene product,GO terms and definitions,Gene notes,User comments,Protein domain names and descriptions,EC descriptions"/>
+          <c:if test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
+             <c:set var="textFields" value="${textFields},Release 5.5 Genes"/>
+          </c:if>
+          <c:if test="${fn:containsIgnoreCase(modelName, 'TriTrypDB') || fn:containsIgnoreCase(modelName, 'EuPathDB')}">
+             <c:set var="textFields" value="${textFields},Phenotype"/>
+          </c:if>
+          <c:if test="${fn:containsIgnoreCase(modelName, 'ToxoDB') || fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
+             <c:set var="textFields" value="${textFields},Community annotation"/>
+          </c:if>
+          <c:if test="${not fn:containsIgnoreCase(modelName, 'CryptoDB') && not fn:containsIgnoreCase(modelName, 'GiardiaDB') && not fn:containsIgnoreCase(modelName, 'TrichDB') && not fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
+             <c:set var="textFields" value="${textFields},Metabolic pathway names and descriptions"/>
+          </c:if>
            		<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch"/>
 		        <input type="hidden" name="array(${orgParam.name})" value="${listOrganisms}"/>
           		<input type="hidden" name="array(text_fields)" value="${textFields}"/>

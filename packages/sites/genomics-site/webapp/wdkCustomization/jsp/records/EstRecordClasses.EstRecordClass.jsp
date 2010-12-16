@@ -25,6 +25,7 @@
 
 <site:header title="${wdkModel.displayName} : EST ${id}"
              divisionName="EST Record"
+             refer="recordPage"
              division="queries_tools"/>
 
 
@@ -36,14 +37,14 @@
 
 <br/>
 
+<%-- quick tool-box for the record --%>
+<site:recordToolbox />
+
 <h2>
 <center>
 <wdk:recordPageBasketIcon />
 </center>
 </h2>
-
-<%-- quick tool-box for the record --%>
-<site:recordToolbox />
 
 <%--#############################################################--%>
 
