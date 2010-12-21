@@ -174,20 +174,11 @@
 <%-- import WDK related assets --%> 
 <wdk:includes /> 
 
-
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
-
-<%-- NOW PROVIDED IN WDK via includes.tag
-<link rel="stylesheet" href="wdk/css/jquery-ui-1.7.2.custom.css"           type="text/css" />
-<link rel="stylesheet" href="wdk/css/dyk.css"            type="text/css"/>
-<link rel="stylesheet" href="wdk/css/Strategy.css"           type="text/css" />
-<link rel="stylesheet" href="wdk/css/flexigrid.css" type="text/css"/>
-<link rel="StyleSheet" href="wdk/css/jquery.autocomplete.css" type="text/css"/>
-<link rel="StyleSheet" href="wdk/css/jquery.multiSelect.css" type="text/css"/>
---%>
 
 <link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 
 <link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
+<link rel="stylesheet" href="/assets/css/spanlogic.css"         type="text/css" />
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
 
 

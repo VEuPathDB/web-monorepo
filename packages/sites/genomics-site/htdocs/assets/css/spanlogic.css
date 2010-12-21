@@ -1,0 +1,149 @@
+.regionParams .param-group[type="ShowHide"]{
+  border:none;
+  background:none;
+}
+
+#spanLogicParams, #spanLogicGraphics {
+  margin:5px;
+}
+
+#outputGroup,#comparisonGroup{
+  margin-top: 15px;
+}
+
+.invisible {
+  visibility: hidden;
+}  
+
+.instructions {
+  text-align:center;
+  color:gray;
+  margin-bottom:16px;
+}
+
+.span-step-text{
+  font-style:italic;
+  white-space:nowrap;
+  padding: 23px 0;
+}
+
+.span-step-text .param{
+  display: inline;
+}
+
+.span-step-text.left {
+  text-align:left;
+}
+
+.span-step-text.center {
+  text-align:center;
+}
+
+.span-step-text.right {
+  text-align:right;
+}
+
+.span-step-text .region_a,
+.span-step-text .region_b{
+  background-color:#efefef;
+  padding-bottom:45px;
+  font-style:normal;
+  font-weight: bold;
+  padding-top: 3px;
+  padding-left: 3px;
+  padding-right: 3px;
+  border-top: 1px solid grey;
+  border-left: 1px solid grey;
+  border-right: 1px solid grey;
+}
+
+.region_b {
+  color: #C80064;
+}
+
+.region_a {
+  color: #0000EE;
+}
+
+.span-step-text select{
+  font-weight: bold;
+}
+
+ul.horizontal {
+  padding: 5px 0;
+}
+
+ul.horizontal li {
+  padding: 1px 4px;
+}
+
+ul.horizontal.singleline {
+  white-space: nowrap;
+}
+
+ul.horizontal li input {
+  padding: 0;
+}
+
+.regionText {
+  width: 3.2em;
+}
+
+.regionParams {
+  background: #efefef; 
+  padding: 5px;
+  width:375px;
+}
+
+.regionGraphic {
+  background: #fff;
+}
+
+.regionHeader {
+  font-style: italic;
+  text-align: center;
+  font-size: 85%;
+}
+
+.offsetOptions {
+  display: inline-table;
+  margin-left: 20px;
+}
+
+div#scale_a, div#scale_b{
+  height:75px;
+  margin:2px 8px;
+  border:1px solid gray;
+}
+
+.span-operations{
+  position:relative;
+  display: inline;
+}
+
+.span-operations .operation-help {
+  position:absolute;
+  display: inline;
+  width: 45px;
+  top: 60px;
+  left: 27px;
+  padding:20px;
+  background-color: #efefef;
+}
+
+.triangle {
+  position:absolute;
+  top: 16px;
+  left: 40px;
+  border-width: 0 30px 100px;
+  border-style: solid;
+}
+
+.triangle.border {
+  border-color: transparent transparent #666;
+}
+
+.triangle.body {
+  border-color: transparent transparent #efefef;
+  padding-top: 2px
+}

@@ -10,140 +10,10 @@
 <c:set var="action" value="${requestScope.action}"/>
 <c:set var="allowChooseOutput" value="${requestScope.allowChooseOutput}"/>
 
-
-<style>
-  .regionParams .param-group[type="ShowHide"]{
-    border:none;
-    background:none;
-  }
-  #spanLogicParams, #spanLogicGraphics {
-    margin:5px;
-  }
-
-  #outputGroup,#comparisonGroup{
-    margin-top: 15px;
-  }
-  .invisible {
-    visibility: hidden;
-  }  
-  .instructions {
-    text-align:center;
-    color:gray;
-    margin-bottom:16px;
-  }
-  .span-step-text{
-	font-style:italic;
-	white-space:nowrap;
-	padding: 23px 0;
-  }
-  .span-step-text .param{
-	display: inline;
-  }
-  .span-step-text.left {
-    text-align:left;
-  }
-  .span-step-text.center {
-    text-align:center;
-  }
-  .span-step-text.right {
-    text-align:right;
-  }
-  .span-step-text .region_a,
-  .span-step-text .region_b{
-	background-color:#efefef;
-	padding-bottom:45px;
-	font-style:normal;
-	font-weight: bold;
-	padding-top: 3px;
-	padding-left: 3px;
-	padding-right: 3px;
-	border-top: 1px solid grey;
-	border-left: 1px solid grey;
-	border-right: 1px solid grey;
-
-  }
-  .region_b {
-    color: #C80064;   //same as rgb(200,0,100);    light green: #1acd22;
-  }
-  .region_a {
-    color: #0000EE;
-  }
-  .span-step-text select{
-	font-weight: bold;
-  }
-
-  ul.horizontal {
-    padding: 5px 0;
-  }
-  ul.horizontal li {
-    padding: 1px 4px;
-  }
-  ul.horizontal.singleline {
-    white-space: nowrap;
-  }
-  ul.horizontal li input {
-    padding: 0;
-  }
-  .regionText {
-    width: 3.2em;
-  }
-  .regionParams {
-    background: #efefef; 
-    padding: 5px;
-    width:375px;
-  }
-  .regionGraphic {
-    background: #fff;
-  }
-  .regionHeader {
-    font-style: italic;
-    text-align: center;
-    font-size: 85%;
-  }
-
-  .offsetOptions {
-    display: inline-table;
-    margin-left: 20px;
-  }
-  canvas, div#scale_a, div#scale_b{
-	height:75px;
-	margin:2px 8px;
-	border:1px solid gray;
-  }
-  .span-operations{
-    position:relative;
-    display: inline;
-  }
-  .span-operations .operation-help {
-    position:absolute;
-    display: inline;
-    width: 45px;
-    top: 60px;
-    left: 27px;
-    padding:20px;
-    background-color: #efefef;
-  }
-  #spanLogicParams table {
-  //  margin: auto;
-  }
-  .triangle {
-    position:absolute;
-    top: 16px;
-    left: 40px;
-    border-width: 0 30px 100px;
-    border-style: solid;
-  }
-  .triangle.border {
-    border-color: transparent transparent #666;
-  }
-  .triangle.body {
-    border-color: transparent transparent #efefef;
-    padding-top: 2px
-  }
-</style>
 <c:set var="pMap" value="${question.paramsMap}"/>
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/wizard.do"  onsubmit="callWizard('wizard.do?action=${requestScope.action}&step=${wdkStep.stepId}&',this,null,null,'submit')">
-<c:if test="${action == 'revise' && wdkStep.previousStep != null}">
+<c:if test="${action == 'revise'}">
+  <c:set var="spanStep" value="${wdkStep}"/>
   <c:set var="wdkStep" value="${wdkStep.previousStep}"/>
 </c:if>
 <h2 style="text-align:center;">Combine Step <span class="current_step_num"></span> and Step <span class="new_step_num"></span></h2>
@@ -169,6 +39,12 @@
 	<wdk:answerParamInput qp="${pMap['span_a']}"/>
 	<wdk:answerParamInput qp="${pMap['span_b']}"/>
 	<input type="hidden" value="${wdkStep.displayType}" id="span_a_type"/>
+	<input type="hidden" value="${importStep.displayType}" id="span_b_type"/>
+	<c:if test="${action == 'revise'}">
+	  <input type="hidden" value="${spanStep.params['span_output']}" id="span_output_default"/>
+	  <input type="hidden" value="${spanStep.params['span_operation']}" id="span_operation_default"/>
+	  <input type="hidden" value="${spanStep.params['span_strand']}" id="span_strand_default"/>
+        </c:if>
 	<input type="hidden" value="${importStep.displayType}" id="span_b_type"/>
 	<c:set var="wdkStepRecType" value="${wdkStep.displayType}"/>
 	<c:set var="importStepRecType" value="${importStep.displayType}"/>
