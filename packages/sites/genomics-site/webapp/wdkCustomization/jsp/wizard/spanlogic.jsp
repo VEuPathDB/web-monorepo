@@ -41,9 +41,9 @@
 	<input type="hidden" value="${wdkStep.displayType}" id="span_a_type"/>
 	<input type="hidden" value="${importStep.displayType}" id="span_b_type"/>
 	<c:if test="${action == 'revise'}">
-	  <input type="hidden" value="${spanStep.params['span_output']}" id="span_output_default"/>
-	  <input type="hidden" value="${spanStep.params['span_operation']}" id="span_operation_default"/>
-	  <input type="hidden" value="${spanStep.params['span_strand']}" id="span_strand_default"/>
+          <c:forEach items="${spanStep.params}" var="spanParam">
+            <input type="hidden" value="${spanParam.value}" id="${spanParam.key}_default"/>
+          </c:forEach>
         </c:if>
 	<input type="hidden" value="${importStep.displayType}" id="span_b_type"/>
 	<c:set var="wdkStepRecType" value="${wdkStep.displayType}"/>
@@ -62,7 +62,7 @@
 
 <%-- region areas --%>
         <div id="outputGroup">
-          <site:spanlogicGraph groupName="a" question="${question}" step="${wdkStep}" stepType="current_step"/>
+          <site:spanlogicGraph groupName="a" question="${question}" step="${wdkStep}" stepType="current_step" />
         </div>
         </td>
 
