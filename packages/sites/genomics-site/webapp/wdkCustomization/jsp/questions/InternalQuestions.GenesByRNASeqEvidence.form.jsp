@@ -11,6 +11,7 @@
 <%-- QUESTIONS --%>
 <c:set var="plasmoQuestions" value="P.f.study:Field Parasites from Pregnant Women and Children (Duffy),GeneQuestions.GenesByRNASeqPfExpressionFoldChange,P.f.study:Post Infection Time Series (Stunnenberg),GeneQuestions.GenesByRNASeqPfRBCFoldChange,GeneQuestions.GenesByRNASeqPfRBCExprnPercentile,P.f.study:Intraerythrocytic infection cycle (Newbold/Llinas),GeneQuestions.GenesByRNASeqExpressionTiming" />
 <c:set var="tritrypQuestions" value="GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile"/>
+<c:set var="toxoQuestions" value="GeneQuestions.GenesByTgVegRNASeqExpressionFoldChange,GeneQuestions.GenesByTgVegRNASeqExpressionPercentile"/>
 
 
 
@@ -28,12 +29,16 @@ ${Question_Header}
 
   <c:choose>
     <c:when test="${projectId == 'PlasmoDB'}">
-	<site:queryList4 columns="${columns}" questions="${plasmoQuestions}"/>
-    </c:when>    <c:when test="${projectId == 'TriTrypDB'}">
-	<site:queryList3 columns="${columns}" questions="${tritrypQuestions}"/>
+      <site:queryList4 columns="${columns}" questions="${plasmoQuestions}"/>
+    </c:when>    
+    <c:when test="${projectId == 'TriTrypDB'}">
+      <site:queryList3 columns="${columns}" questions="${tritrypQuestions}"/>
+    </c:when>
+    <c:when test="${projectId == 'ToxoDB'}">
+      <site:queryList3 columns="${columns}" questions="${toxoQuestions}"/>
     </c:when>
     <c:otherwise>  <%-- it must be the portal --%>
-	<site:queryList4 columns="${columns}" questions="${plasmoQuestions},${tritrypQuestions}"/>
+      <site:queryList4 columns="${columns}" questions="${plasmoQuestions},${tritrypQuestions},${toxoQuestions}"/>
     </c:otherwise>
    </c:choose>
 
