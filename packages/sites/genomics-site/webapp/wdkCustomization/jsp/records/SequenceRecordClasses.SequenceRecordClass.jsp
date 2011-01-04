@@ -593,6 +593,16 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
    Sequence and annotations from Genbank for Enterocytozoon bieneusi H348 contigs.
   </c:set>
 </c:when>
+<c:when test="${fn:contains(organism,'bayeri') && projectId eq 'MicrosporidiaDB'}">
+  <c:set var="reference">
+WGS assembly for <i>O. bayeri OER-3-3</i> obtained from Patrick Keeling, downloaded from Genbank (<a href="http://www.ncbi.nlm.nih.gov/nuccore/ACSZ00000000.1"Target="_blank">O.bayeri Genbank Record</a>).
+  </c:set>
+</c:when>
+<c:when test="${fn:contains(organism,'parisii') && projectId eq 'MicrosporidiaDB'}">
+  <c:set var="reference">
+WGS sequence for <i>Nematocida parisii ERTm1</i> obtained from Christina Cuomo at the Broad Institute,downloaded from Genbank (<a href="http://www.ncbi.nlm.nih.gov/nuccore/AEFF00000000"Target="_blank">N.parisii Genbank Record</a>).
+  </c:set>
+</c:when>
 <c:when test="${(fn:contains(organism,'Anncaliia') || fn:contains(organism,'Edhazardia') || fn:contains(organism,'Nosema') || fn:contains(organism,'Vittaforma')) && projectId eq 'MicrosporidiaDB'}">
   <c:set var="reference">
    Microsporidia sequences from the Genome Survey Sequences Database (GSS) division of Genbank  
