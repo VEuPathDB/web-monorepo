@@ -781,7 +781,7 @@ WHERE  edr.external_database_id = ed.external_database_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="NextGenSeq:coverageLog"  includeProjects="PlasmoDB,ToxoDB">
+  <sqlQuery name="NextGenSeq:coverageLog"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
        <![CDATA[
     SELECT $$sample$$   as feature_id,
@@ -5666,7 +5666,7 @@ GROUP BY interval
     </sql>
   </sqlQuery>
 
-   <sqlQuery name="NextGenSeq:coverageLog:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB">
+   <sqlQuery name="NextGenSeq:coverageLog:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
 <![CDATA[
      SELECT start_interval feature_id,
