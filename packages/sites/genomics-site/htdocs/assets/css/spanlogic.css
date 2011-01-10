@@ -57,6 +57,17 @@
   border-right: 1px solid grey;
 }
 
+/* Override tab-like styles for the details popup */
+.crumb_details .span-step-text .region_a,
+.crumb_details .span-step-text .region_b {
+  padding: 0;
+  border: none;
+}
+
+.span-step-text.bottom {
+  display: none;
+}
+
 .region_b {
   color: #C80064;
 }
@@ -65,7 +76,10 @@
   color: #0000EE;
 }
 
-.span-step-text select{
+.span-step-text select,
+.span-step-text .span_output,
+.span-step-text .comparison_type,
+.span-step-text .span_strand {
   font-weight: bold;
 }
 

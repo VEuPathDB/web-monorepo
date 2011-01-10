@@ -48,3 +48,21 @@ function customNewTab() {
 	$('body').append(tooltips);
 	htmltooltip.render();
 }
+
+// TODO: If span logic code is moved back into WDK,
+// this should be moved into view-JSON.js
+function customSpanParameters(params) {
+	var sentence;
+	$(params).each(function() {
+		if (this.name === 'span_sentence') {
+			sentence = document.createElement('tr');
+			var td = document.createElement('td');
+			var value = document.createElement('div');
+			value.setAttribute('class','span-step-text');
+			$(value).html(this.internal);
+			$(td).append(value);
+			$(sentence).append(td);
+		}
+	});
+	return sentence;
+}
