@@ -364,7 +364,7 @@ GO,InterproscanData
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
     <c:set var="ptracks">
-    StuartMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    StuartMassSpecPeptides+FergusonMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
     InterproscanData,Tbrucei_Proteomics_Procyclic_Form
