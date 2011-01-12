@@ -21,7 +21,7 @@
 /><c:set 
     var="project" value="${applicationScope.wdkModel.name}" 
 /><api:configurations 
-    var="config" configfile="WEB-INF/wdk-model/config/apifed-config.xml"
+    var="config" configfile="/WEB-INF/wdk-model/config/apifed-config.xml"
 /><%--
  synd:feed returns a SyndFeed object which has a Bean interface for
 iteration and getting SyndEntry objects and their attributes.

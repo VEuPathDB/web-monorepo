@@ -14,7 +14,7 @@
 
 <c:if test="${project == 'EuPathDB'}">
 <c:catch var="e">
-	<api:configurations var="config" configfile="WEB-INF/wdk-model/config/apifed-config.xml" />
+	<api:configurations var="config" configfile="/WEB-INF/wdk-model/config/apifed-config.xml" />
 </c:catch>
 <c:if test="${e!=null}">
     <font size="-1" color="#CC0033">News not available for the component Sites</font>
