@@ -51,18 +51,68 @@ function customNewTab() {
 
 // TODO: If span logic code is moved back into WDK,
 // this should be moved into view-JSON.js
-function customSpanParameters(params) {
-	var sentence;
-	$(params).each(function() {
-		if (this.name === 'span_sentence') {
-			sentence = document.createElement('tr');
+function customSpanParameters(aParams) {
+	var selectedOutput, aType, bType;
+	var paramsDiv = document.createElement('div');
+	var params = new Array();
+
+	function makeSpanTable(aSpanParams, aType, aGroup) {
+		var tr, table = document.createElement('table');
+		tr = document.createElement('tr');
+		$(tr).append("<td class='region_" + aGroup + "' rowspan='2'>" + aType + " Region:</td>");
+		$(tr).append("<td class='param value'>Begin at:</td>");
+		$(tr).append(aSpanParams['span_begin_' + aGroup]);
+		$(tr).append(aSpanParams['span_begin_direction_' + aGroup]);
+		$(tr).append(aSpanParams['span_begin_offset_' + aGroup]);
+		$(table).append(tr);
+		tr = document.createElement('tr');
+		$(tr).append("<td class='param value'>End at:</td>");
+		$(tr).append(aSpanParams['span_end_' + aGroup]);
+		$(tr).append(aSpanParams['span_end_direction_' + aGroup]);
+		$(tr).append(aSpanParams['span_end_offset_' + aGroup]);
+		$(table).append(tr);
+		return table
+	}
+
+	$(aParams).each(function() {
+		switch (this.name) {
+		case 'span_sentence':
+			var sentence = document.createElement('div');
+			sentence.setAttribute('class','span-step-text');
+			$(sentence).html(this.internal);
+			$(paramsDiv).append(sentence);
+			break;
+		case 'span_output':
+			selectedOutput = this.internal;
+			break;
+		default:
 			var td = document.createElement('td');
-			var value = document.createElement('div');
-			value.setAttribute('class','span-step-text');
-			$(value).html(this.internal);
-			$(td).append(value);
-			$(sentence).append(td);
+			td.className = "param value";
+			$(td).html(this.value);
+			params[this.name] = td;
+			break;
 		}
 	});
-	return sentence;
+
+	if (selectedOutput === 'a') {
+		aType = $('span.span_output',paramsDiv).text();
+		aType = aType.substring(0,aType.indexOf(' from'));
+		bType = $('span.comparison_type', paramsDiv).text();
+	}
+	else {
+		bType = $('span.span_output',paramsDiv).text();
+		bType = bType.substring(0,bType.indexOf(' from'));
+		aType = $('span.comparison_type', paramsDiv).text();
+	}
+
+	$(paramsDiv).append(makeSpanTable(params, aType, 'a'));
+
+	$(paramsDiv).append(makeSpanTable(params, bType, 'b'));
+
+	var tr = document.createElement('tr');
+	var td = document.createElement('td');
+	$(td).append(paramsDiv);
+	$(tr).append(td);
+
+	return tr;
 }
