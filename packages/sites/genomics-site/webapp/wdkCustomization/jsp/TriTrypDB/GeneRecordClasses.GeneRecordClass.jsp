@@ -58,8 +58,8 @@
 </c:if>
 
 
-<c:set var="esmeraldoDatabaseName" value="Sanger T.cruzi Esmeraldo chromosomes"/>
-<c:set var="nonEsmeraldoDatabaseName" value="Sanger T.cruzi Non-Esmeraldo contigs and chromosomes"/>
+<c:set var="esmeraldoDatabaseName" value="TcruziEsmeraldoLike_chromosomes_RSRC"/>
+<c:set var="nonEsmeraldoDatabaseName" value="TcruziNonEsmeraldoLike_genome_RSRC"/>
 
 
 <%-- display page header with recordClass type in banner --%>
@@ -326,7 +326,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
 
 <c:set var="attribution">
-enzymeDB
+enzymeDB_RSRC
 </c:set>
 
 <wdk:wdkTable tblName="EcNumber" isOpen="true"
