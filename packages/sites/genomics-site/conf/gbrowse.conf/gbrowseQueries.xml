@@ -839,7 +839,7 @@ SELECT
        'sample='|| ra.sample || '$dlm' || 
        'gene_id=' || ra.query_id atts
 FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
-WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+WHERE d.name = 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC'
  AND  rel.external_database_id = rel.external_database_id
  AND  ra.external_database_release_id = rel.external_database_release_id
  AND  ra.na_sequence_id = $srcfeature_id
@@ -867,7 +867,7 @@ SELECT
        'sample='|| ra.sample || '$dlm' || 
        'gene_id=' || ra.query_id atts
 FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
-WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+WHERE d.name = 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC'
  AND  rel.external_database_id = rel.external_database_id
  AND  ra.external_database_release_id = rel.external_database_release_id
  AND  ra.na_sequence_id = $srcfeature_id
@@ -896,7 +896,7 @@ FROM
          ra.query_id name, ra.strand||'1' as strand,
          ra.genome_matches,ra.sample
   FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
-  WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+  WHERE d.name = 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC'
    AND  rel.external_database_id = rel.external_database_id
    AND  ra.external_database_release_id = rel.external_database_release_id
    AND  ra.na_sequence_id = $srcfeature_id
@@ -924,7 +924,7 @@ FROM
          ra.query_id name, ra.strand||'1' as strand,
          ra.genome_matches
   FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
-  WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+  WHERE d.name = 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC'
    AND  rel.external_database_id = rel.external_database_id
    AND  ra.external_database_release_id = rel.external_database_release_id
    AND  ra.sample = 'raw_polyA'
@@ -1187,10 +1187,10 @@ AND blat.query_external_db_release_id = edr.external_database_release_id
 AND ed.external_database_id=edr.external_database_id
 AND etn.taxon_id = tn.taxon_id
 AND tn.name_class = 'scientific name'
-AND ed.name in ('L.major BAC Ends from Sanger',
-                'T.brucei RPCI93 BAC Ends',
-                'T.cruzi CHORI105 BAC End',
-                'L.major PAC Ends from Sanger',
+AND ed.name in ('Lmajor_sanger_BACEnds_RSRC',
+                'Tbrucei_Genbank_BACEnds_RSRC',
+                'Tcruzi_BACEnds_RSRC',
+                'Lmajor_sanger_PACEnds_RSRC',
                 'TgME49B7 Sanger BAC Ends')
 ) bacs
 GROUP BY bacs.feature_id, bacs.name, bacs.taxon
@@ -1245,7 +1245,7 @@ AND blat.query_external_db_release_id = edr.external_database_release_id
 AND edr.external_database_id = ed.external_database_id
 AND etn.taxon_id = tn.taxon_id
 AND tn.name_class = 'scientific name'
-AND ed.name in ('L.major Cosmid Ends from Sanger',
+AND ed.name in ('Lmajor_sanger_CosmidEnds_RSRC',
                 'Tg TIGR Cosmid Ends')
 ) bacs
 GROUP BY bacs.feature_id
@@ -1544,7 +1544,7 @@ WHERE  blat.query_na_sequence_id = etn.na_sequence_id
   SELECT edr.external_database_release_id
   FROM sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
   WHERE ed.external_database_id=edr.external_database_id
-  AND ed.name = 'L.major FV1 random Ends from Sanger'
+  AND ed.name = 'Lmajor_sanger_FV1Ends_RSRC'
   )
 GROUP BY regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]')
 ) f
@@ -4128,10 +4128,10 @@ AND blat.query_external_db_release_id in (
 SELECT edr.external_database_release_id
 FROM sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
 WHERE ed.external_database_id=edr.external_database_id
-AND ed.name in ('L.major BAC Ends from Sanger',
-                'T.brucei RPCI93 BAC Ends',
-                'T.cruzi CHORI105 BAC End',
-                'L.major PAC Ends from Sanger',
+AND ed.name in ('Lmajor_sanger_BACEnds_RSRC',
+                'Tbrucei_Genbank_BACEnds_RSRC',
+                'Tcruzi_BACEnds_RSRC',
+                'Lmajor_sanger_PACEnds_RSRC',
                 'TgME49B7 Sanger BAC Ends'))
 ]]>
     </sql>
@@ -4252,7 +4252,7 @@ AND blat.query_external_db_release_id = edr.external_database_release_id
 AND ed.external_database_id=edr.external_database_id
 AND etn.taxon_id = tn.taxon_id
 AND tn.name_class = 'scientific name'
-AND ed.name in ('L.major Cosmid Ends from Sanger',
+AND ed.name in ('Lmajor_sanger_CosmidEnds_RSRC',
                 'Tg TIGR Cosmid Ends')
 ]]>
     </sql>
