@@ -5532,7 +5532,7 @@ GROUP BY interval
              interval * (($rend - $base_start + 1) / 800) startm,
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
-    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
        FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
@@ -5541,8 +5541,8 @@ GROUP BY interval
          AND ed.name = $$edname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$sample$$
-         AND csc.location <= $rend
-         AND csc.location >= $base_start - 1)
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_start >= $base_start - 1)
        GROUP BY interval,sample,multiple
 ]]>
     </sql>
@@ -5565,7 +5565,7 @@ GROUP BY interval
              interval * (($rend - $base_start + 1) / 800) startm,
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
-    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
        FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
@@ -5574,8 +5574,8 @@ GROUP BY interval
          AND ed.name = $$numEdname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$numSample$$
-         AND csc.location <= $rend
-         AND csc.location >= $base_start - 1)
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_start >= $base_start - 1)
        GROUP BY interval,sample,multiple) num,
      (SELECT interval feature_id,
              'NextGenSeq' type,
@@ -5585,7 +5585,7 @@ GROUP BY interval
              interval * (($rend - $base_start + 1) / 800) startm,
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
-    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
        FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
@@ -5594,8 +5594,8 @@ GROUP BY interval
          AND ed.name = $$denEdname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$denSample$$
-         AND csc.location <= $rend
-         AND csc.location >= $base_start - 1)
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_start >= $base_start - 1)
        GROUP BY interval,sample,multiple) den
     WHERE den.feature_id = num.feature_id
       AND den.multiple = num.multiple 
