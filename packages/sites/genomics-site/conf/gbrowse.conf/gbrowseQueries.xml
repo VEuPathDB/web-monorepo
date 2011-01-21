@@ -699,7 +699,7 @@ FROM   dual
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="MicroArrayProbes:expressionD" includeProjects="PlasmoDB">
+  <sqlQuery name="MicroArrayProbes:expressionD" includeProjects="PlasmoDB,TriTrypDB">
     <testParamValues project="PlasmoDB">
       <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_06$$"/>
       <param name="base_start" value="469864"/> 
