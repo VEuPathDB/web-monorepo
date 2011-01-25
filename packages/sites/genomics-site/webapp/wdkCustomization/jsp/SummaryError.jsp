@@ -24,6 +24,8 @@
 </c:if>
 
 <%-- <site:header banner="Query cannot be executed" /> --%>
+
+<%--
 <h2><span style="color: red;">Query cannot be executed</span></h2>
 <div style="color: red;">
     <pre>
@@ -41,7 +43,6 @@
  and copy the information below in the message.</p>
 
 
-<!-- display question and param values and result size for wdkAnswer -->
 <table>
     <tr>
         <td align="right" nowrap><b>Query :</b></td>
@@ -87,6 +88,12 @@
 </ul>
 <p>Please for any questions   
 <a href="<c:url value="/help.jsp"/>"  target="_blank" onClick="poptastic(this.href); return false;">drop us a line</a>.</p>
+
+--%>
+
+<h2>Sorry, in this strategy, you have hit a step that needs to be revised and run again.<br>
+Please click on the name of the first step that shows 0 results, and choose the 'revise' option.</h2>
+
 
 <!-- pager at bottom -->
 <c:if test="${resultOnly}">
