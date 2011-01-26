@@ -131,7 +131,7 @@ ${organism}<br>
       Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
     </c:set>
   </c:when>
-  <c:when test='${organismFull eq "Leishmania mexicana mexicana"}'>
+  <c:when test='${organismFull eq "Leishmania mexicana"}'>
     <c:set var="tracks">
       Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
     </c:set>
