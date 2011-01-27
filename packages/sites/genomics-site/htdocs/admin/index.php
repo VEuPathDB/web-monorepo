@@ -20,7 +20,6 @@ $pageMap = array(
     'WDK'           => "/a/admin/index.jsp?p=WDK",
     'Tomcat'        => "/a/admin/index.jsp?p=Tomcat",
     'Apache'        => "/admin/apacheInfo.php",
-    //'Proxy'       => "https://caper.rcc.uga.edu/proxy-bin/admin/set-nginx-upstream?conf=" . $headers['Host'] . ".conf",
     'Proxy'         => "/admin/proxyInfo.php",
     'Build'         => "/a/admin/index.jsp?p=Build",
     'Announcements' => "/cgi-bin/admin/messageConsole.pl"
