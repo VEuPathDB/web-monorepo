@@ -60,9 +60,11 @@
      <img src="<c:url value='/images/arrow.gif'/>">
   </td>
 
+<c:if test="${organism_full ne 'Neospora caninum'}">
   <td align="center"><a href="#Expression">Expression</a>
      <img src="<c:url value='/images/arrow.gif'/>">
   </td>
+</c:if>
 
   <td align="center"><a href="#Sequence">Sequence</a>
      <img src="<c:url value='/images/arrow.gif'/>">
@@ -395,6 +397,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
 
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
+
+<c:if test="${organism_full ne 'Neospora caninum'}"> <%-- Expression section --%>
 <site:pageDivider name="Expression"/>
 
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
@@ -462,6 +466,9 @@ experimental condition.
                    attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
 
 </c:if>
+
+</c:if>  <%-- Expression section --%>
+
 
 <site:pageDivider name="Sequence"/>
 <i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
