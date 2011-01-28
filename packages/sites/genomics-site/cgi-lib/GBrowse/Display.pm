@@ -342,6 +342,12 @@ sub colorFromBinaryColor {
   }
 }
 
+sub colorFromBinaryColorScore {
+  my ($f, $first, $second) = @_;
+  my ($binColor) = $f->get_tag_values('binaryColor');
+  $f->score < 0 ? $second : $first; 
+}
+
 sub colorFromTriColor {
   my ($f, @colors) = @_;
   my ($triColor) = $f->get_tag_values('triColor');
