@@ -507,7 +507,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <%-- Expression Graphs ------------------------------------------------------%>
 
-<c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi' || binomial eq 'Leishmania major strain Friedlin' }">
+<c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi' || binomial eq 'Leishmania major' }">
 <site:pageDivider name="Expression"/>
   <site:expressionGraphs species="${binomial}" model="tritryp"/>
 </c:if>
