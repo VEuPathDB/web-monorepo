@@ -5714,7 +5714,7 @@ GROUP BY interval
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
          AND edr.external_database_id = ed.external_database_id
-         AND (ed.name = $$edname1$$ OR ed.name = $$edname2$$) 
+         AND ed.name in ($$edname1$$, $$edname2$$) 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$sample$$
          AND csc.mapping_start + 1 <= $rend
