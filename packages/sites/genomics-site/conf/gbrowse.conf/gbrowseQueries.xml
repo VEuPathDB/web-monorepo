@@ -442,6 +442,7 @@ ORDER BY blat.target_start asc, blat.score desc
   <sqlQuery name="match:WU_BLASTX">
      <sql>
 <![CDATA[
+select * from (
 SELECT b.similarity_id feature_id, 'match' type, 'WU_BLASTX' source, 
        b.name, b.score, b.pvalue, b.na_sequence_id parent_id, 
        b.startm, b.end, b.strand, b.atts
@@ -450,10 +451,10 @@ FROM
 WHERE  
        b.startm between $base_start and $rend and
        b.end between $base_start and $rend and       
-       b.na_sequence_id = $srcfeature_id and 
-       RowNum < 4000 
+       b.na_sequence_id = $srcfeature_id
 ORDER BY 
-       b.na_sequence_id, b.startm, b.pvalue
+       b.pvalue asc
+) where rownum < 4000
 ]]>
     </sql>
   </sqlQuery>
@@ -1476,6 +1477,7 @@ ORDER BY
   <sqlQuery name="match:BLASTX">
      <sql>
 <![CDATA[
+select * from (
  SELECT distinct sim.similarity_id feature_id, 
        'match' type, 
        'BLASTX' source,
@@ -1504,11 +1506,9 @@ WHERE
        to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-10 and 
        sim.min_query_start >= $base_start and 
        sim.max_query_end <= $rend and 
-       extq.na_sequence_id = $srcfeature_id and 
-       RowNum < 4000 
-ORDER BY 
-       sim.min_query_start asc, 
-       pvalue asc
+       extq.na_sequence_id = $srcfeature_id
+ORDER BY pvalue asc
+) where rownum < 4000
 ]]>
     </sql>
   </sqlQuery>
