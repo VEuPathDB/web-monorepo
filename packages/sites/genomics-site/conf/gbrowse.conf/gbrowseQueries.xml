@@ -581,7 +581,7 @@ WHERE startm <= $rend
   </sqlQuery>
   
   
-  <sqlQuery name="lowcomplexity:dust" excludeProjects="GiardiaDB">
+  <sqlQuery name="lowcomplexity:dust">
      <sql>
 <![CDATA[
 SELECT
@@ -1330,7 +1330,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql> 
   </sqlQuery>
   
-  <sqlQuery name="TandemRepeat:TRF" excludeProjects="GiardiaDB">
+  <sqlQuery name="TandemRepeat:TRF">
      <sql>
 <![CDATA[
  SELECT
