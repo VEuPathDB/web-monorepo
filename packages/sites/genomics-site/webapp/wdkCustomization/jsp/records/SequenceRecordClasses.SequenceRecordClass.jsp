@@ -468,6 +468,11 @@ Sequence and annotation of <i>Giardia</i> Assemblage E isolate P15 was provided 
 Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
      </c:set>
   </c:when>
+<c:when test="${fn:contains(organism,'brucei strain 427') && projectId eq 'TriTrypDB'}">
+  <c:set var="reference">
+  <i>Trypanosoma brucei</i> strain Lister 427 genome sequence and assembly was provided prepublication by Dr. George Cross. For additional information please see information in the <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Tbrucei427_chromosomes_RSRC&title=Query#Tbrucei427_chromosomes_RSRC">data sources</a> page.
+  </c:set>
+</c:when>
 <c:when test="${fn:contains(organism,'congolense') && projectId eq 'TriTrypDB'}">
   <c:set var="reference">
 Chromosome and unassigned contig sequences and annotations for <i>Trypanosoma congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
