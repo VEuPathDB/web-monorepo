@@ -624,6 +624,11 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
 Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
   </c:set>
 </c:when>
+<c:when test='${organismFull eq "Trypanosoma brucei brucei strain 427"}'>
+  <c:set var="reference">
+  <i>Trypanosoma brucei</i> strain Lister 427 genome sequence and assembly was provided prepublication by Dr. George Cross. For additional information please see information in the <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Tbrucei427_chromosomes_RSRC&title=Query#Tbrucei427_chromosomes_RSRC">data sources</a> page.
+  </c:set>
+</c:when>
 <c:when test='${organismFull eq "Trypanosoma congolense"}'>
   <c:set var="reference">
 Chromosome and unassigned contig sequences and annotations for <i>Trypanosoma congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tcongolense">GeneDB</a> for project details and data release policies.
