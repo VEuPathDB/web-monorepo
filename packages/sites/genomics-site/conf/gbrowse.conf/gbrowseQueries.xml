@@ -4758,7 +4758,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
@@ -4785,7 +4785,7 @@ AND    lower(a.name) like '%tbp-replicate%'
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
@@ -4813,7 +4813,7 @@ AND    lower(a.name) like '%snap50-replicate%'
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
@@ -4841,7 +4841,7 @@ AND    lower(a.name) like '%acetylh3-replicate%'
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
@@ -4868,7 +4868,7 @@ AND    lower(a.name) like '%acetylh3%' AND lower(a.name) not like '%replicate%'
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
