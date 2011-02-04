@@ -263,9 +263,14 @@ function updateImageMapDiv(imgMapDivId, imgMapSrc, postLoadJS) {
             attr("src", "wdk/images/loading2.gif")).
           append("<br>Loading...");
 
+
+// cris, 2-4-11. fixes #2430
     if (!isWorking && http) {
-      jQuery(slot).append(loadingImg);
-      
+	//if($('div#imgMapDivId_loading').length == 0) {    
+		$('#imgMapDivId_loading').remove();
+		jQuery(slot).append(loadingImg);
+	//}
+ 
       jQuery(slot).load(imgMapSrc, null, 
               function(responseText, status, XMLHttpRequest) {
          jQuery.each(postLoadJS.split(','), function (i, val) {
