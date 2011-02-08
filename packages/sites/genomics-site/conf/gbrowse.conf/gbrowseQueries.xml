@@ -5552,8 +5552,7 @@ GROUP BY interval
      <sql>
 <![CDATA[
      SELECT num.feature_id, num.type, num.source,
-              CASE WHEN num.multiple = 1 then -1 * power(2,-1*num.score) / power(2,-1*den.score) 
-              ELSE power(2,num.score) / power(2,den.score) END score, 
+            decode(num.multiple, 1, -1, 1)*(num.score/den.score) score,
              num.parent_id,
              num.startm, num.end, num.atts
      FROM
