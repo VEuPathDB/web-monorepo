@@ -27,14 +27,14 @@ do
   echo "${SITE} gbrowse:"
   echo
 
-  cat /var/www/Common/tmp/gbrowseLogs/${SITE}/*slow.log | gbrowseSlowQueryReport -s .01 -g
+  cat /var/www/Common/tmp/gbrowseLogs/${SITE}/*slow.log | gbrowseSlowQueryReport -s .01 -g -t 1293858000
 done
 
 echo $DIVIDER
 echo "gbrowse combined:"
 echo
 
-cat /var/www/Common/tmp/gbrowseLogs/${PREFIX}?.*.org/*_slow.log | gbrowseSlowQueryReport -s .01 -g
+cat /var/www/Common/tmp/gbrowseLogs/${PREFIX}?.*.org/*_slow.log | gbrowseSlowQueryReport -s .01 -g -t 1293858000
 
 SITES="tritrypdb3.0 trichdb1.2.4 cryptodb4.3.5 amoeba1.3.1 plasmo7.1.1 toxo6.3 giardiadb2.3.2"
 
@@ -49,6 +49,6 @@ do
   echo "${SITE} wdk:"
   echo
 
-  cat /usr/local/tomcat_instances/*/logs/${SITE}/wdk-warn.log4j | wdkSlowQueryReport -s .01 -g
+  cat /usr/local/tomcat_instances/*/logs/${SITE}/wdk-warn.log4j | wdkSlowQueryReport -s .01 -g -t 1293858000
 done
 
