@@ -82,9 +82,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></td>
     <td class="mythStyle" title="Leishmania major, TriTrypDB"><i>Lma</i></td>
     <td class="mythStyle" title="Leishmania mexicana, TriTrypDB"><i>Lme</i></td>
-    <td class="mythStyle" title="Trypanosoma brucei, TriTrypDB"><i>Tb</i></td>
+    <td class="mythStyle" title="Trypanosoma brucei, TriTrypDB"><i>Tb+</i></td>
     <td class="mythStyle" title="Trypanosoma congolense, TriTrypDB"><i>Tco</i></td>
-    <td class="mythStyle" title="Trypanosoma cruzi, TriTrypDB"><i>Tcr***</i></td>
+    <td class="mythStyle" title="Trypanosoma cruzi, TriTrypDB"><i>Tcr++</i></td>
    <td class="mythStyle" title="Trypanosoma vivax, TriTrypDB"><i>Tvi</i></td>
 </tr>
 
@@ -165,14 +165,14 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 <table width="100%">
 <tr><td>
-<font size="-1"><b>Cryptosporidium</b>: Ch, C. hominis; Cm, C. muris; Cp, C. parvum; <b>Encephalitozoon</b>: Ec, E. cuniculi; Eint, E. intestinalis;  <b>Entamoeba</b>: Ed, E. dispar; Eh, E. histolytica; Einv, E. invadens; <b>Enterocytozoon</b>: Eb, E. bieneusi; <b>Giardia</b> GA, G.Assemblage_A_isolate_WB; GB, G.Assemblage_B_isolate_GS; GE, G.Assemblage_E_isolate_P15; <b>Leishmania</b>: Lb, L. braziliensis; Li, L. infantum; Lma, L. major; Lme, L. mexicana; <b>Neospora</b>: Nc, N. caninum; <b>Plasmodium</b>: Pb, P. berghei; Pc, P. chabaudi; Pf, P. falciparum; Pk, P. knowlesi; Pv, P. vivax; Py, P. yoelii; <b>Toxoplasma</b>: Tg, T. gondii; <b>Trichomonas</b>: Tva, T. vaginalis; <b>Trypanosoma</b>: Tb, T. brucei; Tco, T. congolense; Tcr, T. cruzi; Tvi, T. vivax.)</i></font><br>
+<font size="-1"><b>Cryptosporidium</b>: Ch, <i>C. hominis</i>; Cm, <i>C. muris</i>; Cp, <i>C. parvum</i>; <b>Encephalitozoon</b>: Ec, <i>E. cuniculi</i>; Eint, <i>E. intestinalis</i>;  <b>Entamoeba</b>: Ed, <i>E. dispar</i>; Eh, <i>E. histolytica</i>; Einv, <i>E. invadens</i>; <b>Enterocytozoon</b>: Eb, <i>E. bieneusi</i>; <b>Giardia</b> GA, <i>G.Assemblage_A_isolate_WB</i>; GB, <i>G.Assemblage_B_isolate_GS</i>; GE, <i>G.Assemblage_E_isolate_P15</i>; <b>Leishmania</b>: Lb, <i>L. braziliensis</i>; Li, <i>L. infantum</i>; Lma, <i>L. major</i>; Lme, <i>L. mexicana</i>; <b>Neospora</b>: Nc, <i>N. caninum</i>; <b>Plasmodium</b>: Pb, <i>P. berghei</i>; Pc, <i>P. chabaudi</i>; Pf, <i>P. falciparum</i>; Pk, <i>P. knowlesi</i>; Pv, <i>P. vivax</i>; Py, <i>P. yoelii</i>; <b>Toxoplasma</b>: Tg, <i>T. gondii</i>; <b>Trichomonas</b>: Tva, <i>T. vaginalis</i>; <b>Trypanosoma</b>: Tb, <i>T. brucei</i>; Tco, <i>T. congolense</i>; Tcr, <i>T. cruzi</i>; Tvi, <i>T. vivax</i>.</font><br>
 </td></tr>
 <br>
 <tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
 <tr><td colspan="10"><font size="-2">** <i>T.gondii</i> gene groups identified in ToxoDB across the three strains (ME49, GT1, VEG) and the A
 picoplast.</font></td></tr>
-<tr><td colspan="10"><font size="-2">*** <i>T.cruzi</i> shows the number of distinct genes among the Esmeraldo like and Non-Esmeraldo like genes, plus the unassigned.</font></td></tr>
-
+<tr><td colspan="10"><font size="-2">+ <i>T.brucei</i> shows the number of distinct genes among theTREU927, gambiense and 427 strains.</font></td></tr>
+<tr><td colspan="10"><font size="-2">++ <i>T.cruzi</i> shows the number of distinct genes among the Esmeraldo like and Non-Esmeraldo like genes, plus the unassigned.</font></td></tr>
 </table>
 
   </c:otherwise>
