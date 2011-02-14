@@ -1,15 +1,17 @@
 #!/bin/bash
 
-USAGE="usage: $0 [ q | w ]"
+USAGE="usage: $0 [ q | w ] { -g }"
 
 # check argument count
-if [ $# -ne 1 ]
+if [ $# -eq 0 ]
 then
   echo "$USAGE"
   exit -1
 fi
 
 PREFIX="$1"
+GENEPAGE="$2"
+STARTTIME=1293858000
 
 # make sure q/w switch is one of those
 if [ "$PREFIX" != "q" -a "$PREFIX" != "w" ]
@@ -19,22 +21,23 @@ then
 fi
 
 echo dumping gbrowse slow-query logs for sites with prefix ${PREFIX} on `uname -n`
+echo "gene-page switch: $GENEPAGE"
 
 DIVIDER="--------------------------------------------------------------------------------------------------------"
-for SITE in `ls /var/www/Common/tmp/gbrowseLogs/${PREFIX}?.*.org/*_slow.log | sed 's/^.*gbrowseLogs\///'|sed 's/\/.*$//'|sort -u`
-do
-  echo $DIVIDER
-  echo "${SITE} gbrowse:"
-  echo
+# for SITE in `ls /var/www/Common/tmp/gbrowseLogs/${PREFIX}?.*.org/*_slow.log | sed 's/^.*gbrowseLogs\///'|sed 's/\/.*$//'|sort -u`
+# do
+#   echo $DIVIDER
+#   echo "${SITE} gbrowse:"
+#   echo
+# 
+#   cat /var/www/Common/tmp/gbrowseLogs/${SITE}/*slow.log | gbrowseSlowQueryReport -s .01 $GENEPAGE -t $STARTTIME
+# done
 
-  cat /var/www/Common/tmp/gbrowseLogs/${SITE}/*slow.log | gbrowseSlowQueryReport -s .01 -g -t 1293858000
-done
-
-echo $DIVIDER
+echo
 echo "gbrowse combined:"
 echo
 
-cat /var/www/Common/tmp/gbrowseLogs/${PREFIX}?.*.org/*_slow.log | gbrowseSlowQueryReport -s .01 -g -t 1293858000
+cat /var/www/Common/tmp/gbrowseLogs/${PREFIX}?.*.org/*_slow.log | gbrowseSlowQueryReport -s .01 $GENEPAGE -t $STARTTIME
 
 SITES="tritrypdb3.0 trichdb1.2.4 cryptodb4.3.5 amoeba1.3.1 plasmo7.1.1 toxo6.3 giardiadb2.3.2"
 
@@ -45,10 +48,21 @@ fi
 
 for SITE in $SITES
 do
-  echo $DIVIDER
-  echo "${SITE} wdk:"
-  echo
+#   echo $DIVIDER
+#   echo "${SITE} wdk:"
+#   echo
 
-  cat /usr/local/tomcat_instances/*/logs/${SITE}/wdk-warn.log4j | wdkSlowQueryReport -s .01 -g -t 1293858000
+#   cat /usr/local/tomcat_instances/*/logs/${SITE}/wdk-warn.log4j | wdkSlowQueryReport -s .01 $GENEPAGE -t $STARTTIME
+
+  for SITELOG in `ls /usr/local/tomcat_instances/*/logs/${SITE}/wdk-warn.log4j`
+  do
+    LOGFILES="$LOGFILES $SITELOG"
+  done
+
 done
 
+# echo $DIVIDER
+echo "wdk combined:"
+echo
+
+cat ${LOGFILES} | wdkSlowQueryReport -s .01 $GENEPAGE -t $STARTTIME
