@@ -26,8 +26,8 @@
     <th><i>major</i></th>
     <th><i>mexicana</i></th>
     <th>Distinct genes</th>
-    <th><i>strain 427</i></th>
     <th><i>TREU927</i></th>
+    <th><i>strain 427</i></th>
     <th><i>gambiense</i></th>
     <th>Distinct genes</th>
     <th>esmeraldo</th>
@@ -81,13 +81,13 @@
       <wdk:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tbr427_genes" />  
+                          instanceName="tbr927_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tbr927_genes" />  
+                          instanceName="tbr427_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 
