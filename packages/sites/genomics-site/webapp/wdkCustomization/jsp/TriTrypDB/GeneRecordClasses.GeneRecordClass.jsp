@@ -376,7 +376,7 @@ GO,InterproscanData
     StuartMassSpecPeptides+FergusonMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
-    InterproscanData,Tbrucei_Proteomics_Procyclic_Form
+    InterproscanData,Tbrucei_Proteomics_Procyclic_Form,Tbrucei_Ferguson_Phospho_Proteome_RSRC
     </c:set>
 	</c:when>
 
