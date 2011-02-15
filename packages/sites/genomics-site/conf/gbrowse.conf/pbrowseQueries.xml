@@ -345,7 +345,7 @@ WHERE msf.na_feature_id =  x.feat_id
     </sql>
   </sqlQuery>
 
-    <sqlQuery name="domain:MassSpecPeptide" excludeProjects="TriTrypDB">
+    <sqlQuery name="domain:MassSpecPeptide">
       <sql>
 <![CDATA[
 SELECT msf.aa_feature_id feature_id,

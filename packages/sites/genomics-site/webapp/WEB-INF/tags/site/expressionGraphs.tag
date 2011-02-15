@@ -64,7 +64,7 @@
 
         <tr>
         <td>
-          <img  id="${imgId}" src="">
+          <img  id="${imgId}" src="<c:url value='/images/spacer.gif'/>">
         </td>
 
                  <c:set var="noExpressionDataTable">false</c:set>

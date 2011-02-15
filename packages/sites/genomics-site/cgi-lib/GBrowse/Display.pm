@@ -178,9 +178,10 @@ sub massSpecBgColorFromExtDbName {
                 'Wastling 1-D SDS PAGE Insoluble' => 'mediumslateblue',
                 'Wastling 1-D SDS PAGE' => 'mediumslateblue',
                 'Wastling 1-D SDS PAGE Soluble' => 'mediumslateblue',
-                'Wastling MudPIT Soluble' => 'black',
-                'Wastling MudPIT Insoluble' => 'black',
+                'Wastling MudPIT Soluble' => 'brown',
+                'Wastling MudPIT Insoluble' => 'sandybrown',
                 'Wastling Rhoptry' => 'mediumblue',
+                'Wastling 2-D' => 'brown',
                 'Wastling' => 'mediumblue',
                 'Murray Conoid-enriched Fraction' =>  'maroon',
                 'Murray Conoid-depleted Fraction' => 'darksalmon',
@@ -340,6 +341,12 @@ sub colorFromBinaryColor {
   } else {
     $binColor == 1 ? $second : ($f->strand == +1 ? $first : $third); 
   }
+}
+
+sub colorFromBinaryColorScore {
+  my ($f, $first, $second) = @_;
+  my ($binColor) = $f->get_tag_values('binaryColor');
+  $f->score < 0 ? $second : $first; 
 }
 
 sub colorFromTriColor {

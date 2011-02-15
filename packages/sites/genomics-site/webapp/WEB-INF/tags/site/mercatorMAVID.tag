@@ -107,38 +107,41 @@ return true;
         <table>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="l_infantum" checked>L.infantum
+              <input type="checkbox" name="genomes" value="Lbraziliensis" checked>L.braziliensis
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="l_major" checked>L.major
+              <input type="checkbox" name="genomes" value="Linfantum" checked>L.infantum
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="l_braziliensis" checked>L.braziliensis
+              <input type="checkbox" name="genomes" value="LmajorFriedlin" checked>L.major
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="l_mexicana" checked>L.mexicana
+              <input type="checkbox" name="genomes" value="Lmexicana" checked>L.mexicana
             </td>
             </tr>
            <tr>
             <td>
-              <input type="checkbox" name="genomes" value="t_vivax" checked>T.vivax
+              <input type="checkbox" name="genomes" value="Tbrucei427" checked>T.brucei 427
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="t_congolense" checked>T.congolense
+              <input type="checkbox" name="genomes" value="Tbrucei927" checked>T.brucei 927
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="t_brucei927" checked>T.brucei927
+              <input type="checkbox" name="genomes" value="Tbruceigambiense" checked>T.brucei gambiense
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="t_bruceigambiense" checked>T.brucei gambiense
+              <input type="checkbox" name="genomes" value="Tcongolense" checked>T.congolense
             </td>
           </tr>
             <tr>
-            <td colspan="2">
-              <input type="checkbox" name="genomes" value="t_cruzinonesmeraldo" checked>T.cruzi non-esmeraldo like
+            <td>
+              <input type="checkbox" name="genomes" value="TcruziEsmeraldoLike" checked>T.cruzi esmeraldo like
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="TcruziNonEsmeraldoLike" checked>T.cruzi non-esmeraldo like
             </td>
             <td colspan="2">
-              <input type="checkbox" name="genomes" value="t_cruziesmeraldo" checked>T.cruzi esmeraldo like
+              <input type="checkbox" name="genomes" value="Tvivax" checked>T.vivax
             </td>
            </tr>
          </table>

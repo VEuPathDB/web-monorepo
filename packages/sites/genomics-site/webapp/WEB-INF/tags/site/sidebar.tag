@@ -14,7 +14,7 @@
 
 <c:if test="${project == 'EuPathDB'}">
 <c:catch var="e">
-	<api:configurations var="config" configfile="WEB-INF/wdk-model/config/apifed-config.xml" />
+	<api:configurations var="config" configfile="/WEB-INF/wdk-model/config/apifed-config.xml" />
 </c:catch>
 <c:if test="${e!=null}">
     <font size="-1" color="#CC0033">News not available for the component Sites</font>
@@ -323,7 +323,7 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
          </c:if>
             <li id='h-6'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Data Summary</a></li>
             <li id='h-'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
-            <li id='h-'><a href="http://workshop.eupathdb.org/2010/">2010 EuPathDB Workshop</a></li>
+            <li id='h-'><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
 
             <li id='h-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
 	    <li id='h-'><a href="<c:url value="/helpDYK.jsp"/>">Strategies Graphical Interface</a></li>

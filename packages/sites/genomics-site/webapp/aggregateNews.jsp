@@ -19,7 +19,7 @@
 />
 
 <api:configurations 
-    var="config" configfile="WEB-INF/wdk-model/config/apifed-config.xml"
+    var="config" configfile="/WEB-INF/wdk-model/config/apifed-config.xml"
 />
 
 <%--

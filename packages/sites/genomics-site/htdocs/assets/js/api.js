@@ -10,6 +10,8 @@ in sayShowOrHide don't work
 
 */
 
+// used by Firefox
+// gene page, cookie set to expire a year from today
 function toggleLayer(controllingLayerName, textLayerName) {
     //alert("toggleLayer: " + controllingLayerName);
     var controllingLayer ; 
@@ -23,7 +25,7 @@ function toggleLayer(controllingLayerName, textLayerName) {
     var style = controllingLayer.style;
     style.display = style.display? "":"block";   // toggle it
     sayShowOrHide(controllingLayerName, textLayerName, style);
-    storeIntelligentCookie("show" + controllingLayerName, style.display == "block"? 1:0);
+    storeIntelligentCookie("show" + controllingLayerName, style.display == "block"? 1:0,365);
 }
 
 function sayShowOrHide(controllingLayerName, textLayerName, style) {
@@ -94,18 +96,21 @@ function getCookie(name) {
     return unescape(document.cookie.substring(len,end));
 }
 
-function setCookie(name, value, expires, path, domain, secure) {
+function setCookie(name, value, days, path, domain, secure) {
     // alert(name + "=" + escape(value) +
     //       ( (expires) ? ";expires=" + expires.toGMTString() : "") +
     //       ( (path) ? ";path=" + path : "") + 
     //       ( (domain) ? ";domain=" + domain : "") +
     //       ( (secure) ? ";secure" : ""));
 
+    var expiresDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * 24 * days);
+
     document.cookie = name + "=" + escape(value) +
-        ( (expires) ? ";expires=" + expires.toGMTString() : "") +
+        ( (days) ? ";expires=" + expiresDate.toGMTString() : "") +
         ( (path) ? ";path=" + path : "") + 
         ( (domain) ? ";domain=" + domain : "") +
         ( (secure) ? ";secure" : "");
+
 }
 
 function deleteCookie(name, path, domain) {
@@ -133,13 +138,15 @@ function storeMasterCookie() {
     }
 }
 
-function storeIntelligentCookie(name, value, expires, path, domain, secure) {
+
+//cookie will expire in these many days
+function storeIntelligentCookie(name, value, days, path, domain, secure) {
     if (!getCookie('MasterCookie')) {
         storeMasterCookie();
     }
     var IntelligentCookie = getCookie(name);
     if ((!IntelligentCookie) || (IntelligentCookie != value)) {
-        setCookie(name, value, expires, path, domain, secure);
+        setCookie(name, value, days, path, domain, secure);
         var IntelligentCookie = getCookie(name);
         if ((!IntelligentCookie) || (IntelligentCookie != value)) {
             deleteCookie('MasterCookie');
@@ -256,9 +263,14 @@ function updateImageMapDiv(imgMapDivId, imgMapSrc, postLoadJS) {
             attr("src", "wdk/images/loading2.gif")).
           append("<br>Loading...");
 
+
+// cris, 2-4-11. fixes #2430
     if (!isWorking && http) {
-      jQuery(slot).append(loadingImg);
-      
+	//if($('div#imgMapDivId_loading').length == 0) {    
+		$('#imgMapDivId_loading').remove();
+		jQuery(slot).append(loadingImg);
+	//}
+ 
       jQuery(slot).load(imgMapSrc, null, 
               function(responseText, status, XMLHttpRequest) {
          jQuery.each(postLoadJS.split(','), function (i, val) {

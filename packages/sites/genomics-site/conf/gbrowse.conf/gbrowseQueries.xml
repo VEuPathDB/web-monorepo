@@ -442,6 +442,7 @@ ORDER BY blat.target_start asc, blat.score desc
   <sqlQuery name="match:WU_BLASTX">
      <sql>
 <![CDATA[
+select * from (
 SELECT b.similarity_id feature_id, 'match' type, 'WU_BLASTX' source, 
        b.name, b.score, b.pvalue, b.na_sequence_id parent_id, 
        b.startm, b.end, b.strand, b.atts
@@ -450,10 +451,10 @@ FROM
 WHERE  
        b.startm between $base_start and $rend and
        b.end between $base_start and $rend and       
-       b.na_sequence_id = $srcfeature_id and 
-       RowNum < 4000 
+       b.na_sequence_id = $srcfeature_id
 ORDER BY 
-       b.na_sequence_id, b.startm, b.pvalue
+       b.pvalue asc
+) where rownum < 4000
 ]]>
     </sql>
   </sqlQuery>
@@ -580,7 +581,7 @@ WHERE startm <= $rend
   </sqlQuery>
   
   
-  <sqlQuery name="lowcomplexity:dust" excludeProjects="GiardiaDB">
+  <sqlQuery name="lowcomplexity:dust">
      <sql>
 <![CDATA[
 SELECT
@@ -699,7 +700,7 @@ FROM   dual
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="MicroArrayProbes:expressionD" includeProjects="PlasmoDB">
+  <sqlQuery name="MicroArrayProbes:expressionD" includeProjects="PlasmoDB,TriTrypDB">
     <testParamValues project="PlasmoDB">
       <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_06$$"/>
       <param name="base_start" value="469864"/> 
@@ -781,7 +782,7 @@ WHERE  edr.external_database_id = ed.external_database_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="NextGenSeq:coverageLog"  includeProjects="PlasmoDB,ToxoDB">
+  <sqlQuery name="NextGenSeq:coverageLog"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
        <![CDATA[
     SELECT $$sample$$   as feature_id,
@@ -839,7 +840,7 @@ SELECT
        'sample='|| ra.sample || '$dlm' || 
        'gene_id=' || ra.query_id atts
 FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
-WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+WHERE d.name = 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC'
  AND  rel.external_database_id = rel.external_database_id
  AND  ra.external_database_release_id = rel.external_database_release_id
  AND  ra.na_sequence_id = $srcfeature_id
@@ -867,7 +868,7 @@ SELECT
        'sample='|| ra.sample || '$dlm' || 
        'gene_id=' || ra.query_id atts
 FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
-WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+WHERE d.name = 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC'
  AND  rel.external_database_id = rel.external_database_id
  AND  ra.external_database_release_id = rel.external_database_release_id
  AND  ra.na_sequence_id = $srcfeature_id
@@ -896,7 +897,7 @@ FROM
          ra.query_id name, ra.strand||'1' as strand,
          ra.genome_matches,ra.sample
   FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
-  WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+  WHERE d.name = 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC'
    AND  rel.external_database_id = rel.external_database_id
    AND  ra.external_database_release_id = rel.external_database_release_id
    AND  ra.na_sequence_id = $srcfeature_id
@@ -924,7 +925,7 @@ FROM
          ra.query_id name, ra.strand||'1' as strand,
          ra.genome_matches
   FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
-  WHERE d.name = 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross'
+  WHERE d.name = 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC'
    AND  rel.external_database_id = rel.external_database_id
    AND  ra.external_database_release_id = rel.external_database_release_id
    AND  ra.sample = 'raw_polyA'
@@ -1187,10 +1188,10 @@ AND blat.query_external_db_release_id = edr.external_database_release_id
 AND ed.external_database_id=edr.external_database_id
 AND etn.taxon_id = tn.taxon_id
 AND tn.name_class = 'scientific name'
-AND ed.name in ('L.major BAC Ends from Sanger',
-                'T.brucei RPCI93 BAC Ends',
-                'T.cruzi CHORI105 BAC End',
-                'L.major PAC Ends from Sanger',
+AND ed.name in ('Lmajor_sanger_BACEnds_RSRC',
+                'Tbrucei_Genbank_BACEnds_RSRC',
+                'Tcruzi_BACEnds_RSRC',
+                'Lmajor_sanger_PACEnds_RSRC',
                 'TgME49B7 Sanger BAC Ends')
 ) bacs
 GROUP BY bacs.feature_id, bacs.name, bacs.taxon
@@ -1245,7 +1246,7 @@ AND blat.query_external_db_release_id = edr.external_database_release_id
 AND edr.external_database_id = ed.external_database_id
 AND etn.taxon_id = tn.taxon_id
 AND tn.name_class = 'scientific name'
-AND ed.name in ('L.major Cosmid Ends from Sanger',
+AND ed.name in ('Lmajor_sanger_CosmidEnds_RSRC',
                 'Tg TIGR Cosmid Ends')
 ) bacs
 GROUP BY bacs.feature_id
@@ -1329,7 +1330,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql> 
   </sqlQuery>
   
-  <sqlQuery name="TandemRepeat:TRF" excludeProjects="GiardiaDB">
+  <sqlQuery name="TandemRepeat:TRF">
      <sql>
 <![CDATA[
  SELECT
@@ -1476,6 +1477,7 @@ ORDER BY
   <sqlQuery name="match:BLASTX">
      <sql>
 <![CDATA[
+select * from (
  SELECT distinct sim.similarity_id feature_id, 
        'match' type, 
        'BLASTX' source,
@@ -1504,11 +1506,9 @@ WHERE
        to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-10 and 
        sim.min_query_start >= $base_start and 
        sim.max_query_end <= $rend and 
-       extq.na_sequence_id = $srcfeature_id and 
-       RowNum < 4000 
-ORDER BY 
-       sim.min_query_start asc, 
-       pvalue asc
+       extq.na_sequence_id = $srcfeature_id
+ORDER BY pvalue asc
+) where rownum < 4000
 ]]>
     </sql>
   </sqlQuery>
@@ -1544,7 +1544,7 @@ WHERE  blat.query_na_sequence_id = etn.na_sequence_id
   SELECT edr.external_database_release_id
   FROM sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
   WHERE ed.external_database_id=edr.external_database_id
-  AND ed.name = 'L.major FV1 random Ends from Sanger'
+  AND ed.name = 'Lmajor_sanger_FV1Ends_RSRC'
   )
 GROUP BY regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]')
 ) f
@@ -4128,10 +4128,10 @@ AND blat.query_external_db_release_id in (
 SELECT edr.external_database_release_id
 FROM sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
 WHERE ed.external_database_id=edr.external_database_id
-AND ed.name in ('L.major BAC Ends from Sanger',
-                'T.brucei RPCI93 BAC Ends',
-                'T.cruzi CHORI105 BAC End',
-                'L.major PAC Ends from Sanger',
+AND ed.name in ('Lmajor_sanger_BACEnds_RSRC',
+                'Tbrucei_Genbank_BACEnds_RSRC',
+                'Tcruzi_BACEnds_RSRC',
+                'Lmajor_sanger_PACEnds_RSRC',
                 'TgME49B7 Sanger BAC Ends'))
 ]]>
     </sql>
@@ -4252,7 +4252,7 @@ AND blat.query_external_db_release_id = edr.external_database_release_id
 AND ed.external_database_id=edr.external_database_id
 AND etn.taxon_id = tn.taxon_id
 AND tn.name_class = 'scientific name'
-AND ed.name in ('L.major Cosmid Ends from Sanger',
+AND ed.name in ('Lmajor_sanger_CosmidEnds_RSRC',
                 'Tg TIGR Cosmid Ends')
 ]]>
     </sql>
@@ -4758,7 +4758,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
@@ -4785,7 +4785,7 @@ AND    lower(a.name) like '%tbp-replicate%'
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
@@ -4813,7 +4813,7 @@ AND    lower(a.name) like '%snap50-replicate%'
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
@@ -4841,7 +4841,7 @@ AND    lower(a.name) like '%acetylh3-replicate%'
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
@@ -4868,7 +4868,7 @@ AND    lower(a.name) like '%acetylh3%' AND lower(a.name) not like '%replicate%'
        ee.na_sequence_id     as parent_id,
        ee.start_min           as startm,
        ee.end_max             as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
        apidb.ExpressionElement ee,
        apidb.chipprotocolparams cpp
@@ -5532,7 +5532,7 @@ GROUP BY interval
              interval * (($rend - $base_start + 1) / 800) startm,
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
-    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
        FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
@@ -5541,8 +5541,8 @@ GROUP BY interval
          AND ed.name = $$edname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$sample$$
-         AND csc.location <= $rend
-         AND csc.location >= $base_start - 1)
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_start >= $base_start - 1)
        GROUP BY interval,sample,multiple
 ]]>
     </sql>
@@ -5552,8 +5552,7 @@ GROUP BY interval
      <sql>
 <![CDATA[
      SELECT num.feature_id, num.type, num.source,
-              CASE WHEN num.multiple = 1 then -1 * power(2,-1*num.score) / power(2,-1*den.score) 
-              ELSE power(2,num.score) / power(2,den.score) END score, 
+            decode(num.multiple, 1, -1, 1)*(num.score/den.score) score,
              num.parent_id,
              num.startm, num.end, num.atts
      FROM
@@ -5565,7 +5564,7 @@ GROUP BY interval
              interval * (($rend - $base_start + 1) / 800) startm,
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
-    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
        FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
@@ -5574,8 +5573,8 @@ GROUP BY interval
          AND ed.name = $$numEdname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$numSample$$
-         AND csc.location <= $rend
-         AND csc.location >= $base_start - 1)
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_start >= $base_start - 1)
        GROUP BY interval,sample,multiple) num,
      (SELECT interval feature_id,
              'NextGenSeq' type,
@@ -5585,7 +5584,7 @@ GROUP BY interval
              interval * (($rend - $base_start + 1) / 800) startm,
              (interval + 1) * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts, multiple
-    FROM (select ceil(csc.location / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
+    FROM (select ceil(csc.mapping_start / (($rend - $base_start + 1) / 800)) interval, csc.coverage, csc.sample,csc.multiple
        FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
@@ -5594,8 +5593,8 @@ GROUP BY interval
          AND ed.name = $$denEdname$$ 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$denSample$$
-         AND csc.location <= $rend
-         AND csc.location >= $base_start - 1)
+         AND csc.mapping_start <= $rend
+         AND csc.mapping_start >= $base_start - 1)
        GROUP BY interval,sample,multiple) den
     WHERE den.feature_id = num.feature_id
       AND den.multiple = num.multiple 
@@ -5666,7 +5665,7 @@ GROUP BY interval
     </sql>
   </sqlQuery>
 
-   <sqlQuery name="NextGenSeq:coverageLog:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB">
+   <sqlQuery name="NextGenSeq:coverageLog:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
 <![CDATA[
      SELECT start_interval feature_id,
@@ -5714,7 +5713,7 @@ GROUP BY interval
              sres.externaldatabase ed
        WHERE csc.external_database_release_id = edr.external_database_release_id
          AND edr.external_database_id = ed.external_database_id
-         AND (ed.name = $$edname1$$ OR ed.name = $$edname2$$) 
+         AND ed.name in ($$edname1$$, $$edname2$$) 
          AND csc.na_sequence_id = $srcfeature_id
          AND csc.sample = $$sample$$
          AND csc.mapping_start + 1 <= $rend

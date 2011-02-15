@@ -15,7 +15,7 @@
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
     <th colspan=4 align="center"><i>Leishmania </i></th>
-    <th colspan=3 align="center"><i>Trypanosoma brucei</i></th>
+    <th colspan=4 align="center"><i>Trypanosoma brucei</i></th>
     <th rowspan=2 align="center"><i>Trypanosoma<br>congolense</i></th>
     <th colspan=4 align="center"><i>Trypanosoma cruzi</i></th>
     <th rowspan=2 align="center"><i>Trypanosoma<br>vivax</i></th>
@@ -25,6 +25,7 @@
     <th><i>infantum</i></th>
     <th><i>major</i></th>
     <th><i>mexicana</i></th>
+    <th>Distinct genes</th>
     <th><i>strain 427</i></th>
     <th><i>TREU927</i></th>
     <th><i>gambiense</i></th>
@@ -69,6 +70,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="lme_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tbr_distinct_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 
