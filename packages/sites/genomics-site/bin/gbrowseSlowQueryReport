@@ -95,11 +95,11 @@ Print a report summarizing the gbrowse slow query logs.
 
 Takes one or more logs on standard input.
 
-usage:  gbrowseSlowQueryReport -s secs [-g] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile]
+usage:  gbrowseSlowQueryReport -s secs [-g] [-n] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile]
 
 where:
   -s:  slowness threshold in seconds.  run times over secs are reported in Slow columns
-  -g:  genepage only flag. only queries logged with \"GENEPAGE\"
+  -g:  genepage only flag. only include queries logged with \"GENEPAGE\"
   -n:  not-genepage flag. complementary to -g flag (only non-genepage queries)
   -w:  width filter
   -t:  time filter (use seconds since epoch, which is a column in gbrowse log)
