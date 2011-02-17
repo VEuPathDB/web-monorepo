@@ -260,8 +260,10 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
   <c:param name="flag" value="0" /> 
 </c:url>
 --%>
+<b><a title="Click to go to the comments page" style="font-size:120%" href="${commentsUrl}">Add a comment on ${id}
+<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+</a></b><br><br>
 
-<b><a href="${commentsUrl}">Add a comment on ${id}</a></b><br><br>
 
 <c:catch var="e">
 <wdk:wdkTable tblName="UserComments"  isOpen="true"/>
