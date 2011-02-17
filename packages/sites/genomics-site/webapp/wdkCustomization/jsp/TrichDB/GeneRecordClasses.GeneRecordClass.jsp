@@ -59,6 +59,8 @@
 <br>
 <%--#############################################################--%>
 <%-- this block moves here so we can set a link to add a comment on the apge title --%>
+<c:set var="externalDbName" value="${attrs['external_db_name']}"/>
+<c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
 <c:url var="commentsUrl" value="addComment.do">
   <c:param name="stableId" value="${id}"/>
   <c:param name="commentTargetId" value="gene"/>
@@ -177,10 +179,10 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <%--- Comments -----------------------------------------------------%>
 <a name="user-comment"/>
 
-<c:set var="externalDbName" value="${attrs['external_db_name']}"/>
-<c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
 
 <%-- moved above
+<c:set var="externalDbName" value="${attrs['external_db_name']}"/>
+<c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
 <c:url var="commentsUrl" value="addComment.do">
   <c:param name="stableId" value="${id}"/>
   <c:param name="commentTargetId" value="gene"/>
