@@ -66,9 +66,42 @@
 
 <c:set var="append" value="" />
 
+<%-- this block moves here so we can set a link to add a comment on the apge title --%>
+<c:url var="commentsUrl" value="addComment.do">
+  <c:param name="stableId" value="${id}"/>
+  <c:param name="commentTargetId" value="gene"/>
+  <c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
+  <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
+  <c:param name="organism" value="${genus_species}" />
+  <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
+  <c:param name="contig" value="${contig}" />
+  <c:param name="strand" value="${strand}" />
+  <c:param name="flag" value="0" />
+</c:url>
+
 <h2>
 <center>
-	<wdk:recordPageBasketIcon  desc="${prd}" />
+	<!-- the ID and product title -->
+ 	${id} <br /> <span style="font-size:80%">${prd}</span> <br/>
+
+<c:set var="count" value="0"/>
+<c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
+        <c:set var="count" value="${count +  1}"/>
+</c:forEach>
+<c:choose>
+<c:when test="${count == 0}">
+	<a style="font-size:70%;font-weight:normal;cursor:hand" href="${commentsUrl}">Add the first user comment
+</c:when>
+<c:otherwise>
+	<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation">This gene has <span style='color:red'>${count}</span> community comments
+</c:otherwise>
+</c:choose>
+<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+	<!-- the basket and favorites  -->
+  	<wdk:recordPageBasketIcon />
 </center>
 </h2>
 
@@ -217,6 +250,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 <site:pageDivider name="Annotation"/>
 
 <%------------------------------------------------------------------%>
+<%-- moved above
 <c:url var="commentsUrl" value="addComment.do">
   <c:param name="stableId" value="${id}"/>
   <c:param name="commentTargetId" value="gene"/>
@@ -228,19 +262,24 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
   <c:param name="strand" value="${strand}" />
   <c:param name="flag" value="0" />
 </c:url>
+--%>
+<b><a title="Click to go to the comments page" style="font-size:120%"href="${commentsUrl}"><font size='-2'>
+	Add a comment on ${id}</font>
+	<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+</a></b><br><br>
+
 <c:set var='commentLegend'>
     <c:catch var="e">
-      <site:dataTable tblName="UserComments"/>
-      <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
+      	<site:dataTable tblName="UserComments"/>
     </c:catch>
     <c:if test="${e != null}">
-     <site:embeddedError 
-         msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
-         e="${e}" 
-     />
+     	<site:embeddedError 
+         	msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
+         	e="${e}" 
+     		/>
     </c:if>
-    
 </c:set>
+
 <site:panel 
     displayName="User Comments"
     content="${commentLegend}" />
