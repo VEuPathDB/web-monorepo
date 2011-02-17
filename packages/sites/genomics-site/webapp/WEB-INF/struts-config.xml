@@ -494,6 +494,16 @@
       name="questionForm">
       <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
+    <action
+      path="/getDataSource"
+      type="org.apidb.apicommon.controller.GetDataSourceAction"
+      scope="request">
+      <forward name="show_list" path="/wdkCustomization/jsp/DataSourceList.jsp"/>
+      <forward name="show_detail" path="/wdkCustomization/jsp/DataSourceDetail.jsp"/>
+      <forward name="show_xml_list" redirect="false" path="/showXmlDataList.do"/>
+      <forward name="show_xml_detail" redirect="false" path="/showXmlDataContent.do"/>
+    </action>
+
   </action-mappings>
 
   <controller maxFileSize="10M" />
