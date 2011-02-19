@@ -271,22 +271,14 @@ WHERE  tas.aa_sequence_id = taf.aa_sequence_id and
   <sqlQuery name="new:Segment">
       <sql>
 <![CDATA[
-SELECT tas.aa_sequence_id srcfeature_id, 
+SELECT ga.aa_sequence_id srcfeature_id, 
        1 startm, 
-       tas.length end, 
-       gf.source_id name, 
+       ga.protein_length end, 
+       ga.source_id name, 
        'protein' type,
-       'ID=' || tas.aa_sequence_id atts
-FROM   dots.translatedaasequence tas, 
-       dots.translatedaafeature taf,
-       dots.transcript trp,
-       dots.genefeature gf
-WHERE  tas.aa_sequence_id = taf.aa_sequence_id
-       and taf.na_feature_id = trp.na_feature_id 
-       and trp.parent_id = gf.na_feature_id
-       and (trp.protein_id = '$name' or
-            trp.source_id = '$name' or
-            gf.source_id = '$name' )
+       'ID=' || ga.aa_sequence_id atts
+FROM   apidb.GeneAttributes ga
+WHERE  ga.source_id = '$name'
 ]]>
       </sql>
     </sqlQuery>
