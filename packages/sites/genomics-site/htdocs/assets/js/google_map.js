@@ -31,11 +31,11 @@ jQuery(document).ready(function(){
   initialize();
 
   var dd   = document.domain;
-  var type = "&myMultiProp(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
+  var type = "&array(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
   if(dd.match('toxodb')) {
-    type = "&myMultiProp(type)=RFLP Typed,Sequencing Typed";
+    type = "&array(type)=RFLP Typed,Sequencing Typed";
   } else if(dd.match('plasmodb')) {
-    type = "&myMultiProp(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
+    type = "&array(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
   } else if(dd.match('giardiadb')) {
     type = '';
   } else if(dd.match('plasmodb')) {
@@ -64,7 +64,7 @@ function createMarker(country, total, type) {
           marker = new GMarker(point);
           map.addOverlay(marker);
           GEvent.addListener(marker, "click", function() {
-            marker.openInfoWindowHtml(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&myMultiProp(country)="+country+type+"'> Click for Details</a>");
+            marker.openInfoWindowHtml(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+type+"'> Click for Details</a>");
           });
         }
       }

@@ -121,8 +121,8 @@ Ack, this form won't work at all without JavaScript support!
 <div class="params">
 <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
 
-	<input name="myMultiProp(phyletic_term_map)" value="rnor" type="hidden"/>
-	<input name="myMultiProp(phyletic_indent_map)" value="ARCH" type="hidden"/>
+	<input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
+	<input name="array(phyletic_indent_map)" value="ARCH" type="hidden"/>
 
 <table>
   <tr>
@@ -162,9 +162,9 @@ Ack, this form won't work at all without JavaScript support!
     </c:forEach>
 </table>
 
-  <html:hidden property="myProp(${includedSpeciesName})" value="n/a" />
-  <html:hidden property="myProp(${excludedSpeciesName})" value="n/a" />
-  <html:hidden property="myProp(${profilePatternName})" value="%"/>
+  <html:hidden property="value(${includedSpeciesName})" value="n/a" />
+  <html:hidden property="value(${excludedSpeciesName})" value="n/a" />
+  <html:hidden property="value(${profilePatternName})" value="%"/>
 </div><%-- END OF PARAMS DIV --%>
 </html:form>
     </c:when>
@@ -255,8 +255,8 @@ Ack, this form won't work at all without JavaScript support!
 <c:if test="${showParams == null}">
 <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
 
-	<input name="myMultiProp(phyletic_term_map)" value="rnor" type="hidden"/>
-	<input name="myMultiProp(phyletic_indent_map)" value="ARCH" type="hidden"/>
+	<input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
+	<input name="array(phyletic_indent_map)" value="ARCH" type="hidden"/>
 <table>
   <tr>
     <td><b>Show results from species:</b></td>
@@ -295,9 +295,9 @@ Ack, this form won't work at all without JavaScript support!
     </c:forEach>
 </table>
 
-  <html:hidden property="myProp(${includedSpeciesName})" value="n/a" />
-  <html:hidden property="myProp(${excludedSpeciesName})" value="n/a" />
-  <html:hidden property="myProp(${profilePatternName})" value="%"/>
+  <html:hidden property="value(${includedSpeciesName})" value="n/a" />
+  <html:hidden property="value(${excludedSpeciesName})" value="n/a" />
+  <html:hidden property="value(${profilePatternName})" value="%"/>
 </c:if>
 </div><%-- END OF PARAMS DIV --%>
 

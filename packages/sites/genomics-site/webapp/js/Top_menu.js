@@ -34,7 +34,7 @@ function navigation_toggle(area,p_name)
 	
 		var inputs = document.getElementById(area+'_area').getElementsByTagName('Input');
 		document.getElementById(area).className = "seled";
-		renameInputs(area+'_area','myMultiProp('+p_name+')');
+		renameInputs(area+'_area','array('+p_name+')');
 		var plusminus = document.getElementById(area).getElementsByTagName('span');
 		plusminus[0].innerHTML = "<img src='images/arrow_down.gif' alt='' border='0'/>";				
 		if(!IE)
@@ -79,7 +79,7 @@ function navigation_toggle_Color(area,p_name,sid)
 	
 		var inputs = document.getElementById(area+'_area').getElementsByTagName('Input');
 		document.getElementById(area).className = "seled";
-		renameInputs(area+'_area','myMultiProp('+p_name+')');
+		renameInputs(area+'_area','array('+p_name+')');
 		var plusminus = document.getElementById(area).getElementsByTagName('span');
 		plusminus[0].innerHTML = "<img src='images/arrow_down.gif' alt='' border='0'/>";
 		if(sid.length > 0)

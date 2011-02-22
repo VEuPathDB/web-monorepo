@@ -7,13 +7,11 @@
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
 
-<link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 <jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
 
-<c:set var="qForm" value="${requestScope.questionForm}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
@@ -33,39 +31,27 @@
 <jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 
 
-<%-- display question section --%>
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
-<tr>
-<td bgcolor=white valign=top>
 
-<%-- put an anchor here for linking back from help sections --%>
-<A name="${fromAnchorQ}"></A>
+<c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
+<hr>
 
-<input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
-
-<!-- show error messages, if any -->
-
-<div class='usererror'><api:errors/></div>
-
-<%-- the js has to be included here in order to appear in the step form --%>
-<script type="text/javascript" src='<c:url value="/wdk/js/wdkQuestion.js"/>'></script>
-<c:if test="${showParams == null}">
-            <script type="text/javascript">
-              $(document).ready(function() { initParamHandlers(); });
-            </script>
+<c:set var="attrId" value="attributions-section"/>
+<c:set var="descripId" value="query-description-section"/>
+<c:if test="${wdkQuestion.fullName == 'IsolateQuestions.IsolateByCountry'}">
+	<c:set var="descripId" value="query-description-noShowOnForm"/>
 </c:if>
 
+<%-- display description for wdkQuestion --%>
+<div id="${descripId}"><b>Description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
 
-
-<div class="params">
-	<site:questionParams />
-
-</div>   <%-- end of params div --%>
-
-
-</td>
-</tr>
-</table> 
+<%-- get the attributions of the question if not EuPathDB --%>
+<c:if test = "${project != 'EuPathDB'}">
+<hr>
+<div id="${attrId}">
+	<c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
+	<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+</div>
+</c:if>
 
 

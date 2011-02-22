@@ -7,9 +7,7 @@
 <struts-config>
 
   <form-beans>
-    <form-bean name="questionSetForm" type="org.gusdb.wdk.controller.action.QuestionSetForm"/>
     <form-bean name="questionForm" type="org.gusdb.wdk.controller.action.QuestionForm"/>
-    <form-bean name="booleanQuestionForm" type="org.gusdb.wdk.controller.action.BooleanQuestionForm"/>
     <form-bean name="downloadConfigForm" type="org.gusdb.wdk.controller.action.DownloadConfigForm"/>
     <form-bean name="booleanExpressionForm" type="org.gusdb.wdk.controller.action.BooleanExpressionForm"/>
     <form-bean name="testForm" type="org.gusdb.wdk.controller.action.TestForm"/>
@@ -31,6 +29,7 @@
     <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.action.RenameStepForm"/>
     <form-bean name="renameStrategyForm" type="org.gusdb.wdk.controller.action.RenameStrategyForm"/>
     <form-bean name="userFileUploadForm" type="org.apidb.apicommon.controller.UserFileUploadForm"/>
+    <form-bean name="wizardForm" type="org.gusdb.wdk.controller.action.WizardForm"/>
   </form-beans>
 
   <global-exceptions>
@@ -166,14 +165,14 @@
       path="/showQuestionSets"
       type="org.gusdb.wdk.controller.action.ShowQuestionSetsAction"
       scope="request"
-      name="questionSetForm">
+      name="questionForm">
       <forward name="show_questionsets" path="/questionSets.jsp"/>
     </action>
     <action
       path="/showQuestionSetsFlat"
       type="org.gusdb.wdk.controller.action.ShowQuestionSetsFlatAction"
       scope="request"
-      name="questionSetForm"
+      name="questionForm"
       input="/showQuestion.do">
       <forward name="show_questionsetsflat" path="/questionSetsFlat.jsp"/>
     </action>
@@ -181,7 +180,7 @@
       path="/processQuestionSetsFlat"
       type="org.gusdb.wdk.controller.action.ProcessQuestionSetsFlatAction"
       scope="request"
-      name="questionSetForm"
+      name="questionForm"
       input="/showQuestion.do">
       <forward name="process_questionsetsflat" path="/processQuestion.do?fromQuestionSet=1"/>
     </action>
@@ -243,15 +242,6 @@
       input="/showSummary.do">
       <forward name="pq_show_summary" path="/showSummary.do"/>
     </action>  
-    <action
-       path="/processBooleanQuestion"
-       type="org.gusdb.wdk.controller.action.ProcessBooleanQuestionAction"
-       scope="session"
-       name="booleanQuestionForm"
-       input="/startBoolean.do">
-       <forward name="pbq_get_boolean_answer" path="/getBooleanAnswer.do"/>
-       <forward name="pbq_grow_boolean" path="/growBoolean.do"/>
-    </action>
     <action
       path="/showRecord"
       type="org.gusdb.wdk.controller.action.ShowRecordAction"
@@ -481,6 +471,39 @@
       scope="request"
       validate="false">
     </action>
+    <action path="/wizard"
+      type="org.gusdb.wdk.controller.action.WizardAction"
+      scope="request"
+      name="wizardForm"
+      validate="false">
+      <forward name="show_wizards" path="/wdk/jsp/wizard/wizards.jsp"/>
+    </action>
+    <action
+      path="/processBoolean"
+      type="org.gusdb.wdk.controller.action.ProcessBooleanAction"
+      scope="request"
+      validate="true"
+      name="questionForm">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/processStep"
+      type="org.gusdb.wdk.controller.action.ProcessStepAction"
+      scope="request"
+      validate="true"
+      name="questionForm">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/getDataSource"
+      type="org.apidb.apicommon.controller.GetDataSourceAction"
+      scope="request">
+      <forward name="show_list" path="/wdkCustomization/jsp/DataSourceList.jsp"/>
+      <forward name="show_detail" path="/wdkCustomization/jsp/DataSourceDetail.jsp"/>
+      <forward name="show_xml_list" redirect="false" path="/showXmlDataList.do"/>
+      <forward name="show_xml_detail" redirect="false" path="/showXmlDataContent.do"/>
+    </action>
+
   </action-mappings>
 
   <controller maxFileSize="10M" />

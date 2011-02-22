@@ -46,7 +46,7 @@
     <td align="right">
         <input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag">
         ${geneIdParam.prompt}: 
-        <html:text property="myProp(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})"
+        <html:text property="value(GeneQuestions_GeneBySingleLocusTag_${geneIdParam.name})"
                    value="${geneIdParam.default}" size="10"/></td>
     <td align="right" width="24">
         <input type="hidden" name="questionSubmit" value="Get Answer">
@@ -80,15 +80,15 @@
     <td align="left"><i>${geneByTextQuestion.displayName}</i></td>
     <td align="right">
         <input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch">
-        <input type="hidden" name="myMultiProp(text_search_organism)"
+        <input type="hidden" name="array(text_search_organism)"
                value="${listOrganisms}">
-        <input type="hidden" name="myMultiProp(text_fields)"
+        <input type="hidden" name="array(text_fields)"
                value="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions">
        
-        <input type="hidden" name="myMultiProp(whole_words)" value="yes">
-        <input type="hidden" name="myProp(max_pvalue)" value="-30">
+        <input type="hidden" name="array(whole_words)" value="yes">
+        <input type="hidden" name="value(max_pvalue)" value="-30">
          ${textParam.prompt}:
-        <html:text property="myProp(GeneQuestions_GenesByTextSearch_${textParam.name})"
+        <html:text property="value(GeneQuestions_GenesByTextSearch_${textParam.name})"
                    value="${textParam.default}" size="10"/>
     <td align="right" width="24">
         <input type="hidden" name="questionSubmit" value="Get Answer">
@@ -103,10 +103,10 @@
     <td align="right">
         <c:set var="pNam" value="${geneTypeParam.name}"/>
         <input type="hidden" name="questionFullName" value="GeneQuestions.GenesByGeneType">    
-        <input type="hidden" name="myMultiProp(organism)" value="${listOrganisms}">
-        <input type="hidden" name="myMultiProp(includePseudogenes)" value="No">
+        <input type="hidden" name="array(organism)" value="${listOrganisms}">
+        <input type="hidden" name="array(includePseudogenes)" value="No">
         <table><tr><td align="right" valign="middle">${geneTypeParam.prompt}:</td>
-                   <td><html:select  property="myMultiProp(${pNam})">
+                   <td><html:select  property="array(${pNam})">
                            <c:forEach items="${geneTypeParam.vocab}" var="opt">
                                <html:option value="${opt}">${opt}</html:option>
                            </c:forEach>
@@ -126,7 +126,7 @@
     <td align="right">
         <input type="hidden" name="questionFullName" value="GenomicSequenceQuestions.SequenceBySourceId">
         ${sequenceIdParam.prompt}:
-        <html:text property="myProp(GenomicSequenceQuestions_SequenceBySourceId_${sequenceIdParam.name})"
+        <html:text property="value(GenomicSequenceQuestions_SequenceBySourceId_${sequenceIdParam.name})"
                    value="${sequenceIdParam.default}"  size="10"/>
     <td align="right" width="24">
         <input type="hidden" name="questionSubmit" value="Get Answer">

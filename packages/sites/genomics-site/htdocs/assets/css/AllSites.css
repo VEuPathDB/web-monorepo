@@ -65,6 +65,12 @@ div.usererror {
   color:red;
 }
 
+.crumb_details td.region_a,
+.crumb_details td.region_b {
+  font-weight: bold;
+  vertical-align: middle;
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TABLES 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -470,7 +476,7 @@ div.innertube #record-toolbox li {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #menubar {
-	min-width: 935px; //to make space for My Favorites
+	min-width: 935px; /* to make space for My Favorites */
 	height: 19px;
 	text-align: left;
 	background-image: url(../images/menu_bar.png);

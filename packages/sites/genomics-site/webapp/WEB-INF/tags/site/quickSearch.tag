@@ -75,7 +75,7 @@
                <html:form method="get" action="/processQuestionSetsFlat.do">
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" title="Enter a Gene ID. Use * as a wildcard (to obtain more than one). Click to enter multiple Gene IDs">Gene ID:</a></b></label>
          		<input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
-	  			<input type="text" class="search-box" name="myProp(${geneIdParam.name})" value="${geneIdParam.default}" />  <!-- size is defined in class -->
+	  			<input type="text" class="search-box" name="value(${geneIdParam.name})" value="${geneIdParam.default}" />  <!-- size is defined in class -->
 	  			<input type="hidden" name="questionSubmit" value="Get Answer"/>
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
@@ -99,12 +99,12 @@ title="Enter a term to find genes. Use * as a wildcard. Use quotation marks to f
              <c:set var="textFields" value="${textFields},Metabolic pathway names and descriptions"/>
           </c:if>
            		<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch"/>
-		        <input type="hidden" name="myMultiProp(${orgParam.name})" value="${listOrganisms}"/>
-          		<input type="hidden" name="myMultiProp(text_fields)" value="${textFields}"/>
-          		<input type="hidden" name="myMultiProp(whole_words)" value="no"/>
-          		<input type="hidden" name="myProp(max_pvalue)" value="-30"/>
-          		<input type="text" class="search-box ts_ie" name="myProp(${textParam.name})" value="${textParam.default}"/>
-                        <input type="hidden" name="myProp(timestamp)" value="${timestampParam.default}"/>
+		        <input type="hidden" name="array(${orgParam.name})" value="${listOrganisms}"/>
+          		<input type="hidden" name="array(text_fields)" value="${textFields}"/>
+          		<input type="hidden" name="array(whole_words)" value="no"/>
+          		<input type="hidden" name="value(max_pvalue)" value="-30"/>
+          		<input type="text" class="search-box ts_ie" name="value(${textParam.name})" value="${textParam.default}"/>
+                        <input type="hidden" name="value(timestamp)" value="${timestampParam.default}"/>
           		<input type="hidden" name="questionSubmit" value="Get Answer"/>
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>

@@ -1,6 +1,6 @@
 <?
 
-$nginxForm = "https://proxy.apidb.org/proxy-bin/admin/set-nginx-upstream?conf=" 
+$nginxForm = "https://rubus.rcc.uga.edu/proxy-bin/admin/set-nginx-upstream?conf=" 
     . $headers['Host'] . ".conf"
     . "&return=" . $_SERVER['SCRIPT_URI'] . '?' . $_SERVER["QUERY_STRING"];
     
