@@ -76,11 +76,11 @@
 
          <c:set var="expressionDataTable">
            <c:set var="prefix" value="<%= request.getRequestURL() %>" />
-           <c:set var="tableSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=table&id=${row['source_id'].value}&vp=${defaultVp}"/>
+           <c:set var="tableSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=table&id=${row['source_id'].value}"/>
            <c:import url="${prefix}/../../../../../${tableSrc}"  />  
          </c:set>
 
-<c:set var="toggleName" value="${fn:replace(row['profile_name'].value, ' ', '')}"/>
+<c:set var="toggleName" value="${name}_${fn:replace(row['profile_name'].value, ' ', '')}"/>
 
 <wdk:toggle
     name="${toggleName}Data"
