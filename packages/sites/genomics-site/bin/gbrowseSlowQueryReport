@@ -2,10 +2,11 @@
 use strict;
 use Getopt::Long;
 
-my ($threshold, $genepage, $width_filter, $time_filter, $sort_column, $plotOutputFile);
+my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile);
 $sort_column=2;
 &GetOptions('s=s' => \$threshold,
             'g' => \$genepage,
+            'n' => \$notgenepage,
             'w=s' => \$width_filter,
             't=s' => \$time_filter,
             'c=s' => \$sort_column,
@@ -43,6 +44,7 @@ while(<STDIN>) {
                    # the symptom is that the next log entry is mashed in
                    # these are delimited by ========, so dodge that
   next if ($genepage && !/GENEPAGE/);
+  next if ($notgenepage && /GENEPAGE/);
   chomp;
   my ($qt, $timestamp, $absoluteTime, $tag, $module, $seconds, $width, $name) = split(/\t/);
   next if ($time_min && $absoluteTime < $time_min);
@@ -93,11 +95,12 @@ Print a report summarizing the gbrowse slow query logs.
 
 Takes one or more logs on standard input.
 
-usage:  gbrowseSlowQueryReport -s secs [-g] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile]
+usage:  gbrowseSlowQueryReport -s secs [-g] [-n] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile]
 
 where:
   -s:  slowness threshold in seconds.  run times over secs are reported in Slow columns
-  -g:  genepage only flag
+  -g:  genepage only flag. only include queries logged with \"GENEPAGE\"
+  -n:  not-genepage flag. complementary to -g flag (only non-genepage queries)
   -w:  width filter
   -t:  time filter (use seconds since epoch, which is a column in gbrowse log)
   -c:  column to sort on (default is 2, the total time)

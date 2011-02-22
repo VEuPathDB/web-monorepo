@@ -67,9 +67,42 @@
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
+<%-- this block moves here so we can set a link to add a comment on the page title --%>
+<c:url var="commentsUrl" value="addComment.do">
+  <c:param name="stableId" value="${id}"/>
+  <c:param name="commentTargetId" value="gene"/>
+  <c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
+  <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" />
+  <c:param name="organism" value="${binomial}" />
+  <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
+  <c:param name="contig" value="${sequence_id}" />
+  <c:param name="flag" value="0" /> 
+</c:url>
+
 <h2>
 <center>
-<wdk:recordPageBasketIcon  desc="${prd}" />
+	<!-- the ID and product title -->
+ 	${id} <br /> <span style="font-size:80%">${prd}</span> <br/>
+
+<c:set var="count" value="0"/>
+<c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
+        <c:set var="count" value="${count +  1}"/>
+</c:forEach>
+<c:choose>
+<c:when test="${count == 0}">
+	<a style="font-size:70%;font-weight:normal;cursor:hand" href="${commentsUrl}">Add the first user comment
+</c:when>
+<c:otherwise>
+	<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation">This gene has <span style='color:red'>${count}</span> community comments
+</c:otherwise>
+</c:choose>
+<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+	<!-- the basket and favorites  -->
+  	<wdk:recordPageBasketIcon />
+
 </center>
 </h2>
 
@@ -215,6 +248,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <wdk:wdkTable tblName="Notes" isOpen="true" />
 
 <%--- Comments -----------------------------------------------------%>
+<%-- moved above 
 <c:url var="commentsUrl" value="addComment.do">
   <c:param name="stableId" value="${id}"/>
   <c:param name="commentTargetId" value="gene"/>
@@ -225,7 +259,11 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
   <c:param name="contig" value="${sequence_id}" />
   <c:param name="flag" value="0" /> 
 </c:url>
-<b><a href="${commentsUrl}">Add a comment on ${id}</a></b><br><br>
+--%>
+<b><a title="Click to go to the comments page" style="font-size:120%" href="${commentsUrl}">Add a comment on ${id}
+<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+</a></b><br><br>
+
 
 <c:catch var="e">
 <wdk:wdkTable tblName="UserComments"  isOpen="true"/>
@@ -287,8 +325,9 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
     InterproscanData
     </c:set>
 
+<c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=${wdkRecord.primaryKey};type=${ptracks};width=640;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};type=${ptracks};width=640;embed=1;genepage=1
 </c:set>
 <c:if test="${ptracks ne ''}">
     <c:set var="proteinFeaturesImg">

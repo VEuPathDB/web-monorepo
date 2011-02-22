@@ -71,12 +71,46 @@
 </table>
 
 <hr>
+<%-- this block moves here so we can set a link to add a comment on the apge title --%>
+<c:url var="commentsUrl" value="addComment.do">
+    <c:param name="stableId" value="${id}"/>
+    <c:param name="commentTargetId" value="gene"/>
+    <c:param name="externalDbName" value="${attrs['external_db_name'].value}" />
+    <c:param name="externalDbVersion" value="${attrs['external_db_version'].value}" /> 
+    <c:param name="organism" value="${genus_species}" />
+    <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
+    <c:param name="contig" value="${attrs['sequence_id'].value}" />
+    <c:param name="strand" value="${strand}" />
+    <c:param name="flag" value="0" /> 
+</c:url>
 
 <%--  TITLE  --------------------------%>
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 <h2><center>
-        <wdk:recordPageBasketIcon desc="${prd}"/>
+
+	<!-- the ID and product title -->
+ 	${id} <br /> <span style="font-size:80%">${prd}</span> <br/>
+
+<c:set var="count" value="0"/>
+<c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
+        <c:set var="count" value="${count +  1}"/>
+</c:forEach>
+<c:choose>
+<c:when test="${count == 0}">
+	<a style="font-size:70%;font-weight:normal;cursor:hand" href="${commentsUrl}">Add the first user comment
+</c:when>
+<c:otherwise>
+	<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation">This gene has <span style='color:red'>${count}</span> community comments
+</c:otherwise>
+</c:choose>
+<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+	<!-- the basket and favorites  -->
+  	<wdk:recordPageBasketIcon />
+
         <%--${fn:length(wdkRecord.tables['CommunityExpComments'])}--%>
 </center></h2>
 
@@ -209,6 +243,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 <site:pageDivider name="Annotation"/>
 
+<%-- moved above
 <c:url var="commentsUrl" value="addComment.do">
     <c:param name="stableId" value="${id}"/>
     <c:param name="commentTargetId" value="gene"/>
@@ -220,9 +255,10 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     <c:param name="strand" value="${strand}" />
     <c:param name="flag" value="0" /> 
 </c:url>
-
-<a href="${commentsUrl}">Add a comment on ${id}</a>
-
+--%>
+<b><a title="Click to go to the comments page" style="font-size:120%" href="${commentsUrl}">Add a comment on ${id}
+<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+</a></b><br><br>
 
 <c:catch var="e">
 <wdk:wdkTable tblName="UserComments"/>
@@ -325,8 +361,9 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     NRDB,InterproscanData,Wastling-Rhoptry,Wastling1D_SDSPage,Wastling-1D_SDSPage-Soluble,Wastling-1D_SDSPage-Insoluble,Wastling-MudPIT-Soluble,Wastling-MudPIT-Insoluble,Murray-Roos_Proteomics_Conoid-enriched,Murray-Roos_Proteomics_Conoid-depleted,1D_tg_35bands_022706_Proteomics,Dec2006_Tg_membrane_Fayun_Proteomics,March2007Tg_Cyto_Proteins_Proteomics,Oct2006_Tg_membrane_Fayun_Proteomics,massspec_may02-03_2006_Proteomics,massspec_june30_2006_Proteomics,massspec_Oct2006_Tg_membrane_Fayun_Proteomics,massspec_may10_2006_Proteomics,massspec_1D_tg_1frac_020306_Proteomics,massspec_Carruthers_2destinct_peptides,massspec_MudPIT_Twinscan_hits,Moreno-1-annotated,Moreno-6-annotated,Moreno-p3-annotated
     </c:set>
 
+<c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wdkRecord.primaryKey};type=${ptracks};width=600;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};type=${ptracks};width=600;embed=1;genepage=1
 </c:set>
 <c:if test="${ptracks ne ''}">
     <c:set var="proteinFeaturesImg">
