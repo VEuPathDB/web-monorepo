@@ -36,12 +36,12 @@
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
       <c:set var="simple" value="1e0dccb636a58a91" />
-      <c:set var="expanded" value="5d0b81139d371422" />
+      <c:set var="expanded" value="aea5452877157ff5" />
       <c:set var="expressed" value="1b9b55c3c788b8bc" />
       <c:set var="expressedPknowlesi" value="6b39827bdee7406d" />
+      <c:set var="PfalDrugTargets" value="57c0cf7dabba1408" />
 <%-- these need to be regenerated
       <c:set var="PfalVaccineAg" value="d6da190be19651a3" />
-      <c:set var="PfalDrugTargets" value="3dada0a520754b5d" />
 --%>
    </c:when>
 
@@ -57,10 +57,10 @@
 
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
       <c:set var="simple" value="6d18cc017993d226" />
-      <c:set var="expanded" value="8699257e6a988b74" />
+      <c:set var="expanded" value="2138414b43b897b5" />
       <c:set var="TcAllexpressed" value="4abe1d668c3cc290" />
       <c:set var="expressedLbrazilliensis" value="edf8019a9b1c938f" />
-      <c:set var="SecretedAmastigoteKin" value="c867cab6ad4645a0" />
+      <c:set var="SecretedAmastigoteKin" value="24351a75599d35f8" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
@@ -91,7 +91,7 @@
 
 <c:if test="${expanded != null}">
   <tr align = "left">
-	<td><a  title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${expanded}"/>');" href="javascript:void(0);">Kinases having TM domains and Expr(EST or Prot evidence) ortho</a> </td>
+	<td><a  title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${expanded}"/>');" href="javascript:void(0);">Kinases with TM domains and EST or mass spec. evidence</a> </td>
 	<td>Strategy with nested strategy and transform</td>
 	<td>Find all kinases that have at least one transmembrane domain and evidence for expression based on EST alignments or proteomics evidence and transform the result to identify all orthologs since not all organisms have expression evidence</td>
 </tr>
@@ -147,9 +147,9 @@
 
 <c:if test="${PfalDrugTargets != null}">
 <tr align = "left">
-	<td><a   title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${PfalDrugTargets}"/>');" href="javascript:void(0);"><i>P.falciparum</i> candidate drug targets</a> </td>
+	<td><a   title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${PfalDrugTargets}"/>');" href="javascript:void(0);">Candidate drug targets</a> </td>
 	<td>Nested stategy to identify potential drug targets.</td>
-	<td>Find genes from <i>P. falciparum</i> that could be worth following up as potential drug targets.  Note that there are many ways to do this search ... experiment with different parameter settings and incorporating different queries.</td>
+	<td>Find <i>Plasmodium</i> genes that could be worth following up as potential drug targets.  Note that there are many ways to do this search ... experiment with different parameter settings and incorporating different queries.</td>
 </tr>
 </c:if>
 
