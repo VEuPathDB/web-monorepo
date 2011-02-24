@@ -12,20 +12,5 @@
   <site:footer />
 </c:set>
 
-${Question_Header}
+<wdk:questionForm />
 
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
-<c:if test="${fn:contains(recordType, 'Assem') }">
-  <c:set var="recordType" value="Transcript Assemblie" />
-</c:if>
-<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
-
-<html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
-
-    <wdk:questionForm />
-
-    <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
-
-</html:form>
-
-${Question_Footer}
