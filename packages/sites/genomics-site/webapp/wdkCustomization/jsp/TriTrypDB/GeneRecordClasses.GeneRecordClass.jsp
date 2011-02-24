@@ -122,7 +122,7 @@
 	<a style="font-size:70%;font-weight:normal;cursor:hand" href="${commentsUrl}">Add the first user comment
 </c:when>
 <c:otherwise>
-	<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation">This gene has <span style='color:red'>${count}</span> community comments
+	<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation" onclick="showLayer('UserComments')">This gene has <span style='color:red'>${count}</span> user comments
 </c:otherwise>
 </c:choose>
 <img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
