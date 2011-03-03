@@ -1,0 +1,340 @@
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	background-image: url(/assets/images/ToxoDB/background_s.jpg);
+}
+
+.coloredtext {         /* no link */
+	color: #206910;
+}
+
+a:link, a:visited {
+	color: #772841;
+}
+
+a:hover, a:active {
+	color: #206910;   /*  #3c8935;  */
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header {
+	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
+}
+
+#header2 {
+	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
+}
+
+
+#header_rt {
+   color: #3c8935;
+}
+
+#header_rt a:link, #header_rt a:visited {
+   color: #3c8935;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER DROPDOWN MENU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+#nav_top {
+	color: #3c8935;
+}
+
+#nav_top a:link, #nav_top a:visited {
+	color: #3c8935;
+}
+
+#nav_top li ul {  /* second-level lists */
+	background-image: url(../images/ToxoDB/footer.png);
+	border-color:#3c8935;
+	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
+}
+
+#nav_top li ul a:link, #nav_top li ul a:visited {
+	color: #3c8935;
+}
+
+#nav_top li ul a:hover, #nav_top li ul a:active {
+	color: #6f223a;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =STRUCTURE 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+/* #menubar #mysearch {
+	background-image: url(../images/ToxoDB/my_hist_menubar.png);
+	border: 1px solid #831639;
+} */
+ 
+#contentcolumn {
+	background-image: url(../images/ToxoDB/footer.png);
+	border: 1px solid #20691a;
+}
+
+#contentcolumn2 {
+	background-image: url(../images/ToxoDB/footer.png);
+	border: 1px solid #20691a;
+}
+
+#mysearchhist {
+	background-image: url(../images/ToxoDB/bubble_my_searchbox.png);
+	border: 1px solid #20691a;
+}
+
+
+#main_tools {
+	background-image: url(../images/ToxoDB/tools_bckgnd.jpg);
+}
+
+#about_us_left {
+	background-color: #bfccdf;
+	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
+}
+
+#pink_title {
+	color: #5e0f28;
+	background-image: url(../images/ToxoDB/trheader.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Top Menu Bar Dropdown List
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
+	color:#560000;
+}
+#menu ul ul a:link, #menu ul ul a:visited{
+	border-bottom-color: #3c8935;
+}
+
+#menu ul ul a:hover, #menu ul ul a:active{
+	border-bottom-color: #3c8935;
+	color: #b30101;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Menu Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.menu_lefttop_drop {
+   border-color: #20691A;  /* color as in contentcolumn border */
+}
+
+#menu_lefttop a.heading {
+	background-image: url(../images/ToxoDB/menu_lft2.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Search Boxes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.search-box{
+   border: solid 1px #1c7c12;
+} 
+
+.search-box .textbox{
+	border: solid 1px #b3b3b3;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Fonts 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+h1 {
+	color: #20691a;
+}
+h2 {
+  	color: #20691a;
+}
+
+.h2center, .h3left,.h3center, .h4left {
+  	color: #3c8935;
+}
+
+
+.subcolor {
+	color: #714782
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOOTER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
+#footer{
+   background-image: url(../images/ToxoDB/footer.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TABLES 
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+td.headerrow {
+	color: #5e0f28;
+	background-image: url(../images/ToxoDB/trheader.png);
+	background-repeat: repeat-x;
+}
+
+
+tr.headerrow {
+	color: #5e0f28;
+}
+
+tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
+	background-image: url(../images/ToxoDB/trheader.png);
+}
+
+.flexigrid tr.headerrow th:hover {
+	background-image: url(../images/ToxoDB/trhover.png);
+}
+
+td.subheaderrow {
+	background-image: url(../images/ToxoDB/trsubhead.png);
+}
+
+tr.subheaderrow th {
+	background-image: url(../images/ToxoDB/trsubhead.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.headerrow2 td{
+        color: #5e0f28;
+	background-image: url(../images/ToxoDB/trheader.png);
+}
+
+tr.subheaderrow2 td{
+	background-image: url(../images/ToxoDB/trsubhead.png);
+}
+
+a.queryGridInactive {
+        color:              #C8C8C8;
+}
+a.queryGridActive {
+        color:              #772841;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =END OF TABLES FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.subheaderrow th {
+	border-color: #772841;
+}
+
+tr.headerrow th { 
+	border-color: #772841;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =RED BUTTON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WorkSpace Divs 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ABOUT US and HELP PAGES SIDEBAR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.twoColHybLt #sidebar1 {
+	background-image: url(../images/ToxoDB/aboutus.png);
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WARNING BOXES 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ADVANCED STRATEGY PAGING 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =MISC 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+span.marker a:link, span.marker a:visited {
+	color: #7D0101;
+}
+
+
+/* APPLICATION PAGE STYLES */
+
+#strategy_tabs a:link, #strategy_tabs a:visited {
+    background-color: #E8EBF0;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	border: 1px solid #3c8935;
+}
+
+.blockPage{
+	background-image: url(/assets/images/ToxoDB/footer.png);
+}
+
+.flexigrid div.hDiv
+{
+	background-image:url(/assets/images/ToxoDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/ToxoDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/ToxoDB/trheader.png);
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 history.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Strategy.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter_menu.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#query_form {
+	border: 1px solid #772841;	
+}
+
+
+
+/*THE END */
