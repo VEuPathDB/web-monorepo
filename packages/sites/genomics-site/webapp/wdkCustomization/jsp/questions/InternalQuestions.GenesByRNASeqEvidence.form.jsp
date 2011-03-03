@@ -17,12 +17,14 @@
 </c:if>
 
 
-${Question_Header}
 <wdk:errors/>
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
+<%--
 <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
+--%>
+
 <center><table width="90%">
 
 <c:set value="2" var="columns"/>
@@ -49,4 +51,3 @@ ${Question_Header}
 </center>
 </div>
 
-${Question_Footer}

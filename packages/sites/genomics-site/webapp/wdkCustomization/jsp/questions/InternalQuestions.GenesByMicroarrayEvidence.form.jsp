@@ -19,7 +19,7 @@
     <c:otherwise>
 
 
-${Question_Header}
+
 
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -29,10 +29,8 @@ ${Question_Header}
 
 <wdk:errors/>
 
+<%-- div needed for Add Step --%>
 <div id="form_question">
-
-<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
-
 
 <center><table width="90%">
      
@@ -83,4 +81,3 @@ ${Question_Header}
 </c:choose>
 
 
-${Question_Footer}
