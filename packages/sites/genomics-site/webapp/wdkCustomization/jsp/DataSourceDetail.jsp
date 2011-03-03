@@ -18,6 +18,16 @@
 
 <site:header banner="Data Contents" />
 
+<style type="text/css">
+.data-source {
+  border-top: 1px solid blue;
+  border-bottom: 1px solid blue;
+  margin: 5px;
+  padding: 5px;
+}
+
+</style>
+
 <!-- show all xml question sets -->
 <div id="data-sources">
   <c:forEach items="${answer.records}" var="record">
@@ -29,15 +39,14 @@
     <c:set var="version" value="${attributes['version']}" />
     <c:set var="publicUrl" value="${attributes['public_url']}" />
     <c:set var="categories" value="${attributes['categories']}" />
-    <c:set var="organisms" value="${attributes['organisms']}" />
+    <c:set var="organism" value="${attributes['organism']}" />
     <c:set var="description" value="${attributes['description']}" />
     <c:set var="contact" value="${attributes['contact']}" />
-    <c:set var="email" value="${attributes['email']}" />
     <c:set var="institution" value="${attributes['institution']}" />
     
     <c:set var="tables" value="${record.tables}" />
     <c:set var="publications" value="${tables['Publications']}" />
-    <c:set var="references" value="${attributes['References']}" />
+    <c:set var="references" value="${tables['References']}" />
     <div class="data-source">
       <div>
         <a name="${primaryKey.value}"></a>
@@ -46,21 +55,15 @@
       </div>
       <div class="detail">
         <p>${description.value}</p>
-        <div>${publicUrl.displayName}: <a href="${publicUr.value}">${publicUrl.value}</a>
+        <div>${publicUrl.displayName}: <a href="${publicUr.value}">${publicUrl.value}</a></div>
       </div>
       
-      <c:if test="${fn:length(publications) != 0}">
-        <c:wdkTable tblName="${publications.name}" />
-      </c:if>
-      
-      <c:if test="${fn:length(references) != 0}">
-        <c:wdkTable tblName="${references.name}" />
-      </c:if>
+      <wdk:wdkTable tblName="${publications.name}" />
+      <wdk:wdkTable tblName="${references.name}" />
     </div>
     
-    </c:forEach>
   </c:forEach>
-</UL>
+</div>
 
 <p><a href="">Click here to see the complete list of Data Sources</a></p>
 

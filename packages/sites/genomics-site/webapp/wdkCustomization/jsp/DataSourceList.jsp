@@ -22,6 +22,5 @@
     <c:set var="attributes" value="${record.attributes}"/>
     <c:set var="displayName" value="${attributes['display_name']}" />
     <LI><a href="getDataSource.do${reference}#${primaryKey.value}">${displayName.value}</a></LI>
-    </c:forEach>
   </c:forEach>
 </UL>

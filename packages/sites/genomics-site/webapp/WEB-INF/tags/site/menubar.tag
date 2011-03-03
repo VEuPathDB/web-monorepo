@@ -174,7 +174,7 @@
 	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods'/>">Data Sources and Methods</a></li>	
 </c:if>
 <c:if test="${project != 'EuPathDB'}">
-   	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.DataSources'/>">Data Sources</a></li>
+   	    <li><a href="<c:url value='/getDataSource.do?display=detail'/>">Data Sources</a></li>
  	    <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.Methods'/>">Analysis Methods</a></li>
 </c:if>
 <c:if test="${project == 'CryptoDB'}">
