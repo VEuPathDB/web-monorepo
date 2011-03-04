@@ -3375,6 +3375,22 @@ WHERE  sa.dataset = 'sangerPReichenowiSnps_RSRC'
 ]]>
     </sql>
   </sqlQuery>
+
+
+
+  <sqlQuery name="SNP:Diversity">
+     <sql>
+<![CDATA[
+SELECT etn.na_sequence_id feature_id, 
+       'SNP' type, 
+       '$source' source 
+FROM   dots.NASEQUENCE etn 
+WHERE  etn.na_sequence_id = $srcfeature_id 
+]]>
+    </sql>
+  </sqlQuery>
+
+
   
   
   <sqlQuery name="match:BergmanVaidyaOligos"  includeProjects="PlasmoDB">
@@ -4249,7 +4265,33 @@ GROUP BY interval, na_sequence_id
 ]]> 
     </sql> 
   </sqlQuery>
-  
+
+
+  <sqlQuery name="SNP:Diversity:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT 
+       gff3.gff3_feature_id          as feature_id,
+       'SNP_sub'                     as type, 
+       '$source'                     as source, 
+       gff3.score                    as score, 
+       gff3.na_sequence_id           as parent_id, 
+       gff3.mapping_start            as startm, 
+       gff3.mapping_end              as end, 
+       decode(gff3.is_reversed, 0, '+1', 1, '-1', '.') as strand
+FROM   ApiDB.GFF3 gff3,
+       sres.ExternalDatabase ed,
+       sres.ExternalDatabaseRelease edr
+WHERE  ed.name = $$edname$$
+  AND  edr.external_database_id = ed.external_database_id
+  AND  gff3.external_database_release_id = edr.external_database_release_id
+  AND  gff3.na_sequence_id = $srcfeature_id
+  AND  gff3.mapping_start <= $rend
+  AND  gff3.mapping_end >= $base_start
+]]>
+    </sql>
+  </sqlQuery> 
+
   <sqlQuery name="alignment:Cosmids:bulksubfeatures" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_LmjF24_01_20050601_V5.2$$"/>
