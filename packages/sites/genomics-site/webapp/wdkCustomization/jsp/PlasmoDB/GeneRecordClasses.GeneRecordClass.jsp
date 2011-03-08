@@ -207,18 +207,6 @@
 
 
 
-
-<!-- note moved comments url stuff here so can use in plasmo new annotation section -->
-<c:set var="externalDbName" value="${attrs['external_db_name']}"/>
-<c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
-<c:url var="commentsUrl" value="showAddComment.do">
-  <c:param name="stableId" value="${id}"/>
-  <c:param name="commentTargetId" value="gene"/>
-  <c:param name="externalDbName" value="${externalDbName.value}" />
-  <c:param name="externalDbVersion" value="${externalDbVersion.value}" />
-        <c:param name="organism" value="${binomial}" />
-</c:url>
-
 <%-- OVERVIEW ------------%>
 
 <c:set var="attr" value="${attrs['overview']}" />
@@ -348,22 +336,6 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <a name="user-comment"/>
 
-<%-- moved above
-<c:set var="externalDbName" value="${attrs['external_db_name']}"/>
-<c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
-<c:url var="commentsUrl" value="addComment.do">
-  <c:param name="stableId" value="${id}"/>
-  <c:param name="commentTargetId" value="gene"/>
-  <c:param name="externalDbName" value="${externalDbName.value}" />
-  <c:param name="externalDbVersion" value="${externalDbVersion.value}" />
-  <c:param name="organism" value="${binomial}" />
-  <c:param name="locations" value="${fn:replace(start,',','')}-${fn:replace(end,',','')}" />
-  <c:param name="contig" value="${attrs['sequence_id'].value}" /> 
-  <c:param name="strand" value="${strand}" />
-  <c:param name="flag" value="0" /> 
-  <c:param name="bulk" value="0" /> 
-</c:url>
---%>
 <b><a title="Click to go to the comments page" style="font-size:120%" href="${commentsUrl}">Add a comment on ${id}
 <img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
 </a></b><br><br>
