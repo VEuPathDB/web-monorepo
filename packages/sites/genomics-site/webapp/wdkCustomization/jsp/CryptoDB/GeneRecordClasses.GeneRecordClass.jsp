@@ -547,7 +547,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 
 <wdk:toggle
     name="GenomicSequence" 
-    isOpen="fales"
+    isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
     content="${seq}" />
 
