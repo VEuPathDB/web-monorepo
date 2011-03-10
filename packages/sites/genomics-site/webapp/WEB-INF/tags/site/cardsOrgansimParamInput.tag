@@ -76,8 +76,8 @@ function noop(){}
 					    <c:if test="${i == 0}"><c:set var="checked" value="checked"/></c:if>
 					    <%--<c:forEach items="${qP.vocab}" var="flatVoc">--%>
 						<li>
-							<%--<input name="myMultiProp(${pNam})" value="${flatVoc}" id="${v}_${i}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input>--%>
-							<html:multibox property="myMultiProp(${pNam})" value="${entity.key}" styleId="${v}_${i}" onclick="copySelection(this)" />
+							<%--<input name="array(${pNam})" value="${flatVoc}" id="${v}_${i}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input>--%>
+							<html:multibox property="array(${pNam})" value="${entity.key}" styleId="${v}_${i}" onclick="copySelection(this)" />
 								<i>${entity.value}</i>
 						</li>
 						<c:set var="i" value="${i+1}"/>
@@ -91,8 +91,8 @@ function noop(){}
 					<%--<c:forEach items="${qP.vocab}" var="flatVoc">--%>
 					  <c:if test="${fn:startsWith(entity.value,group)}">
 						<li>
-							<%--<input name="myMultiProp(${pNam})" value="${flatVoc}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input>--%>
-							<html:multibox property="myMultiProp(${pNam})" value="${entity.key}" onclick="copySelection(this)"/>
+							<%--<input name="array(${pNam})" value="${flatVoc}" type="checkbox" onclick="copySelection(this)"><i>${flatVoc}</i></input>--%>
+							<html:multibox property="array(${pNam})" value="${entity.key}" onclick="copySelection(this)"/>
 								<i>${entity.value}</i>
 						</li>
 					  </c:if>

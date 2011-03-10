@@ -208,7 +208,7 @@
     <li><a href="#">Community</a>
 	<ul>
  	    <c:if test="${project != 'EuPathDB'}" >    
-		<li><a title="Add your comments to your gene of interest: start at the gene page" onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesByTextSearch&myMultiProp(text_search_organism)=${listOrganisms}&myMultiProp(text_fields)=User comments&myMultiProp(whole_words)=no&myProp(max_pvalue)=-30&myProp(text_expression)=*&myProp(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
+		<li><a title="Add your comments to your gene of interest: start at the gene page" onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesByTextSearch&array(text_search_organism)=${listOrganisms}&array(text_fields)=User comments&array(whole_words)=no&value(max_pvalue)=-30&value(text_expression)=*&value(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
 
 	    <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
 
