@@ -1840,7 +1840,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:syntenySpanMC" includeProjects="TriTrypDB,PlasmoDB,CryptoDB,GiardiaDB,AmoebaDB,MicrosporidiaDB">
+  <sqlQuery name="match:syntenySpanMC" includeProjects="TriTrypDB,PlasmoDB,CryptoDB,GiardiaDB,AmoebaDB,MicrosporidiaDB,PiroplasmaDB">
      <sql>
 <![CDATA[
 SELECT
