@@ -25,35 +25,38 @@
 
     <c:set var="secName" value="${row['module'].value}"/>
     <c:set var="imgId" value="img${secName}"/>
-    <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&model=${model}&fmt=png&id=${row['source_id'].value}"/>
+    <c:set var="preImgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&fmt=png&id=${row['source_id'].value}"/>
     <c:set var="imgSrc" value="${preImgSrc}"/>
 
-    <c:set var="selectList">
-        <SELECT NAME="${name}List"
-        OnChange="javascript:updateImage('${imgId}', ${name}Pick.${name}List.options[selectedIndex].value)">
 
+
+
+    <c:set var="selectList">
+
+
+      <form name=${name}List>
         <c:set var="vp_i" value="0"/>
         <c:set var="defaultVp" value=""/>
-        <c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
 
+        <c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
           <c:choose>
             <c:when test="${vp_i == 0}">
-              <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}&vp=_LEGEND,${vp}">${vp}</OPTION>
+              ${vp} <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="${vp}" name="${vp}" checked /> &nbsp;
+
               <c:set var="imgSrc" value="${imgSrc}&vp=_LEGEND,${vp}"/>
               <c:set var="defaultVp" value="${vp}"/>
             </c:when>
             <c:otherwise>
-              <OPTION  VALUE="${preImgSrc}&vp=_LEGEND,${vp}">${vp}</OPTION>
+              ${vp} <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="${vp}"name="${vp}" /> &nbsp;
             </c:otherwise>
           </c:choose>
-
 
           <c:set var="vp_i" value="${vp_i +  1}"/>
         </c:forEach>
 
-          <OPTION VALUE="${preImgSrc}">ALL</OPTION>
+     </form>
 
-        </select>
+
     </c:set>
 
 
@@ -112,7 +115,7 @@
         ${row['y_axis'].value} 
 
        <br /><br />
-        <b>Choose Graph to Display</b><br />
+        <b>Choose Graph(s) to Display</b><br />
 
 
 
@@ -152,5 +155,17 @@
 
 </c:forEach>
 
-
-
+<script type="text/javascript">
+function formatImgUrl(url, myForm)
+{
+  var vp = '&vp=_LEGEND';
+  for (var i=0; i < myForm.length; i++){
+    var e = myForm.elements[i];
+    if(e.checked) {
+      vp = vp + ',' + e.value;
+    }
+  }
+  url = url + vp;
+  return(url);
+}
+</script>
