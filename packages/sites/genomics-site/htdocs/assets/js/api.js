@@ -267,7 +267,7 @@ function updateImageMapDiv(imgMapDivId, imgMapSrc, postLoadJS) {
 // cris, 2-4-11. fixes #2430
     if (!isWorking && http) {
 	//if($('div#imgMapDivId_loading').length == 0) {    
-		$('#imgMapDivId_loading').remove();
+	//	$('#imgMapDivId_loading').remove();
 		jQuery(slot).append(loadingImg);
 	//}
  
