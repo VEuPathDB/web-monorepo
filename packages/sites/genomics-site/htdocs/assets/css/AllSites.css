@@ -750,9 +750,11 @@ div#menu ul ul ul li:hover ul {
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =FOOTER  padding 25px helps in showing the whole background, otherwise its height is limited by its content
+        min-width avoids wrapping of the logos
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
+   min-width: 1000px;
    font-size: 10px;
    width: 95%;  /* 75%  */
    background-color:#FFFFFF;
