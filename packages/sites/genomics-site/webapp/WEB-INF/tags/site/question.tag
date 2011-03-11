@@ -32,20 +32,9 @@
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
 <jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 
-
-<%-- display question section --%>
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
-<tr>
-<td bgcolor=white valign=top>
-
-<%-- put an anchor here for linking back from help sections --%>
-<A name="${fromAnchorQ}"></A>
-
-
 <input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
 
 <!-- show error messages, if any -->
-
 <div class='usererror'><api:errors/></div>
 
 <%-- the js has to be included here in order to appear in the step form --%>
@@ -56,16 +45,8 @@
             </script>
 </c:if>
 
-
-
 <div class="params">
 	<site:questionParams />
-
 </div>   <%-- end of params div --%>
-
-
-</td>
-</tr>
-</table> 
 
 

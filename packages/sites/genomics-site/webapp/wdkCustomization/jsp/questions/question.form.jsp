@@ -2,12 +2,11 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
+<%-- join the Question_Footer var in Question.jsp; as is, it was removing the footer tag
 <c:set var="Question_Footer" scope="request">
-<%-- displays question description, can be overridden by the custom question form --%>
-<site:questionDescription />
+	<site:questionDescription />
 </c:set>
-
+--%>
 
 <c:choose>
   <c:when test = "${fn:containsIgnoreCase(wdkQuestion.name, 'Blast') || fn:containsIgnoreCase(wdkQuestion.name, 'BySimilarity')}">
