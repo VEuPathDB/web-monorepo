@@ -133,29 +133,21 @@
 <c:set var="attr" value="${attrs['overview']}" />
 
 <c:choose>
-  <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
-     <c:set var="assemblage" value="<b>Assemblage A isolate WB</b>"/>
-     <c:set var="gtracks"  value="Gene+SyntenySpanAssemblageB+SyntenyAssemblageB+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX"/>
-     <c:set var="ptracks" value="RatnerMassSpecPeptides+TachezyMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP"/>
+  <c:when test='${organismFull eq "Theileria annulata strain Ankara"}'>
+     <c:set var="gtracks"  value="Gene+SyntenySpanTparva+SyntenyTparva+SyntenySpanBbovis+SyntenyBbovis+BLASTX"/>
+     <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/>
   </c:when>
-  <c:when test='${organismFull eq "Giardia intestinalis ATCC 50581"}'>
-     <c:set var="assemblage" value="<b>Assemblage B isolate GS</b>" />
-     <c:set var="gtracks" value="Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+EST+BLASTX" />
+  <c:when test='${organismFull eq "Theileria parva strain Muguga"}'>
+     <c:set var="gtracks" value="Gene+SyntenySpanTannulata+SyntenyTannulata+SyntenySpanBbovis+SyntenyBbovis+BLASTX" />
      <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/> 
   </c:when>
-  <c:when test='${organismFull eq "Giardia lamblia P15"}'>
-     <c:set var="assemblage" value="<b>Assemblage E isolate P15</b>" /> 
-     <c:set var="gtracks" value="Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageB+SyntenyAssemblageB+UnifiedMassSpecPeptides+EST+BLASTX" /> 
+  <c:when test='${organismFull eq "Babesia bovis T2Bo"}'>
+     <c:set var="gtracks" value="Gene+SyntenySpanTparva+SyntenyTparva+SyntenySpanTannulata+SyntenyTannulata+BLASTX" /> 
      <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP" /> 
   </c:when>
 </c:choose>
 
 
-
-<site:panel 
-    displayName="${attr.displayName}"
-    content="${attr.value}${append}   ${assemblage} ${isdeprecated}" />
-<br>
 
 <c:set var="content">
 ${attrs['organism'].value}<br>
@@ -172,11 +164,11 @@ ${attrs['organism'].value}<br>
 
 
 <c:set var="attribution">
-G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblageE_contigsGB
+<%-- G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblageE_contigsGB --%>
 </c:set>
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/piroplasmadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -185,7 +177,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
     <center><div id="${gnCtxDivId}"></div></center>
     
     <c:set var="gbrowseUrl">
-        /cgi-bin/gbrowse/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
+        /cgi-bin/gbrowse/piroplasmadb/?name=${sequence_id}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
     </c:set>
     <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
   </c:set>
