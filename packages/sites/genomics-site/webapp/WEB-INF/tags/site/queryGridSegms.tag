@@ -3,6 +3,7 @@
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<%-- "existsOn" is only used by the Portal --%>
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
@@ -13,11 +14,11 @@
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="Sequence ID(s)"  existsOn="A Am G C M P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansBySourceId" linktext="Segment ID(s)"  existsOn=""/>
                 </tr>
 
                  <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A Am G C M P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansByLocation" linktext="Genomic Location" existsOn=""/>
                 </tr>
             </table>
 </div>
@@ -29,12 +30,10 @@
         <td >
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST Similarity" type="SEQ" existsOn="A Am G C M P T Tr Tt"  />
+
+                 <tr>
+                     <site:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansByMotifSearch" linktext="DNA Motif" existsOn=""/>
                 </tr>
-
-
-
             </table>
 </div>
         </td>

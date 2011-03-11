@@ -94,20 +94,24 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Transcript Expression
                 </td></tr>
-                <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A Am G P T Tt"/>
-                </tr>
+               
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn="A Am C G M P T Tr Tt"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySageTagEvidence" linktext="SAGE Tag Evidence" existsOn="A G P T Tt"/>
                 </tr>
-                <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByChIPchip" linktext="ChIP chip Evidence" existsOn="A P T"/> 
+ 		<tr>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A Am G P T Tt"/>
                 </tr>
                 <tr>
                     <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByRNASeqEvidence" linktext="RNA Seq Evidence" existsOn="A P T Tt"/>
+                </tr>
+		   <tr>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByChIPchip" linktext="ChIP chip Evidence" existsOn="A P T"/> 
+                </tr>
+		   <tr>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByBindingSiteFeature" linktext="Binding Site Evidence" existsOn="A P"/> 
                 </tr>
             </table>
 </div>

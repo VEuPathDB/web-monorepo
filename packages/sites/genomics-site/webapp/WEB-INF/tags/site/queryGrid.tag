@@ -19,10 +19,6 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<c:set var="PORTAL" value="${ fn:containsIgnoreCase(modelName, 'eupath')    }"     />
-<c:set var="COMPONENT" value="${ fn:containsIgnoreCase(modelName, 'plasmo') || fn:containsIgnoreCase(modelName, 'toxo') || fn:containsIgnoreCase(modelName, 'crypto') || fn:containsIgnoreCase(modelName, 'giardia') || fn:containsIgnoreCase(modelName, 'trich')   || fn:containsIgnoreCase(modelName, 'tritryp')  }"     />
-
-
 <%--------------------------------------------------------------------%>
 <%-- these divs are needed because they do NOT come from header.... problem associated with having a sidebar --%>
 
@@ -44,30 +40,13 @@
 
 <table id="queryGrid" width="100%" border="0" cellspacing="0" cellpadding="0">
 
-<c:if test="${PORTAL}">
-<tr><td colspan="3">  
-    <div class="smallBlack" align="center">
-	<b>Search Availability in Organism Specific Sites:</b> &nbsp;&nbsp; &nbsp;
-	<img src="/assets/images/A_letter.gif" border='0' alt='amoeba' width="10" height="10"/> = AmoebaDB &nbsp;&nbsp;
-	<img src="/assets/images/cryptodb_letter.gif" border='0' alt='crypto' /> = CryptoDB &nbsp;&nbsp;
-	<img src="/assets/images/giardiadb_letter.gif" border='0' alt='giardia' /> = GiardiaDB &nbsp; &nbsp;
-	<img src="/assets/images/M_letter.gif" border='0' alt='micro'  width="10" height="10"/> = MicrosporidiaDB &nbsp; &nbsp;
-	<img src="/assets/images/plasmodb_letter.gif" border='0' alt='plasmo' /> = PlasmoDB &nbsp;&nbsp;
-	<img src="/assets/images/toxodb_letter.gif" border='0' alt='toxo' /> = ToxoDB &nbsp; &nbsp;
-	<img src="/assets/images/trichdb_letter.gif" border='0' alt='trich' /> = TrichDB &nbsp; &nbsp;
-        <img src="/assets/images/tritrypdb_letter.gif" border='0' alt='Tt' /> = TriTrypDB &nbsp; &nbsp;
-	</div>
-</td></tr>
-</c:if>
-
-<c:if test="${COMPONENT}">
 <tr><td colspan="3">  
     <div class="smallBlack" align="center">
 	(Click on &nbsp; 
 	<img src="/assets/images/eupathdb_letter.gif" border='0' alt='eupathdb'/> &nbsp; to access a search in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>)
 	</div>
 </td></tr>
-</c:if>
+
 
 <%-----------------------------------------------------------------------------%>
 <%--  All Gene Queries  --%>
@@ -80,12 +59,12 @@
 <%-----------------------------------------------------------------------------%>
 <%--  Isolates  --%>
 
-<c:if test = "${project == 'CryptoDB' || project == 'EuPathDB' || project == 'PlasmoDB' || project == 'ToxoDB' || project == 'GiardiaDB'}">
+
   <tr class="headerrow2"><td colspan="4" align="center"><b>Identify Isolates by:</b></td></tr>
   <tr><td colspan="3" align="center">
 	<site:queryGridIsolates/> 
   </td></tr>
-</c:if>
+
 
 <%-----------------------------------------------------------------------------%>
 <%--  All Genomic and SNP  --%>
@@ -104,15 +83,15 @@
 </div>
     </td>
 
-    <%--  All SNP Queries TABLE --%>
-    <td >    
-<div class="innertube2"> 
-	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
+    <%--  All Genomic Segments Queries TABLE --%>
+    <td > 
+<div class="innertube2">     
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerrow2">
-			<td   align="center"><b>Identify SNPs by:</b></td>
+			<td   align="center"><b>Identify Genomic Segments by:</b></td>
 		</tr>
 		<tr><td align="center">
-			<site:queryGridSNPs/>
+			<site:queryGridSegms/>
 		</td></tr>
    	</table> 
 </div>
@@ -137,19 +116,21 @@
 </div>
     </td>
 
-    <%--  All EST Assemblies Queries TABLE --%>
-    <td > 
-<div class="innertube2">     
-	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+    <%--  All SNP Queries TABLE --%>
+    <td >    
+<div class="innertube2"> 
+	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
 		<tr class="headerrow2">
-			<td   align="center"><b>Identify Transcript Assemblies by:</b></td>
+			<td   align="center"><b>Identify SNPs by:</b></td>
 		</tr>
 		<tr><td align="center">
-			<site:queryGridAssem/>
+			<site:queryGridSNPs/>
 		</td></tr>
    	</table> 
 </div>
     </td>
+
+
 </tr>
 
 
