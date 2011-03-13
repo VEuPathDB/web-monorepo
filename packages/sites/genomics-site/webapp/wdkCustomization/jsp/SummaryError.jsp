@@ -91,8 +91,12 @@
 
 --%>
 
-<h2>Sorry, in this strategy, you have hit a step that needs to be revised and run again.<br>
-Please click on the name of the first step that shows 0 results, and choose the 'revise' option.</h2>
+<h3>Sorry, an error has occured.<br>
+Please  <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">contact us</a> and let us know what happened to the best of your recollection, with as much detail as possible. <br>
+If you can see the strategy panel on top of ths message, it is possible that in this strategy, you have hit a step that -because of a new release-  needs to be revised and run again. If that is the case, please click on the name of the first step that shows 0 results, and choose the 'revise' option.<br><br>
+Your FungiDB team.
+</h3>
+
 
 
 <!-- pager at bottom -->
