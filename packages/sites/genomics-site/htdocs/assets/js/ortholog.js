@@ -12,7 +12,7 @@ function openOrthologFilter(strat_back_id, step_id){
 
         if(openDetail != null) hideDetails(); 
 
-        var url = "wizard.do?stage=show_ortholog&action=add";
+        var url = "wizard.do?stage=show_ortholog&action=revise";
         url += "&strategy=" + strat_back_id + "&step=" + step_id;
         url += "&questionFullName=InternalQuestions.GenesByOrthologs";
 
