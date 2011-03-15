@@ -31,7 +31,7 @@
 
 <tr><td colspan="2">The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>,  <a href="http://amoebadb.org">AmoebaDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>,  <a href="http://microsporidiadb.org">MicrosporidiaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> and <a href="http://tritrypdb.org">TriTrypDB</a> websites. <br><br>
 The Gene Metrics table summarizes the number of genes for the organisms currently available in EuPathDB, including their available evidence. High gene numbers (such as for rodent malaria parasites Pb, Pc & Py) reflect incomplete sequence assembly and redundant gene models. <br><br>
-<i>(Please mouse over gene metrics for a definitions; mouse over acronims for the organism full name.)</i><br>
+<i>(Please mouse over gene metrics for a definition; mouse over acronims for the organism full name.)</i><br>
 </td></tr>
 </table>
 
