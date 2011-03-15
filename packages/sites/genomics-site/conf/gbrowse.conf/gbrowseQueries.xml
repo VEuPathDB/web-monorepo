@@ -213,10 +213,11 @@ SELECT -- trying to find genes by source_id
        decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand
 FROM   
        ApiDB.FeatureLocation nal,
-       apidb.GENEALIAS ga
+       apidb.GeneId ga
 WHERE  
        nal.feature_source_id = ga.gene and
-       ga.alias like lower('$name') and
+       lower(ga.id) like lower('$name') and
+       ga.unique_mapping = 1 and
        nal.is_top_level=1
 UNION
 SELECT   -- trying to find genes by product description ( at least 7 chars)
