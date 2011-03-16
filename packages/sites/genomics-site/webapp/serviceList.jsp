@@ -13,6 +13,9 @@
 <c:set var="margin" value="15px"/>
 
 <!-- this should be read from the model -->
+<c:if test="${wdkModelDispName eq 'FungiDB'}">
+    	<c:set var="organism" value="Aspergillus clavatus"/>
+</c:if>
 <c:if test="${wdkModelDispName eq 'AmoebaDB'}">
     	<c:set var="organism" value="Entamoeba dispar"/>
 </c:if>
