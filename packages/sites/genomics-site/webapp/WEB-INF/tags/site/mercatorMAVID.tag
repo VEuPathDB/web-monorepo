@@ -57,7 +57,7 @@ return true;
 </SCRIPT>
 
 <c:set var="cgiScript" value='mavidAlign'/>
-<c:if test="${(projectId eq 'TriTrypDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP')}">
+<c:if test="${(projectId eq 'TriTrypDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PiroplasmaDB') || (projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP')}">
   <c:set var="cgiScript" value='pairwiseMercator'/>
 </c:if>
 
@@ -178,6 +178,25 @@ return true;
          </table>
      </td></tr>
 </c:if>
+<c:if test="${projectId eq 'PiroplasmaDB'}">
+
+   <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
+        <table>
+          <tr>
+            <td>
+              <input type="checkbox" name="genomes" value="TannulataAnkara" checked>T.Ankara
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="TparvaMuguga" checked>T.parva
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="BbovisT2Bo" checked>B.bovis
+            </td>
+           </tr>
+         </table>
+     </td></tr>
+</c:if>
+
 <c:if test="${projectId eq 'MicrosporidiaDB'}">
 
    <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
