@@ -42,8 +42,8 @@
               <table cellspacing="2" cellpadding="4" border="0" bgcolor="#cccccc">
               <form method="POST" action="/cgi-bin/processMail">
 
-                <input type="hidden" name="to1" value="apibugz@"/>
-                <input type="hidden" name="to2" value="pcbi.upenn.edu"/>
+                <input type="hidden" name="to1" value="redmine@"/>
+                <input type="hidden" name="to2" value="apidb.org"/>
                 <input type="hidden" name="cc1" value="help@"/>
                 <input type="hidden" name="cc2" value="${site}.org"/>
 
@@ -68,7 +68,8 @@
                         <input type="hidden" name="version" value="${version}">
                         <input type="hidden" name="browser" value="${header['User-Agent']}">
                         <input type="hidden" name="referer" value="${header['referer']}">
-                        <input type="hidden" name="reporterEmail" value="supportform@apidb.org"/>                    </td></tr>
+                        <%-- websitesupportform@apidb.org is a group in ApiDB Google Apps and an account in Redmine (an account is required for redmine to receive emails) --%>
+                        <input type="hidden" name="reporterEmail" value="websitesupportform@apidb.org"/>                    </td></tr>
                 <tr><td>&nbsp;</td>
                     <td align="left"><input type="submit" value="Submit"></td></tr>
               </form>
