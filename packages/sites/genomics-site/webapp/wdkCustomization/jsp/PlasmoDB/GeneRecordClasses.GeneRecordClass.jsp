@@ -206,6 +206,26 @@
 </center></h2>
 
 
+<%--- COMMUNITY EXPERT ANNOTATION -----------%>
+
+<site:panel 
+    displayName="Community Expert Annotation"
+    content="" />
+
+<c:catch var="e">
+    <site:dataTable tblName="CommunityExpComments"/>
+</c:catch>
+<c:if test="${e != null}">
+  <table  width="100%" cellpadding="3">
+      <tr><td><b>User Comments</b>
+      <site:embeddedError
+          msg="<font size='-1'><i>temporarily unavailable.</i></font>"
+          e="${e}"
+      />
+      </td></tr>
+  </table>
+</c:if>
+<br/><br/>
 
 <%-- OVERVIEW ------------%>
 
