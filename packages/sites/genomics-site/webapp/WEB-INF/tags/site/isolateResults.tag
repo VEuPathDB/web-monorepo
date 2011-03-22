@@ -135,6 +135,10 @@
 	       <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
 	</th>
 	<th style="text-align: right;white-space:nowrap;">
+               <wdk:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
+	</th>
+<!--
+	<th style="text-align: right;white-space:nowrap;">
 		           <%-- display a list of sortable attributes --%>
 		           <c:set var="addAttributes" value="${wdkAnswer.displayableAttributes}" />
 		           <select id="addAttributes" style="display:none;" commandUrl="${commandUrl}" multiple="multiple">
@@ -144,6 +148,7 @@
 		               </c:forEach>
 		           </select>
 	</th>
+-->
 	<th style="text-align: right;white-space:nowrap;width:5%;">
 	    &nbsp;
 	   <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}', this)" />
