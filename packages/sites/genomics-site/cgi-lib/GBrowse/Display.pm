@@ -264,6 +264,7 @@ sub massSpecBgColorFromExtDbName {
                 'Pf_Bowyer_Proteomics_42hrs_Post_Infection_RSRC' => 'yellow',
                 'Pf_Bowyer_Proteomics_48hrs_Post_Infection_RSRC' => 'orange',
                 #AmoebaDB
+                'Ehistolytica_Glycosylation_RSRC' => 'yellow',
                 'Phagosome Proteomics data from Huston - 0 mins' => 'yellow',
                 'Phagosome Proteomics data from Huston - 30 mins' => 'tan',
                 'Phagosome Proteomics data from Huston - 5 mins' => 'khaki',
