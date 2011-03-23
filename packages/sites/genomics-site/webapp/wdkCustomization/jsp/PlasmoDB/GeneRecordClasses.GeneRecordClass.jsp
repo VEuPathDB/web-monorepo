@@ -208,6 +208,7 @@
 
 <%--- COMMUNITY EXPERT ANNOTATION -----------%>
 
+<%--
 <site:panel 
     displayName="Community Expert Annotation"
     content="" />
@@ -226,6 +227,7 @@
   </table>
 </c:if>
 <br/><br/>
+--%>
 
 <%-- OVERVIEW ------------%>
 
