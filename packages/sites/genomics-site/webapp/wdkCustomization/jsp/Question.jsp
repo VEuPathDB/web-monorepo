@@ -4,13 +4,12 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<%-- partial is used for internal questions in queryList4.tag --%>
 <c:set var="Question_Header" scope="request">
   <c:if test="${requestScope.partial != 'true'}">
     <site:header title="Search for ${wdkQuestion.recordClass.type}s by ${wdkQuestion.displayName}" refer="customQuestion" />
   </c:if>
 </c:set>
-
-
 
 ${Question_Header}
 
@@ -48,17 +47,14 @@ ${Question_Header}
 
 
 <c:set var="Question_Footer" scope="request">
-
   <%-- displays question description, can be overridden by the custom question form --%>
 <c:if test="${hideAttrDescr == false}">
   <site:questionDescription />
 </c:if>
 
-<%-- I think partial is not used anymore.... --%>
 <c:if test="${requestScope.partial != 'true'}">
   <site:footer />
 </c:if>
-
 </c:set>
 
 ${Question_Footer}

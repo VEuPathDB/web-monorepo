@@ -75,9 +75,12 @@ function getComboElement()
 <!------------------------------------------------------------------------->
 
 <c:set var="questionFullNamesArray" value="${fn:split(questions, ',')}" />
+
+<%-- we cannot do this anymore, we are already in a page with header
 <c:if test="${fn:length(questionFullNamesArray) == 1}">
 	<jsp:forward page="/showQuestion.do?questionFullName=${questionFullNamesArray[0]}"/>
 </c:if>
+--%>
 
 <c:set var="width" value="49%"/>  <%-- width of column 1--%>
 
@@ -91,7 +94,7 @@ function getComboElement()
 <c:set var="question" value=""/>  
 
 <%-- CHECK if this line is a STUDY or a QUESTION --%>
-<c:set var="check" value="${fn:substring(qFullName,0,9)}"/>  
+<c:set var="check" value="${fn:substring(qFullName,0,12)}"/>  
 
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(check,'study')}">      <%-- a study is always new, 
@@ -111,7 +114,9 @@ function getComboElement()
 </c:otherwise>
 </c:choose>
 
-<%--   DEBUG    <td colspan="${columns+2}">***${check}***${prefix}***${question}***<td></tr>   --%>
+<%--   DEBUG   
+<td colspan="${columns+2}">***${check}***${prefix}***${question}***</td></tr>   
+ --%>
 
 <%-- DETERMINE organism --%>
 <c:choose>
@@ -156,15 +161,14 @@ function getComboElement()
   </c:otherwise>
 </c:choose>
 
-<%--  if it is a new organism, write it and make a new line --%>
 
+<%--  if it is a new organism, write it and make a new line --%>
     <c:if test="${oldorg != org}">  
                 </tr>
 		<tr><td colspan="${columns+2}" style="padding:0">&nbsp;</td></tr>
 		<tr class="subheaderrow2"><td colspan="${columns+2}" style="padding:0;"><i><b>${org}</b></i></td></tr> 
                 <c:set var="i" value="1"/>  <!-- i represents the column where to write (1 or 2) -->   
                 <tr>
-
     </c:if>
 
 
@@ -188,7 +192,7 @@ function getComboElement()
     <td width="1%" align="left">&#8226;</td>
     <td width="${width}" align="left">
 	<a id="${qName}" href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${question}','${isInsert}')" rel="htmltooltip">
-	<font color="#000066" size="3">${question}${url}</font></a>
+	<font color="#000066" size="3">${question}</font></a>
     </td>
     <div id="${qName}_tip" class="htmltooltip">${q.summary}</div>
 
