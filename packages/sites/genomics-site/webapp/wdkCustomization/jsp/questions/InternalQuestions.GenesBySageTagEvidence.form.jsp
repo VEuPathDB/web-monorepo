@@ -9,24 +9,20 @@
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
-${Question_Header}
-<wdk:errors/>
+<c:set value="1" var="columns"/>
+
+<!-- show error messages, if any -->
+<div class='usererror'><api:errors/></div>
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
-<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
-<table width="100%" cellpadding="4">
-<c:set value="1" var="columns"/>
 
+<table width="100%" cellpadding="4">
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
-<c:choose>
-<c:when test = "${project == 'EuPathDB' || project == 'GiardiaDB' || project == 'TriTrypDB' || project == 'PlasmoDB' || project == 'ToxoDB'}">
-	<site:queryList3  columns="${columns}" questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
-</c:when>
-</c:choose>
+<site:queryList3  columns="${columns}" questions="GeneQuestions.GenesBySageTag,GeneQuestions.GenesBySageTagRStat"/>
 
 </table>
 </div>
 
-${Question_Footer}
+
