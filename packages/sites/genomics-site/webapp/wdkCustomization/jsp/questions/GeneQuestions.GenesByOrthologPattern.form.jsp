@@ -5,9 +5,7 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
-
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
@@ -50,8 +48,6 @@
 <c:set var="indentMap" value="${ind.vocabMap}"/>
 <c:set var="termMap" value="${trm.vocabMap}"/>
 
-
-
 <script type="text/javascript" lang="JavaScript 1.2">
 <!-- //
 includedSpeciesName = '${includedSpeciesName}';
@@ -74,9 +70,6 @@ abbrev =
   new Array("All Organisms"
             <c:forEach var="sp" items="${ind.vocab}">, "${sp}"</c:forEach>
    );
-
-
-
 
 parents = new Array();
 parents.push(0);
@@ -117,27 +110,23 @@ Ack, this form won't work at all without JavaScript support!
 
 <div class="params">
 <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
+<input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
+<input name="array(phyletic_indent_map)" value="ARCH" type="hidden"/>
 
-	<input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
-	<input name="array(phyletic_indent_map)" value="ARCH" type="hidden"/>
-
-
-
-
-
-
-<table>
+<table style="width:100%">
   <tr>
-    <td><b>Show results from species:</b></td>
+    <td style="text-align:right"><b>Show results from species:</b></td>
     <td><wdk:enumParamInput qp="${resultSpecies}" /></td>
+    <td style="text-align:right;vertical-align:bottom"><div class="filter-button">
+ 		<html:submit property="questionSubmit" value="Get Answer"/>
+	</div>
+    </td>
   </tr>
 </table>
 
-<br />
 
-<div class="filter-button">
- 	<html:submit property="questionSubmit" value="Get Answer"/>
-</div>
+<br><br>
+<p style="font-size:85%;font-style:italic">(Click on the radio button next to a species to toggle through three states --include, exclude, don't care--. See description below)</p>
 
 <table border="0" cellpadding="2">
 
@@ -174,11 +163,9 @@ Ack, this form won't work at all without JavaScript support!
   <html:hidden property="value(${profilePatternName})" value="%"/>
 </div><%-- END OF PARAMS DIV --%>
 
-
 	<div class="filter-button">
  		 <html:submit property="questionSubmit" value="Get Answer"/>
 	</div>
-
 
 <c:if test="${showParams == null}">
 <script type="text/javascript" lang="JavaScript 1.2">
