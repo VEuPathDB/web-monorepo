@@ -22,11 +22,13 @@ ${Question_Header}
 <c:set var="webProps" value="${wdkQuestion.propertyLists['websiteProperties']}" />
 <c:set var="hideOperation" value="${false}" />
 <c:set var="hideTitle" value="${false}" />
+<c:set var="hideAttrDescr" value="${false}" />
 
 <c:forEach var="prop" items="${webProps}">
   <c:choose>
     <c:when test="${prop == 'hideOperation'}"><c:set var="hideOperation" value="${true}" /></c:when>
     <c:when test="${prop == 'hideTitle'}"><c:set var="hideTitle" value="${true}" /></c:when>
+    <c:when test="${prop == 'hideAttrDescr'}"><c:set var="hideAttrDescr" value="${true}" /></c:when>
   </c:choose>
 </c:forEach>
 
@@ -46,12 +48,17 @@ ${Question_Header}
 
 
 <c:set var="Question_Footer" scope="request">
-  <%-- displays question description, can be overridden by the custom question form --%>
-  <site:questionDescription />
 
-  <c:if test="${requestScope.partial != 'true'}">
-    <site:footer />
-  </c:if>
+  <%-- displays question description, can be overridden by the custom question form --%>
+<c:if test="${hideAttrDescr == false}">
+  <site:questionDescription />
+</c:if>
+
+<%-- I think partial is not used anymore.... --%>
+<c:if test="${requestScope.partial != 'true'}">
+  <site:footer />
+</c:if>
+
 </c:set>
 
 ${Question_Footer}
