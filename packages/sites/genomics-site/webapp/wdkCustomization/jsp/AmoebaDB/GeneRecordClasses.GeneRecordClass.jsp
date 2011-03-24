@@ -296,7 +296,7 @@ GO,InterproscanData
   </c:when>
   <c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
     <c:set var="ptracks">
-    InterproDomains+SignalP+TMHMM+BLASTP+HustonMassSpecPeptides      
+    InterproDomains+SignalP+TMHMM+BLASTP+HustonMassSpecPeptides+CarpentieriMassSpecPeptides
     </c:set>
   </c:when>
   <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
