@@ -76,12 +76,6 @@ function getComboElement()
 
 <c:set var="questionFullNamesArray" value="${fn:split(questions, ',')}" />
 
-<%-- we cannot do this anymore, we are already in a page with header
-<c:if test="${fn:length(questionFullNamesArray) == 1}">
-	<jsp:forward page="/showQuestion.do?questionFullName=${questionFullNamesArray[0]}"/>
-</c:if>
---%>
-
 <c:set var="width" value="49%"/>  <%-- width of column 1--%>
 
 <%-- OPEN FIRST LINE --%>
@@ -157,7 +151,11 @@ function getComboElement()
       <c:set var="org" value="Leishmania major"/>
   </c:when>
   <c:otherwise>
-       <c:set var="org" value="Unknown"/>
+<%--if organism is not found 
+	(EITHER it is not specified in displayName or study OR it is a new organism), 
+	no header will be displayed 
+--%>
+       <c:set var="org" value=""/>
   </c:otherwise>
 </c:choose>
 

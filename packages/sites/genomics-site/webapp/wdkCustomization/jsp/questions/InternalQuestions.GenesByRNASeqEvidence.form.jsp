@@ -10,21 +10,23 @@
 
 <%-- QUESTIONS --%>
 <c:set var="plasmoQuestions" value="P.f.study:Field Parasites from Pregnant Women and Children (Duffy),GeneQuestions.GenesByRNASeqPfExpressionFoldChange,P.f.study:Post Infection Time Series (Stunnenberg),GeneQuestions.GenesByRNASeqPfRBCFoldChange,GeneQuestions.GenesByRNASeqPfRBCExprnPercentile,P.f.study:Intraerythrocytic infection cycle (Newbold/Llinas),GeneQuestions.GenesByRNASeqExpressionTiming" />
+
+<c:set var="toxoQuestions" value="GeneQuestions.GenesByTgVegRNASeqExpressionPercentile" />
+
 <c:set var="tritrypQuestions" value="GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile"/>
-
-<c:if test="${projectId == 'ToxoDB'}">
- <jsp:forward page="/showQuestion.do?questionFullName=GeneQuestions.GenesByTgVegRNASeqExpressionPercentile" />
-</c:if>
-
+<%-- END OF QUESTIONS --%>
 
 <wdk:errors/>
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
-<%--
-<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
---%>
 
+<!--    questions will be displayed in columns -number of columns is determined above
+        queryList4.tag relies on EITHER the question displayName having the organism acronym (P.f.) as first characters 
+				OR having questions grouped by "study", here the study tells about the organism as in "P.f.study:"
+        queryList4.tag contains the organism mapping (from P.f. to Plasmodium falciparum, etc)
+	if organism is not found (a new organism), no header will be displayed
+-->
 <center><table width="90%">
 
 <c:set value="2" var="columns"/>
@@ -36,10 +38,10 @@
       <site:queryList4 columns="${columns}" questions="${plasmoQuestions}"/>
     </c:when>    
     <c:when test="${projectId == 'TriTrypDB'}">
-      <site:queryList3 columns="${columns}" questions="${tritrypQuestions}"/>
+      <site:queryList4 columns="${columns}" questions="${tritrypQuestions}"/>
     </c:when>
     <c:when test="${projectId == 'ToxoDB'}">
-      <site:queryList3 columns="${columns}" questions="${toxoQuestions}"/>
+      <site:queryList4 columns="${columns}" questions="${toxoQuestions}"/>
     </c:when>
     <c:otherwise>  <%-- it must be the portal --%>
       <site:queryList4 columns="${columns}" questions="${plasmoQuestions},${tritrypQuestions},${toxoQuestions}"/>
