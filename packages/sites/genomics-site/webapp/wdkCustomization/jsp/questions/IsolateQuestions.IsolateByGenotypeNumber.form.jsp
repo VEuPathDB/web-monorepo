@@ -2,6 +2,7 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
 <c:set var="partial" value="${requestScope.partial}" />
 <c:set var="showParams" value="${requestScope.showParams}"/>
