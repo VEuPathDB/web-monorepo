@@ -4,28 +4,8 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<%--
-<c:set value="${wdkModel.displayName}" var="wdkModelDispName"/>
-<site:header title="PlasmoDB : Isolate Clustering"
-                 banner="${wdkModelDispName} Isolate Clustering"
-                 parentDivision="PlasmoDB"
-                 parentUrl="/home.jsp"
-                 divisionName="Isolate Clustering"
-                 division="queries_tools"/>
---%>
-
-${Question_Header}
-
-<table border=0 width=100% cellpadding="3" cellspacing="0" bgcolor="white"  class="thinTopBorders"> 
-<tr><td bgcolor="white" valign="top" colspan="2">
-
-
-
-
-<%-- show error messages, if any --%>
 <wdk:errors/>
 
 <table width="100%" cellpadding="4">
@@ -86,13 +66,8 @@ ${Question_Header}
 </table>
 
 <hr>
-</td>
-</tr>
 
-
-
-<tr><td>
-<b>Description:</b>Isolate Strains were clustered based on their snp sequences and are presented in the <a href="http://sourceforge.net/projects/jtreeview/">jtreeview</a> applet.  Displayed is a row for each snp and a column for each available isolate.  The Snps are ordered by Chromosome location while the isolates are ordered by the result of hierarchical clustering (Michiel de Hoon's implementation (<a href="http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/">Cluster 3.0</a>) of Michael Eisen's <a href="http://rana.lbl.gov/EisenSoftware.htm">cluster</a> algorithms).
+<p><b>Description:</b>  Isolate Strains were clustered based on their snp sequences and are presented in the <a href="http://sourceforge.net/projects/jtreeview/">jtreeview</a> applet.  Displayed is a row for each snp and a column for each available isolate.  The Snps are ordered by Chromosome location while the isolates are ordered by the result of hierarchical clustering (Michiel de Hoon's implementation (<a href="http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/">Cluster 3.0</a>) of Michael Eisen's <a href="http://rana.lbl.gov/EisenSoftware.htm">cluster</a> algorithms).
 <br/><br/>
 The Dendrogram view (default) shows light tan pixels for a Major allele, black pixels for a Minor allele, and grey pixels to indicate no available data.  (NOTE:  Major and Minor alleles are calculated within each experiment).  Click "Analysis > Alignment" from the menu bar to see the actual nucleotide sequences.
 <br/><br/>
@@ -100,11 +75,3 @@ Highlighting areas of the dendrogram or clicking the above nodes will create a "
 <br/><br/>
 <i>NOTE:  This clustering is provided as a visualization tool and is not intended to imply true phylogenetic relationships.</i>
   
-</td></tr>
-
-
-</table> 
-
-
-
-${Question_Footer}
