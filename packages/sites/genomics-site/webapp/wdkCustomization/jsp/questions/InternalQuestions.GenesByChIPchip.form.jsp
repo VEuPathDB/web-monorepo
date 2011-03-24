@@ -4,36 +4,20 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
-
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
-
-
-<!-- get wdkModel name to display as page header -->
-<c:set value="${wdkModel.displayName}" var="project"/>
+<c:set var="project" value="${wdkModel.displayName}"/>
 
 <%-- QUESTIONS --%>
 <c:set var="plasmoQuestions" value="GeneQuestions.GenesByChIPchipPlasmo" />
 <c:set var="toxoQuestions" value="GeneQuestions.GenesByChIPchipToxo"/>
 
-<c:if test="${project == 'ToxoDB'}">
-	<jsp:forward page="/showQuestion.do?questionFullName=${toxoQuestions}" /> 
-</c:if>
-
-<c:if test="${project == 'PlasmoDB'}">
-        <jsp:forward page="/showQuestion.do?questionFullName=${plasmoQuestions}" />
-</c:if>
-
-${Question_Header}
-
-<wdk:errors/>
+<!-- show error messages, if any -->
+<div class='usererror'><api:errors/></div>
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
-
-<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}</h1>
 
 <center><table width="90%">
 
@@ -42,9 +26,20 @@ ${Question_Header}
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
 
+<!--	questions will be displayed in columns -number of columns is determined above
+	queryList3.tag relies on the question displayName having the organism acronym (P.f.) as first characters (unlike queryList4.tag)
+        queryList3.tag contains the organism mapping (from P.f. to Plasmodium falciparum, etc)
+        if this becomes difficult to maintain, we would show acronyms.
+-->
 <c:choose>
 <c:when test = "${project == 'EuPathDB'}">
-<site:queryList3 columns="${columns}" questions="${plasmoQuestions},${toxoQuestions}"/>
+	<site:queryList3 columns="${columns}" questions="${plasmoQuestions},${toxoQuestions}"/>
+</c:when>
+<c:when test = "${project == 'PlasmoDB'}">
+	<site:queryList3 columns="${columns}" questions="${plasmoQuestions}"/>
+</c:when>
+<c:when test = "${project == 'ToxoDB'}">
+	<site:queryList3 columns="${columns}" questions="${plasmoQuestions}"/>
 </c:when>
 </c:choose>
 
@@ -52,4 +47,4 @@ ${Question_Header}
 </center>
 </div>
 
-${Question_Footer}
+

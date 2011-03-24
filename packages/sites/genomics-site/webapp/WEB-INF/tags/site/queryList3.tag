@@ -20,6 +20,7 @@
 
 <c:set var="isInsert" value="${param.isInsert}" />
 
+<!------------------------------------------------------------------------->
 <SCRIPT type="text/javascript" >
 
 function writeData(page, div, quesName, insertStep){
@@ -68,14 +69,10 @@ function getComboElement()
    return document.getElementById("querySelect").options[document.getElementById("querySelect").selectedIndex].value;
 }
 
-
 </SCRIPT>
+<!------------------------------------------------------------------------->
 
-      <c:set var="questionFullNamesArray" value="${fn:split(questions, ',')}" />
-      <c:if test="${fn:length(questionFullNamesArray) == 1}">
-        <jsp:forward page="/showQuestion.do?questionFullName=${questionFullNamesArray[0]}"/>
-      </c:if>
-
+<c:set var="questionFullNamesArray" value="${fn:split(questions, ',')}" />
 
 <tr>
       <c:forEach items="${questionFullNamesArray}" var="qFullName">
@@ -127,7 +124,7 @@ function getComboElement()
       <c:set var="org" value="Leishmania major"/>
   </c:when>
   <c:otherwise>
-       <c:set var="org" value=""/>
+       <c:set var="org" value="Unknown"/>
 </c:otherwise>
 </c:choose>
 
@@ -137,7 +134,7 @@ function getComboElement()
 
 		<tr><td colspan="${columns+2}" style="padding:0">&nbsp;</td></tr>
 	<%--	<tr><td colspan="${columns}" style="padding:0"><hr style="color:lightgrey"/></td></tr>  --%>
-		<tr><td colspan="${columns+2}" style="padding:0"><i>${org}</i></td></tr> 
+		<tr  class="subheaderrow2"><td colspan="${columns+2}" style="padding:0"><i>${org}</i></td></tr> 
 
 		<tr>
 		<c:set var="i" value="1"/>
