@@ -6,25 +6,22 @@
 <c:set var="partial" value="${requestScope.partial}" />
 <c:set var="showParams" value="${requestScope.showParams}"/>
 
-<!-- get wdkQuestion; setup requestScope HashMap to collect help info for footer -->
-<c:set value="${sessionScope.wdkQuestion}" var="wdkQuestion"/>
+<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
+<jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
+<c:set var="qForm" value="${requestScope.questionForm}"/>
 
+<%-- display page header with wdkQuestion displayName as banner --%>
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
+<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+<c:set var="showParams" value="${requestScope.showParams}"/>
 
-${Question_Header}
-
-<h1>Identify Isolates based on RFLP Genotype Number</h1> 
-
-<hr>
 
 <div><b>Description:</b>  Shown below is a table of identified RFLP Genotypes (Chunlei Su).  Use the check boxes on the left to search for associated isolates.  Click <a href="/Standards_gel_pics.pdf">here</a> for RFLP images in PDF format.</div>
-
 <br/>
 
-<html:form method="post" action="/processQuestion.do" enctype="multipart/form-data" styleId="form_question">
-
 <div class="params">
-<c:if test="${showParams == null || showParams}">
-<input type="hidden" name="questionFullName" value="IsolateQuestions.IsolateByGenotypeNumber"/>
+<c:if test="${showParams == null || showParams}">   <%-- still in use? --%>
 
 <%-- this js has to be included here in order to appear in the step form --%>
 <script type="text/javascript" src='<c:url value="/assets/js/wdkQuestion.js"/>'></script> 
@@ -114,34 +111,20 @@ ${Question_Header}
 <tr><td><input type="checkbox" name="array(genotype)" value="139" id="genotype"><td>139</td><td>II or III</td><td>II</td><td>II</td><td>III</td><td>III</td><td>III</td><td>II</td><td>II</td><td>III</td><td>III</td><td>I</td></tr>
 <tr><td><input type="checkbox" name="array(genotype)" value="141" id="genotype"><td>141</td><td>II or III</td><td>III</td><td>III</td><td>III</td><td>III</td><td>III</td><td>III</td><td>III</td><td>III</td><td>I</td><td>III</td></tr>
 
-<tr><td align=center colspan=15>
+</table> 
+
 </c:if>
 </div><%-- END OF PARAMS DIV --%>
 
-<c:if test="${showParams == null || !showParams}">
-<div class="filter-button">
-<html:submit property="questionSubmit" value="Get Answer"/>
-</div>
-</c:if>
-</td></tr> 
-
-</table> 
-
-
+<div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
 
 <hr>
 
 <div><b>Data sources:</b></div>
-  <div>
+<div>
   <ul> 
-  <li> 
-  <a href="/toxo1.0.hwang/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPSequences"> Toxoplasma RFLP sequences from Chunlei Su </a> </li> 
-  <li> 
-  <a href="/toxo1.0.hwang/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPs"> Toxoplasma RFLPs from Chunlei Su </a> </li> 
+  <li><a href="/toxo1.0.hwang/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPSequences"> Toxoplasma RFLP sequences from Chunlei Su </a> </li> 
+  <li><a href="/toxo1.0.hwang/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPs"> Toxoplasma RFLPs from Chunlei Su </a> </li> 
   </ul> 
 </div> 
 
-</html:form>
-
-
-${Question_Footer}
