@@ -5,20 +5,15 @@
 
 <c:set var="partial" value="${requestScope.partial}" />
 <c:set var="showParams" value="${requestScope.showParams}"/>
-
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
-<jsp:useBean scope="request" id="helps" class="java.util.LinkedHashMap"/>
-<c:set var="qForm" value="${requestScope.questionForm}"/>
 
-<%-- display page header with wdkQuestion displayName as banner --%>
-<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
-<c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
-<c:set var="showParams" value="${requestScope.showParams}"/>
-
+<!-- show error messages, if any -->
+<div class='usererror'><api:errors/></div>
 
 <div><b>Description:</b>  Shown below is a table of identified RFLP Genotypes (Chunlei Su).  Use the check boxes on the left to search for associated isolates.  Click <a href="/Standards_gel_pics.pdf">here</a> for RFLP images in PDF format.</div>
 <br/>
+
+<input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}" />
 
 <div class="params">
 <c:if test="${showParams == null || showParams}">   <%-- still in use? --%>
