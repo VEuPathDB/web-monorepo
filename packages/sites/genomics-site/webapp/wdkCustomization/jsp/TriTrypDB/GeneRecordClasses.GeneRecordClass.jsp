@@ -453,6 +453,15 @@ GO,InterproscanData
     </c:set>
 	</c:when>
 
+  <c:when test='${organismFull eq "Leishmania mexicana"}'>
+    <c:set var="ptracks">
+    AebischerMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    </c:set>
+    <c:set var="attribution">
+    InterproscanData,Linfantum_Proteomics_SDS_Amastigote
+    </c:set>
+  </c:when> 
+
  </c:choose>
     
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
