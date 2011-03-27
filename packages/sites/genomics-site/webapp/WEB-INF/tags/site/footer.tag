@@ -49,6 +49,7 @@
 		<a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb_w50.png"     	width=30></a>&nbsp;
        		<a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb_w50.png"  	width=30></a>&nbsp;&nbsp;
         	<a href="http://microsporidiadb.org"><img border=0 src="/assets/images/MicrosporidiaDB/microdb_w30.png"  ></a>&nbsp;&nbsp;
+        	<a href="http://piroplasmadb.org"><img border=0 src="/assets/images/newSite.png" 	width=35 ></a>&nbsp;&nbsp;
         	<a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb_w50.png"     	width=30></a>&nbsp;&nbsp;
         	<a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb_w50.png"           	width=30></a>&nbsp;&nbsp;
         	<a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb_w65.png"        	height=30></a>&nbsp;&nbsp;

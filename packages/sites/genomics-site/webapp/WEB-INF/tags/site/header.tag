@@ -110,6 +110,9 @@
       <c:when test = "${project == 'GiardiaDB'}">
              <c:set var="banner" value="GiardiaDB : The Giardia genome resource"/>
       </c:when>
+	 <c:when test = "${project == 'PiroplasmaDB'}">
+             <c:set var="banner" value="PiroplasmaDB : The Piroplasma genome resource"/>
+      </c:when>
       <c:when test = "${project == 'PlasmoDB'}">
              <c:set var="banner" value="PlasmoDB : The Plasmodium genome resource"/>
       </c:when>
