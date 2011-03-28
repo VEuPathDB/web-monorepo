@@ -398,6 +398,25 @@ sub spliceSiteAlignTitle {
   return hover("Splice Site: $loc",\@data);
 }
 
+sub spliceSiteTitle {
+  my $f = shift;
+  my $sample = $f->name;  # sample_name
+  my $loc = $f->start;
+  my $orient   = $f->strand eq '+' ? "forward" : "reverse";
+  my ($type) = $f->get_tag_values('type');
+  my ($ct) = $f->get_tag_values('count');
+  my ($uniq) = $f->get_tag_values('is_unique');
+  my ($mismatch) = $f->get_tag_values('avg_mismatches');
+  my @data;
+  push(@data, ['Location:' => $loc]);
+  push @data, ['Orientation:' => "$orient" ];
+  push(@data, ['Sample:' => $sample]);
+  push(@data, ['Type:' => $type]);
+  push(@data, ['Count:' => $ct]);
+  push(@data, ['Avg Mismatches:' => $mismatch]);
+  return hover("Splice Site: $loc",\@data);
+}
+
 sub polyASiteAlignTitle {
   my $f = shift;
   my $seq = $f->name;  ##currently using the name to hold sequence

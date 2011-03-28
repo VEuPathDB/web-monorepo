@@ -356,13 +356,6 @@ sub colorFromTriColor {
   return $colors[$triColor];
 }
 
-sub colorForSpliceSites {
-  my ($f, $first, $second, $third, $fourth) = @_;
-  my $strand = $f->strand;
-  my ($gm) = $f->get_tag_values('genome_matches');
-  return $strand == +1 ? ($gm == 1 ? $first : $second) : ($gm == 1 ? $third : $fourth);
-}
-
 sub bgColorForSpliceSites {
   my ($f, $first, $second, $third, $fourth) = @_;
   my $strand = $f->strand;
@@ -462,6 +455,19 @@ sub bgColorForSpliceAndPaSites {
   }
   return 'lightslategray';
 }
+
+sub colorForSpliceSites {
+  my ($f) = @_;
+  my $strand = $f->strand;
+
+  if($strand eq '+' || $strand eq '+1'){
+    return 'blue';
+  }else{
+    return 'firebrick';
+  }
+  return 'lightslategray';
+}
+
 
 sub colorForBindingSitesByPvalue{
   my ($f) = @_;
