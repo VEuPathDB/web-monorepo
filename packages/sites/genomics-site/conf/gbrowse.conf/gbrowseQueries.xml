@@ -938,6 +938,52 @@ GROUP BY parent_id,strand,startm
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="domain:spliceSites" includeProjects="TriTrypDB">
+    <sql>
+<![CDATA[
+SELECT 
+       ssf.splice_site_feature_id feature_id,
+       'domain' type,
+       'spliceSites' source,
+       null as parent_id, 
+       ssf.location as startm, ssf.location as end, 
+       ssf.sample_name as name, ssf.strand as strand, 
+       'type='|| ssf.type || '$dlm' ||
+       'count='|| ssf.count || '$dlm' ||
+       'is_unique='|| ssf.is_unique || '$dlm' || 
+       'avg_mismatches='|| ssf.avg_mismatches atts
+FROM  apidb.spliceSiteFeature ssf
+WHERE ssf.na_sequence_id = $srcfeature_id
+  AND ssf.location >= $base_start
+  AND ssf.location <= $rend
+  AND ssf.type='Splice Site'
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="domain:polyaSites" includeProjects="TriTrypDB">
+    <sql>
+<![CDATA[
+SELECT 
+       ssf.splice_site_feature_id feature_id,
+       'domain' type,
+       'polyaSites' source,
+       null as parent_id, 
+       ssf.location as startm, ssf.location as end, 
+       ssf.sample_name as name, ssf.strand as strand, 
+       'type='|| ssf.type || '$dlm' ||
+       'count='|| ssf.count || '$dlm' ||
+       'is_unique='|| ssf.is_unique || '$dlm' || 
+       'avg_mismatches='|| ssf.avg_mismatches atts
+FROM  apidb.spliceSiteFeature ssf
+WHERE ssf.na_sequence_id = $srcfeature_id
+  AND ssf.location >= $base_start
+  AND ssf.location <= $rend
+  AND ssf.type='Poly A'
+]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="domain:MassSpecPeptides">
      <sql>
 <![CDATA[
