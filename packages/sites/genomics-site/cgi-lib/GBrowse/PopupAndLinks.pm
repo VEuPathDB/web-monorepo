@@ -405,15 +405,19 @@ sub spliceSiteTitle {
   my $orient   = $f->strand eq '+' ? "forward" : "reverse";
   my ($type) = $f->get_tag_values('type');
   my ($ct) = $f->get_tag_values('count');
-  my ($uniq) = $f->get_tag_values('is_unique');
+  my ($ctpm) = $f->get_tag_values('count_per_mill');
+  my ($uniq) = ($f->get_tag_values('is_unique'));
   my ($mismatch) = $f->get_tag_values('avg_mismatches');
   my ($gene) = $f->get_tag_values('gene_id');
+
   my @data;
   push(@data, ['Location:' => $loc]);
   push @data, ['Orientation:' => "$orient" ];
   push(@data, ['Sample:' => $sample]);
   push(@data, ['Type:' => $type]);
   push(@data, ['Count:' => $ct]);
+  push(@data, ['Count per million:' => $ctpm]);
+  push(@data, ['Is Unique:' => $uniq]);
   push(@data, ['Gene ID:' => $gene]) if ($gene);
   push(@data, ['Avg Mismatches:' => $mismatch]);
   return hover("Splice Site: $loc",\@data);

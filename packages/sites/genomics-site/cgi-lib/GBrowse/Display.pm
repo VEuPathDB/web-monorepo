@@ -458,13 +458,22 @@ sub bgColorForSpliceAndPaSites {
 
 sub colorForSpliceSites {
   my ($f) = @_;
-  my $strand = $f->strand;
+  my $name = $f->name;  # sample_name
 
-  if($strand eq '+' || $strand eq '+1'){
-    return 'blue';
-  }else{
-    return 'firebrick';
-  }
+  return 'red' if $name eq 'T.brucei Long Slender SLT';
+  return 'orange' if $name eq 'T.brucei Short Stumpy SLT';
+  return 'limegreen' if $name eq 'T.brucei bloodstream 427 SLT';
+  return 'green' if $name eq 'T.brucei procyclic_late SLT';
+  return 'cornflowerblue' if $name eq 'T.brucei Alba 1 non-induced SLT';
+  return 'blue' if $name eq 'T.brucei Alba 1 induced SLT';
+  return 'purple' if $name eq 'T.brucei Alba 3 and 4 non-induced SLT';
+  return 'darkorchid' if $name eq 'T.brucei Alba 3 and 4 induced SLT';
+
+  return 'green' if $name eq 'L. infantum procyclic promastigotes SL - NSR';
+  return 'firebrick' if $name eq 'L. major procyclic promastigotes SL - NSR';
+  return 'red' if $name eq 'L. major procyclic promastigotes SL - Random';
+  return 'blue' if $name eq 'L. major procyclic promastigotes PolyA';
+
   return 'lightslategray';
 }
 

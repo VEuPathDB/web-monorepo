@@ -942,7 +942,7 @@ GROUP BY parent_id,strand,startm
     <sql>
 <![CDATA[
 SELECT 
-       ssf.splice_site_feature_id feature_id,
+       distinct ssf.splice_site_feature_id feature_id,
        'domain' type,
        'spliceSites' source,
        null as parent_id, 
@@ -950,6 +950,7 @@ SELECT
        ssf.sample_name as name, ssf.strand as strand, 
        'type='|| ssf.type || '$dlm' ||
        'count='|| ssf.count || '$dlm' ||
+       'count_per_mill='|| ssf.count_per_million || '$dlm' ||
        'is_unique='|| ssf.is_unique || '$dlm' || 
        'avg_mismatches='|| ssf.avg_mismatches || '$dlm' || 
        'gene_id='|| gtable.source_id atts
@@ -965,6 +966,7 @@ WHERE ssf.na_sequence_id = $srcfeature_id
   AND ssf.location >= $base_start
   AND ssf.location <= $rend
   AND ssf.type='Splice Site'
+ORDER BY ssf.sample_name
 ]]>
     </sql>
   </sqlQuery>
@@ -973,7 +975,7 @@ WHERE ssf.na_sequence_id = $srcfeature_id
     <sql>
 <![CDATA[
 SELECT 
-       ssf.splice_site_feature_id feature_id,
+       distinct ssf.splice_site_feature_id feature_id,
        'domain' type,
        'polyaSites' source,
        null as parent_id, 
@@ -981,6 +983,7 @@ SELECT
        ssf.sample_name as name, ssf.strand as strand, 
        'type='|| ssf.type || '$dlm' ||
        'count='|| ssf.count || '$dlm' ||
+       'count_per_mill='|| ssf.count_per_million || '$dlm' ||
        'is_unique='|| ssf.is_unique || '$dlm' || 
        'avg_mismatches='|| ssf.avg_mismatches || '$dlm' || 
        'gene_id='|| gtable.source_id atts
