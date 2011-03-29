@@ -1788,7 +1788,7 @@ The overall expression percentile of each condition is the average percentile ov
 
 
 <hr>
-<div align="center">
+<div>
   <c:choose>
     <c:when test="${binomial eq 'Plasmodium vivax' && sequence_id eq 'AY598140'}">
         <b><i>P. vivax</i> mitochondrial sequence and annotation was obtained from Genbank</b>
@@ -1812,7 +1812,7 @@ The overall expression percentile of each condition is the average percentile ov
         <%-- P. falciparum 2, 10, 11, 14 = TIGR --%>
         <b>Chromosome ${sequence_id} of <i>P. falciparum</i> 3D7 was sequenced at 
         <a href="http://www.tigr.org/tdb/edb2/pfa1/htmls/">The Institute for Genomic Research</a>
-        <br>and the <a href="http://www.nmrc.navy.mil/">Naval Medical Research Center</a></b>.
+        and the <a href="http://www.nmrc.navy.mil/">Naval Medical Research Center</a></b>.
 <br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:when>
     <c:when test="${binomial eq 'Plasmodium falciparum' && (sequence_id eq 'Pf3D7_01' || sequence_id eq 'Pf3D7_03' || sequence_id eq 'Pf3D7_04' || sequence_id eq 'Pf3D7_05' || sequence_id eq 'Pf3D7_06' || sequence_id eq 'Pf3D7_07' || sequence_id eq 'Pf3D7_08' || sequence_id eq 'Pf3D7_09' || sequence_id eq 'Pf3D7_13')}">
