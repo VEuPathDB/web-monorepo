@@ -951,8 +951,16 @@ SELECT
        'type='|| ssf.type || '$dlm' ||
        'count='|| ssf.count || '$dlm' ||
        'is_unique='|| ssf.is_unique || '$dlm' || 
-       'avg_mismatches='|| ssf.avg_mismatches atts
+       'avg_mismatches='|| ssf.avg_mismatches || '$dlm' || 
+       'gene_id='|| gtable.source_id atts
 FROM  apidb.spliceSiteFeature ssf
+LEFT JOIN (select source_id , sample_name, location, strand
+  from apidb.spliceSiteGenes 
+  where na_sequence_id = $srcfeature_id
+  and location >=$base_start
+  and location <=$rend
+  ) gtable
+  ON (ssf.sample_name = gtable.sample_name AND ssf.location = gtable.location AND ssf.strand=gtable.strand)
 WHERE ssf.na_sequence_id = $srcfeature_id
   AND ssf.location >= $base_start
   AND ssf.location <= $rend
@@ -974,8 +982,16 @@ SELECT
        'type='|| ssf.type || '$dlm' ||
        'count='|| ssf.count || '$dlm' ||
        'is_unique='|| ssf.is_unique || '$dlm' || 
-       'avg_mismatches='|| ssf.avg_mismatches atts
+       'avg_mismatches='|| ssf.avg_mismatches || '$dlm' || 
+       'gene_id='|| gtable.source_id atts
 FROM  apidb.spliceSiteFeature ssf
+LEFT JOIN (select source_id , sample_name, location, strand
+  from apidb.spliceSiteGenes 
+  where na_sequence_id = $srcfeature_id
+  and location >=$base_start
+  and location <=$rend
+  ) gtable
+  ON (ssf.sample_name = gtable.sample_name and ssf.location = gtable.location and ssf.strand=gtable.strand)
 WHERE ssf.na_sequence_id = $srcfeature_id
   AND ssf.location >= $base_start
   AND ssf.location <= $rend
