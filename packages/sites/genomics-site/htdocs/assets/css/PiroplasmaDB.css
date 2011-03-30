@@ -4,19 +4,19 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/ToxoDB/background_s.jpg);
+	background-image: url(/assets/images/PiroplasmaDB/background_s.jpg);
 }
 
 .coloredtext {         /* no link */
-	color: #206910;
+	color: #6f4230;
 }
 
 a:link, a:visited {
-	color: #772841;
+	color: #316e9f;
 }
 
 a:hover, a:active {
-	color: #206910;   /*  #3c8935;  */
+	color: #6f4230;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -24,83 +24,83 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
+	background-image: url(../images/PiroplasmaDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
+	background-image: url(../images/PiroplasmaDB/backgroundtop_s.jpg);
 }
 
 
 #header_rt {
-   color: #3c8935;
+   color: #6f4230;
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #3c8935;
+   color: #6f4230;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 #nav_top {
-	color: #3c8935;
+	color: #6f4230;
 }
 
 #nav_top a:link, #nav_top a:visited {
-	color: #3c8935;
+	color: #6f4230;
 }
 
 #nav_top li ul {  /* second-level lists */
-	background-image: url(../images/ToxoDB/footer.png);
-	border-color:#3c8935;
-	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
+	background-image: url(../images/PiroplasmaDB/footer.png);
+	border-color:#6f4230;
+	list-style-image: url(../images/PiroplasmaDB/bullet_arrow.gif);
 }
 
 #nav_top li ul a:link, #nav_top li ul a:visited {
-	color: #3c8935;
+	color: #6f4230;
 }
 
 #nav_top li ul a:hover, #nav_top li ul a:active {
-	color: #6f223a;
+	color: #316e9f;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 /* #menubar #mysearch {
-	background-image: url(../images/ToxoDB/my_hist_menubar.png);
+	background-image: url(../images/PiroplasmaDB/my_hist_menubar.png);
 	border: 1px solid #831639;
 } */
  
 #contentcolumn {
-	background-image: url(../images/ToxoDB/footer.png);
+	background-image: url(../images/PiroplasmaDB/footer.png);
 	border: 1px solid #20691a;
 }
 
 #contentcolumn2 {
-	background-image: url(../images/ToxoDB/footer.png);
+	background-image: url(../images/PiroplasmaDB/footer.png);
 	border: 1px solid #20691a;
 }
 
 #mysearchhist {
-	background-image: url(../images/ToxoDB/bubble_my_searchbox.png);
+	background-image: url(../images/PiroplasmaDB/bubble_my_searchbox.png);
 	border: 1px solid #20691a;
 }
 
 
 #main_tools {
-	background-image: url(../images/ToxoDB/tools_bckgnd.jpg);
+	background-image: url(../images/PiroplasmaDB/tools_bckgnd.jpg);
 }
 
 #about_us_left {
 	background-color: #bfccdf;
-	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
+	list-style-image: url(../images/PiroplasmaDB/bullet_arrow.gif);
 }
 
 #pink_title {
 	color: #5e0f28;
-	background-image: url(../images/ToxoDB/trheader.png);
+	background-image: url(../images/PiroplasmaDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,7 +128,7 @@ a:hover, a:active {
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/ToxoDB/menu_lft2.png);
+	background-image: url(../images/PiroplasmaDB/menu_lft2.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -170,7 +170,7 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
-   background-image: url(../images/ToxoDB/footer.png);
+   background-image: url(../images/PiroplasmaDB/footer.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -180,7 +180,7 @@ h2 {
 
 td.headerrow {
 	color: #5e0f28;
-	background-image: url(../images/ToxoDB/trheader.png);
+	background-image: url(../images/PiroplasmaDB/trheader.png);
 	background-repeat: repeat-x;
 }
 
@@ -190,19 +190,19 @@ tr.headerrow {
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/ToxoDB/trheader.png);
+	background-image: url(../images/PiroplasmaDB/trheader.png);
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/ToxoDB/trhover.png);
+	background-image: url(../images/PiroplasmaDB/trhover.png);
 }
 
 td.subheaderrow {
-	background-image: url(../images/ToxoDB/trsubhead.png);
+	background-image: url(../images/PiroplasmaDB/trsubhead.png);
 }
 
 tr.subheaderrow th {
-	background-image: url(../images/ToxoDB/trsubhead.png);
+	background-image: url(../images/PiroplasmaDB/trsubhead.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -212,11 +212,11 @@ tr.subheaderrow th {
 
 tr.headerrow2 td{
         color: #5e0f28;
-	background-image: url(../images/ToxoDB/trheader.png);
+	background-image: url(../images/PiroplasmaDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
-	background-image: url(../images/ToxoDB/trsubhead.png);
+	background-image: url(../images/PiroplasmaDB/trsubhead.png);
 }
 
 a.queryGridInactive {
@@ -257,7 +257,7 @@ tr.headerrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
-	background-image: url(../images/ToxoDB/aboutus.png);
+	background-image: url(../images/PiroplasmaDB/aboutus.png);
 }
 
 
@@ -297,22 +297,22 @@ span.marker a:link, span.marker a:visited {
 }
 
 .blockPage{
-	background-image: url(/assets/images/ToxoDB/footer.png);
+	background-image: url(/assets/images/PiroplasmaDB/footer.png);
 }
 
 .flexigrid div.hDiv
 {
-	background-image:url(/assets/images/ToxoDB/trheader.png);
+	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove
 {
-	background-image:url(/assets/images/ToxoDB/trheader.png);
+	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
 }
 
 div.colCopy
 {
-	background-image:url(/assets/images/ToxoDB/trheader.png);
+	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
 }
 
 
