@@ -33,11 +33,12 @@
 <c:set var="CryptoDBOrgs" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris" />				
 <c:set var="GiardiaDBOrgs" value="Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15" />
 <c:set var="MicrosporidiaDBOrgs" value="Encephalitozoon cuniculi,Encephalitozoon intestinalis,Enterocytozoon bieneusi" />
+<c:set var="PiroplasmaDBOrgs" value="Theileria parva,Theileria annulata,Babesia bovis" />
 <c:set var="PlasmoDBOrgs" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii" />
 <c:set var="ToxoDBOrgs" value="Toxoplasma gondii,Neospora caninum" />
 <c:set var="TrichDBOrgs" value="Trichomonas vaginalis"/>
 <c:set var="TriTrypDBOrgs" value="Leishmania braziliensis,Leishmania infantum,Leishmania major,Leishmania mexicana,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax"/>
-<c:set var="EuPathDBOrgs" value="${AmoebaDBOrgs},${CryptoDBOrgs},${GiardiaDBOrgs},${MicrosporidiaDBOrgs},${PlasmoDBOrgs},${ToxoDBOrgs},${TrichDBOrgs},${TriTrypDBOrgs},"/>
+<c:set var="EuPathDBOrgs" value="${AmoebaDBOrgs},${CryptoDBOrgs},${GiardiaDBOrgs},${MicrosporidiaDBOrgs},${PiroplasmaDBOrgs},${PlasmoDBOrgs},${ToxoDBOrgs},${TrichDBOrgs},${TriTrypDBOrgs},"/>
 <c:choose>
   	 <c:when test="${fn:containsIgnoreCase(modelName, 'AmoebaDB')}">
                  <c:set var="listOrganisms" value="${AmoebaDBOrgs}" />
@@ -53,6 +54,9 @@
         </c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'MicrosporidiaDB')}">
                 <c:set var="listOrganisms" value="${MicrosporidiaDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'PiroplasmaDB')}">
+                <c:set var="listOrganisms" value="${PiroplasmaDBOrgs}" />
         </c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
                 <c:set var="listOrganisms" value="${PlasmoDBOrgs}" />
