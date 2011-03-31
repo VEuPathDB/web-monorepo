@@ -111,24 +111,6 @@
 </h2>
 
 
-<site:panel 
-    displayName="Community Expert Annotation"
-    content="" />
-
-<c:catch var="e">
-  <site:dataTable tblName="CommunityExpComments"/>
-</c:catch>
-<c:if test="${e != null}">
-  <table  width="100%" cellpadding="3">
-    <tr><td><b>User Comments</b>
-    <site:embeddedError
-    msg="<font size='-1'><i>temporarily unavailable.</i></font>"
-    e="${e}"
-    />
-    </td></tr>
-  </table>
-</c:if>
-<br/><br/>
 
 <%-- OVERVIEW ---------------%>
 
@@ -137,6 +119,11 @@
 
 
 <c:set var="attr" value="${attrs['overview']}" />
+<site:panel 
+    displayName="${attr.displayName}"
+    content="${attr.value}${append}" />
+<br>
+
 
 <c:choose>
   <c:when test='${organismFull eq "Theileria annulata strain Ankara"}'>
@@ -420,38 +407,23 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
     content="${seq}" />
 </c:if>
 <%---- reference ---------------------------------------------------%> 
-<%--
-<c:set var="reference" value="${extdbname}" />
---%>
 
 <hr>
-<c:choose>
-  <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
-     <c:set var="reference">
-<b>Genomic minimalism in the early diverging intestinal parasite <i>Giardia lamblia</i>. </b>
-Hilary G. Morrison, Andrew G. McArthur, Frances D. Gillin, Stephen B. Aley, Rodney D. Adam, Gary J. Olsen, Aaron A. Best, W. Zacheus Cande, Feng Chen, Michael J. Cipriano, Barbara J. Davids, Scott C. Dawson, Heidi G. Elmendorf, Adrian B. Hehl, Mic
-hael E. Holder, Susan M. Huse, Ulandt U. Kim, Erica Lasek-Nesselquist, Gerard Manning, Anuranjini Nigam, Julie E. J. Nixon, Daniel Palm, Nora E. Passamaneck, Anjali Prabhu, Claudia I. Reich, David S. Reiner, John Samuelson, Staffan G. Svard, and M
-itchell L. Sogin.  <font color="blue">Science 28 September 2007, Volume 317, pp. 1921-1926.</font>
-    </c:set>
-  </c:when>
-  <c:when test='${organismFull eq "Giardia intestinalis ATCC 50581"}'>
-     <c:set var="reference">
-<b>Draft Genome Sequencing of <i>Giardia intestinalis</i> Assemblage B Isolate GS: Is Human Giardiasis Caused by Two Different Species ?</b>  Franzen O, Jerlstrom-Hultqvist J, Castro E, Sherwood E, Ankarklev J, Reiner DS, Palm D, Andersson JO, Andersson B, Svard SG. http://www.ncbi.nlm.nih.gov/pubmed/19696920
-     </c:set>
-  </c:when>
-  <c:when test='${organismFull eq "Giardia lamblia P15"}'>
-     <c:set var="reference">
-Sequence and annotation of <i>Giardia</i> Assemblage E isolate P15 was provided by J. Jerlstrom-Hultqvist. O. Franzen, E.
-Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Karolinska Institutet, Stockholm, Sweden and Uppsala University, Uppsala, Sweden).  The genome sequence and annotation was provided to GiardiaDB prepublication and is expected to be published in a peer-reviewed journal as soon as possible. Permission should be obtained from the authors before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
-     </c:set>
-  </c:when>
-</c:choose>
 
+<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
+
+<c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
+<c:forEach var="row" items="${referenceTable}">
+  <c:if test="${extdbname eq row['name'].value}">
+    <c:set var="reference" value="${row['description'].value}"/>
+  </c:if>
+</c:forEach>
 
 
 <site:panel 
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
+
 <br>
 
 <%------------------------------------------------------------------%>
