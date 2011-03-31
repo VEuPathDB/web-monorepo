@@ -573,6 +573,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
      <wdk:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 
+<%---- Poly A Sites table ---------------------------------------------%>
+<c:if test="${binomial eq 'Leishmania major' }">
+     <wdk:wdkTable tblName="PolyASites" isOpen="false" attribution=""/>
+</c:if>
+
+
 <%-- SAGE Tag table ------------------------------------------------------%>
 <c:if test="${binomial eq 'Trypanosoma brucei' }">
 <wdk:wdkTable tblName="SageTags" attribution="TrypSageTagFreqs"/>
