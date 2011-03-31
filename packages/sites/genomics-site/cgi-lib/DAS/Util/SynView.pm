@@ -14,6 +14,7 @@ sub postgrid {
     for my $part (@{$track->{parts}}) {
       my $feature = $part->{feature};
       next unless $feature->isa("Bio::SeqFeatureI");
+      next if $feature->isa("Bio::Das::Feature");
       my @orthologs = $feature->get_tag_values("Ortholog");
       next unless @orthologs;
       my $gene = $feature->name;
