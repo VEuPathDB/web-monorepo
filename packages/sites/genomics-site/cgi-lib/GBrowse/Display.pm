@@ -466,8 +466,8 @@ sub colorForSpliceSites {
   return 'green' if $name eq 'T.brucei procyclic_late SLT';
   return 'cornflowerblue' if $name eq 'T.brucei Alba 1 non-induced SLT';
   return 'blue' if $name eq 'T.brucei Alba 1 induced SLT';
-  return 'purple' if $name eq 'T.brucei Alba 3 and 4 non-induced SLT';
-  return 'darkorchid' if $name eq 'T.brucei Alba 3 and 4 induced SLT';
+  return 'darkorchid' if $name eq 'T.brucei Alba 3 and 4 non-induced SLT';
+  return 'purple' if $name eq 'T.brucei Alba 3 and 4 induced SLT';
 
   return 'green' if $name eq 'L. infantum procyclic promastigotes SL - NSR';
   return 'firebrick' if $name eq 'L. major procyclic promastigotes SL - NSR';
