@@ -549,12 +549,6 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
   </c:when>
 </c:choose>
 
-<%---- Splice Sites table ---------------------------------------------%>
-<c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi' || binomial eq 'Leishmania major' }">
-     <wdk:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
-</c:if>
-
-
 <c:set var="pdbLink">
   <br><a href="http://www.rcsb.org/pdb/smartSubquery.do?smartSearchSubtype=SequenceQuery&inputFASTA_USEstructureId=false&sequence=${attrs['protein_sequence'].value}&eCutOff=10&searchTool=blast">Search
     PDB by the protein sequence of ${id}</a>
@@ -574,6 +568,10 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
   <site:expressionGraphs species="${binomial}" model="tritryp"/>
 </c:if>
 
+<%---- Splice Sites table ---------------------------------------------%>
+<c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi' || binomial eq 'Leishmania major' }">
+     <wdk:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
+</c:if>
 
 <%-- SAGE Tag table ------------------------------------------------------%>
 <c:if test="${binomial eq 'Trypanosoma brucei' }">
