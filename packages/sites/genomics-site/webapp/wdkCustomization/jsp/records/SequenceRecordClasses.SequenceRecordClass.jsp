@@ -235,11 +235,9 @@ ${externalLinks}
     <c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
     <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
-    <c:set value="Test = ${externalDbName}" var="reference"/>
 
      <c:forEach var="row" items="${referenceTable}">
       <c:if test="${externalDbName eq row['name'].value}">
-         ${row['name'].value} <br />
          <c:set var="reference" value="${row['description'].value}"/>
       </c:if>
      </c:forEach>
