@@ -230,6 +230,21 @@ ${externalLinks}
 
 
  <c:choose>
+ <c:when test="${projectId eq 'PiroplasmaDB'}">
+
+    <c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
+
+    <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
+    <c:set value="Test = ${externalDbName}" var="reference"/>
+
+     <c:forEach var="row" items="${referenceTable}">
+      <c:if test="${externalDbName eq row['name'].value}">
+         ${row['name'].value} <br />
+         <c:set var="reference" value="${row['description'].value}"/>
+      </c:if>
+     </c:forEach>
+
+ </c:when>
  <c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium hominis') && projectId eq 'CryptoDB'}">
  <c:set var="reference">
     Xu P, Widmer G, Wang Y, Ozaki LS, Alves JM, Serrano MG, Puiu D, Manque P, 
