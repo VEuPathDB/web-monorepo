@@ -13,7 +13,7 @@
 
 <c:set var="toxoQuestions" value="GeneQuestions.GenesByTgVegRNASeqExpressionPercentile" />
 
-<c:set var="tritrypQuestions" value="GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile,GeneQuestions.GenesByRNAiSeqTbrucei"/>
+<c:set var="tritrypQuestions" value="GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile"/>
 <%-- END OF QUESTIONS --%>
 
 <wdk:errors/>

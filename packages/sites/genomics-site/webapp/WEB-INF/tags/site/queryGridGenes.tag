@@ -206,6 +206,9 @@
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByPhenotype" linktext="Phenotype" existsOn="A Tt"/>
                 </tr>
+                <tr>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByHighTroughputPhenotyping" linktext="Phenotype" existsOn="A Tt"/>
+                </tr>
             </table>
 </div>
         </td>
