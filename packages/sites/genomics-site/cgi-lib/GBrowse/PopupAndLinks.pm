@@ -12,7 +12,7 @@ BEGIN {
   my $serverName = $ENV{SERVER_NAME};
   my $project_id = $ENV{PROJECT_ID};
 
-  if ($project_id !~ /Microsporidia/) {
+  if ($project_id !~ /Microsporidia/ && $project_id !~ /Piroplasma/) {
 
     my $xml = `wget -qO- "http://$serverName/a/getVocab.do?questionFullName=GeneQuestions.GenesByMassSpec&name=ms_assay&xml=TRUE"`;
     my $string = XMLin($xml, ForceArray => 1);
