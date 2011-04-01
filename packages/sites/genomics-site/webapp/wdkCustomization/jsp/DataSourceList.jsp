@@ -4,7 +4,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
 <!-- get wdkXmlQuestionSets saved in request scope -->
-<c:set var="answer" value="${requestScope.dataSourceAnswer}"/>
+<c:set var="dataSources" value="${requestScope.dataSources}"/>
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
 <c:set var="reference">
@@ -17,10 +17,17 @@
 
 <!-- show all xml question sets -->
 <UL>
-  <c:forEach items="${answer.records}" var="record">
-    <c:set var="primaryKey" value="${record.primaryKey}"/>
-    <c:set var="attributes" value="${record.attributes}"/>
-    <c:set var="displayName" value="${attributes['display_name']}" />
-    <LI><a href="getDataSource.do${reference}#${primaryKey.value}">${displayName.value}</a></LI>
+  <c:forEach items="${dataSources}" var="category">
+	<li>
+	  <span class="category">${category.key}</span>
+	  <ul>
+	    <c:forEach items="${category.value}" var="record">
+          <c:set var="primaryKey" value="${record.primaryKey}"/>
+          <c:set var="attributes" value="${record.attributes}"/>
+          <c:set var="displayName" value="${attributes['display_name']}" />
+          <LI><a href="getDataSource.do${reference}#${primaryKey.value}">${displayName.value}</a></LI>
+		</c:forEach>
+	  </ul>
+	</li>
   </c:forEach>
 </UL>
