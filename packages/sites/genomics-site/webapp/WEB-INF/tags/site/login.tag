@@ -101,7 +101,7 @@
      </tr>
      <tr>
        <td colspan="2" align="center" valign="top">
-          <span class="small"><a href="<c:url value='/showResetPassword.do'/>">Forgot Password?</a>&nbsp;&nbsp;<a href="showRegister.do">Register/Subscribe</a></span>
+          <span class="small"><a href="<c:url value='/showResetPassword.do'/>">Forgot Password?</a>&nbsp;&nbsp;<a href="<c:url value='/showRegister.do'/>">Register/Subscribe</a></span>
        </td>
      </tr>
   </c:otherwise>
