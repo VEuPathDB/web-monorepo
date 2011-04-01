@@ -344,6 +344,12 @@ sub peakTitle {
 }
 
 
+sub geneLink {
+  my $f = shift;
+  my $name = $f->name;
+  return "/a/showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$name&project_id=$ENV{PROJECT_ID}";
+}
+
 sub geneTitle {
   my $f = shift;
   my $projectId = $ENV{PROJECT_ID};
