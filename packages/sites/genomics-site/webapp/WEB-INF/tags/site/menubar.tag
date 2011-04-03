@@ -88,7 +88,16 @@
 </c:otherwise>
 </c:choose>
 <c:set var="basketCount" value="${wdkUser.basketCount}"/>
-<div id="menubar">
+
+<!-- piroplasma is using the background image menubar.png from its own directory -->
+<c:choose>
+<c:when test="${project == 'PiroplasmaDB'}">
+	<div id="menubar" id="piro">
+</c:when>
+<c:otherwise>
+	<div id="menubar">
+</c:otherwise>
+</c:choose>
 
 <div id="menu">
 

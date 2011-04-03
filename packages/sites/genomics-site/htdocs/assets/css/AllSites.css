@@ -489,6 +489,10 @@ div.innertube #record-toolbox li {
 	z-index: 1;
 }
 
+#menubar #piro {
+	background-image: url(../images/PiroplasmaDB/menu_bar.png);
+}
+
 /* #menubar #mysearch {
 	width: auto;
 	background-repeat: repeat-x;
