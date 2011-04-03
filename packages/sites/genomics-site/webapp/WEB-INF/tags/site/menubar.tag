@@ -91,8 +91,8 @@
 
 <!-- piroplasma is using the background image menubar.png from its own directory -->
 <c:choose>
-<c:when test="${project == 'PiroplasmaDB'}">
-	<div id="menubar" id="piro">
+<c:when test="${project eq 'PiroplasmaDB'}">
+	<div  id="piro_menubar" >
 </c:when>
 <c:otherwise>
 	<div id="menubar">

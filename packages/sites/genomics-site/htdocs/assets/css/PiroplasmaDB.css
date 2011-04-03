@@ -71,7 +71,22 @@ a:hover, a:active {
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#piro_menubar {
+	min-width: 935px; /* to make space for My Favorites */
+	height: 19px;
+	text-align: left;
+	background-image: url(../images/PiroplasmaDB/menu_bar.png);
+	background-repeat: repeat-x;
+	
+	padding-left: 45px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+	clear: both;
+	z-index: 1;
+}
+	
 #contentcolumn {
 	background-image: url(../images/PiroplasmaDB/footer.png);
 	border: 1px solid #9a5b37;  //#20691a;
