@@ -1,3 +1,7 @@
+@variables {
+  TextColor: yellow;
+}
+
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TAGS 
@@ -8,15 +12,15 @@ body {
 }
 
 .coloredtext {         /* no link */
-	color: #6f4230;
+	color: #9a5b37;     //  #6f4230;   
 }
 
 a:link, a:visited {
-	color: #316e9f;
+	color: #316e9f; 
 }
 
 a:hover, a:active {
-	color: #6f4230;
+	color: #9a5b37;   // #6f4230;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,32 +37,32 @@ a:hover, a:active {
 
 
 #header_rt {
-   color: #6f4230;
+   color: #9a5b37;   //#6f4230;
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #6f4230;
+   color: #9a5b37;   //#6f4230;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 #nav_top {
-	color: #6f4230;
+	color: #9a5b37;   //#6f4230;
 }
 
 #nav_top a:link, #nav_top a:visited {
-	color: #6f4230;
+	color: #9a5b37; //#6f4230;
 }
 
 #nav_top li ul {  /* second-level lists */
 	background-image: url(../images/PiroplasmaDB/footer.png);
-	border-color:#6f4230;
+	border-color:#9a5b37; // #6f4230;
 	list-style-image: url(../images/PiroplasmaDB/bullet_arrow.gif);
 }
 
 #nav_top li ul a:link, #nav_top li ul a:visited {
-	color: #6f4230;
+	color: #9a5b37;  //#6f4230;
 }
 
 #nav_top li ul a:hover, #nav_top li ul a:active {
@@ -68,24 +72,19 @@ a:hover, a:active {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-/* #menubar #mysearch {
-	background-image: url(../images/PiroplasmaDB/my_hist_menubar.png);
-	border: 1px solid #831639;
-} */
- 
 #contentcolumn {
 	background-image: url(../images/PiroplasmaDB/footer.png);
-	border: 1px solid #20691a;
+	border: 1px solid #9a5b37;  //#20691a;
 }
 
 #contentcolumn2 {
 	background-image: url(../images/PiroplasmaDB/footer.png);
-	border: 1px solid #20691a;
+	border: 1px solid #9a5b37;  //#20691a;
 }
 
 #mysearchhist {
 	background-image: url(../images/PiroplasmaDB/bubble_my_searchbox.png);
-	border: 1px solid #20691a;
+	border: 1px solid #9a5b37;  //#20691a;
 }
 
 
@@ -98,10 +97,6 @@ a:hover, a:active {
 	list-style-image: url(../images/PiroplasmaDB/bullet_arrow.gif);
 }
 
-#pink_title {
-	color: #5e0f28;
-	background-image: url(../images/PiroplasmaDB/trheader.png);
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
@@ -109,22 +104,22 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
-	color:#560000;
+	color: #9a5b37;    //#560000;
 }
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #3c8935;
+	border-bottom-color:  #9a5b37; //#3c8935;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #3c8935;
-	color: #b30101;
+	border-bottom-color:  #9a5b37; //#3c8935;
+	color: #316e9f;   //#b30101;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .menu_lefttop_drop {
-   border-color: #20691A;  /* color as in contentcolumn border */
+   border-color:  #9a5b37;  //#20691A;  /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
@@ -136,7 +131,7 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   border: solid 1px #1c7c12;
+   border: solid 1px #9a5b37;  //#1c7c12;
 } 
 
 .search-box .textbox{
@@ -148,21 +143,21 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #20691a;
+	color: #9a5b37;  //#20691a;
 }
 h2 {
-  	color: #20691a;
+  	color: #9a5b37; //#20691a;
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #3c8935;
+  	color: #9a5b37; //#3c8935;
 }
 
-
+/* not in use, remove in a few cycles
 .subcolor {
 	color: #714782
 }
-
+*/
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,14 +174,14 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #5e0f28;
+	color: #0c3f60;
 	background-image: url(../images/PiroplasmaDB/trheader.png);
 	background-repeat: repeat-x;
 }
 
 
 tr.headerrow {
-	color: #5e0f28;
+	color: #0c3f60;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
@@ -211,7 +206,7 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #5e0f28;
+        color: #0c3f60;
 	background-image: url(../images/PiroplasmaDB/trheader.png);
 }
 
@@ -223,7 +218,7 @@ a.queryGridInactive {
         color:              #C8C8C8;
 }
 a.queryGridActive {
-        color:              #772841;
+        color:              #0c3f60;
 }
 
 
@@ -233,11 +228,11 @@ a.queryGridActive {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.subheaderrow th {
-	border-color: #772841;
+	border-color: #0c3f60;
 }
 
 tr.headerrow th { 
-	border-color: #772841;
+	border-color: #0c3f60;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -253,7 +248,7 @@ tr.headerrow th {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ABOUT US and HELP PAGES SIDEBAR
+	 =ABOUT US and HELP PAGES SIDEBAR  I think it is unused
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
