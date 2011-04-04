@@ -579,7 +579,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <td rowspan="2" class="centered">
   <c:choose>
   <c:when test="${!async}">
-      <img src="${imgSrc}">
+      <img src="${imgSrc}" height="200" width="250">
   </c:when>
   <c:otherwise>
       <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
