@@ -588,7 +588,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 </td>
 
         <td class="top">
-          <wdk:wdkTable tblName="RNAiPhenotypingCoverage" isOpen="true"/>
+          <wdk:wdkTable tblName="RNAiPhenotypingCoverage" isOpen="false"/>
 
         </td>
 
@@ -605,7 +605,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
        content="${coverageContent}" noData="${noData}"
        imageId="${imgId}" imageSource="${imgSrc}"
        displayName="RNAi Target Sequencing - Induced vs Uninduced"
-       attribution=""/>
+       attribution="Tbrucei_RNAiSeq_Horn_RSRC"/>
   
 
 </c:if>
