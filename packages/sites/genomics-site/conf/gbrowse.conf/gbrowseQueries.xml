@@ -944,18 +944,17 @@ GROUP BY parent_id,strand,startm
 SELECT 
        distinct ssf.splice_site_feature_id feature_id,
        'domain' type,
-       'spliceSites' source,
-       null as parent_id, 
+       '$source' as source,
        ssf.location as startm, ssf.location as end, 
        ssf.sample_name as name, ssf.strand as strand, 
-       'type='|| ssf.type || '$dlm' ||
-       'count='|| ssf.count || '$dlm' ||
        'count_per_mill='|| ssf.count_per_million || '$dlm' ||
        'is_unique='|| ssf.is_unique || '$dlm' || 
        'avg_mismatches='|| ssf.avg_mismatches || '$dlm' || 
-       'gene_id='|| gtable.source_id atts
+       'gene_id='|| gtable.source_id || ';;' || 
+       'utr_length='|| gtable.utr_len atts
 FROM  apidb.spliceSiteFeature ssf
-LEFT JOIN (select source_id , sample_name, location, strand
+LEFT JOIN (select source_id , sample_name, location, strand,
+    CASE WHEN (within_cds=1) THEN (-1)*dist_to_cds ELSE dist_to_cds END AS utr_len
   from apidb.spliceSiteGenes 
   where na_sequence_id = $srcfeature_id
   and location >=$base_start
@@ -966,6 +965,11 @@ WHERE ssf.na_sequence_id = $srcfeature_id
   AND ssf.location >= $base_start
   AND ssf.location <= $rend
   AND ssf.type='Splice Site'
+  AND ssf.external_database_release_id in
+    (SELECT external_database_release_id 
+       FROM sres.externaldatabase ed, sres.externalDatabaseRelease edr
+      WHERE ed.external_database_id = edr.external_database_id
+        AND ed.name $$edName$$ )
 ORDER BY ssf.sample_name
 ]]>
     </sql>
@@ -981,14 +985,15 @@ SELECT
        null as parent_id, 
        ssf.location as startm, ssf.location as end, 
        ssf.sample_name as name, ssf.strand as strand, 
-       'type='|| ssf.type || '$dlm' ||
        'count='|| ssf.count || '$dlm' ||
        'count_per_mill='|| ssf.count_per_million || '$dlm' ||
        'is_unique='|| ssf.is_unique || '$dlm' || 
        'avg_mismatches='|| ssf.avg_mismatches || '$dlm' || 
-       'gene_id='|| gtable.source_id atts
+       'gene_id='|| gtable.source_id || ';;' || 
+       'utr_length='|| gtable.utr_len atts
 FROM  apidb.spliceSiteFeature ssf
-LEFT JOIN (select source_id , sample_name, location, strand
+LEFT JOIN (select source_id , sample_name, location, strand,
+    CASE WHEN (within_cds=1) THEN (-1)*dist_to_cds ELSE dist_to_cds END AS utr_len
   from apidb.spliceSiteGenes 
   where na_sequence_id = $srcfeature_id
   and location >=$base_start
