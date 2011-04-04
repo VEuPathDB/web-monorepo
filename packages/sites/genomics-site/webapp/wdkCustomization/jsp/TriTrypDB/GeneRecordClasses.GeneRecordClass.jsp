@@ -565,7 +565,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
 <site:pageDivider name="Phenotype"/>
-
+<c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 <c:set var="secName" value="Horn::TbRNAiRNASeq"/>
 <c:set var="imgId" value="img${secName}"/>
 <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=tritryp&fmt=png&id=${id}&thumb=1&vp=coverage"/>
