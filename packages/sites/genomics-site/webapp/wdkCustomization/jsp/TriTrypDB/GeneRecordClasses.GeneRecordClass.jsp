@@ -413,7 +413,7 @@ GO,InterproscanData
     TarletonMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
-    InterproscanData,Tcruzi_Proteomics_Amastigote
+    Tcruzi_Proteomics_Amastigote,InterproscanData,Tcruzi_Proteomics_Amastigote
     </c:set>
 	</c:when>
 
@@ -440,7 +440,7 @@ GO,InterproscanData
     SilvermanMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
-    InterproscanData,Linfantum_Proteomics_SDS_Amastigote
+    Lmajor_Proteomics_Exosomes,InterproscanData,Linfantum_Proteomics_SDS_Amastigote
     </c:set>
 	</c:when>
 
@@ -449,7 +449,7 @@ GO,InterproscanData
     CuervoMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
-    InterproscanData,Linfantum_Proteomics_SDS_Amastigote
+    Lbraziliensis_Proteomics_Promastigotes, InterproscanData,Linfantum_Proteomics_SDS_Amastigote
     </c:set>
 	</c:when>
 
@@ -458,7 +458,7 @@ GO,InterproscanData
     AebischerMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
-    InterproscanData,Linfantum_Proteomics_SDS_Amastigote
+    Lmexicana_Proteomics_Aebischer_GelFree_RSRC,InterproscanData,Linfantum_Proteomics_SDS_Amastigote
     </c:set>
   </c:when> 
 
