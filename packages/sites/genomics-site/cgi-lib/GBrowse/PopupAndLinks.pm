@@ -408,23 +408,21 @@ sub spliceSiteTitle {
   my $f = shift;
   my $sample = $f->name;  # sample_name
   my $loc = $f->start;
-  my $orient   = $f->strand eq '+' ? "forward" : "reverse";
-  my ($type) = $f->get_tag_values('type');
-  my ($ct) = $f->get_tag_values('count');
   my ($ctpm) = $f->get_tag_values('count_per_mill');
-  my ($uniq) = ($f->get_tag_values('is_unique'));
+  my ($uniq) = ($f->get_tag_values('is_unique'))? "yes" : "no";
   my ($mismatch) = $f->get_tag_values('avg_mismatches');
   my ($gene) = $f->get_tag_values('gene_id');
+  my ($utr_len) = $f->get_tag_values('utr_length');
+  $utr_len = ($utr_len < 0)? "N/A (within gene)": $utr_len;
+
 
   my @data;
   push(@data, ['Location:' => $loc]);
-  push @data, ['Orientation:' => "$orient" ];
   push(@data, ['Sample:' => $sample]);
-  push(@data, ['Type:' => $type]);
-  push(@data, ['Count:' => $ct]);
   push(@data, ['Count per million:' => $ctpm]);
-  push(@data, ['Is Unique:' => $uniq]);
+  push(@data, ['Unique Alignment:' => $uniq]);
   push(@data, ['Gene ID:' => $gene]) if ($gene);
+  push(@data, ['UTR Length:' => $utr_len]) if ($gene);
   push(@data, ['Avg Mismatches:' => $mismatch]);
   return hover("Splice Site: $loc",\@data);
 }
