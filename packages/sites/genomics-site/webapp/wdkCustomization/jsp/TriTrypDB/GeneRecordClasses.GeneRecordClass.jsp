@@ -568,7 +568,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <c:set var="secName" value="Horn::TbRNAiRNASeq"/>
 <c:set var="imgId" value="img${secName}"/>
-<c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=tritryp&fmt=png&id=${id}"/>
+<c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=tritryp&fmt=png&id=${id}&thumb=1&vp=coverage"/>
 
 <c:set var="isOpen" value="true"/>
 
