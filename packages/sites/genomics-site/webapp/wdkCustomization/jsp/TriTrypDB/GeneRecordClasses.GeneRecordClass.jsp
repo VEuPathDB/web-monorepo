@@ -588,7 +588,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 </td>
 
         <td class="top">
-          <wdk:wdkTable tblName="RNAiPhenotypingCoverage" isOpen="false"/>
+          <wdk:wdkTable tblName="RNAiPhenotypingCoverage" isOpen="true"/>
 
         </td>
 
