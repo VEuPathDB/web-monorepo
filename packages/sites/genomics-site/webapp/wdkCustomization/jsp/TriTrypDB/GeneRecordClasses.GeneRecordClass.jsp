@@ -563,6 +563,48 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <%-- Expression Graphs ------------------------------------------------------%>
 
+<c:if test="${binomial eq 'Trypanosoma brucei'}">
+<site:pageDivider name="Phenotype"/>
+
+<c:set var="secName" value="Horn::TbRNAiRNASeq"/>
+<c:set var="imgId" value="img${secName}"/>
+<c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=tritryp&fmt=png&id=${id}"/>
+
+<c:set var="isOpen" value="true"/>
+
+<c:set var="coverageContent">
+<table>
+<tr>
+
+<td rowspan="2" class="centered">
+  <c:choose>
+  <c:when test="${!async}">
+      <img src="${imgSrc}">
+  </c:when>
+  <c:otherwise>
+      <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
+  </c:otherwise>
+  </c:choose></td>
+<td  class="centered"><div class="small">
+RNAi target sequencing coverage at different life cycle stages. <br><br>In this experiment RNAi plasmid library, containing randomly sheared genomic fragments was used to create an inducible library in bloodstream form T. brucei . After transfection, the library was grown under non-inducing and inducing conditions and genomic DNA was isolated from surviving populations.<br><br>Cells carrying RNAi target fragments that negatively impact fitness through dsRNA expression and RNAi-mediated ablation are relatively depleted as the population expands and these changes are reported by the depth of sequence coverage relative to the uninduced control (No Tet). </div>
+</td>
+</tr>
+</table>
+</c:set>
+
+<c:set var="noData" value="false"/>
+
+<wdk:toggle name="${secName}" isOpen="${isOpen}"
+       content="${coverageContent}" noData="${noData}"
+       imageId="${imgId}" imageSource="${imgSrc}"
+       displayName="RNAi Target Sequencing - Induced vs Uninduced"
+       attribution=""/>
+  
+
+</c:if>
+
+<%-- Expression Graphs ------------------------------------------------------%>
+
 <c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi' || binomial eq 'Leishmania major' }">
 <site:pageDivider name="Expression"/>
   <site:expressionGraphs species="${binomial}" model="tritryp"/>
