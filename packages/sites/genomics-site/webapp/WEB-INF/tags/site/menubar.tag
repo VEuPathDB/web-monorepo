@@ -34,11 +34,12 @@
 <c:set var="CryptoDBOrgs" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris" />				
 <c:set var="GiardiaDBOrgs" value="Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15" />
 <c:set var="MicrosporidiaDBOrgs" value="Encephalitozoon cuniculi,Encephalitozoon intestinalis,Enterocytozoon bieneusi" />
+<c:set var="PiroplasmaDBOrgs" value="Babesia bovis,Theileria annulata,Theileria parva" />
 <c:set var="PlasmoDBOrgs" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii" />
 <c:set var="ToxoDBOrgs" value="Toxoplasma gondii,Neospora caninum" />
 <c:set var="TrichDBOrgs" value="Trichomonas vaginalis"/>
 <c:set var="TriTrypDBOrgs" value="Leishmania braziliensis,Leishmania infantum,Leishmania major,Leishmania mexicana,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax"/>
-<c:set var="EuPathDBOrgs" value="${AmoebaDBOrgs},${CryptoDBOrgs},${GiardiaDBOrgs},${MicrosporidiaDBOrgs},${PlasmoDBOrgs},${ToxoDBOrgs},${TrichDBOrgs},${TriTrypDBOrgs},"/>
+<c:set var="EuPathDBOrgs" value="${AmoebaDBOrgs},${CryptoDBOrgs},${GiardiaDBOrgs},${MicrosporidiaDBOrgs},${PiroplasmaDBOrgs},${PlasmoDBOrgs},${ToxoDBOrgs},${TrichDBOrgs},${TriTrypDBOrgs},"/>
 
 <c:choose>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
@@ -55,6 +56,9 @@
         </c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'MicrosporidiaDB')}">
                 <c:set var="listOrganisms" value="${MicrosporidiaDBOrgs}" />
+        </c:when>
+	<c:when test="${fn:containsIgnoreCase(modelName, 'PiroplasmaDB')}">
+                <c:set var="listOrganisms" value="${PiroplasmaDBOrgs}" />
         </c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
                 <c:set var="listOrganisms" value="${PlasmoDBOrgs}" />
@@ -216,6 +220,13 @@
 <ul>
     <li><a href="#">Community</a>
 	<ul>
+		<li>
+		<a href="http://twitter.com/eupathdb">
+			<img style="margin:0px;vertical-align:top" title="Follow us on twitter!" src="/assets/images/twitter.gif" width="20">
+			<span style="vertical-align:top">&nbsp;Follow us on twitter!</span>
+		</a>
+		</li>
+
  	    <c:if test="${project != 'EuPathDB'}" >    
 		<li><a title="Add your comments to your gene of interest: start at the gene page" onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesByTextSearch&array(text_search_organism)=${listOrganisms}&array(text_fields)=User comments&array(whole_words)=no&value(max_pvalue)=-30&value(text_expression)=*&value(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
 
@@ -239,6 +250,11 @@
     </li>
 </ul>
 
+<%--
+<ul  style="padding-top:3px;width:11em;border-width:0;float:left;text-align:left">
+    <li><a href="http://twitter.com/eupathdb"><img title="Follow us on twitter!" src="/assets/images/twitter.gif" width="25"></a></li>
+</ul>
+--%>
 
  <c:if test="${project != 'EuPathDB'}" >
 
