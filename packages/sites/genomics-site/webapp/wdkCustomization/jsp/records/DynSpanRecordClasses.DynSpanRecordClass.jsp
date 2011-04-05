@@ -123,16 +123,24 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
                  attribution=""/>
 
 <br>
-<wdk:wdkTable tblName="SNPs" isOpen="true"
+
+
+<c:if test="${wdkModel.displayName ne 'PiroplasmaDB'}">
+
+	<wdk:wdkTable tblName="SNPs" isOpen="true"
                  attribution=""/>
 
-<br>
-<wdk:wdkTable tblName="SageTags" isOpen="true"
+	<br>
+	<wdk:wdkTable tblName="SageTags" isOpen="true"
                  attribution=""/>
 
-<br>
-<wdk:wdkTable tblName="ESTs" isOpen="true"
+	<br>
+	<wdk:wdkTable tblName="ESTs" isOpen="true"
                  attribution=""/>
+
+</c:if>
+
+
 </c:otherwise>
 </c:choose>
 
