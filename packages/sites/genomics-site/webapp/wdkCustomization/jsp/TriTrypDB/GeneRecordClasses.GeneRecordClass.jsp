@@ -588,12 +588,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
  <td>
      <table>
           <tr>
-             <td class="top">
+             <td  class="top">
                <wdk:wdkTable tblName="RNAiPhenotypingCoverage" isOpen="false"/>
              </td>
           </tr>
           <tr> 
-             <td  class="centered"><div class="small">
+             <td><div class="small">
 <b>Description</b><br>RNAi target sequencing coverage at different life cycle stages. <br><br>In this experiment RNAi plasmid library, containing randomly sheared genomic fragments was used to create an inducible library in bloodstream form T. brucei . After transfection, the library was grown under non-inducing and inducing conditions and genomic DNA was isolated from surviving populations.<br><br>Cells carrying RNAi target fragments that negatively impact fitness through dsRNA expression and RNAi-mediated ablation are relatively depleted as the population expands and these changes are reported by the depth of sequence coverage relative to the uninduced control (No Tet).<br><br><b>x-axis</b><br>Stage/Sample<br><br><b>y-axis</b><br>Coverage - log 2 (RPKM)<br> </div>
             </td>
          </tr>
