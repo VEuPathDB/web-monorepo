@@ -18,16 +18,16 @@
 <!-- show all xml question sets -->
 <UL>
   <c:forEach items="${dataSources}" var="category">
-	<li>
-	  <span class="category">${category.key}</span>
-	  <ul>
-	    <c:forEach items="${category.value}" var="record">
+    <li>
+      <span class="category">${category.key}</span>
+      <ul>
+        <c:forEach items="${category.value}" var="record">
           <c:set var="primaryKey" value="${record.primaryKey}"/>
           <c:set var="attributes" value="${record.attributes}"/>
           <c:set var="displayName" value="${attributes['display_name']}" />
           <LI><a href="getDataSource.do${reference}#${primaryKey.value}">${displayName.value}</a></LI>
-		</c:forEach>
-	  </ul>
-	</li>
+        </c:forEach>
+      </ul>
+    </li>
   </c:forEach>
 </UL>

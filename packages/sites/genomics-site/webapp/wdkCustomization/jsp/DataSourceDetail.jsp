@@ -5,7 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!-- get wdkXmlQuestionSets saved in request scope -->
-<c:set var="dataSources" value="${requestScope.dataSourceAnswer}"/>
+<c:set var="dataSources" value="${requestScope.dataSources}"/>
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
 <c:set var="reference">
@@ -33,16 +33,16 @@
   <h1>Data Sources</h1>
   <h3>Data source categories</h3>
   <ul id="toc">
-    <c:forEach items="dataSources" var="category">
+    <c:forEach items="${dataSources}" var="category">
       <li><a href="#${category.key}">${category.key}</a></li>
     </c:forEach>
   </ul>
 
-  <c:forEach items="categories" var="category">
+  <c:forEach items="${dataSources}" var="category">
     <div class="category">
       <h3><a name="${category.key}">${category.key}</a></h3>
       <div class="category-content">
-        <c:forEach items="${answer.records}" var="record">
+        <c:forEach items="${category.value}" var="record">
           <c:set var="wdkRecord" value="${record}" scope="request" />
           <c:set var="primaryKey" value="${record.primaryKey}"/>
           <c:set var="attributes" value="${record.attributes}"/>
@@ -71,9 +71,9 @@
           
             <wdk:wdkTable tblName="${publications.name}" />
             <wdk:wdkTable tblName="${references.name}" />
-        </div>
+          </div>
         
-      </c:forEach>
+        </c:forEach>
       </div>
     </div>
   </c:forEach>

@@ -119,7 +119,7 @@
 
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<site:panel attribute="${attr.name}" 
     displayName="${attr.displayName}"
     content="${attr.value}${append}" />
 <br>
