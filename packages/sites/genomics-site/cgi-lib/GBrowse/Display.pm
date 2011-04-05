@@ -458,7 +458,7 @@ sub bgColorForSpliceAndPaSites {
 
 sub colorForSpliceSites {
   my ($f) = @_;
-  my $name = $f->name;  # sample_name
+  my ($name) = $f->get_tag_values('sample_name');
 
   return 'red' if $name eq 'T.brucei Long Slender SLT';
   return 'orange' if $name eq 'T.brucei Short Stumpy SLT';

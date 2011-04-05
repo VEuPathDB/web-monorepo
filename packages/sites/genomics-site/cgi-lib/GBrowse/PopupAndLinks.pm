@@ -406,25 +406,26 @@ sub spliceSiteAlignTitle {
 
 sub spliceSiteTitle {
   my $f = shift;
-  my $sample = $f->name;  # sample_name
+
   my $loc = $f->start;
+  my ($sample_name) = $f->get_tag_values('sample_name');
   my ($ctpm) = $f->get_tag_values('count_per_mill');
   my ($uniq) = ($f->get_tag_values('is_unique'))? "yes" : "no";
   my ($mismatch) = $f->get_tag_values('avg_mismatches');
   my ($gene) = $f->get_tag_values('gene_id');
   my ($utr_len) = $f->get_tag_values('utr_length');
   $utr_len = ($utr_len < 0)? "N/A (within gene)": $utr_len;
-
+  my ($id) =  my $name = $f->name;
 
   my @data;
   push(@data, ['Location:' => $loc]);
-  push(@data, ['Sample:' => $sample]);
+  push(@data, ['Sample:' => $sample_name]);
   push(@data, ['Count per million:' => $ctpm]);
   push(@data, ['Unique Alignment:' => $uniq]);
   push(@data, ['Gene ID:' => $gene]) if ($gene);
   push(@data, ['UTR Length:' => $utr_len]) if ($gene);
   push(@data, ['Avg Mismatches:' => $mismatch]);
-  return hover("Splice Site: $loc",\@data);
+  return hover("$id",\@data);
 }
 
 sub polyASiteAlignTitle {
