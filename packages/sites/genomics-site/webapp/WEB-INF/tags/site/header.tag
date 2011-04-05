@@ -230,6 +230,7 @@ ${headElement}
 <%--------------------------- BODY of HTML doc ---------------------%>
 <body>
 
+<div id="wdk_tooltip" class="htmltooltip"></div>
 <%-- the "Contact Us" page does not need header, only the css above --%>
    <c:if test="${division != 'help'}"> 
 
