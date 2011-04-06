@@ -1,5 +1,5 @@
---- gbrowse_img_1_70	2010-02-01 11:47:25.000000000 -0500
-+++ gbrowse_img	2010-02-01 11:57:53.000000000 -0500
+--- gbrowse_img.orig	2011-04-06 10:47:31.000000000 -0400
++++ gbrowse_img	2011-04-06 10:53:32.000000000 -0400
 @@ -236,7 +236,8 @@
  				drag_n_drop   => 0,
  				cache_extra   => [map {$_->mtime} values %$feature_list],
@@ -10,3 +10,14 @@
  				-truecolor    => $CONFIG->setting('truecolor') || 0,
  				-grid         => $grid,
  			       }
+@@ -273,7 +274,9 @@
+ 							$panel
+ 						       );
+   my $source = $CONFIG->source;
+-  $html =~ s!href="\?ref=([^"]+)"!href="../../gbrowse/$source?ref=$1"!g;
++  # relative path won't work on a wdk gene page
++  #$html =~ s!href="\?ref=([^"]+)"!href="../../gbrowse/$source?ref=$1"!g;
++  $html =~ s!href="\?ref=([^"]+)"!href="/cgi-bin/gbrowse/$source?ref=$1"!g;
+   $html =~ s!href="!target="_top" href="!g;
+   print_top('');
+   print $html;
