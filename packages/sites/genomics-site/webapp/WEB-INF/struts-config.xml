@@ -155,7 +155,7 @@
     </action>
     <action
       path="/showQuestion"
-      type="org.gusdb.wdk.controller.action.ShowQuestionAction"
+      type="org.apidb.apicommon.controller.action.CustomShowQuestionAction"
       scope="request"
       validate="false"
       name="questionForm">
