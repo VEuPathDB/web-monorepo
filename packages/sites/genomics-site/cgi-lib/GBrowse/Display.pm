@@ -633,6 +633,24 @@ sub heightByCount {
   return (log($count*$height)/log(2));
 }
 
+sub heightBySpliceSiteCount {
+  my ($f, $height) = @_;
+  $f = $f->parent if (! $f->get_tag_values('count_per_mill'));
+  my ($count) = $f->get_tag_values('count_per_mill');
+
+  if ($count < 2) {
+    return 3;
+  } elsif ($count < 10) {
+    return 5;
+  } elsif ($count < 100) {
+    return 7;
+  } elsif ($count < 1000) {
+    return 9;
+  } else {
+    return 11;
+  }
+}
+
 
 #--------------------------------------------------------------------------------
 #  Other Display
