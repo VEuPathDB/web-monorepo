@@ -409,6 +409,9 @@ sub spliceSiteTitle {
 
   my $loc = $f->start;
   my ($sample_name) = $f->get_tag_values('sample_name');
+  if ($sample_name eq 'L. infantum procyclic promastigotes SL - NSR') {
+    $sample_name = 'L. donovani procyclic promastigotes SL - NSR';
+  }
   my ($ctpm) = $f->get_tag_values('count_per_mill');
   my ($uniq) = ($f->get_tag_values('is_unique'))? "yes" : "no";
   my ($mismatch) = $f->get_tag_values('avg_mismatches');
