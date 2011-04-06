@@ -49,6 +49,8 @@
 
 <h2>
 <center>
+	<!-- the ID and product title -->
+ 	${id} <br />
 <wdk:recordPageBasketIcon />
 </center>
 </h2>
