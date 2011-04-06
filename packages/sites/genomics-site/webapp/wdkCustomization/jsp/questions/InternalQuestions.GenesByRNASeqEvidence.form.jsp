@@ -13,7 +13,7 @@
 
 <c:set var="toxoQuestions" value="GeneQuestions.GenesByTgVegRNASeqExpressionPercentile" />
 
-<c:set var="tritrypQuestions" value="T.b.study:Blood Form vs. Procyclic Form (Cross),GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile,T.b.study:Splice Sites (Nilsson),GeneQuestions.GenesByTrypFoldChangeNilsson,GeneQuestions.GenesByExprPercentileNilssonSpliceSites,L.m.study:Splice Sites (Myler),GeneQuestions.GenesByTrypFoldChangeMyler,GeneQuestions.GenesByExprPercentileMylerSpliceSites"/>
+<c:set var="tritrypQuestions" value="T.b.study:Blood Form vs. Procyclic Form (Cross),GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile,T.b.study:Splice Sites (Nilsson),GeneQuestions.GenesByTrypFoldChangeNilsson,GeneQuestions.GenesByExprPercentileNilssonSpliceSites"/>
 <%-- END OF QUESTIONS --%>
 
 <wdk:errors/>
