@@ -969,6 +969,7 @@ WHERE ssf.na_sequence_id = $srcfeature_id
   AND ssf.location >= $base_start
   AND ssf.location <= $rend
   AND ssf.type = $$type$$
+  AND ssf.sample_name $$sample$$
   AND ssf.external_database_release_id in
     (SELECT external_database_release_id 
        FROM sres.externaldatabase ed, sres.externalDatabaseRelease edr
