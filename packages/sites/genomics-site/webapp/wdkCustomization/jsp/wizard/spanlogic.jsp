@@ -11,12 +11,20 @@
 <c:set var="allowChooseOutput" value="${requestScope.allowChooseOutput}"/>
 
 <c:set var="pMap" value="${question.paramsMap}"/>
+
+<%-- query_form is used for all popups.... for showing questions, long descriptions use all browser space which is annoying 
+	so the style in Strategies.css is set to have max-width 75%   
+--%>
+<style type="text/css">
+	#query_form {	max-width: 100%; }
+</style>
+
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/wizard.do"  onsubmit="callWizard('wizard.do?action=${requestScope.action}&step=${wdkStep.stepId}&',this,null,null,'submit')">
 <c:if test="${action == 'revise'}">
   <c:set var="spanStep" value="${wdkStep}"/>
   <c:set var="wdkStep" value="${wdkStep.previousStep}"/>
 </c:if>
-<h2 style="text-align:center;">Combine Step <span class="current_step_num"></span> and Step <span class="new_step_num"></span></h2>
+ <div class="h2center" style="text-align:center;">Combine Step <span class="current_step_num"></span> and Step <span class="new_step_num"></span> using relative locations in the genome</div>
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
 <c:set target="${typeMap}" property="singular" value="${importStep.displayType}"/>

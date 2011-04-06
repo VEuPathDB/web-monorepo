@@ -188,7 +188,7 @@
 		    </c:otherwise> <%-- not BlastDatabaseType --%>
 		  </c:choose>
 
-		      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<%--		      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>     --%>
 		      <td>
 		          <a href="#" id="help_${pNam}" rel="htmltooltip">
 		          <img src="/assets/images/help.png" border="0" alt="Help"></a>

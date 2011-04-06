@@ -191,13 +191,13 @@
                     </c:choose>
 
                     <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
-                        <td width="10%">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                      <%--   <td width="10%">&nbsp;&nbsp;&nbsp;&nbsp;</td> --%>
                         <td valign="top" width="50" nowrap>
                             <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                             <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
                             <a id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">
                             	<img src="/assets/images/help.png" border="0" alt="Help">
-    						</a>
+    			    </a>
                         </td>
                     </c:if>
                 </tr>
