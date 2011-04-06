@@ -19,33 +19,52 @@
 <site:header banner="Data Contents" />
 
 <style type="text/css">
-.data-source {
-  border-top: 1px solid blue;
-  border-bottom: 1px solid blue;
+#data-sources h3 {
+  background-color: #EFEFEF;
+  padding: 5px;
+  font-style: italic;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+}
+#data-sources .data-source {
+  border-bottom: 1px solid #AAAAAA;
   margin: 5px;
   padding: 5px;
 }
-
+#data-sources .anchor {
+  padding: 5px;
+  float: right;
+}
+#data-sources .caption {
+  color: #555555;
+}
+#data-sources .data-source .description {
+  padding: 2px 2px 5px 30px;
+}
 </style>
 
 <!-- show all xml question sets -->
 <div id="data-sources">
+  <a name="_top"></a>
   <h1>Data Sources</h1>
   <h3>Data source categories</h3>
   <ul id="toc">
     <c:forEach items="${dataSources}" var="category">
-      <li><a href="#${category.key}">${category.key}</a></li>
+      <li><a href="#${category.key}"><i>${category.key}</i></a></li>
     </c:forEach>
   </ul>
+  <br />
 
   <c:forEach items="${dataSources}" var="category">
     <div class="category">
+      <div class="anchor">[ <a href="#_top">Top</a> ]</div>
       <h3><a name="${category.key}">${category.key}</a></h3>
       <div class="category-content">
         <c:forEach items="${category.value}" var="record">
           <c:set var="wdkRecord" value="${record}" scope="request" />
           <c:set var="primaryKey" value="${record.primaryKey}"/>
           <c:set var="attributes" value="${record.attributes}"/>
+          <c:set var="name" value="${attributes['data_source_name']}" />
           <c:set var="displayName" value="${attributes['display_name']}" />
           <c:set var="version" value="${attributes['version']}" />
           <c:set var="publicUrl" value="${attributes['public_url']}" />
@@ -60,17 +79,21 @@
           <c:set var="references" value="${tables['References']}" />
           <div class="data-source">
             <div>
-              <a name="${primaryKey.value}"></a>
+              <a name="${name.value}"></a>
               <b>${displayName.value}</b>
-              (${version.displayName} : ${version.value})
+              (<span class="caption">${version.displayName}</span>: ${version.value})
             </div>
             <div class="detail">
-              <p>${description.value}</p>
-              <div>${publicUrl.displayName}: <a href="${publicUr.value}">${publicUrl.value}</a></div>
+              <div><span class="caption">${categories.displayName}</span>: ${categories.value}</div>
+              <div><span class="caption">${organism.displayName}</span>: ${organism.value}</div>
+              <div><span class="caption">${contact.displayName}</span>: ${contact.value}</div>
+              <div><span class="caption">${institution.displayName}</span>: ${institution.value}</div>
+              <div><span class="caption">${publicUrl.displayName}</span>: <a href="${publicUr.value}">${publicUrl.value}</a></div>
+              <p class="description">${description.value}</p>
             </div>
           
             <wdk:wdkTable tblName="${publications.name}" />
-            <wdk:wdkTable tblName="${references.name}" />
+            <%-- <wdk:wdkTable tblName="${references.name}" /> --%>
           </div>
         
         </c:forEach>

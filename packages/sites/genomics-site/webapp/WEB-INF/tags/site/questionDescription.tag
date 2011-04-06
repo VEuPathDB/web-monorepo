@@ -49,8 +49,26 @@
 <c:if test = "${project != 'EuPathDB'}">
 <hr>
 <div id="${attrId}">
-	<c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
-	<site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+  <c:set var="ds_ref_questions" value="${requestScope.ds_ref_questions}" />
+  <c:choose>
+    <c:when test="${fn:length(ds_ref_questions) == 0}">
+      <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
+      <site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+    </c:when>
+    <c:otherwise>
+      <div><b>Data Sources:</b></div>
+      <ul>
+      <c:forEach items="${ds_ref_questions}" var="dsRecord">
+        <li>
+          <c:set var="ds_attributes" value="${dsRecord.attributes}" />
+          <c:set var="ds_name" value="${ds_attributes['data_source_name']}" />
+          <c:set var="ds_display" value="${ds_attributes['display_name']}" />
+          * <a href="<c:url value='/getDataSource.do?question=${wdkQuestion.fullName}&display=detail#target=${ds_name}'/>">${ds_display}</a>
+        </li>
+      </c:forEach>
+      </ul>
+    </c:otherwise>
+  </c:choose>
 </div>
 </c:if>
 

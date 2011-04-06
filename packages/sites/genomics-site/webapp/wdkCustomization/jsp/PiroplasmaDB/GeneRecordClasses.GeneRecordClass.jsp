@@ -180,7 +180,7 @@ ${attrs['organism'].value}<br>
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
+    attribution=""
   />
 
 <%-- END DNA CONTEXT --------------------------------------------%>
@@ -270,7 +270,7 @@ ${attrs['organism'].value}<br>
       <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+  <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution=""
                  postscript="${orthomclLink}"/>
 
 </c:if>
@@ -308,7 +308,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
         content="${proteinFeaturesImg}"
         isOpen="true"
         name="Protein Context"
-        attribution="${attribution}"/>
+        attribution=""/>
       <!--${proteinFeaturesUrl} -->
    <br>
 </c:if>
@@ -316,15 +316,15 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 <%-- EC ------------------------------------------------------------%>
 
   <wdk:wdkTable tblName="EcNumber" isOpen="true"
-               attribution="enzymeDB,G.lamblia_contigs"/>
+               attribution=""/>
 
 <%-- GO ------------------------------------------------------------%>
   <wdk:wdkTable tblName="GoTerms" isOpen="true"
-               attribution="GO,InterproscanData,G.lamblia_contigs"/>
+               attribution=""/>
 
 <%-- EPITOPES ------------------------------------------------------%>
   <wdk:wdkTable tblName="Epitopes" isOpen="true"
-                 attribution="IEDB_Epitopes"/>
+                 attribution=""/>
 </c:if>
 
 
