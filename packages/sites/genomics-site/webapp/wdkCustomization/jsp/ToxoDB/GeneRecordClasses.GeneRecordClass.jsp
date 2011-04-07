@@ -162,7 +162,7 @@
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
  <!--Alternate Gene Models are taking time are hence being currently avoided in the record page -->
  <!-- c:set var="tracks" value="Version4Genes+Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+ChIPEinsteinPLK+ChIPEinsteinRHPeaks+ChIPEinsteinPLKPeaks+ChIPEinsteinTypeIIIPeaks" -->
- <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+ChIPEinsteinPLK+ChIPEinsteinME1"/>
+ <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+RnaSeqTgVEGTachyzoiteReidDay4+ChIPEinsteinPLK+ChIPEinsteinME1"/>
 </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1'}">
      <c:set var="tracks" value="Gene+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora"/>
@@ -171,7 +171,7 @@
      <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanNeospora+SyntenyNeospora"/>
 </c:if>
 <c:if test="${organism_full eq 'Neospora caninum'}">
-     <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG"/>
+     <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG+RnaSeqTgNcTachyzoiteReidDay4"/>
 </c:if>
 
 <c:set var="attribution">
