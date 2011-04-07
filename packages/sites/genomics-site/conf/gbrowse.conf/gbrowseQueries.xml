@@ -658,7 +658,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="SAGE:3-5prime" excludeProjects="CryptoDB,TrichDB">
+  <sqlQuery name="SAGE:3-5prime" excludeProjects="CryptoDB,TrichDB,TriTrypDB">
      <sql>
 <![CDATA[
 SELECT distinct * from
@@ -682,6 +682,37 @@ WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.start_min <= $rend
   AND  fl.end_max >= $base_start
   AND  fl.na_feature_id = sta.na_feature_id
+  AND  to_number(fl.feature_source_id) = staa.composite_element_id
+)
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="SAGE:3-5prime" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+SELECT distinct * from
+(
+SELECT fl.na_feature_id as feature_id,
+       'SAGE' type, 
+       '3-5prime' source, 
+       sta.source_id name, 
+       fl.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'SourceID=' || sta.feature_source_id || '$dlm' ||
+       'Sequence=CATG' || staa.sequence || '$dlm' ||
+       'Occurrence=' || staa.occurrence atts
+FROM   apidb.FeatureLocation fl,
+       apidb.sagetaganalysisattributes staa,
+       apidb.sagetagattributes sta
+WHERE  fl.feature_type ='SAGETagFeature'
+  AND  fl.na_sequence_id = $srcfeature_id 
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+  AND  fl.na_feature_id = sta.na_feature_id
+  AND  staa.library_name in ('procyclic_gambiense', 'bloodstream_gambiense') 
   AND  to_number(fl.feature_source_id) = staa.composite_element_id
 )
 ]]>
@@ -4542,7 +4573,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="SAGE:3-5prime:bulkAttribute" excludeProjects="CryptoDB,TrichDB">
+  <sqlQuery name="SAGE:3-5prime:bulkAttribute" excludeProjects="CryptoDB,TrichDB,TriTrypDB">
      <sql>
 <![CDATA[
  SELECT fl.na_feature_id as feature_id,
@@ -4559,6 +4590,30 @@ WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.end_max >= $base_start
   AND  fl.na_feature_id = sta.na_feature_id
   AND  staa.library_name = a.name
+  AND  to_number(fl.feature_source_id) = staa.composite_element_id
+ORDER BY feature_id, a.assay_id
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="SAGE:3-5prime:bulkAttribute" includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT fl.na_feature_id as feature_id,
+       staa.library_name,
+       staa.raw_count,
+       staa.library_tag_percentage
+FROM   apidb.FeatureLocation fl,
+       apidb.sagetaganalysisattributes staa,
+       apidb.sagetagattributes sta,
+       rad.assay a
+WHERE  fl.feature_type ='SAGETagFeature'
+  AND  fl.na_sequence_id = $srcfeature_id 
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+  AND  fl.na_feature_id = sta.na_feature_id
+  AND  staa.library_name = a.name
+  AND  staa.library_name in ('procyclic_gambiense', 'bloodstream_gambiense') 
   AND  to_number(fl.feature_source_id) = staa.composite_element_id
 ORDER BY feature_id, a.assay_id
 ]]>
