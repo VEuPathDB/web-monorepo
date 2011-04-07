@@ -275,6 +275,16 @@ ${attrs['organism'].value}<br>
 
 </c:if>
 
+<%-- EC ------------------------------------------------------------%>
+
+  <wdk:wdkTable tblName="EcNumber" isOpen="true"
+               attribution=""/>
+
+<%-- GO ------------------------------------------------------------%>
+  <wdk:wdkTable tblName="GoTerms" isOpen="true"
+               attribution=""/>
+
+
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
@@ -313,21 +323,47 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
    <br>
 </c:if>
 
-<%-- EC ------------------------------------------------------------%>
 
-  <wdk:wdkTable tblName="EcNumber" isOpen="true"
-               attribution=""/>
+<!-- Molecular weight -->
+<c:set var="mw" value="${attrs['molecular_weight'].value}"/>
+<c:set var="min_mw" value="${attrs['min_molecular_weight'].value}"/>
+<c:set var="max_mw" value="${attrs['max_molecular_weight'].value}"/>
 
-<%-- GO ------------------------------------------------------------%>
-  <wdk:wdkTable tblName="GoTerms" isOpen="true"
-               attribution=""/>
+ <c:choose>
+  <c:when test="${min_mw != null && max_mw != null && min_mw != max_mw}">
+   <site:panel 
+      displayName="Predicted Molecular Weight"
+      content="${min_mw} to ${max_mw} Da" />
+    </c:when>
+    <c:otherwise>
+   <site:panel 
+      displayName="Predicted Molecular Weight"
+      content="${mw} Da" />
+    </c:otherwise>
+  </c:choose>
+
+<!-- Isoelectric Point -->
+<c:set var="ip" value="${attrs['isoelectric_point']}"/>
+
+        <c:choose>
+            <c:when test="${ip.value != null}">
+             <site:panel 
+                displayName="${ip.displayName}"
+                 content="${ip.value}" />
+            </c:when>
+            <c:otherwise>
+             <site:panel 
+                displayName="${ip.displayName}"
+                 content="N/A" />
+            </c:otherwise>
+        </c:choose>
 
 <%-- EPITOPES ------------------------------------------------------%>
-  <wdk:wdkTable tblName="Epitopes" isOpen="true"
-                 attribution=""/>
+<%--  <wdk:wdkTable tblName="Epitopes" isOpen="true"
+                 attribution=""/> --%>
+
 </c:if>
-
-
+ 
 <site:pageDivider name="Sequences"/>
 
 <p>
