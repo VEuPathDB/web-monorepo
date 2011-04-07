@@ -12,6 +12,12 @@
               required="false"
 %>
 
+
+<style type="text/css">
+        .blockUI {   min-width: 750px; }
+</style>
+
+
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <%-- set refererUrl to be the tag's enclosing page if not
@@ -111,25 +117,9 @@ function validateFields(e)
      <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
   </c:if>
 
-  <p> <b>IMPORTANT</b>: If you already registered in another site (AmoebaDB, EuPathDB, CryptoDB ,GiardiaDB, MicrosporidiaDB, PlasmoDB, ToxoDB or TrichDB) you do NOT need to register again.</p>
+  <p> <b>IMPORTANT</b>: If you already registered in another site<br>(AmoebaDB, EuPathDB, CryptoDB ,GiardiaDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, ToxoDB or TrichDB)<br>you do NOT need to register again.</p>
 
-  <div align="left" style="width:550px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
-
-  <p><b>Why register/subscribe?</b> So you can:</p>
-  <div id="cirbulletlist">
-  <ul>
-  <li>Have your strategies back the next time you login
-  <li>Use your basket to store temporarily IDs of interest, and either save, or download or access other tools
-  <li>Use your favorites to store IDs of permanent interest, for faster access to its record page
-  <li>Add a comment on genes and sequences
-  <li>Set site preferences, such as items per page displayed in the query result
-  <li>Opt to receive infrequent alerts (at most monthly), by selecting (below) from which EuPathDB sites
-  </ul>
-  </div>
-
-  </div>
-
-  <br>
+   <br>
 
   <table width="650">
 
@@ -226,6 +216,14 @@ function validateFields(e)
     </td></tr>
     <td align="right" width="50%" nowrap>
     <td nowrap>
+	<c:choose>
+           <c:when test="${requestScope.preference_global_email_piroplasmadb != null}">
+              <input type="checkbox" name="preference_global_email_piroplasmadb" checked>PiroplasmaDB</input>
+           </c:when>
+           <c:otherwise>
+              <input type="checkbox" name="preference_global_email_piroplasmadb">PiroplasmaDB</input>
+           </c:otherwise>
+        </c:choose>
         <c:choose>
            <c:when test="${requestScope.preference_global_email_plasmodb != null}">
               <input type="checkbox" name="preference_global_email_plasmodb" checked>PlasmoDB</input>
@@ -277,24 +275,32 @@ function validateFields(e)
   </table>
 </html:form>
 
+ <br>
+ <div align="left" style="width:550px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
+
+  <p><b>Why register/subscribe?</b> So you can:</p>
+  <div id="cirbulletlist">
+  <ul>
+  <li>Have your strategies back the next time you login
+  <li>Use your basket to store temporarily IDs of interest, and either save, or download or access other tools
+  <li>Use your favorites to store IDs of permanent interest, for faster access to its record page
+  <li>Add a comment on genes and sequences
+  <li>Set site preferences, such as items per page displayed in the query result
+  <li>Opt to receive infrequent alerts (at most monthly), by selecting (below) from which EuPathDB sites
+  </ul>
+  </div>
+  </div>
 
   </c:otherwise>
 
 </c:choose>
 
 
-
-
-
-<br>
-<hr>
-
-<div align="left" style="line-height:1.5em;">
-
+<div align="left" style="width:550px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
 <div style="font-size:1.2em;">
 <b>&nbsp;&nbsp;&nbsp;EuPathDB Websites Privacy Policy</b> 
 </div>
-<hr>
+
 <table><tr>
 <td width="40%">
 <p><b>How we will use your email:</b> </p>
@@ -320,7 +326,6 @@ function validateFields(e)
 </tr></table>
 
 </div>  <%-- div align left --%>
-
 
 </div> <%-- div align center --%>
 

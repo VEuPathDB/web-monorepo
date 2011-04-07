@@ -16,7 +16,7 @@ function popLogin(destination){
 }
 
 function popRegister(){
-	jQuery.blockUI({message : jQuery("#registerForm"), css : {cursor: 'auto',width: '80%',top:'10%',left:'10%' } });
+	jQuery.blockUI({message : jQuery("#registerForm"), css : {cursor: 'auto',width: '80%',top: '0%',left:'10%' } });
 }
 
 function popUnsupported(){
