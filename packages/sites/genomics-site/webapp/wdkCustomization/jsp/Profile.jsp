@@ -160,7 +160,11 @@ function validateFields(e)
 	        ${(global['preference_global_email_microsporidiadb'] == 'on')? 'checked' : ''}>
 	    MicrosporidiaDB
 	 </input>
-         <input type="checkbox" name="preference_global_email_plasmodb" 
+         <input type="checkbox" name="preference_global_email_piroplasmadb" 
+	        ${(global['preference_global_email_piroplasmadb'] == 'on')? 'checked' : ''}>
+	    PiroplasmaDB
+	 </input>
+	 <input type="checkbox" name="preference_global_email_plasmodb" 
 	        ${(global['preference_global_email_plasmodb'] == 'on')? 'checked' : ''}>
 	    PlasmoDB
 	 </input>

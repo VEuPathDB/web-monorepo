@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
 });
 
 function popLogin(destination){
-	jQuery.blockUI({message : jQuery("#loginForm"), css : {cursor: 'auto',width:'30%',top:'40%',left:'35%' }});
+	jQuery.blockUI({message : jQuery("#loginForm"), css : {cursor: 'auto',width:'30%',top:'40%',left:'15%' }});
 	if (destination) {
 		jQuery("#loginForm input:hidden[name=refererUrl]").val(destination);
 	}
