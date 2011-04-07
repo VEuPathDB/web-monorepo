@@ -561,7 +561,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <br />
 
-<%-- Expression Graphs ------------------------------------------------------%>
+<%-- Phenotype section ------------------------------------------------------%>
 
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
 <site:pageDivider name="Phenotype"/>
