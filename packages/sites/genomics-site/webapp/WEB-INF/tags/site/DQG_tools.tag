@@ -43,7 +43,7 @@
 		<li><a href="<c:url value="/srt.jsp"/>"><strong>Sequence Retrieval</strong></a>
 			<ul><li  style="border:0">Retrieve Specific Sequences using IDs and coordinates</li></ul>
 		</li>
-		<li><a href="/common/PubCrawler/"><strong>PubMed and Entrez</strong></a>
+		<li><a href="/pubcrawler/${modelName}"><strong>PubMed and Entrez</strong></a>
 			<ul><li  style="border:0">View the Latest <i>${listOrganisms}</i> Pubmed and Entrez Results</li></ul>
 		</li>
 
