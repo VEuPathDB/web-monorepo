@@ -117,7 +117,7 @@ function validateFields(e)
      <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
   </c:if>
 
-  <p> <b>IMPORTANT</b>: If you already registered in another site<br>(AmoebaDB, EuPathDB, CryptoDB ,GiardiaDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, ToxoDB or TrichDB)<br>you do NOT need to register again.</p>
+  <p> <b>IMPORTANT</b>: If you already registered in another site<br>(AmoebaDB, EuPathDB, CryptoDB ,GiardiaDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, ToxoDB, TrichDB or TriTrypDB)<br>you do NOT need to register again.</p>
 
    <br>
 
