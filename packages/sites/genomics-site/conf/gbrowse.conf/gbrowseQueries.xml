@@ -420,13 +420,18 @@ SELECT blat.blat_alignment_id feature_id,
        blat.target_end end, 
        decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'Direction=' || est.p_end || ' prime' || '$dlm' ||
+       'Primer=' || est.seq_primer || '$dlm' ||
+       'Library=' || l.dbest_name || '$dlm' ||
+       'Vector=' || l.vector || '$dlm' ||
+       'Stage=' || l.stage || '$dlm' ||
        'PercentIdentity=' || blat.percent_identity atts 
 FROM   
        apidb.BlatAlignmentLocation blat, 
        dots.ASSEMBLYSEQUENCE asbl, 
-       dots.EST est, 
+       dots.EST est, dots.library l,
        dots.NASEQUENCE etn
 WHERE  
+       est.library_id = l.library_id and
        blat.query_na_sequence_id = asbl.na_sequence_id and 
        blat.target_na_sequence_id = etn.na_sequence_id and 
        est.na_sequence_id = asbl.na_sequence_id and 
