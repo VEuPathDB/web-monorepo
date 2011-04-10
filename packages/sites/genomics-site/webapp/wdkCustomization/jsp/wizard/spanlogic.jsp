@@ -53,7 +53,7 @@
             <input type="hidden" value="${spanParam.value}" id="${spanParam.key}_default"/>
           </c:forEach>
         </c:if>
-	<input type="hidden" value="${importStep.displayType}" id="span_b_type"/>
+<%--	<input type="hidden" value="${importStep.displayType}" id="span_b_type"/>   seems repeated above --%>
 	<c:set var="wdkStepRecType" value="${wdkStep.displayType}"/>
 	<c:set var="importStepRecType" value="${importStep.displayType}"/>
 	<c:set var="wdkStepResultSize" value="${wdkStep.resultSize}"/>
