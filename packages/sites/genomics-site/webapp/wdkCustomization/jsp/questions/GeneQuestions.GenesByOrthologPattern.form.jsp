@@ -108,6 +108,18 @@ parent[${idx}] = parents[parents.length-1];
 Ack, this form won't work at all without JavaScript support!
 </noscript>
 
+<!-- show error messages, if any -->
+<div class='usererror'><api:errors/></div>
+
+<%-- the js has to be included here in order to appear in the step form --%>
+<script type="text/javascript" src='<c:url value="/wdk/js/wdkQuestion.js"/>'></script>
+<c:if test="${showParams == null}">
+	<script type="text/javascript">
+		$(document).ready(function() { initParamHandlers(); });
+	</script>
+</c:if>
+
+
 <div class="params">
 <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
 <input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
@@ -163,9 +175,7 @@ Ack, this form won't work at all without JavaScript support!
   <html:hidden property="value(${profilePatternName})" value="%"/>
 </div><%-- END OF PARAMS DIV --%>
 
-	<div class="filter-button">
- 		 <html:submit property="questionSubmit" value="Get Answer"/>
-	</div>
+
 
 <c:if test="${showParams == null}">
 <script type="text/javascript" lang="JavaScript 1.2">
