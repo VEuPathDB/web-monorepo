@@ -76,10 +76,11 @@
     content="${seq}" />
 
 <!-- Assembly -->
-
-<c:if test="${projectId != 'TrichDB' && projectId != 'CryptoDB'}">
-  <wdk:wdkTable tblName="AssemblyInfo" isOpen="true" attribution=""/>
-</c:if>
+<%-- Assembly datatype has been deprecated --%>
+<%-- <c:if test="${projectId != 'TrichDB' && projectId != 'CryptoDB'}">
+      <wdk:wdkTable tblName="AssemblyInfo" isOpen="true" attribution=""/>
+     </c:if>
+--%>
 
 <br>
 <%-- REFERENCE ----------------------------------------------------%>
