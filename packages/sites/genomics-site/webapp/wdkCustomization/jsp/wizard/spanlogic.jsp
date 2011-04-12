@@ -16,7 +16,7 @@
 	so the style in Strategies.css is set to have max-width 75%   
 --%>
 <style type="text/css">
-	#query_form {	max-width: 100%; }
+	#query_form {	max-width: 300%; } //100% is not good enough when browser window is small and a scroll bar is needed
 </style>
 
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/wizard.do"  onsubmit="callWizard('wizard.do?action=${requestScope.action}&step=${wdkStep.stepId}&',this,null,null,'submit')">
@@ -24,7 +24,8 @@
   <c:set var="spanStep" value="${wdkStep}"/>
   <c:set var="wdkStep" value="${wdkStep.previousStep}"/>
 </c:if>
- <div class="h2center" style="text-align:center;">Combine Step <span class="current_step_num"></span> and Step <span class="new_step_num"></span> using relative locations in the genome</div>
+ <div class="h2center" style="text-align:center;">Combine Step <span class="current_step_num"></span> and Step <span class="new_step_num"></span> using relative locations in the genome
+</div>
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
 <c:set target="${typeMap}" property="singular" value="${importStep.displayType}"/>
@@ -35,7 +36,10 @@
 <wdk:getPlural pluralMap="${typeMap}"/>
 <c:set var="oldPluralType" value="${typeMap['plural']}"/>
 
-<div class="instructions" style="">Your ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).</div>
+<div class="instructions" style="">Your new ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).
+</div>
+
+
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
 <span style="display:none" id="stepId">${wdkStep.stepId}</span>
 <span style="display:none" id="span_a_num" class="current_step_num"></span>
@@ -43,6 +47,13 @@
   
 <input type="hidden" id="stage" value="process_span" />
   
+
+<div style="text-align:center;padding-top:20px">
+<a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
+	<img title="Click for help with combining IDs via relative genomic location" src="/assets/images/help_spanlogic.png" width="60px" alt="help with combining IDs via relative genomic location" />
+</a>
+</div>
+
 <div id="spanLogicParams">
 	<wdk:answerParamInput qp="${pMap['span_a']}"/>
 	<wdk:answerParamInput qp="${pMap['span_b']}"/>
@@ -92,8 +103,8 @@
 	<td>
 	<div class="span-step-text left">
           <span class="region comparisonRegion region_b">region</span> of a
-          <b><span class="comparison_type"></span> in Step
-          <span class="comparison_num"></span></b> and is on
+          <span class="comparison_type">...</span> <span class="other_step">in Step</span>
+          <span class="comparison_num">...</span> and is on
           <wdk:enumParamInput qp="${pMap['span_strand']}" /></span>
 	</div>
         <div id="comparisonGroup">

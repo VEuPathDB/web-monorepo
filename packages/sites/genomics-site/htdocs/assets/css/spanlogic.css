@@ -17,14 +17,14 @@
 
 .instructions {
   text-align:center;
-  color:gray;
-  margin-bottom:16px;
+  color:#605151;
+ // margin-bottom:16px;
 }
 
 .span-step-text{
   font-style:italic;
   white-space:nowrap;
-  padding: 23px 0;
+   padding-bottom: 23px;
 }
 
 .span-step-text .param{
@@ -79,10 +79,16 @@
 .span-step-text select,
 .span-step-text .span_output,
 .span-step-text .comparison_type,
+.span-step-text .comparison_num,
+.span-step-text .other_step,
 .span-step-text .span_strand {
   font-weight: bold;
 }
-
+.span-step-text .other_step,
+.span-step-text .comparison_type,
+.span-step-text .comparison_num {
+	font-style: normal; //remove italics
+}
 ul.horizontal {
   padding: 5px 0;
 }
