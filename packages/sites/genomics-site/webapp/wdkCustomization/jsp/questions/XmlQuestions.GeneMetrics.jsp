@@ -50,6 +50,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://cryptodb.org">CryptoDB</a></td>
     <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></td>
     <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://microsporidiadb.org">&mu;-sporidiaDB</a></td>
+    <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://plasmodb.org">PiroplasmaDB</a></td>
     <td style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></td>
     <td style="border-right:3px solid grey" colspan="2" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></td>
     <td style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></td>
@@ -69,6 +70,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Encephalitozoon cuniculi, MicrosporidiaDB"><i>Ec</i></td>
     <td class="mythStyle" title="Encephalitozoon intestinalis, MicrosporidiaDB"><i>Eint</i></td>
     <td  style="border-right:3px solid grey"  class="mythStyle" title="Enterocytozoon bieneusi, MicrosporidiaDB"><i>Eb</i></td>
+    <td class="mythStyle" title="Babesia bovis, PiroplasmaDB"><i>Bb</i></td>
+    <td class="mythStyle" title="Theileria annulata, PiroplasmaDB"><i>Ta</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Theileria parva, PiroplasmaDB"><i>Tp</i></td>
     <td class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pb</i></td>
     <td class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pc</i></td>
     <td class="mythStyle" title="Plasmodium falciparum, PlasmoDB"><i>Pf</i></td>
@@ -120,6 +124,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
          <c:set var="Tco" value="${record.attributesMap['Trypanosoma_congolense']}"/> 
          <c:set var="Tcr" value="${record.attributesMap['Trypanosoma_cruzi']}"/> 
          <c:set var="Tvi" value="${record.attributesMap['Trypanosoma_vivax']}"/> 
+         <c:set var="Bb" value="${record.attributesMap['Babesia_bovis']}"/> 
+         <c:set var="Ta" value="${record.attributesMap['Theileria_annulata']}"/> 
+         <c:set var="Tp" value="${record.attributesMap['Theileria_parva']}"/> 
 
 
 
@@ -137,6 +144,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ec}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Eint}</td>
     <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Eb}</td>
+    <td class="mytdStyle" align="right">${Bb}</td>
+    <td class="mytdStyle" align="right">${Ta}</td>
+    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tp}</td>
     <td class="mytdStyle" align="right">${Pb}</td>
     <td class="mytdStyle" align="right">${Pc}</td>
     <td class="mytdStyle" align="right">${Pf}</td>
