@@ -176,6 +176,17 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
 
     <div class="menu_lefttop_drop">
 
+
+<a href="http://twitter.com/eupathdb">
+	<img style="margin-left:17px;float:left;vertical-align:middle" title="Follow us on twitter!" src="/assets/images/twitter.gif" width="25">
+	<span style="vertical-align:sub">&nbsp;&nbsp;&nbsp;Follow us on twitter!</span>
+
+</a>
+<br>
+<hr>
+
+
+
 <c:if test="${project != 'EuPathDB'}" >
 <!--  ACCESS TO COMMUNITY FILES -->
      <b>Community Files</b>
