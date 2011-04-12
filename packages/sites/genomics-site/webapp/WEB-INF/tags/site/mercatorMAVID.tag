@@ -184,7 +184,7 @@ return true;
         <table>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="TannulataAnkara" checked>T.Ankara
+              <input type="checkbox" name="genomes" value="TannulataAnkara" checked>T.annulata
             </td>
             <td>
               <input type="checkbox" name="genomes" value="TparvaMuguga" checked>T.parva
