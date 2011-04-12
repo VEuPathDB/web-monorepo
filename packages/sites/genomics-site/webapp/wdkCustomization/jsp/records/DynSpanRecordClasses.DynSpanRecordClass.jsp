@@ -66,6 +66,9 @@
   <c:when test="${organism_full eq 'Neospora caninum'}">
     <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG"/>
   </c:when>
+  <c:when test="${organism_full eq 'Theileria annulata strain Ankara' || organism_full eq 'Theileria parva strain Muguga' || organism_full eq 'Babesia bovis T2Bo'}">
+    <c:set var="tracks" value="Gene"/>
+  </c:when>
   <c:otherwise>
     <c:set var="tracks" value="Gene+EST+SAGEtags" />
   </c:otherwise>
