@@ -7,6 +7,10 @@
     print "<font size='-1'>(upstream server: " . $upstreamServer . ")</font>";
   }
 
+// auth token for jsp pages
+$ws_key = getWSKey();
+
+
 $headers = apache_request_headers();
 
 ?>
@@ -16,12 +20,12 @@ $headers = apache_request_headers();
 <? 
 
 $pageMap = array( 
-    'Databases'     => "/a/admin/index.jsp?p=Databases",
-    'WDK'           => "/a/admin/index.jsp?p=WDK",
-    'Tomcat'        => "/a/admin/index.jsp?p=Tomcat",
+    'Databases'     => "/a/admin/index.jsp?p=Databases&key=$ws_key",
+    'WDK'           => "/a/admin/index.jsp?p=WDK&key=$ws_key",
+    'Tomcat'        => "/a/admin/index.jsp?p=Tomcat&key=$ws_key",
     'Apache'        => "/admin/apacheInfo.php",
     'Proxy'         => "/admin/proxyInfo.php",
-    'Build'         => "/a/admin/index.jsp?p=Build",
+    'Build'         => "/a/admin/index.jsp?p=Build&key=$ws_key",
     'Announcements' => "/cgi-bin/admin/messageConsole.pl"
     );
 

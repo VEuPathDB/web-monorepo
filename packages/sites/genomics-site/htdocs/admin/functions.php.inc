@@ -47,4 +47,17 @@ function parsePHPModules() {
  return $vModules; 
 } 
 
+function getWSKey() {
+  $ws_key_file = '/usr/local/tomcat_instances/shared/.apidb_siteinfo_key';
+  if ($fh = fopen($ws_key_file, "r")) {
+    while (!feof($fh)) {
+       $line = trim(fgets($fh));
+       if (preg_match("/^[0-9a-zA-Z]/", $line)) {
+         return $line;
+       }
+    }
+    fclose($fh);
+  }
+}
+
 ?>
