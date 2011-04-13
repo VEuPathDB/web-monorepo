@@ -12,6 +12,14 @@
 
 <c:set var="pMap" value="${question.paramsMap}"/>
 
+<c:set var="newStepId">
+  <c:choose>
+    <c:when test="${action == 'add'}">${wdkStep.frontId + 1}</c:when>
+    <c:otherwise>${wdkStep.frontId}</c:otherwise>
+  </c:choose>
+</c:set>
+<c:set var="currentStepId" value="${newStepId - 1}" />
+
 <%-- query_form is used for all popups.... for showing questions, long descriptions use all browser space which is annoying 
 	so the style in Strategies.css is set to have max-width 75%   
 --%>
@@ -24,7 +32,7 @@
   <c:set var="spanStep" value="${wdkStep}"/>
   <c:set var="wdkStep" value="${wdkStep.previousStep}"/>
 </c:if>
- <div class="h2center" style="text-align:center;">Combine Step <span class="current_step_num"></span> and Step <span class="new_step_num"></span> using relative locations in the genome
+ <div class="h2center" style="text-align:center;">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome
 </div>
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
@@ -36,14 +44,14 @@
 <wdk:getPlural pluralMap="${typeMap}"/>
 <c:set var="oldPluralType" value="${typeMap['plural']}"/>
 
-<div class="instructions" style="">Your new ${newPluralType} search (Step <span class="new_step_num"></span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num"></span>).
+<div class="instructions" style="">Your new ${newPluralType} search (Step <span class="new_step_num">${newStepId}</span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num">${currentStepId}</span>).
 </div>
 
 
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
 <span style="display:none" id="stepId">${wdkStep.stepId}</span>
-<span style="display:none" id="span_a_num" class="current_step_num"></span>
-<span style="display:none" id="span_b_num" class="new_step_num"></span>
+<span style="display:none" id="span_a_num" class="current_step_num">${currentStepId}</span>
+<span style="display:none" id="span_b_num" class="new_step_num">${newStepId}</span>
   
 <input type="hidden" id="stage" value="process_span" />
   
