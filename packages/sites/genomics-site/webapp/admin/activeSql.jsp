@@ -1,6 +1,8 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
+<api:checkWSKey keyFile="/usr/local/tomcat_instances/shared/.apidb_siteinfo_key" />
+
 <api:wdkRecord name="UtilityRecordClasses.SiteInfo" recordKey="si"/>
 <c:set var="selfHlColor" value="#F9F4EE"/>
 

@@ -2,6 +2,7 @@
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<api:checkWSKey keyFile="/usr/local/tomcat_instances/shared/.apidb_siteinfo_key" />
 
 <api:wdkRecord name="UtilityRecordClasses.SiteInfo"/>
 
