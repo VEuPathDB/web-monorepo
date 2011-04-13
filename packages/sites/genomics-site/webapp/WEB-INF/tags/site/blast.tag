@@ -115,43 +115,36 @@
 		  <%-- Handle database-type parm in HTML, so it can set questionFullName --%>
 		  <c:choose>
 
-		<%--    <c:when test="${pNam eq 'BlastDatabaseType'}"> --%>
 		    <c:when test="${pNam eq 'BlastAlgorithm'}">
-		      <td>
+		      <td  id="${qP.name}aaa">
+                       <c:set var="counter" value="0"/>
+                       <c:forEach items="${qP.vocab}" var="flatVoc">
+                             <span id="${flatVoc}_font" style="color:gray;"><input type="radio" name="algorithm" value="${flatVoc}" id="BlastAlgorithm_${flatVoc}" onClick="changeLabel();checkSequenceLength()" disabled />${flatVoc}</span>
+                             <c:set var="counter" value="${counter+1}"/>
+                      </c:forEach>
+                       <input  type="hidden" name="array(${pNam})" id="blastAlgo"/>
 
-			<c:set var="counter" value="0"/>
-		        <c:forEach items="${qP.vocab}" var="flatVoc">
-		              <span id="${flatVoc}_font" style="color:gray;"><input type="radio" name="algorithm" value="${flatVoc}" id="BlastAlgorithm_${flatVoc}" onClick="changeLabel();checkSequenceLength()" disabled />${flatVoc}</span>
-			      <c:set var="counter" value="${counter+1}"/>
-		       </c:forEach>
-		        <input type="hidden" name="array(${pNam})" id="blastAlgo"/>
+<script type="text/javascript" >
+changeQuestion();getBlastAlgorithm();
+</script>
+
 		      </td>
 		    </c:when>
+
 		    <c:when test="${pNam eq 'BlastDatabaseOrganism'}">
-		      <td>
-			<select name="blastOrganism" id="BlastOrganism" multiple="multiple" onChange="updateOrganism()">
-		           <option value="-">Select Target Data Type to display appropriate organisms</option>
-		        </select><br>
-			<input type="button" onClick="selectAll_None_Blast(true)" value="All"/>&nbsp;&nbsp;<input onClick="selectAll_None_Blast(false)" type="button" value="None"/><br>
-		        <input name="array(${pNam})" type="hidden" id="blastOrg"/> 
-
-
-
+		      <td  id="${qP.name}aaa">
+		            <wdk:enumParamInput qp="${qP}" />
 		      </td>
 		    </c:when>
-		<%--  <c:when test="${pNam eq 'BlastAlgorithm'}"> --%>
-		    <c:when test="${pNam eq 'BlastDatabaseType'}">
-		     <td>
 
-		       <c:set var="counter" value="0"/>
-		       <c:forEach items="${qP.vocab}" var="flatVoc">
-		              <c:set var="idStr" value="${fn:replace(flatVoc,' ', '')}"/>
-		              <input class="blast-type" type="radio" name="type" value="${flatVoc}" id="BlastType_${idStr}" 
-                                     onClick="getBlastAlgorithm();changeQuestion();checkSequenceLength()" />
-                              <span id="type_BlastType_${idStr}">${flatVoc}</span>
-			      <c:set var="counter" value="${counter+1}"/>	
-		       </c:forEach>
-		       <input type="hidden" name="array(${pNam})" id="blastType"/>
+		    <c:when test="${pNam eq 'BlastDatabaseType'}">
+		     <td  id="${qP.name}aaa">
+		            <wdk:enumParamInput qp="${qP}" />
+
+<script type="text/javascript" >
+updateDatabaseTypeOnclick();
+</script>
+
 
 		     </td>
 
@@ -160,6 +153,7 @@
 
 		      <%-- choose between enum param and straight text or number param --%>
 		      <c:choose>
+
 		        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
 		          <td>
 		            <wdk:enumParamInput qp="${qP}" />
@@ -171,6 +165,9 @@
 		              <c:when test="${pNam == 'BlastQuerySequence'}">
 		                  <html:textarea property="value(${pNam})" styleId="sequence" cols="50" rows="4" onchange="checkSequenceLength()"/>
 				  <br>
+                               <div class="usererror"><span id="short_sequence_warning" ></span></div>
+
+
 
 		              </td> 
 			      </c:when>
@@ -223,20 +220,6 @@
 </c:forEach> <%-- end of foreach on paramGroups --%>
 </c:if>
 </div> <%-- end of params div --%>
-
-
-<span id="short_sequence_warning" style="display: none;
-								background: url('/images/text_bubble.png'); 
-								font-size: 12px; 
-								height: 66px; 
-								left: 369px; 
-								padding-left: 40px; 
-								padding-top: 12px; 
-								position: relative; 
-								top:-243px; 
-								width: 360px;
-			"></span>
-
 
 
 
