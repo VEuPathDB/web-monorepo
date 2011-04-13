@@ -1,4 +1,7 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
+<api:checkWSKey keyFile="/usr/local/tomcat_instances/shared/.apidb_siteinfo_key" />
+
 <jsp:useBean id="pageMap" class="java.util.HashMap" type="java.util.Map"/> 
 
 <c:set var="page" scope="page" value="${param.p}"/>
