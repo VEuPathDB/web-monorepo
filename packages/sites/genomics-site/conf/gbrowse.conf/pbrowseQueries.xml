@@ -607,7 +607,8 @@ SELECT df.aa_feature_id feature_id,
     <sqlQuery name="match:BLASTP">
       <sql>
 <![CDATA[ 
-SELECT sim.similarity_id feature_id,
+SELECT * FROM 
+(SELECT sim.similarity_id feature_id,
        'match' type, 
        'BLASTP' source, 
        eta.source_id name, 
@@ -631,12 +632,13 @@ WHERE  sim.query_id = tas.aa_sequence_id and
        stab.name = 'ExternalAASequence' and
        sim.query_table_id  = qtab.table_id and
        qtab.name = 'TranslatedAASequence' and
-	   sim.query_id = '$srcfeature_id' and
-	   RowNum < 6
+       sim.query_id = $srcfeature_id 
 ORDER BY
        to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) asc,
        sim.total_match_length desc,
        sim.score desc
+
+) WHERE RowNum < 6
 ]]>
       </sql>
     </sqlQuery>
