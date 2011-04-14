@@ -349,11 +349,17 @@ ${headElement}
       </li>
 
       <li>
+<%-- popup does not scroll... a bug? since we do not keep context after registration, do not use popup
         <a href="javascript:void(0)" onclick="popRegister()">Register</a>
+--%>
+        <a href="<c:url value='/showRegister.do'/>" >Register</a>
+
+<%-- used with popRegister()  --%>
         <div id="registerForm" style="display:none;">
           <h2 style="text-align: center">EuPathDB Account Registration</h2>
           <site:register includeCancel="true" />
         </div>
+
       </li>
         
     </c:when>
