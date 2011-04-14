@@ -1724,7 +1724,7 @@ ORDER BY
   </sqlQuery>
  -->
   
-  <sqlQuery name="Microsatellite:sts" excludeProjects="TriTrypDB,ToxoDB,CryptoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="Microsatellite:sts" includeProjects="PlasmoDB">
     <testParamValues project="PlasmoDB">
        <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_06$$"/>
        <param name="base_start" value="469864"/> 
@@ -1741,15 +1741,15 @@ ORDER BY
        l.end_max end, 
        decode (l.is_reversed, 0, '+1', 1, '-1', '.') strand,
              'Name=' || s.name  || '$dlm' || 'SequenceId=' || nas.source_id  atts
-      FROM   DOTS.STS s,
-       ApiDB.FeatureLocation l,
-             DOTS.NASequence nas
+      FROM   DoTS.STS s, SRes.sequenceontology so,
+             ApiDB.FeatureLocation l, DOTS.NASequence nas
       WHERE  s.na_sequence_id = $srcfeature_id 
-  AND  l.start_min <= $rend
-  AND  l.end_max >= $base_start
-  AND  s.na_feature_id = l.na_feature_id 
+        AND  l.start_min <= $rend
+        AND  l.end_max >= $base_start
+        AND  s.na_feature_id = l.na_feature_id 
         AND  nas.na_sequence_id = s.na_sequence_id
-        AND  s.name = 'microsatellite'
+        AND  s.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'microsatellite'
 ]]>
     </sql>
   </sqlQuery>
