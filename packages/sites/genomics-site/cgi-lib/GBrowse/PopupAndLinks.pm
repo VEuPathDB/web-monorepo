@@ -447,18 +447,18 @@ sub polyASiteAlignTitle {
 
 sub MicrosatelliteTitle {
     my $f            = shift;
-    my $name         = $f->name;
-    my $genbankLink  = "<a target='_blank' href='http://www.ncbi.nlm.nih.gov/sites/entrez?db=unists&cmd=search&term=$name'>$name</a>";
+    my $accessn      = $f->name;
+    my $genbankLink  = "<a target='_blank' href='http://www.ncbi.nlm.nih.gov/sites/entrez?db=unists&cmd=search&term=$accessn'>$accessn</a>";
     my $projectId    = $ENV{PROJECT_ID};
     my $start        = $f->start;
     my $stop         = $f->stop;
     my $length       = $stop - $start + 1;
-    my ($type)        = $f->get_tag_values('Name');
+    my ($name)        = $f->get_tag_values('Name');
     my ($sequenceId)        = $f->get_tag_values('SequenceId');
     my $msaLink = "<a target='_blank' href='/cgi-bin/mavidAlign?project_id=$projectId&contig=$sequenceId&start=$start&stop=$stop&revComp=off&type=clustal'>Available Strains</a>";
     my @data;
+    push @data, [ 'Name:'        => $name ];
     push @data, [ 'Genbank Accession:'        => $genbankLink ];
-    push @data, [ 'Type:'        => $type ];
     push @data, [ 'Sequence Id:'        => $sequenceId ];
     push @data, [ '3D7 Start:'        => $start ];
     push @data, [ '3D7 End:'        => $stop ];
