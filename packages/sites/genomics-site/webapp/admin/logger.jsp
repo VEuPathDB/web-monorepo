@@ -1,4 +1,6 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
+<api:checkWSKey keyFile="/usr/local/tomcat_instances/shared/.apidb_siteinfo_key" />
 
 <%@ page import="java.util.*,org.apache.log4j.LogManager,org.apache.log4j.Logger,org.apache.log4j.Level"%>
 <%
@@ -89,7 +91,7 @@ if (displayLoggerList)
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <base href="<%=basePath%>">
+    <%-- base href="<%=basePath%>" --%>
     
     <title>Logger Setup</title>
     
@@ -104,7 +106,7 @@ if (displayLoggerList)
     <FORM METHOD="Post">
     <TABLE CELLPADDING="5" CELLSPACING="0" BORDER="1">
     <TR>
-    	<TD COLSPAN="2"><H2>Enable Disable Logger</H2></TD>
+    	<TD COLSPAN="2"><H2>Alter Log Levels</H2></TD>
     </TR>
     <TR>
     	<TD>Choose Logger:<BR>Format: LoggerClass [Current Level] -> Parent Logger<BR><%=namesOption%></TD>
@@ -160,11 +162,12 @@ else
     	<%=outputMessage%>
     	</TD>    	
     </TR>
+    <TR><TD>&nbsp;</TD></TR>
     <TR>
-    	<TD><A HREF="<c:url value="/admin/logger.jsp"/>">Return to list</A></TD>
+    	<TD><A HREF="/admin?p=Logger">Return to list</A></TD>
     </TR>
     <TR>
-    	<TD><A HREF="/siteinfo?p=Tomcat">Return to the Site Info page</A></TD>
+    	<TD><A HREF="/admin?p=Tomcat">Return to the Site Info page</A></TD>
     </TR>
     </TABLE>
     </FORM>

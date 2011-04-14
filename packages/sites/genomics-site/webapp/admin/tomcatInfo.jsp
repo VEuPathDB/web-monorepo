@@ -24,5 +24,5 @@
 </div></div>
 </p>
 <p>
-<b><a href="<c:url value="/admin/logger.jsp" />">Manage Log Levels</a></b> for this running instance of the webapp
+<b><a href="<c:url value="?p=Logger" />">Manage Log Levels</a></b> for this running instance of the webapp
 </p>
