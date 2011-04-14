@@ -37,6 +37,7 @@
 <c:set var="Am" value="${E}" />
 <c:set var="M" value="${E}" />
 <c:set var="P" value="${E}" />
+<c:set var="Pi" value="${E}" />    <%-- for piroplasma --%>
 <c:set var="T" value="${E}" />
 <c:set var="C" value="${E}" />
 <c:set var="A" value="${E}" />    <%-- for portal --%>
@@ -48,6 +49,7 @@
 
 <c:set var="amoebaRoot" value="http://www.amoebadb.org/amoeba/" />
 <c:set var="microRoot" value="http://www.microsporidiadb.org/micro/" />
+<c:set var="piroRoot" value="http://www.piroplasmadb.org/piro/" />
 <c:set var="plasmoRoot" value="http://www.plasmodb.org/plasmo/" />
 <c:set var="toxoRoot" value="http://www.toxodb.org/toxo/" />
 <c:set var="cryptoRoot" value="http://www.cryptodb.org/cryptodb/" />
@@ -111,6 +113,12 @@
         </c:set>
         <c:set var="P" value="<a href='${plasmoRoot}${link}'><img src='${P_image}' border='0' alt='plasmodb' /></a>" />
   </c:if>
+<c:if test="${token eq 'Pi'}">
+        <c:set var="Pi_image">
+            /assets/images/piroplasmadb_letter.gif
+        </c:set>
+        <c:set var="Pi" value="<a href='${piroRoot}${link}'><img src='${Pi_image}' border='0' alt='piroplasmadb' /></a>" />
+  </c:if>
   <c:if test="${token eq 'T'}">
         <c:set var="T_image">
             /assets/images/toxodb_letter.gif
@@ -136,16 +144,19 @@
     <c:set var="orgnismName" value="Entamoeba"/>
 </c:if>
 <c:if test="${modelName eq 'MicrosporidiaDB'}">
-    <c:set var="orgnismName" value="Encephalitozoon"/>
+    <c:set var="orgnismName" value="Encephalitozoon,Enterocytozoon"/>
 </c:if>
 <c:if test="${modelName eq 'CryptoDB'}">
     <c:set var="orgnismName" value="Cryptosporidium"/>
+</c:if>
+<c:if test="${modelName eq 'PiroplasmaDB'}">
+        <c:set var="orgnismName" value="Babesia,Theileria"/>
 </c:if>
 <c:if test="${modelName eq 'PlasmoDB'}">
         <c:set var="orgnismName" value="Plasmodium"/>
 </c:if>
 <c:if test="${modelName eq 'ToxoDB'}">
-        <c:set var="orgnismName" value="Toxoplasma"/>
+        <c:set var="orgnismName" value="Neospora,Toxoplasma"/>
 </c:if>
 <c:if test="${modelName eq 'GiardiaDB'}">
         <c:set var="orgnismName" value="Giardia"/>
