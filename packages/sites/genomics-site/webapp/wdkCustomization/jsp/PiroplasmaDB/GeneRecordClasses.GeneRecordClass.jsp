@@ -267,7 +267,7 @@ ${attrs['organism'].value}<br>
 
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
+      <a href="http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
   <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution=""
