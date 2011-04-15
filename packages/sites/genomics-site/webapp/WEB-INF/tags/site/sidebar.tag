@@ -182,7 +182,7 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
 	<span style="vertical-align:sub">&nbsp;&nbsp;&nbsp;Follow us on twitter!</span>
 
 </a>
-<br>
+<br><br>
 <hr>
 
 
@@ -193,9 +193,9 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
 <ul>
     <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
     <li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
-</c:if>
 </ul>
      <hr>
+</c:if>
 
 <!--  EVENTS -->
     <b>Upcoming Events</b>

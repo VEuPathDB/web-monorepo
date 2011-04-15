@@ -268,7 +268,7 @@ ${headElement}
       <site:quickSearch /><br />
 
 <%---------------------- Small Menu Options on Header  ------------------%>
-      <div id="nav_topdiv">
+      <div id="nav_topdiv" style="margin-right:28px">
            <ul id="nav_top">
       <li>
       <a href="#">About ${siteName}<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
@@ -350,18 +350,24 @@ ${headElement}
 
       <li>
 <%-- popup does not scroll... a bug? since we do not keep context after registration, do not use popup
-        <a href="javascript:void(0)" onclick="popRegister()">Register</a>
+        <a href="javascript:void(0)" onclick="popRegister()">Register
+		<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+	</a>
 --%>
-        <a href="<c:url value='/showRegister.do'/>" >Register</a>
+	  <a href="<c:url value='/showRegister.do'/>" >Register
+			<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+	</a>
 
-<%-- used with popRegister()  --%>
+<%-- used with popRegister() 
         <div id="registerForm" style="display:none;">
           <h2 style="text-align: center">EuPathDB Account Registration</h2>
           <site:register includeCancel="true" />
         </div>
+ --%>
 
       </li>
         
+
     </c:when>
 
     <c:otherwise>
@@ -376,7 +382,9 @@ ${headElement}
       </li>
 
       <li>
-        <a href="<c:url value='/${logoutUrl}' />" id='logout'>Logout</a>
+        <a href="<c:url value='/${logoutUrl}' />" id='logout'>Logout
+		<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+	</a>
       </li>
 
     </c:otherwise>
@@ -385,8 +393,12 @@ ${headElement}
 
            </ul>
 
-      </div>  <%-- id="nav_top" --%>
+      </div>  <%-- id="nav_topdiv" --%>
       	  
+<a style="position:absolute;right:25px;top:77px" href="http://twitter.com/eupathdb">
+	<img style="margin-left:17px;vertical-align:middle" title="Follow us on twitter!" src="/assets/images/twitter.gif" width="25">
+</a>
+
    </div>  <%-- id="bottom"    --%>
    </div>  <%-- id="header_rt" --%>
 
