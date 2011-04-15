@@ -158,76 +158,76 @@ ${organism}<br>
 <c:choose>
   <c:when test='${organismFull eq "Leishmania braziliensis"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+BLASTX+UnifiedMassSpecPeptides
     </c:set>
   </c:when>
   <c:when test='${organismFull eq "Leishmania major strain Friedlin"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+DoTSAssemblies+BLASTX+UnifiedMassSpecPeptides
+      Gene+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+BLASTX+UnifiedMassSpecPeptides
     </c:set>
   </c:when>
   <c:when test='${organismFull eq "Leishmania infantum"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLMexicanaMC+SyntenyGenesLMexicanaMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
   <c:when test='${organismFull eq "Leishmania mexicana"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+SyntenySpansLBraziliensisMC+SyntenyGenesLBraziliensisMC+SyntenySpansLInfantumMC+SyntenyGenesLInfantumMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
   <c:when test='${binomial eq "Trypanosoma cruzi" && sequenceDatabaseName eq nonEsmeraldoDatabaseName}'>
     <c:set var="tracks">
-      Gene+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
   <c:when test='${binomial eq "Trypanosoma cruzi" && sequenceDatabaseName eq esmeraldoDatabaseName}'>
     <c:set var="tracks">
-      Gene+SyntenySpansTCruziPMC+SyntenyGenesTCruziPMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansTCruziPMC+SyntenyGenesTCruziPMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
   <c:when test='${binomial eq "Trypanosoma cruzi" && sequenceDatabaseName ne esmeraldoDatabaseName && sequenceDatabaseName ne nonEsmeraldoDatabaseName}'>
     <c:set var="tracks">
-      Gene+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansTCruziPMC+SyntenyGenesTCruziPMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansTCruziPMC+SyntenyGenesTCruziPMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
   <c:when test='${organismFull eq "Trypanosoma brucei Lister strain 427"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
   <c:when test='${organismFull eq "Trypanosoma congolense"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
   <c:when test='${organismFull eq "Trypanosoma vivax"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
   <c:when test='${organismFull eq "Trypanosoma brucei gambiense"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+      Gene+SyntenySpansTBruceiMC+SyntenyGenesTBruceiMC+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
   <c:otherwise>
     <c:set var="tracks">
-      Gene+DoTSAssemblies+BLASTX
+      Gene+BLASTX
     </c:set>
   </c:otherwise>
 </c:choose>
@@ -239,7 +239,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 
 <c:if test="${tracks ne ''}">
   <c:set var="baseTracks">
-  Gene+UnifiedMassSpecPeptides+DoTSAssemblies+BLASTX
+  Gene+UnifiedMassSpecPeptides+BLASTX
   </c:set>
 
   <c:set var="gnCtxUrl">
