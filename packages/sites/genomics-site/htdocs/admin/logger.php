@@ -8,11 +8,18 @@ Wrapper on logger.jsp.
 include_once "functions.php.inc";
 
 $ws_key = getWSKey();
-$loggerpage = "http://mheiges.toxodb.org/a/admin/logger.jsp?key=$ws_key";
+$loggerpage_base = "http://" . $_SERVER[SERVER_NAME] . "/a/admin/logger.jsp";
+$loggerpage = "$loggerpage_base?key=$ws_key";
 $postdata = get_post_data_as_string($_POST);
 $response = get_web_page($loggerpage, $postdata);
-echo $response['content'];
 
+// it's important to only display a good response to avoid
+// exposing the secret ws_key (eg. redirection can cause exposure).
+if ( $response['http_code'] == '200' ) {
+    echo $response['content'];
+} else {
+    echo "ERROR. The request for $loggerpage_base returned status code" . $response['http_code'];
+}
 
 
 /** ************************************************************ **/
@@ -31,7 +38,7 @@ function get_web_page($url, $postdata) {
     $options = array(
         CURLOPT_RETURNTRANSFER => true, 
         CURLOPT_HEADER         => false,
-        CURLOPT_FOLLOWLOCATION => true, 
+        CURLOPT_FOLLOWLOCATION => false, // do NOT follow redirects. Following can expose secrete ws_key
         CURLOPT_ENCODING       => "",   
         CURLOPT_USERAGENT      => "siteinfo",
         CURLOPT_AUTOREFERER    => true,
