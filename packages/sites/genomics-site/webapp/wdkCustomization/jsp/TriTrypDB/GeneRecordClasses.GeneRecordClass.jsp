@@ -46,12 +46,6 @@
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
 
-<c:set var="gene_name" value="(${attrs['gene_name'].value})"/>
-<c:if test="${attrs['gene_name'].value == null}">
-  <c:set var="gene_name" value=""/>
-</c:if>
-
-
 <c:set var="strand" value="+"/>
 <c:if test="${attrs['strand'].value == 'reverse'}">
   <c:set var="strand" value="-"/>
@@ -63,7 +57,7 @@
 
 
 <%-- display page header with recordClass type in banner --%>
-<site:header title="TriTrypDB : gene ${id} (${prd} ${gene_name})"
+<site:header title="TriTrypDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
 		refer="recordPage" 
              divisionName="Gene Record"
@@ -111,7 +105,7 @@
 <h2>
 <center>
 	<!-- the ID and product title -->
- 	${id} <br /> <span style="font-size:80%">${prd} ${gene_name}</span> <br/>
+ 	${id} <br /> <span style="font-size:80%">${prd}</span> <br/>
 
 <c:set var="count" value="0"/>
 <c:forEach var="row" items="${wdkRecord.tables['UserComments']}">

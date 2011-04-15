@@ -34,11 +34,6 @@
 <c:set var="end" value="${attrs['end_max_text'].value}"/> 
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
-<c:set var="gene_name" value="(${attrs['gene_name'].value})"/>
-<c:if test="${attrs['gene_name'].value == null}">
-  <c:set var="gene_name" value=""/>
-</c:if>
-
 
 <c:set var="strand" value="+"/>
 <c:if test="${attrs['strand'].value == 'reverse'}">
@@ -58,7 +53,7 @@
 
 <c:set var="async" value="${param.sync != '1'}"/>
 
-<site:header title="PiroplasmaDB: gene ${id} (${prd} ${gene_name})"
+<site:header title="PiroplasmaDB: gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
              refer="recordPage" 
@@ -86,7 +81,7 @@
 <h2>
 <center>
 	<!-- the ID and product title -->
- 	${id} <br /> <span style="font-size:80%">${prd} ${gene_name}</span> <br/>
+ 	${id} <br /> <span style="font-size:80%">${prd}</span> <br/>
 
 <c:set var="count" value="0"/>
 <c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
