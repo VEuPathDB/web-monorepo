@@ -52,10 +52,9 @@ $pageMap = array(
 $page = ( isset($_GET['p']) ) ? $_GET['p'] : 'Databases';
 
 ?>
+<? include "head.php.inc"; ?>
 
 <body>
-
-<? include "head.php.inc"; ?>
 
 <ul id="tabmenu">
  <? 
