@@ -100,6 +100,9 @@
 <c:when test="${website eq 'microsporidiadb'}" >
         <c:set var="webapp" value="micro"/>
 </c:when>
+<c:when test="${website eq 'piroplasmadb'}" >
+        <c:set var="webapp" value="piro"/>
+</c:when>
 <c:otherwise>
         <c:set var="webapp" value="${website}"/>
 </c:otherwise>
