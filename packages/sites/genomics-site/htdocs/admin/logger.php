@@ -8,8 +8,7 @@ Wrapper on logger.jsp.
 include_once "functions.php.inc";
 
 $ws_key = getWSKey();
-#$loggerpage_base = "http://" . $_SERVER[SERVER_NAME] . "/a/admin/logger.jsp";
-$loggerpage_base = "http://integrate.piroplasmadb.org/a/admin/logger.jsp";
+$loggerpage_base = "http://" . $_SERVER[SERVER_NAME] . "/a/admin/logger.jsp";
 $loggerpage = "$loggerpage_base?key=$ws_key";
 $postdata = get_post_data_as_string($_POST);
 $response = get_web_page($loggerpage, $postdata);
