@@ -60,4 +60,62 @@ function getWSKey() {
   }
 }
 
+function get_web_page($url, $postdata) {
+    $options = array(
+        CURLOPT_RETURNTRANSFER => true, 
+        CURLOPT_HEADER         => false,
+        CURLOPT_FOLLOWLOCATION => false, // do NOT follow redirects. Following can expose secrete ws_key
+        CURLOPT_ENCODING       => "",   
+        CURLOPT_USERAGENT      => "siteinfo",
+        CURLOPT_AUTOREFERER    => true,
+        CURLOPT_CONNECTTIMEOUT => 120, 
+        CURLOPT_TIMEOUT        => 120, 
+        CURLOPT_MAXREDIRS      => 2,   
+    );
+
+    if (isset($postdata) && $postdata != '') {
+      $options[CURLOPT_POST] = 1;
+      $options[CURLOPT_POSTFIELDS] = $postdata;
+    }
+
+    $ch      = curl_init( $url );
+    curl_setopt_array( $ch, $options );
+    $content = curl_exec( $ch );
+    $err     = curl_errno( $ch );
+    $errmsg  = curl_error( $ch );
+    $response  = curl_getinfo( $ch );
+    curl_close( $ch );
+
+    $response['errno']   = $err;
+    $response['errmsg']  = $errmsg;
+    $response['content'] = $content;
+    return $response;
+}
+
+// body with <body> tags
+function get_body($html) {
+    $dom= new DOMDocument();
+    $dom->loadHTML($html);
+    $body = $dom->getElementsByTagName('body')->item(0);
+    return $body;
+}
+
+// body content without <body> tags
+function get_body_content($html) {
+    $body = get_body($html);
+    foreach ($body->childNodes as $child) { 
+        echo $child->ownerDocument->saveXML( $child ); 
+    }
+}
+
+function get_post_data_as_string($post) {
+    if (!$post) return;
+    $kv = array();
+    foreach ($post as $key => $value) {
+      $kv[] = "$key=$value";
+    }
+    $postdata = join("&", $kv);
+    return $postdata;
+}
+
 ?>
