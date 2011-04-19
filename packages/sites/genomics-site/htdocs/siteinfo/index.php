@@ -31,10 +31,10 @@ $pageMap = array(
         'url' => "/a/admin/index.jsp?p=Tomcat&key=$ws_key",
         'tab' => 1),
     'Apache' => array(
-        'url' => "/admin/apacheInfo.php",
+        'url' => "/siteinfo/apacheInfo.php",
         'tab' => 1),
     'Proxy' => array(
-        'url' => "/admin/proxyInfo.php",
+        'url' => "/siteinfo/proxyInfo.php",
         'tab' => 1),
     'Build' => array(
         'url' => "/a/admin/index.jsp?p=Build&key=$ws_key",
@@ -43,7 +43,7 @@ $pageMap = array(
         'url' => "/cgi-bin/admin/messageConsole.pl",
         'tab' => 1),
     'Logger'  => array(
-        'url' => "/admin/logger.php",
+        'url' => "/siteinfo/logger.php",
         'tab' => 0),
     );
 

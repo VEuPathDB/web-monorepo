@@ -164,10 +164,10 @@ else
     </TR>
     <TR><TD>&nbsp;</TD></TR>
     <TR>
-    	<TD><A HREF="/admin?p=Logger">Return to list</A></TD>
+    	<TD><A HREF="/siteinfo?p=Logger">Return to list</A></TD>
     </TR>
     <TR>
-    	<TD><A HREF="/admin?p=Tomcat">Return to the Site Info page</A></TD>
+    	<TD><A HREF="/siteinfo?p=Tomcat">Return to the Site Info page</A></TD>
     </TR>
     </TABLE>
     </FORM>
