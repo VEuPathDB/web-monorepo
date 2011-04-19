@@ -5,6 +5,20 @@
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 
+
+<!--  SETTING GENERA
+      (share with quick search and menubar!  -->
+
+<c:set var="AmoebaDBOrgs" value="Entamoeba" />
+<c:set var="CryptoDBOrgs" value="Cryptosporidium" />				
+<c:set var="GiardiaDBOrgs" value="Giardia" />
+<c:set var="MicrosporidiaDBOrgs" value="Encephalitozoon" />
+<c:set var="PiroplasmaDBOrgs" value="Babesia,Theileria" />
+<c:set var="PlasmoDBOrgs" value="Plasmodium" />
+<c:set var="ToxoDBOrgs" value="Toxoplasma,Neospora" />
+<c:set var="TrichDBOrgs" value="Trichomonas"/>
+<c:set var="TriTrypDBOrgs" value="Leishmania,Trypanosoma"/>
+
 <div id="contentwrapper">
 <div id="contentcolumn">
 <div class="innertube">
@@ -20,15 +34,15 @@
 
 <c:set var="mywidth" value="11.11%" />
 
-	<td align="center" width="${mywidth}"><a href="http://amoebadb.org"><img border=0 src="/assets/images/AmoebaDB/amoebadb_w50.png" alt="AmoebaDB logo"></a></td>
-	<td align="center" width="${mywidth}"><a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb_w50.png" alt="CryptoDB logo"></a></td>
-        <td align="center" width="${mywidth}"><a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb_w50.png" alt="GiardiaDB logo"></a></td>
-        <td align="center" width="${mywidth}"><a href="http://microsporidiadb.org"><img border=0 src="/assets/images/MicrosporidiaDB/microdb_w50.png" alt="MicrosporidiaDB logo"></a></td>
-	<td align="center" width="${mywidth}"><a href="http://piroplasmadb.org"><img border=0 src="/assets/images/newSite.png" width="55" alt="PiroplasmaDB logo"></a></td>
-        <td align="center" width="${mywidth}"><a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb_w50.png" alt="PlasmoDB logo"></a></td>
-        <td align="center" width="${mywidth}"><a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb_w50.png" alt="ToxoDB logo"></a></td>
-        <td align="center" width="${mywidth}"><a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb_w65.png" alt="TrichDB logo"></a></td>
-        <td align="center" width="${mywidth}" ><a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb_w40.png" alt="TriTrypDB logo"></a></td>
+	<td title="${AmoebaDBOrgs}" align="center" width="${mywidth}"><a href="http://amoebadb.org"><img  border=0 src="/assets/images/AmoebaDB/amoebadb_w50.png" alt="AmoebaDB logo"></a></td>
+	<td title="${CryptoDBOrgs}" align="center" width="${mywidth}"><a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb_w50.png" alt="CryptoDB logo"></a></td>
+        <td title="${GiardiaDBOrgs}" align="center" width="${mywidth}"><a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb_w50.png" alt="GiardiaDB logo"></a></td>
+        <td title="${MicrosporidiaDBOrgs}" align="center" width="${mywidth}"><a href="http://microsporidiadb.org"><img border=0 src="/assets/images/MicrosporidiaDB/microdb_w50.png" alt="MicrosporidiaDB logo"></a></td>
+	<td title="${PiroplasmaDBOrgs}" align="center" width="${mywidth}"><a href="http://piroplasmadb.org"><img border=0 src="/assets/images/newSite.png" width="55" alt="PiroplasmaDB logo"></a></td>
+        <td title="${PlasmoDBOrgs}" align="center" width="${mywidth}"><a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb_w50.png" alt="PlasmoDB logo"></a></td>
+        <td title="${ToxoDBOrgs}" align="center" width="${mywidth}"><a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb_w50.png" alt="ToxoDB logo"></a></td>
+        <td title="${TrichDBOrgs}" align="center" width="${mywidth}"><a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb_w65.png" alt="TrichDB logo"></a></td>
+        <td title="${TriTrypDBOrgs}" align="center" width="${mywidth}" ><a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb_w40.png" alt="TriTrypDB logo"></a></td>
 	</tr>
 
 	<tr>
