@@ -718,7 +718,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
              Asexual parasites were extracted from patients who presented to local health clinics in the Peruvian Amazon region of Iquitos with typical signs and symptoms of malaria.  These were evaluated by light microscopy examination of Giemsa-stained blood smears to have P. vivax parasitemia.  P. vivax sporozoites were obtained from Sanaria, Inc. from mosquitoes fed on P. vivax infected chimpanzees infected with India VII strain P. vivax. 
             <br><br>
             <b>y-axis (graph #1)</b><br>
-             For a given gene, signals from probes selected by the probe selection algorithm form an integral intensity distribution. According to the MOID algorithm, the 70 percentile of the intensity distribution is defined as the expression level of the gene.
+             RMAExpress Expression value (log2 scale).
             <br><br>
             <b>y-axis (graph #2)</b><br>
             Percentiles are calculated for each sample within array.
@@ -849,8 +849,8 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
             and for Sporozoite sample represents average of two replicates.
             <br><br>
             <b>y-axis (graph #1)</b><br>
-            Log (base 2) ratio of Affymetrix MOID expression value
-            (normalized by experiment) to average MOID value for all time points
+            Log (base 2) ratio of Affymetrix RMAExpress expression value
+            (normalized by experiment) to average RMAExpress value for all time points
             for a gene
           </div>
         </td>
@@ -870,7 +870,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
         <td class="centered">
           <div class="small">
             <b>y-axis (graph #3)</b><br>
-            Affymetrix MOID expression value normalized by experiment
+            Affymetrix RMAExpress expression value normalized by experiment
           </div>
         </td>
       
@@ -957,7 +957,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
         <td class="centered">
           <div class="small">
             <b>y-axis (graph #2)</b><br>
-            Affymetrix MOID expression value for ${id}, normalized by
+            Affymetrix RMAExpress expression value for ${id}, normalized by
             experiment
           </div>
         </td>
