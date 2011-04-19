@@ -13,6 +13,7 @@ var tgeArray = new Array();
 var poArray = new Array();
 
 
+function clickDefault(){}
 
 window.onload = function(){
 	if(window.location.href.indexOf("showApplication") == -1)
