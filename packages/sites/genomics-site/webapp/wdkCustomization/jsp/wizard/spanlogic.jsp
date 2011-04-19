@@ -32,6 +32,11 @@
   <c:set var="spanStep" value="${wdkStep}"/>
   <c:set var="wdkStep" value="${wdkStep.previousStep}"/>
 </c:if>
+
+<table style="margin-left:auto;margin-right:auto;">
+<tr>
+<td width="5%"><td>
+<td width="90%" style="vertical-align:top">
  <div class="h2center" style="text-align:center;">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome
 </div>
 
@@ -44,8 +49,16 @@
 <wdk:getPlural pluralMap="${typeMap}"/>
 <c:set var="oldPluralType" value="${typeMap['plural']}"/>
 
-<div class="instructions" style="">Your new ${newPluralType} search (Step <span class="new_step_num">${newStepId}</span>) returned ${importStep.resultSize} ${newPluralType}.  Use this page to combine them with the ${oldPluralType} in your previous result (Step <span class="current_step_num">${currentStepId}</span>).
+<div class="instructions" style="">Your new <b>${newPluralType}</b> search (Step <span class="new_step_num">${newStepId}</span>) returned <b>${importStep.resultSize} ${newPluralType}</b>.  Use this page to combine them with the <b>${oldPluralType}</b> in your previous result (Step <span class="current_step_num">${currentStepId}</span>).
 </div>
+</td>
+<td width="5%" style="text-align:right">
+<a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
+	<img title="Click for help with combining IDs via relative genomic location" src="/assets/images/help_spanlogic.png" width="60px" alt="help with combining IDs via relative genomic location" />
+</a>
+</td>
+</tr>
+</table>
 
 
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
@@ -55,13 +68,14 @@
   
 <input type="hidden" id="stage" value="process_span" />
   
-
+<%--
 <div style="text-align:center;padding-top:20px">
 <a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
 	<img title="Click for help with combining IDs via relative genomic location" src="/assets/images/help_spanlogic.png" width="60px" alt="help with combining IDs via relative genomic location" />
 </a>
 </div>
-
+--%>
+<br>
 <div id="spanLogicParams">
 	<wdk:answerParamInput qp="${pMap['span_a']}"/>
 	<wdk:answerParamInput qp="${pMap['span_b']}"/>
