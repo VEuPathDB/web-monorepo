@@ -685,5 +685,15 @@ sub synSpanOffset {
 }
 
 
+#--------------------------------------------------------------------------------
+#  Help! notes
+#--------------------------------------------------------------------------------
+
+sub warnNote {
+  my $f = shift;
+  my $txt = "NOTE: If you load tracks and they appear empty, you can try two things to resolve this issue:<br>1. Make sure you are viewing the correct species/strain to which the data was mapped.<br>2. Reset gbrowse by clicking on the red <a href='/cgi-bin/gbrowse/toxodb/?reset=1'><b><u><font color='red'>Reset</font></u></b></a> link, then try again.";
+
+  return $txt;
+}
 
 1;
