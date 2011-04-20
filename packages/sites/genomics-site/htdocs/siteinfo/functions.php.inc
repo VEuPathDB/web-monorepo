@@ -92,12 +92,10 @@ function get_web_page($url, $postdata) {
     return $response;
 }
 
-// body with <body> tags
-function get_body($html) {
-    $dom= new DOMDocument();
-    $dom->loadHTML($html);
-    $body = $dom->getElementsByTagName('body')->item(0);
-    return $body;
+// DOMDocument is php5. contents of temp_5
+// go here once all servers are on php5
+if (class_exists("DOMDocument")) {
+  include "temp_5.php";
 }
 
 // body content without <body> tags

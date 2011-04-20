@@ -7,6 +7,11 @@ Wrapper on logger.jsp.
 
 include_once "functions.php.inc";
 
+if (! function_exists('curl_setopt_array')) {
+  echo "not available; requires php 5";
+  exit;
+}
+
 $ws_key = getWSKey();
 $loggerpage_base = "http://" . $_SERVER[SERVER_NAME] . "/a/admin/logger.jsp";
 $loggerpage = "$loggerpage_base?key=$ws_key";
