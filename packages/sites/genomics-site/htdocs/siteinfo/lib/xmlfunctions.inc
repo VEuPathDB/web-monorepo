@@ -16,7 +16,7 @@ function print_node_values($node) {
       print_node_values($child);
     }
   } else {
-    print $node->nodeValue . "\n";
+    print trim($node->nodeValue) . "\n";
   }
 }
 
