@@ -7,5 +7,3 @@ function get_body($html) {
     return $body;
 }
 ?>
-
-
