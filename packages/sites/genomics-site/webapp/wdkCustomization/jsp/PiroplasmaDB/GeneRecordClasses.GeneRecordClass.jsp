@@ -357,8 +357,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
         </c:choose>
 
 <%-- EPITOPES ------------------------------------------------------%>
-<%--  <wdk:wdkTable tblName="Epitopes" isOpen="true"
-                 attribution=""/> --%>
+<wdk:wdkTable tblName="Epitopes" isOpen="true"
+                 attribution=""/>
 
 </c:if>
  
