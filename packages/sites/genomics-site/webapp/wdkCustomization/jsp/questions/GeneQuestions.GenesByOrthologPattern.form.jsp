@@ -140,7 +140,7 @@ Ack, this form won't work at all without JavaScript support!
 
 <p style="font-style:italic;text-align:center">
 Each gene in the result will belong to an ortholog group with the chosen profile, below.<br>
-Be aware that there could be singletons in the result: genes that are not included in any ortholog group with other genes.
+Be aware that there could be "singletons" in the result: genes that are in a group alone. This will happen if the profile does not force the inclusion of any species.
 </p>
 
 <div class="filter-button">
