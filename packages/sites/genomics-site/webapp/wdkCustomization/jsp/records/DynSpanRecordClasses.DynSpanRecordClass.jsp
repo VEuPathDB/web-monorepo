@@ -10,6 +10,7 @@
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
 <c:set var="pkValues" value="${primaryKey.values}" />
 <c:set var="projectId" value="${pkValues['project_id']}" />
+<c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 <c:set var="id" value="${pkValues['source_id']}" />
 
 <c:catch var="err">
@@ -31,7 +32,7 @@
 <c:otherwise>
 
 <h2><center>
-<wdk:recordPageBasketIcon />
+${id}
 </center></h2>
 
 <%-- download box  and title  ----%>
@@ -52,25 +53,14 @@
 <!-- deal with specific contexts depending on organism -->
 <c:set var="organism_full" value="${attrs['organism']}" />
 <c:choose>
-  <c:when test="${organism_full eq 'Toxoplasma gondii ME49'}">
-    <!--Alternate Gene Models are taking time are hence being currently avoided in the record page -->
-    <!-- c:set var="tracks" value="Version4Genes+Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+ChIPEinsteinPLK+ChIPEinsteinRHPeaks+ChIPEinsteinPLKPeaks+ChIPEinsteinTypeIIIPeaks" -->
-    <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+ChIPEinsteinPLK+ChIPEinsteinRHPeaks+ChIPEinsteinPLKPeaks+ChIPEinsteinTypeIIIPeaks"/>
+  <c:when test="${projectId eq 'ToxoDB'}">
+    <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+AlignmentSNPs" />
   </c:when>
-  <c:when test="${organism_full eq 'Toxoplasma gondii GT1'}">
-    <c:set var="tracks" value="Gene+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora"/>
-  </c:when>
-  <c:when test="${organism_full eq 'Toxoplasma gondii VEG'}">
-    <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanNeospora+SyntenyNeospora"/>
-  </c:when>
-  <c:when test="${organism_full eq 'Neospora caninum'}">
-    <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG"/>
-  </c:when>
-  <c:when test="${organism_full eq 'Theileria annulata strain Ankara' || organism_full eq 'Theileria parva strain Muguga' || organism_full eq 'Babesia bovis T2Bo'}">
-    <c:set var="tracks" value="Gene"/>
+  <c:when test="${projectId eq 'PlasmoDB'}">
+    <c:set var="tracks" value="AnnotatedGenes+EST+SAGEtags+ORF+CombinedSNPs" />
   </c:when>
   <c:otherwise>
-    <c:set var="tracks" value="Gene+EST+SAGEtags" />
+    <c:set var="tracks" value="Gene+EST+SAGEtags+ORF" />
   </c:otherwise>
 </c:choose>
 
@@ -80,11 +70,11 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 </c:set>
 
   <c:set var="sequence_id" value="${attrs['seq_source_id']}" />
-  <c:set var="context_start_range" value="${attrs['context_start']}" />
-  <c:set var="context_end_range" value="${attrs['context_end']}" />
+  <c:set var="context_start_range" value="${attrs['start_min']}" />
+  <c:set var="context_end_range" value="${attrs['end_max']}" />
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/${projectIdLowerCase}/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${tracks};width=640;embed=1;
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -93,9 +83,9 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     <center><div id="${gnCtxDivId}"></div></center>
 
     <c:set var="gbrowseUrl">
-        /cgi-bin/gbrowse/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
+        /cgi-bin/gbrowse/${projectIdLowerCase}/?name=${sequence_id}:${context_start_range}..${context_end_range};type=${tracks}
     </c:set>
-    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font> for additional information</a>
   </c:set>
 
   <wdk:toggle 
