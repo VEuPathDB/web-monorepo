@@ -129,16 +129,32 @@ Ack, this form won't work at all without JavaScript support!
   <tr>
     <td style="text-align:right"><b>Show results from species:</b></td>
     <td><wdk:enumParamInput qp="${resultSpecies}" /></td>
-    <td style="text-align:right;vertical-align:bottom"><div class="filter-button">
+<%--     <td style="text-align:right;vertical-align:bottom">
+	<div class="filter-button">
  		<html:submit property="questionSubmit" value="Get Answer"/>
 	</div>
     </td>
+--%>
   </tr>
 </table>
 
+<p style="font-style:italic;text-align:center">
+Each gene in the result will belong to an ortholog group with the chosen profile, below.<br>
+Be aware that there could be singletons in the result: genes that are not included in any ortholog group with other genes.
+</p>
+
+<div class="filter-button">
+ 	<html:submit property="questionSubmit" value="Get Answer"/>
+</div>
 
 <br><br>
-<p style="font-size:85%;font-style:italic">(Click on the radio button next to a species to toggle through three states --include, exclude, don't care--. See description below)</p>
+
+<b>Select ortholog group profile:</b><t>
+<span style="font-style:italic;">Click on the icon to specify which taxa or species to include or exclude in the profile.</span><br>
+<span style="font-style:italic;position:relative;left:170px">
+Key: <img src="images/dc.gif">=no constraints |  <img src="images/yes.gif">=must be in group | <img src="images/no.gif">=must not be in group | <img src="images/unk.gif">=mixture of constraints</span <br><br>
+</p>
+
 
 <table border="0" cellpadding="2">
 
