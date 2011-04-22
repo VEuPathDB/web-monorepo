@@ -27,7 +27,8 @@ SpanLocation.prototype.createLayout = function() {
             .before("<tr><td colspan='3'><div id='span-composition'></div></td></tr>");
             
         // find the place holder, and put the content of the template into it
-        params.find("#span-composition").css("text-align", "center")
+        params.find("#span-composition").css("width", "500px")
+            .css("margin", "5px auto 5px auto")
             .html($("#span-composition-template").html());
 
         // register events
