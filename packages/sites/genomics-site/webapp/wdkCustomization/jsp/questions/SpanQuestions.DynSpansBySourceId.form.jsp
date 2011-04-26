@@ -2,6 +2,8 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<script type="text/javascript" src="<c:url value='/wdkCustomization/js/span-location.js' />"></script>
+
 <style TYPE="text/css"> 
 <!-- 
 #span-location { margin: 0px auto 0px auto; }
