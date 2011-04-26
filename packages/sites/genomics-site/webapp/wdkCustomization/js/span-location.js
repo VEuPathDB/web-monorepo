@@ -1,6 +1,7 @@
 // =============================================================================
-// The js related to the span search by location question display on question page
-const SPAN_LENGTH_LIMIT = 100000;
+// The js related to the span search by location question display on question page.
+// Cannot use const keyword, since IE doesn't support it.
+var SPAN_LENGTH_LIMIT = 100000;
 
 
 $(document).ready(function() {
@@ -23,16 +24,15 @@ SpanLocation.prototype.createLayout = function() {
         // locate the span_id param, then find it's tr parent, then add a place holder
         // for the span logic container
         var params = $("#form_question .params");
-        params.find("table#span_id").parent("td").parent("tr")
-            .before("<tr><td colspan='3'><div id='span-composition'></div></td></tr>");
+        var spanIdInput = params.find("table#span_id").parent("td");
             
-        // find the place holder, and put the content of the template into it
-        params.find("#span-composition").css("width", "500px")
-            .css("margin", "5px auto 5px auto")
-            .html($("#span-composition-template").html());
+        // find the place holder for location, and put the content of the input id param into it
+        $("#span-location #span-search-list").html(spanIdInput.html());
+
+        spanIdInput.parent("tr").remove();
 
         // register events
-        params.find("#span-composition #compose").click(this.composeId);
+        $("#span-location #span-compose").click(this.composeId);
         $("#form_question").submit(this.validateIds);
 };
 
@@ -65,7 +65,7 @@ SpanLocation.prototype.composeId = function() {
         var strand = params.find("select#sequence_strand").val();
 
         var ids = sequenceIds.split(/[,;]/);
-        var spanIdsInput = params.find("textarea#span_id_data");
+        var spanIdsInput = $("#form_question #span-search-list textarea#span_id_data");
         var spanIds = spanIdsInput.val();
         for(var i = 0; i < ids.length; i++) {
             var sequenceId = $.trim(ids[i]);
@@ -77,7 +77,12 @@ SpanLocation.prototype.composeId = function() {
 };
 
 SpanLocation.prototype.validateIds = function() {
-        var strIds = $("#form_question .params textarea#span_id_data").val();
+        var strIds = $.trim($("#form_question #span-search-list textarea#span_id_data").val());
+        if (strIds.length == 0) {
+            alert("Please enter one or more search locations.");
+            return false;
+        } 
+
         var spanIds = strIds.split(/[,;\n]+/);
         for(var i = 0; i < spanIds.length; i++) {
             var spanId = $.trim(spanIds[i]);
