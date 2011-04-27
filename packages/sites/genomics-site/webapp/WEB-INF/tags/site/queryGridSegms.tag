@@ -11,19 +11,20 @@
      <tr>
 
         <td width="50%" >
-<%--
+
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>
-                    <site:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansBySourceId" linktext="Segment ID(s)"  existsOn=""/>
+                    <site:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansBySourceId" linktext="Genomic Location"  existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
-
+<%--
                  <tr>
                     <site:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansByLocation" linktext="Genomic Location" existsOn=""/>
                 </tr>
+--%>
             </table>
 </div>
---%>
+
         </td>
 
 <%--	<td width="0.5" class="blueVcalLine"></td> --%>
