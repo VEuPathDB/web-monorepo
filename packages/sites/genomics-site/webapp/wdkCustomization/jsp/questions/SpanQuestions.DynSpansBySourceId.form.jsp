@@ -2,7 +2,6 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<script type="text/javascript" src="<c:url value='/wdkCustomization/js/span-location.js' />"></script>
 
 <style TYPE="text/css"> 
 <!-- 
@@ -14,12 +13,14 @@
   text-align: center;
   padding: 5px;
 }
+#span-location #span-params { vertical-align: middle; }
+#span-location #span-search-list #span_id td { font-weight:bold; }
 -->
 </style>
 
 <table id="span-location">
   <tr>
-    <td width="450">
+    <td id="span-params" width="450">
       <site:question/>
     </td>
     <td id="span-control" width="200">
@@ -39,11 +40,9 @@
         The format of a segment is as the following:
       </div>
       <br />
-      <div align="center"><font color="blue"><b>sequence_id:start-end:strand</b></font></div>
+      <div align="center"><b>sequence_id:start-end:strand</b></div>
       <br />
-      <div>
-        Here are some examples: TGME49_chrIa:10000-10500:f, Pf3D7_04:100-200:r
-      </div>
+      <div>(Examples: TGME49_chrIa:10000-10500:f, Pf3D7_04:100-200:r)</div>
       <br />
       <div id="span-search-list">
 
@@ -51,3 +50,6 @@
     </td>
   </tr>
 </table>
+
+<div id="span-extra"></div>
+

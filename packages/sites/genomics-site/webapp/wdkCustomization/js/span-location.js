@@ -21,18 +21,27 @@ function SpanLocation() {
 }
 
 SpanLocation.prototype.createLayout = function() {
+        var questionName = $("#form_question input[name=questionFullName]").val();
+        if (questionName != "SpanQuestions.DynSpansBySourceId") return;
+
         // locate the span_id param, then find it's tr parent, then add a place holder
         // for the span logic container
         var params = $("#form_question .params");
         var spanIdInput = params.find("table#span_id").parent("td");
             
         // find the place holder for location, and put the content of the input id param into it
-        $("#span-location #span-search-list").html(spanIdInput.html());
+        $("#form_question #span-location #span-search-list").html(spanIdInput.html());
+
+        // find extra param groups
+        params.children(".param-group").each(function() {
+            if ($(this).attr("type") != "empty")
+                $(this).appendTo("#span-extra");
+        });
 
         spanIdInput.parent("tr").remove();
 
         // register events
-        $("#span-location #span-compose").click(this.composeId);
+        $("#form_question #span-location #span-compose").click(this.composeId);
         $("#form_question").submit(this.validateIds);
 };
 
@@ -77,9 +86,21 @@ SpanLocation.prototype.composeId = function() {
 };
 
 SpanLocation.prototype.validateIds = function() {
+        var idInputType = $("#form_question #span-search-list input#span_id_type").val();
+        // if the input is not from text area, don't validate
+        if (idInputType == 'file') {
+            var fileName = $("#form_question #span-search-list input#span_id_file").val();
+            if (fileName.length == 0) {
+                // no upload file is selected, error
+                alert("Please select an upload file that contains segment id.");
+                return false;
+            } else return true; // do not validate file content.
+        } else if (idInputType != "data") return true;
+
         var strIds = $.trim($("#form_question #span-search-list textarea#span_id_data").val());
         if (strIds.length == 0) {
-            alert("Please enter one or more search locations.");
+            alert("Please specify a location on the left and click \"Add Location\" or\n"
+                  + "  enter locations directly in the box on the right.");
             return false;
         } 
 
