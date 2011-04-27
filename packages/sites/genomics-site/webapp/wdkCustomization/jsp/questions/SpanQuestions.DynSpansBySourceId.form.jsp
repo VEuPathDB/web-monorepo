@@ -19,12 +19,18 @@
 </style>
 
 <table id="span-location">
+<tr style="font-weight:bold">
+<td class="h4left" width="30%">1. Build segment IDs</td>
+<td class="h4left" width="20%">2. Add them to your list</td>
+<td class="h4left" width="50%">3. When your list is ready, hit "Get Answer" button below</td>
+</tr>
+<tr><td></td></tr>
   <tr>
-    <td id="span-params" width="450">
-      <site:question/>
+    <td id="span-params" width="30%">
+      <site:question nohelp="true"/>
     </td>
-    <td id="span-control" width="200">
-      <p>Please choose a region/segment on the left and add it to the search list.</p>
+    <td id="span-control" width="20%">
+      <p><i>Choose a segment on the left and add it to the search list</i></p>
       <br />
       <div style="text-align:center">
         &#8658;
@@ -32,17 +38,22 @@
         &#8658;
       </div> 
       <br />
-      <p>the length of each region/segment is limited to 100Kbps, and the end
-        location cannot be smaller than start.</p>
+      <ul style="text-align:left;list-style-type: square;list-style-position:inside;">
+	<li><i>The max length of each segment is 100Kbps
+	<li><b>End Location</b> cannot be smaller than <b>Start</b></i>
+      </ul>
     </td>
-    <td width="400">
-      <div>Or, you can enter a comma-separated list of genomic segments directly in the box below.
-        The format of a segment is as the following:
+    <td width="50%">
+      <div><i>In addition, you may enter genomic segments separated by comma, in the box below.
+        The format of a segment is:</i>
       </div>
       <br />
-      <div align="center"><b>sequence_id:start-end:strand</b></div>
-      <br />
-      <div>(Examples: TGME49_chrIa:10000-10500:f, Pf3D7_04:100-200:r)</div>
+      <div align="center">
+	<b>sequence_id:start-end:strand</b>
+      	<br />
+      	<span style="font-size:90%;font-style:italic">(Examples: TGME49_chrIa:10000-10500:f, Pf3D7_04:100-200:r)</span>
+      </div>
+
       <br />
       <div id="span-search-list">
 

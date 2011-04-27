@@ -6,6 +6,11 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
+<%@ attribute name="nohelp"
+              required="false"
+              description="when set, no help icon is added"
+%>
+
 
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
 
@@ -46,7 +51,7 @@
 </c:if>
 
 <div class="params">
-	<site:questionParams />
+	<site:questionParams nohelp="true"/>
 </div>   <%-- end of params div --%>
 
 

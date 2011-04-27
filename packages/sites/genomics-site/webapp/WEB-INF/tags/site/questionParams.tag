@@ -5,6 +5,11 @@
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<%@ attribute name="nohelp"
+              required="false"
+              description="when set, no help icon is added"
+%>
+
 <link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
@@ -195,9 +200,11 @@
                         <td valign="top" width="50" nowrap>
                             <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                             <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
+			 <c:if test="!${nohelp eq 'true'}">
                             <a id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">
                             	<img src="/assets/images/help.png" border="0" alt="Help">
     			    </a>
+			 </c:if>
                         </td>
                     </c:if>
                 </tr>

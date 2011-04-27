@@ -60,7 +60,7 @@ SpanLocation.prototype.composeId = function() {
         }
         var startInput = params.find("input#start_point");
         var start = parseInt(startInput.val());
-        var end = parseInt(params.find("input#end_point").val());
+        var end = parseInt(params.find("input#end_point_segment").val());
         
         // check the length and make sure it didn't exceed the limit
         var length = end - start + 1;
