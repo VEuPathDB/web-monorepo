@@ -274,6 +274,8 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
  <c:set var="revCompOn" value="1"/>
 </c:if>
 
+<c:if test='${organism ne "Trypanosoma cruzi strain CL Brener"}'>
+
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">
 <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
@@ -286,7 +288,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   displayName="Multiple Sequence Alignment"
   content="${mercatorAlign}"
   attribution=""/>
-
+</c:if>
 
 <!-- gene alias table -->
 <wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
