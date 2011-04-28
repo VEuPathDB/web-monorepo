@@ -17,11 +17,11 @@
 #span-location #span-search-list #span_id td { font-weight:bold; }
 -->
 </style>
-
+<br>
 <table id="span-location">
 <tr style="font-weight:bold">
-<td class="h4left" width="30%">1. Build segment IDs</td>
-<td class="h4left" width="20%">2. Add them to your list</td>
+<td style=" border-right: 3px double black;" class="h4left" width="30%">1. Build segment IDs</td>
+<td style=" border-right: 3px double black;" class="h4left" width="20%">2. Add them to your list</td>
 <td class="h4left" width="50%">3. When your list is ready, hit "Get Answer" button below</td>
 </tr>
 <tr><td></td></tr>
