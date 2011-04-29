@@ -37,10 +37,14 @@
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
-<h2 style="text-align:center;">
-<wdk:recordPageBasketIcon />
-</h2>
+<div class="h2center" style="font-size:160%">
+ 	Sage Tag
+</div>
 
+<div class="h3center" style="font-size:130%">
+	${primaryKey}<br>
+	<wdk:recordPageBasketIcon />
+</div>
 <br>
 <%--#############################################################--%>
 

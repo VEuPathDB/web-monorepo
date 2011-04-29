@@ -39,12 +39,14 @@
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
+<div class="h2center" style="font-size:160%">
+ 	ORF
+</div>
 
-<h2>
-<center>
-<wdk:recordPageBasketIcon />
-</center>
-</h2>
+<div class="h3center" style="font-size:130%">
+	${primaryKey}<br>
+	<wdk:recordPageBasketIcon />
+</div>
 
 
 <%--#############################################################--%>

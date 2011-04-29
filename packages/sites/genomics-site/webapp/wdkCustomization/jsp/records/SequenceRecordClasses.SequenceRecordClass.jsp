@@ -47,13 +47,14 @@
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
-<h2>
-<center>
-	<!-- the ID and product title -->
- 	${id} <br />
-<wdk:recordPageBasketIcon />
-</center>
-</h2>
+<div class="h2center" style="font-size:160%">
+ 	Genomic Sequence
+</div>
+
+<div class="h3center" style="font-size:130%">
+	${primaryKey}<br>
+	<wdk:recordPageBasketIcon />
+</div>
 
 <%--#############################################################--%>
 

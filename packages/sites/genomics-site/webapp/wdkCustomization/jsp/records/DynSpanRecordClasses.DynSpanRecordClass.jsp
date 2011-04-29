@@ -31,13 +31,19 @@
 </c:when>
 <c:otherwise>
 
-<h2><center>
-${id}
-</center></h2>
-
-<%-- download box  and title  ----%>
+<%-- quick tool-box for the record --%>
 <site:recordToolbox />
-<br><br>
+
+
+<div class="h2center" style="font-size:160%">
+ 	Genomic Segment
+</div>
+
+<div class="h3center" style="font-size:130%">
+	${primaryKey}<br>
+	<wdk:recordPageBasketIcon />
+</div>
+
 
 <!-- Overview -->
 <c:set var="attr" value="${attrs['overview']}" />
