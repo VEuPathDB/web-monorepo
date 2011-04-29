@@ -238,7 +238,7 @@ ${headElement}
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 
 <div id="header2">
-   <div style="width:460px;" id="header_rt">
+   <div style="width:490px;" id="header_rt">
 
    <div align="right"><div id="toplink">
    <c:if test="${project == 'TriTrypDB'}">
@@ -264,7 +264,7 @@ ${headElement}
    </div></div>
        
 
-    <div style="width:460px;" id="bottom">
+    <div style="width:490px;" id="bottom">
       <site:quickSearch /><br />
 
 <%---------------------- Small Menu Options on Header  ------------------%>

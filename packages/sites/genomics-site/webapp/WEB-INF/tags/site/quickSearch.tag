@@ -72,8 +72,8 @@
         </c:when>
 </c:choose> 
 
-<div  style="width:460px;" id="quick-search" session-id="${sessionId}">
-         <table style="width:460px;">
+<div  style="width:490px;" id="quick-search" session-id="${sessionId}">
+         <table style="width:490px;">
            <tr>
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
