@@ -38,11 +38,15 @@
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
-<h2>
-<center>
-<wdk:recordPageBasketIcon />
-</center>
-</h2>
+
+<div class="h2center" style="font-size:160%">
+ 	SNP
+</div>
+
+<div class="h3center" style="font-size:130%">
+	${primaryKey}<br>
+	<wdk:recordPageBasketIcon />
+</div>
 
 <table border=0 width=100% cellpadding=7 cellspacing=0 bgcolor=white
        class=thinTopBorders>

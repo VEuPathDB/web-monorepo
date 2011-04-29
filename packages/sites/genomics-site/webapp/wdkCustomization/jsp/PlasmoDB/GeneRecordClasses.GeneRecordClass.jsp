@@ -25,6 +25,9 @@
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>
+
+
+
 <c:set var="organism" value="${attrs['organism'].value}"/>
 <c:set var="binomial" value="${attrs['genus_species'].value}"/>
 <c:set var="so_term_name" value="${attrs['so_term_name'].value}"/>
@@ -147,7 +150,7 @@
 
 <hr>
 
-<%-- this block moves here so we can set a link to add a comment on the apge title --%>
+<%-- this block moves here so we can set a link to add a comment on the page title --%>
 <c:set var="externalDbName" value="${attrs['external_db_name']}"/>
 <c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
 <c:url var="commentsUrl" value="addComment.do">
@@ -171,10 +174,13 @@
   ${attrs['GeneDB_updated'].value}
 </c:set>
 
-<h2><center>
+<div class="h2center" style="font-size:160%">
+ 	Gene
+</div>
 
-	<!-- the ID and product title -->
- 	${id} <br /> <span style="font-size:80%">${prd}</span> <br/>
+<div class="h3center" style="font-size:130%">
+
+${id}:&nbsp;&nbsp;&nbsp;${prd} <br/>
 
 <c:set var="count" value="0"/>
 <c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
@@ -203,7 +209,9 @@
     <c:if test="${attrs['new_product_name'].value != null}">
        <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
     </c:if>
-</center></h2>
+
+
+</div>
 
 
 <%--- COMMUNITY EXPERT ANNOTATION -----------%>

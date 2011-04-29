@@ -102,10 +102,13 @@
   ${attrs['GeneDB_updated'].value}
 </c:set>
 
-<h2>
-<center>
-	<!-- the ID and product title -->
- 	${id} <br /> <span style="font-size:80%">${prd}</span> <br/>
+<div class="h2center" style="font-size:160%">
+ 	Gene
+</div>
+
+<div class="h3center" style="font-size:130%">
+
+${id}:&nbsp;&nbsp;&nbsp;${prd} <br/>
 
 <c:set var="count" value="0"/>
 <c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
@@ -133,8 +136,8 @@
     <c:if test="${attrs['new_product_name'].value != null}">
        <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
     </c:if>
-</center>
-</h2>
+</div>
+
 
 <c:set var="attr" value="${attrs['overview']}" />
 <site:panel 
