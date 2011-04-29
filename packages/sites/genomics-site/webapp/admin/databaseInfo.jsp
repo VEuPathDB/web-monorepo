@@ -4,6 +4,7 @@
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
+<api:checkWSKey keyFile="/usr/local/tomcat_instances/shared/.apidb_siteinfo_key" />
 
 <api:wdkRecord name="UtilityRecordClasses.SiteInfo"/>
 <c:set var="dateFormatStr" value="EEE dd MMM yyyy h:mm a"/>
