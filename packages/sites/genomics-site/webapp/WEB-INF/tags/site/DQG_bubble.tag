@@ -65,7 +65,10 @@
                                         <c:set var="display" value="${fn:substring(cat.displayName, 11, -1)}" />
 					<li>
                                             <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
-                                            <a class="heading" href="javascript:void(0)">&nbsp;${display}</a><a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}">details</a>
+                                            <a class="heading" href="javascript:void(0)">&nbsp;${display}</a>
+						 <c:if test="${rootCatEntry.key != 'DynSpanRecordClasses.DynSpanRecordClass'}">
+							<a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}">details</a>
+						 </c:if>
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.websiteQuestions}" var="q">
