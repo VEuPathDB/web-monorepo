@@ -41,7 +41,10 @@
 
 <div class="h3center" style="font-size:130%">
 	${primaryKey}<br>
+<%-- removing access to basket and favorites until we have it working 
 	<wdk:recordPageBasketIcon />
+--%>
+
 </div>
 
 
