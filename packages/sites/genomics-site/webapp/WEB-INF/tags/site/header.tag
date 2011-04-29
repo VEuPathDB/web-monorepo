@@ -268,7 +268,7 @@ ${headElement}
       <site:quickSearch /><br />
 
 <%---------------------- Small Menu Options on Header  ------------------%>
-      <div id="nav_topdiv" style="margin-right:28px">
+      <div id="nav_topdiv">
            <ul id="nav_top">
       <li>
       <a href="#">About ${siteName}<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
@@ -391,13 +391,18 @@ ${headElement}
   </c:choose>
 
 
+	<li>
+	<a style="position:relative;bottom:5px;" href="http://twitter.com/eupathdb">
+		<img title="Follow us on twitter!" src="/assets/images/twitter.gif" width="20">
+	</a>
+	</li>
+
+
            </ul>
 
       </div>  <%-- id="nav_topdiv" --%>
       	  
-<a style="position:absolute;right:25px;top:77px" href="http://twitter.com/eupathdb">
-	<img style="margin-left:17px;vertical-align:middle" title="Follow us on twitter!" src="/assets/images/twitter.gif" width="25">
-</a>
+
 
    </div>  <%-- id="bottom"    --%>
    </div>  <%-- id="header_rt" --%>
