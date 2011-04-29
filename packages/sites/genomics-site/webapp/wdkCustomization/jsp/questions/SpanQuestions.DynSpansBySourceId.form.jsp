@@ -15,6 +15,7 @@
 }
 #span-location #span-params { vertical-align: middle; }
 #span-location #span-search-list #span_id td { font-weight:bold; }
+
 -->
 </style>
 <br>
@@ -24,7 +25,11 @@
 <td style=" border-right: 3px double black;" class="h4left" width="20%">2. Add them to your list</td>
 <td class="h4left" width="50%">3. When your list is ready, hit "Get Answer" button below</td>
 </tr>
-<tr><td></td></tr>
+<tr>
+<td style=" border-right: 3px double black;padding-top:0;padding-bottom:0"  width="30%" ></td>
+<td style=" border-right: 3px double black;padding-top:0;padding-bottom:0"  width="20%" ></td>
+<td style=" border-right: 3px double black;padding-top:0;padding-bottom:0"  width="50%" ></td>
+</tr>
   <tr>
     <td id="span-params" width="30%">
       <site:question nohelp="true"/>
