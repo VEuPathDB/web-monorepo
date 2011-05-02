@@ -361,6 +361,9 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   </c:set>
 <wdk:wdkTable tblName="Phenotype" isOpen="true"
                attribution="" postscript="${geneDbLink}"/>
+
+
+
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
 
   <c:set var="orthomclLink">
@@ -562,6 +565,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
 <site:pageDivider name="Phenotype"/>
+
+
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 <c:set var="secName" value="Horn::TbRNAiRNASeq"/>
 <c:set var="imgId" value="img${secName}"/>
@@ -570,6 +575,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <c:set var="isOpen" value="true"/>
 
 <c:set var="coverageContent">
+
+
 <table>
 <tr>
  <td rowspan="2" class="centered">
@@ -596,6 +603,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
          </tr>
      </table>
 </td>
+</tr></table>
+
+
 </c:set>
 
 <c:set var="noData" value="false"/>
@@ -607,7 +617,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
        attribution="Tbrucei_RNAiSeq_Horn_RSRC"/>
   
 
-</c:if>
+</c:if>  <%-- if Tb , add phenotype section  --%>
 
 <%-- Expression Graphs ------------------------------------------------------%>
 
