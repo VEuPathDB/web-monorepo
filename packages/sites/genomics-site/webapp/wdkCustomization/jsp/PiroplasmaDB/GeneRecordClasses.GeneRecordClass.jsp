@@ -265,7 +265,7 @@ ${attrs['organism'].value}<br>
 
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="http://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
+      <a href="http://v4.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
   <c:if test='${organismFull eq "Babesia bovis T2Bo"}'>
 <br>NOTE: Alternative gene identifiers for <i>B. bovis</i> were used in the OrthoMCL 5 build. Ortholog groups containing these alternative IDs are appended with "bbov|".
   </c:if>

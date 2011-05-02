@@ -303,7 +303,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <c:if test="${isCodingGene}">
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
+      <a href="http://v5.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
   <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
