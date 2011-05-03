@@ -84,16 +84,8 @@
   <c:param name="bulk" value="0" /> 
 </c:url>
 
-
-<div class="h2center" style="font-size:160%">
- 	Gene
-</div>
-
-<div class="h3center" style="font-size:130%">
-
-${id}:&nbsp;&nbsp;&nbsp;${prd} <br/>
-
-
+<div class="h2center" style="font-size:150%">
+${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <c:set var="count" value="0"/>
 <c:forEach var="row" items="${wdkRecord.tables['UserComments']}">

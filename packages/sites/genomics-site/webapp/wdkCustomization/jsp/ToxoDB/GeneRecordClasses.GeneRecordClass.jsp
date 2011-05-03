@@ -88,13 +88,9 @@
 <%-- quick tool-box for the record --%>
 <site:recordToolbox />
 
-<div class="h2center" style="font-size:160%">
- 	Gene
-</div>
+<div class="h2center" style="font-size:150%">
+${id}<br><span style="font-size:70%">${prd}</span><br/>
 
-<div class="h3center" style="font-size:130%">
-
-${id}:&nbsp;&nbsp;&nbsp;${prd} <br/>
 
 <c:set var="count" value="0"/>
 <c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
