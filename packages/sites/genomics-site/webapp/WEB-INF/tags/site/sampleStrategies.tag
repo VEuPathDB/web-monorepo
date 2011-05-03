@@ -128,7 +128,7 @@
   <tr align = "left">
 	<td><a  title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${expandedTmOrSPortho}"/>');" href="javascript:void(0);">kinase, TM or SP, ortholog transform</a> </td>
 	<td>Strategy with nested strategy and ortholog transform</td>
-	<td>Find all kinases that have at least one transmembrane domain or a signal peptide and do an ortholog transform to identify additional genes that may be mis-annotated</td>
+	<td>Find all kinases that have at least one transmembrane domain or a signal peptide with an ortholog transform to identify additional genes that may be mis-annotated</td>
 </tr>
 </c:if>
 
