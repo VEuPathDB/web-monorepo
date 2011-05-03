@@ -187,9 +187,24 @@ function getComboElement()
 <c:otherwise> 
     <c:if test="${i % columns == 0}"> <c:set var="width" value="49%"/></c:if>   <!-- if we are in column 2, set this width -->
 
+    <%-- decide whether to use /showQuestion.do or /wizard.do --%>
+    <c:set var="wdkStrategy" value="${requestScope.wdkStrategy}"/>
+    <c:choose>
+      <c:when test="${wdkStrategy == null}">
+        <c:url var="questionUrl" value="/showQuestion.do?questionFullName=${q.fullName}&partial=true" />
+        <c:set var="nextCall" value="writeData('${questionUrl}', 'des','${question}','${isInsert}');" />
+      </c:when>
+      <c:otherwise>
+        <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
+        <c:set var="action" value="${requestScope.action}"/>
+        <c:url var="questionUrl" value="/wizard.do?stage=question&action=${action}&strategy=${wdkStrategy.strategyId}&step=${wdkStep.stepId}&questionFullName=${q.fullName}" />
+        <c:set var="nextCall" value="callWizard('${questionUrl}',null,null,null,'next');" />
+      </c:otherwise>
+    </c:choose>
+
     <td width="1%" align="left">&#8226;</td>
     <td width="${width}" align="left">
-	<a id="${qName}" href="javascript:writeData('<c:url value="/showQuestion.do?questionFullName=${q.fullName}&partial=true"/>', 'des','${question}','${isInsert}')" rel="htmltooltip">
+	<a id="${qName}" onclick="${nextCall}return false;" href="" rel="htmltooltip">
 	<font color="#000066" size="3">${question}</font></a>
     </td>
     <div id="${qName}_tip" class="htmltooltip">${q.summary}</div>
