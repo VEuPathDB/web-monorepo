@@ -17,21 +17,25 @@
 <c:choose>
    <c:when test="${fn:containsIgnoreCase(site, 'AmoebaDB')}">
       <c:set var="secKin" value="95ac3b1a4f6acfd4" />
+      <c:set var="ap2Motif" value="856a9a5b29f9e99e" />
    </c:when>
 
    <c:when test="${fn:containsIgnoreCase(site, 'CryptoDB')}">
       <c:set var="simple" value="be21be3fa78e67fa" />
       <c:set var="expanded" value="645f96ff3792dcd8" />
+      <c:set var="ap2Motif" value="db57d627778a4b16" />
    </c:when>
 
    <c:when test="${fn:containsIgnoreCase(site, 'GiardiaDB')}">
       <c:set var="simple" value="f5c9f3e4fd59f3bb" />
       <c:set var="expanded" value="699c7268ffcb3e66" />
+      <c:set var="ap2Motif" value="1c4c35adc3734f0b" />
    </c:when>
 
    <c:when test="${fn:containsIgnoreCase(site, 'MicrosporidiaDB')}">
       <c:set var="mspHypoGeneGO" value="f4bd3039772ccc43" />
       <c:set var="fungiNotAnimal" value="0f3e27c0bf3b1540" />
+      <c:set var="ap2Motif" value="8281128855c66f56" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
@@ -40,6 +44,7 @@
       <c:set var="expressed" value="1b9b55c3c788b8bc" />
       <c:set var="expressedPknowlesi" value="6b39827bdee7406d" />
       <c:set var="PfalDrugTargets" value="57c0cf7dabba1408" />
+      <c:set var="ap2Motif" value="0ffa670cc2b0a579" />
 <%-- these need to be regenerated
       <c:set var="PfalVaccineAg" value="d6da190be19651a3" />
 --%>
@@ -48,11 +53,19 @@
 <c:when test="${fn:containsIgnoreCase(site, 'ToxoDB')}">
       <c:set var="simple" value="cc5c9876caa70f82" />
       <c:set var="expanded" value="7d1b3f3e66521bea" />
+      <c:set var="ap2Motif" value="48481038291ab7fa" />
    </c:when>
 
 <c:when test="${fn:containsIgnoreCase(site, 'TrichDB')}">
       <c:set var="simple" value="7fbf3b1254b01c94" />
       <c:set var="expandedTmOrSP" value="0820464a66737f55" />
+      <c:set var="ap2Motif" value="e892ef6112576c45" />
+   </c:when>
+
+<c:when test="${fn:containsIgnoreCase(site, 'PiroplasmaDB')}">
+      <c:set var="spConsPiroNotHum" value="b395b99384348aa6" />
+      <c:set var="expandedTmOrSPortho" value="742254e8ef7609ab" />
+      <c:set var="ap2Motif" value="740d4a3c334f50dd" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
@@ -61,11 +74,13 @@
       <c:set var="TcAllexpressed" value="4abe1d668c3cc290" />
       <c:set var="expressedLbrazilliensis" value="edf8019a9b1c938f" />
       <c:set var="SecretedAmastigoteKin" value="24351a75599d35f8" />
+      <c:set var="rbpMotif" value="14342db338d7884e" />
    </c:when>
 
  <c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
       <c:set var="simple" value="f8336deab20f2975" />
       <c:set var="expanded" value="3dc751bcbcf93330" />
+      <c:set var="ap2Motif" value="6db0178d3994b287" />
    </c:when>
 
 
@@ -85,6 +100,14 @@
 </tr>
 </c:if>
 
+<c:if test="${spConsPiroNotHum != null}">
+<tr align = "left">
+	<td><a title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${spConsPiroNotHum}"/>');" href="javascript:void(0);">Protein Coding Signal Pep not conserved in human</a> </td>
+	<td>Simple strategy</td>
+	<td>Find all protein coding genes that have a signal peptide and are conserved among Piroplasmida but not in human or mouse</td>
+</tr>
+</c:if>
+
 <c:if test="${expanded != null}">
   <tr align = "left">
 	<td><a  title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${expanded}"/>');" href="javascript:void(0);">Kinases with TM domains and EST or mass spec. evidence</a> </td>
@@ -93,11 +116,19 @@
 </tr>
 </c:if>
 
-<c:if test="${expandedTmOrSP!= null}">
+<c:if test="${expandedTmOrSP != null}">
   <tr align = "left">
 	<td><a  title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${expandedTmOrSP}"/>');" href="javascript:void(0);">kinase, TM or SP, EST evidence</a> </td>
 	<td>Strategy with nested strategy</td>
 	<td>Find all kinases that have at least one transmembrane domain or a signal peptide and evidence for expression based on EST alignments</td>
+</tr>
+</c:if>
+
+<c:if test="${expandedTmOrSPortho != null}">
+  <tr align = "left">
+	<td><a  title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${expandedTmOrSPortho}"/>');" href="javascript:void(0);">kinase, TM or SP, ortholog transform</a> </td>
+	<td>Strategy with nested strategy and ortholog transform</td>
+	<td>Find all kinases that have at least one transmembrane domain or a signal peptide and do an ortholog transform to identify additional genes that may be mis-annotated</td>
 </tr>
 </c:if>
 
@@ -171,6 +202,22 @@
 	<td><a   title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${secKin}"/>');" href="javascript:void(0);">Secreted kinases</a> </td>
 	<td>Secreted kinases not conserved in mammals.</td>
 	<td>Find <i>Entamoeba</i> genes which have characteristics of encoding secretory-pathway proteins (have signal peptide and have a transmembrane domain) and which lack detectable orthologs in mammals.</td>
+</tr>
+</c:if>
+
+<c:if test="${ap2Motif != null}">
+<tr align = "left">
+	<td><a   title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${ap2Motif}"/>');" href="javascript:void(0);">Genes with AP-2 like motif</a> </td>
+	<td>Simple strategy using DNA motifs and relative genomic locations</td>
+	<td>Find protein coding genes that have an Ap-2 like motif within 1000 bp of their 5' end.</td>
+</tr>
+</c:if>
+
+<c:if test="${rbpMotif != null}">
+<tr align = "left">
+	<td><a   title="Click to import this strategy in your workspace" onclick="loadSampleStrat('<c:url value="/im.do?s=${rbpMotif}"/>');" href="javascript:void(0);">Genes with RBP like motif</a> </td>
+	<td>Simple strategy using DNA motifs and relative genomic locations</td>
+	<td>Find protein coding genes that have an RNA binding like motif in their 3' region (-300 to +300 of gene end).</td>
 </tr>
 </c:if>
 
