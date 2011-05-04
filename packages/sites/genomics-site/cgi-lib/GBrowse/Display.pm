@@ -460,6 +460,7 @@ sub colorForSpliceSites {
   my ($f) = @_;
   my ($name) = $f->get_tag_values('sample_name');
 
+  # T brucei Nilsson
   return 'red' if $name eq 'T.brucei Long Slender SLT';
   return 'orange' if $name eq 'T.brucei Short Stumpy SLT';
   return 'limegreen' if $name eq 'T.brucei bloodstream 427 SLT';
@@ -469,10 +470,21 @@ sub colorForSpliceSites {
   return 'darkorchid' if $name eq 'T.brucei Alba 3 and 4 non-induced SLT';
   return 'purple' if $name eq 'T.brucei Alba 3 and 4 induced SLT';
 
+  # Leish. Myler
   return 'green' if $name eq 'L. infantum procyclic promastigotes SL - NSR';
   return 'lightgreen' if $name eq 'L. major procyclic promastigotes SL - NSR';
   return 'darkgreen' if $name eq 'L. major procyclic promastigotes SL - Random';
   return 'red' if $name eq 'L. major procyclic promastigotes PolyA';
+
+  # T cruzi Nilsson
+  return 'red' if $name eq 'Tcruzi ama wt SLT';
+  return 'orange' if $name eq 'Tcruzi ama J1 ko SLT';
+  return 'limegreen' if $name eq 'Tcruzi epi wt SLT';
+  return 'green' if $name eq 'Tcruzi epi J1 ko SLT';
+  return 'cornflowerblue' if $name eq 'Tcruzi meta wt SLT';
+  return 'blue' if $name eq 'Tcruzi meta J1 ko SLT';
+  return 'darkorchid' if $name eq 'Tcruzi trypo wt SLT';
+  return 'purple' if $name eq 'Tcruzi trypo J1 ko SLT';
 
   return 'lightslategray';
 }
