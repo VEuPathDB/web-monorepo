@@ -34,8 +34,14 @@
 
 <table style="margin-left:auto;margin-right:auto;">
 <tr>
-<td width="5%"><td>
-<td width="90%" style="vertical-align:top">
+
+<td width="10%" style="text-align:center;vertical-align:middle">
+<a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
+	<img title="Click for help with combining IDs via relative genomic location" src="/assets/images/help_spanlogic.png" width="45px" alt="help with combining IDs via relative genomic location" />
+</a>
+</td>
+
+<td width="80%" style="vertical-align:top">
  <div class="h2center" style="text-align:center;">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome
 </div>
 
@@ -51,11 +57,13 @@
 <div class="instructions" style="">Your new <b>${newPluralType}</b> search (Step <span class="new_step_num">${newStepId}</span>) returned <b>${importStep.resultSize} ${newPluralType}</b>.  Use this page to combine them with the <b>${oldPluralType}</b> in your previous result (Step <span class="current_step_num">${currentStepId}</span>).
 </div>
 </td>
-<td width="5%" style="text-align:right">
-<a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-	<img title="Click for help with combining IDs via relative genomic location" src="/assets/images/help_spanlogic.png" width="60px" alt="help with combining IDs via relative genomic location" />
+
+<td width="10%" style="text-align:center;vertical-align:middle">
+<a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
+	<img title="Click for a 7-minute flash tutorial on combining IDs via relative genomic location" src="/assets/images/tut_icon.jpg" width="60px" alt="help with combining IDs via relative genomic location" />
 </a>
 </td>
+
 </tr>
 </table>
 
