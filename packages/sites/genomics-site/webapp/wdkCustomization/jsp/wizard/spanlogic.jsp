@@ -23,7 +23,7 @@
 <%-- query_form is used for all popups.... for showing questions, long descriptions use all browser space which is annoying so the style in Strategies.css is set to have max-width 75% ; for smaller popups left is set to 140px; the span logic popup is wide so we set itcloser to the left  
 --%>
 <style type="text/css">
-	#query_form {	max-width: 300%; left:45px;} //100% is not good enough when browser window is small and a scroll bar is needed
+	#query_form {	max-width: 150%; left:45px;} //100% is not good enough when browser window is small and a scroll bar is needed
 </style>
 
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/wizard.do"  onsubmit="callWizard('wizard.do?action=${requestScope.action}&step=${wdkStep.stepId}&',this,null,null,'submit')">
