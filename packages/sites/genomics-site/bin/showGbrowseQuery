@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+use strict;
+use Getopt::Long;
+
+my ($server, $logfile, $queryName, $runtime);
+
+&GetOptions('s=s' => \$server,
+            'l=s' => \$logfile,
+            'q=s' => \$queryName,
+            'r=s' => \$runtime,
+            );
+
+
+usage() unless ($server && $logfile && $queryName && $runtime);
+
+open LOGFILE, "ssh $server cat $logfile |"
+  or die "couldn't open ssh command to cat logfile";
+
+my $state = "seeking";
+my $lineNumber;
+
+while(<LOGFILE>) {
+  $lineNumber++;
+  if ($state eq "seeking") {
+    next unless /QUERYTIME/;
+    chomp;
+    my ($qt, $timestamp, $absoluteTime, $tag, $module, $seconds, $width, $name) = split(/\t/);
+  $state = "printing"
+    if $name eq $queryName && $seconds == $runtime;	
+  } else {
+    last if /QUERYTIME/;
+    print "$_"; 
+  }
+}
+
+
+
+sub usage {
+  print STDERR "
+
+Print a report summarizing the gbrowse slow query logs.
+
+Takes one or more logs on standard input.
+
+usage:  showGbrowseQuery -s <server> -l <logfile> -q <queryName> -r <runtime>
+
+where:
+  <server> server name (e.g. q2.cryptodb.org)
+  <logfile> full pathname of log file (e.g. /var/www/Common/tmp/gbrowseLogs/w2.toxodb.org/very_slow.log)
+  <queryName> gbrowse query name (e.g. SNP:Stanford:bulkAttribute
+  <runtime>   query execution duration in seconds
+";
+  exit(1);
+}
