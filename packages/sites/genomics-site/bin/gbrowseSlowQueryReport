@@ -2,7 +2,8 @@
 use strict;
 use Getopt::Long;
 
-my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile);
+my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile, $qOrW);
+
 $sort_column=2;
 &GetOptions('s=s' => \$threshold,
             'g' => \$genepage,
@@ -10,11 +11,12 @@ $sort_column=2;
             'w=s' => \$width_filter,
             't=s' => \$time_filter,
             'c=s' => \$sort_column,
-            'p=s' => \$plotOutputFile
+            'p=s' => \$plotOutputFile,
+            'q=s' => \$qOrW,
             );
 
 
-usage() unless $threshold;
+usage() unless ($qOrW eq "q" or $qOrW eq "w");
 
 my ($width_min, $width_max);
 if ($width_filter) {
@@ -38,38 +40,57 @@ if ($plotOutputFile) {
 
 my $min_absolute_time = 1000000000000000;
 my $max_absolute_time = 0;
-while(<STDIN>) {
-  next unless /QUERYTIME/;
-  next if /\=\=/;  # some lines in the log are mangled, with missing newlines
-                   # the symptom is that the next log entry is mashed in
-                   # these are delimited by ========, so dodge that
-  next if ($genepage && !/GENEPAGE/);
-  next if ($notgenepage && /GENEPAGE/);
-  chomp;
-  my ($qt, $timestamp, $absoluteTime, $tag, $module, $seconds, $width, $name) = split(/\t/);
-  next if ($time_min && $absoluteTime < $time_min);
-  next if ($time_max && $absoluteTime > $time_max);
-  next if ($width_min && $width < $width_min);
-  next if ($width_max && $width > $width_max);
-  $min_absolute_time = $absoluteTime if $absoluteTime < $min_absolute_time;  # the first time we have included
-  $max_absolute_time = $absoluteTime if $absoluteTime > $max_absolute_time;  # the latest time we have included
 
-  if (!$h->{$name}) {
-    $h->{$name} = [$name, 0, 0, 0, 0, 0];
-  }
-  $h->{$name}->[1] += $seconds;      # total secs
-  $h->{$name}->[2] += 1;             # count
-  if ($seconds > $threshold) {
-    $h->{$name}->[3] += $seconds;    # total secs over threshold
-    $h->{$name}->[4] += 1;           # count over threshold
-  }
-  $h->{$name}->[5] = $seconds if ($seconds > $h->{$name}->[5]); # max secs
+for (my $campus = 1; $campus <= 2; $campus++) {
+    # print "files from campus $campus\n";
+    my $server = "$qOrW$campus.cryptodb.org";
+    open REMOTE_LS, "ssh $server ls /var/www/Common/tmp/gbrowseLogs/$qOrW$campus.*.org/*_slow.log |"
+         or die "couldn't open ssh command to list files";
+    while (my $logFileName = <REMOTE_LS> ) {
+	chomp($logFileName);
+	# print "    $logFileName\n";
+	open LOGFILE, "ssh $qOrW$campus.cryptodb.org cat $logFileName |"
+	  or die "couldn't open ssh command to cat logfile";
 
-  # we are generating a plot data file too
-  if ($plotOutputFile) {
-    print P "$absoluteTime\t$seconds\t$name\n";
+	while(<LOGFILE>) {
+	  next unless /QUERYTIME/;
+	  next if /\=\=/;  # some lines in the log are mangled, with missing newlines
+	  # the symptom is that the next log entry is mashed in
+	  # these are delimited by ========, so dodge that
+	  next if ($genepage && !/GENEPAGE/);
+	  next if ($notgenepage && /GENEPAGE/);
+	  chomp;
+	  my ($qt, $timestamp, $absoluteTime, $tag, $module, $seconds, $width, $name) = split(/\t/);
+	  next if ($time_min && $absoluteTime < $time_min);
+	  next if ($time_max && $absoluteTime > $time_max);
+	  next if ($width_min && $width < $width_min);
+	  next if ($width_max && $width > $width_max);
+	  $min_absolute_time = $absoluteTime if $absoluteTime < $min_absolute_time;  # the first time we have included
+	  $max_absolute_time = $absoluteTime if $absoluteTime > $max_absolute_time;  # the latest time we have included
+
+	  if (!$h->{$name}) {
+	    $h->{$name} = [$name, 0, 0, 0, 0, 0, $server, $logFileName];
+	  }
+	  $h->{$name}->[1] += $seconds;      # total secs
+	  $h->{$name}->[2] += 1;             # count
+	  if ($seconds > $threshold) {
+	    $h->{$name}->[3] += $seconds;    # total secs over threshold
+	    $h->{$name}->[4] += 1;           # count over threshold
+	  }
+
+	  if ($seconds > $h->{$name}->[5]) { # slowest instance yet of this query name
+	    $h->{$name}->[5] = $seconds; # max run-time
+	    $h->{$name}->[6] = $server;  # server with max run-time
+	    $h->{$name}->[7] = $logFileName; # logfile containing max run-time
+	  }
+
+	  # if we are generating a plot data file, spit out this data point
+	  if ($plotOutputFile) {
+	    print P "$absoluteTime\t$seconds\t$name\n";
+	  }
+	}
+      }
   }
-}
 
 close(P) if ($plotOutputFile);
 
@@ -77,11 +98,11 @@ my @sorted = sort {$b->[$sort_column-1] <=> $a->[$sort_column-1]} values(%$h);
 
 
 # name total_secs count avg_secs total_secs_over count_over  worst_secs
-  print sprintf("%47s%12s%8s%10s%12s%8s%7s\n",('Name','TotSecs','#','AvgSecs','SlowSecs','Slow_#','Worst'));
+  print sprintf("%47s%12s%8s%10s%12s%8s%7s\n",('Name','TotSecs','#','AvgSecs','SlowSecs','Slow_#','Worst', 'Server', 'Log File'));
 
 foreach my $a (@sorted) {
   my $avg = $a->[1] / $a->[2];
-  print sprintf("%47s%12.2f%8d%10.2f%12.2f%8d%7.2f\n",($a->[0],$a->[1],$a->[2],$avg,$a->[3],$a->[4],$a->[5]));
+  print sprintf("%47s%12.2f%8d%10.2f%12.2f%8d%7.2f%25s%80s\n",($a->[0],$a->[1],$a->[2],$avg,$a->[3],$a->[4],$a->[5],$a->[6],$a->[7]));
 }
 
 print "\nActual time start: " . localtime($min_absolute_time) . " ($min_absolute_time)\n";
@@ -95,9 +116,10 @@ Print a report summarizing the gbrowse slow query logs.
 
 Takes one or more logs on standard input.
 
-usage:  gbrowseSlowQueryReport -s secs [-g] [-n] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile]
+usage:  gbrowseSlowQueryReport -q {q|w} [-s secs] [-g] [-n] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile]
 
 where:
+  -q:  show [q]a or [w]ww sites
   -s:  slowness threshold in seconds.  run times over secs are reported in Slow columns
   -g:  genepage only flag. only include queries logged with \"GENEPAGE\"
   -n:  not-genepage flag. complementary to -g flag (only non-genepage queries)
