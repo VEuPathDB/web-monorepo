@@ -171,6 +171,40 @@ sub sageTagUniqueMapFgColor {
 	($strand eq "+1") ? "blue" : "darkred";
 }
 
+sub rumIntronBgColorFromSample {
+  my $f = shift;
+
+  my %colors = (#PlasmoDB
+                'Hour0'  => 'mediumslateblue',
+                'Hour5'  => 'mediumslateblue', 
+                'Hour8'  => 'mediumslateblue',
+                'Hour10' => 'mediumblue',
+                'Hour15' => 'brown',
+                'Hour16' => 'sandybrown',
+                'Hour20' => 'rosybrown',
+                'Hour24' => 'brown',
+                'Hour25' => 'rosybrown',
+                'Hour30' => 'maroon',
+                'Hour32' => 'darksalmon',
+                'Hour35' => 'sandybrown',
+                'Hour40' => 'sienna',
+                'Hour48' => 'peachpuff',
+                '3D7'    => 'peru',
+                'PL01'   => 'darkkhaki', 
+                'PL02'   => 'brown'
+                );  
+
+  my ($sample) = $f->get_tag_values('Sample'); 
+  my ($canonical) = $f->get_tag_values('Canonical'); 
+  if(my $color = $colors{$sample}) {
+    if($canonical == 1) {
+      return 'red';
+    }
+    return $color;
+  }
+  return 'yellow'; 
+} 
+
 sub massSpecBgColorFromExtDbName {
   my $f = shift;
 

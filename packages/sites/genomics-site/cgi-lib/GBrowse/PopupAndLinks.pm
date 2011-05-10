@@ -653,6 +653,28 @@ sub ArrayElementTitle {
      hover("Glass Slide Oligo: $name", \@data);
 }
 
+sub rumIntronTitle {  
+  my ($f) = @_;
+  my ($sample) = $f->get_tag_values('Sample');
+  my ($lour) = $f->get_tag_values('LOUR');
+  my ($sour) =  $f->get_tag_values('SOUR');
+  my ($lonr) =  $f->get_tag_values('LONR');
+  my ($sonr) =  $f->get_tag_values('SONR');
+  my ($canonical) =  $f->get_tag_values('Canonical');
+  my ($knowintron) = $f->get_tag_values('KnownIntron');
+
+  my @data;
+  push @data, [ 'Sample:' => $sample ];
+  push @data, [ 'Score'   => $f->score ];
+  push @data, [ 'Signal is canonical:'        => "$canonical" ];
+  push @data, [ 'Long Overlap Unique Reads:'  => "$lour" ];
+  push @data, [ 'Short Overlap Unique Reads:' => "$sour" ];
+  push @data, [ 'Long Overlap NU Reads:'      => "$lonr" ];
+  push @data, [ 'Short Overlap NU Reads:'     => "$sonr" ];
+
+  hover('RUM Intron', \@data);
+}
+
 sub massSpecTitle {  
   my ($f, $replaceString,$replaceString2,$val2, $link) = @_;
   my ($desc) = $f->get_tag_values('Description');
