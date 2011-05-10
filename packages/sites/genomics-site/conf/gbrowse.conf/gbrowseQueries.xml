@@ -358,8 +358,38 @@ ORDER BY
     </sql>
   </sqlQuery>
 
-  
-  
+  <sqlQuery name="rum:intron" includeProjects="PlasmoDB">
+     <sql>
+     <![CDATA[
+      SELECT rum_intron_feature_id feature_id,
+             'rum' type, 
+             'intron' source, 
+             rif.sample_name name, 
+             score score, 
+             na_sequence_id parent_id, 
+             mapping_start startm, 
+             mapping_end end, 
+            'LOUR=' || rif.long_overlap_unique_reads || '$dlm' ||
+            'SOUR=' || rif.short_overlap_unique_reads || '$dlm' ||
+            'LONR=' || rif.long_overlap_nu_reads || '$dlm' ||
+            'SONR=' || rif.short_overlap_nu_reads || '$dlm' ||
+            'SpliceSignal=' || rif.standard_splice_signal || '$dlm' ||
+            'NCSignal=' || rif.signal_not_canonical || '$dlm' ||
+            'KnownINtron=' || rif.known_intron || '$dlm' ||
+            'Canonical=' || rif.signal_not_canonical || '$dlm' ||
+            'Sample=' || sample_name atts
+      FROM   apidb.RUMIntronFeature rif 
+      WHERE  rif.mapping_start <= $rend 
+         AND rif.mapping_end >= $base_start 
+         AND rif.na_sequence_id = $srcfeature_id
+         AND mapping_end - mapping_start < 2000
+         AND score > 1
+         --AND known_intron = 1
+      ORDER BY rif.mapping_start, rif.sample_name
+    ]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="alignment:ORFlength">
      <sql>
 <![CDATA[
