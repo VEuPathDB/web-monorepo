@@ -8,6 +8,7 @@ include 'lib/xmlfunctions.inc';
 include 'lib/wdkXmlInfo.inc';
 include 'lib/apacheXmlInfo.inc';
 include 'lib/proxyXmlInfo.inc';
+include 'lib/buildXmlInfo.inc';
 
 $want_value = false;
 
@@ -36,6 +37,7 @@ $req_xpath = ($path_info) ? '/' . $path_info : ROOTNAME;
 $proxyxml = get_proxy_xml();
 $wdkxml = get_wdk_xml();
 $apachexml = get_apache_xml();
+$buildxml = get_build_xml();
 
 /** Construct new XML doc and combine xml gathered from various sources **/
 $sitexml = new DomDocument('1.0');
@@ -48,6 +50,7 @@ $sitexml->appendChild($root);
 import_node($sitexml, $proxyxml);
 import_node($sitexml, $wdkxml);
 import_node($sitexml, $apachexml);
+import_node($sitexml, $buildxml);
 
 /** get node from xpath query **/
 $domxpath = new DOMXpath($sitexml);
