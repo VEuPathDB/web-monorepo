@@ -1,4 +1,6 @@
-<h3 class='banner' align='center'><a href='/'>
+
+<h3 class='banner' align='center'>
+<a href='/'>
 <? 
   include_once "functions.php.inc";
   print $_SERVER['SERVER_NAME'] . '<br>';
@@ -13,7 +15,8 @@ $ws_key = getWSKey();
 $headers = apache_request_headers();
 
 ?>
-</a></h3>
+</a>
+</h3>
 
 <fmt:formatDate type="both" pattern="${dateFormatStr}" value="<%=new Date()%>" />
 <? 

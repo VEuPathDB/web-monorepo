@@ -5,7 +5,7 @@ function upstreamServer() {
   if ( isset($headers['Via']) ) {
       $host_port = getModuleSetting('apache2handler','Hostname:Port');
       $uphost = substr($host_port , 0, strrpos($host_port , ':'));
-      return "<a href='http://$uphost/'>$uphost</a>";
+      return "$uphost";
   }
 }
 
@@ -36,9 +36,9 @@ function parsePHPModules() {
     $vPat = '<info>([^<]+)<\/info>';
     $vPat3 = "/$vPat\s*$vPat\s*$vPat/";
     $vPat2 = "/$vPat\s*$vPat/";
-    if (preg_match($vPat3,$vOne,$vMat)) { // 3cols
+    if (preg_match($vPat3,$vOne,$vMat)) {
      $vModules[$vName][trim($vMat[1])] = array(trim($vMat[2]),trim($vMat[3]));
-    } elseif (preg_match($vPat2,$vOne,$vMat)) { // 2cols
+    } elseif (preg_match($vPat2,$vOne,$vMat)) {
      $vModules[$vName][trim($vMat[1])] = trim($vMat[2]);
     }
    }
@@ -64,7 +64,7 @@ function get_web_page($url, $postdata) {
     $options = array(
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HEADER         => false,
-        CURLOPT_FOLLOWLOCATION => false, // do NOT follow redirects. Following can expose secrete ws_key
+        CURLOPT_FOLLOWLOCATION => false, // do NOT follow redirects. Following can expose secret ws_key
         CURLOPT_ENCODING       => "",
         CURLOPT_USERAGENT      => "siteinfo",
         CURLOPT_AUTOREFERER    => true,
