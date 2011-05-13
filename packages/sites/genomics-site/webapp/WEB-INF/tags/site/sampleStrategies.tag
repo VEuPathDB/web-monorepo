@@ -40,7 +40,8 @@
 
  <c:when test="${fn:containsIgnoreCase(site, 'PlasmoDB')}">
       <c:set var="simple" value="1e0dccb636a58a91" />
-      <c:set var="expanded" value="aea5452877157ff5" />
+  <%--    <c:set var="expanded" value="aea5452877157ff5" /> --%>
+     <c:set var="expanded" value="19eaaf6ea54f7244" /> 
       <c:set var="expressed" value="1b9b55c3c788b8bc" />
       <c:set var="expressedPknowlesi" value="6b39827bdee7406d" />
       <c:set var="PfalDrugTargets" value="57c0cf7dabba1408" />
@@ -70,7 +71,9 @@
 
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
       <c:set var="simple" value="6d18cc017993d226" />
-      <c:set var="expanded" value="2138414b43b897b5" />
+<%--       <c:set var="expanded" value="2138414b43b897b5" /> --%>
+<c:set var="expanded" value="36fffaa5684ac600" />
+
       <c:set var="TcAllexpressed" value="4abe1d668c3cc290" />
       <c:set var="expressedLbrazilliensis" value="edf8019a9b1c938f" />
       <c:set var="SecretedAmastigoteKin" value="24351a75599d35f8" />
