@@ -59,7 +59,8 @@
 
 <c:when test="${fn:containsIgnoreCase(site, 'TrichDB')}">
       <c:set var="simple" value="7fbf3b1254b01c94" />
-      <c:set var="expandedTmOrSP" value="0820464a66737f55" />
+<%--  <c:set var="expandedTmOrSP" value="0820464a66737f55" /> --%>
+      <c:set var="expandedTmOrSP" value="36fffaa5684ac600" /> 
       <c:set var="ap2Motif" value="e892ef6112576c45" />
    </c:when>
 
@@ -71,9 +72,7 @@
 
  <c:when test="${fn:containsIgnoreCase(site, 'TriTrypDB')}">
       <c:set var="simple" value="6d18cc017993d226" />
-<%--       <c:set var="expanded" value="2138414b43b897b5" /> --%>
-<c:set var="expanded" value="36fffaa5684ac600" />
-
+      <c:set var="expanded" value="2138414b43b897b5" />
       <c:set var="TcAllexpressed" value="4abe1d668c3cc290" />
       <c:set var="expressedLbrazilliensis" value="edf8019a9b1c938f" />
       <c:set var="SecretedAmastigoteKin" value="24351a75599d35f8" />
