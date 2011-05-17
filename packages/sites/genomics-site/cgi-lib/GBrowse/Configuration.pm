@@ -11,7 +11,7 @@ use HTML::Template;
 
 require Exporter;
 
-umask 002;
+umask 0;
 
 # Export Static Methods
 @ISA = qw(Exporter);
