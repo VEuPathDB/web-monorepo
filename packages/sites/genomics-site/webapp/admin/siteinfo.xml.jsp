@@ -16,6 +16,10 @@
     servicename="${wdkRecord.attributes['service_name'].value}" var='appdbAliases'
 /><api:orclSvcAliases 
     servicename="${cache.dbInfo['service_name']}" var='userdbAliases'
+/><api:modelConfig 
+    var="modelConfig"
+/><api:commentConfig
+    var="commentConfig"
 /><c:set 
     var="dateFormatStr" value="EEE dd MMM yyyy h:mm a"
 /><c:choose><c:when 
@@ -48,6 +52,28 @@
       </aliases>
     </userdb>
   </databases>
+  <modelconfig>
+    <c:forEach 
+        var="section" items="${modelConfig.props}"
+    ><${fn:toLowerCase(section.key)}><c:forEach 
+        var="cfg" items="${section.value}"
+    ><${fn:toLowerCase(cfg.key)}>${fn:escapeXml(cfg.value)}</${fn:toLowerCase(cfg.key)}>
+    </c:forEach>
+        </${fn:toLowerCase(section.key)}>
+    </c:forEach>
+  </modelconfig>
+  <commentconfig>
+    <c:forEach 
+        var="cfg" items="${commentConfig.props}"
+    ><${fn:toLowerCase(cfg.key)}>${fn:escapeXml(cfg.value)}</${fn:toLowerCase(cfg.key)}>
+    </c:forEach>
+  </commentconfig>
+  <modelprop>
+    <c:forEach 
+        var="prop" items="${applicationScope.wdkModel.properties}"
+    ><${fn:toLowerCase(fn:replace(prop.key, '_', ''))}>${fn:escapeXml(prop.value)}</${fn:toLowerCase(fn:replace(prop.key, '_', ''))}>
+    </c:forEach>
+  </modelprop>
 </wdk>
 </c:set
 ><c:choose
