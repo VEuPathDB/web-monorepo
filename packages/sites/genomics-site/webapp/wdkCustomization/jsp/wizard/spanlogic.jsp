@@ -32,7 +32,7 @@
   <c:set var="wdkStep" value="${wdkStep.previousStep}"/>
 </c:if>
 
-<table style="margin-left:auto;margin-right:auto;">
+<table width="100%" style="margin-left:auto;margin-right:auto;">
 <tr>
 
 <td width="10%" style="text-align:center;vertical-align:middle">
@@ -54,11 +54,19 @@
 <wdk:getPlural pluralMap="${typeMap}"/>
 <c:set var="oldPluralType" value="${typeMap['plural']}"/>
 
-<div class="instructions" style="">Your new <b>${newPluralType}</b> search (Step <span class="new_step_num">${newStepId}</span>) returned <b>${importStep.resultSize} ${newPluralType}</b>.  Use this page to combine them with the <b>${oldPluralType}</b> in your previous result (Step <span class="current_step_num">${currentStepId}</span>).
+<div class="instructions">
+You had <b>${wdkStep.resultSize} ${oldPluralType}</b> in your Strategy (Step <span class="new_step_num">${currentStepId}</span>).
+</b>. 
+<br>
+Your new <b>${newPluralType}</b> search (Step <span class="new_step_num">${newStepId}</span>) returned <b>${importStep.resultSize} ${newPluralType}</b>.  
+<br>
+To combine these two results based on their relative genomic location, <span style="background:yellow">select 5 parameters</span> in the logic statement below. 
+<br><br>
+
 </div>
 </td>
 
-<td width="10%" style="text-align:center;vertical-align:middle">
+<td width="10%" style="text-align:center;vertical-align:top">
 <a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
 	<img title="Click for a 7-minute flash tutorial on combining IDs via relative genomic location" src="/assets/images/tut_icon.jpg" width="60px" alt="help with combining IDs via relative genomic location" />
 </a>
@@ -67,22 +75,14 @@
 </tr>
 </table>
 
-
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
 <span style="display:none" id="stepId">${wdkStep.stepId}</span>
 <span style="display:none" id="span_a_num" class="current_step_num">${currentStepId}</span>
 <span style="display:none" id="span_b_num" class="new_step_num">${newStepId}</span>
   
 <input type="hidden" id="stage" value="process_span" />
-  
-<%--
-<div style="text-align:center;padding-top:20px">
-<a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-	<img title="Click for help with combining IDs via relative genomic location" src="/assets/images/help_spanlogic.png" width="60px" alt="help with combining IDs via relative genomic location" />
-</a>
-</div>
---%>
-<br>
+
+<%-- sentence and region areas --%>
 <div id="spanLogicParams">
 	<wdk:answerParamInput qp="${pMap['span_a']}"/>
 	<wdk:answerParamInput qp="${pMap['span_b']}"/>
@@ -93,7 +93,7 @@
             <input type="hidden" value="${spanParam.value}" id="${spanParam.key}_default"/>
           </c:forEach>
         </c:if>
-<%--	<input type="hidden" value="${importStep.displayType}" id="span_b_type"/>   seems repeated above --%>
+
 	<c:set var="wdkStepRecType" value="${wdkStep.displayType}"/>
 	<c:set var="importStepRecType" value="${importStep.displayType}"/>
 	<c:set var="wdkStepResultSize" value="${wdkStep.resultSize}"/>
@@ -101,10 +101,13 @@
 	<c:if test="${wdkStepResultSize > 1}"><c:set var="wdkStepRecType" value="${wdkStepRecType}s"/></c:if>
 	<c:if test="${importStepResultSize > 1}"><c:set var="importStepRecType" value="${importStepRecType}s"/></c:if>
 
+
+       
 <%-- sentence --%>
-        <table><tr><td>
+        <table>
+	<tr><td>
 	<div class="span-step-text right">
-	  <span>Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span></span>
+	  <span>"Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span></span>
         </div>
 
 
@@ -134,7 +137,8 @@
           <span class="region comparisonRegion region_b">region</span> of a
           <span class="comparison_type">...</span> <span class="other_step">in Step</span>
           <span class="comparison_num">...</span> and is on
-          <wdk:enumParamInput qp="${pMap['span_strand']}" /></span>
+          <wdk:enumParamInput qp="${pMap['span_strand']}" />
+           "
 	</div>
         <div id="comparisonGroup">
           <site:spanlogicGraph groupName="b" question="${question}" step="${importStep}" stepType="new_step" />
@@ -149,6 +153,7 @@
       	  You cannot select output because there are steps in the strategy after the current one you are working on.
     	</c:if>
 
+<%-- unused
 	<div class="span-step-text bottom">
 	  Return each <span class="span_output"></span> whose <span class="region outputRegion">region</span>
           <span class="span_operation"></span>&nbsp;the <span class="region comparisonRegion">region</span> of a
@@ -156,6 +161,7 @@
           <span class="comparison_num"></span> and is on
           <span class="span_strand"></span>
 	</div>
+--%>
         <input type="hidden" id="span_sentence" name="value(span_sentence)" value="" />
 </div>
 
