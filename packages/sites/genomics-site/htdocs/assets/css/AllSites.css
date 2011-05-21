@@ -546,7 +546,7 @@ div.innertube #record-toolbox li {
 	border-left-width: 0px;
 	border-style: solid;
 	border-color: #888888;
-	z-index: 500;
+//	z-index: 500;
 }
 
 #menu a.dropdown {
@@ -569,7 +569,7 @@ div.innertube #record-toolbox li {
 	font-weight:bold;
 	margin:0pt;
 	padding:0pt;
-	z-index: 500;
+//	z-index: 500;
 }
 
 #menu a:link, #menu a:visited {
@@ -592,7 +592,7 @@ div.innertube #record-toolbox li {
 	position:relative;
 	line-height: 14px;
 	font-weight:normal;
-	z-index: 500;
+//	z-index: 500;
 }
 
 #menu ul ul {

@@ -5,6 +5,7 @@
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
 
+
 <c:set var="wdkQuestion" value="${requestScope.question}"/>
 <c:set var="spanOnly" value="false"/>
 <c:set var="checked" value=""/>
@@ -39,12 +40,30 @@
 
 ${Question_Header}
 
-
 <%-- display question param section --%>
 <div class="filter params">
+
+<%-- debug 
+<c:forEach var='parameter' items='${paramValues}'>  
+	<c:out value='${parameter.key}'/> = 
+	<c:forEach var='value' items='${parameter.value}'>
+		<c:out value='${value}' escapeXml="false"/><br> 
+	</c:forEach>         
+</c:forEach>
+
+<br>${wdkStep.frontId}
+<br>${requestScope.wdkQuestion.displayName}
+<br>${requestScope.question.displayName}
+<br>
+--%>
+<%-- while wdkStep.frontId is not correctly set up (seems always 1) we do not display step number
   <span class="form_subtitle">
     Transform Step ${wdkStep.frontId}
     : ${wdkQuestion.displayName}
+  </span>
+--%>
+  <span class="h2center">
+     ${wdkQuestion.displayName}
   </span>
 
   <wdk:questionForm />
