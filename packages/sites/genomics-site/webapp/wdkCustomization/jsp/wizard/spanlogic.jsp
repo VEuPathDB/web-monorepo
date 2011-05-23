@@ -153,7 +153,7 @@ To combine these two results based on their relative genomic location, <span sty
       	  You cannot select output because there are steps in the strategy after the current one you are working on.
     	</c:if>
 
-<%-- unused
+<%-- used --%>
 	<div class="span-step-text bottom">
 	  Return each <span class="span_output"></span> whose <span class="region outputRegion">region</span>
           <span class="span_operation"></span>&nbsp;the <span class="region comparisonRegion">region</span> of a
@@ -161,7 +161,7 @@ To combine these two results based on their relative genomic location, <span sty
           <span class="comparison_num"></span> and is on
           <span class="span_strand"></span>
 	</div>
---%>
+
         <input type="hidden" id="span_sentence" name="value(span_sentence)" value="" />
 </div>
 
