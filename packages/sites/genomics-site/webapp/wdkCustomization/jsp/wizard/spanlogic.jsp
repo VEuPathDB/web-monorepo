@@ -55,12 +55,13 @@
 <c:set var="oldPluralType" value="${typeMap['plural']}"/>
 
 <div class="instructions">
-You had <b>${wdkStep.resultSize} ${oldPluralType}</b> in your Strategy (Step <span class="new_step_num">${currentStepId}</span>).
-</b>. 
-<br>
-Your new <b>${newPluralType}</b> search (Step <span class="new_step_num">${newStepId}</span>) returned <b>${importStep.resultSize} ${newPluralType}</b>.  
+You had <b style="color:blue">${wdkStep.resultSize} ${oldPluralType}</b> in your Strategy <span style="color:blue">(Step</span> <span style="color:blue" class="new_step_num">${currentStepId}</span><span style="color:blue">).</span>
+</b> &nbsp;&nbsp;
+Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span> <span style="color:#c80064" class="new_step_num">${newStepId}</span><span style="color:#c80064">) returned <b>${importStep.resultSize} ${newPluralType}</b>.</span>  
+<%--
 <br>
 To combine these two results based on their relative genomic location, <span style="background:yellow">select 5 parameters</span> in the logic statement below. 
+--%>
 <br><br>
 
 </div>

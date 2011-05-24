@@ -7,9 +7,16 @@
   margin:5px;
 }
 
-#outputGroup,#comparisonGroup{
+#outputGroup{
   margin-top: 15px;
+  float:right;
 }
+
+#comparisonGroup{
+  margin-top: 15px;
+  float:left;
+}
+
 
 .invisible {
   visibility: hidden;
