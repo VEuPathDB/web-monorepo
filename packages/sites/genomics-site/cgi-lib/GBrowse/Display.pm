@@ -646,6 +646,23 @@ sub bacsBgcolor {
  }
 
 
+sub cghBgcolor { 
+    my $f = shift;
+    my ($type) = $f->get_tag_values('Type');
+    my ($dir) = $f->get_tag_values('Direction');
+    
+    if (($type eq 'Type I') && ($dir eq 'amplification')) { 
+      return 'green';
+    } elsif (($type eq 'Type II') && ($dir eq 'amplification')){
+      return 'maroon';
+    } elsif (($type eq 'Type II') && ($dir eq 'deletion')){
+      return 'orange';
+    } elsif (($type eq 'Type I') && ($dir eq 'deletion')){
+      return 'blue';
+    }
+ }
+
+
 
 #--------------------------------------------------------------------------------
 #  Methods For Height
