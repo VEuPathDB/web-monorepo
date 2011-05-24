@@ -23,7 +23,7 @@
 <tr style="font-weight:bold">
 <td style=" border-right: 3px double black;" class="h4left" width="30%">1. Build segment IDs</td>
 <td style=" border-right: 3px double black;" class="h4left" width="20%">2. Add them to your list</td>
-<td class="h4left" width="50%">3. When your list is ready, hit "Get Answer" button below</td>
+<td class="h4left" width="50%">3. When your list is ready, hit button below</td>
 </tr>
 <tr>
 <td style=" border-right: 3px double black;padding-top:0;padding-bottom:0"  width="30%" ></td>
@@ -49,7 +49,7 @@
       </ul>
     </td>
     <td width="50%">
-      <div><i>In addition, you may enter genomic segments separated by comma, in the box below.
+      <div><i>You may also enter directly genomic segments separated by comma, in the box below.
         The format of a segment is:</i>
       </div>
       <br />
