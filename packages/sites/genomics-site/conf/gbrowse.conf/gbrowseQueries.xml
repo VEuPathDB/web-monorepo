@@ -1329,7 +1329,7 @@ from dots.nasequence s, (
 
 SELECT bacs.feature_id, 
        'alignment' type, 
-       'Cosmids' source, 
+       '$source' source,
        max(bacs.query_na_sequence_id) parent_id, 
        min(bacs.target_start) startm, 
        max(bacs.target_end) end,
@@ -1356,8 +1356,7 @@ AND blat.query_external_db_release_id = edr.external_database_release_id
 AND edr.external_database_id = ed.external_database_id
 AND etn.taxon_id = tn.taxon_id
 AND tn.name_class = 'scientific name'
-AND ed.name in ('Lmajor_sanger_CosmidEnds_RSRC',
-                'Tg TIGR Cosmid Ends')
+AND ed.name = $$edName$$
 ) bacs
 GROUP BY bacs.feature_id
 ) f
@@ -4429,7 +4428,7 @@ WHERE  ed.name = $$edname$$
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
 'cosmid_end' type,
-'Cosmids' source,
+'$source' source,
 etn.source_id name, 
  CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
          THEN regexp_substr(etn.source_id, '(.*)[^(X)(Y)]')
@@ -4455,8 +4454,7 @@ AND blat.query_external_db_release_id = edr.external_database_release_id
 AND ed.external_database_id=edr.external_database_id
 AND etn.taxon_id = tn.taxon_id
 AND tn.name_class = 'scientific name'
-AND ed.name in ('Lmajor_sanger_CosmidEnds_RSRC',
-                'Tg TIGR Cosmid Ends')
+AND ed.name = $$edName$$
 ]]>
     </sql>
   </sqlQuery>
