@@ -394,6 +394,7 @@ GO,InterproscanData
 
 </c:if>
 
+<wdk:wdkTable tblName="AnnotationChanges"/>
 
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
