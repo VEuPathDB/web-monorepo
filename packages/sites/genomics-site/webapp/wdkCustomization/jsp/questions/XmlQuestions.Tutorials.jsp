@@ -55,8 +55,13 @@
                             		<c:set var="urlFlv">http://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&autostart=true</c:set>
                           	</c:when>
                           	</c:choose>
-                          	<c:set var="duration" value="${row[4].value}"/>
-                          	<c:set var="size" value="${row[5].value}"/>
+				<c:set var="urlPdf" value="${row[4].value}"/>
+                          	<c:if test="${urlPdf != 'unavailable' &&  ! fn:startsWith(urlPdf, 'http://')}">
+                            		<c:set var="urlPdf">http://eupathdb.org/tutorials/${urlPdf}</c:set>
+                          	</c:if>
+
+                          	<c:set var="duration" value="${row[5].value}"/>
+                          	<c:set var="size" value="${row[6].value}"/>
 
 
 				<li id='t-${attrs['uid']}'>${attrs['title']}<br />
@@ -67,13 +72,17 @@
                           		 	(<a href="${urlAvi}">Windows media</a>)
                              		</c:if>
                              		<c:if test="${urlFlv != 'unavailable'}">
-                          		 	(<a href="${urlFlv}">Flash</a>)
+                          		 	(<a href="${urlFlv}">Flash</a>, ${row[5].value})
+                             		</c:if>
+					<c:if test="${urlPdf != 'unavailable'}">
+                          		 	(<a href="${urlPdf}">pdf</a>)
                              		</c:if>
 				</li>
 
 			</c:if>
 			</c:forEach> 
 		</c:forEach>
+	<br />
  	</c:forEach>
 	</ul>
 

@@ -256,21 +256,17 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
                         No tutorials.
                       </c:when>
                       <c:otherwise>
-<!--
-<c:if test="${project == 'TriTrypDB'}">
-The TriTrypDB tutorials will be here soon. In the meantime we provide you with 
-access to PlasmoDB.org and CryptoDB.org tutorials, websites that offer the same 
-navigation and querying capabilities as in TriTrypDB.org.<br>
-</c:if>
--->
+
 	<ul>
 	<c:set var="count" value="0" />
+
 	<c:forEach items="${tutAnswer.recordInstances}" var="record">
         	<c:set var="attrs" value="${record.attributesMap}"/>
 		<c:forEach items="${record.tables}" var="table">
           		<c:forEach items="${table.rows}" var="row">
           		<c:set var="projects" value="${row[0].value}"/>
           		<c:if test="${fn:containsIgnoreCase(projects, project)}"> 
+
                           	<c:set var="urlMov" value="${row[1].value}"/>
                           	<c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
                             		<c:set var="urlMov">http://eupathdb.org/tutorials/${urlMov}</c:set>
@@ -288,8 +284,14 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
                             		<c:set var="urlFlv">http://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&autostart=true</c:set>
                           	</c:when>
                           	</c:choose>
-                          	<c:set var="duration" value="${row[4].value}"/>
-                          	<c:set var="size" value="${row[5].value}"/>
+				<c:set var="urlPdf" value="${row[4].value}"/>
+                          	<c:if test="${urlPdf != 'unavailable' &&  ! fn:startsWith(urlPdf, 'http://')}">
+                            		<c:set var="urlPdf">http://eupathdb.org/tutorials/${urlPdf}</c:set>
+                          	</c:if>
+
+                          	<c:set var="duration" value="${row[5].value}"/>
+                          	<c:set var="size" value="${row[6].value}"/>
+
 				<c:if test="${count < SidebarLimit}">	
 					<c:set var="count" value="${count + 1}" />
 					<li id='t-${attrs['uid']}'>${attrs['title']}<br />
@@ -300,7 +302,10 @@ navigation and querying capabilities as in TriTrypDB.org.<br>
                           		 		(<a href="${urlAvi}">Windows media</a>)
                              			</c:if>
                              			<c:if test="${urlFlv != 'unavailable'}">
-                          		 		(<a href="${urlFlv}">Flash</a>)
+                          		 		(<a href="${urlFlv}">Flash</a>, ${row[5].value})
+                             			</c:if>
+						<c:if test="${urlPdf != 'unavailable'}">
+                          		 		(<a href="${urlPdf}">pdf</a>)
                              			</c:if>
 					  </li>
 				</c:if>
