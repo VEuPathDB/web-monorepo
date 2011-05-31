@@ -1008,39 +1008,54 @@ GROUP BY parent_id,strand,startm
     <sql>
 <![CDATA[
 SELECT 
-       distinct ssf.splice_site_feature_id feature_id,
+       splice_site_feature_id feature_id,
        'domain' type,
        '$source' as source,
-       ssf.location as startm, ssf.location as end, 
-       CASE WHEN (gtable.source_id IS NULL) THEN ' (' || ssf.count_per_million || ')'
-          WHEN (gtable.utr_len >0) THEN  gtable.source_id || ' - ' ||  gtable.utr_len || ' (' || ssf.count_per_million || ')'
-          ELSE  gtable.source_id || ' - ' ||  'within gene' || ' (' || ssf.count_per_million || ')' END AS name, 
-       ssf.strand as strand, 
-       'sample_name='|| ssf.sample_name || '$dlm' ||
-       'count_per_mill='|| ssf.count_per_million || '$dlm' ||
-       'is_unique='|| ssf.is_unique || '$dlm' || 
-       'avg_mismatches='|| ssf.avg_mismatches || '$dlm' || 
-       'gene_id='|| gtable.source_id || ';;' || 
-       'utr_length='|| gtable.utr_len atts
-FROM  apidb.spliceSiteFeature ssf
-LEFT JOIN (select source_id , sample_name, location, strand,
-    CASE WHEN (within_cds=1) THEN (-1)*dist_to_cds ELSE dist_to_cds END AS utr_len
-  from apidb.spliceSiteGenes 
-  where na_sequence_id = $srcfeature_id
-  and location >=$base_start
-  and location <=$rend
-  ) gtable
+       location as startm, location as end, 
+       CASE WHEN (source_id IS NULL) THEN ' (' || count_per_million || ')'
+            WHEN (utr_len >0) THEN  source_id || ' - ' ||  utr_len || ' (' || count_per_million || ')'
+            ELSE  source_id || ' - ' ||  'within gene' || ' (' || count_per_million || ')' END AS name, 
+       strand as strand, 
+       'sample_name='|| sample_name || '$dlm' ||
+       'count_per_mill='|| count_per_million || '$dlm' ||
+       'is_unique='|| is_unique || '$dlm' || 
+       'avg_mismatches='|| avg_mismatches || '$dlm' || 
+       'gene_id='|| source_id || ';;' || 
+       'utr_length='|| utr_len atts
+FROM (
+ SELECT 
+       distinct ssf.splice_site_feature_id, ssf.location, ssf.strand,
+       CASE WHEN (ssf.sample_name = 'T.brucei bloodstream 427 SLT') THEN 'T.brucei bloodstream (Lister 427)'
+            WHEN (ssf.sample_name = 'T.brucei Long Slender SLT') THEN 'T.brucei bloodstream long slender (Antat1.1)'
+            WHEN (ssf.sample_name = 'T.brucei Short Stumpy SLT') THEN 'T.brucei bloodstream short stumpy (Antat1.1)'
+            WHEN (ssf.sample_name = 'T.brucei procyclic_late SLT') THEN 'T.brucei bloodstream procyclic (Antat1.1)'
+            WHEN (ssf.sample_name = 'T.brucei Alba 1 non-induced SLT') THEN 'T.brucei Alba 1- (29-13, RNAi)'
+            WHEN (ssf.sample_name = 'T.brucei Alba 1 induced SLT') THEN 'T.brucei Alba 1+ (29-13, RNAi)'
+            WHEN (ssf.sample_name = 'T.brucei Alba 3 and 4 non-induced SLT') THEN 'T.brucei Alba 3_4- (29-13, RNAi)'
+            WHEN (ssf.sample_name = 'T.brucei Alba 3 and 4 induced SLT') THEN 'T.brucei Alba 3_4+ (29-13, RNAi)'
+            ELSE ssf.sample_name END AS sample_name,
+       ssf.count_per_million, ssf.is_unique, ssf.avg_mismatches,
+       gtable.source_id, gtable.utr_len
+ FROM  apidb.spliceSiteFeature ssf
+ LEFT JOIN (SELECT source_id , sample_name, location, strand,
+          CASE WHEN (within_cds=1) THEN (-1)*dist_to_cds ELSE dist_to_cds END AS utr_len
+   FROM apidb.spliceSiteGenes 
+   WHERE na_sequence_id = $srcfeature_id
+   AND location >=$base_start
+   AND location <=$rend
+   ) gtable
   ON (ssf.sample_name = gtable.sample_name AND ssf.location = gtable.location AND ssf.strand=gtable.strand)
-WHERE ssf.na_sequence_id = $srcfeature_id
-  AND ssf.location >= $base_start
-  AND ssf.location <= $rend
-  AND ssf.type = $$type$$
-  AND ssf.sample_name $$sample$$
-  AND ssf.external_database_release_id in
-    (SELECT external_database_release_id 
-       FROM sres.externaldatabase ed, sres.externalDatabaseRelease edr
-      WHERE ed.external_database_id = edr.external_database_id
-        AND ed.name $$edName$$ )
+ WHERE ssf.na_sequence_id = $srcfeature_id
+   AND ssf.location >= $base_start
+   AND ssf.location <= $rend
+   AND ssf.type = $$type$$
+   AND ssf.sample_name $$sample$$
+   AND ssf.external_database_release_id in
+     (SELECT external_database_release_id 
+        FROM sres.externaldatabase ed, sres.externalDatabaseRelease edr
+       WHERE ed.external_database_id = edr.external_database_id
+         AND ed.name $$edName$$ )
+)
 ]]>
     </sql>
   </sqlQuery>
