@@ -1154,3 +1154,17 @@ a:hover, a:active {
 td { 
     padding: 3px 3px 3px 3px;
 }
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Gene Page: View in GBrowse button
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+a#gbView {
+    background: transparent url('../images/button-design.gif') no-repeat scroll top right;
+    display: block;
+    float: left;
+    height: 24px;
+    padding-left: 7px;
+    padding-right: 9px;
+    padding-top: 5px;
+}

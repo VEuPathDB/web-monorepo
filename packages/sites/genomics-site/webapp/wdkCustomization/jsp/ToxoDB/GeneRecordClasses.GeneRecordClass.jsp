@@ -191,7 +191,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     <c:set var="gbrowseUrl">
         /cgi-bin/gbrowse/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
     </c:set>
-    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
   </c:set>
 
   <wdk:toggle 
