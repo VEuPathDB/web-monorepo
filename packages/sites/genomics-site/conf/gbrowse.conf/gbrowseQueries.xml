@@ -4999,29 +4999,22 @@ SELECT   feature_id,
          'CGH' as type,
          startm, 
          end, 
-         CASE WHEN direction = 'deletion' THEN -1*count(*) ELSE count(*) END as score,
+         CASE WHEN direction = 'deletion' THEN  -1*count(*) ELSE count(*) END as score,
          'Type=' || strain || '$dlm' ||
-         'Direction=' || direction atts 
-FROM     (SELECT  feature_id , startm, end, 
-                  parent_id,   probes, score, 
-                  CASE WHEN score < 0 THEN 'deletion' ELSE 'amplification' END as direction ,
-                  CASE WHEN strain in ('Brazil','Chinata','Colombiana','M78','Montalvania','PalDacl9','SylvioX10_4','TCC','TEDa2cl4','TEP6cl5') THEN 'Type I' ELSE 'Type II' END as strain
-          FROM    (SELECT  mapping_start as feature_id,
-                           NA_SEQUENCE_ID as parent_id,
-                           mapping_start as startm, 
-                           mapping_end as end, 
-                           SCORE as score,
-                           decode (is_reversed, 0, '+1', 1, '-1', '.') as strand,
-                           replace(substr(to_char(attr),0, (REGEXP_INSTR(to_char(attr), ';')-1)) , 'probes=') as probes,
-                           replace(substr(to_char(attr), REGEXP_INSTR(to_char(attr), 'strain=')), 'strain=') as strain
+         'Direction=' || direction  atts 
+FROM    (SELECT  mapping_start as feature_id,
+                 NA_SEQUENCE_ID as parent_id,
+                 mapping_start as startm, 
+                 mapping_end as end, 
+                 SCORE as score,
+                 CASE WHEN SCORE < 0 THEN 'deletion'  ELSE 'amplification' END as direction,
+                 decode (is_reversed, 0, '+1', 1, '-1', '.') as strand,
+                 CASE WHEN replace(substr(to_char(attr), REGEXP_INSTR(to_char(attr), 'strain=')), 'strain=') in ('Brazil','Chinata','Colombiana','M78','Montalvania','PalDacl9','SylvioX10_4','TCC','TEDa2cl4','TEP6cl5') THEN 'Type I' ELSE 'Type II' END as strain
                    FROM    Apidb.GFF3
                    WHERE   MAPPING_START <= $rend 
                    AND     MAPPING_END >= $base_start 
                    AND     na_sequence_id = $srcfeature_id
                    )
-          WHERE  probes >= 5
-          AND    abs(score) >= 0.6
-          )
 WHERE strain = $$strain$$ 
 GROUP BY feature_id, parent_id, startm,end, direction, strain
 ]]> 
