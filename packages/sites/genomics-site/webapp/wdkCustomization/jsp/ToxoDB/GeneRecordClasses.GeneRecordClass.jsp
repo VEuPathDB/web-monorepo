@@ -195,7 +195,8 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
   </c:set>
 
   <wdk:toggle 
-    name="dnaContextSyn" displayName="Genomic Context"
+    name="dnaContextSyn" displayName="Genomic Context" 
+    dsLink="/cgi-bin/gbrowse/${fn:toLowerCase(projectId)}/?help=citations" 
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
