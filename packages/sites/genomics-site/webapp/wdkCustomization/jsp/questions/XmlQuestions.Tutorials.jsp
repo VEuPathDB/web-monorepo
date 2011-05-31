@@ -64,7 +64,8 @@
                           	<c:set var="size" value="${row[6].value}"/>
 
 
-				<li id='t-${attrs['uid']}'>${attrs['title']}<br />
+				<li id='t-${attrs['uid']}'><span style="font-size:120%;font-weight:bold">${attrs['title']}</span><br />
+					${attrs['description']}<br />
                              		<c:if test="${urlMov != 'unavailable'}">
                           		 	(<a href="${urlMov}">Quick Time</a>)
                              		</c:if>
@@ -75,7 +76,7 @@
                           		 	(<a href="${urlFlv}">Flash</a>, ${row[5].value})
                              		</c:if>
 					<c:if test="${urlPdf != 'unavailable'}">
-                          		 	(<a href="${urlPdf}">pdf</a>)
+                          		 	(<a href="${urlPdf}">PDF</a>)
                              		</c:if>
 				</li>
 

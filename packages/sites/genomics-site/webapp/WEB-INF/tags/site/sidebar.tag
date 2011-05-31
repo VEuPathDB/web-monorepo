@@ -305,7 +305,7 @@ https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summ
                           		 		(<a href="${urlFlv}">Flash</a>, ${row[5].value})
                              			</c:if>
 						<c:if test="${urlPdf != 'unavailable'}">
-                          		 		(<a href="${urlPdf}">pdf</a>)
+                          		 		(<a href="${urlPdf}">PDF</a>)
                              			</c:if>
 					  </li>
 				</c:if>
