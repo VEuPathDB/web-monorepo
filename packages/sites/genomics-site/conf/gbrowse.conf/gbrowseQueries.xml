@@ -552,14 +552,14 @@ select
        gattr.source_id name, 
        '.' score, 
        anch_left.synteny_id parent_id,
-       CASE WHEN (syn.is_reversed = 1) 
-         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN fl.end_max > syn.b_end THEN syn.b_end ELSE fl.end_max END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
-         ELSE anch_left.ref_loc + (((CASE WHEN fl.start_min < syn.b_start THEN syn.b_start ELSE fl.start_min END) - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
-       END startm,
-       CASE WHEN (syn.is_reversed = 1) 
-         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN fl.start_min < syn.b_start THEN syn.b_start ELSE fl.start_min END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
-         ELSE anch_left.ref_loc + (((CASE WHEN fl.end_max > syn.b_end THEN syn.b_end ELSE fl.end_max END) - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
-       END end,
+       apidb.compute_startm (syn.is_reversed, fl.start_min, fl.end_max,
+                             anch_left.ref_loc, anch_right.ref_loc,
+                             anch_left.syntenic_loc, anch_right.syntenic_loc,
+                             syn.b_start, syn.b_end) startm,
+       apidb.compute_end (syn.is_reversed, fl.start_min, fl.end_max,
+                          anch_left.ref_loc, anch_right.ref_loc,
+                          anch_left.syntenic_loc, anch_right.syntenic_loc,
+                          syn.b_start, syn.b_end) end,
        CASE WHEN (fl.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
        'Note=' || gattr.product || decode(gattr.is_deprecated,1,' (deprecated)') || '$dlm' ||
        'SOTerm=' || gattr.so_term_name || '$dlm' ||
@@ -598,14 +598,26 @@ WHERE (select count(*) from materialized_query) = 0
   AND (
        (syn.is_reversed = 0
         AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
-        AND anch_left.ref_loc + ((fl.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
-        AND anch_left.ref_loc + ((fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+        AND apidb.compute_startm (syn.is_reversed, fl.start_min, fl.end_max,
+                                  anch_left.ref_loc, anch_right.ref_loc,
+                                  anch_left.syntenic_loc, anch_right.syntenic_loc,
+                                  syn.b_start, syn.b_end) <= $rend
+        AND apidb.compute_end (syn.is_reversed, fl.start_min, fl.end_max,
+                               anch_left.ref_loc, anch_right.ref_loc,
+                               anch_left.syntenic_loc, anch_right.syntenic_loc,
+                               syn.b_start, syn.b_end) >= $base_start
        ) 
        OR
        (syn.is_reversed = 1 
         AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc - 1)>0
-        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) <= $rend 
-        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) >= $base_start 
+        AND apidb.compute_startm (syn.is_reversed, fl.start_min, fl.end_max,
+                                  anch_left.ref_loc, anch_right.ref_loc,
+                                  anch_left.syntenic_loc, anch_right.syntenic_loc,
+                                  syn.b_start, syn.b_end) <= $rend
+        AND apidb.compute_end (syn.is_reversed, fl.start_min, fl.end_max,
+                               anch_left.ref_loc, anch_right.ref_loc,
+                               anch_left.syntenic_loc, anch_right.syntenic_loc,
+                               syn.b_start, syn.b_end) >= $base_start
        )
   )
   AND fl.start_min <= syn.b_end
@@ -4504,14 +4516,14 @@ SELECT -- slow query for all other views
        'syntenyMC' source, 
        exfloc.na_feature_id as name,
        exfloc.parent_id,
-       CASE WHEN (syn.is_reversed = 1) 
-         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
-         ELSE anch_left.ref_loc + (((CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END) - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
-       END startm,
-       CASE WHEN (syn.is_reversed = 1) 
-         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
-         ELSE anch_left.ref_loc + (((CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END) - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
-       END end,
+       apidb.compute_startm (syn.is_reversed, exfloc.start_min, exfloc.end_max,
+                             anch_left.ref_loc, anch_right.ref_loc,
+                             anch_left.syntenic_loc, anch_right.syntenic_loc,
+                             syn.b_start, syn.b_end) startm,
+       apidb.compute_end (syn.is_reversed, exfloc.start_min, exfloc.end_max,
+                          anch_left.ref_loc, anch_right.ref_loc,
+                          anch_left.syntenic_loc, anch_right.syntenic_loc,
+                          syn.b_start, syn.b_end) end,
        CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
        'isDeprecated=' ||  ga.is_deprecated atts 
 FROM 
@@ -4537,14 +4549,26 @@ WHERE (select count(*) from materialized_query) = 0
   AND (
        (syn.is_reversed = 0
         AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
-        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
-        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+        AND apidb.compute_startm (syn.is_reversed, exfloc.start_min, exfloc.end_max,
+                                  anch_left.ref_loc, anch_right.ref_loc,
+                                  anch_left.syntenic_loc, anch_right.syntenic_loc,
+                                  syn.b_start, syn.b_end) <= $rend
+        AND apidb.compute_end (syn.is_reversed, exfloc.start_min, exfloc.end_max,
+                               anch_left.ref_loc, anch_right.ref_loc,
+                               anch_left.syntenic_loc, anch_right.syntenic_loc,
+                               syn.b_start, syn.b_end) >= $base_start
        ) 
        OR
        (syn.is_reversed = 1 
         AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
-        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) <= $rend 
-        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) >= $base_start
+        AND apidb.compute_startm (syn.is_reversed, exfloc.start_min, exfloc.end_max,
+                                  anch_left.ref_loc, anch_right.ref_loc,
+                                  anch_left.syntenic_loc, anch_right.syntenic_loc,
+                                  syn.b_start, syn.b_end) <= $rend
+        AND apidb.compute_end (syn.is_reversed, exfloc.start_min, exfloc.end_max,
+                               anch_left.ref_loc, anch_right.ref_loc,
+                               anch_left.syntenic_loc, anch_right.syntenic_loc,
+                               syn.b_start, syn.b_end) >= $base_start
         )
   )
   AND exfloc.start_min <= syn.b_end
