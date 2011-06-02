@@ -179,7 +179,7 @@
 
 <c:choose>
 <c:when test="${record.attributesMap['ESTs'] == 'yes'}">
-    <td class="mytdStyle" style="${separation}"
+    <td class="mytdStyle" style="${separation}">
 
   <c:choose>
   <c:when test="${website == 'eupathdb'}">
