@@ -392,7 +392,7 @@ ${headElement}
 
 
 	<li>
-	<a style="position:relative;bottom:5px;" href="http://twitter.com/eupathdb">
+	<a id="twitter" href="http://twitter.com/eupathdb">
 		<img title="Follow us on twitter!" src="/assets/images/twitter.gif" width="20">
 	</a>
 	</li>

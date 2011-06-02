@@ -389,18 +389,23 @@ div.innertube #record-toolbox li {
 	list-style-image: none;
 } 
 
+#nav_top #twitter {
+	position:relative;
+	bottom:5px;
+}
+
 #nav_top a:link, #nav_top a:visited {
 	display: block;
 	width: auto;
 	text-decoration: none;
-	z-index: 520;
+//	z-index: 520;
 }
 #nav_top a:hover, #nav_top a:active {
 	display: block;
 	width: auto;
 	color: #FFFFFF;
 	text-decoration: none;
-	z-index: 520;
+//	z-index: 520;
 }
 
 #nav_top li {
@@ -577,7 +582,7 @@ div.innertube #record-toolbox li {
 	line-height: 13px;   /* for menubar */
 	width: auto;
 	text-decoration:none;
-	z-index: 500;
+//	z-index: 500;
 }
 
 #menu a:hover, #menu a:active {
@@ -585,7 +590,7 @@ div.innertube #record-toolbox li {
 	line-height: 13px;
 	width: auto;
 	text-decoration: none;
-	z-index: 500;
+//	z-index: 500;
 }
 
 #menu li {
