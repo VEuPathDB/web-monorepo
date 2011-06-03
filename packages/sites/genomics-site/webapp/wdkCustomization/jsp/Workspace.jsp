@@ -104,9 +104,11 @@ function create_Portal_Record_Url(recordName, projectId, primaryKey, portal_url)
       portal_url = "http://toxodb.org/toxo/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
     } else if(projectId == 'GiardiaDB'){
       portal_url = "http://giardiadb.org/giardiadb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" + primaryKey;
+    } else if(projectId == 'PiroplasmaDB'){
+      portal_url = "http://piroplasmadb.org/piro/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" +   primaryKey;
     } else if(projectId == 'TrichDB'){
       portal_url = "http://trichdb.org/trichdb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" +   primaryKey;
- } else if(projectId == 'TriTrypDB'){
+    } else if(projectId == 'TriTrypDB'){
       portal_url = "http://tritrypdb.org/tritrypdb/showRecord.do?name=" + recordName + "&project_id=" + projectId + "&source_id=" +   primaryKey;
     } else if(projectId == 'ApiDB'){
       portal_url = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&cmd=search&term=" + primaryKey; 
