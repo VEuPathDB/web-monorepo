@@ -42,10 +42,10 @@
             <td>begin at</td>
             <td align="left">
               <select name="upstreamAnchor">
-                <option value="Start" selected>Start</option>
-                <option value="CodeStart">translation start (ATG)</option>
-                <option value="CodeEnd">translation stop codon</option>
-                <option value="End">Stop</option>
+                <option value="Start" selected>Transcription Start <sup>***</sup></option>
+                <option value="CodeStart">Translation Start (ATG)</option>
+                <option value="CodeEnd">Translation Stop Codon</option>
+                <option value="End">Transcription Stop <sup>***</sup></option>
               </select>
             </td>
             <td align="left">
@@ -62,10 +62,10 @@
             <td>end at</td>
             <td align="left">
               <select name="downstreamAnchor">
-                <option value="Start">Start</option>
-                <option value="CodeStart">translation start (ATG)</option>
-                <option value="CodeEnd">translation stop codon</option>
-                <option value="End" selected>Stop</option>
+                <option value="Start">Transcription Start <sup>***</sup></option>
+                <option value="CodeStart">Translation Start (ATG)</option>
+                <option value="CodeEnd">Translation Stop Codon</option>
+                <option value="End" selected>Transcription Stop <sup>***</sup></option>
               </select>
             </td>
             <td align="left">
@@ -90,4 +90,8 @@
     </tr>
     <tr><td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
   </table>
+
+<p><sup>***</sup> Note: If UTRs have not been annotated for a gene, then choosing "transcription start" may have the same effect as choosing "translation start".</p>
+<br><br>
+
 </form>
