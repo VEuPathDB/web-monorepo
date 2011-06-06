@@ -20,25 +20,6 @@ then
   exit -1
 fi
 
-echo dumping gbrowse slow-query logs for sites with prefix ${PREFIX} on `uname -n`
-echo "gene-page switch: $GENEPAGE"
-
-DIVIDER="--------------------------------------------------------------------------------------------------------"
-# for SITE in `ls /var/www/Common/tmp/gbrowseLogs/${PREFIX}?.*.org/*_slow.log | sed 's/^.*gbrowseLogs\///'|sed 's/\/.*$//'|sort -u`
-# do
-#   echo $DIVIDER
-#   echo "${SITE} gbrowse:"
-#   echo
-# 
-#   cat /var/www/Common/tmp/gbrowseLogs/${SITE}/*slow.log | gbrowseSlowQueryReport -s .01 $GENEPAGE -t $STARTTIME
-# done
-
-echo
-echo "gbrowse combined:"
-echo
-
-cat /var/www/Common/tmp/gbrowseLogs/${PREFIX}?.*.org/*_slow.log | gbrowseSlowQueryReport -s .01 $GENEPAGE -t $STARTTIME
-
 SITES="tritrypdb3.0 trichdb1.2.4 cryptodb4.3.5 amoeba1.3.1 plasmo7.1.1 toxo6.3 giardiadb2.3.2"
 
 if [ "$PREFIX" = "w" ]

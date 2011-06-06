@@ -2,16 +2,38 @@
 use strict;
 use Getopt::Long;
 
-my ($server, $logfile, $queryName, $runtime);
+my ($server, $logfile, $queryName, $runtime, $rownum);
 
 &GetOptions('s=s' => \$server,
             'l=s' => \$logfile,
             'q=s' => \$queryName,
             'r=s' => \$runtime,
+            'n=s' => \$rownum,
             );
 
 
-usage() unless ($server && $logfile && $queryName && $runtime);
+usage() unless ($server && $logfile && $queryName && $runtime) || $rownum;
+
+if ($rownum) {
+  my $header = <STDIN>;
+  print $header;
+  while (my $line = <STDIN>) {
+    my $n = substr($line, 0, 3);
+    next if $n != $rownum;
+
+    print $line;
+    $server = substr($line, 108, 25);
+    $server =~ s/\s//g;
+    $logfile = substr($line, 133, 80);
+    $logfile =~ s/\s//g;
+    $queryName = substr($line, 4, 47);
+    $queryName =~ s/\s//g;
+    $runtime = substr($line, 101, 7);
+    # print "server >$server< logfile >$logfile< queryName >$queryName< runtime >$runtime<\n";
+    last;
+  }
+
+}
 
 open LOGFILE, "ssh $server cat $logfile |"
   or die "couldn't open ssh command to cat logfile";
@@ -43,12 +65,14 @@ Print a report summarizing the gbrowse slow query logs.
 Takes one or more logs on standard input.
 
 usage:  showGbrowseQuery -s <server> -l <logfile> -q <queryName> -r <runtime>
+        showGbrowseQuery -n <reportLineNumber>
 
 where:
-  <server> server name (e.g. q2.cryptodb.org)
-  <logfile> full pathname of log file (e.g. /var/www/Common/tmp/gbrowseLogs/w2.toxodb.org/very_slow.log)
-  <queryName> gbrowse query name (e.g. SNP:Stanford:bulkAttribute
-  <runtime>   query execution duration in seconds
+  <server>           server name (e.g. q2.cryptodb.org)
+  <logfile>          full pathname of log file (e.g. /var/www/Common/tmp/gbrowseLogs/w2.toxodb.org/very_slow.log)
+  <queryName>        gbrowse query name (e.g. SNP:Stanford:bulkAttribute
+  <runtime>          query execution duration in seconds
+  <reportLineNumber> line number (initial column) from gbrowseSlowQueryReport
 ";
   exit(1);
 }
