@@ -65,6 +65,8 @@ for (my $campus = 1; $campus <= 2; $campus++) {
 	  next if ($time_max && $absoluteTime > $time_max);
 	  next if ($width_min && $width < $width_min);
 	  next if ($width_max && $width > $width_max);
+	  next if ($absoluteTime =~ /[a-z,A-Z]/); # this happened: the "time" field had a word embedded in it
+
 	  $min_absolute_time = $absoluteTime if $absoluteTime < $min_absolute_time;  # the first time we have included
 	  $max_absolute_time = $absoluteTime if $absoluteTime > $max_absolute_time;  # the latest time we have included
 
@@ -98,11 +100,12 @@ my @sorted = sort {$b->[$sort_column-1] <=> $a->[$sort_column-1]} values(%$h);
 
 
 # name total_secs count avg_secs total_secs_over count_over  worst_secs
-  print sprintf("%47s%12s%8s%10s%12s%8s%7s\n",('Name','TotSecs','#','AvgSecs','SlowSecs','Slow_#','Worst', 'Server', 'Log File'));
+  print sprintf("%3s %47s%12s%8s%10s%12s%8s%7s%25s%80s\n",('  #', 'Name','TotSecs','Count','AvgSecs','SlowSecs','Slow_#','Worst', 'Server', 'Log File'));
 
+my $rownum;
 foreach my $a (@sorted) {
   my $avg = $a->[1] / $a->[2];
-  print sprintf("%47s%12.2f%8d%10.2f%12.2f%8d%7.2f%25s%80s\n",($a->[0],$a->[1],$a->[2],$avg,$a->[3],$a->[4],$a->[5],$a->[6],$a->[7]));
+  print sprintf("%3d %47s%12.2f%8d%10.2f%12.2f%8d%7.2f%25s%80s\n",++$rownum,($a->[0],$a->[1],$a->[2],$avg,$a->[3],$a->[4],$a->[5],$a->[6],$a->[7]));
 }
 
 print "\nActual time start: " . localtime($min_absolute_time) . " ($min_absolute_time)\n";
