@@ -13,7 +13,7 @@
 
 <c:set var="toxoQuestions" value="GeneQuestions.GenesByTgVegRNASeqExpressionPercentile" />
 
-<c:set var="tritrypQuestions" value="T.b.study:Blood Form vs. Procyclic Form (Cross),GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile,T.b.study:Splice Sites (Nilsson),GeneQuestions.GenesByTrypFoldChangeNilsson,GeneQuestions.GenesByExprPercentileNilssonSpliceSites,GeneQuestions.GenesByBruceiSpliceSites,T.b.study:Cell Cycle (Archer),GeneQuestions.GenesByCellCycleRnaSeq,GeneQuestions.GenesByExprPercentileTbCellCyc,GeneQuestions.GenesByTbCellCycFoldChange,T.c.study:Splice Leader Sites (Nilsson),GeneQuestions.GenesByCruziSpliceSites"/>
+<c:set var="tritrypQuestions" value="T.b.study:Blood Form vs. Procyclic Form (Cross),GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile,T.b.study:Splice Sites (Nilsson),GeneQuestions.GenesByTrypFoldChangeNilssonTbrucei,GeneQuestions.GenesByExprPercentileNilssonTbruceiSpliceSites,GeneQuestions.GenesByTbruceiSpliceSites,T.b.study:Cell Cycle (Archer),GeneQuestions.GenesByCellCycleRnaSeq,GeneQuestions.GenesByExprPercentileTbCellCyc,GeneQuestions.GenesByTbCellCycFoldChange,T.c.study:Splice Leader Sites (Nilsson),GeneQuestions.GenesByTrypFoldChangeNilssonTcruzi,GeneQuestions.GenesByExprPercentileNilssonTcruziSpliceSites,GeneQuestions.GenesByTcruziSpliceSites"/>
 <%-- END OF QUESTIONS --%>
 
 <wdk:errors/>
