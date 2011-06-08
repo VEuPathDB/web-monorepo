@@ -490,6 +490,40 @@ sub bgColorForSpliceAndPaSites {
   return 'lightslategray';
 }
 
+
+sub colorBySpliceSiteCount {
+  my ($f) = @_;
+  $f = $f->parent if (! $f->get_tag_values('count_per_mill'));
+  my ($count) = $f->get_tag_values('count_per_mill');
+  my $strand = $f->strand;
+  if($strand eq '+'){
+    if ($count < 2) {
+      return 'lightskyblue';
+    } elsif ($count < 10) {
+      return 'cornflowerblue';
+    } elsif ($count < 100) {
+      return 'blue';
+    } elsif ($count < 1000) {
+      return 'navy';
+    } else {
+      return 'black';
+    }
+  } else {
+    if ($count < 2) {
+      return '#FFCCCC';
+    } elsif ($count < 10) {
+      return 'pink';
+    } elsif ($count < 100) {
+      return 'orange';
+    } elsif ($count < 1000) {
+      return 'tomato';
+    } else {
+      return 'firebrick';
+    }
+  }
+}
+
+
 sub colorForSpliceSites {
   my ($f) = @_;
   my ($name) = $f->get_tag_values('sample_name');
