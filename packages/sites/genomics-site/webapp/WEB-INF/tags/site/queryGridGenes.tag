@@ -50,7 +50,7 @@
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOldAnnotation" linktext="Old Annotation (v 5.5)"  existsOn="A P"/>
                 </tr>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithUpdatedAnnotation" linktext="Updated Annotation"  existsOn="A P Tr"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithUpdatedAnnotation" linktext="Updated Annotation"  existsOn="A P Tt"/>
                 </tr>
                 <tr><td class="lines2">&nbsp;</td></tr>
 
