@@ -121,12 +121,25 @@ function changeLabel(){
 }
 
 
-function updateDatabaseTypeOnclick(){
+function updateDatabaseTypeOnclick(question){
+  var questionLow = question.toLowerCase();
+  // disable options based on the selected question
   algos = document.getElementsByName('array(BlastDatabaseType)');
   for(var i = 0; i < algos.length; i++)
   {
-       var obj = algos.item(i);
-       obj.onclick =function() { checkSequenceLength();changeQuestion();getBlastAlgorithm(); }
+       var alg = algos[i];
+       var type = alg.value;
+       var disabled = true;
+       if (question == "UnifiedBlast"
+           || questionLow.match(type.toLowerCase()) != null
+           || (question == "GenesBySimilarity" && (type == "Transcripts" || type == "Proteins"))
+           || (question == "SequencesBySimilarity" && type == "Genome")
+          ) { 
+           disabled = false;
+       }
+       if (disabled) $(alg).attr("disabled", "disabled")
+       else $(alg).removeAttr("disabled");
+       alg.onclick =function() { checkSequenceLength();changeQuestion();getBlastAlgorithm(); }
   }
 }
 
@@ -137,7 +150,7 @@ function getBlastAlgorithm() {
 
 	types = document.getElementsByName("array(BlastDatabaseType)");
 
-    for(var t = 0; t < document.getElementsByName("array(BlastDatabaseType)").length; t++){
+    for(var t = 0; t < types.length; t++){
 		if(types[t].checked)
 			type = types[t].value;
 	}

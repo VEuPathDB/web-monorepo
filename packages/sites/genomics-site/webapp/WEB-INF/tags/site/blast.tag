@@ -142,7 +142,7 @@ changeQuestion();getBlastAlgorithm();
 		            <wdk:enumParamInput qp="${qP}" />
 
 <script type="text/javascript" >
-updateDatabaseTypeOnclick();
+updateDatabaseTypeOnclick("${wdkQuestion.name}");
 </script>
 
 
