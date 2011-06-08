@@ -186,6 +186,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
   <c:set var="gnCtxImg">
+    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
     <center><div id="${gnCtxDivId}"></div></center>
     
     <c:set var="gbrowseUrl">

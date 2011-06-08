@@ -154,6 +154,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
   <c:set var="gnCtxImg">
+    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
     <center><div id="${gnCtxDivId}"></div></center>
     
     <c:set var="gbrowseUrl">

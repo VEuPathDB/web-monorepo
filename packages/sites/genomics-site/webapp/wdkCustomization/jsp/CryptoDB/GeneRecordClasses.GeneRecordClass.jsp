@@ -194,6 +194,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
   <c:set var="gnCtxImg">
+    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
     <center><div id="${gnCtxDivId}"></div></center>
     
     <c:set var="gbrowseUrl">

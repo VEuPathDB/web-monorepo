@@ -241,6 +241,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
   <c:set var="gnCtxImg">
+    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
     <center><div id="${gnCtxDivId}"></div></center>
     
     <c:set var="gbrowseUrl">

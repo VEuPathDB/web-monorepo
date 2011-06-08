@@ -1167,9 +1167,16 @@ td {
 a#gbView {
     background: transparent url('../images/button-design.gif') no-repeat scroll top right;
     display: block;
-    float: left;
+/*    float: left; */
     height: 24px;
     padding-left: 7px;
     padding-right: 9px;
     padding-top: 5px;
+    width: 140px;
+    margin: 0px auto;
+}
+
+#gnCtx {
+    height: 500px;
+    overflow: auto;
 }
