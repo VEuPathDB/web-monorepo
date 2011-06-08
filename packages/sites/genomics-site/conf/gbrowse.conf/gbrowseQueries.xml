@@ -1043,16 +1043,7 @@ SELECT
 FROM (
  SELECT 
        distinct ssf.splice_site_feature_id, ssf.location, ssf.strand,
-       CASE WHEN (ssf.sample_name = 'T.brucei bloodstream 427 SLT') THEN 'T.brucei bloodstream (Lister 427)'
-            WHEN (ssf.sample_name = 'T.brucei Long Slender SLT') THEN 'T.brucei bloodstream long slender (Antat1.1)'
-            WHEN (ssf.sample_name = 'T.brucei Short Stumpy SLT') THEN 'T.brucei bloodstream short stumpy (Antat1.1)'
-            WHEN (ssf.sample_name = 'T.brucei procyclic_late SLT') THEN 'T.brucei bloodstream procyclic (Antat1.1)'
-            WHEN (ssf.sample_name = 'T.brucei Alba 1 non-induced SLT') THEN 'T.brucei Alba 1- (29-13, RNAi)'
-            WHEN (ssf.sample_name = 'T.brucei Alba 1 induced SLT') THEN 'T.brucei Alba 1+ (29-13, RNAi)'
-            WHEN (ssf.sample_name = 'T.brucei Alba 3 and 4 non-induced SLT') THEN 'T.brucei Alba 3_4- (29-13, RNAi)'
-            WHEN (ssf.sample_name = 'T.brucei Alba 3 and 4 induced SLT') THEN 'T.brucei Alba 3_4+ (29-13, RNAi)'
-            ELSE ssf.sample_name END AS sample_name,
-       ssf.count_per_million, ssf.is_unique, ssf.avg_mismatches,
+       ssf.sample_name, ssf.count_per_million, ssf.is_unique, ssf.avg_mismatches,
        gtable.source_id, gtable.utr_len
  FROM  apidb.spliceSiteFeature ssf
  LEFT JOIN (SELECT source_id , sample_name, location, strand,
