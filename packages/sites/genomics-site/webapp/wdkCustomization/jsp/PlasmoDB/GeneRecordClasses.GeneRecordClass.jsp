@@ -489,6 +489,11 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     </td></tr>
   </table>
 --%>
+
+<wdk:wdkTable tblName="RodMalPhenotype" isOpen="false"
+               attribution=""/>
+
+
   <c:if test="${isCodingGene}">
     <wdk:wdkTable tblName="MetabolicPathways" attribution="ecMappings_Hagai"/>
   </c:if>
