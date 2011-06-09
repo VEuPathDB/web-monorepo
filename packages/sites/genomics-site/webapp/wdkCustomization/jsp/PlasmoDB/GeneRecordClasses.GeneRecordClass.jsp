@@ -474,8 +474,13 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
-<c:if test="${binomial eq 'Plasmodium falciparum'}">
   <wdk:wdkTable tblName="Notes" attribution="P.falciparum_chromosomes"/>
+
+
+<c:if test="${binomial eq 'Plasmodium falciparum'}">
+
+<wdk:wdkTable tblName="RodMalPhenotype" isOpen="false"
+               attribution="Pf_Phenotype_DBRefs_RSRC,Pb_RMgm_Phenotype_DBRefs_RSRC,Pc_Phenotype_DBRefs_RSRC,Pv_Phenotype_DBRefs_RSRC"/>
   
   <!-- publications -->
 
@@ -489,10 +494,6 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     </td></tr>
   </table>
 --%>
-
-<wdk:wdkTable tblName="RodMalPhenotype" isOpen="false"
-               attribution=""/>
-
 
   <c:if test="${isCodingGene}">
     <wdk:wdkTable tblName="MetabolicPathways" attribution="ecMappings_Hagai"/>
