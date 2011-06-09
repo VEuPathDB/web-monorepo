@@ -1361,6 +1361,8 @@ SELECT bacs.feature_id,
 FROM (
 SELECT CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
               THEN regexp_substr(etn.source_id, '(.*)[^(X)(Y)]')
+       WHEN (tn.name like 'Toxoplasma%' AND etn.secondary_identifier IS NOT NULL)
+              THEN regexp_substr(etn.secondary_identifier, '(.*)[^_forward|_reverse]')
        WHEN tn.name like 'Toxoplasma%'
               THEN regexp_substr(etn.source_id, '(.*)[^T(V|H)]')
        END feature_id,
@@ -4456,6 +4458,8 @@ SELECT blat.blat_alignment_id feature_id,
 etn.source_id name, 
  CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
          THEN regexp_substr(etn.source_id, '(.*)[^(X)(Y)]')
+      WHEN (tn.name like 'Toxoplasma%' AND etn.secondary_identifier IS NOT NULL)
+         THEN regexp_substr(etn.secondary_identifier, '(.*)[^_forward|_reverse]')
       WHEN tn.name like 'Toxoplasma%'
          THEN regexp_substr(etn.source_id, '(.*)[^T(V|H)]')
   END parent_id,
