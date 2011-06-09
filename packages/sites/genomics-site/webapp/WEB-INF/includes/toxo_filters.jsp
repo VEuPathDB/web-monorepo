@@ -16,6 +16,7 @@
     <th align="center">Tg<br>Results</th>
     <th align="center">Tg<br>Genes</th>
     <th align="center">Nc<br>Genes</th>
+    <th align="center">Et<br>Genes</th>
     <th colspan=2 align="center">GT1</th>
     <th colspan=2 align="center">ME49</th>
     <th colspan=2 align="center">VEG</th>
@@ -48,6 +49,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="neospora_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="eimeria_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 

@@ -15,8 +15,10 @@
     <th align="center">All<br>Results</th>
     <th align="center">Ortholog<br>Groups</th>
     <th align="center"><i>Encephalitozoon cuniculi </i></th>
+    <th align="center"><i>Encephalitozoon hellem </i></th>
     <th align="center"><i>Encephalitozoon intestinalis</i></th>
     <th align="center"><i>Enterocytozoon bieneusi</i></th>
+    <th align="center"><i>Nosema ceranae</i></th>
   </tr>
   <tr align="center">
     <td>
@@ -41,6 +43,12 @@
       <wdk:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
+                          instanceName="ehel_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
                           instanceName="eint_genes" />  
     </td>
     <td>
@@ -48,6 +56,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="ebie_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="ncer_genes" />  
     </td>
   </tr>
 </table>
