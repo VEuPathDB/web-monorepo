@@ -101,8 +101,11 @@
 
 </c:if>
 
-<%-- RFLP table ------------------------------------------------%>
+<%-- RFLP tables ------------------------------------------------%>
 <c:if test="${data_type eq 'RFLP Typed'}">
+
+<wdk:wdkTable tblName="RFLPgenotype" isOpen="true"
+     attribution=""/>
 
 <wdk:wdkTable tblName="RFLPdata" isOpen="true"
      attribution=""/>
