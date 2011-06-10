@@ -124,17 +124,27 @@ ${attrs['organism'].value}<br>
 <c:choose>
   <c:when test='${organism_full eq "Encephalitozoon cuniculi GB-M1"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+Repeat+EST+BLASTX
+      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEHellem+SyntenyGenesEHellem+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+SyntenySpansNcerenae+SyntenyGenesNcerenae+Repeat+EST+BLASTX
     </c:set>
   </c:when>
   <c:when test='${organism_full eq "Encephalitozoon intestinalis"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+Repeat+EST+BLASTX
+      Gene+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansEHellem+SyntenyGenesEHellem+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+SyntenySpansNcerenae+SyntenyGenesNcerenae+Repeat+EST+BLASTX
+    </c:set>
+  </c:when>
+  <c:when test='${organism_full eq "Encephalitozoon hellem ATCC 50504"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+SyntenySpansNcerenae+SyntenyGenesNcerenae+Repeat+EST+BLASTX
     </c:set>
   </c:when>
   <c:when test='${organism_full eq "Enterocytozoon bieneusi H348"}'>
     <c:set var="gtracks">
-      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEcuniculi+SyntenyGenesEcuniculi++Repeat+EST+BLASTX
+      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEHellem+SyntenyGenesEHellem+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansNcerenae+SyntenyGenesNcerenae+Repeat+EST+BLASTX
+    </c:set>
+  </c:when>
+  <c:when test='${organism_full eq "Nosema ceranae BRL01"}'>
+    <c:set var="gtracks">
+      Gene+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEHellem+SyntenyGenesEHellem+Repeat+EST+BLASTX
     </c:set>
   </c:when>
 
@@ -427,6 +437,16 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 <c:when test='${organism_full eq "Enterocytozoon bieneusi H348"}'>
   <c:set var="reference">
    Sequence and annotations from Genbank for Enterocytozoon bieneusi H348 contigs.
+  </c:set>
+</c:when>
+<c:when test='${organism_full eq "Encephalitozoon hellem ATCC 50504"}'>
+  <c:set var="reference">
+Genome Sequence for Encephalitozoon hellem ATCC 50504 strain for downloaded from Genbank (GenomeProject ID #53973). Sequence provided by University of British Columbia. For information on this project, please refer <a href="http://www.ncbi.nlm.nih.gov/genomes/mpfsubmission.cgi?show=0E17799A-B7C0-44F1-A121-834EB85764D3">this page</a> 
+ </c:set>
+</c:when>
+<c:when test='${organism_full eq "Nosema ceranae BRL01"}'>
+  <c:set var="reference">
+WGS assembly for Nosema ceranae BRL01 was described by <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/19503607">Cornman RS et. al.</a> and downloaded from Genbank (<a target="_blank" href="http://www.ncbi.nlm.nih.gov/nuccore/ACOL00000000">N.ceranae Genbank Record</a>)
   </c:set>
 </c:when>
 </c:choose>

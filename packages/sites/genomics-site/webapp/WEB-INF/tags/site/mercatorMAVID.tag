@@ -203,13 +203,19 @@ return true;
         <table>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="e_cuniculi" checked>E.cuniculi
+              <input type="checkbox" name="genomes" value="Ecuniculi" checked>E.cuniculi
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="e_intestinalis" checked>E.intestinalis
+              <input type="checkbox" name="genomes" value="Eintestinalis" checked>E.intestinalis
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="e_bieneusi" checked>E.bieneusi
+              <input type="checkbox" name="genomes" value="Ebieneusi" checked>E.bieneusi
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="EhellemATCC50504" checked>E.hellem
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="NceranaeBRL01" checked>N.cerenae
             </td>
            </tr>
          </table>
