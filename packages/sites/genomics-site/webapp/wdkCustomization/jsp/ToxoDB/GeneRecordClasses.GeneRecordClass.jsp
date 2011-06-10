@@ -161,8 +161,8 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <!-- deal with specific contexts depending on organism -->
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
  <!--Alternate Gene Models are taking time are hence being currently avoided in the record page -->
- <!-- c:set var="tracks" value="Version4Genes+Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+ChIPEinsteinPLK+ChIPEinsteinRHPeaks+ChIPEinsteinPLKPeaks+ChIPEinsteinTypeIIIPeaks" -->
- <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+RnaSeqTgVEGTachyzoiteReidDay4+ChIPEinsteinPLK+ChIPEinsteinME1"/>
+ <!-- c:set var="tracks" value="Version4Genes+Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+SyntenySpanEimeria+SyntenyEimeria+ChIPEinsteinPLK+ChIPEinsteinRHPeaks+ChIPEinsteinPLKPeaks+ChIPEinsteinTypeIIIPeaks" -->
+ <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora+SyntenySpanEimeria+SyntenyEimeria+RnaSeqTgVEGTachyzoiteReidDay4+ChIPEinsteinPLK+ChIPEinsteinME1"/>
 </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1'}">
      <c:set var="tracks" value="Gene+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG+SyntenySpanNeospora+SyntenyNeospora"/>
@@ -171,7 +171,10 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
      <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanNeospora+SyntenyNeospora"/>
 </c:if>
 <c:if test="${organism_full eq 'Neospora caninum'}">
-     <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG+RnaSeqTgNcTachyzoiteReidDay4"/>
+     <c:set var="tracks" value="Gene+SyntenySpanGT1+SyntenyGT1+SyntenySpanME49+SyntenyME49+SyntenySpanVEG+SyntenyVEG+SyntenySpanEimeria+SyntenyEimeria+RnaSeqTgNcTachyzoiteReidDay4"/>
+</c:if>
+<c:if test="${organism_full eq 'Eimeria tenella str. Houghton'}">
+     <c:set var="tracks" value="Gene+SyntenySpanME49+SyntenyME49+SyntenySpanNeospora+SyntenyNeospora+BLASTX"/>
 </c:if>
 
 <c:set var="attribution">
@@ -590,6 +593,11 @@ Chromosome sequences and annotation for <i>Neospora caninum</i> obtained from th
   <c:set var="reference">
 Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David Roos (University of Pennsylvania), Jessica Kissinger (University of Georgia).The apicoplast genome of <i>T. gondii</i> RH (Type I) strain is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799"TARGET="_blank">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html"TARGET="_blank">here</a> to view a map of the <i>T. gondii</i> apicoplast. 
   </c:set>
+</c:when>
+<c:when test='${organism_full eq "Eimeria tenella str. Houghton" }'>
+  <c:set var="reference">
+Sequence data and annotations for Eimeria tenella Houghton strain were produced by GeneDB.
+</c:set>
 </c:when>
 
 <c:otherwise>
