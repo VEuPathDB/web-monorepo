@@ -178,8 +178,8 @@
 <div><b>Data sources:</b></div>
 <div>
   <ul> 
-  <li><a href="/toxo1.0.hwang/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPSequences"> Toxoplasma RFLP sequences from Chunlei Su </a> </li> 
-  <li><a href="/toxo1.0.hwang/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPs"> Toxoplasma RFLPs from Chunlei Su </a> </li> 
+  <li><a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPSequences"> Toxoplasma RFLP sequences from Chunlei Su </a> </li> 
+  <li><a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPs"> Toxoplasma RFLPs from Chunlei Su </a> </li> 
   </ul> 
 </div> 
 
