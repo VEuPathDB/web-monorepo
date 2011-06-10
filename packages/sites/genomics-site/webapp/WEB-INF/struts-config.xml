@@ -81,7 +81,7 @@
       scope="request"
       validate="false">
     </action>
-	<action
+    <action
       path="/expandStep"
       type="org.gusdb.wdk.controller.action.ExpandStepAction"
       scope="request"
