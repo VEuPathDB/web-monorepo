@@ -5993,13 +5993,15 @@ GROUP BY interval
      SELECT start_interval feature_id,
              'NextGenSeq' type,
              '$source' source,
-              decode(is_reversed, 1, -1, 1)*abs(log(2,max(coverage))) score, 
+             strand,
+             decode(strand, '-1', -1, 1)*abs(log(2,max(coverage))) score, 
              $$sample$$ parent_id,
              start_interval * (($rend - $base_start + 1) / 800) startm,
              end_interval * (($rend - $base_start + 1) / 800) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
     FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
-                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval,csc.is_reversed, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval,
+                 decode (csc.is_reversed, 0, '+1', 1, '-1', '.') strand, 
                  csc.coverage, csc.sample,csc.multiple
        FROM  apidb.NextGenSeqCoverage csc,
              sres.externaldatabaserelease edr,
@@ -6011,7 +6013,7 @@ GROUP BY interval
          AND csc.sample = $$sample$$
          AND csc.mapping_start + 1 <= $rend
          AND csc.mapping_end >= $base_start - 1)
-       GROUP BY start_interval,end_interval,sample,is_reversed,multiple
+       GROUP BY start_interval,end_interval,sample,strand,multiple
 ]]>
     </sql>
   </sqlQuery>
