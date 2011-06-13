@@ -94,7 +94,7 @@ print "\n(requests with unknown gene names: $h{'unknown'})\n\n";
 sub usage {
 
 print "
-Count gene pages requested in the apache access log.  Uses '$uniquePerPage' as a string that reliably appears one per gene page in the log, and excluding that contains '$exclude';
+Count gene pages requested in the apache access log (from STDIN).  Uses '$uniquePerPage' as a string that reliably appears one per gene page in the log, and excluding that contains '$exclude';
 
 usage:  countGenePagesInAccessLog [-h | -t starttime[,endtime]]
 
