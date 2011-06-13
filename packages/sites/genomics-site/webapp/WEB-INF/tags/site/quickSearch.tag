@@ -87,7 +87,7 @@
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" 
-title="Enter a term to find genes. Use * as a wildcard. Use quotation marks to find phrase matches. Click to access the advanced gene search page">Gene Text Search:</a></b></label>
+title="Enter a term to find genes. Use * as a wildcard in a word (cannot run a search for just *). Use quotation marks to find phrase matches. Click to access the advanced gene search page">Gene Text Search:</a></b></label>
 
           <c:set var="textFields" value="Gene ID,Alias,Gene product,GO terms and definitions,Gene notes,User comments,Protein domain names and descriptions,EC descriptions"/>
           <c:if test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
