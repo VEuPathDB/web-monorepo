@@ -2,7 +2,7 @@
 use strict;
 use Getopt::Long;
 
-my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile, $qOrW);
+my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile, $qOrW, %earliest, %latest, %count);
 
 $sort_column=2;
 &GetOptions('s=s' => \$threshold,
@@ -67,6 +67,10 @@ for (my $campus = 1; $campus <= 2; $campus++) {
 	  next if ($width_max && $width > $width_max);
 	  next if ($absoluteTime =~ /[a-z,A-Z]/); # this happened: the "time" field had a word embedded in it
 
+          # update per-file statistics
+          $earliest{$logFileName} = $absoluteTime if (!$earliest{$logFileName} || $absoluteTime < $earliest{$logFileName});
+          $latest{$logFileName} = $absoluteTime if (!$latest{$logFileName} || $absoluteTime > $latest{$logFileName});
+          $count{$logFileName}++;
 	  $min_absolute_time = $absoluteTime if $absoluteTime < $min_absolute_time;  # the first time we have included
 	  $max_absolute_time = $absoluteTime if $absoluteTime > $max_absolute_time;  # the latest time we have included
 
@@ -111,6 +115,11 @@ foreach my $a (@sorted) {
 print "\nActual time start: " . localtime($min_absolute_time) . " ($min_absolute_time)\n";
 print   "Actual time end:   " . localtime($max_absolute_time) . " ($max_absolute_time)\n\n";
 
+print "statistics by log file:\n";
+print sprintf("%5s %24s  %24s %60s\n", "#", "earliest", "latest", "file");
+foreach my $f (sort(keys %count)) {
+  print sprintf("%5d %24s  %24s %60s\n", $count{$f}, scalar(localtime($earliest{$f})), scalar(localtime($latest{$f})), $f);
+}
 
 sub usage {
   print STDERR "
