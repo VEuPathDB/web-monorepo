@@ -438,9 +438,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 
-<site:pageDivider name="Expression"/>
+
 
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
+
+<site:pageDivider name="Expression"/>
 
  <%-- ------------------------------------------------------------------ --%>
 
@@ -500,6 +502,7 @@ experimental condition.
 
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1' || organism_full eq 'Toxoplasma gondii VEG'}">
 
+<site:pageDivider name="Expression"/>
 
 <wdk:wdkTable tblName="ToxoExpandStrainsMicroarray" isOpen="true"
                    attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
