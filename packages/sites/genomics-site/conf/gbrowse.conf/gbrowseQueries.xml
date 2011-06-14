@@ -909,6 +909,20 @@ WHERE  edr.external_database_id = ed.external_database_id
     </sql>
   </sqlQuery>
 
+
+  <sqlQuery name="NextGenSeq:strandCoverageLogAlt2">
+     <sql>
+       <![CDATA[
+    SELECT $$sample$$   as feature_id,
+          'NextGenSeq'  as type, 
+          '$source'     as source,
+           $base_start  as startm,
+           $rend        as end  
+    FROM   dual 
+       ]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="NextGenSeq:coverageLog2"  includeProjects="ToxoDB">
      <sql>
        <![CDATA[
@@ -6009,6 +6023,38 @@ GROUP BY interval
              '$source' source,
              strand,
              decode(multiple, 1, -1, 1)*abs(log(2,max(coverage))) score, 
+             $$sample$$ parent_id,
+             start_interval * (($rend - $base_start + 1) / 800) startm,
+             end_interval * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
+    FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval,
+                 decode (csc.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+                 csc.coverage, csc.sample,csc.multiple
+       FROM  apidb.NextGenSeqCoverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$edname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.sample = $$sample$$
+         AND csc.mapping_start + 1 <= $rend
+         AND csc.mapping_end >= $base_start - 1)
+       GROUP BY start_interval,end_interval,sample,strand,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+
+   <sqlQuery name="NextGenSeq:strandCoverageLogAlt2:bulksubfeatures">
+     <sql>
+<![CDATA[
+     SELECT start_interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+             strand,
+             decode(strand, '-1', -1, 1)*abs(log(2,max(coverage))) score, 
              $$sample$$ parent_id,
              start_interval * (($rend - $base_start + 1) / 800) startm,
              end_interval * (($rend - $base_start + 1) / 800) end,
