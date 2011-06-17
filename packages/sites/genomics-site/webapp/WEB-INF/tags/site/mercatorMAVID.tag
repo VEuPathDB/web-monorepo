@@ -57,7 +57,7 @@ return true;
 </SCRIPT>
 
 <c:set var="cgiScript" value='mavidAlign'/>
-<c:if test="${(projectId eq 'TriTrypDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PiroplasmaDB') || (projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP')}">
+<c:if test="${(projectId eq 'TriTrypDB') || (projectId eq 'ToxoDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PiroplasmaDB') || (projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP')}">
   <c:set var="cgiScript" value='pairwiseMercator'/>
 </c:if>
 
@@ -178,6 +178,34 @@ return true;
          </table>
      </td></tr>
 </c:if>
+<c:if test="${projectId eq 'ToxoDB'}">
+
+   <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
+        <table>
+          <tr>
+            <td>
+              <input type="checkbox" name="genomes" value="TgondiiME49" checked>T.gondii ME49
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="TgondiiGT1" checked>T.gondii GT1
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="TgondiiVEG" checked>T.gondii VEG
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="TgondiiRH" checked>T.gondii RH
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="Ncaninum" checked>N.caninum
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="EtenellaHoughton" checked>E.tenella
+            </td>
+           </tr>
+         </table>
+     </td></tr>
+</c:if>
+
 <c:if test="${projectId eq 'PiroplasmaDB'}">
 
    <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
