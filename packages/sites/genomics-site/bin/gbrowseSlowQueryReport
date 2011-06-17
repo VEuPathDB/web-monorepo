@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 use strict;
 use Getopt::Long;
+use Time::Local;
 
-my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile, $qOrW, %earliest, %latest, %count);
+my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile, $qOrW, $logTailSize, $logDeathImmunity, %earliest, %latest, %count);
 
 $sort_column=2;
 &GetOptions('s=s' => \$threshold,
@@ -13,6 +14,8 @@ $sort_column=2;
             'c=s' => \$sort_column,
             'p=s' => \$plotOutputFile,
             'q=s' => \$qOrW,
+            'l=s' => \$logTailSize,
+            'i' => \$logDeathImmunity,
             );
 
 
@@ -41,7 +44,7 @@ if ($plotOutputFile) {
 my $min_absolute_time = 1000000000000000;
 my $max_absolute_time = 0;
 
-for (my $campus = 1; $campus <= 2; $campus++) {
+for (my $campus = 2; $campus <= 2; $campus++) { # should be 1, 2
     # print "files from campus $campus\n";
     my $server = "$qOrW$campus.cryptodb.org";
     open REMOTE_LS, "ssh $server ls /var/www/Common/tmp/gbrowseLogs/$qOrW$campus.*.org/*_slow.log |"
@@ -116,9 +119,56 @@ print "\nActual time start: " . localtime($min_absolute_time) . " ($min_absolute
 print   "Actual time end:   " . localtime($max_absolute_time) . " ($max_absolute_time)\n\n";
 
 print "statistics by log file:\n";
-print sprintf("%5s %24s  %24s %60s\n", "#", "earliest", "latest", "file");
+print sprintf("%7s %24s %24s %13s %60s\n", "queries", "--------earliest----", "---------latest-----", "page-requests", "-------------------------------file------------");
 foreach my $f (sort(keys %count)) {
-  print sprintf("%5d %24s  %24s %60s\n", $count{$f}, scalar(localtime($earliest{$f})), scalar(localtime($latest{$f})), $f);
+  $f =~ /(\w\w.\w*.org)/;
+  my $server = $1;
+  #print "found server \"$server\" in file \"$f\"\n";
+  my $pageRequestCount = getPageViews($server, $earliest{$f}, $latest{$f}, $logTailSize, $logDeathImmunity);
+  print sprintf("%7d %24s %24s %13d %60s\n", $count{$f}, scalar(localtime($earliest{$f})), scalar(localtime($latest{$f})), $pageRequestCount, $f);
+}
+
+sub getPageViews {
+  my ($server, $startTime, $endTime, $logTailSize, $logDeathImmunity) = @_;
+
+  die "endTime $endTime is less than startTime $startTime"
+    if $endTime < $startTime;
+
+  my $logTailSize = 200000 if !$logTailSize;
+  open LOGFILE, "ssh $server tail -$logTailSize /var/log/httpd/$server/access_log |"
+    or die "couldn't open ssh command to cat logfile";
+
+  my $minAbsoluteTime = 1000000000000000;
+  my $maxAbsoluteTime = -1;
+  my $uniquePerPage = 'GET /gbrowse/tmp/\w+aa';
+  my $genePageCount;
+
+  while(<LOGFILE>) {
+    m|\[(\d\d)/(\w\w\w)/(\d\d\d\d)\:(\d\d)\:(\d\d)\:(\d\d) ...... "(.*)"$|;
+    my ($mday, $mon_str, $year, $hour, $min, $sec, $command) = ($1, $2, $3, $4, $5, $6, $7);
+    my $months = {Jan=>0, Feb=>1, Mar=>2, Apr=>3, May=>4, Jun=>5, Jul=>6, Aug=>7, Sep=>8, Oct=>9, Nov=>10, Dec=>11};
+    my $day_str = "$mday, $mon_str, $year";
+    my $mon = $months->{$mon_str};
+    my $absoluteTime = timelocal($sec,$min,$hour,$mday,$mon,$year);
+
+    $minAbsoluteTime = $absoluteTime if $absoluteTime < $minAbsoluteTime;  # the first time we have included
+    $maxAbsoluteTime = $absoluteTime if $absoluteTime > $maxAbsoluteTime;  # the latest time we have included
+
+    $genePageCount++ if ($absoluteTime > $startTime && $absoluteTime < $endTime && $command =~ /$uniquePerPage/);
+  }
+
+  # print "$genePageCount gene pages between " . localtime($startTime) . " and " . localtime($endTime) . "\n";
+
+  # check that log file covers entire period of interest
+  # if this dies, consider setting a larger $logTailSize, or overriding with $logDeathImmunity
+  die "access log (" . localtime($minAbsoluteTime) . " to "
+    . localtime($maxAbsoluteTime) .  ") doesn't cover entire period of interest ("
+      . localtime($startTime) . " to " . localtime($endTime) .  ")"
+	if ($minAbsoluteTime > $startTime || $maxAbsoluteTime < $endTime)
+           && !$logDeathImmunity;
+
+  return $genePageCount;
+
 }
 
 sub usage {
@@ -140,6 +190,7 @@ where:
   -c:  column to sort on (default is 2, the total time)
   -p:  optional output file: a tab delimited file to pass as input
         to wdkSlowQueryPlot.  Used to visualize the query durations over time.
+  -l:  log tail size -- number of records of access log to analyze for
 
 ";
   exit(1);
