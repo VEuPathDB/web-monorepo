@@ -317,8 +317,9 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution="${attribution}"
   />
-</c:if> 
 --%>
+
+</c:if> 
 
 
 <%-- END DNA CONTEXT --------------------------------------------%>

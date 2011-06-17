@@ -170,8 +170,9 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution="${attribution}"
   />
-</c:if>
 --%>
+
+</c:if>
 
 
 <!-- gene alias table -->

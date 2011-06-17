@@ -178,8 +178,9 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution="${attribution}"
   />
-</c:if>
 --%>
+
+</c:if>
 
 <!-- gene alias table -->
 <%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
