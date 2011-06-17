@@ -138,6 +138,14 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 </c:set>
 
 <c:if test="${gtracks ne ''}">
+
+
+<site:gbrowse source_id="${id}" project_id="${projectId}" sequence_id="${contig}"
+              context_start_range="${context_start_range}" context_end_range="${context_end_range}"
+              tracks="${gtracks}" attribution="${attribution}" />
+
+
+<%--
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/trichdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
@@ -163,6 +171,8 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
     attribution="${attribution}"
   />
 </c:if>
+--%>
+
 
 <!-- gene alias table -->
 <wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>

@@ -181,7 +181,11 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,TgondiiRHChromosome1,TgondiiApicoplast,TIGRGeneIndices_Tgondii,dbEST,ESTAlignments_Tgondii,N.caninum_chromosomes,NeosporaUnassignedContigsSanger,TIGRGeneIndices_NeosporaCaninum
 </c:set>
 
+<site:gbrowse source_id="${id}" project_id="${projectId}" sequence_id="${sequence_id}"
+              context_start_range="${context_start_range}" context_end_range="${context_end_range}"
+              tracks="${tracks}" attribution="${attribution}" />
 
+<%--
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
@@ -206,6 +210,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution="${attribution}"
   />
+--%>
 
 <%-- END DNA CONTEXT --------------------------------------------%>
 

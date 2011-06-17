@@ -152,6 +152,12 @@ ${attrs['organism'].value}<br>
 <%-- G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblageE_contigsGB --%>
 </c:set>
 
+
+<site:gbrowse source_id="${id}" project_id="${projectId}" sequence_id="${sequence_id}"
+              context_start_range="${context_start_range}" context_end_range="${context_end_range}"
+              tracks="${gtracks}" attribution="${attribution}" />
+
+<%--
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/piroplasmadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
@@ -175,6 +181,8 @@ ${attrs['organism'].value}<br>
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution=""
   />
+--%>
+
 
 <%-- END DNA CONTEXT --------------------------------------------%>
 

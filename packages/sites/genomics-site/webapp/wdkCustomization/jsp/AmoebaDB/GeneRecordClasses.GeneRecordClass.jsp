@@ -147,6 +147,13 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 </c:set>
 
 <c:if test="${gtracks ne ''}">
+
+
+<site:gbrowse source_id="${id}" project_id="${projectId}" sequence_id="${contig}"
+              context_start_range="${context_start_range}" context_end_range="${context_end_range}"
+              tracks="${gtracks}" attribution="${attribution}" />
+
+<%--
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
@@ -172,6 +179,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
     attribution="${attribution}"
   />
 </c:if>
+--%>
 
 <!-- gene alias table -->
 <%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>

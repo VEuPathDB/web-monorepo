@@ -234,6 +234,14 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   Gene+UnifiedMassSpecPeptides+BLASTX
   </c:set>
 
+
+<site:gbrowse source_id="${id}" project_id="${projectId}" sequence_id="${contig}"
+              context_start_range="${context_start_range}" context_end_range="${context_end_range}"
+              tracks="${tracks}" attribution="${attribution}" />
+
+
+
+<%--
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
@@ -257,6 +265,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution="${attribution}"
   />
+--%>
 
 </c:if> <%-- {tracks ne ''} %-->
 

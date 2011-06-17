@@ -286,6 +286,13 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 </c:set>
 
 <c:if test="${tracks ne ''}">
+
+<site:gbrowse source_id="${id}" project_id="${projectId}" sequence_id="${sequence_id}"
+              context_start_range="${context_start_range}" context_end_range="${context_end_range}"
+              tracks="${tracks}" attribution="${attribution}" />
+
+
+<%--
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
@@ -311,6 +318,8 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     attribution="${attribution}"
   />
 </c:if> 
+--%>
+
 
 <%-- END DNA CONTEXT --------------------------------------------%>
 
