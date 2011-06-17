@@ -363,7 +363,7 @@ ORDER BY
      <![CDATA[
       SELECT rum_intron_feature_id feature_id,
              'rum' type, 
-             'intron' source, 
+             '$source' source, 
              rif.sample_name name, 
              score score, 
              na_sequence_id parent_id, 
@@ -378,13 +378,18 @@ ORDER BY
             'KnownINtron=' || rif.known_intron || '$dlm' ||
             'Canonical=' || rif.signal_not_canonical || '$dlm' ||
             'Sample=' || sample_name atts
-      FROM   apidb.RUMIntronFeature rif 
+      FROM   apidb.RUMIntronFeature rif, 
+             sres.externaldatabase edb,
+             sres.externaldatabaserelease edbr 
       WHERE  rif.mapping_start <= $rend 
          AND rif.mapping_end >= $base_start 
          AND rif.na_sequence_id = $srcfeature_id
          AND mapping_end - mapping_start < 2000
          AND score > 1
-         --AND known_intron = 1
+         --AND known_intron = 1 
+         AND rif.external_database_release_id = edbr.external_database_release_id 
+         AND edb.external_database_id = edbr.external_database_id 
+         AND edb.name = $$edname$$
       ORDER BY rif.mapping_start, rif.sample_name
     ]]>
     </sql>
