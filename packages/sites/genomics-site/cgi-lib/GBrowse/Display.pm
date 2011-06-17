@@ -174,24 +174,26 @@ sub sageTagUniqueMapFgColor {
 sub rumIntronBgColorFromSample {
   my $f = shift;
 
-  my %colors = (#PlasmoDB
-                'Hour0'  => 'mediumslateblue',
-                'Hour5'  => 'mediumslateblue', 
+  my %colors = (#Pf-RNASeq_Newbold
+                'Hour0'  => 'lightblue',
                 'Hour8'  => 'mediumslateblue',
-                'Hour10' => 'mediumblue',
-                'Hour15' => 'brown',
                 'Hour16' => 'sandybrown',
-                'Hour20' => 'rosybrown',
                 'Hour24' => 'brown',
-                'Hour25' => 'rosybrown',
-                'Hour30' => 'maroon',
                 'Hour32' => 'darksalmon',
-                'Hour35' => 'sandybrown',
-                'Hour40' => 'sienna',
                 'Hour48' => 'peachpuff',
+                #Pf-RNASeq_Duffy
                 '3D7'    => 'peru',
                 'PL01'   => 'darkkhaki', 
-                'PL02'   => 'brown'
+                'PL02'   => 'brown',
+                #Pf-RNASeq_Stunnenberg
+                'Hour5'  => 'mediumslateblue', 
+                'Hour10' => 'mediumblue',
+                'Hour15' => 'lightblue',
+                'Hour20' => 'rosybrown',
+                'Hour25' => 'brown',
+                'Hour30' => 'maroon',
+                'Hour35' => 'sandybrown',
+                'Hour40' => 'sienna'
                 );  
 
   my ($sample) = $f->get_tag_values('Sample'); 
