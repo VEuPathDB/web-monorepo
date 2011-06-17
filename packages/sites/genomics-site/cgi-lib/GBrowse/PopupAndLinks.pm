@@ -662,9 +662,12 @@ sub rumIntronTitle {
   my ($sonr) =  $f->get_tag_values('SONR');
   my ($canonical) =  $f->get_tag_values('Canonical');
   my ($knowintron) = $f->get_tag_values('KnownIntron');
+  my $start = $f->start;
+  my $stop = $f->stop;
 
   my @data;
   push @data, [ 'Sample:' => $sample ];
+  push @data, [ 'Genome Location:' => "$start - $stop"];
   push @data, [ 'Score'   => $f->score ];
   push @data, [ 'Signal is canonical:'        => "$canonical" ];
   push @data, [ 'Long Overlap Unique Reads:'  => "$lour" ];
