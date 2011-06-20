@@ -82,8 +82,11 @@
   <c:when test="${fn:contains(organism,'yoelii')}">
     <c:set var="species" value="yoelii"/>
   </c:when>
-  <c:when test="${fn:contains(organism,'falciparum')}">
-    <c:set var="species" value="falciparum"/>
+  <c:when test="${fn:contains(organism,'falciparum 3D7')}">
+    <c:set var="species" value="falciparum3D7"/>
+  </c:when>
+  <c:when test="${fn:contains(organism,'falciparum IT')}">
+    <c:set var="species" value="falciparumIT"/>
   </c:when>
   <c:when test="${fn:contains(organism,'berghei')}">
     <c:set var="species" value="berghei"/>
@@ -123,7 +126,7 @@
   </td>
   </c:if>
 
-  <c:if test="${species eq 'falciparum' || species eq 'berghei' || species eq 'yoelii' || species eq 'vivax'}">
+  <c:if test="${species eq 'falciparum3D7' || species eq 'berghei' || species eq 'yoelii' || species eq 'vivax'}">
   <td align="center"><a href="#Expression">Expression</a>
      <img src="<c:url value='/images/arrow.gif'/>">
   </td>
@@ -244,34 +247,39 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <%-- DNA CONTEXT ------------%>
 
 <c:choose>
-  <c:when test="${species eq 'falciparum'}">
+  <c:when test="${species eq 'falciparum3D7'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+CombinedSNPs
+      AnnotatedGenes+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+CombinedSNPs
     </c:set>
   </c:when>
   <c:when test="${species eq 'yoelii'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC
     </c:set>
   </c:when>
   <c:when test="${species eq 'chabaudi'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
+    </c:set>
+  </c:when>
+  <c:when test="${species eq 'falciparumIT'}">
+    <c:set var="tracks">
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC
     </c:set>
   </c:when>
   <c:when test="${species eq 'berghei'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
     </c:set>
   </c:when>
   <c:when test="${species eq 'knowlesi'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenyGenesVivaxMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
     </c:set>
   </c:when>
   <c:when test="${species eq 'vivax'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
+      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
     </c:set>
   </c:when>
   <c:otherwise>
@@ -328,14 +336,14 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 
-<c:if test="${binomial eq 'Plasmodium falciparum'}">
+<c:if test="${species eq 'falciparum3D7'}">
     <wdk:wdkTable tblName="SNPs" isOpen="false"
                    attribution="Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps"/>
 </c:if>
 
 
 <%-- version 5.5 genes --%>
-<c:if test="${binomial eq 'Plasmodium falciparum'}">
+<c:if test="${species eq 'falciparum3D7'}">
 <wdk:wdkTable tblName="PlasmoVer5Genes" isOpen="true"
                attribution="" />
 </c:if>
@@ -391,7 +399,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 
-<c:if test="${binomial ne 'Plasmodium falciparum'}">
+<c:if test="${species eq 'falciparum3D7'}">
   <div align="center">
       <i>The ${binomial} genome is not finished.  Please consult Plasmodium orthologs to support your conclusions.</i><br><br>
   </div>
@@ -455,7 +463,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 </c:if>
 <%--</c:if>--%>
 
-<c:if test="${binomial eq 'Plasmodium falciparum'}">
+<c:if test="${species eq 'falciparum3D7'}">
   <a name="ecNumber"></a>
   <c:if test="${isCodingGene}">
     <wdk:wdkTable tblName="EcNumber" isOpen="false"
@@ -482,7 +490,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <wdk:wdkTable tblName="Notes" attribution="P.falciparum_chromosomes"/>
 
 
-<c:if test="${binomial eq 'Plasmodium falciparum'}">
+<c:if test="${species eq 'falciparum3D7'}">
 
 <wdk:wdkTable tblName="RodMalPhenotype" isOpen="false"
                attribution="Pf_Phenotype_DBRefs_RSRC,Pb_RMgm_Phenotype_DBRefs_RSRC,Pc_Phenotype_DBRefs_RSRC,Pv_Phenotype_DBRefs_RSRC"/>
@@ -521,7 +529,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${isCodingGene}">
   <site:pageDivider name="Protein"/>
 
-  <c:if test="${species eq 'falciparum'}">
+  <c:if test="${species eq 'falciparum3D7'}">
      <c:set var="ptracks"> 
        FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfBowyerMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
      </c:set>
@@ -562,7 +570,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     </c:if> <%-- ptracks ne '' --%>
 
 
-  <c:if test="${binomial eq 'Plasmodium falciparum'}">
+  <c:if test="${species eq 'falciparum3D7'}">
   <wdk:wdkTable tblName="Y2hInteractions" isOpen="true"
                  attribution="y2h_data"/>
   </c:if>
@@ -608,7 +616,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
             </c:otherwise>
         </c:choose>
 
-  <c:if test="${binomial eq 'Plasmodium falciparum'}">
+  <c:if test="${species eq 'falciparum3D7'}">
       <wdk:wdkTable tblName="MassSpec" isOpen="true"
                     attribution="Waters_female_gametes,Waters_male_gametes,Waters_mixed_gametes,Pyoelii_LiverStage_LS40,Pyoelii_LiverStage_LS50,FlorensMassSpecData2002,FlorensMassSpecData2004,Pf_Merozoite_Peptides,Lasonder_Mosquito_Oocysts,Lasonder_Mosquito_oocyst_derived_sporozoites,Lasonder_Mosquito_salivary_gland_sporozoites,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,P.falciparum_Clinical_Proteomics,Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection,Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection,P.vivax_Clinical_Proteomics,Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC"/>
   </c:if>
@@ -626,7 +634,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
   <wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
 
-  <c:if test="${binomial eq 'Plasmodium falciparum'}">
+  <c:if test="${species eq 'falciparum3D7'}">
     <wdk:wdkTable tblName="3dPreds" attribution="predictedProteinStructures"/>
   </c:if>
 
@@ -637,7 +645,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 
-<c:if test="${binomial eq 'Plasmodium falciparum' || binomial eq 'Plasmodium yoelii' || binomial eq 'Plasmodium berghei'}">
+<c:if test="${species eq 'falciparum3D7' || binomial eq 'Plasmodium yoelii' || binomial eq 'Plasmodium berghei'}">
   <site:pageDivider name="Expression"/>
 
   <%-- wdk:wdkTable tblName="ArrayElements" attribution="Vaidya_Bergman_oligos,DeRisi_oligos,berghei_gss_oligos"/ --%>
@@ -761,7 +769,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 </c:if>
 
-<c:if test="${binomial eq 'Plasmodium falciparum'}">
+<c:if test="${species eq 'falciparum3D7'}">
 
   <c:set var="secName" value="DeRisiWinzeler::Ver1"/>
   <c:if test="${attrs['graph_derisi_winzeler'].value == 0 && attrs['graph_3d7'].value == 1 && attrs['graph_hb3'].value == 1 && attrs['graph_dd2'].value == 1}">
@@ -1433,7 +1441,7 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
 
  <%-- ------------------------------------------------------------------ --%>
 
-<c:if test="${binomial eq 'Plasmodium falciparum'}">
+<c:if test="${species eq 'falciparum3D7'}">
   <site:expressionGraphs species="${binomial}" model="plasmo"/>
 </c:if>
 
@@ -1824,7 +1832,7 @@ The overall expression percentile of each condition is the average percentile ov
         Genomic Research</a></b>
 
     </c:when>
-    <c:when test="${binomial eq 'Plasmodium falciparum' && (sequence_id eq 'Pf3D7_02' || sequence_id eq 'Pf3D7_10' || sequence_id eq 'Pf3D7_11' || sequence_id eq 'Pf3D7_14')}">
+    <c:when test="${species eq 'falciparum3D7' && (sequence_id eq 'Pf3D7_02' || sequence_id eq 'Pf3D7_10' || sequence_id eq 'Pf3D7_11' || sequence_id eq 'Pf3D7_14')}">
 
         <%-- P. falciparum 2, 10, 11, 14 = TIGR --%>
         <b>Chromosome ${sequence_id} of <i>P. falciparum</i> 3D7 was sequenced at 
@@ -1832,38 +1840,38 @@ The overall expression percentile of each condition is the average percentile ov
         and the <a href="http://www.nmrc.navy.mil/">Naval Medical Research Center</a></b>.
 <br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:when>
-    <c:when test="${binomial eq 'Plasmodium falciparum' && (sequence_id eq 'Pf3D7_01' || sequence_id eq 'Pf3D7_03' || sequence_id eq 'Pf3D7_04' || sequence_id eq 'Pf3D7_05' || sequence_id eq 'Pf3D7_06' || sequence_id eq 'Pf3D7_07' || sequence_id eq 'Pf3D7_08' || sequence_id eq 'Pf3D7_09' || sequence_id eq 'Pf3D7_13')}">
+    <c:when test="${species eq 'falciparum3D7' && (sequence_id eq 'Pf3D7_01' || sequence_id eq 'Pf3D7_03' || sequence_id eq 'Pf3D7_04' || sequence_id eq 'Pf3D7_05' || sequence_id eq 'Pf3D7_06' || sequence_id eq 'Pf3D7_07' || sequence_id eq 'Pf3D7_08' || sequence_id eq 'Pf3D7_09' || sequence_id eq 'Pf3D7_13')}">
         <%-- P. falciparum 1, 3-9, 13 = Sanger --%>
         <b>Chromosome ${sequence_id} of <i>P. falciparum</i> 3D7 was sequenced at the 
         <a href="http://www.sanger.ac.uk/Projects/P_falciparum/">Sanger Institute</a></b>.
 <br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:when>
-    <c:when test="${binomial eq 'Plasmodium falciparum' && sequence_id eq 'Pf3D7_12'}">
+    <c:when test="${species eq 'falciparum3D7' && sequence_id eq 'Pf3D7_12'}">
         <%-- P. falciparum 12 = Stanford --%>
         <b>Chromosome ${sequence_id} of <i>P. falciparum</i> 3D7 was sequenced at the
         <a href="http://sequence-www.stanford.edu/group/malaria/">Stanford Genome Technology Center</a></b>.
 <br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:when>
-    <c:when test="${binomial eq 'Plasmodium falciparum' && sequence_id eq 'M76611'}">
+    <c:when test="${species eq 'falciparum3D7' && sequence_id eq 'M76611'}">
         <%-- P. falciparum mitochondrial genome --%>
         <%--b>The <i>P. falciparum</i> mitochondrial sequence was retrieved from GenBank</b --%>
         <b>The <i>P. falciparum</i> mitochondrial genome was obtained from the Wellcome Trust Sanger Institute (WTSI).</b>
 <br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the WTSI and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:when>
-    <c:when test="${binomial eq 'Plasmodium falciparum' && sequence_id eq 'PFC10_API_IRAB'}">
+    <c:when test="${species eq 'falciparum3D7' && sequence_id eq 'PFC10_API_IRAB'}">
         <%-- P. falciparum plastid genome --%>
         <b>The <i>P. falciparum</i> plastid genome was obtained from the Wellcome Trust Sanger Institute (WTSI).</b>
 <br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the WTSI and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
     </c:when>
 
-    <c:when test="${binomial eq 'Plasmodium falciparum' && sequence_id eq 'AJ276844'}">
+    <c:when test="${species eq 'falciparum3D7' && sequence_id eq 'AJ276844'}">
         <%-- P. falciparum mitochondrion = University of London --%>
         <b>The mitochondrial genome of <i>P. falciparum</i> was
         sequenced at the
         <a href="http://www.lshtm.ac.uk/pmbu/staff/dconway/dconway.html">London
         School of Hygiene & Tropical Medicine</a></b>
     </c:when>
-    <c:when test="${binomial eq 'Plasmodium falciparum' && (sequence_id eq 'X95275' || sequence_id eq 'X95276')}">
+    <c:when test="${species eq 'falciparum3D7' && (sequence_id eq 'X95275' || sequence_id eq 'X95276')}">
 
         <%-- P. falciparum plastid --%>
         <b>The <i>P. falciparum</i> plastid was
@@ -1872,9 +1880,12 @@ The overall expression percentile of each condition is the average percentile ov
         Institute for Medical Research</a></b>
 
     </c:when>
-    <c:when test="${binomial eq 'Plasmodium falciparum' && (sequence_id eq 'API_IRAB' || sequence_id eq 'PfNF54')}">
+    <c:when test="${species eq 'falciparum3D7' && (sequence_id eq 'API_IRAB' || sequence_id eq 'PfNF54')}">
         <%-- new plastid sequences --%>
         <b>The new <i>P. falciparum</i> plastid and mitochondrial sequences were provided by GeneDB (WTSI). </b>
+    </c:when>
+    <c:when test="${species eq 'falciparumIT'}">
+Sequence data for Plasmodium falciparum IT strain were produced by Wellcome Trust Sanger Institute, with funding from the EVIMalaR Consortium (a European Commission Funded Network of Excellence). 
     </c:when>
     <c:when test="${binomial eq 'Plasmodium berghei'}">
         <%-- e.g.PB000938.03.0 --%>
