@@ -156,7 +156,10 @@ return true;
           <tr>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="Pfalciparum" checked>P.falciparum
+              <input type="checkbox" name="genomes" value="Pfalciparum" checked>P.falciparum 3D7
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="PfalciparumIT" checked>P.falciparum IT
             </td>
             <td>
               <input type="checkbox" name="genomes" value="Pvivax" checked>P.vivax
