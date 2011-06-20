@@ -149,11 +149,6 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 <c:if test="${gtracks ne ''}">
 
 
-<site:gbrowse source_id="${id}" project_id="${projectId}" sequence_id="${contig}"
-              context_start_range="${context_start_range}" context_end_range="${context_end_range}"
-              tracks="${gtracks}" attribution="${attribution}" />
-
-<%--
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
@@ -161,12 +156,12 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
   <c:set var="gnCtxImg">
-    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
-    <center><div id="${gnCtxDivId}"></div></center>
-    
     <c:set var="gbrowseUrl">
         /cgi-bin/gbrowse/amoebadb/?name=${contig}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
     </c:set>
+
+    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
+    <center><div id="${gnCtxDivId}"></div></center>
     <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
   </c:set>
 
@@ -178,7 +173,6 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution="${attribution}"
   />
---%>
 
 </c:if>
 

@@ -181,12 +181,6 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 </c:set>
 
 
-<site:gbrowse source_id="${id}" project_id="${projectId}" sequence_id="${sequence_id}"
-              context_start_range="${context_start_range}" context_end_range="${context_end_range}"
-              tracks="${gtracks}" attribution="${attribution}" />
-
-
-<%--
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
@@ -194,12 +188,11 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
   <c:set var="gnCtxImg">
-    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
-    <center><div id="${gnCtxDivId}"></div></center>
-    
     <c:set var="gbrowseUrl">
         /cgi-bin/gbrowse/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
     </c:set>
+    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+    <center><div id="${gnCtxDivId}"></div></center>
     <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
   </c:set>
 
@@ -210,7 +203,6 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution="${attribution}"
   />
---%>
 
 
 <%-- END DNA CONTEXT --------------------------------------------%>

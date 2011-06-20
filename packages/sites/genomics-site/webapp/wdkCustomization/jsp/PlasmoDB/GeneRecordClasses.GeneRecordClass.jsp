@@ -287,12 +287,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <c:if test="${tracks ne ''}">
 
-<site:gbrowse source_id="${id}" project_id="${projectId}" sequence_id="${sequence_id}"
-              context_start_range="${context_start_range}" context_end_range="${context_end_range}"
-              tracks="${tracks}" attribution="${attribution}" />
 
-
-<%--
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
@@ -300,12 +295,13 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
   <c:set var="gnCtxImg">
-    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
-    <center><div id="${gnCtxDivId}"></div></center>
-    
-    <c:set var="gbrowseUrl">
+ <c:set var="gbrowseUrl">
         /cgi-bin/gbrowse/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
     </c:set>
+    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
+
+    <center><div id="${gnCtxDivId}"></div></center>
+    
     <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
   </c:set>
 
@@ -317,7 +313,6 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution="${attribution}"
   />
---%>
 
 </c:if> 
 
