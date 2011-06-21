@@ -112,7 +112,7 @@
 --%>
 
 <ul>
-    <li><a href="<c:url value="/queries_tools.jsp"/>" title="START a NEW search strategy, or CLICK to access the page with all available searches (last option in the dropdown menu)." >New Search</a>
+    <li><a title="START a NEW search strategy, or CLICK to access the page with all available searches (last option in the dropdown menu)." >New Search</a>
   	<site:drop_down_QG2 />
     </li>
 </ul>
@@ -146,7 +146,7 @@
 </ul>
 
 <ul style="width:7em;">
-    <li><a href="#">Tools</a>
+    <li><a>Tools</a>
 	<ul>
 	    <li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"> BLAST</a></li>
   	    <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
@@ -180,7 +180,7 @@
 </ul>
 
 <ul>
-	<li><a href="#">Data Summary</a>
+	<li><a>Data Summary</a>
   	<ul>
 
 <c:if test="${project == 'EuPathDB'}">
@@ -201,7 +201,7 @@
 </ul>
 
 <ul>
-    <li><a href="#">Downloads</a>
+    <li><a>Downloads</a>
  	<ul>
     	    <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#downloads"/>">Understanding Downloads</a></li>
     	    <li><a href="/common/downloads">Data Files</a></li>
@@ -218,7 +218,7 @@
 </ul>
     
 <ul>
-    <li><a href="#">Community</a>
+    <li><a>Community</a>
 	<ul>
 		<li>
 		<a href="http://twitter.com/eupathdb">
