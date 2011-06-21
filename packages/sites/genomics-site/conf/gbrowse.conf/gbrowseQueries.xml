@@ -358,7 +358,7 @@ ORDER BY
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="rum:intron" includeProjects="PlasmoDB">
+  <sqlQuery name="rum:intron" includeProjects="PlasmoDB,ToxoDB">
      <sql>
      <![CDATA[
       SELECT rum_intron_feature_id feature_id,
