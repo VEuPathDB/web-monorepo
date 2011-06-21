@@ -353,6 +353,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
    <c:set var="revCompOn" value="1"/>
   </c:if>
 
+</c:if>
 
 
 
@@ -360,7 +361,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:set var="mercatorAlign">
 <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
                     contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
-                    availableGenomes="3D7,Dd2,HB3, and IT"/>
+                    availableGenomes=""/>
 </c:set>
 
 <wdk:toggle isOpen="false"
@@ -369,7 +370,6 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   content="${mercatorAlign}"
   attribution=""/>
 
-</c:if>
 
 <site:pageDivider name="Annotation"/>
 
