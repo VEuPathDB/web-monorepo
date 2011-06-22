@@ -29,6 +29,17 @@
 <c:set var="sessionId" value="${sessionScope['sessionId']}"/>
 
 
+<%-- get the organisms from the param --%>
+<c:set var="listOrganisms" value="" />
+<c:forEach items="${orgParam.vocabMap}" var="item">
+  <c:set var="term" value="${item.key}" />
+  <c:if test="${fn:length(listOrganisms) > 0}">
+    <c:set var="listOrganisms" value="${listOrganisms}," />
+  </c:if>
+  <c:set var="listOrganisms" value="${listOrganisms}${term}" />
+</c:forEach>
+
+<%--
 <c:set var="AmoebaDBOrgs" value="Entamoeba dispar,Entamoeba histolytica,Entamoeba invadens" />
 <c:set var="CryptoDBOrgs" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris" />				
 <c:set var="GiardiaDBOrgs" value="Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15" />
@@ -71,6 +82,8 @@
                 <c:set var="listOrganisms" value="${TriTrypDBOrgs}" />
         </c:when>
 </c:choose> 
+--%>
+
 
 <div id="quick-search" session-id="${sessionId}">
          <table style="float:right;margin-bottom:10px">
