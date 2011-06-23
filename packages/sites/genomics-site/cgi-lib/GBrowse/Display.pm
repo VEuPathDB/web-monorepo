@@ -194,21 +194,13 @@ sub rumIntronBgColorFromSample {
                 'Hour30' => 'maroon',
                 'Hour35' => 'sandybrown',
                 'Hour40' => 'sienna',
-                #TgME49_ncRNA_Gregory_RSRC
-                'ME49ncRNA' => 'maroon',
-                #Nc_RNASeq_Tachyzoite_Reid_RSRC 
-                #TgVEG_RNASeq_Tachyzoite_Reid_RSRC
                 'day3' => 'blue',
                 'day4' => 'red',
-                #TgRH_ncRNA_Gregory_RSRC
-                'RHncRNA' => 'maroon',
-                #NC_mRNA_Gregory_RSRC
-                'NCmRNA' => 'maroon',
-                #TgVEG_mRNA_Gregory_RSRC
+                'NCmRNA' => 'green',
                 'VEGmRNA' => 'maroon',
-                #TgRH_HTS_Gubbels_RSRC
                 'Lane6' => 'maroon',
-                #NC_ncRNA_Gregory_RSRC
+                'ME49ncRNA' => 'blue',
+                'RHncRNA' => 'yellow',
                 'NCncRNA' => 'maroon', 
                 );  
 
