@@ -389,7 +389,7 @@ ORDER BY
          --AND known_intron = 1 
          AND rif.external_database_release_id = edbr.external_database_release_id 
          AND edb.external_database_id = edbr.external_database_id 
-         AND edb.name = $$edname$$
+         AND edb.name $$edname$$
       ORDER BY rif.mapping_start, rif.sample_name
     ]]>
     </sql>
