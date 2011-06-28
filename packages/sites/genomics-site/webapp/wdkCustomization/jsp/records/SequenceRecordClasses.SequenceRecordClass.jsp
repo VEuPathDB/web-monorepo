@@ -738,6 +738,11 @@ Vavraia culicis strain floridensis whole genome shotgun sequence provided by Gen
   </c:set>
 </c:when>
 
+<c:when test="${fn:contains(organism,'Entamoeba histolytica Rahman') && projectId eq 'AmoebaDB'}">
+  <c:set var="reference">
+Genome Assembly for Entamoeba histolytica Rahman strain was provided by Gareth Weedall and Neil Hall. Institute of Integrative Biology, University of Liverpool, Crown Street, Liverpool L69 7ZB, UK  </c:set>
+</c:when>
+
 
 <c:otherwise>
     <c:set var="reference">
