@@ -49,10 +49,10 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://amoebadb.org">AmoebaDB</a></td>
     <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://cryptodb.org">CryptoDB</a></td>
     <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></td>
-    <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://microsporidiadb.org">&mu;-sporidiaDB</a></td>
+    <td style="border-right:3px solid grey" colspan="5" class="mythStyle"><a href="http://microsporidiadb.org">&mu;-sporidiaDB</a></td>
     <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://plasmodb.org">PiroplasmaDB</a></td>
     <td style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></td>
-    <td style="border-right:3px solid grey" colspan="2" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></td>
+    <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></td>
     <td style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></td>
     <td colspan="8" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></td>
 </tr>
@@ -69,7 +69,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td  style="border-right:3px solid grey" class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>GE</i></td>
     <td class="mythStyle" title="Encephalitozoon cuniculi, MicrosporidiaDB"><i>Ec</i></td>
     <td class="mythStyle" title="Encephalitozoon intestinalis, MicrosporidiaDB"><i>Eint</i></td>
-    <td  style="border-right:3px solid grey"  class="mythStyle" title="Enterocytozoon bieneusi, MicrosporidiaDB"><i>Eb</i></td>
+    <td class="mythStyle" title="Encephalitozoon hellem, MicrosporidiaDB"><i>Ehel</i></td>
+    <td class="mythStyle" title="Enterocytozoon bieneusi, MicrosporidiaDB"><i>Eb</i></td>
+    <td  style="border-right:3px solid grey"  class="mythStyle" title="Nosema cerenae, MicrosporidiaDB"><i>Ncer</i></td>
     <td class="mythStyle" title="Babesia bovis, PiroplasmaDB"><i>Bb</i></td>
     <td class="mythStyle" title="Theileria annulata, PiroplasmaDB"><i>Ta</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Theileria parva, PiroplasmaDB"><i>Tp</i></td>
@@ -80,6 +82,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pv</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Py</i></td>
     <td class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nc</i></td>
+    <td class="mythStyle" title="Eimeria tenella, ToxoDB"><i>Et</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Toxoplasma gondii"><i>Tg**</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tva</i></td>
     <td class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lb</i></td>
@@ -107,7 +110,10 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
          <c:set var="Ec" value="${record.attributesMap['Encephalitozoon_cuniculi']}"/>
          <c:set var="Eint" value="${record.attributesMap['Encephalitozoon_intestinalis']}"/>
          <c:set var="Eb" value="${record.attributesMap['Enterocytozoon_bieneusi']}"/>
+         <c:set var="Ehel" value="${record.attributesMap['Encephalitozoon_hellem']}"/>
+         <c:set var="Ncer" value="${record.attributesMap['Nosema_cerenae']}"/>
          <c:set var="Nc" value="${record.attributesMap['Neospora_caninum']}"/>
+         <c:set var="Et" value="${record.attributesMap['Eimeria_tenella']}"/>
 	 <c:set var="Pb" value="${record.attributesMap['Plasmodium_berghei']}"/>
 	 <c:set var="Pc" value="${record.attributesMap['Plasmodium_chabaudi']}"/>
 	 <c:set var="Pf" value="${record.attributesMap['Plasmodium_falciparum']}"/>
@@ -141,6 +147,8 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mytdStyle" align="right">${GA}</td>
     <td class="mytdStyle" align="right">${GB}</td>
     <td style="border-right:3px solid grey" class="mytdStyle" align="right">${GE}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ncer}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ehel}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ec}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Eint}</td>
     <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Eb}</td>
@@ -154,6 +162,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mytdStyle" align="right">${Pv}</td>
     <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Py}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Nc}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Et}</td>
     <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Tg}</td>
     <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tva}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lb}</td>
@@ -175,7 +184,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 <table width="100%">
 <tr><td>
-<font size="-1"><b>Babesia</b>: Bb, <i>B. bovis</i>; <b>Cryptosporidium</b>: Ch, <i>C. hominis</i>; Cm, <i>C. muris</i>; Cp, <i>C. parvum</i>; <b>Encephalitozoon</b>: Ec, <i>E. cuniculi</i>; Eint, <i>E. intestinalis</i>;  <b>Entamoeba</b>: Ed, <i>E. dispar</i>; Eh, <i>E. histolytica</i>; Einv, <i>E. invadens</i>; <b>Enterocytozoon</b>: Eb, <i>E. bieneusi</i>; <b>Giardia</b> GA, <i>G.Assemblage_A_isolate_WB</i>; GB, <i>G.Assemblage_B_isolate_GS</i>; GE, <i>G.Assemblage_E_isolate_P15</i>; <b>Leishmania</b>: Lb, <i>L. braziliensis</i>; Li, <i>L. infantum</i>; Lma, <i>L. major</i>; Lme, <i>L. mexicana</i>; <b>Neospora</b>: Nc, <i>N. caninum</i>; <b>Plasmodium</b>: Pb, <i>P. berghei</i>; Pc, <i>P. chabaudi</i>; Pf, <i>P. falciparum</i>; Pk, <i>P. knowlesi</i>; Pv, <i>P. vivax</i>; Py, <i>P. yoelii</i>; <b>Theileria</b>: Ta, <i>T. annulata</i>; Tp, <i>T. parva</i>; <b>Toxoplasma</b>: Tg, <i>T. gondii</i>; <b>Trichomonas</b>: Tva, <i>T. vaginalis</i>; <b>Trypanosoma</b>: Tb, <i>T. brucei</i>; Tco, <i>T. congolense</i>; Tcr, <i>T. cruzi</i>; Tvi, <i>T. vivax</i>.</font><br>
+<font size="-1"><b>Babesia</b>: Bb, <i>B. bovis</i>; <b>Cryptosporidium</b>: Ch, <i>C. hominis</i>; Cm, <i>C. muris</i>; Cp, <i>C. parvum</i>;  <b>Eimeria</b>: Et, <i>E. tenella</i>; <b>Encephalitozoon</b>: Ec, <i>E. cuniculi</i>; Eint, <i>E. intestinalis</i>; Ehel, <i>E. hellem</i>; <b>Entamoeba</b>: Ed, <i>E. dispar</i>; Eh, <i>E. histolytica</i>; Einv, <i>E. invadens</i>; <b>Enterocytozoon</b>: Eb, <i>E. bieneusi</i>; <b>Giardia</b> GA, <i>G.Assemblage_A_isolate_WB</i>; GB, <i>G.Assemblage_B_isolate_GS</i>; GE, <i>G.Assemblage_E_isolate_P15</i>; <b>Leishmania</b>: Lb, <i>L. braziliensis</i>; Li, <i>L. infantum</i>; Lma, <i>L. major</i>; Lme, <i>L. mexicana</i>; <b>Neospora</b>: Nc, <i>N. caninum</i>; <b>Nosema</b>: Ncer, <i>N. cerenae</i>; <b>Plasmodium</b>: Pb, <i>P. berghei</i>; Pc, <i>P. chabaudi</i>; Pf, <i>P. falciparum</i>; Pk, <i>P. knowlesi</i>; Pv, <i>P. vivax</i>; Py, <i>P. yoelii</i>; <b>Theileria</b>: Ta, <i>T. annulata</i>; Tp, <i>T. parva</i>; <b>Toxoplasma</b>: Tg, <i>T. gondii</i>; <b>Trichomonas</b>: Tva, <i>T. vaginalis</i>; <b>Trypanosoma</b>: Tb, <i>T. brucei</i>; Tco, <i>T. congolense</i>; Tcr, <i>T. cruzi</i>; Tvi, <i>T. vivax</i>.</font><br>
 </td></tr>
 <br>
 <tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
