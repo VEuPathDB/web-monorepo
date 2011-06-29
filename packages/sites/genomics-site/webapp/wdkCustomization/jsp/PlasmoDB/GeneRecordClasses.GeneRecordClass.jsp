@@ -493,7 +493,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${species eq 'falciparum3D7'}">
 
 <wdk:wdkTable tblName="RodMalPhenotype" isOpen="false"
-               attribution="Pf_Phenotype_DBRefs_RSRC,Pb_RMgm_Phenotype_DBRefs_RSRC,Pc_Phenotype_DBRefs_RSRC,Pv_Phenotype_DBRefs_RSRC"/>
+               attribution="Phenotype_DBRefs"/>
   
   <!-- publications -->
 
