@@ -188,6 +188,7 @@ $(document).ready(function(){
         <html:hidden property="externalDbName" value="${commentForm.externalDbName}"/>
         <html:hidden property="externalDbVersion" value="${commentForm.externalDbVersion}"/>
         <html:hidden property="organism" value="${commentForm.organism}"/>
+        <html:hidden property="reviewStatus" value="${commentForm.reviewStatus}"/> 
         <html:hidden property="commentTargetId" value="${commentForm.commentTargetId}"/>
         <%--<html:hidden property="locations" value="${fn:replace(commentForm.locations, ',', '')}"/> --%>
         
