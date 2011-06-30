@@ -22,6 +22,7 @@ $sort_column=2;
             'd' => \$debug,
 	   );
 
+usage() unless $build;
 
 if ($width_filter) {
   ($width_min, $width_max) = split(/,\s*/, $width_filter);
@@ -61,7 +62,7 @@ Print a report summarizing the gbrowse slow query logs.
 
 Takes one or more logs on standard input.
 
-usage:  gbrowseSlowQueryReport -q {q|w} [-s secs] [-g] [-n] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile] [-d]
+usage:  gbrowseSlowQueryReport -b {q|w} [-s secs] [-g] [-n] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile] [-d]
 
 where:
   -b:  show info from [q]a or [w]ww build
