@@ -490,7 +490,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <wdk:wdkTable tblName="Notes" attribution="P.falciparum_chromosomes"/>
 
 
-<c:if test="${species eq 'falciparum3D7'}">
+<c:if test="${species eq 'falciparum3D7' || species eq 'berghei' || species eq 'yoelii'}">
 
 <wdk:wdkTable tblName="RodMalPhenotype" isOpen="false"
                attribution="Phenotype_DBRefs"/>
