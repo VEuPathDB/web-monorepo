@@ -21,6 +21,7 @@
 </c:catch>
 
 <site:header title="${wdkModel.displayName} : DynSpan ${id}"
+             refer="recordPage"
              banner="DynSpan ${id}"
              divisionName="DynSpan Record"
              division="queries_tools"/>
@@ -45,6 +46,12 @@
 	<wdk:recordPageBasketIcon />
 --%>
 
+</div>
+
+
+<div class="h2center" style="font-size:150%">
+  <!-- the basket and favorites  -->
+  <wdk:recordPageBasketIcon />
 </div>
 
 
