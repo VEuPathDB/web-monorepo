@@ -502,11 +502,16 @@ sub bgColorForSpliceAndPaSites {
 
 
 sub colorBySpliceSiteCount {
-  my ($f) = @_;
+  my ($f,$fg) = @_;
   $f = $f->parent if (! $f->get_tag_values('count_per_mill'));
   my ($count) = $f->get_tag_values('count_per_mill');
+  my ($dom) = ($f->get_tag_values('is_dominant')); #BB
   my $strand = $f->strand;
-  if($strand eq '+'){
+
+  if ($dom && $fg){
+    # if splice site is dominant, return black for forground color
+    return 'black';
+  } elsif ($strand eq '+'){
     if ($count < 2) {
       return 'lightskyblue';
     } elsif ($count < 10) {

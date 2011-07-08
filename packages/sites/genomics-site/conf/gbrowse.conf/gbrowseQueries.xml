@@ -1057,6 +1057,7 @@ SELECT
        'sample_name='|| sample_name || '$dlm' ||
        'count_per_mill='|| count_per_million || '$dlm' ||
        'is_unique='|| is_unique || '$dlm' || 
+       'is_dominant='|| is_dominant || '$dlm' || 
        'avg_mismatches='|| avg_mismatches || '$dlm' || 
        'gene_id='|| source_id || ';;' || 
        'utr_length='|| utr_len atts
@@ -1064,9 +1065,9 @@ FROM (
  SELECT 
        distinct ssf.splice_site_feature_id, ssf.location, ssf.strand,
        ssf.sample_name, ssf.count_per_million, ssf.is_unique, ssf.avg_mismatches,
-       gtable.source_id, gtable.utr_len
+       gtable.source_id, gtable.utr_len, gtable.is_dominant
  FROM  apidb.spliceSiteFeature ssf
- LEFT JOIN (SELECT source_id , sample_name, location, strand,
+ LEFT JOIN (SELECT source_id , sample_name, location, strand, is_dominant,
           CASE WHEN (within_cds=1) THEN (-1)*dist_to_cds ELSE dist_to_cds END AS utr_len
    FROM apidb.spliceSiteGenes 
    WHERE na_sequence_id = $srcfeature_id
