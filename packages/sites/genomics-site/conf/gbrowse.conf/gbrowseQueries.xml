@@ -276,9 +276,8 @@ SELECT etn.na_sequence_id srcfeature_id,
        etn.source_id name, 
        'Sequence' type, 
        ' ' atts
-FROM   dots.NaSequence etn, apidb.SequenceAlias sa, sres.sequenceontology so
+FROM   apidb.sequenceattributes etn, apidb.SequenceAlias sa
 WHERE  etn.source_id = sa.source_id 
- and so.sequence_ontology_id = etn.sequence_ontology_id
  and sa.lowercase_source_id = lower('$name') 
 ]]>
     </sql>
