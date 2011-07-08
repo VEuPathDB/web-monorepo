@@ -492,8 +492,9 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <c:if test="${species eq 'falciparum3D7' || species eq 'berghei' || species eq 'yoelii'}">
 
-<wdk:wdkTable tblName="RodMalPhenotype" isOpen="false"
-               attribution="Phenotype_DBRefs"/>
+<%-- Need to comment out Phenotype for build 11 --%>
+<%-- wdk:wdkTable tblName="RodMalPhenotype" isOpen="false" --%>
+<%--               attribution="Phenotype_DBRefs"/ --%>
   
   <!-- publications -->
 
