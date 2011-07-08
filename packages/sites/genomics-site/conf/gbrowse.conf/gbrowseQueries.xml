@@ -942,7 +942,7 @@ SELECT
        ra.query_id as name, ra.strand||'1' as strand, 
        'genome_matches=' || ra.genome_matches || '$dlm' ||
        'count='|| ra.intron_size || '$dlm' ||
-       'utr_length='|| ra.end_b || '$dlm' || 
+       'utr_length='|| (ra.end_b + 1) || '$dlm' || 
        'sample='|| ra.sample || '$dlm' || 
        'gene_id=' || ra.query_id atts
 FROM  apidb.nextgenseq_align ra, sres.externaldatabase d, sres.externaldatabaserelease rel
