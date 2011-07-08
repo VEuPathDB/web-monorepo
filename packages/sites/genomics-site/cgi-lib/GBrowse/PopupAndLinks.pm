@@ -413,7 +413,8 @@ sub spliceSiteTitle {
     $sample_name = 'L. donovani procyclic promastigotes SL - NSR';
   }
   my ($ctpm) = $f->get_tag_values('count_per_mill');
-  my ($uniq) = ($f->get_tag_values('is_unique'))? "yes" : "no";
+  my ($isUniq) = $f->get_tag_values('is_unique');
+  my ($uniq) = ($isUniq == 1)? "yes" : "no";
   my ($mismatch) = $f->get_tag_values('avg_mismatches');
   my ($gene) = $f->get_tag_values('gene_id');
   my ($utr_len) = $f->get_tag_values('utr_length');
