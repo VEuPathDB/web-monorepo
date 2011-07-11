@@ -703,14 +703,14 @@ sub cghBgcolor {
     my ($type) = $f->get_tag_values('Type');
     my ($dir) = $f->get_tag_values('Direction');
     
-    if (($type eq 'Type I') && ($dir eq 'amplification')) { 
+    if (($type eq 'Type 1') && ($dir eq 'amplification')) { 
       return 'green';
-    } elsif (($type eq 'Type II') && ($dir eq 'amplification')){
+    } elsif (($type eq 'Type 2') && ($dir eq 'amplification')){
       return 'maroon';
-    } elsif (($type eq 'Type II') && ($dir eq 'deletion')){
-      return 'orange';
-    } elsif (($type eq 'Type I') && ($dir eq 'deletion')){
-      return 'blue';
+    } elsif (($type eq 'Type 2') && ($dir eq 'deletion')){
+      return 'maroon';
+    } elsif (($type eq 'Type 1') && ($dir eq 'deletion')){
+      return 'green';
     }
  }
 
