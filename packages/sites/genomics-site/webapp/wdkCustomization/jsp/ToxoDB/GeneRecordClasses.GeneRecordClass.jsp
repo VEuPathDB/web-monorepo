@@ -112,8 +112,19 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
   	<wdk:recordPageBasketIcon />
 
         <%--${fn:length(wdkRecord.tables['CommunityExpComments'])}--%>
-</div>
 
+
+<c:set var="count" value="0"/>
+<c:forEach var="row" items="${wdkRecord.tables['ToxoETennellaSuspects']}">
+        <c:set var="count" value="${count +  1}"/>
+</c:forEach>
+<c:choose>
+<c:when test="${count > 0}">
+<br><span style="font-size:70%">This gene model is curently under revision.</span><br/>
+</c:when>
+</c:choose>
+
+</div>
 
 <%--- COMMUNITY EXPERT ANNOTATION -----------%>
 
