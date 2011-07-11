@@ -245,11 +245,11 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
     <c:set var="gbrowseUrl">
         /cgi-bin/gbrowse/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
     </c:set>
-    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
 
     <center><div id="${gnCtxDivId}"></div></center>
     
-    <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
   </c:set>
 
   <wdk:toggle 
