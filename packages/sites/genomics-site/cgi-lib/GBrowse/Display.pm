@@ -505,14 +505,14 @@ sub colorBySpliceSiteCount {
   my ($f,$fg) = @_;
   $f = $f->parent if (! $f->get_tag_values('count_per_mill'));
   my ($count) = $f->get_tag_values('count_per_mill');
-  my ($dom) = ($f->get_tag_values('is_dominant')); #BB
+  my ($dom) = ($f->get_tag_values('is_dominant'));
   my $strand = $f->strand;
 
-  if ($dom && $fg){
-    # if splice site is dominant, return black for forground color
-    return 'black';
-  } elsif ($strand eq '+'){
-    if ($count < 2) {
+  if ($strand eq '+'){
+    if ($dom && $fg){
+      # if splice site is dominant, return red for foreground color
+      return 'red';
+    } elsif ($count < 2) {
       return 'lightskyblue';
     } elsif ($count < 10) {
       return 'cornflowerblue';
@@ -524,7 +524,10 @@ sub colorBySpliceSiteCount {
       return 'black';
     }
   } else {
-    if ($count < 2) {
+    if ($dom && $fg){
+      # if splice site is dominant, return black for foreground color
+      return 'black';
+    } elsif ($count < 2) {
       return '#FFCCCC';
     } elsif ($count < 10) {
       return 'pink';
