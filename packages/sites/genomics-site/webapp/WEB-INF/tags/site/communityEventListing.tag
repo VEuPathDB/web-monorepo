@@ -1,6 +1,6 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="synd" uri="http://crashingdaily.com/taglib/syndication" %>
+<%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -12,9 +12,9 @@ http://${pageContext.request.serverName}${feedPath}
 </c:set>
 
 <c:catch var="feedex">
- <synd:feed feed="allFeeds" timeout="5000">
+ <wir:feed feed="allFeeds" timeout="5000">
      ${rss_Url}
- </synd:feed>
+ </wir:feed>
 
 <ul id='communityEventList'>
 <c:forEach items="${allFeeds.entries}" var="e" begin="0" end="3" >

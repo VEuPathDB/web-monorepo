@@ -3,7 +3,7 @@
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
-<%@ taglib prefix="synd" uri="http://crashingdaily.com/taglib/syndication" %>
+<%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome" %>
 
 <%-- This variable gets used to limit the number of items that appear in the sidebar menus.  Change the value here to change the length of tehse menus --%>
 <c:set var="SidebarLimit" value="7" />
@@ -94,18 +94,18 @@
 	</c:forEach>
 
 <%-- 
- synd:feed returns a SyndFeed object which has a Bean interface for 
+ wir:feed returns a SyndFeed object which has a Bean interface for 
 iteration and getting SyndEntry objects and their attributes. 
 See the Rome API for SyndEntry attributes you can get.
-https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summary.html
+http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.html
 --%>
 
 
 	<c:catch var="feedex">
- 	<synd:feed feed="allFeeds" timeout="7000">
+ 	<wir:feed feed="allFeeds" timeout="7000">
      		${rss_Url}
-	</synd:feed>
-	<synd:sort feed="allFeeds" direction="desc" value="date"/>
+	</wir:feed>
+	<wir:sort feed="allFeeds" direction="desc" value="date"/>
 
 	<ul>
 	    <c:forEach items="${allFeeds.entries}" var="e" begin="0" end="6" >

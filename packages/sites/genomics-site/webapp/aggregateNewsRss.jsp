@@ -11,7 +11,7 @@
 %><%@ 
     taglib prefix="api" uri="http://apidb.org/taglib"
 %><%@
-    taglib prefix="synd" uri="http://crashingdaily.com/taglib/syndication"
+    taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome"
 %><c:catch 
     var="error"
 ><%-- 
@@ -23,10 +23,10 @@
 /><api:configurations 
     var="config" configfile="/WEB-INF/wdk-model/config/apifed-config.xml"
 /><%--
- synd:feed returns a SyndFeed object which has a Bean interface for
+ wir:feed returns a SyndFeed object which has a Bean interface for
 iteration and getting SyndEntry objects and their attributes.
 See the Rome API for SyndEntry attributes you can get.
-https://rome.dev.java.net/apidocs/0_9/com/sun/syndication/feed/synd/package-summary.html
+http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.html
 --%><c:set var="rss_Url">
 http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
 </c:set><c:forEach
@@ -37,13 +37,13 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
     ${fn:substringBefore(s.value,'services')}showXmlDataContent.do?name=XmlQuestions.NewsRss
 </c:set></c:forEach><c:set
     var="dateStringPattern" value="dd MMMM yyyy HH:mm"
-/><synd:feed 
+/><wir:feed 
     feed="allFeeds" timeout="7000" 
     channelLink="http://eupathdb.org/"
     title="EuPathDB BRC News"
     >
     ${rss_Url}
-</synd:feed><synd:sort
+</wir:feed><wir:sort
     feed="allFeeds" direction="desc" value="date"
-/><synd:xmlout feed="allFeeds" />
+/><wir:xmlout feed="allFeeds" />
 </c:catch>
