@@ -820,7 +820,7 @@ sub dustCitation {
 }
 
 sub rumIntronCitation {
-  return <<EOF 
+  return <<EOL;
   Mouse-over column description: <br/><br/>
 SCORE: 
   The number of reads which map across the junction that (a) map uniquely,
@@ -846,7 +846,7 @@ SHORT_OVERLAP_NU_READS:
   The number of reads mapping across the junction for which their alignment
   is not unique and they have less than 8 bases on one (or both) sides of
   the junction
-EOF 
+EOL
 
 } 
 
