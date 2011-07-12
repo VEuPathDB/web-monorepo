@@ -4001,7 +4001,7 @@ SELECT
        exon_loc.na_feature_id name,
        exon_loc.parent_id parent_id,
        exon_loc.start_min as startm,
-       CASE WHEN exon_loc.is_reversed = 0 THEN exon_loc.coding_start ELSE exon_loc.coding_end END end,
+       CASE WHEN exon_loc.is_reversed = 0 THEN exon_loc.coding_start - 1 ELSE exon_loc.coding_end - 1 END end,
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
@@ -4020,7 +4020,7 @@ SELECT
        'annotation' source, 
        exon_loc.na_feature_id name,
        exon_loc.parent_id parent_id,
-       CASE WHEN exon_loc.is_reversed = 0 THEN exon_loc.coding_end ELSE exon_loc.coding_start END startm,
+       CASE WHEN exon_loc.is_reversed = 0 THEN exon_loc.coding_end + 1 ELSE exon_loc.coding_start + 1 END startm,
        exon_loc.end_max as end,
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'isDeprecated=' ||  ga.is_deprecated atts 
