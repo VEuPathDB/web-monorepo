@@ -811,4 +811,16 @@ sub warnNote {
   return $txt;
 }
 
+#--------------------------------------------------------------------------------
+#  Citations
+#--------------------------------------------------------------------------------
+
+sub dustCitation {
+  return "Selecting this option displays regions of low compositional complexity, as defined by the DUST algorithm of Tatusov and Lipman.  For more information on DUST click <a href=\"ftp://ftp.ncbi.nlm.nih.gov/pub/agarwala/windowmasker/windowmasker_suppl.pdf\">here</a>.";
+}
+
+
+
+
+
 1;
