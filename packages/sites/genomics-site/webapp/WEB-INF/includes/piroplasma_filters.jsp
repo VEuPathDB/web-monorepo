@@ -41,13 +41,13 @@
       <wdk:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tparva_genes" />  
+                          instanceName="tannu_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tannu_genes" />  
+                          instanceName="tparva_genes" />  
     </td>
   </tr>
 </table>
