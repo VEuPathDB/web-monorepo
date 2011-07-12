@@ -451,37 +451,22 @@ Sequence data for Plasmodium falciparum IT strain were produced by Wellcome Trus
       <b>Whole genome sequence of the natural recombinant Toxoplasma gondii strain TgCkUg2 was provided by Irene Lindstrom Bontell and Judith E Smith, Institute of Integrative and Comparative Biology, Clarendon Way, University of Leeds, Leeds, LS2 9JT, UK.  Further information may be obtained from the following publication: Genome Biol. 2009 May 20;10(5):R53. PMID 19457243.</b>
    </c:set>
    </c:when>
-   <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'MAS')}">
+   <c:when test="${projectId eq 'ToxoDB' && (fn:contains(organism,'MAS') || fn:contains(organism,'VAND') || fn:contains(organism,'p89') || fn:contains(organism,'Toxoplasma gondii FOU') || fn:contains(organism,'Toxoplasma gondii RUB'))}">
     <c:set var="reference">
-This assembly was sequenced at a ~40X coverage using both 454 and Illumina sequencing technology and assembled with Newbler. Genomic DNA was provided by Dr. David Sibley's laboratory and the sequence generated at the J. Craig Venter Institute. Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigators who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data.
+Genome sequence data were produced by JCVI as part of the <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
+<p>Data Usage Policy</p>
+<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
+<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
    </c:set>
    </c:when>
-   <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'VAND')}">
-    <c:set var="reference">
-This assembly was sequenced at a ~30X coverage using both 454 and Illumina sequencing technology and assembled with Newbler. Genomic DNA was provided by Dr. David Sibley's laboratory and the sequence generated at the J. Craig Venter Institute. Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigators who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data.
-   </c:set>
-   </c:when>
-   <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'p89')}">
-    <c:set var="reference">
-This assembly was sequenced at a ~40X coverage using both 454 and Illumina sequencing technology and assembled with Newbler. Genomic DNA was provided by Dr. David Sibley's laboratory and the sequence generated at the J. Craig Venter Institute. Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigators who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data.
-   </c:set>
-   </c:when>
+
 <c:when test="${fn:contains(organism,'Eimeria tenella str. Houghton') && projectId eq 'ToxoDB'}">
   <c:set var="reference">
-Sequence data and annotations for Eimeria tenella Houghton strain were produced by GeneDB.
+<p>Adam James Reid, Damer Blake, Thomas Dan Otto, Alejandro Sanchez, Mandy Sanders, Yealing Tay, Paul Dear, Kiew-Lian Wan, Matthew Berriman, Arnab Pain, Fiona Tomley. <i>Sequencing and annotation of the Eimeria tenella genome</i>.</p><br>
+<p>Funding: BBSRC, Wellcome Trust Sanger Institute</p><br>
+<p>The data were produced by the Parasite Genomics group at the Wellcome Trust Sanger Institute to the standard of an Improved Draft.  The Parasite Genomics group and collaborators plan on publishing the completed and annotated draft sequence in a peer-reviewed journal as soon as possible. Permission of the Principal Investigator (Matthew Berriman,mb4@sanger.ac.uk) should be obtained before publishing chromosome- or genome- scale analyses of the sequences or annotations. </p>
 </c:set>
 </c:when>
-<c:when test="${fn:contains(organism,'Toxoplasma gondii FOU') && projectId eq 'ToxoDB'}">
-  <c:set var="reference">
-Sequence and Assembly for Toxoplasma gondii FOU strain was provided by JCVI.
-</c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Toxoplasma gondii RUB') && projectId eq 'ToxoDB'}">
-  <c:set var="reference">
-Sequence and Assembly for Toxoplasma gondii RUB strain was provided by JCVI.
-</c:set>
-</c:when>
-
 
 
     <c:when test="${projectId eq 'TrichDB'}">
