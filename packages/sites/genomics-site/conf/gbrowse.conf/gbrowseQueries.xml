@@ -1050,8 +1050,8 @@ SELECT
        '$source' as source,
        location as startm, location as end, 
        CASE WHEN (source_id IS NULL) THEN ' (' || count_per_million || ')'
-            WHEN (utr_len >0) THEN  source_id || ' - ' ||  utr_len || ' (' || count_per_million || ')'
-            ELSE  source_id || ' - ' ||  'within gene' || ' (' || count_per_million || ')' END AS name, 
+            WHEN (utr_len >0) THEN  source_id || '-' ||  utr_len || '(' || count_per_million || ')'
+            ELSE  source_id || '-' ||  'within gene' || '(' || count_per_million || ')' END AS name, 
        strand as strand, 
        'sample_name='|| sample_name || '$dlm' ||
        'count_per_mill='|| count_per_million || '$dlm' ||
