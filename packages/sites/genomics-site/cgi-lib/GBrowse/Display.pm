@@ -819,8 +819,35 @@ sub dustCitation {
   return "Selecting this option displays regions of low compositional complexity, as defined by the DUST algorithm of Tatusov and Lipman.  For more information on DUST click <a href=\"ftp://ftp.ncbi.nlm.nih.gov/pub/agarwala/windowmasker/windowmasker_suppl.pdf\">here</a>.";
 }
 
+sub rumIntronCitation {
+  return <<EOF 
+  Mouse-over column description: <br/><br/>
+SCORE: 
+  The number of reads which map across the junction that (a) map uniquely,
+  (b) have at least 8 bases on either side, and (c) have a characterized
+  splice signal.  So if the splice signals are not characterized the score
+  is zero.
+  <br/><br/>
+LONG_OVERLAP_UNIQUE_READS: 
+  The number of reads mapping across the junction for which their alignment
+  is unique and they have at least 8 bases on each side of the junction.
+  These are the ones that count towards the "score". 
+  <br/><br/>
+SHORT_OVERLAP_UNIQUE_READS:
+  The number of reads mapping across the junction for which their alignment
+  is unique and they have less than 8 bases on one (or both) sides of the
+  junction 
+  <br/><br/>
+LONG_OVERLAP_NU_READS:
+  The number of reads mapping across the junction for which their alignment
+  is not unique and they have at least 8 bases on each side of the junction
+  <br/><br/>
+SHORT_OVERLAP_NU_READS:
+  The number of reads mapping across the junction for which their alignment
+  is not unique and they have less than 8 bases on one (or both) sides of
+  the junction
+EOF 
 
-
-
+} 
 
 1;
