@@ -5066,6 +5066,7 @@ FROM    (SELECT  mapping_start as feature_id,
                    AND     na_sequence_id = $srcfeature_id
          )
 GROUP BY feature_id, parent_id, startm,end, direction
+HAVING count(*) <= 10
 ]]> 
     </sql> 
   </sqlQuery>
