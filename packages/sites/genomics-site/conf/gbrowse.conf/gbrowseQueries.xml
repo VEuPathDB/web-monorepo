@@ -1066,7 +1066,7 @@ FROM (
        ssf.sample_name, ssf.count_per_million, ssf.is_unique, ssf.avg_mismatches,
        gtable.source_id, gtable.utr_len, gtable.is_dominant
  FROM  apidb.spliceSiteFeature ssf
- LEFT JOIN (SELECT source_id , sample_name, location, strand, is_dominant,
+ LEFT JOIN (SELECT source_id , sample_name, location, strand, is_dominant, count,
           CASE WHEN (within_cds=1) THEN (-1)*dist_to_cds ELSE dist_to_cds END AS utr_len
    FROM apidb.spliceSiteGenes 
    WHERE na_sequence_id = $srcfeature_id
@@ -1084,7 +1084,8 @@ FROM (
         FROM sres.externaldatabase ed, sres.externalDatabaseRelease edr
        WHERE ed.external_database_id = edr.external_database_id
          AND ed.name $$edName$$ )
-)
+   AND NOT (gtable.count=1 AND gtable.is_dominant is null)
+   )
 ]]>
     </sql>
   </sqlQuery>
