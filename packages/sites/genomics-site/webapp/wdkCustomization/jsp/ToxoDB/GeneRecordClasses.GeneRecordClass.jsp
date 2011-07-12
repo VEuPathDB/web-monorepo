@@ -616,7 +616,9 @@ Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David
 </c:when>
 <c:when test='${organism_full eq "Eimeria tenella str. Houghton" }'>
   <c:set var="reference">
-Sequence data and annotations for Eimeria tenella Houghton strain were produced by GeneDB.
+<p>Adam James Reid, Damer Blake, Thomas Dan Otto, Alejandro Sanchez, Mandy Sanders, Yealing Tay, Paul Dear, Kiew-Lian Wan, Matthew Berriman, Arnab Pain, Fiona Tomley. <i>Sequencing and annotation of the Eimeria tenella genome</i>.</p><br>
+<p>Funding: BBSRC, Wellcome Trust Sanger Institute</p><br>
+<p>The data were produced by the Parasite Genomics group at the Wellcome Trust Sanger Institute to the standard of an Improved Draft.  The Parasite Genomics group and collaborators plan on publishing the completed and annotated draft sequence in a peer-reviewed journal as soon as possible. Permission of the Principal Investigator (Matthew Berriman,mb4@sanger.ac.uk) should be obtained before publishing chromosome- or genome- scale analyses of the sequences or annotations. </p>
 </c:set>
 </c:when>
 
