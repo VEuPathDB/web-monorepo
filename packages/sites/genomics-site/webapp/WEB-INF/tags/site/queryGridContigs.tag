@@ -17,7 +17,7 @@
                 </tr>
 
                  <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Species" existsOn="A Am G C M Pi P T Tr Tt"/>
+                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Taxon/Strain" existsOn="A Am G C M Pi P T Tr Tt"/>
                 </tr>
             </table>
 </div>
