@@ -113,7 +113,7 @@
 
 
   <c:if test="${wdkRecord.attributes['external_db_name'].value eq 'Toxoplasma_RFLP_Su_RSRC'}">
-  Click <a href="/Standards_gel_pics.pdf">here</a> for associated RFLP images in PDF format.
+  <a href="/Standards_gel_pics.pdf"><b>Click here for associated RFLP images</b></a> in PDF format.
   
   <br/>
   </c:if>
