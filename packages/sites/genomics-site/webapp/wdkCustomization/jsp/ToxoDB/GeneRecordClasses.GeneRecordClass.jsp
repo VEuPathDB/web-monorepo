@@ -120,7 +120,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 </c:forEach>
 <c:choose>
 <c:when test="${count > 0}">
-<br><span style="font-size:70%">This gene model is curently under revision.</span><br/>
+<br><span style="color:#CC0000;">This gene model is curently under revision.</span><br/>
 </c:when>
 </c:choose>
 
