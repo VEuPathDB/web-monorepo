@@ -1170,7 +1170,7 @@ a#gbView {
 /*    float: left; */
     height: 24px;
     padding-left: 7px;
-    padding-right: 9px;
+    padding-right: 4px; 
     padding-top: 5px;
     width: 140px;
     margin: 0px auto;
