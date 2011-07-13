@@ -246,9 +246,9 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Evolution
                 </td></tr>
-                <tr>
+<!--                <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesOrthologousToAGivenGene" linktext="Orthologs/Paralogs" existsOn="A C P T Tt"/>
-                </tr>
+                </tr>     -->
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOrthologPattern" linktext="Orthology Profile" existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
