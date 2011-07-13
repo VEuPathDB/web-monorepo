@@ -48,7 +48,9 @@
 </td>
 
 <td width="80%" style="vertical-align:middle">
- <div class="h2center" style="text-align:center;">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome
+ <div class="h2center" style="text-align:center;">Genomic Colocation
+</div>
+ <div class="h2center" style="text-align:center;color:grey">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome
 </div>
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
