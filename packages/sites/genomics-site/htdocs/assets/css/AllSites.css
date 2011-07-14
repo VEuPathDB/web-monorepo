@@ -1180,3 +1180,16 @@ a#gbView {
     height: 500px;
     overflow: auto;
 }
+
+#menu_lefttop div ul.related-sites {
+    border: 1px solid;
+    height: 120px;
+    list-style-position: inside;
+    margin-left: 0;
+    overflow-y: auto;
+}
+
+#menu_lefttop div ul.related-sites li {
+    padding-left: 1.7em;
+    text-indent: -1.5em;
+}

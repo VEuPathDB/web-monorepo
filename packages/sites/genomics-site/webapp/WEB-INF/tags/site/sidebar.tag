@@ -213,7 +213,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
         No links.
       </c:when>
       <c:otherwise>
-        <ul>
+        <ul class="related-sites">
 		<c:set var="count" value="0" />
         <c:forEach items="${extlAnswer.recordInstances}" var="record">
           <c:forEach items="${record.tables}" var="table">
