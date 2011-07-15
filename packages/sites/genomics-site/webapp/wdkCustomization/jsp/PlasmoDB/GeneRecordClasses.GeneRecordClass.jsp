@@ -524,7 +524,9 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <wdk:wdkTable tblName="Mr4Reagents" attribution="MR4Reagents"/>
 
+<%--
 <wdk:wdkTable tblName="AnnotationChanges"/>
+--%>
 
 
 <c:if test="${isCodingGene}">
