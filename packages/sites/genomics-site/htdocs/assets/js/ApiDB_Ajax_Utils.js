@@ -1,3 +1,4 @@
+// originally used by set of javascript files dealing with location queries, AjaxLocation...  now obsolete.
 
 //Create the XMLObjectRequest suitable for the given browser type
 function createAjaxObject(){

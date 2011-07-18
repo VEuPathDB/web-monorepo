@@ -39,52 +39,6 @@
   <c:set var="listOrganisms" value="${listOrganisms}${term}" />
 </c:forEach>
 
-<%--
-<c:set var="AmoebaDBOrgs" value="Entamoeba dispar,Entamoeba histolytica,Entamoeba invadens" />
-<c:set var="CryptoDBOrgs" value="Cryptosporidium hominis,Cryptosporidium parvum,Cryptosporidium muris" />				
-<c:set var="GiardiaDBOrgs" value="Giardia Assemblage A isolate WB, Giardia Assemblage B isolate GS,Giardia Assemblage E isolate P15" />
-<c:set var="MicrosporidiaDBOrgs" value="Encephalitozoon cuniculi,Encephalitozoon intestinalis,Enterocytozoon bieneusi" />
-<c:set var="PiroplasmaDBOrgs" value="Theileria parva,Theileria annulata,Babesia bovis" />
-<c:set var="PlasmoDBOrgs" value="Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii" />
-<c:set var="ToxoDBOrgs" value="Toxoplasma gondii,Neospora caninum" />
-<c:set var="TrichDBOrgs" value="Trichomonas vaginalis"/>
-<c:set var="TriTrypDBOrgs" value="Leishmania braziliensis,Leishmania infantum,Leishmania major,Leishmania mexicana,Trypanosoma brucei,Trypanosoma cruzi,Trypanosoma congolense,Trypanosoma vivax"/>
-<c:set var="EuPathDBOrgs" value="${AmoebaDBOrgs},${CryptoDBOrgs},${GiardiaDBOrgs},${MicrosporidiaDBOrgs},${PiroplasmaDBOrgs},${PlasmoDBOrgs},${ToxoDBOrgs},${TrichDBOrgs},${TriTrypDBOrgs},"/>
-<c:choose>
-  	 <c:when test="${fn:containsIgnoreCase(modelName, 'AmoebaDB')}">
-                 <c:set var="listOrganisms" value="${AmoebaDBOrgs}" />
-         </c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
-		<c:set var="listOrganisms" value="${EuPathDBOrgs}" />
-	</c:when>
-        <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
-		<c:set var="listOrganisms" value="${CryptoDBOrgs}" />
-	</c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
-                <c:set var="listOrganisms" value="${GiardiaDBOrgs}" />
-        </c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'MicrosporidiaDB')}">
-                <c:set var="listOrganisms" value="${MicrosporidiaDBOrgs}" />
-        </c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'PiroplasmaDB')}">
-                <c:set var="listOrganisms" value="${PiroplasmaDBOrgs}" />
-        </c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
-                <c:set var="listOrganisms" value="${PlasmoDBOrgs}" />
-        </c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
-                <c:set var="listOrganisms" value="${ToxoDBOrgs}" />
-        </c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
-                <c:set var="listOrganisms" value="${TrichDBOrgs}" />
-        </c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
-                <c:set var="listOrganisms" value="${TriTrypDBOrgs}" />
-        </c:when>
-</c:choose> 
---%>
-
-
 <div id="quick-search" session-id="${sessionId}">
          <table style="float:right;margin-bottom:10px">
            <tr>
