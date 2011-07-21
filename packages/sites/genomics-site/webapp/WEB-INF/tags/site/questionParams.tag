@@ -119,15 +119,17 @@
             <c:otherwise> <%-- visible param --%>
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
+                    <td width="30%" align="right" style="vertical-align:top">
+                        <b id="help_${pNam}" class="help_link" rel="htmltooltip">
+                            ${qP.prompt} (<img width="10" height="10" src="wdk/images/question.png" />)
+                        </b>
+                    </td>
                     <c:choose>
                         <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'EuPathDB'}">
 
 <c:choose>
 <c:when test="${fn:contains(wdkQuestion.name, 'Location') || fn:contains(wdkQuestion.name, 'Snp') }">  <!-- as it happens in component sites  under choice below EnumParamBean -->
 
-                           <td width="30%" align="right" style="vertical-align:top">
-				<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
-			    </td>
                             <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
@@ -155,29 +157,21 @@
                         </c:when>
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
-                            <td width="30%" align="right" style="vertical-align:top">
-				<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b>
-			    </td>
                             <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
                                 <wdk:enumParamInput qp="${qP}" />
                             </td>
                         </c:when>
-                        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.HistoryParamBean'}">
-                            <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
+                        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.AnswerParamBean'}">
                             <td align="left" valign="top">
                                 <wdk:answerParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
-                            <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                             <td align="left" valign="top">
                                 <wdk:datasetParamInput qp="${qP}" />
                             </td>
                         </c:when>
-                        <c:otherwise>  <%-- not enumParam --%>
-                            <c:choose>
                                 <c:when test="${isReadonly}">
-                                    <td width="30%" align="right" valign="top"><b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <bean:write name="qForm" property="value(${pNam})"/>
                                         <html:hidden property="value(${pNam})"/>
@@ -185,14 +179,10 @@
                                 </c:when>
                                 <c:otherwise>
 
-                                    <td width="30%" align="right" valign="top">
-					<b id="help_${pNam}" class="help_link" rel="htmltooltip">${qP.prompt}</b></td>
                                     <td align="left" valign="top">
                                         <html:text styleId="${pNam}" property="value(${pNam})" size="35" />
                                     </td>
                                 </c:otherwise>
-                            </c:choose>
-                        </c:otherwise>
                     </c:choose>
 
                     <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
@@ -226,9 +216,7 @@
             <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
     
                 <c:if test="${!isHidden}">
-                        <c:if test="${!fn:containsIgnoreCase(pNam,'organism')}">
                 	        <div class="htmltooltip" id="help_${pNam}_tip">${qP.help}</div>
-                        </c:if>
                 </c:if>
             
         </c:forEach>
