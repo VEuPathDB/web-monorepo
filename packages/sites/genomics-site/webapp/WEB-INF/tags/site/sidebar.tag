@@ -177,9 +177,15 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
     <div class="menu_lefttop_drop">
 
 
-<a href="http://twitter.com/eupathdb">
+<a style="line-height:24px" href="http://twitter.com/eupathdb">
 	<img style="margin-left:17px;float:left;vertical-align:middle" title="Follow us on twitter!" src="/assets/images/twitter.gif" width="25">
 	<span style="vertical-align:sub">&nbsp;&nbsp;&nbsp;Follow us on twitter!</span>
+
+</a>
+<br>
+<a href="https://www.facebook.com/pages/EuPathDB/133123003429972">
+	<img style="margin-left:17px;float:left;vertical-align:middle" title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="25">
+	<span style="vertical-align:sub">&nbsp;&nbsp;&nbsp;Follow us on facebook!</span>
 
 </a>
 <br><br>
@@ -233,9 +239,11 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
           </c:forEach>
         </c:forEach> 
         </ul>
+	<!-- not needed since now we have a window and scrollbar to see all 
 		<c:if test="${count >= SidebarLimit}">
 			<a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Full Links Page</a><br>
 		</c:if>
+	-->
       </c:otherwise>
     </c:choose>
 

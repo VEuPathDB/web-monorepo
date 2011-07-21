@@ -177,7 +177,11 @@
 		<li>
 		<a href="http://twitter.com/eupathdb">
 			<img style="margin:0px;vertical-align:top" title="Follow us on twitter!" src="/assets/images/twitter.gif" width="20">
-			<span style="vertical-align:top">&nbsp;Follow us on twitter!</span>
+			<span style="vertical-align:top">&nbsp;Follow us on twitter!</span> 
+		</a>
+		<a href="https://www.facebook.com/pages/EuPathDB/133123003429972">
+			<img style="margin:0px;vertical-align:top" title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="20">
+			<span style="vertical-align:top">&nbsp;Follow us on facebook!</span> 
 		</a>
 		</li>
 

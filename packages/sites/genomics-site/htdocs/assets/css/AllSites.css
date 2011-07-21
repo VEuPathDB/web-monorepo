@@ -1182,7 +1182,7 @@ a#gbView {
 }
 
 #menu_lefttop div ul.related-sites {
-    border: 1px solid;
+    border: 1px lightgrey solid;
     height: 120px;
     list-style-position: inside;
     margin-left: 0;

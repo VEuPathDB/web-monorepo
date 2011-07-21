@@ -329,13 +329,10 @@ ${headElement}
           <li><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>
         	</ul>
       </li>
-      <li>
-      <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-		Contact Us<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
-      </li>
- 
+    
  
  <wdk:requestURL/>
+
  <c:choose>
     <c:when test="${wdkUser == null || wdkUser.guest == true}">
     
@@ -390,6 +387,11 @@ ${headElement}
     </c:otherwise>
   </c:choose>
 
+	<li>
+	<a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
+		Contact Us<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+      	</li>
+ 
 
 	<li>
 	<a id="twitter" href="http://twitter.com/eupathdb">
@@ -397,6 +399,11 @@ ${headElement}
 	</a>
 	</li>
 
+	<li>
+	<a id="twitter" href="https://www.facebook.com/pages/EuPathDB/133123003429972">
+		<img title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="20">
+	</a>
+	</li>
 
            </ul>
 
