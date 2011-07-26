@@ -503,6 +503,12 @@
       <forward name="show_xml_list" redirect="false" path="/showXmlDataList.do?name=XmlQuestions.DataSources"/>
       <forward name="show_xml_detail" redirect="false" path="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>
     </action>
+    <action
+      path="/exportBasket"
+      type="org.gusdb.wdk.controller.action.ExportBasketAction"
+      scope="request"
+      validate="false">
+    </action>
 
   </action-mappings>
 
