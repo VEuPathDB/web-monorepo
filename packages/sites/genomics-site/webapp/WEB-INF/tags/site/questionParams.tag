@@ -121,7 +121,7 @@
                 <tr>
                     <td width="30%" align="right" style="vertical-align:top">
                         <b id="help_${pNam}" class="help_link" rel="htmltooltip">
-                            ${qP.prompt} (<img width="10" height="10" src="wdk/images/question.png" />)
+                            ${qP.prompt} <img src="wdk/images/question.png" />
                         </b>
                     </td>
                     <c:choose>
