@@ -505,7 +505,7 @@
     </action>
     <action
       path="/exportBasket"
-      type="org.gusdb.wdk.controller.action.ExportBasketAction"
+      type="org.apidb.apicommon.controller.action.ExportBasketAction"
       scope="request"
       validate="false">
     </action>

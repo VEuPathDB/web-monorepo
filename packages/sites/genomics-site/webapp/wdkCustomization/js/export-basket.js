@@ -12,9 +12,9 @@ function exportBasket(targetProject, rcName) {
 			var count = parseInt(data);
 			
 			var message = count + " records exported to " + targetProject
-			    + ".\nNow if you go to " + targetProject + " and login with "
-				+ "the same account, you will be able to find these records "
-				+ "in your basket there.\n"
+			    + ".\n\nNow if you go to " + targetProject + " and login with "
+				+ "the same account, \nyou will be able to find these records "
+				+ "in your basket there.\n\n"
 				+ "Do you want to go to " + targetProject + " now?";
 			var result = confirm(message);
 			$("body").unblock();
