@@ -37,7 +37,7 @@ my $sql=q(SELECT message_id,
                  TO_CHAR(start_date, 'mm-dd-yyyy hh24:mi'), 
                  TO_CHAR(stop_date, 'mm-dd-yyyy hh24:mi'), 
                  admin_comments, TO_CHAR(time_submitted, 'mm-dd-yyyy hh24:mi:ss') 
-                 FROM announce.messages ORDER BY message_id DESC);
+                 FROM announce.messages ORDER BY start_date DESC);
 
 my $sth=$dbh->prepare($sql) or
      die "Could not prepare query. Check SQL syntax.";
@@ -106,44 +106,57 @@ _END_OF_TEXT_
 
   
 # Print message rows from database 
-      my $i=0;
-      my $n=0;
-      while ((@row=$sth->fetchrow_array) && ($n < 50)){
-       
-         # Query associated projects from DB
+my $max_show_rows = 50;
+my $i=0;
+my $n=0;
+my $total_row_count = $n;
+while ((@row=$sth->fetchrow_array) ){
+       $total_row_count++;
+      if ($n < $max_show_rows) {
+          # Query associated projects from DB
           my @projects=&getProjects($row[0]);
           
-        my $rowStyle;        
-	if ($i % 2==0){$rowStyle="alternate";}
-           else {$rowStyle="primary";}
-
-         print <<_END_OF_TEXT_
-        <!--Display database rows, alternating background color-->  
-	<tr class="$rowStyle">  
-        <td> <a href=/cgi-bin/admin/messageInsert.pl?messageId=$row[0] onsubmit="return validate_form(this)" onClick="window.open('/cgi-bin/admin/messageInsert.pl?messageId=$row[0]','submitNew', 'width=500,height=730,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">$row[0]</a>
-        </td>
-        <td class="message">$row[1]</td>
-	<td>$row[2]</td>
-        <td>@projects</td> 
-	<td>$row[3]</td>
-	<td>$row[4]</td>
-	<td class="message">@{[$row[5] || '']}</td>
-        <td>
-            <img id="image_id" src="/images/deleteButtongs.png" onclick="confirmDelete($row[0])" 
-            onmouseover="change_image(this, '/images/deleteButton.png')" 
-            onmouseout="change_image(this, '/images/deleteButtongs.png')" border="0"/></a>
-        </td>
-        </tr> 
-        
+          my $rowStyle;        
+          if ($i % 2==0){$rowStyle="alternate";}
+          else {$rowStyle="primary";}
+          
+          print <<_END_OF_TEXT_;
+<!--Display database rows, alternating background color-->  
+<tr class="$rowStyle">  
+<td> <a href=/cgi-bin/admin/messageInsert.pl?messageId=$row[0] onsubmit="return validate_form(this)" onClick="window.open('/cgi-bin/admin/messageInsert.pl?messageId=$row[0]','submitNew', 'width=500,height=730,toolbar=no, location=no, value=submitNew, directories=no,status=yes,menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">$row[0]</a>
+</td>
+<td class="message">$row[1]</td>
+<td>$row[2]</td>
+<td>@projects</td> 
+<td>$row[3]</td>
+<td>$row[4]</td>
+<td class="message">@{[$row[5] || '']}</td>
+<td>
+<img id="image_id" src="/images/deleteButtongs.png" onclick="confirmDelete($row[0])" 
+onmouseover="change_image(this, '/images/deleteButton.png')" 
+onmouseout="change_image(this, '/images/deleteButtongs.png')" border="0"/></a>
+</td>
+</tr> 
+          
 _END_OF_TEXT_
-;
-        $i++;
-        $n++;
-     }
+          $i++;
+          $n++;
+      }
+}
+
+print "</table>\n";
+
+if ($total_row_count > $n) {
+    print <<"_END_OF_TEXT_";
+
+  <div style="position: relative; bottom: 30px; width: 275px; height: 30px; margin: 0 auto">
+      <b>$n of $total_row_count records shown.</b>
+  </div>
+_END_OF_TEXT_
+}
 
  # Render link for new message creation       
 print <<_END_OF_TEXT_
-</table>
   <div style="position: relative; bottom: 20px; width: 175px; height: 30px; margin: 0 auto">
       <a href=admin/insertMessage.pl?submitMessage=true onClick="window.open('/cgi-bin/admin/messageInsert.pl?submitMessage=true','submitNew', 'width=500,height=700,toolbar=no, location=no, value=submitNew, directories=no,status=yes, menubar=no,scrollbars=no,copyhistory=yes, resizable=no'); return false">Create New Message</a>
   </div>
