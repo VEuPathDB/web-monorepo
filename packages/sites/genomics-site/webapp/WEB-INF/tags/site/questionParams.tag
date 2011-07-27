@@ -120,8 +120,8 @@
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
                     <td width="30%" align="right" style="vertical-align:top">
-                        <b id="help_${pNam}" class="help_link" rel="htmltooltip">
-                            ${qP.prompt} <img src="wdk/images/question.png" />
+                        <b>
+                            ${qP.prompt} <img id="help_${pNam}" class="help_link" rel="htmltooltip" src="wdk/images/question.png" />
                         </b>
                     </td>
                     <c:choose>
