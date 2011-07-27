@@ -19,7 +19,7 @@
   Export ${recordClass.type} basket to:
   <select id="to-project">
     <c:choose>
-      <c:when test="${project == 'EuPathDB'}">
+      <c:when test="${projectId == 'EuPathDB'}">
         <option value="AmoebaDB" selected="selected">AmoebaDB</option>
         <option value="CryptoDB">CryptoDB</option>
         <option value="GiardiaDB">GiardiaDB</option>
