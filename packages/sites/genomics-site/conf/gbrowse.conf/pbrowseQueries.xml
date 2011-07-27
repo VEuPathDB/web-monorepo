@@ -277,7 +277,7 @@ SELECT ga.aa_sequence_id srcfeature_id,
        ga.source_id name, 
        'protein' type,
        'ID=' || ga.aa_sequence_id atts
-FROM   apidb.GeneAttributes ga
+FROM   ApidbTuning.GeneAttributes ga
 WHERE  ga.source_id = '$name'
 ]]>
       </sql>

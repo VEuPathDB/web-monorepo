@@ -212,8 +212,8 @@ SELECT -- trying to find genes by source_id
        nal.end_max end, 
        decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand
 FROM   
-       ApiDB.FeatureLocation nal,
-       apidb.GeneId ga
+       ApidbTuning.FeatureLocation nal,
+       ApidbTuning.GeneId ga
 WHERE  
        nal.feature_source_id = ga.gene and
        lower(ga.id) like lower('$name') and
@@ -232,7 +232,7 @@ SELECT   -- trying to find genes by product description ( at least 7 chars)
        ga.end_max end,
        decode (ga.strand, 'forward', '+1', 'reverse', '-1', '.') strand
 FROM
-       dots.GeneFeature gf, apidb.GenomicSequence gs, apidb.GeneAttributes ga
+       dots.GeneFeature gf, ApidbTuning.GenomicSequence gs, ApidbTuning.GeneAttributes ga
 WHERE
        ga.sequence_id = gs.source_id and
        gf.source_id = ga.source_id and
@@ -248,7 +248,7 @@ SELECT -- match a sequence source_id
        '' phase, 
        null parent_id, 
        1 startm, gs.length end, '.' strand
-FROM apidb.GenomicSequence gs, sres.SequenceOntology so,
+FROM ApidbTuning.GenomicSequence gs, sres.SequenceOntology so,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
      dots.NASequence nas
 WHERE gs.lowercase_source_id
@@ -276,7 +276,7 @@ SELECT etn.na_sequence_id srcfeature_id,
        etn.source_id name, 
        'Sequence' type, 
        ' ' atts
-FROM   apidb.sequenceattributes etn, apidb.SequenceAlias sa
+FROM   ApidbTuning.SequenceAttributes etn, ApidbTuning.SequenceAlias sa
 WHERE  etn.source_id = sa.source_id 
  and sa.lowercase_source_id = lower('$name') 
 ]]>
@@ -315,8 +315,8 @@ WHERE  ens.na_sequence_id = $srcfeature_id
        'isPseudo=' || ga.is_pseudo
          as atts
 FROM
-       apidb.GeneAttributes ga,
-       apidb.FeatureLocation fl
+       ApidbTuning.GeneAttributes ga,
+       ApidbTuning.FeatureLocation fl
 WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.feature_type = 'GeneFeature'
   AND  fl.na_feature_id = ga.na_feature_id
@@ -344,7 +344,7 @@ ORDER BY
        'Note=here to work around Feature.pm bug of splitting null atts' atts
 FROM 
        dots.TransposableElement tr,
-       apidb.FeatureLocation fl
+       ApidbTuning.FeatureLocation fl
 WHERE
        tr.na_feature_id = fl.na_feature_id and
        fl.feature_type = 'TransposableElement' and
@@ -407,7 +407,7 @@ ORDER BY
              end_max end, 
              decode (is_reversed, 0, '+1', 1, '-1', '.') strand,
              'Length=' || (end_max-start_min+1)/3 atts
-      FROM   apidb.featureLocation 
+      FROM   ApidbTuning.FeatureLocation 
       WHERE  na_sequence_id = $srcfeature_id 
         AND  start_min <= $rend
         AND  end_max >= $base_start - 1 
@@ -431,7 +431,7 @@ ORDER BY
              end_max end, 
              decode (is_reversed, 0, '+1', 1, '-1', '.') strand,
              'Length=' || (end_max-start_min+1)/3 atts
-      FROM   apidb.featureLocation 
+      FROM   ApidbTuning.FeatureLocation 
       WHERE  na_sequence_id = $srcfeature_id 
         AND  start_min <= $rend
         AND  end_max >= $base_start - 1 
@@ -460,7 +460,7 @@ SELECT blat.blat_alignment_id feature_id,
        'Stage=' || l.stage || '$dlm' ||
        'PercentIdentity=' || blat.percent_identity atts 
 FROM   
-       apidb.BlatAlignmentLocation blat, 
+       ApidbTuning.BlatAlignmentLocation blat, 
        dots.ASSEMBLYSEQUENCE asbl, 
        dots.EST est, dots.library l,
        dots.NASEQUENCE etn
@@ -488,7 +488,7 @@ SELECT b.similarity_id feature_id, 'match' type, 'WU_BLASTX' source,
        b.name, b.score, b.pvalue, b.na_sequence_id parent_id, 
        b.startm, b.end, b.strand, b.atts
 FROM   
-       apidb.blastx b
+       ApidbTuning.Blastx b
 WHERE  
        b.startm between $base_start and $rend and
        b.end between $base_start and $rend and       
@@ -516,7 +516,7 @@ SELECT blat.blat_alignment_id feature_id,
        'PercentIdentity=' || blat.percent_identity || '$dlm' ||
        'Count=' || a.number_of_contained_sequences atts 
 FROM   
-       apidb.BlatAlignmentLocation blat, 
+       ApidbTuning.BlatAlignmentLocation blat, 
        dots.Assembly a
 WHERE  
        blat.query_na_sequence_id = a.na_sequence_id and 
@@ -536,7 +536,7 @@ ORDER BY
 <![CDATA[
 with materialized_query as
      (select organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, atts
-      from apidb.GeneContextSyntenicGenes
+      from ApidbTuning.GeneContextSyntenicGenes
       where -- organism = $$taxon$$ and
             na_sequence_id = $srcfeature_id
         and context_start = $base_start
@@ -582,8 +582,8 @@ FROM
        apidb.synteny syn,
        apidb.syntenyAnchor anch_left,
        apidb.syntenyAnchor anch_right,
-       apidb.geneattributes gattr,
-       apidb.featurelocation fl
+       ApidbTuning.GeneAttributes gattr,
+       ApidbTuning.FeatureLocation fl
 WHERE (select count(*) from materialized_query) = 0
 --AND gattr.organism = 'Plasmodium yoelii yoelii str. 17XNL'
   AND syn.a_na_sequence_id = $srcfeature_id
@@ -655,7 +655,7 @@ SELECT
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'Note=here to work around Feature.pm bug of splitting null atts' atts
 FROM 
-       apidb.FeatureLocation fl, dots.LowComplexityNAFeature lc
+       ApidbTuning.FeatureLocation fl, dots.LowComplexityNAFeature lc
 WHERE
        fl.feature_type = 'LowComplexityNAFeature' and
        fl.start_min <= $rend and 
@@ -731,9 +731,9 @@ SELECT fl.na_feature_id as feature_id,
        'SourceID=' || sta.feature_source_id || '$dlm' ||
        'Sequence=CATG' || staa.sequence || '$dlm' ||
        'Occurrence=' || staa.occurrence atts
-FROM   apidb.FeatureLocation fl,
-       apidb.sagetaganalysisattributes staa,
-       apidb.sagetagattributes sta
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SageTagAnalysisAttributes staa,
+       ApidbTuning.SageTagAttributes sta
 WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.na_sequence_id = $srcfeature_id 
   AND  fl.start_min <= $rend
@@ -761,9 +761,9 @@ SELECT fl.na_feature_id as feature_id,
        'SourceID=' || sta.feature_source_id || '$dlm' ||
        'Sequence=CATG' || staa.sequence || '$dlm' ||
        'Occurrence=' || staa.occurrence atts
-FROM   apidb.FeatureLocation fl,
-       apidb.sagetaganalysisattributes staa,
-       apidb.sagetagattributes sta
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SageTagAnalysisAttributes staa,
+       ApidbTuning.SageTagAttributes sta
 WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.na_sequence_id = $srcfeature_id 
   AND  fl.start_min <= $rend
@@ -807,7 +807,7 @@ SELECT fl.na_feature_id as feature_id,
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'SourceId='   || fl.feature_source_id || '$dlm'
         as atts
-FROM   apidb.featurelocation fl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+FROM   ApidbTuning.FeatureLocation fl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
 WHERE  edr.external_database_id = ed.external_database_id
   AND  edr.external_database_release_id=fl.external_database_release_id
   AND  fl.feature_type = 'ArrayElementFeature'
@@ -1068,7 +1068,7 @@ FROM (
  FROM  apidb.spliceSiteFeature ssf
  LEFT JOIN (SELECT source_id , sample_name, location, strand, is_dominant, count,
           CASE WHEN (within_cds=1) THEN (-1)*dist_to_cds ELSE dist_to_cds END AS utr_len
-   FROM apidb.spliceSiteGenes 
+   FROM ApidbTuning.SpliceSiteGenes 
    WHERE na_sequence_id = $srcfeature_id
    AND location >=$base_start
    AND location <=$rend
@@ -1107,7 +1107,7 @@ SELECT
        'SOTerm=' || fs.term_name atts
 FROM  dots.massspecfeature msf,
       dots.translatedaafeature taaf,
-      apidb.FeatureSo fs,
+      ApidbTuning.FeatureSo fs,
       dots.aasequence aas, dots.aalocation aal,
 (SELECT count(*) as match_count, 
        min(msf.na_feature_id) as feat_id,
@@ -1117,7 +1117,7 @@ FROM  dots.massspecfeature msf,
        decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
        ed.name as ed_name
 FROM  dots.massspecfeature msf,
-      apidb.FeatureLocation nal,
+      ApidbTuning.FeatureLocation nal,
       dots.nasequence enas,
       sres.externaldatabaserelease edr,
       sres.externaldatabase ed
@@ -1154,7 +1154,7 @@ SELECT
        'SOTerm=' || fs.term_name atts
 FROM  dots.massspecfeature msf,
       dots.translatedaafeature taaf,
-      apidb.FeatureSo fs,
+      ApidbTuning.FeatureSo fs,
       dots.aasequence aas, dots.aalocation aal,
 (SELECT count(*) as match_count, 
        min(msf.na_feature_id) as feat_id,
@@ -1164,7 +1164,7 @@ FROM  dots.massspecfeature msf,
        decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
        ed.name as ed_name
 FROM  dots.massspecfeature msf,
-      apidb.FeatureLocation nal,
+      ApidbTuning.FeatureLocation nal,
       dots.nasequence enas,
       sres.externaldatabaserelease edr,
       sres.externaldatabase ed
@@ -1213,7 +1213,7 @@ FROM  dots.massspecfeature msf,
        decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
        apidb.tab_to_string(CAST(COLLECT(edr.external_database_release_id || '') AS apidb.varchartab), ', ' ) db_ids
 FROM  dots.massspecfeature msf,
-      apidb.FeatureLocation nal,
+      ApidbTuning.FeatureLocation nal,
       dots.nasequence enas,
       sres.externalDatabaseRelease edr,
       sres.externalDatabase ed
@@ -1230,7 +1230,7 @@ GROUP BY enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x,
 FROM
 (SELECT distinct (edr.external_database_release_id)||'='|| ed.name db_info
 FROM  dots.massspecfeature msf,
-       apidb.FeatureLocation nal,
+       ApidbTuning.FeatureLocation nal,
        dots.nasequence enas,
        sres.externalDatabaseRelease edr,
        sres.externalDatabase ed
@@ -1277,7 +1277,7 @@ SELECT blat.blat_alignment_id feature_id,
        'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
        'Library=' || l.dbest_name  || '$dlm' atts 
 FROM   
-       apidb.BlatAlignmentLocation blat, 
+       ApidbTuning.BlatAlignmentLocation blat, 
        dots.Est est, 
        dots.ExternalNASequence estseq,
        dots.Library l,
@@ -1330,7 +1330,7 @@ SELECT CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
        END feature_id,tn.name as taxon,
        blat.query_na_sequence_id, blat.target_start, blat.target_end,
        blat.target_na_sequence_id, ed.name 
-FROM apidb.BlatAlignmentLocation blat,
+FROM ApidbTuning.BlatAlignmentLocation blat,
 dots.ExternalNASequence etn, Sres.taxonname tn, 
 sres.ExternalDatabase ed, sres.externalDatabaseRelease edr
 WHERE blat.query_na_sequence_id = etn.na_sequence_id
@@ -1389,7 +1389,7 @@ SELECT CASE WHEN tn.name like 'Leishmania%' OR tn.name like 'Trypanosoma%'
        END feature_id,
        blat.query_na_sequence_id, blat.target_start, blat.target_end,
        blat.target_na_sequence_id
-FROM apidb.BlatAlignmentLocation blat, dots.ExternalNASequence etn, 
+FROM ApidbTuning.BlatAlignmentLocation blat, dots.ExternalNASequence etn, 
      sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr,
      Sres.taxonname tn
 WHERE blat.query_na_sequence_id = etn.na_sequence_id 
@@ -1478,7 +1478,7 @@ SELECT fl.na_sequence_id feature_id,
        'overview' source,
        start_min startm,
        end_max end
-FROM  apidb.featurelocation fl, sres.sequenceOntology so  
+FROM  ApidbTuning.FeatureLocation fl, sres.sequenceOntology so  
 WHERE fl.na_sequence_id = $srcfeature_id
   AND so.sequence_ontology_id = fl.sequence_ontology_id 
   AND so.term_name='centromere'    
@@ -1502,7 +1502,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
        'Note=here to work around Feature.pm bug of splitting null atts' atts
 FROM 
        dots.NaFeature tr,
-       apidb.FeatureLocation fl
+       ApidbTuning.FeatureLocation fl
 WHERE
        tr.na_feature_id = fl.na_feature_id and
        fl.feature_type = 'TandemRepeatFeature' and
@@ -1534,7 +1534,7 @@ ORDER BY
        'Score=' || to_char(exp(BS.primary_score),'9.99EEEE') as atts
 FROM 
        dots.BindingSiteFeature BS,
-       apidb.FeatureLocation fl,
+       ApidbTuning.FeatureLocation fl,
        dots.nasequence s,
        sres.externaldatabase d,
        sres.externaldatabaserelease rel
@@ -1581,7 +1581,7 @@ SELECT gf.na_feature_id feature_id,
          as atts
 FROM   dots.GENEFEATURE gf, 
        dots.NALOCATION nal,
-       apidb.GeneAttributes ga 
+       ApidbTuning.GeneAttributes ga 
 WHERE  ga.so_term_name = 'repeat_region'
    AND nal.na_feature_id = gf.na_feature_id
    AND ga.start_min <= $rend 
@@ -1607,7 +1607,7 @@ WHERE  ga.so_term_name = 'repeat_region'
        'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
        'Library=' || l.dbest_name  || '$dlm' atts 
 FROM   
-       apidb.BlatAlignmentLocation blat, 
+       ApidbTuning.BlatAlignmentLocation blat, 
        dots.Est est, 
        dots.ExternalNASequence estseq,
        dots.Library l,
@@ -1652,7 +1652,7 @@ select * from (
        'TStart=' || sim.min_query_start || '$dlm' || 
        'TStop=' || sim.max_query_end atts 
 FROM   
-       apidb.SimilaritySpanLocation sim, 
+       ApidbTuning.SimilaritySpanLocation sim, 
        dots.EXTERNALAASEQUENCE extt, 
        dots.NASEQUENCE extq
 WHERE  
@@ -1688,7 +1688,7 @@ SELECT regexp_substr(etn.source_id, '(.*)[^(x1-4)(y1-4)]') feature_id,
        min(blat.target_start) startm,
        max(blat.target_end) end,
        max(blat.target_na_sequence_id) as query_na_sequence_id
-FROM   apidb.BlatAlignmentLocation blat,
+FROM   ApidbTuning.BlatAlignmentLocation blat,
        dots.ExternalNASequence etn
 WHERE  blat.query_na_sequence_id = etn.na_sequence_id
   AND  blat.target_na_sequence_id = $srcfeature_id
@@ -1785,7 +1785,7 @@ where offset < $rend and (offset+length) > $base_start
        'PercentIdentity=' || blat.percent_identity || '$dlm' ||
        'Count=' || a.number_of_contained_sequences atts 
 FROM   
-       apidb.BlatAlignmentLocation blat, 
+       ApidbTuning.BlatAlignmentLocation blat, 
        dots.Assembly a
 WHERE  
        blat.query_na_sequence_id = a.na_sequence_id and 
@@ -1818,7 +1818,7 @@ ORDER BY
        decode (l.is_reversed, 0, '+1', 1, '-1', '.') strand,
              'Name=' || s.name  || '$dlm' || 'SequenceId=' || nas.source_id  atts
       FROM   DoTS.STS s, SRes.sequenceontology so,
-             ApiDB.FeatureLocation l, DOTS.NASequence nas
+             ApidbTuning.FeatureLocation l, DOTS.NASequence nas
       WHERE  s.na_sequence_id = $srcfeature_id 
         AND  l.start_min <= $rend
         AND  l.end_max >= $base_start
@@ -1970,7 +1970,7 @@ SELECT
          as atts
 FROM 
        dots.GeneFeature gf,
-       ApiDB.FeatureLocation fl, 
+       ApidbTuning.FeatureLocation fl, 
        dots.NASequence ns,
        sres.TaxonName tn,
        sres.SequenceOntology so,
@@ -2039,8 +2039,8 @@ FROM
       apidb.synteny syn,
       apidb.syntenyAnchor anch_left,
       apidb.syntenyAnchor anch_right,
-      apidb.sequenceattributes a,
-      apidb.sequenceattributes b,
+      ApidbTuning.SequenceAttributes a,
+      ApidbTuning.SequenceAttributes b,
       sres.externaldatabaserelease edr,
       sres.externaldatabase ed
 WHERE edr.external_database_id = ed.external_database_id
@@ -2195,8 +2195,8 @@ WHERE edr.external_database_id = ed.external_database_id
        sa.reference_na || '&' ||
        sa.source_id 
         as atts
-FROM   apidb.featurelocation fl,
-       apidb.SnpAttributes sa
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SnpAttributes sa
 WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.start_min <= $rend
   AND  fl.start_min >= $base_start
@@ -2237,8 +2237,8 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        'RefAA='   || sa.reference_aa || '$dlm' ||
        'SourceID='   ||  sa.source_id 
         as atts
-FROM   apidb.featurelocation fl,
-       apidb.SnpAttributes sa
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SnpAttributes sa
 WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.start_min <= $rend
   AND  fl.start_min >= $base_start
@@ -2273,8 +2273,8 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        'RefAA='   || sa.reference_aa || '$dlm' ||
        'SourceID='   ||  sa.source_id 
         as atts
-FROM   apidb.featurelocation fl,
-       apidb.SnpAttributes sa
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SnpAttributes sa
 WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.start_min <= $rend
   AND  fl.start_min >= $base_start
@@ -2320,7 +2320,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
         as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-ExonIb'
@@ -2349,8 +2349,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-ExonIb'
        ee.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -2380,8 +2380,8 @@ AND    cpp.protocol_type = 'called_peaks'
        ee.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts       
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -2410,8 +2410,8 @@ AND    cpp.protocol_type = 'called_peaks'
        ee.end_max           as end,
       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts 
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -2441,8 +2441,8 @@ AND    cpp.protocol_type = 'called_peaks'
        ee.end_max           as end,
        'Treatment=' || cpp.treatment ||  '$dlm' || 'Analysis=' || a.name ||  '$dlm' ||'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -2469,8 +2469,8 @@ AND    cpp.protocol_type = 'called_peaks'
        ee.end_max           as end,
       'Treatment=' || cpp.treatment ||  '$dlm' || 'Analysis=' || a.name ||  '$dlm' ||'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts 
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -2498,8 +2498,8 @@ AND    cpp.protocol_type = 'called_peaks'
        ee.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' ||'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    p.protocol_id  = a.protocol_id
@@ -2543,8 +2543,8 @@ AND    cpp.protocol_type = 'called_peaks'
        sa.gene_strand || '$dlm' ||
        'SourceID='   ||  sa.source_id 
         as atts
-FROM   apidb.featurelocation fl,
-       apidb.SnpAttributes sa
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SnpAttributes sa
 WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.start_min <= $rend
   AND  fl.start_min >= $base_start
@@ -2578,7 +2578,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
         as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit -Expresssion-IbIntron'
@@ -2609,7 +2609,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit -Expresssion-IbIntron'
        l.end_max as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'Note=GeneticMarkers' atts
-FROM   dots.seqVariation sv, ApiDB.FeatureLocation l,
+FROM   dots.seqVariation sv, ApidbTuning.FeatureLocation l,
        sres.EXTERNALDATABASERELEASE edr, sres.EXTERNALDATABASE ed
 WHERE  sv.external_database_release_id = edr.external_database_release_id and
        edr.external_database_id = ed.external_database_id and
@@ -2971,7 +2971,7 @@ WHERE
         as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-estSNPs'
@@ -3011,7 +3011,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-estSNPs'
         as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - Resequencing'
@@ -3051,7 +3051,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Resequencing'
         as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - Expresssion-Antisense'
@@ -3088,7 +3088,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expresssion-Antisense'
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - TBLASTN-TranscriptDiscovery'
@@ -3120,7 +3120,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - TBLASTN-TranscriptDiscovery'
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - EST-TranscriptDiscovery'
@@ -3157,7 +3157,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - EST-TranscriptDiscovery'
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - BLASTX-TranscriptDiscovery'
@@ -3197,7 +3197,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - BLASTX-TranscriptDiscovery'
         as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - ChIP'
@@ -3232,7 +3232,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - ChIP'
         as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearCoding'
@@ -3272,7 +3272,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearCoding'
         as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearNonCoding'
@@ -3302,8 +3302,8 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearNonCoding'
        ee.end_max           as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis='|| a.name || '$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -3339,7 +3339,7 @@ AND    cpp.strain = $$strain$$
         as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
 WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-Markers'
@@ -3398,7 +3398,7 @@ WHERE
        sa.reference_na || '&' ||
        sa.source_id 
         as atts
-FROM   apidb.SnpAttributes sa
+FROM   ApidbTuning.SnpAttributes sa
 WHERE  sa.dataset =  'Pf_Broad_SNPs_RSRC'
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
@@ -3431,10 +3431,10 @@ SELECT
         as atts
 FROM   dots.ExternalNaSequence s,
        dots.SnpFeature snp,
-       ApiDB.FeatureLocation l,
+       ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr,
-       apidb.geneattributes gene_info
+       ApidbTuning.GeneAttributes gene_info
 WHERE  ed.name = 'WinzelerGeneticVariationArray_RSRC'  
   AND  edr.external_database_id = ed.external_database_id
   AND  snp.external_database_release_id = edr.external_database_release_id
@@ -3468,7 +3468,7 @@ SELECT
        'MajorAllele=' || swi.major_allele || '$dlm' ||
        'MinorAlleleFreq=' || swi.minor_allele_frequency || '$dlm' ||
        'NumIsolates=' || swi.number_isolates as atts
-FROM   apidb.snpsWithIsolates swi, apidb.SnpAttributes sa
+FROM   ApidbTuning.SnpsWithIsolates swi, ApidbTuning.SnpAttributes sa
 WHERE  swi.snp_source_id = sa.source_id
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
@@ -3504,7 +3504,7 @@ WHERE  swi.snp_source_id = sa.source_id
        sa.reference_na || '&' ||
        sa.source_id 
         as atts
-FROM   apidb.SnpAttributes sa
+FROM   ApidbTuning.SnpAttributes sa
 WHERE  sa.dataset = 'sangerItGhanaSnps_RSRC'
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
@@ -3540,7 +3540,7 @@ WHERE  sa.dataset = 'sangerItGhanaSnps_RSRC'
        sa.reference_na || '&' ||
        sa.source_id 
         as atts
-FROM   apidb.SnpAttributes sa
+FROM   ApidbTuning.SnpAttributes sa
 WHERE  sa.dataset = 'sangerPReichenowiSnps_RSRC'  
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
@@ -3647,7 +3647,7 @@ ORDER BY
        sa.reference_na || '&' ||
        sa.source_id 
         as atts
-FROM   apidb.SnpAttributes sa
+FROM   ApidbTuning.SnpAttributes sa
 WHERE  sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'  
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
@@ -3713,7 +3713,7 @@ WHERE  sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
        sa.reference_na || '&' ||
        sa.source_id 
         as atts
-FROM   apidb.SnpAttributes sa
+FROM   ApidbTuning.SnpAttributes sa
 WHERE  sa.dataset =  'NIH SNPs'
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
@@ -3754,8 +3754,8 @@ WHERE  sa.dataset =  'NIH SNPs'
        sa.reference_na || '&' ||
        sa.source_id
        as atts
-FROM   apidb.featurelocation fl,
-       apidb.SnpAttributes sa
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SnpAttributes sa
 WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.start_min <= $rend
   AND  fl.start_min >= $base_start
@@ -3948,7 +3948,7 @@ SELECT blat.blat_alignment_id feature_id,
        blat.target_start startm,
        blat.target_end end,
        'pct=' || blat.percent_identity  atts
-FROM   apidb.BlatAlignmentLocation blat,
+FROM   ApidbTuning.BlatAlignmentLocation blat,
        dots.ExternalNASequence etn
 WHERE  blat.query_na_sequence_id = etn.na_sequence_id
   AND  blat.target_na_sequence_id = $srcfeature_id
@@ -3987,7 +3987,7 @@ SELECT
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
-       ApiDB.FeatureLocation exon_loc, Apidb.GeneAttributes ga
+       ApidbTuning.FeatureLocation exon_loc, ApidbTuning.GeneAttributes ga
 WHERE  exon_loc.na_sequence_id = $srcfeature_id
   and  exon_loc.feature_type = 'ExonFeature'
   AND  (( exon_loc.is_reversed = 0 AND exon_loc.coding_start <= $rend AND  exon_loc.coding_end >= $base_start)
@@ -4005,7 +4005,7 @@ SELECT
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
-       ApiDB.FeatureLocation exon_loc, Apidb.GeneAttributes ga
+       ApidbTuning.FeatureLocation exon_loc, ApidbTuning.GeneAttributes ga
 WHERE  exon_loc.na_sequence_id = $srcfeature_id
   and  exon_loc.feature_type = 'ExonFeature'
   AND  exon_loc.start_min <= $rend
@@ -4025,7 +4025,7 @@ SELECT
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
-       ApiDB.FeatureLocation exon_loc, Apidb.GeneAttributes ga
+       ApidbTuning.FeatureLocation exon_loc, ApidbTuning.GeneAttributes ga
 WHERE  exon_loc.na_sequence_id = $srcfeature_id
   and  exon_loc.feature_type = 'ExonFeature'
   AND  exon_loc.start_min <= $rend
@@ -4045,7 +4045,7 @@ SELECT
        decode (exon_loc.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
-       ApiDB.FeatureLocation exon_loc, Apidb.GeneAttributes ga
+       ApidbTuning.FeatureLocation exon_loc, ApidbTuning.GeneAttributes ga
 WHERE  exon_loc.na_sequence_id = $srcfeature_id
   and  exon_loc.feature_type = 'ExonFeature'
   AND  exon_loc.start_min <= $rend
@@ -4073,7 +4073,7 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
     <sql>
 <![CDATA[
 select ga2.source_id 
-from apidb.geneattributes ga1, apidb.geneattributes ga2
+from ApidbTuning.GeneAttributes ga1, ApidbTuning.GeneAttributes ga2
 where ga1.source_id = '$name'
 and ga1.orthomcl_name = ga2.orthomcl_name
 and not ga2.source_id = ga1.source_id
@@ -4098,7 +4098,7 @@ SELECT blat.blat_alignment_id feature_id,
        blat.blocksizes BLOCKSIZES,
        ' ' atts
 FROM
-       apidb.BlatAlignmentLocation blat,
+       ApidbTuning.BlatAlignmentLocation blat,
        dots.Assembly a
 WHERE
        blat.query_na_sequence_id = a.na_sequence_id and 
@@ -4130,7 +4130,7 @@ SELECT blat.blat_alignment_id feature_id,
        blat.blocksizes BLOCKSIZES,
        ' ' atts
 FROM   
-       apidb.BlatAlignmentLocation blat, 
+       ApidbTuning.BlatAlignmentLocation blat, 
        dots.ASSEMBLYSEQUENCE asbl, 
        dots.EST est, 
        dots.NASEQUENCE etn
@@ -4165,7 +4165,7 @@ WHERE
     <sql>
 <![CDATA[
 select ga2.source_id 
-from apidb.geneattributes ga1, apidb.geneattributes ga2
+from ApidbTuning.GeneAttributes ga1, ApidbTuning.GeneAttributes ga2
 where ga1.source_id = '$name'
 and ga1.orthomcl_name = ga2.orthomcl_name
 and not ga2.source_id = ga1.source_id
@@ -4184,7 +4184,7 @@ SELECT  msf.na_feature_id as feature_id,
         fl.na_feature_id as parent_id,
         decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
         'ExtDbName=' || ed.name atts
- FROM dots.MassSpecFeature msf, apidb.FeatureLocation fl,
+ FROM dots.MassSpecFeature msf, ApidbTuning.FeatureLocation fl,
        sres.externaldatabaserelease edr, sres.externaldatabase ed
  WHERE msf.na_feature_id = fl.na_feature_id
   AND  fl.start_min >= $base_start 
@@ -4207,7 +4207,7 @@ SELECT  msf.na_feature_id as feature_id,
         fl.na_feature_id as parent_id,
         decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
         'ExtDbName=' || ed.name atts
- FROM dots.MassSpecFeature msf, apidb.FeatureLocation fl,
+ FROM dots.MassSpecFeature msf, ApidbTuning.FeatureLocation fl,
        sres.externaldatabaserelease edr, sres.externaldatabase ed
  WHERE msf.na_feature_id = fl.na_feature_id
   AND  fl.start_min >= $base_start 
@@ -4233,7 +4233,7 @@ SELECT interval feature_id,
       'score=' || count(interval) atts
 FROM ( SELECT ceil(nal.start_min /50) interval, nal.na_sequence_id
  FROM  dots.massspecfeature msf,
-       apidb.FeatureLocation nal,
+       ApidbTuning.FeatureLocation nal,
        dots.nasequence enas
  WHERE msf.na_feature_id = nal.na_feature_id
   AND  nal.na_sequence_id = $srcfeature_id
@@ -4302,7 +4302,7 @@ SELECT blat.blat_alignment_id feature_id,
        blat.tstarts TSTARTS,
        blat.blocksizes BLOCKSIZES,
        ' ' atts
-FROM   apidb.BlatAlignmentLocation blat, 
+FROM   ApidbTuning.BlatAlignmentLocation blat, 
        dots.ASSEMBLYSEQUENCE asbl,
        dots.EST est,
        dots.NASEQUENCE etn
@@ -4335,7 +4335,7 @@ blat.score,
 blat.target_start startm,
 blat.target_end end,
 'pct=' || blat.percent_identity atts
-FROM apidb.BlatAlignmentLocation blat,
+FROM ApidbTuning.BlatAlignmentLocation blat,
 dots.ExternalNASequence etn, sres.taxonname tn
 WHERE blat.query_na_sequence_id = etn.na_sequence_id
 AND etn.taxon_id = tn.taxon_id
@@ -4390,7 +4390,7 @@ SELECT interval feature_id,
       interval * 50000 end 
 FROM ( 
       SELECT ceil(fl.start_min / 50000) interval 
-      FROM   apidb.GENEATTRIBUTES gf, apidb.FeatureLocation fl
+      FROM   ApidbTuning.GeneAttributes gf, ApidbTuning.FeatureLocation fl
 
       WHERE  gf.na_feature_id = fl.na_feature_id and 
              fl.na_sequence_id = $parent_id 
@@ -4419,7 +4419,7 @@ FROM
        dots.translatedaasequence taas, 
        sres.taxonname tn, 
        sres.sequenceontology so, 
-       ApiDB.FeatureLocation nal 
+       ApidbTuning.FeatureLocation nal 
 WHERE
        t.na_feature_id = taaf.na_feature_id
        AND taaf.aa_sequence_id = taas.aa_sequence_id
@@ -4488,7 +4488,7 @@ blat.score,
 blat.target_start startm,
 blat.target_end end,
 'pct=' || blat.percent_identity atts
-FROM apidb.BlatAlignmentLocation blat,
+FROM ApidbTuning.BlatAlignmentLocation blat,
 dots.ExternalNASequence etn, Sres.TaxonName tn,
 sres.EXTERNALDATABASE ed, sres.EXTERNALDATABASERELEASE edr
 WHERE blat.query_na_sequence_id = etn.na_sequence_id
@@ -4516,7 +4516,7 @@ WITH materialized_query AS
              context_source_id, project_id, syntenic_na_feature_id,
              syntenic_exon_feature_id, syntenic_gene_feature_id, startm, end,
              strand, atts
-      FROM apidb.SyntenicExonCache
+      FROM ApidbTuning.SyntenicExonCache
       WHERE na_sequence_id = $srcfeature_id
         AND context_start = $base_start
         AND context_end = $rend
@@ -4552,8 +4552,8 @@ FROM
        apidb.synteny syn,
        apidb.syntenyAnchor anch_left,
        apidb.syntenyAnchor anch_right,
-       apidb.featurelocation exfloc,
-       apidb.geneattributes ga
+       ApidbTuning.FeatureLocation exfloc,
+       ApidbTuning.GeneAttributes ga
 WHERE (select count(*) from materialized_query) = 0
   AND ga.na_feature_id = exfloc.parent_id
   AND syn.a_na_sequence_id = $srcfeature_id
@@ -4623,7 +4623,7 @@ WHERE startm <= $rend
        sim.query_end end, 
        decode (sim.span_is_reversed, 0, '+1', 1, '-1', '.') strand, 
        '' atts 
-FROM   apidb.SimilaritySpanLocation sim
+FROM   ApidbTuning.SimilaritySpanLocation sim
 WHERE  sim.query_id = $srcfeature_id
 AND    (sim.max_query_end - sim.min_query_start) < 5000
 AND    to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-10 
@@ -4648,7 +4648,7 @@ AND    sim.max_query_end <= $rend
        sim.query_end end, 
        decode (sim.span_is_reversed, 0, '+1', 1, '-1', '.') strand, 
        '' atts 
-FROM   apidb.SimilaritySpanLocation sim
+FROM   ApidbTuning.SimilaritySpanLocation sim
 WHERE  sim.query_id = $srcfeature_id
 AND    (sim.max_query_end - sim.min_query_start) < 5000
 AND    to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-10 
@@ -4675,7 +4675,7 @@ SELECT blat.blat_alignment_id feature_id,
        blat.blocksizes BLOCKSIZES,
        ' ' atts
 FROM
-       apidb.BlatAlignmentLocation blat,
+       ApidbTuning.BlatAlignmentLocation blat,
        dots.EST est,
        dots.EXTERNALNASEQUENCE etn
 WHERE  blat.target_start <= $rend
@@ -4697,9 +4697,9 @@ ORDER BY
        staa.library_name,
        staa.raw_count,
        staa.library_tag_percentage
-FROM   apidb.FeatureLocation fl,
-       apidb.sagetaganalysisattributes staa,
-       apidb.sagetagattributes sta,
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SageTagAnalysisAttributes staa,
+       ApidbTuning.SageTagAttributes sta,
        rad.assay a
 WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.na_sequence_id = $srcfeature_id 
@@ -4720,9 +4720,9 @@ ORDER BY feature_id, a.assay_id
        staa.library_name,
        staa.raw_count,
        staa.library_tag_percentage
-FROM   apidb.FeatureLocation fl,
-       apidb.sagetaganalysisattributes staa,
-       apidb.sagetagattributes sta,
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SageTagAnalysisAttributes staa,
+       ApidbTuning.SageTagAttributes sta,
        rad.assay a
 WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.na_sequence_id = $srcfeature_id 
@@ -4765,7 +4765,7 @@ SELECT blat.blat_alignment_id feature_id,
        blat.blocksizes BLOCKSIZES,
        ' ' atts
 FROM
-       apidb.BlatAlignmentLocation blat,
+       ApidbTuning.BlatAlignmentLocation blat,
        dots.Assembly a
 WHERE
        blat.query_na_sequence_id = a.na_sequence_id and 
@@ -4825,11 +4825,11 @@ SELECT
        'isDeprecated=' ||  ga.is_deprecated atts 
 FROM   
       dots.GeneFeature gf,
-       ApiDB.FeatureLocation fl,
-       ApiDB.FeatureLocation fl_gf,
+       ApidbTuning.FeatureLocation fl,
+       ApidbTuning.FeatureLocation fl_gf,
        sres.ExternalDatabaseRelease edr,
        sres.ExternalDatabase ed,
-       ApiDB.GeneAttributes ga
+       ApidbTuning.GeneAttributes ga
 WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.feature_type = 'ExonFeature'
   AND  gf.na_feature_id = fl.parent_id
@@ -4874,7 +4874,7 @@ SELECT /*+ ordered */
         '0' strand,
         'Type=sgap' atts
 FROM    apidb.synteny syn,
-        apidb.featurelocation fl,
+        ApidbTuning.FeatureLocation fl,
         apidb.syntenyAnchor anch_right,
         apidb.syntenyAnchor anch_left
 WHERE  syn.a_na_sequence_id = $srcfeature_id
@@ -4923,9 +4923,9 @@ SELECT    sa.na_feature_id as feature_id,
           var.allele,
           var.phenotype,
           var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var,
-     apidb.featurelocation fl
+     ApidbTuning.FeatureLocation fl
 WHERE fl.na_sequence_id = $srcfeature_id
   AND fl.start_min <= $rend
   AND fl.start_min >= $base_start
@@ -4946,9 +4946,9 @@ SELECT    sa.na_feature_id as feature_id,
           var.allele,
           var.phenotype,
           var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var,
-     apidb.featurelocation fl
+     ApidbTuning.FeatureLocation fl
 WHERE fl.na_sequence_id = $srcfeature_id
   AND fl.start_min <= $rend
   AND fl.start_min >= $base_start
@@ -4975,7 +4975,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
       interval * 50000 end 
 FROM (
       SELECT ceil(fl.start_min/ 50000) interval
-      FROM   dots.seqVariation sv, apidb.SnpAttributes sa, ApiDB.FeatureLocation fl
+      FROM   dots.seqVariation sv, ApidbTuning.SnpAttributes sa, ApidbTuning.FeatureLocation fl
       WHERE  sv.parent_id = fl.na_feature_id
        AND   fl.na_feature_id = sa.na_feature_id
        AND   fl.na_sequence_id = $parent_id
@@ -4998,8 +4998,8 @@ GROUP BY interval
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =  cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id =  a.analysis_id
@@ -5025,9 +5025,9 @@ SELECT    sa.na_feature_id as feature_id,
           var.allele,
           var.phenotype,
           var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var,
-     apidb.featurelocation fl
+     ApidbTuning.FeatureLocation fl
 WHERE fl.na_sequence_id = $srcfeature_id
   AND fl.start_min <= $rend
   AND fl.start_min >= $base_start
@@ -5086,8 +5086,8 @@ HAVING count(*) <= 10
        ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -5113,8 +5113,8 @@ AND    lower(a.name) like '%tbp-replicate%'
        ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -5141,8 +5141,8 @@ AND    lower(a.name) like '%snap50-replicate%'
        ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -5169,8 +5169,8 @@ AND    lower(a.name) like '%acetylh3-replicate%'
        ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -5196,8 +5196,8 @@ AND    lower(a.name) like '%acetylh3%' AND lower(a.name) not like '%replicate%'
        ee.end_max             as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name|| '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.genotype as atts
 FROM   rad.protocol p,rad.analysis a,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
@@ -5225,8 +5225,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis='     || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5255,8 +5255,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5284,8 +5284,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5315,8 +5315,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5345,8 +5345,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis='     || a.name  || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5374,8 +5374,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis=' || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p, 
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5405,8 +5405,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis=' || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5438,8 +5438,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5469,8 +5469,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5500,8 +5500,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5531,8 +5531,8 @@ SELECT  ee.na_feature_id   as feature_id,
        'Analysis=' || a.name || '$dlm' ||
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,rad.protocol p,
-       apidb.ExpressionElement ee,
-       apidb.chipprotocolparams cpp
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
 WHERE  a.analysis_id = cpp.analysis_id
 AND    a.protocol_id = p.protocol_id
 AND    a.analysis_id = ee.analysis_id
@@ -5565,7 +5565,7 @@ FROM   (select ceil(ee.start_min / (($rend - $base_start + 1) / 800)) start_inte
                ee.score as score,ee.na_feature_id,
                ee.na_sequence_id,a.name as name 
         from rad.analysis a,
-             apidb.ExpressionElement ee
+             ApidbTuning.ExpressionElement ee
         WHERE  a.analysis_id = ee.analysis_id
         AND    ee.na_sequence_id = $srcfeature_id
         AND    a.name =  $$analysis$$
@@ -5584,9 +5584,9 @@ SELECT    sa.na_feature_id as feature_id,
           var.allele,
           var.phenotype,
           var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var,
-     apidb.featurelocation fl
+     ApidbTuning.FeatureLocation fl
 WHERE fl.na_sequence_id = $srcfeature_id
   AND fl.start_min <= $rend
   AND fl.start_min >= $base_start
@@ -5606,7 +5606,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var
 WHERE sa.dataset = 'sangerPReichenowiSnps_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
@@ -5681,7 +5681,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var
 WHERE sa.dataset = 'Pf_Broad_SNPs_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
@@ -5699,7 +5699,7 @@ ORDER BY var.strain
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var
 WHERE sa.dataset = 'sangerItGhanaSnps_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
@@ -5717,7 +5717,7 @@ ORDER BY var.strain
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var
 WHERE sa.dataset = 'WinzelerGeneticVariationArray_RSRC'
   AND sa.na_sequence_id = $srcfeature_id
@@ -5736,7 +5736,7 @@ ORDER BY var.strain
 <![CDATA[
 SELECT sc.na_feature_id as feature_id, sc.strain, sc.allele,
        sc.phenotype, sc.product
-FROM apidb.SnpCombined sc
+FROM ApidbTuning.SnpCombined sc
 WHERE sc.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
   AND sc.na_sequence_id = $srcfeature_id
   AND sc.start_min <= $rend
@@ -5752,7 +5752,7 @@ ORDER BY sc.strain
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var
 WHERE sa.dataset = 'NIH SNPs'
   AND sa.na_sequence_id = $srcfeature_id
@@ -5776,9 +5776,9 @@ ORDER BY var.strain
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, UPPER(var.strain) strain, var.allele,
        var.phenotype, var.product
-FROM apidb.SnpAttributes sa,
+FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var,
-     apidb.featurelocation fl
+     ApidbTuning.FeatureLocation fl
 WHERE fl.na_sequence_id = $srcfeature_id
   AND fl.start_min <= $rend
   AND fl.start_min >= $base_start
@@ -5806,9 +5806,9 @@ SELECT fl.na_feature_id as feature_id,
        fl.end_max end, 
        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'binaryColor='||CASE WHEN staa.occurrence > 1 THEN 1 ELSE 0 END atts
-FROM   apidb.FeatureLocation fl,
-       apidb.sagetaganalysisattributes staa,
-       apidb.sagetagattributes sta
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SageTagAnalysisAttributes staa,
+       ApidbTuning.SageTagAttributes sta
 WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.na_sequence_id = $srcfeature_id 
   AND  fl.start_min <= $rend
@@ -5833,7 +5833,7 @@ SELECT interval as feature_id,
 FROM
 (
   SELECT ceil(fl.start_min / 1000) interval 
-  FROM   apidb.featurelocation fl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+  FROM   ApidbTuning.FeatureLocation fl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
   WHERE  edr.external_database_id = ed.external_database_id
     AND  edr.external_database_release_id=fl.external_database_release_id
     AND  fl.feature_type = 'ArrayElementFeature'

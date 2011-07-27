@@ -81,7 +81,7 @@ if ($bool) {
 # returns chromosome number and snp location
 sub getParams{
   my ($snpSrcId) = @_;
-  my $sql = "select pfl.seq_source_id, pfl.old_location from apidb.PlasmoPfalLocations pfl, apidb.snpattributes sa where sa.source_id ='$snpSrcId' and sa.start_min=pfl.new_location and pfl.seq_source_id=sa.seq_source_id";
+  my $sql = "select pfl.seq_source_id, pfl.old_location from apidb.PlasmoPfalLocations pfl, ApidbTuning.SnpAttributes sa where sa.source_id ='$snpSrcId' and sa.start_min=pfl.new_location and pfl.seq_source_id=sa.seq_source_id";
 
   my $stmt = $dbh->prepareAndExecute($sql);
   my ($srcId,$start) = $stmt->fetchrow_array();
@@ -98,7 +98,7 @@ sub getSnpLocations{
   $srcId = 'MAL'.$srcId;
   my @locations;
 
-  my $sql = "select distinct(old_location) from apidb.PlasmoPfalLocations pfl, apidb.snpattributes sa where sa.seq_source_id='$srcId' and pfl.seq_source_id=sa.seq_source_id and start_min=new_location and old_location > ($start-$width) and old_location < ($start+$width) order by old_location";
+  my $sql = "select distinct(old_location) from apidb.PlasmoPfalLocations pfl, ApidbTuning.SnpAttributes sa where sa.seq_source_id='$srcId' and pfl.seq_source_id=sa.seq_source_id and start_min=new_location and old_location > ($start-$width) and old_location < ($start+$width) order by old_location";
 
   my $stmt = $dbh->prepareAndExecute($sql);
   while(my ($loc) = $stmt->fetchrow_array()){
