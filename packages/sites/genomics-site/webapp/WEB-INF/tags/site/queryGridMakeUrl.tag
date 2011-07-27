@@ -115,7 +115,7 @@
   </c:if>
 <c:if test="${token eq 'Pi'}">
         <c:set var="Pi_image">
-            /assets/images/piroplasmadb_letter.gif
+            /assets/images/plasmodb_letter.gif
         </c:set>
         <c:set var="Pi" value="<a href='${piroRoot}${link}'><img src='${Pi_image}' border='0' alt='piroplasmadb' /></a>" />
   </c:if>
@@ -144,7 +144,7 @@
     <c:set var="orgnismName" value="Entamoeba"/>
 </c:if>
 <c:if test="${modelName eq 'MicrosporidiaDB'}">
-    <c:set var="orgnismName" value="Encephalitozoon,Enterocytozoon"/>
+    <c:set var="orgnismName" value="Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Octosporea,Vavraia"/>
 </c:if>
 <c:if test="${modelName eq 'CryptoDB'}">
     <c:set var="orgnismName" value="Cryptosporidium"/>
@@ -156,7 +156,7 @@
         <c:set var="orgnismName" value="Plasmodium"/>
 </c:if>
 <c:if test="${modelName eq 'ToxoDB'}">
-        <c:set var="orgnismName" value="Neospora,Toxoplasma"/>
+        <c:set var="orgnismName" value="Eimeria,Neospora,Toxoplasma"/>
 </c:if>
 <c:if test="${modelName eq 'GiardiaDB'}">
         <c:set var="orgnismName" value="Giardia"/>
@@ -206,6 +206,7 @@
 	<td width="14">${C}</td>
 	<td width="14">${G}</td>
 	<td width="14">${M}</td>	
+	<td width="14">${Pi}</td>	
 	<td width="14">${P}</td>	
 	<td width="14">${T}</td>
 	<td width="14">${Tr}</td>

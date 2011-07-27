@@ -6,37 +6,31 @@
 <c:set var="cycName" value="${sName}Cyc" />
 
 <c:choose>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
-		<c:set var="listOrganisms" value="Cryptosporidium, Giardia, Plasmodium, Toxoplasma, Neospora, Trichomonas, Trypanosoma, Leishmania"/>
+        <c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
+		<c:set var="listOrganisms" value="Eukaryotic Pathogens"/>
 	</c:when>
         <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
 		<c:set var="listOrganisms" value="Cryptosporidium"/>
 	</c:when>
-<c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
-                <c:set var="listOrganisms" value="Toxoplasma, Neospora"/>
+        <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
+                <c:set var="listOrganisms" value="Toxoplasma, Neospora, Eimeria"/>
         </c:when>
-
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
 		<c:set var="listOrganisms" value="Plasmodium"/>
 	</c:when>
- <c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
+ 	<c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
 		<c:set var="listOrganisms" value="Giardia"/>
 	</c:when>
- <c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
+ 	<c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
 		<c:set var="listOrganisms" value="Trichomonas"/>
 	</c:when>
-
- <c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
-		<c:set var="listOrganisms" value="Leishmania, Trypanosoma"/>
+ 	<c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
+		<c:set var="listOrganisms" value="Leishmania, Trypanosoma, Crithidia"/>
 	</c:when>
-
 </c:choose> 
 
 <div id="info">
-
-
     	<ul> 
-	
 		<li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"><strong>BLAST</strong></a>
 			<ul><li style="border:0">Identify Sequence Similarities</li></ul>
 		</li>
@@ -60,7 +54,7 @@
 
 	<c:choose>
 	<c:when test="${sName == 'Crypto'}">
-          
+
                 <li><a href="http://apicyc.apidb.org/CPARVUM/server.html"><strong>${cycName}</strong></a>
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
@@ -70,7 +64,6 @@
 		</li>
 	</c:when>
 	<c:when test="${sName == 'EuPath'}">
-          
                 <li><a href="http://apicyc.apidb.org/"><strong>ApiCyc</strong></a>
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
