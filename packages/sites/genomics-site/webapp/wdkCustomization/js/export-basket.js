@@ -25,6 +25,7 @@ function exportBasket(rcName) {
             } else {
                 var message = "No record is exported to " + targetProject + ".\n"
                     + "You don't have any record of the selected type in your baskets,\n"
+                    + "or the records already exist in the basket of the selected website,\n"
                     + "or the records are not compatible with the selected website.";
                 alert(message);
             }

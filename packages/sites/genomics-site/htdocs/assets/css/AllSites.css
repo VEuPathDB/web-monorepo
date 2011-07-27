@@ -1193,3 +1193,8 @@ a#gbView {
     padding-left: 1.7em;
     text-indent: -1.5em;
 }
+
+#export-basket {
+    background-color: #EEEEEE;
+    padding: 1px;
+}
