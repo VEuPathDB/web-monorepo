@@ -464,7 +464,7 @@ sub getProjectNames() {
 
      my @projectNames;
      my $sql=q(SELECT project_name from announce.projects
-               ORDER BY project_id);
+               ORDER BY project_name);
      my $sth=$dbh->prepare($sql);
      $sth->execute();
 
