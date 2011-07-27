@@ -11,11 +11,29 @@
   <c:set var="baskets" value="${requestScope.baskets}" />
   <c:set var="wdkStep" value="${baskets[0]}" />
 </c:if>
-<c:set var="rcName" value="${wdkStep.answerValue.recordClass.fullName}" />
-
-<%-- export basket to EuPathDB --%>
+<c:set var="recordClass" value="${wdkStep.answerValue.recordClass}" />
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
-<c:if test="${projectId != 'EuPathDB'}">
-  <input type="button" value="Export to EuPathDB" onclick="exportBasket('EuPathDB', '${rcName}')" />
-</c:if>
+
+<%-- export basket --%>
+<div id="export-basket">
+  Export ${recordClass.type} basket to:
+  <select id="to-project">
+    <c:choose>
+      <c:when test="${project == 'EuPathDB'}">
+        <option value="AmoebaDB" selected="selected">AmoebaDB</option>
+        <option value="CryptoDB">CryptoDB</option>
+        <option value="GiardiaDB">GiardiaDB</option>
+        <option value="MicrosporidiaDB">MicrosporidiaDB</option>
+        <option value="PlasmoDB">PlasmoDB</option>
+        <option value="ToxoDB">ToxoDB</option>
+        <option value="TrichDB">TrichDB</option>
+        <option value="TriTrypDB">TriTrypDB</option>
+      </c:when>
+      <c:otherwise>
+        <option value="EuPathDB" selected="selected">EuPathDB</option>
+      </c:otherwise>
+    </c:choose>
+  </select>
+  <input type="button" value="Export" onclick="exportBasket('${recordClass.fullName}')" />
+</div>
 
