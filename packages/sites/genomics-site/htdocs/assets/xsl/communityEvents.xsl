@@ -55,10 +55,12 @@
     <xsl:if test="description/text()"><br/></xsl:if>
     <xsl:if test="$projCount &gt; 0">
       <p>
-      <xsl:for-each select="presence/projects/project">         
+      <xsl:for-each select="presence/projects/project">
+        <xsl:if test="string-length(.) &gt; 0">
         <img>
          <xsl:attribute name="src">/assets/images/<xsl:value-of select="normalize-space(.)"/>/favicon.jpg</xsl:attribute>
         </img>
+        </xsl:if>
       </xsl:for-each>
       <br/>
       Participation by EuPathDB: 
