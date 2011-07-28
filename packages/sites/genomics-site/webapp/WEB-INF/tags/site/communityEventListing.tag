@@ -17,7 +17,7 @@ http://${pageContext.request.serverName}${feedPath}
  </wir:feed>
 
 <ul id='communityEventList'>
-<c:forEach items="${allFeeds.entries}" var="e" begin="0" end="3" >
+<c:forEach items="${allFeeds.entries}" var="e" begin="0" end="9" >
   <fmt:formatDate var="fdate" value="${e.publishedDate}" pattern="d MMMM yyyy"/>
   <li id="${e.uri}"><a href='${fn:trim(e.link)}'>${e.title}</a></li>
 </c:forEach>
