@@ -175,7 +175,10 @@ _END_OF_TEXT_
    
    my $messageID=$_[0];
    my @projects;
-   my $sql=q(SELECT p.project_name FROM announce.projects p, announce.message_projects mp WHERE mp.message_ID = ? AND mp.project_ID = p.project_ID); 
+   my $sql=q(SELECT p.project_name 
+            FROM announce.projects p, announce.message_projects mp 
+            WHERE mp.message_ID = ? AND mp.project_ID = p.project_ID
+            ORDER BY p.project_name);
    my $sth=$dbh->prepare($sql);
    $sth->execute($messageID);
         

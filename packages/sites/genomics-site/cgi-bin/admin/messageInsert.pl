@@ -1,5 +1,4 @@
 #!/usr/bin/perl -Tw 
-
 use CGI qw/:standard/;
 use strict;
 use warnings;
@@ -191,7 +190,7 @@ if ($query->param("messageId")){
        ##Write an updated message record to the database.
        
         my $messageId = $query->param("updateMessageId");
-	my $messageText = $query->param("messageText");
+    	my $messageText = $query->param("messageText");
         my $messageCategory = $query->param("messageCategory");
         my @selectedProjects = $query->param("selectedProjects");
         my $startDate = $query->param("startDate");
@@ -274,8 +273,6 @@ sub displayMessageForm {
             $idString="<p><b>Message ID: $messageId</b></p>";
             }
 
-my @projectNames=getProjectNames();
-my @projectIds=getProjectIds();
    #### XHTML FORM #####     
     print<<_END_OF_TEXT_
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -321,8 +318,10 @@ _END_OF_TEXT_
 ;
 
            my $i=0;
-           foreach $projectId (@projectIds) {
+           foreach my $project (getProjects()) {
             $checkBox = '';
+            my $projectId = $project->{'id'};
+            my $projectName = $project->{'name'};
              if (!$messageId) {
                  foreach my $project (@selectedProjects) { 
                       if ($projectId eq $project) {$checkBox = "checked='checked'"};
@@ -336,7 +335,7 @@ _END_OF_TEXT_
                  }
              print "<label>";
              print "<input type=\"checkbox\" name=\"selectedProjects\" value=\"$projectId\" $checkBox id=\"selectedProjects_[$i]\" />";
-             print "<em>$projectNames[$i]</em>";
+             print "<em>$projectName</em>";
              print "</label>";
              print "<em>";
              print "<br/>";
@@ -438,44 +437,22 @@ _END_OF_TEXT_
 
 ####################################
 
- sub getProjectIds() {
+ sub getProjects() {
 
      ## Query DB and return ID's associated with projects.
 
-     my @projectIds;
-     my $sql=q(SELECT project_id from announce.projects
+     my @projects;
+     my $sql=q(SELECT project_id, project_name 
+                FROM  announce.projects
                ORDER BY project_name);
      my $sth=$dbh->prepare($sql);
      $sth->execute();
 
      while (my @row=$sth->fetchrow_array()){
-     my $i=0;
-     push (@projectIds,  $row[$i]);
-     $i++;
+         push (@projects,  { 'id' => $row[0], 'name' => $row[1] } );
      }
 
-     return @projectIds;
-     }
-
-####################################
-
-sub getProjectNames() {
-
-     ## Query DB and return ID's associated with projects.
-
-     my @projectNames;
-     my $sql=q(SELECT project_name from announce.projects
-               ORDER BY project_name);
-     my $sth=$dbh->prepare($sql);
-     $sth->execute();
-
-     while (my @row=$sth->fetchrow_array()){
-     my $i=0;
-     push (@projectNames,  $row[$i]);
-     $i++;
-     }
-
-     return @projectNames;
+     return @projects;
      }
 
 ####################################
