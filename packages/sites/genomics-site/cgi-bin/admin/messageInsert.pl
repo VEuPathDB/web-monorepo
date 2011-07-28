@@ -443,7 +443,8 @@ _END_OF_TEXT_
      ## Query DB and return ID's associated with projects.
 
      my @projectIds;
-     my $sql=q(SELECT project_id from announce.projects);
+     my $sql=q(SELECT project_id from announce.projects
+               ORDER BY project_name);
      my $sth=$dbh->prepare($sql);
      $sth->execute();
 
