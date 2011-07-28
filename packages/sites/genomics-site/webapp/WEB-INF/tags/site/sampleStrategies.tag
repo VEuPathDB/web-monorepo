@@ -22,7 +22,7 @@
 
    <c:when test="${fn:containsIgnoreCase(site, 'CryptoDB')}">
       <c:set var="simple" value="be21be3fa78e67fa" />
-      <c:set var="expanded" value="645f96ff3792dcd8" />
+      <c:set var="expanded" value="f38d8d049867593d" />
       <c:set var="ap2Motif" value="db57d627778a4b16" />
    </c:when>
 
