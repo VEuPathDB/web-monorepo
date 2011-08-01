@@ -21,8 +21,10 @@
 function appendchecked(url) {
     var newtxt = '';
     var chkbx = document.downloadConfigForm.selectedFields;
-    for(var i = 0; i < chkbx.length; i ++) {
-        if(chkbx[i].type == 'checkbox' && chkbx[i].checked === true) {
+    for(var i = 0; i < chkbx.length; i++) {
+        if( chkbx[i].type=="hidden" ||
+            (chkbx[i].type == 'checkbox' && chkbx[i].checked === true)
+          ) {
             if(newtxt.length !== 0) {
                 newtxt += ',';
             }
