@@ -125,7 +125,7 @@
                         </b>
                     </td>
                     <c:choose>
-                        <c:when test="${fn:containsIgnoreCase(pNam,'organism') && wdkModel.displayName eq 'EuPathDB'}">
+                        <c:when test="${fn:containsIgnoreCase(pNam,'organislm') && wdkModel.displayName eq 'EuPathDB'}">
 
 <c:choose>
 <c:when test="${fn:contains(wdkQuestion.name, 'Location') || fn:contains(wdkQuestion.name, 'Snp') }">  <!-- as it happens in component sites  under choice below EnumParamBean -->
@@ -139,12 +139,13 @@
 
                             <c:set var="hasOrganism" value="true"/>
                             <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5">
-                                <table border="0">
+                                <table border="5">
                                     <tr>
                                     <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
                                     <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                                     <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-	                                    <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" />
+                                        <%-- <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" /> --%>
+                                        <wdk:enumParamInput qp="${qP}" />
                                     </td>
                                     </tr>
                                 </table>
