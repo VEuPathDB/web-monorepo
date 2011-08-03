@@ -129,6 +129,8 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 	</c:if>
  <%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
     <c:if test="${attrs['new_product_name'].value != null}">
+
+
        <br><br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
     </c:if>
 </div>
@@ -566,55 +568,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <site:pageDivider name="Phenotype"/>
 
 
-<c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
-<c:set var="secName" value="Horn::TbRNAiRNASeq"/>
-<c:set var="imgId" value="img${secName}"/>
-<c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&model=tritryp&fmt=png&id=${id}"/>
+<site:profileGraphs organism="${organismFull}" tableName="PhenotypeGraphs"/>
 
-<c:set var="isOpen" value="true"/>
-
-<c:set var="coverageContent">
-
-
-<table>
-<tr>
- <td rowspan="2" class="centered">
-   <c:choose>
-    <c:when test="${!async}">
-       <img id="${imgId}"  src="${imgSrc}">
-    </c:when>
-   <c:otherwise>
-      <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
-   </c:otherwise>
-   </c:choose>
- </td>
- <td>
-     <table>
-          <tr>
-             <td  class="top">
-               <wdk:wdkTable tblName="RNAiPhenotypingCoverage" isOpen="false"/>
-             </td>
-          </tr>
-          <tr> 
-             <td><div class="small">
-<b>Description</b><br>RNAi target sequencing coverage at different life cycle stages. <br><br>In this experiment RNAi plasmid library, containing randomly sheared genomic fragments was used to create an inducible library in bloodstream form T. brucei . After transfection, the library was grown under non-inducing and inducing conditions and genomic DNA was isolated from surviving populations.<br><br>Cells carrying RNAi target fragments that negatively impact fitness through dsRNA expression and RNAi-mediated ablation are relatively depleted as the population expands and these changes are reported by the depth of sequence coverage relative to the uninduced control (No Tet).<br><br><b>x-axis</b><br>Stage/Sample<br><br><b>y-axis</b><br>Coverage - log 2 (RPKM)<br> </div>
-            </td>
-         </tr>
-     </table>
-</td>
-</tr></table>
-
-
-</c:set>
-
-<c:set var="noData" value="false"/>
-
-<wdk:toggle name="${secName}" isOpen="${isOpen}"
-       content="${coverageContent}" noData="${noData}"
-       imageId="${imgId}" imageSource="${imgSrc}"
-       displayName="RNAi Target Sequencing - Induced vs Uninduced"
-       attribution="Tbrucei_RNAiSeq_Horn_RSRC"/>
-  
+ <wdk:wdkTable tblName="RNAiPhenotypingCoverage" isOpen="false"/>
 
 </c:if>  <%-- if Tb , add phenotype section  --%>
 
@@ -622,7 +578,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi' || binomial eq 'Leishmania major' }">
 <site:pageDivider name="Expression"/>
-  <site:expressionGraphs species="${binomial}" model="tritryp"/>
+  <site:expressionGraphs organism="${organismFull}"/>
 </c:if>
 
 <%---- Splice Sites table ---------------------------------------------%>
