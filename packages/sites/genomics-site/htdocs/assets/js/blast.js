@@ -61,6 +61,8 @@ function checkSequenceLength(){
 		if(str2.length <= 25 && algorithm == "blastn"){
 			document.getElementById('short_sequence_warning').innerHTML = "Note:  The expect value has been set from " + eval.value + " to 1000 because <br> your query sequence is less than 25 nucleotides.  You may want <br> to adjust the expect value further to refine the specificity of your <br> query.";
 			eval.value = 1000;
+		}else if (str2.length > 31000) {
+			document.getElementById('short_sequence_warning').innerHTML = "Note:  The maximum allowed size for your sequence is 31000 base pairs.";
 		}else{
 			document.getElementById('short_sequence_warning').innerHTML = "";
 		}

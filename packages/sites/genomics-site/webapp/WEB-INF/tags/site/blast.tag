@@ -164,7 +164,7 @@ updateDatabaseTypeOnclick("${wdkQuestion.name}");
 		            <c:choose>
 		              <c:when test="${pNam == 'BlastQuerySequence'}">
 		                  <html:textarea property="value(${pNam})" styleId="sequence" cols="50" rows="4" onchange="checkSequenceLength()"/>
-				  <br>
+				  <br><i>Note: max.allowed sequence is 31K bases</i><br>
                                <div class="usererror"><span id="short_sequence_warning" ></span></div>
 
 
