@@ -353,16 +353,6 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 <wdk:wdkTable tblName="Notes" isOpen="false"
                attribution="" postscript="${geneDbLink}"/>
 
-<%-- Phenotype ------------------------------------------------------------%>
-  <c:set var="geneDbLink">
-    <div align="left">
-    <br><small>Phenotypes curated from the literature by <a href="http://www.genedb.org/">Gene<b>DB</b></a>
-</small></div>
-  </c:set>
-<wdk:wdkTable tblName="Phenotype" isOpen="true"
-               attribution="" postscript="${geneDbLink}"/>
-
-
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
   <c:set var="orthomclLink">
     <div align="center">
@@ -567,12 +557,20 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
 <site:pageDivider name="Phenotype"/>
 
+<%-- Phenotype ------------------------------------------------------------%>
+  <c:set var="geneDbLink">
+    <div align="left">
+    <br><small>Phenotypes curated from the literature by <a href="http://www.genedb.org/">Gene<b>DB</b></a>
+</small></div>
+  </c:set>
+
+<wdk:wdkTable tblName="Phenotype" isOpen="true"
+               attribution="" postscript="${geneDbLink}"/>
+
 
 <site:profileGraphs organism="${organismFull}" tableName="PhenotypeGraphs"/>
 
- <wdk:wdkTable tblName="RNAiPhenotypingCoverage" isOpen="false"/>
-
-</c:if>  <%-- if Tb , add phenotype section  --%>
+</c:if>
 
 <%-- Expression Graphs ------------------------------------------------------%>
 

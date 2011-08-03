@@ -71,11 +71,17 @@
           <img  id="${imgId}" src="<c:url value='/images/spacer.gif'/>">
         </td>
 
-                 <c:set var="noProfileDataTable">false</c:set>
-
 
         <td class="centered">
+        <c:set var="noProfileDataTable">false</c:set>
+        <c:set var="toggleName" value="${name}_${fn:replace(row['profile_name'].value, ' ', '')}"/>
 
+        <c:choose>
+         <c:when test="${not empty row['dataTable'].value}">
+            <wdk:wdkTable tblName="${row['dataTable'].value}" isOpen="false"/>
+
+         </c:when>
+         <c:otherwise>
 
 
          <c:set var="profileDataTable">
@@ -84,7 +90,10 @@
            <c:import url="${prefix}/../../../../../${tableSrc}"  />  
          </c:set>
 
-<c:set var="toggleName" value="${name}_${fn:replace(row['profile_name'].value, ' ', '')}"/>
+
+
+
+
 
 <wdk:toggle
     name="${toggleName}Data"
@@ -94,6 +103,8 @@
     noData="${noProfileDataTable}"
     attribution=""/>   
 
+         </c:otherwise>
+         </c:choose>
 
 
 
