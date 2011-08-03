@@ -54,42 +54,52 @@ function makeSelection(state)
       <td>
         <input type="hidden" name="step" value="${step_id}"/>
         <input type="hidden" name="wdkReportFormat" value="${format}"/>
-          <table>
-
-          <c:set var="attributeFields" value="${wdkAnswer.allReportMakerAttributes}"/>
-          <c:set var="numPerLine" value="2"/>
-          <c:set var="numPerColumn" value="${fn:length(attributeFields) / numPerLine}"/>
-          <c:set var="i" value="0"/>
-
+        <c:set var="numPerLine" value="2"/>
+        <table>
           <tr>
              <th colspan="${numPerLine}">Attributes</th>
           </tr>
-          <tr>
-            <td nowrap>
-              <c:forEach items="${attributeFields}" var="rmAttr">
-                <c:choose>
-                      <c:when test="${rmAttr.name eq 'primary_key'}">
-                        <input type="checkbox" checked="checked" disabled="true" >
-                        <input type="hidden" name="o-fields" value="${rmAttr.name}" >
-                      </c:when>
-                      <c:otherwise>
-                        <input type="checkbox" name="o-fields" value="${rmAttr.name}">
-                      </c:otherwise>
-                </c:choose>
-                ${rmAttr.displayName}
-                <c:set var="i" value="${i+1}"/>
-                <c:choose>
-                  <c:when test="${i >= numPerColumn}">
-                    <c:set var="i" value="0"/>
-                    </td><td nowrap>
-                  </c:when>
-                  <c:otherwise>
-                    <br />
-                  </c:otherwise>
-                </c:choose>
-              </c:forEach>
-            </td>
-          </tr>
+          
+          <c:if test="${wdkAnswer.useAttributeTree}">
+            <tr>
+              <td colspan="${numPerLine}">
+                <wdk:attributeTree treeObject="${wdkAnswer.reportMakerAttributeTree}" wdkAnswer="${wdkAnswer}" checkboxName="o-fields"/>
+              </td>
+            </tr>
+          </c:if>
+          <c:if test="${not wdkAnswer.useAttributeTree}">
+          
+	          <c:set var="attributeFields" value="${wdkAnswer.allReportMakerAttributes}"/>
+	          <c:set var="numPerColumn" value="${fn:length(attributeFields) / numPerLine}"/>
+	          <c:set var="i" value="0"/>
+	          <tr>
+	            <td nowrap>
+	              <c:forEach items="${attributeFields}" var="rmAttr">
+	                <c:choose>
+	                      <c:when test="${rmAttr.name eq 'primary_key'}">
+	                        <input type="checkbox" checked="checked" disabled="true" >
+	                        <input type="hidden" name="o-fields" value="${rmAttr.name}" >
+	                      </c:when>
+	                      <c:otherwise>
+	                        <input type="checkbox" name="o-fields" value="${rmAttr.name}">
+	                      </c:otherwise>
+	                </c:choose>
+	                ${rmAttr.displayName}
+	                <c:set var="i" value="${i+1}"/>
+	                <c:choose>
+	                  <c:when test="${i >= numPerColumn}">
+	                    <c:set var="i" value="0"/>
+	                    </td><td nowrap>
+	                  </c:when>
+	                  <c:otherwise>
+	                    <br />
+	                  </c:otherwise>
+	                </c:choose>
+	              </c:forEach>
+	            </td>
+	          </tr>
+          
+          </c:if>
           
           <c:set var="tableFields" value="${wdkAnswer.allReportMakerTables}"/>
           <c:set var="numPerColumn" value="${fn:length(tableFields) / numPerLine}"/>

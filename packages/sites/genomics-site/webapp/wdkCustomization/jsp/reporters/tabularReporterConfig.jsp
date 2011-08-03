@@ -56,56 +56,69 @@ function appendchecked(url) {
       <td>
         <input type="hidden" name="step" value="${step_id}">
         <input type="hidden" name="wdkReportFormat" value="${format}">
-        <c:set var="attributeFields" value="${wdkAnswer.allReportMakerAttributes}"/>
         <c:set var="numPerLine" value="2"/>
-        <c:set var="numPerColumn" value="${fn:length(attributeFields) / numPerLine}"/>
-        <c:set var="i" value="0"/>
         <table>
           <tr>
-            <td colspan="${numPerLine}">
-              <input type="checkbox" name="selectedFields" value="default" onclick="uncheckFields(1);" checked>
-              Default (same as in <a href="showApplication.do">result</a>), or...
-            </td>
+             <th colspan="${numPerLine}">Attributes</th>
           </tr>
+          <c:if test="${wdkAnswer.useAttributeTree}">
+            <tr>
+              <td colspan="${numPerLine}">
+                <wdk:attributeTree treeObject="${wdkAnswer.reportMakerAttributeTree}" wdkAnswer="${wdkAnswer}" checkboxName="selectedFields"/>
+              </td>
+            </tr>
+          </c:if>
+          <c:if test="${not wdkAnswer.useAttributeTree}">
+			      <c:set var="attributeFields" value="${wdkAnswer.allReportMakerAttributes}"/>
+			      <c:set var="numPerColumn" value="${fn:length(attributeFields) / numPerLine}"/>
+			      <c:set var="i" value="0"/>
 
-          <tr><td colspan="${numPerLine}">&nbsp;</td></tr>
-
-          <tr>
-            <td nowrap>
-              <c:forEach items="${attributeFields}" var="rmAttr">
-                <%-- this is a hack, why some reportMakerAttributes have no name? --%>
-                <c:choose>
-                  <c:when test="${rmAttr.name != null && rmAttr.name != ''}">
-                    <c:choose>
-                      <c:when test="${rmAttr.name eq 'primary_key'}">
-                        <input type="checkbox" checked="checked" disabled="true" >
-                        <input type="hidden" name="selectedFields" value="${rmAttr.name}" >
-                      </c:when>
-                      <c:otherwise>
-                        <input type="checkbox" name="selectedFields" value="${rmAttr.name}" onclick="uncheckFields(0);">
-                      </c:otherwise>
-                    </c:choose>
-                        ${rmAttr.displayName}
-                    <c:set var="i" value="${i+1}"/>
-                    <c:choose>
-                      <c:when test="${i >= numPerColumn}">
-                        <c:set var="i" value="0"/>
-                        </td><td nowrap>
-                      </c:when>
-                      <c:otherwise>
-                        <br />
-                      </c:otherwise>
-                    </c:choose>
-                  </c:when>
-                  <c:otherwise>
-                    <!-- <td><html:multibox property="selectedFields">junk</html:multibox>junk</td>${br} -->
-                  </c:otherwise>
-                </c:choose>
-              </c:forEach>
-            </td>
-          </tr>
-          </table>
-        </td>
+	          <tr>
+	            <td colspan="${numPerLine}">
+	              <input type="checkbox" name="selectedFields" value="default" onclick="uncheckFields(1);" checked>
+	              Default (same as in <a href="showApplication.do">result</a>), or...
+	            </td>
+	          </tr>
+	
+	          <tr><td colspan="${numPerLine}">&nbsp;</td></tr>
+	
+	          <tr>
+	            <td nowrap>
+	              <c:forEach items="${attributeFields}" var="rmAttr">
+	                <%-- this is a hack, why some reportMakerAttributes have no name? --%>
+	                <c:choose>
+	                  <c:when test="${rmAttr.name != null && rmAttr.name != ''}">
+	                    <c:choose>
+	                      <c:when test="${rmAttr.name eq 'primary_key'}">
+	                        <input type="checkbox" checked="checked" disabled="true" >
+	                        <input type="hidden" name="selectedFields" value="${rmAttr.name}" >
+	                      </c:when>
+	                      <c:otherwise>
+	                        <input type="checkbox" name="selectedFields" value="${rmAttr.name}" onclick="uncheckFields(0);">
+	                      </c:otherwise>
+	                    </c:choose>
+	                        ${rmAttr.displayName}
+	                    <c:set var="i" value="${i+1}"/>
+	                    <c:choose>
+	                      <c:when test="${i >= numPerColumn}">
+	                        <c:set var="i" value="0"/>
+	                        </td><td nowrap>
+	                      </c:when>
+	                      <c:otherwise>
+	                        <br />
+	                      </c:otherwise>
+	                    </c:choose>
+	                  </c:when>
+	                  <c:otherwise>
+	                    <!-- <td><html:multibox property="selectedFields">junk</html:multibox>junk</td>${br} -->
+	                  </c:otherwise>
+	                </c:choose>
+	              </c:forEach>
+	            </td>
+	          </tr>
+	        </c:if>
+        </table>
+      </td>
     </tr>
 
   <tr><td valign="top">&nbsp;</td>
