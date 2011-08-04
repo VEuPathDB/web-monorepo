@@ -12,12 +12,12 @@
 <c:set var="AmoebaDBOrgs" value="Entamoeba" />
 <c:set var="CryptoDBOrgs" value="Cryptosporidium" />				
 <c:set var="GiardiaDBOrgs" value="Giardia" />
-<c:set var="MicrosporidiaDBOrgs" value="Encephalitozoon" />
-<c:set var="PiroplasmaDBOrgs" value="Babesia,Theileria" />
+<c:set var="MicrosporidiaDBOrgs" value="Encephalitozoon, Enterocytozoon, Nematocida, Nosema, Octosporea, Vavraia" />
+<c:set var="PiroplasmaDBOrgs" value="Babesia, Theileria" />
 <c:set var="PlasmoDBOrgs" value="Plasmodium" />
-<c:set var="ToxoDBOrgs" value="Toxoplasma,Neospora" />
+<c:set var="ToxoDBOrgs" value="Eimeria, Neospora, Toxoplasma" />
 <c:set var="TrichDBOrgs" value="Trichomonas"/>
-<c:set var="TriTrypDBOrgs" value="Leishmania,Trypanosoma"/>
+<c:set var="TriTrypDBOrgs" value="Crithidia, Leishmania, Trypanosoma"/>
 
 <div id="contentwrapper">
 <div id="contentcolumn">
@@ -26,7 +26,7 @@
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
 
-	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens</b> (<i>Babesia</i>, <i>Cryptosporidium</i>,  <i>Encephalitozoon</i>, <i>Entamoeba</i>, <i>Enterocytozoon</i>, <i>Giardia</i>, <i>Leishmania</i>, <i>Neospora</i>, <i>Plasmodium</i>, <i>Theileria</i>, <i>Toxoplasma</i>, <i>Trichomonas</i> and <i>Trypanosoma</i>).
+	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens</b> (<i>Babesia</i>, <i>Crithidia</i>, <i>Cryptosporidium</i>, <i>Eimeria</i>, <i>Encephalitozoon</i>, <i>Entamoeba</i>, <i>Enterocytozoon</i>, <i>Giardia</i>, <i>Leishmania</i>, <i>Nematocida</i>, <i>Neospora</i>, <i>Nosema</i>, <i>Octosporea</i>, <i>Plasmodium</i>, <i>Theileria</i>, <i>Toxoplasma</i>, <i>Trichomonas</i>, <i>Trypanosoma</i>, <i>Vivraia</i>, ).
 	<br>
 
 	<table class="center" style="padding:2px;" width="95%"><tr>
