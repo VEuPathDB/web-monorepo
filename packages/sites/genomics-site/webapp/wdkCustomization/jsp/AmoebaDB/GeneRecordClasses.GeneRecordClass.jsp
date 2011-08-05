@@ -375,7 +375,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 
 <c:if test="${binomial eq 'Entamoeba histolytica'}">
 <site:pageDivider name="Expression"/>
-  <site:expressionGraphs species="${binomial}" model="amoeba"/>
+  <site:expressionGraphs organism="${organism_full}"/>
 </c:if>
 
 

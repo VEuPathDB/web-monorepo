@@ -462,60 +462,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 <site:pageDivider name="Expression"/>
 
  <%-- ------------------------------------------------------------------ --%>
-
-  <c:set var="secName" value="Roos::ToxoLineages::Ver1"/>
-  <c:set var="imgId" value="img${secName}"/>
-  <c:set var="imgSrc" value="${plotBaseUrl}?type=${secName}&project_id=${projectId}&id=${id}&model=toxo&fmt=png"/>
-  <c:set var="isOpen" value="true"/>
-
-  <c:set var="noData" value="false"/>
-  <c:if test="${attrs['graph_archetypal'].value == 0}">
-    <c:set var="noData" value="true"/>
-  </c:if>
-
-  <c:set var="expressionContent">
-    <table>
-      <tr>
-        <td>
-              <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
-        </td>
-
-        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
-
-	<td class="top">  
-          <wdk:wdkTable tblName="ToxoStrainsMicroarrayPercentile" isOpen="true"/>
-
-        </td>
-
-        <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
-        <td class="centered">
-          <div class="small">
-             	<!-- DESCRIPTION?? -->
-The percentile graph on the right represents the percentiles of each expression value across the
-dynamic range of the microarray log(2) intensities.
-experimental condition.
-          </div>
-        </td>
-
-      </tr>
-    </table>
-
-
-  </c:set>
-
-
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
-               content="${expressionContent}" noData="${noData}"
-               imageId="${imgId}" imageSource="${imgSrc}"
-               displayName="Tachyzoite differential expression profiling of three archetypal T. gondii lineages"
-               attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
-
+  <site:expressionGraphs organism="${organism_full}"/>
+ <%-- ------------------------------------------------------------------ --%>
 </c:if>
-
- <%-- ------------------------------------------------------------------ --%>
-  <site:expressionGraphs species="${organism_full}" model="toxo"/>
- <%-- ------------------------------------------------------------------ --%>
-
 
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1' || organism_full eq 'Toxoplasma gondii VEG'}">
 

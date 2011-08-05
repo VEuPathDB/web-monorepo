@@ -307,7 +307,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 
   <site:pageDivider name="Expression"/>
 
-<site:expressionGraphs species="${binomial}" model="giardia"/>
+<site:expressionGraphs organism="${organismFull}"/>
 
 
 <%-- SAGE tags ------------------------------------------------------%>
