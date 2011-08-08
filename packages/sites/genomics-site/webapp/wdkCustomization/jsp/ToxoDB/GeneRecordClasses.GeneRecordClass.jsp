@@ -457,22 +457,23 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
 
 
-<c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
 
+<c:if test="${attrs['hasExpression'].value eq '1'}">
 <site:pageDivider name="Expression"/>
 
  <%-- ------------------------------------------------------------------ --%>
   <site:expressionGraphs organism="${organism_full}"/>
  <%-- ------------------------------------------------------------------ --%>
-</c:if>
+
 
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1' || organism_full eq 'Toxoplasma gondii VEG'}">
 
-<site:pageDivider name="Expression"/>
 
 <wdk:wdkTable tblName="ToxoExpandStrainsMicroarray" isOpen="true"
                    attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
 
+
+</c:if>
 </c:if>
 
 

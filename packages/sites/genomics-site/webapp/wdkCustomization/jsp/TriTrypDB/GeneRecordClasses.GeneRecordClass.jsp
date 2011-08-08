@@ -554,7 +554,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <%-- Phenotype section ------------------------------------------------------%>
 
-<c:if test="${binomial eq 'Trypanosoma brucei'}">
+
+<c:if test="${attrs['hasPhenotype'].value eq '1'}">
 <site:pageDivider name="Phenotype"/>
 
 <%-- Phenotype ------------------------------------------------------------%>
@@ -574,10 +575,10 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <%-- Expression Graphs ------------------------------------------------------%>
 
-<c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi' || binomial eq 'Leishmania major' }">
+<c:if test="${attrs['hasExpression'].value eq '1'}">
 <site:pageDivider name="Expression"/>
   <site:expressionGraphs organism="${organismFull}"/>
-</c:if>
+
 
 <%---- Splice Sites table ---------------------------------------------%>
 <c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi' || binomial eq 'Leishmania major' }">
@@ -593,6 +594,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <%-- SAGE Tag table ------------------------------------------------------%>
 <c:if test="${binomial eq 'Trypanosoma brucei' }">
 <wdk:wdkTable tblName="SageTags" attribution="TrypSageTagFreqs"/>
+</c:if>
+
+
 </c:if>
 
 <%-- Sequence Data ------------------------------------------------------%>

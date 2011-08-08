@@ -19,7 +19,6 @@
 <c:set var="projectId" value="PlasmoDB"/>
 
 <c:if test="${organism eq 'Plasmodium vivax SaI-1'}">
-  <site:pageDivider name="Expression"/>
 
   <c:set var="secName" value="ZBPvivaxTS::Ver1"/>
   <c:set var="imgId" value="img${secName}"/>

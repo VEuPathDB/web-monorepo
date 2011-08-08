@@ -373,7 +373,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 
 <%-- Expression Graphs ------------------------------------------------------%>
 
-<c:if test="${binomial eq 'Entamoeba histolytica'}">
+
+<c:if test="${attrs['hasExpression'].value eq '1'}">
 <site:pageDivider name="Expression"/>
   <site:expressionGraphs organism="${organism_full}"/>
 </c:if>

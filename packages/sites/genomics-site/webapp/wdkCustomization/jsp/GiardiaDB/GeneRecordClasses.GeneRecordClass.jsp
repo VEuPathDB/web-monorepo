@@ -305,15 +305,18 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 
 <%-- Microarray Data ------------------------------------------------------%>
 
+<c:if test="${attrs['hasExpression'].value eq '1'}">
   <site:pageDivider name="Expression"/>
 
-<site:expressionGraphs organism="${organismFull}"/>
 
+<site:expressionGraphs organism="${organismFull}"/>
 
 <%-- SAGE tags ------------------------------------------------------%>
 
 <wdk:wdkTable tblName="SageTags" isOpen="FALSE"
                attribution="GiardiaSageTagArrayDesign,GiardiaSageTagFreqs"/>
+
+</c:if>
 
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>

@@ -647,19 +647,18 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 </c:if> <%-- end if isCodingGene --%>
 
 
-
-<c:if test="${organismFull eq 'Plasmodium falciparum 3D7' || binomial eq 'Plasmodium yoelii' || binomial eq 'Plasmodium berghei' || binomial eq 'Plasmodium vivax'}">
+<c:if test="${attrs['hasExpression'].value eq '1'}">
   <site:pageDivider name="Expression"/>
 
   <site:expressionGraphs organism="${organismFull}"/>
-</c:if>
-
- <%-- ------------------------------------------------------------------ --%>
 
 
 <c:if test="${species eq 'falciparum3D7'}">
   <wdk:wdkTable tblName="SageTags" attribution="SageTagArrayDesign,PlasmoSageTagFreqs"/>
 </c:if>
+</c:if>
+
+ <%-- ------------------------------------------------------------------ --%>
 
 
 <site:pageDivider name="Sequence"/>
