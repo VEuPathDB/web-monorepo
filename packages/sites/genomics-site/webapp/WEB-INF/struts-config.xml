@@ -509,6 +509,12 @@
       scope="request"
       validate="false">
     </action>
+    <action
+      path="/invokeAttributePlugin"
+      type="org.gusdb.wdk.controller.action.InvokeAttributePluginAction"
+      scope="request"
+      validate="false">
+    </action>
 
   </action-mappings>
 
