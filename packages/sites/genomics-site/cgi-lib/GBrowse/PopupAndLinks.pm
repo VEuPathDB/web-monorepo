@@ -684,10 +684,18 @@ sub massSpecTitle {
   my ($desc) = $f->get_tag_values('Description');
   $desc =~s/\nreport:(.*)$//;
   $desc =~s/\nscore:(.*)$//; 
-my ($count) = $f->get_tag_values('Count');
+  my ($count) = $f->get_tag_values('Count');
   my ($seq) =  $f->get_tag_values('PepSeq');
   my ($extdbname) = $f->get_tag_values('ExtDbName');
   $desc =~ s/[\r\n]/<br>/g;
+
+  my ($phospho_site) = $f->get_tag_values('PhosphoSite');
+  if($phospho_site) {
+    my @locs = map {$_ - $f->start + 1} split /;/, $phospho_site; 
+    for my $loc (reverse @locs) {
+      substr($seq, $loc, 0) = '*'; 
+    }
+  } 
 
 #  if($replaceString) {
 #    $extdbname =~ s/$replaceString/assay: /i;
