@@ -375,6 +375,17 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
                attribution="DTASelect-filter_032108_Proteomics,Giardia_Proteomics_From_Tachezy"/>
 
 
+<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+
+<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+
+<c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
+  ${attrs['ssgcid_request_link']}
+</c:if>
+
+
+
+
 <site:pageDivider name="Sequences"/>
 
 <p>

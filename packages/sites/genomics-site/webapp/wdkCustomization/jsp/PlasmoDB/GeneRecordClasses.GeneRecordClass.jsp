@@ -635,7 +635,13 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     PDB by the protein sequence of ${id}</a>
   </c:set>
 
-  <wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+
+<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+
+<c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
+  ${attrs['ssgcid_request_link']}
+</c:if>
 
   <c:if test="${species eq 'falciparum3D7'}">
     <wdk:wdkTable tblName="3dPreds" attribution="predictedProteinStructures"/>

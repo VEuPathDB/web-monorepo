@@ -361,8 +361,17 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 <wdk:wdkTable tblName="Epitopes" isOpen="true"
                  attribution=""/>
 
-</c:if>
  
+<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+
+<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+
+<c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
+  ${attrs['ssgcid_request_link']}
+</c:if>
+
+</c:if>
+
 <site:pageDivider name="Sequences"/>
 
 <p>
