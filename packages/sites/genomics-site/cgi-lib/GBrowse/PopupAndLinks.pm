@@ -690,6 +690,7 @@ sub massSpecTitle {
   $desc =~ s/[\r\n]/<br>/g;
 
   my ($phospho_site) = $f->get_tag_values('PhosphoSite');
+  my ($phospho_score) = $f->get_tag_values('PhosphoScore');
   if($phospho_site) {
     my @locs = map {$_ - $f->start + 1} split /;/, $phospho_site; 
     for my $loc (reverse @locs) {
@@ -712,6 +713,7 @@ sub massSpecTitle {
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
+  push @data, [ 'Score:' => "$phospho_score" ] if($phospho_score);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
 
   hover('Mass Spec', \@data);
