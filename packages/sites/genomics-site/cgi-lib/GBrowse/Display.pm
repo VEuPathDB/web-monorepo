@@ -98,41 +98,41 @@ sub SnpBgcolorForGenotyping {
       my ($freq) = $f->get_tag_values('MinorAlleleFreq');
 
       if ($source eq 'Broad 75K genotyping chip') {
-	if ($freq <= 0.1) {
-	  return '#FF0000';
-	} elsif ($freq <= 0.2) {
-	  return '#E00000';
-	} elsif ($freq <= 0.3) {
-	  return '#C00000';
-	} elsif ($freq <= 0.4) {
-	  return '#A00000';
-	} else {
-	  return '#800000';
-	}
+  if ($freq <= 0.1) {
+    return '#FF0000';
+  } elsif ($freq <= 0.2) {
+    return '#E00000';
+  } elsif ($freq <= 0.3) {
+    return '#C00000';
+  } elsif ($freq <= 0.4) {
+    return '#A00000';
+  } else {
+    return '#800000';
+  }
       } elsif ($source eq 'Broad 3K genotyping chip') {
-	if ($freq <= 0.1) {
-	  return '#0000FF';
-	} elsif ($freq <= 0.2) {
-	  return '#0000E0';
-	} elsif ($freq <= 0.3) {
-	  return '#0000C0';
-	} elsif ($freq <= 0.4) {
-	  return '#0000A0';
-	} else {
-	  return '#000080';
-	}
+  if ($freq <= 0.1) {
+    return '#0000FF';
+  } elsif ($freq <= 0.2) {
+    return '#0000E0';
+  } elsif ($freq <= 0.3) {
+    return '#0000C0';
+  } elsif ($freq <= 0.4) {
+    return '#0000A0';
+  } else {
+    return '#000080';
+  }
       } else {  # for 'Isolate barcode data from Broad'
-	if ($freq <= 0.1) {
-	  return '#00FF00';
-	} elsif ($freq <= 0.2) {
-	  return '#00E000';
-	} elsif ($freq <= 0.3) {
-	  return '#00C000';
-	} elsif ($freq <= 0.4) {
-	  return '#00A000';
-	} else {
-	  return '#008000';
-	}
+  if ($freq <= 0.1) {
+    return '#00FF00';
+  } elsif ($freq <= 0.2) {
+    return '#00E000';
+  } elsif ($freq <= 0.3) {
+    return '#00C000';
+  } elsif ($freq <= 0.4) {
+    return '#00A000';
+  } else {
+    return '#008000';
+  }
       }
 }
 
@@ -167,8 +167,8 @@ sub sageTagUniqueMapFgColor {
   my $f            = shift;
   my $strand       = $f->strand; 
   my ($occurrence) = $f->get_tag_values('Occurrence'); 
-	return "grey" if ($occurrence > 1);
-	($strand eq "+1") ? "blue" : "darkred";
+  return "grey" if ($occurrence > 1);
+  ($strand eq "+1") ? "blue" : "darkred";
 }
 
 sub rumIntronBgColorFromSample {
@@ -241,6 +241,14 @@ sub massSpecBgColorFromExtDbName {
                 'MS Carruthers 2destinct peptides' => 'plum',
                 'Moreno DTASelect filter sample A' => 'lime',
                 'Moreno DTASelect filter sample G' => 'green',
+                'Tg_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC' => 'maroon',
+                'Tg_Boothroyd_Elias_Moritz_Intracellular_Totalproteome_RSRC'   => 'darksalmon',
+                'Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC'      => 'peachpuff',
+                'Tg_Boothroyd_Elias_Moritz_Purified_Totalproteome_RSRC'        => 'peru',
+                'Tg_Tonkin_TiO2_Bound_Mascot-based_Phosphoproteome_RSRC'       => 'tan',
+                'Tg_Tonkin_TiO2_Bound_Sequest-based_Phosphoproteome_RSRC'      => 'khaki',
+                'Tg_Tonkin_TiO2_Unbound_Phosphoproteome_RSRC'                  => 'darkkhaki',
+
                 # TriTrypDB
                 'Tcruzi Proteomics-Epimastigote' => 'black',
                 'Tcruzi Proteomics-Amastigote' => 'mediumslateblue',
@@ -307,6 +315,8 @@ sub massSpecBgColorFromExtDbName {
                 'Florens_Life_Cycle_MassSpec_Spz_RSRC' => 'brown',
                 'Pf_Bowyer_Proteomics_42hrs_Post_Infection_RSRC' => 'yellow',
                 'Pf_Bowyer_Proteomics_48hrs_Post_Infection_RSRC' => 'orange',
+                'Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC' => 'tan',
+                'Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC'   => 'khaki',
                 #AmoebaDB
                 'Ehistolytica_Glycosylation_RSRC' => 'yellow',
                 'Phagosome Proteomics data from Huston - 0 mins' => 'yellow',
