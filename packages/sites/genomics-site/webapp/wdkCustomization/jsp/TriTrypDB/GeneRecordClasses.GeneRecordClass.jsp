@@ -197,7 +197,7 @@ ${organism}<br>
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
     <c:set var="tracks">
-      Gene+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
+      Gene+SyntenySpansTBrucei427MC+SyntenyGenesTBrucei427MC+SyntenySpansTBruceiGambienseMC+SyntenyGenesTBruceiGambienseMC+SyntenySpansTCongolenseMC+SyntenyGenesTCongolenseMC+SyntenySpansTVivaxMC+SyntenyGenesTVivaxMC+SyntenySpansTCruziSMC+SyntenyGenesTCruziSMC+SyntenySpansLMajorMC+SyntenyGenesLMajorMC+UnifiedMassSpecPeptides+BLASTX
     </c:set>
   </c:when>
 
