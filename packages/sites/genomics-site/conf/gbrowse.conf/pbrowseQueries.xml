@@ -350,6 +350,7 @@ SELECT msf.aa_feature_id feature_id,
        'Count=' || match_count || '$dlm' ||
        'ExtDbName=' || ed.name || '$dlm' ||
        'PhosphoSite=' || y.phospho_site || '$dlm' ||
+       'PhosphoScore=' || y.phospho_score || '$dlm' ||
        'PepSeq=' || substr(taas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) atts
 FROM  dots.massspecfeature msf,
       dots.aalocation aal,
@@ -358,6 +359,7 @@ FROM  dots.massspecfeature msf,
       sres.externaldatabaserelease edr,
       sres.externaldatabase ed,
       (SELECT msf.na_feature_id as feat_id,
+              apidb.tab_to_string(CAST(COLLECT(pot.description ||'') AS apidb.varchartab),';') as phospho_score,
               apidb.tab_to_string(CAST(COLLECT(aal.start_min ||'') AS apidb.varchartab),';') as phospho_site
        FROM  dots.massspecfeature msf,
              dots.aalocation aal,
