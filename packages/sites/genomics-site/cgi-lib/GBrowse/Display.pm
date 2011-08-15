@@ -215,6 +215,13 @@ sub rumIntronBgColorFromSample {
   return 'yellow'; 
 } 
 
+sub rumIntronUnifiedWidth {
+  my $f = shift;
+  my ($count) = $f->get_tag_values('Count'); 
+	warn "count $count";
+	return $count;
+}
+
 sub massSpecBgColorFromExtDbName {
   my $f = shift;
 

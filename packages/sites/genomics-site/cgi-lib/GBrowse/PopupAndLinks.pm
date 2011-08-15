@@ -679,6 +679,21 @@ sub rumIntronTitle {
   hover('RUM Intron', \@data);
 }
 
+sub rumIntronTitleUnified {  
+  my ($f) = @_;
+  my ($samples) = $f->get_tag_values('Samples');
+  my ($scores) = $f->get_tag_values('Scores');
+  my $start = $f->start;
+  my $stop = $f->stop;
+
+  my @data;
+  push @data, [ 'Sample:' => $samples ];
+  push @data, [ 'Location:' => "$start - $stop"];
+  push @data, [ 'Score'   => $scores ];
+  hover('Unified RUM Intron', \@data);
+}
+
+
 sub massSpecTitle {  
   my ($f, $replaceString,$replaceString2,$val2, $link) = @_;
   my ($desc) = $f->get_tag_values('Description');
