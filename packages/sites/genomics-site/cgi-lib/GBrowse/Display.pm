@@ -215,6 +215,16 @@ sub rumIntronBgColorFromSample {
   return 'yellow'; 
 } 
 
+sub rumIntronBgColorUnified {
+  my $f = shift;
+  my ($scores) = $f->get_tag_values('Scores'); 
+  my $sum = eval join '+', split /;/, $scores;
+  return '#FDD017' if $sum <= 5;
+  return '#F87217' if $sum <= 20;
+  return '#E56717' if $sum <= 100;
+  return '#7E3517'; 
+}
+
 sub rumIntronUnifiedWidth {
   my $f = shift;
   my ($scores) = $f->get_tag_values('Scores'); 
