@@ -697,6 +697,7 @@ sub rumIntronTitleUnified {
      my $score = $score_arr[$count];
      my $exp = $exp_arr[$count];
      $exp =~ s/_RSRC$//g;
+     $exp =~ s/RNASeq//ig;
      $exp =~ s/_/ /g;
      $html .= "<tr><td>$exp</td><td>$_</td><td>$score</td></tr>";
      $count++;
@@ -707,7 +708,7 @@ sub rumIntronTitleUnified {
   push @data, [ '' => $html ];
   push @data, [ 'Location:'  => "$start - $stop"];
   push @data, [ 'Scores'     => $sum ];
-  hover('Unified Splice Site Junctions', \@data);
+  hover('Unified Splice Site Junctions - RNASeq', \@data);
 }
 
 sub massSpecTitle {  
