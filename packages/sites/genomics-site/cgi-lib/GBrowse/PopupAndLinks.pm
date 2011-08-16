@@ -687,9 +687,9 @@ sub rumIntronTitleUnified {
   my $stop = $f->stop;
 
   my @data;
-  push @data, [ 'Sample:' => $samples ];
+  push @data, [ 'Sample(s):' => $samples ];
   push @data, [ 'Location:' => "$start - $stop"];
-  push @data, [ 'Score'   => $scores ];
+  push @data, [ 'Score(s)'   => $scores ];
   hover('Unified RUM Intron', \@data);
 }
 
