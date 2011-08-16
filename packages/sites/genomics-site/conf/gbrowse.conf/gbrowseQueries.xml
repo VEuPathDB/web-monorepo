@@ -405,6 +405,7 @@ ORDER BY
              mapping_start startm, 
              mapping_end end, 
             'Samples=' || apidb.tab_to_string(CAST(COLLECT(rif.sample_name ||'') AS apidb.varchartab),';') || '$dlm' ||
+            'Exps=' || apidb.tab_to_string(CAST(COLLECT(edb.name ||'') AS apidb.varchartab),';') || '$dlm' ||
             'Count=' || count(mapping_start) || '$dlm' ||
             'Scores=' || apidb.tab_to_string(CAST(COLLECT(score ||'') AS apidb.varchartab),';') atts
       FROM   apidb.RUMIntronFeature rif, 
