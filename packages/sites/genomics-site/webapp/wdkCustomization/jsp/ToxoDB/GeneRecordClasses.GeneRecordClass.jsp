@@ -230,7 +230,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 <!-- snps between strains -->
 <wdk:wdkTable tblName="SNPs" isOpen="false"
-                   attribution="ME49_SNPs,AmitAlignmentSnps,Lindstrom454Snps"/>
+                   attribution="AmitAlignmentSnps"/>
 
 <!-- locations -->
 <wdk:wdkTable tblName="Genbank" isOpen="true"

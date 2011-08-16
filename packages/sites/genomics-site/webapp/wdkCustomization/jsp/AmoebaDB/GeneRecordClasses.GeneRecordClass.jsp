@@ -198,10 +198,9 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
   content="${mercatorAlign}"
   attribution=""/>
 
-
-
-
-
+<!-- snps between strains -->
+<wdk:wdkTable tblName="SNPs" isOpen="false"
+                   attribution=""/>
 
 <site:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
