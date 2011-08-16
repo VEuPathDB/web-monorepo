@@ -340,7 +340,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${i
 <wdk:wdkTable tblName="MassSpec" isOpen="true"
                attribution="Hayes_Johnson_Tvag_MassSpec"/>
 
-<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<%-- tvag doesn't have pdbsimilarities --%>
+<%-- wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/ --%>
 
 <wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
