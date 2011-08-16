@@ -217,9 +217,12 @@ sub rumIntronBgColorFromSample {
 
 sub rumIntronUnifiedWidth {
   my $f = shift;
-  my ($count) = $f->get_tag_values('Count'); 
-	warn "count $count";
-	return $count;
+  my ($scores) = $f->get_tag_values('Scores'); 
+  my $sum = eval join '+', split /;/, $scores;
+  return 1 if $sum <= 5;
+  return 2 if $sum <= 20;
+  return 3 if $sum <= 100;
+  return 4;
 }
 
 sub massSpecBgColorFromExtDbName {
