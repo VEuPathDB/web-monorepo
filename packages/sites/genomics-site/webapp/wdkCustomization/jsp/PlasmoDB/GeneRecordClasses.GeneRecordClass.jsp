@@ -624,6 +624,11 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
                     attribution="Waters_female_gametes,Waters_male_gametes,Waters_mixed_gametes,Pyoelii_LiverStage_LS40,Pyoelii_LiverStage_LS50,FlorensMassSpecData2002,FlorensMassSpecData2004,Pf_Merozoite_Peptides,Lasonder_Mosquito_Oocysts,Lasonder_Mosquito_oocyst_derived_sporozoites,Lasonder_Mosquito_salivary_gland_sporozoites,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,P.falciparum_Clinical_Proteomics,Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection,Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection,P.vivax_Clinical_Proteomics,Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC"/>
   </c:if>
 
+  <c:if test="${species eq 'falciparum3D7'}">
+      <wdk:wdkTable tblName="MassSpecMod" isOpen="true"
+          attribution="Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC,Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC"/>
+  </c:if> 
+
   <c:if test="${binomial eq 'Plasmodium berghei'}">
     <wdk:wdkTable tblName="ProteinExpression" attribution="Pberghei_Protein_Expression"/>
   </c:if>
@@ -635,7 +640,13 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     PDB by the protein sequence of ${id}</a>
   </c:set>
 
-  <wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+
+<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+
+<c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
+  ${attrs['ssgcid_request_link']}
+</c:if>
 
   <c:if test="${species eq 'falciparum3D7'}">
     <wdk:wdkTable tblName="3dPreds" attribution="predictedProteinStructures"/>

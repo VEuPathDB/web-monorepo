@@ -480,6 +480,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 
 <wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
 
+<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+
+<c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
+  ${attrs['ssgcid_request_link']}
+</c:if>
+
 <wdk:wdkTable tblName="Antibody" attribution="Antibody"/>
 
 </c:if>

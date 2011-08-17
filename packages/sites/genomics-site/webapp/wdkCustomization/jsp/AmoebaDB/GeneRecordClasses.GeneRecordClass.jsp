@@ -198,10 +198,9 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
   content="${mercatorAlign}"
   attribution=""/>
 
-
-
-
-
+<!-- snps between strains -->
+<wdk:wdkTable tblName="SNPs" isOpen="false"
+                   attribution=""/>
 
 <site:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
@@ -370,6 +369,16 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
                  content="N/A" />
             </c:otherwise>
         </c:choose>
+
+
+<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+
+<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+
+<c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
+  ${attrs['ssgcid_request_link']}
+</c:if>
+
 
 <%-- Expression Graphs ------------------------------------------------------%>
 

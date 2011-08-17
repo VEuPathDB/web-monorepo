@@ -394,6 +394,39 @@ ORDER BY
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="rum:intronunified" includeProjects="PlasmoDB,ToxoDB">
+     <sql>
+     <![CDATA[
+      SELECT rif.mapping_start || '_' || rif.mapping_end as feature_id,
+             'rum' type, 
+             '$source' source, 
+             'Name' name, 
+             na_sequence_id parent_id, 
+             mapping_start startm, 
+             mapping_end end, 
+            'Samples=' || apidb.tab_to_string(CAST(COLLECT(rif.sample_name ||'') AS apidb.varchartab),';') || '$dlm' ||
+            'Exps=' || apidb.tab_to_string(CAST(COLLECT(edb.name ||'') AS apidb.varchartab),';') || '$dlm' ||
+            'Count=' || count(mapping_start) || '$dlm' ||
+            'Scores=' || apidb.tab_to_string(CAST(COLLECT(score ||'') AS apidb.varchartab),';') atts
+      FROM   apidb.RUMIntronFeature rif, 
+             sres.externaldatabase edb,
+             sres.externaldatabaserelease edbr 
+      WHERE  rif.mapping_start <= $rend 
+         AND rif.mapping_end >= $base_start 
+         AND rif.na_sequence_id = $srcfeature_id
+         AND mapping_end - mapping_start < 2000
+         AND score > 1
+         --AND known_intron = 1 
+         AND rif.external_database_release_id = edbr.external_database_release_id 
+         AND edb.external_database_id = edbr.external_database_id 
+         AND edb.name $$edname$$
+		  GROUP BY rif.mapping_start, mapping_end, na_sequence_id 
+      ORDER BY rif.mapping_start
+    ]]>
+    </sql>
+  </sqlQuery>
+
+
   <sqlQuery name="alignment:ORFlength">
      <sql>
 <![CDATA[

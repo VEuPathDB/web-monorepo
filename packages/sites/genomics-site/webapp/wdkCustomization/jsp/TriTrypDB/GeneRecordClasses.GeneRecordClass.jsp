@@ -293,6 +293,10 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
   attribution=""/>
 </c:if>
 
+<!-- snps between strains -->
+<wdk:wdkTable tblName="SNPs" isOpen="false"
+                   attribution=""/>
+
 <!-- gene alias table -->
 <wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
@@ -546,6 +550,14 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 </c:set>
 
 <wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+
+<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+
+<c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
+  ${attrs['ssgcid_request_link']}
+</c:if>
+
+
 
 <wdk:wdkTable tblName="Epitopes" isOpen="true" attribution="IEDB_Epitopes"/>
 

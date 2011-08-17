@@ -66,7 +66,7 @@
 --%>
 
 <ul>
-    <li><a title="START a NEW search strategy, or CLICK to access the page with all available searches (last option in the dropdown menu)." >New Search</a>
+    <li><a title="START a NEW search strategy. Searches are organized by the genomic feature they return." >New Search</a>
   	<site:drop_down_QG2 />
     </li>
 </ul>

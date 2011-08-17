@@ -282,24 +282,6 @@
 </thead>
 <tbody class="rootBody">
 
-<%--
-<c:if test = "${eupathIsolatesQuestion}">
-   <tr><td colspan="10" align="center"> 
-       
-       <c:if test = "${eupathIsolatesQuestion}">
-          <table width="100%" border="0" cellpadding="3" cellspacing="0">
-         <tr align=center>
-         <th>  Please select at least two isolates to run ClustalW
-              <input type="button" value="Run Clustalw" onClick="goToIsolate()" />
-         </th>
-	 </tr>
-         </table>
-       </c:if>
-   </td></tr>
-
-</c:if>
---%>
-
 <c:set var="i" value="0"/>
 
 <c:forEach items="${wdkAnswer.records}" var="record">
@@ -433,10 +415,11 @@
 </div>
 <%--------- END OF RESULTS  ----------%>
 
-
+<!-- now includes the buttons -see below-, so we can, from the clicked button, access the right form
 <c:if test = "${eupathIsolatesQuestion}">
   </form>
 </c:if>
+-->
 
 <c:if test = "${eupathIsolatesQuestion && clustalwIsolatesCount > 1}">
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
@@ -448,13 +431,19 @@
   </tr>
 	<tr>
 	  <td align=center> 
-      <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate()" />
-      <input type="button" name="CheckAll" value="Check All" onClick="checkboxAll(document.checkHandleForm.selectedFields)">
-      <input type="button" name="UnCheckAll" value="Uncheck All" onClick="checkboxNone(document.checkHandleForm.selectedFields)">
+      <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this)" />
+      <input type="button" name="CheckAll" value="Check All" onClick="checkboxAll(this)">
+      <input type="button" name="UnCheckAll" value="Uncheck All" onClick="checkboxNone(this)">
     </td>
 	</tr>
 </table>
 </c:if>
+
+
+<c:if test = "${eupathIsolatesQuestion}">
+  </form>
+</c:if>
+
 
 
 <%--------- PAGING BOTTOM BAR ----------%>

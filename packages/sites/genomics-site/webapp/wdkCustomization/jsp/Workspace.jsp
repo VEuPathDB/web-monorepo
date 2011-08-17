@@ -39,21 +39,25 @@
         var guestUser = '${wdkUser.guest}'; 
 	exportBaseURL = '${exportBaseUrl}';
 
-  function goToIsolate() {
-    var form = document.checkHandleForm;
-    var cbs = form.selectedFields;
-    var count = 0;
-    var url = "/cgi-bin/isolateClustalw?project_id=${modelName};isolate_ids=";
-    for (var i=0; i < cbs.length; i++) {
-      if(cbs[i].checked) {
-      url += cbs[i].value + ",";
-      count++;
-      }
-    }
-    if(count < 2) {
-      alert("Please select at least two isolates to run ClustalW");
-      return false;
-    }
+function goToIsolate(ele) {
+	//accessing the right form (forms in summary page and basket page use the same name)
+	// var form = document.checkHandleForm;
+	var form = $(ele).parents("form[name=checkHandleForm]");
+	// var cbs = form.selectedFields;
+	 var cbs = form.find('input:checkbox[name=selectedFields]:checked');
+
+	//alert("cbs length is " + cbs.length);
+	if(cbs.length < 2) {
+		alert("Please select at least two isolates to run ClustalW");
+		return false;
+	}
+
+	var url = "/cgi-bin/isolateClustalw?project_id=${modelName};isolate_ids=";
+	cbs.each(function(){
+		url += $(this).val() + ",";
+	});
+	//alert(url);
+
 
 /* code if we want to popup a new window */
 var w = open ('', 'clustalwResult', 'width=800,height=500,titlebar=1,menubar=1,resizable=1,scrollbars=1,toolbar=1');

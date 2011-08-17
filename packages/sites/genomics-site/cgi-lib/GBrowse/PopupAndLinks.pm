@@ -676,7 +676,39 @@ sub rumIntronTitle {
   push @data, [ 'Long Overlap NU Reads:'      => "$lonr" ];
   push @data, [ 'Short Overlap NU Reads:'     => "$sonr" ];
 
-  hover('RUM Intron', \@data);
+  hover('Splice Site Junctions', \@data);
+}
+
+sub rumIntronTitleUnified {  
+  my ($f) = @_;
+  my ($samples) = $f->get_tag_values('Samples');
+  my ($scores) = $f->get_tag_values('Scores');
+  my ($exps) = $f->get_tag_values('Exps');
+  my $start = $f->start;
+  my $stop = $f->stop;
+  my $sum = eval join '+', split /;/, $scores;
+
+  my @sample_arr = split /;/, $samples;
+  my @score_arr  = split /;/, $scores;
+  my @exp_arr    = split /;/, $exps;
+  my $count = 0;
+  my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th></tr>";
+  foreach (@sample_arr) {
+     my $score = $score_arr[$count];
+     my $exp = $exp_arr[$count];
+     $exp =~ s/_RSRC$//g;
+     $exp =~ s/RNASeq//ig;
+     $exp =~ s/_/ /g;
+     $html .= "<tr><td>$exp</td><td>$_</td><td>$score</td></tr>";
+     $count++;
+  }
+  $html .= "</table>";
+
+  my @data;
+  push @data, [ '' => $html ];
+  push @data, [ 'Location:'  => "$start - $stop"];
+  push @data, [ 'Scores'     => $sum ];
+  hover('Unified Splice Site Junctions - RNASeq', \@data);
 }
 
 sub massSpecTitle {  
@@ -690,6 +722,7 @@ sub massSpecTitle {
   $desc =~ s/[\r\n]/<br>/g;
 
   my ($phospho_site) = $f->get_tag_values('PhosphoSite');
+  my ($phospho_score) = $f->get_tag_values('PhosphoScore');
   if($phospho_site) {
     my @locs = map {$_ - $f->start + 1} split /;/, $phospho_site; 
     for my $loc (reverse @locs) {
@@ -712,6 +745,7 @@ sub massSpecTitle {
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
+  push @data, [ 'Score:' => "$phospho_score" ] if($phospho_score);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
 
   hover('Mass Spec', \@data);
