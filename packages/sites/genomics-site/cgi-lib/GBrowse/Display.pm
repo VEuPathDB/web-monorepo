@@ -219,10 +219,11 @@ sub rumIntronBgColorUnified {
   my $f = shift;
   my ($scores) = $f->get_tag_values('Scores'); 
   my $sum = eval join '+', split /;/, $scores;
-  return '#FDD017' if $sum <= 5;
-  return '#F87217' if $sum <= 20;
-  return '#E56717' if $sum <= 100;
-  return '#7E3517'; 
+	# http://www.computerhope.com/htmcolor.htm
+  return '#FDD017' if $sum <= 5;   # Gold1
+  return '#F88017' if $sum <= 20;  # Dark Orange
+  return '#C35617' if $sum <= 100; # Dark Orange3
+  return '#7E3517';   # Sienna4 
 }
 
 sub rumIntronUnifiedWidth {
