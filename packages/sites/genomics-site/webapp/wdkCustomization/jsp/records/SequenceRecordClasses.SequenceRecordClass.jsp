@@ -433,7 +433,7 @@ Sequence data for <i>Plasmodium falciparum</i> IT strain were produced by Wellco
     </c:when>
     <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'TgCATBr9')}">
     <c:set var="reference">
-     <b><i>Toxoplasma gondii</i> GT1  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
+     <b><i>Toxoplasma gondii</i> CATBr9 sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
     </c:set>
     </c:when>
     <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'RH') && id eq 'NC_001799'}">
