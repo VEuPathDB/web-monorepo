@@ -368,7 +368,7 @@ sub geneTitle {
   my ($isPseudo) = $f->get_tag_values("isPseudo");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
-  return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo', '$utr'))"};
+  return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','ABC','$taxon','$isPseudo', '$utr'))"};
 } 
 
 sub spliceSiteCuratedTitle {
@@ -723,10 +723,12 @@ sub massSpecTitle {
 
   my ($phospho_site) = $f->get_tag_values('PhosphoSite');
   my ($phospho_score) = $f->get_tag_values('PhosphoScore');
+  my ($ontology_names) = $f->get_tag_values('Ontology');
   if($phospho_site) {
     my @locs = map {$_ - $f->start + 1} split /;/, $phospho_site; 
     for my $loc (reverse @locs) {
-      substr($seq, $loc, 0) = '*'; 
+      substr($seq, $loc, 0) = '*' if $ontology_names =~ /phosphorylation/i; 
+      substr($seq, $loc, 0) = '#' if $ontology_names =~ /methionine/i; 
     }
   } 
 
@@ -746,6 +748,7 @@ sub massSpecTitle {
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
   push @data, [ 'Score:' => "$phospho_score" ] if($phospho_score);
+  push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine" ] if($ontology_names);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
 
   hover('Mass Spec', \@data);
