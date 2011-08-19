@@ -536,6 +536,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
      <wdk:wdkTable tblName="MassSpec" isOpen="true" attribution="Tbrucei_Proteomics_Procyclic_Form"/>
+
+     <wdk:wdkTable tblName="MassSpecMod" isOpen="true" attribution="Tbrucei_Ferguson_Phospho_Proteome_RSRC"/> 
   </c:when>
 
   <c:when test='${binomial eq "Trypanosoma cruzi"}'>
