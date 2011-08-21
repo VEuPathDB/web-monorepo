@@ -1082,8 +1082,9 @@ SELECT
        'domain' type,
        '$source' as source,
        location as startm, location as end, 
-       CASE WHEN (source_id IS NULL) THEN ' (' || count_per_million || ')'
-            WHEN (utr_len >0) THEN  source_id || '-' ||  utr_len || '(' || count_per_million || ')'
+       CASE WHEN (NOT dist_to_cds = utr_len) 
+               THEN  source_id || '-' ||  utr_len || '*(' || count_per_million || ')' || ' Alternate CDS Start'
+            WHEN (dist_to_cds = utr_len AND within_cds=0) THEN  source_id ||  utr_len || '(' || count_per_million || ')'
             ELSE  source_id || '-' ||  'within gene' || '(' || count_per_million || ')' END AS name, 
        strand as strand, 
        'sample_name='|| sample_name || '$dlm' ||
@@ -1097,11 +1098,11 @@ FROM (
  SELECT 
        distinct ssf.splice_site_feature_id, ssf.location, ssf.strand,
        ssf.sample_name, ssf.count_per_million, ssf.is_unique, ssf.avg_mismatches,
-       gtable.source_id, gtable.utr_len, gtable.is_dominant
+       gtable.source_id, gtable.utr_len, gtable.is_dominant, gtable.dist_to_cds, gtable.within_cds
  FROM  apidb.spliceSiteFeature ssf
  LEFT JOIN (SELECT source_id , sample_name, location, strand, is_dominant, count,
-          CASE WHEN (within_cds=1) THEN (-1)*dist_to_cds ELSE dist_to_cds END AS utr_len
-   FROM ApidbTuning.SpliceSiteGenes 
+          dist_to_first_atg  AS utr_len, dist_to_cds, within_cds
+   FROM Apidb.SpliceSiteGenes 
    WHERE na_sequence_id = $srcfeature_id
    AND location >=$base_start
    AND location <=$rend
