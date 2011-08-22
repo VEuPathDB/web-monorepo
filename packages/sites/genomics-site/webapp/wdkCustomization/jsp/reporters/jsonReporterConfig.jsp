@@ -63,6 +63,7 @@ function makeSelection(state)
           <c:if test="${wdkAnswer.useAttributeTree}">
             <tr>
               <td colspan="${numPerLine}">
+                <input type="checkbox" name="o-fields" value="${wdkAnswer.recordClass.primaryKeyAttribute.name}" checked="checked" style="display:none;"/>
                 <wdk:checkboxTree rootNode="${wdkAnswer.reportMakerAttributeTree}" checkboxName="o-fields" showSelectAll="false"/>
               </td>
             </tr>

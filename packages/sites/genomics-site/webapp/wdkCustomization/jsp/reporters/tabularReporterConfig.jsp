@@ -64,6 +64,7 @@ function appendchecked(url) {
           <c:if test="${wdkAnswer.useAttributeTree}">
             <tr>
               <td colspan="${numPerLine}">
+                <input type="checkbox" name="selectedFields" value="${wdkAnswer.recordClass.primaryKeyAttribute.name}" checked="checked" style="display:none;"/>
                 <wdk:checkboxTree rootNode="${wdkAnswer.reportMakerAttributeTree}" checkboxName="selectedFields" showSelectAll="false"/>
               </td>
             </tr>
