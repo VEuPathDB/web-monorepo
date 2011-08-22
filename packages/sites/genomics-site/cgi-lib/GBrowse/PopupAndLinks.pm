@@ -175,6 +175,29 @@ sub synSpanTitle {
   hover( ($type =~ /gap/i) ? 'All gaps in region' : 'Scaffold', \@data);
 }
 
+sub htsSnpTitleQuick {
+  my $f = shift;
+  my ($gene) = $f->get_tag_values("Gene"); 
+  my ($isCoding) = $f->get_tag_values("IsCoding"); 
+  my ($nonSyn) = $f->get_tag_values("NonSyn"); 
+  my ($rend) = $f->get_tag_values("rend"); 
+  my ($base_start) = $f->get_tag_values("base_start");
+  my $zoom_level = $rend - $base_start; 
+  if ($zoom_level <= 60000) {
+    my ($params) = $f->get_tag_values("params");
+    my $variants = $f->bulkAttributes();
+    my @vars;
+    foreach my $variant (@$variants) {
+      push(@vars, "$variant->{STRAIN}::$variant->{ALLELE}::$variant->{PRODUCT}::$variant->{COVERAGE}::$variant->{ALLELE_PERCENT}::$variant->{PVALUE}");
+    }
+    my $varsString = join('|', @vars);
+    my $start = $f->start();
+    return qq{" onmouseover="return escape(htspst(this,'$params&$varsString&$start&$gene&$isCoding&$nonSyn'))"};
+  } else {
+    return $gene? "In gene $gene" : "Intergenic"; 
+  }
+}
+
 sub snpTitleQuick {
   my $f = shift;
   my ($gene) = $f->get_tag_values("Gene"); 

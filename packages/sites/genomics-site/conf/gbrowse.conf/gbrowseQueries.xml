@@ -2240,6 +2240,43 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
+    <sqlQuery name="htsSNP:Alignment"  includeProjects="ToxoDB,AmoebaDB,TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT  /*+use_nl(sa snp)*/
+       sa.na_feature_id          as feature_id,
+       'htsSNP'                      as type, 
+       'Alignment'                as source, 
+       sa.source_id              as name, 
+       '.'                        as score, 
+       sa.seq_source_id           as parent_id, 
+       sa.start_min               as startm,
+       sa.start_min               as end,
+       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'RefNA='   || sa.reference_na || '$dlm' ||
+       'base_start='   || '$base_start' || '$dlm' ||
+       'rend='   || '$rend' || '$dlm' ||
+       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
+       'IsCoding=' || sa.is_coding || '$dlm' ||
+       'Gene=' || sa.gene_source_id || '$dlm' ||
+       'params=' || sa.position_in_CDS || '&' ||
+       sa.position_in_protein || '&' ||
+       sa.reference_strain || '&' ||
+       sa.reference_aa || '&' ||
+       sa.gene_strand || '&' ||
+       sa.reference_na || '&' ||
+       sa.source_id 
+        as atts
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SnpAttributes sa
+WHERE  fl.na_sequence_id = $srcfeature_id
+  AND  fl.start_min <= $rend
+  AND  fl.start_min >= $base_start
+  AND  fl.na_feature_id = sa.na_feature_id
+  AND  sa.dataset = 'InsertSnps.pm NGS SNPs INTERNAL'
+]]>
+    </sql>
+  </sqlQuery>
   
   <sqlQuery name="SNP:Stanford"  includeProjects="ToxoDB">
     <testParamValues project="ToxoDB">
@@ -5634,6 +5671,28 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
+   
+  <sqlQuery name="htsSNP:Alignment:bulkAttribute" includeProjects="ToxoDB,AmoebaDB,TriTrypDB">
+     <sql>
+<![CDATA[
+SELECT    sa.na_feature_id as feature_id,
+          var.strain, var.allele, var.phenotype, var.product,
+          var.pvalue, var.coverage, var.allele_percent
+FROM ApidbTuning.SnpAttributes sa,
+     dots.SeqVariation var,
+     ApidbTuning.FeatureLocation fl
+WHERE fl.na_sequence_id = $srcfeature_id
+  AND fl.start_min <= $rend
+  AND fl.start_min >= $base_start
+  AND fl.feature_type = 'SnpFeature'
+  AND fl.na_feature_id = sa.na_feature_id
+  AND sa.dataset = 'InsertSnps.pm NGS SNPs INTERNAL'
+  AND var.parent_id = fl.na_feature_id
+ ORDER BY var.strain
+ 
+]]>
+    </sql>
+  </sqlQuery>
   
   <sqlQuery name="SNP:SangerPr:bulkAttribute"  includeProjects="PlasmoDB">
      <sql>
