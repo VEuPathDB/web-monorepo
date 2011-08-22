@@ -726,7 +726,7 @@ sub massSpecTitle {
   my ($ontology_names) = $f->get_tag_values('Ontology');
   if($phospho_site) {
     my @locs = map {$_ - $f->start + 1} split /;/, $phospho_site; 
-    for my $loc (reverse @locs) {
+    for my $loc (sort { $b <=> $a }  @locs) {
       substr($seq, $loc, 0) = '*' if $ontology_names =~ /phosphorylation/i; 
       substr($seq, $loc, 0) = '#' if $ontology_names =~ /methionine/i; 
     }
