@@ -534,7 +534,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
   <c:if test="${species eq 'falciparum3D7'}">
      <c:set var="ptracks"> 
-       FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfBowyerMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+       FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfBowyerMassSpecPeptides+BoothroydPhosphoMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
      </c:set>
   </c:if>
   <c:if test="${species eq 'berghei'}">
