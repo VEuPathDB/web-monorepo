@@ -368,7 +368,7 @@ sub geneTitle {
   my ($isPseudo) = $f->get_tag_values("isPseudo");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
-  return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','ABC','$taxon','$isPseudo', '$utr'))"};
+  return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo', '$utr'))"};
 } 
 
 sub spliceSiteCuratedTitle {
