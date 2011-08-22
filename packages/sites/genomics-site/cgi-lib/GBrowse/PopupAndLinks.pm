@@ -724,12 +724,28 @@ sub massSpecTitle {
   my ($phospho_site) = $f->get_tag_values('PhosphoSite');
   my ($phospho_score) = $f->get_tag_values('PhosphoScore');
   my ($ontology_names) = $f->get_tag_values('Ontology');
+  my $tb = "<table><tr><th>Location</th><th>Modified Residue</th><th>Modification Type</th><th>Score</th></tr>";
+
+  my $start = $f->start;
   if($phospho_site) {
-    my @locs = map {$_ - $f->start + 1} split /;/, $phospho_site; 
+    my @locs =  split /;/, $phospho_site; 
+    my @scores = split /;/, $phospho_score; 
+    my @term = split /;/, $ontology_names; 
+    my $count = 0;
+    foreach my $loc (@locs) {
+       my $residue = substr($seq, $loc - $start, 1);
+       $tb .= "<tr><td>".$locs[$count]."</td><td>$residue</td><td>".$term[$count]."</td><td>".$scores[$count]."</td></tr>";
+       $count++;
+    }
+    $tb .= "</table>"; 
+  } 
+
+  if($phospho_site) {
+    my @locs = map {$_ - $start } split /;/, $phospho_site; 
     for my $loc (sort { $b <=> $a }  @locs) {
       substr($seq, $loc, 0) = '*' if $ontology_names =~ /phosphorylation/i; 
       substr($seq, $loc, 0) = '#' if $ontology_names =~ /methionine/i; 
-    }
+    } 
   } 
 
 #  if($replaceString) {
@@ -747,7 +763,7 @@ sub massSpecTitle {
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
-  push @data, [ 'Score:' => "$phospho_score" ] if($phospho_score);
+  push @data, [ 'Info:' => "$tb" ] if($phospho_score);
   push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine" ] if($ontology_names);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
 
