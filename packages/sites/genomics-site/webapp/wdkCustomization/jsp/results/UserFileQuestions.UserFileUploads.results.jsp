@@ -95,10 +95,13 @@
 	               </c:forEach>
 	           </select>
         </th>
-        <th nowrap align="right" width="5%">
-             &nbsp;
-             <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}')" />
-        </th>
+        <%-- remove Reset button when new tree structure is activated --%>
+        <c:if test="${not wdkAnswer.useCheckboxTree}">
+			    <th style="text-align: right;white-space:nowrap;width:5%;">
+			      &nbsp;
+			      <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}', this)" />
+			    </th>
+			  </c:if>
       </tr>
     </table>	
   </td></tr>

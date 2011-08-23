@@ -175,6 +175,29 @@ sub synSpanTitle {
   hover( ($type =~ /gap/i) ? 'All gaps in region' : 'Scaffold', \@data);
 }
 
+sub htsSnpTitleQuick {
+  my $f = shift;
+  my ($gene) = $f->get_tag_values("Gene"); 
+  my ($isCoding) = $f->get_tag_values("IsCoding"); 
+  my ($nonSyn) = $f->get_tag_values("NonSyn"); 
+  my ($rend) = $f->get_tag_values("rend"); 
+  my ($base_start) = $f->get_tag_values("base_start");
+  my $zoom_level = $rend - $base_start; 
+  if ($zoom_level <= 60000) {
+    my ($params) = $f->get_tag_values("params");
+    my $variants = $f->bulkAttributes();
+    my @vars;
+    foreach my $variant (@$variants) {
+      push(@vars, "$variant->{STRAIN}::$variant->{ALLELE}::$variant->{PRODUCT}::$variant->{COVERAGE}::$variant->{ALLELE_PERCENT}::$variant->{PVALUE}");
+    }
+    my $varsString = join('|', @vars);
+    my $start = $f->start();
+    return qq{" onmouseover="return escape(htspst(this,'$params&$varsString&$start&$gene&$isCoding&$nonSyn'))"};
+  } else {
+    return $gene? "In gene $gene" : "Intergenic"; 
+  }
+}
+
 sub snpTitleQuick {
   my $f = shift;
   my ($gene) = $f->get_tag_values("Gene"); 
@@ -723,11 +746,29 @@ sub massSpecTitle {
 
   my ($phospho_site) = $f->get_tag_values('PhosphoSite');
   my ($phospho_score) = $f->get_tag_values('PhosphoScore');
+  my ($ontology_names) = $f->get_tag_values('Ontology');
+  my $tb = "<table><tr><th>Location</th><th>Modified Residue</th><th>Modification Type</th><th>Score</th></tr>";
+
+  my $start = $f->start;
   if($phospho_site) {
-    my @locs = map {$_ - $f->start + 1} split /;/, $phospho_site; 
-    for my $loc (reverse @locs) {
-      substr($seq, $loc, 0) = '*'; 
+    my @locs =  split /;/, $phospho_site; 
+    my @scores = split /;/, $phospho_score; 
+    my @term = split /;/, $ontology_names; 
+    my $count = 0;
+    foreach my $loc (@locs) {
+       my $residue = substr($seq, $loc - $start, 1);
+       $tb .= "<tr><td>".$locs[$count]."</td><td>$residue</td><td>".$term[$count]."</td><td>".$scores[$count]."</td></tr>";
+       $count++;
     }
+    $tb .= "</table>"; 
+  } 
+
+  if($phospho_site) {
+    my @locs = map {$_ - $start + 1} split /;/, $phospho_site; 
+    for my $loc (sort { $b <=> $a }  @locs) {
+      substr($seq, $loc, 0) = '*' if $ontology_names =~ /phosphorylation/i; 
+      substr($seq, $loc, 0) = '#' if $ontology_names =~ /methionine/i; 
+    } 
   } 
 
 #  if($replaceString) {
@@ -745,7 +786,8 @@ sub massSpecTitle {
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
-  push @data, [ 'Score:' => "$phospho_score" ] if($phospho_score);
+  push @data, [ 'Info:' => "$tb" ] if($phospho_score);
+  push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine" ] if($ontology_names);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
 
   hover('Mass Spec', \@data);

@@ -1082,8 +1082,9 @@ SELECT
        'domain' type,
        '$source' as source,
        location as startm, location as end, 
-       CASE WHEN (source_id IS NULL) THEN ' (' || count_per_million || ')'
-            WHEN (utr_len >0) THEN  source_id || '-' ||  utr_len || '(' || count_per_million || ')'
+       CASE WHEN (NOT dist_to_cds = utr_len) 
+               THEN  source_id || '-' ||  utr_len || '*(' || count_per_million || ')' || ' Alternate CDS Start'
+            WHEN (dist_to_cds = utr_len AND within_cds=0) THEN  source_id ||  utr_len || '(' || count_per_million || ')'
             ELSE  source_id || '-' ||  'within gene' || '(' || count_per_million || ')' END AS name, 
        strand as strand, 
        'sample_name='|| sample_name || '$dlm' ||
@@ -1097,11 +1098,11 @@ FROM (
  SELECT 
        distinct ssf.splice_site_feature_id, ssf.location, ssf.strand,
        ssf.sample_name, ssf.count_per_million, ssf.is_unique, ssf.avg_mismatches,
-       gtable.source_id, gtable.utr_len, gtable.is_dominant
+       gtable.source_id, gtable.utr_len, gtable.is_dominant, gtable.dist_to_cds, gtable.within_cds
  FROM  apidb.spliceSiteFeature ssf
  LEFT JOIN (SELECT source_id , sample_name, location, strand, is_dominant, count,
-          CASE WHEN (within_cds=1) THEN (-1)*dist_to_cds ELSE dist_to_cds END AS utr_len
-   FROM ApidbTuning.SpliceSiteGenes 
+          dist_to_first_atg  AS utr_len, dist_to_cds, within_cds
+   FROM Apidb.SpliceSiteGenes 
    WHERE na_sequence_id = $srcfeature_id
    AND location >=$base_start
    AND location <=$rend
@@ -2239,6 +2240,43 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
+    <sqlQuery name="htsSNP:Alignment"  includeProjects="ToxoDB,AmoebaDB,TriTrypDB">
+     <sql>
+<![CDATA[
+ SELECT  /*+use_nl(sa snp)*/
+       sa.na_feature_id          as feature_id,
+       'htsSNP'                      as type, 
+       'Alignment'                as source, 
+       sa.source_id              as name, 
+       '.'                        as score, 
+       sa.seq_source_id           as parent_id, 
+       sa.start_min               as startm,
+       sa.start_min               as end,
+       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+       'RefNA='   || sa.reference_na || '$dlm' ||
+       'base_start='   || '$base_start' || '$dlm' ||
+       'rend='   || '$rend' || '$dlm' ||
+       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
+       'IsCoding=' || sa.is_coding || '$dlm' ||
+       'Gene=' || sa.gene_source_id || '$dlm' ||
+       'params=' || sa.position_in_CDS || '&' ||
+       sa.position_in_protein || '&' ||
+       sa.reference_strain || '&' ||
+       sa.reference_aa || '&' ||
+       sa.gene_strand || '&' ||
+       sa.reference_na || '&' ||
+       sa.source_id 
+        as atts
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SnpAttributes sa
+WHERE  fl.na_sequence_id = $srcfeature_id
+  AND  fl.start_min <= $rend
+  AND  fl.start_min >= $base_start
+  AND  fl.na_feature_id = sa.na_feature_id
+  AND  sa.dataset = 'InsertSnps.pm NGS SNPs INTERNAL'
+]]>
+    </sql>
+  </sqlQuery>
   
   <sqlQuery name="SNP:Stanford"  includeProjects="ToxoDB">
     <testParamValues project="ToxoDB">
@@ -5633,6 +5671,28 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
+   
+  <sqlQuery name="htsSNP:Alignment:bulkAttribute" includeProjects="ToxoDB,AmoebaDB,TriTrypDB">
+     <sql>
+<![CDATA[
+SELECT    sa.na_feature_id as feature_id,
+          var.strain, var.allele, var.phenotype, var.product,
+          var.pvalue, var.coverage, var.allele_percent
+FROM ApidbTuning.SnpAttributes sa,
+     dots.SeqVariation var,
+     ApidbTuning.FeatureLocation fl
+WHERE fl.na_sequence_id = $srcfeature_id
+  AND fl.start_min <= $rend
+  AND fl.start_min >= $base_start
+  AND fl.feature_type = 'SnpFeature'
+  AND fl.na_feature_id = sa.na_feature_id
+  AND sa.dataset = 'InsertSnps.pm NGS SNPs INTERNAL'
+  AND var.parent_id = fl.na_feature_id
+ ORDER BY var.strain
+ 
+]]>
+    </sql>
+  </sqlQuery>
   
   <sqlQuery name="SNP:SangerPr:bulkAttribute"  includeProjects="PlasmoDB">
      <sql>

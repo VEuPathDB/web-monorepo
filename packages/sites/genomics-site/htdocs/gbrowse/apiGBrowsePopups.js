@@ -7,6 +7,14 @@ function twoColRow(left, right) {
 }
 
 
+function threeColRow(one, two, three) {
+  return '<tr><td>' + one + '</td><td>' + two + '</td><td>' + three + '</td></tr>';
+}
+
+function fiveColRow(one, two, three, four, five, six) {
+  return '<tr><td>' + one + '</td><td>' + two + '</td><td>' + three + '</td><td>' + four + '</td><td>' + five + '</td></tr>';
+}
+
 
 function popup_text () {
   var items = popup_text.arguments.length;
@@ -191,6 +199,81 @@ function pst (tip, paramsString) {
 //  tip.T_BGCOLOR = 'lightskyblue';
   tip.T_TITLE = 'SNP';
   return table(rows);
+}
+
+
+
+// htsSNP Title
+function htspst (tip, paramsString) {
+  // split paramsString on ampersand
+  var v = new Array();
+  v = paramsString.split('&');
+
+  var revArray = new Array();
+  revArray['A'] = 'T';
+  revArray['C'] = 'G';
+  revArray['T'] = 'A';
+  revArray['G'] = 'C';
+
+  var POS_IN_CDS     = 0;
+  var POS_IN_PROTEIN = POS_IN_CDS + 1; 
+  var REF_STRAIN     = POS_IN_PROTEIN + 1; 
+  var REF_AA         = REF_STRAIN + 1; 
+  var REVERSED       = REF_AA + 1; 
+  var REF_NA         = REVERSED + 1; 
+  var SOURCE_ID      = REF_NA + 1; 
+  var VARIANTS       = SOURCE_ID + 1; 
+  var START          = VARIANTS + 1;
+  var GENE           = START + 1; 
+  var IS_CODING      = GENE + 1;
+  var NON_SYN        = IS_CODING + 1;
+  var WEBAPP         = NON_SYN + 1;
+
+  // expand minimalist input data
+  var link = "<a href=/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
+ 
+  var type = 'Non-coding';
+  var refNA = (v[REVERSED] == '1')? revArray[v[REF_NA]] : v[REF_NA];
+  var refAAString = '';
+  if (v[IS_CODING] == 'yes') {
+    var non = (v[NON_SYN] == 'yes')? 'non-' : '';
+    type = 'Coding (' + non + 'synonymous)';
+    refAAString = '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + v[REF_AA];
+  }
+
+  // format into html table rows
+  var rows = new Array();
+  rows.push(twoColRow('SNP', link));
+  rows.push(twoColRow('Location', v[START]));
+  if (v[GENE] != '') rows.push(twoColRow('Gene', v[GENE]));
+  if (v[IS_CODING] == 'yes') {
+    rows.push(twoColRow('Position&nbsp;in&nbsp;CDS', v[POS_IN_CDS]));
+    rows.push(twoColRow('Position&nbsp;in&nbsp;protein', v[POS_IN_PROTEIN]));
+  }
+  rows.push(twoColRow('Type', type));
+
+  var strains = new Array();
+  strains.push(fiveColRow('<b>Strain</b>','<b>Allele</b>','<b>Product</b>','<b>Coverage</b>','<b>Allele&nbsp;%</b>'));
+  strains.push(fiveColRow(v[REF_STRAIN] + '&nbsp;(reference)',refNA,v[REF_AA],'&nbsp;','&nbsp;'));
+  // make one row per SNP allele
+  var variants = new Array();
+  variants = v[VARIANTS].split('|');
+  for (var i=0; i<variants.length; i++) {
+    var variant = new Array();
+    variant = variants[i].split('::');
+    var strain = variant[0];
+    if (strain == v[REF_STRAIN]) continue;
+    var na = variant[1];
+    if (v[REVERSED] == '1') na = revArray[na]; 
+    var aa = variant[2];
+    var info = 
+     'NA=' + na + ((v[IS_CODING] == 'yes')? '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + aa : '');
+    strains.push(fiveColRow(strain, na, (v[IS_CODING] == 'yes') ? aa : '&nbsp;',variant[3],variant[4]));
+  }
+
+//  tip.T_BGCOLOR = 'lightskyblue';
+  tip.T_TITLE = 'SNP';
+  return table(rows) + table(strains);
 }
 
 

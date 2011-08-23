@@ -414,7 +414,7 @@ GO,InterproscanData
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
     <c:set var="ptracks">
-    StuartMassSpecPeptides+FergusonMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    StuartMassSpecPeptides+FergusonMassSpecPeptides+AlmeidaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
     InterproscanData,Tbrucei_Proteomics_Procyclic_Form,Tbrucei_Ferguson_Phospho_Proteome_RSRC
@@ -536,6 +536,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
      <wdk:wdkTable tblName="MassSpec" isOpen="true" attribution="Tbrucei_Proteomics_Procyclic_Form"/>
+
+     <wdk:wdkTable tblName="MassSpecMod" isOpen="true" attribution="Tbrucei_Ferguson_Phospho_Proteome_RSRC"/> 
   </c:when>
 
   <c:when test='${binomial eq "Trypanosoma cruzi"}'>

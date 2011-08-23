@@ -355,12 +355,12 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
    <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
     <c:set var="ptracks">
-     WastlingMassSpecPeptides+MurrayMassSpecPeptides+EinsteinMassSpecPeptides+CarruthersMassSpecPeptides+MorenoMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
+     WastlingMassSpecPeptides+MurrayMassSpecPeptides+EinsteinMassSpecPeptides+CarruthersMassSpecPeptides+MorenoMassSpecPeptides+TonkinMassSpecPeptides+BoothroydMassSpecPeptides+BoothroydOocystMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
     </c:set>
     </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1'}">
 <c:set var="ptracks">
-     InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
+     TonkinMassSpecPeptides+BoothroydMassSpecPeptides+BoothroydOocystMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
     </c:set>
 </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii VEG'}">
@@ -452,6 +452,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
                attribution="Wastling-Rhoptry,Wastling1D_SDSPage,Wastling-1D_SDSPage-Soluble,Wastling-1D_SDSPage-Insoluble,Wastling-MudPIT-Soluble,Wastling-MudPIT-Insoluble,Murray-Roos_Proteomics_Conoid-enriched,Murray-Roos_Proteomics_Conoid-depleted,Dec2006_Tg_membrane_Fayun_Proteomics,Oct2006_Tg_membrane_Fayun_Proteomics,massspec_1D_tg_1frac_020306_Proteomics,massspec_june30_2006_Proteomics,massspec_may02-03_2006_Proteomics,massspec_may10_2006_Proteomics,massspec_May2007_Proteomics,massspec_May22_2007_Proteomics,massspec_membrane_frac_frac_Proteomics,Moreno-1-annotated,massspec_Carruthers_2destinct_peptides,massspec_MudPIT_Twinscan_hits"/>
 
 
+
+ <wdk:wdkTable tblName="MassSpecMod" isOpen="true"
+      attribution="Tg_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC,Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Bound_Mascot-based_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Bound_Sequest-based_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Unbound_Phosphoproteome_RSRC"/> 
 
 
 <wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>

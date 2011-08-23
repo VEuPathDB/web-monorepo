@@ -59,14 +59,15 @@ function makeSelection(state)
           <tr>
              <th colspan="${numPerLine}">Attributes</th>
           </tr>
-	        <c:if test="${wdkAnswer.useAttributeTree}">
+	        <c:if test="${wdkAnswer.useCheckboxTree}">
 	          <tr>
 	            <td colspan="${numPerLine}">
-    	          <wdk:attributeTree treeObject="${wdkAnswer.reportMakerAttributeTree}" wdkAnswer="${wdkAnswer}" checkboxName="selectedFields"/>
-    	        </td>
+	              <input type="checkbox" name="selectedFields" value="${wdkAnswer.recordClass.primaryKeyAttribute.name}" checked="checked" style="display:none;"/>
+	              <wdk:checkboxTree rootNode="${wdkAnswer.reportMakerAttributeTree}" checkboxName="selectedFields" showSelectAll="false" showResetCurrent="true"/>
+	            </td>
     	      </tr>
 	        </c:if>
-	        <c:if test="${not wdkAnswer.useAttributeTree}">
+	        <c:if test="${not wdkAnswer.useCheckboxTree}">
 	        
 	          <c:set var="attributeFields" value="${wdkAnswer.allReportMakerAttributes}"/>
 	          <c:set var="numPerColumn" value="${fn:length(attributeFields) / numPerLine}"/>
