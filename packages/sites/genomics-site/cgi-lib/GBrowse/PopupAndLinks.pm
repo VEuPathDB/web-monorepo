@@ -764,7 +764,7 @@ sub massSpecTitle {
   } 
 
   if($phospho_site) {
-    my @locs = map {$_ - $start } split /;/, $phospho_site; 
+    my @locs = map {$_ - $start + 1} split /;/, $phospho_site; 
     for my $loc (sort { $b <=> $a }  @locs) {
       substr($seq, $loc, 0) = '*' if $ontology_names =~ /phosphorylation/i; 
       substr($seq, $loc, 0) = '#' if $ontology_names =~ /methionine/i; 
