@@ -786,7 +786,7 @@ sub massSpecTitle {
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
-  push @data, [ 'Info:' => "$tb" ] if($phospho_score);
+  push @data, [ 'Info:' => "$tb" ] if($phospho_site);
   push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine" ] if($ontology_names);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
 
