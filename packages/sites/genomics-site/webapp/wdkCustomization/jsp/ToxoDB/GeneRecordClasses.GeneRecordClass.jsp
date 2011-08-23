@@ -360,7 +360,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1'}">
 <c:set var="ptracks">
-     InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
+     TonkinMassSpecPeptides+BoothroydMassSpecPeptides+BoothroydOocystMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
     </c:set>
 </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii VEG'}">
