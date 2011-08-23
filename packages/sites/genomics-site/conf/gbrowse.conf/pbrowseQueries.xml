@@ -395,7 +395,7 @@ FROM  dots.massspecfeature msf,
          AND ed.name $$edName$$
        GROUP BY ed.name,aal.start_max ,aal.end_max) x
 WHERE msf.na_feature_id =  x.feat_id
-      AND msf.na_feature_id = y.feat_id
+      AND msf.na_feature_id = y.feat_id(+)
       AND msf.parent_id = taaf.aa_feature_id
       AND taaf.aa_sequence_id = $srcfeature_id
       AND taaf.aa_sequence_id = taas.aa_sequence_id
