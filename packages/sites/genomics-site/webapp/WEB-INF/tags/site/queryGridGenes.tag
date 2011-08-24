@@ -281,12 +281,12 @@
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(modelName,'eupath')||fn:containsIgnoreCase(modelName,'toxo') }">
                 <tr>
-                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A Am C P T Tt"/>
                 </tr>
 </c:when>
 <c:otherwise>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A Am C P T Tt"/>
                 </tr>
 </c:otherwise>
 </c:choose>
