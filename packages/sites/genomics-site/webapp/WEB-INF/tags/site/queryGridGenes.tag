@@ -3,6 +3,13 @@
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
+<%-- get wdkModel saved in application scope --%>
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="modelName" value="${wdkModel.displayName}"/>
+
+
+
 <%-- title and linktext should be read from categories.xml (category, question displayName),
      which should indicate also the presence of the query in each project --%>
 
@@ -271,9 +278,18 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Population Biology
                 </td></tr>
+<c:choose>
+<c:when test="${fn:containsIgnoreCase(modelName,'eupath')||fn:containsIgnoreCase(modelName,'toxo') }">
+                <tr>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A C P T"/>
+                </tr>
+</c:when>
+<c:otherwise>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A C P T"/>
                 </tr>
+</c:otherwise>
+</c:choose>
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="NA" linktext="Microsatellites" existsOn=""/>
                 </tr>
