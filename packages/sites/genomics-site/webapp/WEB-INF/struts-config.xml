@@ -514,6 +514,7 @@
       type="org.gusdb.wdk.controller.action.InvokeAttributePluginAction"
       scope="request"
       validate="false">
+      <forward name="display" redirect="false" path="/wdk/jsp/results/attributePlugin.jsp"/>
     </action>
 
   </action-mappings>
