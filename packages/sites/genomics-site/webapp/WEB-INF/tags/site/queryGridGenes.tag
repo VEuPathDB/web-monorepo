@@ -47,12 +47,16 @@
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByExonCount" linktext="Exon Count" existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
                 <tr>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithUserComments" linktext="User Comments" existsOn="A Am C G M Pi P T Tr Tt"/>
+                </tr>
+                <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOldAnnotation" linktext="Old Annotation (v 5.5)"  existsOn="A P"/>
                 </tr>
+
                 <tr>
                     <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithUpdatedAnnotation" linktext="Updated Annotation"  existsOn="A P Tt"/>
                 </tr>
-                <tr><td class="lines2">&nbsp;</td></tr>
+             <!--   <tr><td class="lines2">&nbsp;</td></tr> -->
 
             </table>
 
@@ -275,7 +279,7 @@
                 </tr>
 
  <tr><td class="lines2">&nbsp;</td></tr>
- <tr><td class="lines2">&nbsp;</td></tr>
+<!--  <tr><td class="lines2">&nbsp;</td></tr> -->
 
             </table>
 </div>
