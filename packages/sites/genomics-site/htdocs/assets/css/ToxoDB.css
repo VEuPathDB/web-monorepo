@@ -8,15 +8,15 @@ body {
 }
 
 .coloredtext {         /* no link */
-	color: #206910;
+	color: #206910; //green
 }
 
 a:link, a:visited {
-	color: #772841;
+	color: #772841; //dark pink, wine color
 }
 
 a:hover, a:active {
-	color: #206910;   /*  #3c8935;  */
+	color: #206910;  //green
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,7 +33,7 @@ a:hover, a:active {
 
 
 #header_rt {
-   color: #3c8935;
+   color: #3c8935; //lighter green
 }
 
 #header_rt a:link, #header_rt a:visited {
@@ -62,7 +62,7 @@ a:hover, a:active {
 }
 
 #nav_top li ul a:hover, #nav_top li ul a:active {
-	color: #6f223a;
+	color: #6f223a;   //dark red
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,7 +75,7 @@ a:hover, a:active {
  
 #contentcolumn {
 	background-image: url(../images/ToxoDB/footer.png);
-	border: 1px solid #20691a;
+	border: 1px solid #20691a; //green
 }
 
 #contentcolumn2 {
@@ -83,16 +83,18 @@ a:hover, a:active {
 	border: 1px solid #20691a;
 }
 
+/* commented out in DQG_bubble.tag
 #mysearchhist {
 	background-image: url(../images/ToxoDB/bubble_my_searchbox.png);
 	border: 1px solid #20691a;
 }
-
+*/
 
 #main_tools {
 	background-image: url(../images/ToxoDB/tools_bckgnd.jpg);
 }
 
+/* not in use, remove in a few rounds
 #about_us_left {
 	background-color: #bfccdf;
 	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
@@ -102,13 +104,13 @@ a:hover, a:active {
 	color: #5e0f28;
 	background-image: url(../images/ToxoDB/trheader.png);
 }
-
+*/
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
+#menu a:hover, #menu a:active {
 	color:#560000;
 }
 #menu ul ul a:link, #menu ul ul a:visited{
@@ -117,14 +119,14 @@ a:hover, a:active {
 
 #menu ul ul a:hover, #menu ul ul a:active{
 	border-bottom-color: #3c8935;
-	color: #b30101;
+	color: #6f2239;      //#b30101; //light red
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .menu_lefttop_drop {
-   border-color: #20691A;  /* color as in contentcolumn border */
+   border-color: #6f223a; //  color as sidebar header color
 }
 
 #menu_lefttop a.heading {
@@ -136,11 +138,11 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   border: solid 1px #1c7c12;
+   border: solid 1px #1c7c12;   //lighter  green
 } 
 
 .search-box .textbox{
-	border: solid 1px #b3b3b3;
+	border: solid 1px #b3b3b3;  //grey with a redish tint
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -155,14 +157,14 @@ h2 {
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #3c8935;
+  	color: #3c8935; //lighter green
 }
 
-
+/* seems unused
 .subcolor {
 	color: #714782
 }
-
+*/
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,7 +181,7 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #5e0f28;
+	color: #5e0f28;  //dark red
 	background-image: url(../images/ToxoDB/trheader.png);
 	background-repeat: repeat-x;
 }
@@ -220,7 +222,7 @@ tr.subheaderrow2 td{
 }
 
 a.queryGridInactive {
-        color:              #C8C8C8;
+        color:              #C8C8C8;    //grey with redish tint
 }
 a.queryGridActive {
         color:              #772841;
@@ -241,36 +243,12 @@ tr.headerrow th {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    =RED BUTTON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WorkSpace Divs 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
 	background-image: url(../images/ToxoDB/aboutus.png);
 }
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WARNING BOXES 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ADVANCED STRATEGY PAGING 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -281,12 +259,32 @@ span.marker a:link, span.marker a:visited {
 	color: #7D0101;
 }
 
-
-/* APPLICATION PAGE STYLES */
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = strategy workspace
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+span#stratTitle, #strategy_tabs #selected a {
+	color:#560000;
+}
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
     background-color: #E8EBF0;
 }
+.history_panel table {
+  border-left: 2px solid #772841;
+  border-right: 2px solid #772841;
+}
+
+.ui-widget-header {
+    background: none repeat scroll 0 0  #f7eff2;
+    font-weight:normal;
+    border: 2px solid #772841;
+    color: #5e0f28;  //dark red
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+      	color: #5e0f28;  
+}
+*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = styles for blockUI popups
@@ -316,21 +314,11 @@ div.colCopy
 }
 
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 history.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter_menu.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #query_form {
 	border: 1px solid #772841;	
 }

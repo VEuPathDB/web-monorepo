@@ -8,7 +8,7 @@ body {
 }
 
 .coloredtext {         /* no link */
-	color: #6A5329;
+	color: #6A5329; //brown
 }
 
 a:link, a:visited {
@@ -81,7 +81,7 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #contentcolumn {
 	background-image: url(../images/AmoebaDB/footer.png);
-	border: 1px solid #4F3D1B;
+	border: 1px solid #4F3D1B; //brown
 }
 
 #contentcolumn2 {
@@ -89,28 +89,30 @@ a:hover, a:active {
 	border: 1px solid #4F3D1B;
 }
 
+/* commented out in DQG_bubble.tag
 #mysearchhist {
 	background-image: url(../images/AmoebaDB/bubble_my_searchbox.png);
 	border: 1px solid #b5a3d4;
 }
-
-
+*/
 
 
 #main_tools {
 	background-image: url(../images/AmoebaDB/tools_bckgnd.jpg);
 }
 
+/* not in use, remove in a few rounds
 #about_us_left {
 	background-color: #cdc3de;
 	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
 }
 
-// not in use, remove in a few rounds
+
 #pink_title {
 	color: #4F3D1B; //brown
 	background-image: url(../images/AmoebaDB/trheader.png);
 }
+*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List

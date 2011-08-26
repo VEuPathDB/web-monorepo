@@ -257,8 +257,7 @@ height: 240px;
    font-weight: normal;
    padding: 6px;
    line-height: 15px;
-   border: 1px solid #630d0d;
-   border-color: 630d0d;
+   border: 1px solid grey;
    background-color: #FFFFFF;
    margin: -5px 0px 5px;
 }
@@ -1214,6 +1213,12 @@ a#gbView {
     padding: 1px;
 }
 
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Strategy history panel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+table.datatables tr.headerrow th {
+	border-width:0px 0px 2px;
+}
 
 /*THE END */
