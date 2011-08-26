@@ -4,6 +4,10 @@
      (after the order set up in header.tag)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =main structure
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #toplink {
 	padding-top: 1px;
 }
@@ -36,6 +40,19 @@
 	background-position: 0 -25px;
 	background-repeat: repeat-x;
 	margin: 0 5px 0 6px;
+}
+
+div.innertube #record-toolbox {
+    float: right;
+    border-style: double;
+    border-width: 3px;
+    margin: 3px;
+    padding: 5px;
+    text-align: center;
+}
+
+div.innertube #record-toolbox li {
+    margin-top: 2px;
 }
 
 div#quick-search td {
@@ -190,7 +207,7 @@ height: 240px;
 /**/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Menu Lists
+	 =Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu_lefttop {
@@ -208,7 +225,7 @@ height: 240px;
 }
 	
 #menu_lefttop a.heading:hover {
-	color: #CCCCCC;
+	color: #CCCCCC;  //grey
 	display: block;
 }
 
@@ -251,8 +268,36 @@ ul.heading_list li:hover a.detail_link {
 	position: relative;
 }
 
+
+#menu_lefttop a.heading {
+	height: 24px;
+/*	width: 191px;*/
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 17px;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	padding-right: 10px;
+	padding-left:  7px;
+	margin-bottom: 5px;
+}
+
+#menu_lefttop div ul.related-sites {
+    border: 1px lightgrey solid;
+    height: 120px;
+    list-style-position: inside;
+    margin-left: 0;
+    overflow-y: auto;
+}
+
+#menu_lefttop div ul.related-sites li {
+    padding-left: 1.7em;
+    text-indent: -1.5em;
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =not sure where it is used, classic bullet list
+	 =classic bullet list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #cirbulletlist ol {
 	list-style-type: disc;
@@ -263,21 +308,27 @@ ul.heading_list li:hover a.detail_link {
 #cirbulletlist ol {
     list-style-type: decimal;
 }
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =help.jsp, classic bullet list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#cirbulletlist ul {
+	list-style-type: disc;
+	margin-left:  1em;
+	padding-left: 1em;
+	list-style-position: outside;
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =serviceList.jsp, classic bullet list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+ul.cirbulletlist {
+	list-style-type: disc;
+	margin-left:  1em;
+	list-style-position: outside;
+}
 
 .fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
 
-div.innertube #record-toolbox {
-    float: right;
-    border-style: double;
-    border-width: 3px;
-    margin: 3px;
-    padding: 5px;
-    text-align: center;
-}
 
-div.innertube #record-toolbox li {
-    margin-top: 2px;
-}
 
 
 
@@ -477,7 +528,7 @@ div.innertube #record-toolbox li {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =STRUCTURE 
+	 =horizontal grey menubar below header
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #menubar {
@@ -691,23 +742,9 @@ div#menu ul ul ul li:hover ul {
 
 
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Menu Lists
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu_lefttop a.heading {
-	height: 24px;
-/*	width: 191px;*/
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 17px;
-	voice-family: "\"}\"";
-	voice-family: inherit;
-	text-decoration: none;
-	background-repeat: no-repeat;
-	padding-right: 10px;
-	padding-left:  7px;
-	margin-bottom: 5px;
-}
+
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Search Boxes
@@ -888,10 +925,9 @@ tr.lines td, tr.linesalt td {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WorkSpace Divs 
+	 =genePage.js which deals with seeing gen page in results page, unused at the moment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
+/*
 #gene_page_progress_bar {
 	position: relative;
 	left: 450px;
@@ -908,7 +944,7 @@ tr.lines td, tr.linesalt td {
 	color: #FFFFFF;
 	z-index: 100;
 }
-
+*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT US and HELP PAGES SIDEBAR
@@ -1036,22 +1072,8 @@ tr.lines td, tr.linesalt td {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in help.jsp, classic bullet list
+	 =boolean operators?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#cirbulletlist ul {
-	list-style-type: disc;
-	margin-left:  1em;
-	padding-left: 1em;
-	list-style-position: outside;
-}
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in serviceList.jsp, classic bullet list
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-ul.cirbulletlist {
-	list-style-type: disc;
-	margin-left:  1em;
-	list-style-position: outside;
-}
 
 .vennFilter {
    float:left;
@@ -1134,7 +1156,7 @@ h2 {
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =TAGS 
+	 =Generic
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
@@ -1181,20 +1203,17 @@ a#gbView {
     overflow: auto;
 }
 
-#menu_lefttop div ul.related-sites {
-    border: 1px lightgrey solid;
-    height: 120px;
-    list-style-position: inside;
-    margin-left: 0;
-    overflow-y: auto;
-}
 
-#menu_lefttop div ul.related-sites li {
-    padding-left: 1.7em;
-    text-indent: -1.5em;
-}
 
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Basket
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #export-basket {
     background-color: #EEEEEE;
     padding: 1px;
 }
+
+
+
+/*THE END */

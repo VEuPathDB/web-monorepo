@@ -1,6 +1,6 @@
 	
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =TAGS 
+	 =Generic 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
@@ -12,11 +12,11 @@ body {
 }
 
 a:link, a:visited {
-	color: #4F3D1B;
+	color: #4F3D1B; //darker brown
 }
 
 a:hover, a:active {
-	color: #4f7f6d;  /*  #5E9F87;*/     /* #6A5329;*/
+	color: #4f7f6d;  //  #5E9F87; lighter green 
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,7 +33,7 @@ a:hover, a:active {
 
 
 #header_rt {
-   color: #58441F;
+   color: #58441F; //brown
 }
 
 #header_rt a:link, #header_rt a:visited {
@@ -63,12 +63,12 @@ a:hover, a:active {
 }
 
 #nav_top li ul a:hover, #nav_top li ul a:active {
-	color: #4f7f6d;   /*#8f0165; */
+	color: #4f7f6d;  
 }
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =STRUCTURE 
+	 =horizontal grey menubar below header
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 /* #menubar #mysearch {
@@ -76,7 +76,9 @@ a:hover, a:active {
 	border: 1px solid #792861;
 } */
  
-
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =main structure
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #contentcolumn {
 	background-image: url(../images/AmoebaDB/footer.png);
 	border: 1px solid #4F3D1B;
@@ -104,8 +106,9 @@ a:hover, a:active {
 	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
 }
 
+// not in use, remove in a few rounds
 #pink_title {
-	color: #4F3D1B;  /*  #5f0f47; */
+	color: #4F3D1B; //brown
 	background-image: url(../images/AmoebaDB/trheader.png);
 }
 
@@ -114,21 +117,21 @@ a:hover, a:active {
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
+#menu a:hover, #menu a:active {
 	color:#58441F;
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color:  #4F3D1B; /* #5f0f47;*/
+	border-bottom-color:  #58441F;
 }
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #4F3D1B; /* #5f0f47;*/
-	color: #4f7f6d;   /* #8f0165; */
+	border-bottom-color: #58441F;
+	color: #4f7f6d;  
 }
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Menu Lists
+	 =Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .menu_lefttop_drop {
    border-color:  #4F3D1B;  /* color as in contentcolumn border */
@@ -143,12 +146,12 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-    border: solid 1px #634697;
+    border: solid 1px #58441F;
  } 
 
 
 .search-box .textbox{
-	border: solid 1px #634697;
+	border: solid 1px #58441F;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -167,11 +170,11 @@ h2 {
   	color: #58441F;
 }
 
-
+/* seems unused 
 .subcolor {
 	color: #714782
 }
-
+*/
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -188,13 +191,13 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #4F3D1B;
+	color: #58441F;
 	background-image: url(../images/AmoebaDB/trheader.png);
 }
 
 
 tr.headerrow {
-	color: #4F3D1B;
+	color: #58441F;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
@@ -219,7 +222,7 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #4F3D1B;  /* #5f0f47;*/
+        color: #58441F; 
 	background-image: url(../images/AmoebaDB/trheader.png);
 }
 
@@ -228,11 +231,11 @@ tr.subheaderrow2 td{
 }
 
 a.queryGridInactive {
-        color:               #C8C8C8;
+        color: #C8C8C8;
 }
 
 a.queryGridActive {
-        color:              #4F3D1B;   /* #440c94; */
+        color: #58441F;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,23 +244,12 @@ a.queryGridActive {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.subheaderrow th {
-	border-color: #4F3D1B;
+	border-color: #58441F;
 }
 
 tr.headerrow th { 
-	border-color: #4F3D1B;
+	border-color: #58441F;
 }
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    =RED BUTTON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WorkSpace Divs 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
 
@@ -269,36 +261,26 @@ tr.headerrow th {
 	background-image: url(../images/AmoebaDB/aboutus.png);
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WARNING BOXES 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ADVANCED STRATEGY PAGING 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in help.jsp, classic bullet list
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =MISC 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+// maybe used in genePage.js which deals with seeing gen page in results page , unused at the moment
 span.marker a:link, span.marker a:visited {
-	color: #800158;
+	color: #800158;   //pink
 }
 
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = strategy workspace
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-/* APPLICATION PAGE STYLES */
-
+span#stratTitle, #strategy_tabs #selected a {
+	color: #58441F;
+}
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #e9e6ee;
+    background-color: #e9e6ee;   //very light colored grey
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -306,7 +288,7 @@ span.marker a:link, span.marker a:visited {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 1px solid #4F3D1B;
+	border: 1px solid  #58441F; //brown
 }
 
 .blockPage{
@@ -331,23 +313,13 @@ div.colCopy
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 history.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#query_form {
-	border: 1px solid #634697;	
+
+div#query_form {
+	border: 1px solid #58441F;     //brown
 }
+
 
 
 
