@@ -284,9 +284,14 @@
                     <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A Am C P T Tt"/>
                 </tr>
 </c:when>
+<c:when test="${fn:containsIgnoreCase(modelName,'tritryp')||fn:containsIgnoreCase(modelName,'amoeba') }">
+                <tr>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByHtsSnps" linktext="SNPs" />
+                </tr>
+</c:when>
 <c:otherwise>
                 <tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A Am C P T Tt"/>
+                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySnps" linktext="SNPs" />
                 </tr>
 </c:otherwise>
 </c:choose>
