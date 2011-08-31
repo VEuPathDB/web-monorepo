@@ -8,15 +8,18 @@ body {
 }
 
 .coloredtext {         /* no link */
-	color: #206910; //green
+	color: #772841; // dark red, now that links are green   
 }
 
-a:link, a:visited {
+a[href]:link {
+	color: #187a02; //#206910;  //green
+}
+a[href]:visited {
+	color: #507a46;
+}
+
+a[href]:hover, a[href]:active {
 	color: #772841; //dark pink, wine color
-}
-
-a:hover, a:active {
-	color: #206910;  //green
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,14 +153,14 @@ a:hover, a:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #20691a;
+	color: #772841; //#20691a;
 }
 h2 {
-  	color: #20691a;
+  	color: #772841; //#20691a;
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #3c8935; //lighter green
+  	color: #772841; //dark red     #3c8935; //lighter green
 }
 
 /* seems unused
@@ -269,22 +272,6 @@ span#stratTitle, #strategy_tabs #selected a {
 #strategy_tabs a:link, #strategy_tabs a:visited {
     background-color: #E8EBF0;
 }
-.history_panel table {
-  border-left: 2px solid #772841;
-  border-right: 2px solid #772841;
-}
-
-.ui-widget-header {
-    background: none repeat scroll 0 0  #f7eff2;
-    font-weight:normal;
-    border: 2px solid #772841;
-    color: #5e0f28;  //dark red
-}
-
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-      	color: #5e0f28;  
-}
-*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = styles for blockUI popups
