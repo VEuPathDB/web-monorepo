@@ -310,6 +310,18 @@ div.colCopy
 	border: 1px solid #772841;	
 }
 
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 New treeParam jQuery code (also used for attribute selection) 
+	 makes organism <a href>.... so it picks up the link color 
+	 in Project.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.jstree a:link,.jstree a:visited {
+	color:black;
+}
+.jstree a:hover,.jstree a:active {
+	color:black;
+}
 
 
 /*THE END */
