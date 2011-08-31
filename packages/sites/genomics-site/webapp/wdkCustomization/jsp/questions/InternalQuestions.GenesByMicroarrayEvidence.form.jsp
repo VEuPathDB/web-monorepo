@@ -11,11 +11,11 @@
 
 <%-- QUESTIONS --%>
 <%-- 	study is a keyword --if the questionset name contains "study" we will revise this....
-	when the keyword "study" is found, queryList4.tag will make a new row
+	when the keyword "study" is found, queryList.tag will make a new row
 	a study belongs to an organism and contains questions, 
 	questions will be displayed in columns --number of columns is determined below
 	several studies can belong to the same organism 
-	queryList4.tag contains the organism mapping (from E.hi to Entamoeba histolytica, etc)
+	queryList.tag contains the organism mapping (from E.hi to Entamoeba histolytica, etc)
 	of this becomes difficult to maintain, we would show acronyms.
 --%>
 
@@ -53,22 +53,22 @@
 
 <c:choose>
  <c:when test = "${project == 'AmoebaDB'}">
-    <site:queryList4 columns="${columns}" questions="${amoebaQuestions}"/>
+    <site:queryList columns="${columns}" questions="${amoebaQuestions}"/>
   </c:when>
   <c:when test = "${project == 'GiardiaDB'}">
-    <site:queryList4 columns="${columns}" questions="${giardiaQuestions}"/>
+    <site:queryList columns="${columns}" questions="${giardiaQuestions}"/>
   </c:when>
   <c:when test = "${project == 'EuPathDB'}">
-    <site:queryList4 columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
+    <site:queryList columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
   </c:when>
   <c:when test = "${project == 'PlasmoDB'}">
-    <site:queryList4  columns="${columns}"  questions="${plasmoQuestions}"/>
+    <site:queryList  columns="${columns}"  questions="${plasmoQuestions}"/>
   </c:when>
   <c:when test = "${project == 'ToxoDB'}">
-    <site:queryList4 columns="${columns}" questions="${toxoQuestions}"/>
+    <site:queryList columns="${columns}" questions="${toxoQuestions}"/>
   </c:when>
   <c:when test = "${project == 'TriTrypDB'}">
-    <site:queryList4 columns="${columns}" questions="${tritrypQuestions}"/>
+    <site:queryList columns="${columns}" questions="${tritrypQuestions}"/>
   </c:when>
 </c:choose>
     

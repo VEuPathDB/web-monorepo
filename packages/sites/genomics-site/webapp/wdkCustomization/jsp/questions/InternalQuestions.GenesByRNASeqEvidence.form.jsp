@@ -22,9 +22,9 @@
 <div id="form_question">
 
 <!--    questions will be displayed in columns -number of columns is determined above
-        queryList4.tag relies on EITHER the question displayName having the organism acronym (P.f.) as first characters 
+        queryList.tag relies on EITHER the question displayName having the organism acronym (P.f.) as first characters 
 				OR having questions grouped by "study", here the study tells about the organism as in "P.f.study:"
-        queryList4.tag contains the organism mapping (from P.f. to Plasmodium falciparum, etc)
+        queryList.tag contains the organism mapping (from P.f. to Plasmodium falciparum, etc)
 	if organism is not found (a new organism), no header will be displayed
 -->
 <center><table width="90%">
@@ -35,16 +35,16 @@
 
   <c:choose>
     <c:when test="${projectId == 'PlasmoDB'}">
-      <site:queryList4 columns="${columns}" questions="${plasmoQuestions}"/>
+      <site:queryList columns="${columns}" questions="${plasmoQuestions}"/>
     </c:when>    
     <c:when test="${projectId == 'TriTrypDB'}">
-      <site:queryList4 columns="${columns}" questions="${tritrypQuestions}"/>
+      <site:queryList columns="${columns}" questions="${tritrypQuestions}"/>
     </c:when>
     <c:when test="${projectId == 'ToxoDB'}">
-      <site:queryList4 columns="${columns}" questions="${toxoQuestions}"/>
+      <site:queryList columns="${columns}" questions="${toxoQuestions}"/>
     </c:when>
     <c:otherwise>  <%-- it must be the portal --%>
-      <site:queryList4 columns="${columns}" questions="${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
+      <site:queryList columns="${columns}" questions="${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
     </c:otherwise>
    </c:choose>
 

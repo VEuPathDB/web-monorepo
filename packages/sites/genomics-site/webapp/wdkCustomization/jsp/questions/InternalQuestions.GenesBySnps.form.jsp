@@ -32,22 +32,22 @@
 
 <c:choose>
 <c:when test = "${project == 'AmoebaDB'}">
-	<site:queryList4 columns="${columns}" questions="${amoebaQuestions}"/>
+	<site:queryList columns="${columns}" questions="${amoebaQuestions}"/>
 </c:when>
 <c:when test = "${project == 'CryptoDB'}">
-	<site:queryList4 columns="${columns}" questions="${cryptoQuestions}"/>
+	<site:queryList columns="${columns}" questions="${cryptoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'EuPathDB'}">
-	<site:queryList4 columns="${columns}" questions="${eupathQuestions}"/>
+	<site:queryList columns="${columns}" questions="${eupathQuestions}"/>
 </c:when>
 <c:when test = "${project == 'PlasmoDB'}">
-	<site:queryList4 columns="${columns}" questions="${plasmoQuestions}"/>
+	<site:queryList columns="${columns}" questions="${plasmoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
-	<site:queryList4 columns="${columns}" questions="${toxoQuestions}"/>
+	<site:queryList columns="${columns}" questions="${toxoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'TriTrypDB'}">
-	<site:queryList4 columns="${columns}" questions="${trypQuestions}"/>
+	<site:queryList columns="${columns}" questions="${trypQuestions}"/>
 </c:when>
 </c:choose>
 

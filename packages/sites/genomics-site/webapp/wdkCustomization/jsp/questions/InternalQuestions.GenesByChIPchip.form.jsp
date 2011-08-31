@@ -26,21 +26,21 @@
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
 <!--    questions will be displayed in columns -number of columns is determined above
-        queryList4.tag relies on EITHER the question displayName having the organism acronym (P.f.) as first characters 
+        queryList.tag relies on EITHER the question displayName having the organism acronym (P.f.) as first characters 
                                 OR having questions grouped by "study", here the study tells about the organism as in "P.f.study:"
-        queryList4.tag contains the organism mapping (from P.f. to Plasmodium falciparum, etc)
+        queryList.tag contains the organism mapping (from P.f. to Plasmodium falciparum, etc)
         if organism is not found (a new organism), no header will be displayed
 -->
 
 <c:choose>
 <c:when test = "${project == 'EuPathDB'}">
-	<site:queryList4 columns="${columns}" questions="${plasmoQuestions},${toxoQuestions}"/>
+	<site:queryList columns="${columns}" questions="${plasmoQuestions},${toxoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'PlasmoDB'}">
-	<site:queryList4 columns="${columns}" questions="${plasmoQuestions}"/>
+	<site:queryList columns="${columns}" questions="${plasmoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
-	<site:queryList4 columns="${columns}" questions="${toxoQuestions}"/>
+	<site:queryList columns="${columns}" questions="${toxoQuestions}"/>
 </c:when>
 </c:choose>
 

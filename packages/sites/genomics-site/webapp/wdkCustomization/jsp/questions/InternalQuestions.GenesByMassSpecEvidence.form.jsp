@@ -22,10 +22,10 @@
 
  <c:choose>
     <c:when test="${projectId == 'PlasmoDB' || projectId == 'EuPathDB'}">
-	<site:queryList4 columns="${columns}" questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
+	<site:queryList columns="${columns}" questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
     </c:when>
     <c:otherwise>
-	<site:queryList4 columns="${columns}" questions="GeneQuestions.GenesByMassSpec"/>
+	<site:queryList columns="${columns}" questions="GeneQuestions.GenesByMassSpec"/>
     </c:otherwise>
 </c:choose>
 

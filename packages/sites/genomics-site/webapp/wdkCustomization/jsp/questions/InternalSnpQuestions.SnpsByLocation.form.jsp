@@ -26,10 +26,10 @@
 
 <c:choose>
 <c:when test = "${project == 'EuPathDB'}">
-	<site:queryList4 columns="${columns}" questions="${questions}"/>
+	<site:queryList columns="${columns}" questions="${questions}"/>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
-	<site:queryList4 columns="${columns}" questions="${questions}"/>
+	<site:queryList columns="${columns}" questions="${questions}"/>
 </c:when>
 </c:choose>
 

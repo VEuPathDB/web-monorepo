@@ -21,13 +21,13 @@
 
 <c:choose>
 <c:when test = "${projectId == 'GiardiaDB'}">
-	<site:queryList4 columns="${columns}"  questions="GeneQuestions.GenesByProteinStructure"/>
+	<site:queryList columns="${columns}"  questions="GeneQuestions.GenesByProteinStructure"/>
 </c:when>
 <c:when test = "${projectId == 'CryptoDB' || projectId == 'TriTrypDB'}">
-	<site:queryList4 columns="${columns}"  questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesBySecondaryStructure"/>
+	<site:queryList columns="${columns}"  questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesBySecondaryStructure"/>
 </c:when>
 <c:otherwise>  <%-- EuPathDB and PlasmoDB, Toxo --%>
-	<site:queryList4 columns="${columns}" questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesWithStructurePrediction,GeneQuestions.GenesBySecondaryStructure"/>
+	<site:queryList columns="${columns}" questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesWithStructurePrediction,GeneQuestions.GenesBySecondaryStructure"/>
 </c:otherwise>
 </c:choose>
 
