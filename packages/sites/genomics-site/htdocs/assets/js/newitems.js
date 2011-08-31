@@ -53,7 +53,7 @@ function flagUnreadListItems() {
         if ( ! readMap[this.id]) {
           this.style.backgroundColor='#ffffa0';
           this.style.margin='2px';
-          this.style.paddingLeft='1px';
+          //this.style.paddingLeft='1px';
           sectUnreadCount++;
           totalUnreadCount++;
         }
