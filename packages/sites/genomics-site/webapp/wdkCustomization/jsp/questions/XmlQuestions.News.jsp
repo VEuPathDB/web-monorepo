@@ -119,7 +119,15 @@
   <c:set var="tag" value="${record.attributesMap['tag']}"/>
   <c:set var="item" value="${record.attributesMap['item']}"/>
 
-  <c:if test="${param.tag == null or param.tag eq tag or param.tag == ''}">
+  <%-- if a 'tag' parameter is included in the url querystring and its value matches the 
+        XmlRecord's tag, show the matching record and skip the others. If there is no tag parameter, 
+        show all records. 
+        Examples: 
+            /showXmlDataContent.do?name=XmlQuestions.News      
+            /showXmlDataContent.do?name=XmlQuestions.News&tag=toxo2_11_news
+        The latter record-specific URL is used in RSS feeds.
+  --%>
+  <c:if test="${param.tag eq tag or param.tag == null or param.tag == ''}">
     <a name="newsItem${i}"/>
     <a name="${tag}"/>
     <table border="0" cellpadding="2" cellspacing="0" width="100%">
@@ -139,6 +147,8 @@
 <table width='100%'>
 <tr><td>
 <c:if test="${param.tag != null and param.tag != ''}">
+  <%-- if a tag parameter is included in the url querystring we will be showing only
+       one record, so add a link to a page with 'All' records --%>
  <a href="showXmlDataContent.do?name=XmlQuestions.News" id='allnews'>All ${xmlAnswer.question.displayName}</a>
 </c:if>
 </td><td align="right">
