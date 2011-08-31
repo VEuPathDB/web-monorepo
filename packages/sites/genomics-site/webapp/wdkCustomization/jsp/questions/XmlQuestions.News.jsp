@@ -43,6 +43,13 @@
 	margin-top: 1em;
 	margin-bottom: 1em;
   }
+
+.thinTopBottomBorders a[href]:link, .thinTopBottomBorders a[href]:visited {
+	text-decoration: underline;
+}
+.thinTopBottomBorders a[href]:hover, .thinTopBottomBorders a[href]:active {
+	text-decoration: none;
+}
 </style>
 
 <table border='0' width='100%' cellpadding='3' cellspacing='0' 
@@ -134,8 +141,11 @@
   
     <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
     <tr class="rowLight"><td>
-      <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${tag}">
-      <font color='black'><b>${headline}</b></font></a> (${fdate})<br><br>
+ <!-- these headlines do not need to link once in the news page
+      <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${tag}"> -->
+      <font color='black'><b>${headline}</b></font>
+<!-- </a>  -->
+	 (${fdate})<br><br>
       ${item}</td></tr></table>
     <c:set var="i" value="${i+1}"/>
   </c:if>
