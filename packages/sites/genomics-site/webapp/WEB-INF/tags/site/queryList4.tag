@@ -55,6 +55,9 @@ document.getElementById(div).innerHTML += "<hr/>"
 			initParamHandlers(true);
 			var question = new WdkQuestion();
 			question.registerGroups();
+			if ($('.checkboxTree').length > 0) {
+			  configureCheckboxTree();
+			}
 		}
 	});
 }	

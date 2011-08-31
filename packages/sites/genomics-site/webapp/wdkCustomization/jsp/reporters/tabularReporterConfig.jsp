@@ -117,15 +117,16 @@ function appendchecked(url) {
 	              </c:forEach>
 	            </td>
 	          </tr>
+	          
+            <tr>
+              <td align="center" colspan="${numPerLine}"><input type="button" value="select all" onclick="checkFields(1)">
+                <input type="button" value="clear all" selected="yes" onclick="checkFields(0)">
+              </td>
+            </tr>
 	        </c:if>
         </table>
       </td>
     </tr>
-
-  <tr><td valign="top">&nbsp;</td>
-      <td align="center"><input type="button" value="select all" onclick="checkFields(1)">
-          <input type="button" value="clear all" selected="yes" onclick="checkFields(0)">
-        </td></tr>
 
   <tr><td valign="top"><b>Column names: </b></td>
       <td><input type="radio" name="includeHeader" value="yes" checked>include
