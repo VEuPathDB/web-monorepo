@@ -11,12 +11,16 @@ body {
 	color: #6A5329; //brown
 }
 
-a:link, a:visited {
-	color: #4F3D1B; //darker brown
+
+a[href]:link {
+	color: #02935c; //#058252;//#167a53; //#22a371;  //#4f7f6d;  //  #5E9F87; lighter green 
+}
+a[href]:visited {
+	color: #628276;
 }
 
-a:hover, a:active {
-	color: #4f7f6d;  //  #5E9F87; lighter green 
+a[href]:hover, a[href]:active {
+	color:  #02935c;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
