@@ -39,9 +39,11 @@
 		<br>&copy;${copyrightYear} The EuPathDB Project Team
 	</div>
 
-	<div style="float:right;padding-right:9px;padding-top:9px;font-size:1.4em;line-height:2;">
-		Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments
+	<div style="float:right;padding-right:9px;font-size:1.4em;line-height:2;">
+		Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments<br>
+	<img border=0 style="position:relative;top:-10px;left:112px" src="<c:url value='/wdk/images/stratWDKlogo.png'/>"  width=100>
 	</div>
+
 
 	<span style="position: relative; top: -9px;">
 		<a href="http://www.eupathdb.org"><br><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a>&nbsp;&nbsp;
