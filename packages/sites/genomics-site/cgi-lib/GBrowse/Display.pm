@@ -262,11 +262,15 @@ sub massSpecBgColorFromExtDbName {
                 'MS Carruthers 2destinct peptides' => 'plum',
                 'Moreno DTASelect filter sample A' => 'lime',
                 'Moreno DTASelect filter sample G' => 'green',
-                'Tg_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC' => 'maroon',
-                'Tg_Boothroyd_Elias_Moritz_Intracellular_Totalproteome_RSRC'   => 'darksalmon',
-                'Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC'      => 'peachpuff',
-                'Tg_Boothroyd_Elias_Moritz_Purified_Totalproteome_RSRC'        => 'peru',
-                'Tg_Tonkin_TiO2_Bound_Mascot-based_Phosphoproteome_RSRC'       => 'tan',
+                'Tg_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC' => '#F62817',  #Firebrick1
+                'Tg_Boothroyd_Elias_Moritz_Intracellular_Totalproteome_RSRC'   => '#250517',  #Gray18
+                'Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC'      => '#F62817',
+                'Tg_Boothroyd_Elias_Moritz_Purified_Totalproteome_RSRC'        => '#250517',
+                'TgGT1_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC' => '#F62817',  #Firebrick1
+                'TgGT1_Boothroyd_Elias_Moritz_Intracellular_Totalproteome_RSRC'   => '#250517',  #Gray18
+                'TgGT1_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC'      => '#F62817',
+                'TgGT1_Boothroyd_Elias_Moritz_Purified_Totalproteome_RSRC'        => '#250517',
+                'TgGT1_Tonkin_TiO2_Bound_Mascot-based_Phosphoproteome_RSRC'       => 'tan',
                 'Tg_Tonkin_TiO2_Bound_Sequest-based_Phosphoproteome_RSRC'      => 'khaki',
                 'Tg_Tonkin_TiO2_Unbound_Phosphoproteome_RSRC'                  => 'darkkhaki',
 
