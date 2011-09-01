@@ -343,6 +343,13 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 </c:if>
 
 
+<%-- eQTL regions --%>
+<c:if test="${species eq 'falciparum3D7'}">
+<wdk:wdkTable tblName="Plasmo_eQTL_Table" isOpen="true"
+               attribution="" />
+</c:if>
+
+
 <%-- version 5.5 genes --%>
 <c:if test="${species eq 'falciparum3D7'}">
 <wdk:wdkTable tblName="PlasmoVer5Genes" isOpen="true"
