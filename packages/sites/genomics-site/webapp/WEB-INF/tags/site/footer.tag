@@ -41,12 +41,15 @@
 
 	<div style="float:right;padding-right:9px;font-size:1.4em;line-height:2;">
 		Please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments<br>
-	<img border=0 style="position:relative;top:-9px;left:103px" src="<c:url value='/wdk/images/stratWDKlogo.png'/>" >
+	<img border=0 style="position:relative;top:-9px;left:103px" src="<c:url value='/wdk/images/stratWDKlogo.png'/>"  width="120">
 	</div>
 
 
 	<span style="position: relative; top: -9px;">
 		<a href="http://www.eupathdb.org"><br><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a>&nbsp;&nbsp;
+<br>
+</span>
+	<span style="position: relative; top: -13px;left:80px">
 		<a href="http://amoebadb.org"><img border=0 src="/assets/images/AmoebaDB/amoebadb_w30.png"              ></a>&nbsp;
 		<a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb_w50.png"     	width=30></a>&nbsp;
        		<a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb_w50.png"  	width=30></a>&nbsp;&nbsp;
