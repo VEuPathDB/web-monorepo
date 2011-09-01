@@ -26,9 +26,12 @@
                             left is set to 140px (good for smaller popups) 
 				BUT the span logic popup below is wide so we set it closer to the left  
 				Problem: IE makes width = max-width independently of the content
+			    #query_form form {	margin-top: 40px;}
+				BUT here we need 0px
 --%>
 <style type="text/css">
 	#query_form {	max-width: 150%; left:45px;}
+	#query_form form {	margin-top: 29px;}
 						
 </style>
 
@@ -38,20 +41,31 @@
   <c:set var="wdkStep" value="${wdkStep.previousStep}"/>
 </c:if>
 
-<table width="100%" style="margin-left:auto;margin-right:auto;">
-<tr>
 
-<td width="10%" style="text-align:center;vertical-align:middle">
+<div class="h2center" style="text-align:center;">Genomic Colocation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="position:relative;top:6px">
 <a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-	<img title="Click for help with combining IDs via relative genomic location" src="/assets/images/help_spanlogic.png" width="45px" alt="help with combining IDs via relative genomic location" />
+	<img title="Help text in a popup window" src="<c:url value='/wdk/images/help2.png'/>"  width="25"  alt="help with combining IDs via relative genomic location" />
 </a>
-</td>
+<a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
+	<img title="7-minute flash tutorial on a popup window" src="<c:url value='/wdk/images/camera2.jpg'/>" width="25" alt="help with combining IDs via relative genomic location" />
+</a>
+</span>
+</div>
 
-<td width="80%" style="vertical-align:middle">
- <div class="h2center" style="text-align:center;">Genomic Colocation
+<%--
+<div class="h2center" style="margin-bottom:1px">Genomic Colocation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+<div class="h2center" style="margin-left:0">
+<a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
+	<img title="Click for help with combining IDs via relative genomic location" src="<c:url value='/wdk/images/help.png'/>"  width="25"  alt="help with combining IDs via relative genomic location" />
+</a>
+<a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
+	<img title="Click for a 7-minute flash tutorial on combining IDs via relative genomic location" src="<c:url value='/wdk/images/camara.jpg'/>" width="25" alt="help with combining IDs via relative genomic location" />
+</a>
 </div>
- <div class="h2center" style="text-align:center;color:grey">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome
-</div>
+--%>
+
+<div class="h2center" style="color:grey">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome</div>
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
 <c:set target="${typeMap}" property="singular" value="${importStep.displayType}"/>
@@ -66,23 +80,17 @@
 You had <b style="color:blue">${wdkStep.resultSize} ${oldPluralType}</b> in your Strategy <span style="color:blue">(Step</span> <span style="color:blue" class="new_step_num">${currentStepId}</span><span style="color:blue">).</span>
 </b> &nbsp;&nbsp;
 Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span> <span style="color:#c80064" class="new_step_num">${newStepId}</span><span style="color:#c80064">) returned <b>${importStep.resultSize} ${newPluralType}</b>.</span>  
-<%--
-<br>
-To combine these two results based on their relative genomic location, <span style="background:yellow">select 5 parameters</span> in the logic statement below. 
---%>
+
 <br><br>
-
 </div>
-</td>
 
-<td width="10%" style="text-align:center;vertical-align:top">
-<a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
-	<img title="Click for a 7-minute flash tutorial on combining IDs via relative genomic location" src="/assets/images/tut_icon.jpg" width="60px" alt="help with combining IDs via relative genomic location" />
-</a>
-</td>
 
-</tr>
-</table>
+
+
+
+
+
+
 
 <span style="display:none" id="strategyId">${wdkStrategy.strategyId}</span>
 <span style="display:none" id="stepId">${wdkStep.stepId}</span>
