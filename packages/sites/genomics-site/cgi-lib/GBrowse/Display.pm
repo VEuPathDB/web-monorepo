@@ -336,8 +336,8 @@ sub massSpecBgColorFromExtDbName {
                 'Florens_Life_Cycle_MassSpec_Spz_RSRC' => 'brown',
                 'Pf_Bowyer_Proteomics_42hrs_Post_Infection_RSRC' => 'yellow',
                 'Pf_Bowyer_Proteomics_48hrs_Post_Infection_RSRC' => 'orange',
-                'Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC' => 'tan',
-                'Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC'   => 'khaki',
+                'Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC' => '#F62817',  #Firebrick1
+                'Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC'   => '#250517',  #Gray18
                 #AmoebaDB
                 'Ehistolytica_Glycosylation_RSRC' => 'yellow',
                 'Phagosome Proteomics data from Huston - 0 mins' => 'yellow',
