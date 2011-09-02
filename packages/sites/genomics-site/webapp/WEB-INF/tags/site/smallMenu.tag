@@ -18,10 +18,14 @@ a#twitter {
 }
 a#facebook {
 	background-image: url("/assets/images/social.jpg");
-	background-position: -9px -25px;
+	background-position: -10px -25px;
 }
+#nav_top #twitter,#nav_top #facebook {
+	-moz-border-radius: 2px 2px 2px 2px;
+	border-radius: 2px 2px 2px 2px;
+
 </style>
---%>
+ --%>
 
 
 <%---------------------- Small Menu Options on Header  ------------------%>
@@ -154,23 +158,16 @@ a#facebook {
 <%--- TWITTER -----%>
 	<li>
 	<a id="twitter" href="http://twitter.com/eupathdb">
-		<img title="Follow us on twitter!" src="/assets/images/twitter.gif" width="20">
-	<%--	<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" style="position:relative;bottom:5px"/>  --%>
-
-<!--
-		<img title="Follow us on twitter!"  src="<c:url value='/wdk/images/transparent1.gif'/>"  width="16" height="16">
-		<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
--->
+		<img title="Follow us on twitter!" src="/assets/images/twitter.gif" width="20"> 
+	<%--	<img title="Follow us on twitter!"  src="<c:url value='/wdk/images/transparent1.gif'/>"  width="16" height="16">  --%>
 	</a>
 	</li>
 
 <%--- FACEBOOK -----%>
 	<li>
-	<a id="facebook" href="https://www.facebook.com/pages/EuPathDB/133123003429972" style="position:relative;bottom:5px">
+	<a id="facebook" href="https://www.facebook.com/pages/EuPathDB/133123003429972" style="margin-left:2px">
 		<img title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="19">
-<!--
-		<img title="Follow us on facebook!"  src="<c:url value='/wdk/images/transparent1.gif'/>"  width="16" height="16">
--->
+	<%--	<img title="Follow us on facebook!"  src="<c:url value='/wdk/images/transparent1.gif'/>"  width="16" height="16">  --%>
 	</a>
 	</li>
 

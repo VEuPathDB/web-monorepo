@@ -439,9 +439,9 @@ ul.cirbulletlist {
 	list-style-image: none;
 } 
 
-#nav_top #twitter {
+#nav_top #twitter,#nav_top #facebook {
 	position:relative;
-	bottom:5px;
+	bottom:4px;
 }
 
 #nav_top a:link, #nav_top a:visited {
