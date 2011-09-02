@@ -184,7 +184,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 </a>
 <br>
 <a href="https://www.facebook.com/pages/EuPathDB/133123003429972">
-	<img style="margin-left:17px;float:left;vertical-align:middle" title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="25">
+	<img style="margin-left:19px;float:left;vertical-align:middle" title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="22">
 	<span style="vertical-align:sub">&nbsp;&nbsp;&nbsp;Follow us on facebook!</span>
 
 </a>

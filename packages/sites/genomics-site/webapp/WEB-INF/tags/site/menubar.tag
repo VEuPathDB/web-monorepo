@@ -180,7 +180,7 @@
 			<span style="vertical-align:top">&nbsp;Follow us on twitter!</span> 
 		</a>
 		<a href="https://www.facebook.com/pages/EuPathDB/133123003429972">
-			<img style="margin:0px;vertical-align:top" title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="20">
+			<img style="margin:0px;margin-left:1px;vertical-align:top" title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="18">
 			<span style="vertical-align:top">&nbsp;Follow us on facebook!</span> 
 		</a>
 		</li>
