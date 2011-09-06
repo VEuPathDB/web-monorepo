@@ -2028,7 +2028,35 @@ ORDER BY
     </sql>
   </sqlQuery>
   
-  
+  <sqlQuery name="gene:Gff3Model">
+    <sql>
+        <![CDATA[ 
+          SELECT
+             g3.gff3_feature_id feature_id,
+             'exon' type,
+             'annotation' source,
+             g3.gff3_feature_id name,
+             '.' score,
+             g3.na_sequence_id parent_id,
+             g3.mapping_start startm,
+             g3.mapping_end end,
+             decode (g3.is_reversed, 0, '+1', 1, '-1', '.') strand,
+             g3.attr atts
+          FROM
+             apidb.gff3 g3, sres.ExternalDatabaseRelease edr,
+             sres.ExternalDatabase ed
+          WHERE 
+             g3.external_database_release_id = edr.external_database_release_id
+          AND  edr.external_database_id = ed.external_database_id
+          AND  g3.mapping_start <= $rend
+          AND  g3.mapping_end >= $base_start
+          AND  ed.name = $$extDbName$$ 
+          ORDER BY 
+               g3.na_sequence_id, g3.mapping_start
+        ]]>
+      </sql>
+  </sqlQuery>
+
   <sqlQuery name="match:syntenySpanMC" includeProjects="TriTrypDB,PlasmoDB,CryptoDB,GiardiaDB,AmoebaDB,MicrosporidiaDB,PiroplasmaDB">
      <sql>
 <![CDATA[
@@ -4127,7 +4155,39 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
-
+<!--
+  <sqlQuery name="gene:Gff3Model:bulksubfeatures">
+     <sql>
+<![CDATA[
+SELECT
+       gf.gff3_feature_id feature_id, 
+       'exon' type, 
+       '$source' source, 
+       gf.gff3_feature_id name, 
+       '.' score, 
+       fl.start_min startm,            
+       fl.end_max end, 
+       ed.name||':'||edr.version external_database_name,
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       gf.attr
+FROM   
+       Apidb.Gff3 gf,
+       sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase ed
+WHERE  gf.na_sequence_id = $srcfeature_id
+  AND  fl.feature_type = 'ExonFeature'
+  AND  gf.na_sequence_id = fl.na_sequence_id
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+  AND  gf.external_database_release_id = edr.external_database_release_id 
+  AND  edr.external_database_id = ed.external_database_id 
+  AND  ed.name = $$extDbName$$ 
+ORDER BY 
+       fl.start_min
+]]>
+    </sql>
+  </sqlQuery>
+-->
   <sqlQuery name="gene:syntenyMC:attribute:Ortholog" excludeProjects="TrichDB">
     <testParamValues project="ToxoDB">
       <param name="name" value="TGME49_039250"/> 
@@ -4511,7 +4571,8 @@ GROUP BY interval, na_sequence_id
   </sqlQuery>
 
 
-  <sqlQuery name="SNP:Diversity:bulksubfeatures"  includeProjects="PlasmoDB">
+
+  <sqlQuery name="SNP:Diversity:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB">
      <sql>
 <![CDATA[
 SELECT 
