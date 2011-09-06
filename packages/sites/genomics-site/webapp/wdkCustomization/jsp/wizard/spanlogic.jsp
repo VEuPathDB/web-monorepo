@@ -42,30 +42,18 @@
 </c:if>
 
 
-<div class="h2center" style="text-align:center;">Genomic Colocation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<span style="position:relative;top:6px">
+<div class="h2center" style="text-align:center;">Genomic Colocation
+<span style="position:relative;bottom:5px">
 <a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-	<img title="Help text in a popup window" src="<c:url value='/wdk/images/help2.png'/>"  width="25"  alt="help with combining IDs via relative genomic location" />
+	<img title="Help text in a popup window" src="<c:url value='/wdk/images/help.png'/>" width="15"  alt="help with combining IDs via relative genomic location" />
 </a>
 <a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
-	<img title="7-minute flash tutorial on a popup window" src="<c:url value='/wdk/images/camera2.jpg'/>" width="25" alt="help with combining IDs via relative genomic location" />
+	<img style="position:relative;top:4px;right:6px" title="7-minute flash tutorial on a popup window" src="<c:url value='/wdk/images/camera.jpg'/>" width="21" alt="help with combining IDs via relative genomic location" />
 </a>
 </span>
 </div>
 
-<%--
-<div class="h2center" style="margin-bottom:1px">Genomic Colocation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-<div class="h2center" style="margin-left:0">
-<a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-	<img title="Click for help with combining IDs via relative genomic location" src="<c:url value='/wdk/images/help.png'/>"  width="25"  alt="help with combining IDs via relative genomic location" />
-</a>
-<a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
-	<img title="Click for a 7-minute flash tutorial on combining IDs via relative genomic location" src="<c:url value='/wdk/images/camara.jpg'/>" width="25" alt="help with combining IDs via relative genomic location" />
-</a>
-</div>
---%>
-
-<div class="h2center" style="color:grey">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome</div>
+<div class="h3center" style="color:grey">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome</div>
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
 <c:set target="${typeMap}" property="singular" value="${importStep.displayType}"/>
