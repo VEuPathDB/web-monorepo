@@ -12,6 +12,7 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 <c:set var="id" value="${pkValues['source_id']}" />
+<c:set var="gtracks" value="${param.gtracks}"/>
 
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
@@ -65,18 +66,24 @@
 <br /><br />
 
 <%-- DNA CONTEXT ---------------%>
-
-<!-- deal with specific contexts depending on organism -->
-<c:set var="organism_full" value="${attrs['organism']}" />
 <c:choose>
-  <c:when test="${projectId eq 'ToxoDB'}">
-    <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+AlignmentSNPs" />
-  </c:when>
-  <c:when test="${projectId eq 'PlasmoDB'}">
-    <c:set var="tracks" value="AnnotatedGenes+EST+SAGEtags+ORF+CombinedSNPs" />
+  <c:when test="${gtracks eq ''}">
+<!-- deal with specific contexts depending on organism -->
+    <c:set var="organism_full" value="${attrs['organism']}" />
+    <c:choose>
+      <c:when test="${projectId eq 'ToxoDB'}">
+        <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+AlignmentSNPs" />
+      </c:when>
+      <c:when test="${projectId eq 'PlasmoDB'}">
+        <c:set var="tracks" value="AnnotatedGenes+EST+SAGEtags+ORF+CombinedSNPs" />
+      </c:when>
+      <c:otherwise>
+        <c:set var="tracks" value="Gene+EST+SAGEtags+ORF" />
+      </c:otherwise>
+    </c:choose>
   </c:when>
   <c:otherwise>
-    <c:set var="tracks" value="Gene+EST+SAGEtags+ORF" />
+    <c:set var="tracks" value="AnnotatedGenes+Microsatellite"/>
   </c:otherwise>
 </c:choose>
 
@@ -89,9 +96,10 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
   <c:set var="context_start_range" value="${attrs['start_min']}" />
   <c:set var="context_end_range" value="${attrs['end_max']}" />
 
-  <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/${projectIdLowerCase}/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${tracks};width=640;embed=1;
-  </c:set>
+
+<c:set var="gnCtxUrl">
+       /cgi-bin/gbrowse_img/${projectIdLowerCase}/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowse;type=${tracks};width=640;embed=1;
+</c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
