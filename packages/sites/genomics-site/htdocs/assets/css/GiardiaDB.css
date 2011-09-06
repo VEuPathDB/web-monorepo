@@ -8,11 +8,11 @@ body {
 }
 
 a:link, a:visited {
-	color: #227124;
+	color: #227124; //green
 }
 
 a:hover, a:active {
-	color: #2c2c7d;  /* 79da7c; */
+	color: #2c2c7d;  //blue, towards purple
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,7 +59,7 @@ a:hover, a:active {
 }
 
 #nav_top li ul a:hover, #nav_top li ul a:active {
-	color: #26267b;
+	color: #227124; //green
 }
 
 
@@ -116,7 +116,7 @@ a:hover, a:active {
 
 #menu ul ul a:hover, #menu ul ul a:active{
 	border-bottom-color: #2c2c7d;
-	color: #b30101;
+	color: #2c2c7d;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
