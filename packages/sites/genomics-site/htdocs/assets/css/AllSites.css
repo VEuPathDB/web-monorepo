@@ -1138,7 +1138,7 @@ tr.lines td, tr.linesalt td {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	font-size: 20px;
+	font-size: 170%;//20px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	text-align: center;
@@ -1146,7 +1146,7 @@ h1 {
 }
 
 h2 {
-	font-size: 18px;
+	font-size: 150%;//18px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	margin-bottom: 11px;
@@ -1154,6 +1154,14 @@ h2 {
 	margin-left: 11px;
 }
 
+h3 {
+	font-size: 120%;//14px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	margin-bottom: 11px;
+ 	text-align: left;
+	margin-left: 11px;
+}
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Generic
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -1234,6 +1242,26 @@ table.datatables tr.headerrow th {
 .jstree a[href]:hover,.jstree a[href]:active {
 	color:black;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
+.blockMsg{
+        padding:        10px 0;
+        margin:         10px 0;
+        width:          30%; 
+        top:            40%; 
+        left:           35%; 
+        text-align:      center; 
+        background-color:#fff;
+	opacity:0.8;
+}
+
+.blockPage{
+
+}
+*/
 
 
 /*THE END */
