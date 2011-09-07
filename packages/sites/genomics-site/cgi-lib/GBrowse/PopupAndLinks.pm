@@ -492,7 +492,7 @@ sub MicrosatelliteTitle {
 }
 
 
-sub CentiMorganTitle {
+sub HaploBlockTitle {
     my $f            = shift;
     my $accessn      = $f->name;
     my $projectId    = $ENV{PROJECT_ID};
@@ -506,7 +506,7 @@ sub CentiMorganTitle {
     push @data, [ 'Sequence Id:'        => $sequenceId ];
     push @data, [ '3D7 Start:'        => $start ];
     push @data, [ '3D7 End:'        => $stop ];
-    return hover( "Centimrogan Region - $name", \@data);
+    return hover( "Haplotype Block - $name", \@data);
 }
 
 sub contigTitle {  

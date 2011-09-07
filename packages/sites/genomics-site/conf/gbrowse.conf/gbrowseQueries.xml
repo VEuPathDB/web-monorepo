@@ -1865,11 +1865,11 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="CentiMorganBlock:feature" includeProjects="PlasmoDB">
+  <sqlQuery name="HaploBlock:feature" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT cef.na_feature_id as feature_id,
-        'CentiMorganBlock' type, 
+        'HaploBlock' type, 
         'feature' source, 
         cef.source_id name, 
         cef.na_sequence_id parent_id, 
