@@ -219,7 +219,7 @@ sub rumIntronBgColorUnified {
   my $f = shift;
   my ($scores) = $f->get_tag_values('Scores'); 
   my $sum = eval join '+', split /;/, $scores;
-	# http://www.computerhope.com/htmcolor.htm
+  # http://www.computerhope.com/htmcolor.htm
   return '#FDD017' if $sum <= 5;   # Gold1
   return '#F88017' if $sum <= 20;  # Dark Orange
   return '#C35617' if $sum <= 100; # Dark Orange3
@@ -235,6 +235,26 @@ sub rumIntronUnifiedWidth {
   return 3 if $sum <= 100;
   return 4;
 }
+
+sub massSpecFgColorFromExtDbName {
+  my $f = shift;
+
+  my %colors = (#ToxoDB
+                'TgonME49_BoothroydBowyerOocystMembrane_Proteome_RSRC'         => 'gray',
+                'TgonME49_BoothroydBowyerOocystCytosol_Proteome_RSRC'          => 'red',
+                'TgonME49_BoothroydBowyerOocystWalls_Proteome_RSRC'            => 'gray' 
+                   );
+
+  $f = $f->parent if (! $f->get_tag_values('ExtDbName'));
+  my ($extdbname) = $f->get_tag_values('ExtDbName');
+
+  if(my $color = $colors{$extdbname}) {
+    return $color
+  }
+  return 'gray';
+}
+
+
 
 sub massSpecBgColorFromExtDbName {
   my $f = shift;
@@ -273,6 +293,9 @@ sub massSpecBgColorFromExtDbName {
                 'TgGT1_Tonkin_TiO2_Bound_Mascot-based_Phosphoproteome_RSRC'       => 'tan',
                 'Tg_Tonkin_TiO2_Bound_Sequest-based_Phosphoproteome_RSRC'      => 'khaki',
                 'Tg_Tonkin_TiO2_Unbound_Phosphoproteome_RSRC'                  => 'darkkhaki',
+                'TgonME49_BoothroydBowyerOocystMembrane_Proteome_RSRC'         => 'yellow',
+                'TgonME49_BoothroydBowyerOocystCytosol_Proteome_RSRC'          => 'yellow',
+                'TgonME49_BoothroydBowyerOocystWalls_Proteome_RSRC'            => 'blue',
 
                 # TriTrypDB
                 'Tcruzi Proteomics-Epimastigote' => 'black',
@@ -353,6 +376,7 @@ sub massSpecBgColorFromExtDbName {
 
   $f = $f->parent if (! $f->get_tag_values('ExtDbName'));
   my ($extdbname) = $f->get_tag_values('ExtDbName');
+
 
   if(my $color = $colors{$extdbname}) {
     return $color
