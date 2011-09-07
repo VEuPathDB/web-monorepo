@@ -63,7 +63,7 @@ function appendchecked(url) {
           </tr>
           <c:if test="${wdkAnswer.useCheckboxTree}">
             <tr>
-              <td colspan="${numPerLine}">Note: ${wdkAnswer.recordClass.primaryKeyAttribute.displayName} is always automatically included.</td>
+              <td colspan="${numPerLine}">Note: ${wdkAnswer.recordClass.primaryKeyAttribute.displayName}s are automatically included in the report.</td>
             </tr>
             <tr>
               <td colspan="${numPerLine}">
