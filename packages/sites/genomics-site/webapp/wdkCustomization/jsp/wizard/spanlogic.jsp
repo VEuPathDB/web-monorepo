@@ -48,7 +48,7 @@
 	<img title="Help text in a popup window" src="<c:url value='/wdk/images/help.png'/>" width="15"  alt="help with combining IDs via relative genomic location" />
 </a>
 <a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
-	<img style="position:relative;top:4px;right:6px" title="7-minute flash tutorial on a popup window" src="<c:url value='/wdk/images/camera.jpg'/>" width="21" alt="help with combining IDs via relative genomic location" />
+	<img style="position:relative;top:1px;right:6px" title="7-minute flash tutorial on a popup window" src="/assets/images/camera.png" width="18" alt="help with combining IDs via relative genomic location" />
 </a>
 </span>
 </div>
