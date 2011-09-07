@@ -13,14 +13,14 @@ body {
 
 
 a[href]:link {
-	color: #02935c; //#058252;//#167a53; //#22a371;  //#4f7f6d;  //  #5E9F87; lighter green 
+	color: #02935c;     //green
 }
 a[href]:visited {
-	color: #628276;
+	color: #628276;     //paler green
 }
 
 a[href]:hover, a[href]:active {
-	color:  #58441F;
+	color:  #58441F;    //brown
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

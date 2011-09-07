@@ -15,11 +15,11 @@ a[href]:link {
 	color: #187a02; //#206910;  //green
 }
 a[href]:visited {
-	color: #507a46;
+	color: #507a46;            //muter green
 }
 
 a[href]:hover, a[href]:active {
-	color: #772841; //dark pink, wine color
+	color: #772841;            //dark pink, wine color
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,7 +126,7 @@ a[href]:hover, a[href]:active {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Menu Lists
+	 =Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .menu_lefttop_drop {
    border-color: #6f223a; //  color as sidebar header color
@@ -308,19 +308,6 @@ div.colCopy
 
 #query_form {
 	border: 1px solid #772841;	
-}
-
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 New treeParam jQuery code (also used for attribute selection) 
-	 makes organism <a href>.... so it picks up the link color 
-	 in Project.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.jstree a:link,.jstree a:visited {
-	color:black;
-}
-.jstree a:hover,.jstree a:active {
-	color:black;
 }
 
 

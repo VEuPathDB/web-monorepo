@@ -1221,4 +1221,19 @@ table.datatables tr.headerrow th {
 	border-width:0px 0px 2px;
 }
 
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 New treeParam jQuery code (also used for attribute selection) 
+	 makes organism <a href>.... so it picks up the link color 
+	 in Project.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.jstree a[href]:link,.jstree a[href]:visited {
+	color:black;
+}
+.jstree a[href]:hover,.jstree a[href]:active {
+	color:black;
+}
+
+
 /*THE END */

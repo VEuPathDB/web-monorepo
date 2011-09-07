@@ -11,11 +11,11 @@ body {
 	color: #8f0165;
 }
 
-a:link, a:visited {
+a[href]:link, a[href]:visited {
 	color: #6600CC;
 }
 
-a:hover, a:active {
+a[href]:hover, a[href]:active {
 	color: #8f0165;    /*  #330099;  */
 }
 
