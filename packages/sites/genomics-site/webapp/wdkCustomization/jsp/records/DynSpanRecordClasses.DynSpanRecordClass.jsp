@@ -83,7 +83,7 @@
     </c:choose>
   </c:when>
   <c:otherwise>
-    <c:set var="tracks" value="AnnotatedGenes+Microsatellite+CentiMorganBlock"/>
+    <c:set var="tracks" value="AnnotatedGenes+Microsatellite+HaploBlock"/>
   </c:otherwise>
 </c:choose>
 
