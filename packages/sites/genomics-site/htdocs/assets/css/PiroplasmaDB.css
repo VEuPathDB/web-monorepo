@@ -15,14 +15,23 @@ body {
 	color: #9a5b37;     //  #6f4230;   
 }
 
-a[href]:link, a[href]:visited {
+a:link, a:visited {
 	color: #316e9f; 
 }
 
-a[href]:hover, a[href]:active {
+a:hover, a:active {
 	color: #9a5b37;   // #6f4230;
 }
+a[name]:link {
+	color: black;
+}
+a[name]:visited {
+	color: black;
+}
 
+a[name]:hover, a[name]:active {
+	color:  black;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	

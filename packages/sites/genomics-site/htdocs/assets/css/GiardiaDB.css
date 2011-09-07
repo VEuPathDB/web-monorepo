@@ -7,14 +7,23 @@ body {
 	background-image: url(/assets/images/GiardiaDB/background_s.jpg);
 }
 
-a[href]:link, a[href]:visited {
+a:link, a:visited {
 	color: #227124; //green
 }
 
-a[href]:hover, a[href]:active {
+a:hover, a:active {
 	color: #2c2c7d;  //blue, towards purple
 }
+a[name]:link {
+	color: black;
+}
+a[name]:visited {
+	color: black;
+}
 
+a[name]:hover, a[name]:active {
+	color:  black;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	

@@ -12,17 +12,27 @@ body {
 }
 
 
-a[href]:link {
+a:link {
 	color: #02935c;     //green
 }
-a[href]:visited {
+a:visited {
 	color: #628276;     //paler green
 }
 
-a[href]:hover, a[href]:active {
+a:hover, a:active {
 	color:  #58441F;    //brown
 }
 
+a[name]:link {
+	color: black;
+}
+a[name]:visited {
+	color: black;
+}
+
+a[name]:hover, a[name]:active {
+	color:  black;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	

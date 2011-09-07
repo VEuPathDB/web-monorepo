@@ -8,14 +8,23 @@ body {
 }
 
 
-a[href]:link, a[href]:visited {
+a:link, a:visited {
 	color: #015f9a;
 }
 
-a[href]:hover, a[href]:active {
+a:hover, a:active {
 	color: #b45f04;    /* for contrast   93c4e3; */
 }
+a[name]:link {
+	color: black;
+}
+a[name]:visited {
+	color: black;
+}
 
+a[name]:hover, a[name]:active {
+	color:  black;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	

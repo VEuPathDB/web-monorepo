@@ -11,17 +11,26 @@ body {
 	color: #772841; // dark red, now that links are green   
 }
 
-a[href]:link {
+a:link {
 	color: #187a02; //#206910;  //green
 }
-a[href]:visited {
+a:visited {
 	color: #507a46;            //muter green
 }
 
-a[href]:hover, a[href]:active {
+a:hover, a:active {
 	color: #772841;            //dark pink, wine color
 }
+a[name]:link {
+	color: black;
+}
+a[name]:visited {
+	color: black;
+}
 
+a[name]:hover, a[name]:active {
+	color:  black;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	

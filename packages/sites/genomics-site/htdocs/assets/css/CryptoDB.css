@@ -6,14 +6,23 @@ body {
 	background-image: url(/assets/images/CryptoDB/background_s.jpg);
 }
 
-a[href]:link, a[href]:visited {
+a:link, a:visited {
 	color: #0b4796;
 }
 
-a[href]:hover, a[href]:active {
+a:hover, a:active {
 	color: #610b0b;    /* for contrast 08438F; */        /*  #83a6d4; */
 }
+a[name]:link {
+	color: black;
+}
+a[name]:visited {
+	color: black;
+}
 
+a[name]:hover, a[name]:active {
+	color:  black;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
