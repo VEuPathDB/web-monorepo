@@ -491,6 +491,24 @@ sub MicrosatelliteTitle {
     return hover( "Microsatellite STS - $name", \@data);
 }
 
+
+sub CentiMorganTitle {
+    my $f            = shift;
+    my $accessn      = $f->name;
+    my $projectId    = $ENV{PROJECT_ID};
+    my $start        = $f->start;
+    my $stop         = $f->stop;
+    my $length       = $stop - $start + 1;
+    my ($name)        = $f->get_tag_values('Name');
+    my ($sequenceId)        = $f->get_tag_values('SequenceId');
+    my @data;
+    push @data, [ 'Name:'        => $name ];
+    push @data, [ 'Sequence Id:'        => $sequenceId ];
+    push @data, [ '3D7 Start:'        => $start ];
+    push @data, [ '3D7 End:'        => $stop ];
+    return hover( "Centimrogan Region - $name", \@data);
+}
+
 sub contigTitle {  
   my $f = shift;
   my $name = $f->name;

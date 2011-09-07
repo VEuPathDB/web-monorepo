@@ -1865,6 +1865,28 @@ ORDER BY
   </sqlQuery>
   
   
+  <sqlQuery name="CentiMorganBlock:feature" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT cef.na_feature_id as feature_id,
+        'CentiMorganBlock' type, 
+        'feature' source, 
+        cef.source_id name, 
+        cef.na_sequence_id parent_id, 
+        nl.start_max startm, 
+        nl.end_min end, 
+        'Name=' || cef.name  || '$dlm' || 'SequenceId=' || ens.source_id  atts
+      FROM   DoTS.ChromosomeElementFeature cef, Dots.NaLocation nl, DoTS.ExternalNASequence ens
+      WHERE  cef.na_sequence_id = $srcfeature_id 
+        AND  cef.na_feature_id = nl.na_feature_id 
+        AND  ens.na_sequence_id = cef.na_sequence_id
+        AND  nl.start_max <= $rend
+        AND  nl.end_min >= $base_start
+]]>
+    </sql>
+  </sqlQuery>
+  
+  
 <!-- NOTE: externalDatabase.name list specified in query, for Crypto AND Plasmo -->
   <sqlQuery name="match:IsolatePopset" excludeProjects="TriTrypDB,GiardiaDB,TrichDB">
     <testParamValues project="ToxoDB">
