@@ -31,7 +31,7 @@
         <td class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -95,7 +95,7 @@
         <td class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -153,7 +153,7 @@
         <td rowspan="3" class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -222,7 +222,7 @@
         <td rowspan="3" class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -325,7 +325,7 @@
         <td rowspan="2" class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -394,7 +394,7 @@
         <td rowspan="3" class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -463,7 +463,7 @@
         <td rowspan="3" class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -533,7 +533,7 @@
         <td rowspan="3" class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -603,7 +603,7 @@
         <td rowspan="2" class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -643,7 +643,7 @@ trophozite and schizont stage.
         <td rowspan="2" class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -696,7 +696,7 @@ trophozite and schizont stage.
         <td rowspan=2 class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -759,7 +759,7 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
         <td rowspan="2" class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -823,7 +823,7 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
         <td  class="centered">
           <c:choose>
           <c:when test="${!async}">
-              <img src="${imgSrc}">
+              <img id="${imgId}" src="${imgSrc}">
           </c:when>
           <c:otherwise>
               <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -872,7 +872,7 @@ M values (Blue bars in the upper graph) represent the relative expression level 
 <td rowspan="2" class="centered">
   <c:choose>
   <c:when test="${!async}">
-      <img src="${imgSrc}">
+      <img id="${imgId}" src="${imgSrc}">
   </c:when>
   <c:otherwise>
       <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -912,7 +912,7 @@ The overall expression percentile of each condition is the average percentile ov
 <td rowspan="2" class="centered">
   <c:choose>
   <c:when test="${!async}">
-      <img src="${imgSrc}">
+      <img id="${imgId}" src="${imgSrc}">
   </c:when>
   <c:otherwise>
       <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
@@ -1013,7 +1013,7 @@ The overall expression percentile of each condition is the average percentile ov
 <td rowspan="2"  class="centered">
   <c:choose>
   <c:when test="${!async}">
-      <img src="${imgSrc}">
+      <img id="${imgId}" src="${imgSrc}">
   </c:when>
   <c:otherwise>
       <img id="${imgId}" src="<c:url value="/images/spacer.gif"/>">
