@@ -35,7 +35,7 @@ http://${pageContext.request.serverName}${feedPath}
 <br>
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
-      		<a call="small" href='<c:url value="/eupathEvents.jsp"/>'>Full Events Page >>></a>
+      		<a class="small" href='<c:url value="/eupathEvents.jsp"/>'>Full Events Page >>></a>
 </c:when>
 <c:otherwise>
 	<c:if test="${fn:length(allFeeds.entries) > 0}">

@@ -124,7 +124,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 		 <i>Specific-Organism Site News temporarily unavailable</i><br>
 	</c:if>
 <br>
-	 <a calss="small" href="<c:url value="/aggregateNews.jsp"/>">All ${project} News >>></a>
+	 <a class="small" href="<c:url value="/aggregateNews.jsp"/>">All ${project} News >>></a>
 
 </c:if>
 
