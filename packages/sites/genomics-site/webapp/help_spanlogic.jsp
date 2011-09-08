@@ -23,7 +23,16 @@
 
 
 <div style="font-size:120%;text-align:center">
-  This "relative locations" form is dense and requires some basic understanding;<br> please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;"><b>Contact Us</b></a> with any questions or feedback you may have.
+<center><table><tr>
+<td width="80%" style="vertical-align:middle">
+  	This "relative locations" form is dense and requires some basic understanding;<br> please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;"><b>Contact Us</b></a> with any questions or feedback you may have.
+</td>
+<td width="20%">
+	<a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
+	<img title="7-minute flash tutorial on a popup window" src="/assets/images/camera.png" alt="help with combining IDs via relative genomic location" />
+	</a>
+</td>
+</tr></table></center>
 </div>
 
 <hr>
