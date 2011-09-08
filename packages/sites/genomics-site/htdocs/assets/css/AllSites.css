@@ -283,6 +283,7 @@ ul.heading_list li:hover a.detail_link {
 }
 
 #menu_lefttop div ul.related-sites,
+#menu_lefttop div ul#news,
 #menu_lefttop div ul#communityEventList {
     border: 1px lightgrey solid;
     height: 120px;
@@ -292,6 +293,7 @@ ul.heading_list li:hover a.detail_link {
 }
 
 #menu_lefttop div ul.related-sites li,
+#menu_lefttop div ul#news li,
 #menu_lefttop div ul#communityEventList li {
     padding-left: 1.7em;
     text-indent: -1.5em;

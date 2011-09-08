@@ -59,8 +59,8 @@
 	<img style="border: 2px solid #666666;" src="/assets/images/genomeTable.png" width="190" height="100"></a>
 </td><tr>
 <tr><td style="text-align:left;">
-	<a style="white-space:nowrap;" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">
-		>>also check our Gene Metrics......</a>
+	<a class="small"  href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">
+		Also check our Gene Metrics >>></a>
     </td>
  </tr></table>
 
@@ -107,7 +107,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 	</wir:feed>
 	<wir:sort feed="allFeeds" direction="desc" value="date"/>
 
-	<ul>
+	<ul id="news">
 	    <c:forEach items="${allFeeds.entries}" var="e" begin="0" end="6" >
 		<fmt:formatDate var="fdate" value="${e.publishedDate}" pattern="d MMMM yyyy"/>
 		<c:if test="${fdate != null && e.author != null}">
@@ -123,18 +123,18 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 	<c:if test="${feedex != null}">
 		 <i>Specific-Organism Site News temporarily unavailable</i><br>
 	</c:if>
-
-	 <a style="margin-left: 0px" href="<c:url value="/aggregateNews.jsp"/>">All ${project} News</a>
+<br>
+	 <a calss="small" href="<c:url value="/aggregateNews.jsp"/>">All ${project} News >>></a>
 
 </c:if>
 
 <c:if test="${project != 'EuPathDB'}">
     	<c:catch var="newsErr">
           <c:set var="i" value="1"/>
-          <ul>
+          <ul id="news">
           <c:forEach items="${newsAnswer.recordInstances}" var="record">
 
-          <c:if test="${i <= 4}">
+          <c:if test="${i <= 80}">   <!-- was 4 when we did not have a scrollbar -->
 
             <c:set var="attrs" value="${record.attributesMap}"/>
 
@@ -160,7 +160,8 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
     	<c:if test="${newsErr != null}">
 		 <i>News temporarily unavailable<br></i>
 	    </c:if>
-	  <a style="margin-left: 0px" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News</a>
+<br>
+	  <a class="small" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News >>></a>
 
 </c:if>
 
@@ -206,7 +207,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 <!--  EVENTS -->
     <b>Upcoming Events</b>
     <site:communityEventListing/>
-    
+    <br><br>
     <hr>
 
 <!--  LINKS to interesting sites -->
