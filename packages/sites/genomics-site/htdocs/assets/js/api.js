@@ -205,7 +205,7 @@ function updateImage(imgId, imgSrc) {
             http.send(null);
         } catch (e) {
             var img = document.getElementById(imgId);
-            if(img.src != null && img.src != imgSrc) {
+            if(img != null && img.src != null && img.src != imgSrc) {
                 img.src = imgSrc;
             }
         }
