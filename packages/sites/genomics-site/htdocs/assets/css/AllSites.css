@@ -282,7 +282,8 @@ ul.heading_list li:hover a.detail_link {
 	margin-bottom: 5px;
 }
 
-#menu_lefttop div ul.related-sites {
+#menu_lefttop div ul.related-sites,
+#menu_lefttop div ul#communityEventList {
     border: 1px lightgrey solid;
     height: 120px;
     list-style-position: inside;
@@ -290,10 +291,12 @@ ul.heading_list li:hover a.detail_link {
     overflow-y: auto;
 }
 
-#menu_lefttop div ul.related-sites li {
+#menu_lefttop div ul.related-sites li,
+#menu_lefttop div ul#communityEventList li {
     padding-left: 1.7em;
     text-indent: -1.5em;
 }
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =classic bullet list
