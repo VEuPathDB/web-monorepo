@@ -507,7 +507,7 @@ sub HaploBlockTitle {
     my ($end_min)        = $f->get_tag_values('end_min');
     my ($sequenceId)        = $f->get_tag_values('SequenceId');
     my @data;
-    push @data, [ 'Name:'        => $name ];
+    push @data, [ 'Name (Centimorgan value appended):'        => $name ];
     push @data, [ 'Sequence Id:'        => $sequenceId ];
     push @data, [ '3D7 Liberal Start-End'        => "$start_min..$end_max" ];
     push @data, [ '3D7 Conservative Start-End'        => "$start_max..$end_min" ];
