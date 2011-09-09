@@ -595,7 +595,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 
 <%---- Splice Sites table ---------------------------------------------%>
-<c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Trypanosoma cruzi' || binomial eq 'Leishmania major' }">
+<c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Leishmania major' }">
      <wdk:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 
