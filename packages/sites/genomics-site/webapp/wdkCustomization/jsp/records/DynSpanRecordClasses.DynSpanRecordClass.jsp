@@ -64,26 +64,22 @@
 
 
 <br /><br />
-
+${gtracks}
 <%-- DNA CONTEXT ---------------%>
-<c:choose>
-  <c:when test="${gtracks eq ''}">
 <!-- deal with specific contexts depending on organism -->
     <c:set var="organism_full" value="${attrs['organism']}" />
-    <c:choose>
-      <c:when test="${projectId eq 'ToxoDB'}">
-        <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+AlignmentSNPs" />
-      </c:when>
-      <c:when test="${projectId eq 'PlasmoDB'}">
-        <c:set var="tracks" value="AnnotatedGenes+EST+SAGEtags+ORF+CombinedSNPs" />
-      </c:when>
-      <c:otherwise>
-        <c:set var="tracks" value="Gene+EST+SAGEtags+ORF" />
-      </c:otherwise>
-    </c:choose>
+<c:choose>
+  <c:when test="${projectId eq 'ToxoDB'}">
+    <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+AlignmentSNPs" />
+  </c:when>
+  <c:when test="${fn:containsIgnoreCase(gtracks, 'Custom') && projectId eq 'PlasmoDB'}">
+      <c:set var="tracks" value="AnnotatedGenes+Microsatellite+HaploBlock+CombinedSNPs"/>
+  </c:when>
+  <c:when test="${projectId eq 'PlasmoDB'}">
+     <c:set var="tracks" value="AnnotatedGenes+EST+SAGEtags+ORF+CombinedSNPs" />
   </c:when>
   <c:otherwise>
-    <c:set var="tracks" value="AnnotatedGenes+Microsatellite+HaploBlock"/>
+     <c:set var="tracks" value="Gene+EST+SAGEtags+ORF" />
   </c:otherwise>
 </c:choose>
 
@@ -136,7 +132,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
                  attribution=""/>
 
 <br>
-<wdk:wdkTable tblName="ORFs" isOpen="true"
+<wdk:wdkTable tblName="ORFs" isOpen="false"
                  attribution=""/>
 
 <br>
@@ -144,15 +140,15 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 <c:if test="${wdkModel.displayName ne 'PiroplasmaDB'}">
 
-	<wdk:wdkTable tblName="SNPs" isOpen="true"
+	<wdk:wdkTable tblName="SNPs" isOpen="false"
                  attribution=""/>
 
 	<br>
-	<wdk:wdkTable tblName="SageTags" isOpen="true"
+	<wdk:wdkTable tblName="SageTags" isOpen="false"
                  attribution=""/>
 
 	<br>
-	<wdk:wdkTable tblName="ESTs" isOpen="true"
+	<wdk:wdkTable tblName="ESTs" isOpen="false"
                  attribution=""/>
 
 </c:if>
