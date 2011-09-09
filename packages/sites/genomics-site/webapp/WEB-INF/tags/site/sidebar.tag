@@ -43,16 +43,12 @@
     <div id="menu_lefttop">
 
 
-
 <%--------------  EUPATHDB DATA STATS---------------------------------------------%>
-    
 	
 	<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
         <a class="heading" id='stats'  href="#">Data Summary</a>
 
         <div class="menu_lefttop_drop" style="text-align:center;">
-
-
 <table width="90%" style="text-align:center;margin-left: auto;margin-right: auto;">
 <tr><td style="padding:0;">
 	<a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">
@@ -61,15 +57,15 @@
 <tr><td style="text-align:left;">
 	<a class="small"  href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">
 		Also check our Gene Metrics >>></a>
-    </td>
+</td>
  </tr></table>
-
 	</div>
 
 
-
-
 <%--------------  NEWS ---------------------------------------------%>
+<!-- number of news items to show in sidebar (there is scrollbar) -->
+<c:set var="newsCount" value="50"/>
+
         <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
         <a class="heading"  href="#">News</a>
 
@@ -80,9 +76,7 @@
         </c:when>
         <c:otherwise>
 
-
 <c:if test="${project == 'EuPathDB'}">
-
 	<c:set var="rss_Url">
 		http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
 	</c:set>
@@ -92,23 +86,20 @@
   			${fn:substringBefore(s.value,'services')}showXmlDataContent.do?name=XmlQuestions.NewsRss
   		</c:set>
 	</c:forEach>
-
 <%-- 
  wir:feed returns a SyndFeed object which has a Bean interface for 
 iteration and getting SyndEntry objects and their attributes. 
 See the Rome API for SyndEntry attributes you can get.
 http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.html
 --%>
-
-
 	<c:catch var="feedex">
  	<wir:feed feed="allFeeds" timeout="7000">
      		${rss_Url}
 	</wir:feed>
 	<wir:sort feed="allFeeds" direction="desc" value="date"/>
 
-	<ul id="news">
-	    <c:forEach items="${allFeeds.entries}" var="e" begin="0" end="6" >
+	<ul id="news">       <!-- newsCount was 6 when we did not have a scrollbar -->
+	    <c:forEach items="${allFeeds.entries}" var="e" begin="0" end="${newsCount}" >
 		<fmt:formatDate var="fdate" value="${e.publishedDate}" pattern="d MMMM yyyy"/>
 		<c:if test="${fdate != null && e.author != null}">
 			<li id="n-${shorttag}">
@@ -123,8 +114,8 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 	<c:if test="${feedex != null}">
 		 <i>Specific-Organism Site News temporarily unavailable</i><br>
 	</c:if>
-<br>
-	 <a class="small" href="<c:url value="/aggregateNews.jsp"/>">All ${project} News >>></a>
+	<br>
+	<a class="small" href="<c:url value="/aggregateNews.jsp"/>">All ${project} News >>></a>
 
 </c:if>
 
@@ -134,7 +125,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
           <ul id="news">
           <c:forEach items="${newsAnswer.recordInstances}" var="record">
 
-          <c:if test="${i <= 80}">   <!-- was 4 when we did not have a scrollbar -->
+          <c:if test="${i <= newsCount }">   <!-- was 4 when we did not have a scrollbar -->
 
             <c:set var="attrs" value="${record.attributesMap}"/>
 
@@ -158,17 +149,16 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
           </ul>
         </c:catch>
     	<c:if test="${newsErr != null}">
-		 <i>News temporarily unavailable<br></i>
-	    </c:if>
-<br>
-	  <a class="small" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News >>></a>
+		<i>News temporarily unavailable<br></i>
+	</c:if>
+	<br>
+	<a class="small" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News >>></a>
 
 </c:if>
 
         </c:otherwise>
       </c:choose>
    </div>
-
 
 
 <%--------------  COMMUNITY RESOURCES ---------------------------------------------%>
@@ -365,7 +355,4 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
   </div>
 </div>
   
-<%-- what s this for?
-<script type="text/javascript">
-</script>
---%>
+

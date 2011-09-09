@@ -65,31 +65,31 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
                  division="news"
 />
 <style type="text/css">
-  .thinTopBottomBorders ul { 
-    list-style: inside disc;
+#news ul { 
+    	list-style: inside disc;
 	padding-left: 2em;
-    text-indent: -1em;
+    	text-indent: -1em;
   }
-  .thinTopBottomBorders ul ul {
-    list-style-type: circle;
+#news ul ul {
+    	list-style-type: circle;
   }
-  .thinTopBottomBorders p {
+#news p {
 	margin-top: 1em;
 	margin-bottom: 1em;
   }
+#news a[href]:link, #news a[href]:visited {
+	text-decoration: underline;
+}
+#news a[href]:hover, #news a[href]:active {
+	text-decoration: none;
+}
 </style>
 
 <c:choose>
 <c:when test="${error != null}">
-<i>News is temporarily unavailable</i>
+	<i>News is temporarily unavailable</i>
 </c:when>
 <c:otherwise>
-
-<table border='0' width='100%' cellpadding='3' cellspacing='0' 
-       bgcolor='white' class='thinTopBottomBorders'> 
-
- <tr>
-  <td bgcolor=white valign=top>
 
 <c:set var="i" value="1"/>
 <c:forEach items="${allFeeds.entries}" var="e">
@@ -102,38 +102,33 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
   <c:set var="item" value="${e.description.value}"/>
   <c:if test="${param.tag == null or param.tag eq tag or param.tag == ''}">
     <a name="${tag}"/>
-    <table border="0" cellpadding="2" cellspacing="0" width="100%">
+    <table id="news">
   
     <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
     <tr class="rowLight"><td>
-      <a href="aggregateNews.jsp?tag=${tag}">
-      <font color='black'><b>${headline}</b></font></a> (${fdate})<br><br>
-      ${item}</td></tr>
-      </table>
-    <c:set var="i" value="${i+1}"/>
+ <!--   <a style="text-decoration:none" href="aggregateNews.jsp?tag=${tag}">  -->
+	<font color='black'><b>${headline}</b></font>
+	<!-- </a>  -->
+	(${fdate})<br><br>
+	${item}</td></tr>
+    </table>
+  <c:set var="i" value="${i+1}"/>
   </c:if>
 
 </c:forEach>
 
-<p>
-
 <table width='100%'>
 <tr><td>
-<c:if test="${param.tag != null and param.tag != ''}">
- <a href="aggregateNews.jsp" id='allnews'>All EuPathDB News</a>
-</c:if>
-</td><td align="right">
-<a href="${rssUrl}">
-  <img src="${pageContext.request.contextPath}/images/feed-icon16x16.png" alt="" border='0'>
-<font size='-2' color='black'>RSS</font></a>
+	<c:if test="${param.tag != null and param.tag != ''}">
+ 	<a href="aggregateNews.jsp" id='allnews'>All EuPathDB News</a>
+	</c:if>
+</td>
+<td align="right">
+	<a href="${rssUrl}">
+  	<img src="${pageContext.request.contextPath}/images/feed-icon16x16.png" alt="" border='0'>
+	<font size='-2' color='black'>RSS</font></a>
 </td></tr>
 </table>
-
-
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table> 
 
 </c:otherwise>
 </c:choose>
