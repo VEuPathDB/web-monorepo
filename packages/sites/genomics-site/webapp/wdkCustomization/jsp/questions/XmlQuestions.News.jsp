@@ -30,33 +30,6 @@
                  divisionName="News"
                  division="news"
                  headElement="${headElement}" />
-<style type="text/css">
-  .thinTopBottomBorders ul { 
-    list-style: inside disc;
-	padding-left: 2em;
-    text-indent: -1em;
-  }
-  .thinTopBottomBorders ul ul {
-    list-style-type: circle;
-  }
-  .thinTopBottomBorders p {
-	margin-top: 1em;
-	margin-bottom: 1em;
-  }
-
-.thinTopBottomBorders a[href]:link, .thinTopBottomBorders a[href]:visited {
-	text-decoration: underline;
-}
-.thinTopBottomBorders a[href]:hover, .thinTopBottomBorders a[href]:active {
-	text-decoration: none;
-}
-</style>
-
-<table border='0' width='100%' cellpadding='3' cellspacing='0' 
-       bgcolor='white' class='thinTopBottomBorders'> 
-
- <tr>
-  <td bgcolor=white valign=top>
 
 <%-- 
   Validate that the date string in the xml is parsable to a date object.
@@ -111,7 +84,6 @@
     ${InvalidTagError}.</font>
   </c:when>
 
-
   <c:otherwise>
 
 <!-- main body start -->
@@ -137,7 +109,7 @@
   <c:if test="${param.tag eq tag or param.tag == null or param.tag == ''}">
     <a name="newsItem${i}"/>
     <a name="${tag}"/>
-    <table border="0" cellpadding="2" cellspacing="0" width="100%">
+    <table id="news">
   
     <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
     <tr class="rowLight"><td>
@@ -152,7 +124,7 @@
 
 </c:forEach>
 
-<p>
+<br>
 
 <table width='100%'>
 <tr><td>
@@ -172,11 +144,5 @@
 
   </c:otherwise>
 </c:choose>
-
-
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table> 
 
 <site:footer/>

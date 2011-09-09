@@ -64,26 +64,6 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
                  divisionName="News"
                  division="news"
 />
-<style type="text/css">
-#news ul { 
-    	list-style: inside disc;
-	padding-left: 2em;
-    	text-indent: -1em;
-  }
-#news ul ul {
-    	list-style-type: circle;
-  }
-#news p {
-	margin-top: 1em;
-	margin-bottom: 1em;
-  }
-#news a[href]:link, #news a[href]:visited {
-	text-decoration: underline;
-}
-#news a[href]:hover, #news a[href]:active {
-	text-decoration: none;
-}
-</style>
 
 <c:choose>
 <c:when test="${error != null}">
