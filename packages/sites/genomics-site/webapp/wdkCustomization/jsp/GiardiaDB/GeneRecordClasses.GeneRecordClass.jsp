@@ -133,18 +133,18 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <c:set var="attr" value="${attrs['overview']}" />
 
 <c:choose>
-  <c:when test='${organismFull eq "Giardia lamblia ATCC 50803"}'>
+  <c:when test='${organismFull eq "Giardia Assemblage A isolate WB"}'>
      <c:set var="assemblage" value="<b>Assemblage A isolate WB</b>"/>
      <c:set var="gtracks"  value="Gene+SyntenySpanAssemblageB+SyntenyAssemblageB+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX"/>
      <c:set var="ptracks" value="RatnerMassSpecPeptides+TachezyMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP"/>
   </c:when>
-  <c:when test='${organismFull eq "Giardia intestinalis ATCC 50581"}'>
+  <c:when test='${organismFull eq "Giardia Assemblage B isolate GS"}'>
      <c:set var="assemblage" value="<b>Assemblage B isolate GS</b>" />
      <c:set var="gtracks" value="Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+EST+BLASTX" />
      <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/> 
   </c:when>
-  <c:when test='${organismFull eq "Giardia lamblia P15"}'>
-     <c:set var="assemblage" value="<b>Assemblage E isolate P15</b>" /> 
+  <c:when test='${organismFull eq "Giardia Assemblage E isolate P15"}'>
+     <c:set var="assemblage" value="<b>Giardia Assemblage E isolate P15</b>" /> 
      <c:set var="gtracks" value="Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageB+SyntenyAssemblageB+UnifiedMassSpecPeptides+EST+BLASTX" /> 
      <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP" /> 
   </c:when>
