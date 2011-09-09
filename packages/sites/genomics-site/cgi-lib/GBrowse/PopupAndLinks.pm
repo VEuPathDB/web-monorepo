@@ -499,13 +499,20 @@ sub HaploBlockTitle {
     my $start        = $f->start;
     my $stop         = $f->stop;
     my $length       = $stop - $start + 1;
+    my ($boundary) = $f->get_tag_values('boundary');
     my ($name)        = $f->get_tag_values('Name');
+    my ($start_max)        = $f->get_tag_values('start_max');
+    my ($start_min)        = $f->get_tag_values('start_min');
+    my ($end_max)        = $f->get_tag_values('end_max');
+    my ($end_min)        = $f->get_tag_values('end_min');
     my ($sequenceId)        = $f->get_tag_values('SequenceId');
     my @data;
     push @data, [ 'Name:'        => $name ];
     push @data, [ 'Sequence Id:'        => $sequenceId ];
-    push @data, [ '3D7 Start:'        => $start ];
-    push @data, [ '3D7 End:'        => $stop ];
+    push @data, [ '3D7 Liberal Start-End'        => "$start_min..$end_max" ];
+    push @data, [ '3D7 Conservative Start-End'        => "$start_max..$end_min" ];
+    push @data, [ 'Leberal Length'        => abs($end_max-$start_min) ];
+    push @data, [ 'Conservative Length'        => abs($end_min-$start_max) ];
     return hover( "Haplotype Block - $name", \@data);
 }
 

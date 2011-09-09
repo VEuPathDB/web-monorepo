@@ -666,6 +666,23 @@ sub colorForSevenSampleRNASeq{
   return 'lightslategray';
 }
 
+sub haploColor { 
+  my $f   = shift;
+  my ($boundary) = $f->get_tag_values('Boundary');
+
+  return 'darkseagreen' if($boundary eq 'Liberal');
+  return 'darkgreen' if($boundary eq 'Conservative');
+}
+
+sub haploHeight { 
+  my $f   = shift;
+  my ($boundary) = $f->get_tag_values('Boundary');
+
+  #return 20  if($boundary eq 'Liberal');
+  return 20  if($boundary eq 'Conservative');
+}
+
+
 sub chipColor { 
   my $f   = shift;
   my ($a) = $f->get_tag_values('Antibody');

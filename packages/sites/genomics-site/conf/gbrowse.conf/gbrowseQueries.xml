@@ -1865,27 +1865,30 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="HaploBlock:feature" includeProjects="PlasmoDB">
+  <sqlQuery name="Haplotype:Block">
      <sql>
 <![CDATA[
- SELECT cef.na_feature_id as feature_id,
-        'HaploBlock' type, 
-        'feature' source, 
-        cef.source_id name, 
-        cef.na_sequence_id parent_id, 
-        nl.start_max startm, 
-        nl.end_min end, 
-        'Name=' || cef.name  || '$dlm' || 'SequenceId=' || ens.source_id  atts
-      FROM   DoTS.ChromosomeElementFeature cef, Dots.NaLocation nl, DoTS.ExternalNASequence ens
-      WHERE  cef.na_sequence_id = $srcfeature_id 
-        AND  cef.na_feature_id = nl.na_feature_id 
-        AND  ens.na_sequence_id = cef.na_sequence_id
-        AND  nl.start_max <= $rend
-        AND  nl.end_min >= $base_start
+SELECT  cef.na_feature_id feature_id,
+       'Haplotype' type, 
+       'Block' source, 
+       cef.source_id name, 
+       '.' score, 
+       cef.na_sequence_id parent_id, 
+       nl.start_min startm, 
+       nl.end_max end, 
+       'Boundary=' || 'Liberal'  || '$dlm' ||'Name=' || cef.name  || '$dlm' || 'SequenceId=' || ens.source_id  || '$dlm' || 'start_max=' || nl.start_max || '$dlm' ||'end_min=' || nl.end_min || '$dlm' || 'start_min=' || nl.start_min || '$dlm' || 'end_max=' || nl.end_max as atts
+FROM DoTS.ChromosomeElementFeature cef, Dots.NaLocation nl, DoTS.ExternalNASequence ens
+         WHERE  cef.na_sequence_id = $srcfeature_id 
+         AND    cef.na_feature_id = nl.na_feature_id 
+         AND    ens.na_sequence_id = cef.na_sequence_id
+         AND    nl.start_min <= $rend
+         AND    nl.end_max >= $base_start
 ]]>
     </sql>
   </sqlQuery>
-  
+ 
+ 
+ 
   
 <!-- NOTE: externalDatabase.name list specified in query, for Crypto AND Plasmo -->
   <sqlQuery name="match:IsolatePopset" excludeProjects="TriTrypDB,GiardiaDB,TrichDB">
@@ -6558,6 +6561,30 @@ GROUP BY interval
 ]]>
     </sql>
   </sqlQuery>
+
+  
+  <sqlQuery name="Haplotype:Block:bulksubfeatures">
+     <sql>
+<![CDATA[
+SELECT  cef.source_id feature_id, 
+       'Haplotype_Inner' type, 
+       'Block' source, 
+       cef.name name,
+       cef.na_feature_id parent_id, 
+       '.' score, 
+       nl.start_max startm,            
+       nl.end_min end, 
+       'Boundary=' || 'Conservative'  || '$dlm' ||'Name=' || cef.name  || '$dlm' || 'SequenceId=' || ens.source_id  as atts
+FROM    DoTS.ChromosomeElementFeature cef, Dots.NaLocation nl, DoTS.ExternalNASequence ens
+         WHERE  cef.na_sequence_id = $srcfeature_id 
+         AND    cef.na_feature_id = nl.na_feature_id 
+         AND    ens.na_sequence_id = cef.na_sequence_id
+         AND    nl.start_max <= $rend
+         AND    nl.end_min >= $base_start
+]]>
+    </sql>
+  </sqlQuery>
+
 
 </module>
 </DAS>
