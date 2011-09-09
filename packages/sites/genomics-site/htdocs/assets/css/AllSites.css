@@ -303,22 +303,22 @@ ul.heading_list li:hover a.detail_link {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =News
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#news ul { 
+table#news ul { 
     	list-style: inside disc;
 	padding-left: 2em;
     	text-indent: -1em;
 }
-#news ul ul {
+table#news ul ul {
     list-style-type: circle;
 }
-#news p {
+table#news p {
 	margin-top: 1em;
 	margin-bottom: 1em;
 }
-#news a[href]:link, #news a[href]:visited {
+table#news a[href]:link, table#news a[href]:visited {
 	text-decoration: underline;
 }
-#news a[href]:hover, #news a[href]:active {
+table#news a[href]:hover, table#news a[href]:active {
 	text-decoration: none;
 }
 

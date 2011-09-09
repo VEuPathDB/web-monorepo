@@ -36,11 +36,14 @@ function appendchecked(url) {
 </script>
 <%-- end galaxy.psu.edu users  --%>
 
-<!-- display description for page -->
-<p><b>Generate a tab delimited report of your query result.  Select columns to include in the report.  Optionally include a first line with column names</b></p>
 
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
+
+
+<!-- display description for page -->
+<h3>Generate a tab delimited report of your search result.  Select columns to include in the report.  Optionally (see below) include a first line with column names.</h3>
+<br>
 
 <!-- handle empty result set situation -->
 <c:choose>
@@ -51,20 +54,19 @@ function appendchecked(url) {
 
 <!-- content of current page -->
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />" >
-  <table>
-  <tr><td valign="top"><b>Columns:</b></td>
+<table>
+  <tr>
+      <td ></td>
       <td>
         <input type="hidden" name="step" value="${step_id}">
         <input type="hidden" name="wdkReportFormat" value="${format}">
         <c:set var="numPerLine" value="2"/>
         <table>
           <tr>
-             <th colspan="${numPerLine}">Attributes</th>
+             <th colspan="${numPerLine}">Columns</th>
           </tr>
           <c:if test="${wdkAnswer.useCheckboxTree}">
-            <tr>
-              <td colspan="${numPerLine}">Note: ${wdkAnswer.recordClass.primaryKeyAttribute.displayName}s are automatically included in the report.</td>
-            </tr>
+
             <tr>
               <td colspan="${numPerLine}">
                 <input type="checkbox" name="selectedFields" value="${wdkAnswer.recordClass.primaryKeyAttribute.name}" checked="checked" style="display:none;"/>
@@ -135,17 +137,21 @@ function appendchecked(url) {
       <td><input type="radio" name="includeHeader" value="yes" checked>include
           <input type="radio" name="includeHeader" value="no">exclude
         </td></tr>
+
   <tr><td valign="top"><b>Download Type: </b></td>
       <td>
           <input type="radio" name="downloadType" value="text">Text File
           <input type="radio" name="downloadType" value="excel">Excel File
           <input type="radio" name="downloadType" value="plain" checked>Show in Browser
         </td></tr>
-  <tr><td colspan="2">&nbsp;</td></tr>
-  <tr><td colspan="2">Please note: if you choose Excel as download type, you can only download maximum 10M (in bytes) of the results, and the rest are discarded. Opening huge Excel file may crash you system. If you need to get the complete results, please choose the Download Type is Text File, or Show in Browser.</td></tr>
-  <tr><td></td>
-      <td><html:submit property="downloadConfigSubmit" value="Get Report"/>
-      </td></tr></table>
+
+  <tr><td colspan="2">
+<i>**Note: if you choose "Excel File" as Download Type, you can only download a maximum 10M (in bytes) of the results and the rest will be discarded. Opening a huge Excel file may crash your system. If you need to get the complete results, please choose "Text File" or "Show in Browser".</i>
+</td></tr>
+
+  <tr><td colspan="2" style="text-align:center"><html:submit property="downloadConfigSubmit" value="Get Report"/>
+   </td></tr>
+</table>
 </form>
 
   <%-- galaxy.psu.edu users; send data to Galaxy  --%>
