@@ -30,15 +30,14 @@ function makeSelection(state)
 //-->
 </script>
 
-
 <!-- display page header -->
 <site:header banner="Create and download a Full Records Report" />
 
-<!-- display description for page -->
-<p><b>Generate a report that contents the complete information for each record.  Select columns to include in the report.</b></p>
-
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
+
+<!-- display description for page -->
+<h3>Generate a report that contents the complete information for each record.</h3>
 
 <!-- handle empty result set situation -->
 <c:choose>
@@ -49,20 +48,17 @@ function makeSelection(state)
 
 <!-- content of current page -->
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />">
-  <table>
-  <tr><td valign="top"><b>Columns:</b></td>
+  <table width="100%">
+  <tr><td width="20%"></td>
       <td>
         <input type="hidden" name="step" value="${step_id}"/>
         <input type="hidden" name="wdkReportFormat" value="${format}"/>
         <c:set var="numPerLine" value="2"/>
         <table>
           <tr>
-             <th colspan="${numPerLine}">Attributes</th>
+             <th colspan="${numPerLine}">Columns</th>
           </tr>
 	        <c:if test="${wdkAnswer.useCheckboxTree}">
-	          <tr>
-	            <td colspan="${numPerLine}">Note: ${wdkAnswer.recordClass.primaryKeyAttribute.displayName}s are automatically included in the report.</td>
-	          </tr>
 	          <tr>
 	            <td colspan="${numPerLine}">
 	              <input type="checkbox" name="selectedFields" value="${wdkAnswer.recordClass.primaryKeyAttribute.name}" checked="checked" style="display:none;"/>
@@ -111,6 +107,14 @@ function makeSelection(state)
           <tr>
              <th colspan="${numPerLine}">Tables</th>
           </tr>
+
+      <tr>
+      <td colspan="2"align="center">
+          <input type="button" value="select all" onclick="makeSelection(1)">
+          <input type="button" value="clear all" selected="yes" onclick="makeSelection(0)">
+          <input type="button" value="select inverse" selected="yes" onclick="makeSelection(-1)">
+        </td></tr>
+
           <tr>
             <td nowrap>
               <c:forEach items="${tableFields}" var="rmTable">
@@ -136,18 +140,25 @@ function makeSelection(state)
               </c:forEach>
             </td>
           </tr>
-         
+              <tr>
+      <td colspan="2" align="center">
+          <input type="button" value="select all" onclick="makeSelection(1)">
+          <input type="button" value="clear all" selected="yes" onclick="makeSelection(0)">
+          <input type="button" value="select inverse" selected="yes" onclick="makeSelection(-1)">
+        </td></tr>
+
         </table>
       </td>
   </tr>
-
+<tr><td colspan="2"><hr></td></tr>
+<!--
   <tr><td valign="top">&nbsp;</td>
       <td align="center">
           <input type="button" value="select all" onclick="makeSelection(1)">
           <input type="button" value="clear all" selected="yes" onclick="makeSelection(0)">
           <input type="button" value="select inverse" selected="yes" onclick="makeSelection(-1)">
         </td></tr>
-
+-->
   <tr><td valign="top"><b>Download Type: </b></td>
       <td>
           <input type="radio" name="downloadType" value="text">Text File
@@ -160,9 +171,8 @@ function makeSelection(state)
     </td>
   </tr>
 
-  <tr><td colspan="2">&nbsp;</td></tr>
-  <tr><td></td>
-      <td><html:submit property="downloadConfigSubmit" value="Get Report"/>
+  <tr>
+      <td  colspan="2" style="text-align:center"><html:submit property="downloadConfigSubmit" value="Get Report"/>
       </td></tr></table>
 </form>
 
