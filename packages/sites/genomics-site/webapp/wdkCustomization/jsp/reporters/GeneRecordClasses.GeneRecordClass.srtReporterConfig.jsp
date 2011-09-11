@@ -19,11 +19,12 @@
 <!-- display page header -->
 <site:header refer="srt" banner="Retrieve Gene Sequences" />
 
-<!-- display description for page -->
-<p><b>This reporter will retrieve the sequences of the genes in your result.</b></p>
-
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
+
+<!-- display description for page -->
+<h3>This reporter will retrieve the sequences of the genes in your result.</h3>
+
 
 <site:geneSrt allRecordIds="${allRecordIds}" />
 

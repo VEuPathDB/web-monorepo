@@ -15,11 +15,12 @@
 <!-- display page header -->
 <site:header banner="Create and download a Report in GFF3 Format" />
 
-<!-- display description for page -->
-<p><b>Generate a report of your query result in GFF3 format. </b></p>
-
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
+
+<!-- display description for page -->
+<h3>Generate a report of your query result in GFF3 format. </h3>
+
 
 <!-- handle empty result set situation -->
 <c:choose>
@@ -32,7 +33,7 @@
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />">
         <input type="hidden" name="step" value="${wdkStep.stepId}"/>
         <input type="hidden" name="wdkReportFormat" value="${format}"/>
-    <table>
+    <table width="100%">
         <tr>
             <td valign="top" nowrap><b>Download Type</b>: 
                 <input type="radio" name="downloadType" value="text">GFF File
@@ -40,7 +41,7 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td  style="text-align:center">
                 <html:submit property="downloadConfigSubmit" value="Get Report"/>
             </td>
         </tr>

@@ -18,12 +18,11 @@
 <!-- display page header -->
 <site:header refer="srt" banner="Retrieve Orf Sequences" />
 
-<!-- display description for page -->
-<p><b>This reporter will retrieve the sequences of the open reading frames in your result.</b></p>
-
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
 
+<!-- display description for page -->
+<h3>This reporter will retrieve the sequences of the open reading frames in your result.</h3>
 
 <%--
 <c:choose>

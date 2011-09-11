@@ -18,11 +18,11 @@
 <!-- display page header -->
 <site:header refer="srt" banner="Retrieve Genome Sequences" />
 
-<!-- display description for page -->
-<p><b>This reporter will retrieve the sequences of the genome records in your result.</b></p>
-
 <!-- display the parameters of the question, and the format selection form -->
 <wdk:reporter/>
+
+<!-- display description for page -->
+<h3>This reporter will retrieve the sequences of the genome records in your result.</h3>
 
 <!-- <c:choose>
 <c:when test="${fn:containsIgnoreCase(site, 'EuPathDB')}">
@@ -52,15 +52,15 @@
                                  <input name="start" value="1" size="6"> to
                                  <input name="end" value="0" size="6"></td></tr>
 
-    <tr><td valign="top" nowrap><b>Download Type</b>:
+     
+        </table>
+    </td></tr>
+ <tr><td valign="top" nowrap><b>Download Type</b>:
             <input type="radio" name="downloadType" value="text">Save to File</input>
             <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
         </td></tr>
 
-            <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>        
-        </table>
-    </td></tr>
-
+            <tr><td style="text-align:center"><input name="go" value="Get Sequences" type="submit"/></td></tr>      
     </table>
   </form>
 
