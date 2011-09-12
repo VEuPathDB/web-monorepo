@@ -64,7 +64,7 @@ function makeSelection(state)
             <tr>
               <td colspan="${numPerLine}">
                 <input type="checkbox" name="o-fields" value="${wdkAnswer.recordClass.primaryKeyAttribute.name}" checked="checked" style="display:none;"/>
-                <wdk:checkboxTree rootNode="${wdkAnswer.reportMakerAttributeTree}" checkboxName="o-fields" showSelectAll="false" showResetCurrent="true"/>
+                <wdk:checkboxTree id="selectedFieldsCBT" rootNode="${wdkAnswer.reportMakerAttributeTree}" checkboxName="o-fields" showSelectAll="false" showResetCurrent="true"/>
               </td>
             </tr>
           </c:if>
