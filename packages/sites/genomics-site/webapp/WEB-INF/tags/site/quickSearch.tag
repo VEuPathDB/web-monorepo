@@ -42,6 +42,8 @@
 <div id="quick-search" session-id="${sessionId}">
          <table style="float:right;margin-bottom:10px">
            <tr>
+
+<!-- GENE ID -->
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" title="Enter a Gene ID. Use * as a wildcard (to obtain more than one). Click to enter multiple Gene IDs">Gene ID:</a></b></label>
@@ -51,6 +53,8 @@
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
 			 </div></td>
+
+<!-- TEXT SEARCH -->
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" 
