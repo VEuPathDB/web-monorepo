@@ -24,10 +24,12 @@
 <c:set var="geneByTextQuestion" value="${gqMap['GenesByTextSearch']}"/>
 <c:set var="gkwqpMap" value="${geneByTextQuestion.paramsMap}"/>
 <c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
-<c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
 <c:set var="timestampParam" value="${gkwqpMap['timestamp']}"/>
 <c:set var="sessionId" value="${sessionScope['sessionId']}"/>
 
+<c:catch var="orgParam_exception">
+	<c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
+</c:catch>
 
 <%-- get the organisms from the param --%>
 <c:set var="listOrganisms" value="" />
@@ -39,8 +41,13 @@
   <c:set var="listOrganisms" value="${listOrganisms}${term}" />
 </c:forEach>
 
+<c:if test="${orgParam_exception != null}">
+	<span style="position:absolute;top:30px;right:150px;font-style:italics;font-size:90%;color:#CC0033;">
+		Error. search temporarily unavailable</span>
+</c:if>
+
 <div id="quick-search" session-id="${sessionId}">
-         <table style="float:right;margin-bottom:10px">
+	<table style="float:right;margin-bottom:10px">
            <tr>
 
 <!-- GENE ID -->
@@ -85,5 +92,5 @@ title="Enter a term to find genes. Use * as a wildcard in a word (cannot run a s
           	   </html:form>
 			 </div></td>
             </tr>
-         </table>
+	</table>
 </div>
