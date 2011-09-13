@@ -64,7 +64,6 @@
 
 
 <br /><br />
-${gtracks}
 <%-- DNA CONTEXT ---------------%>
 <!-- deal with specific contexts depending on organism -->
     <c:set var="organism_full" value="${attrs['organism']}" />
@@ -72,8 +71,8 @@ ${gtracks}
   <c:when test="${projectId eq 'ToxoDB'}">
     <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+AlignmentSNPs" />
   </c:when>
-  <c:when test="${fn:containsIgnoreCase(gtracks, 'Custom') && projectId eq 'PlasmoDB'}">
-      <c:set var="tracks" value="AnnotatedGenes+Microsatellite+HaploBlock+CombinedSNPs"/>
+  <c:when test="${gtracks ne '' && projectId eq 'PlasmoDB'}">
+      <c:set var="tracks" value="${gtracks}"/>
   </c:when>
   <c:when test="${projectId eq 'PlasmoDB'}">
      <c:set var="tracks" value="AnnotatedGenes+EST+SAGEtags+ORF+CombinedSNPs" />
