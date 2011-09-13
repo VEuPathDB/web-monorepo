@@ -41,6 +41,7 @@
 </table>
 
 <%------------------------------------%>
+<div style="overflow-x:auto">
 <table class="mytableStyle" width="100%">
 <tr class="mythStyle">
     <td width="7%" class="mythStyle" title="Website">Website</td>
@@ -278,7 +279,7 @@
 </c:forEach>
 
 </table>
-
+</div>
 
 <table width="100%">
 <tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>

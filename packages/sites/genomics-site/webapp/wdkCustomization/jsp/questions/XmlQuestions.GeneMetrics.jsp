@@ -35,6 +35,8 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 </td></tr>
 </table>
 
+
+<div style="overflow-x:auto">
 <table  class="mytableStyle" width="100%">
 <c:choose>
   <c:when test='${xmlAnswer.resultSize == 0}'>
@@ -177,10 +179,8 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
  
   </c:forEach>
 
-
-
   </table>
-
+</div>
 
 <table width="100%">
 <tr><td>
