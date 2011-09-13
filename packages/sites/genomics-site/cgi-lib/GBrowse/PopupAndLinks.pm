@@ -793,6 +793,7 @@ sub massSpecTitle {
     for my $loc (sort { $b <=> $a }  @locs) {
       substr($seq, $loc, 0) = '*' if $ontology_names =~ /phosphorylation/i; 
       substr($seq, $loc, 0) = '#' if $ontology_names =~ /methionine/i; 
+      substr($seq, $loc, 0) = '^' if $ontology_names =~ /cysteine/i; 
     } 
   } 
 
@@ -812,7 +813,7 @@ sub massSpecTitle {
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);
   push @data, [ 'Info:' => "$tb" ] if($phospho_site);
-  push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine" ] if($ontology_names);
+  push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine<br/>^ stands for modified_L_cysteine" ] if($ontology_names);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
 
   hover('Mass Spec', \@data);
