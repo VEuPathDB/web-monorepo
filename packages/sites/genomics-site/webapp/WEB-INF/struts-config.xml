@@ -490,7 +490,7 @@
       path="/processStep"
       type="org.gusdb.wdk.controller.action.ProcessStepAction"
       scope="request"
-      validate="true"
+      validate="false"
       name="questionForm">
       <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
