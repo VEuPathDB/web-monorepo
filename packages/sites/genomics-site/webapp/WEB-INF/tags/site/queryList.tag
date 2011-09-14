@@ -43,21 +43,19 @@ function writeData(page, div, quesName, insertStep){
 			var qops = "";
 			
 			t.html(qt);
-document.getElementById(div).innerHTML = "<h1>" + quesName + "</h1><br/>";
+      document.getElementById(div).innerHTML = "<h1>" + quesName + "</h1><br/>";
 			t.append(qf);
 			t.append(qops);
- document.getElementById(div).innerHTML += "<hr/>"
+      document.getElementById(div).innerHTML += "<hr/>"
 			t.append(qd);
-document.getElementById(div).innerHTML += "<hr/>"
+      document.getElementById(div).innerHTML += "<hr/>"
 			t.append(qa);
 			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
 			htmltooltip.render();
 			initParamHandlers(true);
 			var question = new WdkQuestion();
 			question.registerGroups();
-			if ($('.checkboxTree').length > 0) {
-			  configureCheckboxTree();
-			}
+			configureCheckboxTrees();
 		}
 	});
 }	
