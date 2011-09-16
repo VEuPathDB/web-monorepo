@@ -2034,19 +2034,19 @@ ORDER BY
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="gene:Gff3Model">
+  <sqlQuery name="gene:JcviPasa">
     <sql>
 <![CDATA[ 
-SELECT g3.gff3_feature_id feature_id,
+SELECT g3.parent_attr feature_id,
        'gene' type,
-       '$source' source,
-       substr(ltrim(rtrim(substr(g3.attr,0,(Instr(g3.attr,';'))),';'),';'),4) name,
+       'JcviPasa' source,
+       g3.parent_attr name,
        '.' score,
        g3.na_sequence_id parent_id,
-       g3.mapping_start startm,
-       g3.mapping_end end,
+       min(g3.mapping_start) startm,
+       max(g3.mapping_end) end,
        decode (g3.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       'product=' || substr(ltrim(rtrim(substr(g3.attr,(Instr(g3.attr,';'))),';'),';'),8) || '$dlm' atts
+       '' atts 
 FROM   apidb.gff3 g3, sres.ExternalDatabaseRelease edr,
        sres.ExternalDatabase ed
 WHERE g3.external_database_release_id = edr.external_database_release_id
@@ -2054,8 +2054,8 @@ WHERE g3.external_database_release_id = edr.external_database_release_id
   AND g3.na_sequence_id = $srcfeature_id
   AND g3.mapping_start <= $rend
   AND g3.mapping_end >= $base_start
-  AND ed.name = $$extDbName$$ 
-ORDER BY g3.mapping_start
+  AND ed.name = 'TgonME49_JCVI_Reannotation_RSRC'
+GROUP BY g3.parent_attr, g3.na_sequence_id, g3.is_reversed
 ]]>
       </sql>
   </sqlQuery>
@@ -4158,39 +4158,33 @@ WHERE  exon_loc.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
-<!--
-  <sqlQuery name="gene:Gff3Model:bulksubfeatures">
+
+  <sqlQuery name="gene:JcviPasa:bulksubfeatures">
      <sql>
 <![CDATA[
-SELECT
-       gf.gff3_feature_id feature_id, 
-       'exon' type, 
-       '$source' source, 
-       gf.gff3_feature_id name, 
-       '.' score, 
-       fl.start_min startm,            
-       fl.end_max end, 
-       ed.name||':'||edr.version external_database_name,
-       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       gf.attr
-FROM   
-       Apidb.Gff3 gf,
-       sres.ExternalDatabaseRelease edr,
+SELECT g3.gff3_feature_id feature_id,
+       'exon' type,
+       'JcviPasa' source,
+       g3.gff3_feature_id name,
+       '.' score,
+       g3.parent_attr parent_id,
+       g3.mapping_start startm,
+       g3.mapping_end end,
+       decode (g3.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'product=' || substr(ltrim(rtrim(substr(g3.attr,(Instr(g3.attr,';'))),';'),';'),8) || '$dlm' atts
+FROM   apidb.gff3 g3, sres.ExternalDatabaseRelease edr,
        sres.ExternalDatabase ed
-WHERE  gf.na_sequence_id = $srcfeature_id
-  AND  fl.feature_type = 'ExonFeature'
-  AND  gf.na_sequence_id = fl.na_sequence_id
-  AND  fl.start_min <= $rend
-  AND  fl.end_max >= $base_start
-  AND  gf.external_database_release_id = edr.external_database_release_id 
-  AND  edr.external_database_id = ed.external_database_id 
-  AND  ed.name = $$extDbName$$ 
-ORDER BY 
-       fl.start_min
+WHERE g3.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND g3.na_sequence_id = $srcfeature_id
+  AND g3.mapping_start <= $rend
+  AND g3.mapping_end >= $base_start
+  AND ed.name = 'TgonME49_JCVI_Reannotation_RSRC'
+ORDER BY g3.mapping_start
 ]]>
     </sql>
   </sqlQuery>
--->
+
   <sqlQuery name="gene:syntenyMC:attribute:Ortholog" excludeProjects="TrichDB">
     <testParamValues project="ToxoDB">
       <param name="name" value="TGME49_039250"/> 
