@@ -894,57 +894,7 @@ td.lines2, #queryGrid td.lines2 {
 	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-td.lines {
-	padding: 4px;
-}
 
-td.linesalt {
-	background-color: #EEEEEE;
-	padding: 4px;
-}
-
-table.results {
-	margin-top: 6px;
-}
-
-tr.subheaderrow th {
-	padding: 0px;  /* not needed in paging bar */
-	border-width: 2px 0 2px 0;
-	border-style: solid;
-}
-
-tr.headerrow th { 
-//	white-space: nowrap;
-	font-size: 12px;
-	vertical-align:	middle;
-	padding: 1px 2px;
-	border-width: 2px 0 2px 0;
-	border-style: solid;
-}
-
-/* result column headers */
-tr.headerrow th table tbody tr td { 
-	padding: 1px;
-//	white-space: nowrap;
-	vertical-align: middle;
-	font-size: 12px;
-}
-
-tr.headerInternalRow td {
-	vertical-align: middle;
-}
-
-tr.lines {
-	background-color: #FFFFFF;
-}
-
-tr.linesalt {
-	background-color: #DDDDDD;
-}
-
-tr.lines td, tr.linesalt td {
-	padding: 0px 2px;
-}
 
 #strat_description tr.lines td, #strat_description tr.linesalt td {
 	padding: 6px 0px;
@@ -1250,13 +1200,6 @@ a#gbView {
     padding: 1px;
 }
 
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 Strategy history panel
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-table.datatables tr.headerrow th {
-	border-width:0px 0px 2px;
-}
 
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
