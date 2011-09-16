@@ -1,0 +1,49 @@
+--- GBrowseInstall.pm.dist	2011-09-16 09:35:38.000000000 -0400
++++ GBrowseInstall.pm	2011-09-16 09:40:59.000000000 -0400
+@@ -185,7 +185,6 @@
+ sub ACTION_build {
+     my $self = shift;
+     $self->depends_on('config');
+-    $self->depends_on('register') unless $self->registration_done;
+     $self->SUPER::ACTION_build;
+     mkdir './htdocs/tmp';
+     chmod 0777,'./htdocs/tmp';
+@@ -454,10 +453,8 @@
+     $gid =~ /^(\d+)$/;
+     $gid = $1;
+     
+-    unless (chown $uid,$gid,$tmp) {
+-	$self->ownership_warning($tmp,$user);
+-    }
+-
++    chmod 0777, $tmp;
++    
+     my $htdocs_i = File::Spec->catfile($self->install_path->{htdocs},'i');
+     my $images   = File::Spec->catfile($tmp,'images');
+     my $htdocs = $self->install_path->{htdocs};
+@@ -475,9 +472,7 @@
+ 
+     my $databases = $self->install_path->{'databases'};
+     
+-    unless (chown $uid,$gid,glob(File::Spec->catfile($databases,'').'*')) {
+-	$self->ownership_warning($databases,$user);
+-    }
++    chmod 0777,glob(File::Spec->catfile($databases,'').'*');
+ 
+     chmod 0755,File::Spec->catfile($self->install_path->{'etc'},'init.d','gbrowse-slave');
+     $self->fix_selinux;
+@@ -490,13 +485,7 @@
+     my $perl          = $self->perl;
+     my @inc           = map{"-I$_"} split ':',$self->added_to_INC;
+     system $perl,@inc,$metadb_script;
+-    system 'sudo','chown','-R',"$uid.$gid",$sessions,$userdata;
+-
+-    if (Module::Build->y_n(
+-	    "It is recommended that you restart Apache. Shall I try this for you?",'y'
+-	)) {
+-	system "sudo /etc/init.d/apache2 restart";
+-    }
++    system 'chmod','-R',"777",$sessions,$userdata;
+     
+     print STDERR "\n***INSTALLATION COMPLETE***\n";
+     print STDERR "Load http://localhost/$base for demo and documentation.\n";
