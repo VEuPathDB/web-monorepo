@@ -1759,8 +1759,8 @@ SELECT 's.' || piece_na_sequence_id as feature_id,
       '.' score,
       0 phase,
       virtual_na_sequence_id as parent_id,
-      offset as startm,
-      (offset + length) as end,
+      (offset + 1) as startm,
+      (offset + end_position - start_position + 1) as end,
       decode(strand_orientation, '+', '+1', '-', '-1', '', '+1', '0') strand,
       'Length=' || length || '$dlm' ||
       'Type=contig' || '$dlm' ||
@@ -1769,34 +1769,15 @@ SELECT 's.' || piece_na_sequence_id as feature_id,
 FROM (
 (SELECT ens.source_id, sp.piece_na_sequence_id,sp.virtual_na_sequence_id, sp.sequence_order,
        ens.length, vs.length as chr_length, sp.strand_orientation,
-       0 as offset
+       distance_from_left as offset,sp.start_position, sp.end_position
  FROM dots.VirtualSequence vs, dots.SequencePiece sp,
-     dots.ExternalNaSequence ens
+     dots.NaSequence ens --dots.ExternalNaSequence ens
  WHERE vs.na_sequence_id = $srcfeature_id 
   and vs.na_sequence_id = sp.virtual_na_sequence_id
   and ens.na_sequence_id = sp.piece_na_sequence_id
-  and sp.sequence_order = 1 
   and strand_orientation is not null
 GROUP by ens.source_id, sp.piece_na_sequence_id, sp.virtual_na_sequence_id,sp.sequence_order,
-       ens.length, vs.length, sp.strand_orientation)
-UNION
-(SELECT ens.source_id, sp.piece_na_sequence_id,sp.virtual_na_sequence_id, sp.sequence_order,
-       ens.length, vs.length as chr_length, sp.strand_orientation,
-       sum(predecessors.length) as offset
- FROM dots.VirtualSequence vs, dots.SequencePiece sp,
-     dots.ExternalNaSequence ens,
-     (select sp2.virtual_na_sequence_id, sp2.sequence_order, ens2.length
-      from dots.SequencePiece sp2,
-           dots.ExternalNaSequence ens2
-      where sp2.piece_na_sequence_id = ens2.na_sequence_id) predecessors
- WHERE vs.na_sequence_id = $srcfeature_id 
-  and vs.na_sequence_id = sp.virtual_na_sequence_id
-  and ens.na_sequence_id = sp.piece_na_sequence_id
-  and vs.na_sequence_id = predecessors.virtual_na_sequence_id(+)
-  and sp.sequence_order > predecessors.sequence_order
-  and ens.external_database_release_id is not null
-GROUP by ens.source_id, sp.piece_na_sequence_id, sp.virtual_na_sequence_id,sp.sequence_order,
-       ens.length, vs.length, sp.strand_orientation )
+       ens.length, vs.length, sp.strand_orientation, distance_from_left,start_position,end_position)
 ORDER by offset) 
 where offset < $rend and (offset+length) > $base_start
 ]]>
