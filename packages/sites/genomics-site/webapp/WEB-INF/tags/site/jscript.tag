@@ -22,12 +22,17 @@
 	<wdk:recordPageScript />
 </c:if>
 
+<%-- SITES was in model.prop to build the organism param tree in portal
+/ApiDB_Ajax_Utils.js was used for adhoc js in different question pages, such as location queries, when we did not have dependent params
+
 <c:set var="used_sites" value="${applicationScope.wdkModel.properties['SITES']}"/>
 
 <script type="text/javascript">
      var sites = new Array(${used_sites});
   </script>
 <script type="text/javascript" src="/assets/js/ApiDB_Ajax_Utils.js"></script>
+--%>
+
 
 <c:if test="${refer == 'customSummary' || refer == 'customQuestion'}">
   <wdk:parameterScript />
