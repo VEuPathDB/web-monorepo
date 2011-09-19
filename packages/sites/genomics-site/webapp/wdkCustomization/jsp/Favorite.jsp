@@ -4,6 +4,6 @@
 <!-- display page header with recordClass type in banner -->
 <site:header refer="recordPage" banner="Favorite page"/>
 
-<wdk:favorites />
+<site:favorites />
 
 <site:footer/>

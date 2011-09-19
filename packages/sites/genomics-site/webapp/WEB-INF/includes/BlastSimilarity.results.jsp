@@ -12,7 +12,7 @@
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="recordName" value="${wdkAnswer.question.recordClass.fullName}" />
-<c:set var="recHasBasket" value="${wdkAnswer.question.recordClass.hasBasket}" />
+<c:set var="recHasBasket" value="${wdkAnswer.question.recordClass.useBasket}" />
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 <c:set var="answerRecords" value="${wdkAnswer.records}" />
 

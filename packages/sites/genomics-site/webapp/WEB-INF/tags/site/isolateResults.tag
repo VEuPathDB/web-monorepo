@@ -8,8 +8,9 @@
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}"/>
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
-<c:set var="recordName" value="${wdkAnswer.question.recordClass.fullName}" />
-<c:set var="recHasBasket" value="${wdkAnswer.question.recordClass.hasBasket}" />
+<c:set var="recordClass" value="${wdkAnswer.question.recordClass}" />
+<c:set var="recordName" value="${recordClass.fullName}" />
+<c:set var="recHasBasket" value="${recordClass.useBasket}" />
 <c:set var="clustalwIsolatesCount" value="0" />
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 <c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
