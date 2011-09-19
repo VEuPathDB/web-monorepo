@@ -10,7 +10,6 @@
               description="when set, no help icon is added"
 %>
 
-<link rel="stylesheet" href="<c:url value='/misc/Top_menu.css' />" type="text/css">
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
