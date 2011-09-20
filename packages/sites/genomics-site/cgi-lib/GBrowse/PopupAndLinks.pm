@@ -506,11 +506,16 @@ sub HaploBlockTitle {
     my ($end_max)        = $f->get_tag_values('end_max');
     my ($end_min)        = $f->get_tag_values('end_min');
     my ($sequenceId)        = $f->get_tag_values('SequenceId');
+    my $libContlink = "<a target='_blank' href='showQuestion.do?questionFullName=GeneQuestions.GenesByLocation&value%28sequenceId%29=$sequenceId&value%28organism%29=Plasmodium+falciparum&value%28end_point%29=$end_max&value%28start_point%29=$start_min&weight=10'>Query for Contained Genes</a>";
+    my $consrvContlink = "<a target='_blank' href='showQuestion.do?questionFullName=GeneQuestions.GenesByLocation&value%28sequenceId%29=$sequenceId&value%28organism%29=Plasmodium+falciparum&value%28end_point%29=$end_min&value%28start_point%29=$start_max&weight=10'>Query for Contained Genes</a>";
+    my $libAssoclink = "<a target='_blank' href='showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_Segments&value%28lod_score%29=1.5&value%28end_point_segment%29=$end_max&value%28sequence_id%29=$sequenceId&value%28liberal_conservative%29=Liberal+Locations&value%28start_point%29=$start_min&weight=10'>Query for Associated Genes</a>";
+    my $consrvAssoclink = "<a target='_blank' href='showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_Segments&value%28lod_score%29=1.5&value%28end_point_segment%29=$end_min&value%28sequence_id%29=$sequenceId&value%28liberal_conservative%29=Conservative+Locations&value%28start_point%29=$start_max&weight=10'>Query for Associated Genes</a>";
+
     my @data;
     push @data, [ 'Name (Centimorgan value appended):'        => $name ];
     push @data, [ 'Sequence Id:'        => $sequenceId ];
-    push @data, [ '3D7 Liberal Start-End'        => "$start_min..$end_max" ];
-    push @data, [ '3D7 Conservative Start-End'        => "$start_max..$end_min" ];
+    push @data, [ '3D7 Liberal Start-End'        => "$start_min..$end_max  ($libAssoclink, $libContlink)" ];
+    push @data, [ '3D7 Conservative Start-End'        => "$start_max..$end_min   ($consrvAssoclink, $consrvContlink)" ];
     push @data, [ 'Leberal Length'        => abs($end_max-$start_min) ];
     push @data, [ 'Conservative Length'        => abs($end_min-$start_max) ];
     return hover( "Haplotype Block - $name", \@data);
