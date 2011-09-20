@@ -66,3 +66,21 @@ print "<p>$0 running under @{[
         'cgi'
 ]}";
 
+print "<p>";
+
+my @modules = ('DBI', 'DBD::Oracle');
+for my $module (@modules) {
+    eval "require $module";
+    printf( "<br>%-20s version %s - ", $module, $module->VERSION ) unless ( $@ );
+
+    my $file = $module;
+    $file =~ s|::|/|g;
+    $file .= '.pm';
+    
+    for my $inc (@INC) {
+       if (-e "$inc/$file") {
+           print "$inc/$file<br>";
+           last;
+       }
+    }
+}
