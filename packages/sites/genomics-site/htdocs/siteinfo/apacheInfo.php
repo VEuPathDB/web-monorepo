@@ -9,7 +9,6 @@ $upstreamServer = upstreamServer();
 ?>
 <h2>Apache HTTP Server</h2>
 
-<? print $proxyNotice ?>
 <p>
 <b><a href="#" style="text-decoration:none" onclick="Effect.toggle('httpheaders','blind'); return false">HTTP Headers &#8593;&#8595;</a></b>
 <div id="httpheaders" style="padding: 5px; display: none;"><div>

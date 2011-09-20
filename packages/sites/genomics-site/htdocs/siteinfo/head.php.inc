@@ -2,9 +2,9 @@
     <title><? print $_SERVER['HTTP_HOST'] ?> site info</title>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
 
-    <script type='text/javascript' src='/a/js/overlib.js'></script>
-    <script type='text/javascript' src='/a/js/prototype.js'></script>
-    <script type='text/javascript' src='/a/js/scriptaculous.js'></script>
+    <script type='text/javascript' src='/siteinfo/js/overlib.js'></script>
+    <script type='text/javascript' src='/siteinfo/js/prototype.js'></script>
+    <script type='text/javascript' src='/siteinfo/js/scriptaculous.js'></script>
 
     <script type="text/javascript">
       var ol_textcolor = "#003366";
