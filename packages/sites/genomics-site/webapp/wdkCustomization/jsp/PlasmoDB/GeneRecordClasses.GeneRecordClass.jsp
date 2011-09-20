@@ -352,7 +352,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:set var="queryURL">
         showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_HaploGrpSimilarity&value%28lod_score%29=1.5&value%28percentage_sim_haploblck%29=25&value%28pf_gene_id%29=${id}&weight=10
 </c:set>
-<a id="assocQueryLink" href="${queryURL}"><font size='-2'>Other genes that have similar associations based on eQTL studies (genes sharing atleast 25% of the associations listed here with a LOD cut off of 1.5)</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
+<a id="assocQueryLink" href="${queryURL}"><font size='-2'>Other genes that have similar associations based on eQTL experiments</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
 
 
 <%-- version 5.5 genes --%>
