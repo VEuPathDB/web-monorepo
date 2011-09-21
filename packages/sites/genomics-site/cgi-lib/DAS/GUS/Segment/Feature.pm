@@ -300,6 +300,8 @@ sub entire_seq {
 
 *get_SeqFeatures = \&sub_SeqFeature;
 
+*tag_value = \&get_tag_values;
+
 =head2 get_tag_values()
   
   Title  : get_tag_values
