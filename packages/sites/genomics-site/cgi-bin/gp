@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+
+# balloon popups - reads gbrowse feature files 
+
+use strict;
+use warnings;
+use lib $ENV{GUS_HOME};
+use CGI qw(param header);
+
+my $f = param('f');
+
+return unless $f;
+
+my $root = $ENV{DOCUMENT_ROOT};
+open(F, "$root/gbrowse2/tmp/$f");
+
+my $html = "<table border=0>";
+
+while(<F>) {
+  my ($h, $c) = split /\t/, $_;
+	$html.= "<tr><td>$h</td><td>$c</td></tr>";
+}
+$html .= "</table>";
+close F;
+print header;
+print $html;
