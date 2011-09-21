@@ -1780,7 +1780,23 @@ FROM (
 GROUP by ens.source_id, sp.piece_na_sequence_id, sp.virtual_na_sequence_id,sp.sequence_order,
        ens.length, vs.length, sp.strand_orientation, distance_from_left,start_position,end_position)
 ORDER by offset) 
-where offset < $rend and (offset+length) > $base_start
+WHERE offset < $rend and (offset+length) > $base_start
+UNION
+SELECT 'g.' || $srcfeature_id as feature_id,
+       'contig' type,
+       'GenBank' source,
+       'Gap' name,
+     '.' score,
+      0 phase,
+      0 as parent_id,
+      (distance_from_left + 1) as startm,
+      (distance_from_left + end_position - start_position + 1) as end,
+      '0' strand,
+      'Length=' || (end_position - start_position+ 1) || '$dlm' || 'Type=fgap' as atts
+FROM DOTS.sequencepiece
+where virtual_na_sequence_id = $srcfeature_id
+and strand_orientation is null
+and distance_from_left < $rend and (distance_from_left+end_position-start_position+1) > $base_start
 ]]>
     </sql>
   </sqlQuery>
@@ -4935,7 +4951,31 @@ WHERE  fl.na_feature_id = sg.na_feature_id
 ]]>
     </sql>
   </sqlQuery>
-  
+
+
+  <sqlQuery name="contig:Genbank:bulksubfeatures" excludeProjects="PlasmoDB,ToxoDB,TrichDB">
+     <sql>
+<![CDATA[
+SELECT 'g.' || piece_na_sequence_id as feature_id, 
+       'gap' type,
+       'GenBank' source,
+        ens.source_id as name,
+       'g.' || vs.na_sequence_id parent_id,
+      (distance_from_left + 1) as startm,
+      (distance_from_left + end_position - start_position + 1) as end,
+       '0' as strand,
+       'Type=sgap' as atts
+FROM   dots.VirtualSequence vs, dots.SequencePiece sp,
+     dots.NaSequence ens
+ WHERE vs.na_sequence_id = $srcfeature_id 
+  and vs.na_sequence_id = sp.virtual_na_sequence_id
+  and ens.na_sequence_id = sp.piece_na_sequence_id
+  and strand_orientation is null
+  and distance_from_left < $rend and (distance_from_left+end_position-start_position+1) > $base_start
+]]>
+    </sql>
+  </sqlQuery>
+
   
   <sqlQuery name="gene:AlternateModels:bulksubfeatures">
      <sql>
