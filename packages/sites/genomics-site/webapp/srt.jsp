@@ -93,7 +93,7 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
   </form>
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
-<c:if test="${wdkModel.name ne 'TrichDB' || wdkModel.name ne 'EuPathDB'}">
+<c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
 
   <hr>
 <h3><a name="msa">Retrieve Multiple Sequence Alignments by Contig / Genomic Sequence IDs</a></h3>
