@@ -366,6 +366,45 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
   <wdk:wdkTable tblName="GoTerms" isOpen="true"
                attribution="GO,InterproscanData,G.lamblia_contigs"/>
 
+
+<!-- Molecular weight -->
+
+<c:set var="mw" value="${attrs['molecular_weight'].value}"/>
+<c:set var="min_mw" value="${attrs['min_molecular_weight'].value}"/>
+<c:set var="max_mw" value="${attrs['max_molecular_weight'].value}"/>
+
+ <c:choose>
+  <c:when test="${min_mw != null && max_mw != null && min_mw != max_mw}">
+   <site:panel 
+      displayName="Molecular Weight"
+      content="${min_mw} to ${max_mw} Da" />
+    </c:when>
+    <c:otherwise>
+   <site:panel 
+      displayName="Molecular Weight"
+      content="${mw} Da" />
+    </c:otherwise>
+  </c:choose>
+
+<!-- Isoelectric Point -->
+<c:set var="ip" value="${attrs['isoelectric_point']}"/>
+
+        <c:choose>
+            <c:when test="${ip.value != null}">
+             <site:panel 
+                displayName="${ip.displayName}"
+                 content="${ip.value}" />
+            </c:when>
+            <c:otherwise>
+             <site:panel 
+                displayName="${ip.displayName}"
+                 content="N/A" />
+            </c:otherwise>
+        </c:choose>
+
+
+
+
 <%-- EPITOPES ------------------------------------------------------%>
   <wdk:wdkTable tblName="Epitopes" isOpen="true"
                  attribution="IEDB_Epitopes"/>
