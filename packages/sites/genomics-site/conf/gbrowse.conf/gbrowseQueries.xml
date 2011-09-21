@@ -1768,7 +1768,8 @@ SELECT 's.' || piece_na_sequence_id as feature_id,
       'Orientation=' || strand_orientation atts
 FROM (
 (SELECT ens.source_id, sp.piece_na_sequence_id,sp.virtual_na_sequence_id, sp.sequence_order,
-       ens.length, vs.length as chr_length, sp.strand_orientation,
+       (sp.end_position - sp.start_position+ 1) as length,
+       vs.length as chr_length, sp.strand_orientation,
        distance_from_left as offset,sp.start_position, sp.end_position
  FROM dots.VirtualSequence vs, dots.SequencePiece sp,
      dots.NaSequence ens --dots.ExternalNaSequence ens
