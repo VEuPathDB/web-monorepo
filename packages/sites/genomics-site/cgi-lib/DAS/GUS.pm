@@ -94,9 +94,14 @@ sub new {
   my $password  = $arg{-pass};
   my $sqlfile   = $arg{-sqlfile};
   my $docroot   = $arg{-docroot};
+
+  $self->{db_args}->{dsn}      = $dsn;
+  $self->{db_args}->{username} = $username;
+  $self->{db_args}->{password} = $password;
+
   my $dbh = DBI->connect( $dsn, $username, $password )
       or $self->throw("unable to open db handle");
-  
+
   # solve oracle clob problem
   $dbh->{LongTruncOk} = 0;
   $dbh->{LongReadLen} = 10000000;
@@ -328,7 +333,6 @@ sub get_feature_by_name {
     $sth = $self->dbh->prepare($query);
 
     $self->{queryLogger}->execute($sth, $query, "GUS.pm", "get_feature_by_name");
-#    $sth->execute();
 
     while(my $hashref = $sth->fetchrow_hashref) {
       $seg_name = $$hashref{'CTG_NAME'};
@@ -365,6 +369,63 @@ sub default_class { return 'Sequence' }
 sub aggregators { return }
 
 sub absolute { return }
+
+sub reconnect {
+  my $self = shift;
+  my $dsn  = $self->{db_args}->{dsn};
+  my $user = $self->{db_args}->{username};
+  my $pass = $self->{db_args}->{password};
+
+  my $new_dbh = DBI->connect($dsn,$user,$pass) or $self->throw($DBI::errstr);
+  $self->{dbh} = $new_dbh;
+
+}
+
+sub clone {
+    my $self = shift;
+  # my $dsn  = $self->{db_args}->{dsn};
+  # my $user = $self->{db_args}->{username};
+  # my $pass = $self->{db_args}->{password};
+
+  # $self->{dbh}->{InactiveDestroy} = 1;
+  # my $new_dbh = DBI->connect($dsn,$user,$pass) or $self->throw($DBI::errstr);
+  # $new_dbh->{InactiveDestroy} = 1;
+  # $self->{dbh} = $new_dbh unless $self->is_temp;
+
+  $self->{dbh}{InactiveDestroy} = 1;
+  $self->{dbh} = $self->{dbh}->clone();
+}
+
+sub DESTROY {
+  my $self = shift;
+  $self->dbh->disconnect;
+  return;
+} 
+
+sub get_seq_stream {
+   my $self = shift;
+
+   my ($type,$types,$callback,$attributes,$iterator,$feature_id,$seq_id,$start,$end) = 
+            $self->_rearrange([qw(TYPE TYPES CALLBACK ATTRIBUTES ITERATOR FEATURE_ID SEQ_ID START END)], @_); 
+
+  my $seg = $self->segment(-name    => $seq_id,
+                           -factory => $self,
+                           -start   => $start,
+                           -stop    => $end );
+
+  my @features = $seg->features(-type       => $type,
+                                -attributes => $attributes,
+                                -callback   => $callback,
+                                -iterator   => $iterator,
+                                -factory    => $self,
+                                -feature_id =>$feature_id,
+                                -seq_id     =>$seq_id,
+                                -start      =>$start,
+                                -end        =>$end,
+                              );
+
+  return DAS::GUSIterator->new(\@features);
+}
 
 package DAS::GUSIterator;
 
