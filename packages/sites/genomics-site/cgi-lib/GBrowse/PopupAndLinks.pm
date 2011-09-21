@@ -536,7 +536,7 @@ sub contigTitle {
   push @data, [ 'Length:'  => $length ];
   push @data, [ 'Orientation:' => "$orient" ]; 
   push @data, [ 'Location:' => "$start..$stop" ];
-  hover('Sequence Piece', \@data);
+  hover('Scaffold/Contig', \@data);
   }
 
 

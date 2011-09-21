@@ -852,6 +852,7 @@ sub changeType {
   my $f = shift;
   my ($type) = $f->get_tag_values("Type");
   return "arrow" if($type eq 'scaffold');
+  return "arrow" if($type eq 'contig');
   return "segments";
 }
 
