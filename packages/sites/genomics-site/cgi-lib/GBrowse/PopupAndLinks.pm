@@ -528,17 +528,34 @@ sub contigTitle {
   my $loc  = $f->location->to_FTstring;
   my $orient   = $f->strand eq '-1' ? "reverse" : "forward";
   my ($length) = $f->get_tag_values("Length");
-  my ($type) = $f->get_tag_values("Type");
+  my ($term) = $f->get_tag_values("PieceTerm");
+  $term = 'scaffold' if ($term eq 'supercontig');
+  my ($start_position) = $f->get_tag_values("Start");
+  my ($end_position) = $f->get_tag_values("End");
   my $start = $f->start;
   my $stop = $f->stop;
   my @data;
-  push @data, [ 'Name:'    => $name ]; 
-  push @data, [ 'Length:'  => $length ];
-  push @data, [ 'Orientation:' => "$orient" ]; 
-  push @data, [ 'Location:' => "$start..$stop" ];
-  hover('Scaffold/Contig', \@data);
-  }
 
+  if ($term eq 'contig'){
+    push @data, [ 'Contig:' => $name ];
+    push @data, [ 'Length:' => $length ];
+    push @data, [ 'Orientation:' => "$orient" ];
+    push @data, [ 'Contig location:' => "$start_position..$end_position" ];
+    push @data, [ 'Reference  Location:' => "$start..$stop" ];
+    hover('Contig', \@data);
+  } elsif ($term eq 'scaffold'){
+    push @data, [ 'Scaffold:' => $name ];
+    push @data, [ 'Length:'  => $length ];
+    push @data, [ 'Orientation:' => "$orient" ];
+    push @data, [ 'Scaffold location:' => "$start_position..$end_position" ];
+    push @data, [ 'Reference Location:' => "$start..$stop" ];
+    hover('Scaffold', \@data);
+  } else { # for 'gap'
+    push @data, [ 'Length:'  => $length ];
+    push @data, [ 'Reference Location:' => "$start..$stop" ];
+    hover('Gap', \@data);
+  }
+}
 
 sub scaffoldTitle { 
   my $f = shift;
