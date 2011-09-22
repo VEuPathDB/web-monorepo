@@ -485,20 +485,24 @@ Genome sequence data were produced by JCVI as part of the <a href="https://sites
     </c:set>
     </c:when>
 
-  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'ATCC 50803')}">
+  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'isolate WB') && externalDbName eq 'GintAssemA_chromosome_virtual_genome_RSRC' }"> 
      <c:set var="reference">
-<b>Genomic minimalism in the early diverging intestinal parasite <i>Giardia lamblia</i>. </b>
-Hilary G. Morrison, Andrew G. McArthur, Frances D. Gillin, Stephen B. Aley, Rodney D. Adam, Gary J. Olsen, Aaron A. Best, W. Zacheus Cande, Feng Chen, Michael J. Cipriano, Barbara J. Davids, Scott C. Dawson, Heidi G. Elmendorf, Adrian B. Hehl, Mic
-hael E. Holder, Susan M. Huse, Ulandt U. Kim, Erica Lasek-Nesselquist, Gerard Manning, Anuranjini Nigam, Julie E. J. Nixon, Daniel Palm, Nora E. Passamaneck, Anjali Prabhu, Claudia I. Reich, David S. Reiner, John Samuelson, Staffan G. Svard, and M
-itchell L. Sogin.  <font color="blue">Science 28 September 2007, Volume 317, pp. 1921-1926.</font>
+<b>Optical map of the Genotype A1 WB C6 <i>Giardia lamblia</i> genome isolate</b>. Alexander D Perry, BS; Hilary G Morrison, Ph.D.; Rodney D Adam, MD (Submitted to Molecular and Biochemical Parasitology).
+<br><br><i>G. lamblia</i> contig sequence and annotation from Genbank (version: 2007-09-24)
+<br><br><i>G. lamblia</i> sequence, assembly, annotation from Mitchell Sogin (MBL).<br><b>Genomic minimalism in the early diverging intestinal parasite <i>Giardia lamblia</i>. </b> Hilary G. Morrison <i>et al</i> <a href="http://www.sciencemag.org/content/317/5846/1921.full">Science 28 September 2007, Volume 317, pp. 1921-1926.</a>
+     </c:set>
+  </c:when>
+  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'isolate WB')}"> 
+     <c:set var="reference">
+G. lamblia sequence, assembly, annotation from Mitchell Sogin (MBL).<br><b>Genomic minimalism in the early diverging intestinal parasite <i>Giardia lamblia</i>. </b> Hilary G. Morrison <i>et al</i> <a href="http://www.sciencemag.org/content/317/5846/1921.full">Science 28 September 2007, Volume 317, pp. 1921-1926.</a>
     </c:set>
   </c:when>
-  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'ATCC 50581')}"> 
+  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'isolate GS')}"> 
      <c:set var="reference">
 <b>Draft Genome Sequencing of <i>Giardia intestinalis</i> Assemblage B Isolate GS: Is Human Giardiasis Caused by Two Different Species ?</b>  Franzen O, Jerlstrom-Hultqvist J, Castro E, Sherwood E, Ankarklev J, Reiner DS, Palm D, Andersson JO, Andersson B, Svard SG. http://www.ncbi.nlm.nih.gov/pubmed/19696920
      </c:set>
   </c:when>
-  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'P15')}"> 
+  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'isolate P15')}"> 
      <c:set var="reference">
 Sequence and annotation of <i>Giardia</i> Assemblage E isolate P15 was provided by J. Jerlstrom-Hultqvist. O. Franzen, E.Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Karolinska Institutet, Stockholm, Sweden and Uppsala University, Uppsala, Sweden).  The genome sequence and annotation was provided to GiardiaDB prepublication and is expected to be published in a peer-reviewed journal as soon as possible. Permission should be obtained from the authors before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
      </c:set>
