@@ -1763,22 +1763,25 @@ SELECT 's.' || piece_na_sequence_id as feature_id,
       (offset + end_position - start_position + 1) as end,
       decode(strand_orientation, '+', '+1', '-', '-1', '', '+1', '0') strand,
       'Length=' || length || '$dlm' ||
-      'Type=contig' || '$dlm' ||
       'Note=' || source_id || '$dlm' ||
+      'PieceTerm=' || term_name || '$dlm' ||
+      'Start=' || start_position || '$dlm' ||
+      'End=' || end_position || '$dlm' ||
       'Orientation=' || strand_orientation atts
 FROM (
 (SELECT ens.source_id, sp.piece_na_sequence_id,sp.virtual_na_sequence_id, sp.sequence_order,
-       (sp.end_position - sp.start_position+ 1) as length,
+       (sp.end_position - sp.start_position + 1) as length, sp.end_position, sp.start_position,
        vs.length as chr_length, sp.strand_orientation,
-       distance_from_left as offset,sp.start_position, sp.end_position
- FROM dots.VirtualSequence vs, dots.SequencePiece sp,
+       distance_from_left as offset,so.term_name
+ FROM dots.VirtualSequence vs, dots.SequencePiece sp, SRes.sequenceontology so,
      dots.NaSequence ens --dots.ExternalNaSequence ens
  WHERE vs.na_sequence_id = $srcfeature_id 
-  and vs.na_sequence_id = sp.virtual_na_sequence_id
-  and ens.na_sequence_id = sp.piece_na_sequence_id
-  and strand_orientation is not null
+  AND vs.na_sequence_id = sp.virtual_na_sequence_id
+  AND ens.na_sequence_id = sp.piece_na_sequence_id
+  AND strand_orientation is not null
+  AND so.sequence_ontology_id = ens.sequence_ontology_id
 GROUP by ens.source_id, sp.piece_na_sequence_id, sp.virtual_na_sequence_id,sp.sequence_order,
-       ens.length, vs.length, sp.strand_orientation, distance_from_left,start_position,end_position)
+       ens.length, vs.length, sp.strand_orientation, distance_from_left,start_position,end_position,so.term_name)
 ORDER by offset) 
 WHERE offset < $rend and (offset+length) > $base_start
 UNION
