@@ -1,6 +1,8 @@
-function exportBasket(rcName) {
+function exportBasket() {
+    var recordClass = getCurrentBasketWrapper().attr("recordclass");
+    
     var targetProject = $("#export-basket #to-project").val();
-    var url = "exportBasket.do?target=" + targetProject + "&recordClass=" + rcName;
+    var url = "exportBasket.do?target=" + targetProject + "&recordClass=" + recordClass;
     $.ajax({
         url: url,
         type: "get",

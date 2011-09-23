@@ -6,17 +6,11 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- get the current record class --%>
-<c:set var="wdkStep" value="${requestScope.wdkStep}" />
-<c:if test="${wdkStep == null}">
-  <c:set var="baskets" value="${requestScope.baskets}" />
-  <c:set var="wdkStep" value="${baskets[0]}" />
-</c:if>
-<c:set var="recordClass" value="${wdkStep.answerValue.recordClass}" />
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
 <%-- export basket --%>
 <div id="export-basket">
-  Export ${recordClass.type} basket to:
+  Export basket to:
   <select id="to-project">
     <c:choose>
       <c:when test="${projectId == 'EuPathDB'}">
@@ -34,6 +28,6 @@
       </c:otherwise>
     </c:choose>
   </select>
-  <input type="button" value="Export" onclick="exportBasket('${recordClass.fullName}')" />
+  <input type="button" value="Export" onclick="exportBasket()" />
 </div>
 
