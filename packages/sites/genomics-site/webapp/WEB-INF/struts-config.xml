@@ -242,6 +242,7 @@
       scope="request"
       input="/showSummary.do">
       <forward name="pq_show_summary" path="/showSummary.do"/>
+      <forward name="pq_show_basket" path="/showBasket.do"/>
     </action>  
     <action
       path="/showRecord"
