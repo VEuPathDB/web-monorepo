@@ -17,12 +17,42 @@
                 </tr>
 
                 
+<c:choose>
+<c:when test="${fn:containsIgnoreCase(modelName,'eupath')||fn:containsIgnoreCase(modelName,'toxo') }">
                 <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="InternalSnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="A Am C P T Tt"/>
                 </tr>
+</c:when>
+<c:when test="${fn:containsIgnoreCase(modelName,'tritryp')||fn:containsIgnoreCase(modelName,'amoeba') }">
                 <tr>
-                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByLocation" linktext="Genomic Location" existsOn="A C P T"/>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="HtsSnpsByGeneId" linktext="Gene ID" existsOn="A Am C P T Tt"/>
                 </tr>
+</c:when>
+<c:otherwise>
+                <tr>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="A Am C P T Tt"/>
+                </tr>
+</c:otherwise>
+</c:choose>
+
+<c:choose>
+<c:when test="${fn:containsIgnoreCase(modelName,'eupath')||fn:containsIgnoreCase(modelName,'toxo') }">
+                <tr>
+                    <site:queryGridMakeUrl qset="InternalSnpQuestions" qname="SnpsByLocation" linktext="Genomic Location" existsOn="A Am C P T Tt"/>
+                </tr>
+</c:when>
+<c:when test="${fn:containsIgnoreCase(modelName,'tritryp')||fn:containsIgnoreCase(modelName,'amoeba') }">
+                <tr>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="HtsSnpsByLocation" linktext="Genomic Location" existsOn="A Am C P T Tt"/>
+                </tr>
+</c:when>
+<c:otherwise>
+                <tr>
+                    <site:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByLocation" linktext="Genomic Location" existsOn="A Am C P T Tt"/>
+                </tr>
+</c:otherwise>
+</c:choose>
+
             </table>
         </td>
 
