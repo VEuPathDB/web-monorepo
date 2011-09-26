@@ -88,7 +88,7 @@
               <div><span class="caption">${organism.displayName}</span>: ${organism.value}</div>
               <div><span class="caption">${contact.displayName}</span>: ${contact.value}</div>
               <div><span class="caption">${institution.displayName}</span>: ${institution.value}</div>
-              <div><span class="caption">${publicUrl.displayName}</span>: <a href="${publicUr.value}">${publicUrl.value}</a></div>
+              <div><span class="caption">${publicUrl.displayName}</span>: <a href="${publicUrl.value}">${publicUrl.value}</a></div>
               <p class="description">${description.value}</p>
             </div>
           
