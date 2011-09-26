@@ -487,7 +487,7 @@ Genome sequence data were produced by JCVI as part of the <a href="https://sites
 
   <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'isolate WB') && externalDbName eq 'GintAssemA_chromosome_virtual_genome_RSRC' }"> 
      <c:set var="reference">
-<b>Optical map of the Genotype A1 WB C6 <i>Giardia lamblia</i> genome isolate</b>. Alexander D Perry, BS; Hilary G Morrison, Ph.D.; Rodney D Adam, MD (Submitted to Molecular and Biochemical Parasitology).
+<b>Optical map of the Genotype A1 WB C6 <i>Giardia lamblia</i> genome isolate</b>. Alexander D Perry, Hilary G Morrison,Rodney D Adam. (Submitted to Molecular and Biochemical Parasitology).
 <br><br><i>G. lamblia</i> contig sequence and annotation from Genbank (version: 2007-09-24)
 <br><br><i>G. lamblia</i> sequence, assembly, annotation from Mitchell Sogin (MBL).<br><b>Genomic minimalism in the early diverging intestinal parasite <i>Giardia lamblia</i>. </b> Hilary G. Morrison <i>et al</i> <a href="http://www.ncbi.nlm.nih.gov/pubmed/17901334">Science 28 September 2007, Volume 317, pp. 1921-1926.</a>
      </c:set>
