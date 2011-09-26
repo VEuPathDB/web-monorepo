@@ -1934,6 +1934,7 @@ SELECT 's.' || piece_na_sequence_id as feature_id,
       (offset + 1) as startm,
       (offset + end_position - start_position + 1) as end,
       decode(strand_orientation, '+', '+1', '-', '-1', '', '+1', '0') strand,
+      'Type=scaffold' || '$dlm' ||
       'Length=' || length || '$dlm' ||
       'Note=' || source_id || '$dlm' ||
       'PieceTerm=' || term_name || '$dlm' ||
