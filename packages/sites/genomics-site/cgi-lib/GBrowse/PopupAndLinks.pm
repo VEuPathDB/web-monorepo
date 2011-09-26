@@ -541,14 +541,14 @@ sub contigTitle {
     push @data, [ 'Length:' => $length ];
     push @data, [ 'Orientation:' => "$orient" ];
     push @data, [ 'Contig location:' => "$start_position..$end_position" ];
-    push @data, [ 'Reference  Location:' => "$start..$stop" ];
+    push @data, [ 'Location on scaffold:' => "$start..$stop" ];
     hover('Contig', \@data);
   } elsif ($term eq 'scaffold'){
     push @data, [ 'Scaffold:' => $name ];
     push @data, [ 'Length:'  => $length ];
     push @data, [ 'Orientation:' => "$orient" ];
     push @data, [ 'Scaffold location:' => "$start_position..$end_position" ];
-    push @data, [ 'Reference Location:' => "$start..$stop" ];
+    push @data, [ 'Location on chromosome:' => "$start..$stop" ];
     hover('Scaffold', \@data);
   } else { # for 'gap'
     push @data, [ 'Length:'  => $length ];
