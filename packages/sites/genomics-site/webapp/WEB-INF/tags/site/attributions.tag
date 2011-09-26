@@ -38,8 +38,10 @@ display the attributions.
     </c:choose>
     <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
     <c:set var="attributionKey" value="${attributionKey}${attribution}" />
-    <c:set var="attributionDisplay" value="${attributionDisplay}${dsRecord.attributesMap['resource']}" />
+
 </c:forEach>
+
+
 <c:if test="${hasItem}">
     <div><b>${caption}:</b></div>
     <div>
@@ -50,9 +52,12 @@ display the attributions.
                         <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=Query#" />
                     </c:set>
                     <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+
+                    <c:if test="${dsRecord.attributesMap['category'] ne 'ignore'}">
                     <a href="${dataSourceUrl}${attribution}">
                         ${dsRecord.attributesMap['resource']}
                     </a>
+                    </c:if>
                 </li>
             </c:forEach>
         </ul>
