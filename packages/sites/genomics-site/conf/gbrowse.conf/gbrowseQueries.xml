@@ -1090,6 +1090,31 @@ WHERE  edr.external_database_id = ed.external_database_id
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="NextGenSeq:coverageLogGB2"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
+     <sql>
+       <![CDATA[
+SELECT name || '_' ||  sample as feature_id,
+	'NextGenSeq'  as type, 
+	'coverageLogGB2'     as source,
+	$base_start  as startm,
+	$rend        as end,
+	'name=Pf_RNASeq_Stunnenberg_RSRC' || '$dlm' ||
+	'sample=' || sample as atts
+FROM
+(
+        SELECT 'Hour5' as sample FROM dual
+  UNION SELECT 'Hour10' as sample FROM dual
+  UNION SELECT 'Hour15' as sample FROM dual
+  UNION SELECT 'Hour20' as sample FROM dual
+  UNION SELECT 'Hour25' as sample FROM dual
+  UNION SELECT 'Hour30' as sample FROM dual
+  UNION SELECT 'Hour35' as sample FROM dual
+  UNION SELECT 'Hour40' as sample FROM dual
+) x,
+(SELECT 'Pf_RNASeq_Stunnenberg_RSRC' as name FROM dual) y
+       ]]>
+    </sql>
+  </sqlQuery>
 
   <sqlQuery name="NextGenSeq:strandCoverageLog">
      <sql>
@@ -6515,6 +6540,34 @@ GROUP BY interval
          AND csc.mapping_start + 1 <= $rend
          AND csc.mapping_end >= $base_start - 1)
        GROUP BY start_interval,end_interval,sample,strand,multiple
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="NextGenSeq:coverageLogGB2:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
+     <sql>
+<![CDATA[
+     SELECT start_interval feature_id,
+             'NextGenSeq' type,
+             'coverageLogGB2' source,
+              decode(multiple, 1, -1, 1)*abs(log(2,max(coverage))) score, 
+             name || '_' || sample parent_id,
+             start_interval * (($rend - $base_start + 1) / 800) startm,
+             end_interval * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
+    FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
+                 csc.coverage, csc.sample,ed.name, csc.multiple
+       FROM  apidb.NextGenSeqCoverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = 'Pf_RNASeq_Stunnenberg_RSRC'
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.mapping_start + 1 <= $rend
+         AND csc.mapping_end >= $base_start - 1)
+       GROUP BY start_interval,end_interval,sample,multiple, name
 ]]>
     </sql>
   </sqlQuery>
