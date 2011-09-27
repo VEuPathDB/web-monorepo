@@ -8,7 +8,9 @@
 <%-- get the current record class --%>
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
+
 <%-- export basket --%>
+<%-- disable basket exporting for build-12
 <div id="export-basket">
   Export basket to:
   <select id="to-project">
@@ -30,4 +32,4 @@
   </select>
   <input type="button" value="Export" onclick="exportBasket()" />
 </div>
-
+--%>
