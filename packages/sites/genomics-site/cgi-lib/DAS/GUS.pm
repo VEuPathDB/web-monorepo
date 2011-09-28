@@ -405,8 +405,8 @@ sub DESTROY {
 sub get_seq_stream {
    my $self = shift;
 
-   my ($type,$types,$callback,$attributes,$iterator,$feature_id,$seq_id,$start,$end) = 
-            $self->_rearrange([qw(TYPE TYPES CALLBACK ATTRIBUTES ITERATOR FEATURE_ID SEQ_ID START END)], @_); 
+   my ($type,$types,$callback,$attributes,$iterator,$feature_id,$seq_id,$start,$end,$sqlName,$sqlParam) = 
+            $self->_rearrange([qw(TYPE TYPES CALLBACK ATTRIBUTES ITERATOR FEATURE_ID SEQ_ID START END SQLNAME SQLPARAM)], @_); 
 
   my $seg = $self->segment(-name    => $seq_id,
                            -factory => $self,
@@ -422,6 +422,8 @@ sub get_seq_stream {
                                 -seq_id     =>$seq_id,
                                 -start      =>$start,
                                 -end        =>$end,
+                                -sqlName    => $sqlName,
+                                -sqlParam   => $sqlParam,
                               );
 
   return DAS::GUSIterator->new(\@features);
