@@ -131,6 +131,33 @@ sub synGeneTitle {
   hover("Syntenic Gene: $name", \@data);
 }
 
+sub synGeneTitleGB2 {
+  my $f = shift;
+  my $name = $f->name;
+  my $chr = $f->seq_id;
+  my $loc = $f->location->to_FTstring;
+  my ($desc) = $f->get_tag_values("Note");
+  my ($taxon) = $f->get_tag_values("Taxon");
+  my ($isPseudo) = $f->get_tag_values("IsPseudo");
+  my ($contig) = $f->get_tag_values("Contig");
+  my ($soTerm) = $f->get_tag_values("SOTerm");
+  my ($trunc) = $f->get_tag_values("Truncated");
+  my ($isrev) = $f->get_tag_values("isReversed");
+  my ($start) = $f->get_tag_values("Start");
+  my ($end) = $f->get_tag_values("End");
+  $soTerm =~ s/\_/ /g;
+  $soTerm =~ s/\b(\w)/\U$1/g;
+  $trunc =  " (truncated by syntenic region to $trunc)" if $trunc;
+  open (F, ">$ENV{DOCUMENT_ROOT}/gbrowse2/tmp/$f");
+  print F "Species\t$taxon\n";
+  print F "Name\t$name\n";
+  print F "Gene Type\t$soTerm\n";
+  print F "Description\t$desc\n";
+  print F "Location\t$contig: $start - $end $trunc";
+  close F; 
+  return "url:/cgi-bin/gp?f=$f"; 
+}
+
 sub synSpanTitle {
   my ($f) = @_;
   my $name = $f->name;
@@ -392,6 +419,44 @@ sub geneTitle {
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
   return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo', '$utr'))"};
+} 
+
+sub geneTitleGB2 {
+  my $f = shift;
+  my $projectId = $ENV{PROJECT_ID};
+  my $sourceId = $f->name;
+  my $chr = $f->seq_id;
+  my @utrs = $f->sub_SeqFeature("UTR");
+  my $utr = '';
+  foreach (@utrs) {
+    next if $_->type !~ /utr/i;
+    $utr .= $_->location->to_FTstring. " ";
+  }
+  my $loc = $f->location->to_FTstring;
+  my ($soTerm) = $f->get_tag_values("soTerm");
+  my ($product) = $f->get_tag_values("product");
+  my ($taxon) = $f->get_tag_values("taxon");
+  my ($isPseudo) = $f->get_tag_values("isPseudo");
+  $soTerm =~ s/\_/ /g;
+  $soTerm =~ s/\b(\w)/\U$1/g;
+  $soTerm .= " (pseudogene)" if $isPseudo == '1';
+
+  my $ignore_gene_alias = 0;
+  $ignore_gene_alias = 1 if ($projectId == 'ToxoDB');
+
+   my $cdsLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>CDS</a>"; 
+   my $proteinLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>protein</a>";
+
+  open F, ">$ENV{DOCUMENT_ROOT}/gbrowse2/tmp/$f";
+  print F "Species\t$taxon\n";
+  print F "ID\t$sourceId\n";
+  print F "Gene Type\t$soTerm\n";
+  print F "Description\t$product\n";
+  print F "Location\t$loc\n";
+  print F "UTR\t$utr\n" if $utr;
+  print F "Download\t$cdsLink | $proteinLink"; 
+  close F;
+  return "url:/cgi-bin/gp?f=$f";
 } 
 
 sub spliceSiteCuratedTitle {
