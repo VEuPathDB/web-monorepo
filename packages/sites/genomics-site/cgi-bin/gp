@@ -7,12 +7,17 @@ use warnings;
 use lib $ENV{GUS_HOME};
 use CGI qw(param header);
 
-my $f = param('f');
+my $f = param('f');  # feature full name e.g. gene:annotation(PF11_0240)
+my $t = param('t');  # feature type e.g. gene:annotation
+my $n = param('n');  # feature name e.g. PF11_0240
 
-return unless $f;
+#return unless $f;
 
 my $root = $ENV{DOCUMENT_ROOT};
-open(F, "$root/gbrowse2/tmp/$f");
+open(F, "$root/gbrowse2/tmp/$f") if $f;
+open(F, "$root/gbrowse2/tmp/$t/$n") if ($t && $n);
+
+exit unless ($f || ($t && $n));
 
 my $html = "<table border=0>";
 
