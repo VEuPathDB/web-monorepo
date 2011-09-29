@@ -233,7 +233,7 @@ ${externalLinks}
 
 
  <c:choose>
- <c:when test="${projectId eq 'PiroplasmaDB'}">
+ <c:when test="${projectId eq 'PiroplasmaDB' || projectId eq 'FungiDB'}">
 
     <c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
