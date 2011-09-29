@@ -147,15 +147,13 @@ sub synGeneTitleGB2 {
   my ($end) = $f->get_tag_values("End");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
-  $trunc =  " (truncated by syntenic region to $trunc)" if $trunc;
-  open (F, ">$ENV{DOCUMENT_ROOT}/gbrowse2/tmp/$f");
-  print F "Species\t$taxon\n";
-  print F "Name\t$name\n";
-  print F "Gene Type\t$soTerm\n";
-  print F "Description\t$desc\n";
-  print F "Location\t$contig: $start - $end $trunc";
-  close F; 
-  return "url:/cgi-bin/gp?f=$f"; 
+  my @data;
+  push @data, [ 'Species:' => $taxon ];  
+  push @data, [ 'Name:'  => $name ];
+  push @data, [ 'Gene Type:' => ($isPseudo ? "Pseudogenic " : "") . $soTerm  ];
+  push @data, [ 'Description:' => $desc ];
+  push @data, [ 'Location:'  => "$contig: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "") ];
+  &createPopups($f, \@data); 
 }
 
 sub synSpanTitle {
@@ -447,16 +445,15 @@ sub geneTitleGB2 {
    my $cdsLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>CDS</a>"; 
    my $proteinLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>protein</a>";
 
-  open F, ">$ENV{DOCUMENT_ROOT}/gbrowse2/tmp/$f";
-  print F "Species\t$taxon\n";
-  print F "ID\t$sourceId\n";
-  print F "Gene Type\t$soTerm\n";
-  print F "Description\t$product\n";
-  print F "Location\t$loc\n";
-  print F "UTR\t$utr\n" if $utr;
-  print F "Download\t$cdsLink | $proteinLink"; 
-  close F;
-  return "url:/cgi-bin/gp?f=$f";
+  my @data;
+  push(@data, ['Species:'     => $taxon]);
+  push(@data, ['ID:'          => $sourceId]);
+  push(@data, ['Gene Type:'   => $soTerm]);
+  push(@data, ['Description:' => $product]);
+  push(@data, ['Location:'    => $loc]);
+  push(@data, ['UTR:'         => $utr]) if $utr;
+  push(@data, ['Download:'    => "$cdsLink | $proteinLink"]); 
+  &createPopups($f, \@data);
 } 
 
 sub spliceSiteCuratedTitle {
@@ -939,6 +936,48 @@ sub massSpecUnifiedTitle {
   hover('', \@data) if $count;
 }
 
+sub createPopups {
+  my ($f, $data) = @_;
+
+  my $type = $f->type;
+  my $name = $f->name;
+  my $base = "$ENV{DOCUMENT_ROOT}/gbrowse2/tmp";
+  mkdir "$base/$type", 0777 unless -d "$base/$type";
+  unless(-e "$base/$type/$name") {
+    open F, ">$base/$type/$name";
+    foreach(@$data) {
+      my ($k, $v) = @$_;
+      print F "$k\t$v\n";
+    }
+    close F;
+  }
+  return "url:/cgi-bin/gp?t=$type&n=$name";
+}
+
+sub blastxTitleGB2 {
+  my $f = shift;
+  my $name = $f->name;
+  my $chr = $f->seq_id;
+  my $loc = $f->location->to_FTstring;
+  my ($e) = $f->get_tag_values("Expect");
+  my ($tstart) = $f->get_tag_values('TStart');
+  my ($tstop )= $f->get_tag_values('TStop');
+  my ($pctI) = $f->get_tag_values("PercentIdentity");
+  my ($percent_pos) = $f->get_tag_values("PercentPositive");
+  my ($desc) = $f->get_tag_values("Defline");
+  $desc ||= "<i>unavailable</i>";
+  $desc =~ s/\001.*//;
+  my @data;
+  push @data, [ 'Accession:'   => "gi\|$name" ];
+  push @data, [ 'Score:'       => $f->score ];
+  push @data, [ 'E-Value:'     => $e];
+  push @data, [ 'Location:' => "$tstart - $tstop"]; 
+  push @data, [ 'Identity %:'  => $pctI];
+  push @data, [ 'Percent Positive' => $percent_pos];
+  push @data, [ 'Description:' => $desc ];
+  &createPopups($f, \@data);
+}
+
 sub blastxTitle {
   my $f = shift;
   my $name = $f->name;
@@ -962,6 +1001,7 @@ sub blastxTitle {
   push @data, [ 'Description:' => $desc ];
   hover("BLASTX: gi\|$name", \@data);
 }
+
 
 
 # TODO:  There is a link to a ToxoDB specific Database... is this needed?  can we get this from the sage tag record page?  Want to make the popup as generic as possible so all sites can use
