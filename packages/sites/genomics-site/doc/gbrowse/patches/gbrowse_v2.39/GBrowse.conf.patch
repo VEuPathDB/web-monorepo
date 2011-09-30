@@ -1,0 +1,13 @@
+--- GBrowse.conf.orig	2011-09-30 17:59:42.000000000 -0400
++++ GBrowse.conf	2011-09-30 18:00:32.000000000 -0400
+@@ -234,4 +234,10 @@
+ description   = Population Display Demo
+ path          = pop_demo.conf
+ 
++[plasmodb]
++description   = PlasmoDB GBrowse v2.39
++path          = plasmodb.conf
+ 
++[plasmodbaa]
++description   = PlasmoDB PBrowse v2.39
++path          = plasmodbaa.conf
