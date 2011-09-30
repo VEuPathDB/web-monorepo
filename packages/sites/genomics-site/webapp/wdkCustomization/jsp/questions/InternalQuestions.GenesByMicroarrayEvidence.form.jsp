@@ -19,6 +19,8 @@
 	if this becomes difficult to maintain, we would show acronyms.
 --%>
 
+<c:set var="fungiQuestions" value="GeneQuestions.GenesByMicroarrayTimeSeriesSc" />
+
 <c:set var="amoebaQuestions" value="E.hi.study:Colonization-Invasion and Stage Conversion (Gilchrist),GeneQuestions.GenesByEHistolyticaExpressionTiming" />
 
 <c:set var="giardiaQuestions" value="G.l.study:Stress Response (Hehl),GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,G.l.study:Encystation (Hehl),GeneQuestions.GiardiaGenesByDifferentialExpressionTwo,GeneQuestions.GiardiaGenesByExpressionPercentileProfileTwo,GeneQuestions.GiardiaGenesFoldChangeTwo,G.l.study:Host Parasite Interaction (Svard),GeneQuestions.GenesByRingqvistFoldChange,GeneQuestions.GenesByRingqvistPercentile" />
@@ -52,6 +54,9 @@
     </tr>
 
 <c:choose>
+ <c:when test = "${project == 'FungiDB'}">
+    <site:queryList columns="${columns}" questions="${fungiQuestions}"/>
+  </c:when>
  <c:when test = "${project == 'AmoebaDB'}">
     <site:queryList columns="${columns}" questions="${amoebaQuestions}"/>
   </c:when>
