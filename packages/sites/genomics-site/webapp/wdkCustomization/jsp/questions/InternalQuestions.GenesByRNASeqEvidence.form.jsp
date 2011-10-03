@@ -9,6 +9,8 @@
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
 <%-- QUESTIONS --%>
+<c:set var="fungiQuestions" value="GeneQuestions.GenesByRnaSeqFoldChangeRo,GeneQuestions.GenesByRnaSeqPercentileRo"/>
+
 <c:set var="plasmoQuestions" value="P.f.study:Field Parasites from Pregnant Women and Children (Duffy),GeneQuestions.GenesByRNASeqPfExpressionFoldChange,P.f.study:Post Infection Time Series (Stunnenberg),GeneQuestions.GenesByRNASeqPfRBCFoldChange,GeneQuestions.GenesByRNASeqPfRBCExprnPercentile,P.f.study:Intraerythrocytic infection cycle (Newbold/Llinas),GeneQuestions.GenesByRNASeqExpressionTiming" />
 
 <c:set var="toxoQuestions" value="T.g.study:Expression Percentile,GeneQuestions.GenesByTgVegRNASeqExpressionPercentile" />
@@ -34,6 +36,10 @@
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
   <c:choose>
+
+    <c:when test="${projectId == 'FungiDB'}">
+      <site:queryList columns="${columns}" questions="${fungiQuestions}"/>
+    </c:when>    
     <c:when test="${projectId == 'PlasmoDB'}">
       <site:queryList columns="${columns}" questions="${plasmoQuestions}"/>
     </c:when>    
