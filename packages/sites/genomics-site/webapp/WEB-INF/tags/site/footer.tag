@@ -33,6 +33,19 @@
 
 <%--------------------------------------------%>
 
+<c:if test="${refer == 'home'}" >
+<style type="text/css">
+#footer {
+	min-width: 800px;
+	width:80%;
+	position:relative;
+	left:200px;
+}
+
+</style>
+</c:if>
+
+
 <div id="footer" >
 	<div style="float:left;padding-left:9px;padding-top:9px;">
  	 	<a href="http://${fn:toLowerCase(siteName)}.org">${siteName}</a> ${version}&nbsp;&nbsp;&nbsp;&nbsp;${releaseDate_formatted}
