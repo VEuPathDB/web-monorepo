@@ -36,8 +36,8 @@
 <c:if test="${refer == 'home'}" >
 <style type="text/css">
 #footer {
-	min-width: 800px;
-	width:80%;
+	min-width: 756px;
+	width:75%;
 	position:relative;
 	left:200px;
 }
