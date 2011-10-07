@@ -28,7 +28,7 @@
 <td width="34%" >
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Product Name" existsOn="A C T G P"/>
+      <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByProduct" linktext="Locus Sequence" existsOn="A C T G P"/>
     </tr>
      <tr>
       <site:queryGridMakeUrl qset="IsolateQuestions" qname="IsolateByGenotypeNumber" linktext="RFLP Genotype Number" existsOn="A T"/>
