@@ -11,3 +11,11 @@
 +[plasmodbaa]
 +description   = PlasmoDB PBrowse v2.39
 +path          = plasmodbaa.conf
+
++[toxodb]
++description   = ToxoDB GBrowse v2.39
++path          = toxodb.conf
+ 
++[toxodbaa]
++description   = ToxoDB PBrowse v2.39
++path          = toxodbaa.conf
