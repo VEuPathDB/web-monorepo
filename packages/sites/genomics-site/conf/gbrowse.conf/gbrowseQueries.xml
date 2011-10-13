@@ -6608,7 +6608,7 @@ GROUP BY interval
              c.start_interval * (($rend - $base_start + 1) / 800) startm,
              c.end_interval * (($rend - $base_start + 1) / 800) end,
              'triColor='||CASE WHEN c.sample = $$sample1$$ and c.multiple = 0 THEN 0 WHEN c.multiple = 0 THEN 1 ELSE 2 END atts
-    FROM apidb.nextgenseq_stats s, (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
+    FROM ApidbTuning.NextGenSeqStats s, (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
                  csc.coverage, csc.sample,csc.multiple
        FROM  apidb.NextGenSeqCoverage csc,
