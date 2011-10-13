@@ -1128,12 +1128,12 @@ FROM
      <sql>
        <![CDATA[
 SELECT name || '_' ||  sample as feature_id,
-	'NextGenSeq'  as type, 
-	'$source'     as source,
-	$base_start  as startm,
-	$rend        as end,
-	'name=' || name || '$dlm' ||
-	'sample=' || sample as atts
+       'NextGenSeq'  as type, 
+       '$source'     as source,
+       $base_start  as startm,
+       $rend        as end,
+       'name=' || name || '$dlm' ||
+       'sample=' || sample as atts
 FROM
 (
         SELECT 'Hour5' as sample FROM dual
@@ -1144,6 +1144,13 @@ FROM
   UNION SELECT 'Hour30' as sample FROM dual
   UNION SELECT 'Hour35' as sample FROM dual
   UNION SELECT 'Hour40' as sample FROM dual
+  UNION SELECT 'Hour0' as sample FROM dual
+  UNION SELECT 'Hour8' as sample FROM dual
+  UNION SELECT 'Hour16' as sample FROM dual
+  UNION SELECT 'Hour24' as sample FROM dual
+  UNION SELECT 'Hour32' as sample FROM dual
+--  UNION SELECT 'Hour40' as sample FROM dual
+  UNION SELECT 'Hour48' as sample FROM dual
 ) x,
 (SELECT $$edname$$ as name FROM dual) y
        ]]>
