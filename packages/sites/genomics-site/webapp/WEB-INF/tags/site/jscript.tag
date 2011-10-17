@@ -50,9 +50,6 @@
 <script type="text/javascript" src="/assets/js/dqg.js"></script>
 <script type="text/javascript" src="/assets/js/newitems.js"></script>
 
-<!-- dynamic organism param in portal -->
-<script type="text/javascript" src="<c:url value='/js/Top_menu.js'/>"></script>
-
 <script type="text/javascript" src="/assets/js/popups.js"></script>
 <script type="text/javascript" src="/assets/js/api.js"></script>
 
@@ -70,7 +67,7 @@
 </c:if>
 
 <!-- js for popups in query grid and other.... -->
-<script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>
+<!-- <script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>  -->
 
 <%-- show/hide the tables in the record page --%>
 <script type='text/javascript' src="/assets/js/show_hide_tables.js"></script>
