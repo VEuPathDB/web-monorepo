@@ -564,7 +564,7 @@ ORDER BY
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="gene:syntenyMC" excludeProjects="TrichDB">
+  <sqlQuery name="gene:syntenyMC" excludeProjects="TrichDB,FungiDB">
      <sql>
 <![CDATA[
 with materialized_query as
@@ -671,6 +671,85 @@ WHERE startm <= $rend
 ]]>
     </sql>
   </sqlQuery>
+
+
+  <sqlQuery name="Synteny:syntenyOrg" includeProjects="FungiDB">
+     <sql>
+<![CDATA[
+select * from (
+select
+       gattr.na_feature_id feature_id,
+       'Synteny' type, 
+       '$source' source, 
+       gattr.source_id name, 
+       '.' score, 
+       anch_left.synteny_id parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN fl.end_max > syn.b_end THEN syn.b_end ELSE fl.end_max END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         ELSE anch_left.ref_loc + (((CASE WHEN fl.start_min < syn.b_start THEN syn.b_start ELSE fl.start_min END) - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN fl.start_min < syn.b_start THEN syn.b_start ELSE fl.start_min END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         ELSE anch_left.ref_loc + (((CASE WHEN fl.end_max > syn.b_end THEN syn.b_end ELSE fl.end_max END) - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
+       END end,
+       CASE WHEN (fl.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'Note=' || gattr.product || decode(gattr.is_deprecated,1,' (deprecated)') || '$dlm' ||
+       'SOTerm=' || gattr.so_term_name || '$dlm' ||
+       'SyntenyID=' || syn.synteny_id || '$dlm' ||
+       'Contig=' || gattr.sequence_id || '$dlm' ||
+       'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
+       'isDeprecated=' || gattr.is_deprecated || '$dlm' ||
+       'Start=' || gattr.start_min || '$dlm' ||
+       'End=' || gattr.end_max || '$dlm' ||
+       'isReversed=' || gattr.is_reversed || '$dlm' ||
+       'Truncated=' || CASE WHEN fl.end_max > syn.b_end THEN syn.b_end 
+                           WHEN fl.start_min < syn.b_start THEN syn.b_start 
+                           END || '$dlm' ||
+       'Taxon=' || gattr.organism atts
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidbtuning.geneattributes gattr,
+       apidbtuning.featurelocation fl
+WHERE syn.a_na_sequence_id = $srcfeature_id
+  AND gattr.organism = $$organism$$
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_left.ref_loc != anch_right.ref_loc
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND fl.na_sequence_id = syn.b_na_sequence_id 
+  AND fl.feature_type = 'GeneFeature'
+  AND gattr.na_feature_id = fl.na_feature_id
+  AND (
+       (syn.is_reversed = 0
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
+        AND anch_left.ref_loc + ((fl.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc - 1)>0
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) <= $rend 
+        AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) >= $base_start 
+       )
+  )
+  AND fl.start_min <= syn.b_end
+  AND fl.end_max >= syn.b_start
+) 
+WHERE startm <= $rend
+  AND end >= $base_start
+]]>
+    </sql>
+  </sqlQuery>
+
+
   
 
   <sqlQuery name="gene:syntenyMCGB2" excludeProjects="TrichDB">
@@ -2427,6 +2506,74 @@ WHERE edr.external_database_id = ed.external_database_id
   AND syn.a_na_sequence_id = $srcfeature_id
   AND a.na_sequence_id = syn.a_na_sequence_id
   AND b.na_sequence_id = syn.b_na_sequence_id
+  AND anch_left.synteny_id = syn.synteny_id
+  AND anch_left.prev_ref_loc < $base_start
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc) > 1
+]]>
+    </sql>
+  </sqlQuery>
+
+
+  <sqlQuery name="Synteny:syntenySpanOrg" includeProjects="FungiDB">
+     <sql>
+<![CDATA[
+SELECT
+       syn.synteny_id feature_id,
+       'Synteny' type, 
+       '$source' source, 
+       b.source_id name, 
+       '.' score, 
+       syn.synteny_id parent_id, 
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END startm,
+       CASE WHEN (is_reversed = 1) 
+         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+       END end, 
+       decode(is_reversed, 0, '+1', 1, '-1', '+1') strand,
+       'RefStart=' || syn.a_start || '$dlm' ||
+       'RefEnd=' || syn.a_end || '$dlm' ||
+       'RefContigLength=' || a.length || '$dlm' ||
+       'SynStart=' || syn.b_start || '$dlm' ||
+       'SynEnd=' || syn.b_end || '$dlm' ||
+       'ContigLength=' || b.length || '$dlm' ||
+       'Contig=' || b.source_id || '$dlm' ||
+       'Chromosome=' || b.chromosome || '$dlm' ||
+        (CASE WHEN (b.chromosome is NOT NULL) 
+             THEN (SELECT 'ChrColor=' || rcc.value || '$dlm' 
+                  FROM apidb.rodentChrColors rcc 
+                   WHERE b.chromosome = rcc.chromosome) 
+             ELSE ''
+             END) || 
+       'ExtDBName=' || ed.name || '$dlm' ||
+       'Taxon=' || b.organism ||  '$dlm' ||
+       'Scale=' || 
+       CASE WHEN (is_reversed = 1) 
+         THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
+         ELSE (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) 
+         END atts
+FROM 
+      apidb.synteny syn,
+      apidb.syntenyAnchor anch_left,
+      apidb.syntenyAnchor anch_right,
+      apidb.sequenceattributes a,
+      apidb.sequenceattributes b,
+      sres.externaldatabaserelease edr,
+      sres.externaldatabase ed
+WHERE edr.external_database_id = ed.external_database_id
+  AND syn.external_database_release_id = edr.external_database_release_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND a.na_sequence_id = syn.a_na_sequence_id
+  AND b.na_sequence_id = syn.b_na_sequence_id
+  AND b.organism = $$organism$$
   AND anch_left.synteny_id = syn.synteny_id
   AND anch_left.prev_ref_loc < $base_start
   AND anch_left.ref_loc >= $base_start
@@ -4497,7 +4644,7 @@ ORDER BY g3.mapping_start
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="gene:syntenyMC:attribute:Ortholog" excludeProjects="TrichDB">
+  <sqlQuery name="gene:syntenyMC:attribute:Ortholog" excludeProjects="TrichDB,FungiDB">
     <testParamValues project="ToxoDB">
       <param name="name" value="TGME49_039250"/> 
     </testParamValues>
@@ -4520,6 +4667,19 @@ and not ga2.source_id = ga1.source_id
 ]]>
  </sql>
  </sqlQuery>
+
+  <sqlQuery name="Synteny:syntenyOrg:attribute:Ortholog" includeProjects="FungiDB">
+    <sql>
+<![CDATA[
+select ga2.source_id 
+from apidbtuning.geneattributes ga1, apidbtuning.geneattributes ga2
+where ga1.source_id = '$name'
+and ga1.orthomcl_name = ga2.orthomcl_name
+and not ga2.source_id = ga1.source_id
+]]>
+ </sql>
+ </sqlQuery>
+
 
 
   <sqlQuery name="gene:syntenyMCGB2:attribute:Ortholog" excludeProjects="TrichDB">
@@ -5075,7 +5235,7 @@ WHERE startm <= $rend
   </sqlQuery>
   
   
-  <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="TrichDB">
+  <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="TrichDB,FungiDB">
      <sql>
 <![CDATA[
 WITH materialized_query AS
@@ -5175,7 +5335,70 @@ WHERE startm <= $rend
     </sql>
   </sqlQuery>
   
-  
+  <sqlQuery name="Synteny:syntenyOrg:bulksubfeatures" includeProjects="FungiDB">
+     <sql>
+<![CDATA[
+SELECT 
+* FROM (SELECT
+       exfloc.na_feature_id feature_id,
+       'exon' type, 
+       '$source' source, 
+       exfloc.na_feature_id as name,
+       exfloc.parent_id,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         ELSE anch_left.ref_loc + (((CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END) - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
+       END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+         ELSE anch_left.ref_loc + (((CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END) - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END end,
+       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'isDeprecated=' ||  ga.is_deprecated atts 
+FROM 
+       apidb.synteny syn,
+       apidb.syntenyAnchor anch_left,
+       apidb.syntenyAnchor anch_right,
+       apidbtuning.featurelocation exfloc,
+       apidbtuning.geneattributes ga
+WHERE ga.na_feature_id = exfloc.parent_id
+  AND ga.organism = $$organism$$
+  AND syn.a_na_sequence_id = $srcfeature_id
+  AND syn.a_start <= $rend 
+  AND syn.a_end >= $base_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < $base_start 
+  AND anch_left.ref_loc >= $base_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < $rend
+  AND anch_right.next_ref_loc >= $rend
+  AND anch_left.ref_loc != anch_right.ref_loc
+  AND exfloc.feature_type = 'ExonFeature'
+  AND exfloc.na_sequence_id = syn.b_na_sequence_id 
+  AND (
+       (syn.is_reversed = 0
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
+        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend 
+        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+       ) 
+       OR
+       (syn.is_reversed = 1 
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) <= $rend 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)) >= $base_start
+        )
+  )
+  AND exfloc.start_min <= syn.b_end
+  AND exfloc.end_max >= syn.b_start
+)
+WHERE startm <= $rend
+  AND end >= $base_start
+]]>
+    </sql>
+  </sqlQuery>  
+
+
+
   <sqlQuery name="match:WU_BLASTX:bulksubfeatures">
      <sql>
 <![CDATA[
@@ -5439,7 +5662,7 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="match:syntenySpanMC:bulksubfeatures" excludeProjects="CryptoDB,TrichDB">
+  <sqlQuery name="match:syntenySpanMC:bulksubfeatures" excludeProjects="CryptoDB,TrichDB,FungiDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_TcChr7-S$$"/>
       <param name="rend" value="564285"/>
@@ -5466,6 +5689,62 @@ SELECT /*+ ordered */
         'Type=sgap' atts
 FROM    apidb.synteny syn,
         ApidbTuning.FeatureLocation fl,
+        apidb.syntenyAnchor anch_right,
+        apidb.syntenyAnchor anch_left
+WHERE  syn.a_na_sequence_id = $srcfeature_id
+   AND syn.a_start <= $rend
+   AND syn.a_end >= $base_start
+   AND anch_left.synteny_id = syn.synteny_id
+   AND anch_left.prev_ref_loc < $base_start
+   AND anch_left.ref_loc >= $base_start
+   AND anch_right.synteny_id = syn.synteny_id
+   AND anch_right.ref_loc < $rend
+   AND anch_right.next_ref_loc >= $rend
+   AND fl.na_sequence_id = syn.b_na_sequence_id
+   AND fl.feature_type = 'ScaffoldGapFeature'
+   AND fl.IS_TOP_LEVEL = 1
+   AND (
+    (syn.is_reversed = 0
+  AND (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
+     AND anch_left.ref_loc + ((fl.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= $rend
+     AND anch_left.ref_loc + ((fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= $base_start
+  )
+  OR
+  (syn.is_reversed = 1
+  AND (anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
+  AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) <= $rend
+  AND anch_left.ref_loc + ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1)) >= $base_start
+  )
+  )
+  AND fl.start_min <= syn.b_end
+  AND fl.end_max >= syn.b_start
+)
+]]>
+    </sql>
+  </sqlQuery>
+
+    <sqlQuery name="Synteny:syntenySpanOrg:bulksubfeatures" includeProjects="FungiDB">
+  <sql>
+<![CDATA[
+SELECT * FROM (
+SELECT /*+ ordered */
+       fl.na_feature_id feature_id,
+       'gap' type,
+       'syntenyGap' source,
+       fl.na_feature_id name,
+       anch_left.synteny_id || '_gap' parent_id,
+      CASE WHEN (syn.is_reversed = 1)
+        THEN anch_left.ref_loc - ((anch_left.syntenic_loc - fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+        ELSE anch_left.ref_loc + ((fl.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+        END startm,
+        CASE WHEN (syn.is_reversed = 1)
+        THEN anch_left.ref_loc - ((anch_left.syntenic_loc - fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+        ELSE anch_left.ref_loc + ((fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+        END end,
+        '0' strand,
+        'Type=sgap' atts
+FROM    apidb.synteny syn,
+        apidbtuning.featurelocation fl,
         apidb.syntenyAnchor anch_right,
         apidb.syntenyAnchor anch_left
 WHERE  syn.a_na_sequence_id = $srcfeature_id
