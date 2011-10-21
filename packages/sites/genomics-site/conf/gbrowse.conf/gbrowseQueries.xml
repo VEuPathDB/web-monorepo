@@ -1190,6 +1190,30 @@ FROM
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="NextGenSeq:coverageCombNormGB2"  includeProjects="TriTrypDB,PlasmoDB">
+    <sql>
+       <![CDATA[
+SELECT name || '_' || sample as feature_id,
+       'NextGenSeq'        as type,
+       '$source'          as source,
+       $base_start        as startm,
+       $rend              as end,
+       'name=' || name || '$dlm' || 
+       'sample=' || sample as atts
+FROM ( 
+        SELECT '0' as sample FROM dual
+  UNION SELECT '6' as sample FROM dual
+  UNION SELECT '12' as sample FROM dual
+  UNION SELECT '18' as sample FROM dual
+  UNION SELECT '24' as sample FROM dual
+  UNION SELECT '30' as sample FROM dual
+  UNION SELECT '36' as sample FROM dual
+  ) x,
+  ( SELECT $$edname$$ as name FROM dual ) y
+        ]]>
+        </sql>
+  </sqlQuery>
+
   <sqlQuery name="NextGenSeq:coverageLog"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
        <![CDATA[
@@ -2204,7 +2228,7 @@ ORDER BY
 ]]>
     </sql>
   </sqlQuery>
- -->
+ --> 
   
   <sqlQuery name="Microsatellite:sts" includeProjects="PlasmoDB">
     <testParamValues project="PlasmoDB">
@@ -3932,7 +3956,7 @@ WHERE
 ]]>
     </sql>
   </sqlQuery>
-  
+
   <sqlQuery name="SNP:Broad"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -6880,39 +6904,67 @@ GROUP BY interval
     </sql>
   </sqlQuery>
 
-
-   <sqlQuery name="NextGenSeq:coverageCombNorm:bulksubfeatures"  includeProjects="PlasmoDB">
+  <sqlQuery name="NextGenSeq:coverageCombNorm:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
-<![CDATA[
-     SELECT start_interval feature_id,
-             'NextGenSeq' type,
-             '$source' source,
-              CASE WHEN  multiple = 1 THEN -1 * max(round(c.coverage * s.sum_span_length / 15000000,1)) ELSE max(round(c.coverage * s.sum_span_length / 15000000,1)) END as score, 
-             $$sample1$$ || $$sample2$$ parent_id,
-             c.start_interval * (($rend - $base_start + 1) / 800) startm,
-             c.end_interval * (($rend - $base_start + 1) / 800) end,
-             'triColor='||CASE WHEN c.sample = $$sample1$$ and c.multiple = 0 THEN 0 WHEN c.multiple = 0 THEN 1 ELSE 2 END atts
-    FROM ApidbTuning.NextGenSeqStats s, (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
+    <![CDATA[
+    SELECT start_interval feature_id,
+          'NextGenSeq' type,
+          '$source' source,
+          CASE WHEN  multiple = 1 THEN -1 * max(round(c.coverage * s.sum_span_length / 15000000,1)) ELSE max(round(c.coverage * s.sum_span_length / 15000000,1)) END as score, 
+          $$sample1$$ || $$sample2$$ parent_id,
+          c.start_interval * (($rend - $base_start + 1) / 800) startm,
+          c.end_interval * (($rend - $base_start + 1) / 800) end,
+          'triColor='||CASE WHEN c.sample = $$sample1$$ and c.multiple = 0 THEN 0 WHEN c.multiple = 0 THEN 1 ELSE 2 END atts
+     FROM ApidbTuning.NextGenSeqStats s, 
+         (SELECT ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
                  csc.coverage, csc.sample,csc.multiple
-       FROM  apidb.NextGenSeqCoverage csc,
-             sres.externaldatabaserelease edr,
-             sres.externaldatabase ed
-       WHERE csc.external_database_release_id = edr.external_database_release_id
-         AND edr.external_database_id = ed.external_database_id
-         AND ed.name = $$edname$$ 
-         AND csc.na_sequence_id = $srcfeature_id
-         AND (csc.sample = $$sample1$$
-          OR csc.sample = $$sample2$$)
-         AND csc.mapping_start + 1 <= $rend
-         AND csc.mapping_end >= $base_start - 1) c
-         where c.sample = s.sample
-       GROUP BY c.start_interval,c.end_interval,c.sample,c.multiple,s.sum_span_length
-]]>
-    </sql>
-  </sqlQuery>
+          FROM  apidb.NextGenSeqCoverage csc,
+                sres.externaldatabaserelease edr,
+                sres.externaldatabase ed
+          WHERE csc.external_database_release_id = edr.external_database_release_id
+            AND edr.external_database_id = ed.external_database_id
+            AND ed.name = $$edname$$ 
+            AND csc.na_sequence_id = $srcfeature_id
+            AND (csc.sample = $$sample1$$ OR csc.sample = $$sample2$$)
+            AND csc.mapping_start + 1 <= $rend
+            AND csc.mapping_end >= $base_start - 1) c
+      WHERE c.sample = s.sample
+      GROUP BY c.start_interval,c.end_interval,c.sample,c.multiple,s.sum_span_length
+     ]]>
+     </sql>
+   </sqlQuery>
 
-
+   <sqlQuery name="NextGenSeq:coverageCombNormGB2:bulksubfeatures"  includeProjects="PlasmoDB">
+    <sql>
+    <![CDATA[
+SELECT start_interval feature_id,
+      'NextGenSeq' type,
+      '$source' source,
+      CASE WHEN  multiple = 1 THEN -1 * max(round(c.coverage * s.sum_span_length / 15000000,1)) ELSE max(round(c.coverage * s.sum_span_length / 15000000,1)) END as score,
+      c.name || '_' || c.hpi parent_id,
+      c.start_interval * (($rend - $base_start + 1) / 800) startm,
+      c.end_interval * (($rend - $base_start + 1) / 800) end,
+      'triColor='||CASE WHEN c.sample = 'FAIRE' || c.hpi and c.multiple = 0 THEN 0 WHEN c.multiple = 0 THEN 1 ELSE 2 END atts
+FROM ApidbTuning.NextGenSeqStats s, 
+    (SELECT ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval,
+            ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval,
+            csc.coverage, csc.sample,csc.multiple,ed.name, 
+            regexp_substr(csc.sample, '\d{1,}') as hpi
+      FROM  apidb.NextGenSeqCoverage csc,
+            sres.externaldatabaserelease edr,
+            sres.externaldatabase ed
+      WHERE csc.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = $$edname$$
+        AND csc.na_sequence_id = $srcfeature_id
+        AND csc.mapping_start + 1 <= $rend
+        AND csc.mapping_end >= $base_start - 1) c
+WHERE c.sample = s.sample
+GROUP BY c.start_interval,c.end_interval,c.sample,c.name,c.hpi,c.multiple,s.sum_span_length
+      ]]>
+      </sql>
+   </sqlQuery> 
 
    <sqlQuery name="NextGenSeq:strandCoverageLog:bulksubfeatures">
      <sql>
