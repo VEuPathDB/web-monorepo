@@ -7,8 +7,9 @@
 <%-- header includes menubar and announcements tags --%>
 <%-- refer is used to determine which announcements are shown --%>
 <site:header refer="home"/>
-
-<site:DQG />
-<wdk:searchLookup />
+<site:DQG /> 
 <site:sidebar />
 <site:footer  refer="home"/>
+
+
+

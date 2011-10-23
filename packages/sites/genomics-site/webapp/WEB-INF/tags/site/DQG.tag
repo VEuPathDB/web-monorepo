@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -18,6 +19,7 @@
 <c:set var="ToxoDBOrgs" value="Eimeria, Gregarina, Neospora, Toxoplasma" />
 <c:set var="TrichDBOrgs" value="Trichomonas"/>
 <c:set var="TriTrypDBOrgs" value="Crithidia, Leishmania, Trypanosoma"/>
+
 
 <div id="contentwrapper">
 <div id="contentcolumn">
@@ -93,5 +95,10 @@
 </table>
 
 </div>
+
+<div style="padding:3px 10px;">
+	<wdk:searchLookup />
+</div>
+
 </div>
 </div>
