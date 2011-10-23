@@ -67,12 +67,14 @@
                                             <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
                                             <a class="heading" href="javascript:void(0)">&nbsp;${display}</a>
 						 <c:if test="${rootCatEntry.key != 'DynSpanRecordClasses.DynSpanRecordClass'}">
-							<a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}">details</a>
+							<a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;description</a>
 						 </c:if>
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.websiteQuestions}" var="q">
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}">${q.displayName}</a></li>
+									<c:set var="popup" value="${q.summary}"/>
+									<li><a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}"  rel='htmltooltip'>${q.displayName}</a></li>
+									<div id="${q.questionSetName}_${q.name}_tip" class="htmltooltip">${popup}</div>
 								</c:forEach>
 							</ul>
 						</div>
@@ -103,11 +105,13 @@
 					<li>
 						<img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
 						<a class="heading" href="javascript:void(0)">${cat.displayName}</a>
-						<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.name}">details</a>
+						<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;<i>description</i></a>
 						<div class="sub_list">
 							<ul>
 								<c:forEach items="${cat.websiteQuestions}" var="q">
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}">${q.displayName}</a></li>
+									<c:set var="popup" value="${q.summary}"/>
+									<li><a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}"  rel='htmltooltip'>${q.displayName}</a></li>
+									 <div id="${q.questionSetName}_${q.name}_tip" class="htmltooltip">${popup}</div>
 								</c:forEach>
 							</ul>
 						</div>

@@ -58,6 +58,7 @@ div.innertube #record-toolbox li {
 div#quick-search td {
   white-space: nowrap;
 }
+/* in WDK
 
 div.htmltooltip{
   background-color:#FFFFC3;
@@ -70,6 +71,7 @@ div.htmltooltip{
   width:250px;
   z-index:1000;
 }
+*/
 
 p.unreadlabel {
   color:yellow;
@@ -197,7 +199,22 @@ table.threecolumn td {
 	padding-left: 19px;
 }
 
+.detail_link {
+//	border: 2px solid #d8d8d8;
+	display: inline;
+	left: -9999px;
+	position: absolute;
+}
 
+.detail_link:link, .detail_link:visited{
+	color: blue;    //#808080;
+	text-decoration: underline;
+}
+
+a.heading:hover + a.detail_link, a.detail_link:hover {
+	left: -2px;
+	position: relative;
+}
 
 /* for Internet Explorer */
 /*\*/
@@ -262,11 +279,12 @@ height: 240px;
    margin: -5px 0px 5px;
 }
 
+/* this does not belong in sidebar
 ul.heading_list li:hover a.detail_link {
 	left: -2px;
 	position: relative;
 }
-
+*/
 
 #menu_lefttop a.heading {
 	height: 24px;
@@ -452,7 +470,6 @@ ul.cirbulletlist {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-#nav_topdiv { clear: both; }
 #nav_top {
 	float: right;
 	text-align: right;

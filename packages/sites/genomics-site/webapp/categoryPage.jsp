@@ -10,7 +10,7 @@
 
 <c:set var="cat" value="${rootCatMap[record].websiteChildren[category]}" />
 
-<site:header refer="category"/>
+<site:header refer="category"  division="help"/>
 
 <style>
 
