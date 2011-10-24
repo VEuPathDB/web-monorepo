@@ -59,7 +59,6 @@ div.question .left {
 	<div class="question">
 		<a href="showQuestion.do?questionFullName=${q.fullName}"><h2>${q.displayName}</h2></a><br>
 		<div class="summary"><h3>Summary</h3><br>${q.summary}</div>
-		<div class="description"><h3>Description</h3><br>${q.description}</div>
 		<div class="params"><h3>Parameters</h3><br>
 			<table cellspacing="5px">
 			    <c:forEach items="${q.params}" var="p">
@@ -67,6 +66,7 @@ div.question .left {
 			    </c:forEach>
 			</table>
 		</div>
+		<div class="description"><h3>Description</h3><br>${q.description}</div>
 	</div>
 </c:forEach>
 
