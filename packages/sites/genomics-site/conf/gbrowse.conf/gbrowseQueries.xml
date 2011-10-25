@@ -3532,6 +3532,30 @@ WHERE
   </sqlQuery>
 
 
+  <sqlQuery name="ChIP:NucleosomeGB2" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT name as feature_id,
+       'ChIP'             as type,
+       '$source'       as source,
+       e.source_id        as name,
+       e.source_id        as parent_id,
+       $base_start        as startm,
+       $rend              as end,
+       'name=' || name as atts
+FROM   DoTS.Nasequence e,
+(       SELECT 'H4_ring' AS name FROM dual
+  UNION SELECT 'H4_trophozoite' AS name FROM dual
+  UNION SELECT 'H3K9ac_troph' AS name FROM dual
+  UNION SELECT 'H4_schizont' AS name FROM dual
+) x,
+(SELECT $$analysis$$ as analysis FROM dual) y
+WHERE
+       e.na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
   
   <sqlQuery name="AffymetrixProbes:GenotypingEstSNPs"  includeProjects="ToxoDB">
     <testParamValues project="ToxoDB">
@@ -6470,6 +6494,33 @@ GROUP BY start_interval,end_interval,na_sequence_id,name
     </sql>
   </sqlQuery>
  
+  <sqlQuery name="ChIP:NucleosomeGB2:bulksubfeatures"  includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+ SELECT  start_interval     as feature_id,
+        'ChIP'             as type,
+        '$source'               as source,
+        avg(score)         as score,
+        name  parent_id,
+         start_interval * (($rend - $base_start + 1) / 800) startm,
+         end_interval * (($rend - $base_start + 1) / 800) end,
+       'Analysis=' || name as atts
+FROM   (select ceil(ee.start_min / (($rend - $base_start + 1) / 800)) start_interval,
+               ceil(ee.end_max / (($rend - $base_start + 1) / 800)) end_interval,
+               ee.score as score,ee.na_feature_id,
+               ee.na_sequence_id,a.name as name 
+        from rad.analysis a,
+             ApidbTuning.ExpressionElement ee
+        WHERE  a.analysis_id = ee.analysis_id
+        AND    ee.na_sequence_id = $srcfeature_id
+        AND    a.name in ( $$analysis$$ )
+        AND    ee.start_min <= $rend
+        AND    ee.end_max >= $base_start)
+GROUP BY start_interval,end_interval,na_sequence_id,name
+   ]]>
+    </sql>
+  </sqlQuery>
+
   <sqlQuery name="SNP:Alignment:bulkAttribute" includeProjects="ToxoDB">
      <sql>
 <![CDATA[
