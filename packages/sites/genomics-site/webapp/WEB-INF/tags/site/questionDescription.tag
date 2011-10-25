@@ -43,12 +43,14 @@
 </c:if>
 
 <%-- display description for wdkQuestion --%>
-<a style="color:black" id="${descripId}"><b>Description: </b><jsp:getProperty name="wdkQuestion" property="description"/></a>
+<a name="${descripId}"></a>
+<div style="color:black" id="${descripId}"><b>Description: </b><jsp:getProperty name="wdkQuestion" property="description"/></div>
 
 <%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB'}">
 <hr>
-<a style="color:black" id="${attrId}">
+<a name="${attrId}"></a>
+<div style="color:black" id="${attrId}">
   <c:set var="ds_ref_questions" value="${requestScope.ds_ref_questions}" />
   <c:choose>
     <c:when test="${fn:length(ds_ref_questions) == 0}">
@@ -69,7 +71,7 @@
       </ul>
     </c:otherwise>
   </c:choose>
-</a>
+</div>
 </c:if>
 
 
