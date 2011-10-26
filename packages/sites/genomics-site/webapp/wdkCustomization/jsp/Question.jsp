@@ -59,13 +59,14 @@ ${Question_Header}
 
 <c:if test="${requestScope.partial != 'true'}">
   <site:footer />
+  <!-- log screen and browser window size for awstats; excluded when page is called by Ajax (internal
+       questions; partial == true)  because it breaks IE7. When using internal questions, the parent 
+       question page will still call this once.
+   -->
+  <script language="javascript" type="text/javascript" src="/js/awstats_misc_tracker.js" ></script>
+  <noscript><img src="/js/awstats_misc_tracker.js?nojs=y" height="0" width="0" border="0" style="display: none"></noscript>
 </c:if>
 </c:set>
 
-<!-- log screen and browser window size for awstats -->
-<%--
-<script language="javascript" type="text/javascript" src="/js/awstats_misc_tracker.js" ></script>
---%>
-<noscript><img src="/js/awstats_misc_tracker.js?nojs=y" height="0" width="0" border="0" style="display: none"></noscript>
 
 ${Question_Footer}
