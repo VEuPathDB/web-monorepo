@@ -63,7 +63,9 @@ ${Question_Header}
 </c:set>
 
 <!-- log screen and browser window size for awstats -->
+<%--
 <script language="javascript" type="text/javascript" src="/js/awstats_misc_tracker.js" ></script>
+--%>
 <noscript><img src="/js/awstats_misc_tracker.js?nojs=y" height="0" width="0" border="0" style="display: none"></noscript>
 
 ${Question_Footer}

@@ -16,7 +16,9 @@
 	<c:set value="1" var="columns"/>
 </c:if>
 
-<script src="<c:url value='wdk/js/wdkQuestion.js'/>" type="text/javascript"></script>
+<script type="text/javascript">
+$(initializeQuestion);
+</script>
 
 <c:set var="isInsert" value="${param.isInsert}" />
 
@@ -27,6 +29,7 @@
 function writeData(page, div, quesName, insertStep){
     if(page=="") {document.getElementById(div).innerHTML = ""; return;}
 	var t = $("#"+div);
+
 	$.ajax({
 		url: page,
 		dataType: 'html',
@@ -34,15 +37,20 @@ function writeData(page, div, quesName, insertStep){
 			if(location.href.indexOf("showApplication") != -1){
 				formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, insertStep, false, false, false);
 			}
-			var q = document.createElement('div');
-			$(q).html(data);
-			var qf = $("form#form_question",q);
-			var qt = $("div#question_Form", q).children("h1");
-			var qd = $("div#query-description-section", q);
-			var qa = $("div#attributions-section", q);
+
+/*
+                        $("body > div#question-temp").remove();
+                        $("body").append("<div id=\"question-temp\"></div>");
+                        var q = $("body > div#question-temp");
+			q.html(data);
+
+			var qf = q.find("form#form_question");
+			var qt = q.find("div#question_Form > h1");
+			var qd = q.find("div#query-description-section");
+			var qa = q.find("div#attributions-section");
 			var qops = "";
 			
-			t.html(qt);
+			//t.html(qt);
       document.getElementById(div).innerHTML = "<h1>" + quesName + "</h1><br/>";
 			t.append(qf);
 			t.append(qops);
@@ -50,8 +58,11 @@ function writeData(page, div, quesName, insertStep){
 			t.append(qd);
       document.getElementById(div).innerHTML += "<hr/>"
 			t.append(qa);
+                        q.remove();
+*/
+                        t.html($.trim(data));
 			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
-			htmltooltip.render();
+			 htmltooltip.render();
 			initParamHandlers(true);
 			var question = new WdkQuestion();
 			question.registerGroups();
