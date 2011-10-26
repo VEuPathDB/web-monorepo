@@ -5,7 +5,7 @@
 
 */jQuery
 jQuery(document).ready(function() {
-	popUnsupported();
+	//popUnsupported();
 });
 
 function popLogin(destination){
