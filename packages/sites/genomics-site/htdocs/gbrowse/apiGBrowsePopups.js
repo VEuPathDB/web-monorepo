@@ -37,10 +37,63 @@ function popup_text () {
   return table(rows);
 }
 
+/****** Favorite link functions for GBrowse ******/
+
+function applyCorrectFavoriteLink(sourceId, projectId) {
+	performIfItemIsFavorite(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
+			function() { setSavedItemLink(projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', 'Remove From Favorites'); },
+			function() { /* no action needed if not a favorite */ });
+}
+
+function addGeneAsFavorite(projectId, sourceId) {
+	performSavedItemOp(addToFavorites, projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', 'Remove From Favorites',
+			'Gene '+sourceId+' has been added to your favorites.');
+}
+
+function removeGeneAsFavorite(projectId, sourceId) {
+	performSavedItemOp(removeFromFavorites, projectId, sourceId, 'gbfavorite', 'addGeneAsFavorite', 'As Favorite',
+			'Gene '+sourceId+' has been removed from your favorites.');
+}
+
+/****** Basket link functions for GBrowse ******/
+
+function applyCorrectBasketLink(sourceId, projectId) {
+	performIfItemInBasket(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
+			function() { setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', 'Remove From Basket'); },
+			function() { /* no action needed if not in basket */ });
+}
+
+function addGeneToBasket(projectId, sourceId) {
+	performSavedItemOp(addToBasket, projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', 'Remove From Basket',
+			'Gene '+sourceId+' has been added to your basket.');
+}
+
+function removeGeneFromBasket(projectId, sourceId) {
+	performSavedItemOp(removeFromBasket, projectId, sourceId, 'gbbasket', 'addGeneToBasket', 'To Basket',
+			'Gene '+sourceId+' has been removed from your basket.');
+}
+
+/****** Utility link functions for GBrowse ******/
+
+function performSavedItemOp(funcToCall, projectId, sourceId, selectionSuffix, nextFunction, nextLinkText, alertText) {
+	if (!isUserLoggedIn()) {
+		popLogin();
+		return; // if user logs in, will not get here
+	}
+	funcToCall(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
+		    function(result) {
+				setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, nextLinkText);
+				alert(alertText);
+			});
+}
+
+function setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, nextLinkText) {
+	jQuery('#'+sourceId+'_'+selectionSuffix)
+    	.html("<a href=\"javascript:void(0);\" onclick=\""+nextFunction+"('"+projectId+"','"+sourceId+"');\">"+nextLinkText+"</a>");
+}
 
 // Gene title
 function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, isPseudo, utr) {
-
 
   // In ToxoDB, sequences of alternative gene models have to be returned
   var ignore_gene_alias = 0;
@@ -60,7 +113,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
 
   var type = (isPseudo == '1')? soTerm + " (pseudogene)" : soTerm;
   var download = cdsLink + " | " + proteinLink;
-
+  
   // format into html table rows
   var rows = new Array();
   rows.push(twoColRow('Species:', taxon));
@@ -71,13 +124,44 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   if(utr != '') {
     rows.push(twoColRow('UTR', utr));
   }
-  rows.push(twoColRow('Download', download)); 
+  rows.push(twoColRow('Save', getSaveRowLinks(projectId, sourceId)));
+  rows.push(twoColRow('Download', download));
 
-//  tip.T_BGCOLOR = 'lightskyblue';
+  //  tip.T_BGCOLOR = 'lightskyblue';
   tip.T_TITLE = 'Annotated Gene ' + sourceId;
   return table(rows);
 }
 
+// Syntetic Gene title
+function syn_gene_title (tip, projectId, taxon, name, geneType, desc, location) {
+	// format into html table rows
+	var rows = new Array();
+	rows.push(twoColRow('Species:', taxon));
+	rows.push(twoColRow('ID:', name));
+	rows.push(twoColRow('Gene Type:', geneType));
+	rows.push(twoColRow('Description:', desc));
+	rows.push(twoColRow('Location:', location));
+	rows.push(twoColRow('Save', getSaveRowLinks(projectId, sourceId)));
+	tip.T_TITLE = 'Syntenic Gene: ' + name;
+	return table(rows);
+}
+
+function getSaveRowLinks(projectId, sourceId) {
+	var saveRowLinks;
+	if (isUserLoggedIn()) {
+		// enable saving as favorite or to basket
+		var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><a href=\"javascript:void(0);\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">As Favorite</a></span>";
+		var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><a href=\"javascript:void(0);\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">To Basket</a></span>";
+		saveRowLinks = favoriteLink + " | " + basketLink;
+		// now set appropriate links based on whether gene is already in basket/favorites
+		applyCorrectBasketLink(sourceId, projectId);
+		applyCorrectFavoriteLink(sourceId, projectId);
+	} else {
+		// prompt user to log in if he wants to to save genes
+		saveRowLinks = "<a onclick=\"popLogin()\" href=\"javascript:void(0)\">Log in</a> to save genes.";
+	}
+	return saveRowLinks;
+}
 
 // EST title
 function est (tip, paramsString) {

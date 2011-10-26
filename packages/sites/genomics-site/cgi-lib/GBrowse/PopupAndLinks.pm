@@ -108,6 +108,7 @@ sub snpLink {
 
 sub synGeneTitle {
   my $f = shift;
+  my $projectId = $ENV{PROJECT_ID};
   my $name = $f->name;
   my $chr = $f->seq_id;
   my $loc = $f->location->to_FTstring;
@@ -122,13 +123,18 @@ sub synGeneTitle {
   my ($end) = $f->get_tag_values("End");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
-  my @data;
-  push @data, [ 'Species:' => $taxon ];  
-  push @data, [ 'Name:'  => $name ];
-  push @data, [ 'Gene Type:' => ($isPseudo ? "Pseudogenic " : "") . $soTerm  ];
-  push @data, [ 'Description:' => $desc ];
-  push @data, [ 'Location:'  => "$contig: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "") ];
-  hover("Syntenic Gene: $name", \@data);
+  my $location = "$contig: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "");
+  my $geneType = ($isPseudo ? "Pseudogenic " : "") . $soTerm;
+  return qq{" onmouseover="return escape(syn_gene_title(this,'$projectId','$taxon','$name','$geneType','$desc','$location'))"};
+  
+  # old way to create pop-up; do via javascript now
+  #my @data;
+  #push @data, [ 'Species:' => $taxon ];  
+  #push @data, [ 'Name:'  => $name ];
+  #push @data, [ 'Gene Type:' =>  $geneType ];
+  #push @data, [ 'Description:' => $desc ];
+  #push @data, [ 'Location:'  =>  $location ];
+  #hover("Syntenic Gene: $name", \@data);
 }
 
 sub synGeneTitleGB2 {

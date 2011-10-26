@@ -99,6 +99,8 @@ a#facebook {
       <%--------------- Construct popups to login/register -------------%>  
       <li>
         <a href="javascript:void(0)" onclick="popLogin()">Login<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+        <%-- Add HTML attribute to allow javaScript to easily determine if user is logged in --%>
+        <div id="loginStatus" loggedIn="false" style="display:none;"/>
         <div id="loginForm" style="display:none;">
           <h2 style="text-align: center">EuPathDB Account Login</h2>
           <site:login includeCancel="true" />
@@ -136,14 +138,15 @@ a#facebook {
 
       <li>
         <a href="<c:url value='/showProfile.do'/>" id='profile'>${wdkUser.firstName} ${wdkUser.lastName}'s Profile<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
+        <%-- Add HTML attribute to allow javaScript to easily determine if user is logged in --%>
+        <div id="loginStatus" loggedIn="true" style="display:none;"/>
       </li>
 
       <li>
         <a href="<c:url value='/${logoutUrl}' />" id='logout'>Logout
-		<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
-	</a>
+		      <img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" />
+     	  </a>
       </li>
-
     </c:otherwise>
   </c:choose>
 
