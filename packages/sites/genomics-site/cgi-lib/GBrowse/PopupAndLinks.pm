@@ -947,7 +947,7 @@ sub createPopups {
 
   my $type = $f->type;
   my $name = $f->name;
-  my $base = "$ENV{DOCUMENT_ROOT}/gbrowse2/tmp";
+  my $base = "$ENV{DOCUMENT_ROOT}/gbrowse/tmp";
   mkdir "$base/$type", 0777 unless -d "$base/$type";
   unless(-e "$base/$type/$name") {
     open F, ">$base/$type/$name";

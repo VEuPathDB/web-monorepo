@@ -14,8 +14,8 @@ my $n = param('n');  # feature name e.g. PF11_0240
 #return unless $f;
 
 my $root = $ENV{DOCUMENT_ROOT};
-open(F, "$root/gbrowse2/tmp/$f") if $f;
-open(F, "$root/gbrowse2/tmp/$t/$n") if ($t && $n);
+open(F, "$root/gbrowse/tmp/$f") if $f;
+open(F, "$root/gbrowse/tmp/$t/$n") if ($t && $n);
 
 exit unless ($f || ($t && $n));
 
