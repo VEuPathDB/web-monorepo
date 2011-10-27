@@ -1,14 +1,14 @@
---- GBrowse.conf.orig	2011-10-27 14:00:03.000000000 -0400
-+++ GBrowse.conf	2011-10-27 14:00:07.000000000 -0400
+--- GBrowse.conf.orig	2011-06-29 13:43:00.000000000 -0400
++++ GBrowse.conf	2011-10-27 14:52:36.000000000 -0400
 @@ -5,7 +5,7 @@
  [GENERAL]
- config_base            = /var/www/ToxoDB/toxo.mheiges/conf/gbrowse.conf   # overridden by environment variable GBROWSE_CONF
- htdocs_base            = /var/www/ToxoDB/toxo.mheiges/html/gbrowse
+ config_base            = $CONF   # overridden by environment variable GBROWSE_CONF
+ htdocs_base            = $HTDOCS
 -url_base               = /gbrowse2
 +url_base               = /gbrowse
- tmp_base               = /var/www/ToxoDB/toxo.mheiges/html/gbrowse/tmp
- persistent_base        = /var/www/ToxoDB/toxo.mheiges/cgi-lib/persistent
- userdata_base          = /var/www/ToxoDB/toxo.mheiges/cgi-lib/persistent/userdata
+ tmp_base               = $TMP
+ persistent_base        = $PERSISTENT
+ userdata_base          = $PERSISTENT/userdata
 @@ -234,4 +234,19 @@
  description   = Population Display Demo
  path          = pop_demo.conf
