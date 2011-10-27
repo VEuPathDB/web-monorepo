@@ -1,5 +1,5 @@
---- GBrowse.conf.orig 2011-10-27 13:44:31.000000000 -0400
-+++ GBrowse.conf 2011-10-27 13:46:21.000000000 -0400
+--- GBrowse.conf.orig	2011-10-27 14:00:03.000000000 -0400
++++ GBrowse.conf	2011-10-27 14:00:07.000000000 -0400
 @@ -5,7 +5,7 @@
  [GENERAL]
  config_base            = /var/www/ToxoDB/toxo.mheiges/conf/gbrowse.conf   # overridden by environment variable GBROWSE_CONF
@@ -28,4 +28,4 @@
 +[toxodbaa]
 +description   = ToxoDB PBrowse v2.39
 +path          = toxodbaa.conf
-
+ 
