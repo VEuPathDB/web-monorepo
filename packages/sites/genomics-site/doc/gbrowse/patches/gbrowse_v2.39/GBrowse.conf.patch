@@ -1,24 +1,8 @@
---- GBrowse.conf.orig	2011-10-27 16:14:56.000000000 -0400
-+++ GBrowse.conf	2011-10-27 16:18:14.000000000 -0400
-@@ -154,6 +154,21 @@
- # uncomment this to use the PAM authentication plugin
- # authentication plugin = PamAuthenticate
+--- GBrowse.conf.orig	2011-10-28 14:14:36.000000000 -0400
++++ GBrowse.conf	2011-10-28 14:31:38.000000000 -0400
+@@ -234,4 +234,4 @@
+ description   = Population Display Demo
+ path          = pop_demo.conf
  
-+[plasmodb]
-+description   = PlasmoDB GBrowse v2.39
-+path          = plasmodb.conf
-+
-+[plasmodbaa]
-+description   = PlasmoDB PBrowse v2.39
-+path          = plasmodbaa.conf
-+
-+[toxodb]
-+description   = ToxoDB GBrowse v2.39
-+path          = toxodb.conf
-+
-+[toxodbaa]
-+description   = ToxoDB PBrowse v2.39
-+path          = toxodbaa.conf
- 
- ####### User Account Registration Database ######
- # If no authentication plugin is defined, and
+-
++#include "eupath_datasource.conf"
