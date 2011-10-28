@@ -1,5 +1,5 @@
---- GBrowseInstall.pm.dist	2011-09-16 09:35:38.000000000 -0400
-+++ GBrowseInstall.pm	2011-09-16 09:40:59.000000000 -0400
+--- GBrowseInstall.pm.orig	2011-06-29 13:43:02.000000000 -0400
++++ GBrowseInstall.pm	2011-10-27 20:00:52.000000000 -0400
 @@ -185,7 +185,6 @@
  sub ACTION_build {
      my $self = shift;
@@ -47,3 +47,19 @@
      
      print STDERR "\n***INSTALLATION COMPLETE***\n";
      print STDERR "Load http://localhost/$base for demo and documentation.\n";
+@@ -699,6 +688,7 @@
+     my $installscript =  $self->install_destination('script');
+     my $etc         =  $self->install_path->{'etc'} ||= GBrowseGuessDirectories->etc;
+     my $cgiurl        = $self->cgiurl;
++    my $url_base    = '/' . basename($self->config_data('htdocs'));
+ 
+     $persistent ||= $databases;
+ 
+@@ -719,6 +709,7 @@
+ 	s/\$CAN_USER_ACCOUNTS/$self->has_mysql_or_sqlite/eg;
+ 	s/\$USER_ACCOUNT_DB/$self->guess_user_account_db/eg;
+ 	s/\$SMTP_GATEWAY/$self->guess_smtp_gateway/eg;
++    s!^url_base\s*=.+!url_base               = $url_base!g;
+ 	s/\$TMP/$tmp/g;
+ 	$out->print($_);
+     }
