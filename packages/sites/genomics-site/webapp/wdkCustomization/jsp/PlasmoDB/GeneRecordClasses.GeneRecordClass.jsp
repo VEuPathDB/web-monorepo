@@ -250,7 +250,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <c:choose>
   <c:when test="${species eq 'falciparum3D7'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+CombinedSNPs
+      Synteny/pfal_gene+pfal_span+pfit_gene+pfit_span+pviv_gene+pviv_span+pkno_gene+pkno_span+pyoe_gene+pyoe_span+pber_gene+pber_span+pcha_gene+pcha_span%1ECombinedSNPs
     </c:set>
   </c:when>
   <c:when test="${species eq 'yoelii'}">
@@ -298,7 +298,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
