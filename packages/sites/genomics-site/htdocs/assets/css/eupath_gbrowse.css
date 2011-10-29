@@ -62,3 +62,9 @@
     padding-top: 5px;
     border:   1px solid;
 }
+.panright {
+ opacity:0 !important;
+}
+.panleft {
+ opacity:0 !important;
+}
