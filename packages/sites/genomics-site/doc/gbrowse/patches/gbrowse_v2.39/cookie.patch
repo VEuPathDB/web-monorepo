@@ -1,0 +1,156 @@
+diff -r -c GBrowse-2.39/htdocs/example_scripts/gbrowse_get_sessionid.pl GBrowse-2.39.eupath/htdocs/example_scripts/gbrowse_get_sessionid.pl
+*** GBrowse-2.39/htdocs/example_scripts/gbrowse_get_sessionid.pl	2011-06-29 13:42:57.000000000 -0400
+--- GBrowse-2.39.eupath/htdocs/example_scripts/gbrowse_get_sessionid.pl	2011-10-29 21:29:49.000000000 -0400
+***************
+*** 13,18 ****
+  die $response->status_line unless $response->is_success;
+  
+  my $cookie = $response->header('Set-cookie');
+! my ($id)   = $cookie =~ /gbrowse_sess=([a-f0-9]+)/;
+  print $id,"\n";
+  
+--- 13,18 ----
+  die $response->status_line unless $response->is_success;
+  
+  my $cookie = $response->header('Set-cookie');
+! my ($id)   = $cookie =~ /gbrowse2_sess=([a-f0-9]+)/;
+  print $id,"\n";
+  
+diff -r -c GBrowse-2.39/htdocs/example_scripts/gbrowse_new_sessionid.pl GBrowse-2.39.eupath/htdocs/example_scripts/gbrowse_new_sessionid.pl
+*** GBrowse-2.39/htdocs/example_scripts/gbrowse_new_sessionid.pl	2011-06-29 13:42:59.000000000 -0400
+--- GBrowse-2.39.eupath/htdocs/example_scripts/gbrowse_new_sessionid.pl	2011-10-29 21:30:40.000000000 -0400
+***************
+*** 13,18 ****
+  die $response->status_line unless $response->is_success;
+  
+  my $cookie = $response->header('Set-cookie');
+! my ($id)   = $cookie =~ /gbrowse_sess=([a-f0-9]+)/;
+  print $id,"\n";
+  
+--- 13,18 ----
+  die $response->status_line unless $response->is_success;
+  
+  my $cookie = $response->header('Set-cookie');
+! my ($id)   = $cookie =~ /gbrowse2_sess=([a-f0-9]+)/;
+  print $id,"\n";
+  
+diff -r -c GBrowse-2.39/htdocs/example_scripts/gbrowse_upload_data.pl GBrowse-2.39.eupath/htdocs/example_scripts/gbrowse_upload_data.pl
+*** GBrowse-2.39/htdocs/example_scripts/gbrowse_upload_data.pl	2011-06-29 13:42:56.000000000 -0400
+--- GBrowse-2.39.eupath/htdocs/example_scripts/gbrowse_upload_data.pl	2011-10-29 21:30:21.000000000 -0400
+***************
+*** 41,47 ****
+  die $response->status_line unless $response->is_success;
+  my $content     = $response->decoded_content;
+  my $cookie      = $response->header('Set-cookie');
+! my ($used_id)   = $cookie =~ /gbrowse_sess=([a-f0-9]+)/;
+  
+  my $struct  = from_json($content);
+  
+--- 41,47 ----
+  die $response->status_line unless $response->is_success;
+  my $content     = $response->decoded_content;
+  my $cookie      = $response->header('Set-cookie');
+! my ($used_id)   = $cookie =~ /gbrowse2_sess=([a-f0-9]+)/;
+  
+  my $struct  = from_json($content);
+  
+diff -r -c GBrowse-2.39/htdocs/example_scripts/gbrowse_upload_file.pl GBrowse-2.39.eupath/htdocs/example_scripts/gbrowse_upload_file.pl
+*** GBrowse-2.39/htdocs/example_scripts/gbrowse_upload_file.pl	2011-06-29 13:43:03.000000000 -0400
+--- GBrowse-2.39.eupath/htdocs/example_scripts/gbrowse_upload_file.pl	2011-10-29 21:30:06.000000000 -0400
+***************
+*** 35,41 ****
+  die $response->status_line unless $response->is_success;
+  my $content     = $response->decoded_content;
+  my $cookie      = $response->header('Set-cookie');
+! my ($used_id)   = $cookie =~ /gbrowse_sess=([a-f0-9]+)/;
+  
+  my $struct  = from_json($content);
+  
+--- 35,41 ----
+  die $response->status_line unless $response->is_success;
+  my $content     = $response->decoded_content;
+  my $cookie      = $response->header('Set-cookie');
+! my ($used_id)   = $cookie =~ /gbrowse2_sess=([a-f0-9]+)/;
+  
+  my $struct  = from_json($content);
+  
+diff -r -c GBrowse-2.39/htdocs/js/login.js GBrowse-2.39.eupath/htdocs/js/login.js
+*** GBrowse-2.39/htdocs/js/login.js	2011-06-29 13:43:01.000000000 -0400
+--- GBrowse-2.39.eupath/htdocs/js/login.js	2011-10-29 21:29:09.000000000 -0400
+***************
+*** 1207,1213 ****
+      var currentUrl  = String(String(document.location).split('#')[0]).split('?')[0];
+          currentUrl  = String(currentUrl).split('http://')[1];
+          currentUrl  = currentUrl.slice(currentUrl.indexOf('/'));
+!     document.cookie = 'gbrowse_sess=; max-age=0; path='+currentUrl;
+  }
+  
+  //Retrieve the GET variables and pass them to the OpenID handler
+--- 1207,1213 ----
+      var currentUrl  = String(String(document.location).split('#')[0]).split('?')[0];
+          currentUrl  = String(currentUrl).split('http://')[1];
+          currentUrl  = currentUrl.slice(currentUrl.indexOf('/'));
+!     document.cookie = 'gbrowse2_sess=; max-age=0; path='+currentUrl;
+  }
+  
+  //Retrieve the GET variables and pass them to the OpenID handler
+diff -r -c GBrowse-2.39/lib/Bio/Graphics/Browser2/Render.pm GBrowse-2.39.eupath/lib/Bio/Graphics/Browser2/Render.pm
+*** GBrowse-2.39/lib/Bio/Graphics/Browser2/Render.pm	2011-06-29 13:43:01.000000000 -0400
+--- GBrowse-2.39.eupath/lib/Bio/Graphics/Browser2/Render.pm	2011-10-29 21:28:25.000000000 -0400
+***************
+*** 61,67 ****
+      ($data_source, $session) = @_;
+    } elsif (@_ == 1) {
+      my $globals = shift;
+!     $requested_id = param('id')        || CGI::cookie('gbrowse_sess');
+      $authority    = param('authority') || CGI::cookie('authority');
+  
+      $session = $globals->authorized_session($requested_id, $authority);
+--- 61,67 ----
+      ($data_source, $session) = @_;
+    } elsif (@_ == 1) {
+      my $globals = shift;
+!     $requested_id = param('id')        || CGI::cookie('gbrowse2_sess');
+      $authority    = param('authority') || CGI::cookie('authority');
+  
+      $session = $globals->authorized_session($requested_id, $authority);
+diff -r -c GBrowse-2.39/lib/Bio/Graphics/Browser2/Session.pm GBrowse-2.39.eupath/lib/Bio/Graphics/Browser2/Session.pm
+*** GBrowse-2.39/lib/Bio/Graphics/Browser2/Session.pm	2011-06-29 13:42:57.000000000 -0400
+--- GBrowse-2.39.eupath/lib/Bio/Graphics/Browser2/Session.pm	2011-10-29 21:28:45.000000000 -0400
+***************
+*** 35,41 ****
+  	my ($driver,$id,$session_args,$default_source,$lockdir,$locktype,$expire_time) 
+  	  = @args{'driver','id','args','source','lockdir','locktype','expires'};
+  
+! 	$CGI::Session::NAME = 'gbrowse_sess';     # custom cookie
+  	$CGI::Session::Driver::file::NoFlock = 1; # flocking unnecessary because we roll our own
+  
+  	unless ($id) {
+--- 35,41 ----
+  	my ($driver,$id,$session_args,$default_source,$lockdir,$locktype,$expire_time) 
+  	  = @args{'driver','id','args','source','lockdir','locktype','expires'};
+  
+! 	$CGI::Session::NAME = 'gbrowse2_sess';     # custom cookie
+  	$CGI::Session::Driver::file::NoFlock = 1; # flocking unnecessary because we roll our own
+  
+  	unless ($id) {
+diff -r -c GBrowse-2.39/lib/Legacy/Graphics/Browser/PageSettings.pm GBrowse-2.39.eupath/lib/Legacy/Graphics/Browser/PageSettings.pm
+*** GBrowse-2.39/lib/Legacy/Graphics/Browser/PageSettings.pm	2011-06-29 13:43:03.000000000 -0400
+--- GBrowse-2.39.eupath/lib/Legacy/Graphics/Browser/PageSettings.pm	2011-10-29 21:27:56.000000000 -0400
+***************
+*** 3,9 ****
+  
+  use Legacy::Graphics::Browser::Util 'shellwords';
+  use CGI::Session;
+! use constant COOKIE_NAME => 'gbrowse_sess';
+  
+  sub new {
+    my $class    = shift;
+--- 3,9 ----
+  
+  use Legacy::Graphics::Browser::Util 'shellwords';
+  use CGI::Session;
+! use constant COOKIE_NAME => 'gbrowse2_sess';
+  
+  sub new {
+    my $class    = shift;
