@@ -161,7 +161,7 @@ sub myheader {
 }
 
 sub mypostgrid { 
-  return DAS::Util::SynView::postgrid(@_);
+  return DAS::Util::SynView::postgridGB2(@_);
 } 
 
 1;
