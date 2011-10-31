@@ -949,8 +949,8 @@ sub massSpecTitle {
   push @data, [ 'Info:' => "$tb" ] if($phospho_site);
   push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine<br/>^ stands for modified_L_cysteine" ] if($ontology_names);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
+  &createPopups($f, \@data); 
 
-  hover('Mass Spec', \@data);
 }
 
 sub massSpecUnifiedTitle {
