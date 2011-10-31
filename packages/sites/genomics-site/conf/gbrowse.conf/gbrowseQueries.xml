@@ -890,7 +890,7 @@ SELECT
              ELSE ''
              END) || 
        'ExtDBName=' || ed.name || '$dlm' ||
-       'Taxon=' || b.organism || ' contig' || '$dlm' ||
+       'Taxon=' || b.organism || '$dlm' ||
        'SynType=' || 'span' ||  '$dlm' ||
        'Scale=' || 
        CASE WHEN (is_reversed = 1) 
