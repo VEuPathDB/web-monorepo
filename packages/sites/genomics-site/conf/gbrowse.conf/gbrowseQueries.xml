@@ -4105,14 +4105,13 @@ WHERE  swi.snp_source_id = sa.source_id
        'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
        'IsCoding=' || sa.is_coding || '$dlm' ||
        'Gene=' || sa.gene_source_id || '$dlm' ||
-       'params=' || sa.position_in_CDS || '&' ||
-       sa.position_in_protein || '&' ||
-       sa.reference_strain || '&' ||
-       sa.reference_aa || '&' ||
-       sa.gene_strand || '&' ||
-       sa.reference_na || '&' ||
-       sa.source_id 
-        as atts
+       'position_in_CDS=' || sa.position_in_CDS || '$dlm' ||
+       'position_in_protein=' || sa.position_in_protein || '$dlm' ||
+       'reference_strain=' || sa.reference_strain || '$dlm' ||
+       'reference_aa=' || sa.reference_aa || '$dlm' ||
+       'gene_strand=' || sa.gene_strand || '$dlm' ||
+       'reference_na=' || sa.reference_na || '$dlm' ||
+       'source_id=' || sa.source_id as atts
 FROM   ApidbTuning.SnpAttributes sa
 WHERE  sa.dataset = 'sangerItGhanaSnps_RSRC'
   AND  sa.na_sequence_id = $srcfeature_id
@@ -4141,14 +4140,13 @@ WHERE  sa.dataset = 'sangerItGhanaSnps_RSRC'
        'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
        'IsCoding=' || sa.is_coding || '$dlm' ||
        'Gene=' || sa.gene_source_id || '$dlm' ||
-       'params=' || sa.position_in_CDS || '&' ||
-       sa.position_in_protein || '&' ||
-       sa.reference_strain || '&' ||
-       sa.reference_aa || '&' ||
-       sa.gene_strand || '&' ||
-       sa.reference_na || '&' ||
-       sa.source_id 
-        as atts
+       'position_in_CDS=' || sa.position_in_CDS || '$dlm' ||
+       'position_in_protein=' || sa.position_in_protein || '$dlm' ||
+       'reference_strain=' || sa.reference_strain || '$dlm' ||
+       'reference_aa=' || sa.reference_aa || '$dlm' ||
+       'gene_strand=' || sa.gene_strand || '$dlm' ||
+       'reference_na=' || sa.reference_na || '$dlm' ||
+       'source_id=' || sa.source_id as atts
 FROM   ApidbTuning.SnpAttributes sa
 WHERE  sa.dataset = 'sangerPReichenowiSnps_RSRC'  
   AND  sa.na_sequence_id = $srcfeature_id
@@ -4248,14 +4246,13 @@ ORDER BY
        'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
        'IsCoding=' || sa.is_coding || '$dlm' ||
        'Gene=' || sa.gene_source_id || '$dlm' ||
-       'params=' || sa.position_in_CDS || '&' ||
-       sa.position_in_protein || '&' ||
-       sa.reference_strain || '&' ||
-       sa.reference_aa || '&' ||
-       sa.gene_strand || '&' ||
-       sa.reference_na || '&' ||
-       sa.source_id 
-        as atts
+       'position_in_CDS=' || sa.position_in_CDS || '$dlm' ||
+       'position_in_protein=' || sa.position_in_protein || '$dlm' ||
+       'reference_strain=' || sa.reference_strain || '$dlm' ||
+       'reference_aa=' || sa.reference_aa || '$dlm' ||
+       'gene_strand=' || sa.gene_strand || '$dlm' ||
+       'reference_na=' || sa.reference_na || '$dlm' ||
+       'source_id=' || sa.source_id as atts
 FROM   ApidbTuning.SnpAttributes sa
 WHERE  sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'  
   AND  sa.na_sequence_id = $srcfeature_id
@@ -4314,14 +4311,13 @@ WHERE  sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
        'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
        'IsCoding=' || sa.is_coding || '$dlm' ||
        'Gene=' || sa.gene_source_id || '$dlm' ||
-       'params=' || sa.position_in_CDS || '&' ||
-       sa.position_in_protein || '&' ||
-       sa.reference_strain || '&' ||
-       sa.reference_aa || '&' ||
-       sa.gene_strand || '&' ||
-       sa.reference_na || '&' ||
-       sa.source_id 
-        as atts
+       'position_in_CDS=' || sa.position_in_CDS || '$dlm' ||
+       'position_in_protein=' || sa.position_in_protein || '$dlm' ||
+       'reference_strain=' || sa.reference_strain || '$dlm' ||
+       'reference_aa=' || sa.reference_aa || '$dlm' ||
+       'gene_strand=' || sa.gene_strand || '$dlm' ||
+       'reference_na=' || sa.reference_na || '$dlm' ||
+       'source_id=' || sa.source_id as atts
 FROM   ApidbTuning.SnpAttributes sa
 WHERE  sa.dataset =  'NIH SNPs'
   AND  sa.na_sequence_id = $srcfeature_id
