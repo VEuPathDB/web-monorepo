@@ -250,37 +250,37 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <c:choose>
   <c:when test="${species eq 'falciparum3D7'}">
     <c:set var="tracks">
-      Synteny/pfal_gene+pfal_span+pfit_gene+pfit_span+pviv_gene+pviv_span+pkno_gene+pkno_span+pyoe_gene+pyoe_span+pber_gene+pber_span+pcha_gene+pcha_span%1ECombinedSNPs
+      Synteny/pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pyoe_span+pyoe_gene+pber_span+pber_gene+pcha_span+pcha_gene%1ECombinedSNPs
     </c:set>
   </c:when>
   <c:when test="${species eq 'yoelii'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC
+      Synteny/pyoe_span+pyoe_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcha_span+pcha_gene+pber_span+pber_gene
     </c:set>
   </c:when>
   <c:when test="${species eq 'chabaudi'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
+      Synteny/pcha_span+pcha_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pber_span+pber_gene+pyoe_span+pyoe_gene
     </c:set>
   </c:when>
   <c:when test="${species eq 'falciparumIT'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC
+      Synteny/pfit_span+pfit_gene+pfal_span+pfal_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pber_span+pber_gene+pyoe_span+pyoe_gene+pcha_span+pcha_gene
     </c:set>
   </c:when>
   <c:when test="${species eq 'berghei'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
+      Synteny/pber_span+pber_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcha_span+pcha_gene+pyoe_span+pyoe_gene
     </c:set>
   </c:when>
   <c:when test="${species eq 'knowlesi'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenyGenesVivaxMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
+      Synteny/pkno_span+pkno_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pcha_span+pcha_gene+pber_span+pber_gene+pyoe_span+pyoe_gene
     </c:set>
   </c:when>
   <c:when test="${species eq 'vivax'}">
     <c:set var="tracks">
-      AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansFalciparumITMC+SyntenyGenesFalciparumITMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC
+      Synteny/pviv_span+pviv_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pkno_span+pkno_gene+pcha_span+pcha_gene+pber_span+pber_gene+pyoe_span+pyoe_gene
     </c:set>
   </c:when>
   <c:otherwise>
