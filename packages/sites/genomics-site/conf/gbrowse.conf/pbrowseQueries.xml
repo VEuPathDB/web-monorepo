@@ -246,7 +246,7 @@
   <sqlQuery name="get_feature_by_name">
     <sql>
 <![CDATA[
-SELECT trp.source_id ctg_name, 
+SELECT regexp_replace(trp.source_id, '-1$', '') ctg_name, 
        tas.aa_sequence_id feature_id, 
        tas.aa_sequence_id parent_id, 
        'protein' type, 
