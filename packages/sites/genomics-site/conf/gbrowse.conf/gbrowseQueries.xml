@@ -1125,7 +1125,6 @@ SELECT name || '_' ||  sample as feature_id,
   '$source'     as source,
   $base_start  as startm,
   $rend        as end,
-  'name=' || name || '$dlm' ||
   'sample=' || sample as atts
 FROM
 (
@@ -1235,7 +1234,6 @@ SELECT name || '_' ||  sample as feature_id,
        '$source'     as source,
        $base_start  as startm,
        $rend        as end,
-       'name=' || name || '$dlm' ||
        'sample=' || sample as atts
 FROM
 (
