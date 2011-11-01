@@ -754,7 +754,8 @@ sub estTitle {
   push @data, [ 'Vector:' => $vector ]; 
   push @data, [ 'Primer:' => $primer ]; 
   push @data, [ 'Stage:' => $stage ]; 
-  hover("dbEST Alignment: $name", \@data);
+  #hover("dbEST Alignment: $name", \@data);
+  &createPopups($f, \@data); 
 }
 
 sub cosmidTitle { 
@@ -822,7 +823,8 @@ sub orfTitle {
   push @data, [ 'Start:'  => $start ];
   push @data, [ 'Stop:'   => $stop ];
   push @data, [ 'Length:' => $length . ' aa' ];
-  return hover( 'ORFs >= 150 nt', \@data);
+  #return hover( 'ORFs >= 150 nt', \@data);
+  &createPopups($f, \@data); 
 }
 
 sub ArrayElementTitle {
