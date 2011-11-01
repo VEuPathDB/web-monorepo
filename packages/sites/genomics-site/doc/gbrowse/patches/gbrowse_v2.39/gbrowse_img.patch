@@ -1,0 +1,11 @@
+--- gbrowse_img.v2.39	2011-11-01 10:39:34.000000000 -0400
++++ gbrowse_img	2011-11-01 10:40:32.000000000 -0400
+@@ -226,7 +226,7 @@
+         my $url    = $renderer->source->generate_image($img_data);
+ 	my $js = $render->data_source->globals->js_url;
+ 	my @scripts = map { {src=>"$js/$_"} }
+-	                  qw(balloon.js balloon.config.js yahoo-dom-event.js);
++	                  qw(prototype.js GBox.js balloon.js balloon.config.js yahoo-dom-event.js);
+ 	print $self->header(-type=>'text/html');
+ 	print start_html(-script=>\@scripts),
+ 	      $render->render_balloon_settings,
