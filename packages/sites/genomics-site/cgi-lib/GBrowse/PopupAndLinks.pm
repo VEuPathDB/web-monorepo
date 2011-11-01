@@ -891,6 +891,7 @@ sub rumIntronTitleUnified {
   push @data, [ 'Location:'  => "$start - $stop"];
   push @data, [ 'Scores'     => $sum ];
   hover('Unified Splice Site Junctions - RNASeq', \@data);
+  &createPopups($f, \@data); 
 }
 
 sub massSpecTitle {  
@@ -1049,7 +1050,8 @@ sub blastxTitle {
   push @data, [ 'Identity %:'  => $pctI];
   push @data, [ 'Percent Positive' => $percent_pos];
   push @data, [ 'Description:' => $desc ];
-  hover("BLASTX: gi\|$name", \@data);
+  #hover("BLASTX: gi\|$name", \@data);
+  &createPopups($f, \@data); 
 }
 
 
@@ -1083,7 +1085,8 @@ sub sageTagTitle {
     my $percent = sprintf("%.3f", $item->{LIBRARY_TAG_PERCENTAGE});
     push @data, [ "$lib" => "$percent % | $raw_count" ];
   }
-  return hover( "Sage Tag - Temp ID $name", \@data); 
+  #return hover( "Sage Tag - Temp ID $name", \@data); 
+  &createPopups($f, \@data); 
 } 
 
 
@@ -1119,7 +1122,8 @@ sub geneticMarkersTitle {
     my $info = "$na" . ($isCoding? " : $aa" : "");
     push @data, [ "Strain: $strain" => $info ];
   }
-  hover( "Genetic Markers - $class", \@data);
+  #hover( "Genetic Markers - $class", \@data);
+  &createPopups($f, \@data); 
 }
 
 sub RandomEndsTitle {
@@ -1145,7 +1149,8 @@ sub RandomEndsTitle {
      push @data, [ 'Percent Identity:' => "$pct %" ]; 
      push @data, [ 'Score:' => $_->score ]; 
   }
- hover("Random End: $cname", \@data);
+ #hover("Random End: $cname", \@data);
+  &createPopups($f, \@data); 
 }
 
 sub affyProbesTitle {
@@ -1161,7 +1166,8 @@ sub affyProbesTitle {
   push @data, ['Start:'        => $start];
   push @data, ['Stop:'         => $stop];
   push @data, ['Count:' => $count];
-  hover( $type, \@data);   
+  #hover( $type, \@data);   
+  &createPopups($f, \@data); 
 }
 
 
@@ -1193,7 +1199,8 @@ sub bindingSiteTitle {
   push @data, [ 'P value:' => $score];  
   push @data, [ 'Sequence:' => $sequence ];  
   push @data, [ 'Click logo for larger image'  => $link];
-  hover("Binding Site $name", \@data);
+  #hover("Binding Site $name", \@data);
+  &createPopups($f, \@data); 
 }
 
 
@@ -1215,7 +1222,8 @@ sub interproTitle {
   push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
   push @data, [ 'Evalue:' => $evalue ];
   push @data, [ 'Interpro:' => $interproId ];
-  hover("InterPro Domain: $name", \@data);
+  #hover("InterPro Domain: $name", \@data);
+  &createPopups($f, \@data); 
 }
 
 sub interproLink {
@@ -1257,7 +1265,8 @@ sub signalpTitle {
   push @data, [ 'NN D-Score:' => $d_score ];
   push @data, [ 'HMM Signal Probability:' => $signal_prob ];
   push @data, [ 'Algorithm:' => $algorithm ];
-  hover("Signal peptide", \@data);
+  #hover("Signal peptide", \@data);
+  &createPopups($f, \@data); 
 }
 
 sub tmhmmTitle {
@@ -1266,7 +1275,8 @@ sub tmhmmTitle {
   my @data;
   push @data, [ 'Topology:' => $desc ];
   push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
-  hover("Transmembrane Domain", \@data);
+  #hover("Transmembrane Domain", \@data);
+  &createPopups($f, \@data); 
 }
 
 sub blastpTitle {
@@ -1282,7 +1292,8 @@ sub blastpTitle {
   push @data, [ '% Identical:' => sprintf("%3.1f", $f->get_tag_values("PercentIdentity")) ];
   push @data, [ '% Positive:' => sprintf("%3.1f", $f->get_tag_values("PercentPositive")) ];
   push @data, [ 'Coordinates:' => $f->start . ' .. ' . $f->end ];
-  hover("BLASTP hit: $name", \@data);
+  #hover("BLASTP hit: $name", \@data);
+  &createPopups($f, \@data); 
 }
 
 sub isolatesTitle {
@@ -1299,7 +1310,7 @@ sub isolatesTitle {
   push @data, [ 'Expect:' => $evalue ];
   push @data, [ 'Match:'  => "$matchlen nt" ];
   push @data, [ 'Note:'   => $desc ];
-  hover( "$name", \@data);
+  &createPopups($f, \@data); 
 }
 
 sub lowcomplexitySegTitle {
@@ -1308,14 +1319,16 @@ sub lowcomplexitySegTitle {
   my ($sequence) = $f->get_tag_values("Sequence");
   push @data, [ 'Coordinates:' => $f->start . '..' . $f->end ];
   push @data, [ 'Sequence:'  => $sequence ];
-  hover("Low complexity", \@data);
+  #hover("Low complexity", \@data);
+  &createPopups($f, \@data); 
 }
 
 sub ExportPredTitle{
    my $f = shift;
    my @data;
    push @data, [ 'Coordinates:' => $f->start . '..' . $f->end ];
-   hover("Predicted export domain", \@data);
+   #hover("Predicted export domain", \@data);
+   &createPopups($f, \@data); 
 }
 
 1;
