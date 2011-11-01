@@ -1229,36 +1229,14 @@ FROM (
   <sqlQuery name="NextGenSeq:coverageLogGB2"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
        <![CDATA[
-SELECT name || '_' ||  sample as feature_id,
+SELECT ext_db_name || '_' || sample as feature_id,
        'NextGenSeq'  as type, 
        '$source'     as source,
        $base_start  as startm,
        $rend        as end,
        'sample=' || sample as atts
-FROM
-(
-        SELECT 'Hour5' as sample FROM dual
-  UNION SELECT 'Hour10' as sample FROM dual
-  UNION SELECT 'Hour15' as sample FROM dual
-  UNION SELECT 'Hour20' as sample FROM dual
-  UNION SELECT 'Hour25' as sample FROM dual
-  UNION SELECT 'Hour30' as sample FROM dual
-  UNION SELECT 'Hour35' as sample FROM dual
-  UNION SELECT 'Hour40' as sample FROM dual
--- for plasmo 'Pf_RNASeq_Newbold_RSRC' tracks
-  UNION SELECT 'Hour0' as sample FROM dual
-  UNION SELECT 'Hour8' as sample FROM dual
-  UNION SELECT 'Hour16' as sample FROM dual
-  UNION SELECT 'Hour24' as sample FROM dual
-  UNION SELECT 'Hour32' as sample FROM dual
---  UNION SELECT 'Hour40' as sample FROM dual
-  UNION SELECT 'Hour48' as sample FROM dual
--- for plasmo 'Pf_RNASeq_Duffy_RSRC' tracks:
-  UNION SELECT '3D7' as sample FROM dual
-  UNION SELECT 'PL01' as sample FROM dual
-  UNION SELECT 'PL02' as sample FROM dual
-) x,
-(SELECT $$edname$$ as name FROM dual) y
+FROM apidbtuning.NextGenSeqStats
+WHERE ext_db_name = $$edname$$
        ]]>
     </sql>
   </sqlQuery>
