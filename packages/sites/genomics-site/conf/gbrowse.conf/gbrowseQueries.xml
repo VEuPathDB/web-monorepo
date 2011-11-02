@@ -1105,35 +1105,18 @@ WHERE  edr.external_database_id = ed.external_database_id
   <sqlQuery name="NextGenSeq:coverageGB2"  includeProjects="TriTrypDB,PlasmoDB">
      <sql>
        <![CDATA[
-SELECT name || '_' ||  sample as feature_id,
+SELECT ext_db_name || '_' ||  sample as feature_id,
   'NextGenSeq'  as type, 
   '$source'     as source,
   $base_start  as startm,
   $rend        as end,
   'sample=' || sample as atts
-FROM
-(
-        SELECT 'Input_10h' as sample FROM dual
-  UNION SELECT 'Input_20h' as sample FROM dual
-  UNION SELECT 'Input_30h' as sample FROM dual
-  UNION SELECT 'Input_40h' as sample FROM dual
-  UNION SELECT 'H2AZ_10h' as sample FROM dual
-  UNION SELECT 'H2AZ_20h' as sample FROM dual
-  UNION SELECT 'H2AZ_30h' as sample FROM dual
-  UNION SELECT 'H2AZ_40h' as sample FROM dual
-  UNION SELECT 'H3K4me3_10h' as sample FROM dual
-  UNION SELECT 'H3K4me3_20h' as sample FROM dual
-  UNION SELECT 'H3K4me3_30h' as sample FROM dual
-  UNION SELECT 'H3K4me3_40h' as sample FROM dual
-  UNION SELECT 'H3K9ac_10h' as sample FROM dual
-  UNION SELECT 'H3K9ac_20h' as sample FROM dual
-  UNION SELECT 'H3K9ac_30h' as sample FROM dual
-  UNION SELECT 'H3K9ac_40h' as sample FROM dual
-) x,
-(SELECT $$edname$$ as name FROM dual) y
+FROM apidbtuning.NextGenSeqStats
+WHERE ext_db_name = $$edname$$
        ]]>
     </sql>
   </sqlQuery>
+
 
   <sqlQuery name="NextGenSeq:coverageRatio"  includeProjects="TriTrypDB,PlasmoDB">
      <sql>
