@@ -22,8 +22,7 @@
                      font-size: small;
                      }
 .tabmenu_active   { cursor: pointer;
-			color: black;
-			background-color: #BBCCFF;
+			color: blue;
 			font-size: 11pt;
 			font-weight: bold;
                         font-family: sans-serif;
@@ -33,19 +32,23 @@
 			border-top:  1px solid;
 			border-left: 1px solid;
 			border-right: 1px solid;
-			border-bottom: 1px solid;
-			border-bottom-color: beige;
+			background-color: #E3E9FF;
+			border-bottom-color: #E3E9FF;
 			z-index: 10;
 		      }
 .tabmenu_inactive { cursor: pointer;
-			color: blue;
+			color: black;
 			font-size: 11pt;
-			background-color: transparent;
-			font-weight: bold;
+			background-color: #BBCCFF;
+			border-bottom-color: #E3E9FF;
+			font-weight: normal;
                         font-family: sans-serif;
 			padding-top:   5px;
 			padding-left:  5px;
 			padding-right: 5px;
+			border-top:  1px solid;
+			border-left: 1px solid;
+			border-right: 1px solid;
 		      }
 .tabmenu_inactive:hover {
      text-decoration: none;
