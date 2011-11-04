@@ -251,8 +251,8 @@ sub htsSnpTitleQuick {
   }
 
   push(@data, ['Type' => $type]);
-  push(@data, ['Strain' => "<b>Allele</b> Product Coverage Allele %"]);
-  push(@data, ["$reference_strain&nbsp;(reference)" => "$refNA | $reference_aa"]);
+  push(@data, ['<b>Strain</b>' => "<b>Allele Product Coverage Allele%</b>"]);
+  push(@data, ["$reference_strain&nbsp;(reference)" => "$refNA &nbsp;&nbsp;&nbsp;&nbsp; $reference_aa"]);
 
   # make one row per SNP allele
   my $size = @vars;
@@ -265,7 +265,7 @@ sub htsSnpTitleQuick {
     my $na = $var[1];
     $na = $revArray{$na} if ($gene_strand == 1);
     my $aa_seq =  ($isCoding == 'yes') ? $var[2]  : '';
-    push(@data, ["$strain" => " $na | $aa_seq | $var[3] | $var[4]" ]);
+    push(@data, ["$strain" => " $na &nbsp;&nbsp;&nbsp;&nbsp; $aa_seq &nbsp;&nbsp;&nbsp;&nbsp; $var[3] &nbsp;&nbsp;&nbsp;&nbsp; $var[4]" ]);
 
   }
   hover($f, \@data); 
