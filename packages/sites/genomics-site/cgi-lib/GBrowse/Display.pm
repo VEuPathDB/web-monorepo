@@ -883,7 +883,7 @@ sub synSpanOffset {
 
 sub warnNote {
   my ($f, $project) = @_;
-  my $txt = "<font color='red'><b>NOTE</b>: If you load tracks and they appear empty</font>, you can try two things to resolve this issue:<br>1. Make sure you are viewing the correct species/strain to which the data was mapped.<br>2. Reset gbrowse by clicking on the red <a href='/cgi-bin/gbrowse/$project/?reset=1'><b><u><font color='red'>Reset</font></u></b></a> link, then try again.";
+  my $txt = "<font color='red'><b>NOTE</b>: If you load tracks and they appear empty</font>, you can try two things to resolve this issue:<br>1. Make sure you are viewing the correct species/strain to which the data was mapped.<br>2. Reset gbrowse by clicking on the red <a href='/cgi-bin/gbrowse/$project/?reset=1'><b><u><font color='red'>Reset</font></u></b></a> link, then try again.<br/><br/>";
 
   return $txt;
 }
