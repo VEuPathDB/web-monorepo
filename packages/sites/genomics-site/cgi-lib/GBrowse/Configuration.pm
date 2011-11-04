@@ -107,26 +107,46 @@ sub popup_template {
 }
 
 
+
 sub hover {
-  my ($name, $data) = @_;
+  my ($f, $data) = @_;
 
-  my @dataArray;
-  foreach(@$data) {
-    push @dataArray, @$_;
+  my $type = $f->type;
+  my $name = $f->name;
+  my $base = "$ENV{DOCUMENT_ROOT}/gbrowse/tmp";
+  mkdir "$base/$type", 0777 unless -d "$base/$type";
+  unless(-e "$base/$type/$name") {
+    open F, ">$base/$type/$name";
+    foreach(@$data) {
+      my ($k, $v) = @$_;
+      print F "$k\t$v\n";
+    }
+    close F;
   }
-
-  my @quotedData;
-  foreach(@dataArray) {
-    s/'/\\'/g;
-    s/\"/&quot;/g;
-    s/\s+$//;
-    push @quotedData, "'$_'";
-  }
-
-  my $dataString = scalar @quotedData > 0 ? "," . join(',', @quotedData) : '';
-
-  return qq{" onmouseover="return escape(popup_text(this,'$name'$dataString))"};
+  return "url:/cgi-bin/gp?t=$type&n=$name";
 }
+
+
+# sub hover {
+#   my ($name, $data) = @_;
+
+#   my @dataArray;
+#   foreach(@$data) {
+#     push @dataArray, @$_;
+#   }
+
+#   my @quotedData;
+#   foreach(@dataArray) {
+#     s/'/\\'/g;
+#     s/\"/&quot;/g;
+#     s/\s+$//;
+#     push @quotedData, "'$_'";
+#   }
+
+#   my $dataString = scalar @quotedData > 0 ? "," . join(',', @quotedData) : '';
+
+#   return qq{" onmouseover="return escape(popup_text(this,'$name'$dataString))"};
+# }
 
 
 sub oldhover {
