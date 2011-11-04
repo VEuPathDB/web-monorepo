@@ -42,15 +42,6 @@ DAS::GUS - DAS-style accession to a gus database
 
 =cut
 
-=head1 AUTHOR 
-
-Name:  Haiming Wang
-Email: hwang@uga.edu
-
-=cut
-
-#'
-
 package DAS::GUS;
 
 use strict;

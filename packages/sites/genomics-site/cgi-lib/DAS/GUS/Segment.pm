@@ -11,12 +11,6 @@ DAS::GUS::Segment - DAS-style access to a GUS database
                             -stop  => $stop );
 
 =head1 DESCRIPTION
-
-=head1 AUTHOR
-
-Name:  Haiming Wang
-Email:  hwang@uga.edu
-
 =cut
 
 package DAS::GUS::Segment;

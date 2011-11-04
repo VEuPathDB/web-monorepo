@@ -23,13 +23,6 @@ methods implemented by this module.
 
 =cut
 
-=head1 AUTHOR 
-
-Name:  Haiming Wang
-Email: hwang@uga.edu
-
-=cut
-
 package DAS::GUS::Segment::Feature;
 
 use strict;

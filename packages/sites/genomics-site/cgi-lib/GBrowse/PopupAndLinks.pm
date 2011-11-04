@@ -5,7 +5,6 @@ use strict;
 use GBrowse::Configuration;
 use XML::Simple;
 
-
 my %MS_EXTDB_NAME_MAP;
 
 BEGIN {
@@ -214,19 +213,62 @@ sub htsSnpTitleQuick {
   my ($rend) = $f->get_tag_values("rend"); 
   my ($base_start) = $f->get_tag_values("base_start");
   my $zoom_level = $rend - $base_start; 
-  if ($zoom_level <= 60000) {
-    my ($params) = $f->get_tag_values("params");
-    my $variants = $f->bulkAttributes();
-    my @vars;
-    foreach my $variant (@$variants) {
-      push(@vars, "$variant->{STRAIN}::$variant->{ALLELE}::$variant->{PRODUCT}::$variant->{COVERAGE}::$variant->{ALLELE_PERCENT}::$variant->{PVALUE}");
-    }
-    my $varsString = join('|', @vars);
-    my $start = $f->start();
-    return qq{" onmouseover="return escape(htspst(this,'$params&$varsString&$start&$gene&$isCoding&$nonSyn'))"};
-  } else {
-    return $gene? "In gene $gene" : "Intergenic"; 
+
+  my ($position_in_CDS) = $f->get_tag_values("position_in_CDS");
+  my ($position_in_protein) = $f->get_tag_values("position_in_protein");
+  my ($reference_strain) = $f->get_tag_values("reference_strain");
+  my ($reference_aa) = $f->get_tag_values("reference_aa");
+  my ($gene_strand) = $f->get_tag_values("gene_strand");
+  my ($reference_na) = $f->get_tag_values("reference_na");
+  my ($source_id) = $f->get_tag_values("source_id");
+
+  my $variants = $f->bulkAttributes();
+  my @vars;
+  foreach my $variant (@$variants) {
+    push(@vars, "$variant->{STRAIN}::$variant->{ALLELE}::$variant->{PRODUCT}::$variant->{COVERAGE}::$variant->{ALLELE_PERCENT}::$variant->{PVALUE}");
   }
+  my $varsString = join('|', @vars);
+  my $start = $f->start();
+  my %revArray = { 'A' => 'T', 'C' => 'G', 'T' => 'A', 'G' => 'C' };
+  #return qq{" onmouseover="return escape(htspst(this,'$params&$varsString&$start&$gene&$isCoding&$nonSyn'))"};
+  my $link = "<a href='/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$source_id'>$source_id</a>";
+
+  my $type = 'Non-coding';
+  my  $refNA = $gene_strand == 1 ? $revArray{$reference_na} : $reference_na;
+  my $refAAString = ''; 
+  if ($isCoding == 'yes') {
+    my $non = $nonSyn == 'yes' ? 'non-' : ''; 
+    $type = "Coding ($non" . "synonymous)";
+    $refAAString = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$reference_aa";
+  }
+
+  my @data;
+  push(@data, ['SNP' => $link]);
+  push(@data, ['Gene' => $gene]) if $gene;
+  if ($isCoding == 'yes') {
+    push(@data, ['Position&nbsp;in&nbsp;CDS' => $position_in_CDS]);
+    push(@data, ['Position&nbsp;in&nbsp;protein' => $position_in_protein]);
+  }
+
+  push(@data, ['Type' => $type]);
+  push(@data, ['Strain' => "<b>Allele</b> Product Coverage Allele %"]);
+  push(@data, ["$reference_strain&nbsp;(reference)" => "$refNA | $reference_aa"]);
+
+  # make one row per SNP allele
+  my $size = @vars;
+  for (my $i=0; $i< $size; $i++) {
+   
+    my @var = split /\:\:/, $vars[$i];
+    my $strain = $var[0];
+    next if ($strain eq $reference_strain);
+
+    my $na = $var[1];
+    $na = $revArray{$na} if ($gene_strand == 1);
+    my $aa_seq =  ($isCoding == 'yes') ? $var[2]  : '';
+    push(@data, ["$strain" => " $na | $aa_seq | $var[3] | $var[4]" ]);
+
+  }
+  hover($f, \@data); 
 }
 
 sub snpTitleQuick {
@@ -249,7 +291,6 @@ sub snpTitleQuick {
   my @vars;
   foreach my $variant (@$variants) {
     push(@vars, "$variant->{STRAIN}:$variant->{ALLELE}:$variant->{PRODUCT}");
-    warn ">> $f @vars";
   }
 
   my $start = $f->start();
