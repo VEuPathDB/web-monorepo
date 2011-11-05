@@ -422,7 +422,7 @@ sub snpTitleFromMatchToReference {
                  my $info = $likeRef ? "matches reference" : "polymorphic";
                  push @data, [ "$strain" => $info ];
                }
-               hover( "CGH | $source_id | $type", \@data) if $refStrain;
+               hover( $f, \@data) if $refStrain;
              } else {
                 return $gene? "In gene $gene" : "Non-coding";
              }
@@ -444,7 +444,7 @@ sub snpTitleFromMatchToReference {
    push @data, [ 'Country:'  => $country ];
    push @data, [ 'Allele:'  => $allele ];
    push @data, [ 'SNP Id:'  => $link ];
-   return hover( "3k Chip", \@data); 
+   return hover($f, \@data); 
  }
 
  sub chipTitle {
@@ -466,7 +466,7 @@ sub snpTitleFromMatchToReference {
    push @data, [ 'Minor Allele:'  => $minorAllele ];
    push @data, [ 'Minor Allele Frequency:'  => $minorAlleleFreq ];
    push @data, [ '# of isolates:'  => $numIsolates ];
-   return hover( "SNP on genotypying chip", \@data); 
+   return hover($f, \@data); 
  }
 
 sub peakTitle {
@@ -479,7 +479,7 @@ sub peakTitle {
   push @data, [ 'Analysis:' => $analysis ];
   push @data, [ 'Antibody:' => $a ];
   push @data, [ 'Score:' => $score ];
-  hover( "ChIP-chip called peaks $name", \@data); 
+  hover( $f, \@data); 
 }
 
 
@@ -562,7 +562,7 @@ sub spliceSiteCuratedTitle {
   push(@data, ['Gene:' => $gene_id]);
   push(@data, ['Sequence count:' => $sasNum]);
   push(@data, ['UTR length:' => $utr_len]);
-  return hover("$id",\@data);
+  return hover($f,\@data);
 }
 
 sub spliceSiteAlignTitle {
@@ -577,7 +577,7 @@ sub spliceSiteAlignTitle {
   push(@data, ['Longest Sequence:' => $seq]);
   push(@data, ['Number of Sequences:' => $seqNum]);
   push(@data, ['Genome Matches:' => $genMatches]);
-  return hover("Splice Site: $loc",\@data);
+  return hover($f,\@data);
 }
 
 sub spliceSiteTitle {
@@ -605,7 +605,7 @@ sub spliceSiteTitle {
   push(@data, ['Gene ID:' => $gene]) if ($gene);
   push(@data, ['UTR Length:' => $utr_len]) if ($gene);
   push(@data, ['Avg Mismatches:' => $mismatch]);
-  return hover("$id",\@data);
+  return hover($f,\@data);
 }
 
 sub polyASiteAlignTitle {
@@ -619,7 +619,7 @@ sub polyASiteAlignTitle {
   push(@data, ['Location:' => $loc]);
   push(@data, ['Number of Sequences:' => $seqNum]);
   push(@data, ['Genome Matches:' => $genMatches]);
-  return hover("PolyA Site: $loc",\@data);
+  return hover($f,\@data);
 }
 
 sub MicrosatelliteTitle {
@@ -641,7 +641,7 @@ sub MicrosatelliteTitle {
     push @data, [ '3D7 End:'        => $stop ];
     push @data, [ '3D7 ePCR Product Size:'        => $length ];
     push @data, [ 'Multiple Sequence Alignment'        => $msaLink ];
-    return hover( "Microsatellite STS - $name", \@data);
+    return hover($f, \@data);
 }
 
 
@@ -671,7 +671,7 @@ sub HaploBlockTitle {
     push @data, [ '3D7 Conservative Start-End'        => "$start_max..$end_min   ($consrvAssoclink, $consrvContlink)" ];
     push @data, [ 'Leberal Length'        => abs($end_max-$start_min) ];
     push @data, [ 'Conservative Length'        => abs($end_min-$start_max) ];
-    return hover( "Haplotype Block - $name", \@data);
+    return hover($f, \@data);
 }
 
 sub contigTitle {  
@@ -695,18 +695,21 @@ sub contigTitle {
     push @data, [ 'Orientation:' => "$orient" ];
     push @data, [ 'Contig location:' => "$start_position..$end_position" ];
     push @data, [ 'Location on scaffold:' => "$start..$stop" ];
-    hover('Contig', \@data);
+#    hover('Contig', \@data);
+    hover($f, \@data);
   } elsif ($term eq 'scaffold'){
     push @data, [ 'Scaffold:' => $name ];
     push @data, [ 'Length:'  => $length ];
     push @data, [ 'Orientation:' => "$orient" ];
     push @data, [ 'Scaffold location:' => "$start_position..$end_position" ];
     push @data, [ 'Location on chromosome:' => "$start..$stop" ];
-    hover('Scaffold', \@data);
+#    hover('Scaffold', \@data);
+    hover($f, \@data);
   } else { # for 'gap'
     push @data, [ 'Length:'  => $length ];
     push @data, [ 'Reference Location:' => "$start..$stop" ];
-    hover('Gap', \@data);
+#    hover('Gap', \@data);
+    hover($f, \@data);
   }
 }
 
@@ -737,7 +740,8 @@ sub scaffoldTitle {
     push @data, [ 'Orientation:' => "$orient" ]; 
     push @data, [ 'Location:' => "$start..$stop" ];
   } 
-  hover( ($type eq 'scaffold') ? 'Scaffold' : 'All gaps in region', \@data);
+#  hover( ($type eq 'scaffold') ? 'Scaffold' : 'All gaps in region', \@data);
+    hover($f, \@data);
 }
 
 
@@ -754,7 +758,8 @@ sub assemblyTitle {
   push @data, [ 'Stop:'   => $stop ];
   push @data, [ 'Percent Identity:' => $percent_identity ]; 
   push @data, [ 'Count of ESTs:' => $count ]; 
-  hover("DoTS EST Assemblies: $name", \@data);
+#  hover("DoTS EST Assemblies: $name", \@data);
+    hover($f, \@data);
 }
 
 sub tigrAssemblyTitle {
@@ -770,7 +775,8 @@ sub tigrAssemblyTitle {
   push @data, [ 'Accession: ' => $name ];
   # push @data, [ 'Location: ' => "$chr $loc" ];
   push @data, [ 'Description: ' => $desc ];
-  hover("TIGR EST $db $ver Assembly: $name", \@data);
+#  hover("TIGR EST $db $ver Assembly: $name", \@data);
+    hover($f, \@data);
 }
 
 sub estTitle { 
@@ -822,7 +828,8 @@ sub cosmidTitle {
     push @data, [ 'Score:' => $_->score ]; 
     push @data, [ '<hr>' => '<hr>' ] if $count % 2;
   }
-  hover("End-Sequenced Cosmid: $cname", \@data);
+#  hover("End-Sequenced Cosmid: $cname", \@data);
+    hover($f, \@data);
 }
 
 sub bacsTitle { 
@@ -849,7 +856,8 @@ sub bacsTitle {
     push @data, [ 'Score:' => $_->score ]; 
     push @data, [ '<hr>' => '<hr>' ] if $count % 2;
   }
-  hover("End-Sequenced BAC: $cname", \@data);
+#  hover("End-Sequenced BAC: $cname", \@data);
+    hover($f, \@data);
 }
 
 sub orfTitle {
@@ -875,7 +883,7 @@ sub ArrayElementTitle {
      my @data;
      push @data, [ 'Name:'  => $name ];
      push @data, [ 'Location:'  => "$chr $loc" ];
-     hover("Glass Slide Oligo: $name", \@data);
+     hover($f, \@data);
 }
 
 sub rumIntronTitle {  
@@ -900,7 +908,8 @@ sub rumIntronTitle {
   push @data, [ 'Long Overlap NU Reads:'      => "$lonr" ];
   push @data, [ 'Short Overlap NU Reads:'     => "$sonr" ];
 
-  hover('Splice Site Junctions', \@data);
+#  hover('Splice Site Junctions', \@data);
+    hover($f, \@data);
 }
 
 sub rumIntronTitleUnified {  
@@ -932,7 +941,7 @@ sub rumIntronTitleUnified {
   push @data, [ '' => $html ];
   push @data, [ 'Location:'  => "$start - $stop"];
   push @data, [ 'Scores'     => $sum ];
-  hover('Unified Splice Site Junctions - RNASeq', \@data);
+#  hover('Unified Splice Site Junctions - RNASeq', \@data);
   hover($f, \@data); 
 }
 
@@ -1026,7 +1035,7 @@ sub massSpecUnifiedTitle {
     push @data, [ "$assayTitle" => "$test{$try} ($freq{$try})" ];
     $assayTitle = ' ';
   }
-  hover('', \@data) if $count;
+  hover($f, \@data) if $count;
 }
 
 
