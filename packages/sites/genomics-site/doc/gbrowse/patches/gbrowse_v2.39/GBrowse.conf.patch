@@ -1,5 +1,16 @@
---- GBrowse.conf.orig	2011-10-28 14:14:36.000000000 -0400
-+++ GBrowse.conf	2011-10-28 14:31:38.000000000 -0400
+--- GBrowse.conf.orig	2011-11-06 20:09:12.000000000 -0500
++++ GBrowse.conf	2011-11-06 20:17:45.000000000 -0500
+@@ -160,8 +160,8 @@
+ # "user_accounts" is true, then GBrowse
+ # will attempt to use its internal user accounts database
+ # to authenticate and/or register users.
+-user_accounts               = 1
+-user_accounts_registration  = 1
++user_accounts               = 0
++user_accounts_registration  = 0
+ user_accounts_openid        = 0
+ 
+ # Path to the database -- you will need to create this database and grant all
 @@ -234,4 +234,4 @@
  description   = Population Display Demo
  path          = pop_demo.conf
