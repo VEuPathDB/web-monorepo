@@ -365,6 +365,21 @@ sub massSpecBgColorFromExtDbName {
                 'Pf_Bowyer_Proteomics_48hrs_Post_Infection_RSRC' => 'orange',
                 'Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC' => '#F62817',  #Firebrick1
                 'Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC'   => '#250517',  #Gray18
+                'Pf_Voss_trophs_stages_F5_RSRC' => '#FF0000',
+                'Pf_Voss_trophs_stages_F4_RSRC' => '#FFFF00',
+                'Pf_Voss_trophs_stages_F3_RSRC' => '#009900',
+                'Pf_Voss_trophs_stages_F2_RSRC' => '#0000FF',
+                'Pf_Voss_trophs_stages_F1_RSRC' => '#990099',
+                'Pf_Voss_schizonts_stages_F5_RSRC' => '#660000',
+                'Pf_Voss_schizonts_stages_F4_RSRC' => '#FF6600',
+                'Pf_Voss_schizonts_stages_F3_RSRC' => '#003300',
+                'Pf_Voss_schizonts_stages_F2_RSRC' => '#000033',
+                'Pf_Voss_schizonts_stages_F1_RSRC' => '#330066',
+                'Pf_Voss_ring_stages_F5_RSRC' => '#CC3333',
+                'Pf_Voss_ring_stages_F3_RSRC' => '#FFFF00',
+                'Pf_Voss_ring_stages_F1_RSRC' => '#66FF66',
+                'Pf_Voss_ring_stages_F4_RSRC' => '#3399FF',
+                'Pf_Voss_ring_stages_F2_RSRC' => '#FF99FF',
                 #AmoebaDB
                 'Ehistolytica_Glycosylation_RSRC' => 'yellow',
                 'Phagosome Proteomics data from Huston - 0 mins' => 'yellow',
