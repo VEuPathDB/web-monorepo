@@ -7,28 +7,6 @@ use XML::Simple;
 
 my %MS_EXTDB_NAME_MAP;
 
-BEGIN {
-  my $serverName = $ENV{SERVER_NAME};
-  my $project_id = $ENV{PROJECT_ID};
-
-  if ($project_id !~ /Microsporidia/ && $project_id !~ /Piroplasma/ && $project_id !~ /FungiDB/ ) {
-
-    my $xml = `wget -qO- "http://$serverName/a/getVocab.do?questionFullName=GeneQuestions.GenesByMassSpec&name=ms_assay&xml=TRUE"`;
-    my $string = XMLin($xml, ForceArray => 1);
-
-    my $terms = $string->{terms}->[0]->{term};
-
-    if(ref($terms) eq 'HASH') {
-
-      foreach my $name (keys %{$terms}) {
-
-        my $display = $terms->{$name}->{content};
-        my $extDbName = $terms->{$name}->{internal};
-        $MS_EXTDB_NAME_MAP{$extDbName} = $display;
-      }
-    }
-  }
-};
 
 #--------------------------------------------------------------------------------
 #  Methods for Links
@@ -105,38 +83,23 @@ sub snpLink {
 #  Methods for Titles (Popups)
 #--------------------------------------------------------------------------------
 
-sub synGeneTitle {
+
+
+
+sub syntenyTitle {
   my $f = shift;
-  my $projectId = $ENV{PROJECT_ID};
-  my $name = $f->name;
-  my $chr = $f->seq_id;
-  my $loc = $f->location->to_FTstring;
-  my ($desc) = $f->get_tag_values("Note");
-  my ($taxon) = $f->get_tag_values("Taxon");
-  my ($isPseudo) = $f->get_tag_values("IsPseudo");
-  my ($contig) = $f->get_tag_values("Contig");
-  my ($soTerm) = $f->get_tag_values("SOTerm");
-  my ($trunc) = $f->get_tag_values("Truncated");
-  my ($isrev) = $f->get_tag_values("isReversed");
-  my ($start) = $f->get_tag_values("Start");
-  my ($end) = $f->get_tag_values("End");
-  $soTerm =~ s/\_/ /g;
-  $soTerm =~ s/\b(\w)/\U$1/g;
-  my $location = "$contig: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "");
-  my $geneType = ($isPseudo ? "Pseudogenic " : "") . $soTerm;
-  return qq{" onmouseover="return escape(syn_gene_title(this,'$projectId','$taxon','$name','$geneType','$desc','$location'))"};
-  
-  # old way to create pop-up; do via javascript now
-  #my @data;
-  #push @data, [ 'Species:' => $taxon ];  
-  #push @data, [ 'Name:'  => $name ];
-  #push @data, [ 'Gene Type:' =>  $geneType ];
-  #push @data, [ 'Description:' => $desc ];
-  #push @data, [ 'Location:'  =>  $location ];
-  #hover("Syntenic Gene: $name", \@data);
+  my ($syntype) = $f->get_tag_values('SynType');
+
+  if($syntype eq 'gene') {
+    &synGeneTitle($f);
+  }
+  else {
+    &synSpanTitle($f);
+  }
 }
 
-sub synGeneTitleGB2 {
+
+sub synGeneTitle {
   my $f = shift;
   my $name = $f->name;
   my $chr = $f->seq_id;
@@ -187,7 +150,7 @@ sub synSpanTitle {
     push @data, [ 'Reversed: ' => "$strand" ];
     push @data, [ 'Total Syn Contig Length: ' => "$contigLength" ];
     push @data, [ 'Total Ref Contig Length: ' => "$refContigLength" ];
-    hover("Synteny Span", \@data);
+    hover($f, \@data);
   } else { 
     my @gaps = $f->sub_SeqFeature();
     my $count = 0;
@@ -202,7 +165,9 @@ sub synSpanTitle {
       push @data, [ "Gap $count: $gstart..$gstop"  => $gsize ]; 
     }
   }
-  hover( ($type =~ /gap/i) ? 'All gaps in region' : 'Scaffold', \@data);
+
+#  hover( ($type =~ /gap/i) ? 'All gaps in region' : 'Scaffold', \@data);
+  hover($f, \@data);
 }
 
 sub htsSnpTitleQuick {
