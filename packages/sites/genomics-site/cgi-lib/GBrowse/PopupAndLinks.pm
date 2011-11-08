@@ -117,7 +117,7 @@ sub synGeneTitle {
   $soTerm =~ s/\b(\w)/\U$1/g;
   my @data;
   push @data, [ 'Species:' => $taxon ];  
-  push @data, [ 'Name:'  => $name ];
+  push @data, [ 'Gene:'  => $name ];
   push @data, [ 'Gene Type:' => ($isPseudo ? "Pseudogenic " : "") . $soTerm  ];
   push @data, [ 'Description:' => $desc ];
   push @data, [ 'Location:'  => "$contig: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "") ];
@@ -352,7 +352,7 @@ sub snpTitle {
         push @data, [ "$strain" => $info ];
       }
     }
-    return hover( "SNP", \@data) if $refStrain;
+    return hover( $f, \@data) if $refStrain;
   } else {
     return $gene? "In gene $gene" : "Non-coding"; 
   }
@@ -394,23 +394,6 @@ sub snpTitleFromMatchToReference {
 
 } 
 
-# not needed?
- sub chipTitleQuick {
-   my $f = shift;
-   my @data;
-   my $name = $f->name;
-   my ($country) = $f->get_tag_values("Country"); 
-   my ($allele) = $f->get_tag_values("Allele"); 
-   my ($strain) = $f->get_tag_values("Strain"); 
-   my ($snpid) = $f->get_tag_values("SnpId"); 
-   my $link = qq(<a href="/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$snpid">$snpid</a>);
-   push @data, [ 'Name:'  => $name ];
-   push @data, [ 'Strain:'  => $strain ];
-   push @data, [ 'Country:'  => $country ];
-   push @data, [ 'Allele:'  => $allele ];
-   push @data, [ 'SNP Id:'  => $link ];
-   return hover($f, \@data); 
- }
 
  sub chipTitle {
    my $f = shift;
@@ -441,6 +424,7 @@ sub peakTitle {
   my ($analysis) = $f->get_tag_values("Analysis");
   my ($a) = $f->get_tag_values('Antibody');
   my @data;
+  push @data, [ 'Name:' => $name ];
   push @data, [ 'Analysis:' => $analysis ];
   push @data, [ 'Antibody:' => $a ];
   push @data, [ 'Score:' => $score ];
@@ -522,7 +506,7 @@ sub spliceSiteCuratedTitle {
   my ($sample) = $f->get_tag_values('sample');
   my $sampleName = $sample eq 'curated_long_splice' ? 'Splice Leader Site' : 'Polyadenylation Site';
   my @data;
-  push(@data, [$sampleName => '']);
+  push(@data, [$sampleName => $id]);
   push(@data, ['Location:' => $loc]);
   push(@data, ['Gene:' => $gene_id]);
   push(@data, ['Sequence count:' => $sasNum]);
@@ -560,9 +544,10 @@ sub spliceSiteTitle {
   my ($gene) = $f->get_tag_values('gene_id');
   my ($utr_len) = $f->get_tag_values('utr_length');
   $utr_len = ($utr_len < 0)? "N/A (within gene)": $utr_len;
-  my ($id) =  my $name = $f->name;
+  my $name = $f->name;
 
   my @data;
+  push(@data, ['Name:' => $name]);
   push(@data, ['Location:' => $loc]);
   push(@data, ['Sample:' => $sample_name]);
   push(@data, ['Count per million:' => $ctpm]);
@@ -737,6 +722,7 @@ sub tigrAssemblyTitle {
   my ($db) = $f->get_tag_values("TGI");
   my ($ver) = $f->get_tag_values("TGIver");
   my @data;
+  push @data, [ "TIGR EST $db $ver Assembly: $name" => $name ];
   push @data, [ 'Accession: ' => $name ];
   # push @data, [ 'Location: ' => "$chr $loc" ];
   push @data, [ 'Description: ' => $desc ];
@@ -776,6 +762,7 @@ sub cosmidTitle {
   my $length = $stop - $start;
   my $cname = $f->name;
   my @data; 
+  push @data, [ 'Cosmid:'     => $cname ]; 
   push @data, [ 'Clone Size:'     => $length ]; 
   push @data, [ 'Clone Location:' => "$start..$stop"];
   push @data, [ '<hr>'            => '<hr>' ];
@@ -804,6 +791,7 @@ sub bacsTitle {
   my $length = $stop - $start;
   my $cname = $f->name;
   my @data; 
+  push @data, [ 'End-Sequenced BAC:'     => $cname ]; 
   push @data, [ 'Clone Size:'     => $length ]; 
   push @data, [ 'Clone Location:' => "$start..$stop"];
   push @data, [ '<hr>'            => '<hr>' ];
@@ -1068,7 +1056,8 @@ sub sageTagTitle {
 #    . $tag . ">TgSAGEDB</a>";
   my ($occurrence) = $f->get_tag_values('Occurrence'); 
   my @data; 
-  push @data, [ 'Name:'          => "$sourceId" ];
+  push @data, [ 'Name:'          => "$name" ];
+  push @data, [ 'Source ID:'          => "$sourceId" ];
   push @data, [ 'Temporary external ID:' => "$name" ];
   push @data, [ 'Location:'        => "$start..$stop" ];
   push @data, [ 'Sequence:'        => $tag ];
@@ -1110,6 +1099,7 @@ sub geneticMarkersTitle {
     push @data, [ 'Position in CDS:'  => $posInCDS ];
     push @data, [ 'Position in Protein:'  => $posInProtein ];
   }
+  push @data, [ 'Genetic Markers:'  => $class ];
   push @data, ["Strain: $refStrain (reference)"=>"$refNA $refAA"];
   foreach my $variant (@$variants) {
     my $strain = $variant->{STRAIN};
@@ -1129,6 +1119,7 @@ sub RandomEndsTitle {
   my $length = $stop - $start;
   my $cname = $f->name;
   my @data; 
+  push @data, [ 'Random End:'     => $cname ]; 
   push @data, [ 'Clone Size:'     => $length ]; 
   push @data, [ 'Clone Location:' => "$start..$stop"];
   push @data, [ '<hr>'            => '<hr>' ];
@@ -1156,6 +1147,7 @@ sub affyProbesTitle {
   my ($probeSet) = $f->get_tag_values("ProbeSet"); 
   my $probeId = $f->name; 
   my @data;
+  push @data, ['Type:' => $type ];
   push @data, ['ProbeSetID:' => $probeSet ];
   push @data, ['ProbeID:' => $probeId ];
   push @data, ['Start:'        => $start];
