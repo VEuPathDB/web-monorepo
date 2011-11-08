@@ -16,6 +16,7 @@
 <c:set var="id" value="${pkValues['source_id']}" />
 
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:set var="organismFull" value="${attrs['organism_full'].value}"/>
 
 <site:header title="${wdkRecord.primaryKey}" 
 	     refer="recordPage" 
@@ -489,6 +490,15 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 <wdk:wdkTable tblName="Antibody" attribution="Antibody"/>
 
 </c:if>
+
+
+<c:if test="${attrs['hasExpression'].value eq '1'}">
+  <site:pageDivider name="Expression"/>
+
+  <site:expressionGraphs organism="${organismFull}"/>
+
+</c:if>
+
 
 <site:pageDivider name="Sequences"/>
 
