@@ -112,8 +112,9 @@ sub hover {
   my ($f, $data) = @_;
 
   my $type = $f->type;
-  my $name = $f->name;
+  my $name = $f->feature_id;
   my $base = "$ENV{DOCUMENT_ROOT}/gbrowse/tmp";
+
   mkdir "$base/$type", 0777 unless -d "$base/$type";
   unless(-e "$base/$type/$name") {
     open F, ">$base/$type/$name";
