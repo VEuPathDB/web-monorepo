@@ -438,6 +438,16 @@ sub geneLink {
   return "/gene/$name";
 }
 
+sub geneGbrowseLink {
+  my $f = shift;
+  my $window = 500; # width on either side of gene
+  my $linkStart = ($f->start) - $window;
+  my $linkStop= ($f->stop) + $window;
+  my ($seqId) = $f->get_tag_values("seqId");
+
+  return "../../../../cgi-bin/gbrowse/plasmodb/?start=$linkStart;stop=$linkStop;ref=$seqId";
+}
+
 sub geneTitle {
   my $f = shift;
   my $projectId = $ENV{PROJECT_ID};
@@ -482,8 +492,15 @@ sub geneTitleGB2 {
   my $ignore_gene_alias = 0;
   $ignore_gene_alias = 1 if ($projectId == 'ToxoDB');
 
-   my $cdsLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>CDS</a>"; 
-   my $proteinLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>protein</a>";
+  my $cdsLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>CDS</a>"; 
+  my $proteinLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>protein</a>";
+
+  my $window = 500; # width on either side of gene
+  my $linkStart = ($f->start) - $window;
+  my $linkStop= ($f->stop) + $window;
+  my ($seqId) = $f->get_tag_values("seqId");
+  my $gbLink = "<a href='../../../../cgi-bin/gbrowse/plasmodb/?start=$linkStart;stop=$linkStop;ref=$seqId'>GBrowse</a>";
+  my $recordLink = "<a href='../../../gene/$sourceId'>Gene Page</a>";
 
   my @data;
   push(@data, ['Species:'     => $taxon]);
@@ -492,7 +509,8 @@ sub geneTitleGB2 {
   push(@data, ['Description:' => $product]);
   push(@data, ['Location:'    => $loc]);
   push(@data, ['UTR:'         => $utr]) if $utr;
-  push(@data, ['Download:'    => "$cdsLink | $proteinLink"]); 
+  push(@data, ['Download:'    => "$cdsLink | $proteinLink"]);
+  push(@data, ['Links:'    => "$gbLink | $recordLink"]);
   hover($f, \@data);
 } 
 
