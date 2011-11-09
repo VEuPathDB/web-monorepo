@@ -141,8 +141,10 @@ sub synSpanTitle {
   my ($contigSourceId) = $f->get_tag_values("Contig");
   my ($chromosome) = $f->get_tag_values("Chromosome");
   my ($type) = $f->get_tag_values("Type");
+  my $boolNotRef = ( $chr eq $contigSourceId ) ? 0 : 1;
+
   my @data;
-  if ($type !~ /gap/i) {
+  if (($type !~ /gap/i) && ($boolNotRef)){
     push @data, [ 'Chromsome: '=> "$chromosome" ] if ($chromosome);
     push @data, [ 'Syntenic Contig: ' => "$contigSourceId" ];
     push @data, [ 'Ref location: ' => "$refStart&nbsp;-&nbsp;$refEnd ($refLength&nbsp;bp)" ];
@@ -151,6 +153,12 @@ sub synSpanTitle {
     push @data, [ 'Total Syn Contig Length: ' => "$contigLength" ];
     push @data, [ 'Total Ref Contig Length: ' => "$refContigLength" ];
     hover($f, \@data);
+  } elsif ($type !~ /gap/i) {
+    push @data, [ 'Chromsome: '=> "$chromosome" ] if ($chromosome);
+    push @data, [ 'Contig: ' => "$contigSourceId" ];
+    push @data, [ 'Location: ' => "$refStart&nbsp;-&nbsp;$refEnd ($refLength&nbsp;bp)" ];
+    push @data, [ 'Total Contig Length: ' => "$refContigLength" ];
+
   } else { 
     my @gaps = $f->sub_SeqFeature();
     my $count = 0;
