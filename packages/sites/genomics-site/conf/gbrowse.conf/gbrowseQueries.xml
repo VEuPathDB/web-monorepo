@@ -905,6 +905,68 @@ WHERE edr.external_database_id = ed.external_database_id
   AND anch_right.ref_loc < $rend
   AND anch_right.next_ref_loc >= $rend
   AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc) > 1 
+UNION
+-- for: reference organism - gene
+SELECT
+       'slow' query_style,
+       gattr.na_feature_id feature_id,
+       'gene' type, 
+       'syntenyMCGB2' source, 
+       gattr.source_id name, 
+       '.' score, 
+       gattr.na_feature_id parent_id,
+       gattr.start_min startm,
+       gattr.end_max end,
+       decode(is_reversed, 0, +1, 1, -1, +1) strand,
+       'Note=' || gattr.product || decode(gattr.is_deprecated,1,' (deprecated)') || '$dlm' ||
+       'SOTerm=' || gattr.so_term_name || '$dlm' ||
+       'Contig=' || gattr.sequence_id || '$dlm' ||
+       'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
+       'isDeprecated=' || gattr.is_deprecated || '$dlm' ||
+       'Start=' || gattr.start_min || '$dlm' ||
+       'End=' || gattr.end_max || '$dlm' ||
+       'isReversed=' || gattr.is_reversed || '$dlm' ||
+       'SynType=' || 'gene' ||  '$dlm' || 
+       'Taxon=' || gattr.organism atts
+FROM 
+       ApidbTuning.GeneAttributes gattr
+WHERE gattr.na_sequence_id = $srcfeature_id
+  AND start_min <= $rend
+  AND end_max >= $base_start
+UNION
+-- for: reference organism - span
+SELECT
+        'slow' query_style,
+        na_sequence_id feature_id,
+        'gene' type, 
+        'syntenyMCGB2' source, 
+        source_id name, 
+        '.' score, 
+        null parent_id,
+        $base_start startm,
+        $rend end, 
+        0 strand,
+       'RefStart=' || $base_start || '$dlm' ||
+       'RefEnd=' || $rend || '$dlm' ||
+       'RefContigLength=' || length || '$dlm' ||
+       'SynStart=' || $base_start || '$dlm' ||
+       'SynEnd=' || $rend || '$dlm' ||
+       'ContigLength=' || length || '$dlm' ||
+        'Contig=' || source_id || '$dlm' ||
+        'Chromosome=' || chromosome || '$dlm' ||
+         (CASE WHEN (chromosome is NOT NULL) 
+              THEN (SELECT 'ChrColor=' || rcc.value || ';;' 
+                   FROM apidb.rodentChrColors rcc 
+                    WHERE sa.chromosome = rcc.chromosome) 
+              ELSE ''
+              END) || 
+        'ExtDBName=' || database_name || '$dlm' ||
+        'SynType=' || 'span' ||  '$dlm' ||
+	'Scale=1' ||  '$dlm' ||
+        'Taxon=' || organism atts
+ FROM 
+       ApidbTuning.SequenceAttributes sa
+ WHERE  na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
@@ -5120,6 +5182,27 @@ WHERE ga.na_feature_id = exfloc.parent_id
   )
   AND exfloc.start_min <= syn.b_end
   AND exfloc.end_max >= syn.b_start
+UNION
+-- for: reference organism - gene
+SELECT
+       'slow' query_style,
+       exfloc.na_feature_id feature_id,
+       'exon' type, 
+       'syntenyMCGB2' source, 
+       exfloc.na_feature_id as name,
+       exfloc.parent_id,
+       ga.start_min as startm,
+       ga.end_max as end,
+      decode(ga.is_reversed, 0, +1, 1, -1, +1) strand,
+       'isDeprecated=' ||  ga.is_deprecated atts 
+FROM 
+       ApidbTuning.FeatureLocation exfloc,
+       ApidbTuning.GeneAttributes ga
+WHERE ga.na_sequence_id = $srcfeature_id
+  AND ga.start_min <= $rend
+  AND ga.end_max >= $base_start
+  AND ga.na_feature_id = exfloc.parent_id
+  AND exfloc.feature_type = 'ExonFeature'
 )
 WHERE startm <= $rend
   AND end >= $base_start
