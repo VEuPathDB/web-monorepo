@@ -115,12 +115,19 @@ sub synGeneTitle {
   my ($end) = $f->get_tag_values("End");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
+  my $window = 500; # width on either side of gene
+  my $linkStart = $start - $window;
+  my $linkStop = $end + $window;
+  my $gbLink = "<a href='../../../../cgi-bin/gbrowse/plasmodb/?start=$linkStart;stop=$linkStop;ref=$contig'>GBrowse</a>";
+  my $recordLink = "<a href='../../../gene/$name'>Gene Page</a>";
+
   my @data;
   push @data, [ 'Species:' => $taxon ];  
   push @data, [ 'Gene:'  => $name ];
   push @data, [ 'Gene Type:' => ($isPseudo ? "Pseudogenic " : "") . $soTerm  ];
   push @data, [ 'Description:' => $desc ];
   push @data, [ 'Location:'  => "$contig: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "") ];
+  push(@data, ['Links:'    => "$gbLink | $recordLink"]);
   hover($f, \@data); 
 }
 
@@ -451,7 +458,7 @@ sub geneGbrowseLink {
   my $window = 500; # width on either side of gene
   my $linkStart = ($f->start) - $window;
   my $linkStop= ($f->stop) + $window;
-  my ($seqId) = $f->get_tag_values("seqId");
+  my ($seqId) = $f->get_tag_values("Contig");
 
   return "../../../../cgi-bin/gbrowse/plasmodb/?start=$linkStart;stop=$linkStop;ref=$seqId";
 }
@@ -506,7 +513,7 @@ sub geneTitleGB2 {
   my $window = 500; # width on either side of gene
   my $linkStart = ($f->start) - $window;
   my $linkStop= ($f->stop) + $window;
-  my ($seqId) = $f->get_tag_values("seqId");
+  my ($seqId) = $f->get_tag_values("Contig");
   my $gbLink = "<a href='../../../../cgi-bin/gbrowse/plasmodb/?start=$linkStart;stop=$linkStop;ref=$seqId'>GBrowse</a>";
   my $recordLink = "<a href='../../../gene/$sourceId'>Gene Page</a>";
 
