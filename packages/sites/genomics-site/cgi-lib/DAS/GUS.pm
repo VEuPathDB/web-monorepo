@@ -263,14 +263,24 @@ interrupted. When a callback is provided, the method returns undef.
 
 sub features {
   my $self = shift;
-  my ( $type, $types, $callback, $attributes, $iterator ) = 
+  my ( $type, $types, $callback, $attributes, $iterator, 
+       $seq_id, $start, $end ) = 
                 $self->_rearrange([qw(TYPE
                                       TYPES
                                       CALLBACK
                                       ATTRIBUTES
-                                      ITERATOR)], @_ );
+                                      ITERATOR
+                                      SEQ_ID
+                                      START
+                                      END
+                                      )], @_ );
         
   $type ||= $types;
+
+  if($seq_id) {
+    my @features = $self->segment($seq_id, $start, $end)->features(-type => $type);
+    return @features; 
+  }
 
   my @features = DAS::GUS::Segment->features(
                       -type       => $type, 
