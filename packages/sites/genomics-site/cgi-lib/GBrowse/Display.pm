@@ -380,6 +380,7 @@ sub massSpecBgColorFromExtDbName {
                 'Pf_Voss_ring_stages_F1_RSRC' => '#66FF66',
                 'Pf_Voss_ring_stages_F4_RSRC' => '#3399FF',
                 'Pf_Voss_ring_stages_F2_RSRC' => '#FF99FF',
+                'Pvivax_Cui_Schizont_Proteomics_RSRC' => 'blue',
                 #AmoebaDB
                 'Ehistolytica_Glycosylation_RSRC' => 'yellow',
                 'Phagosome Proteomics data from Huston - 0 mins' => 'yellow',
