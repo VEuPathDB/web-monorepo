@@ -1,6 +1,16 @@
---- RenderPanels.pm.orig	2011-09-28 14:39:38.000000000 -0400
-+++ RenderPanels.pm	2011-09-29 14:20:05.000000000 -0400
-@@ -1465,6 +1465,15 @@
+--- RenderPanels.pm.orig	2011-11-09 13:32:32.000000000 -0500
++++ RenderPanels.pm	2011-11-09 13:56:19.000000000 -0500
+@@ -253,6 +253,9 @@
+     my $feature_files  = $args->{external_features};
+     my $labels         = $args->{labels};
+ 
++    # eupathdb pass labels to crate_panel_args 11/9/2011
++    $args->{labels} = $labels;
++
+     warn "[$$] MAKE_REQUESTS, labels = ",join ',',@$labels if DEBUG;
+ 
+     my $base        = $self->get_cache_base();
+@@ -1465,6 +1468,15 @@
  
  		    warn "track_setup($label): ",time()-$time," seconds " if BENCHMARK;
  
@@ -11,12 +21,12 @@
 +        $sqlParam = $array[$index+1] if $index;
 +        my ($index2) = grep { $array[$_] =~ /sqlName/i } 0..$#array;
 +        $sqlName = $array[$index2+1] if $index;
-+				# end EuPathDB patches 
++        # end EuPathDB patches 
 +
  		    # == populate the tracks with feature data ==
  		    $self->add_features_to_track(
  			-labels    => [ $label, ],
-@@ -1472,6 +1481,8 @@
+@@ -1472,6 +1484,8 @@
  			-filters   => $filters,
  			-segment   => $segment,
  			-fsettings => $settings->{features},
@@ -25,7 +35,7 @@
  			);
  
  		    warn "add_features($label): ",time()-$time," seconds " if BENCHMARK;
-@@ -1595,6 +1606,8 @@
+@@ -1595,6 +1609,8 @@
    my $tracks          = $args{-tracks}    or die "programming error";
    my $filters         = $args{-filters}   or die "programming error";
    my $fsettings       = $args{-fsettings} or die "programming error";
@@ -34,7 +44,7 @@
  
    warn "[$$] add_features_to_track @{$args{-labels}}" if DEBUG;
  
-@@ -1636,7 +1649,7 @@
+@@ -1636,7 +1652,7 @@
  	  $iterator2dbid{$iterator} = $source->db2id($db);
        }
  
@@ -43,7 +53,7 @@
  	  $iterators{$iterator}     = $iterator;
  	  $iterator2dbid{$iterator} = $source->db2id($db);
        }
-@@ -1849,7 +1862,7 @@
+@@ -1849,7 +1865,7 @@
  
  sub get_iterator {
    my $self = shift;
@@ -52,7 +62,7 @@
  
    # The Bio::DB::SeqFeature::Store database supports correct
    # semantics for directly retrieving features that overlap
-@@ -1863,6 +1876,8 @@
+@@ -1863,6 +1879,8 @@
  		  -start  => $segment->start,
  		  -end    => $segment->end,
  		  -max_features => $max,  # some adaptors allow this
@@ -61,7 +71,7 @@
  	  );
        return $db->get_seq_stream(@args);
    }
-@@ -1880,7 +1895,7 @@
+@@ -1880,7 +1898,7 @@
      return;
    }
  
@@ -70,14 +80,24 @@
  }
  
  sub get_summary_iterator {
-@@ -1999,7 +2014,9 @@
- 	      -pad_top      => $image_class->gdMediumBoldFont->height+2,
-               -pad_bottom   => 3,
- 	      -image_class  => $image_class,
--	      -postgrid     => $postgrid,
-+	      # EuPathDB patch 9/28/2011
-+	      #-postgrid     => $postgrid,
-+	      -postgrid     => $section eq 'detail' ? $source->global_setting('postgrid') : '',
- 	      -background   => $args->{background} || '',
- 	      -truecolor    => $source->global_setting('truecolor') || 0,
- 	      -map_fonts_to_truetype    => $source->global_setting('truetype') || 0,
+@@ -1951,6 +1969,10 @@
+   my $self               = shift;
+   my $args               = shift;
+ 
++  # eupathdb check the synteny labels 11/9/2011
++  my $labels = $args->{labels};
++  my $synview = grep(/Synteny/, @$labels) if $labels;
++
+   my $segment        = $args->{segment}        || $self->segment;
+   my ($seg_start,$seg_stop,$flip) = $self->segment_coordinates($segment,
+ 							       $args->{flip});
+@@ -1977,7 +1999,8 @@
+ 		    ]);
+   }
+   elsif ($section eq 'detail'){
+-    $postgrid = make_postgrid_callback($settings);
++    # eupathdb patches - checks the synteny 11/9/2011
++    $postgrid = $synview ? $source->global_setting('postgrid') : make_postgrid_callback($settings);
+     $h_region_str = join(':', @{$settings->{h_region}||[]}); 
+   }
+ 
