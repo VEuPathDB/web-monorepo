@@ -368,9 +368,9 @@ sub features {
 
     $sql =~ s/(\$\w+)/eval $1/eg;
 
-    print "<pre>vvvvvvvvvv $typeString vvvvvvvvvvvvv</pre>" if DEBUG;
-    print "<pre>$sql</pre>" if DEBUG;
-    print "<pre>^^^^^^^^^^ End $typeString ^^^^^^^^^^^^^</pre>" if DEBUG;
+    warn "<pre>vvvvvvvvvv $typeString vvvvvvvvvvvvv</pre>" if DEBUG;
+    warn "<pre>$sql</pre>" if DEBUG;
+    warn "<pre>^^^^^^^^^^ End $typeString ^^^^^^^^^^^^^</pre>" if DEBUG;
 
     my $sth = $factory->dbh->prepare($sql);
     $factory->getQueryLogger()->execute($sth, $sql, "Segment.pm", $queryName, $rend - $base_start)
@@ -392,9 +392,9 @@ sub features {
   if($bulkSubFeatureSql) {
     $bulkSubFeatureSql =~ s/(\$\w+)/eval $1/eg;
 
-    print "<pre>vvvvvvvvvv $queryName:bulksubfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
-    print "<pre>$bulkSubFeatureSql</pre>" if DEBUG;
-    print "<pre>^^^^^^^^^^ End $queryName:bulksubfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
+    warn "<pre>vvvvvvvvvv $queryName:bulksubfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
+    warn "<pre>$bulkSubFeatureSql</pre>" if DEBUG;
+    warn "<pre>^^^^^^^^^^ End $queryName:bulksubfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
 
     $self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory, "$queryName:bulksubfeatures", $rend - $base_start);
   } 
@@ -403,9 +403,9 @@ sub features {
   next unless $bulkAttributeSql;
   $bulkAttributeSql =~ s/(\$\w+)/eval $1/eg;
 
-  print "<pre>vvvvvvvvvv $type:bulkAttribute vvvvvvvvvvvvv</pre>" if DEBUG;
-  print "<pre>$bulkAttributeSql</pre>" if DEBUG;
-  print "<pre>^^^^^^^^^^ End $type:bulkAttribute ^^^^^^^^^^^^^</pre>" if DEBUG;
+  warn "<pre>vvvvvvvvvv $type:bulkAttribute vvvvvvvvvvvvv</pre>" if DEBUG;
+  warn "<pre>$bulkAttributeSql</pre>" if DEBUG;
+  warn "<pre>^^^^^^^^^^ End $type:bulkAttribute ^^^^^^^^^^^^^</pre>" if DEBUG;
 
   $self->_addBulkAttribute(\@features, $bulkAttributeSql, $factory, "$queryName:bulkAttribute", $rend-$base_start);
 

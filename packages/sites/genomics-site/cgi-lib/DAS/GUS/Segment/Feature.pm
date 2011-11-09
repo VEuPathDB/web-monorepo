@@ -732,9 +732,9 @@ sub sub_SeqFeature {
     # $query =~ s/(\$\w+)/eval "$1"/eg;
     $query = eval qq{"$query"};
 
-    print "<pre>vvvvvvvvvvvvvv $sqlName:subfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
-    print "<pre>$query</pre>" if DEBUG;
-    print "<pre>^^^^^^^^^^^^^^ $sqlName:subfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
+    warn "<pre>vvvvvvvvvvvvvv $sqlName:subfeatures vvvvvvvvvvvvv</pre>" if DEBUG;
+    warn "<pre>$query</pre>" if DEBUG;
+    warn "<pre>^^^^^^^^^^^^^^ $sqlName:subfeatures ^^^^^^^^^^^^^</pre>" if DEBUG;
 
   }
 
@@ -1123,9 +1123,9 @@ sub attributes {
     $sql =~ s/(\$\w+)/eval "$1"/eg;
   #return @{$self->factory->dbh->selectcol_arrayref($sql)};
 
-    print "<pre>vvvvvvvvvvvvvv $sqlName:attribute:$tag vvvvvvvvvvvvv</pre>" if DEBUG;
-    print "<pre>$sql</pre>" if DEBUG;
-    print "<pre>^^^^^^^^^^^^^^ $sqlName:attribute:$tag ^^^^^^^^^^^^^</pre>" if DEBUG;
+    warn "<pre>vvvvvvvvvvvvvv $sqlName:attribute:$tag vvvvvvvvvvvvv</pre>" if DEBUG;
+    warn "<pre>$sql</pre>" if DEBUG;
+    warn "<pre>^^^^^^^^^^^^^^ $sqlName:attribute:$tag ^^^^^^^^^^^^^</pre>" if DEBUG;
 
   return @{$self->factory->dbh->selectall_arrayref($sql)};
   }
