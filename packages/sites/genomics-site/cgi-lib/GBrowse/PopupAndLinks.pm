@@ -410,6 +410,23 @@ sub snpTitleFromMatchToReference {
 } 
 
 
+ sub cghTitle {
+   my $f = shift;
+   my @data;
+   my ($info) = $f->get_tag_values("info");
+   my @strainScores = split(/\|/,$info);
+
+   push @data, ['Strains and score (pos=amp, neg=del)' ];   
+
+   foreach my $strainScr (@strainScores) {
+     $strainScr =~ s/\:/\: /g;
+     my @score = split(/,/, $strainScr);
+     push @data, [ $score[0] => $score[1]];
+   }
+   return hover($f, \@data); 
+ }
+
+
  sub chipTitle {
    my $f = shift;
    my @data;
