@@ -34,7 +34,7 @@
  		  {
  		      -src    => $url,
 -		      -usemap => "#gbrowse2_img_map"}
-+		      -usemap => "#". ($hmap . "_map" || "gbrowse2_img_map")}
++		      -usemap => "#". ($hmap || "gbrowse2_img") . "_map"}
  		  ),
  	      $map,
  	      end_html();
