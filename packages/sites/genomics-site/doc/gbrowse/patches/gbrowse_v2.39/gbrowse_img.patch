@@ -1,6 +1,27 @@
---- gbrowse_img.v2.39	2011-11-01 10:39:34.000000000 -0400
-+++ gbrowse_img	2011-11-01 10:40:32.000000000 -0400
-@@ -226,7 +226,7 @@
+--- gbrowse_img.orig	2011-11-11 08:47:01.000000000 -0500
++++ gbrowse_img	2011-11-11 08:57:01.000000000 -0500
+@@ -204,6 +204,8 @@
+     my $format   = param('format') || 'GD';
+     my $flip     = param('flip')   || 0;
+     my $embed    = param('embed');
++    # eupathdb patches for image map name 11/11/11
++    my $hmap     = param('hmap');
+ 
+     my $convert_to_pdf;
+     if ($format eq 'PDF' && `which inkscape`) {
+@@ -214,9 +216,10 @@
+     $format = 'GD::SVG' if $format eq 'SVG';
+     $format      = 'GD' if $embed;
+ 
++    # eupathdb patches for image map name 11/11/11
+     my ($img_data,$map) = $render->region->feature_count > 1 
+                                  ? $self->render_multiple($renderer,$format,$flip,$embed)
+-	                         : $self->render_tracks  ($renderer,$format,$flip,$embed);
++	                         : $self->render_tracks  ($renderer,$format,$flip,$embed,$hmap); 
+ 
+  
+     my $seg   = $render->segment;
+@@ -226,14 +229,14 @@
          my $url    = $renderer->source->generate_image($img_data);
  	my $js = $render->data_source->globals->js_url;
  	my @scripts = map { {src=>"$js/$_"} }
@@ -9,3 +30,45 @@
  	print $self->header(-type=>'text/html');
  	print start_html(-script=>\@scripts),
  	      $render->render_balloon_settings,
+ 	      img(
+ 		  {
+ 		      -src    => $url,
+-		      -usemap => "#gbrowse2_img_map"}
++		      -usemap => "#". ($hmap . "_map" || "gbrowse2_img_map")}
+ 		  ),
+ 	      $map,
+ 	      end_html();
+@@ -290,7 +293,8 @@
+ 
+ sub render_tracks {
+     my $self = shift;
+-    my ($renderer,$format,$flip,$embed) = @_;
++    # eupathdb patches for image map name 11/11/11
++    my ($renderer,$format,$flip,$embed,$hmap) = @_;
+ 
+     my $render   = $self->render;
+ 
+@@ -329,7 +333,7 @@
+     my @map_data        = map {$_->{map}} @image_data;
+ 
+     my $img_data  = $self->consolidate_images(\@gds);
+-    my $map       = $self->consolidate_maps  (\@map_data, \@gds) if $embed;
++    my $map       = $self->consolidate_maps  (\@map_data, \@gds, $hmap) if $embed;
+ 
+     return ($img_data,$map);
+ 
+@@ -504,10 +508,12 @@
+ 
+ sub consolidate_maps {
+     my $self = shift;
+-    my ($maps,$gds) = @_;
++    # eupathdb patches for image map name 11/11/11
++    my ($maps,$gds,$hmap) = @_;
+ 
+     my $offset = 0;
+-    my @integrated_list = 'gbrowse2_img';
++    # eupathdb patches for image map name 11/11/11
++    my @integrated_list = $hmap || 'gbrowse2_img';
+     for (my $i=0;$i<@$maps;$i++) {
+ 	my $data = $maps->[$i];
+ 	shift @$data;
