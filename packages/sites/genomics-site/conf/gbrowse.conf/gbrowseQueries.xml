@@ -914,7 +914,7 @@ SELECT
        'syntenyMCGB2' source, 
        gattr.source_id name, 
        '.' score, 
-       gattr.na_feature_id parent_id,
+       gattr.na_sequence_id parent_id,
        gattr.start_min startm,
        gattr.end_max end,
        decode(is_reversed, 0, +1, 1, -1, +1) strand,
@@ -5220,9 +5220,11 @@ SELECT
        'syntenyMCGB2' source, 
        exfloc.na_feature_id as name,
        exfloc.parent_id,
-       ga.start_min as startm,
-       ga.end_max as end,
-      decode(ga.is_reversed, 0, +1, 1, -1, +1) strand,
+       CASE WHEN exfloc.is_reversed = 0 THEN
+         exfloc.coding_start ELSE exfloc.coding_end END as startm,
+       CASE WHEN exfloc.is_reversed = 0 THEN
+         exfloc.coding_end ELSE exfloc.coding_start END as end,
+       decode (exfloc.is_reversed, 0, +1, 1, -1,+1) strand,
        'isDeprecated=' ||  ga.is_deprecated atts 
 FROM 
        ApidbTuning.FeatureLocation exfloc,
@@ -5231,6 +5233,7 @@ WHERE ga.na_sequence_id = $srcfeature_id
   AND ga.start_min <= $rend
   AND ga.end_max >= $base_start
   AND ga.na_feature_id = exfloc.parent_id
+  AND exfloc.na_sequence_id = ga.na_sequence_id  
   AND exfloc.feature_type = 'ExonFeature'
 )
 WHERE startm <= $rend
