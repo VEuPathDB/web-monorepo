@@ -113,7 +113,7 @@
                     <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySageTagEvidence" linktext="SAGE Tag Evidence" existsOn="A G P T Tt"/>
                 </tr>
  		<tr>
-                    <site:queryGridMakeUrl qset="GeneQuestions" qname="GenesByRtPcrFoldChange" linktext="RT PCR Evidence" existsOn="A C"/>
+                    <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByRTPCREvidence" linktext="RT PCR Evidence" existsOn="A C"/>
                 </tr>
  		<tr>
                     <site:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A Am G P T Tt"/>
