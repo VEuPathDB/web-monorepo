@@ -2017,47 +2017,6 @@ ORDER BY
     </sql>
   </sqlQuery>
   
-  
-  <sqlQuery name="match:BLASTX">
-     <sql>
-<![CDATA[
-select * from (
- SELECT distinct sim.similarity_id feature_id, 
-       'match' type, 
-       'BLASTX' source,
-       extt.source_id name, 
-       sim.similarity_score || '' score, 
-       to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) pvalue,
-       extq.na_sequence_id parent_id, 
-       sim.min_query_start startm, 
-       sim.max_query_end end, 
-       decode (sim.similarity_is_reversed, 0, '+1', 1, '-1', '.') strand, 
-       'Score=' || sim.similarity_score || '$dlm' || 
-       'Expect=' || (sim.pvalue_mant || 'e' ||sim.pvalue_exp)||'$dlm'|| 
-       'Defline=' || extt.description || '$dlm' || 
-       'PercentIdentity=' || sim.percent_identical || '$dlm' ||
-       'PercentPositive=' || sim.percent_positive || '$dlm' ||
-       'TStart=' || sim.min_query_start || '$dlm' || 
-       'TStop=' || sim.max_query_end atts 
-FROM   
-       ApidbTuning.SimilaritySpanLocation sim, 
-       dots.EXTERNALAASEQUENCE extt, 
-       dots.NASEQUENCE extq
-WHERE  
-       sim.query_id = extq.na_sequence_id and 
-       sim.subject_id = extt.aa_sequence_id and 
-       (sim.max_query_end - sim.min_query_start) < 5000 and 
-       to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-10 and 
-       sim.min_query_start >= $base_start and 
-       sim.max_query_end <= $rend and 
-       extq.na_sequence_id = $srcfeature_id
-ORDER BY pvalue asc
-) where rownum < 4000
-]]>
-    </sql>
-  </sqlQuery>
-  
-  
   <sqlQuery name="alignment:RandomEnds" excludeProjects="PlasmoDB,ToxoDB,CryptoDB,GiardiaDB,TrichDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_LmjF01_01_20050601_5.2$$"/>
@@ -5430,32 +5389,6 @@ AND    sim.max_query_end <= $rend
 ]]>
     </sql>
   </sqlQuery>
-  
-  
-  <sqlQuery name="match:BLASTX:bulksubfeatures">
-     <sql>
-<![CDATA[
- SELECT sim.similarity_span_id feature_id, 
-       sim.similarity_id as parent_id,
-       'HSP' type, 
-       'BLASTX' source, 
-       sim.similarity_span_id name, 
-       '.' phase, 
-       sim.span_score || '' score, 
-       sim.query_start startm, 
-       sim.query_end end, 
-       decode (sim.span_is_reversed, 0, '+1', 1, '-1', '.') strand, 
-       '' atts 
-FROM   ApidbTuning.SimilaritySpanLocation sim
-WHERE  sim.query_id = $srcfeature_id
-AND    (sim.max_query_end - sim.min_query_start) < 5000
-AND    to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-10 
-AND    sim.min_query_start >= $base_start 
-AND    sim.max_query_end <= $rend
-]]>
-    </sql>
-  </sqlQuery>
-  
   
   <sqlQuery name="alignment:dbEST:bulksubfeatures">
      <sql>
