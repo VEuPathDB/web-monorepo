@@ -328,7 +328,11 @@ sub massSpecBgColorFromExtDbName {
                 'Lmajor Proteomics 2DGel 6-11 Promastigote' => 'blue',
                 'Linfantum Proteomics data from Marc Ouellette' => 'lightseagreen',
                 'L.major Proteomics-Exosomes' => 'crimson',
-                'L. braziliensis Proteomics-Promastigotes' => 'orange',              
+                'L. braziliensis Proteomics-Promastigotes' => 'orange',
+                'Tbrucei427_Proteomics_Urbaniak_BsfProteome_RSRC' => 'maroon',
+                'Tbrucei427_Proteomics_Urbaniak_BsfEnriched_RSRC' => 'red' ,
+                'Tbrucei927_Proteomics_Urbaniak_BsfProteome_RSRC' => 'orange',
+                'Tbrucei927_Proteomics_Urbaniak_BsfEnriched_RSRC' => 'yellow',
                 # CryptoDB
                 'Ferrari_Proteomics_LTQ_Oocyst_walls' => 'sandybrown',
                 'Ferrari_Proteomics_LTQ_Sporozoites_merged' => 'tan',
@@ -376,7 +380,7 @@ sub massSpecBgColorFromExtDbName {
                 'Pf_Voss_schizonts_stages_F2_RSRC' => '#000033',
                 'Pf_Voss_schizonts_stages_F1_RSRC' => '#330066',
                 'Pf_Voss_ring_stages_F5_RSRC' => '#CC3333',
-                'Pf_Voss_ring_stages_F3_RSRC' => '#FFFF00',
+                'Pf_Voss_ring_stages_F3_RSRC' => '#FF9900',
                 'Pf_Voss_ring_stages_F1_RSRC' => '#66FF66',
                 'Pf_Voss_ring_stages_F4_RSRC' => '#3399FF',
                 'Pf_Voss_ring_stages_F2_RSRC' => '#FF99FF',
@@ -387,7 +391,11 @@ sub massSpecBgColorFromExtDbName {
                 'Phagosome Proteomics data from Huston - 30 mins' => 'tan',
                 'Phagosome Proteomics data from Huston - 5 mins' => 'khaki',
                 'Phagosome Proteomics data from Huston - 10 mins' => 'orange',
-                'Phagosome Proteomics data from Huston - 60 mins' => 'sandybrown'
+                'Phagosome Proteomics data from Huston - 60 mins' => 'sandybrown',
+                'Ehistolytica_Markiewicz_Proteomics_RSRC' => 'blue',
+                'Ehistolytica_Marion_Proteomics_Wild_Type_RSRC' => 'lightgreen',
+                'Ehistolytica_Marion_Proteomics_MyoIB_5Min_RSRC'=> 'green',
+                'Ehistolytica_Marion_Proteomics_MyoIB_15Min_RSRC' => 'darkgreen',
                    );
 
   $f = $f->parent if (! $f->get_tag_values('ExtDbName'));
