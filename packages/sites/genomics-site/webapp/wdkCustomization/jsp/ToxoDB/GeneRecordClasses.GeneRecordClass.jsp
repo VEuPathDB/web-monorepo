@@ -178,7 +178,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
      <c:set var="tracks" value="Gene%1ESynteny/tggt1_span+tggt1_gene+tgme49_span+tgme49_gene+tgveg_span+tgveg_gene+nc_span+nc_gene+et_span+et_gene"/>
 </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii VEG'}">
-     <c:set var="tracks" value="Gene%1ESynteny/tgveg_span+tgveg_gene+tgme49_span+tgme49_gene+tggt1_span+tggt1_gene+nc_span+nc_gene+et_span_et_gene"/>
+     <c:set var="tracks" value="Gene%1ESynteny/tgveg_span+tgveg_gene+tgme49_span+tgme49_gene+tggt1_span+tggt1_gene+nc_span+nc_gene+et_span+et_gene"/>
 </c:if>
 <c:if test="${organism_full eq 'Neospora caninum'}">
      <c:set var="tracks" value="Gene%1ESynteny/nc_span+nc_gene+tgme49_span+tgme49_gene+tgveg_span+tgveg_gene+tggt1_span+tggt1_gene+et_span+et_gene%1ERnaSeqTgNcTachyzoiteReidDay4"/>
