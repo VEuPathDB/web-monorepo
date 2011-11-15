@@ -757,9 +757,12 @@ sub chipColor {
 sub ChromosomeFgcolor {
     my $f = shift;
     my ($chr) =$f->get_tag_values("Chromosome");
-    if ($chr) { 
-        my ($col) = $f->get_tag_values("ChrColor");
-        return $col;
+    my ($syntype) =$f->get_tag_values("SynType");
+    if ($syntype =~ /span/) { 
+      my ($col) = $f->get_tag_values("ChrColor");
+      return $col if $col;
+      return "orange" if ($f->strand == 1); 
+      return "darkseagreen";
     } 
 }  
 
