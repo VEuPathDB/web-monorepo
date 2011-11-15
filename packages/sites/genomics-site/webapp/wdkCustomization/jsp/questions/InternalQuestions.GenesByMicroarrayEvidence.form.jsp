@@ -21,7 +21,7 @@
 
 <c:set var="fungiQuestions" value="GeneQuestions.GenesByMicroarrayTimeSeriesSc" />
 
-<c:set var="amoebaQuestions" value="E.hi.study:Colonization-Invasion and Stage Conversion (Gilchrist),GeneQuestions.GenesByEHistolyticaExpressionTiming,E.hi.study:G3 v. HM1:IMSS Transcript Expression (Gilchrist),GeneQuestions.GenesByAmoebaFoldChangeGilchrist,GeneQuestions.GenesByExpressionPercentileGilchrist,GeneQuestions.GenesByAmoebaFoldChangePageGilchrist" />
+<c:set var="amoebaQuestions" value="E.hi.study:Colonization-Invasion and Stage Conversion (Gilchrist),GeneQuestions.GenesByEHistolyticaExpressionTiming,GeneQuestions.GenesByExpressionTimingPercentileGilchrist,E.hi.study:G3 v. HM1:IMSS Transcript Expression (Gilchrist),GeneQuestions.GenesByAmoebaFoldChangeGilchrist,GeneQuestions.GenesByExpressionPercentileGilchrist,GeneQuestions.GenesByAmoebaFoldChangePageGilchrist" />
 
 <c:set var="giardiaQuestions" value="G.l.study:Stress Response (Hehl),GeneQuestions.GiardiaGenesByDifferentialExpression,GeneQuestions.GiardiaGenesByExpressionPercentileProfile,G.l.study:Encystation (Hehl),GeneQuestions.GiardiaGenesByDifferentialExpressionTwo,GeneQuestions.GiardiaGenesByExpressionPercentileProfileTwo,GeneQuestions.GiardiaGenesFoldChangeTwo,G.l.study:Host Parasite Interaction (Svard),GeneQuestions.GenesByRingqvistFoldChange,GeneQuestions.GenesByRingqvistPercentile" />
 
