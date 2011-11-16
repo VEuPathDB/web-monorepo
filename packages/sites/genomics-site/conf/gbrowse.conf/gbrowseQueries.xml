@@ -1285,6 +1285,21 @@ WHERE ext_db_name = $$edname$$
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="NextGenSeq:strandCoverageLogGB2">
+     <sql>
+       <![CDATA[
+SELECT ext_db_name || '_' || sample as feature_id,
+       'NextGenSeq'  as type, 
+       '$source'     as source,
+       $base_start  as startm,
+       $rend        as end,
+       'sample=' || sample as atts
+FROM apidbtuning.NextGenSeqStats
+WHERE ext_db_name = $$edname$$
+       ]]>
+    </sql>
+  </sqlQuery>
+
 
   <sqlQuery name="NextGenSeq:coverageLog2"  includeProjects="ToxoDB">
      <sql>
@@ -2654,14 +2669,13 @@ WHERE edr.external_database_id = ed.external_database_id
        'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
        'IsCoding=' || sa.is_coding || '$dlm' ||
        'Gene=' || sa.gene_source_id || '$dlm' ||
-       'params=' || sa.position_in_CDS || '&' ||
-       sa.position_in_protein || '&' ||
-       sa.reference_strain || '&' ||
-       sa.reference_aa || '&' ||
-       sa.gene_strand || '&' ||
-       sa.reference_na || '&' ||
-       sa.source_id 
-        as atts
+       'position_in_CDS=' || sa.position_in_CDS || '$dlm' ||
+       'position_in_protein=' || sa.position_in_protein || '$dlm' ||
+       'reference_strain=' || sa.reference_strain || '$dlm' ||
+       'reference_aa=' || sa.reference_aa || '$dlm' ||
+       'gene_strand=' || sa.gene_strand || '$dlm' ||
+       'reference_na=' || sa.reference_na || '$dlm' ||
+       'source_id=' || sa.source_id as atts
 FROM   ApidbTuning.FeatureLocation fl,
        ApidbTuning.SnpAttributes sa
 WHERE  fl.na_sequence_id = $srcfeature_id
@@ -6888,6 +6902,37 @@ GROUP BY c.start_interval,c.end_interval,c.sample,c.name,c.hpi,c.multiple,s.sum_
       ]]>
       </sql>
    </sqlQuery> 
+	 
+   <sqlQuery name="NextGenSeq:strandCoverageLogGB2:bulksubfeatures">
+     <sql>
+<![CDATA[
+     SELECT start_interval feature_id,
+             'NextGenSeq' type,
+             '$source' source,
+             strand,
+             decode(strand, '-1', -1, 1)*abs(log(2,max(coverage))) score, 
+             name || '_' || sample parent_id,
+             start_interval * (($rend - $base_start + 1) / 800) startm,
+             end_interval * (($rend - $base_start + 1) / 800) end,
+             'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
+    FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
+                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval,
+                 decode (csc.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+                 csc.coverage, ed.name,csc.sample,csc.multiple
+       FROM  apidb.NextGenSeqCoverage csc,
+             sres.externaldatabaserelease edr,
+             sres.externaldatabase ed
+       WHERE csc.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND ed.name = $$edname$$ 
+         AND csc.na_sequence_id = $srcfeature_id
+         AND csc.multiple = $$multiple$$
+         AND csc.mapping_start + 1 <= $rend
+         AND csc.mapping_end >= $base_start - 1)
+       GROUP BY start_interval,end_interval,sample,name,strand,multiple
+]]>
+    </sql>
+  </sqlQuery>
 
    <sqlQuery name="NextGenSeq:strandCoverageLog:bulksubfeatures">
      <sql>
