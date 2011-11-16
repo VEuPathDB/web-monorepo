@@ -304,7 +304,8 @@ sub snpTitleQuick {
   for (my $i=0; $i< $size; $i++) {
     my @var = split /\:/, $vars[$i];
     my $strain = $var[0];
-    next if ($strain == $reference_strain);
+
+    next if ($strain eq $reference_strain);
 
     my $na = $var[1];
     $na = $revArray{$na} if ($gene_strand == 1);
