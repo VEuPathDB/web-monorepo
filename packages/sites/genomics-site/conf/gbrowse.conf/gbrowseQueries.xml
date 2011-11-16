@@ -1870,7 +1870,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
 
 -->
 
-  <sqlQuery name="Centromere:overview"  includeProjects="PlasmoDB">
+  <sqlQuery name="Centromere:overview"  includeProjects="PlasmoDB,ToxoDB">
     <testParamValues project="PlasmoDB">
        <param name="srcfeature_id" value="$$na_seq_id_Pf3D7_09$$"/>
     </testParamValues>
