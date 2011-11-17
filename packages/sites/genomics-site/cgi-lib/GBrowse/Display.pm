@@ -750,6 +750,15 @@ sub chipColor {
   return '#E6E600' if($a =~ /H3/i );
   return '#F00000' if($a =~ /H4K20me3/i);
 
+  return '#600000' if($a =~ /SET8/ && $r == 1);
+  return '#C00000' if($a =~ /SET8/ && $r == 2);
+  return '#FF6600' if($a =~ /TBP1/ && $r == 1);
+  return '#FFCC00' if($a =~ /TBP1/ && $r == 2);
+  return '#000066' if($a =~ /TBP2/ && $r == 1);
+  return '#6666FF' if($a =~ /TBP2/ && $r == 2);
+  return '#006600' if($a =~ /RPB9_RNA_pol_II/ && $r == 1);
+  return '#66FF66' if($a =~ /RPB9_RNA_pol_II/ && $r == 2);
+
   return '#B84C00';
 }
 
