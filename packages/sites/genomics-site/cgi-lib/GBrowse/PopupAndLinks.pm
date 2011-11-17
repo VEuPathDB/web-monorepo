@@ -118,9 +118,11 @@ sub synGeneTitle {
   my $window = 500; # width on either side of gene
   my $linkStart = $start - $window;
   my $linkStop = $end + $window;
-  my $gbLink = "<a href='../../../../cgi-bin/gbrowse/plasmodb/?start=$linkStart;stop=$linkStop;ref=$contig'>GBrowse</a>";
-  my $recordLink = "<a href='../../../gene/$name'>Gene Page</a>";
+  my $projectId = $ENV{PROJECT_ID};
+  $projectId =~ tr/A-Z/a-z/;
 
+  my $gbLink = "<a href='../../../../cgi-bin/gbrowse/$projectId/?start=$linkStart;stop=$linkStop;ref=$contig'>GBrowse</a>";
+  my $recordLink = "<a href='../../../gene/$name'>Gene Page</a>";
   my @data;
   push @data, [ 'Species:' => $taxon ];  
   push @data, [ 'Gene:'  => $name ];
@@ -473,12 +475,14 @@ sub geneLink {
 
 sub geneGbrowseLink {
   my $f = shift;
+  my $projectId = $ENV{PROJECT_ID};
+  $projectId =~ tr/A-Z/a-z/;
   my $window = 500; # width on either side of gene
   my $linkStart = ($f->start) - $window;
   my $linkStop= ($f->stop) + $window;
   my ($seqId) = $f->get_tag_values("Contig");
 
-  return "../../../../cgi-bin/gbrowse/plasmodb/?start=$linkStart;stop=$linkStop;ref=$seqId";
+  return "../../../../cgi-bin/gbrowse/$projectId/?start=$linkStart;stop=$linkStop;ref=$seqId";
 }
 
 sub geneTitle {
@@ -532,7 +536,10 @@ sub geneTitleGB2 {
   my $linkStart = ($f->start) - $window;
   my $linkStop= ($f->stop) + $window;
   my ($seqId) = $f->get_tag_values("Contig");
-  my $gbLink = "<a href='../../../../cgi-bin/gbrowse/plasmodb/?start=$linkStart;stop=$linkStop;ref=$seqId'>GBrowse</a>";
+  my $projectId = $ENV{PROJECT_ID};
+  $projectId =~ tr/A-Z/a-z/;
+
+  my $gbLink = "<a href='../../../../cgi-bin/gbrowse/$projectId/?start=$linkStart;stop=$linkStop;ref=$seqId'>GBrowse</a>";
   my $recordLink = "<a href='../../../gene/$sourceId'>Gene Page</a>";
 
   my @data;
