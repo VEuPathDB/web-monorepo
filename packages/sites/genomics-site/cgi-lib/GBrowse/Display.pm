@@ -202,6 +202,7 @@ sub rumIntronBgColorFromSample {
                 'ME49ncRNA' => 'tan',
                 'RHncRNA' => 'yellow',
                 'NCncRNA' => 'maroon', 
+                'OocystmRNA' => 'green', 
                 );  
 
   my ($sample) = $f->get_tag_values('Sample'); 
