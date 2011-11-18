@@ -22,7 +22,7 @@
                      font-size: small;
                      }
 .tabmenu_active   { cursor: pointer;
-			color: blue;
+			color: #002439;
 			font-size: 11pt;
 			font-weight: bold;
                         font-family: sans-serif;
@@ -37,7 +37,7 @@
 			z-index: 10;
 		      }
 .tabmenu_inactive { cursor: pointer;
-			color: black;
+                        color:#015F9A;
 			font-size: 11pt;
 			background-color: #BBCCFF;
 			border-bottom-color: #E3E9FF;
@@ -70,4 +70,20 @@
 }
 .panleft {
  opacity:0 !important;
+}
+.tctl {
+ color:#002439;
+ text-decoration:underline;
+}
+.nojs {
+ color:#002439;
+}
+.track_label {
+ color:#015F9A;
+}
+.clickable {
+ color:#015F9A;
+}
+.a {
+ color:#9a3b00;
 }
