@@ -82,7 +82,8 @@
  color:#015F9A;
 }
 .clickable {
- color:#015F9A;
+  color:blue;
+ text-decoration:underline;
 }
 .a {
  color:#9a3b00;
