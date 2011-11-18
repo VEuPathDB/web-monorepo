@@ -435,7 +435,6 @@ ORDER BY
              'alignment' type, 
              '$source' source, 
              feature_source_id name, 
-             '' score, 
              na_sequence_id parent_id, 
              start_min startm, 
              end_max end, 
@@ -447,29 +446,6 @@ ORDER BY
         AND  end_max >= $base_start - 1 
         AND  feature_type='Miscellaneous'
         AND  end_max - start_min + 1 >= $$minLength$$
-      ORDER BY start_min
-]]>
-    </sql>
-  </sqlQuery>
-  
-    <sqlQuery name="alignment:ORF">
-     <sql>
-<![CDATA[
- SELECT na_feature_id feature_id, 
-             'alignment' type, 
-             'ORF' source, 
-             feature_source_id name, 
-             '' score, 
-             na_sequence_id parent_id, 
-             start_min startm, 
-             end_max end, 
-             decode (is_reversed, 0, '+1', 1, '-1', '.') strand,
-             'Length=' || (end_max-start_min+1)/3 atts
-      FROM   ApidbTuning.FeatureLocation 
-      WHERE  na_sequence_id = $srcfeature_id 
-        AND  start_min <= $rend
-        AND  end_max >= $base_start - 1 
-        AND  feature_type='Miscellaneous'
       ORDER BY start_min
 ]]>
     </sql>
@@ -1819,7 +1795,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
 <![CDATA[ 
 SELECT etn.na_sequence_id feature_id, 
        'ORF' type, 
-       'density' source 
+       '$source' source 
 FROM   dots.NASEQUENCE etn 
 WHERE  etn.na_sequence_id = $srcfeature_id 
 ]]>
@@ -5034,13 +5010,13 @@ GROUP BY interval
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="ORF:density:bulksubfeatures" excludeProjects="ToxoDB,CryptoDB,GiardiaDB"> 
+  <sqlQuery name="ORF:density:bulksubfeatures"> 
     <sql> 
 <![CDATA[ 
 SELECT interval feature_id, 
        na_sequence_id as parent_id,
       'ORF' type, 
-      'density' source,
+      '$source' source,
       count(interval) score, 
       interval * 500 startm, 
       (interval + 1) * 500 end,
@@ -5062,6 +5038,7 @@ WHERE
        AND tn.name_class = 'scientific name'
        AND t.sequence_ontology_id = so.sequence_ontology_id
        AND so.term_name = 'ORF'
+       AND end_max - start_min + 1 >= $$minLength$$
        AND taaf.na_feature_id = nal.na_feature_id
        AND enas.na_sequence_id = $srcfeature_id
        AND nal.start_min >= $base_start - 1 
