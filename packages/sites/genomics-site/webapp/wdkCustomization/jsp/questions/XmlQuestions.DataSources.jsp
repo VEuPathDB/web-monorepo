@@ -65,7 +65,7 @@
 		<b><a name="toc"></a>DataSources Categories</b>
 		<ul>
 	</c:if>
-	<c:if test="${showCat && currentCat != 'ignore'}">
+	<c:if test="${showCat && !fn:containsIgnoreCase(currentCat, 'ignore')}">
 		<li><a href="#${currentCat}">${currentCat}</a></li>
 	</c:if>
 	<c:set var="tocBegin" value="false"/>
@@ -88,7 +88,7 @@
 
 <c:choose>
 
-<c:when test="${currentCat == 'ignore'}">
+<c:when test="${fn:containsIgnoreCase(currentCat, 'ignore')}">
 </c:when>
 
 <c:when test="${param['idx'] != null && param['idx'] != i}">
