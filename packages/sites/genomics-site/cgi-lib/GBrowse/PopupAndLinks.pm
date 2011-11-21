@@ -540,20 +540,18 @@ sub geneTitleGB2 {
   $projectId =~ tr/A-Z/a-z/;
 
   my $gbLink = "<a href='../../../../cgi-bin/gbrowse/$projectId/?start=$linkStart;stop=$linkStop;ref=$seqId'>GBrowse</a>";
-  #my $recordLink = "<a href='../../../gene/$sourceId'>Gene Page</a>";
+  my $recordLink = "<a href='../../../gene/$sourceId'>Gene Page</a>";
 
-  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr',"$gbLink"))};
-  #my @data;
-  #push(@data, ['Species:'     => $taxon]);
-  #push(@data, ['ID:'          => $sourceId]);
-  #push(@data, ['Gene Type:'   => $soTerm]);
-  #push(@data, ['Description:' => $product]);
-  #push(@data, ['Location:'    => $loc]);
-  #push(@data, ['UTR:'         => $utr]) if $utr;
-  #push(@data, ['Save:'        => '<span id="$sourceId_gbsaver"><a onclick="popLogin()" href="javascript:void(0)">Log in</a> to save genes.</span>']);
-  #push(@data, ['Download:'    => "$cdsLink | $proteinLink"]);
-  #push(@data, ['Links:'    => "$gbLink | $recordLink"]);
-  #hover($f, \@data);
+  my @data;
+  push(@data, ['Species:'     => $taxon]);
+  push(@data, ['ID:'          => $sourceId]);
+  push(@data, ['Gene Type:'   => $soTerm]);
+  push(@data, ['Description:' => $product]);
+  push(@data, ['Location:'    => $loc]);
+  push(@data, ['UTR:'         => $utr]) if $utr;
+  push(@data, ['Download:'    => "$cdsLink | $proteinLink"]);
+  push(@data, ['Links:'    => "$gbLink | $recordLink"]);
+  hover($f, \@data);
 } 
 
 sub spliceSiteCuratedTitle {
