@@ -3994,7 +3994,7 @@ WHERE
        e.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
-  </sqlQuery 
+  </sqlQuery>
 
   <sqlQuery name="SNP:Broad"  includeProjects="PlasmoDB">
      <sql>
@@ -5876,22 +5876,22 @@ AND    cpp.antibody $$antibody$$
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="ChIP_chip:AbAssay:bulksubfeatures"  includeProjects="ToxoDB">
+ <sqlQuery name="ChIP_chip:AbAssay:bulksubfeatures"  includeProjects="ToxoDB">
      <sql>
 <![CDATA[
- SELECT ee.na_feature_id  as feature_id,
-       'ChIP_sub'         as type,
-       '$source'          as source,
-       ee.score           as score,
-       ee.na_sequence_id  as parent_id,
-       ee.start_min       as startm,
-       ee.end_max         as end,
+ SELECT ee.na_feature_id   as feature_id,
+       'ChIP_sub'          as type,
+       '$source'           as source,
+       ee.score     as score,
+       ee.na_sequence_id   as parent_id,
+       ee.start_min        as startm,
+       ee.end_max          as end,
        'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
 FROM   rad.protocol p,
        rad.analysis a,
        ApidbTuning.ExpressionElement ee,
        ApidbTuning.ChIPProtocolParams cpp
-WHERE  ee.analysis_id  =  cpp.analysis_id
+WHERE  ee.analysis_id =  cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id =  a.analysis_id
 AND    ee.na_sequence_id = $srcfeature_id
