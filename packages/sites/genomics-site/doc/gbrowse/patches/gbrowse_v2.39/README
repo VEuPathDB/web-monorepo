@@ -10,3 +10,6 @@ cookie.patch - changes the name of the state cookie from gbrowse_sess to
                cookie is good for about 1 year on our sites so this patch
                can be discontinued a year after we release gbrowse 2
 
+js_popups.patch - allows gbrowse popups' content to be generated from
+                  javascript calls, rather than just string, ajax, or
+                  html element as is supported in v2.39
