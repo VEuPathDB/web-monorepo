@@ -4682,7 +4682,7 @@ SELECT g3.gff3_feature_id feature_id,
        g3.mapping_start startm,
        g3.mapping_end end,
        decode (g3.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       'product=' || substr(ltrim(rtrim(substr(g3.attr,(Instr(g3.attr,';'))),';'),';'),8) || '$dlm' atts
+       ' ' atts
 FROM   apidb.gff3 g3, sres.ExternalDatabaseRelease edr,
        sres.ExternalDatabase ed
 WHERE g3.external_database_release_id = edr.external_database_release_id
