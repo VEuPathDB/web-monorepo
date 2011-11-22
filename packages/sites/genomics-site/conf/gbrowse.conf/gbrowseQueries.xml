@@ -3962,7 +3962,7 @@ WHERE
  SELECT e.na_sequence_id||'_'||x.antibody  as feature_id,
        'ChIP_chip'        as type, 
        '$source'          as source, 
-       e.source_id        as name, 
+       x.antibody         as name, 
        e.source_id        as parent_id, 
        $base_start        as startm, 
        $rend              as end,
