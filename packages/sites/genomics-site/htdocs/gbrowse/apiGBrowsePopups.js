@@ -1,4 +1,24 @@
 
+//********************************************************************************/
+// Two configurations available for gene pop-ups:
+//
+//   1. Shows only the add/remove basket link, skips favorites
+var GbrowsePopupConfig = getGbrowsePopupConfig(false, "Basket:", "Add", "Remove");
+//
+//   2. Shows both basket and favorites links in pop-ups
+// var GbrowsePopupConfig = getGbrowsePopupConfig(true, "Save:", "Add to Basket", "Remove from Basket");
+//
+//********************************************************************************/
+
+function getGbrowsePopupConfig(showFav, saveRowTitle, addBasketText, removeBasketText) {
+	var config = new Object();
+	config.showFavoriteLinks = showFav;
+	config.saveRowTitle = saveRowTitle;
+	config.addBasketText = addBasketText;
+	config.removeBasketText = removeBasketText;
+	return config;
+}
+
 /****** Table-building utilities ******/
 
 function table(rows) {
@@ -35,8 +55,8 @@ function removeGeneAsFavorite(projectId, sourceId) {
 
 /****** Basket link functions for GBrowse ******/
 
-var saveBasketTextLink = 'To Basket <img width="20" src="' + getWebAppUrl() + '/wdk/images/basket_gray.png"/>';
-var removeBasketTextLink = 'Remove From Basket <img width="20" src="' + getWebAppUrl() + '/wdk/images/basket_color.png"/>';
+var saveBasketTextLink = GbrowsePopupConfig.addBasketText + ' <img width="20" src="' + getWebAppUrl() + '/wdk/images/basket_gray.png"/>';
+var removeBasketTextLink = GbrowsePopupConfig.removeBasketText + ' <img width="20" src="' + getWebAppUrl() + '/wdk/images/basket_color.png"/>';
 
 function applyCorrectBasketLink(sourceId, projectId) {
 	performIfItemInBasket(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
@@ -83,10 +103,18 @@ function getSaveRowLinks(projectId, sourceId) {
 		// enable saving as favorite or to basket
 		var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><a href=\"javascript:void(0);\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">" + saveFavTextLink + "</a></span>";
 		var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><a href=\"javascript:void(0);\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">" + saveBasketTextLink + "</a></span>";
-		saveRowLinks = favoriteLink + " | " + basketLink;
-		// now set appropriate links based on whether gene is already in basket/favorites
-		applyCorrectBasketLink(sourceId, projectId);
-		applyCorrectFavoriteLink(sourceId, projectId);
+		
+		if (GbrowsePopupConfig.showFavoriteLinks) {
+			saveRowLinks = favoriteLink + " | " + basketLink;
+			// now set appropriate links based on whether gene is already in basket/favorites
+			applyCorrectBasketLink(sourceId, projectId);
+			applyCorrectFavoriteLink(sourceId, projectId);
+		} else {
+			// only show basket link
+			saveRowLinks = basketLink;
+			applyCorrectBasketLink(sourceId, projectId);
+		}
+		
 	} else {
 		// prompt user to log in if he wants to to save genes
 		saveRowLinks = "<a onclick=\"checkLogin()\" href=\"javascript:void(0)\">Log in</a> to save genes.";
@@ -96,7 +124,6 @@ function getSaveRowLinks(projectId, sourceId) {
 
 
 /****** Pop-up functions for various record types ******/
-
 
 // Gene title
 function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams) {
@@ -129,7 +156,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   if(utr != '') {
     rows.push(twoColRow('UTR:', utr));
   }
-  rows.push(twoColRow('Save:', getSaveRowLinks(projectId, sourceId)));
+  rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
   rows.push(twoColRow('Download:', cdsLink + " | " + proteinLink));
   rows.push(twoColRow('Links:', gbLink + " | " + recordLink));
   
@@ -152,7 +179,7 @@ function syn_gene_title (tip, projectId, sourceId, taxon, geneType, desc, locati
 	rows.push(twoColRow('Gene Type:', geneType));
 	rows.push(twoColRow('Description:', desc));
 	rows.push(twoColRow('Location:', location));
-	rows.push(twoColRow('Save:', getSaveRowLinks(projectId, sourceId)));
+	rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
 	rows.push(twoColRow('Links:', gbLink + ' | ' + recordLink));
 
 	tip.T_TITLE = 'Syntenic Gene: ' + sourceId;
