@@ -1177,11 +1177,9 @@ sub affyProbesTitle {
   my $start = $f->start;
   my $stop  = $f->stop;
   my ($count) = $f->get_tag_values("Count"); 
-  my ($probeSet) = $f->get_tag_values("ProbeSet"); 
   my $probeId = $f->name; 
   my @data;
   push @data, ['Type:' => $type ];
-  push @data, ['ProbeSetID:' => $probeSet ];
   push @data, ['ProbeID:' => $probeId ];
   push @data, ['Start:'        => $start];
   push @data, ['Stop:'         => $stop];
