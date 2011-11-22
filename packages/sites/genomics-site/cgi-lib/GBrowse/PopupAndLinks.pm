@@ -1344,4 +1344,18 @@ sub ExportPredTitle{
    hover($f, \@data); 
 }
 
+
+sub jcviPasaTitle {
+  my $f = shift;
+
+  my $start = $f->start;
+  my $stop = $f->stop;
+  my $name = $f->name;
+
+  my @data;
+  push(@data, ['Name:' => $name]);
+  push(@data, ['Location:' => $start . " - " . $stop]);
+  return hover($f,\@data);
+}
+
 1;
