@@ -93,7 +93,7 @@ function setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, ne
 }
 
 // Gene title
-function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr) {
+function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams) {
 
   // In ToxoDB, sequences of alternative gene models have to be returned
   var ignore_gene_alias = 0;
@@ -102,15 +102,16 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   } 
 
   // expand minimalist input data
-  var cdsLink = "<a href=../../../cgi-bin/geneSrt?project_id=" + projectId
+  var cdsLink = "<a href='../../../cgi-bin/geneSrt?project_id=" + projectId
         + "&ids=" + sourceId
         + "&ignore_gene_alias=" + ignore_gene_alias
-        + "&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>CDS</a>"
-  var proteinLink = "<a href=../../../cgi-bin/geneSrt?project_id=" + projectId
+        + "&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target='_blank'>CDS</a>"
+  var proteinLink = "<a href='../../../cgi-bin/geneSrt?project_id=" + projectId
         + "&ids=" + sourceId
         + "&ignore_gene_alias=" + ignore_gene_alias
-        + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences target=_blank>protein</a>"
-  var recordLink = "<a href='../../../gene/" + sourceId + ">Gene Page</a>";
+        + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target='_blank'>protein</a>"
+  var recordLink = "<a href='../../../gene/" + sourceId + "'>Gene Page</a>";
+  var gbLink = "<a href='../../../../cgi-bin/gbrowse/" + projectId.toLowerCase() + "/?" + gbLinkParams + "'>GBrowse</a>";
   
   // format into html table rows
   var rows = new Array();
@@ -129,45 +130,6 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   //  tip.T_BGCOLOR = 'lightskyblue';
   tip.T_TITLE = 'Annotated Gene ' + sourceId;
   return table(rows);
-  
-  
-  
-  my $f = shift;
-  my $projectId = $ENV{PROJECT_ID};
-  my $sourceId = $f->name;
-  my $chr = $f->seq_id;
-  my @utrs = $f->sub_SeqFeature("UTR");
-  my $utr = '';
-  foreach (@utrs) {
-    next if $_->type !~ /utr/i;
-    $utr .= $_->location->to_FTstring. " ";
-  }
-  my $loc = $f->location->to_FTstring;
-  my ($soTerm) = $f->get_tag_values("soTerm");
-  my ($product) = $f->get_tag_values("product");
-  my ($taxon) = $f->get_tag_values("taxon");
-  my ($isPseudo) = $f->get_tag_values("isPseudo");
-  $soTerm =~ s/\_/ /g;
-  $soTerm =~ s/\b(\w)/\U$1/g;
-  $soTerm .= " (pseudogene)" if $isPseudo == '1';
-
-  my $ignore_gene_alias = 0;
-  $ignore_gene_alias = 1 if ($projectId == 'ToxoDB');
-
-  my $cdsLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>CDS</a>"; 
-  my $proteinLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>protein</a>";
-
-  my $window = 500; # width on either side of gene
-  my $linkStart = ($f->start) - $window;
-  my $linkStop= ($f->stop) + $window;
-  my ($seqId) = $f->get_tag_values("Contig");
-  my $gbLink = "<a href='../../../../cgi-bin/gbrowse/plasmodb/?start=$linkStart;stop=$linkStop;ref=$seqId'>GBrowse</a>";
-
-  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo', '$utr', "$gbLink"))};
-
-  
-  
-  
 }
 
 // Syntetic Gene title
