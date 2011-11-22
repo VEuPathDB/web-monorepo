@@ -87,7 +87,7 @@ sub syntenyTitle {
   my $f = shift;
   my ($syntype) = $f->get_tag_values('SynType');
 
-  if($syntype eq 'gene') {
+  if($syntype eq 'genes') {
     &synGeneTitle($f);
   }
   else {
