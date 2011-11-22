@@ -786,7 +786,7 @@ select
        'Truncated=' || CASE WHEN fl.end_max > syn.b_end THEN syn.b_end 
                            WHEN fl.start_min < syn.b_start THEN syn.b_start 
                            END || '$dlm' ||
-       'SynType=' || 'genes' ||  '$dlm' || 
+       'SynType=' || 'gene' ||  '$dlm' || 
        'Taxon=' || gattr.organism atts
 FROM 
        apidb.synteny syn,
@@ -877,7 +877,7 @@ SELECT
              END) || 
        'ExtDBName=' || ed.name || '$dlm' ||
        'Taxon=' || b.organism || '$dlm' ||
-       'SynType=' || 'contig' ||  '$dlm' ||
+       'SynType=' || 'span' ||  '$dlm' ||
        'Scale=' || 
        CASE WHEN (is_reversed = 1) 
          THEN (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)
@@ -926,7 +926,7 @@ SELECT
        'Start=' || gattr.start_min || '$dlm' ||
        'End=' || gattr.end_max || '$dlm' ||
        'isReversed=' || gattr.is_reversed || '$dlm' ||
-       'SynType=' || 'genes' ||  '$dlm' || 
+       'SynType=' || 'gene' ||  '$dlm' || 
        'Taxon=' || gattr.organism atts
 FROM 
        ApidbTuning.GeneAttributes gattr
@@ -961,7 +961,7 @@ SELECT
               ELSE ''
               END) || 
         'ExtDBName=' || database_name || '$dlm' ||
-        'SynType=' || 'contig' ||  '$dlm' ||
+        'SynType=' || 'span' ||  '$dlm' ||
 	'Scale=1' ||  '$dlm' ||
         'Taxon=' || organism atts
  FROM 
