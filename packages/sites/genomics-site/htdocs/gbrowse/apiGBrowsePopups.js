@@ -1,41 +1,18 @@
-function table (rows) {
-  return '<table border=0>' + rows.join('') + '</table>';
+
+/****** Table-building utilities ******/
+
+function table(rows) {
+  return '<table border="0">' + rows.join('') + '</table>';
 }
 
 function twoColRow(left, right) {
   return '<tr><td>' + left + '</td><td>' + right + '</td></tr>';
 }
 
-
-function threeColRow(one, two, three) {
-  return '<tr><td>' + one + '</td><td>' + two + '</td><td>' + three + '</td></tr>';
-}
-
-function fiveColRow(one, two, three, four, five, six) {
+function fiveColRow(one, two, three, four, five) {
   return '<tr><td>' + one + '</td><td>' + two + '</td><td>' + three + '</td><td>' + four + '</td><td>' + five + '</td></tr>';
 }
 
-
-function popup_text () {
-  var items = popup_text.arguments.length;
-
-  var tip = popup_text.arguments[0];
-  var name = popup_text.arguments[1];
-
-  var rows = new Array();
-
-  // The first value is the name... the following values are in sets of 2
-  // (name, header_0, value_0, header_1, value_1, ....)
-  for (i = 2;i < items; i++) {
-    var rowHeader = popup_text.arguments[i];
-    i++;
-    var rowValue = popup_text.arguments[i];
-    rows.push(twoColRow(rowHeader, rowValue));
-  }
-
-  tip.T_TITLE = name;
-  return table(rows);
-}
 
 /****** Favorite link functions for GBrowse ******/
 
@@ -55,6 +32,7 @@ function removeGeneAsFavorite(projectId, sourceId) {
 			'Gene '+sourceId+' has been removed from your favorites.');
 }
 
+
 /****** Basket link functions for GBrowse ******/
 
 function applyCorrectBasketLink(sourceId, projectId) {
@@ -72,6 +50,7 @@ function removeGeneFromBasket(projectId, sourceId) {
 	performSavedItemOp(removeFromBasket, projectId, sourceId, 'gbbasket', 'addGeneToBasket', 'To Basket',
 			'Gene '+sourceId+' has been removed from your basket.');
 }
+
 
 /****** Utility link functions for GBrowse ******/
 
@@ -91,6 +70,27 @@ function setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, ne
 	jQuery('#'+sourceId+'_'+selectionSuffix)
     	.html("<a href=\"javascript:void(0);\" onclick=\""+nextFunction+"('"+projectId+"','"+sourceId+"');\">"+nextLinkText+"</a>");
 }
+
+function getSaveRowLinks(projectId, sourceId) {
+	var saveRowLinks;
+	if (isUserLoggedIn()) {
+		// enable saving as favorite or to basket
+		var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><a href=\"javascript:void(0);\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">As Favorite</a></span>";
+		var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><a href=\"javascript:void(0);\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">To Basket</a></span>";
+		saveRowLinks = favoriteLink + " | " + basketLink;
+		// now set appropriate links based on whether gene is already in basket/favorites
+		applyCorrectBasketLink(sourceId, projectId);
+		applyCorrectFavoriteLink(sourceId, projectId);
+	} else {
+		// prompt user to log in if he wants to to save genes
+		saveRowLinks = "<a onclick=\"popLogin()\" href=\"javascript:void(0)\">Log in</a> to save genes.";
+	}
+	return saveRowLinks;
+}
+
+
+/****** Pop-up functions for various record types ******/
+
 
 // Gene title
 function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams) {
@@ -127,41 +127,32 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   rows.push(twoColRow('Download:', cdsLink + " | " + proteinLink));
   rows.push(twoColRow('Links:', gbLink + " | " + recordLink));
   
-  //  tip.T_BGCOLOR = 'lightskyblue';
+  //tip.T_BGCOLOR = 'lightskyblue';
   tip.T_TITLE = 'Annotated Gene ' + sourceId;
   return table(rows);
 }
 
+
 // Syntetic Gene title
-function syn_gene_title (tip, projectId, taxon, name, geneType, desc, location) {
+function syn_gene_title (tip, projectId, sourceId, taxon, geneType, desc, location, gbLinkParams) {
+
+	var gbLink = '<a href="../../../../cgi-bin/gbrowse/' + projectId.toLowerCase() + '/?' + gbLinkParams + '">GBrowse</a>';
+	var recordLink = '<a href="../../../gene/' + sourceId + '">Gene Page</a>';
+	
 	// format into html table rows
 	var rows = new Array();
 	rows.push(twoColRow('Species:', taxon));
-	rows.push(twoColRow('ID:', name));
+	rows.push(twoColRow('Gene:', sourceId));
 	rows.push(twoColRow('Gene Type:', geneType));
 	rows.push(twoColRow('Description:', desc));
 	rows.push(twoColRow('Location:', location));
-	rows.push(twoColRow('Save', getSaveRowLinks(projectId, sourceId)));
-	tip.T_TITLE = 'Syntenic Gene: ' + name;
+	rows.push(twoColRow('Save:', getSaveRowLinks(projectId, sourceId)));
+	rows.push(twoColRow('Links:', gbLink + ' | ' + recordLink));
+
+	tip.T_TITLE = 'Syntenic Gene: ' + sourceId;
 	return table(rows);
 }
 
-function getSaveRowLinks(projectId, sourceId) {
-	var saveRowLinks;
-	if (isUserLoggedIn()) {
-		// enable saving as favorite or to basket
-		var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><a href=\"javascript:void(0);\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">As Favorite</a></span>";
-		var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><a href=\"javascript:void(0);\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">To Basket</a></span>";
-		saveRowLinks = favoriteLink + " | " + basketLink;
-		// now set appropriate links based on whether gene is already in basket/favorites
-		applyCorrectBasketLink(sourceId, projectId);
-		applyCorrectFavoriteLink(sourceId, projectId);
-	} else {
-		// prompt user to log in if he wants to to save genes
-		saveRowLinks = "<a onclick=\"popLogin()\" href=\"javascript:void(0)\">Log in</a> to save genes.";
-	}
-	return saveRowLinks;
-}
 
 // EST title
 function est (tip, paramsString) {
@@ -280,11 +271,10 @@ function pst (tip, paramsString) {
     rows.push(twoColRow(strain, info));    
   }
 
-//  tip.T_BGCOLOR = 'lightskyblue';
+  //  tip.T_BGCOLOR = 'lightskyblue';
   tip.T_TITLE = 'SNP';
   return table(rows);
 }
-
 
 
 // htsSNP Title
@@ -359,5 +349,3 @@ function htspst (tip, paramsString) {
   tip.T_TITLE = 'SNP';
   return table(rows) + table(strains);
 }
-
-

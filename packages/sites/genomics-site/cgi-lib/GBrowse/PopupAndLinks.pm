@@ -83,9 +83,6 @@ sub snpLink {
 #  Methods for Titles (Popups)
 #--------------------------------------------------------------------------------
 
-
-
-
 sub syntenyTitle {
   my $f = shift;
   my ($syntype) = $f->get_tag_values('SynType');
@@ -97,40 +94,33 @@ sub syntenyTitle {
     &synSpanTitle($f);
   }
 }
-
-
+  
 sub synGeneTitle {
   my $f = shift;
-  my $name = $f->name;
-  my $chr = $f->seq_id;
-  my $loc = $f->location->to_FTstring;
-  my ($desc) = $f->get_tag_values("Note");
+  
+  my $projectId = $ENV{PROJECT_ID};
+  my $sourceId = $f->name;
   my ($taxon) = $f->get_tag_values("Taxon");
-  my ($isPseudo) = $f->get_tag_values("IsPseudo");
-  my ($contig) = $f->get_tag_values("Contig");
+  my ($desc) = $f->get_tag_values("Note");
+
   my ($soTerm) = $f->get_tag_values("SOTerm");
-  my ($trunc) = $f->get_tag_values("Truncated");
-  my ($isrev) = $f->get_tag_values("isReversed");
-  my ($start) = $f->get_tag_values("Start");
-  my ($end) = $f->get_tag_values("End");
+  my ($isPseudo) = $f->get_tag_values("IsPseudo");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
+  $soTerm = ($isPseudo ? "Pseudogenic " : "") . $soTerm;
+
+  my ($seqId) = $f->get_tag_values("Contig");
+  my ($start) = $f->get_tag_values("Start");
+  my ($end) = $f->get_tag_values("End");
   my $window = 500; # width on either side of gene
   my $linkStart = $start - $window;
   my $linkStop = $end + $window;
-  my $projectId = $ENV{PROJECT_ID};
-  $projectId =~ tr/A-Z/a-z/;
+  my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
 
-  my $gbLink = "<a href='../../../../cgi-bin/gbrowse/$projectId/?start=$linkStart;stop=$linkStop;ref=$contig'>GBrowse</a>";
-  my $recordLink = "<a href='../../../gene/$name'>Gene Page</a>";
-  my @data;
-  push @data, [ 'Species:' => $taxon ];  
-  push @data, [ 'Gene:'  => $name ];
-  push @data, [ 'Gene Type:' => ($isPseudo ? "Pseudogenic " : "") . $soTerm  ];
-  push @data, [ 'Description:' => $desc ];
-  push @data, [ 'Location:'  => "$contig: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "") ];
-  push(@data, ['Links:'    => "$gbLink | $recordLink"]);
-  hover($f, \@data); 
+  my $trunc = $f->get_tag_values("Truncated");
+  my $location = "$seqId: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "");
+  
+  return qq{javascript:escape(syn_gene_title(this,'$projectId','$sourceId','$taxon','$soTerm','$desc','$location','$gbLinkParams'))};
 }
 
 sub synSpanTitle {
@@ -219,7 +209,7 @@ sub htsSnpTitleQuick {
   my  $refNA = $gene_strand == 1 ? $revArray{$reference_na} : $reference_na;
   my $refAAString = ''; 
   if ($isCoding == 'yes') {
-    my $non = $nonSyn == 'yes' ? 'non-' : ''; 
+    my $non = ($nonSyn == 'yes') ? 'non-' : ''; 
     $type = "Coding ($non" . "synonymous)";
     $refAAString = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$reference_aa";
   }
@@ -238,7 +228,7 @@ sub htsSnpTitleQuick {
 
   # make one row per SNP allele
   my $size = @vars;
-  for (my $i=0; $i< $size; $i++) {
+  for (my $i=0; $i < $size; $i++) {
    
     my @var = split /\:\:/, $vars[$i];
     my $strain = $var[0];
@@ -510,8 +500,6 @@ sub geneTitleGB2 {
   my $f = shift;
   
   my $projectId = $ENV{PROJECT_ID};
-  #$projectId =~ tr/A-Z/a-z/;
-  
   my $sourceId = $f->name;
   my $chr = $f->seq_id;
   my $loc = $f->location->to_FTstring;
@@ -539,28 +527,6 @@ sub geneTitleGB2 {
   my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
 
   return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams'))};
-
-  # seemingly unused (?)
-  #my $ignore_gene_alias = 0;
-  #$ignore_gene_alias = 1 if ($projectId == 'ToxoDB');
-  
-  #my $cdsLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=CDS&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>CDS</a>"; 
-  #my $proteinLink = "<a href='../../../../cgi-bin/geneSrt?project_id=$projectId&ids=$sourceId&ignore_gene_alias=$ignore_gene_alias&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target=_blank>protein</a>";
-
-  #my $gbLink = '<a href="../../../../cgi-bin/gbrowse/$projectId/?start=$linkStart;stop=$linkStop;ref=$seqId">GBrowse</a>';
-  #my $recordLink = "<a href='../../../gene/$sourceId'>Gene Page</a>";
-
-  #my @data;
-  #push(@data, ['Species:'     => $taxon]);
-  #push(@data, ['ID:'          => $sourceId]);
-  #push(@data, ['Gene Type:'   => $soTerm]);
-  #push(@data, ['Description:' => $product]);
-  #push(@data, ['Location:'    => $loc]);
-  #push(@data, ['UTR:'         => $utr]) if $utr;
-  #push(@data, ['Save:'        => '<span id="$sourceId_gbsaver"><a onclick="popLogin()" href="javascript:void(0)">Log in</a> to save genes.</span>']);
-  #push(@data, ['Download:'    => "$cdsLink | $proteinLink"]);
-  #push(@data, ['Links:'    => "$gbLink | $recordLink"]);
-  #hover($f, \@data);
 } 
 
 sub spliceSiteCuratedTitle {

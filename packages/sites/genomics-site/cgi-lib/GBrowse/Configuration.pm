@@ -107,7 +107,6 @@ sub popup_template {
 }
 
 
-
 sub hover {
   my ($f, $data) = @_;
 
@@ -126,28 +125,6 @@ sub hover {
   }
   return "url:/cgi-bin/gp?t=$type&n=$name";
 }
-
-
-# sub hover {
-#   my ($name, $data) = @_;
-
-#   my @dataArray;
-#   foreach(@$data) {
-#     push @dataArray, @$_;
-#   }
-
-#   my @quotedData;
-#   foreach(@dataArray) {
-#     s/'/\\'/g;
-#     s/\"/&quot;/g;
-#     s/\s+$//;
-#     push @quotedData, "'$_'";
-#   }
-
-#   my $dataString = scalar @quotedData > 0 ? "," . join(',', @quotedData) : '';
-
-#   return qq{" onmouseover="return escape(popup_text(this,'$name'$dataString))"};
-# }
 
 
 sub oldhover {
