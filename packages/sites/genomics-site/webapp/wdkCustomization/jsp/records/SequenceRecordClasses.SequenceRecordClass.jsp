@@ -540,6 +540,42 @@ Chromosome and unassigned contig sequences and annotations for <i>Trypanosoma co
 Sequence from <i>Trypanosoma cruzi</i> Esmeraldo strain cl3 was obtained from Dr. Gregory Buck, Center for the Study of Biological Complexity, Microbiology and Immunology, Virginia Commonwealth University. <br><br>It is requested that users of this <i>Trypanosoma cruzii</i> Esmeraldo cl3 strain sequence assembly acknowledge Gregory A. Buck, Virginia Commonwealth University, and The Genome Center, Washington University School of Medicine in any publications that result from use of this sequence assembly.<br><br>Any publications that propose to use whole genome or chromosome data should contact The Genome Center at Washington University (gweinsto@wustl.edu or wwarren@wustl.edu) for the use of pre-publication data.  Please refer to the <a href="http://genome.wustl.edu/data/data_use_policy">Genome Center Data Use Policy</a> for further information regarding proper use of data and proper citation.<br><br> For additional information on this <i>Trypanosoma cruzi</i> assembly, please visit the <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=TcruziEsmeraldo_scaffold_RSRC&title=Query#TcruziEsmeraldo_scaffold_RSRC">data source</a>. 
   </c:set>
 </c:when>
+<c:when test="${fn:contains(organism,'Endotrypanum monterogeii strain LV88') && projectId eq 'TriTrypDB'}">
+  <c:set var="reference">
+The <i>Endotrypanum monterogeii</i> LV88 strain was provided by Dr. Michael Chance, Liverpool, as described (A. H. Lopes, D.M. Iovannisci, M. Petrillo-Peixoto, D. McMahon-Pratt, & S.M. Beverley (1990), Molec. Biochem. Parasitol.  40: 151-162).  It was isolated from a <i>Choloepus hoffmani</i> sloth in Costa Rica.    
+Genomic DNA was prepared by CsCl/Ethidium bromide density gradient centrifugation to rminimize the amount of kinetoplast (mitochondrial) DNA, and was provided by Drs. Natalia Akopyants and Stephen Beverley, Washington University School of Medicine.    
+Total sequence coverage of 454 instrument reads was 50X (Fragments 20X, 3Kb PE 24X, 8Kb PE 6X) using a genome size estimate of 35Mb. The combined sequence reads were assembled using the Newbler software (Roche). This first draft assembly was referred to as <i>Endotrypanum monterogeii</i> 1.0. This version has been cleaned of contaminants and had some remaining vector trimmed from contigs. The assembly is made up of a total of 3593 scaffolds with an N50 scaffold length of over 693kb (N50 contig length was 21.7kb). The assembly spans 32.4Mb.
+<br/><br/>
+This work was supported by NIH grant AI29646 to SMB and by NIH-NHGRI grant 5U54HG00307907 to RKW, Director of The Genome Institute at Washington University.
+<br/><br/>
+For questions regarding this <i>Endotrypanum monterogeii</i> LV88 1.0 assembly please contact Dr. Wes Warren, Washington University School of Medicine (wwarren@genome.wustl.edu). Downloads of the sequence data are available via the TriTrypDB genome browser server. Funding for the sequence characterization of the <i>Endotrypanum monterogeii</i> LV88 genome was provided by the National Human Genome Research Institute (NHGRI), National Institutes of Health (NIH).
+  </c:set>
+</c:when>
+
+<c:when test="${fn:contains(organism,'Leishmania major strain LV39c5') && projectId eq 'TriTrypDB'}">
+  <c:set var="reference">
+<i>Leishmania major</i> LV39 clone 5 (LV39cl5) was provided by Dr. Richard Titus.   This is a clonal derivative of the L. major strain with the WHO designation Rho/SU/59/P, as described (Marchand, M., Daoud, S., Titus, R. G., Louis, J. & Boon, T., (1987) Parasite Immunol. 9, 81-92).     Investigators should be aware of our understanding that other lines arising from this WHO strain have received many different shorthand names around the world.  However limited testing suggest some may differ significantly from one another, for reasons unknown. 
+Genomic DNA was prepared by CsCl/Ethidium bromide density gradient centrifugation to rminimize the amount of kinetoplast (mitochondrial) DNA, and was provided by Drs. Natalia Akopyants and Stephen Beverley, Washington University School of Medicine.    
+Total sequence coverage of 454 instrument reads was 54X (Fragments 25X, 3Kb PE 24X, 8Kb PE 6X) using a genome size estimate of 35Mb. The combined sequence reads were assembled using the Newbler software (Roche). This first draft assembly was referred to as <i>Leishmania major</i> LV39cl5 1.0. This version has been cleaned of contaminants and had some remaining vector trimmed from contigs. The assembly is made up of a total of 1754 scaffolds with an N50 scaffold length of over 962kb (N50 contig length was 40.4kb). The assembly spans 32.2Mb.
+<br/><br/>
+This work was supported by NIH grant AI29646 to SMB and by NIH-NHGRI grant 5U54HG00307907 to RKW, Director of The Genome Institute at Washington University.
+<br/><br/>
+For questions regarding this <i>Leishmania major</i> LV39cl5 1.0 assembly please contact Dr. Wes Warren, Washington University School of Medicine (wwarren@genome.wustl.edu). Downloads of the sequence data are available via the TriTrypDB genome browser server. Funding for the sequence characterization of the <i>Leishmania major</i> LV39cl5 genome was provided by the National Human Genome Research Institute (NHGRI), National Institutes of Health (NIH).
+
+  </c:set>
+</c:when>
+<c:when test="${fn:contains(organism,'Leishmania panamensis strain L13') && projectId eq 'TriTrypDB'}">
+  <c:set var="reference">
+The <i>Leishmania panamensis</i> strain L13 (WHO strain identifier MHOM/COL/81/L13) was obtained from Dr. Nancy Saravia, CIDEIM, Cali, Colombia.   This isolate was obtained from a human mucosal lesion from Colombia (Choco, Tadó).  
+Genomic DNA was prepared by CsCl/Ethidium bromide density gradient centrifugation to minimize the amount of kinetoplast (mitochondrial) DNA, and was provided by Drs. Natalia Akopyants and Stephen Beverley, Washington University School of Medicine.  
+Total sequence coverage of Illumina instrument reads was 165X (300-500bp inserts 65X, 3Kb PE 99X) using a genome size estimate of 35Mb. The combined sequence reads were assembled using the SOAPdenovo software (BGI). This first draft assembly was referred to as <i>Leishmania panamensis</i> L13 1.0. This version has not been cleaned of contaminating contigs. The assembly is made up of a total of 2825 scaffolds with an N50 scaffold length of over 124kb (N50 contig length was 4838bp). The assembly spans 29.2Mb.
+<br/><br/>
+This work was supported by NIH grant AI29646 to SMB and by NIH-NHGRI grant 5U54HG00307907 to RKW, Director of The Genome Institute at Washington University.
+<br/><br/>
+For questions regarding this <i>Leishmania panamensis</i> L13 1.1 assembly please contact Dr. Wesley Warren, Washington University School of Medicine (wwarren@genome.wustl.edu). Downloads of the sequence data are available via the TriTrypDB genome browser server. Funding for the sequence characterization of the <i>Leishmania panamensis</i> L13 genome was provided by the National Human Genome Research Institute (NHGRI), National Institutes of Health (NIH).
+  </c:set>
+</c:when>
+
 <c:when test="${fn:contains(organism,'M2903') && projectId eq 'TriTrypDB'}">
   <c:set var="reference">
 Sequence from <i>Leishmania braziliensis M2903</i> was generated by the Washington University Genome Center and has been provided <a href="http://genome.wustl.edu/data/data_use_policy">prepublication</a>. Permission should be obtained from Steve Beverley (beverley@borcim.wustl.edu) before publishing analyses of the sequence/open reading frames/genes on a genome scale. <br><br>Please read <a href="http://www.ncbi.nlm.nih.gov/pubmed/19741685">this paper for policies on pre-publication data sharing</a>. <br><br>For additional information on the <i>Leishmania braziliensis M2903</i> assembly, please visit the <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=LbraziliensisM2903_contigs_RSRC&title=Query#LbraziliensisM2903_contigs_RSRC">data source</a>.
