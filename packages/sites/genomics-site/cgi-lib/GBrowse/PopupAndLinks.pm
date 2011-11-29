@@ -1183,7 +1183,6 @@ sub affyProbesTitle {
   push @data, ['ProbeID:' => $probeId ];
   push @data, ['Start:'        => $start];
   push @data, ['Stop:'         => $stop];
-  push @data, ['Count:' => $count];
   hover($f, \@data); 
 }
 
