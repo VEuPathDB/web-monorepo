@@ -2800,7 +2800,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
   </sqlQuery>
   
   
-  <sqlQuery name="AffymetrixProbes:Exons" excludeProjects="PlasmoDB,TriTrypDB,CryptoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="AffymetrixProbes:Exons" includeProjects="ToxoDB">
    <testParamValues project="ToxoDB">
      <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
      <param name="rend" value="1904851"/>
@@ -2818,9 +2818,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
        l.start_min                as startm, 
        l.end_max                  as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'ProbeSet=' || f.description || '$dlm' ||
-       'Count='   || f.probe_count || '$dlm'
-        as atts
+        '' as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
        ApidbTuning.FeatureLocation l,
@@ -3076,9 +3074,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
        l.start_min                as startm, 
        l.end_max                  as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'ProbeSet=' || f.description || '$dlm' ||
-       'Count='   || f.probe_count || '$dlm'
-        as atts
+        '' as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
        ApidbTuning.FeatureLocation l,
@@ -3522,9 +3518,7 @@ WHERE
        l.start_min                as startm, 
        l.end_max                  as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'ProbeSet=' || f.description || '$dlm' ||
-       'Count='   || f.probe_count || '$dlm'
-        as atts
+        '' as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
        ApidbTuning.FeatureLocation l,
@@ -3562,9 +3556,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Genotyping-estSNPs'
        l.start_min                as startm, 
        l.end_max                  as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'ProbeSet=' || f.description || '$dlm' ||
-       'Count='   || f.probe_count || '$dlm'
-        as atts
+        '' as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
        ApidbTuning.FeatureLocation l,
@@ -3602,9 +3594,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Resequencing'
        l.start_min                as startm, 
        l.end_max                  as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'ProbeSet=' || f.description || '$dlm' ||
-       'Count='   || f.probe_count || '$dlm'
-        as atts
+        '' as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
        ApidbTuning.FeatureLocation l,
@@ -3748,9 +3738,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - BLASTX-TranscriptDiscovery'
        l.start_min                as startm, 
        l.end_max                  as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'ProbeSet=' || f.description || '$dlm' ||
-       'Count='   || f.probe_count || '$dlm'
-        as atts
+        '' as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
        ApidbTuning.FeatureLocation l,
@@ -3783,9 +3771,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - ChIP'
        l.start_min                as startm, 
        l.end_max                  as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'ProbeSet=' || f.description || '$dlm' ||
-       'Count='   || f.probe_count || '$dlm'
-        as atts
+        '' as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
        ApidbTuning.FeatureLocation l,
@@ -3823,9 +3809,7 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearCoding'
        l.start_min                as startm, 
        l.end_max                  as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'ProbeSet=' || f.description || '$dlm' ||
-       'Count='   || f.probe_count || '$dlm'
-        as atts
+        '' as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
        ApidbTuning.FeatureLocation l,
@@ -3918,9 +3902,7 @@ AND    cpp.antibody $$antibody$$
        l.start_min                as startm, 
        l.end_max                  as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'ProbeSet=' || f.description || '$dlm' ||
-       'Count='   || f.probe_count || '$dlm'
-        as atts
+        '' as atts
 FROM   dots.ArrayElementFeature f,
        dots.SequencePiece s,
        ApidbTuning.FeatureLocation l,
