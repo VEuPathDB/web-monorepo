@@ -45,7 +45,6 @@
       <xsl:attribute name="href">
         <xsl:value-of select="normalize-space(url)" />
       </xsl:attribute>
-      <xsl:value-of select="$tag" />
       Event Website
       </a>
       </b>
