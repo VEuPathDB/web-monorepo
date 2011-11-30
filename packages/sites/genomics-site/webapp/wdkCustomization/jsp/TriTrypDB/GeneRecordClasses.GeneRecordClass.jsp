@@ -158,7 +158,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 <c:if test="${gtracks ne ''}">
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;type=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
