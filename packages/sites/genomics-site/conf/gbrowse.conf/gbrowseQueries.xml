@@ -1687,6 +1687,36 @@ ORDER BY
     </sql>
   </sqlQuery>
   
+
+  <sqlQuery name="proteinAlignment:BLAT">
+     <sql>
+<![CDATA[
+SELECT blat.blat_protein_alignment_id feature_id, 
+       'proteinAlignment' type, 
+       'BLAT' source, 
+       est.source_id as name, 
+       blat.score score, 
+       blat.query_aa_sequence_id parent_id, 
+       blat.target_start startm, 
+       blat.target_end end, 
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
+       'Defline=' || est.description atts 
+FROM   
+       DoTS.BlatProteinAlignment blat, 
+       DOTS.externalaasequence est
+WHERE  
+       blat.query_aa_sequence_id = est.aa_sequence_id and 
+       blat.target_start <= $rend and 
+       blat.target_end >= $base_start and 
+       (blat.target_end - blat.target_start ) < 5000 and 
+       blat.target_na_sequence_id = $srcfeature_id
+ORDER BY 
+       blat.target_start
+]]>
+    </sql>
+  </sqlQuery>
+
   
   <sqlQuery name="alignment:Bacs" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
      <sql>
@@ -4956,6 +4986,35 @@ WHERE  blat.query_na_sequence_id = asbl.na_sequence_id and
     </sql>
   </sqlQuery>
   
+
+
+  <sqlQuery name="proteinAlignment:BLAT:bulksubfeatures">
+     <sql>
+<![CDATA[
+SELECT blat.blat_protein_alignment_id feature_id,
+       'block' type, 
+       'BLAT' source,
+       est.source_id as name, 
+       blat.score || '' score,
+       blat.blat_protein_alignment_id parent_id,
+       blat.target_start startm,
+       blat.target_end end,
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       blat.tstarts TSTARTS,
+       blat.blocksizes BLOCKSIZES,
+       ' ' atts
+FROM
+       DoTS.BlatProteinAlignment blat, 
+       DOTS.externalaasequence est
+WHERE  blat.query_aa_sequence_id = est.aa_sequence_id and
+       blat.target_start <= $rend and 
+       blat.target_end >= $base_start and 
+       (blat.target_end - blat.target_start ) < 5000 and 
+       blat.target_na_sequence_id = $srcfeature_id
+]]>
+    </sql>
+  </sqlQuery>
+
   
   <sqlQuery name="alignment:Bacs:bulksubfeatures" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
      <sql>
