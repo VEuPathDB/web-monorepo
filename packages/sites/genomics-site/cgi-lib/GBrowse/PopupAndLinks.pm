@@ -1024,6 +1024,26 @@ sub massSpecUnifiedTitle {
   hover($f, \@data) if $count;
 }
 
+sub blatTitleGB2 {
+  my $f = shift;
+  my $name = $f->name;
+  my $chr = $f->seq_id;
+  my $tstart =  $f->start;
+  my $tstop =  $f->stop;
+  my $loc = $f->location->to_FTstring;
+  my ($pctI) = $f->get_tag_values("PercentIdentity");
+  my ($desc) = $f->get_tag_values("Defline");
+  $desc ||= "<i>unavailable</i>";
+  $desc =~ s/\001.*//;
+  my @data;
+  push @data, [ 'Accession:'   => "gi\|$name" ];
+  push @data, [ 'Score:'       => $f->score ];
+  push @data, [ 'Location:' => "$tstart - $tstop"];
+  push @data, [ 'Identity %:'  => $pctI];
+  push @data, [ 'Description:' => $desc ];
+  hover($f, \@data);
+}
+
 
 sub blastxTitleGB2 {
   my $f = shift;
