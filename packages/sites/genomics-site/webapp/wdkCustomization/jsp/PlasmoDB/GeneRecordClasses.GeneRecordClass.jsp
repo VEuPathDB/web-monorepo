@@ -247,58 +247,17 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <%-- DNA CONTEXT ------------%>
 
-<c:choose>
-  <c:when test="${species eq 'falciparum3D7'}">
-    <c:set var="tracks">
-      Gene%1ESynteny/pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pyoe_span+pyoe_gene+pber_span+pber_gene+pcha_span+pcha_gene%1ECombinedSNPs
-    </c:set>
-  </c:when>
-  <c:when test="${species eq 'yoelii'}">
-    <c:set var="tracks">
-      Gene%1ESynteny/pyoe_span+pyoe_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcha_span+pcha_gene+pber_span+pber_gene
-    </c:set>
-  </c:when>
-  <c:when test="${species eq 'chabaudi'}">
-    <c:set var="tracks">
-      Gene%1ESynteny/pcha_span+pcha_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pber_span+pber_gene+pyoe_span+pyoe_gene
-    </c:set>
-  </c:when>
-  <c:when test="${species eq 'falciparumIT'}">
-    <c:set var="tracks">
-      Synteny/pfit_span+pfit_gene+pfal_span+pfal_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pber_span+pber_gene+pyoe_span+pyoe_gene+pcha_span+pcha_gene
-    </c:set>
-  </c:when>
-  <c:when test="${species eq 'berghei'}">
-    <c:set var="tracks">
-      Gene%1ESynteny/pber_span+pber_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcha_span+pcha_gene+pyoe_span+pyoe_gene
-    </c:set>
-  </c:when>
-  <c:when test="${species eq 'knowlesi'}">
-    <c:set var="tracks">
-      Gene%1ESynteny/pkno_span+pkno_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pcha_span+pcha_gene+pber_span+pber_gene+pyoe_span+pyoe_gene
-    </c:set>
-  </c:when>
-  <c:when test="${species eq 'vivax'}">
-    <c:set var="tracks">
-      Gene%1ESynteny/pviv_span+pviv_gene+pfal_span+pfal_gene+pfit_span+pfit_gene+pkno_span+pkno_gene+pcha_span+pcha_gene+pber_span+pber_gene+pyoe_span+pyoe_gene
-    </c:set>
-  </c:when>
-  <c:otherwise>
-    <c:set var="tracks">
-      <%-- CHECK Gene+EST+BLASTX --%>
-    </c:set>
-  </c:otherwise>
-</c:choose>
+<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
 <c:set var="attribution">
 P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${species}_chromosomes,P.${species}_wholeGenomeShotgunSequence,P.${species}_Annotation,${species}_falciparum_synteny
 </c:set>
 
-<c:if test="${tracks ne ''}">
+<c:if test="${gtracks ne ''}">
 
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>

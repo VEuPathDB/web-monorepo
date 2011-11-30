@@ -129,9 +129,7 @@ ${attrs['organism'].value}<br>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
-<c:set var="gtracks">
-Gene+Repeat+EST+BLASTX
-</c:set>
+<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
 <c:set var="attribution">
 T.vaginalis_scaffolds,T.vaginalis_Annotation

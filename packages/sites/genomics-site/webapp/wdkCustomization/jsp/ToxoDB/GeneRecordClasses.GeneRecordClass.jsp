@@ -169,23 +169,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <%-- DNA CONTEXT ---------------%>
 
-<!-- deal with specific contexts depending on organism -->
-<c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
- <!--Alternate Gene Models are taking time are hence being currently avoided in the record page -->
- <c:set var="tracks" value="Gene%1ESynteny/tgme49_span+tgme49_gene+tggt1_span+tggt1_gene+tgveg_span+tgveg_gene+nc_span+nc_gene+et_span+et_gene%1ERnaSeqTgVEGTachyzoiteReidDay4%1EChIPEinsteinPLK%1EChIPEinsteinME1"/>
-</c:if>
-<c:if test="${organism_full eq 'Toxoplasma gondii GT1'}">
-     <c:set var="tracks" value="Gene%1ESynteny/tggt1_span+tggt1_gene+tgme49_span+tgme49_gene+tgveg_span+tgveg_gene+nc_span+nc_gene+et_span+et_gene"/>
-</c:if>
-<c:if test="${organism_full eq 'Toxoplasma gondii VEG'}">
-     <c:set var="tracks" value="Gene%1ESynteny/tgveg_span+tgveg_gene+tgme49_span+tgme49_gene+tggt1_span+tggt1_gene+nc_span+nc_gene+et_span+et_gene"/>
-</c:if>
-<c:if test="${organism_full eq 'Neospora caninum'}">
-     <c:set var="tracks" value="Gene%1ESynteny/nc_span+nc_gene+tgme49_span+tgme49_gene+tgveg_span+tgveg_gene+tggt1_span+tggt1_gene+et_span+et_gene%1ERnaSeqTgNcTachyzoiteReidDay4"/>
-</c:if>
-<c:if test="${organism_full eq 'Eimeria tenella str. Houghton'}">
-     <c:set var="tracks" value="Gene%1ESynteny/et_span+et_gene+tgme49_span+tgme49_gene+tgveg_span+tgveg_gene+tggt1_span+tggt1_gene+nc_span+nc_gene%1EBLASTX"/>
-</c:if>
+<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
 <c:set var="attribution">
 Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,TgondiiRHChromosome1,TgondiiApicoplast,TIGRGeneIndices_Tgondii,dbEST,ESTAlignments_Tgondii,N.caninum_chromosomes,NeosporaUnassignedContigsSanger,TIGRGeneIndices_NeosporaCaninum
@@ -193,7 +177,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${tracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>

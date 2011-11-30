@@ -115,12 +115,10 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
     <c:set var="snptrack" value="SNPs+"/>
 </c:if>
 
+<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
+
 <c:choose>
 <c:when test="${organism eq parvumOrganism}">
-    <c:set var="gtracks">
-    ${snptrack}Gene+SyntenySpanParvumChr6+SyntenyParvumChr6+SyntenySpanHominis+SyntenyHominis+SyntenySpanMuris+SyntenyMuris+UnifiedMassSpecPeptides+BLASTX+Cluster
-    </c:set>
-
     <c:set var="attribution">
     C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,
     C.parvumChr6_scaffoldsGB,Wastling2DGelLSMassSpec, NRDB,
@@ -140,9 +138,6 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 </c:when>
 <c:when test="${organism eq hominisOrganism}">
-    <c:set var="gtracks">
-      BLASTX+Cluster+Gene+SyntenySpanParvum+SyntenyParvum+SyntenySpanMuris+SyntenyMuris    
-    </c:set>
 
     <c:set var="attribution">
 NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6_scaffoldsGB,dbEST
@@ -150,9 +145,6 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 
 </c:when>
 <c:when test="${organism eq murisOrganism}">
-    <c:set var="gtracks">
-      BLASTX+Cluster+Gene+SyntenySpanParvum+SyntenyParvum+SyntenySpanHominis+SyntenyHominis
-    </c:set>
 
     <c:set var="attribution">
 NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6_scaffoldsGB,dbEST
@@ -160,9 +152,6 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 
 </c:when>
 <c:when test="${organism eq parvumChr6Organism}">
-    <c:set var="gtracks">
-    Gene+SyntenySpanParvum+SyntenyParvum+SyntenySpanHominis+SyntenyHominis+SyntenySpanMuris+SyntenyMuris+WastlingMassSpecPeptides+EinsteinMassSpecPeptides+FerrariMassSpecPeptides+BLASTX
-    </c:set>
 
     <c:set var="attribution">
     C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,
@@ -183,7 +172,6 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 
 </c:when>
 <c:otherwise>
-    <c:set var="gtracks" value="" />
 </c:otherwise>
 </c:choose>
 

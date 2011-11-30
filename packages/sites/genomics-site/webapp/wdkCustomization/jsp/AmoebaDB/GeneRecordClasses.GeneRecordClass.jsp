@@ -124,23 +124,7 @@ ${attrs['organism'].value}<br>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
-<c:choose>
-  <c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpansEhistolytica+SyntenyGenesEhistolytica+Repeat+EST+BLASTX
-    </c:set>
-  </c:when>
-  <c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpansEdispar+SyntenyGenesEdispar+Repeat+EST+BLASTX
-    </c:set> 
-  </c:when>
-  <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
-    <c:set var="gtracks">
-      Gene+Repeat+EST+BLASTX
-    </c:set>
-  </c:when>
-</c:choose>
+<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
 <c:set var="attribution">
 E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations

@@ -132,20 +132,19 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <c:set var="attr" value="${attrs['overview']}" />
 
+<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
+
 <c:choose>
   <c:when test='${organismFull eq "Giardia Assemblage A isolate WB"}'>
      <c:set var="assemblage" value="<b>Assemblage A isolate WB</b>"/>
-     <c:set var="gtracks"  value="Gene+SyntenySpanAssemblageB+SyntenyAssemblageB+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX"/>
      <c:set var="ptracks" value="RatnerMassSpecPeptides+TachezyMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP"/>
   </c:when>
   <c:when test='${organismFull eq "Giardia Assemblage B isolate GS"}'>
      <c:set var="assemblage" value="<b>Assemblage B isolate GS</b>" />
-     <c:set var="gtracks" value="Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageE+SyntenyAssemblageE+UnifiedMassSpecPeptides+EST+BLASTX" />
      <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/> 
   </c:when>
   <c:when test='${organismFull eq "Giardia Assemblage E isolate P15"}'>
      <c:set var="assemblage" value="<b>Giardia Assemblage E isolate P15</b>" /> 
-     <c:set var="gtracks" value="Gene+SyntenySpanAssemblageA+SyntenyAssemblageA+SyntenySpanAssemblageB+SyntenyAssemblageB+UnifiedMassSpecPeptides+EST+BLASTX" /> 
      <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP" /> 
   </c:when>
 </c:choose>
@@ -167,13 +166,6 @@ ${attrs['organism'].value}<br>
 </c:set>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
-
-<%-- <c:set var="gtracks"> --%>
-<%-- Alternate Gene Models are taking time and hence are being avoided in the record page --%>
-<%-- Contigs+Gene+DeprecatedGene+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX --%>
-<%-- Contigs+Gene+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX --%>
-<%-- </c:set> --%>
-
 
 
 <c:set var="attribution">

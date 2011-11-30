@@ -117,17 +117,16 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <br>
 
 
+<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
+
 <c:choose>
   <c:when test='${organismFull eq "Theileria annulata strain Ankara"}'>
-     <c:set var="gtracks"  value="Gene+SyntenySpanTparva+SyntenyTparva+SyntenySpanBbovis+SyntenyBbovis+BLASTX"/>
      <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/>
   </c:when>
   <c:when test='${organismFull eq "Theileria parva strain Muguga"}'>
-     <c:set var="gtracks" value="Gene+SyntenySpanTannulata+SyntenyTannulata+SyntenySpanBbovis+SyntenyBbovis+BLASTX" />
      <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/> 
   </c:when>
   <c:when test='${organismFull eq "Babesia bovis T2Bo"}'>
-     <c:set var="gtracks" value="Gene+SyntenySpanTparva+SyntenyTparva+SyntenySpanTannulata+SyntenyTannulata+BLASTX" /> 
      <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP" /> 
   </c:when>
 </c:choose>
@@ -139,14 +138,6 @@ ${attrs['organism'].value}<br>
 </c:set>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
-
-<%-- <c:set var="gtracks"> --%>
-<%-- Alternate Gene Models are taking time and hence are being avoided in the record page --%>
-<%-- Contigs+Gene+DeprecatedGene+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX --%>
-<%-- Contigs+Gene+UnifiedMassSpecPeptides+SAGEtags+EST+BLASTX --%>
-<%-- </c:set> --%>
-
-
 
 <c:set var="attribution">
 <%-- G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblageE_contigsGB --%>
