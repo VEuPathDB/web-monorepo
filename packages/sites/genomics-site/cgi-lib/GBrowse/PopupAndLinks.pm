@@ -1036,10 +1036,10 @@ sub blatTitleGB2 {
   $desc ||= "<i>unavailable</i>";
   $desc =~ s/\001.*//;
   my @data;
-  push @data, [ 'Accession:'   => "gi\|$name" ];
+  push @data, [ 'GI number:'   => "$name" ];
   push @data, [ 'Score:'       => $f->score ];
   push @data, [ 'Location:' => "$tstart - $tstop"];
-  push @data, [ 'Identity %:'  => $pctI];
+  push @data, [ 'Identity %:'  => sprintf("%3.1f", $pctI) ];
   push @data, [ 'Description:' => $desc ];
   hover($f, \@data);
 }
