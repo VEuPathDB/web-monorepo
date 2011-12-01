@@ -377,6 +377,15 @@ GO,InterproscanData
     </c:set>
   </c:when> 
 
+  <c:when test='${organismFull eq "Leishmania tarentolae Parrot-TarII"}'>
+    <c:set var="ptracks">
+    InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    </c:set>
+    <c:set var="attribution">
+    InterproscanData
+    </c:set>
+  </c:when> 
+
  </c:choose>
     
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
