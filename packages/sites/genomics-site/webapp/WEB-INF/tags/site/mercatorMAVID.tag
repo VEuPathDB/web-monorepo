@@ -118,6 +118,9 @@ return true;
             <td>
               <input type="checkbox" name="genomes" value="Lmexicana" checked>L.mexicana
             </td>
+            <td>
+              <input type="checkbox" name="genomes" value="ltarParrotTraII" checked>L.tarentolae
+            </td>
             </tr>
            <tr>
             <td>
