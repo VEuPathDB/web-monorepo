@@ -15,7 +15,7 @@
 
 <c:set var="toxoQuestions" value="T.g.study:Expression Percentile,GeneQuestions.GenesByTgVegRNASeqExpressionPercentile" />
 
-<c:set var="tritrypQuestions" value="T.b.study:Blood Form vs. Procyclic Form (Cross),GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile,T.b.study:Splice Sites (Nilsson),GeneQuestions.GenesByTrypFoldChangeNilssonTbrucei,GeneQuestions.GenesByExprPercentileNilssonTbruceiSpliceSites,GeneQuestions.GenesByTbruceiSpliceSites,T.b.study:Cell Cycle (Archer),GeneQuestions.GenesByCellCycleRnaSeq,GeneQuestions.GenesByExprPercentileTbCellCyc,GeneQuestions.GenesByTbCellCycFoldChange,T.b.study:mRNA Degradation (Clayton),GeneQuestions.GenesByTbRNADegrdFoldChange,GeneQuestions.GenesByExprPercentileTbRNADegrd,GeneQuestions.GenesByRNADgrdRnaSeq"/>
+<c:set var="tritrypQuestions" value="T.b.study:Blood Form vs. Procyclic Form (Cross),GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile,T.b.study:Splice Sites (Nilsson),GeneQuestions.GenesByTrypFoldChangeNilssonTbrucei,GeneQuestions.GenesByExprPercentileNilssonTbruceiSpliceSites,GeneQuestions.GenesByTbruceiSpliceSites,T.b.study:Cell Cycle (Archer),GeneQuestions.GenesByCellCycleRnaSeq,GeneQuestions.GenesByExprPercentileTbCellCyc,GeneQuestions.GenesByTbCellCycFoldChange,T.b.study: Transcriptome wide mRNA Degradation (Clayton),GeneQuestions.GenesByRNADgrdRnaSeq,GeneQuestions.GenesByExprPercentileTbRNADegrd,GeneQuestions.GenesByTbRNADegrdFoldChange"/>
 <%-- END OF QUESTIONS --%>
 
 <wdk:errors/>
