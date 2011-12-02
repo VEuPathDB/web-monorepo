@@ -66,6 +66,22 @@
 
 <wdk:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
 
+
+
+<c:set var="dataset" value="${attrs['dataset'].value}"/>
+<c:set var="dataset_rsrc" value="${attrs['dataset_hidden'].value}"/>
+<c:if test="${dataset_rsrc ne ''}">
+  <c:set var="reference">
+<a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${dataset_rsrc}&title=SNPs%20Summary">${dataset}</a>
+
+  </c:set>
+<site:panel 
+    displayName="Data Provider"
+    content="${reference}" />
+
+</c:if>
+
+
 </td></tr>
 </table>
 
