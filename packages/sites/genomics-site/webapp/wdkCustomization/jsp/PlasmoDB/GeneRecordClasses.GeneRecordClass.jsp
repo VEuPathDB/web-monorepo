@@ -505,7 +505,12 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
   <c:if test="${species eq 'falciparum3D7'}">
      <c:set var="ptracks"> 
-       FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfBowyerMassSpecPeptides+BoothroydPhosphoMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+       FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfBowyerMassSpecPeptides+BoothroydPhosphoMassSpecPeptides+VossMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+     </c:set>
+  </c:if>
+  <c:if test="${species eq 'falciparumIT'}">
+      <c:set var="ptracks"> 
+        InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
      </c:set>
   </c:if>
   <c:if test="${species eq 'berghei'}">
@@ -513,10 +518,25 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
         WatersMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
      </c:set>
   </c:if>
+  <c:if test="${species eq 'chabaudi'}">
+      <c:set var="ptracks"> 
+        InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+     </c:set>
+  </c:if>
   <c:if test="${species eq 'yoelii'}">
       <c:set var="ptracks">
        LiverStageMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
     </c:set>
+  </c:if>
+  <c:if test="${species eq 'vivax'}">
+      <c:set var="ptracks">
+       PvClinicalMassSpecPeptides+CuiMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+    </c:set>
+  </c:if>
+  <c:if test="${species eq 'knowlesi'}">
+      <c:set var="ptracks"> 
+        InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+     </c:set>
   </c:if>
 
   <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
