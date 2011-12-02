@@ -67,10 +67,10 @@
 <wdk:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
 
 
-
+<c:set var="type" value="${attrs['type'].value}"/>
 <c:set var="dataset" value="${attrs['dataset'].value}"/>
 <c:set var="dataset_rsrc" value="${attrs['dataset_hidden'].value}"/>
-<c:if test="${dataset_rsrc ne ''}">
+<c:if test="${type ne 'HTS'}">
   <c:set var="reference">
 <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${dataset_rsrc}&title=SNPs%20Summary">${dataset}</a>
 
