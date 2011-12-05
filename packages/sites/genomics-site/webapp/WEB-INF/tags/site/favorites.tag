@@ -16,7 +16,7 @@
               <c:forEach var="fav_item" items="${allFavorites}">
                 <c:set var="recordClass" value="${fav_item.key}" />
                 <c:set var="favorites" value="${fav_item.value}" /> <%-- a list of favorites of a record type --%>
-				<c:set var="idTag" value="${fn:split(recordClass.type, ' ')[0]}" />
+		<c:set var="idTag" value="${fn:replace(recordClass.fullName, '.', '_')}" />
                 <li>
                   <a id="tab_${idTag}" href="javascript:void(0)" onclick="showFavorites('${idTag}')">${recordClass.type}s (${fn:length(favorites)})</a>
                 </li>
@@ -27,7 +27,7 @@
             <input class="favorite-refresh-button" title="Reload the page after you remove some IDs, or add a new project name." type="button" value="Refresh" onclick="window.location.reload();"/>
             <c:forEach var="fav_item" items="${allFavorites}">
               <c:set var="recordClass" value="${fav_item.key}" />
-			  <c:set var="idTag" value="${fn:split(recordClass.type, ' ')[0]}" /> 
+	      <c:set var="idTag" value="${fn:replace(recordClass.fullName, '.', '_')}" /> 
               <div id="favorites_${idTag}" class="favorites_panel">
                 <c:set var="favorites" value="${fav_item.value}" /> <%-- a list of favorites of a record type --%>
 
