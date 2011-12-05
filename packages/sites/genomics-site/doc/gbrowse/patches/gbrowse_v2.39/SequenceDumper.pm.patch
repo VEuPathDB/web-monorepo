@@ -1,0 +1,17 @@
+--- SequenceDumper.pm.orig	2011-12-05 13:38:09.000000000 -0500
++++ SequenceDumper.pm	2011-12-05 13:39:31.000000000 -0500
+@@ -275,8 +275,13 @@
+   print "##See http://www.sanger.ac.uk/Software/formats/GFF/\n";
+   print "##NOTE: Selected features dumped.\n";
+   my @feature_types = $self->selected_features;
++
++  # eupathdb patch 12/5/2011
++  my @sqlName = $self->selected_sqlName;
++  my @sqlParam = $self->selected_sqlParam; 
++
+   $segment->absolute(0);
+-  my $iterator = $segment->get_seq_stream(-types => \@feature_types) or return;
++  my $iterator = $segment->get_seq_stream(-types => \@feature_types, -sqlName=>\@sqlName, -sqlParam => \@sqlParam) or return;
+   while (my $f = $iterator->next_seq) {
+       eval{$f->version(3)};
+       my $s =$f->gff_string(1);
