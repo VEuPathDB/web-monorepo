@@ -179,7 +179,11 @@
 </c:set>
 
 <div class="h2center" style="font-size:150%">
-${id}<br><span style="font-size:70%">${prd}</span><br/>
+${id} 
+<c:if test="${attrs['genedb_new_id'].value != null}">
+ / ${attrs['GeneDBNewLinkTemp'].value}
+</c:if>
+<br><span style="font-size:70%">${prd} </span><br/>
 
 <c:set var="count" value="0"/>
 <c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
