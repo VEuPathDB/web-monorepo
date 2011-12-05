@@ -727,8 +727,11 @@ sub chipColor {
   return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
   return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
 
-  return '#00C800' if($a =~ /H3K4/ && $r == 1);
-  return '#00C896' if($a =~ /H3K4/ && $r == 2);
+  return '#00FF00' if($a =~ /H3K4me3/ && $r == 1);
+  return '#00C896' if($a =~ /H3K4me3/ && $r == 2);
+  return '#0033FF' if($a =~ /H3K4me1/ && $r == 1);
+  return '#0066FF' if($a =~ /H3K4me1/ && $r == 2);
+
   return '#C86400' if($a =~ /H3K9/ && $r == 1);
   return '#FA9600' if($a =~ /H3K9/ && $r == 2);
 
