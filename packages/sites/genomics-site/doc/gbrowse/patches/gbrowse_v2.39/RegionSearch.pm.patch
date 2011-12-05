@@ -1,0 +1,13 @@
+--- RegionSearch.pm.orig	2011-12-05 16:12:04.000000000 -0500
++++ RegionSearch.pm	2011-12-05 16:17:22.000000000 -0500
+@@ -719,7 +719,9 @@
+ sub features {
+     my $self    = shift;
+     my $segment = $self->segment;
+-    $self->db->features(-seq_id => $segment->seq_id,
++    # eupathdb patch 12/5/2011 sqlparam and sqlname
++    #$self->db->features(-seq_id => $segment->seq_id,
++    $segment->features(-seq_id => $segment->seq_id,
+ 			-start  => $segment->start,
+ 			-end    => $segment->end,
+ 			-class  => eval {$segment->class} || 'Sequence',
