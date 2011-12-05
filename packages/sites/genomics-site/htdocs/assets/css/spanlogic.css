@@ -28,13 +28,19 @@
   white-space:nowrap;
   text-align:center;
   font-style:italic;
-//  color:#605151;
- // margin-bottom:16px;
+/*
+  color:#605151;
+  margin-bottom:16px;
+*/
 }
 
+/* fix comment syntax error.
+   need to comment out white-space since it cause a layout issue on IE7.
 .span-step-text{
- // font-style:italic;
+  font-style:italic;
   white-space:nowrap;
+*/
+.span-step-text{
   padding-bottom: 23px;
   font-size:125%;
   font-weight:bold;
@@ -100,7 +106,7 @@
 .span-step-text .other_step,
 .span-step-text .comparison_type,
 .span-step-text .comparison_num {
-	font-style: normal; //remove italics
+	font-style: normal; /*remove italics */
 }
 ul.horizontal {
   padding: 5px 0;
