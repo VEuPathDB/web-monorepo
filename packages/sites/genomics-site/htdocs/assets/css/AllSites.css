@@ -836,7 +836,7 @@ div#menu ul ul ul li:hover ul {
 #footer{
    text-align: center;
    margin: 0 2.5%;
-   padding: 0px 0px 35px;
+ //  padding: 0px 0px 35px;     seems not to be needed 2011-12-06
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

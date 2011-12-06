@@ -6,9 +6,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@ attribute name="refer" 
- 			  type="java.lang.String"
-			  required="false" 
-			  description="Page calling this tag"
+                          type="java.lang.String"
+                          required="false" 
+                          description="Page calling this tag"
 %>
 
 
@@ -70,7 +70,7 @@ a#facebook {
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#swg"/>">Scientific Working Group</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#acks"/>">Acknowledgements</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#funding"/>">Funding</a></li>
-	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">How to use this resource</a></li>
+	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">Data Access Policy</a></li>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to cite us</a></li>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li>
         <li><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>         
@@ -83,16 +83,15 @@ a#facebook {
       <li>
       <a href="#">Help<img src="/assets/images/${project}/menu_divider5.png" alt="" width="17" height="9" /></a>
       		<ul>
+	<c:if test="${refer == 'customSummary'}">
+	   <li><a href="javascript:void(0)" onclick="dykOpen()">Did You Know...</a></li>
+	</c:if>
 
-
-          <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a></li>
-    	  <c:if test="${refer == 'customSummary'}"> 
-		  	<li><a href="javascript:void(0)" onclick="dykOpen()">Did You Know...</a></li>
-         </c:if> 
           <li><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
-<%--	  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Community Links</a></li> --%>
-          <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
-          <li><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>
+          <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a></li>
+<%--	  <li><a href="<c:url value="/helpDYK.jsp"/>">Strategies FAQ</a></li>  --%>
+  	  <li><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from Workshop</a></li>
+          <li><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
         	</ul>
       </li>
     

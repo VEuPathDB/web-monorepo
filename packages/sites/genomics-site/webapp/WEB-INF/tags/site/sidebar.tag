@@ -247,9 +247,26 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 
 <%--------------  TUTORIALS ---------------------------------------------%>
         <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-        <a class="heading" id='tutorials' href="#">Web Tutorials</a>
+        <a class="heading" id='tutorials' href="#">Education and Tutorials</a>
         <div class="menu_lefttop_drop">
 
+
+ 	<ul id="education">
+
+
+            <li id='edu-1'><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
+
+	    <li id='edu-2'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a> (with choices for video and pdf)</a></li>
+
+            <li id='edu-1'><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from Workshop</a></li> (in English and Spanish)
+
+
+
+            <li id='ed-3'><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
+
+        </ul>
+
+<%--
           <c:choose>
                       <c:when test="${tutAnswer.resultSize < 1}">
                         No tutorials.
@@ -320,33 +337,36 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 
                       </c:otherwise>
 	</c:choose>
+--%>
+
 
         </div>
 
 
 <%--------------  INFO AND HELP ---------------------------------------------%>
         <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-        <a class="heading" id='informationAndHelp' href="#">Information and Help</a>
+        <a class="heading" id='informationAndHelp' href="#">Other Information</a>
         <div class="menu_lefttop_drop">
-        <ul id=information>
- <c:if test="${project == 'CryptoDB'}">
-	            <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
-</c:if>
+        <ul id="information">
+ 		<li id='h-01'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to Cite us</a></li>
+		<li id='h-01'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citingproviders"/>">Citing Data Providers</a></li>
+            	<li id='h-02'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
+
+ 	<c:if test="${project == 'CryptoDB'}">
+		<li id='h-c1'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
+	</c:if>
         <c:if test="${project == 'ToxoDB'}">
-            <li id='h-5'><a href="/common/cosmid-BAC-tutorial/CosmidandBAC-Tutorial.html"/>Viewing Cosmid and BAC Alignments</a></li>
-            <li id='h-4'><a href="/common/array-tutorial/Array-Tutorial.html"/>Viewing Microarray Probes</a></li>
+            	<li id='h-t1'><a href="/common/cosmid-BAC-tutorial/CosmidandBAC-Tutorial.html"/>Viewing Cosmid and BAC Alignments</a></li>
+            	<li id='h-t2'><a href="/common/array-tutorial/Array-Tutorial.html"/>Viewing Microarray Probes</a></li>
          </c:if>
-            <li id='h-6'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Data Summary</a></li>
-            <li id='h-'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
-            <li id='h-'><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
 
-            <li id='h-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
-	    <li id='h-'><a href="<c:url value="/helpDYK.jsp"/>">Strategies Graphical Interface</a></li>
-            <li id='h-7'><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>
-            <li id='h-'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li>
+            	<li id='h-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Data Summary</a></li>
+            	<li id='h-2'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li>
+            	<li id='h-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
+            	<li id='h-4'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
+            	<li id='h-5'><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>
+            	<li id='h-6'><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
 
-            <li id='h-2'><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
-            <li id='h-1'><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
 
         </ul></div>
 
