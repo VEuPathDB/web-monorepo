@@ -264,7 +264,7 @@ ${headElement}
 
     <div style="width:537px;" id="bottom">
       <site:quickSearch />
-      <site:smallMenu />
+      <site:smallMenu refer="${refer}"/>
 
    </div>  <%-- id="bottom"    --%>
    </div>  <%-- id="header_rt" --%>

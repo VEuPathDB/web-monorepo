@@ -5,6 +5,13 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<%@ attribute name="refer" 
+ 			  type="java.lang.String"
+			  required="false" 
+			  description="Page calling this tag"
+%>
+
+
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
@@ -79,9 +86,9 @@ a#facebook {
 
 
           <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a></li>
-    	  <c:if test="${refer == 'customSummary'}">
+    	  <c:if test="${refer == 'customSummary'}"> 
 		  	<li><a href="javascript:void(0)" onclick="dykOpen()">Did You Know...</a></li>
-          </c:if>
+         </c:if> 
           <li><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
 <%--	  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Community Links</a></li> --%>
           <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Glossary of Terms</a></li>
