@@ -40,7 +40,6 @@ $(document).ready(function(){
     });
 });
 
-
 $(function()
 { 
  $("#trigger").click(function(event) {
@@ -96,16 +95,29 @@ $("#box a").click(function(event) {
 
 <script type="text/javascript">
 $(document).ready(function(){
-   $("#preview").click(function(){
-   $("#wrapper").show();
-   var pmids = $('#pmIds').val(); 
-   var pmids = pmids.replace(/\D/g, "-");
-   $("#quote p").load("/cgi-bin/pmid2title?pmids=" + pmids);
-  });      
+  $("#preview").click(function(){
+    var pmids = $('#pmIds').val();
+    if ($.trim(pmids) == '') {
+    	alert('No Pubmed IDs have been entered.');
+    	return;
+    }
+    $("#wrapper").show();
+    pmids = pmids.replace(/\D/g, "-");
+    $("#quote p").load("/cgi-bin/pmid2title?pmids=" + pmids);
+  });
   $("#remove").click(function(){
-   $("#wrapper").hide();
+    $("#wrapper").hide();
   });      
 }); 
+
+function openPubmedWindow(searchBoxId) {
+	var searchTerm = $('#'+searchBoxId)[0].value;
+	if ($.trim(searchTerm) == '') {
+		alert("Please enter a search term.");
+		return;
+	}
+	window.open('http://www.ncbi.nlm.nih.gov/pubmed?term='+searchTerm);
+}
 </script>
 
 </head>
@@ -377,16 +389,20 @@ $(document).ready(function(){
         <td>&nbsp;</td>
         <td valign=top>PubMed ID(s)</td>
         <td>
+          <table style="border:1px solid black; background-color: rgb(255, 255, 255);"><tr><td>        
           <html:text property="pmIds" styleId="pmIds" size="70"/>
-          <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title</li><li>Enter one or more IDs in the box above separated by \',\'</li><li>Example: 18172196,10558988</li></ul>')">
+          <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title.</li><li>Enter one or more IDs in the box above separated by \',\'s (Example: 18172196,10558988).</li><li>Click \'Preview\' to see information about these publications.</li></ul>');">
           <img src="/assets/images/help.png" align=bottom border=0></a>
-          <br />
+          <br/>
+          Search PubMed: <input id="pubmedSearchBox" type="text" size="53" value="${commentForm.stableId}"/> <input type="button" value="Search" onclick="openPubmedWindow('pubmedSearchBox');"/>
+          <br/>
           <div id="wrapper" style="display:none;">
             <div id="quote" class="border">
             <img id="remove" src="images/remove.gif" align=right>
             <p></p></div>
           </div>
-          <input type="button" id="preview" value="Preview">
+          <div>To view article details, click <input type="button" id="preview" value="Preview"></div>
+          </td></tr></table>
         </td>
       </tr>
 
