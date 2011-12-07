@@ -18,6 +18,14 @@
       and set isValidRecord to false if appropriate. 
       wdkRecord.isValidRecord is tested in the project's RecordClass --%>
 <c:set var="junk" value="${attrs['organism']}"/>
+  <c:set var="snp_position" value="${attrs['start_min'].value}"/>
+  <c:set var="start" value="${snp_position-25}"/>
+  <c:set var="end"   value="${snp_position+25}"/>
+   <c:if test="${attrs['gene_strand'].value == 'reverse'}">
+    <c:set var="revCompOn" value="1"/>
+   </c:if>
+  <c:set var="sequence_id" value="${attrs['seq_source_id'].value}"/>
+  <c:set var="dataset_provider" value="${attrs['dataset'].value}"/>
 </c:catch>
 
 <site:header title="${wdkModel.displayName} : SNP ${id}"
@@ -63,6 +71,41 @@
 
 
 <wdk:wdkTable tblName="Strains" isOpen="true"/>
+
+
+<c:if test="${projectId eq 'PlasmoDB'}">
+
+<wdk:wdkTable tblName="IsolatesAlleleFrequency" isOpen="true"/>
+<wdk:wdkTable tblName="Isolates" isOpen="false"/>
+
+
+<c:if test="${dataset_provider == 'Pf_Broad_SNPs_RSRC' || dataset_provider == 'Pf_plasmoDbCombinedSnps_RSRC'}">
+<c:set var="showAlignmts">
+
+  <c:catch var="e">
+  <c:import url="http://${pageContext.request.serverName}/cgi-bin/displaySnpAlignments.pl?snpId=${id}&width=25&project_id=${projectId}" />
+  </c:catch>
+  <c:if test="${e!=null}"> 
+      <site:embeddedError 
+          msg="<font size='-2'>temporarily unavailable</font>" 
+          e="${e}" 
+      />
+  </c:if>
+</c:set>
+
+<wdk:toggle name="SequenceAlignment"
+    displayName="Sequence Alignment"
+    content="${showAlignmts}"
+    isOpen="true"/>
+</c:if>
+
+<br/>
+<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+                      contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0" availableGenomes="3D7,Dd2,HB3, and IT"/>
+
+<br/>
+</c:if>
+
 
 <wdk:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
 
