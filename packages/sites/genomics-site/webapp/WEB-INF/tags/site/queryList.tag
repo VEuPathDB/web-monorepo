@@ -66,7 +66,6 @@ function writeData(page, div, quesName, insertStep){
 			initParamHandlers(true);
 			var question = new WdkQuestion();
 			question.registerGroups();
-			configureCheckboxTrees();
 		}
 	});
 }	
