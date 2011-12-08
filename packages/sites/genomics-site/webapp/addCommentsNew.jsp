@@ -233,7 +233,7 @@ function openPubmedWindow(searchBoxId) {
       Please add only scientific comments to be displayed on the ${commentForm.commentTargetId} page for ${commentForm.stableId}. 
       If you want to report a problem, use the <a href="<c:url value='/help.jsp'/>">support page.</a>
       
-      Your comments are appreciated. 
+      <br>Your comments are appreciated. 
       
      <c:if test="${wdkModel.projectId eq 'TriTrypDB'}" > 
         They will be forwarded to the Annotation Center for review and possibly 
@@ -245,7 +245,7 @@ function openPubmedWindow(searchBoxId) {
     </c:if>
       
     <c:if test="${commentForm.commentTargetId eq 'gene'}">
-      If this is a <b>new gene</b>, please <a href="addComment.do?stableId=${commentForm.contig}&commentTargetId=genome&externaDbName=${commentForm.externalDbName}&externalDbVersion=${commentForm.externalDbVersion}&flag=0">click here</a>.
+      If this is a <b>new gene</b>, please also add a comment in the corresponding <a href="addComment.do?stableId=${commentForm.contig}&commentTargetId=genome&externaDbName=${commentForm.externalDbName}&externalDbVersion=${commentForm.externalDbVersion}&flag=0">Genome Sequence</a>.
     </c:if>
 
     <c:if test="${commentForm.commentTargetId eq 'genome'}">
@@ -401,7 +401,7 @@ function openPubmedWindow(searchBoxId) {
             <img id="remove" src="images/remove.gif" align=right>
             <p></p></div>
           </div>
-          <div>To view article details, click <input type="button" id="preview" value="Preview"></div>
+          <div>(To preview article details, enter the pubmedID(s) above and click <input type="button" id="preview" value="Preview">)</div>
           </td></tr></table>
         </td>
       </tr>
