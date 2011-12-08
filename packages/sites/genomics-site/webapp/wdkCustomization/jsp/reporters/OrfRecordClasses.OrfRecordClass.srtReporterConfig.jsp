@@ -51,7 +51,7 @@
 
     <tr>
         <td colspan="2">
-    <table id="offsetOptions2" cellpadding="2">
+    <table id="offsetOptions" cellpadding="2">
         <tr><td colspan="2">
             <b>Choose the region of the sequence(s):</b>
         </td></tr>
