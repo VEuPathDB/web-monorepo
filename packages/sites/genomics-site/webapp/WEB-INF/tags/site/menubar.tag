@@ -193,7 +193,6 @@
     	    <li><a onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
 	    </c:if>
 
-    	    <li><a href="https://community.eupathdb.org">Discussion Forums</a></li>
 	    <li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>
 
   	    <c:choose>
