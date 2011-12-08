@@ -33,14 +33,18 @@ my $dbh = $db->getQueryHandle(0);
 
 my @strains = ("3D7", "106_1", "7G8", "D10", "D6", "Dd2", "FCB", "FCC-2", "FCR3", "HB3", "K1", "Malayan", "RO-33", "SantaLucia", "Senegal3101", "Senegal3404", "Senegal3504", "Senegal5102", "V1_S");
 
-my ($chrNum, $snpLocation) = getParams($snpId);
-my %is_snpLocation = getSnpLocations($chrNum, $snpLocation, $width);
+my ($seqSrcId, $snpLocation) = getParams($snpId);
+my %is_snpLocation = getSnpLocations($seqSrcId, $snpLocation, $width);
 my $srcId;
 
 print "Content-type: text/html\n\n";
 print '<pre>';
 
 my $bool = 0;  # boolean to check if there is at least one alignment
+my $chrNum = $seqSrcId;
+$chrNum =~s/Pf3D7_//;  # get chromosome number
+$chrNum =~s/0(\d)/$1/; # removing the preceding 0 from chr 1 to 9
+
 foreach my $str (sort @strains) {
   $srcId = $str ."." . $chrNum;  # as '3D7.5' for example
 
@@ -86,16 +90,12 @@ sub getParams{
   my $stmt = $dbh->prepareAndExecute($sql);
   my ($srcId,$start) = $stmt->fetchrow_array();
 
-#  $srcId =~s/MAL//;  #put test to check integer found
-  $srcId =~s/Pf3D7_//;
-
   return ($srcId, $start);
 }
 
 # returns all SNP locations
 sub getSnpLocations{
   my ($srcId, $start, $width) = @_;
-  $srcId = 'MAL'.$srcId;
   my @locations;
 
   my $sql = "select distinct(old_location) from apidb.PlasmoPfalLocations pfl, ApidbTuning.SnpAttributes sa where sa.seq_source_id='$srcId' and pfl.seq_source_id=sa.seq_source_id and start_min=new_location and old_location > ($start-$width) and old_location < ($start+$width) order by old_location";
