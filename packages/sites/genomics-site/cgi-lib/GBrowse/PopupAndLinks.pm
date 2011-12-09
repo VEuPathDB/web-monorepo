@@ -407,8 +407,10 @@ sub snpTitleFromMatchToReference {
    my $f = shift;
    my @data;
    my ($info) = $f->get_tag_values("info");
+   my ($probes) = $f->get_tag_values("probes");
    my @strainScores = split(/\|/,$info);
 
+   push @data, [ "Number of Probes =" => $probes ];
    push @data, ['Strains and score (pos=amp, neg=del)' ];   
 
    foreach my $strainScr (@strainScores) {
