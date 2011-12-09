@@ -29,17 +29,17 @@
 
 <c:catch var="orgParam_exception">
 	<c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
+    <%-- get the organisms from the param --%>
+    <c:set var="listOrganisms" value="" />
+    <c:forEach items="${orgParam.vocabMap}" var="item">
+      <c:set var="term" value="${item.key}" />
+      <c:if test="${fn:length(listOrganisms) > 0}">
+        <c:set var="listOrganisms" value="${listOrganisms}," />
+      </c:if>
+      <c:set var="listOrganisms" value="${listOrganisms}${term}" />
+    </c:forEach>
 </c:catch>
 
-<%-- get the organisms from the param --%>
-<c:set var="listOrganisms" value="" />
-<c:forEach items="${orgParam.vocabMap}" var="item">
-  <c:set var="term" value="${item.key}" />
-  <c:if test="${fn:length(listOrganisms) > 0}">
-    <c:set var="listOrganisms" value="${listOrganisms}," />
-  </c:if>
-  <c:set var="listOrganisms" value="${listOrganisms}${term}" />
-</c:forEach>
 
 <c:if test="${orgParam_exception != null}">
 	<span style="position:absolute;top:30px;right:150px;font-style:italics;font-size:90%;color:#CC0033;">
