@@ -40,15 +40,16 @@
     </c:forEach>
 </c:catch>
 
-
-<c:if test="${orgParam_exception != null}">
-	<span style="position:absolute;top:30px;right:150px;font-style:italics;font-size:90%;color:#CC0033;">
-		Error. search temporarily unavailable</span>
-</c:if>
-
 <div id="quick-search" session-id="${sessionId}">
 	<table style="float:right;margin-bottom:10px">
            <tr>
+
+<c:choose>
+<c:when test="${orgParam_exception != null}">
+	<td><span style="font-style:italics;font-size:90%;color:#CC0033;">
+		Error. search temporarily unavailable</span></td>
+</c:when>
+<c:otherwise>
 
 <!-- GENE ID -->
              <td title="Use * as a wildcard in a gene ID. Click on 'Gene ID' to enter multiple Gene IDs."><div align="right">
@@ -90,6 +91,8 @@
 	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
           	   </html:form>
 			 </div></td>
+</c:otherwise>
+</c:choose>
             </tr>
 	</table>
 </div>
