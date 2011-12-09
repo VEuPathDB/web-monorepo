@@ -9,7 +9,7 @@
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
-<c:set value="1" var="columns"/>
+<c:set value="2" var="columns"/>
 
 <!-- show error messages, if any -->
 <div class='usererror'><api:errors/></div>
