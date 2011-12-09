@@ -43,8 +43,8 @@ display the attributions.
 
 
 <c:if test="${hasItem}">
-    <div><b>${caption}:</b></div>
-    <div>
+    <h2>${caption}</h2>
+
         <ul>
             <c:forEach var="attribution" items="${attributions}">
                 <li>
@@ -61,10 +61,10 @@ display the attributions.
                 </li>
             </c:forEach>
         </ul>
-    </div>
+
 </c:if>
 
 </c:catch>
 <c:if test="${error != null}">
-<b>Data sources:</b> <span style="color:red">Not available (Parsing Error)</span>
+<h2>Data sources</h2> <span style="color:red">Not available (Parsing Error)</span>
 </c:if>
