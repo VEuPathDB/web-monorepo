@@ -1,0 +1,11 @@
+Images here are still used in 
+- the model, mostly on geneQuestions.xml, on question descriptions. 
+- webapp/derisiExpressionDoc.jsp, which is used also in some question description. 
+- webapp/aggregateNews.jsp
+- webapp/srt.jsp  
+- WEB-INF/tags/site/srtHelp.tag
+- WEB-INF/tags/site/plasmoLegacyGraphs.tag used in gene page
+- wdkCustomization/jsp/Profile.jsp
+- wdkCustomization/jsp/questions/XmlQuestions.News.jsp
+- wdkCustomization/jsp/questions/GeneQuestions.GenesByOrthologPattern.form.jsp
+
