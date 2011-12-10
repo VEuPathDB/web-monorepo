@@ -53,7 +53,7 @@ a#facebook {
 	</c:choose>
 <%--	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li> --%>
 <%-- all sites go to the Data Summary page --%>
-	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
+	<li><a href="<c:url value="/showQuestion.do?questionFullName=GenomicSequenceQuestions.SequencesByTaxon"/>">Organisms in ${project}</a></li>
 
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citingproviders"/>">Citing Data Providers</a></li>
 

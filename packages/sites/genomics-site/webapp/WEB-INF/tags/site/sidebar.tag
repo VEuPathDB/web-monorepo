@@ -350,7 +350,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
         <ul id="information">
  		<li id='h-01'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to Cite us</a></li>
 		<li id='h-01'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citingproviders"/>">Citing Data Providers</a></li>
-            	<li id='h-02'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
+            	<li id='h-02'><a href="<c:url value="/showQuestion.do?questionFullName=GenomicSequenceQuestions.SequencesByTaxon"/>">Organisms in ${project}</a></li>
 
  	<c:if test="${project == 'CryptoDB'}">
 		<li id='h-c1'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
