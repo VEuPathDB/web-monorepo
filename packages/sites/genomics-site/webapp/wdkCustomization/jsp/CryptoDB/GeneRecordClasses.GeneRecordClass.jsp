@@ -447,7 +447,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 </c:if>
 
 <%-- Isolate Overlap  ------------------------------------------------------%>
-<c:if test="${organism ne hominisOrganism && attrs['so_term_name'].value eq 'protein_coding'}">
+<%-- <c:if test="${organism ne hominisOrganism && attrs['so_term_name'].value eq 'protein_coding'}">
 
 <c:set var="attribution">
 </c:set>
@@ -456,7 +456,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
      attribution="${attribution}"/>
 
 </c:if>
-
+--%>
 <c:if test="${organism eq parvumOrganism}">
 <wdk:wdkTable tblName="MassSpec" isOpen="true"
                attribution="Wastling1DGelLSMassSpec,Wastling2DGelLSMassSpec,WastlingMudPitSolMassSpec,WastlingMudPitInsolMassSpec,CryptoLoweryLCMSMSInsolExcystedMassSpec,CryptoLoweryLCMSMSInsolNonExcystedMassSpec,CryptoLoweryLCMSMSSolMassSpec,Ferrari_Proteomics_LTQ_Oocyst_walls,Ferrari_Proteomics_LTQ_intact_oocysts_merged,Ferrari_Proteomics_LTQ_Sporozoites_merged,Fiser_Proteomics_16May2006_1D_gel,Fiser_Proteomics_24Jun2006_1D_gel,Fiser_Proteomics_14Aug2006_1D_gel,Crypto_Proteomics_from_Lorenza_Putignani"/>
