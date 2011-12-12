@@ -1223,23 +1223,14 @@ WHERE ext_db_name = $$edname$$
   <sqlQuery name="NextGenSeq:coverageCombNormGB2"  includeProjects="TriTrypDB,PlasmoDB">
     <sql>
        <![CDATA[
-SELECT name || '_' || sample as feature_id,
-       'NextGenSeq'        as type,
-       '$source'          as source,
-       $base_start        as startm,
-       $rend              as end,
-       'name=' || name || '$dlm' || 
+SELECT ext_db_name || '_' || sample as feature_id,
+       'NextGenSeq'  as type, 
+       '$source'     as source,
+       $base_start  as startm,
+       $rend        as end,
        'sample=' || sample as atts
-FROM ( 
-        SELECT '0' as sample FROM dual
-  UNION SELECT '6' as sample FROM dual
-  UNION SELECT '12' as sample FROM dual
-  UNION SELECT '18' as sample FROM dual
-  UNION SELECT '24' as sample FROM dual
-  UNION SELECT '30' as sample FROM dual
-  UNION SELECT '36' as sample FROM dual
-  ) x,
-  ( SELECT $$edname$$ as name FROM dual ) y
+FROM apidbtuning.NextGenSeqStats
+WHERE ext_db_name = $$edname$$
         ]]>
         </sql>
   </sqlQuery>
@@ -7015,10 +7006,10 @@ SELECT start_interval feature_id,
       'NextGenSeq' type,
       '$source' source,
       CASE WHEN  multiple = 1 THEN -1 * max(round(c.coverage * s.sum_span_length / 15000000,1)) ELSE max(round(c.coverage * s.sum_span_length / 15000000,1)) END as score,
-      c.name || '_' || c.hpi parent_id,
+      c.name || '_' || c.sample as parent_id,
       c.start_interval * (($rend - $base_start + 1) / 800) startm,
       c.end_interval * (($rend - $base_start + 1) / 800) end,
-      'triColor='||CASE WHEN c.sample = 'FAIRE' || c.hpi and c.multiple = 0 THEN 0 WHEN c.multiple = 0 THEN 1 ELSE 2 END atts
+      'sample=' || c.sample  atts
 FROM ApidbTuning.NextGenSeqStats s, 
     (SELECT ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval,
             ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval,
