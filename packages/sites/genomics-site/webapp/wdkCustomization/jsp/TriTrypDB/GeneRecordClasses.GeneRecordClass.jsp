@@ -667,8 +667,12 @@ Chromosome and unassigned contig sequences and annotations for <i>Trypanosoma co
    Chromosome sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
   </c:set>
 </c:when>
-
-
+ <c:when test='${organismFull eq "Leishmania tarentolae Parrot-TarII"}'>
+ <c:set var="reference">
+Chromosome sequence and annotations for <i>Leishmania tarentolae</i> are provided by  the CIHR Group on host pathogen interactions (Marc Ouellette, Jacques Corbeil, Barbara Papadopoulou, Michel J. Tremblay, Fr&#233;d&#233;ric Raymond, S&#233;bastien Boisvert from Universit&#233; Laval, and Martin Olivier from McGill University). 
+  </c:set>
+</c:when>
+ 
 <c:otherwise>
   <c:set var="reference">
 Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were generated at the Wellcome Trust Sanger Institute Pathogen Sequencing Unit. 
