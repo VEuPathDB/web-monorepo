@@ -1,0 +1,11 @@
+--- HTML.pm.orig	2011-12-12 13:59:38.000000000 -0500
++++ HTML.pm	2011-12-12 13:59:53.000000000 -0500
+@@ -269,7 +269,7 @@
+     my $html = textfield(
+         -name    => 'name',
+         -id      => 'landmark_search_field',
+-        -size    => 25,
++        -size    => 35,
+         -default => $search_value,
+ 	-override=>1,
+     );
