@@ -338,10 +338,19 @@ GO,InterproscanData
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
     <c:set var="ptracks">
-    StuartMassSpecPeptides+FergusonMassSpecPeptides+AlmeidaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    StuartMassSpecPeptides+FergusonMassSpecPeptides+AlmeidaMassSpecPeptides+KinobeadPhosphoPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
-    InterproscanData,Tbrucei_Proteomics_Procyclic_Form,Tbrucei_Ferguson_Phospho_Proteome_RSRC
+    InterproscanData,Tbrucei_Proteomics_Procyclic_Form,Tbrucei_Ferguson_Phospho_Proteome_RSRC,Tbrucei427_Proteomics_Urbaniak_BsfProteome_RSRC
+    </c:set>
+	</c:when>
+
+ <c:when test='${organismFull eq "Trypanosoma brucei Lister strain 427"}'>
+    <c:set var="ptracks">
+    KinobeadPhosphoPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
+    </c:set>
+    <c:set var="attribution">
+    InterproscanData,Tbrucei427_Proteomics_Urbaniak_BsfProteome_RSRC
     </c:set>
 	</c:when>
 
