@@ -96,9 +96,13 @@
 
 </div>
 
+<%--
 <div style="padding:3px 10px;">
 	<wdk:searchLookup />
 </div>
+--%>
+
+
 
 </div>
 </div>
