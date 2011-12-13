@@ -1,5 +1,14 @@
---- GBrowse.conf.orig	2011-11-06 20:09:12.000000000 -0500
-+++ GBrowse.conf	2011-11-06 20:17:45.000000000 -0500
+--- GBrowse.conf.orig	2011-12-13 11:27:04.000000000 -0500
++++ GBrowse.conf	2011-12-13 11:56:30.000000000 -0500
+@@ -97,7 +97,7 @@
+ 
+ balloon tips        = 1
+ titles are balloons = 1
+-plugins             = FastaDumper RestrictionAnnotator SequenceDumper TrackDumper
++plugins             = FastaDumper RestrictionAnnotator SequenceDumper
+ overview grid       = 0
+ region grid         = 0
+ detail grid         = 1
 @@ -160,8 +160,8 @@
  # "user_accounts" is true, then GBrowse
  # will attempt to use its internal user accounts database
