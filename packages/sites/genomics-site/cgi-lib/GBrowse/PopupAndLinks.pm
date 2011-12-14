@@ -411,7 +411,7 @@ sub snpTitleFromMatchToReference {
    my @strainScores = split(/\|/,$info);
 
    push @data, [ "Number of Probes =" => $probes ];
-   push @data, ['Strains and score (pos=amp, neg=del)' ];   
+   push @data, ['Strains & DTU, score (pos=amp,neg=del)' ];   
 
    foreach my $strainScr (@strainScores) {
      $strainScr =~ s/\:/\: /g;
