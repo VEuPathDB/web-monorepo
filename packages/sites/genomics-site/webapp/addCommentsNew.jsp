@@ -116,7 +116,7 @@ function openPubmedWindow(searchBoxId) {
 		alert("Please enter a search term.");
 		return;
 	}
-	window.open('http://www.ncbi.nlm.nih.gov/pubmed?term='+searchTerm);
+	window.open('http://www.ncbi.nlm.nih.gov/pubmed?term='+searchTerm,'pubmed','resizable=yes,scrollbars=yes,height=600,width=800');
 }
 </script>
 
@@ -389,19 +389,25 @@ function openPubmedWindow(searchBoxId) {
         <td>&nbsp;</td>
         <td valign=top>PubMed ID(s)</td>
         <td>
-          <table style="border:1px solid black; background-color: rgb(255, 255, 255);"><tr><td>        
+          <table style="border:1px solid black; background-color: rgb(255, 255, 255);">
+	<tr>
+	  <td>        
           <html:text property="pmIds" styleId="pmIds" size="70"/>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title.</li><li>Enter one or more IDs in the box above separated by \',\'s (Example: 18172196,10558988).</li><li>Click \'Preview\' to see information about these publications.</li></ul>');">
           <img src="/assets/images/help.png" align=bottom border=0></a>
+
+    	<div> <input type="button" id="preview" value="Preview"> the article details of the PubMed ID(s) above</div>
           <br/>
-          Search PubMed: <input id="pubmedSearchBox" type="text" size="53" value="${commentForm.stableId}"/> <input type="button" value="Search" onclick="openPubmedWindow('pubmedSearchBox');"/>
-          <br/>
+
+	  <input type="button" value="Search for PubMed IDs" onclick="openPubmedWindow('pubmedSearchBox');"/>
+          <input id="pubmedSearchBox" type="text" size="30" value="<enter valid gene ID>"/> 
+
           <div id="wrapper" style="display:none;">
             <div id="quote" class="border">
             <img id="remove" src="images/remove.gif" align=right>
             <p></p></div>
           </div>
-          <div>(To preview article details, enter the pubmedID(s) above and click <input type="button" id="preview" value="Preview">)</div>
+
           </td></tr></table>
         </td>
       </tr>
