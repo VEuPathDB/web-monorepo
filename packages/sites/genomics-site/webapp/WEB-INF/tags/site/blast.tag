@@ -4,6 +4,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
@@ -37,7 +38,9 @@
 <script type="text/javascript" src='<c:url value="/wdk/js/wdkQuestion.js"/>'></script>
 <c:if test="${showParams == null}">
 	<script type="text/javascript">
-		$(document).ready(function() { initParamHandlers(); });
+		$(document).ready(function() {
+			initParamHandlers();
+		});
 	</script>
 </c:if>
 
