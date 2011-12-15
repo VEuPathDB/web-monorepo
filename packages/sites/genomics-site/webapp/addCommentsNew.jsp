@@ -400,8 +400,9 @@ function openPubmedWindow(searchBoxId) {
           <br/>
 
 	  <input type="button" value="Search for PubMed IDs" onclick="openPubmedWindow('pubmedSearchBox');"/>
-          <input id="pubmedSearchBox" type="text" size="30" value="<enter valid gene ID>"/> 
+          <input id="pubmedSearchBox" type="text" size="30" style="color:grey" value="<enter valid gene ID>"/> 
 
+	<!-- article details here -->
           <div id="wrapper" style="display:none;">
             <div id="quote" class="border">
             <img id="remove" src="images/remove.gif" align=right>
