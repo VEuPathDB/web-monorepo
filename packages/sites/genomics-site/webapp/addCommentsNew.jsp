@@ -116,7 +116,8 @@ function openPubmedWindow(searchBoxId) {
 		alert("Please enter a search term.");
 		return;
 	}
-	window.open('http://www.ncbi.nlm.nih.gov/pubmed?term='+searchTerm,'pubmed','resizable=yes,scrollbars=yes,height=600,width=800');
+	newwindow=window.open('http://www.ncbi.nlm.nih.gov/pubmed?term='+searchTerm,'pubmed','resizable=yes,scrollbars=yes,height=600,width=800');
+	if (window.focus) {newwindow.focus()}
 }
 </script>
 
