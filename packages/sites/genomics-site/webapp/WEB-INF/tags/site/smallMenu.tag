@@ -53,9 +53,10 @@ a#facebook {
 	</c:choose>
 <%--	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#generalinfo"/>">General Information</a></li> --%>
 <%-- all sites go to the Data Summary page --%>
-	<li><a href="<c:url value="/showQuestion.do?questionFullName=GenomicSequenceQuestions.SequencesByTaxon"/>">Organisms in ${project}</a></li>
 
+        <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to cite us</a></li>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citingproviders"/>">Citing Data Providers</a></li>
+	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
 
 <%-- if the site has statistics on its own, not covered in the Portal Data SUmmary table, such as Giardia and Trich, show them, otherwise show the genome table --%>
 <c:choose>
@@ -71,7 +72,7 @@ a#facebook {
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#acks"/>">Acknowledgements</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#funding"/>">Funding</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">Data Access Policy</a></li>
-        <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to cite us</a></li>
+
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li>
         <li><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>         
 
@@ -86,9 +87,8 @@ a#facebook {
 	<c:if test="${refer == 'customSummary'}">
 	   <li><a href="javascript:void(0)" onclick="dykOpen()">Did You Know...</a></li>
 	</c:if>
-
-          <li><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
           <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a></li>
+          <li><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
 <%--	  <li><a href="<c:url value="/helpDYK.jsp"/>">Strategies FAQ</a></li>  --%>
   	  <li><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from Workshop</a></li>
           <li><a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a></li>
