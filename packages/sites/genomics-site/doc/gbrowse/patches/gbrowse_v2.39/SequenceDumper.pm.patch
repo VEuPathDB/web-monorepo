@@ -1,5 +1,14 @@
---- SequenceDumper.pm.orig	2011-12-05 13:38:09.000000000 -0500
-+++ SequenceDumper.pm	2011-12-05 13:39:31.000000000 -0500
+--- SequenceDumper.pm.orig	2011-12-16 15:37:21.000000000 -0500
++++ SequenceDumper.pm	2011-12-16 16:35:48.000000000 -0500
+@@ -95,7 +95,7 @@
+ 
+ @ISA = qw(Bio::Graphics::Browser2::Plugin);
+ 
+-sub name { "Sequence File" }
++sub name { "Track Data" }
+ sub description {
+   p("The Sequence dumper plugin dumps out the currently displayed genomic segment",
+     "in the requested format.").
 @@ -275,8 +275,13 @@
    print "##See http://www.sanger.ac.uk/Software/formats/GFF/\n";
    print "##NOTE: Selected features dumped.\n";
