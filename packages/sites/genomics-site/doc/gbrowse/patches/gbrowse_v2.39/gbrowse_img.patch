@@ -93,7 +93,7 @@
 +    foreach (@feature_names) {
 +	my ($name,$color) = split '@';
 +	$color ||= 'yellow';
-+	$colors{$name} = $color;
++	$colors{lc $name} = $color;
 +    }
 +    return sub {
 +	my $feature = shift;
