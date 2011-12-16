@@ -1,15 +1,19 @@
---- gbrowse_img.orig	2011-11-11 08:47:01.000000000 -0500
-+++ gbrowse_img	2011-11-11 08:57:01.000000000 -0500
-@@ -204,6 +204,8 @@
+--- gbrowse_img.orig	2011-12-16 12:10:11.000000000 -0500
++++ gbrowse_img	2011-12-16 14:11:04.000000000 -0500
+@@ -204,6 +204,12 @@
      my $format   = param('format') || 'GD';
      my $flip     = param('flip')   || 0;
      my $embed    = param('embed');
 +    # eupathdb patches for image map name 11/11/11
 +    my $hmap     = param('hmap');
++
++    if (my @regions = param('h_region')) {
++       $render->state->{h_region} = \@regions;
++    } 
  
      my $convert_to_pdf;
      if ($format eq 'PDF' && `which inkscape`) {
-@@ -214,9 +216,10 @@
+@@ -214,9 +220,10 @@
      $format = 'GD::SVG' if $format eq 'SVG';
      $format      = 'GD' if $embed;
  
@@ -21,7 +25,7 @@
  
   
      my $seg   = $render->segment;
-@@ -226,14 +229,14 @@
+@@ -226,14 +233,14 @@
          my $url    = $renderer->source->generate_image($img_data);
  	my $js = $render->data_source->globals->js_url;
  	my @scripts = map { {src=>"$js/$_"} }
@@ -38,7 +42,7 @@
  		  ),
  	      $map,
  	      end_html();
-@@ -290,7 +293,8 @@
+@@ -290,7 +297,8 @@
  
  sub render_tracks {
      my $self = shift;
@@ -48,7 +52,28 @@
  
      my $render   = $self->render;
  
-@@ -329,7 +333,7 @@
+@@ -304,6 +312,8 @@
+ #                          map { split /[ +-]/ } @types;
+     my @track_types      = map {shellwords($_)} (param('t'),param('type'),param('track'));
+ 
++    my $h_callback = make_hilite_callback(param('h_feat'));
++
+     # If no tracks specified, we want to see all tracks with this feature
+     if (!@track_types) { @track_types = @labels; } 
+     unshift @track_types,'_scale';
+@@ -313,9 +323,10 @@
+ 						      labels            => \@track_types,
+ 						      external_features => $external,
+ 						      section           => 'detail',
+-						      cache_extra       => [$format],
++						      cache_extra       => [$format,param('h_feat'),param('h_region')],
+ 						      image_class       => $format,
+ 						      flip              => $flip,
++                  hilite_callback   => $h_callback || undef,
+ 						      -key_style        => 'between',
+ 						      -suppress_key     => 0,
+ 						      }
+@@ -329,7 +340,7 @@
      my @map_data        = map {$_->{map}} @image_data;
  
      my $img_data  = $self->consolidate_images(\@gds);
@@ -57,7 +82,36 @@
  
      return ($img_data,$map);
  
-@@ -504,10 +508,12 @@
+@@ -377,6 +388,28 @@
+                                  : $self->_consolidate_gd ($width,$height,$gds,$orientation,$labels);
+ }
+ 
++sub make_hilite_callback {
++    my @feature_names = @_;
++    return unless @feature_names;
++    my %colors;
++    foreach (@feature_names) {
++	my ($name,$color) = split '@';
++	$color ||= 'yellow';
++	$colors{$name} = $color;
++    }
++    return sub {
++	my $feature = shift;
++	my $color;
++	# if we get here, we select the search term for highlighting
++	my %names = map {lc $_=> 1}
++	                $feature->display_name,
++	                eval{$feature->get_tag_values('Alias')};
++	return unless %names;
++	$color ||= $colors{$_} foreach keys %names;
++	return $color;
++    }
++}
++
+ sub _consolidate_gd {
+     my $self = shift;
+     my ($width,$height,$gds,$orientation,$labels) = @_;
+@@ -504,10 +537,12 @@
  
  sub consolidate_maps {
      my $self = shift;
