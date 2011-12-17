@@ -99,7 +99,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></td>
     <td class="mythStyle" title="Leishmania major, TriTrypDB"><i>Lma</i></td>
     <td class="mythStyle" title="Leishmania mexicana, TriTrypDB"><i>Lme</i></td>
-    <td class="mythStyle" title="Leishmania tarentolae, TriTrypDB"><i>Lmt</i></td>
+    <td class="mythStyle" title="Leishmania tarentolae, TriTrypDB"><i>Lt</i></td>
     <td class="mythStyle" title="Trypanosoma brucei 927, TriTrypDB"><i>Tb927</i></td>
     <td class="mythStyle" title="Trypanosoma brucei 427, TriTrypDB"><i>Tb427</i></td>
     <td class="mythStyle" title="Trypanosoma brucei gambiense, TriTrypDB"><i>Tbg</i></td>
