@@ -57,13 +57,19 @@
     <td class="mythStyle" title="Mouseover the red dot to read the organellar genomes">Organ<br>ellar</td>
     <td class="mythStyle" title="Isolates">Isol<br>ates</td>
     <td class="mythStyle" title="Single Nucleotide Polymorphisms">SNPs</td>
+
+
+    <td class="mythStyle" title="ChIP Chip">ChIP<br>chip</td>
+    <td class="mythStyle" title="Chip Seq">Chip<br>Seq</td>
+
     <td class="mythStyle" title="Expressed Sequence Tags">ESTs</td>
     <td class="mythStyle" title="Microarray">Micro<br>array</td>
-    <td class="mythStyle" title="Proteomics">Prote<br>omics</td>
-    <td class="mythStyle" title="ChIP Chip">ChIP<br>chip</td>
+
     <td class="mythStyle" title="RNA Seq">RNA<br>Seq</td>
-    <td class="mythStyle" title="Chip Seq">Chip<br>Seq</td>
+
     <td class="mythStyle" title="Sage Tags">SAGE<br>Tags</td>
+
+    <td class="mythStyle" title="Proteomics">Prote<br>omics</td>
     <td class="mythStyle" title="Metabolic Pathways">Path<br>ways</td>
 </tr>
 
@@ -179,6 +185,28 @@
 </c:choose>
 
 <c:choose>
+<c:when test="${record.attributesMap['ChIP_chip'] == 'yes'}">
+    <td class="mytdStyle" style="${separation}">
+	<a href="http://${website}.org/${webapp}/getDataSource.do?display=detail">
+		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+</c:when>
+<c:otherwise>
+    <td class="mytdStyle" style="${separation}"></td>
+</c:otherwise>
+</c:choose>
+
+<c:choose>
+<c:when test="${record.attributesMap['Chip_Seq'] == 'yes'}">
+    <td class="mytdStyle" style="${separation}">
+	<a href="http://${website}.org/${webapp}/getDataSource.do?display=detail">	
+		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+</c:when>
+<c:otherwise>
+    <td class="mytdStyle" style="${separation}"></td>
+</c:otherwise>
+</c:choose>
+
+<c:choose>
 <c:when test="${record.attributesMap['ESTs'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 
@@ -209,27 +237,9 @@
 </c:otherwise>
 </c:choose>
 
-<c:choose>
-<c:when test="${record.attributesMap['Proteomics'] == 'yes'}">
-    <td class="mytdStyle" style="${separation}">
-	<a href="http://${website}.org/${webapp}/getDataSource.do?display=detail">
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
-</c:when>
-<c:otherwise>
-    <td class="mytdStyle" style="${separation}"></td>
-</c:otherwise>
-</c:choose>
 
-<c:choose>
-<c:when test="${record.attributesMap['ChIP_chip'] == 'yes'}">
-    <td class="mytdStyle" style="${separation}">
-	<a href="http://${website}.org/${webapp}/getDataSource.do?display=detail">
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
-</c:when>
-<c:otherwise>
-    <td class="mytdStyle" style="${separation}"></td>
-</c:otherwise>
-</c:choose>
+
+
 
 <c:choose>
 <c:when test="${record.attributesMap['RNA_Seq'] == 'yes'}">
@@ -242,8 +252,10 @@
 </c:otherwise>
 </c:choose>
 
+
+
 <c:choose>
-<c:when test="${record.attributesMap['Chip_Seq'] == 'yes'}">
+<c:when test="${record.attributesMap['SageTags'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataSource.do?display=detail">	
 		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
@@ -254,9 +266,9 @@
 </c:choose>
 
 <c:choose>
-<c:when test="${record.attributesMap['SageTags'] == 'yes'}">
+<c:when test="${record.attributesMap['Proteomics'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
-	<a href="http://${website}.org/${webapp}/getDataSource.do?display=detail">	
+	<a href="http://${website}.org/${webapp}/getDataSource.do?display=detail">
 		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
 </c:when>
 <c:otherwise>
