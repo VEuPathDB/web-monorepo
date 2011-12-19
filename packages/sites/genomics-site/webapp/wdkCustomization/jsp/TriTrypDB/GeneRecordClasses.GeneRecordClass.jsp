@@ -678,7 +678,7 @@ Chromosome and unassigned contig sequences and annotations for <i>Trypanosoma co
 </c:when>
  <c:when test='${organismFull eq "Leishmania tarentolae Parrot-TarII"}'>
  <c:set var="reference">
-Chromosome sequence and annotations for <i>Leishmania tarentolae</i> are provided by  the CIHR Group on host pathogen interactions (Marc Ouellette, Jacques Corbeil, Barbara Papadopoulou, Michel J. Tremblay, Fr&#233;d&#233;ric Raymond, S&#233;bastien Boisvert from Universit&#233; Laval, and Martin Olivier from McGill University). The CIHR group plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible. Permission  should be obtained from Marc Ouellette before publishing analyses of the  sequence/open reading frames/genes on a chromosome or genome scale.
+Chromosome sequence and annotations for <i>Leishmania tarentolae</i> are provided by  the CIHR Group on host pathogen interactions (Marc Ouellette, Jacques Corbeil, Barbara Papadopoulou, Michel J. Tremblay, Fr&#233;d&#233;ric Raymond, S&#233;bastien Boisvert from Universit&#233; Laval, and Martin Olivier from McGill University). <br><br><b>Genome sequencing of the lizard parasite <i>Leishmania tarentolae</i> reveals loss of genes associated to the intracellular stage of human pathogenic species</b> <a href="http://www.ncbi.nlm.nih.gov/pubmed/21998295">Raymond et. al</a>. 
   </c:set>
 </c:when>
  
