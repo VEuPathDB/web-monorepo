@@ -52,7 +52,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="background-color:white;border-right:3px solid grey;border-top:0px none;border-left:0 none;"></td>
     <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://amoebadb.org">AmoebaDB</a></td>
     <td style="border-right:3px solid grey" colspan="4" class="mythStyle"><a href="http://cryptodb.org">CryptoDB</a></td>
-    <td style="border-right:3px solid grey" colspan="4" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></td>
+    <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></td>
     <td style="border-right:3px solid grey" colspan="5" class="mythStyle"><a href="http://microsporidiadb.org">&mu;-sporidiaDB</a></td>
     <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://piroplasmadb.org">PiroplasmaDB</a></td>
     <td style="border-right:3px solid grey" colspan="7" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></td>
@@ -69,8 +69,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Cryptosporidium muris, CryptoDB"  ><i>Cm</i></td>
     <td class="mythStyle" title="Cryptosporidium parvum Chr 6, CryptoDB"  ><i>Cp6</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Cryptosporidium parvum, CryptoDB" ><i>Cp</i></td>
-    <td class="mythStyle" title="Giardia lamblia, GiardiaDB" ><i>Gl*</i></td>
-    <td class="mythStyle" title="Giardia Assemblage A isolate WB, GiardiaDB" ><i>Ga</i></td>
+    <td class="mythStyle" title="Giardia Assemblage A isolate WB, GiardiaDB" ><i>Ga*</i></td>
     <td class="mythStyle" title="Giardia Assemblage B isolate GS, GiardiaDB" ><i>Gb</i></td>
     <td  style="border-right:3px solid grey" class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>Ge</i></td>
     <td class="mythStyle" title="Encephalitozoon cuniculi, MicrosporidiaDB"><i>Ec</i></td>
@@ -129,7 +128,6 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
           <c:set var="Gaa" value="${record.attributesMap['Giardia Assemblage A isolate WB']}"/>
           <c:set var="Gab" value="${record.attributesMap['Giardia Assemblage B isolate GS']}"/>
           <c:set var="Gae" value="${record.attributesMap['Giardia Assemblage E isolate P15']}"/>
-          <c:set var="Gla" value="${record.attributesMap['Giardia lamblia ATCC 50803']}"/>
           <c:set var="Lb" value="${record.attributesMap['Leishmania braziliensis']}"/>
           <c:set var="Li" value="${record.attributesMap['Leishmania infantum']}"/>
           <c:set var="Lmf" value="${record.attributesMap['Leishmania major strain Friedlin']}"/>
@@ -171,7 +169,6 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cm}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cp6}</td>
     <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Cp}</td>
-    <td class="mytdStyle" align="right">${Gla}</td>
     <td class="mytdStyle" align="right">${Gaa}</td>
     <td class="mytdStyle" align="right">${Gab}</td>
     <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Gae}</td>
@@ -222,7 +219,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <font size="-1"><b>Babesia</b>: Bb, <i>B. bovis</i>; <b>Cryptosporidium</b>: Ch, <i>C. hominis</i>; Cm, <i>C. muris</i>; Cp, <i>C. parvum</i>;  <b>Eimeria</b>: Et, <i>E. tenella</i>; <b>Encephalitozoon</b>: Ec, <i>E. cuniculi</i>; Eint, <i>E. intestinalis</i>; Ehel, <i>E. hellem</i>; <b>Entamoeba</b>: Ed, <i>E. dispar</i>; Eh, <i>E. histolytica</i>; Einv, <i>E. invadens</i>; <b>Enterocytozoon</b>: Eb, <i>E. bieneusi</i>; <b>Giardia</b> GA, <i>G.Assemblage_A_isolate_WB</i>; GB, <i>G.Assemblage_B_isolate_GS</i>; GE, <i>G.Assemblage_E_isolate_P15</i>; <b>Leishmania</b>: Lb, <i>L. braziliensis</i>; Li, <i>L. infantum</i>; Lma, <i>L. major</i>; Lme, <i>L. mexicana</i>; <b>Neospora</b>: Nc, <i>N. caninum</i>; <b>Nosema</b>: Ncer, <i>N. cerenae</i>; <b>Plasmodium</b>: Pb, <i>P. berghei</i>; Pc, <i>P. chabaudi</i>; Pf, <i>P. falciparum</i>; Pk, <i>P. knowlesi</i>; Pv, <i>P. vivax</i>; Py, <i>P. yoelii</i>; <b>Theileria</b>: Ta, <i>T. annulata</i>; Tp, <i>T. parva</i>; <b>Toxoplasma</b>: Tg, <i>T. gondii</i>; <b>Trichomonas</b>: Tva, <i>T. vaginalis</i>; <b>Trypanosoma</b>: Tb, <i>T. brucei</i>; Tco, <i>T. congolense</i>; Tcr, <i>T. cruzi</i>; Tvi, <i>T. vivax</i>.</font><br>
 </td></tr>
 <br>
-<tr><td colspan="10"><font size="-2"><hr>* In addition, <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
+<tr><td colspan="10"><font size="-2"><hr>* In addition, <i>Giardia Assemblage A isolate WB</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
 
 <!--
 <tr><td colspan="10"><font size="-2">** <i>T.gondii</i> gene groups identified in ToxoDB across the three strains (ME49, GT1, VEG) and the Apicoplast.</font></td></tr>
