@@ -25,7 +25,7 @@
     }">
   <div class="warn announcebox ${homeClass}">
     <table><tr><td>
-      <img src="/images/warningSign.png" alt="warningSign" /></td>
+      <img src="/assets/images/warningSign.png" alt="warningSign" /></td>
     <td>
       <span class="warningMessage">
       This pre-release version of ${wdkModel.name} is available for early community review. Please explore the site and <a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> with your feedback. This site is under active development so there may be incomplete or inaccurate data and occasional site outages can be expected.</span>
@@ -43,7 +43,7 @@
   <c:if test="${siteInfo != ''}">
     <div class="info announcebox ${homeClass}">
     <table><tr><td>
-	         <img src="/images/clearInfoIcon.png" alt="warningSign" /></td>
+	         <img src="/assets/images/clearInfoIcon.png" alt="warningSign" /></td>
                <td>
                  <span class="warningMessage">${siteInfo}</span>
     </td></tr></table>
@@ -61,7 +61,7 @@
 <c:if test="${siteDegraded != ''}">
 <div class="warn announcebox ${homeClass}">
   <table><tr><td>
-               <img src="/images/warningSign.png" alt="warningSign" /></td>
+               <img src="/assets/images/warningSign.png" alt="warningSign" /></td>
              <td>
                <span class="warningMessage">${siteDegraded}</span>
    </td></tr></table>
@@ -77,7 +77,7 @@
 <c:if test="${siteDown != ''}">
 <div class="error announcebox ${homeClass}">
   <table><tr><td>
-               <img src="/images/stopSign.png" alt="stopSign" /></td>
+               <img src="/assets/images/stopSign.png" alt="stopSign" /></td>
              <td>
                <span class="warningMessage">${siteDown}</span>
    </td></tr></table>
