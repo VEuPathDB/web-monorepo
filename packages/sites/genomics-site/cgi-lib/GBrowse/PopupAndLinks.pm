@@ -941,6 +941,10 @@ sub massSpecTitle {
   my ($count) = $f->get_tag_values('Count');
   my ($seq) =  $f->get_tag_values('PepSeq');
   my ($extdbname) = $f->get_tag_values('ExtDbName');
+
+  my ($experiment) = $f->get_tag_values('Experiment');
+  my ($sample) = $f->get_tag_values('Sample');
+
   $desc =~ s/[\r\n]/<br>/g;
 
   my ($phospho_site) = $f->get_tag_values('PhosphoSite');
@@ -979,10 +983,11 @@ sub massSpecTitle {
 #    $extdbname =~ s/$replaceString2/$val2/i;
 #  }
   
-  my $displayName = $MS_EXTDB_NAME_MAP{$extdbname} ? $MS_EXTDB_NAME_MAP{$extdbname} : $extdbname;
+#  my $displayName = $MS_EXTDB_NAME_MAP{$extdbname} ? $MS_EXTDB_NAME_MAP{$extdbname} : $extdbname;
 
   my @data;
-  push @data, [ 'Experiment:' => $displayName ];
+  push @data, [ 'Experiment:' => $experiment ];
+  push @data, [ 'Sample:' => $sample ];
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Number of Matches:' => "$count" ] if($count);

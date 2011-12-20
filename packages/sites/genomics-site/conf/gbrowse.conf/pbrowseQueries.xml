@@ -293,50 +293,6 @@ WHERE  tas.aa_sequence_id = $srcfeature_id
       </sql>
     </sqlQuery>
 
-    <sqlQuery name="domain:MassSpecPeptides">
-      <sql>
-<![CDATA[
-SELECT msf.aa_feature_id feature_id,
-       'domain' type,
-       'MassSpecPeptides' source,
-       msf.source_id name,
-       aal.start_max startm,
-       aal.end_max end,
-       'Description=' || msf.description || '$dlm' ||
-       'Count=' || match_count || '$dlm' ||
-       'ExtDbName=' || ed.name || '$dlm' ||
-       'PepSeq=' || substr(taas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) atts
-FROM  dots.massspecfeature msf,
-      dots.aalocation aal,
-      dots.translatedaafeature taaf,
-      dots.translatedaasequence taas,
-      sres.externaldatabaserelease edr,
-      sres.externaldatabase ed,
-      (SELECT  count(*) as match_count, min(msf.na_feature_id) as feat_id
-FROM  dots.massspecfeature msf,
-      dots.aalocation aal,
-      dots.translatedaafeature taaf,
-      dots.translatedaasequence taas,
-      sres.externaldatabaserelease edr,
-      sres.externaldatabase ed
-WHERE msf.parent_id = taaf.aa_feature_id
-      AND taaf.aa_sequence_id = $srcfeature_id
-      AND taaf.aa_sequence_id = taas.aa_sequence_id
-      AND msf.aa_feature_id = aal.aa_feature_id
-      AND msf.external_database_release_id = edr.external_database_release_id
-      AND edr.external_database_id = ed.external_database_id
-      group by ed.name,aal.start_max ,aal.end_max) x
-WHERE msf.na_feature_id =  x.feat_id
-      AND msf.parent_id = taaf.aa_feature_id
-      AND taaf.aa_sequence_id = $srcfeature_id
-      AND taaf.aa_sequence_id = taas.aa_sequence_id
-      AND msf.aa_feature_id = aal.aa_feature_id
-      AND msf.external_database_release_id = edr.external_database_release_id
-      AND edr.external_database_id = ed.external_database_id
-    ]]>
-    </sql>
-  </sqlQuery>
-
     <sqlQuery name="domain:MassSpecPeptidePhospho">
       <sql>
 <![CDATA[
@@ -349,6 +305,8 @@ SELECT msf.aa_feature_id feature_id,
        'Description=' || msf.description || '$dlm' ||
        'Count=' || match_count || '$dlm' ||
        'ExtDbName=' || ed.name || '$dlm' ||
+       'Experiment=' || mst.experiment || '$dlm' ||
+       'Sample=' || mst.sample || '$dlm' ||
        'PhosphoSite=' || y.phospho_site || '$dlm' ||
        'Ontology=' || y.ontology_name || '$dlm' ||
        'PhosphoScore=' || y.phospho_score || '$dlm' ||
@@ -359,6 +317,7 @@ FROM  dots.massspecfeature msf,
       dots.translatedaasequence taas,
       sres.externaldatabaserelease edr,
       sres.externaldatabase ed,
+      apidbtuning.massspecterms mst,
       (SELECT msf.na_feature_id as feat_id,
               apidb.tab_to_string(CAST(COLLECT(so.term_name ||'') AS apidb.varchartab),';') as ontology_name,
               apidb.tab_to_string(CAST(COLLECT(pot.description ||'') AS apidb.varchartab),';') as phospho_score,
@@ -395,6 +354,7 @@ FROM  dots.massspecfeature msf,
          AND ed.name $$edName$$
        GROUP BY ed.name,aal.start_max ,aal.end_max) x
 WHERE msf.na_feature_id =  x.feat_id
+      AND ed.name = mst.ext_db_name
       AND msf.na_feature_id = y.feat_id(+)
       AND msf.parent_id = taaf.aa_feature_id
       AND taaf.aa_sequence_id = $srcfeature_id
@@ -418,6 +378,8 @@ SELECT msf.aa_feature_id feature_id,
        'Description=' || msf.description || '$dlm' ||
        'Count=' || match_count || '$dlm' ||
        'ExtDbName=' || ed.name || '$dlm' ||
+       'Experiment=' || mst.experiment || '$dlm' ||
+       'Sample=' || mst.sample || '$dlm' ||
        'PepSeq=' || substr(taas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) atts
 FROM  dots.massspecfeature msf,
       dots.aalocation aal,
@@ -425,6 +387,7 @@ FROM  dots.massspecfeature msf,
       dots.translatedaasequence taas,
       sres.externaldatabaserelease edr,
       sres.externaldatabase ed,
+      apidbtuning.massspecterms mst,
       (SELECT  count(*) as match_count, min(msf.na_feature_id) as feat_id
 FROM  dots.massspecfeature msf,
       dots.aalocation aal,
@@ -441,6 +404,7 @@ WHERE msf.parent_id = taaf.aa_feature_id
       AND ed.name $$edName$$
       group by ed.name,aal.start_max ,aal.end_max) x
 WHERE msf.na_feature_id =  x.feat_id
+      AND ed.name = mst.ext_db_name
       AND msf.parent_id = taaf.aa_feature_id
       AND taaf.aa_sequence_id = $srcfeature_id
       AND taaf.aa_sequence_id = taas.aa_sequence_id
