@@ -564,115 +564,6 @@ ORDER BY
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="gene:syntenyMC" excludeProjects="TrichDB,FungiDB">
-     <sql>
-<![CDATA[
-with materialized_query as
-     (select organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, atts
-      from ApidbTuning.GeneContextSyntenicGenes
-      where -- organism = $$taxon$$ and
-            na_sequence_id = $srcfeature_id
-        and context_start = $base_start
-        and context_end = $rend)
-select 'fast' query_style, syntenic_na_feature_id feature_id, 'gene' type,
-       'syntenyMC' source,  syntenic_source_id name, '.' score, synteny_id parent_id,
-       startm, end, strand, atts
-from materialized_query
-where organism != 'placeholder'
-union
-select * from (
-select
-       'slow' query_style,
-       gattr.na_feature_id feature_id,
-       'gene' type, 
-       'syntenyMC' source, 
-       gattr.source_id name, 
-       '.' score, 
-       anch_left.synteny_id parent_id,
-       apidb.compute_startm (syn.is_reversed, fl.start_min, fl.end_max,
-                             anch_left.ref_loc, anch_right.ref_loc,
-                             anch_left.syntenic_loc, anch_right.syntenic_loc,
-                             syn.b_start, syn.b_end) startm,
-       apidb.compute_end (syn.is_reversed, fl.start_min, fl.end_max,
-                          anch_left.ref_loc, anch_right.ref_loc,
-                          anch_left.syntenic_loc, anch_right.syntenic_loc,
-                          syn.b_start, syn.b_end) end,
-       CASE WHEN (fl.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
-       'Note=' || gattr.product || decode(gattr.is_deprecated,1,' (deprecated)') || '$dlm' ||
-       'SOTerm=' || gattr.so_term_name || '$dlm' ||
-       'SyntenyID=' || syn.synteny_id || '$dlm' ||
-       'Contig=' || gattr.sequence_id || '$dlm' ||
-       'IsPseudo=' || gattr.is_pseudo || '$dlm' ||
-       'isDeprecated=' || gattr.is_deprecated || '$dlm' ||
-       'Start=' || gattr.start_min || '$dlm' ||
-       'End=' || gattr.end_max || '$dlm' ||
-       'isReversed=' || gattr.is_reversed || '$dlm' ||
-       'Truncated=' || CASE WHEN fl.end_max > syn.b_end THEN syn.b_end 
-                           WHEN fl.start_min < syn.b_start THEN syn.b_start 
-                           END || '$dlm' ||
-       'Taxon=' || gattr.organism atts
-FROM 
-       apidb.synteny syn,
-       apidb.syntenyAnchor anch_left,
-       apidb.syntenyAnchor anch_right,
-       ApidbTuning.GeneAttributes gattr,
-       ApidbTuning.FeatureLocation fl
-WHERE (select count(*) from materialized_query) = 0
---AND gattr.organism = 'Plasmodium yoelii yoelii str. 17XNL'
-  AND syn.a_na_sequence_id = $srcfeature_id
-  AND syn.a_start <= $rend 
-  AND syn.a_end >= $base_start 
-  AND anch_left.synteny_id = syn.synteny_id 
-  AND anch_left.prev_ref_loc < $base_start 
-  AND anch_left.ref_loc >= $base_start
-  AND anch_right.synteny_id = syn.synteny_id
-  AND anch_left.ref_loc != anch_right.ref_loc
-  AND anch_right.ref_loc < $rend
-  AND anch_right.next_ref_loc >= $rend
-  AND fl.na_sequence_id = syn.b_na_sequence_id 
-  AND fl.feature_type = 'GeneFeature'
-  AND gattr.na_feature_id = fl.na_feature_id
-  AND (
-       (syn.is_reversed = 0
-        -- test that the divisor used in synteny scaling is nonzero. It's odd
-        -- that this varies with is_reversed. But any changes must happen both
-        -- here and in the PL/SQL
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
-        AND apidb.compute_startm (syn.is_reversed, fl.start_min, fl.end_max,
-                                  anch_left.ref_loc, anch_right.ref_loc,
-                                  anch_left.syntenic_loc, anch_right.syntenic_loc,
-                                  syn.b_start, syn.b_end) <= $rend
-        AND apidb.compute_end (syn.is_reversed, fl.start_min, fl.end_max,
-                               anch_left.ref_loc, anch_right.ref_loc,
-                               anch_left.syntenic_loc, anch_right.syntenic_loc,
-                               syn.b_start, syn.b_end) >= $base_start
-       ) 
-       OR
-       (syn.is_reversed = 1 
-        -- test that the divisor used in synteny scaling is nonzero. It's odd
-        -- that this varies with is_reversed. But any changes must happen both
-        -- here and in the PL/SQL
-        AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc - 1)>0
-        AND apidb.compute_startm (syn.is_reversed, fl.start_min, fl.end_max,
-                                  anch_left.ref_loc, anch_right.ref_loc,
-                                  anch_left.syntenic_loc, anch_right.syntenic_loc,
-                                  syn.b_start, syn.b_end) <= $rend
-        AND apidb.compute_end (syn.is_reversed, fl.start_min, fl.end_max,
-                               anch_left.ref_loc, anch_right.ref_loc,
-                               anch_left.syntenic_loc, anch_right.syntenic_loc,
-                               syn.b_start, syn.b_end) >= $base_start
-       )
-  )
-  AND fl.start_min <= syn.b_end
-  AND fl.end_max >= syn.b_start
-) 
-WHERE startm <= $rend
-  AND end >= $base_start
-]]>
-    </sql>
-  </sqlQuery>
-
-
   <sqlQuery name="Synteny:syntenyOrg" includeProjects="FungiDB">
      <sql>
 <![CDATA[
@@ -749,10 +640,7 @@ WHERE startm <= $rend
     </sql>
   </sqlQuery>
 
-
-  
-
-  <sqlQuery name="gene:syntenyMCGB2" excludeProjects="TrichDB">
+  <sqlQuery name="gene:syntenyMC" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
 select query_style, feature_id, type, source, name, score, parent_id, startm, end, strand, atts  from (
@@ -760,7 +648,7 @@ select
        'slow' query_style,
        gattr.na_feature_id feature_id,
        'gene' type, 
-       'syntenyMCGB2' source, 
+       'syntenyMC' source, 
        gattr.source_id name, 
        '.' score, 
        anch_left.synteny_id parent_id,
@@ -847,7 +735,7 @@ SELECT
        'slow' query_style,
        syn.synteny_id feature_id,
        'gene' type, 
-       'syntenyMCGB2' source, 
+       'syntenyMC' source, 
        b.source_id name, 
        '.' score, 
        syn.synteny_id parent_id, 
@@ -910,7 +798,7 @@ SELECT
        'slow' query_style,
        gattr.na_feature_id feature_id,
        'gene' type, 
-       'syntenyMCGB2' source, 
+       'syntenyMC' source, 
        gattr.source_id name, 
        '.' score, 
        gattr.na_sequence_id parent_id,
@@ -938,7 +826,7 @@ SELECT
         'slow' query_style,
         na_sequence_id feature_id,
         'gene' type, 
-        'syntenyMCGB2' source, 
+        'syntenyMC' source, 
         source_id name, 
         '.' score, 
         null parent_id,
@@ -4636,30 +4524,6 @@ ORDER BY g3.mapping_start
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="gene:syntenyMC:attribute:Ortholog" excludeProjects="TrichDB,FungiDB">
-    <testParamValues project="ToxoDB">
-      <param name="name" value="TGME49_039250"/> 
-    </testParamValues>
-    <testParamValues project="TriTrypDB">
-      <param name="name" value="LmjF05.1010"/>
-    </testParamValues>
-    <testParamValues project="PlasmoDB">
-      <param name="name" value="PF11_0344"/>
-    </testParamValues>
-    <testParamValues project="CryptoDB">
-      <param name="name" value="cgd7_230"/>
-    </testParamValues>
-    <sql>
-<![CDATA[
-select ga2.source_id 
-from ApidbTuning.GeneAttributes ga1, ApidbTuning.GeneAttributes ga2
-where ga1.source_id = '$name'
-and ga1.orthomcl_name = ga2.orthomcl_name
-and not ga2.source_id = ga1.source_id
-]]>
- </sql>
- </sqlQuery>
-
   <sqlQuery name="Synteny:syntenyOrg:attribute:Ortholog" includeProjects="FungiDB">
     <sql>
 <![CDATA[
@@ -4674,7 +4538,7 @@ and not ga2.source_id = ga1.source_id
 
 
 
-  <sqlQuery name="gene:syntenyMCGB2:attribute:Ortholog" excludeProjects="TrichDB">
+  <sqlQuery name="gene:syntenyMC:attribute:Ortholog" excludeProjects="TrichDB">
     <testParamValues project="ToxoDB">
       <param name="name" value="TGME49_039250"/> 
     </testParamValues>
@@ -5118,7 +4982,7 @@ AND ed.name = $$edName$$
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="gene:syntenyMCGB2:bulksubfeatures" excludeProjects="TrichDB">
+  <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
 SELECT -- slow query for all other views
@@ -5126,7 +4990,7 @@ SELECT -- slow query for all other views
        'slow' query_style,
        exfloc.na_feature_id feature_id,
        'exon' type, 
-       'syntenyMCGB2' source, 
+       'syntenyMC' source, 
        exfloc.na_feature_id as name,
        exfloc.parent_id,
        apidb.compute_startm (syn.is_reversed, exfloc.start_min, exfloc.end_max,
@@ -5197,7 +5061,7 @@ SELECT
        'slow' query_style,
        exfloc.na_feature_id feature_id,
        'exon' type, 
-       'syntenyMCGB2' source, 
+       'syntenyMC' source, 
        exfloc.na_feature_id as name,
        exfloc.parent_id,
        CASE WHEN exfloc.is_reversed = 0 THEN
@@ -5222,106 +5086,6 @@ WHERE startm <= $rend
     </sql>
   </sqlQuery>
   
-  
-  <sqlQuery name="gene:syntenyMC:bulksubfeatures" excludeProjects="TrichDB,FungiDB">
-     <sql>
-<![CDATA[
-WITH materialized_query AS
-     (SELECT organism, na_sequence_id, feature_id, context_start, context_end,
-             context_source_id, project_id, syntenic_na_feature_id,
-             syntenic_exon_feature_id, syntenic_gene_feature_id, startm, end,
-             strand, atts
-      FROM ApidbTuning.SyntenicExonCache
-      WHERE na_sequence_id = $srcfeature_id
-        AND context_start = $base_start
-        AND context_end = $rend
-        -- AND organism = $organism
-     )
-SELECT -- fast query uses pre-calculated values for gene-page views
-       'fast' query_style, syntenic_exon_feature_id feature_id,
-       'exon' type,
-       'syntenyMC' source, syntenic_exon_feature_id name, syntenic_gene_feature_id parent_id,
-       startm, end, strand, atts
-FROM materialized_query
-WHERE organism != 'placeholder'
-UNION
-SELECT -- slow query for all other views
-* FROM (SELECT
-       'slow' query_style,
-       exfloc.na_feature_id feature_id,
-       'exon' type, 
-       'syntenyMC' source, 
-       exfloc.na_feature_id as name,
-       exfloc.parent_id,
-       apidb.compute_startm (syn.is_reversed, exfloc.start_min, exfloc.end_max,
-                             anch_left.ref_loc, anch_right.ref_loc,
-                             anch_left.syntenic_loc, anch_right.syntenic_loc,
-                             syn.b_start, syn.b_end) startm,
-       apidb.compute_end (syn.is_reversed, exfloc.start_min, exfloc.end_max,
-                          anch_left.ref_loc, anch_right.ref_loc,
-                          anch_left.syntenic_loc, anch_right.syntenic_loc,
-                          syn.b_start, syn.b_end) end,
-       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
-       'isDeprecated=' ||  ga.is_deprecated atts 
-FROM 
-       apidb.synteny syn,
-       apidb.syntenyAnchor anch_left,
-       apidb.syntenyAnchor anch_right,
-       ApidbTuning.FeatureLocation exfloc,
-       ApidbTuning.GeneAttributes ga
-WHERE (select count(*) from materialized_query) = 0
-  AND ga.na_feature_id = exfloc.parent_id
-  AND syn.a_na_sequence_id = $srcfeature_id
-  AND syn.a_start <= $rend 
-  AND syn.a_end >= $base_start 
-  AND anch_left.synteny_id = syn.synteny_id 
-  AND anch_left.prev_ref_loc < $base_start 
-  AND anch_left.ref_loc >= $base_start
-  AND anch_right.synteny_id = syn.synteny_id
-  AND anch_right.ref_loc < $rend
-  AND anch_right.next_ref_loc >= $rend
-  AND anch_left.ref_loc != anch_right.ref_loc
-  AND exfloc.feature_type = 'ExonFeature'
-  AND exfloc.na_sequence_id = syn.b_na_sequence_id 
-  AND (
-       (syn.is_reversed = 0
-        -- test that the divisor used in synteny scaling is nonzero. It's odd
-        -- that this varies with is_reversed. But any changes must happen both
-        -- here and in the PL/SQL
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
-        AND apidb.compute_startm (syn.is_reversed, exfloc.start_min, exfloc.end_max,
-                                  anch_left.ref_loc, anch_right.ref_loc,
-                                  anch_left.syntenic_loc, anch_right.syntenic_loc,
-                                  syn.b_start, syn.b_end) <= $rend
-        AND apidb.compute_end (syn.is_reversed, exfloc.start_min, exfloc.end_max,
-                               anch_left.ref_loc, anch_right.ref_loc,
-                               anch_left.syntenic_loc, anch_right.syntenic_loc,
-                               syn.b_start, syn.b_end) >= $base_start
-       ) 
-       OR
-       (syn.is_reversed = 1 
-        -- test that the divisor used in synteny scaling is nonzero. It's odd
-        -- that this varies with is_reversed. But any changes must happen both
-        -- here and in the PL/SQL
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1)>0
-        AND apidb.compute_startm (syn.is_reversed, exfloc.start_min, exfloc.end_max,
-                                  anch_left.ref_loc, anch_right.ref_loc,
-                                  anch_left.syntenic_loc, anch_right.syntenic_loc,
-                                  syn.b_start, syn.b_end) <= $rend
-        AND apidb.compute_end (syn.is_reversed, exfloc.start_min, exfloc.end_max,
-                               anch_left.ref_loc, anch_right.ref_loc,
-                               anch_left.syntenic_loc, anch_right.syntenic_loc,
-                               syn.b_start, syn.b_end) >= $base_start
-        )
-  )
-  AND exfloc.start_min <= syn.b_end
-  AND exfloc.end_max >= syn.b_start
-)
-WHERE startm <= $rend
-  AND end >= $base_start
-]]>
-    </sql>
-  </sqlQuery>
   
   <sqlQuery name="Synteny:syntenyOrg:bulksubfeatures" includeProjects="FungiDB">
      <sql>
