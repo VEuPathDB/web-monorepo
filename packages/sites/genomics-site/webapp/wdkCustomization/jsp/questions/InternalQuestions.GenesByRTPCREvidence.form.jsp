@@ -28,7 +28,7 @@
 <table width="100%" cellpadding="4">
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
-<site:queryList columns="${columns}" questions="c.p.study:C. parvum post-infection semi-quantitative Real Time PCR  (Rutherford and Kissinger et al.),GeneQuestions.GenesByRtPcrFoldChange,GeneQuestions.GenesByCryptoRtpcrProfileSimilarity"/>
+<site:queryList columns="${columns}" questions="c.p.study:C. parvum post-infection semi-quantitative Real Time PCR  (Rutherford and Kissinger labs),GeneQuestions.GenesByRtPcrFoldChange,GeneQuestions.GenesByCryptoRtpcrProfileSimilarity"/>
 
 </table>
 </div>
