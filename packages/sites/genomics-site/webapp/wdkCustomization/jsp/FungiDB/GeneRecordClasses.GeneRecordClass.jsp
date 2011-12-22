@@ -278,7 +278,7 @@ GO,InterproscanData
 
     <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
     <c:set var="proteinFeaturesUrl">
-    http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/fungidbaa/?name=${id}:1..${proteinLength};type=${ptracks};width=640;embed=1;genepage=1
+    http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/fungidbaa/?name=${id}:1..${proteinLength};type=${ptracks};hmap=pbrowse;width=640;embed=1;genepage=1
     </c:set>
     <c:if test="${ptracks ne ''}">
         <c:set var="proteinFeaturesImg">
