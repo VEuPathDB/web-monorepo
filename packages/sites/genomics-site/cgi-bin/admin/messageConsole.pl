@@ -132,9 +132,9 @@ while ((@row=$sth->fetchrow_array) ){
 <td>$row[4]</td>
 <td class="message">@{[$row[5] || '']}</td>
 <td>
-<img id="image_id" src="/images/deleteButtongs.png" onclick="confirmDelete($row[0])" 
-onmouseover="change_image(this, '/images/deleteButton.png')" 
-onmouseout="change_image(this, '/images/deleteButtongs.png')" border="0"/></a>
+<img id="image_id" src="/assets/images/deleteButtongs.png" onclick="confirmDelete($row[0])" 
+onmouseover="change_image(this, '/assets/images/deleteButton.png')" 
+onmouseout="change_image(this, '/assets/images/deleteButtongs.png')" border="0"/></a>
 </td>
 </tr> 
           
