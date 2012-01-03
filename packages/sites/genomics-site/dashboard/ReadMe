@@ -17,7 +17,8 @@ Requirements for the Dashboard
         Options +MultiViews
       </Directory>
 
-
+  - PHP 5
+    - PECL json PHP module (available in the RPM php-pecl-json)
 
 Development
 
