@@ -8,14 +8,14 @@ abstract class DatabaseInfo extends JmxModule {
     # use our internal bean
     $domain = 'org.apidb.wdk';
     
-    # refresh bean data before fetching
-    # e.e. in case the dblinks have changed
+    ## refresh bean data before fetching
+    ## e.e. in case the dblinks have changed
     return array(
-      array(
-          'type' => 'exec',
-          'mbean' => "$domain:$mbean_path,context=$context",
-          'operation' => 'refresh',
-      ),
+     # array(
+     #     'type' => 'exec',
+     #     'mbean' => "$domain:$mbean_path,context=$context",
+     #     'operation' => 'refresh',
+     # ),
       array(
           'type' => 'read',
           'mbean' => "$domain:$mbean_path,context=$context",
@@ -28,7 +28,7 @@ abstract class DatabaseInfo extends JmxModule {
       array index 
   **/
   function get_result_value($json_response) {
-    return $json_response[1]{'value'};
+    return $json_response[0]{'value'};
   }
 
 }

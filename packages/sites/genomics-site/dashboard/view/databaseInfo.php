@@ -1,7 +1,12 @@
 <?php
 
+require_once dirname(__FILE__) . "/../lib/modules/RefreshDatabaseInfo.php";
 require_once dirname(__FILE__) . "/../lib/modules/UserDatabaseInfo.php";
 require_once dirname(__FILE__) . "/../lib/modules/AppDatabaseInfo.php";
+
+if (isset($_GET['refresh']) && $_GET['refresh'] == 1) {
+  $refresh = new RefreshDatabaseInfo();
+}
 
 $adb = new AppDatabaseInfo();
 $udb = new UserDatabaseInfo();
@@ -67,7 +72,6 @@ Related Links
 <b>Client login name</b>: <?=strtolower($adb->get('login'))?><br>
 <b>Client connecting from</b>: <?=strtolower($adb->get('client_host'))?><br>
 <b>Client OS user</b>: <?=strtolower($adb->get('os_user'))?><br>
-<b>System Date</b>: <?=$adb->get('system_date')?><br>
 <p>
 <b>Available DBLinks</b>: 
 
@@ -141,13 +145,13 @@ foreach ($dblink_map as $dblink) {
 <p>
 <b>Client login name</b>: <?= strtolower($udb->get('login')) ?></b><br>
 
-
-      
-      
-      
-  
-  
-
+<p>
+<hr>
+<b>Information on this page was last updated</b>: <?=$adb->get('system_date')?><br>
+<form method="GET" action="">
+<input name="refresh" type="hidden" value="1">
+<input type="submit" value="refresh">
+</form>
 
 
 </div>

@@ -2,14 +2,10 @@
 // version of data and format returned. Change value e.g as
 // elements are added, removed.
 define('FORMATVERSION', '1.0');
-define('ROOTNAME', 'siteinfo');
+define('ROOTNAME', 'dashboard');
 
 require_once dirname(__FILE__) . '/lib/PrivateAPI.php';
 require_once dirname(__FILE__) . '/lib/xmlfunctions.inc';
-
-//include 'lib/apacheXmlInfo.inc';
-//include 'lib/proxyXmlInfo.inc';
-//include 'lib/buildXmlInfo.inc';
 
 $api = new PrivateAPI();
 
@@ -19,8 +15,8 @@ $path_info = trim(@$_SERVER["PATH_INFO"], '/');
 /**
 Check if pathinfo terminates with 'value' and remove it. The remainder of path_info
 will be used for an xpath query.
-    /siteinfo/wdk returns xml document
-    /siteinfo/wdk/value returns text values of /siteinfo/wdk
+    /dashboard/wdk returns xml document
+    /dashboard/wdk/value returns text values of /dashboard/wdk
 **/
 
 if ($path_info) {

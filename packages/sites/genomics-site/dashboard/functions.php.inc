@@ -137,4 +137,17 @@ function unescape_property($value) {
   
   }
 
+function append_to_self_url($params = null) {
+  $self = $_SERVER["PHP_SELF"];
+
+ // if ($params == null) { return $self; }
+  
+  if ($_SERVER["QUERY_STRING"]) {
+    $url = $self . "?" . $_SERVER["QUERY_STRING"] . '&' . $params;
+  } else {
+    $url = $self . "?" . $params;
+  }
+error_log('returning ' . $url);
+  return $url;
+}
 ?>
