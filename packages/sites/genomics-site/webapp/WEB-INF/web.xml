@@ -23,6 +23,10 @@
     <listener-class>org.gusdb.wdk.controller.ApplicationInitListener</listener-class>
   </listener>
 
+  <listener>
+    <listener-class>org.apidb.apicommon.jmx.JmxInitListener</listener-class>
+  </listener>
+
   <servlet>
     <servlet-name>wdkEuPathDbBrc</servlet-name>
     <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -150,22 +154,18 @@
     <taglib-location>/WEB-INF/tld-third-party/taglibs-random.tld</taglib-location>
   </taglib>
   </jsp-config>
-
   <filter>
     <filter-name>MDCServletFilter</filter-name>
     <filter-class>org.apidb.apicommon.controller.log4j.MDCServletFilter</filter-class>
   </filter>
- 
   <filter>
     <filter-name>CheckLoginFilter</filter-name>
     <filter-class>org.gusdb.wdk.controller.CheckLoginFilter</filter-class>
   </filter>
-  
   <filter-mapping>
     <filter-name>MDCServletFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
- 
   <filter-mapping>
     <filter-name>CheckLoginFilter</filter-name>
     <url-pattern>/*</url-pattern>

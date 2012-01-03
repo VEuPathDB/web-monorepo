@@ -1,0 +1,58 @@
+<?php
+// keyworkd, module, and whether a menu tab should be made
+# $pageMap = array( 
+#     'Databases' => array(
+#         'module' => "/a/admin/index.jsp?p=Databases&key=$ws_key",
+#         'tab' => 1),
+#     'WDK' => array(
+#         'module' => "/a/admin/index.jsp?p=WDK&key=$ws_key",
+#         'tab' => 1),
+#     'Tomcat' => array(
+#         'module' => "/a/admin/index.jsp?p=Tomcat&key=$ws_key",
+#         'tab' => 1),
+#     'Apache' => array(
+#         'module' => "/siteinfo/apacheInfo.php",
+#         'tab' => 1),
+#     'Proxy' => array(
+#         'module' => "/siteinfo/proxyInfo.php",
+#         'tab' => 1),
+#     'Build' => array(
+#         'module' => "/siteinfo/buildInfo.php",
+#         'tab' => 1),
+#     'Announcements' => array(
+#         'module' => "/cgi-bin/admin/messageConsole.pl",
+#         'tab' => 1),
+#     'Logger'  => array(
+#         'module' => "/siteinfo/logger.php",
+#         'tab' => 0),
+#     );
+$pageMap = array( 
+     'Databases' => array(
+         'module' => "view/databaseInfo.php",
+         'tab' => 1),
+     'WDK State' => array(
+         'module' => "view/stateInfo.php",
+         'tab' => 1),
+     'Configuration' => array(
+         'module' => "view/configurationInfo.php",
+         'tab' => 1),
+    'Tomcat' => array(
+        'module' => "view/tomcatInfo.php",
+        'tab' => 1),
+    'Apache' => array(
+        'module' => "view/apacheInfo.php",
+        'tab' => 1),
+    'Proxy' => array(
+        'module' => "view/proxyInfo.php",
+        'tab' => 1),
+     'Build' => array(
+         'module' => "view/buildInfo.php",
+         'tab' => 1),
+    'Announcements' => array(
+        'module' => "/cgi-bin/admin/messageConsole.pl",
+        'tab' => 1),
+    'Logger'  => array(
+        'module' => "view/logger.php",
+        'tab' => 0),
+   );
+?>
