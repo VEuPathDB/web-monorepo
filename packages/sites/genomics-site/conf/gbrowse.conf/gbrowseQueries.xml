@@ -643,9 +643,8 @@ WHERE startm <= $rend
   <sqlQuery name="gene:syntenyMC" excludeProjects="TrichDB">
      <sql>
 <![CDATA[
-select query_style, feature_id, type, source, name, score, parent_id, startm, end, strand, atts  from (
+select feature_id, type, source, name, score, parent_id, startm, end, strand, atts  from (
 select
-       'slow' query_style,
        gattr.na_feature_id feature_id,
        'gene' type, 
        'syntenyMC' source, 
@@ -732,7 +731,6 @@ WHERE startm <= $rend
   AND end >= $base_start
 UNION
 SELECT
-       'slow' query_style,
        syn.synteny_id feature_id,
        'gene' type, 
        'syntenyMC' source, 
@@ -795,7 +793,6 @@ WHERE edr.external_database_id = ed.external_database_id
 UNION
 -- for: reference organism - gene
 SELECT
-       'slow' query_style,
        gattr.na_feature_id feature_id,
        'gene' type, 
        'syntenyMC' source, 
@@ -823,15 +820,14 @@ WHERE gattr.na_sequence_id = $srcfeature_id
 UNION
 -- for: reference organism - span
 SELECT
-        'slow' query_style,
         na_sequence_id feature_id,
         'gene' type, 
         'syntenyMC' source, 
         source_id name, 
         '.' score, 
         null parent_id,
-        $base_start startm,
-        $rend end, 
+        round($base_start) startm,
+        round($rend) end, 
         0 strand,
        'RefStart=' || $base_start || '$dlm' ||
        'RefEnd=' || $rend || '$dlm' ||
@@ -5041,7 +5037,6 @@ AND ed.name = $$edName$$
 <![CDATA[
 SELECT -- slow query for all other views
 * FROM (SELECT
-       'slow' query_style,
        exfloc.na_feature_id feature_id,
        'exon' type, 
        'syntenyMC' source, 
@@ -5112,7 +5107,6 @@ WHERE ga.na_feature_id = exfloc.parent_id
 UNION
 -- for: reference organism - gene
 SELECT
-       'slow' query_style,
        exfloc.na_feature_id feature_id,
        'exon' type, 
        'syntenyMC' source, 
