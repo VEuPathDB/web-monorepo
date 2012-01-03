@@ -93,9 +93,9 @@ p {
 
 .clickable {
   cursor: pointer;
-  font-family: "Trebuchet MS", Arial, sans-serif;
+  font: 12px Verdana, Arial, Helvetica, sans-serif;
   font-weight: bold;
-  color: #2F4F4F
+  color: #2F4F4F;
 }
 
 .warn {
