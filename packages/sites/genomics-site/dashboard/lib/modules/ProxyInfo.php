@@ -31,8 +31,9 @@ class ProxyInfo {
 
     $this->data_map = array(
        'via' => $headers['Via'],
-       'proxyapp' => $proxy_app,
-       'proxyhost'  => $prox_host,
+       'proxy_app' => $proxy_app,
+       'proxy_host'  => $prox_host,
+       'proxied_host' => $headers['Host'],
        'upstream_server' => upstreamServer(),
        'nginx_proxy_switcher' => $c->get('nginx_proxy_switcher'),
     );

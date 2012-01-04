@@ -40,8 +40,8 @@ class PrivateAPI {
     $all_data = array('wdk' =>
       array(
         'proxy'             => array(
-          'proxyapp'           => $proxy->get('proxyapp'),
-          'proxyhost'          => $proxy->get('proxyhost'),
+          'proxyapp'           => $proxy->get('proxy_app'),
+          'proxyhost'          => $proxy->get('proxy_host'),
           'upstreamhost'       => $proxy->get('upstream_server'),
         ),
         'modelname'         => $wdk_meta_mbean->get('DisplayName'),

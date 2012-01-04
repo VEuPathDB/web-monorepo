@@ -47,13 +47,6 @@
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
 
-  <servlet> 
-      <servlet-name>onWebappStartup</servlet-name> 
-      <servlet-class>org.apidb.apicommon.controller.OnWebappStartup</servlet-class>
-      <load-on-startup>1</load-on-startup> 
-  </servlet>
-
-
 <!-- Internal WSF support -->
   <context-param>
     <param-name>wsfConfigDir_param</param-name>
