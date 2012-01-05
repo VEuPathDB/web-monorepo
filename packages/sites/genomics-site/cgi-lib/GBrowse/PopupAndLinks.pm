@@ -505,6 +505,8 @@ sub geneTitleGB2 {
   my $sourceId = $f->name;
   my $chr = $f->seq_id;
   my $loc = $f->location->to_FTstring;
+
+  $loc =~ s/(\d+\.\.)/<br \/>&nbsp;&nbsp;$1/g;
   
   my ($soTerm) = $f->get_tag_values("soTerm");
   my ($isPseudo) = $f->get_tag_values("isPseudo");
@@ -519,7 +521,7 @@ sub geneTitleGB2 {
   my $utr = '';
   foreach (@utrs) {
     next if $_->type !~ /utr/i;
-    $utr .= $_->location->to_FTstring. " ";
+    $utr .= $_->location->to_FTstring. "<br />";
   }
   
   my $window = 500; # width on either side of gene
