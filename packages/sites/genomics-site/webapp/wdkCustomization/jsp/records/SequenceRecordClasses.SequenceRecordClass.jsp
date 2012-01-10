@@ -101,18 +101,22 @@
 <%-- Gbrowse tracks defaults For Unannotated genomes  --------------%>
 <%------------------------------------------------------------------%>
 <c:if test="${attrs['gene_count'].value == 0}">
-  <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
 
   <%------------------------------------------------------------------%>
   <c:choose>
-    <c:when test="${projectId eq 'TriTrypDB' && attrs['length'].value > 300000}">
+    <c:when test="${projectId eq 'TriTrypDB' && attrs['length'].value >= 300000}">
+      <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
+    </c:when>
+    <c:when test="${projectId ne 'TriTrypDB' && attrs['length'].value >= 100000}">
       <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
     </c:when>
     <c:when test="${projectId ne 'TriTrypDB' && attrs['length'].value < 100000}">
+      <c:set var="gtracks" value="BLASTX+ORF300+TandemRepeat+LowComplexity" />
+    </c:when>
+    <c:when test="${projectId eq 'TriTrypDB' && attrs['length'].value < 300000}">
       <c:set var="gtracks" value="BLASTX+ORF+TandemRepeat+LowComplexity" />
     </c:when>
     <c:otherwise>
-      <c:set var="gtracks" value="BLASTX+ORF300+TandemRepeat+LowComplexity" />
     </c:otherwise>
   </c:choose>
   <%------------------------------------------------------------------%>
