@@ -489,10 +489,14 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   </c:if>
 
 <c:set var="plasmocyc" value="${attrs['PlasmoCyc']}"/>  
-<c:set var="plasmocycvalue" value="<a href='${plasmocyc.url}'>View</a>"/>  
+<c:set var="plasmocycurl" value="${plasmocyc.url}"/>  
+
+  <c:if test="${species eq 'berghei'}">
+    <c:set var="plasmocycurl" value="http://apicyc.apidb.org/"/>  
+  </c:if>
 
 <site:panel 
-    displayName="PlasmoCyc <a href='${plasmocyc.url}'>View</a>"
+    displayName="PlasmoCyc <a href='${plasmocycurl}'>View</a>"
     content="" />
 
 </c:if>
