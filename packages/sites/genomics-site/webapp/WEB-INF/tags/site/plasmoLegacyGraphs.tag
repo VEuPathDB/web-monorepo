@@ -958,7 +958,7 @@ The overall expression percentile of each condition is the average percentile ov
 
 </c:if>
 
-<c:if test="${binomial eq 'Plasmodium berghei str. ANKA'}">
+<c:if test="${organism eq 'Plasmodium berghei str. ANKA'}">
 
   <c:set var="secName" value="Waters::Dozi"/>
   <c:set var="imgId" value="img${secName}"/>
