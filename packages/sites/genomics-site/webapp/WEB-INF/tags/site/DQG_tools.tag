@@ -13,7 +13,7 @@
 		<c:set var="listOrganisms" value="Cryptosporidium"/>
 	</c:when>
         <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
-                <c:set var="listOrganisms" value="Toxoplasma, Neospora, Eimeria, Gregarina"/>
+                <c:set var="listOrganisms" value="Eimeria, Gregarina, Neospora, Toxoplasma"/>
         </c:when>
 	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
 		<c:set var="listOrganisms" value="Plasmodium"/>
@@ -25,7 +25,7 @@
 		<c:set var="listOrganisms" value="Trichomonas"/>
 	</c:when>
  	<c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
-		<c:set var="listOrganisms" value="Leishmania, Trypanosoma, Crithidia"/>
+		<c:set var="listOrganisms" value="Crithidia, Endotrypanum, Leishmania, Trypanosoma"/>
 	</c:when>
 </c:choose> 
 
