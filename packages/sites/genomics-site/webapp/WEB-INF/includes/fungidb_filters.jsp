@@ -200,13 +200,13 @@
       <wdk:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="cgat_r_genes" />  
+                          instanceName="cgat_wm_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="cgat_wm_genes" />  
+                          instanceName="cgat_r_genes" />  
     </td>
     <td>
       <wdk:filterInstance strategyId="${strategyId}" 
