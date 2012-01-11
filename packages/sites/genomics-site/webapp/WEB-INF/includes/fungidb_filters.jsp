@@ -10,6 +10,7 @@
 <c:set var="layout" value="${requestScope.filter_layout}"/>
 
 <!-- display basic filters -->
+<!-- release 1
 <table border="1">
   <tr>
     <th rowspan=2 align="center">All<br>Results</th>
@@ -159,6 +160,89 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="rory_genes" />  
+    </td>
+  </tr>
+</table>
+-->
+<!-- release 2 alpha -->
+<table border="1">
+  <tr>
+    <th rowspan=2 align="center">All<br>Results</th>
+    <th rowspan=2 align="center">Ortholog<br>Groups</th>
+    <th colspan=6 align="center"><i>Basidiomycota</i></th>
+    <th align="center"><i>Sordariomycetes</i></th>
+    <th align="center"><i>Saccharomycotina</i></th>
+  </tr>
+  <tr>
+    <th><i>C.gat</i> WM276</th>
+    <th><i>C.gat</i> R265</th>
+    <th><i>C.neo</i> H99</th>
+    <th><i>C.neo</i> B3501</th>
+    <th><i>C.neo</i> JEC21</th>
+    <th><i>T.mes</i></th>
+    <th><i>N.cra</i></th>
+    <th><i>S.cer</i></th>
+  </tr>
+  <tr align="center">
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="all_results" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="fungidb_distinct_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cgat_r_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cgat_wm_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cneo_grubii_genes" />  
+    </td>
+   <td>
+      <wdk:filterInstance strategyId="${strategyId}"
+                          stepId="${stepId}"
+                          answerValue="${answerValue}"
+                          instanceName="cneo_neo_b_genes" />
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cneo_neo_je_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tmes_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="ncra_genes" />  
+    </td>
+    <td>
+      <wdk:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="scer_genes" />  
     </td>
   </tr>
 </table>
