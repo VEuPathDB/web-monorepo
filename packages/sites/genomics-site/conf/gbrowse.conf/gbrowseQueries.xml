@@ -1532,7 +1532,7 @@ ORDER BY
      <sql>
 <![CDATA[
 SELECT blat.blat_protein_alignment_id feature_id, 
-       'proteinAlignment' type, 
+       'proteinAlignmentApiDB' type, 
        'BLAT' source, 
        eaas.source_id as name, 
        blat.score score, 
