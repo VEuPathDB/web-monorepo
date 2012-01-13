@@ -16,7 +16,7 @@
 <div class="h2center">We encourage you to see the <a href="http://eupathdb.org/tutorials/New_Strat/New_Strat_viewlet_swf.html">Tutorial</a> (5 minutes) about building a basic search strategy</div>
 
 <center>
-<img src="/images/strategy_help.jpg">
+<img src="<c:url value='/wdk/images/strategy_help.jpg'/>"> 
 </center>
 
 The image above shows some of the functionality of the Run Strategies tab.  <br>
