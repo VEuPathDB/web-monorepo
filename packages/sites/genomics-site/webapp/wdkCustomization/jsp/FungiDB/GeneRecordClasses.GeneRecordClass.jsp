@@ -344,8 +344,7 @@ GO,InterproscanData
   </c:if>
 
 
-
-<c:if test="${binomial eq 'Rhizopus oryzae' || binomial eq 'Saccharomyces cerevisiae'}">
+<c:if test="${binomial eq 'Cryptococcus neoformans' || binomial eq 'Saccharomyces cerevisiae' || binomial eq 'Neurospora crassa'}">
   <site:pageDivider name="Expression"/>
   <site:expressionGraphs organism="${organism_full}"/>
 
