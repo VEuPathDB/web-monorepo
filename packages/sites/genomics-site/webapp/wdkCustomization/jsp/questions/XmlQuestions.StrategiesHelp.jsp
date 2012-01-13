@@ -19,11 +19,10 @@
                  parentUrl="/home.jsp"
                  divisionName="Did you know"
                  division="about"/>
-<div id="strategyTips">
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
- <tr>
-  <td bgcolor=white valign=top>
+
+
+<div id="strategyTips">
 
 <%-- handle empty result set situation --%>
 <c:choose>
@@ -84,9 +83,5 @@
 </c:choose>
 
 
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table> 
 </div>
 <site:footer/>
