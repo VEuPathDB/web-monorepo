@@ -89,15 +89,20 @@ class PrivateAPI {
   }
 
   /**
-   lowercase and remove '_' from array keys (first dimension only)
+   lowercase and remove '_' from array keys
   **/
-  function normalize_keys_in_array($prop) {
-    $array = array();
-    foreach ($prop as $k => $v) {
-      array_push($array, array(str_replace('_', '', strtolower($k)) => $v));
+  function normalize_keys_in_array($in_array) {
+    $to_array = array();
+    foreach ($in_array as $k => $v) {
+      if (is_array($v)) {
+        $to_array[strtolower(str_replace('_', '', $k))] = $this->normalize_keys_in_array($v);
+      } else {
+        $to_array[strtolower(str_replace('_', '', $k))] = $v;
+      }
     }
-    return $array;
+    return $to_array;
   }
+    
   
   function init_svn_info($build) {
     $array = array(
