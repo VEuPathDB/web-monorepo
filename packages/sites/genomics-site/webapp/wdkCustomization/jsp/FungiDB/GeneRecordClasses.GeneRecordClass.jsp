@@ -448,14 +448,6 @@ GO,InterproscanData
 <site:footer/>
 
 <script type="text/javascript">
-  document.write(
-    '<img alt="logo" src="/images/pix-white.gif?resolution='
-     + screen.width + 'x' + screen.height + '" border="0">'
-  );
-</script>
-
-
-<script type="text/javascript">
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-22063485-1']);

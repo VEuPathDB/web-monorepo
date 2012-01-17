@@ -486,11 +486,4 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 
 <site:footer/>
 
-<script type="text/javascript">
-  document.write(
-    '<img alt="logo" src="/images/pix-white.gif?resolution='
-     + screen.width + 'x' + screen.height + '" border="0">'
-  );
-</script>
-
 <site:pageLogger name="gene page" />

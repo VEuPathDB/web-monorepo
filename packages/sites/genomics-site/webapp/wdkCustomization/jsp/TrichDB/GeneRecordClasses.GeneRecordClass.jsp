@@ -417,11 +417,4 @@ Carlton J. et. al. <b>Draft Genome Sequence of the Sexually Transmitted Pathogen
 
 <site:footer/>
 
-<script type="text/javascript">
-  document.write(
-    '<img alt="logo" src="/images/pix-white.gif?resolution='
-     + screen.width + 'x' + screen.height + '" border="0">'
-  );
-</script>
-
 <site:pageLogger name="gene page" />

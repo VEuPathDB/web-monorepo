@@ -535,13 +535,6 @@ Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Kar
 
 <site:footer/>
 
-<script type="text/javascript">
-  document.write(
-    '<img alt="logo" src="/images/pix-white.gif?resolution='
-     + screen.width + 'x' + screen.height + '" border="0">'
-  );
-</script>
-
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 

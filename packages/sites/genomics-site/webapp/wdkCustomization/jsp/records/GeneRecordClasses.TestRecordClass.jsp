@@ -370,10 +370,4 @@ Teichmann SA, Ivens A, Dear PH.
 
        <jsp:include page="/include/footer.html"/>
 
-<script type="text/javascript">
-document.write(
-  '<img alt="logo" src="/images/pix-white.gif?resolution='
-   + screen.width + 'x' + screen.height + '" border="0">'
-);
-</script>
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip_3.45.js'></script>
