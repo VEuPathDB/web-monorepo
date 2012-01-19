@@ -401,14 +401,13 @@ ORDER BY
       SELECT rif.mapping_start || '_' || rif.mapping_end as feature_id,
              'rum' type, 
              '$source' source, 
-             'Name' name, 
              na_sequence_id parent_id, 
              mapping_start startm, 
              mapping_end end, 
-            'Samples=' || apidb.tab_to_string(CAST(COLLECT(rif.sample_name ||'') AS apidb.varchartab),';') || '$dlm' ||
-            'Exps=' || apidb.tab_to_string(CAST(COLLECT(edb.name ||'') AS apidb.varchartab),';') || '$dlm' ||
+            'Samples=' || apidb.tab_to_string(CAST(COLLECT(rif.sample_name ||'') AS apidb.varchartab),',') || '$dlm' ||
+            'Exps=' || apidb.tab_to_string(CAST(COLLECT(edb.name ||'') AS apidb.varchartab),',') || '$dlm' ||
             'Count=' || count(mapping_start) || '$dlm' ||
-            'Scores=' || apidb.tab_to_string(CAST(COLLECT(score ||'') AS apidb.varchartab),';') atts
+            'Scores=' || apidb.tab_to_string(CAST(COLLECT(score ||'') AS apidb.varchartab),',') atts
       FROM   apidb.RUMIntronFeature rif, 
              sres.externaldatabase edb,
              sres.externaldatabaserelease edbr 
