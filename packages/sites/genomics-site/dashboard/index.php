@@ -54,7 +54,7 @@ if (strncmp($pageMap[$page]['module'], 'http', 4) == 0) {
 }
 ?>
 
-<img src="images/logo.png" align="right" vspace="2" />
+<a href="?p=About"><img src="images/logo.png" align="right" vspace="2" /></a>
 </div>
 
 </body>

@@ -28,5 +28,8 @@ $pageMap = array(
     'Logger'  => array(
         'module' => "view/logger.php",
         'tab' => 0),
+    'About'  => array(
+        'module' => "view/about.php",
+        'tab' => 0),
    );
 ?>
