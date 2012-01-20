@@ -121,35 +121,7 @@ ${attrs['organism'].value}<br>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
-<c:choose>
-  <c:when test='${organism_full eq "Encephalitozoon cuniculi GB-M1"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEHellem+SyntenyGenesEHellem+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+SyntenySpansNcerenae+SyntenyGenesNcerenae+Repeat+EST+BLASTX
-    </c:set>
-  </c:when>
-  <c:when test='${organism_full eq "Encephalitozoon intestinalis"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansEHellem+SyntenyGenesEHellem+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+SyntenySpansNcerenae+SyntenyGenesNcerenae+Repeat+EST+BLASTX
-    </c:set>
-  </c:when>
-  <c:when test='${organism_full eq "Encephalitozoon hellem ATCC 50504"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+SyntenySpansNcerenae+SyntenyGenesNcerenae+Repeat+EST+BLASTX
-    </c:set>
-  </c:when>
-  <c:when test='${organism_full eq "Enterocytozoon bieneusi H348"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEHellem+SyntenyGenesEHellem+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansNcerenae+SyntenyGenesNcerenae+Repeat+EST+BLASTX
-    </c:set>
-  </c:when>
-  <c:when test='${organism_full eq "Nosema ceranae BRL01"}'>
-    <c:set var="gtracks">
-      Gene+SyntenySpansEbieneusi+SyntenyGenesEbieneusi+SyntenySpansEcuniculi+SyntenyGenesEcuniculi+SyntenySpansEintestinalis+SyntenyGenesEintestinalis+SyntenySpansEHellem+SyntenyGenesEHellem+Repeat+EST+BLASTX
-    </c:set>
-  </c:when>
-
-
-</c:choose>
+<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
 <c:set var="attribution">
 EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bieneusi_Genbank_contigs_and_annotations,EbieneusiScaffolds
