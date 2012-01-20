@@ -364,6 +364,18 @@ sub get_feature_by_name {
   if (@features) { @features; } else { (); }
 }
 
+sub seq_ids_length {
+  my $self = shift;
+  my $dbh = $self->dbh;
+  my $sth = $dbh->prepare("SELECT distinct source_id, length FROM ApidbTuning.SequenceAttributes");
+  $sth->execute() or $self->throw($sth->errstr);
+  my @result;
+  while (my $rowref = $sth->fetchrow_arrayref) {
+    push @result,[@$rowref];
+  }
+  return @result;
+}
+
 sub default_class { return 'Sequence' }
 
 # Compatible with other gbrowse related scripts - e.g. das
