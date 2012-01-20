@@ -12,6 +12,9 @@ $model_data_tree = $model_config->get_data_tree();
 $comment = $comment_config->get_data_map();
 $properties = $properties_config->get_data_map();
 ?>
+
+<h2>Configuration</h2>
+
 <p class="smalltext"><span class="expand_all clickable smalltext">expand all</span> | <span class="collapse_all clickable smalltext">collapse all</span></p>
 
 <p class="clickable">WDK Model Configuration &#8593;&#8595;</p> 

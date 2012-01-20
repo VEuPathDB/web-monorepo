@@ -152,8 +152,3 @@ foreach ($dblink_map as $dblink) {
 <input name="refresh" type="hidden" value="1">
 <input type="submit" value="refresh">
 </form>
-
-
-</div>
-</body>
-</html>

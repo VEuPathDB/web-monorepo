@@ -5,12 +5,10 @@
 <? 
   require_once dirname(__FILE__) . "/lib/modules/ProxyInfo.php";
   $pi = new ProxyInfo();
-  print $_SERVER['SERVER_NAME'] . '<br>';
+  print $_SERVER['SERVER_NAME'] ;
   if ($upstreamServer = $pi->get('upstream_server')) {
-    print "<font size='-1'>(upstream server: " . $upstreamServer . ")</font>";
+    print "<br><font size='-1'>(upstream server: " . $upstreamServer . ")</font>";
   }
-
-
 $headers = apache_request_headers();
 
 ?>
@@ -56,6 +54,8 @@ if (strncmp($pageMap[$page]['module'], 'http', 4) == 0) {
 }
 ?>
 
+<img src="images/logo.png" align="right" vspace="2" />
 </div>
+
 </body>
 </html>
