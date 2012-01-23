@@ -477,27 +477,6 @@ sub geneGbrowseLink {
   return "../../../../cgi-bin/gbrowse/$projectId/?start=$linkStart;stop=$linkStop;ref=$seqId";
 }
 
-sub geneTitle {
-  my $f = shift;
-  my $projectId = $ENV{PROJECT_ID};
-  my $sourceId = $f->name;
-  my $chr = $f->seq_id;
-  my @utrs = $f->sub_SeqFeature("UTR");
-  my $utr = '';
-  foreach (@utrs) {
-    next if $_->type !~ /utr/i;
-    $utr .= $_->location->to_FTstring. " ";
-  }
-  my $loc = $f->location->to_FTstring;
-  my ($soTerm) = $f->get_tag_values("soTerm");
-  my ($product) = $f->get_tag_values("product");
-  my ($taxon) = $f->get_tag_values("taxon");
-  my ($isPseudo) = $f->get_tag_values("isPseudo");
-  $soTerm =~ s/\_/ /g;
-  $soTerm =~ s/\b(\w)/\U$1/g;
-  return qq{" onmouseover="return escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$isPseudo', '$utr'))"};
-} 
-
 sub geneTitleGB2 {
   my $f = shift;
   
