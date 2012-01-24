@@ -319,9 +319,9 @@ FROM  dots.massspecfeature msf,
       sres.externaldatabase ed,
       apidbtuning.massspecterms mst,
       (SELECT msf.na_feature_id as feat_id,
-              apidb.tab_to_string(CAST(COLLECT(so.term_name ||'') AS apidb.varchartab),';') as ontology_name,
-              apidb.tab_to_string(CAST(COLLECT(pot.description ||'') AS apidb.varchartab),';') as phospho_score,
-              apidb.tab_to_string(CAST(COLLECT(aal.start_min ||'') AS apidb.varchartab),';') as phospho_site
+              apidb.tab_to_string(set(CAST(COLLECT(so.term_name ||'') AS apidb.varchartab)),';') as ontology_name,
+              apidb.tab_to_string(set(CAST(COLLECT(pot.description ||'') AS apidb.varchartab)),';') as phospho_score,
+              apidb.tab_to_string(set(CAST(COLLECT(aal.start_min ||'') AS apidb.varchartab)),';') as phospho_site
        FROM  dots.massspecfeature msf,
              dots.aalocation aal,
              dots.posttranslationalmodfeature pot,

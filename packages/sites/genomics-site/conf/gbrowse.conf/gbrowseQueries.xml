@@ -404,10 +404,10 @@ ORDER BY
              na_sequence_id parent_id, 
              mapping_start startm, 
              mapping_end end, 
-            'Samples=' || apidb.tab_to_string(CAST(COLLECT(rif.sample_name ||'') AS apidb.varchartab),',') || '$dlm' ||
-            'Exps=' || apidb.tab_to_string(CAST(COLLECT(edb.name ||'') AS apidb.varchartab),',') || '$dlm' ||
+            'Samples=' || apidb.tab_to_string(set(cast(COLLECT(rif.sample_name ||'') AS apidb.varchartab)),',') || '$dlm' ||
+            'Exps=' || apidb.tab_to_string(set(cast(COLLECT(edb.name ||'') AS apidb.varchartab)),',') || '$dlm' ||
             'Count=' || count(mapping_start) || '$dlm' ||
-            'Scores=' || apidb.tab_to_string(CAST(COLLECT(score ||'') AS apidb.varchartab),',') atts
+            'Scores=' || apidb.tab_to_string(set(cast(COLLECT(score ||'') AS apidb.varchartab)),',') atts
       FROM   apidb.RUMIntronFeature rif, 
              sres.externaldatabase edb,
              sres.externaldatabaserelease edbr 
@@ -1409,7 +1409,7 @@ FROM  dots.massspecfeature msf,
        nal.start_min startm,
        nal.end_max end,
        decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       apidb.tab_to_string(CAST(COLLECT(edr.external_database_release_id || '') AS apidb.varchartab), ', ' ) db_ids
+       apidb.tab_to_string(set(cast(COLLECT(edr.external_database_release_id || '') AS apidb.varchartab)), ', ' ) db_ids
 FROM  dots.massspecfeature msf,
       ApidbTuning.FeatureLocation nal,
       dots.nasequence enas,
@@ -1423,8 +1423,8 @@ WHERE msf.na_feature_id = nal.na_feature_id
  AND  msf.external_database_release_id = edr.external_database_release_id
  AND  edr.external_database_id = ed.external_database_id
 GROUP BY enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x,
-(select apidb.tab_to_string(CAST(COLLECT(y.db_info)
-         AS apidb.varchartab), ', ' ) db_names
+(select apidb.tab_to_string(set(cast(COLLECT(y.db_info)
+         AS apidb.varchartab)), ', ' ) db_names
 FROM
 (SELECT distinct (edr.external_database_release_id)||'='|| ed.name db_info
 FROM  dots.massspecfeature msf,
@@ -2986,7 +2986,7 @@ SELECT   feature_id,
         'CGHBlock' as type,
          startm,
          end,
-        'info=' || apidb.tab_to_string(CAST(COLLECT(attributes order by attributes) AS apidb.varchartab), '|') || '$dlm' || 'probes=' || probes as atts
+        'info=' || apidb.tab_to_string(set(cast(COLLECT(attributes order by attributes) AS apidb.varchartab)), '|') || '$dlm' || 'probes=' || probes as atts
 FROM    (SELECT   mapping_start as feature_id,
                            NA_SEQUENCE_ID as parent_id,
                            mapping_start as startm,
