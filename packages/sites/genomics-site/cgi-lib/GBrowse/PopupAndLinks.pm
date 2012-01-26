@@ -86,12 +86,15 @@ sub snpLink {
 sub syntenyTitle {
   my $f = shift;
   my ($syntype) = $f->get_tag_values('SynType');
-
   if($syntype eq 'genes') {
     &synGeneTitle($f);
-  }
-  else {
+  } elsif($syntype eq 'contig') {
     &synSpanTitle($f);
+  } else {
+    my $p = $f->parent;
+    if ($p->type =~ /gene/i) {
+      &synGeneTitle($p);
+    }
   }
 }
   
