@@ -5,7 +5,7 @@
  balloon tips        = 1
  titles are balloons = 1
 -plugins             = FastaDumper RestrictionAnnotator SequenceDumper TrackDumper
-+plugins             = SequenceDumper RestrictionAnnotator
++plugins             = SequenceDumper RestrictionAnnotator FastaDumper Submitter
  overview grid       = 0
  region grid         = 0
  detail grid         = 1
