@@ -175,7 +175,7 @@
 <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
 
 <%-- import WDK related assets --%> 
-<wdk:includes /> 
+<wdk:includes refer="${refer}" /> 
 
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
 
@@ -291,7 +291,7 @@ ${headElement}
 
 <wdk:noscript /> <%-- include noscript tag on all pages to check if javascript enabled --%>
 
-<c:if test="${refer != 'home' && refer != 'home2' && refer != 'customSummary'}">
+<c:if test="${refer != 'home' && refer != 'home2' && refer != 'summary'}">
 	<div id="contentwrapper">
 	<div id="contentcolumn2">
 	<div class="innertube">

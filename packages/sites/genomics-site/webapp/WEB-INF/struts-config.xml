@@ -237,13 +237,13 @@
       input="/showSummary.do">
     </action>
     <action
-      path="/processSummary"
-      type="org.gusdb.wdk.controller.action.ProcessSummaryAction"
+      path="/processSummaryView"
+      type="org.gusdb.wdk.controller.action.ProcessSummaryViewAction"
       scope="request"
-      input="/showSummary.do">
-      <forward name="pq_show_summary" path="/showSummary.do"/>
-      <forward name="pq_show_basket" path="/showBasket.do"/>
-    </action>  
+      input="/showSummaryView.do">
+      <forward name="show-summary-view" path="/showSummaryView.do"/>
+      <forward name="pq-show-basket" path="/showBasket.do"/>
+    </action>
     <action
       path="/showRecord"
       type="org.apidb.apicommon.controller.action.CustomShowRecordAction"
@@ -512,12 +512,25 @@
       validate="false">
     </action>
     <action
+      path="/showSummaryView"
+      type="org.gusdb.wdk.controller.action.ShowSummaryViewAction"
+      scope="request"
+      validate="true">
+    </action>
+    <action
+      path="/showRecordView"
+      type="org.gusdb.wdk.controller.action.ShowRecordViewAction"
+      scope="request"
+      validate="true">
+    </action>
+    <action
       path="/invokeAttributePlugin"
       type="org.gusdb.wdk.controller.action.InvokeAttributePluginAction"
       scope="request"
       validate="false">
       <forward name="display" redirect="false" path="/wdk/jsp/results/attributePlugin.jsp"/>
     </action>
+
 
   </action-mappings>
 

@@ -7,7 +7,7 @@
 <%-- partial is used for internal questions in queryList.tag --%>
 <c:set var="Question_Header" scope="request">
   <c:if test="${requestScope.partial != 'true'}">
-    <site:header title="Search for ${wdkQuestion.recordClass.type}s by ${wdkQuestion.displayName}" refer="customQuestion" />
+    <site:header title="Search for ${wdkQuestion.recordClass.type}s by ${wdkQuestion.displayName}" refer="question" />
   </c:if>
 </c:set>
 
