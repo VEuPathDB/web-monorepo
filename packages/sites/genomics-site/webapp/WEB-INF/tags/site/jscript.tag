@@ -9,7 +9,6 @@
 
 <%-- JQuery library is included by WDK --%>
 
-<link rel="stylesheet" type="text/css" href="<c:url value='/wdkCustomization/css/jquery-ui/jquery-ui-1.8.16.custom.css' />">
 
 <c:if test="${refer == 'summary'}">
 
