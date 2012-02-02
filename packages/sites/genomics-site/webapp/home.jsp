@@ -18,7 +18,7 @@
 
 <%-- header includes menubar and announcements tags --%>
 <%-- refer is used to determine which announcements are shown --%>
-<site:header refer="home"  twitter="${twitter}" facebook="${facebook}"/>
+<site:header refer="home"/>
 <site:DQG /> 
 <site:sidebar  twitter="${twitter}" facebook="${facebook}"/>
 <site:footer  refer="home"/>

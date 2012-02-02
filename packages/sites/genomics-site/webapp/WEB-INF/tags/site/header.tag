@@ -52,17 +52,6 @@
               description="additional body elements"
 %>
 
-
-<%@ attribute name="twitter" 
- 			  type="java.lang.String"
-			  required="true" 
-			  description="link to twitter for this project"
-%>
-<%@ attribute name="facebook" 
- 			  type="java.lang.String"
-			  required="true" 
-			  description="link to facebook for this project"
-%>
 <%---------------------------%>
 
 <%-- flag incoming galaxy.psu.edu users  --%>
@@ -73,6 +62,19 @@
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
+
+<c:choose>
+<c:when test="${project eq 'FungiDB'}" >
+	<c:set var="twitter" value="FungiDB"/>
+	<c:set var="facebook" value="FungiDB"/>
+</c:when>
+<c:otherwise>
+	<c:set var="twitter" value="EuPathDB"/>
+	<c:set var="facebook" value="pages/EuPathDB/133123003429972"/>
+</c:otherwise>
+</c:choose>
+
+
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 <c:set var="version" value="${applicationScope.wdkModel.version}" />
 
