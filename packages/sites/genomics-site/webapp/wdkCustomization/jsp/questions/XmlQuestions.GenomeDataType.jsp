@@ -27,15 +27,29 @@
 <c:set var="ncbiTaxPage1" value="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="/>
 <c:set var="ncbiTaxPage2" value="&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock"/>
 
+<c:choose>
+<c:when test="${project eq 'FungiDB'}" >
+	<c:set var="siteTitle" value="FungiDB"/>
+</c:when>
+<c:otherwise>
+	<c:set var="siteTitle" value="EuPathDB"/>
+</c:otherwise>
+</c:choose>
+
 
 <%------------------------------------%>
 <table width="100%">
 
-<tr><td><h2>EuPathDB Genomes and Data Types</h2></td>
-    <td align="right"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics >>></a></td>
+<tr><td><h2>${siteTitle} Genomes and Data Types</h2></td>
+    <td align="right"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">${siteTitle} Gene Metrics >>></a></td>
 </tr>
 
-<tr><td colspan="2">The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://amoebadb.org">AmoebaDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://microsporidiadb.org">MicrosporidiaDB</a>, <a href="http://piroplasmadb.org">PiroplasmaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> (currently unsupported) and <a href="http://tritrypdb.org">TriTrypDB</a> (supported by the Bill and Melinda Gates Foundation) websites.<br><br>
+<tr><td colspan="2">
+
+<c:if test="${project ne 'FungiDB'}" >
+The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://amoebadb.org">AmoebaDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://microsporidiadb.org">MicrosporidiaDB</a>, <a href="http://piroplasmadb.org">PiroplasmaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> (currently unsupported) and <a href="http://tritrypdb.org">TriTrypDB</a> (supported by the Bill and Melinda Gates Foundation) websites.<br><br>
+</c:if>
+
 <i>(Please mouse over column headers for details; click on red dots to access information on data sources.)</i><br>
 </td>
 </tr>
@@ -45,7 +59,15 @@
 <div style="overflow-x:auto">
 <table class="mytableStyle" width="100%">
 <tr class="mythStyle">
-    <td width="7%" class="mythStyle" title="Website">Website</td>
+<c:choose>
+<c:when test="${project eq 'FungiDB'}" >
+    <td width="7%" class="mythStyle">Family</td>
+</c:when>
+<c:otherwise>
+    <td width="7%" class="mythStyle">Website</td>
+</c:otherwise>
+</c:choose>
+
     <td class="mythStyle" title="Genus">Genus</td>
     <td class="mythStyle" title="Species">Species</td>
     <td class="mythStyle" title="Strain">Strain</td>
@@ -69,7 +91,9 @@
     <td class="mythStyle" title="Metabolic Pathways">Path<br>ways</td>
 </tr>
 
+<!-- LOOP -->
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
+
 <c:set var="orgCounter" value="${orgCounter+1}"/>
 
 <c:set var="fastaLink" value="${record.attributesMap['URLGenomeFasta']}"/>
@@ -78,8 +102,10 @@
 <c:set var="genus" value="${record.attributesMap['Genus']}"/>
 <c:set var="species" value="${record.attributesMap['Species']}"/>
 <c:set var="strain" value="${record.attributesMap['Strain']}"/>
-<c:set var="website" value="${record.attributesMap['Website']}"/>
 <c:set var="org_genomes" value="${record.attributesMap['Organellar_Genomes']}"/>
+
+<c:set var="website" value="${record.attributesMap['Website']}"/>
+
 
 <tr class="mytdStyle">
 <c:choose>
@@ -113,6 +139,12 @@
         <c:set var="webapp" value="${website}"/>
 </c:otherwise>
 </c:choose>
+
+<!-- if we are in FungiDB, website is really a family of organisms, we need to use project instead -->
+<c:if test="${project eq 'FungiDB'}" >
+	<c:set var="website" value="fungidb"/>
+	<c:set var="webapp" value="fungidb"/>
+</c:if>
 
 <!-- ORGANISM and link to NCBI -->
     <td class="mytdStyle"  style="${separation};border-left:1px solid grey;border-bottom:none">		<i>${genus}</i></td>
@@ -291,9 +323,13 @@
 
 
 <table width="100%">
-<tr><td><b>There are ${orgCounter} organisms in EuPathDB.</b></td></tr>
+<tr><td><b>There are ${orgCounter} organisms in ${siteTitle}.</b></td></tr>
 <tr><td><br></td></tr>
-<tr><td colspan="10"><font size="-2"><hr>* <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
+
+<c:if test="${project ne 'FungiDB'}" >
+	<tr><td colspan="10"><font size="-2">
+		<hr>* <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
+</c:if>
 
 </table>
 
