@@ -10,7 +10,16 @@
                           required="false" 
                           description="Page calling this tag"
 %>
-
+<%@ attribute name="twitter" 
+ 			  type="java.lang.String"
+			  required="true" 
+			  description="link to twitter for this project"
+%>
+<%@ attribute name="facebook" 
+ 			  type="java.lang.String"
+			  required="true" 
+			  description="link to facebook for this project"
+%>
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
@@ -170,7 +179,7 @@ a#facebook {
 
 <%--- TWITTER -----%>
 	<li>
-	<a id="twitter" href="http://twitter.com/eupathdb">
+	<a id="twitter" href="http://twitter.com/${twitter}">
 		<img title="Follow us on twitter!" src="/assets/images/twitter.gif" width="20"> 
 	<%--	<img title="Follow us on twitter!"  src="<c:url value='/wdk/images/transparent1.gif'/>"  width="16" height="16">  --%>
 	</a>
@@ -178,7 +187,7 @@ a#facebook {
 
 <%--- FACEBOOK -----%>
 	<li>
-	<a id="facebook" href="https://www.facebook.com/pages/EuPathDB/133123003429972" style="margin-left:2px">
+	<a id="facebook" href="https://www.facebook.com/${facebook}" style="margin-left:2px">
 		<img title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="19">
 	<%--	<img title="Follow us on facebook!"  src="<c:url value='/wdk/images/transparent1.gif'/>"  width="16" height="16">  --%>
 	</a>

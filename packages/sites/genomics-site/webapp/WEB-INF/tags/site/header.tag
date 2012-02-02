@@ -52,6 +52,17 @@
               description="additional body elements"
 %>
 
+
+<%@ attribute name="twitter" 
+ 			  type="java.lang.String"
+			  required="true" 
+			  description="link to twitter for this project"
+%>
+<%@ attribute name="facebook" 
+ 			  type="java.lang.String"
+			  required="true" 
+			  description="link to facebook for this project"
+%>
 <%---------------------------%>
 
 <%-- flag incoming galaxy.psu.edu users  --%>
@@ -264,7 +275,7 @@ ${headElement}
 
     <div style="width:537px;" id="bottom">
       <site:quickSearch />
-      <site:smallMenu refer="${refer}"/>
+      <site:smallMenu refer="${refer}" twitter="${twitter}" facebook="${facebook}"/>
 
    </div>  <%-- id="bottom"    --%>
    </div>  <%-- id="header_rt" --%>
@@ -283,7 +294,7 @@ ${headElement}
 
 <%------------- REST OF PAGE  ----------------%>
 
-<site:menubar refer="${refer}"/>
+<site:menubar refer="${refer}" twitter="${twitter}" facebook="${facebook}"/>
 <site:siteAnnounce  refer="${refer}"/>
 
 

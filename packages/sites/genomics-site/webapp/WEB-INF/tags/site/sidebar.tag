@@ -5,6 +5,17 @@
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 <%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome" %>
 
+<%@ attribute name="twitter" 
+ 			  type="java.lang.String"
+			  required="true" 
+			  description="link to twitter for this project"
+%>
+<%@ attribute name="facebook" 
+ 			  type="java.lang.String"
+			  required="true" 
+			  description="link to facebook for this project"
+%>
+
 <%-- This variable gets used to limit the number of items that appear in the sidebar menus.  Change the value here to change the length of tehse menus --%>
 <c:set var="SidebarLimit" value="7" />
 
@@ -165,12 +176,12 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 
     <div class="menu_lefttop_drop">
 
-<a style="line-height:24px" href="http://twitter.com/eupathdb">
+<a style="line-height:24px" href="http://twitter.com/${twitter}">
 	<img style="margin-left:17px;float:left;vertical-align:middle" title="Follow us on twitter!" src="/assets/images/twitter.gif" width="25">
 	<span style="vertical-align:sub">&nbsp;&nbsp;&nbsp;Follow us on twitter!</span>
 </a>
 <br>
-<a href="https://www.facebook.com/pages/EuPathDB/133123003429972">
+<a href="https://www.facebook.com/${facebook}">
 	<img style="margin-left:19px;float:left;vertical-align:middle" title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="22">
 	<span style="vertical-align:sub">&nbsp;&nbsp;&nbsp;Follow us on facebook!</span>
 
