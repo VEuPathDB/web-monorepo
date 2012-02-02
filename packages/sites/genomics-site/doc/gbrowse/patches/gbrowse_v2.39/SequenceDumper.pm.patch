@@ -1,5 +1,5 @@
---- SequenceDumper.pm.orig	2011-12-16 15:37:21.000000000 -0500
-+++ SequenceDumper.pm	2011-12-16 16:35:48.000000000 -0500
+--- SequenceDumper.pm.orig	2012-02-02 12:31:03.000000000 -0500
++++ SequenceDumper.pm	2012-02-02 15:37:43.000000000 -0500
 @@ -95,7 +95,7 @@
  
  @ISA = qw(Bio::Graphics::Browser2::Plugin);
@@ -24,3 +24,16 @@
    while (my $f = $iterator->next_seq) {
        eval{$f->version(3)};
        my $s =$f->gff_string(1);
+@@ -284,6 +289,12 @@
+       print $s,"\n";
+   }
+ 
++  print "##FASTA\n";
++  my $seq = $segment->seq;
++  $seq =~ s/(.{1,60})/$1\n/g;
++  print ">".$segment->ref,":",$segment->start,"..",$segment->stop, "\n";
++  print $seq;
++
+   print end_pre() if $html;
+   print end_html() if $html;
+ }
