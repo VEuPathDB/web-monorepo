@@ -46,11 +46,22 @@
 
 <tr><td colspan="2">
 
-<c:if test="${project ne 'FungiDB'}" >
-The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://amoebadb.org">AmoebaDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://microsporidiadb.org">MicrosporidiaDB</a>, <a href="http://piroplasmadb.org">PiroplasmaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> (currently unsupported) and <a href="http://tritrypdb.org">TriTrypDB</a> (supported by the Bill and Melinda Gates Foundation) websites.<br><br>
-</c:if>
+<c:choose>
+<c:when test="${project eq 'FungiDB'}" >
 
-<i>(Please mouse over column headers for details; click on red dots to access information on data sources.)</i><br>
+FungiDB is an integrated genomic and functional genomic database for the kingdom Fungi. In its first iteration (released in early 2011), FungiDB contains the genomes of <b>18 Fungi covering 17 species</b> (see below). FungiDB integrates whole genome sequence and annotation and will expand to include experimental data and environmental isolate sequences provided by the community of researchers. The database includes comparative genomics, analysis of gene expression, and supplemental bioinformatics analyses and a web interface for data-mining.
+
+
+</c:when>
+<c:otherwise>
+
+The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Center (BRC)</b></a> designs, develops and maintains the <a href="http://eupathdb.org">EuPathDB</a>, <a href="http://amoebadb.org">AmoebaDB</a>, <a href="http://cryptodb.org">CryptoDB</a>, <a href="http://giardiadb.org">GiardiaDB</a>, <a href="http://microsporidiadb.org">MicrosporidiaDB</a>, <a href="http://piroplasmadb.org">PiroplasmaDB</a>, <a href="http://plasmodb.org">PlasmoDB</a>, <a href="http://toxodb.org">ToxoDB</a>, <a href="http://trichdb.org">TrichDB</a> (currently unsupported) and <a href="http://tritrypdb.org">TriTrypDB</a> (supported by the Bill and Melinda Gates Foundation) websites.
+
+</c:otherwise>
+</c:choose>
+
+<br><br>
+<i style="color:#b45f04">(Please mouse over links for details; click on red dots <img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"> to access dataset information.)</i><br>
 </td>
 </tr>
 </table>
@@ -73,7 +84,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
     <td class="mythStyle" title="Strain">Strain</td>
     <td class="mythStyle" title="Click to access this Taxon ID in NCBI">Taxon ID</td>
     <td class="mythStyle" title="Data Source">Data<br>Source</td>
-    <td class="mythStyle" title="Click to access this genome in our Data Sources page">Genome<br>Version</td>
+    <td class="mythStyle" title="Click to access genome details in our Data Sources page">Genome<br>Version</td>
     <td class="mythStyle" title="Size in Mega bases; click to run a search and get all genomic sequences for this genome">Available<br>Megabase Pairs</td>
     <td class="mythStyle" title="Gene Count; click to run a search and get all genes annotated in this genome">Gene<br>Count</td>
     <td class="mythStyle" title="Mouseover the red dot to read the organellar genomes">Organ<br>ellar</td>
@@ -153,18 +164,18 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
     <td class="mytdStyle" style="${separation}" title="Click to access this Taxon ID in NCBI">
 	<a href="${ncbiTaxPage1}${record.attributesMap['Taxon_ID']}${ncbiTaxPage2}">			${record.attributesMap['Taxon_ID']}</a></td>
 	
-<!-- DATA SOURCE, link to component site -->
+<!-- DATA SOURCE, VERSION:  link to component site -->
     <td class="mytdStyle" style="${separation}">							${record.attributesMap['Data_Source']}</td>
-    <td class="mytdStyle" style="${separation}">
+    <td class="mytdStyle" style="${separation}" title="Click to access genome details in our Data Sources page">
         <a href="http://${website}.org/${webapp}/getDataSource.do?display=detail">
 		${record.attributesMap['Genome_Version']}</a></td>
 
 <!-- FILE SIZES -->
-    <td class="mytdStyle" style="text-align:right;${separation}">
+    <td class="mytdStyle" style="text-align:right;${separation}" title="Size in Mega bases; click to run a search and get all genomic sequences for this genome">
 	<a href="http://${website}.org/${webapp}/showSummary.do?questionFullName=GenomicSequenceQuestions.SequencesByTaxon&array(organism)=${genus}%20${species}%20${strain}"> 
 <!--  <a href="${fastaLink}"> -->
 							${record.attributesMap['Genome_Size']}</a></td>
-    <td class="mytdStyle" style="text-align:right;${separation}">
+    <td class="mytdStyle" style="text-align:right;${separation}" title="Gene Count; click to run a search and get all genes annotated in this genome">
 	<c:if test='${not empty gffLink}'>
 		<a href="http://${website}.org/${webapp}/showSummary.do?questionFullName=GeneQuestions.GenesByTaxon&array(organism)=${genus}%20${species}%20${strain}">	
 	</c:if>
