@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -13,13 +13,13 @@
 
 
 <!-- display page header -->
-<site:header banner="Create and download a Report in Genebank Format" />
+<imp:header banner="Create and download a Report in Genebank Format" />
 
 <!-- display description for page -->
 <p><b>Generate a report of your query result in GFF3 format. </b></p>
 
 <!-- display the parameters of the question, and the format selection form -->
-<wdk:reporter/>
+<imp:reporter/>
 
 <!-- handle empty result set situation -->
 <c:choose>
@@ -50,4 +50,4 @@
   </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>

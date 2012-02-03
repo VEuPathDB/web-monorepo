@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -13,7 +13,7 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="EuPathDB Publications"
+<imp:header title="EuPathDB Publications"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
@@ -137,6 +137,6 @@
 </tr>
 </table> 
 
-<site:footer/>
+<imp:footer/>
 
 

@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -77,7 +77,7 @@
 
 <ul>
     <li><a title="START a NEW search strategy. Searches are organized by the genomic feature they return." >New Search</a>
-  	<site:drop_down_QG2 />
+  	<imp:drop_down_QG2 />
     </li>
 </ul>
 
@@ -93,7 +93,7 @@
 <ul style="width:10em;white-space:nowrap">	
 <c:choose>
   <c:when test="${wdkUser == null || wdkUser.guest}">
-    <wdk:requestURL path="/showApplication.do" />
+    <imp:requestURL path="/showApplication.do" />
     <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');popLogin('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
   </c:when>
   <c:otherwise>
@@ -228,7 +228,7 @@
 <ul style="padding-top:3px;width:11em;border-width:0;float:right">
 <c:choose>
 <c:when test="${wdkUser == null || wdkUser.guest}">
-	<wdk:requestURL path="/showFavorite.do" />
+	<imp:requestURL path="/showFavorite.do" />
 	<li><a id="mybasket" onclick="popLogin('${originRequestUrl}');" href="javascript:void(0)">
 		<img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
 		<span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>

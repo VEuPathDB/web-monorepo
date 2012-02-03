@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 
@@ -8,14 +8,14 @@
 
 <!-- display page header with recordClass type in banner -->
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
-<site:header banner="${recordType}"/>
+<imp:header banner="${recordType}"/>
 
 <h2 style="text-align: center;">
-<wdk:recordPageBasketIcon />
+<imp:recordPageBasketIcon />
 </h2>
 
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <table width="100%">
 
@@ -156,7 +156,7 @@
 
 <!-- show all tables for record -->
 <c:forEach items="${wdkRecord.tables}"  var="tblEntry">
-  <wdk:wdkTable tblName="${tblEntry.key}" isOpen="true"/>
+  <imp:wdkTable tblName="${tblEntry.key}" isOpen="true"/>
 </c:forEach>
 
-<site:footer/>
+<imp:footer/>

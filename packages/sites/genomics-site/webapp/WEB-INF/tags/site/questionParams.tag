@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
@@ -96,7 +96,7 @@
         <c:choose>
             <%--<c:when test="${isHidden}"><html:hidden property="value(${qP.class.name})"/></c:when>--%>
             <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.TimestampParamBean'}">
-                <wdk:timestampParamInput qp="${qP}" />
+                <imp:timestampParamInput qp="${qP}" />
             </c:when>
             <c:when test="${isHidden}">
                 <c:choose>
@@ -130,7 +130,7 @@
 <c:when test="${fn:contains(wdkQuestion.name, 'Location') || fn:contains(wdkQuestion.name, 'Snp') }">  <!-- as it happens in component sites  under choice below EnumParamBean -->
 
                             <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
-                                <wdk:enumParamInput qp="${qP}" />
+                                <imp:enumParamInput qp="${qP}" />
                             </td>
                            
 </c:when>
@@ -143,8 +143,8 @@
                                     <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
                                     <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                                     <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-                                        <%-- <site:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" /> --%>
-                                        <wdk:enumParamInput qp="${qP}" />
+                                        <%-- <imp:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" /> --%>
+                                        <imp:enumParamInput qp="${qP}" />
                                     </td>
                                     </tr>
                                 </table>
@@ -158,17 +158,17 @@
                         
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
                             <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
-                                <wdk:enumParamInput qp="${qP}" />
+                                <imp:enumParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.AnswerParamBean'}">
                             <td align="left" valign="top">
-                                <wdk:answerParamInput qp="${qP}" />
+                                <imp:answerParamInput qp="${qP}" />
                             </td>
                         </c:when>
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.DatasetParamBean'}">
                             <td align="left" valign="top">
-                                <wdk:datasetParamInput qp="${qP}" />
+                                <imp:datasetParamInput qp="${qP}" />
                             </td>
                         </c:when>
                                 <c:when test="${isReadonly}">
@@ -227,7 +227,7 @@
 </c:forEach> <%-- end of foreach on paramGroups --%>
 
 
-<wdk:weight wdkModel="${wdkModel}" wdkQuestion="${wdkQuestion}" />
+<imp:weight wdkModel="${wdkModel}" wdkQuestion="${wdkQuestion}" />
 
 
 <%-- set the custom name --%>

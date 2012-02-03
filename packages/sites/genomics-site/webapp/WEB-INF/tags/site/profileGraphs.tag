@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%@ attribute name="organism"
@@ -78,7 +78,7 @@
 
         <c:choose>
          <c:when test="${not empty row['dataTable'].value}">
-            <wdk:wdkTable tblName="${row['dataTable'].value}" isOpen="false"/>
+            <imp:wdkTable tblName="${row['dataTable'].value}" isOpen="false"/>
 
          </c:when>
          <c:otherwise>
@@ -95,7 +95,7 @@
 
 
 
-<wdk:toggle
+<imp:toggle
     name="${toggleName}Data"
     displayName="Data Table"
     content="${profileDataTable}"
@@ -154,7 +154,7 @@
 
   </c:if>
 
-<wdk:toggle
+<imp:toggle
     name="${toggleName}"
     isOpen="${row['mainOpen'].value}"
     noData="${noData}"

@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -24,7 +24,7 @@ http://${pageContext.request.serverName}${feedPath}
 </c:catch>
 <c:if test="${feedex != null}">
   <br>
-  <site:embeddedError 
+  <imp:embeddedError 
       msg="<font size='-1'><i>temporarily unavailable.</i></font>"
       e="${feedex}" 
   />

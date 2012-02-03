@@ -1,9 +1,9 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <!-- display page header with recordClass type in banner -->
-<site:header refer="recordPage" banner="Favorite page"/>
+<imp:header refer="recordPage" banner="Favorite page"/>
 
-<site:favorites />
+<imp:favorites />
 
-<site:footer/>
+<imp:footer/>

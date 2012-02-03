@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -10,7 +10,7 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
-<site:header title="${wdkModel.displayName} : User Comments on ${id}"
+<imp:header title="${wdkModel.displayName} : User Comments on ${id}"
                  banner="Comments on ${id}"/>
 
 <c:set var="commentsTable" value="${requestScope.wdkRecord.tables['UserComments']}"/>
@@ -53,6 +53,6 @@
 </table>
 
 <hr/><br/><br/>
-<site:footer/>
+<imp:footer/>
 
 

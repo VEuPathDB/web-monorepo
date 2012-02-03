@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set var="version" value="${wdkModel.version}"/>
@@ -7,7 +7,7 @@
 
 
 <%-- we need the header only for the css and js --%>
-<site:header title="${site}.org :: Support"
+<imp:header title="${site}.org :: Support"
                  banner="Support"
                  parentDivision="${site}"
                  parentUrl="/home.jsp"

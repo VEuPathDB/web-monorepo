@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -110,7 +110,7 @@ a#facebook {
     
 
 <%--- LOGIN/REGISTER  -----%>
-<wdk:requestURL/>
+<imp:requestURL/>
 
  <c:choose>
     <c:when test="${wdkUser == null || wdkUser.guest == true}">
@@ -122,7 +122,7 @@ a#facebook {
         <div id="loginStatus" loggedIn="false" style="display:none;"/>
         <div id="loginForm" style="display:none;">
           <h2 style="text-align: center">EuPathDB Account Login</h2>
-          <site:login includeCancel="true" />
+          <imp:login includeCancel="true" />
         </div>
       </li>
 
@@ -139,7 +139,7 @@ a#facebook {
 <%-- used with popRegister() 
         <div id="registerForm" style="display:none;">
           <h2 style="text-align: center">EuPathDB Account Registration</h2>
-          <site:register includeCancel="true" />
+          <imp:register includeCancel="true" />
         </div>
  --%>
 

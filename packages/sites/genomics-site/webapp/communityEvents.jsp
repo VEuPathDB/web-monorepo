@@ -6,7 +6,7 @@ Transform XML message into events HTML page.
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib"%>
 
@@ -23,7 +23,7 @@ http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=
 http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
 </c:set>
 
-<site:header refer="events" title="${wdkModel.displayName} : Community Events" />
+<imp:header refer="events" title="${wdkModel.displayName} : Community Events" />
 
 <style type="text/css">
   .title {

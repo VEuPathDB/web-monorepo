@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -53,7 +53,7 @@
 <tr class="headerrow2"><td colspan="4" align="center"><b>Identify Genes by:</b></td></tr>
 
 <tr><td colspan="3" align="center">
-	<site:queryGridGenes/>
+	<imp:queryGridGenes/>
 </td></tr>
 
 <%-----------------------------------------------------------------------------%>
@@ -62,7 +62,7 @@
 
   <tr class="headerrow2"><td colspan="4" align="center"><b>Identify Isolates by:</b></td></tr>
   <tr><td colspan="3" align="center">
-	<site:queryGridIsolates/> 
+	<imp:queryGridIsolates/> 
   </td></tr>
 
 
@@ -77,7 +77,7 @@
 			<td   align="center"><b>Identify Genomic Sequences by:</b></td>
 		</tr>
 		<tr><td align="center">
-			<site:queryGridContigs/>
+			<imp:queryGridContigs/>
 		</td></tr>	
 	</table> 
 </div>
@@ -91,7 +91,7 @@
 			<td   align="center"><b>Identify Genomic Segments by:</b></td>
 		</tr>
 		<tr><td align="center">
-			<site:queryGridSegms/>
+			<imp:queryGridSegms/>
 		</td></tr>
    	</table> 
 </div>
@@ -109,7 +109,7 @@
 			<td   align="center"><b>Identify ESTs by:</b></td>
 		</tr>
 		<tr><td align="center">
-			<site:queryGridESTs/>
+			<imp:queryGridESTs/>
 		</td></tr>	
 	</table> 
 </div>
@@ -124,7 +124,7 @@
 			<td   align="center"><b>Identify SNPs by:</b></td>
 		</tr>
 		<tr><td align="center">
-			<site:queryGridSNPs/>
+			<imp:queryGridSNPs/>
 		</td></tr>
    	</table> 
 </div>
@@ -145,7 +145,7 @@
 			<td   align="center"><b>Identify Sage Tag Alignments by:</b></td>
 		</tr>
 		<tr><td align="center">
-			<site:queryGridSage/>
+			<imp:queryGridSage/>
 		</td></tr>	
 	</table>
 </div> 
@@ -159,7 +159,7 @@
 			<td   align="center"><b>Identify ORFs by:</b></td>
 		</tr>
 		<tr><td align="center">
-			<site:queryGridORFs/>
+			<imp:queryGridORFs/>
 		</td></tr>
    	</table> 
 </div>

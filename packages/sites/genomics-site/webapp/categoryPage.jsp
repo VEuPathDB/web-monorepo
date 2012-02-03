@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -10,7 +10,7 @@
 
 <c:set var="cat" value="${rootCatMap[record].websiteChildren[category]}" />
 
-<site:header refer="category"  division="help"/>
+<imp:header refer="category"  division="help"/>
 
 <style>
 
@@ -71,5 +71,5 @@ div.question .left {
 </c:forEach>
 
 
-<site:footer />
+<imp:footer />
 

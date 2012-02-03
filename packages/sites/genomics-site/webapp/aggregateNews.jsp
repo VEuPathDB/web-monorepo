@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -57,7 +57,7 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 </c:catch>
 
 
-<site:header title="${wdkModel.displayName} : News"
+<imp:header title="${wdkModel.displayName} : News"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
@@ -112,4 +112,4 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 
 </c:otherwise>
 </c:choose>
-<site:footer/>
+<imp:footer/>

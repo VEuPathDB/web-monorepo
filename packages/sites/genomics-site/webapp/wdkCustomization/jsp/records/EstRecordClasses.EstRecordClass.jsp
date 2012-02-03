@@ -1,8 +1,8 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -23,7 +23,7 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<site:header title="${wdkModel.displayName} : EST ${id}"
+<imp:header title="${wdkModel.displayName} : EST ${id}"
              divisionName="EST Record"
              refer="recordPage"
              division="queries_tools"/>
@@ -38,7 +38,7 @@
 <br/>
 
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <div class="h2center" style="font-size:160%">
  	EST
@@ -46,7 +46,7 @@
 
 <div class="h3center" style="font-size:130%">
 	${primaryKey}<br>
-	<wdk:recordPageBasketIcon />
+	<imp:recordPageBasketIcon />
 </div>
 
 <%--#############################################################--%>
@@ -54,14 +54,14 @@
 <c:set var="append" value="" />
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}" />
 
 <br>
 <%------------------------------------------------------------------%>
 
-<wdk:wdkTable tblName="AlignmentInfo" isOpen="false" attribution=""/>
+<imp:wdkTable tblName="AlignmentInfo" isOpen="false" attribution=""/>
 
 <br>
 
@@ -74,24 +74,24 @@
     </font>
     </noindex>
 </c:set>
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${seq}" />
 
 <!-- Assembly -->
 <%-- Assembly datatype has been deprecated --%>
 <%-- <c:if test="${projectId != 'TrichDB' && projectId != 'CryptoDB'}">
-      <wdk:wdkTable tblName="AssemblyInfo" isOpen="true" attribution=""/>
+      <imp:wdkTable tblName="AssemblyInfo" isOpen="true" attribution=""/>
      </c:if>
 --%>
 
 <br>
 <%-- REFERENCE ----------------------------------------------------%>
-<wdk:wdkTable tblName="ReferenceInfo" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="ReferenceInfo" isOpen="true" attribution=""/>
 
 <br>
 <%------------------------------------------------------------------%>
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
-<site:footer/>
+<imp:footer/>

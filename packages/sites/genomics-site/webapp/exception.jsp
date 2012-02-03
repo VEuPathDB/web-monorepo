@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -11,10 +11,10 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="siteAdminEmail" value="${props['SITE_ADMIN_EMAIL']}"/>
 
-<site:header refer="exception" />
+<imp:header refer="exception" />
 
 <h2><span style="font-color: red;">Unexpected Error</span></h2>
-<%-- <site:header banner="Unexpected Error" /> --%>
+<%-- <imp:header banner="Unexpected Error" /> --%>
 
 <em>Sorry, an unexpected error has occurred.</em>
 <p>
@@ -57,7 +57,7 @@ Parameter Value: <c:out value='${p.value}'/>
 ************************************************
 <h3>Stacktrace</h3>
 
-<wdk:errors showStackTrace="true" />
+<imp:errors showStackTrace="true" />
 </body></html>
 </c:set>
 
@@ -76,7 +76,7 @@ ${error}
 </c:when>
 <c:otherwise>
   <c:if test="${header['Referer'] != null or param.debug == 1}">
-  <site:email 
+  <imp:email 
     to="${siteAdminEmail}"
     from="tomcat@${serverName}"
     subject="${wdkModel.displayName} Site Error - ${pageContext.request.remoteHost}" 
@@ -89,4 +89,4 @@ ${error}
 </c:choose>
 
 
-<site:footer/>
+<imp:footer/>

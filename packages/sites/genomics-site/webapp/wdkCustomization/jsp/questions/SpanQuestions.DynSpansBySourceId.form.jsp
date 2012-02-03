@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
@@ -32,7 +32,7 @@
 </tr>
   <tr>
     <td id="span-params" width="30%">
-      <site:question nohelp="true"/>
+      <imp:question nohelp="true"/>
     </td>
     <td id="span-control" width="20%">
       <p><i>Choose a segment on the left and add it to the search list</i></p>

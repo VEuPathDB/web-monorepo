@@ -1,21 +1,21 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="${wdkModel.displayName}.org :: Community Upload"
+<imp:header title="${wdkModel.displayName}.org :: Community Upload"
              banner="Community Upload"/>
 
 <c:choose>
 	<c:when test="${empty wdkUser || wdkUser.guest}">
     		<body>
 		<div class="h2center" style="font-size: 18px;">Please login to upload files</div>
-		<table style="margin-left: auto; margin-right: auto;" width="90%"><tr><td><site:login/></td></tr></table>
+		<table style="margin-left: auto; margin-right: auto;" width="90%"><tr><td><imp:login/></td></tr></table>
 	</c:when>
 <c:otherwise>
 
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="/assets/js/fileUpload.js"></script>
 
     <body>
-    <wdk:errors/>
+    <imp:errors/>
     <div id='error'/>
     <html:form method="post" action="/communityUpload.do" 
                styleId='uploadForm'
@@ -71,5 +71,5 @@
     </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>
 </body>

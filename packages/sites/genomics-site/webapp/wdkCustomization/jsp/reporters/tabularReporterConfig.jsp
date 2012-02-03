@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -14,7 +14,7 @@
 
 
 <!-- display page header -->
-<site:header banner="Create and download a Report in Tabular Format" />
+<imp:header banner="Create and download a Report in Tabular Format" />
 
 <%-- galaxy.psu.edu users; to send data to Galaxy  --%>
 <script type="text/javascript">
@@ -38,7 +38,7 @@ function appendchecked(url) {
 
 
 <!-- display the parameters of the question, and the format selection form -->
-<wdk:reporter/>
+<imp:reporter/>
 
 
 <!-- display description for page -->
@@ -70,7 +70,7 @@ function appendchecked(url) {
             <tr>
               <td colspan="${numPerLine}">
                 <input type="checkbox" name="selectedFields" value="${wdkAnswer.recordClass.primaryKeyAttribute.name}" checked="checked" style="display:none;"/>
-                <wdk:checkboxTree id="selectedFieldsCBT" rootNode="${wdkAnswer.reportMakerAttributeTree}" checkboxName="selectedFields" showSelectAll="false" showResetCurrent="true" useHelp="true"/>
+                <imp:checkboxTree id="selectedFieldsCBT" rootNode="${wdkAnswer.reportMakerAttributeTree}" checkboxName="selectedFields" showSelectAll="false" showResetCurrent="true" useHelp="true"/>
               </td>
             </tr>
           </c:if>
@@ -174,4 +174,4 @@ function appendchecked(url) {
   </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>

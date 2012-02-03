@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 
@@ -18,10 +18,10 @@
 
 <%-- header includes menubar and announcements tags --%>
 <%-- refer is used to determine which announcements are shown --%>
-<site:header refer="home"/>
-<site:DQG /> 
-<site:sidebar  twitter="${twitter}" facebook="${facebook}"/>
-<site:footer  refer="home"/>
+<imp:header refer="home"/>
+<imp:DQG /> 
+<imp:sidebar  twitter="${twitter}" facebook="${facebook}"/>
+<imp:footer  refer="home"/>
 
 
 

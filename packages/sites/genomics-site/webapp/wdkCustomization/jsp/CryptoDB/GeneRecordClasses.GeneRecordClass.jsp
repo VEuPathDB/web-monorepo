@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -18,7 +18,7 @@
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 <c:set var="organismFull" value="${attrs['organism_full'].value}"/>
 
-<site:header title="${wdkRecord.primaryKey}" 
+<imp:header title="${wdkRecord.primaryKey}" 
 	     refer="recordPage" 
              divisionName="Gene Record"
              division="queries_tools"/>
@@ -60,7 +60,7 @@
 
 
 <%-- quick tool-box for the record --%>
-  <site:recordToolbox /> 
+  <imp:recordToolbox /> 
 
 <br>
 <%--#############################################################--%>
@@ -100,13 +100,13 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 	<!-- the basket and favorites  -->
-  	<wdk:recordPageBasketIcon />
+  	<imp:recordPageBasketIcon />
 
 </div>
 
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}${append}" />
 <br>
@@ -193,7 +193,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
     <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
   </c:set>
 
-  <wdk:toggle 
+  <imp:toggle 
     name="dnaContextSyn" displayName="Genomic Context"
     displayLink="${has_model_comment}"
     content="${gnCtxImg}" isOpen="true" 
@@ -210,12 +210,12 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 <%-- snps dataTable defined above --%>
 <c:if test="${snps ne 'none'}">
 
-<wdk:wdkTable tblName="SNPs" isOpen="true"
+<imp:wdkTable tblName="SNPs" isOpen="true"
      attribution="Widmer_SNPs"/>
 </c:if>
 
 <!-- gene alias table -->
-<%-- <wdk:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
+<%-- <imp:wdkTable tblName="Alias" isOpen="true" attribution=""/> --%>
 
 <!-- Mercator / Mavid alignments -->
 <c:if test="${strand eq '-'}">
@@ -223,11 +223,11 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 </c:if>
 
 <c:set var="mercatorAlign">
-<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
                     contigId="${contig}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"/>
 </c:set>
 
-<wdk:toggle isOpen="false"
+<imp:toggle isOpen="false"
   name="mercatorAlignment"
   displayName="Multiple Sequence Alignment"
   content="${mercatorAlign}"
@@ -235,7 +235,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 
 
 
-<site:pageDivider name="Annotation"/>
+<imp:pageDivider name="Annotation"/>
 
 <%------------------------------------------------------------------%>
 <%-- moved above
@@ -258,17 +258,17 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 
 <c:set var='commentLegend'>
     <c:catch var="e">
-      	<site:dataTable tblName="UserComments"/>
+      	<imp:dataTable tblName="UserComments"/>
     </c:catch>
     <c:if test="${e != null}">
-     	<site:embeddedError 
+     	<imp:embeddedError 
          	msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
          	e="${e}" 
      		/>
     </c:if>
 </c:set>
 
-<site:panel 
+<imp:panel 
     displayName="User Comments"
     content="${commentLegend}" />
 <br>
@@ -285,7 +285,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 
 
 <!-- External Links --> 
-<wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 
 <%-- ORTHOMCL ------------------------------------------------------%>
@@ -294,10 +294,10 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="<site:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+      <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_Phyletic,OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_Phyletic,OrthoMCL"
                  postscript="${orthomclLink}"/>
 
   <c:set var="attribution">
@@ -311,7 +311,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 enzymeDB,CparvumEC-KEGG,ChominisEC-KEGG,CparvumEC-CryptoCyc,ChominisEC-CryptoCyc
 </c:set>
 
-<wdk:wdkTable tblName="EcNumber" isOpen="true"
+<imp:wdkTable tblName="EcNumber" isOpen="true"
      attribution="${attribution}"/>
 
 </c:if>
@@ -319,7 +319,7 @@ enzymeDB,CparvumEC-KEGG,ChominisEC-KEGG,CparvumEC-CryptoCyc,ChominisEC-CryptoCyc
 <%-- PFAM ----------------------------------------------------------%>
 <%--<c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
-<wdk:wdkTable tblName="PfamDomains" isOpen="true"
+<imp:wdkTable tblName="PfamDomains" isOpen="true"
      attribution=""/>
 </c:if>--%>
 
@@ -331,16 +331,16 @@ GO,InterproscanData,
 CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
 </c:set>
 
-<wdk:wdkTable tblName="GoTerms" isOpen="true"
+<imp:wdkTable tblName="GoTerms" isOpen="true"
      attribution="${attribution}"/>
 </c:if>
 
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+<imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
-<wdk:wdkTable tblName="Notes" isOpen="true" />
+<imp:wdkTable tblName="Notes" isOpen="true" />
 
 
 <%------------------------------------------------------------------%>
@@ -352,7 +352,7 @@ CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
 ${attrs['linkout'].value}
 </c:set>
 
-<site:panel 
+<imp:panel 
     displayName="Links to Other Web Pages"
     content="${content}" />
 <br>
@@ -360,7 +360,7 @@ ${attrs['linkout'].value}
 <%-- Protein Features ---------------------------------------------------%>
 
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-  <site:pageDivider name="Protein"/>
+  <imp:pageDivider name="Protein"/>
 </c:if>
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
@@ -385,7 +385,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
            <c:import url="${proteinFeaturesUrl}"/>
         </c:catch>
         <c:if test="${e!=null}">
-            <site:embeddedError 
+            <imp:embeddedError 
                 msg="<font size='-2'>temporarily unavailable</font>" 
                 e="${e}" 
             />
@@ -393,7 +393,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
         </center></noindex>
     </c:set>
 
-    <wdk:toggle name="proteinContext"  displayName="Protein Features"
+    <imp:toggle name="proteinContext"  displayName="Protein Features"
              content="${proteinFeaturesImg}"
              attribution="${attribution}"/>
 
@@ -408,12 +408,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 
  <c:choose>
   <c:when test="${min_mw != null && max_mw != null && min_mw != max_mw}">
-   <site:panel 
+   <imp:panel 
       displayName="Predicted Molecular Weight"
       content="${min_mw} to ${max_mw} Da" />
     </c:when>
     <c:otherwise>
-   <site:panel 
+   <imp:panel 
       displayName="Predicted Molecular Weight"
       content="${mw} Da" />
     </c:otherwise>
@@ -424,12 +424,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 
         <c:choose>
             <c:when test="${ip.value != null}">
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="${ip.value}" />
             </c:when>
             <c:otherwise>
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="N/A" />
             </c:otherwise>
@@ -441,7 +441,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 <c:set var="attribution">
 </c:set>
 
-<wdk:wdkTable tblName="Epitopes" isOpen="true"
+<imp:wdkTable tblName="Epitopes" isOpen="true"
      attribution="${attribution}"/>
 
 </c:if>
@@ -452,13 +452,13 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 <c:set var="attribution">
 </c:set>
 
-<wdk:wdkTable tblName="IsolateOverlap" isOpen="true"
+<imp:wdkTable tblName="IsolateOverlap" isOpen="true"
      attribution="${attribution}"/>
 
 </c:if>
 --%>
 <c:if test="${organism eq parvumOrganism}">
-<wdk:wdkTable tblName="MassSpec" isOpen="true"
+<imp:wdkTable tblName="MassSpec" isOpen="true"
                attribution="Wastling1DGelLSMassSpec,Wastling2DGelLSMassSpec,WastlingMudPitSolMassSpec,WastlingMudPitInsolMassSpec,CryptoLoweryLCMSMSInsolExcystedMassSpec,CryptoLoweryLCMSMSInsolNonExcystedMassSpec,CryptoLoweryLCMSMSSolMassSpec,Ferrari_Proteomics_LTQ_Oocyst_walls,Ferrari_Proteomics_LTQ_intact_oocysts_merged,Ferrari_Proteomics_LTQ_Sporozoites_merged,Fiser_Proteomics_16May2006_1D_gel,Fiser_Proteomics_24Jun2006_1D_gel,Fiser_Proteomics_14Aug2006_1D_gel,Crypto_Proteomics_from_Lorenza_Putignani"/>
 </c:if>
 
@@ -467,28 +467,28 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
     PDB by the protein sequence of ${id}</a>
 </c:set>
 
-<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
 
-<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+<imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
   ${attrs['ssgcid_request_link']}
 </c:if>
 
-<wdk:wdkTable tblName="Antibody" attribution="Antibody"/>
+<imp:wdkTable tblName="Antibody" attribution="Antibody"/>
 
 </c:if>
 
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
-  <site:pageDivider name="Expression"/>
+  <imp:pageDivider name="Expression"/>
 
-  <site:expressionGraphs organism="${organismFull}"/>
+  <imp:expressionGraphs organism="${organismFull}"/>
 
 </c:if>
 
 
-<site:pageDivider name="Sequences"/>
+<imp:pageDivider name="Sequences"/>
 
 <p>
 <table border='0' width='100%'>
@@ -508,7 +508,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
   <font size="-1">Sequence Length: ${fn:length(attr.value)} aa</font><br/>
     </noindex>
 </c:set>
-<wdk:toggle
+<imp:toggle
     name="Translation"
     isOpen="true"
     displayName="Translation"
@@ -524,7 +524,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
   <font size="-1">Sequence Length: ${fn:length(attr.value)} bp</font><br/>
     </noindex>
 </c:set>
-<wdk:toggle
+<imp:toggle
     name="TranscriptSequence"
     isOpen="false"
     displayName="Transcript Sequence"
@@ -548,7 +548,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
     </noindex>
 </c:set>
 
-<wdk:toggle
+<imp:toggle
     name="GenomicSequence" 
     isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
@@ -565,7 +565,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
   <font size="-1">Sequence Length: ${fn:length(attr.value)} bp</font><br/>
     </noindex>
 </c:set>
-<wdk:toggle
+<imp:toggle
     name="CodingSequence"
     isOpen="true"
     displayName="Coding Sequence"
@@ -619,7 +619,7 @@ Teichmann SA, Ivens A, Dear PH.
     </c:set>
 </c:if>
 
-<site:panel
+<imp:panel
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
 <br>
@@ -629,10 +629,10 @@ Teichmann SA, Ivens A, Dear PH.
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
 
-<site:footer/>
+<imp:footer/>
 
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
-<site:pageLogger name="gene page" />
+<imp:pageLogger name="gene page" />

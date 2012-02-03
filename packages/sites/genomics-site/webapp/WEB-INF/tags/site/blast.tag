@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
@@ -134,13 +134,13 @@ changeQuestion();getBlastAlgorithm();
 
 		    <c:when test="${pNam eq 'BlastDatabaseOrganism'}">
 		      <td  id="${qP.name}aaa">
-		            <wdk:enumParamInput qp="${qP}" />
+		            <imp:enumParamInput qp="${qP}" />
 		      </td>
 		    </c:when>
 
 		    <c:when test="${pNam eq 'BlastDatabaseType'}">
 		     <td  id="${qP.name}aaa">
-		            <wdk:enumParamInput qp="${qP}" />
+		            <imp:enumParamInput qp="${qP}" />
 
 <script type="text/javascript" >
 updateDatabaseTypeOnclick("${wdkQuestion.name}");
@@ -157,7 +157,7 @@ updateDatabaseTypeOnclick("${wdkQuestion.name}");
 
 		        <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
 		          <td>
-		            <wdk:enumParamInput qp="${qP}" />
+		            <imp:enumParamInput qp="${qP}" />
 		          </td>
 		        </c:when>
 		        <c:otherwise>

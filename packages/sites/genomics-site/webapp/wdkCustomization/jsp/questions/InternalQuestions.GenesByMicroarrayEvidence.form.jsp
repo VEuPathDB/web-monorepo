@@ -1,6 +1,6 @@
 
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -36,7 +36,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set value="${wdkModel.displayName}" var="project"/>
 
-<wdk:errors/>
+<imp:errors/>
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
@@ -55,25 +55,25 @@
 
 <c:choose>
  <c:when test = "${project == 'FungiDB'}">
-    <site:queryList columns="${columns}" questions="${fungiQuestions}"/>
+    <imp:queryList columns="${columns}" questions="${fungiQuestions}"/>
   </c:when>
  <c:when test = "${project == 'AmoebaDB'}">
-    <site:queryList columns="${columns}" questions="${amoebaQuestions}"/>
+    <imp:queryList columns="${columns}" questions="${amoebaQuestions}"/>
   </c:when>
   <c:when test = "${project == 'GiardiaDB'}">
-    <site:queryList columns="${columns}" questions="${giardiaQuestions}"/>
+    <imp:queryList columns="${columns}" questions="${giardiaQuestions}"/>
   </c:when>
   <c:when test = "${project == 'EuPathDB'}">
-    <site:queryList columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
+    <imp:queryList columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
   </c:when>
   <c:when test = "${project == 'PlasmoDB'}">
-    <site:queryList  columns="${columns}"  questions="${plasmoQuestions}"/>
+    <imp:queryList  columns="${columns}"  questions="${plasmoQuestions}"/>
   </c:when>
   <c:when test = "${project == 'ToxoDB'}">
-    <site:queryList columns="${columns}" questions="${toxoQuestions}"/>
+    <imp:queryList columns="${columns}" questions="${toxoQuestions}"/>
   </c:when>
   <c:when test = "${project == 'TriTrypDB'}">
-    <site:queryList columns="${columns}" questions="${tritrypQuestions}"/>
+    <imp:queryList columns="${columns}" questions="${tritrypQuestions}"/>
   </c:when>
 </c:choose>
     

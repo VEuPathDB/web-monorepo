@@ -1,11 +1,10 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
-
 
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
@@ -58,7 +57,7 @@
   <c:choose>
     <c:when test="${fn:length(ds_ref_questions) == 0}">
       <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
-      <site:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+      <imp:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
     </c:when>
     <c:otherwise>
       <h2>Data Sources:</h2>

@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -12,5 +12,5 @@
 </c:if>
 
 <%-- used by gbrowse and error pages directly, and by community files and download files pages via /html/include/fancy*IndexHeader.shtml ----%>
-<site:header     banner="${project} ${ftype}" />
+<imp:header     banner="${project} ${ftype}" />
 

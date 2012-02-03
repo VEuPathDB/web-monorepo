@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -18,7 +18,7 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<site:header title="${wdkModel.displayName} : gene ${id}"
+<imp:header title="${wdkModel.displayName} : gene ${id}"
 			 refer="recordPage"
              divisionName="Gene Record"
              division="queries_tools"/>
@@ -41,7 +41,7 @@
 
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
-<site:header title="${wdkModel.displayName} : gene ${id} (${prd})"
+<imp:header title="${wdkModel.displayName} : gene ${id} (${prd})"
 			 refer="recordPage"
              banner="${id}<br>${prd}"
              divisionName="Gene Record"
@@ -86,7 +86,7 @@
 
 <%--  TITLE  --------------------------%>
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <div class="h2center" style="font-size:150%">
 ${id}<br><span style="font-size:70%">${prd}</span><br/>
@@ -109,7 +109,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 	<!-- the basket and favorites  -->
-  	<wdk:recordPageBasketIcon />
+  	<imp:recordPageBasketIcon />
 
         <%--${fn:length(wdkRecord.tables['CommunityExpComments'])}--%>
 
@@ -138,17 +138,17 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 </a>
 -->
 
-<site:panel 
+<imp:panel 
     displayName="Community Expert Annotation"
     content="" />
 
 <c:catch var="e">
-  <site:dataTable tblName="CommunityExpComments"/>
+  <imp:dataTable tblName="CommunityExpComments"/>
 </c:catch>
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
       <tr><td><b>User Comments</b>
-     <site:embeddedError
+     <imp:embeddedError
          msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}"
      />
@@ -161,7 +161,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <%-- OVERVIEW ---------------%>
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel
+<imp:panel
     displayName="${attr.displayName}"
     content="${attr.value}${append}" />
 <br>
@@ -193,7 +193,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
   </c:set>
 
-  <wdk:toggle 
+  <imp:toggle 
     name="dnaContextSyn" displayName="Genomic Context" 
     dsLink="/cgi-bin/gbrowse/${fn:toLowerCase(projectId)}/?help=citations" 
     content="${gnCtxImg}" isOpen="true" 
@@ -205,21 +205,21 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <%-- END DNA CONTEXT --------------------------------------------%>
 
 <!-- strains comparison table -->
-<wdk:wdkTable tblName="Strains" isOpen="true"
+<imp:wdkTable tblName="Strains" isOpen="true"
                attribution="T.gondiiGT1_contigsGB,T.gondiiME49_contigsGB,T.gondiiVEG_contigsGB"/>
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+<imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 <!-- snps between strains -->
-<wdk:wdkTable tblName="SNPs" isOpen="false"
+<imp:wdkTable tblName="SNPs" isOpen="false"
                    attribution="AmitAlignmentSnps"/>
 
 <!-- locations -->
-<wdk:wdkTable tblName="Genbank" isOpen="true"
+<imp:wdkTable tblName="Genbank" isOpen="true"
                attribution="T.gondiiGT1_contigsGB,T.gondiiME49_contigsGB,T.gondiiVEG_contigsGB" />
 <!-- version 4 genes -->
-<wdk:wdkTable tblName="ToxoVer4Genes" isOpen="true"
+<imp:wdkTable tblName="ToxoVer4Genes" isOpen="true"
                attribution="" />
 
 
@@ -229,11 +229,11 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
   </c:if>
 
 <c:set var="mercatorAlign">
-  <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+  <imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
                       contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="secondary2" cellPadding="0"/>
 </c:set>
 
-<wdk:toggle isOpen="false"
+<imp:toggle isOpen="false"
   name="mercatorAlignment"
   displayName="Multiple Sequence Alignment of ${sequence_id} across available genomes"
   content="${mercatorAlign}"
@@ -241,7 +241,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 </c:if>
 
-<site:pageDivider name="Annotation"/>
+<imp:pageDivider name="Annotation"/>
 
 <%-- moved above
 <c:url var="commentsUrl" value="addComment.do">
@@ -261,13 +261,13 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 </a></b><br><br>
 
 <c:catch var="e">
-<wdk:wdkTable tblName="UserComments"/>
+<imp:wdkTable tblName="UserComments"/>
 </c:catch>
 
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
       <tr><td><b>User Comments</b>
-     <site:embeddedError
+     <imp:embeddedError
          msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}"
      />
@@ -277,13 +277,13 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 
 <c:catch var="e">
-  <wdk:wdkTable tblName="TaskComments" isOpen="true"
+  <imp:wdkTable tblName="TaskComments" isOpen="true"
                  attribution="TASKAnnotation" suppressColumnHeaders="true"/>
 </c:catch>
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
       <tr><td><b>Toxoplasma Genome Sequencing Project Annotation </b>
-     <site:embeddedError 
+     <imp:embeddedError 
          msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}" 
      />
@@ -293,46 +293,46 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 
 <!-- External Links --> 
-<wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 <c:if test="${isCodingGene}">
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="<site:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+      <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
                  postscript="${orthomclLink}"/>
 </c:if>
 
-  <wdk:wdkTable tblName="EcNumber" isOpen="true"
+  <imp:wdkTable tblName="EcNumber" isOpen="true"
                  attribution="ME49_Annotation,enzymeDB"/>
 
-  <wdk:wdkTable tblName="GoTerms" isOpen="true"
+  <imp:wdkTable tblName="GoTerms" isOpen="true"
                  attribution="GO,GOAssociations,InterproscanData"/>
 
 <c:set var="externalDbName" value="${attrs['external_db_name']}"/>
 <c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
 
 <c:if test="${externalDbName.value eq 'Roos Lab T. gondii apicoplast'}">
-  <wdk:wdkTable tblName="Notes" isOpen="true"
+  <imp:wdkTable tblName="Notes" isOpen="true"
 	 	 attribution="TgondiiApicoplast"/>
 </c:if>                 
 
-  <wdk:wdkTable tblName="MetabolicPathways" isOpen="true"
+  <imp:wdkTable tblName="MetabolicPathways" isOpen="true"
                  attribution="MetabolicDbXRefs_Feng"/>
 
-<wdk:wdkTable tblName="Antibody" attribution="Antibody"/>
+<imp:wdkTable tblName="Antibody" attribution="Antibody"/>
 <c:set var="toxocyc" value="${attrs['ToxoCyc']}"/>
 
 <!--
-<site:panel 
+<imp:panel 
     displayName="ToxoCyc <a href='${toxocyc.url}'>View</a>"
     content="" />
 -->
 
 <c:if test="${isCodingGene}">
-  <site:pageDivider name="Protein"/>
+  <imp:pageDivider name="Protein"/>
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
@@ -376,7 +376,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
            <c:import url="${proteinFeaturesUrl}"/>
         </c:catch>
         <c:if test="${e!=null}">
-            <site:embeddedError 
+            <imp:embeddedError 
                 msg="<font size='-2'>temporarily unavailable</font>" 
                 e="${e}" 
             />
@@ -384,7 +384,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
         </center></noindex>
     </c:set>
 
-    <wdk:toggle name="proteinFeatures" 
+    <imp:toggle name="proteinFeatures" 
         displayName="Protein Features"
         content="${proteinFeaturesImg}"
         attribution="${attribution}"/>
@@ -400,12 +400,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
  <c:choose>
   <c:when test="${min_mw != null && max_mw != null && min_mw != max_mw}">
-   <site:panel 
+   <imp:panel 
       displayName="Molecular Weight"
       content="${min_mw} to ${max_mw} Da" />
     </c:when>
     <c:otherwise>
-   <site:panel 
+   <imp:panel 
       displayName="Molecular Weight"
       content="${mw} Da" />
     </c:otherwise>
@@ -416,33 +416,33 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
         <c:choose>
             <c:when test="${ip.value != null}">
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="${ip.value}" />
             </c:when>
             <c:otherwise>
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="N/A" />
             </c:otherwise>
         </c:choose>
 
-    <wdk:wdkTable tblName="Epitopes"/>
+    <imp:wdkTable tblName="Epitopes"/>
 
 </c:if>
 
-<wdk:wdkTable tblName="MassSpec" isOpen="true"
+<imp:wdkTable tblName="MassSpec" isOpen="true"
                attribution="Wastling-Rhoptry,Wastling1D_SDSPage,Wastling-1D_SDSPage-Soluble,Wastling-1D_SDSPage-Insoluble,Wastling-MudPIT-Soluble,Wastling-MudPIT-Insoluble,Murray-Roos_Proteomics_Conoid-enriched,Murray-Roos_Proteomics_Conoid-depleted,Dec2006_Tg_membrane_Fayun_Proteomics,Oct2006_Tg_membrane_Fayun_Proteomics,massspec_1D_tg_1frac_020306_Proteomics,massspec_june30_2006_Proteomics,massspec_may02-03_2006_Proteomics,massspec_may10_2006_Proteomics,massspec_May2007_Proteomics,massspec_May22_2007_Proteomics,massspec_membrane_frac_frac_Proteomics,Moreno-1-annotated,massspec_Carruthers_2destinct_peptides,massspec_MudPIT_Twinscan_hits"/>
 
 
 
- <wdk:wdkTable tblName="MassSpecMod" isOpen="true"
+ <imp:wdkTable tblName="MassSpecMod" isOpen="true"
       attribution="Tg_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC,Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Bound_Mascot-based_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Bound_Sequest-based_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Unbound_Phosphoproteome_RSRC"/> 
 
 
-<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
 
-<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+<imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
   ${attrs['ssgcid_request_link']}
@@ -450,17 +450,17 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
-<site:pageDivider name="Expression"/>
+<imp:pageDivider name="Expression"/>
 
  <%-- ------------------------------------------------------------------ --%>
-  <site:expressionGraphs organism="${organism_full}"/>
+  <imp:expressionGraphs organism="${organism_full}"/>
  <%-- ------------------------------------------------------------------ --%>
 
 
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1' || organism_full eq 'Toxoplasma gondii VEG'}">
 
 
-<wdk:wdkTable tblName="ToxoExpandStrainsMicroarray" isOpen="true"
+<imp:wdkTable tblName="ToxoExpandStrainsMicroarray" isOpen="true"
                    attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
 
 
@@ -469,7 +469,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
 
 
-<site:pageDivider name="Sequence"/>
+<imp:pageDivider name="Sequence"/>
 <i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
 <c:if test="${isCodingGene}">
 <!-- protein sequence -->
@@ -478,7 +478,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
   <pre><w:wrap size="60">${proteinSequence.value}</w:wrap></pre>
   <font size="-1">Sequence Length: ${fn:length(proteinSequence.value)} aa</font><br/>
 </c:set>
-<wdk:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
+<imp:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
              content="${proteinSequenceContent}" isOpen="false"/>
 </c:if>
 
@@ -488,7 +488,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
   <pre><w:wrap size="60">${transcriptSequence.value}</w:wrap></pre>
   <font size="-1">Sequence Length: ${fn:length(transcriptSequence.value)} bp</font><br/>
 </c:set>
-<wdk:toggle name="transcriptSequence"
+<imp:toggle name="transcriptSequence"
              displayName="${transcriptSequence.displayName}"
              content="${transcriptSequenceContent}" isOpen="false"/>
 
@@ -505,7 +505,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
   <font size="-1">Sequence Length: ${fn:length(totSeq)} bp</font><br/>
 </c:set>
 
-<wdk:toggle name="genomicSequence" isOpen="false"
+<imp:toggle name="genomicSequence" isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
     content="${seq}" />
 
@@ -516,7 +516,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
   <pre><w:wrap size="60">${cds.value}</w:wrap></pre>
   <font size="-1">Sequence Length: ${fn:length(cds.value)} bp</font><br/>
 </c:set>
-<wdk:toggle name="cds" displayName="${cds.displayName}"
+<imp:toggle name="cds" displayName="${cds.displayName}"
              content="${cdsContent}" isOpen="false"/>
 </c:if>
 
@@ -571,7 +571,7 @@ Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David
 </c:choose>
 
 
-<site:panel 
+<imp:panel 
     displayName="Genome Sequencing and Annotation"
     content="${reference}" />
 
@@ -581,6 +581,6 @@ Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David
 </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>
 
-<site:pageLogger name="gene page" />
+<imp:pageLogger name="gene page" />

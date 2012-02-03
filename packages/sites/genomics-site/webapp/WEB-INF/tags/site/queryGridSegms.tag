@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -15,11 +15,11 @@
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>
-                    <site:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansBySourceId" linktext="Genomic Location"  existsOn="A Am C G M Pi P T Tr Tt"/>
+                    <imp:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansBySourceId" linktext="Genomic Location"  existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
 <%--
                  <tr>
-                    <site:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansByLocation" linktext="Genomic Location" existsOn=""/>
+                    <imp:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansByLocation" linktext="Genomic Location" existsOn=""/>
                 </tr>
 --%>
             </table>
@@ -36,7 +36,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
                  <tr>
-                     <site:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansByMotifSearch" linktext="DNA Motif" existsOn="A Am C G M Pi P T Tr Tt"/>
+                     <imp:queryGridMakeUrl qset="SpanQuestions" qname="DynSpansByMotifSearch" linktext="DNA Motif" existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
             </table>
 </div>

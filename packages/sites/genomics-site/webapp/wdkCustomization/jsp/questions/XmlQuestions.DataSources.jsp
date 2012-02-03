@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -26,7 +26,7 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="${wdkModel.displayName} : Data Sources"
+<imp:header title="${wdkModel.displayName} : Data Sources"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
@@ -201,4 +201,4 @@
 <c:if test="${param['datasets'] != null}">
 <a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>"><font size="-1">Click here to see the complete list of Data Sources</font></a><br/>
 </c:if>
-<site:footer/>
+<imp:footer/>

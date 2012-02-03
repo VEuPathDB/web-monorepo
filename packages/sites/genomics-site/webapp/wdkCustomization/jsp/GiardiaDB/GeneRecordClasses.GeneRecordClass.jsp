@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -18,7 +18,7 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<site:header title="GiardiaDB: gene ${id} (${prd})"
+<imp:header title="GiardiaDB: gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
 	     refer="recordPage" 
              divisionName="Gene Record"
@@ -54,7 +54,7 @@
 
 <c:set var="async" value="${param.sync != '1'}"/>
 
-<site:header title="GiardiaDB: gene ${id} (${prd})"
+<imp:header title="GiardiaDB: gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
              refer="recordPage" 
@@ -65,7 +65,7 @@
 <a name="top"></a>
 
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <%-- this block moves here so we can set a link to add a comment on the page title --%>
 <c:url var="commentsUrl" value="addComment.do">
@@ -99,23 +99,23 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 	<!-- the basket and favorites  -->
-  	<wdk:recordPageBasketIcon />
+  	<imp:recordPageBasketIcon />
 
 </div>
 
 
 
-<site:panel 
+<imp:panel 
     displayName="Community Expert Annotation"
     content="" />
 
 <c:catch var="e">
-  <site:dataTable tblName="CommunityExpComments"/>
+  <imp:dataTable tblName="CommunityExpComments"/>
 </c:catch>
 <c:if test="${e != null}">
   <table  width="100%" cellpadding="3">
     <tr><td><b>User Comments</b>
-    <site:embeddedError
+    <imp:embeddedError
     msg="<font size='-1'><i>temporarily unavailable.</i></font>"
     e="${e}"
     />
@@ -156,7 +156,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
    </c:set>
 </c:if>
 
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}${append}   ${assemblage} ${isdeprecated}" />
 <br>
@@ -188,7 +188,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
     <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
   </c:set>
 
-  <wdk:toggle 
+  <imp:toggle 
     name="dnaContextSyn" displayName="Genomic Context"
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
@@ -200,7 +200,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <%-- END DNA CONTEXT --------------------------------------------%>
 
 <%-- Gene Location ------------------------------------------------------%>
-<wdk:wdkTable tblName="Genbank" isOpen="true"
+<imp:wdkTable tblName="Genbank" isOpen="true"
                attribution=""/>
 
 
@@ -209,22 +209,22 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
   </c:if>
 
 <!-- Gene Deprecation --> 
-<wdk:wdkTable tblName="GeneDeprecation" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="GeneDeprecation" isOpen="true" attribution=""/>
 
 <!-- External Links --> 
-<wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+<imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">
-<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
                     contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
                     availableGenomes=""/>
 </c:set>
 
-<wdk:toggle isOpen="true"
+<imp:toggle isOpen="true"
   name="mercatorAlignment"
   displayName="Multiple Sequence Alignment"
   content="${mercatorAlign}"
@@ -234,10 +234,10 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 
 
 
-<site:pageDivider name="Annotation"/>
+<imp:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
 
-<wdk:wdkTable tblName="Notes" isOpen="true" />
+<imp:wdkTable tblName="Notes" isOpen="true" />
 
 <%--- Comments -----------------------------------------------------%>
 <%-- moved above 
@@ -258,12 +258,12 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 
 
 <c:catch var="e">
-<wdk:wdkTable tblName="UserComments"  isOpen="true"/>
+<imp:wdkTable tblName="UserComments"  isOpen="true"/>
 </c:catch>
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
       <tr><td><b>User Comments</b>
-     <site:embeddedError 
+     <imp:embeddedError 
          msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}" 
      />
@@ -276,7 +276,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
   <c:set var='treeLink'>
     ${tree_applet} against RefEuks database
   </c:set>
-  <site:panel 
+  <imp:panel 
       displayName="Phylogenetic Tree"
       content="${treeLink}" />
 </c:if>
@@ -287,10 +287,10 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="<site:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+      <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
                  postscript="${orthomclLink}"/>
 
 </c:if>
@@ -298,14 +298,14 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <%-- Microarray Data ------------------------------------------------------%>
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
-  <site:pageDivider name="Expression"/>
+  <imp:pageDivider name="Expression"/>
 
 
-<site:expressionGraphs organism="${organismFull}"/>
+<imp:expressionGraphs organism="${organismFull}"/>
 
 <%-- SAGE tags ------------------------------------------------------%>
 
-<wdk:wdkTable tblName="SageTags" isOpen="FALSE"
+<imp:wdkTable tblName="SageTags" isOpen="FALSE"
                attribution="GiardiaSageTagArrayDesign,GiardiaSageTagFreqs"/>
 
 </c:if>
@@ -314,7 +314,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
-<site:pageDivider name="Protein Features"/>
+<imp:pageDivider name="Protein Features"/>
    
     <c:set var="attribution">
     InterproscanData
@@ -331,7 +331,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
            <c:import url="${proteinFeaturesUrl}"/>
         </c:catch>
         <c:if test="${e!=null}">
-            <site:embeddedError 
+            <imp:embeddedError 
                 msg="<font size='-2'>temporarily unavailable</font>" 
                 e="${e}" 
             />
@@ -339,7 +339,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
         </center></noindex>
     </c:set>
 
-    <wdk:toggle 
+    <imp:toggle 
         displayName="Predicted Protein Features"
         content="${proteinFeaturesImg}"
         isOpen="true"
@@ -351,11 +351,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 
 <%-- EC ------------------------------------------------------------%>
 
-  <wdk:wdkTable tblName="EcNumber" isOpen="true"
+  <imp:wdkTable tblName="EcNumber" isOpen="true"
                attribution="enzymeDB,G.lamblia_contigs"/>
 
 <%-- GO ------------------------------------------------------------%>
-  <wdk:wdkTable tblName="GoTerms" isOpen="true"
+  <imp:wdkTable tblName="GoTerms" isOpen="true"
                attribution="GO,InterproscanData,G.lamblia_contigs"/>
 
 
@@ -367,12 +367,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 
  <c:choose>
   <c:when test="${min_mw != null && max_mw != null && min_mw != max_mw}">
-   <site:panel 
+   <imp:panel 
       displayName="Molecular Weight"
       content="${min_mw} to ${max_mw} Da" />
     </c:when>
     <c:otherwise>
-   <site:panel 
+   <imp:panel 
       displayName="Molecular Weight"
       content="${mw} Da" />
     </c:otherwise>
@@ -383,12 +383,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 
         <c:choose>
             <c:when test="${ip.value != null}">
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="${ip.value}" />
             </c:when>
             <c:otherwise>
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="N/A" />
             </c:otherwise>
@@ -398,17 +398,17 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 
 
 <%-- EPITOPES ------------------------------------------------------%>
-  <wdk:wdkTable tblName="Epitopes" isOpen="true"
+  <imp:wdkTable tblName="Epitopes" isOpen="true"
                  attribution="IEDB_Epitopes"/>
 </c:if>
 
-<wdk:wdkTable tblName="MassSpec" isOpen="true"
+<imp:wdkTable tblName="MassSpec" isOpen="true"
                attribution="DTASelect-filter_032108_Proteomics,Giardia_Proteomics_From_Tachezy"/>
 
 
-<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
 
-<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+<imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
   ${attrs['ssgcid_request_link']}
@@ -417,7 +417,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 
 
 
-<site:pageDivider name="Sequences"/>
+<imp:pageDivider name="Sequences"/>
 
 <p>
 <table border='0' width='100%'>
@@ -436,7 +436,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 	<font size="-1">Sequence Length: ${fn:length(attr.value)} aa</font><br/>
     </noindex>
 </c:set>
-<wdk:toggle
+<imp:toggle
     name="ProteinSequence"
     isOpen="true"
     displayName="${attr.displayName}"
@@ -452,7 +452,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 	<font size="-1">Sequence Length: ${fn:length(attr.value)} bp</font><br/>
     </noindex>
 </c:set>
-<wdk:toggle
+<imp:toggle
     name="mRnaSequence"
     isOpen="false"
     displayName="${attr.displayName}"
@@ -472,7 +472,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
   <font size="-1">Sequence Length: ${fn:length(totSeq)} bp</font><br/>
 </c:set>
 
-<wdk:toggle
+<imp:toggle
     name="GenomicSequence"
     displayName="Genomic Sequence (introns shown in lower case)"
     isOpen="false"
@@ -489,7 +489,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 	<font size="-1">Sequence Length: ${fn:length(attr.value)} bp</font><br/>
     </noindex>
 </c:set>
-<wdk:toggle
+<imp:toggle
     name="CodingSequence"
     isOpen="true"
     displayName="${attr.displayName}"
@@ -522,7 +522,7 @@ Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Kar
 
 
 
-<site:panel 
+<imp:panel 
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
 <br>
@@ -533,9 +533,9 @@ Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Kar
 
 <%-- jsp:include page="/include/footer.html" --%>
 
-<site:footer/>
+<imp:footer/>
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
-<site:pageLogger name="gene page" />
+<imp:pageLogger name="gene page" />

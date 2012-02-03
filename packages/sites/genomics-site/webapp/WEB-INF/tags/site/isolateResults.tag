@@ -1,8 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}"/>
@@ -30,7 +30,7 @@
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
 <c:set target="${typeMap}" property="singular" value="${wdkStep.displayType}"/>
-<wdk:getPlural pluralMap="${typeMap}"/>
+<imp:getPlural pluralMap="${typeMap}"/>
 <c:set var="type" value="${typeMap['plural']}"/>
 
 <c:set var="qsp" value="${fn:split(wdk_query_string,'&')}" />
@@ -55,7 +55,7 @@
 <c:set var="commandUrl"><c:url value="/processSummary.do?${commandUrl}" /></c:set>
 
 <c:if test="${strategy != null}">
-    <wdk:filterLayouts strategyId="${strategy.strategyId}" 
+    <imp:filterLayouts strategyId="${strategy.strategyId}" 
                        stepId="${wdkStep.stepId}"
                        answerValue="${wdkAnswer}" />
 </c:if>
@@ -133,10 +133,10 @@
 	</th>
 --%>
 	<th style="text-align: left;white-space:nowrap;"> 
-	       <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
+	       <imp:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
 	</th>
 	<th style="text-align: right;white-space:nowrap;">
-               <wdk:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
+               <imp:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
 	</th>
 <!--
 	<th style="text-align: right;white-space:nowrap;">
@@ -460,7 +460,7 @@
 	</th>
 --%>
 	<th style="text-align:left;white-space:nowrap;"> 
-	       <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="bottom"/> 
+	       <imp:pager wdkAnswer="${wdkAnswer}" pager_id="bottom"/> 
 	</th>
 	<th style="text-align:right;white-space:nowrap;">
 		&nbsp;

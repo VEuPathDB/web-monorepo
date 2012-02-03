@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
@@ -6,7 +6,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <!-- get wdkModel name to display as page header -->
-<site:header title="PlasmoDB : gene expression profile"
+<imp:header title="PlasmoDB : gene expression profile"
                  banner="Gene Expression Profile"
                  parentDivision="PlasmoDB"
                  parentUrl="/home.jsp"
@@ -83,4 +83,4 @@
 
 </table>
 
-<site:footer/>
+<imp:footer/>

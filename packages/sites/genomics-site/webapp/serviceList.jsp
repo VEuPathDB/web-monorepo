@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <!-- serviceList.jsp -->
@@ -8,7 +8,7 @@
 
 <!-- get wdkModel name to display as page header -->
 <c:set value="${wdkModel.displayName}" var="wdkModelDispName"/>
-<site:header banner="${wdkModelDispName}" />
+<imp:header banner="${wdkModelDispName}" />
 
 <c:set var="margin" value="15px"/>
 
@@ -84,7 +84,7 @@ Click on a search below to access its <a href="http://www.w3.org/Submission/wadl
 <br><br>
 
 <!-- show all questionSets in model, driven by categories as in menubar -->
-<site:drop_down_QG2 from="webservices" />
+<imp:drop_down_QG2 from="webservices" />
 
 <br><hr><br>
 
@@ -126,4 +126,4 @@ Click on a search below to access its <a href="http://www.w3.org/Submission/wadl
 </ul>
 
 
-<site:footer/>
+<imp:footer/>

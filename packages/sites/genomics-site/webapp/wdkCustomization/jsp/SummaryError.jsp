@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -20,10 +20,10 @@
      
 <!-- display page header with wdkAnswer's recordClass's type as banner -->
 <c:if test="${resultOnly}">
-    <site:header refer="summaryError"/>
+    <imp:header refer="summaryError"/>
 </c:if>
 
-<%-- <site:header banner="Query cannot be executed" /> --%>
+<%-- <imp:header banner="Query cannot be executed" /> --%>
 
 <%--
 <h2><span style="color: red;">Query cannot be executed</span></h2>
@@ -103,5 +103,5 @@ Your EuPathDB team.
 
 <!-- pager at bottom -->
 <c:if test="${resultOnly}">
-    <site:footer/>
+    <imp:footer/>
 </c:if>

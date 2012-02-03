@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
@@ -8,7 +8,7 @@
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 <c:choose>
 	<c:when test="${projectId != 'CryptoDB' }">  <!-- plasmo and toxo -->
-		<site:question/>
+		<imp:question/>
 	</c:when>
 
 	<c:otherwise>

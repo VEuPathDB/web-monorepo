@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -77,7 +77,7 @@
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Intraerythrocytic Time Series"
@@ -126,7 +126,7 @@
   </c:if>
 
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Asexual parasites from patient blood samples"
@@ -205,7 +205,7 @@
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Overlay of Intraerythrocytic Expression Profiles"
@@ -308,7 +308,7 @@
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Intraerythrocytic 3D7 (photolithographic oligo array)"
@@ -377,7 +377,7 @@
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Gametocyte 3D7/NF54 (photolithographic oligo array)"
@@ -446,7 +446,7 @@
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Developmental series 3D7 (glass slide oligo array)"
@@ -516,7 +516,7 @@
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Developmental series Dd2 (glass slide oligo array)"
@@ -586,7 +586,7 @@
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Developmental series HB3 (glass slide oligo array)"
@@ -625,7 +625,7 @@ trophozite and schizont stage.
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Intraerythrocytic comparison of antigenic and adherent variant clones of <i>P. falciparum 3D7</i>"
@@ -672,7 +672,7 @@ trophozite and schizont stage.
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Sir2 and invasion pathway studies (WT vs. KO)"
@@ -740,7 +740,7 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Distinct physiological states of <i>Plasmodium falciparum</i> in malaria infected patients"
@@ -797,7 +797,7 @@ OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selecte
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Ex vivo intraerythrocitic expression assays of <i>Plasmodium falciparum</i> in malaria infected patients"
@@ -853,7 +853,7 @@ M values (Blue bars in the upper graph) represent the relative expression level 
 <c:set var="noData" value="true"/>
 </c:if>
 
-<wdk:toggle name="${secName}" isOpen="${isOpen}"
+<imp:toggle name="${secName}" isOpen="${isOpen}"
        content="${expressionContent}" noData="${noData}"
        imageId="${imgId}" imageSource="${imgSrc}"
        displayName="Relative expression profiles between liver, mosquito, and red cell stage parasites"
@@ -892,7 +892,7 @@ The overall expression percentile of each condition is the average percentile ov
 <c:set var="noData" value="true"/>
 </c:if>
 
-<wdk:toggle name="${secName}" isOpen="${isOpen}"
+<imp:toggle name="${secName}" isOpen="${isOpen}"
        content="${expressionContent}" noData="${noData}"
        imageId="${imgId}" imageSource="${imgSrc}"
        displayName="Expression profile of liver, mosquito, and red cell stage parasites"
@@ -950,7 +950,7 @@ The overall expression percentile of each condition is the average percentile ov
 <c:set var="noData" value="true"/>
 </c:if>
 
-<wdk:toggle name="${secName}" isOpen="${isOpen}"
+<imp:toggle name="${secName}" isOpen="${isOpen}"
        content="${expressionContent}" noData="${noData}"
        imageId="${imgId}" imageSource="${imgSrc}"
        displayName="Expression profile of blood stage, live stage, gametocyte, and sporozoite samples"
@@ -980,7 +980,7 @@ The overall expression percentile of each condition is the average percentile ov
         <td><image src="<c:url value="/images/spacer.gif"/>" height="155" width="5"></td>        
 
 	<td class="top">  
-          <wdk:wdkTable tblName="TwoChannelDiffExpr" isOpen="true"/>
+          <imp:wdkTable tblName="TwoChannelDiffExpr" isOpen="true"/>
 
         </td>
 
@@ -994,7 +994,7 @@ The overall expression percentile of each condition is the average percentile ov
     </table>
   </c:set>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="P.Berghei Differential Expression - DOZI KO vs. WT"
@@ -1045,7 +1045,7 @@ The overall expression percentile of each condition is the average percentile ov
     <c:set var="noData" value="true"/>
   </c:if>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="P. berghei expression"

@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -26,7 +26,7 @@
 
 <c:set var="headElement">
 </c:set>
-<site:header refer="customSummary" headElement="${headElement}"/>
+<imp:header refer="customSummary" headElement="${headElement}"/>
 <c:set var="scheme" value="${pageContext.request.scheme}" />
 <c:set var="serverName" value="${pageContext.request.serverName}" />
 <c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
@@ -140,6 +140,6 @@ function parse_Url( url, parameter_name )
 </script>
 </c:if>
 
-<wdk:strategyWorkspace includeDYK="true" />
+<imp:strategyWorkspace includeDYK="true" />
 
-<site:footer  refer="customSummary" />
+<imp:footer  refer="customSummary" />

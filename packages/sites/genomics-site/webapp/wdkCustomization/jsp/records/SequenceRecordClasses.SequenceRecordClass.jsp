@@ -1,8 +1,8 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -27,7 +27,7 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<site:header title="${id}"
+<imp:header title="${id}"
              divisionName="Genomic Sequence Record"
              refer="recordPage"
              division="queries_tools"/>
@@ -45,7 +45,7 @@
 <br/>
 
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <div class="h2center" style="font-size:160%">
  	Genomic Sequence
@@ -53,7 +53,7 @@
 
 <div class="h3center" style="font-size:130%">
 	${primaryKey}<br>
-	<wdk:recordPageBasketIcon />
+	<imp:recordPageBasketIcon />
 </div>
 
 <%--#############################################################--%>
@@ -64,7 +64,7 @@
 <c:set var="append" value="" />
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}" />
 <br>
@@ -79,11 +79,11 @@
   <c:param name="flag" value="0" /> 
 </c:url>
 <c:catch var="e">
-      <wdk:wdkTable tblName="SequenceComments" isOpen="true"/>
+      <imp:wdkTable tblName="SequenceComments" isOpen="true"/>
       <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
 </c:catch>
 <c:if test="${e != null}">
-     <site:embeddedError 
+     <imp:embeddedError 
          msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
          e="${e}" 
      />
@@ -145,7 +145,7 @@
            <c:import url="${genomeContextUrl}"/>
         </c:catch>
         <c:if test="${e!=null}"> 
-            <site:embeddedError 
+            <imp:embeddedError 
                 msg="<font size='-2'>temporarily unavailable</font>" 
                 e="${e}" 
             />
@@ -161,7 +161,7 @@
 
     </c:set>
 
-    <wdk:toggle 
+    <imp:toggle 
         isOpen="true"
         name="genomicContext"
         displayName="Genomic Context"
@@ -174,13 +174,13 @@
 <br>
 
 <c:if test="${projectId eq 'GiardiaDB' || projectId eq 'PlasmoDB' || projectId eq 'ToxoDB' || projectId eq 'TriTrypDB'}">
-	<wdk:wdkTable tblName="Aliases" isOpen="true" attribution=""/>
+	<imp:wdkTable tblName="Aliases" isOpen="true" attribution=""/>
 </c:if>
 
-<wdk:wdkTable tblName="Centromere" isOpen="true"
+<imp:wdkTable tblName="Centromere" isOpen="true"
                  attribution=""/>
 
-<wdk:wdkTable tblName="SequencePieces" isOpen="true"
+<imp:wdkTable tblName="SequencePieces" isOpen="true"
                  attribution=""/>
 
 <%------------------------------------------------------------------%>
@@ -213,13 +213,13 @@ ${externalLinks}
 
   <br />
 <h3>Retrieve Multiple Sequence Alignments by Contig / Genomic Sequence IDs</h3>
-   <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" contigId="${id}"
+   <imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" contigId="${id}"
       start="1" end="${attrs['length'].value}" bkgClass="secondary3" cellPadding="0"/>
   </c:if>
 </c:if>
 </c:set>
 
-<wdk:toggle
+<imp:toggle
     isOpen="true"
     name="Sequences"
     attribution=""
@@ -791,7 +791,7 @@ Genome Assembly for Entamoeba histolytica Rahman strain was provided by Gareth W
 
 
 
-<site:panel 
+<imp:panel 
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
 <br>
@@ -803,4 +803,4 @@ Genome Assembly for Entamoeba histolytica Rahman strain was provided by Gareth W
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
-<site:footer/>
+<imp:footer/>

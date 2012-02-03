@@ -1,8 +1,8 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -22,7 +22,7 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<site:header title="${wdkRecord.primaryKey}"
+<imp:header title="${wdkRecord.primaryKey}"
              divisionName="${recordType} Record"
              refer="recordPage"
              division="queries_tools"/>
@@ -38,7 +38,7 @@
 <c:set var="data_type" value="${attrs['data_type']}" />
 
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <div class="h2center" style="font-size:160%">
  	Isolate
@@ -46,14 +46,14 @@
 
 <div class="h3center" style="font-size:130%">
 	${primaryKey}<br>
-	<wdk:recordPageBasketIcon />
+	<imp:recordPageBasketIcon />
 </div>
 
 <%--#############################################################--%>
 
 <c:set var="attr" value="${attrs['overview']}" />
 
-<site:panel
+<imp:panel
     displayName="${attr.displayName}"
         content="${attr.value}" />
 <br>
@@ -62,7 +62,7 @@
 
 <%-- References ------------------------------------------------%>
 
-<wdk:wdkTable tblName="Reference" isOpen="true"
+<imp:wdkTable tblName="Reference" isOpen="true"
      attribution=""/>
 
 <br>
@@ -81,11 +81,11 @@
 </c:url>
 
 <c:catch var="e">
-	   <site:dataTable tblName="IsolateComments"/>
+	   <imp:dataTable tblName="IsolateComments"/>
 	   <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
 </c:catch>
 <c:if test="${e != null}">
-		  <site:embeddedError
+		  <imp:embeddedError
 		    msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
 		    e="${e}"
 		/>
@@ -104,10 +104,10 @@
 <%-- RFLP tables ------------------------------------------------%>
 <c:if test="${data_type eq 'RFLP Typed'}">
 
-<wdk:wdkTable tblName="RFLPgenotype" isOpen="true"
+<imp:wdkTable tblName="RFLPgenotype" isOpen="true"
      attribution=""/>
 
-<wdk:wdkTable tblName="RFLPdata" isOpen="true"
+<imp:wdkTable tblName="RFLPdata" isOpen="true"
      attribution=""/>
 <br>
 
@@ -126,7 +126,7 @@
 
 <c:if test="${data_type eq 'Sequencing Typed'}">
 
-<wdk:wdkTable tblName="GeneOverlap" isOpen="true"
+<imp:wdkTable tblName="GeneOverlap" isOpen="true"
      attribution=""/>
 
 <br>
@@ -149,7 +149,7 @@
   </noindex>
 </c:set>
 
-<site:panel
+<imp:panel
   displayName="Protein"
   content="${proteinSeq}" />
 <br>
@@ -169,7 +169,7 @@
   </noindex>
 </c:set>
 
-<site:panel
+<imp:panel
   displayName="${attr.displayName}"
   content="${seq}" />
 <br>
@@ -181,7 +181,7 @@
 
 <hr>
 
-<site:footer/>
+<imp:footer/>
 
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip_3.45.js'></script>
 

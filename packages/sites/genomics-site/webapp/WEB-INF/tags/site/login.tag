@@ -2,7 +2,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <%@ attribute name="showError"
               required="false"
@@ -19,7 +19,7 @@
       such as login.jsp use this tag and will set refererUrl to be
       that login page.)--%>
 <c:if test="${requestScope.refererUrl == null}">
-  <wdk:requestURL/>
+  <imp:requestURL/>
   <c:set var="refererUrl" value="${originRequestUrl}" scope="request"/> 
 </c:if>
 

@@ -1,8 +1,8 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
@@ -28,7 +28,7 @@
   <c:set var="dataset_provider" value="${attrs['dataset'].value}"/>
 </c:catch>
 
-<site:header title="${wdkModel.displayName} : SNP ${id}"
+<imp:header title="${wdkModel.displayName} : SNP ${id}"
              banner="SNP ${id}"
              refer="recordPage"
              divisionName="SNP Record"
@@ -41,7 +41,7 @@
 <c:otherwise>
 
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 
 <div class="h2center" style="font-size:160%">
@@ -50,7 +50,7 @@
 
 <div class="h3center" style="font-size:130%">
 	${primaryKey}<br>
-	<wdk:recordPageBasketIcon />
+	<imp:recordPageBasketIcon />
 </div>
 
 
@@ -59,24 +59,24 @@
 
 <!-- Overview -->
 <c:set var="attr" value="${attrs['snp_overview']}" />
-<wdk:toggle name="${attr.displayName}"
+<imp:toggle name="${attr.displayName}"
     displayName="${attr.displayName}" isOpen="true"
     content="${attr.value}" />
 
 <!-- Gene context -->
 <c:set var="attr" value="${attrs['gene_context']}" />
-<wdk:toggle name="${attr.displayName}"
+<imp:toggle name="${attr.displayName}"
     displayName="${attr.displayName}" isOpen="true"
     content="${attr.value}" />
 
 
-<wdk:wdkTable tblName="Strains" isOpen="true"/>
+<imp:wdkTable tblName="Strains" isOpen="true"/>
 
 
 <c:if test="${projectId eq 'PlasmoDB'}">
 
-<wdk:wdkTable tblName="IsolatesAlleleFrequency" isOpen="true"/>
-<wdk:wdkTable tblName="Isolates" isOpen="false"/>
+<imp:wdkTable tblName="IsolatesAlleleFrequency" isOpen="true"/>
+<imp:wdkTable tblName="Isolates" isOpen="false"/>
 
 
 <c:if test="${dataset_provider == 'Pf_Broad_SNPs_RSRC' || dataset_provider == 'Pf_plasmoDbCombinedSnps_RSRC'}">
@@ -86,28 +86,28 @@
   <c:import url="http://${pageContext.request.serverName}/cgi-bin/displaySnpAlignments.pl?snpId=${id}&width=25&project_id=${projectId}" />
   </c:catch>
   <c:if test="${e!=null}"> 
-      <site:embeddedError 
+      <imp:embeddedError 
           msg="<font size='-2'>temporarily unavailable</font>" 
           e="${e}" 
       />
   </c:if>
 </c:set>
 
-<wdk:toggle name="SequenceAlignment"
+<imp:toggle name="SequenceAlignment"
     displayName="Sequence Alignment"
     content="${showAlignmts}"
     isOpen="true"/>
 </c:if>
 
 <br/>
-<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
                       contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0" availableGenomes="3D7,Dd2,HB3, and IT"/>
 
 <br/>
 </c:if>
 
 
-<wdk:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
+<imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
 
 
 <c:set var="type" value="${attrs['type'].value}"/>
@@ -118,7 +118,7 @@
 <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${dataset_rsrc}&title=SNPs%20Summary">${dataset}</a>
 
   </c:set>
-<site:panel 
+<imp:panel 
     displayName="Data Provider"
     content="${reference}" />
 
@@ -131,6 +131,6 @@
 </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>
 
-<site:pageLogger name="snp page" />
+<imp:pageLogger name="snp page" />

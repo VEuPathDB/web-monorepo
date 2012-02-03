@@ -1,8 +1,8 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
@@ -49,7 +49,7 @@
 </c:catch>
 
 
-<site:header title="PlasmoDB : Array element ${id}"
+<imp:header title="PlasmoDB : Array element ${id}"
              banner="${organism}<br>Array element<br>${provider}: ${id}"
              divisionName="Array Element Record"
              division="queries_tools"
@@ -64,7 +64,7 @@
 <c:if test="${species_error != null}">${species_error}</c:if>
 
 <h2 style="text-align:center;">
-<wdk:recordPageBasketIcon />
+<imp:recordPageBasketIcon />
 </h2>
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white
@@ -88,10 +88,10 @@ Also see <a href="http://malaria.ucsf.edu/comparison/comp_oligolink.php?OLIGO=${
   <td><font size="-1">${sequence}</font></td></tr>
   </table>
 
-  <wdk:wdkTable tblName="GenomicLocations" isOpen="true"
+  <imp:wdkTable tblName="GenomicLocations" isOpen="true"
                  attribution=""/>
 
-  <wdk:wdkTable tblName="Genes" isOpen="true"
+  <imp:wdkTable tblName="Genes" isOpen="true"
                  attribution=""/>
 
 <c:if test="${species eq 'falciparum'}">
@@ -156,7 +156,7 @@ Also see <a href="http://malaria.ucsf.edu/comparison/comp_oligolink.php?OLIGO=${
 
   <c:set var="noData" value="false"/>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Developmental series 3D7 (glass slide oligo array)"
@@ -222,7 +222,7 @@ Also see <a href="http://malaria.ucsf.edu/comparison/comp_oligolink.php?OLIGO=${
 
   <c:set var="noData" value="false"/>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Developmental series Dd2 (glass slide oligo array)"
@@ -288,7 +288,7 @@ Also see <a href="http://malaria.ucsf.edu/comparison/comp_oligolink.php?OLIGO=${
 
   <c:set var="noData" value="false"/>
 
-  <wdk:toggle name="${secName}" isOpen="${isOpen}"
+  <imp:toggle name="${secName}" isOpen="${isOpen}"
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Developmental series HB3 (glass slide oligo array)"
@@ -299,4 +299,4 @@ Also see <a href="http://malaria.ucsf.edu/comparison/comp_oligolink.php?OLIGO=${
 </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>

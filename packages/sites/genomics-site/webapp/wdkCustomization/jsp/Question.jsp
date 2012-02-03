@@ -1,13 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- partial is used for internal questions in queryList.tag --%>
 <c:set var="Question_Header" scope="request">
   <c:if test="${requestScope.partial != 'true'}">
-    <site:header title="Search for ${wdkQuestion.recordClass.type}s by ${wdkQuestion.displayName}" refer="customQuestion" />
+    <imp:header title="Search for ${wdkQuestion.recordClass.type}s by ${wdkQuestion.displayName}" refer="customQuestion" />
   </c:if>
 </c:set>
 
@@ -47,7 +47,7 @@ ${Question_Header}
 
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
 
-<wdk:questionForm />
+<imp:questionForm />
 
 <c:if test="${hideOperation == false}">
     <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
@@ -59,11 +59,11 @@ ${Question_Header}
 <c:set var="Question_Footer" scope="request">
   <%-- displays question description, can be overridden by the custom question form --%>
 <c:if test="${hideAttrDescr == false}">
-  <site:questionDescription />
+  <imp:questionDescription />
 </c:if>
 
 <c:if test="${requestScope.partial != 'true'}">
-  <site:footer />
+  <imp:footer />
   <!-- log screen and browser window size for awstats; excluded when page is called by Ajax (internal
        questions; partial == true)  because it breaks IE7. When using internal questions, the parent 
        question page will still call this once.

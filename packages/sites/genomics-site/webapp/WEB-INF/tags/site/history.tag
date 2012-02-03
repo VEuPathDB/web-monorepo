@@ -1,12 +1,12 @@
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
 <%-- restore wdkUser as needed --%>
-<wdk:restoreUser />
+<imp:restoreUser />
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <c:choose>

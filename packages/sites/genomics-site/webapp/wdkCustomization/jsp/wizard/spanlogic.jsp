@@ -1,6 +1,6 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -57,11 +57,11 @@
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
 <c:set target="${typeMap}" property="singular" value="${importStep.displayType}"/>
-<wdk:getPlural pluralMap="${typeMap}"/>
+<imp:getPlural pluralMap="${typeMap}"/>
 <c:set var="newPluralType" value="${typeMap['plural']}"/>
 
 <c:set target="${typeMap}" property="singular" value="${wdkStep.displayType}"/>
-<wdk:getPlural pluralMap="${typeMap}"/>
+<imp:getPlural pluralMap="${typeMap}"/>
 <c:set var="oldPluralType" value="${typeMap['plural']}"/>
 
 <div class="instructions">
@@ -89,8 +89,8 @@ Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span>
 
 <%-- sentence and region areas --%>
 <div id="spanLogicParams">
-	<wdk:answerParamInput qp="${pMap['span_a']}"/>
-	<wdk:answerParamInput qp="${pMap['span_b']}"/>
+	<imp:answerParamInput qp="${pMap['span_a']}"/>
+	<imp:answerParamInput qp="${pMap['span_b']}"/>
 	<input type="hidden" value="${wdkStep.displayType}" id="span_a_type"/>
 	<input type="hidden" value="${importStep.displayType}" id="span_b_type"/>
 	<c:if test="${action == 'revise'}">
@@ -112,13 +112,13 @@ Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span>
         <table>
 	<tr><td>
 	<div class="span-step-text right">
-	  <span>"Return each <wdk:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span></span>
+	  <span>"Return each <imp:enumParamInput qp="${pMap['span_output']}" /> whose <span class="region outputRegion region_a">region</span></span>
         </div>
 
 
 <%-- region areas --%>
         <div id="outputGroup">
-          <site:spanlogicGraph groupName="a" question="${question}" step="${wdkStep}" stepType="current_step" />
+          <imp:spanlogicGraph groupName="a" question="${question}" step="${wdkStep}" stepType="current_step" />
         </div>
         </td>
 
@@ -131,7 +131,7 @@ Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span>
             <div class="operation-help">
               <div></div><!-- This is where the operation icon will go.  -->
             </div>
-            <wdk:enumParamInput qp="${pMap['span_operation']}" />
+            <imp:enumParamInput qp="${pMap['span_operation']}" />
           </div>
           &nbsp;the
         </div>
@@ -142,11 +142,11 @@ Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span>
           <span class="region comparisonRegion region_b">region</span> of a
           <span class="comparison_type">...</span> <span class="other_step">in Step</span>
           <span class="comparison_num">...</span> and is on
-          <wdk:enumParamInput qp="${pMap['span_strand']}" />
+          <imp:enumParamInput qp="${pMap['span_strand']}" />
            "
 	</div>
         <div id="comparisonGroup">
-          <site:spanlogicGraph groupName="b" question="${question}" step="${importStep}" stepType="new_step" />
+          <imp:spanlogicGraph groupName="b" question="${question}" step="${importStep}" stepType="new_step" />
         </div>
         </td></tr>
 	</table>

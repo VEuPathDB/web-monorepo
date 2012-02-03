@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <c:set var="answerValue" value="${requestScope.answer_value}"/>
 <c:set var="strategyId" value="${requestScope.strategy_id}"/>
@@ -20,31 +20,31 @@
   </tr>
   <tr align="center">
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_results" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="piro_distinct_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="bbov_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tannu_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tparva_genes" />  

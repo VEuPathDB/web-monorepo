@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -19,7 +19,7 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<site:header title="MicrosporidiaDB : gene ${id} (${prd})"
+<imp:header title="MicrosporidiaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
 		refer="recordPage" 
              divisionName="Gene Record"
@@ -51,7 +51,7 @@
 
 <%-- display page header with recordClass type in banner --%>
 
-<site:header title="MicrosporidiaDB : gene ${id} (${prd})"
+<imp:header title="MicrosporidiaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
              division="queries_tools" 
@@ -59,7 +59,7 @@
 
 <a name="top"></a>
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <br>
 <%--#############################################################--%>
@@ -99,7 +99,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 	<!-- the basket and favorites  -->
-  	<wdk:recordPageBasketIcon />
+  	<imp:recordPageBasketIcon />
 
 </div>
 
@@ -109,7 +109,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}${append}" />
 <br>
@@ -144,7 +144,7 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
     <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
   </c:set>
 
-  <wdk:toggle 
+  <imp:toggle 
     name="dnaContextSyn" displayName="Genomic Context"
     displayLink="${has_model_comment}"
     content="${gnCtxImg}" isOpen="true" 
@@ -158,7 +158,7 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
 
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+<imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
 <!-- Mercator / Mavid alignments -->
@@ -168,12 +168,12 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
   </c:if>
 
 <c:set var="mercatorAlign">
-<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
                     contigId="${contig}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
                     availableGenomes=""/>
 </c:set>
 
-<wdk:toggle isOpen="false"
+<imp:toggle isOpen="false"
   name="mercatorAlignment"
   displayName="Multiple Sequence Alignment"
   content="${mercatorAlign}"
@@ -182,7 +182,7 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
 
 
 
-<site:pageDivider name="Annotation"/>
+<imp:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
 
 <c:if test="${notes ne 'none'}">
@@ -215,16 +215,16 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
 
 <c:catch var="e">
 
-<wdk:wdkTable tblName="UserComments"  isOpen="true"/>
+<imp:wdkTable tblName="UserComments"  isOpen="true"/>
 
 <!-- External Links --> 
-<wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 </c:catch>
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
       <tr><td><b>User Comments</b>
-     <site:embeddedError 
+     <imp:embeddedError 
          msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}" 
      />
@@ -240,7 +240,7 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
 GO,InterproscanData
 </c:set>
 
-<wdk:wdkTable tblName="GoTerms" isOpen="true" attribution="${attribution}"/>
+<imp:wdkTable tblName="GoTerms" isOpen="true" attribution="${attribution}"/>
 
 </c:if>
 
@@ -250,16 +250,16 @@ GO,InterproscanData
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="<site:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+      <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL" postscript="${orthomclLink}"/>
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL" postscript="${orthomclLink}"/>
 
 </c:if>
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
-  <site:pageDivider name="Protein"/>
+  <imp:pageDivider name="Protein"/>
     <c:set var="ptracks">
     InterproDomains+SignalP+TMHMM+BLASTP
     </c:set>
@@ -279,7 +279,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
            <c:import url="${proteinFeaturesUrl}"/>
         </c:catch>
         <c:if test="${e!=null}">
-            <site:embeddedError 
+            <imp:embeddedError 
                 msg="<font size='-2'>temporarily unavailable</font>" 
                 e="${e}" 
             />
@@ -287,7 +287,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
         </center></noindex>
     </c:set>
 
-    <wdk:toggle name="proteinContext"  displayName="Protein Features"
+    <imp:toggle name="proteinContext"  displayName="Protein Features"
              content="${proteinFeaturesImg}"
              attribution="${attribution}"/>
       <!-- ${proteinFeaturesUrl} -->
@@ -303,12 +303,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 
  <c:choose>
   <c:when test="${min_mw != null && max_mw != null && min_mw != max_mw}">
-   <site:panel 
+   <imp:panel 
       displayName="Molecular Weight"
       content="${min_mw} to ${max_mw} Da" />
     </c:when>
     <c:otherwise>
-   <site:panel 
+   <imp:panel 
       displayName="Molecular Weight"
       content="${mw} Da" />
     </c:otherwise>
@@ -319,21 +319,21 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 
         <c:choose>
             <c:when test="${ip.value != null}">
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="${ip.value}" />
             </c:when>
             <c:otherwise>
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="N/A" />
             </c:otherwise>
         </c:choose>
 
 
-<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
 
-<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+<imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
   ${attrs['ssgcid_request_link']}
@@ -341,7 +341,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 
 
 
-<site:pageDivider name="Sequence"/>
+<imp:pageDivider name="Sequence"/>
 
 <i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
 
@@ -356,7 +356,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
   <pre><w:wrap size="60">${attrs['protein_sequence'].value}</w:wrap></pre>
   <font size="-1">Sequence Length: ${fn:length(proteinSequence.value)} aa</font><br/>
 </c:set>
-<wdk:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
+<imp:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
              content="${proteinSequenceContent}" isOpen="false"/>
 </c:if>
 <%------------------------------------------------------------------%>
@@ -368,7 +368,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
   <pre><w:wrap size="60">${transcriptSequence.value}</w:wrap></pre>
   <font size="-1">Sequence Length: ${fn:length(transcriptSequence.value)} bp</font><br/>
 </c:set>
-<wdk:toggle name="transcriptSequence"
+<imp:toggle name="transcriptSequence"
              displayName="${transcriptSequence.displayName}"
              content="${transcriptSequenceContent}" isOpen="false"/>
 
@@ -389,7 +389,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
   <font size="-1">Sequence Length: ${fn:length(totSeq)} bp</font><br/>
 </c:set>
 
-<wdk:toggle name="genomicSequence" isOpen="false"
+<imp:toggle name="genomicSequence" isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
     content="${seq}" />
 
@@ -402,7 +402,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
   <pre><w:wrap size="60">${cds.value}</w:wrap></pre>
   <font size="-1">Sequence Length: ${fn:length(cds.value)} bp</font><br/>
 </c:set>
-<wdk:toggle name="cds" displayName="${cds.displayName}"
+<imp:toggle name="cds" displayName="${cds.displayName}"
              content="${cdsContent}" isOpen="false"/>
 
 </c:if>
@@ -437,7 +437,7 @@ WGS assembly for Nosema ceranae BRL01 was described by <a target="_blank" href="
 </c:when>
 </c:choose>
 
-<site:panel 
+<imp:panel 
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
 <br>
@@ -450,6 +450,6 @@ WGS assembly for Nosema ceranae BRL01 was described by <a target="_blank" href="
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
 
-<site:footer/>
+<imp:footer/>
 
-<site:pageLogger name="gene page" />
+<imp:pageLogger name="gene page" />

@@ -11,7 +11,7 @@ Sample usage:
            <c:import url="${someUrl}"/>
         </c:catch>
         <c:if test="${e!=null}"> 
-            <site:embeddedError 
+            <imp:embeddedError 
                 msg="<font size='-2'>error accessing<br>'${someUrl}'</font>" 
                 e="${e}" 
             />
@@ -19,7 +19,7 @@ Sample usage:
 
 
 --%>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -81,7 +81,7 @@ Time: <fmt:formatDate type="both" pattern="dd/MMM/yyyy:H:mm:ss" value="<%=new ja
 
 </c:set>
     
-<site:email 
+<imp:email 
     to="${to}"
     from="${from}"
     subject="${subject}" 
