@@ -11,7 +11,7 @@ class ResetWdkCache extends JmxModule {
         array(
             'type' => 'exec',
             'mbean' => "$domain:$mbean_path,context=$context",
-            'operation' => 'refresh',
+            'operation' => 'resetWdkCache',
         )
       );
     }
