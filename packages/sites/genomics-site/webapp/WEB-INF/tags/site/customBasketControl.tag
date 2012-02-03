@@ -1,5 +1,4 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
@@ -10,7 +9,7 @@
 
 
 <%-- export basket --%>
-<%-- disable basket exporting for build-12
+<%-- enable basket exporting for build-14 --%>
 <div id="export-basket">
   Export basket to:
   <select id="to-project">
@@ -32,4 +31,4 @@
   </select>
   <input type="button" value="Export" onclick="exportBasket()" />
 </div>
---%>
+
