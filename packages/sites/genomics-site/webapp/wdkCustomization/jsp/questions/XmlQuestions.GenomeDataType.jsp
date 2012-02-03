@@ -40,11 +40,12 @@
 <%------------------------------------%>
 <table width="100%">
 
-<tr><td><h2>${siteTitle} Genomes and Data Types</h2></td>
+<tr><td width="35%"><h2>${siteTitle} Genomes and Data Types</h2></td>
+    <td  width="15%"><a  title="Download the summary table in an XML file" href="<c:url value="/eupathGenomeXml.jsp"/>"><b>(XML)</b></td>
     <td align="right"><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">${siteTitle} Gene Metrics >>></a></td>
 </tr>
 
-<tr><td colspan="2">
+<tr><td colspan="3">
 
 <c:choose>
 <c:when test="${project eq 'FungiDB'}" >
@@ -104,6 +105,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 
 <!-- LOOP -->
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
+<c:set var="genomelink_message" value=""/>
 
 <c:set var="orgCounter" value="${orgCounter+1}"/>
 
@@ -135,6 +137,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 
 <!-- website/webapp for links to data sources -->
 <c:set var="website" value="${fn:toLowerCase(website)}"/>
+<c:set var="project" value="${fn:toLowerCase(project)}"/>
 
 <c:choose>
 <c:when test="${website eq 'amoebadb' || website eq 'plasmodb' || website eq 'toxodb'}" >
@@ -170,8 +173,12 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
         <a href="http://${website}.org/${webapp}/getDataSource.do?display=detail">
 		${record.attributesMap['Genome_Version']}</a></td>
 
+<c:if test="${project ne website}" >
+	<c:set var="genomelink_message" value="Notice that you will be moved to ${website}.org"/>
+</c:if>
+
 <!-- FILE SIZES -->
-    <td class="mytdStyle" style="text-align:right;${separation}" title="Size in Mega bases; click to run a search and get all genomic sequences for this genome">
+    <td class="mytdStyle" style="text-align:right;${separation}" title="Size in Mega bases; click to run a search and get all genomic sequences for this genome. ${genomelink_message}">
 	<a href="http://${website}.org/${webapp}/showSummary.do?questionFullName=GenomicSequenceQuestions.SequencesByTaxon&array(organism)=${genus}%20${species}%20${strain}"> 
 <!--  <a href="${fastaLink}"> -->
 							${record.attributesMap['Genome_Size']}</a></td>
