@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -32,22 +32,22 @@
 
 <c:choose>
 <c:when test = "${project == 'AmoebaDB'}">
-	<site:queryList columns="${columns}" questions="${amoebaQuestions}"/>
+	<imp:queryList columns="${columns}" questions="${amoebaQuestions}"/>
 </c:when>
 <c:when test = "${project == 'CryptoDB'}">
-	<site:queryList columns="${columns}" questions="${cryptoQuestions}"/>
+	<imp:queryList columns="${columns}" questions="${cryptoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'EuPathDB'}">
-	<site:queryList columns="${columns}" questions="${eupathQuestions}"/>
+	<imp:queryList columns="${columns}" questions="${eupathQuestions}"/>
 </c:when>
 <c:when test = "${project == 'PlasmoDB'}">
-	<site:queryList columns="${columns}" questions="${plasmoQuestions}"/>
+	<imp:queryList columns="${columns}" questions="${plasmoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
-	<site:queryList columns="${columns}" questions="${toxoQuestions}"/>
+	<imp:queryList columns="${columns}" questions="${toxoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'TriTrypDB'}">
-	<site:queryList columns="${columns}" questions="${trypQuestions}"/>
+	<imp:queryList columns="${columns}" questions="${trypQuestions}"/>
 </c:when>
 </c:choose>
 

@@ -1,8 +1,8 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -23,7 +23,7 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<site:header title="${id}"
+<imp:header title="${id}"
              refer="recordPage"
              divisionName="${recordType} Record"
              division="queries_tools"/>
@@ -37,7 +37,7 @@
 
 <br/>
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <div class="h2center" style="font-size:160%">
  	ORF
@@ -45,7 +45,7 @@
 
 <div class="h3center" style="font-size:130%">
 	${primaryKey}<br>
-	<wdk:recordPageBasketIcon />
+	<imp:recordPageBasketIcon />
 </div>
 
 
@@ -54,7 +54,7 @@
 <c:set var="append" value="" />
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}" />
 <br>
@@ -77,7 +77,7 @@
     <c:import url="${genomeContextUrl}"/>
   </c:catch>
   <c:if test="${e!=null}">
-    <site:embeddedError 
+    <imp:embeddedError 
         msg="<font size='-2'>temporarily unavailable</font>" 
         e="${e}" 
     />
@@ -95,7 +95,7 @@
 
   </c:set>
 
-<site:panel 
+<imp:panel 
  displayName="Genomic Context" 
   content="${genomeContextImg}"
   attribution="${attribution}"/>
@@ -104,7 +104,7 @@
 
 
 <%-- GENOMIC LOCATIONS ------------------------------------------------%>
-  <wdk:wdkTable tblName="Locations" isOpen="true"
+  <imp:wdkTable tblName="Locations" isOpen="true"
                  attribution=""/>
 
 <%-- GENOME SEQUENCE ------------------------------------------------%>
@@ -116,14 +116,14 @@
     </font>
     </noindex>
 </c:set>
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${seq}" />
 <br>
 
 <%------------------------------------------------------------------%>
 
-<site:panel 
+<imp:panel 
     displayName="Attributions"
     content="Computed by EuPathDB" />
 <br>
@@ -135,5 +135,5 @@
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
-<site:footer/>
+<imp:footer/>
 

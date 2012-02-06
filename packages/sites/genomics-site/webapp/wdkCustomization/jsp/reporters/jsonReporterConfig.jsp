@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -32,10 +32,10 @@ function makeSelection(state)
 
 
 <!-- display page header -->
-<site:header banner="Create and download a Full Records Report" />
+<imp:header banner="Create and download a Full Records Report" />
 
 <!-- display the parameters of the question, and the format selection form -->
-<wdk:reporter/>
+<imp:reporter/>
 
 <!-- display description for page -->
 <h3>Generate a report that contents the complete information for each record.</h3>
@@ -64,7 +64,7 @@ function makeSelection(state)
             <tr>
               <td colspan="${numPerLine}">
                 <input type="checkbox" name="o-fields" value="${wdkAnswer.recordClass.primaryKeyAttribute.name}" checked="checked" style="display:none;"/>
-                <wdk:checkboxTree id="selectedFieldsCBT" rootNode="${wdkAnswer.reportMakerAttributeTree}" checkboxName="o-fields" showSelectAll="false" showResetCurrent="true" useHelp="true"/>
+                <imp:checkboxTree id="selectedFieldsCBT" rootNode="${wdkAnswer.reportMakerAttributeTree}" checkboxName="o-fields" showSelectAll="false" showResetCurrent="true" useHelp="true"/>
               </td>
             </tr>
           </c:if>
@@ -178,4 +178,4 @@ function makeSelection(state)
   </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>

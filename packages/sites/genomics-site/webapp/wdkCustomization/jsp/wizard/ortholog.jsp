@@ -2,7 +2,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 
 
@@ -35,7 +35,7 @@
 
 <c:set var="Question_Footer" scope="request">
 <%-- displays question description, can be overridden by the custom question form --%>
-<wdk:questionDescription />
+<imp:questionDescription />
 </c:set>
 
 ${Question_Header}
@@ -66,7 +66,7 @@ ${Question_Header}
      ${wdkQuestion.displayName}
   </span>
 
-  <wdk:questionForm />
+  <imp:questionForm />
 </div>
 
 <html:hidden property="stage" styleId="stage" value="process_ortholog"/>

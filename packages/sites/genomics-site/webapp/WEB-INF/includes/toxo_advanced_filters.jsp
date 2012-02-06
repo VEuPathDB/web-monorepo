@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <c:set var="answerValue" value="${requestScope.answer_value}"/>
 <c:set var="strategyId" value="${requestScope.strategy_id}"/>
@@ -19,7 +19,7 @@
           <th>Tg genes minus GT1</th>
 
           <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_min_gt1" />  
@@ -28,7 +28,7 @@
         <tr>
           <th>Tg genes minus ME49</th>
           <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_min_me49" />  
@@ -37,7 +37,7 @@
         <tr>
           <th>Tg genes minus VEG</th>
           <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_min_veg" />  
@@ -75,19 +75,19 @@
    </c:choose>
      <ul>
          <li>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="gt1_min_me49" />  
          </li>
          <li>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="gt1_int_me49" />  
          </li>
          <li>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="me49_min_gt1" />  
@@ -118,19 +118,19 @@
    </c:choose>
      <ul>
          <li>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="gt1_min_veg" />  
          </li>
          <li>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="gt1_int_veg" />  
          </li>
          <li>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="veg_min_gt1" />  
@@ -161,19 +161,19 @@
    </c:choose>
      <ul>
          <li>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="me49_min_veg" />  
          </li>
          <li>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="me49_int_veg" />  
          </li>
          <li>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="veg_min_me49" />  

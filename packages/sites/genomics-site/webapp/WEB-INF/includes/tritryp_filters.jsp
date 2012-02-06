@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <c:set var="answerValue" value="${requestScope.answer_value}"/>
 <c:set var="strategyId" value="${requestScope.strategy_id}"/>
@@ -37,103 +37,103 @@
   </tr>
   <tr align="center">
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_results" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tritryp_distinct_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="lbr_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="lin_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="lma_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="lme_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="lta_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tbr_distinct_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tbr927_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tbr427_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tbrgamb_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tcongolense_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tc_distinct_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tce_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tcne_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tcu_genes" />  
     </td>
     <td>
-      <wdk:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tvivax_genes" />  

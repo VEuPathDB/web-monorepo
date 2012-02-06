@@ -1,10 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -18,7 +18,7 @@
 <c:set var="subject" value="${subject}" />
 <c:set var="body" value="${body}" />
 
-<site:header title="${wdkModel.displayName}.org :: Add A Phenotype Comment"
+<imp:header title="${wdkModel.displayName}.org :: Add A Phenotype Comment"
                  banner="Add A Phenotype Comment"/>
 <head>
 
@@ -96,7 +96,7 @@ $(document).ready(function(){
 
   <c:when test="${empty wdkUser || wdkUser.guest}">
     <p align=center>Please login to post a comment.</p>
-    <table align='center'><tr><td><site:login/></td></tr></table>
+    <table align='center'><tr><td><imp:login/></td></tr></table>
   </c:when> 
   
   <c:otherwise>
@@ -108,7 +108,7 @@ $(document).ready(function(){
         <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${phenotypeForm.stableId}"/>
         </c:set>
 
-        <site:email
+        <imp:email
               to="${to}"
               from="${from}"
               subject="${subject}"
@@ -125,7 +125,7 @@ $(document).ready(function(){
       <c:otherwise>
 
         <c:if test="${param.flag ne '0'}">
-          <wdk:errors/>
+          <imp:errors/>
         </c:if>
          
       <html:form method="post" action="addPhenotype.do"  enctype="multipart/form-data">
@@ -341,4 +341,4 @@ $(document).ready(function(){
 
 <script language="JavaScript" type="text/javascript" src="/gbrowse/wz_tooltip.js"></script>
 </body>
-<site:footer/>
+<imp:footer/>

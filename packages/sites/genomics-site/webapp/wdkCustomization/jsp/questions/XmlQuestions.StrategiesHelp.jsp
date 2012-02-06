@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -13,7 +13,7 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="${wdkModel.displayName} : Did You Know"
+<imp:header title="${wdkModel.displayName} : Did You Know"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
@@ -84,4 +84,4 @@
 
 
 </div>
-<site:footer/>
+<imp:footer/>

@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -7,7 +7,7 @@
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="${wdkModel.displayName} :: Retrieve Sequences"
+<imp:header title="${wdkModel.displayName} :: Retrieve Sequences"
                  refer="srt"
                  banner="Retrieve Sequences"
                  parentDivision="PlasmoDB"
@@ -55,7 +55,7 @@
 
 <h3><a name="gene">Retrieve Sequences By Gene IDs</a></h3>
 
-<site:geneSrt />
+<imp:geneSrt />
 
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
@@ -98,7 +98,7 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
   <hr>
 <h3><a name="msa">Retrieve Multiple Sequence Alignments by Contig / Genomic Sequence IDs</a></h3>
 
-  <site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${wdkModel.name}" start="15,000" 
+  <imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${wdkModel.name}" start="15,000" 
                       end="30,000" inputContig="1" contigId="${contigsIds.default}" cellPadding="2"/>
 
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
@@ -187,6 +187,6 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
 
 <br>
 
-<site:srtHelp/>
+<imp:srtHelp/>
  
-<site:footer/>
+<imp:footer/>

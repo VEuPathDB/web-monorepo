@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <%@ attribute name="groupName"
               required="true"
@@ -26,7 +26,7 @@
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
 <c:set target="${typeMap}" property="singular" value="${step.displayType}"/>
-<wdk:getPlural pluralMap="${typeMap}"/>
+<imp:getPlural pluralMap="${typeMap}"/>
 <c:set var="pluralType" value="${typeMap['plural']}"/>
 
 <c:set var="regionOnClick" value="updateRegionParams(this);" />
@@ -58,9 +58,9 @@
       <tr>
         <c:set var="span_begin" value="span_begin_${groupName}"/>
         <td style="text-align:right;padding-bottom:0px;">begin at:</td>
-	<td style="padding-bottom:0px;"><wdk:enumParamInput qp="${pMap[span_begin]}"/></td>
+	<td style="padding-bottom:0px;"><imp:enumParamInput qp="${pMap[span_begin]}"/></td>
         <c:set var="span_begin_direction" value="span_begin_direction_${groupName}"/>
-        <td style="padding-bottom:0px;"><wdk:enumParamInput qp="${pMap[span_begin_direction]}"/></td>
+        <td style="padding-bottom:0px;"><imp:enumParamInput qp="${pMap[span_begin_direction]}"/></td>
         <c:set var="span_begin_offset" value="span_begin_offset_${groupName}"/>
         <td style="padding-bottom:0px;" align="left" valign="top">
           <html:text styleId="${span_begin_offset}" property="value(${span_begin_offset})" styleClass="regionText" />&nbsp;bp
@@ -69,9 +69,9 @@
       <tr>
         <c:set var="span_end" value="span_end_${groupName}"/>
         <td style="text-align:right;padding-top:0px;">end at:</td>
-	<td style="padding-top:0px;"><wdk:enumParamInput qp="${pMap[span_end]}"/></td>
+	<td style="padding-top:0px;"><imp:enumParamInput qp="${pMap[span_end]}"/></td>
         <c:set var="span_end_direction" value="span_end_direction_${groupName}"/>
-        <td style="padding-top:0px;"><wdk:enumParamInput qp="${pMap[span_end_direction]}"/></td>
+        <td style="padding-top:0px;"><imp:enumParamInput qp="${pMap[span_end_direction]}"/></td>
         <c:set var="span_end_offset" value="span_end_offset_${groupName}"/>
         <td style="padding-top:0px;" align="left" valign="top">
           <html:text styleId="${span_end_offset}" property="value(${span_end_offset})" styleClass="regionText" />&nbsp;bp

@@ -1,8 +1,8 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
@@ -21,7 +21,7 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<site:header title="${wdkModel.displayName} : DynSpan ${id}"
+<imp:header title="${wdkModel.displayName} : DynSpan ${id}"
              refer="recordPage"
              banner="DynSpan ${id}"
              divisionName="DynSpan Record"
@@ -34,7 +34,7 @@
 <c:otherwise>
 
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 
 <div class="h2center" style="font-size:160%">
@@ -44,7 +44,7 @@
 <div class="h3center" style="font-size:130%">
 	${primaryKey}<br>
 <%-- removing access to basket and favorites until we have it working 
-	<wdk:recordPageBasketIcon />
+	<imp:recordPageBasketIcon />
 --%>
 
 </div>
@@ -52,13 +52,13 @@
 
 <div class="h2center" style="font-size:150%">
   <!-- the basket and favorites  -->
-  <wdk:recordPageBasketIcon />
+  <imp:recordPageBasketIcon />
 </div>
 
 
 <!-- Overview -->
 <c:set var="attr" value="${attrs['overview']}" />
-<wdk:toggle name="${attr.displayName}"
+<imp:toggle name="${attr.displayName}"
     displayName="${attr.displayName}" isOpen="true"
     content="${attr.value}" />
 
@@ -107,7 +107,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font> for additional information</a>
   </c:set>
 
-  <wdk:toggle 
+  <imp:toggle 
     name="dnaContextSyn" displayName="Genomic Context"
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
@@ -122,16 +122,16 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <br><br>
 <!-- SRT -->
 <c:set var="attr" value="${attrs['otherInfo']}" />
-<wdk:toggle name="${attr.displayName}"
+<imp:toggle name="${attr.displayName}"
     displayName="${attr.displayName}" isOpen="true"
     content="${attr.value}" />
 
 <br>
-<wdk:wdkTable tblName="Genes" isOpen="true"
+<imp:wdkTable tblName="Genes" isOpen="true"
                  attribution=""/>
 
 <br>
-<wdk:wdkTable tblName="ORFs" isOpen="false"
+<imp:wdkTable tblName="ORFs" isOpen="false"
                  attribution=""/>
 
 <br>
@@ -139,15 +139,15 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 <c:if test="${wdkModel.displayName ne 'PiroplasmaDB'}">
 
-	<wdk:wdkTable tblName="SNPs" isOpen="false"
+	<imp:wdkTable tblName="SNPs" isOpen="false"
                  attribution=""/>
 
 	<br>
-	<wdk:wdkTable tblName="SageTags" isOpen="false"
+	<imp:wdkTable tblName="SageTags" isOpen="false"
                  attribution=""/>
 
 	<br>
-	<wdk:wdkTable tblName="ESTs" isOpen="false"
+	<imp:wdkTable tblName="ESTs" isOpen="false"
                  attribution=""/>
 
 </c:if>
@@ -156,4 +156,4 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>

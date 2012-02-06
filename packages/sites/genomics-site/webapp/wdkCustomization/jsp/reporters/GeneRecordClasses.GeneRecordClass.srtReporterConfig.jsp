@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -17,16 +17,16 @@
 <c:set var="site" value="${wdkModel.displayName}"/>
 
 <!-- display page header -->
-<site:header refer="srt" banner="Retrieve Gene Sequences" />
+<imp:header refer="srt" banner="Retrieve Gene Sequences" />
 
 <!-- display the parameters of the question, and the format selection form -->
-<wdk:reporter/>
+<imp:reporter/>
 
 <!-- display description for page -->
 <h3>This reporter will retrieve the sequences of the genes in your result.</h3>
 
 
-<site:geneSrt allRecordIds="${allRecordIds}" />
+<imp:geneSrt allRecordIds="${allRecordIds}" />
 
 <hr>
 
@@ -34,6 +34,6 @@
   <br>
   <br>
 
-<site:srtHelp/>
+<imp:srtHelp/>
  
-<site:footer/>
+<imp:footer/>

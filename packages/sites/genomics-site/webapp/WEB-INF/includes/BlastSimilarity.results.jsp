@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -57,7 +57,7 @@
 <c:set var="commandUrl"><c:url value="/processSummary.do?${commandUrl}" /></c:set>
 
 <c:if test="${strategy != null}">
-    <wdk:filterLayouts strategyId="${strategy.strategyId}" 
+    <imp:filterLayouts strategyId="${strategy.strategyId}" 
                        stepId="${wdkStep.stepId}"
                        answerValue="${wdkAnswer}" />
 </c:if>

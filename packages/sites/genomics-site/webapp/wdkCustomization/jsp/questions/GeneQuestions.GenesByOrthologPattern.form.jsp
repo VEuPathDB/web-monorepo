@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
@@ -128,7 +128,7 @@ Ack, this form won't work at all without JavaScript support!
 <table style="width:100%">
   <tr>
     <td style="text-align:right"><b>Show results from species:</b></td>
-    <td><wdk:enumParamInput qp="${resultSpecies}" /></td>
+    <td><imp:enumParamInput qp="${resultSpecies}" /></td>
 <%--     <td style="text-align:right;vertical-align:bottom">
 	<div class="filter-button">
  		<html:submit property="questionSubmit" value="Get Answer"/>

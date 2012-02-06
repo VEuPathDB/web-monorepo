@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -13,11 +13,11 @@
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                  <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="Sequence ID(s)"  existsOn="A Am G C M Pi P T Tr Tt"/>
+                    <imp:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequenceBySourceId" linktext="Sequence ID(s)"  existsOn="A Am G C M Pi P T Tr Tt"/>
                 </tr>
 
                  <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Taxon/Strain" existsOn="A Am G C M Pi P T Tr Tt"/>
+                    <imp:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesByTaxon" linktext="Taxon/Strain" existsOn="A Am G C M Pi P T Tr Tt"/>
                 </tr>
             </table>
 </div>
@@ -30,7 +30,7 @@
 <div class="innertube2">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-                    <site:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST Similarity" type="SEQ" existsOn="A Am G C M Pi P T Tr Tt"  />
+                    <imp:queryGridMakeUrl qset="GenomicSequenceQuestions" qname="SequencesBySimilarity" linktext="BLAST Similarity" type="SEQ" existsOn="A Am G C M Pi P T Tr Tt"  />
                 </tr>
 
 

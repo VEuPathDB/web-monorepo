@@ -1,3 +1,3 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
-<site:sampleStrategies />
+<imp:sampleStrategies />

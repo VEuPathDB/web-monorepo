@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -62,6 +62,19 @@
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
+
+<c:choose>
+<c:when test="${project eq 'FungiDB'}" >
+	<c:set var="twitter" value="FungiDB"/>
+	<c:set var="facebook" value="FungiDB"/>
+</c:when>
+<c:otherwise>
+	<c:set var="twitter" value="EuPathDB"/>
+	<c:set var="facebook" value="pages/EuPathDB/133123003429972"/>
+</c:otherwise>
+</c:choose>
+
+
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 <c:set var="version" value="${applicationScope.wdkModel.version}" />
 
@@ -175,7 +188,7 @@
 <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
 
 <%-- import WDK related assets --%> 
-<wdk:includes refer="${refer}" /> 
+<imp:includes refer="${refer}" /> 
 
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
 
@@ -188,7 +201,7 @@
    var helpEmail = 'help@${project}.org';
 </script>
 <!-- header : refer = ${refer} -->
-<site:jscript refer="${refer}"/>
+<imp:jscript refer="${refer}"/>
 
 <!--[if lte IE 8]>
 <style>
@@ -263,8 +276,8 @@ ${headElement}
        
 
     <div style="width:537px;" id="bottom">
-      <site:quickSearch />
-      <site:smallMenu refer="${refer}"/>
+      <imp:quickSearch />
+      <imp:smallMenu refer="${refer}" twitter="${twitter}" facebook="${facebook}"/>
 
    </div>  <%-- id="bottom"    --%>
    </div>  <%-- id="header_rt" --%>
@@ -283,13 +296,13 @@ ${headElement}
 
 <%------------- REST OF PAGE  ----------------%>
 
-<site:menubar refer="${refer}"/>
-<site:siteAnnounce  refer="${refer}"/>
+<imp:menubar refer="${refer}" twitter="${twitter}" facebook="${facebook}"/>
+<imp:siteAnnounce  refer="${refer}"/>
 
 
 </c:if>  <%-- page was not the "Contact Us" page --%>
 
-<wdk:noscript /> <%-- include noscript tag on all pages to check if javascript enabled --%>
+<imp:noscript /> <%-- include noscript tag on all pages to check if javascript enabled --%>
 
 <c:if test="${refer != 'home' && refer != 'home2' && refer != 'summary'}">
 	<div id="contentwrapper">

@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
-<site:header title="${wdkModel.displayName}.org :: Community Upload"
+<imp:header title="${wdkModel.displayName}.org :: Community Upload"
              banner="Community Upload"/>
 
 
@@ -11,4 +11,4 @@
 <h2>Files Successfully Received</h2>
 
 
-<site:footer/>
+<imp:footer/>

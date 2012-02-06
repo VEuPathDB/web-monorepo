@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -13,10 +13,10 @@
 
 
 <!-- display page header -->
-<site:header banner="Create and download a Report in GFF3 Format" />
+<imp:header banner="Create and download a Report in GFF3 Format" />
 
 <!-- display the parameters of the question, and the format selection form -->
-<wdk:reporter/>
+<imp:reporter/>
 
 <!-- display description for page -->
 <h3>Generate a report of your query result in GFF3 format. </h3>
@@ -62,4 +62,4 @@
   </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>

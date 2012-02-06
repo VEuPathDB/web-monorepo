@@ -1,7 +1,7 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
@@ -17,4 +17,4 @@
 
 <api:errors/>
 
-<site:pageLogger name="gene page" />
+<imp:pageLogger name="gene page" />

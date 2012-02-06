@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <%@ attribute name="refer" 
  	      type="java.lang.String"
@@ -17,10 +17,15 @@
 	<script type="text/javascript" src="/assets/js/ortholog.js"></script>
         <script type="text/javascript" src="<c:url value='/wdkCustomization/js/export-basket.js' />"></script>
 </c:if>
+<!-- jscript : refer = ${refer}-->
+<c:if test="${refer == 'record'}">
+	<!-- RecordPageScript Included -->
+	<imp:recordPageScript />
+</c:if>
 
 
 <c:if test="${refer == 'question' || refer == 'summary'}">
-  <wdk:parameterScript />
+  <imp:parameterScript />
   <script type="text/javascript" src="/assets/js/orthologpattern.js"></script>
   <script type="text/javascript" src="/assets/js/blast.js"></script>
   <script type="text/javascript" src="<c:url value='/wdkCustomization/js/span-location.js' />"></script>

@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -7,7 +7,7 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="${wdkModel.displayName} :: Registration"
+<imp:header title="${wdkModel.displayName} :: Registration"
                  banner="Registration and Subscription"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
@@ -16,7 +16,7 @@
 
 
 
-<site:register/>
+<imp:register/>
 
 
-<site:footer/>
+<imp:footer/>

@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
@@ -6,7 +6,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <!-- get wdkModel name to display as page header -->
-<site:header title="${wdkModel.displayName} : Search patterns"
+<imp:header title="${wdkModel.displayName} : Search patterns"
                  banner="How to construct a search pattern"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
@@ -117,4 +117,4 @@ Even if these regular expressions might seems complicated at first sight, they p
 
 </table>
 
-<site:footer/>
+<imp:footer/>

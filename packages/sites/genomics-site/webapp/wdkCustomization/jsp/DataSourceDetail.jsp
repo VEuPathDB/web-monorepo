@@ -1,5 +1,5 @@
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -16,7 +16,7 @@
   </c:choose>
 </c:set>
 
-<site:header banner="Data Contents" />
+<imp:header banner="Data Contents" />
 
 <style type="text/css">
 #data-sources h3 {
@@ -92,8 +92,8 @@
               <p class="description">${description.value}</p>
             </div>
           
-            <wdk:wdkTable tblName="${publications.name}" />
-            <%-- <wdk:wdkTable tblName="${references.name}" /> --%>
+            <imp:wdkTable tblName="${publications.name}" />
+            <%-- <imp:wdkTable tblName="${references.name}" /> --%>
           </div>
         
         </c:forEach>
@@ -107,4 +107,4 @@
 </div>
 
 
-<site:footer/>
+<imp:footer/>

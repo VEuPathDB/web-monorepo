@@ -1,6 +1,6 @@
 
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -18,7 +18,7 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<site:header title="${wdkModel.displayName} : gene ${id}"
+<imp:header title="${wdkModel.displayName} : gene ${id}"
              divisionName="Gene Record"
 		refer="recordPage" 
              division="queries_tools"/>
@@ -108,7 +108,7 @@
   <c:set var="strand" value="-"/>
 </c:if>
 
-<site:header title="${wdkModel.displayName} : gene ${id} (${prd})"
+<imp:header title="${wdkModel.displayName} : gene ${id} (${prd})"
              divisionName="Gene Record"
 		refer="recordPage" 
              division="queries_tools"
@@ -172,7 +172,7 @@
 
 
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <c:set var="genedb_annot_link">
   ${attrs['GeneDB_updated'].value}
@@ -202,7 +202,7 @@ ${id}
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 	<!-- the basket and favorites  -->
-  	<wdk:recordPageBasketIcon />
+  	<imp:recordPageBasketIcon />
 
 
     <c:if test="${attrs['updated_annotation'].value != null}">
@@ -220,17 +220,17 @@ ${id}
 <%--- COMMUNITY EXPERT ANNOTATION -----------%>
 
 <%--
-<site:panel 
+<imp:panel 
     displayName="Community Expert Annotation"
     content="" />
 
 <c:catch var="e">
-    <site:dataTable tblName="CommunityExpComments"/>
+    <imp:dataTable tblName="CommunityExpComments"/>
 </c:catch>
 <c:if test="${e != null}">
   <table  width="100%" cellpadding="3">
       <tr><td><b>User Comments</b>
-      <site:embeddedError
+      <imp:embeddedError
           msg="<font size='-1'><i>temporarily unavailable.</i></font>"
           e="${e}"
       />
@@ -243,7 +243,7 @@ ${id}
 <%-- OVERVIEW ------------%>
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel
+<imp:panel
     displayName="${attr.displayName} ${has_namefun_comment}"
     content="${attr.value}${append}" />
 <br>
@@ -277,7 +277,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
   </c:set>
 
-  <wdk:toggle 
+  <imp:toggle 
     name="dnaContextSyn" displayName="Genomic Context"
     displayLink="${has_model_comment}"
     content="${gnCtxImg}" isOpen="true" 
@@ -301,14 +301,14 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 <c:if test="${species eq 'falciparum3D7'}">
-    <wdk:wdkTable tblName="SNPs" isOpen="false"
+    <imp:wdkTable tblName="SNPs" isOpen="false"
                    attribution="Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps"/>
 </c:if>
 
 
 <%-- eQTL regions --%>
 <c:if test="${species eq 'falciparum3D7'}">
-<wdk:wdkTable tblName="Plasmo_eQTL_Table" isOpen="true"
+<imp:wdkTable tblName="Plasmo_eQTL_Table" isOpen="true"
                attribution="" />
 </c:if>
 
@@ -320,7 +320,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <%-- version 5.5 genes --%>
 <c:if test="${species eq 'falciparum3D7'}">
-<wdk:wdkTable tblName="PlasmoVer5Genes" isOpen="true"
+<imp:wdkTable tblName="PlasmoVer5Genes" isOpen="true"
                attribution="" />
 </c:if>
 
@@ -335,19 +335,19 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">
-<site:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
+<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
                     contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
                     availableGenomes=""/>
 </c:set>
 
-<wdk:toggle isOpen="false"
+<imp:toggle isOpen="false"
   name="mercatorAlignment"
   displayName="Multiple Sequence Alignment"
   content="${mercatorAlign}"
   attribution=""/>
 
 
-<site:pageDivider name="Annotation"/>
+<imp:pageDivider name="Annotation"/>
 
 <a name="user-comment"/>
 
@@ -357,14 +357,14 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <c:catch var="e">
 
-<wdk:wdkTable tblName="UserComments"  isOpen="true"/>
+<imp:wdkTable tblName="UserComments"  isOpen="true"/>
 
 
 </c:catch>
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
       <tr><td><b>User Comments</b>
-     <site:embeddedError 
+     <imp:embeddedError 
          msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}" 
      />
@@ -406,13 +406,13 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <%--
 <c:catch var="e">
 
-<wdk:wdkTable tblName="PhenotypeComments"  isOpen="true"/> 
+<imp:wdkTable tblName="PhenotypeComments"  isOpen="true"/> 
 
 </c:catch>
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
       <tr><td><b>User Comments</b>
-     <site:embeddedError 
+     <imp:embeddedError 
          msg="<font size='-1'><i>temporarily unavailable.</i></font>"
          e="${e}" 
      />
@@ -426,15 +426,15 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${species ne 'falciparum' || (species eq 'falciparum' && attrs['annotation_status'].value ne 'new' &&attrs['annotation_status'].value ne 'new_organellar')}">
 --%>
 
-<wdk:wdkTable tblName="GeneLinkouts" isOpen="true" attribution="Plasmodraft_DBRefs,Phenotype_DBRefs"/>
+<imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution="Plasmodraft_DBRefs,Phenotype_DBRefs"/>
 
 <c:if test="${isCodingGene}">
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="<site:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+      <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <wdk:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
                  postscript="${orthomclLink}"/>
 </c:if>
 <%--</c:if>--%>
@@ -442,14 +442,14 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${species eq 'falciparum3D7'}">
   <a name="ecNumber"></a>
   <c:if test="${isCodingGene}">
-    <wdk:wdkTable tblName="EcNumber" isOpen="false"
+    <imp:wdkTable tblName="EcNumber" isOpen="false"
                    attribution="ecMappings_Hagai,P.falciparum_chromosomes,enzymeDB"/>
   </c:if>
 </c:if>
 
 <c:if test="${isCodingGene}">
   <a name="goTerm"></a>
-  <wdk:wdkTable tblName="GoTerms"
+  <imp:wdkTable tblName="GoTerms"
                  attribution="GO,GOAssociations,InterproscanData"/>
 </c:if>
 
@@ -460,16 +460,16 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 <!-- gene alias table -->
-<wdk:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+<imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
-  <wdk:wdkTable tblName="Notes" attribution="P.falciparum_chromosomes"/>
+  <imp:wdkTable tblName="Notes" attribution="P.falciparum_chromosomes"/>
 
 
 <c:if test="${species eq 'falciparum3D7' || species eq 'berghei' || species eq 'yoelii'}">
 
 <%-- Need to comment out Phenotype for build 11 --%>
-<wdk:wdkTable tblName="RodMalPhenotype" isOpen="false"  attribution="Phenotype_DBRefs"/>
+<imp:wdkTable tblName="RodMalPhenotype" isOpen="false"  attribution="Phenotype_DBRefs"/>
   
   <!-- publications -->
 
@@ -485,7 +485,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 --%>
 
   <c:if test="${isCodingGene}">
-    <wdk:wdkTable tblName="MetabolicPathways" attribution="ecMappings_Hagai"/>
+    <imp:wdkTable tblName="MetabolicPathways" attribution="ecMappings_Hagai"/>
   </c:if>
 
 <c:set var="plasmocyc" value="${attrs['PlasmoCyc']}"/>  
@@ -495,21 +495,21 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     <c:set var="plasmocycurl" value="http://apicyc.apidb.org/"/>  
   </c:if>
 
-<site:panel 
+<imp:panel 
     displayName="PlasmoCyc <a href='${plasmocycurl}'>View</a>"
     content="" />
 
 </c:if>
 
-<wdk:wdkTable tblName="Mr4Reagents" attribution="MR4Reagents"/>
+<imp:wdkTable tblName="Mr4Reagents" attribution="MR4Reagents"/>
 
 <%--
-<wdk:wdkTable tblName="AnnotationChanges"/>
+<imp:wdkTable tblName="AnnotationChanges"/>
 --%>
 
 
 <c:if test="${isCodingGene}">
-  <site:pageDivider name="Protein"/>
+  <imp:pageDivider name="Protein"/>
 
   <c:if test="${species eq 'falciparum3D7'}">
      <c:set var="ptracks"> 
@@ -559,13 +559,13 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
       <c:import url="${proteinFeaturesUrl}"/>
     </c:catch>
     <c:if test="${e!=null}">
-      <site:embeddedError 
+      <imp:embeddedError 
             msg="<font size='-2'>temporarily unavailable</font>" 
             e="${e}" />
     </c:if> 
     </center></noindex>
     </c:set>
-    <wdk:toggle name="proteinContext"  displayName="Protein Features" 
+    <imp:toggle name="proteinContext"  displayName="Protein Features" 
                 content="${proteinFeaturesImg}" 
                 attribution="${attribution}"/>
 
@@ -573,7 +573,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
   <c:if test="${species eq 'falciparum3D7'}">
-  <wdk:wdkTable tblName="Y2hInteractions" isOpen="true"
+  <imp:wdkTable tblName="Y2hInteractions" isOpen="true"
                  attribution="y2h_data"/>
   </c:if>
 
@@ -591,12 +591,12 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
  <c:choose>
   <c:when test="${min_mw != null && max_mw != null && min_mw != max_mw}">
-   <site:panel 
+   <imp:panel 
       displayName="Molecular Weight"
       content="${min_mw} to ${max_mw} Da" />
     </c:when>
     <c:otherwise>
-   <site:panel 
+   <imp:panel 
       displayName="Molecular Weight"
       content="${mw} Da" />
     </c:otherwise>
@@ -607,71 +607,71 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
         <c:choose>
             <c:when test="${ip.value != null}">
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="${ip.value}" />
             </c:when>
             <c:otherwise>
-             <site:panel 
+             <imp:panel 
                 displayName="${ip.displayName}"
                  content="N/A" />
             </c:otherwise>
         </c:choose>
 
   <c:if test="${species eq 'falciparum3D7'}">
-      <wdk:wdkTable tblName="MassSpec" isOpen="true"
+      <imp:wdkTable tblName="MassSpec" isOpen="true"
                     attribution="Waters_female_gametes,Waters_male_gametes,Waters_mixed_gametes,Pyoelii_LiverStage_LS40,Pyoelii_LiverStage_LS50,FlorensMassSpecData2002,FlorensMassSpecData2004,Pf_Merozoite_Peptides,Lasonder_Mosquito_Oocysts,Lasonder_Mosquito_oocyst_derived_sporozoites,Lasonder_Mosquito_salivary_gland_sporozoites,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,P.falciparum_Clinical_Proteomics,Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection,Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection,P.vivax_Clinical_Proteomics,Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC,Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC,Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC"/>
   </c:if>
 
   <c:if test="${species eq 'falciparum3D7'}">
-      <wdk:wdkTable tblName="MassSpecMod" isOpen="true"
+      <imp:wdkTable tblName="MassSpecMod" isOpen="true"
           attribution="Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC,Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC"/>
   </c:if> 
 
   <c:if test="${binomial eq 'Plasmodium berghei'}">
-    <wdk:wdkTable tblName="ProteinExpression" attribution="Pberghei_Protein_Expression"/>
+    <imp:wdkTable tblName="ProteinExpression" attribution="Pberghei_Protein_Expression"/>
   </c:if>
 
-  <wdk:wdkTable tblName="ProteinDatabase"/>
+  <imp:wdkTable tblName="ProteinDatabase"/>
 
   <c:set var="pdbLink">
     <a href="http://www.rcsb.org/pdb/smartSubquery.do?smartSearchSubtype=SequenceQuery&inputFASTA_USEstructureId=false&sequence=${attrs['protein_sequence'].value}&eCutOff=10&searchTool=blast">Search
     PDB by the protein sequence of ${id}</a>
   </c:set>
 
-<wdk:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
 
-<wdk:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
+<imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
   ${attrs['ssgcid_request_link']}
 </c:if>
 
   <c:if test="${species eq 'falciparum3D7'}">
-    <wdk:wdkTable tblName="3dPreds" attribution="predictedProteinStructures"/>
+    <imp:wdkTable tblName="3dPreds" attribution="predictedProteinStructures"/>
   </c:if>
 
-  <wdk:wdkTable tblName="Epitopes"/>
+  <imp:wdkTable tblName="Epitopes"/>
 
 
 </c:if> <%-- end if isCodingGene --%>
 
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
-  <site:pageDivider name="Expression"/>
+  <imp:pageDivider name="Expression"/>
 
-  <site:expressionGraphs organism="${organismFull}"/>
+  <imp:expressionGraphs organism="${organismFull}"/>
 
 
 <c:if test="${species eq 'falciparum3D7'}">
-  <wdk:wdkTable tblName="SageTags" attribution="SageTagArrayDesign,PlasmoSageTagFreqs"/>
+  <imp:wdkTable tblName="SageTags" attribution="SageTagArrayDesign,PlasmoSageTagFreqs"/>
 </c:if>
 </c:if>
 
  <%-- ------------------------------------------------------------------ --%>
 
 
-<site:pageDivider name="Sequence"/>
+<imp:pageDivider name="Sequence"/>
 <i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
 <c:if test="${isCodingGene}">
 <!-- protein sequence -->
@@ -680,7 +680,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <pre><w:wrap size="60">${attrs['protein_sequence'].value}</w:wrap></pre>
   <font size="-1">Sequence Length: ${fn:length(proteinSequence.value)} aa</font><br/>
 </c:set>
-<wdk:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
+<imp:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
              content="${proteinSequenceContent}" isOpen="false"/>
 
 <%-- Workshop annotations have become the offical annotation as of release V6.0
@@ -695,7 +695,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
   <table width="100%" bgcolor=#98FB98>
     <tr><td>
-      <wdk:toggle name="workshopProteinSequence" displayName="${workshopProteinSequence.displayName}"
+      <imp:toggle name="workshopProteinSequence" displayName="${workshopProteinSequence.displayName}"
                content="${workshopProteinSequenceContent}" isOpen="false"/>
     </td></tr>--%>
 <%--  </c:if>--%>
@@ -707,7 +707,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <pre><w:wrap size="60">${transcriptSequence.value}</w:wrap></pre>
   <font size="-1">Sequence Length: ${fn:length(transcriptSequence.value)} bp</font><br/>
 </c:set>
-<wdk:toggle name="transcriptSequence"
+<imp:toggle name="transcriptSequence"
              displayName="${transcriptSequence.displayName}"
              content="${transcriptSequenceContent}" isOpen="false"/>
 
@@ -723,7 +723,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   </c:set>
     <table width="100%" bgcolor=#98FB98>
       <tr><td>
-      <wdk:toggle name="workshopTranscriptSequence"
+      <imp:toggle name="workshopTranscriptSequence"
              displayName="${workshopTranscriptSequence.displayName}"
              content="${workshopTranscriptSequenceContent}" isOpen="false"/>
     </td></tr>
@@ -744,7 +744,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <font size="-1">Sequence Length: ${fn:length(totSeq)} bp</font><br/>
 </c:set>
 
-<wdk:toggle name="genomicSequence" isOpen="false"
+<imp:toggle name="genomicSequence" isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
     content="${seq}" />
 
@@ -756,7 +756,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <pre><w:wrap size="60">${cds.value}</w:wrap></pre>
   <font size="-1">Sequence Length: ${fn:length(cds.value)} bp</font><br/>
 </c:set>
-<wdk:toggle name="cds" displayName="${cds.displayName}"
+<imp:toggle name="cds" displayName="${cds.displayName}"
              content="${cdsContent}" isOpen="false"/>
 
 
@@ -770,7 +770,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     </c:set>
     <table width="100%" bgcolor=#98FB98>
       <tr><td>
-    <wdk:toggle name="workshopCds" displayName="${workshopCds.displayName}"
+    <imp:toggle name="workshopCds" displayName="${workshopCds.displayName}"
                 content="${workshopCdsContent}" isOpen="false"/>
     </td></tr>
   </table>
@@ -886,6 +886,6 @@ Annotation of the P. chabaudi AS chromosomes was obtained from the Pathogen Sequ
 </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>
 
-<site:pageLogger name="gene page" />
+<imp:pageLogger name="gene page" />

@@ -1,11 +1,11 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set var="version" value="${wdkModel.version}"/>
 <c:set var="site" value="${wdkModel.displayName}"/>
 
 <!-- get wdkModel name to display as page header -->
-<site:header title="${site}.org :: Support Feedback"
+<imp:header title="${site}.org :: Support Feedback"
                  banner="${site} Support Feedback"
                  parentDivision="${site}"
                  parentUrl="/home.jsp"
@@ -33,6 +33,6 @@
 </td></tr>
 </table> 
 
-<site:footer/>
+<imp:footer/>
 
 

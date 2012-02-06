@@ -1,8 +1,8 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -22,7 +22,7 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<site:header title="${wdkRecord.primaryKey}"
+<imp:header title="${wdkRecord.primaryKey}"
              divisionName="Sage Tag Record"
              refer="recordPage"
              division="queries_tools"/>
@@ -35,7 +35,7 @@
 <c:otherwise>
 
 <%-- quick tool-box for the record --%>
-<site:recordToolbox />
+<imp:recordToolbox />
 
 <div class="h2center" style="font-size:160%">
  	Sage Tag
@@ -43,7 +43,7 @@
 
 <div class="h3center" style="font-size:130%">
 	${primaryKey}<br>
-	<wdk:recordPageBasketIcon />
+	<imp:recordPageBasketIcon />
 </div>
 <br>
 <%--#############################################################--%>
@@ -51,18 +51,18 @@
 
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}" />
 <br>
 
-<wdk:wdkTable tblName="AllCounts" isOpen="true" />
+<imp:wdkTable tblName="AllCounts" isOpen="true" />
 <br>
 
-<wdk:wdkTable tblName="Genes" isOpen="true" />
+<imp:wdkTable tblName="Genes" isOpen="true" />
 <br>
 
-<wdk:wdkTable tblName="Locations" isOpen="true" />
+<imp:wdkTable tblName="Locations" isOpen="true" />
 
 <br>
 
@@ -71,4 +71,4 @@
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
-<site:footer/>
+<imp:footer/>

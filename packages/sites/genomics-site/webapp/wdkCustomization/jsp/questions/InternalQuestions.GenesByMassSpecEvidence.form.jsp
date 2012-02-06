@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -9,7 +9,7 @@
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
-<wdk:errors/>
+<imp:errors/>
 
 <%-- div needed for Add Step --%>
 <div id="form_question">
@@ -22,10 +22,10 @@
 
  <c:choose>
     <c:when test="${projectId == 'PlasmoDB' || projectId == 'EuPathDB'}">
-	<site:queryList columns="${columns}" questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
+	<imp:queryList columns="${columns}" questions="GeneQuestions.GenesByMassSpec,GeneQuestions.GenesByProteomicsProfile"/>
     </c:when>
     <c:otherwise>
-	<site:queryList columns="${columns}" questions="GeneQuestions.GenesByMassSpec"/>
+	<imp:queryList columns="${columns}" questions="GeneQuestions.GenesByMassSpec"/>
     </c:otherwise>
 </c:choose>
 

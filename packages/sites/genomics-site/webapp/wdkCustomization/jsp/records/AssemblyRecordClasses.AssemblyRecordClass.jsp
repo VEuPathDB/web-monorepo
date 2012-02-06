@@ -1,8 +1,8 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
@@ -13,7 +13,7 @@
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 
-<site:header title="${wdkModel.displayName} : Assembly ${id}"
+<imp:header title="${wdkModel.displayName} : Assembly ${id}"
              divisionName="Assembly Record"
              division="queries_tools"
              refer="recordPage"
@@ -36,7 +36,7 @@
 
 <h2>
 <center>
-<wdk:recordPageBasketIcon />
+<imp:recordPageBasketIcon />
 </center>
 </h2>
 
@@ -46,7 +46,7 @@
 
 
 <!-- Overview -->
-<wdk:toggle name="${overview.displayName}"
+<imp:toggle name="${overview.displayName}"
     displayName="${overview.displayName}" isOpen="true"
     content="${overview.value}" />
 
@@ -73,14 +73,14 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
 </c:catch>
 <c:if test="${e!=null}"> 
   <c:set var="dnaContextContent">
-  <site:embeddedError 
+  <imp:embeddedError 
       msg="<font size='-2'>temporarily unavailable</font>" 
       e="${e}" 
   />
   </c:set>
 </c:if>
 
-<wdk:toggle name="dnaContext" displayName="Genomic Context"
+<imp:toggle name="dnaContext" displayName="Genomic Context"
              content="${dnaContextContent}" isOpen="true"
              />
 
@@ -91,25 +91,25 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
   <c:import url="http://${pageContext.request.serverName}/cgi-bin/estClusterProxy?id=${id}&what=getConsensus&project_id=${projectId}" />
   </c:catch>
   <c:if test="${e!=null}"> 
-      <site:embeddedError 
+      <imp:embeddedError 
           msg="<font size='-2'>temporarily unavailable</font>" 
           e="${e}" 
       />
   </c:if>
 </c:set>
 
-<wdk:toggle name="ConsensusSequence"
+<imp:toggle name="ConsensusSequence"
     displayName="Consensus Sequence"
     content="${consensusSeq}"
     isOpen="true"/>
 
 
 
-<wdk:wdkTable tblName="AlignmentInfo" isOpen="true"/>
+<imp:wdkTable tblName="AlignmentInfo" isOpen="true"/>
 
-<wdk:wdkTable tblName="LibraryInfo" isOpen="true"/>
+<imp:wdkTable tblName="LibraryInfo" isOpen="true"/>
 
-<wdk:wdkTable tblName="EstInfo" isOpen="false"/>
+<imp:wdkTable tblName="EstInfo" isOpen="false"/>
 
 <%------------------------------------------------------------------%>
 
@@ -118,21 +118,21 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
   <c:import url="http://${pageContext.request.serverName}/cgi-bin/estClusterProxy?id=${id}&what=getAlignment&project_id=${projectId}" />
   </c:catch>
   <c:if test="${e!=null}"> 
-      <site:embeddedError 
+      <imp:embeddedError 
           msg="<font size='-2'>temporarily unavailable</font>" 
           e="${e}" 
       />
   </c:if>
 </c:set>
 
-<wdk:toggle name="Alignment"
+<imp:toggle name="Alignment"
     displayName="Alignment${attr.displayName}"
     content="${clusterAlign}" />
 
 
 <%-- REFERENCE ----------------------------------------------------%>
 
-<site:panel 
+<imp:panel 
     displayName="Attributions"
     content=" CAP4 clustering and alignments by EuPathDB. EST sequences as individually attributed." />
 <br>
@@ -144,4 +144,4 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
 </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>

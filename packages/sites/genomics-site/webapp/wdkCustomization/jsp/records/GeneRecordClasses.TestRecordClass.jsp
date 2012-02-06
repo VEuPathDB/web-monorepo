@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -35,7 +35,7 @@
       <font face="Arial,Helvetica">${recordType} Record</font>
 </c:set>
 
-<site:header title="${wdkRecord.primaryKey}"
+<imp:header title="${wdkRecord.primaryKey}"
              bannerPreformatted="${bannerText}"
              divisionName="Gene Record"
              division="queries_tools"/>
@@ -55,17 +55,17 @@
 <c:set var="append" value="" />
 
 <c:set var="notes">
-    <site:dataTable tblName="Notes" align="left" />
+    <imp:dataTable tblName="Notes" align="left" />
 </c:set>
 
 <c:if test="${notes ne 'none'}">
     <c:set var="append">
-        ${append}<br><br><site:dataTable tblName="Notes" />
+        ${append}<br><br><imp:dataTable tblName="Notes" />
     </c:set>
 </c:if>
 
 <c:set var="attr" value="${attrs['overview']}" />
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}${append}" />
 <br>
@@ -73,13 +73,13 @@
 <%------------------------------------------------------------------%>
 
 <c:set var="attr" value="${attrs['product']}" />
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}" />
 <br>
 <%------------------------------------------------------------------%>
 <c:set var="attr" value="${attrs['otherInfo']}" />
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${attr.value}" />
 <br>
@@ -87,11 +87,11 @@
 <%------------------------------------------------------------------%>
 <c:set var='commentLegend'>
     <c:catch var="e">
-      <site:dataTable tblName="UserComments"/>
+      <imp:dataTable tblName="UserComments"/>
       <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
     </c:catch>
     <c:if test="${e != null}">
-     <site:embeddedError 
+     <imp:embeddedError 
          msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
          e="${e}" 
      />
@@ -108,7 +108,7 @@
     </c:url>
     
 </c:set>
-<site:panel 
+<imp:panel 
     displayName="User Comments"
     content="${commentLegend}" />
 <br>
@@ -147,7 +147,7 @@
            <c:import url="${genomeContextUrl}"/>
         </c:catch>
         <c:if test="${e!=null}"> 
-            <site:embeddedError 
+            <imp:embeddedError 
                 msg="<font size='-2'>error accessing<br>'${genomeContextUrl}'</font>" 
                 e="${e}" 
             />
@@ -162,7 +162,7 @@
         <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
     </c:set>
     
-    <site:panel 
+    <imp:panel 
         displayName="Genomic Context"
         content="${genomeContextImg}" />
     <br>
@@ -202,7 +202,7 @@ http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodbaa/?name=$
            <c:import url="${proteinFeaturesUrl}"/>
         </c:catch>
         <c:if test="${e!=null}">
-            <site:embeddedError 
+            <imp:embeddedError 
                 msg="<font size='-2'>error accessing<br>'${proteinFeaturesUrl}'</font>" 
                 e="${e}" 
             />
@@ -210,7 +210,7 @@ http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodbaa/?name=$
         </center></noindex>
     </c:set>
     
-    <site:panel 
+    <imp:panel 
         displayName="Predicted Protein Features"
         content="${proteinFeaturesImg}" />
     <br>
@@ -223,10 +223,10 @@ http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodbaa/?name=$
 <c:set var="junk" value="${attr.close}"/>
 
 <c:set var="table">
-    <site:dataTable tblName="EcNumber" />
+    <imp:dataTable tblName="EcNumber" />
 </c:set>
 
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${table}" />
 <br>
@@ -238,10 +238,10 @@ http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodbaa/?name=$
 <c:set var="junk" value="${attr.close}"/>
 
 <c:set var="table">
-    <site:dataTable tblName="PfamDomains" />
+    <imp:dataTable tblName="PfamDomains" />
 </c:set>
 
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${table}" />
 <br>
@@ -252,10 +252,10 @@ http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodbaa/?name=$
 <c:set var="junk" value="${attr.close}"/>
 
 <c:set var="table">
-    <site:dataTable tblName="GoTerms" />
+    <imp:dataTable tblName="GoTerms" />
 </c:set>
 
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${table}" />
 <br>
@@ -264,12 +264,12 @@ http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodbaa/?name=$
 <c:if test="${extdbname ne CPARVUMCHR6 && attrs['so_type'].value eq 'CDS'}">
 
 <c:set var="table">
-    <site:dataTable tblName="Orthologs" />
+    <imp:dataTable tblName="Orthologs" />
 <br>
 <a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Keyword&q=${fn:substring(attrs['protein_id'].value, 0, 8)}"><font size='-2'>Find ${wdkRecord.primaryKey} in OrthoMCL DB</font></a>
 </c:set>
 
-<site:panel 
+<imp:panel 
     displayName="Cryptosporidium Orthologs and Paralogs(<a href='http://orthomcl.cbil.upenn.edu'>OrthoMCL DB</a>)"
     content="${table}" />
 <br>
@@ -284,7 +284,7 @@ http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodbaa/?name=$
     </font>
     </noindex>
 </c:set>
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${seq}" />
 <br>
@@ -298,7 +298,7 @@ http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodbaa/?name=$
     </font>
     </noindex>
 </c:set>
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${seq}" />
 <br>
@@ -312,7 +312,7 @@ http://${pageContext.request.serverName}/mod-perl/gbrowse_img/cryptodbaa/?name=$
     </font>
     </noindex>
 </c:set>
-<site:panel 
+<imp:panel 
     displayName="${attr.displayName}"
     content="${seq}" />
 <br>
@@ -359,7 +359,7 @@ Teichmann SA, Ivens A, Dear PH.
     </c:set>
 </c:if>
 
-<site:panel 
+<imp:panel 
     displayName="Attributions"
     content="${reference}" />
 <br>

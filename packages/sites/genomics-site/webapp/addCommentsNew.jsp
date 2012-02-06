@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic" %>
@@ -30,7 +30,7 @@
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="${wdkModel.displayName}.org :: Add A Comment"
+<imp:header title="${wdkModel.displayName}.org :: Add A Comment"
                  banner="Add A Comment"/>
 <head>
 <script type="text/javascript">
@@ -129,7 +129,7 @@ function openPubmedWindow(searchBoxId) {
 
   <c:when test="${empty wdkUser || wdkUser.guest}">
     <p align=center>Please login to post a comment.</p>
-    <table align='center'><tr><td><site:login/></td></tr></table>
+    <table align='center'><tr><td><imp:login/></td></tr></table>
   </c:when>
   
   <c:otherwise>
@@ -162,7 +162,7 @@ function openPubmedWindow(searchBoxId) {
         <c:choose>
 
           <c:when test="${param.bulk ne 'yes'}">
-            <site:email
+            <imp:email
                   to="${wdkUser.email}, ${to}"
                   from="${from}"
                   subject="${subject}"
@@ -170,7 +170,7 @@ function openPubmedWindow(searchBoxId) {
             />
           </c:when>
           <c:otherwise>
-            <site:email
+            <imp:email
                   to="${to}"
                   from="${from}"
                   subject="${subject}"
@@ -190,7 +190,7 @@ function openPubmedWindow(searchBoxId) {
        <c:otherwise>
 
     <c:if test="${param.flag ne '0'}">
-          <wdk:errors/>
+          <imp:errors/>
     </c:if>
 
 
@@ -545,4 +545,4 @@ function openPubmedWindow(searchBoxId) {
 <br/><br/>              
 <script language="JavaScript" type="text/javascript" src="/gbrowse/wz_tooltip.js"></script>
 </body>
-<site:footer/>
+<imp:footer/>

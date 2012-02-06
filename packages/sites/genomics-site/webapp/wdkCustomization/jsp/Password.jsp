@@ -1,4 +1,4 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -7,7 +7,7 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<site:header title="${wdkModel.displayName} :: Change Password"
+<imp:header title="${wdkModel.displayName} :: Change Password"
                  banner="Change Password"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
@@ -50,7 +50,7 @@ function validateFields(e)
   <td bgcolor=white valign=top>
 
 <!-- show error messages, if any -->
-<wdk:errors/>
+<imp:errors/>
 
 <!-- get user object from session scope -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
@@ -161,4 +161,4 @@ function validateFields(e)
 </tr>
 </table> 
 
-<site:footer/>
+<imp:footer/>

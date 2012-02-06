@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -9,6 +9,16 @@
  			  type="java.lang.String"
 			  required="false" 
 			  description="Page calling this tag"
+%>
+<%@ attribute name="twitter" 
+ 			  type="java.lang.String"
+			  required="true" 
+			  description="link to twitter for this project"
+%>
+<%@ attribute name="facebook" 
+ 			  type="java.lang.String"
+			  required="true" 
+			  description="link to facebook for this project"
 %>
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
@@ -67,7 +77,7 @@
 
 <ul>
     <li><a title="START a NEW search strategy. Searches are organized by the genomic feature they return." >New Search</a>
-  	<site:drop_down_QG2 />
+  	<imp:drop_down_QG2 />
     </li>
 </ul>
 
@@ -83,7 +93,7 @@
 <ul style="width:10em;white-space:nowrap">	
 <c:choose>
   <c:when test="${wdkUser == null || wdkUser.guest}">
-    <wdk:requestURL path="/showApplication.do" />
+    <imp:requestURL path="/showApplication.do" />
     <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');popLogin('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
   </c:when>
   <c:otherwise>
@@ -175,11 +185,11 @@
     <li><a>Community</a>
 	<ul>
 		<li>
-		<a href="http://twitter.com/eupathdb">
+		<a href="http://twitter.com/${twitter}">
 			<img style="margin:0px;vertical-align:top" title="Follow us on twitter!" src="/assets/images/twitter.gif" width="20">
 			<span style="vertical-align:top">&nbsp;Follow us on twitter!</span> 
 		</a>
-		<a href="https://www.facebook.com/pages/EuPathDB/133123003429972">
+		<a href="https://www.facebook.com/${facebook}">
 			<img style="margin:0px;margin-left:1px;vertical-align:top" title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="18">
 			<span style="vertical-align:top">&nbsp;Follow us on facebook!</span> 
 		</a>
@@ -218,7 +228,7 @@
 <ul style="padding-top:3px;width:11em;border-width:0;float:right">
 <c:choose>
 <c:when test="${wdkUser == null || wdkUser.guest}">
-	<wdk:requestURL path="/showFavorite.do" />
+	<imp:requestURL path="/showFavorite.do" />
 	<li><a id="mybasket" onclick="popLogin('${originRequestUrl}');" href="javascript:void(0)">
 		<img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
 		<span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>

@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -15,7 +15,7 @@
 
 
 <c:if test="${projectId eq 'PlasmoDB'}">
-    <site:plasmoLegacyGraphs organism="${organism}" id="${sourceId}"/>
+    <imp:plasmoLegacyGraphs organism="${organism}" id="${sourceId}"/>
 </c:if>
 
-<site:profileGraphs organism="${organism}" tableName="ExpressionGraphs"/>
+<imp:profileGraphs organism="${organism}" tableName="ExpressionGraphs"/>

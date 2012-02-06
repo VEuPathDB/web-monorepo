@@ -1,5 +1,5 @@
-<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -23,7 +23,7 @@
   href="${rssUrl}" />
 </c:set>
 
-<site:header title="${wdkModel.displayName} : News"
+<imp:header title="${wdkModel.displayName} : News"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
@@ -145,4 +145,4 @@
   </c:otherwise>
 </c:choose>
 
-<site:footer/>
+<imp:footer/>
