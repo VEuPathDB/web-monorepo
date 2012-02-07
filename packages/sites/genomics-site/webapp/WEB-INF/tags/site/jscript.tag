@@ -37,7 +37,6 @@
 <c:if test="${refer == 'customSummary' || refer == 'customQuestion'}">
   <imp:parameterScript />
   <script type="text/javascript" src="/assets/js/orthologpattern.js"></script>
-  <script type="text/javascript" src="/assets/js/blast.js"></script>
   <script type="text/javascript" src="<c:url value='/wdkCustomization/js/span-location.js' />"></script>
 </c:if>
 

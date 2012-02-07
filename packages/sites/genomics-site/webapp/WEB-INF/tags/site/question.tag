@@ -35,7 +35,8 @@
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
 <jsp:useBean id="helpQ" class="java.util.LinkedHashMap"/>
 
-<input type="hidden" name="questionFullName" value="${wdkQuestion.fullName}"/>
+<input type="hidden" id="questionFullName" name="questionFullName" value="${wdkQuestion.fullName}"/>
+<div id="questionName" style="display:none" name="${wdkQuestion.name}"></div>
 
 <!-- show error messages, if any -->
 <div class='usererror'><api:errors/></div>

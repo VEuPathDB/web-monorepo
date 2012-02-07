@@ -1,24 +1,171 @@
+
+$(function() {
+	if (!isRevise()) {
+		setUpBlastPage();
+	}
+});
+
+function setUpBlastPage() {
+	// set sequence field as textarea with onchange event instead of standard text field
+	var sequenceValue = $('#BlastQuerySequence').val();
+    $('#BlastQuerySequence').parent()
+        .html('<textarea id="sequence" onchange="checkSequenceLength()" rows="4" cols="50" name="value(BlastQuerySequence)"></textarea><br/>'+
+              '<i>Note: max.allowed sequence is 31K bases</i><br/><div class="usererror"><span id="short_sequence_warning"></span></div>');
+	$('#sequence').val(sequenceValue);
+	
+	// set onchange for database type to set blast type-specific fields
+	$('input[name="array(BlastDatabaseType)"]').attr("onchange","changeQuestion(); changeAlgorithms();");
+
+	// set onchange for algorithm type to change sequence type
+	$('input[name="array(BlastAlgorithm)"]').attr("onchange","changeSequenceLabel(); checkSequenceLength();");
+
+	// set these based on whatever defaults came out of the question page
+	changeQuestion();
+	changeAlgorithms();
+	
+	// not sure what this does...
+	//if (window.location.href.indexOf("showApplication") == -1)
+	//	initBlastQuestion(window.location.href);
+}
+
+function changeQuestion() {
+	// stores mapping from blast databases to questions	
+	var blastDb = getSelectedDatabaseName();
+	var questionName;
+	if (blastDb.indexOf("est") >= 0) {
+		questionName = "EstQuestions.EstsBySimilarity";
+	} else 	if (blastDb.indexOf("assem") >= 0) {
+		questionName = "AssemblyQuestions.AssembliesBySimilarity";
+	} else 	if (blastDb.indexOf("orf") >= 0) {
+		questionName = "OrfQuestions.OrfsBySimilarity";
+	} else 	if (blastDb.indexOf("survey") >= 0) {
+		questionName = "GenomicSequenceQuestions.GSSBySimilarity";
+	} else 	if (blastDb.indexOf("genom") >= 0) {
+		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
+	} else 	if (blastDb.indexOf("iso") >= 0) {
+		questionName = "IsolateQuestions.IsolatesBySimilarity";
+	} else {
+		questionName = "GeneQuestions.GenesBySimilarity";
+	}
+	$('#questionFullName').val(questionName);
+	// don't think this is necessary since using question page now
+	//$('#questionFullName_id_that_IE7_likes').val(questionName);
+}
+
+function changeAlgorithms() {
+	// get valid program list (based on data type) and grey inapplicable options
+	var tgeUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass&primary_key=fill";
+	var poUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Protein_Orf_TermClass&primary_key=fill";
+	var type = getSelectedDatabaseName();
+	var sendReqUrl;
+
+	// determine appropriate URL to get list of valid algorithms for this database
+	if (type == 'EST' || type == 'Transcripts' || type == 'Genome' ||
+		type == 'Genome Survey Sequences' || type == 'Isolates' || type == 'Assemblies') {
+		sendReqUrl = tgeUrl;
+	}
+	else if (type == 'ORF' || type == 'Proteins'){
+		sendReqUrl = poUrl;
+	}
+	else {
+		alert("Oops! illegal BLAST database type: " + type + ". Please contact the administrator about this error.");
+		return;
+	}
+
+	// make ajax call to get xml-formatted list; parse and populate
+	$.ajax({
+		url: sendReqUrl,
+		dataType: "xml",
+		success: function(xml) {
+			// first get currently selected button
+			var current = getSelectedAlgorithmName();
+			var mustSelectFirst = true;
+			var firstValidAlgorithm = "";
+			
+			// then deactivate all (will turn back on if appropriate)
+			$('input[name="array(BlastAlgorithm)"]').attr("disabled", true).attr("checked", false).parent().children().filter("span").attr("style","color:gray");
+			
+			// then reactivate all valid algorithms for this type
+			$(xml).find("term").each(function() {
+				var algName = $(this).attr("id");
+				$('input[value="'+algName+'"]').attr("disabled", false).parent().children().filter("span").attr("style","color:black");
+				if (firstValidAlgorithm == "") firstValidAlgorithm = algName;
+				if (algName == current) mustSelectFirst = false;
+			});
+			
+			// reselect current, or select the first activated option if
+			//   the previously selected option has been deactivated
+			current = (mustSelectFirst ? firstValidAlgorithm : current);
+			$('input[value="'+current+'"]').attr("checked", true);
+
+			// update sequence label to reflect new algorithm
+			changeSequenceLabel();
+		},
+		error: function(data, msg, e) {
+			alert("ERROR \n "+ msg + "\n" + e +
+                  ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
+		}
+	});
+}
+
+function changeSequenceLabel() {
+	var algorithm = getSelectedAlgorithmName();
+	$('#blastAlgo').val(algorithm);
+	var label = ((algorithm == "blastp" || algorithm == "tblastn") ? "Protein Sequence" : "Nucleotide Sequence");
+	$('#help_BlastQuerySequence').parent().children().filter("span").html(label);
+}
+
+function checkSequenceLength() {
+	if ($('#sequence').val().length != 0){
+		var algorithm = getSelectedAlgorithmName();
+		var sequence = $('#sequence').val();
+		var expectationElem = $('#-e')[0];
+		var filteredSeq = sequence.replace(/^>.*/,"").replace(/[^a-zA-Z]/g,"");
+		if (filteredSeq.length <= 25 && algorithm == "blastn") {
+			$('#short_sequence_warning').html("Note: The expect value has been set from " + expectationElem.value + " to 1000 because<br/>your query sequence is less than 25 nucleotides. You may want<br/>to adjust the expect value further to refine the specificity of your<br/>query.");
+			expectationElem.value = 1000;
+		} else if (filteredSeq.length > 31000) {
+			$('#short_sequence_warning').html("Note: The maximum allowed size for your sequence is 31000 base pairs.");
+		} else {
+			$('#short_sequence_warning').html("");
+		}
+	} else {
+		$('#short_sequence_warning').html("");
+	}
+}
+
+function isRevise() {
+	// not sure of best way to test this, but for now, this seems to work
+	//  (i.e. if there's no input called BlastDatabaseType, then this is revise)
+	return ($('input[name="array(BlastDatabaseType)"]').size() == 0);
+}
+
+function getSelectedDatabaseName() { return getSelectedRadioButton("array(BlastDatabaseType)"); }
+function getSelectedAlgorithmName() { return getSelectedRadioButton("array(BlastAlgorithm)"); }
+
+function getSelectedRadioButton(radioName) {
+	var inputs = $('input[name="' + radioName + '"]');
+	for (var y = 0; y < inputs.size(); y++) {
+		if (inputs[y].checked) {
+			return inputs[y].value;
+		}
+	}
+	// none are selected; return first element
+	return inputs[0].value;
+}
+
+///////////////////////////////////////////////////////////////////////
 var revise = false;
 var Rtype = "";
 var Rprogram = "";
 var Rorganism = null;
-
-var is_Done = false;
 var selectedArray = "";
 
-//Program varaiables
-var tgeUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass&primary_key=fill";
-var poUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Protein_Orf_TermClass&primary_key=fill";
+//Program variables
 var tgeArray = new Array();
 var poArray = new Array();
 
-
 function clickDefault(){}
-
-window.onload = function(){
-	if(window.location.href.indexOf("showApplication") == -1)
-		initBlastQuestion(window.location.href);
-}
 
 function initBlastQuestion(url){
 	revise = false;
@@ -45,86 +192,10 @@ function initBlastQuestion(url){
 	}
 }
 
-
-function checkSequenceLength(){	
-	if(document.getElementById('sequence').value.length != 0){
-    		var algorithm = "";
-		var algos = document.getElementsByName('algorithm');
-		for(var y = 0; y < algos.length; y++){
-			if(algos[y].checked)
-				algorithm = algos[y].value;
-		}
-		var eval = document.getElementById('e');
-		var str=document.getElementById('sequence').value;
-		var str1 = str.replace(/^>.*/,"");
-		var str2 = str1.replace(/[^a-zA-Z]/g,"");
-		if(str2.length <= 25 && algorithm == "blastn"){
-			document.getElementById('short_sequence_warning').innerHTML = "Note:  The expect value has been set from " + eval.value + " to 1000 because <br> your query sequence is less than 25 nucleotides.  You may want <br> to adjust the expect value further to refine the specificity of your <br> query.";
-			eval.value = 1000;
-		}else if (str2.length > 31000) {
-			document.getElementById('short_sequence_warning').innerHTML = "Note:  The maximum allowed size for your sequence is 31000 base pairs.";
-		}else{
-			document.getElementById('short_sequence_warning').innerHTML = "";
-		}
-	}else{
-		document.getElementById('short_sequence_warning').innerHTML = "";
-	}
-}
-
-
-function changeQuestion(){
-        // stores mapping from blast databases to questions	
-	var blastDb = "";
-	var types = document.getElementsByName('array(BlastDatabaseType)');
-	for(var x = 0; x < types.length; x++){
-		if(types[x].checked)
-			blastDb = types[x].value.toLowerCase();
-	}
-	var questionName;
-	if (blastDb.indexOf("est") >= 0){
-		questionName = "EstQuestions.EstsBySimilarity";
-	} else 	if (blastDb.indexOf("assem") >= 0){
-		questionName = "AssemblyQuestions.AssembliesBySimilarity";
-	} else 	if (blastDb.indexOf("orf") >= 0){
-		questionName = "OrfQuestions.OrfsBySimilarity";
-	} else 	if (blastDb.indexOf("survey") >= 0){
-		questionName = "GenomicSequenceQuestions.GSSBySimilarity";
-	} else 	if (blastDb.indexOf("genom") >= 0){
-		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
-	} else 	if (blastDb.indexOf("iso") >= 0){
-		questionName = "IsolateQuestions.IsolatesBySimilarity";
-	} else {
-		questionName = "GeneQuestions.GenesBySimilarity";
-	}
-	document.getElementById( 'questionFullName_id_that_IE7_likes' ).value = questionName;
-}
-
-
-function changeLabel(){	
-	var algorithm = "";
-	var algos = document.getElementsByName('algorithm');
-
-
-	for(var y = 0; y < algos.length; y++){
-		if(algos[y].checked)
-			algorithm = algos[y].value;
-	}
-
-       document.getElementById('blastAlgo').value = algorithm;
-
-       if(algorithm == "blastp" || algorithm == "tblastn") {
-           label = "Protein Sequence";
-       }
-       else {
-           label = "Nucleotide Sequence";
-       }
-
-       document.getElementById('parameter_label').innerHTML = "<b>"+label+"</b>";
-}
-
-
-function updateDatabaseTypeOnclick(question){
-  var questionLow = question.toLowerCase();
+function updateDatabaseTypeOnclick() {
+	alert("updating database type values!!!");
+	var question = $('#questionName').attr(name);
+	var questionLow = question.toLowerCase();
   // disable options based on the selected question
   algos = document.getElementsByName('array(BlastDatabaseType)');
   for(var i = 0; i < algos.length; i++)
@@ -146,82 +217,74 @@ function updateDatabaseTypeOnclick(question){
 }
 
 
-function getBlastAlgorithm() {
-	var label = "";
-  var type = "";
-
-	types = document.getElementsByName("array(BlastDatabaseType)");
-
-    for(var t = 0; t < types.length; t++){
-		if(types[t].checked)
-			type = types[t].value;
-	}
-//	document.getElementById('blastType').value = type;
+function getBlastAlgorithm_old() {
+	var tgeUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass&primary_key=fill";
+	var poUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Protein_Orf_TermClass&primary_key=fill";
+	var type = getSelectedDatabaseName();
 		
-	if(type == 'EST' || type == 'Transcripts' || type == 'Genome' || type == 'Genome Survey Sequences') {
+	if (type == 'EST' || type == 'Transcripts' || type == 'Genome' ||
+		type == 'Genome Survey Sequences' || type == 'Isolates' || type == 'Assemblies') {
 		sendReqUrl = tgeUrl; 
 		selectedArray = 'tge';
 	}
-	else if(type == 'ORF' || type == 'Proteins'){
+	else if (type == 'ORF' || type == 'Proteins'){
 		sendReqUrl = poUrl; 
 		selectedArray = 'po';
 	}
-	else if(type == 'Isolates'){
-		sendReqUrl = tgeUrl; 
-		selectedArray = 'tge';
-	}
-	else if(type == 'Assemblies'){
-		sendReqUrl = tgeUrl; 
-		selectedArray = 'tge';
+	else {
+		alert("Oops! illegal database type: " + type);
 	}
 
-	getAndWrite(sendReqUrl, 'BlastAlgorithm');
+	$.ajax({
+		url: sendReqUrl,
+		dataType: "xml",
+		success: function(data) {
+			fillDivFromXML( data, 'BlastAlgorithm', selectedArray);
+		},
+		error: function(data, msg, e) {
+			alert("ERROR \n "+ msg + "\n" + e +
+                  ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
+		}
+	});
 }
 
-
-function getAndWrite(sendReqUrl, elementId){ 
-  var xmlObj = null;
-	is_Done = false;
-	if(window.XMLHttpRequest){		
-		xmlObj = new XMLHttpRequest();
-	} else if(window.ActiveXObject){
-		xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
-	} else {
-		return;
-	}
-	xmlObj.onreadystatechange = function(){
-		if(xmlObj.readyState == 4 ){
-			if(xmlObj.status == 200){
-				if(elementId == 'BlastAlgorithm'){ 
-					fillDivFromXML( xmlObj.responseXML, elementId, selectedArray);
-				}
-			}else{
-				alert("Message returned, but with an error status");
-			}			
-		 }
-	}
-	xmlObj.open( 'GET', sendReqUrl, true );
-	xmlObj.send('');
-}
-
-function fillDivFromXML(obj, id, index)
+function fillDivFromXML_old(obj, id, index)
 {
 	var defArray = null;
 	if(obj != null){
 		var def = new Array();
 		defArray = obj.getElementsByTagName('term'); //I'm assuming they're 'term' tags
-		setArray(index, defArray);
+		if(index == 'tge') tgeArray = arr;
+		if(index == 'po') poArray = arr;
 	} else {
-		defArray = getArray(index);
+		if(index == 'tge') defArray = tgeArray;
+		else if(index == 'po') defArray = poArray;
+		else alert("Aaaah: illegal value for index: "+index);
 	}
 	var ArrayLength = defArray.length;
 	var term;
-	if(!revise) initRadioArray('algorithm'); 
-	//else revise = false;
+	if(!revise) {
+		// initialize radio array
+		var radioArray = document.getElementsByName('algorithm');
+		for(var y = 0; y < radioArray.length; y++){
+			radioArray[y].disabled = true;
+			radioArray[y].checked = false;
+			document.getElementById(radioArray[y].value+'_font').style.color="gray";
+			document.getElementById(radioArray[y].value+'_font').style.fontWeight="200";
+		}
+		document.getElementById('blastAlgo').value = "";
+	}
 	if( ArrayLength != 0 ){
 		for(var i=0; i<ArrayLength;i++){
 			term = new String( defArray[i].firstChild.data );
-			var radio = getArrayElement(term,'algorithm');
+			var radio;
+			var radioArray = document.getElementsByName('algorithm');
+			for (var y = 0; y < radioArray.length; y++){
+				if(radioArray[y].id == 'BlastAlgorithm_'+term) {
+					radio = radioArray[y];
+					break;
+				}
+			}
 			if(radio.id == 'BlastAlgorithm_'+term){
 				radio.disabled = false;
 				if(i==0){
@@ -236,55 +299,3 @@ function fillDivFromXML(obj, id, index)
 		alert("No Data Returned From the Server!!");
 	}	
 }
-
-
-function getArray(index){
-	if(index == 'N') return blastNArray;
-	if(index == 'PX') return blastPXArray;
-	if(index == 'T') return TblastArray;
-	if(index == 'Genome') return SequenceArray;
-	if(index == 'GSS') return GSSArray;
-	if(index == 'EST') return ESTArray;
-	if(index == 'Transcripts') return GeneArray;
-	if(index == 'Isolates') return IsolateArray;
-	if(index == 'Assemblies') return AssemblyArray;
-	if(index == 'ORF') return ORFArray;
-	if(index == 'tge') return tgeArray;
-	if(index == 'po') return poArray;
-}
-function setArray(index, arr){
-	if(index == 'N') blastNArray = arr;
-	if(index == 'PX') blastPXArray = arr;
-	if(index == 'T') TblastArray = arr;
-	if(index == 'Genome') SequenceArray = arr;
-	if(index == 'GSS') GSSArray = arr;
-	if(index == 'EST') ESTArray = arr;
-	if(index == 'Transcripts') GeneArray = arr;
-	if(index == 'Isolates') IsolateArray = arr;
-	if(index == 'Assemblies') AssemblyArray = arr;
-	if(index == 'ORF') ORFArray = arr;
-	if(index == 'tge') tgeArray = arr;
-	if(index == 'po') poArray = arr;
-}
-
-
-function initRadioArray(name){
-	var radioArray = document.getElementsByName(name);
-	for(var y = 0; y < radioArray.length; y++){
-		radioArray[y].disabled = true;
-		radioArray[y].checked = false;
-		document.getElementById(radioArray[y].value+'_font').style.color="gray";
-		document.getElementById(radioArray[y].value+'_font').style.fontWeight="200";
-	}
-	document.getElementById('blastAlgo').value = "";
-//	document.getElementById('blastOrg').value = "";
-}
-
-function getArrayElement(term,name){	
-	var radioArray = document.getElementsByName(name);
-	for(var y = 0; y < radioArray.length; y++){
-			if(radioArray[y].id == 'BlastAlgorithm_'+term) return radioArray[y];
-	}
-}
-
-
