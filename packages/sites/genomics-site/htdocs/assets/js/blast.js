@@ -193,7 +193,6 @@ function initBlastQuestion(url){
 }
 
 function updateDatabaseTypeOnclick() {
-	alert("updating database type values!!!");
 	var question = $('#questionName').attr(name);
 	var questionLow = question.toLowerCase();
   // disable options based on the selected question
@@ -216,86 +215,3 @@ function updateDatabaseTypeOnclick() {
   }
 }
 
-
-function getBlastAlgorithm_old() {
-	var tgeUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass&primary_key=fill";
-	var poUrl = "showRecord.do?name=AjaxRecordClasses.Blast_Protein_Orf_TermClass&primary_key=fill";
-	var type = getSelectedDatabaseName();
-		
-	if (type == 'EST' || type == 'Transcripts' || type == 'Genome' ||
-		type == 'Genome Survey Sequences' || type == 'Isolates' || type == 'Assemblies') {
-		sendReqUrl = tgeUrl; 
-		selectedArray = 'tge';
-	}
-	else if (type == 'ORF' || type == 'Proteins'){
-		sendReqUrl = poUrl; 
-		selectedArray = 'po';
-	}
-	else {
-		alert("Oops! illegal database type: " + type);
-	}
-
-	$.ajax({
-		url: sendReqUrl,
-		dataType: "xml",
-		success: function(data) {
-			fillDivFromXML( data, 'BlastAlgorithm', selectedArray);
-		},
-		error: function(data, msg, e) {
-			alert("ERROR \n "+ msg + "\n" + e +
-                  ". \nReloading this page might solve the problem. \nOtherwise, please contact site support.");
-		}
-	});
-}
-
-function fillDivFromXML_old(obj, id, index)
-{
-	var defArray = null;
-	if(obj != null){
-		var def = new Array();
-		defArray = obj.getElementsByTagName('term'); //I'm assuming they're 'term' tags
-		if(index == 'tge') tgeArray = arr;
-		if(index == 'po') poArray = arr;
-	} else {
-		if(index == 'tge') defArray = tgeArray;
-		else if(index == 'po') defArray = poArray;
-		else alert("Aaaah: illegal value for index: "+index);
-	}
-	var ArrayLength = defArray.length;
-	var term;
-	if(!revise) {
-		// initialize radio array
-		var radioArray = document.getElementsByName('algorithm');
-		for(var y = 0; y < radioArray.length; y++){
-			radioArray[y].disabled = true;
-			radioArray[y].checked = false;
-			document.getElementById(radioArray[y].value+'_font').style.color="gray";
-			document.getElementById(radioArray[y].value+'_font').style.fontWeight="200";
-		}
-		document.getElementById('blastAlgo').value = "";
-	}
-	if( ArrayLength != 0 ){
-		for(var i=0; i<ArrayLength;i++){
-			term = new String( defArray[i].firstChild.data );
-			var radio;
-			var radioArray = document.getElementsByName('algorithm');
-			for (var y = 0; y < radioArray.length; y++){
-				if(radioArray[y].id == 'BlastAlgorithm_'+term) {
-					radio = radioArray[y];
-					break;
-				}
-			}
-			if(radio.id == 'BlastAlgorithm_'+term){
-				radio.disabled = false;
-				if(i==0){
-					radio.checked = true;
-					changeLabel();
-				}
-				document.getElementById(term+'_font').style.color="black";
-				document.getElementById(term+'_font').style.fontWeight="bold";
-			}
-		}
-	}else{
-		alert("No Data Returned From the Server!!");
-	}	
-}
