@@ -1,8 +1,6 @@
 
 $(function() {
-	if (!isRevise()) {
-		setUpBlastPage();
-	}
+    setUpBlastPage();
 });
 
 function setUpBlastPage() {
@@ -22,10 +20,6 @@ function setUpBlastPage() {
 	// set these based on whatever defaults came out of the question page
 	changeQuestion();
 	changeAlgorithms();
-	
-	// not sure what this does...
-	//if (window.location.href.indexOf("showApplication") == -1)
-	//	initBlastQuestion(window.location.href);
 }
 
 function changeQuestion() {
@@ -48,8 +42,6 @@ function changeQuestion() {
 		questionName = "GeneQuestions.GenesBySimilarity";
 	}
 	$('#questionFullName').val(questionName);
-	// don't think this is necessary since using question page now
-	//$('#questionFullName_id_that_IE7_likes').val(questionName);
 }
 
 function changeAlgorithms() {
@@ -134,12 +126,6 @@ function checkSequenceLength() {
 	}
 }
 
-function isRevise() {
-	// not sure of best way to test this, but for now, this seems to work
-	//  (i.e. if there's no input called BlastDatabaseType, then this is revise)
-	return ($('input[name="array(BlastDatabaseType)"]').size() == 0);
-}
-
 function getSelectedDatabaseName() { return getSelectedRadioButton("array(BlastDatabaseType)"); }
 function getSelectedAlgorithmName() { return getSelectedRadioButton("array(BlastAlgorithm)"); }
 
@@ -153,65 +139,3 @@ function getSelectedRadioButton(radioName) {
 	// none are selected; return first element
 	return inputs[0].value;
 }
-
-///////////////////////////////////////////////////////////////////////
-var revise = false;
-var Rtype = "";
-var Rprogram = "";
-var Rorganism = null;
-var selectedArray = "";
-
-//Program variables
-var tgeArray = new Array();
-var poArray = new Array();
-
-function clickDefault(){}
-
-function initBlastQuestion(url){
-	revise = false;
-	var target = parseUrlUtil('questionFullName',url)[0];
-	if(window.location.href.indexOf("showApplication.do") != -1){
-		restrictTypes(target);
-	}
-	if(parseUrlUtil('-filter',url) != ""){
-       revise = true;
-       Rorganism = unescape(parseUrlUtil('BlastDatabaseOrganism',url)).replace(/\+/g," ").split(",");
-	   Rtype = parseUrlUtil('BlastDatabaseType',url)[0];
-	   if(Rtype.search(/\+/i) >= 0) Rtype = Rtype.replace(/\+/gi," ");
-	   Rprogram = parseUrlUtil('BlastAlgorithm',url);   
-	   clickDefault(Rtype, 'type'); 
-	   enableRadioArray('algorithm', Rprogram);
-	}else{
-		if(target.search(/Gene/i) >= 0) clickDefault('Transcripts','type');
-		else if(target.search(/ORF/i) >= 0) clickDefault('ORF','type');
-		else if(target.search(/ESTsBy/i) >= 0) clickDefault('EST','type');
-		else if(target.search(/Genomic/i) >= 0) clickDefault('Genome','type');
-		else if(target.search(/Isolate/i) >= 0) clickDefault('Isolates','type');
-		else if(target.search(/Assembly/i) >= 0) clickDefault('Assemblies','type');
-		else $("input.blast-type:checked").click();
-	}
-}
-
-function updateDatabaseTypeOnclick() {
-	var question = $('#questionName').attr(name);
-	var questionLow = question.toLowerCase();
-  // disable options based on the selected question
-  algos = document.getElementsByName('array(BlastDatabaseType)');
-  for(var i = 0; i < algos.length; i++)
-  {
-       var alg = algos[i];
-       var type = alg.value;
-       var disabled = true;
-       if (question == "UnifiedBlast"
-           || questionLow.match(type.toLowerCase()) != null
-           || (question == "GenesBySimilarity" && (type == "Transcripts" || type == "Proteins"))
-           || (question == "SequencesBySimilarity" && type == "Genome")
-          ) { 
-           disabled = false;
-       }
-       if (disabled) $(alg).attr("disabled", "disabled")
-       else $(alg).removeAttr("disabled");
-       alg.onclick =function() { checkSequenceLength();changeQuestion();getBlastAlgorithm(); }
-  }
-}
-
