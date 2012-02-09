@@ -4,20 +4,24 @@ $(function() {
 });
 
 function setUpBlastPage() {
-	// set sequence field as textarea with onchange event instead of standard text field
+	// add warning span to sequence field
 	var sequenceValue = $('#BlastQuerySequence').val();
-    $('#BlastQuerySequence').parent()
-        .html('<textarea id="sequence" onchange="checkSequenceLength()" rows="4" cols="50" name="value(BlastQuerySequence)"></textarea><br/>'+
-              '<i>Note: max.allowed sequence is 31K bases</i><br/><div class="usererror"><span id="short_sequence_warning"></span></div>');
-	$('#sequence').val(sequenceValue);
+    var sequenceHtml = $('#BlastQuerySequence').parent().html();
+    //'<textarea id="sequence" onchange="checkSequenceLength()" rows="4" cols="50" name="value(BlastQuerySequence)"></textarea>
+    $('#BlastQuerySequence').parent().html(sequenceHtml +
+    		'<br/><i>Note: max.allowed sequence is 31K bases</i><br/><div class="usererror"><span id="short_sequence_warning"></span></div>');    
+	$('#BlastQuerySequence').val(sequenceValue);
 	
-	// set onchange for database type to set blast type-specific fields
+    // set onchange for sequence field to display appropriate warning message
+	$('#BlastQuerySequence').attr("onchange","checkSequenceLength();");
+    
+	// set onchange for database type to set blast type-specific fields (i.e. all radio buttons)
 	$('input[name="array(BlastDatabaseType)"]').attr("onchange","changeQuestion(); changeAlgorithms();");
 
-	// set onchange for algorithm type to change sequence type
+	// set onchange for algorithm type to change sequence type (i.e. all radio buttons)
 	$('input[name="array(BlastAlgorithm)"]').attr("onchange","changeSequenceLabel(); checkSequenceLength();");
 
-	// set these based on whatever defaults came out of the question page
+	// set these based on whatever defaults come out of the question page
 	changeQuestion();
 	changeAlgorithms();
 }
@@ -108,9 +112,9 @@ function changeSequenceLabel() {
 }
 
 function checkSequenceLength() {
-	if ($('#sequence').val().length != 0){
+	var sequence = $('#BlastQuerySequence').val();
+	if (sequence.length != 0){
 		var algorithm = getSelectedAlgorithmName();
-		var sequence = $('#sequence').val();
 		var expectationElem = $('#-e')[0];
 		var filteredSeq = sequence.replace(/^>.*/,"").replace(/[^a-zA-Z]/g,"");
 		if (filteredSeq.length <= 25 && algorithm == "blastn") {
@@ -136,6 +140,10 @@ function getSelectedRadioButton(radioName) {
 			return inputs[y].value;
 		}
 	}
-	// none are selected; return first element
-	return inputs[0].value;
+	if (inputs.size() > 0) {
+		// none are selected; return first element
+	    return inputs[0].value;
+	}
+	// element not loaded
+	return "";
 }
