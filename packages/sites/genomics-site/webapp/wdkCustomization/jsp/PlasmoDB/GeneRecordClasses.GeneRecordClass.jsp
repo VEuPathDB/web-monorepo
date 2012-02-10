@@ -310,9 +310,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${species eq 'falciparum3D7'}">
 <imp:wdkTable tblName="Plasmo_eQTL_Table" isOpen="true"
                attribution="" />
-</c:if>
 
-<c:if test="${species eq 'falciparum3D7'}">
   <c:set var="queryURL">
         showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_HaploGrpSimilarity&value%28lod_score%29=1.5&value%28percentage_sim_haploblck%29=25&value%28pf_gene_id%29=${id}&weight=10
   </c:set>
