@@ -25,6 +25,10 @@
 <div id="contentcolumn">
 <div class="innertube">
 
+<div style="padding:3px 10px;">
+	<imp:searchLookup />
+</div>
+
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
 
@@ -68,6 +72,9 @@
 </c:otherwise>
 </c:choose>
 
+
+
+
 <table width="100%" border="0" class="threecolumn">
 <tr>
     <td width="33%" align="center">
@@ -96,11 +103,7 @@
 
 </div>
 
-<%--
-<div style="padding:3px 10px;">
-	<imp:searchLookup />
-</div>
---%>
+
 
 
 
