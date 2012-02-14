@@ -1,5 +1,5 @@
---- RenderPanels.pm.orig	2011-12-13 11:59:11.000000000 -0500
-+++ RenderPanels.pm	2011-12-13 12:07:52.000000000 -0500
+--- RenderPanels.pm.orig	2012-02-14 16:29:26.000000000 -0500
++++ RenderPanels.pm	2012-02-14 16:33:25.000000000 -0500
 @@ -253,6 +253,9 @@
      my $feature_files  = $args->{external_features};
      my $labels         = $args->{labels};
@@ -24,23 +24,21 @@
          img({   -src         => $help,
                   -style       => 'cursor:pointer',
                   -onmousedown => $help_click,
-@@ -1465,6 +1461,15 @@
+@@ -1465,6 +1461,13 @@
  
  		    warn "track_setup($label): ",time()-$time," seconds " if BENCHMARK;
  
 +        # EuPathDB patches 9/28/2011
-+        my @array = @$track_args;
++        my %hash = @$track_args;
 +        my ($sqlParam, $sqlName);
-+        my ($index) = grep { $array[$_] =~ /sqlParam/i } 0..$#array;
-+        $sqlParam = $array[$index+1] if $index;
-+        my ($index2) = grep { $array[$_] =~ /sqlName/i } 0..$#array;
-+        $sqlName = $array[$index2+1] if $index;
++        $sqlParam = $hash{'-sqlparam'};
++        $sqlName  = $hash{'-sqlname'};
 +        # end EuPathDB patches 
 +
  		    # == populate the tracks with feature data ==
  		    $self->add_features_to_track(
  			-labels    => [ $label, ],
-@@ -1472,6 +1477,8 @@
+@@ -1472,6 +1475,8 @@
  			-filters   => $filters,
  			-segment   => $segment,
  			-fsettings => $settings->{features},
@@ -49,7 +47,7 @@
  			);
  
  		    warn "add_features($label): ",time()-$time," seconds " if BENCHMARK;
-@@ -1595,6 +1602,8 @@
+@@ -1595,6 +1600,8 @@
    my $tracks          = $args{-tracks}    or die "programming error";
    my $filters         = $args{-filters}   or die "programming error";
    my $fsettings       = $args{-fsettings} or die "programming error";
@@ -58,7 +56,7 @@
  
    warn "[$$] add_features_to_track @{$args{-labels}}" if DEBUG;
  
-@@ -1636,7 +1645,7 @@
+@@ -1636,7 +1643,7 @@
  	  $iterator2dbid{$iterator} = $source->db2id($db);
        }
  
@@ -67,7 +65,7 @@
  	  $iterators{$iterator}     = $iterator;
  	  $iterator2dbid{$iterator} = $source->db2id($db);
        }
-@@ -1849,7 +1858,7 @@
+@@ -1849,7 +1856,7 @@
  
  sub get_iterator {
    my $self = shift;
@@ -76,7 +74,7 @@
  
    # The Bio::DB::SeqFeature::Store database supports correct
    # semantics for directly retrieving features that overlap
-@@ -1863,6 +1872,8 @@
+@@ -1863,6 +1870,8 @@
  		  -start  => $segment->start,
  		  -end    => $segment->end,
  		  -max_features => $max,  # some adaptors allow this
@@ -85,7 +83,7 @@
  	  );
        return $db->get_seq_stream(@args);
    }
-@@ -1880,7 +1891,7 @@
+@@ -1880,7 +1889,7 @@
      return;
    }
  
@@ -94,7 +92,7 @@
  }
  
  sub get_summary_iterator {
-@@ -1977,7 +1988,11 @@
+@@ -1977,7 +1986,11 @@
  		    ]);
    }
    elsif ($section eq 'detail'){
