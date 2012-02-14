@@ -12,11 +12,14 @@
 
 <c:if test="${refer == 'summary'}">
 
-	<!-- javascript provided by site -->
-	<script type="text/javascript" src="/assets/js/customStrategy.js"></script>
-	<script type="text/javascript" src="/assets/js/ortholog.js"></script>
-        <script type="text/javascript" src="<c:url value='/wdkCustomization/js/export-basket.js' />"></script>
+    <!-- javascript provided by site -->
+    <script type="text/javascript" src="/assets/js/customStrategy.js"></script>
+    <script type="text/javascript" src="/assets/js/ortholog.js"></script>
+    <script type="text/javascript" src="<c:url value='/wdkCustomization/js/export-basket.js' />"></script>
+    <script type="text/javascript" src='<c:url value="/wdkCustomization/js/span-genome-view.js"/>'></script>
+    <link rel="StyleSheet" type="text/css" href="<c:url value='/wdkCustomization/css/span-genome-view.css' />"/>
 </c:if>
+
 <!-- jscript : refer = ${refer}-->
 <c:if test="${refer == 'record'}">
 	<!-- RecordPageScript Included -->

@@ -1,0 +1,7 @@
+#genome-view { width: 100%; }
+#genome-view tr.even { background-color:#EEEEEE; }
+#genome-view .sequence .ruler { display:inline-block; height:5px; position:relative; top:5px; background-color:#BBBBBB;}
+#genome-view .span {
+  display:inline-block; height:12px; min-width:3px; position:relative; top:-4px; 
+  background-color:#33FF33; cursor:pointer; border: 1px solid #3333FF;
+}
