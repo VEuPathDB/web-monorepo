@@ -23,6 +23,11 @@ function initializeSpanGenomeView() {
             $(this).css("left", spanStart + "%")
                    .css("width", spanWidth + "%");
             var width = $(this).width();
+            
+            // register click event
+            $(this).click(function() {
+                window.location.href = $(this).attr("url");
+            })
         });
     });
 }

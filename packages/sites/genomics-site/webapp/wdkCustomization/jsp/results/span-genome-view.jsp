@@ -22,8 +22,8 @@ initializeSpanGenomeView();
   <c:set var="rowStyle" value="odd" />
   <c:forEach items="${sequences}" var="sequence">
     <tr class="sequence ${rowStyle}" length="${sequence.length}">
-      <c:set var="tooltip" value="${sequence.sourceId}, length: ${sequence.length}" />
-      <td class="sequence-id" nowrap title="${tooltip}">${sequence.sourceId}</td>
+      <c:url var="sequenceUrl" value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&source_id=${sequence.sourceId}" />
+      <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
       <td class="length" nowrap>${sequence.length}</td>
       <td class="span-count" nowrap>${fn:length(sequence.spans)}</td>
       <td width="100%">
@@ -32,7 +32,10 @@ initializeSpanGenomeView();
           <c:forEach items="${sequence.spans}" var="span">
             <c:set var="spanStyle" value="${span.forward ? 'forward' : 'reverse'}" />
             <c:set var="tooltip" value="${span.sourceId}, starts at: ${span.start}, ends at ${span.end}" />
-            <div class="span ${spanStyle}" start="${span.start}" end="${span.end}" forward="${span.forward}" title="${tooltip}"></div>
+            <c:url var="spanUrl" value="/showRecord.do?name=DynSpanRecordClasses.DynSpanRecordClass&source_id=${span.sourceId}" />
+            <div class="span ${spanStyle}" start="${span.start}" end="${span.end}" 
+                 forward="${span.forward}" title="${tooltip}" url="${spanUrl}">
+            </div>
           </c:forEach>
         </div>
       </td>
