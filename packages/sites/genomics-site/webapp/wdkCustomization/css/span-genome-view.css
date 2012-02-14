@@ -1,7 +1,10 @@
 #genome-view { width: 100%; }
 #genome-view tr.even { background-color:#EEEEEE; }
-#genome-view .sequence .ruler { display:inline-block; height:5px; position:relative; top:5px; background-color:#BBBBBB;}
-#genome-view .span {
-  display:inline-block; height:12px; min-width:3px; position:relative; top:-4px; 
-  background-color:#33FF33; cursor:pointer; border: 1px solid #3333FF;
+#genome-view td.length, #genome-view td.span-count { text-align:right; }
+#genome-view .spans { position:relative; }
+#genome-view .spans .ruler { height:5px; margin: 7px 0; background-color:#BBBBBB;}
+#genome-view .spans .span {
+  display:block; height:12px; min-width:1px; position:absolute; top:-4px; cursor:pointer; border: 1px solid #3333FF; border-radius: 2px;
 }
+#genome-view .spans .span.forward { background-color:#33FF33; }
+#genome-view .spans .span.reverse { background-color:#FF3333; }

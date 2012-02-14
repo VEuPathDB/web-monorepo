@@ -10,7 +10,7 @@ function initializeSpanGenomeView() {
         // scale sequence ruler
         var length = parseInt($(this).attr("length"));
         var rulerWidth = length * 100.0 / maxLength;
-        var spans = $(this).children(".spans");
+        var spans = $(this).find(".spans");
         spans.children(".ruler").css("width", rulerWidth + "%");
 
         // locate each span
