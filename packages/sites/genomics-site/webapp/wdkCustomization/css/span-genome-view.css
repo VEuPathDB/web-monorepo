@@ -4,7 +4,7 @@
 #genome-view .spans { position:relative; }
 #genome-view .spans .ruler { height:5px; margin: 7px 0; background-color:#BBBBBB;}
 #genome-view .spans .span {
-  display:block; height:12px; min-width:1px; position:absolute; top:-4px; cursor:pointer; border: 1px solid #3333FF; border-radius: 2px;
+  display:block; height:12px; min-width:2px; position:absolute; top:-4px; cursor:pointer; border: 1px solid #3333FF; border-radius: 2px;
 }
 #genome-view .spans .span.forward { background-color:#33FF33; }
 #genome-view .spans .span.reverse { background-color:#FF3333; }
