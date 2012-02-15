@@ -3,8 +3,12 @@
 #genome-view td.length, #genome-view td.span-count { text-align:right; }
 #genome-view .spans { position:relative; }
 #genome-view .spans .ruler { height:5px; margin: 7px 0; background-color:#BBBBBB;}
-#genome-view .spans .span {
-  display:block; height:12px; min-width:2px; position:absolute; top:-4px; cursor:pointer; border: 1px solid #3333FF; border-radius: 2px;
-}
-#genome-view .spans .span.forward { background-color:#33FF33; }
-#genome-view .spans .span.reverse { background-color:#FF3333; }
+#genome-view .spans .span, .legend .span { height:12px; border:1px solid #666666; border-radius: 2px; }
+#genome-view .spans .span { display:block; min-width:2px; position:absolute; top:-4px; cursor:pointer; }
+#genome-view .spans .span.forward, .legend .span.forward { background-color:#3333FF; }
+#genome-view .spans .span.reverse, .legend .span.reverse { background-color:#FF3333; }
+
+
+.legend { background-color:#EEEEEE; border-radius:5px; padding:10px; margin:5px; width: 200px; }
+.legend .title { text-align:center; padding:5px; font-weight:bold; }
+.legend .span { width:50px; display:inline-block; }

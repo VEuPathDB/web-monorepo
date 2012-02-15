@@ -13,6 +13,16 @@ initializeGenomeView();
 -->
 </script>
 
+<div class="legend">
+  <div class="title">Legend</div>
+  <div>
+    <div class="span forward"></div> ${recordClass.type} on forward strand
+  </div>
+  <div>
+    <div class="span reverse"></div> ${recordClass.type} on reversed strand
+  </div>
+</div>
+
 <table id="genome-view" class="datatables">
   <thead>
   <tr>
@@ -35,7 +45,7 @@ initializeGenomeView();
           <div class="ruler" style="width:${sequence.percentLength}%"> </div>
           <c:forEach items="${sequence.spans}" var="span">
             <c:set var="spanStyle" value="${span.forward ? 'forward' : 'reverse'}" />
-            <c:set var="tooltip" value="${span.sourceId}, starts at: ${span.start}, ends at ${span.end}" />
+            <c:set var="tooltip" value="${span.sourceId}, on ${spanStyle} strand, starts at: ${span.start}, ends at ${span.end}" />
             <c:url var="spanUrl" value="/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}" />
             <div class="span ${spanStyle}" title="${tooltip}" url="${spanUrl}"
                style="left:${span.percentStart}%; width:${span.percentLength}%">
