@@ -23,6 +23,9 @@ initializeGenomeView();
   </div>
 </div>
 
+<c:set var="zoomInAllTip" value="Zoom in all the sequences." />
+<c:set var="zoomOutAllTip" value="Zoom out all the sequences." />
+
 <table id="genome-view" class="datatables">
   <thead>
   <tr>
@@ -30,7 +33,10 @@ initializeGenomeView();
     <th>Length</th>
     <th>#${recordClass.type}s</th>
     <th>${recordClass.type} Locations</th>
-    <th></th>
+    <th>
+      <img class="zoomin-all" title="${zoomInAllTip}" src="<c:url value='/wdk/images/plus.gif' />" />
+      <img class="zoomout-all" title="${zoomOutAllTip}" src="<c:url value='/wdk/images/minus.gif' />" />
+    </th>
   </tr>
   </thead>
   <tbody>
@@ -44,10 +50,10 @@ initializeGenomeView();
        <div class="canvas">
         <c:set var="pctLength" value="${sequence.percentLength}" />
         <div class="spans" base-size="${pctLength}" size="${pctLength}" style="width:${pctLength}%">
-          <div class="ruler"> </div>
+          <div class="ruler" title="${sequence.sourceId}, length: ${sequence.length}"> </div>
           <c:forEach items="${sequence.spans}" var="span">
             <c:set var="spanStyle" value="${span.forward ? 'forward' : 'reverse'}" />
-            <c:set var="tooltip" value="${span.sourceId}, on ${spanStyle} strand, starts at: ${span.start}, ends at ${span.end}. (Click to go to the record page.)" />
+            <c:set var="tooltip" value="${span.sourceId}, on ${spanStyle} strand, [${span.start} - ${span.end}]. (Click to go to the record page.)" />
             <c:url var="spanUrl" value="/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}" />
             <div class="span ${spanStyle}" title="${tooltip}" url="${spanUrl}"
                style="left:${span.percentStart}%; width:${span.percentLength}%">
@@ -57,8 +63,10 @@ initializeGenomeView();
        </div>
       </td>
       <td class="control" nowrap>
-        <img class="zoomin" src="<c:url value='/wdk/images/plus.gif' />" />
-        <img class="zoomout" src="<c:url value='/wdk/images/minus.gif' />" />
+        <img class="zoomin" src="<c:url value='/wdk/images/plus.gif' />"
+             title="Zoom in sequence ${sequence.sourceId}." />
+        <img class="zoomout" src="<c:url value='/wdk/images/minus.gif' />"
+             title="Zoom out sequence ${sequence.sourceId}." />
       </td>
     </tr>
   </c:forEach>
@@ -69,7 +77,10 @@ initializeGenomeView();
     <th>Length</th>
     <th>#${recordClass.type}s</th>
     <th>${recordClass.type} Locations</th>
-    <th></th>
+    <th>
+      <img class="zoomin-all" title="${zoomInAllTip}" src="<c:url value='/wdk/images/plus.gif' />" />
+      <img class="zoomout-all" title="${zoomOutAllTip}" src="<c:url value='/wdk/images/minus.gif' />" />
+    </th>
   </tr>
   </tfoot>
 </table>
