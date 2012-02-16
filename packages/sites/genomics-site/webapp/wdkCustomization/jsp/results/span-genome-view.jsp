@@ -30,31 +30,37 @@ initializeGenomeView();
     <th>Length</th>
     <th>#${recordClass.type}s</th>
     <th>${recordClass.type} Locations</th>
+    <th></th>
   </tr>
   </thead>
   <tbody>
-  <c:set var="rowStyle" value="odd" />
   <c:forEach items="${sequences}" var="sequence">
-    <tr class="sequence ${rowStyle}">
+    <tr class="sequence">
       <c:url var="sequenceUrl" value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&source_id=${sequence.sourceId}" />
       <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
       <td class="length" nowrap>${sequence.length}</td>
       <td class="span-count" nowrap>${fn:length(sequence.spans)}</td>
       <td width="100%">
-        <div class="spans">
-          <div class="ruler" style="width:${sequence.percentLength}%"> </div>
+       <div class="canvas">
+        <c:set var="pctLength" value="${sequence.percentLength}" />
+        <div class="spans" base-size="${pctLength}" size="${pctLength}" style="width:${pctLength}%">
+          <div class="ruler"> </div>
           <c:forEach items="${sequence.spans}" var="span">
             <c:set var="spanStyle" value="${span.forward ? 'forward' : 'reverse'}" />
-            <c:set var="tooltip" value="${span.sourceId}, on ${spanStyle} strand, starts at: ${span.start}, ends at ${span.end}" />
+            <c:set var="tooltip" value="${span.sourceId}, on ${spanStyle} strand, starts at: ${span.start}, ends at ${span.end}. (Click to go to the record page.)" />
             <c:url var="spanUrl" value="/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}" />
             <div class="span ${spanStyle}" title="${tooltip}" url="${spanUrl}"
                style="left:${span.percentStart}%; width:${span.percentLength}%">
             </div>
           </c:forEach>
         </div>
+       </div>
+      </td>
+      <td class="control" nowrap>
+        <img class="zoomin" src="<c:url value='/wdk/images/plus.gif' />" />
+        <img class="zoomout" src="<c:url value='/wdk/images/minus.gif' />" />
       </td>
     </tr>
-    <c:set var="rowStyle" value="${(rowStyle eq 'odd') ? 'even' : 'odd'}" />
   </c:forEach>
   </tbody>
   <tfoot>
@@ -63,6 +69,7 @@ initializeGenomeView();
     <th>Length</th>
     <th>#${recordClass.type}s</th>
     <th>${recordClass.type} Locations</th>
+    <th></th>
   </tr>
   </tfoot>
 </table>
