@@ -7,18 +7,6 @@ function initializeGenomeView() {
         window.location.href = $(this).parents(".sequence").find(".sequence-id a").attr("href");
     });
 
-    // register datatables
-    $("#genome-view").dataTable({
-        "bJQueryUI": true,
-        "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-        "iDisplayLength": 25,
-        "aoColumns": [ null,
-                       null,
-                       null,
-                       { "bSortable": false },
-                       { "bSortable": false } ],
-    });
-
     // register zoom events
     $("#genome-view .sequence .zoomin").button().click(function() {
         zoomInGenomeView(this);
@@ -28,6 +16,19 @@ function initializeGenomeView() {
     });
     $("#genome-view .zoomin-all").button().click(zoomInAllGenomeView);
     $("#genome-view .zoomout-all").button().click(zoomOutAllGenomeView);
+
+    // register datatables. it has to be the last step, otherwise the rest of 
+    // the registration will be applied to the current page only.
+    $("#genome-view").dataTable({
+        "bJQueryUI": true,
+        "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        "iDisplayLength": 10,
+        "aoColumns": [ null,
+                       null,
+                       null,
+                       { "bSortable": false },
+                       { "bSortable": false } ],
+    });
 }
 
 function zoomInGenomeView(ele) {
@@ -39,7 +40,7 @@ function zoomInGenomeView(ele) {
     var id = spans.attr("timer");
     if (id != undefined) stopTimer(spans, id);
 
-    var increment = (newSize - size) / 10;
+    var increment = (newSize - size) / 5;
     id = setInterval(function() {
         size += increment;
         spans.css("width", size + "%");
@@ -67,7 +68,7 @@ function zoomOutGenomeView(ele) {
     var id = spans.attr("timer");
     if (id != undefined) stopTimer(spans, id);
 
-    var increment = (newSize - size) / 10;
+    var increment = (newSize - size) / 5;
     id = setInterval(function() {
         size += increment;
         spans.css("width", size + "%");
