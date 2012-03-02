@@ -1007,7 +1007,7 @@ sub massSpecUnifiedTitle {
     $test{$key} = $val;
   }
   # display all 'db_name (number of matches)'
-  my $assayTitle = 'Asay (count)';
+  my $assayTitle = 'Assay (count)';
   foreach my $try (keys(%freq)) {   ##@fields) {
     push @data, [ "$assayTitle" => "$test{$try} ($freq{$try})" ];
     $assayTitle = ' ';
