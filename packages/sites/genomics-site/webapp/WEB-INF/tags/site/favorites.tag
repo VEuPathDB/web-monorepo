@@ -4,11 +4,11 @@
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="allFavorites" value="${wdkUser.favorites}" /><%-- a map of (RecordClass, List<Favorite>) --%>
 
-<span class ="h4left">My Favorites</span><br><br>
+<span class ="h3left">My Favorites</span><br><br>
 
 <c:choose>
     <c:when test="${fn:length(allFavorites) == 0}">
-        <p>Your favorites page is currently empty.  To add items to your favorites simply click on the favorites icon in record pages (ie. gene or isolate pages)</p>
+        <p>Your favorites page is currently empty.  To add items to your favorites simply click on the favorites icon in record pages (i.e. gene or isolate pages)</p>
     </c:when>
     <c:otherwise> <%-- has favorites --%>
 
@@ -23,8 +23,21 @@
               </c:forEach>
             </ul>
 
-            <span style="clear:both;font-style:italic;font-size:100%;padding-left:10px;" >(For Help, place your cursor over column headings or icons)</span>
-            <input class="favorite-refresh-button" title="Reload the page after you remove some IDs, or add a new project name." type="button" value="Refresh" onclick="window.location.reload();"/>
+
+<table width="100%">
+<tr>
+<td width="50%" style="padding:0">
+	<input class="favorite-refresh-button" style="margin-left:10px;cursor:pointer" title="Reload the page after you click on the star to add/remove IDs." type="button" value="Reload page" onclick="window.location.reload();"/>
+ 	<div style="clear:both;font-style:italic;font-size:90%;padding-left:10px;" >(Mouse over column headings for help)</div>
+</td>
+<td width="50%" style="text-align:right;padding:0">
+	<p style="color:darkred;font-size:95%;font-style:italic"><b>Note on new releases:</b> 
+	Annotation changes might make IDs in your favorites outdated. 
+	<br>Clicking on an ID, you will access the new ID's page. Unmapped IDs will show a message.</p>
+</td>
+</tr>
+</table>
+
             <c:forEach var="fav_item" items="${allFavorites}">
               <c:set var="recordClass" value="${fav_item.key}" />
 	      <c:set var="idTag" value="${fn:replace(recordClass.fullName, '.', '_')}" /> 
@@ -32,11 +45,11 @@
                 <c:set var="favorites" value="${fav_item.value}" /> <%-- a list of favorites of a record type --%>
 
 
-                <table class="favorite-list mytableStyle" width="93%">
+                <table class="favorite-list mytableStyle" width="100%">
                     <tr>
-			<th title="Click on the star to remove an ID from Favorites. It will not be removed from this page until you hit 'Refresh' or reload the page." class="mythStyle">${recordClass.type}s</th>
-			<th title="Use this column to add notes (click Edit to change this field). Initially it contains the product name associated with the ID."  class="mythStyle">Notes</th>
-			<th title="Organize your favorites by project names. Click Edit to add/change it; IDs with the same project name will be sorted together once the page is refreshed."  class="mythStyle">Project</th>
+			<th title="Click on the star to remove an ID from Favorites. It will not be removed from this page until you hit 'Refresh' or reload the page." class="mythStyle clickable">${recordClass.type}s</th>
+			<th title="Use this column to add notes (click Edit to change this field). Initially it contains the product name associated with the ID."  class="mythStyle clickable">Notes</th>
+			<th title="Organize your favorites by project names. Click Edit to add/change it; IDs with the same project name will be sorted together once the page is refreshed."  class="mythStyle clickable">Project</th>
 		    </tr>
 
 
@@ -60,11 +73,11 @@
                                     </c:forEach>
                                 </span>
                                 <img class="clickable" src="<c:url value='/wdk/images/favorite_color.gif'/>" 
-                                     title="Click to remove this item from Favorites"
+                                     title="Click to remove this item from favorites and reload page"
 				     height="16px" style="vertical-align:text-bottom"
                                      onClick="updateFavorite(this, 'remove')"/>&nbsp;
                                 <img class="clickable" src="<c:url value='/wdk/images/basket_${basketColor}.png'/>" 
-                                     title="Click to add/remove this item from the Basket."
+                                     title="Click to add/remove this item from your basket."
 				     height="16px"  style="vertical-align:text-bottom"
                                      onClick="updateBasket(this,'recordPage', '${id}', '${pid}', '${recordClass.fullName}')" value="${basketValue}"/>&nbsp;
 
@@ -118,10 +131,6 @@
                         </tr>
                     </c:forEach>
                 </table>
-
-<p style="font-style:italic;margin-top:10px;"><b>Note on invalid IDs:</b> For any data type (genes, isolates, etc), changes that occur between database releases might invalidate some of the IDs in your Favorites. 
-<br>You will still see your old ID. When clicking, if the old ID can be mapped to a new ID, you will get the new one; otherwise you will not get a result.</p>
-
                </div>
              </c:forEach>
     </c:otherwise> <%-- END has favorites --%>

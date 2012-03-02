@@ -10,6 +10,8 @@
 
 <%-- export basket --%>
 <%-- enable basket exporting for build-14 --%>
+
+<%-- NOT FOR BUILD14
 <div id="export-basket">
   Export basket to:
   <select id="to-project">
@@ -31,4 +33,4 @@
   </select>
   <input type="button" value="Export" onclick="exportBasket()" />
 </div>
-
+--%>
