@@ -1,4 +1,5 @@
 <?
+header('Content-type: application/json');
 
 require_once dirname(__FILE__) . '/lib/PrivateAPI.php';
 
