@@ -1,0 +1,15 @@
+--- RenderPanels.pm.orig	2012-03-04 22:38:46.000000000 -0500
++++ RenderPanels.pm	2012-03-04 22:53:24.000000000 -0500
+@@ -2031,7 +2031,11 @@
+ 		    ]);
+   }
+   elsif ($section eq 'detail'){
+-    $postgrid = make_postgrid_callback($settings);
++    #$postgrid = make_postgrid_callback($settings);
++    # eupathdb check the synteny labels 3/5/2012
++    my $labels = $args->{labels};
++    my $synview = grep(/Synteny/, @$labels) if $labels;
++    $postgrid = $synview ? $source->global_setting('postgrid') : make_postgrid_callback($settings);
+     $h_region_str = join(':', @{$settings->{h_region}||[]}); 
+   }
+ 
