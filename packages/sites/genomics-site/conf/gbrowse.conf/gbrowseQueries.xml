@@ -6687,10 +6687,10 @@ GROUP BY c.start_interval,c.end_interval,c.sample,c.name,c.hpi,c.multiple,s.sum_
      SELECT start_interval feature_id,
              'NextGenSeq' type,
              '$source' source,
-              decode(multiple, 1, -1, 1)*abs(log(2,max(coverage))) score, 
+              decode(multiple, 1, -1, 1)*abs(round(log(2,max(coverage)),2)) score, 
              $$sample$$ parent_id,
-             start_interval * (($rend - $base_start + 1) / 800) startm,
-             end_interval * (($rend - $base_start + 1) / 800) end,
+             round(start_interval * (($rend - $base_start + 1) / 800)) startm,
+             round(end_interval * (($rend - $base_start + 1) / 800)) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
     FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
