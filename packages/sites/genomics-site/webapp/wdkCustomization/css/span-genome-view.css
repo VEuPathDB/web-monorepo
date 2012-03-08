@@ -4,11 +4,11 @@
 #genome-view td.length, #genome-view td.span-count { text-align:right; }
 #genome-view .canvas { overflow:auto; height:38px; }
 #genome-view .spans { position:relative; }
-#genome-view .spans .ruler { height:5px; margin: 7px 0; background-color:#BBBBBB; cursor:pointer; }
-#genome-view .spans .span, .legend .span { height:12px; border:1px solid #444444; border-radius: 2px; }
-#genome-view .spans .span { display:block; min-width:2px; position:absolute; top:-4px; cursor:pointer; }
-#genome-view .spans .span.forward, .legend .span.forward { background-color:#9999FF; }
-#genome-view .spans .span.reverse, .legend .span.reverse { background-color:#FF6699; }
+#genome-view .spans .ruler { height:3px; background-color:#666666; cursor:pointer; }
+#genome-view .spans .span, .legend .span { height:4px; border:1px solid #444444; }
+#genome-view .spans .span { display:block; min-width:2px; position:absolute; cursor:pointer; }
+#genome-view .spans .span.forward, .legend .span.forward { top:4px; background-color:#0000FF; }
+#genome-view .spans .span.reverse, .legend .span.reverse { top:11px;background-color:#FF0000; }
 
 
 .legend { background-color:#EEEEEE; border-radius:5px; padding:10px; margin:5px; width: 300px; }
