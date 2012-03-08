@@ -908,11 +908,12 @@ sub rumIntronTitleUnified {
      $count++;
   }
   $html .= "</table>";
-
+  my $note = "Score for each sample is the number of unique reads for that sample and the overall score is the sum of all unique reads from all samples";
   my @data;
   push @data, [ '' => $html ];
   push @data, [ 'Location:'  => "$start - $stop"];
   push @data, [ 'Scores'     => $sum ];
+  push @data, [ 'Note'     => $note ];
 #  hover('Unified Splice Site Junctions - RNASeq', \@data);
   hover($f, \@data); 
 }
