@@ -33,7 +33,7 @@
 <td width="50%" style="text-align:right;padding:0">
 	<p style="color:darkred;font-size:95%;font-style:italic"><b>Note on new releases:</b> 
 	Annotation changes might make IDs in your favorites outdated. 
-	<br>Clicking on an ID, you will access the new ID's page. Unmapped IDs will show a message.</p>
+	<br>Click on any ID to access the new ID's page. Unmapped IDs will show a message.</p>
 </td>
 </tr>
 </table>

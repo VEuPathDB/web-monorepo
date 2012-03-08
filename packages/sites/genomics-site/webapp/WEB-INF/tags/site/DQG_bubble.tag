@@ -70,11 +70,13 @@
 							<a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;description</a>
 						 </c:if>
 						<div class="sub_list">
+              <script type="text/javascript">
+                $(function() { assignTooltips('.dqg-tooltip'); });
+              </script>
 							<ul>
 								<c:forEach items="${cat.websiteQuestions}" var="q">
 									<c:set var="popup" value="${q.summary}"/>
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}"  rel='htmltooltip'>${q.displayName}</a></li>
-									<div id="${q.questionSetName}_${q.name}_tip" class="htmltooltip">${popup}</div>
+									<li><a href="showQuestion.do?questionFullName=${q.fullName}" class="dqg-tooltip" id="${q.questionSetName}_${q.name}" title="${fn:escapeXml(popup)}">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
 						</div>
@@ -110,8 +112,7 @@
 							<ul>
 								<c:forEach items="${cat.websiteQuestions}" var="q">
 									<c:set var="popup" value="${q.summary}"/>
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}"  rel='htmltooltip'>${q.displayName}</a></li>
-									 <div id="${q.questionSetName}_${q.name}_tip" class="htmltooltip">${popup}</div>
+									<li><a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}" class="dqg-tooltip" title="${fn:escapeXml(popup)}">${q.displayName}</a></li>
 								</c:forEach>
 							</ul>
 						</div>

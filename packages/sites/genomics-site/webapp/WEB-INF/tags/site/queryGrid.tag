@@ -20,6 +20,11 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
 <%--------------------------------------------------------------------%>
+
+<script type="text/javascript">
+  $(function() { assignTooltips('.queryGridLink', 50); });
+</script>
+
 <%-- these divs are needed because they do NOT come from header.... problem associated with having a sidebar --%>
 
 <c:if test="${from != 'tab'}">

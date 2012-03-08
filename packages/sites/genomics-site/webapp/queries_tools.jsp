@@ -7,5 +7,5 @@
 <imp:header refer="home2" />
 
 <imp:queryGrid />
-<imp:sidebar />
+<imp:sidebar facebook="" twitter=""/>
 <imp:footer refer="home2" />

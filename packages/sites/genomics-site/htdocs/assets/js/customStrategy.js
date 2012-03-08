@@ -42,13 +42,6 @@ function customShowError() {
 	alert("An error occurred. \n Please try again.  If the error persists please contact the EuPathDB team by clicking the Contact Us link at the bottom of the page .  Thank you.");
 }
 
-function customNewTab() {
-	var tooltips = $("#queryGrid div.htmltooltip");
-	tooltips.remove();
-	$('body').append(tooltips);
-	htmltooltip.render();
-}
-
 // TODO: If span logic code is moved back into WDK,
 // this should be moved into view-JSON.js
 function customSpanParameters(aParams) {

@@ -17,7 +17,10 @@
 </c:if>
 
 <script type="text/javascript">
-$(initializeQuestion);
+  $(function() {
+    initializeQuestion();
+    assignTooltips('.query-tooltip');
+  });
 </script>
 
 <c:set var="isInsert" value="${param.isInsert}" />
@@ -37,32 +40,8 @@ function writeData(page, div, quesName, insertStep){
 			if(location.href.indexOf("showApplication") != -1){
 				formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, insertStep, false, false, false);
 			}
-
-/*
-                        $("body > div#question-temp").remove();
-                        $("body").append("<div id=\"question-temp\"></div>");
-                        var q = $("body > div#question-temp");
-			q.html(data);
-
-			var qf = q.find("form#form_question");
-			var qt = q.find("div#question_Form > h1");
-			var qd = q.find("div#query-description-section");
-			var qa = q.find("div#attributions-section");
-			var qops = "";
-			
-			//t.html(qt);
-      document.getElementById(div).innerHTML = "<h1>" + quesName + "</h1><br/>";
-			t.append(qf);
-			t.append(qops);
-      document.getElementById(div).innerHTML += "<hr/>"
-			t.append(qd);
-      document.getElementById(div).innerHTML += "<hr/>"
-			t.append(qa);
-                        q.remove();
-*/
-                        t.html($.trim(data));
+      t.html($.trim(data));
 			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
-			 htmltooltip.render();
 			initParamHandlers(true);
 			var question = new WdkQuestion();
 			question.registerGroups();
@@ -215,10 +194,10 @@ function getComboElement()
 
     <td width="1%" align="left">&#8226;</td>
     <td width="${width}" align="left">
-	<a id="${qName}" onclick="${nextCall}return false;" href="" rel="htmltooltip">
-	<font color="#000066" size="3">${question}</font></a>
+			<a class="query-tooltip" id="${qName}" onclick="${nextCall}return false;" href="" title="${fn:escapeXml(q.summary)}">
+			  <font color="#000066" size="3">${question}</font>
+			</a>
     </td>
-    <div id="${qName}_tip" class="htmltooltip">${q.summary}</div>
 
     <c:if test="${i % columns == 0}"></tr><tr></c:if>   <!-- if we are in column 2, make a new line -->
     <c:set var="i" value="${i+1}"/>   
