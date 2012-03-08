@@ -31,6 +31,7 @@ initializeGenomeView();
   <tr>
     <th>Sequence</th>
     <th>Length</th>
+    <th>Chromosome</th>
     <th>#${recordClass.type}s</th>
     <th>${recordClass.type} Locations</th>
     <th>
@@ -44,16 +45,17 @@ initializeGenomeView();
     <tr class="sequence">
       <c:url var="sequenceUrl" value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&source_id=${sequence.sourceId}" />
       <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
-      <td class="length" nowrap>${sequence.length}</td>
-      <td class="span-count" nowrap>${fn:length(sequence.spans)}</td>
+      <td class="length" nowrap>${sequence.lengthFormatted}</td>
+      <td class="chromosome" nowrap>${sequence.chromosome}</td>
+      <td class="span-count" nowrap>${sequence.spanCountFormatted)}</td>
       <td width="100%">
        <div class="canvas">
         <c:set var="pctLength" value="${sequence.percentLength}" />
         <div class="spans" base-size="${pctLength}" size="${pctLength}" style="width:${pctLength}%">
-          <div class="ruler" title="${sequence.sourceId}, length: ${sequence.length}"> </div>
+          <div class="ruler" title="${sequence.sourceId}, length: ${sequence.lengthFormatted}"> </div>
           <c:forEach items="${sequence.spans}" var="span">
             <c:set var="spanStyle" value="${span.forward ? 'forward' : 'reverse'}" />
-            <c:set var="tooltip" value="${span.sourceId}, on ${spanStyle} strand, [${span.start} - ${span.end}]. (Click to go to the record page.)" />
+            <c:set var="tooltip" value="${span.sourceId}, on ${spanStyle} strand, [${span.startFormatted} - ${span.endFormatted}]. (Click to go to the record page.)" />
             <c:url var="spanUrl" value="/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}" />
             <div class="span ${spanStyle}" title="${tooltip}" url="${spanUrl}"
                style="left:${span.percentStart}%; width:${span.percentLength}%">
@@ -75,6 +77,7 @@ initializeGenomeView();
   <tr>
     <th>Sequence</th>
     <th>Length</th>
+    <th>Chromosome</th>
     <th>#${recordClass.type}s</th>
     <th>${recordClass.type} Locations</th>
     <th>
