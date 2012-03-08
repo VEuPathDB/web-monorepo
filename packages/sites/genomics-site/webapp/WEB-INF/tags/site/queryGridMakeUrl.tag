@@ -141,44 +141,40 @@
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 <c:if test="${modelName eq 'AmoebaDB'}">
-    <c:set var="orgnismName" value="Entamoeba"/>
+    <c:set var="organismName" value="Entamoeba"/>
 </c:if>
 <c:if test="${modelName eq 'MicrosporidiaDB'}">
-    <c:set var="orgnismName" value="Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Octosporea,Vavraia"/>
+    <c:set var="organismName" value="Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Octosporea,Vavraia"/>
 </c:if>
 <c:if test="${modelName eq 'CryptoDB'}">
-    <c:set var="orgnismName" value="Cryptosporidium"/>
+    <c:set var="organismName" value="Cryptosporidium"/>
 </c:if>
 <c:if test="${modelName eq 'PiroplasmaDB'}">
-        <c:set var="orgnismName" value="Babesia,Theileria"/>
+        <c:set var="organismName" value="Babesia,Theileria"/>
 </c:if>
 <c:if test="${modelName eq 'PlasmoDB'}">
-        <c:set var="orgnismName" value="Plasmodium"/>
+        <c:set var="organismName" value="Plasmodium"/>
 </c:if>
 <c:if test="${modelName eq 'ToxoDB'}">
-        <c:set var="orgnismName" value="Eimeria,Neospora,Toxoplasma"/>
+        <c:set var="organismName" value="Eimeria,Neospora,Toxoplasma"/>
 </c:if>
 <c:if test="${modelName eq 'GiardiaDB'}">
-        <c:set var="orgnismName" value="Giardia"/>
+        <c:set var="organismName" value="Giardia"/>
 </c:if>
 <c:if test="${modelName eq 'TrichDB'}">
-        <c:set var="orgnismName" value="Trichomonas"/>
+        <c:set var="organismName" value="Trichomonas"/>
 </c:if>
 <c:if test="${modelName eq 'TriTrypDB'}">
-        <c:set var="orgnismName" value="Kinetoplastid"/>
+        <c:set var="organismName" value="Kinetoplastid"/>
 </c:if>
 
 <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
 
-
-    <td width="5" align="left" class="queryGridBullet">&nbsp;&#8226;&nbsp; </td>
+<td width="5" align="left" class="queryGridBullet">&nbsp;&#8226;&nbsp; </td>
 
 <%-- LINK ACTIVE --%>
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-
-     <td align="left" class="queryGridLink"><a id="${qset}_${qname}_${type}" href='${link}' class='queryGridActive' rel='htmltooltip'>${linktext}</a></td>
-     <div id="${qset}_${qname}_${type}_tip" class="htmltooltip">${popup}</div>
-
+     <td align="left"><a id="${qset}_${qname}_${type}" class="queryGridLink queryGridActive" href='${link}' title="${fn:escapeXml(popup)}">${linktext}</a></td>
 </c:if>
 
 <%-- LINK INACTIVE --%>
@@ -189,9 +185,8 @@
    <c:set var="modelName" value="EuPathDB"/>
 </c:if>
 --%>
-
-     <td align="left" class="queryGridLink"><a id="${qset}_${qname}_${type}" href='javascript:void(0);' class='queryGridInactive' rel='htmltooltip'>${linktext}</a></td>
-     <div id="${qset}_${qname}_${type}_tip" class="htmltooltip">This data type is not available for <i>${orgnismName}</i> (or is not yet in ${modelName}).</div>
+     <c:set var="tooltip" value="This data type is not available for <i>${organismName}</i> (or is not yet in ${modelName})."/>
+     <td align="left"><a id="${qset}_${qname}_${type}" class="queryGridLink queryGridInactive" href='javascript:void(0);' title="${fn:escapeXml(tooltip)}">${linktext}</a></td>
 
 </c:if>
 

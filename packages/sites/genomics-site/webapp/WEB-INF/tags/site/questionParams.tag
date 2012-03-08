@@ -41,6 +41,10 @@
   <script type="text/javascript" src="/assets/js/${wdkQuestion.customJavascript}"></script>
 </c:if>
 
+<script type="text/javascript">
+  $(function() { assignParamTooltips('.help-link'); });
+</script>
+
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
     <c:set var="paramGroup" value="${paramGroupItem.value}" />
@@ -122,7 +126,7 @@
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
                     <td width="30%" align="right" style="vertical-align:top">
-                        <span style="font-weight:bold">${qP.prompt}</span> <img id="help_${pNam}" class="help_link" rel="htmltooltip" src="wdk/images/question.png" />
+                        <span style="font-weight:bold">${qP.prompt}</span> <img class="help-link" title="${fn:escapeXml(qP.help)}" src="wdk/images/question.png" />
                     </td>
                     <c:choose>                        
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
@@ -163,11 +167,11 @@
                         <td valign="top" width="50" nowrap>
                             <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                             <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-			 <c:if test="!${nohelp eq 'true'}">
-                            <a id="help_${pNam}" class="help_link" href="#" rel="htmltooltip">
-                            	<img src="/assets/images/help.png" border="0" alt="Help">
-    			    </a>
-			 </c:if>
+			    <c:if test="${nohelp ne 'true'}">
+                                <a class="help-link" href="#" title="${fn:escapeXml(qP.help)}">
+                                    <img src="/assets/images/help.png" border="0" alt="Help">
+                     	        </a>
+                  	    </c:if>
                         </td>
                     </c:if>
                 </tr>
@@ -178,21 +182,8 @@
         
         <%-- detemine ending display style by displayType of the group --%>
         <c:if test="${hasOrganism}"></table></c:if>
+
         </table>
-    
-        <%-- prepare the help info --%>
-        <c:forEach items="${paramGroup}" var="paramItem">
-            <c:set var="pNam" value="${paramItem.key}" />
-            <c:set var="qP" value="${paramItem.value}" />
-            
-            <c:set var="isHidden" value="${qP.isVisible == false}"/>
-            <c:set var="isReadonly" value="${qP.isReadonly == true}"/>
-    
-                <c:if test="${!isHidden}">
-                	        <div class="htmltooltip" id="help_${pNam}_tip">${qP.help}</div>
-                </c:if>
-            
-        </c:forEach>
     
         </div> <%-- end of group-detail div --%>
     </div> <%-- end of param-group div --%>

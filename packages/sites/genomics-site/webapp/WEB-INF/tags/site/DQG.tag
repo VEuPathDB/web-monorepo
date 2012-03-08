@@ -72,8 +72,9 @@
 </c:otherwise>
 </c:choose>
 
-
-
+<script type="text/javascript">
+  $(function() { assignTooltips('.queryGridLink'); });
+</script>
 
 <table width="100%" border="0" class="threecolumn">
 <tr>
