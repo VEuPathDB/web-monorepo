@@ -1,4 +1,6 @@
 <?
+header('Content-type: text/xml');
+
 // version of data and format returned. Change value e.g as
 // elements are added, removed.
 define('FORMATVERSION', '1.0');

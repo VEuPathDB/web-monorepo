@@ -737,12 +737,12 @@ SELECT
        '.' score, 
        syn.synteny_id parent_id, 
        CASE WHEN (is_reversed = 1) 
-         THEN anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
-         ELSE anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         THEN round(anch_left.ref_loc - ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)))
+         ELSE round(anch_left.ref_loc - ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)))
        END startm,
        CASE WHEN (is_reversed = 1) 
-         THEN anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1))
-         ELSE anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         THEN round(anch_left.ref_loc + ((anch_left.syntenic_loc - syn.b_start) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_left.syntenic_loc - anch_right.syntenic_loc + 1)))
+         ELSE round(anch_left.ref_loc + ((syn.b_end - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)))
        END end, 
        decode(is_reversed, 0, +1, 1, -1, +1) strand,
        'RefStart=' || syn.a_start || '$dlm' ||
@@ -1348,6 +1348,8 @@ SELECT
        'Description=' || msf.description || '$dlm' ||
        'Count=' || match_count || '$dlm' ||
        'ExtDbName=' || ed_name || '$dlm' ||
+       'Experiment=' || experiment  || '$dlm' ||
+       'Sample=' || sample  || '$dlm' ||
        'PepSeq=' || substr(aas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) || '$dlm' ||
        'SOTerm=' || fs.term_name atts
 FROM  dots.massspecfeature msf,
@@ -1360,12 +1362,15 @@ FROM  dots.massspecfeature msf,
        nal.start_min startm,
        nal.end_max end,
        decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       ed.name as ed_name
+       ed.name as ed_name,
+       mst.experiment as experiment,
+       mst.sample as sample
 FROM  dots.massspecfeature msf,
       ApidbTuning.FeatureLocation nal,
       dots.nasequence enas,
       sres.externaldatabaserelease edr,
-      sres.externaldatabase ed
+      sres.externaldatabase ed,
+      ApidbTuning.MassSpecTerms mst
 WHERE msf.na_feature_id = nal.na_feature_id
  AND  nal.na_sequence_id = $srcfeature_id
  AND  enas.na_sequence_id = $srcfeature_id
@@ -1373,8 +1378,9 @@ WHERE msf.na_feature_id = nal.na_feature_id
  AND  nal.end_max <= $rend
  AND  msf.external_database_release_id = edr.external_database_release_id
  AND  ed.name $$edName$$
+ AND  ed.name = mst.ext_db_name
  AND  edr.external_database_id = ed.external_database_id
-GROUP BY ed.name,enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x
+GROUP BY ed.name,mst.experiment,mst.sample,enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x
 WHERE msf.na_feature_id = x.feat_id
  AND  taaf.aa_sequence_id = msf.aa_sequence_id
  AND  taaf.na_feature_id = fs.na_feature_id
@@ -6649,10 +6655,10 @@ GROUP BY c.start_interval,c.end_interval,c.sample,c.name,c.hpi,c.multiple,s.sum_
      SELECT start_interval feature_id,
              'NextGenSeq' type,
              '$source' source,
-              decode($$negativeValuesField$$, 1, -1, 1) * abs(log(2,max(coverage))) score, 
+              decode($$negativeValuesField$$, 1, -1, 1) * abs(round(log(2,max(coverage)),2)) score, 
              $$edname$$ || '_' || sample || '_' || $$subtrackField$$ parent_id,
-             start_interval * (($rend - $base_start + 1) / 800) startm,
-             end_interval * (($rend - $base_start + 1) / 800) end,
+             round(start_interval * (($rend - $base_start + 1) / 800)) startm,
+             round(end_interval * (($rend - $base_start + 1) / 800)) end,
              'multiple=' || multiple  || '$dlm' ||
              'sample=' || sample  || '$dlm' || 
              'is_reversed=' || is_reversed  as atts
@@ -6681,10 +6687,10 @@ GROUP BY c.start_interval,c.end_interval,c.sample,c.name,c.hpi,c.multiple,s.sum_
      SELECT start_interval feature_id,
              'NextGenSeq' type,
              '$source' source,
-              decode(multiple, 1, -1, 1)*abs(log(2,max(coverage))) score, 
+              decode(multiple, 1, -1, 1)*abs(round(log(2,max(coverage)),2)) score, 
              $$sample$$ parent_id,
-             start_interval * (($rend - $base_start + 1) / 800) startm,
-             end_interval * (($rend - $base_start + 1) / 800) end,
+             round(start_interval * (($rend - $base_start + 1) / 800)) startm,
+             round(end_interval * (($rend - $base_start + 1) / 800)) end,
              'binaryColor='||CASE WHEN multiple = 1 THEN 1 ELSE 0 END atts
     FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
                  ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 

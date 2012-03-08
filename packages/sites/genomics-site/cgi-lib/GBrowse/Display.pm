@@ -941,14 +941,14 @@ sub synSpanRelativeCoords {
   my $f = shift; 
   my ($off) = $f->get_tag_values("SynStart"); 
   my ($scale) = $f->get_tag_values("Scale");
-  return $off*$scale;
+  return int($off*$scale+0.5);
 }
 
 
 sub synSpanScale { 
   my $f = shift; 
   my ($scale) = $f->get_tag_values("Scale");
-  return $scale;
+  return int($scale+0.5);
 }
 
 sub synSpanOffset { 

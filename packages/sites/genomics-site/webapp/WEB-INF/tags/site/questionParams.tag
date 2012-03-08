@@ -27,9 +27,8 @@
     <c:set var="portalsProp" value="${props['PORTALS']}" />
 </c:if>
 <c:if test="${fn:contains(recordType, 'Assem') }">
-        <c:set var="recordType" value="Assemblie" />
+    <c:set var="recordType" value="Assemblie" />
 </c:if>
-
 
 <%-- show all params of question, collect help info along the way --%>
 <c:set value="Help for question: ${wdkQuestion.displayName}" var="fromAnchorQ"/>
@@ -37,6 +36,10 @@
 
 <c:set var="hasOrganism" value="false"/>
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
+
+<c:if test="${not empty wdkQuestion.customJavascript}">
+  <script type="text/javascript" src="/assets/js/${wdkQuestion.customJavascript}"></script>
+</c:if>
 
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
@@ -119,43 +122,9 @@
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
                     <td width="30%" align="right" style="vertical-align:top">
-                        <b>
-                            ${qP.prompt} <img id="help_${pNam}" class="help_link" rel="htmltooltip" src="wdk/images/question.png" />
-                        </b>
+                        <span style="font-weight:bold">${qP.prompt}</span> <img id="help_${pNam}" class="help_link" rel="htmltooltip" src="wdk/images/question.png" />
                     </td>
-                    <c:choose>
-                        <c:when test="${fn:containsIgnoreCase(pNam,'organislm') && wdkModel.displayName eq 'EuPathDB'}">
-
-<c:choose>
-<c:when test="${fn:contains(wdkQuestion.name, 'Location') || fn:contains(wdkQuestion.name, 'Snp') }">  <!-- as it happens in component sites  under choice below EnumParamBean -->
-
-                            <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
-                                <imp:enumParamInput qp="${qP}" />
-                            </td>
-                           
-</c:when>
-<c:otherwise>
-
-                            <c:set var="hasOrganism" value="true"/>
-                            <td width="300" align="left" valign="top" rowspan="${paramCount}" cellpadding="5">
-                                <table border="5">
-                                    <tr>
-                                    <td ><b>${qP.prompt}&nbsp;&nbsp;&nbsp;</b>
-                                    <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
-                                    <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
-                                        <%-- <imp:cardsOrgansimParamInput qp="${qP}" portals="${portalsProp}" /> --%>
-                                        <imp:enumParamInput qp="${qP}" />
-                                    </td>
-                                    </tr>
-                                </table>
-                             </td>
-                             <td valign="top" align="center">
-			         <table border="0">
-
-</c:otherwise>
-</c:choose>
-                        </c:when>
-                        
+                    <c:choose>                        
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
                             <td align="left" style="vertical-align:bottom" id="${qP.name}aaa">
                                 <imp:enumParamInput qp="${qP}" />
@@ -177,10 +146,14 @@
                                         <html:hidden property="value(${pNam})"/>
                                     </td>
                                 </c:when>
+                                <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.StringParamBean' and qP.multiLine}">
+                                    <td align="left" valing="top">
+                                        <html:textarea styleId="${pNam}" property="value(${pNam})" rows="4" cols="50"/>
+                                    </td>
+                                </c:when>
                                 <c:otherwise>
-
                                     <td align="left" valign="top">
-                                        <html:text styleId="${pNam}" property="value(${pNam})" size="35" />
+                                        <html:text styleId="${pNam}" property="value(${pNam})" size="35"/>
                                     </td>
                                 </c:otherwise>
                     </c:choose>

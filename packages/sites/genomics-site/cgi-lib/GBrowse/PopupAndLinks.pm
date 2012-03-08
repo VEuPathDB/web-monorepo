@@ -891,11 +891,11 @@ sub rumIntronTitleUnified {
   my ($exps) = $f->get_tag_values('Exps');
   my $start = $f->start;
   my $stop = $f->stop;
-  my $sum = eval join '+', split /;/, $scores;
+  my $sum = eval join '+', split /,/, $scores;
 
-  my @sample_arr = split /;/, $samples;
-  my @score_arr  = split /;/, $scores;
-  my @exp_arr    = split /;/, $exps;
+  my @sample_arr = split /,/, $samples;
+  my @score_arr  = split /,/, $scores;
+  my @exp_arr    = split /,/, $exps;
   my $count = 0;
   my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th></tr>";
   foreach (@sample_arr) {
@@ -908,11 +908,12 @@ sub rumIntronTitleUnified {
      $count++;
   }
   $html .= "</table>";
-
+  my $note = "Score for each sample is the number of unique reads for that sample and the overall score is the sum of all unique reads from all samples";
   my @data;
   push @data, [ '' => $html ];
   push @data, [ 'Location:'  => "$start - $stop"];
   push @data, [ 'Scores'     => $sum ];
+  push @data, [ 'Note'     => $note ];
 #  hover('Unified Splice Site Junctions - RNASeq', \@data);
   hover($f, \@data); 
 }
@@ -1007,7 +1008,7 @@ sub massSpecUnifiedTitle {
     $test{$key} = $val;
   }
   # display all 'db_name (number of matches)'
-  my $assayTitle = 'Asay (count)';
+  my $assayTitle = 'Assay (count)';
   foreach my $try (keys(%freq)) {   ##@fields) {
     push @data, [ "$assayTitle" => "$test{$try} ($freq{$try})" ];
     $assayTitle = ' ';

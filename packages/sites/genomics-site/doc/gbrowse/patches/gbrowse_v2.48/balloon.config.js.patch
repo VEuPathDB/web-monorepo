@@ -1,0 +1,11 @@
+--- balloon.config.js.orig	2012-01-05 16:19:44.000000000 -0500
++++ balloon.config.js	2012-01-05 16:20:01.000000000 -0500
+@@ -28,7 +28,7 @@
+     balloon.fontColor          = 'black';                       //
+     balloon.fontSize           = '11pt';                        //
+     balloon.minWidth           = 100;                           //
+-    balloon.maxWidth           = 400;                           //
++    balloon.maxWidth           = 800;                           //
+     balloon.delayTime          = 750;                           //
+     balloon.stem               = true;                          //
+     balloon.images             = '/images/balloons/GBubble';    //

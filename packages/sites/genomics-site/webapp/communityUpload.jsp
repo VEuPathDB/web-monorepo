@@ -58,6 +58,10 @@
     <tr><td>Document Title:</td><td><html:text property="title" styleId="title" size="60"/></td></tr>
     <%-- <tr><td>Description:<br>(4000 max characters)</td><td><html:textarea rows="5" cols="80" property="notes"/></td></tr> --%>
 
+
+ 	//used in fileUpload.js to access images provided by WDK
+       	<div id ="urlholder"  imageurl="<c:url value='/wdk/images/close.gif'/>" />
+	
     <table id="fileSelTbl">
     </table>
 

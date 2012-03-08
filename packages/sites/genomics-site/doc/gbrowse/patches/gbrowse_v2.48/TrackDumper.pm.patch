@@ -1,0 +1,65 @@
+--- TrackDumper.pm.orig	2012-03-07 12:43:26.000000000 -0500
++++ TrackDumper.pm	2012-03-07 13:17:12.000000000 -0500
+@@ -46,7 +46,8 @@
+   my $current_config = $self->configuration;
+   my $html = p('Dump',
+ 	       popup_menu(-name   => $self->config_name('mode'),
+-			  -values  => ['selected','all'],
++			  #-values  => ['selected','all'], # comments out 'all' option
++			  -values  => ['selected'],
+ 			  -default => $current_config->{mode},
+ 			  -override => 1,
+ 			 ),
+@@ -62,7 +63,8 @@
+ 	       popup_menu(-name=>$self->config_name('region'),
+ 			  -default=>$current_config->{region},
+ 			  -override=>1,
+-			  -values => ['selected','all'],
++			  #-values => ['selected','all'], # comments out 'all' option
++			  -values => ['selected'],
+ 			  -labels=>{all      => 'Across entire genome',
+ 				    selected => 'Across currently visible region'})
+       );      
+@@ -129,14 +131,16 @@
+   my $mode          = $config->{mode}    || 'selected';
+   my $entire_genome = $config->{region} && $config->{region} eq 'all';
+   my $db            = $self->database;
+-  my $whole_segment = $db->segment(Accession => $segment->seq_id) ||
+-                      $db->segment($segment->seq_id);
++  #my $whole_segment = $db->segment(Accession => $segment->seq_id) ||
++  #                    $db->segment($segment->seq_id);
++  my $whole_segment = $db->segment($segment->seq_id); 
+   my $coords        = $config->{coords};
+   my $embed         = $config->{embed};
+ 
+   my $thing_to_dump = $entire_genome ? $segment->db : $segment;
+ 
+   # safest thing to do is to use embedded logic
++=c
+   if ($version == 3 && $config->{print_config}) {
+       my $dumper = Bio::Graphics::Browser2::TrackDumper->new(
+ 	  -data_source => $conf,
+@@ -148,8 +152,9 @@
+ 	  ) or return;
+       $dumper->print_datafile();
+   }
+-
+-  elsif ($config->{print_config}) {
++=cut
++  #elsif ($config->{print_config}) {
++  if ($config->{print_config}) {
+       Bio::Graphics::Browser2::TrackDumper->print_configuration
+ 	  ($self->browser_config,
+ 	   $mode eq 'selected' ? [$self->selected_tracks] : ()
+@@ -186,7 +191,10 @@
+     my @args;
+     if ($mode eq 'selected') {
+ 	my @feature_types = $self->selected_features;
+-	@args = (-types => \@feature_types);
++  my @sqlName = $self->selected_sqlName;
++  my @sqlParam = $self->selected_sqlParam;
++
++	@args = (-types => \@feature_types, -sqlName=>\@sqlName, -sqlParam => \@sqlParam);
+     }
+       
+     my @feats = ();
