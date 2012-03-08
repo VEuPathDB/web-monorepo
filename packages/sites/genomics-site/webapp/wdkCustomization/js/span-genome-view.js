@@ -26,8 +26,9 @@ function initializeGenomeView() {
         "aoColumns": [ null,
                        null,
                        null,
+                       null,
                        { "bSortable": false },
-                       { "bSortable": false } ],
+                       { "bSortable": false } ]
     });
 }
 

@@ -46,8 +46,8 @@ initializeGenomeView();
       <c:url var="sequenceUrl" value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&source_id=${sequence.sourceId}" />
       <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
       <td class="length" nowrap>${sequence.lengthFormatted}</td>
-      <td class="chromosome" nowrap>${sequence.chromosome}</td>
-      <td class="span-count" nowrap>${sequence.spanCountFormatted)}</td>
+      <td class="chromosome" nowrap>${sequence.chromosome == null ? 'Not Assigned' : sequence.chromosome}</td>
+      <td class="span-count" nowrap>${sequence.spanCountFormatted}</td>
       <td width="100%">
        <div class="canvas">
         <c:set var="pctLength" value="${sequence.percentLength}" />
