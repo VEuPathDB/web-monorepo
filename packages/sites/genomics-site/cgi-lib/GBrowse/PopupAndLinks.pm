@@ -891,11 +891,11 @@ sub rumIntronTitleUnified {
   my ($exps) = $f->get_tag_values('Exps');
   my $start = $f->start;
   my $stop = $f->stop;
-  my $sum = eval join '+', split /;/, $scores;
+  my $sum = eval join '+', split /,/, $scores;
 
-  my @sample_arr = split /;/, $samples;
-  my @score_arr  = split /;/, $scores;
-  my @exp_arr    = split /;/, $exps;
+  my @sample_arr = split /,/, $samples;
+  my @score_arr  = split /,/, $scores;
+  my @exp_arr    = split /,/, $exps;
   my $count = 0;
   my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th></tr>";
   foreach (@sample_arr) {
