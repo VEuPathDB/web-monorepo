@@ -1,5 +1,6 @@
 var map =null;
 var geocoder = null;
+var locations = new Array();
 
 function initialize() {
   if (GBrowserIsCompatible()) {
@@ -28,7 +29,6 @@ jQuery.fn.slowEach = function( interval, callback ) {
 };
 
 jQuery(document).ready(function(){
-  initialize();
 
   var dd   = document.domain;
   var type = "&array(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
@@ -44,14 +44,48 @@ jQuery(document).ready(function(){
     type = '';
   } 
 
-  jQuery.get("showRecord.do?name=IsolateRecordClasses.CountryCountClass&source_id=test",{},function(xml){
-    jQuery('country',xml).slowEach(200, function(i) {
-       name = jQuery(this).find("name").text();
-       count = jQuery(this).find("count").text();
-       createMarker(name, count, type);
-    });
-  }); 
+  collectData();
+  initialize();
+
+  setTimeout(function() {
+    setMarkers(locations);
+  }, 1000);
 });
+
+
+function collectData() {
+    jQuery.get("showRecord.do?name=IsolateRecordClasses.CountryCountClass&source_id=test",{},function(xml){
+      jQuery('country',xml).each(function(i) {
+         name = jQuery(this).find("name").text();
+         count = jQuery(this).find("count").text();
+         locations.push(name);
+      });
+    }); 
+}
+
+function setMarkers(locations) {
+  var marker = null;
+
+  for (var i = 0; i < locations.length; i++) {
+    var country = locations[i];
+    if(geocoder) {
+      geocoder.getLatLng(
+        country,
+        function(point) {
+          if(!point) {
+          } else {
+            marker = new GMarker(point);
+            map.addOverlay(marker);
+            GEvent.addListener(marker, "click", function() {
+              marker.openInfoWindowHtml(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+type+"'> Click for Details</a>");
+            });
+          }
+        }
+      );
+    }
+  }
+}
+
 
 function createMarker(country, total, type) {
   var marker = null;
