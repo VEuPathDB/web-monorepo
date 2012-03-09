@@ -423,14 +423,13 @@ GO,InterproscanData
 
 <hr>
 
-<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
-
 <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
-<c:forEach var="row" items="${referenceTable}">
-  <c:if test="${extdbname eq row['name'].value}">
-    <c:set var="reference" value="${row['description'].value}"/>
-  </c:if>
-</c:forEach>
+<%-- c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/ --%>
+<%-- c:forEach var="row" items="${referenceTable}" --%>
+  <%-- c:if test="${extdbname eq row['name'].value}" --%>
+    <%-- c:set var="reference" value="${row['description'].value}"/ --%>
+  <%-- /c:if --%>
+<%-- /c:forEach --%>
 
 <imp:panel 
     displayName="Genome Sequencing and Annotation by:"
