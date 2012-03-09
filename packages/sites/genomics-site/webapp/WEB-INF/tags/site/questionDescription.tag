@@ -49,7 +49,7 @@
 </div>
 
 <%-- get the attributions of the question if not EuPathDB --%>
-<c:if test = "${project != 'EuPathDB'}">
+<c:if test = "${project != 'EuPathDB' && project != 'FungiDB'}">
 <hr>
 <a name="${attrId}"></a>
 <div style="color:black" id="${attrId}">
