@@ -6,8 +6,8 @@ function initialize() {
     if (document.getElementById("map_canvas") == null) {
       return;
     }
-    map = new GMap2(document.getElementById("map_canvas"), { size: new GSize(720,380) } );
-    map.setCenter(new GLatLng(10, 8), 2);
+    map = new GMap2(document.getElementById("map_canvas"), { size: new GSize(1280,420) } );
+    map.setCenter(new GLatLng(12, 8), 2);
     map.addControl(new GLargeMapControl())
 
     geocoder = new GClientGeocoder();
