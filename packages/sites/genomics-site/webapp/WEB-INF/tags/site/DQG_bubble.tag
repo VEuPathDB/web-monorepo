@@ -70,9 +70,6 @@
 							<a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;description</a>
 						 </c:if>
 						<div class="sub_list">
-              <script type="text/javascript">
-                $(function() { assignTooltips('.dqg-tooltip'); });
-              </script>
 							<ul>
 								<c:forEach items="${cat.websiteQuestions}" var="q">
 									<c:set var="popup" value="${q.summary}"/>

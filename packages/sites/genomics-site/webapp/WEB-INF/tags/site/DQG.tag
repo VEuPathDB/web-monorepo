@@ -73,7 +73,7 @@
 </c:choose>
 
 <script type="text/javascript">
-  $(function() { assignTooltips('.queryGridLink'); });
+    $(function() { assignTooltipsLeft('.dqg-tooltip', -3); });
 </script>
 
 <table width="100%" border="0" class="threecolumn">
