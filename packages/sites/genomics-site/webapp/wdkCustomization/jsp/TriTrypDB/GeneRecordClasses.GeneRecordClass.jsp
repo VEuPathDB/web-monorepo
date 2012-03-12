@@ -554,13 +554,22 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 
 <%---- Splice Sites table ---------------------------------------------%>
-<c:if test="${binomial eq 'Leishmania infantum' || binomial eq 'Trypanosoma brucei' || binomial eq 'Leishmania major' || binomial eq 'Trypanosoma cruzi'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
+<c:if test="${binomial eq 'Leishmania infantum'}">
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Linfantum_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
+</c:if>
+<c:if test="${binomial eq 'Leishmania major'}">
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
+</c:if>
+<c:if test="${binomial eq 'Trypanosoma brucei'}">
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC"/>
+</c:if>
+<c:if test="${binomial eq 'Trypanosoma cruzi'}">
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC"/>
 </c:if>
 
 <%---- Poly A Sites table ---------------------------------------------%>
 <c:if test="${binomial eq 'Leishmania major' }">
-     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution=""/>
+     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution="Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
 </c:if>
 
 
