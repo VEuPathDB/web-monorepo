@@ -126,7 +126,7 @@
                 <%-- an individual param (can not use fullName, w/ '.', for mapped props) --%>
                 <tr>
                     <td width="30%" align="right" style="vertical-align:top">
-                        <span style="font-weight:bold">${qP.prompt}</span> <img class="help-link" title="${fn:escapeXml(qP.help)}" src="wdk/images/question.png" />
+                        <span style="font-weight:bold">${qP.prompt}</span> <img class="help-link" style="cursor:pointer" title="${fn:escapeXml(qP.help)}" src="wdk/images/question.png" />
                     </td>
                     <c:choose>                        
                         <c:when test="${qP.class.name eq 'org.gusdb.wdk.model.jspwrap.EnumParamBean'}">
@@ -168,7 +168,7 @@
                             <c:set var="anchorQp" value="HELP_${fromAnchorQ}_${pNam}"/>
                             <c:set target="${helpQ}" property="${anchorQp}" value="${qP}"/>
 			    <c:if test="${nohelp ne 'true'}">
-                                <a class="help-link" href="#" title="${fn:escapeXml(qP.help)}">
+                                <a class="help-link" style="cursor:pointer" href="#" title="${fn:escapeXml(qP.help)}">
                                     <img src="/assets/images/help.png" border="0" alt="Help">
                      	        </a>
                   	    </c:if>
