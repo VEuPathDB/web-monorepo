@@ -43,6 +43,7 @@
 
 <script type="text/javascript" src="/assets/js/popups.js"></script>
 <script type="text/javascript" src="/assets/js/api.js"></script>
+<script type="text/javascript" src="/assets/js/nav.js"></script>
 
 <!-- fix to transparent png images in IE 7 -->
 <!--[if lt IE 7]>

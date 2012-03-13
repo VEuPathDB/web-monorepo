@@ -62,18 +62,16 @@
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
+<c:set var="facebook" value="${props['FACEBOOK_ID']}" />
+<c:set var="twitter" value="${props['TWITTER_ID']}" />
 
-<c:choose>
-<c:when test="${project eq 'FungiDB'}" >
-	<c:set var="twitter" value="FungiDB"/>
-	<c:set var="facebook" value="FungiDB"/>
-</c:when>
-<c:otherwise>
-	<c:set var="twitter" value="EuPathDB"/>
-	<c:set var="facebook" value="pages/EuPathDB/133123003429972"/>
-</c:otherwise>
-</c:choose>
-
+<%-- set default facebook and twitter IDs (can be overridden in model properties) --%>
+<c:if test="${facebook eq null or facebook eq ''}">
+  <c:set var="facebook" value="pages/EuPathDB/133123003429972"/>
+</c:if>
+<c:if test="${twitter eq null or twitter eq ''}">
+  <c:set var="twitter" value="EuPathDB"/>
+</c:if>
 
 <c:set var="siteName" value="${applicationScope.wdkModel.name}" />
 <c:set var="version" value="${applicationScope.wdkModel.version}" />
@@ -182,8 +180,6 @@
 <c:out value="${title}" default="${banner}" />
 </title>
 
-
-
 <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"> <%-- standard --%>
 <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
 
@@ -273,10 +269,11 @@ ${headElement}
    </c:choose>
    </div></div>
        
-
+   <div id="facebook-link" style="display:none">https://facebook.com/${facebook}</div>
+   <div id="twitter-link" style="display:none">http://twitter.com/${twitter}</div>
     <div style="width:537px;" id="bottom">
       <imp:quickSearch />
-      <imp:smallMenu refer="${refer}" twitter="${twitter}" facebook="${facebook}"/>
+      <imp:smallMenu refer="${refer}"/>
 
    </div>  <%-- id="bottom"    --%>
    </div>  <%-- id="header_rt" --%>
@@ -295,7 +292,7 @@ ${headElement}
 
 <%------------- REST OF PAGE  ----------------%>
 
-<imp:menubar refer="${refer}" twitter="${twitter}" facebook="${facebook}"/>
+<imp:menubar refer="${refer}"/>
 <imp:siteAnnounce  refer="${refer}"/>
 
 

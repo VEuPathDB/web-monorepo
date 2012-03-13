@@ -5,7 +5,6 @@
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 
 <imp:header refer="home2" />
-
 <imp:queryGrid />
-<imp:sidebar facebook="" twitter=""/>
+<imp:sidebar/>
 <imp:footer refer="home2" />

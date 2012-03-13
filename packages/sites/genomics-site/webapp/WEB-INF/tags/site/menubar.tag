@@ -10,16 +10,6 @@
 			  required="false" 
 			  description="Page calling this tag"
 %>
-<%@ attribute name="twitter" 
- 			  type="java.lang.String"
-			  required="true" 
-			  description="link to twitter for this project"
-%>
-<%@ attribute name="facebook" 
- 			  type="java.lang.String"
-			  required="true" 
-			  description="link to facebook for this project"
-%>
 
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
@@ -185,13 +175,13 @@
     <li><a>Community</a>
 	<ul>
 		<li>
-		<a href="http://twitter.com/${twitter}">
-			<img style="margin:0px;vertical-align:top" title="Follow us on twitter!" src="/assets/images/twitter.gif" width="20">
-			<span style="vertical-align:top">&nbsp;Follow us on twitter!</span> 
+		<a href="javascript:gotoTwitter()">
+			<img style="margin:0px;vertical-align:top" title="Follow us on Twitter!" src="/assets/images/twitter.gif" width="20">
+			<span style="vertical-align:top">&nbsp;Follow us on Twitter!</span> 
 		</a>
-		<a href="https://www.facebook.com/${facebook}">
-			<img style="margin:0px;margin-left:1px;vertical-align:top" title="Follow us on facebook!" src="/assets/images/facebook-icon.png" width="18">
-			<span style="vertical-align:top">&nbsp;Follow us on facebook!</span> 
+		<a href="javascript:gotoFacebook()">
+			<img style="margin:0px;margin-left:1px;vertical-align:top" title="Follow us on Facebook!" src="/assets/images/facebook-icon.png" width="18">
+			<span style="vertical-align:top">&nbsp;Follow us on Facebook!</span> 
 		</a>
 		</li>
 
