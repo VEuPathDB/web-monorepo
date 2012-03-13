@@ -83,7 +83,7 @@
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GeneByLocusTag" linktext="Gene ID(s)"  existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
                 <tr>
-                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTaxon" linktext="Species" existsOn="A Am C G M Pi P T Tr Tt"/>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByTaxon" linktext="Organism" existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
                 <tr>
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMr4Reagents" linktext="Available Reagents" existsOn="A C P T"/>
