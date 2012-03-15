@@ -249,6 +249,7 @@
       type="org.apidb.apicommon.controller.action.CustomShowRecordAction"
       scope="request">
       <forward name="show_record" path="/record.jsp"/>
+      <forward name="run-question" path="/processQuestion.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&value%28single_gene_id%29=${SOURCE_ID}*&questionSubmit=Get+Answer"/>
     </action>
     <action
       path="/configDownload"
