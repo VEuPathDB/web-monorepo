@@ -10,7 +10,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
 
-<!- model questions used by webservices, for recordClass other than gene. Two reasons why the model was used -instead of the categories.xml:
+<!-- model questions used by webservices, for recordClass other than gene. Two reasons why the model was used -instead of the categories.xml:
     - to avoid fake questions; 
       now with teh new flag "usedBy" we could read from categories.xml, using "usedBy='website'" on fake questions.
     - categories.xml does not provide the questionSet name (e.g. EstQuestions) that is needed to form the WS URL.
@@ -76,7 +76,13 @@
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}</a>
 </c:when>
 <c:otherwise>
-	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a>
+  <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">
+    ${q.displayName}
+    <c:if test="${q.new}">
+      <img src="<c:url value='/wdk/images/new-feature.png' />"
+           title="This is a new search in the current release." />
+    </c:if>
+  </a>
 </c:otherwise>
 </c:choose>
 
@@ -104,7 +110,13 @@
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}</a>
 </c:when>
 <c:otherwise>
-	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a>
+  <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">
+    ${q.displayName}
+    <c:if test="${q.new}">
+      <img src="<c:url value='/wdk/images/new-feature.png' />"
+           title="This is a new search in the current release." />
+    </c:if>
+  </a>
 </c:otherwise>
 </c:choose>
 
@@ -166,7 +178,13 @@
 						<ul>
 						<c:forEach items="${cat.websiteQuestions}" var="q">
 				    			<li>
-								<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}</a>
+							  <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">
+                                                            ${q.displayName}
+                                                            <c:if test="${q.new}">
+                                                              <img src="<c:url value='/wdk/images/new-feature.png' />"
+                                                                   title="This is a new search in the current release." />
+                                                            </c:if>
+                                                          </a>
 							</li>
 						</c:forEach>
 						</ul>

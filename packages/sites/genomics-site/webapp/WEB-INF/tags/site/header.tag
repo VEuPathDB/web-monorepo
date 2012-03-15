@@ -78,7 +78,7 @@
 
 <c:set var="releaseDate" value="${applicationScope.wdkModel.releaseDate}" />
 <c:set var="inputDateFormat" value="dd MMMM yyyy HH:mm"/>
-<fmt:setLocale value="en-US"/><%-- req. for date parsing when client browser (e.g. curl) doesn't send locale --%>
+<fmt:setLocale value="en-US"/><%-- req. for date parsing when client browser (e.g. curl) does not send locale --%>
 <fmt:parseDate pattern="${inputDateFormat}" var="rlsDate" value="${releaseDate}"/> 
 <%-- http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html --%>
 <fmt:formatDate var="releaseDate_formatted" value="${rlsDate}" pattern="d MMM yy"/>
