@@ -172,7 +172,8 @@
     <th colspan=6 align="center"><i>Basidiomycota</i></th>
     <th colspan=3 align="center"><i>Sordariomycetes</i></th>
     <th colspan=2 align="center"><i>Saccharomycotina</i></th>
-    <th colspan=6 align="center"><i>Taphrinomycotina</i></th>
+    <th colspan=1 align="center"><i>Taphrinomycotina</i></th>
+    <th align="center"><i>Oomycetes</i></th>
   </tr>
   <tr>
     <th><i>C.gat</i> WM276</th>
@@ -187,6 +188,7 @@
     <th><i>S.cer</i></th>
     <th><i>C.alb</i></th>
     <th><i>S.pom</i></th>
+    <th><i>H.ara</i></th>
   </tr>
   <tr align="center">
     <td>
@@ -272,6 +274,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="spom_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="hara_genes" />
     </td>
 
   </tr>
