@@ -63,6 +63,7 @@ initializeGenomeView();
                style="left:${span.percentStart}%; width:${span.percentLength}%">
               <div class="tooltip">
                 <p>${span.sourceId}, on ${spanStyle} strand,<br />Location: [${span.startFormatted} - ${span.endFormatted}].</p>
+                <br />
                 <p>View this ${recordClass.type} in:</p>
                 <ul>
                   <li> - <a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}' />">Record Page</a></li>

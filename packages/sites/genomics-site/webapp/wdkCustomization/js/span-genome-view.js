@@ -38,9 +38,10 @@ function initializeGenomeView() {
                                            $(tipSelector).attr("timer", timer);
                                        };
                                       
-                                       //
+                                       // when mouseover the span, canel delayed hiding, if there's any;
                                        // when mouseout the span, start delayed hiding tip.
-                                       span.mouseout(delayedHide);
+                                       span.mouseover(cancelDelayedHide)
+                                           .mouseout(delayedHide);
                                        // when mouse in tip, cancel delayed hiding; 
                                        // when clicking tip, hide tip immediately;
                                        // when mouse out tip, start delayed hiding.

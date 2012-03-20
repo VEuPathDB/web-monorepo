@@ -10,7 +10,6 @@
 #genome-view .spans .span.forward, .legend .span.forward { top:4px; background-color:#0000FF; }
 #genome-view .spans .span.reverse, .legend .span.reverse { top:11px;background-color:#FF0000; }
 #genome-view .spans .span .tooltip { display:none; }
-#genome-view .spans .span .tooltip ul { list-style:disc outside none; }
 
 .legend { background-color:#EEEEEE; border-radius:5px; padding:10px; margin:5px; width: 300px; }
 .legend .title { text-align:center; padding:5px; font-weight:bold; }
