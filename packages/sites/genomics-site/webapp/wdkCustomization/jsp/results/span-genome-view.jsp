@@ -59,8 +59,18 @@ initializeGenomeView();
             <c:set var="spanStyle" value="${span.forward ? 'forward' : 'reverse'}" />
             <c:set var="tooltip" value="${span.sourceId}, on ${spanStyle} strand, [${span.startFormatted} - ${span.endFormatted}]. (Click to go to the record page.)" />
             <c:url var="spanUrl" value="/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}" />
-            <div class="span ${spanStyle}" title="${tooltip}" url="${spanUrl}"
+            <div class="span ${spanStyle}" url="${spanUrl}"
                style="left:${span.percentStart}%; width:${span.percentLength}%">
+              <div class="tooltip">
+                <p>${span.sourceId}, on ${spanStyle} strand,<br />Location: [${span.startFormatted} - ${span.endFormatted}].</p>
+                <p>View this ${recordClass.type} in:</p>
+                <ul>
+                  <li> - <a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}' />">Record Page</a></li>
+                  <c:if test="${recordClass.fullName eq 'GeneRecordClasses.GeneRecordClass'}">
+                    <li> - <a href="/cgi-bin/gbrowse/toxodb/?h_feat=${span.sourceId}@yellow">Gbrowse</a></li>
+                  </c:if>
+                </ul>
+              </div>
             </div>
           </c:forEach>
         </div>
