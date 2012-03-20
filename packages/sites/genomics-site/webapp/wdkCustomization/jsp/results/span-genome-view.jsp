@@ -30,9 +30,9 @@ initializeGenomeView();
   <thead>
   <tr>
     <th>Sequence</th>
-    <th>Length</th>
     <th>Chromosome</th>
     <th>#${recordClass.type}s</th>
+    <th>Length</th>
     <th>${recordClass.type} Locations</th>
     <th>
       <img class="zoomin-all" title="${zoomInAllTip}" src="<c:url value='/wdk/images/plus.gif' />" />
@@ -45,9 +45,9 @@ initializeGenomeView();
     <tr class="sequence">
       <c:url var="sequenceUrl" value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&source_id=${sequence.sourceId}" />
       <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
-      <td class="length" nowrap>${sequence.lengthFormatted}</td>
       <td class="chromosome" nowrap>${sequence.chromosome}</td>
       <td class="span-count" nowrap>${sequence.spanCountFormatted}</td>
+      <td class="length" nowrap>${sequence.lengthFormatted}</td>
       <td width="100%">
        <div class="canvas">
         <c:set var="pctLength" value="${sequence.percentLength}" />
@@ -76,9 +76,9 @@ initializeGenomeView();
   <tfoot>
   <tr>
     <th>Sequence</th>
-    <th>Length</th>
     <th>Chromosome</th>
     <th>#${recordClass.type}s</th>
+    <th>Length</th>
     <th>${recordClass.type} Locations</th>
     <th>
       <img class="zoomin-all" title="${zoomInAllTip}" src="<c:url value='/wdk/images/plus.gif' />" />
