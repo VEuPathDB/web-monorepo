@@ -1074,6 +1074,20 @@ WHERE  edr.external_database_id = ed.external_database_id
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="DGE:coverageSubtracks" includeProjects="TriTrypDB">
+     <sql>
+       <![CDATA[
+    SELECT a.name  as feature_id,
+          'DGE'        as type, 
+          '$source'    as source,
+           $base_start as startm,
+           $rend       as end,
+           'library=' || a.name as atts
+    FROM rad.assay a
+       ]]>
+    </sql>
+  </sqlQuery>
+
 
   <sqlQuery name="NextGenSeq:coverageCombNormGB2"  includeProjects="TriTrypDB,PlasmoDB">
     <sql>
@@ -6496,6 +6510,38 @@ WHERE  fl.feature_type ='SAGETagFeature'
   AND  fl.end_max >= $base_start
   AND  fl.na_feature_id = sta.na_feature_id
   AND  staa.library_name = $$libName$$
+  AND  to_number(fl.feature_source_id) = staa.composite_element_id
+]]>
+    </sql>
+  </sqlQuery>
+
+   <sqlQuery name="DGE:coverageSubtracks:bulksubfeatures"  includeProjects="TriTrypDB">
+     <sql>
+<![CDATA[
+SELECT fl.na_feature_id as feature_id,
+       'DGE' type, 
+       '$source' source, 
+       sta.source_id name, 
+       --$$sample$$ parent_id, 
+       staa.library_name parent_id,
+       CASE WHEN staa.occurrence > 1 
+            THEN decode(log(2,staa.raw_count),0,-0.5,-(log(2,staa.raw_count)))
+            ELSE decode(log(2,staa.raw_count),0,0.5,log(2,staa.raw_count))
+       END score,
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       --'library=' || $$libName$$ || '$dlm' ||
+       'binaryColor='||CASE WHEN staa.occurrence > 1 THEN 1 ELSE 0 END as atts
+FROM   ApidbTuning.FeatureLocation fl,
+       ApidbTuning.SageTagAnalysisAttributes staa,
+       ApidbTuning.SageTagAttributes sta
+WHERE  fl.feature_type ='SAGETagFeature'
+  AND  fl.na_sequence_id = $srcfeature_id 
+  AND  fl.start_min <= $rend
+  AND  fl.end_max >= $base_start
+  AND  fl.na_feature_id = sta.na_feature_id
+  --AND  staa.library_name = $$libName$$
   AND  to_number(fl.feature_source_id) = staa.composite_element_id
 ]]>
     </sql>
