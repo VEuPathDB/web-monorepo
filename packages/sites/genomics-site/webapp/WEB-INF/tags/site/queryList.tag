@@ -140,6 +140,15 @@ function getComboElement()
 <c:when test="${prefix == 'L.m.'}">    
       <c:set var="org" value="Leishmania major"/>
   </c:when>
+<c:when test="${prefix == 'Cneo'}">    
+      <c:set var="org" value="Cryptococcus neoformans"/>
+  </c:when>
+<c:when test="${prefix == 'Ncra'}">    
+      <c:set var="org" value="Neurospora crassa"/>
+  </c:when>
+<c:when test="${prefix == 'Hyaa'}">    
+      <c:set var="org" value="Hyaloperonospora arabidopsidis"/>
+  </c:when>
   <c:otherwise>
 <%--if organism is not found 
 	(EITHER it is not specified in displayName or study OR it is a new organism), 

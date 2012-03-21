@@ -9,7 +9,7 @@
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
 <%-- QUESTIONS --%>
-<c:set var="fungiQuestions" value="GeneQuestions.GenesByRnaSeqFoldChangeCneoCapReg,GeneQuestions.GenesByRnaSeqPercentileCapReg,GeneQuestions.GenesByRnaSeqFoldChangeCneo,GeneQuestions.GenesByRnaSeqPercentileCneo,GeneQuestions.GenesByRnaSeqFoldChangeNcra,GeneQuestions.GenesByRnaSeqPercentileNcra"/>
+<c:set var="fungiQuestions" value="Cneostudy:Capsule Regulation,GeneQuestions.GenesByRnaSeqFoldChangeCneoCapReg,GeneQuestions.GenesByRnaSeqPercentileCapReg,Cneostudy:NRG1 KO and Overexpression,GeneQuestions.GenesByRnaSeqFoldChangeCneo,GeneQuestions.GenesByRnaSeqPercentileCneo,Ncrastudy:Hyphal Growth,GeneQuestions.GenesByRnaSeqFoldChangeNcra,GeneQuestions.GenesByRnaSeqPercentileNcra"/>
 
 <c:set var="plasmoQuestions" value="P.f.study:Field Parasites from Pregnant Women and Children (Duffy),GeneQuestions.GenesByRNASeqPfExpressionFoldChange,P.f.study:Post Infection Time Series (Stunnenberg),GeneQuestions.GenesByRNASeqPfRBCFoldChange,GeneQuestions.GenesByRNASeqPfRBCExprnPercentile,P.f.study:Intraerythrocytic infection cycle (Newbold/Llinas),GeneQuestions.GenesByRNASeqExpressionTiming" />
 
