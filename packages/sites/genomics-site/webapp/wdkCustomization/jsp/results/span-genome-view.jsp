@@ -62,7 +62,8 @@ initializeGenomeView();
             <div class="span ${spanStyle}" url="${spanUrl}"
                style="left:${span.percentStart}%; width:${span.percentLength}%">
               <div class="tooltip">
-                <p>${span.sourceId}, on ${spanStyle} strand,<br />Location: [${span.startFormatted} - ${span.endFormatted}].</p>
+                <p align="center"><b>${span.sourceId}</b></p>
+                <p>Location: [${span.startFormatted} - ${span.endFormatted}], on ${spanStyle} strand.</p>
                 <br />
                 <p>View this ${recordClass.type} in:</p>
                 <ul>
