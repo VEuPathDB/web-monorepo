@@ -2,9 +2,6 @@ function initializeGenomeView() {
     // register click events
     $("#genome-view .sequence .span").each(function() {
         var span = $(this);
-        //span.click(function() {
-        //    window.location.href = $(this).attr("url");
-        //});
         var content = $(this).children(".tooltip");
         span.qtip({ content : content,
                        show: {
