@@ -260,7 +260,7 @@ function updateImageMapDiv(imgMapDivId, imgMapSrc, postLoadJS) {
 
     var loadingImg = (jQuery("<div></div>").attr("id", "imgMapDivId_loading")).attr("class", "gbGnCtx").
           append(jQuery("<img/>").
-            attr("src", "wdk/images/loading2.gif")).
+            attr("src", "wdk/images/loading.gif")).
           append("<br>Loading...");
 
 
