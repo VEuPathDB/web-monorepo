@@ -25,9 +25,11 @@
 <div id="contentcolumn">
 <div class="innertube">
 
+<%-- 
 <div style="padding:3px 10px;">
 	<imp:searchLookup />
 </div>
+--%>
 
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
