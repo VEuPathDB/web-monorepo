@@ -9,6 +9,9 @@
 
 <%-- JQuery library is included by WDK --%>
 
+<c:if test="${project == 'CryptoDB'}">
+  <c:set var="gkey" value="AIzaSyBD4YDJLqvZWsXRpPP8u9dJGj3gMFXCg6s" />
+</c:if>
 
 <c:if test="${refer == 'summary'}">
 
@@ -18,6 +21,9 @@
     <script type="text/javascript" src="<c:url value='/wdkCustomization/js/export-basket.js' />"></script>
     <script type="text/javascript" src='<c:url value="/wdkCustomization/js/span-genome-view.js"/>'></script>
     <link rel="StyleSheet" type="text/css" href="<c:url value='/wdkCustomization/css/span-genome-view.css' />"/>
+
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"></script>
+
 </c:if>
 
 <!-- jscript : refer = ${refer}-->
