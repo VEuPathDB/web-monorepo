@@ -1,54 +1,7 @@
 function initializeGenomeView() {
     // register click events
-    $("#genome-view .sequence .span").each(function() {
-        var span = $(this);
-        var content = $(this).children(".tooltip");
-        span.qtip({ content : content,
-                       show: {
-                               solo: true,
-                               event: 'click mouseenter'
-                             },
-                       hide: {
-                               event: 'click'
-                             },
-                       events: {
-                                 show: function(event, api) {
-                                       // qtip2 assigns an ID of "ui-tooltip-<id>" to the tooltip div
-                                       var tipSelector = '#ui-tooltip-' + api.get('id');
-
-                                       // define functions for hiding tooltip timer.
-                                       var cancelDelayedHide = function() {
-                                           // clear the previous timers
-                                           var timer = $(tipSelector).attr("timer");
-                                           if (timer != undefined) {
-                                               clearTimeout(timer);
-                                               $(tipSelector).removeAttr("timer");
-                                           }
-                                       }
-                                       var hide = function(){
-                                           $(tipSelector).qtip('hide'); 
-                                           cancelDelayedHide();
-                                       };
-                                       var delayedHide = function() {
-                                           cancelDelayedHide();
-                                           var timer = setTimeout("$('" + tipSelector + "').qtip('hide');", 1000);
-                                           $(tipSelector).attr("timer", timer);
-                                       };
-                                      
-                                       // when mouseover the span, canel delayed hiding, if there's any;
-                                       // when mouseout the span, start delayed hiding tip.
-                                       span.mouseover(cancelDelayedHide)
-                                           .mouseout(delayedHide);
-                                       // when mouse in tip, cancel delayed hiding; 
-                                       // when clicking tip, hide tip immediately;
-                                       // when mouse out tip, start delayed hiding.
-                                       $(tipSelector).mouseover(cancelDelayedHide)
-                                                     .click(hide)
-                                                     .mouseout(delayedHide);
-                               }
-                          }
-                     });
-    });
+    assignStickyTooltipByElement("#genome-view .sequence .span");
+	
     $("#genome-view .sequence .ruler").click(function() {
         window.location.href = $(this).parents(".sequence").find(".sequence-id a").attr("href");
     });
