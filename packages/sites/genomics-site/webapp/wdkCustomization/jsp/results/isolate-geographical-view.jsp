@@ -4,16 +4,8 @@
 
 <c:set var="wdkStep" value="${requestScope.wdkStep}" />
 <c:set var="sequences" value="${requestScope.isolates}" />
-
 <c:set var="recordClass" value="${wdkStep.question.recordClass}" />
 
-<c:set var="project" value="CryptoDB" />
-
-<%--- Google keys to access the maps for Isolate questions (check with Haiming) ---%>
-<c:set var="gkey" value="AIzaSyBD4YDJLqvZWsXRpPP8u9dJGj3gMFXCg6s" /> 
-
-<script type="text/javascript" src='http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false'></script>
-<script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
 <script type="text/javascript" src="/assets/js/google_map.js"></script>
 
 <table id="isolate-view" class="datatables">
