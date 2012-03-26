@@ -1,34 +1,21 @@
-var map =null;
-var geocoder = null;
-var locations = new Array();
+var geocoder;
+var map;
 
 function initialize() {
-  if (GBrowserIsCompatible()) {
-    if (document.getElementById("map_canvas") == null) {
-      return;
-    }
-    map = new GMap2(document.getElementById("map_canvas"), { size: new GSize(1280,420) } );
-    map.setCenter(new GLatLng(12, 8), 2);
-    map.addControl(new GLargeMapControl())
+  geocoder = new google.maps.Geocoder();
 
-    geocoder = new GClientGeocoder();
-    geocoder.setCache();
+  var latlng = new google.maps.LatLng(8.597, 10.644);
+
+  var myOptions = {
+    zoom: 2,
+    center: latlng, 
+    mapTypeId: google.maps.MapTypeId.TERRAIN
   }
+  map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 }
 
-jQuery.fn.slowEach = function( interval, callback ) {
-  var array = this;
-  if( ! array.length ) return;
-  var i = 0;
-  next();
-  function next() {
-    if( callback.call( array[i], i, array[i] ) !== false )
-    if( ++i < array.length )
-    setTimeout( next, interval );
-  }
-};
-
 jQuery(document).ready(function(){
+  initialize();
 
   var dd   = document.domain;
   var type = "&array(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
@@ -44,64 +31,39 @@ jQuery(document).ready(function(){
     type = '';
   } 
 
-  collectData();
-  initialize();
+  $('#isolate-view tbody tr').map(function() {
+    // $(this) is used more than once; cache it for performance.
+      var $row = $(this);
+      
+    // For each row that's "mapped", return an object that
+    //  describes the first and second <td> in the row.
+    var $name = $row.find(':nth-child(1)').text();
+    var $count = $row.find(':nth-child(2)').text();
+    var $type = $row.find(':nth-child(3)').text();
 
-  setTimeout(function() {
-    setMarkers(locations);
-  }, 1000);
+      setTimeout( function() {  createMarker($name, $count, $type);}, 200);
+  }).get();
+
 });
 
-
-function collectData() {
-    jQuery.get("showRecord.do?name=IsolateRecordClasses.CountryCountClass&source_id=test",{},function(xml){
-      jQuery('country',xml).each(function(i) {
-         name = jQuery(this).find("name").text();
-         count = jQuery(this).find("count").text();
-         locations.push(name);
-      });
-    }); 
-}
-
-function setMarkers(locations) {
-  var marker = null;
-
-  for (var i = 0; i < locations.length; i++) {
-    var country = locations[i];
-    if(geocoder) {
-      geocoder.getLatLng(
-        country,
-        function(point) {
-          if(!point) {
-          } else {
-            marker = new GMarker(point);
-            map.addOverlay(marker);
-            GEvent.addListener(marker, "click", function() {
-              marker.openInfoWindowHtml(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+type+"'> Click for Details</a>");
-            });
-          }
-        }
-      );
-    }
-  }
-}
-
-
 function createMarker(country, total, type) {
-  var marker = null;
-  if(geocoder) {
-    geocoder.getLatLng(
-      country,
-      function(point) {
-        if(!point) {
-        } else {
-          marker = new GMarker(point);
-          map.addOverlay(marker);
-          GEvent.addListener(marker, "click", function() {
-            marker.openInfoWindowHtml(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+type+"'> Click for Details</a>");
-          });
-        }
-      }
-    );
-  }
+  geocoder.geocode( {'address': country}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      //map.setCenter(results[0].geometry.location);
+
+      var marker = new google.maps.Marker({
+         map: map,
+         position: results[0].geometry.location
+      });
+
+      google.maps.event.addListener(marker, 'click', function() {
+         
+        var infoWindow = new google.maps.InfoWindow();
+        infoWindow.setContent(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+type+"'> Click for Details</a>");
+        infoWindow.open(map,marker);
+      });
+    } else {
+      alert("Geocode was not successful for the following reason: " + status);
+    }
+  });
 }
