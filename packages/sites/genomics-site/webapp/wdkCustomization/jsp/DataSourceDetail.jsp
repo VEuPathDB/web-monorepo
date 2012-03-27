@@ -68,7 +68,7 @@
           <c:set var="displayName" value="${attributes['display_name']}" />
           <c:set var="version" value="${attributes['version']}" />
           <c:set var="publicUrl" value="${attributes['public_url']}" />
-          <c:set var="categories" value="${attributes['categories']}" />
+          <c:set var="categories" value="${attributes['category']}" />
           <c:set var="organism" value="${attributes['organism']}" />
           <c:set var="description" value="${attributes['description']}" />
           <c:set var="contact" value="${attributes['contact']}" />
@@ -76,6 +76,8 @@
         
           <c:set var="tables" value="${record.tables}" />
           <c:set var="publications" value="${tables['Publications']}" />
+          <c:set var="contacts" value="${tables['Contacts']}" />
+          <c:set var="externallinks" value="${tables['ExternalLinks']}" />
           <c:set var="references" value="${tables['References']}" />
           <div class="data-source">
             <div>
