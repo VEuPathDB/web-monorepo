@@ -245,14 +245,7 @@ GO,InterproscanData
 </c:set>
 
 <imp:wdkTable tblName="GoTerms" isOpen="true" attribution=""/>
-</c:if>
-
-<c:if test="${binomial eq 'Saccharomyces cerevisiae' || binomial eq 'Aspergillus nidulans' || binomial eq 'Candida albicans'}">
-  <a name="ecNumber"></a>
- <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-    <imp:wdkTable tblName="EcNumber" isOpen="false"
-                   attribution=""/>
-  </c:if>
+<imp:wdkTable tblName="EcNumber" isOpen="false"  attribution=""/>
 </c:if>
 
 <%-- ORTHOMCL ------------------------------------------------------%>
