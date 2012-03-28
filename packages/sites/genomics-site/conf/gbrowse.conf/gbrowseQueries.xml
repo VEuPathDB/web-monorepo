@@ -395,7 +395,7 @@ ORDER BY
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="rum:intronunified" includeProjects="PlasmoDB,ToxoDB">
+  <sqlQuery name="rum:intronunified" includeProjects="PlasmoDB,ToxoDB,FungiDB">
      <sql>
      <![CDATA[
       SELECT rif.mapping_start || '_' || rif.mapping_end as feature_id,
