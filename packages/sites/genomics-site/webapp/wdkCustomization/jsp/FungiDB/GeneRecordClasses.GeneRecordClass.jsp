@@ -159,8 +159,6 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
 </c:if>
 
 
-<!-- gene alias table -->
-<imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
 
@@ -186,12 +184,11 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
 
 
 <imp:pageDivider name="Annotation"/>
+
 <%--- Notes --------------------------------------------------------%>
-
 <c:if test="${notes ne 'none'}">
-    <%--- wdk:wdkTable tblName="Notes" isOpen="true" / ---%>
+    <wdk:wdkTable tblName="Notes" isOpen="true" />
 </c:if>
-
 <%--- Comments -----------------------------------------------------%>
 <a name="user-comment"/>
 
@@ -223,6 +220,10 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
 <!-- External Links --> 
 <imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
+<!-- gene alias table -->
+<imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+
+
 </c:catch>
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
@@ -244,7 +245,6 @@ GO,InterproscanData
 </c:set>
 
 <imp:wdkTable tblName="GoTerms" isOpen="true" attribution=""/>
-
 </c:if>
 
 <c:if test="${binomial eq 'Saccharomyces cerevisiae' || binomial eq 'Aspergillus nidulans' || binomial eq 'Candida albicans'}">
@@ -266,6 +266,8 @@ GO,InterproscanData
   <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
                  postscript="${orthomclLink}"/>
 </c:if>
+
+
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
@@ -344,6 +346,17 @@ GO,InterproscanData
   <imp:wdkTable tblName="Y2hInteractions" isOpen="true"
                  attribution="y2h_data"/>
   </c:if>
+
+
+
+  <imp:wdkTable tblName="ProteinDatabase"/>
+
+<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+
+  <imp:wdkTable tblName="Epitopes"/>
+
+
+
 
 
 <c:if test="${binomial eq 'Cryptococcus neoformans' || binomial eq 'Saccharomyces cerevisiae' || binomial eq 'Neurospora crassa'}">
