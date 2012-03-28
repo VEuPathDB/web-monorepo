@@ -13,12 +13,14 @@
  <th>Country</th>
  <th>Number of Isolates</th>
  <th>Isolate Type</th>
+ <th>Latitude</th>
+ <th>Longitude</th>
 
 </thead>
 <tbody>
   <c:forEach items="${sequences}" var="sequence">
   <tr>
-<td>${sequence.country}</td><td> ${sequence.total} </td><td>${sequence.type}</td>
+<td>${sequence.country}</td><td> ${sequence.total} </td><td>${sequence.type}</td><td>${sequence.lat}</td><td>${sequence.lng}</td>
 </tr>
   </c:forEach>
 
