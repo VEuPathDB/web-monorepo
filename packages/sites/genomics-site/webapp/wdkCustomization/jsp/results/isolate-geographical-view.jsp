@@ -8,6 +8,9 @@
 
 <script type="text/javascript" src="/assets/js/google_map.js"></script>
 
+
+<div id="map_canvas" style="width: 1024px; height: 380px"></div>
+
 <table id="isolate-view" class="datatables">
 <thead>
  <th>Country</th>
@@ -27,4 +30,3 @@
 </tbody>
 </table>
 
-<div id="map_canvas" style="width: 1080px; height: 420px"></div>
