@@ -83,29 +83,6 @@
 <%-- http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html --%>
 <fmt:formatDate var="releaseDate_formatted" value="${rlsDate}" pattern="d MMM yy"/>
   
-
-
-<%--- Google keys to access the maps for Isolate questions (check with Haiming) ---%>
-<c:if test="${project == 'CryptoDB'}">
-  <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahTMrNE2G2Bled15vogCImXw6TjMNBQeKxJGr2lD8yC0v8vilAhNZXuKjQ" />
-</c:if>
-
-<c:if test="${project == 'PlasmoDB'}">
-  <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahQTcYCy8iFaEFUpq-RKhUlyaXswfRSkzh9P8XS6wfHjLQhH6aRG_redTg" />
-</c:if>
-
-<c:if test="${project == 'ToxoDB'}">
-  <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahTbXWpA0E7vCdCxcYwpPwzMOEinFhTk3zvyW9eMl1CGc0wQabgrO2GHiA" />
-</c:if>
-
-<c:if test="${project == 'GiardiaDB'}">
-  <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahTlNDst8dXAmD5YyQ2VVS97EWFghhQhZPGp197fIBaqTKkE2AWWB1m7xA" />
-</c:if>
-
-<c:if test="${project == 'EuPathDB'}">
-  <c:set var="gkey" value="ABQIAAAAqKP8fsrz5sK-Fsqee-NSahSsTM_yzu3s1MlIlYUNhUGVfJzobxRb1TdHaeE5y5bGlgFsG1VYMy7KCw" />
-</c:if>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <%------------------ setting title --------------%>
@@ -214,11 +191,6 @@
 <!--[if lt IE 7]>
 <link rel="stylesheet" href="/assets/css/ie6.css" type="text/css" />
 <![endif]-->
-
-<c:if test="${param.questionFullName eq 'IsolateQuestions.IsolateByCountry'}">
-  <script type="text/javascript" src="/assets/js/google_map.js"></script>
-  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${gkey}" type="text/javascript"></script>
-</c:if>
 
 <c:if test="${refer == 'home'}">
   <style>  <%-- extra styling to get around the sidebar on home page. --%>
