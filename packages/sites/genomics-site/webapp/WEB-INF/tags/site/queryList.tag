@@ -19,7 +19,7 @@
 <script type="text/javascript">
   $(function() {
     initializeQuestion();
-    assignTooltips('.query-tooltip');
+    assignTooltips('.query-tooltip', 35);
   });
 </script>
 

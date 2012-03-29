@@ -22,7 +22,7 @@
 <%--------------------------------------------------------------------%>
 
 <script type="text/javascript">
-  $(function() { assignTooltips('.queryGridLink', 50); });
+  $(function() { assignTooltips('.queryGridLink'); });
 </script>
 
 <%-- these divs are needed because they do NOT come from header.... problem associated with having a sidebar --%>
