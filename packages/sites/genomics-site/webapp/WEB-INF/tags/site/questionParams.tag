@@ -45,6 +45,19 @@
   $(function() { assignParamTooltips('.help-link'); });
 </script>
 
+<c:set var="invalidParams" value="${requestScope.invalidParams}" />
+<c:if test="${fn:length(invalidParams) != 0}">
+  <div class="invalid-params">
+    <p>Some of the parameters are no longer used. Here are the values you selected previously:</p>
+    <ul>
+      <c:forEach items="${invalidParams}" var="entry">
+        <li>${entry.key} : ${entry.value}</li>
+      </c:forEach>
+    </ul>
+  </div>
+</c:if>
+
+
 <c:forEach items="${paramGroups}" var="paramGroupItem">
     <c:set var="group" value="${paramGroupItem.key}" />
     <c:set var="paramGroup" value="${paramGroupItem.value}" />
