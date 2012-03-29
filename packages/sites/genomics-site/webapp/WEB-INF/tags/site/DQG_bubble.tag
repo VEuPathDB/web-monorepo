@@ -44,86 +44,98 @@
 <c:choose>
 
 <%---------------------------------   TOOLS  -------------------------%>
-	<c:when test="${recordClasses == null}">
-		<imp:DQG_tools />
-	</c:when>
+<c:when test="${recordClasses == null}">
+	<imp:DQG_tools />
+</c:when>
 
 <%---------------------------------   RECORDCLASSSES OTHER THAN GENES  -------------------------%>
-	<c:when test="${recordClasses == 'others'}">
-		<div id="info">
-			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
-			<ul class="heading_list">
-				<c:forEach items="${rootCats}" var="rootCatEntry">
-				    <c:if test="${rootCatEntry.key != 'GeneRecordClasses.GeneRecordClass'}">
-				      <c:set var="rootCat" value="${rootCatEntry.value}" />
-				      <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
-				          <c:set var="cat" value="${catEntry.value}" />
-				          <c:if test="${fn:length(cat.websiteQuestions) > 0}">
-<%-- SAME CODE AS IN drop_down_QG.tag --%>
+<c:when test="${recordClasses == 'others'}">
+	<div id="info">
+	<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
+	<ul class="heading_list">
+		<c:forEach items="${rootCats}" var="rootCatEntry">
+		<c:if test="${rootCatEntry.key != 'GeneRecordClasses.GeneRecordClass'}">
+			<c:set var="rootCat" value="${rootCatEntry.value}" />
+			<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
+				<c:set var="cat" value="${catEntry.value}" />
+				<c:if test="${fn:length(cat.websiteQuestions) > 0}">
+
+<%-- SAME CODE AS IN drop_down_QG2.tag --%>
 <%-- fixing plural and uppercase --%>
 
                                         <c:set var="display" value="${fn:substring(cat.displayName, 11, -1)}" />
 					<li>
                                             <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
                                             <a class="heading" href="javascript:void(0)">&nbsp;${display}</a>
-						 <c:if test="${rootCatEntry.key != 'DynSpanRecordClasses.DynSpanRecordClass'}">
-							<a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;description</a>
-						 </c:if>
-						<div class="sub_list">
-							<ul>
-								<c:forEach items="${cat.websiteQuestions}" var="q">
-									<c:set var="popup" value="${q.summary}"/>
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}" class="dqg-tooltip" id="${q.questionSetName}_${q.name}" title="${fn:escapeXml(popup)}">${q.displayName}</a></li>
-								</c:forEach>
-							</ul>
-						</div>
+					    <c:if test="${rootCatEntry.key != 'DynSpanRecordClasses.DynSpanRecordClass'}">
+						<a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;description</a>
+					    </c:if>
+					    <div class="sub_list">
+						<ul>
+						<c:forEach items="${cat.websiteQuestions}" var="q">
+							<c:set var="popup" value="${q.summary}"/>
+							<li><a href="showQuestion.do?questionFullName=${q.fullName}" class="dqg-tooltip" id="${q.questionSetName}_${q.name}" title="${fn:escapeXml(popup)}">${q.displayName}</a>
+	 						<c:if test="${q.new}">
+      								<img alt="New feature icon" width="25" src="<c:url value='/wdk/images/new-feature.png' />"
+           								title="This is a new search in the current release." />
+    							</c:if>
+							</li>
+						</c:forEach>
+						</ul>
+					     </div>
 					</li>
-                                        </c:if>
-				      </c:forEach>
-				    </c:if>
-				</c:forEach>	
-			</ul>
-		</div>
-		<div id="infobottom">
+				</c:if>
+			</c:forEach>
+		</c:if>
+		</c:forEach>	
+	</ul>
+	</div>
+		
+	<div id="infobottom">
  		<%--	<div id="mysearchhist">
 				<a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
 			</div>  --%>
-		</div>
-	</c:when>
+	</div>
+</c:when>
 
 <%---------------------------------   GENES  -------------------------%>
-	<c:otherwise>
-		<div id="info">
-			<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
-			<ul class="heading_list">
-				
-				<c:set var="rootCat" value="${rootCats['GeneRecordClasses.GeneRecordClass']}" />
-				<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
-				    <c:set var="cat" value="${catEntry.value}" />
-                                    <c:if test="${fn:length(cat.websiteQuestions) > 0}">
-					<li>
-						<img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
-						<a class="heading" href="javascript:void(0)">${cat.displayName}</a>
-						<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;<i>description</i></a>
-						<div class="sub_list">
-							<ul>
-								<c:forEach items="${cat.websiteQuestions}" var="q">
-									<c:set var="popup" value="${q.summary}"/>
-									<li><a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}" class="dqg-tooltip" title="${fn:escapeXml(popup)}">${q.displayName}</a></li>
-								</c:forEach>
-							</ul>
-						</div>
+<c:otherwise>
+	<div id="info">
+	<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
+	<ul class="heading_list">
+		<c:set var="rootCat" value="${rootCats['GeneRecordClasses.GeneRecordClass']}" />
+		<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
+			<c:set var="cat" value="${catEntry.value}" />
+			<c:if test="${fn:length(cat.websiteQuestions) > 0}">
+				<li>
+				<img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
+				<a class="heading" href="javascript:void(0)">${cat.displayName}</a>
+				<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;<i>description</i></a>
+				<div class="sub_list">
+				<ul>
+				<c:forEach items="${cat.websiteQuestions}" var="q">
+					<c:set var="popup" value="${q.summary}"/>
+					<li><a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}" class="dqg-tooltip" title="${fn:escapeXml(popup)}">${q.displayName}</a>
+	 				<c:if test="${q.new}">
+      						<img alt="New feature icon" width="25" src="<c:url value='/wdk/images/new-feature.png' />"
+           						title="This is a new search in the current release." />
+    					</c:if>
 					</li>
-                                    </c:if>
 				</c:forEach>
-			</ul>	
-		</div>
-		<div id="infobottom">
+				</ul>
+				</div>
+				</li>
+			</c:if>
+		</c:forEach>
+	</ul>	
+	</div>
+
+	<div id="infobottom">
 		<%--	<div id="mysearchhist">
 				<a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
 			</div> --%>
     	</div>
-	</c:otherwise>
+</c:otherwise>
 </c:choose>	
 
 <!--<img src="/assets/images/bubble_bottom.png" alt="" width="247" height="35" />-->

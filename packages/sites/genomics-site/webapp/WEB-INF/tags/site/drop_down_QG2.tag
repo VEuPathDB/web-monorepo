@@ -10,33 +10,39 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
 
-<!-- model questions used by webservices, for recordClass other than gene. Two reasons why the model was used -instead of the categories.xml:
-    - to avoid fake questions; 
-      now with teh new flag "usedBy" we could read from categories.xml, using "usedBy='website'" on fake questions.
-    - categories.xml does not provide the questionSet name (e.g. EstQuestions) that is needed to form the WS URL.
-      one could obtain the questionSet name either by 
-          - hardcoding it below (there is already an if that could be used)
-          - reading from the question object (question.questionSetName) ?
+<!-- model questions are used by webservices for OTHER recordClasses, instead of the categories.xml. 
+     Two reasons why the model was used:
+    	- to avoid fake questions; 
+      		now with the new flag "usedBy" we could read from categories.xml, using "usedBy='website'" on fake questions.
+   	 - categories.xml does not provide the questionSet name (e.g. EstQuestions) that is needed to form the WS URL.
+      		one could obtain the questionSet name either by 
+          	- hardcoding it below (there is already an if that could be used)
+          	- reading from the question object (question.questionSetName) ?
  -->
 <c:set value="${wdkModel.questionSets}" var="questionSets"/>
 
 <ul>
-	<c:forEach items="${rootCatMap}" var="rootCatEntry">
-		<c:set var="recType" value="${rootCatEntry.key}" />
-		<c:set var="rootCat" value="${rootCatEntry.value}" />
+<c:forEach items="${rootCatMap}" var="rootCatEntry">
+	<c:set var="recType" value="${rootCatEntry.key}" />
+	<c:set var="rootCat" value="${rootCatEntry.value}" />
 
-		<c:if test="${recType == 'GeneRecordClasses.GeneRecordClass' || 
-				recType == 'SequenceRecordClasses.SequenceRecordClass'  || 
-				recType == 'OrfRecordClasses.OrfRecordClass' || 
-				recType == 'EstRecordClasses.EstRecordClass' || 
-				recType == 'IsolateRecordClasses.IsolateRecordClass' || 
-				recType == 'SnpRecordClasses.SnpRecordClass' || 
-				recType == 'AssemblyRecordClasses.AssemblyRecordClass' || 
-				recType == 'DynSpanRecordClasses.DynSpanRecordClass' || 
-				recType == 'SageTagRecordClasses.SageTagRecordClass' }">
+	<c:if test="${recType == 'GeneRecordClasses.GeneRecordClass' || 
+		recType == 'SequenceRecordClasses.SequenceRecordClass'  || 
+		recType == 'OrfRecordClasses.OrfRecordClass' || 
+		recType == 'EstRecordClasses.EstRecordClass' || 
+		recType == 'IsolateRecordClasses.IsolateRecordClass' || 
+		recType == 'SnpRecordClasses.SnpRecordClass' || 
+		recType == 'AssemblyRecordClasses.AssemblyRecordClass' || 
+		recType == 'DynSpanRecordClasses.DynSpanRecordClass' || 
+		recType == 'SageTagRecordClasses.SageTagRecordClass' }">
+
+
 		<c:choose>
+<%-- ================================= GENES   ================================= --%>
+
 		<c:when test="${recType=='GeneRecordClasses.GeneRecordClass'}">
-			<li>
+<li>
+
 <c:choose>
 <c:when test="${from == 'webservices'}">
     <a title="This one WADL contains documentation for all gene web service searches"  href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Genes</h3></a>
@@ -48,12 +54,13 @@
 </c:otherwise>
 </c:choose>
 
-				<ul>
-				<c:forEach items="${children}" var="catEntry">
-					<c:set var="cat" value="${catEntry.value}" />
-					<c:if test="${fn:length(cat.websiteQuestions) > 0}">
+	<ul>
+	<c:forEach items="${children}" var="catEntry">
+		<c:set var="cat" value="${catEntry.value}" />
+		<c:if test="${fn:length(cat.websiteQuestions) > 0}">
 
-						<li>
+			<%-- GENE CATEGORY --%>
+			<li>     
 <c:choose>
 <c:when test="${from == 'webservices'}">
     &nbsp;&nbsp;<b>${cat.displayName}</b>
@@ -67,31 +74,37 @@
 
 </c:otherwise>
 </c:choose>
+				<ul>
+				<c:forEach items="${questions}" var="q">
 
-							<ul>
-							<c:forEach items="${questions}" var="q">
-								<li>
+				<%-- GENE QUESTION --%>
+				<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}</a>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
+ 	<c:if test="${q.new}">
+      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
+          		title="This is a new search in the current release." />
+    	</c:if>
+	</a>
 </c:when>
 <c:otherwise>
-  <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">
-    ${q.displayName}
-    <c:if test="${q.new}">
-      <img src="<c:url value='/wdk/images/new-feature.png' />"
-           title="This is a new search in the current release." />
-    </c:if>
-  </a>
+  	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
+    	<c:if test="${q.new}">
+      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
+           		title="This is a new search in the current release." />
+    	</c:if>
+  	</a>
 </c:otherwise>
 </c:choose>
+				</li>
+				</c:forEach>
 
-								</li>
-							</c:forEach>
+				<c:forEach items="${categories}" var="cEntry">
+				<c:set var="cat" value="${cEntry.value}" />
 
-							<c:forEach items="${categories}" var="cEntry">
-								<c:set var="cat" value="${cEntry.value}" />
-								<li>
+				<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
  	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${cat.displayName} 
@@ -101,118 +114,117 @@
 	<a href="javascript:void(0)" class="dropdown">${cat.displayName}</a>
 </c:otherwise>
 </c:choose>
-
-								<ul>
-								<c:forEach items="${questions}" var="q">
-									<li>
+					<ul>
+					<c:forEach items="${questions}" var="q">
+									
+					<li>
 <c:choose>
 <c:when test="${from == 'webservices'}">
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}</a>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
+	<c:if test="${q.new}">
+      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
+           		title="This is a new search in the current release." />
+    	</c:if>
+	</a>
 </c:when>
 <c:otherwise>
-  <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">
-    ${q.displayName}
-    <c:if test="${q.new}">
-      <img src="<c:url value='/wdk/images/new-feature.png' />"
-           title="This is a new search in the current release." />
-    </c:if>
-  </a>
+  	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
+    	<c:if test="${q.new}">
+      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
+           		title="This is a new search in the current release." />
+    	</c:if>
+  	</a>
 </c:otherwise>
 </c:choose>
-
-									</li>
-								</c:forEach>
-								</ul>
-
-
-								</li>
-							</c:forEach>   
-
-							</ul>
-						</li>
-					</c:if>
-				</c:forEach>
+					</li>
+					</c:forEach>
+					</ul>
+				</li>
+				</c:forEach>   
 				</ul>
+		
 			</li>
-		</c:when>
-		<c:otherwise>
-			<c:set var="qByCat" value="${catByRec.value}" />
-<c:choose>
-    <c:when test="${from == 'webservices'}">
-        <c:set var="children" value="${rootCat.webserviceChildren}" />
-    </c:when>
-    <c:otherwise>
-        <c:set var="children" value="${rootCat.websiteChildren}" />
-    </c:otherwise>
-</c:choose>
-			<c:forEach items="${children}" var="catEntry">
-			    	<c:set var="cat" value="${catEntry.value}" />
-                            	<c:if test="${fn:length(cat.websiteQuestions) > 0}">
-
-<c:choose>
-    <c:when test="${from == 'webservices'}">
-
-	<ul>
-	<c:forEach items="${questionSets}" var="qSet">
-  		<c:if test="${qSet.internal == false}">
-
-  			<c:if test="${qSet.displayName == cat.displayName}">
-			<br><br>
-			<li><a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
-				<ul>
-           			<c:forEach items="${qSet.questions}" var="q">
-             				<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}</a></li>
-           			</c:forEach>
-				</ul>
-			</li>
-  			</c:if>
 		</c:if>
 	</c:forEach>
 	</ul>
+</li>
+		</c:when>    
 
-    </c:when>
-    <c:otherwise>
-
-					<li>
-						<a href="#" class="dropdown">${cat.displayName}</a> 
-						<ul>
-						<c:forEach items="${cat.websiteQuestions}" var="q">
-				    			<li>
-							  <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">
-                                                            ${q.displayName}
-                                                            <c:if test="${q.new}">
-                                                              <img src="<c:url value='/wdk/images/new-feature.png' />"
-                                                                   title="This is a new search in the current release." />
-                                                            </c:if>
-                                                          </a>
-							</li>
-						</c:forEach>
-						</ul>
-					</li>
-
-    </c:otherwise>
-</c:choose>
-
-                            	</c:if>
-			</c:forEach>
-
-
-
-
-		</c:otherwise>
+<%-- ================================= OTHER RECORDCLASSES   ================================= --%>
+		<c:otherwise>			
+		<c:set var="qByCat" value="${catByRec.value}" />
+		<c:choose>
+    		<c:when test="${from == 'webservices'}">
+        		<c:set var="children" value="${rootCat.webserviceChildren}" />
+    		</c:when>
+    		<c:otherwise>
+        		<c:set var="children" value="${rootCat.websiteChildren}" />
+    		</c:otherwise>
 		</c:choose>
-		</c:if>
+			
+		<c:forEach items="${children}" var="catEntry">
+			<c:set var="cat" value="${catEntry.value}" />
+			<c:if test="${fn:length(cat.websiteQuestions) > 0}">
+<c:choose>
+<c:when test="${from == 'webservices'}">
+<c:forEach items="${questionSets}" var="qSet">
+<c:if test="${qSet.internal == false}">
+ 	<c:if test="${qSet.displayName == cat.displayName}">
+		<br><br>
+		<li>
+		<a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
+			<ul>
+           		<c:forEach items="${qSet.questions}" var="q">
+             			<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}
+				<c:if test="${q.new}">
+      					<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
+           					title="This is a new search in the current release." />
+    				</c:if>
+				</a>
+				</li>
+           		</c:forEach>
+			</ul>
+		</li>
+  	</c:if>
+</c:if>
+</c:forEach>
+</c:when>
+
+<%-- WEBSITE  --%>
+<c:otherwise>  
+<li>
+<a href="#" class="dropdown">${cat.displayName}</a> 
+	<ul>
+	<c:forEach items="${cat.websiteQuestions}" var="q">
+		<li>
+		<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
+                <c:if test="${q.new}">
+                	<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
+                        	title="This is a new search in the current release." />
+                </c:if>
+                </a>
+		</li>
 	</c:forEach>
+	</ul>
+</li>
+</c:otherwise>
+</c:choose>
+			</c:if>
+		</c:forEach>
+		</c:otherwise>
 
+		</c:choose>
+<%-- =============================  END OF OTHER RECORDCLASSES   ===================================== --%>
 
+	</c:if>		<%--  recordclass in the list above --%>
+</c:forEach>
 
 <c:if test="${from ne 'webservices'}">
 	<li><a href="<c:url value="/queries_tools.jsp"/>">View all available searches</a></li>
 </c:if>
 
-
-
 </ul>
 
 
-<%-- TEST, you can remove this line any time --%>
