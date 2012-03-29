@@ -14,6 +14,8 @@
 ${Question_Header}
 
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+<c:set var="q" value="${wdkQuestion}"/>
+
 <c:if test="${fn:contains(recordType, 'Assem') }">
   <c:set var="recordType" value="Transcript Assemblie" />
 </c:if>
@@ -32,27 +34,29 @@ ${Question_Header}
 </c:forEach>
 
 <c:if test="${hideTitle == false}">
-	<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}&nbsp;&nbsp;&nbsp;
-		<span style="font-size:55%;font-weight:bold;text-align:left;font-family: Arial,Helvetica,sans-serif;">
+	<h1>Identify ${recordType}s based on ${wdkQuestion.displayName}
+
 <!--
+		<span style="font-size:55%;font-weight:bold;text-align:left;font-family: Arial,Helvetica,sans-serif;">
 			<a title="Click to move the 'Description' section into focus" style="border:1px solid black;border-radius: 15px;padding:1px 4px;background-color:white" href="#query-description-section">Description</a>&nbsp;&nbsp;&nbsp;&nbsp;
 			<a title="Click to move the 'Data sources' section into focus" style="border:1px solid black;border-radius: 15px;padding:1px 4px;background-color:white" href="#attributions-section">Data Sources</a>&nbsp;&nbsp;&nbsp;&nbsp;
                         <a title="The WADL is used to access this search via RESTful web services"
                            style="border:1px solid black;border-radius: 15px;padding:1px 4px;background-color:white"
                            href="<c:url value='/webservices/${wdkQuestion.questionSetName}/${wdkQuestion.name}.wadl' />">WADL</a>
--->
 		</span>
+-->
+	<c:if test="${q.new}">
+		<img alt="new feature icon"  src="<c:url value='/wdk/images/new-feature.png' />">
+	</c:if>
 	</h1>
 </c:if>
 
 <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
-
 <imp:questionForm />
 
 <c:if test="${hideOperation == false}">
     <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
 </c:if>
-
 </html:form>
 
 
