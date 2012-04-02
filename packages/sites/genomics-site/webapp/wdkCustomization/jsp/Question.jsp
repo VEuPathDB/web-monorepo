@@ -46,7 +46,7 @@ ${Question_Header}
 		</span>
 -->
 	<c:if test="${q.new}">
-		<img alt="new feature icon"  src="<c:url value='/wdk/images/new-feature.png' />">
+		<img alt="new feature icon"  title="This is a new search in the current release" src="<c:url value='/wdk/images/new-feature.png' />">
 	</c:if>
 	</h1>
 </c:if>

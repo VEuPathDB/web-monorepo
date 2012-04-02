@@ -10,6 +10,13 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
 
+<c:set var="newIcon">
+	<c:if test="${q.new}">
+      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
+          		title="This is a new search in the current release" />
+    	</c:if>                            
+</c:set>
+
 <!-- model questions are used by webservices for OTHER recordClasses, instead of the categories.xml. 
      Two reasons why the model was used:
     	- to avoid fake questions; 
@@ -85,15 +92,16 @@
 	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
  	<c:if test="${q.new}">
       		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-          		title="This is a new search in the current release." />
+          		title="This is a new search in the current release" />
     	</c:if>
+<%--	${newIcon}  --%>
 	</a>
 </c:when>
 <c:otherwise>
   	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
     	<c:if test="${q.new}">
       		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-           		title="This is a new search in the current release." />
+           		title="This is a new search in the current release" />
     	</c:if>
   	</a>
 </c:otherwise>
@@ -124,7 +132,7 @@
 	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
 	<c:if test="${q.new}">
       		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-           		title="This is a new search in the current release." />
+           		title="This is a new search in the current release" />
     	</c:if>
 	</a>
 </c:when>
@@ -132,7 +140,7 @@
   	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
     	<c:if test="${q.new}">
       		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-           		title="This is a new search in the current release." />
+           		title="This is a new search in the current release" />
     	</c:if>
   	</a>
 </c:otherwise>

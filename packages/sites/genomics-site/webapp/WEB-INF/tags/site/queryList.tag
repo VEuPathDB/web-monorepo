@@ -208,7 +208,7 @@ function getComboElement()
 			</a>
 			 <c:if test="${q.new}">
       				<img alt="new feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-           				title="This is a new search in the current release." />
+           				title="This is a new search in the current release" />
     			</c:if>
     </td>
 
