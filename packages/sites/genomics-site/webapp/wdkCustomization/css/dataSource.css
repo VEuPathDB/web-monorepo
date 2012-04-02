@@ -1,0 +1,23 @@
+#data-sources { padding: 5px; }
+#data-sources h3 {
+  background-color: #DEDEFC;
+  padding: 5px;
+  margin: 5px 0px;
+  font-style: italic;
+}
+#data-sources ul { list-style: disc inside none; }
+#data-sources .data-source {
+  border-bottom: 1px solid #AAAAAA;
+  margin: 5px;
+  padding: 5px;
+}
+#data-sources .anchor {
+  padding: 5px;
+  float: right;
+}
+#data-sources .caption {
+  color: #555555;
+}
+#data-sources .data-source .description {
+  padding: 2px 2px 5px 30px;
+}

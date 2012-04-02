@@ -16,38 +16,13 @@
   </c:choose>
 </c:set>
 
-<imp:header banner="Data Contents" />
-
-<style type="text/css">
-#data-sources h3 {
-  background-color: #EFEFEF;
-  padding: 5px;
-  font-style: italic;
-  border-top: 2px solid black;
-  border-bottom: 2px solid black;
-}
-#data-sources .data-source {
-  border-bottom: 1px solid #AAAAAA;
-  margin: 5px;
-  padding: 5px;
-}
-#data-sources .anchor {
-  padding: 5px;
-  float: right;
-}
-#data-sources .caption {
-  color: #555555;
-}
-#data-sources .data-source .description {
-  padding: 2px 2px 5px 30px;
-}
-</style>
+<imp:header banner="Data Contents" refer="data-source" />
 
 <!-- show all xml question sets -->
 <div id="data-sources">
   <a name="_top"></a>
   <h1>Data Sources</h1>
-  <h3>Data source categories</h3>
+  <h3>Categories</h3>
   <ul id="toc">
     <c:forEach items="${dataSources}" var="category">
       <li><a href="#${category.key}"><i>${category.key}</i></a></li>
@@ -95,7 +70,6 @@
             </div>
           
             <imp:wdkTable tblName="${publications.name}" />
-            <%-- <imp:wdkTable tblName="${references.name}" /> --%>
           </div>
         
         </c:forEach>

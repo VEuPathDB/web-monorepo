@@ -63,11 +63,13 @@
       <h2>Data Sources:</h2>
       <ul>
       <c:forEach items="${ds_ref_questions}" var="dsRecord">
-        <li>
+        <li class="data-source">
           <c:set var="ds_attributes" value="${dsRecord.attributes}" />
           <c:set var="ds_name" value="${ds_attributes['data_source_name']}" />
           <c:set var="ds_display" value="${ds_attributes['display_name']}" />
-          * <a href="<c:url value='/getDataSource.do?question=${wdkQuestion.fullName}&display=detail#target=${ds_name}'/>">${ds_display}</a>
+          <a href="<c:url value='/getDataSource.do?question=${wdkQuestion.fullName}&display=detail#target=${ds_name}'/>">${ds_display}</a>
+          <span class="version">version: ${ds_attributes['version']}</span>
+          <div class="summary">${ds_attributes['description']}</div>
         </li>
       </c:forEach>
       </ul>
