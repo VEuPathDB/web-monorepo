@@ -22,7 +22,9 @@
     <script type="text/javascript" src='<c:url value="/wdkCustomization/js/span-genome-view.js"/>'></script>
     <link rel="StyleSheet" type="text/css" href="<c:url value='/wdkCustomization/css/span-genome-view.css' />"/>
 
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"></script>
+    <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"></script> -->
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/styledmarker/src/StyledMarker.js"></script>
 
 </c:if>
 
