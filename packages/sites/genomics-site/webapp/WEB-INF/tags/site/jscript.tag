@@ -16,7 +16,7 @@
 <c:if test="${refer == 'summary'}">
 
     <!-- javascript provided by site -->
-    <script type="text/javascript" src="/assets/js/customStrategy.js"></script>
+    <script type="text/javascript" src='<c:url value="/wdkCustomization/assets/js/customStrategy.js" />'></script>
     <script type="text/javascript" src="/assets/js/ortholog.js"></script>
     <script type="text/javascript" src="<c:url value='/wdkCustomization/js/export-basket.js' />"></script>
     <script type="text/javascript" src='<c:url value="/wdkCustomization/js/span-genome-view.js"/>'></script>
@@ -25,6 +25,8 @@
     <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"></script> -->
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/styledmarker/src/StyledMarker.js"></script>
+
+	<script type="text/javascript" src="/assets/js/isolateResult.js"></script>
 
 </c:if>
 
@@ -51,8 +53,9 @@
 <script type="text/javascript" src="/assets/js/newitems.js"></script>
 
 <script type="text/javascript" src="/assets/js/popups.js"></script>
-<script type="text/javascript" src="/assets/js/api.js"></script>
+<!-- now api.js is in wdk  <script type="text/javascript" src="/assets/js/api.js"></script>  -->
 <script type="text/javascript" src="/assets/js/nav.js"></script>
+
 
 <!-- fix to transparent png images in IE 7 -->
 <!--[if lt IE 7]>
