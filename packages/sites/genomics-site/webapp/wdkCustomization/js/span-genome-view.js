@@ -22,6 +22,7 @@ function initializeGenomeView() {
         "bJQueryUI": true,
         "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
         "iDisplayLength": 25,
+	"sDom":'<"H"iplfr>t<"F"ip>',
         "aoColumns": [ null,
                        null,
                        null,
