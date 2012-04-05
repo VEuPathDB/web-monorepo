@@ -34,7 +34,7 @@ initializeGenomeView();
     <th>Sequence</th>
     <th>Chromosome</th>
     <th>#${recordClass.type}s</th>
-    <th>Length</th>
+    <th title="Length of the genomic sequence in #bases">Length</th>
     <th>${recordClass.type} Locations</th>
     <th>
       <img class="zoomin-all" title="${zoomInAllTip}" src="${zoomInImage}" />
