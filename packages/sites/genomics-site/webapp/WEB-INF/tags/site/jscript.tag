@@ -16,7 +16,7 @@
 <c:if test="${refer == 'summary'}">
 
     <!-- javascript provided by site -->
-    <script type="text/javascript" src='<c:url value="/wdkCustomization/assets/js/customStrategy.js" />'></script>
+    <script type="text/javascript" src='<c:url value="/wdkCustomization/js/customStrategy.js" />'></script>
     <script type="text/javascript" src="/assets/js/ortholog.js"></script>
     <script type="text/javascript" src="<c:url value='/wdkCustomization/js/export-basket.js' />"></script>
     <script type="text/javascript" src='<c:url value="/wdkCustomization/js/span-genome-view.js"/>'></script>
