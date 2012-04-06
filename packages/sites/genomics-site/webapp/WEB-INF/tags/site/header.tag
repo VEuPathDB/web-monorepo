@@ -15,43 +15,34 @@
 %>
 
 <%-------- OLD set of attributes,  division being used by login and help, banner by many pages   ---------------------%>
-
 <%@ attribute name="banner"
               required="false"
               description="Value to appear at top of page"
 %>
-
 <%@ attribute name="parentDivision"
               required="false"
 %>
-
 <%@ attribute name="parentUrl"
               required="false"
 %>
-
 <%@ attribute name="divisionName"
               required="false"
 %>
-
 <%@ attribute name="division"
               required="false"
 %>
-
 <%@ attribute name="summary"
               required="false"
               description="short text description of the page"
 %>
-
 <%@ attribute name="headElement"
               required="false"
               description="additional head elements"
 %>
-
 <%@ attribute name="bodyElement"
               required="false"
               description="additional body elements"
 %>
-
 <%---------------------------%>
 
 <%-- flag incoming galaxy.psu.edu users  --%>
@@ -86,7 +77,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <%------------------ setting title --------------%>
-
 <c:if test="${banner == null}">
 <c:choose>
       <c:when test = "${project == 'EuPathDB'}">
@@ -121,7 +111,6 @@
       </c:when>
 </c:choose>
 </c:if>
-
 
 
 <%--------------------------- HEAD of HTML doc ---------------------%>
@@ -159,6 +148,20 @@
 
 <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"> <%-- standard --%>
 <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
+
+<%-- this comes from Workspace.jsp; since it is generic enough to be used in any page, we move it here --%>
+<c:set var="scheme" value="${pageContext.request.scheme}" />
+<c:set var="serverName" value="${pageContext.request.serverName}" />
+<c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
+<c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
+<c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
+<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/im.do?s=" />
+<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+<script type="text/javascript" language="javascript">
+        var guestUser = '${wdkUser.guest}'; 
+	exportBaseURL = '${exportBaseUrl}';
+</script>
+
 
 <%-- import WDK related assets --%> 
 <imp:includes refer="${refer}" /> 
@@ -208,6 +211,7 @@ ${headElement}
 
 <%--------------------------- BODY of HTML doc ---------------------%>
 <body>
+<div id="modelName" name="${siteName}"></div>
 
 <%-- the "Contact Us" page does not need header, only the css above --%>
    <c:if test="${division != 'help'}"> 
@@ -225,7 +229,6 @@ ${headElement}
      <area shape=rect coords="310,0 380,22" href="http://www.genedb.org" alt="GeneDB home page">
      </map>
    </c:if>
-
 
    <c:choose>
     <c:when test="${project == 'EuPathDB'}">
@@ -259,7 +262,6 @@ ${headElement}
    ${releaseDate_formatted}</p>
 
 </div>  <%-- id="header2" --%>
-
 
 
 <%------------- REST OF PAGE  ----------------%>

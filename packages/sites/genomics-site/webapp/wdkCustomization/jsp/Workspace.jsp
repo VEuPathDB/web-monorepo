@@ -6,19 +6,18 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
-<%-- from customQueryHistory --%>
-<%-- get wdkUser saved in session scope --%>
-<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
-<%-- end from customQueryHistory --%>
+<c:set var="model" value="${applicationScope.wdkModel}" />
+<c:set var="modelName" value="${applicationScope.wdkModel.name}" />
+
+<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+
+<c:set var="showHist" value="${requestScope.showHistory}" />
+<c:set var="strategies" value="${requestScope.wdkActiveStrategies}"/>
 
 <c:set var="dsCol" value="${param.dataset_column}"/>
 <c:set var="dsColVal" value="${param.dataset_column_label}"/>
-
-<c:set var="model" value="${applicationScope.wdkModel}" />
-<c:set var="showHist" value="${requestScope.showHistory}" />
-<c:set var="strategies" value="${requestScope.wdkActiveStrategies}"/>
-<c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 
 <c:set var="commandUrl">
     <c:url value="/processSummary.do?${wdk_query_string}" />
@@ -27,47 +26,9 @@
 <c:set var="headElement">
 </c:set>
 <imp:header refer="summary" headElement="${headElement}"/>
-<c:set var="scheme" value="${pageContext.request.scheme}" />
-<c:set var="serverName" value="${pageContext.request.serverName}" />
-<c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
-<c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
-<c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
-<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/im.do?s=" />
-
-<%-- inline script for initial load of summary page --%>
-<script type="text/javascript" language="javascript">
-        var guestUser = '${wdkUser.guest}'; 
-	exportBaseURL = '${exportBaseUrl}';
-
-function goToIsolate(ele) {
-	//accessing the right form (forms in summary page and basket page use the same name)
-	// var form = document.checkHandleForm;
-	var form = $(ele).parents("form[name=checkHandleForm]");
-	// var cbs = form.selectedFields;
-	 var cbs = form.find('input:checkbox[name=selectedFields]:checked');
-
-	//alert("cbs length is " + cbs.length);
-	if(cbs.length < 2) {
-		alert("Please select at least two isolates to run ClustalW");
-		return false;
-	}
-
-	var url = "/cgi-bin/isolateClustalw?project_id=${modelName};isolate_ids=";
-	cbs.each(function(){
-		url += $(this).val() + ",";
-	});
-	//alert(url);
 
 
-/* code if we want to popup a new window */
-var w = open ('', 'clustalwResult', 'width=800,height=500,titlebar=1,menubar=1,resizable=1,scrollbars=1,toolbar=1');
-w.document.open();
-w.location.href=url;
-
-//    window.location.href = url;
-  }
-</script>
-
+<!------------------------   ONLY PORTAL  --------------------------------------->
 <c:if test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
 <script>
 
@@ -75,11 +36,9 @@ w.location.href=url;
 function customResultsPage() {
    fixRecordPageLinks("#strategy_results");
 }
-
 function customBasketPage() {
    fixRecordPageLinks("#basket");
 }
-
 function fixRecordPageLinks(page) {
    $(page + " .Results_Table .rootBody tr td div a").each(function() {
          var currentUrl = $(this).attr('href');
@@ -92,7 +51,6 @@ function fixRecordPageLinks(page) {
 	 });
    });
 }
-
 function create_Portal_Record_Url(recordName, projectId, primaryKey, portal_url) {
   //var portal_url = "";
   if(portal_url.length == 0){
@@ -124,7 +82,6 @@ function create_Portal_Record_Url(recordName, projectId, primaryKey, portal_url)
     create_Portal_Record_Url(recordName,projectId,primaryKey,"");
   } 
 }
-
 function parse_Url( url, parameter_name )
 {
   parameter_name = parameter_name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
@@ -136,9 +93,10 @@ function parse_Url( url, parameter_name )
   else
     return results[1];
 }
-
 </script>
 </c:if>
+<!------------------------   END OF ONLY PORTAL  --------------------------------------->
+
 
 <imp:strategyWorkspace includeDYK="true" />
 
