@@ -26,7 +26,7 @@
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/styledmarker/src/StyledMarker.js"></script>
 
-	<script type="text/javascript" src="/assets/js/isolateResult.js"></script>
+	<script type="text/javascript" src="/assets/js/isolateResults.js"></script>
 
 </c:if>
 
