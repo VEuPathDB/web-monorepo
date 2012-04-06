@@ -64,7 +64,7 @@
   <c:set var="twitter" value="EuPathDB"/>
 </c:if>
 
-<c:set var="siteName" value="${applicationScope.wdkModel.name}" />
+<%--  <c:set var="siteName" value="${applicationScope.wdkModel.name}" />   now defined in siteInfo.tag --%>
 <c:set var="version" value="${applicationScope.wdkModel.version}" />
 
 <c:set var="releaseDate" value="${applicationScope.wdkModel.releaseDate}" />
