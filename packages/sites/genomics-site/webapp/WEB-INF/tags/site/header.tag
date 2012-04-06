@@ -149,20 +149,6 @@
 <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"> <%-- standard --%>
 <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
 
-<%-- this comes from Workspace.jsp; since it is generic enough to be used in any page, we move it here --%>
-<c:set var="scheme" value="${pageContext.request.scheme}" />
-<c:set var="serverName" value="${pageContext.request.serverName}" />
-<c:set var="request_uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
-<c:set var="request_uri" value="${fn:substringAfter(request_uri, '/')}" />
-<c:set var="request_uri" value="${fn:substringBefore(request_uri, '/')}" />
-<c:set var="exportBaseUrl" value = "${scheme}://${serverName}/${request_uri}/im.do?s=" />
-<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-<script type="text/javascript" language="javascript">
-        var guestUser = '${wdkUser.guest}'; 
-	exportBaseURL = '${exportBaseUrl}';
-</script>
-
-
 <%-- import WDK related assets --%> 
 <imp:includes refer="${refer}" /> 
 
@@ -211,7 +197,8 @@ ${headElement}
 
 <%--------------------------- BODY of HTML doc ---------------------%>
 <body>
-<div id="modelName" name="${siteName}"></div>
+<!-- helper divs with generic information used by javascript -->
+<imp:siteInfo />
 
 <%-- the "Contact Us" page does not need header, only the css above --%>
    <c:if test="${division != 'help'}"> 
