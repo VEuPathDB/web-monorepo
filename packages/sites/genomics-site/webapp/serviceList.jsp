@@ -75,7 +75,7 @@ Click on a search below to access its <a href="http://www.w3.org/Submission/wadl
 
 <span style="position:relative;left:${margin};">
 <ul class="cirbulletlist">
-<li>A WADL is an XML document that describes in detail how to form a URL to call the search as a web service request. For more details go to <a style="font-size:120%;font-weight:bold" href="#moreWADL">How to read a WADL</a> at the botom of this page.</li>
+<li>A WADL is an XML document that describes in detail how to form a URL to call the search as a web service request. For more details go to <a style="font-size:120%;font-weight:bold" href="#moreWADL">How to read a WADL</a> at the bottom of this page.</li>
 <li>Note: some browsers (e.g.: Safari) do not know how to render an XML file properly (you will see a page full of terms with no structure).</li>
 <li>To construct the URL in the example above, you would check the <a href="/webservices/GeneQuestions/GenesByMolecularWeight.wadl">Molecular Weight</a> WADL located below under <b>Protein Attributes</b></li>
 </ul>
