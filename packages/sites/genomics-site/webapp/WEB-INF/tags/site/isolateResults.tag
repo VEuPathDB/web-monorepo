@@ -2,8 +2,13 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
 
+<%@ attribute name="strategy"
+	      type="org.gusdb.wdk.model.jspwrap.StrategyBean"
+              required="true"
+              description="Strategy Id we are looking at"
+%>
 <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}"/>
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
@@ -13,20 +18,13 @@
 <c:set var="recHasBasket" value="${recordClass.useBasket}" />
 <c:set var="clustalwIsolatesCount" value="0" />
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
+
 <c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
   && (fn:containsIgnoreCase(modelName, 'CryptoDB') 
   || fn:containsIgnoreCase(modelName, 'ToxoDB') 
   || fn:containsIgnoreCase(modelName, 'EuPathDB') 
   || fn:containsIgnoreCase(modelName, 'GiardiaDB') 
   || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}</c:set> 
-
-<%-- When implement visualizing multiple strategies, the name of the strategy (for the title) could cme from the step object probably --%>
-
-<%@ attribute name="strategy"
-	      type="org.gusdb.wdk.model.jspwrap.StrategyBean"
-              required="true"
-              description="Strategy Id we are looking at"
-%>
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
 <c:set target="${typeMap}" property="singular" value="${wdkStep.displayType}"/>
@@ -52,60 +50,13 @@
 <c:if test="${strategy != null}">
   <c:set var="commandUrl" value="${commandUrl}strategy_checksum=${strategy.checksum}" />
 </c:if>
-<c:set var="commandUrl"><c:url value="/processSummary.do?${commandUrl}" /></c:set>
 
-<c:if test="${strategy != null}">
-    <imp:filterLayouts strategyId="${strategy.strategyId}" 
-                       stepId="${wdkStep.stepId}"
-                       answerValue="${wdkAnswer}" />
-</c:if>
-
-<!-- handle empty result set situation -->
 <c:choose>
-  <c:when test='${strategy != null && wdkAnswer.resultSize == 0}'>
-	No results are retrieved
-  </c:when>
-  <c:when test='${strategy == null && wdkUser.guest && wdkAnswer.resultSize == 0}'>
-    Please login to use the basket
-  </c:when>
-  <c:when test='${strategy == null && wdkAnswer.resultSize == 0}'>
-    Basket Empty
+  <c:when test='${wdkAnswer.resultSize == 0}'>
+        No results are retrieved
   </c:when>
   <c:otherwise>
 
-
-<table width="100%"><tr>
-<td class="h4left" style="vertical-align:middle;padding-bottom:7px;">
-    <c:if test="${strategy != null}">
-        <span id="text_strategy_number">${strategy.name}</span> 
-        (step <span id="text_step_number">${strategy.length}</span>) - 
-    </c:if>
-    ${wdkAnswer.resultSize} <span id="text_data_type">${type}</span>
-</td>
-
-<td  style="vertical-align:middle;text-align:right;white-space:nowrap;">
-  <div style="float:right">
-   <c:if test="${strategy != null}">
-    <c:choose>
-      <c:when test="${wdkUser.guest}">
-        <c:set var="basketClick" value="popLogin()" />
-      </c:when>
-      <c:otherwise>
-        <c:set var="basketClick" value="updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}')" />
-      </c:otherwise>
-    </c:choose>
-    <c:if test="${recHasBasket}"><a style="font-size:120%" href="javascript:void(0)" onClick="${basketClick}"><b>Add Results to Basket</b></a>&nbsp;|&nbsp;</c:if>
-   </c:if>
-    <a style="font-size:120%" href="downloadStep.do?step_id=${wdkStep.stepId}"><b>Download Results</b></a>
-  <c:if test="${!empty sessionScope.GALAXY_URL}">
-    &nbsp;|&nbsp;<a href="downloadStep.do?step_id=${wdkStep.stepId}&wdkReportFormat=tabular"><b>SEND TO GALAXY</b></a>
-  </c:if>
-  </div>
-</td>
-</tr></table>
-
-
-<div class='Results_Pane'>
 <!-- pager -->
 <pg:pager isOffset="true"
           scope="request"
@@ -125,39 +76,22 @@
   </c:if>
 
 <%--------- PAGING TOP BAR ----------%>
-<table width="100%" border="0" cellpadding="3" cellspacing="0">
+<c:url var="commandUrl" value="/processSummaryView.do?step=${step.stepId}&view=${wdkView.name}" />
+<table width="100%">
 	<tr class="subheaderrow">
-<%--
-	<th align="left">
-	   <input id="summary_view_button" disabled="disabled" type="submit" value="Summary View" onclick="ToggleGenePageView('')" />
-	</th>
---%>
 	<th style="text-align: left;white-space:nowrap;"> 
-	       <imp:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
+	       <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
 	</th>
 	<th style="text-align: right;white-space:nowrap;">
-               <imp:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
+               <wdk:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
 	</th>
-<!--
-	<th style="text-align: right;white-space:nowrap;">
-		           <%-- display a list of sortable attributes --%>
-		           <c:set var="addAttributes" value="${wdkAnswer.displayableAttributes}" />
-		           <select id="addAttributes" style="display:none;" commandUrl="${commandUrl}" multiple="multiple">
-		               <option value="">--- Add Column ---</option>
-		               <c:forEach items="${addAttributes}" var="attribute">
-		                 <option value="${attribute.name}" title="${attribute.help}">${attribute.displayName}</option>
-		               </c:forEach>
-		           </select>
-	</th>
--->
-
-	  <%-- remove Reset button when new tree structure is activated --%>
-	  <c:if test="${not wdkAnswer.useCheckboxTree}">
-	    <th style="text-align: right;white-space:nowrap;width:5%;">
-	      &nbsp;
-	      <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}', this)" />
-	    </th>
-	  </c:if>
+  <%-- remove Reset button when new tree structure is activated --%>
+  <c:if test="${not wdkAnswer.useCheckboxTree}">
+  	<th style="text-align: right;white-space:nowrap;width:5%;">
+	    &nbsp;
+	    <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}', this)" />
+	  </th>
+	</c:if>
 	</tr>
 </table>
 <%--------- END OF PAGING TOP BAR ----------%>
@@ -173,7 +107,7 @@
 <div class="Results_Div flexigrid">
 <div class="bDiv">
 <div class="bDivBox">
-<table class="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0" step="wdkStep.stepId">
+<table class="Results_Table" width="100%" step="wdkStep.stepId">
 <thead>
 <tr class="headerrow">
 
@@ -346,39 +280,20 @@
       </div>
 
         <c:choose>
-<%--
-           <c:when test="${fn:containsIgnoreCase(dispModelName, 'EuPathDB')}">
-	         <a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a>
-           </c:when>
---%>
            <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Sequencing Typed'}">
-
               <%-- add checkbox --%>
               <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}"></nobr>
-
             <c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
-
            </c:when>
-
             <c:otherwise>
-
-
               <%-- display a link to record page --%>
-
-				<a class="primaryKey_||_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a>
-
-
-
-              <%--   <span id="gene_id_${fieldVal}"> <a href="javascript:ToggleGenePageView('gene_id_${fieldVal}', 'showRecord.do?name=${recNam}&project_id=${projectId}&primary_key=${id}')">${fieldVal}</a></span> --%>
-
-
-
+		<a class="primaryKey_||_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a>
             </c:otherwise>
         </c:choose>
 
         </c:when>   <%-- when j=0 --%>
 
-        <c:otherwise>
+	<c:otherwise>
 
           <!-- need to know if fieldVal should be hot linked -->
           <c:choose>
@@ -420,45 +335,38 @@
 </div>
 <%--------- END OF RESULTS  ----------%>
 
-<!-- now includes the buttons -see below-, so we can, from the clicked button, access the right form
-<c:if test = "${eupathIsolatesQuestion}">
-  </form>
-</c:if>
--->
-
 <c:if test = "${eupathIsolatesQuestion && clustalwIsolatesCount > 1}">
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
-  <tr align=center>
-    <td> <b><br/> 
-     Please select at least two isolates to run ClustalW. Note: only isolates from a single results page will be aligned. <br/>
-     Increase the page size in advanced paging to increase the number that can be aligned).  </b>
-    </td>
-  </tr>
+	<tr align=center>
+    	  <td> <b><br/> 
+     	  Please select at least two isolates to run ClustalW. Note: only isolates from a single results page will be aligned. <br/>
+     	  Increase the page size in advanced paging to increase the number that can be aligned).  </b>
+    	  </td>
+  	</tr>
 	<tr>
 	  <td align=center> 
-      <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this)" />
-      <input type="button" name="CheckAll" value="Check All" onClick="checkboxAll(this)">
-      <input type="button" name="UnCheckAll" value="Uncheck All" onClick="checkboxNone(this)">
-    </td>
+	  <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this)" />
+<!--
+	  <input type="button" name="CheckAll" value="Check All" onClick="checkboxAll(this)">
+	  <input type="button" name="CheckAll" value="Check All" 
+		onClick="checkboxAll($(this).parents('form[name=checkHandleForm]').find('input:checkbox[name=selectedFields]'))">
+-->
+	  <input type="button" name="CheckAll" value="Check All" 
+		onClick="checkboxAll($('input:checkbox[name=selectedFields]'))">
+      	  <input type="button" name="UnCheckAll" value="Uncheck All" 
+		onClick="checkboxNone($('input:checkbox[name=selectedFields]'))">
+	  </td>
 	</tr>
 </table>
 </c:if>
 
-
 <c:if test = "${eupathIsolatesQuestion}">
   </form>
 </c:if>
 
-
-
 <%--------- PAGING BOTTOM BAR ----------%>
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
 	<tr class="subheaderrow">
-<%--
-	<th align="left">
-	   <input id="summary_view_button" disabled="disabled" type="submit" value="Summary View" onclick="ToggleGenePageView('')" />
-	</th>
---%>
 	<th style="text-align:left;white-space:nowrap;"> 
 	       <imp:pager wdkAnswer="${wdkAnswer}" pager_id="bottom"/> 
 	</th>
@@ -472,7 +380,7 @@
 </table>
 <%--------- END OF PAGING BOTTOM BAR ----------%>
 </pg:pager>
-</div> <!-- END OF RESULTS PANE -->
+
 
   </c:otherwise>
 </c:choose>

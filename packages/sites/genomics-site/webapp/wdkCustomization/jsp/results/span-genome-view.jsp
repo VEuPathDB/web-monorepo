@@ -13,6 +13,7 @@ initializeGenomeView();
 -->
 </script>
 
+<!--
 <div class="legend">
   <div class="title">Legend</div>
   <div>
@@ -22,6 +23,20 @@ initializeGenomeView();
     <div class="span reverse"></div> ${recordClass.type} on reversed strand
   </div>
 </div>
+-->
+<table class="legend">
+<tr>
+<td>
+  <div class="title">Legend</div>
+</td>
+<td class="smaller-font">
+    <div class="span forward"></div> ${recordClass.type} on forward strand<br>
+    <div class="span reverse"></div> ${recordClass.type} on reversed strand
+</td>
+</tr>
+</table>
+
+
 
 <c:url var="zoomInImage" value="/wdkCustomization/images/zoom_in.png" />
 <c:url var="zoomOutImage" value="/wdkCustomization/images/zoom_out.png" />
