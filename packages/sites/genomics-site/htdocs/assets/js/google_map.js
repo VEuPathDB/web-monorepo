@@ -87,7 +87,7 @@ function setMarkers(map, locations) {
         map: map,
         shadow: shadow,
         icon: image,
-        //title: content,
+        title: country + total,
         tooltip: content,
         zIndx: i
       });
