@@ -46,8 +46,6 @@ jQuery(document).ready(function(){
     var $lng = $row.find(':nth-child(5)').text();
 
     locations.push([$name, $count, $type, $lat, $lng]);
-
-      //setTimeout( function() {  createMarker($name, $count, $type);}, 8000);
   }).get();
 
   setMarkers(map, locations);
@@ -56,12 +54,8 @@ jQuery(document).ready(function(){
 
 function setMarkers(map, locations) {
 
-  //var image = new google.maps.MarkerImage('/assets/images/google_icons/sm_red.gif',
-  //  new google.maps.Size(8, 16),
-  //  new google.maps.Point(0,0),
-  //  new google.maps.Point(8,16));
-
   var infoWindow = new google.maps.InfoWindow();
+  var shadow = new google.maps.MarkerImage('/assets/images/isolate/mm_shadow.png');
 
   for (var i = 0; i < locations.length; i++ ) {
      var loc = locations[i];
@@ -70,22 +64,40 @@ function setMarkers(map, locations) {
      var total = loc[1];
      var type = loc[2];
      var content = country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+type+"'> Click for Details</a>";
+    
+     var $icon; 
+     if(total < 2) {
+       $icon = '1.png';
+     } else if(total < 5) {
+       $icon = '3.png';
+     } else if(total < 10) {
+       $icon = '5.png';
+     } else if(total < 20) {
+       $icon = '7.png';
+     } else if(total < 30) {
+       $icon = '8.png';
+     } else {
+       $icon = '10.png';
+     }
+
+     var image = new google.maps.MarkerImage('/assets/images/isolate/' + $icon);
 
      var marker = new google.maps.Marker({
         position: latLng,
         map: map,
-        //icon: image,
-        title: content,
+        shadow: shadow,
+        icon: image,
+        //title: content,
+        tooltip: content,
         zIndx: i
       });
 
       google.maps.event.addListener(marker, 'click', function() {
-        infoWindow.setContent(this.title);
+        infoWindow.setContent(this.tooltip);
         infoWindow.open(map,this);
     });
   }
 }
-
 
 function createMarker(country, total, type) {
   geocoder.geocode( {'address': country}, function(results, status) {
