@@ -154,10 +154,10 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #345d9b;
+	color: #610b0b; /*#345d9b; */
 }
 h2 {
-  	color: #345d9b;
+  	color: #610b0b; /*#345d9b;*/
 }
 
 .h2center, .h3left, .h3center, .h4left {

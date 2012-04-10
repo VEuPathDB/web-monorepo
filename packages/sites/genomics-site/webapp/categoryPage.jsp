@@ -54,10 +54,11 @@ div.question .left {
 	<c:set var="type" value="${category} Questions" />
 </c:if>
 
-<h1>${cat.displayName}</h1>
+<h1>${cat.displayName}</h1><br><br><br>
 <c:forEach items="${cat.websiteQuestions}" var="q">
 	<div class="question">
-		<a href="showQuestion.do?questionFullName=${q.fullName}"><h2>${q.displayName}</h2></a><br>
+		<h2><a href="showQuestion.do?questionFullName=${q.fullName}">${q.displayName}</a></h2>
+			<span style="font-style:italic;font-size:75%">(click to go to the search page)</span><br><br><br>
 		<div class="summary"><h3>Summary</h3><br>${q.summary}</div>
 		<div class="params"><h3>Parameters</h3><br>
 			<table cellspacing="5px">
@@ -68,6 +69,7 @@ div.question .left {
 		</div>
 		<div class="description"><h3>Description</h3><br>${q.description}</div>
 	</div>
+<br><br><br>
 </c:forEach>
 
 
