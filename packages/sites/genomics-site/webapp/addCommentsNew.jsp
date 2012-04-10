@@ -33,11 +33,29 @@
 <imp:header title="${wdkModel.displayName}.org :: Add A Comment"
                  banner="Add A Comment"/>
 <head>
+
+<script type="text/javascript" src="/assets/js/lib/jquery-validate/jquery.validate.pack.js"></script>
+<script type="text/javascript" src="/assets/js/fileUpload.js"></script>
+
 <script type="text/javascript">
 $(document).ready(function(){
-        $('#oldCommentFile td img.delete').click(function(){
+    $('#oldCommentFile td img.delete').click(function(){
     $(this).parent().parent().parent().remove();
     });
+  $("#preview").click(function(){
+    var pmids = $('#pmIds').val();
+    if ($.trim(pmids) == '') {
+    	alert('No Pubmed IDs have been entered.');
+    	return;
+    }
+    $("#wrapper").show();
+    pmids = pmids.replace(/\D/g, "-");
+    $("#quote p").load("/cgi-bin/pmid2title?pmids=" + pmids);
+  });
+  $("#remove").click(function(){
+    $("#wrapper").hide();
+  });      
+
 });
 
 $(function()
@@ -52,7 +70,18 @@ $("#box a").click(function(event) {
   $("#box").slideUp();
 });
 });
+
+function openPubmedWindow(searchBoxId) {
+	var searchTerm = $('#'+searchBoxId)[0].value;
+	if ($.trim(searchTerm) == '') {
+		alert("Please enter a search term.");
+		return;
+	}
+	newwindow=window.open('http://www.ncbi.nlm.nih.gov/pubmed?term='+searchTerm,'pubmed','resizable=yes,scrollbars=yes,height=600,width=800');
+	if (window.focus) {newwindow.focus()}
+}
 </script>
+
 <style type="text/css">
     table.mybox {
       width:     90%;
@@ -89,37 +118,6 @@ $("#box a").click(function(event) {
 
   
 </style>
-
-<script type="text/javascript" src="/assets/js/lib/jquery-validate/jquery.validate.pack.js"></script>
-<script type="text/javascript" src="/assets/js/fileUpload.js"></script>
-
-<script type="text/javascript">
-$(document).ready(function(){
-  $("#preview").click(function(){
-    var pmids = $('#pmIds').val();
-    if ($.trim(pmids) == '') {
-    	alert('No Pubmed IDs have been entered.');
-    	return;
-    }
-    $("#wrapper").show();
-    pmids = pmids.replace(/\D/g, "-");
-    $("#quote p").load("/cgi-bin/pmid2title?pmids=" + pmids);
-  });
-  $("#remove").click(function(){
-    $("#wrapper").hide();
-  });      
-}); 
-
-function openPubmedWindow(searchBoxId) {
-	var searchTerm = $('#'+searchBoxId)[0].value;
-	if ($.trim(searchTerm) == '') {
-		alert("Please enter a search term.");
-		return;
-	}
-	newwindow=window.open('http://www.ncbi.nlm.nih.gov/pubmed?term='+searchTerm,'pubmed','resizable=yes,scrollbars=yes,height=600,width=800');
-	if (window.focus) {newwindow.focus()}
-}
-</script>
 
 </head>
 
@@ -357,7 +355,7 @@ function openPubmedWindow(searchBoxId) {
              <td align="right">
              
               <html:hidden property="existingFiles" value="${file}"/> 
-              <img class="delete" src="images/remove.gif">
+              <img class="delete" src="/assets/images/remove.gif">
              </td>
            </tr>
 
@@ -406,7 +404,7 @@ function openPubmedWindow(searchBoxId) {
 	<!-- article details here -->
           <div id="wrapper" style="display:none;">
             <div id="quote" class="border">
-            <img id="remove" src="images/remove.gif" align=right>
+            <img id="remove" src="/assets/images/remove.gif" align=right>
             <p></p></div>
           </div>
 
