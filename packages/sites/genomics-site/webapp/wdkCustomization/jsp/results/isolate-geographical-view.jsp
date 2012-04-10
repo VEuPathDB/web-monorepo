@@ -11,6 +11,24 @@
 
 <div id="map_canvas" style="width: 1024px; height: 380px"></div>
 
+<table id="pins">
+<tr>
+  <td valign=center>
+  <img src="/assets/images/isolate/1.png">
+  <img src="/assets/images/isolate/2.png">
+  <img src="/assets/images/isolate/3.png">
+  <img src="/assets/images/isolate/4.png">
+  <img src="/assets/images/isolate/5.png">
+  <img src="/assets/images/isolate/6.png">
+  <img src="/assets/images/isolate/7.png">
+  <img src="/assets/images/isolate/8.png">
+  <img src="/assets/images/isolate/9.png">
+  <img src="/assets/images/isolate/10.png">
+  Indicates the number of isolates on each location
+  </td>
+</tr>
+</table>
+
 <table id="isolate-view" class="datatables">
 <thead>
  <th>Country</th>
