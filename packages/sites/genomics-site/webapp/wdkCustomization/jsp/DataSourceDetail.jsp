@@ -46,7 +46,6 @@
           <c:set var="categories" value="${attributes['category']}" />
           <c:set var="organism" value="${attributes['organism']}" />
           <c:set var="description" value="${attributes['description']}" />
-          <c:set var="summary" value="${attributes['summary']}" />
           <c:set var="contact" value="${attributes['contact']}" />
           <c:set var="institution" value="${attributes['institution']}" />
         
@@ -63,7 +62,6 @@
             </div>
             <div class="detail">
               <div><span class="caption">${categories.displayName}</span>: ${categories.value}</div>
-              <div><span class="caption">${summary.displayName}</span>: ${summary.value}</div>
               <div><span class="caption">${organism.displayName}</span>: ${organism.value}</div>
               <div><span class="caption">${contact.displayName}</span>: ${contact.value}</div>
               <div><span class="caption">${institution.displayName}</span>: ${institution.value}</div>
