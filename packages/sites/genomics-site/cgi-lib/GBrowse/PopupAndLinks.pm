@@ -4,7 +4,7 @@ use strict;
 
 use GBrowse::Configuration;
 use XML::Simple;
-
+use Data::Dumper;
 my %MS_EXTDB_NAME_MAP;
 
 
@@ -985,34 +985,46 @@ sub massSpecTitle {
 
 sub massSpecUnifiedTitle {
   my $f = shift;
-  my ($count) = $f->get_tag_values('Count');
+  my ($count) = $f->get_tag_values('SCount');
   my ($seq) =  $f->get_tag_values('PepSeq');
-  my ($db_ids) = $f->get_tag_values('DbIds');
-  my ($db_names) = $f->get_tag_values('DbNames');
+  my ($key) = $f->get_tag_values('Key');
+  my ($experiment) = $f->get_tag_values('Experiment');
+  my ($sample) = $f->get_tag_values('Sample');
   my @data;
 
-  push @data, [ 'Sequence' => "$seq" ];
-  push @data, [ 'Total matches' => "$count" ];
+  my $sum = 0;
+  my @spectra = split(/, /, $count);
 
-  # make hash with external_db_rel_id as key, and number of matches as value
-  my @hits = split(/, /, $db_ids);
-  my %freq;
-  foreach my $hit (sort(@hits)) {
-    $freq{$hit}++;
+  foreach my $spectrum (@spectra) {
+    $sum = $sum + $spectrum;
   }
-  # make hash with external_db_rel_id as key, and db_name as value
-  my @names = split(/, /, $db_names);
-  my %test;
-  foreach my $hit (sort(@names)) {
-    my ($key,$val) = split(/=/, $hit);
-    $test{$key} = $val;
+
+  push @data, [ 'Sequence' => "$seq" ];
+  push @data, [ 'Total matches' => "$sum" ];
+
+  my %assayHash ;
+  my $index = 0;
+  my @keys = split(/, /, $key);
+  my @experiments = split(/,/, $experiment);
+  my @samples = split(/,/, $sample);
+  while ($keys[$index]) {
+    my $sampleCount = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$samples[$index]." [".$spectra[$index]."]<br />";
+    push @{$assayHash{$experiments[$index]}}, $sampleCount;
+    $index++;
   }
-  # display all 'db_name (number of matches)'
-  my $assayTitle = 'Assay (count)';
-  foreach my $try (keys(%freq)) {   ##@fields) {
-    push @data, [ "$assayTitle" => "$test{$try} ($freq{$try})" ];
-    $assayTitle = ' ';
+  my $assayTitle = 'Assay [count]';
+  my $string ='';
+  while( my ($exp,$sampleCounts) = each(%assayHash)) {
+    foreach my $expName ($exp) {
+        $string = $string.$expName."<br />";
+        foreach my $sc (@{$assayHash{$exp}}) {
+          $string = $string.$sc;
+        }
+      }
   }
+  push @data, [ "$assayTitle" => $string ];
+  $assayTitle = ' ';
+
   hover($f, \@data) if $count;
 }
 
