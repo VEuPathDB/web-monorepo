@@ -382,6 +382,7 @@ SELECT msf.aa_feature_id feature_id,
        'Sample=' || mst.sample || '$dlm' ||
        'PepSeq=' || substr(taas.sequence, aal.start_min, aal.end_max - aal.start_min + 1) atts
 FROM  dots.massspecfeature msf,
+      apidb.massspecsummary mss,
       dots.aalocation aal,
       dots.translatedaafeature taaf,
       dots.translatedaasequence taas,
@@ -404,7 +405,8 @@ WHERE msf.parent_id = taaf.aa_feature_id
       AND ed.name $$edName$$
       group by ed.name,aal.start_max ,aal.end_max) x
 WHERE msf.na_feature_id =  x.feat_id
-      AND ed.name = mst.ext_db_name
+      AND mss.mass_spec_summary_id = msf.source_id
+      AND  (ed.name = mst.internal_id or mst.internal_id = ed.name||'|'||mss.sample_file)
       AND msf.parent_id = taaf.aa_feature_id
       AND taaf.aa_sequence_id = $srcfeature_id
       AND taaf.aa_sequence_id = taas.aa_sequence_id
