@@ -92,12 +92,12 @@ sub SnpBgFromMatchingReference {
 
 
 sub SnpBgcolorForGenotyping {
-#  red for 75k chip, green 3k chip and blue for barcoding.
+#  red for 75k chip, blue 3k chip and green for barcoding.
       my $f = shift;
       my ($source) = $f->get_tag_values('IsoDbName');
       my ($freq) = $f->get_tag_values('MinorAlleleFreq');
 
-      if ($source eq 'Broad 75K genotyping chip') {
+      if ($source eq 'Broad_75K_Genotyping_RSRC') {
   if ($freq <= 0.1) {
     return '#FF0000';
   } elsif ($freq <= 0.2) {
@@ -109,7 +109,7 @@ sub SnpBgcolorForGenotyping {
   } else {
     return '#800000';
   }
-      } elsif ($source eq 'Broad 3K genotyping chip') {
+      } elsif ($source eq 'Broad_3K_Genotyping_RSRC') {
   if ($freq <= 0.1) {
     return '#0000FF';
   } elsif ($freq <= 0.2) {
@@ -121,7 +121,7 @@ sub SnpBgcolorForGenotyping {
   } else {
     return '#000080';
   }
-      } else {  # for 'Isolate barcode data from Broad'
+      } else {  # for 'Broad_Isolate_Barcode_RSRC'
   if ($freq <= 0.1) {
     return '#00FF00';
   } elsif ($freq <= 0.2) {
