@@ -1458,7 +1458,7 @@ WHERE msf.na_feature_id = nal.na_feature_id
  and  msf.source_id = mss.mass_spec_summary_id
  AND  msf.external_database_release_id = edr.external_database_release_id
  AND  edr.external_database_id = ed.external_database_id
- and  mst.internal_id = ed.name||'|'||mss.sample_file
+ and  (mst.internal_id = ed.name||'|'||mss.sample_file or mst.internal_id = ed.name)
 Group by     ed.name,
              mst.experiment,
              mss.sample_file,
