@@ -11,7 +11,7 @@
 <%-- QUESTIONS --%>
 <c:set var="fungiQuestions" value="Cneostudy:Capsule Regulation,GeneQuestions.GenesByRnaSeqFoldChangeCneoCapReg,GeneQuestions.GenesByRnaSeqPercentileCapReg,Cneostudy:NRG1 KO and Overexpression,GeneQuestions.GenesByRnaSeqFoldChangeCneo,GeneQuestions.GenesByRnaSeqPercentileCneo,Ncrastudy:Hyphal Growth,GeneQuestions.GenesByRnaSeqFoldChangeNcra,GeneQuestions.GenesByRnaSeqPercentileNcra,Ncrastudy:Population Genomics,GeneQuestions.GenesByRnaSeqFoldChangeNcraPopGen,GeneQuestions.GenesByRnaSeqPercentileNcraPopGen"/>
 
-<c:set var="plasmoQuestions" value="P.f.study:Field Parasites from Pregnant Women and Children (Duffy),GeneQuestions.GenesByRNASeqPfExpressionFoldChange,P.f.study:Post Infection Time Series (Stunnenberg),GeneQuestions.GenesByRNASeqPfRBCFoldChange,GeneQuestions.GenesByRNASeqPfRBCExprnPercentile,P.f.study:Intraerythrocytic infection cycle (Newbold/Llinas),GeneQuestions.GenesByRNASeqExpressionTiming" />
+<c:set var="plasmoQuestions" value="P.f.study:Field Parasites from Pregnant Women and Children (Duffy),GeneQuestions.GenesByRNASeqPfExpressionFoldChange,GeneQuestions.GenesByRNASeqPfExpressionPercentile,P.f.study:Post Infection Time Series (Stunnenberg),GeneQuestions.GenesByRNASeqPfRBCFoldChange,GeneQuestions.GenesByRNASeqPfRBCExprnPercentile,P.f.study:Intraerythrocytic infection cycle (Newbold/Llinas),GeneQuestions.GenesByRNASeqExpressionTiming,GeneQuestions.GenesByRNASeqPercentileNewbold" />
 
 <c:set var="toxoQuestions" value="T.g.study:Expression Percentile,GeneQuestions.GenesByTgVegRNASeqExpressionPercentile" />
 
