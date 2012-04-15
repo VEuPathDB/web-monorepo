@@ -24,6 +24,7 @@ initializeGenomeView();
   </div>
 </div>
 -->
+<div style="float:left">
 <table class="legend">
 <tr>
 <td>
@@ -35,14 +36,21 @@ initializeGenomeView();
 </td>
 </tr>
 </table>
+</div>
 
+<div style="float:left;position:relative;bottom:35px;left:30px;"><img src="<c:url value='/wdk/images/betatesting.png' />" /></div>
 
+<div style="float:left;position:relative;top:5px;left:20px"><h3>
+<a onclick="poptastic(this.href); return false;" target="_blank" href="/cryptodb.aurrecoui/betatester.jsp">
+Be our Beta Tester! Click here to provide feedback on this beta feature!
+</a></h3></div>
 
 <c:url var="zoomInImage" value="/wdkCustomization/images/zoom_in.png" />
 <c:url var="zoomOutImage" value="/wdkCustomization/images/zoom_out.png" />
 <c:set var="zoomInAllTip" value="Zoom in all the sequences." />
 <c:set var="zoomOutAllTip" value="Zoom out all the sequences." />
 
+<div style="clear:both;;position:relative;top:-20px">
 <table id="genome-view" class="datatables">
   <thead>
   <tr>
@@ -114,3 +122,4 @@ initializeGenomeView();
   </tr>
   </tfoot>
 </table>
+</div>
