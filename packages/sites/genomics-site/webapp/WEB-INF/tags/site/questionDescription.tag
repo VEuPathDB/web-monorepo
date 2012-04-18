@@ -67,9 +67,19 @@
           <c:set var="ds_attributes" value="${dsRecord.attributes}" />
           <c:set var="ds_name" value="${ds_attributes['data_source_name']}" />
           <c:set var="ds_display" value="${ds_attributes['display_name']}" />
+          <c:set var="ds_tables" value="${dsRecord.tables}" />
+          <c:set var="ds_publications" value="${ds_tables['Publications']}" />
           <a href="<c:url value='/getDataSource.do?question=${wdkQuestion.fullName}&display=detail#target=${ds_name}'/>">${ds_display}</a>
-          <span class="version">version: ${ds_attributes['version']}</span>
-          <div class="summary">${ds_attributes['description']}</div>
+          <div class="detail">
+            <div class="summary">${ds_attributes['summary']}</div>
+            <c:if test="${fn:length(ds_publications) > 0}">
+              <ul class="publications">
+                <c:forEach items="${ps_publications}" var="publication">
+                  <li><a href="${publication['pubmed_url']}">${publication['citation']}</a></li>
+                </c:forEach>
+              </ul>
+            </c:if>
+          </div>
         </li>
       </c:forEach>
       </ul>

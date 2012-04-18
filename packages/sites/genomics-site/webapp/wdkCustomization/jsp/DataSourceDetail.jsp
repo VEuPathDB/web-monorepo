@@ -70,6 +70,12 @@
             </div>
           
             <imp:wdkTable tblName="${publications.name}" />
+
+            <imp:wdkTable tblName="${contacts.name}" />
+
+            <imp:wdkTable tblName="${externallinks.name}" />
+
+            <imp:wdkTable tblName="${references.name}" />
           </div>
         
         </c:forEach>
