@@ -178,6 +178,7 @@
   </tr>
   <tr>
     <th><i>A.cla</i></th>
+    <th><i>A.fla</i></th>
     <th><i>C.gat</i> WM276</th>
     <th><i>C.gat</i> R265</th>
     <th><i>C.neo</i> H99</th>
@@ -210,6 +211,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="acla_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="afla_genes" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
