@@ -169,7 +169,7 @@
   <tr>
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
-    <th colspan=1 align="center"><i>Eurotiomycetes</i></th>
+    <th colspan=2 align="center"><i>Eurotiomycetes</i></th>
     <th colspan=6 align="center"><i>Basidiomycota</i></th>
     <th colspan=3 align="center"><i>Sordariomycetes</i></th>
     <th colspan=2 align="center"><i>Saccharomycotina</i></th>
