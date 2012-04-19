@@ -69,15 +69,13 @@
           <c:set var="ds_display" value="${ds_attributes['display_name']}" />
           <c:set var="ds_tables" value="${dsRecord.tables}" />
           <c:set var="ds_publications" value="${ds_tables['Publications']}" />
-          <a href="<c:url value='/getDataSource.do?question=${wdkQuestion.fullName}&display=detail#target=${ds_name}'/>">${ds_display}</a>
+          <a class="title" 
+             href="<c:url value='/getDataSource.do?question=${wdkQuestion.fullName}&display=detail#target=${ds_name}'/>">${ds_display}</a>
           <div class="detail">
             <div class="summary">${ds_attributes['summary']}</div>
             <c:if test="${fn:length(ds_publications) > 0}">
-              <ul class="publications">
-                <c:forEach items="${ps_publications}" var="publication">
-                  <li><a href="${publication['pubmed_url']}">${publication['citation']}</a></li>
-                </c:forEach>
-              </ul>
+              <c:set var="pubContent"><imp:table table="${ds_publications}" sortable="false" /></c:set>
+              <imp:simpleToggle name="${ds_publications.displayName}" content="${pubContent}" show="false" />
             </c:if>
           </div>
         </li>

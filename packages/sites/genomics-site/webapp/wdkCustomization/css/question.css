@@ -1,6 +1,6 @@
 #attributions-section ul { list-style: disc inside none; }
 #attributions-section .data-source { margin: 3px; }
-#attributions-section .data-source .version { padding-left:10px; color:#333333; }
-#attributions-section .data-source .summary { margin:2px 2px 10px 12px; }
+#attributions-section .data-source .title { font-weight:bold; }
+#attributions-section .data-source .detail { margin:5px 12px; }
 
 

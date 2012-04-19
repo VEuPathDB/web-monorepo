@@ -280,7 +280,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
+    attribution=""
   />
 
 </c:if> 
@@ -298,14 +298,14 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 <c:if test="${species eq 'falciparum3D7'}">
-    <imp:table tblName="SNPs" isOpen="false"
-                   attribution="Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps"/>
+    <imp:wdkTable tblName="SNPs" isOpen="false"
+               attribution="" />
 </c:if>
 
 
 <%-- eQTL regions --%>
 <c:if test="${species eq 'falciparum3D7'}">
-<imp:table tblName="Plasmo_eQTL_Table" isOpen="true"
+<imp:wdkTable tblName="Plasmo_eQTL_Table" isOpen="true"
                attribution="" />
 
   <c:set var="queryURL">
@@ -316,7 +316,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <%-- version 5.5 genes --%>
 <c:if test="${species eq 'falciparum3D7'}">
-<imp:table tblName="PlasmoVer5Genes" isOpen="true"
+<imp:wdkTable tblName="PlasmoVer5Genes" isOpen="true"
                attribution="" />
 </c:if>
 
@@ -353,7 +353,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <c:catch var="e">
 
-<imp:table tblName="UserComments"  isOpen="true"/>
+<imp:wdkTable tblName="UserComments"  isOpen="true"/>
 
 
 </c:catch>
@@ -402,7 +402,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <%--
 <c:catch var="e">
 
-<imp:table tblName="PhenotypeComments"  isOpen="true"/> 
+<imp:wdkTable tblName="PhenotypeComments"  isOpen="true"/> 
 
 </c:catch>
 <c:if test="${e != null}">
@@ -422,7 +422,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${species ne 'falciparum' || (species eq 'falciparum' && attrs['annotation_status'].value ne 'new' &&attrs['annotation_status'].value ne 'new_organellar')}">
 --%>
 
-<imp:table tblName="GeneLinkouts" isOpen="true" attribution="Plasmodraft_DBRefs,Phenotype_DBRefs"/>
+<imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 <c:if test="${isCodingGene}">
   <c:set var="orthomclLink">
@@ -430,7 +430,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
       <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <imp:table tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
                  postscript="${orthomclLink}"/>
 </c:if>
 <%--</c:if>--%>
@@ -438,15 +438,15 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${species eq 'falciparum3D7'}">
   <a name="ecNumber"></a>
   <c:if test="${isCodingGene}">
-    <imp:table tblName="EcNumber" isOpen="false"
-                   attribution="ecMappings_Hagai,P.falciparum_chromosomes,enzymeDB"/>
+    <imp:wdkTable tblName="EcNumber" isOpen="false"
+                   attribution=""/>
   </c:if>
 </c:if>
 
 <c:if test="${isCodingGene}">
   <a name="goTerm"></a>
-  <imp:table tblName="GoTerms"
-                 attribution="GO,GOAssociations,InterproscanData"/>
+  <imp:wdkTable tblName="GoTerms"
+                 attribution=""/>
 </c:if>
 
 
@@ -456,16 +456,16 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 <!-- gene alias table -->
-<imp:table tblName="Alias" isOpen="FALSE" attribution=""/>
+<imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
-  <imp:table tblName="Notes" attribution="P.falciparum_chromosomes"/>
+  <imp:wdkTable tblName="Notes" attribution=""/>
 
 
 <c:if test="${species eq 'falciparum3D7' || species eq 'berghei' || species eq 'yoelii'}">
 
 <%-- Need to comment out Phenotype for build 11 --%>
-<imp:table tblName="RodMalPhenotype" isOpen="false"  attribution="Phenotype_DBRefs"/>
+<imp:wdkTable tblName="RodMalPhenotype" isOpen="false"  attribution=""/>
   
   <!-- publications -->
 
@@ -481,7 +481,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 --%>
 
   <c:if test="${isCodingGene}">
-    <imp:table tblName="MetabolicPathways" attribution="ecMappings_Hagai"/>
+    <imp:wdkTable tblName="MetabolicPathways" attribution=""/>
   </c:if>
 
 <c:set var="plasmocyc" value="${attrs['PlasmoCyc']}"/>  
@@ -497,10 +497,10 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 </c:if>
 
-<imp:table tblName="Mr4Reagents" attribution="MR4Reagents"/>
+<imp:wdkTable tblName="Mr4Reagents" attribution=""/>
 
 <%--
-<imp:table tblName="AnnotationChanges"/>
+<imp:wdkTable tblName="AnnotationChanges"/>
 --%>
 
 
@@ -563,14 +563,14 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
     </c:set>
     <imp:toggle name="proteinContext"  displayName="Protein Features" 
                 content="${proteinFeaturesImg}" 
-                attribution="${attribution}"/>
+                attribution=""/>
 
     </c:if> <%-- ptracks ne '' --%>
 
 
   <c:if test="${species eq 'falciparum3D7'}">
-  <imp:table tblName="Y2hInteractions" isOpen="true"
-                 attribution="y2h_data"/>
+  <imp:wdkTable tblName="Y2hInteractions" isOpen="true"
+                 attribution=""/>
   </c:if>
 
 <%--  <c:set var="pdbId" value="${attrs['pdb_id'].value}"/>
@@ -615,39 +615,39 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
         </c:choose>
 
   <c:if test="${species eq 'falciparum3D7'}">
-      <imp:table tblName="MassSpec" isOpen="true"
-                    attribution="Waters_female_gametes,Waters_male_gametes,Waters_mixed_gametes,Pyoelii_LiverStage_LS40,Pyoelii_LiverStage_LS50,FlorensMassSpecData2002,FlorensMassSpecData2004,Pf_Merozoite_Peptides,Lasonder_Mosquito_Oocysts,Lasonder_Mosquito_oocyst_derived_sporozoites,Lasonder_Mosquito_salivary_gland_sporozoites,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,P.falciparum_Clinical_Proteomics,Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection,Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection,P.vivax_Clinical_Proteomics,Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC,Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC,Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC,Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC"/>
+      <imp:wdkTable tblName="MassSpec" isOpen="true"
+                    attribution=""/>
   </c:if>
 
   <c:if test="${species eq 'falciparum3D7'}">
-      <imp:table tblName="MassSpecMod" isOpen="true"
-          attribution="Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC,Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC"/>
+      <imp:wdkTable tblName="MassSpecMod" isOpen="true"
+          attribution=""/>
   </c:if> 
 
   <c:if test="${binomial eq 'Plasmodium berghei'}">
-    <imp:table tblName="ProteinExpression" attribution="Pberghei_Protein_Expression"/>
+    <imp:wdkTable tblName="ProteinExpression" attribution=""/>
   </c:if>
 
-  <imp:table tblName="ProteinDatabase"/>
+  <imp:wdkTable tblName="ProteinDatabase"/>
 
   <c:set var="pdbLink">
     <a href="http://www.rcsb.org/pdb/smartSubquery.do?smartSearchSubtype=SequenceQuery&inputFASTA_USEstructureId=false&sequence=${attrs['protein_sequence'].value}&eCutOff=10&searchTool=blast">Search
     PDB by the protein sequence of ${id}</a>
   </c:set>
 
-<imp:table tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution=""/>
 
-<imp:table tblName="Ssgcid" isOpen="true" attribution="" />
+<imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
   ${attrs['ssgcid_request_link']}
 </c:if>
 
   <c:if test="${species eq 'falciparum3D7'}">
-    <imp:table tblName="3dPreds" attribution="predictedProteinStructures"/>
+    <imp:wdkTable tblName="3dPreds" attribution=""/>
   </c:if>
 
-  <imp:table tblName="Epitopes"/>
+  <imp:wdkTable tblName="Epitopes"/>
 
 
 </c:if> <%-- end if isCodingGene --%>
@@ -660,7 +660,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 <c:if test="${species eq 'falciparum3D7'}">
-  <imp:table tblName="SageTags" attribution="SageTagArrayDesign,PlasmoSageTagFreqs"/>
+  <imp:wdkTable tblName="SageTags" attribution=""/>
 </c:if>
 </c:if>
 
