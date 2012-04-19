@@ -354,6 +354,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
             </c:otherwise>
         </c:choose>
 
+      <imp:wdkTable tblName="MassSpec" isOpen="true"
+                    attribution=""/>
 
 <imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
 
