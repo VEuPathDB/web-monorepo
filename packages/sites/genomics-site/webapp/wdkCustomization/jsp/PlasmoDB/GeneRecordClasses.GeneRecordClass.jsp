@@ -509,7 +509,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
   <c:if test="${species eq 'falciparum3D7'}">
      <c:set var="ptracks"> 
-       FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfBowyerMassSpecPeptides+BoothroydPhosphoMassSpecPeptides+VossMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
+       FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfClinicalMassSpecPeptides+PfBowyerMassSpecPeptides+BoothroydPhosphoMassSpecPeptides+VossMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
      </c:set>
   </c:if>
   <c:if test="${species eq 'falciparumIT'}">
@@ -620,6 +620,36 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   </c:if>
 
   <c:if test="${species eq 'falciparum3D7'}">
+      <imp:wdkTable tblName="MassSpecMod" isOpen="true"
+          attribution=""/>
+  </c:if> 
+
+   <c:if test="${species eq 'vivax'}">
+      <imp:wdkTable tblName="MassSpec" isOpen="true"
+                    attribution=""/>
+  </c:if>
+
+  <c:if test="${species eq 'vivax'}">
+      <imp:wdkTable tblName="MassSpecMod" isOpen="true"
+          attribution=""/>
+  </c:if> 
+
+   <c:if test="${species eq 'berghei'}">
+      <imp:wdkTable tblName="MassSpec" isOpen="true"
+                    attribution=""/>
+  </c:if>
+
+  <c:if test="${species eq 'berghei'}">
+      <imp:wdkTable tblName="MassSpecMod" isOpen="true"
+          attribution=""/>
+  </c:if> 
+
+   <c:if test="${species eq 'yoelii'}">
+      <imp:wdkTable tblName="MassSpec" isOpen="true"
+                    attribution=""/>
+  </c:if>
+
+  <c:if test="${species eq 'yoelii'}">
       <imp:wdkTable tblName="MassSpecMod" isOpen="true"
           attribution=""/>
   </c:if> 
