@@ -71,7 +71,7 @@ Be our Beta Tester! <span style="background-color:yellow">Click here</span> to p
     <tr class="sequence">
       <c:url var="sequenceUrl" value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&source_id=${sequence.sourceId}" />
       <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
-      <td class="organism" nowrap>${sequence.organism}</td>
+      <td class="organism">${sequence.organism}</td>
       <td class="chromosome" nowrap>${sequence.chromosome}</td>
       <td class="span-count" nowrap>${sequence.spanCountFormatted}</td>
       <td class="length" nowrap>${sequence.lengthFormatted}</td>
