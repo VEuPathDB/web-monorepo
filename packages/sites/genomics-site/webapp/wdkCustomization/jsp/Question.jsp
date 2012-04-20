@@ -45,9 +45,7 @@ ${Question_Header}
                            href="<c:url value='/webservices/${wdkQuestion.questionSetName}/${wdkQuestion.name}.wadl' />">WADL</a>
 		</span>
 -->
-	<c:if test="${q.new}">
-		<img alt="new feature icon"  title="This is a new search in the current release" src="<c:url value='/wdk/images/new-feature.png' />">
-	</c:if>
+          <imp:questionFeature question="${wdkQuestion}" />
 	</h1>
 </c:if>
 

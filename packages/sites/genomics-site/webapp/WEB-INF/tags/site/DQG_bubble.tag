@@ -73,13 +73,12 @@
 					    <div class="sub_list">
 						<ul>
 						<c:forEach items="${cat.websiteQuestions}" var="q">
-							<c:set var="popup" value="${q.summary}"/>
-							<li><a href="showQuestion.do?questionFullName=${q.fullName}" class="dqg-tooltip" id="${q.questionSetName}_${q.name}" title="${fn:escapeXml(popup)}">${q.displayName}</a>
-	 						<c:if test="${q.new}">
-      								<img alt="New feature icon" width="25" src="<c:url value='/wdk/images/new-feature.png' />"
-           								title="This is a new search in the current release" />
-    							</c:if>
-							</li>
+						  <c:set var="popup" value="${q.summary}"/>
+						  <li>
+                                                    <a href="showQuestion.do?questionFullName=${q.fullName}" class="dqg-tooltip" 
+                                                       id="${q.questionSetName}_${q.name}" title="${fn:escapeXml(popup)}">${q.displayName}</a>
+                                                    <imp:questionFeature question="${q}" />
+						  </li>
 						</c:forEach>
 						</ul>
 					     </div>
@@ -114,13 +113,12 @@
 				<div class="sub_list">
 				<ul>
 				<c:forEach items="${cat.websiteQuestions}" var="q">
-					<c:set var="popup" value="${q.summary}"/>
-					<li><a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}" class="dqg-tooltip" title="${fn:escapeXml(popup)}">${q.displayName}</a>
-	 				<c:if test="${q.new}">
-      						<img alt="New feature icon" width="25" src="<c:url value='/wdk/images/new-feature.png' />"
-           						title="This is a new search in the current release" />
-    					</c:if>
-					</li>
+				  <c:set var="popup" value="${q.summary}"/>
+				  <li>
+                                    <a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}" 
+                                       class="dqg-tooltip" title="${fn:escapeXml(popup)}">${q.displayName}</a>
+                                    <imp:questionFeature question="${q}" />
+			          </li>
 				</c:forEach>
 				</ul>
 				</div>

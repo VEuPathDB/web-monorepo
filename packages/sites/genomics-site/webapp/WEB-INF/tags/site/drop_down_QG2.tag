@@ -10,13 +10,6 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
 
-<c:set var="newIcon">
-	<c:if test="${q.new}">
-      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-          		title="This is a new search in the current release" />
-    	</c:if>                            
-</c:set>
-
 <!-- model questions are used by webservices for OTHER recordClasses, instead of the categories.xml. 
      Two reasons why the model was used:
     	- to avoid fake questions; 
@@ -90,20 +83,13 @@
 <c:when test="${from == 'webservices'}">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
- 	<c:if test="${q.new}">
-      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-          		title="This is a new search in the current release" />
-    	</c:if>
-<%--	${newIcon}  --%>
-	</a>
+        <imp:questionFeature question="${q}" />
+        </a>
 </c:when>
 <c:otherwise>
   	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
-    	<c:if test="${q.new}">
-      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-           		title="This is a new search in the current release" />
-    	</c:if>
-  	</a>
+          <imp:questionFeature question="${q}" />
+        </a>
 </c:otherwise>
 </c:choose>
 				</li>
@@ -130,19 +116,13 @@
 <c:when test="${from == 'webservices'}">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
-	<c:if test="${q.new}">
-      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-           		title="This is a new search in the current release" />
-    	</c:if>
-	</a>
+          <imp:questionFeature question="${q}" />
+        </a>
 </c:when>
 <c:otherwise>
   	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
-    	<c:if test="${q.new}">
-      		<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-           		title="This is a new search in the current release" />
-    	</c:if>
-  	</a>
+          <imp:questionFeature question="${q}" />
+        </a>
 </c:otherwise>
 </c:choose>
 					</li>
@@ -186,11 +166,8 @@
            		<c:forEach items="${qSet.questions}" var="q">
              			<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}
-				<c:if test="${q.new}">
-      					<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-           					title="This is a new search in the current release." />
-    				</c:if>
-				</a>
+                                  <imp:questionFeature question="${q}" />
+                                </a>
 				</li>
            		</c:forEach>
 			</ul>
@@ -208,10 +185,7 @@
 	<c:forEach items="${cat.websiteQuestions}" var="q">
 		<li>
 		<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
-                <c:if test="${q.new}">
-                	<img alt="New feature icon" src="<c:url value='/wdk/images/new-feature.png' />"
-                        	title="This is a new search in the current release." />
-                </c:if>
+                  <imp:questionFeature question="${q}" />
                 </a>
 		</li>
 	</c:forEach>
