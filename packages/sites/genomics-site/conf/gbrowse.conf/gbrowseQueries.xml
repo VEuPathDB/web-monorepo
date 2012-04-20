@@ -3887,47 +3887,6 @@ WHERE  sa.dataset = $$edname$$
     </sql>
   </sqlQuery>
  
-  <sqlQuery name="SNP:Variation"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-SELECT 
-       snp.na_feature_id          as feature_id,
-       'SNP'                      as type, 
-       '$source'                 as source,
-       snp.source_id              as name, 
-       '.'                        as score, 
-       s.source_id                as parent_id, 
-       l.start_min                as startm, 
-       l.end_max                  as end, 
-       decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-       'base_start='   || '$base_start' || '$dlm' ||
-       'rend='   || '$rend' || '$dlm' ||
-       'IsCoding=' || snp.is_coding || '$dlm' ||
-       'PositionInCDS=' || snp.position_in_CDS || '$dlm' ||
-       'Gene='   || gene_info.source_id || '$dlm' ||
-       'RefStrain=' || snp.reference_strain || '$dlm' ||
-       'RefNA='   || snp.reference_na || '$dlm' ||
-       'SourceID='   || snp.source_id || '$dlm' 
-        as atts
-FROM   dots.ExternalNaSequence s,
-       dots.SnpFeature snp,
-       ApidbTuning.FeatureLocation l,
-       sres.ExternalDatabase ed,
-       sres.ExternalDatabaseRelease edr,
-       ApidbTuning.GeneAttributes gene_info
-WHERE  ed.name = $$edname$$  
-  AND  edr.external_database_id = ed.external_database_id
-  AND  snp.external_database_release_id = edr.external_database_release_id
-  AND  s.na_sequence_id = $srcfeature_id
-  AND  snp.na_sequence_id = s.na_sequence_id
-  AND  l.na_feature_id = snp.na_feature_id
-  AND  l.start_min <= $rend
-  AND  l.end_max >= $base_start
-  AND  snp.parent_id = gene_info.na_feature_id(+)
-]]>
-    </sql>
-  </sqlQuery> 
-
   <sqlQuery name="SNP:Genotyping"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -4027,41 +3986,6 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Combined"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
- SELECT 
-       sa.na_feature_id          as feature_id,
-       'SNP'                      as type, 
-       'Combined'                 as source, 
-       sa.source_id              as name, 
-       '.'                        as score, 
-       sa.seq_source_id           as parent_id, 
-       sa.start_min               as startm, 
-       sa.start_min               as end, 
-       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
-       'base_start='   || '$base_start' || '$dlm' ||
-       'rend='   || '$rend' || '$dlm' ||
-       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
-       'IsCoding=' || sa.is_coding || '$dlm' ||
-       'Gene=' || sa.gene_source_id || '$dlm' ||
-       'position_in_CDS=' || sa.position_in_CDS || '$dlm' ||
-       'position_in_protein=' || sa.position_in_protein || '$dlm' ||
-       'reference_strain=' || sa.reference_strain || '$dlm' ||
-       'reference_aa=' || sa.reference_aa || '$dlm' ||
-       'gene_strand=' || sa.gene_strand || '$dlm' ||
-       'reference_na=' || sa.reference_na || '$dlm' ||
-       'source_id=' || sa.source_id as atts
-FROM   ApidbTuning.SnpAttributes sa
-WHERE  sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'  
-  AND  sa.na_sequence_id = $srcfeature_id
-  AND  sa.start_min <= $rend
-  AND  sa.start_min >= $base_start
-]]>
-    </sql>
-  </sqlQuery>
-  
-
   <sqlQuery name="mapp:promoters"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
@@ -6314,61 +6238,6 @@ ORDER BY var.strain
 ]]>
     </sql>
   </sqlQuery>
-  
-  
-  <sqlQuery name="SNP:Variation:bulkAttribute" includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
-       var.phenotype, var.product
-FROM ApidbTuning.SnpAttributes sa,
-     dots.SeqVariation var
-WHERE sa.dataset = $$edname$$
-  AND sa.na_sequence_id = $srcfeature_id
-  AND sa.start_min <= $rend
-  AND sa.start_min >= $base_start
-  AND var.parent_id = sa.na_feature_id
-ORDER BY var.strain
- 
-]]>
-    </sql>
-  </sqlQuery>
-  
-  
-  <sqlQuery name="SNP:Combined:bulkAttribute" includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-SELECT sc.na_feature_id as feature_id, sc.strain, sc.allele,
-       sc.phenotype, sc.product
-FROM ApidbTuning.SnpCombined sc
-WHERE sc.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
-  AND sc.na_sequence_id = $srcfeature_id
-  AND sc.start_min <= $rend
-  AND sc.start_min >= $base_start
-ORDER BY sc.strain
-]]>
-    </sql>
-  </sqlQuery>
-  
-  
-  <sqlQuery name="SNP:Su:bulkAttribute" includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
-       var.phenotype, var.product
-FROM ApidbTuning.SnpAttributes sa,
-     dots.SeqVariation var
-WHERE sa.dataset = 'NIH SNPs'
-  AND sa.na_sequence_id = $srcfeature_id
-  AND sa.start_min <= $rend
-  AND sa.start_min >= $base_start
-  AND var.parent_id = sa.na_feature_id
-ORDER BY var.strain
- 
-]]>
-    </sql>
-  </sqlQuery>
-  
   
   <sqlQuery name="SNP:Widmer:bulkAttribute" includeProjects="CryptoDB">
     <testParamValues project="CryptoDB">
