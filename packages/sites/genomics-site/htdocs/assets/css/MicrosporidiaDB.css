@@ -277,6 +277,9 @@ tr.headerrow th {
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+div.Workspace {
+	border-color: #015f9a;
+}
 
 
 

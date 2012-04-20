@@ -292,6 +292,10 @@ span.marker a:link, span.marker a:visited {
 	 = strategy workspace
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+div.Workspace {
+	border-color: #02935c;
+}
+
 span#stratTitle, #strategy_tabs #selected a {
 	color: #58441F;
 }

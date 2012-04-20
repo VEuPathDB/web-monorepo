@@ -42,7 +42,7 @@ initializeGenomeView();
 
 <div style="float:left;position:relative;top:5px;left:20px"><h3>
 <a onclick="poptastic(this.href); return false;" target="_blank" href="/cryptodb.aurrecoui/betatester.jsp">
-Be our Beta Tester! Click here to provide feedback on this beta feature!
+Be our Beta Tester! <span style="background-color:yellow">Click here</span> to provide feedback on this beta feature!
 </a></h3></div>
 
 <c:url var="zoomInImage" value="/wdkCustomization/images/zoom_in.png" />
@@ -55,6 +55,7 @@ Be our Beta Tester! Click here to provide feedback on this beta feature!
   <thead>
   <tr>
     <th>Sequence</th>
+    <th>Organism</th>
     <th>Chromosome</th>
     <th>#${recordClass.type}s</th>
     <th title="Length of the genomic sequence in #bases">Length</th>
@@ -70,6 +71,7 @@ Be our Beta Tester! Click here to provide feedback on this beta feature!
     <tr class="sequence">
       <c:url var="sequenceUrl" value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&source_id=${sequence.sourceId}" />
       <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
+      <td class="organism" nowrap>${sequence.organism}</td>
       <td class="chromosome" nowrap>${sequence.chromosome}</td>
       <td class="span-count" nowrap>${sequence.spanCountFormatted}</td>
       <td class="length" nowrap>${sequence.lengthFormatted}</td>
@@ -111,6 +113,7 @@ Be our Beta Tester! Click here to provide feedback on this beta feature!
   <tfoot>
   <tr>
     <th>Sequence</th>
+    <th>Organism</th>
     <th>Chromosome</th>
     <th>#${recordClass.type}s</th>
     <th>Length</th>
