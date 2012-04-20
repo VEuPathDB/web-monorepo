@@ -3934,9 +3934,8 @@ WHERE  ed.name = $$edname$$
 SELECT 
        sa.na_feature_id          as feature_id,
        'SNP'                     as type, 
-       'Genotyping'              as source, 
+       '$source'                 as source, 
        sa.source_id              as name, 
-       '.'                       as score, 
        sa.seq_source_id          as parent_id, 
        sa.start_min              as startm, 
        sa.start_min              as end, 
@@ -3953,46 +3952,10 @@ WHERE  swi.snp_source_id = sa.source_id
   AND  sa.na_sequence_id = $srcfeature_id
   AND  sa.start_min <= $rend
   AND  sa.start_min >= $base_start
-  AND  sa.dataset='Pf_plasmoDbCombinedSnps_RSRC'
+  AND  sa.dataset = $$edname$$
 ]]>
     </sql>
   </sqlQuery> 
-
-  <sqlQuery name="SNP:SangerPr"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
- SELECT 
-       sa.na_feature_id          as feature_id,
-       'SNP'                      as type, 
-       'SangerPr'                 as source, 
-       sa.source_id              as name, 
-       '.'                        as score, 
-       sa.seq_source_id           as parent_id, 
-       sa.start_min               as startm, 
-       sa.start_min               as end, 
-       decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
-       'base_start='   || '$base_start' || '$dlm' ||
-       'rend='   || '$rend' || '$dlm' ||
-       'NonSyn='   || sa.has_nonsynonymous_allele || '$dlm'||
-       'IsCoding=' || sa.is_coding || '$dlm' ||
-       'Gene=' || sa.gene_source_id || '$dlm' ||
-       'position_in_CDS=' || sa.position_in_CDS || '$dlm' ||
-       'position_in_protein=' || sa.position_in_protein || '$dlm' ||
-       'reference_strain=' || sa.reference_strain || '$dlm' ||
-       'reference_aa=' || sa.reference_aa || '$dlm' ||
-       'gene_strand=' || sa.gene_strand || '$dlm' ||
-       'reference_na=' || sa.reference_na || '$dlm' ||
-       'source_id=' || sa.source_id as atts
-FROM   ApidbTuning.SnpAttributes sa
-WHERE  sa.dataset = 'sangerPReichenowiSnps_RSRC'  
-  AND  sa.na_sequence_id = $srcfeature_id
-  AND  sa.start_min <= $rend
-  AND  sa.start_min >= $base_start
-]]>
-    </sql>
-  </sqlQuery>
-
-
 
   <sqlQuery name="SNP:Diversity">
      <sql>
@@ -6301,24 +6264,6 @@ WHERE fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="SNP:SangerPr:bulkAttribute"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
-       var.phenotype, var.product
-FROM ApidbTuning.SnpAttributes sa,
-     dots.SeqVariation var
-WHERE sa.dataset = 'sangerPReichenowiSnps_RSRC'
-  AND sa.na_sequence_id = $srcfeature_id
-  AND sa.start_min <= $rend
-  AND sa.start_min >= $base_start
-  AND var.parent_id = sa.na_feature_id
-ORDER BY var.strain
-]]>
-    </sql>
-  </sqlQuery>
-
-
   <sqlQuery name="mapp:promoters:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
