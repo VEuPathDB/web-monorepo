@@ -373,10 +373,10 @@ sub snpTitle {
 sub snpTitleFromMatchToReference {
              my $f = shift;
              my ($isCoding) = $f->get_tag_values("IsCoding");
-             my ($refStrain) = $f->get_tag_values("RefStrain");
+             my ($refStrain) = $f->get_tag_values("reference_strain");
              my ($gene) = $f->get_tag_values("Gene");
-             my ($refNA) = $f->get_tag_values("RefNA");
-             my ($source_id) = $f->get_tag_values("SourceID");
+             my ($refNA) = $f->get_tag_values("reference_na");
+             my ($source_id) = $f->get_tag_values("source_id");
              my ($rend) = $f->get_tag_values("rend");
              my ($base_start) = $f->get_tag_values("base_start");
              my $zoom_level = $rend - $base_start;
