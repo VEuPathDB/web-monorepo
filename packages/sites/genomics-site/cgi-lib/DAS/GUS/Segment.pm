@@ -399,7 +399,7 @@ sub features {
     $self->_addBulkSubFeatures(\@features, $bulkSubFeatureSql, $factory, "$queryName:bulksubfeatures", $rend - $base_start);
   } 
   
-  my $bulkAttributeSql = $factory->parser->getSQL("Feature.pm", "$queryName:bulkAttribute");
+  my $bulkAttributeSql = $factory->parser->getSQL("Feature.pm", "$queryName:bulkAttribute", $sqlParamString);
   next unless $bulkAttributeSql;
   $bulkAttributeSql =~ s/(\$\w+)/eval $1/eg;
 
