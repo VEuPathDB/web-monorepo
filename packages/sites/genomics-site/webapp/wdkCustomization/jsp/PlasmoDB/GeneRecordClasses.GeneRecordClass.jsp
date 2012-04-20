@@ -314,11 +314,9 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
   <a id="assocQueryLink" href="${queryURL}"><font size='-2'>Other genes that have similar associations based on eQTL experiments</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
 </c:if>
 
-<%-- version 5.5 genes --%>
-<c:if test="${species eq 'falciparum3D7'}">
-<imp:wdkTable tblName="PlasmoVer5Genes" isOpen="true"
+<%-- version 8.2 genes --%>
+<imp:wdkTable tblName="PlasmoVer82Genes" isOpen="true"
                attribution="" />
-</c:if>
 
 <c:if test="${externalDbName.value eq 'Pfalciparum_chromosomes_RSRC'}">
   <c:if test="${strand eq '-'}">
