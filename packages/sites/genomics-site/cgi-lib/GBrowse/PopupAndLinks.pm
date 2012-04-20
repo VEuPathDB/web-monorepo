@@ -313,63 +313,6 @@ sub snpTitleQuick {
   hover($f, \@data);
 }
 
-sub snpTitle {
-  my $f = shift;
-  my %rev = ( A => 'T', T => 'A', C => 'G', G => 'C' );
-  my ($isCoding) = $f->get_tag_values("IsCoding"); 
-  $isCoding = $isCoding eq 'yes' ? 1 : 0;
-  my ($posInCDS) = $f->get_tag_values("PositionInCDS"); 
-  my ($posInProtein) = $f->get_tag_values("PositionInProtein"); 
-  my ($refStrain) = $f->get_tag_values("RefStrain"); 
-  my ($refAA) = $f->get_tag_values("RefAA"); 
-  my ($gene) = $f->get_tag_values("Gene"); 
-  my ($reversed) = $f->get_tag_values("Reversed"); 
-  my ($refNA) = $f->get_tag_values("RefNA"); 
-  $refNA = $rev{$refNA} if $reversed;
-  my ($nonSyn) = $f->get_tag_values("NonSyn"); 
-  my $variants = $f->bulkAttributes();
-  my ($source_id) = $f->get_tag_values("SourceID"); 
-  my $type = 'Non-Coding';
-  my ($rend) = $f->get_tag_values("rend"); 
-  my ($base_start) = $f->get_tag_values("base_start");
-  my $zoom_level = $rend - $base_start; 
-
-  if ($isCoding) {
-     my $non = $nonSyn? 'non-' : '';
-     $type = "Coding (${non}synonymous)";
-  }
-  if ($zoom_level <= 60000) {
-    my @data;
-    my $link = qq(<a href=/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$source_id>$source_id</a>);
-    push @data, [ 'SNP'  => $link ];
-    push @data, [ 'Location:'  => $f->start ];
-    if ($gene) {
-       push @data, [ 'Gene:'  => $gene ]; 
-    }
-    if ($isCoding) {
-       $refAA = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$refAA"; 
-       push @data, [ 'Position in CDS:'  => $posInCDS ] if ($posInCDS);
-       push @data, [ 'Position in Protein:'  => $posInProtein ] if ($posInProtein);
-    }
-    push @data, [ 'Type:'  => $type ];
-    push @data, ["$refStrain (reference)"=>"NA=$refNA$refAA"];
-    foreach my $variant (@$variants) {
-      my $strain = $variant->{STRAIN};
-      if (!($strain =~/$refStrain/i)) {
-        my $na = $variant->{ALLELE};
-        $na = $rev{$na} if $reversed;
-        my $aa = $variant->{PRODUCT};
-        my $info = "NA=$na" . ($isCoding? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$aa" : "");
-        push @data, [ "$strain" => $info ];
-      }
-    }
-    return hover( $f, \@data) if $refStrain;
-  } else {
-    return $gene? "In gene $gene" : "Non-coding"; 
-  }
- }
-
-
 sub snpTitleFromMatchToReference {
              my $f = shift;
              my ($isCoding) = $f->get_tag_values("IsCoding");
@@ -908,7 +851,7 @@ sub rumIntronTitleUnified {
      $count++;
   }
   $html .= "</table>";
-  my $note = "Score for each sample is the number of unique reads for that sample and the overall score is the sum of all unique reads from all samples";
+  my $note = "Score for each sample is the number of unique reads for that sample <br/>and the overall score is the sum of all unique reads from all samples";
   my @data;
   push @data, [ '' => $html ];
   push @data, [ 'Location:'  => "$start - $stop"];
