@@ -3888,13 +3888,13 @@ WHERE  sa.dataset =  'Pf_Broad_SNPs_RSRC'
     </sql>
   </sqlQuery>
  
-  <sqlQuery name="SNP:Winzeler"  includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Variation"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT 
        snp.na_feature_id          as feature_id,
        'SNP'                      as type, 
-       'Winzeler'                 as source, 
+       '$source'                  as source,
        snp.source_id              as name, 
        '.'                        as score, 
        s.source_id                as parent_id, 
@@ -3916,7 +3916,7 @@ FROM   dots.ExternalNaSequence s,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr,
        ApidbTuning.GeneAttributes gene_info
-WHERE  ed.name = 'WinzelerGeneticVariationArray_RSRC'  
+WHERE  ed.name = $$edname$$  
   AND  edr.external_database_id = ed.external_database_id
   AND  snp.external_database_release_id = edr.external_database_release_id
   AND  s.na_sequence_id = $srcfeature_id
@@ -6460,14 +6460,14 @@ ORDER BY var.strain
   </sqlQuery>
   
   
-  <sqlQuery name="SNP:Winzeler:bulkAttribute" includeProjects="PlasmoDB">
+  <sqlQuery name="SNP:Variation:bulkAttribute" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT sa.na_feature_id as feature_id, var.strain, var.allele,
        var.phenotype, var.product
 FROM ApidbTuning.SnpAttributes sa,
      dots.SeqVariation var
-WHERE sa.dataset = 'WinzelerGeneticVariationArray_RSRC'
+WHERE sa.dataset = $$edname$$
   AND sa.na_sequence_id = $srcfeature_id
   AND sa.start_min <= $rend
   AND sa.start_min >= $base_start
