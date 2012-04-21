@@ -41,7 +41,7 @@ initializeGenomeView();
 <div style="float:left;position:relative;bottom:35px;left:30px;"><img src="<c:url value='/wdk/images/betatesting.png' />" /></div>
 
 <div style="float:left;position:relative;top:5px;left:30px;font-weight:bold">
-<a onclick="poptastic(this.href); return false;" target="_blank" href="/cryptodb.aurrecoui/betatester.jsp">
+<a onclick="poptastic(this.href); return false;" target="_blank" href="<c:url value='/betatester.jsp' />">
 
  <span style="font-size:120%">Be our Beta Tester!</span> &nbsp;&nbsp;<span style="background-color:yellow">Click here</span> to provide feedback on this beta feature!
 </a></div>

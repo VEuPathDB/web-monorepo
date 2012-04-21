@@ -15,8 +15,8 @@
                  division="help"/>
 
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
-<tr><td bgcolor=white valign=top>
+<table width=100%> 
+<tr><td>
 
 <h1>Beta Tester Questionnaire</h1>
 <h1>We appreciate your feedback!</h1>
@@ -27,12 +27,11 @@
 <c:set var="question3" value="Were you confused by the scale of the genes relative to the genomic sequence?"/>
 <!-- ========================================= -->
 
-<hr class=brown>
-	<center><a style="font-size:14px" href="javascript:window.close()">Close this window.</a></center>  
-<hr class=brown>
+<hr>
+<center><a style="font-size:14px" href="javascript:window.close()">Close this window.</a></center>  
+<hr>
 
-
-              <table cellspacing="2" cellpadding="4" border="0" bgcolor="#cccccc">
+              <table>
               <form method="POST" action="/cgi-bin/processMail">
 
              	<input type="hidden" name="to1" value="redmine@"/>
@@ -40,15 +39,17 @@
 		<input type="hidden" name="cc1" value="help@"/>
                 <input type="hidden" name="cc2" value="${site}.org"/>
                
+		<!-- this tells the mail processor to add the questions and answers to the message -->
  		<input type="hidden" name="betatest" value="true"/>
 
  		<input type="hidden" name="q1" value="${question1}"/>
 		<input type="hidden" name="q2" value="${question2}"/>
 		<input type="hidden" name="q3" value="${question3}"/>
 
-                <tr><td><div class="medium">Feature to be tested:</div></td>
+                <tr><td><div>Feature to be tested:</div></td>
                     <td><input type="text" name="subject" value="Chromosomal View tab beta testing" size="81"></td></tr>
-                <tr><td><div class="medium">Your email address:</div></td>
+
+                <tr><td><div>Your email address:</div></td>
                     <c:choose>
                     <c:when test="${wdkUser == null || wdkUser.guest == true}">
                     <td><input type="text" name="replyTo" value="" size="81"></td></tr>
@@ -58,19 +59,19 @@
                     </c:otherwise>
                     </c:choose>
 
-  		<tr><td><div class="medium">${question1}</div></td>
+  		<tr><td><div style="font-weight:bold">${question1}</div></td>
                     <td><input type="radio" name="a1" value="Yes">Yes</input>
 			<input type="radio" name="a1" value="No">No</input>		</td></tr>
 
-		<tr><td><div class="medium">${question2}</div></td>
+		<tr><td><div style="font-weight:bold">${question2}</div></td>
                     <td><input type="radio" name="a2" value="Yes">Yes</input>
 			<input type="radio" name="a2" value="No">No</input>		</td></tr>
 
-		<tr><td><div class="medium">${question3}</div></td>
+		<tr><td><div style="font-weight:bold">${question3}</div></td>
                     <td><input type="radio" name="a3" value="Yes">Yes</input>
 			<input type="radio" name="a3" value="No">No</input>		</td></tr>
 
-                <tr><td valign="top"><div class="medium">Any other comment you would like to provide?</div></td>
+                <tr><td valign="top"><div style="font-weight:bold">Any other comment you would like to provide?</div></td>
                     <td><textarea name="message" cols="75" rows="8"></textarea>
                         <input type="hidden" name="uid"     value="${wdkUser.userId}">
                         <input type="hidden" name="website" value="${site}">
@@ -78,7 +79,8 @@
                         <input type="hidden" name="browser" value="${header['User-Agent']}">
                         <input type="hidden" name="referer" value="${header['referer']}"
                        <%-- websitesupportform@apidb.org is a group in ApiDB Google Apps and an account in Redmine (an account is required for redmine to receive emails) --%>
-                        <input type="hidden" name="reporterEmail" value="websitesupportform@apidb.org"/>                    </td></tr>
+                        <input type="hidden" name="reporterEmail" value="websitesupportform@apidb.org"/>     </td></tr>
+
                 <tr><td>&nbsp;</td>
                     <td align="left"><input type="submit" value="Submit"></td></tr>
               </form>
@@ -86,13 +88,9 @@
  
 </td></tr>
 
-<tr><td><br><b>If you would like to attach a screenshot, please email directly to <a href="mailto:help@${site}.org">help@${site}.org</a>.</b></td></tr>
-
-
+<tr><td><br>If you would like to attach a screenshot, please email directly to <a href="mailto:help@${site}.org">help@${site}.org</a>.</td></tr>
 
 </table>
-
- 
 
 <imp:footer/>
 
