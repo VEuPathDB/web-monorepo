@@ -2266,8 +2266,79 @@ WHERE g3.external_database_release_id = edr.external_database_release_id
   AND ed.name = 'TgonME49_JCVI_Reannotation_RSRC'
 GROUP BY g3.parent_attr, g3.na_sequence_id, g3.is_reversed
 ]]>
+    </sql>
+  </sqlQuery>
+  
+  <sqlQuery name="gene:OldModels" includeProjects="PlasmoDB">
+     <sql>
+<![CDATA[
+SELECT blat.blat_alignment_id feature_id,
+       'gene' type, 
+       '$source' source, 
+       enas.source_id  name, 
+       blat.score || '' score, 
+       etn.na_sequence_id parent_id, 
+       blat.target_start startm, 
+       blat.target_end end, 
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'soTerm=' || ga.so_term_name || '$dlm' ||
+       'product=' ||  oa.value || '$dlm' ||
+       'taxon=' || ga.organism atts 
+FROM   ApidbTuning.BlatAlignmentLocation blat, 
+       dots.ExternalNASequence enas, dots.NASequence etn,
+       apidb.OldAnnotation oa, apidbtuning.GeneAttributes ga, apidbtuning.GeneId gi,
+       SRes.ExternalDatabase ed, sres.ExternalDatabaseRelease edr 
+WHERE  blat.query_na_sequence_id = enas.na_sequence_id
+  AND  blat.target_na_sequence_id = etn.na_sequence_id
+  AND  blat.is_best_alignment = 1
+  AND  blat.target_start <= $rend
+  AND  blat.target_end >= $base_start
+  AND  etn.na_sequence_id = $srcfeature_id
+  AND  enas.external_database_release_id = edr.external_database_id
+  AND  edr.external_database_id = ed.external_database_id
+  AND  ed.name $$oldTranscriptEdName$$
+  AND  enas.source_id = oa.source_id
+  AND  oa.type='product'
+  AND  enas.source_id = gi.id
+  AND ga.source_id = gi.gene
+UNION
+SELECT
+       gf.na_feature_id feature_id,
+       'gene' type, 
+       '$source' source, 
+       gf.source_id name, 
+       '.' score, 
+       gf.na_sequence_id parent_id, 
+       fl.start_min startm, 
+       fl.end_max end, 
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'soTerm=' || so.term_name || '$dlm' ||
+       'product=' || replace(gf.product,'''','&#146;') || '$dlm' ||
+       'taxon=' || tn.name as atts
+FROM   dots.GeneFeature gf,
+       ApidbTuning.FeatureLocation fl, 
+       dots.NASequence ns,
+       sres.TaxonName tn,
+       sres.SequenceOntology so,
+       sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase ed
+WHERE  fl.na_sequence_id =$srcfeature_id
+  AND  fl.na_sequence_id = ns.na_sequence_id
+  AND  fl.feature_type = 'GenePrediction'
+  AND  fl.na_feature_id = gf.na_feature_id 
+  AND  so.sequence_ontology_id = gf.sequence_ontology_id
+  AND  fl.start_min <= $rend 
+  AND  fl.end_max >= $base_start 
+  AND  tn.taxon_id = ns.taxon_id 
+  AND  tn.name_class = 'scientific name' 
+  AND  gf.external_database_release_id = edr.external_database_release_id
+  AND  edr.external_database_id = ed.external_database_id
+  AND  ed.name $$oldAnnEdName$$ 
+  AND is_predicted=1
+]]>
       </sql>
   </sqlQuery>
+
 
   <sqlQuery name="match:syntenySpanMC" includeProjects="TriTrypDB,PlasmoDB,CryptoDB,GiardiaDB,AmoebaDB,MicrosporidiaDB,PiroplasmaDB">
      <sql>
@@ -5193,6 +5264,42 @@ ORDER BY
 ]]>
     </sql>
   </sqlQuery>
+  
+  <sqlQuery name="gene:OldModels:bulksubfeatures" includeProjects="PlasmoDB">
+  <sql>
+<![CDATA[
+SELECT blat.blat_alignment_id feature_id,
+       'exon' type, 
+       '$source' source, 
+       enas.source_id  name, 
+       blat.score || '' score,
+       blat.blat_alignment_id parent_id,
+       blat.target_start startm,
+       blat.target_end end,
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       blat.tstarts TSTARTS,
+       blat.blocksizes BLOCKSIZES,
+       ' ' atts
+FROM   ApidbTuning.BlatAlignmentLocation blat, 
+       dots.externalnasequence enas,
+       dots.NASEQUENCE etn,
+       SRes.ExternalDatabase ed, sres.ExternalDatabaseRelease edr 
+WHERE  blat.query_na_sequence_id = enas.na_sequence_id
+  AND  blat.target_na_sequence_id = etn.na_sequence_id
+  AND  blat.target_start <= $rend
+  AND  blat.target_end >= $base_start
+  AND  (blat.target_end - blat.target_start ) < 5000
+  AND  blat.is_best_alignment = 1
+  AND  etn.na_sequence_id = $srcfeature_id 
+  AND  etn.na_sequence_id = $srcfeature_id
+  AND  enas.external_database_release_id = edr.external_database_id
+  AND  edr.external_database_id = ed.external_database_id
+  AND  ed.name $$oldTranscriptEdName$$
+ORDER BY blat.target_start
+]]>
+    </sql>
+  </sqlQuery>
+
   
   
   <sqlQuery name="match:syntenySpanMC:bulksubfeatures" excludeProjects="CryptoDB,TrichDB,FungiDB">
