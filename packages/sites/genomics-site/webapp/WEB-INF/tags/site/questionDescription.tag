@@ -74,8 +74,13 @@
           <div class="detail">
             <div class="summary">${ds_attributes['summary']}</div>
             <c:if test="${fn:length(ds_publications) > 0}">
-              <c:set var="pubContent"><imp:table table="${ds_publications}" sortable="false" /></c:set>
-              <imp:simpleToggle name="${ds_publications.displayName}" content="${pubContent}" show="false" />
+                <ul>
+                  <c:forEach items="${ds_publications}" var="publication">
+                    <li>
+                      <a href="http://www.ncbi.nlm.nih.gov/pubmed/${publication['pmid']}">${publication['citation']}</a>
+                    </li>
+                  </c:forEach>
+                </ul>
             </c:if>
           </div>
         </li>
