@@ -57,7 +57,7 @@
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithUserComments" linktext="User Comments" existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
                 <tr>
-                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOldAnnotation" linktext="Old Annotation (v 5.5)"  existsOn="A P"/>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOldAnnotation" linktext="Old Annotation (v 8.2)"  existsOn="A P"/>
                 </tr>
 
                 <tr>
