@@ -26,11 +26,24 @@
     <c:set var="imgSrc" 	value="${preImgSrc}"/>
     <c:set var="noData" 	value="false"/>
 
+
+
+   <c:set var="hasRma" value="false"/>
+   <c:set var="hasCoverage" value="false"/>
+
     <c:set var="selectList">
       <form name=${name}List>
         <c:set var="vp_i" 			value="0"/>
         <c:set var="defaultVp" 			value=""/>
         <c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
+
+          <c:if test="${fn:contains(vp, 'rma')}">
+            <c:set var="hasRma" value="true"/>
+          </c:if>
+          <c:if test="${fn:contains(vp, 'coverage')}">
+            <c:set var="hasCoverage" value="true"/>
+          </c:if>
+
           <c:choose>
             <c:when test="${vp_i == 0}">
               ${vp} <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="${vp}" name="${vp}" checked /> &nbsp;
@@ -43,8 +56,18 @@
             </c:otherwise>
           </c:choose>
           <c:set var="vp_i" value="${vp_i +  1}"/>
+
+          <c:if test="${vp_i % 3 == 0}">
+            <br />
+          </c:if>
         </c:forEach>
+
+        <c:if test="${(hasRma eq 'true' || hasCoverage eq 'true') && row['project_id'].value eq 'PlasmoDB'}">
+          <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
+          <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="internal_want_logged" name="want_logged" checked />
+        </c:if>
       </form>
+
     </c:set>
 
     <c:set var="profileContent">
@@ -130,14 +153,18 @@
 <script type="text/javascript">
 function formatImgUrl(url, myForm)
 {
+  var wl = 0;
   var vp = '&vp=_LEGEND';
   for (var i=0; i < myForm.length; i++){
     var e = myForm.elements[i];
+    if(e.name == 'want_logged' && e.checked) {
+      wl = 1;
+    }
     if(e.checked) {
       vp = vp + ',' + e.value;
     }
   }
-  url = url + vp;
+  url = url + vp + '&wl=' + wl;
   return(url);
 }
 </script>
