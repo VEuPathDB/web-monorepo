@@ -806,70 +806,25 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 <hr>
-<div>
-  <c:choose>
-    <c:when test="${species ne 'falciparum3D7'}">
-     <c:set var="attributions" value="${attrs['dataAttribution']}"/>
-         ${attributions.value}
-    </c:when>
-    <c:when test="${species eq 'falciparum3D7' && (sequence_id eq 'Pf3D7_02_v3' || sequence_id eq 'Pf3D7_10_v3' || sequence_id eq 'Pf3D7_11_v3' || sequence_id eq 'Pf3D7_14_v3')}">
 
-        <%-- P. falciparum 2, 10, 11, 14 = TIGR --%>
-        <b>Chromosome ${sequence_id} of <i>P. falciparum</i> 3D7 was sequenced at 
-        <a href="http://www.tigr.org/tdb/edb2/pfa1/htmls/">The Institute for Genomic Research</a>
-        and the <a href="http://www.nmrc.navy.mil/">Naval Medical Research Center</a></b>.
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:when>
-    <c:when test="${species eq 'falciparum3D7' && (sequence_id eq 'Pf3D7_01_v3' || sequence_id eq 'Pf3D7_03_v3' || sequence_id eq 'Pf3D7_04_v3' || sequence_id eq 'Pf3D7_05_v3' || sequence_id eq 'Pf3D7_06_v3' || sequence_id eq 'Pf3D7_07_v3' || sequence_id eq 'Pf3D7_08_v3' || sequence_id eq 'Pf3D7_09_v3' || sequence_id eq 'Pf3D7_13_v3')}">
-        <%-- P. falciparum 1, 3-9, 13 = Sanger --%>
-        <b>Chromosome ${sequence_id} of <i>P. falciparum</i> 3D7 was sequenced at the 
-        <a href="http://www.sanger.ac.uk/Projects/P_falciparum/">Sanger Institute</a></b>.
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:when>
-    <c:when test="${species eq 'falciparum3D7' && sequence_id eq 'Pf3D7_12_v3'}">
-        <%-- P. falciparum 12 = Stanford --%>
-        <b>Chromosome ${sequence_id} of <i>P. falciparum</i> 3D7 was sequenced at the
-        <a href="http://sequence-www.stanford.edu/group/malaria/">Stanford Genome Technology Center</a></b>.
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:when>
-    <c:when test="${species eq 'falciparum3D7' && sequence_id eq 'M76611'}">
-        <%-- P. falciparum mitochondrial genome --%>
-        <%--b>The <i>P. falciparum</i> mitochondrial sequence was retrieved from GenBank</b --%>
-        <b>The <i>P. falciparum</i> mitochondrial genome was obtained from the Wellcome Trust Sanger Institute (WTSI).</b>
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the WTSI and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:when>
-    <c:when test="${species eq 'falciparum3D7' && sequence_id eq 'PFC10_API_IRAB'}">
-        <%-- P. falciparum plastid genome --%>
-        <b>The <i>P. falciparum</i> plastid genome was obtained from the Wellcome Trust Sanger Institute (WTSI).</b>
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the WTSI and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:when>
+<c:set var="attributions" value="${attrs['dataAttribution']}"/>
 
-    <c:when test="${species eq 'falciparum3D7' && sequence_id eq 'AJ276844'}">
-        <%-- P. falciparum mitochondrion = University of London --%>
-        <b>The mitochondrial genome of <i>P. falciparum</i> was
-        sequenced at the
-        <a href="http://www.lshtm.ac.uk/pmbu/staff/dconway/dconway.html">London
-        School of Hygiene & Tropical Medicine</a></b>
-    </c:when>
-    <c:when test="${species eq 'falciparum3D7' && (sequence_id eq 'X95275' || sequence_id eq 'X95276')}">
+<c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
+<c:if test="${attributions.value ne ''}">
+    <c:set var="reference" value="${attributions.value}"/>
+</c:if>
 
-        <%-- P. falciparum plastid --%>
-        <b>The <i>P. falciparum</i> plastid was
-        sequenced at the 
-        <a href="http://www.nimr.mrc.ac.uk/parasitol/wilson/">National
-        Institute for Medical Research</a></b>
+<imp:panel 
+    displayName="Genome Sequencing and Annotation by:"
+    content="${reference}" />
 
-    </c:when>
-    <c:when test="${species eq 'falciparum3D7' && (sequence_id eq 'API_IRAB' || sequence_id eq 'PfNF54')}">
-        <%-- new plastid sequences --%>
-        <b>The new <i>P. falciparum</i> plastid and mitochondrial sequences were provided by GeneDB (WTSI). </b>
-    </c:when>
-    <c:otherwise>
-      <b>ERROR: attribution unknown for binomial "${binomial}",
-         sequence "${sequence_id}"</b>
-    </c:otherwise>
-  </c:choose>
-</div>
+<br>
+
+<%------------------------------------------------------------------%>
+
+<%-- jsp:include page="/include/footer.html" --%>
+
+
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
