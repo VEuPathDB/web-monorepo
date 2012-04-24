@@ -7,7 +7,8 @@
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
-
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
 
 
 <%-- title and linktext should be read from categories.xml (category, question displayName),
@@ -57,11 +58,11 @@
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithUserComments" linktext="User Comments" existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
                 <tr>
-                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOldAnnotation" linktext="Old Annotation (v 8.2)"  existsOn="A P"/>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByOldAnnotation" linktext="Annotation from Previous ${project} Release"  existsOn="A P"/>
                 </tr>
 
                 <tr>
-                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithUpdatedAnnotation" linktext="Updated Annotation"  existsOn="A P Tt"/>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithUpdatedAnnotation" linktext="Updated Annotation from GeneDB"  existsOn="A P Tt"/>
                 </tr>
              <!--   <tr><td class="lines2">&nbsp;</td></tr> -->
 
