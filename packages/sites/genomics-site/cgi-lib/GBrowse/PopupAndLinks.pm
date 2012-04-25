@@ -120,7 +120,7 @@ sub synGeneTitle {
   my $linkStop = $end + $window;
   my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
 
-  my $trunc = $f->get_tag_values("Truncated");
+  my ($trunc) = $f->get_tag_values("Truncated");
   my $location = "$seqId: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "");
   
   return qq{javascript:escape(syn_gene_title(this,'$projectId','$sourceId','$taxon','$soTerm','$desc','$location','$gbLinkParams'))};
