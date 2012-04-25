@@ -95,7 +95,8 @@ initializeGenomeView();
                 <ul>
                   <li> - <a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}' />">Record Page</a></li>
                   <c:if test="${recordClass.fullName eq 'GeneRecordClasses.GeneRecordClass'}">
-                    <li> - <a href="/cgi-bin/gbrowse/toxodb/?h_feat=${span.sourceId}@yellow">Gbrowse</a></li>
+                    <c:set var="context" value="${span.context}" />
+                    <li> - <a href="/cgi-bin/gbrowse/toxodb/?name=${context};h_feat=${span.sourceId}@yellow">Gbrowse</a></li>
                   </c:if>
                 </ul>
               </div>
