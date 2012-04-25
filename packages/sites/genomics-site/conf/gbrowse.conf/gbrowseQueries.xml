@@ -1806,7 +1806,7 @@ WHERE
        BS.na_feature_id = fl.na_feature_id and
        rel.external_database_release_id = BS.external_database_release_id and
        d.external_database_id  = rel.external_database_id and
-       d.name like '%TransFactorBindingSites_Llinas_RSRC' and
+       d.name like '%_genomeFeature_Llinas_TransFactorBindingSites%' and
        fl.feature_type = 'BindingSiteFeature' and
        fl.start_min <= $rend and 
        fl.end_max >= $base_start and 
