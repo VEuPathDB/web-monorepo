@@ -315,7 +315,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 </c:if>
 
 <%-- version 8.2 genes --%>
-<imp:wdkTable tblName="PlasmoVer82Genes" isOpen="true"
+<imp:wdkTable tblName="PreviousReleaseGenes" isOpen="true"
                attribution="" />
 
 <c:if test="${externalDbName.value eq 'Pfalciparum_chromosomes_RSRC'}">
