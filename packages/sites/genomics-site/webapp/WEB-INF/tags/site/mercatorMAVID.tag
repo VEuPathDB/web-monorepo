@@ -159,26 +159,32 @@ return true;
           <tr>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="Pfalciparum" checked>P.falciparum 3D7
+              <input type="checkbox" name="genomes" value="pfal3D7" checked>P.falciparum 3D7
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="PfalciparumIT" checked>P.falciparum IT
+              <input type="checkbox" name="genomes" value="pfalIT" checked>P.falciparum IT
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Pvivax" checked>P.vivax
+              <input type="checkbox" name="genomes" value="pvivSaI1" checked>P.vivax
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Pyoelii" checked>P.yoelii
+              <input type="checkbox" name="genomes" value="pyoe17XNL" checked>P.yoelii
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="pberANKA" checked>P.berghei
             </td>
            </tr>
             <td>
-              <input type="checkbox" name="genomes" value="Pberghei" checked>P.berghei
+              <input type="checkbox" name="genomes" value="pchachabaudi" checked>P.chabaudi
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Pchabaudi" checked>P.chabaudi
+              <input type="checkbox" name="genomes" value="pknoH" checked>P.knowlesi
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Pknowlesi" checked>P.knowlesi
+              <input type="checkbox" name="genomes" value="pgalUnk" checked>P.gallinaceum
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="preiLaverania" checked>P.reichenowi
             </td>
            </tr>
          </table>
