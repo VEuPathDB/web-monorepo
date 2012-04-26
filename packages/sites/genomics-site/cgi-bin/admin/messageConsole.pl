@@ -52,7 +52,7 @@ print <<_END_OF_TEXT_
         <html xmlns="http://www.w3.org/1999/xhtml" >
 	<head>
 	<title>AMS Console</title>
-        <link href="/css/messageStyles.css" rel="stylesheet" type="text/css" />
+        <link href="/assets/css/messageStyles.css" rel="stylesheet" type="text/css" />
         <script language="javascript">
          function submitWindow()
            {

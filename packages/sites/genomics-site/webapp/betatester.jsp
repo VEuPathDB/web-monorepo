@@ -47,7 +47,7 @@
 		<input type="hidden" name="q3" value="${question3}"/>
 
                 <tr><td><div>Feature to be tested:</div></td>
-                    <td><input type="text" name="subject" value="Chromosomal View tab beta testing" size="81"></td></tr>
+                    <td><input type="text" name="subject" value="Genome View tab beta testing" size="81"></td></tr>
 
                 <tr><td><div>Your email address:</div></td>
                     <c:choose>
