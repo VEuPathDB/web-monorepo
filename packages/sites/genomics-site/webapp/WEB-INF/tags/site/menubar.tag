@@ -185,6 +185,9 @@
 		</a>
 		</li>
 
+  <li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission Policy</a></li>
+
+
  	    <c:if test="${project != 'EuPathDB'}" >    
 		<li><a title="Add your comments to your gene of interest: start at the gene page" onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
 
