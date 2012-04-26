@@ -17,25 +17,11 @@ function initialize() {
 jQuery(document).ready(function(){
   initialize();
 
-  var dd   = document.domain;
-  var type = "&array(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
-  if(dd.match('toxodb')) {
-    type = "&array(type)=RFLP Typed,Sequencing Typed";
-  } else if(dd.match('plasmodb')) {
-    type = "&array(type)=3kChip,HD_Array,Barcode,Sequencing Typed";
-  } else if(dd.match('giardiadb')) {
-    type = '';
-  } else if(dd.match('plasmodb')) {
-    type = '';
-  } else if(dd.match('cryptodb')) {
-    type = '';
-  } 
-
   //$('#isolate-view tbody tr').map(function() {
   var locations = [];
   $('#isolate-view tbody tr').each(function() {
     // $(this) is used more than once; cache it for performance.
-      var $row = $(this);
+    var $row = $(this);
       
     // For each row that's "mapped", return an object that
     //  describes the first and second <td> in the row.
@@ -63,7 +49,7 @@ function setMarkers(map, locations) {
      var country = loc[0];
      var total = loc[1];
      var type = loc[2];
-     var content = country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+type+"'> Click for Details</a>";
+     var content = country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+"&value(type)="+type+"'> Click for Details</a>";
     
      var $icon; 
      if(total < 2) {
