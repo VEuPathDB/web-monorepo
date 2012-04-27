@@ -173,18 +173,12 @@ return true;
             <td>
               <input type="checkbox" name="genomes" value="pberANKA" checked>P.berghei
             </td>
-           </tr>
             <td>
               <input type="checkbox" name="genomes" value="pchachabaudi" checked>P.chabaudi
             </td>
+           </tr>
             <td>
               <input type="checkbox" name="genomes" value="pknoH" checked>P.knowlesi
-            </td>
-            <td>
-              <input type="checkbox" name="genomes" value="pgalUnk" checked>P.gallinaceum
-            </td>
-            <td>
-              <input type="checkbox" name="genomes" value="preiLaverania" checked>P.reichenowi
             </td>
            </tr>
          </table>
