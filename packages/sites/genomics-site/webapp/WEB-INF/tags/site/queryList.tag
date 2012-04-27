@@ -67,6 +67,7 @@ function getComboElement()
 <c:set var="questionFullNamesArray" value="${fn:split(questions, ',')}" />
 
 <c:set var="width" value="49%"/>  <%-- width of column 1--%>
+<c:set var="j" value="0"/>        <%-- study order, for background color --%>
 
 <%-- OPEN FIRST LINE --%>
 <tr>
@@ -84,7 +85,21 @@ function getComboElement()
 <c:when test="${fn:containsIgnoreCase(check,'study')}">      <%-- a study is always new, 
 								a study belongs to an organism and contains questions, 
 								several studies can belong to the same organism --%>
-        <c:set var="prefix" value="${fn:substring(check,0,4)}" />  
+        <c:set var="prefix" value="${fn:substring(check,0,4)}" /> 
+
+
+	<c:if test="${i % columns == 0}"><td colspan="2"></td></c:if> 
+ 	<c:set var="j" value="${j+1}"/>   
+
+        <c:choose>
+        <c:when test="${j % 2 == 0}">   
+                <c:set var="background" value="#FFFFF2" />  <!-- #FCF2F2 pale pink -->
+        </c:when>
+        <c:otherwise>
+                <c:set var="background" value="white" />
+        </c:otherwise>
+        </c:choose>
+
 </c:when>
 <c:otherwise>
         <%-- all this to access the question display name, which will be shown, and set the prefix: example: P.f. --%>
@@ -98,7 +113,7 @@ function getComboElement()
 </c:otherwise>
 </c:choose>
 
-<%--   DEBUG   
+<%--  DEBUG
 <td colspan="${columns+2}">***${check}***${prefix}***${question}***</td></tr>   
  --%>
 
@@ -165,21 +180,23 @@ function getComboElement()
 		<tr><td colspan="${columns+2}" style="padding:0">&nbsp;</td></tr>
 		<tr class="subheaderrow2"><td colspan="${columns+2}" style="padding:0;"><i><b>${org}</b></i></td></tr> 
                 <c:set var="i" value="1"/>  <!-- i represents the column where to write (1 or 2) -->   
-                <tr>
+                <tr style="background-color:${background}">
     </c:if>
 
 
 <%--- A STUDY------%>
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(check,'study')}">
-    </tr>   
+ 
+    </tr> 
+
     <c:set var="i" value="1"/>  <!-- i represents the column where to write (1 or 2) -->        
 
     <%-- access the study Name, to display --%>
     <c:set var="studyNameArray" value="${fn:split(qFullName, ':')}" />
-    <td colspan="${columns+2}" style="padding:0;padding-top: .5em;"><i><b>${studyNameArray[1]}</b></i></td></tr>
+    <tr  style="background-color:${background}"><td colspan="${columns+2}" style="padding:0;padding-top: .5em;"><i><b>${studyNameArray[1]}</b></i></td></tr>
 
-    <tr>
+    <tr style="background-color:${background}">
 </c:when>
 
 <%--- A QUESTION ------%>
@@ -210,7 +227,7 @@ function getComboElement()
 			 <imp:questionFeature question="${q}" />
     </td>
 
-    <c:if test="${i % columns == 0}"></tr><tr></c:if>   <!-- if we are in column 2, make a new line -->
+    <c:if test="${i % columns == 0}"></tr><tr style="background-color:${background}"></c:if>   <!-- if we are in column 2, make a new line -->
     <c:set var="i" value="${i+1}"/>   
 
 </c:otherwise>
@@ -218,6 +235,11 @@ function getComboElement()
 
 <c:set var="oldorg" value="${org}" />
       </c:forEach> <%-- forEach items=questions --%>
+
+
+
+<c:if test="${i % columns == 0}"><td colspan="2"></td></c:if> 
+
 
 </tr>
 
