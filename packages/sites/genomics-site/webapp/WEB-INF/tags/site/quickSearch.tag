@@ -74,7 +74,7 @@
 
           <c:set var="textFields" value="Gene ID,Alias,Gene product,GO terms and definitions,Gene notes,User comments,Protein domain names and descriptions,EC descriptions"/>
           <c:if test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
-             <c:set var="textFields" value="${textFields},Release 5.5 Genes"/>
+             <c:set var="textFields" value="${textFields},Genes of previous release"/>
           </c:if>
           <c:if test="${fn:containsIgnoreCase(modelName, 'TriTrypDB') || fn:containsIgnoreCase(modelName, 'EuPathDB')}">
              <c:set var="textFields" value="${textFields},Phenotype"/>
