@@ -28,11 +28,38 @@
       <img src="/assets/images/warningSign.png" alt="warningSign" /></td>
     <td>
       <span class="warningMessage">
-      This pre-release version of ${wdkModel.name} is available for early community review. Please explore the site and <a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> with your feedback. This site is under active development so there may be incomplete or inaccurate data and occasional site outages can be expected.</span>
+      This pre-release version of ${wdkModel.name} is available for early community review. 
+      Please explore the site and <a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> 
+      with your feedback. This site is under active development so there may be incomplete or 
+      inaccurate data and occasional site outages can be expected.</span>
      </td></tr></table>
   </div>
 </c:if>
 <%-- end hardcoded message only for beta sites --%>
+
+<%-- hardcoded warning message only for alpha sites --%>
+<c:if test="${
+    param.alpha eq 'true' || 
+    fn:startsWith(pageContext.request.serverName, 'alpha') ||
+    fn:startsWith(pageContext.request.serverName, 'a1')   ||
+    fn:startsWith(pageContext.request.serverName, 'a2')
+    }">
+  <div class="warn announcebox ${homeClass}">
+    <table><tr><td>
+      <img src="/assets/images/warningSign.png" alt="warningSign" /></td>
+    <td>
+      <span class="warningMessage">
+      This pre-release version of ${wdkModel.name} is available for early community review. 
+      Your searches and strategies saved in this alpha release will not be available in the 
+      official release.
+      Please explore the site and <a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> 
+      with your feedback. This site is under active development so there may be incomplete or 
+      inaccurate data and occasional site outages can be expected.</span>
+     </td></tr></table>
+  </div>
+</c:if>
+<%-- end hardcoded message only for alpha sites --%>
+
 
 <c:if test="${refer == 'home'}">
   <%--Information message retrieved from DB via messaging system--%>
