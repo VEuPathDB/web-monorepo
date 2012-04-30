@@ -3124,19 +3124,17 @@ WHERE
   </sqlQuery>
 
  
-  <sqlQuery name="ChIP:Hp1" includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:ChipSeq" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT e.na_sequence_id  as feature_id,
+ SELECT $srcfeature_id    as feature_id,
        'ChIP'             as type,
-       'Hp1'              as source,
-       e.source_id        as name,
-       e.source_id        as parent_id,
+       '$source'          as source,
+       '$srcfeature_id'   as name,
+       '$srcfeature_id'   as parent_id,
        $base_start        as startm,
        $rend              as end
-FROM   DoTS.Nasequence e
-WHERE
-       e.na_sequence_id = $srcfeature_id
+FROM   dual
 ]]>
     </sql>
   </sqlQuery>
@@ -3325,46 +3323,19 @@ WHERE
     </sql>
   </sqlQuery>
 
-
-
-  <sqlQuery name="ChIP:Nucleosome" includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
- SELECT e.na_sequence_id  as feature_id,
-       'ChIP'             as type,
-       $$sample$$         as source,
-       e.source_id        as name,
-       e.source_id        as parent_id,
-       $base_start        as startm,
-       $rend              as end
-FROM   DoTS.Nasequence e
-WHERE
-       e.na_sequence_id = $srcfeature_id
-]]>
-    </sql>
-  </sqlQuery>
-
-
   <sqlQuery name="ChIP:NucleosomeGB2" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT name as feature_id,
-       'ChIP'             as type,
-       '$source'       as source,
-       e.source_id        as name,
-       e.source_id        as parent_id,
-       $base_start        as startm,
-       $rend              as end,
-       'name=' || name as atts
-FROM   DoTS.Nasequence e,
-(       SELECT 'H4_ring' AS name FROM dual
-  UNION SELECT 'H4_trophozoite' AS name FROM dual
-  UNION SELECT 'H3K9ac_troph' AS name FROM dual
-  UNION SELECT 'H4_schizont' AS name FROM dual
-) x,
-(SELECT $$analysis$$ as analysis FROM dual) y
-WHERE
-       e.na_sequence_id = $srcfeature_id
+ SELECT name            as feature_id,
+       'ChIP'           as type,
+       '$source'        as source,
+       $srcfeature_id   as name,
+       $srcfeature_id   as parent_id,
+       $base_start      as startm,
+       $rend            as end,
+       'name=' || name  as atts
+FROM   rad.analysis 
+WHERE  name in ($$analysis$$)
 ]]>
     </sql>
   </sqlQuery>
@@ -5727,13 +5698,13 @@ AND    lower(a.name) like '%tbp%' AND lower(a.name) not like '%replicate%'
   </sqlQuery>
 
 
-  <sqlQuery name="ChIP:Hp1:bulksubfeatures"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:ChipSeq:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT  ee.na_feature_id   as feature_id,
        'ChIP'              as type,
-       'Hp1'               as source,
-        ee.score    as score,
+       '$source'           as source,
+        ee.score           as score,
         ee.na_sequence_id  as parent_id,
         ee.start_min       as startm,
         ee.end_max         as end,
@@ -6065,43 +6036,16 @@ AND    cpp.protocol_type = 'raw'
 <!-- a.name not like '%Schizont%' and a.name not like '%Ring%' and (lower(cpp.antibody) = 'h3' or lower(cpp.antibody) = 'h3k9me3' or lower(a.name) like '%cdna%') -->
 
 
-  <sqlQuery name="ChIP:Nucleosome:bulksubfeatures"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
-SELECT  start_interval   as feature_id,
-        'ChIP'             as type,
-        $$sample$$         as source, 
-        avg(score)         as score,
-        na_sequence_id  as parent_id,
-         start_interval * (($rend - $base_start + 1) / 800) startm,
-         end_interval * (($rend - $base_start + 1) / 800) end, 
-        'Analysis='     || name   as atts
-FROM   (select ceil(ee.start_min / (($rend - $base_start + 1) / 800)) start_interval,
-               ceil(ee.end_max / (($rend - $base_start + 1) / 800)) end_interval,
-               ee.score as score,ee.na_feature_id,
-               ee.na_sequence_id,a.name as name 
-        from rad.analysis a,
-             ApidbTuning.ExpressionElement ee
-        WHERE  a.analysis_id = ee.analysis_id
-        AND    ee.na_sequence_id = $srcfeature_id
-        AND    a.name =  $$analysis$$
-        AND    ee.start_min <= $rend
-        AND    ee.end_max >= $base_start)
-GROUP BY start_interval,end_interval,na_sequence_id,name
-   ]]>
-    </sql>
-  </sqlQuery>
- 
   <sqlQuery name="ChIP:NucleosomeGB2:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT  start_interval     as feature_id,
+ SELECT  start_interval    as feature_id,
         'ChIP'             as type,
-        '$source'               as source,
+        '$source'          as source,
         avg(score)         as score,
-        name  parent_id,
-         start_interval * (($rend - $base_start + 1) / 800) startm,
-         end_interval * (($rend - $base_start + 1) / 800) end,
+        name               as parent_id,
+        start_interval * (($rend - $base_start + 1) / 800) startm,
+        end_interval * (($rend - $base_start + 1) / 800) end,
        'Analysis=' || name as atts
 FROM   (select ceil(ee.start_min / (($rend - $base_start + 1) / 800)) start_interval,
                ceil(ee.end_max / (($rend - $base_start + 1) / 800)) end_interval,
