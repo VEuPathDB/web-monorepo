@@ -246,13 +246,13 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
           <c:set var="Ltp" value="${record.attributesMap['Leishmania tarentolae Parrot-TarII']}"/>
           <c:set var="Nc" value="${record.attributesMap['Neospora caninum']}"/>
           <c:set var="Ncb" value="${record.attributesMap['Nosema ceranae BRL01']}"/>
-          <c:set var="Pba" value="${record.attributesMap['Plasmodium berghei str. ANKA']}"/>
+          <c:set var="Pba" value="${record.attributesMap['Plasmodium berghei ANKA']}"/>
           <c:set var="Pcc" value="${record.attributesMap['Plasmodium chabaudi chabaudi']}"/>
           <c:set var="Pf3d7" value="${record.attributesMap['Plasmodium falciparum 3D7']}"/>
           <c:set var="Pfi" value="${record.attributesMap['Plasmodium falciparum IT']}"/>
           <c:set var="Pkh" value="${record.attributesMap['Plasmodium knowlesi strain H']}"/>
           <c:set var="Pvs" value="${record.attributesMap['Plasmodium vivax SaI-1']}"/>
-          <c:set var="Pyy" value="${record.attributesMap['Plasmodium yoelii yoelii str. 17XNL']}"/>
+          <c:set var="Pyy" value="${record.attributesMap['Plasmodium yoelii yoelii 17XNL']}"/>
           <c:set var="Taa" value="${record.attributesMap['Theileria annulata strain Ankara']}"/>
           <c:set var="Tpm" value="${record.attributesMap['Theileria parva strain Muguga']}"/>
           <c:set var="Tgg" value="${record.attributesMap['Toxoplasma gondii GT1']}"/>
