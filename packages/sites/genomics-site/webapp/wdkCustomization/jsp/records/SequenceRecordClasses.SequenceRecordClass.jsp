@@ -237,7 +237,7 @@ ${externalLinks}
 
 
  <c:choose>
- <c:when test="${projectId eq 'PiroplasmaDB'}">
+ <c:when test="${projectId eq 'PiroplasmaDB' || projectId eq 'FungiDB' || projectId eq 'PlasmoDB'}">
 
     <c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
@@ -289,134 +289,6 @@ ${externalLinks}
     Teichmann SA, Ivens A, Dear PH. 
     <b>Integrated mapping, chromosomal sequencing and sequence analysis of <i>Cryptosporidium parvum</i>. 
     </b>Genome Res. 2003 Aug;<a href="http://www.genome.org/cgi/content/full/13/8/1787">13(8):1787-99</a>
-</c:set>
-</c:when>
-
-<c:when test="${fn:containsIgnoreCase(organism, 'vivax') && (id eq 'AY598140') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <b><i>P. vivax</i> mitochondrial sequence and annotation was obtained from Genbank</b>
-    </c:set>
-    </c:when>
-<c:when test="${fn:containsIgnoreCase(organism, 'vivax') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <b><i>P. vivax</i> was sequenced by 
-        <a href="http://www.tigr.org/tdb/e2k1/pva1/">The
-        Institute for Genomic Research</a></b>
-    </c:set>
-    </c:when>
-<c:when test="${fn:containsIgnoreCase(organism, 'yoelii') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <b><i>P. yoelii</i> was sequenced by
-        <a href="http://www.tigr.org/tdb/edb2/pya1/htmls/">The Institute for Genomic Research</a></b>
-    </c:set>
-    </c:when>
-
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (id eq 'Pf3D7_02' || id eq 'Pf3D7_10' || id eq 'Pf3D7_11' || id eq 'Pf3D7_14') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <%-- P. falciparum 2, 10, 11, 14 = TIGR --%>
-        <b>Chromosome ${id} of <i>P. falciparum</i> 3D7 was
-        sequenced at 
-        <a href="http://www.tigr.org/tdb/edb2/pfa1/htmls/">The
-        Institute for Genomic Research</a>
-        and the
-        <a href="http://www.nmrc.navy.mil/">Naval
-        Medical Research Center</a></b>.
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:set>
-    </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && (id eq 'Pf3D7_01' || id eq 'Pf3D7_03' || id eq 'Pf3D7_04' || id eq 'Pf3D7_05' || id eq 'Pf3D7_06' || id eq 'Pf3D7_07' || id eq 'Pf3D7_08' || id eq 'Pf3D7_09' || id eq 'Pf3D7_13') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <%-- P. falciparum 1, 3-9, 13 = Sanger --%>
-        <b>Chromosome ${id} of <i>P. falciparum</i> 3D7 was
-        sequenced at the 
-        <a href="http://www.sanger.ac.uk/Projects/P_falciparum/">Sanger
-        Institute</a></b>.
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:set>
-    </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'Pf3D7_12' && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <%-- P. falciparum 12 = Stanford --%>
-        <b>Chromosome ${id} of <i>P. falciparum</i> 3D7 was
-        sequenced at the
-        <a href="http://sequence-www.stanford.edu/group/malaria/">Stanford
-        Genome Technology Center</a></b>.
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:set>
-    </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'M76611' && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <%-- P. falciparum mitochondrial genome --%>
-        <b>The <i>P. falciparum</i> mitochondrial genome was obtained from the Wellcome Trust Sanger Institute (WTSI).</b>
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the WTSI and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:set>
-    </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'PFC10_API_IRAB' && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <%-- P. falciparum plastid genome --%>
-        <b>The <i>P. falciparum</i> plastid genome was obtained from the Wellcome Trust Sanger Institute (WTSI).</b>
-<br>The new annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a week-long workshop co-organized by staff from the WTSI and the EuPathDB team. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
-    </c:set>
-    </c:when>
-    <c:when test="${fn:containsIgnoreCase(organism, 'falciparum') && id eq 'AJ276844' && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <%-- P. falciparum mitochondrion = University of London --%>
-        <b>The mitochondrial genome of <i>P. falciparum</i> was
-        sequenced at the
-        <a href="http://www.lshtm.ac.uk/pmbu/staff/dconway/dconway.html">London
-        School of Hygiene & Tropical Medicine</a></b>
-    </c:set>
-
-    </c:when>
-    <c:when test="${organism eq '<i>P.&nbsp;falciparum 3D7</i>' && (id eq 'X95275' || id eq 'X95276') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <%-- P. falciparum plastid --%>
-        <b>The <i>P. falciparum</i> plastid was
-        sequenced at the 
-        <a href="http://www.nimr.mrc.ac.uk/parasitol/wilson/">National
-        Institute for Medical Research</a></b>
-    </c:set>
-    </c:when>
-    <c:when test="${fn:contains(organism,'berghei') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <%-- e.g.PB000938.03.0 --%>
-        <b>The <i>P. berghei</i> genome was sequenced by the
-        <a href="http://www.sanger.ac.uk/Projects/P_berghei">Sanger
-        Institute</a></b>
-<br><b>The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated annotation) of P. chabaudi AS in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.</b>
-    </c:set>
-    </c:when>
-    <c:when test="${fn:contains(organism,'knowlesi') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <b>The <i>P.knowlesi </i> genome was sequenced by the
-        <a href="http://www.sanger.ac.uk/Projects/P_knowlesi">Sanger
-        Institute</a></b>
-    </c:set>
-    </c:when>
-    <c:when test="${fn:contains(organism,'reichenowi') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <b>The <i>P. reichenowi</i> genome was sequenced by the
-        <a href="http://www.sanger.ac.uk/Projects/P_reichenowi">Sanger
-        Institute</a></b>
-    </c:set>
-    </c:when>
-    <c:when test="${fn:contains(organism,'gallinaceum') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <b>The <i>P. gallinaceum</i> genome was sequenced by the
-        <a href="http://www.sanger.ac.uk/Projects/P_gallinaceum">Sanger
-        Institute</a></b>
-    </c:set>
-    </c:when>
-    <c:when test="${fn:contains(organism,'chabaudi') && projectId eq 'PlasmoDB'}">
-    <c:set var="reference">
-        <%-- e.g. PC000000.00.0 --%>
-Annotation of the P. chabaudi AS chromosomes was obtained from the Pathogen Sequencing Unit at the <a href="http://www.sanger.ac.uk/Projects/P_chabaudi">Wellcome Trust Sanger Institute</a>, 2009-03-24. It included sequence and gene models. 
-<br><b>The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated annotation) of P. chabaudi AS in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.</b>
-    </c:set>
-    </c:when>
-<c:when test="${fn:contains(organism,'Plasmodium falciparum IT') && projectId eq 'PlasmoDB'}">
-  <c:set var="reference">
-Sequence data for <i>Plasmodium falciparum</i> IT strain were produced by Wellcome Trust Sanger Institute, with funding from the EVIMalaR Consortium (a European Commission Funded Network of Excellence). This draft version of the genome was generated by iterative mapping reads of <i>P. falciparum</i> IT against the <i>P. falciparum</i> 3D7 genome. Subtelomeric genes have been transferred from <i>P. falciparum</i> 3D7 based on location. The Parasite Genomics Group plans on publishing the completed and annotated sequence in a peer-reviewed journal as soon as possible. 
 </c:set>
 </c:when>
 
