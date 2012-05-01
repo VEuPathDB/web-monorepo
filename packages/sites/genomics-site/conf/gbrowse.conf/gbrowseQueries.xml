@@ -2829,34 +2829,6 @@ AND    cpp.protocol_type = 'called_peaks'
   </sqlQuery>
 
 
-  <sqlQuery name="ChIP_peaks:Hp1"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
- SELECT /*+ use_nl(cpp ee) */
-       ee.na_feature_id   as feature_id,
-       'ChIP_peaks'         as type,
-       'Hp1'                as source,
-       ee.feature_source_id        as name,
-       ee.score      as score,
-       ee.na_sequence_id   as parent_id,
-       ee.start_min         as startm,
-       ee.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' ||'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,rad.analysis a,
-       ApidbTuning.ExpressionElement ee,
-       ApidbTuning.ChIPProtocolParams cpp
-WHERE  ee.analysis_id =   cpp.analysis_id
-AND    cpp.protocol_id =  p.protocol_id
-AND    p.protocol_id  = a.protocol_id
-AND    lower(p.name) like  '%voss%'
-AND    ee.na_sequence_id = $srcfeature_id
-AND    ee.start_min <= $rend
-AND    ee.end_max >= $base_start
-AND    cpp.protocol_type = 'called_peaks'
-]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="GeneticMarkers:Sibley"  includeProjects="ToxoDB">
     <testParamValues project="ToxoDB">
        <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
