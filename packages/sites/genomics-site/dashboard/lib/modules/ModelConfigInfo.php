@@ -31,7 +31,6 @@ class ModelConfigInfo extends JmxModule {
         email => a@b.com
       ]
     
-    Allows for only one level deep.
   **/
   function re_section_data() {
     $data_tree = array();
@@ -42,7 +41,7 @@ class ModelConfigInfo extends JmxModule {
       if (count($node) > 1) {
         $section = $node[0];
         (array_key_exists($section, $data_tree)) || $data_tree[$section] = array();
-        array_push($data_tree[$section], array($node[1] => $v));
+        $data_tree[$section][$node[1]] = $v;
       } else {
         array_push($data_tree, array($node[0] => $v));
       }
