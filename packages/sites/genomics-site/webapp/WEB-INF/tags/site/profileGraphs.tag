@@ -135,6 +135,13 @@
         	<c:set var="noData" value="false"/>
     	</c:if>
     </c:if>
+ 
+    <c:set var="dataAttribution" value="${row['attribution'].value}"/>
+
+<%-- This variable is for backward compatibility for attributions, and will become null as all components fal under workflow --%> 
+    <c:if test="${row['project_id'].value eq 'PlasmoDB'}">
+       <c:set var="dataAttribution"  value=""/>
+     </c:if>
 
 <imp:toggle
     name="${toggleName}"				
@@ -142,7 +149,7 @@
     noData="${noData}"					
     displayName="${row['display_name'].value}"		
     content="${profileContent}"				
-    attribution="${row['attribution'].value}"		
+    attribution="${dataAttribution}"		
     imageId="${imgId}"					
     imageSource="${imgSrc}" />				
 
