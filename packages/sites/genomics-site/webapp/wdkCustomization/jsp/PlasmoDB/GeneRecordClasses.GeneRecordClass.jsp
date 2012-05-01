@@ -31,6 +31,7 @@
 <c:set var="organismFull" value="${attrs['organism_full'].value}"/>
 <c:set var="binomial" value="${attrs['genus_species'].value}"/>
 <c:set var="so_term_name" value="${attrs['so_term_name'].value}"/>
+<c:set var="extdbname" value="${attrs['external_db_name'].value}" />
 <c:set var="prd" value="${attrs['product'].value}"/>
 <c:set var="overview" value="${attrs['overview']}"/>
 <c:set var="length" value="${attrs['transcript_length']}"/>
@@ -807,19 +808,21 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <hr>
 
-<c:set var="attributions" value="${attrs['dataAttribution']}"/>
+<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
 <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
-<c:if test="${attributions.value ne ''}">
-    <c:set var="reference" value="${attributions.value}"/>
-</c:if>
+<c:forEach var="row" items="${referenceTable}">
+  <c:if test="${extdbname eq row['name'].value}">
+    <c:set var="reference" value="${row['description'].value}"/>
+  </c:if>
+</c:forEach>
 
-<imp:panel 
+
+<site:panel 
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
 
 <br>
-
 <%------------------------------------------------------------------%>
 
 <%-- jsp:include page="/include/footer.html" --%>
