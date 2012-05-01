@@ -38,7 +38,7 @@
                 <input type="hidden" name="to2" value="apidb.org"/>
 		<input type="hidden" name="cc1" value="help@"/>
                 <input type="hidden" name="cc2" value="${site}.org"/>
-               
+
 		<!-- this tells the mail processor to add the questions and answers to the message -->
  		<input type="hidden" name="betatest" value="true"/>
 
@@ -77,7 +77,7 @@
                         <input type="hidden" name="website" value="${site}">
                         <input type="hidden" name="version" value="${version}">
                         <input type="hidden" name="browser" value="${header['User-Agent']}">
-                        <input type="hidden" name="referer" value="${header['referer']}"
+                        <input type="hidden" name="referer" value="${header['referer']}">
                        <%-- websitesupportform@apidb.org is a group in ApiDB Google Apps and an account in Redmine (an account is required for redmine to receive emails) --%>
                         <input type="hidden" name="reporterEmail" value="websitesupportform@apidb.org"/>     </td></tr>
 
