@@ -80,7 +80,7 @@
 
         <td class="centered">
         	<c:set var="noProfileDataTable">false</c:set>
-        	<c:set var="toggleName" value="${name}_${fn:replace(row['profile_name'].value, ' ', '')}"/>
+        	<c:set var="toggleName" value="${row['module'].value}"/>
 
         	<c:choose>
          	<c:when test="${not empty row['dataTable'].value}">
