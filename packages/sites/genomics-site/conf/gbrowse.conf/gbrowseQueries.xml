@@ -3124,7 +3124,7 @@ WHERE
   </sqlQuery>
 
  
-  <sqlQuery name="ChIP:ChipSeq" includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:ChIPchip" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT $srcfeature_id    as feature_id,
@@ -5698,7 +5698,7 @@ AND    lower(a.name) like '%tbp%' AND lower(a.name) not like '%replicate%'
   </sqlQuery>
 
 
-  <sqlQuery name="ChIP:ChipSeq:bulksubfeatures"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP:ChIPchip:bulksubfeatures"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
 SELECT  ee.na_feature_id   as feature_id,
@@ -5720,7 +5720,7 @@ AND    a.analysis_id = ee.analysis_id
 AND    ee.na_sequence_id = $srcfeature_id
 AND    ee.start_min <= $rend
 AND    ee.end_max >= $base_start
-AND    lower(p.name) like '%voss%'
+AND    cpp.experiment_name = $$exp$$
 AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
