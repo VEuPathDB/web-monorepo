@@ -2796,28 +2796,30 @@ AND    cpp.protocol_type = 'called_peaks'
     </sql>
   </sqlQuery>
 
-
-
-  <sqlQuery name="ChIP_peaks:H3K9me3_genotype_peaks"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP_peaks:peaks"  includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
  SELECT ee.na_feature_id   as feature_id,
        'ChIP_peaks'         as type,
-       'H3K9me3_genotype_peaks'               as source,
+       '$source'  as source,
        ee.feature_source_id        as name,
        ee.score      as score,
        ee.na_sequence_id   as parent_id,
        ee.start_min         as startm,
        ee.end_max           as end,
-       'Treatment=' || cpp.treatment ||  '$dlm' || 'Analysis=' || a.name ||  '$dlm' ||'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
+      'Treatment=' || cpp.treatment ||  '$dlm' || 
+      'Analysis=' || a.name ||  '$dlm' ||
+      'Genotype=' || cpp.genotype ||'$dlm' || 
+      'Antibody=' || cpp.antibody || '$dlm' || 
+      'Rep=' || cpp.replicate as atts 
 FROM   rad.protocol p,rad.analysis a,
        ApidbTuning.ExpressionElement ee,
        ApidbTuning.ChIPProtocolParams cpp
 WHERE  ee.analysis_id =   cpp.analysis_id
 AND    cpp.protocol_id =  p.protocol_id
 AND    cpp.analysis_id = a.analysis_id
-AND    lower(p.name) like  '%scherf%'
-AND    lower(cpp.antibody) = 'h3k9me3'
+AND    p.name = $$protocol$$
+AND    cpp.experiment_name = $$exp$$
 AND    ee.na_sequence_id = $srcfeature_id
 AND    ee.start_min <= $rend
 AND    ee.end_max >= $base_start
@@ -2826,33 +2828,6 @@ AND    cpp.protocol_type = 'called_peaks'
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="ChIP_peaks:H3K9ac_genotype_peaks"  includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
- SELECT ee.na_feature_id   as feature_id,
-       'ChIP_peaks'         as type,
-       'H3K9ac_genotype_peaks'             as source,
-       ee.feature_source_id        as name,
-       ee.score      as score,
-       ee.na_sequence_id   as parent_id,
-       ee.start_min         as startm,
-       ee.end_max           as end,
-      'Treatment=' || cpp.treatment ||  '$dlm' || 'Analysis=' || a.name ||  '$dlm' ||'Genotype=' || cpp.genotype ||'$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts 
-FROM   rad.protocol p,rad.analysis a,
-       ApidbTuning.ExpressionElement ee,
-       ApidbTuning.ChIPProtocolParams cpp
-WHERE  ee.analysis_id =   cpp.analysis_id
-AND    cpp.protocol_id =  p.protocol_id
-AND    cpp.analysis_id = a.analysis_id
-AND    lower(p.name) like  '%scherf%'
-AND    lower(cpp.antibody) = 'h3k9ac'
-AND    ee.na_sequence_id = $srcfeature_id
-AND    ee.start_min <= $rend
-AND    ee.end_max >= $base_start
-AND    cpp.protocol_type = 'called_peaks'
-]]>
-    </sql>
-  </sqlQuery>
 
   <sqlQuery name="ChIP_peaks:Hp1"  includeProjects="PlasmoDB">
      <sql>
