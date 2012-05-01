@@ -26,20 +26,20 @@ $properties = $properties_config->get_data_map();
         copying directly into the model-config.xml as the attribute names shown here may not match the RNG spec.</i>
 
 <pre>
-
 <?
 ksort($model_data_tree);
 foreach ($model_data_tree as $section => $data) {
   print "<b>" . $section . "</b><blockquote>" ;
-  foreach ($data as $entry) {
-    foreach ($entry as $k => $v) {
-      print $k . " = " . htmlentities($v) . "\n";
-    }
+  ksort($data);
+  foreach ($data as $k => $v) {
+    print $k . " = " . htmlentities($v) . "\n";
   }
   print "</blockquote>";
 }
 ?>
 </pre>
+
+
 </div>
 
 
@@ -54,6 +54,7 @@ The CommentConfig class is instantiated on the first page access requiring it (e
 </p>
 <pre>
 <?
+ksort($comment);
 foreach ($comment as $k => $v) {
   print $k . " = " . $v . "\n";
 }
