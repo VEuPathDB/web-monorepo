@@ -5502,6 +5502,7 @@ SELECT  ee.na_feature_id   as feature_id,
        'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
        'Analysis='     || a.name|| '$dlm' ||
        'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Rep='          || cpp.replicate || '$dlm' ||
        'Genotype='     || cpp.genotype as atts
 FROM   rad.analysis a,rad.protocol p,
        ApidbTuning.ExpressionElement ee,
