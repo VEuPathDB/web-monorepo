@@ -180,8 +180,12 @@
 
 <div class="h2center" style="font-size:150%">
 ${id} 
+<br><span style="font-size:70%">${prd} </span><br/> 
 
-<br><span style="font-size:70%">${prd} </span><br/>
+<c:if test="${attrs['old_ids'].value != null}">
+  <br><span style="font-size:70%">${attrs['OldIds'].value}</span><br>
+</c:if>
+
 
 <c:set var="count" value="0"/>
 <c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
