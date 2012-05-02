@@ -97,42 +97,42 @@ sub SnpBgcolorForGenotyping {
       my ($source) = $f->get_tag_values('IsoDbName');
       my ($freq) = $f->get_tag_values('MinorAlleleFreq');
 
-      if ($source eq 'Broad_75K_Genotyping_RSRC') {
+      if ($source eq 'pfal3D7_SNP_Broad75KGenotyping_RSRC') {
+          if ($freq <= 0.1) {
+            return '#FF0000';
+          } elsif ($freq <= 0.2) {
+            return '#E00000';
+          } elsif ($freq <= 0.3) {
+            return '#C00000';
+          } elsif ($freq <= 0.4) {
+            return '#A00000';
+          } else {
+            return '#800000';
+          }
+      } elsif ($source eq 'pfal3D7_SNP_Broad3KGenotyping_RSRC') {
+          if ($freq <= 0.1) {
+            return '#0000FF';
+          } elsif ($freq <= 0.2) {
+            return '#0000E0';
+          } elsif ($freq <= 0.3) {
+            return '#0000C0';
+          } elsif ($freq <= 0.4) {
+            return '#0000A0';
+          } else {
+            return '#000080';
+          }
+      } else {  # for 'pfal3D7_SNP_BroadIsolateBarcode_RSRC'
   if ($freq <= 0.1) {
-    return '#FF0000';
-  } elsif ($freq <= 0.2) {
-    return '#E00000';
-  } elsif ($freq <= 0.3) {
-    return '#C00000';
-  } elsif ($freq <= 0.4) {
-    return '#A00000';
-  } else {
-    return '#800000';
-  }
-      } elsif ($source eq 'Broad_3K_Genotyping_RSRC') {
-  if ($freq <= 0.1) {
-    return '#0000FF';
-  } elsif ($freq <= 0.2) {
-    return '#0000E0';
-  } elsif ($freq <= 0.3) {
-    return '#0000C0';
-  } elsif ($freq <= 0.4) {
-    return '#0000A0';
-  } else {
-    return '#000080';
-  }
-      } else {  # for 'Broad_Isolate_Barcode_RSRC'
-  if ($freq <= 0.1) {
-    return '#00FF00';
-  } elsif ($freq <= 0.2) {
-    return '#00E000';
-  } elsif ($freq <= 0.3) {
-    return '#00C000';
-  } elsif ($freq <= 0.4) {
-    return '#00A000';
-  } else {
-    return '#008000';
-  }
+            return '#00FF00';
+          } elsif ($freq <= 0.2) {
+            return '#00E000';
+          } elsif ($freq <= 0.3) {
+            return '#00C000';
+          } elsif ($freq <= 0.4) {
+            return '#00A000';
+          } else {
+            return '#008000';
+          }
       }
 }
 
