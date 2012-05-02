@@ -1357,7 +1357,9 @@ SELECT
        msf.na_feature_id feature_id,
        'domain' type,
        '$source' source,
-       x.parent_id, startm, end,
+       x.parent_id, 
+       startm, 
+       end,
        msf.source_id name, x.strand,
        'Description=' || msf.description || '$dlm' ||
        'Count=' || match_count || '$dlm' ||
@@ -1370,7 +1372,7 @@ SELECT
 FROM  
 (SELECT count(*) as match_count, 
        min(msf.na_feature_id) as feature_id,
-       enas.na_sequence_id parent_id,
+       nal.na_sequence_id parent_id,
        nal.start_min startm,
        nal.end_max end,
        decode (nal.is_reversed, 0, '+1', 1, '-1', '.') strand,
@@ -1381,13 +1383,11 @@ FROM
 FROM  dots.massspecfeature msf,
       apidb.massspecsummary mss,
       ApidbTuning.FeatureLocation nal,
-      dots.nasequence enas,
       sres.externaldatabaserelease edr,
       sres.externaldatabase ed,
       ApidbTuning.MassSpecTerms mst
 WHERE msf.na_feature_id = nal.na_feature_id
  AND  nal.na_sequence_id = $srcfeature_id
- AND  enas.na_sequence_id = $srcfeature_id
  AND  nal.start_min >= $base_start
  AND  nal.end_max <= $rend
  AND  msf.external_database_release_id = edr.external_database_release_id
@@ -1395,7 +1395,7 @@ WHERE msf.na_feature_id = nal.na_feature_id
  AND  ed.name $$edName$$
  AND  (ed.name = mst.internal_id or mst.internal_id = ed.name||'|'||mss.sample_file)
  AND  edr.external_database_id = ed.external_database_id
-GROUP BY ed.name,mst.experiment,mss.sample_file,mst.sample,mst.html_color,enas.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x,
+GROUP BY ed.name,mst.experiment,mss.sample_file,mst.sample,mst.html_color,nal.na_sequence_id,nal.is_reversed,nal.start_min,nal.end_max) x,
       dots.massspecfeature msf,
       dots.translatedaafeature taaf,
       ApidbTuning.FeatureSo fs,
