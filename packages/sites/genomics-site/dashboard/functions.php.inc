@@ -115,8 +115,6 @@ function unescape_property($value) {
     $times = array();
     $gp = 0; // have found greatest non-zero time period
 
-    //$seconds =  (1 * 60 * 60 ) + (60);
-
     $days    = floor($seconds / 60 / 60 / 24);
     ($days != 0) && array_push($times, $days . 'd') && $gp = 1;
 
@@ -129,9 +127,8 @@ function unescape_property($value) {
     $seconds = ($seconds) % 60;
     ($seconds != 0 || $gp == 1) && array_push($times, $seconds . 's') && $gp = 1;
     
-    $string  = isset($times[0]) ?  "$times[0]" : '0';
+    $string  = isset($times[0]) ?  "$times[0]" : '0s';
     $string .= isset($times[1]) ? " $times[1]" : '';
-    //$string .= isset($times[2]) ? " $times[2]" : '';
 
     return $string;
   

@@ -1,5 +1,6 @@
 <?
 require_once dirname(__FILE__) . "/JmxModule.php";
+require_once dirname(__FILE__) . "/../../functions.php.inc";
 
 class WebappInfo extends JmxModule {
 
@@ -36,15 +37,19 @@ class WebappInfo extends JmxModule {
       array indexes 
   **/
   function get_result_value($json_response) {
-    return array_merge($json_response[0]{'value'}, $json_response[1]{'value'});
+    if (array_key_exists('value', $json_response[0])) {
+      return array_merge($json_response[0]{'value'}, $json_response[1]{'value'});
+    }
+    return null;
   }
 
   public function uptime_as_text() {
     if ($this->data_map{'startTime'} == 0) { return null; }
-    $seconds_elapsed = time() - ($this->data_map{'startTime'} / 1000);
+    $seconds_elapsed = max(0, (time() - ($this->data_map{'startTime'} / 1000)) );
     $string = seconds_as_periods($seconds_elapsed);
     $string .= ' (since ' . date_on_elapsed_seconds($seconds_elapsed) . ')';
     return $string;
+
   }
 
   public function get_context() {

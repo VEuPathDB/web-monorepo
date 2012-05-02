@@ -59,6 +59,35 @@ function resetWdkCache() {
     });   
 }
 
+function reloadWebapp() {
+  content = "Are you sure?<br>"
+          + "</span>";
+  $( "<div></div>" )
+    .html(content)
+    .dialog({
+      title: "Reload Tomcat Webapp",
+      resizable: false,
+      modal: true,
+      buttons: {
+        "Cancel": function() {
+          $(this).dialog( "close" );
+        },
+        "Reload Webapp": function() {
+          $(this).dialog( "close" );
+          blockUI();
+          $("#webapp_uptime").load("view/reloadWebapp.php", { 'reload': '1' }, 
+            function(response, status, xhr) {
+              if (status == "error") {
+                var msg = "<span class='fatal'>Ajax Error: " + xhr.status + " " + xhr.statusText + "</span>";
+                $("#webapp_uptime").html(msg);
+              }
+              unblockUI();
+          })
+        }
+      }
+    });   
+}
+
 function blockUI() {
   $("<div id='blocking'></div>")
     .dialog({

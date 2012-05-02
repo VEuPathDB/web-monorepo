@@ -23,7 +23,16 @@ $catalina_data = $catalina->get_data_map();
 <tr><td><b>Webapp:</b> </td><td class="p"><?= $webapp->get_context(); ?></td></tr>
 
 <tr><td><b>Webapp uptime:</b></td><td class="p">
-<? $t=$webapp->uptime_as_text();  print (isset($t)) ? $t : "<span class='warn'>error</span>" ; ?></td></tr>
+<span id="webapp_uptime">
+  <? $t=$webapp->uptime_as_text();  print (isset($t)) ? $t : "<span class='warn'>error</span>" ; ?>
+</span>
+</td></tr>
+<tr><td></td><td>
+  <button type="submit" id="reload_webapp" value="reload_webapp" onclick="reloadWebapp()">
+    Reload Webapp
+  </button>
+</td></tr>
+
 <tr><td>&nbsp;</td></tr>
 <tr><td><b>Servlet container:</b> </td><td class="p"><?= $catalina->get('serverInfo'); ?></td></tr>
 <tr><td><b>Servlet info:</b> </td><td class="p">${app.servletInfo}</td></tr>

@@ -39,7 +39,7 @@ abstract class JmxModule {
     Return value for given key
   **/
   function get($key) {
-    if (array_key_exists($key, $this->data_map)) {
+    if (is_array($this->data_map) && array_key_exists($key, $this->data_map)) {
       return $this->data_map{$key};
     }
     return null;
