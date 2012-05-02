@@ -2114,7 +2114,8 @@ FROM
 WHERE  
        extq.external_database_release_id = edr.external_database_release_id and
        ed.external_database_id = edr.external_database_id and
-       ed.name in ('C. parvum isolate data','PlasmodiumGenbankIsolates_RSRC','Toxoplasma isolates From David Sibley','Toxoplasma isolates From Genbank') and
+       (   ed.name in ('C. parvum isolate data', 'Toxoplasma isolates From David Sibley','Toxoplasma isolates From Genbank') 
+        or ed.name like '%_isolates_genbank_RSRC') and
        sim.query_id = extq.na_sequence_id and 
        sim.subject_id = extt.na_sequence_id and 
        sim.pvalue_mant is not null and
