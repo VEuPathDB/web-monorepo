@@ -174,7 +174,7 @@
       <c:when test="${name != null && name !='' && ds_ref_table != null && ds_ref_table != ''}">
         <td align="right">
           <font size="-2" face="Arial,Helvetica">
-          [<a href="<c:url value='/getDataSource.do?recordClass=${wdkRecord.recordClass.fullName}&display=detail&target=${name}' />">Data Sources</a>]
+          [<a href="<c:url value='/getDataSource.do?reference=${name}&display=detail' />">Data Sources</a>]
           </font>
         </td>
       </c:when>
