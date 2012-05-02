@@ -60,7 +60,7 @@
       <imp:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
     </c:when>
     <c:otherwise>
-      <h2>Data Sources:</h2>
+      <h2>Data Sources</h2>
       <ul>
       <c:forEach items="${ds_ref_questions}" var="dsRecord">
         <li class="data-source">
