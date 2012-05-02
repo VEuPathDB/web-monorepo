@@ -36,7 +36,14 @@
 </style>
 
 
-<h2>EuPathDB Documents and Publications</h2>
+<table width="90%">
+
+<tr><td><h2>EuPathDB Documents and Publications</h2></td>
+    <td align="right"><a href="http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en">Check publications that cite us in Google Scholar  >>></a></td>
+</tr>
+</table>
+
+
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
