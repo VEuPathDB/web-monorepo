@@ -350,7 +350,7 @@ function tt_OpReHref()
 }
 function tt_Show(t_e, t_id, t_sup, t_clk, t_delay, t_fix, t_left, t_offx, t_offy, t_static, t_sticky, t_temp)
 {
-	#alert("this should show right before tt disappears");
+	//alert("this should show right before tt disappears");
 	if(tt_obj) tt_Hide();
 	tt_mf = document.onmousemove || null;
 	if(window.dd && (window.DRAG && tt_mf == DRAG || window.RESIZE && tt_mf == RESIZE)) return;
