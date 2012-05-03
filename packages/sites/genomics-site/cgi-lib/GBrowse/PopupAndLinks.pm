@@ -472,7 +472,7 @@ sub spliceSiteCuratedTitle {
   push(@data, ['Location:' => $loc]);
   push(@data, ['Gene:' => $gene_id]);
   push(@data, ['Sequence count:' => $sasNum]);
-  push(@data, ['UTR length:' => $utr_len]);
+  # push(@data, ['UTR length:' => $utr_len]);
   return hover($f,\@data);
 }
 
