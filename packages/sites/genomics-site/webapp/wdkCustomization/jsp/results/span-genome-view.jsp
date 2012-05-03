@@ -8,9 +8,7 @@
 <c:set var="recordClass" value="${wdkStep.question.recordClass}" />
 
 <script type="text/javascript">
-<!--
-initializeGenomeView();
--->
+$(initializeGenomeView);
 </script>
 
 <!--
