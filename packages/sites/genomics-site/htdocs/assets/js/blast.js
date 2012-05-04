@@ -28,7 +28,7 @@ function setUpBlastPage() {
 
 function changeQuestion() {
 	// stores mapping from blast databases to questions	
-	var blastDb = getSelectedDatabaseName();
+	var blastDb = getSelectedDatabaseName().toLowerCase();
 	var questionName;
 	if (blastDb.indexOf("est") >= 0) {
 		questionName = "EstQuestions.EstsBySimilarity";
