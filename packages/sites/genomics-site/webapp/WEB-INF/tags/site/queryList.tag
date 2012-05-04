@@ -32,7 +32,7 @@
 function writeData(page, div, quesName, insertStep){
     if(page=="") {document.getElementById(div).innerHTML = ""; return;}
 	var t = $("#"+div);
-
+	$.blockUI();
 	$.ajax({
 		url: page,
 		dataType: 'html',
@@ -41,6 +41,7 @@ function writeData(page, div, quesName, insertStep){
 				formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, insertStep, false, false, false);
 			}
       t.html($.trim(data));
+      $.unblockUI();
 			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
 			initParamHandlers(true);
 			var question = new WdkQuestion();
