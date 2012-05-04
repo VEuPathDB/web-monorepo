@@ -35,7 +35,7 @@
 </xsl:template>
 
 <xsl:template match="event">
-  <xsl:variable name="projCount" select="count(presence/projects/project)"/>
+  <xsl:variable name="projCount" select="count(presence/projects/project[text()])"/>
   <xsl:if test="$projCount &gt; 0">
     <tr valign="top" align="left">
         <td valign="top" bgcolor="#efefef">
