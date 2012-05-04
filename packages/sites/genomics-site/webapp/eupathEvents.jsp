@@ -19,6 +19,11 @@ http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=
 --%>
 
 
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var='projectName' value='${applicationScope.wdkModel.name}'/>
+
+
+
 <c:set var='xsltUrl'>
 http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
 </c:set>
@@ -45,7 +50,7 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
 </head>
 <body>
 
-<table width='90%' align='center' cellpadding='2' cellspacing='0' border='0'>
+<table width='90%' align='center'>
 <tr><td ALIGN="left" width="40%">  
 
   <table align="left" border="0">
@@ -71,7 +76,9 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
   </table>
 
 
-<td  align="center" valign="middle"><b><font face="Arial,Helvetica" color="#003366" size="+3">Events</font></b></td>
+<td  align="center" valign="middle"><b><font face="Arial,Helvetica" color="#003366" size="+3">Events 
+	<a style="font-size:50%" target=":blank" href="/Meetings-sorted.pdf">(pdf)</a>
+</font></b></td>
 <td align="right" width="10%">&nbsp;</td></tr>
 
 
