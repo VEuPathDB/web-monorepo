@@ -62,10 +62,20 @@
           </c:if>
         </c:forEach>
 
-        <c:if test="${(hasRma eq 'true' || hasCoverage eq 'true') && row['project_id'].value eq 'PlasmoDB'}">
-          <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
-          <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="internal_want_logged" name="want_logged" checked />
+
+        <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB'}">
+          <c:if test="${hasRma eq 'true'}">
+            <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
+            <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="internal_want_logged" name="want_logged" checked />
+          </c:if>
+
+          <c:if test="${hasCoverage eq 'true'}">
+            <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
+            <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="internal_want_logged" name="want_logged" />
+          </c:if>
         </c:if>
+
+
       </form>
 
     </c:set>
@@ -139,7 +149,7 @@
     <c:set var="dataAttribution" value="${row['attribution'].value}"/>
 
 <%-- This variable is for backward compatibility for attributions, and will become null as all components fal under workflow --%> 
-    <c:if test="${row['project_id'].value eq 'PlasmoDB'}">
+    <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB'}">
        <c:set var="dataAttribution"  value=""/>
      </c:if>
 
