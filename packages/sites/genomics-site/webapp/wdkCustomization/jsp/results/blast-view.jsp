@@ -70,7 +70,7 @@
   </c:when>
   <c:otherwise>
 
-
+<!-- TITLE and LINKS NOT NEEDED -- ALREADY PROVIDED BY STEP DIV (here we are inside a rsult view tab)
 <table width="100%"><tr>
 <td class="h4left" style="vertical-align:middle;padding-bottom:7px;">
     <c:if test="${strategy != null}">
@@ -101,7 +101,7 @@
   </div>
 </td>
 </tr></table>
-
+-->
 
 
 <!-- content of blast result -->
@@ -140,7 +140,6 @@
   <c:set var="algnSect" value="${algnSect}${algn}"/>
 </c:forEach>
 <PRE>${algnSect}${footerStr}</PRE>
-
 
 </td></tr>
 </table>
