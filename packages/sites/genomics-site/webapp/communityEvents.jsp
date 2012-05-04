@@ -46,7 +46,12 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
   }
 </style>
 
-<h2 align='center'>${projectName} Community Events</h2>
+<table width="90%">
+<tr><td><h2 align='center'>${projectName} Community Events</h2></td>
+    <td align="right"><a target=":blank" href="http://eupathdb.org/eupathdb/eupathEvents.jsp">Eukaryotic Pathogens Meetings with EuPathDB presence  >>></a></td>
+</tr>
+<table>
+
 
 <c:catch var='e'>
 
