@@ -88,4 +88,4 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
 </body>
 </html>
 
-
+<imp:footer />
