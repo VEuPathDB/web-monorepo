@@ -103,7 +103,9 @@
 	<c:url value="${displayName}"/>
 </c:set>
 
+<c:set var="ds_ref_attribute" value="${requestScope.ds_ref_attributes[name]}" />
 <c:set var="ds_ref_table" value="${requestScope.ds_ref_tables[name]}" />
+<c:set var="hasDBDataSource" value="${(ds_ref_table != null && ds_ref_table != '') || (ds_ref_attribute != null && ds_ref_attribute != '')}" />
 
 <table width="100%" class="paneltoggle"
        cellpadding="3"        
@@ -171,7 +173,7 @@
            </font>
         </td>	
 	</c:when>
-      <c:when test="${name != null && name !='' && ds_ref_table != null && ds_ref_table != ''}">
+      <c:when test="${name != null && name !='' && hasDBDataSource}">
         <td align="right">
           <font size="-2" face="Arial,Helvetica">
           [<a href="<c:url value='/getDataSource.do?reference=${name}&display=detail' />">Data Sources</a>]
