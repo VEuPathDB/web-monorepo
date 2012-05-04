@@ -245,7 +245,7 @@ ${id}
 <%-- OVERVIEW ------------%>
 
 <c:set var="attr" value="${attrs['overview']}" />
-<imp:panel
+<imp:panel attribute="${attr.name}"
     displayName="${attr.displayName} ${has_namefun_comment}"
     content="${attr.value}${append}" />
 <br>
