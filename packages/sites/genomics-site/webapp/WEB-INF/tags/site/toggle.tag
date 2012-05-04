@@ -105,7 +105,8 @@
 
 <c:set var="ds_ref_attribute" value="${requestScope.ds_ref_attributes[name]}" />
 <c:set var="ds_ref_table" value="${requestScope.ds_ref_tables[name]}" />
-<c:set var="hasDBDataSource" value="${(ds_ref_table != null && ds_ref_table != '') || (ds_ref_attribute != null && ds_ref_attribute != '')}" />
+<c:set var="ds_ref_profile_graph" value="${requestScope.ds_ref_profile_graphs[name]}" />
+<c:set var="hasDBDataSource" value="${(ds_ref_table != null && ds_ref_table != '') || (ds_ref_attribute != null && ds_ref_attribute != '') || (ds_ref_profile_graph != null && ds_ref_profile_graph != '')}" />
 
 <table width="100%" class="paneltoggle"
        cellpadding="3"        

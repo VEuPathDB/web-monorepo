@@ -27,6 +27,7 @@
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="ds_ref_attribute" value="${requestScope.ds_ref_attributes[attribute]}" />
 <c:set var="ds_ref_table" value="${requestScope.ds_ref_tables[attribute]}" />
+<c:set var="ds_ref_profile_graph" value="${requestScope.ds_ref_profile_graphs[attribute]}" />
 
 
 <c:forEach items="${attribution}" var="attr" >
@@ -51,14 +52,22 @@
      </font>
     </td>
   </c:when>
-      <c:when test="${attribute != null && attribute !='' && ds_ref_table != null && ds_ref_table != ''}">
+  <c:when test="${attribute != null && attribute !='' && ds_ref_table != null && ds_ref_table != ''}">
         <td align="right">
           <font size="-2" face="Arial,Helvetica">
           [<a href="<c:url value='/getDataSource.do?reference=${attribute}&display=detail' />">Data Sources</a>]
           </font>
         </td>
-      </c:when>
+  </c:when>
   <c:when test="${attribute != null && attribute !='' && ds_ref_attribute != null && ds_ref_attribute != ''}">
+    <td align="right">
+     <font size="-2" face="Arial,Helvetica">
+     [<a href="<c:url value='/getDataSource.do?reference=${attribute}&display=detail' />">
+     Data Sources</a>]
+     </font>
+    </td>
+  </c:when>
+  <c:when test="${attribute != null && attribute !='' && ds_ref_profile_graph != null && ds_ref_profile_graph != ''}">
     <td align="right">
      <font size="-2" face="Arial,Helvetica">
      [<a href="<c:url value='/getDataSource.do?reference=${attribute}&display=detail' />">
