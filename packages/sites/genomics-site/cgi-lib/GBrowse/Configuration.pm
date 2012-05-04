@@ -39,6 +39,16 @@ sub init {
           }
 }
 
+sub userDB {
+  my $projectId = $ENV{PROJECT_ID};
+  my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
+  my $resolvedDsn = ApiCommonWebsite::Model::DbUtils->resolveOracleDSN($c->userDb->dbiDsn);
+  return { 
+     -dsn     => $resolvedDsn,
+     -user    => $c->userDb->login,
+     -pass    => $c->userDb->password,
+   }
+}
 
 # For use with link_target.
 # Returns onmouseover popup for mass spec peptides
