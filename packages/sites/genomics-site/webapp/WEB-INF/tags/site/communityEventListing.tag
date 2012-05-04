@@ -32,6 +32,7 @@ http://${pageContext.request.serverName}${feedPath}
 </c:if>
 
 </ul>
+
 <br>
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
@@ -39,7 +40,9 @@ http://${pageContext.request.serverName}${feedPath}
 </c:when>
 <c:otherwise>
 	<c:if test="${fn:length(allFeeds.entries) > 0}">
-		<a class="small" href='<c:url value="/communityEvents.jsp"/>'>Full Events Page >>></a>
+		<a class="small" href='<c:url value="/communityEvents.jsp"/>'>${project} Events Page >>></a>
 	</c:if>
 </c:otherwise>
 </c:choose>
+<br>
+	<a class="small" href='http://maps.google.com/maps/ms?vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&msid=208351045565585105018.000490de33b177c1f9068'>EuPathDB Events in the World >>></a>
