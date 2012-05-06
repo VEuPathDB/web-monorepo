@@ -822,7 +822,7 @@ sub synSpanOffset {
 
 sub warnNote {
   my ($f, $project) = @_;
-  my $txt = "<font color='red'><b>NOTE</b>: If you load tracks and they appear empty</font>, you can try two things to resolve this issue:<br>1. Make sure you are viewing the correct species/strain to which the data was mapped.<br>2. Reset gbrowse by clicking on the red <a href='/cgi-bin/gbrowse/$project/?reset=1'><b><u><font color='red'>Reset</font></u></b></a> link, then try again.<br/><br/>";
+  my $txt = "<table width='100%'><tr><td width='50%'><font color='red'><b>NOTE</b>: If you load tracks and they appear empty</font>, you can try two things to resolve this issue:<br>1. Make sure you are viewing the correct species/strain to which the data was mapped.<br>2. Reset gbrowse by clicking on the red <a href='/cgi-bin/gbrowse/$project/?reset=1'><b><u><font color='red'>Reset</font></u></b></a> link, then try again.<br/><br/></td><td align='center'><a href='http://www.youtube.com/watch?v=jxA6VMN97Y8'>EuPathDB GBrowse Tutorial</a></td></tr></table>";
 
   return $txt;
 }
