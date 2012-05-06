@@ -21,7 +21,7 @@
                  divisionName="allSites"
                  division="genomeDataType"/>
 
-<c:set var="orgCounter" value="${0}"/>
+
 
 <!--    <c:set var="ncbiTaxPage1" value="http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="/>  -->
 <c:set var="ncbiTaxPage1" value="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="/>
@@ -35,6 +35,28 @@
 	<c:set var="siteTitle" value="EuPathDB"/>
 </c:otherwise>
 </c:choose>
+
+
+<style type="text/css" media="screen">
+	.FixedHeader_Cloned th { background-color: lightgrey; }
+	#data-summary_info { font-weight:bold; }
+	#data-summary_filter { font-weight:bold; }
+</style>
+
+<script type="text/javascript">
+			
+$(document).ready( function() {
+	var oTable = $('#data-summary').dataTable(
+		{
+	//	"bJQueryUI": true,
+		"bPaginate": false,
+        //	"aaSorting": [[ 0, 'asc']] 
+		}  
+	);
+	new FixedHeader( oTable );
+} );
+</script>
+
 
 
 <%------------------------------------%>
@@ -66,48 +88,77 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 </td>
 </tr>
 </table>
+<br>
+<%------------------------------- TABLE ----------------------------------------%>
+<!--  <div style="overflow-x:auto;overflow-y:hidden">  -->
+<table class="mytableStyle" id="data-summary" width="100%">
+<thead>
+<!--
+<tr>
+<th>Website</th>
+<th>Genus</th>
+<th>Species</th>
+<th>Strain</th>
+<th>Taxon ID</th>
+<th>Data<br>Source</th>
+<th>Genome<br>Version</th>
+<th>Available<br>Megabase Pairs</th>
+<th>Gene<br>Count</th>
+<th>Organ<br>ellar</th>
+<th>Isol<br>ates</th>
+<th>SNPs</th>
+<th>ChIP<br>chip</th>
+<th>ESTs</th>
+<th>Micro<br>array</th>
+<th>RNA<br>Seq</th>
+<th>RT-<br>PCR</th>
+<th>SAGE<br>Tags</th>
+<th>Prote<br>omics</th>
+<th>Path<br>ways</th>
+-->
 
-<%------------------------------------%>
-<div style="overflow-x:auto">
-<table class="mytableStyle" width="100%">
+
 <tr class="mythStyle">
 <c:choose>
 <c:when test="${project eq 'FungiDB'}" >
-    <td width="7%" class="mythStyle">Family</td>
+    <th width="7%" class="mythStyle">Family</td>
 </c:when>
 <c:otherwise>
-    <td width="7%" class="mythStyle">Website</td>
+    <th width="7%" class="mythStyle">Website</td>
 </c:otherwise>
 </c:choose>
 
-    <td class="mythStyle" title="Genus">Genus</td>
-    <td class="mythStyle" title="Species">Species</td>
-    <td class="mythStyle" title="Strain">Strain</td>
-    <td class="mythStyle" title="Click to access this Taxon ID in NCBI">Taxon ID</td>
-    <td class="mythStyle" title="Data Source">Data<br>Source</td>
-    <td class="mythStyle" title="Click to access genome details in our Data Sources page">Genome<br>Version</td>
-    <td class="mythStyle" title="Size in Mega bases; click to run a search and get all genomic sequences for this genome">Available<br>Megabase Pairs</td>
-    <td class="mythStyle" title="Gene Count; click to run a search and get all genes annotated in this genome">Gene<br>Count</td>
-    <td class="mythStyle" title="Mouseover the red dot to read the organellar genomes">Organ<br>ellar</td>
+    <th class="mythStyle" title="Genus">Genus</th>
+    <th class="mythStyle" title="Species">Species</th>
+    <th class="mythStyle" title="Strain">Strain</th>
+    <th class="mythStyle" title="Click to access this Taxon ID in NCBI">Taxon ID</th>
+    <th class="mythStyle" title="Data Source">Data<br>Source</th>
+    <th class="mythStyle" title="Click to access genome details in our Data Sources page">Genome<br>Version</th>
+    <th class="mythStyle" title="Size in Mega bases; click to run a search and get all genomic sequences for this genome">Available<br>Megabase Pairs</th>
+    <th class="mythStyle" title="Gene Count; click to run a search and get all genes annotated in this genome">Gene<br>Count</th>
+    <th class="mythStyle" title="Mouseover the red dot to read the organellar genomes">Organ<br>ellar</th>
 
-    <td class="mythStyle" title="Isolates">Isol<br>ates</td>
-    <td class="mythStyle" title="Single Nucleotide Polymorphisms">SNPs</td>
-    <td class="mythStyle" title="ChIP Chip">ChIP<br>chip</td>
-    <td class="mythStyle" title="Chip Seq">Chip<br>Seq</td>
-    <td class="mythStyle" title="Expressed Sequence Tags">ESTs</td>
-    <td class="mythStyle" title="Microarray">Micro<br>array</td>
-    <td class="mythStyle" title="RNA Seq">RNA<br>Seq</td>
-    <td class="mythStyle" title="RT PCR">RT-<br>PCR</td>
-    <td class="mythStyle" title="Sage Tags">SAGE<br>Tags</td>
-    <td class="mythStyle" title="Proteomics">Prote<br>omics</td>
-    <td class="mythStyle" title="Metabolic Pathways">Path<br>ways</td>
+    <th class="mythStyle" title="Isolates">Isol<br>ates</th>
+    <th class="mythStyle" title="Single Nucleotide Polymorphisms">SNPs</th>
+    <th class="mythStyle" title="ChIP Chip">ChIP<br>chip</th>
+    <th class="mythStyle" title="Chip Seq">Chip<br>Seq</th>
+    <th class="mythStyle" title="Expressed Sequence Tags">ESTs</th>
+    <th class="mythStyle" title="Microarray">Micro<br>array</th>
+    <th class="mythStyle" title="RNA Seq">RNA<br>Seq</th>
+    <th class="mythStyle" title="RT PCR">RT-<br>PCR</th>
+    <th class="mythStyle" title="Sage Tags">SAGE<br>Tags</th>
+    <th class="mythStyle" title="Proteomics">Prote<br>omics</th>
+    <th class="mythStyle" title="Metabolic Pathways">Path<br>ways</th>
+
+
 </tr>
-
+</thead>
+<tbody>
 <!-- LOOP -->
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 <c:set var="genomelink_message" value=""/>
 
-<c:set var="orgCounter" value="${orgCounter+1}"/>
+
 
 <c:set var="fastaLink" value="${record.attributesMap['URLGenomeFasta']}"/>
 <c:set var="gffLink" value="${record.attributesMap['URLgff']}"/>
@@ -121,19 +172,22 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 
 
 <tr class="mytdStyle">
+
 <c:choose>
 <c:when test="${curWebsite != website}" >
 	<c:set var="samesite" value=""/>
         <c:set var="curWebsite" value="${website}"/>
         <c:set var="separation" value="border-top:3px solid grey"/>
-	<td style="${separation}">${website}</td>
 </c:when>
 <c:otherwise>
 	<c:set var="samesite" value="yes"/>
 	<c:set var="separation" value=""/>
-	<td></td>
 </c:otherwise>
 </c:choose>
+
+<td class="mytdStyle" style="${separation}">${website}</td> 
+
+
 
 <!-- website/webapp for links to data sources -->
 <c:set var="website" value="${fn:toLowerCase(website)}"/>
@@ -179,12 +233,12 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 
 <!-- FILE SIZES -->
     <td class="mytdStyle" style="text-align:right;${separation}" title="Size in Mega bases; click to run a search and get all genomic sequences for this genome. ${genomelink_message}">
-	<a href="http://${website}.org/${webapp}/showSummary.do?questionFullName=GenomicSequenceQuestions.SequencesByTaxon&array(organism)=${genus}%20${species}%20${strain}"> 
+	<a href="http://aurrecoui.${website}.org/${webapp}/showSummary.do?questionFullName=GenomicSequenceQuestions.SequencesByTaxon&array(organism)=${genus}%20${species}%20${strain}"> 
 <!--  <a href="${fastaLink}"> -->
 							${record.attributesMap['Genome_Size']}</a></td>
     <td class="mytdStyle" style="text-align:right;${separation}" title="Gene Count; click to run a search and get all genes annotated in this genome">
 	<c:if test='${not empty gffLink}'>
-		<a href="http://${website}.org/${webapp}/showSummary.do?questionFullName=GeneQuestions.GenesByTaxon&array(organism)=${genus}%20${species}%20${strain}">	
+		<a href="http://aurrecoui.${website}.org/${webapp}/showSummary.do?questionFullName=GeneQuestions.GenesByTaxon&array(organism)=${genus}%20${species}%20${strain}">	
 	</c:if>
 							${record.attributesMap['Gene_Count']}</td>
 
@@ -336,12 +390,14 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 </tr>
 </c:forEach>
 
-</table>
-</div>
 
+</tbody>
+</table>
+<!--  </div> -->
+<%------------------------------- END OF TABLE ----------------------------------------%>
 
 <table width="100%">
-<tr><td><b>There are ${orgCounter} organisms in ${siteTitle}.</b></td></tr>
+
 <tr><td><br></td></tr>
 
 <c:if test="${project ne 'FungiDB'}" >

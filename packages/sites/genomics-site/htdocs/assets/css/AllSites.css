@@ -125,6 +125,7 @@ td.mythStyle,td.mytdStyle,th.mythStyle {
 	border-color:gray;
 	-moz-border-radius:0px;
 	padding:3px;
+	background-color:white;
 }
 th.mythStyle {
 	font-weight:bold;
