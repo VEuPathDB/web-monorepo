@@ -611,7 +611,7 @@ Nematocida parisii strains ERTm1 and ERTm3, whole genome shotgun sequence was ge
 </c:when>
 <c:when test="${fn:contains(organism,'Encephalitozoon hellem ATCC 50504') && projectId eq 'MicrosporidiaDB'}">
   <c:set var="reference">
-Genome Sequence for Encephalitozoon hellem ATCC 50504 strain for downloaded from Genbank (GenomeProject ID #53973). Sequence provided by University of British Columbia. For information on this project, please refer <a href="http://www.ncbi.nlm.nih.gov/bioproject/53973">this page</a>
+Genome Sequence for Encephalitozoon hellem ATCC 50504 strain was downloaded from <a href="http://www.ncbi.nlm.nih.gov/bioproject/53973"> Genbank (GenomeProject ID #53973)</a>. Sequence provided by University of British Columbia
   </c:set>
 </c:when>
 <c:when test="${fn:contains(organism,'Nosema ceranae BRL01') && projectId eq 'MicrosporidiaDB'}">

@@ -427,7 +427,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 </c:when>
 <c:when test='${organism_full eq "Encephalitozoon hellem ATCC 50504"}'>
   <c:set var="reference">
-Genome Sequence for Encephalitozoon hellem ATCC 50504 strain for downloaded from Genbank (GenomeProject ID #53973). Sequence provided by University of British Columbia. For information on this project, please refer <a href="http://www.ncbi.nlm.nih.gov/genomes/mpfsubmission.cgi?show=0E17799A-B7C0-44F1-A121-834EB85764D3">this page</a> 
+Genome Sequence for Encephalitozoon hellem ATCC 50504 strain was downloaded from <a href="http://www.ncbi.nlm.nih.gov/bioproject/53973"> Genbank (GenomeProject ID #53973)</a>. Sequence provided by University of British Columbia.
  </c:set>
 </c:when>
 <c:when test='${organism_full eq "Nosema ceranae BRL01"}'>
