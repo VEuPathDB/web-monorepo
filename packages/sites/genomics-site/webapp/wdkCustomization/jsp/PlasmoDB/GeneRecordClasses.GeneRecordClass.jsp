@@ -182,7 +182,7 @@
 ${id} 
 <br><span style="font-size:70%">${prd} </span><br/> 
 
-<c:if test="${attrs['old_ids'].value != null}">
+<c:if test="${attrs['old_ids'].value != null && attrs['old_ids'].value ne id }">
   <br><span style="font-size:70%">${attrs['OldIds'].value}</span><br>
 </c:if>
 
