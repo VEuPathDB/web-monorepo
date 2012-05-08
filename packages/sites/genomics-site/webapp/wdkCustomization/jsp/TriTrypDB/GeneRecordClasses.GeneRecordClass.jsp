@@ -179,14 +179,14 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 <c:if test="${gtracks ne ''}">
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${id}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
   <c:set var="gnCtxImg">
     <c:set var="gbrowseUrl">
-        /cgi-bin/gbrowse/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};h_feat=${id}@yellow
+        /cgi-bin/gbrowse/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};h_feat=${fn:toLowerCase(id)}@yellow
     </c:set>
     <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
 
