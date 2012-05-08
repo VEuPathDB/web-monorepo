@@ -216,10 +216,10 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
                <c:forEach var="i" begin="0" end="${fn:length(tmp)}" step='3'>
                   <c:set var='uid'>${uid}${fn:substring(tmp, i, i+1)}</c:set>
                </c:forEach>
-			   <c:if test="${count < SidebarLimit}">
+		<%--	   <c:if test="${count < SidebarLimit}">   --%>
                		<li id='rs-${uid}'><a href="${url}">${row[0].value}</a></li>
 			   		<c:set var="count" value="${count + 1}" />
-			   </c:if>
+		<%--	   </c:if>   --%>
             </c:forEach>
           </c:forEach>
         </c:forEach> 
