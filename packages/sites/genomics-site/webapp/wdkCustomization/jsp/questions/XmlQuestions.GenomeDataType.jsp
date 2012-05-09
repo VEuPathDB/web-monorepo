@@ -41,6 +41,7 @@
 	.FixedHeader_Cloned th { background-color: lightgrey; }
 	#data-summary_info { font-weight:bold; }
 	#data-summary_filter { font-weight:bold; }
+	.ui-widget-header { padding:0;background:none;border:0; }
 </style>
 
 <script type="text/javascript">
@@ -48,9 +49,13 @@
 $(document).ready( function() {
 	var oTable = $('#data-summary').dataTable(
 		{
-	//	"bJQueryUI": true,
+		"bJQueryUI": true,
 		"bPaginate": false,
-        //	"aaSorting": [[ 0, 'asc']] 
+//        	"aaSorting": [[ 0, 'asc']] 
+		"aoColumnDefs": [
+                        { "asSorting" : ["asc", "asc"], "aTargets" : [ 0, 1] },
+                        { "sType" : "numeric", "aTargets" : [ 7, 8 ] }
+                        ]
 		}  
 	);
 	new FixedHeader( oTable );
