@@ -351,8 +351,7 @@ GO,InterproscanData
 
 
 
-
-<c:if test="${binomial eq 'Cryptococcus neoformans' || binomial eq 'Saccharomyces cerevisiae' || binomial eq 'Neurospora crassa'}">
+<c:if test="${attrs['hasExpression'].value eq '1'}">
   <imp:pageDivider name="Expression"/>
   <imp:expressionGraphs organism="${organism_full}"/>
 
