@@ -174,7 +174,7 @@
     <th colspan=4 align="center"><i>Sordariomycetes</i></th>
     <th colspan=2 align="center"><i>Saccharomycotina</i></th>
     <th colspan=1 align="center"><i>Taphrinomycotina</i></th>
-    <th align="center"><i>Oomycetes</i></th>
+    <th colspan=6 align="center"><i>Oomycetes</i></th>
   </tr>
   <tr>
     <th><i>A.cla</i></th>
@@ -197,6 +197,11 @@
     <th><i>C.alb</i></th>
     <th><i>S.pom</i></th>
     <th><i>H.ara</i></th>
+    <th><i>P.soj</i></th>
+    <th><i>P.ram</i></th>
+    <th><i>P.cap</i></th>
+    <th><i>P.inf</i></th>
+    <th><i>P.ult</i></th>
   </tr>
   <tr align="center">
     <td>
@@ -330,6 +335,36 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="hara_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="physo_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="phyra_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="phyca_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="phyin_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="pytul_genes" />
     </td>
 
   </tr>
