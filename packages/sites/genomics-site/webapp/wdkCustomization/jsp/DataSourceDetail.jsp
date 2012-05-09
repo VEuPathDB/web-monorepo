@@ -65,7 +65,7 @@
               <div><span class="caption">${organism.displayName}</span>: ${organism.value}</div>
               <div><span class="caption">${contact.displayName}</span>: ${contact.value}</div>
               <div><span class="caption">${institution.displayName}</span>: ${institution.value}</div>
-              <div><span class="caption">${publicUrl.displayName}</span>: <a href="${publicUrl.value}">${publicUrl.value}</a></div>
+              <div><span class="caption">Description:</span></div>
               <p class="description">${description.value}</p>
             </div>
           
@@ -75,7 +75,6 @@
 
             <imp:wdkTable tblName="${externallinks.name}" />
 
-            <imp:wdkTable tblName="${references.name}" />
           </div>
         
         </c:forEach>
