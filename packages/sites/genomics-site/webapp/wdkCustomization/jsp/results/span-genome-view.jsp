@@ -50,7 +50,7 @@ $(initializeGenomeView);
 <c:set var="zoomOutAllTip" value="Zoom out all the sequences." />
 
 <div style="clear:both;;position:relative;top:-20px">
-<table id="genome-view" class="datatables">
+<table class="genome-view datatables">
   <thead>
   <tr>
     <th>Sequence</th>

@@ -1,37 +1,49 @@
 function initializeGenomeView() {
     // register click events
-    assignStickyTooltipByElement("#genome-view .sequence .span");
+    assignStickyTooltipByElement(".genome-view .sequence .span");
 	
-    $("#genome-view .sequence .ruler").click(function() {
-        window.location.href = $(this).parents(".sequence").find(".sequence-id a").attr("href");
-    });
+    $(".genome-view").each(function() {
+        var genomeView = $(this);
+        if (genomeView.attr("initialized") == "true") return;
 
-    // register zoom events
-    $("#genome-view .sequence .zoomin").button().click(function() {
-        zoomInGenomeView(this);
-    });
-    $("#genome-view .sequence .zoomout").button({ disabled: true }).click(function() {
-        zoomOutGenomeView(this);
-    });
-    $("#genome-view .zoomin-all").button().click(zoomInAllGenomeView);
-    $("#genome-view .zoomout-all").button().click(zoomOutAllGenomeView);
+        genomeView.find(".sequence .ruler").click(function() {
+            window.location.href = $(this).parents(".sequence").find(".sequence-id a").attr("href");
+        });
 
-    // register datatables. it has to be the last step, otherwise the rest of 
-    // the registration will be applied to the current page only.
-    $("#genome-view").dataTable({
-        "bJQueryUI": true,
-        "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-        "iDisplayLength": 25,
-	"sDom":'<"H"iplfr>t<"F"ip>',
-        "aoColumns": [ null,
-                       null,
-                       null,
-                       null,
-                       null,
-                       { "bSortable": false },
-                       { "bSortable": false } ]
-    });
+        // register zoom events
+        genomeView.find(".sequence .zoomin").button().click(function() {
+            zoomInGenomeView(this);
+        });
+        genomeView.find(".sequence .zoomout").button({ disabled: true }).click(function() {
+            zoomOutGenomeView(this);
+        });
+        genomeView.find(".zoomin-all").button().click(function() {
+            zoomInAllGenomeView(genomeView);
+        });
+        genomeView.find(".zoomout-all").button().click(function() {
+            zoomOutAllGenomeView(genomeView);
+        });
 
+        // register datatables. it has to be the last step, otherwise the rest of 
+        // the registration will be applied to the current page only.
+        genomeView.dataTable({
+            "bJQueryUI": true,
+            "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "iDisplayLength": 25,
+            "sDom":'<"H"iplfr>t<"F"ip>',
+            "aaSorting": [[3,'desc']],
+            "aoColumns": [ null,
+                           null,
+                           null,
+                           null,
+                           null,
+                           { "bSortable": false },
+                           { "bSortable": false } ]
+        });
+
+        // set initialized flag, make sure only initialize once
+        genomeView.attr("initialized", "true");
+    });
 }
 
 function zoomInGenomeView(ele) {
@@ -90,12 +102,12 @@ function stopTimer(spans, id) {
     spans.removeAttr("timer");
 }
 
-function zoomInAllGenomeView() {
-    $("#genome-view .sequence .zoomin").click();
+function zoomInAllGenomeView(genomeViewSelector) {
+    $(genomeViewSelector).find(".sequence .zoomin").click();
 }
 
-function zoomOutAllGenomeView() {
-    $("#genome-view .sequence .zoomout").each(function() {
+function zoomOutAllGenomeView(genomeViewSelector) {
+    $(genomeViewSelector).find(".sequence .zoomout").each(function() {
         if (!$(this).button("option", "disabled"))
             $(this).click();
     });
