@@ -72,7 +72,7 @@
           
             <c:if test="${fn:length(publications) > 0}">
               <c:set var="publicationContent">
-                <imp:table table="${publications}" sortable="false" />
+                <imp:table table="${publications}" sortable="false" showHeader="false" />
               </c:set>
               <imp:simpleToggle name="${publications.name}" content="${publicationContent}" />
             </c:if>
@@ -84,14 +84,15 @@
               </c:set>
               <imp:simpleToggle name="${contacts.name}" content="${contactContent}" show="false" />
             </c:if>
+--%>
+
 
             <c:if test="${fn:length(externallinks) > 0}">
               <c:set var="extLinkContent">
-                <imp:table table="${externallinks}" sortable="false" />
+                <imp:table table="${externallinks}" sortable="false" showHeader="false" />
               </c:set>
               <imp:simpleToggle name="${externallinks.name}" content="${extLinkContent}" show="false" />
             </c:if>
---%>
 
             <c:if test="${fn:length(references) > 0}">
               <c:set var="hasQuestion" value="${false}" />
