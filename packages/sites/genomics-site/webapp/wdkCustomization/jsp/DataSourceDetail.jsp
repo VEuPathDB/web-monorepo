@@ -62,12 +62,13 @@
               (<span class="caption">${version.displayName}</span>: ${version.value})
             </div>
             <div class="detail">
-              <div><span class="caption">${categories.displayName}</span>: ${categories.value}</div>
-              <div><span class="caption">${organism.displayName}</span>: ${organism.value}</div>
-              <div><span class="caption">${contact.displayName}</span>: ${contact.value}</div>
-              <div><span class="caption">${institution.displayName}</span>: ${institution.value}</div>
-              <div><span class="caption">Description:</span></div>
-              <p class="description">${description.value}</p>
+              <table>
+                <tr><td><span class="caption">${categories.displayName} </span></td><td> ${categories.value}</td></tr>
+                <tr><td><span class="caption">${organism.displayName} </span></td><td> ${organism.value}</td></tr>
+                <tr><td><span class="caption">${contact.displayName} </span></td><td> ${contact.value}</td></tr>
+                <tr><td><span class="caption">${institution.displayName} </span></td><td> ${institution.value}</td></tr>
+                <tr><td><span class="caption">Description </span></td><td> ${description.value}</td></tr>
+              </table>
             </div>
           
             <c:if test="${fn:length(publications) > 0}">
@@ -91,7 +92,7 @@
               <c:set var="extLinkContent">
                 <imp:table table="${externallinks}" sortable="false" showHeader="false" />
               </c:set>
-              <imp:simpleToggle name="${externallinks.name}" content="${extLinkContent}" show="false" />
+              <imp:simpleToggle name="${externallinks.displayName}" content="${extLinkContent}" show="false" />
             </c:if>
 
             <c:if test="${fn:length(references) > 0}">
@@ -112,7 +113,7 @@
                 </ul>
               </c:set>
               <c:if test="${hasQuestion}">
-                <imp:simpleToggle name="${references.name}" content="${referenceContent}" show="false" />
+                <imp:simpleToggle name="${references.displayName}" content="${referenceContent}" show="false" />
               </c:if>
             </c:if>
 
