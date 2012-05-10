@@ -9,7 +9,7 @@ function setUpBlastPage() {
     var sequenceHtml = $('#BlastQuerySequence').parent().html();
     //'<textarea id="sequence" onchange="checkSequenceLength()" rows="4" cols="50" name="value(BlastQuerySequence)"></textarea>
     $('#BlastQuerySequence').parent().html(sequenceHtml +
-    		'<br/><i>Note: max.allowed sequence is 31K bases</i><br/><div class="usererror"><span id="short_sequence_warning"></span></div>');    
+    		'<br/><i>Note: only one input sequence allowed.<br>maximum allowed sequence length is 31K bases.</i><br/><div class="usererror"><span id="short_sequence_warning"></span></div>');    
 	$('#BlastQuerySequence').val(sequenceValue);
 	
     // set onchange for sequence field to display appropriate warning message
