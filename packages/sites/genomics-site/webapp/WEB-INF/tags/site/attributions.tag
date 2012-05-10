@@ -47,18 +47,16 @@ display the attributions.
 
         <ul>
             <c:forEach var="attribution" items="${attributions}">
-                <li>
-                    <c:set var="dataSourceUrl">
-                        <c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=Query#" />
-                    </c:set>
-                    <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-
-                    <c:if test="${dsRecord.attributesMap['category'] ne 'ignore'}">
-                    <a href="${dataSourceUrl}${attribution}">
-                        ${dsRecord.attributesMap['resource']}
-                    </a>
-                    </c:if>
-                </li>
+                <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+                <c:if test="${dsRecord.attributesMap['resource'] != null && dsRecord.attributesMap['category'] ne 'ignore'}">
+                    <li>
+                        <c:url var="dataSourceUrl"
+                               value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=Query#" />
+                        <a href="${dataSourceUrl}${attribution}">
+                            ${dsRecord.attributesMap['resource']}
+                        </a>
+                    </li>
+                </c:if>
             </c:forEach>
         </ul>
 

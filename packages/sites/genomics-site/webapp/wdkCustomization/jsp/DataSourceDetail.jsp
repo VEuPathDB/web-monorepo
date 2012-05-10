@@ -5,6 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!-- get wdkXmlQuestionSets saved in request scope -->
+<c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="dataSources" value="${requestScope.dataSources}"/>
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
@@ -69,11 +70,50 @@
               <p class="description">${description.value}</p>
             </div>
           
-            <imp:wdkTable tblName="${publications.name}" />
+            <c:if test="${fn:length(publications) > 0}">
+              <c:set var="publicationContent">
+                <imp:table table="${publications}" sortable="false" />
+              </c:set>
+              <imp:simpleToggle name="${publications.name}" content="${publicationContent}" />
+            </c:if>
 
-            <imp:wdkTable tblName="${contacts.name}" />
+<%--
+            <c:if test="${fn:length(contacts) > 0}">
+              <c:set var="contactContent">
+                <imp:table table="${contacts}" sortable="false" />
+              </c:set>
+              <imp:simpleToggle name="${contacts.name}" content="${contactContent}" show="false" />
+            </c:if>
 
-            <imp:wdkTable tblName="${externallinks.name}" />
+            <c:if test="${fn:length(externallinks) > 0}">
+              <c:set var="extLinkContent">
+                <imp:table table="${externallinks}" sortable="false" />
+              </c:set>
+              <imp:simpleToggle name="${externallinks.name}" content="${extLinkContent}" show="false" />
+            </c:if>
+--%>
+
+            <c:if test="${fn:length(references) > 0}">
+              <c:set var="hasQuestion" value="${false}" />
+              <c:set var="referenceContent">
+                <ul>
+                  <c:forEach items="${references}" var="reference">
+                    <c:if test="${reference['target_type'] eq 'question'}">
+                      <jsp:setProperty name="wdkModel" property="questionName" value="${reference['target_name']}" />
+                      <c:set var="question" value="${wdkModel.question}" />
+                      <c:if test="${question != null}">
+                        <c:set var="hasQuestion" value="${true}" />
+                        <c:url var="questionUrl" value="/showQuestion.do?questionFullName=${question.fullName}" />
+                        <li><a href="${questionUrl}">${question.displayName}</a></li>
+                      </c:if> 
+                    </c:if>
+                  </c:forEach>
+                </ul>
+              </c:set>
+              <c:if test="${hasQuestion}">
+                <imp:simpleToggle name="${references.name}" content="${referenceContent}" show="false" />
+              </c:if>
+            </c:if>
 
           </div>
         
