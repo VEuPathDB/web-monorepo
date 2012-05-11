@@ -1,5 +1,5 @@
---- TrackDumper.pm.orig	2012-05-11 15:22:52.000000000 -0400
-+++ TrackDumper.pm	2012-05-11 15:27:12.000000000 -0400
+--- TrackDumper.pm.orig	2012-05-11 15:28:57.000000000 -0400
++++ TrackDumper.pm	2012-05-11 16:10:04.000000000 -0400
 @@ -46,7 +46,8 @@
    my $current_config = $self->configuration;
    my $html = p('Dump',
@@ -20,7 +20,7 @@
  			  -labels=>{all      => 'Across entire genome',
  				    selected => 'Across currently visible region'})
        );      
-@@ -129,14 +131,18 @@
+@@ -129,14 +131,19 @@
    my $mode          = $config->{mode}    || 'selected';
    my $entire_genome = $config->{region} && $config->{region} eq 'all';
    my $db            = $self->database;
@@ -28,20 +28,22 @@
 -                      $db->segment($segment->seq_id);
 +  #my $whole_segment = $db->segment(Accession => $segment->seq_id) ||
 +  #                    $db->segment($segment->seq_id);
-+  my $whole_segment = $db->segment($segment->seq_id); 
++  #my $whole_segment = $db->segment($segment->seq_id); 
    my $coords        = $config->{coords};
    my $embed         = $config->{embed};
  
+-  my $thing_to_dump = $entire_genome ? $segment->db : $segment;
 +  # eupath 5/11/2012, convert segment from MetaSegment to GUS::Segment
 +  $segment = $db->segment(-name=>$segment->name, -start=>$segment->start, -stop=>$segment->stop);
-   my $thing_to_dump = $entire_genome ? $segment->db : $segment;
++  #my $thing_to_dump = $entire_genome ? $segment->db : $segment;
++  my $thing_to_dump = $segment;
  
    # safest thing to do is to use embedded logic
 +=c
    if ($version == 3 && $config->{print_config}) {
        my $dumper = Bio::Graphics::Browser2::TrackDumper->new(
  	  -data_source => $conf,
-@@ -148,8 +154,9 @@
+@@ -148,8 +155,9 @@
  	  ) or return;
        $dumper->print_datafile();
    }
@@ -53,7 +55,7 @@
        Bio::Graphics::Browser2::TrackDumper->print_configuration
  	  ($self->browser_config,
  	   $mode eq 'selected' ? [$self->selected_tracks] : ()
-@@ -186,7 +193,10 @@
+@@ -186,7 +194,10 @@
      my @args;
      if ($mode eq 'selected') {
  	my @feature_types = $self->selected_features;
