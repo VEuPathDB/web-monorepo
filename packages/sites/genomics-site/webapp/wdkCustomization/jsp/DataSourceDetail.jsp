@@ -106,7 +106,7 @@
                       <c:if test="${question != null}">
                         <c:set var="hasQuestion" value="${true}" />
                         <c:url var="questionUrl" value="/showQuestion.do?questionFullName=${question.fullName}" />
-                        <li><a href="${questionUrl}">${question.displayName}</a></li>
+                        <li><a title="${question.summary}" href="${questionUrl}">Identify ${question.recordClass.type}s based on ${question.displayName}</a></li>
                       </c:if> 
                     </c:if>
                   </c:forEach>
