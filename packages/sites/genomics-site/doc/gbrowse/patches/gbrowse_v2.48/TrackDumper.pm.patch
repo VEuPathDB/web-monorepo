@@ -1,5 +1,5 @@
---- TrackDumper.pm.orig	2012-03-07 12:43:26.000000000 -0500
-+++ TrackDumper.pm	2012-03-07 13:17:12.000000000 -0500
+--- TrackDumper.pm.orig	2012-05-11 15:22:52.000000000 -0400
++++ TrackDumper.pm	2012-05-11 15:27:12.000000000 -0400
 @@ -46,7 +46,8 @@
    my $current_config = $self->configuration;
    my $html = p('Dump',
@@ -20,7 +20,7 @@
  			  -labels=>{all      => 'Across entire genome',
  				    selected => 'Across currently visible region'})
        );      
-@@ -129,14 +131,16 @@
+@@ -129,14 +131,18 @@
    my $mode          = $config->{mode}    || 'selected';
    my $entire_genome = $config->{region} && $config->{region} eq 'all';
    my $db            = $self->database;
@@ -32,6 +32,8 @@
    my $coords        = $config->{coords};
    my $embed         = $config->{embed};
  
++  # eupath 5/11/2012, convert segment from MetaSegment to GUS::Segment
++  $segment = $db->segment(-name=>$segment->name, -start=>$segment->start, -stop=>$segment->stop);
    my $thing_to_dump = $entire_genome ? $segment->db : $segment;
  
    # safest thing to do is to use embedded logic
@@ -39,7 +41,7 @@
    if ($version == 3 && $config->{print_config}) {
        my $dumper = Bio::Graphics::Browser2::TrackDumper->new(
  	  -data_source => $conf,
-@@ -148,8 +152,9 @@
+@@ -148,8 +154,9 @@
  	  ) or return;
        $dumper->print_datafile();
    }
@@ -51,7 +53,7 @@
        Bio::Graphics::Browser2::TrackDumper->print_configuration
  	  ($self->browser_config,
  	   $mode eq 'selected' ? [$self->selected_tracks] : ()
-@@ -186,7 +191,10 @@
+@@ -186,7 +193,10 @@
      my @args;
      if ($mode eq 'selected') {
  	my @feature_types = $self->selected_features;
