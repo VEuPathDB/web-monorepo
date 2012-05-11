@@ -42,20 +42,25 @@
 	#data-summary_info { font-weight:bold; }
 	#data-summary_filter { font-weight:bold; }
 	.ui-widget-header { padding:0;background:none;border:0; }
+/* 	span.DataTables_sort_icon { position:relative; top:-13px;}  */
 </style>
 
-<script type="text/javascript">
-			
+<script type="text/javascript">	
 $(document).ready( function() {
 	var oTable = $('#data-summary').dataTable(
 		{
-		"bJQueryUI": true,
+		"bJQueryUI": true, //this adds the sorting icons
 		"bPaginate": false,
 //        	"aaSorting": [[ 0, 'asc']] 
 		"aoColumnDefs": [
                         { "asSorting" : ["asc", "asc"], "aTargets" : [ 0, 1] },
                         { "sType" : "numeric", "aTargets" : [ 7, 8 ] }
-                        ]
+                        ],
+   		"oLanguage": {
+                        "sZeroRecords": "There are no organisms that include your keyword in this table.",
+			"sSearch": "Enter keyword to filter rows:</>",
+                        },
+
 		}  
 	);
 	new FixedHeader( oTable );
@@ -141,7 +146,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
     <th class="mythStyle" title="Click to access genome details in our Data Sources page">Genome<br>Version</th>
     <th class="mythStyle" title="Size in Mega bases; click to run a search and get all genomic sequences for this genome">Available<br>Megabase Pairs</th>
     <th class="mythStyle" title="Gene Count; click to run a search and get all genes annotated in this genome">Gene<br>Count</th>
-    <th class="mythStyle" title="Mouseover the red dot to read the organellar genomes">Organ<br>ellar</th>
+    <th class="mythStyle" title="Mouseover the red dot to read the organellar genomes we have, if different">Organ<br>ellar</th>
 
     <th class="mythStyle" title="Isolates">Isol<br>ates</th>
     <th class="mythStyle" title="Single Nucleotide Polymorphisms">SNPs</th>

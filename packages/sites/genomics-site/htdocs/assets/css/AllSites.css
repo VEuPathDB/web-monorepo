@@ -131,6 +131,8 @@ th.mythStyle {
 	font-weight:bold;
 	background-color:lightgrey;
 	border-bottom: 3px solid grey;
+	padding:0;
+	vertical-align:bottom; 
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
