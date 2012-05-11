@@ -37,19 +37,11 @@
 </c:choose>
 
 
-<style type="text/css" media="screen">
-	.FixedHeader_Cloned th { background-color: lightgrey; }
-	#data-summary_info { font-weight:bold; }
-	#data-summary_filter { font-weight:bold; }
-	.ui-widget-header { padding:0;background:none;border:0; }
-/* 	span.DataTables_sort_icon { position:relative; top:-13px;}  */
-</style>
-
 <script type="text/javascript">	
 $(document).ready( function() {
 	var oTable = $('#data-summary').dataTable(
 		{
-		"bJQueryUI": true, //this adds the sorting icons
+	//	"bJQueryUI": true, //this adds the sorting icons
 		"bPaginate": false,
 //        	"aaSorting": [[ 0, 'asc']] 
 		"aoColumnDefs": [

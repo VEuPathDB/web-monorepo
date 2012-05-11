@@ -13,12 +13,39 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set value="${wdkModel.displayName}" var="project"/>
 
+
+
+
+
+
 <imp:header  title="${project} :: Gene Metrics"
                  banner="${project} Gene Metrics"
                  parentDivision="${project}"
                  parentUrl="/home.jsp"
                  divisionName="allSites"
                  division="geneMetrics"/>
+
+
+<script type="text/javascript"> 
+$(document).ready( function() {
+        var oTable = $('#gene-metrics').dataTable(
+                {
+		"bSort": false,
+       		"sScrollX": "100%",
+        	"bScrollCollapse": true,
+                "bPaginate": false,
+                "oLanguage": {
+                        "sZeroRecords": "There are no organisms that include your keyword in this table.",
+                        "sSearch": "Enter keyword to filter rows:</>",
+                        },
+                }  
+        );
+        new FixedColumns( oTable , {
+		"iLeftWidth": 150
+	} );
+} );
+</script>
+
 
 <c:set var="orgWidth" value=""/>  <%-- 4% --%>
 <c:set var="ncbiTaxPage" value="http://130.14.29.110/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=237895&lvl=3&p=mapview&p=has_linkout&p=blast_url&p=genome_blast&lin=f&keep=1&srchmode=5&unlock"/>
@@ -63,8 +90,10 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 </table>
 
 
-<div style="overflow-x:auto">
-<table  class="mytableStyle" width="100%">
+<!-- <div style="overflow-x:auto">  -->
+<table  id="gene-metrics" class="mytableStyle" width="100%">
+<thead>
+
 <c:choose>
   <c:when test='${xmlAnswer.resultSize == 0}'>
     <tr><td>Not available.</td></tr></table>
@@ -160,66 +189,68 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <c:otherwise>    <!------------- ALL PROJECTS BUT FUNGI -------------------->
 
 <tr class="mythStyle">
-    <td style="background-color:white;border-right:3px solid grey;border-top:0px none;border-left:0 none;"></td>
-    <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://amoebadb.org">AmoebaDB</a></td>
-    <td style="border-right:3px solid grey" colspan="4" class="mythStyle"><a href="http://cryptodb.org">CryptoDB</a></td>
-    <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></td>
-    <td style="border-right:3px solid grey" colspan="5" class="mythStyle"><a href="http://microsporidiadb.org">&mu;-sporidiaDB</a></td>
-    <td style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://piroplasmadb.org">PiroplasmaDB</a></td>
-    <td style="border-right:3px solid grey" colspan="7" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></td>
-    <td style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></td>
-    <td style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></td>
-    <td colspan="13" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></td>
+    <th style="background-color:white;border-right:3px solid grey;border-top:0px none;border-left:0 none;"></th>
+    <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://amoebadb.org">AmoebaDB</a></th>
+    <th style="border-right:3px solid grey" colspan="4" class="mythStyle"><a href="http://cryptodb.org">CryptoDB</a></th>
+    <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></th>
+    <th style="border-right:3px solid grey" colspan="5" class="mythStyle"><a href="http://microsporidiadb.org">&mu;-sporidiaDB</a></th>
+    <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://piroplasmadb.org">PiroplasmaDB</a></th>
+    <th style="border-right:3px solid grey" colspan="7" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></th>
+    <th style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></th>
+    <th style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></th>
+    <th colspan="13" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></th>
 </tr>
 <tr class="mythStyle">
-    <td  style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</td>
-    <td class="mythStyle" title="Entamoeba dispar, AmoebaDB"><i>Ed</i></td>
-    <td class="mythStyle" title="Entamoeba histolytica, AmoebaDB"><i>Eh</i></td>
-    <td  style="border-right:3px solid grey"class="mythStyle" title="Entamoeba invadens, AmoebaDB"><i>Einv</i></td>
-    <td class="mythStyle" title="Cryptosporidium hominis, CryptoDB"><i>Ch</i></td>
-    <td class="mythStyle" title="Cryptosporidium muris, CryptoDB"  ><i>Cm</i></td>
-    <td class="mythStyle" title="Cryptosporidium parvum Chr 6, CryptoDB"  ><i>Cp6</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Cryptosporidium parvum, CryptoDB" ><i>Cp</i></td>
-    <td class="mythStyle" title="Giardia Assemblage A isolate WB, GiardiaDB" ><i>Ga*</i></td>
-    <td class="mythStyle" title="Giardia Assemblage B isolate GS, GiardiaDB" ><i>Gb</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>Ge</i></td>
-    <td class="mythStyle" title="Encephalitozoon cuniculi, MicrosporidiaDB"><i>Ec</i></td>
-    <td class="mythStyle" title="Encephalitozoon intestinalis, MicrosporidiaDB"><i>Eint</i></td>
-    <td class="mythStyle" title="Encephalitozoon hellem, MicrosporidiaDB"><i>Ehel</i></td>
-    <td class="mythStyle" title="Enterocytozoon bieneusi, MicrosporidiaDB"><i>Eb</i></td>
-    <td  style="border-right:3px solid grey"  class="mythStyle" title="Nosema cerenae, MicrosporidiaDB"><i>Ncer</i></td>
-    <td class="mythStyle" title="Babesia bovis, PiroplasmaDB"><i>Bb</i></td>
-    <td class="mythStyle" title="Theileria annulata, PiroplasmaDB"><i>Ta</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Theileria parva, PiroplasmaDB"><i>Tp</i></td>
-    <td class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pb</i></td>
-    <td class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pc</i></td>
-    <td class="mythStyle" title="Plasmodium falciparum 3D7, PlasmoDB"><i>Pf3d7</i></td>
-    <td class="mythStyle" title="Plasmodium falciparum IT, PlasmoDB"><i>PfIT</i></td>
-    <td class="mythStyle" title="Plasmodium knowlesi, PlasmoDB"><i>Pk</i></td>
-    <td class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pv</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Py</i></td>
-    <td class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nc</i></td>
-    <td class="mythStyle" title="Eimeria tenella, ToxoDB"><i>Et</i></td>
-    <td class="mythStyle" title="Toxoplasma gondii GT1, ToxoDB"><i>TgGT1</i></td>
-    <td class="mythStyle" title="Toxoplasma gondii ME49, ToxoDB"><i>TgME49</i></td>
-    <td class="mythStyle" title="Toxoplasma gondii RH, ToxoDB"><i>TgRH</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Toxoplasma gondii VEG"><i>TgVeg</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tva</i></td>
-    <td class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lb</i></td>
-    <td class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></td>
-    <td class="mythStyle" title="Leishmania major, TriTrypDB"><i>Lma</i></td>
-    <td class="mythStyle" title="Leishmania mexicana, TriTrypDB"><i>Lme</i></td>
-    <td class="mythStyle" title="Leishmania tarentolae, TriTrypDB"><i>Lt</i></td>
-    <td class="mythStyle" title="Trypanosoma brucei 927, TriTrypDB"><i>Tb927</i></td>
-    <td class="mythStyle" title="Trypanosoma brucei 427, TriTrypDB"><i>Tb427</i></td>
-    <td class="mythStyle" title="Trypanosoma brucei gambiense, TriTrypDB"><i>Tbg</i></td>
-    <td class="mythStyle" title="Trypanosoma congolense, TriTrypDB"><i>Tco</i></td>
-    <td class="mythStyle" title="Trypanosoma cruzi CL Brenner Unassigned, TriTrypDB"><i>TcrCLU</i></td>
-    <td class="mythStyle" title="Trypanosoma cruzi CL Brenner Esmeraldo, TriTrypDB"><i>TcrCLE</i></td>
-    <td class="mythStyle" title="Trypanosoma cruzi CL Brenner NonEsmeraldo, TriTrypDB"><i>TcrCLNE</i></td>
-   <td class="mythStyle" title="Trypanosoma vivax, TriTrypDB"><i>Tvi</i></td>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</th>
+    <th class="mythStyle" title="Entamoeba dispar, AmoebaDB"><i>Ed</i></th>
+    <th class="mythStyle" title="Entamoeba histolytica, AmoebaDB"><i>Eh</i></th>
+    <th  style="border-right:3px solid grey"class="mythStyle" title="Entamoeba invadens, AmoebaDB"><i>Einv</i></th>
+    <th class="mythStyle" title="Cryptosporidium hominis, CryptoDB"><i>Ch</i></th>
+    <th class="mythStyle" title="Cryptosporidium muris, CryptoDB"  ><i>Cm</i></th>
+    <th class="mythStyle" title="Cryptosporidium parvum Chr 6, CryptoDB"  ><i>Cp6</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Cryptosporidium parvum, CryptoDB" ><i>Cp</i></th>
+    <th class="mythStyle" title="Giardia Assemblage A isolate WB, GiardiaDB" ><i>Ga*</i></th>
+    <th class="mythStyle" title="Giardia Assemblage B isolate GS, GiardiaDB" ><i>Gb</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>Ge</i></th>
+    <th class="mythStyle" title="Encephalitozoon cuniculi, MicrosporidiaDB"><i>Ec</i></th>
+    <th class="mythStyle" title="Encephalitozoon intestinalis, MicrosporidiaDB"><i>Eint</i></th>
+    <th class="mythStyle" title="Encephalitozoon hellem, MicrosporidiaDB"><i>Ehel</i></th>
+    <th class="mythStyle" title="Enterocytozoon bieneusi, MicrosporidiaDB"><i>Eb</i></th>
+    <th  style="border-right:3px solid grey"  class="mythStyle" title="Nosema cerenae, MicrosporidiaDB"><i>Ncer</i></th>
+    <th class="mythStyle" title="Babesia bovis, PiroplasmaDB"><i>Bb</i></th>
+    <th class="mythStyle" title="Theileria annulata, PiroplasmaDB"><i>Ta</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Theileria parva, PiroplasmaDB"><i>Tp</i></th>
+    <th class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pb</i></th>
+    <th class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pc</i></th>
+    <th class="mythStyle" title="Plasmodium falciparum 3D7, PlasmoDB"><i>Pf3d7</i></th>
+    <th class="mythStyle" title="Plasmodium falciparum IT, PlasmoDB"><i>PfIT</i></th>
+    <th class="mythStyle" title="Plasmodium knowlesi, PlasmoDB"><i>Pk</i></th>
+    <th class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pv</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Py</i></th>
+    <th class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nc</i></th>
+    <th class="mythStyle" title="Eimeria tenella, ToxoDB"><i>Et</i></th>
+    <th class="mythStyle" title="Toxoplasma gondii GT1, ToxoDB"><i>TgGT1</i></th>
+    <th class="mythStyle" title="Toxoplasma gondii ME49, ToxoDB"><i>TgME49</i></th>
+    <th class="mythStyle" title="Toxoplasma gondii RH, ToxoDB"><i>TgRH</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Toxoplasma gondii VEG"><i>TgVeg</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tva</i></th>
+    <th class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lb</i></th>
+    <th class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></th>
+    <th class="mythStyle" title="Leishmania major, TriTrypDB"><i>Lma</i></th>
+    <th class="mythStyle" title="Leishmania mexicana, TriTrypDB"><i>Lme</i></th>
+    <th class="mythStyle" title="Leishmania tarentolae, TriTrypDB"><i>Lt</i></th>
+    <th class="mythStyle" title="Trypanosoma brucei 927, TriTrypDB"><i>Tb927</i></th>
+    <th class="mythStyle" title="Trypanosoma brucei 427, TriTrypDB"><i>Tb427</i></th>
+    <th class="mythStyle" title="Trypanosoma brucei gambiense, TriTrypDB"><i>Tbg</i></th>
+    <th class="mythStyle" title="Trypanosoma congolense, TriTrypDB"><i>Tco</i></th>
+    <th class="mythStyle" title="Trypanosoma cruzi CL Brenner Unassigned, TriTrypDB"><i>TcrCLU</i></th>
+    <th class="mythStyle" title="Trypanosoma cruzi CL Brenner Esmeraldo, TriTrypDB"><i>TcrCLE</i></th>
+    <th class="mythStyle" title="Trypanosoma cruzi CL Brenner NonEsmeraldo, TriTrypDB"><i>TcrCLNE</i></th>
+   <th class="mythStyle" title="Trypanosoma vivax, TriTrypDB"><i>Tvi</i></th>
 </tr>
+</thead>
 
+<tbody>
   <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
 	 <c:set var="Metric_Type" value="${record.attributesMap['Metric_Type']}"/>
@@ -325,9 +356,9 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 </c:otherwise>
 </c:choose>
 
-
+  </tbody>
   </table>
-</div>
+<!-- </div> -->
 
 
 <c:if test="${project ne 'FungiDB'}" >

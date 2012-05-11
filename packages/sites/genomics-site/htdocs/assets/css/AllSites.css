@@ -131,8 +131,11 @@ th.mythStyle {
 	font-weight:bold;
 	background-color:lightgrey;
 	border-bottom: 3px solid grey;
+	cursor: pointer; 
+/*	if we add back the sort icons in data summary .....
 	padding:0;
-	vertical-align:bottom; 
+	vertical-align:bottom; */
+
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1264,6 +1267,16 @@ a#gbView {
 
 }
 */
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = summary tables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+	#data-summary_info { font-weight:bold; }
+	#data-summary_filter { font-weight:bold; }
+	.ui-widget-header { padding:0;background:none;border:0; }
+	#gene-metrics_filter { font-weight:bold; }
 
 
 /*THE END */
