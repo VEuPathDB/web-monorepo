@@ -31,26 +31,6 @@
 <imp:getPlural pluralMap="${typeMap}"/>
 <c:set var="type" value="${typeMap['plural']}"/>
 
-<c:set var="qsp" value="${fn:split(wdk_query_string,'&')}" />
-<c:set var="commandUrl" value="" />
-<c:forEach items="${qsp}" var="prm">
-  <c:if test="${fn:split(prm, '=')[0] eq 'strategy'}">
-    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
-  </c:if>
-  <c:if test="${fn:split(prm, '=')[0] eq 'step'}">
-    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
-  </c:if>
-  <c:if test="${fn:split(prm, '=')[0] eq 'subquery'}">
-    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
-  </c:if>
-  <c:if test="${fn:split(prm, '=')[0] eq 'summary'}">
-    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
-  </c:if>
-</c:forEach>
-<c:if test="${strategy != null}">
-  <c:set var="commandUrl" value="${commandUrl}strategy_checksum=${strategy.checksum}" />
-</c:if>
-
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>
         No results are retrieved
@@ -76,14 +56,14 @@
   </c:if>
 
 <%--------- PAGING TOP BAR ----------%>
-<c:url var="commandUrl" value="/processSummaryView.do?step=${step.stepId}&view=${wdkView.name}" />
+<c:url var="commandUrl" value="/processSummaryView.do?step=${wdkStep.stepId}&view=${wdkView.name}" />
 <table width="100%">
 	<tr class="subheaderrow">
 	<th style="text-align: left;white-space:nowrap;"> 
 	       <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
 	</th>
 	<th style="text-align: right;white-space:nowrap;">
-               <wdk:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
+         <wdk:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
 	</th>
   <%-- remove Reset button when new tree structure is activated --%>
   <c:if test="${not wdkAnswer.useCheckboxTree}">
@@ -131,56 +111,43 @@
   <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
     <c:set var="attrName" value="${sumAttrib.name}" />
     <th id="${attrName}" align="left" valign="middle">
-	<table>
-          <tr>
-            <td>
-		<table>
-                  <tr>
-                    <td style="padding:0;">
-          <c:choose>
+	    <table>
+        <tr>
+          <td>
+		        <table>
+              <tr>
+                <td style="padding:0;">
+                  <c:choose>
+				            <c:when test="${!sumAttrib.sortable}">
+				              <img src="<c:url value='wdk/images/results_arrw_up_blk.png'/>" border="0" alt="Sort up"/>
+				            </c:when>
+				            <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
+				              <img src="<c:url value='wdk/images/results_arrw_up_gr.png'/>"  alt="Sort up" 
+				                  title="Result is sorted by ${sumAttrib}" />
+				            </c:when>
+				            <c:otherwise>
+                      <%-- display sorting buttons --%>
+                      <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" />
+                      <a href="${resultsAction}" title="Sort by ${sumAttrib}">
+                        <img src="wdk/images/results_arrw_up.png" alt="Sort up" border="0" />
+                      </a>
+                    </c:otherwise>
+                  </c:choose> 
+                </td>
+              </tr>
+              <tr>	
+                <td style="padding:0;">
+	        <c:choose>
             <c:when test="${!sumAttrib.sortable}">
-              <img src="<c:url value='wdk/images/results_arrw_up_blk.png'/>" border="0" alt="Sort up"/>
-            </c:when>
-            <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
-              <img src="<c:url value='wdk/images/results_arrw_up_gr.png'/>"  alt="Sort up" 
-                  title="Result is sorted by ${sumAttrib}" />
-            </c:when>
-            <c:otherwise>
-              <%-- display sorting buttons --%>
-              <c:choose>
-                <c:when test="${strategy != null}">
-                  <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" />
-                </c:when>
-                <c:otherwise>
-                  <c:set var="resultsAction" value="javascript:ChangeBasket('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc')" />
-                </c:otherwise>
-              </c:choose>
-              <a href="${resultsAction}" title="Sort by ${sumAttrib}">
-                  <img src="wdk/images/results_arrw_up.png" alt="Sort up" border="0" /></a>
-            </c:otherwise>
-          </c:choose>
-                 </td>
-               </tr>
-               <tr>	
-                 <td style="padding:0;">
-	  <c:choose>
-            <c:when test="${!sumAttrib.sortable}">
-	      <img src="<c:url value='wdk/images/results_arrw_dwn_blk.png'/>" border="0" />
-	    </c:when>
+	             <img src="<c:url value='wdk/images/results_arrw_dwn_blk.png'/>" border="0" />
+	          </c:when>
             <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
               <img src="<c:url value='wdk/images/results_arrw_dwn_gr.png'/>" alt="Sort down" 
 	                    title="Result is sorted by ${sumAttrib}" />
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
-              <c:choose>
-                <c:when test="${strategy != null}">
-                  <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" />
-                </c:when>
-                <c:otherwise>
-                  <c:set var="resultsAction" value="javascript:ChangeBasket('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc')" />
-                </c:otherwise>
-              </c:choose>
+              <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" />
               <a href="${resultsAction}" title="Sort by ${sumAttrib}">
               <img src="wdk/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
             </c:otherwise>
@@ -199,14 +166,7 @@
         <c:if test="${j != 0}">
           <td style="width:20px;">
             <%-- display remove attribute button --%>
-              <c:choose>
-                <c:when test="${strategy != null}">
-                  <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
-                </c:when>
-                <c:otherwise>
-                  <c:set var="resultsAction" value="javascript:ChangeBasket('${commandUrl}&command=remove&attribute=${attrName}')" />
-                </c:otherwise>
-              </c:choose>
+            <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
             <a href="${resultsAction}"
                         title="Remove ${sumAttrib} column">
               <img src="<c:url value='wdk/images/results_x.png'/>" alt="Remove" border="0" /></a>
