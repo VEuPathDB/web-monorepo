@@ -8,6 +8,8 @@ function initialize() {
 
   var myOptions = {
     zoom: 2,
+    maxZoom: 5,
+    minZoom: 2,
     center: latlng, 
     mapTypeId: google.maps.MapTypeId.TERRAIN
   }
