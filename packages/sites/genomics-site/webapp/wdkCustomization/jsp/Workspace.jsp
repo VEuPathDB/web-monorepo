@@ -34,13 +34,15 @@
 
 // Fix record links in results page on EuPathDB
 function customResultsPage() {
-   fixRecordPageLinks("#strategy_results");
+   var activeView = wdk.findActiveView();
+   fixRecordPageLinks(activeView);
 }
 function customBasketPage() {
-   fixRecordPageLinks("#basket");
+   var activeView = wdk.findActiveView();
+   fixRecordPageLinks(activeView);
 }
-function fixRecordPageLinks(page) {
-   $(page + " .Results_Table .rootBody tr td div a").each(function() {
+function fixRecordPageLinks(viewSelector) {
+   $(viewSelector).find(".Results_Table .rootBody tr td div a").each(function() {
          var currentUrl = $(this).attr('href');
          var recordName = parse_Url(currentUrl, "name");
          var primaryKey = parse_Url(currentUrl, "source_id");
