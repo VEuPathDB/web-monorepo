@@ -24,7 +24,7 @@
   <img src="/assets/images/isolate/8.png">
   <img src="/assets/images/isolate/9.png">
   <img src="/assets/images/isolate/10.png">
-  Indicates the number of isolates on each location
+  Indicates the number of isolates from each location
   </td>
 </tr>
 </table>
