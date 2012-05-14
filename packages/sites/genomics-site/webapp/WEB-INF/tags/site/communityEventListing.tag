@@ -45,4 +45,4 @@ http://${pageContext.request.serverName}${feedPath}
 </c:otherwise>
 </c:choose>
 <br>
-	<a class="small" href='http://maps.google.com/maps/ms?vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&msid=208351045565585105018.000490de33b177c1f9068'>EuPathDB Events in the World >>></a>
+	<a class="small" href='http://maps.google.com/maps/ms?vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&msid=208351045565585105018.000490de33b177c1f9068'>Global view of EuPathDB training >>></a>
