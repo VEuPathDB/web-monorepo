@@ -21,16 +21,24 @@
 
     <c:set var="name" 		value="${fn:replace(row['module'].value, '::', '')}"/>
     <c:set var="secName" 	value="${row['module'].value}"/>
-    <c:set var="imgId" 		value="img${secName}"/>
-    <c:set var="preImgSrc" 	value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&fmt=png&id=${row['source_id'].value}"/>
-    <c:set var="imgSrc" 	value="${preImgSrc}"/>
-    <c:set var="noData" 	value="false"/>
+    <c:set var="baseUrlWithArgs" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&id=${row['source_id'].value}"/>
+    
+    <c:set var="imgId" value="img${secName}"/>    
+    <c:set var="preImgSrc" value="${baseUrlWithArgs}&fmt=png"/>
+    
+    <c:set var="tableId" value="${secName}Data"/>
+    <%-- Since secName can have invalid html ID characters, must clean them up before using --%>
+    <c:set var="tableId" value="${fn:replace(tableId, '.', '')}"/>
+    <c:set var="tableId" value="${fn:replace(tableId, ':', '')}"/>
+    <c:set var="preTableSrc" value="${baseUrlWithArgs}&fmt=table"/>
+    
+    <c:set var="imgSrc" value="${preImgSrc}"/>
+    <c:set var="noData" value="false"/>
+    <c:set var="tblErrMsg" value="Unable to load data table with newly selected columns."/>
 
-
-
-   <c:set var="hasRma" value="false"/>
-   <c:set var="hasCoverage" value="false"/>
-
+    <c:set var="hasRma" value="false"/>
+    <c:set var="hasCoverage" value="false"/>
+    
     <c:set var="selectList">
       <form name=${name}List>
         <c:set var="vp_i" 			value="0"/>
@@ -46,13 +54,13 @@
 
           <c:choose>
             <c:when test="${vp_i == 0}">
-              ${vp} <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="${vp}" name="${vp}" checked /> &nbsp;
+              ${vp} <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${vp}" name="${vp}" checked /> &nbsp;
 
               <c:set var="imgSrc" 		value="${imgSrc}&vp=_LEGEND,${vp}"/>
               <c:set var="defaultVp" 		value="${vp}"/>
             </c:when>
             <c:otherwise>
-              ${vp} <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="${vp}"name="${vp}" /> &nbsp;
+              ${vp} <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${vp}"name="${vp}" /> &nbsp;
             </c:otherwise>
           </c:choose>
           <c:set var="vp_i" value="${vp_i +  1}"/>
@@ -66,15 +74,14 @@
         <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB'}">
           <c:if test="${hasRma eq 'true'}">
             <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
-            <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="internal_want_logged" name="want_logged" checked />
+            <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" checked />
           </c:if>
 
           <c:if test="${hasCoverage eq 'true'}">
             <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
-            <input type="checkbox" onClick="javascript:updateImage('${imgId}', formatImgUrl('${preImgSrc}', this.form))" value="internal_want_logged" name="want_logged" />
+            <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" />
           </c:if>
         </c:if>
-
 
       </form>
 
@@ -90,7 +97,6 @@
 
         <td class="centered">
         	<c:set var="noProfileDataTable">false</c:set>
-        	<c:set var="toggleName" value="${row['module'].value}"/>
 
         	<c:choose>
          	<c:when test="${not empty row['dataTable'].value}">
@@ -105,7 +111,7 @@
 
 <%--   Data table by some graphs --%>
 <imp:toggle
-    name="${toggleName}Data"     
+    name="${tableId}"     
     displayName="Data Table"
     content="${profileDataTable}"
     isOpen="${row['dataOpen'].value}"
@@ -154,13 +160,13 @@
      </c:if>
 
 <imp:toggle
-    name="${toggleName}"				
-    isOpen="${row['mainOpen'].value}"			
-    noData="${noData}"					
-    displayName="${row['display_name'].value}"		
-    content="${profileContent}"				
-    attribution="${dataAttribution}"		
-    imageId="${imgId}"					
+    name="${secName}"
+    isOpen="${row['mainOpen'].value}"
+    noData="${noData}"
+    displayName="${row['display_name'].value}"
+    content="${profileContent}"
+    attribution="${dataAttribution}"
+    imageId="${imgId}"
     imageSource="${imgSrc}" />				
 
   </c:if>  	<%-- test="${organism eq row['organism'].value}" --%>
@@ -168,8 +174,7 @@
 
 
 <script type="text/javascript">
-function formatImgUrl(url, myForm)
-{
+function formatResourceUrl(url, myForm) {
   var wl = 0;
   var vp = '&vp=_LEGEND';
   for (var i=0; i < myForm.length; i++){
@@ -182,6 +187,6 @@ function formatImgUrl(url, myForm)
     }
   }
   url = url + vp + '&wl=' + wl;
-  return(url);
+  return url;
 }
 </script>
