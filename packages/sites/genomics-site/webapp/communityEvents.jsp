@@ -50,7 +50,7 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
 <tr><td><h2 align='center'>${projectName} Community Events</h2></td>
     <td align="right"><a target=":blank" href="http://eupathdb.org/eupathdb/eupathEvents.jsp">Eukaryotic Pathogens Meetings with EuPathDB presence  >>></a></td>
 </tr>
-<table>
+</table>
 
 
 <c:catch var='e'>
@@ -68,13 +68,14 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
     <x:param name="tag" value="${param.tag}"/>
 </x:transform>
 <c:if test="${param.tag != null && param.tag ne ''}">
-<br/><br/>
-<a href='${pageContext.request.requestURI}'>All ${project} Community Events</a>
+	<br/><br/>
+	<a href='${pageContext.request.requestURI}'>All ${project} Community Events</a>
 </c:if>
 </div>
+
 </c:catch>
 <c:if test="${e != null}">
-    oops. this is borken. <br> 
+    oops. this is broken. <br> 
     ${e}
 </c:if>
 
@@ -85,7 +86,5 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
   <font size='-2' color='black'>RSS</font></a>
 </div>
 
-</body>
-</html>
 
-<imp:footer />
+<imp:footer /> <%-- contains </body> </html> --%>
