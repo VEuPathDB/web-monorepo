@@ -9,6 +9,6 @@
 <p/>
 <h2>Additional Information</h2>
 <ul>
-<li><a href="https://www.cbil.upenn.edu/apiwiki/index.php/DashboardXMLApi">Background</a>
-<li><a href="https://www.cbil.upenn.edu/apiwiki/index.php/SysArchDocs/dashboard">XML API</a></li>
+<li><a href="https://www.cbil.upenn.edu/apiwiki/index.php/SysArchDocs/dashboard">Background</a></li>
+<li><a href="https://www.cbil.upenn.edu/apiwiki/index.php/DashboardXMLApi">XML API</a>
 </ul>
