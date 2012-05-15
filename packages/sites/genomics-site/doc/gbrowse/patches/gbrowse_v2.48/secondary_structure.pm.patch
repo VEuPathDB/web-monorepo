@@ -1,0 +1,12 @@
+--- secondary_structure.pm.orig	2012-05-15 10:32:48.000000000 -0400
++++ secondary_structure.pm	2012-05-15 10:51:53.000000000 -0400
+@@ -73,7 +73,8 @@
+ 
+   if (!$max) {
+     $self->draw_spacer($gd,$x1,$y1,$x2,$y2);
+-  } elsif ($self->do_plots && !$self->dna_fits) {
++  #} elsif ($self->do_plots && !$self->dna_fits) {
++  } elsif ($self->do_plots) {
+     $self->draw_plots($gd,$sec_struc_encs,$x1,$y1,$x2,$y2,$min,$max);
+   } else {
+     $self->draw_colorbar($gd,$sec_struc_encs,$x1,$y1,$x2,$y2,$min,$max);
