@@ -71,9 +71,10 @@ sub draw_component {
 
   my ($min, $max) = $self->_checkEncodings($sec_struc_encs);
 
-  if (!$max) {
-    $self->draw_spacer($gd,$x1,$y1,$x2,$y2);
-  } elsif ($self->do_plots && !$self->dna_fits) {
+  #if (!$max) {
+  #  $self->draw_spacer($gd,$x1,$y1,$x2,$y2);
+  #} elsif ($self->do_plots && !$self->dna_fits) {
+  if ($self->do_plots) {
     $self->draw_plots($gd,$sec_struc_encs,$x1,$y1,$x2,$y2,$min,$max);
   } else {
     $self->draw_colorbar($gd,$sec_struc_encs,$x1,$y1,$x2,$y2,$min,$max);
