@@ -4,7 +4,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<!-- get wdkXmlQuestionSets saved in request scope -->
+<%-- get wdkXmlQuestionSets saved in request scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="dataSources" value="${requestScope.dataSources}"/>
 <c:set var="question" value="${requestScope.question}" />
@@ -19,7 +19,7 @@
 
 <imp:header banner="Data Contents" refer="data-source" />
 
-<!-- show all xml question sets -->
+<%-- show all xml question sets --%>
 <div id="data-sources">
   <a name="_top"></a>
   <h1>Data Sources</h1>
