@@ -112,7 +112,7 @@ a[name]:hover, a[name]:active {
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
+#menu a:hover, #menu a:active, #strategy_tabs #selected a {
 	color:#560000;
 }
 #menu ul ul a:link, #menu ul ul a:visited{

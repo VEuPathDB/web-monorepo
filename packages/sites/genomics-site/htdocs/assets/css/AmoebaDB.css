@@ -296,7 +296,7 @@ div.Workspace {
 	border-color: #02935c;
 }
 
-span#stratTitle, #strategy_tabs #selected a {
+#strategy_tabs #selected a {
 	color: #58441F;
 }
 #strategy_tabs a:link, #strategy_tabs a:visited {

@@ -286,7 +286,7 @@ span.marker a:link, span.marker a:visited {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = strategy workspace
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-span#stratTitle, #strategy_tabs #selected a {
+#strategy_tabs #selected a {
 	color:#560000;
 }
 
