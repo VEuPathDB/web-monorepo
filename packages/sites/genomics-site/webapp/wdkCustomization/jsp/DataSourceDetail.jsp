@@ -9,11 +9,10 @@
 <c:set var="dataSources" value="${requestScope.dataSources}"/>
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
-<c:set var="reference">
+<c:set var="dataset">
   <c:choose>
     <c:when test="${question != null}">?question=${question}</c:when>
     <c:when test="${recordClass != null}">?recordClass=${recordClass}</c:when>
-    <c:otherwise></c:otherwise>
   </c:choose>
 </c:set>
 
@@ -23,18 +22,22 @@
 <div id="data-sources">
   <a name="_top"></a>
   <h1>Data Sources</h1>
-  <h3>Categories</h3>
+   
+  <div class="smallitalics">(Click on a category to jump to the corresponding section in the page)</div> <br/>
+
   <ul id="toc">
     <c:forEach items="${dataSources}" var="category">
       <li><a href="#${category.key}"><i>${category.key}</i></a></li>
     </c:forEach>
   </ul>
-  <br />
+  <br/><br/><br/>
 
   <c:forEach items="${dataSources}" var="category">
-    <div class="category">
+  <div class="category">
       <div class="anchor">[ <a href="#_top">Top</a> ]</div>
-      <h3><a name="${category.key}">${category.key}</a></h3>
+      <a name="${category.key}"></a>
+      <div class="h3center ctitle">${category.key}</div>
+
       <div class="category-content">
         <c:forEach items="${category.value}" var="record">
           <c:set var="wdkRecord" value="${record}" scope="request" />
@@ -48,51 +51,62 @@
           <c:set var="organism" value="${attributes['organism']}" />
           <c:set var="description" value="${attributes['description']}" />
           <c:set var="contact" value="${attributes['contact']}" />
-          <c:set var="institution" value="${attributes['institution']}" />
-        
+          <c:set var="institution" value="${attributes['institution']}" />        
           <c:set var="tables" value="${record.tables}" />
           <c:set var="publications" value="${tables['Publications']}" />
           <c:set var="contacts" value="${tables['Contacts']}" />
           <c:set var="externallinks" value="${tables['ExternalLinks']}" />
           <c:set var="references" value="${tables['References']}" />
+
           <div class="data-source">
-            <div>
+
+<%-------    DATASET NAME ----------------%>
+            <div class="dstitle">
               <a name="${name.value}"></a>
-              <b>${displayName.value}</b>
+              ${displayName.value}
               (<span class="caption">${version.displayName}</span>: ${version.value})
             </div>
+
+
+<%-------    DATASET CONTENT ----------------%>
             <div class="detail">
               <table>
-                <tr><td><span class="caption">${categories.displayName} </span></td><td> ${categories.value}</td></tr>
-                <tr><td><span class="caption">${organism.displayName} </span></td><td> ${organism.value}</td></tr>
-                <tr><td><span class="caption">${contact.displayName} </span></td><td> ${contact.value}</td></tr>
-                <tr><td><span class="caption">${institution.displayName} </span></td><td> ${institution.value}</td></tr>
-                <tr><td><span class="caption">Description </span></td><td> ${description.value}</td></tr>
+                <c:if test='${not empty organism.value}'>    <tr><td><span class="caption">${organism.displayName} </span></td><td> ${organism.value}</td></tr>  </c:if>
+                <tr><td><span class="caption">${contact.displayName}</span></td><td> ${contact.value}
+                  <c:if test='${not empty institution.value}'>, ${institution.value}</c:if>
+                </td></tr>
+       <!--         <tr><td><span class="caption">Description </span></td><td> ${description.value}</td></tr> -->
               </table>
             </div>
-          
+            
+            <c:if test='${not empty description.value}'>
+                <imp:simpleToggle name="Description" content="${description.value}" show="false" />
+            </c:if>
+
+            <%-- avoiding table.tag to unify style with searches --%>
             <c:if test="${fn:length(publications) > 0}">
-              <c:set var="publicationContent">
-                <imp:table table="${publications}" sortable="false" showHeader="false" />
+               <c:set var="publicationContent">
+              <!--      <imp:table table="${publications}" sortable="false" showHeader="false" /> -->
+                <ul>
+                  <c:forEach items="${publications}" var="publication">
+                        <li>${publication['citation']}</li>
+                  </c:forEach>
+                </ul>
               </c:set>
-              <imp:simpleToggle name="${publications.name}" content="${publicationContent}" />
-            </c:if>
 
-<%--
-            <c:if test="${fn:length(contacts) > 0}">
-              <c:set var="contactContent">
-                <imp:table table="${contacts}" sortable="false" />
-              </c:set>
-              <imp:simpleToggle name="${contacts.name}" content="${contactContent}" show="false" />
+              <imp:simpleToggle name="${publications.name}" content="${publicationContent}" show="false" />
             </c:if>
---%>
-
 
             <c:if test="${fn:length(externallinks) > 0}">
               <c:set var="extLinkContent">
-                <imp:table table="${externallinks}" sortable="false" showHeader="false" />
+               <!--   <imp:table table="${externallinks}" sortable="false" showHeader="false" />  -->
+                 <ul>
+                  <c:forEach items="${externallinks}" var="externallink">
+                        <li>${externallink['url']}</li>
+                  </c:forEach>
+                </ul>
               </c:set>
-              <imp:simpleToggle name="${externallinks.displayName}" content="${extLinkContent}" show="false" />
+              <imp:simpleToggle name ="${externallinks.displayName}" content="${extLinkContent}" show="false" />
             </c:if>
 
             <c:if test="${fn:length(references) > 0}">
@@ -117,17 +131,20 @@
               </c:if>
             </c:if>
 
-          </div>
-        
-        </c:forEach>
-      </div>
-    </div>
-  </c:forEach>
+          </div><hr>       <!-- .data-source -->
+        </c:forEach>       <!-- all datasets in one category  -->
+
+      </div>   <!-- .category-content -->
+  </div>       <!-- .category   -->
+  </c:forEach> <!-- all categories  -->
   
-  <c:if test="${fn:length(reference) > 0}">
+
+   <%-- if there are more datasets --%>
+  <c:if test="${fn:length(dataset) > 0}">
     <p><a href="<c:url value='/getDataSource.do?display=detail' />">Click here to see the complete list of Data Sources</a></p>
   </c:if>
-</div>
+
+</div>      <!-- #data-sources   -->
 
 
 <imp:footer/>
