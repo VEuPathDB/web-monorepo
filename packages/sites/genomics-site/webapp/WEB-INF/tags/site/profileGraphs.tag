@@ -22,7 +22,7 @@
     <c:set var="name" 		value="${fn:replace(row['module'].value, '::', '')}"/>
     <c:set var="secName" 	value="${row['module'].value}"/>
     <c:set var="baseUrlWithArgs" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&id=${row['source_id'].value}"/>
-    
+
     <c:set var="imgId" value="img${secName}"/>    
     <c:set var="preImgSrc" value="${baseUrlWithArgs}&fmt=png"/>
     
@@ -33,6 +33,8 @@
     <c:set var="preTableSrc" value="${baseUrlWithArgs}&fmt=table"/>
     
     <c:set var="imgSrc" value="${preImgSrc}"/>
+    <c:set var="tableSrc" value="${preTableSrc}"/>
+
     <c:set var="noData" value="false"/>
     <c:set var="tblErrMsg" value="Unable to load data table with newly selected columns."/>
 
@@ -57,6 +59,7 @@
               ${vp} <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${vp}" name="${vp}" checked /> &nbsp;
 
               <c:set var="imgSrc" 		value="${imgSrc}&vp=_LEGEND,${vp}"/>
+              <c:set var="tableSrc" 		value="${tableSrc}&vp=${vp}"/>
               <c:set var="defaultVp" 		value="${vp}"/>
             </c:when>
             <c:otherwise>
@@ -105,7 +108,7 @@
          	<c:otherwise>
          		<c:set var="profileDataTable">
            			<c:set var="prefix" 		value="<%= request.getRequestURL() %>" />
-           			<c:set var="tableSrc" 		value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&fmt=table&id=${row['source_id'].value}"/>
+
            			<c:import url="${prefix}/../../../../../${tableSrc}"  />  
          		</c:set>
 
