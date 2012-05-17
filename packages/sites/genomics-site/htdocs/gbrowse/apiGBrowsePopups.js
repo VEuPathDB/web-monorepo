@@ -174,8 +174,8 @@ function syn_gene_title (tip, projectId, sourceId, taxon, geneType, desc, locati
 	
 	// format into html table rows
 	var rows = new Array();
-	rows.push(twoColRow('Species:', taxon));
 	rows.push(twoColRow('Gene:', sourceId));
+	rows.push(twoColRow('Species:', taxon));
 	rows.push(twoColRow('Gene Type:', geneType));
 	rows.push(twoColRow('Description:', desc));
 	rows.push(twoColRow('Location:', location));
