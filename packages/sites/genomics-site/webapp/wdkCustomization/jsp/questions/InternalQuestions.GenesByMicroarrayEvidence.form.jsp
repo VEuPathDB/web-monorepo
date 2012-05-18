@@ -19,7 +19,7 @@
 	if this becomes difficult to maintain, we would show acronyms.
 --%>
 
-<c:set var="fungiQuestions" value="Cneostudy:Toc1 Toc2 Skn7 mutant treatment,GeneQuestions.GenesByMicroarrayFoldChangeCneoToc1,GeneQuestions.GenesByMicroarrayPercentileCneoToc1,GeneQuestions.GenesByFoldChangePageCneoToc1" />
+<c:set var="fungiQuestions" value="Cneostudy:Toc1 Toc2 Skn7 mutant treatment,GeneQuestions.GenesByMicroarrayFoldChangeCneoToc1,GeneQuestions.GenesByMicroarrayPercentileCneoToc1,GeneQuestions.GenesByFoldChangePageCneoToc1,Calbstudy:C.albicans antifungal activity,GeneQuestions.GenesByMicroarrayFoldChangeCalbAntiFung,GeneQuestions.GenesByMicroarrayPercentileCalbAntiFung,GeneQuestions.GenesByFoldChangePageCalbAntiFung" />
 
 <c:set var="amoebaQuestions" value="E.hi.study:Colonization-Invasion and Stage Conversion (Gilchrist),GeneQuestions.GenesByEHistolyticaExpressionTiming,GeneQuestions.GenesByExpressionTimingPercentileGilchrist,E.hi.study:G3 v. HM1:IMSS Transcript Expression (Gilchrist),GeneQuestions.GenesByAmoebaFoldChangeGilchrist,GeneQuestions.GenesByExpressionPercentileGilchrist,GeneQuestions.GenesByAmoebaFoldChangePageGilchrist" />
 
