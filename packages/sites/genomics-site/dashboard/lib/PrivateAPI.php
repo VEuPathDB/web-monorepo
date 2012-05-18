@@ -51,12 +51,14 @@ class PrivateAPI {
             'servicename'        => $adb->get('service_name'),
             'instancename'       => $adb->get('instance_name'),
             'globalname'         => $adb->get('global_name'),
+            'servername'         => $adb->get('server_name'),
             'aliases'            => $this->split_to_array($adb->get('aliases_from_ldap'), '/,\s*/', 'alias'),
           ),
           'userdb'           => array(
             'servicename'        => $udb->get('service_name'),
             'instancename'       => $udb->get('instance_name'),
             'globalname'         => $udb->get('global_name'),
+            'servername'         => $adb->get('server_name'),
             'aliases'            => $this->split_to_array($udb->get('aliases_from_ldap'), '/,\s*/', 'alias'),
           )
         ),
