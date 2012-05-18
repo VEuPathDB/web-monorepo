@@ -51,7 +51,7 @@ function parsePHPModules() {
 function parse_properties($property_file) {
     $property_text = file_get_contents($property_file);
     if (! $property_text) {
-        throw new Exception("unable to read $property_file");
+        trigger_error("unable to read $property_file");
     }
     $result = array();
     $lines = split("\n", $property_text);
