@@ -9,12 +9,6 @@
 <c:set var="dataSources" value="${requestScope.dataSources}"/>
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
-<c:set var="dataset">
-  <c:choose>
-    <c:when test="${question != null}">?question=${question}</c:when>
-    <c:when test="${recordClass != null}">?recordClass=${recordClass}</c:when>
-  </c:choose>
-</c:set>
 
 <imp:header banner="Data Contents" refer="data-source" />
 
@@ -139,9 +133,9 @@
   </c:forEach> <!-- all categories  -->
   
 
-   <%-- if there are more datasets --%>
-  <c:if test="${fn:length(dataset) > 0}">
-    <p><a href="<c:url value='/getDataSource.do?display=detail' />">Click here to see the complete list of Data Sources</a></p>
+   <%-- if we came to this page to show only a few datasets (would be specified in the url) --%>
+  <c:if test="${fn:length(param.reference) > 0}">
+    <p style="text-align:center;font-size:120%"><a href="<c:url value='/getDataSource.do?display=detail' />">Click here to see the complete list of Data Sources</a></p>
   </c:if>
 
 </div>      <!-- #data-sources   -->
