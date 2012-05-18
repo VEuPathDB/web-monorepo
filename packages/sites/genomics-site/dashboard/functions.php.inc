@@ -52,6 +52,7 @@ function parse_properties($property_file) {
     $property_text = file_get_contents($property_file);
     if (! $property_text) {
         trigger_error("unable to read $property_file");
+        return;
     }
     $result = array();
     $lines = split("\n", $property_text);
