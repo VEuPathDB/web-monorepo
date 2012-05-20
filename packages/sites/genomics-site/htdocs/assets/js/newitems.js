@@ -98,6 +98,7 @@ function putReadInCookie(headernode) {
        readMap[this.id] = 1;
   });
 
+  var key;
   for(key in readMap) {
       if (key == null || key == "") continue;
       if (jQuery.inArray(key, listItems) < 0) continue;
