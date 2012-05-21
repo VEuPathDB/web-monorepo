@@ -563,9 +563,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
      <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC"/>
 </c:if>
+<%--- Not ready for build 14
 <c:if test="${binomial eq 'Trypanosoma cruzi'}">
      <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC"/>
 </c:if>
+----%>
 
 <%---- Poly A Sites table ---------------------------------------------%>
 <c:if test="${binomial eq 'Leishmania major' }">
