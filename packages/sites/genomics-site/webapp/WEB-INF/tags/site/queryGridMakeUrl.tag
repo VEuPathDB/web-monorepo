@@ -173,8 +173,29 @@
 <td width="5" align="left" class="queryGridBullet">&nbsp;&#8226;&nbsp; </td>
 
 <%-- LINK ACTIVE --%>
+
+<%-- adding symbols for build14, until we get this from the model https://redmine.apidb.org/issues/9045 --%>
+<c:if test="${modelName eq 'PlasmoDB' || modelName eq 'EuPathDB'}">
+<c:if test="${linktext eq 'Microarray Evidence' || linktext eq 'RNA Seq Evidence'}">
+	<c:set var="astyle" value="position:relative;top:-5px;"/>
+</c:if>
+</c:if>
+
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
-     <td align="left"><a id="${qset}_${qname}_${type}" class="queryGridLink queryGridActive" href='${link}' title="${fn:escapeXml(popup)}">${linktext}</a></td>
+     <td align="left"><a style="${astyle}" id="${qset}_${qname}_${type}" class="queryGridLink queryGridActive" href='${link}' title="${fn:escapeXml(popup)}">${linktext}</a>
+
+<c:if test="${modelName eq 'PlasmoDB' || modelName eq 'EuPathDB'}">
+<c:if test="${linktext eq 'Microarray Evidence'  || linktext eq 'RNA Seq Evidence'}">
+	<img width="40" alt="Revised feature icon" title="This category has been revised" 
+         	src="<c:url value='/wdk/images/revised-small.png' />" />
+</c:if>
+<c:if test="${fn:containsIgnoreCase(linktext, 'Annotation from Previous')}">
+	<img alt="New feature icon" title="This is a new search" 
+         src="<c:url value='/wdk/images/new-feature.png' />" />
+</c:if>
+</c:if>
+
+</td>
 </c:if>
 
 <%-- LINK INACTIVE --%>
