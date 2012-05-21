@@ -82,7 +82,9 @@ Click on a search below to access its <a href="http://www.w3.org/Submission/wadl
 </span>
 
 <br><br>
-
+<c:if test="${wdkModelDispName eq 'EuPathDB'}">
+<i>(Note: The parameter "o-tables" is not available from EuPathDB.)</i>
+</c:if>
 <!-- show all questionSets in model, driven by categories as in menubar -->
 <imp:drop_down_QG2 from="webservices" />
 

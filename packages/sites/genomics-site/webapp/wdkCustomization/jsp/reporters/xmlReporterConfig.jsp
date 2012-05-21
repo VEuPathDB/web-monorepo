@@ -6,6 +6,10 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
+<!-- get wdkModel saved in application scope -->
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set value="${wdkModel.displayName}" var="project"/>
+
 <!-- get wdkAnswer from requestScope -->
 <jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
 <c:set value="${requestScope.wdkStep}" var="wdkStep"/>
@@ -56,6 +60,9 @@ function makeSelection(state)
         <input type="hidden" name="step" value="${step_id}"/>
         <input type="hidden" name="wdkReportFormat" value="${format}"/>
         <c:set var="numPerLine" value="2"/>
+
+
+
         <table>
           <tr>
              <th colspan="${numPerLine}">Columns</th>
@@ -103,6 +110,8 @@ function makeSelection(state)
 	          
 	        </c:if>
           
+<%-- if project is portal, skip the tables --%>
+<c:if test="${project ne 'EuPathDB'}"> 
           <c:set var="tableFields" value="${wdkAnswer.allReportMakerTables}"/>
           <c:set var="numPerColumn" value="${fn:length(tableFields) / numPerLine}"/>
           <c:set var="i" value="0"/>
@@ -147,10 +156,14 @@ function makeSelection(state)
           <input type="button" value="clear all" selected="yes" onclick="makeSelection(0)">
           <input type="button" value="select inverse" selected="yes" onclick="makeSelection(-1)">
         </td></tr>
+</c:if> <%-- if project is portal, skip the tables --%>
+
         </table>
       </td>
   </tr>
-<tr><td colspan="2"><hr></td></tr>
+
+   <tr><td colspan="2"><hr></td></tr>
+
 <!--
   <tr><td valign="top">&nbsp;</td>
       <td align="center">
@@ -160,7 +173,7 @@ function makeSelection(state)
         </td></tr>
 -->
 
-  <tr><td valign="top"><b>Download Type: </b></td>
+   <tr><td valign="top"><b>Download Type: </b></td>
       <td>
           <input type="radio" name="downloadType" value="text">Text File
           <input type="radio" name="downloadType" value="plain" checked>Show in Browser
@@ -175,7 +188,10 @@ function makeSelection(state)
 
   <tr>
       <td  colspan="2" style="text-align:center"><html:submit property="downloadConfigSubmit" value="Get Report"/>
-      </td></tr></table>
+      </td></tr>
+
+
+</table>
 </form>
 
   </c:otherwise>
