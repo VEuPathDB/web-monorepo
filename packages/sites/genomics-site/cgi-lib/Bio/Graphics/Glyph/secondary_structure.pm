@@ -176,7 +176,12 @@ sub _checkEncodings {
   }
 
   my $min = 0;
-  my $max = $h[0] + $c[0] + $s[0];
+  #my $max = $h[0] + $c[0] + $s[0];
+  # eupathdb 5/21/2012
+  # first element is 0 which caused the problem redmine #8686
+  # tried to sort array, @a = sort @a, then pick the max $a[-1].
+  # and it failed too. not sure how to get the max.
+  my $max = $h[1] + $c[1] + $s[1];
   if ($max > 0.5 && $max <= 1) {
     $max = 1;
   } elsif ($max > 5 && $max <= 10) {
