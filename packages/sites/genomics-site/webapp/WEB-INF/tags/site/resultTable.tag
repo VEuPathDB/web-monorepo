@@ -11,7 +11,12 @@
 
 <wdk:resultTable step="${step}" />
 
+<c:set var="model" value="${applicationScope.wdkModel}" />
+<c:set var="modelName" value="${applicationScope.wdkModel.name}" />
+
+<c:if test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
 <script language="javascript">
 customResultsPage();
 </script>
+</c:if>
 
