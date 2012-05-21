@@ -1,5 +1,5 @@
---- HTML.pm.orig	2012-05-14 14:43:36.000000000 -0400
-+++ HTML.pm	2012-05-14 14:44:37.000000000 -0400
+--- HTML.pm.orig	2012-05-21 18:29:15.000000000 -0400
++++ HTML.pm	2012-05-21 18:33:18.000000000 -0400
 @@ -285,7 +285,7 @@
      my $html = textfield(
          -name    => 'name',
@@ -18,3 +18,14 @@
  			     li({-class=>'dir'},a({-href=>'#'},$self->translate('EXPORT')),
  				ul(li(\@export_links))),
  			     $plugin_link ? li($plugin_link) : (),
+@@ -1802,7 +1802,9 @@
+   my %attributes = map {
+     $_ => {
+       'plugin_type' => $plugins->plugin($_)->type(),
+-      'track_name'  => "plugin:".$plugins->plugin($_)->name(),
++      # eupath patch to fix the RestritionAnnotation bug
++      #'track_name'  => "plugin:".$plugins->plugin($_)->name(),
++      'track_name'  => "plugin:".$_,
+       }
+     }
+     keys %$labels;
