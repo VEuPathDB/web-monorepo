@@ -55,6 +55,50 @@
       <form name=${name}List>
         <c:set var="vp_i" 			value="0"/>
         <c:set var="defaultVp" 			value=""/>
+       <b>Choose Gene to Display Graphs for</b>
+       <br />
+       <c:set var="current_graph_id"            value="${row['default_graph_id'].value}"/>
+       <c:forEach var="graph_id" items="${fn:split(row['graph_ids'].value, ',')}">
+
+          <c:set var="gi_i" 			value="0"/> 
+           
+          <c:choose>
+            <c:when test="${graph_id eq row['default_graph_id'].value}">
+            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}" name="geneOptions" checked /> &nbsp;
+                        
+                         <c:set var="imgSrc" 		value="${imgSrc}&id=${graph_id}"/>
+                         
+            </c:when>
+            <c:otherwise>
+            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}"name="geneOptions" /> &nbsp;
+            </c:otherwise>
+          </c:choose>
+          <c:set var="gi_i" value="${gi_i +  1}"/>
+
+          <c:if test="${gi_i % 3 == 0}">
+            <br /><br />
+          </c:if>
+          
+        </c:forEach>
+        <br/ >
+
+        <c:choose>
+           <c:when test="${row['source_id'].value eq row['default_graph_id'].value}">
+             <c:choose>
+                <c:when test="${row['source_id'].value eq current_graph_id}">
+                    <div id="${textId}"  class="coloredtext" style="display:none">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
+                </c:when>
+                <c:otherwise>
+                    <div id="${textId}"  class="coloredtext">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
+                </c:otherwise>
+              </c:choose>
+           </c:when>
+           <c:otherwise>
+             <div id="NoDataText" class="coloredtext">Warning: ${row['source_id']} does not have data for this experiment.</div><div id="${textId}"  class="coloredtext">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
+           </c:otherwise>
+        </c:choose>
+<br /><br />
+        		<b>Choose Graph(s) to Display</b><br />
         <c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
 
           <c:if test="${fn:contains(vp, 'rma')}">
@@ -85,41 +129,6 @@
         </c:forEach>
        
        <br /> <br />
-       <b>Choose Gene to Display Graphs for</b>
-       <br />
-       <c:set var="current_graph_id"            value="${row['default_graph_id'].value}"/>
-       <c:forEach var="graph_id" items="${fn:split(row['graph_ids'].value, ',')}">
-
-          <c:set var="gi_i" 			value="0"/> 
-           
-          <c:choose>
-            <c:when test="${graph_id eq row['default_graph_id'].value}">
-            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}" name="geneOptions" checked /> &nbsp;
-                        
-                         <c:set var="imgSrc" 		value="${imgSrc}&id=${graph_id}"/>
-                         
-            </c:when>
-            <c:otherwise>
-            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}"name="geneOptions" /> &nbsp;
-            </c:otherwise>
-          </c:choose>
-          <c:set var="gi_i" value="${gi_i +  1}"/>
-
-          <c:if test="${gi_i % 3 == 0}">
-            <br /><br />
-          </c:if>
-          
-        </c:forEach>
-        <br/ >
-
-        <c:choose>
-           <c:when test="${row['source_id'].value eq row['default_graph_id'].value}">
-             <div id="${textId}"  class="coloredtext">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
-           </c:when>
-           <c:otherwise>
-             <div id="NoDataText" class="coloredtext">Warning: ${row['source_id']} does not have data for this experiment.</div><div id="${textId}"  class="coloredtext">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
-           </c:otherwise>
-        </c:choose>
               
         <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB'}">
           <c:if test="${hasRma eq 'true'}">
@@ -181,7 +190,6 @@
         		${row['y_axis'].value} 
 
        			<br /><br />
-        		<b>Choose Graph(s) to Display</b><br />
         		${selectList}
        		</div>
       </td>
@@ -249,10 +257,16 @@ function formatResourceUrl(url, myForm) {
   return url;
 }
 
-function updateText(id,geneId,myForm) {
+function updateText(id,sourceId,geneId,myForm) {
    var myText = 'The Data and Graphs you are viewing are for syntentic gene : ';
    myText = myText + geneId;
    document.getElementById(id).innerHTML = myText;
+   if (sourceId == geneId) {
+       document.getElementById(id).style.display="none";
+   }
+   else {
+      document.getElementById(id).style.display="inline"; 
+   }   
 }
 
 </script>
