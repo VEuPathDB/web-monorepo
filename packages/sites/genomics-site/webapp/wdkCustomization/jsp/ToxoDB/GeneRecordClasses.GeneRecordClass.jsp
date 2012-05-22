@@ -453,21 +453,10 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 <imp:pageDivider name="Expression"/>
 
  <%-- ------------------------------------------------------------------ --%>
-  <imp:expressionGraphs organism="${organism_full}"/>
+     <imp:expressionGraphs organism="${organism_full}"/>
  <%-- ------------------------------------------------------------------ --%>
 
-
-<c:if test="${organism_full eq 'Toxoplasma gondii GT1' || organism_full eq 'Toxoplasma gondii VEG'}">
-
-
-<imp:wdkTable tblName="ToxoExpandStrainsMicroarray" isOpen="true"
-                   attribution="Tg_3_Archetypal_Lineages_ExpressionData"/>
-
-
 </c:if>
-</c:if>
-
-
 
 <imp:pageDivider name="Sequence"/>
 <i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
