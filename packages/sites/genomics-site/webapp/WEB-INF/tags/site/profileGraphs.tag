@@ -14,19 +14,29 @@
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set value="${wdkRecord.tables[tableName]}" var="tbl"/>
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
-
+<c:set var="i" value="0"/>
 
 <c:forEach var="row" items="${tbl}">
   <c:if test="${organism eq row['organism'].value}">
 
     <c:set var="name" 		value="${fn:replace(row['module'].value, '::', '')}"/>
     <c:set var="secName" 	value="${row['module'].value}"/>
-    <c:set var="baseUrlWithArgs" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&id=${row['source_id'].value}"/>
+          <c:if test="${fn:contains(vp, 'rma')}">
+            <c:set var="hasRma" value="true"/>
+          </c:if>
+          <c:if test="${fn:contains(vp, 'coverage')}">
+            <c:set var="hasCoverage" value="true"/>
+          </c:if>
 
-    <c:set var="imgId" value="img${secName}"/>    
+          <c:set var="baseUrlWithArgs" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}"/>
+
+
+    
+    <c:set var="imgId" value="img${secName}_${i}"/>    
     <c:set var="preImgSrc" value="${baseUrlWithArgs}&fmt=png"/>
     
-    <c:set var="tableId" value="${secName}Data"/>
+    <c:set var="tableId" value="${secName}Data_${i}"/>
+    <c:set var="textId" value="${secName}Text_${i}"/>
     <%-- Since secName can have invalid html ID characters, must clean them up before using --%>
     <c:set var="tableId" value="${fn:replace(tableId, '.', '')}"/>
     <c:set var="tableId" value="${fn:replace(tableId, ':', '')}"/>
@@ -53,7 +63,7 @@
           <c:if test="${fn:contains(vp, 'coverage')}">
             <c:set var="hasCoverage" value="true"/>
           </c:if>
-
+          
           <c:choose>
             <c:when test="${vp_i == 0}">
               ${vp} <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${vp}" name="${vp}" checked /> &nbsp;
@@ -71,9 +81,46 @@
           <c:if test="${vp_i % 3 == 0}">
             <br />
           </c:if>
+          
         </c:forEach>
+       
+       <br /> <br />
+       <b>Choose Gene to Display Graphs for</b>
+       <br />
+       <c:set var="current_graph_id"            value="${row['default_graph_id'].value}"/>
+       <c:forEach var="graph_id" items="${fn:split(row['graph_ids'].value, ',')}">
 
+          <c:set var="gi_i" 			value="0"/> 
+           
+          <c:choose>
+            <c:when test="${graph_id eq row['default_graph_id'].value}">
+            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}" name="geneOptions" checked /> &nbsp;
+                        
+                         <c:set var="imgSrc" 		value="${imgSrc}&id=${graph_id}"/>
+                         
+            </c:when>
+            <c:otherwise>
+            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}"name="geneOptions" /> &nbsp;
+            </c:otherwise>
+          </c:choose>
+          <c:set var="gi_i" value="${gi_i +  1}"/>
 
+          <c:if test="${gi_i % 3 == 0}">
+            <br /><br />
+          </c:if>
+          
+        </c:forEach>
+        <br/ >
+
+        <c:choose>
+           <c:when test="${row['source_id'].value eq row['default_graph_id'].value}">
+             <div id="${textId}"  class="coloredtext">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
+           </c:when>
+           <c:otherwise>
+             <div id="NoDataText" class="coloredtext">Warning: ${row['source_id']} does not have data for this experiment.</div><div id="${textId}"  class="coloredtext">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
+           </c:otherwise>
+        </c:choose>
+              
         <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB'}">
           <c:if test="${hasRma eq 'true'}">
             <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
@@ -85,6 +132,7 @@
             <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" />
           </c:if>
         </c:if>
+
 
       </form>
 
@@ -123,7 +171,6 @@
 
          	</c:otherwise>
          	</c:choose>
-
        		<br /><br />
        		<div class="small">
         		<b>Description</b><br />
@@ -163,7 +210,7 @@
      </c:if>
 
 <imp:toggle
-    name="${secName}"
+    name="${secName}_${i}"
     isOpen="${row['mainOpen'].value}"
     noData="${noData}"
     displayName="${row['display_name'].value}"
@@ -173,6 +220,7 @@
     imageSource="${imgSrc}" />				
 
   </c:if>  	<%-- test="${organism eq row['organism'].value}" --%>
+  <c:set var="i" value="${i +  1}"/>      
 </c:forEach>  	<%-- var="row" items="${tbl}" --%>
 
 
@@ -180,16 +228,31 @@
 function formatResourceUrl(url, myForm) {
   var wl = 0;
   var vp = '&vp=_LEGEND';
+  var id = '&id=';
+
   for (var i=0; i < myForm.length; i++){
     var e = myForm.elements[i];
-    if(e.name == 'want_logged' && e.checked) {
+
+
+    if (e.type == 'checkbox' && e.name == 'want_logged' && e.checked) {
       wl = 1;
     }
-    if(e.checked) {
+    if (e.type == 'checkbox' && e.name !='want_logged' && e.checked) {
       vp = vp + ',' + e.value;
+      
+    }
+    if (e.type == 'radio' && e.checked) {
+      id = id + e.value;
     }
   }
-  url = url + vp + '&wl=' + wl;
+  url = url + id + vp + '&wl=' + wl;
   return url;
 }
+
+function updateText(id,geneId,myForm) {
+   var myText = 'The Data and Graphs you are viewing are for syntentic gene : ';
+   myText = myText + geneId;
+   document.getElementById(id).innerHTML = myText;
+}
+
 </script>
