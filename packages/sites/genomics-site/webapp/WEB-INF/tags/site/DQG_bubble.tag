@@ -111,14 +111,14 @@
 				<a class="heading" href="javascript:void(0)">${cat.displayName}
 
 
-<%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045 --%>
+<%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${cat.displayName eq 'Transcript Expression'}">
 	<img width="40" alt="Revised feature icon" title="This category has been revised" 
          	src="<c:url value='/wdk/images/revised-small.png' />" />
 </c:if>
 </c:if>
-
+ --%>
 
 </a>
 				<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;<i>description</i></a>
@@ -132,14 +132,14 @@
                                     <imp:questionFeature question="${q}" />
 
 
-<%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045 --%>
+<%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${q.displayName eq 'Microarray Evidence'  || q.displayName eq 'RNA Seq Evidence'}">
 	<img width="40" alt="Revised feature icon" title="This category has been revised" 
          	src="<c:url value='/wdk/images/revised-small.png' />" />
 </c:if>
 </c:if>
-
+ --%>
 			          </li>
 				</c:forEach>
 				</ul>
