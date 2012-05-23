@@ -171,7 +171,8 @@ class PrivateAPI {
         }
       }
       else {
-        $xml_o->addChild("$key","$value");
+        // htmspecialchars() because SimpleXMLElement doesn't escape ampersands
+        $xml_o->addChild("$key", htmlspecialchars("$value"));
       }
     }
 
