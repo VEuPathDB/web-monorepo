@@ -1,5 +1,10 @@
-<?
-header('Content-type: text/xml');
+<?php
+
+/**
+ *
+ * @package RemoteAPI
+ * @subpackage XML
+ */
 
 // version of data and format returned. Change value e.g as
 // elements are added, removed.
@@ -15,12 +20,11 @@ $want_value = false;
 
 $path_info = trim(@$_SERVER["PATH_INFO"], '/');
 /**
-Check if pathinfo terminates with 'value' and remove it. The remainder of path_info
-will be used for an xpath query.
-    /dashboard/wdk returns xml document
-    /dashboard/wdk/value returns text values of /dashboard/wdk
-**/
-
+  Check if pathinfo terminates with 'value' and remove it. The remainder of path_info
+  will be used for an xpath query.
+  /dashboard/wdk returns xml document
+  /dashboard/wdk/value returns text values of /dashboard/wdk
+ * */
 if ($path_info) {
   if ($path_info == 'version') {
     print FORMATVERSION;
@@ -36,7 +40,7 @@ $req_xpath = ($path_info) ? '/' . $path_info : ROOTNAME;
 
 $wdkxml = $api->get_xml();
 
-/** Construct new XML doc and combine xml gathered from various sources **/
+/** Construct new XML doc and combine xml gathered from various sources * */
 $sitexml = new DomDocument('1.0');
 $sitexml->formatOutput = true;
 
@@ -46,29 +50,30 @@ $sitexml->appendChild($root);
 
 import_node($sitexml, $wdkxml);
 
-/** get node from xpath query **/
+/** get node from xpath query * */
 $domxpath = new DOMXpath($sitexml);
 $qstr = "/$req_xpath";
 
 $reportxml = new DomDocument('1.0');
 $qnode = $domxpath->query($qstr)->item(0);
 
-if ( ! $qnode) {
+if (!$qnode) {
   $qnode = error_node($sitexml, "no match for '$qstr'");
 }
 
 $reportxml->appendChild(
-  $reportxml->importNode($qnode, true)
+        $reportxml->importNode($qnode, true)
 );
 $reportxml->preserveWhiteSpace = false;
-$reportxml->formatOutput   = true;
+$reportxml->formatOutput = true;
 
-/** text values or XML output **/
+/** text values or XML output * */
 if ($want_value) {
+  header('Content-type: text/plain');
   print_node_values($qnode);
 } else {
+  header('Content-type: text/xml');
   print $reportxml->saveXml();
 }
 exit;
-
 ?>

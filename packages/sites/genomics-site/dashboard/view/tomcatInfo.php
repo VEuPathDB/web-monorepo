@@ -1,15 +1,22 @@
-<?
-require_once dirname(__FILE__) . "/../lib/modules/JvmInfo.php";
-require_once dirname(__FILE__) . "/../lib/modules/WebappInfo.php";
-require_once dirname(__FILE__) . "/../lib/modules/CatalinaInfo.php";
+<?php
+/**
+ * Information about Tomcat and the Java VM.
+ * @package View
+ */
 
-$jvm = new JvmInfo();
-$webapp = new WebappInfo();
-$catalina = new CatalinaInfo();
+require_once dirname(__FILE__) . "/../lib/modules/Jvm.php";
+require_once dirname(__FILE__) . "/../lib/modules/Webapp.php";
+require_once dirname(__FILE__) . "/../lib/modules/Catalina.php";
 
-$jvm_data = $jvm->get_data_map();
-$webapp_data = $webapp->get_data_map();
-$catalina_data = $catalina->get_data_map();
+$jvm = new Jvm();
+$webapp = new Webapp();
+$catalina = new Catalina();
+
+$jvm_data = $jvm->attributes();
+$webapp_data = $webapp->attributes();
+$catalina_data = $catalina->attributes();
+
+// TODO - if possible show undeployed or stopped instead of error for webapp uptime
 ?>
 
 <h2>Tomcat</h2>
@@ -20,7 +27,7 @@ $catalina_data = $catalina->get_data_map();
 <tr><td><b>Instance uptime:</b></td><td class="p"><?= $jvm->uptime_as_text() ?></td></tr>
 
 <tr><td>&nbsp;</td></tr>
-<tr><td><b>Webapp:</b> </td><td class="p"><?= $webapp->get_context(); ?></td></tr>
+<tr><td><b>Webapp:</b> </td><td class="p"><?= str_replace('/', '', $webapp_data{'path'}); ?></td></tr>
 
 <tr><td><b>Webapp uptime:</b></td><td class="p">
 <span id="webapp_uptime">
@@ -34,15 +41,15 @@ $catalina_data = $catalina->get_data_map();
 </td></tr>
 
 <tr><td>&nbsp;</td></tr>
-<tr><td><b>Servlet container:</b> </td><td class="p"><?= $catalina->get('serverInfo'); ?></td></tr>
-<tr><td><b>Servlet info:</b> </td><td class="p">${app.servletInfo}</td></tr>
-<tr><td><b>Servlet API version:</b> </td><td class="p">${app.servletApiVersion}</td></tr>
+<tr><td><b>Servlet container:</b> </td><td class="p"><?= $catalina_data{'ServerInfo'}; ?></td></tr>
+<tr><td><b>Servlet API version:</b> </td><td class="p"><?= $catalina_data{'ServletApiVersion'}; ?></td></tr>
+<tr><td><b>JSP spec version:</b> </td><td class="p"><?= $catalina_data{'JspSpecVersion'}; ?></td></tr>
 </table>
 <p>
 
 <p class="clickable">Webapp Classpath &#8593;&#8595;</p>
 <div class="expandable" style="padding: 5px;">
-<?= str_replace(':', '<br>', $jvm_data{'ClassPath'}) ?><?= str_replace(':', '<br>', $webapp->get('loaderRepositoriesString')) ?>
+<?= str_replace(':', '<br>', $jvm_data{'ClassPath'}) ?><?= str_replace(':', '<br>', $webapp_data{'loaderRepositoriesString'}) ?>
 </div>
 
 </p>

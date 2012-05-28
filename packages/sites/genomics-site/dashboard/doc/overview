@@ -1,0 +1,82 @@
+
+UserAgent
+    constructor input
+         array(
+            'url' => $url, 
+            'post_fields' => $json_encoded_POST_payload);
+        or NULL and call set methods after instantiation
+
+
+
+JmxBridgeQuery
+    constructor input
+        array(
+            'url' => $url,
+            'query_param_array' => $query_param_array)
+        or NULL and call set methods after instantiation
+    
+    $query_param_array is an array
+                  array(
+                  'type' => 'read',
+                  'mbean' => 'org.apidb.wdk:group=Databases,type=UserDB,context=cryptodb.msh',
+                  'attribute' => 'MetaDataMap',
+              )
+        for the cooresponding json string
+            {"type":"read","mbean":"org.apidb.wdk:group=Databases,type=UserDB,context=cryptodb.msh","attribute":"MetaDataMap"}        
+
+    constructs a UserAgent and executes it
+
+    puts raw json result into JolQueryAnswer
+    
+
+
+JolOperation (abstract)
+    base_url
+    type
+    invoke()
+        return JolQueryResult
+    
+JolReadOperation
+    type = 'read'
+    mbean
+    attribute
+    path
+
+JolExecOperation
+    type = 'exec'
+    mbean
+    operation
+    arguments
+    
+JolWriteOperation
+    type = 'write'
+    mbean
+    attribute
+    value
+    path
+
+JokSearchOperation
+    type = 'search'
+    mbean
+    
+JokListOperation
+    type = 'list'
+    path
+
+
+
+
+Database
+    AppDatabase
+        attributes()
+            $exec = new JolExecOperation
+            $read = new JolReadOperation
+            $req = new JolRequest
+            $req->add_operation($exec)
+            $req->add_operation($read)
+            
+            $result = $req->invoke();
+            return value_array = $result->value();
+        refresh()
+            $req = new JolExecOperation
+            $result = $req->invoke()

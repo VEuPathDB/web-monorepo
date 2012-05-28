@@ -1,4 +1,9 @@
-<?
+<?php
+/**
+ * Information about HTTP reverse proxy (if any).
+ * @package View
+ */
+
 require_once dirname(__FILE__) . "/../lib/modules/ProxyInfo.php";
 
 $pi = new ProxyInfo();

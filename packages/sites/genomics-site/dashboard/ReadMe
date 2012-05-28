@@ -1,14 +1,14 @@
-Dashboard is a web interface that provides state information for a EuPathDB website,
+/dashboard is a web interface that provides state information for a EuPathDB website,
 including data from Apache HTTP Server, Tomcat and the WDK.
 
-Dashboard is written in PHP. The Tomcat and WDK information is obtained from JMX mbeans 
-via Jolokia's JMX-HTTP bridge. Apache server information is obtained directly from 
+/dashboard is written in PHP. The Tomcat and WDK information is obtained from JMX mbeans
+via Jolokia's JMX-HTTP bridge. Apache server information is obtained directly from
 PHP's libraries.
 
 
-Requirements for the Dashboard
+Requirements for /dashboard
 
-  - Jolokia JMX-HTTP bridge deployed in the same Tomcat instance as the webapp hosting dashboard.
+  - Jolokia JMX-HTTP bridge deployed in the same Tomcat instance as the webapp hosting /dashboard.
 
   - Apache HTTP server configuration must export environment variables for TOMCAT_INSTANCE and WEBAPP [1].
     e.g.
@@ -18,7 +18,7 @@ Requirements for the Dashboard
   - http ports configured in workers.properties file [2]. e.g.
     custom.TonkaDB.http_port=8500
 
-  - Add directives for dashboard In Apache virtual host configuration [3]. e.g.
+  - Add directives for /dashboard In Apache virtual host configuration [3]. e.g.
       Alias /dashboard /var/www/mheiges.cryptodb.org/dashboard
       <Directory "/var/www/mheiges.cryptodb.org/dashboard">
         AllowOverride AuthConfig FileInfo Indexes Limit Options=All,MultiViews
@@ -30,8 +30,8 @@ Requirements for the Dashboard
 
 Development
 
-A php module (dashboard/lib/modules) is a class that fetches data from some source (e.g. a JMX 
-bridge or Apache environment) and coalesces the data into a format that can be consumed by a 
+A php module (dashboard/lib/modules) is a class that fetches data from some source (e.g. a JMX
+bridge or Apache environment) and coalesces the data into a format that can be consumed by a
 View (dashboard/view). The module implements to_xml() and to_json() methods.
 
 
@@ -39,25 +39,25 @@ View (dashboard/view). The module implements to_xml() and to_json() methods.
 
 Footnotes
 
-[1]. Quesy will use these to look up localhost port for Jolokia. The names of these variables are 
-defined in Quesy's php.config
+[1]. /dashboard will use these to look up localhost port for Jolokia. The names of these variables are
+defined in /dashboard's php.config
     worker_env_var_name=TOMCAT_INSTANCE
     webapp_env_var_name=WEBAPP
 properties, respectively.
 
-Specifically, Quesy uses Apache's TOMCAT_INSTANCE environment variable to look up the http port in the 
-workers.properties file. For example, if the instance is TonkaDB, Quesy looks for 
+Specifically, /dashboard uses Apache's TOMCAT_INSTANCE environment variable to look up the http port in the
+workers.properties file. For example, if the instance is TonkaDB, /dashboard looks for
 custom.TonkaDB.http_port in the workers.properties file.
 
-Quesy uses the WEBAPP environment variable as the context value in the object name in its JMX request.
+/dashboard uses the WEBAPP environment variable as the context value in the object name in its JMX request.
     org.apidb:component=WDK,subcom=Databases,module=UserDB,context=cryptodb.msh
 
 
-[2].  This is a custom configuration for Quesy. The property name is defined in Quesy's php.config 
+[2].  This is a custom configuration for /dashboard. The property name is defined in /dashboard's php.config
 using the worker_properties_http_var_tmpl property.
 
-[3]. The dashboard web interface is outside the normal html directory so requires explicit configuration
+[3]. The /dashboard web interface is outside the normal html directory so requires explicit configuration
 to install and grant access to it. This is intentional so it doesn't accidentally expose site internals.
 
-The MultiViews option in the Apache vitual host configuration allows urls like /dashboard/xml to work 
+The MultiViews option in the Apache vitual host configuration allows urls like /dashboard/xml to work
 without the .php extension.

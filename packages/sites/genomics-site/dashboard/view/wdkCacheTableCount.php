@@ -1,12 +1,19 @@
-<?
-require_once dirname(__FILE__) . '/../lib/modules/CacheInfo.php';
-require_once dirname(__FILE__) . "/../lib/modules/ResetWdkCache.php";
+<?php
+/**
+ * Action page to reset the WDK database cache
+ * @package View
+ */
+
+require_once dirname(__FILE__) . '/../lib/modules/WdkCache.php';
+
+$cache = new WdkCache();
 
 if (isset($_POST['reset']) && $_POST['reset'] == 1) {
-  $reset = new ResetWdkCache();
+  $cache->reset();
 }
 
-$cache = new CacheInfo();
-print $cache->get('cache_table_count');
-?>
+// Get attributes AFTER any call to reset() !!
+$cattr = $cache->attributes();
 
+print $cattr{'cache_table_count'};
+?>

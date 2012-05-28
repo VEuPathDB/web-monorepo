@@ -1,0 +1,24 @@
+
+<refentry id="{@id}">
+  <graphic fileref="../images/logo.png" align="right" />
+  <refnamediv>
+    <refname>/dashboard</refname>
+    <refpurpose></refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+  </refsynopsisdiv>
+  <refsect1 id="{@id intro}">
+    <title>Introduction</title>
+    <para>
+      /dashboard is a web interface that provides state information for a
+      EuPathDB website, including data from Apache HTTP Server, Tomcat and the
+      WDK.
+    </para>
+    <para>
+      The Tomcat and WDK information is obtained
+      from JMX mbeans via Jolokia's JMX-HTTP bridge. Apache server information
+      is obtained directly from PHP's libraries.
+
+    </para>
+  </refsect1>
+</refentry>

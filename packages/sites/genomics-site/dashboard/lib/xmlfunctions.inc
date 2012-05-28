@@ -1,5 +1,15 @@
-<?
+<?php
+/**
+ * @package Utility
+ * @subpackage Core
+ */
 
+/**
+ *
+ * @param type $dom_doc
+ * @param type $error_str
+ * @return type
+ */
 function error_node($dom_doc, $error_str) {
   $node = $dom_doc->createElement('error');
   $value = $dom_doc->createTextNode($error_str);

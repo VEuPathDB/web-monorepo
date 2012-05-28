@@ -1,7 +1,7 @@
 <head>
-    <title><? print $_SERVER['HTTP_HOST'] ?> Dashboard</title>
+    <title><?= $_SERVER['HTTP_HOST'] ?> Dashboard</title>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-    
+
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.16.custom.css" />
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>

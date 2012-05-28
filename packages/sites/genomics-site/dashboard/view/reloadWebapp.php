@@ -1,12 +1,17 @@
-<?
-require_once dirname(__FILE__) . "/../lib/modules/ReloadWebapp.php";
-require_once dirname(__FILE__) . "/../lib/modules/WebappInfo.php";
+<?php
+
+/**
+ * Action page to reload the Tomcat webapp.
+ * @package View
+ */
+require_once dirname(__FILE__) . "/../lib/modules/Webapp.php";
+
+$webapp = new Webapp();
 
 if (isset($_POST['reload']) && $_POST['reload'] == 1) {
-  $reset = new ReloadWebapp();
+  $webapp->reload();
 }
 
-$webapp = new WebappInfo();
 
 // TODO: this duplicates tomcatInfo.php . Should instead
 // have the data in tomcatInfo.php set by javascript calling
@@ -14,4 +19,3 @@ $webapp = new WebappInfo();
 $t = $webapp->uptime_as_text();
 print (isset($t)) ? $t : "<span class='warn'>error</span>" ;
 ?>
-

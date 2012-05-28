@@ -1,36 +1,40 @@
 <?php
 /**
  Parse a key=value file into an associative array.
- Line comments marked with leading '#' or ';' are allowed. Named 
+ Line comments marked with leading '#' or ';' are allowed. Named
  sections as allowe in ini files are not supported here.
-**/
+ *
+ * @package Utility
+ * @subpackage Configuration
+ *
+ */
 
 class KeyValue {
 
   var $conf_obj;
 
   function __construct($file) {
-        
+
     $fh = fopen($file, "rb");
-    
+
     if (! $fh) {
      print "ERROR: parsing $file";
      exit;
     }
-    
-    while (!feof($fh) ) {  
+
+    while (!feof($fh) ) {
       $line = fgets($fh);
 
       if (preg_match('/^\s*#/', $line)) { continue; }
       if (preg_match('/^\s*;/', $line)) { continue; }
       if (preg_match('/^\s*$/', $line)) { continue; }
       if (!preg_match('/=/',    $line)) { continue; }
-      
+
       $kv = explode('=', $line);
       if (trim($kv[1]) == '') { continue; }
       $this->conf_obj{trim($kv[0])} = trim($kv[1]);
     }
-    
+
     fclose($fh);
   }
 
@@ -41,7 +45,7 @@ class KeyValue {
   static public function init() {
     return new self();
   }
-  
+
   /**
     Return the full configuration array
   **/

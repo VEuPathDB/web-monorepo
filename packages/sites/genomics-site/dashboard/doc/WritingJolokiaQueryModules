@@ -1,0 +1,32 @@
+
+
+extend the JolModule class. JolModule provides the base configuration for connecting to the proper Jolokia instance.
+
+Create new JolRequest() object, then load it with JolOperations.
+Invoke the JolRequest and get back a JolResult object. The JolResult object
+is an Array of JolQueryResultItems, each being the single response to a single JolOperation,
+that you can iterate over or access by
+array index. The array order of the JolQueryResultItems corresponds to the
+order of JolOperations submitted.
+
+
+Debugging Tips.
+
+Use the JolRequest curl_cli_equivalent() method to print out the a curl command
+line equivalent that can be used to inspect the response.
+
+Common Errors
+
+When reading a jmx mbean that has private/restricted attributes mixed in with
+public attributes, you will get the exception
+  java.lang.IllegalStateException: Error while extracting nameInNamespace from org.apache.naming.NamingContext
+
+e.g. '{"type":"read","mbean":"Catalina:j2eeType=WebModule,name=//localhost/toxo.mheiges,J2EEApplication=none,J2EEServer=none"}'
+
+Confirm by viewing the mbean in jconsole where private attributes are colored in red.
+The fix is to add specific attributes to the mbean request.
+e.g. '{"type":"read","mbean":"Catalina:j2eeType=WebModule,name=//localhost/toxo.mheiges,J2EEApplication=none,J2EEServer=none", "attribute":"startTime"}'
+
+Be sure there are no blank lines after the PHP close tag.
+Blank lines after the PHP close tag (?>) will leak into the HTTP response. This
+is particularly a problem when getting a value using the XML interface.

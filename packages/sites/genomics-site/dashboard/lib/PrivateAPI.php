@@ -1,87 +1,105 @@
-<?
-/**
-  This class aggregates data into an array for exposure in a programming API as
-  json or xml .
-  
-  This is intended for use in secure environments as the attributes exposed may
-  be sensitive.
-  
-  It controls which attributes are exposed and handles any attribute renaming.
-**/
-require_once dirname(__FILE__) . "/modules/WdkMetaMbean.php";
-require_once dirname(__FILE__) . "/modules/UserDatabaseInfo.php";
-require_once dirname(__FILE__) . "/modules/AppDatabaseInfo.php";
-require_once dirname(__FILE__) . "/modules/WdkPropertiesInfo.php";
-require_once dirname(__FILE__) . "/modules/ModelConfigInfo.php";
-require_once dirname(__FILE__) . "/modules/CommentConfigInfo.php";
+<?php
+
+require_once dirname(__FILE__) . "/modules/UserDatabase.php";
+require_once dirname(__FILE__) . "/modules/AppDatabase.php";
+require_once dirname(__FILE__) . "/modules/WdkProperties.php";
+require_once dirname(__FILE__) . "/modules/ModelConfig.php";
+require_once dirname(__FILE__) . "/modules/CommentConfig.php";
 require_once dirname(__FILE__) . "/modules/BuildInfo.php";
 require_once dirname(__FILE__) . "/modules/ProxyInfo.php";
+require_once dirname(__FILE__) . "/modules/WdkMeta.php";
 
+/**
+ * Description of PrivateAPI
+ *
+ * @author Mark Heiges <mheiges@uga.edu>
+ *
+ * @package Utility
+ * @subpackage Core
+ */
 class PrivateAPI {
 
   var $api_dataset;
-  
-  function __construct() {
+
+  public function __construct() {
     $this->init();
   }
 
-  function init() {
+  private function init() {
     $this->api_dataset = array();
 
-    $wdk_meta_mbean = new WdkMetaMbean();
-    $adb = new AppDatabaseInfo();
-    $udb = new UserDatabaseInfo();
-    $properties = new WdkPropertiesInfo();
-    $model_config = new ModelConfigInfo();
-    $comment_config = new CommentConfigInfo();
+    $app_database = new AppDatabase();
+    $adb_attr = $app_database->attributes();
+
+    $user_databse = new UserDatabase();
+    $udb_attr = $user_databse->attributes();
+
+    $wdk_properties = new WdkProperties();
+    $wdk_properties_attr = $wdk_properties->attributes();
+
+    $model_config = new ModelConfig();
+    $model_config_attr = $model_config->attributes();
+
+    $comment_config = new CommentConfig();
+    $comment_config_attr = $comment_config->attributes();
+
+    $wdk_meta = new WdkMeta();
+    $wdk_meta_attr = $wdk_meta->attributes();
+
     $build = new BuildInfo();
     $proxy = new ProxyInfo();
+    $proxy_attr = $proxy->attributes();
 
     $all_data = array('wdk' =>
-      array(
-        'proxy'             => array(
-          'proxyapp'           => $proxy->get('proxy_app'),
-          'proxyhost'          => $proxy->get('proxy_host'),
-          'upstreamhost'       => $proxy->get('upstream_server'),
-        ),
-        'modelname'         => $wdk_meta_mbean->get('DisplayName'),
-        'modelversion'      => $wdk_meta_mbean->get('ModelVersion'),
-        'databases'         => array(
-          'appdb'             => array(
-            'servicename'        => $adb->get('service_name'),
-            'instancename'       => $adb->get('instance_name'),
-            'globalname'         => $adb->get('global_name'),
-            'servername'         => $adb->get('server_name'),
-            'aliases'            => $this->split_to_array($adb->get('aliases_from_ldap'), '/,\s*/', 'alias'),
-          ),
-          'userdb'           => array(
-            'servicename'        => $udb->get('service_name'),
-            'instancename'       => $udb->get('instance_name'),
-            'globalname'         => $udb->get('global_name'),
-            'servername'         => $adb->get('server_name'),
-            'aliases'            => $this->split_to_array($udb->get('aliases_from_ldap'), '/,\s*/', 'alias'),
-          )
-        ),
-        'modelconfig'       => $this->normalize_keys_in_array($model_config->re_section_data()),
-        'commentconfig'     => $this->normalize_keys_in_array($comment_config->get_data_map()),
-        'modelprop'         => $this->normalize_keys_in_array($properties->get_data_map()),
-        'svn'               => $this->init_svn_info($build->get_data_map()),
-      )
+        array(
+            'proxy' => array(
+                'proxyapp' => $proxy_attr{'proxy_app'},
+                'proxyhost' => $proxy_attr{'proxy_host'},
+                'upstreamhost' => $proxy_attr{'upstream_server'},
+            ),
+            'modelname' => $wdk_meta_attr{'DisplayName'},
+            'modelversion' => $wdk_meta_attr{'ModelVersion'},
+            'databases' => array(
+                'appdb' => array(
+                    'servicename' => $adb_attr{'service_name'},
+                    'instancename' => $adb_attr{'instance_name'},
+                    'globalname' => $adb_attr{'global_name'},
+                    'servername' => $adb_attr{'server_name'},
+                    'aliases' => $this->split_to_array($adb_attr{'aliases_from_ldap'}, '/,\s*/', 'alias'),
+                ),
+                'userdb' => array(
+                    'servicename' => $udb_attr{'service_name'},
+                    'instancename' => $udb_attr{'instance_name'},
+                    'globalname' => $udb_attr{'global_name'},
+                    'servername' => $adb_attr{'server_name'},
+                    'aliases' => $this->split_to_array($udb_attr{'aliases_from_ldap'}, '/,\s*/', 'alias'),
+                )
+            ),
+            'modelconfig' => $this->normalize_keys_in_array($model_config_attr),
+            'commentconfig' => $this->normalize_keys_in_array($comment_config_attr),
+            'modelprop' => $this->normalize_keys_in_array($wdk_properties_attr),
+            'svn' => $this->init_svn_info($build->get_data_map()),
+        )
     );
 
     $this->api_dataset = array_merge($this->api_dataset, $all_data);
   }
 
   /**
-    Split a string into a multidimensional array using the given key.
-        split_to_array('cryp-inc,crypbl2n', '/,/', 'alias')
-    Returns
-        array(
-           array( 'alias' => 'cryp-inc'),
-           array( 'alias' => 'crypbl2n')
-       )
-  **/
-  function split_to_array($string, $pattern, $key) {
+   * Split a string into a multidimensional array using the given key.
+   *
+   * array(
+   *   array( 'alias' => 'cryp-inc'),
+   *   array( 'alias' => 'crypbl2n')
+   * )
+   *
+   * @param $string  string to split
+   * @param $pattern regex to split on
+   * @param $key key value for each array
+   * @return array
+   *
+   */
+  private function split_to_array($string, $pattern, $key) {
     $array = array();
     $values = preg_split($pattern, $string);
     foreach ($values as $v) {
@@ -91,9 +109,12 @@ class PrivateAPI {
   }
 
   /**
-   lowercase and remove '_' from array keys
-  **/
-  function normalize_keys_in_array($in_array) {
+   * lowercase and remove '_' from array keys
+   *
+   * @param array
+   * @return array
+   */
+  private function normalize_keys_in_array($in_array) {
     $to_array = array();
     foreach ($in_array as $k => $v) {
       if (is_array($v)) {
@@ -104,129 +125,105 @@ class PrivateAPI {
     }
     return $to_array;
   }
-    
-  
-  function init_svn_info($build) {
+
+  /**
+   * Restructures and formats subversion data that was extracted
+   * from the GUS .build.info properties file via the BuildInfo class.
+   * @see BuildInfo
+   *
+   * @param array build data
+   * @return array
+   */
+  private function init_svn_info($build) {
     $array = array(
-               'locations' => array(),
-               'switch'    => '',
-             );
+        'locations' => array(),
+        'switch' => '',
+    );
 
     $switch_stmts = null;
-    
+
     foreach ($build as $p => $v) {
       if ($trunc = strpos($p, '.svn.info')) {
-          $start = strpos($v, 'Revision: ') + strlen('Revision: ');
-          $end = strpos($v, 'Last Changed Rev: ') - $start;
-          $svnrevision = trim(substr($v, $start, $end));
-  
-          $start = strpos($v, 'URL: ') + strlen('URL: ');
-          $end = strpos($v, 'Revision: ') - $start;
-          $svnbranch = trim(substr($v, $start, $end));
-          
-          $svnproject = str_replace('.', '/', substr($p, 0, $trunc));
+        $start = strpos($v, 'Revision: ') + strlen('Revision: ');
+        $end = strpos($v, 'Last Changed Rev: ') - $start;
+        $svnrevision = trim(substr($v, $start, $end));
 
-          array_push($array{'locations'}, 
-            array('location' => array(
-                                  'remote' => $svnbranch, 
-                                  'local' => $svnproject, 
-                                  'revision' => $svnrevision
-                                )
+        $start = strpos($v, 'URL: ') + strlen('URL: ');
+        $end = strpos($v, 'Revision: ') - $start;
+        $svnbranch = trim(substr($v, $start, $end));
+
+        $svnproject = str_replace('.', '/', substr($p, 0, $trunc));
+
+        array_push($array{'locations'}, array('location' => array(
+                'remote' => $svnbranch,
+                'local' => $svnproject,
+                'revision' => $svnrevision
             )
-          );
+                )
+        );
 
-          $switch_stmts .= "svn switch -r$svnrevision $svnbranch $svnproject;\n";
+        $switch_stmts .= "svn switch -r$svnrevision $svnbranch $svnproject;\n";
       }
     }
     $array{'switch'} = $switch_stmts;
     return $array;
   }
-  
-  function get_api_dataset() {
-    return $this->api_dataset;
-  }
-  
-  function get_xml() {
+
+  /**
+   * Returns full data set as XML
+   *
+   * @return \DomDocument
+   */
+  public function get_xml() {
     $wdkxml = new DomDocument('1.0');
     $wdkxml->preserveWhiteSpace = false;
     $load = $wdkxml->loadXML($this->to_xml($this->api_dataset{'wdk'}, 'wdk'));
     return $wdkxml;
   }
 
-  function to_xml($array, $root) {
-     $xml_o = new SimpleXMLElement("<?xml version=\"1.0\"?><$root></$root>");
-     $this->array_to_xml($array, $xml_o);
-     return $xml_o->asXML();
+  /**
+   *
+   * @param type $array
+   * @param type $root
+   * @return string XML
+   */
+  private function to_xml($array, $root) {
+    $xml_o = new SimpleXMLElement("<?xml version=\"1.0\"?><$root></$root>");
+    $this->array_to_xml($array, $xml_o);
+    return $xml_o->asXML();
   }
 
-  function array_to_xml($array, &$xml_o) {
-    foreach($array as $key => $value) {
-      if(is_array($value)) {
-        if(!is_numeric($key)){
+  /**
+   * Transforms array to XML
+   *
+   * @param array $array
+   * @param string $xml_o
+   */
+  private function array_to_xml($array, &$xml_o) {
+    foreach ($array as $key => $value) {
+      if (is_array($value)) {
+        if (!is_numeric($key)) {
           $subnode = $xml_o->addChild("$key");
           $this->array_to_xml($value, $subnode);
-        }
-        else{
+        } else {
           $this->array_to_xml($value, $xml_o);
         }
-      }
-      else {
+      } else {
         // htmspecialchars() because SimpleXMLElement doesn't escape ampersands
         $xml_o->addChild("$key", htmlspecialchars("$value"));
       }
     }
-
   }
-  
-  function to_json() {
+
+  /**
+   * Returns JSON encoding of the full data set
+   *
+   * @return string JSON
+   */
+  public function to_json() {
     return json_encode($this->api_dataset);
   }
-}
-/**
-<wdk>
-  <modelname>${applicationScope.wdkModel.name}</modelname>
-  <modelversion>${applicationScope.wdkModel.version}</modelversion>
-  <databases>
-    <appdb>
-      <servicename>${wdkRecord.attributes['service_name'].value}</servicename>
-      <instancename>${wdkRecord.attributes['instance_name'].value}</instancename>
-      <globalname>${wdkRecord.attributes['global_name'].value}</globalname>
-      <aliases><c:forEach var="a" items="${appdbAliases.nameArray}">
-        <alias>${a}</alias></c:forEach>
-      </aliases>
-    </appdb>
-    <userdb>
-      <servicename>${cache.dbInfo['service_name']}</servicename>
-      <instancename>${cache.dbInfo['instance_name']}</instancename>
-      <globalname>${cache.dbInfo['global_name']}</globalname>
-      <aliases><c:forEach var="a" items="${userdbAliases.nameArray}">
-        <alias>${a}</alias></c:forEach>
-      </aliases>
-    </userdb>
-  </databases>
-  <modelconfig>
-    <c:forEach 
-        var="section" items="${modelConfig.props}"
-    ><${fn:toLowerCase(section.key)}><c:forEach 
-        var="cfg" items="${section.value}"
-    ><${fn:toLowerCase(cfg.key)}>${fn:escapeXml(cfg.value)}</${fn:toLowerCase(cfg.key)}>
-    </c:forEach>
-        </${fn:toLowerCase(section.key)}>
-    </c:forEach>
-  </modelconfig>
-  <commentconfig>
-    <c:forEach 
-        var="cfg" items="${commentConfig.props}"
-    ><${fn:toLowerCase(cfg.key)}>${fn:escapeXml(cfg.value)}</${fn:toLowerCase(cfg.key)}>
-    </c:forEach>
-  </commentconfig>
-  <modelprop>
-    <c:forEach 
-        var="prop" items="${applicationScope.wdkModel.properties}"
-    ><${fn:toLowerCase(fn:replace(prop.key, '_', ''))}>${fn:escapeXml(prop.value)}</${fn:toLowerCase(fn:replace(prop.key, '_', ''))}>
-    </c:forEach>
-  </modelprop>
-</wdk>
 
-**/
+}
+
 ?>

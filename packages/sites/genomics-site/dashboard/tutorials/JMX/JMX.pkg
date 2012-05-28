@@ -1,0 +1,14 @@
+
+<refentry id="{@id}">
+  <graphic fileref="../images/logo.png" align="right" />
+ <refnamediv>
+  <refname>JMX</refname>
+  <refpurpose></refpurpose>
+ </refnamediv>
+  <refsect1 id="{@id intro}">
+    <title>Using JMX as a datasource</title>
+    <para>
+      just do it
+    </para>
+  </refsect1>
+</refentry>

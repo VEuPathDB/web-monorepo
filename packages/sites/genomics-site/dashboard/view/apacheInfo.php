@@ -1,7 +1,8 @@
 <?php
 /**
-  Information about the Apache HTTP Server environment.
-**/
+ * Information about the Apache HTTP Server environment.
+ * @package View
+ */
 
 require_once dirname(__FILE__) . "/../lib/modules/ApacheInfo.php";
 
@@ -46,7 +47,7 @@ function printTable($array) {
           print "</table><table border='0' cellspacing='3' cellpadding='2' align=''>";
       }
       print "<tr class='$rowStyle'><td>$key</td>";
-      if (is_array($value)) { 
+      if (is_array($value)) {
           $value = implode("</td><td>", $value);
           print "<td>$value</td></tr>  ";
       } else {
