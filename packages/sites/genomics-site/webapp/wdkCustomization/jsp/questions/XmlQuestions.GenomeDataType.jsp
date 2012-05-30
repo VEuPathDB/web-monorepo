@@ -235,12 +235,12 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 
 <!-- FILE SIZES -->
     <td class="mytdStyle" style="text-align:right;${separation}" title="Size in Mega bases; click to run a search and get all genomic sequences for this genome. ${genomelink_message}">
-	<a href="http://aurrecoui.${website}.org/${webapp}/showSummary.do?questionFullName=GenomicSequenceQuestions.SequencesByTaxon&array(organism)=${genus}%20${species}%20${strain}"> 
+	<a href="http://${website}.org/${webapp}/showSummary.do?questionFullName=GenomicSequenceQuestions.SequencesByTaxon&array(organism)=${genus}%20${species}%20${strain}"> 
 <!--  <a href="${fastaLink}"> -->
 							${record.attributesMap['Genome_Size']}</a></td>
     <td class="mytdStyle" style="text-align:right;${separation}" title="Gene Count; click to run a search and get all genes annotated in this genome">
 	<c:if test='${not empty gffLink}'>
-		<a href="http://aurrecoui.${website}.org/${webapp}/showSummary.do?questionFullName=GeneQuestions.GenesByTaxon&array(organism)=${genus}%20${species}%20${strain}">	
+		<a href="http://${website}.org/${webapp}/showSummary.do?questionFullName=GeneQuestions.GenesByTaxon&array(organism)=${genus}%20${species}%20${strain}">	
 	</c:if>
 							${record.attributesMap['Gene_Count']}</td>
 
