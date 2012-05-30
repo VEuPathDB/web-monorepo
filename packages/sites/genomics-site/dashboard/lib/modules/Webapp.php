@@ -16,15 +16,12 @@ class Webapp extends JolModule {
   private $uptime_as_text;
   private $webapp_read_op;
   private $domain;
-  private $engine_host;
-  private $context;
   private $attributes;
 
   public function __construct() {
     parent::__construct();
     $this->domain = $this->configuration->get('tomcat_engine_name'); // Catalina
-    $this->engine_host = $this->configuration->get('tomcat_engine_host_name'); // localhost
-    $this->context = $this->configuration->get('context_name');
+    $this->context_path = $this->configuration->get('context_path');
   }
 
   /**
@@ -36,7 +33,7 @@ class Webapp extends JolModule {
 
     $loader = new JolReadOperation(array(
                 'mbean' => $this->domain .
-                ':type=Loader,path=' . $this->mbean_context .
+                ':type=Loader,path=' . $this->context_path .
                 ',host=' . $this->engine_host,
                 'attribute' => array('loaderRepositoriesString'), // use array so we get array response
             ));
@@ -44,7 +41,7 @@ class Webapp extends JolModule {
      $app = new JolReadOperation(array(
                 'mbean' => "$this->domain:" .
                 'j2eeType=WebModule,name=//' .
-                $this->engine_host . $this->mbean_context .
+                $this->engine_host . $this->context_path .
                 ',J2EEApplication=none,J2EEServer=none',
                 'attribute' => array('startTime', 'path'),
             ));   $req->add_operation($loader);
@@ -72,7 +69,7 @@ class Webapp extends JolModule {
     $exec = new JolExecOperation(array(
                 'mbean' => "$this->domain:" .
                 'j2eeType=WebModule,name=//' .
-                $this->engine_host . $this->context .
+                $this->engine_host . $this->context_path .
                 ',J2EEApplication=none,J2EEServer=none',
                 'operation' => 'reload',
             ));

@@ -22,8 +22,11 @@ abstract class JolModule {
     $c = new Configuration();
     $this->configuration = $c;
     $this->jol_base_url = $c->get('jol_base_url');
-    $this->mbean_context = $c->get('context_name');
+$this->mbean_context = $c->get('context_path');
+    $this->context_path = $c->get('context_path');
     $this->mbean_domain = $c->get('wdk_mbean_domain');
+    $this->engine_host = $c->get('tomcat_engine_host_name'); // e.g. localhost
+    $this->path_name = '//' . $this->engine_host .  $this->context_path;
   }
 
 }

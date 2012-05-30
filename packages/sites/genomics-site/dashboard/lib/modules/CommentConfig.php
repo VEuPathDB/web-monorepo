@@ -16,7 +16,7 @@ class CommentConfig extends JolModule {
   public function attributes() {
     $req = new JolRequest($this->jol_base_url);
     $read = new JolReadOperation(array(
-                'mbean' => 'org.gusdb.wdk:type=CommentConfig,context=' . $this->mbean_context,
+                'mbean' => 'org.gusdb.wdk:type=CommentConfig,path=' . $this->path_name,
             ));
     $req->add_operation($read);
     $response = $req->invoke();

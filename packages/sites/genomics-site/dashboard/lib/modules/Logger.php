@@ -17,7 +17,7 @@ class Logger extends JolModule {
   public function attributes() {
     $req = new JolRequest($this->jol_base_url);
     $read = new JolReadOperation(array(
-                'mbean' => 'org.apidb.wdk:type=Log4J,context=' . $this->mbean_context,
+                'mbean' => 'org.apidb.wdk:type=Log4J,path=' . $this->path_name,
             ));
     $req->add_operation($read);
     $response = $req->invoke();
@@ -33,7 +33,7 @@ class Logger extends JolModule {
 
   public function update($logger_map) {
     $req = new JolRequest($this->jol_base_url);
-    $mbean = 'org.apidb.wdk:type=Log4J,context=' . $this->mbean_context;
+    $mbean = 'org.apidb.wdk:type=Log4J,path=' . $this->path_name;
 
     foreach ($logger_map as $name => $value) {
       $op = new JolWriteOperation(array(

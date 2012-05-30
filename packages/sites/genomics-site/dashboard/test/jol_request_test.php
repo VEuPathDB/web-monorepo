@@ -9,7 +9,7 @@ require_once dirname(__FILE__) . "/../lib/JolRequest.php";
 $c = new Configuration();
 
 $jol_base_url = $c->get('jol_base_url');
-$mbean_context = $c->get('context_name');
+$context_path = $c->get('context_name');
 $mbean_domain = $c->get('wdk_mbean_domain');
 
 print "========= empty read request ========== \n";
@@ -114,19 +114,19 @@ function attributes() {
   $req = new JolRequest();
   $req->set_base_url($jol_base_url);
   $read = new JolReadOperation(array(
-              'mbean' => 'org.apidb.wdk:context=toxo.mheiges,group=Databases,type=AppDB',
+              'mbean' => 'org.apidb.wdk:path=//localhost/toxo.mheiges,group=Databases,type=AppDB',
           ));
   $exec = new JolExecOperation(array(
-              'mbean' => 'org.apidb.wdk:group=Databases,type=AppDB,context=toxo.mheiges',
+              'mbean' => 'org.apidb.wdk:group=Databases,type=AppDB,path=//localhost/toxo.mheiges',
               'operation' => 'refresh',
               'arguments' => null,
           ));
   $read_error = new JolReadOperation(array(
-              'mbean' => 'org.apidb.wdk:context=toxo.mheiges,group=Databases,type=AppDB',
+              'mbean' => 'org.apidb.wdk:path=//localhost/toxo.mheiges,group=Databases,type=AppDB',
               'attribute' => 'BOGUSATTR',
           ));
   $read_again = new JolReadOperation(array(
-              'mbean' => 'org.apidb.wdk:context=toxo.mheiges,group=Databases,type=AppDB',
+              'mbean' => 'org.apidb.wdk:path=//localhost/toxo.mheiges,group=Databases,type=AppDB',
               'attribute' => 'system_date',
           ));
   $req->add_operation($read);

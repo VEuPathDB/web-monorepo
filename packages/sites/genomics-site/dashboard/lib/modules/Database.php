@@ -49,7 +49,7 @@ abstract class Database extends JolModule {
 
   private function get_mbean() {
     return 'org.apidb.wdk:group=Databases,type=' .
-            $this->type . ',context=' . $this->mbean_context;
+            $this->type . ',path=' . $this->path_name;
   }
 
 }

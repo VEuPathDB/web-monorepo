@@ -19,7 +19,7 @@ class WdkProperties extends JolModule {
   public function attributes() {
     $req = new JolRequest($this->jol_base_url);
     $read = new JolReadOperation(array(
-                'mbean' => 'org.gusdb.wdk:type=Properties,context=' . $this->mbean_context,
+                'mbean' => 'org.gusdb.wdk:type=Properties,path=' . $this->path_name,
             ));
     $req->add_operation($read);
     $response = $req->invoke();

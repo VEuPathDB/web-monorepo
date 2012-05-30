@@ -136,12 +136,12 @@ class Configuration {
    */
   private function add_webapp_value(&$partial_conf_ar) {
     if (array_key_exists('SERVER_NAME', $_SERVER)) {
-      $context_name = $_SERVER{$partial_conf_ar{'webapp_env_var_name'}};
+      $context_path = $_SERVER{$partial_conf_ar{'ctx_path_env_var_name'}};
     } else {
       // maybe running from command line, use value in config file
-      $context_name = $partial_conf_ar{'tomcat_webapp_for_testing'};
+      $context_path = $partial_conf_ar{'tomcat_webapp_for_testing'};
     }
-    $partial_conf_ar{'context_name'} = $context_name;
+    $partial_conf_ar{'context_path'} = $context_path;
   }
 
 }
