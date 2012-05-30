@@ -22,7 +22,7 @@ class ModelConfig extends JolModule {
   public function attributes() {
     $req = new JolRequest($this->jol_base_url);
     $read = new JolReadOperation(array(
-                'mbean' => 'org.gusdb.wdk:type=ModelConfig,path=' . $this->path_name,
+                'mbean' => $this->wdk_mbean_domain . ':type=ModelConfig,path=' . $this->path_name,
             ));
     $req->add_operation($read);
     $response = $req->invoke();

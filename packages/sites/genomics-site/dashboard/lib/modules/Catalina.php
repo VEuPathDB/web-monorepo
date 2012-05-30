@@ -17,7 +17,7 @@ class Catalina extends JolModule {
     //$domain = $this->configuration->get('tomcat_engine_name');
     $req = new JolRequest($this->jol_base_url);
     $read = new JolReadOperation(array(
-                'mbean' => "org.gusdb.wdk:type=ServletVersions" . ',path=' . $this->path_name,
+                'mbean' => $this->wdk_mbean_domain . ':type=ServletVersions' . ',path=' . $this->path_name,
             ));
     $req->add_operation($read);
     $response = $req->invoke();

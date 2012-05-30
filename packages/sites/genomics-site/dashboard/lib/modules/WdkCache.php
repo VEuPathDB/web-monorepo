@@ -22,7 +22,7 @@ class WdkCache extends JolModule {
   public function attributes() {
     $req = new JolRequest($this->jol_base_url);
     $read = new JolReadOperation(array(
-                'mbean' => 'org.gusdb.wdk:type=Cache,path=' . $this->path_name,
+                'mbean' => $this->wdk_mbean_domain . ':type=Cache,path=' . $this->path_name,
             ));
     $req->add_operation($read);
     $response = $req->invoke();
@@ -36,7 +36,7 @@ class WdkCache extends JolModule {
   public function reset() {
     $req = new JolRequest($this->jol_base_url);
     $exec = new JolExecOperation(array(
-                'mbean' => 'org.gusdb.wdk:type=Cache,path=' . $this->path_name,
+                'mbean' => $this->wdk_mbean_domain . ':type=Cache,path=' . $this->path_name,
                 'operation' => 'resetWdkCache',
             ));
     $req->add_operation($exec);

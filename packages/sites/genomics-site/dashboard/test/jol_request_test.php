@@ -10,7 +10,6 @@ $c = new Configuration();
 
 $jol_base_url = $c->get('jol_base_url');
 $context_path = $c->get('context_name');
-$mbean_domain = $c->get('wdk_mbean_domain');
 
 print "========= empty read request ========== \n";
 
