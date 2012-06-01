@@ -169,26 +169,26 @@
   <tr>
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
-    <th colspan=6 align="center"><i>Eurotiomycetes</i></th>
     <th colspan=6 align="center"><i>Basidiomycota</i></th>
+    <th colspan=6 align="center"><i>Eurotiomycetes</i></th>
     <th colspan=4 align="center"><i>Sordariomycetes</i></th>
     <th colspan=2 align="center"><i>Saccharomycotina</i></th>
     <th colspan=1 align="center"><i>Taphrinomycotina</i></th>
     <th colspan=6 align="center"><i>Oomycetes</i></th>
   </tr>
   <tr>
-    <th><i>A.cla</i></th>
-    <th><i>A.fla</i></th>
-    <th><i>A.fum</i></th>
-    <th><i>A.nid</i></th>
-    <th><i>A.nig</i></th>
-    <th><i>A.ter</i></th>
     <th><i>C.gat</i> WM276</th>
     <th><i>C.gat</i> R265</th>
     <th><i>C.neo</i> H99</th>
     <th><i>C.neo</i> B3501</th>
     <th><i>C.neo</i> JEC21</th>
     <th><i>T.mes</i></th>
+    <th><i>A.cla</i></th>
+    <th><i>A.fla</i></th>
+    <th><i>A.fum</i></th>
+    <th><i>A.nid</i></th>
+    <th><i>A.nig</i></th>
+    <th><i>A.ter</i></th>
     <th><i>N.cra</i></th>
     <th><i>N.dis</i></th>
     <th><i>N.tet</i></th>
@@ -215,6 +215,42 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="fungidb_distinct_genes" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cgat_wm_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cgat_r_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cneo_grubii_genes" />
+    </td>
+   <td>
+      <imp:filterInstance strategyId="${strategyId}"
+                          stepId="${stepId}"
+                          answerValue="${answerValue}"
+                          instanceName="cneo_neo_b_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cneo_neo_je_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tmes_genes" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
@@ -251,42 +287,6 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="ater_genes" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="cgat_wm_genes" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="cgat_r_genes" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="cneo_grubii_genes" />  
-    </td>
-   <td>
-      <imp:filterInstance strategyId="${strategyId}"
-                          stepId="${stepId}"
-                          answerValue="${answerValue}"
-                          instanceName="cneo_neo_b_genes" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="cneo_neo_je_genes" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="tmes_genes" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
