@@ -170,8 +170,8 @@
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
     <th colspan=6 align="center"><i>Basidiomycota</i></th>
-    <th colspan=6 align="center"><i>Eurotiomycetes</i></th>
-    <th colspan=4 align="center"><i>Sordariomycetes</i></th>
+    <th colspan=8 align="center"><i>Eurotiomycetes</i></th>
+    <th colspan=6 align="center"><i>Sordariomycetes</i></th>
     <th colspan=2 align="center"><i>Saccharomycotina</i></th>
     <th colspan=1 align="center"><i>Taphrinomycotina</i></th>
     <th colspan=6 align="center"><i>Oomycetes</i></th>
@@ -189,6 +189,10 @@
     <th><i>A.nid</i></th>
     <th><i>A.nig</i></th>
     <th><i>A.ter</i></th>
+    <th><i>C.imm</i> H538.4</th>
+    <th><i>C.imm</i> RS</th>
+    <th><i>F.oxy</i></th>
+    <th><i>M.ory</i></th>
     <th><i>N.cra</i></th>
     <th><i>N.dis</i></th>
     <th><i>N.tet</i></th>
@@ -287,6 +291,30 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="ater_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}"
+                          stepId="${stepId}"
+                          answerValue="${answerValue}"
+                          instanceName="cimmh5_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cimmrs_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="foxy_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="mory_genes" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
