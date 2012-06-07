@@ -1029,7 +1029,7 @@ td.lines2, #queryGrid td.lines2 {
 .announcebox {
 	min-height: 35px;
   /*  height:auto !important; */
-    height:35px;
+   /*  height:35px; */
 	margin: 12px 25px 0 6px;
 	padding: 6px;
 	background-repeat: repeat-x;
