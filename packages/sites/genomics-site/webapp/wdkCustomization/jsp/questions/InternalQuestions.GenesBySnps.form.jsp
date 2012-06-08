@@ -13,7 +13,7 @@
 <c:set var="amoebaQuestions" value="GeneQuestions.GenesByHtsSnps"/>
 <c:set var="eupathQuestions" value="GeneQuestions.GenesBySnps,GeneQuestions.GenesByHtsSnps"/>
 <c:set var="cryptoQuestions" value="GeneQuestions.GenesBySnps"/>
-<c:set var="plasmoQuestions" value="GeneQuestions.GenesBySnps"/>
+<c:set var="plasmoQuestions" value="GeneQuestions.GenesBySnps,GeneQuestions.GenesByHtsSnps"/>
 <c:set var="toxoQuestions" value="GeneQuestions.GenesBySnps,GeneQuestions.GenesByHtsSnps"/>
 <c:set var="trypQuestions" value="GeneQuestions.GenesByHtsSnps"/>
 
