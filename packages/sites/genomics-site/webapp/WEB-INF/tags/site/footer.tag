@@ -58,7 +58,7 @@
 </div>
 
 <!-- Revised searches dialog -->
-<div id="dialog-revise-search"  title="Redesigned searches">
+<div id="dialog-revise-search"  title="Redesigned searches" style="display:none">
 <ul class="cirbulletlist">
 <li>Searches are sometimes 'redesigned' if database revisions lead to new parameters and/or new parameter choices. 
 <br><br><br>
