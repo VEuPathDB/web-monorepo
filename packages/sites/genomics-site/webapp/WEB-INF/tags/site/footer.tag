@@ -49,7 +49,7 @@
 <%-- ========dialogs that need to appear in various pages========= --%>
 
 <!-- Annotation Change dialog -->
-<div id="dialog-annot-change" title="Annotation changes">
+<div id="dialog-annot-change" title="Annotation changes"  style="display:none">
 <ul class="cirbulletlist">
 <li>Genome annotations are constantly updated to reflect new biological information concerning the sequences.
 <br><br>
