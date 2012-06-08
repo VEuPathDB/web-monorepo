@@ -53,6 +53,7 @@ print <<_END_OF_TEXT_
 	<head>
 	<title>AMS Console</title>
         <link href="/assets/css/messageStyles.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
         <script language="javascript">
          function submitWindow()
            {
@@ -76,8 +77,12 @@ print <<_END_OF_TEXT_
           var confirmDelete= confirm("Are you sure you want to delete this message record?");
           if (confirmDelete== true)
           {
-           window.location=("/cgi-bin/admin/messageInsert.pl?deleteMessageId="+row+"&messageDelete=true");
-           setTimeout('window.location=("/cgi-bin/admin/messageConsole.pl"), 4000');
+           jQuery.get("/cgi-bin/admin/messageInsert.pl", {
+            deleteMessageId: row,
+            messageDelete: true
+           }).success(function() {
+            window.location.reload();
+           });
           }
           else
             {
