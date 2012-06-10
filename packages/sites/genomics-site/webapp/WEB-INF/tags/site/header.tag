@@ -194,9 +194,16 @@ ${headElement}
 
 </head>
 
+<c:if test="${refer != 'home'}">
+	<!-- FreeFind Begin No Index -->
+</c:if>
 
 <%--------------------------- BODY of HTML doc ---------------------%>
 <body>
+
+<!-- site search: freefind engine instructs to position this right after body tag -->
+<imp:freefind_header />
+
 <!-- helper divs with generic information used by javascript -->
 <imp:siteInfo />
 
@@ -260,6 +267,10 @@ ${headElement}
 </c:if>  <%-- page was not the "Contact Us" page --%>
 
 <imp:noscript /> <%-- include noscript tag on all pages to check if javascript enabled --%>
+
+<c:if test="${refer != 'home'}">
+	<!-- FreeFind End No Index -->
+</c:if>
 
 <c:if test="${refer != 'home' && refer != 'home2' && refer != 'summary'}">
 	<div id="contentwrapper">
