@@ -44,7 +44,7 @@
 <tr>
 	<td colspan=2 style="font-family: Arial, Helvetica, sans-serif; font-size: 7.5pt;">
 		<form  id="ffresult_sbox0" style="margin:0px; margin-top:4px;" action="http://search.freefind.com/find.html" method="get" accept-charset="utf-8" onsubmit="ffresults.show(0);">
-		<input type="hidden" name="si" value="58147367">
+		<input type="hidden" name="si" value="${siteID}">
 		<input type="hidden" name="pid" value="r">
 		<input type="hidden" name="n" value="0">
 		<input type="hidden" name="_charset_" value="">
