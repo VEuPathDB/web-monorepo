@@ -66,6 +66,7 @@
           	   </html:form>
 			 </div></td>
 
+<%--
 <!-- TEXT SEARCH -->
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
@@ -97,6 +98,25 @@
                      </span>
           	   </html:form>
 			 </div></td>
+--%>
+
+
+<!-- Site Search -->
+              <td>
+                <form method="get" action="<c:url value='/siteSearch.do' />">
+                  <select name="type">
+                    <option value="all">All</option>
+                    <option value="gene">Genes</option>
+                    <option value="isolate">Isolates</option>
+                    <option value="html">Other pages</option>
+                  </select>
+                  <input type="text" class="search-box ts_ie" name="keyword" value="synth*" />
+                  <input name="go" value="go" type="image" 
+                         src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
+                </form>
+              </td>
+
+
 </c:otherwise>
 </c:choose>
             </tr>

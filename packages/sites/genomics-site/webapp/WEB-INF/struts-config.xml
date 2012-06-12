@@ -532,6 +532,14 @@
       <forward name="display" redirect="false" path="/wdk/jsp/results/attributePlugin.jsp"/>
     </action>
 
+    <action
+      path="/siteSearch"
+      type="org.apidb.apicommon.controller.action.SiteSearchAction"
+      validate="false">
+      <forward name="to-question" redirect="false" path="/processQuestion.do?questionSubmit=Get+Answer"/>
+      <forward name="to-summary" redirect="false" path="/wdkCustomization/jsp/SiteSearchSummary.jsp"/>
+    </action>
+
 
   </action-mappings>
 

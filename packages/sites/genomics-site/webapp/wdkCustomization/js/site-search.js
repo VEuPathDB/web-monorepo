@@ -1,0 +1,111 @@
+if (window.ApiDB == undefined) ApiDB = {};
+ApiDB.SiteSearch = {};
+
+$(function() {
+    ApiDB.SiteSearch.loadResults();
+});
+
+ApiDB.SiteSearch.SUMMARY_SIZE = 5;
+
+ApiDB.SiteSearch.loadResults = function() {
+    var siteSearch = ApiDB.SiteSearch;
+    
+    // load record counts
+    $("#site-search fieldset.record").each(function() {
+        siteSearch.loadRecordResults($(this));
+    });
+
+    // load resource results
+    $("#site-search fieldset.resource").each(function() {
+        siteSearch.loadResourceResults($(this));
+    });
+};
+
+ApiDB.SiteSearch.loadRecordResults = function(recordSelector) {
+    var record = $(recordSelector);
+    var url = record.attr("url");
+    $.ajax({
+        type: "GET",
+        dataType: "html",
+        url: url,
+        success: function(data, textStatus, jqXHR) {
+            var source = $("<div>" + data + "</div>");
+            source = $(source[0]);
+
+            // parse the count, and url to default tab
+            var loaded = record.find(".loaded");
+            var count = source.find("#text_step_count").text();
+            if (count == '') {
+                loaded.find(".count").text("0");
+                record.find(".loading").hide();
+                record.find(".wait").hide();    
+                loaded.show();
+                return;
+            }
+
+            var summaryUrl = source.find("#Summary_Views #_default > a").attr("href");
+            summaryUrl += "&altPageSize=" + ApiDB.SiteSearch.SUMMARY_SIZE;
+           
+            // set count
+            loaded.find(".count").text(count);
+
+            // load result summary
+            var result = record.find(".result");
+            var summary = result.find(".summary");
+            $.ajax({
+                type: "GET",
+                dataType: "html",
+                url: summaryUrl,
+                success: function(data, textStatus, jqXHR) {
+                    var source = $("<div>" + data + "</div>");
+                    source = $(source[0]);
+
+                    // get links to records
+                    source.find(".Results_Table .primaryKey").each(function() {
+                        var recordLink = $("<li></li>").append($(this).next("a"));
+                        summary.append(recordLink);
+                    });
+                    record.find(".loading").hide();
+                    record.find(".wait").hide();
+                    loaded.show();
+                    result.show();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    record.find(".wait").hide();
+                    record.find(".error").show();
+                }
+            });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            record.find(".error").show();
+        }
+    });
+};
+
+ApiDB.SiteSearch.loadResourceResults = function(resourceSelector) {
+    var resource = $(resourceSelector);
+    // parse the count and results
+    var source = resource.find(".source");
+    var count = source.find(".search-header-table .search-count small").text().split(" ", 3)[1];
+    var results = source.find("div.search-results .search-results");
+
+    // set count
+    var loaded = resource.find(".loaded");
+    loaded.find(".count").text(count);
+
+    // set results
+    var resultDiv =  resource.find(".result");
+    var summary = resultDiv.find(".summary");
+    var length = Math.min(parseInt(count), ApiDB.SiteSearch.SUMMARY_SIZE);
+    for (var i = 0; i < length; i++) {
+        summary.append(results[i]);
+    }
+
+    resource.find(".loading").hide();
+    resource.find(".wait").hide();
+    source.empty();
+    loaded.show();
+    resultDiv.show();
+};
+
+
