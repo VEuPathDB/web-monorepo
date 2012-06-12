@@ -9,6 +9,8 @@
 <c:set var="isolateUrl" value="${requestScope.isolateUrl}" />
 <c:url var="countUrl" value="/showSummary.do?resultsOnly=true&" />
 <c:url var="searchUrl" value="/processQuestion.do?questionSubmit=Get+Answer&" />
+<c:set var="hasIsolate" value="${project eq 'CryptoDB' || project eq 'GiardiaDB'
+                                 || project eq 'PlasmoDB' || project eq 'ToxoDB'}" />
 <c:set var="errorMessage">
   <p>An error occurred. Please refresh the page to retry.</p>
   <p>If the problem persists, please contact EuPathDB project team.</p>
@@ -59,6 +61,7 @@
 </fieldset>
 
 
+<c:if test="${hasIsolate}">
 <!-- isolate results -->
 <fieldset id="isolate" class="record" url="${countUrl}${isolateUrl}">
   <legend>
@@ -75,6 +78,7 @@
   </div>
   <div class="error">${errorMessage}</div>
 </fieldset>
+</c:if>
 
 
 <!-- freefind results -->

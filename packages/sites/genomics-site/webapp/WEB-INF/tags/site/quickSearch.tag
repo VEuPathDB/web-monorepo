@@ -11,6 +11,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 <c:set var="version" value="${wdkModel.version}"/>
+<c:set var="projectId" value="${wdkModel.projectId}"/>
 <c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
 
 <%-- GENE  --%>
@@ -102,12 +103,16 @@
 
 
 <!-- Site Search -->
+              <c:set var="hasIsolate" value="${projectId eq 'CryptoDB' || projectId eq 'GiardiaDB'
+                                               || projectId eq 'PlasmoDB' || projectId eq 'ToxoDB'}" />
               <td>
                 <form method="get" action="<c:url value='/siteSearch.do' />">
                   <select name="type">
                     <option value="all">All</option>
                     <option value="gene">Genes</option>
-                    <option value="isolate">Isolates</option>
+                    <c:if test="${hasIsolate}">
+                      <option value="isolate">Isolates</option>
+                    </c:if>
                     <option value="html">Other pages</option>
                   </select>
                   <input type="text" class="search-box ts_ie" name="keyword" value="synth*" />

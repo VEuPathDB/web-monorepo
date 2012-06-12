@@ -5,6 +5,7 @@ fieldset ul { list-style:disc outside none; margin-left:10px; }
 fieldset li { padding:2px; }
 
 #site-search #search-info { padding: 10px; text-align: center; }
+#site-search #search-info #keyword {font-weight:bold; }
 #site-search .loading, #site-search .loaded { margin: 2px; }
 #site-search .wait { background: url(../../wdk/images/load.gif) no-repeat center; width: 16px; height: 16px; display: inline-block; }
 #site-search .source, #site-search .loaded, #site-search .result { display: none; }
