@@ -31,7 +31,7 @@
              <c:set var="siteID" value=""/>
       </c:when>
       <c:when test = "${project == 'ToxoDB'}">
-             <c:set var="siteID" value=""/>
+             <c:set var="siteID" value="49777963"/>
       </c:when>
       <c:when test = "${project == 'TrichDB'}">
              <c:set var="siteID" value=""/>
