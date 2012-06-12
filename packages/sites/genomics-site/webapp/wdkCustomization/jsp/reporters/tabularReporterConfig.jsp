@@ -16,6 +16,10 @@
 <!-- display page header -->
 <imp:header banner="Create and download a Report in Tabular Format" />
 
+
+
+
+
 <%-- galaxy.psu.edu users; to send data to Galaxy  --%>
 <script type="text/javascript">
 function appendchecked(url) {
@@ -35,6 +39,9 @@ function appendchecked(url) {
 }
 </script>
 <%-- end galaxy.psu.edu users  --%>
+
+
+
 
 
 <!-- display the parameters of the question, and the format selection form -->
@@ -154,8 +161,11 @@ function appendchecked(url) {
 </table>
 </form>
 
-  <%-- galaxy.psu.edu users; send data to Galaxy  --%>
+
+    <%-- BEGIN GALAXY  --%>
   <c:if test="${!empty sessionScope.GALAXY_URL}">
+
+  <%-- galaxy.psu.edu users; send data to LIVE   Galaxy  --%>
     <div style="text-align:center;background-color:#FFCCFF;border-style:double; width:300px">
     <c:url var='downloadPath' 
            value='/getDownloadResult.do;jsessionid=${pageContext.session.id}?step=${step_id}&includeHeader=yes&downloadType=plain&wdkReportFormat=tabular&selectedFields='/>
@@ -168,8 +178,22 @@ function appendchecked(url) {
       <input type="submit" name="Send" value="Send to Galaxy" onclick="appendchecked('${fn:escapeXml(downloadUrl)}')">
     </form>
     </div>
-  </c:if>
-  <%-- galaxy.psu.edu users  --%>
+
+  <%-- galaxy UGA users; send data to UGA Galaxy  --%>
+    <div style="text-align:center;background-color:#FFCCFF;border-style:double; width:300px">
+    <br>
+    <form action="${sessionScope.CTEGD_RICH_GALAXY_URL}" name="CTEGD_RICH_GALAXY_URL" id="CTEGD_RICH_GALAXY_URL" method="POST">
+    <input type="hidden" name="URL" value="${fn:escapeXml(downloadUrl)}">
+      <input type="submit" name="Send" value="Send to CTEGD Rich Galaxy" onclick="appendchecked(this.form, '${fn:escapeXml(downloadUrl)}')">
+    </form>
+    </div>
+
+    </c:if>
+    <%-- END GALAXY  --%>
+
+
+
+
 
   </c:otherwise>
 </c:choose>
