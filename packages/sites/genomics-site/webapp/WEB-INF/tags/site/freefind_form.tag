@@ -1,7 +1,10 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ attribute name="searchSite" 
 			  required="true" 
 			  description="Site being searched"
 %>
+<c:set var="project" value="${applicationScope.wdkModel.name}" />
+
 <c:choose>
       <c:when test = "${project == 'EuPathDB'}">
              <c:set var="siteID" value=""/>
