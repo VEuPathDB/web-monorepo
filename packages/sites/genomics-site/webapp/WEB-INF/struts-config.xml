@@ -538,6 +538,7 @@
       validate="false">
       <forward name="to-question" redirect="false" path="/processQuestion.do?questionSubmit=Get+Answer"/>
       <forward name="to-summary" redirect="false" path="/wdkCustomization/jsp/SiteSearchSummary.jsp"/>
+      <forward name="to-html" redirect="false" path="/wdkCustomization/jsp/HtmlSearchSummary.jsp" />
     </action>
 
 

@@ -29,13 +29,17 @@
 <link rel="Stylesheet" type="text/css" href="<c:url value='/wdkCustomization/css/site-search.css' />"/>
 
 
+
+
 <div id="site-search">
 
-<div id="search-info"> 
+
+<h1>Site Search Summary</h1>
+
+<div id="search-info" class="ui-widget-content ui-corner-all"> 
   You are searching for <span id="keyword">${keyword}</span>...
 </div>
 
-<h1>Site Search Summary</h1>
 
 <!-- gene results -->
 <fieldset id="gene" class="record" url="${countUrl}${geneUrl}">
@@ -84,7 +88,8 @@
   <div class="result">
     <ul class="summary"></ul>
     <div class="to-results">
-      <a href="${htmlUrl}">View all web pages</a>
+      <c:url var="htmlSearchUrl" value="/siteSearch.do?type=html&keyword=${keyword}" />
+      <a href="${htmlSearchUrl}">View all web pages</a>
     </div>
   </div>
   <div class="error">${errorMessage}</div>
