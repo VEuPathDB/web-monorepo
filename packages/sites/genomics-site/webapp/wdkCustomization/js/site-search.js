@@ -44,7 +44,6 @@ ApiDB.SiteSearch.loadRecordResults = function(recordSelector) {
             }
 
             var summaryUrl = source.find("#Summary_Views #_default > a").attr("href");
-            summaryUrl += "&altPageSize=" + ApiDB.SiteSearch.SUMMARY_SIZE;
            
             // set count
             loaded.find(".count").text(count);
@@ -61,10 +60,12 @@ ApiDB.SiteSearch.loadRecordResults = function(recordSelector) {
                     source = $(source[0]);
 
                     // get links to records
-                    source.find(".Results_Table .primaryKey").each(function() {
-                        var recordLink = $("<li></li>").append($(this).next("a"));
+                    var records = source.find(".Results_Table .primaryKey");
+                    var length = Math.min(records.length, ApiDB.SiteSearch.SUMMARY_SIZE);
+                    for (var i = 0; i < length; i++) {
+                        var recordLink = $("<li></li>").append($(records[i]).next("a"));
                         summary.append(recordLink);
-                    });
+                    }
                     record.find(".loading").hide();
                     record.find(".wait").hide();
                     loaded.show();
@@ -87,25 +88,25 @@ ApiDB.SiteSearch.loadResourceResults = function(resourceSelector) {
     // parse the count and results
     var source = resource.find(".source");
     var count = source.find(".search-header-table .search-count small").text().split(" ", 3)[1];
-    var results = source.find("div.search-results .search-results");
+    var pages = source.find("div.search-results .search-results");
 
     // set count
     var loaded = resource.find(".loaded");
     loaded.find(".count").text(count);
 
     // set results
-    var resultDiv =  resource.find(".result");
-    var summary = resultDiv.find(".summary");
-    var length = Math.min(parseInt(count), ApiDB.SiteSearch.SUMMARY_SIZE);
+    var result =  resource.find(".result");
+    var summary = result.find(".summary");
+    var length = Math.min(pages.length, ApiDB.SiteSearch.SUMMARY_SIZE);
     for (var i = 0; i < length; i++) {
-        summary.append(results[i]);
+        summary.append(pages[i]);
     }
 
     resource.find(".loading").hide();
     resource.find(".wait").hide();
     source.empty();
     loaded.show();
-    resultDiv.show();
+    result.show();
 };
 
 

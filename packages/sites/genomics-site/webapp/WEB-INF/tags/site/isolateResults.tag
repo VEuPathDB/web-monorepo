@@ -220,7 +220,7 @@
     <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
     <c:set var="align" value="align='${recAttr.attributeField.align}'" />
     <c:set var="nowrap">
-        <c:if test="${recAttr.attributeField.nowrap}">white-space:nowrap;</c:if>
+        <c:if test="${j == 0 || recAttr.attributeField.nowrap}">white-space:nowrap;</c:if>
     </c:set>
 
     <c:set var="pkValues" value="${primaryKey.values}" />
@@ -242,7 +242,7 @@
         <c:choose>
            <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Sequencing Typed'}">
               <%-- add checkbox --%>
-              <nobr><a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}"></nobr>
+              <a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}">
             <c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
            </c:when>
             <c:otherwise>
