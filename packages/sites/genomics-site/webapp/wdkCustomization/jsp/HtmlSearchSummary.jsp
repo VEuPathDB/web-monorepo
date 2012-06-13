@@ -12,6 +12,7 @@
 <c:set var="siteId">
   <c:choose>
     <c:when test = "${project == 'AmoebaDB'}">3266681</c:when>
+    <c:when test = "${project == 'ToxoDB'}">55216397</c:when>
     <c:when test = "${project == 'TriTrypDB'}">58147367</c:when>
     <c:otherwise>58147367</c:otherwise>
   </c:choose>
