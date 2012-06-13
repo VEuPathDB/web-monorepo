@@ -43,7 +43,7 @@
 
 
 <%-- for testing: add more sites as they are being indexed --%>
-<c:if test="${project == 'AmoebaDB' || project == 'TriTrypDB' }">
+<c:if test="${project == 'AmoebaDB' || project == 'TriTrypDB' || project == 'ToxoDB'}">
 <%--------------  SITE SEARCH  ---------------------------------------------%>
 	
 	<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
