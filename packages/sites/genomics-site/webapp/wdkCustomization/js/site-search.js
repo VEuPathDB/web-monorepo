@@ -62,6 +62,7 @@ ApiDB.SiteSearch.loadRecordResults = function(recordSelector) {
                     // get links to records
                     var records = source.find(".Results_Table .primaryKey");
                     var length = Math.min(records.length, ApiDB.SiteSearch.SUMMARY_SIZE);
+                    result.find(".count").text(length);
                     for (var i = 0; i < length; i++) {
                         var recordLink = $("<li></li>").append($(records[i]).next("a"));
                         summary.append(recordLink);
@@ -98,6 +99,7 @@ ApiDB.SiteSearch.loadResourceResults = function(resourceSelector) {
     var result =  resource.find(".result");
     var summary = result.find(".summary");
     var length = Math.min(pages.length, ApiDB.SiteSearch.SUMMARY_SIZE);
+    result.find(".count").text(length);
     for (var i = 0; i < length; i++) {
         summary.append(pages[i]);
     }

@@ -53,6 +53,7 @@
   <span class="wait"> </span>
   <div class="source"></div>
   <div class="result">
+    <p>Display the first <span class="count">0</span> gene(s):</p>
     <ul class="summary"></ul>
     <div class="to-results">
       <a href="${searchUrl}${geneUrl}">View all genes in strategy</a>
@@ -72,6 +73,7 @@
   <span class="wait"> </span>
   <div class="source"></div>
   <div class="result">
+    <p>Display the first <span class="count">0</span> isolate(s):</p>
     <ul class="summary"></ul>
     <div class="to-results">
       <a href="${searchUrl}${isolateUrl}">View all isolates in strategy</a>
@@ -89,8 +91,10 @@
     <div class="loaded">Found <span class="count"></span> web pages</div>
   </legend>
   <span class="wait"> </span>
+
   <div class="source"><c:import url="${htmlUrl}" /></div>
   <div class="result">
+    <p>Display the first <span class="count">0</span> page(s):</p>
     <ul class="summary"></ul>
     <div class="to-results">
       <c:url var="htmlSearchUrl" value="/siteSearch.do?type=html&keyword=${keyword}" />
