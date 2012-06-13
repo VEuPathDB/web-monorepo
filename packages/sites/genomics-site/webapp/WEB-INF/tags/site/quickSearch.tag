@@ -67,7 +67,7 @@
           	   </html:form>
 			 </div></td>
 
-<%--
+<%-- 
 <!-- TEXT SEARCH -->
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
@@ -102,7 +102,7 @@
 --%>
 
 
-<!-- Site Search -->
+<!-- SITE SEARCH -->
               <c:set var="hasIsolate" value="${projectId eq 'CryptoDB' || projectId eq 'GiardiaDB'
                                                || projectId eq 'PlasmoDB' || projectId eq 'ToxoDB'}" />
               <td>
@@ -115,9 +115,11 @@
                     </c:if>
                     <option value="html">Other pages</option>
                   </select>
-                  <input type="text" class="search-box ts_ie" name="keyword" value="synth*" />
-                  <input name="go" value="go" type="image" 
-                         src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
+		  <span class="head-search-tip" title="Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase.">
+                     <input type="text" class="search-box ts_ie" name="keyword" value="synth*" />
+                     <input name="go" value="go" type="image" 
+                         	src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
+		  </span>
                 </form>
               </td>
 
