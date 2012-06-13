@@ -42,19 +42,17 @@
     <div id="menu_lefttop">
 
 
-<%-- for testing: add more sites as they are being indexed --%>
+<%-- for testing: add more sites as they are being indexed
 <c:if test="${project == 'AmoebaDB' || project == 'TriTrypDB' || project == 'ToxoDB'}">
-<%--------------  SITE SEARCH  ---------------------------------------------%>
-	
+--------------  SITE SEARCH  ---------------------------------------------
 	<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
         <a class="heading" id='stats'  href="#">Site Search</a>
-
         <div class="menu_lefttop_drop" style="text-align:center;">
 		<imp:freefind_form searchSite="${project}"/>
  	</div>
-<%--------------  EUPATHDB DATA STATS---------------------------------------------%>
 </c:if>
-
+--%>
+<%--------------  EUPATHDB DATA STATS---------------------------------------------%>
 	<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
         <a class="heading" id='stats'  href="#">Data Summary</a>
 
