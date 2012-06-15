@@ -7,15 +7,16 @@
 require_once dirname(__FILE__) . "/../lib/modules/ProxyInfo.php";
 
 $pi = new ProxyInfo();
+$attributes = $pi->attributes();
 
-$nginx_proxy_switcher_base = str_replace('@HOST@', $pi->get('proxied_host'), $pi->get('nginx_proxy_switcher'));
+$nginx_proxy_switcher_base = str_replace('@HOST@', $attributes{'proxied_host'}, $attributes{'nginx_proxy_switcher'});
 
 $nginxForm = $nginx_proxy_switcher_base
     . "&return=" . $_SERVER['SCRIPT_URI'] . '?' . $_SERVER["QUERY_STRING"];
 
 $proxyNotice = '';
-if ( $pi->get('via') ) {
-    $proxyNotice = "<p>This site is reverse-proxied via <i>'" . $pi->get('via') . "'</i> to upstream host $upstreamServer.";
+if ( $attributes{'via'} ) {
+    $proxyNotice = "<p>This site is reverse-proxied via <i>'" . $attibutes{'via'} . "'</i> to upstream host $upstreamServer.";
 }
 
 ?>
