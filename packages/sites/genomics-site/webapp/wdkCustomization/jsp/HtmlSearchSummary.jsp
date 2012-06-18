@@ -17,8 +17,9 @@
     <c:otherwise>58147367</c:otherwise>
   </c:choose>
 </c:set>
-<c:set var="htmlUrl" value="http://search.freefind.com/find.html?si=${siteId}&pid=r&n=0&_charset_=UTF-8&bcd=%C3%B7&sbv=j1&query=${keyword}" />
-
+<c:url var="htmlUrl" value="http://search.freefind.com/find.html?si=${siteId}&pid=r&n=0&_charset_=UTF-8&bcd=%C3%B7&sbv=j1">
+  <c:param name="query" value="${keyword}" />
+</c:url>
 
 <%-- display page header with recordClass type in banner --%>
 <imp:header banner="Site Search"/>
