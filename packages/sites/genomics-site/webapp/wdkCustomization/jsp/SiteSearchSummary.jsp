@@ -40,20 +40,24 @@
 
 <h1>Site Search Summary</h1>
 
-<div id="search-info" class="ui-widget-content ui-corner-all"> 
-  You are searching for <span id="keyword">${keyword}</span>...
+<div class="h3center"> 
+  Your search for <span style="color:black" id="keyword">${keyword}</span> found:
 </div>
 
+<br><br>
+<ul class="cirbulletlist">
 
 <!-- gene results -->
+<li>
 <fieldset id="gene" class="record" url="${countUrl}${geneUrl}">
   <legend>
-    <div class="loading">Searching for genes...</div>
-    <div class="loaded">Found <span class="count"></span> gene(s)</div>
+<div class="loading">Searching for genes...</div>
+   <!-- <div class="loaded">Found <span class="count"></span> gene(s)</div> -->
+     <div class="loaded"><a title="Click to generate a strategy" href="${searchUrl}${geneUrl}"><span class="count"></span> gene(s)</a></div>
   </legend>
   <span class="wait"> </span>
   <div class="source"></div>
-  <div class="result">
+<!--  <div class="result">
     <p>Display the first <span class="count">0</span> gene(s):</p>
     <ul class="summary"></ul>
     <div class="to-results">
@@ -61,19 +65,24 @@
     </div>
   </div>
   <div class="error">${errorMessage}</div>
+-->
 </fieldset>
+</li>
 
-
+<hr>
 <c:if test="${hasIsolate}">
 <!-- isolate results -->
+
+<li>
 <fieldset id="isolate" class="record" url="${countUrl}${isolateUrl}">
   <legend>
     <div class="loading">Searching for isolates...</div>
-    <div class="loaded">Found <span class="count"></span> isolate(s)</div>
+   <!--  <div class="loaded">Found <span class="count"></span> isolate(s)</div> -->
+     <div class="loaded"><a title="Click to generate a strategy" href="${searchUrl}${isolateUrl}"><span class="count"></span> isolate(s)</a></div>
   </legend>
   <span class="wait"> </span>
   <div class="source"></div>
-  <div class="result">
+<!--   <div class="result">
     <p>Display the first <span class="count">0</span> isolate(s):</p>
     <ul class="summary"></ul>
     <div class="to-results">
@@ -81,32 +90,42 @@
     </div>
   </div>
   <div class="error">${errorMessage}</div>
+-->
 </fieldset>
+</li>
+
 </c:if>
-
-
+<hr>
+<li>
 <!-- freefind results -->
 <fieldset id="freefind" class="resource">
   <legend>
     <div class="loading">Searching for other resources...</div>
-    <div class="loaded">Found <span class="count"></span> web pages</div>
+    <div class="loaded"><span class="count"></span> web pages</div>
   </legend>
   <span class="wait"> </span>
 
   <div class="source"><c:import url="${htmlUrl}" /></div>
   <div class="result">
-    <p>Display the first <span class="count">0</span> page(s):</p>
+<!--    <p>Display the first <span class="count">0</span> page(s):</p> -->
     <ul class="summary"></ul>
+
+<!-- we should be able to show this link only when the number of pages exceeds the maximum set in javascript
     <div class="to-results">
       <c:url var="htmlSearchUrl" value="/siteSearch.do?type=html">
         <c:param name="keyword" value="${keyword}" />
       </c:url>
       <a href="${htmlSearchUrl}">View all web pages</a>
     </div>
+-->
+
+
   </div>
   <div class="error">${errorMessage}</div>
 </fieldset>
+</li>
 
+</ul>
 
 </div><!-- END of site-search -->
 

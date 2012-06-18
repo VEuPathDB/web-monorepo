@@ -5,7 +5,7 @@ $(function() {
     ApiDB.SiteSearch.loadResults();
 });
 
-ApiDB.SiteSearch.SUMMARY_SIZE = 5;
+ApiDB.SiteSearch.SUMMARY_SIZE = 25;
 
 ApiDB.SiteSearch.loadResults = function() {
     var siteSearch = ApiDB.SiteSearch;
@@ -47,9 +47,12 @@ ApiDB.SiteSearch.loadRecordResults = function(recordSelector) {
            
             // set count
             loaded.find(".count").text(count);
+ loaded.show();
+ record.find(".loading").hide();
+ record.find(".wait").hide();
 
             // load result summary
-            var result = record.find(".result");
+ /*           var result = record.find(".result");
             var summary = result.find(".summary");
             $.ajax({
                 type: "GET",
@@ -77,10 +80,13 @@ ApiDB.SiteSearch.loadRecordResults = function(recordSelector) {
                     record.find(".error").show();
                 }
             });
+*/
         },
         error: function(jqXHR, textStatus, errorThrown) {
             record.find(".error").show();
         }
+
+
     });
 };
 
