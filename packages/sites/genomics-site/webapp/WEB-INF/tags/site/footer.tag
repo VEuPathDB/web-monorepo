@@ -22,7 +22,6 @@
 <%-- http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html --%>
 <fmt:formatDate var="copyrightYear" value="${rlsDate}" pattern="yyyy"/>
 
-
 <%------------ divs defined in header.tag for all pages but home/home2  -----------%>
 <c:if test="${refer != 'home' && refer != 'home2' && refer != 'customSummary'}">
 </div> <%-- class="innertube"   --%>
@@ -48,50 +47,17 @@
 
 <%-- ========dialogs that need to appear in various pages========= --%>
 
-<!-- Annotation Change dialog -->
-<div id="dialog-annot-change" title="Annotation changes"  style="display:none">
-<ul class="cirbulletlist">
-<li>Genome annotations are constantly updated to reflect new biological information concerning the sequences.
-<br><br>
-<li>When annotations are updated during a new release of our websites, some IDs may change or be retired.
-</ul>
-</div>
+<%-- create the dialog HTML --%>
+<div style="display:none;" id="dialog-revise-search" title="<imp:verbiage key='dialog.revise-search.title'/>"><imp:verbiage key='dialog.revise-search.content'/></div>
+<div style="display:none;" id="dialog-annot-change" title="<imp:verbiage key='dialog.annot-change.title'/>"><imp:verbiage key='dialog.annot-change.content'/></div>
 
-<!-- Revised searches dialog -->
-<div id="dialog-revise-search"  title="Redesigned searches" style="display:none">
-<ul class="cirbulletlist">
-<li>Searches are sometimes 'redesigned' if database revisions lead to new parameters and/or new parameter choices. 
-<br><br><br>
-<li>When parameters have been modified and we cannot easily map your old choices into the new search, the search will be covered with a <span style="font-size:140%;color:darkred;font-family:sans-serif">X</span>. It means it needs to be revised.
-<br><br><br>
-<li>Please open strategies marked with <img style="vertical-align:bottom" src="<c:url value="wdk/images/invalidIcon.png"/>" width="12"/> and click each search that needs revision.
-<br><br><br>
-<!-- maybe too much info
-<li>In some rare cases, the search name you had in your history, does not exist in the new release and cannot be mapped to a new search. Your only choice will be to delete the search from the strategy.
---> 
-</ul>
-</div>
-
-
+<%-- instantiate dialogs -- open function triggered in tags/wdk/strategyHistory.tag --%>
 <script type="text/javascript">
-
-// generate jquery dialogs of divs with these id values
-	$(function() {
-		$( "#dialog-annot-change" ).dialog({ autoOpen: false });
-	});
-	$(function() {
-		$( "#dialog-revise-search" ).dialog({ autoOpen: false });
-	});
-
-// used in onclicks() in All tab, basket and favorites pages
-	function openWhyAnnotChanges(element){
-		$( "#dialog-annot-change" ).dialog('open');
-	}
-	function openWhyRevise(element){
-		$( "#dialog-revise-search" ).dialog('open');
-	}
+  $(function() {
+    $("#dialog-revise-search").dialog({autoOpen: false, modal: true});
+    $("#dialog-annot-change").dialog({autoOpen: false, modal: true});
+  });
 </script>
-
 <%-- ======== END OF   dialogs that need to appear in various pages========= --%>
 
 
