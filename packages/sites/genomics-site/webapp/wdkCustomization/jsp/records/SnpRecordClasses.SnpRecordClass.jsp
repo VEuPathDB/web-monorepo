@@ -25,7 +25,7 @@
     <c:set var="revCompOn" value="1"/>
    </c:if>
   <c:set var="sequence_id" value="${attrs['seq_source_id'].value}"/>
-  <c:set var="dataset_provider" value="${attrs['dataset'].value}"/>
+  <c:set var="dataset_internal" value="${attrs['dataset_internal'].value}"/>
 </c:catch>
 
 <imp:header title="${wdkModel.displayName} : SNP ${id}"
@@ -75,11 +75,15 @@
 
 <c:if test="${projectId eq 'PlasmoDB'}">
 
-<imp:wdkTable tblName="IsolatesAlleleFrequency" isOpen="true"/>
+<imp:pageDivider name="Isolate Chip Assays"/>
+
 <imp:wdkTable tblName="Isolates" isOpen="false"/>
+<imp:wdkTable tblName="IsolatesAlleleFrequency" isOpen="true"/>
 
 
-<c:if test="${dataset_provider == 'Pf_Broad_SNPs_RSRC' || dataset_provider == 'Pf_plasmoDbCombinedSnps_RSRC'}">
+<imp:pageDivider name="Sequence Context"/>
+
+<c:if test="${dataset_internal == 'pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC' || dataset_internal == 'pfal3D7_SNP_Broad_gff_RSRC'}">
 <c:set var="showAlignmts">
 
   <c:catch var="e">
@@ -110,19 +114,6 @@
 <imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
 
 
-<c:set var="type" value="${attrs['type'].value}"/>
-<c:set var="dataset" value="${attrs['dataset'].value}"/>
-<c:set var="dataset_rsrc" value="${attrs['dataset_hidden'].value}"/>
-<c:if test="${type ne 'HTS'}">
-  <c:set var="reference">
-<a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${dataset_rsrc}&title=SNPs%20Summary">${dataset}</a>
-
-  </c:set>
-<imp:panel 
-    displayName="Data Provider"
-    content="${reference}" />
-
-</c:if>
 
 
 </td></tr>
