@@ -171,7 +171,7 @@
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
     <th colspan=6 align="center"><i>Basidiomycota</i></th>
     <th colspan=8 align="center"><i>Eurotiomycetes</i></th>
-    <th colspan=6 align="center"><i>Sordariomycetes</i></th>
+    <th colspan=8 align="center"><i>Sordariomycetes</i></th>
     <th colspan=2 align="center"><i>Saccharomycotina</i></th>
     <th colspan=1 align="center"><i>Taphrinomycotina</i></th>
     <th colspan=6 align="center"><i>Oomycetes</i></th>
@@ -191,7 +191,9 @@
     <th><i>A.ter</i></th>
     <th><i>C.imm</i> H538.4</th>
     <th><i>C.imm</i> RS</th>
+    <th><i>F.gra</i></th>
     <th><i>F.oxy</i></th>
+    <th><i>F.ver</i></th>
     <th><i>M.ory</i></th>
     <th><i>N.cra</i></th>
     <th><i>N.dis</i></th>
@@ -308,7 +310,19 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
+                          instanceName="fgra_genes" />
+    </td>
+    <td> 
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
                           instanceName="foxy_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="fver_genes" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
