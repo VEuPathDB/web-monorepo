@@ -48,14 +48,38 @@
 <%-- ========dialogs that need to appear in various pages========= --%>
 
 <%-- create the dialog HTML --%>
-<div style="display:none;" id="dialog-revise-search" title="<imp:verbiage key='dialog.revise-search.title'/>"><imp:verbiage key='dialog.revise-search.content'/></div>
-<div style="display:none;" id="dialog-annot-change" title="<imp:verbiage key='dialog.annot-change.title'/>"><imp:verbiage key='dialog.annot-change.content'/></div>
+<div style="display:none;" id="wdk-dialog-revise-search" title="<imp:verbiage key='dialog.revise-search.title'/>"><imp:verbiage key='dialog.revise-search.content'/></div>
+
+<div style="display:none;" id="wdk-dialog-annot-change" title="<imp:verbiage key='dialog.annot-change.title'/>"><imp:verbiage key='dialog.annot-change.content'/></div>
+
+<div style="display:none;" id="wdk-dialog-update-strat" title="<imp:verbiage key='dialog.update-strat.title'/>">
+    <div class="save_as_msg"><imp:verbiage key="dialog.update-strat.content"/></div>
+    <form id="wdk-update-strat">
+        <input type="hidden" name="strategy" value="">
+        <dl>
+            <dt class="name_label">Name:</dt>
+            <dd class="name_input"><input type="text" name="name"></dd>
+            <dt class="desc_label">Description:</dt>
+            <dd class="desc_input"><textarea name="description" rows="10"></textarea></dd>
+        </dl>
+        <div style="text-align: right"><input name="submit" type="submit" value="Save strategy"></div>
+    </form>
+</div>
+
+<div style="display:none;" id="wdk-dialog-share-strat" title="<imp:verbiage key='dialog.share-strat.title'/>">
+    <div class="share_msg"><imp:verbiage key="dialog.share-strat.content"/></div>
+    <div class="share_url"></div>
+</div>
 
 <%-- instantiate dialogs -- open function triggered in tags/wdk/strategyHistory.tag --%>
 <script type="text/javascript">
   $(function() {
-    $("#dialog-revise-search").dialog({autoOpen: false, modal: true});
-    $("#dialog-annot-change").dialog({autoOpen: false, modal: true});
+    var dialogOpts = {
+      autoOpen: false,
+      modal: true,
+      width: 600
+    };
+    $("[id^='wdk-dialog-']").dialog(dialogOpts);
   });
 </script>
 <%-- ======== END OF   dialogs that need to appear in various pages========= --%>
