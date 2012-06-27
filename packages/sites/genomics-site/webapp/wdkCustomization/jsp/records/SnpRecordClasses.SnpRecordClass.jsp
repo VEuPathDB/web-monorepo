@@ -69,9 +69,15 @@
     displayName="${attr.displayName}" isOpen="true"
     content="${attr.value}" />
 
-
-<imp:wdkTable tblName="Strains" isOpen="true"/>
-
+<!-- strains table: one for HTS SNPs and one for sequencing SNPs -->
+<c:choose>
+  <c:when  test="${attrs['type'].value == 'HTS'}">
+    <imp:wdkTable tblName="HTSStrains" isOpen="true"/>
+  </c:when>
+  <c:otherwise>
+    <imp:wdkTable tblName="Strains" isOpen="true"/>
+  </c:otherwise>
+</c:choose>
 
 <c:if test="${projectId eq 'PlasmoDB'}">
 
