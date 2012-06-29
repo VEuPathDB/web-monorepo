@@ -462,7 +462,7 @@ sub spliceSiteCuratedTitle {
   my $f = shift;
   my $id = $f->name;  
   my $loc = $f->start;
-  my ($sasNum) = $f->get_tag_values('count');
+#  my ($sasNum) = $f->get_tag_values('count'); # commenting, as value is always null!
   my ($utr_len) = $f->get_tag_values('utr_length');
   my ($gene_id) = $f->get_tag_values('gene_id');
   my ($sample) = $f->get_tag_values('sample');
@@ -471,8 +471,8 @@ sub spliceSiteCuratedTitle {
   push(@data, [$sampleName => $id]);
   push(@data, ['Location:' => $loc]);
   push(@data, ['Gene:' => $gene_id]);
-  push(@data, ['Sequence count:' => $sasNum]);
-  # push(@data, ['UTR length:' => $utr_len]);
+  push(@data, ['UTR length:' => $utr_len]) if ($utr_len);
+#  push(@data, ['Sequence count:' => $sasNum]);
   return hover($f,\@data);
 }
 
