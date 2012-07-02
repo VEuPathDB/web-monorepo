@@ -246,7 +246,7 @@ ${externalLinks}
 
 
  <c:choose>
- <c:when test="${projectId eq 'PiroplasmaDB' || projectId eq 'FungiDB' || projectId eq 'PlasmoDB'}">
+ <c:when test="${projectId eq 'PiroplasmaDB' || projectId eq 'FungiDB' || projectId eq 'PlasmoDB' || projectId eq 'CryptoDB' || projectId eq 'MicrosporidiaDB'}">
 
     <c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
@@ -259,47 +259,6 @@ ${externalLinks}
      </c:forEach>
 
  </c:when>
- <c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium hominis') && projectId eq 'CryptoDB'}">
- <c:set var="reference">
-    Xu P, Widmer G, Wang Y, Ozaki LS, Alves JM, Serrano MG, Puiu D, Manque P, 
-    Akiyoshi D, Mackey AJ, Pearson WR, Dear PH, Bankier AT, Peterson DL, 
-    Abrahamsen MS, Kapur V, Tzipori S, Buck GA. 
-    <b>The genome of <i>Cryptosporidium hominis</i>.</b> 
-    Nature. 2004 Oct 28;<a href="http://www.nature.com/nature/journal/v431/n7012/abs/nature02977.html"><b>431</b>(7012):1107-12</a>.
-</c:set>
-</c:when>
-<c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium muris') && projectId eq 'CryptoDB'}">
-<c:set var="reference">
-    The Cryptosporidium muris genome sequencing project has been funded by the
-    National Institute of Allergy and Infections Diseases (NIAID), through the
-    Microbial Sequencing Center program at the Institute for Genomic Research (TIGR). 
-</c:set>
-</c:when>
- <c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium parvum Iowa II') && (id eq 'CM000429' || id eq 'CM000430' || id eq 'CM000431' || id eq 'CM000432' || id eq 'CM000433' || id eq 'CM000434' || id eq 'CM000435' || id eq 'CM000436') && projectId eq 'CryptoDB'}">
-<c:set var="reference">
-    Mapping of gene coordinates from contigs to chromosomes for <i>C. parvum</i> generated 
-    from Genbank chromosome records.
-</c:set>
-</c:when>
-<c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium parvum Iowa II') && projectId eq 'CryptoDB'}">
-<c:set var="reference">
-    Abrahamsen MS, Templeton TJ, Enomoto S, Abrahante JE, Zhu G, Lancto CA, 
-    Deng M, Liu C, Widmer G, Tzipori S, Buck GA, Xu P, Bankier AT, Dear PH, 
-    Konfortov BA, Spriggs HF, Iyer L, Anantharaman V, Aravind L, Kapur V. 
-    <b>Complete genome sequence of the apicomplexan, <i>Cryptosporidium parvum</i>.</b> 
-    Science. 2004 Apr 16;
-    <a href="http://www.sciencemag.org/cgi/content/full/304/5669/441"><b>304</b>(5669):441-5</a>.
-</c:set>
-</c:when>
-<c:when test="${fn:containsIgnoreCase(organism, 'Cryptosporidium parvum') && projectId eq 'CryptoDB'}">
-<%-- sequence_source_id = BX526834 --%>
-<c:set var="reference">
-    Bankier AT, Spriggs HF, Fartmann B, Konfortov BA, Madera M, Vogel C, 
-    Teichmann SA, Ivens A, Dear PH. 
-    <b>Integrated mapping, chromosomal sequencing and sequence analysis of <i>Cryptosporidium parvum</i>. 
-    </b>Genome Res. 2003 Aug;<a href="http://www.genome.org/cgi/content/full/13/8/1787">13(8):1787-99</a>
-</c:set>
-</c:when>
 
     <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'ME49')}">
     <c:set var="reference">
@@ -580,78 +539,6 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
   <c:set var="reference">
 Genome Assembly for <i>Entamoeba moshkovskii</i> was provided by Gareth Weedall and Neil Hall. Institute of Integrative Biology, University of Liverpool, Crown Street, Liverpool L69 7ZB, UK  
 </c:set>
-</c:when>
-
-
-<c:when test="${fn:contains(organism,'Encephalitozoon cuniculi GB-M1') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-   Sequence and annotations from BioHealthBase for <i>Encephalitozoon cuniculi GB-M1</i> chromosomes in Genbank (sequence and annotated features) format. 
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Encephalitozoon intestinalis') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-   Sequence and annotations from Patrick Keeling(pkeeling@interchange.ubc.ca)at Canadian Institute for Advanced Research, Evolutionary Biology Program, Department of Botany, University of British Columbia. Please note that the <i>E. intestinalis</i> genome sequence has not yet been published. You are welcome to browse this data and use information on individual genes for your research ... but using this site constitutes your implicit agreement to refrain from genome-wide analysis pending publication of the <i>E. intestinalis</i> genome. Please contact Patrick Keeling (pkeeling@interchange.ubc.ca) with any questions.
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Enterocytozoon bieneusi H348') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-   Sequence and annotations from Genbank for Enterocytozoon bieneusi H348 contigs.
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'bayeri') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-WGS assembly for Octosporea bayeri OER-3-3 was described by <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/19807911">Corradi et. al.</a> and downloaded from Genbank (<a target="_blank" href="http://www.ncbi.nlm.nih.gov/nuccore/ACSZ00000000.1">O.bayeri Genbank Record</a>)
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Nematocida parisii ERTm1') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-Nematocida parisii strain ERTm1, whole genome shotgun sequence was generated by The Broad Institute Genome Sequencing Platform with Federal funds from the National Institute of Allergy and Infectious Diseases National under Contract No.: HHSN2722009000018C and obtained from GenBank (<a href="http://www.ncbi.nlm.nih.gov/nuccore/AEFF00000000">http://www.ncbi.nlm.nih.gov/nuccore/AEFF00000000</a>).
-  </c:set>
-</c:when>
-<c:when test="${(fn:contains(organism,'Anncaliia') || fn:contains(organism,'Edhazardia') || fn:contains(organism,'Nosema bombycis') || fn:contains(organism,'Vittaforma')) && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-   Microsporidia sequences from the Genome Survey Sequences Database (GSS) division of Genbank  
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'ERTm3') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-Nematocida parisii strains ERTm1 and ERTm3, whole genome shotgun sequence was generated by The Broad Institute Genome Sequencing Platform with Federal funds from the National Institute of Allergy and Infectious Diseases National under Contract No.: HHSN2722009000018C and obtained from <a href="http://www.ncbi.nlm.nih.gov/nuccore/AEOO00000000">GenBank</a>.
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Encephalitozoon hellem ATCC 50504') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-Genome Sequence for Encephalitozoon hellem ATCC 50504 strain was downloaded from <a href="http://www.ncbi.nlm.nih.gov/bioproject/53973"> Genbank (GenomeProject ID #53973)</a>. Sequence provided by University of British Columbia
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Nosema ceranae BRL01') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-WGS assembly for Nosema ceranae BRL01 was described by <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/19503607">Cornman RS et. al.</a> and downloaded from Genbank (<a target="_blank" href="http://www.ncbi.nlm.nih.gov/nuccore/ACOL00000000">N.ceranae Genbank Record</a>)
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Encephalitozoon cuniculi EC1') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-<i>Encephalitozoon cuniculi</i> EC1, whole genome shotgun sequence was generated by The Broad Institute Genome Sequencing Platform with Federal funds from the National Institute of Allergy and Infectious Diseases National under Contract No.: HHSN2722009000018C and obtained from GenBank (<a href="http://www.ncbi.nlm.nih.gov/bioproject/63135">http://www.ncbi.nlm.nih.gov/bioproject/63135</a>).
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Encephalitozoon cuniculi EC2') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-<i>Encephalitozoon cuniculi</i> EC2, whole genome shotgun sequence was generated by The Broad Institute Genome Sequencing Platform with Federal funds from the National Institute of Allergy and Infectious Diseases National under Contract No.: HHSN2722009000018C and obtained from GenBank (<a href="http://www.ncbi.nlm.nih.gov/bioproject/63205">http://www.ncbi.nlm.nih.gov/bioproject/63205</a>).
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Encephalitozoon cuniculi EC3') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-<i>Encephalitozoon cuniculi</i> EC3, whole genome shotgun sequence was generated by The Broad Institute Genome Sequencing Platform with Federal funds from the National Institute of Allergy and Infectious Diseases National under Contract No.: HHSN2722009000018C and obtained from GenBank (<a href="http://www.ncbi.nlm.nih.gov/bioproject/63207">http://www.ncbi.nlm.nih.gov/bioproject/63207</a>).
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Nematocida parisii ERTm2') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-Nematocida parisii strain ERTm2, whole genome shotgun sequence was generated by The Broad Institute Genome Sequencing Platform with Federal funds from the National Institute of Allergy and Infectious Diseases National under Contract No.: HHSN2722009000018C.
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Vavraia culicis floridensis') && projectId eq 'MicrosporidiaDB'}">
-  <c:set var="reference">
-<i>Vavraia culicis </i>strain floridensis whole genome shotgun sequence was generated by The Broad Institute Genome Sequencing Platform with Federal funds from the National Institute of Allergy and Infectious Diseases National under Contract No.: HHSN2722009000018C and obtained from GenBank (<a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=948595">http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=948595</a>).
-  </c:set>
 </c:when>
 
 <c:when test="${fn:contains(organism,'Entamoeba histolytica Rahman') && projectId eq 'AmoebaDB'}">
