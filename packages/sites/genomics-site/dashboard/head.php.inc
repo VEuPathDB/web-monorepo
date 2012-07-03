@@ -3,9 +3,9 @@
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
 
     <link rel="stylesheet" type="text/css" href="css/main.css" />
-    <link rel="stylesheet" type="text/css" href="css/custom-theme/jquery-ui-1.8.16.custom.css" />
+    <link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.8.21.custom.css" />
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
-    <script type='text/javascript' src='js/jquery-ui-1.8.16.custom.min.js'></script>
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js'></script>
     <script type='text/javascript' src='js/overlib.js'></script>
     <script type='text/javascript' src='js/main.js'></script>
 
