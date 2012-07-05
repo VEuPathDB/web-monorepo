@@ -409,33 +409,17 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 <%------------------------------------------------------------------%> 
 
 <hr>
-<c:choose>
-<c:when test='${organism_full eq "Encephalitozoon cuniculi GB-M1"}'>
-  <c:set var="reference">
-   Sequence and annotations from BioHealthBase for <i>Encephalitozoon cuniculi GB-M1</i> chromosomes in Genbank (sequence and annotated features) format. 
-  </c:set>
-</c:when>
-<c:when test='${organism_full eq "Encephalitozoon intestinalis"}'>
-  <c:set var="reference">
-   Sequence and annotations from Patrick Keeling at Canadian Institute for Advanced Research, Evolutionary Biology Program, Department of Botany, University of British Columbia. Please note that the <i>E. intestinalis</i> genome sequence has not yet been published. You are welcome to browse this data and use information on individual genes for your research ... but using this site constitutes your implicit agreement to refrain from genome-wide analysis pending publication of the <i>E. intestinalis</i> genome. Please contact Patrick Keeling (pkeeling@interchange.ubc.ca) with any questions.
-  </c:set>
-</c:when>
-<c:when test='${organism_full eq "Enterocytozoon bieneusi H348"}'>
-  <c:set var="reference">
-   Sequence and annotations from Genbank for Enterocytozoon bieneusi H348 contigs.
-  </c:set>
-</c:when>
-<c:when test='${organism_full eq "Encephalitozoon hellem ATCC 50504"}'>
-  <c:set var="reference">
-Genome Sequence for Encephalitozoon hellem ATCC 50504 strain was downloaded from <a href="http://www.ncbi.nlm.nih.gov/bioproject/53973"> Genbank (GenomeProject ID #53973)</a>. Sequence provided by University of British Columbia.
- </c:set>
-</c:when>
-<c:when test='${organism_full eq "Nosema ceranae BRL01"}'>
-  <c:set var="reference">
-WGS assembly for Nosema ceranae BRL01 was described by <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/19503607">Cornman RS et. al.</a> and downloaded from Genbank (<a target="_blank" href="http://www.ncbi.nlm.nih.gov/nuccore/ACOL00000000">N.ceranae Genbank Record</a>)
-  </c:set>
-</c:when>
-</c:choose>
+
+
+<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
+
+<c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
+<c:forEach var="row" items="${referenceTable}">
+  <c:if test="${extdbname eq row['name'].value}">
+    <c:set var="reference" value="${row['description'].value}"/>
+  </c:if>
+</c:forEach>
+
 
 <imp:panel 
     displayName="Genome Sequencing and Annotation by:"
