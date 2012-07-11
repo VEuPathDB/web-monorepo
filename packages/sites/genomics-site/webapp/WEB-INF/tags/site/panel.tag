@@ -47,7 +47,7 @@
   <c:when test='${trimmedAttribution != null && trimmedAttribution != ""}'>
     <td align="right">
      <font size="-2" face="Arial,Helvetica">
-     [<a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${trimmedAttribution}&title=${displayName}">
+     [<a href="getDataSource.do?display=detail&datasets=${trimmedAttribution}&title=${displayName}">
      Data Sources</a>]
      </font>
     </td>

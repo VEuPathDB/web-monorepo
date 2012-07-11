@@ -199,6 +199,6 @@
 </table> 
 <br/>
 <c:if test="${param['datasets'] != null}">
-<a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>"><font size="-1">Click here to see the complete list of Data Sources</font></a><br/>
+<a href="getDataSource.do?display=detail"><font size="-1">Click here to see the complete list of Data Sources</font></a><br/>
 </c:if>
 <imp:footer/>

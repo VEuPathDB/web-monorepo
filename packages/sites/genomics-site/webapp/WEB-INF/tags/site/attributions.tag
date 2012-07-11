@@ -51,7 +51,7 @@ display the attributions.
                 <c:if test="${dsRecord.attributesMap['resource'] != null && dsRecord.attributesMap['category'] ne 'ignore'}">
                     <li>
                         <c:url var="dataSourceUrl"
-                               value="/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attributionKey}&title=Query#" />
+                               value="/getDataSource.do?display=detail&datasets=${attributionKey}&title=Query#" />
                         <a href="${dataSourceUrl}${attribution}">
                             ${dsRecord.attributesMap['resource']}
                         </a>

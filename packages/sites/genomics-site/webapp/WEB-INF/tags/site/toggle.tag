@@ -184,7 +184,7 @@
       <c:when test='${attribution != null && attribution != ""}'>
         <td align="right">
            <font size="-1" face="Arial,Helvetica">
-           [<a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=${attribution}&title=${displayNameParam}">Data Sources</a>]
+           [<a href="getDataSource.do?display=detail&datasets=${attribution}&title=${displayNameParam}">Data Sources</a>]
            </font>
         </td>
       </c:when>
