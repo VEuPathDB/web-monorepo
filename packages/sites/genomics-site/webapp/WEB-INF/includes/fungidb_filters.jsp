@@ -334,7 +334,7 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="ncra_genes" />  
+                          instanceName="NcraOR74A_genes" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
