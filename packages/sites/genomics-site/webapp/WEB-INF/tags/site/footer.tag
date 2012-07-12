@@ -48,6 +48,8 @@
 <%-- ========dialogs that need to appear in various pages========= --%>
 <%-- dialogs instantiated in wdkCommon.js --%>
 
+<div style="display:none;" class="ui-dialog-fixed-width" id="wdk-dialog-IE-warning" title="<imp:verbiage key='dialog.IE-warning.title'/>"><imp:verbiage key='dialog.IE-warning.content'/></div>
+
 <%-- create the dialog HTML --%>
 <div style="display:none;" class="ui-dialog-fixed-width" id="wdk-dialog-revise-search" title="<imp:verbiage key='dialog.revise-search.title'/>"><imp:verbiage key='dialog.revise-search.content'/></div>
 
