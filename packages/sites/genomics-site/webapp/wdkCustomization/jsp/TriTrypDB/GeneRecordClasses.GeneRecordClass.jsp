@@ -362,14 +362,14 @@ GO,InterproscanData
     </c:set>
 	</c:when>
 
- <c:when test='${organismFull eq "Trypanosoma brucei Lister strain 427"}'>
+ <c:when test='${organismFull eq "Trypanosoma brucei Lister strain 427" || organismFull eq "Trypanosoma brucei gambiense"}'>
     <c:set var="ptracks">
     InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     <c:set var="attribution">
     InterproscanData
     </c:set>
-	</c:when>
+</c:when>
 
   <c:when test='${organismFull eq "Leishmania infantum"}'>
     <c:set var="ptracks">
