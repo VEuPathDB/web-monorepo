@@ -165,4 +165,21 @@ div.related_dashboard_links {
   background: #dee2ed;
   border-left: 1px solid #C28547;
   border-top: 1px solid #C28547;
-  }
+}
+
+#loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  text-align: center;
+  width: 100%;
+}
+
+#loading span {
+  background-color: wheat;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border: 1px solid gold;
+  font-size: small;
+  padding: 0 0.4em;
+}
