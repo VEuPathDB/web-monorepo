@@ -17,6 +17,8 @@
 <c:set var="i" value="0"/>
 
 <c:forEach var="row" items="${tbl}">
+     
+                
   <c:if test="${organism eq row['organism'].value}">
 
     <c:set var="name" 		value="${fn:replace(row['module'].value, '::', '')}"/>
@@ -99,6 +101,11 @@
         </c:choose>
 <br /><br />
         		<b>Choose Graph(s) to Display</b><br />
+        <c:set var="VisibleParts" value="${fn:split(row['visible_parts'].value,',')}"/>
+        <c:set var="numVisibleParts" value="0"/>    
+        <c:forEach var="visiblePart" items="${VisibleParts}">
+            <c:set var="numVisibleParts" value="${numVisibleParts +  1}"/>
+        </c:forEach>
         <c:forEach var="vp" items="${fn:split(row['visible_parts'].value, ',')}">
 
           <c:if test="${fn:contains(vp, 'rma')}">
@@ -121,10 +128,19 @@
             </c:otherwise>
           </c:choose>
           <c:set var="vp_i" value="${vp_i +  1}"/>
-
-          <c:if test="${vp_i % 3 == 0}">
-            <br />
-          </c:if>
+          <c:choose>
+            <c:when test="${numVisibleParts % 3 == 0}">
+               <c:if test="${vp_i % 3 == 0}">
+                 <br />
+               </c:if>
+            </c:when>
+            <c:otherwise>
+               <c:if test="${vp_i % 2 == 0}">
+                 <br />
+               </c:if>
+            </c:otherwise>
+          </c:choose>
+           
           
         </c:forEach>
        
