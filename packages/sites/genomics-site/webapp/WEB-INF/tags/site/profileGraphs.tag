@@ -69,6 +69,7 @@
             <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}" name="geneOptions" checked /> &nbsp;
                         
                          <c:set var="imgSrc" 		value="${imgSrc}&id=${graph_id}"/>
+                         <c:set var="tableSrc" 		value="${tableSrc}&id=${graph_id}"/>
                          
             </c:when>
             <c:otherwise>
@@ -186,6 +187,8 @@
          		</c:set>
 
 <%--   Data table by some graphs --%>
+
+
 <imp:toggle
     name="${tableId}"     
     displayName="Data Table"
