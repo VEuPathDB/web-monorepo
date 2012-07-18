@@ -358,7 +358,7 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="scer_genes" />  
+                          instanceName="ScerS288c_genes" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
