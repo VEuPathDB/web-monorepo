@@ -171,6 +171,9 @@ function getComboElement()
 <c:when test="${prefix == 'Spom'}">
       <c:set var="org" value="Schizosaccharomyces pombe "/>
   </c:when>
+<c:when test="${prefix == 'Scer'}">
+      <c:set var="org" value="Saccharomyces cerevisiae"/>
+  </c:when>
 <c:when test="${prefix == 'Calb'}">
       <c:set var="org" value="Candida albicans"/>
   </c:when>
