@@ -469,9 +469,16 @@ sub sequenceAlignmentTitle {
 
   $loc =~ s/(\d+\.\.)/<br \/>&nbsp;&nbsp;$1/g;
 
+  my $downloadLink = "<a target='_blank' href='http://cryptodb.org/common/downloads/release-4.6/CparvumChr6/'>Download files</a>";
+  my $mappingLink  = "<a target='_blank' href='/a/communityDownload.do?fname=chr6OrthoMapping.txt'>Ortholog Mapping file</a>";
+
+
   my @data;
-  push(@data, ['ID:' => $sourceId]);
+  push(@data, ['ID:'       => $sourceId]);
   push(@data, ['Location:' => $loc]);
+  push @data, ['Link:'     => $downloadLink ];
+  push @data, ['Link:'     => $mappingLink ];
+
   return hover($f,\@data);
 
 }
