@@ -67,8 +67,7 @@
                 <textarea name="description" rows="10"></textarea>
             </dd>
         </dl>
-        <div class="char_note"><em>Note: There is a 4,000 character limit.</em>
-            <span class="char_counter">(<span class="count">0</span>/4000)</span></div>
+        <div class="char_note"><em>Note: There is a 4,000 character limit.</em></div>
         <div style="text-align: right"><input name="submit" type="submit" value="Save strategy"></div>
     </form>
 </div>
