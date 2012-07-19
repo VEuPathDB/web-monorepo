@@ -1,0 +1,11 @@
+--- Util.pm.orig	2012-07-19 11:15:20.000000000 -0400
++++ Util.pm	2012-07-19 11:20:58.000000000 -0400
+@@ -120,6 +120,8 @@
+ 
+   my $keywords                 = $data_source->code_setting($label=>'keywords');
+ 
++	$c = &$c if ref $c eq 'CODE';
++
+   $c          .= "<br><i>$keywords</i>"         if $keywords;
+   return $c;
+ }
