@@ -212,6 +212,26 @@ return true;
      </td></tr>
 </c:if>
 
+<c:if test="${projectId eq 'CryptoDB'}">
+
+   <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
+        <table>
+          <tr>
+            <td>
+              <input type="checkbox" name="genomes" value="cparIowaII" checked>C.parvum Iowa II
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="chomTU502" checked>C.hominis
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="cmurRN66" checked>C.muris
+            </td>
+           </tr>
+         </table>
+     </td></tr>
+</c:if>
+
+
 <c:if test="${projectId eq 'PiroplasmaDB'}">
 
    <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
