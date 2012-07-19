@@ -57,7 +57,7 @@ return true;
 </SCRIPT>
 
 <c:set var="cgiScript" value='mavidAlign'/>
-<c:if test="${(projectId eq 'TriTrypDB') || (projectId eq 'ToxoDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PiroplasmaDB') || (projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP')}">
+<c:if test="${ (projectId eq 'CryptoDB') || (projectId eq 'TriTrypDB') || (projectId eq 'ToxoDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PiroplasmaDB') || (projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP')}">
   <c:set var="cgiScript" value='pairwiseMercator'/>
 </c:if>
 
