@@ -257,19 +257,40 @@ return true;
         <table>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="Ecuniculi" checked>E.cuniculi
+              <input type="checkbox" name="genomes" value="ecunEC1" checked>E.cuniculi EC1
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Eintestinalis" checked>E.intestinalis
+              <input type="checkbox" name="genomes" value="ecunEC2" checked>E.cuniculi EC2
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Ebieneusi" checked>E.bieneusi
+              <input type="checkbox" name="genomes" value="ecunEC3" checked>E.cuniculi EC3
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="EhellemATCC50504" checked>E.hellem
+              <input type="checkbox" name="genomes" value="ecunGBM1" checked>E.cuniculi GBM1
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="NceranaeBRL01" checked>N.cerenae
+              <input type="checkbox" name="genomes" value="nemaSp1ERTm2" checked>Nematocida Sp1 ERTm2
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="nparERTm1" checked>N.parisii ERTm1
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="nparERTm3" checked>N.parisii ERTm3
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="eintATCC50506" checked>E.intestinalis
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="ebieH348" checked>E.bieneusi
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="ehelSwiss" checked>E.hellem Swiss
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="ehelATCC50504" checked>E.hellem ATCC 50504
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="ncerBRL01" checked>N.cerenae
             </td>
            </tr>
          </table>
