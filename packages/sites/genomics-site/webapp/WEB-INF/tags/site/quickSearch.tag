@@ -67,7 +67,7 @@
           	   </html:form>
 			 </div></td>
 
-<%-- 
+
 <!-- TEXT SEARCH -->
              <td><div align="right">
                <html:form method="get" action="/processQuestionSetsFlat.do">
@@ -99,9 +99,9 @@
                      </span>
           	   </html:form>
 			 </div></td>
---%>
 
 
+<%--
 <!-- SITE SEARCH -->
               <c:set var="hasIsolate" value="${projectId eq 'CryptoDB' || projectId eq 'GiardiaDB'
                                                || projectId eq 'PlasmoDB' || projectId eq 'ToxoDB'}" />
@@ -122,7 +122,7 @@
 		  </span>
                 </form>
               </td>
-
+--%>
 
 </c:otherwise>
 </c:choose>

@@ -152,6 +152,7 @@ function appendchecked(form, url) {
 
 
 <%-- BEGIN GALAXY  --%>
+<!--
   <c:url var='downloadPath' 
          value='/getDownloadResult.do;jsessionid=${pageContext.session.id}?step=${step_id}&includeHeader=yes&downloadType=plain&wdkReportFormat=tabular&selectedFields='/>
   <c:set var='downloadUrl'>
@@ -178,6 +179,7 @@ function appendchecked(form, url) {
      <input type="submit" name="Send" value="Send to CTEGD Rich Galaxy" onclick="appendchecked(this.form, '${fn:escapeXml(downloadUrl)}')">
   </form>
   </div>  
+-->
 <%-- END GALAXY  --%>
 
 
