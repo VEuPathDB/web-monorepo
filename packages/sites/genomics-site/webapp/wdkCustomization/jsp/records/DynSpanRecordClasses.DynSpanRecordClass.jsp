@@ -12,7 +12,6 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 <c:set var="id" value="${pkValues['source_id']}" />
-<c:set var="gtracks" value="${param.gtracks}"/>
 
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
@@ -70,9 +69,6 @@
 <c:choose>
   <c:when test="${projectId eq 'ToxoDB'}">
     <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+AlignmentSNPs" />
-  </c:when>
-  <c:when test="${gtracks ne '' && projectId eq 'PlasmoDB'}">
-      <c:set var="tracks" value="${gtracks}"/>
   </c:when>
   <c:when test="${projectId eq 'PlasmoDB'}">
      <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+CombinedSNPs" />
