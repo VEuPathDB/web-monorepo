@@ -75,7 +75,7 @@
       <c:set var="tracks" value="${gtracks}"/>
   </c:when>
   <c:when test="${projectId eq 'PlasmoDB'}">
-     <c:set var="tracks" value="AnnotatedGenes+EST+SAGEtags+ORF+CombinedSNPs" />
+     <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+CombinedSNPs" />
   </c:when>
   <c:otherwise>
      <c:set var="tracks" value="Gene+EST+SAGEtags+ORF" />
