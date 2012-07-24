@@ -238,13 +238,13 @@ return true;
         <table>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="TannulataAnkara" checked>T.annulata
+              <input type="checkbox" name="genomes" value="tannAnkara" checked>T.annulata
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="TparvaMuguga" checked>T.parva
+              <input type="checkbox" name="genomes" value="tparMuguga" checked>T.parva
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="BbovisT2Bo" checked>B.bovis
+              <input type="checkbox" name="genomes" value="bbovT2Bo" checked>B.bovis
             </td>
            </tr>
          </table>
