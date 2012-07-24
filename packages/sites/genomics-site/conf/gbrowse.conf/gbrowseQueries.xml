@@ -329,31 +329,32 @@ ORDER BY
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="feature:TransposableElement" includeProjects="PlasmoDB">
+  <sqlQuery name="piggyBac:TransposableElement" includeProjects="PlasmoDB">
      <sql>
 <![CDATA[
- SELECT
-       fl.na_feature_id feature_id,
-       'feature' type, 
+SELECT blat.blat_alignment_id feature_id,
+       'piggyBac' type, 
        'TransposableElement' source, 
-       tr.name name, 
-       '.' score, 
-       fl.na_sequence_id parent_id, 
-       fl.start_min startm, 
-       fl.end_max end, 
-       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       nas.source_id name, 
+       blat.score, 
+       blat.target_na_sequence_id parent_id, 
+       blat.target_start startm, 
+       blat.target_end end, 
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
        'Note=here to work around Feature.pm bug of splitting null atts' atts
-FROM 
-       dots.TransposableElement tr,
-       ApidbTuning.FeatureLocation fl
-WHERE
-       tr.na_feature_id = fl.na_feature_id and
-       fl.feature_type = 'TransposableElement' and
-       fl.start_min <= $rend and 
-       fl.end_max >= $base_start and 
-       fl.na_sequence_id = $srcfeature_id
+FROM   DoTS.NASequence nas, 
+       SRes.ExternalDatabaseRelease edr, 
+       SRes.ExternalDatabase ed,
+       DoTS.BlatAlignment blat 
+WHERE  blat.query_na_sequence_id = nas.na_sequence_id 
+   and edr.external_database_release_id = nas.external_database_release_id
+   and ed.external_database_id = edr.external_database_id
+   and ed.name = 'pfal3D7_PiggyBac_Clones_Adams_clonedInsertEnds_RSRC' 
+   and blat.target_start <= $rend 
+   and blat.target_end >= $base_start
+   and blat.target_na_sequence_id = $srcfeature_id
 ORDER BY 
-       fl.start_min
+   blat.target_start
 ]]>
     </sql>
   </sqlQuery>
