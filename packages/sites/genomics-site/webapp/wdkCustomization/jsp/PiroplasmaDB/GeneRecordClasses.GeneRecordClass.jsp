@@ -452,15 +452,17 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/piroplasmadbaa/?nam
 
 <hr>
 
-<%--<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>--%>
-<c:set var="attributions" value="${attrs['dataAttribution']}"/>
+<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
 <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
-<c:if test="${attributions.value ne ''}">
-    <c:set var="reference" value="${attributions.value}"/>
-</c:if>
+<c:forEach var="row" items="${referenceTable}">
+  <c:if test="${extdbname eq row['name'].value}">
+    <c:set var="reference" value="${row['description'].value}"/>
+  </c:if>
+</c:forEach>
 
-<imp:panel 
+
+<site:panel 
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
 
