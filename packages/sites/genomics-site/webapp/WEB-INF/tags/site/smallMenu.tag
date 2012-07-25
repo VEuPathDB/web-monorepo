@@ -57,7 +57,7 @@ a#facebook {
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citingproviders"/>">Citing Data Providers</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
 
-	<li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission Policy</a></li>
+	<li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission & Release Policies</a></li>
 
 <%-- if the site has statistics on its own, not covered in the Portal Data SUmmary table, such as Giardia and Trich, show them, otherwise show the genome table --%>
 <c:choose>

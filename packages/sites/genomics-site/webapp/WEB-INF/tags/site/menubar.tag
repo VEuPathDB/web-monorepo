@@ -185,7 +185,7 @@
 		</a>
 		</li>
 
-  <li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission Policy</a></li>
+  <li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission & Release Policies</a></li>
 
 
  	    <c:if test="${project != 'EuPathDB'}" >    
