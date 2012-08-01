@@ -1,363 +1,726 @@
 
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =TAGS 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+
 body {
+
 	background-image: url(/assets/images/FungiDB/background_s.jpg);
+
 }
+
+
+
 
 
 a:link, a:visited {
-	color: #015f9a;
+
+	color: #067387;
+
 }
+
+
 
 a:hover, a:active {
-	color: #b45f04;
+
+	color: #4eb8cb;
+
 }
+
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =HEADER 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
+
+
 #header {
+
 	background-image: url(../images/FungiDB/backgroundtop_s.jpg);
+
 }
 
+
+
 #header2 {
+
 	background-image: url(../images/FungiDB/backgroundtop_s.jpg);
+
 }
+
+
+
 
 
 #header_rt {
-   color: #3B1870;
+
+   color: #067387;
+
 }
 
+
+
 #header_rt a:link, #header_rt a:visited {
-   color: #3B1870;
+
+   color: #067387;
+
 }
+
+
+
 
 
 /* only used in tritryp (genedb link)  */
+
 #toplink a:link, #toplink a:visited{
+
 	width: 381px;
+
 }
+
 #toplink a:hover {
+
 	width: 381px;
+
 }
+
+
+
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =HEADER DROPDOWN MENU
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 #nav_top {
-	color: #395b8e;
+
+	color: #067387;
+
 }
+
+
 
 #nav_top a:link, #nav_top a:visited {
-	color: #4D2A82;
+
+	color:  #067387;
+
 }
+
+
 
 #nav_top li ul {  /* second-level lists */
+
 	background-image: url(../images/FungiDB/footer.png);
-	border-color:#4D2A82;
+
+	border-color:#067387;
+
 	list-style-image: url(../images/FungiDB/bullet_arrow.gif);
+
 }
+
+
 
 #nav_top li ul a:link, #nav_top li ul a:visited {
-	color: #4D2A82;
+
+	color: #067387;
+
 }
+
+
 
 #nav_top li ul a:hover, #nav_top li ul a:active {
-	color: #013c63;
+
+	color: #672a87;
+
 }
+
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =STRUCTURE 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
+
+
 /* #menubar #mysearch {
+
 	background-image: url(../images/FungiDB/my_hist_menubar.png);
+
 	border: 1px solid #175982;
+
 } */
+
  
+
 #contentcolumn {
+
 	background-image: url(../images/FungiDB/footer.png);
-	border: 1px solid #634697;
+
+	border: 1px solid #116b7b;
+
 }
+
+
 
 #contentcolumn2 {
+
 	background-image: url(../images/FungiDB/footer.png);
-	border: 1px solid #634697;
+
+	border: 1px solid #116b7b;
+
 }
+
+
 
 #mysearchhist {
+
 	background-image: url(../images/FungiDB/bubble_my_searchbox.png);
-	border: 1px solid #dfbba6;
+
+	border: 1px solid #116b7b;
+
 }
+
+
 
 #main_tools {
+
 	background-image: url(../images/FungiDB/tools_bckgnd.jpg);
+
 }
+
+
 
 #about_us_left {
-	background-color: #edd9cd;
+
+	background-color: #bfccdf;
+
 	list-style-image: url(../images/FungiDB/bullet_arrow.gif);
-}
-#pink_title {
-	color: #0f3e5c;
-	background-image: url(../images/FungiDB/trheader.png);
+
 }
 
+#pink_title {
+
+	color: #5e0f28;
+
+	background-image: url(../images/FungiDB/trheader.png);
+
+}
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =Top Menu Bar Dropdown List
+
 	
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
 
 
 #menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
-	color:#003658;
+
+	color:#3B1870;
+
 }
+
+
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #a45d35;
+
+	border-bottom-color: #414141;
+
 }
+
+
 
 #menu ul ul a:hover, #menu ul ul a:active{
+
 	border-bottom-color: #a45d35;
-	color: #0276be;
+
+	color: #4eb8cb;
+
 }
+
+
+
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =Menu Lists
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 .menu_lefttop_drop {
-   border-color: #634697;  /* color as in contentcolumn border */
+
+   border-color: #9c5bbe;  /* color as in contentcolumn border */
+
 }
+
+
 
 #menu_lefttop a.heading {
+
 	background-image: url(../images/FungiDB/menu_lft2.png);
+
 }
+
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =Search Boxes
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+
 .search-box{
-   border: solid 1px #4D2A82;
+
+   border: solid 1px #157485;
+
 } 
 
+
+
 .search-box .textbox{
+
 	border: solid 1px #b3b3b3;
+
 }
+
+
+
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =Arrow Chains 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 
 
+
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =Fonts 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+
 h1 {
+
 	color: #3B1870;
+
 }
+
 h2 {
+
   	color: #3B1870;
+
 }
+
+
 
 .h2center, .h3left,.h3center, .h4left {
+
   	color: #3B1870;
+
 }
+
+
 
 .subcolor {
-	color: #4a8047
+
+	color: #714782;
+
 }
 
 
 
+
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =FOOTER  
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 	
+
 #footer{
+
     background-image: url(../images/FungiDB/footer.png);
+
  }
 
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =TABLES 
+
 	 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+
 td.headerrow {
+
 	color: #0c3f60;
+
 	background-image: url(../images/FungiDB/trheader.png);
+
 }
+
+
+
 
 
 tr.headerrow {
-	color: #0c3f60;
+
+	color: #5e0f28;
+
 }
+
+
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
+
 	background-image: url(../images/FungiDB/trheader.png);
+
 }
+
+
 
 .flexigrid tr.headerrow th:hover {
+
 	background-image: url(../images/FungiDB/trhover.png);
+
 }
+
+
 
 td.subheaderrow {
+
 	background-image: url(../images/FungiDB/trsubhead.png);
+
 }
+
+
 
 tr.subheaderrow th {
+
 	background-image: url(../images/FungiDB/trsubhead.png);
+
 }
+
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =FOR QUERY GRID
+
 	 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+
 tr.headerrow2 td{
-        color: #0c3f60;
+
+        color: #5e0f28;
+
 	background-image: url(../images/FungiDB/trheader.png);
+
 }
+
+
 
 tr.subheaderrow2 td{
+
 	background-image: url(../images/FungiDB/trsubhead.png);
+
 }
+
+
 
 a.queryGridInactive {
+
         color:              #C8C8C8;
+
 }
 
+
+
 a.queryGridActive {
-        color:              #9f4510;
+
+        color:              #772841;
+
 }
+
+
+
+
 
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =END OF TABLES FOR QUERY GRID
+
 	 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+
 tr.subheaderrow th {
-	border-color: #0c3f60;
+
+	border-color: #772841;
+
 }
+
+
 
 tr.headerrow th { 
-	border-color: #0c3f60;
+
+	border-color: #772841;
+
 }
 
 
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     =RED BUTTON
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
 
 
+
+
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =WorkSpace Divs 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+
+
 
 
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =ABOUT US and HELP PAGES SIDEBAR
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
 
 .twoColHybLt #sidebar1 {
+
 	background-image: url(../images/FungiDB/aboutus.jpg);
+
 }
 
 
 
+
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =WARNING BOXES 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =ADVANCED STRATEGY PAGING 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =used in help.jsp, classic bullet list
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 =MISC 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
 
 span.marker a:link, span.marker a:visited {
-	color: #014c7c;
+
+	color: #7D0101;
+
 }
+
+
 
 /* APPLICATION PAGE STYLES */
 
+
+
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #E9E6EE;   /*  #f2e9e4;  */
+
+    background-color: #E8EBF0;
+
 }
 
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 = styles for blockUI popups
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
 
 .blockMsg{
+
 	border: 1px solid #634697;
+
 }
+
+
 
 .blockPage{
+
 	background-image: url(/assets/images/FungiDB/footer.png);
+
 }
+
+
 
 .flexigrid div.hDiv
+
 {
+
 	background-image:url(/assets/images/FungiDB/trheader.png);
+
 }
+
+
 
 .flexigrid div.hDiv th.thMove
+
 {
+
 	background-image:url(/assets/images/FungiDB/trheader.png);
+
 }
 
+
+
 div.colCopy
+
 {
+
 	background-image:url(/assets/images/FungiDB/trheader.png);
+
 }
+
+
+
+
+
 
 
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 history.css
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
 
+
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 Strategy.css
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 
 
 
+
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	 filter_menu.css
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 #query_form {
+
 	border: 1px solid #015f9a;
+
 }
+
+
+
+#menubar { height:23px; }
 
 
 
