@@ -28,7 +28,7 @@
 <c:when test = "${project == 'EuPathDB'}">
 	<imp:queryList columns="${columns}" questions="${questions}"/>
 </c:when>
-<c:when test = "${project == 'ToxoDB' || project == 'PlasmoDB'}">
+<c:when test = "${project == 'ToxoDB' || project == 'PlasmoDB' || project == 'CryptoDB'}">
 	<imp:queryList columns="${columns}" questions="${questions}"/>
 </c:when>
 </c:choose>
