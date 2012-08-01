@@ -104,13 +104,13 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="npar2_genes" />  
+                          instanceName="npar3_genes" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="npar3_genes" />  
+                          instanceName="npar2_genes" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
