@@ -45,27 +45,10 @@
 <%---------------------------%>
 
 <%-- flag incoming galaxy.psu.edu users  --%>
-<c:choose>
-<c:when test="${!empty param.GALAXY_URL}">
-  <c:set var="GALAXY_URL" value="${param.GALAXY_URL}" scope="session" />
-</c:when>
-<c:when test="${!empty sessionScope.GALAXY_URL}">
-    <%-- keep existing session value --%>
-</c:when>
-<c:otherwise>
-  <c:set var="GALAXY_URL" value="http://main.g2.bx.psu.edu/tool_runner?tool_id=eupathdb" scope="session" />
-</c:otherwise>
-</c:choose>
-
-<c:set var="CTEGD_RICH_GALAXY_URL" value="http://richgalaxy.ctegd.uga.edu/tool_runner?tool_id=eupathdb" scope="session" />
-<%-- end Galaxy flag --%>
-
-
-<%--  was
 <c:if test="${!empty param.GALAXY_URL}">
   <c:set var="GALAXY_URL" value="${param.GALAXY_URL}" scope="session" />
 </c:if>
---%>
+<%-- end Galaxy flag --%>
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
