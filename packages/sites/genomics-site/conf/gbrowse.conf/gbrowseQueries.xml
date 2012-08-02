@@ -1118,7 +1118,7 @@ WHERE ext_db_name = $$edname$$
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="NextGenSeq:coverageLogSubtracks"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB,FungiDB">
+  <sqlQuery name="NextGenSeq:coverageLogSubtracks"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB,CryptoDB,FungiDB">
      <sql>
        <![CDATA[
 select  distinct $$edname$$ || '_' || c.sample || '_' || $$subtrackField$$ as feature_id,
@@ -6132,7 +6132,7 @@ GROUP BY c.start_interval,c.end_interval,c.sample,c.name,c.hpi,c.multiple,s.sum_
    </sqlQuery> 
 
 
-   <sqlQuery name="NextGenSeq:coverageLogSubtracks:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB,FungiDB">
+   <sqlQuery name="NextGenSeq:coverageLogSubtracks:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB,CryptoDB,FungiDB">
      <sql>
 <![CDATA[
      SELECT start_interval feature_id,
