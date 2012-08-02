@@ -238,6 +238,9 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 </c:if>
 
 
+<imp:wdkTable tblName="EcNumber" isOpen="true" attribution="${attribution}"/>
+
+
 <%-- GO ------------------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
 
