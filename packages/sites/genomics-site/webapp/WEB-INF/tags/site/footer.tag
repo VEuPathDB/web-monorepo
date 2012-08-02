@@ -62,12 +62,12 @@
         <dl>
             <dt class="name_label">Name:</dt>
             <dd class="name_input"><input type="text" name="name"></dd>
-            <dt class="desc_label">Description:</dt>
+            <dt class="desc_label">Description (optional):</dt>
             <dd class="desc_input">
                 <textarea name="description" rows="10"></textarea>
+                <div class="char_note"><em>Note: There is a 4,000 character limit.</em></div>
             </dd>
         </dl>
-        <div class="char_note"><em>Note: There is a 4,000 character limit.</em></div>
         <div style="text-align: right"><input name="submit" type="submit" value="Save strategy"></div>
     </form>
 </div>
