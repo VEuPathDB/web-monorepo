@@ -27,23 +27,31 @@ function setUpBlastPage() {
 }
 
 function changeQuestion() {
+        var recordClass = $("input[name='value(BlastRecordClass)']");
 	// stores mapping from blast databases to questions	
 	var blastDb = getSelectedDatabaseName().toLowerCase();
 	var questionName;
 	if (blastDb.indexOf("est") >= 0) {
 		questionName = "EstQuestions.EstsBySimilarity";
+                recordClass.val("EstRecordClasses.EstRecordClass");
 	} else 	if (blastDb.indexOf("assem") >= 0) {
 		questionName = "AssemblyQuestions.AssembliesBySimilarity";
+                recordClass.val("AssemblyRecordClasses.AssemblyRecordClass");
 	} else 	if (blastDb.indexOf("orf") >= 0) {
 		questionName = "OrfQuestions.OrfsBySimilarity";
+                recordClass.val("OrfRecordClasses.OrfRecordClass");
 	} else 	if (blastDb.indexOf("survey") >= 0) {
 		questionName = "GenomicSequenceQuestions.GSSBySimilarity";
+                recordClass.val("SequenceRecordClasses.SequenceRecordClass");
 	} else 	if (blastDb.indexOf("genom") >= 0) {
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
+                recordClass.val("SequenceRecordClasses.SequenceRecordClass");
 	} else 	if (blastDb.indexOf("iso") >= 0) {
 		questionName = "IsolateQuestions.IsolatesBySimilarity";
+                recordClass.val("IsolateRecordClasses.IsolateRecordClass");
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
+                recordClass.val("GeneRecordClasses.GeneRecordClass");
 	}
 	$('#questionFullName').val(questionName);
 }
