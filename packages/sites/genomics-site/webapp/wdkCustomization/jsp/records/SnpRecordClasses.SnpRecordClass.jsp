@@ -107,11 +107,11 @@
     displayName="Sequence Alignment"
     content="${showAlignmts}"
     isOpen="true"/>
-</c:if>
 
 <br/>
 <imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
                       contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0" availableGenomes="3D7,Dd2,HB3, and IT"/>
+</c:if>
 
 <br/>
 </c:if>
