@@ -6,7 +6,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
-<!-- get wdkAnswer from requestScope -->
+<%-- get wdkAnswer from requestScope --%>
 <jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
 <c:set value="${requestScope.wdkStep}" var="wdkStep"/>
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}" />
@@ -31,23 +31,23 @@ function makeSelection(state)
 </script>
 
 
-<!-- display page header -->
+<%-- display page header --%>
 <imp:header banner="Create and download a Full Records Report" />
 
-<!-- display the parameters of the question, and the format selection form -->
+<%-- display the parameters of the question, and the format selection form --%>
 <imp:reporter/>
 
-<!-- display description for page -->
+<%-- display description for page --%>
 <h3>Generate a report that contents the complete information for each record.</h3>
 
-<!-- handle empty result set situation -->
+<%-- handle empty result set situation --%>
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>
     No results for your query
   </c:when>
   <c:otherwise>
 
-<!-- content of current page -->
+<%-- content of current page --%>
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />">
   <table width="100%">
   <tr><td  width="20%"></td>

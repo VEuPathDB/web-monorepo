@@ -6,7 +6,7 @@
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<!-- get wdkAnswer from requestScope -->
+<%-- get wdkAnswer from requestScope --%>
 <jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
 <c:set value="${requestScope.wdkStep}" var="wdkStep"/>
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}" />
@@ -15,13 +15,13 @@
 
 <c:set var="site" value="${wdkModel.displayName}"/>
 
-<!-- display page header -->
+<%-- display page header --%>
 <imp:header refer="srt" banner="Retrieve Genome Sequences" />
 
-<!-- display the parameters of the question, and the format selection form -->
+<%-- display the parameters of the question, and the format selection form --%>
 <imp:reporter/>
 
-<!-- display description for page -->
+<%-- display description for page --%>
 <h3>This reporter will retrieve the sequences of the genome records in your result.</h3>
 
 <!-- <c:choose>
