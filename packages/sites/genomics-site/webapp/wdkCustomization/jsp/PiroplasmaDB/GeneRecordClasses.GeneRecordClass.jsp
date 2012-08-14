@@ -252,16 +252,17 @@ ${attrs['organism'].value}<br>
 <%-- ORTHOMCL ------------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
-  <c:set var="orthomclLink">
-    <div align="center">
-      <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
-  <c:if test='${organismFull eq "Babesia bovis T2Bo"}'>
-<br>NOTE: Alternative gene identifiers for <i>B. bovis</i> were used in the OrthoMCL 5 build. Ortholog groups containing these alternative IDs are appended with "bbov|".
-  </c:if>
-    </div>
-  </c:set>
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
-                 postscript="${orthomclLink}"/>
+<imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""/>
+<c:choose>
+  <c:when test="${fn:contains(orthomcl_name,'|')}">
+  NOTE: Link to OrthoMCL cannot be provided since this gene model has not been included in the most recent build of OrthoMCL.
+  </c:when>
+  <c:otherwise>
+   <div align="center">
+   <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+   </div>
+   </c:otherwise>
+</c:choose>
 
 </c:if>
 
