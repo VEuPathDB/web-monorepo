@@ -12,6 +12,9 @@
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}" />
 <c:set var="format" value="${requestScope.wdkReportFormat}"/>
 
+<%-- display page header --%>
+<imp:header banner="Create and download a Full Records Report" />
+
 <script language="JavaScript" type="text/javascript">
 <!-- //
 function makeSelection(state)
@@ -29,9 +32,6 @@ function makeSelection(state)
 }
 //-->
 </script>
-
-<%-- display page header --%>
-<imp:header banner="Create and download a Full Records Report" />
 
 <%-- display the parameters of the question, and the format selection form --%>
 <imp:reporter/>
