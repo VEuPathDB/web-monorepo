@@ -746,11 +746,9 @@ sub snpHeight {
 sub peakHeight {
   my ($f,$addBase) = @_;
   my $score = $f->score;
-  if ($score > 30) {
-    $score = 30;
-  }
-  return $score unless $addBase;
-  return (2 + $score );
+  my $logScore = 4*(log($score)/log(2));
+  return $logScore unless $addBase;
+  return (2 + $logScore );
 }
 
 
