@@ -746,9 +746,13 @@ sub snpHeight {
 sub peakHeight {
   my ($f,$addBase) = @_;
   my $score = $f->score;
+  if ($score > 30) {
+    $score = 30;
+  }
   return $score unless $addBase;
-  return (2 + $score);
+  return (2 + $score );
 }
+
 
 sub heightBySOTerm {
   my ($f, $term, $val1, $val2) = @_;
