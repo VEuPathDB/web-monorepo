@@ -29,7 +29,7 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="piro_distinct_genes" />  
+                          instanceName="all_ortholog_groups" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 

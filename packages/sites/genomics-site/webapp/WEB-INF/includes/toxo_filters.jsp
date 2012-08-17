@@ -13,6 +13,7 @@
 <table border="1">
   <tr>
     <th align="center">All<br>Results</th>
+    <th align="center">Ortholog<br>Groups</th>
     <th align="center">Tg<br>Results</th>
     <th align="center">Tg<br>Genes</th>
     <th align="center">Nc<br>Genes</th>
@@ -31,6 +32,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_results" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="all_ortholog_groups" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 

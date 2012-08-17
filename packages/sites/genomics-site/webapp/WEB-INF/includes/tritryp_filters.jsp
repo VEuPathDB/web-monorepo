@@ -46,7 +46,7 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tritryp_distinct_genes" />  
+                          instanceName="all_ortholog_groups" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
