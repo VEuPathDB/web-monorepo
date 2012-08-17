@@ -302,7 +302,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 
-<c:if test="${species eq 'falciparum3D7'}">
+<c:if test="${species eq 'falciparum3D7' || species eq 'vivax'}">
     <imp:wdkTable tblName="SNPs" isOpen="false"
                attribution="" />
 </c:if>
