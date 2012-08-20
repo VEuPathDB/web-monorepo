@@ -161,7 +161,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <%-- OVERVIEW ---------------%>
 
 <c:set var="attr" value="${attrs['overview']}" />
-<imp:panel
+<imp:panel attribute="${attr.name}"
     displayName="${attr.displayName}"
     content="${attr.value}${append}" />
 <br>
