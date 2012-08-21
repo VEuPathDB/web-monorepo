@@ -14,18 +14,20 @@
   <tr>
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
-    <th colspan=4 align="center"><i>Encephalitozoon cuniculi </i></th>
-    <th colspan=2 align="center"><i>Encephalitozoon hellem </i></th>
+    <th colspan=5 align="center"><i>Encephalitozoon cuniculi </i></th>
+    <th colspan=3 align="center"><i>Encephalitozoon hellem </i></th>
     <th rowspan=2 align="center"><i>Encephalitozoon intestinalis</i></th>
     <th rowspan=2 align="center"><i>Enterocytozoon bieneusi</i></th>
     <th colspan=3 align="center"><i>Nematocida </i></th>
     <th rowspan=2 align="center"><i>Nosema ceranae</i></th>
   </tr>
   <tr>
+    <th><i>Distinct genes</i></th>
     <th><i>EC1</i></th>
     <th><i>EC2</i></th>
     <th><i>EC3</i></th>
     <th><i>GB-M1</i></th>
+    <th><i>Distinct genes</i></th>
     <th><i>ATCC 50504</i></th>
     <th><i>Swiss</i></th>
     <th><i>parisii ERTm1</i></th>
@@ -50,6 +52,12 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
+                          instanceName="ecun_distinct_genes" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
                           instanceName="ecun1_genes" />  
     </td>
     <td>
@@ -69,6 +77,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="ecunGbM1_genes" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="ehel_distinct_genes" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
