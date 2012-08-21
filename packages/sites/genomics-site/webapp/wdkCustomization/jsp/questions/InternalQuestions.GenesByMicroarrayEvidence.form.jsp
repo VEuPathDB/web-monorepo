@@ -65,7 +65,7 @@
     <imp:queryList columns="${columns}" questions="${giardiaQuestions}"/>
   </c:when>
   <c:when test = "${project == 'EuPathDB'}">
-    <imp:queryList columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
+    <imp:queryList columns="${columns}" questions="${amoebaQuestions},${giardiaQuestions},${piroplasmaQuestions},${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
   </c:when>
   <c:when test = "${project == 'PiroplasmaDB'}">
     <imp:queryList  columns="${columns}"  questions="${piroplasmaQuestions}"/>
