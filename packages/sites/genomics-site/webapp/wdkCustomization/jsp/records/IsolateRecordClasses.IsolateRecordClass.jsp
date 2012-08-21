@@ -175,6 +175,9 @@
 <br>
 </c:if>
 
+<c:if test="${data_type eq 'HTS'}">
+  <imp:wdkTable tblName="HtsContacts" isOpen="true"/>
+</c:if>
 
 </c:otherwise>
 </c:choose>
