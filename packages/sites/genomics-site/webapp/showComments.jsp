@@ -55,13 +55,8 @@ $(document).ready(function() {
 </script>     
 </head>
 
-<c:choose>
-    <c:when test="${fn:length(comments) == 0}">
-        <p>There's currently no comment for ${stable_id}.</p>
-    </c:when>
-    <c:otherwise> <%-- has comments for the stable id --%>
 
-      <c:choose>
+<c:choose>
           <c:when test="${comment_target_id eq 'gene'}">
             <c:set var="returnUrl">
             <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
@@ -80,7 +75,15 @@ $(document).ready(function() {
             </c:set>
           </c:otherwise>
 
-      </c:choose> 
+</c:choose> 
+
+<c:choose>
+    <c:when test="${fn:length(comments) == 0}">
+        <p>There's currently no comment for <a href="${returnUrl}">${stable_id}</a>.</p>
+    </c:when>
+    <c:otherwise> <%-- has comments for the stable id --%>
+
+      
 
       <p align="center">${comment_target_id} comments on <a href="${returnUrl}">${stable_id}</a></p>
       <br/>
