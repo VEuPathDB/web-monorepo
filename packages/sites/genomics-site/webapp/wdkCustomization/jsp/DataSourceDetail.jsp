@@ -49,6 +49,7 @@
           <c:set var="tables" value="${record.tables}" />
           <c:set var="publications" value="${tables['Publications']}" />
           <c:set var="contacts" value="${tables['Contacts']}" />
+          <c:set var="isolates" value="${tables['Isolates']}" />
           <c:set var="externallinks" value="${tables['ExternalLinks']}" />
           <c:set var="references" value="${tables['References']}" />
 
@@ -77,6 +78,22 @@
                 <imp:simpleToggle name="Description" content="${description.value}" show="false" />
             </c:if>
 
+
+            <%-- avoiding table.tag to unify style with searches --%>
+            <c:if test="${fn:length(isolates) > 0}">
+               <c:set var="isolatesContent">
+                <ul>
+                  <c:forEach items="${isolates}" var="isolate">
+                        <li><a href="${isolate['isolate_link'].url}">${isolate['source_id']}</a> </li>
+                  </c:forEach>
+                </ul>
+              </c:set>
+
+              <imp:simpleToggle name="${isolates.displayName}" content="${isolatesContent}" show="true" />
+            </c:if>
+
+
+
             <%-- avoiding table.tag to unify style with searches --%>
             <c:if test="${fn:length(publications) > 0}">
                <c:set var="publicationContent">
@@ -88,8 +105,24 @@
                 </ul>
               </c:set>
 
-              <imp:simpleToggle name="${publications.name}" content="${publicationContent}" show="false" />
+              <imp:simpleToggle name="${publications.displayName}" content="${publicationContent}" show="false" />
             </c:if>
+
+
+
+            <%-- avoiding table.tag to unify style with searches --%>
+            <c:if test="${fn:length(contacts) > 0}">
+               <c:set var="contactsContent">
+                <ul>
+                  <c:forEach items="${contacts}" var="contact">
+                        <li><c:if test="${contact['name'] != null}">${contact['name']}</c:if> <c:if test="${contact['affiliation'] != null}">(${contact['affiliation']})</c:if></li>
+                  </c:forEach>
+                </ul>
+              </c:set>
+
+              <imp:simpleToggle name="${contacts.displayName}" content="${contactsContent}" show="false" />
+            </c:if>
+
 
             <c:if test="${fn:length(externallinks) > 0}">
               <c:set var="extLinkContent">
