@@ -55,6 +55,11 @@
 
 <div style="display:none;" class="ui-dialog-fixed-width" id="wdk-dialog-annot-change" title="<imp:verbiage key='dialog.annot-change.title'/>"><imp:verbiage key='dialog.annot-change.content'/></div>
 
+<div style="display:none;" id="wdk-dialog-strat-desc">
+  <div class="description"></div>
+  <div class="edit"><a href="#">Edit</a></div>
+</div>
+
 <div style="display:none;" id="wdk-dialog-update-strat" title="<imp:verbiage key='dialog.update-strat.title'/>">
     <div class="save_as_msg"><imp:verbiage key="dialog.update-strat.content"/></div>
     <form id="wdk-update-strat">
