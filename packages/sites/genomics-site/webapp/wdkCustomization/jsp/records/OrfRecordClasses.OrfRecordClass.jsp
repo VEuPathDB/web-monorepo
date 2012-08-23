@@ -56,7 +56,8 @@
 <c:set var="attr" value="${attrs['overview']}" />
 <imp:panel 
     displayName="${attr.displayName}"
-    content="${attr.value}" />
+    content="${attr.value}" 
+    attribute="${attr.name}"/>
 <br>
 
 <%-- DNA CONTEXT --------------------------------------------------%>
@@ -104,8 +105,7 @@
 
 
 <%-- GENOMIC LOCATIONS ------------------------------------------------%>
-  <imp:wdkTable tblName="Locations" isOpen="true"
-                 attribution=""/>
+  <imp:wdkTable tblName="Locations" isOpen="true"/>
 
 <%-- GENOME SEQUENCE ------------------------------------------------%>
 <c:set var="attr" value="${attrs['sequence']}" />

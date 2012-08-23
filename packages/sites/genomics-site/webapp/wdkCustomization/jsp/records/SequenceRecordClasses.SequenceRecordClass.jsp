@@ -63,10 +63,11 @@
 
 <c:set var="append" value="" />
 
-<c:set var="attr" value="${attrs['overview']}" />
+<c:set var="attr" value="${attrs['overview']}"/>
 <imp:panel 
     displayName="${attr.displayName}"
-    content="${attr.value}" />
+    content="${attr.value}"
+    attribute="${attr.name}" />
 <br>
 
 
@@ -183,14 +184,12 @@
 <br>
 
 <c:if test="${projectId eq 'GiardiaDB' || projectId eq 'PlasmoDB' || projectId eq 'ToxoDB' || projectId eq 'TriTrypDB'}">
-	<imp:wdkTable tblName="Aliases" isOpen="true" attribution=""/>
+	<imp:wdkTable tblName="Aliases" isOpen="true"/>
 </c:if>
 
-<imp:wdkTable tblName="Centromere" isOpen="true"
-                 attribution=""/>
+<imp:wdkTable tblName="Centromere" isOpen="true"/>
 
-<imp:wdkTable tblName="SequencePieces" isOpen="true"
-                 attribution=""/>
+<imp:wdkTable tblName="SequencePieces" isOpen="true"/>
 
 <%------------------------------------------------------------------%>
 

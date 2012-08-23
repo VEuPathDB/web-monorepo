@@ -61,13 +61,15 @@
 <c:set var="attr" value="${attrs['snp_overview']}" />
 <imp:toggle name="${attr.displayName}"
     displayName="${attr.displayName}" isOpen="true"
-    content="${attr.value}" />
+    content="${attr.value}" 
+    attribute="${attr.name}"/>
 
 <!-- Gene context -->
 <c:set var="attr" value="${attrs['gene_context']}" />
 <imp:toggle name="${attr.displayName}"
     displayName="${attr.displayName}" isOpen="true"
-    content="${attr.value}" />
+    content="${attr.value}" 
+    attribute="${attr.name}"/>
 
 <!-- strains table: one for HTS SNPs and one for sequencing SNPs -->
 <c:choose>
