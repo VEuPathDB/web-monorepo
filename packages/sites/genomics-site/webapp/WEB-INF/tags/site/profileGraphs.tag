@@ -232,7 +232,7 @@
     <c:set var="dataAttribution" value="${row['attribution'].value}"/>
 
 <%-- This variable is for backward compatibility for attributions, and will become null as all components fal under workflow --%> 
-    <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB'}">
+    <c:if test="${row['project_id'].value eq 'FungiDB'}">
        <c:set var="dataAttribution"  value=""/>
      </c:if>
 
