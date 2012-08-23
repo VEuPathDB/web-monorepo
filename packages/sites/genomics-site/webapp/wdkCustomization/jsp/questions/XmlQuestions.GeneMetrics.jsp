@@ -191,61 +191,83 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <tr class="mythStyle">
     <th style="background-color:white;border-right:3px solid grey;border-top:0px none;border-left:0 none;"></th>
     <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://amoebadb.org">AmoebaDB</a></th>
-    <th style="border-right:3px solid grey" colspan="4" class="mythStyle"><a href="http://cryptodb.org">CryptoDB</a></th>
+    <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://cryptodb.org">CryptoDB</a></th>
     <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></th>
-    <th style="border-right:3px solid grey" colspan="5" class="mythStyle"><a href="http://microsporidiadb.org">&mu;-sporidiaDB</a></th>
+    <th style="border-right:3px solid grey" colspan="12" class="mythStyle"><a href="http://microsporidiadb.org">MicrosporidiaDB</a></th>
     <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://piroplasmadb.org">PiroplasmaDB</a></th>
     <th style="border-right:3px solid grey" colspan="7" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></th>
     <th style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></th>
     <th style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></th>
     <th colspan="13" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></th>
 </tr>
+
 <tr class="mythStyle">
     <th  style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</th>
-    <th class="mythStyle" title="Entamoeba dispar, AmoebaDB"><i>Ed</i></th>
-    <th class="mythStyle" title="Entamoeba histolytica, AmoebaDB"><i>Eh</i></th>
-    <th  style="border-right:3px solid grey"class="mythStyle" title="Entamoeba invadens, AmoebaDB"><i>Einv</i></th>
-    <th class="mythStyle" title="Cryptosporidium hominis, CryptoDB"><i>Ch</i></th>
-    <th class="mythStyle" title="Cryptosporidium muris, CryptoDB"  ><i>Cm</i></th>
-    <th class="mythStyle" title="Cryptosporidium parvum Chr 6, CryptoDB"  ><i>Cp6</i></th>
-    <th  style="border-right:3px solid grey" class="mythStyle" title="Cryptosporidium parvum, CryptoDB" ><i>Cp</i></th>
-    <th class="mythStyle" title="Giardia Assemblage A isolate WB, GiardiaDB" ><i>Ga*</i></th>
-    <th class="mythStyle" title="Giardia Assemblage B isolate GS, GiardiaDB" ><i>Gb</i></th>
-    <th  style="border-right:3px solid grey" class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>Ge</i></th>
-    <th class="mythStyle" title="Encephalitozoon cuniculi, MicrosporidiaDB"><i>Ec</i></th>
-    <th class="mythStyle" title="Encephalitozoon intestinalis, MicrosporidiaDB"><i>Eint</i></th>
-    <th class="mythStyle" title="Encephalitozoon hellem, MicrosporidiaDB"><i>Ehel</i></th>
-    <th class="mythStyle" title="Enterocytozoon bieneusi, MicrosporidiaDB"><i>Eb</i></th>
-    <th  style="border-right:3px solid grey"  class="mythStyle" title="Nosema cerenae, MicrosporidiaDB"><i>Ncer</i></th>
-    <th class="mythStyle" title="Babesia bovis, PiroplasmaDB"><i>Bb</i></th>
-    <th class="mythStyle" title="Theileria annulata, PiroplasmaDB"><i>Ta</i></th>
-    <th style="border-right:3px solid grey" class="mythStyle" title="Theileria parva, PiroplasmaDB"><i>Tp</i></th>
-    <th class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pb</i></th>
-    <th class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pc</i></th>
-    <th class="mythStyle" title="Plasmodium falciparum 3D7, PlasmoDB"><i>Pf3d7</i></th>
-    <th class="mythStyle" title="Plasmodium falciparum IT, PlasmoDB"><i>PfIT</i></th>
-    <th class="mythStyle" title="Plasmodium knowlesi, PlasmoDB"><i>Pk</i></th>
-    <th class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pv</i></th>
-    <th  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Py</i></th>
-    <th class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nc</i></th>
-    <th class="mythStyle" title="Eimeria tenella, ToxoDB"><i>Et</i></th>
-    <th class="mythStyle" title="Toxoplasma gondii GT1, ToxoDB"><i>TgGT1</i></th>
-    <th class="mythStyle" title="Toxoplasma gondii ME49, ToxoDB"><i>TgME49</i></th>
-    <th class="mythStyle" title="Toxoplasma gondii RH, ToxoDB"><i>TgRH</i></th>
-    <th  style="border-right:3px solid grey" class="mythStyle" title="Toxoplasma gondii VEG"><i>TgVeg</i></th>
+    <th class="mythStyle" title="Entamoeba dispar SAW760, AmoebaDB"><i>Edi</i></th>
+    <th class="mythStyle" title="Entamoeba histolytica HM-1:IMSS, AmoebaDB"><i>Ehi</i></th>
+    <th  style="border-right:3px solid grey"class="mythStyle" title="Entamoeba invadens IP1, AmoebaDB"><i>EinI</i></th>
+
+    <th class="mythStyle" title="Cryptosporidium hominis TU502, CryptoDB"><i>Cho</i></th>
+    <th class="mythStyle" title="Cryptosporidium muris RN66, CryptoDB"  ><i>Cmu</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Cryptosporidium parvum Iowa II, CryptoDB" ><i>Cpa</i></th>
+
+    <th class="mythStyle" title="Giardia Assemblage A isolate WB, GiardiaDB" ><i>GA*</i></th>
+    <th class="mythStyle" title="Giardia Assemblage B isolate GS, GiardiaDB" ><i>GB</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Giardia_Assemblage_E_isolate_P15, GiardiaDB" ><i>GC</i></th>
+
+    <th class="mythStyle" title="Enterocytozoon bieneusi H348, MicrosporidiaDB"><i>Ebi</i></th>
+
+    <th class="mythStyle" title="Encephalitozoon cuniculi EC1, MicrosporidiaDB"><i>Ecu1</i></th>
+    <th class="mythStyle" title="Encephalitozoon cuniculi EC2, MicrosporidiaDB"><i>Ecu2</i></th>
+    <th class="mythStyle" title="Encephalitozoon cuniculi EC3, MicrosporidiaDB"><i>Ecu3</i></th>
+    <th class="mythStyle" title="Encephalitozoon cuniculi GB-M1, MicrosporidiaDB"><i>EcuG</i></th>
+
+    <th class="mythStyle" title="Encephalitozoon hellem ATCC 50504, MicrosporidiaDB"><i>EheA</i></th>
+    <th class="mythStyle" title="Encephalitozoon hellem Swiss, MicrosporidiaDB"><i>EheS</i></th>
+
+    <th class="mythStyle" title="Encephalitozoon intestinalis ATCC 50506, MicrosporidiaDB"><i>EinA</i></th>
+  
+    <th class="mythStyle" title="Nematocida parisii ERTm1, MicrosporidiaDB"><i>Npa1</i></th>
+    <th class="mythStyle" title="Nematocida parisii ERTm3, MicrosporidiaDB"><i>Npa3</i></th>
+    <th class="mythStyle" title="Nematocida sp. 1 ERTm2, MicrosporidiaDB"><i>Nsp2</i></th>
+
+    <th  style="border-right:3px solid grey"  class="mythStyle" title="Nosema cerenae BRL01, MicrosporidiaDB"><i>Nce</i></th>
+
+    <th class="mythStyle" title="Babesia bovis T2Bo, PiroplasmaDB"><i>Bbo</i></th>
+    <th class="mythStyle" title="Theileria annulata, PiroplasmaDB"><i>Tan</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Theileria parva, PiroplasmaDB"><i>Tpa</i></th>
+
+    <th class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pbe</i></th>
+    <th class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pch</i></th>
+    <th class="mythStyle" title="Plasmodium falciparum 3D7, PlasmoDB"><i>Pfa3</i></th>
+    <th class="mythStyle" title="Plasmodium falciparum IT, PlasmoDB"><i>PfaI</i></th>
+    <th class="mythStyle" title="Plasmodium knowlesi, PlasmoDB"><i>Pko</i></th>
+    <th class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pvi</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Pyo</i></th>
+
+
+    <th class="mythStyle" title="Eimeria tenella str. Houghton, ToxoDB"><i>Ete</i></th>
+    <th class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nca</i></th>
+    <th class="mythStyle" title="Toxoplasma gondii GT1, ToxoDB"><i>TgoG</i></th>
+    <th class="mythStyle" title="Toxoplasma gondii ME49, ToxoDB"><i>TgoM</i></th>
+    <th class="mythStyle" title="Toxoplasma gondii VEG, ToxoDB"><i>TgoV</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Toxoplasma gondii RH"><i>TgoR</i></th>
+
     <th  style="border-right:3px solid grey" class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tva</i></th>
-    <th class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lb</i></th>
-    <th class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Li</i></th>
-    <th class="mythStyle" title="Leishmania major, TriTrypDB"><i>Lma</i></th>
+
+    <th class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lbr</i></th>
+    <th class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Lin</i></th>
+    <th class="mythStyle" title="Leishmania major strain Friedlin, TriTrypDB"><i>Lma</i></th>
     <th class="mythStyle" title="Leishmania mexicana, TriTrypDB"><i>Lme</i></th>
-    <th class="mythStyle" title="Leishmania tarentolae, TriTrypDB"><i>Lt</i></th>
-    <th class="mythStyle" title="Trypanosoma brucei 927, TriTrypDB"><i>Tb927</i></th>
-    <th class="mythStyle" title="Trypanosoma brucei 427, TriTrypDB"><i>Tb427</i></th>
-    <th class="mythStyle" title="Trypanosoma brucei gambiense, TriTrypDB"><i>Tbg</i></th>
+    <th class="mythStyle" title="Leishmania tarentolae Parrot-TarII, TriTrypDB"><i>Lta</i></th>
+    <th class="mythStyle" title="Trypanosoma brucei 927, TriTrypDB"><i>Tbr9</i></th>
+    <th class="mythStyle" title="Trypanosoma brucei 427, TriTrypDB"><i>Tbr4</i></th>
+    <th class="mythStyle" title="Trypanosoma brucei gambiense, TriTrypDB"><i>Tbrg</i></th>
     <th class="mythStyle" title="Trypanosoma congolense, TriTrypDB"><i>Tco</i></th>
-    <th class="mythStyle" title="Trypanosoma cruzi CL Brenner Unassigned, TriTrypDB"><i>TcrCLU</i></th>
-    <th class="mythStyle" title="Trypanosoma cruzi CL Brenner Esmeraldo, TriTrypDB"><i>TcrCLE</i></th>
-    <th class="mythStyle" title="Trypanosoma cruzi CL Brenner NonEsmeraldo, TriTrypDB"><i>TcrCLNE</i></th>
+
+    <th class="mythStyle" title="Trypanosoma cruzi CL Brener Esmeraldo-like, TriTrypDB"><i>TcrE</i></th>
+    <th class="mythStyle" title="Trypanosoma cruzi CL Brener Non-Esmeraldo-like, TriTrypDB"><i>TcrN</i></th>
+    <th class="mythStyle" title="Trypanosoma cruzi strain CL Brener, TriTrypDB"><i>TcrB</i></th>
    <th class="mythStyle" title="Trypanosoma vivax, TriTrypDB"><i>Tvi</i></th>
 </tr>
 </thead>
@@ -254,101 +276,144 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
   <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
 	 <c:set var="Metric_Type" value="${record.attributesMap['Metric_Type']}"/>
-          <c:set var="Bb" value="${record.attributesMap['Babesia bovis T2Bo']}"/>
-          <c:set var="Ch" value="${record.attributesMap['Cryptosporidium hominis']}"/>
-          <c:set var="Cm" value="${record.attributesMap['Cryptosporidium muris']}"/>
-          <c:set var="Cp6" value="${record.attributesMap['Cryptosporidium parvum']}"/>
-          <c:set var="Cp" value="${record.attributesMap['Cryptosporidium parvum Iowa II']}"/>
-          <c:set var="Eth" value="${record.attributesMap['Eimeria tenella str. Houghton']}"/>
-          <c:set var="Ecg" value="${record.attributesMap['Encephalitozoon cuniculi GB-M1']}"/>
-          <c:set var="Eha" value="${record.attributesMap['Encephalitozoon hellem ATCC 50504']}"/>
-          <c:set var="Ei" value="${record.attributesMap['Encephalitozoon intestinalis']}"/>
-          <c:set var="Eds" value="${record.attributesMap['Entamoeba dispar SAW760']}"/>
-          <c:set var="Ehh" value="${record.attributesMap['Entamoeba histolytica HM-1:IMSS']}"/>
-          <c:set var="Eii" value="${record.attributesMap['Entamoeba invadens IP1']}"/>
-          <c:set var="Ebh" value="${record.attributesMap['Enterocytozoon bieneusi H348']}"/>
-          <c:set var="Gaa" value="${record.attributesMap['Giardia Assemblage A isolate WB']}"/>
-          <c:set var="Gab" value="${record.attributesMap['Giardia Assemblage B isolate GS']}"/>
-          <c:set var="Gae" value="${record.attributesMap['Giardia Assemblage E isolate P15']}"/>
-          <c:set var="Lb" value="${record.attributesMap['Leishmania braziliensis']}"/>
-          <c:set var="Li" value="${record.attributesMap['Leishmania infantum']}"/>
-          <c:set var="Lmf" value="${record.attributesMap['Leishmania major strain Friedlin']}"/>
-          <c:set var="Lm" value="${record.attributesMap['Leishmania mexicana']}"/>
-          <c:set var="Ltp" value="${record.attributesMap['Leishmania tarentolae Parrot-TarII']}"/>
-          <c:set var="Nc" value="${record.attributesMap['Neospora caninum']}"/>
-          <c:set var="Ncb" value="${record.attributesMap['Nosema ceranae BRL01']}"/>
-          <c:set var="Pba" value="${record.attributesMap['Plasmodium berghei ANKA']}"/>
-          <c:set var="Pcc" value="${record.attributesMap['Plasmodium chabaudi chabaudi']}"/>
-          <c:set var="Pf3d7" value="${record.attributesMap['Plasmodium falciparum 3D7']}"/>
-          <c:set var="Pfi" value="${record.attributesMap['Plasmodium falciparum IT']}"/>
-          <c:set var="Pkh" value="${record.attributesMap['Plasmodium knowlesi strain H']}"/>
-          <c:set var="Pvs" value="${record.attributesMap['Plasmodium vivax SaI-1']}"/>
-          <c:set var="Pyy" value="${record.attributesMap['Plasmodium yoelii yoelii 17XNL']}"/>
-          <c:set var="Taa" value="${record.attributesMap['Theileria annulata strain Ankara']}"/>
-          <c:set var="Tpm" value="${record.attributesMap['Theileria parva strain Muguga']}"/>
-          <c:set var="Tgg" value="${record.attributesMap['Toxoplasma gondii GT1']}"/>
-          <c:set var="Tgm" value="${record.attributesMap['Toxoplasma gondii ME49']}"/>
-          <c:set var="Tgr" value="${record.attributesMap['Toxoplasma gondii RH']}"/>
-          <c:set var="Tgv" value="${record.attributesMap['Toxoplasma gondii VEG']}"/>
-          <c:set var="Tvg" value="${record.attributesMap['Trichomonas vaginalis G3']}"/>
-          <c:set var="Tbl" value="${record.attributesMap['Trypanosoma brucei Lister strain 427']}"/>
-          <c:set var="Tbt" value="${record.attributesMap['Trypanosoma brucei TREU927']}"/>
-          <c:set var="Tbg" value="${record.attributesMap['Trypanosoma brucei gambiense']}"/>
-          <c:set var="Tcon" value="${record.attributesMap['Trypanosoma congolense']}"/>
-          <c:set var="Tcbe" value="${record.attributesMap['Trypanosoma cruzi CL Brener Esmeraldo-like']}"/>
-          <c:set var="Tcbn" value="${record.attributesMap['Trypanosoma cruzi CL Brener Non-Esmeraldo-like']}"/>
-          <c:set var="Tcbu" value="${record.attributesMap['Trypanosoma cruzi strain CL Brener']}"/>
-          <c:set var="Tv" value="${record.attributesMap['Trypanosoma vivax']}"/>
+          <c:set var="Bbo" value="${record.attributesMap['Babesia bovis T2Bo']}"/>
+
+          <c:set var="Cho" value="${record.attributesMap['Cryptosporidium hominis TU502']}"/>
+          <c:set var="Cmu" value="${record.attributesMap['Cryptosporidium muris RN66']}"/>
+          <c:set var="Cpa" value="${record.attributesMap['Cryptosporidium parvum Iowa II']}"/>
+
+          <c:set var="Ete" value="${record.attributesMap['Eimeria tenella str. Houghton']}"/>
+
+          <c:set var="Ebi" value="${record.attributesMap['Enterocytozoon bieneusi H348']}"/>
+
+          <c:set var="Ecu1" value="${record.attributesMap['Encephalitozoon cuniculi EC1']}"/>
+          <c:set var="Ecu2" value="${record.attributesMap['Encephalitozoon cuniculi EC2']}"/>
+          <c:set var="Ecu3" value="${record.attributesMap['Encephalitozoon cuniculi EC3']}"/>
+          <c:set var="EcuG" value="${record.attributesMap['Encephalitozoon cuniculi GB-M1']}"/>
+
+          <c:set var="EheA" value="${record.attributesMap['Encephalitozoon hellem ATCC 50504']}"/>
+          <c:set var="EheS" value="${record.attributesMap['Encephalitozoon hellem Swiss']}"/>
+
+          <c:set var="EinA" value="${record.attributesMap['Encephalitozoon intestinalis ATCC 50506']}"/>
+
+          <c:set var="Edi" value="${record.attributesMap['Entamoeba dispar SAW760']}"/>
+          <c:set var="Ehi" value="${record.attributesMap['Entamoeba histolytica HM-1:IMSS']}"/>
+          <c:set var="EinI" value="${record.attributesMap['Entamoeba invadens IP1']}"/>
+
+          <c:set var="GA" value="${record.attributesMap['Giardia Assemblage A isolate WB']}"/>
+          <c:set var="GB" value="${record.attributesMap['Giardia Assemblage B isolate GS']}"/>
+          <c:set var="GE" value="${record.attributesMap['Giardia Assemblage E isolate P15']}"/>
+
+          <c:set var="Lbr" value="${record.attributesMap['Leishmania braziliensis']}"/>
+          <c:set var="Lin" value="${record.attributesMap['Leishmania infantum']}"/>
+          <c:set var="Lma" value="${record.attributesMap['Leishmania major strain Friedlin']}"/>
+          <c:set var="Lme" value="${record.attributesMap['Leishmania mexicana']}"/>
+          <c:set var="Lta" value="${record.attributesMap['Leishmania tarentolae Parrot-TarII']}"/>
+
+          <c:set var="Npa1" value="${record.attributesMap['Nematocida parisii ERTm1']}"/>
+          <c:set var="Npa3" value="${record.attributesMap['Nematocida parisii ERTm3']}"/>
+          <c:set var="Nsp2" value="${record.attributesMap['Nematocida sp. 1 ERTm2']}"/>
+
+          <c:set var="Nca" value="${record.attributesMap['Neospora caninum']}"/>
+
+          <c:set var="Nce" value="${record.attributesMap['Nosema ceranae BRL01']}"/>
+
+          <c:set var="Pbe" value="${record.attributesMap['Plasmodium berghei ANKA']}"/>
+          <c:set var="Pch" value="${record.attributesMap['Plasmodium chabaudi chabaudi']}"/>
+          <c:set var="Pfa3" value="${record.attributesMap['Plasmodium falciparum 3D7']}"/>
+          <c:set var="PfaI" value="${record.attributesMap['Plasmodium falciparum IT']}"/>
+          <c:set var="Pko" value="${record.attributesMap['Plasmodium knowlesi strain H']}"/>
+          <c:set var="Pvi" value="${record.attributesMap['Plasmodium vivax SaI-1']}"/>
+          <c:set var="Pyo" value="${record.attributesMap['Plasmodium yoelii yoelii 17XNL']}"/>
+
+          <c:set var="Tan" value="${record.attributesMap['Theileria annulata strain Ankara']}"/>
+          <c:set var="Tpa" value="${record.attributesMap['Theileria parva strain Muguga']}"/>
+
+          <c:set var="TgoG" value="${record.attributesMap['Toxoplasma gondii GT1']}"/>
+          <c:set var="TgoM" value="${record.attributesMap['Toxoplasma gondii ME49']}"/>
+          <c:set var="TgoR" value="${record.attributesMap['Toxoplasma gondii RH']}"/>
+          <c:set var="TgoV" value="${record.attributesMap['Toxoplasma gondii VEG']}"/>
+
+          <c:set var="Tva" value="${record.attributesMap['Trichomonas vaginalis G3']}"/>
+
+          <c:set var="Tbr4" value="${record.attributesMap['Trypanosoma brucei Lister strain 427']}"/>
+          <c:set var="Tbr9" value="${record.attributesMap['Trypanosoma brucei TREU927']}"/>
+          <c:set var="Tbrg" value="${record.attributesMap['Trypanosoma brucei gambiense']}"/>
+          <c:set var="Tco" value="${record.attributesMap['Trypanosoma congolense']}"/>
+          <c:set var="TcrE" value="${record.attributesMap['Trypanosoma cruzi CL Brener Esmeraldo-like']}"/>
+          <c:set var="TcrN" value="${record.attributesMap['Trypanosoma cruzi CL Brener Non-Esmeraldo-like']}"/>
+          <c:set var="TcrB" value="${record.attributesMap['Trypanosoma cruzi strain CL Brener']}"/>
+          <c:set var="Tvi" value="${record.attributesMap['Trypanosoma vivax']}"/>
 
 
 
 <tr class="mytdStyle">
     <td style="border-right:3px solid grey" class="mytdStyle" align="left" title="${record.attributesMap['Description']}">${Metric_Type}</td>
-    <td class="mytdStyle" align="right">${Eds}</td>
-    <td class="mytdStyle" align="right">${Ehh}</td>
-    <td style="border-right:3px solid grey"  class="mytdStyle" align="right">${Eii}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ch}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cm}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cp6}</td>
-    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Cp}</td>
-    <td class="mytdStyle" align="right">${Gaa}</td>
-    <td class="mytdStyle" align="right">${Gab}</td>
-    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Gae}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ecg}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ei}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Eha}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ebh}</td>
-    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Ncb}</td>
-    <td class="mytdStyle" align="right">${Bb}</td>
-    <td class="mytdStyle" align="right">${Taa}</td>
-    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tpm}</td>
-    <td class="mytdStyle" align="right">${Pba}</td>
-    <td class="mytdStyle" align="right">${Pcc}</td>
-    <td class="mytdStyle" align="right">${Pf3d7}</td>
-    <td class="mytdStyle" align="right">${Pfi}</td>
-    <td class="mytdStyle" align="right">${Pkh}</td>    
-    <td class="mytdStyle" align="right">${Pvs}</td>
-    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Pyy}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Nc}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Eth}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tgg}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tgm}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tgr}</td>
-    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Tgv}</td>
-    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tvg}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lb}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Li}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lmf}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lm}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ltp}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tbt}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tbl}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tbg}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tcon}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tcbu}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tcbe}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tcbn}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tv}</td>
+    <td class="mytdStyle" align="right">${Edi}</td>
+    <td class="mytdStyle" align="right">${Ehi}</td>
+    <td style="border-right:3px solid grey"  class="mytdStyle" align="right">${EinI}</td>
+
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cho}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cmu}</td>
+    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Cpa}</td>
+
+    <td class="mytdStyle" align="right">${GA}</td>
+    <td class="mytdStyle" align="right">${GB}</td>
+    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${GE}</td>
+
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ebi}</td>
+
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ecu1}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ecu2}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ecu3}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${EcuG}</td>
+
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${EheA}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${EheS}</td>
+
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${EinA}</td>
+
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Npa1}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Npa3}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Nsp2}</td>
+
+    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Nce}</td>
+
+    <td class="mytdStyle" align="right">${Bbo}</td>
+    <td class="mytdStyle" align="right">${Tan}</td>
+    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tpa}</td>
+
+    <td class="mytdStyle" align="right">${Pbe}</td>
+    <td class="mytdStyle" align="right">${Pch}</td>
+    <td class="mytdStyle" align="right">${Pfa3}</td>
+    <td class="mytdStyle" align="right">${PfaI}</td>
+    <td class="mytdStyle" align="right">${Pko}</td>    
+    <td class="mytdStyle" align="right">${Pvi}</td>
+    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Pyo}</td>
+
+
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ete}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Nca}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TgoG}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TgoM}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TgoV}</td>
+    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${TgoR}</td>
+
+    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tva}</td>
+
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lbr}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lin}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lma}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lme}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lta}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tbr9}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tbr4}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tbrg}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tco}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TcrE}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TcrN}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TcrB}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tvi}</td>
 </tr>
  
   </c:forEach>
