@@ -115,7 +115,8 @@
 <c:set var="attr" value="${attrs['overview']}" />
 <imp:panel 
     displayName="${attr.displayName}"
-    content="${attr.value}${append}" />
+    content="${attr.value}${append}" 
+    attribute="${attr.name}"/>
 <br>
 
 <c:set var="content">

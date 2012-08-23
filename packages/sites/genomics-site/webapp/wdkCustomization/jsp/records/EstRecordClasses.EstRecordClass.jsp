@@ -56,12 +56,13 @@
 <c:set var="attr" value="${attrs['overview']}" />
 <imp:panel 
     displayName="${attr.displayName}"
-    content="${attr.value}" />
+    content="${attr.value}" 
+    attribute="${attr.name}"/>
 
 <br>
 <%------------------------------------------------------------------%>
 
-<imp:wdkTable tblName="AlignmentInfo" isOpen="false" attribution=""/>
+<imp:wdkTable tblName="AlignmentInfo" isOpen="false"/>
 
 <br>
 
@@ -78,16 +79,9 @@
     displayName="${attr.displayName}"
     content="${seq}" />
 
-<!-- Assembly -->
-<%-- Assembly datatype has been deprecated --%>
-<%-- <c:if test="${projectId != 'TrichDB' && projectId != 'CryptoDB'}">
-      <imp:wdkTable tblName="AssemblyInfo" isOpen="true" attribution=""/>
-     </c:if>
---%>
-
 <br>
 <%-- REFERENCE ----------------------------------------------------%>
-<imp:wdkTable tblName="ReferenceInfo" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="ReferenceInfo" isOpen="true"/>
 
 <br>
 <%------------------------------------------------------------------%>

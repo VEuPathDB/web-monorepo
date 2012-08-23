@@ -158,7 +158,8 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <imp:panel 
     displayName="${attr.displayName}"
-    content="${attr.value}${append}   ${assemblage} ${isdeprecated}" />
+    content="${attr.value}${append}   ${assemblage} ${isdeprecated}" 
+    attribute="${attr.name}"/>
 <br>
 
 <c:set var="content">
