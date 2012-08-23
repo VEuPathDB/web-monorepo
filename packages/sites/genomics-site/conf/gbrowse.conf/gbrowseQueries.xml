@@ -2651,7 +2651,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
-    <sqlQuery name="htsSNP:Alignment"  includeProjects="ToxoDB,AmoebaDB,TriTrypDB">
+    <sqlQuery name="htsSNP:Alignment"  includeProjects="ToxoDB,AmoebaDB,TriTrypDB,CryptoDB,PlasmoDB">
      <sql>
 <![CDATA[
  SELECT  /*+use_nl(sa snp)*/
