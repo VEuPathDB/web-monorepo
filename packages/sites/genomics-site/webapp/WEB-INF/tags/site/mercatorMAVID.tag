@@ -199,9 +199,6 @@ return true;
               <input type="checkbox" name="genomes" value="TgondiiVEG" checked>T.gondii VEG
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="TgondiiRH" checked>T.gondii RH
-            </td>
-            <td>
               <input type="checkbox" name="genomes" value="Ncaninum" checked>N.caninum
             </td>
             <td>
