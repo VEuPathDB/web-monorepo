@@ -316,9 +316,6 @@ return true;
     <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
         <input type="radio" name="type" value="clustal" checked>clustal
 
-<c:if test="${(projectId ne 'TriTrypDB') && (projectId ne 'MicrosporidiaDB') && (projectId ne 'PlasmoDB' || wdkRecord.recordClass.type eq 'SNP')}">
-        <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
-</c:if>
         <input type="radio" name="type" value="fasta_ungapped">multi fasta
      </td></tr>
     <tr><td align="left"><br><input type="submit" name='go' value='Get Alignment' />
