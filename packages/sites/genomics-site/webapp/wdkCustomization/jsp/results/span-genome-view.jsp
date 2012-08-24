@@ -2,6 +2,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 
+<%-- gbrowse link does not work if using uppercase in site name --%>
+<c:set var="siteName" value="${fn:toLowerCase(applicationScope.wdkModel.name)}" />
+
 <c:set var="wdkStep" value="${requestScope.wdkStep}" />
 <c:set var="sequences" value="${requestScope.sequences}" />
 
@@ -94,7 +97,7 @@ $(initializeGenomeView);
                   <li> - <a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}' />">Record Page</a></li>
                   <c:if test="${recordClass.fullName eq 'GeneRecordClasses.GeneRecordClass'}">
                     <c:set var="context" value="${span.context}" />
-                    <li> - <a href="/cgi-bin/gbrowse/toxodb/?name=${context};h_feat=${span.sourceId}@yellow">Gbrowse</a></li>
+                    <li> - <a href="/cgi-bin/gbrowse/${siteName}/?name=${context};h_feat=${span.sourceId}@yellow">Gbrowse</a></li>
                   </c:if>
                 </ul>
               </div>
