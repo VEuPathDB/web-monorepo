@@ -247,8 +247,7 @@ ${id}
 <c:set var="attr" value="${attrs['overview']}" />
 <imp:panel attribute="${attr.name}"
     displayName="${attr.displayName} ${has_namefun_comment}"
-    content="${attr.value}${append}" 
-    attribute="${attr.name}"/>
+    content="${attr.value}${append}" />
 <br>
 
 
