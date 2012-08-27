@@ -59,15 +59,17 @@
 
 <!-- Overview -->
 <c:set var="attr" value="${attrs['snp_overview']}" />
-<imp:toggle name="${attr.displayName}"
-    displayName="${attr.displayName}" isOpen="true"
+
+<imp:panel 
+    displayName="${attr.displayName}"
     content="${attr.value}" 
     attribute="${attr.name}"/>
 
 <!-- Gene context -->
 <c:set var="attr" value="${attrs['gene_context']}" />
-<imp:toggle name="${attr.displayName}"
-    displayName="${attr.displayName}" isOpen="true"
+
+<imp:panel
+    displayName="${attr.displayName}" 
     content="${attr.value}" 
     attribute="${attr.name}"/>
 
