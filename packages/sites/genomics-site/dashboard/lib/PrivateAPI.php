@@ -71,7 +71,7 @@ class PrivateAPI {
                     'servicename' => $udb_attr{'service_name'},
                     'instancename' => $udb_attr{'instance_name'},
                     'globalname' => $udb_attr{'global_name'},
-                    'servername' => $adb_attr{'server_name'},
+                    'servername' => $udb_attr{'server_name'},
                     'aliases' => $this->split_to_array($udb_attr{'aliases_from_ldap'}, '/,\s*/', 'alias'),
                 )
             ),
