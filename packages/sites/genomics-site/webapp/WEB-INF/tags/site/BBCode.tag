@@ -5,5 +5,6 @@
 %>
 
 <% 
-	out.println(BBCode.getInstance().convertBBCodeToHtml(content));
+	out.println(content);
+	//out.println(BBCode.getInstance().convertBBCodeToHtml(content));
 %> 

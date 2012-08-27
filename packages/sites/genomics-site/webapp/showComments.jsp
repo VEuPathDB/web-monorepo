@@ -1,4 +1,4 @@
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -14,7 +14,7 @@ attributes:
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
-<imp:header title="${wdkModel.displayName} : User Comments on ${stable_id}"
+<site:header title="${wdkModel.displayName} : User Comments on ${stable_id}"
                  banner="Comments on ${stable_id}"/>
 
 <head>
@@ -209,7 +209,7 @@ $(document).ready(function() {
                 <tr>
                    <td>Phenotype Description:</td> 
                    <td> 
-                   <imp:BBCode content="${comment.content}" />
+                   <site:BBCode content="${comment.content}" />
                    </td>
                 </tr>
 
@@ -230,7 +230,7 @@ $(document).ready(function() {
                 <tr>
                    <td>Content:</td> 
                    <td> 
-                   <imp:BBCode content="${comment.content}" />
+                   <site:BBCode content="${comment.content}" />
                    </td>
                 </tr>
 
@@ -387,6 +387,6 @@ $(document).ready(function() {
 </c:choose>
 
 <hr/><br/><br/>
-<imp:footer/>
+<site:footer/>
 
 
