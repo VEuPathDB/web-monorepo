@@ -1,0 +1,13 @@
+--- bam.pm.orig	2012-08-29 14:47:31.000000000 -0400
++++ bam.pm	2012-08-29 14:48:51.000000000 -0400
+@@ -158,7 +158,9 @@
+     $dest      =~ s/\.[bs]am$//i; # sorting will add the .bam extension
+ 
+     $self->set_status('sorting BAM file');
+-    Bio::DB::Bam->sort_core(0,$source,$dest);
++		# EuPathDB bug fix - https://redmine.apidb.org/issues/9982
++    #Bio::DB::Bam->sort_core(0,$source,$dest);
++    Bio::DB::Bam->sort_core(0,$source,$dest,200*1e6);
+     
+     $self->set_status('indexing BAM file');
+ 
