@@ -698,7 +698,7 @@ ul.cirbulletlist {
 	position:relative;
 	line-height: 14px;
 	font-weight:normal;
-  	z-index: 50;   
+  	z-index: 500;   
 }
 
 #menu ul ul {
