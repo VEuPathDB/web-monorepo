@@ -156,8 +156,8 @@ Ack, this form won't work at all without JavaScript support!
 						<img border=0 id="img0" src="<c:url value="/images/dc.gif"/>">
 				</a>
 				&nbsp;<b>All Organisms</b>
-				&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myshowTree()">expand</a>
-				&nbsp;|&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myhideTree()">collapse</a>
+				&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myshowTree()">expand all</a>
+				&nbsp;|&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myhideTree()">collapse all</a>
 		</td>
 </tr>
 
