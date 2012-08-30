@@ -4,7 +4,7 @@
               required="false"
 %>
 
-<form action="/cgi-bin/geneSrt" method="post">
+<form name="downloadConfigForm" action="/cgi-bin/geneSrt" method="post">
   <input type="hidden" name="project_id" value="${wdkModel.name}"/>
   <c:if test="${allRecordIds != null}">
     <input type="hidden" name="ids" value="${allRecordIds}">

@@ -33,7 +33,7 @@
 </c:otherwise>
 </c:choose> -->
 
-<form action="/cgi-bin/contigSrt" method="post">
+<form name="downloadConfigForm" action="/cgi-bin/contigSrt" method="post">
     <input type="hidden" name="ids" value="${allRecordIds}">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     

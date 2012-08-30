@@ -31,7 +31,7 @@
 </c:when>
 <c:otherwise>
 --%>
- <form action="/cgi-bin/orfSrt" method="post">
+ <form name="downloadConfigForm" action="/cgi-bin/orfSrt" method="post">
 <%--
 </c:otherwise>
 </c:choose>
