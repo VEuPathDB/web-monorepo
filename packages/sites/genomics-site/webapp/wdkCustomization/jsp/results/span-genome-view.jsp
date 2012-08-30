@@ -14,7 +14,7 @@
 $(initializeGenomeView);
 </script>
 
-<!--
+<%--
 <div class="legend">
   <div class="title">Legend</div>
   <div>
@@ -24,8 +24,9 @@ $(initializeGenomeView);
     <div class="span reverse"></div> ${recordClass.type} on reversed strand
   </div>
 </div>
--->
-<div style="float:left">
+--%>
+<%-- <div style="float:left"> --%>
+<div>
 <table class="legend">
 <tr>
 <td>
@@ -39,6 +40,7 @@ $(initializeGenomeView);
 </table>
 </div>
 
+<%--
 <div style="float:left;position:relative;bottom:35px;left:30px;"><img src="<c:url value='/wdk/images/betatesting.png' />" /></div>
 
 <div style="float:left;position:relative;top:5px;left:30px;font-weight:bold">
@@ -46,13 +48,15 @@ $(initializeGenomeView);
 
  <span style="font-size:120%">Be our Beta Tester!</span> &nbsp;&nbsp;<span style="background-color:yellow">Click here</span> to provide feedback on this beta feature!
 </a></div>
+--%>
 
 <c:url var="zoomInImage" value="/wdkCustomization/images/zoom_in.png" />
 <c:url var="zoomOutImage" value="/wdkCustomization/images/zoom_out.png" />
 <c:set var="zoomInAllTip" value="Zoom in all the sequences." />
 <c:set var="zoomOutAllTip" value="Zoom out all the sequences." />
 
-<div style="clear:both;;position:relative;top:-20px">
+<%-- <div style="clear:both;;position:relative;top:-20px"> --%>
+<div>
 <table class="genome-view datatables">
   <thead>
   <tr>
