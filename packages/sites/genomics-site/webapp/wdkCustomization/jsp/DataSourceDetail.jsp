@@ -84,7 +84,7 @@
                <c:set var="isolatesContent">
                 <ul>
                   <c:forEach items="${isolates}" var="isolate">
-                        <li><a href="${isolate['isolate_link'].url}">${isolate['source_id']}</a> </li>
+                        <li><a href="${isolate['isolate_link'].url}">${isolate['isolate_link'].displayText}</a> </li>
                   </c:forEach>
                 </ul>
               </c:set>
