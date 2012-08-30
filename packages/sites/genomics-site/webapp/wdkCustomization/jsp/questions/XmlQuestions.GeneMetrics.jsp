@@ -429,7 +429,22 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <c:if test="${project ne 'FungiDB'}" >
 <table width="100%">
 <tr><td>
-<font size="-1"><b>Babesia</b>: Bb, <i>B. bovis</i>; <b>Cryptosporidium</b>: Ch, <i>C. hominis</i>; Cm, <i>C. muris</i>; Cp, <i>C. parvum</i>;  <b>Eimeria</b>: Et, <i>E. tenella</i>; <b>Encephalitozoon</b>: Ec, <i>E. cuniculi</i>; Eint, <i>E. intestinalis</i>; Ehel, <i>E. hellem</i>; <b>Entamoeba</b>: Ed, <i>E. dispar</i>; Eh, <i>E. histolytica</i>; Einv, <i>E. invadens</i>; <b>Enterocytozoon</b>: Eb, <i>E. bieneusi</i>; <b>Giardia</b> GA, <i>G.Assemblage_A_isolate_WB</i>; GB, <i>G.Assemblage_B_isolate_GS</i>; GE, <i>G.Assemblage_E_isolate_P15</i>; <b>Leishmania</b>: Lb, <i>L. braziliensis</i>; Li, <i>L. infantum</i>; Lma, <i>L. major</i>; Lme, <i>L. mexicana</i>; <b>Neospora</b>: Nc, <i>N. caninum</i>; <b>Nosema</b>: Ncer, <i>N. cerenae</i>; <b>Plasmodium</b>: Pb, <i>P. berghei</i>; Pc, <i>P. chabaudi</i>; Pf, <i>P. falciparum</i>; Pk, <i>P. knowlesi</i>; Pv, <i>P. vivax</i>; Py, <i>P. yoelii</i>; <b>Theileria</b>: Ta, <i>T. annulata</i>; Tp, <i>T. parva</i>; <b>Toxoplasma</b>: Tg, <i>T. gondii</i>; <b>Trichomonas</b>: Tva, <i>T. vaginalis</i>; <b>Trypanosoma</b>: Tb, <i>T. brucei</i>; Tco, <i>T. congolense</i>; Tcr, <i>T. cruzi</i>; Tvi, <i>T. vivax</i>.</font><br>
+<font size="-1"><b>Babesia</b>: Bbo, <i>B. bovis</i>; 
+<b>Cryptosporidium</b>: Cho, <i>C. hominis</i>; Cmu, <i>C. muris</i>; Cpa, <i>C. parvum</i>;  
+<b>Eimeria</b>: Ete, <i>E. tenella</i>; 
+<b>Encephalitozoon</b>: Ecu, <i>E. cuniculi</i>; Ehe, <i>E. hellem</i>; Ein, <i>E. intestinalis</i>; 
+<b>Entamoeba</b>: Edi, <i>E. dispar</i>; Ehi, <i>E. histolytica</i>; Ein, <i>E. invadens</i>;  
+<b>Enterocytozoon</b>: Eb, <i>E. bieneusi</i>; 
+<b>Giardia</b>: GA, <i>G.Assemblage_A_isolate_WB</i>; GB, <i>G.Assemblage_B_isolate_GS</i>; GE, <i>G.Assemblage_E_isolate_P15</i>; 
+<b>Leishmania</b>: Lb, <i>L. braziliensis</i>; Li, <i>L. infantum</i>; Lma, <i>L. major</i>; Lme, <i>L. mexicana</i>; 
+<b>Nematocida</b>: Npa, <i>N. parisii</i>; Nsp, <i>N. sp. 1</i>        
+<b>Neospora</b>: Nca, <i>N. caninum</i>; 
+<b>Nosema</b>: Nce, <i>N. cerenae</i>; 
+<b>Plasmodium</b>: Pbe, <i>P. berghei</i>; Pch, <i>P. chabaudi</i>; Pfa, <i>P. falciparum</i>; Pko, <i>P. knowlesi</i>; Pvi, <i>P. vivax</i>; Pyo, <i>P. yoelii</i>; 
+<b>Theileria</b>: Tan, <i>T. annulata</i>; Tpa, <i>T. parva</i>; 
+<b>Toxoplasma</b>: Tgo, <i>T. gondii</i>; 
+<b>Trichomonas</b>: Tva, <i>T. vaginalis</i>; 
+<b>Trypanosoma</b>: Tbr, <i>T. brucei</i>; Tco, <i>T. congolense</i>; Tcr, <i>T. cruzi</i>; Tvi, <i>T. vivax</i>. </font><br>
 </td></tr>
 <br>
 <tr><td colspan="10"><font size="-2"><hr>* In addition, <i>Giardia Assemblage A isolate WB</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
