@@ -40,7 +40,6 @@
           <c:set var="name" value="${attributes['data_source_name']}" />
           <c:set var="displayName" value="${attributes['display_name']}" />
           <c:set var="version" value="${attributes['version']}" />
-          <c:set var="publicUrl" value="${attributes['public_url']}" />
           <c:set var="categories" value="${attributes['category']}" />
           <c:set var="organism" value="${attributes['organism']}" />
           <c:set var="description" value="${attributes['description']}" />
