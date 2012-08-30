@@ -341,7 +341,9 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
         <div class="menu_lefttop_drop">
         <ul id="information">
  		<li id='h-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to Cite us</a></li>
+<c:if test="${project != 'EuPathDB'}">
 		<li id='h-2'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citingproviders"/>">Citing Data Providers</a></li>
+</c:if>
             	<li id='h-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
 
   <li id='h-31'><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission & Release Policies</a></li>

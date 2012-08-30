@@ -54,7 +54,10 @@ a#facebook {
 <%-- all sites go to the Data Summary page --%>
 
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to cite us</a></li>
+
+<c:if test="${project != 'EuPathDB'}">
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citingproviders"/>">Citing Data Providers</a></li>
+</c:if>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
 
 	<li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission & Release Policies</a></li>
@@ -68,9 +71,11 @@ a#facebook {
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Data Statistics</a></li>
 </c:otherwise>
 </c:choose>
+<c:if test="${project != 'EuPathDB'}">
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#advisors"/>">Scientific Advisory Team</a></li>
-	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#swg"/>">Scientific Working Group</a></li>
- 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#acks"/>">Acknowledgements</a></li>
+</c:if>
+	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.AboutAll#swg"/>">Scientific Working Group</a></li>
+ 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.AboutAll#acks"/>">Acknowledgements</a></li>
  	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#funding"/>">Funding</a></li>
 	<li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#use"/>">Data Access Policy</a></li>
 
