@@ -67,8 +67,9 @@
             <div class="detail">
               <table>
                 <c:if test='${not empty organism.value}'>    <tr><td><span class="caption">${organism.displayName} </span></td><td> ${organism.value}</td></tr>  </c:if>
-                <tr><td><span class="caption">${contact.displayName}</span></td><td> ${contact.value}
-                  <c:if test='${not empty institution.value}'>, ${institution.value}</c:if>
+                <tr><td><span class="caption">${contact.displayName}</span></td>
+                  <td> <c:if test='${not empty contact.value}'>${contact.value}</c:if>
+                  <c:if test='${not empty institution.value}'> - ${institution.value}</c:if>
                 </td></tr>
        <!--         <tr><td><span class="caption">Description </span></td><td> ${description.value}</td></tr> -->
               </table>
