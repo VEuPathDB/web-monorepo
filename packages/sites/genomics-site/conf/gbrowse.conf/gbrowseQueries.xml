@@ -1610,7 +1610,7 @@ SELECT blat.blat_protein_alignment_id feature_id,
        'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
        'Defline=' || eaas.description atts 
 FROM   
-       ApiDB.BlatProteinAlignment blat, 
+       ApiDBTuning.BlatProtAlignLocation blat, 
        DOTS.externalaasequence eaas
 WHERE  
        blat.query_aa_sequence_id = eaas.aa_sequence_id and 
@@ -4446,7 +4446,7 @@ SELECT blat.blat_protein_alignment_id feature_id,
        blat.blocksizes BLOCKSIZES,
        ' ' atts
 FROM
-       ApiDB.BlatProteinAlignment blat, 
+       ApiDBTuning.BlatProtAlignLocation blat, 
        DOTS.externalaasequence eaas
 WHERE  blat.query_aa_sequence_id = eaas.aa_sequence_id and
        blat.target_start <= $rend and 
