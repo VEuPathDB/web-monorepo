@@ -16,7 +16,7 @@ class CommentConfig extends JolModule {
   public function attributes() {
     $req = new JolRequest($this->jol_base_url);
     $read = new JolReadOperation(array(
-                'mbean' => $this->wdk_mbean_domain . ':type=CommentConfig,path=' . $this->path_name,
+                'mbean' => 'org.apidb.wdk:type=CommentConfig,path=' . $this->path_name,
             ));
     $req->add_operation($read);
     $response = $req->invoke();

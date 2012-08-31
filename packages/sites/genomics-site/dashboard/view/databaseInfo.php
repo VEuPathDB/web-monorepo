@@ -6,9 +6,11 @@
 
 require_once dirname(__FILE__) . "/../lib/modules/AppDatabase.php";
 require_once dirname(__FILE__) . "/../lib/modules/UserDatabase.php";
+require_once dirname(__FILE__) . "/../lib/LdapTnsNameResolver.php";
 
 $app_database = new AppDatabase();
 $user_database = new UserDatabase();
+$ldap_resolver = new LdapTnsNameResolver();
 
 if (isset($_GET['refresh']) && $_GET['refresh'] == 1) {
   $success = $app_database->refresh();
@@ -19,6 +21,7 @@ if (isset($_GET['refresh']) && $_GET['refresh'] == 1) {
 
 $adb = $app_database->attributes();
 $udb = $user_database->attributes();
+$aliases_ar = $ldap_resolver->resolve($adb{'service_name'});
 
 ?>
 <h2>Application Database</h2>
@@ -65,7 +68,7 @@ Related Links
 
 <br>
 
-<b>Aliases</b> (from LDAP): <?= $adb{'aliases_from_ldap'} ?>
+<b>Aliases</b> (from LDAP): <?= implode(", ", $aliases_ar) ?>
 
 <br><br>
 <b>Hosted on</b>: <?=strtolower($adb{'server_name'})?><br>

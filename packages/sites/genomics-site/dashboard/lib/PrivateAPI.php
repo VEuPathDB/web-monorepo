@@ -8,6 +8,7 @@ require_once dirname(__FILE__) . "/modules/CommentConfig.php";
 require_once dirname(__FILE__) . "/modules/BuildInfo.php";
 require_once dirname(__FILE__) . "/modules/ProxyInfo.php";
 require_once dirname(__FILE__) . "/modules/WdkMeta.php";
+require_once dirname(__FILE__) . "/LdapTnsNameResolver.php";
 
 /**
  * Description of PrivateAPI
@@ -50,6 +51,8 @@ class PrivateAPI {
     $proxy = new ProxyInfo();
     $proxy_attr = $proxy->attributes();
 
+    $ldap_resolver = new LdapTnsNameResolver();
+
     $all_data = array('wdk' =>
         array(
             'proxy' => array(
@@ -65,14 +68,14 @@ class PrivateAPI {
                     'instancename' => $adb_attr{'instance_name'},
                     'globalname' => $adb_attr{'global_name'},
                     'servername' => $adb_attr{'server_name'},
-                    'aliases' => $this->split_to_array($adb_attr{'aliases_from_ldap'}, '/,\s*/', 'alias'),
+                    'aliases' => $this->array_to_map($ldap_resolver->resolve($adb_attr{'service_name'}), 'alias'),
                 ),
                 'userdb' => array(
                     'servicename' => $udb_attr{'service_name'},
                     'instancename' => $udb_attr{'instance_name'},
                     'globalname' => $udb_attr{'global_name'},
                     'servername' => $udb_attr{'server_name'},
-                    'aliases' => $this->split_to_array($udb_attr{'aliases_from_ldap'}, '/,\s*/', 'alias'),
+                    'aliases' => $this->array_to_map($ldap_resolver->resolve($udb_attr{'service_name'}), 'alias'),
                 )
             ),
             'modelconfig' => $this->normalize_keys_in_array($model_config_attr),
@@ -85,6 +88,29 @@ class PrivateAPI {
     $this->api_dataset = array_merge($this->api_dataset, $all_data);
   }
 
+  /**
+   * Split an one dimensional list array into a multidimensional map array using the given key.
+   * input 
+   *       array('cryp-inc', 'crypbl2n')
+   * becomes
+   *       array(
+   *         array( 'alias' => 'cryp-inc'),
+   *         array( 'alias' => 'crypbl2n')
+   *       )
+   *
+   * @param $array  array to split
+   * @param $key key value for each array
+   * @return array
+   *
+   */
+  private function array_to_map($array, $key) {
+    $map = array();
+    foreach ($array as $v) {
+      array_push($map, array($key => $v));
+    }
+    return $map;
+  }
+  
   /**
    * Split a string into a multidimensional array using the given key.
    *
@@ -99,13 +125,13 @@ class PrivateAPI {
    * @return array
    *
    */
-  private function split_to_array($string, $pattern, $key) {
-    $array = array();
+  private function split_to_map($string, $pattern, $key) {
+    $map = array();
     $values = preg_split($pattern, $string);
     foreach ($values as $v) {
-      array_push($array, array($key => $v));
+      array_push($map, array($key => $v));
     }
-    return $array;
+    return $map;
   }
 
   /**

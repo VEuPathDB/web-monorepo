@@ -24,7 +24,7 @@
   </listener>
 
   <listener>
-    <listener-class>org.apidb.apicommon.jmx.JmxInitListener</listener-class>
+    <listener-class>org.gusdb.wdk.jmx.JmxInitListener</listener-class>
   </listener>
 
   <servlet>

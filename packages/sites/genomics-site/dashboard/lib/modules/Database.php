@@ -29,6 +29,10 @@ abstract class Database extends JolModule {
             ));
     $req->add_operation($read);
     $response = $req->invoke();
+    if ($response->has_error()) {
+      $error1 = $response->get_errors();
+      throw new Exception($error1[0]->error() .  " for " . $req->curl_cli_equivalent());
+    }
     return $response[0]->value();
   }
 
@@ -48,7 +52,7 @@ abstract class Database extends JolModule {
   }
 
   private function get_mbean() {
-    return 'org.apidb.wdk:group=Databases,type=' .
+    return 'org.gusdb.wdk:group=Databases,type=' .
             $this->type . ',path=' . $this->path_name;
   }
 
