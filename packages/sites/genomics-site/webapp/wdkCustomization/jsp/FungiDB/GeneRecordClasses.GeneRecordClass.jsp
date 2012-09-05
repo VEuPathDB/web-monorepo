@@ -255,7 +255,7 @@ GO,InterproscanData
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="http://v5.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
+      <a target="_blank" href="http://v5.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
   <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"

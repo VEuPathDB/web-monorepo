@@ -295,7 +295,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+      <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
   <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_Phyletic,OrthoMCL"

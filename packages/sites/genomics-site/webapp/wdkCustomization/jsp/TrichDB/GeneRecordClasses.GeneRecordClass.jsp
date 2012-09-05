@@ -255,7 +255,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
   <c:set var="orthomclLink">
     <div align="center">
-      <a href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+      <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
   <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
