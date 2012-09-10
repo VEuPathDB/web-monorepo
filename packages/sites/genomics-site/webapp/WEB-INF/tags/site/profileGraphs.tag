@@ -147,7 +147,7 @@
        
        <br /> <br />
               
-        <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB'}">
+        <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB' || row['project_id'].value eq 'MicrosporidiaDB' || row['project_id'].value eq 'PiroplasmaDB' || row['project_id'].value eq 'CryptoDB' || row['project_id'].value eq 'ToxoDB'}">
           <c:if test="${hasRma eq 'true'}">
             <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
             <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" checked />
