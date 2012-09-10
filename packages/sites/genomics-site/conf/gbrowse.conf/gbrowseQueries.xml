@@ -3299,24 +3299,18 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Resequencing'
     </sql>
   </sqlQuery>
   
-  
-  <sqlQuery name="AffymetrixProbes:NuclearCodingAS"  includeProjects="ToxoDB">
-  <testParamValues project="ToxoDB">
-     <param name="srcfeature_id" value="$$na_seq_id_Ib$$"/>
-     <param name="rend" value="1912512"/>
-     <param name="base_start" value="1904662"/>
-  </testParamValues>
-  <sql>
+  <sqlQuery name="AffymetrixProbes:Probes"  includeProjects="ToxoDB">
+    <sql>
 <![CDATA[
  SELECT 
-       f.na_feature_id            as feature_id,
-       'AffymetrixProbes'         as type, 
-       'NuclearCodingAS'          as source, 
-       f.source_id                as name, 
-       '.'                        as score, 
-       f.source_id                as parent_id, 
-       l.start_min                as startm, 
-       l.end_max                  as end, 
+       f.na_feature_id        as feature_id,
+       'AffymetrixProbes'     as type, 
+       '$source       '       as source, 
+       f.source_id            as name, 
+       '.'                    as score, 
+       f.source_id            as parent_id, 
+       l.start_min            as startm, 
+       l.end_max              as end, 
        decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
         '' as atts
 FROM   dots.ArrayElementFeature f,
@@ -3324,7 +3318,7 @@ FROM   dots.ArrayElementFeature f,
        ApidbTuning.FeatureLocation l,
        sres.ExternalDatabase ed,
        sres.ExternalDatabaseRelease edr  
-WHERE  ed.name = 'Affymetrix Probes from Amit - Expresssion-Antisense'
+WHERE  ed.name = $$edname$$
   AND  edr.external_database_id = ed.external_database_id
   AND  f.external_database_release_id = edr.external_database_release_id
   AND  s.virtual_na_sequence_id = $srcfeature_id
@@ -3442,45 +3436,6 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - BLASTX-TranscriptDiscovery'
 ]]>
     </sql>
   </sqlQuery>
-  
-  
-  <sqlQuery name="AffymetrixProbes:ChIP"  includeProjects="ToxoDB">
-    <testParamValues project="ToxoDB">
-       <param name="srcfeature_id" value="$$na_seq_id_IX$$"/>
-       <param name="rend" value="4174385"/>
-       <param name="base_start" value="4174035"/>
-    </testParamValues>
-     <sql>
-<![CDATA[
- SELECT 
-       f.na_feature_id            as feature_id,
-       'AffymetrixProbes'         as type, 
-       'ChIP'                     as source, 
-       f.source_id                as name, 
-       '.'                        as score, 
-       f.source_id                as parent_id, 
-       l.start_min                as startm, 
-       l.end_max                  as end, 
-       decode(l.is_reversed, 0, '+1', 1, '-1', '.') as strand,
-        '' as atts
-FROM   dots.ArrayElementFeature f,
-       dots.SequencePiece s,
-       ApidbTuning.FeatureLocation l,
-       sres.ExternalDatabase ed,
-       sres.ExternalDatabaseRelease edr  
-WHERE  ed.name = 'Affymetrix Probes from Amit - ChIP'
-  AND  edr.external_database_id = ed.external_database_id
-  AND  f.external_database_release_id = edr.external_database_release_id
-  AND  s.virtual_na_sequence_id = $srcfeature_id
-  AND  f.na_sequence_id = s.piece_na_sequence_id
-  AND  l.na_sequence_id = s.virtual_na_sequence_id 
-  AND  l.na_feature_id = f.na_feature_id
-  AND  l.start_min <= $rend
-  AND  l.end_max >= $base_start
-]]>
-    </sql>
-  </sqlQuery>
-  
   
   <sqlQuery name="AffymetrixProbes:NuclearCoding"  includeProjects="ToxoDB">
      <sql>
