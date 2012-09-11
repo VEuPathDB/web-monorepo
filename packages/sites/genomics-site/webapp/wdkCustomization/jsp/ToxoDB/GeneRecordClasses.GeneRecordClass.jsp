@@ -218,8 +218,9 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <!-- locations -->
 <imp:wdkTable tblName="Genbank" isOpen="true"
                attribution="T.gondiiGT1_contigsGB,T.gondiiME49_contigsGB,T.gondiiVEG_contigsGB" />
-<!-- version 4 genes -->
-<imp:wdkTable tblName="ToxoVer4Genes" isOpen="true"
+
+<!-- previous version genes -->
+<imp:wdkTable tblName="PreviousReleaseGenes" isOpen="true"
                attribution="" />
 
 
