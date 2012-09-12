@@ -2194,12 +2194,12 @@ ORDER BY
   </sqlQuery>
   
   
-  <sqlQuery name="scaffold:TIGR">
+  <sqlQuery name="scaffold:genome" includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
 <![CDATA[
  SELECT 's.' || piece_na_sequence_id as feature_id, 
      'scaffold' type,
-     'TIGR' source,
+     'genome' source,
       source_id as name,
       offset as startm,
       (offset + length) as end,
@@ -2242,7 +2242,7 @@ where offset < $rend and (offset+length) > $base_start
 UNION
 SELECT 'g.' || $srcfeature_id as feature_id,
        'scaffold' type,
-       'TIGR' source,
+       'genome' source,
        'aGap' name,
        $base_start as startm,
        $rend as end,
@@ -4763,12 +4763,12 @@ ORDER BY
   </sqlQuery>
   -->
   
-  <sqlQuery name="scaffold:TIGR:bulksubfeatures" excludeProjects="PlasmoDB,TriTrypDB,CryptoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="scaffold:genome:bulksubfeatures" includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
      <sql>
 <![CDATA[
 SELECT sg.na_feature_id as feature_id,
        'gap' type,
-       'TIGR' source,
+       'genome' source,
        sg.source_id name,
        'g.' || vs.na_sequence_id parent_id,
        fl.start_min as startm,
@@ -4777,7 +4777,7 @@ SELECT sg.na_feature_id as feature_id,
        'Type=sgap' as atts
 FROM   DoTS.ScaffoldGapFeature sg,
        DoTS.NaLocation fl,
-       DoTS.VirtualSequence vs
+       ApidbTuning.SequenceAttributes vs
        --DoTS.SequencePiece sp
 WHERE  fl.na_feature_id = sg.na_feature_id
    AND vs.na_sequence_id = sg.na_sequence_id
