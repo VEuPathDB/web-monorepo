@@ -1683,7 +1683,7 @@ ORDER BY f.startm
   </sqlQuery>
   
   
-  <sqlQuery name="alignment:Cosmids" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="alignment:Cosmids" includeProjects="ToxoDB,TriTrypDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_LmjF24_01_20050601_V5.2$$"/>
       <param name="rend" value="204367"/>
@@ -4233,7 +4233,7 @@ WHERE  ed.name = $$edname$$
     </sql>
   </sqlQuery> 
 
-  <sqlQuery name="alignment:Cosmids:bulksubfeatures" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="alignment:Cosmids:bulksubfeatures" includeProjects="ToxoDB,TriTrypDB">
     <testParamValues project="TriTrypDB">
       <param name="srcfeature_id" value="$$na_feat_id_LmjF24_01_20050601_V5.2$$"/>
       <param name="rend" value="204367"/>
