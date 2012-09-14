@@ -1624,7 +1624,7 @@ ORDER BY
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="alignment:Bacs" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="alignment:Bacs" includeProjects="ToxoDB,TriTrypDB">
      <sql>
 <![CDATA[
 select f.feature_id, f.type, f.source, 
