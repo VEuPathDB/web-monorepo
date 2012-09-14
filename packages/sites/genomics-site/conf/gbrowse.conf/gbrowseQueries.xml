@@ -2997,29 +2997,6 @@ WHERE
   </sqlQuery>
 
  
-  <sqlQuery name="ChIP:ChIPchip" includeProjects="PlasmoDB">
-     <sql>
-<![CDATA[
- SELECT distinct p.name || '_' || cpp.antibody as feature_id,
-       'ChIP'             as type,
-       '$source'          as source,
-       '$srcfeature_id'   as name,
-       '$srcfeature_id'   as parent_id,
-       $base_start        as startm,
-       $rend              as end,
-       'Antibody='     || cpp.antibody  as atts
-FROM   rad.analysis a,
-       rad.protocol p,
-			 ApidbTuning.ChIPProtocolParams cpp 
-WHERE  a.analysis_id = cpp.analysis_id
-	AND  a.protocol_id = p.protocol_id
-	AND  cpp.experiment_name = $$exp$$
-	AND  p.name = $$protocol$$
-	AND  cpp.protocol_type = 'raw'
-]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="ChIP:ChIPchipSub_Strain" includeProjects="ToxoDB">
      <sql>
 <![CDATA[
@@ -3043,7 +3020,7 @@ WHERE  a.analysis_id = cpp.analysis_id
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="ChIP:ChIPchipSub_Antibody" includeProjects="ToxoDB">
+  <sqlQuery name="ChIP:ChIPchipSub_Antibody" includeProjects="PlasmoDB,ToxoDB">
      <sql>
 <![CDATA[
  SELECT distinct p.name || '_' || cpp.antibody   as feature_id,
@@ -5260,7 +5237,7 @@ AND    cpp.protocol_type = 'raw'
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="ChIP:ChIPchipSub_Antibody:bulksubfeatures"  includeProjects="ToxoDB">
+  <sqlQuery name="ChIP:ChIPchipSub_Antibody:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB">
      <sql>
 <![CDATA[
 SELECT  ee.na_feature_id   as feature_id,
