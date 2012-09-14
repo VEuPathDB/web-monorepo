@@ -2760,7 +2760,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="ChIP_peaks:peaks"  includeProjects="PlasmoDB">
+  <sqlQuery name="ChIP_peaks:peaks"  includeProjects="PlasmoDB,ToxoDB">
      <sql>
 <![CDATA[
  SELECT ee.na_feature_id   as feature_id,
@@ -2775,6 +2775,7 @@ WHERE  etn.na_sequence_id = $srcfeature_id
       'Analysis=' || a.name ||  '$dlm' ||
       'Genotype=' || cpp.genotype ||'$dlm' || 
       'Antibody=' || cpp.antibody || '$dlm' || 
+      'Strain=' || cpp.strain || '$dlm' || 
       'Rep=' || cpp.replicate as atts 
 FROM   rad.protocol p,rad.analysis a,
        ApidbTuning.ExpressionElement ee,
@@ -3369,62 +3370,6 @@ WHERE  ed.name = 'Affymetrix Probes from Amit - Expression-NuclearNonCoding'
     </sql>
   </sqlQuery>
   
-  
-  <sqlQuery name="ChIP_peaks:Assay"  includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT ee.na_feature_id   as feature_id,
-       'ChIP_peaks'        as type,
-       '$source'           as source,
-       ee.feature_source_id        as name,
-       ee.score      as score,
-       ee.na_sequence_id   as parent_id,
-       ee.start_min         as startm,
-       ee.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis='|| a.name || '$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,rad.analysis a,
-       ApidbTuning.ExpressionElement ee,
-       ApidbTuning.ChIPProtocolParams cpp
-WHERE  ee.analysis_id =   cpp.analysis_id
-AND    cpp.protocol_id =  p.protocol_id
-AND    cpp.analysis_id = a.analysis_id
-AND    ee.na_sequence_id = $srcfeature_id
-AND    ee.start_min <= $rend
-AND    ee.end_max >= $base_start
-AND    p.name = $$protocol$$
-AND    cpp.strain = $$strain$$
-]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="ChIP_peaks:AbAssay"  includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT ee.na_feature_id   as feature_id,
-       'ChIP_peaks'        as type,
-       '$source'           as source,
-       ee.feature_source_id        as name,
-       ee.score      as score,
-       ee.na_sequence_id   as parent_id,
-       ee.start_min         as startm,
-       ee.end_max           as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis='|| a.name || '$dlm'|| 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,rad.analysis a,
-       ApidbTuning.ExpressionElement ee,
-       ApidbTuning.ChIPProtocolParams cpp
-WHERE  ee.analysis_id =   cpp.analysis_id
-AND    cpp.protocol_id =  p.protocol_id
-AND    cpp.analysis_id = a.analysis_id
-AND    ee.na_sequence_id = $srcfeature_id
-AND    ee.start_min <= $rend
-AND    ee.end_max >= $base_start
-AND    p.name = $$protocol$$
-AND    cpp.strain = $$strain$$
-AND    cpp.antibody $$antibody$$
-]]>
-    </sql>
-  </sqlQuery>
-
   <sqlQuery name="SNP:Population"  includeProjects="PlasmoDB,ToxoDB">
      <sql>
 <![CDATA[
