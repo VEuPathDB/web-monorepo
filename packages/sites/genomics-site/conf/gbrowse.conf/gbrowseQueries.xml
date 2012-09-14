@@ -3019,6 +3019,52 @@ WHERE  a.analysis_id = cpp.analysis_id
     </sql>
   </sqlQuery>
 
+  <sqlQuery name="ChIP:ChIPchipSub_Strain" includeProjects="ToxoDB">
+     <sql>
+<![CDATA[
+ SELECT distinct p.name || '_' || cpp.strain   as feature_id,
+       'ChIP'             as type,
+       '$source'          as source,
+       '$srcfeature_id'   as name,
+       '$srcfeature_id'   as parent_id,
+       $base_start        as startm,
+       $rend              as end,
+       'Strain='     || cpp.strain  as atts
+FROM   rad.analysis a,
+       rad.protocol p,
+			 ApidbTuning.ChIPProtocolParams cpp 
+WHERE  a.analysis_id = cpp.analysis_id
+	AND  a.protocol_id = p.protocol_id
+	AND  cpp.experiment_name = $$exp$$
+	AND  p.name = $$protocol$$
+	AND  cpp.protocol_type = 'raw'
+]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="ChIP:ChIPchipSub_Antibody" includeProjects="ToxoDB">
+     <sql>
+<![CDATA[
+ SELECT distinct p.name || '_' || cpp.antibody   as feature_id,
+       'ChIP'             as type,
+       '$source'          as source,
+       '$srcfeature_id'   as name,
+       '$srcfeature_id'   as parent_id,
+       $base_start        as startm,
+       $rend              as end,
+       'Antibody='     || cpp.antibody  as atts
+FROM   rad.analysis a,
+       rad.protocol p,
+			 ApidbTuning.ChIPProtocolParams cpp 
+WHERE  a.analysis_id = cpp.analysis_id
+	AND  a.protocol_id = p.protocol_id
+	AND  cpp.experiment_name = $$exp$$
+	AND  p.name = $$protocol$$
+	AND  cpp.protocol_type = 'raw'
+]]>
+    </sql>
+  </sqlQuery>
+
 
   <sqlQuery name="ChIP:Schizont_H3K4me3_H3K9ac" includeProjects="PlasmoDB">
      <sql>
@@ -3375,63 +3421,6 @@ AND    ee.end_max >= $base_start
 AND    p.name = $$protocol$$
 AND    cpp.strain = $$strain$$
 AND    cpp.antibody $$antibody$$
-]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="ChIP_chip:Assay"  includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT e.na_sequence_id  as feature_id,
-       'ChIP_chip'        as type, 
-       '$source'          as source, 
-       e.source_id        as name, 
-       e.source_id        as parent_id, 
-       $base_start        as startm, 
-       $rend              as end
-FROM   DoTS.NASequence e
-WHERE  
-       e.na_sequence_id = $srcfeature_id
-]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="ChIP_chip:AbAssaySub"  includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT e.na_sequence_id||'_'||x.antibody  as feature_id,
-       'ChIP_chip'        as type, 
-       '$source'          as source, 
-       x.antibody         as name, 
-       e.source_id        as parent_id, 
-       $base_start        as startm, 
-       $rend              as end,
-       'Antibody=' || x.antibody as atts
-FROM   DoTS.Nasequence e,
-(       SELECT 'SET8' AS antibody FROM dual
-  UNION SELECT 'TBP1' AS antibody FROM dual
-  UNION SELECT 'TBP2' AS antibody FROM dual
-  UNION SELECT 'RPB9_RNA_pol_II' AS antibody FROM dual
-) x
-WHERE  
-       e.na_sequence_id = $srcfeature_id
-]]>
-    </sql>
-  </sqlQuery>
-
-  <sqlQuery name="ChIP_chip:AbAssay"  includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT e.na_sequence_id  as feature_id,
-       'ChIP_chip'        as type, 
-       '$source'          as source, 
-       e.source_id        as name, 
-       e.source_id        as parent_id, 
-       $base_start        as startm, 
-       $rend              as end
-FROM   DoTS.NASequence e
-WHERE  
-       e.na_sequence_id = $srcfeature_id
 ]]>
     </sql>
   </sqlQuery>
@@ -5062,89 +5051,6 @@ GROUP BY interval
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="ChIP_chip:AbAssaySub:bulksubfeatures"  includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT ee.na_feature_id  as feature_id,
-       'ChIP_sub'         as type,
-       'cpp.antibody'     as source,
-       ee.score           as score,
-       ee.na_sequence_id||'_'||cpp.antibody  as parent_id,
-       ee.start_min       as startm,
-       ee.end_max         as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
-       rad.analysis a,
-       ApidbTuning.ExpressionElement ee,
-       ApidbTuning.ChIPProtocolParams cpp
-WHERE  ee.analysis_id =  cpp.analysis_id
-AND    cpp.protocol_id =  p.protocol_id
-AND    cpp.analysis_id =  a.analysis_id
-AND    ee.na_sequence_id = $srcfeature_id
-AND    ee.start_min <= $rend
-AND    ee.end_max >= $base_start
-AND    p.name = $$protocol$$
-AND    cpp.strain = $$strain$$
-AND    cpp.antibody $$antibody$$
-]]>
-    </sql>
-  </sqlQuery>
-
- <sqlQuery name="ChIP_chip:AbAssay:bulksubfeatures"  includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT ee.na_feature_id   as feature_id,
-       'ChIP_sub'          as type,
-       '$source'           as source,
-       ee.score     as score,
-       ee.na_sequence_id   as parent_id,
-       ee.start_min        as startm,
-       ee.end_max          as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
-       rad.analysis a,
-       ApidbTuning.ExpressionElement ee,
-       ApidbTuning.ChIPProtocolParams cpp
-WHERE  ee.analysis_id =  cpp.analysis_id
-AND    cpp.protocol_id =  p.protocol_id
-AND    cpp.analysis_id =  a.analysis_id
-AND    ee.na_sequence_id = $srcfeature_id
-AND    ee.start_min <= $rend
-AND    ee.end_max >= $base_start
-AND    p.name = $$protocol$$
-AND    cpp.strain = $$strain$$
-AND    cpp.antibody $$antibody$$
-]]>
-    </sql>
-  </sqlQuery>
-  
-  <sqlQuery name="ChIP_chip:Assay:bulksubfeatures"  includeProjects="ToxoDB">
-     <sql>
-<![CDATA[
- SELECT ee.na_feature_id   as feature_id,
-       'ChIP_sub'          as type,
-       '$source'           as source,
-       ee.score     as score,
-       ee.na_sequence_id   as parent_id,
-       ee.start_min        as startm,
-       ee.end_max          as end,
-       'Treatment=' || cpp.treatment || '$dlm' || 'Analysis=' || a.name || '$dlm' || 'Antibody=' || cpp.antibody || '$dlm' || 'Rep=' || cpp.replicate as atts
-FROM   rad.protocol p,
-       rad.analysis a,
-       ApidbTuning.ExpressionElement ee,
-       ApidbTuning.ChIPProtocolParams cpp
-WHERE  ee.analysis_id =  cpp.analysis_id
-AND    cpp.protocol_id =  p.protocol_id
-AND    cpp.analysis_id =  a.analysis_id
-AND    ee.na_sequence_id = $srcfeature_id
-AND    ee.start_min <= $rend
-AND    ee.end_max >= $base_start
-AND    p.name = $$protocol$$
-AND    cpp.strain = $$strain$$
-]]>
-    </sql>
-  </sqlQuery>
-  
   <sqlQuery name="GeneticMarkers:Sibley:bulkAttribute"  includeProjects="ToxoDB">
     <testParamValues project="ToxoDB">
        <param name="srcfeature_id" value="$$na_seq_id_X$$"/>
@@ -5376,6 +5282,72 @@ AND    cpp.protocol_type = 'raw'
    ]]>
     </sql>
   </sqlQuery>
+
+  <sqlQuery name="ChIP:ChIPchipSub_Strain:bulksubfeatures"  includeProjects="ToxoDB">
+     <sql>
+<![CDATA[
+SELECT  ee.na_feature_id   as feature_id,
+       'ChIP'              as type,
+       '$source'           as source,
+        ee.score           as score,
+        p.name  || '_' || cpp.strain as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
+       'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Analysis='     || a.name|| '$dlm' ||
+       'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Rep='          || cpp.replicate || '$dlm' ||
+       'Strain='       || cpp.strain || '$dlm' ||
+       'Genotype='     || cpp.genotype as atts
+FROM   rad.analysis a,rad.protocol p,
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
+WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
+AND    cpp.experiment_name = $$exp$$
+AND    p.name = $$protocol$$
+AND    cpp.protocol_type = 'raw'
+   ]]>
+    </sql>
+  </sqlQuery>
+
+  <sqlQuery name="ChIP:ChIPchipSub_Antibody:bulksubfeatures"  includeProjects="ToxoDB">
+     <sql>
+<![CDATA[
+SELECT  ee.na_feature_id   as feature_id,
+       'ChIP'              as type,
+       '$source'           as source,
+        ee.score           as score,
+        p.name  || '_' || cpp.antibody as parent_id,
+        ee.start_min       as startm,
+        ee.end_max         as end,
+       'ProtocolType=' || cpp.protocol_type|| '$dlm' ||
+       'Analysis='     || a.name|| '$dlm' ||
+       'Antibody='     || cpp.antibody  || '$dlm' ||
+       'Rep='          || cpp.replicate || '$dlm' ||
+       'Strain='       || cpp.strain || '$dlm' ||
+       'Genotype='     || cpp.genotype as atts
+FROM   rad.analysis a,rad.protocol p,
+       ApidbTuning.ExpressionElement ee,
+       ApidbTuning.ChIPProtocolParams cpp
+WHERE  a.analysis_id = cpp.analysis_id
+AND    a.protocol_id = p.protocol_id
+AND    a.analysis_id = ee.analysis_id
+AND    ee.na_sequence_id = $srcfeature_id
+AND    ee.start_min <= $rend
+AND    ee.end_max >= $base_start
+AND    cpp.experiment_name = $$exp$$
+AND    p.name = $$protocol$$
+AND    cpp.protocol_type = 'raw'
+   ]]>
+    </sql>
+  </sqlQuery>
+  
+  
   
 
   <sqlQuery name="ChIP:Schizont_H3K4me3_H3K9ac:bulksubfeatures"  includeProjects="PlasmoDB">
