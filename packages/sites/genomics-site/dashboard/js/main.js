@@ -20,7 +20,7 @@ jQuery(document).ready(function() {
   });
 
   $.ajaxSetup({
-    timeout: 1000 * 60 * 3, // 3 minutes
+    timeout: 1000 * 60 * 1, // 1 minute
     error: function(jqXHR, textStatus, errorThrown) {
       var text;
       if (textStatus == "timeout") {
