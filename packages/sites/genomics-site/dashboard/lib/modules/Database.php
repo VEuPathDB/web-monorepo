@@ -44,7 +44,7 @@ abstract class Database extends JolModule {
     $req = new JolRequest($this->jol_base_url);
     $exec = new JolExecOperation(array(
                 'mbean' => $this->get_mbean(),
-                'operation' => 'refresh',
+                'operation' => 'reload',
             ));
     $req->add_operation($exec);
     $response = $req->invoke();
