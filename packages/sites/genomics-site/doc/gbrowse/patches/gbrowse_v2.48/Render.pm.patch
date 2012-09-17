@@ -6,7 +6,7 @@
    $key     ||= $label;
 -  $key;
 +  # eupathdb patch for callback on key 9/17/2012
-+  $key unless ref $key eq 'CODE';
++  return $key unless ref $key eq 'CODE';
 +  &$key;
  }
  
