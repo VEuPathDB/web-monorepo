@@ -1,0 +1,13 @@
+--- Render.pm.orig	2012-09-17 15:32:37.000000000 -0400
++++ Render.pm	2012-09-17 15:36:51.000000000 -0400
+@@ -3100,7 +3100,9 @@
+   $key     ||= $source->setting($label => 'key');
+   $key     ||= $key if defined $key;
+   $key     ||= $label;
+-  $key;
++  # eupathdb patch for callback on key 9/17/2012
++  $key unless ref $key eq 'CODE';
++  &$key;
+ }
+ 
+ # convert Mb/Kb back into bp... or a ratio
