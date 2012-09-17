@@ -9,12 +9,15 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="sourceId" value="${pkValues['source_id']}" />
 
-<%@ attribute name="organism"
-              description="Restricts output to only this organism"
+<%@ attribute name="species"
+              description="Restricts output to only this species"
 %>
 
+<%@ attribute name="organism"
+              description="Restricts output to only this species"
+%>
 
-<imp:profileGraphs organism="${organism}" tableName="ExpressionGraphs"/>
+<imp:profileGraphs species="${species}" tableName="ExpressionGraphs"/>
 
 <c:if test="${projectId eq 'PlasmoDB'}">
     <imp:plasmoLegacyGraphs organism="${organism}" id="${sourceId}"/>

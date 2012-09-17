@@ -2,8 +2,8 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<%@ attribute name="organism"
-              description="Restricts output to only this organism"
+<%@ attribute name="species"
+              description="Restricts output to only this species"
 %>
 
 <%@ attribute name="tableName"
@@ -16,10 +16,11 @@
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 <c:set var="i" value="0"/>
 
+
 <c:forEach var="row" items="${tbl}">
-     
-                
-  <c:if test="${organism eq row['organism'].value}">
+
+  <c:if test="${species eq row['graph_species'].value && species eq row['species'].value}">
+
 
     <c:set var="name" 		value="${fn:replace(row['module'].value, '::', '')}"/>
     <c:set var="secName" 	value="${row['module'].value}"/>
@@ -59,13 +60,24 @@
         <c:set var="defaultVp" 			value=""/>
        <b>Choose Gene to Display Graphs for</b>
        <br />
-       <c:set var="current_graph_id"            value="${row['default_graph_id'].value}"/>
+
+       <c:set var="selected_graph_id" value="TEMP"/>
+       <c:set var="gi_i" value="0"/>
+
+       <c:forEach var="graph_id" items="${fn:split(row['graph_ids'].value, ',')}">
+            <c:if test="${gi_i == 0}">
+               <c:set var="selected_graph_id" value="${graph_id}"/>
+            </c:if>
+           <c:if test="${graph_id eq row['source_id']}">
+               <c:set var="selected_graph_id" value="${graph_id}"/>
+           </c:if>
+           <c:set var="gi_i" value="${gi_i + 1}"/>
+       </c:forEach>
+
        <c:forEach var="graph_id" items="${fn:split(row['graph_ids'].value, ',')}">
 
-          <c:set var="gi_i" 			value="0"/> 
-           
           <c:choose>
-            <c:when test="${graph_id eq row['default_graph_id'].value}">
+            <c:when test="${graph_id eq selected_graph_id}">
             <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}" name="geneOptions" checked /> &nbsp;
                         
                          <c:set var="imgSrc" 		value="${imgSrc}&id=${graph_id}"/>
@@ -76,31 +88,22 @@
             <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}"name="geneOptions" /> &nbsp;
             </c:otherwise>
           </c:choose>
-          <c:set var="gi_i" value="${gi_i +  1}"/>
-
-          <c:if test="${gi_i % 3 == 0}">
-            <br /><br />
-          </c:if>
           
         </c:forEach>
+
         <br/ >
 
-        <c:choose>
-           <c:when test="${row['source_id'].value eq row['default_graph_id'].value}">
-             <c:choose>
-                <c:when test="${row['source_id'].value eq current_graph_id}">
-                    <div id="${textId}"  class="coloredtext" style="display:none">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
-                </c:when>
-                <c:otherwise>
-                    <div id="${textId}"  class="coloredtext">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
-                </c:otherwise>
-              </c:choose>
+           <c:choose>
+           <c:when test="${row['source_id'].value eq selected_graph_id}">
+                    <div id="${textId}"  class="coloredtext"></div>
            </c:when>
            <c:otherwise>
-             <div id="NoDataText" class="coloredtext">Warning: ${row['source_id']} does not have data for this experiment.</div><div id="${textId}"  class="coloredtext">The Data and Graphs you are viewing are for syntentic gene : ${current_graph_id}</div>
+                    <div id="${textId}"  class="coloredtext">WARNING:  This Gene (${row['source_id'].value}) does not have data for this graph.  Instead, we are showing data for the selected Gene (${selected_graph_id}) which was discovered to be in the same gene group.  This may or may NOT accurately represent the gene you are interested in.</div>
            </c:otherwise>
-        </c:choose>
+           </c:choose>
+
 <br /><br />
+
         		<b>Choose Graph(s) to Display</b><br />
         <c:set var="VisibleParts" value="${fn:split(row['visible_parts'].value,',')}"/>
         <c:set var="numVisibleParts" value="0"/>    
@@ -129,7 +132,9 @@
             </c:otherwise>
           </c:choose>
           <c:set var="vp_i" value="${vp_i +  1}"/>
-          <c:choose>
+ 
+
+         <c:choose>
             <c:when test="${numVisibleParts % 3 == 0}">
                <c:if test="${vp_i % 3 == 0}">
                  <br />
@@ -158,7 +163,6 @@
             <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" />
           </c:if>
         </c:if>
-
 
       </form>
 
@@ -219,7 +223,7 @@
 
 <%-- END OF SETTING VARIABLES ---%>
 
-    <c:if test="${row['has_profile'].value eq '0'}">
+    <c:if test="${row['has_graph_data'].value eq '0'}">
     	<c:set var="profileContent" 	value="none"/>
     	<c:set var="noData" 		value="true"/>
 
@@ -246,7 +250,7 @@
     imageId="${imgId}"
     imageSource="${imgSrc}" />				
 
-  </c:if>  	<%-- test="${organism eq row['organism'].value}" --%>
+  </c:if>
   <c:set var="i" value="${i +  1}"/>      
 </c:forEach>  	<%-- var="row" items="${tbl}" --%>
 
@@ -277,8 +281,7 @@ function formatResourceUrl(url, myForm) {
 }
 
 function updateText(id,sourceId,geneId,myForm) {
-   var myText = 'The Data and Graphs you are viewing are for syntentic gene : ';
-   myText = myText + geneId;
+   var myText = 'The Data and Graphs you are viewing are for an alternative gene in the gene group.   This may or may NOT accurately represent the gene you are interested in.';
    document.getElementById(id).innerHTML = myText;
    if (sourceId == geneId) {
        document.getElementById(id).style.display="none";
