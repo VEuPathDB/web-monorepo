@@ -551,7 +551,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
 <imp:pageDivider name="Expression"/>
-  <imp:expressionGraphs organism="${organismFull}"/>
+
+  <imp:expressionGraphs species="${binomial}"/>
 
 
 <%---- Splice Sites table ---------------------------------------------%>

@@ -355,7 +355,7 @@ GO,InterproscanData
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
   <imp:pageDivider name="Expression"/>
-  <imp:expressionGraphs organism="${organism_full}"/>
+  <imp:expressionGraphs species="${binomial}"/>
 
 </c:if>
 

@@ -302,7 +302,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 
 
-<c:if test="${species eq 'falciparum3D7' || species eq 'vivax'}">
+<c:if test="${species eq 'falciparum3D7_' || species eq 'vivax_'}">
     <!-- imp:wdkTable tblName="SNPs" isOpen="false"
                attribution="" -->
 Disabled for Redmine 10225 
@@ -690,7 +690,7 @@ Disabled for Redmine 10225
 <c:if test="${attrs['hasExpression'].value eq '1'}">
   <imp:pageDivider name="Expression"/>
 
-  <imp:expressionGraphs organism="${organismFull}"/>
+  <imp:expressionGraphs organism="${organismFull}" species="${binomial}"/>
 
 
 <c:if test="${species eq 'falciparum3D7'}">

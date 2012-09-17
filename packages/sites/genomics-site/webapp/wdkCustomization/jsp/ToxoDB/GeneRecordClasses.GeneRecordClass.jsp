@@ -454,7 +454,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 <imp:pageDivider name="Expression"/>
 
  <%-- ------------------------------------------------------------------ --%>
-     <imp:expressionGraphs organism="${organism_full}"/>
+
+     <imp:expressionGraphs species="${genus_species}"/>
  <%-- ------------------------------------------------------------------ --%>
 
 </c:if>

@@ -368,7 +368,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/piroplasmadbaa/?nam
 <c:if test="${attrs['hasExpression'].value eq '1'}">
   <imp:pageDivider name="Expression"/>
 
-  <imp:expressionGraphs organism="${organismFull}"/>
+  <imp:expressionGraphs species="${binomial}"/>
 </c:if>
 
 <imp:pageDivider name="Sequences"/>
