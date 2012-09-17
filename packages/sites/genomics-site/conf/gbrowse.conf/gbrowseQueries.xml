@@ -2329,7 +2329,7 @@ GROUP BY g3.parent_attr, g3.na_sequence_id, g3.is_reversed
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="gene:OldModels" includeProjects="PlasmoDB">
+  <sqlQuery name="gene:OldModels" includeProjects="PlasmoDB,ToxoDB">
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id,
@@ -4761,7 +4761,7 @@ ORDER BY
     </sql>
   </sqlQuery>
   
-  <sqlQuery name="gene:OldModels:bulksubfeatures" includeProjects="PlasmoDB">
+  <sqlQuery name="gene:OldModels:bulksubfeatures" includeProjects="PlasmoDB,ToxoDB">
   <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id,
