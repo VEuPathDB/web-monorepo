@@ -20,8 +20,25 @@ umask 0;
 sub new {
   my $class = shift;
   my $self  = { track_no => 0 };
+
+  my $projectId = $ENV{PROJECT_ID};
+  my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
+  my $dsn = ApiCommonWebsite::Model::DbUtils->resolveOracleDSN($c->appDb->dbiDsn);
+  my $user = $c->appDb->login;
+  my $pass = $c->appDb->password;
+  my $dbh = DBI->connect( $dsn, $user, $pass)
+        or $self->throw("unable to open db handle");
   bless ($self, $class);
+  $self->dbh($dbh);
+  $self->{dbh}{InactiveDestroy} = 1;
   return $self;
+}
+
+sub dbh {
+  my $self = shift;
+
+  return $self->{'dbh'} = shift if @_; 
+  return $self->{'dbh'};
 }
 
 sub init {
@@ -30,13 +47,13 @@ sub init {
   my $docRoot = $ENV{DOCUMENT_ROOT};
   my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
   my $resolvedDsn = ApiCommonWebsite::Model::DbUtils->resolveOracleDSN($c->appDb->dbiDsn);
-  { -sqlfile => $docRoot .'/../conf/gbrowse.conf/' . $file,
-      -dsn     => $resolvedDsn,
-        -user    => $c->appDb->login,
-          -pass    => $c->appDb->password,
-            -projectId => $projectId,
-	      -docroot => $docRoot
-          }
+  { -sqlfile   => $docRoot .'/../conf/gbrowse.conf/' . $file,
+    -dsn       => $resolvedDsn,
+    -user      => $c->appDb->login,
+    -pass      => $c->appDb->password,
+    -projectId => $projectId,
+    -docroot   => $docRoot
+  }
 }
 
 sub userDB {
@@ -171,5 +188,16 @@ sub myheader {
 sub mypostgrid { 
   return DAS::Util::SynView::postgridGB2(@_);
 } 
+
+sub wdkReference {
+  my ($self,$extdb, $key) = @_;
+
+  my $sql = "SELECT t.name, t.value FROM ApiDB.DataSource d, ApidbTuning.DataSourceWdkRefText t, apidbtuning.datasourcewdkreference w where d.data_source_id = w.data_source_id and w.target_type='gbrowse_track' and d.name='$extdb' and w.data_source_id = t.data_source_id and t.name = '$key' ";
+  my $sth = $self->{dbh}->prepare($sql);
+  $sth->execute() or $self->throw($sth->errstr);
+  while (my ($name, $value)  = $sth->fetchrow_array) {
+    return "$value";
+  }
+}
 
 1;
