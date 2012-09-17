@@ -543,7 +543,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
                attribution="" postscript="${geneDbLink}"/>
 
 
-<imp:profileGraphs organism="${organismFull}" tableName="PhenotypeGraphs"/>
+<imp:profileGraphs species="${binomial}" tableName="PhenotypeGraphs"/>
 
 </c:if>
 
