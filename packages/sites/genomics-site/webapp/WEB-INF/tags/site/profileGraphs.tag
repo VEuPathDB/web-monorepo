@@ -24,16 +24,8 @@
 
     <c:set var="name" 		value="${fn:replace(row['module'].value, '::', '')}"/>
     <c:set var="secName" 	value="${row['module'].value}"/>
-          <c:if test="${fn:contains(vp, 'rma')}">
-            <c:set var="hasRma" value="true"/>
-          </c:if>
-          <c:if test="${fn:contains(vp, 'coverage')}">
-            <c:set var="hasCoverage" value="true"/>
-          </c:if>
 
           <c:set var="baseUrlWithArgs" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}"/>
-
-
     
     <c:set var="imgId" value="img${secName}_${i}"/>    
     <c:set var="preImgSrc" value="${baseUrlWithArgs}&fmt=png"/>
@@ -149,17 +141,17 @@
            
           
         </c:forEach>
-       
-       <br /> <br />
+              <br /> <br />
+
               
         <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB' || row['project_id'].value eq 'MicrosporidiaDB' || row['project_id'].value eq 'PiroplasmaDB' || row['project_id'].value eq 'CryptoDB' || row['project_id'].value eq 'ToxoDB'}">
           <c:if test="${hasRma eq 'true'}">
-            <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
+            <b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b>
             <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" checked />
           </c:if>
 
           <c:if test="${hasCoverage eq 'true'}">
-            <br /><br /><b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b><br />
+            <b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b>
             <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" />
           </c:if>
         </c:if>
