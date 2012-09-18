@@ -1262,7 +1262,7 @@ SELECT
        location as startm, location as end, 
        CASE WHEN (NOT dist_to_cds = utr_len) 
                THEN  source_id || '-' ||  utr_len || '*(' || count_per_million || ')' || ' Alternate CDS Start'
-            WHEN (dist_to_cds = utr_len AND within_cds=0) THEN  source_id ||  utr_len || '(' || count_per_million || ')'
+            WHEN (dist_to_cds = utr_len AND within_cds=0) THEN  source_id || '-' || utr_len || '(' || count_per_million || ')'
             ELSE  source_id || '-' ||  'within gene' || '(' || count_per_million || ')' END AS name, 
        strand as strand, 
        'sample_name='|| sample_name || '$dlm' ||
