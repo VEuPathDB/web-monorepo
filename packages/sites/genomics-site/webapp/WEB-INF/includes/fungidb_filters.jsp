@@ -169,6 +169,7 @@
   <tr>
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
+    <th colspan=1 align="center"><i>Agaricomycetes</i></th>
     <th colspan=6 align="center"><i>Basidiomycota</i></th>
     <th colspan=8 align="center"><i>Eurotiomycetes</i></th>
     <th colspan=8 align="center"><i>Sordariomycetes</i></th>
@@ -177,6 +178,7 @@
     <th colspan=6 align="center"><i>Oomycetes</i></th>
   </tr>
   <tr>
+    <th><i>C.cin</i></th>
     <th><i>C.gat</i> WM276</th>
     <th><i>C.gat</i> R265</th>
     <th><i>C.neo</i> H99</th>
@@ -221,6 +223,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_ortholog_groups" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="ccin_genes" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
