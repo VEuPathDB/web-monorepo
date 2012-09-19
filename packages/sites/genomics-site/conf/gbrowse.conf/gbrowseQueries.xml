@@ -2829,7 +2829,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.start_min <= $rend
   AND  fl.start_min >= $base_start
   AND  fl.na_feature_id = sa.na_feature_id
-  AND  sa.dataset = 'Genetic Markers - David Sibley'
+  AND  sa.dataset = 'tgonME49_SNP_Sibley_Tg10x_31_gff_RSRC'
 ]]>
     </sql>
   </sqlQuery>
