@@ -239,8 +239,8 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
     <th class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pbe</i></th>
     <th class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pch</i></th>
-    <th class="mythStyle" title="Plasmodium falciparum 3D7, PlasmoDB"><i>Pfa3</i></th>
-    <th class="mythStyle" title="Plasmodium falciparum IT, PlasmoDB"><i>PfaI</i></th>
+    <th class="mythStyle" title="Plasmodium falciparum 3D7, PlasmoDB"><i>Pfa3D7</i></th>
+    <th class="mythStyle" title="Plasmodium falciparum IT, PlasmoDB"><i>PfaIT</i></th>
     <th class="mythStyle" title="Plasmodium knowlesi, PlasmoDB"><i>Pko</i></th>
     <th class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pvi</i></th>
     <th  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Pyo</i></th>
