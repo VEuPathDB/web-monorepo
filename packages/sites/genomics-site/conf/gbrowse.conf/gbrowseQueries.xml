@@ -2852,7 +2852,7 @@ FROM   dots.seqVariation sv, ApidbTuning.FeatureLocation l,
        sres.EXTERNALDATABASERELEASE edr, sres.EXTERNALDATABASE ed
 WHERE  sv.external_database_release_id = edr.external_database_release_id and
        edr.external_database_id = ed.external_database_id and
-       ed.name = 'Genetic Markers - David Sibley'
+       ed.name = 'tgonME49_SNP_Sibley_Tg10x_31_gff_RSRC'
  AND   l.na_sequence_id = $srcfeature_id
  AND  sv.na_feature_id=l.na_feature_id
 ]]>
