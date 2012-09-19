@@ -563,7 +563,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
      <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
 </c:if>
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC"/>
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC,Tbrucei_RNASeq_Spliced_Leader_Sites_Tschudi_RSRC"/>
 </c:if>
 <%--- Not ready for build 14
 <c:if test="${binomial eq 'Trypanosoma cruzi'}">
@@ -575,7 +575,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <c:if test="${binomial eq 'Leishmania major' }">
      <imp:wdkTable tblName="PolyASites" isOpen="false" attribution="Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
 </c:if>
-
+<c:if test="${binomial eq 'Trypanosoma brucei'}">
+     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution="Tbrucei_RNASeq_PolyA_Sites_Tschudi_RSRC"/>
+</c:if>
 
 <%-- SAGE Tag table ------------------------------------------------------%>
 <c:if test="${binomial eq 'Trypanosoma brucei' }">
