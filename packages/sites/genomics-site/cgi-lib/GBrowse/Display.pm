@@ -205,8 +205,10 @@ sub rumIntronBgColorFromSample {
                 'hour2'  => '#D4A017', # gold
                 'hour4'  => '#C68E17', # goldenrod3
                 'hour8'  => '#AF7817', # dark goldenrod
-                'hour16' => '#E56717', # dark orange2
+                'hour16' => '#F87217', # dark orange1
+                'hour33' => '#E56717', # dark orange2
                 'hour44' => '#C35617', # dark orange3
+                'bradyzoite' => '#7E3817', # salmon4 
                 # toxo ncanLIV_Gregory_Brian_rnaSeq_RSRC
                 'mRNA'  => '806517',  # gold 4
                 'ncRNA' => '805817',  # goldenrod4
@@ -225,7 +227,7 @@ sub rumIntronBgColorFromSample {
     }
     return $color;
   }
-  return 'yellow'; 
+  return '#F87431';  # Sienna1
 } 
 
 sub rumIntronBgColorUnified {
