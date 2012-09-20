@@ -194,8 +194,6 @@ sub rumIntronBgColorFromSample {
                 'Hour30' => 'maroon',
                 'Hour35' => 'sandybrown',
                 'Hour40' => 'sienna',
-                'day3' => 'seagreen',
-                'day4' => 'darkkhaki',
                 'NCmRNA' => 'green',
                 'VEGmRNA' => 'maroon',
                 'Lane6' => 'maroon',
@@ -212,6 +210,11 @@ sub rumIntronBgColorFromSample {
                 # toxo ncanLIV_Gregory_Brian_rnaSeq_RSRC
                 'mRNA'  => '806517',  # gold 4
                 'ncRNA' => '805817',  # goldenrod4
+                # toxo 
+                'day0'  => '#4E9258', # forest green
+                'day3'  => '#347C2C', # spring green4
+                'day4'  => '#387C44', # sea green4
+                'day10' => '#254117', # dark green
                 );  
 
   my ($sample) = $f->get_tag_values('Sample'); 
