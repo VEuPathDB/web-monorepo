@@ -216,7 +216,7 @@ ${headElement}
 <div id="header2">
    <div style="width:518px;" id="header_rt">
 
-   <div align="right"><div id="toplink">
+   <div id="toplink">
    <c:if test="${project == 'TriTrypDB'}">
      <map name="partof">
      <area shape=rect coords="0,0 172,22" href="http://eupathdb.org" alt="EuPathDB home page">
@@ -236,7 +236,7 @@ ${headElement}
      <a href="http://eupathdb.org"><img src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
    </c:otherwise>
    </c:choose>
-   </div></div>
+   </div>
        
    <div id="facebook-link" style="display:none">https://facebook.com/${facebook}</div>
    <div id="twitter-link" style="display:none">http://twitter.com/${twitter}</div>
