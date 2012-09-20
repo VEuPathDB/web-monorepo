@@ -203,12 +203,15 @@ sub rumIntronBgColorFromSample {
                 'RHncRNA' => 'yellow',
                 'NCncRNA' => 'maroon', 
                 'OocystmRNA' => 'green', 
-                #tgonME49_Gregory_VEG_mRNA_rnaSeq_RSRC
+                # toxo tgonME49_Gregory_VEG_mRNA_rnaSeq_RSRC
                 'hour2'  => '#D4A017', # gold
                 'hour4'  => '#C68E17', # goldenrod3
                 'hour8'  => '#AF7817', # dark goldenrod
                 'hour16' => '#E56717', # dark orange2
                 'hour44' => '#C35617', # dark orange3
+                # toxo ncanLIV_Gregory_Brian_rnaSeq_RSRC
+                'mRNA'  => '806517',  # gold 4
+                'ncRNA' => '805817',  # goldenrod4
                 );  
 
   my ($sample) = $f->get_tag_values('Sample'); 
