@@ -2704,7 +2704,7 @@ WHERE  fl.na_sequence_id = $srcfeature_id
   AND  fl.start_min <= $rend
   AND  fl.start_min >= $base_start
   AND  fl.na_feature_id = sa.na_feature_id
-  AND  sa.dataset =  'Genomic Sequence SNPs'
+  AND  sa.dataset =  'tgonME49_SNP_Amit_nucmer_gff_RSRC'
 ]]>
     </sql>
   </sqlQuery>
@@ -5501,7 +5501,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
   AND fl.start_min >= $base_start
   AND fl.feature_type = 'SnpFeature'
   AND fl.na_feature_id = sa.na_feature_id
-  AND sa.dataset = 'Genomic Sequence SNPs'
+  AND sa.dataset = 'tgonME49_SNP_Amit_nucmer_gff_RSRC'
   AND var.parent_id = fl.na_feature_id
  ORDER BY var.strain
  
