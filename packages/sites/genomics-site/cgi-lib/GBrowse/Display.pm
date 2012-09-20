@@ -203,6 +203,12 @@ sub rumIntronBgColorFromSample {
                 'RHncRNA' => 'yellow',
                 'NCncRNA' => 'maroon', 
                 'OocystmRNA' => 'green', 
+                #tgonME49_Gregory_VEG_mRNA_rnaSeq_RSRC
+                'hour2'  => '#D4A017', # gold
+                'hour4'  => '#C68E17', # goldenrod3
+                'hour8'  => '#AF7817', # dark goldenrod
+                'hour16' => '#E56717', # dark orange2
+                'hour44' => '#C35617', # dark orange3
                 );  
 
   my ($sample) = $f->get_tag_values('Sample'); 
@@ -224,6 +230,7 @@ sub rumIntronBgColorUnified {
   return '#FDD017' if $sum <= 5;   # Gold1
   return '#F88017' if $sum <= 20;  # Dark Orange
   return '#C35617' if $sum <= 100; # Dark Orange3
+  return '#8A4117' if $sum <= 200; # Sienna
   return '#7E3517';   # Sienna4 
 }
 
@@ -348,11 +355,13 @@ sub colorByRnaSeq {
 
   # pos strand multiple align = lightblue
   if($isReversed eq '0' && $multiple eq '1') {
-    return 'mediumslateblue';
+    #return 'mediumslateblue';
+    return 'orange';
   }
   # neg strand multiple align = pink
   if($isReversed eq '1' && $multiple eq '1') {
-    return 'hotpink';
+    #return 'hotpink';
+    return 'peru';
   }
 
   if($multiple eq '0' && $optColor) {
@@ -361,7 +370,8 @@ sub colorByRnaSeq {
 
   # multiple aligners w/o strand info
   if($multiple eq '1' || $score < 0) {
-    return 'lightslategray';
+    #return 'lightslategray';
+    return 'wheat';
   }
 
   return 'black';
