@@ -859,20 +859,31 @@ sub rumIntronTitleUnified {
   my ($exps) = $f->get_tag_values('Exps');
   my $start = $f->start;
   my $stop = $f->stop;
-  my $sum = eval join '+', split /,/, $scores;
+  my $sum = eval join '+', split /[,|\|]/, $scores;
 
-  my @sample_arr = split /,/, $samples;
-  my @score_arr  = split /,/, $scores;
-  my @exp_arr    = split /,/, $exps;
+  my @sample_arr = split /\|/, $samples;
+  my @score_arr  = split /\|/, $scores;
+  my @exp_arr    = split /\|/, $exps;
   my $count = 0;
   my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th></tr>";
-  foreach (@sample_arr) {
+  foreach my $exp (@exp_arr) {
+     my $sample = $sample_arr[$count];
      my $score = $score_arr[$count];
-     my $exp = $exp_arr[$count];
      $exp =~ s/_RSRC$//g;
      $exp =~ s/RNASeq//ig;
      $exp =~ s/_/ /g;
-     $html .= "<tr><td>$exp</td><td>$_</td><td>$score</td></tr>";
+
+     my @sa = split /,/, $sample;
+     my @sc = split /,/, $score;
+     my $seen = 0;
+     for(my $i = 0; $i < $#sa + 1; $i++) {
+       if($seen == 0) {
+         $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$sc[$i]</td></tr>"; 
+       } else {
+         $html .= "<tr><td></td><td>$sa[$i]</td><td>$sc[$i]</td></tr>"; 
+       }
+       $seen = 1;
+     }
      $count++;
   }
   $html .= "</table>";
