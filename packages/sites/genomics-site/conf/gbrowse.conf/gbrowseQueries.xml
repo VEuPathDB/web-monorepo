@@ -402,6 +402,13 @@ ORDER BY
 SELECT feature_id, type, source, parent_id, startm, end,
 'Samples=' || listagg(samples, '|') within group (order by db_name) || '$dlm' ||
 'Exps=' || listagg(db_name, '|') within group (order by db_name) || '$dlm' ||
+'Subtrack=' || 
+    CASE WHEN sum(sum_exp_score) > 100 THEN '100'
+         WHEN sum(sum_exp_score) > 50 THEN '50'
+         WHEN sum(sum_exp_score) > 20 THEN '20'
+         WHEN sum(sum_exp_score) > 5 THEN '5'
+         ELSE '1'
+         END || '$dlm' ||
 'Scores=' || listagg(scores, '|') within group (order by db_name) atts
 FROM (
       SELECT rif.mapping_start || '_' || rif.mapping_end as feature_id,
@@ -410,6 +417,7 @@ FROM (
              na_sequence_id parent_id, 
              mapping_start startm, 
              mapping_end end, 
+             sum(score) as sum_exp_score,
              edb.name as db_name, 
              listagg(rif.sample_name, ',') within group (order by rif.sample_name) as samples,
              listagg(score, ',') within group (order by rif.sample_name) scores
