@@ -399,28 +399,16 @@ ORDER BY
   <sqlQuery name="rum:intronunified" includeProjects="PlasmoDB,ToxoDB,FungiDB">
      <sql>
      <![CDATA[
-SELECT feature_id, type, source, parent_id, startm, end,
-'Samples=' || listagg(samples, '|') within group (order by db_name) || '$dlm' ||
-'Exps=' || listagg(db_name, '|') within group (order by db_name) || '$dlm' ||
-'Subtrack=' || 
-    CASE WHEN sum(sum_exp_score) > 100 THEN '100'
-         WHEN sum(sum_exp_score) > 50 THEN '50'
-         WHEN sum(sum_exp_score) > 20 THEN '20'
-         WHEN sum(sum_exp_score) > 5 THEN '5'
-         ELSE '1'
-         END || '$dlm' ||
-'Scores=' || listagg(scores, '|') within group (order by db_name) atts
-FROM (
       SELECT rif.mapping_start || '_' || rif.mapping_end as feature_id,
              'rum' type, 
              '$source' source, 
              na_sequence_id parent_id, 
              mapping_start startm, 
              mapping_end end, 
-             sum(score) as sum_exp_score,
-             edb.name as db_name, 
-             listagg(rif.sample_name, ',') within group (order by rif.sample_name) as samples,
-             listagg(score, ',') within group (order by rif.sample_name) scores
+            'Samples=' || apidb.tab_to_string(set(cast(COLLECT(rif.sample_name ||'') AS apidb.varchartab)),',') || '$dlm' ||
+            'Exps=' || apidb.tab_to_string(set(cast(COLLECT(edb.name ||'') AS apidb.varchartab)),',') || '$dlm' ||
+            'Count=' || count(mapping_start) || '$dlm' ||
+            'Scores=' || apidb.tab_to_string(set(cast(COLLECT(score ||'') AS apidb.varchartab)),',') atts
       FROM   apidb.RUMIntronFeature rif, 
              sres.externaldatabase edb,
              sres.externaldatabaserelease edbr 
@@ -432,10 +420,8 @@ FROM (
          --AND known_intron = 1 
          AND rif.external_database_release_id = edbr.external_database_release_id 
          AND edb.external_database_id = edbr.external_database_id 
-      GROUP BY rif.mapping_start, mapping_end, edb.name, na_sequence_id
-  )
-      GROUP BY feature_id, type, source, parent_id,startm, end
-      ORDER BY startm
+      GROUP BY rif.mapping_start, mapping_end, na_sequence_id 
+      ORDER BY rif.mapping_start
     ]]>
     </sql>
   </sqlQuery>
@@ -859,7 +845,7 @@ SELECT
               END) || 
         'ExtDBName=' || database_name || '$dlm' ||
         'SynType=' || 'contig' ||  '$dlm' ||
-  'Scale=1' ||  '$dlm' ||
+	'Scale=1' ||  '$dlm' ||
         'Taxon=' || organism atts
  FROM 
        ApidbTuning.SequenceAttributes sa
@@ -3022,12 +3008,12 @@ WHERE
        'Strain='     || cpp.strain  as atts
 FROM   rad.analysis a,
        rad.protocol p,
-       ApidbTuning.ChIPProtocolParams cpp 
+			 ApidbTuning.ChIPProtocolParams cpp 
 WHERE  a.analysis_id = cpp.analysis_id
-  AND  a.protocol_id = p.protocol_id
-  AND  cpp.experiment_name = $$exp$$
-  AND  p.name = $$protocol$$
-  AND  cpp.protocol_type = 'raw'
+	AND  a.protocol_id = p.protocol_id
+	AND  cpp.experiment_name = $$exp$$
+	AND  p.name = $$protocol$$
+	AND  cpp.protocol_type = 'raw'
 ]]>
     </sql>
   </sqlQuery>
@@ -3045,12 +3031,12 @@ WHERE  a.analysis_id = cpp.analysis_id
        'Antibody='     || cpp.antibody  as atts
 FROM   rad.analysis a,
        rad.protocol p,
-       ApidbTuning.ChIPProtocolParams cpp 
+			 ApidbTuning.ChIPProtocolParams cpp 
 WHERE  a.analysis_id = cpp.analysis_id
-  AND  a.protocol_id = p.protocol_id
-  AND  cpp.experiment_name = $$exp$$
-  AND  p.name = $$protocol$$
-  AND  cpp.protocol_type = 'raw'
+	AND  a.protocol_id = p.protocol_id
+	AND  cpp.experiment_name = $$exp$$
+	AND  p.name = $$protocol$$
+	AND  cpp.protocol_type = 'raw'
 ]]>
     </sql>
   </sqlQuery>
