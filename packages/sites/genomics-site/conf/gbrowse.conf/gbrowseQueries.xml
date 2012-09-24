@@ -1706,6 +1706,7 @@ ORDER BY f.startm
 <![CDATA[
 select f.feature_id, f.type, f.source, f.feature_id name, f.parent_id, f.startm, f.end,
 'sequence=' || substr(s.sequence, f.startm, f.end - f.startm + 1) || '$dlm' ||
+'alignLength=' || ( f.end - f.startm + 1) || '$dlm' ||
 'sequence_id=' || s.source_id atts
 from dots.nasequence s, (
 
