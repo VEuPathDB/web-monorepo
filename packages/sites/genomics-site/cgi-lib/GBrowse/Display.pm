@@ -194,6 +194,15 @@ sub rumIntronBgColorFromSample {
                 'Hour30' => 'maroon',
                 'Hour35' => 'sandybrown',
                 'Hour40' => 'sienna',
+                # pfal3D7_Su_seven_stages_rnaSeq_RSRC
+                'earlyTroph'   => '#F87217',  # dark oragne1
+                'gametocyteII' => '#E56717',  # dark orange2
+                'gametocyteV'  => '#C35617',  # dark orange3
+                'lateTroph'    => '#8A4117',  # sienna
+                'ookinete'     => '#7E3517',  # sienna4
+                'ring'         => '#7E3817',  # salmon4
+                'schizont'     => '#C34A2C',  # coral3
+                # misc others
                 'NCmRNA' => 'green',
                 'VEGmRNA' => 'maroon',
                 'Lane6' => 'maroon',
