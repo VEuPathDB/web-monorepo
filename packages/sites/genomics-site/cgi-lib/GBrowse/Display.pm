@@ -758,6 +758,19 @@ sub cghBgcolor {
  }
 
 
+# used to flag (in red) cosmids that whose length suggests misassembly
+# (anything outside the range of 35-45 kb
+sub alignmentConnectColor {
+  my $f = shift;
+  my ($len) = $f->get_tag_values('alignLength');
+
+  if ( ($len >= 35000) && ($len <= 45000) ) {
+    return 'navy';
+  } else {
+    return 'red';
+  }
+}
+
 
 #--------------------------------------------------------------------------------
 #  Methods For Height
