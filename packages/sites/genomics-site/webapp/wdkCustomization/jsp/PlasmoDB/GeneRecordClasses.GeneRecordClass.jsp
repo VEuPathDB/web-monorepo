@@ -80,8 +80,11 @@
   <c:when test="${fn:contains(organism,'vivax')}">
     <c:set var="species" value="vivax"/>
   </c:when>
-  <c:when test="${fn:contains(organism,'yoelii')}">
+  <c:when test="${fn:contains(organism,'yoelii 17XNL')}">
     <c:set var="species" value="yoelii"/>
+  </c:when>
+  <c:when test="${fn:contains(organism,'yoelii YM')}">
+    <c:set var="species" value="yoeliiYM"/>
   </c:when>
   <c:when test="${fn:contains(organism,'falciparum 3D7')}">
     <c:set var="species" value="falciparum3D7"/>
@@ -97,6 +100,9 @@
   </c:when>
   <c:when test="${fn:contains(organism,'knowlesi')}">
     <c:set var="species" value="knowlesi"/>
+  </c:when>
+  <c:when test="${fn:contains(organism,'cynomolgi')}">
+    <c:set var="species" value="cynomolgi"/>
   </c:when>
   <c:otherwise>
     <b>ERROR: setting species for organism "${organism}"</b>
@@ -516,19 +522,9 @@ Disabled for Redmine 10225
        BoothroydPhosphoMassSpecPeptides+TobinPhosphoMassSpecPeptides+FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfClinicalMassSpecPeptides+PfBowyerMassSpecPeptides+VossMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
      </c:set>
   </c:if>
-  <c:if test="${species eq 'falciparumIT'}">
-      <c:set var="ptracks"> 
-        InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
-     </c:set>
-  </c:if>
   <c:if test="${species eq 'berghei'}">
       <c:set var="ptracks"> 
         WatersMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
-     </c:set>
-  </c:if>
-  <c:if test="${species eq 'chabaudi'}">
-      <c:set var="ptracks"> 
-        InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
      </c:set>
   </c:if>
   <c:if test="${species eq 'yoelii'}">
@@ -541,11 +537,12 @@ Disabled for Redmine 10225
        PvClinicalMassSpecPeptides+CuiMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
     </c:set>
   </c:if>
-  <c:if test="${species eq 'knowlesi'}">
+  <c:if test="${species eq 'chabaudi' || species eq 'cynomolgi' || species eq 'falciparumIT' || species eq 'knowlesi' || species eq 'yoeliiYM'}">
       <c:set var="ptracks"> 
         InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
      </c:set>
   </c:if>
+
 
   <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
   <c:set var="proteinFeaturesUrl">
