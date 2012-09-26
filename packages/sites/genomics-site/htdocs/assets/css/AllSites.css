@@ -842,9 +842,8 @@ div#menu ul ul ul li:hover ul {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOR QUERY GRID
+	 =QUERY GRID
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 #queryGrid td {
 	padding: 1px;
@@ -896,7 +895,7 @@ td.lines2, #queryGrid td.lines2 {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ABOUT US and HELP PAGES SIDEBAR
+	 =SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #leftcolumn {
@@ -905,24 +904,27 @@ td.lines2, #queryGrid td.lines2 {
 	margin-left: -100%;
 }
 
-#rightcolumn { /* Not needed? */
-	float: left;
-	width: 25px; /*Width of right column*/
-	margin-left: -25px; /*Set left marginto -(RightColumnWidth)*/
-}
-
-/* used by sidebar */
 .innertube3{
 	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
 
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =UNUSED? comment out before delete: Sep 26 2012
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
+#rightcolumn { 
+	float: left;
+	width: 25px; /*Width of right column*/
+	margin-left: -25px; /*Set left marginto -(RightColumnWidth)*/
+}
+
 .twoColHybLt #container_au { 
-	width: 100%;  /* this will create a container 100% of the browser width */
+	width: 100%; 
 	background-color: #FFFFFF;
-	margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+	margin: 0 auto; 
 	border: 1px solid #000000;
-	text-align: left; /* this overrides the text-align: center on the body element. */
+	text-align: left;
 } 
 
 .twoColHybLt #sidebar1 {
@@ -930,22 +932,24 @@ td.lines2, #queryGrid td.lines2 {
 	width: 12em;
 	color: #FFFFFF;
 	background-repeat: repeat-y;
-	padding: 15px 0; /* top and bottom padding create visual space within this div  */
+	padding: 15px 0;
 }
 
 .twoColHybLt #sidebar1 h3, .twoColHybLt #sidebar1 p {
-	margin-left: 10px; /* the left and right margin should be given to every element that will be placed in the side columns */
+	margin-left: 10px; 
 	margin-right: 10px;
 }
 
 .twoColHybLt #mainContent { 
-	margin: 0 20px 0 13em; /* the right margin can be given in percentages or pixels. It creates the space down the right side of the page. */
+	margin: 0 20px 0 13em; 
 } 
+*/
 
 
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Generic  ==> move to wdkCommon.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
-/* Miscellaneous classes for reuse */
 .fltrt { /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
 	float: right;
 	margin-left: 8px;
@@ -963,19 +967,9 @@ td.lines2, #queryGrid td.lines2 {
     line-height: 0px;
 }
 
-/* To be placed with the <head>
-<!--[if lt IE 7]>
-<style type="text/css"> 
-.twoColHybLt #sidebar1 { padding-top: 30px; }
-.twoColHybLt #mainContent { zoom: 1; padding-top: 15px; }
-</style>
-<![endif]-->
-*/
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WARNING BOXES 
+	 =WARNING BANNERS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .announcebox {
@@ -1175,7 +1169,7 @@ a#gbView {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 New treeParam jQuery code (also used for attribute selection) 
 	 makes organism <a href>.... so it picks up the link color 
-	 in Project.css====>   wdkCommon.css
+	 in Project.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .jstree a[href]:link,.jstree a[href]:visited {
