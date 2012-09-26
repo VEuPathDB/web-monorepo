@@ -171,11 +171,13 @@
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
     <th colspan=1 align="center"><i>Agaricomycetes</i></th>
     <th colspan=6 align="center"><i>Basidiomycota</i></th>
-    <th colspan=8 align="center"><i>Eurotiomycetes</i></th>
+    <th colspan=11 align="center"><i>Eurotiomycetes</i></th>
     <th colspan=8 align="center"><i>Sordariomycetes</i></th>
     <th colspan=2 align="center"><i>Saccharomycotina</i></th>
     <th colspan=1 align="center"><i>Taphrinomycotina</i></th>
     <th colspan=6 align="center"><i>Oomycetes</i></th>
+    <th colspan=1 align="center"><i>Pucciniomycetes</i></th>
+    <th colspan=1 align="center"><i>Rhizopus</i></th>
   </tr>
   <tr>
     <th><i>C.cin</i></th>
@@ -193,6 +195,9 @@
     <th><i>A.ter</i></th>
     <th><i>C.imm</i> H538.4</th>
     <th><i>C.imm</i> RS</th>
+    <th><i>C.pos</i></th>
+    <th><i>H.cap</i> NAm1</th>
+    <th><i>H.cap</i> G186AR</th>
     <th><i>F.gra</i></th>
     <th><i>F.oxy</i></th>
     <th><i>F.ver</i></th>
@@ -210,6 +215,8 @@
     <th><i>P.cap</i></th>
     <th><i>P.inf</i></th>
     <th><i>P.ult</i></th>
+    <th><i>P.gra</i></th>
+    <th><i>R.ory</i></th>
   </tr>
   <tr align="center">
     <td>
@@ -318,6 +325,24 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
+                          instanceName="cpos_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="HcapNAm1_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="HcapG186AR_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
                           instanceName="fgra_genes" />
     </td>
     <td> 
@@ -415,6 +440,18 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="pytul_genes" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="pgra_genes" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="rory_genes" />  
     </td>
 
   </tr>
