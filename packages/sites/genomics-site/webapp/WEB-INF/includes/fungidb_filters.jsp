@@ -178,6 +178,8 @@
     <th colspan=6 align="center"><i>Oomycetes</i></th>
     <th colspan=1 align="center"><i>Pucciniomycetes</i></th>
     <th colspan=1 align="center"><i>Rhizopus</i></th>
+    <th colspan=1 align="center"><i>Chytridiomycetes</i></th>
+    <th colspan=1 align="center"><i>Ustilaginomycetes</i></th>
   </tr>
   <tr>
     <th><i>C.cin</i></th>
@@ -217,6 +219,8 @@
     <th><i>P.ult</i></th>
     <th><i>P.gra</i></th>
     <th><i>R.ory</i></th>
+    <th><i>B.den</i></th>
+    <th><i>U.may</i></th>
   </tr>
   <tr align="center">
     <td>
@@ -452,6 +456,18 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="rory_genes" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="bden_genes" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="umay_genes" />  
     </td>
 
   </tr>
