@@ -1,8 +1,9 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      Stylesheet for styles that are the same across all sites 
+     Stylesheet for styles that are the same across all sites 
      Definitions here get overriden by entries in (project).css
      (after the order set up in header.tag)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =results page, column names
@@ -11,33 +12,20 @@ tr.headerrow th {
 	background-size: 9990%;  
 }
 
-/*  	in sites.css we have as background image an image that is narrow for some cases where the th needs to stretch to hold 5 or 6 lines of text; this size forces the image to stretch with the container
+/* In sites.css we have as background image an image that is narrow for some cases where the th needs to stretch to hold 5 or 6 lines of text; this size forces the image to stretch with the container
 	it does not work on IE7/8 (do not support css3) but it does not hurt either. */
 
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =main structure
+	 =header
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #toplink {
 	padding-top: 1px;
 }
 
-#record_page_cell_div {
-	margin-left: 20px;
-}
-
-#graphic_span {
-	width: 289px;
-	height: 20px;
-	font-weight: bold;
-	color: #FFFFFF;
-	padding-top: 1px;
-	font-size: 16px;
-	text-align: center;
-	position: absolute;
-}
-
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =main structure
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #contentcolumn {
 	min-width: 780px;
 	margin: 0 5px 0 220px;
@@ -66,20 +54,33 @@ div.innertube #record-toolbox li {
     margin-top: 2px;
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =header quick search
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 div#quick-search td {
   white-space: nowrap;
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =newitems.js (sidebar to highlight in yellow unread utems)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 p.unreadlabel {
   color:yellow;
   font-size:.5em;
   padding-left:3px;
 }
 
-
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =some custom question pages, blast.js
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 div.usererror {
   color:red;
 }
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =sounds like spanlogic
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .crumb_details td.region_a,
 .crumb_details td.region_b {
@@ -88,7 +89,7 @@ div.usererror {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =TABLES 
+	 =TABLES : summary tables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 /* used by Expression graphs (fix for text alignment bug) */
 td.centered {
@@ -375,14 +376,14 @@ ul.cirbulletlist {
 	list-style-position: outside;
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Record.jsp, wdk/jsp/records/default.jsp ==> should go to wdkCommon.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
 
 
-
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = used in sample strategies
+	 = sample strategies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .tableWithBorders table{
@@ -394,19 +395,6 @@ ul.cirbulletlist {
         vertical-align: middle;
 }
 
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-**********************************************************************
-**********************************************************************
-**********************************************************************
-
-    Copied from TriTryp.css 5/20/09 : attempt to have here all common css
-
-    Some classes below might already exist above;  need to remove above
-
-*********************************************************************
-*********************************************************************
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -626,7 +614,6 @@ ul.cirbulletlist {
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
-	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
@@ -791,13 +778,8 @@ div#menu ul ul ul li:hover ul {
 }
 
 
-
-
-
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Search Boxes
+	 =Search Boxes (ORTHO: commmon.css)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
@@ -843,8 +825,9 @@ div#menu ul ul ul li:hover ul {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER  padding 25px helps in showing the whole background, otherwise its height is limited by its content
-        min-width avoids wrapping of the logos
+	 =FOOTER  
+      padding 25px helps in showing the whole background, otherwise its height is limited by its content
+      min-width avoids wrapping of the logos
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
@@ -860,7 +843,6 @@ div#menu ul ul ul li:hover ul {
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =FOR QUERY GRID
-	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
@@ -911,40 +893,7 @@ td.lines2, #queryGrid td.lines2 {
 	padding-top: 3px;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =END OF TABLES FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
-
-#strat_description tr.lines td, #strat_description tr.linesalt td {
-	padding: 6px 0px;
-	white-space: nowrap;
-	
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =genePage.js which deals with seeing gen page in results page, unused at the moment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
-#gene_page_progress_bar {
-	position: relative;
-	left: 450px;
-	top: 26px;
-	width: 289px;
-	height: 20px;
-}
-
-#gene_page_progress_bar div#loading_span {
-	position: absolute;
-	left: 118px;
-	top: 3px;
-	font-weight: bold;
-	color: #FFFFFF;
-	z-index: 100;
-}
-*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT US and HELP PAGES SIDEBAR
@@ -992,6 +941,9 @@ td.lines2, #queryGrid td.lines2 {
 .twoColHybLt #mainContent { 
 	margin: 0 20px 0 13em; /* the right margin can be given in percentages or pixels. It creates the space down the right side of the page. */
 } 
+
+
+
 
 /* Miscellaneous classes for reuse */
 .fltrt { /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
@@ -1072,7 +1024,7 @@ td.lines2, #queryGrid td.lines2 {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =boolean operators?
+	 =TOXO  advanced filters (should be moved to Toxo.css)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .vennFilter {
@@ -1135,7 +1087,7 @@ td.lines2, #queryGrid td.lines2 {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Fonts 
+	 =Generic ==> move to wdkCommon.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
@@ -1164,7 +1116,7 @@ h3 {
 	margin-left: 11px;
 }
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Generic
+	 =Generic  ==> move to wdkCommon.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
@@ -1212,8 +1164,6 @@ a#gbView {
 }
 
 
-
-
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Basket
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -1222,12 +1172,10 @@ a#gbView {
     padding: 1px;
 }
 
-
-
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 New treeParam jQuery code (also used for attribute selection) 
 	 makes organism <a href>.... so it picks up the link color 
-	 in Project.css
+	 in Project.css====>   wdkCommon.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .jstree a[href]:link,.jstree a[href]:visited {
@@ -1272,12 +1220,9 @@ a#gbView {
 	 = summary tables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
 	#data-summary_info { font-weight:bold; }
 	#data-summary_filter { font-weight:bold; }
 	#gene-metrics_filter { font-weight:bold; }
-
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
