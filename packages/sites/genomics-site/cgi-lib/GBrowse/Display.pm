@@ -242,13 +242,14 @@ sub rumIntronBgColorFromSample {
 sub rumIntronBgColorFromScore {
   my $f = shift;
   my ($scores) = $f->get_tag_values('Scores'); 
-#  my $sum = eval join '+', split /;/, $scores;
   my $sum = eval join '+', split /[,|\|]/, $scores;
   # http://www.computerhope.com/htmcolor.htm
-  return '#F88017' if $sum <= 5;  # Dark Orange
-  return '#C35617' if $sum <= 20; # Dark Orange3
-  return '#8A4117' if $sum <= 50; # Sienna
-  return '#7E3517' if $sum <= 100; # Sienna4
+  return '#F88017' if $sum <= 5;   # Dark Orange
+  return '#F87217' if $sum <= 10;  # Dark Orange1
+  return '#E56717' if $sum <= 20;  # Dark Orange2
+  return '#C35617' if $sum <= 50;  # Dark Orange3
+  return '#8A4117' if $sum <= 100; # Sienna
+  return '#7E3517' if $sum <= 200; # Sienna4
   return '#7E2217';   # Indian Red4
 }
 
