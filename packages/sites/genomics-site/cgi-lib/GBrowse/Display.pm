@@ -258,13 +258,13 @@ sub rumIntronHeightFromScore {
   my ($scores) = $f->get_tag_values('Scores'); 
   my $sum = eval join '+', split /[,|\|]/, $scores;
   # http://www.computerhope.com/htmcolor.htm
-  return 4 if $sum <= 5;   # Dark Orange
-  return 5 if $sum <= 10;  # Dark Orange1
-  return 6 if $sum <= 20;  # Dark Orange2
-  return 7 if $sum <= 50;  # Dark Orange3
-  return 8 if $sum <= 100; # Sienna
-  return 9 if $sum <= 200; # Sienna4
-  return 10;   # Indian Red4
+  return 5 if $sum <= 5;   # Dark Orange
+  return 6 if $sum <= 10;  # Dark Orange1
+  return 7 if $sum <= 20;  # Dark Orange2
+  return 8 if $sum <= 50;  # Dark Orange3
+  return 9 if $sum <= 100; # Sienna
+  return 10 if $sum <= 200; # Sienna4
+  return 11;   # Indian Red4
 }
 
 sub rumIntronUnifiedWidth {
