@@ -378,6 +378,7 @@ ORDER BY
             'NCSignal=' || rif.signal_not_canonical || '$dlm' ||
             'KnownINtron=' || rif.known_intron || '$dlm' ||
             'Canonical=' || rif.signal_not_canonical || '$dlm' ||
+            'Scores=' || score || '$dlm' ||
             'Sample=' || sample_name atts
       FROM   apidb.RUMIntronFeature rif, 
              sres.externaldatabase edb,
