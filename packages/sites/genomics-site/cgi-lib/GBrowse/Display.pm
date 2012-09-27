@@ -245,11 +245,11 @@ sub rumIntronBgColorFromScore {
 #  my $sum = eval join '+', split /;/, $scores;
   my $sum = eval join '+', split /[,|\|]/, $scores;
   # http://www.computerhope.com/htmcolor.htm
-  return 'gold' if $sum <= 5;  # Dark Orange
-  return 'goldenrod' if $sum <= 20; # Dark Orange3
-  return 'darkgoldenrod' if $sum <= 50; # Sienna
-  return 'saddlebrown' if $sum <= 100; # Sienna4
-  return 'maroon';   # Indian Red4
+  return '#F88017' if $sum <= 5;  # Dark Orange
+  return '#C35617' if $sum <= 20; # Dark Orange3
+  return '#8A4117' if $sum <= 50; # Sienna
+  return '#7E3517' if $sum <= 100; # Sienna4
+  return '#7E2217';   # Indian Red4
 }
 
 sub rumIntronUnifiedWidth {
