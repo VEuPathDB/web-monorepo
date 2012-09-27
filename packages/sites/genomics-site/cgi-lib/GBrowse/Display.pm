@@ -239,7 +239,7 @@ sub rumIntronBgColorFromSample {
   return '#F87431';  # Sienna1
 } 
 
-sub rumIntronBgColorUnified {
+sub rumIntronBgColorFromScore {
   my $f = shift;
   my ($scores) = $f->get_tag_values('Scores'); 
 #  my $sum = eval join '+', split /;/, $scores;
