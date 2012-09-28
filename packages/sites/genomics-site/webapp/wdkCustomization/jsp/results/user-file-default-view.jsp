@@ -115,7 +115,7 @@
 <div class="bDiv">
 <div class="bDivBox">
 
-<table id="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
+<table class="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
 <thead>
 <tr class="headerrow">
   <c:set var="j" value="0"/>
