@@ -42,6 +42,7 @@
   <imp:parameterScript />
   <script type="text/javascript" src="/assets/js/orthologpattern.js"></script>
   <script type="text/javascript" src="<c:url value='/wdkCustomization/js/span-location.js' />"></script>
+  <script type="text/javascript" src="<c:url value='/wdkCustomization/js/mutuallyExclusiveParams.js' />"></script>
   <link rel="StyleSheet" type="text/css" href="<c:url value='/wdkCustomization/css/question.css' />"/>
 </c:if>
 
