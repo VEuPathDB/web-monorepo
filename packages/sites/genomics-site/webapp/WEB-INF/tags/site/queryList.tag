@@ -177,6 +177,9 @@ function getComboElement()
 <c:when test="${prefix == 'Calb'}">
       <c:set var="org" value="Candida albicans"/>
   </c:when>
+<c:when test="${prefix == 'Cimm'}">
+    <c:set var="org" value="Coccidioides immitis"/>
+</c:when>
 <c:when test="${prefix == 'Cpos'}">
       <c:set var="org" value="Coccidioides posadasii"/>
   </c:when>
