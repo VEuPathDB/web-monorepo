@@ -5,26 +5,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =results page, column names
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-tr.headerrow th { 
-	background-size: 9990%;  
-}
-
-/* In sites.css we have as background image an image that is narrow for some cases where the th needs to stretch to hold 5 or 6 lines of text; this size forces the image to stretch with the container
-	it does not work on IE7/8 (do not support css3) but it does not hurt either. */
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =header
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#toplink {
-	padding-top: 1px;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =main structure
+	 =MAIN structure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #contentcolumn {
 	min-width: 780px;
@@ -54,93 +37,11 @@ div.innertube #record-toolbox li {
     margin-top: 2px;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =header quick search
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-div#quick-search td {
-  white-space: nowrap;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =newitems.js (sidebar to highlight in yellow unread utems)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-p.unreadlabel {
-  color:yellow;
-  font-size:.5em;
-  padding-left:3px;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =some custom question pages, blast.js
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-div.usererror {
-  color:red;
-}
 
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =sounds like spanlogic
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.crumb_details td.region_a,
-.crumb_details td.region_b {
-  font-weight: bold;
-  vertical-align: middle;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =TABLES : summary tables
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* used by Expression graphs (fix for text alignment bug) */
-td.centered {
-       vertical-align: middle;
-       padding: 20px;
-}
-td.top {
-       vertical-align: top;
-}
-
-
-table.mytableStyle {
-	empty-cells:show;
-	border-width:1px;
-	border-style:solid;	   /* solid, none, inset, outset, dashed, solid, */
-	border-color:black;
-	border-collapse:collapse;  /*separate */
-/*	border-spacing:2px;  */    /* only makes sense when border-collapse is separate
-	table-layout: auto;        /* fixed */
-}
-tr.mytdStyle {
-	text-align:center;
-
-}
-tr.mythStyle {
-	background-color:lightgrey;
-	text-align:center;
-	font-weight:bold;
-}
-td.mythStyle,td.mytdStyle,th.mythStyle {
-	vertical-align:middle;
-	border-width:1px;
-	border-style:inset;
-	border-color:gray;
-	-moz-border-radius:0px;
-	padding:3px;
-	background-color:white;
-}
-th.mythStyle {
-	font-weight:bold;
-	background-color:lightgrey;
-	border-bottom: 3px solid grey;
-	cursor: pointer; 
-/*	if we add back the sort icons in data summary .....
-	padding:0;
-	vertical-align:bottom; */
-
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Main Page Bubble Lists
+	 =HOME Page:  BUBBLE Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 table.threecolumn {
@@ -203,6 +104,8 @@ table.threecolumn td {
 	padding-left: 19px;
 }
 
+
+
 .detail_link {
 /*	border: 2px solid #d8d8d8; */
 	display: inline;
@@ -220,6 +123,14 @@ a.heading:hover + a.detail_link, a.detail_link:hover {
 	position: relative;
 }
 
+/* not sure it is needed....
+ul.heading_list li:hover a.detail_link {
+	left: -2px;
+	position: relative;
+}
+*/
+
+
 /* for Internet Explorer */
 /*\*/
 * html #info {
@@ -228,8 +139,14 @@ height: 240px;
 /**/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Sidebar
+	 =SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/* newitems.js (highlight in yellow unread utems)*/
+p.unreadlabel {
+  color:yellow;
+  font-size:.5em;
+  padding-left:3px;
+}
 
 #menu_lefttop {
 	width: 220px;
@@ -283,12 +200,7 @@ height: 240px;
    margin: -5px 0px 5px;
 }
 
-/* this does not belong in sidebar
-ul.heading_list li:hover a.detail_link {
-	left: -2px;
-	position: relative;
-}
-*/
+
 
 #menu_lefttop a.heading {
 	height: 24px;
@@ -322,6 +234,18 @@ ul.heading_list li:hover a.detail_link {
 }
 
 
+#leftcolumn {
+	float: left;
+	width: 220px; /*Width of left column*/
+	margin-left: -100%;
+}
+
+.innertube3{
+	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
+
+}
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =News
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -347,9 +271,9 @@ table#news a[href]:hover, table#news a[href]:active {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =classic bullet list
+	 =BULLET LISTS    classic bullet list 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#cirbulletlist ol {
+#cirbulletlist ol,#cirbulletlist ul {
 	list-style-type: disc;
 	margin-left:  1em;
 	padding-left: 1em;
@@ -359,16 +283,7 @@ table#news a[href]:hover, table#news a[href]:active {
     list-style-type: decimal;
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =help.jsp, classic bullet list
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#cirbulletlist ul {
-	list-style-type: disc;
-	margin-left:  1em;
-	padding-left: 1em;
-	list-style-position: outside;
-}
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =serviceList.jsp, classic bullet list
+	 = classic bullet list with no padding: serviceList.jsp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 ul.cirbulletlist {
 	list-style-type: disc;
@@ -376,30 +291,19 @@ ul.cirbulletlist {
 	list-style-position: outside;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Record.jsp, wdk/jsp/records/default.jsp ==> should go to wdkCommon.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
 
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = sample strategies
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.tableWithBorders table{
-	border-collapse: collapse;
-}
-.tableWithBorders tr td{
-	padding: 3px 4px 3px 4px;
-	border: 1px solid black;
-        vertical-align: middle;
-}
 
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+div#quick-search td {
+  white-space: nowrap;
+}
+
 
 #header {
 	color: #666666;
@@ -443,7 +347,11 @@ ul.cirbulletlist {
    width: 100%;
    height: 50px;
    margin-top: 18px;
-} 
+}
+ 
+#toplink {
+	padding-top: 1px;
+}
 
 #toplink a:link, #toplink a:visited{
 	display: block;
@@ -459,7 +367,7 @@ ul.cirbulletlist {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =HEADER DROPDOWN MENU
+	 =smallMenu
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 #nav_topdiv { clear: both; }
 #nav_top {
@@ -566,7 +474,7 @@ ul.cirbulletlist {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =horizontal grey menubar below header
+	 =MENUBAR (horizontal bar, under header)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #menubar {
@@ -613,7 +521,7 @@ ul.cirbulletlist {
 */
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Top Menu Bar Dropdown List
+	 =Menubar Dropdown List
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
@@ -778,6 +686,7 @@ div#menu ul ul ul li:hover ul {
 }
 
 
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Search Boxes (ORTHO: commmon.css)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -822,15 +731,6 @@ div#menu ul ul ul li:hover ul {
    text-align: center;
    margin: 0 2.5%;
  /*  padding: 0px 0px 35px;     seems not to be needed 2011-12-06 */
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER  
-      padding 25px helps in showing the whole background, otherwise its height is limited by its content
-      min-width avoids wrapping of the logos
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	
-#footer{
    min-width: 950px;   /* 1100px; */
    font-size: 10px;
    width: 95%;  /* 75%  */
@@ -893,79 +793,62 @@ td.lines2, #queryGrid td.lines2 {
 }
 
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =SIDEBAR
+	 =SUMMARY TABLES 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#leftcolumn {
-	float: left;
-	width: 220px; /*Width of left column*/
-	margin-left: -100%;
+/* used by Expression graphs (fix for text alignment bug) */
+td.centered {
+       vertical-align: middle;
+       padding: 20px;
+}
+td.top {
+       vertical-align: top;
 }
 
-.innertube3{
-	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
+
+table.mytableStyle {
+	empty-cells:show;
+	border-width:1px;
+	border-style:solid;	   /* solid, none, inset, outset, dashed, solid, */
+	border-color:black;
+	border-collapse:collapse;  /*separate */
+/*	border-spacing:2px;  */    /* only makes sense when border-collapse is separate
+	table-layout: auto;        /* fixed */
+}
+tr.mytdStyle {
+	text-align:center;
+
+}
+tr.mythStyle {
+	background-color:lightgrey;
+	text-align:center;
+	font-weight:bold;
+}
+td.mythStyle,td.mytdStyle,th.mythStyle {
+	vertical-align:middle;
+	border-width:1px;
+	border-style:inset;
+	border-color:gray;
+	-moz-border-radius:0px;
+	padding:3px;
+	background-color:white;
+}
+th.mythStyle {
+	font-weight:bold;
+	background-color:lightgrey;
+	border-bottom: 3px solid grey;
+	cursor: pointer; 
+/*	if we add back the sort icons in data summary .....
+	padding:0;
+	vertical-align:bottom; */
 
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =UNUSED? comment out before delete: Sep 26 2012
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
-#rightcolumn { 
-	float: left;
-	width: 25px; /*Width of right column*/
-	margin-left: -25px; /*Set left marginto -(RightColumnWidth)*/
-}
-
-.twoColHybLt #container_au { 
-	width: 100%; 
-	background-color: #FFFFFF;
-	margin: 0 auto; 
-	border: 1px solid #000000;
-	text-align: left;
-} 
-
-.twoColHybLt #sidebar1 {
-	float: left; 
-	width: 12em;
-	color: #FFFFFF;
-	background-repeat: repeat-y;
-	padding: 15px 0;
-}
-
-.twoColHybLt #sidebar1 h3, .twoColHybLt #sidebar1 p {
-	margin-left: 10px; 
-	margin-right: 10px;
-}
-
-.twoColHybLt #mainContent { 
-	margin: 0 20px 0 13em; 
-} 
-*/
+	#data-summary_info { font-weight:bold; }
+	#data-summary_filter { font-weight:bold; }
+	#gene-metrics_filter { font-weight:bold; }
 
 
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Generic  ==> move to wdkCommon.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.fltrt { /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
-	float: right;
-	margin-left: 8px;
-}
-
-.fltlft { /* this class can be used to float an element left in your page */
-	float: left;
-	margin-right: 8px;
-}
-
-.clearfloat { /* this class should be placed on a div or break element and should be the final element before the close of a container that should fully contain a float */
-	clear:both;
-    height:0;
-    font-size: 1px;
-    line-height: 0px;
-}
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1080,12 +963,200 @@ td.lines2, #queryGrid td.lines2 {
    margin-top: 24px;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Generic ==> move to wdkCommon.css
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =some custom QUESTION PAGES, also blast.js
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+div.usererror {
+  color:red;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =SPANLOGIC POPUP?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.crumb_details td.region_a,
+.crumb_details td.region_b {
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 SEARCH page: jQuery treeParam code (also used for attribute selection) 
+	 makes organism <a href>.... so it picks up the link color 
+	 in Project.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+.jstree a[href]:link,.jstree a[href]:visited {
+	color:black;
+}
+.jstree a[href]:hover,.jstree a[href]:active {
+	color:black;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = SAMPLE STRATEGIES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.tableWithBorders table{
+	border-collapse: collapse;
+}
+.tableWithBorders tr td{
+	padding: 3px 4px 3px 4px;
+	border: 1px solid black;
+        vertical-align: middle;
+}
+
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	   RECORD (gene) PAGE: GBrowse button
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+a#gbView {
+    background: transparent url('../images/button-design.gif') no-repeat scroll top right;
+    display: block;
+/*    float: left; */
+    height: 24px;
+    padding-left: 7px;
+    padding-right: 4px; 
+    padding-top: 5px;
+    width: 140px;
+    margin: 0px auto;
+}
+
+#gnCtx {
+    height: 500px;
+    overflow: auto;
+}
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 BASKET
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#export-basket {
+    background-color: #EEEEEE;
+    padding: 1px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = BASKET page: jQuery tabs:
+         = in wdk/css/ui-custom-custom-theme/jquery-ui....custom.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.ui-tabs .ui-tabs-nav li a {
+	padding: 0.1em 1em;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =RESULTS page, column names
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+tr.headerrow th { 
+	background-size: 9990%;  
+}
+
+/* In sites.css we have as background image an image that is narrow for some cases where the th needs to stretch to hold 5 or 6 lines of text; this size forces the image to stretch with the container
+	it does not work on IE7/8 (do not support css3) but it does not hurt either. */
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    = RESULT PAGE: motif
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.motif { color: red; }
+
+
+
+
+/* THE END */
+/* under this, commented out */
+
+
+
+
+
+
+
+
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Record.jsp,now in wdkCommon.css; comment out before delete: Sep 26 2012
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
+.fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
+*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =UNUSED? comment out before delete: Sep 26 2012
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
+#rightcolumn { 
+	float: left;
+	width: 25px;
+	margin-left: -25px; 
+}
+
+.twoColHybLt #container_au { 
+	width: 100%; 
+	background-color: #FFFFFF;
+	margin: 0 auto; 
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+.twoColHybLt #sidebar1 {
+	float: left; 
+	width: 12em;
+	color: #FFFFFF;
+	background-repeat: repeat-y;
+	padding: 15px 0;
+}
+
+.twoColHybLt #sidebar1 h3, .twoColHybLt #sidebar1 p {
+	margin-left: 10px; 
+	margin-right: 10px;
+}
+
+.twoColHybLt #mainContent { 
+	margin: 0 20px 0 13em; 
+} 
+*/
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Generic  ==> moved to wdkCommon.css; comment out before delete: Sep 26 2012
+    .fltrt: this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page.
+    .fltlft:  this class can be used to float an element left in your page 
+    .clearfloat:  this class should be placed on a div or break element and should be the final element before the close of a container that should fully contain a float 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
+.fltrt { 
+	float: right;
+	margin-left: 8px;
+}
+.fltlft { 
+	float: left;
+	margin-right: 8px;
+}
+.clearfloat {
+	clear:both;
+    height:0;
+    font-size: 1px;
+    line-height: 0px;
+}
+*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Generic ==> moved to wdkCommon.css; comment out before delete: Sep 26 2012
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
 h1 {
-	font-size: 170%;   /* 20px; */
+	font-size: 170%;  
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	text-align: center;
@@ -1093,7 +1164,7 @@ h1 {
 }
 
 h2 {
-	font-size: 150%;   /* 18px; */
+	font-size: 150%;  
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	margin-bottom: 11px;
@@ -1102,16 +1173,13 @@ h2 {
 }
 
 h3 {
-	font-size: 120%;   /* 14px; */
+	font-size: 120%;  
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	margin-bottom: 11px;
  	text-align: left;
 	margin-left: 11px;
 }
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Generic  ==> move to wdkCommon.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
 	text-align: left;
@@ -1136,93 +1204,4 @@ td {
     padding: 4px 4px 4px 4px;
 }
 
-
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 Gene Page: View in GBrowse button
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-a#gbView {
-    background: transparent url('../images/button-design.gif') no-repeat scroll top right;
-    display: block;
-/*    float: left; */
-    height: 24px;
-    padding-left: 7px;
-    padding-right: 4px; 
-    padding-top: 5px;
-    width: 140px;
-    margin: 0px auto;
-}
-
-#gnCtx {
-    height: 500px;
-    overflow: auto;
-}
-
-
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 Basket
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#export-basket {
-    background-color: #EEEEEE;
-    padding: 1px;
-}
-
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 New treeParam jQuery code (also used for attribute selection) 
-	 makes organism <a href>.... so it picks up the link color 
-	 in Project.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.jstree a[href]:link,.jstree a[href]:visited {
-	color:black;
-}
-.jstree a[href]:hover,.jstree a[href]:active {
-	color:black;
-}
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = styles for jQuery tabs used for basket page
-         = in wdk/css/ui-custom-custom-theme/jquery-ui....custom.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.ui-tabs .ui-tabs-nav li a {
-	padding: 0.1em 1em;
-}
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = styles for blockUI popups
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
-.blockMsg{
-        padding:        10px 0;
-        margin:         10px 0;
-        width:          30%; 
-        top:            40%; 
-        left:           35%; 
-        text-align:      center; 
-        background-color:#fff;
-	opacity:0.8;
-}
-
-.blockPage{
-
-}
 */
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = summary tables
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-	#data-summary_info { font-weight:bold; }
-	#data-summary_filter { font-weight:bold; }
-	#gene-metrics_filter { font-weight:bold; }
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         = the style for rendering motifs in the motif search result
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.motif { color: red; }
-
-
-/*THE END */
