@@ -52,9 +52,11 @@
     <c:when test="${projectId == 'ToxoDB'}">
       <imp:queryList columns="${columns}" questions="${toxoQuestions}"/>
     </c:when>
+		<%--
     <c:when test="${projectId == 'CryptoDB'}">
       <imp:queryList columns="${columns}" questions="${cryptoQuestions}"/>
     </c:when>
+		--%>
     <c:otherwise>  <%-- it must be the portal --%>
       <imp:queryList columns="${columns}" questions="${plasmoQuestions},${toxoQuestions},${tritrypQuestions}"/>
     </c:otherwise>
