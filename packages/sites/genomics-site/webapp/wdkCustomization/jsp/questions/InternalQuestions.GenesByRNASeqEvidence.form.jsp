@@ -17,7 +17,9 @@
 
 <c:set var="tritrypQuestions" value="T.b.study:Blood Form vs. Procyclic Form (Cross),GeneQuestions.GenesByRNASeqExpressionFoldChange,GeneQuestions.GenesByRNASeqExpressionPercentile,T.b.study:Splice Sites (Nilsson),GeneQuestions.GenesByTrypFoldChangeNilssonTbrucei,GeneQuestions.GenesByExprPercentileNilssonTbruceiSpliceSites,GeneQuestions.GenesByTbruceiSpliceSites,T.b.study:Cell Cycle (Archer),GeneQuestions.GenesByCellCycleRnaSeq,GeneQuestions.GenesByExprPercentileTbCellCyc,GeneQuestions.GenesByTbCellCycFoldChange"/>
 
+<%--
 <c:set var="cryptoQuestions" value="C.p.study:Intestinal Stage (Lippuner),GeneQuestions.GenesByFoldChangeCparvumLippuner,GeneQuestions.GenesByExprPercentileCpLippuner"/>
+--%>
 
 <%-- END OF QUESTIONS --%>
 
