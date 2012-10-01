@@ -50,6 +50,9 @@ function appendchecked(form, url) {
 
 <%-- content of current page --%>
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />" >
+        <c:if test="${param.signature != null}">
+           <input type="hidden" name="signature" value="${param.signature}" />
+        </c:if>
 <table>
   <tr>
       <td ></td>

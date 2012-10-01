@@ -54,6 +54,9 @@ function makeSelection(state)
 
 <%-- content of current page --%>
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />">
+        <c:if test="${param.signature != null}">
+           <input type="hidden" name="signature" value="${param.signature}" />
+        </c:if>
   <table  width="100%">
   <tr><td width="20%"></td>
       <td>

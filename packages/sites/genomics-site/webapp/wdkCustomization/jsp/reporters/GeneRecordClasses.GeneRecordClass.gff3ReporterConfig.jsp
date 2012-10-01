@@ -30,6 +30,9 @@
 
 <%-- content of current page --%>
 <form name="downloadConfigForm" method="get" action="<c:url value='/getDownloadResult.do' />">
+        <c:if test="${param.signature != null}">
+           <input type="hidden" name="signature" value="${param.signature}" />
+        </c:if>
         <input type="hidden" name="step" value="${step_id}"/>
         <input type="hidden" name="wdkReportFormat" value="${format}"/>
     <table width="100%">
