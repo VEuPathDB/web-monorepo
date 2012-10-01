@@ -783,7 +783,7 @@ sub bacsTitle {
   push @data, [ 'Clone Size:'     => $length ]; 
   push @data, [ 'Clone Location:' => "$start..$stop"];
   push @data, [ '<hr>'            => '<hr>' ];
-  my @subs = $f->sub_SeqFeature;
+  my @subs = $f->sub_SeqFeature("bac_end");
   my $count = 0;
   foreach(@subs) {
     $count++;
@@ -1160,7 +1160,7 @@ sub RandomEndsTitle {
   push @data, [ 'Clone Size:'     => $length ]; 
   push @data, [ 'Clone Location:' => "$start..$stop"];
   push @data, [ '<hr>'            => '<hr>' ];
-  my @subs = $f->sub_SeqFeature;
+  my @subs = $f->sub_SeqFeature("random_end");
   my $count = 0;
   foreach(@subs) {
     $count++;
