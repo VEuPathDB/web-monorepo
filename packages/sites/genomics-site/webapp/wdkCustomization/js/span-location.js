@@ -47,8 +47,10 @@ SpanLocation.prototype.createLayout = function() {
 
 SpanLocation.prototype.composeId = function() {
         var params = $("#form_question .params");
-        var sequenceIds = $.trim(params.find("input#sequenceId").val());
-        if (sequenceIds.length == 0 || sequenceIds.indexOf('(Example') == 0) {
+        var sequenceIdsInput = params.find("input#sequenceId");
+        var sequenceIds = $.trim(sequenceIdsInput.val());
+        if (sequenceIds.length == 0 || sequenceIds.indexOf('(Example') == 0 ||
+            sequenceIdsInput.attr("disabled")) {
             // sequence not set, get the chromosome instead
             var chromosome = params.find("select#chromosomeOptional");
             sequenceIds = chromosome.val();

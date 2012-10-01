@@ -47,19 +47,25 @@
       switch(key) {
         case "groups":
           var missingParam = false,
-              groups = value;
+              groups = value,
+              spacer = $("<tr><td colspan='3'>&nbsp;</td></tr>"),
+              radioRow;
 
           self.destroy();
 
           // for each group, we want to get the rows for the params
           self.groupsRows = [];
 
-          $.each(groups, function(groupNum, group) {
+          $.each(groups, function(idx, group) {
             // groupRows will get pushed to groupsRows
             var groupRows = [];
-            $.each(group, function(idx, param) {
-              var row = $("tr", self.paramTable).has("[id='" + param + "']")
-                  .first().addClass("xor-group").data("xor-group", groupNum)
+            $.each(group.params, function(idx, param) {
+              var row = $("tr", self.paramTable)
+                  .has("[id='" + param + "']")
+                  .first()
+                  .addClass("xor-group")
+                  .data("xor-group", group.name)
+                  .hide();
 
               if (row.length !== 1) {
                 missingParam = true;
@@ -75,37 +81,26 @@
             return;
           }
 
-          $("<tr><td colspan='3'>&nbsp;</td></tr><tr><td>&nbsp;</td><td><b>Please choose one of the " +
-              "following groups of parameters</b></td></tr>")
-              .insertBefore(self.groupsRows[0][0])
-              .addClass("xor-group-note");
-
-          // we want to add a radio button to the first cell of the first groupRow
-          $.each(self.groupsRows, function(groupNum, groupRows) {
-            var input = $("<input/ type='radio' name='xor-group'>")
-                // .attr("checked", groupNum == ($.cookie(self.questionName + "-xor-group") || 0))
-                .attr("checked", groupNum === 0)
-                .attr("id", "xor-group-" + groupNum)
-                .val(groupNum);
-
-
-            $("<tr></tr>")
-                .append($("<td style='text-align:right; color:#610B0B;'></td>")
-                    .append(input)
-                    .append("<label for='xor-group-" + groupNum + "'>" +
-                        "<b>Select parameters below</b></label>"))
-                .append("<td colspan='2'></td>")
-                .addClass("xor-group-select")
-                .insertBefore(groupRows[0]);
-
-            $("<tr><td colspan='3'>&nbsp;</td></tr>")
-                .addClass("xor-group-spacer")
-                .insertAfter(groupRows[groupRows.length - 1]);
-          });
-
-          $(this.element).on("change", ".xor-group-select input", function() {
+          radioRow = $("<tr><td width='30%' align='right' " +
+              "style='vertical-align:top'>Choose </td>" +
+              "<td colspan='2'></td></tr>")
+          .addClass("xor-select")
+          .insertBefore(self.groupsRows[0][0])
+          .on("change", function() {
+            // taking advantage of jQuery patching change events to bubble up
             self.change();
           });
+
+          $.each(groups, function(idx, group) {
+            radioRow.find("td:nth-child(2)")
+            .append($("<input id='xor-group-" + idx + "' type='radio' " +
+                "name='xor-group' value='" + idx + "'/>").attr("checked", idx === 0))
+            .append($("<label for='xor-group-" + idx + "'>" + group.name + "</label>"));
+          });
+
+          $("tr.xor-select").before(spacer.clone());
+          $("tr.xor-group").last().after(spacer.clone());
+
           if (this.options.init instanceof Function) {
             this.options.init(this.element);
           }
@@ -128,13 +123,20 @@
 
         $.each(self.groupsRows[num], function() {
           this.css("color", input.checked ? "black" : "#AAA");
+          // this.toggleClass("active", input.checked);
           this.find("td:nth-child(2)")
               .find("input, select, textarea")
               .attr("disabled", !input.checked);
+          if (input.checked) {
+            this.show();
+          } else {
+            this.hide();
+          }
         });
         if (self.options.change instanceof Function) {
           self.options.change(input, self.groupsRows[num]);
         }
+        $(".xor-select", self.element).buttonset();
       });
     },
 
@@ -164,20 +166,34 @@ jQuery(function($) {
 
     var form = $("form#form_question").has("div#questionName").last(),
         questionName = form.find("div#questionName").attr("name"),
-        // tmpChrom = $("#chromosomeOptional", form).first().clone().attr("type", "hidden"),
-        tmpChrom = $("<input type='hidden' name='array(chromosomeOptional)' value='Choose chromosome'/>"),
+        inlineSubmit = form[0].onsubmit,
         groups;
+
+        // disable inline submit; we call it below
+        form[0].onsubmit = null;
 
     if (questionName === "HtsSnpsByLocation") {
       groups = [
-        ['chromosomeOptional'],
-        ['sequenceId']
+        {
+          name: "Chromosome",
+          params: ['chromosomeOptional']
+        },
+        {
+          name: "Sequence ID",
+          params: ['sequenceId']
+        }
       ];
     } else if (/ByLocation$/.exec(questionName) ||
         questionName === "DynSpansBySourceId") {
       groups = [
-        ['organism', 'chromosomeOptional'],
-        ['sequenceId']
+        {
+          name: "Organism &amp; Chromosome",
+          params: ['organism', 'chromosomeOptional']
+        },
+        {
+          name: "Sequence ID",
+          params: ['sequenceId']
+        }
       ];
     } else {
       // no param grouping needed for now
@@ -201,8 +217,10 @@ jQuery(function($) {
             chromosomeOptional[0].disabled = false;
             chromosomeOptional[0].checked = true;
           }
-
           this.organism.disabled = false;
+          if (inlineSubmit instanceof Function) {
+            inlineSubmit.call(this);
+          }
         });
       }
     });
