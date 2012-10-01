@@ -4116,7 +4116,7 @@ WHERE  blat.query_aa_sequence_id = eaas.aa_sequence_id and
     </sql>
   </sqlQuery>
 
-  <sqlQuery name="alignment:Bacs:bulksubfeatures" excludeProjects="PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+  <sqlQuery name="alignment:Bacs:bulksubfeatures" includeProjects="ToxoDB,TriTrypDB">
      <sql>
 <![CDATA[
 SELECT blat.blat_alignment_id feature_id, 
