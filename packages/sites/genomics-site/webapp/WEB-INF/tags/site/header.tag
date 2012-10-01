@@ -5,6 +5,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@ attribute name="title"
+              required="false"
               description="Value to appear in page's title"
 %>
 <%@ attribute name="refer" 
@@ -237,7 +238,8 @@ ${headElement}
    </c:otherwise>
    </c:choose>
    </div>
-       
+   
+   <!-- Facebook and Twitter links are retrieved from the model and accessed from here via javascript -->
    <div id="facebook-link" style="display:none">https://facebook.com/${facebook}</div>
    <div id="twitter-link" style="display:none">http://twitter.com/${twitter}</div>
     <div style="width:537px;" id="bottom">
@@ -272,7 +274,7 @@ ${headElement}
 	<!-- FreeFind End No Index -->
 </c:if>
 
-<c:if test="${refer != 'home' && refer != 'home2' && refer != 'summary'}">
+<c:if test="${refer ne 'home' and refer ne 'home2' and refer ne 'summary'}">
 	<div id="contentwrapper">
 	<div id="contentcolumn2">
 	<div class="innertube">
