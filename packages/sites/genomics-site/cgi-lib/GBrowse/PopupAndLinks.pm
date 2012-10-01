@@ -746,14 +746,15 @@ sub cosmidTitle {
   my $f = shift;
   my $start = $f->start;
   my $stop  = $f->stop;
-  my $length = $stop - $start;
+  my ($length) = $f->get_tag_values('alignLength');
   my $cname = $f->name;
   my @data; 
   push @data, [ 'Cosmid:'     => $cname ]; 
-  push @data, [ 'Clone Size:'     => $length ]; 
+  push @data, [ 'Clone Size:'     => $length ];
   push @data, [ 'Clone Location:' => "$start..$stop"];
   push @data, [ '<hr>'            => '<hr>' ];
-  my @subs = $f->sub_SeqFeature;
+
+  my @subs = $f->sub_SeqFeature("cosmid_end");
   my $count = 0;
   foreach(@subs) {
     $count++;
