@@ -6,7 +6,7 @@ use ApiCommonWebsite::Model::ModelConfig;
 use ApiCommonWebsite::Model::DbUtils;
 
 use DAS::Util::SynView; 
-
+use XML::Twig;
 use HTML::Template;
 
 require Exporter;
@@ -15,7 +15,7 @@ umask 0;
 
 # Export Static Methods
 @ISA = qw(Exporter);
-@EXPORT = qw(init hover myfooter myheader mypostgrid);  
+@EXPORT = qw(init hover myfooter myheader mypostgrid site_version);  
 
 sub new {
   my $class = shift;
@@ -54,6 +54,23 @@ sub init {
     -projectId => $projectId,
     -docroot   => $docRoot
   }
+}
+
+sub site_version {
+  my %site_versions;
+  my $acm = new XML::Twig( 
+    keep_spaces => 1,  
+    PrettyPrint => 'nice',
+    keep_atts_order => 1,
+    TwigHandlers => {
+      'constant[@name="releaseVersion"]'  => sub { 
+        $site_versions{$_[1]->att("includeProjects")} = $_[1]->text;
+      },  
+    }   
+  );  
+
+  $acm->parsefile("$ENV{GUS_HOME}/lib/wdk/apiCommonModel.xml"); 
+  return $site_versions{$ENV{PROJECT_ID}}; 
 }
 
 sub userDB {
