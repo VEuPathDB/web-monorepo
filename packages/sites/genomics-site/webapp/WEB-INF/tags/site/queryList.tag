@@ -181,8 +181,8 @@ function getComboElement()
     <c:set var="org" value="Coccidioides immitis"/>
 </c:when>
 <c:when test="${prefix == 'Cpos'}">
-      <c:set var="org" value="Coccidioides posadasii"/>
-  </c:when>
+    <c:set var="org" value="Coccidioides posadasii"/>
+</c:when>
 <c:when test="${prefix == 'Phyr'}">
       <c:set var="org" value="Phytophthora ramorum"/>
   </c:when>
