@@ -9,8 +9,9 @@
     // default options
     options: {
 
-      // Each element of the array is a (set of)
-      // mutually exclusive parameter(s)
+      // Each element of the array is an object with the properties
+      // "name" and "params" where "name" is the label to use for the
+      // group of params, and "params" is an array of param IDs
       //
       // @Array
       groups: [],
@@ -73,11 +74,11 @@
                 groupRows.push(row);
               }
             });
-
             self.groupsRows.push(groupRows);
           });
 
           if (missingParam) {
+            self.destroy();
             return;
           }
 
@@ -146,7 +147,7 @@
       $(this.element).find(".xor-group-note").remove();
       $(this.element).find(".xor-group-select").remove();
       $(this.element).find(".xor-group-spacer").remove();
-      $(this.element).find(".xor-group").removeClass("xor-group");
+      $(this.element).find(".xor-group").removeClass("xor-group").show();
 
       $.Widget.prototype.destroy.call( this );
     }
@@ -166,11 +167,16 @@ jQuery(function($) {
 
     var form = $("form#form_question").has("div#questionName").last(),
         questionName = form.find("div#questionName").attr("name"),
-        inlineSubmit = form[0].onsubmit,
+        inlineSubmit, // = form[0].onsubmit,
         groups;
 
-        // disable inline submit; we call it below
-        form[0].onsubmit = null;
+    if (form.length === 0) {
+      return;
+    }
+
+    // disable inline submit; we call it below
+    inlineSubmit = form[0].onsubmit;
+    form[0].onsubmit = null;
 
     if (questionName === "HtsSnpsByLocation") {
       groups = [
