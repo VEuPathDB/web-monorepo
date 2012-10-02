@@ -73,6 +73,10 @@ sub site_version {
   return $site_versions{$ENV{PROJECT_ID}}; 
 }
 
+sub bam_file_path {
+  return '/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/release-'. &site_version; 
+}
+
 sub userDB {
   my $projectId = $ENV{PROJECT_ID};
   my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
