@@ -7,7 +7,8 @@
 	      description="Page calling this tag"
 %>
 
-
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
 
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
 <link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 

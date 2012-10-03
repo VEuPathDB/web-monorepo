@@ -154,9 +154,7 @@
 
 <c:if test="${refer == 'home'}">
   <style>  <%-- extra styling to get around the sidebar on home page. --%>
-    noscript .announcebox.warn {
-      margin-left: 220px;
-    }
+    noscript .announcebox.warn {margin-left: 220px; }
   </style>
 </c:if>
 
