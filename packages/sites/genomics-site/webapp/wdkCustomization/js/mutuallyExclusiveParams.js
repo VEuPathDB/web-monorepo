@@ -30,6 +30,8 @@
     _create: function() {
       // cache values
       this.questionName = $("#questionName", this.element).attr("name");
+      this.paramDiv = $("div.param-group[name='" + this.questionName + "_empty']" +
+          " > div.group-detail", this.element),
       this.paramTable = $("div.param-group[name='" + this.questionName + "_empty']" +
           " > div.group-detail > table", this.element),
       this.groups = this.options.groups;
@@ -65,6 +67,7 @@
                   .has("[id='" + param + "']")
                   .first()
                   .addClass("xor-group")
+                  //.css("background-color", "lightYellow")
                   .data("xor-group", group.name)
                   .hide();
 
@@ -82,25 +85,23 @@
             return;
           }
 
-          radioRow = $("<tr><td width='30%' align='right' " +
-              "style='vertical-align:top'>Choose </td>" +
-              "<td colspan='2'></td></tr>")
+          radioRow = $("<div></div>")
           .addClass("xor-select")
-          .insertBefore(self.groupsRows[0][0])
           .on("change", function() {
             // taking advantage of jQuery patching change events to bubble up
             self.change();
           });
+          self.paramDiv.before(radioRow)
+              .addClass("ui-widget-content")
+              .addClass("ui-tabs")
+              .addClass("ui-corner-bottom");
 
           $.each(groups, function(idx, group) {
-            radioRow.find("td:nth-child(2)")
+            radioRow
             .append($("<input id='xor-group-" + idx + "' type='radio' " +
                 "name='xor-group' value='" + idx + "'/>").attr("checked", idx === 0))
-            .append($("<label for='xor-group-" + idx + "'>" + group.name + "</label>"));
+            .append($("<label for='xor-group-" + idx + "'>Search by " + group.name + "</label>"));
           });
-
-          $("tr.xor-select").before(spacer.clone());
-          $("tr.xor-group").last().after(spacer.clone());
 
           if (this.options.init instanceof Function) {
             this.options.init(this.element);
@@ -113,9 +114,11 @@
     },
 
     change: function() {
-      var self = this;
+      var self = this,
+          tabLabels,
+          num;
       $("input[name='xor-group']", self.element).each(function(idx, input) {
-        var num = input.value;
+        num = input.value;
 
         if (input.checked) {
           // set cookie for checked radio
@@ -123,7 +126,7 @@
         }
 
         $.each(self.groupsRows[num], function() {
-          this.css("color", input.checked ? "black" : "#AAA");
+          //this.css("color", input.checked ? "black" : "#AAA");
           // this.toggleClass("active", input.checked);
           this.find("td:nth-child(2)")
               .find("input, select, textarea")
@@ -137,16 +140,30 @@
         if (self.options.change instanceof Function) {
           self.options.change(input, self.groupsRows[num]);
         }
-        $(".xor-select", self.element).buttonset();
+        tabLabels = $(".xor-select", self.element)
+            .buttonset()
+            .css("position", "relative")
+            .css("top", 1)
+            .find("label");
+
+        tabLabels.css("margin-right", ".3em")
+            .removeClass("ui-corner-left")
+            .removeClass("ui-corner-right")
+            .addClass("ui-corner-top");
+
+        tabLabels.css("border-bottom", "none")
+            .css("z-index", "")
+            .css("color", "#777")
+            .filter(".ui-state-active")
+            .css("z-index", 10)
+            .css("color", "");
       });
     },
 
     destroy: function() {
       // remove previous xor-group markup and elements
       $(this.element).off();
-      $(this.element).find(".xor-group-note").remove();
-      $(this.element).find(".xor-group-select").remove();
-      $(this.element).find(".xor-group-spacer").remove();
+      $(this.element).find(".xor-select").remove();
       $(this.element).find(".xor-group").removeClass("xor-group").show();
 
       $.Widget.prototype.destroy.call( this );
@@ -167,16 +184,12 @@ jQuery(function($) {
 
     var form = $("form#form_question").has("div#questionName").last(),
         questionName = form.find("div#questionName").attr("name"),
-        inlineSubmit, // = form[0].onsubmit,
+        inlineSubmit,
         groups;
 
     if (form.length === 0) {
       return;
     }
-
-    // disable inline submit; we call it below
-    inlineSubmit = form[0].onsubmit;
-    form[0].onsubmit = null;
 
     if (questionName === "HtsSnpsByLocation") {
       groups = [
@@ -193,7 +206,7 @@ jQuery(function($) {
         questionName === "DynSpansBySourceId") {
       groups = [
         {
-          name: "Organism &amp; Chromosome",
+          name: "Chromosome",
           params: ['organism', 'chromosomeOptional']
         },
         {
@@ -205,6 +218,11 @@ jQuery(function($) {
       // no param grouping needed for now
       return;
     }
+
+    // disable inline submit; we call it below
+    inlineSubmit = form[0].onsubmit;
+    form[0].onsubmit = null;
+
 
     form.mutuallyExclusiveParams({
       groups: groups,
