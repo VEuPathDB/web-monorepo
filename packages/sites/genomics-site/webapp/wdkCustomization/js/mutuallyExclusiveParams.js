@@ -142,6 +142,7 @@
         }
         tabLabels = $(".xor-select", self.element)
             .buttonset()
+            .css("padding-left", "20%")
             .css("position", "relative")
             .css("top", 1)
             .find("label");
