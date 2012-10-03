@@ -7,6 +7,14 @@
 	      description="Page calling this tag"
 %>
 
+
+
+<%-- When definitions are in conflict, the next one overrides the previous one  --%>
+<link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 
+<link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
+<link rel="stylesheet" href="/assets/css/spanlogic.css"         type="text/css" />
+
+
 <%-- JQuery library is included by WDK --%>
 
 <c:if test="${project == 'CryptoDB'}">
@@ -83,3 +91,21 @@
 <c:if test="${refer == 'data-source'}">
   <link rel="StyleSheet" type="text/css" href="<c:url value='/wdkCustomization/css/dataSource.css' />"/>
 </c:if>
+
+<%-- need to review these --%>
+<!--[if lte IE 8]>
+<style>
+   #header_rt {
+      width:50%;
+   }
+</style>
+<![endif]-->
+
+<!--[if lt IE 8]>
+<link rel="stylesheet" href="/assets/css/ie7.css" type="text/css" />
+<![endif]-->
+
+<!--[if lt IE 7]>
+<link rel="stylesheet" href="/assets/css/ie6.css" type="text/css" />
+<![endif]-->
+

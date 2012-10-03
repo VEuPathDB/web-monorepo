@@ -5,7 +5,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@ attribute name="title"
-              required="false"
               description="Value to appear in page's title"
 %>
 <%@ attribute name="refer" 
@@ -13,12 +12,17 @@
 			  required="false" 
 			  description="Page calling this tag"
 %>
-
-<%-------- OLD set of attributes,  division being used by login and help, banner by many pages   ---------------------%>
 <%@ attribute name="banner"
               required="false"
-              description="Value to appear at top of page"
+              description="Value to appear at top of page if there is no title provided"
 %>
+
+<%-------- OLD set of attributes:
+                header:  only "division" being used (for login and contact us)
+                division and banner used in many pages,
+                most in use still in many jsps, all XMLQuestion pages and custom gene record pages
+                summary used ONLY in gene record pages        ---------------------%>
+ 
 <%@ attribute name="parentDivision"
               required="false"
 %>
@@ -35,14 +39,6 @@
               required="false"
               description="short text description of the page"
 %>
-<%@ attribute name="headElement"
-              required="false"
-              description="additional head elements"
-%>
-<%@ attribute name="bodyElement"
-              required="false"
-              description="additional body elements"
-%>
 <%---------------------------%>
 
 <%-- flag incoming galaxy.psu.edu users  --%>
@@ -53,28 +49,23 @@
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
+<c:set var="version" value="${applicationScope.wdkModel.version}" />
+<c:set var="releaseDate" value="${applicationScope.wdkModel.releaseDate}" />
+
+<c:set var="inputDateFormat" value="dd MMMM yyyy HH:mm"/>
+<fmt:setLocale value="en-US"/>    <%-- req. for date parsing when client browser (e.g. curl) does not send locale --%>
+<fmt:parseDate  var="rlsDate"               value="${releaseDate}"  pattern="${inputDateFormat}"/> 
+<fmt:formatDate var="releaseDate_formatted" value="${rlsDate}"     pattern="d MMM yy"/>
+ 
+<%-- set default facebook and twitter IDs (can be overridden in model properties) --%>
 <c:set var="facebook" value="${props['FACEBOOK_ID']}" />
 <c:set var="twitter" value="${props['TWITTER_ID']}" />
-
-<%-- set default facebook and twitter IDs (can be overridden in model properties) --%>
 <c:if test="${facebook eq null or facebook eq ''}">
   <c:set var="facebook" value="pages/EuPathDB/133123003429972"/>
 </c:if>
 <c:if test="${twitter eq null or twitter eq ''}">
   <c:set var="twitter" value="EuPathDB"/>
 </c:if>
-
-<%--  <c:set var="siteName" value="${applicationScope.wdkModel.name}" />   now defined in siteInfo.tag --%>
-<c:set var="version" value="${applicationScope.wdkModel.version}" />
-
-<c:set var="releaseDate" value="${applicationScope.wdkModel.releaseDate}" />
-<c:set var="inputDateFormat" value="dd MMMM yyyy HH:mm"/>
-<fmt:setLocale value="en-US"/><%-- req. for date parsing when client browser (e.g. curl) does not send locale --%>
-<fmt:parseDate pattern="${inputDateFormat}" var="rlsDate" value="${releaseDate}"/> 
-<%-- http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html --%>
-<fmt:formatDate var="releaseDate_formatted" value="${rlsDate}" pattern="d MMM yy"/>
-  
-<html xmlns="http://www.w3.org/1999/xhtml">
 
 <%------------------ setting title --------------%>
 <c:if test="${banner == null}">
@@ -88,7 +79,7 @@
       <c:when test = "${project == 'GiardiaDB'}">
              <c:set var="banner" value="GiardiaDB : The Giardia genome resource"/>
       </c:when>
-	 <c:when test = "${project == 'PiroplasmaDB'}">
+	   <c:when test = "${project == 'PiroplasmaDB'}">
              <c:set var="banner" value="PiroplasmaDB : The Piroplasma genome resource"/>
       </c:when>
       <c:when test = "${project == 'PlasmoDB'}">
@@ -112,12 +103,7 @@
 </c:choose>
 </c:if>
 
-
-<%--------------------------- HEAD of HTML doc ---------------------%>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="chrome=1"> 
-
+<%------------------ links to news and events  --------------%>
 <c:choose>
   <c:when test = "${project == 'EuPathDB'}">
     <c:set var='eventsRss' value='/ebrcevents.rss'/>
@@ -134,6 +120,16 @@
     <c:set var='rssorigin' value="${project}" />
   </c:otherwise>
 </c:choose>
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<%--------------------------- HEAD of HTML doc ---------------------%>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="chrome=1"> 
+
 <link rel="alternate" type="application/rss+xml" 
       title="${rssorigin} News" href="${newsRss}" />
 <link rel="alternate" type="application/rss+xml" 
@@ -148,39 +144,13 @@
 </title>
 
 <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"> <%-- standard --%>
-<link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"> <%-- for IE7 --%>
+<link rel="shortcut icon" href="/assets/images/${project}/favicon.ico">         <%-- for IE7 --%>
 
-<%-- import WDK related assets --%> 
+<%-- from WDK --%>
 <imp:includes refer="${refer}" /> 
 
-<%-- When definitions are in conflict, the next one overrides the previous one  --%>
-
-<link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 
-<link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
-<link rel="stylesheet" href="/assets/css/spanlogic.css"         type="text/css" />
-
-<%-- temporary:  generate url for old version of site --%>
-<script type="text/javascript">
-   var helpEmail = 'help@${project}.org';
-</script>
-<!-- header : refer = ${refer} -->
+<%-- other API links and javascript--%>
 <imp:jscript refer="${refer}"/>
-
-<!--[if lte IE 8]>
-<style>
-   #header_rt {
-      width:50%;
-   }
-</style>
-<![endif]-->
-
-<!--[if lt IE 8]>
-<link rel="stylesheet" href="/assets/css/ie7.css" type="text/css" />
-<![endif]-->
-
-<!--[if lt IE 7]>
-<link rel="stylesheet" href="/assets/css/ie6.css" type="text/css" />
-<![endif]-->
 
 <c:if test="${refer == 'home'}">
   <style>  <%-- extra styling to get around the sidebar on home page. --%>
@@ -189,9 +159,6 @@
     }
   </style>
 </c:if>
-
-<%-- not in use currently --%>
-${headElement}
 
 </head>
 
@@ -205,57 +172,46 @@ ${headElement}
 <!-- site search: freefind engine instructs to position this right after body tag -->
 <imp:freefind_header />
 
-<!-- helper divs with generic information used by javascript -->
+<!-- helper divs with generic information used by javascript; vars can also be used in any page using this header -->
 <imp:siteInfo />
 
-<%-- the "Contact Us" page does not need header, only the css above --%>
-   <c:if test="${division != 'help'}"> 
+<%-- to store the links, reachable via nav.js functions, from smallMenu, sidebar community, menubar community etc --%>      
+<div id="facebook-link" style="display:none">https://facebook.com/${facebook}</div>
+<div id="twitter-link" style="display:none">http://twitter.com/${twitter}</div>
 
-<%-- added for overLIB --%>
-<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 
 <div id="header2">
-   <div style="width:518px;" id="header_rt">
 
-   <div id="toplink">
-   <c:if test="${project == 'TriTrypDB'}">
-     <map name="partof">
-     <area shape=rect coords="0,0 172,22" href="http://eupathdb.org" alt="EuPathDB home page">
-     <area shape=rect coords="310,0 380,22" href="http://www.genedb.org" alt="GeneDB home page">
-     </map>
-   </c:if>
+  <div style="width:518px;" id="header_rt">
 
-   <c:choose>
-    <c:when test="${project == 'EuPathDB'}">
-       <%-- we have it for now so the page renders correctly --%>
-       <a href="http://eupathdb.org"><img src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
-   </c:when>
-   <c:when test="${project == 'TriTrypDB'}">
-     <img  usemap="#partof" src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/>
-   </c:when>
-   <c:otherwise>
-     <a href="http://eupathdb.org"><img src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
-   </c:otherwise>
-   </c:choose>
-   </div>
-   
-   <!-- Facebook and Twitter links are retrieved from the model and accessed from here via javascript -->
-   <div id="facebook-link" style="display:none">https://facebook.com/${facebook}</div>
-   <div id="twitter-link" style="display:none">http://twitter.com/${twitter}</div>
-    <div style="width:537px;" id="bottom">
-      <imp:quickSearch />
-      <imp:smallMenu refer="${refer}"/>
+    <div id="toplink">
+    <c:if test="${project == 'TriTrypDB'}">
+      <map name="partof">
+      <area shape=rect coords="0,0 172,22" href="http://eupathdb.org" alt="EuPathDB home page">
+      <area shape=rect coords="310,0 380,22" href="http://www.genedb.org" alt="GeneDB home page">
+      </map>
+    </c:if>
+    <c:choose>
+    <c:when test="${project == 'TriTrypDB'}">
+      <img  usemap="#partof" src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/>
+    </c:when>
+    <c:otherwise>
+      <a href="http://eupathdb.org"><img src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
+    </c:otherwise>
+    </c:choose>
+    </div>   <%-- id="toplink" --%>
+ 
+    <br>
+    <imp:quickSearch />								 <%-- <div id="quick-search" --%>
+    <imp:smallMenu refer="${refer}"/>  <%-- <div id="nav_topdiv" --%>
 
-   </div>  <%-- id="bottom"    --%>
-   </div>  <%-- id="header_rt" --%>
+  </div>  <%-- id="header_rt" --%>
 
 
-<%------------- TOP HEADER:  SITE logo and DATE _______  is a EuPathDB Project  ----------------%>
-   <p><a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a></p>
-
-   <p>&nbsp;</p>
-   <p>Version ${version}<br />
-   ${releaseDate_formatted}</p>
+<%------------- TOP LEFT: SITE name and release DATE  ----------%>
+  <a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a>
+	Version ${version}<br/>
+  ${releaseDate_formatted}
 
 </div>  <%-- id="header2" --%>
 
@@ -265,16 +221,15 @@ ${headElement}
 <imp:menubar refer="${refer}"/>
 <imp:siteAnnounce  refer="${refer}"/>
 
-
-</c:if>  <%-- page was not the "Contact Us" page --%>
-
-<imp:noscript /> <%-- include noscript tag on all pages to check if javascript enabled --%>
+<%-- include noscript tag on all pages to check if javascript enabled --%>
+<%-- it does not stop loading the page. sets the message in the announcement area --%>
+<imp:noscript /> 
 
 <c:if test="${refer != 'home'}">
 	<!-- FreeFind End No Index -->
 </c:if>
 
-<c:if test="${refer ne 'home' and refer ne 'home2' and refer ne 'summary'}">
+<c:if test="${refer != 'home' && refer != 'home2' && refer != 'summary'}">
 	<div id="contentwrapper">
 	<div id="contentcolumn2">
 	<div class="innertube">
