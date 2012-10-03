@@ -7,10 +7,10 @@
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 
 <%-- header includes menubar and announcements tags --%>
-<%-- refer is used to determine which announcements are shown --%>
+<%-- refer is used to determine what css and javascript to load, and which announcements are shown --%>
 <imp:header refer="home"/>
-<imp:DQG /> 
 <imp:sidebar/>
+<imp:DQG /> 
 <imp:footer  refer="home"/>
 
 
