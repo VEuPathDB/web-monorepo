@@ -318,10 +318,10 @@ div#quick-search td {
 #header2 {
 	color: #666666;
 	font-size: 10px;  /*version,date*/
-	width: 100%;
+/*	width: 100%; */
 	min-width: 980px;
 	height: 104px;
-	text-align: left;
+/*	text-align: left; */
 	background-repeat: no-repeat;
 }
 
