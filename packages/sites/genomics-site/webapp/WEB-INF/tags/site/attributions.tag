@@ -48,7 +48,7 @@ display the attributions.
         <ul>
             <c:forEach var="attribution" items="${attributions}">
                 <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-                <c:if test="${dsRecord.attributesMap['resource'] != null && dsRecord.attributesMap['category'] ne 'ignore'}">
+                <c:if test="${dsRecord.attributesMap['resource'] ne null and dsRecord.attributesMap['category'] ne 'ignore'}">
                     <li>
                         <c:url var="dataSourceUrl"
                                value="/getDataSource.do?display=detail&datasets=${attributionKey}&title=Query#" />

@@ -106,29 +106,23 @@
   <!-- Error Page Mappings -->
   <error-page>
     <exception-type>java.lang.RuntimeException</exception-type>
-    <location>/wdkCustomization/jsp/Error.jsp</location>
+    <location>/WEB-INF/jsp/error.jsp</location>
   </error-page>
   <error-page>
-    <exception-type>java.lang.IOException</exception-type>
-    <location>/wdkCustomization/jsp/Error.jsp</location>
+    <exception-type>java.lang.Exception</exception-type>
+    <location>/WEB-INF/jsp/error.jsp</location>
   </error-page>
   <error-page>
-    <exception-type>javax.servlet.ServletException</exception-type>
-    <location>/wdkCustomization/jsp/Error.jsp</location>
-  </error-page>
-
-  <error-page>
-     <error-code>404</error-code>
-     <location>/404.jsp</location>
-  </error-page>
-
-  <error-page>
-     <error-code>400</error-code>
-     <location>/404.jsp</location>
+    <error-code>400</error-code>
+    <location>/WEB-INF/jsp/error.jsp</location>
   </error-page>
   <error-page>
-     <error-code>500</error-code>
-     <location>/500.jsp</location>
+    <error-code>404</error-code>
+    <location>/WEB-INF/jsp/error.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/WEB-INF/jsp/error.jsp</location>
   </error-page>
 
   <jsp-config>

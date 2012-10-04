@@ -1,4 +1,4 @@
-<% 
+<%
 /** 
   By default this page returns a "200 OK" HTTP status which prevents error 
   detection with a HEAD request. So force a 5xx status code.
@@ -8,12 +8,11 @@
 response.setStatus(500);
 %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
-<imp:header banner="Unexpected Error" />
+<imp:header banner="Unexpected Error"/>
 
-<EM>Sorry, an unexpected error has occurred.</EM>
+<em>Sorry, an unexpected error has occurred.</em>
 
 <api:errors/>
 

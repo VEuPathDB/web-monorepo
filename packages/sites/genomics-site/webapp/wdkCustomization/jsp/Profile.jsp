@@ -64,7 +64,7 @@ function validateFields(e)
 <!-- display the success information, if the user registered successfully -->
 <c:if test="${requestScope.profileSucceed != null}">
 
-  <p><font color="blue">Your profile has been updated successfully.</font> </p>
+  <p><font color="blue">Your profile has been updated successfully.</font></p><br/>
 
 </c:if>
 
@@ -129,8 +129,13 @@ function validateFields(e)
       <td align="right" width="50%" nowrap><font color="red">*</font> Last Name:</td>
       <td align="left"><input type="text" name="lastName" value="${wdkUser.lastName}" size="20"></td>
     </tr>
+    <tr>
       <td align="right" width="50%" nowrap><font color="red">*</font> Institution:</td>
       <td align="left"><input type="text" name="organization" value="${wdkUser.organization}" size="50"></td>
+    </tr>
+    <tr>
+      <td align="right" width="50%" nowrap="nowrap"> OpenID (<a class="open-dialog-about-openid" href="javascript:void(0)">What is this?</a>): </td>
+      <td align="left"><input type="text" name="openId" value="${wdkUser.openId}" size="50"/></td>
     </tr>
     <tr>
        <td colspan="2" align="left"><hr><b>Preferences:</b></td>

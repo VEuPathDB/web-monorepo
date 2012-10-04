@@ -7,13 +7,7 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} :: Change Password"
-                 banner="Change Password"
-                 parentDivision="${wdkModel.displayName}"
-                 parentUrl="/home.jsp"
-                 divisionName="Change Password"
-                 division="profile"/>
-
+<imp:header title="${wdkModel.displayName} :: Change Password" refer="profile"/>
 
 <script language="JavaScript" type="text/javascript">
 <!--
@@ -64,7 +58,10 @@ function validateFields(e)
   <c:when test="${requestScope.changePasswordSucceed != null}">
 
   <p>
-    <font color="blue">You have changed your password successfully.</font>
+    <font color="blue">You have changed your password successfully.</font><br/>
+    <a href="${pageContext.request.contextPath}/showProfile.do">Return to Profile</a>
+    &#160;&#160;&#160;&#160;&#160;&#160;
+    <a href="${pageContext.request.contextPath}/home.do">${wdkModel.displayName} Home</a>
   </p>
 
   </c:when>

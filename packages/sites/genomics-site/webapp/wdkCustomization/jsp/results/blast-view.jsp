@@ -86,7 +86,7 @@
    <c:if test="${strategy != null}">
     <c:choose>
       <c:when test="${wdkUser.guest}">
-        <c:set var="basketClick" value="popLogin();setFrontAction('basketStep');" />
+        <c:set var="basketClick" value="User.login();" />
       </c:when>
       <c:otherwise>
         <c:set var="basketClick" value="updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}');" />

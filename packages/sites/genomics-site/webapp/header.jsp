@@ -12,5 +12,5 @@
 </c:if>
 
 <%-- used by gbrowse and error pages directly, and by community files and download files pages via /html/include/fancy*IndexHeader.shtml ----%>
-<imp:header     banner="${project} ${ftype}" />
+<imp:header banner="${project} ${ftype}" />
 

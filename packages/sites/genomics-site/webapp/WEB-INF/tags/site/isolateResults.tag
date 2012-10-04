@@ -95,7 +95,7 @@
     <th>
       <c:choose>
         <c:when test="${wdkUser.guest}">
-          <c:set var="basketClick" value="popLogin()" />
+          <c:set var="basketClick" value="User.login()" />
         </c:when>
         <c:otherwise>
           <c:set var="basketClick" value="updateBasket(this,'page', '0', '${modelName}', '${wdkAnswer.recordClass.fullName}')" />
