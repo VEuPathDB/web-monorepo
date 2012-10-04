@@ -97,7 +97,6 @@ function reloadWebapp() {
       buttons: {
         "Cancel": function() {
           $(this).dialog( "close" );
-          $("body").loading("show");
         },
         "Reload Webapp": function() {
           $(this).dialog( "close" );
