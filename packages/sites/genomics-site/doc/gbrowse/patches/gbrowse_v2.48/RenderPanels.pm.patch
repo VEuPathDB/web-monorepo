@@ -1,5 +1,5 @@
---- RenderPanels.pm.orig	2012-05-11 15:28:57.000000000 -0400
-+++ RenderPanels.pm	2012-05-11 16:28:41.000000000 -0400
+--- RenderPanels.pm.orig	2012-10-04 16:35:43.000000000 -0400
++++ RenderPanels.pm	2012-10-04 16:45:32.000000000 -0400
 @@ -257,6 +257,9 @@
      my $feature_files  = $args->{external_features};
      my $labels         = $args->{labels};
@@ -10,7 +10,21 @@
      warn "[$$] MAKE_REQUESTS, labels = ",join ',',@$labels if DEBUG;
  
      my $base        = $self->get_cache_base();
-@@ -562,13 +565,14 @@
+@@ -522,7 +525,12 @@
+ 	$title = $source->setting( $label => 'key') || $l;
+     }
+     $title =~ s/:(overview|region|detail)$//;
+-   
++    
++    # eupathdb 10/4/2012 callback on key
++    if( ref $title eq 'CODE' ) {
++      $title = &$title;
++    }
++
+     my $balloon_style = $source->global_setting('balloon style') || 'GBubble'; 
+     my $favorite      = $settings->{favorites}{$label};
+     my $starIcon      = $favorite ? $favicon_2 : $favicon;
+@@ -562,13 +570,14 @@
              }
          ),
  
@@ -32,7 +46,7 @@
  
          $config_click ? img({   -src         => $configure,
  				-style       => 'cursor:pointer',
-@@ -1537,6 +1541,13 @@
+@@ -1537,6 +1546,13 @@
  
  		    warn "track_setup($label): ",time()-$time," seconds " if BENCHMARK;
  
@@ -46,7 +60,7 @@
  		    # == populate the tracks with feature data ==
  		    $self->add_features_to_track(
  			-labels    => [ $label, ],
-@@ -1544,6 +1555,8 @@
+@@ -1544,6 +1560,8 @@
  			-filters   => $filters,
  			-segment   => $segment,
  			-fsettings => $settings->{features},
@@ -55,7 +69,7 @@
  			);
  
  		    warn "add_features($label): ",time()-$time," seconds " if BENCHMARK;
-@@ -1682,6 +1695,8 @@
+@@ -1682,6 +1700,8 @@
    my $tracks          = $args{-tracks}    or die "programming error";
    my $filters         = $args{-filters}   or die "programming error";
    my $fsettings       = $args{-fsettings} or die "programming error";
@@ -64,7 +78,7 @@
  
    warn "[$$] add_features_to_track @{$args{-labels}}" if DEBUG;
  
-@@ -1725,7 +1740,7 @@
+@@ -1725,7 +1745,7 @@
  	  $iterator2dbid{$iterator} = $source->db2id($db);
        }
  
@@ -73,7 +87,7 @@
  	  $iterators{$iterator}     = $iterator;
  	  $iterator2dbid{$iterator} = $source->db2id($db);
        }
-@@ -1903,7 +1918,7 @@
+@@ -1903,7 +1923,7 @@
  
  sub get_iterator {
    my $self = shift;
@@ -82,7 +96,7 @@
  
    # The Bio::DB::SeqFeature::Store database supports correct
    # semantics for directly retrieving features that overlap
-@@ -1916,7 +1931,10 @@
+@@ -1916,7 +1936,10 @@
        my @args = (-type   => $feature_types,
  		  -seq_id => $segment->seq_id,
  		  -start  => $segment->start,
@@ -94,7 +108,7 @@
        push @args,(-max_features => $max) if $max > 0;  # some adaptors allow this
        return $db->get_seq_stream(@args);
    }
-@@ -1934,7 +1952,7 @@
+@@ -1934,7 +1957,7 @@
      return;
    }
  
@@ -103,7 +117,7 @@
  }
  
  sub get_summary_iterator {
-@@ -2031,7 +2049,11 @@
+@@ -2031,7 +2054,11 @@
  		    ]);
    }
    elsif ($section eq 'detail'){
