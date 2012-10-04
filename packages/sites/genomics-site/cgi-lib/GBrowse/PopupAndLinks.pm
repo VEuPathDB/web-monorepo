@@ -1177,20 +1177,6 @@ sub RandomEndsTitle {
   hover($f, \@data); 
 }
 
-sub affyProbesTitle {
-  my ($f, $type) = @_;
-  my $start = $f->start;
-  my $stop  = $f->stop;
-  my ($count) = $f->get_tag_values("Count"); 
-  my $probeId = $f->name; 
-  my @data;
-  push @data, ['Type:' => $type ];
-  push @data, ['ProbeID:' => $probeId ];
-  push @data, ['Start:'        => $start];
-  push @data, ['Stop:'         => $stop];
-  hover($f, \@data); 
-}
-
 
 sub bindingSiteTitle {
   my $f = shift;
