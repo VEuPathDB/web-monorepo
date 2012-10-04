@@ -817,14 +817,15 @@ sub orfTitle {
 }
 
 sub ArrayElementTitle {
-     my $f = shift;
-     my $chr = $f->seq_id;
-     my $loc = $f->location->to_FTstring;
-     my ($name) = $f->get_tag_values("SourceId");
-     my @data;
-     push @data, [ 'Name:'  => $name ];
-     push @data, [ 'Location:'  => "$chr $loc" ];
-     hover($f, \@data);
+  my ($f, $type) = @_;
+  my $chr = $f->seq_id;
+  my $loc = $f->location->to_FTstring;
+  my ($name) = $f->get_tag_values("SourceId");
+  my @data;
+  push @data, ['Type:' => $type ] if ($type);
+  push @data, [ 'Name:'  => $name ];
+  push @data, [ 'Location:'  => "$chr $loc" ];
+  hover($f, \@data);
 }
 
 sub rumIntronTitle {  
