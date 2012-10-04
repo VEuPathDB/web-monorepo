@@ -6,6 +6,7 @@
 
 <%@ attribute name="title"
               description="Value to appear in page's title"
+              required="false"
 %>
 <%@ attribute name="refer" 
  			  type="java.lang.String"
@@ -21,7 +22,8 @@
                 header:  only "division" being used (for login and contact us)
                 division and banner used in many pages,
                 most in use still in many jsps, all XMLQuestion pages and custom gene record pages
-                summary used ONLY in gene record pages        ---------------------%>
+                summary used ONLY in gene record pages        
+                headElement used in XmlQuestions.News.jsp, Glossary and Tutorials   ---------------------%>
  
 <%@ attribute name="parentDivision"
               required="false"
@@ -39,6 +41,11 @@
               required="false"
               description="short text description of the page"
 %>
+<%@ attribute name="headElement"
+              required="false"
+              description="additional head elements"
+%>
+
 <%---------------------------%>
 
 <%-- flag incoming galaxy.psu.edu users  --%>
@@ -227,7 +234,7 @@
 	<!-- FreeFind End No Index -->
 </c:if>
 
-<c:if test="${refer != 'home' && refer != 'home2' && refer != 'summary'}">
+<c:if test="${refer ne 'home' and refer ne 'home2' and refer ne 'summary'}">
 	<div id="contentwrapper">
 	<div id="contentcolumn2">
 	<div class="innertube">
