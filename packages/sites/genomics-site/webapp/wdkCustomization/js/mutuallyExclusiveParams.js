@@ -150,14 +150,11 @@
         tabLabels.css("margin-right", ".3em")
             .removeClass("ui-corner-left")
             .removeClass("ui-corner-right")
-            .addClass("ui-corner-top");
-
-        tabLabels.css("border-bottom", "none")
+            .addClass("ui-corner-top")
+            .css("border-bottom", "none")
             .css("z-index", "")
-            .css("color", "#777")
             .filter(".ui-state-active")
             .css("z-index", 10)
-            .css("color", "");
       });
     },
 
