@@ -5835,30 +5835,37 @@ GROUP BY c.start_interval,c.end_interval,c.sample,c.name,c.hpi,c.multiple,s.sum_
    <sqlQuery name="NextGenSeq:coverageLogSubtracks:bulksubfeatures"  includeProjects="PlasmoDB,ToxoDB,TriTrypDB,CryptoDB,FungiDB">
      <sql>
 <![CDATA[
-     SELECT start_interval feature_id,
-             'NextGenSeq' type,
-             '$source' source,
-              decode($$negativeValuesField$$, 1, -1, 1) * abs(round(log(2,max(coverage)),2)) score, 
-             $$edname$$ || '_' || sample || '_' || $$subtrackField$$ parent_id,
-             round(start_interval * (($rend - $base_start + 1) / 800)) startm,
-             round(end_interval * (($rend - $base_start + 1) / 800)) end,
-             'multiple=' || multiple  || '$dlm' ||
-             'sample=' || sample  || '$dlm' || 
-             'is_reversed=' || is_reversed  as atts
-    FROM (select ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
-                 ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
-                 is_reversed,
-                 csc.coverage, csc.sample,ed.name, csc.multiple
-       FROM  apidb.NextGenSeqCoverage csc,
+SELECT start_interval feature_id,
+       'NextGenSeq' type,
+       '$source' source,
+       decode($$negativeValuesField$$, 1, -1, 1) * abs(round(log(2,max(coverage*sum_coverage/max_cov)),2)) score, 
+       $$edname$$ || '_' || sample || '_' || $$subtrackField$$ parent_id,
+       round(start_interval * (($rend - $base_start + 1) / 800)) startm,
+       round(end_interval * (($rend - $base_start + 1) / 800)) end,
+       'multiple=' || multiple  || '$dlm' ||
+       'sample=' || sample  || '$dlm' || 
+       'is_reversed=' || is_reversed  as atts
+FROM (SELECT ceil((csc.mapping_start + 1) / (($rend - $base_start + 1) / 800)) start_interval, 
+             ceil(csc.mapping_end / (($rend - $base_start + 1) / 800)) end_interval, 
+             is_reversed,
+             csc.coverage, csc.sample,ed.name, csc.multiple, s.sum_coverage, s.max_cov
+      FROM   apidb.NextGenSeqCoverage csc,
+             ( SELECT ss.ext_db_name, ss.sample, ss.sum_coverage, m.max_cov
+               FROM   apidbtuning.nextgenseqstats ss, 
+                      ( SELECT max(sum_coverage) as max_cov, ext_db_name
+                        FROM APIDBTUNING.nextgenseqstats
+                        GROUP BY ext_db_name) m
+               WHERE ss.ext_db_name = m.ext_db_name) s,
              sres.externaldatabaserelease edr,
              sres.externaldatabase ed
-       WHERE csc.external_database_release_id = edr.external_database_release_id
-         AND edr.external_database_id = ed.external_database_id
-         AND ed.name $$operator$$ $$edname$$
-         AND csc.na_sequence_id = $srcfeature_id
-         AND csc.mapping_start + 1 <= $rend
-         AND csc.mapping_end >= $base_start - 1)
-       GROUP BY start_interval,end_interval,sample,is_reversed,multiple, name
+      WHERE csc.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name $$operator$$ $$edname$$
+        AND csc.na_sequence_id = $srcfeature_id
+        AND csc.mapping_start + 1 <= $rend
+        AND s.ext_db_name = ed.name
+        AND csc.mapping_end >= $base_start - 1)
+GROUP BY start_interval,end_interval,sample,is_reversed,multiple, name
 ]]>
     </sql>
   </sqlQuery>
