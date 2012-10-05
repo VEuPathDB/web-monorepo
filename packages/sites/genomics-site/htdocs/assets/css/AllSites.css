@@ -7,7 +7,7 @@
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =MAIN structure
+	 =MAIN structure: contentwrapper css provided by wdk ???
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #contentcolumn {
 	min-width: 780px;
@@ -36,9 +36,6 @@ div.innertube #record-toolbox {
 div.innertube #record-toolbox li {
     margin-top: 2px;
 }
-
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME Page:  BUBBLE Lists
@@ -141,12 +138,7 @@ height: 240px;
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* newitems.js (highlight in yellow unread utems)*/
-p.unreadlabel {
-  color:yellow;
-  font-size:.5em;
-  padding-left:3px;
-}
+
 
 #menu_lefttop {
 	width: 220px;
@@ -234,17 +226,13 @@ p.unreadlabel {
 }
 
 
-#leftcolumn {
-	float: left;
-	width: 220px; /*Width of left column*/
-	margin-left: -100%;
+
+/* newitems.js (highlight in yellow unread utems)*/
+p.unreadlabel {
+  color:yellow;
+  font-size:.5em;
+  padding-left:3px;
 }
-
-.innertube3{
-	margin: 6px; /*Margins for inner DIV inside each column (to provide padding)*/
-
-}
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =News
@@ -290,9 +278,6 @@ ul.cirbulletlist {
 	margin-left:  1em;
 	list-style-position: outside;
 }
-
-
-
 
 
 
@@ -383,8 +368,6 @@ div#quick-search td {
 	z-index: 1;
 }
 
-
-
 /* #menubar #mysearch {
 	width: auto;
 	background-repeat: repeat-x;
@@ -415,7 +398,6 @@ div#quick-search td {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menubar Dropdown List
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 #menu {
 	z-index: 500;
@@ -1096,4 +1078,18 @@ td {
     padding: 4px 4px 4px 4px;
 }
 
+*/
+
+
+/* from sidebar */
+/*
+#leftcolumn {
+	float: left;
+	width: 220px;
+	margin-left: -100%;
+}
+
+.innertube3{
+	margin: 6px;
+}
 */

@@ -38,9 +38,7 @@
 <c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
 
 <%------------------------------------------%>
-<div id="leftcolumn">
-  <div class="innertube3">
-    <div id="menu_lefttop">
+<div id="menu_lefttop">
 
 
 <%-- for testing SITE SEARCH
@@ -284,8 +282,6 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 </div>
 
 
-    </div>
-  </div>
 </div>
   
 
