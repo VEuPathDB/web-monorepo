@@ -15,7 +15,7 @@ umask 0;
 
 # Export Static Methods
 @ISA = qw(Exporter);
-@EXPORT = qw(init hover myfooter myheader mypostgrid site_version);  
+@EXPORT = qw(init hover myfooter myheader mypostgrid wdkReference site_version);  
 
 sub new {
   my $class = shift;
@@ -213,7 +213,7 @@ sub mypostgrid {
 sub wdkReference {
   my ($self,$extdb, $key) = @_;
 
-  my $sql = "SELECT t.name, t.value FROM ApiDB.DataSource d, ApidbTuning.DataSourceWdkRefText t, apidbtuning.datasourcewdkreference w where d.data_source_id = w.data_source_id and w.target_type='gbrowse_track' and d.name='$extdb' and w.data_source_id = t.data_source_id and t.name = '$key' ";
+  my $sql = "SELECT t.name, t.value FROM ApiDB.DataSource d, ApidbTuning.WdkReferenceText t, apidbtuning.datasourcewdkreference w where d.data_source_id = w.data_source_id and w.target_type='gbrowse_track' and d.name='$extdb' and w.data_source_reference_id = t.data_source_reference_id and t.name = '$key' ";
   my $sth = $self->{dbh}->prepare($sql);
   $sth->execute() or $self->throw($sth->errstr);
   while (my ($name, $value)  = $sth->fetchrow_array) {
