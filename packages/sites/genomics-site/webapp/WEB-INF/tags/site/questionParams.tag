@@ -38,7 +38,7 @@
 <c:set value="${wdkQuestion.paramMapByGroups}" var="paramGroups"/>
 
 <c:if test="${not empty wdkQuestion.customJavascript}">
-  <script type="text/javascript" src="/wdkCustomization/js/questions/${wdkQuestion.customJavascript}"></script>
+  <script type="text/javascript" src="${pageContext.request.contextPath}/wdkCustomization/js/questions/${wdkQuestion.customJavascript}"></script>
 </c:if>
 
 <script type="text/javascript">
