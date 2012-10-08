@@ -43,7 +43,6 @@
 	</style>
 </c:if>
 
-    <wdk:dialogs/>
     <imp:dialogs/>
 
 		<div id="footer">
