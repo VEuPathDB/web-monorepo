@@ -284,6 +284,12 @@ ul.cirbulletlist {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+#nav-top li ul {  /* second-level lists */
+  background-repeat: repeat-x;      /*was in AllSites, did not make it into WDK*/
+  width:13em;
+  padding: 6px 6px 6px 18px;
+}
+
 
 div#quick-search td {
   white-space: nowrap;
