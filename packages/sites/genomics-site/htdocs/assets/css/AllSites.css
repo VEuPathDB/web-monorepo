@@ -7,7 +7,7 @@
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =MAIN structure: contentwrapper css provided by wdk ???
+	 =MAIN structure: contentwrapper css provided by wdk 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #contentcolumn {
 	min-width: 780px;
@@ -119,13 +119,6 @@ a.heading:hover + a.detail_link, a.detail_link:hover {
 	left: -2px;
 	position: relative;
 }
-
-/* not sure it is needed....
-ul.heading_list li:hover a.detail_link {
-	left: -2px;
-	position: relative;
-}
-*/
 
 
 /* for Internet Explorer */
@@ -295,31 +288,17 @@ div#quick-search td {
   white-space: nowrap;
 }
 
-
-#header {
-	color: #666666;
-	font-size: 10px;
-	width: 100%;
-	height: 159px;
-	text-align: left;
-	min-width: 1000px;
-	background-repeat: no-repeat;
-}
-
 #header2 {
 	color: #666666;
 	font-size: 10px;  /*version,date*/
-/*	width: 100%; */
 	min-width: 980px;
 	height: 104px;
-/*	text-align: left; */
 	background-repeat: no-repeat;
 }
 
 
 #header_rt {
    font-size: 12px;
- /*  width: 446px;*/   /* it was making safari wrap with long usernames */
    float: right;
    text-align: right;
    margin-right: 25px;
@@ -346,13 +325,11 @@ div#quick-search td {
 
 #toplink a:link, #toplink a:visited{
 	display: block;
-/* 	width: 381px; */
 	text-align: right;
 }
 
 #toplink a:hover {
 	display: block;
-/* 	width: 381px; */
 	text-align: right;
 }
 
@@ -361,7 +338,7 @@ div#quick-search td {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #menubar {
-	min-width: 935px; /* to make space for My Favorites */
+	min-width: 935px;
 	height: 19px;
 	text-align: left;
 	background-image: url(../images/menu_bar.png);
@@ -373,37 +350,6 @@ div#quick-search td {
 	clear: both;
 	z-index: 1;
 }
-
-/* #menubar #mysearch {
-	width: auto;
-	background-repeat: repeat-x;
-	margin-top: -4px;
-	padding: 4px 3px 3px 3px;
-	z-index: 1;
-} */
-
-/* were used in quickSearch
-
-#half_left {
-	width: 45%;
-	text-align: right;
-	padding: 4px;
-	margin: 6 0 12 0;
-	float: left;
-}
-
-#half_right {
-	width: 45%;
-	text-align: left;
-	padding: 4px;
-	margin: 6 0 12 0;
-	float: right;
-}
-*/
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Menubar Dropdown List
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu {
 	z-index: 500;
@@ -427,7 +373,6 @@ div#quick-search td {
 	border-left-width: 0px;
 	border-style: solid;
 	border-color: #888888;
-/*	z-index: 500; */
 }
 
 #menu a.dropdown {
@@ -450,15 +395,13 @@ div#quick-search td {
 	font-weight:bold;
 	margin:0pt;
 	padding:0pt;
-/*	z-index: 500; */
 }
 
 #menu a:link, #menu a:visited {
 	color:#FFFFFF;
-	line-height: 13px;   /* for menubar */
+	line-height: 13px;  
 	width: auto;
 	text-decoration:none;
-/*	z-index: 500; */
 }
 
 #menu a:hover, #menu a:active {
@@ -466,7 +409,6 @@ div#quick-search td {
 	line-height: 13px;
 	width: auto;
 	text-decoration: none;
-/*	z-index: 500; */
 }
 
 #menu li {
@@ -497,7 +439,7 @@ div#quick-search td {
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom: 0.1px solid black;  /* color will be overriden in project.css */
+	border-bottom: 0.1px solid black; 
 	left:100%;
 	width: 16em;
 	font-weight: normal;
@@ -508,7 +450,7 @@ div#quick-search td {
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom: 0.1px solid black;   /* color will be overriden in project.css */
+	border-bottom: 0.1px solid black; 
 	left:100%;
 	width: 16em;
 	font-weight: normal;
@@ -543,8 +485,6 @@ div#menu ul li:hover ul, div#menu ul ul li:hover ul {
 	z-index: 500;
 }
 
-
-/* box size in third menu */
 div#menu ul ul ul li:hover ul {
 	display:block;
 	width: 26em;
@@ -554,8 +494,6 @@ div#menu ul ul ul li:hover ul {
 	z-index: 500;
 }
 
-/* added for  plasmo microaray questions */
-/* white background in third menu */
 #menu ul ul ul ul a:link, #menu ul ul ul ul a:visited{
 	left:100%;
 	width: 26em;
@@ -954,148 +892,3 @@ tr.headerrow th {
 
 
 
-
-
-
-
-
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Record.jsp,now in wdkCommon.css; comment out before delete: Sep 26 2012
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
-.fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
-*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =UNUSED? comment out before delete: Sep 26 2012
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
-#rightcolumn { 
-	float: left;
-	width: 25px;
-	margin-left: -25px; 
-}
-
-.twoColHybLt #container_au { 
-	width: 100%; 
-	background-color: #FFFFFF;
-	margin: 0 auto; 
-	border: 1px solid #000000;
-	text-align: left;
-} 
-
-.twoColHybLt #sidebar1 {
-	float: left; 
-	width: 12em;
-	color: #FFFFFF;
-	background-repeat: repeat-y;
-	padding: 15px 0;
-}
-
-.twoColHybLt #sidebar1 h3, .twoColHybLt #sidebar1 p {
-	margin-left: 10px; 
-	margin-right: 10px;
-}
-
-.twoColHybLt #mainContent { 
-	margin: 0 20px 0 13em; 
-} 
-*/
-
-
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Generic  ==> moved to wdkCommon.css; comment out before delete: Sep 26 2012
-    .fltrt: this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page.
-    .fltlft:  this class can be used to float an element left in your page 
-    .clearfloat:  this class should be placed on a div or break element and should be the final element before the close of a container that should fully contain a float 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
-.fltrt { 
-	float: right;
-	margin-left: 8px;
-}
-.fltlft { 
-	float: left;
-	margin-right: 8px;
-}
-.clearfloat {
-	clear:both;
-    height:0;
-    font-size: 1px;
-    line-height: 0px;
-}
-*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Generic ==> moved to wdkCommon.css; comment out before delete: Sep 26 2012
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
-h1 {
-	font-size: 170%;  
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	text-align: center;
-	margin-bottom: 14px;
-}
-
-h2 {
-	font-size: 150%;  
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	margin-bottom: 11px;
- 	text-align: left;
-	margin-left: 11px;
-}
-
-h3 {
-	font-size: 120%;  
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	margin-bottom: 11px;
- 	text-align: left;
-	margin-left: 11px;
-}
-
-body {
-	text-align: left;
-	color: #000000;
-	background-color: #ffffff;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	white-space: normal;
-	background-repeat: repeat-x;
-}
-
-
-a:link, a:visited {
-	text-decoration: none;
-}
-
-a:hover, a:active {
-	text-decoration: none;
-}
-
-td { 
-    padding: 4px 4px 4px 4px;
-}
-
-*/
-
-
-/* from sidebar */
-/*
-#leftcolumn {
-	float: left;
-	width: 220px;
-	margin-left: -100%;
-}
-
-.innertube3{
-	margin: 6px;
-}
-*/
