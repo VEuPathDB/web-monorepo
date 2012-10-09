@@ -48,25 +48,25 @@ a[name]:hover, a[name]:active {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-#nav_top {
+#nav-top {
 	color: #395b8e;
 }
 
-#nav_top a:link, #nav_top a:visited {
+#nav-top a:link, #nav-top a:visited {
 	color: #395b8e;
 }
 
-#nav_top li ul {  /* second-level lists */
+#nav-top li ul {  /* second-level lists */
 	background-image: url(../images/CryptoDB/footer.png);
 	border-color:#395b8e;
 	list-style-image: url(../images/CryptoDB/bullet_arrow.gif);
 }
 
-#nav_top li ul a:link, #nav_top li ul a:visited {
+#nav-top li ul a:link, #nav-top li ul a:visited {
 	color: #395b8e;
 }
 
-#nav_top li ul a:hover, #nav_top li ul a:active {
+#nav-top li ul a:hover, #nav-top li ul a:active {
 	color: #630d0d;
 }
 
