@@ -10,6 +10,8 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
+<link rel="stylesheet" href="<c:url value='wdkCustomization/css/superfish/css/superfish.css'/>" type="text/css"/>
+
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
 <link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 
 <link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
@@ -21,6 +23,10 @@
 <c:if test="${project == 'CryptoDB'}">
   <c:set var="gkey" value="AIzaSyBD4YDJLqvZWsXRpPP8u9dJGj3gMFXCg6s" />
 </c:if>
+
+<script type="text/javascript" src="<c:url value='/wdkCustomization/js/lib/hoverIntent.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/wdkCustomization/js/lib/superfish.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/wdkCustomization/js/lib/supersubs.js'/>"></script>
 
 <c:if test="${refer == 'summary'}">
 

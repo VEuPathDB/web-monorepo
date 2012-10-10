@@ -337,6 +337,7 @@ div#quick-search td {
 	 =MENUBAR (horizontal bar, under header)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
+/*
 #menubar {
 	min-width: 935px;
 	height: 19px;
@@ -502,8 +503,70 @@ div#menu ul ul ul li:hover ul {
 	line-height: 14px;
 	z-index: 500;
 }
+*/
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Superfish menu stuff -- override in ${project}.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#menu {
+  z-index: 500;
+}
+
+.sf-menu {
+  width: 100%;
+  background: transparent;
+  margin-bottom: -0.4em;
+}
+
+.sf-menu a {
+  border-left: 1px solid #fff;
+  border-top: none;
+  padding: .65em 1em;
+  text-decoration: none;
+}
+
+.sf-menu a:link, .sf-menu a, .sf-menu a:visited  {
+  color: white;
+  font-weight: bold;
+}
+
+.sf-menu li {
+  background: transparent;
+}
+
+.sf-menu li li {
+    background: #B7B7B7;
+}
+
+.sf-menu li li li {
+    background: #A7A7A7;
+}
+
+.sf-menu li li:hover, .sf-menu li.sfHover,
+.sf-menu a:focus, .sf-menu a:hover, .sf-menu a:active {
+	background:		#C7C7C7;
+	outline:		0;
+}
+
+/*
+.sf-menu li:hover {
+	background:		transparent;
+	outline:		0;
+}
+*/
+
+.sf-menu li#favorite-menu > a {
+  padding: 0.3em;
+}
+
+.sf-menu a:hover {
+  color: #7a3838;
+}
+
+.sf-menu .sfHover > a {
+  color: #364179;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Search Boxes (ORTHO: commmon.css)

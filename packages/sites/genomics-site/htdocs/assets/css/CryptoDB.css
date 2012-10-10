@@ -112,6 +112,7 @@ a[name]:hover, a[name]:active {
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+/*
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
 	color:#560000;
 }
@@ -124,7 +125,21 @@ a[name]:hover, a[name]:active {
 	border-bottom-color: #610b0b;
 	color: #610b0b;
 }
+*/
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Superfish menu stuff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* active link color */
+.sf-menu a:hover {
+  color: #7a3838;
+}
+
+/* parent selected link color */
+.sf-menu li.sfHover > a {
+  color: #364179;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menu Lists
