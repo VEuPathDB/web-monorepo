@@ -55,16 +55,6 @@ $(initializeGenomeView);
 <c:set var="zoomInAllTip" value="Zoom in all the sequences." />
 <c:set var="zoomOutAllTip" value="Zoom out all the sequences." />
 
-<div id="sequence-data">
-  <c:forEach items="${sequences}" var="sequence">
-    <div class="sequence" id="${sequence.sourceId}" data-length="${sequence.length}" data-pct-length="${sequence.percentLength}">
-      <c:forEach items="${sequence.spans}" var="span">
-        <span class="span" id="#{span.sourceId}" 
-      </c:span>
-    </div>
-  </c:forEach>
-</div>
-
 
 <%-- <div style="clear:both;;position:relative;top:-20px"> --%>
 <div>
