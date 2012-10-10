@@ -12,7 +12,7 @@
 .genome-view .spans .span.reverse, .legend .span.reverse { top:11px;background-color:#FF0000; }
 .genome-view .spans .span .tooltip { display:none; }
 
-.legend { background-color:#EEEEEE; border-radius:5px; margin-bottom:5px; width: 300px; }
+.legend { background-color:#EEEEEE; border-radius:5px; margin-bottom:5px; width: 400px; }
 .legend .title { text-align:center; padding-top:5px; font-weight:bold; }
 .legend .span { width:50px; display:inline-block; }
 
