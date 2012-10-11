@@ -213,7 +213,7 @@
           </li>
         </c:when>
         <c:otherwise>
-          <li><a href="<c:url value="/showFavorite.do"/>">
+          <li id="favorite-menu"><a href="<c:url value="/showFavorite.do"/>">
             <img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
             <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
             </a>
