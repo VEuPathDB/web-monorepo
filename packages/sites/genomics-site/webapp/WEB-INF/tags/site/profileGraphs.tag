@@ -127,7 +127,7 @@
  
 
          <c:choose>
-            <c:when test="${numVisibleParts % 3 == 0}">
+            <c:when test="${numVisibleParts % 3 == 0 && numVisibleParts % 2 != 0}">
                <c:if test="${vp_i % 3 == 0}">
                  <br />
                </c:if>
