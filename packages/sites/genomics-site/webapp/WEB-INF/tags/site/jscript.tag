@@ -10,7 +10,7 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<link rel="stylesheet" href="<c:url value='wdkCustomization/css/superfish/css/superfish.css'/>" type="text/css"/>
+<link rel="stylesheet" href="<c:url value='/wdkCustomization/css/superfish/css/superfish.css'/>" type="text/css"/>
 
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
 <link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 
