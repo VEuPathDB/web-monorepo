@@ -632,14 +632,8 @@ div#menu ul ul ul li:hover ul {
 }
 
 .site-icons li { display: inline; }
-
-.site-icons li.short-space {
-	margin-left: 9px;
-}
-
-.site-icons li.long-space {
-	margin-left: 15px;
-}
+.site-icons li.short-space { margin-left: 9px; }
+.site-icons li.long-space { margin-left: 15px; }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =QUERY GRID
