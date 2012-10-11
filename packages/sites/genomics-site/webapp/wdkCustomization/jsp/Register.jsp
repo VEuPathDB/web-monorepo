@@ -7,16 +7,16 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} :: Registration"
+<imp:pageFrame title="${wdkModel.displayName} :: Registration"
                  banner="Registration and Subscription"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="User Registration"
-                 division="register"/>
+                 division="register">
 
 
 
 <imp:register/>
 
 
-<imp:footer/>
+</imp:pageFrame>

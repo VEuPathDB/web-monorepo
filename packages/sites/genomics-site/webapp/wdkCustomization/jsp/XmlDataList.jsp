@@ -6,7 +6,7 @@
 <!-- get wdkXmlQuestionSets saved in request scope -->
 <c:set var="xmlQSets" value="${requestScope.wdkXmlQuestionSets}"/>
 
-<imp:header banner="Data Contents" />
+<imp:pageFrame banner="Data Contents">
 
 <!-- show all xml question sets -->
 <UL>
@@ -23,4 +23,4 @@
 </c:forEach>
 </UL>
 
-<imp:footer/>
+</imp:pageFrame>

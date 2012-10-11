@@ -23,10 +23,10 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<imp:header title="${id}"
+<imp:pageFrame title="${id}"
              refer="recordPage"
              divisionName="${recordType} Record"
-             division="queries_tools"/>
+             division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
@@ -135,5 +135,5 @@
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
-<imp:footer/>
+</imp:pageFrame>
 

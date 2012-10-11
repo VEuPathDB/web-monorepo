@@ -17,7 +17,7 @@
 <c:set var="site" value="${wdkModel.displayName}"/>
 
 <%-- display page header --%>
-<imp:header refer="srt" banner="Retrieve Gene Sequences" />
+<imp:pageFrame refer="srt" banner="Retrieve Gene Sequences">
 
 <%-- display the parameters of the question, and the format selection form --%>
 <imp:reporter/>
@@ -36,4 +36,4 @@
 
 <imp:srtHelp/>
  
-<imp:footer/>
+</imp:pageFrame>

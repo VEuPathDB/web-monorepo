@@ -14,13 +14,13 @@
 <c:set var="tutAnswer" value="${requestScope.wdkXmlAnswer}"/>
 
 
-<imp:header title="${wdkModel.displayName} : Tutorials"
+<imp:pageFrame title="${wdkModel.displayName} : Tutorials"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Tutorials"
                  division="tutorials"
-                 headElement="${headElement}" />
+                 headElement="${headElement}" >
 
 
 
@@ -92,4 +92,4 @@
 
 
 
-<imp:footer/>
+</imp:pageFrame>

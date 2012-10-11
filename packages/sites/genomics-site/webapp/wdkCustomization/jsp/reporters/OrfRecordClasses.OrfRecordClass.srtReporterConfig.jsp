@@ -16,7 +16,7 @@
 <c:set var="site" value="${wdkModel.displayName}"/>
 
 <%-- display page header --%>
-<imp:header refer="srt" banner="Retrieve Orf Sequences" />
+<imp:pageFrame refer="srt" banner="Retrieve Orf Sequences">
 
 <%-- display the parameters of the question, and the format selection form --%>
 <imp:reporter/>
@@ -109,4 +109,4 @@
 
 <imp:srtHelp/>
  
-<imp:footer/>
+</imp:pageFrame>

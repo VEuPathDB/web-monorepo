@@ -19,13 +19,14 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<imp:header title="AmoebaDB : gene ${id} (${prd})"
+<imp:pageFrame title="AmoebaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
-		refer="recordPage" 
+		         refer="recordPage" 
              divisionName="Gene Record"
-             division="queries_tools" />
+             division="queries_tools" >
 
-<h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+ </imp:pageFrame>
 </c:when>
 
 <c:otherwise>
@@ -55,11 +56,11 @@
 
 <%-- display page header with recordClass type in banner --%>
 
-<imp:header title="AmoebaDB : gene ${id} (${prd})"
+<imp:pageFrame title="AmoebaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
              division="queries_tools" 
-             refer="recordPage" />
+             refer="recordPage">
 
 <a name="top"></a>
 
@@ -475,21 +476,15 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 <br>
 
 <%------------------------------------------------------------------%>
-</c:otherwise>
-</c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
-
-
-
-
-<%--
-<jsp:include page="/include/footer.html"/>
---%>
 
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
 
-<imp:footer/>
+</imp:pageFrame>
+</c:otherwise>
+</c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
+
 
 <imp:pageLogger name="gene page" />

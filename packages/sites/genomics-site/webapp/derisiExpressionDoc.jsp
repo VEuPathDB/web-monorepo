@@ -6,12 +6,12 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <!-- get wdkModel name to display as page header -->
-<imp:header title="PlasmoDB : gene expression profile"
+<imp:pageFrame title="PlasmoDB : gene expression profile"
                  banner="Gene Expression Profile"
                  parentDivision="PlasmoDB"
                  parentUrl="/home.jsp"
                  divisionName="Queries & Tools"
-                 division="queries"/>
+                 division="queries">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -83,4 +83,4 @@
 
 </table>
 
-<imp:footer/>
+</imp:pageFrame>

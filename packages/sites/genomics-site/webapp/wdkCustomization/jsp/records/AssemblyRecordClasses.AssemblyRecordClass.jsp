@@ -13,11 +13,11 @@
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 
-<imp:header title="${wdkModel.displayName} : Assembly ${id}"
+<imp:pageFrame title="${wdkModel.displayName} : Assembly ${id}"
              divisionName="Assembly Record"
              division="queries_tools"
              refer="recordPage"
-             summary="EST Assembly Record"/>
+             summary="EST Assembly Record">
 
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 <c:choose>
@@ -144,4 +144,4 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
 </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

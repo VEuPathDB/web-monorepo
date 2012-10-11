@@ -18,11 +18,12 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<imp:header title="${wdkModel.displayName} : gene ${id}"
+<imp:pageFrame title="${wdkModel.displayName} : gene ${id}"
 			 refer="recordPage"
              divisionName="Gene Record"
-             division="queries_tools"/>
+             division="queries_tools">
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  </imp:pageFrame>
 </c:when>
 <c:otherwise>
 <c:set var="so_term_name" value="${attrs['so_term_name'].value}"/>
@@ -41,12 +42,12 @@
 
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
-<imp:header title="${wdkModel.displayName} : gene ${id} (${prd})"
+<imp:pageFrame title="${wdkModel.displayName} : gene ${id} (${prd})"
 			 refer="recordPage"
              banner="${id}<br>${prd}"
              divisionName="Gene Record"
              division="queries_tools"
-             summary="${overview.value}"/>
+             summary="${overview.value}">
 
 <a name = "top"></a>
 
@@ -569,9 +570,9 @@ Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
+</imp:pageFrame>
 </c:otherwise>
 </c:choose>
 
-<imp:footer/>
 
 <imp:pageLogger name="gene page" />

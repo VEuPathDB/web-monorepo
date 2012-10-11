@@ -10,10 +10,10 @@ response.setStatus(500);
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 
-<imp:header banner="Unexpected Error"/>
+<imp:pageFrame banner="Unexpected Error">
 
 <em>Sorry, an unexpected error has occurred.</em>
 
 <api:errors/>
 
-<imp:footer/>
+</imp:pageFrame>

@@ -14,7 +14,7 @@
 
 
 <%-- display page header --%>
-<imp:header banner="Create and download a Full Records Report" />
+<imp:pageFrame banner="Create and download a Full Records Report">
 
 <script language="JavaScript" type="text/javascript">
 <!-- //
@@ -181,4 +181,4 @@ function makeSelection(state)
   </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

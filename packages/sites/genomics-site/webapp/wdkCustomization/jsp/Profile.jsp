@@ -8,12 +8,12 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} :: Update User Profile"
+<imp:pageFrame title="${wdkModel.displayName} :: Update User Profile"
                  banner="Update User Profile"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Update User Profile"
-                 division="profile"/>
+                 division="profile">
 
 <script language="JavaScript" type="text/javascript">
 <!--
@@ -221,4 +221,4 @@ function validateFields(e)
 </tr>
 </table> 
 
-<imp:footer/>
+</imp:pageFrame>

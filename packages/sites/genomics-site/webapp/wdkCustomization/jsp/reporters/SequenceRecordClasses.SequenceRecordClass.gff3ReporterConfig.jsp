@@ -13,7 +13,7 @@
 
 
 <%-- display page header --%>
-<imp:header banner="Create and download a Report in GFF3 Format" />
+<imp:pageFrame banner="Create and download a Report in GFF3 Format">
 
 <%-- display the parameters of the question, and the format selection form --%>
 <imp:reporter/>
@@ -54,4 +54,4 @@
   </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

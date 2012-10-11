@@ -1,6 +1,6 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
-<imp:header title="EuPathDB Account Login" refer="login"/>
+<imp:pageFrame title="EuPathDB Account Login" refer="login">
 
 <h1 align="center">EuPathDB Account Login</h1>
 <div align="center">
@@ -19,5 +19,5 @@
 	</p>
 </div>
 
-<imp:footer/>
+</imp:pageFrame>
 

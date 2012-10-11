@@ -23,10 +23,10 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<imp:header title="${wdkModel.displayName} : EST ${id}"
+<imp:pageFrame title="${wdkModel.displayName} : EST ${id}"
              divisionName="EST Record"
              refer="recordPage"
-             division="queries_tools"/>
+             division="queries_tools">
 
 
 <c:choose>
@@ -88,4 +88,4 @@
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
-<imp:footer/>
+</imp:pageFrame>

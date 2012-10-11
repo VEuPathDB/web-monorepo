@@ -18,12 +18,13 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<imp:header title="GiardiaDB: gene ${id} (${prd})"
+<imp:pageFrame title="GiardiaDB: gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
 	     refer="recordPage" 
              divisionName="Gene Record"
-             division="queries_tools" />
+             division="queries_tools" >
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  </imp:pageFrame>
 </c:when>
 <c:otherwise>
 
@@ -54,11 +55,11 @@
 
 <c:set var="async" value="${param.sync != '1'}"/>
 
-<imp:header title="GiardiaDB: gene ${id} (${prd})"
+<imp:pageFrame title="GiardiaDB: gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
              refer="recordPage" 
-             division="queries_tools" />
+             division="queries_tools" >
 
 <br>
 <%--#############################################################--%>
@@ -528,12 +529,12 @@ Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Kar
 <br>
 
 <%------------------------------------------------------------------%>
+
+</imp:pageFrame>
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
-<%-- jsp:include page="/include/footer.html" --%>
 
-<imp:footer/>
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>

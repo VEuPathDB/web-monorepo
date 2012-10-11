@@ -8,8 +8,8 @@
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName}.org :: Community Upload"
-             banner="Community Upload"/>
+<imp:pageFrame title="${wdkModel.displayName}.org :: Community Upload"
+             banner="Community Upload">
 
 <c:choose>
 	<c:when test="${empty wdkUser || wdkUser.guest}">
@@ -75,5 +75,5 @@
     </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>
 </body>

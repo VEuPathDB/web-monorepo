@@ -26,12 +26,12 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} : Data Sources"
+<imp:pageFrame title="${wdkModel.displayName} : Data Sources"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Data Sources"
-                 division="data_sources"/>
+                 division="data_sources">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 
@@ -201,4 +201,4 @@
 <c:if test="${param['datasets'] != null}">
 <a href="getDataSource.do?display=detail"><font size="-1">Click here to see the complete list of Data Sources</font></a><br/>
 </c:if>
-<imp:footer/>
+</imp:pageFrame>

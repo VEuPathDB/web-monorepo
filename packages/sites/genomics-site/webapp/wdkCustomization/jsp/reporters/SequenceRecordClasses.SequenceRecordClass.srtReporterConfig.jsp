@@ -16,7 +16,7 @@
 <c:set var="site" value="${wdkModel.displayName}"/>
 
 <%-- display page header --%>
-<imp:header refer="srt" banner="Retrieve Genome Sequences" />
+<imp:pageFrame refer="srt" banner="Retrieve Genome Sequences">
 
 <%-- display the parameters of the question, and the format selection form --%>
 <imp:reporter/>
@@ -88,4 +88,4 @@ Options:
 </tr>
 </table> 
  
-<imp:footer/>
+</imp:pageFrame>

@@ -10,7 +10,7 @@
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
 
-<imp:header banner="Data Contents" refer="data-source" />
+<imp:pageFrame banner="Data Contents" refer="data-source" >
 
 <%-- show all xml question sets --%>
 <div id="data-sources">
@@ -174,4 +174,4 @@
 </div>      <!-- #data-sources   -->
 
 
-<imp:footer/>
+</imp:pageFrame>

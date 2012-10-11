@@ -9,12 +9,12 @@
 </style>
 
 <%-- we need the header only for the css and js --%>
-<imp:header title="${site}.org :: Support"
+<imp:pageFrame title="${site}.org :: Support"
                  banner="Support"
                  parentDivision="${site}"
                  parentUrl="/home.jsp"
                  divisionName="Generic"
-                 division="help"/>
+                 division="help">
 
 
 <table width=100%> 
@@ -80,6 +80,6 @@ We are available to help with <b>Questions</b>, <b>Error reports</b>, <b>Feature
 
 </table>
 
-<imp:footer/>
+</imp:pageFrame>
 
 

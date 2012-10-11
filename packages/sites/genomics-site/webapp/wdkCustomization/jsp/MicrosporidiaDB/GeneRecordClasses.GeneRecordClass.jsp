@@ -19,12 +19,13 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<imp:header title="MicrosporidiaDB : gene ${id} (${prd})"
+<imp:pageFrame title="MicrosporidiaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
 		refer="recordPage" 
              divisionName="Gene Record"
-             division="queries_tools" />
+             division="queries_tools" >
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  </imp:pageFrame>
 </c:when>
 <c:otherwise>
 <c:set var="organism" value="${attrs['organism'].value}"/>
@@ -51,11 +52,11 @@
 
 <%-- display page header with recordClass type in banner --%>
 
-<imp:header title="MicrosporidiaDB : gene ${id} (${prd})"
+<imp:pageFrame title="MicrosporidiaDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
              division="queries_tools" 
-			 refer="recordPage" />
+			 refer="recordPage" >
 
 <a name="top"></a>
 <%-- quick tool-box for the record --%>
@@ -433,13 +434,13 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 <br>
 
 <%------------------------------------------------------------------%>
-</c:otherwise>
-</c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
-
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
 
-<imp:footer/>
+</imp:pageFrame>
+</c:otherwise>
+</c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
+
 
 <imp:pageLogger name="gene page" />

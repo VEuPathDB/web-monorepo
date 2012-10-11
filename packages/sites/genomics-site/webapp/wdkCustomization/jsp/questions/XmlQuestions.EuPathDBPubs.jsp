@@ -13,12 +13,12 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="EuPathDB Publications"
+<imp:pageFrame title="EuPathDB Publications"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Publications"
-                 division="about"/>
+                 division="about">
 
 <style type="text/css">
   .thinTopBottomBorders ul { 
@@ -144,6 +144,6 @@
 </tr>
 </table> 
 
-<imp:footer/>
+</imp:pageFrame>
 
 

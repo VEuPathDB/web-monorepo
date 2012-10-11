@@ -17,12 +17,13 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<imp:header title="TrichDB : gene ${id} (${prd})"
+<imp:pageFrame title="TrichDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              refer="recordPage" 
              divisionName="Gene Record"
-             division="queries_tools" />
+             division="queries_tools">
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  </imp:pageFrame>
 </c:when>
 <c:otherwise>
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
@@ -45,16 +46,16 @@
 <c:set var="length" value="${attrs['transcript_length']}"/>
 <%-- display page header with recordClass type in banner --%>
 
-<imp:header title="TrichDB : gene ${id} (${prd})"
+<imp:pageFrame title="TrichDB : gene ${id} (${prd})"
              summary="${overview.value} (${length.value} bp)"
              divisionName="Gene Record"
              refer="recordPage" 
-             division="queries_tools" />
+             division="queries_tools">
 
 <a name="top"></a>
 
 <%-- quick tool-box for the record --%>
-<imp:recordToolbox />
+<imp:recordToolbox/>
 
 <br>
 <%--#############################################################--%>
@@ -429,6 +430,8 @@ Carlton J. et. al. <b>Draft Genome Sequence of the Sexually Transmitted Pathogen
 <br>
 
 <%------------------------------------------------------------------%>
+
+</imp:pageFrame>
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
@@ -436,6 +439,5 @@ Carlton J. et. al. <b>Draft Genome Sequence of the Sexually Transmitted Pathogen
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
 
-<imp:footer/>
 
 <imp:pageLogger name="gene page" />

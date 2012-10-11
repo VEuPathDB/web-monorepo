@@ -6,12 +6,12 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <!-- get wdkModel name to display as page header -->
-<imp:header title="${wdkModel.displayName} : Search patterns"
+<imp:pageFrame title="${wdkModel.displayName} : Search patterns"
                  banner="How to construct a search pattern"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Queries & Tools"
-                 division="queries"/>
+                 division="queries">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -117,4 +117,4 @@ Even if these regular expressions might seems complicated at first sight, they p
 
 </table>
 
-<imp:footer/>
+</imp:pageFrame>

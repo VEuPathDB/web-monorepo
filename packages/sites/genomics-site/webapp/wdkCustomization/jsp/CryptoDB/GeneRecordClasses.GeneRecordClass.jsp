@@ -18,10 +18,10 @@
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
 <c:set var="organismFull" value="${attrs['organism_full'].value}"/>
 
-<imp:header title="${wdkRecord.primaryKey}" 
+<imp:pageFrame title="${wdkRecord.primaryKey}" 
 	     refer="recordPage" 
              divisionName="Gene Record"
-             division="queries_tools"/>
+             division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
@@ -633,7 +633,7 @@ Teichmann SA, Ivens A, Dear PH.
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
 
-<imp:footer/>
+</imp:pageFrame>
 
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>

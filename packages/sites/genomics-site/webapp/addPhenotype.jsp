@@ -18,8 +18,8 @@
 <c:set var="subject" value="${subject}" />
 <c:set var="body" value="${body}" />
 
-<imp:header title="${wdkModel.displayName}.org :: Add A Phenotype Comment"
-                 banner="Add A Phenotype Comment"/>
+<imp:pageFrame title="${wdkModel.displayName}.org :: Add A Phenotype Comment"
+                 banner="Add A Phenotype Comment">
 <head>
 
 
@@ -341,4 +341,4 @@ $(document).ready(function(){
 
 <script language="JavaScript" type="text/javascript" src="/gbrowse/wz_tooltip.js"></script>
 </body>
-<imp:footer/>
+</imp:pageFrame>

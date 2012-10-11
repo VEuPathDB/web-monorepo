@@ -21,10 +21,10 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<imp:header title="${wdkRecord.primaryKey}"
+<imp:pageFrame title="${wdkRecord.primaryKey}"
              divisionName="${recordType} Record"
              refer="recordPage"
-             division="queries_tools"/>
+             division="queries_tools">
 
 
 <c:choose>
@@ -182,7 +182,7 @@
 
 <hr>
 
-<imp:footer/>
+</imp:pageFrame>
 
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip_3.45.js'></script>
 

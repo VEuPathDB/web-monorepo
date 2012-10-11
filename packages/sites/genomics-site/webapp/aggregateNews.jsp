@@ -57,13 +57,12 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 </c:catch>
 
 
-<imp:header title="${wdkModel.displayName} : News"
+<imp:pageFrame title="${wdkModel.displayName} : News"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="News"
-                 division="news"
-/>
+                 division="news">
 
 <c:choose>
 <c:when test="${error != null}">
@@ -112,4 +111,4 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
 
 </c:otherwise>
 </c:choose>
-<imp:footer/>
+</imp:pageFrame>

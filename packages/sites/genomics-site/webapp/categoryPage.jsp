@@ -10,7 +10,7 @@
 
 <c:set var="cat" value="${rootCatMap[record].websiteChildren[category]}" />
 
-<imp:header refer="category"  division="help"/>
+<imp:pageFrame refer="category"  division="help">
 
 <style>
 
@@ -73,5 +73,5 @@ div.question .left {
 </c:forEach>
 
 
-<imp:footer />
+</imp:pageFrame>
 

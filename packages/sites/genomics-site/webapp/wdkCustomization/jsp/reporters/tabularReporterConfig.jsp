@@ -14,7 +14,7 @@
 
 
 <%-- display page header --%>
-<imp:header banner="Create and download a Report in Tabular Format" />
+<imp:pageFrame banner="Create and download a Report in Tabular Format">
 
 <%-- galaxy.psu.edu users; to send data to Galaxy  --%>
 <script type="text/javascript">
@@ -175,4 +175,4 @@ function appendchecked(form, url) {
   </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

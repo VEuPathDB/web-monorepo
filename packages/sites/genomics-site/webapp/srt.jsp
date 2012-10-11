@@ -7,13 +7,13 @@
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} :: Retrieve Sequences"
+<imp:pageFrame title="${wdkModel.displayName} :: Retrieve Sequences"
                  refer="srt"
                  banner="Retrieve Sequences"
                  parentDivision="PlasmoDB"
                  parentUrl="/home.jsp"
                  divisionName="Retrieve Sequences"
-                 division="queries_tools"/>
+                 division="queries_tools">
 <c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
 
 <c:set var="gqSet" value="${qSetMap['InternalQuestions2']}"/>
@@ -189,4 +189,4 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
 
 <imp:srtHelp/>
  
-<imp:footer/>
+</imp:pageFrame>

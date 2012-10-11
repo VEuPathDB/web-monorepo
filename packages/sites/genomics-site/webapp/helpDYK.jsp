@@ -8,7 +8,7 @@
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header refer="customSummary"/>
+<imp:pageFrame refer="customSummary">
 
 <imp:dyk />
 
@@ -20,4 +20,4 @@
         <imp:helpStrategies />
 </div>
 
-<imp:footer />
+</imp:pageFrame>

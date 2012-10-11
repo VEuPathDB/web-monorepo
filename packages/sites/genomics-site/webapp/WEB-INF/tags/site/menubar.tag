@@ -36,8 +36,9 @@
 </c:choose>
 <c:set var="basketCount" value="${wdkUser.basketCount}"/>
 
-
+<!-- this function does not exist in ApiCommon!!  FIX ME!!
 <span class="onload-function" data-function="Setup.configureMenuBar"></span>
+-->
 
 <div id="menu">
 

@@ -11,10 +11,9 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="siteAdminEmail" value="${props['SITE_ADMIN_EMAIL']}"/>
 
-<imp:header refer="exception" />
+<imp:pageFrame title="Unexpected Error" refer="exception">
 
 <h2><span style="font-color: red;">Unexpected Error</span></h2>
-<%-- <imp:header banner="Unexpected Error" /> --%>
 
 <em>Sorry, an unexpected error has occurred.</em>
 <p>
@@ -89,4 +88,4 @@ ${error}
 </c:choose>
 
 
-<imp:footer/>
+</imp:pageFrame>

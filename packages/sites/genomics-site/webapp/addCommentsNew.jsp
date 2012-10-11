@@ -30,8 +30,8 @@
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName}.org :: Add A Comment"
-                 banner="Add A Comment"/>
+<imp:pageFrame title="${wdkModel.displayName}.org :: Add A Comment"
+                 banner="Add A Comment">
 <head>
 
 <script type="text/javascript" src="/assets/js/lib/jquery-validate/jquery.validate.pack.js"></script>
@@ -543,4 +543,4 @@ function openPubmedWindow(searchBoxId) {
 <br/><br/>              
 <script language="JavaScript" type="text/javascript" src="/gbrowse/wz_tooltip.js"></script>
 </body>
-<imp:footer/>
+</imp:pageFrame>

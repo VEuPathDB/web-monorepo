@@ -27,10 +27,10 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<imp:header title="${id}"
+<imp:pageFrame title="${id}"
              divisionName="Genomic Sequence Record"
              refer="recordPage"
-             division="queries_tools"/>
+             division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
@@ -570,4 +570,4 @@ Genome Assembly for Entamoeba histolytica Rahman strain was provided by Gareth W
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
 
-<imp:footer/>
+</imp:pageFrame>

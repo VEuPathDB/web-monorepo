@@ -10,8 +10,8 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
-<imp:header title="${wdkModel.displayName} : User Comments on ${id}"
-                 banner="Comments on ${id}"/>
+<imp:pageFrame title="${wdkModel.displayName} : User Comments on ${id}"
+                 banner="Comments on ${id}">
 
 <c:set var="commentsTable" value="${requestScope.wdkRecord.tables['UserComments']}"/>
    
@@ -53,6 +53,6 @@
 </table>
 
 <hr/><br/><br/>
-<imp:footer/>
+</imp:pageFrame>
 
 

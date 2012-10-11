@@ -622,6 +622,13 @@ div#menu ul ul ul li:hover ul {
    clear: both;
 }
 
+.skinny-footer {
+  min-width: 756px;
+  width:75%;
+  position:relative;
+  left:200px;
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =QUERY GRID
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

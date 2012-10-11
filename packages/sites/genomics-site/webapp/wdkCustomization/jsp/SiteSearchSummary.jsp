@@ -28,7 +28,7 @@
 </c:url>
 
 <%-- display page header with recordClass type in banner --%>
-<imp:header banner="Site Search"/>
+<imp:pageFrame banner="Site Search">
 
 <link rel="Stylesheet" type="text/css" href="<c:url value='/wdkCustomization/css/site-search.css' />"/>
 
@@ -131,4 +131,4 @@
 
 <script type="text/javascript" src="<c:url value='/wdkCustomization/js/site-search.js'/>"></script>
 
-<imp:footer/>
+</imp:pageFrame>

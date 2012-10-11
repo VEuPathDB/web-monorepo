@@ -18,12 +18,12 @@
 
 
 
-<imp:header  title="${project} :: Gene Metrics"
+<imp:pageFrame  title="${project} :: Gene Metrics"
                  banner="${project} Gene Metrics"
                  parentDivision="${project}"
                  parentUrl="/home.jsp"
                  divisionName="allSites"
-                 division="geneMetrics"/>
+                 division="geneMetrics">
 
 
 <script type="text/javascript"> 
@@ -454,4 +454,4 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
   </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

@@ -9,7 +9,7 @@
 <jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 
-<imp:header />
+<imp:pageFrame>
 
 <imp:reporter/>
 
@@ -17,4 +17,4 @@
     No results for your query
 </c:if>
 
-<imp:footer/>
+</imp:pageFrame>

@@ -14,12 +14,12 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set value="${wdkModel.displayName}" var="project"/>
 
-<imp:header  title="${project} :: Genomes & Data Types"
+<imp:pageFrame  title="${project} :: Genomes & Data Types"
                  banner="${project} Genomes & Data Types"
                  parentDivision="${project}"
                  parentUrl="/home.jsp"
                  divisionName="allSites"
-                 division="genomeDataType"/>
+                 division="genomeDataType">
 
 
 
@@ -410,4 +410,4 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 </table>
 
 
-<imp:footer/>
+</imp:pageFrame>

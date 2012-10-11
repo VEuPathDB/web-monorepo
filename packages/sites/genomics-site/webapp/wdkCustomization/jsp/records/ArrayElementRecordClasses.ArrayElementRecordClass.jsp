@@ -49,11 +49,11 @@
 </c:catch>
 
 
-<imp:header title="PlasmoDB : Array element ${id}"
+<imp:pageFrame title="PlasmoDB : Array element ${id}"
              banner="${organism}<br>Array element<br>${provider}: ${id}"
              divisionName="Array Element Record"
              division="queries_tools"
-             summary=""/>
+             summary="">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
@@ -299,4 +299,4 @@ Also see <a href="http://malaria.ucsf.edu/comparison/comp_oligolink.php?OLIGO=${
 </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

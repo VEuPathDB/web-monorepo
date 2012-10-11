@@ -26,12 +26,12 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} : Coming Soon"
+<imp:pageFrame title="${wdkModel.displayName} : Coming Soon"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Coming Soon"
-                 division="coming_soon"/>
+                 division="coming_soon">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -100,4 +100,4 @@
 </tr>
 </table> 
 
-<imp:footer/>
+</imp:pageFrame>

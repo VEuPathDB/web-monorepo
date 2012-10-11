@@ -13,12 +13,12 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} : Did You Know"
+<imp:pageFrame title="${wdkModel.displayName} : Did You Know"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Did you know"
-                 division="about"/>
+                 division="about">
 
 
 
@@ -84,4 +84,4 @@
 
 
 </div>
-<imp:footer/>
+</imp:pageFrame>

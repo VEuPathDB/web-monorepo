@@ -7,7 +7,7 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} :: Change Password" refer="profile"/>
+<imp:pageFrame title="${wdkModel.displayName} :: Change Password" refer="profile">
 
 <script language="JavaScript" type="text/javascript">
 <!--
@@ -158,4 +158,4 @@ function validateFields(e)
 </tr>
 </table> 
 
-<imp:footer/>
+</imp:pageFrame>

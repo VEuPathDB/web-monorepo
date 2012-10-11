@@ -12,12 +12,12 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} : ${banner}"
+<imp:pageFrame title="${wdkModel.displayName} : ${banner}"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Methods"
-                 division="methods"/>
+                 division="methods">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
 
@@ -81,4 +81,4 @@ These are the methods we used to generate/analyze the data in our queries.
 </tr>
 </table> 
 
-<imp:footer/>
+</imp:pageFrame>

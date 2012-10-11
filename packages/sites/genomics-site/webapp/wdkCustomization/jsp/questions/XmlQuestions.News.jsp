@@ -23,13 +23,13 @@
   href="${rssUrl}" />
 </c:set>
 
-<imp:header title="${wdkModel.displayName} : News"
+<imp:pageFrame title="${wdkModel.displayName} : News"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="News"
                  division="news"
-                 headElement="${headElement}" />
+                 headElement="${headElement}" >
 
 <%-- 
   Validate that the date string in the xml is parsable to a date object.
@@ -145,4 +145,4 @@
   </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

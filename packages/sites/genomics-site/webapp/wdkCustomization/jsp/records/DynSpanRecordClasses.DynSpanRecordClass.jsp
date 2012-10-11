@@ -20,11 +20,11 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<imp:header title="${wdkModel.displayName} : DynSpan ${id}"
+<imp:pageFrame title="${wdkModel.displayName} : DynSpan ${id}"
              refer="recordPage"
              banner="DynSpan ${id}"
              divisionName="DynSpan Record"
-             division="queries_tools"/>
+             division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
@@ -152,4 +152,4 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

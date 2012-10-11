@@ -35,10 +35,10 @@
       <font face="Arial,Helvetica">${recordType} Record</font>
 </c:set>
 
-<imp:header title="${wdkRecord.primaryKey}"
+<imp:pageFrame title="${wdkRecord.primaryKey}"
              bannerPreformatted="${bannerText}"
              divisionName="Gene Record"
-             division="queries_tools"/>
+             division="queries_tools">
 
 <c:choose>
 <c:when test="${wdkRecord.attributes['organism'].value eq 'null'}">
@@ -368,6 +368,6 @@ Teichmann SA, Ivens A, Dear PH.
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
-       <jsp:include page="/include/footer.html"/>
+</imp:pageFrame>
 
 <script language='JavaScript' type='text/javascript' src='/gbrowse/wz_tooltip_3.45.js'></script>

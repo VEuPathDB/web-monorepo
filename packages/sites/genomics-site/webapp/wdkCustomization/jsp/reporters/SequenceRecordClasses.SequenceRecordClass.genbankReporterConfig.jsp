@@ -13,7 +13,7 @@
 
 
 <%-- display page header --%>
-<imp:header banner="Create and download a Report in Genebank Format" />
+<imp:pageFrame banner="Create and download a Report in Genebank Format">
 
 <%-- display description for page --%>
 <p><b>Generate a report of your query result in GFF3 format. </b></p>
@@ -53,4 +53,4 @@
   </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

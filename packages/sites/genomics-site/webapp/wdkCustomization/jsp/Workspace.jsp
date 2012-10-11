@@ -23,8 +23,8 @@
     <c:url value="/processSummary.do?${wdk_query_string}" />
 </c:set>
 
-<imp:header refer="summary"/>
+<imp:pageFrame refer="summary">
 
 <imp:strategyWorkspace includeDYK="true" />
 
-<imp:footer  refer="customSummary" />
+</imp:pageFrame>

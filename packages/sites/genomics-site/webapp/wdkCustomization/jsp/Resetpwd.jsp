@@ -7,12 +7,12 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} :: Reset Password"
+<imp:pageFrame title="${wdkModel.displayName} :: Reset Password"
                  banner="Reset Password"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Reset Password"
-                 division="profile"/>
+                 division="profile">
 
 <!-- display page header with recordClass type in banner -->
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
@@ -77,4 +77,4 @@
 </c:choose>
 
 </div>
-<imp:footer/>
+</imp:pageFrame>

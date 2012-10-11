@@ -12,12 +12,12 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} : ${banner}"
+<imp:pageFrame title="${wdkModel.displayName} : ${banner}"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="Useful Links"
-                 division="links"/>
+                 division="links">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -67,4 +67,4 @@
 </tr>
 </table> 
 
-<imp:footer/>
+</imp:pageFrame>

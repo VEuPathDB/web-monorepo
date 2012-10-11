@@ -8,7 +8,7 @@
 
 <!-- display page header with recordClass type in banner -->
 <c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
-<imp:header banner="${recordType}"/>
+<imp:pageFrame banner="${recordType}">
 
 <h2 style="text-align: center;">
 <imp:recordPageBasketIcon />
@@ -159,4 +159,4 @@
   <imp:wdkTable tblName="${tblEntry.key}" isOpen="true"/>
 </c:forEach>
 
-<imp:footer/>
+</imp:pageFrame>

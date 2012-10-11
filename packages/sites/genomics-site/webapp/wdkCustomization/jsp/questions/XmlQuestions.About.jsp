@@ -12,12 +12,12 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:header title="${wdkModel.displayName} : About"
+<imp:pageFrame title="${wdkModel.displayName} : About"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
                  divisionName="More About"
-                 division="about"/>
+                 division="about">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -60,4 +60,4 @@
 </tr>
 </table> 
 
-<imp:footer/>
+</imp:pageFrame>

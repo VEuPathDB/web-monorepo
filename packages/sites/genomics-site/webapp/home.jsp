@@ -1,17 +1,14 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
-<%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root version="2.0"
+    xmlns:jsp="http://java.sun.com/JSP/Page"
+    xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
+  <jsp:directive.page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"/>
 
-<c:set var="project" value="${applicationScope.wdkModel.name}" />
+	<!-- header includes menubar and announcements tags -->
+	<!-- refer is used to determine what css and javascript to load, and which announcements are shown -->
+	<imp:pageFrame refer="home">
+	  <imp:sidebar/>
+	  <imp:DQG/> 
+	</imp:pageFrame>
 
-<%-- header includes menubar and announcements tags --%>
-<%-- refer is used to determine what css and javascript to load, and which announcements are shown --%>
-<imp:header refer="home"/>
-<imp:sidebar/>
-<imp:DQG /> 
-<imp:footer  refer="home"/>
-
-
-
+</jsp:root>

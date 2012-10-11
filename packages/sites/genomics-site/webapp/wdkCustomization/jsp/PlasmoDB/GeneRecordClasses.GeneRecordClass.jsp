@@ -17,11 +17,12 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-<imp:header title="${wdkModel.displayName} : gene ${id}"
+<imp:pageFrame title="${wdkModel.displayName} : gene ${id}"
              divisionName="Gene Record"
-		refer="recordPage" 
-             division="queries_tools"/>
+		         refer="recordPage" 
+             division="queries_tools">
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+</imp:pageFrame>
 </c:when>
 <c:otherwise>
 
@@ -114,11 +115,11 @@
   <c:set var="strand" value="-"/>
 </c:if>
 
-<imp:header title="${wdkModel.displayName} : gene ${id} (${prd})"
+<imp:pageFrame title="${wdkModel.displayName} : gene ${id} (${prd})"
              divisionName="Gene Record"
-		refer="recordPage" 
+		         refer="recordPage" 
              division="queries_tools"
-             summary="${overview.value} (${length.value} bp)"/>
+             summary="${overview.value} (${length.value} bp)">
 
 <a name="top"></a>
 
@@ -833,9 +834,9 @@ Disabled for Redmine 10225
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
+
+</imp:pageFrame>
 </c:otherwise>
 </c:choose>
-
-<imp:footer/>
 
 <imp:pageLogger name="gene page" />

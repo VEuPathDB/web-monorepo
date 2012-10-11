@@ -23,10 +23,10 @@
 </c:catch>
 
 
-<imp:header  title="${recordType} : ${id}"
+<imp:pageFrame  title="${recordType} : ${id}"
              divisionName="PubChem Compound Record"
              refer="recordPage"
-             division="queries_tools"/>
+             division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
@@ -49,5 +49,5 @@
 </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>
 

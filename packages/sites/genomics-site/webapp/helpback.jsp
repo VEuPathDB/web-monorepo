@@ -5,12 +5,12 @@
 <c:set var="site" value="${wdkModel.displayName}"/>
 
 <!-- get wdkModel name to display as page header -->
-<imp:header title="${site}.org :: Support Feedback"
+<imp:pageFrame title="${site}.org :: Support Feedback"
                  banner="${site} Support Feedback"
                  parentDivision="${site}"
                  parentUrl="/home.jsp"
                  divisionName="Generic"
-                 division="help"/>
+                 division="help">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
@@ -33,6 +33,6 @@
 </td></tr>
 </table> 
 
-<imp:footer/>
+</imp:pageFrame>
 
 

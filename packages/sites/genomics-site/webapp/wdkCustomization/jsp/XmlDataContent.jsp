@@ -9,7 +9,7 @@
 <c:set var="xmlAnswer" value="${requestScope.wdkXmlAnswer}"/>
 
 <!-- display page header with xmlquestion display in banner -->
-<imp:header banner="${xmlAnswer.question.displayName}"/>
+<imp:pageFrame banner="${xmlAnswer.question.displayName}">
 
 <!-- handle empty result set situation -->
 <c:choose>
@@ -63,4 +63,4 @@
   </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>

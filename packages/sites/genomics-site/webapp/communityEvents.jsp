@@ -23,7 +23,7 @@ http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=
 http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
 </c:set>
 
-<imp:header refer="events" title="${wdkModel.displayName} : Community Events" />
+<imp:pageFrame refer="events" title="${wdkModel.displayName} : Community Events">
 
 <style type="text/css">
   .title {
@@ -87,4 +87,4 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
 </div>
 
 
-<imp:footer /> <%-- contains </body> </html> --%>
+</imp:pageFrame> <%-- contains </body> </html> --%>

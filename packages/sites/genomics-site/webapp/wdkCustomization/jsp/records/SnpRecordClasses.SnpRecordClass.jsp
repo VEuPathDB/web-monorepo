@@ -28,11 +28,11 @@
   <c:set var="dataset_internal" value="${attrs['dataset_internal'].value}"/>
 </c:catch>
 
-<imp:header title="${wdkModel.displayName} : SNP ${id}"
+<imp:pageFrame title="${wdkModel.displayName} : SNP ${id}"
              banner="SNP ${id}"
              refer="recordPage"
              divisionName="SNP Record"
-             division="queries_tools"/>
+             division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
@@ -132,6 +132,6 @@
 </c:otherwise>
 </c:choose>
 
-<imp:footer/>
+</imp:pageFrame>
 
 <imp:pageLogger name="snp page" />

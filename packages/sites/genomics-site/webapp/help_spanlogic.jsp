@@ -7,12 +7,12 @@
 
 
 <%-- we need the header only for the css and js --%>
-<imp:header title="${site}.org :: Support"
+<imp:pageFrame title="${site}.org :: Support"
                  banner="Support"
                  parentDivision="${site}"
                  parentUrl="/home.jsp"
                  divisionName="Generic"
-                 division="help"/>
+                 division="help">
 
 
 <h1>Combine results (genes, SNPs, ORFs, ...) based on their relative genomic locations</h1>
@@ -72,7 +72,7 @@ Decide if your region of interest is the exact location of each ID in Step A on 
 </li>
 </ol>
 
-
+</imp:pageFrame>
 
 
  

@@ -22,10 +22,10 @@
 <c:set var="junk" value="${attrs['organism']}"/>
 </c:catch>
 
-<imp:header title="${wdkRecord.primaryKey}"
+<imp:pageFrame title="${wdkRecord.primaryKey}"
              divisionName="Sage Tag Record"
              refer="recordPage"
-             division="queries_tools"/>
+             division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
@@ -71,4 +71,4 @@
 </c:otherwise>
 </c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
 
-<imp:footer/>
+</imp:pageFrame>

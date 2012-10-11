@@ -8,7 +8,7 @@
 
 <!-- get wdkModel name to display as page header -->
 <c:set value="${wdkModel.displayName}" var="wdkModelDispName"/>
-<imp:header banner="${wdkModelDispName}" />
+<imp:pageFrame banner="${wdkModelDispName}">
 
 <c:set var="margin" value="15px"/>
 
@@ -128,4 +128,4 @@ Click on a search below to access its <a href="http://www.w3.org/Submission/wadl
 </ul>
 
 
-<imp:footer/>
+</imp:pageFrame>
