@@ -67,7 +67,7 @@
       </c:choose>
       
       <imp:dialogs/>
-      <imp:footer/>
+      <imp:footer refer="${refer}"/>
 
     </body>
   </html>

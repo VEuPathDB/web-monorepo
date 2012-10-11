@@ -6,7 +6,7 @@
 
   <![CDATA[</div></div></div>]]>
   <imp:dialogs/>
-  <imp:footer/>
+  <imp:footer refer="gbrowse"/>
   <![CDATA[</body></html>]]>
 
 </jsp:root>

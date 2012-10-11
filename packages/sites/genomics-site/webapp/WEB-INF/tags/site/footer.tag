@@ -15,14 +15,14 @@
   <fmt:parseDate  var="releaseDate" value="${applicationScope.wdkModel.releaseDate}" pattern="dd MMMM yyyy HH:mm"/> 
   <fmt:formatDate var="releaseDate_formatted" value="${releaseDate}" pattern="d MMM yy"/>
   <fmt:formatDate var="copyrightYear" value="${releaseDate}" pattern="yyyy"/>
-  <!--
-  <c:set var="extraFooterClass" value="${refer eq 'home' or refer eq 'home2' ? 'skinny-footer' : '' }"/>
-  -->
-  <div id="footer">
+  
+  <c:set var="footerClass" value="${refer eq 'home' or refer eq 'home2' ? 'skinny-footer' : 'wide-footer' }"/>
+  
+  <div id="footer" class="${footerClass}">
     <div style="float:left;padding-left:9px;padding-top:9px;">
       <a href="http://${fn:toLowerCase(siteName)}.org">${siteName}</a>
-      ${version}&#160;&#160;&#160;&#160;${releaseDate_formatted}<br/>
-      &#169;${copyrightYear} The EuPathDB Project Team
+      ${version}<span style="margin-left: 20px">${releaseDate_formatted}</span><br/>
+      <span style="margin-left:4px;">&amp;copy;${copyrightYear} The EuPathDB Project Team</span>
     </div>
 
     <div style="float:right;padding-right:9px;font-size:1.4em;line-height:2;">
@@ -33,20 +33,22 @@
       </a>
     </div>
 
-    <span style="position:relative; top:-9px;">
-      <a href="http://www.eupathdb.org"><br/><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a>&#160;&#160;<br/>
+    <span style="position:relative; top:-9px; right:7px;">
+      <a href="http://www.eupathdb.org"><br/><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a><br/>
     </span>
 
-    <span style="position:relative; top:-13px; left:80px">
-      <a href="http://amoebadb.org"><img border="0" src="/assets/images/AmoebaDB/amoebadb_w30.png" width="25"/></a>&#160;
-      <a href="http://cryptodb.org"><img border="0" src="/assets/images/CryptoDB/cryptodb_w50.png" width="25"/></a>&#160;
-      <a href="http://giardiadb.org"><img border="0" src="/assets/images/GiardiaDB/giardiadb_w50.png" width="25"/></a>&#160;&#160;
-      <a href="http://microsporidiadb.org"><img border="0" src="/assets/images/MicrosporidiaDB/microdb_w30.png" width="25"/></a>&#160;&#160;
-      <a href="http://piroplasmadb.org"><img border="0" src="/assets/images/newSite.png" width="30"/></a>&#160;&#160;
-      <a href="http://plasmodb.org"><img border="0" src="/assets/images/PlasmoDB/plasmodb_w50.png" width="25"/></a>&#160;&#160;
-      <a href="http://toxodb.org"><img border="0" src="/assets/images/ToxoDB/toxodb_w50.png" width="25"/></a>&#160;&#160;
-      <a href="http://trichdb.org"><img border="0" src="/assets/images/TrichDB/trichdb_w65.png" height="25"/></a>&#160;&#160;
-      <a href="http://tritrypdb.org"><img border="0" src="/assets/images/TriTrypDB/tritrypdb_w40.png" width="20"/></a>
+    <span style="position:relative; top:-8px; left:80px">
+      <ul class="site-icons">
+        <li><a href="http://amoebadb.org"><img border="0" src="/assets/images/AmoebaDB/amoebadb_w30.png" width="25"/></a></li>
+        <li class="short-space"><a href="http://cryptodb.org"><img border="0" src="/assets/images/CryptoDB/cryptodb_w50.png" width="25"/></a></li>
+        <li class="short-space"><a href="http://giardiadb.org"><img border="0" src="/assets/images/GiardiaDB/giardiadb_w50.png" width="25"/></a></li>
+        <li class="long-space"><a href="http://microsporidiadb.org"><img border="0" src="/assets/images/MicrosporidiaDB/microdb_w30.png" width="25"/></a></li>
+        <li class="short-space"><a href="http://piroplasmadb.org"><img border="0" src="/assets/images/newSite.png" width="30"/></a></li>
+        <li class="long-space"><a href="http://plasmodb.org"><img border="0" src="/assets/images/PlasmoDB/plasmodb_w50.png" width="25"/></a></li>
+        <li class="long-space"><a href="http://toxodb.org"><img border="0" src="/assets/images/ToxoDB/toxodb_w50.png" width="25"/></a></li>
+        <li class="short-space"><a href="http://trichdb.org"><img border="0" src="/assets/images/TrichDB/trichdb_w65.png" height="25"/></a></li>
+        <li class="short-space"><a href="http://tritrypdb.org"><img border="0" src="/assets/images/TriTrypDB/tritrypdb_w40.png" width="20"/></a></li>
+      </ul>
     </span>
   </div>
   

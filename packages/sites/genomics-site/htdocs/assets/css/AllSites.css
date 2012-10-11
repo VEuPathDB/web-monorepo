@@ -608,13 +608,10 @@ div#menu ul ul ul li:hover ul {
       =FOOTER       this allows to insert a div with version and date
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#footer{
+#footer {
    text-align: center;
    margin: 0 2.5%;
- /*  padding: 0px 0px 35px;     seems not to be needed 2011-12-06 */
-   min-width: 950px;   /* 1100px; */
    font-size: 10px;
-   width: 95%;  /* 75%  */
    background-color:#FFFFFF;
    background-repeat: repeat-x;
    color: #505050;
@@ -622,11 +619,26 @@ div#menu ul ul ul li:hover ul {
    clear: both;
 }
 
+.wide-footer {
+	min-width: 950px;
+	width: 95%;
+}
+
 .skinny-footer {
   min-width: 756px;
   width:75%;
   position:relative;
   left:200px;
+}
+
+.site-icons li { display: inline; }
+
+.site-icons li.short-space {
+	margin-left: 9px;
+}
+
+.site-icons li.long-space {
+	margin-left: 15px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

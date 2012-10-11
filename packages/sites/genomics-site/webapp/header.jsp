@@ -28,7 +28,7 @@
 
   <![CDATA[<body>]]>
     
-  <imp:header refer="${refer}"/>
+  <imp:header refer="gbrowse"/>
   
   <![CDATA[
     <div id="contentwrapper">
