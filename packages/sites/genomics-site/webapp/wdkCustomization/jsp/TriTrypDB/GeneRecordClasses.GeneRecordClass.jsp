@@ -738,7 +738,7 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
-</imp:pageFrame/>
+</imp:pageFrame>
 </c:otherwise>
 </c:choose>
 
