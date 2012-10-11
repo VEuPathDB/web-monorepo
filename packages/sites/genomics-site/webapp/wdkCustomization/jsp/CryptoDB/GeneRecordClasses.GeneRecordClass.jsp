@@ -630,7 +630,7 @@ Teichmann SA, Ivens A, Dear PH.
 
 <%------------------------------------------------------------------%>
 </c:otherwise>
-</c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
+</c:choose> <%-- if wdkRecord.attributes['organism'].value --%>
 
 
 </imp:pageFrame>
