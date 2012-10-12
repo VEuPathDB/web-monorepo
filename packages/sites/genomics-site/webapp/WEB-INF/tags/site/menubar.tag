@@ -165,6 +165,8 @@
           <img style="margin:0px;vertical-align:top" title="Follow us on Twitter!" src="/assets/images/twitter.gif" width="20">
           <span style="vertical-align:top">&nbsp;Follow us on Twitter!</span> 
         </a>
+        </li>
+        <li>
         <a href="javascript:gotoFacebook()">
           <img style="margin:0px;margin-left:1px;vertical-align:top" title="Follow us on Facebook!" src="/assets/images/facebook-icon.png" width="18">
           <span style="vertical-align:top">&nbsp;Follow us on Facebook!</span> 
