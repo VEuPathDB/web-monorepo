@@ -146,12 +146,12 @@
               
         <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB' || row['project_id'].value eq 'MicrosporidiaDB' || row['project_id'].value eq 'PiroplasmaDB' || row['project_id'].value eq 'CryptoDB' || row['project_id'].value eq 'ToxoDB'}">
           <c:if test="${hasRma eq 'true'}">
-            <b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b>
+            <b>Show log Scale (not applicable for log(ratio) graphs, percentile graphs or data tables)</b>
             <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" checked />
           </c:if>
 
           <c:if test="${hasCoverage eq 'true'}">
-            <b>Show log Scale (not applicable for log(ratio) OR percentile graphs)</b>
+            <b>Show log Scale (not applicable for log(ratio) graphs, percentile graphs, or data tables)</b>
             <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" />
           </c:if>
         </c:if>
