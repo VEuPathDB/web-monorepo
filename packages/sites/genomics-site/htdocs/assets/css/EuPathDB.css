@@ -224,11 +224,12 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #505453;
+  color: #505453;
 	background-image: url(../images/EuPathDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
+  color: darkred;
 	background-image: url(../images/EuPathDB/trsubhead.png);
 }
 
@@ -239,11 +240,6 @@ a.queryGridActive {
         color:              #08549c;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =END OF TABLES FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 tr.subheaderrow th {
 	border-color: #51575b;
 }
@@ -251,11 +247,6 @@ tr.subheaderrow th {
 tr.headerrow th { 
 	border-color: #51575b;
 }
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    =RED BUTTON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
