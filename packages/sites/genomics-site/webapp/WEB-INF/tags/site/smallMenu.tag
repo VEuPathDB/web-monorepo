@@ -68,7 +68,7 @@
 	    <li>
 	      <a href="javascript:void()">Help</a>
 	      <ul>
-	        <c:if test="${refer eq 'customSummary'}">
+	        <c:if test="${refer eq 'summary'}">
 	          <li><a href="javascript:void(0)" onclick="dykOpen()">Did You Know...</a></li>
 	        </c:if>
 	        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Tutorials">Web Tutorials</a></li>

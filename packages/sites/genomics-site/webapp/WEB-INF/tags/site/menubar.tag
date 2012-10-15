@@ -87,7 +87,7 @@
       </c:when>
       <c:otherwise>
         <c:choose>
-          <c:when test="${refer == 'customSummary'}">
+          <c:when test="${refer == 'summary'}">
           <li><a id="mybasket" onclick="showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
           </c:when>
           <c:otherwise>
