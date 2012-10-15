@@ -47,6 +47,8 @@
 </c:choose>
 <c:set var="basketCount" value="${wdkUser.basketCount}"/>
 
+<%-- this isn't needed anymore with the superfish menu bar
+     end div at end of file
 <!-- piroplasma is using the background image menubar.png from its own directory -->
 <c:choose>
 <c:when test="${project eq 'PiroplasmaDB'}">
@@ -56,6 +58,7 @@
   <div id="menubar">
 </c:otherwise>
 </c:choose>
+--%>
 
 <div id="menu">
 
@@ -229,5 +232,7 @@
 
 </div>
 
+<%-- closing menubar div
 </div>
+--%>
 <a name="skip" id="skip"></a>
