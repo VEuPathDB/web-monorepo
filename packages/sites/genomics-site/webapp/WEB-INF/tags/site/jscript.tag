@@ -16,14 +16,14 @@
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
 <link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 
 <link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
-<link rel="stylesheet" href="/assets/css/spanlogic.css"         type="text/css" />
 
+<!-- JQuery library is included by WDK -->
 
-<%-- JQuery library is included by WDK --%>
-
+<!-- comment out, since it is commented out below
 <c:if test="${project == 'CryptoDB'}">
   <c:set var="gkey" value="AIzaSyBD4YDJLqvZWsXRpPP8u9dJGj3gMFXCg6s" />
 </c:if>
+-->
 
 <script type="text/javascript" src="${base}/wdkCustomization/js/lib/hoverIntent.js"></script>
 <script type="text/javascript" src="${base}/wdkCustomization/js/lib/superfish.js"></script>
@@ -34,9 +34,11 @@
 
 <c:if test="${refer == 'summary'}">
     <script type="text/javascript" src="${base}/wdkCustomization/js/customStrategy.js"></script>
-    <script type="text/javascript" src="${base}/wdkCustomization/js/spanlogic.js"></script>
     <script type="text/javascript" src="${base}/wdkCustomization/js/ortholog.js"></script>
     <script type="text/javascript" src="${base}/wdkCustomization/js/export-basket.js"></script>
+
+    <script type="text/javascript" src="${base}/wdkCustomization/js/spanlogic.js"></script>
+    <link rel="stylesheet" href="${base}/wdkCustomization/css/spanlogic.css" type="text/css" />
 
     <script type="text/javascript" src="${base}/wdkCustomization/js/span-genome-view.js"></script>
     <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/span-genome-view.css"/>
