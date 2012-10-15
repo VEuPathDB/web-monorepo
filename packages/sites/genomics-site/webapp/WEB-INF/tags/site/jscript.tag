@@ -50,9 +50,13 @@
 	  <script type="text/javascript" src="/assets/js/isolateResults.js"></script>
 </c:if>
 
+<!-- this seems unneeded since it only contains:
+        <script type="text/javascript" src="<c:url value='wdk/js/lib/json.js'/>"></script>
+  which is already in the wdk:includes.tag
 <c:if test="${refer == 'record'}">
 	<imp:recordPageScript />
 </c:if>
+-->
 
 <c:if test="${refer == 'question' || refer == 'summary'}">
   <imp:parameterScript />
@@ -72,14 +76,13 @@
 <!-- Sidebar news/events, yellow background -->
 <script type="text/javascript" src="/assets/js/newitems.js"></script>
 
-<!-- used in ?  -->
-<script type="text/javascript" src="/assets/js/popups.js"></script>
+<!-- Access twitter/facebook links, and configure menubar (superfish) -->
 <script type="text/javascript" src="/assets/js/nav.js"></script>
 
-<%-- show/hide the tables in the Record page --%>
+<!-- show/hide the tables in the Record page -->
 <script type='text/javascript' src="/assets/js/show_hide_tables.js"></script>
 
-<%-- Data source page --%>
+<!-- Data source page -->
 <c:if test="${refer == 'data-source'}">
   <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/dataSource.css"/>
 </c:if>
@@ -114,3 +117,7 @@
   <link rel="stylesheet" href="/assets/css/ie6.css" type="text/css" />
 <![endif]-->
 
+<!-- empty, used to contain the IE warning popup, and some login/register related functionality
+     probably moved to WDK in the latest refactoring Oct 10 2012
+<script type="text/javascript" src="/assets/js/popups.js"></script>
+-->
