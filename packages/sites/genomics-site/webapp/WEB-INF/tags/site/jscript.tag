@@ -7,6 +7,7 @@
 	      description="Page calling this tag"
 %>
 
+<c:set var="base" value="${pageContext.request.contextPath}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
@@ -24,95 +25,90 @@
   <c:set var="gkey" value="AIzaSyBD4YDJLqvZWsXRpPP8u9dJGj3gMFXCg6s" />
 </c:if>
 
-<script type="text/javascript" src="<c:url value='/wdkCustomization/js/lib/hoverIntent.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/wdkCustomization/js/lib/superfish.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/wdkCustomization/js/lib/supersubs.js'/>"></script>
+<script type="text/javascript" src="${base}/wdkCustomization/js/lib/hoverIntent.js"></script>
+<script type="text/javascript" src="${base}/wdkCustomization/js/lib/superfish.js"></script>
+<script type="text/javascript" src="${base}/wdkCustomization/js/lib/supersubs.js"></script>
+
+<!-- Contact Us window -->
+<script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
 
 <c:if test="${refer == 'summary'}">
+    <script type="text/javascript" src="${base}/wdkCustomization/js/customStrategy.js"></script>
+    <script type="text/javascript" src="${base}/wdkCustomization/js/spanlogic.js"></script>
+    <script type="text/javascript" src="${base}/wdkCustomization/js/ortholog.js"></script>
+    <script type="text/javascript" src="${base}/wdkCustomization/js/export-basket.js"></script>
 
-    <!-- javascript provided by site -->
-    <script type="text/javascript" src='<c:url value="/wdkCustomization/js/customStrategy.js" />'></script>
-    <script type="text/javascript" src="<c:url value='/wdkCustomization/js/spanlogic.js' />"></script>
-    <script type="text/javascript" src="<c:url value='/wdkCustomization/js/ortholog.js' />"></script>
-    <script type="text/javascript" src="<c:url value='/wdkCustomization/js/export-basket.js' />"></script>
-    <script type="text/javascript" src='<c:url value="/wdkCustomization/js/span-genome-view.js"/>'></script>
-    <link rel="StyleSheet" type="text/css" href="<c:url value='/wdkCustomization/css/span-genome-view.css' />"/>
+    <script type="text/javascript" src="${base}/wdkCustomization/js/span-genome-view.js"></script>
+    <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/span-genome-view.css"/>
 
     <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"></script> -->
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/styledmarker/src/StyledMarker.js"></script>
 
-	<script type="text/javascript" src="/assets/js/isolateResults.js"></script>
-
+	  <script type="text/javascript" src="/assets/js/isolateResults.js"></script>
 </c:if>
 
-<!-- jscript : refer = ${refer}-->
 <c:if test="${refer == 'record'}">
-	<!-- RecordPageScript Included -->
 	<imp:recordPageScript />
 </c:if>
-
 
 <c:if test="${refer == 'question' || refer == 'summary'}">
   <imp:parameterScript />
   <script type="text/javascript" src="/assets/js/orthologpattern.js"></script>
-  <script type="text/javascript" src="<c:url value='/wdkCustomization/js/span-location.js' />"></script>
-  <script type="text/javascript" src="<c:url value='/wdkCustomization/js/mutuallyExclusiveParams.js' />"></script>
-  <link rel="StyleSheet" type="text/css" href="<c:url value='/wdkCustomization/css/question.css' />"/>
+  <script type="text/javascript" src="${base}/wdkCustomization/js/span-location.js"></script>
+  <script type="text/javascript" src="${base}/wdkCustomization/js/mutuallyExclusiveParams.js"></script>
+
+  <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/question.css"/>
+</c:if>
+
+<%-- Quick seach box --%>
+<script type="text/javascript" src="/assets/js/quicksearch.js"></script>
+
+<!-- Dynamic query grid (bubbles in home page) -->
+<script type="text/javascript" src="/assets/js/dqg.js"></script>
+
+<!-- Sidebar news/events, yellow background -->
+<script type="text/javascript" src="/assets/js/newitems.js"></script>
+
+<!-- used in ?  -->
+<script type="text/javascript" src="/assets/js/popups.js"></script>
+<script type="text/javascript" src="/assets/js/nav.js"></script>
+
+<%-- show/hide the tables in the Record page --%>
+<script type='text/javascript' src="/assets/js/show_hide_tables.js"></script>
+
+<%-- Data source page --%>
+<c:if test="${refer == 'data-source'}">
+  <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/dataSource.css"/>
+</c:if>
+
+<!-- SRT page -->
+<c:if test="${refer == 'srt'}">
+  <script type="text/javascript" src="/assets/js/srt.js"></script>
 </c:if>
 
 
-<%-- js for quick seach box --%>
-<script type="text/javascript" src="/assets/js/quicksearch.js"></script>
 
-<!-- dynamic query grid code -->
-<script type="text/javascript" src="/assets/js/dqg.js"></script>
-<script type="text/javascript" src="/assets/js/newitems.js"></script>
-
-<script type="text/javascript" src="/assets/js/popups.js"></script>
-<!-- now api.js is in wdk  <script type="text/javascript" src="/assets/js/api.js"></script>  -->
-<script type="text/javascript" src="/assets/js/nav.js"></script>
-
+<%-- need to review these --%>
 
 <!-- fix to transparent png images in IE 7 -->
 <!--[if lt IE 7]>
-<script type="text/javascript" src="/assets/js/pngfix.js"></script>
+  <script type="text/javascript" src="/assets/js/pngfix.js"></script>
 <![endif]-->
 
-<!-- js for Contact Us window -->
-<script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
-
-
-<c:if test="${refer == 'srt'}">
-<script type="text/javascript" src="/assets/js/srt.js"></script>
-</c:if>
-
-<!-- js for popups in query grid and other.... -->
-<!-- <script type='text/javascript' src='<c:url value="/js/overlib.js"/>'></script>  -->
-
-<%-- show/hide the tables in the record page --%>
-<script type='text/javascript' src="/assets/js/show_hide_tables.js"></script>
-
-
-<%-- used by the data source page --%>
-<c:if test="${refer == 'data-source'}">
-  <link rel="StyleSheet" type="text/css" href="<c:url value='/wdkCustomization/css/dataSource.css' />"/>
-</c:if>
-
-<%-- need to review these --%>
 <!--[if lte IE 8]>
 <style>
-   #header_rt {
-      width:50%;
+  #header_rt {
+    width:50%;
    }
 </style>
 <![endif]-->
 
 <!--[if lt IE 8]>
-<link rel="stylesheet" href="/assets/css/ie7.css" type="text/css" />
+  <link rel="stylesheet" href="/assets/css/ie7.css" type="text/css" />
 <![endif]-->
 
 <!--[if lt IE 7]>
-<link rel="stylesheet" href="/assets/css/ie6.css" type="text/css" />
+  <link rel="stylesheet" href="/assets/css/ie6.css" type="text/css" />
 <![endif]-->
 
