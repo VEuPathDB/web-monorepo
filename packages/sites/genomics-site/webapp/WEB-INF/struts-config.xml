@@ -10,7 +10,6 @@
     <form-bean name="questionForm" type="org.gusdb.wdk.controller.form.QuestionForm"/>
     <form-bean name="downloadConfigForm" type="org.gusdb.wdk.controller.form.DownloadConfigForm"/>
     <form-bean name="booleanExpressionForm" type="org.gusdb.wdk.controller.form.BooleanExpressionForm"/>
-    <form-bean name="testForm" type="org.gusdb.wdk.controller.form.TestForm"/>
     <form-bean name="loginForm" type="org.gusdb.wdk.controller.form.LoginForm"/>
     <form-bean name="registerForm" type="org.gusdb.wdk.controller.form.RegisterForm"/>
     <form-bean name="logoutForm" type="org.gusdb.wdk.controller.form.LogoutForm"/>
@@ -167,13 +166,6 @@
       validate="false">
     </action>
     <action
-      path="/processBasketQuestion"
-      type="org.gusdb.wdk.controller.action.ProcessBasketQuestionAction"
-      scope="request"
-      validate="false">
-      <forward name="processQuestion" path="/processFilter.do"/>
-    </action>
-    <action
       path="/showBasket"
       type="org.gusdb.wdk.controller.action.ShowBasketAction"
       scope="request"
@@ -304,7 +296,7 @@
     <!-- * is question set name -->
 	<action
 		path="/*.wadl"
-		type="org.gusdb.wdk.controller.action.ProcessRESTAction"
+		type="org.gusdb.wdk.controller.action.services.ProcessRESTAction"
 		scope="request"
 		validate="false" 
 		parameter="{1}.all::wadl">
@@ -318,7 +310,7 @@
      -->
 	<action
        path="/*/*.*"
-       type="org.gusdb.wdk.controller.action.ProcessRESTAction"
+       type="org.gusdb.wdk.controller.action.services.ProcessRESTAction"
        scope="request"
 	   validate="false"
 	   parameter="{1}.{2}::{3}">
@@ -414,16 +406,8 @@
       scope="request">
     </action>
     <action
-      path="/processTestForm"
-      type="org.gusdb.wdk.controller.action.ProcessTestFormAction"
-      name="testForm"
-      input="/testForm.jsp"
-      scope="request">
-      <forward name="process_test_form" path="/wdk/testFormResult.jsp"/>
-    </action>
-    <action
       path="/showErrorPage"
-      type="org.gusdb.wdk.controller.action.ShowErrorPageAction"
+      type="org.gusdb.wdk.controller.action.standard.ShowErrorPageAction"
       scope="request">
     </action>
    <action
@@ -465,12 +449,12 @@
     </action>
     <action
       path="/savePreference"
-      type="org.gusdb.wdk.controller.action.ProcessSavePreferenceAction"
+      type="org.gusdb.wdk.controller.action.user.ProcessSavePreferenceAction"
       scope="request">
     </action>
     <action
       path="/goRemote"
-      type="org.gusdb.wdk.controller.action.RemoteLoginAction"
+      type="org.gusdb.wdk.controller.action.services.RemoteLoginAction"
       scope="request">
     </action>
     <action
@@ -509,7 +493,7 @@
     </action>
     <action
       path="/logging"
-      type="org.gusdb.wdk.controller.action.LoggingAction"
+      type="org.gusdb.wdk.controller.action.standard.LoggingAction"
       scope="request"
       validate="false">
     </action>
