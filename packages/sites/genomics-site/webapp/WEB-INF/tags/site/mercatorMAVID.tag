@@ -190,19 +190,19 @@ return true;
         <table>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="TgondiiME49" checked>T.gondii ME49
+              <input type="checkbox" name="genomes" value="tgonME49" checked>T.gondii ME49
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="TgondiiGT1" checked>T.gondii GT1
+              <input type="checkbox" name="genomes" value="tgonGT1" checked>T.gondii GT1
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="TgondiiVEG" checked>T.gondii VEG
+              <input type="checkbox" name="genomes" value="tgonVEG" checked>T.gondii VEG
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Ncaninum" checked>N.caninum
+              <input type="checkbox" name="genomes" value="ncanLIV" checked>N.caninum
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="EtenellaHoughton" checked>E.tenella
+              <input type="checkbox" name="genomes" value="etenHoughton" checked>E.tenella
             </td>
            </tr>
          </table>
