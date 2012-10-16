@@ -32,7 +32,7 @@
 </tr>
   <tr>
     <td id="span-params" width="30%">
-      <imp:question nohelp="true"/>
+      <imp:question/>
     </td>
     <td id="span-control" width="20%">
       <p><i>Choose a segment on the left and add it to the search list</i></p>
