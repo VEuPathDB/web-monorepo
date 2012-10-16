@@ -130,7 +130,7 @@
 
 <%------------------------------------------------------------------%>
 </c:otherwise>
-</c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
+</c:choose> <%-- if wdkRecord.attributes['organism'].value --%>
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
