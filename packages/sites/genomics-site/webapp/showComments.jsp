@@ -1,3 +1,4 @@
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %> 
 <%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
@@ -14,8 +15,7 @@ attributes:
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
-<site:header title="${wdkModel.displayName} : User Comments on ${stable_id}"
-                 banner="Comments on ${stable_id}"/>
+<imp:pageFrame title="${wdkModel.displayName} : User Comments on ${stable_id}" >
 
 <head>
 <style type="text/css">
@@ -385,8 +385,4 @@ $(document).ready(function() {
           </c:forEach>
     </c:otherwise> <%-- has comments for the stable id --%>
 </c:choose>
-
-<hr/><br/><br/>
-<site:footer/>
-
-
+</imp:pageFrame>
