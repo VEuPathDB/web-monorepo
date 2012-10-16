@@ -186,7 +186,7 @@ not clear we need icons on categories, ui-infra meet May 22, 2012
      <td align="left"><a style="${astyle}" id="${qset}_${qname}_${type}" class="queryGridLink queryGridActive" href='${link}' title="${fn:escapeXml(popup)}">${linktext}</a>
 
 
-<c:if test="${modelName eq 'PlasmoDB' || modelName eq 'EuPathDB'}">
+<c:if test="${modelName eq 'ToxoDB' || modelName eq 'EuPathDB'}">
 <%-- not clear we need icons on categories, ui-infra meet May 22, 2012
 <c:if test="${linktext eq 'Microarray Evidence'  || linktext eq 'RNA Seq Evidence'}">
 	<img width="40" alt="Revised feature icon" title="This category has been revised" 
