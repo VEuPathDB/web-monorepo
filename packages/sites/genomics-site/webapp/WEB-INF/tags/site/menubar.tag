@@ -60,7 +60,7 @@
 </c:choose>
 --%>
 
-<div id="menu">
+<div id="menu" class="ui-helper-clearfix">
 
   <ul class="sf-menu">
     <%-- default style for this ul establishes 9em --%>
@@ -83,7 +83,7 @@
     <c:choose>
       <c:when test="${wdkUser == null || wdkUser.guest}">
         <imp:requestURL path="/showApplication.do" />
-        <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');popLogin('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
+        <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');User.login('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
       </c:when>
       <c:otherwise>
         <c:choose>
@@ -211,7 +211,7 @@
       <c:choose>
         <c:when test="${wdkUser == null || wdkUser.guest}">
           <imp:requestURL path="/showFavorite.do" />
-          <li id="favorite-menu"><a id="mybasket" onclick="popLogin('${originRequestUrl}');" href="javascript:void(0)">
+          <li id="favorite-menu"><a id="mybasket" onclick="User.login('${originRequestUrl}');" href="javascript:void(0)">
             <img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
             <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
             </a>
