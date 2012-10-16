@@ -133,10 +133,10 @@ function validateFields(e)
       <td align="right" width="50%" nowrap><font color="red">*</font> Institution:</td>
       <td align="left"><input type="text" name="organization" value="${wdkUser.organization}" size="50"></td>
     </tr>
-    <tr>
+    <%-- <tr>
       <td align="right" width="50%" nowrap="nowrap"> OpenID (<a class="open-dialog-about-openid" href="javascript:void(0)">What is this?</a>): </td>
       <td align="left"><input type="text" name="openId" value="${wdkUser.openId}" size="50"/></td>
-    </tr>
+    </tr> --%>
     <tr>
        <td colspan="2" align="left"><hr><b>Preferences:</b></td>
     </tr>
