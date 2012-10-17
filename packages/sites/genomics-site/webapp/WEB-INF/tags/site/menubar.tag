@@ -149,7 +149,28 @@
     <li><a>Downloads</a>
       <ul>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.AboutAll#downloads"/>">Understanding Downloads</a></li>
-        <li><a href="/common/downloads">Data Files</a></li>
+
+        <c:choose>
+          <c:when test="${project eq 'EuPathDB'}">
+            <li><a name="data-files">Data Files</a>
+              <ul>
+                <li><a href="http://amoebadb.org/common/downloads">AmoebaDB</a></li>
+                <li><a href="http://cryptodb.org/common/downloads">CryptoDB</a></li>
+                <li><a href="http://giardiadb.org/common/downloads">GiardiaDB</a></li>
+                <li><a href="http://microsporidiadb.org/common/downloads">MicrosporidiaDB</a></li>
+                <li><a href="http://piroplasmadb.org/common/downloads">PiroplasmaDB</a></li>
+                <li><a href="http://plasmodb.org/common/downloads">PlasmoDB</a></li>
+                <li><a href="http://toxodb.org/common/downloads">ToxoDB</a></li>
+                <li><a href="http://trichdb.org/common/downloads">TrichDB</a></li>
+                <li><a href="http://tritrypdb.org/common/downloads">TriTrypDB</a></li>
+              </ul>
+            </li>
+          </c:when>
+
+          <c:otherwise>
+            <li><a href="/common/downloads">Data Files</a>
+          </c:otherwise>
+        </c:choose>
 
         <%--  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods"/>">Protocols and Methods</a></li> --%>
 
