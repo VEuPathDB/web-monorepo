@@ -18,34 +18,6 @@ attributes:
 <imp:pageFrame title="${wdkModel.displayName} : User Comments on ${stable_id}" >
 
 <head>
-<style type="text/css">
-  table.mybox {
-    width:     90%;
-    max-width: 100%;
-    padding:   6px;
-    color:     #000;
-    cellpandding: 3;
-    cellspacing: 3;
-    align: center;
-  }
-  td {
-    padding:   3px;
-    vertical-align: top;
-  }
-  th {
-    vertical-align: top;
-    padding:     3px;
-    background:  #88aaca ;
-    color:       #250517;
-    font-weight: normal;
-  }
-  ul.myul {
-    list-style: inherit;
-    margin:auto 1.5em;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-  } 
-</style>
 <script type="text/javascript">                                         
 $(document).ready(function() { 
   $("a.delete").click(function() {
@@ -55,43 +27,37 @@ $(document).ready(function() {
 </script>     
 </head>
 
-
 <c:choose>
-          <c:when test="${comment_target_id eq 'gene'}">
-            <c:set var="returnUrl">
-            <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
-            </c:set>
-          </c:when>
+  <c:when test="${comment_target_id eq 'gene'}">
+    <c:set var="returnUrl">
+      <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
+    </c:set>
+  </c:when>
 
-          <c:when test="${comment_target_id eq 'isolate'}">
-            <c:set var="returnUrl">
-            <c:url value="/showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
-            </c:set>
-          </c:when>
+  <c:when test="${comment_target_id eq 'isolate'}">
+    <c:set var="returnUrl">
+      <c:url value="/showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
+    </c:set>
+  </c:when>
 
-          <c:otherwise>
-            <c:set var="returnUrl"> 
-            <c:url value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
-            </c:set>
-          </c:otherwise>
-
+  <c:otherwise>
+    <c:set var="returnUrl"> 
+      <c:url value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
+    </c:set>
+  </c:otherwise>
 </c:choose> 
 
 <c:choose>
-    <c:when test="${fn:length(comments) == 0}">
-        <p>There's currently no comment for <a href="${returnUrl}">${stable_id}</a>.</p>
-    </c:when>
-    <c:otherwise> <%-- has comments for the stable id --%>
-
-      
+  <c:when test="${fn:length(comments) == 0}">
+    <p>There's currently no comment for <a href="${returnUrl}">${stable_id}</a>.</p>
+  </c:when>
+  <c:otherwise> <%-- has comments for the stable id --%>
 
       <p align="center">${comment_target_id} comments on <a href="${returnUrl}">${stable_id}</a></p>
       <br/>
 
       <c:forEach var="comment" items="${comments}">
-
-        <table class=mybox>
-
+        <table>
             <tr>
                <th width=150>Headline:</th>
                <th> 
@@ -133,7 +99,6 @@ $(document).ready(function() {
             </c:when>
             </c:choose>
 
-
             <tr>
                <td>Project:</td>
                 <td>${comment.projectName}, version ${comment.projectVersion} </td>
@@ -150,10 +115,7 @@ $(document).ready(function() {
             </tr>
 
             <c:choose>
-
               <c:when test="${param.commentTargetId eq 'phenotype'}">
-
-
                 <tr>
                  <td>Mutant Status:</td>
                  <td>${comment.mutantStatusName}</td>
