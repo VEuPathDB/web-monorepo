@@ -4,3 +4,8 @@
 #attributions-section .data-source .detail { margin:5px 12px; }
 
 
+.xor-select { padding-left: 20%; position: relative; top: 1px; }
+.xor-select .ui-button { margin-right: 0.3em; border-bottom: none; z-index: 0; }
+.xor-select .ui-button.ui-state-active { z-index: 10; }
+.xor-select .ui-button span { padding: 0.1em 1em; }
+.xor-select .ui-button.ui-widget.ui-state-default.ui-button-text-only.ui-corner-top { background-color: #DADADA; }

@@ -142,19 +142,10 @@
         }
         tabLabels = $(".xor-select", self.element)
             .buttonset()
-            .css("padding-left", "20%")
-            .css("position", "relative")
-            .css("top", 1)
-            .find("label");
-
-        tabLabels.css("margin-right", ".3em")
+            .find("label")
             .removeClass("ui-corner-left")
             .removeClass("ui-corner-right")
-            .addClass("ui-corner-top")
-            .css("border-bottom", "none")
-            .css("z-index", "")
-            .filter(".ui-state-active")
-            .css("z-index", 10)
+            .addClass("ui-corner-top");
       });
     },
 
@@ -240,10 +231,11 @@ jQuery(function($) {
             chromosomeOptional[0].checked = true;
           }
           this.organism.disabled = false;
-          if (inlineSubmit instanceof Function) {
-            inlineSubmit.call(this);
-          }
         });
+      }
+    }).submit(function() {
+      if (inlineSubmit instanceof Function) {
+        inlineSubmit.call(this);
       }
     });
 
