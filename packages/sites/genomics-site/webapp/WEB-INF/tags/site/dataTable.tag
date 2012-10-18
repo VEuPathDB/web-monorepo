@@ -36,7 +36,7 @@
 </c:forEach>
 </tr>
 
-<%/* table rows */%>
+<%-- table rows --%>
 <c:set var="i" value="0"/>
 <c:forEach var="row" items="${tbl}">
     
