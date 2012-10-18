@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
-<%/* get wdkRecord from proper scope */%>
+<%-- get wdkRecord from proper scope --%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>

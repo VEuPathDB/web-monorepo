@@ -4,7 +4,7 @@
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
-<%/* get wdkRecord from proper scope */%>
+<%-- get wdkRecord from proper scope --%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />

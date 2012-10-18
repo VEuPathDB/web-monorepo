@@ -5,7 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-<%/* get wdkRecord from proper scope */%>
+<%-- get wdkRecord from proper scope --%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
@@ -433,7 +433,7 @@ Carlton J. et. al. <b>Draft Genome Sequence of the Sexually Transmitted Pathogen
 
 </imp:pageFrame>
 </c:otherwise>
-</c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
+</c:choose> <%-- if wdkRecord.attributes['organism'].value --%>
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>

@@ -4,7 +4,7 @@
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
-<%/* get wdkRecord from proper scope */%>
+<%-- get wdkRecord from proper scope --%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
@@ -565,7 +565,7 @@ Genome Assembly for Entamoeba histolytica Rahman strain was provided by Gareth W
 
 <%------------------------------------------------------------------%>
 </c:otherwise>
-</c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
+</c:choose> <%-- if wdkRecord.attributes['organism'].value --%>
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>

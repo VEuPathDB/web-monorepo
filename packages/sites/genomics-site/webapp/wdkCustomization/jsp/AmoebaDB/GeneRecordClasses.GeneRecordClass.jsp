@@ -5,7 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-<%/* get wdkRecord from proper scope */%>
+<%-- get wdkRecord from proper scope --%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
@@ -484,7 +484,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 
 </imp:pageFrame>
 </c:otherwise>
-</c:choose> <%/* if wdkRecord.attributes['organism'].value */%>
+</c:choose> <%-- if wdkRecord.attributes['organism'].value --%>
 
 
 <imp:pageLogger name="gene page" />
