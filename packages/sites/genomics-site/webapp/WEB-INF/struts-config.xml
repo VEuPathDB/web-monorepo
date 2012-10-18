@@ -59,7 +59,7 @@
 
   <action-mappings>
   
-    <!-- Front-page Actions -->
+    <!-- Front-page and Standard Actions -->
     
     <action path="/home"
         parameter="org.gusdb.wdk.controller.action.standard.GenericPageAction"
@@ -70,6 +70,11 @@
         parameter="org.gusdb.wdk.controller.action.user.ContactUsAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <forward name="success" path="/wdk/jsp/jsonResponse.jsp"/>
+    </action>
+    <action path="/showErrorPage"
+        parameter="org.gusdb.wdk.controller.action.standard.ShowErrorPageAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
+        scope="request">
     </action>
 
     <!-- User Account Maintenance Actions -->
@@ -403,11 +408,6 @@
     <action
       path="/showXmlDataContent"
       type="org.gusdb.wdk.controller.action.ShowXmlDataContentAction"
-      scope="request">
-    </action>
-    <action
-      path="/showErrorPage"
-      type="org.gusdb.wdk.controller.action.standard.ShowErrorPageAction"
       scope="request">
     </action>
    <action
