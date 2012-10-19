@@ -210,7 +210,7 @@
 
     <td ${align} ${nowrap}>
       <c:set var="recNam" value="${record.recordClass.fullName}"/>
-      <c:set var="fieldVal" value="${recAttr.briefDisplay}"/>
+      <c:set var="fieldVal" value="${recAttr.display}"/>
       <c:choose>
 
         <c:when test="${recAttr.name eq 'filename'}">
