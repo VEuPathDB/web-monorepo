@@ -1,8 +1,9 @@
 <?php require_once dirname(__FILE__) . "/lib/UserAgent.php" ?>
+<html><?php include "head.php.inc"; ?>
 
 <h3 class='banner' align='center'>
-<a href='/'>
 <?php
+  print "<a href='/'>";
   require_once dirname(__FILE__) . "/lib/modules/ProxyInfo.php";
   $pi = new ProxyInfo();
   $pi_attr = $pi->attributes();
@@ -10,19 +11,18 @@
   if ($upstreamServer = $pi_attr{'upstream_server'}) {
     print "<br><font size='-1'>(upstream server: " . $upstreamServer . ")</font>";
   }
-$headers = apache_request_headers();
+  print "</a>";
+  print "<br><font size='-1'>[canonical server: " . php_uname('n') . "]</font>";
 
+  $headers = apache_request_headers();
 ?>
-</a>
 </h3>
-<fmt:formatDate type="both" pattern="${dateFormatStr}" value="<%=new Date()%>" />
 <?php
 include('config/module.php');
 
 // default page
 $page = ( isset($_GET['p']) ) ? $_GET['p'] : 'Databases';
 ?>
-<?php include "head.php.inc"; ?>
 
 <body>
 
