@@ -168,7 +168,7 @@ return true;
               <input type="checkbox" name="genomes" value="pvivSaI1" checked>P.vivax
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="pyoe17XNL" checked>P.yoelii
+              <input type="checkbox" name="genomes" value="pyoe17XNL" checked>P.yoelii 17XNL
             </td>
             <td>
               <input type="checkbox" name="genomes" value="pberANKA" checked>P.berghei
@@ -179,6 +179,12 @@ return true;
            </tr>
             <td>
               <input type="checkbox" name="genomes" value="pknoH" checked>P.knowlesi
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="pyoeyoeliiYM" checked>P.yoelii YM
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="pcynB" checked>P.cynomolgi
             </td>
            </tr>
          </table>
