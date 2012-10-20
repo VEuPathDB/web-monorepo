@@ -32,12 +32,12 @@
       </a>
     </div>
 
-    <div style="position:relative; top:-9px; right:7px;">
+    <span style="position:relative; top:-9px; right:7px;">
       <a href="http://www.eupathdb.org"><br/><img src="/assets/images/eupathdblink.png" alt="Link to EuPathDB homepage"/></a><br/>
-    </div>
+    </span>
 
-    <div style="padding-left: 160px;">
-      <ul class="site-icons" style="position:relative; top:-8px;">
+    <span>
+      <ul class="site-icons" style="position:relative; top:-8px;display:inline-block;left:80px;">
         <li><a href="http://amoebadb.org"><img border="0" src="/assets/images/AmoebaDB/amoebadb_w30.png" width="25"/></a></li>
         <li class="short-space"><a href="http://cryptodb.org"><img border="0" src="/assets/images/CryptoDB/cryptodb_w50.png" width="25"/></a></li>
         <li class="short-space"><a href="http://giardiadb.org"><img border="0" src="/assets/images/GiardiaDB/giardiadb_w50.png" width="25"/></a></li>
@@ -48,7 +48,7 @@
         <li class="short-space"><a href="http://trichdb.org"><img border="0" src="/assets/images/TrichDB/trichdb_w65.png" height="25"/></a></li>
         <li class="short-space"><a href="http://tritrypdb.org"><img border="0" src="/assets/images/TriTrypDB/tritrypdb_w40.png" width="20"/></a></li>
       </ul>
-    </div>
+    </span>
   </div>
   
 </jsp:root>
