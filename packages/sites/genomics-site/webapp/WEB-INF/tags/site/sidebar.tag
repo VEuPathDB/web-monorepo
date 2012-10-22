@@ -5,8 +5,6 @@
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 <%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome" %>
 
-<jsp:useBean id="constants" class="org.eupathdb.common.model.JspConstants"/>
-
 <%-- Limit the number of items that appear in the sidebar menus. 
      Change the value here to change the length of these menus. --%>
 <c:set var="SidebarLimit" value="7" />
@@ -256,30 +254,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 <a class="heading" id='informationAndHelp' href="#">About ${project}</a>
 <div class="menu_lefttop_drop">
   <ul id="information">
-    <li id='h-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to Cite us</a></li>
-
-    <c:if test="${project != 'EuPathDB'}">
-		  <li id='h-2'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citingproviders"/>">Citing Data Providers</a></li>
-    </c:if>
-
-    <li id='h-3'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Organisms in ${project}</a></li>
-    <li id='h-31'><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission & Release Policies</a></li>
-   	<li id='h-4'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Data Summary</a></li>
-   	<li id='h-5'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
-
-    <c:if test="${project == 'CryptoDB'}">
-		  <li id='h-61'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
-	  </c:if>
-
-    <c:if test="${project == 'ToxoDB'}">
-     	<li id='h-61'><a href="/common/cosmid-BAC-tutorial/CosmidandBAC-Tutorial.html"/>Viewing Cosmid and BAC Alignments</a></li>
-      <li id='h-62'><a href="/common/array-tutorial/Array-Tutorial.html"/>Viewing Microarray Probes</a></li>
-    </c:if>
-
-   	<li id='h-9'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li>
-		<li id='h-91'><a href="${constants.publicationUrl}">Publications that Cite Us</a></li>
-   	<li id='h-10'><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>
-   	<li id='h-11'><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
+    <imp:aboutMenu/>
   </ul>
 </div>
 
