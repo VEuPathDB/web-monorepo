@@ -1,10 +1,11 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
+
+<jsp:useBean id="constants" class="org.eupathdb.common.model.JspConstants"/>
 
 <%-- get wdkXmlAnswer saved in request scope --%>
 <c:set var="xmlAnswer" value="${requestScope.wdkXmlAnswer}"/>
@@ -39,7 +40,9 @@
 <table width="100%">
 
 <tr><td><h2>EuPathDB Documents and Publications</h2></td>
-    <td style="font-size:120%;font-weight:bold;text-align:right"><a href="http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en">View publications that cite us in Google Scholar  >>>&nbsp;&nbsp;&nbsp;</a></td>
+    <td style="font-size:120%;font-weight:bold;text-align:right">
+      <a href="${constants.publicationUrl}">View publications that cite us in Google Scholar  >>>&nbsp;&nbsp;&nbsp;</a>
+    </td>
 </tr>
 </table>
 

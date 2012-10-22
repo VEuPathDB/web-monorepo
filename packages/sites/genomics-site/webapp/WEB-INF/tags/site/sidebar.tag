@@ -5,6 +5,8 @@
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 <%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome" %>
 
+<jsp:useBean id="constants" class="org.eupathdb.common.model.JspConstants"/>
+
 <%-- Limit the number of items that appear in the sidebar menus. 
      Change the value here to change the length of these menus. --%>
 <c:set var="SidebarLimit" value="7" />
@@ -275,7 +277,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
     </c:if>
 
    	<li id='h-9'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li>
-		<li id='h-91'><a href="http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en">Publications that Cite Us</a></li>
+		<li id='h-91'><a href="${constants.publicationUrl}">Publications that Cite Us</a></li>
    	<li id='h-10'><a href="<c:url value="http://eupathdb.org/tutorials/eupathdbFlyer.pdf"/>">EuPathDB Brochure</a></li>
    	<li id='h-11'><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
   </ul>
