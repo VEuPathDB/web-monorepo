@@ -20,26 +20,6 @@
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
-<%-- set refererUrl to be the tag's enclosing page if not
-      already set elsewhere in the page. (hint: external login pages
-      such as login.jsp use this tag and will set refererUrl to be
-      that login page.)--%>
-<c:if test="${requestScope.refererUrl == null}">
-  <imp:requestURL/>
-  <c:set var="refererUrl" value="${originRequestUrl}" scope="request"/> 
-</c:if>
-
-<%-- unset session scoped URLs to avoid conflicts if user
-     enters from another page in parallel. IOW, keep the URLs
-     restricted to requestScope (session scope was used to maintain 
-     state through ProcessLoginAction which forwards via redirect (
-     where request vars do not follow).) 
---%>
-<c:remove var="originUrl"  scope="session"/>
-<c:remove var="refererUrl" scope="session"/>
-
-
-
 <script language="JavaScript" type="text/javascript">
 <!--
 function validateFields(e)
