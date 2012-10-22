@@ -82,8 +82,7 @@
 
     <c:choose>
       <c:when test="${wdkUser == null || wdkUser.guest}">
-        <imp:requestURL path="/showApplication.do" />
-        <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');User.login('${originRequestUrl}');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
+        <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');User.login('/showApplication.do');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
       </c:when>
       <c:otherwise>
         <c:choose>
@@ -221,18 +220,11 @@
       </ul>
     </li>
 
-    <%--
-    <ul  style="padding-top:3px;width:11em;border-width:0;float:left;text-align:left">
-        <li><a href="http://twitter.com/eupathdb"><img title="Follow us on twitter!" src="/assets/images/twitter.gif" width="25"></a></li>
-    </ul>
-    --%>
-
     <c:if test="${project != 'EuPathDB'}" >
 
       <c:choose>
         <c:when test="${wdkUser == null || wdkUser.guest}">
-          <imp:requestURL path="/showFavorite.do" />
-          <li id="favorite-menu"><a id="mybasket" onclick="User.login('${originRequestUrl}');" href="javascript:void(0)">
+          <li id="favorite-menu"><a id="mybasket" onclick="User.login('/showFavorite.do');" href="javascript:void(0)">
             <img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
             <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
             </a>
