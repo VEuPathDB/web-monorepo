@@ -77,7 +77,7 @@
 <script type="text/javascript" src="/assets/js/newitems.js"></script>
 
 <!-- Access twitter/facebook links, and configure menubar (superfish) -->
-<script type="text/javascript" src="/assets/js/nav.js"></script>
+<script type="text/javascript" src="${base}/js/nav.js"></script>
 
 <!-- show/hide the tables in the Record page -->
 <script type='text/javascript' src="/assets/js/show_hide_tables.js"></script>
