@@ -207,8 +207,9 @@
     <c:set var="pkValues" value="${primaryKey.values}" />
     <c:set var="projectId" value="${pkValues['project_id']}" />
     <c:set var="id" value="${pkValues['source_id']}" />
+    <c:set var="truncateTo" value="${recAttr.attributeField.truncateTo}"/>
 
-    <td ${align} ${nowrap}>
+    <td ${align} ${nowrap} data-truncate-to="${truncateTo}">
       <c:set var="recNam" value="${record.recordClass.fullName}"/>
       <c:set var="fieldVal" value="${recAttr.display}"/>
       <c:choose>
