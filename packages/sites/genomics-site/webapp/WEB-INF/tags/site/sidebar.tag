@@ -253,7 +253,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 
 <%--------------  INFO AND HELP ---------------------------------------------%>
 <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-<a class="heading" id='informationAndHelp' href="#">Other Information</a>
+<a class="heading" id='informationAndHelp' href="#">About ${project}</a>
 <div class="menu_lefttop_drop">
   <ul id="information">
     <li id='h-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#citing"/>">How to Cite us</a></li>
