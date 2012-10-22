@@ -24,21 +24,7 @@
   <imp:freefind_header/>
 
   <!-- helper divs with generic information used by javascript; vars can also be used in any page using this header -->
-  <imp:siteInfo />
-
-  <!-- set default facebook and twitter IDs (can be overridden in model properties) -->
-  <c:set var="facebook" value="${props['FACEBOOK_ID']}" />
-  <c:set var="twitter" value="${props['TWITTER_ID']}" />
-  <c:if test="${empty facebook}">
-    <c:set var="facebook" value="pages/EuPathDB/133123003429972"/>
-	</c:if>
-	<c:if test="${empty twitter}">
-	  <c:set var="twitter" value="EuPathDB"/>
-	</c:if>
-
-  <!-- to store the links, reachable via nav.js functions, from smallMenu, sidebar community, menubar community etc -->
-  <div id="facebook-link" style="display:none">https://facebook.com/${facebook}</div>
-  <div id="twitter-link" style="display:none">http://twitter.com/${twitter}</div>
+  <imp:siteInfo/>
 
   <div id="header2">
 
