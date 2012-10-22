@@ -292,7 +292,7 @@ sub snpTitleQuick {
   }
 
   push(@data, ['Type' => $type]);
-  push(@data, ["$reference_strain"."&nbsp;(refernece)" => "NA=$refNA $refAAString"]);
+  push(@data, ["$reference_strain"."&nbsp;(reference)" => "NA=$refNA $refAAString"]);
 
   # make one row per SNP allele
   my $size = @vars;
