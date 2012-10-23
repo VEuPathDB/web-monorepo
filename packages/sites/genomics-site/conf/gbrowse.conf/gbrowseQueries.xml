@@ -3784,8 +3784,8 @@ FROM
        ApidbTuning.FeatureLocation exon_loc, ApidbTuning.GeneAttributes ga
 WHERE  exon_loc.na_sequence_id = $srcfeature_id
   and  exon_loc.feature_type = 'ExonFeature'
-  AND  (( exon_loc.is_reversed = 0 AND exon_loc.coding_start <= $rend AND  exon_loc.coding_end >= $base_start)
-    OR   (exon_loc.is_reversed = 1 AND exon_loc.coding_end <= $rend AND  exon_loc.coding_start >= $base_start))
+  AND  (( exon_loc.is_reversed = 0 AND exon_loc.coding_start <= $rend+1000 AND  exon_loc.coding_end >= $base_start-1000)
+    OR   (exon_loc.is_reversed = 1 AND exon_loc.coding_end <= $rend+1000 AND  exon_loc.coding_start >= $base_start-1000))
   AND ga.na_feature_id = exon_loc.parent_id
 UNION
 SELECT 
@@ -3800,8 +3800,8 @@ SELECT
        'isDeprecated=' ||  is_deprecated atts 
 FROM   ApidbTuning.Intron 
 WHERE  na_sequence_id = $srcfeature_id
-  AND  start_min <= $rend
-  AND  end_max >= $base_start
+  AND  start_min <= $rend+1000
+  AND  end_max >= $base_start-1000
 ) order by startm
 ]]>
     </sql>
