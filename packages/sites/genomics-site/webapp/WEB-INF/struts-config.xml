@@ -54,7 +54,7 @@
   <global-forwards type="org.apache.struts.action.ActionForward">
     <forward name="home" path="/home.jsp"/>
     <forward name="needs_login" path="/showLogin.do"/>
-    <forward name="application_error" path="/WEB-INF/jsp/error.jsp"/>
+    <forward name="application_error" path="/wdkCustomization/jsp/Error.jsp"/>
   </global-forwards>
 
   <action-mappings>
