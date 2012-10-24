@@ -20,6 +20,17 @@
   
 	<li><a href="${baseUrl}/${newsUrl}">${project} News</a></li>
 
+  <!-- Usage and Citation -->
+  
+  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#citing">How to cite us</a></li>
+  <c:if test="${not isPortal}">
+    <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#citingproviders">Citing Data Providers</a></li>
+  </c:if>
+  <li><a href="${constants.publicationUrl}">Publications that Cite Us</a></li>
+  <li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission &amp; Release Policies</a></li>
+  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#use">Data Access Policy</a></li>
+  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">EuPathDB Publications</a></li>
+
   <!-- Data Provided -->
   
   <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GenomeDataType">Organisms in ${project}</a></li>
@@ -33,17 +44,6 @@
   <li><a href="${baseUrl}/${statsUrl}">Data Statistics</a></li>
   <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GeneMetrics">EuPathDB Gene Metrics</a></li>
   
-	<!-- Usage and Citation -->
-  
-  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">EuPathDB Publications</a></li>
-  <li><a href="${constants.publicationUrl}">Publications that Cite Us</a></li>
-	<li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#citing">How to cite us</a></li>
-	<c:if test="${not isPortal}">
-	  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#citingproviders">Citing Data Providers</a></li>
-	</c:if>	
-	<li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission &amp; Release Policies</a></li>
-  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#use">Data Access Policy</a></li>
-	
 	<!-- Administrative -->
   
   <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer.pdf">EuPathDB Brochure</a></li>
