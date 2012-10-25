@@ -176,10 +176,14 @@ Ack, this form won't work at all without JavaScript support!
   <c:set var="indent" value="${indentMap[sp]}"/>
 
   <c:choose>
+    <c:when test="${nest eq 0}">
+      </li>
+    </c:when>
     <c:when test="${nest lt 0}">
       <c:forEach begin="1" end="${nest * -1}" step="1">
         </li></ul>
       </c:forEach>
+      </li>
     </c:when>
     <c:otherwise>
       <c:forEach begin="1" end="${nest}" step="1">
@@ -190,8 +194,8 @@ Ack, this form won't work at all without JavaScript support!
 
   <li id="${sp}-node">
     <!-- ${sp} -->
-    <a href="javascript:void(0)" onclick="toggle(${idx})"><img
-        border=0 id="img${idx}" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;
+    <a href="javascript:void(0)" onclick="toggle(${idx})"><img alt=""
+        border="0" id="img${idx}" src="<c:url value="/images/dc.gif"/>"/></a>&nbsp;
     <span>
     <c:choose>
       <c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when>
@@ -203,7 +207,9 @@ Ack, this form won't work at all without JavaScript support!
 	<c:set var="idx" value="${idx+1}"/>	
 
 </c:forEach>
-</li></ul>
+<c:forEach begin="1" end="${indent}" step="1">
+  </li></ul>
+</c:forEach>
 
   </div></td>
 </tr>
