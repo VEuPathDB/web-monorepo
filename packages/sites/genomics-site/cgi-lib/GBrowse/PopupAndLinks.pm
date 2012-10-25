@@ -143,6 +143,8 @@ sub synSpanTitle {
   my ($contigSourceId) = $f->get_tag_values("Contig");
   my ($chromosome) = $f->get_tag_values("Chromosome");
   my ($type) = $f->get_tag_values("Type");
+  my ($scale) = $f->get_tag_values("Scale");
+  $scale = sprintf("%.2f", $scale);
   my $boolNotRef = ( $chr eq $contigSourceId ) ? 0 : 1;
 
   my @data;
@@ -154,6 +156,7 @@ sub synSpanTitle {
     push @data, [ 'Reversed: ' => "$strand" ];
     push @data, [ 'Total Syn Contig Length: ' => "$contigLength" ];
     push @data, [ 'Total Ref Contig Length: ' => "$refContigLength" ];
+    push @data, [ 'Scale: ' => "$scale" ];
     hover($f, \@data);
   } elsif ($type !~ /gap/i) {
     push @data, [ 'Chromsome: '=> "$chromosome" ] if ($chromosome);
