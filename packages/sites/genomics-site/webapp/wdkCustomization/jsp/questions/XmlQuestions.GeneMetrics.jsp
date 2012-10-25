@@ -246,7 +246,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <th  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Pyo</i></th>
 
 
-    <th class="mythStyle" title="Eimeria tenella str. Houghton, ToxoDB"><i>Ete</i></th>
+    <th class="mythStyle" title="Eimeria tenella strain Houghton, ToxoDB"><i>Ete</i></th>
     <th class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nca</i></th>
     <th class="mythStyle" title="Toxoplasma gondii GT1, ToxoDB"><i>TgoG</i></th>
     <th class="mythStyle" title="Toxoplasma gondii ME49, ToxoDB"><i>TgoM</i></th>
