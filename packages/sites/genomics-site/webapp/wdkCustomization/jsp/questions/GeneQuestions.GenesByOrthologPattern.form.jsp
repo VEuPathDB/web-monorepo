@@ -158,12 +158,11 @@ Ack, this form won't work at all without JavaScript support!
 				&nbsp;<b>All Organisms</b>
 				&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myshowTree()">expand all</a>
 				&nbsp;|&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myhideTree()">collapse all</a>
-		</td>
-</tr>
-
 
 <%--  TREE CONSTRUCTION LOOP  -----------------%>
+  <div id="orthology-profile-tree" style="display:none">
 
+<c:set var="indent" value="0"/>
 <c:forEach var="sp" items="${ind.vocab}">
  	<c:set var="spDisp" value="${termMap[sp]}"/>
   <c:set var="category" value="0"/>
@@ -171,30 +170,43 @@ Ack, this form won't work at all without JavaScript support!
       <c:set var="spDisp" value="${sp}"/> 
       <c:set var="category" value="1"/>
   </c:if>
+
+  <%-- determine if we should nest our list, remain the same, or unnest --%>
+  <c:set var="nest" value="${indentMap[sp] - indent}"/>
   <c:set var="indent" value="${indentMap[sp]}"/>
 
+  <c:choose>
+    <c:when test="${nest lt 0}">
+      <c:forEach begin="1" end="${nest * -1}" step="1">
+        </li></ul>
+      </c:forEach>
+    </c:when>
+    <c:otherwise>
+      <c:forEach begin="1" end="${nest}" step="1">
+        <ul>
+      </c:forEach>
+    </c:otherwise>
+  </c:choose>
 
-	<!-- ${sp} -->
-	<c:choose>
-			<c:when test="${indent == '0' || indent == '1'}"> <c:set var="display" value="marker"/><c:set var="showhide" value="donothide"/> </c:when>   
-			<c:otherwise> <c:set var="display" value="none"/><c:set var="showhide" value="showhide"/> </c:otherwise>   
-	</c:choose> 
-
-	<tr style="display:${display}" class="${showhide}">
-		<td width="250px" style="text-align:right">&nbsp;&nbsp;&nbsp;</td>
-    <td>
-				<c:forEach var="i" begin="0" end="${indent}" step="1">
-          &nbsp;&nbsp;&nbsp;&nbsp;
-        </c:forEach>
-			
-        <a href="javascript:void(0)" onclick="toggle(${idx})"><img border=0 id="img${idx}" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;<c:choose><c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when><c:otherwise><i>${spDisp}</i></c:otherwise></c:choose><c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
-
-		</td>
-	</tr>
-
+  <li id="${sp}-node">
+    <!-- ${sp} -->
+    <a href="javascript:void(0)" onclick="toggle(${idx})"><img
+        border=0 id="img${idx}" src="<c:url value="/images/dc.gif"/>"></a>&nbsp;
+    <span>
+    <c:choose>
+      <c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when>
+      <c:otherwise><i>${spDisp}</i></c:otherwise>
+    </c:choose>
+    <c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
+    </span>
 
 	<c:set var="idx" value="${idx+1}"/>	
-	</c:forEach>
+
+</c:forEach>
+</li></ul>
+
+  </div></td>
+</tr>
 
 </table>
 <br><br>
@@ -205,15 +217,28 @@ Ack, this form won't work at all without JavaScript support!
 </div><%-- END OF PARAMS DIV --%>
 
 <script>
+
 	function myshowTree(){
-		$("tr").css("display","block");
+    $("#orthology-profile-tree").jstree("open_all", true);
 	}
+
 	function myhideTree(){
-		$("tr.showhide").css("display","none");
+    $("#orthology-profile-tree").jstree("close_all", true);
 	}
+
 	<c:if test="${showParams == null}">
 		$(document).ready(function() { initParamHandlers(); });
+
+    $(document).ready(function() {
+      $("#orthology-profile-tree").jstree({
+        "plugins" : [ "html_data", "themes" ],
+        "themes" : { "theme" : "classic", "icons" : false }
+      }).bind("loaded.jstree", function() {
+        $(this).jstree("open_all").jstree("close_node", "> ul > li").show();
+      });
+    });
 	</c:if>
+
 </script>
 
 
