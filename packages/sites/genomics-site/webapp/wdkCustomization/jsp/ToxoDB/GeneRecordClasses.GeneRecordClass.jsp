@@ -129,7 +129,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <%--- COMMUNITY EXPERT ANNOTATION -----------%>
 
-<!--
+<%--
 <c:if test="${fn:length(wdkRecord.tables['CommunityExpComments']) gt 0}">
 <div style="font-size:large; text-align:center; font-weight:bold"> 
 <a href=<c:url value="showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>>Community Annotation Available</a>
@@ -137,8 +137,8 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <br>
 </c:if>
 </a>
--->
 
+ 
 <imp:panel 
     displayName="Community Expert Annotation"
     content="" />
@@ -156,8 +156,9 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
       </td></tr>
  </table>
 </c:if>
-
 <br/><br/>
+--%>
+
 
 <%-- OVERVIEW ---------------%>
 
