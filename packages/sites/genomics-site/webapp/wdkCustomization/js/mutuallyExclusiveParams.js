@@ -85,7 +85,7 @@
             return;
           }
 
-          radioRow = $("<div></div>")
+          radioRow = $("<div><label>Search by: </label></div>")
           .addClass("xor-select")
           .on("change", function() {
             // taking advantage of jQuery patching change events to bubble up
@@ -100,7 +100,7 @@
             radioRow
             .append($("<input id='xor-group-" + idx + "' type='radio' " +
                 "name='xor-group' value='" + idx + "'/>").attr("checked", idx === 0))
-            .append($("<label for='xor-group-" + idx + "'>Search by " + group.name + "</label>"));
+            .append($("<label for='xor-group-" + idx + "'>" + group.name + "</label>"));
           });
 
           if (this.options.init instanceof Function) {
