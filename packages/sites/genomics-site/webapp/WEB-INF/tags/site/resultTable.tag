@@ -16,7 +16,9 @@
 
 <c:if test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
 <script language="javascript">
-customResultsPage();
+  if (typeof customResultsPage === "function") {
+    customResultsPage();
+  }
 </script>
 </c:if>
 
