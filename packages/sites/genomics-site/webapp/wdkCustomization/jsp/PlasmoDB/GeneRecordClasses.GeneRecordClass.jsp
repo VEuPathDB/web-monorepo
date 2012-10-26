@@ -662,12 +662,7 @@ Disabled for Redmine 10225
 
   <imp:wdkTable tblName="ProteinDatabase"/>
 
-  <c:set var="pdbLink">
-    <a href="http://www.rcsb.org/pdb/smartSubquery.do?smartSearchSubtype=SequenceQuery&inputFASTA_USEstructureId=false&sequence=${attrs['protein_sequence'].value}&eCutOff=10&searchTool=blast">Search
-    PDB by the protein sequence of ${id}</a>
-  </c:set>
-
-<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution=""/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
