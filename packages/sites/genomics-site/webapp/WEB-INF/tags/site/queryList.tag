@@ -41,14 +41,18 @@ function writeData(page, div, quesName, insertStep){
 			if(location.href.indexOf("showApplication") != -1){
 				formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, insertStep, false, false, false);
 			}
-      t.html($.trim(data));
-      // t.html(data);
-      $.unblockUI();
+                        t.html($.trim(data));
+                        // t.html(data);
+                        $.unblockUI();
 			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
 			initParamHandlers(true);
 			var question = new WdkQuestion();
 			question.registerGroups();
-		}
+		},
+                error: function(data) {
+                        alert("An error has occurred, please refresh and try again. If the problem persists, please contact us.");
+                        $.unblockUI();
+                }
 	});
 }	
 
