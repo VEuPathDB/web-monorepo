@@ -443,7 +443,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
       attribution="Tg_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC,Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Bound_Mascot-based_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Bound_Sequest-based_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Unbound_Phosphoproteome_RSRC"/> 
 
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 

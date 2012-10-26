@@ -463,12 +463,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
                attribution="Wastling1DGelLSMassSpec,Wastling2DGelLSMassSpec,WastlingMudPitSolMassSpec,WastlingMudPitInsolMassSpec,CryptoLoweryLCMSMSInsolExcystedMassSpec,CryptoLoweryLCMSMSInsolNonExcystedMassSpec,CryptoLoweryLCMSMSSolMassSpec,Ferrari_Proteomics_LTQ_Oocyst_walls,Ferrari_Proteomics_LTQ_intact_oocysts_merged,Ferrari_Proteomics_LTQ_Sporozoites_merged,Fiser_Proteomics_16May2006_1D_gel,Fiser_Proteomics_24Jun2006_1D_gel,Fiser_Proteomics_14Aug2006_1D_gel,Crypto_Proteomics_from_Lorenza_Putignani"/>
 </c:if>
 
-<c:set var="pdbLink">
-  <br><a href="http://www.rcsb.org/pdb/smartSubquery.do?smartSearchSubtype=SequenceQuery&inputFASTA_USEstructureId=false&sequence=${attrs['protein_sequence'].value}&eCutOff=10&searchTool=blast">Search
-    PDB by the protein sequence of ${id}</a>
-</c:set>
-
-<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 

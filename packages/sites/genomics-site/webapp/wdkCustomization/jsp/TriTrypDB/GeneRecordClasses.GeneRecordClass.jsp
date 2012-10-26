@@ -507,12 +507,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
   </c:when>
 </c:choose>
 
-<c:set var="pdbLink">
-  <br><a href="http://www.rcsb.org/pdb/smartSubquery.do?smartSearchSubtype=SequenceQuery&inputFASTA_USEstructureId=false&sequence=${attrs['protein_sequence'].value}&eCutOff=10&searchTool=blast">Search
-    PDB by the protein sequence of ${id}</a>
-</c:set>
-
-<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 

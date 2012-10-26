@@ -347,7 +347,7 @@ GO,InterproscanData
 
   <imp:wdkTable tblName="ProteinDatabase"/>
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
 
   <imp:wdkTable tblName="Epitopes"/>
 

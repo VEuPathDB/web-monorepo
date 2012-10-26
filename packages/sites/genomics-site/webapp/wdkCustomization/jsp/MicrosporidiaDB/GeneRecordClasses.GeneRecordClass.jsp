@@ -338,7 +338,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
         </c:choose>
 
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 

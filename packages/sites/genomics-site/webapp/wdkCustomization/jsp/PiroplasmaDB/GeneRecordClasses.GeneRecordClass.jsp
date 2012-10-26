@@ -355,7 +355,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/piroplasmadbaa/?nam
                  attribution=""/>
 
  
-<imp:wdkTable tblName="PdbSimilarities" postscript="${pdbLink}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
