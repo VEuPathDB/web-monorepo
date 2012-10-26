@@ -6,12 +6,23 @@
 
 require_once dirname(__FILE__) . "/../lib/modules/WdkCache.php";
 require_once dirname(__FILE__) . "/../lib/modules/ModelConfig.php";
+require_once dirname(__FILE__) . "/../lib/modules/WdkMeta.php";
 
 $cache = new WdkCache();
 $model_config = new ModelConfig();
 $cattr = $cache->attributes();
 $model_data_tree = $model_config->attributes();
+$meta = new WdkMeta();
+$meta_data = $meta->attributes();
+
 ?>
+<h2>Model</h2>
+<b>Name: </b><?=$meta_data{'DisplayName'};?><br>
+<b>Model Version: </b><?=$meta_data{'ModelVersion'};?><br>
+<b>Build Number: </b><?=$meta_data{'BuildNumber'};?><br>
+<b>Release Date: </b><?=$meta_data{'ReleaseDate'};?><br>
+<b>GUS Home: </b><?=$meta_data{'GusHome'};?><br>
+
 <h2>Cache</h2>
 
 <b>Cache table count: </b><span id="cache_table_count"><?=$cattr{'cache_table_count'};?></span>
