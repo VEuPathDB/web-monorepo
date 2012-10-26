@@ -74,7 +74,7 @@ $(document).ready( function() {
 <c:choose>
 <c:when test="${project eq 'FungiDB'}" >
 
-FungiDB is an integrated genomic and functional genomic database for the kingdom Fungi. In its first iteration (released in early 2011), FungiDB contains the genomes of <b>18 Fungi covering 17 species</b> (see below). FungiDB integrates whole genome sequence and annotation and will expand to include experimental data and environmental isolate sequences provided by the community of researchers. The database includes comparative genomics, analysis of gene expression, and supplemental bioinformatics analyses and a web interface for data-mining.
+FungiDB is an integrated genomic and functional genomic database for the kingdom Fungi. In its 2.1 version (released in October 2012), FungiDB contains the genomes of <b>33 Fungi qnd 6 Oomycetes</b> (see below). FungiDB integrates whole genome sequence and annotation and will expand to include experimental data and environmental isolate sequences provided by the community of researchers. The database includes comparative genomics, analysis of gene expression, and supplemental bioinformatics analyses and a web interface for data-mining.
 
 
 </c:when>
