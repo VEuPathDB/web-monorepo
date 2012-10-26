@@ -35,12 +35,14 @@ function writeData(page, div, quesName, insertStep){
 	$.blockUI();
 	$.ajax({
 		url: page,
+                contentType: "text/html; charset=UTF-8",
 		dataType: 'html',
 		success: function(data){
 			if(location.href.indexOf("showApplication") != -1){
 				formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, insertStep, false, false, false);
 			}
       t.html($.trim(data));
+      // t.html(data);
       $.unblockUI();
 			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
 			initParamHandlers(true);
