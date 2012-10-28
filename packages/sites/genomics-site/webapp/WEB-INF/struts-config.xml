@@ -67,7 +67,7 @@
       <forward name="success" path="/home.jsp"/>
     </action>
     <action path="/contactUs"
-        parameter="org.gusdb.wdk.controller.action.user.ContactUsAction"
+        parameter="org.eupathdb.common.controller.action.ContactUsAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <forward name="success" path="/wdk/jsp/jsonResponse.jsp"/>
     </action>
