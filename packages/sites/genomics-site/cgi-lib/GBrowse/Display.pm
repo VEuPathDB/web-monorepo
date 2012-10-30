@@ -802,7 +802,7 @@ sub snpHeight {
 sub peakHeight {
   my ($f,$addBase) = @_;
   my $score = $f->score;
-  my $logScore = 4*(log($score)/log(2));
+  my $logScore = 2*(log($score)/log(2));
   return $logScore unless $addBase;
   return (2 + $logScore );
 }
