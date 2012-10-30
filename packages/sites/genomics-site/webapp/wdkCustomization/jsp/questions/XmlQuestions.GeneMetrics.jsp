@@ -282,7 +282,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
           <c:set var="Cmu" value="${record.attributesMap['Cryptosporidium muris RN66']}"/>
           <c:set var="Cpa" value="${record.attributesMap['Cryptosporidium parvum Iowa II']}"/>
 
-          <c:set var="Ete" value="${record.attributesMap['Eimeria tenella str. Houghton']}"/>
+          <c:set var="Ete" value="${record.attributesMap['Eimeria tenella strain Houghton']}"/>
 
           <c:set var="Ebi" value="${record.attributesMap['Enterocytozoon bieneusi H348']}"/>
 
