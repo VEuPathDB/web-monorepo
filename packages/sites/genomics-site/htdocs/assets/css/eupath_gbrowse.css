@@ -22,8 +22,9 @@
                      font-size: small;
                      }
 .tabmenu_active   { cursor: pointer;
-			color: #002439;
-			font-size: 11pt;
+			/* color: #002439; */
+			color: #15317E;
+			font-size: 14pt;
 			font-weight: bold;
                         font-family: sans-serif;
 			padding-top: 5px;
@@ -38,7 +39,7 @@
 		      }
 .tabmenu_inactive { cursor: pointer;
                         color:#015F9A;
-			font-size: 11pt;
+			font-size: 12pt;
 			background-color: #BBCCFF;
 			border-bottom-color: #E3E9FF;
 			font-weight: normal;
