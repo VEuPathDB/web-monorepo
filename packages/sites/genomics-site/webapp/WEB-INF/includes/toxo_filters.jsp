@@ -22,7 +22,6 @@
     <th colspan=2 align="center">ME49</th>
     <th colspan=2 align="center">VEG</th>
     <th colspan=2 align="center">RH</th>
-    <th align="center">All Tg<br>Strains</th>
   </tr>
 
 
@@ -110,12 +109,6 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="rh_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="each_tg_instance" />  
     </td>
 
   </tr>
