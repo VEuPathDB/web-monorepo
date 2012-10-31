@@ -493,7 +493,8 @@
     </action>
     <action
       path="/logging"
-      type="org.gusdb.wdk.controller.action.standard.LoggingAction"
+      parameter="org.gusdb.wdk.controller.action.standard.LoggingAction"
+      type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
       scope="request"
       validate="false">
     </action>
