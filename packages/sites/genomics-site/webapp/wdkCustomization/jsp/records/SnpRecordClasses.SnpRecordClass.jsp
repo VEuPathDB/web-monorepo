@@ -93,30 +93,6 @@
 
 <imp:pageDivider name="Sequence Context"/>
 
-<c:if test="${dataset_internal == 'pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC' || dataset_internal == 'pfal3D7_SNP_Broad_gff_RSRC'}">
-<c:set var="showAlignmts">
-
-  <c:catch var="e">
-  <c:import url="http://${pageContext.request.serverName}/cgi-bin/displaySnpAlignments.pl?snpId=${id}&width=25&project_id=${projectId}" />
-  </c:catch>
-  <c:if test="${e!=null}"> 
-      <imp:embeddedError 
-          msg="<font size='-2'>temporarily unavailable</font>" 
-          e="${e}" 
-      />
-  </c:if>
-</c:set>
-
-<imp:toggle name="SequenceAlignment"
-    displayName="Sequence Alignment"
-    content="${showAlignmts}"
-    isOpen="true"/>
-
-<br/>
-<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
-                      contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0" availableGenomes="3D7,Dd2,HB3, and IT"/>
-</c:if>
-
 <br/>
 </c:if>
 

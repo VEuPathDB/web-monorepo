@@ -572,7 +572,6 @@ sub MicrosatelliteTitle {
     my $length       = $stop - $start + 1;
     my ($name)        = $f->get_tag_values('Name');
     my ($sequenceId)        = $f->get_tag_values('SequenceId');
-    my $msaLink = "<a target='_blank' href='/cgi-bin/mavidAlign?project_id=$projectId&contig=$sequenceId&start=$start&stop=$stop&revComp=off&type=clustal'>Available Strains</a>";
     my @data;
     push @data, [ 'Name:'        => $name ];
     push @data, [ 'Genbank Accession:'        => $genbankLink ];
@@ -580,7 +579,6 @@ sub MicrosatelliteTitle {
     push @data, [ '3D7 Start:'        => $start ];
     push @data, [ '3D7 End:'        => $stop ];
     push @data, [ '3D7 ePCR Product Size:'        => $length ];
-    push @data, [ 'Multiple Sequence Alignment'        => $msaLink ];
     return hover($f, \@data);
 }
 
