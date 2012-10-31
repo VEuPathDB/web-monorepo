@@ -82,7 +82,7 @@
     <action path="/showLogin"
         parameter="org.gusdb.wdk.controller.action.user.ShowLoginAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="success" path="/WEB-INF/jsp/Login.jsp"/>
+      <forward name="success" path="/wdkCustomization/jsp/Login.jsp"/>
       <forward name="show_profile" path="showProfile.do" redirect="true"/>
     </action>
     <action path="/processLogin"
@@ -153,10 +153,10 @@
         parameter="org.gusdb.wdk.controller.action.user.ProcessResetPasswordAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
         name="resetPasswordForm">
-      <forward name="success" path="/showPassword.do"/>
+      <forward name="success" path="/wdkCustomization/jsp/Resetpwd.jsp"/>
+      <forward name="show_password" path="/showPassword.do" redirect="true"/>
     </action>
-  
-  
+
     <action
       path="/showFavorite"
       type="org.gusdb.wdk.controller.action.ShowFavoriteAction"
