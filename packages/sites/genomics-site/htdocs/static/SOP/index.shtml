@@ -1,47 +1,25 @@
-<html>
-
-<head>
-<title>EuPathDB - Annotation SOPs</title>
-<link href="/misc/style.css" rel=stylesheet type="text/css" />
+<!--#include virtual="/a/header.jsp?ftype=Annoation_SOP"-->
 <link href="sop_style.css" rel=stylesheet type="text/css" />
 
-</head>
 
-<body>
+<table>
 
-
-<table align="center" WIDTH='640' cellpadding='0' cellspacing='0'>
 <tr>
-<td align='center' width="20"><a href='/'><img src="/assets/images/<!--#echo var="PROJECT_ID" -->/title_s.png"></a></td>
+<th>
+Gene Model and Functional Curation
+</th>
 </tr>
-</table>
-
-
-
-<table width=640 align="center" border=0 cellpadding=3 cellspacing=3>
 
 <tr>
-<!--
-         <!--#include virtual="/include/left-image.html" -->
--->
 <td>
-<span class=title>Gene Model and Functional Curation</span><br />
-<span class=smalltitle>Standard Operational Procedures (SOP)</span>
-</span></td> 
-
+Standard Operational Procedures (SOP)
+</td> 
 </tr>
 
-<!--
-<tr>
-<td colspan=2>
-         <!--#include virtual="/include/toolbar.html"-->
-</td>
-</tr>
--->
-<tr><td colspan=2> 
+<tr><td> 
 
-<span class=title>Overview</span>
-<div class=subsubtitle>
+<p>Overview
+<p>
 The following is completed documentation of many of ApiDB's standard 
 operating procedures (SOPs) for gene model and functional curation. 
 Each SOP outlines the purpose and scope of each process or procedure, 
@@ -49,12 +27,11 @@ all requirements necessary to carry out each procedure, a detailed
 description of the process or analysis, and all measures utilized to 
 ensure that data and data types generated are consistent, 
 current, and maintain specific quality requirements. 
-</div>
 
 </td></tr>
 
-<tr><td colspan=2> 
-<span class=title>Gene Model Curation</span>
+<tr><td > 
+<p>Gene Model Curation
 
 <ul>
 <li><a href=GenePredictionSOP.shtml>Gene Prediction</a></li>
@@ -63,7 +40,7 @@ Outlines the process for locating and predicting coding and non-coding genome fe
 <li><a href=FrameshiftSOP.shtml>Frameshift</a></li>
 </ul>
 
-<span class=title>Functional Curation</span>
+<p>Functional Curation</p>
 
 <ul>
 <li>
@@ -88,7 +65,7 @@ annotation to each gene model.
 
 </ul>
 
-<span class=title>GenBank Submission</span>
+<p>GenBank Submission</p>
 
 <ul>
 <li><a href=SubmitToGenBank.shtml>Prepare for GenBank submission</a> (Tbl2asn: convert feature table to sequin)</li>
@@ -128,7 +105,6 @@ annotation to each gene model.
 
 </table>
 
+<!--#include virtual='/a/footer.jsp' -->
 
 
-</body>
-</html>
