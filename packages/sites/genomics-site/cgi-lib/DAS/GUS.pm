@@ -364,6 +364,23 @@ sub get_feature_by_name {
   if (@features) { @features; } else { (); }
 }
 
+sub wdk_reference {
+ warn ">>>>>>>>>>>>>>>>>";
+  my $self = shift;
+  my $track_name  = shift;
+ warn ">>>>>>>>>>>>>>>>> $self | $track_name";
+  my $dbh = $self->dbh;
+  my $sth = $dbh->prepare("SELECT name, value FROM ApidbTuning.DataSourceWdkRefText");
+  $sth->execute() or $self->throw($sth->errstr);
+  while (my ($name, $value)  = $sth->fetchrow_array) {
+	  warn ">>> $name => $value";
+
+  }
+
+  return "test gus";
+
+}
+
 sub seq_ids_length {
   my $self = shift;
   my $dbh = $self->dbh;
