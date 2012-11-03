@@ -5,7 +5,7 @@
  
  use constant BINARY            => 'primer3';
 -use constant BINPATH           => '/usr/local/bin';
-+use constant BINPATH           => "$ENV{GUS_HOME}/bin';
++use constant BINPATH           => "$ENV{GUS_HOME}/bin";
  use constant METHOD            => 'local';
  use constant IMAGE_PAD         => 25;
  use constant MAXRANGE          => 300;
