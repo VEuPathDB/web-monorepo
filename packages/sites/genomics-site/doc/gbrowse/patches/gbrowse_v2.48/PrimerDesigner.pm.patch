@@ -1,0 +1,18 @@
+--- PrimerDesigner.pm.orig	2012-11-03 13:25:03.000000000 -0400
++++ PrimerDesigner.pm	2012-11-03 13:33:11.000000000 -0400
+@@ -86,13 +86,13 @@
+ use Carp qw/cluck/;
+ 
+ use constant BINARY            => 'primer3';
+-use constant BINPATH           => '/usr/local/bin';
++use constant BINPATH           => "$ENV{GUS_HOME}/bin';
+ use constant METHOD            => 'local';
+ use constant IMAGE_PAD         => 25;
+ use constant MAXRANGE          => 300;
+ use constant IMAGEWIDTH        => 800;
+ use constant DEFAULT_SEG_SIZE  => 10000;
+-use constant STYLE             => '/gbrowse2/css/gbrowse.css';
++use constant STYLE             => '/assets/css/eupath_gbrowse.css';
+ 
+ #use vars '@ISA';
+ use vars qw/@ISA $PNG $CALL/;
