@@ -57,24 +57,29 @@ sub init {
 }
 
 sub site_version {
+
+  my $versionType = shift || 'buildNumber' ; # version type is releaseVersion or buildNumber 
   my %site_versions;
   my $acm = new XML::Twig( 
     keep_spaces => 1,  
     PrettyPrint => 'nice',
     keep_atts_order => 1,
     TwigHandlers => {
-      'constant[@name="releaseVersion"]'  => sub { 
+      "constant[\@name=\"$versionType\"]"  => sub { 
         $site_versions{$_[1]->att("includeProjects")} = $_[1]->text;
       },  
     }   
   );  
 
   $acm->parsefile("$ENV{GUS_HOME}/lib/wdk/apiCommonModel.xml"); 
-  return $site_versions{$ENV{PROJECT_ID}}; 
+
+  my ($key) = grep { $_ =~ /$ENV{PROJECT_ID}/i } keys %site_versions;
+
+  return $site_versions{$key}; 
 }
 
 sub bam_file_path {
-  return '/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/release-'. &site_version; 
+  return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. '/bam';
 }
 
 sub userDB {
