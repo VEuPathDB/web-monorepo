@@ -2,29 +2,35 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+
 
 <%@ attribute name="strategy"
 	      type="org.gusdb.wdk.model.jspwrap.StrategyBean"
               required="true"
               description="Strategy Id we are looking at"
 %>
+
+
 <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
 <c:set var="wdkAnswer" value="${wdkStep.answerValue}"/>
+
 <c:set var="qName" value="${wdkAnswer.question.fullName}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="recordClass" value="${wdkAnswer.question.recordClass}" />
 <c:set var="recordName" value="${recordClass.fullName}" />
+
 <c:set var="recHasBasket" value="${recordClass.useBasket}" />
 <c:set var="clustalwIsolatesCount" value="0" />
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
+
 
 <c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
   && (fn:containsIgnoreCase(modelName, 'CryptoDB') 
   || fn:containsIgnoreCase(modelName, 'ToxoDB') 
   || fn:containsIgnoreCase(modelName, 'EuPathDB') 
   || fn:containsIgnoreCase(modelName, 'GiardiaDB') 
-  || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}</c:set> 
+  || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}
+</c:set> 
 
 <jsp:useBean id="typeMap" class="java.util.HashMap"/>
 <c:set target="${typeMap}" property="singular" value="${wdkStep.displayType}"/>
@@ -55,23 +61,17 @@
     <pg:param name="sort" id="pager" />
   </c:if>
 
+
 <%--------- PAGING TOP BAR ----------%>
 <c:url var="commandUrl" value="/processSummaryView.do?step=${wdkStep.stepId}&view=${wdkView.name}" />
-<table width="100%">
+<table id="paging-top-bar" width="100%">
 	<tr class="subheaderrow">
 	<th style="text-align: left;white-space:nowrap;"> 
-	       <wdk:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
+	       <imp:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
 	</th>
 	<th style="text-align: right;white-space:nowrap;">
-         <wdk:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
+         <imp:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
 	</th>
-  <%-- remove Reset button when new tree structure is activated --%>
-  <c:if test="${not wdkAnswer.useCheckboxTree}">
-  	<th style="text-align: right;white-space:nowrap;width:5%;">
-	    &nbsp;
-	    <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}', this)" />
-	  </th>
-	</c:if>
 	</tr>
 </table>
 <%--------- END OF PAGING TOP BAR ----------%>
@@ -79,15 +79,19 @@
 <c:if test = "${eupathIsolatesQuestion}">
   <form name="checkHandleForm" method="post" action="/dosomething.jsp"> 
 </c:if>
+
 <!-- content of current page -->
 <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
 <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
 
 <%--------- RESULTS  ----------%>
+
+<!-- these 3? divs are needed for the basket to work (click on basket icon to select all IDs), not for css really  -->
 <div class="Results_Div flexigrid">
 <div class="bDiv">
 <div class="bDivBox">
-<table class="Results_Table" width="100%" step="wdkStep.stepId">
+
+<table class="Results_Table" width="100%" step="${wdkStep.stepId}">
 <thead>
 <tr class="headerrow">
 
@@ -157,12 +161,7 @@
                </table>
              </td>
         <td style="white-space:nowrap;"><span title="${sumAttrib.help}">${sumAttrib.displayName}</span></td>
-        <%-- <c:if test="${j != 0}">
-          <div style="float:left;">
-            <a href="javascript:void(0)">
-              <img src="<c:url value='wdk/images/results_grip.png'/>" alt="" border="0" /></a>
-          </div>
-        </c:if> --%>
+
         <c:if test="${j != 0}">
           <td style="width:20px;">
             <%-- display remove attribute button --%>
@@ -172,6 +171,12 @@
               <img src="<c:url value='wdk/images/results_x.png'/>" alt="Remove" border="0" /></a>
           </td>
         </c:if>
+
+<!-- NEW as in wdk:resultsTable -->
+ 						<td>
+              <imp:attributePlugin attribute="${sumAttrib}" />
+            </td>
+
          </tr>
       </table>
     </th>
@@ -179,10 +184,15 @@
   </c:forEach>
 </tr>
 </thead>
+
+
+
 <tbody class="rootBody">
 
 <c:set var="i" value="0"/>
 
+
+<!-- FOR EACH ROW -->
 <c:forEach items="${wdkAnswer.records}" var="record">
 
     <c:set value="${record.primaryKey}" var="primaryKey"/>
@@ -216,72 +226,77 @@
 
   <c:set var="j" value="0"/>
 
+
+<!-- FOR EACH COLUMN -->
   <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
     <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
+
+<!-- ~~~~~~~~~~~~~ IN wdkAttribute.tag for data types using wdk default view ~~~~~~~~~~~~~~~~~ -->
+
+    <td ${align} style="${nowrap}padding:3px 2px">
+    <div class="attribute-summary">
+
+<!--
     <c:set var="align" value="align='${recAttr.attributeField.align}'" />
     <c:set var="nowrap">
         <c:if test="${j == 0 || recAttr.attributeField.nowrap}">white-space:nowrap;</c:if>
     </c:set>
-
     <c:set var="pkValues" value="${primaryKey.values}" />
     <c:set var="projectId" value="${pkValues['project_id']}" />
     <c:set var="id" value="${pkValues['source_id']}" />
+    <c:set var="recNam" value="${record.recordClass.fullName}"/>
+    <c:set var="fieldVal" value="${recAttr.briefDisplay}"/>
+-->
 
-    <td ${align} style="${nowrap}padding:3px 2px"><div>
-      <c:set var="recNam" value="${record.recordClass.fullName}"/>
-      <c:set var="fieldVal" value="${recAttr.briefDisplay}"/>
       <c:choose>
-        <c:when test="${j == 0}">
+        <c:when test="${j == 0}"> <!-- ID column -->
 
-      <div class="primaryKey" fvalue="${fieldVal}" style="display:none;">
-        <c:forEach items="${pkValues}" var="pkValue">
-          <span key="${pkValue.key}">${pkValue.value}</span>
-        </c:forEach>
-      </div>
+      		<!-- hidden div, this might be used by js -->
+      		<div class="primaryKey" fvalue="${fieldVal}" style="display:none;">
+        		<c:forEach items="${pkValues}" var="pkValue">
+          		<span key="${pkValue.key}">${pkValue.value}</span>
+        		</c:forEach>
+      		</div>
 
-        <c:choose>
-           <c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Sequencing Typed'}">
-              <%-- add checkbox --%>
-              <a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}">
-            <c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
-           </c:when>
-            <c:otherwise>
-              <%-- display a link to record page --%>
-		<a class="primaryKey_||_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a>
-            </c:otherwise>
-        </c:choose>
+       		<c:choose>
+           	<c:when test = "${eupathIsolatesQuestion && record.summaryAttributes['data_type'] eq 'Sequencing Typed'}">
+             	<a href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}">
+             	<c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
+           	</c:when>
+           	<c:otherwise>
+		  				<a class="primaryKey_||_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a>
+           	</c:otherwise>
+        	</c:choose>
 
         </c:when>   <%-- when j=0 --%>
 
-	<c:otherwise>
-
+	      <c:otherwise> <!-- OTHER COLUMNS -->
           <!-- need to know if fieldVal should be hot linked -->
           <c:choose>
-			<c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
-               <span style="color:gray;">N/A</span>
+						<c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
+              <span style="color:gray;">N/A</span>
             </c:when>
             <c:when test="${recAttr.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
-               <c:choose>
-		  <c:when test="${fn:containsIgnoreCase(dispModelName, 'EuPathDB')}">
-		    <a href="javascript:create_Portal_Record_Url('','${projectId}','','${recAttr.url}')">
-                      ${recAttr.displayText}</a>
-	          </c:when>
-	          <c:otherwise>
-		    <a href="${recAttr.url}">${recAttr.displayText}</a>
-		  </c:otherwise>
-	       </c:choose>
+					    <a href="${recAttr.url}">${recAttr.displayText}</a>
             </c:when>
             <c:otherwise>
               ${fieldVal}
             </c:otherwise>
           </c:choose>
-
         </c:otherwise>
-      </c:choose>
-    </div></td>
-    <c:set var="j" value="${j+1}"/>
 
+      </c:choose>
+
+    </div>
+    </td>
+
+<!-- ~~~~~~~~~~~~~ END OF  wdkAttribute.tag ~~~~~~~~~~~~~~~~~ -->
+
+
+    <c:set var="j" value="${j+1}"/>
   </c:forEach>
+
+
 </tr>
 <c:set var="i" value="${i+1}"/>
 </c:forEach>
@@ -290,9 +305,11 @@
 
 </tbody>
 </table>
+
 </div>
 </div>
 </div>
+
 <%--------- END OF RESULTS  ----------%>
 
 <c:if test = "${eupathIsolatesQuestion && clustalwIsolatesCount > 1}">
@@ -305,16 +322,12 @@
   	</tr>
 	<tr>
 	  <td align=center> 
-	  <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this)" />
-<!--
-	  <input type="button" name="CheckAll" value="Check All" onClick="checkboxAll(this)">
-	  <input type="button" name="CheckAll" value="Check All" 
-		onClick="checkboxAll($(this).parents('form[name=checkHandleForm]').find('input:checkbox[name=selectedFields]'))">
--->
-	  <input type="button" name="CheckAll" value="Check All" 
-		onClick="checkboxAll($('input:checkbox[name=selectedFields]'))">
-      	  <input type="button" name="UnCheckAll" value="Uncheck All" 
-		onClick="checkboxNone($('input:checkbox[name=selectedFields]'))">
+	  	<input type="button" value="Run Clustalw on Checked Strains" 
+				onClick="goToIsolate(this)" />
+	  	<input type="button" name="CheckAll" value="Check All" 
+				onClick="checkboxAll($('input:checkbox[name=selectedFields]'))">
+			<input type="button" name="UnCheckAll" value="Uncheck All" 
+				onClick="checkboxNone($('input:checkbox[name=selectedFields]'))">
 	  </td>
 	</tr>
 </table>
@@ -329,12 +342,6 @@
 	<tr class="subheaderrow">
 	<th style="text-align:left;white-space:nowrap;"> 
 	       <imp:pager wdkAnswer="${wdkAnswer}" pager_id="bottom"/> 
-	</th>
-	<th style="text-align:right;white-space:nowrap;">
-		&nbsp;
-	</th>
-	<th style="text-align:right;white-space:nowrap;width:5%;">
-	    &nbsp;
 	</th>
 	</tr>
 </table>
