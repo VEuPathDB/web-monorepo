@@ -1,13 +1,9 @@
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
-<%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
+<%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
-
-<!-- get wdkAnswer from requestScope -->
+<!-- from old usr view jsp file -->
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="strategy" value="${requestScope.wdkStrategy}"/>
 <c:set var="step" value="${requestScope.wdkStep}"/>
@@ -17,267 +13,327 @@
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="summaryUrl" value="${wdk_summary_url}" />
 
-<c:set var="qsp" value="${fn:split(wdk_query_string,'&')}" />
-<c:set var="commandUrl" value="" />
-<c:forEach items="${qsp}" var="prm">
-  <c:if test="${fn:split(prm, '=')[0] eq 'strategy'}">
-    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
-  </c:if>
-  <c:if test="${fn:split(prm, '=')[0] eq 'step'}">
-    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
-  </c:if>
-  <c:if test="${fn:split(prm, '=')[0] eq 'subquery'}">
-    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
-  </c:if>
-  <c:if test="${fn:split(prm, '=')[0] eq 'summary'}">
-    <c:set var="commandUrl" value="${commandUrl}${prm}&" />
-  </c:if>
-</c:forEach>
-    <c:set var="commandUrl" value="${commandUrl}strategy_checksum=${strategy.checksum}" />
-<c:set var="commandUrl"><c:url value="/processSummary.do?${commandUrl}" /></c:set>
 
+<!-- copied from wdk resultTable.tag -->
+<!-- removed sections for basket -->
 
-<c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
+  <c:set var="wdkAnswer" value="${step.answerValue}"/>
 
-<c:set var="global" value="${wdkUser.globalPreferences}"/>
-<c:set var="showParam" value="${global['preference_global_show_param']}"/>
-<c:set value="${wdkAnswer.recordClass.type}" var="wdkAnswerType"/>
+  <c:set var="qName" value="${wdkAnswer.question.fullName}" />
+  <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
+  <c:set var="recordName" value="${wdkAnswer.question.recordClass.fullName}" />
+  <c:set var="recHasBasket" value="${wdkAnswer.question.recordClass.useBasket}" />
+  <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 
-<c:choose>
-  <c:when test='${wdkAnswer.resultSize == 0}'>
-    <pre>${wdkAnswer.resultMessage}</pre>
-  </c:when>
-  <c:otherwise>
+  <c:catch var="answerValueRecords_exception">
+    <c:set var="answerRecords" value="${wdkAnswer.records}" />
+  </c:catch>
 
+  <c:set var="wdkView" value="${requestScope.wdkView}" />
 
-<h2><table width="100%"><tr><td><span id="text_strategy_number">${strategy.name}</span> 
-    (step <span id="text_step_number">${strategy.length}</span>) 
-    - ${wdkAnswer.resultSize} <span id="text_data_type">Files</span></td></tr></table>
-</h2>
+  <jsp:useBean id="typeMap" class="java.util.HashMap"/>
+  <c:set target="${typeMap}" property="singular" value="${step.displayType}"/>
+  <imp:getPlural pluralMap="${typeMap}"/>
+  <c:set var="type" value="${typeMap['plural']}"/>
 
-<div class='Results_Pane'>
+  <c:set var="isBasket" value="${fn:contains(step.questionName, 'ByRealtimeBasket')}"/>
 
-<pg:pager isOffset="true"
-          scope="request"
-          items="${wdk_paging_total}"
-          maxItems="${wdk_paging_total}"
-          url="${wdk_paging_url}"
-          maxPageItems="${wdk_paging_pageSize}"
-          export="currentPageNumber=pageNumber">
-  <c:forEach var="paramName" items="${wdk_paging_params}">
-    <pg:param name="${paramName}" id="pager" />
-  </c:forEach>
-  <c:if test="${wdk_summary_checksum != null}">
-    <pg:param name="summary" id="pager" />
-  </c:if>
-  <c:if test="${wdk_sorting_checksum != null}">
-    <pg:param name="sort" id="pager" />
-  </c:if>
-
-
-
-
-
-<table cellspacing="0" cellpadding="0" border="0" width="100%">
-  <tr><td valign="top" width="75px" style="background-color: #DDDDDD">  
-    <table width="100%" border="0" cellpadding="3" cellspacing="0">
-      <tr class="subheaderrow">
-        <th nowrap> 
-          <imp:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
-        </th>
-        <th nowrap align="right">
-           <%-- display a list of sortable attributes --%>
-           <c:set var="addAttributes" value="${wdkAnswer.displayableAttributes}" />
-           	<select id="addAttributes" style="display:none;" commandUrl="${commandUrl}" multiple="multiple">
-	               <option value="">--- Add Column ---</option>
-	               <c:forEach items="${addAttributes}" var="attribute">
-	                 <option value="${attribute.name}" title="${attribute.help}">${attribute.displayName}</option>
-	               </c:forEach>
-	           </select>
-        </th>
-        <%-- remove Reset button when new tree structure is activated --%>
-        <c:if test="${not wdkAnswer.useCheckboxTree}">
-			    <th style="text-align: right;white-space:nowrap;width:5%;">
-			      &nbsp;
-			      <input type="button" value="Reset Columns" onClick="resetAttr('${commandUrl}', this)" />
-			    </th>
-			  </c:if>
-      </tr>
-    </table>	
-  </td></tr>
-</table>
-
-<c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
-<c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
-
-<%--------- RESULTS  ----------%>
-<div class="Results_Div flexigrid">
-<div class="bDiv">
-<div class="bDivBox">
-
-<table class="Results_Table" width="100%" border="0" cellpadding="3" cellspacing="0">
-<thead>
-<tr class="headerrow">
-  <c:set var="j" value="0"/>
-  <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
-
-    <c:if test="${j != 0}">
-    
-    <c:set var="attrName" value="${sumAttrib.name}" />
-    <th id="${attrName}" align="left" valign="middle">
-
-        <div style="float:left; min-height:20px; width:20px;">
-          <c:choose>
-            <c:when test="${!sumAttrib.sortable}">
-              <img style="float:left;" src="<c:url value='/wdk/images/results_arrw_up_blk.png'/>" border="0" alt="Sort up"/>
-            </c:when>
-            <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
-              <img style="float:left;" src="<c:url value='/wdk/images/results_arrw_up_gr.png'/>"  alt="Sort up" 
-                  title="Result is sorted by ${sumAttrib}" />
-            </c:when>
-            <c:otherwise>
-              <%-- display sorting buttons --%>
-              <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true)"
-                  title="Sort by ${sumAttrib}">
-                  <img src="<c:url value='/wdk/images/results_arrw_up.png'/>" alt="Sort up" border="0" /></a>
-            </c:otherwise>
-          </c:choose>
-	  <c:choose>
-            <c:when test="${!sumAttrib.sortable}">
-	      <img style="float:left;" src="<c:url value='/wdk/images/results_arrw_dwn_blk.png'/>" border="0" />
-	    </c:when>
-            <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
-              <img style="float:left;" src="<c:url value='/wdk/images/results_arrw_dwn_gr.png'/>" alt="Sort down" 
-	                    title="Result is sorted by ${sumAttrib}" />
-            </c:when>
-            <c:otherwise>
-              <%-- display sorting buttons --%>
-              <a style="float:left;" href="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true)"
-	                    title="Sort by ${sumAttrib}">
-              <img src="<c:url value='/wdk/images/results_arrw_dwn.png'/>" alt="Sort down" border="0" /></a>
-            </c:otherwise>
-          </c:choose>
+  <c:choose>
+    <c:when test='${answerValueRecords_exception ne null and isBasket}'>
+      <div class="ui-widget">
+        <div class="ui-state-error ui-corner-all" style="padding:8px;">
+          <p>
+            <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+            <div><imp:verbiage key="answer-value-records-error-msg.basket.content"/></div>
+          </p>
         </div>
-        <div style="float:left;">${sumAttrib.displayName}</div>
-        <c:if test="${j != 0}">
-          <div style="float:left;">
-            <%-- display remove attribute button --%>
-            <a href="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true)"
-                        title="Remove ${sumAttrib} column">
-              <img src="<c:url value='/wdk/images/results_x.png'/>" alt="Remove" border="0" /></a>
-          </div>
+      </div>
+    </c:when>
+    <c:when test='${answerValueRecords_exception ne null}'>
+      <div class="ui-widget">
+        <div class="ui-state-error ui-corner-all" style="padding:8px;">
+          <p>
+            <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+              <div><imp:verbiage key="answer-value-records-error-msg.default.content"/></div>
+          </p>
+        </div>
+      </div>
+    </c:when>
+ 
+
+   <c:when test='${wdkAnswer.resultSize == 0}'>
+      No results are retrieved
+<!--  <pre>${wdkAnswer.resultMessage}</pre> -->
+    </c:when>
+
+
+
+    <c:otherwise>
+  
+      <!-- pager -->
+      <pg:pager isOffset="true"
+                scope="request"
+                items="${wdk_paging_total}"
+                maxItems="${wdk_paging_total}"
+                url="${wdk_paging_url}"
+                maxPageItems="${wdk_paging_pageSize}"
+                export="currentPageNumber=pageNumber">
+        <c:forEach var="paramName" items="${wdk_paging_params}">
+          <pg:param name="${paramName}" id="pager" />
+        </c:forEach>
+        <c:if test="${wdk_summary_checksum != null}">
+          <pg:param name="summary" id="pager" />
+        </c:if>
+        <c:if test="${wdk_sorting_checksum != null}">
+          <pg:param name="sort" id="pager" />
         </c:if>
 
-    </th>
+    
+        <%--------- PAGING TOP BAR ----------%>
+        <c:url var="commandUrl" value="/processSummaryView.do?step=${step.stepId}&view=${wdkView.name}" />
+        <table  width="100%">
+          <tr class="subheaderrow">
+            <th style="text-align: left;white-space:nowrap;"> 
+              <imp:pager wdkAnswer="${wdkAnswer}" pager_id="top"/> 
+            </th>
+            <th style="text-align: right;white-space:nowrap;">
+              <imp:addAttributes wdkAnswer="${wdkAnswer}" commandUrl="${commandUrl}"/>
+            </th>
+          </tr>
+        </table>
+        <%--------- END OF PAGING TOP BAR ----------%>
 
-    </c:if>
+        <!-- content of current page -->
+        <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
+        <c:set var="sortingAttrOrders" value="${wdkAnswer.sortingAttributeOrders}" />
+        
+        <%--------- RESULTS  ----------%>
 
-  <c:set var="j" value="${j+1}"/>
-  </c:forEach>
-</tr>
-</thead>
+       <div class="Results_Div flexigrid">
+          <div class="bDiv">
+            <div class="bDivBox">
+
+              <table  width="100%" class="Results_Table" step="${step.stepId}">
+                <thead>
+                  <tr class="headerrow">
+
+
+                    <c:set var="j" value="0"/>
+
+                    <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
+
+ <c:if test="${j != 0}">
+
+                      <c:set var="attrName" value="${sumAttrib.name}" />
+                      <th id="${attrName}" align="left" valign="middle">
+                        <table>
+                          <tr>
+                            <td>
+                              <table>
+                                <tr>
+                                  <td style="padding:0;">
+                                    <c:choose>
+                                      <c:when test="${!sumAttrib.sortable}">
+                                        <img src="<c:url value='/wdk/images/results_arrw_up_blk.png'/>" border="0" alt="Sort up"/>
+                                      </c:when>
+                                      <c:when test="${attrName eq sortingAttrNames[0] and sortingAttrOrders[0]}">
+                                        <img src="<c:url value='/wdk/images/results_arrw_up_gr.png'/>"  alt="Sort up" title="Result is sorted by ${sumAttrib}" />
+                                      </c:when>
+                                      <c:otherwise>
+
+                                        <c:set var="resultsAction" value="javascript:sortResult('${attrName}', 'asc')" />
+                                        <a href="${resultsAction}" title="Sort by ${sumAttrib}">
+                                          <img src="<c:url value='/wdk/images/results_arrw_up.png'/>" alt="Sort up" border="0" />
+                                        </a>
+                                      </c:otherwise>
+                                    </c:choose>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td style="padding:0;">
+                                    <c:choose>
+                                      <c:when test="${!sumAttrib.sortable}">
+                                        <img src="<c:url value='/wdk/images/results_arrw_dwn_blk.png'/>" border="0" />
+                                      </c:when>
+                                      <c:when test="${attrName eq sortingAttrNames[0] and not sortingAttrOrders[0]}">
+                                        <img src="<c:url value='/wdk/images/results_arrw_dwn_gr.png'/>" alt="Sort down" title="Result is sorted by ${sumAttrib}" />
+                                      </c:when>
+                                      <c:otherwise>
+
+                                        <c:set var="resultsAction" value="javascript:sortResult('${attrName}', 'desc')" />
+                                        <a href="${resultsAction}" title="Sort by ${sumAttrib}">
+                                          <img src="<c:url value='/wdk/images/results_arrw_dwn.png'/>" alt="Sort down" border="0" />
+                                        </a>
+                                      </c:otherwise>
+                                    </c:choose>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+
+                            <td>
+                              <span title="${sumAttrib.help}">${sumAttrib.displayName}</span>
+                            </td>
+
+                            <c:if test="${sumAttrib.removable}">
+                              <td style="width:20px;">
+
+                                <c:set var="resultsAction" value="javascript:removeAttribute('${attrName}')" />
+                                <a href="${resultsAction}" title="Remove ${sumAttrib} column">
+                                  <img src="<c:url value='/wdk/images/results_x.png'/>" alt="Remove" border="0" />
+                                </a>
+                              </td>
+                            </c:if>
+                            <td>
+                              <imp:attributePlugin attribute="${sumAttrib}" />
+                            </td>
+                          </tr>
+                        </table>
+                      </th>
+</c:if>
+
+
+                      <c:set var="j" value="${j+1}"/>
+                    </c:forEach>
+                  </tr>
+                </thead>
+                <tbody class="rootBody">
+
 
 <c:forEach items="${wdkAnswer.records}" var="r">
     <c:set value="${r.summaryAttributes['filename']}" var="filename"/>
 </c:forEach>
 
-<c:set var="i" value="0"/>
 
-<c:forEach items="${wdkAnswer.records}" var="record">
+                  <c:set var="i" value="0"/>
+
+<!-- FOR EACH ROW -->
+                  <c:forEach items="${answerRecords}" var="record">
+                    <c:set value="${record.primaryKey}" var="primaryKey"/>
+                    <c:set var="recNam" value="${record.recordClass.fullName}"/>
+                    <tr class="${i % 2 eq 0 ? 'lines' : 'linesalt'}">
 
 
-<c:choose>
-  <c:when test="${i % 2 == 0}"><tr class="lines"></c:when>
-  <c:otherwise><tr class="linesalt"></c:otherwise>
-</c:choose>
+                      <c:set var="j" value="0"/>
 
-  <c:set var="j" value="0"/>
+<!-- FOR EACH COLUMN -->
+                      <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
 
-  <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
+ <c:if test="${j != 0}">
 
-    <c:if test="${j != 0}">
+                        <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
 
-    <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
-    <c:set var="align" value="align='${recAttr.attributeField.align}'" />
-    <c:set var="nowrap">
-        <c:if test="${recAttr.attributeField.nowrap}">nowrap</c:if>
-    </c:set>
 
-    <c:set value="${record.primaryKey}" var="primaryKey"/>
-    <c:set var="pkValues" value="${primaryKey.values}" />
-    <c:set var="projectId" value="${pkValues['project_id']}" />
-    <c:set var="id" value="${pkValues['source_id']}" />
-    <c:set var="truncateTo" value="${recAttr.attributeField.truncateTo}"/>
+<!-- ~~~~~~~~~~~~~ IN wdkAttribute.tag for data types using wdk default view ~~~~~~~~~~~~~~~~~ -->
 
-    <td ${align} ${nowrap} data-truncate-to="${truncateTo}">
-      <c:set var="recNam" value="${record.recordClass.fullName}"/>
-      <c:set var="fieldVal" value="${recAttr.display}"/>
+<!--       <imp:wdkAttribute attributeValue="${recAttr}" truncate="true" recordName="${recNam}" />   -->
+<c:set var="attributeValue" value="${recAttr}" />
+<c:set var="truncate" value="false" />
+<c:set var="recordName" value="${recNam}" />
+
+
+
+<c:set var="toTruncate" value="${truncate != null && truncate == 'true'}" />
+<c:set var="attributeField" value="${attributeValue.attributeField}" />
+<c:set var="align" value="align='${attributeField.align}'" />
+<c:set var="nowrap">
+  <c:if test="${attributeField.nowrap}">white-space:nowrap;</c:if>
+</c:set>
+<c:set var="displayValue">
+  <c:choose>
+    <c:when test="${toTruncate}">${attributeValue.briefDisplay}</c:when>
+    <c:otherwise>${attributeValue.value}</c:otherwise>
+  </c:choose>
+</c:set>
+
+<td>
+<div class="attribute-summary" ${align} style="${nowrap}padding:3px 2px">
+      
+
+ <c:set var="fieldVal" value="${recAttr.display}"/>
       <c:choose>
 
+
         <c:when test="${recAttr.name eq 'filename'}">
+          <!-- this should be done in teh model with a link attribute -->
           <a href="<c:url value="/communityDownload.do?fname=${fieldVal}" />">${fieldVal}</a><br>
-          
         </c:when>
-
         <c:otherwise>
-          <!-- need to know if fieldVal should be hot linked -->
-          <c:choose>
-			<c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
-               <span style="color:gray;">N/A</span>
-            </c:when>
-            <c:when test="${recAttr.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
-               <c:choose>
-		  <c:when test="${fn:containsIgnoreCase(dispModelName, 'EuPathDB')}">
-		    <a href="javascript:create_Portal_Record_Url('','${projectId}','','${recAttr.url}')">
-                      ${recAttr.displayText}</a>
-	          </c:when>
-	          <c:otherwise>
-		    <a href="${recAttr.url}">${recAttr.displayText}</a>
-		  </c:otherwise>
-	       </c:choose>
-            </c:when>
-            <c:otherwise>
-              ${fieldVal}
-            </c:otherwise>
-          </c:choose>
 
-        </c:otherwise>
-      </c:choose>
-    </td>
+  <!-- need to know if fieldVal should be hot linked -->
+  <c:choose>
 
-    </c:if>
-    
-    <c:set var="j" value="${j+1}"/>
-  </c:forEach>
-</tr>
-<c:set var="i" value="${i+1}"/>
-</c:forEach>
-</tr>
-</table>
+    <c:when test="${displayValue == null || fn:length(displayValue) == 0}">
+      <span style="color:gray;">N/A</span>
+    </c:when>
+
+    <c:when test="${attributeValue.class.name eq 'org.gusdb.wdk.model.PrimaryKeyAttributeValue'}">
+      <c:set var="pkValues" value="${attributeValue.values}" />
+      <c:set var="recordLinkKeys" value="" />
+      <c:forEach items="${pkValues}" var="pkValue">
+        <c:set var="recordLinkKeys" value="${recordLinkKeys}&${pkValue.key}=${pkValue.value}" />
+      </c:forEach>
+
+      <%-- display a link to record page --%>
+      <!-- store the primary key pairs here -->
+      <div class="primaryKey" fvalue="${briefValue}" style="display:none;">
+        <c:forEach items="${pkValues}" var="pkValue">
+          <span key="${pkValue.key}">${pkValue.value}</span>
+        </c:forEach>
+      </div>
+      <a href="<c:url value='/showRecord.do?name=${recordName}${recordLinkKeys}' />">${displayValue}</a>
+    </c:when>
+
+    <c:when test="${attributeValue.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
+      <c:set var="target">
+        <c:if test="${attributeField.newWindow}">target="_blank"</c:if>
+      </c:set>
+      <a ${target} href="${attributeValue.url}">${attributeValue.displayText}</a>
+    </c:when>
+    <c:otherwise>
+      ${displayValue}
+    </c:otherwise>
+  </c:choose>
+
+
+ 					</c:otherwise>
+      	</c:choose>
+
+
 </div>
-</div>
-</div>
-<%--------- END OF RESULTS  ----------%>
-
-  <%--------- PAGING BOTTOM BAR ----------%>
-<table width="100%" border="0" cellpadding="3" cellspacing="0">
-	<tr class="subheaderrow">
-	<th style="text-align:left;white-space:nowrap;"> 
-	       <imp:pager wdkAnswer="${wdkAnswer}" pager_id="bottom"/> 
-	</th>
-	<th style="text-align:right;white-space:nowrap;">
-		&nbsp;
-	</th>
-	<th style="text-align:right;white-space:nowrap;width:5%;">
-	    &nbsp;
-	</th>
-	</tr>
-</table>
-<%--------- END OF PAGING BOTTOM BAR ----------%>
-</pg:pager>
-</div><!-- END OF THE RESULTS PANE -->
+</td>
 
 
-  </c:otherwise>
-</c:choose>
+<!-- ~~~~~~~~~~~~~ END OF  wdkAttribute.tag ~~~~~~~~~~~~~~~~~ -->
 
+
+</c:if>
+
+                        <c:set var="j" value="${j+1}"/>
+                      </c:forEach>
+                    </tr>
+                    <c:set var="i" value="${i+1}"/>
+                  </c:forEach>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+
+        <%--------- END OF RESULTS  ----------%>
+
+
+
+        <%--------- PAGING BOTTOM BAR ----------%>
+        <table width="100%">
+          <tr class="subheaderrow">
+            <th style="text-align:left;white-space:nowrap;"> 
+              <imp:pager wdkAnswer="${wdkAnswer}" pager_id="bottom"/> 
+            </th>
+          </tr>
+        </table>
+        <%--------- END OF PAGING BOTTOM BAR ----------%>
+      </pg:pager>
+    </c:otherwise> <%-- end of resultSize != 0 --%>
+  </c:choose>
