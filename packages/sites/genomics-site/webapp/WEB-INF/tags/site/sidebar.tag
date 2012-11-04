@@ -140,7 +140,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
               <c:forEach var="k" begin="0" end="${fn:length(tmp)}" step='3'>
                 <c:set var='shorttag'>${shorttag}${fn:substring(tmp, k, k+1)}</c:set>
               </c:forEach>
-            
+              
               <fmt:parseDate pattern="${dateStringPattern}" var="pdate" value="${attrs['date']}"/> 
               <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
       
@@ -238,7 +238,8 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 <a class="heading" id='tutorials' href="#">Education and Tutorials</a>
 <div class="menu_lefttop_drop">
   <ul id="education">
-	  <li id='edu-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a> (video and pdf)</a></li>
+ <li id='edu-05'><a target="_blank" href="http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1">Youtube Tutorials Channel</a>&nbsp;&nbsp;<span style="color:red;font-variant:small-caps;">NEW!</span></li>
+	  <li id='edu-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a> (video and pdf)</li>
     <li id='edu-2'><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
     <li id='edu-3-1'><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from our most recent Workshop</a> (English)</li>
     <li id='edu-3-2'><a href="http://workshop.eupathdb.org/2011/index.php?page=schedule">Exercises from 2011 Workshop</a> (English and Spanish)</li>
