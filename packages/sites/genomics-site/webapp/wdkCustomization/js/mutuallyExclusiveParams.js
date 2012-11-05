@@ -217,7 +217,9 @@ jQuery(function($) {
       groups: groups,
 
       init: function(element) {
-        if ($("#sequenceId", element).val().indexOf("(Examples:") !== 0) {
+        if ($("#sequenceId", element).val().indexOf("(Examples:") !== 0 ||
+            // AmoebaDB only allows SequenceID
+            (questionName === "HtsSnpsByLocation" && modelName() === "AmoebaDB")) {
           // select this
           $("input[name='xor-group']")[1].checked = true;
         }
