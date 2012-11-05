@@ -76,9 +76,12 @@
 </table>
 <%--------- END OF PAGING TOP BAR ----------%>
 	
+
 <c:if test = "${eupathIsolatesQuestion}">
-  <form name="checkHandleForm" method="post" action="/dosomething.jsp"> 
+  <form name="checkHandleForm" method="post" action="/dosomething.jsp" onsubmit="return false;"> 
 </c:if>
+
+
 
 <!-- content of current page -->
 <c:set var="sortingAttrNames" value="${wdkAnswer.sortingAttributeNames}" />
@@ -313,13 +316,14 @@
 <%--------- END OF RESULTS  ----------%>
 
 <c:if test = "${eupathIsolatesQuestion && clustalwIsolatesCount > 1}">
-<table width="100%" border="0" cellpadding="3" cellspacing="0">
+<table width="100%">
 	<tr align=center>
     	  <td> <b><br/> 
-     	  Please select at least two isolates to run ClustalW. Note: only isolates from a single results page will be aligned. <br/>
-     	  Increase the page size in advanced paging to increase the number that can be aligned).  </b>
+     	  Please select at least two isolates to run ClustalW. Note: only isolates from a single page will be aligned. <br/>
+     	  (Increase the page size in 'Advanced Paging' to increase the number that can be aligned).  </b>
     	  </td>
   	</tr>
+
 	<tr>
 	  <td align=center> 
 	  	<input type="button" value="Run Clustalw on Checked Strains" 
@@ -330,12 +334,16 @@
 				onClick="checkboxNone($('input:checkbox[name=selectedFields]'))">
 	  </td>
 	</tr>
+
 </table>
 </c:if>
+
+
 
 <c:if test = "${eupathIsolatesQuestion}">
   </form>
 </c:if>
+
 
 <%--------- PAGING BOTTOM BAR ----------%>
 <table width="100%" border="0" cellpadding="3" cellspacing="0">
