@@ -232,13 +232,13 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <th class="mythStyle" title="Theileria annulata, PiroplasmaDB"><i>Tan</i></th>
     <th style="border-right:3px solid grey" class="mythStyle" title="Theileria parva, PiroplasmaDB"><i>Tpa</i></th>
 
-    <th class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pbe</i></th>
-    <th class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pch</i></th>
-    <th class="mythStyle" title="Plasmodium cynomolgi, PlasmoDB"><i>Pcy</i></th>
+    <th class="mythStyle" title="Plasmodium berghei ANKA, PlasmoDB"><i>Pbe</i></th>
+    <th class="mythStyle" title="Plasmodium chabaudi chabaudi, PlasmoDB"><i>Pch</i></th>
+    <th class="mythStyle" title="Plasmodium cynomolgi strain B, PlasmoDB"><i>Pcy</i></th>
     <th class="mythStyle" title="Plasmodium falciparum 3D7, PlasmoDB"><i>Pfa3D7</i></th>
     <th class="mythStyle" title="Plasmodium falciparum IT, PlasmoDB"><i>PfaIT</i></th>
-    <th class="mythStyle" title="Plasmodium knowlesi, PlasmoDB"><i>Pko</i></th>
-    <th class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pvi</i></th>
+    <th class="mythStyle" title="Plasmodium knowlesi strain H, PlasmoDB"><i>Pko</i></th>
+    <th class="mythStyle" title="Plasmodium vivax Sal-1, PlasmoDB"><i>Pvi</i></th>
     <th class="mythStyle" title="Plasmodium yoelii yoelii 17XNL, PlasmoDB"><i>Pyo1</i></th>
     <th  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii yoelii YM, PlasmoDB"><i>PyoY</i></th>
 
