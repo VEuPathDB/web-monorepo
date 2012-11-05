@@ -14,9 +14,10 @@
 <c:set var="summaryUrl" value="${wdk_summary_url}" />
 
 
-<!-- copied from wdk resultTable.tag -->
-<!-- removed sections for basket -->
-
+<!-- rest copied from wdk resultTable.tag -->
+<!--   removed sections for basket (though they could stay now that we set the record tyoe with no basket in teh model)  -->
+<!--   removed also some blocks within the wdkAttribute tag code, that were not needed -->
+<!-- we should try that  this record type uses the wdk default to render the page -->
   <c:set var="wdkAnswer" value="${step.answerValue}"/>
 
   <c:set var="qName" value="${wdkAnswer.question.fullName}" />
@@ -67,7 +68,6 @@
     </c:when>
 
 
-
     <c:otherwise>
   
       <!-- pager -->
@@ -89,7 +89,7 @@
         </c:if>
 
     
-        <%--------- PAGING TOP BAR ----------%>
+        <%--------- PAGING/Select columns  TOP BAR ----------%>
         <c:url var="commandUrl" value="/processSummaryView.do?step=${step.stepId}&view=${wdkView.name}" />
         <table  width="100%">
           <tr class="subheaderrow">
@@ -114,16 +114,15 @@
             <div class="bDivBox">
 
               <table  width="100%" class="Results_Table" step="${step.stepId}">
+
                 <thead>
                   <tr class="headerrow">
-
 
                     <c:set var="j" value="0"/>
 
                     <c:forEach items="${wdkAnswer.summaryAttributes}" var="sumAttrib">
 
  <c:if test="${j != 0}">
-
                       <c:set var="attrName" value="${sumAttrib.name}" />
                       <th id="${attrName}" align="left" valign="middle">
                         <table>
@@ -192,45 +191,39 @@
                       </th>
 </c:if>
 
-
                       <c:set var="j" value="${j+1}"/>
                     </c:forEach>
                   </tr>
                 </thead>
-                <tbody class="rootBody">
 
+                <tbody class="rootBody">
 
 <c:forEach items="${wdkAnswer.records}" var="r">
     <c:set value="${r.summaryAttributes['filename']}" var="filename"/>
 </c:forEach>
-
-
                   <c:set var="i" value="0"/>
-
-<!-- FOR EACH ROW -->
+									<!-- FOR EACH ROW -->
                   <c:forEach items="${answerRecords}" var="record">
                     <c:set value="${record.primaryKey}" var="primaryKey"/>
                     <c:set var="recNam" value="${record.recordClass.fullName}"/>
                     <tr class="${i % 2 eq 0 ? 'lines' : 'linesalt'}">
 
-
                       <c:set var="j" value="0"/>
-
-<!-- FOR EACH COLUMN -->
+											<!-- FOR EACH COLUMN -->
                       <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
 
  <c:if test="${j != 0}">
-
                         <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
 
 
 <!-- ~~~~~~~~~~~~~ IN wdkAttribute.tag for data types using wdk default view ~~~~~~~~~~~~~~~~~ -->
 
-<!--       <imp:wdkAttribute attributeValue="${recAttr}" truncate="true" recordName="${recNam}" />   -->
+<%--       <imp:wdkAttribute attributeValue="${recAttr}" truncate="true" recordName="${recNam}" />   
+       do not make these html comments, the tag is called....
+--%>
 <c:set var="attributeValue" value="${recAttr}" />
 <c:set var="truncate" value="false" />
 <c:set var="recordName" value="${recNam}" />
-
 
 
 <c:set var="toTruncate" value="${truncate != null && truncate == 'true'}" />
@@ -249,11 +242,8 @@
 <td>
 <div class="attribute-summary" ${align} style="${nowrap}padding:3px 2px">
       
-
  <c:set var="fieldVal" value="${recAttr.display}"/>
       <c:choose>
-
-
         <c:when test="${recAttr.name eq 'filename'}">
           <!-- this should be done in teh model with a link attribute -->
           <a href="<c:url value="/communityDownload.do?fname=${fieldVal}" />">${fieldVal}</a><br>
@@ -262,59 +252,30 @@
 
   <!-- need to know if fieldVal should be hot linked -->
   <c:choose>
-
     <c:when test="${displayValue == null || fn:length(displayValue) == 0}">
       <span style="color:gray;">N/A</span>
-    </c:when>
-
-    <c:when test="${attributeValue.class.name eq 'org.gusdb.wdk.model.PrimaryKeyAttributeValue'}">
-      <c:set var="pkValues" value="${attributeValue.values}" />
-      <c:set var="recordLinkKeys" value="" />
-      <c:forEach items="${pkValues}" var="pkValue">
-        <c:set var="recordLinkKeys" value="${recordLinkKeys}&${pkValue.key}=${pkValue.value}" />
-      </c:forEach>
-
-      <%-- display a link to record page --%>
-      <!-- store the primary key pairs here -->
-      <div class="primaryKey" fvalue="${briefValue}" style="display:none;">
-        <c:forEach items="${pkValues}" var="pkValue">
-          <span key="${pkValue.key}">${pkValue.value}</span>
-        </c:forEach>
-      </div>
-      <a href="<c:url value='/showRecord.do?name=${recordName}${recordLinkKeys}' />">${displayValue}</a>
-    </c:when>
-
-    <c:when test="${attributeValue.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
-      <c:set var="target">
-        <c:if test="${attributeField.newWindow}">target="_blank"</c:if>
-      </c:set>
-      <a ${target} href="${attributeValue.url}">${attributeValue.displayText}</a>
     </c:when>
     <c:otherwise>
       ${displayValue}
     </c:otherwise>
   </c:choose>
 
-
  					</c:otherwise>
       	</c:choose>
 
-
 </div>
 </td>
-
-
 <!-- ~~~~~~~~~~~~~ END OF  wdkAttribute.tag ~~~~~~~~~~~~~~~~~ -->
 
-
 </c:if>
-
                         <c:set var="j" value="${j+1}"/>
                       </c:forEach>
                     </tr>
                     <c:set var="i" value="${i+1}"/>
                   </c:forEach>
                 </tbody>
+
+
               </table>
 
             </div>
