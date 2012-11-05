@@ -232,7 +232,7 @@
       scope="request"
       validate="false"
       name="questionForm">
-      <forward name="show_error" path="/summaryError.jsp"/>
+      <forward name="show_error" path="/wdkCustomization/jsp/SummaryError.jsp"/>
       <forward name="process_boolean_expression" path="/processBooleanExpression.do"/>
       <forward name="show_summary" path="/showSummary.do"/>
       <forward name="show_strategy" path="/showStrategy.do"/>
