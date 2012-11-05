@@ -13,11 +13,6 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set value="${wdkModel.displayName}" var="project"/>
 
-
-
-
-
-
 <imp:pageFrame  title="${project} :: Gene Metrics"
                  banner="${project} Gene Metrics"
                  parentDivision="${project}"
@@ -195,7 +190,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></th>
     <th style="border-right:3px solid grey" colspan="12" class="mythStyle"><a href="http://microsporidiadb.org">MicrosporidiaDB</a></th>
     <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://piroplasmadb.org">PiroplasmaDB</a></th>
-    <th style="border-right:3px solid grey" colspan="7" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></th>
+    <th style="border-right:3px solid grey" colspan="9" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></th>
     <th style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></th>
     <th style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></th>
     <th colspan="13" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></th>
@@ -239,15 +234,17 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
     <th class="mythStyle" title="Plasmodium berghei, PlasmoDB"><i>Pbe</i></th>
     <th class="mythStyle" title="Plasmodium chabaudi, PlasmoDB"><i>Pch</i></th>
+    <th class="mythStyle" title="Plasmodium cynomolgi, PlasmoDB"><i>Pcy</i></th>
     <th class="mythStyle" title="Plasmodium falciparum 3D7, PlasmoDB"><i>Pfa3D7</i></th>
     <th class="mythStyle" title="Plasmodium falciparum IT, PlasmoDB"><i>PfaIT</i></th>
     <th class="mythStyle" title="Plasmodium knowlesi, PlasmoDB"><i>Pko</i></th>
     <th class="mythStyle" title="Plasmodium vivax, PlasmoDB"><i>Pvi</i></th>
-    <th  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii, PlasmoDB"><i>Pyo</i></th>
+    <th class="mythStyle" title="Plasmodium yoelii yoelii 17XNL, PlasmoDB"><i>Pyo1</i></th>
+    <th  style="border-right:3px solid grey" class="mythStyle" title="Plasmodium yoelii yoelii YM, PlasmoDB"><i>PyoY</i></th>
 
 
     <th class="mythStyle" title="Eimeria tenella strain Houghton, ToxoDB"><i>Ete</i></th>
-    <th class="mythStyle" title="Neospora caninum, ToxoDB"><i>Nca</i></th>
+    <th class="mythStyle" title="Neospora caninum Liverpool, ToxoDB"><i>Nca</i></th>
     <th class="mythStyle" title="Toxoplasma gondii GT1, ToxoDB"><i>TgoG</i></th>
     <th class="mythStyle" title="Toxoplasma gondii ME49, ToxoDB"><i>TgoM</i></th>
     <th class="mythStyle" title="Toxoplasma gondii VEG, ToxoDB"><i>TgoV</i></th>
@@ -314,17 +311,19 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
           <c:set var="Npa3" value="${record.attributesMap['Nematocida parisii ERTm3']}"/>
           <c:set var="Nsp2" value="${record.attributesMap['Nematocida sp. 1 ERTm2']}"/>
 
-          <c:set var="Nca" value="${record.attributesMap['Neospora caninum']}"/>
+          <c:set var="Nca" value="${record.attributesMap['Neospora caninum Liverpool']}"/>
 
           <c:set var="Nce" value="${record.attributesMap['Nosema ceranae BRL01']}"/>
 
           <c:set var="Pbe" value="${record.attributesMap['Plasmodium berghei ANKA']}"/>
           <c:set var="Pch" value="${record.attributesMap['Plasmodium chabaudi chabaudi']}"/>
+          <c:set var="Pcy" value="${record.attributesMap['Plasmodium cynomolgi strain B']}"/>
           <c:set var="Pfa3" value="${record.attributesMap['Plasmodium falciparum 3D7']}"/>
           <c:set var="PfaI" value="${record.attributesMap['Plasmodium falciparum IT']}"/>
           <c:set var="Pko" value="${record.attributesMap['Plasmodium knowlesi strain H']}"/>
           <c:set var="Pvi" value="${record.attributesMap['Plasmodium vivax SaI-1']}"/>
-          <c:set var="Pyo" value="${record.attributesMap['Plasmodium yoelii yoelii 17XNL']}"/>
+          <c:set var="Pyo1" value="${record.attributesMap['Plasmodium yoelii yoelii 17XNL']}"/>
+          <c:set var="PyoY" value="${record.attributesMap['Plasmodium yoelii yoelii YM']}"/>
 
           <c:set var="Tan" value="${record.attributesMap['Theileria annulata strain Ankara']}"/>
           <c:set var="Tpa" value="${record.attributesMap['Theileria parva strain Muguga']}"/>
@@ -385,11 +384,13 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
     <td class="mytdStyle" align="right">${Pbe}</td>
     <td class="mytdStyle" align="right">${Pch}</td>
+    <td class="mytdStyle" align="right">${Pcy}</td>
     <td class="mytdStyle" align="right">${Pfa3}</td>
     <td class="mytdStyle" align="right">${PfaI}</td>
     <td class="mytdStyle" align="right">${Pko}</td>    
     <td class="mytdStyle" align="right">${Pvi}</td>
-    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Pyo}</td>
+    <td class="mytdStyle" align="right">${Pyo1}</td>
+    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${PyoY}</td>
 
 
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ete}</td>
@@ -440,7 +441,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <b>Nematocida</b>: Npa, <i>N. parisii</i>; Nsp, <i>N. sp. 1</i>        
 <b>Neospora</b>: Nca, <i>N. caninum</i>; 
 <b>Nosema</b>: Nce, <i>N. cerenae</i>; 
-<b>Plasmodium</b>: Pbe, <i>P. berghei</i>; Pch, <i>P. chabaudi</i>; Pfa, <i>P. falciparum</i>; Pko, <i>P. knowlesi</i>; Pvi, <i>P. vivax</i>; Pyo, <i>P. yoelii</i>; 
+<b>Plasmodium</b>: Pbe, <i>P. berghei</i>; Pch, <i>P. chabaudi</i>; Pcy, <i>P. cynomolgi</i>; Pfa, <i>P. falciparum</i>; Pko, <i>P. knowlesi</i>; Pvi, <i>P. vivax</i>; Pyo, <i>P. yoelii</i>; 
 <b>Theileria</b>: Tan, <i>T. annulata</i>; Tpa, <i>T. parva</i>; 
 <b>Toxoplasma</b>: Tgo, <i>T. gondii</i>; 
 <b>Trichomonas</b>: Tva, <i>T. vaginalis</i>; 
