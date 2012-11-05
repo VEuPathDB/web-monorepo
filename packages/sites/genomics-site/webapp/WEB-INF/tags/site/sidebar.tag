@@ -29,7 +29,11 @@
 <c:set var="tutQuestion" value="${xqMap['Tutorials']}"/>
 <c:set var="extlQuestion" value="${xqMap['ExternalLinks']}"/>
 
-<c:set var="newsAnswer" value="${newsQuestion.fullAnswer}"/>
+<c:catch var="newsErr2">
+	<c:set var="newsAnswer" value="${newsQuestion.fullAnswer}"/>
+</c:catch>
+
+
 <c:set var="tutAnswer" value="${tutQuestion.fullAnswer}"/>
 <c:catch var="extlAnswer_exception">
   <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
@@ -82,6 +86,9 @@
 
 <div class="menu_lefttop_drop" id="News">
   <c:choose>
+		<c:when test="${newsErr2 != null}">
+  		<i>News temporarily unavailable</i>
+		</c:when>
   <c:when test="${newsAnswer.resultSize < 1}">
     No news now, please check back later.<br>
   </c:when>
