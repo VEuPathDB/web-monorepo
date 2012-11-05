@@ -183,7 +183,7 @@
 
 <br>
 
-<c:if test="${projectId eq 'GiardiaDB' || projectId eq 'PlasmoDB' || projectId eq 'ToxoDB' || projectId eq 'TriTrypDB'}">
+<c:if test="${projectId eq 'GiardiaDB' || projectId eq 'PlasmoDB' || projectId eq 'TriTrypDB'}">
 	<imp:wdkTable tblName="Aliases" isOpen="true"/>
 </c:if>
 
