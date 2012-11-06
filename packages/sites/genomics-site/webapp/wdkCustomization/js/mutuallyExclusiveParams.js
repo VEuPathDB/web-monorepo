@@ -217,21 +217,34 @@ jQuery(function($) {
       groups: groups,
 
       init: function(element) {
-        if ($("#sequenceId", element).val().indexOf("(Examples:") !== 0 ||
+        if ($("#sequenceId", element).val().indexOf("(Example") !== 0 ||
             // AmoebaDB only allows SequenceID
             (questionName === "HtsSnpsByLocation" && modelName() === "AmoebaDB")) {
           // select this
           $("input[name='xor-group']")[1].checked = true;
         }
         element.on("submit", function(event) {
+          // If chromosome is disabled, enable it and select the first option,
+          // which should be the "blank" option
           var chromosomeOptional = this.chromosomeOptional;
-          if (chromosomeOptional.nodeName === "SELECT" && chromosomeOptional.disabled) {
-            chromosomeOptional.disabled = false;
-            chromosomeOptional[0].selected = true;
-          } else if (chromosomeOptional[0].disabled) {
-            chromosomeOptional[0].disabled = false;
-            chromosomeOptional[0].checked = true;
+
+          if (chromosomeOptional instanceof Node) {
+            // it will either be a SELECT or INPUT element
+            if (chromosomeOptional.nodeName === "SELECT" && chromosomeOptional.disabled) {
+              chromosomeOptional.disabled = false;
+              chromosomeOptional[0].selected = true;
+            } else if (chromosomeOptional.nodeName === "INPUT" && chromosomeOptional.disabled) {
+              chromosomeOptional[0].disabled = false;
+              chromosomeOptional[0].checked = true;
+            }
+          } else if (chromosomeOptional instanceof NodeList) {
+            // it will be a list of INPUT elements
+            if (chromosomeOptional[0].disabled) {
+              chromosomeOptional[0].disabled = false;
+              chromosomeOptional[0].checked = true;
+            }
           }
+
           this.organism.disabled = false;
         });
       }
