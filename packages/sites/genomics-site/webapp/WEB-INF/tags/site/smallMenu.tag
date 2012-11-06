@@ -38,7 +38,7 @@
 	        <c:if test="${refer eq 'summary'}">
 	          <li><a href="javascript:void(0)" onclick="dykOpen()">Did You Know...</a></li>
 	        </c:if>
-	        <li><a href="${constants.youtubeUrl}">Youtube Tutorials Channel</a></li>
+	        <li><a href="${constants.youtubeUrl}">YouTube Tutorials Channel</a></li>
 	        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Tutorials">Web Tutorials</a></li>
 	        <li><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
 	        <li><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from Workshop</a></li>
