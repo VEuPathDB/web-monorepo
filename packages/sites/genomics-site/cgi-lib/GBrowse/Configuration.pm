@@ -3,10 +3,12 @@ package GBrowse::Configuration;
 @main::rainbow = qw(red green yellow blue khaki pink orange cyan purple);
 
 use ApiCommonWebsite::Model::ModelConfig;
+use ApiCommonWebsite::Model::ModelApicommonXml;
+
 use ApiCommonWebsite::Model::DbUtils;
 
 use DAS::Util::SynView; 
-use XML::Twig;
+
 use HTML::Template;
 
 require Exporter;
@@ -59,23 +61,15 @@ sub init {
 sub site_version {
 
   my $versionType = shift || 'buildNumber' ; # version type is releaseVersion or buildNumber 
-  my %site_versions;
-  my $acm = new XML::Twig( 
-    keep_spaces => 1,  
-    PrettyPrint => 'nice',
-    keep_atts_order => 1,
-    TwigHandlers => {
-      "constant[\@name=\"$versionType\"]"  => sub { 
-        $site_versions{$_[1]->att("includeProjects")} = $_[1]->text;
-      },  
-    }   
-  );  
 
-  $acm->parsefile("$ENV{GUS_HOME}/lib/wdk/apiCommonModel.xml"); 
+  my $model = ApiCommonWebsite::Model::ModelApicommonXml->new();
+  my $projectId = $ENV{PROJECT_ID};
 
-  my ($key) = grep { $_ =~ /$ENV{PROJECT_ID}/i } keys %site_versions;
+  if($versionType eq 'buildNumber') {
+    return $model->getBuildNumberByProjectId($projectId);
+  }
 
-  return $site_versions{$key}; 
+  return->getSiteVersionByProjectId($projectId);
 }
 
 sub bam_file_path {
