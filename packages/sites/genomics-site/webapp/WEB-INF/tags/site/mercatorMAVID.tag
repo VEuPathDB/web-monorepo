@@ -57,9 +57,7 @@ return true;
 </SCRIPT>
 
 <c:set var="cgiScript" value='mavidAlign'/>
-<c:if test="${ (projectId eq 'CryptoDB') || (projectId eq 'TriTrypDB') || (projectId eq 'ToxoDB') || (projectId eq 'MicrosporidiaDB') || (projectId eq 'PiroplasmaDB') || (projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP')}">
-  <c:set var="cgiScript" value='pairwiseMercator'/>
-</c:if>
+<c:set var="cgiScript" value='pairwiseMercator'/>
 
 <c:if test="${inputContig == null}">
  <c:set var="headerFiller" value="of <i>${contigId}</i>"/>
@@ -300,7 +298,7 @@ return true;
      </td></tr>
 </c:if>
 
-<c:if test="${projectId eq 'AmoebaDB_'}">
+<c:if test="${projectId eq 'AmoebaDB'}">
 
    <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
         <table>
@@ -310,9 +308,6 @@ return true;
             </td>
             <td>
               <input type="checkbox" name="genomes" value="e_histolytica" checked>E.histolytica
-            </td>
-            <td>
-              <input type="checkbox" name="genomes" value="e_invadens" checked>E.invadens
             </td>
            </tr>
          </table>
