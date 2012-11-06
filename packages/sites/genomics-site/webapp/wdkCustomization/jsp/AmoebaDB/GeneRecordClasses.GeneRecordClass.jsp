@@ -167,6 +167,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 
 
 <!-- Mercator / Mavid alignments -->
+<c:if test='${organism_full eq "Entamoeba dispar SAW760" || organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
 
  <c:if test="${strand eq '-'}">
    <c:set var="revCompOn" value="1"/>
@@ -183,6 +184,9 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
   displayName="Multiple Sequence Alignment"
   content="${mercatorAlign}"
   attribution=""/>
+
+</c:if>
+
 
 <!-- snps between strains -->
 <imp:wdkTable tblName="SNPs" isOpen="false"
@@ -274,6 +278,7 @@ GO,InterproscanData
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
   <imp:pageDivider name="Protein"/>
+
 
 <c:choose>
   <c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
