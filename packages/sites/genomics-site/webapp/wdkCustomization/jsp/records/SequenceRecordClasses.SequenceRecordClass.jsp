@@ -183,9 +183,8 @@
 
 <br>
 
-<c:if test="${projectId eq 'GiardiaDB' || projectId eq 'PlasmoDB' || projectId eq 'TriTrypDB'}">
-	<imp:wdkTable tblName="Aliases" isOpen="true"/>
-</c:if>
+
+<imp:wdkTable tblName="Aliases" isOpen="true"/>
 
 <imp:wdkTable tblName="Centromere" isOpen="true"/>
 
