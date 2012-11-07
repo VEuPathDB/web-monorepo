@@ -27,6 +27,8 @@
 <c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
 <c:set var="timestampParam" value="${gkwqpMap['timestamp']}"/>
 
+<%-- JSP constants --%>
+<jsp:useBean id="constants" class="org.eupathdb.common.model.JspConstants"/>
 
 <!-- for external links -->
 <c:set var="xqSetMap" value="${wdkModel.xmlQuestionSetsMap}"/>
@@ -189,19 +191,25 @@
     <li><a>Community</a>
       <ul>
         <li>
-        <a href="javascript:gotoTwitter()">
-          <img style="margin:0px;vertical-align:top" title="Follow us on Twitter!" src="/assets/images/twitter.gif" width="20">
-          <span style="vertical-align:top">&nbsp;Follow us on Twitter!</span> 
-        </a>
+          <a href="javascript:gotoTwitter()">
+            <img style="margin:0px;vertical-align:top" title="Follow us on Twitter!" src="/assets/images/twitter.gif" width="20">
+            <span style="vertical-align:top">&nbsp;Follow us on Twitter!</span> 
+          </a>
         </li>
         <li>
-        <a href="javascript:gotoFacebook()">
-          <img style="margin:0px;margin-left:1px;vertical-align:top" title="Follow us on Facebook!" src="/assets/images/facebook-icon.png" width="18">
-          <span style="vertical-align:top">&nbsp;Follow us on Facebook!</span> 
-        </a>
-      </li>
+          <a href="javascript:gotoFacebook()">
+            <img style="margin:0px;margin-left:1px;vertical-align:top" title="Follow us on Facebook!" src="/assets/images/facebook-icon.png" width="18">
+            <span style="vertical-align:top">&nbsp;Follow us on Facebook!</span> 
+          </a>
+        </li>
+        <li>
+          <a href="${constants.youtubeUrl}">
+            <img style="margin:0px;margin-left:1px;vertical-align:top" title="Follow us on YouTube!" src="/assets/images/youtube_32x32.png" width="18">
+            <span style="vertical-align:top">&nbsp;Follow us on YouTube!</span> 
+          </a>
+        </li>
 
-      <li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission & Release Policies</a></li>
+        <li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission & Release Policies</a></li>
 
 
        <c:if test="${project != 'EuPathDB'}" >    

@@ -5,6 +5,9 @@
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 <%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome" %>
 
+<%-- JSP constants --%>
+<jsp:useBean id="constants" class="org.eupathdb.common.model.JspConstants"/>
+
 <%-- Limit the number of items that appear in the sidebar menus. 
      Change the value here to change the length of these menus. --%>
 <c:set var="SidebarLimit" value="7" />
@@ -245,7 +248,9 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 <a class="heading" id='tutorials' href="#">Education and Tutorials</a>
 <div class="menu_lefttop_drop">
   <ul id="education">
- <li id='edu-05'><a target="_blank" href="http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1">YouTube Tutorials Channel</a>&nbsp;&nbsp;<span style="color:red;font-variant:small-caps;">NEW!</span></li>
+    <li id='edu-05'><a target="_blank" href="${constants.youtubeUrl}">
+      <img style="width:25px;height:25px;display:inline;" src="/assets/images/youtube_32x32.png"/>
+      YouTube Tutorials Channel</a>&nbsp;&nbsp;<span style="color:red;font-variant:small-caps;">NEW!</span></li>
 	  <li id='edu-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a> (video and pdf)</li>
     <li id='edu-2'><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
     <li id='edu-3-1'><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from our most recent Workshop</a> (English)</li>
