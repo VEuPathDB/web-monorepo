@@ -234,8 +234,8 @@ jQuery(function($) {
               chromosomeOptional.disabled = false;
               chromosomeOptional[0].selected = true;
             } else if (chromosomeOptional.nodeName === "INPUT" && chromosomeOptional.disabled) {
-              chromosomeOptional[0].disabled = false;
-              chromosomeOptional[0].checked = true;
+              chromosomeOptional.disabled = false;
+              chromosomeOptional.checked = true;
             }
           } else if (chromosomeOptional instanceof NodeList) {
             // it will be a list of INPUT elements
