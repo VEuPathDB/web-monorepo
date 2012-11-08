@@ -5756,7 +5756,7 @@ GROUP BY c.start_interval,c.end_interval,c.sample,c.name,c.hpi,c.multiple,s.sum_
 SELECT start_interval feature_id,
        'NextGenSeq' type,
        '$source' source,
-       decode($$negativeValuesField$$, 1, -1, 1) * abs(round(log(2,max(coverage*sum_coverage/max_cov)),2)) score, 
+       decode($$negativeValuesField$$, 1, -1, 1) * abs(round(log(2,max(coverage*max_cov/sum_coverage)),2)) score, 
        $$edname$$ || '_' || sample || '_' || $$subtrackField$$ parent_id,
        round(start_interval * (($rend - $base_start + 1) / 800)) startm,
        round(end_interval * (($rend - $base_start + 1) / 800)) end,
