@@ -402,7 +402,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 
 <tr><td><br></td></tr>
 
-<c:if test="${project ne 'FungiDB'}" >
+<c:if test="${project ne fn:containsIgnoreCase(modelName, 'FungiDB') }" >
 	<tr><td colspan="10"><font size="-2">
 		<hr>* <i>G. lamblia</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
 </c:if>
