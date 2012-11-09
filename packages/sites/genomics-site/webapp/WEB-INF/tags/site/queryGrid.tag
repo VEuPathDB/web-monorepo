@@ -65,9 +65,19 @@
 <%--  Isolates  --%>
 
 
-  <tr class="headerrow2"><td colspan="4" align="center"><b>Identify Isolates by:</b></td></tr>
+  <tr class="headerrow2"><td colspan="2" align="center"><b>Identify Isolates by:</b></td></tr>
   <tr><td colspan="3" align="center">
 	<imp:queryGridIsolates/> 
+  </td></tr>
+
+
+<%-----------------------------------------------------------------------------%>
+<%--  Pathways  --%>
+
+
+  <tr class="headerrow2"><td colspan="2" align="center"><b>Identify Pathways by:</b></td></tr>
+  <tr><td colspan="3" align="center">
+	<imp:queryGridPathways/> 
   </td></tr>
 
 

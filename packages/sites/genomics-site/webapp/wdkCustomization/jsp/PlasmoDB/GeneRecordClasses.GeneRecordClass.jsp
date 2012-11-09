@@ -432,6 +432,7 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 <c:if test="${species ne 'falciparum' || (species eq 'falciparum' && attrs['annotation_status'].value ne 'new' &&attrs['annotation_status'].value ne 'new_organellar')}">
 --%>
 
+<imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
 <imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 <c:if test="${isCodingGene}">
