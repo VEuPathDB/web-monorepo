@@ -211,7 +211,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 </c:choose>
 
 <!-- if we are in FungiDB, website is really a family of organisms, we need to use project instead -->
-<c:if test="${project eq 'FungiDB'}" >
+<c:if test="${project eq fn:containsIgnoreCase(modelName, 'FungiDB')}" >
 	<c:set var="website" value="fungidb"/>
 	<c:set var="webapp" value="fungidb"/>
 </c:if>
