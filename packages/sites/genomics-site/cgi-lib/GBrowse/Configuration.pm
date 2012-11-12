@@ -49,7 +49,7 @@ sub init {
   my $docRoot = $ENV{DOCUMENT_ROOT};
   my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
   my $resolvedDsn = ApiCommonWebsite::Model::DbUtils->resolveOracleDSN($c->appDb->dbiDsn);
-  { -sqlfile   => $docRoot .'/../conf/gbrowse.conf/' . $file,
+  { -sqlfile   => $ENV{GUS_HOME} . '/lib/xml/gbr/' . $file,
     -dsn       => $resolvedDsn,
     -user      => $c->appDb->login,
     -pass      => $c->appDb->password,
