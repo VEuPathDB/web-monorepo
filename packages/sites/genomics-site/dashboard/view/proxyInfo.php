@@ -23,7 +23,7 @@ if ( $attributes{'via'} ) {
 
 <h2>Reverse-Proxy Server</h2>
 
-<?= $proxyNotice ?>
+<?php print $proxyNotice ?>
 
 <p>
-<a href="<?= $nginxForm ?>">Change upstream server</a> (separate authentication required)
+<a href="<?php print $nginxForm ?>">Change upstream server</a> (separate authentication required)

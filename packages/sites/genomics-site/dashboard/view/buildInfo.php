@@ -13,9 +13,9 @@ $build = $build_info->get_data_map();
 
 <h2>Build State</h2>
 <p>
-  Last build  was for '<b><?= $build_info->get('!Last.build.component') ?></b>
-  <b><?= $build_info->get('!Last.build.initialTarget') ?></b>'
-  on <b><?= $build_info->get('!Last.build.timestamp') ?></b>
+  Last build  was for '<b><?php print $build_info->get('!Last.build.component') ?></b>
+  <b><?php print $build_info->get('!Last.build.initialTarget') ?></b>'
+  on <b><?php print $build_info->get('!Last.build.timestamp') ?></b>
   <a href='javascript:void()' style="text-decoration:none"
      onmouseover="return overlib('A given build may not refresh all project components. ' +
          'For example, a \'ApiCommonData/Model install\' does not build any WDK code.<br>' +
@@ -34,7 +34,7 @@ $build = $build_info->get_data_map();
       <th align="left"><font size="-2">component</font></th>
       <th align="left"><font size="-2">build time</font></th>
     </tr>
-    <?
+    <?php
     /**
       example prop: ApiCommonShared.Model.buildtime
       1. sort
@@ -72,7 +72,7 @@ $build = $build_info->get_data_map();
   since this state was recorded.</font>
 
   <table class='p' border='1' cellspacing='0'>
-    <?
+    <?php
     /**
       example prop:
       ApiCommonWebService.svn.info
@@ -109,7 +109,7 @@ $build = $build_info->get_data_map();
   </p>
   <table class='p' border='1' cellspacing='0' cellpadding='5'>
     <tr><td class='monospaced'>
-        <?
+        <?php
         foreach ($build as $p => $v) {
           if ($trunc = strpos($p, '.svn.info')) {
             $start = strpos($v, 'Revision: ') + strlen('Revision: ');

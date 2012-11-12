@@ -17,7 +17,7 @@ $ai = new ApacheInfo();
 <p>
 <p class="clickable">HTTP Headers &#8593;&#8595;</p>
 <div class="expandable" style="padding: 5px;">
-<? printTable($ai->get('HTTP Headers Information')); ?>
+<?php printTable($ai->get('HTTP Headers Information')); ?>
 </div>
 
 
@@ -25,18 +25,18 @@ $ai = new ApacheInfo();
 
 <p class="clickable">Apache Environment &#8593;&#8595;</p>
 <div class="expandable" style="padding: 5px;">
-<? printTable($ai->get('Apache Environment')); ?>
+<?php printTable($ai->get('Apache Environment')); ?>
 </div>
 
 <p>
 
 <p class="clickable">Apache Internals &#8593;&#8595;</p>
 <div class="expandable" style="padding: 5px;">
-<? printTable($ai->get('apache2handler')); ?>
+<?php printTable($ai->get('apache2handler')); ?>
 </div>
 
 
-<?
+<?php
 function printTable($array) {
   $tabledef = "<table border='0' cellspacing='3' cellpadding='2' align=''>";
   print $tabledef;

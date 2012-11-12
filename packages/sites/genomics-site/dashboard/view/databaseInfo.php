@@ -36,28 +36,28 @@ Related Links
 </div>
 <p>
 <b>Service Name</b>:
-<?= ($adb{'service_name'}) ? $adb{'service_name'} : "<span class='warn'>service name not available</span>"; ?>
+<?php print ($adb{'service_name'}) ? $adb{'service_name'} : "<span class='warn'>service name not available</span>"; ?>
 </p>
 
 <p>
 <b>Other Identifiers</b>:
 <table border="0" cellspacing="3" cellpadding="2" align="">
 <tr class="secondary3"><th><font size="-2">Identifier</font></th><th><font size="-2">Value</font></th><th></th></tr>
-<tr class="rowMedium"><td>Instance Name</td><td><?= strtolower($adb{'instance_name'}) ?></td>
+<tr class="rowMedium"><td>Instance Name</td><td><?php print strtolower($adb{'instance_name'}) ?></td>
     <td><a href='javascript:void()' style="text-decoration:none"
         onmouseover="return overlib(
          'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'instance_name\')&nbsp;from&nbsp;dual</i>'
         )"
         onmouseout = "return nd();"><sup>[?]</sup></a></td>
 </tr>
-<tr class="rowLight"><td>Global Name</td><td><?= strtolower($adb{'global_name'}) ?></td>
+<tr class="rowLight"><td>Global Name</td><td><?php print strtolower($adb{'global_name'}) ?></td>
     <td><a href='javascript:void()' style="text-decoration:none"
         onmouseover="return overlib(
          'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'global_name\')&nbsp;from&nbsp;dual</i>'
         )"
         onmouseout = "return nd();"><sup>[?]</sup></a></td>
 </tr>
-<tr class="rowMedium"><td>DB Unique Name</td><td><?= strtolower($adb{'db_unique_name'}) ?></td>
+<tr class="rowMedium"><td>DB Unique Name</td><td><?php print strtolower($adb{'db_unique_name'}) ?></td>
     <td><a href='javascript:void()' style="text-decoration:none"
         onmouseover="return overlib(
          'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'db_unique_name\')&nbsp;from&nbsp;dual</i>'
@@ -68,15 +68,15 @@ Related Links
 
 <br>
 
-<b>Aliases</b> (from LDAP): <?= implode(", ", $aliases_ar) ?>
+<b>Aliases</b> (from LDAP): <?php print implode(", ", $aliases_ar) ?>
 
 <br><br>
-<b>Hosted on</b>: <?=strtolower($adb{'server_name'})?><br>
-<b>Oracle Version</b>: <?=$adb{'version'}?>
+<b>Hosted on</b>: <?php print strtolower($adb{'server_name'})?><br>
+<b>Oracle Version</b>: <?php print $adb{'version'}?>
 <p>
-<b>Client login name</b>: <?=strtolower($adb{'login'})?><br>
-<b>Client connecting from</b>: <?=strtolower($adb{'client_host'})?><br>
-<b>Client OS user</b>: <?=strtolower($adb{'os_user'})?><br>
+<b>Client login name</b>: <?php print strtolower($adb{'login'})?><br>
+<b>Client connecting from</b>: <?php print strtolower($adb{'client_host'})?><br>
+<b>Client OS user</b>: <?php print strtolower($adb{'os_user'})?><br>
 <p>
 <b>Available DBLinks</b>:
 
@@ -89,20 +89,20 @@ Related Links
 <th align="left"><font size="-2">host</font></th>
 <th align="left"><font size="-2">created</font></th>
 </tr>
-<?
+<?php
 $dblink_map = $adb{'DblinkList'};
 $row = 0;
 foreach ($dblink_map as $dblink) {
   $css_class = ($row % 2) ? "rowMedium" : "rowLight";
 ?>
-<tr class="<?=$css_class?>" >
-  <td><?=strtolower($dblink{'owner'})?></td>
-  <td><?=strtolower($dblink{'db_link'})?></td>
-  <td><?=strtolower($dblink{'username'})?></td>
-  <td><?=strtolower($dblink{'host'})?></td>
-  <td><?=strtolower($dblink{'created'})?></td>
+<tr class="<?php print $css_class?>" >
+  <td><?php print strtolower($dblink{'owner'})?></td>
+  <td><?php print strtolower($dblink{'db_link'})?></td>
+  <td><?php print strtolower($dblink{'username'})?></td>
+  <td><?php print strtolower($dblink{'host'})?></td>
+  <td><?php print strtolower($dblink{'created'})?></td>
 </tr>
-<?
+<?php
   $row++;
 }
 ?>
@@ -117,28 +117,28 @@ foreach ($dblink_map as $dblink) {
 <b>Identifiers</b>:
 <table border="0" cellspacing="3" cellpadding="2" align="">
 <tr class="secondary3"><th><font size="-2">Identifier</font></th><th><font size="-2">Value</font></th><th></th></tr>
-<tr class="rowLight"><td>Service Name</td><td><?= strtolower($udb{'service_name'}) ?></td>
+<tr class="rowLight"><td>Service Name</td><td><?php print strtolower($udb{'service_name'}) ?></td>
     <td><a href='javascript:void()' style="text-decoration:none"
         onmouseover="return overlib(
          'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'service_name\')&nbsp;from&nbsp;dual</i>'
         )"
         onmouseout = "return nd();"><sup>[?]</sup></a></td>
 </tr>
-<tr class="rowMedium"><td>Instance Name</td><td><?= strtolower($udb{'instance_name'}) ?></td>
+<tr class="rowMedium"><td>Instance Name</td><td><?php print strtolower($udb{'instance_name'}) ?></td>
     <td><a href='javascript:void()' style="text-decoration:none"
         onmouseover="return overlib(
          'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'instance_name\')&nbsp;from&nbsp;dual</i>'
         )"
         onmouseout = "return nd();"><sup>[?]</sup></a></td>
 </tr>
-<tr class="rowLight"><td>Global Name</td><td><?= strtolower($udb{'global_name'}) ?></td>
+<tr class="rowLight"><td>Global Name</td><td><?php print strtolower($udb{'global_name'}) ?></td>
     <td><a href='javascript:void()' style="text-decoration:none"
         onmouseover="return overlib(
          'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'global_name\')&nbsp;from&nbsp;dual</i>'
         )"
         onmouseout = "return nd();"><sup>[?]</sup></a></td>
 </tr>
-<tr class="rowMedium"><td>DB Unique Name</td><td><?= strtolower($udb{'db_unique_name'}) ?></td>
+<tr class="rowMedium"><td>DB Unique Name</td><td><?php print strtolower($udb{'db_unique_name'}) ?></td>
     <td><a href='javascript:void()' style="text-decoration:none"
         onmouseover="return overlib(
          'result of <br><i>select&nbsp;sys_context(\'userenv\',&nbsp;\'db_unique_name\')&nbsp;from&nbsp;dual</i>'
@@ -147,13 +147,13 @@ foreach ($dblink_map as $dblink) {
 </tr>
 </table>
 <br>
-<b>Hosted on</b>: <?= strtolower($udb{'server_name'}) ?><br>
+<b>Hosted on</b>: <?php print strtolower($udb{'server_name'}) ?><br>
 <p>
-<b>Client login name</b>: <?= strtolower($udb{'login'}) ?></b><br>
+<b>Client login name</b>: <?php print strtolower($udb{'login'}) ?></b><br>
 
 <p>
 <hr>
-<b>Information on this page was last updated</b>: <?=$adb{'system_date'}?><br>
+<b>Information on this page was last updated</b>: <?php print $adb{'system_date'}?><br>
 <form method="GET" action="">
 <input name="refresh" type="hidden" value="1">
 <input type="submit" value="update now">

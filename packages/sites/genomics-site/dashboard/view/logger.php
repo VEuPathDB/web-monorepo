@@ -46,7 +46,7 @@ foreach ($log_data as $logger => $level) {
       <td>Choose Logger:<br>
         <font size="-1">Format: LoggerClass [Current Level]</font><br>
         <select name='logger_name[]' multiple="" size='20'>
-          <?= $select_opts ?>
+          <?php print $select_opts ?>
         </select>
       </td>
       <td>Choose Level:<br>

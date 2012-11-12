@@ -23,15 +23,15 @@ $catalina_data = $catalina->attributes();
 
 
 <table class='p' border='0' cellpadding='0' cellspacing='0'>
-<tr><td><b>Instance:</b></td><td class="p"><?= $jvm_data{'SystemProperties'}{'instance.name'} ?></td></tr>
-<tr><td><b>Instance uptime:</b></td><td class="p"><?= $jvm->uptime_as_text() ?></td></tr>
+<tr><td><b>Instance:</b></td><td class="p"><?php print $jvm_data{'SystemProperties'}{'instance.name'} ?></td></tr>
+<tr><td><b>Instance uptime:</b></td><td class="p"><?php print $jvm->uptime_as_text() ?></td></tr>
 
 <tr><td>&nbsp;</td></tr>
-<tr><td><b>Webapp:</b> </td><td class="p"><?= str_replace('/', '', $webapp_data{'path'}); ?></td></tr>
+<tr><td><b>Webapp:</b> </td><td class="p"><?php print str_replace('/', '', $webapp_data{'path'}); ?></td></tr>
 
 <tr><td><b>Webapp uptime:</b></td><td class="p">
 <span id="webapp_uptime">
-  <? $t=$webapp->uptime_as_text();  print (isset($t)) ? $t : "<span class='warn'>error</span>" ; ?>
+  <?php $t=$webapp->uptime_as_text();  print (isset($t)) ? $t : "<span class='warn'>error</span>" ; ?>
 </span>
 </td></tr>
 <tr><td></td><td>
@@ -41,15 +41,15 @@ $catalina_data = $catalina->attributes();
 </td></tr>
 
 <tr><td>&nbsp;</td></tr>
-<tr><td><b>Servlet container:</b> </td><td class="p"><?= $catalina_data{'ServerInfo'}; ?></td></tr>
-<tr><td><b>Servlet API version:</b> </td><td class="p"><?= $catalina_data{'ServletApiVersion'}; ?></td></tr>
-<tr><td><b>JSP spec version:</b> </td><td class="p"><?= $catalina_data{'JspSpecVersion'}; ?></td></tr>
+<tr><td><b>Servlet container:</b> </td><td class="p"><?php print $catalina_data{'ServerInfo'}; ?></td></tr>
+<tr><td><b>Servlet API version:</b> </td><td class="p"><?php print $catalina_data{'ServletApiVersion'}; ?></td></tr>
+<tr><td><b>JSP spec version:</b> </td><td class="p"><?php print $catalina_data{'JspSpecVersion'}; ?></td></tr>
 </table>
 <p>
 
 <p class="clickable">Webapp Classpath &#8593;&#8595;</p>
 <div class="expandable" style="padding: 5px;">
-<?= str_replace(':', '<br>', $jvm_data{'ClassPath'}) ?><?= str_replace(':', '<br>', $webapp_data{'loaderRepositoriesString'}) ?>
+<?php print str_replace(':', '<br>', $jvm_data{'ClassPath'}) ?><?php print str_replace(':', '<br>', $webapp_data{'loaderRepositoriesString'}) ?>
 </div>
 
 </p>

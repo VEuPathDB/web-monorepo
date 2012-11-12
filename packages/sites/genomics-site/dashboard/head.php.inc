@@ -1,5 +1,5 @@
 <head>
-    <title><?= $_SERVER['HTTP_HOST'] ?> /dashboard</title>
+    <title><?php print $_SERVER['HTTP_HOST'] ?> /dashboard</title>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
 
     <link rel="stylesheet" type="text/css" href="css/main.css" />
