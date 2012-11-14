@@ -15,7 +15,7 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
-
+<c:set var="pathwayImageId" value="${attrs['image_id'].value}" />
 
 <imp:pageFrame title="${wdkModel.displayName} : Met Pathway ${id}"
              refer="recordPage"
@@ -53,7 +53,16 @@
     content="${attr.value}" 
     attribute="${attr.name}"/>
 <br>
-<%-- GENOMIC LOCATIONS ------------------------------------------------%>
+
+<div align="center">
+ <img align="middle" src="/cgi-bin/colorKEGGmap.pl?model=${projectId}&pathway=${id}"/>
+</div>
+<br>
+
+<br>
+
+
+<%-- Reaction Table ------------------------------------------------%>
   <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true"/>
 
 </c:otherwise>

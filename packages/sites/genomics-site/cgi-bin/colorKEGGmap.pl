@@ -3,30 +3,41 @@
 use strict;
 
 use GD;
+use CGI;
+use CGI::Carp qw(fatalsToBrowser set_message);
 use Switch;
 use Data::Dumper;
 use IO::File;
 use CBIL::Util::PropertySet;
 use DBD::Oracle qw(:ora_types);
 use ApiCommonWebsite::Model::ModelConfig;
-use ApiCommonData::Load::TuningConfig::Utils;
 
 #------------------------------------------------------------------------------
-if (!@ARGV) {
-die "Usage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\n";
+BEGIN {
+    # Carp callback for sending fatal messages to browser
+    sub handle_errors {
+        my $msg = shift;
+        print "<h3>Oops</h3>";
+        print "<p>Got an error: <pre>$msg</pre>";
+    }
+    set_message(\&handle_errors);
 }
 
+my $q = new CGI;
 
-my $model = $ARGV[0];
-my $c = new ApiCommonWebsite::Model::ModelConfig($model);
+my $projectId = $q->param('model') || $ARGV[0];
+my $pathwaySourceId = $q->param('pathway') || $ARGV[1];
+
+die "valid project_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\n" if (!$projectId);
+die "valid pathway_source_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\n" if (!$pathwaySourceId);
+
+my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
+
 my $dbh = DBI->connect($c->getDbiDsn,$c->getLogin,$c->getPassword,
                        { PrintError => 1,
                          RaiseError => 0
                        } ) or die "Can't connect to the database: $DBI::errstr\n";
 
-
-
-my $pathwaySourceId = $ARGV[1];
 
 my $ecMapSql = "SELECT DISTINCT ec.ec_number,apidb.tab_to_string(set(cast(COLLECT(gf.organism) AS apidb.varchartab))) as organisms,
                        pn.x, pn.y,pn.width, pn.height
@@ -130,8 +141,16 @@ foreach my $ecNumber (keys %{$ecOrganismMap}){
 }
 
 
-binmode STDOUT;
-print $im->gif();
+my $gifImage = $im->gif();
+print "Content-type: image/gif\n\n";
+print $gifImage;
+
+#if needed at a future development
+#my $outFile = "/tmp/pathwaySourceId.gif";
+#open (OUT,">$outFile") || die "could not open temporary  output file for drawing\n";
+#binmode (OUT);
+#print OUT $gifImage;
+#close OUT;
 
 
 # x and y specify the center of the rectangle
