@@ -16,6 +16,7 @@
 <c:set var="id" value="${pkValues['source_id']}" />
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 <c:set var="pathwayImageId" value="${attrs['image_id'].value}" />
+<c:set var="pathwayName" value="${attrs['description'].value}" />
 
 <imp:pageFrame title="${wdkModel.displayName} : Met Pathway ${id}"
              refer="recordPage"
@@ -38,7 +39,7 @@
 </div>
 
 <div class="h3center" style="font-size:130%">
-	${primaryKey}<br>
+	${id} -  ${pathwayName}<br>
 	<imp:recordPageBasketIcon />
 </div>
 
