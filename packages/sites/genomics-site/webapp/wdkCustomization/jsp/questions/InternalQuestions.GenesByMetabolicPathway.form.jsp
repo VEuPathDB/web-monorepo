@@ -9,7 +9,7 @@
 <c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
 <%-- QUESTIONS --%>
-<c:set var="pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathway,GeneQuestions.GenesByMetabolicPathways"/>
+<c:set var="pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayHagai,GeneQuestions.GenesByMetabolicPathwayKegg"/>
 <%-- END OF QUESTIONS --%>
 
 <imp:errors/>
