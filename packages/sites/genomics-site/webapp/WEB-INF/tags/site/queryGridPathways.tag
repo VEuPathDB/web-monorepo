@@ -15,36 +15,15 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 <tr>
-                    <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwayQuestions.PathwaysByPathwayID" linktext="Pathway Name(s)" existsOn="A P"/>
+                    <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwayQuestions.PathwaysByPathwayID" linktext="Pathway Name(s)" existsOn="A"/>
                 </tr>
 
 <tr>
-	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="OrfsByMassSpec" linktext="Mass Spec. Evidence" existsOn="A C T G"/>
+	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByGeneList" linktext="Mass Spec. Evidence" existsOn="A"/>
             	</tr>
             </table>
 </div>
         </td>
-
-<%--	<td width="1" class="blueVcalLine"></td> --%>
-	<td width="1"></td>
-
-        <td  width="50%" >
-<div class="innertube2">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
-<tr>
-                    <imp:queryGridMakeUrl qset="PathwayQuestions" qname="OrfsBySimilarity" linktext="BLAST Similarity" type="ORF" existsOn="A Am G C M Pi P T Tr Tt"/>
-                </tr>  
- <tr>
-                    <imp:queryGridMakeUrl qset="PathwayQuestions" qname="OrfsByMotifSearch" linktext="Protein Motif" existsOn="A Am G C M Pi P T Tr Tt"/>
-                </tr>
- <tr>
-                    <imp:queryGridMakeUrl qset="PathwayQuestions" qname="OrfsByLocation" linktext="Genomic Location" existsOn="A Am G C M Pi P T Tr Tt"/>
-                </tr>
-            </table>
-</div>
-    	</td>
-
 
 </tr>
 </table>
