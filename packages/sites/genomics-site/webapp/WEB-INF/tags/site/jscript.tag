@@ -58,6 +58,10 @@
 </c:if>
 -->
 
+<c:if test="${refer == 'recordPage'}">
+  <script type="text/javascript" src="/assets/js/isolateResults.js"></script>
+</c:if>
+
 <c:if test="${refer == 'question' || refer == 'summary'}">
   <imp:parameterScript />
   <script type="text/javascript" src="/assets/js/orthologpattern.js"></script>
