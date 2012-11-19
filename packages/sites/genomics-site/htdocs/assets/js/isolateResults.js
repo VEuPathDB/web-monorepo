@@ -16,7 +16,7 @@ function checkboxNone(ele) {
 	});
 */
 
-function goToIsolate(ele,type) {
+function goToIsolate(ele,type,source_id,loc) {
 	var form = $(ele).parents("form[name=checkHandleForm]");
 	var cbs = form.find('input:checkbox[name=selectedFields]:checked');
 	//alert("cbs length is " + cbs.length);
@@ -24,7 +24,7 @@ function goToIsolate(ele,type) {
 		alert("Please select at least two isolates to run ClustalW");
 		return false;
 	}
-	var url = "/cgi-bin/isolateClustalw?project_id=" + modelName() + ";type=" + type + ";isolate_ids=";
+	var url = "/cgi-bin/isolateClustalw?project_id=" + modelName() + ";type=" + type + ";sid=" + source_id + ";loc=" + loc + ";isolate_ids=";
 	cbs.each(function(){
 		url += $(this).val() + ",";
 	});
