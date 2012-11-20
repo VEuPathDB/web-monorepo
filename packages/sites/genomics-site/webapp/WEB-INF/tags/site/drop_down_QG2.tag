@@ -37,8 +37,9 @@
 		recType == 'SnpRecordClasses.SnpRecordClass' || 
 		recType == 'AssemblyRecordClasses.AssemblyRecordClass' || 
 		recType == 'DynSpanRecordClasses.DynSpanRecordClass' || 
-		recType == 'SageTagRecordClasses.SageTagRecordClass' }">
-
+		recType == 'SageTagRecordClasses.SageTagRecordClass' ||
+		recType == 'CompoundRecordClasses.CompoundRecordClass' ||
+		recType == 'PathwayRecordClasses.PathwayRecordClass' }">
 
 		<c:choose>
 <%-- ================================= GENES   ================================= --%>
