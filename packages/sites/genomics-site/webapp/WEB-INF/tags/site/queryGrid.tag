@@ -82,6 +82,15 @@
 
 
 <%-----------------------------------------------------------------------------%>
+<%--  Compounds  --%>
+
+
+  <tr class="headerrow2"><td colspan="2" align="center"><b>Identify Compounds by:</b></td></tr>
+  <tr><td colspan="3" align="center">
+	<imp:queryGridCompounds/> 
+  </td></tr>
+
+<%-----------------------------------------------------------------------------%>
 <%--  All Genomic and SNP  --%>
 <tr>
     <%-- All Genomic Sequences (CONTIG) Queries TABLE  --%>
