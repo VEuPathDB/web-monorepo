@@ -28,20 +28,7 @@
 <c:forEach items="${rootCatMap}" var="rootCatEntry">
 	<c:set var="recType" value="${rootCatEntry.key}" />
 	<c:set var="rootCat" value="${rootCatEntry.value}" />
-
-	<c:if test="${recType == 'GeneRecordClasses.GeneRecordClass' || 
-		recType == 'SequenceRecordClasses.SequenceRecordClass'  || 
-		recType == 'OrfRecordClasses.OrfRecordClass' || 
-		recType == 'EstRecordClasses.EstRecordClass' || 
-		recType == 'IsolateRecordClasses.IsolateRecordClass' || 
-		recType == 'SnpRecordClasses.SnpRecordClass' || 
-		recType == 'AssemblyRecordClasses.AssemblyRecordClass' || 
-		recType == 'DynSpanRecordClasses.DynSpanRecordClass' || 
-		recType == 'SageTagRecordClasses.SageTagRecordClass' ||
-		recType == 'CompoundRecordClasses.CompoundRecordClass' ||
-		recType == 'PathwayRecordClasses.PathwayRecordClass' }">
-
-		<c:choose>
+  <c:choose>
 <%-- ================================= GENES   ================================= --%>
 
 		<c:when test="${recType=='GeneRecordClasses.GeneRecordClass'}">
@@ -232,7 +219,6 @@
 		</c:choose>
 <%-- =============================  END OF OTHER RECORDCLASSES   ===================================== --%>
 
-	</c:if>		<%--  recordclass in the list above --%>
 </c:forEach>
 
 <c:if test="${from ne 'webservices'}">
