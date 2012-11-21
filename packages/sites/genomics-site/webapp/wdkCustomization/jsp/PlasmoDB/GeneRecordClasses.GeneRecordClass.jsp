@@ -310,8 +310,30 @@ P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${speci
 
 <c:if test="${species eq 'falciparum3D7' || species eq 'vivax'}">
 
-    <imp:wdkTable tblName="SNPs" isOpen="false"
-               attribution=""/>
+    <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/>
+
+
+<form name="checkHandleForm" method="post" action="/dosomething.jsp" onsubmit="return false;">
+
+    <imp:wdkTable tblName="SNPsAlignment" isOpen="false" attribution=""/>
+
+<table width="100%">
+  <tr align=center>        
+    <td><b>Please select at least two isolates strains to run ClustalW.</b> </td>
+  </tr>   
+  <tr>
+    <td align=center>
+      <input type="button" value="Run Clustalw on Checked Strains" 
+           onClick="goToIsolate(this,'htsSNP','${attrs['sequence_id']}','${attrs['start_min_text']}','${attrs['end_max_text']}')" />
+      <input type="button" name="CheckAll" value="Check All" 
+           onClick="checkboxAll($('input:checkbox[name=selectedFields]'))">
+      <input type="button" name="UnCheckAll" value="Uncheck All" 
+          onClick="checkboxNone($('input:checkbox[name=selectedFields]'))">
+    </td>
+  </tr> 
+</table>
+</form>
+
 </c:if>
 
 
