@@ -77,18 +77,22 @@
 <c:choose>
   <c:when  test="${attrs['type'].value == 'HTS'}">
 
+<c:set var="start" value="${attrs['start_min_text']}"/>
+<c:set var="startm" value="${fn:replace(start,',','') - 50}" /> </h4>
+<c:set var="end" value="${fn:replace(start,',','') + 50}" /> </h4>
+
 <form name="checkHandleForm" method="post" action="/dosomething.jsp" onsubmit="return false;">
 
     <imp:wdkTable tblName="HTSStrains" isOpen="true"/>
 
 <table width="100%">
   <tr align=center>        
-    <td><b>Please select at least two isolates strains to run ClustalW.</b> </td>
+    <td><b>Please select at least two isolates strains to run ClustalW.</b></td>
   </tr>   
   <tr>
     <td align=center>
       <input type="button" value="Run Clustalw on Checked Strains" 
-           onClick="goToIsolate(this,'htsSNP','${attrs['seq_source_id']}','${attrs['start_min_text']}')" />
+           onClick="goToIsolate(this,'htsSNP','${attrs['seq_source_id']}','${startm}', '${end}')" />
       <input type="button" name="CheckAll" value="Check All" 
            onClick="checkboxAll($('input:checkbox[name=selectedFields]'))">
       <input type="button" name="UnCheckAll" value="Uncheck All" 
