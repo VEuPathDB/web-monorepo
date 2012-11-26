@@ -372,10 +372,18 @@ sub colorFromBinaryColor {
 
 
 sub colorByRnaSeq {
-  my ($f, $optColor) = @_;
+  my ($f, $optColor, $optColor2 ) = @_;
   my ($isReversed) = $f->get_tag_values('is_reversed');
   my ($multiple) = $f->get_tag_values('multiple');
   my $score = $f->score();
+
+  if($multiple eq '0' && $optColor) {
+    return $optColor;
+  }
+
+  if($multiple eq '1' && $optColor2) {
+    return $optColor2;
+  }
 
   # pos strand unique = BLUE
   if($isReversed eq '0' && $multiple eq '0') {
@@ -395,10 +403,6 @@ sub colorByRnaSeq {
   if($isReversed eq '1' && $multiple eq '1') {
     #return 'hotpink';
     return 'peru';
-  }
-
-  if($multiple eq '0' && $optColor) {
-    return $optColor;
   }
 
   # multiple aligners w/o strand info
