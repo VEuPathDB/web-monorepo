@@ -54,9 +54,12 @@
     content="${attr.value}" 
     attribute="${attr.name}"/>
 <br>
-
+<c:set var="popup" value="Active regions here"/>
 <div align="center">
- <img align="middle" src="/cgi-bin/colorKEGGmap.pl?model=${projectId}&pathway=${id}"/>
+ <img align="middle" src="/cgi-bin/colorKEGGmap.pl?model=${projectId}&pathway=${id}" usemap="#pathwayMap"/>
+ <map name="pathwayMap">
+  <area shape="rect" coords="0,0,300,300"  alt="Sun" title="${fn:escapeXml(popup)}">
+ </map>
 </div>
 <br>
 

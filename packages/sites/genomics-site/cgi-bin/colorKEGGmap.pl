@@ -24,12 +24,33 @@ BEGIN {
 }
 
 my $q = new CGI;
-
 my $projectId = $q->param('model') || $ARGV[0];
 my $pathwaySourceId = $q->param('pathway') || $ARGV[1];
 
 die "valid project_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\n" if (!$projectId);
 die "valid pathway_source_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\n" if (!$pathwaySourceId);
+
+#SET COLORS FOR ELEMENTS WHICH DECIDE COLORING EX ORGANISMS
+
+my ($colors, @r, @g, @b);
+push @r,238 ; push @g, 203 ; push @b,173;
+push @r,135 ; push @g, 206 ; push @b,250;
+push @r,102 ; push @g, 205 ; push @b,170;
+push @r,244 ; push @g, 164 ; push @b,96;
+push @r,233 ; push @g, 150 ; push @b,122;
+push @r,255 ; push @g, 215 ; push @b,0;
+push @r,189 ; push @g, 183 ; push @b,107;
+push @r,100 ; push @g, 149 ; push @b,237;
+push @r,190 ; push @g, 190 ; push @b,190;
+
+$colors->{'red'} = \@r;
+$colors->{'green'} = \@g;
+$colors->{'blue'} = \@b;
+
+#VARIABLES TO STORE COLORING FACTOR AND ITS COLOR MAP
+my (@coloringFactor, $factorColorMap);
+
+#-----MODEL PROPS TO MAKE DB CONNECTION -----#
 
 my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
 
@@ -39,6 +60,20 @@ my $dbh = DBI->connect($c->getDbiDsn,$c->getLogin,$c->getPassword,
                        } ) or die "Can't connect to the database: $DBI::errstr\n";
 
 
+
+my $organismSql = "SELECT distinct organism from ApiDbTuning.GeneAttributes";
+my $sth = $dbh->prepare($organismSql);
+$sth->execute;
+
+while (my $org = $sth->fetchrow_array()) {
+ push @coloringFactor, $org;
+}
+
+#GET COLORMAP FOR ORGANISMS
+$factorColorMap = &getColorMap(\@coloringFactor,$colors);
+
+
+#EC NUMBER BASED COLORING
 my $ecMapSql = "SELECT DISTINCT ec.ec_number,apidb.tab_to_string(set(cast(COLLECT(gf.organism) AS apidb.varchartab))) as organisms,
                        pn.x, pn.y,pn.width, pn.height
                 FROM   apidbTuning.GeneAttributes gf, ApidbTuning.GenomicSequence gs,
@@ -55,7 +90,7 @@ my $ecMapSql = "SELECT DISTINCT ec.ec_number,apidb.tab_to_string(set(cast(COLLEC
                 AND    p.source_id = '$pathwaySourceId'
                 group by ec.ec_number, pn.x, pn.y,pn.width, pn.height";
  
-my $sth=$dbh->prepare($ecMapSql);
+$sth = $dbh->prepare($ecMapSql);
 $sth->execute;
 
 my $ecOrganismMap;
@@ -66,19 +101,12 @@ while (my $ecMap = $sth->fetchrow_hashref()) {
 
   my @organisms = split(/,/,$$ecMap{'ORGANISMS'});
   my (@r, @g, @b);
-  
-  foreach my $org (@organisms){ 
-    switch ($org) {
-       case /falciparum 3D7/       {push @r,238 ; push @g, 203 ; push @b,173}
-       case /vivax SaI-1/          {push @r,135   ; push @g, 206 ; push @b,250}
-       case /falciparum IT/        {push @r,102 ; push @g, 205 ; push @b,170}
-       case /cynomolgi strain B/   {push @r,244 ; push @g,164 ; push @b,96}
-       case /yoelii yoelii YM/     {push @r,233 ; push @g, 150 ; push @b,122}
-       case /berghei ANKA/         {push @r,255 ; push @g, 215  ; push @b,0}
-       case /yoelii yoelii 17XNL/  {push @r,189 ; push @g, 183 ; push @b,107}
-       case /chabaudi chabaudi/    {push @r,100 ; push @g, 149 ; push @b,237}
-       case /knowlesi strain H/    {push @r,190 ; push @g, 190  ; push @b,190}
-     }
+   
+  foreach my $org (@organisms){
+    next unless $factorColorMap->{$org}; 
+    push @r, $factorColorMap->{$org}->{'r'};   
+    push @g, $factorColorMap->{$org}->{'g'};   
+    push @b, $factorColorMap->{$org}->{'b'};   
   }
 
   $ecOrganismMap->{$ecNumber}->{'red'} = \@r;
@@ -109,6 +137,28 @@ while (my $ref = $sth->fetchrow) {
 
 my $im = GD::Image->newFromPngData($pngImage) || die "cannot read png image";
 
+#draw a legend
+my $imgWidth = $im->width();
+my $x = 270;
+my $y = 1;
+my $color = $im->colorAllocate(0,0,0);
+$im->string(gdLargeFont,200,1,'LEGEND',$color);
+
+foreach my $factor (keys %{$factorColorMap}) {
+   my $color = $im->colorAllocate($factorColorMap->{$factor}->{'r'},
+                                  $factorColorMap->{$factor}->{'g'},
+                                  $factorColorMap->{$factor}->{'b'});
+
+   $im->string(gdMediumBoldFont,$x,$y,$factor,$color);
+   if ($x + 250 > $imgWidth) {
+     $y = $y + 13;
+     $x = 270;
+   } else {
+     $x = $x + 270;
+   }
+}
+#--end legend
+
 foreach my $ecNumber (keys %{$ecOrganismMap}){
 
   my $x = $ecOrganismMap->{$ecNumber}->{'x'};
@@ -125,21 +175,20 @@ foreach my $ecNumber (keys %{$ecOrganismMap}){
 
   for (my $k = 0; $k < $divisions; $k++){
         my $color  = $im->colorAllocate($$red[$k],$$green[$k],$$blue[$k]); 
-    for(my $i = $x1; $i < ($x1+$increment); $i++) {
-       for(my $j = $y1; $j < $y2; $j++) {
+    for (my $i = $x1; $i < ($x1+$increment); $i++) {
+       for (my $j = $y1; $j < $y2; $j++) {
 
-        my $index = $im->getPixel($i,$j);
-        my ($r,$g,$b) = $im->rgb($index);
+         my $index = $im->getPixel($i,$j);
+         my ($r,$g,$b) = $im->rgb($index);
 
-        if (($r==252) && ($g==254) && ($b==252)) {
-          $im->setPixel($i,$j,$color);
-        }
+         if (($r==252) && ($g==254) && ($b==252)) {
+           $im->setPixel($i,$j,$color);
+         }
       }
     }
     $x1 = $x1 + $increment;
   }
 }
-
 
 my $gifImage = $im->gif();
 print "Content-type: image/gif\n\n";
@@ -147,10 +196,30 @@ print $gifImage;
 
 #if needed at a future development
 #my $outFile = "/tmp/pathwaySourceId.gif";
-#open (OUT,">$outFile") || die "could not open temporary  output file for drawing\n";
+#open (OUT,">image.gif") || die "could not open temporary  output file for drawing\n";
 #binmode (OUT);
 #print OUT $gifImage;
 #close OUT;
+
+
+sub getColorMap {
+  my ($elements,$colors) = @_;
+  my $elementColorMap;
+
+  my $r = $colors->{'red'};
+  my $g = $colors->{'green'};
+  my $b = $colors->{'blue'};
+  my $iter = 0;
+
+  foreach my $element (@$elements) {
+    $elementColorMap->{$element}->{'r'} = $$r[$iter];
+    $elementColorMap->{$element}->{'g'} = $$g[$iter];
+    $elementColorMap->{$element}->{'b'} = $$b[$iter];
+    $iter++;
+  }
+  return $elementColorMap;
+}
+
 
 
 # x and y specify the center of the rectangle
