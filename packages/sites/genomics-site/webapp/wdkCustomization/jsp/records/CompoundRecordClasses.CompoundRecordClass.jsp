@@ -10,7 +10,7 @@
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
 <c:set var="pkValues" value="${primaryKey.values}" />
 <c:set var="projectId" value="${pkValues['project_id']}" />
-<c:set var="id" value="${pkValues['compound_id']}" />
+<c:set var="id" value="${pkValues['source_id']}" />
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
