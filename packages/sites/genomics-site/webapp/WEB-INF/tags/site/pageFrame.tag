@@ -69,6 +69,17 @@
       <imp:dialogs/>
       <imp:footer refer="${refer}"/>
 
+      <jsp:text><![CDATA[
+        <!--[if lte IE 9]>
+          <script type="text/javascript">
+            jQuery(document).ready(function($) {
+              if ($.cookie("api-unsupported")) return;
+              $("#wdk-dialog-IE-warning").dialog("open");
+            });
+          </script>
+        <![endif]-->
+      ]]></jsp:text>
+
     </body>
   </html>
 </jsp:root>
