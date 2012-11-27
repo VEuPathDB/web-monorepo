@@ -16,12 +16,15 @@ if (isset($_GET['refresh']) && $_GET['refresh'] == 1) {
   $success = $app_database->refresh();
   // TODO - put this warning near the refresh button where it is better noticed
   if ( ! $success) {print "<font color='red'>FAILED TO REFRESH</font>";}
+  $success = $user_database->refresh();
+  // TODO - put this warning near the refresh button where it is better noticed
+  if ( ! $success) {print "<font color='red'>FAILED TO REFRESH</font>";}
 }
-
 
 $adb = $app_database->attributes();
 $udb = $user_database->attributes();
-$aliases_ar = $ldap_resolver->resolve($adb{'service_name'});
+$adb_aliases_ar = $ldap_resolver->resolve($adb{'service_name'});
+$udb_aliases_ar = $ldap_resolver->resolve($udb{'service_name'});
 
 ?>
 <h2>Application Database</h2>
@@ -68,7 +71,7 @@ Related Links
 
 <br>
 
-<b>Aliases</b> (from LDAP): <?php print implode(", ", $aliases_ar) ?>
+<b>Aliases</b> (from LDAP): <?php print implode(", ", $adb_aliases_ar) ?>
 
 <br><br>
 <b>Hosted on</b>: <?php print strtolower($adb{'server_name'})?><br>
@@ -109,6 +112,12 @@ foreach ($dblink_map as $dblink) {
 </table>
 
 
+<hr>
+<b>Information on this page was last updated</b>: <?php print $adb{'system_date'}?><br>
+<form method="GET" action="">
+<input name="refresh" type="hidden" value="1">
+<input type="submit" value="update now">
+</form>
 <p>
 <h2>WDK-Engine/Userlogin Database</h2>
 
@@ -147,13 +156,50 @@ foreach ($dblink_map as $dblink) {
 </tr>
 </table>
 <br>
+
+<b>Aliases</b> (from LDAP): <?php print implode(", ", $udb_aliases_ar) ?>
+
+<br><br>
 <b>Hosted on</b>: <?php print strtolower($udb{'server_name'}) ?><br>
+<b>Oracle Version</b>: <?php print $udb{'version'}?>
 <p>
 <b>Client login name</b>: <?php print strtolower($udb{'login'}) ?></b><br>
+<b>Client connecting from</b>: <?php print strtolower($udb{'client_host'})?><br>
+<b>Client OS user</b>: <?php print strtolower($udb{'os_user'})?><br>
 
 <p>
+<b>Available DBLinks</b>:
+
+<table border="0" cellspacing="3" cellpadding="2" align="">
+
+<tr class="secondary3">
+<th align="left"><font size="-2">owner</font></th>
+<th align="left"><font size="-2">db_link</font></th>
+<th align="left"><font size="-2">username</font></th>
+<th align="left"><font size="-2">host</font></th>
+<th align="left"><font size="-2">created</font></th>
+</tr>
+<?php
+$dblink_map = $udb{'DblinkList'};
+$row = 0;
+foreach ($dblink_map as $dblink) {
+  $css_class = ($row % 2) ? "rowMedium" : "rowLight";
+?>
+<tr class="<?php print $css_class?>" >
+  <td><?php print strtolower($dblink{'owner'})?></td>
+  <td><?php print strtolower($dblink{'db_link'})?></td>
+  <td><?php print strtolower($dblink{'username'})?></td>
+  <td><?php print strtolower($dblink{'host'})?></td>
+  <td><?php print strtolower($dblink{'created'})?></td>
+</tr>
+<?php
+  $row++;
+}
+?>
+</table>
+
 <hr>
-<b>Information on this page was last updated</b>: <?php print $adb{'system_date'}?><br>
+<b>Information on this page was last updated</b>: <?php print $udb{'system_date'}?><br>
 <form method="GET" action="">
 <input name="refresh" type="hidden" value="1">
 <input type="submit" value="update now">
