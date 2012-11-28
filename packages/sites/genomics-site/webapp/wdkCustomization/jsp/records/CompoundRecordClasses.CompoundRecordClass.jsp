@@ -19,7 +19,7 @@
 <%-- force RecordInstance.fillColumnAttributeValues() to run
       and set isValidRecord to false if appropriate. 
       wdkRecord.isValidRecord is tested in the project's RecordClass --%>
-<c:set var="junk" value="${attrs['compound_id']}"/>
+<c:set var="junk" value="${attrs['source_id']}"/>
 </c:catch>
 
 
