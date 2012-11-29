@@ -1,6 +1,6 @@
---- GBrowse.conf.orig	2012-03-05 16:15:54.000000000 -0500
-+++ GBrowse.conf	2012-03-05 16:24:14.000000000 -0500
-@@ -97,7 +97,7 @@
+--- GBrowse.conf.orig	2012-11-29 10:51:56.000000000 -0500
++++ GBrowse.conf	2012-11-29 16:10:41.000000000 -0500
+@@ -97,11 +97,11 @@
  
  balloon tips        = 1
  titles are balloons = 1
@@ -9,6 +9,11 @@
  overview grid       = 0
  region grid         = 0
  detail grid         = 1
+-image widths        = 450 640 800 1024
++image widths        = 450 640 800 1024 1280 1440 1680
+ default width       = 800
+ pad_left            = 60
+ pad_right           = 30
 @@ -161,9 +161,9 @@
  # "user_accounts" is true, then GBrowse
  # will attempt to use its internal user accounts database
