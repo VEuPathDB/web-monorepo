@@ -10,7 +10,7 @@
 <c:set var="project" value="${wdkModel.displayName}"/>
 
 <%-- QUESTIONS --%>
-<c:set var="questions" value="SnpQuestions.SnpsByStrain"/>
+<c:set var="questions" value="SnpQuestions.SnpsByStrain,SnpQuestions.HtsSnpsByStrain"/>
 
 <!-- show error messages, if any -->
 <div class='usererror'><api:errors/></div>
