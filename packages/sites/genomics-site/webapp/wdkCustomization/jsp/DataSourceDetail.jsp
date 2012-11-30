@@ -61,6 +61,19 @@
               (<span class="caption">${version.displayName}</span>: ${version.value})
             </div>
 
+            <div class="small" style="padding:6px;">
+              <a href="#" class="wdk-toggle-group"
+                data-container=".data-source"
+                data-show="true">
+                expand all
+              </a> |
+              <a href="#" class="wdk-toggle-group"
+                 data-container=".data-source"
+                 data-show="false">
+                collapse all
+              </a>
+            </div>
+
 
 <%-------    DATASET CONTENT ----------------%>
             <div class="detail">
