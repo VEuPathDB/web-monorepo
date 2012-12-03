@@ -173,11 +173,6 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
-<c:set var="attribution">
-Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,TgondiiRHChromosome1,TgondiiApicoplast,TIGRGeneIndices_Tgondii,dbEST,ESTAlignments_Tgondii,N.caninum_chromosomes,NeosporaUnassignedContigsSanger,TIGRGeneIndices_NeosporaCaninum
-</c:set>
-
-
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
@@ -201,25 +196,25 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
+    attribution=""
   />
 
 <%-- END DNA CONTEXT --------------------------------------------%>
 
 <!-- strains comparison table -->
 <imp:wdkTable tblName="Strains" isOpen="true"
-               attribution="T.gondiiGT1_contigsGB,T.gondiiME49_contigsGB,T.gondiiVEG_contigsGB"/>
+               attribution=""/>
 
 <!-- gene alias table -->
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 <!-- snps between strains -->
 <imp:wdkTable tblName="SNPs" isOpen="false"
-                   attribution="AmitAlignmentSnps"/>
+                   attribution=""/>
 
 <!-- locations -->
 <imp:wdkTable tblName="Genbank" isOpen="true"
-               attribution="T.gondiiGT1_contigsGB,T.gondiiME49_contigsGB,T.gondiiVEG_contigsGB" />
+               attribution="" />
 
 <!-- previous version genes -->
 <imp:wdkTable tblName="PreviousReleaseGenes" isOpen="true"
@@ -281,7 +276,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 <c:catch var="e">
   <imp:wdkTable tblName="TaskComments" isOpen="true"
-                 attribution="TASKAnnotation" suppressColumnHeaders="true"/>
+                 attribution="" suppressColumnHeaders="true"/>
 </c:catch>
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
@@ -304,28 +299,28 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
       <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
                  postscript="${orthomclLink}"/>
 </c:if>
 
   <imp:wdkTable tblName="EcNumber" isOpen="true"
-                 attribution="ME49_Annotation,enzymeDB"/>
+                 attribution=""/>
 
   <imp:wdkTable tblName="GoTerms" isOpen="true"
-                 attribution="GO,GOAssociations,InterproscanData"/>
+                 attribution=""/>
 
 <c:set var="externalDbName" value="${attrs['external_db_name']}"/>
 <c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
 
 <c:if test="${externalDbName.value eq 'Roos Lab T. gondii apicoplast'}">
   <imp:wdkTable tblName="Notes" isOpen="true"
-	 	 attribution="TgondiiApicoplast"/>
+	 	 attribution=""/>
 </c:if>                 
 
   <imp:wdkTable tblName="MetabolicPathways" isOpen="true"
-                 attribution="MetabolicDbXRefs_Feng"/>
+                 attribution=""/>
 
-<imp:wdkTable tblName="Antibody" attribution="Antibody"/>
+<imp:wdkTable tblName="Antibody" attribution=""/>
 <c:set var="toxocyc" value="${attrs['ToxoCyc']}"/>
 
 <!--
@@ -364,9 +359,7 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
      InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
     </c:set>
 </c:if>
-    <c:set var="attribution">
-    NRDB,InterproscanData,Wastling-Rhoptry,Wastling1D_SDSPage,Wastling-1D_SDSPage-Soluble,Wastling-1D_SDSPage-Insoluble,Wastling-MudPIT-Soluble,Wastling-MudPIT-Insoluble,Murray-Roos_Proteomics_Conoid-enriched,Murray-Roos_Proteomics_Conoid-depleted,1D_tg_35bands_022706_Proteomics,Dec2006_Tg_membrane_Fayun_Proteomics,March2007Tg_Cyto_Proteins_Proteomics,Oct2006_Tg_membrane_Fayun_Proteomics,massspec_may02-03_2006_Proteomics,massspec_june30_2006_Proteomics,massspec_Oct2006_Tg_membrane_Fayun_Proteomics,massspec_may10_2006_Proteomics,massspec_1D_tg_1frac_020306_Proteomics,massspec_Carruthers_2destinct_peptides,massspec_MudPIT_Twinscan_hits,Moreno-1-annotated,Moreno-6-annotated,Moreno-p3-annotated
-    </c:set>
+
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
@@ -390,7 +383,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
     <imp:toggle name="proteinFeatures" 
         displayName="Protein Features"
         content="${proteinFeaturesImg}"
-        attribution="${attribution}"/>
+        attribution=""/>
    <br>
 </c:if>
 </c:if>
@@ -435,15 +428,15 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 </c:if>
 
 <imp:wdkTable tblName="MassSpec" isOpen="true"
-               attribution="Wastling-Rhoptry,Wastling1D_SDSPage,Wastling-1D_SDSPage-Soluble,Wastling-1D_SDSPage-Insoluble,Wastling-MudPIT-Soluble,Wastling-MudPIT-Insoluble,Murray-Roos_Proteomics_Conoid-enriched,Murray-Roos_Proteomics_Conoid-depleted,Dec2006_Tg_membrane_Fayun_Proteomics,Oct2006_Tg_membrane_Fayun_Proteomics,massspec_1D_tg_1frac_020306_Proteomics,massspec_june30_2006_Proteomics,massspec_may02-03_2006_Proteomics,massspec_may10_2006_Proteomics,massspec_May2007_Proteomics,massspec_May22_2007_Proteomics,massspec_membrane_frac_frac_Proteomics,Moreno-1-annotated,massspec_Carruthers_2destinct_peptides,massspec_MudPIT_Twinscan_hits"/>
+               attribution=""/>
 
 
 
  <imp:wdkTable tblName="MassSpecMod" isOpen="true"
-      attribution="Tg_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC,Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Bound_Mascot-based_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Bound_Sequest-based_Phosphoproteome_RSRC,Tg_Tonkin_TiO2_Unbound_Phosphoproteome_RSRC"/> 
+      attribution=""/> 
 
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 

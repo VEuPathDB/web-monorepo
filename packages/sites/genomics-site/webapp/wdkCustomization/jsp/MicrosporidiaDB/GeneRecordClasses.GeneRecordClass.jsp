@@ -125,10 +125,6 @@ ${attrs['organism'].value}<br>
 
 <c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
-<c:set var="attribution">
-EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bieneusi_Genbank_contigs_and_annotations,EbieneusiScaffolds
-</c:set>
-
 <c:if test="${gtracks ne ''}">
 
   <c:set var="gnCtxUrl">
@@ -152,7 +148,7 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
+    attribution=""
   />
 
 
@@ -235,19 +231,15 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
 </c:if>
 
 
-<imp:wdkTable tblName="EcNumber" isOpen="true" attribution="${attribution}"/>
+<imp:wdkTable tblName="EcNumber" isOpen="true" attribution=""/>
 
 
 
 <%-- GO ------------------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
 
-<c:set var="attribution">
-GO,InterproscanData
-</c:set>
 
-
-<imp:wdkTable tblName="GoTerms" isOpen="true" attribution="${attribution}"/>
+<imp:wdkTable tblName="GoTerms" isOpen="true" attribution=""/>
 
 </c:if>
 
@@ -260,7 +252,7 @@ GO,InterproscanData
       <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL" postscript="${orthomclLink}"/>
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="" postscript="${orthomclLink}"/>
 
 </c:if>
 
@@ -271,10 +263,6 @@ GO,InterproscanData
     InterproDomains+SignalP+TMHMM+BLASTP
     </c:set>
     
-    <c:set var="attribution">
-    InterproscanData
-    </c:set>
-
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
 http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?name=${id}:1..${proteinLength};type=${ptracks};width=640;embed=1;genepage=1
@@ -296,7 +284,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
 
     <imp:toggle name="proteinContext"  displayName="Protein Features"
              content="${proteinFeaturesImg}"
-             attribution="${attribution}"/>
+             attribution=""/>
       <!-- ${proteinFeaturesUrl} -->
 
 </c:if>
@@ -338,7 +326,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/microsporidiadbaa/?
         </c:choose>
 
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 

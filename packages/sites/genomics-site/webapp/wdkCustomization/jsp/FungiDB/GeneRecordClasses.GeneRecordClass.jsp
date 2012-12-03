@@ -129,9 +129,6 @@ ${attrs['organism'].value}<br>
 
 <c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
-<c:set var="attribution">
-EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bieneusi_Genbank_contigs_and_annotations,EbieneusiScaffolds
-</c:set>
 
 <c:if test="${gtracks ne ''}">
   <c:set var="gnCtxUrl">
@@ -243,10 +240,6 @@ EcuniculiChromosomesAndAnnotations,EintestinalisChromosomesAndAnnotations,E.bien
 <%-- GO ------------------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
 
-<c:set var="attribution">
-GO,InterproscanData
-</c:set>
-
 <imp:wdkTable tblName="GoTerms" isOpen="true" attribution=""/>
 <imp:wdkTable tblName="EcNumber" isOpen="false"  attribution=""/>
 </c:if>
@@ -259,7 +252,7 @@ GO,InterproscanData
       <a target="_blank" href="http://v5.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
                  postscript="${orthomclLink}"/>
 </c:if>
 
@@ -272,10 +265,6 @@ GO,InterproscanData
     InterproDomains+SignalP+TMHMM+BLASTP
     </c:set>
     
-    <c:set var="attribution">
-    InterproscanData
-    </c:set>
-
     <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
     <c:set var="proteinFeaturesUrl">
     http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/fungidbaa/?name=${id}:1..${proteinLength};type=${ptracks};hmap=pbrowse;width=640;embed=1;genepage=1
@@ -340,14 +329,14 @@ GO,InterproscanData
 
   <c:if test="${binomial eq 'Saccharomyces cerevisiae'}">
   <imp:wdkTable tblName="Y2hInteractions" isOpen="true"
-                 attribution="y2h_data"/>
+                 attribution=""/>
   </c:if>
 
 
 
   <imp:wdkTable tblName="ProteinDatabase"/>
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
   <imp:wdkTable tblName="Epitopes"/>
 

@@ -262,9 +262,6 @@ ${id}
 
 <c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
-<c:set var="attribution">
-P.${species}.contigs,P.${species}_contigsGB,P.${species}_mitochondrial,P.${species}_chromosomes,P.${species}_wholeGenomeShotgunSequence,P.${species}_Annotation,${species}_falciparum_synteny
-</c:set>
 
 <c:if test="${gtracks ne ''}">
 

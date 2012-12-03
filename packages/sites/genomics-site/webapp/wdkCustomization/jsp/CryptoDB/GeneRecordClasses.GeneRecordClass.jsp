@@ -118,63 +118,6 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
-<c:choose>
-<c:when test="${organism eq parvumOrganism}">
-    <c:set var="attribution">
-    C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,
-    C.parvumChr6_scaffoldsGB,Wastling2DGelLSMassSpec, NRDB,
-    Wastling1DGelLSMassSpec,
-    WastlingMudPitSolMassSpec,
-    WastlingMudPitInsolMassSpec,
-    CryptoLoweryLCMSMSInsolExcystedMassSpec,
-    CryptoLoweryLCMSMSInsolNonExcystedMassSpec,
-    CryptoLoweryLCMSMSSolMassSpec,
-    Ferrari_Proteomics_LTQ_Oocyst_walls,
-    Ferrari_Proteomics_LTQ_intact_oocysts_merged,
-    Ferrari_Proteomics_LTQ_Sporozoites_merged,
-    Fiser_Proteomics_16May2006_1D_gel,
-    Fiser_Proteomics_24Jun2006_1D_gel,
-    Fiser_Proteomics_14Aug2006_1D_gel
-    </c:set>
-
-</c:when>
-<c:when test="${organism eq hominisOrganism}">
-
-    <c:set var="attribution">
-NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6_scaffoldsGB,dbEST
-    </c:set>
-
-</c:when>
-<c:when test="${organism eq murisOrganism}">
-
-    <c:set var="attribution">
-NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6_scaffoldsGB,dbEST
-    </c:set>
-
-</c:when>
-<c:when test="${organism eq parvumChr6Organism}">
-
-    <c:set var="attribution">
-    C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,
-    C.parvumChr6_scaffoldsGB,dbEST,Wastling2DGelLSMassSpec, NRDB,
-    Wastling1DGelLSMassSpec,
-    WastlingMudPitSolMassSpec,
-    WastlingMudPitInsolMassSpec,
-    CryptoLoweryLCMSMSInsolExcystedMassSpec,
-    CryptoLoweryLCMSMSInsolNonExcystedMassSpec,
-    CryptoLoweryLCMSMSSolMassSpec,
-    Ferrari_Proteomics_LTQ_Oocyst_walls,
-    Ferrari_Proteomics_LTQ_intact_oocysts_merged,
-    Ferrari_Proteomics_LTQ_Sporozoites_merged,
-    Fiser_Proteomics_16May2006_1D_gel,
-    Fiser_Proteomics_24Jun2006_1D_gel,
-    Fiser_Proteomics_14Aug2006_1D_gel
-    </c:set>
-
-</c:when>
-<c:otherwise>
-</c:otherwise>
-</c:choose>
 
 <c:if test="${gtracks ne ''}">
 
@@ -200,7 +143,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
+    attribution=""
   />
 
 
@@ -212,7 +155,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 <c:if test="${snps ne 'none'}">
 
 <imp:wdkTable tblName="SNPs" isOpen="true"
-     attribution="Widmer_SNPs"/>
+     attribution=""/>
 </c:if>
 
 <!-- gene alias table -->
@@ -298,7 +241,7 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
       <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_Phyletic,OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
                  postscript="${orthomclLink}"/>
 
   <c:set var="attribution">
@@ -308,12 +251,9 @@ NRDB,C.muris_scaffoldsGB,C.hominis_scaffoldsGB,C.parvum_scaffoldsGB,C.parvumChr6
 <%-- EC ------------------------------------------------------------%>
 <c:if test="${organism ne parvumChr6Organism && attrs['so_term_name'].value eq 'protein_coding'}">
 
-<c:set var="attribution">
-enzymeDB,CparvumEC-KEGG,ChominisEC-KEGG,CparvumEC-CryptoCyc,ChominisEC-CryptoCyc
-</c:set>
 
 <imp:wdkTable tblName="EcNumber" isOpen="true"
-     attribution="${attribution}"/>
+     attribution=""/>
 
 </c:if>
 
@@ -327,13 +267,9 @@ enzymeDB,CparvumEC-KEGG,ChominisEC-KEGG,CparvumEC-CryptoCyc,ChominisEC-CryptoCyc
 <%-- GO ------------------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
-<c:set var="attribution">
-GO,InterproscanData,
-CparvumContigs,ChominisContigs,CparvumChr6Scaffold,CparvumESTs
-</c:set>
 
 <imp:wdkTable tblName="GoTerms" isOpen="true"
-     attribution="${attribution}"/>
+     attribution=""/>
 </c:if>
 
 
@@ -371,9 +307,6 @@ ${attrs['linkout'].value}
     InterproDomains+SignalP+TMHMM+WastlingMassSpecPeptides+LoweryMassSpecPeptides+EinsteinMassSpecPeptides+FerrariMassSpecPeptides+PutignaniMassSpecPeptides+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
     
-    <c:set var="attribution">
-     InterproscanData,NRDB
-    </c:set>
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
@@ -396,7 +329,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 
     <imp:toggle name="proteinContext"  displayName="Protein Features"
              content="${proteinFeaturesImg}"
-             attribution="${attribution}"/>
+             attribution=""/>
 
 </c:if>
 
@@ -439,31 +372,26 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
 <%-- EPITOPES ------------------------------------------------------%>
 <c:if test="${parvumChr6Organism ne hominisOrganism && attrs['so_term_name'].value eq 'protein_coding'}">
 
-<c:set var="attribution">
-</c:set>
-
 <imp:wdkTable tblName="Epitopes" isOpen="true"
-     attribution="${attribution}"/>
+     attribution=""/>
 
 </c:if>
 
 <%-- Isolate Overlap  ------------------------------------------------------%>
 <%-- <c:if test="${organism ne hominisOrganism && attrs['so_term_name'].value eq 'protein_coding'}">
 
-<c:set var="attribution">
-</c:set>
 
 <imp:wdkTable tblName="IsolateOverlap" isOpen="true"
-     attribution="${attribution}"/>
+     attribution=""/>
 
 </c:if>
 --%>
 <c:if test="${organism eq parvumOrganism}">
 <imp:wdkTable tblName="MassSpec" isOpen="true"
-               attribution="Wastling1DGelLSMassSpec,Wastling2DGelLSMassSpec,WastlingMudPitSolMassSpec,WastlingMudPitInsolMassSpec,CryptoLoweryLCMSMSInsolExcystedMassSpec,CryptoLoweryLCMSMSInsolNonExcystedMassSpec,CryptoLoweryLCMSMSSolMassSpec,Ferrari_Proteomics_LTQ_Oocyst_walls,Ferrari_Proteomics_LTQ_intact_oocysts_merged,Ferrari_Proteomics_LTQ_Sporozoites_merged,Fiser_Proteomics_16May2006_1D_gel,Fiser_Proteomics_24Jun2006_1D_gel,Fiser_Proteomics_14Aug2006_1D_gel,Crypto_Proteomics_from_Lorenza_Putignani"/>
+               attribution=""/>
 </c:if>
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
@@ -471,7 +399,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${
   ${attrs['ssgcid_request_link']}
 </c:if>
 
-<imp:wdkTable tblName="Antibody" attribution="Antibody"/>
+<imp:wdkTable tblName="Antibody" attribution=""/>
 
 </c:if>
 
