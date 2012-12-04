@@ -24,7 +24,7 @@
     <tr>
       <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByPathway" linktext="Metabolic Pathway" existsOn="A P"/>
     </tr>
-      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByMolecularWeight" linktext="Metabolic Pathway" existsOn="A P"/>
+      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByMolecularWeight" linktext="Molecular Weight" existsOn="A P"/>
      <tr>
 
      </tr>
