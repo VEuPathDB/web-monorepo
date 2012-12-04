@@ -19,7 +19,10 @@
                 </tr>
 
 <tr>
-	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByGeneList" linktext="Mass Spec. Evidence" existsOn="A"/>
+	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByGeneList" linktext="Gene Asssociation" existsOn="A"/>
+            	</tr>
+<tr>
+	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByCompounds" linktext="Compounds" existsOn="A"/>
             	</tr>
             </table>
 </div>
