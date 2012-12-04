@@ -16,7 +16,7 @@ $nginxForm = $nginx_proxy_switcher_base
 
 $proxyNotice = '';
 if ( $attributes{'via'} ) {
-    $proxyNotice = "<p>This site is reverse-proxied via <i>'" . $attibutes{'via'} . "'</i> to upstream host $upstreamServer.";
+    $proxyNotice = "<p>This site is reverse-proxied via <i>'" . $attributes{'via'} . "'</i> to upstream host $upstreamServer.";
 }
 
 ?>
