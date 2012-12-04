@@ -48,6 +48,8 @@
 
 <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true"/>
 
+<imp:wdkTable tblName="RelatedCompounds" isOpen="true"/>
+
 </c:otherwise>
 </c:choose>
 
