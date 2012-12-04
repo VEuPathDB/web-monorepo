@@ -192,7 +192,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
   <imp:toggle 
     name="dnaContextSyn" displayName="Genomic Context" 
-    dsLink="/cgi-bin/gbrowse/${fn:toLowerCase(projectId)}/?help=citations" 
+    dsLink=""
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
