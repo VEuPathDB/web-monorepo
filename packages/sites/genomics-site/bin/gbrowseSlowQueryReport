@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+use lib "$ENV{GUS_HOME}/lib/perl";
 use strict;
 use Getopt::Long;
 use Time::Local;
@@ -7,6 +8,8 @@ use FgpUtil::Log::SlowQueryReport;
 
 my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile, $logTailSize, $logDeathImmunity, $debug);
 my ($width_min, $width_max);
+
+usage() unless scalar(@ARGV);
 
 $sort_column=2;
 &GetOptions('s=s' => \$threshold,
@@ -55,7 +58,7 @@ sub usage {
 
 Print a report summarizing the gbrowse slow query logs.
 
-Takes one or more logs on standard input.
+Takes one or more apache error logs on standard input.
 
 usage:  gbrowseSlowQueryReport [-s secs] [-g] [-n] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile] [-d]
 
