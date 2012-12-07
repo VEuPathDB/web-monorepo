@@ -10,7 +10,8 @@
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
 <c:set var="pkValues" value="${primaryKey.values}" />
 <c:set var="projectId" value="${pkValues['project_id']}" />
-<c:set var="id" value="${pkValues['source_id']}" />
+<c:set var="id" value="${pkValues['compound_id']}" />
+<c:set var="source_id" value="${pkValues['source_id']}" />
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="recordType" value="${wdkRecord.recordClass.type}" />
@@ -23,32 +24,49 @@
 </c:catch>
 
 
-<imp:pageFrame  title="${recordType} : ${id}"
+<imp:pageFrame  title="${recordType} : ${source_id}"
              divisionName="PubChem Compound Record"
              refer="recordPage"
              division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${source_id}' was not found.</h2>
 </c:when>
 <c:otherwise>
 
 <!-- Overview -->
 <c:set var="attr" value="${attrs['overview']}" />
-<imp:toggle name="${attr.displayName}"
-    displayName="${attr.displayName}" isOpen="true"
+<imp:panel attribute="${attr.name}" 
+    displayName="${attr.displayName}" 
     content="${attr.value}" />
 
+<!-- image-->
+<table border="0" class="paneltoggle"  
+       bgcolor="#DDDDDD" 
+       cellpadding="0" 
+       cellspacing="1" 
+       width="100%">
+<tr><td style="padding:3px;"><font size="-2" face="Arial,Helvetica">
+    <b>2D Structure</b></font></td></tr></table>
+<table border="0" 
+       cellpadding="5" 
+       width="100%" 
+       bgcolor="#FFFFFF">
+<td></td>
+<td>
+ <img src="http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&cid=${attrs['compound_id']}&width=100&height=100"/>
+</td>
+</tr>
+</table>
 
+<imp:wdkTable tblName="Properties" isOpen="true" attribution=""/>
 
-<imp:wdkTable tblName="Properties" isOpen="true"/>
+<imp:wdkTable tblName="SubstanceProps" isOpen="true" attribution=""/>
 
-<imp:wdkTable tblName="SubstanceProps" isOpen="true"/>
+<imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
 
-<imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true"/>
-
-<imp:wdkTable tblName="RelatedCompounds" isOpen="true"/>
+<imp:wdkTable tblName="RelatedCompounds" isOpen="true" attribution=""/>
 
 </c:otherwise>
 </c:choose>
