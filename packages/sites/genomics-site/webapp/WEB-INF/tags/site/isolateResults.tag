@@ -63,7 +63,7 @@
 
 
 <%--------- PAGING TOP BAR ----------%>
-<c:url var="commandUrl" value="/processSummaryView.do?step=${wdkStep.stepId}&view=${wdkView.name}" />
+<c:url var="commandUrl" value="/processSummaryView.do?step=${wdkStep.stepId}&view=${wdkView.name}&pager.offset=${currentPageNumber + 1}" />
 <table id="paging-top-bar" width="100%">
 	<tr class="subheaderrow">
 	<th style="text-align: left;white-space:nowrap;"> 
