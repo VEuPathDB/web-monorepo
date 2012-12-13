@@ -22,7 +22,7 @@
   <c:if test="${not isPortal}">
     <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#citingproviders">Citing Data Providers</a></li>
   </c:if>
-  <li><a href="${constants.publicationUrl}">Publications that Cite Us</a></li>
+  <li><a href="${constants.publicationUrl}">Publications that Use our Resources</a></li>
   <li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission &amp; Release Policies</a></li>
   <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#use">Data Access Policy</a></li>
 
