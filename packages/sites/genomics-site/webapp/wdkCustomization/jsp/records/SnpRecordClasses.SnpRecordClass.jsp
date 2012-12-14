@@ -78,8 +78,8 @@
   <c:when  test="${attrs['type'].value == 'HTS'}">
 
 <c:set var="start" value="${attrs['start_min_text']}"/>
-<c:set var="startm" value="${fn:replace(start,',','') - 50}" /> </h4>
-<c:set var="end" value="${fn:replace(start,',','') + 50}" /> </h4>
+<c:set var="startm" value="${fn:replace(start,',','') - 39}" /> </h4>
+<c:set var="end" value="${fn:replace(start,',','') + 40}" /> </h4>
 
 <form name="checkHandleForm" method="post" action="/dosomething.jsp" onsubmit="return false;">
 
