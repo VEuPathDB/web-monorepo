@@ -86,10 +86,10 @@
    <c:if test="${strategy != null}">
     <c:choose>
       <c:when test="${wdkUser.guest}">
-        <c:set var="basketClick" value="User.login();" />
+        <c:set var="basketClick" value="wdk.user.login();" />
       </c:when>
       <c:otherwise>
-        <c:set var="basketClick" value="updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}');" />
+        <c:set var="basketClick" value="wdk.basket.updateBasket(this, '${wdkStep.stepId}', '0', '${modelName}', '${recordName}');" />
       </c:otherwise>
     </c:choose>
     <c:if test="${recHasBasket}"><a id="basketStep" style="font-size:120%" href="javascript:void(0)" onClick="${basketClick}"><b>Add ${r_count} to Basket</b></a>&nbsp;|&nbsp;</c:if>

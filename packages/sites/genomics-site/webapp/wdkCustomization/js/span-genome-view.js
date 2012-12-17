@@ -1,6 +1,6 @@
 function initializeGenomeView() {
     // register click events
-    assignStickyTooltipByElement(".genome-view .sequence .span");
+    wdk.tooltips.assignStickyTooltipByElement(".genome-view .sequence .span");
 	
     $(".genome-view").each(function() {
         var genomeView = $(this);

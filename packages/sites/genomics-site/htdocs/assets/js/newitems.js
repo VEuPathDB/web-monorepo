@@ -11,7 +11,7 @@ var listItems = new Array();
  */
 function getReadFromCookie() {
   var readMap = {};
-  var cookie = getCookie(readListCookieName);
+  var cookie = wdk.api.getCookie(readListCookieName);
 
   if (cookie == null) return readMap;
   
@@ -109,5 +109,5 @@ function putReadInCookie(headernode) {
   jQuery(headernode).css({'padding-bottom' : oldHeadingPadBot})
 
   // expiration a year from today
-  storeIntelligentCookie(readListCookieName, newCookieVal, 365, '/', secondLevelDomain());
+  wdk.api.storeIntelligentCookie(readListCookieName, newCookieVal, 365, '/', wdk.api.secondLevelDomain());
 }

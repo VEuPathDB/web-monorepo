@@ -9,9 +9,9 @@ var excludedSpeciesName;
 var profilePatternName;
 
 function initOrthologQuestion(url){
-	var include = unescape(parseUrlUtil('included_species', url)).replace(/\+/g," ").split(", ");
-	var exclude = unescape(parseUrlUtil('excluded_species', url)).replace(/\+/g," ").split(", ");
-	var pattern = unescape(parseUrlUtil('profile_pattern', url));
+	var include = unescape(wdk.util.parseUrlUtil('included_species', url)).replace(/\+/g," ").split(", ");
+	var exclude = unescape(wdk.util.parseUrlUtil('excluded_species', url)).replace(/\+/g," ").split(", ");
+	var pattern = unescape(wdk.util.parseUrlUtil('profile_pattern', url));
 
 	$("form#form_question input:hidden[name='value(profile_pattern)']").attr('value',pattern);
 

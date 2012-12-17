@@ -102,10 +102,10 @@
     <th>
       <c:choose>
         <c:when test="${wdkUser.guest}">
-          <c:set var="basketClick" value="User.login()" />
+          <c:set var="basketClick" value="wdk.user.login()" />
         </c:when>
         <c:otherwise>
-          <c:set var="basketClick" value="updateBasket(this,'page', '0', '${modelName}', '${wdkAnswer.recordClass.fullName}')" />
+          <c:set var="basketClick" value="wdk.basket.updateBasket(this,'page', '0', '${modelName}', '${wdkAnswer.recordClass.fullName}')" />
         </c:otherwise>
       </c:choose>
       <a href="javascript:void(0)" onclick="${basketClick}">
@@ -134,7 +134,7 @@
 				            </c:when>
 				            <c:otherwise>
                       <%-- display sorting buttons --%>
-                      <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" />
+                      <c:set var="resultsAction" value="javascript:wdk.resultsPage.GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" />
                       <a href="${resultsAction}" title="Sort by ${sumAttrib}">
                         <img src="wdk/images/results_arrw_up.png" alt="Sort up" border="0" />
                       </a>
@@ -154,7 +154,7 @@
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
-              <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" />
+              <c:set var="resultsAction" value="javascript:wdk.resultsPage.GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" />
               <a href="${resultsAction}" title="Sort by ${sumAttrib}">
               <img src="wdk/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
             </c:otherwise>
@@ -168,7 +168,7 @@
         <c:if test="${j != 0}">
           <td style="width:20px;">
             <%-- display remove attribute button --%>
-            <c:set var="resultsAction" value="javascript:GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
+            <c:set var="resultsAction" value="javascript:wdk.resultsPage.GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
             <a href="${resultsAction}"
                         title="Remove ${sumAttrib} column">
               <img src="<c:url value='wdk/images/results_x.png'/>" alt="Remove" border="0" /></a>
@@ -215,7 +215,7 @@
 	          <c:set var="basket_img" value="basket_color.png"/>
                   <c:set var="basketTitle" value="Click to remove this item from the basket." />
                 </c:if>
-                <c:set var="basketClick" value="updateBasket(this, 'single', '${primaryKey.value}', '${modelName}', '${recordName}')" />
+                <c:set var="basketClick" value="wdk.basket.updateBasket(this, 'single', '${primaryKey.value}', '${modelName}', '${recordName}')" />
               </c:when>
               <c:otherwise>
                 <c:set var="basketTitle" value="Please log in to use the basket." />
@@ -329,9 +329,9 @@
 	  	<input type="button" value="Run Clustalw on Checked Strains" 
 				onClick="goToIsolate(this)" />
 	  	<input type="button" name="CheckAll" value="Check All" 
-				onClick="checkboxAll($('input:checkbox[name=selectedFields]'))">
+				onClick="wdk.api.checkboxAll($('input:checkbox[name=selectedFields]'))">
 			<input type="button" name="UnCheckAll" value="Uncheck All" 
-				onClick="checkboxNone($('input:checkbox[name=selectedFields]'))">
+				onClick="wdk.api.checkboxNone($('input:checkbox[name=selectedFields]'))">
 	  </td>
 	</tr>
 

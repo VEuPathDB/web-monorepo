@@ -103,7 +103,7 @@ Ack, this form won't work at all without JavaScript support!
 <div class='usererror'><api:errors/></div>
 
 <%-- the js has to be included here in order to appear in the step form --%>
-<script type="text/javascript" src='<c:url value="/wdk/js/wdkQuestion.js"/>'></script>
+<script type="text/javascript" src='<c:url value="/wdk/js/wdk/src/question.js"/>'></script>
 
 <%--  PARAMS DIV --%>
 <div class="params">
@@ -233,7 +233,7 @@ Ack, this form won't work at all without JavaScript support!
 	}
 
 	<c:if test="${showParams == null}">
-		$(document).ready(function() { initParamHandlers(); });
+		$(document).ready(function() { wdk.parameterHandlers.init(); });
 
     $(document).ready(function() {
       $("#orthology-profile-tree").jstree({

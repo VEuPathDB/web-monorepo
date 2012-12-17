@@ -22,7 +22,7 @@
 <%--------------------------------------------------------------------%>
 
 <script type="text/javascript">
-  $(function() { assignTooltipsLeftJustified('.queryGridLink'); });
+  $(function() { wdk.tooltips.assignTooltipsLeftJustified('.queryGridLink'); });
 </script>
 
 <%-- these divs are needed because they do NOT come from header.... problem associated with having a sidebar --%>

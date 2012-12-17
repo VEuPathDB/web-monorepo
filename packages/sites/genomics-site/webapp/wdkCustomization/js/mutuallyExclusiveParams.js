@@ -164,8 +164,8 @@
 
 
 // *ByLocation questions have mutually exclusive params:
-jQuery(function($) {
-  wdkEvent.subscribe("questionload", function() {
+  wdk.event.subscribe("questionload", function() {
+    var $ = jQuery;
 
     // First, find the active form
     // Then, get the form name
@@ -219,7 +219,7 @@ jQuery(function($) {
       init: function(element) {
         if ($("#sequenceId", element).val().indexOf("(Example") !== 0 ||
             // AmoebaDB only allows SequenceID
-            (questionName === "HtsSnpsByLocation" && modelName() === "AmoebaDB")) {
+            (questionName === "HtsSnpsByLocation" && wdk.modelName() === "AmoebaDB")) {
           // select this
           $("input[name='xor-group']")[1].checked = true;
         }
@@ -254,9 +254,8 @@ jQuery(function($) {
       }
     });
 
-    wdkEvent.subscribe("questionchange", function() {
+    wdk.event.subscribe("questionchange", function() {
       form.mutuallyExclusiveParams("change");
     });
 
   });
-});

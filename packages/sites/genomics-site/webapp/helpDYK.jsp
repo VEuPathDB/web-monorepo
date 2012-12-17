@@ -13,7 +13,7 @@
 <imp:dyk />
 
 <script type="text/javascript" language="javascript">
-	window.onload = function(){ showPanel('help') }
+	window.onload = function(){ wdk.addStepPopup.showPanel('help') }
 </script>
 
 <div id="help" style="display:none">

@@ -22,7 +22,7 @@
 <span id="user-control"></span>
 
 <script id="user-not-logged-in" type="text/x-handlebars-template">
-  <li><a href="javascript:void(0)" onclick="User.login()">Login</a></li>
+  <li><a href="javascript:void(0)" onclick="wdk.user.login()">Login</a></li>
   <li><a href="<c:url value='/showRegister.do'/>">Register</a></li>
 </script>
 

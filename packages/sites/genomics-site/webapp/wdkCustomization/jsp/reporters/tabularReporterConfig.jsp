@@ -80,7 +80,7 @@ function appendchecked(form, url) {
 
 	          <tr>
 	            <td colspan="${numPerLine}">
-	              <input type="checkbox" name="selectedFields" value="default" onclick="uncheckFields(1);" checked>
+	              <input type="checkbox" name="selectedFields" value="default" onclick="wdk.uncheckFields(1);" checked>
 	              Default (same as in <a href="showApplication.do">result</a>), or...
 	            </td>
 	          </tr>
@@ -99,7 +99,7 @@ function appendchecked(form, url) {
 	                        <input type="hidden" name="selectedFields" value="${rmAttr.name}" >
 	                      </c:when>
 	                      <c:otherwise>
-	                        <input type="checkbox" name="selectedFields" value="${rmAttr.name}" onclick="uncheckFields(0);">
+	                        <input type="checkbox" name="selectedFields" value="${rmAttr.name}" onclick="wdk.uncheckFields(0);">
 	                      </c:otherwise>
 	                    </c:choose>
 	                        ${rmAttr.displayName}
@@ -123,8 +123,8 @@ function appendchecked(form, url) {
 	          </tr>
 	          
             <tr>
-              <td align="center" colspan="${numPerLine}"><input type="button" value="select all" onclick="checkFields(1)">
-                <input type="button" value="clear all" selected="yes" onclick="checkFields(0)">
+              <td align="center" colspan="${numPerLine}"><input type="button" value="select all" onclick="wdk.checkFields(1)">
+                <input type="button" value="clear all" selected="yes" onclick="wdk.checkFields(0)">
               </td>
             </tr>
 	        </c:if>

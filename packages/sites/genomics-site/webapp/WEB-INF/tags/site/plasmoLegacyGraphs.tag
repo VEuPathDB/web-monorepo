@@ -50,7 +50,7 @@
         </td>
          <td  class="centered"  nowrap><b>Sort By:</b>
 <SELECT NAME="DailyList"
-OnChange="javascript:updateImage('${imgId}', DailySort.DailyList.options[selectedIndex].value)">
+OnChange="javascript:wdk.api.updateImage('${imgId}', DailySort.DailyList.options[selectedIndex].value)">
 <OPTION SELECTED="SELECTED" VALUE="${preImgSrc}patient-number">patient-number</OPTION>
 <OPTION VALUE="${preImgSrc}age">age</OPTION>
 <OPTION VALUE="${preImgSrc}temperature">temperature</OPTION>

@@ -35,11 +35,11 @@ function fiveColRow(one, two, three, four, five) {
 
 /****** Favorite link functions for GBrowse ******/
 
-var saveFavTextLink = 'As Favorite <img width="20" src="' + getWebAppUrl() + '/wdk/images/favorite_gray.gif"/>';
-var removeFavTextLink = 'Remove From Favorites <img width="20" src="' + getWebAppUrl() + '/wdk/images/favorite_color.gif"/>';
+var saveFavTextLink = 'As Favorite <img width="20" src="' + wdk.getWebAppUrl() + '/wdk/images/favorite_gray.gif"/>';
+var removeFavTextLink = 'Remove From Favorites <img width="20" src="' + wdk.getWebAppUrl() + '/wdk/images/favorite_color.gif"/>';
 
 function applyCorrectFavoriteLink(sourceId, projectId) {
-	performIfItemIsFavorite(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
+	wdk.favorite.performIfItemIsFavorite(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
 			function() { setSavedItemLink(projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', removeFavTextLink); },
 			function() { /* no action needed if not a favorite */ });
 }
@@ -55,37 +55,37 @@ function removeGeneAsFavorite(projectId, sourceId) {
 
 /****** Basket link functions for GBrowse ******/
 
-var saveBasketTextLink = GbrowsePopupConfig.addBasketText + ' <img width="20" src="' + getWebAppUrl() + '/wdk/images/basket_gray.png"/>';
-var removeBasketTextLink = GbrowsePopupConfig.removeBasketText + ' <img width="20" src="' + getWebAppUrl() + '/wdk/images/basket_color.png"/>';
+var saveBasketTextLink = GbrowsePopupConfig.addBasketText + ' <img width="20" src="' + wdk.getWebAppUrl() + '/wdk/images/basket_gray.png"/>';
+var removeBasketTextLink = GbrowsePopupConfig.removeBasketText + ' <img width="20" src="' + wdk.getWebAppUrl() + '/wdk/images/basket_color.png"/>';
 
 function applyCorrectBasketLink(sourceId, projectId) {
-	performIfItemInBasket(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
+	wdk.basket.performIfItemInBasket(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
 			function() { setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink); },
 			function() { /* no action needed if not in basket */ });
 }
 
 function addGeneToBasket(projectId, sourceId) {
-	performSavedItemOp(addToBasket, projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink);
+	performSavedItemOp(wdk.basket.addToBasket, projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink);
 }
 
 function removeGeneFromBasket(projectId, sourceId) {
-	performSavedItemOp(removeFromBasket, projectId, sourceId, 'gbbasket', 'addGeneToBasket', saveBasketTextLink);
+	performSavedItemOp(wdk.basket.removeFromBasket, projectId, sourceId, 'gbbasket', 'addGeneToBasket', saveBasketTextLink);
 }
 
 
 /****** Utility link functions for GBrowse ******/
 
 function checkLogin() {
-	if (!User.isUserLoggedIn()) {
+	if (!wdk.isUserLoggedIn()) {
 		Balloon.prototype.hideTooltip(1);
-		User.login();
+		popLogin();
 		return; // if user logs in, will not get here
 	}
 }
 
 function performSavedItemOp(funcToCall, projectId, sourceId, selectionSuffix, nextFunction, nextLinkText) {
 	checkLogin();
-	jQuery('#'+sourceId+'_'+selectionSuffix).html('<img width="20" src="' + getWebAppUrl() + '/wdk/images/loading.gif"/>');
+	jQuery('#'+sourceId+'_'+selectionSuffix).html('<img width="20" src="' + wdk.getWebAppUrl() + '/wdk/images/loading.gif"/>');
 	funcToCall(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
 		    function(result) {
 				setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, nextLinkText);
@@ -99,7 +99,7 @@ function setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, ne
 
 function getSaveRowLinks(projectId, sourceId) {
 	var saveRowLinks;
-	if (User.isUserLoggedIn()) {
+	if (wdk.isUserLoggedIn()) {
 		// enable saving as favorite or to basket
 		var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><a href=\"javascript:void(0);\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">" + saveFavTextLink + "</a></span>";
 		var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><a href=\"javascript:void(0);\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">" + saveBasketTextLink + "</a></span>";

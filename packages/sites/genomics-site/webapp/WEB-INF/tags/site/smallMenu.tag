@@ -16,7 +16,7 @@
   <c:set var="version" value="${applicationScope.wdkModel.version}"/>
   <c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
  
-  <span class="onload-function" data-function="setUpNavDropDowns"><jsp:text/></span>
+  <span class="onload-function" data-function="wdk.setUpNavDropDowns"><jsp:text/></span>
   
   <!--*********** Small Menu Options on Header ***********-->
 
@@ -36,7 +36,7 @@
 	      <a href="javascript:void()">Help</a>
 	      <ul>
 	        <c:if test="${refer eq 'summary'}">
-	          <li><a href="javascript:void(0)" onclick="dykOpen()">Did You Know...</a></li>
+	          <li><a href="javascript:void(0)" onclick="wdk.dyk.dykOpen()">Did You Know...</a></li>
 	        </c:if>
 	        <li><a href="${constants.youtubeUrl}">YouTube Tutorials Channel</a></li>
 	        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Tutorials">Web Tutorials</a></li>

@@ -63,7 +63,7 @@
 </c:if>
 
 <c:if test="${refer == 'question' || refer == 'summary'}">
-  <imp:parameterScript />
+  <%-- <imp:parameterScript /> --%>
   <script type="text/javascript" src="/assets/js/orthologpattern.js"></script>
   <script type="text/javascript" src="${base}/wdkCustomization/js/span-location.js"></script>
   <script type="text/javascript" src="${base}/wdkCustomization/js/mutuallyExclusiveParams.js"></script>

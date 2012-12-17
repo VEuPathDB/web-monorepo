@@ -70,14 +70,14 @@
 
           <c:choose>
             <c:when test="${graph_id eq selected_graph_id}">
-            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}" name="geneOptions" checked /> &nbsp;
+            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}" name="geneOptions" checked /> &nbsp;
                         
                          <c:set var="imgSrc" 		value="${imgSrc}&id=${graph_id}"/>
                          <c:set var="tableSrc" 		value="${tableSrc}&id=${graph_id}"/>
                          
             </c:when>
             <c:otherwise>
-            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}"name="geneOptions" /> &nbsp;
+            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}"name="geneOptions" /> &nbsp;
             </c:otherwise>
           </c:choose>
           
@@ -113,14 +113,14 @@
           
           <c:choose>
             <c:when test="${vp_i == 0}">
-              ${vp} <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${vp}" name="${vp}" checked /> &nbsp;
+              ${vp} <input type="checkbox" onclick="wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${vp}" name="${vp}" checked /> &nbsp;
 
               <c:set var="imgSrc" 		value="${imgSrc}&vp=_LEGEND,${vp}"/>
               <c:set var="tableSrc" 		value="${tableSrc}&vp=${vp}"/>
               <c:set var="defaultVp" 		value="${vp}"/>
             </c:when>
             <c:otherwise>
-              ${vp} <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${vp}"name="${vp}" /> &nbsp;
+              ${vp} <input type="checkbox" onclick="wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${vp}"name="${vp}" /> &nbsp;
             </c:otherwise>
           </c:choose>
           <c:set var="vp_i" value="${vp_i +  1}"/>
@@ -147,12 +147,12 @@
         <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB' || row['project_id'].value eq 'MicrosporidiaDB' || row['project_id'].value eq 'PiroplasmaDB' || row['project_id'].value eq 'CryptoDB' || row['project_id'].value eq 'ToxoDB'}">
           <c:if test="${hasRma eq 'true'}">
             <b>Show log Scale (not applicable for log(ratio) graphs, percentile graphs or data tables)</b>
-            <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" checked />
+            <input type="checkbox" onclick="wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" checked />
           </c:if>
 
           <c:if test="${hasCoverage eq 'true'}">
             <b>Show log Scale (not applicable for log(ratio) graphs, percentile graphs, or data tables)</b>
-            <input type="checkbox" onclick="updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" />
+            <input type="checkbox" onclick="wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="internal_want_logged" name="want_logged" />
           </c:if>
         </c:if>
 

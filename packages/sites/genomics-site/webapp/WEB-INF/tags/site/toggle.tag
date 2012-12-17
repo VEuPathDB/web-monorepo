@@ -120,10 +120,10 @@
         <td>
         <c:set var="showOnClick" value=""/>
         <c:if test="${imageId != null}">
-            <c:set var="showOnClick" value="updateImage('${imageId}', '${imageSource}')"/>
+            <c:set var="showOnClick" value="wdk.api.updateImage('${imageId}', '${imageSource}')"/>
         </c:if>
         <c:if test="${imageMapDivId != null}">
-            <c:set var="showOnClick" value="updateImageMapDiv('${imageMapDivId}', '${imageMapSource}', '${postLoadJS}')"/>
+            <c:set var="showOnClick" value="wdk.api.updateImageMapDiv('${imageMapDivId}', '${imageMapSource}', '${postLoadJS}')"/>
         </c:if>
         <c:if test="${showOnClick != ''}">
             <c:set var="showOnClick" value="${showOnClick}&amp;&amp;"/>
@@ -139,18 +139,18 @@
         <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
            <div id="toggle${name}" class="toggle-handle" name="${name}" align="left">
              <b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
-             <a href="javascript:${showOnClick}toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
+             <a href="javascript:${showOnClick}wdk.api.toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
            </div>
         </c:when>
 
         <%--  Netscape/Firefox cannot handle this way of doing it  --%>
         <c:otherwise>
            <div id="showToggle${name}" class="toggle" name="${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
-             <a href="javascript:${showOnClick}showLayer('${name}')&amp;&amp;showLayer('hideToggle${name}')&amp;&amp;hideLayer('showToggle${name}')&amp;&amp;storeIntelligentCookie('show${name}',1,365)" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
+             <a href="javascript:${showOnClick}wdk.api.showLayer('${name}')&amp;&amp;wdk.api.showLayer('hideToggle${name}')&amp;&amp;wdk.api.hideLayer('showToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',1,365)" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
            </div>
 
            <div id="hideToggle${name}" class="toggle" name="${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
-              <a href="javascript:hideLayer('${name}')&amp;&amp;showLayer('showToggle${name}')&amp;&amp;hideLayer('hideToggle${name}')&amp;&amp;storeIntelligentCookie('show${name}',0,365);" title="Hide ${displayName}" onmouseover="status='Hide ${displayName}';return true" onmouseout="status='';return true">Hide</a>
+              <a href="javascript:wdk.api.hideLayer('${name}')&amp;&amp;wdk.api.showLayer('showToggle${name}')&amp;&amp;wdk.api.hideLayer('hideToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',0,365);" title="Hide ${displayName}" onmouseover="status='Hide ${displayName}';return true" onmouseout="status='';return true">Hide</a>
             </div>
         </c:otherwise>
         </c:choose>
@@ -207,7 +207,7 @@
       <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
         <c:if test="${isOpen}"> 
            <script type="text/javascript">
-              toggleLayer('${name}', 'toggle${name}');
+              wdk.api.toggleLayer('${name}', 'toggle${name}');
             </script>
         </c:if>
      </c:when> 
@@ -218,18 +218,18 @@
           <c:when test="${isOpen}">
           <script type="text/javascript">
           <!-- //
-            showLayer("${name}");
-            showLayer("hideToggle${name}");
-            hideLayer("showToggle${name}");
+            wdk.api.showLayer("${name}");
+            wdk.api.showLayer("hideToggle${name}");
+            wdk.api.hideLayer("showToggle${name}");
           // -->
           </script>
          </c:when>
          <c:otherwise>
           <script type="text/javascript">
           <!-- //
-            hideLayer("${name}");
-            hideLayer("hideToggle${name}");
-            showLayer("showToggle${name}");
+            wdk.api.hideLayer("${name}");
+            wdk.api.hideLayer("hideToggle${name}");
+            wdk.api.showLayer("showToggle${name}");
           // -->
           </script>
          </c:otherwise>
@@ -240,7 +240,7 @@
         <c:if test="${imageId != null && isOpen}">
           <script type="text/javascript">
             <!-- //
-              updateImage('${imageId}', '${imageSource}')
+              wdk.api.updateImage('${imageId}', '${imageSource}')
             // -->
           </script>
         </c:if>
@@ -248,7 +248,7 @@
         <c:if test="${imageMapDivId != null && isOpen}">
           <script type="text/javascript">
             <!-- //
-              updateImageMapDiv('${imageMapDivId}', '${imageMapSource}', '${postLoadJS}')
+              wdk.api.updateImageMapDiv('${imageMapDivId}', '${imageMapSource}', '${postLoadJS}')
             // -->
           </script>
         </c:if>

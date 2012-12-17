@@ -24,7 +24,7 @@ function goToIsolate(ele,type,source_id,start,end) {
 		alert("Please select at least two isolates to run ClustalW");
 		return false;
 	}
-	var url = "/cgi-bin/isolateClustalw?project_id=" + modelName() + ";type=" + type + ";sid=" + source_id + ";start=" + start + ";end=" + end + ";isolate_ids=";
+	var url = "/cgi-bin/isolateClustalw?project_id=" + wdk.modelName() + ";type=" + type + ";sid=" + source_id + ";start=" + start + ";end=" + end + ";isolate_ids=";
 	cbs.each(function(){
 		url += $(this).val() + ",";
 	});

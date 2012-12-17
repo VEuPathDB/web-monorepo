@@ -76,7 +76,7 @@
 </c:choose>
 
 <script type="text/javascript">
-    $(function() { assignTooltipsLeft('.dqg-tooltip', -3); });
+    $(function() { wdk.tooltips.assignTooltipsLeft('.dqg-tooltip', -3); });
 </script>
 
 <table width="100%" border="0" class="threecolumn">

@@ -18,8 +18,8 @@
 
 <script type="text/javascript">
   $(function() {
-    initializeQuestion();
-    assignTooltips('.query-tooltip', 35);
+    wdk.question.init();
+    wdk.tooltips.assignTooltips('.query-tooltip', 35);
   });
 </script>
 
@@ -45,8 +45,8 @@ function writeData(page, div, quesName, insertStep){
                         // t.html(data);
                         $.unblockUI();
 			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
-			initParamHandlers(true);
-			var question = new WdkQuestion();
+			wdk.parameterHandlers.init(true);
+			var question = new wdk.question.WdkQuestion();
 			question.registerGroups();
 		},
                 error: function(data) {
@@ -251,7 +251,7 @@ function getComboElement()
         <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
         <c:set var="action" value="${requestScope.action}"/>
         <c:url var="questionUrl" value="/wizard.do?stage=question&action=${action}&strategy=${wdkStrategy.strategyId}&step=${wdkStep.stepId}&questionFullName=${q.fullName}" />
-        <c:set var="nextCall" value="callWizard('${questionUrl}',null,null,null,'next');" />
+        <c:set var="nextCall" value="wdk.addStepPopup.callWizard('${questionUrl}',null,null,null,'next');" />
       </c:otherwise>
     </c:choose>
 

@@ -7,7 +7,6 @@ function QuickSearch() {
 
     this.LoadQuickSearch = function() {
        var quickSearch = this;
-       var wdk = new WDK();
        var session = jQuery("#quick-search").attr("session-id");
        jQuery("#quick-search form").each(function() {
            var form = this;

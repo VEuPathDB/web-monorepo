@@ -19,7 +19,7 @@ function customEditStep(questionName, url) {
 }
 
 // Include orthologs link in gene details boxes in all sites
-function customCreateDetails(jsonstep, modelstep) {
+function customCreateDetails(jsonstep, modelstep, strat) {
    var orthologs = "";
    if(jsonstep.dataType == "GeneRecordClasses.GeneRecordClass"){
       var orthologTgt;
@@ -28,7 +28,7 @@ function customCreateDetails(jsonstep, modelstep) {
       }else{
          orthologTgt = modelstep.back_step_Id;
       }
-      orthologs = "<a title='Add an ortholog transform to this step: obtain the ortholog genes to the genes in this result' class='orthologs_link' href='javascript:void(0)' onclick='openOrthologFilter(\"" + strat.backId + "\"," + orthologTgt + ");hideDetails(this)'>Orthologs</a>&nbsp;|&nbsp;";
+      orthologs = "<a title='Add an ortholog transform to this step: obtain the ortholog genes to the genes in this result' class='orthologs_link' href='javascript:void(0)' onclick='openOrthologFilter(\"" + strat.backId + "\"," + orthologTgt + ");wdk.step.hideDetails(this)'>Orthologs</a>&nbsp;|&nbsp;";
    }
    return orthologs;
 }

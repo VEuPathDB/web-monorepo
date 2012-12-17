@@ -84,15 +84,15 @@
 
     <c:choose>
       <c:when test="${wdkUser == null || wdkUser.guest}">
-        <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');User.login('/showApplication.do');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
+        <li><a id="mybasket" onclick="wdk.stratTabCookie.setCurrentTabCookie('application', 'basket');wdk.user.login('/showApplication.do');" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
       </c:when>
       <c:otherwise>
         <c:choose>
           <c:when test="${refer == 'summary'}">
-          <li><a id="mybasket" onclick="showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
+          <li><a id="mybasket" onclick="wdk.addStepPopup.showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
           </c:when>
           <c:otherwise>
-          <li><a id="mybasket" onclick="setCurrentTabCookie('application', 'basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
+          <li><a id="mybasket" onclick="wdk.stratTabCookie.setCurrentTabCookie('application', 'basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
           </c:otherwise>
         </c:choose>
       </c:otherwise>
@@ -187,7 +187,7 @@
 
         <c:if test="${project != 'EuPathDB'}" >
           <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
-          <li><a onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+          <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
         </c:if>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li> 
       </ul>
@@ -218,11 +218,11 @@
 
 
        <c:if test="${project != 'EuPathDB'}" >    
-        <li><a title="Add your comments to your gene of interest: start at the gene page" onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
+        <li><a title="Add your comments to your gene of interest: start at the gene page" onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
 
         <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
 
-        <li><a onclick="setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+        <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
       </c:if>
 
       <li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>
@@ -242,7 +242,7 @@
 
       <c:choose>
         <c:when test="${wdkUser == null || wdkUser.guest}">
-          <li id="favorite-menu"><a id="mybasket" onclick="User.login('/showFavorite.do');" href="javascript:void(0)">
+          <li id="favorite-menu"><a id="mybasket" onclick="wdk.user.login('/showFavorite.do');" href="javascript:void(0)">
             <img style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="<c:url value="/wdk/images/favorite_color.gif"/>"/>&nbsp;
             <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
             </a>
