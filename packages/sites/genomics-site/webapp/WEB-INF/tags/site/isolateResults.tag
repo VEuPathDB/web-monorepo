@@ -329,9 +329,9 @@
 	  	<input type="button" value="Run Clustalw on Checked Strains" 
 				onClick="goToIsolate(this)" />
 	  	<input type="button" name="CheckAll" value="Check All" 
-				onClick="wdk.api.checkboxAll($('input:checkbox[name=selectedFields]'))">
+				onClick="wdk.api.checkboxAll(jQuery('input:checkbox[name=selectedFields]'))">
 			<input type="button" name="UnCheckAll" value="Uncheck All" 
-				onClick="wdk.api.checkboxNone($('input:checkbox[name=selectedFields]'))">
+				onClick="wdk.api.checkboxNone(jQuery('input:checkbox[name=selectedFields]'))">
 	  </td>
 	</tr>
 

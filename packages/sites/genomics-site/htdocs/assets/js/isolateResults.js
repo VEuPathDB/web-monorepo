@@ -17,6 +17,7 @@ function checkboxNone(ele) {
 */
 
 function goToIsolate(ele,type,source_id,start,end) {
+  var $ = jQuery;
 	var form = $(ele).parents("form[name=checkHandleForm]");
 	var cbs = form.find('input:checkbox[name=selectedFields]:checked');
 	//alert("cbs length is " + cbs.length);
