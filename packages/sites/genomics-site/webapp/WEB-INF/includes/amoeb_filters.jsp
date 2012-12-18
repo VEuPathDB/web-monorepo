@@ -18,6 +18,10 @@
     <th align="center"><i>Entamoeba dispar</i></th>
     <th align="center"><i>Entamoeba histolytica</i></th>
     <th align="center"><i>Entamoeba invadens</i></th>
+    <th align="center"><i>Entamoeba moshkovskii</i></th>
+    <th align="center"><i>Entamoeba nuttalli</i></th>
+    <th align="center"><i>Acanthamoeba castellanii</i></th>
+
   </tr>
   <tr align="center">
     <td>
@@ -50,5 +54,27 @@
                           answerValue="${answerValue}" 
                           instanceName="einv_genes" />  
     </td>
+
+
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="emos_genes" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="enut_genes" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="acas_genes" />  
+    </td>
+
+
   </tr>
 </table>
