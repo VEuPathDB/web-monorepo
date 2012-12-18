@@ -11,7 +11,7 @@ use IO::File;
 use CBIL::Util::PropertySet;
 use DBD::Oracle qw(:ora_types);
 use ApiCommonWebsite::Model::ModelConfig;
-
+use Fcntl qw(:flock);
 #------------------------------------------------------------------------------
 BEGIN {
     # Carp callback for sending fatal messages to browser
@@ -94,6 +94,7 @@ $sth = $dbh->prepare($ecMapSql);
 $sth->execute;
 
 my $ecOrganismMap;
+my $ecPopUpMap;
 
 while (my $ecMap = $sth->fetchrow_hashref()) {
   my $ecNumber = $$ecMap{'EC_NUMBER'};
@@ -175,6 +176,8 @@ foreach my $ecNumber (keys %{$ecOrganismMap}){
   my ($x1, $y1, $x2, $y2) = &rectangleCorners($x,$y,$width,$height);
   my $increment = ($x2-$x1)/$divisions;
 
+  $ecPopUpMap = $ecPopUpMap."<area shape=\"rect\" coords=\"$x1,$y1,$x2,$y2\"  alt=\"Ec Number\" title=\"$ecNumber\">";
+
   for (my $k = 0; $k < $divisions; $k++){
         my $color  = $im->colorAllocate($$red[$k],$$green[$k],$$blue[$k]); 
     for (my $i = $x1; $i < ($x1+$increment); $i++) {
@@ -197,8 +200,8 @@ print "Content-type: image/gif\n\n";
 print $gifImage;
 
 #if needed at a future development
-#my $outFile = "/tmp/pathwaySourceId.gif";
-#open (OUT,">image.gif") || die "could not open temporary  output file for drawing\n";
+#my $outFile = "/tmp/$pathwaySourceId.gif";
+#open (OUT,">$outFile") || die "could not open temporary  output file for drawing\n";
 #binmode (OUT);
 #print OUT $gifImage;
 #close OUT;
@@ -234,6 +237,22 @@ sub rectangleCorners {
   my $y2 = $y + $h/2;
 
   return($x1, $y1, $x2, $y2);
+}
+
+sub print_cached {
+  my $newpagecache = shift;
+  if ($newpagecache) {
+    if (open(CP,"+>$newpagecache")) {
+      flock(CP,LOCK_EX);
+      print CP @_;
+      seek(CP,0,0);
+      print <CP>;
+      flock(CP,LOCK_UN);
+      close(CP);
+    }
+  } else {
+    print @_;
+  }
 }
 
 

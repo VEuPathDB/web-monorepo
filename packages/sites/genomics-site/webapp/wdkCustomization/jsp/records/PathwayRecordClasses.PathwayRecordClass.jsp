@@ -1,8 +1,9 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<!--#include file="/cgi-bin/KEGGImage.map" -->
 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -53,17 +54,17 @@
     displayName="${attr.displayName}"
     content="${attr.value}" 
     attribute="${attr.name}"/>
-<br>
-<c:set var="popup" value="Active regions here"/>
-<div align="center">
- <img align="middle" src="/cgi-bin/colorKEGGmap.pl?model=${projectId}&pathway=${id}" usemap="#pathwayMap"/>
- <map name="pathwayMap">
-  <area shape="rect" coords="0,0,300,300"  alt="Sun" title="${fn:escapeXml(popup)}">
- </map>
-</div>
+
 <br>
 
 <br>
+<c:set var="popup" value="Active regions here"/>
+<div align="center">
+<img align="middle" src="/cgi-bin/colorKEGGmap.pl?model=${projectId}&pathway=${id}" usemap="#pathwayMap"/>
+<imp:pathwayMap pathway="${id}" />
+</div>
+<br>
+
 
 
 <%-- Reaction Table ------------------------------------------------%>
