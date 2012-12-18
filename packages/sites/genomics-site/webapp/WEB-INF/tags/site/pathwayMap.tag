@@ -21,10 +21,33 @@
       <c:set var="x2"              value="${row['x2'].value}"/>
       <c:set var="y2"              value="${row['y2'].value}"/>
 
-      <c:set var="popup"           value="EC Number: ${ecNumber}&#013;&#013;Organisms: ${organisms}&#013;&#013;Genes: ${genes}&#013;"/>
+      <c:set var="popup" value="<table><tr><td>EC No:</td><td><a href='showQuestion.do?questionFullName=GeneQuestions.GenesByEcNumber'>${ecNumber}</a></td></tr><tr><td>Organisms:</td><td>${organisms}</td></tr><tr><td>Genes:</td><td>${genes}</td></tr></table>"/>
 
-    <area shape="rect" coords="${x1},${y1},${x2},${y2}" alt="Ec Number" title="${popup}">
+    <area shape="rect"  coords="${x1},${y1},${x2},${y2}" alt="${popup}">
     </c:if>
 </c:forEach>
 
 </map>
+
+
+<script type="text/javascript">
+// Create the tooltips only when document ready
+$(document).ready(function(){
+   // Use the each() method to gain access to each elements attributes
+   $('area').each(function()
+   {
+      $(this).qtip(
+      {
+         content: $(this).attr('alt'), // Use the ALT attribute of the area map
+         position: 'topLeft', // Set its position
+         hide:  {
+            fixed: true // Make it fixed so it can be hovered over
+         },
+	 style: {
+		classes: 'ui-tooltip-green ui-tooltip-rounded'
+	 }
+      });
+   });
+});
+</script>
+
