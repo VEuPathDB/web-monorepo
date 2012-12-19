@@ -39,7 +39,10 @@ $(document).ready(function(){
       $(this).qtip(
       {
          content: $(this).attr('alt'), // Use the ALT attribute of the area map
-         position: 'topLeft', // Set its position
+         position: {		
+                my: 'top left',  // Position my top left...
+		at: 'bottom right', // at the bottom right of...
+         },
          hide:  {
             fixed: true // Make it fixed so it can be hovered over
          },
