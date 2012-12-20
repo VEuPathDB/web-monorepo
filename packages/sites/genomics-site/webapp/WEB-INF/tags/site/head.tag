@@ -56,11 +56,11 @@
     <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"/> <!-- standard -->
     <link rel="shortcut icon" href="/assets/images/${project}/favicon.ico"/>         <!-- for IE7 -->
 
-    <!-- from WDK -->
-    <imp:includes refer="${refer}" /> 
+    <!-- StyleSheets provided by WDK -->
+    <imp:wdkStylesheets refer="${refer}" /> 
 
-    <!-- other API links and javascript -->
-    <imp:jscript refer="${refer}"/>
+    <!-- StyleSheets provided by Site -->
+    <imp:stylesheets refer="${refer}" /> 
 
     <!-- extra styling to get around the sidebar on home page. -->
     <c:if test="${refer eq 'home'}">
@@ -68,6 +68,13 @@
         noscript .announcebox.warn { margin-left: 220px; }
       </style>
     </c:if>
+
+    <!-- JavaScript provided by WDK -->
+    <imp:wdkJavascripts refer="${refer}"/>
+
+    <!-- JavaScript provided by Site -->
+    <imp:javascripts refer="${refer}"/>
+
 
   </head>
   

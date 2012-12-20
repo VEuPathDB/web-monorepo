@@ -11,12 +11,6 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<link rel="stylesheet" href="<c:url value='/wdkCustomization/css/superfish/css/superfish.css'/>" type="text/css"/>
-
-<%-- When definitions are in conflict, the next one overrides the previous one  --%>
-<link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 
-<link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
-
 <!-- JQuery library is included by WDK -->
 
 <!-- comment out, since it is commented out below
@@ -38,10 +32,8 @@
     <script type="text/javascript" src="${base}/wdkCustomization/js/export-basket.js"></script>
 
     <script type="text/javascript" src="${base}/wdkCustomization/js/spanlogic.js"></script>
-    <link rel="stylesheet" href="${base}/wdkCustomization/css/spanlogic.css" type="text/css" />
 
     <script type="text/javascript" src="${base}/wdkCustomization/js/span-genome-view.js"></script>
-    <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/span-genome-view.css"/>
 
     <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"></script> -->
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
@@ -86,11 +78,6 @@
 <!-- show/hide the tables in the Record page -->
 <script type='text/javascript' src="/assets/js/show_hide_tables.js"></script>
 
-<!-- Data source page -->
-<c:if test="${refer == 'data-source'}">
-  <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/dataSource.css"/>
-</c:if>
-
 <!-- SRT page -->
 <c:if test="${refer == 'srt'}">
   <script type="text/javascript" src="/assets/js/srt.js"></script>
@@ -103,22 +90,6 @@
 <!-- fix to transparent png images in IE 7 -->
 <!--[if lt IE 7]>
   <script type="text/javascript" src="/assets/js/pngfix.js"></script>
-<![endif]-->
-
-<!--[if lte IE 8]>
-<style>
-  #header_rt {
-    width:50%;
-   }
-</style>
-<![endif]-->
-
-<!--[if lt IE 8]>
-  <link rel="stylesheet" href="/assets/css/ie7.css" type="text/css" />
-<![endif]-->
-
-<!--[if lt IE 7]>
-  <link rel="stylesheet" href="/assets/css/ie6.css" type="text/css" />
 <![endif]-->
 
 <!-- empty, used to contain the IE warning popup, and some login/register related functionality
