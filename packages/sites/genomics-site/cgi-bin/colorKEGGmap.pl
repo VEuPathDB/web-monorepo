@@ -74,21 +74,23 @@ $factorColorMap = &getColorMap(\@coloringFactor,$colors);
 
 
 #EC NUMBER BASED COLORING
-my $ecMapSql = "SELECT DISTINCT ec.ec_number,apidb.tab_to_string(set(cast(COLLECT(gf.organism) AS apidb.varchartab))) as organisms,
-                       pn.x, pn.y,pn.width, pn.height
-                FROM   apidbTuning.GeneAttributes gf, ApidbTuning.GenomicSequence gs,
-                       dots.Transcript t, dots.translatedAaFeature taf,apidb.pathway p, apidb.pathwaynode pn,
-                       dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec,ApidbTuning.GeneAttributes ga
-                WHERE  gs.na_sequence_id = gf.na_sequence_id
-                AND    ga.source_id = gf.source_id
-                AND    gf.na_feature_id = t.parent_id
-                AND    t.na_feature_id = taf.na_feature_id
-                AND    taf.aa_sequence_id = asec.aa_sequence_id
-                AND    asec.enzyme_class_id = ec.enzyme_class_id
-                AND    p.pathway_id = pn.parent_id
-                AND    ec.ec_number = pn.display_label
-                AND    p.source_id = '$pathwaySourceId'
-                group by ec.ec_number, pn.x, pn.y,pn.width, pn.height";
+my $ecMapSql = "SELECT DISTINCT pn.display_label, ec.organisms,
+                       pn.x, pn.y,pn.width, pn.height, pn.node_type
+                FROM   (Select apidb.tab_to_string(set(cast(COLLECT(gf.organism) AS apidb.varchartab))) as organisms,ec.ec_number 
+                       from  ApidbTuning.GeneAttributes gf, ApidbTuning.GenomicSequence gs,
+                             dots.Transcript t, dots.translatedAaFeature taf,
+                             dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec,ApidbTuning.GeneAttributes ga
+                       Where  gs.na_sequence_id = gf.na_sequence_id
+                       AND    ga.source_id = gf.source_id
+                       AND    gf.na_feature_id = t.parent_id
+                       AND    t.na_feature_id = taf.na_feature_id
+                       AND    taf.aa_sequence_id = asec.aa_sequence_id
+                       AND    asec.enzyme_class_id = ec.enzyme_class_id
+                       Group By ec.ec_number ) ec,
+                       (Select pn.display_label,pn.x, pn.y,pn.width, pn.height, pn.pathway_node_type_id as node_type
+                        from apidb.pathway p, apidb.pathwaynode pn Where p.pathway_id = pn.parent_id and  p.source_id = '$pathwaySourceId'
+                        Group By pn.pathway_node_type_id, pn.display_label, pn.x, pn.y,pn.width, pn.height) pn
+                WHERE  ec.ec_number(+) = pn.display_label";
  
 $sth = $dbh->prepare($ecMapSql);
 $sth->execute;
@@ -97,28 +99,39 @@ my $ecOrganismMap;
 my $ecPopUpMap;
 
 while (my $ecMap = $sth->fetchrow_hashref()) {
-  my $ecNumber = $$ecMap{'EC_NUMBER'};
-  chomp $ecNumber;
+  if ($$ecMap{'NODE_TYPE'} == '1') {
 
-  my @organisms = split(/,/,$$ecMap{'ORGANISMS'});
-  my (@r, @g, @b);
+    my $ecNumber = $$ecMap{'DISPLAY_LABEL'};
+    chomp $ecNumber;
+    next unless $$ecMap{'ORGANISMS'};
+    my @organisms = split(/,/,$$ecMap{'ORGANISMS'});
+    my (@r, @g, @b);
    
-  foreach my $org (@organisms){
-    next unless $factorColorMap->{$org}; 
-    push @r, $factorColorMap->{$org}->{'r'};   
-    push @g, $factorColorMap->{$org}->{'g'};   
-    push @b, $factorColorMap->{$org}->{'b'};   
-  }
+    foreach my $org (@organisms){
+      next unless $factorColorMap->{$org}; 
+      push @r, $factorColorMap->{$org}->{'r'};   
+      push @g, $factorColorMap->{$org}->{'g'};   
+      push @b, $factorColorMap->{$org}->{'b'};   
+    }
 
-  $ecOrganismMap->{$ecNumber}->{'red'} = \@r;
-  $ecOrganismMap->{$ecNumber}->{'green'} = \@g;
-  $ecOrganismMap->{$ecNumber}->{'blue'} = \@b;
-  $ecOrganismMap->{$ecNumber}->{'x'} =  $$ecMap{'X'};
-  $ecOrganismMap->{$ecNumber}->{'y'} = $$ecMap{'Y'};
-  $ecOrganismMap->{$ecNumber}->{'height'} = $$ecMap{'HEIGHT'};
-  $ecOrganismMap->{$ecNumber}->{'divisions'} = @r;
-  $ecOrganismMap->{$ecNumber}->{'width'} = $$ecMap{'WIDTH'};
-  
+    $ecOrganismMap->{$ecNumber}->{'red'} = \@r;
+    $ecOrganismMap->{$ecNumber}->{'green'} = \@g;
+    $ecOrganismMap->{$ecNumber}->{'blue'} = \@b;
+    $ecOrganismMap->{$ecNumber}->{'x'} =  $$ecMap{'X'};
+    $ecOrganismMap->{$ecNumber}->{'y'} = $$ecMap{'Y'};
+    $ecOrganismMap->{$ecNumber}->{'height'} = $$ecMap{'HEIGHT'};
+    $ecOrganismMap->{$ecNumber}->{'divisions'} = @r;
+    $ecOrganismMap->{$ecNumber}->{'width'} = $$ecMap{'WIDTH'};
+    $ecOrganismMap->{$ecNumber}->{'nodeType'} = $$ecMap{'NODE_TYPE'};
+
+  } elsif ($$ecMap{'NODE_TYPE'} == '2') {
+      my $compound = $$ecMap{'DISPLAY_LABEL'};
+      $ecOrganismMap->{$compound}->{'x'} = $$ecMap{'X'};
+      $ecOrganismMap->{$compound}->{'y'} = $$ecMap{'Y'};
+      $ecOrganismMap->{$compound}->{'height'} = $$ecMap{'HEIGHT'};
+      $ecOrganismMap->{$compound}->{'width'} = $$ecMap{'WIDTH'};
+      $ecOrganismMap->{$compound}->{'nodeType'} = $$ecMap{'NODE_TYPE'};
+  }  
 }
 
 #print Dumper  $ecOrganismMap;
@@ -172,26 +185,29 @@ foreach my $ecNumber (keys %{$ecOrganismMap}){
   my $red = $ecOrganismMap->{$ecNumber}->{'red'};
   my $green = $ecOrganismMap->{$ecNumber}->{'green'};
   my $blue = $ecOrganismMap->{$ecNumber}->{'blue'};
+  
+  if ($ecOrganismMap->{$ecNumber}->{'nodeType'} == '1') { 
+    my ($x1, $y1, $x2, $y2) = &rectangleCorners($x,$y,$width,$height);
+    my $increment = ($x2-$x1)/$divisions;
 
-  my ($x1, $y1, $x2, $y2) = &rectangleCorners($x,$y,$width,$height);
-  my $increment = ($x2-$x1)/$divisions;
+    for (my $k = 0; $k < $divisions; $k++){
+          my $color  = $im->colorAllocate($$red[$k],$$green[$k],$$blue[$k]); 
+      for (my $i = $x1; $i < ($x1+$increment); $i++) {
+         for (my $j = $y1; $j < $y2; $j++) {
 
-  $ecPopUpMap = $ecPopUpMap."<area shape=\"rect\" coords=\"$x1,$y1,$x2,$y2\"  alt=\"Ec Number\" title=\"$ecNumber\">";
+           my $index = $im->getPixel($i,$j);
+           my ($r,$g,$b) = $im->rgb($index);
 
-  for (my $k = 0; $k < $divisions; $k++){
-        my $color  = $im->colorAllocate($$red[$k],$$green[$k],$$blue[$k]); 
-    for (my $i = $x1; $i < ($x1+$increment); $i++) {
-       for (my $j = $y1; $j < $y2; $j++) {
-
-         my $index = $im->getPixel($i,$j);
-         my ($r,$g,$b) = $im->rgb($index);
-
-         if (($r==252) && ($g==254) && ($b==252)) {
-           $im->setPixel($i,$j,$color);
-         }
+           if (($r==252) && ($g==254) && ($b==252)) {
+             $im->setPixel($i,$j,$color);
+           }
+        }
       }
-    }
     $x1 = $x1 + $increment;
+    }
+  } elsif ($ecOrganismMap->{$ecNumber}->{'nodeType'} == '2') {
+    my $yellow = $im->colorAllocate(102,102,0); 
+    $im->filledEllipse($x,$y,$width,$height, $yellow);
   }
 }
 
@@ -239,21 +255,7 @@ sub rectangleCorners {
   return($x1, $y1, $x2, $y2);
 }
 
-sub print_cached {
-  my $newpagecache = shift;
-  if ($newpagecache) {
-    if (open(CP,"+>$newpagecache")) {
-      flock(CP,LOCK_EX);
-      print CP @_;
-      seek(CP,0,0);
-      print <CP>;
-      flock(CP,LOCK_UN);
-      close(CP);
-    }
-  } else {
-    print @_;
-  }
-}
+
 
 
 1;
