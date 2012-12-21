@@ -65,19 +65,19 @@
       <c:forEach items="${ds_ref_questions}" var="dsRecord">
         <li class="data-source">
           <c:set var="ds_attributes" value="${dsRecord.attributes}" />
-          <c:set var="ds_name" value="${ds_attributes['data_source_name']}" />
+          <c:set var="ds_id" value="${ds_attributes['dataset_id']}" />
           <c:set var="ds_display" value="${ds_attributes['display_name']}" />
           <c:set var="ds_tables" value="${dsRecord.tables}" />
           <c:set var="ds_publications" value="${ds_tables['Publications']}" />
           <a class="title" 
-             href="<c:url value='/getDataSource.do?question=${wdkQuestion.fullName}&display=detail#target=${ds_name}'/>">${ds_display}</a>
+             href="<c:url value='/getDataset.do?question=${wdkQuestion.fullName}&display=detail#${ds_id}'/>">${ds_display}</a>
           <div class="detail">
             <div class="summary">${ds_attributes['summary']}</div>
             <c:if test="${fn:length(ds_publications) > 0}">
                 <ul>
                   <c:forEach items="${ds_publications}" var="publication">
                     <li>
-                      <a href="http://www.ncbi.nlm.nih.gov/pubmed/${publication['pmid']}">${publication['citation']}</a>
+                    <a href="${publication['pubmed_link'].url}">${publication['citation'].value}</a>
                     </li>
                   </c:forEach>
                 </ul>
