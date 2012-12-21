@@ -6,7 +6,7 @@
 
 <%-- get wdkXmlQuestionSets saved in request scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
-<c:set var="dataSources" value="${requestScope.dataSources}"/>
+<c:set var="datasets" value="${requestScope.datasets}"/>
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
 
@@ -20,13 +20,13 @@
   <div class="smallitalics">(Click on a category to jump to the corresponding section in the page)</div> <br/>
 
   <ul id="toc">
-    <c:forEach items="${dataSources}" var="category">
+    <c:forEach items="${datasets}" var="category">
       <li><a href="#${category.key}"><i>${category.key}</i></a></li>
     </c:forEach>
   </ul>
   <br/><br/><br/>
 
-  <c:forEach items="${dataSources}" var="category">
+  <c:forEach items="${datasets}" var="category">
   <div class="category">
       <div class="anchor">[ <a href="#_top">Top</a> ]</div>
       <a name="${category.key}"></a>
@@ -181,7 +181,7 @@
 
    <%-- if we came to this page to show only a few datasets (would be specified in the url) --%>
   <c:if test="${fn:length(param.reference) > 0}">
-    <p style="text-align:center;font-size:120%"><a href="<c:url value='/getDataSource.do?display=detail' />">Click here to see the complete list of Data Sources</a></p>
+    <p style="text-align:center;font-size:120%"><a href="<c:url value='/getDataset.do?display=detail' />">Click here to see the complete list of Data Sources</a></p>
   </c:if>
 
 </div>      <!-- #data-sources   -->

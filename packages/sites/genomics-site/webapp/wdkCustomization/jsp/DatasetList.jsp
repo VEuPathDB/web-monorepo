@@ -4,7 +4,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 
 <!-- get wdkXmlQuestionSets saved in request scope -->
-<c:set var="dataSources" value="${requestScope.dataSources}"/>
+<c:set var="datasets" value="${requestScope.datasets}"/>
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
 <c:set var="reference">
@@ -17,7 +17,7 @@
 
 <!-- show all xml question sets -->
 <UL>
-  <c:forEach items="${dataSources}" var="category">
+  <c:forEach items="${datasets}" var="category">
     <li>
       <span class="category">${category.key}</span>
       <ul>
@@ -25,7 +25,7 @@
           <c:set var="primaryKey" value="${record.primaryKey}"/>
           <c:set var="attributes" value="${record.attributes}"/>
           <c:set var="displayName" value="${attributes['display_name']}" />
-          <LI><a href="getDataSource.do${reference}#${primaryKey.value}">${displayName.value}</a></LI>
+          <LI><a href="getDataset.do${reference}#${primaryKey.value}">${displayName.value}</a></LI>
         </c:forEach>
       </ul>
     </li>
