@@ -39,9 +39,8 @@
           <c:set var="attributes" value="${record.attributes}"/>
           <c:set var="name" value="${attributes['dataset_name']}" />
           <c:set var="displayName" value="${attributes['display_name']}" />
-          <c:set var="version" value="${attributes['version']}" />
           <c:set var="categories" value="${attributes['category']}" />
-          <c:set var="organism" value="${attributes['organism']}" />
+          <c:set var="organism" value="${attributes['organisms']}" />
           <c:set var="description" value="${attributes['description']}" />
           <c:set var="contact" value="${attributes['contact']}" />
           <c:set var="institution" value="${attributes['institution']}" />        
@@ -49,7 +48,7 @@
           <c:set var="publications" value="${tables['Publications']}" />
           <c:set var="contacts" value="${tables['Contacts']}" />
           <c:set var="isolates" value="${tables['Isolates']}" />
-          <c:set var="externallinks" value="${tables['ExternalLinks']}" />
+          <c:set var="externallinks" value="${tables['HyperLinks']}" />
           <c:set var="references" value="${tables['References']}" />
 
           <div class="data-set">
@@ -58,7 +57,6 @@
             <div class="dstitle">
               <a name="${name.value}"></a>
               ${displayName.value}
-              (<span class="caption">${version.displayName}</span>: ${version.value})
             </div>
 
             <div class="small" style="padding:6px;">
@@ -128,7 +126,7 @@
                <c:set var="contactsContent">
                 <ul>
                   <c:forEach items="${contacts}" var="contact">
-                        <li><c:if test="${contact['name'] != null}">${contact['name']}</c:if> <c:if test="${contact['affiliation'] != null}">(${contact['affiliation']})</c:if></li>
+                        <li><c:if test="${contact['contact_name'] != null}">${contact['contact_name']}</c:if> <c:if test="${contact['affiliation'] != null}">(${contact['affiliation']})</c:if></li>
                   </c:forEach>
                 </ul>
               </c:set>
