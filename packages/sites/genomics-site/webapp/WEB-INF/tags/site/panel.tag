@@ -47,7 +47,7 @@
   <c:when test='${trimmedAttribution != null && trimmedAttribution != ""}'>
     <td align="right">
      <font size="-2" face="Arial,Helvetica">
-     [<a href="getDataSource.do?display=detail&datasets=${trimmedAttribution}&title=${displayName}">
+     [<a href="getDataset.do?display=detail&datasets=${trimmedAttribution}&title=${displayName}">
      Data Sources</a>]
      </font>
     </td>
@@ -55,14 +55,14 @@
   <c:when test="${attribute != null && attribute !='' && ds_ref_table != null && ds_ref_table != ''}">
         <td align="right">
           <font size="-2" face="Arial,Helvetica">
-          [<a href="<c:url value='/getDataSource.do?reference=${attribute}&display=detail' />">Data Sources</a>]
+          [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">Data Sources</a>]
           </font>
         </td>
   </c:when>
   <c:when test="${attribute != null && attribute !='' && ds_ref_attribute != null && ds_ref_attribute != ''}">
     <td align="right">
      <font size="-2" face="Arial,Helvetica">
-     [<a href="<c:url value='/getDataSource.do?reference=${attribute}&display=detail' />">
+     [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">
      Data Sources</a>]
      </font>
     </td>
@@ -70,7 +70,7 @@
   <c:when test="${attribute != null && attribute !='' && ds_ref_profile_graph != null && ds_ref_profile_graph != ''}">
     <td align="right">
      <font size="-2" face="Arial,Helvetica">
-     [<a href="<c:url value='/getDataSource.do?reference=${attribute}&display=detail' />">
+     [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">
      Data Sources</a>]
      </font>
     </td>

@@ -106,7 +106,7 @@
 <c:set var="ds_ref_attribute" value="${requestScope.ds_ref_attributes[name]}" />
 <c:set var="ds_ref_table" value="${requestScope.ds_ref_tables[name]}" />
 <c:set var="ds_ref_profile_graph" value="${requestScope.ds_ref_profile_graphs[name]}" />
-<c:set var="hasDBDataSource" value="${(ds_ref_table != null && ds_ref_table != '') || (ds_ref_attribute != null && ds_ref_attribute != '') || (ds_ref_profile_graph != null && ds_ref_profile_graph != '')}" />
+<c:set var="hasDBDataset" value="${(ds_ref_table != null && ds_ref_table != '') || (ds_ref_attribute != null && ds_ref_attribute != '') || (ds_ref_profile_graph != null && ds_ref_profile_graph != '')}" />
 
 <table width="100%" class="paneltoggle"
        cellpadding="3"        
@@ -174,17 +174,17 @@
            </font>
         </td>	
 	</c:when>
-      <c:when test="${name != null && name !='' && hasDBDataSource}">
+      <c:when test="${name != null && name !='' && hasDBDataset}">
         <td align="right">
           <font size="-2" face="Arial,Helvetica">
-          [<a href="<c:url value='/getDataSource.do?reference=${name}&display=detail' />">Data Sources</a>]
+          [<a href="<c:url value='/getDataset.do?reference=${name}&display=detail' />">Data Sources</a>]
           </font>
         </td>
       </c:when>
       <c:when test='${attribution != null && attribution != ""}'>
         <td align="right">
            <font size="-1" face="Arial,Helvetica">
-           [<a href="getDataSource.do?display=detail&datasets=${attribution}&title=${displayNameParam}">Data Sources</a>]
+           [<a href="getDataset.do?display=detail&datasets=${attribution}&title=${displayNameParam}">Data Sources</a>]
            </font>
         </td>
       </c:when>

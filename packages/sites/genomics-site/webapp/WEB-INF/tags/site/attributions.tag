@@ -22,7 +22,7 @@ display the attributions.
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="xqSet" value="${wdkModel.xmlQuestionSetsMap['XmlQuestions']}"/>
-<c:set var="dataSourcesQuestion" value="${xqSet.questionsMap['DataSources']}"/>
+<c:set var="dataSourcesQuestion" value="${xqSet.questionsMap['Datasets']}"/>
 <c:set var="dsRecords" value="${dataSourcesQuestion.fullAnswer.recordInstanceMap}"/>
 
 <c:set var="attributionKey" value="" />
@@ -51,7 +51,7 @@ display the attributions.
                 <c:if test="${dsRecord.attributesMap['resource'] ne null and dsRecord.attributesMap['category'] ne 'ignore'}">
                     <li>
                         <c:url var="dataSourceUrl"
-                               value="/getDataSource.do?display=detail&datasets=${attributionKey}&title=Query#" />
+                               value="/getDataset.do?display=detail&datasets=${attributionKey}&title=Query#" />
                         <a href="${dataSourceUrl}${attribution}">
                             ${dsRecord.attributesMap['resource']}
                         </a>
