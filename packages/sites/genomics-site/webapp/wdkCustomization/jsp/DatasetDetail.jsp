@@ -10,12 +10,12 @@
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
 
-<imp:pageFrame banner="Data Contents" refer="data-source" >
+<imp:pageFrame banner="Data Contents" refer="data-set" >
 
 <%-- show all xml question sets --%>
-<div id="data-sources">
+<div id="data-sets">
   <a name="_top"></a>
-  <h1>Data Sources</h1>
+  <h1>Data Sets</h1>
    
   <div class="smallitalics">(Click on a category to jump to the corresponding section in the page)</div> <br/>
 
@@ -37,7 +37,7 @@
           <c:set var="wdkRecord" value="${record}" scope="request" />
           <c:set var="primaryKey" value="${record.primaryKey}"/>
           <c:set var="attributes" value="${record.attributes}"/>
-          <c:set var="name" value="${attributes['data_source_name']}" />
+          <c:set var="name" value="${attributes['dataset_name']}" />
           <c:set var="displayName" value="${attributes['display_name']}" />
           <c:set var="version" value="${attributes['version']}" />
           <c:set var="categories" value="${attributes['category']}" />
@@ -52,7 +52,7 @@
           <c:set var="externallinks" value="${tables['ExternalLinks']}" />
           <c:set var="references" value="${tables['References']}" />
 
-          <div class="data-source">
+          <div class="data-set">
 
 <%-------    DATASET NAME ----------------%>
             <div class="dstitle">
@@ -63,12 +63,12 @@
 
             <div class="small" style="padding:6px;">
               <a href="#" class="wdk-toggle-group"
-                data-container=".data-source"
+                data-container=".data-set"
                 data-show="true">
                 expand all
               </a> |
               <a href="#" class="wdk-toggle-group"
-                 data-container=".data-source"
+                 data-container=".data-set"
                  data-show="false">
                 collapse all
               </a>
@@ -171,7 +171,7 @@
               </c:if>
             </c:if>
 
-          </div><hr>       <!-- .data-source -->
+          </div><hr>       <!-- .data-set -->
         </c:forEach>       <!-- all datasets in one category  -->
 
       </div>   <!-- .category-content -->
@@ -181,10 +181,10 @@
 
    <%-- if we came to this page to show only a few datasets (would be specified in the url) --%>
   <c:if test="${fn:length(param.reference) > 0}">
-    <p style="text-align:center;font-size:120%"><a href="<c:url value='/getDataset.do?display=detail' />">Click here to see the complete list of Data Sources</a></p>
+    <p style="text-align:center;font-size:120%"><a href="<c:url value='/getDataset.do?display=detail' />">Click here to see the complete list of Data Sets</a></p>
   </c:if>
 
-</div>      <!-- #data-sources   -->
+</div>      <!-- #data-sets   -->
 
 
 </imp:pageFrame>

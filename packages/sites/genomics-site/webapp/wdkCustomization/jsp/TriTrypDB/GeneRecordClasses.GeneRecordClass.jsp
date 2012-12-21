@@ -691,7 +691,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
 </c:when>
 <c:when test='${organismFull eq "Trypanosoma brucei Lister strain 427"}'>
   <c:set var="reference">
-  <i>Trypanosoma brucei</i> strain Lister 427 genome sequence and assembly was provided prepublication by Dr. George Cross. For additional information please see information in the <a href="getDataSource.do?display=detail&datasets=Tbrucei427_chromosomes_RSRC&title=Query#Tbrucei427_chromosomes_RSRC">data sources</a> page.
+  <i>Trypanosoma brucei</i> strain Lister 427 genome sequence and assembly was provided prepublication by Dr. George Cross. For additional information please see information in the <a href="getDataset.do?display=detail&datasets=Tbrucei427_chromosomes_RSRC&title=Query#Tbrucei427_chromosomes_RSRC">data sources</a> page.
   </c:set>
 </c:when>
 <c:when test='${organismFull eq "Trypanosoma congolense"}'>

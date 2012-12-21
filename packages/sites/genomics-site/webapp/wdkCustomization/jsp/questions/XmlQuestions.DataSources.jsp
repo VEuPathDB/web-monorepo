@@ -62,7 +62,7 @@
 	</c:otherwise>
 	</c:choose>
 	<c:if test="${tocBegin}">
-		<b><a name="toc"></a>DataSources Categories</b>
+		<b><a name="toc"></a>Data Set Categories</b>
 		<ul>
 	</c:if>
 	<c:if test="${showCat && !fn:containsIgnoreCase(currentCat, 'ignore')}">
@@ -199,6 +199,6 @@
 </table> 
 <br/>
 <c:if test="${param['datasets'] != null}">
-<a href="getDataSource.do?display=detail"><font size="-1">Click here to see the complete list of Data Sources</font></a><br/>
+<a href="getDataset.do?display=detail"><font size="-1">Click here to see the complete list of Data Sources</font></a><br/>
 </c:if>
 </imp:pageFrame>
