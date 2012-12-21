@@ -522,13 +522,13 @@
       <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
-      path="/getDataSource"
-      type="org.apidb.apicommon.controller.action.GetDataSourceAction"
+      path="/getDataset"
+      type="org.apidb.apicommon.controller.action.GetDatasetAction"
       scope="request">
-      <forward name="show_list" redirect="false" path="/wdkCustomization/jsp/DataSourceList.jsp"/>
-      <forward name="show_detail" redirect="false" path="/wdkCustomization/jsp/DataSourceDetail.jsp"/>
-      <forward name="show_xml_list" redirect="false" path="/showXmlDataList.do?name=XmlQuestions.DataSources"/>
-      <forward name="show_xml_detail" redirect="false" path="/showXmlDataContent.do?name=XmlQuestions.DataSources"/>
+      <forward name="show_list" redirect="false" path="/wdkCustomization/jsp/DatasetList.jsp"/>
+      <forward name="show_detail" redirect="false" path="/wdkCustomization/jsp/DatasetDetail.jsp"/>
+      <forward name="show_xml_list" redirect="false" path="/showXmlDataList.do?name=XmlQuestions.Datasets"/>
+      <forward name="show_xml_detail" redirect="false" path="/showXmlDataContent.do?name=XmlQuestions.Datasets"/>
     </action>
     <action
       path="/exportBasket"
