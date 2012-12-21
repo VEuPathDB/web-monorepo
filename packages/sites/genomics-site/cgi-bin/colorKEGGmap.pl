@@ -26,10 +26,18 @@ BEGIN {
 my $q = new CGI;
 my $projectId = $q->param('model') || $ARGV[0];
 my $pathwaySourceId = $q->param('pathway') || $ARGV[1];
+my $geneList = $q->param('geneList') || $ARGV[2];
 
-die "valid project_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\n" if (!$projectId);
-die "valid pathway_source_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\n" if (!$pathwaySourceId);
+die "valid project_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional param)\n" if (!$projectId);
+die "valid pathway_source_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional param)\n" if (!$pathwaySourceId);
 
+my $appendSQL;
+
+if ($geneList) {
+  $geneList =~ s/,/','/g;
+  $geneList = "'$geneList'";
+  $appendSQL = "AND ga.source_id in ($geneList) ";
+} 
 #SET COLORS FOR ELEMENTS WHICH DECIDE COLORING EX ORGANISMS
 
 my ($colors, @r, @g, @b);
@@ -76,13 +84,12 @@ $factorColorMap = &getColorMap(\@coloringFactor,$colors);
 #EC NUMBER BASED COLORING
 my $ecMapSql = "SELECT DISTINCT pn.display_label, ec.organisms,
                        pn.x, pn.y,pn.width, pn.height, pn.node_type
-                FROM   (Select apidb.tab_to_string(set(cast(COLLECT(gf.organism) AS apidb.varchartab))) as organisms,ec.ec_number 
-                       from  ApidbTuning.GeneAttributes gf, ApidbTuning.GenomicSequence gs,
+                FROM   (Select apidb.tab_to_string(set(cast(COLLECT(ga.organism) AS apidb.varchartab))) as organisms,ec.ec_number 
+                       from  ApidbTuning.GenomicSequence gs,
                              dots.Transcript t, dots.translatedAaFeature taf,
                              dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec,ApidbTuning.GeneAttributes ga
-                       Where  gs.na_sequence_id = gf.na_sequence_id
-                       AND    ga.source_id = gf.source_id
-                       AND    gf.na_feature_id = t.parent_id
+                       Where  gs.na_sequence_id = ga.na_sequence_id $appendSQL
+                       AND    ga.na_feature_id = t.parent_id
                        AND    t.na_feature_id = taf.na_feature_id
                        AND    taf.aa_sequence_id = asec.aa_sequence_id
                        AND    asec.enzyme_class_id = ec.enzyme_class_id
@@ -153,10 +160,10 @@ my $im = GD::Image->newFromPngData($pngImage) || die "cannot read png image";
 
 #draw a legend
 my $imgWidth = $im->width();
-my $x = 270;
+my $x = 370;
 my $y = 1;
 my $black = $im->colorAllocate(0,0,0);
-$im->string(gdMediumBoldFont,200,1,'LEGEND',$black);
+$im->string(gdMediumBoldFont,300,1,'LEGEND',$black);
 
 foreach my $factor (keys %{$factorColorMap}) {
    my $color = $im->colorAllocate($factorColorMap->{$factor}->{'r'},
@@ -168,7 +175,7 @@ foreach my $factor (keys %{$factorColorMap}) {
 
    if ($x + 230 > $imgWidth) {
      $y = $y + 13;
-     $x = 270;
+     $x = 370;
    } else {
      $x = $x + 240;
    }
