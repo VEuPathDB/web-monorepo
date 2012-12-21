@@ -15,7 +15,7 @@ DAS::GUS::Segment - DAS-style access to a GUS database
 
 package DAS::GUS::Segment;
 
-use strict;
+#use strict;
 use Bio::Root::Root;
 use Bio::Das::SegmentI;
 use DAS::GUS::Segment::Feature;
