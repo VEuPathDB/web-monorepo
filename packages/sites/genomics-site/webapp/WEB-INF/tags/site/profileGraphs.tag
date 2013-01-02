@@ -6,6 +6,8 @@
               description="Restricts output to only this species"
 %>
 
+<%@ attribute name="type"  description="Type"  %>
+
 <%@ attribute name="tableName"
               description="PhenotypeGraphs or ExpressionGraphs"
 %>
@@ -18,9 +20,7 @@
 
 
 <c:forEach var="row" items="${tbl}">
-
-  <c:if test="${species eq row['graph_species'].value && species eq row['species'].value}">
-
+  <c:if test="${(species eq row['graph_species'].value && species eq row['species'].value) || (type eq 'compound')}">
 
     <c:set var="name" 		value="${fn:replace(row['module'].value, '::', '')}"/>
     <c:set var="secName" 	value="${row['module'].value}"/>
@@ -45,12 +45,22 @@
 
     <c:set var="hasRma" value="false"/>
     <c:set var="hasCoverage" value="false"/>
-    
+
+  <c:if test="${type ne 'compound'}">      </c:if>
     <c:set var="selectList">
       <form name=${name}List>
         <c:set var="vp_i" 			value="0"/>
         <c:set var="defaultVp" 			value=""/>
-       <b>Choose Gene to Display Graphs for</b>
+
+	
+	<c:choose>
+	  <c:when test="${type ne 'compound'}">
+	  <b>Choose Gene to Display Graphs for</b>
+	  </c:when>
+	  <c:when test="${type eq 'compound'}">
+	    <b>Choose Compound to Display Graphs for</b>
+	  </c:when>
+	</c:choose>
        <br />
 
        <c:set var="selected_graph_id" value="TEMP"/>
@@ -80,20 +90,20 @@
             <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}"name="geneOptions" /> &nbsp;
             </c:otherwise>
           </c:choose>
-          
+
         </c:forEach>
 
         <br/ >
-
-           <c:choose>
-           <c:when test="${row['source_id'].value eq selected_graph_id}">
-                    <div id="${textId}"  class="coloredtext"></div>
-           </c:when>
-           <c:otherwise>
-                    <div id="${textId}"  class="coloredtext">WARNING:  This Gene (${row['source_id'].value}) does not have data for this graph.  Instead, we are showing data for the selected Gene (${selected_graph_id}) which was discovered to be in the same gene group.  This may or may NOT accurately represent the gene you are interested in.</div>
-           </c:otherwise>
-           </c:choose>
-
+	  <c:if test="${type ne 'compound'}">
+            <c:choose>
+              <c:when test="${row['source_id'].value eq selected_graph_id}">
+                <div id="${textId}"  class="coloredtext"></div>
+              </c:when>
+              <c:otherwise>
+                <div id="${textId}"  class="coloredtext">WARNING:  This Gene (${row['source_id'].value}) does not have data for this graph.  Instead, we are showing data for the selected Gene (${selected_graph_id}) which was discovered to be in the same gene group.  This may or may NOT accurately represent the gene you are interested in.</div>
+              </c:otherwise>
+            </c:choose>
+	    </c:if>
 <br /><br />
 
         		<b>Choose Graph(s) to Display</b><br />
