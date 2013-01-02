@@ -68,6 +68,9 @@
 
 <imp:wdkTable tblName="RelatedCompounds" isOpen="true" attribution=""/>
 
+<imp:profileGraphs type='compound' tableName="MassSpecGraphs"/>
+
+
 </c:otherwise>
 </c:choose>
 
