@@ -26,7 +26,7 @@
       <c:set var="x2"              value="${row['x2'].value}"/>
       <c:set var="y2"              value="${row['y2'].value}"/>
 
-      <c:set var="popup" value="<table><tr><td>EC No:</td><td><a href='showQuestion.do?questionFullName=GeneQuestions.GenesByEcNumber'>${node_value}</a></td></tr><tr><td>Organisms:</td><td>${organisms}</td></tr><tr><td>Genes:</td><td>${genes}</td></tr></table>"/>
+      <c:set var="popup" value="<table><tr><td>EC No:</td><td><a href='processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&array%28ec_number_pattern%29=${node_value}&questionSubmit=Get+Answer'>${node_value}</a></td></tr><tr><td>Organisms:</td><td>${organisms}</td></tr><tr><td>Genes:</td><td>${genes}</td></tr></table>"/>
 
     <area shape="rect"  coords="${x1},${y1},${x2},${y2}" alt="${popup}">
     </c:if>
