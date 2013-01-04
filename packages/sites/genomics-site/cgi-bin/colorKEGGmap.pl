@@ -161,10 +161,10 @@ my $im = GD::Image->newFromPngData($pngImage) || die "cannot read png image";
 
 #draw a legend
 my $imgWidth = $im->width();
-my $x = 370;
+my $x = 100;
 my $y = 1;
 my $black = $im->colorAllocate(0,0,0);
-$im->string(gdMediumBoldFont,300,1,'LEGEND',$black);
+$im->string(gdMediumBoldFont,10,1,'LEGEND',$black);
 
 foreach my $factor (keys %{$factorColorMap}) {
    my $color = $im->colorAllocate($factorColorMap->{$factor}->{'r'},
@@ -174,11 +174,11 @@ foreach my $factor (keys %{$factorColorMap}) {
    $im->filledRectangle($x,$y+3,($x+8),($y+8),$color);
    $im->string(gdMediumBoldFont,($x+12), $y,$factor,$black);
 
-   if ($x + 230 > $imgWidth) {
+   if ($x + 500 > $imgWidth) {
      $y = $y + 13;
-     $x = 370;
+     $x = 100;
    } else {
-     $x = $x + 240;
+     $x = $x + 250;
    }
 }
 #--end legend
