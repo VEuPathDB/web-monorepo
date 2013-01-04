@@ -36,7 +36,9 @@ my $appendSQL;
 if ($geneList) {
   $geneList =~ s/,/','/g;
   $geneList = "'$geneList'";
-  $appendSQL = "AND ga.source_id in ($geneList) ";
+  $appendSQL = "AND ga.source_id in ($geneList) AND";
+} else {
+  $appendSQL = "AND";
 } 
 #SET COLORS FOR ELEMENTS WHICH DECIDE COLORING EX ORGANISMS
 
@@ -88,8 +90,7 @@ my $ecMapSql = "SELECT DISTINCT pn.display_label, ec.organisms,
                        from  ApidbTuning.GenomicSequence gs,
                              dots.Transcript t, dots.translatedAaFeature taf,
                              dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec,ApidbTuning.GeneAttributes ga
-                       Where  gs.na_sequence_id = ga.na_sequence_id $appendSQL
-                       AND    ga.na_feature_id = t.parent_id
+                       Where  gs.na_sequence_id = ga.na_sequence_id $appendSQL ga.na_feature_id = t.parent_id
                        AND    t.na_feature_id = taf.na_feature_id
                        AND    taf.aa_sequence_id = asec.aa_sequence_id
                        AND    asec.enzyme_class_id = ec.enzyme_class_id

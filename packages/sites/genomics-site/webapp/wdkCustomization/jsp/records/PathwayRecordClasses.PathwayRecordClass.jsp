@@ -58,10 +58,9 @@
 <br>
 
 <br>
-<c:set var="popup" value="Active regions here"/>
 <div align="center">
 <img align="middle" src="/cgi-bin/colorKEGGmap.pl?model=${projectId}&pathway=${id}" usemap="#pathwayMap"/>
-<imp:pathwayMap pathway="${id}" />
+<imp:pathwayMap projectId="${projectId}" pathway="${id}" />
 </div>
 <br>
 
