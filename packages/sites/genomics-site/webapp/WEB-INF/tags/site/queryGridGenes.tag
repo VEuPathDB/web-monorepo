@@ -213,6 +213,9 @@
                     <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMetabolicPathway" linktext="Metabolic Pathways" existsOn="A P"/>
                 </tr>
                 <tr>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByReactionCompounds" linktext="Compounds in Reactions" existsOn="A P"/>
+                </tr>
+                <tr>
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByProteinProteinInteraction" linktext="Y2H Interaction" existsOn="A P"/>
                 </tr>
                 <tr>
