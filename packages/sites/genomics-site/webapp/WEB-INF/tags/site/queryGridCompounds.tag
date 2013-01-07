@@ -14,7 +14,7 @@
         <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByCompoundID" linktext="Compound ID" existsOn="A P"/>
     </tr>
     <tr>
-       <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByGeneID" linktext="Gene ID" existsOn="A P"/> 
+       <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByPathwayReaction" linktext="Gene ID" existsOn="A P"/> 
     </tr>
     </table>
 </td>
