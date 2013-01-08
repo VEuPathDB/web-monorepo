@@ -42,16 +42,7 @@
 
 <div class="h3center" style="font-size:130%">
 	${primaryKey}<br>
-<%-- removing access to basket and favorites until we have it working 
 	<imp:recordPageBasketIcon />
---%>
-
-</div>
-
-
-<div class="h2center" style="font-size:150%">
-  <!-- the basket and favorites  -->
-  <imp:recordPageBasketIcon />
 </div>
 
 

@@ -54,9 +54,6 @@
 </div>
 
 
-<table width="90%" align="center" cellspacing="5">
-<tr><td>
-
 <!-- Overview -->
 <c:set var="attr" value="${attrs['snp_overview']}" />
 
@@ -124,11 +121,6 @@
 
 <imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
 
-
-
-
-</td></tr>
-</table>
 
 </c:otherwise>
 </c:choose>
