@@ -70,25 +70,37 @@
 	<imp:queryGridIsolates/> 
   </td></tr>
 
-
 <%-----------------------------------------------------------------------------%>
-<%--  Pathways  --%>
+<%--  All Pathways and Compounds  --%>
+<tr>
+    <%-- All Pathways Queries TABLE  --%>
+    <td >     
+<div class="innertube2">
+	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
+		<tr class="headerrow2">
+			<td   align="center"><b>Identify Pathways by:</b></td>
+		</tr>
+		<tr><td align="center">
+			<imp:queryGridPathways/>
+		</td></tr>	
+	</table> 
+</div>
+    </td>
 
-
-  <tr class="headerrow2"><td colspan="2" align="center"><b>Identify Pathways by:</b></td></tr>
-  <tr><td colspan="3" align="center">
-	<imp:queryGridPathways/> 
-  </td></tr>
-
-
-<%-----------------------------------------------------------------------------%>
-<%--  Compounds  --%>
-
-
-  <tr class="headerrow2"><td colspan="2" align="center"><b>Identify Compounds by:</b></td></tr>
-  <tr><td colspan="3" align="center">
-	<imp:queryGridCompounds/> 
-  </td></tr>
+    <%--  All Compounds Queries TABLE --%>
+    <td > 
+<div class="innertube2">     
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+		<tr class="headerrow2">
+			<td   align="center"><b>Identify Compounds by:</b></td>
+		</tr>
+		<tr><td align="center">
+			<imp:queryGridCompounds/>
+		</td></tr>
+   	</table> 
+</div>
+    </td>
+</tr>
 
 <%-----------------------------------------------------------------------------%>
 <%--  All Genomic and SNP  --%>

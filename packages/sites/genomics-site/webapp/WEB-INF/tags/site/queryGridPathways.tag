@@ -15,17 +15,14 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 <tr>
-                    <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwayQuestions.PathwaysByPathwayID" linktext="Pathway Name(s)" existsOn="A"/>
+                    <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByPathwayID" linktext="Pathway Name(s)" existsOn="P"/>
                 </tr>
 
 <tr>
-	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByGeneList" linktext="Gene Asssociation" existsOn="A"/>
+	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByGeneList" linktext="Genes" existsOn="P"/>
             	</tr>
 <tr>
-	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByCompounds" linktext="Compounds" existsOn="A"/>
-            	</tr>
-<tr>
-	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByGeneIds" linktext="Compounds" existsOn="A"/>
+	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByCompounds" linktext="Compounds" existsOn="P"/>
             	</tr>
             </table>
 </div>
