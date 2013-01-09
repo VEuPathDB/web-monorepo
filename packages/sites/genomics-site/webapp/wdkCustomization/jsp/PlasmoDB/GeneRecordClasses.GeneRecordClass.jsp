@@ -427,6 +427,11 @@ ${id}
 <%-- "This if clause is redundant as the new (re) annotation has become the official annotation"
 <c:if test="${species ne 'falciparum' || (species eq 'falciparum' && attrs['annotation_status'].value ne 'new' &&attrs['annotation_status'].value ne 'new_organellar')}">
 --%>
+  <a name="ecNumber"></a>
+  <c:if test="${isCodingGene}">
+    <imp:wdkTable tblName="EcNumber" isOpen="false"
+                   attribution=""/>
+  </c:if>
 
 <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
 <imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
@@ -442,13 +447,6 @@ ${id}
 </c:if>
 <%--</c:if>--%>
 
-<c:if test="${species eq 'falciparum3D7'}">
-  <a name="ecNumber"></a>
-  <c:if test="${isCodingGene}">
-    <imp:wdkTable tblName="EcNumber" isOpen="false"
-                   attribution=""/>
-  </c:if>
-</c:if>
 
 <c:if test="${isCodingGene}">
   <a name="goTerm"></a>
