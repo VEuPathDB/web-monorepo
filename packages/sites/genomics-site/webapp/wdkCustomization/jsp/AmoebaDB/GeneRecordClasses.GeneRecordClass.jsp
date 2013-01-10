@@ -448,29 +448,22 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 <%------------------------------------------------------------------%> 
 <hr>
 
-<c:choose>
-<c:when test='${organism_full eq "Entamoeba dispar SAW760"}'>
-  <c:set var="reference">
- Whole genome shotgun sequence and annotations for <i>E. dispar</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
-  </c:set>
-</c:when>
-<c:when test='${organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
-  <c:set var="reference">
- Whole genome shotgun sequence and annotations for <i>E. histolytica</i>HM-1:IMSS obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
-  </c:set>
-</c:when>
-<c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
-  <c:set var="reference">
- Whole genome shotgun sequence and annotations for <i>E. invadens</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
-  </c:set>
-</c:when>
-</c:choose>
 
-<imp:panel 
+<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
+
+<c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
+<c:forEach var="row" items="${referenceTable}">
+  <c:if test="${extdbname eq row['name'].value}">
+    <c:set var="reference" value="${row['description'].value}"/>
+  </c:if>
+</c:forEach>
+
+
+<site:panel 
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
-<br>
 
+<br>
 <%------------------------------------------------------------------%>
 
 

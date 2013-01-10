@@ -203,8 +203,8 @@ ${attrs['organism'].value}<br>
    <c:set var="revCompOn" value="1"/>
   </c:if>
 
-<!-- Gene Deprecation --> 
-<imp:wdkTable tblName="GeneDeprecation" isOpen="true"/>
+<!-- Gene Deprecation:  TODO.  Temporarily remove because not loaded in rebuild --> 
+<%-- imp:wdkTable tblName="GeneDeprecation" isOpen="true"/ --%>
 
 <!-- External Links --> 
 <imp:wdkTable tblName="GeneLinkouts" isOpen="true"/>
@@ -486,35 +486,25 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
     content="${seq}" />
 </c:if>
 <%---- reference ---------------------------------------------------%> 
-<%--
-<c:set var="reference" value="${extdbname}" />
---%>
+
 
 <hr>
-<c:choose>
-  <c:when test='${organismFull eq "Giardia Assemblage A isolate WB"}'>
-     <c:set var="reference">
-G. lamblia sequence, assembly, annotation from Mitchell Sogin (MBL).<br><b>Genomic minimalism in the early diverging intestinal parasite <i>Giardia lamblia</i>. </b> Hilary G. Morrison <i>et al</i> <a href="http://www.ncbi.nlm.nih.gov/pubmed/17901334">Science 28 September 2007, Volume 317, pp. 1921-1926.</a>
-    </c:set>
-  </c:when>
-  <c:when test='${organismFull eq "Giardia Assemblage B isolate GS"}'>
-     <c:set var="reference">
-<b>Draft Genome Sequencing of <i>Giardia intestinalis</i> Assemblage B Isolate GS: Is Human Giardiasis Caused by Two Different Species?</b>  Franzen O, Jerlstrom-Hultqvist J, Castro E, Sherwood E, Ankarklev J, Reiner DS, Palm D, Andersson JO, Andersson B, Svard SG. <a href='http://www.ncbi.nlm.nih.gov/pubmed/19696920'>PLoS Pathog. 2009 Aug;5(8):e1000560</a>
-     </c:set>
-  </c:when>
-  <c:when test='${organismFull eq "Giardia Assemblage E isolate P15"}'>
-     <c:set var="reference">
-Sequence and annotation of <i>Giardia</i> Assemblage E isolate P15 was provided by J. Jerlstrom-Hultqvist. O. Franzen, E.
-Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Karolinska Institutet, Stockholm, Sweden and Uppsala University, Uppsala, Sweden).  The genome sequence and annotation was provided to GiardiaDB prepublication and is expected to be published in a peer-reviewed journal as soon as possible. Permission should be obtained from the authors before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
-     </c:set>
-  </c:when>
-</c:choose>
 
 
+<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
-<imp:panel 
+<c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
+<c:forEach var="row" items="${referenceTable}">
+  <c:if test="${extdbname eq row['name'].value}">
+    <c:set var="reference" value="${row['description'].value}"/>
+  </c:if>
+</c:forEach>
+
+
+<site:panel 
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
+
 <br>
 
 <%------------------------------------------------------------------%>

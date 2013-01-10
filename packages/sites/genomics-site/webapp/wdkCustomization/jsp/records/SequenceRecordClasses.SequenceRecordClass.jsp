@@ -244,7 +244,7 @@ ${externalLinks}
 
 
  <c:choose>
- <c:when test="${projectId eq 'PiroplasmaDB' || projectId eq 'FungiDB' || projectId eq 'PlasmoDB' || projectId eq 'CryptoDB' || projectId eq 'MicrosporidiaDB'}">
+ <c:when test="${projectId eq 'PiroplasmaDB' || projectId eq 'FungiDB' || projectId eq 'PlasmoDB' || projectId eq 'CryptoDB' || projectId eq 'MicrosporidiaDB' || projectId eq 'ToxoDB' || projectId eq 'AmoebaDB' || projectId eq 'GiardiaDB'}">
 
     <c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
@@ -258,67 +258,6 @@ ${externalLinks}
 
  </c:when>
 
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'ME49')}">
-    <c:set var="reference">
-     <b><i>Toxoplasma gondii</i> ME49  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'GT1')}">
-    <c:set var="reference">
-     <b><i>Toxoplasma gondii</i> GT1  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'VEG')}">
-    <c:set var="reference">
-     <b><i>Toxoplasma gondii</i> VEG  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'TgCATBr9')}">
-    <c:set var="reference">
-     <b><i>Toxoplasma gondii</i> CATBr9 sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'niphandrodes')}">
-    <c:set var="reference">
-     <b><i>Gregarina niphandrodes</i> sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'RH') && id eq 'NC_001799'}">
-    <c:set var="reference">
-     <b>Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David Roos (University of Pennsylvania), Jessica Kissinger (University of Georgia).The apicoplast genome of <i>T. gondii</i> RH (Type I) strain is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799"TARGET="_blank">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html"TARGET="_blank">here</a> to view a map of the <i>T. gondii</i> apicoplast. </b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'RH')}">
-    <c:set var="reference">
-     <b>Scaffold genome sequence for <i>Toxoplasma gondii</i> type I RH strain (Chromosomes Ia and Ib only) provided on 2006-09-25, by Matt Berriman (The Wellcome Trust Sanger Institute), Jim Ajioka (University of Cambridge).</b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'caninum')}">
-    <c:set var="reference">
-<b>Chromosome sequences and annotation for <i>Neospora caninum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.</b>
-    </c:set>
-    </c:when>
-    <c:when test="${projectId eq 'ToxoDB' && fn:contains(organism,'TgCkUg2')}">
-    <c:set var="reference">
-      <b>Whole genome sequence of the natural recombinant Toxoplasma gondii strain TgCkUg2 was provided by Irene Lindstrom Bontell and Judith E Smith, Institute of Integrative and Comparative Biology, Clarendon Way, University of Leeds, Leeds, LS2 9JT, UK.  Further information may be obtained from the following publication: Genome Biol. 2009 May 20;10(5):R53. PMID 19457243.</b>
-   </c:set>
-   </c:when>
-   <c:when test="${projectId eq 'ToxoDB' && (fn:contains(organism,'MAS') || fn:contains(organism,'VAND') || fn:contains(organism,'p89') || fn:contains(organism,'Toxoplasma gondii FOU') || fn:contains(organism,'Toxoplasma gondii RUB'))}">
-    <c:set var="reference">
-Genome sequence data were produced by JCVI as part of the <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
-<p>Data Usage Policy</p>
-<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
-<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
-   </c:set>
-   </c:when>
-
-<c:when test="${fn:contains(organism,'Eimeria tenella str. Houghton') && projectId eq 'ToxoDB'}">
-  <c:set var="reference">
-<p>Adam James Reid, Damer Blake, Thomas Dan Otto, Alejandro Sanchez, Mandy Sanders, Yealing Tay, Paul Dear, Kiew-Lian Wan, Matthew Berriman, Arnab Pain, Fiona Tomley. <i>Sequencing and annotation of the Eimeria tenella genome</i>.</p><br>
-<p>Funding: BBSRC, Wellcome Trust Sanger Institute</p><br>
-<p>The data were produced by the Parasite Genomics group at the Wellcome Trust Sanger Institute to the standard of an Improved Draft.  The Parasite Genomics group and collaborators plan on publishing the completed and annotated draft sequence in a peer-reviewed journal as soon as possible. Permission of the Principal Investigator (Matthew Berriman,mb4@sanger.ac.uk) should be obtained before publishing chromosome- or genome- scale analyses of the sequences or annotations. </p>
-</c:set>
-</c:when>
 
 
     <c:when test="${projectId eq 'TrichDB'}">
@@ -327,28 +266,6 @@ Genome sequence data were produced by JCVI as part of the <a href="https://sites
     </c:set>
     </c:when>
 
-  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'isolate WB') && externalDbName eq 'GintAssemA_chromosome_virtual_genome_RSRC' }"> 
-     <c:set var="reference">
-<b>Optical map of the Genotype A1 WB C6 <i>Giardia lamblia</i> genome isolate</b>. Alexander D Perry, Hilary G Morrison,Rodney D Adam. (Submitted to Molecular and Biochemical Parasitology).
-<br><br><i>G. lamblia</i> contig sequence and annotation from Genbank (version: 2007-09-24)
-<br><br><i>G. lamblia</i> sequence, assembly, annotation from Mitchell Sogin (MBL).<br><b>Genomic minimalism in the early diverging intestinal parasite <i>Giardia lamblia</i>. </b> Hilary G. Morrison <i>et al</i> <a href="http://www.ncbi.nlm.nih.gov/pubmed/17901334">Science 28 September 2007, Volume 317, pp. 1921-1926.</a>
-     </c:set>
-  </c:when>
-  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'isolate WB')}"> 
-     <c:set var="reference">
-G. lamblia sequence, assembly, annotation from Mitchell Sogin (MBL).<br><b>Genomic minimalism in the early diverging intestinal parasite <i>Giardia lamblia</i>. </b> Hilary G. Morrison <i>et al</i> <a href="http://www.ncbi.nlm.nih.gov/pubmed/17901334">Science 28 September 2007, Volume 317, pp. 1921-1926.</a>
-    </c:set>
-  </c:when>
-  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'isolate GS')}"> 
-     <c:set var="reference">
-<b>Draft Genome Sequencing of <i>Giardia intestinalis</i> Assemblage B Isolate GS: Is Human Giardiasis Caused by Two Different Species ?</b>  Franzen O, Jerlstrom-Hultqvist J, Castro E, Sherwood E, Ankarklev J, Reiner DS, Palm D, Andersson JO, Andersson B, Svard SG. http://www.ncbi.nlm.nih.gov/pubmed/19696920
-     </c:set>
-  </c:when>
-  <c:when test="${projectId eq 'GiardiaDB' && fn:contains(organism,'isolate P15')}"> 
-     <c:set var="reference">
-Sequence and annotation of <i>Giardia</i> Assemblage E isolate P15 was provided by J. Jerlstrom-Hultqvist. O. Franzen, E.Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Karolinska Institutet, Stockholm, Sweden and Uppsala University, Uppsala, Sweden).  The genome sequence and annotation was provided to GiardiaDB prepublication and is expected to be published in a peer-reviewed journal as soon as possible. Permission should be obtained from the authors before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
-     </c:set>
-  </c:when>
 
 <c:when test="${fn:contains(organism,'brucei gambiense') && projectId eq 'TriTrypDB'}">
   <c:set var="reference">
@@ -482,11 +399,6 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
    Chromosome sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.
   </c:set>
 </c:when>
-<c:when test="${fn:contains(organism,'Entamoeba dispar') && projectId eq 'AmoebaDB'}">
-  <c:set var="reference">
- Whole genome shotgun sequence and annotations for <i>E. dispar</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
-  </c:set>
-</c:when>
 <c:when test='${organism eq "Entamoeba histolytica HM-1:IMSS"}'>
   <c:set var="reference">
  Whole genome shotgun sequence and annotations for <i>E. histolytica</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
@@ -528,23 +440,6 @@ Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were
 <br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
   </c:set>
 </c:when>
-<c:when test="${fn:contains(organism,'Entamoeba invadens') && projectId eq 'AmoebaDB'}">
-  <c:set var="reference">
- Whole genome shotgun sequence and annotations for <i>E. invadens</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
-  </c:set>
-</c:when>
-<c:when test="${fn:contains(organism,'Entamoeba moshkovskii') && projectId eq 'AmoebaDB'}">
-  <c:set var="reference">
-Genome Assembly for <i>Entamoeba moshkovskii</i> was provided by Gareth Weedall and Neil Hall. Institute of Integrative Biology, University of Liverpool, Crown Street, Liverpool L69 7ZB, UK  
-</c:set>
-</c:when>
-
-<c:when test="${fn:contains(organism,'Entamoeba histolytica Rahman') && projectId eq 'AmoebaDB'}">
-  <c:set var="reference">
-Genome Assembly for Entamoeba histolytica Rahman strain was provided by Gareth Weedall and Neil Hall. Institute of Integrative Biology, University of Liverpool, Crown Street, Liverpool L69 7ZB, UK  
-  </c:set>
-</c:when>
-
 
 <c:otherwise>
     <c:set var="reference">

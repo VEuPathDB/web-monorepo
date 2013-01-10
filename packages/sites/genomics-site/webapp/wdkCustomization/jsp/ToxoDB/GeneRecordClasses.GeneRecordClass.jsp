@@ -507,59 +507,29 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 </c:if>
 
 
+
 <hr>
-<br />
 
 
-<c:choose>
-<c:when test='${organism_full eq "Toxoplasma gondii VEG" }'>
-  <c:set var="reference">
-<b><i>Toxoplasma gondii</i> VEG sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-  </c:set>
-</c:when>
+<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
-<c:when test='${organism_full eq "Toxoplasma gondii GT1" }'>
-  <c:set var="reference">
-<b><i>Toxoplasma gondii</i> GT1  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-  </c:set>
-</c:when>
-
-<c:when test='${organism_full eq "Toxoplasma gondii ME49" }'>
-  <c:set var="reference">
-<b><i>Toxoplasma gondii</i> ME49  sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).</b>
-  </c:set>
-</c:when>
-
-<c:when test='${organism_full eq "Neospora caninum" }'>
-  <c:set var="reference">
-Chromosome sequences and annotation for <i>Neospora caninum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.  Please visit <a href="http://www.genedb.org/Homepage/Ncaninum">GeneDB</a> for project details and data release policies. 
-  </c:set>
-</c:when>
-
-<c:when test='${organism_full eq "Toxoplasma gondii RH" }'>
-  <c:set var="reference">
-Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David Roos (University of Pennsylvania), Jessica Kissinger (University of Georgia).The apicoplast genome of <i>T. gondii</i> RH (Type I) strain is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799"TARGET="_blank">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html"TARGET="_blank">here</a> to view a map of the <i>T. gondii</i> apicoplast. 
-  </c:set>
-</c:when>
-<c:when test='${organism_full eq "Eimeria tenella str. Houghton" }'>
-  <c:set var="reference">
-<p>Adam James Reid, Damer Blake, Thomas Dan Otto, Alejandro Sanchez, Mandy Sanders, Yealing Tay, Paul Dear, Kiew-Lian Wan, Matthew Berriman, Arnab Pain, Fiona Tomley. <i>Sequencing and annotation of the Eimeria tenella genome</i>.</p><br>
-<p>Funding: BBSRC, Wellcome Trust Sanger Institute</p><br>
-<p>The data were produced by the Parasite Genomics group at the Wellcome Trust Sanger Institute to the standard of an Improved Draft.  The Parasite Genomics group and collaborators plan on publishing the completed and annotated draft sequence in a peer-reviewed journal as soon as possible. Permission of the Principal Investigator (Matthew Berriman,mb4@sanger.ac.uk) should be obtained before publishing chromosome- or genome- scale analyses of the sequences or annotations. </p>
-</c:set>
-</c:when>
-
-<c:otherwise>
-  <c:set var="reference">
-  ERROR:  No reference found for this gene.
-  </c:set>
-</c:otherwise>
-</c:choose>
+<c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
+<c:forEach var="row" items="${referenceTable}">
+  <c:if test="${extdbname eq row['name'].value}">
+    <c:set var="reference" value="${row['description'].value}"/>
+  </c:if>
+</c:forEach>
 
 
-<imp:panel 
-    displayName="Genome Sequencing and Annotation"
+<site:panel 
+    displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
+
+<br>
+
+
+
+
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
