@@ -157,22 +157,39 @@ while (my $ref = $sth->fetchrow) {
  $pngImage .= $ref;
 }
 
-my $im = GD::Image->newFromPngData($pngImage) || die "cannot read png image";
+my $pathwayImg = GD::Image->newFromPngData($pngImage) || die "cannot read png image";
 
 #draw a legend
-my $imgWidth = $im->width();
+my $imgWidth = $pathwayImg->width();
+my $imgHeight = $pathwayImg->height();
+
+
+#if ($imgWidth > 1000) {
+#  $imgWidth = int(0.7*($imgWidth));
+#  $imgHeight = int(0.7*($imgHeight));
+#}
+
+#my $imgNew  =  new GD::Image($imgWidth,$imgHeight);
+#$imgNew->copyResampled($img,0,0,0,0,$imgWidth,$imgHeight,$img->width(),$img->height());
+
+
+my $legendImg = GD::Image->new($imgWidth,75);
+my $white = $legendImg->colorAllocate(255,255,255);
+
 my $x = 100;
 my $y = 1;
-my $black = $im->colorAllocate(0,0,0);
-$im->string(gdMediumBoldFont,10,1,'LEGEND',$black);
+my $black = $legendImg->colorAllocate(0,0,0);
+$legendImg->rectangle(0,0,$imgWidth-1,75,$black);
+
+$legendImg->string(gdMediumBoldFont,10,1,'LEGEND',$black);
 
 foreach my $factor (keys %{$factorColorMap}) {
-   my $color = $im->colorAllocate($factorColorMap->{$factor}->{'r'},
+   my $color = $legendImg->colorAllocate($factorColorMap->{$factor}->{'r'},
                                   $factorColorMap->{$factor}->{'g'},
                                   $factorColorMap->{$factor}->{'b'});
 
-   $im->filledRectangle($x,$y+3,($x+8),($y+8),$color);
-   $im->string(gdMediumBoldFont,($x+12), $y,$factor,$black);
+   $legendImg->filledRectangle($x,$y+3,($x+8),($y+8),$color);
+   $legendImg->string(gdMediumBoldFont,($x+12), $y,$factor,$black);
 
    if ($x + 500 > $imgWidth) {
      $y = $y + 13;
@@ -182,6 +199,11 @@ foreach my $factor (keys %{$factorColorMap}) {
    }
 }
 #--end legend
+
+my $im = GD::Image->new($imgWidth,($imgHeight+75));
+
+$im->copy($pathwayImg,0,0,0,0,$imgWidth,$imgHeight);
+$im->copy($legendImg,0,($imgHeight-1),0,0,$imgWidth,75);
 
 foreach my $ecNumber (keys %{$ecOrganismMap}){
 
