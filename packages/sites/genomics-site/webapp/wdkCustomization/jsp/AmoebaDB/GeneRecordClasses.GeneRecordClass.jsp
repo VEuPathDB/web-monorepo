@@ -128,9 +128,6 @@ ${attrs['organism'].value}<br>
 
 <c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
-<c:set var="attribution">
-E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
-</c:set>
 
 <c:if test="${gtracks ne ''}">
 
@@ -157,7 +154,7 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
+    attribution=""
   />
 
 </c:if>
@@ -244,17 +241,14 @@ E.histolytica_Annotations,E.dispar_Annotations,E.invadens_Annotations
 </c:if>
 
 
-<imp:wdkTable tblName="EcNumber" isOpen="true" attribution="${attribution}"/>
+<imp:wdkTable tblName="EcNumber" isOpen="true" attribution=""/>
 
 
 <%-- GO ------------------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding') || (attrs['so_term_name'].value eq 'repeat_region')}">
 
-<c:set var="attribution">
-GO,InterproscanData
-</c:set>
 
-<imp:wdkTable tblName="GoTerms" isOpen="true" attribution="${attribution}"/>
+<imp:wdkTable tblName="GoTerms" isOpen="true" attribution=""/>
 
 </c:if>
 
@@ -271,7 +265,7 @@ GO,InterproscanData
       <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL" postscript="${orthomclLink}"/>
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="" postscript="${orthomclLink}"/>
 
 </c:if>
 
@@ -298,9 +292,6 @@ GO,InterproscanData
   </c:when>
 </c:choose>
 
-    <c:set var="attribution">
-    InterproscanData
-    </c:set>
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
@@ -323,7 +314,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 
     <imp:toggle name="proteinContext"  displayName="Protein Features"
              content="${proteinFeaturesImg}"
-             attribution="${attribution}"/>
+             attribution=""/>
       <!-- ${proteinFeaturesUrl} -->
 
 </c:if>
@@ -367,7 +358,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
       <imp:wdkTable tblName="MassSpec" isOpen="true"
                     attribution=""/>
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 

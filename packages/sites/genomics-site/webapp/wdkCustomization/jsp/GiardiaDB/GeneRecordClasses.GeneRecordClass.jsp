@@ -170,11 +170,6 @@ ${attrs['organism'].value}<br>
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
 
-<c:set var="attribution">
-G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblageE_contigsGB
-</c:set>
-
-
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
@@ -195,15 +190,13 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
   />
 
 
 <%-- END DNA CONTEXT --------------------------------------------%>
 
 <%-- Gene Location ------------------------------------------------------%>
-<imp:wdkTable tblName="Genbank" isOpen="true"
-               attribution=""/>
+<imp:wdkTable tblName="Genbank" isOpen="true"/>
 
 
   <c:if test="${strand eq '-'}">
@@ -211,13 +204,13 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
   </c:if>
 
 <!-- Gene Deprecation --> 
-<imp:wdkTable tblName="GeneDeprecation" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="GeneDeprecation" isOpen="true"/>
 
 <!-- External Links --> 
-<imp:wdkTable tblName="GeneLinkouts" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="GeneLinkouts" isOpen="true"/>
 
 <!-- gene alias table -->
-<imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
+<imp:wdkTable tblName="Alias" isOpen="FALSE"/>
 
 <!-- Mercator / Mavid alignments -->
 <c:set var="mercatorAlign">
@@ -229,8 +222,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <imp:toggle isOpen="true"
   name="mercatorAlignment"
   displayName="Multiple Sequence Alignment"
-  content="${mercatorAlign}"
-  attribution=""/>
+  content="${mercatorAlign}"/>
 
 
 
@@ -292,7 +284,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
       <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
     </div>
   </c:set>
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
                  postscript="${orthomclLink}"/>
 
 </c:if>
@@ -307,7 +299,7 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 <%-- SAGE tags ------------------------------------------------------%>
 
 <imp:wdkTable tblName="SageTags" isOpen="FALSE"
-               attribution="GiardiaSageTagArrayDesign,GiardiaSageTagFreqs"/>
+               attribution=""/>
 
 </c:if>
 
@@ -317,9 +309,6 @@ G.lamblia_contigsGB,G.intestinalisAssemblageB_contigsGB,G.intestinalisAssemblage
 
 <imp:pageDivider name="Protein Features"/>
    
-    <c:set var="attribution">
-    InterproscanData
-    </c:set>
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
@@ -345,7 +334,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
         content="${proteinFeaturesImg}"
         isOpen="true"
         name="Protein Context"
-        attribution="${attribution}"/>
+        attribution=""/>
       <!--${proteinFeaturesUrl} -->
    <br>
 </c:if>
@@ -353,11 +342,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 <%-- EC ------------------------------------------------------------%>
 
   <imp:wdkTable tblName="EcNumber" isOpen="true"
-               attribution="enzymeDB,G.lamblia_contigs"/>
+               attribution=""/>
 
 <%-- GO ------------------------------------------------------------%>
   <imp:wdkTable tblName="GoTerms" isOpen="true"
-               attribution="GO,InterproscanData,G.lamblia_contigs"/>
+               attribution=""/>
 
 
 <!-- Molecular weight -->
@@ -400,14 +389,14 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=$
 
 <%-- EPITOPES ------------------------------------------------------%>
   <imp:wdkTable tblName="Epitopes" isOpen="true"
-                 attribution="IEDB_Epitopes"/>
+                 attribution=""/>
 </c:if>
 
 <imp:wdkTable tblName="MassSpec" isOpen="true"
-               attribution="DTASelect-filter_032108_Proteomics,Giardia_Proteomics_From_Tachezy"/>
+               attribution=""/>
 
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
