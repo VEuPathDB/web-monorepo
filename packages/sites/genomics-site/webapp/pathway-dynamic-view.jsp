@@ -10,6 +10,8 @@
 <c:set var="pathwayId" value="${param.pathway}" />
 <c:set var="projectId" value="${param.model}" />
 
+<base target="_parent" />
+
    <!-- StyleSheets provided by WDK -->
 <imp:wdkStylesheets refer="window"/>
 

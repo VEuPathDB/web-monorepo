@@ -56,15 +56,16 @@
     attribute="${attr.name}"/>
 
 <br>
-
+<%--
 <br>
 <div align="center">
 <img align="middle" src="/cgi-bin/colorKEGGmap.pl?model=${projectId}&pathway=${id}" usemap="#pathwayMap"/>
 <imp:pathwayMap projectId="${projectId}" pathway="${id}" />
 </div>
 <br>
-
-
+--%>
+<iframe  src="<c:url value='/pathway-dynamic-view.jsp?model=${projectId}&pathway=${id}' />"  width=100% height=800 align=middle>
+</iframe> 
 
 <%-- Reaction Table ------------------------------------------------%>
   <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true"/>
