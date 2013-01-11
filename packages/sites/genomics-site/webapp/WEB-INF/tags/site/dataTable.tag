@@ -56,7 +56,7 @@
         
             <td ${align} ${nowrap}>
                 <c:choose>
-                    <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
+                    <c:when test="${colVal.class.name eq 'org.gusdb.wdk.model.record.attribute.LinkAttributeValue'}">
                         <a href="${colVal.url}">${colVal.displayText}</a>
                     </c:when>
                     <c:otherwise>

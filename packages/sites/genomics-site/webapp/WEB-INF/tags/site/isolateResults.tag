@@ -279,7 +279,7 @@
 						<c:when test="${fieldVal == null || fn:length(fieldVal) == 0}">
               <span style="color:gray;">N/A</span>
             </c:when>
-            <c:when test="${recAttr.class.name eq 'org.gusdb.wdk.model.LinkAttributeValue'}">
+            <c:when test="${recAttr.class.name eq 'org.gusdb.wdk.model.record.attribute.LinkAttributeValue'}">
 					    <a href="${recAttr.url}">${recAttr.displayText}</a>
             </c:when>
             <c:otherwise>
