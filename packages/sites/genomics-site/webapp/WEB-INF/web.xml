@@ -28,9 +28,11 @@
   
   <!-- The Apache file upload library starts a cleanup thread to remove temporary files -->
   <!--    This listener destroys that thread when the webapp is unloaded.               -->
+  <!--
   <listener>
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
+  -->
   
   <servlet>
     <servlet-name>wdkEuPathDbBrc</servlet-name>
