@@ -158,10 +158,10 @@
     </action>
 
     <action
-        path="/uploadTest"
-        parameter="org.gusdb.wdk.controller.action.FileUploadAction"
+        path="/uploadSample"
+        parameter="org.gusdb.wdk.controller.action.UploadSampleAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="input" path="/uploadTest.jsp"/>
+      <forward name="input" path="/uploadSample.jsp"/>
     </action>
     
     <action
