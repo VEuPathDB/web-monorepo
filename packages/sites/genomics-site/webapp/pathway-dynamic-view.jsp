@@ -7,6 +7,7 @@
 
 <%--############# Access URL Params ############--%>
 <c:set var="geneList"  value="${param.geneList}" />
+<c:set var="compoundList"  value="${param.compoundList}" />
 <c:set var="pathwayId" value="${param.pathway}" />
 <c:set var="projectId" value="${param.model}" />
 
@@ -20,8 +21,8 @@
 
 <br>
 <div align="center">
-<img align="middle" src="http://${pageContext.request.serverName}/cgi-bin/colorKEGGmap.pl?model=${projectId}&pathway=${pathwayId}&geneList=${geneList}" usemap="#pathwayMap"/>
-<imp:pathwayMap projectId="${projectId}" pathway="${pathwayId}" geneList="${geneList}" />
+<img align="middle" src="http://${pageContext.request.serverName}/cgi-bin/colorKEGGmap.pl?model=${projectId}&pathway=${pathwayId}&geneList=${geneList}&compoundList=${compoundList}" usemap="#pathwayMap"/>
+<imp:pathwayMap projectId="${projectId}" pathway="${pathwayId}" geneList="${geneList}" compoundList="${compoundList}"/>
 </div>
 <br>
 

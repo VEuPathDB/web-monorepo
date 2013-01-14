@@ -23,16 +23,16 @@ BEGIN {
 }
 
 my $q = new CGI;
-my $projectId = $q->param('model') || $ARGV[0];
-my $pathwaySourceId = $q->param('pathway') || $ARGV[1];
-my $geneList = $q->param('geneList') || $ARGV[2];
+my $projectId = $q->param('model');
+my $pathwaySourceId = $q->param('pathway');
+my $geneList = $q->param('geneList');
+my $compoundList = $q->param('compoundList');
 
-die "valid project_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional param)\n" if (!$projectId);
-die "valid pathway_source_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional param)\n" if (!$pathwaySourceId);
+die "valid project_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional)\t\t<compoundList> (comma separated - Optional)\n" if (!$projectId);
+die "valid pathway_source_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional)\t\t<compoundList> (comma separated - Optional)\n" if (!$pathwaySourceId);
 
-my $appendSQL;
+my ($appendSQL, $appendCmpdSQL);
 
-$appendSQL ="";
 if ($geneList) {
   $geneList =~ s/,/','/g;
   $geneList = "'$geneList'";
@@ -41,6 +41,13 @@ if ($geneList) {
   $appendSQL = "AND";
 }
 
+if ($compoundList) {
+  $compoundList =~ s/,/','/g;
+  $compoundList = "'$compoundList'";
+  $appendCmpdSQL = "AND pn.display_label in ($compoundList) AND";
+} else {
+  $appendCmpdSQL = "AND";
+}
 
 #-----MODEL PROPS TO MAKE DB CONNECTION -----#
 
@@ -89,8 +96,7 @@ my $cpdLabelSql = "Select p.source_id, pc.compound_source_id,
                      pn.display_label, pn.x, pn.y, pn.height as radius 
               From   ApiDB.Pathway p, ApiDB.PathwayNode pn, ApiDBTuning.PathwayCompounds pc
               Where  p.pathway_id = pn.parent_id
-              And    pn.pathway_node_type_id = 2
-              AND    pn.display_label = pc.compound
+              And    pn.pathway_node_type_id = 2 $appendCmpdSQL pn.display_label = pc.compound
               AND    p.source_id = '$pathwaySourceId'
               Group By p.source_id, pc.compound_source_id, pn.display_label, pn.x, pn.y, pn.height, pn.width";
 

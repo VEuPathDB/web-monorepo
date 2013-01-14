@@ -14,9 +14,13 @@
               description="List if genes (subset) for which paiting needs to be done (optional)"
 %>
 
+<%@ attribute name="compoundList"
+              description="List if compounds (subset) for which paiting needs to be done (optional)"
+%>
+
 <map name=pathwayMap>
 
-<c:import url="http://${pageContext.request.serverName}/cgi-bin/getImageMap.pl?model=${projectId}&pathway=${pathway}&geneList=${geneList}" />
+<c:import url="http://${pageContext.request.serverName}/cgi-bin/getImageMap.pl?model=${projectId}&pathway=${pathway}&geneList=${geneList}&compoundList=${compoundList}" />
 
 </map>
 

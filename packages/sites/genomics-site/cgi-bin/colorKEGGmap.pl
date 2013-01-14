@@ -24,14 +24,15 @@ BEGIN {
 }
 
 my $q = new CGI;
-my $projectId = $q->param('model') || $ARGV[0];
-my $pathwaySourceId = $q->param('pathway') || $ARGV[1];
-my $geneList = $q->param('geneList') || $ARGV[2];
+my $projectId = $q->param('model');
+my $pathwaySourceId = $q->param('pathway');
+my $geneList = $q->param('geneList');
+my $compoundList = $q->param('compoundList');
 
-die "valid project_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional param)\n" if (!$projectId);
-die "valid pathway_source_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional param)\n" if (!$pathwaySourceId);
+die "valid project_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional)\t\t<compoundList> (Comma Seperated - Optional)\n" if (!$projectId);
+die "valid pathway_source_id is required\nUsage\tperl\t\tcolorKEGGmap.pl\t\t<model>\t\t<mapSourceId>\t\t<geneList> (comma separated - Optional)\t\t<compoundList> (Comma Seperated - Optional)\n" if (!$pathwaySourceId);
 
-my $appendSQL;
+my ($appendSQL, $appendCmpdSQL);
 
 if ($geneList) {
   $geneList =~ s/,/','/g;
@@ -40,6 +41,16 @@ if ($geneList) {
 } else {
   $appendSQL = "AND";
 } 
+
+if ($compoundList) {
+  $compoundList =~ s/,/','/g;
+  $compoundList = "'$compoundList'";
+  $appendCmpdSQL = "AND pn.display_label in ($compoundList) AND";
+} else {
+  $appendCmpdSQL = "AND";
+} 
+
+
 #SET COLORS FOR ELEMENTS WHICH DECIDE COLORING EX ORGANISMS
 
 my ($colors, @r, @g, @b);
@@ -96,7 +107,8 @@ my $ecMapSql = "SELECT DISTINCT pn.display_label, ec.organisms,
                        AND    asec.enzyme_class_id = ec.enzyme_class_id
                        Group By ec.ec_number ) ec,
                        (Select pn.display_label,pn.x, pn.y,pn.width, pn.height, pn.pathway_node_type_id as node_type
-                        from apidb.pathway p, apidb.pathwaynode pn Where p.pathway_id = pn.parent_id and  p.source_id = '$pathwaySourceId'
+                        from apidb.pathway p, apidb.pathwaynode pn 
+                        Where p.pathway_id = pn.parent_id $appendCmpdSQL  p.source_id = '$pathwaySourceId'
                         Group By pn.pathway_node_type_id, pn.display_label, pn.x, pn.y,pn.width, pn.height) pn
                 WHERE  ec.ec_number(+) = pn.display_label";
  
