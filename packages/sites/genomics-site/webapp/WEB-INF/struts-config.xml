@@ -158,6 +158,13 @@
     </action>
 
     <action
+        path="/uploadTest"
+        parameter="org.gusdb.wdk.controller.action.FileUploadAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+      <forward name="input" path="/uploadTest.jsp"/>
+    </action>
+    
+    <action
       path="/showFavorite"
       type="org.gusdb.wdk.controller.action.ShowFavoriteAction"
       scope="request"
