@@ -26,29 +26,35 @@
 
 <c:if test="${hideTitle == false}">
   <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}
-
-<!--
-    <span style="font-size:55%;font-weight:bold;text-align:left;font-family: Arial,Helvetica,sans-serif;">
-      <a title="Click to move the 'Description' section into focus" style="border:1px solid black;border-radius: 15px;padding:1px 4px;background-color:white" href="#query-description-section">Description</a>&nbsp;&nbsp;&nbsp;&nbsp;
-      <a title="Click to move the 'Data sources' section into focus" style="border:1px solid black;border-radius: 15px;padding:1px 4px;background-color:white" href="#attributions-section">Data Sources</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <a title="The WADL is used to access this search via RESTful web services"
-                           style="border:1px solid black;border-radius: 15px;padding:1px 4px;background-color:white"
-                           href="<c:url value='/webservices/${wdkQuestion.questionSetName}/${wdkQuestion.name}.wadl' />">WADL</a>
-    </span>
--->
-          <imp:questionFeature question="${wdkQuestion}" />
-  </h1>
+    <imp:questionFeature question="${wdkQuestion}"/></h1>
 </c:if>
-
-<html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
-<imp:questionForm />
-
-<c:if test="${hideOperation == false}">
-    <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
-</c:if>
-</html:form>
 
 <%-- displays question description, can be overridden by the custom question form --%>
 <c:if test="${hideAttrDescr == false}">
-  <imp:questionDescription />
+  <div class="content-pane snippet" style="padding:1em 2em">
+    <div><imp:questionDescription /></div>
+  </div>
 </c:if>
+
+<a name="query-search-form"></a>
+
+<div id="query-search-form">
+  <html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/processQuestion.do">
+    <imp:questionForm />
+
+    <c:if test="${hideOperation == false}">
+        <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
+
+        <%-- custom name param --%>
+        <div style="text-align:center;padding-top:1em;">
+          <label><span style="font-style:italic;color:#333">Name this search:</span></label>
+          <input style="width:15em"
+            class="wdk-tooltip"
+            title="Give this search a custom name (15 character limit). The name will appear in this search's step box and, if this is a new strategy, as the strategy's default name."
+            type="text" placeholder="${wdkQuestion.shortDisplayName}" name="customName" maxlength="15" value="${customName}"/>
+        </div>
+      </c:if>
+
+  </html:form>
+</div>
+

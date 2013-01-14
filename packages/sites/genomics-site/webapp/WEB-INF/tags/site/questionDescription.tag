@@ -33,8 +33,6 @@
 
 <c:set target="${helps}" property="${fromAnchorQ}" value="${helpQ}"/>
 
-<hr>
-
 <c:set var="attrId" value="attributions-section"/>
 <c:set var="descripId" value="query-description-section"/>
 <c:if test="${wdkQuestion.fullName == 'IsolateQuestions.IsolateByCountry'}">
@@ -43,16 +41,27 @@
 
 <%-- display description for wdkQuestion --%>
 <a name="${descripId}"></a>
-<div style="color:black" id="${descripId}">
-	<h2>Description</h2>
-	<jsp:getProperty name="wdkQuestion" property="description"/>
+<div style="color:black;" id="${descripId}">
+	<div class="h4left">Description</div>
+  <div>
+    <jsp:getProperty name="wdkQuestion" property="description"/>
+
+    <br/>
+    <br/>
+
+    <p>To access this search via RESTful web services, use this
+      <a href="${pageContext.request.contextPath}/webservices/${wdkQuestion.questionSetName}/${wdkQuestion.name}.wadl">WADL</a></p>
+
+    <br/>
+    <br/>
+
+  </div>
 </div>
 
 <%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB' && project != 'FungiDB'}">
-<hr>
 <a name="${attrId}"></a>
-<div style="color:black" id="${attrId}">
+<div style="color:black;" id="${attrId}">
   <c:set var="ds_ref_questions" value="${requestScope.ds_ref_questions}" />
   <c:choose>
     <c:when test="${fn:length(ds_ref_questions) == 0}">
@@ -60,7 +69,7 @@
       <imp:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
     </c:when>
     <c:otherwise>
-      <h2>Data Sources</h2>
+      <div class="h4left">Data Sources</div>
       <ul>
       <c:forEach items="${ds_ref_questions}" var="dsRecord">
         <li class="data-source">

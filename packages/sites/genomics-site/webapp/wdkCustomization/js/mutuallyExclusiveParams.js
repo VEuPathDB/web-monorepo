@@ -30,10 +30,10 @@
     _create: function() {
       // cache values
       this.questionName = $("#questionName", this.element).attr("name");
-      this.paramDiv = $("div.param-group[name='" + this.questionName + "_empty']" +
-          " > div.group-detail", this.element),
-      this.paramTable = $("div.param-group[name='" + this.questionName + "_empty']" +
-          " > div.group-detail > table", this.element),
+      this.paramDiv = $(".param-group[name='" + this.questionName + "_empty']" +
+          " > .group-detail", this.element),
+      //this.paramTable = $(".param-group[name='" + this.questionName + "_empty']" +
+      //    " > .group-detail > table", this.element),
       this.groups = this.options.groups;
     },
 
@@ -52,18 +52,18 @@
           var missingParam = false,
               groups = value,
               spacer = $("<tr><td colspan='3'>&nbsp;</td></tr>"),
-              radioRow;
+              radioDiv;
 
           self.destroy();
 
           // for each group, we want to get the rows for the params
-          self.groupsRows = [];
+          self.groupsDivs = [];
 
           $.each(groups, function(idx, group) {
             // groupRows will get pushed to groupsRows
-            var groupRows = [];
+            var groupDivs = [];
             $.each(group.params, function(idx, param) {
-              var row = $("tr", self.paramTable)
+              var div = $(".param-item", self.paramDiv)
                   .has("[id='" + param + "']")
                   .first()
                   .addClass("xor-group")
@@ -71,13 +71,13 @@
                   .data("xor-group", group.name)
                   .hide();
 
-              if (row.length !== 1) {
+              if (div.length !== 1) {
                 missingParam = true;
               } else {
-                groupRows.push(row);
+                groupDivs.push(div);
               }
             });
-            self.groupsRows.push(groupRows);
+            self.groupsDivs.push(groupDivs);
           });
 
           if (missingParam) {
@@ -85,19 +85,19 @@
             return;
           }
 
-          radioRow = $("<div><label>Search by: </label></div>")
+          radioDiv = $("<div><label>Search by: </label></div>")
           .addClass("xor-select")
           .on("change", function() {
             // taking advantage of jQuery patching change events to bubble up
             self.change();
           });
-          self.paramDiv.before(radioRow)
+          self.paramDiv.before(radioDiv)
               .addClass("ui-widget-content")
               .addClass("ui-tabs")
-              .addClass("ui-corner-bottom");
+              .addClass("ui-corner-all");
 
           $.each(groups, function(idx, group) {
-            radioRow
+            radioDiv
             .append($("<input id='xor-group-" + idx + "' type='radio' " +
                 "name='xor-group' value='" + idx + "'/>").attr("checked", idx === 0))
             .append($("<label for='xor-group-" + idx + "'>" + group.name + "</label>"));
@@ -125,11 +125,10 @@
           // $.cookie(self.questionName + "-xor-group", num);
         }
 
-        $.each(self.groupsRows[num], function() {
+        $.each(self.groupsDivs[num], function() {
           //this.css("color", input.checked ? "black" : "#AAA");
           // this.toggleClass("active", input.checked);
-          this.find("td:nth-child(2)")
-              .find("input, select, textarea")
+          this.find("input, select, textarea")
               .attr("disabled", !input.checked);
           if (input.checked) {
             this.show();

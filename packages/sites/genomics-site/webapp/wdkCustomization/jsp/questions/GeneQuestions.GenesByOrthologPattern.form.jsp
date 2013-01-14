@@ -102,124 +102,127 @@ Ack, this form won't work at all without JavaScript support!
 <!-- show error messages, if any -->
 <div class='usererror'><api:errors/></div>
 
-<%-- the js has to be included here in order to appear in the step form --%>
-<script type="text/javascript" src='<c:url value="/wdk/js/wdk/src/question.js"/>'></script>
-
 <%--  PARAMS DIV --%>
 <div class="params">
-<input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
-<input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
-<input name="array(phyletic_indent_map)" value="ARCH" type="hidden"/>
+  <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
+  <input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
+  <input name="array(phyletic_indent_map)" value="ARCH" type="hidden"/>
 
-<table style="width:70%;margin-left:auto;margin-right:auto;">
-<tr>
-    <td title="Find genes in these organisms that belong to an ortholog group with the profile you select below." 
-				style="font-size:120%;text-align:right">
-					<b>Find genes in these organisms</b>
-        	<img title="Find genes in these organisms that belong to an ortholog group with the profile you select below" 
-								class="help-link"
-						 		src="wdk/images/question.png" 
-								style="cursor:pointer" 
-								aria-describedby="ui-tooltip-2">
-    </td>
-    <td><imp:enumParamInput qp="${resultSpecies}" /></td>
-</tr>
+  <div class="param-group content-pane">
+    <div class="group-detail">
 
-<tr>
-		<td title="If you do not force the inclusion of any organism you will get back all genes, since each gene is in a group by itself." 
-				style="font-size:120%;text-align:right" >
-					<b>Select orthology profile</b>
-    			<img title=""If you do not force the inclusion of any organism you will get back all genes, since each gene is in a group by itself." 
-								class="help-link" 
-								src="wdk/images/question.png" 
-								style="cursor:pointer" 
-								aria-describedby="ui-tooltip-2">
-   </td>
-    <td>Click on <img src="images/dc.gif"> to determine which organisms to include or exclude in the orthology profile.<br>
-    		<i style="font-size:95%">(<img src="images/dc.gif">=no constraints |  <img src="images/yes.gif">=must be in group | <img src="images/no.gif">=must not be in group | <img src="images/unk.gif">=mixture of constraints)</i>
-		</td>
-</tr>
+      <div class="param-item">
+        <label>
+          <span style="font-weight:bold">Find genes in these organisms</span>
+          <img title="Find genes in these organisms that belong to an ortholog group with the profile you select below" 
+             class="help-link"
+             src="wdk/images/question.png" 
+             style="cursor:pointer" 
+             aria-describedby="ui-tooltip-2">
+        </label>
+        <div class="param-control"><imp:enumParamInput qp="${resultSpecies}" /></div>
+      </div>
 
-<c:set var="idx" value="1"/>
-	
+      <div class="param-item">
+        <label>
+          <span style="font-weight:bold">Select orthology profile</span>
+          <img title="If you do not force the inclusion of any organism you will get back all genes, since each gene is in a group by itself." 
+              class="help-link" 
+              src="wdk/images/question.png" 
+              style="cursor:pointer" 
+              aria-describedby="ui-tooltip-2">
+        </label>
+
+        <div class="param-control">
+          <div>Click on <img src="images/dc.gif"> to determine which organisms to
+              include or exclude in the orthology profile.<br>
+            <i style="font-size:95%">(<img src="images/dc.gif">=no constraints |
+            <img src="images/yes.gif">=must be in group |
+            <img src="images/no.gif">=must not be in group |
+            <img src="images/unk.gif">=mixture of constraints)</i>
+          </div>
+
+          <c:set var="idx" value="1"/>
+
+<%-- I don't think we need this - dmf
 <tr style="display:none;" class="showhide">
 		<td width="250px"  style="text-align:right">&nbsp;</td>
 		<td>
 					<div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
 		</td>
 </tr>
+--%>
 
-<tr>
-		<td width="250px"  style="text-align:right">&nbsp;</td>
-		<td>
-				<a href="javascript:void(0)" onclick="toggle(0)">
-						<img border=0 id="img0" src="<c:url value="/images/dc.gif"/>">
-				</a>
-				&nbsp;<b>All Organisms</b>
-				&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myshowTree()">expand all</a>
-				&nbsp;|&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myhideTree()">collapse all</a>
+          <div style="padding-top:1em"> <%-- start WRAPPER --%>
+            <a href="javascript:void(0)" onclick="toggle(0)">
+              <img border=0 id="img0" src="<c:url value="/images/dc.gif"/>">
+            </a>
+            &nbsp;<b>All Organisms</b>
+            &nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myshowTree()">expand all</a>
+            &nbsp;|&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myhideTree()">collapse all</a>
 
-<%--  TREE CONSTRUCTION LOOP  -----------------%>
-  <div id="orthology-profile-tree" style="display:none">
+            <%--  TREE CONSTRUCTION LOOP  -----------------%>
+            <div id="orthology-profile-tree" style="display:none">
 
-<c:set var="indent" value="0"/>
-<c:forEach var="sp" items="${ind.vocab}">
- 	<c:set var="spDisp" value="${termMap[sp]}"/>
-  <c:set var="category" value="0"/>
-  <c:if test="${spDisp == null}">
-      <c:set var="spDisp" value="${sp}"/> 
-      <c:set var="category" value="1"/>
-  </c:if>
+              <c:set var="indent" value="0"/>
+              <c:forEach var="sp" items="${ind.vocab}">
+                <c:set var="spDisp" value="${termMap[sp]}"/>
+                <c:set var="category" value="0"/>
+                <c:if test="${spDisp == null}">
+                  <c:set var="spDisp" value="${sp}"/> 
+                  <c:set var="category" value="1"/>
+                </c:if>
 
-  <%-- determine if we should nest our list, remain the same, or unnest --%>
-  <c:set var="nest" value="${indentMap[sp] - indent}"/>
-  <c:set var="indent" value="${indentMap[sp]}"/>
+                <%-- determine if we should nest our list, remain the same, or unnest --%>
+                <c:set var="nest" value="${indentMap[sp] - indent}"/>
+                <c:set var="indent" value="${indentMap[sp]}"/>
 
-  <c:choose>
-    <c:when test="${nest eq 0}">
-      </li>
-    </c:when>
-    <c:when test="${nest lt 0}">
-      <c:forEach begin="1" end="${nest * -1}" step="1">
-        </li></ul>
-      </c:forEach>
-      </li>
-    </c:when>
-    <c:otherwise>
-      <c:forEach begin="1" end="${nest}" step="1">
-        <ul>
-      </c:forEach>
-    </c:otherwise>
-  </c:choose>
+                <c:choose>
+                  <c:when test="${nest eq 0}">
+                    </li>
+                  </c:when>
+                  <c:when test="${nest lt 0}">
+                    <c:forEach begin="1" end="${nest * -1}" step="1">
+                      </li></ul>
+                    </c:forEach>
+                    </li>
+                  </c:when>
+                  <c:otherwise>
+                    <c:forEach begin="1" end="${nest}" step="1">
+                      <ul>
+                    </c:forEach>
+                  </c:otherwise>
+                </c:choose>
 
-  <li id="${sp}-node">
-    <!-- ${sp} -->
-    <a href="javascript:void(0)" onclick="toggle(${idx})"><img alt=""
-        border="0" id="img${idx}" src="<c:url value="/images/dc.gif"/>"/></a>&nbsp;
-    <span>
-    <c:choose>
-      <c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when>
-      <c:otherwise><i>${spDisp}</i></c:otherwise>
-    </c:choose>
-    <c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
-    </span>
+                <li id="${sp}-node">
+                  <!-- ${sp} -->
+                  <a href="javascript:void(0)" onclick="toggle(${idx})"><img alt=""
+                      border="0" id="img${idx}" src="<c:url value="/images/dc.gif"/>"/></a>&nbsp;
+                  <span>
+                  <c:choose>
+                    <c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when>
+                    <c:otherwise><i>${spDisp}</i></c:otherwise>
+                  </c:choose>
+                  <c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
+                  </span>
 
-	<c:set var="idx" value="${idx+1}"/>	
+                <c:set var="idx" value="${idx+1}"/>	
 
-</c:forEach>
-<c:forEach begin="1" end="${indent}" step="1">
-  </li></ul>
-</c:forEach>
+              </c:forEach>
+              <c:forEach begin="1" end="${indent}" step="1">
+                </li></ul>
+              </c:forEach>
 
-  </div></td>
-</tr>
+          </div> <%-- end TREE --%>
 
-</table>
-<br><br>
+          <html:hidden property="value(${includedSpeciesName})" value="n/a" />
+          <html:hidden property="value(${excludedSpeciesName})" value="n/a" />
+          <html:hidden property="value(${profilePatternName})" value="%"/>
+        </div> <%-- end WRAPPER --%>
 
-  <html:hidden property="value(${includedSpeciesName})" value="n/a" />
-  <html:hidden property="value(${excludedSpeciesName})" value="n/a" />
-  <html:hidden property="value(${profilePatternName})" value="%"/>
+      </div> <%-- end param-item --%>
+    </div> <%-- end group-detail --%>
+  </div> <%-- end param-group --%>
 </div><%-- END OF PARAMS DIV --%>
 
 <script>

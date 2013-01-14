@@ -26,23 +26,32 @@ SpanLocation.prototype.createLayout = function() {
 
         // locate the span_id param, then find it's tr parent, then add a place holder
         // for the span logic container
-        var params = $("#form_question .params");
-        var spanIdInput = params.find("table#span_id").parent("td");
+        var params = $("#form_question .params").last();
+        var spanIdInput = params.find("#span_id").parent(".param-control");
             
         // find the place holder for location, and put the content of the input id param into it
-        $("#form_question #span-location #span-search-list").html(spanIdInput.html());
+        $("#form_question #span-location #span-search-list").append(spanIdInput.children());
 
         // find extra param groups
-        params.children(".param-group").each(function() {
-            if ($(this).attr("type") != "empty")
-                $(this).appendTo("#span-extra");
-        });
+        // params.children(".param-group").each(function() {
+        //     if ($(this).attr("type") != "empty")
+        //         $(this).appendTo("#span-extra");
+        // });
+        params.children(".param-group").not(".empty").appendTo("#span-extra");
 
-        spanIdInput.parent("tr").remove();
+        spanIdInput.parents(".param-item").remove();
 
         // register events
         $("#form_question #span-location #span-compose").click(this.composeId);
         $("#form_question").submit(this.validateIds);
+
+        // fix param label width
+        $("#form_question").find("label").css("width", "130px");
+        $("#form_question").find(".param-control").css("margin-left", "140px");
+
+        // move content-pane class to span-location table
+        params.find(".content-pane").removeClass("content-pane")
+            .parents("#span-location").wrap("<div class='content-pane'></div>").css("margin", "1em");
 };
 
 SpanLocation.prototype.composeId = function() {
