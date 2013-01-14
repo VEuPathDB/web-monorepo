@@ -1197,6 +1197,18 @@ sub ExportPredTitle{
    hover($f, \@data); 
 }
 
+sub repeatFamily {
+  my $f = shift;
+
+  my $start = $f->start;
+  my $stop = $f->stop;
+  my ($family) = $f->get_tag_values("Family");
+
+  my @data;
+  push(@data, ['Repeat Family:' => $family]);
+  push(@data, ['Location:' => $start . " - " . $stop]);
+  return hover($f,\@data);
+}
 
 sub jcviPasaTitle {
   my $f = shift;
