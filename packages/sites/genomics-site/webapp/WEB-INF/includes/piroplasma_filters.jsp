@@ -35,19 +35,19 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="bbov_genes" />  
+                          instanceName="bbov_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tannu_genes" />  
+                          instanceName="tannu_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tparva_genes" />  
+                          instanceName="tparva_instances" />  
     </td>
   </tr>
 </table>

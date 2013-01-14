@@ -52,31 +52,31 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="lbr_genes" />  
+                          instanceName="lbr_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="lin_genes" />  
+                          instanceName="lin_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="lma_genes" />  
+                          instanceName="lma_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="lme_genes" />  
+                          instanceName="lme_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="lta_genes" />  
+                          instanceName="lta_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
@@ -88,25 +88,25 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tbr927_genes" />  
+                          instanceName="tbr927_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tbr427_genes" />  
+                          instanceName="tbr427_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tbrgamb_genes" />  
+                          instanceName="tbrgamb_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tcongolense_genes" />  
+                          instanceName="tcongolense_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
@@ -118,25 +118,25 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tce_genes" />  
+                          instanceName="tce_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tcne_genes" />  
+                          instanceName="tcne_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tcu_genes" />  
+                          instanceName="tcu_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tvivax_genes" />  
+                          instanceName="tvivax_instances" />  
     </td>
   </tr>
 </table>
