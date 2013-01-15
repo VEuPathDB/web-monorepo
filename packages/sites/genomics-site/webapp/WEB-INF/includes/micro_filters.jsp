@@ -17,9 +17,12 @@
     <th colspan=5 align="center"><i>Encephalitozoon cuniculi </i></th>
     <th colspan=3 align="center"><i>Encephalitozoon hellem </i></th>
     <th rowspan=2 align="center"><i>Encephalitozoon intestinalis</i></th>
+    <th rowspan=2 align="center"><i>Encephalitozoon romaleae</i></th>
     <th rowspan=2 align="center"><i>Enterocytozoon bieneusi</i></th>
     <th colspan=3 align="center"><i>Nematocida </i></th>
     <th rowspan=2 align="center"><i>Nosema ceranae</i></th>
+    <th rowspan=2 align="center"><i>Vavraia culicis</i></th>
+    <th rowspan=2 align="center"><i>Vittaforma corneae</i></th>
   </tr>
   <tr>
     <th><i>Distinct genes</i></th>
@@ -106,6 +109,12 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
+                          instanceName="eromSJ_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
                           instanceName="ebie_instances" />  
     </td>
     <td>
@@ -131,6 +140,18 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="ncer_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="vculf_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="vcorA_instances" />  
     </td>
   </tr>
 </table>

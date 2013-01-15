@@ -15,6 +15,7 @@
     <th align="center">All<br>Results</th>
     <th align="center">Ortholog<br>Groups</th>
     <th align="center"><i>Babesia bovis</i></th>
+    <th align="center"><i>Babesia microti</i></th>
     <th align="center"><i>Theileria annulata</i></th>
     <th align="center"><i>Theileria parva</i></th>
   </tr>
@@ -36,6 +37,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="bbov_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="bmicroti_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
