@@ -19,7 +19,7 @@
 %>
 <%@ attribute name="attribution"
               required="false"
-              description="Dataset ID (from Data Sources) for attribution"
+              description="Dataset ID (from Data Sets) for attribution"
 %>
 
 
@@ -48,14 +48,14 @@
     <td align="right">
      <font size="-2" face="Arial,Helvetica">
      [<a href="getDataset.do?display=detail&datasets=${trimmedAttribution}&title=${displayName}">
-     Data Sources</a>]
+     Data Sets</a>]
      </font>
     </td>
   </c:when>
   <c:when test="${attribute != null && attribute !='' && ds_ref_table != null && ds_ref_table != ''}">
         <td align="right">
           <font size="-2" face="Arial,Helvetica">
-          [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">Data Sources</a>]
+          [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">Data Sets</a>]
           </font>
         </td>
   </c:when>
@@ -63,7 +63,7 @@
     <td align="right">
      <font size="-2" face="Arial,Helvetica">
      [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">
-     Data Sources</a>]
+     Data Sets</a>]
      </font>
     </td>
   </c:when>
@@ -71,7 +71,7 @@
     <td align="right">
      <font size="-2" face="Arial,Helvetica">
      [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">
-     Data Sources</a>]
+     Data Sets</a>]
      </font>
     </td>
   </c:when>

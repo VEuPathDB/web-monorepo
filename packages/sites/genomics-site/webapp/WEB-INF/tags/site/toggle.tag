@@ -67,7 +67,7 @@
 
 <%@ attribute name="attribution"
               required="false"
-              description="Dataset ID (from Data Sources) for attribution"
+              description="Dataset ID (from Data Sets) for attribution"
 %>
 
 <c:set var="userAgent" value="${header['User-Agent']}"/>
@@ -170,21 +170,21 @@
 	 <c:when  test='${dsLink != null && dsLink != ""}'>
 	 <td align="right">
            <font size="-1" face="Arial,Helvetica">
-           [<a href="${dsLink}">Data Sources</a>]
+           [<a href="${dsLink}">Data Sets</a>]
            </font>
         </td>	
 	</c:when>
       <c:when test="${name != null && name !='' && hasDBDataset}">
         <td align="right">
           <font size="-2" face="Arial,Helvetica">
-          [<a href="<c:url value='/getDataset.do?reference=${name}&display=detail' />">Data Sources</a>]
+          [<a href="<c:url value='/getDataset.do?reference=${name}&display=detail' />">Data Sets</a>]
           </font>
         </td>
       </c:when>
       <c:when test='${attribution != null && attribution != ""}'>
         <td align="right">
            <font size="-1" face="Arial,Helvetica">
-           [<a href="getDataset.do?display=detail&datasets=${attribution}&title=${displayNameParam}">Data Sources</a>]
+           [<a href="getDataset.do?display=detail&datasets=${attribution}&title=${displayNameParam}">Data Sets</a>]
            </font>
         </td>
       </c:when>
