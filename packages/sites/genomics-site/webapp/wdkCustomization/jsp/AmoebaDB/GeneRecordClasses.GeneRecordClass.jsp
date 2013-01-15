@@ -164,25 +164,17 @@ ${attrs['organism'].value}<br>
 
 
 <!-- Mercator / Mavid alignments -->
-<c:if test='${organism_full eq "Entamoeba dispar SAW760" || organism_full eq "Entamoeba histolytica HM-1:IMSS"}'>
-
- <c:if test="${strand eq '-'}">
-   <c:set var="revCompOn" value="1"/>
-  </c:if>
-
 <c:set var="mercatorAlign">
 <imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
-                    contigId="${contig}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
+                    contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
                     availableGenomes=""/>
 </c:set>
 
-<imp:toggle isOpen="false"
+<imp:toggle isOpen="true"
   name="mercatorAlignment"
   displayName="Multiple Sequence Alignment"
   content="${mercatorAlign}"
   attribution=""/>
-
-</c:if>
 
 
 <!-- snps between strains -->

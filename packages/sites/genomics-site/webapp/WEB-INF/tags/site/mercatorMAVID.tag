@@ -247,6 +247,9 @@ return true;
             <td>
               <input type="checkbox" name="genomes" value="bbovT2Bo" checked>B.bovis
             </td>
+            <td>
+              <input type="checkbox" name="genomes" value="bmicRI" checked>B.microti
+            </td>
            </tr>
          </table>
      </td></tr>
@@ -288,10 +291,19 @@ return true;
               <input type="checkbox" name="genomes" value="ehelSwiss" checked>E.hellem Swiss
             </td>
             <td>
+              <input type="checkbox" name="genomes" value="eromSJ2008" checked>E.romaleae
+            </td>
+            <td>
               <input type="checkbox" name="genomes" value="ehelATCC50504" checked>E.hellem ATCC 50504
             </td>
             <td>
               <input type="checkbox" name="genomes" value="ncerBRL01" checked>N.cerenae
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="vculfloridensis" checked>V.floridensis
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="vcorATCC50505" checked>V.corneae
             </td>
            </tr>
          </table>
@@ -304,15 +316,47 @@ return true;
         <table>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="e_dispar" checked>E.dispar
+              <input type="checkbox" name="genomes" value="acasNeff" checked>A.castellanii
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="e_histolytica" checked>E.histolytica
+              <input type="checkbox" name="genomes" value="edisSAW760" checked>E.dispar
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="ehisHM1IMSS" checked>E.histolytica
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="einvIP1" checked>E.invadens
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="emosLaredo" checked>E.moshkovskii
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="enutP19" checked>E.nuttalli
             </td>
            </tr>
          </table>
      </td></tr>
 </c:if>
+
+<c:if test="${projectId eq 'GiardiaDB'}">
+
+   <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
+        <table>
+          <tr>
+            <td>
+              <input type="checkbox" name="genomes" value="gassAWB" checked>Giardia Assemblage A
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="gassBGS" checked>Giardia Assemblage B
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="gassEP15" checked>Giardia Assemblage E
+            </td>
+           </tr>
+         </table>
+     </td></tr>
+</c:if>
+
 
     <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
         <input type="radio" name="type" value="clustal" checked>clustal
