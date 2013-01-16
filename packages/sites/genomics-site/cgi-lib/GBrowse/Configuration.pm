@@ -76,6 +76,10 @@ sub bam_file_path {
   return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. '/bam';
 }
 
+sub bigwig_file_path {
+  return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. '/bigwig';
+}
+
 sub userDB {
   my $projectId = $ENV{PROJECT_ID};
   my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
