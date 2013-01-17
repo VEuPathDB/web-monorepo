@@ -336,7 +336,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
    <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
     <c:set var="ptracks">
-     WastlingMassSpecPeptides+MurrayMassSpecPeptides+EinsteinMassSpecPeptides+CarruthersMassSpecPeptides+MorenoMassSpecPeptides+TonkinMassSpecPeptides+BoothroydMassSpecPeptides+BoothroydOocystMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
+     WastlingMassSpecPeptides+MurrayMassSpecPeptides+EinsteinMassSpecPeptides+CarruthersMassSpecPeptides+MorenoMassSpecPeptides+TonkinMassSpecPeptides+SullivanMassSpecPeptides+BoothroydMassSpecPeptides+BoothroydOocystMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
     </c:set>
     </c:if>
 <c:if test="${organism_full eq 'Toxoplasma gondii GT1'}">
