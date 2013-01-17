@@ -90,3 +90,4 @@
  color:#9a3b00;
 }
 .list {visibility:hidden;}
+#balloon, #closeButton { z-index: 505; }
