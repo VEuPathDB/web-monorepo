@@ -23,6 +23,8 @@
 
 <c:set var="giardiaQuestions" value="G.l.study:Three Strains (Svard),GeneQuestions.GenesByRNASeqSvard3StagesFC,GeneQuestions.GenesByRNASeqSvard3StagesPercentile"/>
 
+<c:set var="microsporidiaQuestions" value="N.p.study:C.elegans Infection Time Series (Troemel),GeneQuestions.GenesByRNASeqTroemelCeInfectionFC,GeneQuestions.GenesByRNASeqTroemelCeInfectionPercentile"/>
+
 <%-- END OF QUESTIONS --%>
 
 <imp:errors/>
@@ -60,13 +62,18 @@
       <imp:queryList columns="${columns}" questions="${giardiaQuestions}"/>
     </c:when>
 
+    <c:when test="${projectId == 'MicrosporidiaDB'}">
+      <imp:queryList columns="${columns}" questions="${microsporidiaQuestions}"/>
+    </c:when>
+
+
 		<%--
     <c:when test="${projectId == 'CryptoDB'}">
       <imp:queryList columns="${columns}" questions="${cryptoQuestions}"/>
     </c:when>
 		--%>
     <c:otherwise>  <%-- it must be the portal --%>
-      <imp:queryList columns="${columns}" questions="${plasmoQuestions},${toxoQuestions},${tritrypQuestions},${giardiaQuestions}"/>
+      <imp:queryList columns="${columns}" questions="${plasmoQuestions},${toxoQuestions},${tritrypQuestions},${giardiaQuestions},${microsporidiaQuestions}"/>
     </c:otherwise>
    </c:choose>
 
