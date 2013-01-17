@@ -138,7 +138,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <c:choose>
   <c:when test='${organismFull eq "Giardia Assemblage A isolate WB"}'>
      <c:set var="assemblage" value="<b>Assemblage A isolate WB</b>"/>
-     <c:set var="ptracks" value="RatnerMassSpecPeptides+TachezyMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP"/>
+     <c:set var="ptracks" value="RatnerMassSpecPeptides+TachezyMassSpecPeptides+GillianMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP"/>
   </c:when>
   <c:when test='${organismFull eq "Giardia Assemblage B isolate GS"}'>
      <c:set var="assemblage" value="<b>Assemblage B isolate GS</b>" />
