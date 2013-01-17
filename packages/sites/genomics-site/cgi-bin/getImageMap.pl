@@ -97,8 +97,7 @@ my $cpdLabelSql = "Select p.source_id, pc.compound_source_id,
               From   ApiDB.Pathway p, ApiDB.PathwayNode pn, ApiDBTuning.PathwayCompounds pc
               Where  p.pathway_id = pn.parent_id
               And    pn.pathway_node_type_id = 2 $appendCmpdSQL pn.display_label = pc.compound
-              AND    p.source_id = '$pathwaySourceId'
-              Group By p.source_id, pc.compound_source_id, pn.display_label, pn.x, pn.y, pn.height, pn.width";
+              AND    p.source_id = '$pathwaySourceId'";
 
 $sth = $dbh->prepare($cpdLabelSql);
 $sth->execute;

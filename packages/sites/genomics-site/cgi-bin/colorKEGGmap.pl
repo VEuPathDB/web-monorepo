@@ -45,7 +45,7 @@ if ($geneList) {
 if ($compoundList) {
   $compoundList =~ s/,/','/g;
   $compoundList = "'$compoundList'";
-  $appendCmpdSQL = "AND pn.display_label in ($compoundList) AND";
+  $appendCmpdSQL = "AND (pn.display_label in ($compoundList) OR pn.pathway_node_type_id = '1') AND";
 } else {
   $appendCmpdSQL = "AND";
 } 
