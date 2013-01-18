@@ -100,7 +100,7 @@
                 <div id="${textId}"  class="coloredtext"></div>
               </c:when>
               <c:otherwise>
-                <div id="${textId}"  class="coloredtext">WARNING:  This Gene (${row['source_id'].value}) does not have data for this graph.  Instead, we are showing data for the selected Gene (${selected_graph_id}) which was discovered to be in the same gene group.  This may or may NOT accurately represent the gene you are interested in.</div>
+                <div id="${textId}"  class="coloredtext">WARNING:  This Gene (${row['source_id'].value}) does not have data for this experiment.  Instead, we are showing data for the selected Gene (${selected_graph_id}) which was discovered to be in the same gene group.  This may or may NOT accurately represent the gene you are interested in.</div>
               </c:otherwise>
             </c:choose>
 	    </c:if>
