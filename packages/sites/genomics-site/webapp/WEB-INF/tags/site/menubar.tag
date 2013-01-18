@@ -62,6 +62,7 @@
 </c:choose>
 --%>
 
+<span class="onload-function" data-function="Setup.configureMenuBar"><jsp:text/></span>
 <div id="menu" class="ui-helper-clearfix">
 
   <ul class="sf-menu">

@@ -22,6 +22,7 @@
 <script type="text/javascript" src="${base}/wdkCustomization/js/lib/hoverIntent.js"></script>
 <script type="text/javascript" src="${base}/wdkCustomization/js/lib/superfish.js"></script>
 <script type="text/javascript" src="${base}/wdkCustomization/js/lib/supersubs.js"></script>
+<script type="text/javascript" src="${base}/wdkCustomization/js/common.js"><jsp:text/></script>
 
 <!-- Contact Us window -->
 <script type='text/javascript' src='<c:url value="/js/newwindow.js"/>'></script>
