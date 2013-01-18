@@ -3,7 +3,7 @@ package GBrowse::Configuration;
 @main::rainbow = qw(red green yellow blue khaki pink orange cyan purple);
 
 use ApiCommonWebsite::Model::ModelConfig;
-use ApiCommonWebsite::Model::ModelApicommonXml;
+use EuPathSiteCommon::Model::ModelXML;
 
 use ApiCommonWebsite::Model::DbUtils;
 
@@ -62,7 +62,7 @@ sub site_version {
 
   my $versionType = shift || 'buildNumber' ; # version type is releaseVersion or buildNumber 
 
-  my $model = ApiCommonWebsite::Model::ModelApicommonXml->new();
+  my $model = EuPathSiteCommon::Model::ModelXML->new('apiCommonModel.xml');
   my $projectId = $ENV{PROJECT_ID};
 
   if($versionType eq 'buildNumber') {
