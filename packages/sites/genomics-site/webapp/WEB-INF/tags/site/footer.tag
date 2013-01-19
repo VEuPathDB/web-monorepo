@@ -26,7 +26,7 @@
     </div>
 
     <div style="float:right;padding-right:9px;font-size:1.4em;line-height:2;">
-      Please <a href="${pageContext.request.contextPath}/help.jsp" target="_blank" onclick="poptastic(this.href); return false;">Contact Us</a> with any questions or comments<br/>
+      Please <a href="${pageContext.request.contextPath}/contact.do" class="open-window-contact-us">Contact Us</a> with any questions or comments<br/>
       <a href="http://code.google.com/p/strategies-wdk/">
         <img border="0" style="position:relative;top:-9px;left:103px" src="${pageContext.request.contextPath}/wdk/images/stratWDKlogo.png" width="120"/>
       </a>
