@@ -61,6 +61,29 @@
 <%-- end hardcoded message only for alpha sites --%>
 
 
+
+<%-- hardcoded warning message for search page in plasmo about pathways --%>
+<c:if test="${refer == 'question' && project =='PlasmoDB'}">
+  <div class="info announcebox ${homeClass}" style="color:darkred">
+    <table><tr><td>
+      <img src="/assets/images/clearInfoIcon.png" alt="warningSign" /></td>
+    <td>
+      <span class="warningMessage">
+
+      This first release of Metabolic Pathways in ${wdkModel.name} includes only pathways from Kegg.
+			We plan to expand the Pathways data soon to include other sources such as ...
+      Please explore the site and 
+				<a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> 
+      with your feedback. 
+
+      </span>
+     </td></tr></table>
+  </div>
+</c:if>
+<%-- end hardcoded message --%>
+
+
+
 <c:if test="${refer == 'home'}">
   <%--Information message retrieved from DB via messaging system--%>
   <c:set var="siteInfo">
