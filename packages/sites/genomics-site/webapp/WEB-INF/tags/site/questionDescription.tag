@@ -41,11 +41,13 @@
 
 <%-- display description for wdkQuestion --%>
 <a name="${descripId}"></a>
-<div style="color:black;" id="${descripId}">
+<div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${descripId}">
+  <div>
 	<div class="h4left">Description</div>
   <div>
     <jsp:getProperty name="wdkQuestion" property="description"/>
 
+    <!--
     <br/>
     <br/>
 
@@ -54,14 +56,17 @@
 
     <br/>
     <br/>
+    -->
 
+  </div>
   </div>
 </div>
 
 <%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB' && project != 'FungiDB'}">
 <a name="${attrId}"></a>
-<div style="color:black;" id="${attrId}">
+<div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${attrId}">
+  <div>
   <c:set var="ds_ref_questions" value="${requestScope.ds_ref_questions}" />
   <c:choose>
     <c:when test="${fn:length(ds_ref_questions) == 0}">
@@ -97,6 +102,7 @@
       </ul>
     </c:otherwise>
   </c:choose>
+</div>
 </div>
 </c:if>
 

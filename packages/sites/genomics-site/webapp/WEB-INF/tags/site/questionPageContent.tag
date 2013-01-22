@@ -31,9 +31,9 @@
 
 <%-- displays question description, can be overridden by the custom question form --%>
 <c:if test="${hideAttrDescr == false}">
-  <div class="content-pane snippet" style="padding:1em 2em">
+  <!-- <div class="content-pane snippet" style="padding:1em 2em"> -->
     <div><imp:questionDescription /></div>
-  </div>
+    <!-- </div> -->
 </c:if>
 
 <a name="query-search-form"></a>
