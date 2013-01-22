@@ -35,7 +35,7 @@
 </c:if>
 
 <!-- Data source page -->
-<c:if test="${refer == 'data-source'}">
+<c:if test="${refer == 'data-set'}">
   <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/dataSource.css"/>
 </c:if>
 

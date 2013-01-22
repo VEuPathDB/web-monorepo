@@ -1,72 +1,72 @@
-#data-sources { padding: 5px; }
+#data-sets { padding: 5px; }
 
-#data-sources ul { 
+#data-sets ul { 
 	list-style: disc inside none; 
 	font-size:120%;
 }
 
-#data-sources .smallitalics { 
+#data-sets .smallitalics { 
 	font-size:90%;
 	font-style:italic; 
 }
 
-#data-sources .anchor {
+#data-sets .anchor {
   padding: 5px;
   float: right;
 }
 
-#data-sources .caption {
+#data-sets .caption {
   color: #555555;
 }
 
-#data-sources .category div.ctitle {
+#data-sets .category div.ctitle {
 	background-color:lightgrey;  /* #d3d3d3 */
 	padding:10px;
 	margin-top:10px;
 	border-top:3px solid grey;
 }
 
-#data-sources .category-content .data-source {
+#data-sets .category-content .data-set {
 	margin-bottom:10px;
 
 } 
-#data-sources .category-content .data-source .dstitle {
+#data-sets .category-content .data-set .dstitle {
 	font-size:120%;
 	margin-left:5px;
 	padding:5px 0;
 	font-weight:bold;
 }
 
-#data-sources .category-content .data-source div.detail {
+#data-sets .category-content .data-set div.detail {
 	margin-left:15px;
 }
 
-#data-sources .category-content .data-source .wdk-toggle {
+#data-sets .category-content .data-set .wdk-toggle {
 	font-family: Arial;
 	font-size: 100%;
 }
 
 /* cancelling jquery styles in this page*/
-#data-sources .category-content .data-source .wdk-toggle h3.ui-state-default, 
-#data-sources .category-content .data-source .wdk-toggle h3.ui-state-hover,
-#data-sources .category-content .data-source .wdk-toggle h3.ui-state-active,
-#data-sources .category-content .data-source .wdk-toggle .ui-widget-content {
+#data-sets .category-content .data-set .wdk-toggle h3.ui-state-default, 
+#data-sets .category-content .data-set .wdk-toggle h3.ui-state-hover,
+#data-sets .category-content .data-set .wdk-toggle h3.ui-state-active,
+#data-sets .category-content .data-set .wdk-toggle .ui-widget-content {
 	border:0;
 	background:0;
 }
 
-#data-sources .category-content .data-source .wdk-toggle .ui-accordion {
+#data-sets .category-content .data-set .wdk-toggle .ui-accordion {
 	padding:0;
 	margin-left:5px;
 }
 
-#data-sources .category-content .data-source .wdk-toggle h3 {
+#data-sets .category-content .data-set .wdk-toggle h3 {
 	text-decoration:underline;
 	padding:0;
 	line-height:2px;
 }
 
-#data-sources .category-content .data-source li {
+#data-sets .category-content .data-set li {
 	font-size: 85%;
 }
 
