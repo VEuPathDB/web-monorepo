@@ -39,23 +39,20 @@
 
 <script type="text/javascript">	
 $(document).ready( function() {
-	var oTable = $('#data-summary').dataTable(
-		{
-	//	"bJQueryUI": true, //this adds the sorting icons
-		"bPaginate": false,
-//        	"aaSorting": [[ 0, 'asc']] 
-		"aoColumnDefs": [
-                        { "asSorting" : ["asc", "asc"], "aTargets" : [ 0, 1] },
-                        { "sType" : "numeric", "aTargets" : [ 7, 8 ] }
-                        ],
-   		"oLanguage": {
-                        "sZeroRecords": "There are no organisms that include your keyword in this table.",
-			"sSearch": "Enter keyword to filter rows:</>",
-                        },
-
-		}  
-	);
-	new FixedHeader( oTable );
+  var oTable = $('#data-summary').dataTable({
+    // "bJQueryUI": true, //this adds the sorting icons
+    "bPaginate": false,
+    // "aaSorting": [[ 0, 'asc']] 
+    "aoColumnDefs": [
+      { "asSorting" : ["asc", "asc"], "aTargets" : [ 0, 1] },
+      { "sType" : "numeric", "aTargets" : [ 7, 8 ] }
+    ],
+    "oLanguage": {
+      "sZeroRecords": "There are no organisms that include your keyword in this table.",
+      "sSearch": "Enter keyword to filter rows:</>"
+    }
+  });
+  new FixedHeader( oTable );
 } );
 </script>
 
