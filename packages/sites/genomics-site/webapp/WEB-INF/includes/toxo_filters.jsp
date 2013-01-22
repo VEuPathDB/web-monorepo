@@ -54,13 +54,13 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="neospora_genes" />  
+                          instanceName="neospora_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="eimeria_genes" />  
+                          instanceName="eimeria_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
