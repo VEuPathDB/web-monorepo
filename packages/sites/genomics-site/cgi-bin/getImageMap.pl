@@ -84,11 +84,20 @@ print "Content-type: text/html\n\n";
 
 while (my $ecMap = $sth->fetchrow_hashref()) {
 
-  my $popUp = "<table><tr><td>EC No:</td><td><a href=\"processQuestion.do?questionFullName=GeneQuestions.
-InternalGenesByEcNumber&array%28organism%29=all&array%28ec_number_pattern%29=".$$ecMap{'DISPLAY_LABEL'}."&questionSubmit=Get+Answer\">".$$ecMap{'DISPLAY_LABEL'}."</a></td></tr><tr><td>Organisms:</td><td>".$$ecMap{'ORGANISMS'}."</td></tr><tr><td>Genes:</td><td>".$$ecMap{'GENES'}."</td></tr></table>";
+  my $popUp = "<table>".
+                "<tr>".
+                  "<td>EC No:</td>".
+                  "<td><a href=\"javascript:void(0)\" onclick=\"PathwayMap.goToUrl(this)\" data-location=\"processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&array%28ec_number_pattern%29=".$$ecMap{'DISPLAY_LABEL'}."&questionSubmit=Get+Answer\">".$$ecMap{'DISPLAY_LABEL'}."</a></td>".
+                "</tr><tr>".
+                  "<td>Organisms:</td>".
+                  "<td>".$$ecMap{'ORGANISMS'}."</td>".
+                "</tr><tr>".
+                  "<td>Genes:</td>".
+                  "<td>".$$ecMap{'GENES'}."</td>".
+                "</tr>".
+              "</table>";
 
-
-  print "<area shape='rect'  coords='$$ecMap{'X1'},$$ecMap{'Y1'},$$ecMap{'X2'},$$ecMap{'Y2'}' alt='$popUp'>\n";
+  print "<area shape='rect' coords='$$ecMap{'X1'},$$ecMap{'Y1'},$$ecMap{'X2'},$$ecMap{'Y2'}' alt='$popUp'>\n";
 }
 
 

@@ -26,26 +26,33 @@
 
 
 <script type="text/javascript">
-// Create the tooltips only when document ready
-$(document).ready(function(){
-   // Use the each() method to gain access to each elements attributes
-   $('area').each(function()
-   {
-      $(this).qtip(
-      {
-         content: $(this).attr('alt'), // Use the ALT attribute of the area map
-         position: {		
-                my: 'top left',  // Position my top left...
-		at: 'center', // at the bottom right of...
-         },
-         hide:  {
+  var PathwayMap = {
+    initTooltips: function(){
+      // Use the each() method to gain access to each elements attributes
+      $('area').each(function(){
+        $(this).qtip({
+          content: $(this).attr('alt'), // Use the ALT attribute of the area map
+          position: {   
+            my: 'top left',  // Position my top left...
+            at: 'center', // at the bottom right of...
+          },
+          hide:  {
             fixed: true // Make it fixed so it can be hovered over
-         },
-	 style: {
-		classes: 'ui-tooltip-green ui-tooltip-rounded'
-	 }
+          },
+          style: {
+            classes: 'ui-tooltip-green ui-tooltip-rounded'
+          }
+        });
       });
-   });
-});
+    },
+    goToUrl: function(source) {
+      var url = $(source).attr('data-location');
+      window.opener.location.href=url;
+      window.close();
+    }
+  };
+
+  // Create the tooltips only when document ready
+  $(document).ready(PathwayMap.initTooltips);
 </script>
 
