@@ -10,34 +10,23 @@
 
 <c:set var="recordClass" value="${wdkStep.question.recordClass}" />
 
-<script type="text/javascript">
-$(initializeGenomeView);
-</script>
+<span class="onload-function" data-function="initializeGenomeView"> </span>
 
-<%--
+<div class="genome-view">
+
 <div class="legend">
   <div class="title">Legend</div>
   <div>
-    <div class="span forward"></div> ${recordClass.type} on forward strand
+    <div class="region forward"></div> 
+    A genomic sequence segment on forward strand, the height of the segment 
+    reflects the number of ${recordClass.type}s that are overlapped with the
+    segment.
   </div>
   <div>
-    <div class="span reverse"></div> ${recordClass.type} on reversed strand
+    <div class="region reverse"></div> 
+    A genomic sequence segment on reversed strand, the height also reflects
+    the number of ${recordClass.type}s.
   </div>
-</div>
---%>
-<%-- <div style="float:left"> --%>
-<div>
-<table class="legend">
-<tr>
-<td>
-  <div class="title">Legend</div>
-</td>
-<td class="smaller-font">
-    <div class="span forward"></div> ${recordClass.type} on forward strand<br>
-    <div class="span reverse"></div> ${recordClass.type} on reversed strand
-</td>
-</tr>
-</table>
 </div>
 
 <%--
@@ -50,15 +39,55 @@ $(initializeGenomeView);
 </a></div>
 --%>
 
+<div id="sequences">
+  <c:forEach items="${sequences}" var="sequence">
+    <div id="${sequence.sourceId}" class="sequence"
+         data-length="${sequence.length}">
+      <div class="chromosome">${sequence.chromosome}</div>
+      <div class="organism">${sequence.organism}</div>
+      <div class="regions">
+        <c:forEach items="${sequence.regions}" var="region">
+          <div id="${region.sourceId}" class="region">
+            <h4>Region ${region}</h4>
+            <div> with ${region.featureCount}  ${recordClass.type}s</div>
+            <div class="end">${region.end}</div>
+            <div class="start">${region.start}</div>
+            <div class="canvas">
+              <div class="ruler"> </div>
+              <c:forEach items="${region.features}" var="feature">
+                <c:set var="forward" value="${feature.forward ? 'forward' : 'reverse'}" />
+                <div class="feature ${forward}" title="${feature.sourceId}"
+                     style="left:${feature.percentStart}%; width:${feature.percentLength}%;">
+                </div>
+              </c:forEach>
+            </div>
+          </div>
+        </c:forEach>
+      </div>
+      
+      <div class="features">
+        <c:forEach items="${sequence.features}" var="feature">
+          <div id="${feature.sourceId}">
+              <h4>${feature.sourceId}</h4>
+              <div>on ${sequence.sourceId}, ${feature.startFormatted}-${feature.endFormatted} (${feature.forward ? "forward" : "reverse"})</div>
+              <ul>
+                <li><a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />">Feature page</a></li>
+                <li><a href="/cgi-bin/gbrowse/${siteName}/?name=${context};h_feat=${feature.sourceId}@yellow">Gbrowse</a></li>
+              </ul>
+          </div>
+        </c:forEach>
+      </div>
+    </div>
+  </c:forEach>
+</div>
+
 <c:url var="zoomInImage" value="/wdkCustomization/images/zoom_in.png" />
 <c:url var="zoomOutImage" value="/wdkCustomization/images/zoom_out.png" />
 <c:set var="zoomInAllTip" value="Zoom in all the sequences." />
 <c:set var="zoomOutAllTip" value="Zoom out all the sequences." />
 
 
-<%-- <div style="clear:both;;position:relative;top:-20px"> --%>
-<div>
-<table class="genome-view datatables">
+<table class="datatables">
   <thead>
   <tr>
     <th>Sequence</th>
@@ -80,40 +109,27 @@ $(initializeGenomeView);
       <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
       <td class="organism">${sequence.organism}</td>
       <td class="chromosome" nowrap>${sequence.chromosome}</td>
-      <td class="span-count" nowrap>${sequence.spanCountFormatted}</td>
+      <td class="span-count" nowrap>${sequence.featureCountFormatted}</td>
       <td class="length" nowrap>${sequence.lengthFormatted}</td>
       <td width="100%">
        <div class="canvas">
-        <c:set var="pctLength" value="${sequence.percentLength}" />
-        <div class="spans" base-size="${pctLength}" size="${pctLength}" style="width:${pctLength}%">
-          <div class="ruler" title="${sequence.sourceId}, length: ${sequence.lengthFormatted}"> </div>
-          <c:forEach items="${sequence.spans}" var="span">
-            <c:set var="spanStyle" value="${span.forward ? 'forward' : 'reverse'}" />
-            <c:set var="tooltip" value="${span.sourceId}, on ${spanStyle} strand, [${span.startFormatted} - ${span.endFormatted}]. (Click to go to the record page.)" />
-            <c:url var="spanUrl" value="/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}" />
-            <div class="span ${spanStyle}" url="${spanUrl}"
-               style="left:${span.percentStart}%; width:${span.percentLength}%">
-              <div class="tooltip">
-                <p align="center"><b>${span.sourceId}</b></p>
-                <p>Location: [${span.startFormatted} - ${span.endFormatted}], on ${spanStyle} strand.</p>
-                <br />
-                <p>View this ${recordClass.type} in:</p>
-                <ul>
-                  <li> - <a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${span.sourceId}' />">Record Page</a></li>
-                  <c:if test="${recordClass.fullName eq 'GeneRecordClasses.GeneRecordClass'}">
-                    <c:set var="context" value="${span.context}" />
-                    <li> - <a href="/cgi-bin/gbrowse/${siteName}/?name=${context};h_feat=${span.sourceId}@yellow">Gbrowse</a></li>
-                  </c:if>
-                </ul>
-              </div>
-            </div>
-          </c:forEach>
-        </div>
-       </div>
-      </td>
-      <td class="control" nowrap>
-        <img class="zoomin" src="${zoomInImage}" title="Zoom in sequence ${sequence.sourceId}." />
-        <img class="zoomout" src="${zoomOutImage}" title="Zoom out sequence ${sequence.sourceId}." />
+        <div class="ruler" title="${sequence.sourceId}, length: ${sequence.lengthFormatted}"
+             style="width:${sequence.percentLength}%"> </div>
+            <c:forEach items="${sequence.regions}" var="region">
+              <c:set var="forwardCount" value="${region.forwardCount}" />
+              <c:set var="reverseCount" value="${region.reverseCount}" />
+              <c:if test="${forwardCount gt 0}">
+                <div data-id="${region.sourceId}" class="region forward" 
+                     style="left:${region.percentStart}%; width:${region.percentLength}%; height:${forwardCount * 2}px">
+                </div>
+              </c:if>
+              <c:if test="${reverseCount gt 0}">
+                <div data-id="${region.sourceId}" class="region reverse" 
+                     style="left:${region.percentStart}%; width:${region.percentLength}%; height:${reverseCount * 2}px">
+                </div>
+              </c:if>
+            </c:forEach>
+       </div>  
       </td>
     </tr>
   </c:forEach>
@@ -133,4 +149,5 @@ $(initializeGenomeView);
   </tr>
   </tfoot>
 </table>
-</div>
+
+</div> <!-- end of .genome-view -->

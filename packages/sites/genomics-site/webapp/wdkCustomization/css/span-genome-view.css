@@ -1,20 +1,42 @@
+.ui-tooltip, .qtip { max-width:600px; }
+
 .genome-view { width: 100%; }
 .genome-view th { white-space:nowrap; }
 .genome-view td { vertical-align:top; border:1px solid #AAAAAA; }
 .genome-view td.length, .genome-view td.span-count { text-align:right; }
+
+.genome-view #sequences {display:none;}
+
+.genome-view .legend .region { width:1%; height:15px, border:1px dotted #CCCCCC;}
+.genome-view .region.forward { background-color:#AAAAFF; }
+.genome-view .region.reverse { background-color:#FFAAAA; }
+
 /* height needs to account for scrolloing bar when zooming */
-.genome-view .canvas { overflow:auto; height:33px; padding: 0 2px 0 0; }
-.genome-view .spans { position:relative; }
-.genome-view .spans .ruler { height:3px; background-color:#666666; cursor:pointer; }
-.genome-view .spans .span, .legend .span { height:4px; border:1px solid #444444; }
-.genome-view .spans .span { display:block; min-width:2px; position:absolute; cursor:pointer; }
-.genome-view .spans .span.forward, .legend .span.forward { top:4px; background-color:#0000FF; }
-.genome-view .spans .span.reverse, .legend .span.reverse { top:11px;background-color:#FF0000; }
-.genome-view .spans .span .tooltip { display:none; }
+.genome-view .canvas, .region .canvas { position:relative; overflow:auto; }
+.genome-view .canvas .ruler, .region .canvas .ruler { position:absolute; height:3px; background-color:#666666; cursor:pointer; }
+
+.region .canvas { height:65px; }
+.genome-view .canvas { height:65px; }
+.genome-view .canvas .ruler { top:31px; }
+
+
+.region .end {float:right; margin:0px 5px 0px 0px;}
+.region {width: 500px; }
+.region .canvas {margin:0px 20px 0px 0px; }
+.region .canvas .ruler { width:100%; }
+.region .canvas .feature { height:5px; border:1px solid #444444; }
+.region .canvas .feature { display:block; min-width:2px; position:absolute; cursor:pointer; }
+.region .canvas .feature.forward { top:5px; background-color:#0000FF; }
+.region .canvas .feature.reverse { top:12px;background-color:#FF0000; }
+
+.genome-view .canvas .region { display:block; position:absolute; cursor:pointer; border-left:1px dotted #CCCCCC; }
+.genome-view .canvas .region.forward { bottom:35px; }
+.genome-view .canvas .region.reverse { top:35px; }
+
 
 .legend { background-color:#EEEEEE; border-radius:5px; margin-bottom:5px; width: 400px; }
 .legend .title { text-align:center; padding-top:5px; font-weight:bold; }
-.legend .span { width:50px; display:inline-block; }
+.legend .feature { width:50px; display:inline-block; }
 
  .smaller-font {
 	font-size: 90%;
