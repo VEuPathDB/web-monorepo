@@ -43,26 +43,25 @@ display the attributions.
 
 
 <c:if test="${hasItem}">
-    <h2>${caption}</h2>
+  <div class="group-title" style="padding-bottom:1em">${caption}</div>
 
-        <ul>
-            <c:forEach var="attribution" items="${attributions}">
-                <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
-                <c:if test="${dsRecord.attributesMap['resource'] ne null and dsRecord.attributesMap['category'] ne 'ignore'}">
-                    <li>
-                        <c:url var="dataSourceUrl"
-                               value="/getDataset.do?display=detail&datasets=${attributionKey}&title=Query#" />
-                        <a href="${dataSourceUrl}${attribution}">
-                            ${dsRecord.attributesMap['resource']}
-                        </a>
-                    </li>
-                </c:if>
-            </c:forEach>
-        </ul>
-
+    <ul>
+    <c:forEach var="attribution" items="${attributions}">
+      <c:set var="dsRecord" value="${dsRecords[attribution]}"/>
+      <c:if test="${dsRecord.attributesMap['resource'] ne null and dsRecord.attributesMap['category'] ne 'ignore'}">
+        <li>
+          <c:url var="dataSourceUrl"
+                 value="/getDataset.do?display=detail&datasets=${attributionKey}&title=Query#" />
+          <a href="${dataSourceUrl}${attribution}">
+            ${dsRecord.attributesMap['resource']}
+          </a>
+        </li>
+      </c:if>
+    </c:forEach>
+  </ul>
 </c:if>
 
 </c:catch>
 <c:if test="${error != null}">
-<h2>Data sources</h2> <span style="color:red">Not available (Parsing Error)</span>
+<div class="group-title" style="padding-bottom:1em">Data sources</div> <span style="color:red">Not available (Parsing Error)</span>
 </c:if>

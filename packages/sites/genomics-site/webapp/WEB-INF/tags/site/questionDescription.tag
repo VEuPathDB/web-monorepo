@@ -64,46 +64,53 @@
 
 <%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB' && project != 'FungiDB'}">
-<a name="${attrId}"></a>
-<div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${attrId}">
-  <div>
   <c:set var="ds_ref_questions" value="${requestScope.ds_ref_questions}" />
   <c:choose>
     <c:when test="${fn:length(ds_ref_questions) == 0}">
-      <c:set var="propertyLists" value="${wdkQuestion.propertyLists}"/>
-      <imp:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
+      <c:set var="attributions" value="${wdkQuestion.propertyLists['specificAttributions']}"/>
+      <c:if test="${fn:length(attributions) gt 0}">
+        <a name="${attrId}"></a>
+        <div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${attrId}">
+          <div>
+            <imp:attributions attributions="${attributions}" caption="Data sets" />
+          </div>
+        </div>
+      </c:if>
     </c:when>
     <c:otherwise>
-      <div class="group-title" style="padding-bottom: 1em;">Data Sets</div>
-      <ul>
-      <c:forEach items="${ds_ref_questions}" var="dsRecord">
-        <li class="data-source">
-          <c:set var="ds_attributes" value="${dsRecord.attributes}" />
-          <c:set var="ds_id" value="${ds_attributes['dataset_id']}" />
-          <c:set var="ds_display" value="${ds_attributes['display_name']}" />
-          <c:set var="ds_tables" value="${dsRecord.tables}" />
-          <c:set var="ds_publications" value="${ds_tables['Publications']}" />
-          <a class="title" 
-             href="<c:url value='/getDataset.do?question=${wdkQuestion.fullName}&display=detail#${ds_id}'/>">${ds_display}</a>
-          <div class="detail">
-            <div class="summary">${ds_attributes['summary']}</div>
-            <c:if test="${fn:length(ds_publications) > 0}">
-                <ul>
-                  <c:forEach items="${ds_publications}" var="publication">
-                    <li>
-                    <a href="${publication['pubmed_link'].url}">${publication['citation'].value}</a>
-                    </li>
-                  </c:forEach>
-                </ul>
-            </c:if>
-          </div>
-        </li>
-      </c:forEach>
-      </ul>
+    <a name="${attrId}"></a>
+      <div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${attrId}">
+        <div>
+          <div class="group-title" style="padding-bottom: 1em;">Data Sets</div>
+          <ul>
+          <c:forEach items="${ds_ref_questions}" var="dsRecord">
+            <li class="data-source">
+              <c:set var="ds_attributes" value="${dsRecord.attributes}" />
+              <c:set var="ds_id" value="${ds_attributes['dataset_id']}" />
+              <c:set var="ds_display" value="${ds_attributes['display_name']}" />
+              <c:set var="ds_tables" value="${dsRecord.tables}" />
+              <c:set var="ds_publications" value="${ds_tables['Publications']}" />
+              <a class="title" 
+                 href="<c:url value='/getDataset.do?question=${wdkQuestion.fullName}&display=detail#${ds_id}'/>">${ds_display}</a>
+              <div class="detail">
+                <div class="summary">${ds_attributes['summary']}</div>
+                <c:if test="${fn:length(ds_publications) > 0}">
+                    <ul>
+                      <c:forEach items="${ds_publications}" var="publication">
+                        <li>
+                        <a href="${publication['pubmed_link'].url}">${publication['citation'].value}</a>
+                        </li>
+                      </c:forEach>
+                    </ul>
+                </c:if>
+              </div>
+            </li>
+          </c:forEach>
+          </ul>
+        </div>
+      </div>
     </c:otherwise>
   </c:choose>
-</div>
-</div>
 </c:if>
 
 
