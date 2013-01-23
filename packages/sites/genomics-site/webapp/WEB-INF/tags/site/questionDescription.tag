@@ -43,7 +43,7 @@
 <a name="${descripId}"></a>
 <div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${descripId}">
   <div>
-	<div class="h4left">Description</div>
+    <div class="group-title" style="padding-bottom:1em;">Description</div>
   <div>
     <jsp:getProperty name="wdkQuestion" property="description"/>
 
@@ -74,7 +74,7 @@
       <imp:attributions attributions="${propertyLists['specificAttribution']}" caption="Data sources" />
     </c:when>
     <c:otherwise>
-      <div class="h4left">Data Sets</div>
+      <div class="group-title" style="padding-bottom: 1em;">Data Sets</div>
       <ul>
       <c:forEach items="${ds_ref_questions}" var="dsRecord">
         <li class="data-source">
