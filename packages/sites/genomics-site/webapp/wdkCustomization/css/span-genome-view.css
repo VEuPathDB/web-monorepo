@@ -13,7 +13,7 @@
 .genome-view .region.reverse { background-color:#FFAAAA; }
 
 /* height needs to account for scrolloing bar when zooming */
-.genome-view .canvas, .region .canvas { position:relative; overflow:auto; }
+.genome-view .canvas, .region .canvas { position:relative; overflow:visible; }
 .genome-view .canvas .ruler, .region .canvas .ruler { position:absolute; height:3px; background-color:#666666; cursor:pointer; }
 
 .genome-view .canvas { height:65px; }
@@ -26,7 +26,7 @@
 .region .canvas .ruler { top:10px; width:100%; }
 .region .canvas .feature { height:5px; border:1px solid #444444; }
 .region .canvas .feature { display:block; min-width:2px; position:absolute; cursor:pointer; }
-.region .canvas .feature.forward { top:1px; background-color:#0000FF; }
+.region .canvas .feature.forward { top:3px; background-color:#0000FF; }
 .region .canvas .feature.reverse { top:15px;background-color:#FF0000; }
 
 .genome-view .canvas .region { display:block; position:absolute; cursor:pointer; border-left:1px dotted #CCCCCC; }
