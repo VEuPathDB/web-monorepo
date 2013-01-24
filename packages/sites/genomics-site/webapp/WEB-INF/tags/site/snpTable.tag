@@ -13,10 +13,8 @@
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
-
-
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
-
+<c:set var="snpoverview" value="${attrs['snpoverview']}"/>	
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
@@ -37,6 +35,12 @@
 <div class="table-description">${tbl.tableField.description}</div>
 
 <form name="checkHandleForm" method="post" action="/dosomething.jsp" onsubmit="return false;">
+
+<table>
+  <tr><td>
+    ${snpoverview}
+  </td></tr>
+</table>
 
 <table >
 <c:forEach var="row" items="${tbl}">
