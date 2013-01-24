@@ -15,19 +15,10 @@ function initializeGenomeView() {
                 window.location.href = $(this).parents(".sequence").find(".sequence-id a").attr("href");
             });
 
-            var tooltip = window.wdk.tooltips;
-            canvas.find(".region").each(function() {
+            canvas.find(".region").click(function() {
                 var regionId = $(this).attr("data-id");
                 var content = sequenceData.find(".regions #" + regionId);
-                
-                // register tooltip on features
-                content.find(".feature").each(function() {
-                    var featureId = $(this).attr("id");
-                    var feature = sequenceData.find(".sequences #" + featureId);
-                    tooltip.setUpStickyTooltip(this, feature);
-                });
-                
-                tooltip.setUpStickyTooltip(this, content);
+                content.clone().dialog({width:500});
             });
         });
 

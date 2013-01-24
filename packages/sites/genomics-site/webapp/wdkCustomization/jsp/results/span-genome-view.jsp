@@ -49,31 +49,27 @@
         <c:forEach items="${sequence.regions}" var="region">
           <div id="${region.sourceId}" class="region">
             <h4>Region ${region}</h4>
-            <div> with ${region.featureCount}  ${recordClass.type}s</div>
-            <div class="end">${region.end}</div>
-            <div class="start">${region.start}</div>
+            <div>  has ${region.featureCount}  ${recordClass.type}s</div>
+            <div>Region location:</div>
+            <div class="end">${region.endFormatted}</div>
+            <div class="start">${region.startFormatted}</div>
             <div class="canvas">
               <div class="ruler"> </div>
               <c:forEach items="${region.features}" var="feature">
                 <c:set var="forward" value="${feature.forward ? 'forward' : 'reverse'}" />
-                <div class="feature ${forward}" title="${feature.sourceId}"
+                <div id="${feature.sourceId}" class="feature ${forward}" title="${feature.sourceId} ${feature.startFormatted}-${feature.endFormatted}"
                      style="left:${feature.percentStart}%; width:${feature.percentLength}%;">
                 </div>
               </c:forEach>
             </div>
-          </div>
-        </c:forEach>
-      </div>
-      
-      <div class="features">
-        <c:forEach items="${sequence.features}" var="feature">
-          <div id="${feature.sourceId}">
-              <h4>${feature.sourceId}</h4>
-              <div>on ${sequence.sourceId}, ${feature.startFormatted}-${feature.endFormatted} (${feature.forward ? "forward" : "reverse"})</div>
-              <ul>
-                <li><a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />">Feature page</a></li>
-                <li><a href="/cgi-bin/gbrowse/${siteName}/?name=${context};h_feat=${feature.sourceId}@yellow">Gbrowse</a></li>
-              </ul>
+            <div class="features">
+              <c:forEach items="${region.features}" var="feature">
+                <div id="${feature.sourceId}">${feature.sourceId}
+                  <a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />">Record page</a>
+                  | <a href="/cgi-bin/gbrowse/${siteName}/?name=${context};h_feat=${feature.sourceId}@yellow">Gbrowse</a>
+                </div>
+              </c:forEach>
+            </div>
           </div>
         </c:forEach>
       </div>
@@ -120,11 +116,13 @@
               <c:set var="reverseCount" value="${region.reverseCount}" />
               <c:if test="${forwardCount gt 0}">
                 <div data-id="${region.sourceId}" class="region forward" 
+                     title="${region.sourceId}, ${forwardCount} ${recordClass.displayName}s on forward strand. Click to view detail."
                      style="left:${region.percentStart}%; width:${region.percentLength}%; height:${forwardCount * 2}px">
                 </div>
               </c:if>
               <c:if test="${reverseCount gt 0}">
                 <div data-id="${region.sourceId}" class="region reverse" 
+                     title="${region.sourceId}, ${reverseCount} ${recordClass.displayName}s on reverse strand. Click to view detail."
                      style="left:${region.percentStart}%; width:${region.percentLength}%; height:${reverseCount * 2}px">
                 </div>
               </c:if>
