@@ -179,7 +179,6 @@ ${attrs['organism'].value}<br>
 
 <!-- snps between strains -->
 <%-- <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> --%>
-  <imp:snpTable tblName="SNPsAlignment" isOpen="false" />
 
 <imp:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>

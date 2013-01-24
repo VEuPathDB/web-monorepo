@@ -210,7 +210,6 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <!-- snps between strains -->
 <%-- <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> --%>
-  <imp:snpTable tblName="SNPsAlignment" isOpen="false" />
 
 <!-- locations -->
 <imp:wdkTable tblName="Genbank" isOpen="true"

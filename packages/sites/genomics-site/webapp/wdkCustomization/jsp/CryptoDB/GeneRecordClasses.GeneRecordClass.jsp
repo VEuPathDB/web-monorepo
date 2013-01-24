@@ -155,7 +155,6 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <c:if test="${snps ne 'none'}">
 
 <%-- <imp:wdkTable tblName="SNPs" isOpen="true" attribution=""/> --%>
-  <imp:snpTable tblName="SNPsAlignment" isOpen="false" />
 </c:if>
 
 <!-- gene alias table -->
