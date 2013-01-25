@@ -209,7 +209,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 <!-- snps between strains -->
-<%-- <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> --%>
+ <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> 
 
 <!-- locations -->
 <imp:wdkTable tblName="Genbank" isOpen="true"
