@@ -22,12 +22,13 @@
 
 .region {width: 500px; }
 .region .end {float:right; margin:0px 10px 0px 0px;}
-.region .canvas { height:25px; margin:0px 10px 0px 0px; }
-.region .canvas .ruler { top:10px; width:100%; }
+.region .canvas { height:100px; margin:0px 10px 0px 0px; }
+.region .canvas .ruler { top:12px; width:100%; }
 .region .canvas .feature { height:5px; border:1px solid #444444; }
 .region .canvas .feature { display:block; min-width:2px; position:absolute; cursor:pointer; }
 .region .canvas .feature.forward { top:3px; background-color:#0000FF; }
-.region .canvas .feature.reverse { top:15px;background-color:#FF0000; }
+.region .canvas .feature.reverse { top:17px;background-color:#FF0000; }
+.region .features {display:none;}
 
 .genome-view .canvas .region { display:block; position:absolute; cursor:pointer; border-left:1px dotted #CCCCCC; }
 .genome-view .canvas .region.forward { bottom:35px; }

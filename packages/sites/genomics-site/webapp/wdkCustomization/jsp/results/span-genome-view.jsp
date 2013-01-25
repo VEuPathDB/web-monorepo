@@ -57,16 +57,22 @@
               <div class="ruler"> </div>
               <c:forEach items="${region.features}" var="feature">
                 <c:set var="forward" value="${feature.forward ? 'forward' : 'reverse'}" />
-                <div id="${feature.sourceId}" class="feature ${forward}" title="${feature.sourceId} ${feature.startFormatted}-${feature.endFormatted}"
+                <div id="${feature.sourceId}" class="feature ${forward}"
                      style="left:${feature.percentStart}%; width:${feature.percentLength}%;">
                 </div>
               </c:forEach>
             </div>
             <div class="features">
               <c:forEach items="${region.features}" var="feature">
-                <div id="${feature.sourceId}">${feature.sourceId}
-                  <a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />">Record page</a>
-                  | <a href="/cgi-bin/gbrowse/${siteName}/?name=${context};h_feat=${feature.sourceId}@yellow">Gbrowse</a>
+                <div id="${feature.sourceId}">
+                  <h4>${feature.sourceId}</h4>
+                  <p>start: ${feature.startFormatted}, end: ${feature.endFormatted}, 
+                     on ${feature.forward ? "forward" : "reverse"} strand of ${sequence.sourceId}</p>
+                  <p>${feature.description}</p>
+                  <ul>
+                    <li><a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />">Record page</a></li>
+                    <li><a href="/cgi-bin/gbrowse/${siteName}/?name=${context};h_feat=${feature.sourceId}@yellow">Gbrowse</a></li>
+                  <ul>
                 </div>
               </c:forEach>
             </div>

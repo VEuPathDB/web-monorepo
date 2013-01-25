@@ -1,4 +1,5 @@
 function initializeGenomeView() {
+    var tooltip = window.wdk.tooltips;
     $(".genome-view").each(function() {
         var genomeView = $(this);
         if (genomeView.attr("initialized") == "true") return;
@@ -17,8 +18,19 @@ function initializeGenomeView() {
 
             canvas.find(".region").click(function() {
                 var regionId = $(this).attr("data-id");
-                var content = sequenceData.find(".regions #" + regionId);
-                content.clone().dialog({width:500});
+                var content = sequenceData.find(".regions #" + regionId).clone();
+
+                var flag = content.data("registered");
+                if (flag != "true") {
+                    content.data("registered", "true");
+                    // register tooltips on sequences
+                    content.find(".canvas .feature").each(function() {
+                        var featureId = $(this).attr("id");
+                        var feature = content.find(".features #" + featureId);
+                        tooltip.setUpStickyTooltip(this, feature);
+                    });
+                }
+                content.dialog({width:500});
             });
         });
 
