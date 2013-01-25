@@ -47,6 +47,7 @@
         <li class="long-space"><a href="http://toxodb.org"><img border="0" src="/assets/images/ToxoDB/toxodb_w50.png" width="25"/></a></li>
         <li class="short-space"><a href="http://trichdb.org"><img border="0" src="/assets/images/TrichDB/trichdb_w65.png" height="25"/></a></li>
         <li class="short-space"><a href="http://tritrypdb.org"><img border="0" src="/assets/images/TriTrypDB/tritrypdb_w40.png" width="20"/></a></li>
+        <li class="long-space"><a href="http://orthomcl.org"><img border="0" src="${pageContext.request.contextPath}/wdkCustomization/images/ortho-icon-30x30.png" width="22"/></a></li>
       </ul>
     </span>
   </div>
