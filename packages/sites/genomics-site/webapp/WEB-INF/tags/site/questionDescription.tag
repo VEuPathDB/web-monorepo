@@ -41,24 +41,9 @@
 
 <%-- display description for wdkQuestion --%>
 <a name="${descripId}"></a>
-<div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${descripId}">
-  <div>
-    <div class="group-title" style="padding-bottom:1em;">Description</div>
+<div class="truncate" style="color:black;padding:1em 2em 0em 2em;margin:1em;" id="${descripId}">
   <div>
     <jsp:getProperty name="wdkQuestion" property="description"/>
-
-    <!--
-    <br/>
-    <br/>
-
-    <p>To access this search via RESTful web services, use this
-      <a href="${pageContext.request.contextPath}/webservices/${wdkQuestion.questionSetName}/${wdkQuestion.name}.wadl">WADL</a></p>
-
-    <br/>
-    <br/>
-    -->
-
-  </div>
   </div>
 </div>
 
@@ -72,7 +57,7 @@
         <a name="${attrId}"></a>
         <div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${attrId}">
           <div>
-            <imp:attributions attributions="${attributions}" caption="Data sets" />
+            <imp:attributions attributions="${attributions}" caption="Data sets used by this search" />
           </div>
         </div>
       </c:if>
@@ -81,7 +66,7 @@
     <a name="${attrId}"></a>
       <div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${attrId}">
         <div>
-          <div class="group-title" style="padding-bottom: 1em;">Data Sets</div>
+          <div class="group-title h4left" style="padding-bottom: .4em;">Data sets used by this search</div>
           <ul>
           <c:forEach items="${ds_ref_questions}" var="dsRecord">
             <li class="data-source">
@@ -95,7 +80,7 @@
               <div class="detail">
                 <div class="summary">${ds_attributes['summary']}</div>
                 <c:if test="${fn:length(ds_publications) > 0}">
-                    <ul>
+                    <ul class="publications">
                       <c:forEach items="${ds_publications}" var="publication">
                         <li>
                         <a href="${publication['pubmed_link'].url}">${publication['citation'].value}</a>

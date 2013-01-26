@@ -60,8 +60,6 @@
   <script type="text/javascript" src="/assets/js/orthologpattern.js"></script>
   <script type="text/javascript" src="${base}/wdkCustomization/js/span-location.js"></script>
   <script type="text/javascript" src="${base}/wdkCustomization/js/mutuallyExclusiveParams.js"></script>
-
-  <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/question.css"/>
 </c:if>
 
 <%-- Quick seach box --%>

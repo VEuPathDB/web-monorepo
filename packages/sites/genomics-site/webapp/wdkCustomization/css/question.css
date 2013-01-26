@@ -3,10 +3,14 @@
     padding: 1em;
 }
 
-#attributions-section ul { list-style: disc inside none; }
-#attributions-section .data-source { margin: 3px; }
+#query-description-section { font-size: 13px; }
+
+#attributions-section ul { list-style: none; }
+#attributions-section .data-source { margin: 3px; padding: 2px 0px; }
 #attributions-section .data-source .title { font-weight:bold; }
 #attributions-section .data-source .detail { margin:5px 12px; }
+#attributions-section .data-source .publications { list-style-type: circle; }
+#attributions-section .data-source .publications li { margin:5px 14px; font-size: 11px; }
 
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
