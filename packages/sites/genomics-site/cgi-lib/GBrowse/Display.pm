@@ -371,6 +371,38 @@ sub colorFromBinaryColor {
 }
 
 
+
+
+sub rnaseqColorFromBigWigFiles {
+  my $f = shift;
+
+  my ($strand) = $f->get_tag_values('strand');
+  my ($alignment) = $f->get_tag_values('alignment');
+
+  # pos strand unique = BLUE
+  if($strand eq 'forward' && $alignment eq 'unique') {
+    return 'blue';
+  }
+  # neg strand unique = RED
+  if($strand eq 'reverse' && $alignment eq 'unique') {
+    return 'red';
+  }
+
+
+  # pos strand unique = grey
+  if($strand eq 'forward' && $alignment eq 'non-unique') {
+    return 'grey';
+  }
+  # neg strand unique = lightgrey
+  if($strand eq 'reverse' && $alignment eq 'non-unique') {
+    return 'lightgrey';
+  }
+
+  return 'black';
+}
+
+
+
 sub colorByRnaSeq {
   my $f = shift;
   my ($isReversed) = $f->get_tag_values('is_reversed');
