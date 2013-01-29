@@ -1,0 +1,32 @@
+--- SubtrackTable.pm.orig	2013-01-29 13:01:11.000000000 -0500
++++ SubtrackTable.pm	2013-01-29 13:10:33.000000000 -0500
+@@ -493,7 +495,10 @@
+     my $db   = $source->open_database($label) or return;
+     my $meta = eval {$db->metadata}           or return;
+ 
++    my $hasDefault;
++
+     for my $id (sort {$a<=>$b} keys %$meta) {
++
+ 	my $method = $meta->{$id}{method} || eval {$db->feature_type} || 'feature';
+ 	my $source = $meta->{$id}{source} || '';
+ 	my $type = $meta->{$id}{type} || "$method:$source";
+@@ -501,10 +506,17 @@
+ 	next unless $type =~ /$match/;
+ 	my @vals = map {$_||''} @{$meta->{$id}}{@facets};
+ 	push @vals,"=$id";
++
++
++        if($meta->{$id}{':selected'}) {
++          push @vals, '*';
++          $hasDefault = 1;
++        }
++
+ 	push @rows,\@vals;
+     }
+ 
+-    push @{$rows[0]},'*';
++    push @{$rows[0]},'*' unless($hasDefault);
+     return @rows;
+ }
+ 
