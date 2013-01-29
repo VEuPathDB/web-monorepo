@@ -52,7 +52,7 @@
   <c:set var="ds_ref_questions" value="${requestScope.ds_ref_questions}" />
   <c:choose>
     <c:when test="${fn:length(ds_ref_questions) == 0}">
-      <c:set var="attributions" value="${wdkQuestion.propertyLists['specificAttributions']}"/>
+      <c:set var="attributions" value="${wdkQuestion.propertyLists['specificAttribution']}"/>
       <c:if test="${fn:length(attributions) gt 0}">
         <a name="${attrId}"></a>
         <div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${attrId}">
