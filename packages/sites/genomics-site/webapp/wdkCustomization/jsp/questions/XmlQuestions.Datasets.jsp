@@ -1,5 +1,4 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
@@ -16,7 +15,7 @@
 </c:when>
 
 <c:when test="${param['datasets'] != null}">
-  <c:set var="banner" value="Data Sources for ${param['title']}"/>
+  <c:set var="banner" value="Data Sets for ${param['title']}"/>
 </c:when>
 
 <c:otherwise>
@@ -26,11 +25,11 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:pageFrame title="${wdkModel.displayName} : Data Sources"
+<imp:pageFrame title="${wdkModel.displayName} : Data Sets"
                  banner="${banner}"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
-                 divisionName="Data Sources"
+                 divisionName="Data Sets"
                  division="data_sources">
 
 <table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBorders> 
@@ -199,6 +198,6 @@
 </table> 
 <br/>
 <c:if test="${param['datasets'] != null}">
-<a href="getDataset.do?display=detail"><font size="-1">Click here to see the complete list of Data Sources</font></a><br/>
+<a href="getDataset.do?display=detail"><font size="-1">Click here to see the complete list of Data Sets</font></a><br/>
 </c:if>
 </imp:pageFrame>
