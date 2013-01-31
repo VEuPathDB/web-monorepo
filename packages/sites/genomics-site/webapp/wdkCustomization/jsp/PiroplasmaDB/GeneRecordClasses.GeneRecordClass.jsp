@@ -120,17 +120,9 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
-<c:choose>
-  <c:when test='${organismFull eq "Theileria annulata strain Ankara"}'>
-     <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/>
-  </c:when>
-  <c:when test='${organismFull eq "Theileria parva strain Muguga"}'>
-     <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/> 
-  </c:when>
-  <c:when test='${organismFull eq "Babesia bovis T2Bo"}'>
-     <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP" /> 
-  </c:when>
-</c:choose>
+<c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/>
+
+
 
 
 
