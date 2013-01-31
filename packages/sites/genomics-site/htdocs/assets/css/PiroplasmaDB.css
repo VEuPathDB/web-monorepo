@@ -12,7 +12,7 @@ body {
 }
 
 .coloredtext {         /* no link */
-	color: #9a5b37;     //  #6f4230;   
+	color: #6f223a;     /*  #9a5b37;      #6f4230;   */
 }
 
 a:link, a:visited {
@@ -20,7 +20,7 @@ a:link, a:visited {
 }
 
 a:hover, a:active {
-	color: #9a5b37;   // #6f4230;
+	color: #6f223a;    /*  #9a5b37;    */
 }
 a[name]:link {
 	color: black;
@@ -46,36 +46,36 @@ a[name]:hover, a[name]:active {
 
 
 #header_rt {
-   color: #9a5b37;   //#6f4230;
+   color: #6f223a;     /*   #9a5b37;   #6f4230; */
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #9a5b37;   //#6f4230;
+   color: #6f223a;    /*    #9a5b37;   #6f4230; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 #nav-top {
-	color: #9a5b37;   //#6f4230;
+	color: #316e9f;  /*  #9a5b37;   */
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color: #9a5b37; //#6f4230;
+	color: #316e9f;    
 }
 
 #nav-top li ul {  /* second-level lists */
 	background-image: url(../images/PiroplasmaDB/footer.png);
-	border-color:#9a5b37; // #6f4230;
+	border-color:#316e9f;  /*   #9a5b37; */
 	list-style-image: url(../images/PiroplasmaDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #9a5b37;  //#6f4230;
+	color: #316e9f;   /*  #9a5b37;  */
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #316e9f;
+	color: #6f223a;  
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,17 +98,17 @@ a[name]:hover, a[name]:active {
 	
 #contentcolumn {
 	background-image: url(../images/PiroplasmaDB/footer.png);
-	border: 1px solid #9a5b37;  //#20691a;
+	border: 1px solid #6f223a;   /*  #9a5b37;  #20691a; */
 }
 
 #contentcolumn2 {
 	background-image: url(../images/PiroplasmaDB/footer.png);
-	border: 1px solid #9a5b37;  //#20691a;
+	border: 1px solid #6f223a;  /*  #9a5b37;  #20691a; */
 }
 
 #mysearchhist {
 	background-image: url(../images/PiroplasmaDB/bubble_my_searchbox.png);
-	border: 1px solid #9a5b37;  //#20691a;
+	border: 1px solid #6f223a;   /*  #9a5b37;  #20691a; */
 }
 
 
@@ -128,14 +128,14 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color: #9a5b37;    //#560000;
+	color: #6f223a;    /*  #9a5b37;    #560000;  */
 }
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color:  #9a5b37; //#3c8935;
+	border-bottom-color:  #6f223a;   /*  #9a5b37; #3c8935; */
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color:  #9a5b37; //#3c8935;
+	border-bottom-color:  #6f223a;    /*  #9a5b37; #3c8935;  */
 	color: #316e9f;   //#b30101;
 }
 
@@ -143,7 +143,7 @@ a[name]:hover, a[name]:active {
 	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .menu_lefttop_drop {
-   border-color:  #9a5b37;  //#20691A;  /* color as in contentcolumn border */
+   border-color:  #6f223a;  /8  #9a5b37; #20691A; */  /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
@@ -155,7 +155,7 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   border: solid 1px #9a5b37;  //#1c7c12;
+   border: solid 1px #6f223a;;    /*  #9a5b37; #1c7c12;   */
 } 
 
 .search-box .textbox{
@@ -167,21 +167,15 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #9a5b37;  //#20691a;
+	color: #6f223a;   /* #9a5b37; #20691a; */
 }
 h2 {
-  	color: #9a5b37; //#20691a;
+  	color: #6f223a;     /*   #9a5b37; #20691a;  */
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #9a5b37; //#3c8935;
+  	color: #6f223a;    /*  #9a5b37; #3c8935;  */
 }
-
-/* not in use, remove in a few cycles
-.subcolor {
-	color: #714782
-}
-*/
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
