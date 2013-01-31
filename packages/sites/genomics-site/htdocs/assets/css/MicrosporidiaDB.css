@@ -13,7 +13,7 @@ a:link, a:visited {
 }
 
 a:hover, a:active {
-	color: #b45f04;
+	color: #4d2a82;  /* #b45f04; */
 }
 a[name]:link {
 	color: black;
@@ -125,16 +125,16 @@ a[name]:hover, a[name]:active {
 
 
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color:#003658;
+	color:#013c63;   /* #003658; */
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #a45d35;
+	border-bottom-color: #013c63;    /*  #a45d35; */
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #a45d35;
-	color: #0276be;
+	border-bottom-color: #013c63;   /*  #a45d35; */
+	color: #013c63;                 /* #0276be; */
 }
 
 
@@ -247,7 +247,7 @@ a.queryGridInactive {
 }
 
 a.queryGridActive {
-        color:              #9f4510;
+        color:              #4d2a82;  /* #9f4510; */
 }
 
 
