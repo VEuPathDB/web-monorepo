@@ -28,7 +28,7 @@ a:link, a:visited {
 
 a:hover, a:active {
 
-	color: #4eb8cb;
+	color: #672a87;   /* #4eb8cb; */
 
 }
 
@@ -140,7 +140,7 @@ a:hover, a:active {
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
 
-	color: #672a87;
+	color: #672a87; 
 
 }
 
@@ -212,7 +212,7 @@ a:hover, a:active {
 
 #pink_title {
 
-	color: #5e0f28;
+	color: #672a87;
 
 	background-image: url(../images/FungiDB/trheader.png);
 
@@ -234,7 +234,7 @@ a:hover, a:active {
 
 #menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
 
-	color:#3B1870;
+	color:#672a87;   /*  #3B1870; */
 
 }
 
@@ -252,7 +252,7 @@ a:hover, a:active {
 
 	border-bottom-color: #a45d35;
 
-	color: #4eb8cb;
+	color: #672a87;   /* #4eb8cb; */
 
 }
 
@@ -330,13 +330,13 @@ a:hover, a:active {
 
 h1 {
 
-	color: #3B1870;
+	color: #672a87;  /* #3B1870; */
 
 }
 
 h2 {
 
-  	color: #3B1870;
+  	color: #672a87;  /*  #3B1870; */
 
 }
 
@@ -344,7 +344,7 @@ h2 {
 
 .h2center, .h3left,.h3center, .h4left {
 
-  	color: #3B1870;
+  	color: #672a87;  /* #3B1870; */
 
 }
 
@@ -402,7 +402,7 @@ td.headerrow {
 
 tr.headerrow {
 
-	color: #5e0f28;
+	color: #672a87;
 
 }
 
@@ -452,7 +452,7 @@ tr.subheaderrow th {
 
 tr.headerrow2 td{
 
-        color: #5e0f28;
+        color: #672a87;
 
 	background-image: url(../images/FungiDB/trheader.png);
 
@@ -478,7 +478,7 @@ a.queryGridInactive {
 
 a.queryGridActive {
 
-        color:              #772841;
+        color:              #672a87;
 
 }
 
@@ -500,7 +500,7 @@ a.queryGridActive {
 
 tr.subheaderrow th {
 
-	border-color: #772841;
+	border-color: #672a87;
 
 }
 
@@ -508,7 +508,7 @@ tr.subheaderrow th {
 
 tr.headerrow th { 
 
-	border-color: #772841;
+	border-color: #067387;    /*  #672a87; */
 
 }
 
