@@ -5,9 +5,16 @@
 
 #query-description-section { font-size: 13px; }
 
+.snippet-toggle {
+	margin-left: 0.8em;
+}
+.truncate-toggle {
+	margin-left: -0.5em;
+}
+
 #attributions-section ul { 
   list-style-type: square;
-	margin-left:  1em;
+	margin-left:  2em;
 	list-style-position: outside;
 } 
 #attributions-section .data-source { margin: 3px; padding: 2px 0px; }
