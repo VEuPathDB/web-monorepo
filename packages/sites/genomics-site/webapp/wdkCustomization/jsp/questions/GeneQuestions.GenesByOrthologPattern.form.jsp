@@ -14,7 +14,7 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+<c:set var="recordName" value="${wdkQuestion.recordClass.displayName}"/>
 <c:set var="showParams" value="${requestScope.showParams}"/>
 
 <%-- parameters -------%>

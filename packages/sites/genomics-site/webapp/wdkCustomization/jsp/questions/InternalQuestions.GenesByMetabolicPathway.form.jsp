@@ -6,7 +6,6 @@
 
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
 <%-- QUESTIONS --%>
 <c:set var="pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayHagai,GeneQuestions.GenesByMetabolicPathwayKegg,GeneQuestions.GenesByReactionCompounds"/>

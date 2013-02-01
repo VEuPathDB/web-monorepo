@@ -4,12 +4,9 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+<c:set var="recordName" value="${wdkQuestion.recordClass.displayNamePlural}"/>
 <c:set var="q" value="${wdkQuestion}"/>
 
-<c:if test="${fn:contains(recordType, 'Assem') }">
-  <c:set var="recordType" value="Transcript Assemblie" />
-</c:if>
 
 <c:set var="webProps" value="${wdkQuestion.propertyLists['websiteProperties']}" />
 <c:set var="hideOperation" value="${false}" />
@@ -25,7 +22,7 @@
 </c:forEach>
 
 <c:if test="${hideTitle == false}">
-  <h1>Identify ${recordType}s based on ${wdkQuestion.displayName}
+  <h1>Identify ${recordName} based on ${wdkQuestion.displayName}
     <imp:questionFeature question="${wdkQuestion}"/></h1>
 </c:if>
 

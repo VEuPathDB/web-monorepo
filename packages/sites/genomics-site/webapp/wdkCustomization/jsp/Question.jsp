@@ -5,7 +5,7 @@
 <%-- partial is used for internal questions in queryList.tag --%>
 <c:choose>
   <c:when test="${requestScope.partial != 'true'}">
-    <imp:pageFrame title="Search for ${wdkQuestion.recordClass.type}s by ${wdkQuestion.displayName}" refer="question">
+    <imp:pageFrame title="Search for ${wdkQuestion.recordClass.displayNamePlural} by ${wdkQuestion.displayName}" refer="question">
       <imp:questionPageContent/>
     </imp:pageFrame>
     <!-- log screen and browser window size for awstats; excluded when page is called by Ajax (internal

@@ -8,7 +8,7 @@
 <c:set value="${vals['source_id']}" var="id"/>
 <c:set value="${vals['project_id']}" var="pid"/>
 <c:set var="type" value="${wdkRecord.recordClass.fullName}" />
-<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:set var="recordType" value="${wdkRecord.recordClass.displayName}" />
 <div id="record-toolbox">
   <ul>
     <c:choose>

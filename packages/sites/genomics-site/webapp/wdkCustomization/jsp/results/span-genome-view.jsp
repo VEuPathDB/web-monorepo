@@ -19,13 +19,13 @@
   <div>
     <div class="region forward"></div> 
     A genomic sequence segment on forward strand, the height of the segment 
-    reflects the number of ${recordClass.type}s that are overlapped with the
+    reflects the number of ${recordClass.displayNamePlural} that are overlapped with the
     segment.
   </div>
   <div>
     <div class="region reverse"></div> 
     A genomic sequence segment on reversed strand, the height also reflects
-    the number of ${recordClass.type}s.
+    the number of ${recordClass.displayNamePlural}.
   </div>
 </div>
 
@@ -49,7 +49,7 @@
         <c:forEach items="${sequence.regions}" var="region">
           <div id="${region.sourceId}" class="region">
             <h4>Region ${region}</h4>
-            <div>  has ${region.featureCount}  ${recordClass.type}s</div>
+            <div>  has ${region.featureCount}  ${recordClass.displayNamePlural}</div>
             <div>Region location:</div>
             <div class="end">${region.endFormatted}</div>
             <div class="start">${region.startFormatted}</div>
@@ -95,9 +95,9 @@
     <th>Sequence</th>
     <th>Organism</th>
     <th>Chromosome</th>
-    <th>#${recordClass.type}s</th>
+    <th>#${recordClass.displayNamePlural}</th>
     <th title="Length of the genomic sequence in #bases">Length</th>
-    <th>${recordClass.type} Locations</th>
+    <th>${recordClass.displayName} Locations</th>
     <th>
       <img class="zoomin-all" title="${zoomInAllTip}" src="${zoomInImage}" />
       <img class="zoomout-all" title="${zoomOutAllTip}" src="${zoomOutImage}" />
@@ -143,9 +143,9 @@
     <th>Sequence</th>
     <th>Organism</th>
     <th>Chromosome</th>
-    <th>#${recordClass.type}s</th>
+    <th>#${recordClass.displayNamePlural}</th>
     <th>Length</th>
-    <th>${recordClass.type} Locations</th>
+    <th>${recordClass.displayName} Locations</th>
     <th>
       <img class="zoomin-all" title="${zoomInAllTip}" src="${zoomInImage}" />
       <img class="zoomout-all" title="${zoomOutAllTip}" src="${zoomOutImage}" />

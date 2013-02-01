@@ -24,10 +24,7 @@
 %>
 <c:set var="pMap" value="${question.paramsMap}"/>
 
-<jsp:useBean id="typeMap" class="java.util.HashMap"/>
-<c:set target="${typeMap}" property="singular" value="${step.displayType}"/>
-<imp:getPlural pluralMap="${typeMap}"/>
-<c:set var="pluralType" value="${typeMap['plural']}"/>
+<c:set var="pluralType" value="${step.recordClass.displayNamePlural}"/>
 
 <c:set var="regionOnClick" value="updateRegionParams(this);" />
 
@@ -83,7 +80,7 @@
   </fieldset>
 </div>
        <c:choose>
-         <c:when test="${step.displayType eq 'SNP'}">
+         <c:when test="${step.recordClass.displayName eq 'SNP'}">
             <c:set var="featureLength" value="1" />
          </c:when>
          <c:otherwise>

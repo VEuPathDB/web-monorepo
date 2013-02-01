@@ -14,7 +14,7 @@
 <c:set var="source_id" value="${pkValues['source_id']}" />
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
-<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
@@ -24,14 +24,14 @@
 </c:catch>
 
 
-<imp:pageFrame  title="${recordType} : ${source_id}"
+<imp:pageFrame  title="${recordName} : ${source_id}"
              divisionName="PubChem Compound Record"
              refer="recordPage"
              division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${source_id}' was not found.</h2>
+  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordName)} '${source_id}' was not found.</h2>
 </c:when>
 <c:otherwise>
 

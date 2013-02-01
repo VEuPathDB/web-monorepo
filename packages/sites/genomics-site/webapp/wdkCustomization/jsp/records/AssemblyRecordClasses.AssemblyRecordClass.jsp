@@ -19,10 +19,10 @@
              refer="recordPage"
              summary="EST Assembly Record">
 
-<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 <c:choose>
   <c:when test="${wdkRecord.attributes['organism'].value eq null || !wdkRecord.validRecord}">
-    <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+    <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordName)} '${id}' was not found.</h2>
   </c:when>
   <c:otherwise>
 <c:set var="overview" value="${attrs['overview']}"/>

@@ -10,7 +10,7 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
-<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 <c:set var="pkValues" value="${primaryKey.values}" />
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
@@ -25,12 +25,12 @@
 
 <imp:pageFrame title="${id}"
              refer="recordPage"
-             divisionName="${recordType} Record"
+             divisionName="${recordName} Record"
              division="queries_tools">
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-  <h2 style="text-align:center;color:#CC0000;">The ${recordType} '${id}' was not found.</h2>
+  <h2 style="text-align:center;color:#CC0000;">The ${recordName} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>
 

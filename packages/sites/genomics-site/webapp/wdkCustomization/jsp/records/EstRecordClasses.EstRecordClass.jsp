@@ -14,7 +14,7 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
-<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
@@ -31,7 +31,7 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-  <h2 style="text-align:center;color:#CC0000;">The ${recordType} '${id}' was not found.</h2>
+  <h2 style="text-align:center;color:#CC0000;">The ${recordName} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>
 

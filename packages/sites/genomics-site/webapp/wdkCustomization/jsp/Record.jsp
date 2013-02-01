@@ -7,8 +7,8 @@
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
 <!-- display page header with recordClass type in banner -->
-<c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
-<imp:pageFrame banner="${recordType}">
+<c:set value="${wdkRecord.recordClass.displayName}" var="recordName"/>
+<imp:pageFrame banner="${recordName}">
 
 <h2 style="text-align: center;">
 <imp:recordPageBasketIcon />

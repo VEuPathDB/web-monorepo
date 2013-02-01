@@ -7,7 +7,6 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set value="${wdkModel.displayName}" var="project"/>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 
 <c:set value="2" var="columns"/>
 

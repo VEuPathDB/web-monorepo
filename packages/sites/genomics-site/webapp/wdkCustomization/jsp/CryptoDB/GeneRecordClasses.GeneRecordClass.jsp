@@ -15,7 +15,7 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
-<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 <c:set var="organismFull" value="${attrs['organism_full'].value}"/>
 
 <imp:pageFrame title="${wdkRecord.primaryKey}" 
@@ -25,7 +25,7 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordName)} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>
 
@@ -56,7 +56,6 @@
 <c:set var="strand" value="${attrs['strand_plus_minus'].value}"/>
 
 <%-- display page header with recordClass type in banner --%>
-<c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
 
 
 <%-- quick tool-box for the record --%>

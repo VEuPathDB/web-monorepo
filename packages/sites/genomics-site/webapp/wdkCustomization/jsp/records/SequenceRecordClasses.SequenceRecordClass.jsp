@@ -18,7 +18,7 @@
 
 <c:set var="SRT_CONTIG_URL" value="/cgi-bin/contigSrt"/>
 
-<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
@@ -34,7 +34,7 @@
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
-  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordName)} '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>
 

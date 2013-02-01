@@ -12,7 +12,7 @@
 <c:set var="pkValues" value="${primaryKey.values}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
-<c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
+<c:set value="${wdkRecord.recordClass.displayName}" var="recordName"/>
 
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
@@ -22,7 +22,7 @@
 </c:catch>
 
 <imp:pageFrame title="${wdkRecord.primaryKey}"
-             divisionName="${recordType} Record"
+             divisionName="${recordName} Record"
              refer="recordPage"
              division="queries_tools">
 
@@ -30,7 +30,7 @@
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
   <h2 style="text-align:center;color:#CC0000;">
-  The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  The ${fn:toLowerCase(recordName)} '${id}' was not found.</h2>
 </c:when>
 
 <c:otherwise>

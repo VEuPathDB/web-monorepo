@@ -14,15 +14,12 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
+<c:set var="recordName" value="${wdkQuestion.recordClass.displayName}"/>
 <c:set var="showParams" value="${requestScope.showParams}"/>
 
 <%--CODE TO SET UP THE SITE VARIABLES --%>
 <c:if test="${wdkModel.displayName eq 'EuPathDB'}">
     <c:set var="portalsProp" value="${props['PORTALS']}" />
-</c:if>
-<c:if test="${fn:contains(recordType, 'Assem') }">
-        <c:set var="recordType" value="Transcript Assemblie" />
 </c:if>
 
 <%-- show all params of question, collect help info along the way --%>

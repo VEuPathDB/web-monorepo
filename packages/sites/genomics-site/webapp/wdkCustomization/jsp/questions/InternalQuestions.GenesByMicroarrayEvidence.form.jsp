@@ -6,7 +6,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 <c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
 
 <%-- QUESTIONS --%>

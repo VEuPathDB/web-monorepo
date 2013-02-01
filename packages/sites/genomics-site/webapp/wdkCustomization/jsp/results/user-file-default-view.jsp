@@ -32,10 +32,7 @@
 
   <c:set var="wdkView" value="${requestScope.wdkView}" />
 
-  <jsp:useBean id="typeMap" class="java.util.HashMap"/>
-  <c:set target="${typeMap}" property="singular" value="${step.displayType}"/>
-  <imp:getPlural pluralMap="${typeMap}"/>
-  <c:set var="type" value="${typeMap['plural']}"/>
+  <c:set var="displayName" value="${step.recordClass.displayName}"/>
 
   <c:set var="isBasket" value="${fn:contains(step.questionName, 'ByRealtimeBasket')}"/>
 

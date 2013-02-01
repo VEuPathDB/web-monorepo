@@ -20,7 +20,7 @@
 <c:set var="context_end_range" value="${attrs['context_end_range'].value}" />
 
 <%-- display page header with recordClass type in banner --%>
-<c:set value="${wdkRecord.recordClass.type}" var="recordType"/>
+<c:set value="${wdkRecord.recordClass.displayName}" var="recordName"/>
 
 <c:set var='bannerText'>
       <c:if test="${wdkRecord.attributes['organism'].value ne 'null'}">
@@ -32,7 +32,7 @@
           </font><br>
       </c:if>
       
-      <font face="Arial,Helvetica">${recordType} Record</font>
+      <font face="Arial,Helvetica">${recordName} Record</font>
 </c:set>
 
 <imp:pageFrame title="${wdkRecord.primaryKey}"

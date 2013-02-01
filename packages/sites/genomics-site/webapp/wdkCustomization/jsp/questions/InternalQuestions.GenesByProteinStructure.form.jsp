@@ -6,7 +6,6 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
-<c:set var="recordType" value="${wdkQuestion.recordClass.type}"/>
 <c:set var="projectId" value="${wdkModel.displayName}"/>
 
 <imp:errors/>

@@ -15,7 +15,7 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 
-<c:set var="recordType" value="${wdkRecord.recordClass.type}" />
+<c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
@@ -25,7 +25,7 @@
              divisionName="Gene Record"
              division="queries_tools" >
 
-  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordType)} '${id}' was not found.</h2>
+  <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordName)} '${id}' was not found.</h2>
  </imp:pageFrame>
 </c:when>
 

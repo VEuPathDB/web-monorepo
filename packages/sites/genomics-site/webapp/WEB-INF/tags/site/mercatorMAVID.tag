@@ -150,7 +150,7 @@ return true;
      </td></tr>
 </c:if>
 
-<c:if test="${projectId eq 'PlasmoDB' && wdkRecord.recordClass.type ne 'SNP'}">
+<c:if test="${projectId eq 'PlasmoDB' && wdkRecord.recordClass.displayName ne 'SNP'}">
 
    <tr><td align="left"><b>Genomes to Align:</b>&nbsp;&nbsp;<br />
         <table>
