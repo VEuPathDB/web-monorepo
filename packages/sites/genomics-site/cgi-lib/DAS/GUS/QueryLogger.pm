@@ -3,6 +3,8 @@ package  DAS::GUS::QueryLogger;
 use Time::HiRes qw ( time );
 use Fcntl qw(:flock SEEK_END);
 use File::Path;
+use ApiCommonWebsite::Model::ModelConfig;
+use strict;
 
 # Log gbrowse queries.
 # file locking is commented out, as it is probably overkill and a bit dangerous.
@@ -13,11 +15,6 @@ my $LOG10 = log(10);
 #####################################################
 # treat sub-floor ranges like the floor
 my $RANGE_FLOOR = 50000;
-
-# slowness factors (in seconds) (these get scaled by a function of range)
-my $SLIGHT = 0.05;
-my $MEDIUM = 0.5;
-my $VERY =   2.0;
 
 # max log sizes (megabytes) (shared equally among the three logs).
 my $LOGSIZES = {'w1' => 250, 'q1' => 25, 'b1' => 25,
@@ -30,26 +27,28 @@ sub new {
     my ($class, $logFileDirectory, $site, $inGenePage) = @_;
     my $self = {};
 
+    my $projectId = $ENV{PROJECT_ID};
+    my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
+
+    $self->{baselineThreshold} = .1;
+    $self->{slowThreshold} = 2;
+
+    if ($c->queryMonitor) {
+      $self->{baselineThreshold} = $c->queryMonitor->baseline if defined($c->queryMonitor->baseline);
+      $self->{slowThreshold} = $c->queryMonitor->slow if defined($c->queryMonitor->baseline);
+    }
+
     if ($logFileDirectory) {
       $self->{inGenePage} = $inGenePage;
       $self->{logFileDir} = $logFileDirectory;
       mkpath($logFileDirectory);
       my @siteparts = split(/\./, $site);
 
-      my $slowFile = "$logFileDirectory/very_slow.log";
-      &rotateLog($logFileDirectory, 'very_slow', $siteparts[0]);
-      open($self->{verySlowHandle},">> $slowFile") ||
+      my $slowFile = "$logFileDirectory/slowQueries.log";
+      &rotateLog($logFileDirectory, 'slowQueries', $siteparts[0]);
+      open($self->{slowHandle},">> $slowFile") ||
 	die "Can't open gbrowse log file '$slowFile'\n";
 
-      my $medFile = "$logFileDirectory/medium_slow.log";
-      &rotateLog($logFileDirectory, 'medium_slow', $siteparts[0]);
-      open($self->{mediumSlowHandle},">> $medFile") ||
-	die "Can't open gbrowse log file '$medFile'\n";
-
-      my $slightFile = "$logFileDirectory/slightly_slow.log";
-      &rotateLog($logFileDirectory, 'slightly_slow', $siteparts[0]);
-      open($self->{slightlySlowHandle},">> $slightFile") ||
-	die "Can't open gbrowse log file '$slightFile'\n";
     }
     bless($self,$class);
     return $self;
@@ -62,7 +61,7 @@ sub execute {
     my $status = $sth->execute();
 
     if ($self->{logFileDir}) {
-      my $elapsed_time = time() - $start_time;
+      my $elapsed_time = (time() - $start_time) * 1000;
 
       my $reportedRange = $range? $range : "n/a";
       my $r = ($range && $range >= $RANGE_FLOOR)? $range : $RANGE_FLOOR;
@@ -71,29 +70,24 @@ sub execute {
       # in other words, an approx 10 fold difference in speed allowed
       # across typical smallest window (gene page) and largest (chromosome)
       my $scaledRange = &log10($r/5000) ** 2;
-      $slightlySlow = $scaledRange * $SLIGHT;
-      $mediumSlow = $scaledRange * $MEDIUM;
-      $verySlow = $scaledRange * $VERY;
+      my $baseline = $scaledRange * $self->{baselineThreshold};
+      my $slow = $scaledRange * $self->{slowThreshold};
 
       my $fh;
       my $howSlow;
-      if ($elapsed_time > $verySlow) {
-	$fh = $self->{verySlowHandle};
-	$howSlow = 'v';
-      } elsif ($elapsed_time > $mediumSlow) {
-	$fh = $self->{mediumSlowHandle};
-	$howSlow = 'm';
-      } elsif ($elapsed_time > $slightlySlow) {
-	$fh = $self->{slightlySlowHandle};
-	$howSlow = 's';
+      if ($elapsed_time > $slow) {
+	$fh = $self->{slowHandle};
+	$howSlow = 'slow';
+      } elsif ($elapsed_time > $baseline) {
+	$fh = $self->{slowHandle};
+	$howSlow = 'baseline';
       }
       if ($fh) {
         my $inGenePage = $self->{inGenePage}? 'GENEPAGE ' : ''; 
 #        lock($fh);
-	print $fh "============================================================================\n";
-	print $fh "${inGenePage}QUERYTIME\t" . localtime() . "\t" . time() . "\t$howSlow\t$moduleName\t" . sprintf("%.2f", $elapsed_time) . "\t$reportedRange\t$queryName\n";
-	print $fh "============================================================================\n";
-	print $fh "$sql\n\n";
+	# we need the EOL so reports can detect corrupted lines
+	print $fh "${inGenePage}QUERYTIME\t" . localtime() . "\t" . time() . "\t$howSlow\t$moduleName\t" . sprintf("%.3f", $elapsed_time) . "\t$reportedRange\t$queryName\tEOL\n";
+	print $fh "$sql\n\n" if $howSlow eq 'slow';
 #	unlock($fh);
       }
     }
