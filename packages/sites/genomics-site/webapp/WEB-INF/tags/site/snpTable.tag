@@ -14,6 +14,8 @@
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
+<c:set var="project" value="${wdkModel.displayName}"/>
+
 <%-- <c:set var="snpoverview" value="${attrs['snpoverview']}"/>	--%> 
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -70,7 +72,15 @@
   </tr>   
   <tr>
     <td align=center>
-    <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this,'htsSNP','${attrs['sequence_id']}','${attrs['start_min_text']}','${attrs['end_max_text']}')" />      
+    <c:choose>
+      <c:when test = "${project == 'ToxoDB'}">
+        <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this,'htsSNP','${attrs['isolate_sequence_id']}','${attrs['isolate_start_min']}','${attrs['isolate_end_max']}')" /> 
+      </c:when>
+      <c:otherwise>
+        <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this,'htsSNP','${attrs['sequence_id']}','${attrs['start_min_text']}','${attrs['end_max_text']}')" />      
+       </c:otherwise>
+    </c:choose>
+
     <input type="button" name="CheckAll" value="Check All"  onClick="wdk.api.checkboxAll(jQuery('input:checkbox[name=selectedFields]'))">
     <input type="button" name="UnCheckAll" value="Uncheck All" onClick="wdk.api.checkboxNone(jQuery('input:checkbox[name=selectedFields]'))">
     </td>
