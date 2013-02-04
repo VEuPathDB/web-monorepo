@@ -55,14 +55,9 @@
 
 <div class="h3center" style="color:grey">Combine Step <span class="current_step_num">${currentStepId}</span> and Step <span class="new_step_num">${newStepId}</span> using relative locations in the genome</div>
 
-<jsp:useBean id="typeMap" class="java.util.HashMap"/>
-<c:set target="${typeMap}" property="singular" value="${importStep.displayType}"/>
-<imp:getPlural pluralMap="${typeMap}"/>
-<c:set var="newPluralType" value="${typeMap['plural']}"/>
+<c:set var="newPluralType" value="${importStep.recordClass.displayNamePlural}"/>
 
-<c:set target="${typeMap}" property="singular" value="${wdkStep.displayType}"/>
-<imp:getPlural pluralMap="${typeMap}"/>
-<c:set var="oldPluralType" value="${typeMap['plural']}"/>
+<c:set var="oldPluralType" value="${wdkStep.recordClass.displayNamePlural}"/>
 
 <div class="instructions">
 You had <b style="color:blue">${wdkStep.resultSize} ${oldPluralType}</b> in your Strategy <span style="color:blue">(Step</span> <span style="color:blue" class="new_step_num">${currentStepId}</span><span style="color:blue">).</span>
@@ -91,16 +86,16 @@ Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span>
 <div id="spanLogicParams">
 	<imp:answerParamInput qp="${pMap['span_a']}"/>
 	<imp:answerParamInput qp="${pMap['span_b']}"/>
-	<input type="hidden" value="${wdkStep.displayType}" id="span_a_type"/>
-	<input type="hidden" value="${importStep.displayType}" id="span_b_type"/>
+	<input type="hidden" value="${wdkStep.recordClass.DisplayName}" id="span_a_type"/>
+	<input type="hidden" value="${importStep.recordClass.displayName}" id="span_b_type"/>
 	<c:if test="${action == 'revise'}">
           <c:forEach items="${spanStep.params}" var="spanParam">
             <input type="hidden" value="${spanParam.value}" id="${spanParam.key}_default"/>
           </c:forEach>
         </c:if>
 
-	<c:set var="wdkStepRecType" value="${wdkStep.displayType}"/>
-	<c:set var="importStepRecType" value="${importStep.displayType}"/>
+	<c:set var="wdkStepRecType" value="${wdkStep.recordClass.displayName}"/>
+	<c:set var="importStepRecType" value="${importStep.recordClass.displayName}"/>
 	<c:set var="wdkStepResultSize" value="${wdkStep.resultSize}"/>
 	<c:set var="importStepResultSize" value="${importStep.resultSize}"/>
 	<c:if test="${wdkStepResultSize > 1}"><c:set var="wdkStepRecType" value="${wdkStepRecType}s"/></c:if>
