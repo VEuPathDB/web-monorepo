@@ -18,7 +18,7 @@
 
 <c:set var="strategy" value="${wdkStrategy}"/>
 
-<c:set var="step_dataType" value="${wdkStep.displayType}" />
+<c:set var="step_dataType" value="${wdkStep.displayName}" />
 <c:choose>
 	<c:when test="${fn:endsWith(step_dataType,'y')}">
 		<c:set var="type" value="${fn:substring(step_dataType,0,fn:length(step_dataType)-1)}ies" />

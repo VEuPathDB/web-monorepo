@@ -32,10 +32,7 @@
   || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}
 </c:set> 
 
-<jsp:useBean id="typeMap" class="java.util.HashMap"/>
-<c:set target="${typeMap}" property="singular" value="${wdkStep.displayType}"/>
-<imp:getPlural pluralMap="${typeMap}"/>
-<c:set var="type" value="${typeMap['plural']}"/>
+<c:set var="type" value="${wdkStep.recordClass.displayNamePlural}"/>
 
 <c:choose>
   <c:when test='${wdkAnswer.resultSize == 0}'>

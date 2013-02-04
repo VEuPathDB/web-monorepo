@@ -15,7 +15,7 @@
 <c:set var="allowBoolean" value="${requestScope.allowBoolean}"/>
 <c:set var="action" value="${requestScope.action}"/>
 
-<c:if test="${wdkQuestion.recordClass.fullName != wdkStep.dataType}">
+<c:if test="${wdkQuestion.recordClass.fullName != wdkStep.recordClass.fullName}">
 	<c:set var="checked" value="checked=''"/>
 	<c:set var="buttonVal" value="Continue...."/>
 	<c:set var="spanOnly" value="true"/>
