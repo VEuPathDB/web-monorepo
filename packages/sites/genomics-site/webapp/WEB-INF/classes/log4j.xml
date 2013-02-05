@@ -29,7 +29,43 @@
 		</filter>
 	</appender>
 
+	<appender name="example-sql-log"
+		class="org.apache.log4j.RollingFileAppender">
+		<param name="maxFileSize" value="10MB" />
+		<param name="maxBackupIndex" value="1" />
+		<param name="File" value="${catalina.base}/logs/@WEBAPP@/exampleQueries.log4j" />
+		<layout class="org.apache.log4j.PatternLayout">
+    		<!-- ipAddress provided by org.apidb.apicommon.controller.log4j.MDCServletFilter -->
+			<param name="ConversionPattern"
+			       value="%-4r [%-5p] %C:%L - %X{ipAddress} - [%d{dd/MMM/yyyy:HH:mm:ss Z}] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="info" />
+			<param name="LevelMax" value="info" />
+                        <param name="AcceptOnMatch" value="true"/>
+		</filter>
+
+	</appender>
+	<appender name="slow-sql-log"
+		class="org.apache.log4j.RollingFileAppender">
+		<param name="maxFileSize" value="10MB" />
+		<param name="maxBackupIndex" value="1" />
+		<param name="File" value="${catalina.base}/logs/@WEBAPP@/slowQueries.log4j" />
+		<layout class="org.apache.log4j.PatternLayout">
+    		<!-- ipAddress provided by org.apidb.apicommon.controller.log4j.MDCServletFilter -->
+			<param name="ConversionPattern"
+			       value="%-4r [%-5p] %C:%L - %X{ipAddress} - [%d{dd/MMM/yyyy:HH:mm:ss Z}] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="warn" />
+			<param name="LevelMax" value="warn" />
+                        <param name="AcceptOnMatch" value="true"/>
+		</filter>
+	</appender>
+
     <logger name="org.gusdb"><level value="info"/></logger>
+    <logger name="org.gusdb.wdk.model.dbms.SqlExampleLog" additivity="false"><level value="info"/><appender-ref ref="example-sql-log" /></logger>
+    <logger name="org.gusdb.wdk.model.dbms.SqlUtils" additivity="false"><level value="warn"/><appender-ref ref="slow-sql-log" /></logger>
     <logger name="org.apidb"><level value="info"/></logger>
     <logger name="org.apache"><level value="warn"/></logger>
     <logger name="org.apache.catalina.core">
