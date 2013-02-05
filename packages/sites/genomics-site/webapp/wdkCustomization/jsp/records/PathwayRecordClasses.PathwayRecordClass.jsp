@@ -84,7 +84,7 @@ Coloring of the KEGG maps was performed in house with custom scripts and annotat
 <br>
 
 <imp:panel 
-    displayName="Metabolic Pathways from KEGG"
+    displayName="Data Source"
     content="${reference}" />
 <br>
 
