@@ -75,14 +75,13 @@
 </c:choose>
   <c:set var="reference">
 <br> Compounds were procured from the <a href="http://pubchem.ncbi.nlm.nih.gov/">PubChem Compound Database</a> and associations were identified with KEGG Metabolic Pathways.<br>
-     Compounds were associated to genes via their interactions with enzymes in pathways (EC Numbers).<br><br>
-Graphs for the compounds were provided by <a href="http://www.molbio1.princeton.edu/labs/llinas/">Llinas lab</a><br>
+     Compounds were associated to genes via their interactions with enzymes in pathways (EC Numbers).
   </c:set>
 <br>
 <br>
 
 <imp:panel 
-    displayName="PubChem Compounds and Graphs"
+    displayName="Data Source"
     content="${reference}" />
 <br>
 
