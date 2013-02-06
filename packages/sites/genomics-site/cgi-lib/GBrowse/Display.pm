@@ -950,4 +950,12 @@ EOL
 
 } 
 
+sub massSpecKey {
+  my $projectId = $ENV{PROJECT_ID};
+
+  return 'T.gondii MS/MS Peptides - Unified' if ($projectId =~ /ToxoDB/i);
+  return 'Unified MS/MS Peptides (see <10k region for details)';
+
+}
+
 1;
