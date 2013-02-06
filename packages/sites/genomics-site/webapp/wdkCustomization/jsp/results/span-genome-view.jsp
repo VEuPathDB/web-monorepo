@@ -7,26 +7,26 @@
 
 <c:set var="wdkStep" value="${requestScope.wdkStep}" />
 <c:set var="sequences" value="${requestScope.sequences}" />
+<c:set var="segmentSize" value="${requestScope.segmentSize}" />
 
 <c:set var="recordClass" value="${wdkStep.question.recordClass}" />
+<c:set var="displayName" value="${recordClass.displayName}" />
+<c:set var="displayNamePlural" value="${recordClass.displayNamePlural}" />
 
 <span class="onload-function" data-function="initializeGenomeView"> </span>
 
 <div class="genome-view">
 
-<div class="legend">
-  <div class="title">Legend</div>
-  <div>
-    <div class="region forward"></div> 
-    A genomic sequence segment on forward strand, the height of the segment 
-    reflects the number of ${recordClass.displayNamePlural} that are overlapped with the
-    segment.
-  </div>
-  <div>
-    <div class="region reverse"></div> 
-    A genomic sequence segment on reversed strand, the height also reflects
-    the number of ${recordClass.displayNamePlural}.
-  </div>
+<fieldset class="legend">
+  <legend class="title">Legend</legend>
+  <ul>
+    <li><div class="region forward"> </div> Segments on forward strand</li>
+    <li><div class="region reverse"> </div> Segments on reverse strand</li>
+    <li>Size of each segment: ${segmentSize} BPs</li>
+    <li>The height of each segment reflects the number of ${displayNamePlural} in the segment</li>
+    <li><div class="feature forward"> </div> Segments on forward strand</li>
+    <li><div class="feature reverse"> </div> Segments on reverse strand</li>
+  </ul>
 </div>
 
 <%--
@@ -83,12 +83,6 @@
   </c:forEach>
 </div>
 
-<c:url var="zoomInImage" value="/wdkCustomization/images/zoom_in.png" />
-<c:url var="zoomOutImage" value="/wdkCustomization/images/zoom_out.png" />
-<c:set var="zoomInAllTip" value="Zoom in all the sequences." />
-<c:set var="zoomOutAllTip" value="Zoom out all the sequences." />
-
-
 <table class="datatables">
   <thead>
   <tr>
@@ -98,10 +92,6 @@
     <th>#${recordClass.displayNamePlural}</th>
     <th title="Length of the genomic sequence in #bases">Length</th>
     <th>${recordClass.displayName} Locations</th>
-    <th>
-      <img class="zoomin-all" title="${zoomInAllTip}" src="${zoomInImage}" />
-      <img class="zoomout-all" title="${zoomOutAllTip}" src="${zoomOutImage}" />
-    </th>
   </tr>
   </thead>
   <tbody>
@@ -146,10 +136,6 @@
     <th>#${recordClass.displayNamePlural}</th>
     <th>Length</th>
     <th>${recordClass.displayName} Locations</th>
-    <th>
-      <img class="zoomin-all" title="${zoomInAllTip}" src="${zoomInImage}" />
-      <img class="zoomout-all" title="${zoomOutAllTip}" src="${zoomOutImage}" />
-    </th>
   </tr>
   </tfoot>
 </table>
