@@ -955,6 +955,12 @@ sub massSpecKey {
 
   return 'T.gondii MS/MS Peptides - Unified' if ($projectId =~ /ToxoDB/i);
   return 'Unified MS/MS Peptides (see <10k region for details)';
+}
+
+sub combinedRumKey {
+  my $projectId = $ENV{PROJECT_ID};
+  return 'T.gondii Splice Site Junctions - Unified' if ($projectId =~ /ToxoDB/i);
+  return 'Splice Site Junctions - Combined';
 
 }
 
