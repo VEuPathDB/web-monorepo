@@ -799,6 +799,28 @@ sub cghBgcolor {
  }
 
 
+sub riteshMSBgcolor {
+  my $f = shift;
+  
+  my ($psm) = $f->get_tag_values('PSM');
+
+  if($psm < 10) {
+    return "#3BB9FF";  # deep sky blue
+  } elsif ($psm < 20) {
+    return "#2B65EC"; # royal blue 2
+  } elsif ($psm < 50) {
+    return "#342D7E"; # slate blue4
+  } elsif ($psm < 50) {
+    return "#151B54"; # midnight blue
+  } elsif ($psm < 100) {
+    return "#463E41"; # dim gray
+  } elsif ($psm < 200) {
+    return "#25383C"; # dark slate gray
+  } else {
+    return "#382D2C"; # grey26
+  } 
+}
+
 # used to flag (in red) cosmids that whose length suggests misassembly
 # (anything outside the range of 35-45 kb
 sub alignmentConnectColor {
@@ -811,6 +833,9 @@ sub alignmentConnectColor {
     return 'red';
   }
 }
+
+
+
 
 
 #--------------------------------------------------------------------------------
