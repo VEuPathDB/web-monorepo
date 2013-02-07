@@ -808,7 +808,7 @@ sub riteshMSBgcolor {
     return "#3BB9FF";  # deep sky blue
   } elsif ($psm < 20) {
     return "#2B65EC"; # royal blue 2
-  } elsif ($psm < 50) {
+  } elsif ($psm < 30) {
     return "#342D7E"; # slate blue4
   } elsif ($psm < 50) {
     return "#151B54"; # midnight blue
