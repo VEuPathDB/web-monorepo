@@ -54,7 +54,7 @@
 
     <appender name="logstash"
         class="org.apache.log4j.net.SocketAppender">
-        <param name="port" value="25000"/>
+        <param name="port" value="9201"/>
         <param name="remoteHost" value="localhost"/>
         <param name="application" value="@WEBAPP@"/>
         <param name="locationInfo" value="true"/>
