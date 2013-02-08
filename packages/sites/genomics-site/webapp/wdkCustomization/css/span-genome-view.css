@@ -7,7 +7,6 @@
 
 .genome-view #sequences {display:none;}
 
-.genome-view .legend .region { width:1%; height:15px, border:1px dotted #CCCCCC;}
 .genome-view .region { min-width:2px; }
 .genome-view .region.forward { background-color:#AAAAFF; }
 .genome-view .region.reverse { background-color:#FFAAAA; }
@@ -35,9 +34,14 @@
 .genome-view .canvas .region.reverse { top:35px; }
 
 
-.legend { background-color:#EEEEEE; border-radius:5px; margin-bottom:5px; width: 400px; }
-.legend .title { text-align:center; padding-top:5px; font-weight:bold; }
-.legend .feature { width:50px; display:inline-block; }
+.genome-view .legend { background-color:#EEEEEE; border-radius:5px; margin:5px; padding:5px; width: 600px; }
+.genome-view .legend .title { text-align:center; padding-top:5px; font-weight:bold; }
+.genome-view .legend .icon { display:inline-block; width: 3.5%; }
+.genome-view .legend .region { height: 20px; }
+.genome-view .legend .feature { height: 5px; }
+.genome-view .legend .feature.forward { background-color:#0000FF; }
+.genome-view .legend .feature.reverse { background-color:#FF0000; }
+
 
  .smaller-font {
 	font-size: 90%;

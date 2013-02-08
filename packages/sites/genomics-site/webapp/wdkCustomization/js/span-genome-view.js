@@ -38,7 +38,7 @@ function initializeGenomeView() {
         // the registration will be applied to the current page only.
         genomeView.find(".datatables").dataTable({
             "bJQueryUI": true,
-            "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "aLengthMenu": [[10, 25, -1], [10, 25, "All"]],
             "iDisplayLength": 25,
             "sDom":'<"H"iplfr>t<"F"ip>',
             "aaSorting": [[3,'desc']],

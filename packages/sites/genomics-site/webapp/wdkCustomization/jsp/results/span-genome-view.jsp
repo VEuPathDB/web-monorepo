@@ -20,14 +20,15 @@
 <fieldset class="legend">
   <legend class="title">Legend</legend>
   <ul>
-    <li><div class="region forward"> </div> Segments on forward strand</li>
-    <li><div class="region reverse"> </div> Segments on reverse strand</li>
-    <li>Size of each segment: ${segmentSize} BPs</li>
-    <li>The height of each segment reflects the number of ${displayNamePlural} in the segment</li>
-    <li><div class="feature forward"> </div> Segments on forward strand</li>
-    <li><div class="feature reverse"> </div> Segments on reverse strand</li>
+    <li> * <div class="icon region forward"> </div> Segments on forward strand;</li>
+    <li> * <div class="icon region reverse"> </div> Segments on reverse strand;</li>
+    <li> * <div class="icon"> </div> Size of each segment: ${segmentSize} base pairs;</li>
+    <li> * <div class="icon"> </div> The height of each segment reflects the number of ${displayNamePlural} in the segment;</li>
+    <li> * <div class="icon feature forward"> </div> ${displayNamePlural} on forward strand;</li>
+    <li> * <div class="icon feature reverse"> </div> ${displayNamePlural} on reverse strand;</li>
   </ul>
-</div>
+</fieldset>
+
 
 <%--
 <div style="float:left;position:relative;bottom:35px;left:30px;"><img src="<c:url value='/wdk/images/betatesting.png' />" /></div>
