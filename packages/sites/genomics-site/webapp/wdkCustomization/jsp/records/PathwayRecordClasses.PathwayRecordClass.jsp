@@ -76,7 +76,7 @@
 
   <c:set var="reference">
  <br>Data for Metabolic Pathways were procured from the <a href="http://www.kegg.jp/">Kyoto Encyclopedia of Genes and Genomes (KEGG)</a>.<br>
- This data was mapped to EC Numbers obtained from the official genome annotations of organisms (<a href="<c:url value='/getDataset.do?display=detail#Genomes and Annotation'/>">view here</a>), and Compounds from the NCBI repository.<br>
+ This data was mapped to EC Numbers obtained from <a href="<c:url value='/getDataset.do?display=detail#Genomes and Annotation'/>">the official genome annotations of organisms</a>, and Compounds from the NCBI repository.<br>
  The images and maps for KEGG pathways are copyright of <a href="http://www.kanehisa.jp/">Kanehisa Laboratories</a>.
 Coloring of the KEGG maps was performed in house with custom scripts and annotation information.<br>
   </c:set>
