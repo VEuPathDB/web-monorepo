@@ -40,11 +40,11 @@
     <imp:questionForm />
 
     <c:if test="${hideOperation == false}">
-        <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
+        <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer" style="font-size:110%;font-weight:bold;font-family:Arial,Helvetica,sans-serif"/></div>
 
         <%-- custom name param --%>
         <div style="text-align:center;padding-top:1em;">
-          <label><span style="font-style:italic;color:#333">Name this search:</span></label>
+          <label><span style="font-weight:bold;font-style:italic;color:#333">Name this search:&nbsp;</span></label>
           <input style="width:15em"
             class="wdk-tooltip"
             title="Give this search a custom name (15 character limit). The name will appear in this search's step box and, if this is a new strategy, as the strategy's default name."

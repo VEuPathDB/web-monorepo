@@ -38,7 +38,7 @@
 
 <%-- display description for wdkQuestion --%>
 <a name="${descripId}"></a>
-<div class="truncate" style="color:black;padding:1em 2em 0em 2em;margin:1em;" id="${descripId}">
+<div class="snippet" style="color:black;padding:0.5em 1em 0em 1em;margin:0.5em;" id="${descripId}">
   <div>
     <jsp:getProperty name="wdkQuestion" property="description"/>
   </div>
@@ -52,18 +52,18 @@
       <c:set var="attributions" value="${wdkQuestion.propertyLists['specificAttribution']}"/>
       <c:if test="${fn:length(attributions) gt 0}">
         <a name="${attrId}"></a>
-        <div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${attrId}">
+        <div class="content-pane snippet" style="color:black;padding:0.5em 1em;" id="${attrId}">
           <div>
-            <imp:attributions attributions="${attributions}" caption="Data sets used by this search" />
+            <imp:attributions attributions="${attributions}" caption="Data Sets used by this search" />
           </div>
         </div>
       </c:if>
     </c:when>
     <c:otherwise>
     <a name="${attrId}"></a>
-      <div class="content-pane snippet" style="color:black;padding:1em 2em;" id="${attrId}">
+      <div class="content-pane snippet" style="color:black;padding:0.5em 1em;" id="${attrId}">
         <div>
-          <div class="group-title h4left" style="padding-bottom: .4em;">Data sets used by this search</div>
+          <div class="group-title h4left" style="padding-bottom: .4em;">Data Sets used by this search</div>
           <ul>
           <c:forEach items="${ds_ref_questions}" var="dsRecord">
             <li class="data-source">
