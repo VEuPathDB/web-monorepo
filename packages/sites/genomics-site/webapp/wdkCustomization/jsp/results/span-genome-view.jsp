@@ -26,6 +26,7 @@
     <li> * <div class="icon"> </div> The height of each segment reflects the number of ${displayNamePlural} in the segment;</li>
     <li> * <div class="icon feature forward"> </div> ${displayNamePlural} on forward strand;</li>
     <li> * <div class="icon feature reverse"> </div> ${displayNamePlural} on reverse strand;</li>
+    <li> * <div class="icon"> </div> Only the first 50 longest sequences are displayed.</li>
   </ul>
 </fieldset>
 
@@ -102,8 +103,8 @@
       <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
       <td class="organism">${sequence.organism}</td>
       <td class="chromosome" nowrap>${sequence.chromosome}</td>
-      <td class="span-count" nowrap>${sequence.featureCountFormatted}</td>
-      <td class="length" nowrap>${sequence.lengthFormatted}</td>
+      <td class="span-count" nowrap>${sequence.featureCount}</td>
+      <td class="length" nowrap>${sequence.length}</td>
       <td width="100%">
        <div class="canvas">
         <div class="ruler" title="${sequence.sourceId}, length: ${sequence.lengthFormatted}"

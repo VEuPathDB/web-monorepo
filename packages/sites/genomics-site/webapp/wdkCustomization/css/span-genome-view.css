@@ -41,7 +41,7 @@
 .genome-view .legend .feature { height: 5px; }
 .genome-view .legend .feature.forward { background-color:#0000FF; }
 .genome-view .legend .feature.reverse { background-color:#FF0000; }
-
+.genome-view .legend li { line-height: 22px; }
 
  .smaller-font {
 	font-size: 90%;

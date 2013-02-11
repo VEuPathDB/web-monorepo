@@ -41,13 +41,12 @@ function initializeGenomeView() {
             "aLengthMenu": [[10, 25, -1], [10, 25, "All"]],
             "iDisplayLength": 25,
             "sDom":'<"H"iplfr>t<"F"ip>',
-            "aaSorting": [[3,'desc']],
+            "aaSorting": [[4,'desc']],
             "aoColumns": [ null,
                            null,
                            null,
                            null,
                            null,
-                           { "bSortable": false },
                            { "bSortable": false } ]
         });
 
