@@ -1,5 +1,5 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="site" tagdir="/WEB-INF/tags/site" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -515,7 +515,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
 <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
 <c:forEach var="row" items="${referenceTable}">
-  <c:if test="${extdbname eq row['name'].value}">
+  <c:if test="${externalDbName eq row['name'].value}">
     <c:set var="reference" value="${row['description'].value}"/>
   </c:if>
 </c:forEach>
