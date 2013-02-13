@@ -26,7 +26,7 @@
     <li> * <div class="icon"> </div> The height of each segment reflects the number of ${displayNamePlural} in the segment;</li>
     <li> * <div class="icon feature forward"> </div> ${displayNamePlural} on forward strand;</li>
     <li> * <div class="icon feature reverse"> </div> ${displayNamePlural} on reverse strand;</li>
-    <li> * <div class="icon"> </div> Only the first 50 longest sequences are displayed.</li>
+    <li> * <div class="icon"> </div> Only the first 150 longest sequences are displayed.</li>
   </ul>
 </fieldset>
 

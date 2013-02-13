@@ -15,8 +15,8 @@
 .genome-view .canvas, .region .canvas { position:relative; overflow:visible; }
 .genome-view .canvas .ruler, .region .canvas .ruler { position:absolute; height:3px; background-color:#666666; cursor:pointer; }
 
-.genome-view .canvas { height:65px; }
-.genome-view .canvas .ruler { top:31px; }
+.genome-view .canvas { height:99px; }
+.genome-view .canvas .ruler { top:48px; }
 
 
 .region {width: 500px; }
@@ -29,9 +29,9 @@
 .region .canvas .feature.reverse { top:17px;background-color:#FF0000; }
 .region .features {display:none;}
 
-.genome-view .canvas .region { display:block; position:absolute; cursor:pointer; border-left:1px dotted #CCCCCC; }
-.genome-view .canvas .region.forward { bottom:35px; }
-.genome-view .canvas .region.reverse { top:35px; }
+.genome-view .canvas .region { display:block; position:absolute; cursor:pointer; border-left:1px dotted #CCCCCC; max-height:50px; }
+.genome-view .canvas .region.forward { bottom:52px; }
+.genome-view .canvas .region.reverse { top:52px; }
 
 
 .genome-view .legend { background-color:#EEEEEE; border-radius:5px; margin:5px; padding:5px; width: 600px; }
