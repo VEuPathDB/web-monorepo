@@ -275,7 +275,7 @@ ${attrs['organism'].value}<br>
     InterproDomains+SignalP+TMHMM+BLASTP+HustonMassSpecPeptides+CarpentieriMassSpecPeptides
     </c:set>
   </c:when>
-  <c:when test='${organism_full eq "Entamoeba invadens IP1"}'>
+  <c:when test='${organism_full eq "Entamoeba invadens IP1" || organism_full eq "Acanthamoeba castellanii str. Neff"}'>
     <c:set var="ptracks">
     InterproDomains+SignalP+TMHMM+BLASTP
     </c:set>
