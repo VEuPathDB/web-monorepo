@@ -78,15 +78,28 @@
 	<c:param name="flag" value="0" />
 </c:url>
 
+<a name="user-comment"/>
+
+<b>
+<a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
+<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+</b>
+
+<br/><br/>
+
 <c:catch var="e">
-	   <imp:dataTable tblName="IsolateComments"/>
-	   <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
+     <imp:wdkTable tblName="IsolateComments"/>
 </c:catch>
 <c:if test="${e != null}">
-		  <imp:embeddedError
-		    msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
-		    e="${e}"
-		/>
+
+  <table  width="100%" cellpadding="3">
+    <tr><td><b>User Comments</b> 
+      <imp:embeddedError
+        msg="<font size='-1'><b>User Comments</b> is temporarily unavailable.</font>"
+        e="${e}"
+    />
+    </td></tr>
+  </table>
 </c:if>
 <br>
 
