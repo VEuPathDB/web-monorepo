@@ -444,9 +444,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/amoebadbaa/?name=${
 
 <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
 <c:forEach var="row" items="${referenceTable}">
-  <c:if test="${extdbname eq row['name'].value}">
     <c:set var="reference" value="${row['description'].value}"/>
-  </c:if>
 </c:forEach>
 
 

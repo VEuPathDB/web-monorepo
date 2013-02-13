@@ -515,9 +515,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 
 <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
 <c:forEach var="row" items="${referenceTable}">
-  <c:if test="${externalDbName eq row['name'].value}">
     <c:set var="reference" value="${row['description'].value}"/>
-  </c:if>
 </c:forEach>
 
 
