@@ -74,7 +74,7 @@
     <td align=center>
     <c:choose>
       <c:when test = "${project == 'ToxoDB'}">
-        <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this,'htsSNP','${attrs['isolate_sequence_source_id']}','${attrs['isolate_start_min']}','${attrs['isolate_end_max']}')" /> 
+        <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this,'htsSNP','${attrs['primary_seq_id']}','${attrs['primary_seq_start']}','${attrs['primary_seq_end']}')" /> 
       </c:when>
       <c:otherwise>
         <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this,'htsSNP','${attrs['sequence_id']}','${attrs['start_min_text']}','${attrs['end_max_text']}')" />      
