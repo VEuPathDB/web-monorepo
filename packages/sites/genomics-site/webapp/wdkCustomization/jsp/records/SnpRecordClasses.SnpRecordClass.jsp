@@ -25,7 +25,6 @@
     <c:set var="revCompOn" value="1"/>
    </c:if>
   <c:set var="sequence_id" value="${attrs['seq_source_id'].value}"/>
-  <c:set var="dataset_internal" value="${attrs['dataset_internal'].value}"/>
 </c:catch>
 
 <imp:pageFrame title="${wdkModel.displayName} : SNP ${id}"

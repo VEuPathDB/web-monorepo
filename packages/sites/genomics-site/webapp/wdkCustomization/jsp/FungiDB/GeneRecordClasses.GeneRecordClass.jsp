@@ -179,6 +179,11 @@ ${attrs['organism'].value}<br>
   attribution=""/ --%>
 
 
+    <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> 
+    <imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
+
+
+
 
 
 <imp:pageDivider name="Annotation"/>

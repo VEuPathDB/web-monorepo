@@ -304,6 +304,8 @@ ${id}
 --%>
 
 
+
+<%-- TODO: write attribute query "hasHtsSnps" ... then use that in the test --%>
 <c:if test="${species eq 'falciparum3D7' || species eq 'vivax'}">
     <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> 
     <imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
