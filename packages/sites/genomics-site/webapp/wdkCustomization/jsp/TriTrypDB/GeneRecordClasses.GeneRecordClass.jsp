@@ -237,7 +237,6 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 
 <!-- snps between strains -->
  <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> 
- <imp:snpTable tblName="SNPsAlignment" isOpen="false" />
 
 <!-- gene alias table -->
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
