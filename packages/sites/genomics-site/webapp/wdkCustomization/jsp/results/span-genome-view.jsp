@@ -64,6 +64,10 @@
                 </div>
               </c:forEach>
             </div>
+            <ul class="legend">
+              <li> * <div class="icon feature forward"> </div> ${displayNamePlural} on forward strand;</li>
+              <li> * <div class="icon feature reverse"> </div> ${displayNamePlural} on reverse strand;</li>
+            </ul>
             <div class="features">
               <c:forEach items="${region.features}" var="feature">
                 <div id="${feature.sourceId}">
