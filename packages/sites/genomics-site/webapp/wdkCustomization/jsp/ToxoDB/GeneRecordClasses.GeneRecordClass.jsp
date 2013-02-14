@@ -208,8 +208,11 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
 <!-- snps between strains -->
+<c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
  <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> 
  <imp:snpTable tblName="SNPsAlignment" isOpen="false" />
+</c:if>
+
 
 <!-- locations -->
 <imp:wdkTable tblName="Genbank" isOpen="true"
