@@ -38,16 +38,16 @@
 
     <span>
       <ul class="site-icons" style="position:relative; top:-8px;display:inline-block;left:80px;">
-        <li><a href="http://amoebadb.org"><img border="0" src="/assets/images/AmoebaDB/amoebadb_w30.png" width="25"/></a></li>
-        <li class="short-space"><a href="http://cryptodb.org"><img border="0" src="/assets/images/CryptoDB/cryptodb_w50.png" width="25"/></a></li>
-        <li class="short-space"><a href="http://giardiadb.org"><img border="0" src="/assets/images/GiardiaDB/giardiadb_w50.png" width="25"/></a></li>
-        <li class="long-space"><a href="http://microsporidiadb.org"><img border="0" src="/assets/images/MicrosporidiaDB/microdb_w30.png" width="25"/></a></li>
-        <li class="short-space"><a href="http://piroplasmadb.org"><img border="0" src="/assets/images/PiroplasmaDB/piroLogo-50.png" width="26"/></a></li>
-        <li class="long-space"><a href="http://plasmodb.org"><img border="0" src="/assets/images/PlasmoDB/plasmodb_w50.png" width="25"/></a></li>
-        <li class="long-space"><a href="http://toxodb.org"><img border="0" src="/assets/images/ToxoDB/toxodb_w50.png" width="25"/></a></li>
-        <li class="short-space"><a href="http://trichdb.org"><img border="0" src="/assets/images/TrichDB/trichdb_w65.png" height="25"/></a></li>
-        <li class="short-space"><a href="http://tritrypdb.org"><img border="0" src="/assets/images/TriTrypDB/tritrypdb_w40.png" width="20"/></a></li>
-        <li class="short-space"><a href="http://orthomcl.org"><img border="0" src="/assets/images/OrthoMCL/Ortho-3D-lighter-50.png" width="30"/></a></li>
+        <li title="AmoebaDB.org"><a href="http://amoebadb.org"><img border="0" src="/assets/images/AmoebaDB/amoebadb_w30.png" width="25"/></a></li>
+        <li title="CryptoDB.org" class="short-space"><a href="http://cryptodb.org"><img border="0" src="/assets/images/CryptoDB/cryptodb_w50.png" width="25"/></a></li>
+        <li title="GiardiaDB.org" class="short-space"><a href="http://giardiadb.org"><img border="0" src="/assets/images/GiardiaDB/giardiadb_w50.png" width="25"/></a></li>
+        <li title="MicrosporidiaDB.org" class="long-space"><a href="http://microsporidiadb.org"><img border="0" src="/assets/images/MicrosporidiaDB/microdb_w30.png" width="25"/></a></li>
+        <li title="PiroplasmaDB.org" class="short-space"><a href="http://piroplasmadb.org"><img border="0" src="/assets/images/PiroplasmaDB/piroLogo-50.png" width="26"/></a></li>
+        <li title="PlasmoDB.org" class="long-space"><a href="http://plasmodb.org"><img border="0" src="/assets/images/PlasmoDB/plasmodb_w50.png" width="25"/></a></li>
+        <li title="ToxoDB.org" class="long-space"><a href="http://toxodb.org"><img border="0" src="/assets/images/ToxoDB/toxodb_w50.png" width="25"/></a></li>
+        <li title="TrichDB.org" class="short-space"><a href="http://trichdb.org"><img border="0" src="/assets/images/TrichDB/trichdb_w65.png" height="25"/></a></li>
+        <li title="TriTrypDB.org" class="short-space"><a href="http://tritrypdb.org"><img border="0" src="/assets/images/TriTrypDB/tritrypdb_w40.png" width="20"/></a></li>
+        <li title="OrthoMCL.org" class="short-space"><a href="http://orthomcl.org"><img border="0" src="/assets/images/OrthoMCL/Ortho-3D-lighter-50.png" width="30"/></a></li>
  <!--       <li class="long-space"><a href="http://orthomcl.org"><img border="0" src="${pageContext.request.contextPath}/wdkCustomization/images/ortho-blue.png" width="35" style="position:relative;top:5px"/></a></li> -->
       </ul>
     </span>
