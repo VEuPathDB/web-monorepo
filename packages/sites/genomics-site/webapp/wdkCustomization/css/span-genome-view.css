@@ -29,20 +29,23 @@
 .region .canvas .feature.reverse { top:17px;background-color:#FF0000; }
 .region .features {display:none;}
 
-
 .genome-view .canvas .region { display:block; position:absolute; cursor:pointer; border-left:1px dotted #CCCCCC; max-height:50px; }
 .genome-view .canvas .region.forward { bottom:52px; }
 .genome-view .canvas .region.reverse { top:52px; }
 
-
-.genome-view .legend { background-color:#EEEEEE; border-radius:5px; margin:5px; padding:5px; width: 600px; }
-.genome-view .legend .title { text-align:center; padding-top:5px; font-weight:bold; }
-.genome-view .legend .icon { display:inline-block; width: 3.5%; }
+.genome-view .legend { background-color:#EEEEEE; border-radius:5px; padding-left:5px; width: 425px; float:right;  font-size:90%; font-style:italic;}
+.genome-view .legend .title {  font-weight:bold; text-align:center}
+.genome-view .legend .icon { display:inline-block; width: 1.0%; }
 .genome-view .legend .region { height: 20px; }
+.genome-view .legend .region.diffSize { height: 15px; }
+.genome-view .legend .feature { height: 5px; }
+.genome-view .legend .feature.forward { background-color:#0000FF; }
+.genome-view .legend .feature.reverse { background-color:#FF0000; }
+
 .region .legend .feature { height: 5px; display:inline-block; width: 20px; }
 .region .legend .feature.forward { background-color:#0000FF; }
 .region .legend .feature.reverse { background-color:#FF0000; }
-.genome-view .legend li { line-height: 22px; }
+.genome-view .legend li { line-height: 22px; font-size:80%;}
 
  .smaller-font {
 	font-size: 90%;

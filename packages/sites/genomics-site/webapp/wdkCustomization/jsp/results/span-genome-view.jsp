@@ -13,23 +13,19 @@
 <c:set var="displayName" value="${recordClass.displayName}" />
 <c:set var="displayNamePlural" value="${recordClass.displayNamePlural}" />
 
+
 <span class="onload-function" data-function="initializeGenomeView"> </span>
+
 
 <div class="genome-view">
 
-<fieldset class="legend">
-  <legend class="title">Legend</legend>
-  <ul>
-    <li> * <div class="icon region forward"> </div> Segments on forward strand;</li>
-    <li> * <div class="icon region reverse"> </div> Segments on reverse strand;</li>
-    <li> * <div class="icon"> </div> Size of each segment: ${segmentSize} base pairs;</li>
-    <li> * <div class="icon"> </div> The height of each segment reflects the number of ${displayNamePlural} in the segment;</li>
-    <li> * <div class="icon feature forward"> </div> ${displayNamePlural} on forward strand;</li>
-    <li> * <div class="icon feature reverse"> </div> ${displayNamePlural} on reverse strand;</li>
-    <li> * <div class="icon"> </div> Only the first 150 longest sequences are displayed.</li>
-  </ul>
-</fieldset>
-
+ <div class="legend">
+   <div class="title">Note:  Only the first 150 most dense sequences are displayed.<br>Click on a Segment to see the Genes in it.</div>
+   <div class="icon region forward"> </div> Segments on forward strand;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   <div class="icon region reverse diffSize"> </div> Segments on reverse strand;<br>
+   <b title="Based on the length of the longest sequence and its gene density.">Segment width:</b> ${segmentSize} base pairs;
+   <b>Segment height</b>: #${displayNamePlural} in the Segment;
+ </div>
 
 <%--
 <div style="float:left;position:relative;bottom:35px;left:30px;"><img src="<c:url value='/wdk/images/betatesting.png' />" /></div>
@@ -89,6 +85,10 @@
   </c:forEach>
 </div>
 
+
+
+
+
 <table class="datatables">
   <thead>
   <tr>
@@ -145,5 +145,6 @@
   </tr>
   </tfoot>
 </table>
+
 
 </div> <!-- end of .genome-view -->
