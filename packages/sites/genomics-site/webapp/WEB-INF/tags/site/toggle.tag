@@ -70,6 +70,7 @@
               description="Dataset ID (from Data Sets) for attribution"
 %>
 
+
 <c:set var="userAgent" value="${header['User-Agent']}"/>
 
 <%-- most CSS selector characters (., >, +, ~, #, :, etc) are not valid in id attributes or tag names --%>
@@ -176,8 +177,10 @@
 	</c:when>
       <c:when test="${name != null && name !='' && hasDBDataset}">
         <td align="right">
+          <c:set var="wdkRecord" value="${requestScope.wdkRecord}" />
+          <c:set var="rcName" value="${wdkRecord.recordClass.fullName}" />
           <font size="-2" face="Arial,Helvetica">
-          [<a href="<c:url value='/getDataset.do?reference=${name}&display=detail' />">Data Sets</a>]
+          [<a href="<c:url value='/getDataset.do?reference=${name}&recordClass=${rcName}&display=detail' />">Data Sets</a>]
           </font>
         </td>
       </c:when>

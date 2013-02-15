@@ -28,7 +28,8 @@
 <c:set var="ds_ref_attribute" value="${requestScope.ds_ref_attributes[attribute]}" />
 <c:set var="ds_ref_table" value="${requestScope.ds_ref_tables[attribute]}" />
 <c:set var="ds_ref_profile_graph" value="${requestScope.ds_ref_profile_graphs[attribute]}" />
-
+<c:set var="wdkRecord" value="${requestScope.wdkRecord}" />
+<c:set var="rcName" value="${wdkRecord.recordClass.fullName}" />
 
 <c:forEach items="${attribution}" var="attr" >
   <c:set var="trimmedAttribution" value="${trimmedAttribution},${fn:trim(attr)}" />
@@ -55,14 +56,14 @@
   <c:when test="${attribute != null && attribute !='' && ds_ref_table != null && ds_ref_table != ''}">
         <td align="right">
           <font size="-2" face="Arial,Helvetica">
-          [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">Data Sets</a>]
+          [<a href="<c:url value='/getDataset.do?reference=${attribute}&recordClass=${rcName}&display=detail' />">Data Sets</a>]
           </font>
         </td>
   </c:when>
   <c:when test="${attribute != null && attribute !='' && ds_ref_attribute != null && ds_ref_attribute != ''}">
     <td align="right">
      <font size="-2" face="Arial,Helvetica">
-     [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">
+     [<a href="<c:url value='/getDataset.do?reference=${attribute}&recordClass=${rcName}&display=detail' />">
      Data Sets</a>]
      </font>
     </td>
