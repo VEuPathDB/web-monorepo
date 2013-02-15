@@ -49,6 +49,7 @@
           <c:set var="contacts" value="${tables['Contacts']}" />
           <c:set var="isolates" value="${tables['Isolates']}" />
           <c:set var="externallinks" value="${tables['HyperLinks']}" />
+          <c:set var="versions" value="${tables['Version']}" /> 
           <c:set var="references" value="${tables['References']}" />
 
           <div class="data-set">
@@ -146,6 +147,19 @@
               </c:set>
               <imp:simpleToggle name ="${externallinks.displayName}" content="${extLinkContent}" show="false" />
             </c:if>
+
+            <c:if test="${fn:length(versions) > 0}">
+              <c:set var="versionContent">
+                <!-- <imp:table table="${versions}" sortable="false" showHeader="false" /> -->
+                 <table>
+                  <c:forEach items="${versions}" var="version">
+                        <tr><td>${version['organism']}</td><td>" : "</td><td>${version['version']}</td></tr>
+                  </c:forEach>
+                 </table>
+              </c:set>
+              <imp:simpleToggle name ="${versions.displayName}" content="${versionContent}" show="false" /> 
+            </c:if>
+
 
             <c:if test="${fn:length(references) > 0}">
               <c:set var="hasQuestion" value="${false}" />
