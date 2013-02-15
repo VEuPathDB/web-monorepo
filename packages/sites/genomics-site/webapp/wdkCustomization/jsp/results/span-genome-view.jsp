@@ -20,7 +20,7 @@
 <div class="genome-view">
 
  <div class="legend">
-   <div class="title">Note:  Only the first 150 most dense sequences are displayed.<br>Click on a Segment to see the Genes in it.</div>
+   <div class="title">Note:  Only the first 150 most dense sequences are listed.<br>Click on a Segment to see the Genes in it.</div>
    <div class="icon region forward"> </div> Segments on forward strand;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <div class="icon region reverse diffSize"> </div> Segments on reverse strand;<br>
    <b title="Based on the length of the longest sequence and its gene density.">Segment width:</b> ${segmentSize} base pairs;
