@@ -38,21 +38,20 @@
 
 <%-- display description for wdkQuestion --%>
 <a name="${descripId}"></a>
-<!--
+
+
 <div class="truncate" style="color:black;padding:0.5em 1em 0em 1em;margin:0.5em;" id="${descripId}">
-  <div>
--->
-<div class="content-pane collapsible" id="${descripId}">
-
-        <div class="group-title h4left" style="padding-bottom: .4em;">Description ...</div>
-        <div class="group-detail" style="display:none">
-    				<jsp:getProperty name="wdkQuestion" property="description"/>
-				</div>
-  </div>
-
 <!--
-</div>
+<div class="content-pane collapsible" id="${descripId}">
+        <div class="group-title h4left" style="padding-bottom: .4em;">Description ...</div>
 -->
+    <div>
+<!--
+        <div class="group-detail" style="display:none"> 
+-->
+    				<jsp:getProperty name="wdkQuestion" property="description"/>
+    </div>
+</div>
 
 <%-- get the attributions of the question if not EuPathDB --%>
 <c:if test = "${project != 'EuPathDB' && project != 'FungiDB'}">
@@ -74,12 +73,15 @@
 
 <!--
       <div class="content-pane snippet" style="color:black;padding:0.5em 1em;" id="${attrId}">
-        <div>
 -->
       <div class="content-pane collapsible" id="${attrId}">
-
+<!--
+       <div>
+-->
         <div class="group-title h4left" style="padding-bottom: .4em;">Data Sets used by this search ...</div>
+
         <div class="group-detail" style="display:none">
+	    
           <ul>
           <c:forEach items="${ds_ref_questions}" var="dsRecord">
             <li class="data-source">
@@ -106,11 +108,8 @@
           </c:forEach>
           </ul>
         </div>
-
-<!--
-        </div>
       </div>
--->
+
     </c:otherwise>
   </c:choose>
 </c:if>
