@@ -18,7 +18,7 @@
 
 -->
 </style>
-<br>
+<!-- <br> -->
 <table id="span-location">
 <tr style="font-weight:bold">
 <td style=" border-right: 3px double black;" class="h4left" width="30%">1. Build segment IDs</td>

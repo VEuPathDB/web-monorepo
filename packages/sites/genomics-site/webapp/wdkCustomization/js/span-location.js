@@ -51,7 +51,11 @@ SpanLocation.prototype.createLayout = function() {
 
         // move content-pane class to span-location table
         params.find(".content-pane").removeClass("content-pane")
-            .parents("#span-location").wrap("<div class='content-pane'></div>").css("margin", "1em");
+            .parents("#span-location")
+            .addClass("content-pane")
+            .css("display", "block")
+            .css("padding", "0.5em")
+            .css("margin", "0.5em");
 };
 
 SpanLocation.prototype.composeId = function() {
