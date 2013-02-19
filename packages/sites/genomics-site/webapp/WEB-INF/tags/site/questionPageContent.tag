@@ -26,12 +26,7 @@
     <imp:questionFeature question="${wdkQuestion}"/></h1>
 </c:if>
 
-<%-- displays question description, can be overridden by the custom question form --%>
-<c:if test="${hideAttrDescr == false}">
-  <!-- <div class="content-pane snippet" style="padding:1em 2em"> -->
-    <div><imp:questionDescription /></div>
-    <!-- </div> -->
-</c:if>
+
 
 <a name="query-search-form"></a>
 
@@ -40,18 +35,35 @@
     <imp:questionForm />
 
     <c:if test="${hideOperation == false}">
-        <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer" style="font-size:110%;font-weight:bold;font-family:Arial,Helvetica,sans-serif"/></div>
+        <div title="Click to run a search and generate the first step of a new strategy." class="filter-button">
+					<html:submit property="questionSubmit" 
+												value="Get Answer" 
+												title="Click to run a search and generate the first step of a new strategy."  
+												style="font-size:110%;font-family:Arial,Helvetica,sans-serif;"/>
+				</div>
 
         <%-- custom name param --%>
-        <div style="text-align:center;padding-top:1em;">
-          <label><span style="font-weight:bold;font-style:italic;color:#333">Name this search:&nbsp;</span></label>
+        <div style="text-align:center;padding-top:0.5em;">
+         <!-- <label><span style="font-weight:bold;font-style:italic;color:#333">Name this search:&nbsp;</span></label> -->
+					<!-- placeholder was: ${wdkQuestion.shortDisplayName} -->
           <input style="width:15em"
-            class="wdk-tooltip"
-            title="Give this search a custom name (15 character limit). The name will appear in this search's step box and, if this is a new strategy, as the strategy's default name."
-            type="text" placeholder="${wdkQuestion.shortDisplayName}" name="customName" maxlength="15" value="${customName}"/>
+            title="Give this search a custom name (15 character limit). The name will appear in this search's step box."
+            type="text" 
+						placeholder="Give this search a name" 
+						name="customName" 
+						maxlength="15" 
+						value="${customName}"/>
         </div>
       </c:if>
 
   </html:form>
 </div>
 
+<hr>
+
+<%-- displays question description, can be overridden by the custom question form --%>
+<c:if test="${hideAttrDescr == false}">
+  <!-- <div class="content-pane snippet" style="padding:1em 2em"> -->
+    <div><imp:questionDescription /></div>
+    <!-- </div> -->
+</c:if>
