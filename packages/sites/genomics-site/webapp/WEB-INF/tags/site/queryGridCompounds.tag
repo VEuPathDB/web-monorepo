@@ -32,6 +32,9 @@
     </tr>
       <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByMolecularWeight" linktext="Molecular Weight" existsOn="A P"/>
      <tr>
+    </tr>
+      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByFoldChange" linktext="Fold Change" existsOn="A P"/>
+     <tr>
 
      </tr>
 
