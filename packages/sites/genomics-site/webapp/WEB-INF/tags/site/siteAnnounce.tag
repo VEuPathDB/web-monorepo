@@ -6,6 +6,10 @@
               required="true"
               description="page calling this tag"
 %>
+<%@ attribute name="showBanner"
+              required="false"
+              description="if true,it needs to show banner"
+%>
 
 
 <c:set var="project" value="${wdkModel.name}"/>
@@ -16,6 +20,7 @@
   <c:set var="homeClass" value="home"/>
 </c:if>
 
+<!-- ================== BETA SITES ============ -->
 <%-- hardcoded warning message only for beta sites --%>
 <c:if test="${
     param.beta eq 'true' || 
@@ -37,6 +42,7 @@
 </c:if>
 <%-- end hardcoded message only for beta sites --%>
 
+<!-- ================== ALPHA SITES ============ -->
 <%-- hardcoded warning message only for alpha sites --%>
 <c:if test="${
     param.alpha eq 'true' || 
@@ -61,28 +67,23 @@
 <%-- end hardcoded message only for alpha sites --%>
 
 
+<!-- ================== IF SHOWBANNER, determined in pageFrame ============ -->
 
-<%-- hardcoded warning message for search page in plasmo about pathways --%>
-<c:if test="${refer == 'question' && project =='PlasmoDB'}">
-  <div class="info announcebox ${homeClass}" style="color:darkred">
-    <table><tr><td>
-      <img src="/assets/images/clearInfoIcon.png" alt="warningSign" /></td>
-    <td>
-      <span class="warningMessage">
-
-      This first release of Metabolic Pathways in ${wdkModel.name} includes only pathways from Kegg.
-			We plan to expand the Pathways data soon to include other sources such as ...
-      Please explore the site and 
-				<a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> 
-      with your feedback. 
-
-      </span>
-     </td></tr></table>
+<c:if test="${not empty showBanner}">
+  <div class="info announcebox ${homeClass}" style="color:darkred;font-size:120%">
+    <table><tr>
+			<td><img src="/assets/images/clearInfoIcon.png" alt="warningSign" /></td>
+    	<td>
+      	<span class="warningMessage">
+					${showBanner}
+      	</span>
+     	</td>
+		</tr></table>
   </div>
 </c:if>
-<%-- end hardcoded message --%>
 
 
+<!-- ================== READING MESSAGES FROM APICOMM (Information, Degraded, Down) =============== -->
 
 <c:if test="${refer == 'home'}">
   <%--Information message retrieved from DB via messaging system--%>

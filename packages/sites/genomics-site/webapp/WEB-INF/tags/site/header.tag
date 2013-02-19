@@ -8,6 +8,9 @@
   <jsp:directive.attribute name="refer" required="false" 
               description="Page calling this tag"/>
 
+  <jsp:directive.attribute name="title" required="false" 
+              description="brings information about the recordclass"/>
+
   <c:set var="props" value="${applicationScope.wdkModel.properties}"/>
   <c:set var="project" value="${props['PROJECT_ID']}"/>
   
@@ -63,7 +66,11 @@
   <!--~~~~~~~ REST OF PAGE ~~~~~~~-->
 
   <imp:menubar refer="${refer}"/>
-  <imp:siteAnnounce  refer="${refer}"/>
+
+	<c:set var="showBanner">
+		<imp:extraBanner refer="${refer}" title="${title}"/>
+	</c:set>
+  <imp:siteAnnounce refer="${refer}" showBanner="${showBanner}"/>
 
   <!-- include noscript tag on all pages to check if javascript enabled -->
   <!-- it does not stop loading the page. sets the message in the announcement area -->

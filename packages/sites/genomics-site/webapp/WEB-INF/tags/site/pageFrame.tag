@@ -48,8 +48,8 @@
     <imp:head refer="${refer}" title="${title}" banner="${banner}"/>
 
     <body>
-    
-      <imp:header refer="${refer}"/>
+   
+      <imp:header refer="${refer}" title= "${title}" />
       
       <c:choose>
         <c:when test="${refer ne 'home' and refer ne 'home2' and refer ne 'summary'}">
