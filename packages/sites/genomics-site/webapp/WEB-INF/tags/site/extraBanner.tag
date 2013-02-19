@@ -17,8 +17,8 @@
              refer == 'recordPage' && fn:containsIgnoreCase(title,'pathway') ||
              refer == 'recordPage' && fn:containsIgnoreCase(title,'compound') ) }">
 
-       This first release of Metabolic Pathways in ${wdkModel.name} includes only pathways from Kegg.
-			 We plan to expand the Pathways data soon to include other sources such as ...
+       This <i>beta-release</i> of Metabolic Pathways data sets incorporates a subset of PubChem records and KEGG pathways.  Future releases will include additional metabolites and other small molecules, and mapping onto additional pathways (including MPMP, MetaCyc, etc).  
+
        Please explore the site and 
 			 <a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> 
 			 with your feedback. 
