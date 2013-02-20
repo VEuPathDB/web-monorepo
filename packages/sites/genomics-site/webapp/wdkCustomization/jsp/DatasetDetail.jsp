@@ -153,7 +153,7 @@
                 <!-- <imp:table table="${versions}" sortable="false" showHeader="false" /> -->
                  <table>
                   <c:forEach items="${versions}" var="version">
-                        <tr><td>${version['organism']}</td><td>" : "</td><td>${version['version']}</td></tr>
+                        <tr><td>${version['version']}(${version['organism']})</td></tr>
                   </c:forEach>
                  </table>
               </c:set>
