@@ -43,7 +43,7 @@ display the attributions.
 
 
 <c:if test="${hasItem}">
-  <div class="group-title" style="padding-bottom:1em">${caption}</div>
+  <div class="group-title h3left" style="padding-bottom:1em">${caption}</div>
 
     <ul>
     <c:forEach var="attribution" items="${attributions}">
