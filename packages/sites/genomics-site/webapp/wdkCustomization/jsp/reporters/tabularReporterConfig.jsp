@@ -19,15 +19,21 @@
 <%-- galaxy.psu.edu users; to send data to Galaxy  --%>
 <script type="text/javascript">
 function appendchecked(form, url) {
+    var configForm = document.downloadConfigForm;
     var newtxt = 'primary_key';
-    var chkbx = document.downloadConfigForm.selectedFields;
+    var chkbx = configForm.selectedFields;
     for (var i = 0; i < chkbx.length; i++) {
        if( chkbx[i].value != "primary_key" && (chkbx[i].type=="hidden" ||
                (chkbx[i].type == 'checkbox' && chkbx[i].checked === true))) {
            newtxt += ',' + chkbx[i].value;
        }
     }
-    form.URL.value = url + newtxt;
+
+    // append includeHeader value
+    var includeHeader = "includeHeader=" +
+      jQuery(configForm.includeHeader).filter(":checked").val();
+
+    form.URL.value = url + newtxt + "&" + includeHeader;
 }
 </script>
 <%-- end galaxy.psu.edu users  --%>
@@ -158,7 +164,7 @@ function appendchecked(form, url) {
   <c:if test="${!empty sessionScope.GALAXY_URL}">
     <div style="text-align:center;background-color:#FFCCFF;border-style:double; width:300px">
     <c:url var='downloadPath' 
-           value='/getDownloadResult.do;jsessionid=${pageContext.session.id}?step=${step_id}&includeHeader=yes&downloadType=plain&wdkReportFormat=tabular&selectedFields='/>
+           value='/getDownloadResult.do;jsessionid=${pageContext.session.id}?step=${step_id}&downloadType=plain&wdkReportFormat=tabular&selectedFields='/>
     <c:set var='downloadUrl'>
       ${pageContext.request.scheme}://${pageContext.request.serverName}${downloadPath}
     </c:set>
