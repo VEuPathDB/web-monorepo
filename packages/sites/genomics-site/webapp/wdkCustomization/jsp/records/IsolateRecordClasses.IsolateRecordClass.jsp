@@ -187,6 +187,7 @@
 </c:if>
 
 <c:if test="${data_type eq 'HTS'}">
+  <imp:wdkTable tblName="BioMaterialCharacteristics" isOpen="true"/>
   <imp:wdkTable tblName="HtsContacts" isOpen="true"/>
 </c:if>
 
