@@ -63,11 +63,15 @@
       <c:set var="attributions" value="${wdkQuestion.propertyLists['specificAttribution']}"/>
       <c:if test="${fn:length(attributions) gt 0}">
         <a name="${attrId}"></a>
+<!--
         <div class="content-pane snippet" style="color:black;padding:0.5em 1em;" id="${attrId}">
           <div>
+-->
+				<div class="content-pane notcollapsible" id="${attrId}">
             <imp:attributions attributions="${attributions}" caption="Data Sets used by this search" />
           </div>
-        </div>
+<!--        </div>
+-->
       </c:if>
     </c:when>
     <c:otherwise>
