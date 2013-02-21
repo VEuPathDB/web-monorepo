@@ -12,12 +12,19 @@
 <c:set var="recordClass" value="${wdkStep.question.recordClass}" />
 <c:set var="displayName" value="${recordClass.displayName}" />
 <c:set var="displayNamePlural" value="${recordClass.displayNamePlural}" />
-
+<c:set var="isDetail" value="${requestScope.isDetail}" />
+<c:set var="isTruncate" value="${requestScope.isTruncate}" />
 
 <span class="onload-function" data-function="initializeGenomeView"> </span>
 
 
 <div class="genome-view">
+
+<c:choose>
+  <c:when test="${isTruncate == 'true'}">
+    <p>The number of ${displayNamePlural} in the result exceeds the display limit, Genomic Summary View is not available for the result.</p>
+  </c:when>
+  <c:otherwise> <%-- display genomic view --%>
 
  <div class="legend">
    <div class="title">Note:  Only the first 150 most dense sequences are listed.<br>Click on a Segment to see the Genes in it.</div>
@@ -64,11 +71,14 @@
               <li> * <div class="icon feature forward"> </div> ${displayNamePlural} on forward strand;</li>
               <li> * <div class="icon feature reverse"> </div> ${displayNamePlural} on reverse strand;</li>
             </ul>
-            <div class="features">
-              <c:forEach items="${region.features}" var="feature">
+          </div>
+        </c:forEach>
+      </div>
+      <div class="features">
+              <c:forEach items="${sequence.features}" var="feature">
                 <div id="${feature.sourceId}">
                   <h4>${feature.sourceId}</h4>
-                  <p>start: ${feature.startFormatted}, end: ${feature.endFormatted}, 
+                  <p>start: ${feature.startFormatted}, end: ${feature.endFormatted},
                      on ${feature.forward ? "forward" : "reverse"} strand of ${sequence.sourceId}</p>
                   <p>${feature.description}</p>
                   <ul>
@@ -77,9 +87,6 @@
                   <ul>
                 </div>
               </c:forEach>
-            </div>
-          </div>
-        </c:forEach>
       </div>
     </div>
   </c:forEach>
@@ -113,6 +120,16 @@
        <div class="canvas">
         <div class="ruler" title="${sequence.sourceId}, length: ${sequence.lengthFormatted}"
              style="width:${sequence.percentLength}%"> </div>
+          <c:choose>
+            <c:when test="${isDetail == 'true'}"><%-- display detail view --%>
+              <c:forEach items="${sequence.features}" var="feature">
+                <c:set var="forward" value="${feature.forward ? 'forward' : 'reverse'}" />
+                <div id="${feature.sourceId}" class="feature ${forward}"
+                     style="left:${feature.percentStart}%; width:${feature.percentLength}%;">
+                </div>
+              </c:forEach>
+            </c:when>
+            <c:otherwise><%-- display density view --%>
             <c:forEach items="${sequence.regions}" var="region">
               <c:set var="forwardCount" value="${region.forwardCount}" />
               <c:set var="reverseCount" value="${region.reverseCount}" />
@@ -129,6 +146,8 @@
                 </div>
               </c:if>
             </c:forEach>
+            </c:otherwise>
+          </c:choose>
        </div>  
       </td>
     </tr>
@@ -146,5 +165,7 @@
   </tfoot>
 </table>
 
+  </c:otherwise> <%-- end of display genomic view --%>
+</c:choose>
 
 </div> <!-- end of .genome-view -->

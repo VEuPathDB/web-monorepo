@@ -33,6 +33,11 @@
 .genome-view .canvas .region.forward { bottom:52px; }
 .genome-view .canvas .region.reverse { top:52px; }
 
+
+.genome-view .canvas .feature { height:5px; border:1px solid #444444; display:block; min-width:2px; position:absolute; cursor:pointer; }
+.genome-view .canvas .feature.forward { bottom:52px; background-color:#0000FF; }
+.genome-view .canvas .feature.reverse { top:52px;background-color:#FF0000; }
+
 .genome-view .legend { background-color:#EEEEEE; border-radius:5px; padding-left:5px; width: 425px; float:right;  font-size:90%; font-style:italic;}
 .genome-view .legend .title {  font-weight:bold; text-align:center}
 .genome-view .legend .icon { display:inline-block; width: 1.0%; }
@@ -41,6 +46,7 @@
 .genome-view .legend .feature { height: 5px; }
 .genome-view .legend .feature.forward { background-color:#0000FF; }
 .genome-view .legend .feature.reverse { background-color:#FF0000; }
+
 
 .region .legend .feature { height: 5px; display:inline-block; width: 20px; }
 .region .legend .feature.forward { background-color:#0000FF; }
