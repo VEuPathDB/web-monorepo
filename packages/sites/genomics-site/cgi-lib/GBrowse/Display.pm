@@ -433,6 +433,10 @@ sub colorByRnaSeq {
     return 'wheat';
   }
 
+  if(!$isReversed) {  # is_reversed is null - refer to bug #12335 
+    return 'blue';
+  }
+
   return 'black';
 }
 
