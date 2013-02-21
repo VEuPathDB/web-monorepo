@@ -1,5 +1,5 @@
---- PrimerDesigner.pm.orig	2012-12-10 15:15:25.000000000 -0500
-+++ PrimerDesigner.pm	2012-12-10 15:21:53.000000000 -0500
+--- /var/www/dfalke-b.plasmodb.org/gus_home/lib/gbrowse/plugins/PrimerDesigner.pm.orig	2013-02-19 13:51:55.000000000 -0500
++++ /var/www/dfalke-b.plasmodb.org/gus_home/lib/gbrowse/plugins/PrimerDesigner.pm	2013-02-19 14:27:24.000000000 -0500
 @@ -86,13 +86,13 @@
  use Carp qw/cluck/;
  
@@ -16,7 +16,31 @@
  
  #use vars '@ISA';
  use vars qw/@ISA $PNG $CALL/;
-@@ -1265,6 +1265,9 @@
+@@ -414,6 +414,14 @@
+   my $style_sheet = $self->browser_config->plugin_setting('stylesheet') || STYLE;
+   print start_html( -style => $style_sheet, -title => 'PCR Primers' );
+   print $self->browser_config->header_html;
++  
++  # call `render_html_start' here
++  my $render = $self->renderer;
++  my $region   = $render->region;
++  my $features = $region->features;
++  my @post_load = $render->get_post_load_functions;
++  my $title = $render->generate_title($features);
++  print $render->render_html_start($title,@post_load);
+ 
+   # reset off-scale target if required
+   delete $conf->{target} if $conf->{target} 
+@@ -677,7 +685,7 @@
+   # or print the config form
+   print $self->configure_form($segment,$target,$lb,$rb);
+ 
+-    my $render = $self->renderer;
++    # my $render = $self->renderer;
+ 
+     my $segment_info = $render->segment_info_object;
+ 
+@@ -1265,6 +1273,9 @@
  
    my $sr = $conf->{size_range} || '';
  
@@ -26,7 +50,7 @@
    my %table = (
      b(qq(<a name="PRIMER_NUM_RETURN_INPUT" target="_new" href="$help\#PRIMER_NUM_RETURN">
         Primer sets:</a>)
-@@ -1279,7 +1282,7 @@
+@@ -1279,7 +1290,7 @@
      b(qq(<a name="PRIMER_OPT_TM_INPUT" target="_new" href="$help\#PRIMER_TM">
            Primer Tm</a>)
      ),
@@ -35,3 +59,12 @@
         Opt. <input type="text" size="4" name="PRIMER_OPT_TM" value="60.0">
         Max. <input type="text" size="4" name="PRIMER_MAX_TM" value="63.0">),
      b(qq(<a name="PRIMER_PRODUCT_SIZE_RANGE" href="javascript:void(0)"
+@@ -1851,7 +1862,7 @@
+     my $output;
+     my @post_load = $render->get_post_load_functions;
+ 
+-    $output .= $render->render_html_start($title,@post_load);
++    # $output .= $render->render_html_start($title,@post_load);
+     $output .= $render->render_busy_signal;
+ 
+     push @panels, $output;
