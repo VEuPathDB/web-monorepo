@@ -40,11 +40,28 @@
 <imp:recordToolbox />
 
 <div class="h2center" style="font-size:160%">
- 	Isolate
+ 	Isolate ${primaryKey}<br>
 </div>
 
 <div class="h3center" style="font-size:130%">
-	${primaryKey}<br>
+
+<c:set var="count" value="0"/>
+<c:forEach var="row" items="${wdkRecord.tables['IsolateComments']}">
+<c:set var="count" value="${count +  1}"/>
+</c:forEach>
+<c:choose>
+<c:when test="${count == 0}">
+<a style="font-size:70%;font-weight:normal;cursor:hand" href="${commentsUrl}">Add the first user comment
+</c:when>
+<c:otherwise>
+<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation" onclick="wdk.api.showLayer('UserComments')">This gene has <span style='color:red'>${count}
+    </span> user comments
+		</c:otherwise>
+		</c:choose>
+		<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+		</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+
 	<imp:recordPageBasketIcon />
 </div>
 
