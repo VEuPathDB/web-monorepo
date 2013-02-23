@@ -61,7 +61,7 @@ sub execute {
     my $status = $sth->execute();
 
     if ($self->{logFileDir}) {
-      my $elapsed_time = (time() - $start_time) * 1000;
+      my $elapsed_time = (time() - $start_time);
 
       my $reportedRange = $range? $range : "n/a";
       my $r = ($range && $range >= $RANGE_FLOOR)? $range : $RANGE_FLOOR;
