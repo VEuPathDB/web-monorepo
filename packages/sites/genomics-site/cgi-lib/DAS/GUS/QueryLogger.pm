@@ -33,9 +33,9 @@ sub new {
     $self->{baselineThreshold} = .1;
     $self->{slowThreshold} = 2;
 
-    if ($c->queryMonitor) {
-      $self->{baselineThreshold} = $c->queryMonitor->baseline if defined($c->queryMonitor->baseline);
-      $self->{slowThreshold} = $c->queryMonitor->slow if defined($c->queryMonitor->baseline);
+    if ($c->{queryMonitor}) {
+      $self->{baselineThreshold} = $c->{queryMonitor}->{baseline} if defined($c->{queryMonitor}->{baseline});
+      $self->{slowThreshold} = $c->{queryMonitor}->{slow} if defined($c->{queryMonitor}->{slow});
     }
 
     if ($logFileDirectory) {
