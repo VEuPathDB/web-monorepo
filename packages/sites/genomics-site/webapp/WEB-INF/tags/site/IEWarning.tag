@@ -23,18 +23,7 @@
     <imp:verbiage key="dialog.IE-warning.title"/>
   </c:set>
   <div style="display:none;" id="wdk-dialog-IE-warning" class="ui-dialog-fixed-width" title="${ieTitle}">
-    <!-- <imp:verbiage key="dialog.IE-warning.content"/> -->
-    <p>Portions of the website are known to be incompatible with your version of
-      Internet Explorer. If possible, upgrade to version 8 or later.</p>
-    <p>If you are unable or not allowed to upgrade your browser, please
-      <a href="${pageContext.request.contextPath}/contact.do"
-        class="open-window-contact-us">contact us</a>.
-    </p>
-    <div style="text-align:center;">
-      <a class="button close-dialog-IE-warning"
-        onclick="jQuery.cookie('api-unsupported', true, {path:'/'});">
-        Continue using this site with your current browser</a>
-    </div>
+    <imp:verbiage key="dialog.IE-warning.content"/>
   </div>
 
 </jsp:root>
