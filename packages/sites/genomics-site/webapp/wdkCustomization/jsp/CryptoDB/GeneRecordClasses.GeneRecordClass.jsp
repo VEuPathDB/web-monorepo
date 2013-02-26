@@ -151,9 +151,8 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <%-- snps dataTable defined above --%>
 <c:if test="${snps ne 'none'}">
-
-<imp:wdkTable tblName="SNPs" isOpen="true" attribution=""/> 
-
+<%-- TODO: NEED SNP OVERVIEW HERE --%>
+<%-- TODO: WHAT ABOUT THE ALIGNMENTS? --%>
 </c:if>
 
 <!-- gene alias table -->

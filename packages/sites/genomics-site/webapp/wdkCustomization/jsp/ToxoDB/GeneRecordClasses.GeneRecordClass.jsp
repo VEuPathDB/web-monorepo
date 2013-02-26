@@ -209,7 +209,8 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <!-- snps between strains -->
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
- <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> 
+
+<%-- TODO: NEED SNP OVERVIE HERE --%>
  <imp:snpTable tblName="SNPsAlignment" isOpen="false" />
 </c:if>
 

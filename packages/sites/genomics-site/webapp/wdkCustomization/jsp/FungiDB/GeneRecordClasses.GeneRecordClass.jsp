@@ -178,8 +178,7 @@ ${attrs['organism'].value}<br>
   content="${mercatorAlign}"
   attribution=""/ --%>
 
-
-    <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> 
+<%-- TODO: NEED SNP OVERVIEW HERE --%>
     <imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
 
 
