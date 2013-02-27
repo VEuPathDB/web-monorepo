@@ -177,7 +177,16 @@ ${attrs['organism'].value}<br>
 
 
 <!-- snps between strains -->
-<%-- TODO: NEED SNP OVERVIEW HERE --%>
+<%-- HTS SNP OVERVIEW ---------------%>
+
+<c:set var="htsSNPs" value="${attrs['snpoverview']}" />
+<imp:panel attribute="${htsSNPs.name}"
+    displayName="${htsSNPs.displayName}"
+    content="${htsSNPs.value}${append}" />
+<br>
+
+<imp:snpTable tblName="SNPsAlignment" isOpen="false" />
+
 
 <imp:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
