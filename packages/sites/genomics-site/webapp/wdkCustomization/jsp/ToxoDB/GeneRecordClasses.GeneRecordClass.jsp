@@ -210,7 +210,14 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <!-- snps between strains -->
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
 
-<%-- TODO: NEED SNP OVERVIE HERE --%>
+<%-- HTS SNP OVERVIEW ---------------%>
+
+<c:set var="htsSNPs" value="${attrs['snpoverview']}" />
+<imp:panel attribute="${htsSNPs.name}"
+    displayName="${htsSNPs.displayName}"
+    content="${htsSNPs.value}${append}" />
+<br>
+
  <imp:snpTable tblName="SNPsAlignment" isOpen="false" />
 </c:if>
 
