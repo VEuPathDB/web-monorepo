@@ -740,8 +740,8 @@ sub sub_SeqFeature {
 
 
   my $sth = $self->factory->dbh->prepare($query);
-  $self->factory->getQueryLogger()->execute($sth, $query, "Feature.pm", "$sqlName:subfeatures")
-    or $self->throw("subfeature query failed");
+  my ($status, $startTime, $firstPageTime) = $self->factory->getQueryLogger()->execute($sth);
+  $self->throw("subfeature query failed") unless $status;
 
   my $counter = 0;
   while (my $hashref = $sth->fetchrow_hashref) {
@@ -779,16 +779,17 @@ sub sub_SeqFeature {
                                                     "block.$feature_id", 
                                                     $feature_id); 
 
-      $self->add_subfeature($feat); 
-      $feat->source($source); 
-      $counter = $counter + 1; 
-    } 
-    return if($counter <= 1 ); 
+	$self->add_subfeature($feat); 
+	$feat->source($source); 
+	$counter = $counter + 1; 
+      } 
+      $self->factory->getQueryLogger()->logQuery($startTime, $firstPageTime, $query, "Feature.pm", "$sqlName:subfeatures");
+      return if($counter <= 1 ); 
 
-    my $subfeats = $self->subfeatures or return; 
-    return @{$subfeats}; 
-  } 
-  # end temporary solution for EST features
+      my $subfeats = $self->subfeatures or return; 
+      return @{$subfeats}; 
+    } 
+    # end temporary solution for EST features
 
 
 
@@ -1185,15 +1186,19 @@ sub protein {
   $query =~ s/(\$\w+)/eval $1/eg;
 
   my $sth = $self->factory->dbh->prepare($query);
-  $self->factory->getQueryLogger()->execute($sth, $query, "Feature.pm", "protein:seq")
-    or $self->throw("protein query failed");
+  my ($status, $startTime, $firstPageTime) = $self->factory->getQueryLogger()->execute($sth);
+  $status or $self->throw("protein query failed");
 
+  my $answer;
   while (my $hashref = $sth->fetchrow_hashref) {
-    return [ $$hashref{'SOURCE_ID'},
+    $answer = [ $$hashref{'SOURCE_ID'},
        $$hashref{'PROTEIN_ID'},
        $$hashref{'SEQUENCE'}
      ];
+    last;
   }
+  $self->factory->getQueryLogger()->logQuery($startTime, $firstPageTime, $query, "Feature.pm", "protein:seq");
+  return $answer;
 }
 
 # test - get a feature's sequence from GUS
@@ -1207,11 +1212,16 @@ sub seq {
 
   $query =~ s/(\$\w+)/eval $1/eg;
   my $sth = $self->factory->dbh->prepare($query);
-  $self->factory->getQueryLogger()->execute($sth, $query, "Feature.pm", "$sqlName:seq")
-    or $self->throw("feature $sqlName:seq sequence query failed");
+  my ($status, $startTime, $firstPageTime) = $self->factory->getQueryLogger()->execute($sth);
+  $status  or $self->throw("feature $sqlName:seq sequence query failed");
+
+  my $answer;
   while (my $hashref = $sth->fetchrow_hashref) {
-    return [ $$hashref{'SOURCE_ID'}, $$hashref{'SEQUENCE'} ];
+    $answer = [ $$hashref{'SOURCE_ID'}, $$hashref{'SEQUENCE'} ];
+    last;
   }
+  $self->factory->getQueryLogger()->logQuery($startTime, $firstPageTime, $query, "Feature.pm", "$sqlName:seq");
+  return $answer;
 }
 
 sub _addSubFeatureFromRow {

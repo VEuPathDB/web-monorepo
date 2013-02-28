@@ -52,16 +52,21 @@ sub new {
     }
     bless($self,$class);
     return $self;
-}
+  }
 
 # execute a query, and log if we have a handle
 sub execute {
-    my ($self, $sth, $sql, $moduleName, $queryName, $range) = @_;
+    my ($self, $sth) = @_;
     my $start_time = time();
     my $status = $sth->execute();
+    return ($status, $start_time, time());
+}
 
+sub logQuery {
+    my ($self, $startTime, $firstPageTime, $sql, $moduleName, $queryName, $range) = @_;
     if ($self->{logFileDir}) {
-      my $elapsed_time = (time() - $start_time);
+      my $elapsed_first_page_time = ($firstPageTime - $startTime);
+      my $elapsed_last_page_time = (time() - $startTime);
 
       my $reportedRange = $range? $range : "n/a";
       my $r = ($range && $range >= $RANGE_FLOOR)? $range : $RANGE_FLOOR;
@@ -75,10 +80,10 @@ sub execute {
 
       my $fh;
       my $howSlow;
-      if ($elapsed_time > $slow) {
+      if ($elapsed_last_page_time > $slow) {
 	$fh = $self->{slowHandle};
 	$howSlow = 'slow';
-      } elsif ($elapsed_time > $baseline) {
+      } elsif ($elapsed_last_page_time > $baseline) {
 	$fh = $self->{slowHandle};
 	$howSlow = 'baseline';
       }
@@ -86,12 +91,11 @@ sub execute {
         my $inGenePage = $self->{inGenePage}? 'GENEPAGE ' : ''; 
 #        lock($fh);
 	# we need the EOL so reports can detect corrupted lines
-	print $fh "${inGenePage}QUERYTIME\t" . localtime() . "\t" . time() . "\t$howSlow\t$moduleName\t" . sprintf("%.3f", $elapsed_time) . "\t$reportedRange\t$queryName\tEOL\n";
+	print $fh "${inGenePage}QUERYTIME\t" . localtime() . "\t" . time() . "\t$howSlow\t$moduleName\t" . sprintf("%.4f", $elapsed_first_page_time) . "\t" . sprintf("%.4f", $elapsed_last_page_time) . "\t$reportedRange\t$queryName\tEOL\n";
 	print $fh "$sql\n\n" if $howSlow eq 'slow';
 #	unlock($fh);
       }
     }
-    return $status;
 }
 
 sub lock {

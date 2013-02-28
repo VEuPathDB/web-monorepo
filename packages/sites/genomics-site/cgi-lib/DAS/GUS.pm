@@ -333,7 +333,9 @@ sub get_feature_by_name {
 
     $sth = $self->dbh->prepare($query);
 
-    $self->{queryLogger}->execute($sth, $query, "GUS.pm", "get_feature_by_name");
+    my ($status, $startTime, $endTime) = $self->{queryLogger}->execute($sth);
+    $status or $self->throw("getting feature by name query failed");
+
 
     while(my $hashref = $sth->fetchrow_hashref) {
       $seg_name = $$hashref{'CTG_NAME'};
@@ -360,22 +362,26 @@ sub get_feature_by_name {
 
       push @features, $feat;
     }
+    $self->{queryLogger}->logQuery($startTime, $endTime, $query, "GUS.pm", "get_feature_by_name");
   }
   if (@features) { @features; } else { (); }
 }
 
 sub wdk_reference {
- warn ">>>>>>>>>>>>>>>>>";
+  warn ">>>>>>>>>>>>>>>>>";
   my $self = shift;
   my $track_name  = shift;
- warn ">>>>>>>>>>>>>>>>> $self | $track_name";
+  warn ">>>>>>>>>>>>>>>>> $self | $track_name";
   my $dbh = $self->dbh;
-  my $sth = $dbh->prepare("SELECT name, value FROM ApidbTuning.DataSourceWdkRefText");
-  $sth->execute() or $self->throw($sth->errstr);
+  my $query = "SELECT name, value FROM ApidbTuning.DataSourceWdkRefText";
+  my $sth = $dbh->prepare($query);
+  my ($status, $startTime, $endTime) = $self->{queryLogger}->execute($sth);
+  $status or $self->throw($sth->errstr);
   while (my ($name, $value)  = $sth->fetchrow_array) {
 	  warn ">>> $name => $value";
 
   }
+  $self->{queryLogger}->logQuery($startTime, $endTime, $query, "GUS.pm", "wdk_reference");
 
   return "test gus";
 
@@ -384,12 +390,15 @@ sub wdk_reference {
 sub seq_ids_length {
   my $self = shift;
   my $dbh = $self->dbh;
-  my $sth = $dbh->prepare("SELECT distinct source_id, length FROM ApidbTuning.SequenceAttributes");
-  $sth->execute() or $self->throw($sth->errstr);
+  my $query = "SELECT distinct source_id, length FROM ApidbTuning.SequenceAttributes";
+  my $sth = $dbh->prepare($query);
+  my ($status, $startTime, $endTime) = $self->{queryLogger}->execute($sth);
+  $status or $self->throw($sth->errstr);
   my @result;
   while (my $rowref = $sth->fetchrow_arrayref) {
     push @result,[@$rowref];
   }
+  $self->{queryLogger}->logQuery($startTime, $endTime, $query, "GUS.pm", "seqs_id_length");
   return @result;
 }
 
