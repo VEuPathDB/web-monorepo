@@ -169,10 +169,18 @@
                     <c:if test="${reference['target_type'] eq 'question'}">
                       <jsp:setProperty name="wdkModel" property="questionName" value="${reference['target_name']}" />
                       <c:set var="question" value="${wdkModel.question}" />
-                      <c:if test="${question != null && questioni.isTranform == false}">
+                      <c:if test="${question != null}">
                         <c:set var="hasQuestion" value="${true}" />
-                        <c:url var="questionUrl" value="/showQuestion.do?questionFullName=${question.fullName}" />
-                        <li><a title="${question.summary}" href="${questionUrl}">Identify ${question.recordClass.displayNamePlural} based on ${question.displayName}</a></li>
+                        <c:set var="display" value="Identify ${question.recordClass.displayNamePlural} based on ${question.displayName}" />
+                        <c:choose>
+                          <c:when test="${question.isTransform == false}">
+                            <li>${display}</li>
+                            <c:url var="questionUrl" value="/showQuestion.do?questionFullName=${question.fullName}" />
+                          </c:when>
+                          <c:otherwise>
+                            <li><a title="${question.summary}" href="${questionUrl}">${display}</a></li>
+                          </c:otherwise>
+                        </c:choose>
                       </c:if> 
                     </c:if>
                   </c:forEach>
