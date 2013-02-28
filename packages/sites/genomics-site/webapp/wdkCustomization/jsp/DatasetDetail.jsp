@@ -173,7 +173,7 @@
                         <c:set var="hasQuestion" value="${true}" />
                         <c:set var="display" value="Identify ${question.recordClass.displayNamePlural} based on ${question.displayName}" />
                         <c:choose>
-                          <c:when test="${question.isTransform == false}">
+                          <c:when test="${question.isTransform}">
                             <li>${display}</li>
                             <c:url var="questionUrl" value="/showQuestion.do?questionFullName=${question.fullName}" />
                           </c:when>
