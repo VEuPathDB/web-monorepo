@@ -237,6 +237,11 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 
 <!-- snps between strains -->
 <%-- TODO: NEED SNP OVERVIEW HERE --%>
+<c:set var="htsSNPs" value="${attrs['snpoverview']}" />
+<imp:panel attribute="${htsSNPs.name}"
+     displayName="${htsSNPs.displayName}"
+     content="${htsSNPs.value}${append}" />
+<br> 
 
 <!-- gene alias table -->
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
