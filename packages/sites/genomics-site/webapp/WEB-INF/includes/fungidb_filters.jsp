@@ -17,7 +17,7 @@
     <th colspan=2 align="center"><i>Agaricomycetes</i></th>
     <th colspan=1 align="center"><i>Chytridiomycetes</i></th>
     <th colspan=15 align="center"><i>Eurotiomycetes</i></th>
-    <th colspan=2 align="center"><i>Leotimycetes</i></th>
+    <th colspan=2 align="center"><i>Leotiomycetes</i></th>
     <th colspan=6 align="center"><i>Oomycetes</i></th>
     <th colspan=1 align="center"><i>Pucciniomycetes</i></th>
     <th colspan=2 align="center"><i>Saccharomycetes</i></th>
