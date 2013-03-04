@@ -52,6 +52,7 @@
 	
 <br/><span class="smallTitle">------ Technical</span>
 	
+	<li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Infrastructure">EuPathDB Infrastructure</a></li>
 	<li><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
     
 </jsp:root>
