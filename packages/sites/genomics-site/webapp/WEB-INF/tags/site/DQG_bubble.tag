@@ -66,7 +66,17 @@
                                         <c:set var="display" value="${fn:substring(cat.displayName, 11, -1)}" />
 					<li>
                                             <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
-                                            <a class="heading" href="javascript:void(0)">&nbsp;${display}</a>
+                                            <a class="heading" href="javascript:void(0)">&nbsp;${display}
+
+<c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
+<c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
+	<img alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
+         	src="<c:url value='/wdk/images/beta2-30.png' />" />
+</c:if>
+</c:if>
+
+
+</a>
 					    <c:if test="${rootCatEntry.key != 'DynSpanRecordClasses.DynSpanRecordClass'}">
 						<a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;description</a>
 					    </c:if>
