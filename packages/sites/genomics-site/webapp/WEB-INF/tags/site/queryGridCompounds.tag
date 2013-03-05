@@ -11,13 +11,13 @@
 <td width="50%" >
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr> 
-        <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByCompoundID" linktext="Compound ID" existsOn="A P"/>
+        <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByCompoundID" linktext="Compound ID" existsOn="P"/>
     </tr>
     <tr> 
-        <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByTextSearch" linktext="Text (synonym, InChI, etc.)" existsOn="A P"/>
+        <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByTextSearch" linktext="Text (synonym, InChI, etc.)" existsOn="P"/>
     </tr>
     <tr>
-       <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByEcReaction" linktext="Gene ID" existsOn="A P"/> 
+       <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByEcReaction" linktext="Gene ID" existsOn="P"/> 
     </tr>
     </table>
 </td>
@@ -25,15 +25,15 @@
 <td width="50%" >
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByPathway" linktext="Metabolic Pathway" existsOn="A P"/>
+      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByPathway" linktext="Metabolic Pathway" existsOn="P"/>
     </tr>
-      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByMolecularFormula" linktext="Molecular Formula" existsOn="A P"/>
+      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByMolecularFormula" linktext="Molecular Formula" existsOn="P"/>
      <tr>
     </tr>
-      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByMolecularWeight" linktext="Molecular Weight" existsOn="A P"/>
+      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByMolecularWeight" linktext="Molecular Weight" existsOn="P"/>
      <tr>
     </tr>
-      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByFoldChange" linktext="Fold Change" existsOn="A P"/>
+      <imp:queryGridMakeUrl qset="CompoundQuestions" qname="CompoundsByFoldChange" linktext="Fold Change" existsOn="P"/>
      <tr>
 
      </tr>
