@@ -78,7 +78,12 @@
 <div class="innertube2">
 	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
 		<tr class="headerrow2">
-			<td   align="center"><b>Identify Pathways by:</b></td>
+			<td style="padding-top:0"  align="center"><b>Identify Pathways by:</b>
+
+<img alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
+ header." src="<c:url value='/wdk/images/beta2-40.png'/>" />
+
+</td>
 		</tr>
 		<tr><td align="center">
 			<imp:queryGridPathways/>
@@ -92,7 +97,12 @@
 <div class="innertube2">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerrow2">
-			<td   align="center"><b>Identify Compounds by:</b></td>
+			<td  style="padding-top:0"  align="center"><b>Identify Compounds by:
+
+<img alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
+ header." src="<c:url value='/wdk/images/beta2-40.png'/>" />
+
+</b></td>
 		</tr>
 		<tr><td align="center">
 			<imp:queryGridCompounds/>
