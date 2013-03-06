@@ -196,6 +196,7 @@
     
     <li><a>Community</a>
       <ul>
+        <%--
         <li>
           <a href="javascript:gotoTwitter()">
             <img style="margin:0px;vertical-align:top" title="Follow us on Twitter!" src="/assets/images/twitter.gif" width="20">
@@ -214,6 +215,8 @@
             <span style="vertical-align:top">&nbsp;Follow us on YouTube!</span> 
           </a>
         </li>
+        --%>
+        <imp:socialMedia small="true" label="true"/>
 
         <li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission & Release Policies</a></li>
 
