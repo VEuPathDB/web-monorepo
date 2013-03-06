@@ -185,11 +185,11 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 <tr class="mythStyle">
     <th style="background-color:white;border-right:3px solid grey;border-top:0px none;border-left:0 none;"></th>
-    <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://amoebadb.org">AmoebaDB</a></th>
+    <th style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://amoebadb.org">AmoebaDB</a></th>
     <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://cryptodb.org">CryptoDB</a></th>
     <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://giardiadb.org">GiardiaDB</a></th>
-    <th style="border-right:3px solid grey" colspan="12" class="mythStyle"><a href="http://microsporidiadb.org">MicrosporidiaDB</a></th>
-    <th style="border-right:3px solid grey" colspan="3" class="mythStyle"><a href="http://piroplasmadb.org">PiroplasmaDB</a></th>
+    <th style="border-right:3px solid grey" colspan="15" class="mythStyle"><a href="http://microsporidiadb.org">MicrosporidiaDB</a></th>
+    <th style="border-right:3px solid grey" colspan="4" class="mythStyle"><a href="http://piroplasmadb.org">PiroplasmaDB</a></th>
     <th style="border-right:3px solid grey" colspan="9" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></th>
     <th style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></th>
     <th style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></th>
@@ -198,9 +198,13 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
 <tr class="mythStyle">
     <th  style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</th>
+
+    <th class="mythStyle" title="Acanthamoeba castellanii str. Neff, AmoebaDB"><i>Aca</i></th>
     <th class="mythStyle" title="Entamoeba dispar SAW760, AmoebaDB"><i>Edi</i></th>
     <th class="mythStyle" title="Entamoeba histolytica HM-1:IMSS, AmoebaDB"><i>Ehi</i></th>
-    <th  style="border-right:3px solid grey"class="mythStyle" title="Entamoeba invadens IP1, AmoebaDB"><i>EinI</i></th>
+    <th class="mythStyle" title="Entamoeba invadens IP1, AmoebaDB"><i>EinI</i></th>
+    <th class="mythStyle" title="Entamoeba moshkovskii Laredo, AmoebaDB"><i>Emo</i></th>
+    <th  style="border-right:3px solid grey"class="mythStyle" title="Entamoeba nuttalli P19, AmoebaDB"><i>Enu</i></th>
 
     <th class="mythStyle" title="Cryptosporidium hominis TU502, CryptoDB"><i>Cho</i></th>
     <th class="mythStyle" title="Cryptosporidium muris RN66, CryptoDB"  ><i>Cmu</i></th>
@@ -221,14 +225,20 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <th class="mythStyle" title="Encephalitozoon hellem Swiss, MicrosporidiaDB"><i>EheS</i></th>
 
     <th class="mythStyle" title="Encephalitozoon intestinalis ATCC 50506, MicrosporidiaDB"><i>EinA</i></th>
+    <th class="mythStyle" title="Encephalitozoon romaleae SJ-2008, MicrosporidiaDB"><i>Ero</i></th>
   
     <th class="mythStyle" title="Nematocida parisii ERTm1, MicrosporidiaDB"><i>Npa1</i></th>
     <th class="mythStyle" title="Nematocida parisii ERTm3, MicrosporidiaDB"><i>Npa3</i></th>
     <th class="mythStyle" title="Nematocida sp. 1 ERTm2, MicrosporidiaDB"><i>Nsp2</i></th>
 
-    <th  style="border-right:3px solid grey"  class="mythStyle" title="Nosema cerenae BRL01, MicrosporidiaDB"><i>Nce</i></th>
+    <th class="mythStyle" title="Nosema cerenae BRL01, MicrosporidiaDB"><i>Nce</i></th>
+
+    <th class="mythStyle" title="Vavraia culicis floridensis, MicrosporidiaDB"><i>Vcu</i></th>
+
+    <th  style="border-right:3px solid grey"  class="mythStyle" title="Vittaforma corneae ATCC 50505, MicrosporidiaDB"><i>Vco</i></th>
 
     <th class="mythStyle" title="Babesia bovis T2Bo, PiroplasmaDB"><i>Bbo</i></th>
+    <th class="mythStyle" title="Babesia microti strain RI, PiroplasmaDB"><i>Bmi</i></th>
     <th class="mythStyle" title="Theileria annulata, PiroplasmaDB"><i>Tan</i></th>
     <th style="border-right:3px solid grey" class="mythStyle" title="Theileria parva, PiroplasmaDB"><i>Tpa</i></th>
 
@@ -273,7 +283,10 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
   <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
 	 <c:set var="Metric_Type" value="${record.attributesMap['Metric_Type']}"/>
+          <c:set var="Aca" value="${record.attributesMap['Acanthamoeba castellanii str. Neff']}"/>
+
           <c:set var="Bbo" value="${record.attributesMap['Babesia bovis T2Bo']}"/>
+          <c:set var="Bmi" value="${record.attributesMap['Babesia microti strain RI']}"/>
 
           <c:set var="Cho" value="${record.attributesMap['Cryptosporidium hominis TU502']}"/>
           <c:set var="Cmu" value="${record.attributesMap['Cryptosporidium muris RN66']}"/>
@@ -292,10 +305,13 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
           <c:set var="EheS" value="${record.attributesMap['Encephalitozoon hellem Swiss']}"/>
 
           <c:set var="EinA" value="${record.attributesMap['Encephalitozoon intestinalis ATCC 50506']}"/>
+          <c:set var="Ero" value="${record.attributesMap['Encephalitozoon romaleae SJ-2008']}"/>
 
           <c:set var="Edi" value="${record.attributesMap['Entamoeba dispar SAW760']}"/>
           <c:set var="Ehi" value="${record.attributesMap['Entamoeba histolytica HM-1:IMSS']}"/>
           <c:set var="EinI" value="${record.attributesMap['Entamoeba invadens IP1']}"/>
+          <c:set var="Emo" value="${record.attributesMap['Entamoeba moshkovskii Laredo']}"/>
+          <c:set var="Enu" value="${record.attributesMap['Entamoeba nuttalli P19']}"/>
 
           <c:set var="GA" value="${record.attributesMap['Giardia Assemblage A isolate WB']}"/>
           <c:set var="GB" value="${record.attributesMap['Giardia Assemblage B isolate GS']}"/>
@@ -344,13 +360,19 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
           <c:set var="TcrB" value="${record.attributesMap['Trypanosoma cruzi strain CL Brener']}"/>
           <c:set var="Tvi" value="${record.attributesMap['Trypanosoma vivax']}"/>
 
+          <c:set var="Vcu" value="${record.attributesMap['Vavraia culicis floridensis']}"/>
+          <c:set var="Vco" value="${record.attributesMap['Vittaforma corneae ATCC 50505']}"/>
 
 
 <tr class="mytdStyle">
     <td style="border-right:3px solid grey" class="mytdStyle" align="left" title="${record.attributesMap['Description']}">${Metric_Type}</td>
+   
+    <td class="mytdStyle" align="right">${Aca}</td>
     <td class="mytdStyle" align="right">${Edi}</td>
     <td class="mytdStyle" align="right">${Ehi}</td>
-    <td style="border-right:3px solid grey"  class="mytdStyle" align="right">${EinI}</td>
+    <td class="mytdStyle" align="right">${EinI}</td>
+    <td class="mytdStyle" align="right">${Emo}</td>
+    <td style="border-right:3px solid grey"  class="mytdStyle" align="right">${Enu}</td>
 
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cho}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cmu}</td>
@@ -371,14 +393,20 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${EheS}</td>
 
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${EinA}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ero}</td>
 
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Npa1}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Npa3}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Nsp2}</td>
 
-    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Nce}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Nce}</td>
+
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Vcu}</td>
+
+    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Vco}</td>
 
     <td class="mytdStyle" align="right">${Bbo}</td>
+    <td class="mytdStyle" align="right">${Bmi}</td>
     <td class="mytdStyle" align="right">${Tan}</td>
     <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tpa}</td>
 
@@ -430,11 +458,15 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <c:if test="${project ne 'FungiDB'}" >
 <table width="100%">
 <tr><td>
-<font size="-1"><b>Babesia</b>: Bbo, <i>B. bovis</i>; 
+<font size="-1">
+
+<b>Acanthamoeba</b>: Aca, <i>A. castellanii</i>;
+<b>Annacaliia</b>: Aal, <i>A. algerae</i>;
+<b>Babesia</b>: Bbo, <i>B. bovis</i>; Bmi, <i>B. microti</i>;
 <b>Cryptosporidium</b>: Cho, <i>C. hominis</i>; Cmu, <i>C. muris</i>; Cpa, <i>C. parvum</i>;  
 <b>Eimeria</b>: Ete, <i>E. tenella</i>; 
-<b>Encephalitozoon</b>: Ecu, <i>E. cuniculi</i>; Ehe, <i>E. hellem</i>; Ein, <i>E. intestinalis</i>; 
-<b>Entamoeba</b>: Edi, <i>E. dispar</i>; Ehi, <i>E. histolytica</i>; Ein, <i>E. invadens</i>;  
+<b>Encephalitozoon</b>: Ecu, <i>E. cuniculi</i>; Ehe, <i>E. hellem</i>; Ein, <i>E. intestinalis</i>; Ero, <i>E. romaleae</i>; 
+<b>Entamoeba</b>: Edi, <i>E. dispar</i>; Ehi, <i>E. histolytica</i>; Ein, <i>E. invadens</i>; Emo, <i>E. moshkovskii</i>; Enu, <i>E. nuttalli</i>;  
 <b>Enterocytozoon</b>: Eb, <i>E. bieneusi</i>; 
 <b>Giardia</b>: GA, <i>G.Assemblage_A_isolate_WB</i>; GB, <i>G.Assemblage_B_isolate_GS</i>; GE, <i>G.Assemblage_E_isolate_P15</i>; 
 <b>Leishmania</b>: Lb, <i>L. braziliensis</i>; Li, <i>L. infantum</i>; Lma, <i>L. major</i>; Lme, <i>L. mexicana</i>; 
@@ -445,7 +477,11 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <b>Theileria</b>: Tan, <i>T. annulata</i>; Tpa, <i>T. parva</i>; 
 <b>Toxoplasma</b>: Tgo, <i>T. gondii</i>; 
 <b>Trichomonas</b>: Tva, <i>T. vaginalis</i>; 
-<b>Trypanosoma</b>: Tbr, <i>T. brucei</i>; Tco, <i>T. congolense</i>; Tcr, <i>T. cruzi</i>; Tvi, <i>T. vivax</i>. </font><br>
+<b>Trypanosoma</b>: Tbr, <i>T. brucei</i>; Tco, <i>T. congolense</i>; Tcr, <i>T. cruzi</i>; Tvi, <i>T. vivax</i>;
+<b>Vavraia</b>: Vcu, <i>V. culicis</i>;
+<b>Vittaforma</b>: Vco, <i>V. corneae</i>. 
+
+</font><br>
 </td></tr>
 <br>
 <tr><td colspan="10"><font size="-2"><hr>* In addition, <i>Giardia Assemblage A isolate WB</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
