@@ -141,7 +141,7 @@
                <!--   <imp:table table="${externallinks}" sortable="false" showHeader="false" />  -->
                  <ul>
                   <c:forEach items="${externallinks}" var="externallink">
-                        <li>${externallink['url']}</li>
+                        <li><a href="${externallink['hyper_link'].url}">${externallink['hyper_link'].displayText}</a></li>
                   </c:forEach>
                 </ul>
               </c:set>
