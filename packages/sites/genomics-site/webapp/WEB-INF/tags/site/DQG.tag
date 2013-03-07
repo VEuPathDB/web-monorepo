@@ -79,7 +79,7 @@
     $(function() { wdk.tooltips.assignTooltipsLeft('.dqg-tooltip', -3); });
 </script>
 
-<table width="100%" border="0" class="threecolumn">
+<table id="bubbles" width="100%" border="0" class="threecolumn">
 <tr>
     <td width="33%" align="center">
 	   <c:set var="qSetName" value="GeneQuestions" />

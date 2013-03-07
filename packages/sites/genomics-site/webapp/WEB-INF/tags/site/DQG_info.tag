@@ -4,7 +4,7 @@
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="sName" value="${fn:substringBefore(modelName,'DB')}" />
 <c:set var="cycName" value="${sName}Cyc" />
-<div id="info">
+<div class="info">
     	<ul>
 		<li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"><strong>BLAST</strong></a>
 			<ul><li>Description</li></ul>
@@ -23,5 +23,5 @@
 		</li>
     	</ul>
 </div>
-<div id="infobottom">
+<div class="infobottom">
 </div><!--end info-->

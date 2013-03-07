@@ -50,7 +50,7 @@
 
 <%---------------------------------   RECORDCLASSSES OTHER THAN GENES  -------------------------%>
 <c:when test="${recordClasses == 'others'}">
-	<div id="info">
+	<div class="info">
 	<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
 	<ul class="heading_list">
 		<c:forEach items="${rootCats}" var="rootCatEntry">
@@ -100,7 +100,7 @@
 	</ul>
 	</div>
 		
-	<div id="infobottom">
+	<div class="infobottom">
  		<%--	<div id="mysearchhist">
 				<a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
 			</div>  --%>
@@ -109,7 +109,7 @@
 
 <%---------------------------------   GENES  -------------------------%>
 <c:otherwise>
-	<div id="info">
+	<div class="info">
 	<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
 	<ul class="heading_list">
 		<c:set var="rootCat" value="${rootCats['GeneRecordClasses.GeneRecordClass']}" />
@@ -160,7 +160,7 @@
 	</ul>	
 	</div>
 
-	<div id="infobottom">
+	<div class="infobottom">
 		<%--	<div id="mysearchhist">
 				<a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
 			</div> --%>

@@ -29,7 +29,7 @@
 	</c:when>
 </c:choose> 
 
-<div id="info">
+<div class="info">
     	<ul> 
 		<li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"><strong>BLAST</strong></a>
 			<ul><li style="border:0">Identify Sequence Similarities</li></ul>
@@ -92,7 +92,7 @@
 		<li><a href="<c:url value="/serviceList.jsp"/>"><strong>Searches via Web Services</strong></a>
 			<ul><li style="border:0">Learn about web service access to our data</li></ul>
 		</li>
-                <li>&nbsp;<ul><li  style="border:0">&nbsp;</li></ul></li> 
+                <%-- <li>&nbsp;<ul><li  style="border:0">&nbsp;</li></ul></li> --%>
 
 	</c:otherwise>
 	</c:choose>
@@ -111,5 +111,5 @@
 
 </div>
 
-<div id="infobottom" class="tools">
+<div class="infobottom tools">
 </div><!--end info-->
