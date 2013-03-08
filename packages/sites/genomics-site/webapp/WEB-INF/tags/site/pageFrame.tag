@@ -68,6 +68,7 @@
       
       <imp:dialogs/>
       <imp:footer refer="${refer}"/>
+      <imp:IEWarning version="7"/>
 
     </body>
   </html>

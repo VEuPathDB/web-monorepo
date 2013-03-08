@@ -56,7 +56,7 @@
       <li class="empty-divider"><a href="${pageContext.request.contextPath}/contact.do" class="open-window-contact-us">Contact Us</a></li>
 	  
 	    <!-- TWITTER/FACEBOOK -->
-	    <imp:socialMedia/>
+	    <imp:socialMedia small="true"/>
 	
 	  </ul>
   </div>

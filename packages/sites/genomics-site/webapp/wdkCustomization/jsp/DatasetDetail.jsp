@@ -141,7 +141,7 @@
                <!--   <imp:table table="${externallinks}" sortable="false" showHeader="false" />  -->
                  <ul>
                   <c:forEach items="${externallinks}" var="externallink">
-                        <li>${externallink['url']}</li>
+                        <li><a href="${externallink['hyper_link'].url}">${externallink['hyper_link'].displayText}</a></li>
                   </c:forEach>
                 </ul>
               </c:set>
@@ -168,11 +168,20 @@
                   <c:forEach items="${references}" var="reference">
                     <c:if test="${reference['target_type'] eq 'question'}">
                       <jsp:setProperty name="wdkModel" property="questionName" value="${reference['target_name']}" />
+
                       <c:set var="question" value="${wdkModel.question}" />
                       <c:if test="${question != null}">
                         <c:set var="hasQuestion" value="${true}" />
+                        <c:set var="display" value="Identify ${question.recordClass.displayNamePlural} based on ${question.displayName}" />
                         <c:url var="questionUrl" value="/showQuestion.do?questionFullName=${question.fullName}" />
-                        <li><a title="${question.summary}" href="${questionUrl}">Identify ${question.recordClass.displayNamePlural} based on ${question.displayName}</a></li>
+                        <c:choose>
+                          <c:when test="${question.isTransform}">
+                            <li>${display}</li>
+                          </c:when>
+                          <c:otherwise>
+                            <li><a title="${question.summary}" href="${questionUrl}">${display}</a></li>
+                          </c:otherwise>
+                        </c:choose>
                       </c:if> 
                     </c:if>
                   </c:forEach>

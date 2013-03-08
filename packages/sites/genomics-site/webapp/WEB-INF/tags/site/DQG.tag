@@ -10,10 +10,10 @@
 <!--  SETTING GENERA
       (share with quick search and menubar!  -->
 
-<c:set var="AmoebaDBOrgs" value="Entamoeba" />
+<c:set var="AmoebaDBOrgs" value="Acanthamoeba, Entamoeba" />
 <c:set var="CryptoDBOrgs" value="Cryptosporidium" />				
 <c:set var="GiardiaDBOrgs" value="Giardia" />
-<c:set var="MicrosporidiaDBOrgs" value="Edhazardia, Encephalitozoon, Enterocytozoon, Hamiltosporidium, Nematocida, Nosema, Vavraia" />
+<c:set var="MicrosporidiaDBOrgs" value="Annacaliia, Edhazardia, Encephalitozoon, Enterocytozoon, Hamiltosporidium, Nematocida, Nosema, Vavraia, Vittaforma" />
 <c:set var="PiroplasmaDBOrgs" value="Babesia, Theileria" />
 <c:set var="PlasmoDBOrgs" value="Plasmodium" />
 <c:set var="ToxoDBOrgs" value="Eimeria, Gregarina, Neospora, Toxoplasma" />
@@ -35,7 +35,7 @@
 <c:when test="${project == 'EuPathDB'}">
 
 	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens</b>:
-<br><i style="font-size:90%">(mouse over the logos:</i> <i>Babesia</i>, <i>Crithidia</i>, <i>Cryptosporidium</i>, <i>Edhazardia</i>, <i>Eimeria</i>, <i>Encephalitozoon</i>, <i>Endotrypanum</i>, <i>Entamoeba</i>, <i>Enterocytozoon</i>, <i>Giardia</i>, <i>Gregarina</i>, <i>Hamiltosporidium</i>, <i>Leishmania</i>, <i>Nematocida</i>, <i>Neospora</i>, <i>Nosema</i>, <i>Plasmodium</i>, <i>Theileria</i>, <i>Toxoplasma</i>, <i>Trichomonas</i>, <i>Trypanosoma</i>, <i>Vivraia</i>).
+<br><i style="font-size:90%">(mouse over the logos:</i> <i>Acanthamoeba</i>, <i>Annacaliia</i>, <i>Babesia</i>, <i>Crithidia</i>, <i>Cryptosporidium</i>, <i>Edhazardia</i>, <i>Eimeria</i>, <i>Encephalitozoon</i>, <i>Endotrypanum</i>, <i>Entamoeba</i>, <i>Enterocytozoon</i>, <i>Giardia</i>, <i>Gregarina</i>, <i>Hamiltosporidium</i>, <i>Leishmania</i>, <i>Nematocida</i>, <i>Neospora</i>, <i>Nosema</i>, <i>Plasmodium</i>, <i>Theileria</i>, <i>Toxoplasma</i>, <i>Trichomonas</i>, <i>Trypanosoma</i>, <i>Vivraia</i>, <i>Vittaforma</i>).
 	<br>
 
 	<table class="center" style="padding:2px;" width="95%"><tr>
@@ -79,7 +79,7 @@
     $(function() { wdk.tooltips.assignTooltipsLeft('.dqg-tooltip', -3); });
 </script>
 
-<table width="100%" border="0" class="threecolumn">
+<table id="bubbles" width="100%" border="0" class="threecolumn">
 <tr>
     <td width="33%" align="center">
 	   <c:set var="qSetName" value="GeneQuestions" />

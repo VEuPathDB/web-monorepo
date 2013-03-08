@@ -209,7 +209,15 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <!-- snps between strains -->
 <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
- <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> 
+
+<%-- HTS SNP OVERVIEW ---------------%>
+
+<c:set var="htsSNPs" value="${attrs['snpoverview']}" />
+<imp:panel attribute="${htsSNPs.name}"
+    displayName="${htsSNPs.displayName}"
+    content="${htsSNPs.value}${append}" />
+<br>
+
  <imp:snpTable tblName="SNPsAlignment" isOpen="false" />
 </c:if>
 

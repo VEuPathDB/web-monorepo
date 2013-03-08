@@ -178,8 +178,12 @@ ${attrs['organism'].value}<br>
   content="${mercatorAlign}"
   attribution=""/ --%>
 
-
-    <imp:wdkTable tblName="SNPs" isOpen="false" attribution=""/> 
+<%-- HTS SNP OVERVIEW ---------------%>
+<c:set var="htsSNPs" value="${attrs['snpoverview']}" />
+<imp:panel attribute="${htsSNPs.name}"
+    displayName="${htsSNPs.displayName}"
+    content="${htsSNPs.value}${append}" />
+<br>
     <imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
 
 

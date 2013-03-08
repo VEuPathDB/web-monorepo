@@ -67,9 +67,12 @@ sub new {
     $query =~ s/(\$\w+)/eval $1/eg;
     my $sth = $factory->dbh->prepare($query);
     # use 1000 as approximate range
-    $factory->getQueryLogger()->execute($sth, $query, "Segment.pm", "new:Segment");
+    my ($status, $startTime, $firstPageTime) = $factory->getQueryLogger()->execute($sth);
+    $status or $self->throw("getting segment query failed");
 
     my $hashref = $sth->fetchrow_hashref;
+    $factory->getQueryLogger()->logQuery($startTime, $firstPageTime, $query, "Segment.pm", "new:Segment");
+
     warn "END or STARTM of $name could not be determined by sql: $query\n" 
       unless exists $$hashref{'END'} && exists $$hashref{'STARTM'};
     my $length  = $$hashref{'END'} - $$hashref{'STARTM'} + 1;
@@ -373,14 +376,16 @@ sub features {
     warn "<pre>^^^^^^^^^^ End $typeString ^^^^^^^^^^^^^</pre>" if DEBUG;
 
     my $sth = $factory->dbh->prepare($sql);
-    $factory->getQueryLogger()->execute($sth, $sql, "Segment.pm", $queryName, $rend - $base_start)
-      or $self->throw("getting feature query failed");
+    my ($status, $startTime, $firstPageTime) = $factory->getQueryLogger()->execute($sth);
+    $status or $self->throw("getting feature query failed");
 
     my @tempfeats = ();
 
     while (my $featureRow = $sth->fetchrow_hashref) {
       push @tempfeats, $self->_makeFeature($featureRow, $factory, $queryName);
     }
+    $factory->getQueryLogger()->logQuery($startTime, $firstPageTime, $sql, "Segment.pm", $queryName, $rend - $base_start);
+
 
     if($typeString =~ /blat/i) { 
         @tempfeats = _feature_filter(\@tempfeats, 10);
@@ -426,8 +431,8 @@ sub _addBulkAttribute {
   my %featuresById;
   map { $featuresById{$_->feature_id} = $_ } @$features;
   my $sth = $factory->dbh->prepare($bulkAttributeSql);
-  $factory->getQueryLogger()->execute($sth, $bulkAttributeSql, "Segment.pm", $queryName, $range)
-    or $self->throw("getting bulk attribute query failed");
+  my ($status, $startTime, $firstPageTime) = $factory->getQueryLogger()->execute($sth);
+  $status or $self->throw("getting bulk attribute query failed");
 
   my @bulkAtts;
   while (my $featureRow = $sth->fetchrow_hashref) {
@@ -436,6 +441,8 @@ sub _addBulkAttribute {
       $feature->bulkAttributes($featureRow);
     } 
   } 
+  $factory->getQueryLogger()->logQuery($startTime, $firstPageTime, $bulkAttributeSql, "Segment.pm", $queryName, $range);
+
 }
 
 sub _addBulkSubFeatures {
@@ -444,8 +451,8 @@ sub _addBulkSubFeatures {
   my %featuresById;
   map { $featuresById{$_->feature_id} = $_ } @$features;
   my $sth = $factory->dbh->prepare($subFeatureSql);
-  $factory->getQueryLogger()->execute($sth, $subFeatureSql, "Segment.pm", $queryName, $range)
-    or $self->throw("getting bulk subfeature query failed");
+  my ($status, $startTime, $firstPageTime) = $factory->getQueryLogger()->execute($sth);
+  $status or $self->throw("getting bulk subfeature query failed");
 
   while (my $featureRow = $sth->fetchrow_hashref) {
     my $feature = $featuresById{$$featureRow{'PARENT_ID'}};
@@ -472,6 +479,7 @@ sub _addBulkSubFeatures {
       . $subFeatureSql) if DEBUG;
     }
   }
+  $factory->getQueryLogger()->logQuery($startTime, $firstPageTime,$subFeatureSql, "Segment.pm", $queryName, $range);
 }
 
 =head2 _getUniqueTypes
@@ -644,8 +652,10 @@ sub seq {
   $seqQuery =~ s/(\$\w+)/eval $1/eg;
 
   my $sth = $self->factory->dbh->prepare($seqQuery);
-  $self->factory->getQueryLogger()->execute($sth, $seqQuery, "Segment.pm", "get_sequence");
+  my ($status, $startTime, $firstPageTime) = $self->factory->getQueryLogger()->execute($sth);
+  $status or $self->throw("getting sequence query failed");
   my ($seq) = $sth->fetchrow_array();
+  $self->factory->getQueryLogger()->logQuery($startTime, $firstPageTime, $seqQuery, "Segment.pm", "get_sequence");
 
   if (!$has_start && !$has_stop) {
     # do nothing, sequence is already complete
@@ -693,7 +703,7 @@ sub secondary_structure_encodings {
   $strucQuery =~ s/(\$\w+)/eval $1/eg;
 
   my $sth = $self->factory->dbh->prepare($strucQuery);
-  $self->factory->getQueryLogger()->execute($sth, $strucQuery, "Segment.pm", "get_2d_struc");
+  my ($status, $startTime, $firstPageTime) = $self->factory->getQueryLogger()->execute($sth);
 
   my $encodings = undef;
   while (my ($type, $encoding) = $sth->fetchrow_array()) {
@@ -703,6 +713,7 @@ sub secondary_structure_encodings {
     $type = 'strand' if $type =~ /^e$/i;
     $encodings->{$type} = $encoding;
   }
+  $self->factory->getQueryLogger()->logQuery($startTime, $firstPageTime, $strucQuery, "Segment.pm", "get_2d_struc");
 
   unless ($encodings && $encodings->{helix}) {
     warn "no structure encodings retrieved by sql: $strucQuery\n";

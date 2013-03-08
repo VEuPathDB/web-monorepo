@@ -18,7 +18,7 @@ foreach my $campus (@campusList) {
     chomp($component);
     my $lcComponent = lc($component);
     my $site = "$siteSet$campus.$lcComponent.org";
-    print "$site\t/var/www/Common/tmp/gbrowseLogs/$site/*_slow.log\t/var/log/httpd/$site/access_log\n";
+    print "$site /var/www/Common/tmp/gbrowseLogs/$site/*_slow.log /var/log/httpd/$site/access_log\n";
 
   }
 }
@@ -26,7 +26,7 @@ foreach my $campus (@campusList) {
 sub usage {
   print STDERR "
 
-Generate the tab-delimited report description that gbrowseSlowQueryReport expects on its standard in, to specify what log files to report on. It can be used in a command pipeline with gbrowseSlowQueryReport.
+Generate the space-delimited report description that gbrowseSlowQueryReport expects on its standard in, to specify what log files to report on. It can be used in a command pipeline with gbrowseSlowQueryReport.
 
 usage:
 gbrowseSlowQueryReportInput -siteSet [ q | w ]

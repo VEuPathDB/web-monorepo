@@ -152,7 +152,15 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <%-- snps dataTable defined above --%>
 <c:if test="${snps ne 'none'}">
 
-<imp:wdkTable tblName="SNPs" isOpen="true" attribution=""/> 
+<%-- HTS SNP OVERVIEW ---------------%>
+
+<c:set var="htsSNPs" value="${attrs['snpoverview']}" />
+<imp:panel attribute="${htsSNPs.name}"
+    displayName="${htsSNPs.displayName}"
+    content="${htsSNPs.value}${append}" />
+<br>
+
+<imp:snpTable tblName="SNPsAlignment" isOpen="false" />
 
 </c:if>
 

@@ -33,22 +33,20 @@ my $parseLogRecord = sub {
 
   my $reject = 0;
 
-# QUERYTIME       Fri Mar 12 22:26:49 2010        1268450809.72195        v       Segment.pm      7.12     5792    alignment:dbEST
+  # QUERYTIME       Fri Mar 12 22:26:49 2010        1268450809.72195        baseline       Segment.pm      0.004    7.12     5792    alignment:dbEST EOL
 
   $reject = 1 unless $logRecord =~ /QUERYTIME/;
-  $reject = 1 if $logRecord =~ /\=\=/;  # some lines in the log are mangled, with missing newlines
-  # the symptom is that the next log entry is mashed in
-  # these are delimited by ========, so dodge that
+  $reject = 1 if $logRecord =~ /EOL./;  # some lines in the log are mangled, with missing newlines.  die if there is an EOL that is not at the end of the line.
   $reject = 1 if ($genepage && !$logRecord =~ /GENEPAGE/);
   $reject = 1 if ($notgenepage && $logRecord =~ /GENEPAGE/);
   chomp($logRecord);
-  my ($qt, $timestampString, $timestamp, $tag, $module, $seconds, $width, $name) = split(/\t/, $logRecord);
+  my ($qt, $timestampString, $timestamp, $tag, $module, $executeSeconds, $lastPageSeconds, $width, $name) = split(/\t/, $logRecord);
 
   $reject = 1 if ($width_min && $width < $width_min);
   $reject = 1 if ($width_max && $width > $width_max);
   $reject = 1 if ($timestamp =~ /[a-z,A-Z]/); # this happened: the "time" field had a word embedded in it
 
-  return ($reject, $timestamp, $seconds, $name, $width);
+  return ($reject, $timestamp, $lastPageSeconds, $name, $width);
 };
 
 FgpUtil::Log::SlowQueryReport::makeReport($parseLogRecord, $time_filter, $plotOutputFile, $sort_column, $logTailSize, $logDeathImmunity, $threshold, $debug);
@@ -60,7 +58,7 @@ Print a report summarizing the gbrowse slow query logs.
 
 Takes one or more apache error logs on standard input.
 
-usage:  gbrowseSlowQueryReport [-s secs] [-g] [-n] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile] [-d]
+usage:  gbrowseSlowQueryReport -s secs [-g] [-n] [-w width_min[,length_max]] [-t starttime[,endtime]] [-c colnum] [-p plotOutputFile] [-d]
 
 where:
   -s:  slowness threshold in seconds.  run times over secs are reported in Slow columns
