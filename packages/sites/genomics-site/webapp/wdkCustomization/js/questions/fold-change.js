@@ -52,22 +52,22 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       "down-regulated-minimum-none"          : 36
     };
 
-    direction = $form.find("#regulated_dir")
+    direction = $form.find("select[name*='regulated_dir']")
         .val().replace(/\s+/g, "-");
 
-    if ($form.find("#samples_fc_ref_generic:checked").length > 1) {
-      ref_operation = $form.find("#min_max_avg_ref")
+    if ($form.find("input[name*='samples_fc_ref_generic']:checked").length > 1) {
+      ref_operation = $form.find("select[name*='min_max_avg_ref']")
           .find(":selected").text().replace(/\s+/g, "-");
     }
 
-    if ($form.find("#samples_fc_comp_generic:checked").length > 1) {
-      comp_operation = $form.find("#min_max_avg_comp")
+    if ($form.find("input[name*='samples_fc_comp_generic']:checked").length > 1) {
+      comp_operation = $form.find("select[name*='min_max_avg_comp']")
           .find(":selected").text().replace(/\s+/g, "-");
     }
 
 
-    if ($form.find("#samples_fc_ref_generic:checked").length === 0 &&
-        $form.find("#samples_fc_comp_generic:checked").length === 0) {
+    if ($form.find("input[name*='samples_fc_ref_generic']:checked").length === 0 &&
+        $form.find("input[name*='samples_fc_comp_generic']:checked").length === 0) {
       blockGraph();
       return;
     }
@@ -97,13 +97,13 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
   // make some params readonly in certain conditions
   var setParams = function() {
-    var refOp = $form.find("#min_max_avg_ref"),
-        compOp = $form.find("#min_max_avg_comp"),
-        refCount = $form.find("#samples_fc_ref_generic:checked").length,
-        compCount = $form.find("#samples_fc_comp_generic:checked").length;
+    var refOp = $form.find("select[name*='min_max_avg_ref']"),
+        compOp = $form.find("select[name*='min_max_avg_comp']"),
+        refCount = $form.find("input[name*='samples_fc_ref_generic']:checked").length,
+        compCount = $form.find("input[name*='samples_fc_comp_generic']:checked").length;
 
     // if "up or down regulated" selected, disable ops
-    if ($form.find("#regulated_dir").val() === "up or down regulated") {
+    if ($form.find("select[name*='regulated_dir']").val() === "up or down regulated") {
       refOp.attr("disabled", true);
       refOp.find(":selected").text(refCount <= 1 ? "none" : refOp.val().slice(0, -1));
 
