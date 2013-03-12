@@ -43,13 +43,13 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       "down-regulated-minimum-minimum"       : 27,
       "down-regulated-none-minimum"          : 28,
       "down-regulated-average-minimum"       : 29,
-      "up-or-down-regulated-average-average" : 30,
-      "up-or-down-regulated-average-none"    : 31,
-      "up-or-down-regulated-none-average"    : 32,
-      "up-or-down-regulated-none-none"       : 33,
-      "down-regulated-none-none"             : 34,
-      "down-regulated-average-none"          : 35,
-      "down-regulated-minimum-none"          : 36
+      "down-regulated-none-none"             : 30,
+      "down-regulated-average-none"          : 31,
+      "down-regulated-minimum-none"          : 32,
+      "up-or-down-regulated-average-average" : 33,
+      "up-or-down-regulated-average-none"    : 34,
+      "up-or-down-regulated-none-average"    : 35,
+      "up-or-down-regulated-none-none"       : 36
     };
 
     direction = $form.find("select[name*='regulated_dir']")
