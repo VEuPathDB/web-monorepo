@@ -49,6 +49,39 @@
 
 <!-- display wdkModel introduction text -->
 <h1>Searches via Web Services</h1>
+
+<c:if test="${wdkModelDispName eq 'EuPathDB'}">
+  <%-- copied from siteAnnounce.tag --%>
+  <div class="info announcebox" style="color:darkred;font-size:120%">
+    <table><tr>
+			<td><img src="/assets/images/clearInfoIcon.png" alt="warningSign" /></td>
+    	<td>
+      	<span class="warningMessage" style="line-height: 16px">
+          Currently, some searches (demarcated with a &dagger;) do not work properly
+          from <a href="http://eupathdb.org">EuPathDB.org</a> via webservices.
+          Please go to individual component sites (such as
+          <a href="http://plasmodb.org">PlasmoDB.org</a>) for such searches.
+          Additionally, the parameter  "o-tables" is not available from
+          <a href="http://eupathdb.org">EuPathDB.org</a>.
+
+          <%--
+          Currently, the following parameters do not work with webservices from
+          <a href="http://eupathdb.org">EuPathDB.org</a>.
+          If you wish to conduct searches via webservices with these parameters
+          (demarcated with a &dagger;),
+          please go to individual component sites (such as <a href="http://www.plasmodb.org">PlasmoDB.org</a>).
+          <br/><br/>
+          <ul class="cirbulletlist">
+            <li>Parameters whose name begins with "ds_"</li>
+            <li>Parameters named "o-tables"</li>
+          </ul>
+          --%>
+      	</span>
+     	</td>
+		</tr></table>
+  </div>
+</c:if>
+
 <br>
 ${wdkModelDispName} provides programmatic access to <a href="<c:url value="/queries_tools.jsp"/>">its searches</a>, via <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm"><b>REST</b></a> Web Services. 
 The result of a web service request is a list of records (genes, ESTs, etc) in either 
@@ -82,9 +115,6 @@ Click on a search below to access its <a href="http://www.w3.org/Submission/wadl
 </span>
 
 <br><br>
-<c:if test="${wdkModelDispName eq 'EuPathDB'}">
-<i>(Note: The parameter "o-tables" is not available from EuPathDB.)</i>
-</c:if>
 <!-- show all questionSets in model, driven by categories as in menubar -->
 <imp:drop_down_QG2 from="webservices" />
 

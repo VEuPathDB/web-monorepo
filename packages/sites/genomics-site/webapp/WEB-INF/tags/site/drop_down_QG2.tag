@@ -95,6 +95,17 @@
 	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
         <imp:questionFeature question="${q}" />
         </a>
+  <c:if test="${project eq 'EuPathDB'}">
+    <c:set var="flag"/>
+    <c:forEach items="${q.params}" varStatus="loop">
+      <c:if test="${q.params[loop.index].type eq 'DatasetParam'}">
+        <c:set var="flag">
+          <span title="This search is currently unavailable via webservices from EuPathDB">[&dagger;]</span>
+        </c:set>
+      </c:if>
+    </c:forEach>
+    ${flag}
+  </c:if>
 </c:when>
 <c:otherwise>
   	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
@@ -137,6 +148,17 @@
 	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
           <imp:questionFeature question="${q}" />
         </a>
+  <c:if test="${project eq 'EuPathDB'}">
+    <c:set var="flag"/>
+    <c:forEach items="${q.params}" varStatus="loop">
+      <c:if test="${q.params[loop.index].type eq 'DatasetParam'}">
+        <c:set var="flag">
+          <span title="This search is currently unavailable via webservices from EuPathDB">[&dagger;]</span>
+        </c:set>
+      </c:if>
+    </c:forEach>
+    ${flag}
+  </c:if>
 </c:when>
 <c:otherwise>
   	<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
@@ -187,6 +209,17 @@
 				<a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}
                                   <imp:questionFeature question="${q}" />
                                 </a>
+                  <c:if test="${project eq 'EuPathDB'}">
+                    <c:set var="flag"/>
+                    <c:forEach items="${q.params}" varStatus="loop">
+                      <c:if test="${q.params[loop.index].type eq 'DatasetParam'}">
+                        <c:set var="flag">
+                          <span title="This search is currently unavailable via webservices from EuPathDB">[&dagger;]</span>
+                        </c:set>
+                      </c:if>
+                    </c:forEach>
+                    ${flag}
+                  </c:if>
 				</li>
            		</c:forEach>
 			</ul>
