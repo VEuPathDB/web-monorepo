@@ -59,7 +59,7 @@
   <%-- <imp:parameterScript /> --%>
   <script type="text/javascript" src="/assets/js/orthologpattern.js"></script>
   <script type="text/javascript" src="${base}/wdkCustomization/js/span-location.js"></script>
-  <script type="text/javascript" src="${base}/wdkCustomization/js/questions/fold-change.js"></script>
+  <%-- <script type="text/javascript" src="${base}/wdkCustomization/js/questions/fold-change.js"></script> --%>
   <script type="text/javascript" src="${base}/wdkCustomization/js/mutuallyExclusiveParams.js"></script>
 </c:if>
 
