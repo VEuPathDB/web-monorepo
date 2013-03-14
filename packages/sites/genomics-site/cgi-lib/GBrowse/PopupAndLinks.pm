@@ -609,46 +609,39 @@ sub estTitle {
 
 sub cosmidTitle { 
   my $f = shift;
-  my $start = $f->start;
-  my $stop  = $f->stop;
-  my ($length) = $f->get_tag_values('alignLength');
-  my $cname = $f->name;
-  my @data; 
-  push @data, [ 'Cosmid:'     => $cname ]; 
-  push @data, [ 'Clone Size:'     => $length ];
-  push @data, [ 'Clone Location:' => "$start..$stop"];
-  push @data, [ '<hr>'            => '<hr>' ];
-
-  my @subs = $f->sub_SeqFeature("cosmid_end");
-  my $count = 0;
-  foreach(@subs) {
-    $count++;
-    my $name  = $_->name; 
-    my $start = $_->start;
-    my $stop  = $_->stop;
-    my ($pct) = $_->get_tag_values("pct");
-    push @data, [ 'Bac End:'      => $name ]; 
-    push @data, [ 'Location:'  => "$start..$stop" ];
-    push @data, [ 'Percent Identity:' => "$pct %" ]; 
-    push @data, [ 'Score:' => $_->score ]; 
-    push @data, [ '<hr>' => '<hr>' ] if $count % 2;
-  }
-#  hover("End-Sequenced Cosmid: $cname", \@data);
-    hover($f, \@data);
+  
+  &genericEndFeatureTitle($f, 'cosmid_end', 'Cosmid');
 }
 
-sub bacsTitle { 
+sub bacsTitle {
   my $f = shift;
+  
+  &genericEndFeatureTitle($f, 'bac_end', 'Bac');
+}
+
+sub fosmidTitle {
+  my $f = shift;
+  &genericEndFeatureTitle($f, 'generic_end', 'Fosmid');
+}
+
+
+sub genericEndFeatureTitle { 
+  my $f = shift;
+  my $bulkFeatureName = shift;
+  my $trackName = shift;
+
+
+
   my $start = $f->start;
   my $stop  = $f->stop;
-  my $length = $stop - $start;
+  my $length = $stop - $start + 1;
   my $cname = $f->name;
   my @data; 
-  push @data, [ 'End-Sequenced BAC:'     => $cname ]; 
+  push @data, [ "End-Sequenced $trackName:"     => $cname ]; 
   push @data, [ 'Clone Size:'     => $length ]; 
   push @data, [ 'Clone Location:' => "$start..$stop"];
   push @data, [ '<hr>'            => '<hr>' ];
-  my @subs = $f->sub_SeqFeature("bac_end");
+  my @subs = $f->sub_SeqFeature("$bulkFeatureName");
   my $count = 0;
   foreach(@subs) {
     $count++;
@@ -656,13 +649,12 @@ sub bacsTitle {
     my $start = $_->start;
     my $stop  = $_->stop;
     my ($pct) = $_->get_tag_values("pct");
-    push @data, [ 'Bac End:'      => $name ]; 
+    push @data, [ "$trackName End:"      => $name ]; 
     push @data, [ 'Location:'  => "$start..$stop" ];
     push @data, [ 'Percent Identity:' => "$pct %" ]; 
     push @data, [ 'Score:' => $_->score ]; 
     push @data, [ '<hr>' => '<hr>' ] if $count % 2;
   }
-#  hover("End-Sequenced BAC: $cname", \@data);
     hover($f, \@data);
 }
 
