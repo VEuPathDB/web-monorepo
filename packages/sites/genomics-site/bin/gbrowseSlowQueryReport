@@ -4,7 +4,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use strict;
 use Getopt::Long;
 use Time::Local;
-use FgpUtil::Log::SlowQueryReport;
+use FgpUtil::Util::SlowQueryReport;
 
 my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile, $logTailSize, $logDeathImmunity, $debug);
 my ($width_min, $width_max);
