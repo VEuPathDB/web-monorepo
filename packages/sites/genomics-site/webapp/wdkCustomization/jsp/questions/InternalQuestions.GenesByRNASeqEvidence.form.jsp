@@ -22,7 +22,7 @@
 
 <c:set var="giardiaQuestions" value="G.l.study:Three Strains (Svard),GeneQuestions.GenesByRNASeqSvard3StagesFC,GeneQuestions.GenesByRNASeqSvard3StagesPercentile"/>
 
-<c:set var="hostQuestions" value="Tg.ME49.study:Infection (Greg),GeneQuestions.HostDBGenesByRNASeqTgME49Percentile"/>
+<c:set var="hostQuestions" value="Tg.ME49.study:Infection (Greg),GeneQuestions.GenesByRNASeqTgME49HumanFoldChange,GeneQuestions.GenesByRNASeqTgME49HumanPercentile"/>
 
 <c:set var="microsporidiaQuestions" value="N.p.study:N. parisii Infection Time Series in C. elegans (Cuomo et al.),GeneQuestions.GenesByRNASeqTroemelCeInfectionFC,GeneQuestions.GenesByRNASeqTroemelCeInfectionPercentile"/>
 
