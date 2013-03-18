@@ -22,7 +22,7 @@
 
 <c:choose>
   <c:when test="${isTruncate == 'true'}">
-    <p>The number of ${displayNamePlural} in the result exceeds the display limit, Genomic Summary View is not available for the result.</p>
+    <p>The number of ${displayNamePlural} in the result exceeds the display limit (2000 IDs), Genomic Summary View is not available for the result.</p>
   </c:when>
   <c:otherwise> <%-- display genomic view --%>
 
