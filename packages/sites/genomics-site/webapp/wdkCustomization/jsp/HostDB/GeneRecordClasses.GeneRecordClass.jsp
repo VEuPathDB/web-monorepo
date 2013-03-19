@@ -329,9 +329,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/hostdbaa/?name=${wd
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
+<%--
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
   ${attrs['ssgcid_request_link']}
 </c:if>
+--%>
 
 </c:if>
 
