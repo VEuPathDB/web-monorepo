@@ -38,12 +38,12 @@
 .genome-view .canvas .feature.forward { bottom:52px; background-color:#0000FF; }
 .genome-view .canvas .feature.reverse { top:52px;background-color:#FF0000; }
 
-.genome-view .legend { background-color:#EEEEEE; border-radius:5px; padding-left:5px; width: 425px; float:right;  font-size:90%; font-style:italic;}
+.genome-view .legend { background-color:#EEEEEE; border-radius:5px; padding:5px; margin:5px; width: 425px; font-size:90%; font-style:italic;line-height:20px;}
 .genome-view .legend .title {  font-weight:bold; text-align:center}
 .genome-view .legend .icon { display:inline-block; width: 1.0%; }
 .genome-view .legend .region { height: 20px; }
 .genome-view .legend .region.diffSize { height: 15px; }
-.genome-view .legend .feature { height: 5px; }
+.genome-view .legend .feature { height: 5px; display:inline-block; width:25px; }
 .genome-view .legend .feature.forward { background-color:#0000FF; }
 .genome-view .legend .feature.reverse { background-color:#FF0000; }
 
