@@ -716,41 +716,76 @@ sub rumIntronTitleUnified {
   my ($samples) = $f->get_tag_values('Samples');
   my ($scores) = $f->get_tag_values('Scores');
   my ($exps) = $f->get_tag_values('Exps');
+  my ($lours) = $f->get_tag_values('LOURS');
+  my ($sours) =  $f->get_tag_values('SOURS');
+  my ($lonrs) =  $f->get_tag_values('LONRS');
+  my ($sonrs) =  $f->get_tag_values('SONRS');
+
+  my ($notCans)  =  $f->get_tag_values('NOTCAN');
+
   my $start = $f->start;
   my $stop = $f->stop;
-  my $sum = eval join '+', split /[,|\|]/, $scores;
+
+  my $sum_lour = eval join '+', split /[,|\|]/, $lours;
+  my $sum_sour = eval join '+', split /[,|\|]/, $sours;
+
+  # sum=Score;  this should be the sum of the long and short unique reads;  bug int he score in the db
+  my $sum = $sum_lour + $sum_sour;
 
   my @sample_arr = split /\|/, $samples;
   my @score_arr  = split /\|/, $scores;
   my @exp_arr    = split /\|/, $exps;
+
+  my @lour_arr    = split /\|/, $lours;
+  my @sour_arr    = split /\|/, $sours;
+  my @lonrs_arr    = split /\|/, $lonrs;
+  my @sonrs_arr    = split /\|/, $sonrs;
+  my @notCan_arr   = split /\|/, $notCans;
+
   my $count = 0;
-  my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th></tr>";
+  my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th><th>Long Unique</th><th>Short Unique</th><th>Long Non-Unique</th><th>Short Non-Unique</th><th>Canonical</th></tr>";
   foreach my $exp (@exp_arr) {
      my $sample = $sample_arr[$count];
      my $score = $score_arr[$count];
+     my $lour_exps = $lour_arr[$count];
+     my $sour_exps = $sour_arr[$count];
+     my $lonrs_exps = $lonrs_arr[$count];
+     my $sonrs_exps = $sonrs_arr[$count];
+     my $notCan_exps = $notCan_arr[$count];
+
      $exp =~ s/_RSRC$//g;
      $exp =~ s/RNASeq//ig;
      $exp =~ s/_/ /g;
 
      my @sa = split /,/, $sample;
      my @sc = split /,/, $score;
+     my @lour = split /,/, $lour_exps;
+     my @sour = split /,/, $sour_exps;
+     my @lonrs = split /,/, $lonrs_exps;
+     my @sonrs = split /,/, $sonrs_exps;
+     my @notCans = split /,/, $notCan_exps;
+
      my $seen = 0;
      for(my $i = 0; $i < $#sa + 1; $i++) {
+
+       my $isCanonical = $notCans[$i] ? 'false' : 'true';
+       my $score = $lour[$i] + $sour[$i];
+
        if($seen == 0) {
-         $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$sc[$i]</td></tr>"; 
+         $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$score</td><td>$lour[$i]</td><td>$sour[$i]</td><td>$lonrs[$i]</td><td>$sonrs[$i]</td><td>$isCanonical</td></tr>"; 
        } else {
-         $html .= "<tr><td></td><td>$sa[$i]</td><td>$sc[$i]</td></tr>"; 
+         $html .= "<tr><td></td><td>$sa[$i]</td><td>$score</td><td>$lour[$i]</td><td>$sour[$i]</td><td>$lonrs[$i]</td><td>$sonrs[$i]</td><td>$isCanonical</td></tr>"; 
        }
        $seen = 1;
      }
      $count++;
   }
   $html .= "</table>";
-  my $note = "Score for each sample is the number of unique reads for that sample <br/>and the overall score is the sum of all unique reads from all samples";
+  my $note = "The overall score is the sum of the short and long overlap unique reads from all samples.";
   my @data;
   push @data, [ '' => $html ];
   push @data, [ 'Location:'  => "$start - $stop"];
-  push @data, [ 'Scores'     => $sum ];
+  push @data, [ 'Score'     => $sum ];
   push @data, [ 'Note'     => $note ];
 #  hover('Unified Splice Site Junctions - RNASeq', \@data);
   hover($f, \@data); 
