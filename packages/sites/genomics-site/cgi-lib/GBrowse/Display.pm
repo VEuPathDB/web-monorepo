@@ -370,14 +370,13 @@ sub colorFromBinaryColor {
   }
 }
 
-
-
-
-sub rnaseqColorFromBigWigFiles {
+sub rnaseqColorFromBigWig {
   my $f = shift;
 
   my ($strand) = $f->get_tag_values('strand');
   my ($alignment) = $f->get_tag_values('alignment');
+
+  ######## strand specific rnaseq ######
 
   # pos strand unique = BLUE
   if($strand eq 'forward' && $alignment eq 'unique') {
@@ -388,7 +387,6 @@ sub rnaseqColorFromBigWigFiles {
     return 'red';
   }
 
-
   # pos strand unique = grey
   if($strand eq 'forward' && $alignment eq 'non-unique') {
     return 'grey';
@@ -398,10 +396,16 @@ sub rnaseqColorFromBigWigFiles {
     return 'lightgrey';
   }
 
+  ######## non strand specific rnaseq ######
+  if($alignment eq 'unique') {
+    return 'blue';
+  }
+  if($alignment eq 'non-unique') {
+    return 'grey';
+  }
+
   return 'black';
-}
-
-
+} 
 
 sub colorByRnaSeq {
   my $f = shift;
