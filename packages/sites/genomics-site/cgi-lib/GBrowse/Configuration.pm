@@ -72,11 +72,47 @@ sub site_version {
   return->getSiteVersionByProjectId($projectId);
 }
 
+sub lookupOrganismDirectory {
+  my ($self, $orgAbbrev) = @_;
+
+  if($self->{_organism_directory_map}->{$orgAbbrev}) {
+    return $self->{_organism_directory_map}->{$orgAbbrev};
+  }
+
+  my $dbh = $self->dbh();
+  my $sh = $dbh->prepare("select abbrev, name_for_filenames from apidb.organism");
+  $sh->execute();
+
+  my $rv = "ORGANISM_WEBSERVICE_DIR";
+  while(my ($abbrev, $name) = $sh->fetchrow_array()) {
+    $self->{_organism_directory_map}->{$abbrev} = $name;
+    $rv = $name if($abbrev eq $orgAbbrev);
+  }
+
+  $sh->finish();
+  return $rv;
+}
+
+
 sub bam_file_path {
+  my ($self, $orgAbbrev) = @_;
+
+  if($orgAbbrev) {
+    my $orgDirName = $self->lookupOrganismDirectory($orgAbbrev);
+    return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. "/$orgDirName/bam";
+  }
+
   return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. '/bam';
 }
 
 sub bigwig_file_path {
+  my ($self, $orgAbbrev) = @_;
+
+  if($orgAbbrev) {
+    my $orgDirName = $self->lookupOrganismDirectory($orgAbbrev);
+    return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. "/$orgDirName/bigwig";
+  }
+
   return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. '/bigwig';
 }
 
