@@ -133,9 +133,10 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
   var init = function() {
     // create placeholder for graph images
-    $img = $("<div></div>").prependTo(".param-group.empty").addClass("fold-change-img");
+    $img = $("<div></div>").appendTo(".param-group.empty").addClass("fold-change-img");
     // get a handle on the form element -- we use .last to handle nested forms
     $form = $("form#form_question").last();
+    $form.addClass("fold-change");
 
     // load slides
     for (var i = 1; i <= 36; i++) {
