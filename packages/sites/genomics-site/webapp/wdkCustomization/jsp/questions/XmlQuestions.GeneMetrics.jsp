@@ -453,13 +453,19 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
   </tbody>
   </table>
 <!-- </div> -->
-
+<br><br>
 
 <c:if test="${project ne 'FungiDB'}" >
 <table width="100%">
-<tr><td>
-<font size="-1">
 
+<tr><td colspan="10"><font size="-2">
+	* In addition, <i>Giardia Assemblage A isolate WB</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
+<tr><td colspan="10"><font size="-2">
+	** Community entries:  These are counts <b>at release time</b>; there might be more now.</font></td></tr>
+
+<tr><td><hr></td></tr>
+
+<tr><td><font size="-1">
 <b>Acanthamoeba</b>: Aca, <i>A. castellanii</i>;
 <b>Annacaliia</b>: Aal, <i>A. algerae</i>;
 <b>Babesia</b>: Bbo, <i>B. bovis</i>; Bmi, <i>B. microti</i>;
@@ -481,10 +487,8 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <b>Vavraia</b>: Vcu, <i>V. culicis</i>;
 <b>Vittaforma</b>: Vco, <i>V. corneae</i>. 
 
-</font><br>
-</td></tr>
-<br>
-<tr><td colspan="10"><font size="-2"><hr>* In addition, <i>Giardia Assemblage A isolate WB</i> has 3766 deprecated genes that are not included in the official gene count.</font></td></tr>
+</font></td></tr>
+
 </table>
 </c:if>
 

@@ -57,10 +57,18 @@
     </div>  <!-- id="header_rt" -->
 
     <!--~~~~~~~ TOP LEFT: SITE name and release DATE ~~~~~~~-->
-    <a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a>
+  <c:choose>
+  <c:when test="${project == 'HostDB'}">
+    <a href="/" style="font-color:blue;font-size:600%;font-weight:bold;position:relative;left:30px;top:5px">HostDB</a>
+    <span style="position:relative;top:-30px;left:29px">Version ${version}</span>
+    <span style="position:relative;top:-20px;left:-20px">${releaseDate_formatted}</span>
+  </c:when>
+  <c:otherwise>
+  <a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a>
     Version ${version}<br/>
     ${releaseDate_formatted}
-
+  </c:otherwise>
+  </c:choose>
   </div>
 
   <!--~~~~~~~ REST OF PAGE ~~~~~~~-->

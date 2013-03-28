@@ -1,0 +1,356 @@
+@variables {
+  TextColor: yellow;
+}
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	background-image: url(/assets/images/PiroplasmaDB/background_s.jpg);
+}
+
+.coloredtext {         /* no link */
+	color: #6f223a;     /*  #9a5b37;      #6f4230;   */
+}
+
+a:link, a:visited {
+	color: #316e9f; 
+}
+
+a:hover, a:active {
+	color: #6f223a;    /*  #9a5b37;    */
+}
+a[name]:link {
+	color: black;
+}
+a[name]:visited {
+	color: black;
+}
+
+a[name]:hover, a[name]:active {
+	color:  black;
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header {
+	background-image: url(../images/PiroplasmaDB/backgroundtop_s.jpg);
+}
+
+#header2 {
+	background-image: url(../images/PiroplasmaDB/backgroundtop_s.jpg);
+}
+
+
+#header_rt {
+   color: #6f223a;     /*   #9a5b37;   #6f4230; */
+}
+
+#header_rt a:link, #header_rt a:visited {
+   color: #6f223a;    /*    #9a5b37;   #6f4230; */
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER DROPDOWN MENU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+#nav-top {
+	color: #316e9f;  /*  #9a5b37;   */
+}
+
+#nav-top a:link, #nav-top a:visited {
+	color: #316e9f;    
+}
+
+#nav-top li ul {  /* second-level lists */
+	background-image: url(../images/PiroplasmaDB/footer.png);
+	border-color:#316e9f;  /*   #9a5b37; */
+	list-style-image: url(../images/PiroplasmaDB/bullet_arrow.gif);
+}
+
+#nav-top li ul a:link, #nav-top li ul a:visited {
+	color: #316e9f;   /*  #9a5b37;  */
+}
+
+#nav-top li ul a:hover, #nav-top li ul a:active {
+	color: #6f223a;  
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =STRUCTURE 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#piro_menubar {
+	min-width: 935px; /* to make space for My Favorites */
+	height: 19px;
+	text-align: left;
+	background-image: url(../images/PiroplasmaDB/menu_bar.png);
+	background-repeat: repeat-x;
+	
+	padding-left: 45px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+	clear: both;
+	z-index: 1;
+}
+	
+#contentcolumn {
+	background-image: url(../images/PiroplasmaDB/footer.png);
+	border: 1px solid #6f223a;   /*  #9a5b37;  #20691a; */
+}
+
+#contentcolumn2 {
+	background-image: url(../images/PiroplasmaDB/footer.png);
+	border: 1px solid #6f223a;  /*  #9a5b37;  #20691a; */
+}
+
+#mysearchhist {
+	background-image: url(../images/PiroplasmaDB/bubble_my_searchbox.png);
+	border: 1px solid #6f223a;   /*  #9a5b37;  #20691a; */
+}
+
+
+#main_tools {
+	background-image: url(../images/PiroplasmaDB/tools_bckgnd.jpg);
+}
+
+#about_us_left {
+	background-color: #bfccdf;
+	list-style-image: url(../images/PiroplasmaDB/bullet_arrow.gif);
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Top Menu Bar Dropdown List
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#menu a:hover, #menu a:active, #strategy_tabs #selected a {
+	color: #6f223a;    /*  #9a5b37;    #560000;  */
+}
+#menu ul ul a:link, #menu ul ul a:visited{
+	border-bottom-color:  #6f223a;   /*  #9a5b37; #3c8935; */
+}
+
+#menu ul ul a:hover, #menu ul ul a:active{
+	border-bottom-color:  #6f223a;    /*  #9a5b37; #3c8935;  */
+	color: #316e9f;   //#b30101;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Menu Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.menu_lefttop_drop {
+   border-color:  #6f223a;  /8  #9a5b37; #20691A; */  /* color as in contentcolumn border */
+}
+
+#menu_lefttop a.heading {
+	background-image: url(../images/PiroplasmaDB/menu_lft2.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Search Boxes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.search-box{
+   border: solid 1px #6f223a;;    /*  #9a5b37; #1c7c12;   */
+} 
+
+.search-box .textbox{
+	border: solid 1px #b3b3b3;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Fonts 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+h1 {
+	color: #6f223a;   /* #9a5b37; #20691a; */
+}
+h2 {
+  	color: #6f223a;     /*   #9a5b37; #20691a;  */
+}
+
+.h2center, .h3left,.h3center, .h4left {
+  	color: #6f223a;    /*  #9a5b37; #3c8935;  */
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOOTER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
+#footer{
+   background-image: url(../images/PiroplasmaDB/footer.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TABLES 
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+td.headerrow {
+	color: #0c3f60;
+	background-image: url(../images/PiroplasmaDB/trheader.png);
+	background-repeat: repeat-x;
+}
+
+
+tr.headerrow {
+	color: #0c3f60;
+}
+
+tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
+	background-image: url(../images/PiroplasmaDB/trheader.png);
+}
+
+.flexigrid tr.headerrow th:hover {
+	background-image: url(../images/PiroplasmaDB/trhover.png);
+}
+
+td.subheaderrow {
+	background-image: url(../images/PiroplasmaDB/trsubhead.png);
+}
+
+tr.subheaderrow th {
+	background-image: url(../images/PiroplasmaDB/trsubhead.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.headerrow2 td{
+        color: #0c3f60;
+	background-image: url(../images/PiroplasmaDB/trheader.png);
+}
+
+tr.subheaderrow2 td{
+	background-image: url(../images/PiroplasmaDB/trsubhead.png);
+}
+
+a.queryGridInactive {
+        color:              #C8C8C8;
+}
+a.queryGridActive {
+        color:              #0c3f60;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =END OF TABLES FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.subheaderrow th {
+	border-color: #0c3f60;
+}
+
+tr.headerrow th { 
+	border-color: #0c3f60;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =RED BUTTON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WorkSpace Divs 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+div.Workspace {
+	border-color: #316e9f;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ABOUT US and HELP PAGES SIDEBAR  I think it is unused
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.twoColHybLt #sidebar1 {
+	background-image: url(../images/PiroplasmaDB/aboutus.png);
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WARNING BOXES 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ADVANCED STRATEGY PAGING 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =MISC 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+span.marker a:link, span.marker a:visited {
+	color: #7D0101;
+}
+
+
+/* APPLICATION PAGE STYLES */
+
+#strategy_tabs a:link, #strategy_tabs a:visited {
+    background-color: #E8EBF0;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	border: 1px solid #3c8935;
+}
+
+.blockPage{
+	background-image: url(/assets/images/PiroplasmaDB/footer.png);
+}
+
+.flexigrid div.hDiv
+{
+	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 history.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Strategy.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter_menu.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#query_form {
+	border: 1px solid #772841;	
+}
+
+
+
+/*THE END */

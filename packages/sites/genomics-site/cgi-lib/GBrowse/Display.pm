@@ -241,8 +241,15 @@ sub rumIntronBgColorFromSample {
 
 sub rumIntronBgColorFromScore {
   my $f = shift;
-  my ($scores) = $f->get_tag_values('Scores'); 
-  my $sum = eval join '+', split /[,|\|]/, $scores;
+
+  my ($lours) = $f->get_tag_values('LOURS');
+  my ($sours) =  $f->get_tag_values('SOURS');
+
+  my $sum_lour = eval join '+', split /[,|\|]/, $lours;
+  my $sum_sour = eval join '+', split /[,|\|]/, $sours;
+
+  my $sum = $sum_lour + $sum_sour;
+
   # http://www.computerhope.com/htmcolor.htm
   return '#F88017' if $sum <= 5;   # Dark Orange
   return '#F87217' if $sum <= 10;  # Dark Orange1
@@ -255,8 +262,15 @@ sub rumIntronBgColorFromScore {
 
 sub rumIntronHeightFromScore {
   my $f = shift;
-  my ($scores) = $f->get_tag_values('Scores'); 
-  my $sum = eval join '+', split /[,|\|]/, $scores;
+
+  my ($lours) = $f->get_tag_values('LOURS');
+  my ($sours) =  $f->get_tag_values('SOURS');
+
+  my $sum_lour = eval join '+', split /[,|\|]/, $lours;
+  my $sum_sour = eval join '+', split /[,|\|]/, $sours;
+
+  my $sum = $sum_lour + $sum_sour;
+
   # http://www.computerhope.com/htmcolor.htm
   return 5 if $sum <= 5;   # Dark Orange
   return 6 if $sum <= 10;  # Dark Orange1
@@ -370,14 +384,13 @@ sub colorFromBinaryColor {
   }
 }
 
-
-
-
-sub rnaseqColorFromBigWigFiles {
+sub rnaseqColorFromBigWig {
   my $f = shift;
 
   my ($strand) = $f->get_tag_values('strand');
   my ($alignment) = $f->get_tag_values('alignment');
+
+  ######## strand specific rnaseq ######
 
   # pos strand unique = BLUE
   if($strand eq 'forward' && $alignment eq 'unique') {
@@ -388,7 +401,6 @@ sub rnaseqColorFromBigWigFiles {
     return 'red';
   }
 
-
   # pos strand unique = grey
   if($strand eq 'forward' && $alignment eq 'non-unique') {
     return 'grey';
@@ -398,10 +410,16 @@ sub rnaseqColorFromBigWigFiles {
     return 'lightgrey';
   }
 
+  ######## non strand specific rnaseq ######
+  if($alignment eq 'unique') {
+    return 'blue';
+  }
+  if($alignment eq 'non-unique') {
+    return 'grey';
+  }
+
   return 'black';
-}
-
-
+} 
 
 sub colorByRnaSeq {
   my $f = shift;

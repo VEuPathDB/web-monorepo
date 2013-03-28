@@ -97,6 +97,9 @@ sub new {
   $dbh->{LongTruncOk} = 0;
   $dbh->{LongReadLen} = 10000000;
 
+  # get 500 rows at a time for efficiency.
+  $dbh->{RowCacheSize} = 500;
+
   $self->dbh($dbh);
   $self->parser(ApiCommonWebsite::Model::SqlXmlParser->new($sqlfile, $projectId, 0));
 

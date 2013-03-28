@@ -172,23 +172,6 @@ ${attrs['organism'].value}<br>
 <!-- gene alias table -->
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
 
-<!-- Mercator / Mavid alignments -->
-<c:set var="mercatorAlign">
-<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
-                    contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
-                    availableGenomes=""/>
-</c:set>
-
-<imp:toggle isOpen="true"
-  name="mercatorAlignment"
-  displayName="Multiple Sequence Alignment"
-  content="${mercatorAlign}"
-  attribution=""/>
-
-
-
-
-
 <imp:pageDivider name="Annotation"/>
 <%--- Notes --------------------------------------------------------%>
 
@@ -346,9 +329,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/hostdbaa/?name=${wd
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
+<%--
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
   ${attrs['ssgcid_request_link']}
 </c:if>
+--%>
 
 </c:if>
 

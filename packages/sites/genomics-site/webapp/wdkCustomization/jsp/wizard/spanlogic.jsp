@@ -86,7 +86,7 @@ Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span>
 <div id="spanLogicParams">
 	<imp:answerParamInput qp="${pMap['span_a']}"/>
 	<imp:answerParamInput qp="${pMap['span_b']}"/>
-	<input type="hidden" value="${wdkStep.recordClass.DisplayName}" id="span_a_type"/>
+	<input type="hidden" value="${wdkStep.recordClass.displayName}" id="span_a_type"/>
 	<input type="hidden" value="${importStep.recordClass.displayName}" id="span_b_type"/>
 	<c:if test="${action == 'revise'}">
           <c:forEach items="${spanStep.params}" var="spanParam">

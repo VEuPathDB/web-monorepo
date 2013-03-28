@@ -22,6 +22,8 @@
 
 <c:set var="giardiaQuestions" value="G.l.study:Three Strains (Svard),GeneQuestions.GenesByRNASeqSvard3StagesFC,GeneQuestions.GenesByRNASeqSvard3StagesPercentile"/>
 
+<c:set var="hostQuestions" value="T.g.study:ME49 Infection (Gregory),GeneQuestions.GenesByRNASeqTgME49HumanFoldChange,GeneQuestions.GenesByRNASeqTgME49HumanPercentile"/>
+
 <c:set var="microsporidiaQuestions" value="N.p.study:N. parisii Infection Time Series in C. elegans (Cuomo et al.),GeneQuestions.GenesByRNASeqTroemelCeInfectionFC,GeneQuestions.GenesByRNASeqTroemelCeInfectionPercentile"/>
 
 <%-- END OF QUESTIONS --%>
@@ -60,6 +62,9 @@
     <c:when test="${projectId == 'GiardiaDB'}">
       <imp:queryList columns="${columns}" questions="${giardiaQuestions}"/>
     </c:when>
+    <c:when test="${projectId == 'HostDB'}">
+      <imp:queryList columns="${columns}" questions="${hostQuestions}"/>
+    </c:when>
 
     <c:when test="${projectId == 'MicrosporidiaDB'}">
       <imp:queryList columns="${columns}" questions="${microsporidiaQuestions}"/>
@@ -72,7 +77,7 @@
     </c:when>
 		--%>
     <c:otherwise>  <%-- it must be the portal --%>
-      <imp:queryList columns="${columns}" questions="${plasmoQuestions},${toxoQuestions},${tritrypQuestions},${giardiaQuestions},${microsporidiaQuestions}"/>
+      <imp:queryList columns="${columns}" questions="${plasmoQuestions},${toxoQuestions},${tritrypQuestions},${giardiaQuestions},${hostQuestions},${microsporidiaQuestions}"/>
     </c:otherwise>
    </c:choose>
 
