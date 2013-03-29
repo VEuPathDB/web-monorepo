@@ -14,14 +14,16 @@
   <tr>
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
-    <th colspan=5 align="center"><i>Leishmania </i></th>
+    <th colspan=6 align="center"><i>Leishmania </i></th>
     <th colspan=4 align="center"><i>Trypanosoma brucei</i></th>
     <th rowspan=2 align="center"><i>Trypanosoma<br>congolense</i></th>
-    <th colspan=4 align="center"><i>Trypanosoma cruzi</i></th>
+    <th colspan=6 align="center"><i>Trypanosoma cruzi</i></th>
+    <th rowspan=2 align="center"><i>Trypanosoma<br>evansi</i></th>
     <th rowspan=2 align="center"><i>Trypanosoma<br>vivax</i></th>
   </tr>
   <tr>
     <th><i>braziliensis</i></th>
+    <th><i>donovani</i></th>
     <th><i>infantum</i></th>
     <th><i>major</i></th>
     <th><i>mexicana</i></th>
@@ -34,6 +36,8 @@
     <th>esmeraldo</th>
     <th>non-esmeraldo</th>
     <th>unassigned</th>
+    <th>marinkellei</th>
+    <th>Sylvio</th>
   </tr>
   <tr align="center">
     <td>
@@ -53,6 +57,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="lbr_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="ldo_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
@@ -131,6 +141,24 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tcu_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tcmar_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tcsyl_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tevansi_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
