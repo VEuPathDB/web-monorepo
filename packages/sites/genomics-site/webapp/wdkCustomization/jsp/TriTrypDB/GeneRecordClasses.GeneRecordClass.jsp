@@ -173,10 +173,6 @@ ${organism}<br>
 
 <c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
-<c:set var="attribution">
-L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_Annotation_chromosomes,T.bruceigambiense_Annotation,T.congolense_Annotation_chromosomes,T.cruziEsmeraldo_Annotation_Chromosomes,T.cruziNonEsmeraldo_chromosomes,T.cruziNonEsmeraldo_Annotation_Chromosomes,T.vivax_chromosomes,T.vivax_Annotation_chromosomes
-</c:set>
-
 <c:if test="${gtracks ne ''}">
 
   <c:set var="gnCtxUrl">
@@ -201,7 +197,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
+    attribution=""
   />
 
 </c:if> <%-- {tracks ne ''} %-->
@@ -212,7 +208,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 <c:if test='${binomial eq "Trypanosoma cruzi"}'>
 
 <imp:wdkTable tblName="Genbank" isOpen="true"
-               attribution="TcruziContigsAndAnnotations,TcruziEsmeraldo_likeChromosomeMap,TcruziNonEsmeraldo_likeChromosomeMap" />
+               attribution="" />
 </c:if>
 
 <c:if test="${strand eq '-'}">
@@ -310,7 +306,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
     </div>
   </c:set>
 
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_TrypDB"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
                  postscript="${orthomclLink}"/>
 </c:if>
 
@@ -318,24 +314,16 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 <%-- EC ------------------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
 
-<c:set var="attribution">
-enzymeDB_RSRC
-</c:set>
-
 <imp:wdkTable tblName="EcNumber" isOpen="true"
-               attribution="${attribution}"/>
+               attribution=""/>
 
 </c:if>
 
 <%-- GO ------------------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
 
-<c:set var="attribution">
-GO,InterproscanData
-</c:set>
-
 <imp:wdkTable tblName="GoTerms" isOpen="true"
-               attribution="${attribution}"/>
+               attribution=""/>
 
 </c:if>
 
@@ -353,17 +341,11 @@ GO,InterproscanData
     <c:set var="ptracks">
     TarletonMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
-    <c:set var="attribution">
-    Tcruzi_Proteomics_Amastigote,InterproscanData,Tcruzi_Proteomics_Amastigote
-    </c:set>
 	</c:when>
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
     <c:set var="ptracks">
     StuartMassSpecPeptides+FergusonMassSpecPeptides+AlmeidaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    InterproscanData,Tbrucei_Proteomics_Procyclic_Form,Tbrucei_Ferguson_Phospho_Proteome_RSRC
     </c:set>
 	</c:when>
 
@@ -371,17 +353,11 @@ GO,InterproscanData
     <c:set var="ptracks">
     InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
-    <c:set var="attribution">
-    InterproscanData
-    </c:set>
 </c:when>
 
   <c:when test='${organismFull eq "Leishmania infantum"}'>
     <c:set var="ptracks">
     LinfantumMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    InterproscanData,Linfantum_Proteomics_SDS_Amastigote,Linfantum_Proteomics_glycosylation
     </c:set>
 	</c:when>
 
@@ -389,17 +365,11 @@ GO,InterproscanData
     <c:set var="ptracks">
     SilvermanMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
-    <c:set var="attribution">
-    Lmajor_Proteomics_Exosomes,InterproscanData,Linfantum_Proteomics_SDS_Amastigote
-    </c:set>
 	</c:when>
 
   <c:when test='${organismFull eq "Leishmania braziliensis"}'>
     <c:set var="ptracks">
     CuervoMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    Lbraziliensis_Proteomics_Promastigotes, InterproscanData,Linfantum_Proteomics_SDS_Amastigote
     </c:set>
 	</c:when>
 
@@ -407,17 +377,11 @@ GO,InterproscanData
     <c:set var="ptracks">
     AebischerMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
     </c:set>
-    <c:set var="attribution">
-    Lmexicana_Proteomics_Aebischer_GelFree_RSRC,InterproscanData,Linfantum_Proteomics_SDS_Amastigote
-    </c:set>
   </c:when> 
 
   <c:when test='${organismFull eq "Leishmania tarentolae Parrot-TarII"}'>
     <c:set var="ptracks">
     InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    InterproscanData
     </c:set>
   </c:when> 
 
@@ -444,7 +408,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <imp:toggle name="proteinContext"  displayName="Protein Features"
              content="${proteinFeaturesImg}"
-             attribution="${attribution}"/>
+             attribution=""/>
 
 </c:if> <%-- ptracks ne '' --%>
 </c:if> <%-- so_term_name eq 'protein_coding --%>
@@ -487,30 +451,30 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <c:choose>
   <c:when test='${organismFull eq "Leishmania infantum"}'>
      <imp:wdkTable tblName="MassSpec" isOpen="true" 
-          attribution="Linfantum_Proteomics_glycosylation,Linfantum_Proteomics_SDS_Amastigote,Linfantum_Proteomics_OuelletteM"/>
+          attribution=""/>
   </c:when>
 
   <c:when test='${organismFull eq "Leishmania major strain Friedlin"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution="Lmajor_Proteomics_Exosomes"/>
+     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
   </c:when>
 
   <c:when test='${organismFull eq "Leishmania braziliensis"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution="Lbraziliensis_Proteomics_Promastigotes"/>
+     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
   </c:when>
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution="Tbrucei_Proteomics_Procyclic_Form"/>
+     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
 
-     <imp:wdkTable tblName="MassSpecMod" isOpen="true" attribution="Tbrucei_Ferguson_Phospho_Proteome_RSRC"/> 
+     <imp:wdkTable tblName="MassSpecMod" isOpen="true" attribution=""/> 
   </c:when>
 
   <c:when test='${binomial eq "Trypanosoma cruzi"}'>
      <imp:wdkTable tblName="MassSpec" isOpen="true" 
-          attribution="Tcruzi_Proteomics_Amastigote,Tcruzi_Proteomics_Membrane_Protein,Tcruzi_Proteomics_Reservosomes_B1TU"/>
+          attribution=""/>
   </c:when>
 </c:choose>
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
@@ -520,7 +484,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 
 
-<imp:wdkTable tblName="Epitopes" isOpen="true" attribution="IEDB_Epitopes"/>
+<imp:wdkTable tblName="Epitopes" isOpen="true" attribution=""/>
 
 
 <br />
@@ -556,31 +520,31 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <%---- Splice Sites table ---------------------------------------------%>
 <c:if test="${binomial eq 'Leishmania infantum'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Linfantum_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 <c:if test="${binomial eq 'Leishmania major'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC,Tbrucei_RNASeq_Spliced_Leader_Sites_Tschudi_RSRC"/>
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 <%--- Not ready for build 14
 <c:if test="${binomial eq 'Trypanosoma cruzi'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC"/>
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 ----%>
 
 <%---- Poly A Sites table ---------------------------------------------%>
 <c:if test="${binomial eq 'Leishmania major' }">
-     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution="Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
+     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution=""/>
 </c:if>
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
-     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution="Tbrucei_RNASeq_PolyA_Sites_Tschudi_RSRC"/>
+     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution=""/>
 </c:if>
 
 <%-- SAGE Tag table ------------------------------------------------------%>
 <c:if test="${binomial eq 'Trypanosoma brucei' }">
-<imp:wdkTable tblName="SageTags" attribution="TrypSageTagFreqs"/>
+<imp:wdkTable tblName="SageTags" attribution=""/>
 </c:if>
 
 
