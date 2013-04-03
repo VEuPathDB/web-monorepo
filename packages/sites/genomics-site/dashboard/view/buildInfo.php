@@ -6,11 +6,36 @@
  */
 
 require_once dirname(__FILE__) . "/../lib/modules/BuildInfo.php";
+require_once dirname(__FILE__) . "/../lib/modules/StageValues.php";
 
 $build_info = new BuildInfo();
 $build = $build_info->get_data_map();
+
+$stage_values = new StageValues();
+$stages = $stage_values->get_data_map();
 ?>
 
+<h2>Website Stage</h2>
+
+<?php
+$stage_value = getenv('WEBSITE_RELEASE_STAGE');
+
+if ($stage_value) {
+print '<p>';
+print "<b>Website Release Stage:</b> " . $stages[$stage_value] . ' (' . $stage_value . ')';
+print '</p>';
+
+if (isset($_COOKIE["website_release_stage"])) {
+  print "<p class='warn'>The stage is set for this browser by the cookie '<b>website_release_stage</b>' and may differ 
+  from the actual stage. Delete this cookie or restart your browser to revert to the default.</p>";
+}
+
+print "<br><a href='set_website_release_stage_20'>change</a>";
+} else {
+  print "The 'WEBSITE_RELEASE_STAGE' environment variable is not set.";
+}
+
+ ?>
 <h2>Build State</h2>
 <p>
   Last build  was for '<b><?php print $build_info->get('!Last.build.component') ?></b>
