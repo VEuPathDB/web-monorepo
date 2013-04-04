@@ -30,11 +30,13 @@ if ($stage_value) {
     print "<p class='warn'>The default stage for this site is overridden for this browser session by the cookie '<b>website_release_stage</b>' and may differ 
     from the actual stage. Delete this cookie or restart your browser to revert to the default.</p>";
   }
-  
+
+  /**  
   // only development sites can change their stage on the fly
   if ($stage_value == $stages['DEVELOPMENT'] || isset($_COOKIE["website_release_stage"])) {
     print "<p><a href='set_website_release_stage_70'>change</a></p>";
   }
+  */
 } else {
   print "The 'WEBSITE_RELEASE_STAGE' environment variable is not set.";
 }
