@@ -12,6 +12,7 @@ $build_info = new BuildInfo();
 $build = $build_info->get_data_map();
 
 $stage_values = new StageValues();
+$flipped_stages = $stage_values->get_flipped_data_map();
 $stages = $stage_values->get_data_map();
 ?>
 
@@ -21,16 +22,19 @@ $stages = $stage_values->get_data_map();
 $stage_value = getenv('WEBSITE_RELEASE_STAGE');
 
 if ($stage_value) {
-print '<p>';
-print "<b>Website Release Stage:</b> " . $stages[$stage_value] . ' (' . $stage_value . ')';
-print '</p>';
-
-if (isset($_COOKIE["website_release_stage"])) {
-  print "<p class='warn'>The stage is set for this browser by the cookie '<b>website_release_stage</b>' and may differ 
-  from the actual stage. Delete this cookie or restart your browser to revert to the default.</p>";
-}
-
-print "<br><a href='set_website_release_stage_20'>change</a>";
+  print '<p>';
+  print "<b>Website Release Stage:</b> " . $flipped_stages[$stage_value] . ' (' . $stage_value . ')';
+  print '</p>';
+  
+  if (isset($_COOKIE["website_release_stage"])) {
+    print "<p class='warn'>The default stage for this site is overridden for this browser session by the cookie '<b>website_release_stage</b>' and may differ 
+    from the actual stage. Delete this cookie or restart your browser to revert to the default.</p>";
+  }
+  
+  // only development sites can change their stage on the fly
+  if ($stage_value == $stages['DEVELOPMENT'] || isset($_COOKIE["website_release_stage"])) {
+    print "<p><a href='set_website_release_stage_70'>change</a></p>";
+  }
 } else {
   print "The 'WEBSITE_RELEASE_STAGE' environment variable is not set.";
 }
