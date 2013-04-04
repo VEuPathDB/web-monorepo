@@ -14,23 +14,43 @@
   <tr>
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
-    <th colspan=2 align="center"><i>Agaricomycetes</i></th>
-    <th colspan=1 align="center"><i>Chytridiomycetes</i></th>
-    <th colspan=15 align="center"><i>Eurotiomycetes</i></th>
-    <th colspan=2 align="center"><i>Leotiomycetes</i></th>
     <th colspan=6 align="center"><i>Oomycetes</i></th>
-    <th colspan=1 align="center"><i>Pucciniomycetes</i></th>
-    <th colspan=2 align="center"><i>Saccharomycetes</i></th>
-    <th colspan=3 align="center"><i>Schizosaccharomycetes</i></th>
-    <th colspan=9 align="center"><i>Sordariomycetes</i></th>
-    <th colspan=6 align="center"><i>Tremellomycetes</i></th>
-    <th colspan=3 align="center"><i>Ustilaginomycetes</i></th>
+    <th colspan=1 align="center"><i>Chytridiomycetes</i></th>
     <th colspan=2 align="center"><i>Zygomycetes</i></th>
+    <th colspan=2 align="center"><i>Agaricomycetes</i></th>
+    <th colspan=6 align="center"><i>Tremellomycetes</i></th>
+    <th colspan=1 align="center"><i>Pucciniomycetes</i></th>
+    <th colspan=3 align="center"><i>Ustilaginomycetes</i></th>
+    <th colspan=3 align="center"><i>Schizosaccharomycetes</i></th>
+    <th colspan=15 align="center"><i>Eurotiomycetes</i></th>
+    <th colspan=9 align="center"><i>Sordariomycetes</i></th>
+    <th colspan=2 align="center"><i>Leotiomycetes</i></th>
+    <th colspan=2 align="center"><i>Saccharomycetes</i></th>
   </tr>
-  <tr>
+    <th><i>H.ara</i></th>
+    <th><i>P.cap</i></th>
+    <th><i>P.inf</i></th>
+    <th><i>P.ram</i></th>
+    <th><i>P.soj</i></th>
+    <th><i>P.ult</i></th>
+    <th><i>B.den</i></th>
+    <th><i>M.cir</i></th>
+    <th><i>R.ory</i></th>
     <th><i>C.cin</i></th>
     <th><i>P.chr</i></th>
-    <th><i>B.den</i></th>
+    <th><i>C.gat</i> R265</th>
+    <th><i>C.gat</i> WM276</th>
+    <th><i>C.neo</i> H99</th>
+    <th><i>C.neo</i> B3501</th>
+    <th><i>C.neo</i> JEC21</th>
+    <th><i>T.mes</i></th>
+    <th><i>P.gra</i></th>
+    <th><i>M.glo</i></th>
+    <th><i>S.rei</i></th>
+    <th><i>U.may</i></th>
+    <th><i>S.jap</i></th>
+    <th><i>S.oct</i></th>
+    <th><i>S.pom</i></th>
     <th><i>A.car</i></th>
     <th><i>A.cla</i></th>
     <th><i>A.fla</i></th>
@@ -46,20 +66,6 @@
     <th><i>N.fis</i></th>
     <th><i>P.mar</i></th>
     <th><i>T.sti</i></th>
-    <th><i>B.fuc</i></th>
-    <th><i>S.scl</i></th>
-    <th><i>H.ara</i></th>
-    <th><i>P.cap</i></th>
-    <th><i>P.inf</i></th>
-    <th><i>P.ram</i></th>
-    <th><i>P.soj</i></th>
-    <th><i>P.ult</i></th>
-    <th><i>P.gra</i></th>
-    <th><i>C.alb</i></th>
-    <th><i>S.cer</i></th>
-    <th><i>S.jap</i></th>
-    <th><i>S.oct</i></th>
-    <th><i>S.pom</i></th>
     <th><i>F.oxy</i></th>
     <th><i>F.ver</i></th>
     <th><i>F.gra</i></th>
@@ -69,17 +75,115 @@
     <th><i>N.tet</i></th>
     <th><i>S.mac</i></th>
     <th><i>T.ree</i></th>
+    <th><i>B.fuc</i></th>
+    <th><i>S.scl</i></th>
+    <th><i>C.alb</i></th>
+    <th><i>S.cer</i></th>
+    <th><i>H.ara</i></th>
+    <th><i>P.cap</i></th>
+    <th><i>P.inf</i></th>
+    <th><i>P.ram</i></th>
+    <th><i>P.soj</i></th>
+    <th><i>P.ult</i></th>
+    <th><i>B.den</i></th>
+    <th><i>M.cir</i></th>
+    <th><i>R.ory</i></th>
+    <th><i>C.cin</i></th>
+    <th><i>P.chr</i></th>
     <th><i>C.gat</i> R265</th>
     <th><i>C.gat</i> WM276</th>
     <th><i>C.neo</i> H99</th>
     <th><i>C.neo</i> B3501</th>
     <th><i>C.neo</i> JEC21</th>
     <th><i>T.mes</i></th>
+    <th><i>P.gra</i></th>
     <th><i>M.glo</i></th>
     <th><i>S.rei</i></th>
     <th><i>U.may</i></th>
+    <th><i>S.jap</i></th>
+    <th><i>S.oct</i></th>
+    <th><i>S.pom</i></th>
+    <th><i>A.car</i></th>
+    <th><i>A.cla</i></th>
+    <th><i>A.fla</i></th>
+    <th><i>A.fum</i></th>
+    <th><i>A.nig</i></th>
+    <th><i>A.ter</i></th>
+    <th><i>A.nid</i></th>
+    <th><i>C.imm</i> H538.4</th>
+    <th><i>C.imm</i> RS</th>
+    <th><i>C.pos</i></th>
+    <th><i>H.cap</i> NAm1</th>
+    <th><i>H.cap</i> G186AR</th>
+    <th><i>N.fis</i></th>
+    <th><i>P.mar</i></th>
+    <th><i>T.sti</i></th>
+    <th><i>F.oxy</i></th>
+    <th><i>F.ver</i></th>
+    <th><i>F.gra</i></th>
+    <th><i>M.ory</i></th>
+    <th><i>N.cra</i></th>
+    <th><i>N.dis</i></th>
+    <th><i>N.tet</i></th>
+    <th><i>S.mac</i></th>
+    <th><i>T.ree</i></th>
+    <th><i>B.fuc</i></th>
+    <th><i>S.scl</i></th>
+    <th><i>C.alb</i></th>
+    <th><i>S.cer</i></th>
+    <th><i>H.ara</i></th>
+    <th><i>P.cap</i></th>
+    <th><i>P.inf</i></th>
+    <th><i>P.ram</i></th>
+    <th><i>P.soj</i></th>
+    <th><i>P.ult</i></th>
+    <th><i>B.den</i></th>
     <th><i>M.cir</i></th>
     <th><i>R.ory</i></th>
+    <th><i>C.cin</i></th>
+    <th><i>P.chr</i></th>
+    <th><i>C.gat</i> R265</th>
+    <th><i>C.gat</i> WM276</th>
+    <th><i>C.neo</i> H99</th>
+    <th><i>C.neo</i> B3501</th>
+    <th><i>C.neo</i> JEC21</th>
+    <th><i>T.mes</i></th>
+    <th><i>P.gra</i></th>
+    <th><i>M.glo</i></th>
+    <th><i>S.rei</i></th>
+    <th><i>U.may</i></th>
+    <th><i>S.jap</i></th>
+    <th><i>S.oct</i></th>
+    <th><i>S.pom</i></th>
+    <th><i>A.car</i></th>
+    <th><i>A.cla</i></th>
+    <th><i>A.fla</i></th>
+    <th><i>A.fum</i></th>
+    <th><i>A.nig</i></th>
+    <th><i>A.ter</i></th>
+    <th><i>A.nid</i></th>
+    <th><i>C.imm</i> H538.4</th>
+    <th><i>C.imm</i> RS</th>
+    <th><i>C.pos</i></th>
+    <th><i>H.cap</i> NAm1</th>
+    <th><i>H.cap</i> G186AR</th>
+    <th><i>N.fis</i></th>
+    <th><i>P.mar</i></th>
+    <th><i>T.sti</i></th>
+    <th><i>F.oxy</i></th>
+    <th><i>F.ver</i></th>
+    <th><i>F.gra</i></th>
+    <th><i>M.ory</i></th>
+    <th><i>N.cra</i></th>
+    <th><i>N.dis</i></th>
+    <th><i>N.tet</i></th>
+    <th><i>S.mac</i></th>
+    <th><i>T.ree</i></th>
+    <th><i>B.fuc</i></th>
+    <th><i>S.scl</i></th>
+    <th><i>C.alb</i></th>
+    <th><i>S.cer</i></th>
+  <tr>
   </tr>
   <tr align="center">
     <td>
