@@ -35,7 +35,7 @@ my $response    = $agent->request($request);
 die $response->status_line unless $response->is_success;
 my $content     = $response->decoded_content;
 my $cookie      = $response->header('Set-cookie');
-my ($used_id)   = $cookie =~ /gbrowse_sess=([a-f0-9]+)/;
+my ($used_id)   = $cookie =~ /gbrowse2_sess=([a-f0-9]+)/;
 
 my $struct  = from_json($content);
 

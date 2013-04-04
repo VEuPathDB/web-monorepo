@@ -721,7 +721,7 @@ sub as_string {
 sub features {
     my $self    = shift;
     my $segment = $self->segment;
-    $self->db->features(-seq_id => $segment->seq_id,
+    $segment->features(-seq_id => $segment->seq_id,
 			-start  => $segment->start,
 			-end    => $segment->end,
 #			-class  => eval {$segment->class} || 'Sequence',

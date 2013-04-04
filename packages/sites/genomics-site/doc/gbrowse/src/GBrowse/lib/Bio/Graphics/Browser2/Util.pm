@@ -120,6 +120,8 @@ sub citation {
 
   my $keywords                 = $data_source->code_setting($label=>'keywords');
 
+	$c = &$c if ref $c eq 'CODE';
+
   $c          .= "<br><i>$keywords</i>"         if $keywords;
   return $c;
 }

@@ -46,7 +46,8 @@ sub configure_form {
   my $current_config = $self->configuration;
   my $html = p('Dump',
 	       popup_menu(-name   => $self->config_name('mode'),
-			  -values  => ['selected','all'],
+			  #-values  => ['selected','all'], # comments out 'all' option
+			  -values  => ['selected'],
 			  -default => $current_config->{mode},
 			  -override => 1,
 			 ),
@@ -62,7 +63,8 @@ sub configure_form {
 	       popup_menu(-name=>$self->config_name('region'),
 			  -default=>$current_config->{region},
 			  -override=>1,
-			  -values => ['selected','all'],
+			  #-values => ['selected','all'], # comments out 'all' option
+			  -values => ['selected'],
 			  -labels=>{all      => 'Across entire genome',
 				    selected => 'Across currently visible region'})
       );      
@@ -129,14 +131,19 @@ sub dump {
   my $mode          = $config->{mode}    || 'selected';
   my $entire_genome = $config->{region} && $config->{region} eq 'all';
   my $db            = $self->database;
-  my $whole_segment = $db->segment(Accession => $segment->seq_id) ||
-                      $db->segment($segment->seq_id);
+  #my $whole_segment = $db->segment(Accession => $segment->seq_id) ||
+  #                    $db->segment($segment->seq_id);
+  #my $whole_segment = $db->segment($segment->seq_id); 
   my $coords        = $config->{coords};
   my $embed         = $config->{embed};
 
-  my $thing_to_dump = $entire_genome ? $segment->db : $segment;
+  # eupath 5/11/2012, convert segment from MetaSegment to GUS::Segment
+  $segment = $db->segment(-name=>$segment->name, -start=>$segment->start, -stop=>$segment->stop);
+  #my $thing_to_dump = $entire_genome ? $segment->db : $segment;
+  my $thing_to_dump = $segment;
 
   # safest thing to do is to use embedded logic
+=c
   if ($version == 3 && $config->{print_config}) {
       my $dumper = Bio::Graphics::Browser2::TrackDumper->new(
 	  -data_source => $conf,
@@ -148,8 +155,9 @@ sub dump {
 	  ) or return;
       $dumper->print_datafile();
   }
-
-  elsif ($config->{print_config}) {
+=cut
+  #elsif ($config->{print_config}) {
+  if ($config->{print_config}) {
       Bio::Graphics::Browser2::TrackDumper->print_configuration
 	  ($self->browser_config,
 	   $mode eq 'selected' ? [$self->selected_tracks] : ()
@@ -186,7 +194,10 @@ sub print_gff {
     my @args;
     if ($mode eq 'selected') {
 	my @feature_types = $self->selected_features;
-	@args = (-types => \@feature_types);
+  my @sqlName = $self->selected_sqlName;
+  my @sqlParam = $self->selected_sqlParam;
+
+	@args = (-types => \@feature_types, -sqlName=>\@sqlName, -sqlParam => \@sqlParam);
     }
       
     my @feats = ();

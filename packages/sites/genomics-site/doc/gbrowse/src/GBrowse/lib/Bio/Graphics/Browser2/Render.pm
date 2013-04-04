@@ -64,7 +64,7 @@ sub new {
     ($data_source, $session) = @_;
   } elsif (@_ == 1) {
     my $globals = shift;
-    $requested_id = param('id')        || CGI::cookie('gbrowse_sess');
+    $requested_id = param('id')        || CGI::cookie('gbrowse2_sess');
     $authority    = param('authority') || CGI::cookie('authority');
     my $shared_ok = Bio::Graphics::Browser2::Action->shared_lock_ok(param('action'));
     $session      = $globals->authorized_session($requested_id, 
@@ -3100,7 +3100,9 @@ sub label2key {
   $key     ||= $source->setting($label => 'key');
   $key     ||= $key if defined $key;
   $key     ||= $label;
-  $key;
+  # eupathdb patch for callback on key 9/17/2012
+  return $key unless ref $key eq 'CODE';
+  &$key;
 }
 
 # convert Mb/Kb back into bp... or a ratio

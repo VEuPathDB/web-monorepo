@@ -3,12 +3,15 @@
 eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
+eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+
 use strict;
 use CGI;
 use Bio::Graphics::Browser2;
 use Bio::Graphics::Browser2::Render::HTML;
 
-umask 022;
+umask 0;
 
 my $fcgi    = Bio::Graphics::Browser2::Render->fcgi_request;
 my $init;

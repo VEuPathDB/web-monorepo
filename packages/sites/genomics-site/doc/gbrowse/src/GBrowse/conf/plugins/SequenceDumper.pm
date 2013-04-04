@@ -215,14 +215,25 @@ sub gff_dump {
   print "##See http://www.sanger.ac.uk/Software/formats/GFF/\n";
   print "##NOTE: Selected features dumped.\n";
   my @feature_types = $self->selected_features;
+
+  # eupathdb patch 3/5/2012
+  my @sqlName = $self->selected_sqlName;
+  my @sqlParam = $self->selected_sqlParam; 
+
   $segment->absolute(0);
-  my $iterator = $segment->get_seq_stream(-types => \@feature_types) or return;
+  my $iterator = $segment->get_seq_stream(-types => \@feature_types, -sqlName=>\@sqlName, -sqlParam => \@sqlParam) or return;
   while (my $f = $iterator->next_seq) {
       eval{$f->version(3)};
       my $s =$f->gff_string(1);
       chomp($s);
       print $s,"\n";
   }
+
+  print "##FASTA\n";
+  my $seq = $segment->seq;
+  $seq =~ s/(.{1,60})/$1\n/g;
+  print ">".$segment->ref,":",$segment->start,"..",$segment->stop, "\n";
+  print $seq;
 
   print end_pre() if $html;
   print end_html() if $html;

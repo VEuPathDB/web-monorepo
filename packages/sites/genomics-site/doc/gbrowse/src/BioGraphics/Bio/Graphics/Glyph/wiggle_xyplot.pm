@@ -212,7 +212,11 @@ sub draw_plot {
 	    $x2        = $right - ($x2-$left) if $flip;
  
 	    my $color = $score > $midpoint ? $positive : $negative;
+			if($score < 0) { 
+	    [int($x1+0.5),int($y2+0.5),int($x2+0.5),int($y1+0.5),$color,$lw];
+			} else {
 	    [int($x1+0.5),int($y1+0.5),int($x2+0.5),int($y2+0.5),$color,$lw];
+			}
 	} else {
 	    ();
 	}

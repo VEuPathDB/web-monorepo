@@ -285,7 +285,7 @@ sub render_search_form_objects {
     my $html = textfield(
         -name    => 'name',
         -id      => 'landmark_search_field',
-        -size    => 25,
+        -size    => 35,
         -default => $search_value,
 	-override=>1,
     );
@@ -723,7 +723,7 @@ sub render_actionmenu {
 			-class => 'dropdown downdown-horizontal'},
 		       li({-class=>'dir'},$self->translate('FILE'),
 			  ul(li($bookmark_link),
-			     li($share_link),
+			     #li($share_link),
 			     li({-class=>'dir'},a({-href=>'#'},$self->translate('EXPORT')),
 				ul(li(\@export_links))),
 			     $plugin_link ? li($plugin_link) : (),
@@ -1802,7 +1802,9 @@ sub plugin_menu {
   my %attributes = map {
     $_ => {
       'plugin_type' => $plugins->plugin($_)->type(),
-      'track_name'  => "plugin:".$plugins->plugin($_)->name(),
+      # eupath patch to fix the RestritionAnnotation bug
+      #'track_name'  => "plugin:".$plugins->plugin($_)->name(),
+      'track_name'  => "plugin:".$_,
       }
     }
     keys %$labels;

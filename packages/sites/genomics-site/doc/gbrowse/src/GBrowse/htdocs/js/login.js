@@ -1207,7 +1207,7 @@ function remove_openid_cookie() {
     var currentUrl  = String(String(document.location).split('#')[0]).split('?')[0];
         currentUrl  = String(currentUrl).split('http://')[1];
         currentUrl  = currentUrl.slice(currentUrl.indexOf('/'));
-    document.cookie = 'gbrowse_sess=; max-age=0; path='+currentUrl;
+    document.cookie = 'gbrowse2_sess=; max-age=0; path='+currentUrl;
 }
 
 //Retrieve the GET variables and pass them to the OpenID handler

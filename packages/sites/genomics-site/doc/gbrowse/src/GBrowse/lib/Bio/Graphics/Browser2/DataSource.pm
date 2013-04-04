@@ -403,8 +403,24 @@ sub plugin_tracks {
 sub label2type {
   my ($self,$label,$length) = @_;
   my $l = $self->semantic_label($label,$length);
-  return shellwords($self->setting($l,'feature')||$self->setting($label,'feature')||'');
+  #return shellwords($self->setting($l,'feature')||$self->setting($label,'feature')||'');
+  return shellwords($self->setting($l,'feature')||$self->setting($label,'feature')||'""');
 }
+
+# euapthdb patch 3/5/2012: sequence dumper unable to get sqlName and sqlparam
+sub label2sqlName {
+  my ($self,$label,$length) = @_;
+  my $l = $self->semantic_label($label,$length);
+  return shellwords($self->setting($l,'sqlname')||$self->setting($label,'sqlname')||'""');
+}
+
+sub label2sqlParam {
+  my ($self,$label,$length) = @_;
+  my $l = $self->semantic_label($label,$length);
+  return $self->setting($l,'sqlparam')||$self->setting($label,'sqlparam')||'""';
+}
+
+# end euapthdb 3/5/2012 patch
 
 sub track_listing_class {
     my $self = shift;

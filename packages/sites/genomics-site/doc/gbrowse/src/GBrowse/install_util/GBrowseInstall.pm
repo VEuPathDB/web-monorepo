@@ -189,7 +189,7 @@ sub ACTION_realclean {
 sub ACTION_build {
     my $self = shift;
     $self->depends_on('config');
-    $self->depends_on('register') unless $self->registration_done;
+    #$self->depends_on('register') unless $self->registration_done;
     $self->SUPER::ACTION_build;
     mkdir './htdocs/tmp';
     chmod 0777,'./htdocs/tmp';
@@ -459,9 +459,11 @@ sub ACTION_install {
     $gid =~ /^(\d+)$/;
     $gid = $1;
     
-    unless (chown $uid,$gid,$tmp) {
-	$self->ownership_warning($tmp,$user);
-    }
+    #unless (chown $uid,$gid,$tmp) {
+	#$self->ownership_warning($tmp,$user);
+  #  }
+
+	  chmod 0777, $tmp;
 
     my $htdocs_i = File::Spec->catfile($self->install_path->{htdocs},'i');
     my $images   = File::Spec->catfile($tmp,'images');
@@ -480,9 +482,10 @@ sub ACTION_install {
 
     my $databases = $self->install_path->{'databases'};
     
-    unless (chown $uid,$gid,glob(File::Spec->catfile($databases,'').'*')) {
-	$self->ownership_warning($databases,$user);
-    }
+    #unless (chown $uid,$gid,glob(File::Spec->catfile($databases,'').'*')) {
+	#$self->ownership_warning($databases,$user);
+  #  }
+	chmod 0777,glob(File::Spec->catfile($databases,'').'*'); 
 
     chmod 0755,File::Spec->catfile($self->install_path->{'etc'},'init.d','gbrowse-slave');
     $self->fix_selinux;
@@ -495,13 +498,14 @@ sub ACTION_install {
     my $perl          = $self->perl;
     my @inc           = map{"-I$_"} split ':',$self->added_to_INC;
     system $perl,@inc,$metadb_script;
-    system 'sudo','chown','-R',"$uid.$gid",$sessions,$userdata;
+    #system 'sudo','chown','-R',"$uid.$gid",$sessions,$userdata;
 
-    if (Module::Build->y_n(
-	    "It is recommended that you restart Apache. Shall I try this for you?",'y'
-	)) {
-	system "sudo /etc/init.d/apache2 restart";
-    }
+    #if (Module::Build->y_n(
+	  #  "It is recommended that you restart Apache. Shall I try this for you?",'y'
+	#)) {
+	#system "sudo /etc/init.d/apache2 restart";
+  #  }
+	 system 'chmod','-R',"777",$sessions,$userdata;
     
     print STDERR "\n***INSTALLATION COMPLETE***\n";
     print STDERR "Load http://localhost/$base for demo and documentation.\n";
@@ -704,6 +708,7 @@ sub substitute_in_place {
     my $installscript =  $self->install_destination('script');
     my $etc         =  $self->install_path->{'etc'} ||= GBrowseGuessDirectories->etc;
     my $cgiurl        = $self->cgiurl;
+		my $url_base    = '/' . basename($self->config_data('htdocs'));
 
     $persistent ||= $databases;
 
@@ -724,6 +729,7 @@ sub substitute_in_place {
 	s/\$CAN_USER_ACCOUNTS/$self->has_mysql_or_sqlite/eg;
 	s/\$USER_ACCOUNT_DB/$self->guess_user_account_db/eg;
 	s/\$SMTP_GATEWAY/$self->guess_smtp_gateway/eg;
+	s!^url_base\s*=.+!url_base               = $url_base!g;
 	s/\$TMP/$tmp/g;
 	$out->print($_);
     }

@@ -493,7 +493,10 @@ sub get_facet_values {
     my $db   = $source->open_database($label) or return;
     my $meta = eval {$db->metadata}           or return;
 
+    my $hasDefault;
+
     for my $id (sort {$a<=>$b} keys %$meta) {
+
 	my $method = $meta->{$id}{method} || eval {$db->feature_type} || 'feature';
 	my $source = $meta->{$id}{source} || '';
 	my $type = $meta->{$id}{type} || "$method:$source";
@@ -501,10 +504,17 @@ sub get_facet_values {
 	next unless $type =~ /$match/;
 	my @vals = map {$_||''} @{$meta->{$id}}{@facets};
 	push @vals,"=$id";
+
+
+        if($meta->{$id}{':selected'}) {
+          push @vals, '*';
+          $hasDefault = 1;
+        }
+
 	push @rows,\@vals;
     }
 
-    push @{$rows[0]},'*';
+    push @{$rows[0]},'*' unless($hasDefault);
     return @rows;
 }
 

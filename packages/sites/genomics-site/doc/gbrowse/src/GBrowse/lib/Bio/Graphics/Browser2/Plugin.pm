@@ -992,6 +992,21 @@ sub selected_features {
   return map {$conf->config->label2type($_)} @tracks;
 }
 
+## eupathdb patch 12/5/2011. getsqlparam and sqlname
+sub selected_sqlName {
+  my $self = shift;
+  my $conf   = $self->browser_config;
+  my @tracks = $self->selected_tracks;
+  return map {$conf->config->label2sqlName($_)} @tracks;
+}
+
+sub selected_sqlParam {
+  my $self = shift;
+  my $conf   = $self->browser_config;
+  my @tracks = $self->selected_tracks;
+  return map {$conf->config->label2sqlParam($_)} @tracks;
+}
+
 # called by annotators when they need to create a new list of features
 sub new_feature_list {
   my $self     = shift;

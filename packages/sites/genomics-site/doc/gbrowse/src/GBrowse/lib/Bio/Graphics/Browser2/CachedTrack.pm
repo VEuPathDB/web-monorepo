@@ -15,7 +15,9 @@ use Digest::MD5 'md5_hex';
 use Storable qw(:DEFAULT freeze thaw);
 
 # pending requests get 1 minute before they are considered likely to be defunct
-use constant DEFAULT_REQUEST_TIME => 60;
+# eupathdb increase default pending requet time to avoid timeout
+#use constant DEFAULT_REQUEST_TIME => 60;
+use constant DEFAULT_REQUEST_TIME => 800;
 use constant DEFAULT_CACHE_TIME   => 60*60; # 1 hour
 
 # constructor:

@@ -257,6 +257,9 @@ sub make_requests {
     my $feature_files  = $args->{external_features};
     my $labels         = $args->{labels};
 
+    # eupathdb pass labels to crate_panel_args 3/5/2011
+    $args->{labels} = $labels;
+
     warn "[$$] MAKE_REQUESTS, labels = ",join ',',@$labels if DEBUG;
 
     my $base        = $self->get_cache_base();
@@ -522,7 +525,12 @@ sub wrap_rendered_track {
 	$title = $source->setting( $label => 'key') || $l;
     }
     $title =~ s/:(overview|region|detail)$//;
-   
+    
+    # eupathdb 10/4/2012 callback on key
+    if( ref $title eq 'CODE' ) {
+      $title = &$title;
+    }
+
     my $balloon_style = $source->global_setting('balloon style') || 'GBubble'; 
     my $favorite      = $settings->{favorites}{$label};
     my $starIcon      = $favorite ? $favicon_2 : $favicon;
@@ -562,13 +570,14 @@ sub wrap_rendered_track {
             }
         ),
 
-        $download_click ? img({   -src         => $download,
-				  -style       => 'cursor:pointer',
-				  -onmousedown => $download_click,
-				  $self->if_not_ipad(-onMouseOver =>
-						     "$balloon_style.showTooltip(event,'$download_this_track')"),
-			      })
-	                 : '',
+        # euapth 5/11/2012
+        #$download_click ? img({   -src         => $download,
+				#  -style       => 'cursor:pointer',
+				#  -onmousedown => $download_click,
+				#  $self->if_not_ipad(-onMouseOver =>
+				#		     "$balloon_style.showTooltip(event,'$download_this_track')"),
+			  #    })
+	      #           : '',
 
         $config_click ? img({   -src         => $configure,
 				-style       => 'cursor:pointer',
@@ -1537,6 +1546,13 @@ sub run_local_requests {
 
 		    warn "track_setup($label): ",time()-$time," seconds " if BENCHMARK;
 
+        # EuPathDB patches 3/5/2011
+        my %hash = @$track_args;
+        my ($sqlParam, $sqlName);
+        $sqlParam = $hash{'-sqlparam'};
+        $sqlName  = $hash{'-sqlname'};
+        # end EuPathDB patches 
+
 		    # == populate the tracks with feature data ==
 		    $self->add_features_to_track(
 			-labels    => [ $label, ],
@@ -1544,6 +1560,8 @@ sub run_local_requests {
 			-filters   => $filters,
 			-segment   => $segment,
 			-fsettings => $settings->{features},
+      -sqlParam  => [$sqlParam],
+      -sqlName   => [$sqlName], 
 			);
 
 		    warn "add_features($label): ",time()-$time," seconds " if BENCHMARK;
@@ -1682,6 +1700,8 @@ sub add_features_to_track {
   my $tracks          = $args{-tracks}    or die "programming error";
   my $filters         = $args{-filters}   or die "programming error";
   my $fsettings       = $args{-fsettings} or die "programming error";
+  my $sqlParam        = $args{-sqlParam} or die "programming error";
+  my $sqlName         = $args{-sqlName} or die "programming error";
 
   warn "[$$] add_features_to_track @{$args{-labels}}" if DEBUG;
 
@@ -1725,7 +1745,7 @@ sub add_features_to_track {
 	  $iterator2dbid{$iterator} = $source->db2id($db);
       }
 
-      if (@full_types && (my $iterator = $self->get_iterator($db2db{$db},$segment,\@full_types))) {
+      if (@full_types && (my $iterator = $self->get_iterator($db2db{$db},$segment,\@full_types,$sqlName,$sqlParam))) {
 	  $iterators{$iterator}     = $iterator;
 	  $iterator2dbid{$iterator} = $source->db2id($db);
       }
@@ -1903,7 +1923,7 @@ sub add_features_to_track {
 
 sub get_iterator {
   my $self = shift;
-  my ($db,$segment,$feature_types) = @_;
+  my ($db,$segment,$feature_types,$sqlName,$sqlParam) = @_;
 
   # The Bio::DB::SeqFeature::Store database supports correct
   # semantics for directly retrieving features that overlap
@@ -1916,7 +1936,10 @@ sub get_iterator {
       my @args = (-type   => $feature_types,
 		  -seq_id => $segment->seq_id,
 		  -start  => $segment->start,
-		  -end    => $segment->end);
+		  -end    => $segment->end,
+      -sqlParam => $sqlParam,
+      -sqlName  => $sqlName 
+			);
       push @args,(-max_features => $max) if $max > 0;  # some adaptors allow this
       return $db->get_seq_stream(@args);
   }
@@ -1934,7 +1957,7 @@ sub get_iterator {
     return;
   }
 
-  return $db_segment->get_seq_stream(-type=>$feature_types);
+  return $db_segment->get_seq_stream(-type=>$feature_types,-sqlName=>$sqlName,-sqlParam=>$sqlParam);
 }
 
 sub get_summary_iterator {
@@ -2031,7 +2054,11 @@ sub create_panel_args {
 		    ]);
   }
   elsif ($section eq 'detail'){
-    $postgrid = make_postgrid_callback($settings);
+    #$postgrid = make_postgrid_callback($settings);
+    # eupathdb check the synteny labels 3/5/2012
+    my $labels = $args->{labels};
+    my $synview = grep(/Synteny/, @$labels) if $labels;
+    $postgrid = $synview ? $source->global_setting('postgrid') : make_postgrid_callback($settings);
     $h_region_str = join(':', @{$settings->{h_region}||[]}); 
   }
 

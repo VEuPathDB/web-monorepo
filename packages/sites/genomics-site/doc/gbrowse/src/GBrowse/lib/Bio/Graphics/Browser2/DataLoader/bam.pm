@@ -158,7 +158,9 @@ sub finish_load {
     $dest      =~ s/\.[bs]am$//i; # sorting will add the .bam extension
 
     $self->set_status('sorting BAM file');
-    Bio::DB::Bam->sort_core(0,$source,$dest);
+		# EuPathDB bug fix - https://redmine.apidb.org/issues/9982
+    #Bio::DB::Bam->sort_core(0,$source,$dest);
+    Bio::DB::Bam->sort_core(0,$source,$dest,200*1e6);
     
     $self->set_status('indexing BAM file');
 

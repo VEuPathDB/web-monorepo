@@ -165,11 +165,13 @@ sub generate_chrom_sizes {
     # seq_ids it knows about.
 
   TRY: {
-      my @seqids  = eval {$db->seq_ids}    or last TRY;
+      #my @seqids  = eval {$db->seq_ids}    or last TRY;
+      my @seqids  = eval {$db->seq_ids_length}    or last TRY;
       my $result = eval {
 	  for (@seqids) {
-	      my ($segment) = $db->segment($_) or die "Can't find chromosome $_ in default database";
-	      print $s "$_\t",$segment->length,"\n";
+	      #my ($segment) = $db->segment($_) or die "Can't find chromosome $_ in default database";
+	      #print $s "$_\t",$segment->length,"\n";
+	      print $s $_->[0], "\t",$_->[1], "\n";
 	  }
 	  close $s;
 	  return 1;

@@ -35,7 +35,7 @@ sub new {
 	  = @args{'driver','id','args','source','lockdir','locktype','expires','mode'};
 
 	$mode ||= 'exclusive';
-	$CGI::Session::NAME = 'gbrowse_sess';     # custom cookie
+	$CGI::Session::NAME = 'gbrowse2_sess';     # custom cookie
 
 	#Probably safe to uncomment, but must test exhaustively with mysql locking
 	#to determine.

@@ -86,13 +86,13 @@ use Math::Round 'nearest';
 use Carp qw/cluck/;
 
 use constant BINARY            => 'primer3';
-use constant BINPATH           => '/usr/local/bin';
+use constant BINPATH           => "$ENV{GUS_HOME}/bin";
 use constant METHOD            => 'local';
 use constant IMAGE_PAD         => 25;
 use constant MAXRANGE          => 300;
 use constant IMAGEWIDTH        => 800;
 use constant DEFAULT_SEG_SIZE  => 10000;
-use constant STYLE             => '/gbrowse2/css/gbrowse.css';
+use constant STYLE             => '/assets/css/eupath_gbrowse.css';
 
 #use vars '@ISA';
 use vars qw/@ISA $PNG $CALL/;
@@ -414,6 +414,14 @@ sub dump {
   my $style_sheet = $self->browser_config->plugin_setting('stylesheet') || STYLE;
   print start_html( -style => $style_sheet, -title => 'PCR Primers' );
   print $self->browser_config->header_html;
+  
+  # call `render_html_start' here
+  my $render = $self->renderer;
+  my $region   = $render->region;
+  my $features = $region->features;
+  my @post_load = $render->get_post_load_functions;
+  my $title = $render->generate_title($features);
+  print $render->render_html_start($title,@post_load);
 
   # reset off-scale target if required
   delete $conf->{target} if $conf->{target} 
@@ -677,7 +685,7 @@ JS
   # or print the config form
   print $self->configure_form($segment,$target,$lb,$rb);
 
-    my $render = $self->renderer;
+    # my $render = $self->renderer;
 
     my $segment_info = $render->segment_info_object;
 
@@ -1265,6 +1273,9 @@ sub primer3_params {
 
   my $sr = $conf->{size_range} || '';
 
+	my $primer_min_tm = "57.0";
+	$primer_min_tm = "50.0" if ($ENV{PROJECT_ID} =~ /PlasmoDB/i);
+
   my %table = (
     b(qq(<a name="PRIMER_NUM_RETURN_INPUT" target="_new" href="$help\#PRIMER_NUM_RETURN">
        Primer sets:</a>)
@@ -1279,7 +1290,7 @@ sub primer3_params {
     b(qq(<a name="PRIMER_OPT_TM_INPUT" target="_new" href="$help\#PRIMER_TM">
           Primer Tm</a>)
     ),
-    qq(Min. <input type="text" size="4" name="PRIMER_MIN_TM" value="57.0">
+    qq(Min. <input type="text" size="4" name="PRIMER_MIN_TM" value="$primer_min_tm">
        Opt. <input type="text" size="4" name="PRIMER_OPT_TM" value="60.0">
        Max. <input type="text" size="4" name="PRIMER_MAX_TM" value="63.0">),
     b(qq(<a name="PRIMER_PRODUCT_SIZE_RANGE" href="javascript:void(0)"
@@ -1851,7 +1862,7 @@ sub render_panel {
     my $output;
     my @post_load = $render->get_post_load_functions;
 
-    $output .= $render->render_html_start($title,@post_load);
+    # $output .= $render->render_html_start($title,@post_load);
     $output .= $render->render_busy_signal;
 
     push @panels, $output;

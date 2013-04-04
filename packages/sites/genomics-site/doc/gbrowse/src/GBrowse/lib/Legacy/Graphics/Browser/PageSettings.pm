@@ -3,7 +3,7 @@ use strict;
 
 use Legacy::Graphics::Browser::Util 'shellwords';
 use CGI::Session;
-use constant COOKIE_NAME => 'gbrowse_sess';
+use constant COOKIE_NAME => 'gbrowse2_sess';
 
 sub new {
   my $class    = shift;
