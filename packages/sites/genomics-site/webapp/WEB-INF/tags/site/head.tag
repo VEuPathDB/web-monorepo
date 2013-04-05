@@ -69,9 +69,6 @@
       </style>
     </c:if>
 
-    <!-- JavaScript provided by WDK -->
-    <imp:wdkJavascripts refer="${refer}"/>
-
     <!-- JavaScript provided by Site -->
     <imp:javascripts refer="${refer}"/>
 

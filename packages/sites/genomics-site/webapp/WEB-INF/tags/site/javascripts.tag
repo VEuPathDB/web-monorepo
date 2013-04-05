@@ -9,6 +9,12 @@
       required="true" 
       description="Page calling this tag"/>
 
+  <jsp:useBean id="websiteRelease" class="org.eupathdb.common.controller.WebsiteReleaseConstants"/>
+
+  <c:set var="min" value="${requestScope.WEBSITE_RELEASE_STAGE ge websiteRelease.feature}"/>
+  <!-- JavaScript provided by WDK -->
+  <imp:wdkJavascripts refer="${refer}" min="${min}"/>
+
   <c:set var="base" value="${pageContext.request.contextPath}"/>
   <c:set var="props" value="${applicationScope.wdkModel.properties}" />
   <c:set var="project" value="${props['PROJECT_ID']}" />
