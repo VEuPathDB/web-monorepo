@@ -158,6 +158,7 @@ sub make_path {
     my $path = shift;
     return unless $path =~ /^(.+)$/;
     $path = $1;
+    print STDERR "Attempting path: $path\n";
     mkpath($path,0,0777) unless -d $path;    
 }
 
