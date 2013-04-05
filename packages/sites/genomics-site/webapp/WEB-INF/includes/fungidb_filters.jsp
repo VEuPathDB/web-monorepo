@@ -79,110 +79,6 @@
     <th><i>S.scl</i></th>
     <th><i>C.alb</i></th>
     <th><i>S.cer</i></th>
-    <th><i>H.ara</i></th>
-    <th><i>P.cap</i></th>
-    <th><i>P.inf</i></th>
-    <th><i>P.ram</i></th>
-    <th><i>P.soj</i></th>
-    <th><i>P.ult</i></th>
-    <th><i>B.den</i></th>
-    <th><i>M.cir</i></th>
-    <th><i>R.ory</i></th>
-    <th><i>C.cin</i></th>
-    <th><i>P.chr</i></th>
-    <th><i>C.gat</i> R265</th>
-    <th><i>C.gat</i> WM276</th>
-    <th><i>C.neo</i> H99</th>
-    <th><i>C.neo</i> B3501</th>
-    <th><i>C.neo</i> JEC21</th>
-    <th><i>T.mes</i></th>
-    <th><i>P.gra</i></th>
-    <th><i>M.glo</i></th>
-    <th><i>S.rei</i></th>
-    <th><i>U.may</i></th>
-    <th><i>S.jap</i></th>
-    <th><i>S.oct</i></th>
-    <th><i>S.pom</i></th>
-    <th><i>A.car</i></th>
-    <th><i>A.cla</i></th>
-    <th><i>A.fla</i></th>
-    <th><i>A.fum</i></th>
-    <th><i>A.nig</i></th>
-    <th><i>A.ter</i></th>
-    <th><i>A.nid</i></th>
-    <th><i>C.imm</i> H538.4</th>
-    <th><i>C.imm</i> RS</th>
-    <th><i>C.pos</i></th>
-    <th><i>H.cap</i> NAm1</th>
-    <th><i>H.cap</i> G186AR</th>
-    <th><i>N.fis</i></th>
-    <th><i>P.mar</i></th>
-    <th><i>T.sti</i></th>
-    <th><i>F.oxy</i></th>
-    <th><i>F.ver</i></th>
-    <th><i>F.gra</i></th>
-    <th><i>M.ory</i></th>
-    <th><i>N.cra</i></th>
-    <th><i>N.dis</i></th>
-    <th><i>N.tet</i></th>
-    <th><i>S.mac</i></th>
-    <th><i>T.ree</i></th>
-    <th><i>B.fuc</i></th>
-    <th><i>S.scl</i></th>
-    <th><i>C.alb</i></th>
-    <th><i>S.cer</i></th>
-    <th><i>H.ara</i></th>
-    <th><i>P.cap</i></th>
-    <th><i>P.inf</i></th>
-    <th><i>P.ram</i></th>
-    <th><i>P.soj</i></th>
-    <th><i>P.ult</i></th>
-    <th><i>B.den</i></th>
-    <th><i>M.cir</i></th>
-    <th><i>R.ory</i></th>
-    <th><i>C.cin</i></th>
-    <th><i>P.chr</i></th>
-    <th><i>C.gat</i> R265</th>
-    <th><i>C.gat</i> WM276</th>
-    <th><i>C.neo</i> H99</th>
-    <th><i>C.neo</i> B3501</th>
-    <th><i>C.neo</i> JEC21</th>
-    <th><i>T.mes</i></th>
-    <th><i>P.gra</i></th>
-    <th><i>M.glo</i></th>
-    <th><i>S.rei</i></th>
-    <th><i>U.may</i></th>
-    <th><i>S.jap</i></th>
-    <th><i>S.oct</i></th>
-    <th><i>S.pom</i></th>
-    <th><i>A.car</i></th>
-    <th><i>A.cla</i></th>
-    <th><i>A.fla</i></th>
-    <th><i>A.fum</i></th>
-    <th><i>A.nig</i></th>
-    <th><i>A.ter</i></th>
-    <th><i>A.nid</i></th>
-    <th><i>C.imm</i> H538.4</th>
-    <th><i>C.imm</i> RS</th>
-    <th><i>C.pos</i></th>
-    <th><i>H.cap</i> NAm1</th>
-    <th><i>H.cap</i> G186AR</th>
-    <th><i>N.fis</i></th>
-    <th><i>P.mar</i></th>
-    <th><i>T.sti</i></th>
-    <th><i>F.oxy</i></th>
-    <th><i>F.ver</i></th>
-    <th><i>F.gra</i></th>
-    <th><i>M.ory</i></th>
-    <th><i>N.cra</i></th>
-    <th><i>N.dis</i></th>
-    <th><i>N.tet</i></th>
-    <th><i>S.mac</i></th>
-    <th><i>T.ree</i></th>
-    <th><i>B.fuc</i></th>
-    <th><i>S.scl</i></th>
-    <th><i>C.alb</i></th>
-    <th><i>S.cer</i></th>
   <tr>
   </tr>
   <tr align="center">
@@ -202,6 +98,60 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
+                          instanceName="hara_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="phyca_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="phyin_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="phyra_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="physo_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="pytul_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="bden_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="mcir_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="rory_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
                           instanceName="ccin_instances" />
     </td>
     <td>
@@ -214,7 +164,79 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="bden_instances" />  
+                          instanceName="cgatWM276_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cgatR265_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cneoH99_instances" />
+    </td>
+   <td>
+      <imp:filterInstance strategyId="${strategyId}"
+                          stepId="${stepId}"
+                          answerValue="${answerValue}"
+                          instanceName="cneoB3501A_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="cneoJEC21_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tmes_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="pgra_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="mglo_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="srei_instances" />
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="umay_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="sjap_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="soct_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="spom_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
@@ -306,90 +328,6 @@
                           answerValue="${answerValue}" 
                           instanceName="tsti_instances" />
     </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="bfuc_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="sscl_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="hara_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="phyca_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="phyin_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="phyra_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="physo_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="pytul_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="pgra_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="calb_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="scer_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="sjap_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="soct_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="spom_instances" />
-    </td>
     <td> 
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
@@ -448,67 +386,25 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="cgatWM276_instances" />
+                          instanceName="bfuc_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="cgatR265_instances" />
+                          instanceName="sscl_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="cneoH99_instances" />
-    </td>
-   <td>
-      <imp:filterInstance strategyId="${strategyId}"
-                          stepId="${stepId}"
-                          answerValue="${answerValue}"
-                          instanceName="cneoB3501A_instances" />
+                          instanceName="calb_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="cneoJEC21_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="tmes_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="mglo_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="srei_instances" />
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="umay_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="mcir_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="rory_instances" />  
+                          instanceName="scer_instances" />  
     </td>
 
   </tr>
