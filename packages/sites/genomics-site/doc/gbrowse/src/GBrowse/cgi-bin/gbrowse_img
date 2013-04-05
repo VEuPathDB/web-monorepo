@@ -208,12 +208,7 @@ sub render_image {
 
     if (my @regions = param('h_region')) {
        $render->state->{h_region} = \@regions;
-    } 
-
-    if (my @regions = param('h_region')) {
-	$render->state->{h_region} = \@regions;
     }
-
 
     my $convert_to_pdf;
     if ($format eq 'PDF' && `which inkscape`) {
