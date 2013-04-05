@@ -164,13 +164,13 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="cgatWM276_instances" />
+                          instanceName="cgatR265_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="cgatR265_instances" />
+                          instanceName="cgatWM276_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
