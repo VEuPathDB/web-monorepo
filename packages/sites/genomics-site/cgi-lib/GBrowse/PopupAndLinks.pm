@@ -519,7 +519,7 @@ sub spliceSiteTitleUnified {
    }
   $html .= "</table>";
 
-  my $note = "The overall count is the sum of the count per million for each sample.";.
+  my $note = "The overall count is the sum of the count per million for each sample.";
   my @data;
   push @data, [ '' => $html ];
   push @data, [ 'Location:'  => "$loc"];
