@@ -116,14 +116,22 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
     content="${attr.value}${append}" />
 <br>
 
-
-<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
-
-<c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/>
-
-
-
-
+<c:choose>
+   <c:when test="${empty attrs['dna_gtracks'].value}">
+     <c:set var="dna_gtracks" value="${attrs['defaultDnaGTracks'].value}"/>
+   </c:when>
+   <c:otherwise>
+     <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
+   </c:otherwise>
+</c:choose>
+<c:choose>
+   <c:when test="${empty attrs['protein_gtracks'].value}">
+     <c:set var="protein_gtracks" value="${attrs['defaultProteinGTracks'].value}"/>
+   </c:when>
+   <c:otherwise>
+     <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
+   </c:otherwise>
+</c:choose>
 
 <c:set var="content">
 ${attrs['organism'].value}<br>
@@ -133,7 +141,7 @@ ${attrs['organism'].value}<br>
 
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/hostdb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/hostdb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -258,9 +266,9 @@ ${attrs['organism'].value}<br>
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/hostdbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};type=${ptracks};width=640;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/hostdbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};l=${protein_gtracks};width=640;embed=1;genepage=1
 </c:set>
-<c:if test="${ptracks ne ''}">
+<c:if test="${protein_gtracks ne ''}">
     <c:set var="proteinFeaturesImg">
         <noindex follow><center>
         <c:catch var="e">

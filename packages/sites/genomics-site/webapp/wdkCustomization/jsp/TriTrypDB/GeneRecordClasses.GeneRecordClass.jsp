@@ -168,15 +168,30 @@ ${id}
 ${organism}<br>
 </c:set>
 
+<c:choose>
+   <c:when test="${empty attrs['dna_gtracks'].value}">
+     <c:set var="dna_gtracks" value="${attrs['defaultDnaGTracks'].value}"/>
+   </c:when>
+   <c:otherwise>
+     <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
+   </c:otherwise>
+</c:choose>
+<c:choose>
+   <c:when test="${empty attrs['protein_gtracks'].value}">
+     <c:set var="protein_gtracks" value="${attrs['defaultProteinGTracks'].value}"/>
+   </c:when>
+   <c:otherwise>
+     <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
+   </c:otherwise>
+</c:choose>
+
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
 
-<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
-
-<c:if test="${gtracks ne ''}">
+<c:if test="${dna_gtracks ne ''}">
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -336,62 +351,11 @@ ${organism}<br>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 <imp:pageDivider name="Protein"/>
 
- <c:choose>
-  <c:when test='${binomial eq "Trypanosoma cruzi"}'>
-    <c:set var="ptracks">
-    TarletonMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-	</c:when>
-
-  <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
-    <c:set var="ptracks">
-    StuartMassSpecPeptides+FergusonMassSpecPeptides+AlmeidaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-	</c:when>
-
- <c:when test='${organismFull eq "Trypanosoma brucei Lister strain 427" || organismFull eq "Trypanosoma brucei gambiense"}'>
-    <c:set var="ptracks">
-    InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-</c:when>
-
-  <c:when test='${organismFull eq "Leishmania infantum"}'>
-    <c:set var="ptracks">
-    LinfantumMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-	</c:when>
-
-  <c:when test='${organismFull eq "Leishmania major strain Friedlin"}'>
-    <c:set var="ptracks">
-    SilvermanMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-	</c:when>
-
-  <c:when test='${organismFull eq "Leishmania braziliensis"}'>
-    <c:set var="ptracks">
-    CuervoMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-	</c:when>
-
-  <c:when test='${organismFull eq "Leishmania mexicana"}'>
-    <c:set var="ptracks">
-    AebischerMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-  </c:when> 
-
-  <c:when test='${organismFull eq "Leishmania tarentolae Parrot-TarII"}'>
-    <c:set var="ptracks">
-    InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-  </c:when> 
-
- </c:choose>
-    
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id}:1..${proteinLength};type=${ptracks};width=640;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id}:1..${proteinLength};type=${protein_gtracks};width=640;embed=1;genepage=1
 </c:set>
-<c:if test="${ptracks ne ''}">
+<c:if test="${protein_gtracks ne ''}">
     <c:set var="proteinFeaturesImg">
         <noindex follow><center>
         <c:catch var="e">
@@ -410,7 +374,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
              content="${proteinFeaturesImg}"
              attribution=""/>
 
-</c:if> <%-- ptracks ne '' --%>
+</c:if> <%-- protein_gtracks ne '' --%>
 </c:if> <%-- so_term_name eq 'protein_coding --%>
 
 <!-- Molecular weight -->

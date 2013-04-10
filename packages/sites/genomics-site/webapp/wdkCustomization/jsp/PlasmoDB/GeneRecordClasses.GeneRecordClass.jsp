@@ -256,17 +256,30 @@ ${id}
     content="${attr.value}${append}" />
 <br>
 
+<c:choose>
+   <c:when test="${empty attrs['dna_gtracks'].value}">
+     <c:set var="dna_gtracks" value="${attrs['defaultDnaGTracks'].value}"/>
+   </c:when>
+   <c:otherwise>
+     <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
+   </c:otherwise>
+</c:choose>
+<c:choose>
+   <c:when test="${empty attrs['protein_gtracks'].value}">
+     <c:set var="protein_gtracks" value="${attrs['defaultProteinGTracks'].value}"/>
+   </c:when>
+   <c:otherwise>
+     <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
+   </c:otherwise>
+</c:choose>
 
 <%-- DNA CONTEXT ------------%>
 
-<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
+
+<c:if test="${dna_gtracks ne ''}">
 
 
-<c:if test="${gtracks ne ''}">
-
-
-  <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
+  <c:set var="gnCtxUrl"> /cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -521,39 +534,14 @@ ${id}
 <c:if test="${isCodingGene}">
   <imp:pageDivider name="Protein"/>
 
-  <c:if test="${species eq 'falciparum3D7'}">
-     <c:set var="ptracks"> 
-       BoothroydPhosphoMassSpecPeptides+TobinPhosphoMassSpecPeptides+FlorensMassSpecPeptides+KhanMassSpecPeptides+LasonderMassSpecPeptides+LasonderMassSpecPeptidesBloodStage+PfClinicalMassSpecPeptides+PfBowyerMassSpecPeptides+VossMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
-     </c:set>
-  </c:if>
-  <c:if test="${species eq 'berghei'}">
-      <c:set var="ptracks"> 
-        WatersMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
-     </c:set>
-  </c:if>
-  <c:if test="${species eq 'yoelii'}">
-      <c:set var="ptracks">
-       LiverStageMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
-    </c:set>
-  </c:if>
-  <c:if test="${species eq 'vivax'}">
-      <c:set var="ptracks">
-       PvClinicalMassSpecPeptides+CuiMassSpecPeptides+InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
-    </c:set>
-  </c:if>
-  <c:if test="${species eq 'chabaudi' || species eq 'cynomolgi' || species eq 'falciparumIT' || species eq 'knowlesi' || species eq 'yoeliiYM'}">
-      <c:set var="ptracks"> 
-        InterproDomains+SignalP+TMHMM+ExportPred+HydropathyPlot+SecondaryStructure+LowComplexity+BLASTP
-     </c:set>
-  </c:if>
 
 
   <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
   <c:set var="proteinFeaturesUrl">
-   http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/plasmodbaa/?name=${id}:1..${proteinLength};type=${ptracks};hmap=pbrowse;width=640;embed=1;genepage=1
+   http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/plasmodbaa/?name=${id}:1..${proteinLength};l=${protein_gtracks};hmap=pbrowse;width=640;embed=1;genepage=1
    </c:set>
 
-   <c:if test="${ptracks ne ''}">
+   <c:if test="${protein_gtracks ne ''}">
        <c:set var="proteinFeaturesImg">
        <noindex follow><center>
     <c:catch var="e">
@@ -570,7 +558,7 @@ ${id}
                 content="${proteinFeaturesImg}" 
                 attribution=""/>
 
-    </c:if> <%-- ptracks ne '' --%>
+    </c:if> <%-- protein_gtracks ne '' --%>
 
 
   <c:if test="${species eq 'falciparum3D7'}">
