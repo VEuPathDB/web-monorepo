@@ -482,6 +482,52 @@ sub spliceSiteTitle {
   return hover($f,\@data);
 }
 
+sub spliceSiteTitleUnified {
+  my ($f) = @_;
+  my $loc = $f->start;
+  my ($sample_name) = $f->get_tag_values('sample_name');
+  my ($ctpm) = $f->get_tag_values('count_per_mill');
+  my ($isUniq) = $f->get_tag_values('is_unique');
+  my ($mismatch) = $f->get_tag_values('avg_mismatches');
+  my ($gene) = $f->get_tag_values('gene_id');
+  my ($utr_len) = $f->get_tag_values('utr_length');
+  my $name = $f->name;
+
+  # sum over count_per_mill values for each sample
+  my $sum = eval join '+', split /,/, $ctpm;
+
+  my @sample_arr = split /,/, $sample_name;
+  my @ctpm_arr  = split /,/, $ctpm;
+  my @uniq_arr  = split /,/, $isUniq;
+  my @mismatch_arr  = split /,/, $mismatch;
+  my @gene_arr  = split /,/, $gene;
+  my @utr_len_arr = split /,/, $utr_len;
+
+  my $count = 0;
+  my $html = "<table><tr><th>Sample</th><th>Count per million</th><th>Unique Alignment</th><th>Gene ID</th><th>UTR Length</th><th>Avg. Mismatches</th></tr>";
+  foreach my $exp (@sample_arr) {
+     my $sample = $sample_arr[$count];
+     my $ctpm = $ctpm_arr[$count];
+     my $uniq = $uniq_arr[$count];
+     $uniq = ($uniq == 1)? "yes" : "no";
+     my $gene = $gene_arr[$count];
+     my $utr_len = $utr_len_arr[$count];
+     $utr_len = ($utr_len < 0)? "N/A (within gene)": $utr_len;
+     my $mismatch = $mismatch_arr[$count];
+     $html .= "<tr><td>$sample</td><td>$ctpm</td><td>$uniq</td><td>$gene</td><td>$utr_len</td><td>$mismatch</td></tr>";
+     $count++;
+   }
+  $html .= "</table>";
+
+  my $note = "The overall count is the sum of the count per million for each sample.";.
+  my @data;
+  push @data, [ '' => $html ];
+  push @data, [ 'Location:'  => "$loc"];
+  push @data, [ 'Count'     => $sum ];
+  push @data, [ 'Note'     => $note ];
+  hover($f, \@data); 
+}
+
 sub polyASiteAlignTitle {
   my $f = shift;
   my $seq = $f->name;  ##currently using the name to hold sequence
