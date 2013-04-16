@@ -122,22 +122,10 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 ${attrs['organism'].value}<br>
 </c:set>
 
-<c:choose>
-   <c:when test="${empty attrs['dna_gtracks'].value}">
-     <c:set var="dna_gtracks" value="${attrs['defaultDnaGTracks'].value}"/>
-   </c:when>
-   <c:otherwise>
+
      <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
-   </c:otherwise>
-</c:choose>
-<c:choose>
-   <c:when test="${empty attrs['protein_gtracks'].value}">
-     <c:set var="protein_gtracks" value="${attrs['defaultProteinGTracks'].value}"/>
-   </c:when>
-   <c:otherwise>
+
      <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
-   </c:otherwise>
-</c:choose>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
