@@ -168,22 +168,10 @@ ${id}
 ${organism}<br>
 </c:set>
 
-<c:choose>
-   <c:when test="${empty attrs['dna_gtracks'].value}">
-     <c:set var="dna_gtracks" value="${attrs['defaultDnaGTracks'].value}"/>
-   </c:when>
-   <c:otherwise>
-     <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
-   </c:otherwise>
-</c:choose>
-<c:choose>
-   <c:when test="${empty attrs['protein_gtracks'].value}">
-     <c:set var="protein_gtracks" value="${attrs['defaultProteinGTracks'].value}"/>
-   </c:when>
-   <c:otherwise>
-     <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
-   </c:otherwise>
-</c:choose>
+<c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
+
+<c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
+
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
@@ -353,7 +341,7 @@ ${organism}<br>
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id}:1..${proteinLength};type=${protein_gtracks};width=640;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id}:1..${proteinLength};l=${protein_gtracks};width=640;embed=1;genepage=1
 </c:set>
 <c:if test="${protein_gtracks ne ''}">
     <c:set var="proteinFeaturesImg">
