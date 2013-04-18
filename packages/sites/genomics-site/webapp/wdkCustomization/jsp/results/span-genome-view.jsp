@@ -87,7 +87,7 @@
                   <p>${feature.description}</p>
                   <ul>
                     <li><a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />">Record page</a></li>
-                    <li><a href="/cgi-bin/gbrowse/${siteName}/?name=${context};h_feat=${feature.sourceId}@yellow">Gbrowse</a></li>
+                    <li><a href="/cgi-bin/gbrowse/${siteName}/?name=${feature.context};h_feat=${feature.sourceId}@yellow">Gbrowse</a></li>
                   <ul>
                 </div>
               </c:forEach>

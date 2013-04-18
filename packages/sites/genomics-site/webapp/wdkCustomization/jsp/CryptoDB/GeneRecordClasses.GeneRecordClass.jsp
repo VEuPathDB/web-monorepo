@@ -109,19 +109,22 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
     content="${attr.value}${append}" 
     attribute="${attr.name}"/>
 <br>
+
+     <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
+
+     <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
+
 <%-- DNA CONTEXT ---------------------------------------------------%>
 <c:if test="${snps ne 'none'}">
     <c:set var="snptrack" value="SNPs+"/>
 </c:if>
 
-<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
-
-<c:if test="${gtracks ne ''}">
+<c:if test="${dna_gtracks ne ''}">
 
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/cryptodb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/cryptodb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -309,16 +312,11 @@ ${attrs['linkout'].value}
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
-    <c:set var="ptracks">
-    InterproDomains+SignalP+TMHMM+WastlingMassSpecPeptides+LoweryMassSpecPeptides+EinsteinMassSpecPeptides+FerrariMassSpecPeptides+PutignaniMassSpecPeptides+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    
-
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};type=${ptracks};width=640;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/cryptodbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};l=${protein_gtracks};width=640;embed=1;genepage=1
 </c:set>
-<c:if test="${ptracks ne ''}">
+<c:if test="${protein_gtracks ne ''}">
     <c:set var="proteinFeaturesImg">
         <noindex follow><center>
         <c:catch var="e">

@@ -132,24 +132,6 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <c:set var="attr" value="${attrs['overview']}" />
 
-<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
-
-<c:choose>
-  <c:when test='${organismFull eq "Giardia Assemblage A isolate WB"}'>
-     <c:set var="assemblage" value="<b>Assemblage A isolate WB</b>"/>
-     <c:set var="ptracks" value="RatnerMassSpecPeptides+TachezyMassSpecPeptides+GillinMassSpecPeptides+InterproDomains+SignalP+TMHMM+BLASTP"/>
-  </c:when>
-  <c:when test='${organismFull eq "Giardia Assemblage B isolate GS"}'>
-     <c:set var="assemblage" value="<b>Assemblage B isolate GS</b>" />
-     <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/> 
-  </c:when>
-  <c:when test='${organismFull eq "Giardia Assemblage E isolate P15"}'>
-     <c:set var="assemblage" value="<b>Giardia Assemblage E isolate P15</b>" /> 
-     <c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP" /> 
-  </c:when>
-</c:choose>
-
-
 <c:if test="${attrs['is_deprecated'].value eq 'Yes'}">
    <c:set var="isdeprecated">
      **<b>Deprecated</b>**
@@ -166,11 +148,16 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 ${attrs['organism'].value}<br>
 </c:set>
 
+
+     <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
+
+     <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
+
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/giardiadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -311,9 +298,9 @@ ${attrs['organism'].value}<br>
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};type=${ptracks};width=640;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/giardiadbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};l=${protein_gtracks};width=640;embed=1;genepage=1
 </c:set>
-<c:if test="${ptracks ne ''}">
+<c:if test="${protein_gtracks ne ''}">
     <c:set var="proteinFeaturesImg">
         <noindex follow><center>
         <c:catch var="e">

@@ -22,6 +22,9 @@
                 <tr>
                     <imp:queryGridMakeUrl qset="InternalSnpQuestions" qname="SnpsByGeneId" linktext="Gene ID" existsOn="A Am C P T Tt"/>
                 </tr>
+                <tr>
+                    <imp:queryGridMakeUrl qset="InternalSnpQuestions" qname="HtsSnpsByStrain" linktext="Gene ID" existsOn="C P T"/>
+                </tr>
 </c:when>
 <c:when test="${fn:containsIgnoreCase(modelName,'tritryp')||fn:containsIgnoreCase(modelName,'amoeba') }">
                 <tr>
@@ -44,6 +47,9 @@
 <c:when test="${fn:containsIgnoreCase(modelName,'tritryp')||fn:containsIgnoreCase(modelName,'amoeba') }">
                 <tr>
                     <imp:queryGridMakeUrl qset="SnpQuestions" qname="HtsSnpsByLocation" linktext="Genomic Location" existsOn="A Am C P T Tt"/>
+                </tr>
+                <tr>
+                    <imp:queryGridMakeUrl qset="SnpQuestions" qname="HtsSnpsByStrain" linktext="Strain" existsOn="A Tt"/>
                 </tr>
 </c:when>
 <c:otherwise>

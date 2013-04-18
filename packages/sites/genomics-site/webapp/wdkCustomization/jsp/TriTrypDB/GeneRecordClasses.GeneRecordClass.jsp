@@ -130,7 +130,7 @@ ${id}
 
 	<c:if test="${attrs['updated_annotation'].value != null}">
 		<br>${genedb_annot_link}
-	</c:if>
+	</c:if >
  <%-- Updated Product Name from GeneDB ------------------------------------------------------------%>
     <c:if test="${attrs['new_product_name'].value != null}">
 
@@ -168,19 +168,18 @@ ${id}
 ${organism}<br>
 </c:set>
 
+<c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
+
+<c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
+
+
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
 
-<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
-
-<c:set var="attribution">
-L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_Annotation_chromosomes,T.bruceigambiense_Annotation,T.congolense_Annotation_chromosomes,T.cruziEsmeraldo_Annotation_Chromosomes,T.cruziNonEsmeraldo_chromosomes,T.cruziNonEsmeraldo_Annotation_Chromosomes,T.vivax_chromosomes,T.vivax_Annotation_chromosomes
-</c:set>
-
-<c:if test="${gtracks ne ''}">
+<c:if test="${dna_gtracks ne ''}">
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/tritrypdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -201,7 +200,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
     content="${gnCtxImg}" isOpen="true" 
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
-    attribution="${attribution}"
+    attribution=""
   />
 
 </c:if> <%-- {tracks ne ''} %-->
@@ -212,7 +211,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 <c:if test='${binomial eq "Trypanosoma cruzi"}'>
 
 <imp:wdkTable tblName="Genbank" isOpen="true"
-               attribution="TcruziContigsAndAnnotations,TcruziEsmeraldo_likeChromosomeMap,TcruziNonEsmeraldo_likeChromosomeMap" />
+               attribution="" />
 </c:if>
 
 <c:if test="${strand eq '-'}">
@@ -310,7 +309,7 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
     </div>
   </c:set>
 
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL_TrypDB"
+  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
                  postscript="${orthomclLink}"/>
 </c:if>
 
@@ -318,24 +317,16 @@ L.braziliensis_Annotation,L.infantum_Annotation,L.major_Annotation,T.brucei927_A
 <%-- EC ------------------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
 
-<c:set var="attribution">
-enzymeDB_RSRC
-</c:set>
-
 <imp:wdkTable tblName="EcNumber" isOpen="true"
-               attribution="${attribution}"/>
+               attribution=""/>
 
 </c:if>
 
 <%-- GO ------------------------------------------------------------%>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
 
-<c:set var="attribution">
-GO,InterproscanData
-</c:set>
-
 <imp:wdkTable tblName="GoTerms" isOpen="true"
-               attribution="${attribution}"/>
+               attribution=""/>
 
 </c:if>
 
@@ -348,86 +339,11 @@ GO,InterproscanData
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 <imp:pageDivider name="Protein"/>
 
- <c:choose>
-  <c:when test='${binomial eq "Trypanosoma cruzi"}'>
-    <c:set var="ptracks">
-    TarletonMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    Tcruzi_Proteomics_Amastigote,InterproscanData,Tcruzi_Proteomics_Amastigote
-    </c:set>
-	</c:when>
-
-  <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
-    <c:set var="ptracks">
-    StuartMassSpecPeptides+FergusonMassSpecPeptides+AlmeidaMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    InterproscanData,Tbrucei_Proteomics_Procyclic_Form,Tbrucei_Ferguson_Phospho_Proteome_RSRC
-    </c:set>
-	</c:when>
-
- <c:when test='${organismFull eq "Trypanosoma brucei Lister strain 427" || organismFull eq "Trypanosoma brucei gambiense"}'>
-    <c:set var="ptracks">
-    InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    InterproscanData
-    </c:set>
-</c:when>
-
-  <c:when test='${organismFull eq "Leishmania infantum"}'>
-    <c:set var="ptracks">
-    LinfantumMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    InterproscanData,Linfantum_Proteomics_SDS_Amastigote,Linfantum_Proteomics_glycosylation
-    </c:set>
-	</c:when>
-
-  <c:when test='${organismFull eq "Leishmania major strain Friedlin"}'>
-    <c:set var="ptracks">
-    SilvermanMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    Lmajor_Proteomics_Exosomes,InterproscanData,Linfantum_Proteomics_SDS_Amastigote
-    </c:set>
-	</c:when>
-
-  <c:when test='${organismFull eq "Leishmania braziliensis"}'>
-    <c:set var="ptracks">
-    CuervoMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    Lbraziliensis_Proteomics_Promastigotes, InterproscanData,Linfantum_Proteomics_SDS_Amastigote
-    </c:set>
-	</c:when>
-
-  <c:when test='${organismFull eq "Leishmania mexicana"}'>
-    <c:set var="ptracks">
-    AebischerMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    Lmexicana_Proteomics_Aebischer_GelFree_RSRC,InterproscanData,Linfantum_Proteomics_SDS_Amastigote
-    </c:set>
-  </c:when> 
-
-  <c:when test='${organismFull eq "Leishmania tarentolae Parrot-TarII"}'>
-    <c:set var="ptracks">
-    InterproDomains+SignalP+TMHMM+HydropathyPlot+SecondaryStructure+BLASTP
-    </c:set>
-    <c:set var="attribution">
-    InterproscanData
-    </c:set>
-  </c:when> 
-
- </c:choose>
-    
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id}:1..${proteinLength};type=${ptracks};width=640;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=${id}:1..${proteinLength};l=${protein_gtracks};width=640;embed=1;genepage=1
 </c:set>
-<c:if test="${ptracks ne ''}">
+<c:if test="${protein_gtracks ne ''}">
     <c:set var="proteinFeaturesImg">
         <noindex follow><center>
         <c:catch var="e">
@@ -444,9 +360,9 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <imp:toggle name="proteinContext"  displayName="Protein Features"
              content="${proteinFeaturesImg}"
-             attribution="${attribution}"/>
+             attribution=""/>
 
-</c:if> <%-- ptracks ne '' --%>
+</c:if> <%-- protein_gtracks ne '' --%>
 </c:if> <%-- so_term_name eq 'protein_coding --%>
 
 <!-- Molecular weight -->
@@ -487,30 +403,30 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <c:choose>
   <c:when test='${organismFull eq "Leishmania infantum"}'>
      <imp:wdkTable tblName="MassSpec" isOpen="true" 
-          attribution="Linfantum_Proteomics_glycosylation,Linfantum_Proteomics_SDS_Amastigote,Linfantum_Proteomics_OuelletteM"/>
+          attribution=""/>
   </c:when>
 
   <c:when test='${organismFull eq "Leishmania major strain Friedlin"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution="Lmajor_Proteomics_Exosomes"/>
+     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
   </c:when>
 
   <c:when test='${organismFull eq "Leishmania braziliensis"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution="Lbraziliensis_Proteomics_Promastigotes"/>
+     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
   </c:when>
 
   <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution="Tbrucei_Proteomics_Procyclic_Form"/>
+     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
 
-     <imp:wdkTable tblName="MassSpecMod" isOpen="true" attribution="Tbrucei_Ferguson_Phospho_Proteome_RSRC"/> 
+     <imp:wdkTable tblName="MassSpecMod" isOpen="true" attribution=""/> 
   </c:when>
 
   <c:when test='${binomial eq "Trypanosoma cruzi"}'>
      <imp:wdkTable tblName="MassSpec" isOpen="true" 
-          attribution="Tcruzi_Proteomics_Amastigote,Tcruzi_Proteomics_Membrane_Protein,Tcruzi_Proteomics_Reservosomes_B1TU"/>
+          attribution=""/>
   </c:when>
 </c:choose>
 
-<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution="PDBProteinSequences"/>
+<imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
@@ -520,7 +436,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 
 
-<imp:wdkTable tblName="Epitopes" isOpen="true" attribution="IEDB_Epitopes"/>
+<imp:wdkTable tblName="Epitopes" isOpen="true" attribution=""/>
 
 
 <br />
@@ -556,31 +472,31 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 
 <%---- Splice Sites table ---------------------------------------------%>
 <c:if test="${binomial eq 'Leishmania infantum'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Linfantum_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 <c:if test="${binomial eq 'Leishmania major'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC,Tbrucei_RNASeq_Spliced_Leader_Sites_Tschudi_RSRC"/>
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 <%--- Not ready for build 14
 <c:if test="${binomial eq 'Trypanosoma cruzi'}">
-     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution="Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC"/>
+     <imp:wdkTable tblName="SpliceSites" isOpen="false" attribution=""/>
 </c:if>
 ----%>
 
 <%---- Poly A Sites table ---------------------------------------------%>
 <c:if test="${binomial eq 'Leishmania major' }">
-     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution="Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC"/>
+     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution=""/>
 </c:if>
 <c:if test="${binomial eq 'Trypanosoma brucei'}">
-     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution="Tbrucei_RNASeq_PolyA_Sites_Tschudi_RSRC"/>
+     <imp:wdkTable tblName="PolyASites" isOpen="false" attribution=""/>
 </c:if>
 
 <%-- SAGE Tag table ------------------------------------------------------%>
 <c:if test="${binomial eq 'Trypanosoma brucei' }">
-<imp:wdkTable tblName="SageTags" attribution="TrypSageTagFreqs"/>
+<imp:wdkTable tblName="SageTags" attribution=""/>
 </c:if>
 
 
@@ -652,87 +568,25 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
     content="${seq}" />
 
 </c:if>
-<%------------------------------------------------------------------%> 
 
-
-<c:choose>
-
-<c:when test='${binomial eq "Trypanosoma cruzi"}'>
-  <c:set var="reference">
-      Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
-<br/>Mapping of gene coordinates from contigs to chromosomes for T. cruzi strain CL Brener chromosomes, generated by Rick Tarleton lab (UGA).
-  </c:set>
-</c:when>
-<c:when test='${organismFull eq "Leishmania infantum"}'>
-  <c:set var="reference">
-   Sequence data for <i>Leishmania infantum</i> clone JPCM5 (MCAN/ES/98/LLM-877) were downloaded from <a href="http://www.genedb.org/genedb/linfantum/">GeneDB</a> (sequence and annotated features).<br> 
-Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_infantum/">The Sanger Institute pathogen sequencing unit</a>. 
-  </c:set>
-</c:when>
-<c:when test='${organismFull eq "Leishmania major strain Friedlin"}'>
-  <c:set var="reference">
-   Sequence data for <i>Leishmania major</i> Friedlin (reference strain - MHOM/IL/80/Friedlin, zymodeme MON-103) were downloaded from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_major/">The Sanger Institute pathogen sequencing unit</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://www.sanger.ac.uk/Projects/L_major/EUseqlabs.shtml">The European Leishmania major Friedlin Genome Sequencing Consortium</a>.
-  </c:set>
-</c:when>
-<c:when test='${organismFull eq "Leishmania braziliensis"}'>
-  <c:set var="reference">
-   Sequence data for <i>Leishmania braziliensis</i> clone M2904 (MHOM/BR/75M2904) were downloaded from <a href="http://www.genedb.org/genedb/lbraziliensis/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_braziliensis/">The Sanger Institute pathogen sequencing unit</a>.
-  </c:set>
-</c:when>
-<c:when test='${organismFull eq "Trypanosoma brucei gambiense"}'>
-  <c:set var="reference">
-  Chromosome sequences and annotations for <i>Trypanosoma brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tbruceigambiense">GeneDB</a> for project details and data release policies.
-  </c:set>
-</c:when>
-<c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
-  <c:set var="reference">
-   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
-  </c:set>
-</c:when>
-<c:when test='${organismFull eq "Trypanosoma brucei Lister strain 427"}'>
-  <c:set var="reference">
-  <i>Trypanosoma brucei</i> strain Lister 427 genome sequence and assembly was provided prepublication by Dr. George Cross. For additional information please see information in the <a href="getDataset.do?display=detail&datasets=Tbrucei427_chromosomes_RSRC&title=Query#Tbrucei427_chromosomes_RSRC">data sources</a> page.
-  </c:set>
-</c:when>
-<c:when test='${organismFull eq "Trypanosoma congolense"}'>
-  <c:set var="reference">
-Chromosome and unassigned contig sequences and annotations for <i>Trypanosoma congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tcongolense">GeneDB</a> for project details and data release policies.
-  </c:set>
-</c:when>
-<c:when test='${organismFull eq "Trypanosoma vivax"}'>
-  <c:set var="reference">
-   Chromosome sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
-  </c:set>
-</c:when>
- <c:when test='${organismFull eq "Leishmania tarentolae Parrot-TarII"}'>
- <c:set var="reference">
-Chromosome sequence and annotations for <i>Leishmania tarentolae</i> are provided by  the CIHR Group on host pathogen interactions (Marc Ouellette, Jacques Corbeil, Barbara Papadopoulou, Michel J. Tremblay, Fr&#233;d&#233;ric Raymond, S&#233;bastien Boisvert from Universit&#233; Laval, and Martin Olivier from McGill University). <br><br><b>Genome sequencing of the lizard parasite <i>Leishmania tarentolae</i> reveals loss of genes associated to the intracellular stage of human pathogenic species</b> <a href="http://www.ncbi.nlm.nih.gov/pubmed/21998295">Raymond et. al</a>. 
-  </c:set>
-</c:when>
- 
-<c:otherwise>
-  <c:set var="reference">
-Sequence data from GeneDB for <i>${organism}</i> chromosomes in EMBL format were generated at the Wellcome Trust Sanger Institute Pathogen Sequencing Unit. 
-  </c:set>
-</c:otherwise>
-</c:choose>
-
-
-
-
-
-<imp:panel 
-    displayName="Genome Sequencing and Annotation"
-    content="${reference}" />
-<br>
-
-<%------------------------------------------------------------------%>
+<!-- attribution -->
 
 <hr>
 
+<c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
+
+<c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
+<c:forEach var="row" items="${referenceTable}">
+    <c:set var="reference" value="${row['description'].value}"/>
+</c:forEach>
+
+
+<imp:panel 
+    displayName="Genome Sequencing and Annotation by:"
+    content="${reference}" />
+
+<br>
+<%------------------------------------------------------------------%>
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>

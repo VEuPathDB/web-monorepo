@@ -117,23 +117,21 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <br>
 
 
-<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
-
-<c:set var="ptracks" value="InterproDomains+SignalP+TMHMM+BLASTP"/>
-
-
-
-
-
 <c:set var="content">
 ${attrs['organism'].value}<br>
 </c:set>
+
+
+     <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
+ 
+     <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
+
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/piroplasmadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/piroplasmadb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -275,9 +273,9 @@ ${attrs['organism'].value}<br>
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/piroplasmadbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};type=${ptracks};width=640;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/piroplasmadbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};l=${protein_gtracks};width=640;embed=1;genepage=1
 </c:set>
-<c:if test="${ptracks ne ''}">
+<c:if test="${protein_gtracks ne ''}">
     <c:set var="proteinFeaturesImg">
         <noindex follow><center>
         <c:catch var="e">

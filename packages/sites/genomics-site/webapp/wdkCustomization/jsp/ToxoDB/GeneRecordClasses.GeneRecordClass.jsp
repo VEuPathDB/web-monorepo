@@ -168,12 +168,16 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <br>
 
 
+     <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
+
+     <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
+
+
 <%-- DNA CONTEXT ---------------%>
 
-<c:set var="gtracks" value="${attrs['gtracks'].value}"/>
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/toxodb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -344,38 +348,13 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <%-- PROTEIN FEATURES -------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
-   <c:if test="${organism_full eq 'Toxoplasma gondii ME49'}">
-    <c:set var="ptracks">
-     WastlingMassSpecPeptides+MurrayMassSpecPeptides+EinsteinMassSpecPeptides+CarruthersMassSpecPeptides+MorenoMassSpecPeptides+TonkinMassSpecPeptides+SullivanMassSpecPeptides+BoothroydMassSpecPeptides+BoothroydOocystMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
-    </c:set>
-    </c:if>
-<c:if test="${organism_full eq 'Toxoplasma gondii GT1'}">
-<c:set var="ptracks">
-    BoothroydMassSpecPeptides+InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
-    </c:set>
-</c:if>
-<c:if test="${organism_full eq 'Toxoplasma gondii VEG'}">
-<c:set var="ptracks">
-     InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
-    </c:set>
-</c:if>
-<c:if test="${organism_full eq 'Neospora caninum'}">
-<c:set var="ptracks">
-     InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
-    </c:set>
-</c:if>
-<c:if test="${organism_full eq 'Eimeria tenella str. Houghton'}">
-<c:set var="ptracks">
-     InterproDomains+SignalP+TMHMM+HydropathyPlot+LowComplexity+BLASTP 
-    </c:set>
-</c:if>
-
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
+
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};type=${ptracks};width=600;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wdkRecord.primaryKey}:1..${proteinLength};l=${protein_gtracks};width=600;embed=1;genepage=1
 </c:set>
-<c:if test="${ptracks ne ''}">
+  <c:if test="${protein_gtracks ne ''}">
     <c:set var="proteinFeaturesImg">
         <noindex follow><center>
         <c:catch var="e">
@@ -395,7 +374,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
         content="${proteinFeaturesImg}"
         attribution=""/>
    <br>
-</c:if>
+  </c:if>
 </c:if>
 
 <!-- Molecular weight -->

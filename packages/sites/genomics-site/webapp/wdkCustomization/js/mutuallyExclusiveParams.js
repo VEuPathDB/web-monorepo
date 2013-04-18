@@ -130,14 +130,10 @@
           // this.toggleClass("active", input.checked);
           this.find("input, select, textarea")
               .attr("disabled", !input.checked);
-          if (input.checked) {
-            this.show();
-          } else {
-            this.hide();
-          }
+          this.toggle(input.checked);
         });
-        if (self.options.change instanceof Function) {
-          self.options.change(input, self.groupsRows[num]);
+        if (self.options.change instanceof Function && input.checked) {
+          self.options.change.call(self.element, input, self.groupsDivs[num]);
         }
         tabLabels = $(".xor-select", self.element)
             .buttonset()
@@ -173,6 +169,7 @@
     var form = $("form#form_question").has("div#questionName").last(),
         questionName = form.find("div#questionName").attr("name"),
         inlineSubmit,
+        chromosomeFakeNull,
         groups;
 
     if (form.length === 0) {
@@ -222,32 +219,48 @@
           // select this
           $("input[name='xor-group']")[1].checked = true;
         }
-        element.on("submit", function(event) {
-          // If chromosome is disabled, enable it and select the first option,
-          // which should be the "blank" option
-          var chromosomeOptional = this.chromosomeOptional;
-
-          if (chromosomeOptional instanceof Node) {
-            // it will either be a SELECT or INPUT element
-            if (chromosomeOptional.nodeName === "SELECT" && chromosomeOptional.disabled) {
-              chromosomeOptional.disabled = false;
-              chromosomeOptional[0].selected = true;
-            } else if (chromosomeOptional.nodeName === "INPUT" && chromosomeOptional.disabled) {
-              chromosomeOptional.disabled = false;
-              chromosomeOptional.checked = true;
-            }
-          } else if (chromosomeOptional instanceof NodeList) {
-            // it will be a list of INPUT elements
-            if (chromosomeOptional[0].disabled) {
-              chromosomeOptional[0].disabled = false;
-              chromosomeOptional[0].checked = true;
-            }
-          }
-
-          this.organism.disabled = false;
-        });
+        // change default chromosome
+        chromosomeFakeNull = element.find("#chromosomeOptional > :first").remove();
+        //element.find("#chromosomeOptional option:nth-child(2)").attr("selected", true);
       }
+
     }).submit(function() {
+      // If chromosome is disabled, enable it and select the first option,
+      // which should be the "blank" option
+      var chromosomeOptional = this.chromosomeOptional;
+
+      if (chromosomeOptional.disabled && this.sequenceId.value.indexOf("(Example:") === 0) {
+        alert("Please enter a valid Sequence ID");
+        event.preventDefault();
+        return false;
+      }
+
+      /* IT APPEARS ALL SEARCHES ARE USING SELECT
+
+      if (chromosomeOptional instanceof Node) {
+        // it will either be a SELECT or INPUT element
+        if (chromosomeOptional.nodeName === "SELECT" && chromosomeOptional.disabled) {
+          chromosomeOptional.disabled = false;
+          chromosomeOptional[0].selected = true;
+        } else if (chromosomeOptional.nodeName === "INPUT" && chromosomeOptional.disabled) {
+          chromosomeOptional.disabled = false;
+          chromosomeOptional.checked = true;
+        }
+      } else if (chromosomeOptional instanceof NodeList) {
+        // it will be a list of INPUT elements
+        if (chromosomeOptional[0].disabled) {
+          chromosomeOptional[0].disabled = false;
+          chromosomeOptional[0].checked = true;
+        }
+      }
+      */
+      if (chromosomeOptional.disabled) {
+        chromosomeOptional.disabled = false;
+        chromosomeFakeNull.appendTo(chromosomeOptional).attr("selected", true);
+      }
+
+      this.organism.disabled = false;
+
       if (inlineSubmit instanceof Function) {
         inlineSubmit.call(this);
       }

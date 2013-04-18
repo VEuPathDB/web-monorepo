@@ -105,16 +105,19 @@ return true;
         <table>
           <tr>
             <td>
-              <input type="checkbox" name="genomes" value="Lbraziliensis" checked>L.braziliensis
+              <input type="checkbox" name="genomes" value="lbraMHOMBR75M2904" checked>L.braziliensis
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Linfantum" checked>L.infantum
+              <input type="checkbox" name="genomes" value="ldonBPK282A1" checked>L.donovani
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="LmajorFriedlin" checked>L.major
+              <input type="checkbox" name="genomes" value="linfJPCM5" checked>L.infantum
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Lmexicana" checked>L.mexicana
+              <input type="checkbox" name="genomes" value="lmajFriedlin" checked>L.major
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="lmexMHOMGT2001U1103" checked>L.mexicana
             </td>
             <td>
               <input type="checkbox" name="genomes" value="ltarParrotTarII" checked>L.tarentolae
@@ -122,27 +125,39 @@ return true;
             </tr>
            <tr>
             <td>
-              <input type="checkbox" name="genomes" value="Tbrucei427" checked>T.brucei 427
+              <input type="checkbox" name="genomes" value="tbruLister427" checked>T.brucei 427
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Tbrucei927" checked>T.brucei 927
+              <input type="checkbox" name="genomes" value="tbruTREU927" checked>T.brucei 927
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Tbruceigambiense" checked>T.brucei gambiense
+              <input type="checkbox" name="genomes" value="tbrugambienseDAL972" checked>T.brucei gambiense
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="Tcongolense" checked>T.congolense
+              <input type="checkbox" name="genomes" value="tconIL3000" checked>T.congolense
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="tevaSTIB805" checked>T.evansi
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="tvivY486" checked>T.vivax
             </td>
           </tr>
             <tr>
             <td>
-              <input type="checkbox" name="genomes" value="TcruziEsmeraldoLike" checked>T.cruzi esmeraldo like
+              <input type="checkbox" name="genomes" value="tcruCLBrenerEsmeraldo-like" checked>T.cruzi esmeraldo like
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="TcruziNonEsmeraldoLike" checked>T.cruzi non-esmeraldo like
+              <input type="checkbox" name="genomes" value="tcruCLBrenerNon-Esmeraldo-like" checked>T.cruzi non-esmeraldo like
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="tcruCLBrener" checked>T.cruzi strain CL Brener
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="tcrumarinkelleiB7" checked>T.cruzi marinkellei
             </td>
             <td colspan="2">
-              <input type="checkbox" name="genomes" value="Tvivax" checked>T.vivax
+              <input type="checkbox" name="genomes" value="tcruSylvioX10-1" checked>T.cruzi Sylvio
             </td>
            </tr>
          </table>
