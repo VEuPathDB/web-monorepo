@@ -1,6 +1,6 @@
-"use strict";
-
 wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
+  "use strict";
+
   var $img,
       $form;
 
@@ -68,7 +68,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     if ($form.find("input[name*='samples_fc_ref_generic']:checked").length === 0 &&
         $form.find("input[name*='samples_fc_comp_generic']:checked").length === 0) {
-      blockGraph();
+      // blockGraph();
       return;
     }
 
@@ -82,7 +82,8 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
   var blockGraph = function() {
     if (!$img.data("blockUI.isBlocked")) {
       $img.block({
-        message: "<a href='' class='fold-change-help'>Click for more information</a>",
+        //message: "<a href='' class='fold-change-help'>Click for more information</a>",
+        message: "<p>Begin by choosing reference and comparison samples.</p>",
         overlayCSS: {
           background: "white",
           opacity: 0.8,
@@ -92,6 +93,8 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
           cursor: "default"
         }
       });
+      var zIdx = parseInt($img.find(".blockUI.blockOverlay").css("z-index"), 10);
+      $(".foldchange-help").css("z-index", zIdx + 1);
     }
   };
 
@@ -148,7 +151,15 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       .css("top", "-10000px")
       .appendTo($img);
     }
+
     $img.find("div").last().css("top", "");
+
+    // add help link
+    $("<a><img src='/plasmo.dfalke/wdk/images/question.png'/></a>")
+    .addClass("foldchange-help")
+    .attr("href", "/assets/Fold Change Help.docx")
+    .attr("title", "Click to download detailed help about this search.")
+    .prependTo($img);
 
     // set color of params
     // $(".samples_fc_ref_generic, .min_max_avg_ref").css("color", "blue");
