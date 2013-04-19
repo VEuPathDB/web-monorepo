@@ -2,18 +2,11 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
   "use strict";
 
   var $img,
-      $form;
+      $form,
+      slideMap;
 
-  // set the classname for the image placeholder
-  var setGraph = function() {
-    var direction,
-        className,
-        slideMap,
-        ref_operation = "none",
-        comp_operation = "none";
-
-
-    slideMap = {
+  // map operation combinations to slide numbers
+  slideMap = {
       "up-regulated-maximum-maximum"         : 1,
       "up-regulated-none-maximum"            : 2,
       "up-regulated-maximum-none"            : 3,
@@ -52,6 +45,62 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       "up-or-down-regulated-none-none"       : 36
     };
 
+
+  var init = function() {
+    // create placeholder for graph images
+    var $wrapper,
+        $help;
+
+    $wrapper = $("<div/>").addClass("fold-change-wrapper").appendTo(".param-group.empty");
+    $img = $("<div/>").addClass("fold-change-img").appendTo($wrapper);
+    // get a handle on the form element -- we use .last to handle nested forms
+    $form = $("form#form_question").last();
+    $form.addClass("fold-change");
+
+    // load slides
+    for (var i = 1; i <= 36; i++) {
+      $("<div></div>")
+      .css("position", "absolute")
+      .css("height", "300px")
+      .css("width", "400px")
+      .css("background-image", "url(/assets/images/fold-change/Slide" + (i<10 ? "0"+i : i) + ".jpg)")
+      .css("top", "-10000px")
+      .appendTo($img);
+    }
+
+    $img.find("div").last().css("top", "");
+
+    // add help link
+    $help = $("<div/>").appendTo($wrapper)
+    .addClass("fold-change-help");
+
+    $("<a><img src='/plasmo.dfalke/wdk/images/question.png'/> Download detailed help about this search.</a>")
+    .attr("href", "/assets/Fold Change Help.docx")
+    .appendTo($help);
+
+
+    // connect to form change event
+    $form.on("change", function() {
+      setParams();
+      setGraph();
+    }).on("submit", function() {
+      $(this).find(":disabled").attr("disabled", false);
+    });
+
+    setTimeout(function() {
+      setParams();
+      setGraph();
+    }, 100);
+    return;
+  };
+
+  // set the classname for the image placeholder
+  var setGraph = function() {
+    var direction,
+        className,
+        ref_operation = "none",
+        comp_operation = "none";
+
     direction = $form.find("select[name*='regulated_dir']")
         .val().replace(/\s+/g, "-");
 
@@ -68,7 +117,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     if ($form.find("input[name*='samples_fc_ref_generic']:checked").length === 0 &&
         $form.find("input[name*='samples_fc_comp_generic']:checked").length === 0) {
-      // blockGraph();
+      blockGraph();
       return;
     }
 
@@ -132,60 +181,6 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       compOp.attr("disabled", false);
       compOp.find(":selected").text(compOp.val().slice(0, -1));
     }
-  };
-
-  var init = function() {
-    // create placeholder for graph images
-    $img = $("<div></div>").appendTo(".param-group.empty").addClass("fold-change-img");
-    // get a handle on the form element -- we use .last to handle nested forms
-    $form = $("form#form_question").last();
-    $form.addClass("fold-change");
-
-    // load slides
-    for (var i = 1; i <= 36; i++) {
-      $("<div></div>")
-      .css("position", "absolute")
-      .css("height", "300px")
-      .css("width", "400px")
-      .css("background-image", "url(/assets/images/fold-change/Slide" + (i<10 ? "0"+i : i) + ".jpg)")
-      .css("top", "-10000px")
-      .appendTo($img);
-    }
-
-    $img.find("div").last().css("top", "");
-
-    // add help link
-    $("<a><img src='/plasmo.dfalke/wdk/images/question.png'/></a>")
-    .addClass("foldchange-help")
-    .attr("href", "/assets/Fold Change Help.docx")
-    .attr("title", "Click to download detailed help about this search.")
-    .prependTo($img);
-
-    // set color of params
-    // $(".samples_fc_ref_generic, .min_max_avg_ref").css("color", "blue");
-    // $(".samples_fc_comp_generic, .min_max_avg_comp").css("color", "#D10000");
-
-    $img.on("click", ".fold-change-help", function(e) {
-      e.preventDefault();
-      $("<div>Some static help information here...</div>").dialog({
-        modal: true,
-        title: "Help for Fold Change Expression Searches"
-      });
-    });
-
-    // connect to form change event
-    $form.on("change", function() {
-      setParams();
-      setGraph();
-    }).on("submit", function() {
-      $(this).find(":disabled").attr("disabled", false);
-    });
-
-    setTimeout(function() {
-      setParams();
-      setGraph();
-    }, 100);
-    return;
   };
 
   init();
