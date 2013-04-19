@@ -74,7 +74,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     $help = $("<div/>").appendTo($wrapper)
     .addClass("fold-change-help");
 
-    $("<a><img src='/plasmo.dfalke/wdk/images/question.png'/> Download detailed help about this search.</a>")
+    $("<a><img src='" + wdk.getWebAppUrl() + "wdk/images/question.png'/> Download detailed help about this search.</a>")
     .attr("href", "/assets/Fold Change Help.docx")
     .appendTo($help);
 
