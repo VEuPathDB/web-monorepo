@@ -26,7 +26,8 @@
     <c:set var="secName" 	value="${row['module'].value}"/>
 
     <c:set var="baseUrlWithArgs" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&dataset=${row['dataset_name']}"/>
-    <c:if test="${row['is_graph_custom'].value} eq 'false'">
+
+    <c:if test="${row['is_graph_custom'].value eq 'false'}">
        <c:set var="baseUrlWithArgs" value="${baseUrlWithArgs}&template=1"/>
     </c:if>
     
