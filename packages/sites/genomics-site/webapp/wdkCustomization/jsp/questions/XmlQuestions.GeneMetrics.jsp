@@ -65,7 +65,7 @@ $(document).ready( function() {
 <c:when test="${project eq 'FungiDB'}" >
 
 <tr><td colspan="2">
-FungiDB is an integrated genomic and functional genomic database for the kingdom Fungi. In its first iteration (released in early 2011), FungiDB contains the genomes of <b>18 Fungi covering 17 species</b> (see below). FungiDB integrates whole genome sequence and annotation and will expand to include experimental data and environmental isolate sequences provided by the community of researchers. The database includes comparative genomics, analysis of gene expression, and supplemental bioinformatics analyses and a web interface for data-mining.
+FungiDB is an integrated genomic and functional genomic database for the kingdom Fungi. In its first iteration (released in early 2011), FungiDB contains the genomes of <b>52 strains covering 48 species</b> (see below). FungiDB integrates whole genome sequence and annotation and will expand to include experimental data and environmental isolate sequences provided by the community of researchers. The database includes comparative genomics, analysis of gene expression, and supplemental bioinformatics analyses and a web interface for data-mining.
 <br><br>
 <i style="color:#b45f04">(Please mouse over gene metrics for a definition; mouse over acronyms for the organism full name.)</i><br>
 </td></tr>
@@ -101,82 +101,189 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <c:choose>
 <c:when test="${project eq 'FungiDB'}" >
 
-<tr class="mythStyle">
+  <tr class="mythStyle">
     <td style="background-color:white;border-right:3px solid grey;border-top:0px none;border-left:0 none;"></td>
-    <td style="border-right:3px solid grey" colspan="8" class="mythStyle">Eurotiomycetes; Ascomycota</td>
-    <td style="border-right:3px solid grey" colspan="5" class="mythStyle">Sordariomycetes; Ascomycota</td>
-    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Saccharomycotina; Ascomycota</td>
-    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Basidiomycota</td>
-    <td class="mythStyle">Mucormycotina; Zygomycota</td>
-</tr>
-<tr class="mythStyle" style="cursor:pointer">
-    <td  style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</td>
-    <td class="mythStyle" title="Aspergillus clavatus NRRL 1"><i>Ac</i></td>
-    <td class="mythStyle" title="Aspergillus flavus NRRL 3357"><i>Afl</i></td>
-    <td class="mythStyle" title="Aspergillus fumigatus Af293"><i>Afu</i></td>
+    <td style="border-right:3px solid grey" colspan="15" class="mythStyle">Ascomycota; Eurotiomycetes</td>
+    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Ascomycota; Leotiomycetes</td>
+    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Ascomycota; Saccharomycetes</td>
+    <td style="border-right:3px solid grey" colspan="3" class="mythStyle">Ascomycota; Schizosaccharomycetes</td>
+    <td style="border-right:3px solid grey" colspan="9" class="mythStyle">Ascomycota; Sordariomycetes</td>
+    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Basidiomycota; Agaricomycetes</td>
+    <td style="border-right:3px solid grey" colspan="1" class="mythStyle">Basidiomycota; Pucciniomycetes</td>
+    <td style="border-right:3px solid grey" colspan="6" class="mythStyle">Basidiomycota; Tremellomycetes</td>
+    <td style="border-right:3px solid grey" colspan="3" class="mythStyle">Basidiomycota; Ustilaginomycetes</td>
+    <td style="border-right:3px solid grey" colspan="1" class="mythStyle">Chytridiomycota; Chytridiomycetes</td>
+    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Mucoromycotina; Mucorales</td>
+    <td style="border-right:3px solid grey" colspan="5" class="mythStyle">Oomycetes; Peronosporales</td>
+    <td colspan="1" class="mythStyle">Oomycetes; Pythiales</td>
+  </tr>
+  <tr class="mythStyle" style="cursor:pointer">
+    <td style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</td>
+    <td class="mythStyle" title="Ajellomyces capsulatus G186AR"><i>Acap</i></td>
+    <td class="mythStyle" title="Ajellomyces capsulatus NAm1"><i>AcapN</i></td>
+    <td class="mythStyle" title="Aspergillus carbonarius ITEM 5010"><i>Acar</i></td>
+    <td class="mythStyle" title="Aspergillus clavatus NRRL 1"><i>Acla</i></td>
+    <td class="mythStyle" title="Aspergillus flavus NRRL3357"><i>Afla</i></td>
+    <td class="mythStyle" title="Aspergillus fumigatus Af293"><i>Afum</i></td>
     <td class="mythStyle" title="Aspergillus nidulans FGSC A4"><i>Anid</i></td>
     <td class="mythStyle" title="Aspergillus niger ATCC 1015"><i>Anig</i></td>
-    <td class="mythStyle" title="Aspergillus terreus NIH 2624"><i>At</i></td>
-    <td class="mythStyle" title="Coccidioides immitis H538.4"><i>CiH</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Coccidioides immitis RS"><i>CiRS</i></td>
-    <td class="mythStyle" title="Fusarium graminearum PH-1 (NRRL 31084)"><i>Fg</i></td>
-    <td class="mythStyle" title="Fusarium oxysporum f.sp.lycopersici  4287"><i>Fo</i></td>
-    <td class="mythStyle" title="Gibberella moniliformis "><i>Gm</i></td>
-    <td class="mythStyle" title="Magnaporthe oryzae 70-15"><i>Mo</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Neurospora crassa OR74A"><i>Nc</i></td>
-    <td class="mythStyle" title="Candida albicans SC5314"><i>Ca</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Saccharomyces cerevisiae S288c"><i>Sc</i></td>
-    <td class="mythStyle" title="Cryptococcus neoformans var.grubii H99"><i>Cn</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Puccinia graminis f.sp.tritici CRL 75"><i>Pg</i></td>
-    <td  style="border-right:3px solid grey" class="mythStyle" title="Rhizopus oryzae RA 99-880"><i>Ro</i></td>
-</tr>
+    <td class="mythStyle" title="Aspergillus terreus NIH2624"><i>Ater</i></td>
+    <td class="mythStyle" title="Coccidioides immitis H538.4"><i>Cimm</i></td>
+    <td class="mythStyle" title="Coccidioides immitis RS"><i>CimmR</i></td>
+    <td class="mythStyle" title="Coccidioides posadasii C735 delta SOWgp"><i>Cpos</i></td>
+    <td class="mythStyle" title="Neosartorya fischeri NRRL 181"><i>Nfis</i></td>
+    <td class="mythStyle" title="Penicillium marneffei ATCC 18224"><i>Pmar</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Talaromyces stipitatus ATCC 10500"><i>Tsti</i></td>
+    <td class="mythStyle" title="Botryotinia fuckeliana B05.10"><i>Bfuc</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Sclerotinia sclerotiorum 1980 UF-70"><i>Sscl</i></td>
+    <td class="mythStyle" title="Candida albicans SC5314"><i>Calb</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Saccharomyces cerevisiae S288c"><i>Scer</i></td>
+    <td class="mythStyle" title="Schizosaccharomyces japonicus yFS275"><i>Sjap</i></td>
+    <td class="mythStyle" title="Schizosaccharomyces octosporus yFS286"><i>Soct</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Schizosaccharomyces pombe 972h-"><i>Spom</i></td>
+    <td class="mythStyle" title="Fusarium oxysporum f. sp. lycopersici 4287"><i>Foxy</i></td>
+    <td class="mythStyle" title="Gibberella moniliformis 7600"><i>Gmon</i></td>
+    <td class="mythStyle" title="Gibberella zeae PH-1"><i>Gzea</i></td>
+    <td class="mythStyle" title="Magnaporthe oryzae 70-15"><i>Mory</i></td>
+    <td class="mythStyle" title="Neurospora crassa OR74A"><i>Ncra</i></td>
+    <td class="mythStyle" title="Neurospora discreta FGSC 8579"><i>Ndis</i></td>
+    <td class="mythStyle" title="Neurospora tetrasperma FGSC 2508"><i>Ntet</i></td>
+    <td class="mythStyle" title="Sordaria macrospora k-hell"><i>Smac</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Trichoderma reesei QM6a"><i>Tree</i></td>
+    <td class="mythStyle" title="Coprinopsis cinerea okayama7#130"><i>Ccin</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Phanerochaete chrysosporium RP-78"><i>Pchr</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Puccinia graminis f. sp. tritici CRL 75-36-700-3"><i>Pgra</i></td>
+    <td class="mythStyle" title="Cryptococcus gattii R265"><i>Cgat</i></td>
+    <td class="mythStyle" title="Cryptococcus gattii WM276"><i>CgatW</i></td>
+    <td class="mythStyle" title="Cryptococcus neoformans var. grubii H99"><i>Cneo</i></td>
+    <td class="mythStyle" title="Cryptococcus neoformans var. neoformans B-3501A"><i>CneoB</i></td>
+    <td class="mythStyle" title="Cryptococcus neoformans var. neoformans JEC21"><i>CneoJ</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Tremella mesenterica DSM 1558"><i>Tmes</i></td>
+    <td class="mythStyle" title="Malassezia globosa CBS 7966"><i>Mglo</i></td>
+    <td class="mythStyle" title="Sporisorium reilianum SRZ2"><i>Srei</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Ustilago maydis 521"><i>Umay</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Batrachochytrium dendrobatidis JEL423"><i>Bden</i></td>
+    <td class="mythStyle" title="Mucor circinelloides f. lusitanicus CBS 277.49"><i>Mcir</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Rhizopus oryzae RA 99-880"><i>Rory</i></td>
+    <td class="mythStyle" title="Hyaloperonospora arabidopsidis Emoy2"><i>Hara</i></td>
+    <td class="mythStyle" title="Phytophthora capsici LT1534"><i>Pcap</i></td>
+    <td class="mythStyle" title="Phytophthora infestans T30-4"><i>Pinf</i></td>
+    <td class="mythStyle" title="Phytophthora ramorum"><i>Pram</i></td>
+    <td style="border-right:3px solid grey" class="mythStyle" title="Phytophthora sojae"><i>Psoj</i></td>
+    <td class="mythStyle" title="Pythium ultimum DAOM BR144"><i>Pult</i></td>
+  </tr>
 
 
- <c:forEach items="${xmlAnswer.recordInstances}" var="record">
+  <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
-	 <c:set var="Metric_Type" value="${record.attributesMap['Metric_Type']}"/>
-	 <c:set var="Ac" value="${record.attributesMap['Aspergillus_clavatus']}"/>
-	 <c:set var="Afl" value="${record.attributesMap['Aspergillus_flavus']}"/>
-	 <c:set var="Afu" value="${record.attributesMap['Aspergillus_fumigatus']}"/>
-	 <c:set var="Anid" value="${record.attributesMap['Aspergillus_nidulans']}"/>
- 	 <c:set var="Anig" value="${record.attributesMap['Aspergillus_niger']}"/>
-	 <c:set var="At" value="${record.attributesMap['Aspergillus_terreus']}"/>
-	 <c:set var="CiH" value="${record.attributesMap['Coccidioides_immitis_H538_4']}"/>
-	 <c:set var="CiRS" value="${record.attributesMap['Coccidioides_immitis_RS']}"/>
-	 <c:set var="Fg" value="${record.attributesMap['Fusarium_graminearum']}"/>
-	 <c:set var="Fo" value="${record.attributesMap['Fusarium_oxysporum']}"/>
-         <c:set var="Gm" value="${record.attributesMap['Gibberella_moniliformis']}"/>
-         <c:set var="Mo" value="${record.attributesMap['Magnaporthe_oryzae']}"/>
-         <c:set var="Nc" value="${record.attributesMap['Neurospora_crassa']}"/>
-         <c:set var="Ca" value="${record.attributesMap['Candida_albicans']}"/>
-	 <c:set var="Sc" value="${record.attributesMap['Saccharomyces_cerevisiae']}"/>
-	 <c:set var="Cn" value="${record.attributesMap['Cryptococcus_neoformans']}"/>
-	 <c:set var="Pg" value="${record.attributesMap['Puccinia_graminis']}"/>
-	 <c:set var="Ro" value="${record.attributesMap['Rhizopus_oryzae']}"/>
+    <c:set var="Acap" value="${record.attributesMap['Ajellomyces capsulatus G186AR']}"/>
+    <c:set var="AcapN" value="${record.attributesMap['Ajellomyces capsulatus NAm1']}"/>
+    <c:set var="Acar" value="${record.attributesMap['Aspergillus carbonarius ITEM 5010']}"/>
+    <c:set var="Acla" value="${record.attributesMap['Aspergillus clavatus NRRL 1']}"/>
+    <c:set var="Afla" value="${record.attributesMap['Aspergillus flavus NRRL3357']}"/>
+    <c:set var="Afum" value="${record.attributesMap['Aspergillus fumigatus Af293']}"/>
+    <c:set var="Anid" value="${record.attributesMap['Aspergillus nidulans FGSC A4']}"/>
+    <c:set var="Anig" value="${record.attributesMap['Aspergillus niger ATCC 1015']}"/>
+    <c:set var="Ater" value="${record.attributesMap['Aspergillus terreus NIH2624']}"/>
+    <c:set var="Cimm" value="${record.attributesMap['Coccidioides immitis H538.4']}"/>
+    <c:set var="CimmR" value="${record.attributesMap['Coccidioides immitis RS']}"/>
+    <c:set var="Cpos" value="${record.attributesMap['Coccidioides posadasii C735 delta SOWgp']}"/>
+    <c:set var="Nfis" value="${record.attributesMap['Neosartorya fischeri NRRL 181']}"/>
+    <c:set var="Pmar" value="${record.attributesMap['Penicillium marneffei ATCC 18224']}"/>
+    <c:set var="Tsti" value="${record.attributesMap['Talaromyces stipitatus ATCC 10500']}"/>
+    <c:set var="Bfuc" value="${record.attributesMap['Botryotinia fuckeliana B05.10']}"/>
+    <c:set var="Sscl" value="${record.attributesMap['Sclerotinia sclerotiorum 1980 UF-70']}"/>
+    <c:set var="Calb" value="${record.attributesMap['Candida albicans SC5314']}"/>
+    <c:set var="Scer" value="${record.attributesMap['Saccharomyces cerevisiae S288c']}"/>
+    <c:set var="Sjap" value="${record.attributesMap['Schizosaccharomyces japonicus yFS275']}"/>
+    <c:set var="Soct" value="${record.attributesMap['Schizosaccharomyces octosporus yFS286']}"/>
+    <c:set var="Spom" value="${record.attributesMap['Schizosaccharomyces pombe 972h-']}"/>
+    <c:set var="Foxy" value="${record.attributesMap['Fusarium oxysporum f. sp. lycopersici 4287']}"/>
+    <c:set var="Gmon" value="${record.attributesMap['Gibberella moniliformis 7600']}"/>
+    <c:set var="Gzea" value="${record.attributesMap['Gibberella zeae PH-1']}"/>
+    <c:set var="Mory" value="${record.attributesMap['Magnaporthe oryzae 70-15']}"/>
+    <c:set var="Ncra" value="${record.attributesMap['Neurospora crassa OR74A']}"/>
+    <c:set var="Ndis" value="${record.attributesMap['Neurospora discreta FGSC 8579']}"/>
+    <c:set var="Ntet" value="${record.attributesMap['Neurospora tetrasperma FGSC 2508']}"/>
+    <c:set var="Smac" value="${record.attributesMap['Sordaria macrospora k-hell']}"/>
+    <c:set var="Tree" value="${record.attributesMap['Trichoderma reesei QM6a']}"/>
+    <c:set var="Ccin" value="${record.attributesMap['Coprinopsis cinerea okayama7#130']}"/>
+    <c:set var="Pchr" value="${record.attributesMap['Phanerochaete chrysosporium RP-78']}"/>
+    <c:set var="Pgra" value="${record.attributesMap['Puccinia graminis f. sp. tritici CRL 75-36-700-3']}"/>
+    <c:set var="Cgat" value="${record.attributesMap['Cryptococcus gattii R265']}"/>
+    <c:set var="CgatW" value="${record.attributesMap['Cryptococcus gattii WM276']}"/>
+    <c:set var="Cneo" value="${record.attributesMap['Cryptococcus neoformans var. grubii H99']}"/>
+    <c:set var="CneoB" value="${record.attributesMap['Cryptococcus neoformans var. neoformans B-3501A']}"/>
+    <c:set var="CneoJ" value="${record.attributesMap['Cryptococcus neoformans var. neoformans JEC21']}"/>
+    <c:set var="Tmes" value="${record.attributesMap['Tremella mesenterica DSM 1558']}"/>
+    <c:set var="Mglo" value="${record.attributesMap['Malassezia globosa CBS 7966']}"/>
+    <c:set var="Srei" value="${record.attributesMap['Sporisorium reilianum SRZ2']}"/>
+    <c:set var="Umay" value="${record.attributesMap['Ustilago maydis 521']}"/>
+    <c:set var="Bden" value="${record.attributesMap['Batrachochytrium dendrobatidis JEL423']}"/>
+    <c:set var="Mcir" value="${record.attributesMap['Mucor circinelloides f. lusitanicus CBS 277.49']}"/>
+    <c:set var="Rory" value="${record.attributesMap['Rhizopus oryzae RA 99-880']}"/>
+    <c:set var="Hara" value="${record.attributesMap['Hyaloperonospora arabidopsidis Emoy2']}"/>
+    <c:set var="Pcap" value="${record.attributesMap['Phytophthora capsici LT1534']}"/>
+    <c:set var="Pinf" value="${record.attributesMap['Phytophthora infestans T30-4']}"/>
+    <c:set var="Pram" value="${record.attributesMap['Phytophthora ramorum']}"/>
+    <c:set var="Psoj" value="${record.attributesMap['Phytophthora sojae']}"/>
+    <c:set var="Pult" value="${record.attributesMap['Pythium ultimum DAOM BR144']}"/>
 
-
-
-<tr class="mytdStyle">
-    <td style="border-right:3px solid grey;cursor:pointer" class="mytdStyle" align="left" title="${record.attributesMap['Description']}">${Metric_Type}</td>
-    <td class="mytdStyle" align="right">${Ac}</td>
-    <td class="mytdStyle" align="right">${Afl}</td>
-    <td class="mytdStyle" align="right">${Afu}</td>
-    <td class="mytdStyle" align="right">${Anid}</td>
-    <td class="mytdStyle" align="right">${Anig}</td>
-    <td class="mytdStyle" align="right">${At}</td>
-    <td class="mytdStyle" align="right">${CiH}</td>
-    <td style="border-right:3px solid grey"  class="mytdStyle" align="right">${CiRS}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Fg}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Fo}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Gm}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Mo}</td>
-    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Nc}</td>
-    <td class="mytdStyle" align="right">${Ca}</td>
-    <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Sc}</td>
-    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cn}</td>
-    <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Pg}</td>
-    <td class="mytdStyle" align="right">${Ro}</td>
-</tr>
+    <tr class="mytdStyle">
+      <td style="border-right:3px solid grey;cursor:pointer" class="mytdStyle" align="left" title="${record.attributesMap['Description']}">${Metric_Type}</td>
+      <td class="mytdStyle" align="right">${Acap}</td>
+      <td class="mytdStyle" align="right">${AcapN}</td>
+      <td class="mytdStyle" align="right">${Acar}</td>
+      <td class="mytdStyle" align="right">${Acla}</td>
+      <td class="mytdStyle" align="right">${Afla}</td>
+      <td class="mytdStyle" align="right">${Afum}</td>
+      <td class="mytdStyle" align="right">${Anid}</td>
+      <td class="mytdStyle" align="right">${Anig}</td>
+      <td class="mytdStyle" align="right">${Ater}</td>
+      <td class="mytdStyle" align="right">${Cimm}</td>
+      <td class="mytdStyle" align="right">${CimmR}</td>
+      <td class="mytdStyle" align="right">${Cpos}</td>
+      <td class="mytdStyle" align="right">${Nfis}</td>
+      <td class="mytdStyle" align="right">${Pmar}</td>
+      <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tsti}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Bfuc}</td>
+      <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Sscl}</td>
+      <td class="mytdStyle" align="right">${Calb}</td>
+      <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Scer}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Sjap}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Soct}</td>
+      <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Spom}</td>
+      <td class="mytdStyle" align="right">${Foxy}</td>
+      <td class="mytdStyle" align="right">${Gmon}</td>
+      <td class="mytdStyle" align="right">${Gzea}</td>
+      <td class="mytdStyle" align="right">${Mory}</td>
+      <td class="mytdStyle" align="right">${Ncra}</td>
+      <td class="mytdStyle" align="right">${Ndis}</td>
+      <td class="mytdStyle" align="right">${Ntet}</td>
+      <td class="mytdStyle" align="right">${Smac}</td>
+      <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tree}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ccin}</td>
+      <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Pchr}</td>
+      <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Pgra}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cgat}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${CgatW}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cneo}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${CneoB}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${CneoJ}</td>
+      <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Tmes}</td>
+      <td class="mytdStyle" align="right">${Mglo}</td>
+      <td class="mytdStyle" align="right">${Srei}</td>
+      <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Umay}</td>
+      <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Bden}</td>
+      <td class="mytdStyle" align="right">${Mcir}</td>
+      <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Rory}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Hara}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pcap}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pinf}</td>
+      <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pram}</td>
+      <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Psoj}</td>
+      <td class="mytdStyle" align="right">${Pult}</td>
+    </tr>
 
   </c:forEach>
 
