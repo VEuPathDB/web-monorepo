@@ -176,6 +176,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
   <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
+    <c:set var="Metric_Type" value="${record.attributesMap['Metric_Type']}"/>
     <c:set var="Acap" value="${record.attributesMap['Ajellomyces capsulatus G186AR']}"/>
     <c:set var="AcapN" value="${record.attributesMap['Ajellomyces capsulatus NAm1']}"/>
     <c:set var="Acar" value="${record.attributesMap['Aspergillus carbonarius ITEM 5010']}"/>
