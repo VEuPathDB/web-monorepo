@@ -260,4 +260,16 @@ sub wdkReference {
   }
 }
 
+sub citationFromExtDatabaseNamePattern {
+  my ($self,$extdb) = @_;
+
+  my $sql = "with pubs as (select name, id, listagg(publication,',') WITHIN GROUP (order by publication) PMIDS, contact_email from ( SELECT nvl(ds.dataset_name_pattern, ds.name) as name, ds.dataset_presenter_id as id, c.email as contact_email, p.pmid as publication from ApidbTuning.DatasetPresenter ds, APIDBTUNING.datasetcontact c,APIDBTUNING.datasetpublication p where ds.dataset_presenter_id = c.dataset_presenter_id and ds.dataset_presenter_id = p.dataset_presenter_id and ((ds.name = '$extdb' and ds.dataset_name_pattern is null) or ds.dataset_name_pattern = '$extdb') and c.is_primary_contact =1 )group by name, id, contact_email) select name, description ||' Primary Contact Email: '||nvl(email,'unavailable')||' PMID: ' || publications as citationfrom (SELECT nvl(ds.dataset_name_pattern, ds.name) as name, ds.description as description, pubs.contact_email as email, pubs.PMIDS as publications FROM ApidbTuning.DatasetPresenter ds, pubs where ds.dataset_presenter_id = pubs.id )";
+  my $sth = $self->{dbh}->prepare($sql);
+  $sth->execute() or $self->throw($sth->errstr);
+  while (my ($name,$value)  = $sth->fetchrow_array) {
+    return "$value";
+  }
+
+}
+
 1;
