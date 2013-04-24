@@ -3,7 +3,16 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
   var $img,
       $form,
-      slideMap;
+      $overlay,
+      slideMap,
+      helpContent;
+
+  helpContent = "<p>This graphic will help you visualize the parameter " +
+    "choices you make at the left. " +
+    "It will begin to display when you choose a <b>Reference Sample</b> or " +
+    " <b>Comparison Sample</b>.</p>" +
+    "<p>Additionally, see the <a href='/assets/Fold%20Change%20Help.pdf' " +
+    " target='_blank'>detailed help for this search</a>.</p>";
 
   // map operation combinations to slide numbers
   slideMap = {
@@ -45,17 +54,32 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       "up-or-down-regulated-none-none"       : 36
     };
 
-
   var init = function() {
     // create placeholder for graph images
     var $wrapper,
         $help;
+
+    // swap location of question icons for parameters
+    $(".group-detail").find("label").each(function() {
+      $(this).find(":first-child").appendTo(this)
+    });
 
     $wrapper = $("<div/>").addClass("fold-change-wrapper").appendTo(".param-group.empty");
     $img = $("<div/>").addClass("fold-change-img").appendTo($wrapper);
     // get a handle on the form element -- we use .last to handle nested forms
     $form = $("form#form_question").last();
     $form.addClass("fold-change");
+
+    // override blockUI functions
+    $img.block = function() {
+      this.find(".overlay").css("opacity", "0.9");
+      return this;
+    };
+
+    $img.unblock = function() {
+      this.find(".overlay").css("opacity", "0");
+      return this;
+    };
 
     // load slides
     for (var i = 1; i <= 36; i++) {
@@ -70,13 +94,22 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     $img.find("div").last().css("top", "");
 
-    // add help link
-    $help = $("<div/>").appendTo($wrapper)
-    .addClass("fold-change-help");
+    $("<div/>").css({
+      "background-color": "whitesmoke",
+      "opacity": "0.9",
+      "height": "100%",
+      "width": "100%"
+    }).addClass("overlay").appendTo($img);
 
-    $("<a><img src='" + wdk.getWebAppUrl() + "wdk/images/question.png'/> Download detailed help about this search.</a>")
-    .attr("href", "/assets/Fold Change Help.docx")
-    .appendTo($help);
+    // add help link
+    $help = $("<div/>")
+    .html(helpContent)
+    .addClass("fold-change-help")
+    .appendTo($wrapper);
+
+    // $("<a><img src='" + wdk.getWebAppUrl() + "wdk/images/question.png'/> Download detailed help about this search.</a>")
+    // .attr("href", "/assets/Fold Change Help.docx")
+    // .appendTo($help);
 
 
     // connect to form change event
@@ -117,7 +150,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     if ($form.find("input[name*='samples_fc_ref_generic']:checked").length === 0 &&
         $form.find("input[name*='samples_fc_comp_generic']:checked").length === 0) {
-      blockGraph();
+      $img.block();
       return;
     }
 
@@ -125,26 +158,6 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     //$img.unblock().removeClass().addClass("fold-change-img").addClass(className);
     $img.unblock().find("div").css("top", "-10000px").eq(slideMap[className] - 1).css("top", "");
-  };
-
-  // block image placeholder with a link for help text
-  var blockGraph = function() {
-    if (!$img.data("blockUI.isBlocked")) {
-      $img.block({
-        //message: "<a href='' class='fold-change-help'>Click for more information</a>",
-        message: "<p>Begin by choosing reference and comparison samples.</p>",
-        overlayCSS: {
-          background: "white",
-          opacity: 0.8,
-          cursor: "default"
-        },
-        css: {
-          cursor: "default"
-        }
-      });
-      var zIdx = parseInt($img.find(".blockUI.blockOverlay").css("z-index"), 10);
-      $(".foldchange-help").css("z-index", zIdx + 1);
-    }
   };
 
   // make some params readonly in certain conditions
