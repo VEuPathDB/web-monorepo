@@ -102,88 +102,88 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <c:when test="${project eq 'FungiDB'}" >
 
   <tr class="mythStyle">
-    <td style="background-color:white;border-right:3px solid grey;border-top:0px none;border-left:0 none;"></td>
-    <td style="border-right:3px solid grey" colspan="15" class="mythStyle">Ascomycota; Eurotiomycetes</td>
-    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Ascomycota; Leotiomycetes</td>
-    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Ascomycota; Saccharomycetes</td>
-    <td style="border-right:3px solid grey" colspan="3" class="mythStyle">Ascomycota; Schizosaccharomycetes</td>
-    <td style="border-right:3px solid grey" colspan="9" class="mythStyle">Ascomycota; Sordariomycetes</td>
-    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Basidiomycota; Agaricomycetes</td>
-    <td style="border-right:3px solid grey" colspan="1" class="mythStyle">Basidiomycota; Pucciniomycetes</td>
-    <td style="border-right:3px solid grey" colspan="6" class="mythStyle">Basidiomycota; Tremellomycetes</td>
-    <td style="border-right:3px solid grey" colspan="3" class="mythStyle">Basidiomycota; Ustilaginomycetes</td>
-    <td style="border-right:3px solid grey" colspan="1" class="mythStyle">Chytridiomycota; Chytridiomycetes</td>
-    <td style="border-right:3px solid grey" colspan="2" class="mythStyle">Mucoromycotina; Mucorales</td>
-    <td style="border-right:3px solid grey" colspan="5" class="mythStyle">Oomycetes; Peronosporales</td>
-    <td colspan="1" class="mythStyle">Oomycetes; Pythiales</td>
+    <th style="background-color:white;border-right:3px solid grey;border-top:0px none;border-left:0 none;"></th>
+    <th style="border-right:3px solid grey" colspan="15" class="mythStyle">Ascomycota; Eurotiomycetes</th>
+    <th style="border-right:3px solid grey" colspan="2" class="mythStyle">Ascomycota; Leotiomycetes</th>
+    <th style="border-right:3px solid grey" colspan="2" class="mythStyle">Ascomycota; Saccharomycetes</th>
+    <th style="border-right:3px solid grey" colspan="3" class="mythStyle">Ascomycota; Schizosaccharomycetes</th>
+    <th style="border-right:3px solid grey" colspan="9" class="mythStyle">Ascomycota; Sordariomycetes</th>
+    <th style="border-right:3px solid grey" colspan="2" class="mythStyle">Basidiomycota; Agaricomycetes</th>
+    <th style="border-right:3px solid grey" colspan="1" class="mythStyle">Basidiomycota; Pucciniomycetes</th>
+    <th style="border-right:3px solid grey" colspan="6" class="mythStyle">Basidiomycota; Tremellomycetes</th>
+    <th style="border-right:3px solid grey" colspan="3" class="mythStyle">Basidiomycota; Ustilaginomycetes</th>
+    <th style="border-right:3px solid grey" colspan="1" class="mythStyle">Chytridiomycota; Chytridiomycetes</th>
+    <th style="border-right:3px solid grey" colspan="2" class="mythStyle">Mucoromycotina; Mucorales</th>
+    <th style="border-right:3px solid grey" colspan="5" class="mythStyle">Oomycetes; Peronosporales</th>
+    <th colspan="1" class="mythStyle">Oomycetes; Pythiales</th>
   </tr>
   <tr class="mythStyle" style="cursor:pointer">
-    <td style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</td>
+    <th style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</th>
 
-    <td class="mythStyle" title="Ajellomyces capsulatus G186AR"><i>Acap</i></td>
-    <td class="mythStyle" title="Ajellomyces capsulatus NAm1"><i>AcapN</i></td>
-    <td class="mythStyle" title="Aspergillus carbonarius ITEM 5010"><i>Acar</i></td>
-    <td class="mythStyle" title="Aspergillus clavatus NRRL 1"><i>Acla</i></td>
-    <td class="mythStyle" title="Aspergillus flavus NRRL3357"><i>Afla</i></td>
-    <td class="mythStyle" title="Aspergillus fumigatus Af293"><i>Afum</i></td>
-    <td class="mythStyle" title="Aspergillus nidulans FGSC A4"><i>Anid</i></td>
-    <td class="mythStyle" title="Aspergillus niger ATCC 1015"><i>Anig</i></td>
-    <td class="mythStyle" title="Aspergillus terreus NIH2624"><i>Ater</i></td>
-    <td class="mythStyle" title="Coccidioides immitis H538.4"><i>Cimm</i></td>
-    <td class="mythStyle" title="Coccidioides immitis RS"><i>CimmR</i></td>
-    <td class="mythStyle" title="Coccidioides posadasii C735 delta SOWgp"><i>Cpos</i></td>
-    <td class="mythStyle" title="Neosartorya fischeri NRRL 181"><i>Nfis</i></td>
-    <td class="mythStyle" title="Penicillium marneffei ATCC 18224"><i>Pmar</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Talaromyces stipitatus ATCC 10500"><i>Tsti</i></td>
+    <th class="mythStyle" title="Ajellomyces capsulatus G186AR"><i>Acap</i></th>
+    <th class="mythStyle" title="Ajellomyces capsulatus NAm1"><i>AcapN</i></th>
+    <th class="mythStyle" title="Aspergillus carbonarius ITEM 5010"><i>Acar</i></th>
+    <th class="mythStyle" title="Aspergillus clavatus NRRL 1"><i>Acla</i></th>
+    <th class="mythStyle" title="Aspergillus flavus NRRL3357"><i>Afla</i></th>
+    <th class="mythStyle" title="Aspergillus fumigatus Af293"><i>Afum</i></th>
+    <th class="mythStyle" title="Aspergillus nidulans FGSC A4"><i>Anid</i></th>
+    <th class="mythStyle" title="Aspergillus niger ATCC 1015"><i>Anig</i></th>
+    <th class="mythStyle" title="Aspergillus terreus NIH2624"><i>Ater</i></th>
+    <th class="mythStyle" title="Coccidioides immitis H538.4"><i>Cimm</i></th>
+    <th class="mythStyle" title="Coccidioides immitis RS"><i>CimmR</i></th>
+    <th class="mythStyle" title="Coccidioides posadasii C735 delta SOWgp"><i>Cpos</i></th>
+    <th class="mythStyle" title="Neosartorya fischeri NRRL 181"><i>Nfis</i></th>
+    <th class="mythStyle" title="Penicillium marneffei ATCC 18224"><i>Pmar</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Talaromyces stipitatus ATCC 10500"><i>Tsti</i></th>
 
-    <td class="mythStyle" title="Botryotinia fuckeliana B05.10"><i>Bfuc</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Sclerotinia sclerotiorum 1980 UF-70"><i>Sscl</i></td>
+    <th class="mythStyle" title="Botryotinia fuckeliana B05.10"><i>Bfuc</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Sclerotinia sclerotiorum 1980 UF-70"><i>Sscl</i></th>
 
-    <td class="mythStyle" title="Candida albicans SC5314"><i>Calb</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Saccharomyces cerevisiae S288c"><i>Scer</i></td>
+    <th class="mythStyle" title="Candida albicans SC5314"><i>Calb</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Saccharomyces cerevisiae S288c"><i>Scer</i></th>
 
-    <td class="mythStyle" title="Schizosaccharomyces japonicus yFS275"><i>Sjap</i></td>
-    <td class="mythStyle" title="Schizosaccharomyces octosporus yFS286"><i>Soct</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Schizosaccharomyces pombe 972h-"><i>Spom</i></td>
+    <th class="mythStyle" title="Schizosaccharomyces japonicus yFS275"><i>Sjap</i></th>
+    <th class="mythStyle" title="Schizosaccharomyces octosporus yFS286"><i>Soct</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Schizosaccharomyces pombe 972h-"><i>Spom</i></th>
 
-    <td class="mythStyle" title="Fusarium oxysporum f. sp. lycopersici 4287"><i>Foxy</i></td>
-    <td class="mythStyle" title="Gibberella moniliformis 7600"><i>Gmon</i></td>
-    <td class="mythStyle" title="Gibberella zeae PH-1"><i>Gzea</i></td>
-    <td class="mythStyle" title="Magnaporthe oryzae 70-15"><i>Mory</i></td>
-    <td class="mythStyle" title="Neurospora crassa OR74A"><i>Ncra</i></td>
-    <td class="mythStyle" title="Neurospora discreta FGSC 8579"><i>Ndis</i></td>
-    <td class="mythStyle" title="Neurospora tetrasperma FGSC 2508"><i>Ntet</i></td>
-    <td class="mythStyle" title="Sordaria macrospora k-hell"><i>Smac</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Trichoderma reesei QM6a"><i>Tree</i></td>
+    <th class="mythStyle" title="Fusarium oxysporum f. sp. lycopersici 4287"><i>Foxy</i></th>
+    <th class="mythStyle" title="Gibberella moniliformis 7600"><i>Gmon</i></th>
+    <th class="mythStyle" title="Gibberella zeae PH-1"><i>Gzea</i></th>
+    <th class="mythStyle" title="Magnaporthe oryzae 70-15"><i>Mory</i></th>
+    <th class="mythStyle" title="Neurospora crassa OR74A"><i>Ncra</i></th>
+    <th class="mythStyle" title="Neurospora discreta FGSC 8579"><i>Ndis</i></th>
+    <th class="mythStyle" title="Neurospora tetrasperma FGSC 2508"><i>Ntet</i></th>
+    <th class="mythStyle" title="Sordaria macrospora k-hell"><i>Smac</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Trichoderma reesei QM6a"><i>Tree</i></th>
 
-    <td class="mythStyle" title="Coprinopsis cinerea okayama7#130"><i>Ccin</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Phanerochaete chrysosporium RP-78"><i>Pchr</i></td>
+    <th class="mythStyle" title="Coprinopsis cinerea okayama7#130"><i>Ccin</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Phanerochaete chrysosporium RP-78"><i>Pchr</i></th>
 
-    <td style="border-right:3px solid grey" class="mythStyle" title="Puccinia graminis f. sp. tritici CRL 75-36-700-3"><i>Pgra</i></td>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Puccinia graminis f. sp. tritici CRL 75-36-700-3"><i>Pgra</i></th>
 
-    <td class="mythStyle" title="Cryptococcus gattii R265"><i>Cgat</i></td>
-    <td class="mythStyle" title="Cryptococcus gattii WM276"><i>CgatW</i></td>
-    <td class="mythStyle" title="Cryptococcus neoformans var. grubii H99"><i>Cneo</i></td>
-    <td class="mythStyle" title="Cryptococcus neoformans var. neoformans B-3501A"><i>CneoB</i></td>
-    <td class="mythStyle" title="Cryptococcus neoformans var. neoformans JEC21"><i>CneoJ</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Tremella mesenterica DSM 1558"><i>Tmes</i></td>
+    <th class="mythStyle" title="Cryptococcus gattii R265"><i>Cgat</i></th>
+    <th class="mythStyle" title="Cryptococcus gattii WM276"><i>CgatW</i></th>
+    <th class="mythStyle" title="Cryptococcus neoformans var. grubii H99"><i>Cneo</i></th>
+    <th class="mythStyle" title="Cryptococcus neoformans var. neoformans B-3501A"><i>CneoB</i></th>
+    <th class="mythStyle" title="Cryptococcus neoformans var. neoformans JEC21"><i>CneoJ</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Tremella mesenterica DSM 1558"><i>Tmes</i></th>
 
-    <td class="mythStyle" title="Malassezia globosa CBS 7966"><i>Mglo</i></td>
-    <td class="mythStyle" title="Sporisorium reilianum SRZ2"><i>Srei</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Ustilago maydis 521"><i>Umay</i></td>
+    <th class="mythStyle" title="Malassezia globosa CBS 7966"><i>Mglo</i></th>
+    <th class="mythStyle" title="Sporisorium reilianum SRZ2"><i>Srei</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Ustilago maydis 521"><i>Umay</i></th>
 
-    <td style="border-right:3px solid grey" class="mythStyle" title="Batrachochytrium dendrobatidis JEL423"><i>Bden</i></td>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Batrachochytrium dendrobatidis JEL423"><i>Bden</i></th>
 
-    <td class="mythStyle" title="Mucor circinelloides f. lusitanicus CBS 277.49"><i>Mcir</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Rhizopus oryzae RA 99-880"><i>Rory</i></td>
+    <th class="mythStyle" title="Mucor circinelloides f. lusitanicus CBS 277.49"><i>Mcir</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Rhizopus oryzae RA 99-880"><i>Rory</i></th>
 
-    <td class="mythStyle" title="Hyaloperonospora arabidopsidis Emoy2"><i>Hara</i></td>
-    <td class="mythStyle" title="Phytophthora capsici LT1534"><i>Pcap</i></td>
-    <td class="mythStyle" title="Phytophthora infestans T30-4"><i>Pinf</i></td>
-    <td class="mythStyle" title="Phytophthora ramorum"><i>Pram</i></td>
-    <td style="border-right:3px solid grey" class="mythStyle" title="Phytophthora sojae"><i>Psoj</i></td>
+    <th class="mythStyle" title="Hyaloperonospora arabidopsidis Emoy2"><i>Hara</i></th>
+    <th class="mythStyle" title="Phytophthora capsici LT1534"><i>Pcap</i></th>
+    <th class="mythStyle" title="Phytophthora infestans T30-4"><i>Pinf</i></th>
+    <th class="mythStyle" title="Phytophthora ramorum"><i>Pram</i></th>
+    <th style="border-right:3px solid grey" class="mythStyle" title="Phytophthora sojae"><i>Psoj</i></th>
 
-    <td class="mythStyle" title="Pythium ultimum DAOM BR144"><i>Pult</i></td>
+    <th class="mythStyle" title="Pythium ultimum DAOM BR144"><i>Pult</i></th>
   </tr>
 
 
