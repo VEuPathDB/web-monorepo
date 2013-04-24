@@ -119,6 +119,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
   </tr>
   <tr class="mythStyle" style="cursor:pointer">
     <td style="border-right:3px solid grey" class="mythStyle" title="">Gene Metric</td>
+
     <td class="mythStyle" title="Ajellomyces capsulatus G186AR"><i>Acap</i></td>
     <td class="mythStyle" title="Ajellomyces capsulatus NAm1"><i>AcapN</i></td>
     <td class="mythStyle" title="Aspergillus carbonarius ITEM 5010"><i>Acar</i></td>
@@ -134,13 +135,17 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Neosartorya fischeri NRRL 181"><i>Nfis</i></td>
     <td class="mythStyle" title="Penicillium marneffei ATCC 18224"><i>Pmar</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Talaromyces stipitatus ATCC 10500"><i>Tsti</i></td>
+
     <td class="mythStyle" title="Botryotinia fuckeliana B05.10"><i>Bfuc</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Sclerotinia sclerotiorum 1980 UF-70"><i>Sscl</i></td>
+
     <td class="mythStyle" title="Candida albicans SC5314"><i>Calb</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Saccharomyces cerevisiae S288c"><i>Scer</i></td>
+
     <td class="mythStyle" title="Schizosaccharomyces japonicus yFS275"><i>Sjap</i></td>
     <td class="mythStyle" title="Schizosaccharomyces octosporus yFS286"><i>Soct</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Schizosaccharomyces pombe 972h-"><i>Spom</i></td>
+
     <td class="mythStyle" title="Fusarium oxysporum f. sp. lycopersici 4287"><i>Foxy</i></td>
     <td class="mythStyle" title="Gibberella moniliformis 7600"><i>Gmon</i></td>
     <td class="mythStyle" title="Gibberella zeae PH-1"><i>Gzea</i></td>
@@ -150,26 +155,34 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td class="mythStyle" title="Neurospora tetrasperma FGSC 2508"><i>Ntet</i></td>
     <td class="mythStyle" title="Sordaria macrospora k-hell"><i>Smac</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Trichoderma reesei QM6a"><i>Tree</i></td>
+
     <td class="mythStyle" title="Coprinopsis cinerea okayama7#130"><i>Ccin</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Phanerochaete chrysosporium RP-78"><i>Pchr</i></td>
+
     <td style="border-right:3px solid grey" class="mythStyle" title="Puccinia graminis f. sp. tritici CRL 75-36-700-3"><i>Pgra</i></td>
+
     <td class="mythStyle" title="Cryptococcus gattii R265"><i>Cgat</i></td>
     <td class="mythStyle" title="Cryptococcus gattii WM276"><i>CgatW</i></td>
     <td class="mythStyle" title="Cryptococcus neoformans var. grubii H99"><i>Cneo</i></td>
     <td class="mythStyle" title="Cryptococcus neoformans var. neoformans B-3501A"><i>CneoB</i></td>
     <td class="mythStyle" title="Cryptococcus neoformans var. neoformans JEC21"><i>CneoJ</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Tremella mesenterica DSM 1558"><i>Tmes</i></td>
+
     <td class="mythStyle" title="Malassezia globosa CBS 7966"><i>Mglo</i></td>
     <td class="mythStyle" title="Sporisorium reilianum SRZ2"><i>Srei</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Ustilago maydis 521"><i>Umay</i></td>
+
     <td style="border-right:3px solid grey" class="mythStyle" title="Batrachochytrium dendrobatidis JEL423"><i>Bden</i></td>
+
     <td class="mythStyle" title="Mucor circinelloides f. lusitanicus CBS 277.49"><i>Mcir</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Rhizopus oryzae RA 99-880"><i>Rory</i></td>
+
     <td class="mythStyle" title="Hyaloperonospora arabidopsidis Emoy2"><i>Hara</i></td>
     <td class="mythStyle" title="Phytophthora capsici LT1534"><i>Pcap</i></td>
     <td class="mythStyle" title="Phytophthora infestans T30-4"><i>Pinf</i></td>
     <td class="mythStyle" title="Phytophthora ramorum"><i>Pram</i></td>
     <td style="border-right:3px solid grey" class="mythStyle" title="Phytophthora sojae"><i>Psoj</i></td>
+
     <td class="mythStyle" title="Pythium ultimum DAOM BR144"><i>Pult</i></td>
   </tr>
 
@@ -232,6 +245,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
     <tr class="mytdStyle">
       <td style="border-right:3px solid grey;cursor:pointer" class="mytdStyle" align="left" title="${record.attributesMap['Description']}">${Metric_Type}</td>
+
       <td class="mytdStyle" align="right">${Acap}</td>
       <td class="mytdStyle" align="right">${AcapN}</td>
       <td class="mytdStyle" align="right">${Acar}</td>
@@ -247,13 +261,17 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
       <td class="mytdStyle" align="right">${Nfis}</td>
       <td class="mytdStyle" align="right">${Pmar}</td>
       <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tsti}</td>
+
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Bfuc}</td>
       <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Sscl}</td>
+
       <td class="mytdStyle" align="right">${Calb}</td>
       <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Scer}</td>
+
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Sjap}</td>
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Soct}</td>
       <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Spom}</td>
+
       <td class="mytdStyle" align="right">${Foxy}</td>
       <td class="mytdStyle" align="right">${Gmon}</td>
       <td class="mytdStyle" align="right">${Gzea}</td>
@@ -263,26 +281,34 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
       <td class="mytdStyle" align="right">${Ntet}</td>
       <td class="mytdStyle" align="right">${Smac}</td>
       <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tree}</td>
+
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ccin}</td>
       <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Pchr}</td>
+
       <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Pgra}</td>
+
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cgat}</td>
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${CgatW}</td>
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Cneo}</td>
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${CneoB}</td>
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${CneoJ}</td>
       <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Tmes}</td>
+
       <td class="mytdStyle" align="right">${Mglo}</td>
       <td class="mytdStyle" align="right">${Srei}</td>
       <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Umay}</td>
+
       <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Bden}</td>
+
       <td class="mytdStyle" align="right">${Mcir}</td>
       <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Rory}</td>
+
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Hara}</td>
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pcap}</td>
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pinf}</td>
       <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Pram}</td>
       <td style="background-color:${bgcolor};border-right:3px solid grey" class="mytdStyle" align="right">${Psoj}</td>
+
       <td class="mytdStyle" align="right">${Pult}</td>
     </tr>
 
