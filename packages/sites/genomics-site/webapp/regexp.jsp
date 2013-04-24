@@ -13,23 +13,31 @@
                  divisionName="Queries & Tools"
                  division="queries">
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
 
-  <tr>
-    <td>
-      <div class="small">
-        <!-- content-->
+<style type="text/css">
+span.regex {
+	font-size: 120%;
+	font-weight:bold;
+	font-style:italic;
+}
+</style>
 
-<p>The following is a simple explanation of regular
-expressions.</p>
-<p>Perl regular expressions are strings which are used for pattern matching, e.g. 'aadgt', 'aa+dgt', 'a|d|c', '[mac]a'. <br>
+<!-- content-->
+
+<h2>The following is a simple explanation of regular expressions.</h2>
+
+Perl regular expressions are strings which are used for pattern matching, e.g. <span class="regex">'aadgt', 'aa+dgt', 'a|d|c', '[mac]a'. </span>
+<br>
 This allows to find patterns in all kind of text strings and therefore Perl is very useful to the molecular biologist, since nucleotide and amino acid sequences are "nothing else" than text.
-<p>Perl has special characters which can be used to match a
-greater number of strings. The following is a description of some
-these characters and examples of how they are used.
+<br>
+Perl has special characters which can be used to match a greater number of strings. 
+<br>
+The following is a description of some of these characters and examples of how they are used.
+<br>
 Even if these regular expressions might seems complicated at first sight, they prove to be very useful and easy to understand after having gone through some examples.
+<br><br>
 
-<p><font size=+1><b>Special Characters</b></font>
+<div class="h3left">Special Characters</div>
 
 <table BORDER COLS=2 WIDTH="640">
 <tr>
@@ -60,27 +68,41 @@ Even if these regular expressions might seems complicated at first sight, they p
 
 </table>
 
-<p>Here are some examples of searches.
-<p><i>ad+f</i> (1 or more occurences of 'd') would match any of the following:
+<br><br>
+
+<div class="h3left">Here are some examples of searches.</div>
+
+<span class="regex">ad+f</span> (1 or more occurences of 'd') would match any of the following:
 <br>adf
 <br>addf
 <br>adddf
 <br>addddddf
-<br>etc..
-<p><i>ad*f</i> (0 or more occurences of 'd') would match:
+<br>...
+<br><br>
+
+<span class="regex">ad*f</span> (0 or more occurences of 'd') would match:
 <br>af
 <br>adf
 <br>addf
 <br>adddf
-<br>etc...
-<p><i>ad?f</i> (0 or 1 occurence of 'd') would match:
+<br>...
+<br><br>
+
+<span class="regex">ad?f</span> (0 or 1 occurence of 'd') would match:
 <br>af
 <br>adf
-<p><i>a[yst]c</i> would match:
+
+<br><br>
+
+<span class="regex">a[yst]c</span> would match:
 <br>atc
 <br>asc
 <br>ayc
-<p><font size=+1><B>Pattern Anchors</B></font>
+
+<br><br>
+
+<br>
+<div class="h3left">Pattern Anchors</div>
 
 <table BORDER COLS=2 WIDTH="100%" >
 <tr>
@@ -96,25 +118,41 @@ Even if these regular expressions might seems complicated at first sight, they p
 </tr>
 </table>
 
-<p>Here are examples of expressions using pattern anchors.
-<p><i>^mdef</i> (e.g. a protein sequence <b>starting with</b> 'MDEF') would match:
-<br>mdef
-<br>mdefab
-<br>mdefaredfadfk
-<br><font color=FF0000>but not match :</font>
-<br>edefa
-<br>eeeedef
-<br>defaredfadfk
-<p><i>kdel$</i> (searches for proteins <b>ending with</b> 'KDEL', a standard ER retention signal) would match:
-<br>eeeekdel
-<br>kdel
-<br><font color=FF0000>but not match :</font>
-<br>edefkdell
-<br>akdeleefg
-      </div>
-    </td>
-  </tr>
 
-</table>
+<br><br>
+<div class="h3left">Here are examples of expressions using pattern anchors.</div>
+
+<span class="regex">^mdef</span> (e.g. a protein sequence <b>starting with</b> 'mdef') would match:
+<ul class="cirbulletlist">
+<li>mdef
+<li>mdefab
+<li>mdefaredfadfk
+</ul>
+<font color=FF0000>but not match :</font>
+<ul class="cirbulletlist">
+<li>edefa
+<li>eeeedef
+<li>defaredfadfk
+</ul>
+
+<br><br>
+
+<span class="regex">kdel$</span> (searches for proteins <b>ending with</b> 'kdel', a standard ER retention signal) would match:
+<ul class="cirbulletlist">
+<li>eeeekdel
+<li>kdel
+</ul>
+<font color=FF0000>but not match :</font>
+<ul class="cirbulletlist">
+<li>edefkdell
+<li>akdeleefg
+</ul>   
+
+<br><br>
+<div class="h3left">Specify the number of occurrences of a residue.</div>
+
+<span class="regex">P{1,5}</span>  would match P from 1 to 5 times.
+<br><br>
+<span class="regex">.{1,30}</span> would match any amino acid 1 to 30 times so you could find a motif within 30 amino acids of something like the beginning.
 
 </imp:pageFrame>
