@@ -15,7 +15,7 @@
 
 
 <style type="text/css">
-span.regex {
+.regex {
 	font-size: 120%;
 	font-weight:bold;
 	font-style:italic;
@@ -40,31 +40,39 @@ Even if these regular expressions might seems complicated at first sight, they p
 <div class="h3left">Special Characters</div>
 
 <table BORDER COLS=2 WIDTH="640">
+
 <tr>
-<td WIDTH="50" bgcolor=FAFA00>+</td>
+<td WIDTH="50" class="regex">.</td>
+<td>Match any character.</td>
+</tr>
+
+<tr>
+<td WIDTH="50" class="regex">+</td>
 <td>Matches "one or more of the preceding characters".</td>
 </tr>
 
 <tr>
-<td WIDTH="50" bgcolor=FAFA00>*</td>
+<td WIDTH="50" class="regex">*</td>
 <td>Matches "any number of occurrences of the preceding character", including
 0.</td>
 </tr>
 
 <tr>
-<td WIDTH="50" bgcolor=FAFA00>?</td>
+<td WIDTH="50" class="regex">?</td>
 <td>Matches "zero or one occurrences of the preceding character".</td>
 </tr>
 
 <tr>
-<td WIDTH="50" bgcolor=FAFA00>[ ]</td>
+<td WIDTH="50" class="regex">[ ]</td>
 <td>Matches any character contained in the brackets.</td>
 </tr>
 
 <tr>
-<td WIDTH="50" bgcolor=FAFA00>[^ ]</td>
+<td WIDTH="50" class="regex">[^ ]</td>
 <td>Match any character <i>except</i> those in the brackets.</td>
 </tr>
+
+
 
 </table>
 
@@ -106,13 +114,13 @@ Even if these regular expressions might seems complicated at first sight, they p
 
 <table BORDER COLS=2 WIDTH="100%" >
 <tr>
-<td WIDTH="50" bgcolor=FAFA00>^</td>
+<td WIDTH="50" class="regex">^</td>
 
 <td>Match only at the beginning of the string.</td>
 </tr>
 
 <tr>
-<td WIDTH="50" bgcolor=FAFA00>$</td>
+<td WIDTH="50" class="regex">$</td>
 
 <td>Match only at the end of the string.</td>
 </tr>
