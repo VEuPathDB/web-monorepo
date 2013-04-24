@@ -26,15 +26,16 @@
 
 <h2>The following is a simple explanation of regular expressions.</h2>
 
-Perl regular expressions are strings which are used for pattern matching, e.g. <span class="regex">'aadgt', 'aa+dgt', 'a|d|c', '[mac]a'. </span>
+Perl regular expressions are terms used for pattern matching in text strings, e.g. <span class="regex">'aadgt', 'aa+dgt', 'a|d|c', '[mac]a'. </span>
 <br>
-This allows to find patterns in all kind of text strings and therefore Perl is very useful to the molecular biologist, since nucleotide and amino acid sequences are "nothing else" than text.
+Because nucleotide and amino acid sequences are text strings, regular expressions are very useful for finding motifs within sequences. 
 <br>
-Perl has special characters which can be used to match a greater number of strings. 
+Motifs often include repetitive or ambiguous assignments at some locations. The rules and special characters used in regular expressions
+ help define the full set of strings that match the motif pattern.  
 <br>
 The following is a description of some of these characters and examples of how they are used.
 <br>
-Even if these regular expressions might seems complicated at first sight, they prove to be very useful and easy to understand after having gone through some examples.
+Although regular expressions seem complicated at first, they are very useful and easy to understand after going through some examples.
 <br><br>
 
 <div class="h3left">Special Characters</div>
@@ -72,6 +73,20 @@ Even if these regular expressions might seems complicated at first sight, they p
 <td>Match any character <i>except</i> those in the brackets.</td>
 </tr>
 
+<tr>
+<td WIDTH="50" class="regex">{n}</td>
+<td>Matches when the preceding character, or character range, occurs exactly n times.</td>
+</tr>
+
+<tr>
+<td WIDTH="50" class="regex">{n,}</td>
+<td>Matches when the preceding character occurs at least n times.</td>
+</tr>
+
+<tr>
+<td WIDTH="50" class="regex">{n,m}</td>
+<td>Matches when the preceding character occurs at least n times, but no more than m times.</td>
+</tr>
 
 
 </table>
@@ -106,10 +121,18 @@ Even if these regular expressions might seems complicated at first sight, they p
 <br>atc
 <br>asc
 <br>ayc
-
+<br>
 <br><br>
 
+
+<div class="h3left">Specify the number of occurrences of a residue.</div>
+
+<span class="regex">P{1,5}</span>  would match P from 1 to 5 times.
+<br><br>
+<span class="regex">.{1,30}</span> would match any amino acid 1 to 30 times so you could find a motif within 30 amino acids of something like the beginning.
+
 <br>
+<br><br>
 <div class="h3left">Pattern Anchors</div>
 
 <table BORDER COLS=2 WIDTH="100%" >
@@ -156,11 +179,6 @@ Even if these regular expressions might seems complicated at first sight, they p
 <li>akdeleefg
 </ul>   
 
-<br><br>
-<div class="h3left">Specify the number of occurrences of a residue.</div>
 
-<span class="regex">P{1,5}</span>  would match P from 1 to 5 times.
-<br><br>
-<span class="regex">.{1,30}</span> would match any amino acid 1 to 30 times so you could find a motif within 30 amino acids of something like the beginning.
 
 </imp:pageFrame>
