@@ -241,6 +241,7 @@ ${organism}<br>
      displayName="${htsSNPs.displayName}"
      content="${htsSNPs.value}${append}" />
 <br> 
+<imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
 
 <!-- gene alias table -->
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
