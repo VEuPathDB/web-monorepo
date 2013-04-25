@@ -16,9 +16,7 @@
   <c:set var="version" value="${applicationScope.wdkModel.version}"/>
   <c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
  
-  <span class="onload-function" data-function="wdk.setUpNavDropDowns"><jsp:text/></span>
-  <span class="onload-function" data-function="eupath.setup.setUpContactUsLogic"><jsp:text/></span>
-  
+
   <!--*********** Small Menu Options on Header ***********-->
 
   <div id="nav-top-div">
