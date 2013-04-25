@@ -196,7 +196,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     }
   };
 
-  init();
+  $(init);
 
   ns.init = init;
 });
