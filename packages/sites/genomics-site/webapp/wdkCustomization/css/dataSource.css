@@ -62,8 +62,9 @@
 
 #data-sets .category-content .data-set .wdk-toggle h3 {
 	text-decoration:underline;
-	padding:0;
-	line-height:2px;
+	padding-top:0;
+	padding-bottom: 0;
+	line-height:1em;
 }
 
 #data-sets .category-content .data-set li {
