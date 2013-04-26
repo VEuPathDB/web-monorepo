@@ -139,22 +139,6 @@ ${id}
     </c:if>
 </div>
 
-
-<imp:panel displayName="Community Expert Annotation" content="" />
-
-<c:catch var="e">
-  <imp:dataTable tblName="CommunityExpComments"/>
-</c:catch>
-<c:if test="${e != null}">
-  <table  width="100%" cellpadding="3">
-    <tr><td><b>User Comments</b>
-      <imp:embeddedError msg="<font size='-1'><i>temporarily unavailable.</i></font>" e="${e}" />
-    </td></tr>
-  </table>
-</c:if>
-
-<br/><br/>
-
 <%-- OVERVIEW ---------------%>
 
 <c:set var="attr" value="${attrs['overview']}" />
@@ -241,6 +225,7 @@ ${organism}<br>
      displayName="${htsSNPs.displayName}"
      content="${htsSNPs.value}${append}" />
 <br> 
+<imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
 
 <!-- gene alias table -->
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
