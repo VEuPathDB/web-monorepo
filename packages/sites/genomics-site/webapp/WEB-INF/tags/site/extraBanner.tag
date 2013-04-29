@@ -20,6 +20,6 @@
        This <i>beta-release</i> of Compound and Metabolic Pathways data sets incorporates KEGG pathways and a subset of PubChem records.  Future releases will include compounds for additional metabolites and small molecules, and pathways from other sources such as MPMP, MetaCyc, etc.  
 
        Please explore the site and 
-			 <a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> 
+			 <a class="open-window-contact-us" href='<c:url value='/contact.do'/>'>contact us</a> 
 			 with your feedback. 
 </c:if>

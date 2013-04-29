@@ -243,7 +243,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
   </c:otherwise>
   </c:choose>
   <br><span style="font-size:8pt;font-style:italic">(If you have a link that you think would be useful for the community, 
-    please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">send us a note.)</a></span>
+    please <a href="<c:url value="/contact.do"/>" class="open-window-contact-us">send us a note.)</a></span>
 </div>
 
 <%--------------  TUTORIALS ---------------------------------------------%>

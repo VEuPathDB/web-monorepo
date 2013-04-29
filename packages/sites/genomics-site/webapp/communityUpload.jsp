@@ -33,7 +33,7 @@
     This form allows you to upload and share documents, images, small datasets and other files 
     of community interest. Files submitted via this form will be publicly available
     (see the file listing <a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">here</a>). 
-    If you wish to submit data privately, please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> and we will provide further assistance.
+    If you wish to submit data privately, please <a href="<c:url value="/contact.do"/>" class="open-window-contact-us">Contact Us</a> and we will provide further assistance.
     <br><br>
     Files to be associated with specific genes or genomic sequences should be added
     via the 'User Comments' form which is linked on each record page.
@@ -52,7 +52,7 @@
     </div>
     <br>
     The maximum allowed upload size is 10MB total for all files uploaded in a single submission. 
-    If the total size of your files exceeds this limit, please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">Contact Us</a> and we will provide further assistance.
+    If the total size of your files exceeds this limit, please <a href="<c:url value="/contact.do"/>" class="open-window-contact-us">Contact Us</a> and we will provide further assistance.
     <br><br>
     <table>
     <tr><td>Document Title:</td><td><html:text property="title" styleId="title" size="60"/></td></tr>
