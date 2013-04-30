@@ -6,11 +6,13 @@
 
 require_once dirname(__FILE__) . "/../lib/modules/AppDatabase.php";
 require_once dirname(__FILE__) . "/../lib/modules/UserDatabase.php";
+require_once dirname(__FILE__) . "/../lib/modules/TuningManagerStatus.php";
 require_once dirname(__FILE__) . "/../lib/LdapTnsNameResolver.php";
 
 $app_database = new AppDatabase();
 $user_database = new UserDatabase();
 $ldap_resolver = new LdapTnsNameResolver();
+$tuning_manager_status = new TuningManagerStatus();
 
 if (isset($_GET['refresh']) && $_GET['refresh'] == 1) {
   $success = $app_database->refresh();
@@ -25,6 +27,7 @@ $adb = $app_database->attributes();
 $udb = $user_database->attributes();
 $adb_aliases_ar = $ldap_resolver->resolve($adb{'service_name'});
 $udb_aliases_ar = $ldap_resolver->resolve($udb{'service_name'});
+$tuning_status_attrs = $tuning_manager_status->attributes();
 
 ?>
 <h2>Application Database</h2>
@@ -119,6 +122,45 @@ foreach ($dblink_map as $dblink) {
 <input type="submit" value="update now">
 </form>
 <p>
+
+
+<h2>Custom Tuning</h2>
+<p>
+
+<p class="clickable">tuningManager Status &#8593;&#8595;</p>
+<div class="expandable" style="padding: 5px;">
+
+<table border="0" cellspacing="3" cellpadding="2" align="">
+
+<tr class="secondary3">
+<th align="left"><font size="-2">name</font></th>
+<th align="left"><font size="-2">created</font></th>
+<th align="left"><font size="-2">status</font></th>
+<th align="left"><font size="-2">last_check</font></th>
+</tr>
+<?php
+$tm_status_map = $tuning_status_attrs{'table_statuses'};
+$row = 0;
+foreach ($tm_status_map as $table) {
+  $css_class = ($row % 2) ? "rowMedium" : "rowLight";
+?>
+<tr class="<?php print $css_class?>" >
+  <td><?php print $table{'name'}?></td>
+  <td><?php print $table{'created'}?></td>
+  <td><?php print $table{'status'}?></td>
+  <td><?php print $table{'last_check'}?></td>
+</tr>
+<?php
+  $row++;
+}
+?>
+</table>
+
+</div>
+</p>
+
+
+
 <h2>WDK-Engine/Userlogin Database</h2>
 
 
