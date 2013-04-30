@@ -21,7 +21,7 @@
 <c:set var="cryptoQuestions" value="C.p.study:Intestinal Stage (Lippuner),GeneQuestions.GenesByFoldChangeCparvumLippuner,GeneQuestions.GenesByExprPercentileCpLippuner"/>
 --%>
 
-<c:set var="giardiaQuestions" value="G.l.study:Three Strains (Svard),GeneQuestions.GenesByRNASeqSvard3StagesFC,GeneQuestions.GenesByRNASeqSvard3StagesPercentile"/>
+<c:set var="giardiaQuestions" value="G.l.study:Three Strains (Svard),GeneQuestions.GenesByRNASeqgassAWB_Svard_rnaSeq_RSRCPercentile"/>
 
 <c:set var="hostQuestions" value="T.g.study:ME49 Infection (Gregory),GeneQuestions.GenesByRNASeqTgME49HumanFoldChange,GeneQuestions.GenesByRNASeqTgME49HumanPercentile"/>
 
