@@ -127,7 +127,7 @@ foreach ($dblink_map as $dblink) {
 <h2>Custom Tuning</h2>
 <p>
 
-<p class="clickable">tuningManager Status &#8593;&#8595;</p>
+<p class="clickable">Tuning Tables &#8593;&#8595;</p>
 <div class="expandable" style="padding: 5px;">
 
 <table border="0" cellspacing="3" cellpadding="2" align="">
