@@ -128,27 +128,46 @@ foreach ($dblink_map as $dblink) {
 <p>
 
 <p class="clickable">Tuning Tables &#8593;&#8595;</p>
-<div class="expandable" style="padding: 5px;">
+<div class="XXXexpandable" style="padding: 5px;">
 
+<?php  $days_old_warning_threshold = 5; ?>
+
+<p>
+Color codes: <span class='fatal'>update failed</span>, 
+<span class='warn'>last_check older than <?php print $days_old_warning_threshold?> days</span>
+</p>
 <table border="0" cellspacing="3" cellpadding="2" align="">
 
 <tr class="secondary3">
 <th align="left"><font size="-2">name</font></th>
-<th align="left"><font size="-2">created</font></th>
-<th align="left"><font size="-2">status</font></th>
 <th align="left"><font size="-2">last_check</font></th>
+<th align="left"><font size="-2">status</font></th>
+<th align="left"><font size="-2">created</font></th>
 </tr>
 <?php
 $tm_status_map = $tuning_status_attrs{'table_statuses'};
 $row = 0;
 foreach ($tm_status_map as $table) {
-  $css_class = ($row % 2) ? "rowMedium" : "rowLight";
+  $row_css_class = ($row % 2) ? "rowMedium" : "rowLight";
+  
+  $now = time();
+  $last_check_ts = strtotime($table{'last_check'});
+  $seconds_diff = $now - $last_check_ts;
+  $days_diff = $seconds_diff / 60 / 60 / 24;
+
+  if ($days_diff > $days_old_warning_threshold) {
+    $cell_css_class = "class='warn'";
+  } else if (stripos($table{'status'}, 'fail') !== FALSE) {
+    $cell_css_class =  "class='fatal'";
+  } else {
+    $cell_css_class = '';
+  }
 ?>
-<tr class="<?php print $css_class?>" >
-  <td><?php print $table{'name'}?></td>
-  <td><?php print $table{'created'}?></td>
-  <td><?php print $table{'status'}?></td>
-  <td><?php print $table{'last_check'}?></td>
+<tr class="<?php print $row_css_class?>" >
+  <td <?php print $cell_css_class?>><?php print $table{'name'}?></td>
+  <td <?php print $cell_css_class?>><?php print $table{'last_check'}?></td>
+  <td <?php print $cell_css_class?>><?php print $table{'status'}?></td>
+  <td <?php print $cell_css_class?>><?php print $table{'created'}?></td>
 </tr>
 <?php
   $row++;
