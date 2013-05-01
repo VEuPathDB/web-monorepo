@@ -128,7 +128,7 @@ foreach ($dblink_map as $dblink) {
 <p>
 
 <p class="clickable">Tuning Tables &#8593;&#8595;</p>
-<div class="XXXexpandable" style="padding: 5px;">
+<div class="expandable" style="padding: 5px;">
 
 <?php  $days_old_warning_threshold = 5; ?>
 
