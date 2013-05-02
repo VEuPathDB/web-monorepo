@@ -34,7 +34,7 @@
     <td>
       <span class="warningMessage">
       This pre-release version of ${wdkModel.name} is available for early community review. 
-      Please explore the site and <a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> 
+      Please explore the site and <a class="open-window-contact-us" href='<c:url value='/contact.do'/>'>contact us</a> 
       with your feedback. This site is under active development so there may be incomplete or 
       inaccurate data and occasional site outages can be expected.</span>
      </td></tr></table>
@@ -58,7 +58,7 @@
       This pre-release version of ${wdkModel.name} is available for early community review. 
       Your searches and strategies saved in this alpha release will not be available in the 
       official release.
-      Please explore the site and <a onclick="poptastic(this.href); return false;" target="_blank" href='<c:url value='/help.jsp'/>'>contact us</a> 
+      Please explore the site and <a class="open-window-contact-us" href='<c:url value='/contact.do'/>'>contact us</a> 
       with your feedback. This site is under active development so there may be incomplete or 
       inaccurate data and occasional site outages can be expected.</span>
      </td></tr></table>

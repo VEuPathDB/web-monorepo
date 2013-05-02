@@ -230,7 +230,7 @@ function openPubmedWindow(searchBoxId) {
       <tr class="medium">
         <td colspan=3> 
       Please add only scientific comments to be displayed on the ${commentForm.commentTargetId} page for ${commentForm.stableId}. 
-      If you want to report a problem, use the <a href="<c:url value='/help.jsp'/>">support page.</a>
+      If you want to report a problem, use the <a class="open-window-contact-us" href="<c:url value='/contact.do'/>">support page.</a>
       
       <br>Your comments are appreciated. 
       

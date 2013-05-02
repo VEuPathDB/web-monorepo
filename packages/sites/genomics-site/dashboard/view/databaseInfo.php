@@ -6,11 +6,13 @@
 
 require_once dirname(__FILE__) . "/../lib/modules/AppDatabase.php";
 require_once dirname(__FILE__) . "/../lib/modules/UserDatabase.php";
+require_once dirname(__FILE__) . "/../lib/modules/TuningManagerStatus.php";
 require_once dirname(__FILE__) . "/../lib/LdapTnsNameResolver.php";
 
 $app_database = new AppDatabase();
 $user_database = new UserDatabase();
 $ldap_resolver = new LdapTnsNameResolver();
+$tuning_manager_status = new TuningManagerStatus();
 
 if (isset($_GET['refresh']) && $_GET['refresh'] == 1) {
   $success = $app_database->refresh();
@@ -25,6 +27,7 @@ $adb = $app_database->attributes();
 $udb = $user_database->attributes();
 $adb_aliases_ar = $ldap_resolver->resolve($adb{'service_name'});
 $udb_aliases_ar = $ldap_resolver->resolve($udb{'service_name'});
+$tuning_status_attrs = $tuning_manager_status->attributes();
 
 ?>
 <h2>Application Database</h2>
@@ -119,6 +122,64 @@ foreach ($dblink_map as $dblink) {
 <input type="submit" value="update now">
 </form>
 <p>
+
+
+<h2>Custom Tuning</h2>
+<p>
+
+<p class="clickable">Tuning Tables &#8593;&#8595;</p>
+<div class="expandable" style="padding: 5px;">
+
+<?php  $days_old_warning_threshold = 5; ?>
+
+<p>
+Color codes: <span class='fatal'>update failed</span>, 
+<span class='warn'>last_check older than <?php print $days_old_warning_threshold?> days</span>
+</p>
+<table border="0" cellspacing="3" cellpadding="2" align="">
+
+<tr class="secondary3">
+<th align="left"><font size="-2">name</font></th>
+<th align="left"><font size="-2">last_check</font></th>
+<th align="left"><font size="-2">status</font></th>
+<th align="left"><font size="-2">created</font></th>
+</tr>
+<?php
+$tm_status_map = $tuning_status_attrs{'table_statuses'};
+$row = 0;
+foreach ($tm_status_map as $table) {
+  $row_css_class = ($row % 2) ? "rowMedium" : "rowLight";
+  
+  $now = time();
+  $last_check_ts = strtotime($table{'last_check'});
+  $seconds_diff = $now - $last_check_ts;
+  $days_diff = $seconds_diff / 60 / 60 / 24;
+
+  if ($days_diff > $days_old_warning_threshold) {
+    $cell_css_class = "class='warn'";
+  } else if (stripos($table{'status'}, 'fail') !== FALSE) {
+    $cell_css_class =  "class='fatal'";
+  } else {
+    $cell_css_class = '';
+  }
+?>
+<tr class="<?php print $row_css_class?>" >
+  <td <?php print $cell_css_class?>><?php print $table{'name'}?></td>
+  <td <?php print $cell_css_class?>><?php print $table{'last_check'}?></td>
+  <td <?php print $cell_css_class?>><?php print $table{'status'}?></td>
+  <td <?php print $cell_css_class?>><?php print $table{'created'}?></td>
+</tr>
+<?php
+  $row++;
+}
+?>
+</table>
+
+</div>
+</p>
+
+
+
 <h2>WDK-Engine/Userlogin Database</h2>
 
 
