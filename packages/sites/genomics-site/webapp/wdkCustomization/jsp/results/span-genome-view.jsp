@@ -86,8 +86,8 @@
                      on ${feature.forward ? "forward" : "reverse"} strand of ${sequence.sourceId}</p>
                   <p>${feature.description}</p>
                   <ul>
-                    <li><a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />">Record page</a></li>
-                    <li><a href="/cgi-bin/gbrowse/${siteName}/?name=${feature.context};h_feat=${feature.sourceId}@yellow">Gbrowse</a></li>
+                    <li><a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />"><u>Record page</u></a></li>
+                    <li><a href="/cgi-bin/gbrowse/${siteName}/?name=${feature.context};h_feat=${feature.sourceId}@yellow"><u>Gbrowse</u></a></li>
                   <ul>
                 </div>
               </c:forEach>
