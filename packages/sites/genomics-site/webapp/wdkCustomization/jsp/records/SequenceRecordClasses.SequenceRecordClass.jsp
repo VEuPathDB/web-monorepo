@@ -106,10 +106,10 @@
   <%------------------------------------------------------------------%>
   <c:choose>
     <c:when test="${projectId eq 'TriTrypDB' && attrs['length'].value >= 300000}">
-      <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
+      <c:set var="gtracks" value="ProtAlign+ORF600+TandemRepeat+LowComplexity" />
     </c:when>
     <c:when test="${projectId eq 'TriTrypDB' && attrs['length'].value < 300000}">
-      <c:set var="gtracks" value="BLASTX+ORF+TandemRepeat+LowComplexity" />
+      <c:set var="gtracks" value="ProtAlign+ORF+TandemRepeat+LowComplexity" />
     </c:when>
     <c:when test="${(projectId eq 'PlasmoDB' || projectId eq 'FungiDB') && attrs['length'].value >= 100000}">
       <c:set var="gtracks" value="ProtAlign+ORF600+TandemRepeat+LowComplexity" />
@@ -121,10 +121,10 @@
 
        <c:choose>
          <c:when test="${attrs['length'].value >= 100000}">
-           <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
+           <c:set var="gtracks" value="ProtAlign+ORF600+TandemRepeat+LowComplexity" />
          </c:when>
          <c:otherwise>
-           <c:set var="gtracks" value="BLASTX+ORF300+TandemRepeat+LowComplexity" />
+           <c:set var="gtracks" value="ProtAlign+ORF300+TandemRepeat+LowComplexity" />
          </c:otherwise>
        </c:choose>
     </c:otherwise>
