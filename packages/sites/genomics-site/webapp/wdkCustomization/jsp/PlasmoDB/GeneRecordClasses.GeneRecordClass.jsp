@@ -306,18 +306,14 @@ ${id}
 
 
 
-<%-- TODO: write attribute query "hasHtsSnps" ... then use that in the test --%>
-<c:if test="${species eq 'falciparum3D7' || species eq 'vivax'}">
-
 <%-- HTS SNP OVERVIEW ---------------%>
-
+<c:if test="${attrs['hasHtsSnps'].value eq '1'}">
 <c:set var="htsSNPs" value="${attrs['snpoverview']}" />
 <imp:panel attribute="${htsSNPs.name}"
     displayName="${htsSNPs.displayName}"
     content="${htsSNPs.value}${append}" />
 <br>
-
-    <imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
+<imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
 </c:if>
 
 

@@ -219,13 +219,15 @@ ${organism}<br>
 </c:if>
 
 <!-- snps between strains -->
-<%-- TODO: NEED SNP OVERVIEW HERE --%>
+<c:if test="${attrs['hasHtsSnps'].value eq '1'}">
+
 <c:set var="htsSNPs" value="${attrs['snpoverview']}" />
 <imp:panel attribute="${htsSNPs.name}"
      displayName="${htsSNPs.displayName}"
      content="${htsSNPs.value}${append}" />
 <br> 
 <imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
+</c:if>
 
 <!-- gene alias table -->
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>

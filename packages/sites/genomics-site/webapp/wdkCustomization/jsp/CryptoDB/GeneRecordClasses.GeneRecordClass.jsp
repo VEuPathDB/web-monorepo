@@ -152,10 +152,8 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <%-- SNPs  ---------------------------------------------------%>
 
-<%-- snps dataTable defined above --%>
-<c:if test="${snps ne 'none'}">
-
 <%-- HTS SNP OVERVIEW ---------------%>
+<c:if test="${attrs['hasHtsSnps'].value eq '1'}">
 
 <c:set var="htsSNPs" value="${attrs['snpoverview']}" />
 <imp:panel attribute="${htsSNPs.name}"
