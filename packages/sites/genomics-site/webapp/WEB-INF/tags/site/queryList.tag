@@ -153,8 +153,11 @@ function getComboElement()
  <c:when test="${prefix == 'N.c.'}">    
       <c:set var="org" value="Neospora caninum"/>
   </c:when>
- <c:when test="${prefix == 'L.d.' || prefix == 'L.i.'}">    
+ <c:when test="${prefix == 'L.i.'}">    
       <c:set var="org" value="Leishmania infantum"/>
+  </c:when>
+ <c:when test="${prefix == 'L.d.'}">    
+      <c:set var="org" value="Leishmania donovani"/>
   </c:when>
  <c:when test="${prefix == 'T.c.'}">    
       <c:set var="org" value="Trypanosoma cruzi"/>
