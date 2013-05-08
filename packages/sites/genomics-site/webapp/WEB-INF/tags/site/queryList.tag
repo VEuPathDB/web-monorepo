@@ -237,6 +237,8 @@ function getComboElement()
     <tr  style="background-color:${background}"><td colspan="${columns+2}" style="padding:0;padding-top:1em;font-size:120%;font-weight:bold;font-style:italic">${studyNameArray[1]}</td></tr>
 
     <tr style="background-color:${background}">
+
+<c:set var="oldorg" value="${org}" />
 </c:when>
 
 <%--- A QUESTION ------%>
@@ -273,7 +275,7 @@ function getComboElement()
 </c:otherwise>
 </c:choose>
 
-<c:set var="oldorg" value="${org}" />
+
       </c:forEach> <%-- forEach items=questions --%>
 
 
