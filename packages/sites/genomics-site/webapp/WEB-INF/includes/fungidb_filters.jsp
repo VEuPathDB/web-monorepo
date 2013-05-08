@@ -61,14 +61,14 @@
     <th><i>C.imm</i> H538.4</th>
     <th><i>C.imm</i> RS</th>
     <th><i>C.pos</i></th>
-    <th><i>H.cap</i> NAm1</th>
-    <th><i>H.cap</i> G186AR</th>
+    <th><i>A.cap</i> NAm1</th>
+    <th><i>A.cap</i> G186AR</th>
     <th><i>N.fis</i></th>
     <th><i>P.mar</i></th>
     <th><i>T.sti</i></th>
     <th><i>F.oxy</i></th>
-    <th><i>F.ver</i></th>
-    <th><i>F.gra</i></th>
+    <th><i>G.mon</i></th>
+    <th><i>G.zea</i></th>
     <th><i>M.ory</i></th>
     <th><i>N.cra</i></th>
     <th><i>N.dis</i></th>
@@ -302,13 +302,13 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="hcapNAm1_instances" />
+                          instanceName="acapNAm1_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="hcapG186AR_instances" />
+                          instanceName="acapG186AR_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
@@ -338,13 +338,13 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="fver_instances" />
+                          instanceName="gmon_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="fgra_instances" />
+                          instanceName="gzea_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
