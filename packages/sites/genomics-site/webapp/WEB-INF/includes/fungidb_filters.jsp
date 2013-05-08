@@ -67,8 +67,8 @@
     <th><i>P.mar</i></th>
     <th><i>T.sti</i></th>
     <th><i>F.oxy</i></th>
-    <th><i>G.mon</i></th>
-    <th><i>G.zea</i></th>
+    <th><i>F.ver</i></th>
+    <th><i>F.gra</i></th>
     <th><i>M.ory</i></th>
     <th><i>N.cra</i></th>
     <th><i>N.dis</i></th>
@@ -338,13 +338,13 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="gmon_instances" />
+                          instanceName="fver_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="gzea_instances" />
+                          instanceName="fgra_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
