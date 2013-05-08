@@ -52,14 +52,17 @@
 
 .span-step-text.left {
   text-align:left;
+	white-space:nowrap;
 }
 
 .span-step-text.center {
   text-align:center;
+	white-space:nowrap;
 }
 
 .span-step-text.right {
   text-align:right;
+	white-space:nowrap;
 }
 
 .span-step-text .region_a,
