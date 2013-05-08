@@ -71,7 +71,6 @@
 
 <!-- strains table: one for HTS SNPs and one for sequencing SNPs -->
 
-<h2> !!! ${attrs['type']}</h2>
 <c:choose>
   <c:when  test="${attrs['type'].value == 'HTS'}">
 
