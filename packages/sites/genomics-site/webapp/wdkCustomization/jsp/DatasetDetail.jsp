@@ -10,7 +10,7 @@
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
 
-<imp:pageFrame banner="Data Contents" refer="data-set" >
+<imp:pageFrame banner="Data Sets" refer="data-set" >
 
 <%-- show all xml question sets --%>
 <div id="data-sets">
