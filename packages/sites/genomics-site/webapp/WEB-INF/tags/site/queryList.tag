@@ -124,6 +124,19 @@ function getComboElement()
 <td colspan="${columns+2}">***${check}***${prefix}***${question}***</td></tr>   
  --%>
 
+
+
+
+
+<%--  if it is a new organism, write it and make a new line --%>
+
+
+<%--- A STUDY------%>
+<c:choose>
+<c:when test="${fn:containsIgnoreCase(check,'study')}">
+
+
+
 <%-- DETERMINE organism --%>
 <c:choose>
   <c:when test="${prefix == 'E.hi'}">    
@@ -214,7 +227,7 @@ function getComboElement()
 </c:choose>
 
 
-<%--  if it is a new organism, write it and make a new line --%>
+
     <c:if test="${oldorg != org}">  
                 </tr>
 		<tr><td colspan="${columns+2}" style="padding:0">&nbsp;</td></tr>
@@ -223,10 +236,6 @@ function getComboElement()
                 <tr style="background-color:${background}">
     </c:if>
 
-
-<%--- A STUDY------%>
-<c:choose>
-<c:when test="${fn:containsIgnoreCase(check,'study')}">
  
     </tr> 
 
