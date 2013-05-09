@@ -37,6 +37,7 @@
           <c:set var="wdkRecord" value="${record}" scope="request" />
           <c:set var="primaryKey" value="${record.primaryKey}"/>
           <c:set var="attributes" value="${record.attributes}"/>
+          <c:set var="datasetId" value="${attributes['dataset_id']}" />
           <c:set var="name" value="${attributes['dataset_name']}" />
           <c:set var="displayName" value="${attributes['display_name']}" />
           <c:set var="categories" value="${attributes['category']}" />
@@ -56,7 +57,7 @@
 
 <%-------    DATASET NAME ----------------%>
             <div class="dstitle">
-              <a name="${name.value}"></a>
+              <a name="${datasetId.value}"></a>
               ${displayName.value}
             </div>
 
