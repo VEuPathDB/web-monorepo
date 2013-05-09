@@ -229,9 +229,9 @@
         	<c:set var="noData" value="false"/>
     	</c:if>
     </c:if>
- 
+
 <imp:toggle
-    name="${secName}_${i}"
+    name="${secName}"
     isOpen="${row['mainOpen'].value}"
     noData="${noData}"
     displayName="${row['display_name'].value}"
