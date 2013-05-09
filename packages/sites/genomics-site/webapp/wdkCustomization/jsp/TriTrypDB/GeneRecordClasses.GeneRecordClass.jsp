@@ -386,33 +386,8 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
             </c:otherwise>
         </c:choose>
 
-
-<c:choose>
-  <c:when test='${organismFull eq "Leishmania infantum"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" 
-          attribution=""/>
-  </c:when>
-
-  <c:when test='${organismFull eq "Leishmania major strain Friedlin"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
-  </c:when>
-
-  <c:when test='${organismFull eq "Leishmania braziliensis"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
-  </c:when>
-
-  <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
-
-     <imp:wdkTable tblName="MassSpecMod" isOpen="true" attribution=""/> 
-  </c:when>
-
-  <c:when test='${binomial eq "Trypanosoma cruzi"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" 
-          attribution=""/>
-  </c:when>
-</c:choose>
-
+ <imp:wdkTable tblName="MassSpec" isOpen="true"   attribution=""/>
+     
 <imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
