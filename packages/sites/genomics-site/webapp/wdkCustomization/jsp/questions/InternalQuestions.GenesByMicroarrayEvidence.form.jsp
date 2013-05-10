@@ -17,7 +17,7 @@
 	queryList.tag contains the organism mapping (from E.hi to Entamoeba histolytica, etc)
 	if this becomes difficult to maintain, we would show acronyms.
 --%>
-<c:set var="fungiQuestions" value="Calbstudy:Antifungal Activity,GeneQuestions.GenesByMicroarrayDirectCalbSC5314_microarrayExpression_benzimidazole_derivative_GSE21622_RSRC,GeneQuestions.GenesByMicroarrayDirectCalbSC5314_microarrayExpression_benzimidazole_derivative_GSE21622_RSRCPercentile,Scerstudy:Time Series,GeneQuestions.GenesByMicroarrayTimeSeriesSc" />
+<c:set var="fungiQuestions" value="Calbstudy:Antifungal Activity,GeneQuestions.GenesByMicroarrayDirectCalbSC5314_microarrayExpression_benzimidazole_derivative_GSE21622_RSRC,GeneQuestions.GenesByMicroarrayDirectCalbSC5314_microarrayExpression_benzimidazole_derivative_GSE21622_RSRCPercentile,Cneostudy:Antifungal Activity,GeneQuestions.GenesByMicroarrayCneoH99_microarrayExpression_mutatant_treatment_GSE30154_RSRC,GeneQuestions.GenesByMicroarrayCneoH99_microarrayExpression_mutatant_treatment_GSE30154_RSRCPercentile,Scerstudy:Time Series,GeneQuestions.GenesByMicroarrayTimeSeriesSc" />
 
 <c:set var="amoebaQuestions" value="E.hi.study:Colonization-Invasion and Stage Conversion (Gilchrist),GeneQuestions.GenesByEHistolyticaExpressionTiming,GeneQuestions.GenesByExpressionTimingPercentileGilchrist,E.hi.study:G3 v. HM1:IMSS Transcript Expression (Gilchrist),GeneQuestions.GenesByAmoebaFoldChangeGilchrist,GeneQuestions.GenesByExpressionPercentileGilchrist,GeneQuestions.GenesByAmoebaFoldChangePageGilchrist" />
 
