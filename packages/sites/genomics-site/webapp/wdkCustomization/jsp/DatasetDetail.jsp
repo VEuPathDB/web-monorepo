@@ -113,7 +113,7 @@
               <!--      <imp:table table="${publications}" sortable="false" showHeader="false" /> -->
                 <ul>
                   <c:forEach items="${publications}" var="publication">
-                        <li>${publication['citation']}</li>
+                        <li><a href="${publication['pubmed_link'].url}">${publication['pubmed_link'].displayText}</a></li>
                   </c:forEach>
                 </ul>
               </c:set>
