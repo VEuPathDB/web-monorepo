@@ -22,13 +22,14 @@
 <c:forEach var="row" items="${tbl}">
   <c:if test="${(species eq row['species'].value) || (type eq 'compound')}">
 
-    <c:set var="name" 		value="${fn:replace(row['module'].value, '::', '')}"/>
     <c:set var="secName" 	value="${row['module'].value}"/>
 
     <c:set var="baseUrlWithArgs" value="${plotBaseUrl}?type=${secName}&project_id=${row['project_id'].value}&dataset=${row['dataset_name']}"/>
 
     <c:if test="${row['is_graph_custom'].value eq 'false'}">
        <c:set var="baseUrlWithArgs" value="${baseUrlWithArgs}&template=1"/>
+
+    <c:set var="secName"  value="${secName}${row['dataset_name']}"/>
     </c:if>
     
     <c:set var="imgId" value="img${secName}_${i}"/>    
@@ -229,9 +230,9 @@
         	<c:set var="noData" value="false"/>
     	</c:if>
     </c:if>
- 
+
 <imp:toggle
-    name="${secName}_${i}"
+    name="${secName}"
     isOpen="${row['mainOpen'].value}"
     noData="${noData}"
     displayName="${row['display_name'].value}"

@@ -10,7 +10,7 @@
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
 
-<imp:pageFrame banner="Data Contents" refer="data-set" >
+<imp:pageFrame banner="Data Sets" refer="data-set" >
 
 <%-- show all xml question sets --%>
 <div id="data-sets">
@@ -37,6 +37,7 @@
           <c:set var="wdkRecord" value="${record}" scope="request" />
           <c:set var="primaryKey" value="${record.primaryKey}"/>
           <c:set var="attributes" value="${record.attributes}"/>
+          <c:set var="datasetId" value="${attributes['dataset_id']}" />
           <c:set var="name" value="${attributes['dataset_name']}" />
           <c:set var="displayName" value="${attributes['display_name']}" />
           <c:set var="categories" value="${attributes['category']}" />
@@ -56,7 +57,7 @@
 
 <%-------    DATASET NAME ----------------%>
             <div class="dstitle">
-              <a name="${name.value}"></a>
+              <a name="${datasetId.value}"></a>
               ${displayName.value}
             </div>
 
@@ -112,7 +113,7 @@
               <!--      <imp:table table="${publications}" sortable="false" showHeader="false" /> -->
                 <ul>
                   <c:forEach items="${publications}" var="publication">
-                        <li>${publication['citation']}</li>
+                        <li><a href="${publication['pubmed_link'].url}">${publication['pubmed_link'].displayText}</a></li>
                   </c:forEach>
                 </ul>
               </c:set>

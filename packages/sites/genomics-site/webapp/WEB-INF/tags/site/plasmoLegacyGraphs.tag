@@ -89,7 +89,7 @@ OnChange="javascript:wdk.api.updateImage('${imgId}', DailySort.DailyList.options
                content="${expressionContent}" noData="${noData}"
                imageId="${imgId}" imageSource="${imgSrc}"
                displayName="Distinct physiological states of <i>Plasmodium falciparum</i> in malaria infected patients"
-               attribution="daily_expressionProfiles"/>
+               attribution="pfal3D7_microarrayExpression_Daily_Patients_RSRC"/>
 
 
 </c:if>

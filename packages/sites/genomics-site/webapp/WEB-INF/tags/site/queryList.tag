@@ -124,6 +124,19 @@ function getComboElement()
 <td colspan="${columns+2}">***${check}***${prefix}***${question}***</td></tr>   
  --%>
 
+
+
+
+
+<%--  if it is a new organism, write it and make a new line --%>
+
+
+<%--- A STUDY------%>
+<c:choose>
+<c:when test="${fn:containsIgnoreCase(check,'study')}">
+
+
+
 <%-- DETERMINE organism --%>
 <c:choose>
   <c:when test="${prefix == 'E.hi'}">    
@@ -153,8 +166,11 @@ function getComboElement()
  <c:when test="${prefix == 'N.c.'}">    
       <c:set var="org" value="Neospora caninum"/>
   </c:when>
- <c:when test="${prefix == 'L.d.' || prefix == 'L.i.'}">    
+ <c:when test="${prefix == 'L.i.'}">    
       <c:set var="org" value="Leishmania infantum"/>
+  </c:when>
+ <c:when test="${prefix == 'L.d.'}">    
+      <c:set var="org" value="Leishmania donovani"/>
   </c:when>
  <c:when test="${prefix == 'T.c.'}">    
       <c:set var="org" value="Trypanosoma cruzi"/>
@@ -211,7 +227,7 @@ function getComboElement()
 </c:choose>
 
 
-<%--  if it is a new organism, write it and make a new line --%>
+
     <c:if test="${oldorg != org}">  
                 </tr>
 		<tr><td colspan="${columns+2}" style="padding:0">&nbsp;</td></tr>
@@ -220,10 +236,6 @@ function getComboElement()
                 <tr style="background-color:${background}">
     </c:if>
 
-
-<%--- A STUDY------%>
-<c:choose>
-<c:when test="${fn:containsIgnoreCase(check,'study')}">
  
     </tr> 
 
@@ -234,6 +246,8 @@ function getComboElement()
     <tr  style="background-color:${background}"><td colspan="${columns+2}" style="padding:0;padding-top:1em;font-size:120%;font-weight:bold;font-style:italic">${studyNameArray[1]}</td></tr>
 
     <tr style="background-color:${background}">
+
+<c:set var="oldorg" value="${org}" />
 </c:when>
 
 <%--- A QUESTION ------%>
@@ -270,7 +284,7 @@ function getComboElement()
 </c:otherwise>
 </c:choose>
 
-<c:set var="oldorg" value="${org}" />
+
       </c:forEach> <%-- forEach items=questions --%>
 
 

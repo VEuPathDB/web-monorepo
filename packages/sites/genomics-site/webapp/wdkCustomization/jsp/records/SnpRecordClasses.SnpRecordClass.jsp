@@ -70,6 +70,7 @@
     attribute="${attr.name}"/>
 
 <!-- strains table: one for HTS SNPs and one for sequencing SNPs -->
+
 <c:choose>
   <c:when  test="${attrs['type'].value == 'HTS'}">
 

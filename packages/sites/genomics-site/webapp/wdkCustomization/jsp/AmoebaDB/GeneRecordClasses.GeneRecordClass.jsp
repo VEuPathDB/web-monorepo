@@ -179,6 +179,7 @@ ${attrs['organism'].value}<br>
 
 <!-- snps between strains -->
 <%-- HTS SNP OVERVIEW ---------------%>
+<c:if test="${attrs['hasHtsSnps'].value eq '1'}">
 
 <c:set var="htsSNPs" value="${attrs['snpoverview']}" />
 <imp:panel attribute="${htsSNPs.name}"
@@ -187,6 +188,8 @@ ${attrs['organism'].value}<br>
 <br>
 
 <imp:snpTable tblName="SNPsAlignment" isOpen="false" />
+
+</c:if>
 
 
 <imp:pageDivider name="Annotation"/>

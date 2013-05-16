@@ -139,7 +139,10 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="5">Protein Expression</td></tr>
                 <tr><td>
-                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMassSpecEvidence" linktext="Mass Spec. Evidence" existsOn="A Am C G P T Tr Tt"/>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMassSpec" linktext="Mass Spec. Evidence" existsOn="A Am C G P T Tr Tt"/>
+                </td></tr>
+                <tr><td>
+                    <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesByQuantitativeProteomics" linktext="Quantitative Evidence" existsOn="A Tr"/>
                 </td></tr>
 
             </table>
