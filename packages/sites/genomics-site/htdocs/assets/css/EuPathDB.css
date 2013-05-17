@@ -7,11 +7,11 @@ body {
 	background-image: url(/assets/images/EuPathDB/background_s.jpg);
 }
 
-a:link, a:visited {
+a:link, a:visited, div.divlink {
 	color: #2c5986;
 }
 
-a:hover, a:active {
+a:hover, a:active, div.divlink:hover {
 	color: #610b0b;   /* red like in crypto */     /*    #88a3bc;  */
 }
 

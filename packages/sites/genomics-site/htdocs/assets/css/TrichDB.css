@@ -6,11 +6,11 @@ body {
 	background-image: url(/assets/images/TrichDB/background_s.jpg);
 }
 
-a:link, a:visited {
+a:link, a:visited, div.divlink {
 	color: #538001;
 }
 
-a:hover, a:active {
+a:hover, a:active, div.divlink:hover {
 	color: #7B5A37;  /* #a9cb6d; */
 }
 a[name]:link {

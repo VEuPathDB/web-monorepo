@@ -11,14 +11,14 @@ body {
 	color: #772841; // dark red, now that links are green   
 }
 
-a:link {
+a:link, div.divlink {
 	color: #187a02; //#206910;  //green
 }
 a:visited {
 	color: #507a46;            //muter green
 }
 
-a:hover, a:active {
+a:hover, a:active, div.divlink:hover {
 	color: #772841;            //dark pink, wine color
 }
 a[name]:link {

@@ -12,14 +12,14 @@ body {
 }
 
 
-a:link {
+a:link, div.divlink {
 	color: #02935c;     //green
 }
 a:visited {
 	color: #628276;     //paler green
 }
 
-a:hover, a:active {
+a:hover, a:active, div.divlink:hover {
 	color:  #58441F;    //brown
 }
 
