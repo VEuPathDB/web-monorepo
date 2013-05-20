@@ -64,7 +64,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       $(this).find(":first-child").appendTo(this)
     });
 
-    $wrapper = $("<div/>").addClass("fold-change-wrapper").appendTo(".param-group.empty");
+    $wrapper = $("<div/>").addClass("fold-change-wrapper").appendTo(".param-group.dynamic");
     $img = $("<div/>").addClass("fold-change-img").appendTo($wrapper);
     // get a handle on the form element -- we use .last to handle nested forms
     $form = $("form#form_question").last();
@@ -72,12 +72,12 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     // override blockUI functions
     $img.block = function() {
-      this.find(".overlay").css("opacity", "0.9");
+      this.find(".overlay").show();
       return this;
     };
 
     $img.unblock = function() {
-      this.find(".overlay").css("opacity", "0");
+      this.find(".overlay").hide();
       return this;
     };
 
@@ -94,12 +94,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     $img.find("div").last().css("top", "");
 
-    $("<div/>").css({
-      "background-color": "whitesmoke",
-      "opacity": "0.9",
-      "height": "100%",
-      "width": "100%"
-    }).addClass("overlay").appendTo($img);
+    $("<div/>").addClass("overlay").appendTo($img);
 
     // add help link
     $help = $("<div/>")
@@ -148,16 +143,17 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     }
 
 
-    if ($form.find("input[name*='samples_fc_ref_generic']:checked").length === 0 &&
-        $form.find("input[name*='samples_fc_comp_generic']:checked").length === 0) {
-      $img.block();
-      return;
-    }
-
     className = [direction, ref_operation, comp_operation].join("-");
 
     //$img.unblock().removeClass().addClass("fold-change-img").addClass(className);
-    $img.unblock().find("div").css("top", "-10000px").eq(slideMap[className] - 1).css("top", "");
+    $img.find("div").css("top", "-10000px").eq(slideMap[className] - 1).css("top", "");
+
+    if ($form.find("input[name*='samples_fc_ref_generic']:checked").length === 0 ||
+        $form.find("input[name*='samples_fc_comp_generic']:checked").length === 0) {
+      $img.block();
+    } else {
+      $img.unblock();
+    }
   };
 
   // make some params readonly in certain conditions
@@ -171,9 +167,11 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     if ($form.find("select[name*='regulated_dir']").val() === "up or down regulated") {
       refOp.attr("disabled", true);
       refOp.find(":selected").text(refCount <= 1 ? "none" : refOp.val().slice(0, -1));
+      refOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
 
       compOp.attr("disabled", true);
       compOp.find(":selected").text(compCount <= 1 ? "none" : compOp.val().slice(0, -1));
+      compOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
       return;
     }
 
@@ -181,18 +179,22 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     if (refCount <= 1) {
       refOp.attr("disabled", true);
       refOp.find(":selected").text("none");
+      refOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
     } else {
       refOp.attr("disabled", false);
       refOp.find(":selected").text(refOp.val().slice(0, -1));
+      refOp.parents(".param-line").find(".text").css("color","black");
     }
 
     // if compCount <= 1, make ops disabled
     if (compCount <=1) {
       compOp.attr("disabled", true);
       compOp.find(":selected").text("none");
+      compOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
     } else {
       compOp.attr("disabled", false);
       compOp.find(":selected").text(compOp.val().slice(0, -1));
+      compOp.parents(".param-line").find(".text").css("color","black");
     }
   };
 
