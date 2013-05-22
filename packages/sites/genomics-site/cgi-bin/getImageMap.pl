@@ -59,7 +59,7 @@ my $dbh = DBI->connect($c->getDbiDsn,$c->getLogin,$c->getPassword,
                        } ) or die "Can't connect to the database: $DBI::errstr\n";
 
 
-my $ecMapSql = "SELECT DISTINCT p.source_id as source_id,  ec.ec_number as display_label,
+my $ecMapSql = "SELECT DISTINCT p.source_id as source_id,  ec.ec_number as display_label, ec.description,
                        (pn.x - (pn.width/2)) as x1, (pn.y - (pn.height/2)) as y1,
                        (pn.x + (pn.width/2)) as x2, (pn.y + (pn.height/2)) as y2,
                        apidb.tab_to_string(set(cast(COLLECT(ga.organism) AS apidb.varchartab)), ', ') as organisms,
@@ -74,7 +74,7 @@ my $ecMapSql = "SELECT DISTINCT p.source_id as source_id,  ec.ec_number as displ
                 AND    p.pathway_id = pn.parent_id
                 AND    ec.ec_number = pn.display_label
                 AND    p.source_id = '$pathwaySourceId'
-                group by p.source_id, ec.ec_number, pn.x, pn.y,pn.width, pn.height";
+                group by p.source_id, ec.ec_number, ec.description, pn.x, pn.y,pn.width, pn.height";
 
 my $sth = $dbh->prepare($ecMapSql);
 $sth->execute;
@@ -87,7 +87,8 @@ while (my $ecMap = $sth->fetchrow_hashref()) {
   my $popUp = "<table>".
                 "<tr>".
                   "<td>EC No:</td>".
-                  "<td><a href=\"processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&array%28ec_number_pattern%29=".$$ecMap{'DISPLAY_LABEL'}."&questionSubmit=Get+Answer\">".$$ecMap{'DISPLAY_LABEL'}."</a></td>".
+                  "<td><a href=\"processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&array%28ec_number_pattern%29=".$$ecMap{'DISPLAY_LABEL'}."&questionSubmit=Get+Answer\">".$$ecMap{'DISPLAY_LABEL'} . " (" . $$ecMap{'DESCRIPTION'} .")</a></td>".
+                 
                 "</tr><tr>".
                   "<td>Organisms:</td>".
                   "<td>".$$ecMap{'ORGANISMS'}."</td>".
