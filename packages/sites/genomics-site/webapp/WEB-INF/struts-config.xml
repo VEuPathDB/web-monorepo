@@ -580,7 +580,7 @@
 
   </action-mappings>
 
-  <controller maxFileSize="10M" />
+  <controller maxFileSize="10M" contentType="text/html; charset=ISO-8859-1" />
 
   <message-resources parameter="org.gusdb.wdk.view.DefaultViewResources" null="false"/>
 
