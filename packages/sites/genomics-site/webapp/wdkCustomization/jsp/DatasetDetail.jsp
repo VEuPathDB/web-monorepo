@@ -29,7 +29,6 @@
         data-container="#data-sets"
         data-animated="false"
         data-show="false">Collapse all</a></p>
-      <p onclick="jQuery('.ui-accordion-content').show()">Show</p>
     </div>
 
     <div class="smallitalics">(Click on a category to jump to the corresponding section in the page)</div> <br/>
