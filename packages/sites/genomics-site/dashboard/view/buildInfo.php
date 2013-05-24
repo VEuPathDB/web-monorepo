@@ -154,7 +154,7 @@ if ($stage_value) {
             $svnproject = str_replace('.', '/', substr($p, 0, $trunc));
 
 
-            print "svn co -r$svnrevision $svnbranch $svnproject;<br>";
+            print "svn switch -r$svnrevision $svnbranch $svnproject;<br>";
           }
         }
         ?>

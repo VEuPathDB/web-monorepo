@@ -189,7 +189,7 @@ class PrivateAPI {
                 )
         );
 
-        $switch_stmts .= "svn co -r$svnrevision $svnbranch $svnproject;\n";
+        $switch_stmts .= "svn switch -r$svnrevision $svnbranch $svnproject;\n";
       }
     }
     $array{'switch'} = $switch_stmts;
