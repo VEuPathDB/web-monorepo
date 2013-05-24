@@ -12,6 +12,31 @@
 
 <imp:pageFrame banner="Data Sets" refer="data-set" >
 
+<%--
+<script>
+  // capture ctrl-f/cmd-f key combo
+  (function() {
+    var lastKeys = [];
+    $(document).on("keydown", function(e) {
+      var lastKey;
+      if (lastKeys.length === 0 || lastKeys.length > 1) {
+        lastKeys.push(e.which);
+      } else if (lastKeys.length === 1) {
+        lastKey = lastKeys[0];
+        if ((lastKey === 91 || lastKey === 17) && // CMD or CTRL
+            (e.which === 70 || e.which === 71))  { // F or G
+          $("#data-sets").find(".wdk-toggle").simpleToggle("show");
+        }
+      }
+      return;
+    }).on("keyup", function(e) {
+      // clear keys 
+      lastKeys = [];
+    })
+  })(jQuery);
+</script>
+--%>
+
   <%-- show all simpleToggles if page is filtered --%>
   <c:set var="show" value="${fn:length(param.reference) gt 0 or
       fn:length(param.question) gt 0 or
@@ -35,7 +60,12 @@
         data-show="false">Collapse all</a></p>
     </div>
 
-    <div class="smallitalics">(Click on a category to jump to the corresponding section in the page)</div> <br/>
+    <div class="smallitalics">
+      (Click on a category to jump to the corresponding section in the page.
+      To search for text on the page, first click
+      <a class="wdk-toggle-group" href="#" data-container="#data-sets" data-show="true">Expand all</a>
+      to make all details visible for searching.)
+    </div> <br/>
 
     <ul id="toc">
       <c:forEach items="${datasets}" var="category">
