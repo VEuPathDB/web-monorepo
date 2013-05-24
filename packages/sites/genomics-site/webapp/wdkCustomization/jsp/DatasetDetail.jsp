@@ -12,6 +12,12 @@
 
 <imp:pageFrame banner="Data Sets" refer="data-set" >
 
+  <%-- show all simpleToggles if page is filtered --%>
+  <c:set var="show" value="${fn:length(param.reference) gt 0 or
+      fn:length(param.question) gt 0 or
+      fn:length(param.recordClass) gt 0 or
+      fn:length(param.datasets) gt 0}"/>
+
 <%-- show all xml question sets --%>
 <div id="data-sets">
   <a name="_top"></a>
@@ -22,12 +28,10 @@
       <p><a class="wdk-toggle-group"
         href="#"
         data-container="#data-sets"
-        data-animated="false"
         data-show="true">Expand all</a><p>
       <p><a class="wdk-toggle-group"
         href="#"
         data-container="#data-sets"
-        data-animated="false"
         data-show="false">Collapse all</a></p>
     </div>
 
@@ -104,7 +108,7 @@
             </div>
             
             <c:if test='${not empty description.value}'>
-                <imp:simpleToggle name="Description" content="${description.value}" show="false" />
+            <imp:simpleToggle name="Description" content="${description.value}" show="${show}" />
             </c:if>
 
 
@@ -134,7 +138,7 @@
                 </ul>
               </c:set>
 
-              <imp:simpleToggle name="${publications.displayName}" content="${publicationContent}" show="false" />
+              <imp:simpleToggle name="${publications.displayName}" content="${publicationContent}" show="${show}" />
             </c:if>
 
 
@@ -149,7 +153,7 @@
                 </ul>
               </c:set>
 
-              <imp:simpleToggle name="${contacts.displayName}" content="${contactsContent}" show="false" />
+              <imp:simpleToggle name="${contacts.displayName}" content="${contactsContent}" show="${show}" />
             </c:if>
 
 
@@ -162,7 +166,7 @@
                   </c:forEach>
                 </ul>
               </c:set>
-              <imp:simpleToggle name ="${externallinks.displayName}" content="${extLinkContent}" show="false" />
+              <imp:simpleToggle name ="${externallinks.displayName}" content="${extLinkContent}" show="${show}" />
             </c:if>
 
             <c:if test="${fn:length(versions) > 0}">
@@ -174,7 +178,7 @@
                   </c:forEach>
                  </table>
               </c:set>
-              <imp:simpleToggle name ="${versions.displayName}" content="${versionContent}" show="false" /> 
+              <imp:simpleToggle name ="${versions.displayName}" content="${versionContent}" show="${show}" /> 
             </c:if>
 
 
@@ -205,7 +209,7 @@
                 </ul>
               </c:set>
               <c:if test="${hasQuestion}">
-                <imp:simpleToggle name="${references.displayName}" content="${referenceContent}" show="false" />
+              <imp:simpleToggle name="${references.displayName}" content="${referenceContent}" show="${show}" />
               </c:if>
             </c:if>
 
