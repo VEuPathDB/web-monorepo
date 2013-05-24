@@ -20,7 +20,7 @@
 
 <c:choose>
 <c:when test = "${projectId ==  'TrichDB'}">
-	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesByProteinStructure"/>
+	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesBySecondaryStructure"/>
 </c:when>
 
 <c:when test = "${projectId == 'AmoebaDB' || projectId == 'MicrosporidiaDB' || projectId == 'PiroplasmaDB'}">
