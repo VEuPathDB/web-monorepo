@@ -189,7 +189,7 @@
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByIsoelectricPoint" linktext="Isoelectric Point" existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
                 <tr>
-                    <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesByProteinStructure" linktext="Protein Structure" existsOn="A C G P Tr Tt"/>
+                    <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesByProteinStructure" linktext="Protein Structure" existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
                 <tr>
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesWithEpitopes" linktext="Epitopes" existsOn="A C G P T Tt"/>
