@@ -23,11 +23,11 @@
 	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesByProteinStructure"/>
 </c:when>
 
-<c:when test = "${projectId == 'AmoebaDB'} || ${projectId == 'MicrosporidiaDB'} || ${projectId == 'PiroplasmaDB'}">
+<c:when test = "${projectId == 'AmoebaDB' || projectId == 'MicrosporidiaDB' || projectId == 'PiroplasmaDB'}">
 	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesByPdbSimilarity"/>
 </c:when>
 
-<c:when test = "${projectId == 'CryptoDB' || ${projectId == 'ToxoDB'} || projectId == 'GiardiaDB'}' || projectId == 'TriTrypDB'}} ">
+<c:when test = "${projectId == 'CryptoDB' || projectId == 'ToxoDB' || projectId == 'GiardiaDB' || projectId == 'TriTrypDB'} ">
 	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesBySecondaryStructure"/>
 </c:when>
 <c:otherwise>  <%-- EuPathDB and PlasmoDB, Toxo --%>
