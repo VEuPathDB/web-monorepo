@@ -41,6 +41,13 @@
 	margin-left:15px;
 }
 
+#data-sets .toggle-all {
+  float: right;
+  text-align: center;
+  border: 3px double;
+  padding: 5px;
+}
+
 #data-sets .category-content .data-set .wdk-toggle {
 	font-family: Arial;
 	font-size: 100%;
@@ -63,7 +70,14 @@
 #data-sets .category-content .data-set .wdk-toggle h3 {
 	text-decoration:underline;
 	padding:0;
-	line-height:2px;
+  font-size: 1em;
+  margin-bottom: 0px;
+  font-weight: normal;
+}
+
+#data-sets .category-content .data-set .wdk-toggle h3 a {
+  color: #555;
+  padding-left: 0.4em;
 }
 
 #data-sets .category-content .data-set li {

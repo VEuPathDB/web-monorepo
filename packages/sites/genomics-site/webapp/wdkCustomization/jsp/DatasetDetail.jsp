@@ -17,13 +17,30 @@
   <a name="_top"></a>
   <h1>Data Sets</h1>
    
-  <div class="smallitalics">(Click on a category to jump to the corresponding section in the page)</div> <br/>
+  <div class="ui-helper-clearfix">
+    <div class="toggle-all">
+      <p><a class="wdk-toggle-group"
+        href="#"
+        data-container="#data-sets"
+        data-animated="false"
+        data-show="true">Expand all</a><p>
+      <p><a class="wdk-toggle-group"
+        href="#"
+        data-container="#data-sets"
+        data-animated="false"
+        data-show="false">Collapse all</a></p>
+      <p onclick="jQuery('.ui-accordion-content').show()">Show</p>
+    </div>
 
-  <ul id="toc">
-    <c:forEach items="${datasets}" var="category">
-      <li><a href="#${category.key}"><i>${category.key}</i></a></li>
-    </c:forEach>
-  </ul>
+    <div class="smallitalics">(Click on a category to jump to the corresponding section in the page)</div> <br/>
+
+    <ul id="toc">
+      <c:forEach items="${datasets}" var="category">
+        <li><a href="#${category.key}"><i>${category.key}</i></a></li>
+      </c:forEach>
+    </ul>
+  </div>
+
   <br/><br/><br/>
 
   <c:forEach items="${datasets}" var="category">
