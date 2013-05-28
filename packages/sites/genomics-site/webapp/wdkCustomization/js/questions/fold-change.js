@@ -60,9 +60,9 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
         $help;
 
     // swap location of question icons for parameters
-    $(".group-detail").find("label").each(function() {
-      $(this).find(":first-child").appendTo(this)
-    });
+    // $(".group-detail").find("label").each(function() {
+    //   $(this).find(":first-child").appendTo(this)
+    // });
 
     $wrapper = $("<div/>").addClass("fold-change-wrapper").appendTo(".param-group.dynamic");
     $img = $("<div/>").addClass("fold-change-img").appendTo($wrapper);
@@ -167,11 +167,11 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     if ($form.find("select[name*='regulated_dir']").val() === "up or down regulated") {
       refOp.attr("disabled", true);
       refOp.find(":selected").text(refCount <= 1 ? "none" : refOp.val().slice(0, -1));
-      refOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
+      //refOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
 
       compOp.attr("disabled", true);
       compOp.find(":selected").text(compCount <= 1 ? "none" : compOp.val().slice(0, -1));
-      compOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
+      //compOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
       return;
     }
 
@@ -179,22 +179,22 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     if (refCount <= 1) {
       refOp.attr("disabled", true);
       refOp.find(":selected").text("none");
-      refOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
+      //refOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
     } else {
       refOp.attr("disabled", false);
       refOp.find(":selected").text(refOp.val().slice(0, -1));
-      refOp.parents(".param-line").find(".text").css("color","black");
+      //refOp.parents(".param-line").find(".text").css("color","black");
     }
 
     // if compCount <= 1, make ops disabled
     if (compCount <=1) {
       compOp.attr("disabled", true);
       compOp.find(":selected").text("none");
-      compOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
+      //compOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
     } else {
       compOp.attr("disabled", false);
       compOp.find(":selected").text(compOp.val().slice(0, -1));
-      compOp.parents(".param-line").find(".text").css("color","black");
+      //compOp.parents(".param-line").find(".text").css("color","black");
     }
   };
 
