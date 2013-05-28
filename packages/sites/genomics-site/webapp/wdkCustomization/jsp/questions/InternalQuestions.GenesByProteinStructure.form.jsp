@@ -19,10 +19,15 @@
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
 <c:choose>
-<c:when test = "${projectId == 'GiardiaDB'}">
-	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesByProteinStructure"/>
+<c:when test = "${projectId ==  'TrichDB'}">
+	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesBySecondaryStructure"/>
 </c:when>
-<c:when test = "${projectId == 'CryptoDB' || projectId == 'TriTrypDB'}">
+
+<c:when test = "${projectId == 'AmoebaDB' || projectId == 'MicrosporidiaDB' || projectId == 'PiroplasmaDB'}">
+	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesByPdbSimilarity"/>
+</c:when>
+
+<c:when test = "${projectId == 'CryptoDB' || projectId == 'ToxoDB' || projectId == 'GiardiaDB' || projectId == 'TriTrypDB'} ">
 	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesBySecondaryStructure"/>
 </c:when>
 <c:otherwise>  <%-- EuPathDB and PlasmoDB, Toxo --%>

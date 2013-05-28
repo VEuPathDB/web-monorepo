@@ -12,18 +12,68 @@
 
 <imp:pageFrame banner="Data Sets" refer="data-set" >
 
+<%--
+<script>
+  // capture ctrl-f/cmd-f key combo
+  (function() {
+    var lastKeys = [];
+    $(document).on("keydown", function(e) {
+      var lastKey;
+      if (lastKeys.length === 0 || lastKeys.length > 1) {
+        lastKeys.push(e.which);
+      } else if (lastKeys.length === 1) {
+        lastKey = lastKeys[0];
+        if ((lastKey === 91 || lastKey === 17) && // CMD or CTRL
+            (e.which === 70 || e.which === 71))  { // F or G
+          $("#data-sets").find(".wdk-toggle").simpleToggle("show");
+        }
+      }
+      return;
+    }).on("keyup", function(e) {
+      // clear keys 
+      lastKeys = [];
+    })
+  })(jQuery);
+</script>
+--%>
+
+  <%-- show all simpleToggles if page is filtered --%>
+  <c:set var="show" value="${fn:length(param.reference) gt 0 or
+      fn:length(param.question) gt 0 or
+      fn:length(param.recordClass) gt 0 or
+      fn:length(param.datasets) gt 0}"/>
+
 <%-- show all xml question sets --%>
 <div id="data-sets">
   <a name="_top"></a>
   <h1>Data Sets</h1>
    
-  <div class="smallitalics">(Click on a category to jump to the corresponding section in the page)</div> <br/>
+  <div class="ui-helper-clearfix">
+    <div class="toggle-all">
+      <p><a class="wdk-toggle-group"
+        href="#"
+        data-container="#data-sets"
+        data-show="true">Expand all</a><p>
+      <p><a class="wdk-toggle-group"
+        href="#"
+        data-container="#data-sets"
+        data-show="false">Collapse all</a></p>
+    </div>
 
-  <ul id="toc">
-    <c:forEach items="${datasets}" var="category">
-      <li><a href="#${category.key}"><i>${category.key}</i></a></li>
-    </c:forEach>
-  </ul>
+    <div class="smallitalics">
+      (Click on a category to jump to the corresponding section in the page.
+      To search for text on the page, first click
+      <a class="wdk-toggle-group" href="#" data-container="#data-sets" data-show="true">Expand all</a>
+      to make all details visible for searching.)
+    </div> <br/>
+
+    <ul id="toc">
+      <c:forEach items="${datasets}" var="category">
+        <li><a href="#${category.key}"><i>${category.key}</i></a></li>
+      </c:forEach>
+    </ul>
+  </div>
+
   <br/><br/><br/>
 
   <c:forEach items="${datasets}" var="category">
@@ -88,7 +138,7 @@
             </div>
             
             <c:if test='${not empty description.value}'>
-                <imp:simpleToggle name="Description" content="${description.value}" show="false" />
+            <imp:simpleToggle name="Description" content="${description.value}" show="${show}" />
             </c:if>
 
 
@@ -118,7 +168,7 @@
                 </ul>
               </c:set>
 
-              <imp:simpleToggle name="${publications.displayName}" content="${publicationContent}" show="false" />
+              <imp:simpleToggle name="${publications.displayName}" content="${publicationContent}" show="${show}" />
             </c:if>
 
 
@@ -133,7 +183,7 @@
                 </ul>
               </c:set>
 
-              <imp:simpleToggle name="${contacts.displayName}" content="${contactsContent}" show="false" />
+              <imp:simpleToggle name="${contacts.displayName}" content="${contactsContent}" show="${show}" />
             </c:if>
 
 
@@ -146,7 +196,7 @@
                   </c:forEach>
                 </ul>
               </c:set>
-              <imp:simpleToggle name ="${externallinks.displayName}" content="${extLinkContent}" show="false" />
+              <imp:simpleToggle name ="${externallinks.displayName}" content="${extLinkContent}" show="${show}" />
             </c:if>
 
             <c:if test="${fn:length(versions) > 0}">
@@ -158,7 +208,7 @@
                   </c:forEach>
                  </table>
               </c:set>
-              <imp:simpleToggle name ="${versions.displayName}" content="${versionContent}" show="false" /> 
+              <imp:simpleToggle name ="${versions.displayName}" content="${versionContent}" show="${show}" /> 
             </c:if>
 
 
@@ -189,7 +239,7 @@
                 </ul>
               </c:set>
               <c:if test="${hasQuestion}">
-                <imp:simpleToggle name="${references.displayName}" content="${referenceContent}" show="false" />
+              <imp:simpleToggle name="${references.displayName}" content="${referenceContent}" show="${show}" />
               </c:if>
             </c:if>
 
