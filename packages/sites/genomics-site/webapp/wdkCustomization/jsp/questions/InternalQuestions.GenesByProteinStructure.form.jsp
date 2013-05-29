@@ -30,7 +30,7 @@
 <c:when test = "${projectId == 'CryptoDB' || projectId == 'ToxoDB' || projectId == 'GiardiaDB' || projectId == 'TriTrypDB'} ">
 	<imp:queryList columns="${columns}"  questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesBySecondaryStructure"/>
 </c:when>
-<c:otherwise>  <%-- EuPathDB and PlasmoDB, Toxo --%>
+<c:otherwise>  <%-- EuPathDB and PlasmoDB --%>
 	<imp:queryList columns="${columns}" questions="GeneQuestions.GenesByPdbSimilarity,GeneQuestions.GenesWithStructurePrediction,GeneQuestions.GenesBySecondaryStructure"/>
 </c:otherwise>
 </c:choose>
