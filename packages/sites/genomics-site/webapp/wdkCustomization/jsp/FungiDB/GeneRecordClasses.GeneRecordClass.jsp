@@ -261,7 +261,7 @@ ${attrs['organism'].value}<br>
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
   <c:set var="orthomclLink">
     <div align="center">
-      <a target="_blank" href="http://v5.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}">Find the group containing ${id} in the OrthoMCL database</a>
+      <a target="_blank" href="http://v5.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
     </div>
   </c:set>
   <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""

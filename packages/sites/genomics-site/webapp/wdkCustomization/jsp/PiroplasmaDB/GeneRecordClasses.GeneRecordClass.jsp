@@ -245,7 +245,7 @@ ${attrs['organism'].value}<br>
   </c:when>
   <c:otherwise>
    <div align="center">
-   <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+      <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
    </div>
    </c:otherwise>
 </c:choose>

@@ -27,7 +27,7 @@
 <table width="100%" cellpadding="4">
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
-<imp:queryList columns="${columns}" questions="T.b.study:T. Brucei SILAC Quantitative Mass Spec (Urbaniak),GeneQuestions.GenesByQuantProtDirecttbruTREU927_quantitativeMassSpec_Urbaniak_CompProt_RSRC"/>
+<imp:queryList columns="${columns}" questions="T.b.study:T. brucei SILAC Quantitative Mass Spec (Urbaniak),GeneQuestions.GenesByQuantProtDirecttbruTREU927_quantitativeMassSpec_Urbaniak_CompProt_RSRC"/>
 
 </table>
 </div>

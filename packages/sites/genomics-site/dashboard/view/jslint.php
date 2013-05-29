@@ -1,7 +1,7 @@
 <?php
     // get list of js files
     $curr_dir = getcwd();
-    $js_dir = $_SERVER['GUS_HOME'] . '/../webapp/wdk/js';
+    $js_dir = $_SERVER['GUS_HOME'] . '/../webapp/wdk/js/src';
 
     chdir($js_dir) or die("Could not change to $js_dir");
     $js_files = glob('*.js');
@@ -47,7 +47,7 @@
 <script src="js/jslint.js"></script>
 <script>
   $(function() {
-    var js_dir = "/wdk/js",
+    var js_dir = "/wdk/js/src",
         errors_template = $("#errors_template").html(),
         JSLINT_OPTS = {
           browser  : true,
@@ -66,7 +66,7 @@
           content_container = $(el).parent().next();
 
       $.ajax({
-        url: "<?php echo $_SERVER['CONTEXT_PATH']; ?>" + "/wdk/js/" + jsfile,
+        url: "<?php echo $_SERVER['CONTEXT_PATH']; ?>" + js_dir + "/" + jsfile,
         success: function(data, textStatus, jqXHR) {
           var stop_err_msg,
               jsl_result = JSLINT(data, JSLINT_OPTS),

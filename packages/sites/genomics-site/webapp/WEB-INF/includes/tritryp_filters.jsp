@@ -18,7 +18,6 @@
     <th colspan=4 align="center"><i>Trypanosoma brucei</i></th>
     <th rowspan=2 align="center"><i>Trypanosoma<br>congolense</i></th>
     <th colspan=6 align="center"><i>Trypanosoma cruzi</i></th>
-    <th rowspan=2 align="center"><i>Trypanosoma<br>evansi</i></th>
     <th rowspan=2 align="center"><i>Trypanosoma<br>vivax</i></th>
   </tr>
   <tr>
@@ -153,12 +152,6 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tcsyl_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="tevansi_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
