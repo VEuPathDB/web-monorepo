@@ -3,16 +3,12 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
   var $img,
       $form,
-      $overlay,
-      slideMap,
-      helpContent;
+      helpTmpl,
+      slideMap;
 
-  helpContent = "<p>This graphic will help you visualize the parameter " +
-    "choices you make at the left. " +
-    "It will begin to display when you choose a <b>Reference Sample</b> or " +
-    " <b>Comparison Sample</b>.</p>" +
-    "<p>Additionally, see the <a href='/assets/Fold%20Change%20Help.pdf' " +
-    " target='_blank'>detailed help for this search</a>.</p>";
+  var $scope = {}; // gets bound to form state, with some extras. used for template
+
+  helpTmpl = Handlebars.compile($("#help-template").html());
 
   // map operation combinations to slide numbers
   slideMap = {
@@ -55,31 +51,15 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     };
 
   var init = function() {
-    // create placeholder for graph images
-    var $wrapper,
-        $help;
 
     // swap location of question icons for parameters
     // $(".group-detail").find("label").each(function() {
     //   $(this).find(":first-child").appendTo(this)
     // });
 
-    $wrapper = $("<div/>").addClass("fold-change-wrapper").appendTo(".param-group.dynamic");
-    $img = $("<div/>").addClass("fold-change-img").appendTo($wrapper);
+    $img = $(".fold-change-img");
     // get a handle on the form element -- we use .last to handle nested forms
     $form = $("form#form_question").last();
-    $form.addClass("fold-change");
-
-    // override blockUI functions
-    $img.block = function() {
-      this.find(".overlay").show();
-      return this;
-    };
-
-    $img.unblock = function() {
-      this.find(".overlay").hide();
-      return this;
-    };
 
     // load slides
     for (var i = 1; i <= 36; i++) {
@@ -94,66 +74,24 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     $img.find("div").last().css("top", "");
 
-    $("<div/>").addClass("overlay").appendTo($img);
-
-    // add help link
-    $help = $("<div/>")
-    .html(helpContent)
-    .addClass("fold-change-help")
-    .appendTo($wrapper);
-
-    // $("<a><img src='" + wdk.getWebAppUrl() + "wdk/images/question.png'/> Download detailed help about this search.</a>")
-    // .attr("href", "/assets/Fold Change Help.docx")
-    // .appendTo($help);
-
-
     // connect to form change event
-    $form.on("change", function() {
-      setParams();
-      setGraph();
-    }).on("submit", function() {
+    $form.on("change", update).on("submit", function() {
       $(this).find(":disabled").attr("disabled", false);
     });
 
-    setTimeout(function() {
-      setParams();
-      setGraph();
-    }, 100);
+    $form.find("#fold_change").on("keyup", function(e) {
+      update();
+    });
+
+    setTimeout(update, 0);
     return;
   };
 
-  // set the classname for the image placeholder
-  var setGraph = function() {
-    var direction,
-        className,
-        ref_operation = "none",
-        comp_operation = "none";
-
-    direction = $form.find("select[name*='regulated_dir']")
-        .val().replace(/\s+/g, "-");
-
-    if ($form.find("input[name*='samples_fc_ref_generic']:checked").length > 1) {
-      ref_operation = $form.find("select[name*='min_max_avg_ref']")
-          .find(":selected").text().replace(/\s+/g, "-");
-    }
-
-    if ($form.find("input[name*='samples_fc_comp_generic']:checked").length > 1) {
-      comp_operation = $form.find("select[name*='min_max_avg_comp']")
-          .find(":selected").text().replace(/\s+/g, "-");
-    }
-
-
-    className = [direction, ref_operation, comp_operation].join("-");
-
-    //$img.unblock().removeClass().addClass("fold-change-img").addClass(className);
-    $img.find("div").css("top", "-10000px").eq(slideMap[className] - 1).css("top", "");
-
-    if ($form.find("input[name*='samples_fc_ref_generic']:checked").length === 0 ||
-        $form.find("input[name*='samples_fc_comp_generic']:checked").length === 0) {
-      $img.block();
-    } else {
-      $img.unblock();
-    }
+  var update = function() {
+    setParams();
+    setScope();
+    setGraph();
+    setHelp();
   };
 
   // make some params readonly in certain conditions
@@ -195,6 +133,69 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       compOp.attr("disabled", false);
       compOp.find(":selected").text(compOp.val().slice(0, -1));
       //compOp.parents(".param-line").find(".text").css("color","black");
+    }
+  };
+
+  // set the properies of $scope
+  var setScope = function() {
+    // defaults
+    // $scope.ref_operation = "none";
+    // $scope.comp_operation = "none;
+
+    $scope.fold_change = $form.find("#fold_change").val();
+    $scope.direction = $form.find("select[name*='regulated_dir']").val();
+    $scope.ref_count = $form.find("input[name*='samples_fc_ref_generic']:checked").length;
+    $scope.comp_count = $form.find("input[name*='samples_fc_comp_generic']:checked").length;
+    $scope.ref_operation = $form.find("select[name*='min_max_avg_ref']").find(":selected").text();
+    $scope.comp_operation = $form.find("select[name*='min_max_avg_comp']").find(":selected").text();
+
+    $scope.multiple_ref = $scope.ref_count > 1;
+    $scope.multiple_comp = $scope.comp_count > 1;
+
+    if ($scope.multiple_ref) {
+      $scope.numerator = $scope.ref_operation + " expression value in reference samples";
+    } else {
+      $scope.numerator = "reference expression value";
+    }
+
+    if ($scope.multiple_comp) {
+      $scope.denominator = $scope.comp_operation + " expression value in comparison samples";
+    } else {
+      $scope.denominator = "comparison expression value";
+    }
+  };
+
+  // set the classname for the image placeholder
+  var setGraph = function() {
+    var className = [
+      $scope.direction.replace(/\s+/g, "-"),
+      $scope.ref_operation.replace(/\s+/g, "-"),
+      $scope.comp_operation.replace(/\s+/g, "-")
+    ].join("-");
+
+    $img.find("div").css("top", "-10000px").eq(slideMap[className] - 1).css("top", "");
+
+    if ($scope.ref_count === 0 || $scope.comp_count === 0) {
+      $img.block({
+        message: null,
+        overlayCSS: {
+          opacity: 0.9,
+          backgroundColor: "rgb(211,211,211)"
+        }
+      });
+    } else {
+      $img.unblock();
+    }
+  };
+
+  var setHelp = function() {
+    if ($scope.ref_count && $scope.comp_count) {
+      var html = helpTmpl($scope);
+      $(".fold-change-help.static-help").hide();
+      $(".fold-change-help.dynamic-help").html(html).show();
+    } else {
+      $(".fold-change-help.static-help").show();
+      $(".fold-change-help.dynamic-help").hide();
     }
   };
 
