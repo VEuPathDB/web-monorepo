@@ -171,7 +171,11 @@
 </c:if>
 </div><%-- END OF PARAMS DIV --%>
 
-<div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
+<div class="filter-button">
+  <html:submit property="questionSubmit"
+    styleClass="btn btn-primary"
+    value="Get Answer"/>
+</div>
 
 <hr>
 

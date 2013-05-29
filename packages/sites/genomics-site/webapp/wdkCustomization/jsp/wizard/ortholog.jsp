@@ -71,7 +71,11 @@ ${Question_Header}
 
 <html:hidden property="stage" styleId="stage" value="process_ortholog"/>
 
-<div id="transform_button" class="filter-button"><html:submit property="questionSubmit" value="${buttonVal}"/></div>
+  <div id="transform_button" class="filter-button">
+    <html:submit property="questionSubmit"
+      styleClass="btn btn-primary"
+      value="${buttonVal}"/>
+  </div>
 </html:form>
 
 ${Question_Footer}
