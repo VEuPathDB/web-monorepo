@@ -165,7 +165,7 @@ Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span>
         <input type="hidden" id="span_sentence" name="value(span_sentence)" value="" />
 </div>
 
-<div class="filter-button"><html:submit property="questionSubmit" value="Submit" styleClass="btn btn-primary" styleId="submitButton"/></div>
+<div class="filter-button"><html:submit property="questionSubmit" value="Submit" styleId="submitButton"/></div>
 </html:form>
 
 <script>
