@@ -78,7 +78,7 @@
             <imp:enumParamInput qp="${samples_fc_ref_genericParam}"/>
           </div>
           <div id="min_max_avg_refaaa" class="param-line">
-            <span class="text">Calculate the fold change using the</span>
+            <span class="text">Calculate each gene's fold change using its</span>
             <imp:enumParamInput qp="${min_max_avg_refParam}"/>
             <img class="help-link"
               style="cursor:pointer"
@@ -86,7 +86,7 @@
               src="${pageContext.request.contextPath}/wdk/images/question.png" />
             <span class="text">
               <span class="prompt">expression value</span>
-              of my chosen reference samples.</span>
+              in my chosen reference samples.</span>
           </div>
         </div>
 
@@ -106,7 +106,7 @@
             <imp:enumParamInput qp="${samples_fc_comp_genericParam}"/>
           </div>
           <div id="min_max_avg_compaaa" class="param-line">
-            <span class="text">Calculate the fold change using the</span>
+            <span class="text">Calculate each gene's fold change using its</span>
             <imp:enumParamInput qp="${min_max_avg_compParam}"/>
             <img class="help-link"
               style="cursor:pointer"
@@ -114,7 +114,7 @@
               src="${pageContext.request.contextPath}/wdk/images/question.png" />
             <span class="text">
               <span class="prompt">expression value</span>
-              of my chosen comparison samples.</span>
+              in my chosen comparison samples.</span>
           </div>
         </div>
       </div>
