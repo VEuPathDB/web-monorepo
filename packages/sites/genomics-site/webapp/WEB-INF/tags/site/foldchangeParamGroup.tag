@@ -121,6 +121,7 @@
     </div> <!-- .fold-change-params -->
 
     <div class="fold-change-graphic">
+      <div class="fold-change-img"></div>
       <div class="fold-change-help static-help">
         <p>This graphic will help you visualize the parameter
         choices you make at the left.
@@ -128,7 +129,6 @@
          <b>Comparison Sample</b>.</p>
       </div>
       <div class="fold-change-help dynamic-help"></div>
-      <div class="fold-change-img"></div>
       <div class="fold-change-help detailed-help">
         <p>See the <a href='/assets/Fold%20Change%20Help.pdf'
          target='_blank'>detailed help for this search</a>.</p>
