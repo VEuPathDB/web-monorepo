@@ -4,11 +4,57 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
   var $img,
       $form,
       helpTmpl,
+      helpMap,
       slideMap;
 
   var $scope = {}; // gets bound to form state, with some extras. used for template
 
   helpTmpl = Handlebars.compile($("#help-template").html());
+
+  // map extra help info to param choices
+  helpMap = {
+    "down-regulated-none-none":
+    "See help document for more details.",
+
+    "down-regulated-maximum-none":
+    "This calculation creates the broadest window of expression values in which to look for genes that meet your fold change cutoff.  To restrict the window, use the average or minimum reference value. See help document for more details. ",
+
+    "down-regulated-average-none":
+    "To broaden the window, use the maximum reference value. To restrict the window in which to look for genes that meet your fold change cutoff, use the minimum reference value. See our help document for more details.",
+
+    "down-regulated-minimum-none":
+    "This calculation creates the most restrictive window of expression values in which to look for genes that meet your fold change cutoff. To broaden the window, use the average or maximum reference value. See help document for more details. ",
+
+    "down-regulated-none-maximum":
+    "This calculation creates the most restrictive window in which to look for genes that meet your fold change cutoff.  To broaden the window, use the average or minimum comparison value. See our help document for more details.",
+
+    "down-regulated-none-average":
+    "To broaden the window, use the minimum comparison value. To restrict the window in which to look for genes that meet your fold change cutoff, use the maximum comparison value. See our help document for more details.",
+
+    "down-regulated-none-minimum":
+    "This calculation creates the broadest window of expression values in which to look for genes that meet your fold change cutoff. To restrict the window, use the average or maximum comparison value. See help document for more details.",
+
+    "up-regulated-none-none":
+    "See help document for more details.",
+
+    "up-regulated-maximum-none":
+    "This calculation creates the most restrictive window of expression values in which to look for genes that meet your fold change cut off. To broaden the window, use the average or minimum reference value. See our help document for more details. ",
+
+    "up-regulated-average-none":
+    "To broaden the window of expression values in which to look for genes that meet your fold change cut off, use the minimum reference expression value. To restrict the window, use the maximum reference value. See our help document for more details.",
+
+    "up-regulated-minimum-none":
+    "This calculation creates the broadest window of expression values in which to look for genes that meet your fold change cut off. To restrict the window, use the average or maximum reference value. See our help document for more details. ",
+
+    "up-regulated-none-maximum":
+    "This calculation creates the broadest window of expression values in which to look for genes that meet your fold change cut off. To restrict the window, use the average or minimum comparison value. See help document for more details. ",
+
+    "up-regulated-none-average":
+    "To broaden the window of expression values in which to look for genes that meet your fold change cut off, use the maximum comparison value. To restrict the window, use the minimum comparison value. See help document for more details.",
+
+    "up-regulated-none-minimum":
+    "This calculation creates the most restrictive window of expression values in which to look for genes that meet your fold change cut off. To broaden the window, use the average or maximum comparison value. See our help document for more details."
+  };
 
   // map operation combinations to slide numbers
   slideMap = {
@@ -149,6 +195,12 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     $scope.ref_operation = $form.find("select[name*='min_max_avg_ref']").find(":selected").text();
     $scope.comp_operation = $form.find("select[name*='min_max_avg_comp']").find(":selected").text();
 
+    $scope.className = [
+      $scope.direction.replace(/\s+/g, "-"),
+      $scope.ref_operation.replace(/\s+/g, "-"),
+      $scope.comp_operation.replace(/\s+/g, "-")
+    ].join("-");
+
     $scope.multiple_ref = $scope.ref_count > 1;
     $scope.multiple_comp = $scope.comp_count > 1;
 
@@ -163,17 +215,13 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     } else {
       $scope.denominator = "comparison expression value";
     }
+
+    $scope.extra_help = helpMap[$scope.className];
   };
 
   // set the classname for the image placeholder
   var setGraph = function() {
-    var className = [
-      $scope.direction.replace(/\s+/g, "-"),
-      $scope.ref_operation.replace(/\s+/g, "-"),
-      $scope.comp_operation.replace(/\s+/g, "-")
-    ].join("-");
-
-    $img.find("div").css("top", "-10000px").eq(slideMap[className] - 1).css("top", "");
+    $img.find("div").css("top", "-10000px").eq(slideMap[$scope.className] - 1).css("top", "");
 
     if ($scope.ref_count === 0 || $scope.comp_count === 0) {
       $img.block({

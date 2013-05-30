@@ -176,7 +176,7 @@
         </div>
       </div>
     </div>
-    <p>and returns genes when <b>fold change</b> &gt;= <b>{{fold_change}}</b>. {{extra_help}}</p>
+    <p>and returns genes when <b>fold change</b> &gt;= <b>{{fold_change}}</b>. {{{extra_help}}}</p>
   </script>
 
 </jsp:root>
