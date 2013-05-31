@@ -9,8 +9,6 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
   var $scope = {}; // gets bound to form state, with some extras. used for template
 
-  helpTmpl = Handlebars.compile($("#help-template").html());
-
   // map extra help info to param choices
   helpMap = {
     "down-regulated-none-none":
@@ -103,6 +101,8 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     //   $(this).find(":first-child").appendTo(this)
     // });
 
+    helpTmpl = Handlebars.compile($("#help-template").html());
+
     $img = $(".fold-change-img");
     // get a handle on the form element -- we use .last to handle nested forms
     $form = $("form#form_question").last();
@@ -129,7 +129,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       update();
     });
 
-    setTimeout(update, 0);
+    update();
     return;
   };
 
@@ -245,7 +245,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     if ($scope.ref_count && $scope.comp_count) {
       var html = helpTmpl($scope);
       $(".fold-change-help.static-help").hide();
-      $(".fold-change-help.dynamic-help").html(html).show();
+      $(".fold-change-help.dynamic-help").show().html(html);
     } else {
       $(".fold-change-help.static-help").show();
       $(".fold-change-help.dynamic-help").hide();
