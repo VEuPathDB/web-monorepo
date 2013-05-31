@@ -21,10 +21,10 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     "To broaden the window, use the maximum reference value. To narrow the window in which to look for genes that meet your fold change cutoff, use the minimum reference value. See our help document for more details.",
 
     "down-regulated-minimum-none":
-    "This calculation creates the most <b>narrowest</b> window of expression values in which to look for genes that meet your fold change cutoff. To broaden the window, use the average or maximum reference value. See help document for more details. ",
+    "This calculation creates the <b>narrowest</b> window of expression values in which to look for genes that meet your fold change cutoff. To broaden the window, use the average or maximum reference value. See help document for more details. ",
 
     "down-regulated-none-maximum":
-    "This calculation creates the most <b>narrowest</b> window in which to look for genes that meet your fold change cutoff.  To broaden the window, use the average or minimum comparison value. See our help document for more details.",
+    "This calculation creates the <b>narrowest</b> window in which to look for genes that meet your fold change cutoff.  To broaden the window, use the average or minimum comparison value. See our help document for more details.",
 
     "down-regulated-none-average":
     "To broaden the window, use the minimum comparison value. To narrow the window in which to look for genes that meet your fold change cutoff, use the maximum comparison value. See our help document for more details.",
@@ -36,7 +36,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     "See help document for more details.",
 
     "up-regulated-maximum-none":
-    "This calculation creates the most <b>narrowest</b> window of expression values in which to look for genes that meet your fold change cut off. To broaden the window, use the average or minimum reference value. See our help document for more details. ",
+    "This calculation creates the <b>narrowest</b> window of expression values in which to look for genes that meet your fold change cut off. To broaden the window, use the average or minimum reference value. See our help document for more details. ",
 
     "up-regulated-average-none":
     "To broaden the window of expression values in which to look for genes that meet your fold change cut off, use the minimum reference expression value. To narrow the window, use the maximum reference value. See our help document for more details.",
@@ -51,7 +51,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     "To broaden the window of expression values in which to look for genes that meet your fold change cut off, use the maximum comparison value. To narrow the window, use the minimum comparison value. See help document for more details.",
 
     "up-regulated-none-minimum":
-    "This calculation creates the most <b>narrowest</b> window of expression values in which to look for genes that meet your fold change cut off. To broaden the window, use the average or maximum comparison value. See our help document for more details."
+    "This calculation creates the <b>narrowest</b> window of expression values in which to look for genes that meet your fold change cut off. To broaden the window, use the average or maximum comparison value. See our help document for more details."
   };
 
   // map operation combinations to slide numbers
@@ -153,12 +153,10 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       refOp.attr("disabled", true);
       refOp.find(":selected").text("none");
       refOp.parent().hide().next().hide();
-      //refOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
     } else {
       refOp.attr("disabled", false);
       refOp.find(":selected").text(refOp.val().slice(0, -1));
       refOp.parent().show().next().show();
-      //refOp.parents(".param-line").find(".text").css("color","black");
     }
 
     // if compCount <= 1, make ops disabled
@@ -166,24 +164,16 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       compOp.attr("disabled", true);
       compOp.find(":selected").text("none");
       compOp.parent().hide().next().hide();
-      //compOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
     } else {
       compOp.attr("disabled", false);
       compOp.find(":selected").text(compOp.val().slice(0, -1));
       compOp.parent().show().next().show();
-      //compOp.parents(".param-line").find(".text").css("color","black");
     }
 
     // if "up or down regulated" selected, disable ops
     if ($form.find("select[name*='regulated_dir']").val() === "up or down regulated") {
       refOp.attr("disabled", true);
-      //refOp.find(":selected").text(refCount <= 1 ? "none" : refOp.val().slice(0, -1));
-      //refOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
-
       compOp.attr("disabled", true);
-      //compOp.find(":selected").text(compCount <= 1 ? "none" : compOp.val().slice(0, -1));
-      //compOp.parents(".param-line").find(".text").css("color","rgb(198,198,198)");
-      return;
     }
   };
 
@@ -233,7 +223,8 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
         message: null,
         overlayCSS: {
           opacity: 0.9,
-          backgroundColor: "rgb(211,211,211)"
+          backgroundColor: "rgb(211,211,211)",
+          zIndex: 1
         }
       });
     } else {
