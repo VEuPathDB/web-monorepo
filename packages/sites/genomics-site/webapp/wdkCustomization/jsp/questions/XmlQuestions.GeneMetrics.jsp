@@ -327,7 +327,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <th style="border-right:3px solid grey" colspan="9" class="mythStyle"><a href="http://plasmodb.org">PlasmoDB</a></th>
     <th style="border-right:3px solid grey" colspan="6" class="mythStyle"><a href="http://toxodb.org">ToxoDB</a></th>
     <th style="border-right:3px solid grey" colspan="1" class="mythStyle"><a href="http://trichdb.org">TrichDB</a></th>
-    <th colspan="13" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></th>
+    <th colspan="16" class="mythStyle"><a href="http://tritrypdb.org">TriTrypDB</a></th>
 </tr>
 
 <tr class="mythStyle">
@@ -397,6 +397,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <th  style="border-right:3px solid grey" class="mythStyle" title="Trichomonas vaginalis,TrichDB"><i>Tva</i></th>
 
     <th class="mythStyle" title="Leishmania braziliensis, TriTrypDB"><i>Lbr</i></th>
+    <th class="mythStyle" title="Leishmania donovani, TriTrypDB"><i>Ldo</i></th>
     <th class="mythStyle" title="Leishmania infantum, TriTrypDB"><i>Lin</i></th>
     <th class="mythStyle" title="Leishmania major strain Friedlin, TriTrypDB"><i>Lma</i></th>
     <th class="mythStyle" title="Leishmania mexicana, TriTrypDB"><i>Lme</i></th>
@@ -409,6 +410,8 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <th class="mythStyle" title="Trypanosoma cruzi CL Brener Esmeraldo-like, TriTrypDB"><i>TcrE</i></th>
     <th class="mythStyle" title="Trypanosoma cruzi CL Brener Non-Esmeraldo-like, TriTrypDB"><i>TcrN</i></th>
     <th class="mythStyle" title="Trypanosoma cruzi strain CL Brener, TriTrypDB"><i>TcrB</i></th>
+    <th class="mythStyle" title="Trypanosoma cruzi marinkellei, TriTrypDB"><i>Tcrm</i></th>
+    <th class="mythStyle" title="Trypanosoma cruzi Sylvio, TriTrypDB"><i>TcrS</i></th>
    <th class="mythStyle" title="Trypanosoma vivax, TriTrypDB"><i>Tvi</i></th>
 </tr>
 </thead>
@@ -451,10 +454,11 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
           <c:set var="GB" value="${record.attributesMap['Giardia Assemblage B isolate GS']}"/>
           <c:set var="GE" value="${record.attributesMap['Giardia Assemblage E isolate P15']}"/>
 
-          <c:set var="Lbr" value="${record.attributesMap['Leishmania braziliensis']}"/>
-          <c:set var="Lin" value="${record.attributesMap['Leishmania infantum']}"/>
+          <c:set var="Lbr" value="${record.attributesMap['Leishmania braziliensis MHOM/BR/75/M2904']}"/>
+          <c:set var="Ldo" value="${record.attributesMap['Leishmania donovani BPK282A1']}"/>
+          <c:set var="Lin" value="${record.attributesMap['Leishmania infantum JPCM5']}"/>
           <c:set var="Lma" value="${record.attributesMap['Leishmania major strain Friedlin']}"/>
-          <c:set var="Lme" value="${record.attributesMap['Leishmania mexicana']}"/>
+          <c:set var="Lme" value="${record.attributesMap['Leishmania mexicana MHOM/GT/2001/U1103']}"/>
           <c:set var="Lta" value="${record.attributesMap['Leishmania tarentolae Parrot-TarII']}"/>
 
           <c:set var="Npa1" value="${record.attributesMap['Nematocida parisii ERTm1']}"/>
@@ -487,12 +491,14 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 
           <c:set var="Tbr4" value="${record.attributesMap['Trypanosoma brucei Lister strain 427']}"/>
           <c:set var="Tbr9" value="${record.attributesMap['Trypanosoma brucei TREU927']}"/>
-          <c:set var="Tbrg" value="${record.attributesMap['Trypanosoma brucei gambiense']}"/>
-          <c:set var="Tco" value="${record.attributesMap['Trypanosoma congolense']}"/>
+          <c:set var="Tbrg" value="${record.attributesMap['Trypanosoma brucei gambiense DAL972']}"/>
+          <c:set var="Tco" value="${record.attributesMap['Trypanosoma congolense IL3000']}"/>
           <c:set var="TcrE" value="${record.attributesMap['Trypanosoma cruzi CL Brener Esmeraldo-like']}"/>
           <c:set var="TcrN" value="${record.attributesMap['Trypanosoma cruzi CL Brener Non-Esmeraldo-like']}"/>
           <c:set var="TcrB" value="${record.attributesMap['Trypanosoma cruzi strain CL Brener']}"/>
-          <c:set var="Tvi" value="${record.attributesMap['Trypanosoma vivax']}"/>
+          <c:set var="Tcrm" value="${record.attributesMap['Trypanosoma cruzi marinkellei strain B7']}"/>
+          <c:set var="TcrS" value="${record.attributesMap['Trypanosoma cruzi Sylvio X10/1']}"/>
+          <c:set var="Tvi" value="${record.attributesMap['Trypanosoma vivax Y486']}"/>
 
           <c:set var="Vcu" value="${record.attributesMap['Vavraia culicis floridensis']}"/>
           <c:set var="Vco" value="${record.attributesMap['Vittaforma corneae ATCC 50505']}"/>
@@ -565,6 +571,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="border-right:3px solid grey" class="mytdStyle" align="right">${Tva}</td>
 
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lbr}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Ldo}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lin}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lma}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Lme}</td>
@@ -576,6 +583,8 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TcrE}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TcrN}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TcrB}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tcrm}</td>
+    <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${TcrS}</td>
     <td style="background-color:${bgcolor}" class="mytdStyle" align="right">${Tvi}</td>
 </tr>
  
@@ -609,7 +618,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
 <b>Entamoeba</b>: Edi, <i>E. dispar</i>; Ehi, <i>E. histolytica</i>; Ein, <i>E. invadens</i>; Emo, <i>E. moshkovskii</i>; Enu, <i>E. nuttalli</i>;  
 <b>Enterocytozoon</b>: Eb, <i>E. bieneusi</i>; 
 <b>Giardia</b>: GA, <i>G.Assemblage_A_isolate_WB</i>; GB, <i>G.Assemblage_B_isolate_GS</i>; GE, <i>G.Assemblage_E_isolate_P15</i>; 
-<b>Leishmania</b>: Lb, <i>L. braziliensis</i>; Li, <i>L. infantum</i>; Lma, <i>L. major</i>; Lme, <i>L. mexicana</i>; 
+<b>Leishmania</b>: Lb, <i>L. braziliensis</i>; Ld, <i>L. donovani</i>; Li, <i>L. infantum</i>; Lma, <i>L. major</i>; Lme, <i>L. mexicana</i>; 
 <b>Nematocida</b>: Npa, <i>N. parisii</i>; Nsp, <i>N. sp. 1</i>        
 <b>Neospora</b>: Nca, <i>N. caninum</i>; 
 <b>Nosema</b>: Nce, <i>N. cerenae</i>; 
