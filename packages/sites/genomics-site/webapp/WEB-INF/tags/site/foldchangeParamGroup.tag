@@ -176,7 +176,24 @@
         </div>
       </div>
     </div>
-    <p>and returns genes when <b>fold change</b> &gt;= <b>{{fold_change}}</b>. {{{extra_help}}}</p>
+    <p>and returns genes when <b>fold change</b> &gt;= <b>{{fold_change}}</b>.
+      {{#if narrowest}}
+        This calculation creates the <b>narrowest</b> window of expression values in
+        which to look for genes that meet your fold change cutoff.
+      {{/if}}
+      {{#if broadest}}
+        This calculation creates the <b>broadest</b> window of expression values in
+        which to look for genes that meet your fold change cutoff.
+      {{/if}}
+
+      {{#if toNarrow}}
+        To narrow the window, use the {{toNarrow}}.
+      {{/if}}
+
+      {{#if toBroaden}}
+        To broaden the window, use the {{toBroaden}}.
+      {{/if}}
+    </p>
   </script>
 
 </jsp:root>

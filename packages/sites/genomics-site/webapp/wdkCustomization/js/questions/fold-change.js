@@ -212,6 +212,116 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     }
 
     $scope.extra_help = helpMap[$scope.className];
+
+    $scope.narrowest = false;
+    $scope.broadest = false;
+
+    if ($scope.direction === "up-regulated") {
+      // we are interested in expression values increasing
+
+      // a broad window exists when we choose the least ref expression value
+      // and the most comp expression value
+      if (($scope.ref_operation === "none" || $scope.ref_operation === "minimum")
+          && $scope.comp_operation === "maximum") {
+        $scope.broadest = true;
+      } else if ($scope.ref_operation === "minimum" &&
+          ($scope.comp_operation === "none" || $scope.comp_operation === "maximum")) {
+        $scope.broadest = true;
+      }
+      // a narrow window exists when we choose the most ref expression value
+      // and the least comp expression value
+      if (($scope.ref_operation === "none" || $scope.ref_operation === "maximum")
+          && $scope.comp_operation === "minimum") {
+        $scope.narrowest = true;
+      } else if ($scope.ref_operation === "maximum" &&
+          ($scope.comp_operation === "none" || $scope.comp_operation === "minimum")) {
+        $scope.narrowest = true;
+      }
+    } else if ($scope.direction === "down-regulated") {
+      // we are interested in expression values decreasing
+
+      // a broad window exists when we choose the most ref expression value
+      // and the least comp expression value
+      if (($scope.ref_operation === "none" || $scope.ref_operation === "maximum")
+          && $scope.comp_operation === "minimum") {
+        $scope.broadest = true;
+      } else if ($scope.ref_operation === "maximum" &&
+          ($scope.comp_operation === "none" || $scope.comp_operation === "minimum")) {
+        $scope.broadest = true;
+      }
+      // a narrow window exists when we choose the least ref expression value
+      // and the most comp expression value
+      if (($scope.ref_operation === "none" || $scope.ref_operation === "minimum")
+          && $scope.comp_operation === "maximum") {
+        $scope.narrowest = true;
+      } else if ($scope.ref_operation === "minimum" &&
+          ($scope.comp_operation === "none" || $scope.comp_operation === "maximum")) {
+        $scope.narrowest = true;
+      }
+    }
+
+    $scope.narrowOps = { comp: [], ref: [] };
+    $scope.broadenOps = { comp: [], ref: [] };
+    if ($scope.direction === "up-regulated") {
+      // select average or minimum comp
+      if ($scope.comp_operation === "maximum") {
+        $scope.narrowOps.comp.push("average", "minimum");
+      } else if ($scope.comp_operation === "average") {
+        $scope.narrowOps.comp.push("minimum");
+        $scope.broadenOps.comp.push("maximum");
+      } else if ($scope.comp_operation === "minimum") {
+        $scope.broadenOps.comp.push("average", "maximum");
+      }
+      // select average or maximum ref
+      if ($scope.ref_operation === "minimum") {
+        $scope.narrowOps.ref.push("average", "maximum");
+      } else if ($scope.ref_operation === "average") {
+        $scope.narrowOps.ref.push("maximum");
+        $scope.broadenOps.ref.push("minimum");
+      } else if ($scope.ref_operation === "maximum") {
+        $scope.broadenOps.ref.push("average", "minimum");
+      }
+    } else if ($scope.direction === "down-regulated") {
+      // select average or maximum comp
+      if ($scope.comp_operation === "minimum") {
+        $scope.narrowOps.comp.push("average", "maximum");
+      } else if ($scope.comp_operation === "average") {
+        $scope.narrowOps.comp.push("maximum");
+        $scope.broadenOps.comp.push("minimum");
+      } else if ($scope.comp_operation === "maximum") {
+        $scope.broadenOps.comp.push("average", "minimum");
+      }
+      // select average or maximum ref
+      if ($scope.ref_operation === "maximum") {
+        $scope.narrowOps.ref.push("average", "minimum");
+      } else if ($scope.ref_operation === "average") {
+        $scope.narrowOps.ref.push("minimum");
+        $scope.broadenOps.ref.push("maximum");
+      } else if ($scope.ref_operation === "minimum") {
+        $scope.broadenOps.ref.push("average", "maximum");
+      }
+    }
+
+    $scope.toBroaden = "";
+    $scope.toNarrow = "";
+
+    $scope.broadenHelp = [];
+    if ($scope.broadenOps.ref.length) {
+      $scope.broadenHelp.push($scope.broadenOps.ref.join(" or ") + " reference value");
+    }
+    if ($scope.broadenOps.comp.length) {
+      $scope.broadenHelp.push($scope.broadenOps.comp.join(" or ") + " comparison value");
+    }
+    $scope.toBroaden = $scope.broadenHelp.join(", or ");
+
+    $scope.narrowHelp = [];
+    if ($scope.narrowOps.ref.length) {
+      $scope.narrowHelp.push($scope.narrowOps.ref.join(" or ") + " reference value");
+    }
+    if ($scope.narrowOps.comp.length) {
+      $scope.narrowHelp.push($scope.narrowOps.comp.join(" or ") + " comparison value");
+    }
+    $scope.toNarrow = $scope.narrowHelp.join(", or ");
   };
 
   // set the classname for the image placeholder
