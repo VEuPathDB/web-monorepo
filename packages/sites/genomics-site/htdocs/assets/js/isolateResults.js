@@ -35,4 +35,6 @@ function goToIsolate(ele,type,source_id,start,end) {
 	w.document.open();
 	w.location.href=url;
 	//window.location.href = url;
+  // focus the window
+  w.focus();
 }

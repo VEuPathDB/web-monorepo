@@ -24,12 +24,7 @@
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 
 
-<c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
-  && (fn:containsIgnoreCase(modelName, 'CryptoDB') 
-  || fn:containsIgnoreCase(modelName, 'ToxoDB') 
-  || fn:containsIgnoreCase(modelName, 'EuPathDB') 
-  || fn:containsIgnoreCase(modelName, 'GiardiaDB') 
-  || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}
+<c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') }
 </c:set> 
 
 <c:set var="type" value="${wdkStep.recordClass.displayNamePlural}"/>
