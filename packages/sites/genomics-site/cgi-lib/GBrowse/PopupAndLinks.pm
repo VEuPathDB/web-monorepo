@@ -1309,6 +1309,8 @@ sub jcviPasaTitle {
 sub riteshMassSpec {
   my $f = shift;
 
+  my $start = $f->start;
+  my $stop  = $f->stop;
   my ($pep) = $f->get_tag_values('Peptide');
   my ($fdr) = $f->get_tag_values('FDR');
   my ($psm) = $f->get_tag_values('PSM');
@@ -1317,6 +1319,7 @@ sub riteshMassSpec {
   push(@data, ['Peptide:'    => $pep]);
   push(@data, ['FDR Score:'  => $fdr]);
   push(@data, ['PSM Counts:' => $psm]);
+  push(@data, ['Position:'   => "$start..$stop"]);
 
   return hover($f,\@data);
 }
