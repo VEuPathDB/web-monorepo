@@ -4,121 +4,81 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
   var $img,
       $form,
       helpTmpl,
-      helpMap,
-      slideMap;
+      oneDirectionTmpl,
+      twoDirectionTmpl;
 
   var $scope = {}; // gets bound to form state, with some extras. used for template
 
-  // map extra help info to param choices
-  helpMap = {
-    "down-regulated-none-none":
-    "See help document for more details.",
-
-    "down-regulated-maximum-none":
-    "This calculation creates the <b>broadest</b> window of expression values in which to look for genes that meet your fold change cutoff.  To narrow the window, use the average or minimum reference value. See help document for more details. ",
-
-    "down-regulated-average-none":
-    "To broaden the window, use the maximum reference value. To narrow the window in which to look for genes that meet your fold change cutoff, use the minimum reference value. See our help document for more details.",
-
-    "down-regulated-minimum-none":
-    "This calculation creates the <b>narrowest</b> window of expression values in which to look for genes that meet your fold change cutoff. To broaden the window, use the average or maximum reference value. See help document for more details. ",
-
-    "down-regulated-none-maximum":
-    "This calculation creates the <b>narrowest</b> window in which to look for genes that meet your fold change cutoff.  To broaden the window, use the average or minimum comparison value. See our help document for more details.",
-
-    "down-regulated-none-average":
-    "To broaden the window, use the minimum comparison value. To narrow the window in which to look for genes that meet your fold change cutoff, use the maximum comparison value. See our help document for more details.",
-
-    "down-regulated-none-minimum":
-    "This calculation creates the <b>broadest</b> window of expression values in which to look for genes that meet your fold change cutoff. To narrow the window, use the average or maximum comparison value. See help document for more details.",
-
-    "up-regulated-none-none":
-    "See help document for more details.",
-
-    "up-regulated-maximum-none":
-    "This calculation creates the <b>narrowest</b> window of expression values in which to look for genes that meet your fold change cut off. To broaden the window, use the average or minimum reference value. See our help document for more details. ",
-
-    "up-regulated-average-none":
-    "To broaden the window of expression values in which to look for genes that meet your fold change cut off, use the minimum reference expression value. To narrow the window, use the maximum reference value. See our help document for more details.",
-
-    "up-regulated-minimum-none":
-    "This calculation creates the <b>broadest</b> window of expression values in which to look for genes that meet your fold change cut off. To narrow the window, use the average or maximum reference value. See our help document for more details. ",
-
-    "up-regulated-none-maximum":
-    "This calculation creates the <b>broadest</b> window of expression values in which to look for genes that meet your fold change cut off. To narrow the window, use the average or minimum comparison value. See help document for more details. ",
-
-    "up-regulated-none-average":
-    "To broaden the window of expression values in which to look for genes that meet your fold change cut off, use the maximum comparison value. To narrow the window, use the minimum comparison value. See help document for more details.",
-
-    "up-regulated-none-minimum":
-    "This calculation creates the <b>narrowest</b> window of expression values in which to look for genes that meet your fold change cut off. To broaden the window, use the average or maximum comparison value. See our help document for more details."
+  var sampleCollection = function(type) {
+    this.type = type;
+    this.samplesLabel = type[0].toUpperCase() + type.slice(1);
+    this.operationLabel = type[0].toUpperCase() + type.slice(1);
+    this.samples = [];
   };
 
-  // map operation combinations to slide numbers
-  slideMap = {
-      "up-regulated-maximum-maximum"         : 1,
-      "up-regulated-none-maximum"            : 2,
-      "up-regulated-maximum-none"            : 3,
-      "up-regulated-minimum-maximum"         : 4,
-      "up-regulated-minimum-none"            : 5,
-      "up-regulated-none-none"               : 6,
-      "up-regulated-average-maximum"         : 7,
-      "up-regulated-average-none"            : 8,
-      "up-regulated-maximum-average"         : 9,
-      "up-regulated-none-average"            : 10,
-      "up-regulated-minimum-average"         : 11,
-      "up-regulated-average-average"         : 12,
-      "up-regulated-maximum-minimum"         : 13,
-      "up-regulated-none-minimum"            : 14,
-      "up-regulated-minimum-minimum"         : 15,
-      "up-regulated-average-minimum"         : 16,
-      "down-regulated-maximum-maximum"       : 17,
-      "down-regulated-maximum-none"          : 18,
-      "down-regulated-none-maximum"          : 19,
-      "down-regulated-minimum-maximum"       : 20,
-      "down-regulated-average-maximum"       : 21,
-      "down-regulated-maximum-average"       : 22,
-      "down-regulated-none-average"          : 23,
-      "down-regulated-minimum-average"       : 24,
-      "down-regulated-average-average"       : 25,
-      "down-regulated-maximum-minimum"       : 26,
-      "down-regulated-minimum-minimum"       : 27,
-      "down-regulated-none-minimum"          : 28,
-      "down-regulated-average-minimum"       : 29,
-      "down-regulated-none-none"             : 30,
-      "down-regulated-average-none"          : 31,
-      "down-regulated-minimum-none"          : 32,
-      "up-or-down-regulated-average-average" : 33,
-      "up-or-down-regulated-average-none"    : 34,
-      "up-or-down-regulated-none-average"    : 35,
-      "up-or-down-regulated-none-none"       : 36
-    };
+  /** 
+   * set the sample step in px and where the first sample goes
+   * String @operation - one of minimum, maximum, average
+   * Boolean @isHigh - should the samples appear high or low in graph?
+   */
+  sampleCollection.prototype.setup = function(sampleCount, operation, isHigh) {
+    var sampleStep, stepCount, steps, smallSteps, bigSteps;
+
+    smallSteps = [0, 100, 33, 66]; // percentages
+    bigSteps = [0, 200, 66, 133]; // percentages
+
+    stepCount = sampleCount = Math.min(sampleCount, 4);
+
+    if (sampleCount > 1) {
+      //stepCount = sampleCount - 1;
+      this.operationLabel = operation[0].toUpperCase() + operation.slice(1) +
+          " " + this.operationLabel;
+    }
+
+    switch (operation) {
+      case "minimum":
+        //sampleStep = (isHigh) ? -(56 / stepCount) : -(126 / stepCount);
+        steps = (isHigh) ? $.map(smallSteps, function(x) { return -x; }) :
+          $.map(bigSteps, function(x) { return -x;});
+        break;
+
+      case "maximum":
+        //sampleStep = (isHigh) ? 126 / stepCount : 56 / stepCount;
+        steps = (isHigh) ? bigSteps : smallSteps;
+        break;
+
+      case "average":
+        //sampleStep = 126 / stepCount;
+        if (stepCount === 2) {
+          steps = [-90, 90];
+        } else if (stepCount === 3) {
+          steps = [-90, 90, 0];
+        } else if (stepCount === 4) {
+          steps = [-90, 90, -50, 50];
+        }
+        break;
+
+      default:
+        //sampleStep = 126 / stepCount;
+        steps = smallSteps;
+    }
+    for (var i = 0; i < sampleCount; i++) {
+      //this.samples.push({top: i * sampleStep});
+      this.samples.push({top: steps[i]});
+    }
+    return this;
+  };
 
   var init = function() {
 
-    // swap location of question icons for parameters
-    // $(".group-detail").find("label").each(function() {
-    //   $(this).find(":first-child").appendTo(this)
-    // });
-
     helpTmpl = Handlebars.compile($("#help-template").html());
+    oneDirectionTmpl = Handlebars.compile($("#one-direction-template").html());
+    twoDirectionTmpl = Handlebars.compile($("#two-direction-template").html());
+    Handlebars.registerPartial("samples", $("#samples-partial").html());
+    Handlebars.registerPartial("foldChange", $("#foldChange-partial").html());
 
     $img = $(".fold-change-img");
-    // get a handle on the form element -- we use .last to handle nested forms
     $form = $("form#form_question").last();
-
-    // load slides
-    for (var i = 1; i <= 36; i++) {
-      $("<div></div>")
-      .css("position", "absolute")
-      .css("height", "300px")
-      .css("width", "400px")
-      .css("background-image", "url(/assets/images/fold-change/Slide" + (i<10 ? "0"+i : i) + ".jpg)")
-      .css("top", "-10000px")
-      .appendTo($img);
-    }
-
-    $img.find("div").last().css("top", "");
 
     // connect to form change event
     $form.on("change", update).on("submit", function() {
@@ -179,39 +139,34 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
   // set the properies of $scope
   var setScope = function() {
-    // defaults
-    // $scope.ref_operation = "none";
-    // $scope.comp_operation = "none;
 
-    $scope.fold_change = $form.find("#fold_change").val();
+    $scope.foldChange = $form.find("#fold_change").val();
     $scope.direction = $form.find("select[name*='regulated_dir']").val();
-    $scope.ref_count = $form.find("input[name*='samples_fc_ref_generic']:checked").length;
-    $scope.comp_count = $form.find("input[name*='samples_fc_comp_generic']:checked").length;
-    $scope.ref_operation = $form.find("select[name*='min_max_avg_ref']").find(":selected").text();
-    $scope.comp_operation = $form.find("select[name*='min_max_avg_comp']").find(":selected").text();
+    $scope.refCount = $form.find("input[name*='samples_fc_ref_generic']:checked").length;
+    $scope.compCount = $form.find("input[name*='samples_fc_comp_generic']:checked").length;
+    $scope.refOperation = $form.find("select[name*='min_max_avg_ref']").find(":selected").text();
+    $scope.compOperation = $form.find("select[name*='min_max_avg_comp']").find(":selected").text();
 
     $scope.className = [
       $scope.direction.replace(/\s+/g, "-"),
-      $scope.ref_operation.replace(/\s+/g, "-"),
-      $scope.comp_operation.replace(/\s+/g, "-")
+      $scope.refOperation.replace(/\s+/g, "-"),
+      $scope.compOperation.replace(/\s+/g, "-")
     ].join("-");
 
-    $scope.multiple_ref = $scope.ref_count > 1;
-    $scope.multiple_comp = $scope.comp_count > 1;
+    $scope.multipleRef = $scope.refCount > 1;
+    $scope.multipleComp = $scope.compCount > 1;
 
-    if ($scope.multiple_ref) {
-      $scope.numerator = $scope.ref_operation + " expression value in reference samples";
+    if ($scope.multipleRef) {
+      $scope.numerator = $scope.refOperation + " expression value in reference samples";
     } else {
       $scope.numerator = "reference expression value";
     }
 
-    if ($scope.multiple_comp) {
-      $scope.denominator = $scope.comp_operation + " expression value in comparison samples";
+    if ($scope.multipleComp) {
+      $scope.denominator = $scope.compOperation + " expression value in comparison samples";
     } else {
       $scope.denominator = "comparison expression value";
     }
-
-    $scope.extra_help = helpMap[$scope.className];
 
     $scope.narrowest = false;
     $scope.broadest = false;
@@ -221,20 +176,20 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
       // a broad window exists when we choose the least ref expression value
       // and the most comp expression value
-      if (($scope.ref_operation === "none" || $scope.ref_operation === "minimum")
-          && $scope.comp_operation === "maximum") {
+      if (($scope.refOperation === "none" || $scope.refOperation === "minimum")
+          && $scope.compOperation === "maximum") {
         $scope.broadest = true;
-      } else if ($scope.ref_operation === "minimum" &&
-          ($scope.comp_operation === "none" || $scope.comp_operation === "maximum")) {
+      } else if ($scope.refOperation === "minimum" &&
+          ($scope.compOperation === "none" || $scope.compOperation === "maximum")) {
         $scope.broadest = true;
       }
       // a narrow window exists when we choose the most ref expression value
       // and the least comp expression value
-      if (($scope.ref_operation === "none" || $scope.ref_operation === "maximum")
-          && $scope.comp_operation === "minimum") {
+      if (($scope.refOperation === "none" || $scope.refOperation === "maximum")
+          && $scope.compOperation === "minimum") {
         $scope.narrowest = true;
-      } else if ($scope.ref_operation === "maximum" &&
-          ($scope.comp_operation === "none" || $scope.comp_operation === "minimum")) {
+      } else if ($scope.refOperation === "maximum" &&
+          ($scope.compOperation === "none" || $scope.compOperation === "minimum")) {
         $scope.narrowest = true;
       }
     } else if ($scope.direction === "down-regulated") {
@@ -242,20 +197,20 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
       // a broad window exists when we choose the most ref expression value
       // and the least comp expression value
-      if (($scope.ref_operation === "none" || $scope.ref_operation === "maximum")
-          && $scope.comp_operation === "minimum") {
+      if (($scope.refOperation === "none" || $scope.refOperation === "maximum")
+          && $scope.compOperation === "minimum") {
         $scope.broadest = true;
-      } else if ($scope.ref_operation === "maximum" &&
-          ($scope.comp_operation === "none" || $scope.comp_operation === "minimum")) {
+      } else if ($scope.refOperation === "maximum" &&
+          ($scope.compOperation === "none" || $scope.compOperation === "minimum")) {
         $scope.broadest = true;
       }
       // a narrow window exists when we choose the least ref expression value
       // and the most comp expression value
-      if (($scope.ref_operation === "none" || $scope.ref_operation === "minimum")
-          && $scope.comp_operation === "maximum") {
+      if (($scope.refOperation === "none" || $scope.refOperation === "minimum")
+          && $scope.compOperation === "maximum") {
         $scope.narrowest = true;
-      } else if ($scope.ref_operation === "minimum" &&
-          ($scope.comp_operation === "none" || $scope.comp_operation === "maximum")) {
+      } else if ($scope.refOperation === "minimum" &&
+          ($scope.compOperation === "none" || $scope.compOperation === "maximum")) {
         $scope.narrowest = true;
       }
     }
@@ -264,40 +219,40 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     $scope.broadenOps = { comp: [], ref: [] };
     if ($scope.direction === "up-regulated") {
       // select average or minimum comp
-      if ($scope.comp_operation === "maximum") {
+      if ($scope.compOperation === "maximum") {
         $scope.narrowOps.comp.push("average", "minimum");
-      } else if ($scope.comp_operation === "average") {
+      } else if ($scope.compOperation === "average") {
         $scope.narrowOps.comp.push("minimum");
         $scope.broadenOps.comp.push("maximum");
-      } else if ($scope.comp_operation === "minimum") {
+      } else if ($scope.compOperation === "minimum") {
         $scope.broadenOps.comp.push("average", "maximum");
       }
       // select average or maximum ref
-      if ($scope.ref_operation === "minimum") {
+      if ($scope.refOperation === "minimum") {
         $scope.narrowOps.ref.push("average", "maximum");
-      } else if ($scope.ref_operation === "average") {
+      } else if ($scope.refOperation === "average") {
         $scope.narrowOps.ref.push("maximum");
         $scope.broadenOps.ref.push("minimum");
-      } else if ($scope.ref_operation === "maximum") {
+      } else if ($scope.refOperation === "maximum") {
         $scope.broadenOps.ref.push("average", "minimum");
       }
     } else if ($scope.direction === "down-regulated") {
       // select average or maximum comp
-      if ($scope.comp_operation === "minimum") {
+      if ($scope.compOperation === "minimum") {
         $scope.narrowOps.comp.push("average", "maximum");
-      } else if ($scope.comp_operation === "average") {
+      } else if ($scope.compOperation === "average") {
         $scope.narrowOps.comp.push("maximum");
         $scope.broadenOps.comp.push("minimum");
-      } else if ($scope.comp_operation === "maximum") {
+      } else if ($scope.compOperation === "maximum") {
         $scope.broadenOps.comp.push("average", "minimum");
       }
       // select average or maximum ref
-      if ($scope.ref_operation === "maximum") {
+      if ($scope.refOperation === "maximum") {
         $scope.narrowOps.ref.push("average", "minimum");
-      } else if ($scope.ref_operation === "average") {
+      } else if ($scope.refOperation === "average") {
         $scope.narrowOps.ref.push("minimum");
         $scope.broadenOps.ref.push("maximum");
-      } else if ($scope.ref_operation === "minimum") {
+      } else if ($scope.refOperation === "minimum") {
         $scope.broadenOps.ref.push("average", "maximum");
       }
     }
@@ -326,24 +281,52 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
   // set the classname for the image placeholder
   var setGraph = function() {
-    $img.find("div").css("top", "-10000px").eq(slideMap[$scope.className] - 1).css("top", "");
+    var html = '';
 
-    if ($scope.ref_count === 0 || $scope.comp_count === 0) {
-      $img.block({
-        message: null,
-        overlayCSS: {
-          opacity: 0.9,
-          backgroundColor: "rgb(211,211,211)",
-          zIndex: 1
-        }
+    if ($scope.direction === "up or down regulated") {
+      var leftSampleGroups = [],
+          rightSampleGroups = [];
+      if ($scope.refCount) {
+        leftSampleGroups.push(new sampleCollection("reference")
+            .setup($scope.refCount, $scope.refOperation));
+        rightSampleGroups.push(new sampleCollection("reference")
+            .setup($scope.refCount, $scope.refOperation, true));
+      }
+      if ($scope.compCount) {
+        leftSampleGroups.push(new sampleCollection("comparison")
+            .setup($scope.compCount, $scope.compOperation, true));
+        rightSampleGroups.push(new sampleCollection("comparison")
+            .setup($scope.compCount, $scope.compOperation));
+      }
+      html = twoDirectionTmpl({
+        title: $scope.direction[0].toUpperCase() + $scope.direction.slice(1),
+        leftSampleGroups: leftSampleGroups,
+        rightSampleGroups: rightSampleGroups,
+        foldChange: ($scope.refCount && $scope.compCount) ? $scope.foldChange : 0
       });
     } else {
-      $img.unblock();
+      var sampleCollections = [];
+      var refSamples = new sampleCollection("reference");
+      var compSamples = new sampleCollection("comparison");
+
+      refSamples.setup($scope.refCount, $scope.refOperation, $scope.direction === "down-regulated");
+      compSamples.setup($scope.compCount, $scope.compOperation, $scope.direction === "up-regulated");
+
+      if ($scope.refCount) sampleCollections.push(refSamples);
+      if ($scope.compCount) sampleCollections.push(compSamples);
+
+      html = oneDirectionTmpl({
+        title: $scope.direction[0].toUpperCase() + $scope.direction.slice(1),
+        direction: $scope.direction.replace(/\s+/g, "-"),
+        sampleGroups: sampleCollections,
+        foldChange: ($scope.refCount && $scope.compCount) ? $scope.foldChange : 0
+      });
     }
+    $img.html(html);
   };
 
   var setHelp = function() {
-    if ($scope.ref_count && $scope.comp_count) {
+    if ($scope.refCount && $scope.compCount) {
       var html = helpTmpl($scope);
       $(".fold-change-help.static-help").hide();
       $(".fold-change-help.dynamic-help").show().html(html);

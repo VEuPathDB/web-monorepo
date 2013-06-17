@@ -64,7 +64,7 @@
       <div class="samples ui-helper-clearfix">
         <div class="param-line" style="margin-top: 4px">
           <span class="text">between
-            <span class="reference-label">Reference Samples</span>
+            <span class="samples-tab reference">Reference Samples</span>
             <jsp:text> </jsp:text>
             <img class="help-link"
               style="cursor:pointer"
@@ -92,7 +92,7 @@
 
         <div class="param-line" style="margin-top: 1em">
           <span class="text">and
-            <span class="comparison-label">Comparison Samples</span>
+            <span class="samples-tab comparison">Comparison Samples</span>
             <jsp:text> </jsp:text>
             <img class="help-link"
               style="cursor:pointer"
@@ -139,13 +139,13 @@
 
   <script id="help-template" type="text/x-handlebars-template">
     <p>You are searching for genes that are <b>{{direction}}</b> between
-      {{#if multiple_ref}}
+      {{#if multipleRef}}
         at least two <b>reference samples</b>
       {{else}}
         one <b>reference sample</b>
       {{/if}}
       and
-      {{#if multiple_comp}}
+      {{#if multipleComp}}
         at least two <b>comparison samples</b>.
       {{else}}
         one <b>comparison sample</b>.
@@ -158,16 +158,16 @@
       <div class="right-hand-side">
         <div class="division">
           <div class="numerator">
-            {{#if multiple_ref}}
-              <span class="reference-label">{{ref_operation}}</span> expression value
+            {{#if multipleRef}}
+              <span class="reference-label">{{refOperation}}</span> expression value
               in <span class="reference-label">reference</span> samples
             {{else}}
               <span class="reference-label">reference</span> expression value
             {{/if}}
           </div>
           <div class="denominator">
-            {{#if multiple_comp}}
-              <span class="comparison-label">{{comp_operation}}</span> expression value
+            {{#if multipleComp}}
+              <span class="comparison-label">{{compOperation}}</span> expression value
               in <span class="comparison-label">comparison</span> samples
             {{else}}
               <span class="comparison-label">comparison</span> expression value
@@ -176,7 +176,7 @@
         </div>
       </div>
     </div>
-    <p>and returns genes when <b>fold change</b> &gt;= <b>{{fold_change}}</b>.
+    <p>and returns genes when <b>fold change</b> &gt;= <b>{{foldChange}}</b>.
       {{#if narrowest}}
         This calculation creates the <b>narrowest</b> window of expression values in
         which to look for genes that meet your fold change cutoff.
@@ -194,6 +194,73 @@
         To broaden the window, use the {{toBroaden}}.
       {{/if}}
     </p>
+  </script>
+
+  <script id="samples-partial" type="text/x-handlebars-template">
+    <div class="samples {{type}}-samples">
+      <div class="operation {{operationLevel}}">
+        <div class="operation-line"></div>
+        {{operationLabel}}
+
+        {{#each samples}}
+        <div class="sample" style="top: {{top}}%"></div>
+        {{/each}}
+
+      </div>
+      <div class="samples-label">
+        {{samplesLabel}}
+      </div>
+    </div>
+  </script>
+
+  <script id="foldChange-partial" type="text/x-handlebars-template">
+    <div class="fold-change-label">
+      <div>
+        <div class="arrow">
+          <span class="ui-icon ui-icon-arrowthick-1-n"></span>
+        </div>
+        &gt;= fold change
+        <div class="arrow">
+          <span class="ui-icon ui-icon-arrowthick-1-s"></span>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="one-direction-template" type="text/x-handlers/template">
+    <div class="{{direction}}">
+      <div class="title">{{title}}</div>
+      {{#each sampleGroups}}
+      {{> samples}}
+      {{/each}}
+      {{#if foldChange}}
+      {{> foldChange}}
+      {{/if}}
+    </div>
+  </script>
+
+  <script id="two-direction-template" type="text/x-handlers/template">
+    <div class="up-or-down-regulated">
+      <div class="title">{{title}}</div>
+      <div class="left-samples">
+        {{#each leftSampleGroups}}
+        {{> samples}}
+        {{/each}}
+
+        {{#if foldChange}}
+        {{> foldChange}}
+        {{/if}}
+      </div>
+      <div class="right-samples">
+        {{#each rightSampleGroups}}
+        {{> samples}}
+        {{/each}}
+
+        {{#if foldChange}}
+        {{> foldChange}}
+        {{/if}}
+      </div>
+    </div>
   </script>
 
 </jsp:root>
