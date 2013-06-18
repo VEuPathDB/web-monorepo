@@ -62,9 +62,19 @@
       </div>
 
       <div class="samples ui-helper-clearfix">
-        <div class="param-line" style="margin-top: 4px">
-          <span class="text">between
-            <span class="samples-tab reference">Reference Samples</span>
+        <div id="min_max_avg_refaaa" class="param-line">
+          <span class="text">between each gene's
+            <imp:enumParamInput qp="${min_max_avg_refParam}"/>
+            <span class="prompt">expression value</span>
+            <img class="help-link"
+              style="cursor:pointer"
+              title="${fn:escapeXml(min_max_avg_refParam.help)}"
+              src="${pageContext.request.contextPath}/wdk/images/question.png" />
+          </span>
+        </div>
+        <div class="param-line">
+          <span class="text">
+            in the following <span class="prompt">Reference Samples</span>
             <jsp:text> </jsp:text>
             <img class="help-link"
               style="cursor:pointer"
@@ -77,6 +87,7 @@
           <div id="samples_fc_ref_genericaaa">
             <imp:enumParamInput qp="${samples_fc_ref_genericParam}"/>
           </div>
+          <!--
           <div id="min_max_avg_refaaa" class="param-line">
             <span class="text">Calculate each gene's fold change using its</span>
             <imp:enumParamInput qp="${min_max_avg_refParam}"/>
@@ -88,11 +99,22 @@
               <span class="prompt">expression value</span>
               in my chosen reference samples.</span>
           </div>
+          -->
         </div>
 
-        <div class="param-line" style="margin-top: 1em">
-          <span class="text">and
-            <span class="samples-tab comparison">Comparison Samples</span>
+        <div id="min_max_avg_compaaa" class="param-line">
+          <span class="text">and each gene's 
+            <imp:enumParamInput qp="${min_max_avg_compParam}"/>
+            <span class="prompt">expression value</span>
+            <img class="help-link"
+              style="cursor:pointer"
+              title="${fn:escapeXml(min_max_avg_compParam.help)}"
+              src="${pageContext.request.contextPath}/wdk/images/question.png" />
+          </span>
+        </div>
+        <div class="param-line">
+          <span class="text">
+            in the following <span class="prompt">Comparison Samples</span>
             <jsp:text> </jsp:text>
             <img class="help-link"
               style="cursor:pointer"
@@ -105,6 +127,7 @@
           <div id="samples_fc_comp_genericaaa">
             <imp:enumParamInput qp="${samples_fc_comp_genericParam}"/>
           </div>
+          <!--
           <div id="min_max_avg_compaaa" class="param-line">
             <span class="text">Calculate each gene's fold change using its</span>
             <imp:enumParamInput qp="${min_max_avg_compParam}"/>
@@ -116,12 +139,14 @@
               <span class="prompt">expression value</span>
               in my chosen comparison samples.</span>
           </div>
+          -->
         </div>
       </div>
     </div> <!-- .fold-change-params -->
 
     <div class="fold-change-graphic">
       <div class="fold-change-img"><jsp:text/></div>
+      <div class="caption">Up to four samples are represented for comparison or reference</div>
       <div class="fold-change-help static-help">
         <p>This graphic will help you visualize the parameter
         choices you make at the left.
@@ -136,6 +161,18 @@
     </div>
 
   </div> <!-- .fold-change -->
+
+  <script id="formula-partial" type="texxt/x-handlebars-template">
+    <div class="formula">
+      <div class="left-hand-side">{{{leftHandSide}}}</div>
+      <div class="right-hand-side">
+        <div class="division">
+          <div class="numerator">{{{numerator}}}</div>
+          <div class="denominator">{{{denominator}}}</div>
+        </div>
+      </div>
+    </div>
+  </script>
 
   <script id="help-template" type="text/x-handlebars-template">
     <p>You are searching for genes that are <b>{{direction}}</b> between
@@ -153,29 +190,9 @@
     </p>
     <br/>
     <p>For each gene, the search calculates:</p>
-    <div class="formula">
-      <div class="left-hand-side">fold change</div>
-      <div class="right-hand-side">
-        <div class="division">
-          <div class="numerator">
-            {{#if multipleRef}}
-              <span class="reference-label">{{refOperation}}</span> expression value
-              in <span class="reference-label">reference</span> samples
-            {{else}}
-              <span class="reference-label">reference</span> expression value
-            {{/if}}
-          </div>
-          <div class="denominator">
-            {{#if multipleComp}}
-              <span class="comparison-label">{{compOperation}}</span> expression value
-              in <span class="comparison-label">comparison</span> samples
-            {{else}}
-              <span class="comparison-label">comparison</span> expression value
-            {{/if}}
-          </div>
-        </div>
-      </div>
-    </div>
+    {{#each formulas}}
+    {{> formula}}
+    {{/each}}
     <p>and returns genes when <b>fold change</b> &gt;= <b>{{foldChange}}</b>.
       {{#if narrowest}}
         This calculation creates the <b>narrowest</b> window of expression values in
@@ -215,50 +232,44 @@
 
   <script id="foldChange-partial" type="text/x-handlebars-template">
     <div class="fold-change-label">
-      <div>
-        <div class="arrow">
-          <span class="ui-icon ui-icon-arrowthick-1-n"></span>
-        </div>
-        &gt;= fold change
-        <div class="arrow">
-          <span class="ui-icon ui-icon-arrowthick-1-s"></span>
-        </div>
-      </div>
+      <span class="bracket">}</span> <span class="label">fold change</span>
     </div>
   </script>
 
   <script id="one-direction-template" type="text/x-handlers/template">
     <div class="{{direction}}">
+      <div class="title">Example Expression for a Gene In Selected Samples</div>
       <div class="title">{{title}}</div>
-      {{#each sampleGroups}}
-      {{> samples}}
-      {{/each}}
       {{#if foldChange}}
       {{> foldChange}}
       {{/if}}
+      {{#each sampleGroups}}
+      {{> samples}}
+      {{/each}}
     </div>
   </script>
 
   <script id="two-direction-template" type="text/x-handlers/template">
     <div class="up-or-down-regulated">
+      <div class="title">Example Expression for a Gene In Selected Samples</div>
       <div class="title">{{title}}</div>
       <div class="left-samples">
+        {{#if foldChange}}
+        {{> foldChange}}
+        {{/if}}
+
         {{#each leftSampleGroups}}
         {{> samples}}
         {{/each}}
-
+      </div>
+      <div class="right-samples">
         {{#if foldChange}}
         {{> foldChange}}
         {{/if}}
-      </div>
-      <div class="right-samples">
+
         {{#each rightSampleGroups}}
         {{> samples}}
         {{/each}}
-
-        {{#if foldChange}}
-        {{> foldChange}}
-        {{/if}}
       </div>
     </div>
   </script>

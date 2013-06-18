@@ -16,6 +16,12 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     this.samples = [];
   };
 
+  var formula = function(leftHandSide, numerator, denominator) {
+    this.leftHandSide = leftHandSide;
+    this.numerator = numerator;
+    this.denominator = denominator;
+  };
+
   /** 
    * set the sample step in px and where the first sample goes
    * String @operation - one of minimum, maximum, average
@@ -76,6 +82,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     twoDirectionTmpl = Handlebars.compile($("#two-direction-template").html());
     Handlebars.registerPartial("samples", $("#samples-partial").html());
     Handlebars.registerPartial("foldChange", $("#foldChange-partial").html());
+    Handlebars.registerPartial("formula", $("#formula-partial").html());
 
     $img = $(".fold-change-img");
     $form = $("form#form_question").last();
@@ -112,22 +119,22 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     if (refCount <= 1) {
       refOp.attr("disabled", true);
       refOp.find(":selected").text("none");
-      refOp.parent().hide().next().hide();
+      refOp.parent().hide(); //.next().hide();
     } else {
       refOp.attr("disabled", false);
       refOp.find(":selected").text(refOp.val().slice(0, -1));
-      refOp.parent().show().next().show();
+      refOp.parent().show(); //.next().show();
     }
 
     // if compCount <= 1, make ops disabled
     if (compCount <=1) {
       compOp.attr("disabled", true);
       compOp.find(":selected").text("none");
-      compOp.parent().hide().next().hide();
+      compOp.parent().hide(); //.next().hide();
     } else {
       compOp.attr("disabled", false);
       compOp.find(":selected").text(compOp.val().slice(0, -1));
-      compOp.parent().show().next().show();
+      compOp.parent().show(); //.next().show();
     }
 
     // if "up or down regulated" selected, disable ops
@@ -156,16 +163,31 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     $scope.multipleRef = $scope.refCount > 1;
     $scope.multipleComp = $scope.compCount > 1;
 
+    $scope.formulas = [];
+    var compFormula, refFormula;
+
     if ($scope.multipleRef) {
-      $scope.numerator = $scope.refOperation + " expression value in reference samples";
+      refFormula = '<span class="reference-label">' +
+        $scope.refOperation + '</span> expression value in ' +
+        '<span class="reference-label">reference</span> samples';
     } else {
-      $scope.numerator = "reference expression value";
+      refFormula = '<span class="reference-label">reference</span> expression value';
     }
 
     if ($scope.multipleComp) {
-      $scope.denominator = $scope.compOperation + " expression value in comparison samples";
+      compFormula = '<span class="comparison-label">' +
+        $scope.compOperation + '</span> expression value in ' +
+        '<span class="comparison-label">comparison</span> samples';
     } else {
-      $scope.denominator = "comparison expression value";
+      compFormula = '<span class="comparison-label">comparison</span> expression value';
+    }
+
+    if ($scope.direction === "up-regulated" || $scope.direction === "up or down regulated") {
+      $scope.formulas.push(new formula("fold change", compFormula, refFormula));
+    }
+
+    if ($scope.direction === "down-regulated" || $scope.direction === "up or down regulated") {
+      $scope.formulas.push(new formula("fold change", refFormula, compFormula));
     }
 
     $scope.narrowest = false;
