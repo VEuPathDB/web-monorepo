@@ -63,18 +63,17 @@
 
       <div class="samples ui-helper-clearfix">
         <div id="min_max_avg_refaaa" class="param-line">
-          <span class="text">between each gene's
-            <imp:enumParamInput qp="${min_max_avg_refParam}"/>
-            <span class="prompt">expression value</span>
-            <img class="help-link"
-              style="cursor:pointer"
-              title="${fn:escapeXml(min_max_avg_refParam.help)}"
-              src="${pageContext.request.contextPath}/wdk/images/question.png" />
-          </span>
+          between each gene's
+          <imp:enumParamInput qp="${min_max_avg_refParam}"/>
+          <span class="text prompt">expression value</span>
+          <img class="help-link"
+            style="cursor:pointer"
+            title="${fn:escapeXml(min_max_avg_refParam.help)}"
+            src="${pageContext.request.contextPath}/wdk/images/question.png" />
         </div>
-        <div class="param-line">
+        <div class="param-line" style="padding-bottom:0">
           <span class="text">
-            in the following <span class="prompt">Reference Samples</span>
+            in the following <span class="samples-tab reference">Reference Samples</span>
             <jsp:text> </jsp:text>
             <img class="help-link"
               style="cursor:pointer"
@@ -103,18 +102,17 @@
         </div>
 
         <div id="min_max_avg_compaaa" class="param-line">
-          <span class="text">and each gene's 
-            <imp:enumParamInput qp="${min_max_avg_compParam}"/>
-            <span class="prompt">expression value</span>
-            <img class="help-link"
-              style="cursor:pointer"
-              title="${fn:escapeXml(min_max_avg_compParam.help)}"
-              src="${pageContext.request.contextPath}/wdk/images/question.png" />
-          </span>
+          and each gene's 
+          <imp:enumParamInput qp="${min_max_avg_compParam}"/>
+          <span class="text prompt">expression value</span>
+          <img class="help-link"
+            style="cursor:pointer"
+            title="${fn:escapeXml(min_max_avg_compParam.help)}"
+            src="${pageContext.request.contextPath}/wdk/images/question.png" />
         </div>
-        <div class="param-line">
+        <div class="param-line" style="padding-bottom:0">
           <span class="text">
-            in the following <span class="prompt">Comparison Samples</span>
+            in the following <span class="samples-tab comparison">Comparison Samples</span>
             <jsp:text> </jsp:text>
             <img class="help-link"
               style="cursor:pointer"
@@ -193,7 +191,8 @@
     {{#each formulas}}
     {{> formula}}
     {{/each}}
-    <p>and returns genes when <b>fold change</b> &gt;= <b>{{foldChange}}</b>.
+    <p>and returns genes when {{{criteria}}}.
+      <!--<b>fold change</b> &gt;= <b>{{foldChange}}</b>.-->
       {{#if narrowest}}
         This calculation creates the <b>narrowest</b> window of expression values in
         which to look for genes that meet your fold change cutoff.
@@ -240,9 +239,12 @@
     <div class="{{direction}}">
       <div class="title">Example Expression for a Gene In Selected Samples</div>
       <div class="title">{{title}}</div>
+      <!--
       {{#if foldChange}}
       {{> foldChange}}
       {{/if}}
+      -->
+
       {{#each sampleGroups}}
       {{> samples}}
       {{/each}}
@@ -254,18 +256,22 @@
       <div class="title">Example Expression for a Gene In Selected Samples</div>
       <div class="title">{{title}}</div>
       <div class="left-samples">
+        <!--
         {{#if foldChange}}
         {{> foldChange}}
         {{/if}}
+        -->
 
         {{#each leftSampleGroups}}
         {{> samples}}
         {{/each}}
       </div>
       <div class="right-samples">
+        <!--
         {{#if foldChange}}
         {{> foldChange}}
         {{/if}}
+        -->
 
         {{#each rightSampleGroups}}
         {{> samples}}

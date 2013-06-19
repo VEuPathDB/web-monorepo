@@ -77,12 +77,13 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
   var init = function() {
 
-    helpTmpl = Handlebars.compile($("#help-template").html());
-    oneDirectionTmpl = Handlebars.compile($("#one-direction-template").html());
-    twoDirectionTmpl = Handlebars.compile($("#two-direction-template").html());
     Handlebars.registerPartial("samples", $("#samples-partial").html());
     Handlebars.registerPartial("foldChange", $("#foldChange-partial").html());
     Handlebars.registerPartial("formula", $("#formula-partial").html());
+
+    helpTmpl = Handlebars.compile($("#help-template").html());
+    oneDirectionTmpl = Handlebars.compile($("#one-direction-template").html());
+    twoDirectionTmpl = Handlebars.compile($("#two-direction-template").html());
 
     $img = $(".fold-change-img");
     $form = $("form#form_question").last();
@@ -182,12 +183,17 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       compFormula = '<span class="comparison-label">comparison</span> expression value';
     }
 
-    if ($scope.direction === "up-regulated" || $scope.direction === "up or down regulated") {
+    if ($scope.direction === "up-regulated") {
       $scope.formulas.push(new formula("fold change", compFormula, refFormula));
-    }
-
-    if ($scope.direction === "down-regulated" || $scope.direction === "up or down regulated") {
+      $scope.criteria = "<b>fold change</b> &gt;= <b>" + $scope.foldChange + "</b>";
+    } else if ($scope.direction === "down-regulated") {
       $scope.formulas.push(new formula("fold change", refFormula, compFormula));
+      $scope.criteria = "<b>fold change</b> &gt;= <b>" + $scope.foldChange + "</b>";
+    } else if ($scope.direction === "up or down regulated") {
+      $scope.formulas.push(new formula('fold change<sub>up</sub>', compFormula, refFormula));
+      $scope.formulas.push(new formula('fold change<sub>down</sub>', refFormula, compFormula));
+      $scope.criteria = "<b>fold change<sub>up</sub></b> &gt;= <b>" + $scope.foldChange + "</b>";
+      $scope.criteria += " or <b>fold change<sub>down</sub></b> &gt;= <b>" + $scope.foldChange + "</b>";
     }
 
     $scope.narrowest = false;
