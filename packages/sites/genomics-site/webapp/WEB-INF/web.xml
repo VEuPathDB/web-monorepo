@@ -41,6 +41,7 @@
     <init-param>
       <param-name>disabled</param-name>
       <param-value>true</param-name>
+    </init-param>
     <init-param>
       <param-name>storage-directory</param-name>
       <param-value>melody-data</param-value>
