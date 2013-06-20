@@ -37,10 +37,13 @@
         <tr>
           <th>Tg genes minus VEG</th>
           <td>
-      <imp:filterInstance strategyId="${strategyId}" 
+
+TODO
+
+      <%-- imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="all_min_veg" />  
+                          instanceName="all_min_veg" / --%>  
           </td>
         </tr>
       </table>
@@ -118,22 +121,28 @@
    </c:choose>
      <ul>
          <li>
-      <imp:filterInstance strategyId="${strategyId}" 
+
+TODO
+      <%-- imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="gt1_min_veg" />  
+                          instanceName="gt1_min_veg" / --%>  
          </li>
          <li>
-      <imp:filterInstance strategyId="${strategyId}" 
+
+TODO
+      <%-- imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="gt1_int_veg" />  
+                          instanceName="gt1_int_veg" / --%>  
          </li>
          <li>
-      <imp:filterInstance strategyId="${strategyId}" 
+
+TODO
+      <%-- imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="veg_min_gt1" />  
+                          instanceName="veg_min_gt1" / --%>  
          </li>
      </ul>
    </div>
@@ -161,22 +170,28 @@
    </c:choose>
      <ul>
          <li>
-      <imp:filterInstance strategyId="${strategyId}" 
+
+TODO
+      <%-- imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="me49_min_veg" />  
+                          instanceName="me49_min_veg" / --%>  
          </li>
          <li>
-      <imp:filterInstance strategyId="${strategyId}" 
+
+TODO
+      <%--imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="me49_int_veg" />  
+                          instanceName="me49_int_veg" / --%>  
          </li>
          <li>
-      <imp:filterInstance strategyId="${strategyId}" 
+
+TODO
+      <%-- imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="veg_min_me49" />  
+                          instanceName="veg_min_me49" / --%>  
          </li>
      </ul>
    </div>
