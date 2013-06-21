@@ -27,8 +27,8 @@
 -->
 
 <c:set var="tritrypQuestions" value="T.b.study:T. brucei SILAC Quantitative Mass Spec (Urbaniak),GeneQuestions.GenesByQuantProtDirecttbruTREU927_quantitativeMassSpec_Urbaniak_CompProt_RSRC"/>
-<c:set var="toxoQuestions" value="T.g.study:T. gondii H. sapien host Time Course Quantitative Mass Spec (Wastling),GeneQuestions.GenesByQuantProttgonME49_quantitativeMassSpec_Wastling_VEG_timecourse_Quant_RSRCFoldChange"/>
-<c:set var="hostQuestions" value="H.s.study:H. sapien T. gondii infection Time Course Quantitative Mass Spec (Wastling),GeneQuestions.GenesByQuantProthsapREF_quantitativeMassSpec_Wastling_VEG_timecourse_Quant_host_RSRCFoldChange"/>
+<c:set var="toxoQuestions" value="T.g.study:VEG infection Time Series (H. sapien host)(Wastling),GeneQuestions.GenesByQuantProttgonME49_quantitativeMassSpec_Wastling_VEG_timecourse_Quant_RSRCFoldChange"/>
+<c:set var="hostQuestions" value="T.g.study:VEG infection Time Series (H. sapien host)(Wastling),GeneQuestions.GenesByQuantProthsapREF_quantitativeMassSpec_Wastling_VEG_timecourse_Quant_host_RSRCFoldChange"/>
 
 <table width="100%" cellpadding="4">
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
