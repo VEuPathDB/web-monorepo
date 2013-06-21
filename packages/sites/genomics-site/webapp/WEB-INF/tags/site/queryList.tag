@@ -216,7 +216,10 @@ function getComboElement()
 </c:when>
 <c:when test="${prefix == 'Phyr'}">
       <c:set var="org" value="Phytophthora ramorum"/>
-  </c:when>
+</c:when>
+<c:when test="${prefix == 'H.s'}">
+      <c:set var="org" value="Homo sapien"/>
+</c:when>
   <c:otherwise>
 <%--if organism is not found 
 	(EITHER it is not specified in displayName or study OR it is a new organism), 
