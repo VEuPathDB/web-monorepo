@@ -4,9 +4,11 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
-<c:set var="projectId" value="${wdkModel.displayName}"/>
+<c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
+
+<c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set value="${wdkModel.displayName}" var="project"/>
 
 <c:set value="2" var="columns"/>
 
@@ -24,10 +26,28 @@
 	if organism is not found (a new organism), no header will be displayed
 -->
 
+<c:set var="tritrypQuestions" value="T.b.study:T. brucei SILAC Quantitative Mass Spec (Urbaniak),GeneQuestions.GenesByQuantProtDirecttbruTREU927_quantitativeMassSpec_Urbaniak_CompProt_RSRC"/>
+<c:set var="toxoQuestions" value="T.g.study:T. gondii H. sapien host Time Course Quantitative Mass Spec (Wastling),GeneQuestions.GenesByQuantProttgonME49_quantitativeMassSpec_Wastling_VEG_timecourse_Quant_RSRCFoldChange"/>
+<c:set var="hostQuestions" value="H.s.study:H. sapien T. gondii infection Time Course Quantitative Mass Spec (Wastling),GeneQuestions.GenesByQuantProthsapREF_quantitativeMassSpec_Wastling_VEG_timecourse_Quant_host_RSRCFoldChange"/>
+
 <table width="100%" cellpadding="4">
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
-<imp:queryList columns="${columns}" questions="T.b.study:T. brucei SILAC Quantitative Mass Spec (Urbaniak),GeneQuestions.GenesByQuantProtDirecttbruTREU927_quantitativeMassSpec_Urbaniak_CompProt_RSRC"/>
+
+<c:choose>
+ <c:when test = "${project == 'HostDB'}">
+    <imp:queryList columns="${columns}" questions="${hostQuestions}"/>
+  </c:when>
+  <c:when test = "${project == 'EuPathDB'}">
+    <imp:queryList columns="${columns}" questions="${toxoQuestions},${tritrypQuestions}"/>
+  </c:when>
+  <c:when test = "${project == 'ToxoDB'}">
+    <imp:queryList columns="${columns}" questions="${toxoQuestions}"/>
+  </c:when>
+  <c:when test = "${project == 'TriTrypDB'}">
+    <imp:queryList columns="${columns}" questions="${tritrypQuestions}"/>
+  </c:when>
+</c:choose>
 
 </table>
 </div>
