@@ -19,6 +19,7 @@
 
   <c:set var="protein_coding_onlyParam" value="${paramGroup['protein_coding_only']}"/>
 
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/wdkCustomization/css/fold-change.css"/>
   <div class="fold-change ui-help-clearfix">
 
     <div class="fold-change-params">
@@ -143,6 +144,7 @@
     </div> <!-- .fold-change-params -->
 
     <div class="fold-change-graphic">
+      <div class="title">Example Expression for a Gene In Selected Samples</div>
       <div class="fold-change-img"><jsp:text/></div>
       <div class="caption">Up to four samples are represented for comparison or reference</div>
       <div class="fold-change-help static-help">
@@ -224,7 +226,7 @@
 
       </div>
       <div class="samples-label">
-        {{samplesLabel}}
+        {{samplesLabel}} <br/> Samples
       </div>
     </div>
   </script>
@@ -237,7 +239,6 @@
 
   <script id="one-direction-template" type="text/x-handlers/template">
     <div class="{{direction}}">
-      <div class="title">Example Expression for a Gene In Selected Samples</div>
       <div class="title">{{title}}</div>
       <!--
       {{#if foldChange}}
@@ -253,7 +254,6 @@
 
   <script id="two-direction-template" type="text/x-handlers/template">
     <div class="up-or-down-regulated">
-      <div class="title">Example Expression for a Gene In Selected Samples</div>
       <div class="title">{{title}}</div>
       <div class="left-samples">
         <!--
