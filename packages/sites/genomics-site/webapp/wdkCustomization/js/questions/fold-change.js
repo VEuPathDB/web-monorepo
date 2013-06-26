@@ -124,7 +124,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     } else {
       refOp.attr("disabled", false);
       refOp.find(":selected").text(refOp.val().slice(0, -1));
-      refOp.parent().show(); //.next().show();
+      refOp.parent().css("display", ""); //.next().show();
     }
 
     // if compCount <= 1, make ops disabled
@@ -135,7 +135,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     } else {
       compOp.attr("disabled", false);
       compOp.find(":selected").text(compOp.val().slice(0, -1));
-      compOp.parent().show(); //.next().show();
+      compOp.parent().css("display", ""); //.next().show();
     }
 
     // if "up or down regulated" selected, disable ops
