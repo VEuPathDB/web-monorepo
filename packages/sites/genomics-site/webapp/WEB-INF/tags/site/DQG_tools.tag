@@ -37,8 +37,11 @@
 		<li><a href="<c:url value="/srt.jsp"/>"><strong>Sequence Retrieval</strong></a>
 			<ul><li  style="border:0">Retrieve Specific Sequences using IDs and coordinates</li></ul>
 		</li>
+	<li><a href="http://pathogenportal.org"><strong>Pathogen Portal</strong></a>
+			<ul><li  style="border:0">RNA sequence analysis, interactome maps and more</li></ul>
+		</li>
 		<li><a href="/pubcrawler/${modelName}"><strong>PubMed and Entrez</strong></a>
-			<ul><li  style="border:0">View the Latest <i>${listOrganisms}</i> Pubmed and Entrez Results</li></ul>
+			<ul><li  style="border:0">View the Latest Pubmed and Entrez Results</li></ul>
 		</li>
 
 <c:if test="${sName != 'EuPath'}">
@@ -74,7 +77,7 @@
 	</c:when>
 	<c:when test="${sName == 'Toxo'}">
 		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary Genome Browse</strong></a>
-                        <ul><li  style="border:0">Access Additional info like Probeset data and <i>Toxoplasma</i> Array info</li></ul>
+                        <ul><li  style="border:0">Access Probeset data and <i>Toxoplasma</i> Array info</li></ul>
                 </li>
 
 		<li><p class="coloredtext" style="padding-top:6px;line-height:1em;">

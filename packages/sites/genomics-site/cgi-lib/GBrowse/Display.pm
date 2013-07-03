@@ -853,18 +853,27 @@ sub cghBgcolor {
     }
  }
 
-
-sub riteshMSBgcolor {
+sub riteshMSBgcolor { # content color
   my $f = shift;
-  
+  my ($psm) = $f->get_tag_values('PSM');
+
+  if($psm > 1) {
+    return "#F62217";  # ruby red
+  } else {
+    return "#59E817";  # nebula green
+  } 
+}
+
+sub riteshMSFgcolor { # border color
+  my $f = shift;
   my ($psm) = $f->get_tag_values('PSM');
 
   if($psm > 1) {
     return "red";  
   } else {
-    return "green"; 
+    return "#52D017"; # yellow green 
   } 
-}
+} 
 
 # used to flag (in red) cosmids that whose length suggests misassembly
 # (anything outside the range of 35-45 kb

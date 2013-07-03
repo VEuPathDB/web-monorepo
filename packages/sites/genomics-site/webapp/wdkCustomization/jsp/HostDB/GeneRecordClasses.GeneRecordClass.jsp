@@ -233,14 +233,16 @@ ${attrs['organism'].value}<br>
 
 <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""/>
 <c:choose>
-  <c:when test="${fn:contains(orthomcl_name,'|')}">
-  NOTE: Link to OrthoMCL cannot be provided since this gene model has not been included in the most recent build of OrthoMCL.
-  </c:when>
-  <c:otherwise>
-   <div align="center">
-      <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
-   </div>
-   </c:otherwise>
+    <c:when test="${fn:contains( orthomcl_name, '|') }">
+    <div>
+    <br>Note: Genes in this table could not be mapped to OrthoMCL, but were grouped to each other based on blast similarity.
+    </div>
+    </c:when>
+    <c:otherwise>
+    <div>
+    <br> <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
+    </div>
+    </c:otherwise>
 </c:choose>
 
 </c:if>

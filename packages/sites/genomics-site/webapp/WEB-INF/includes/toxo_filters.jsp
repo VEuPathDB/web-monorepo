@@ -87,16 +87,21 @@
                           instanceName="me49_instances" />  
     </td>
     <td>
-      <imp:filterInstance strategyId="${strategyId}" 
+
+TODO
+
+      <%-- imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="veg_genes" />  
+                          instanceName="veg_genes" / --%>  
     </td>
     <td>
-      <imp:filterInstance strategyId="${strategyId}" 
+
+TODO
+      <%-- imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="veg_instances" />  
+                          instanceName="veg_instances" / --%>  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
