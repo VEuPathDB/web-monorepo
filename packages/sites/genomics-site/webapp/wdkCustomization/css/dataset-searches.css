@@ -1,0 +1,166 @@
+html {
+  overflow-y: scroll;
+}
+[data-controller] {
+  width: 80%;
+  margin: 0 auto;
+  visibility: hidden;
+  padding-top: 50px;
+}
+.dataTable {
+  font-size: 14px;
+  width: 100%;
+}
+.dataTables_filter.disabled {
+  color: #ccc;
+}
+.dataTable th ,
+.dataTable td {
+  padding: 0.8em;
+  vertical-align: middle;
+  background-color: #ffffff;
+}
+.dataTable th {
+  color: #a45d35; /* SASS: site-color-primary */
+  border-top: none;
+  vertical-align: bottom;
+}
+.dataTable td {
+  border-bottom: 1px solid #dddddd;
+  border-top: none;
+  line-height: 1.2;
+}
+.dataTable tr:hover td {
+  background-color: #f7f7f7;
+}
+.dataTable tr.active td {
+  background-color: #f0f0f0;
+}
+/* The following three rules kanged from http://s-church.net/Blog/Entry/464 */
+.dataTable th.skew {
+    vertical-align: bottom;
+    padding: 0;
+}
+ 
+.dataTable th.skew > div {
+    position: relative;
+    top: -86px;
+    left: 48px;
+    width: 50px;
+    transform:skew(-45deg,0deg);
+    -ms-transform:skew(-45deg,0deg);
+    -moz-transform:skew(-45deg,0deg);
+    -webkit-transform:skew(-45deg,0deg);
+    -o-transform:skew(-45deg,0deg);    
+    z-index: 1;
+    padding-bottom: 5px;
+}
+ 
+.dataTable th.skew span {
+    transform:skew(45deg,0deg) rotate(315deg);
+    -ms-transform:skew(45deg,0deg) rotate(315deg);
+    -moz-transform:skew(45deg,0deg) rotate(315deg);
+    -webkit-transform:skew(45deg,0deg) rotate(315deg);
+    -o-transform:skew(45deg,0deg) rotate(315deg);        
+    position: relative;
+    left: -30px;
+    bottom: -32px;
+    display: inline-block;
+    width: 150px;
+    text-align: left;
+}
+.dataTable th.sorting,
+.dataTable th.sorting_asc,
+.dataTable th.sorting_desc {
+  cursor: pointer;
+  background-position: left center;
+  background-repeat: no-repeat;
+  text-indent: 0.5em;
+}
+.dataTable th.sorting {
+  background-image: url('../../wdk/images/sort_both.png');
+}
+.dataTable th.sorting_asc {
+  background-image: url('../../wdk/images/sort_asc.png');
+}
+.dataTable th.sorting_desc {
+  background-image: url('../../wdk/images/sort_desc.png');
+}
+.dataTable td.description {
+  padding-left: 2em;
+  text-indent: -1.2em;
+}
+.dataTable.collapsed tbody tr {
+  display: none;
+}
+.dataTable.collapsed tbody tr.active {
+  display: table-row;
+}
+.table-toggle {
+  display: none;
+  text-align: center;
+  background: #f7f7f7;
+  border-bottom: 1px solid #dddddd;
+  cursor: pointer;
+  padding-bottom: 2px;
+}
+.table-toggle:hover {
+  background: #f0f0f0;
+}
+.table-toggle label {
+  cursor: pointer;
+  font-weight: bold;
+}
+.table-toggle .ui-icon {
+  display: inline-block;
+  position: relative;
+  top: 4px;
+}
+.dataTables_scrollBody {
+  position: relative;
+}
+.search-mechanism {
+  width: 1em;
+  text-align: center;
+}
+.red-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: darkred;
+}
+.mag-glass {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  background: url(/assets/images/mag_glass.png);
+  vertical-align: middle;
+}
+.info {
+  display: inline-block;
+  width: 13px;
+  height: 12px;
+  background: url(../../wdk/images/question.png);
+  vertical-align: middle;
+}
+.info .tooltip-content {
+  display: none;
+}
+#question-wrapper.active {
+  margin-top: 0.5em;
+  padding-top: 1em;
+}
+.tabs {
+  border: none;
+}
+.ui-tabs-panel {
+  min-height: 500px;
+}
+#query-search-form {
+  overflow-x: hidden;
+}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+  font-family: inherit;
+  font-size: inherit;
+}
