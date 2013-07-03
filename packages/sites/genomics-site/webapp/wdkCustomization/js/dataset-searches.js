@@ -1,6 +1,6 @@
 function datasetSearches($element, $attrs) {
   "use strict";
-  console.log($attrs);
+  //console.log($attrs);
 
   var $datasetRecords = $element.find($attrs.table);
 
@@ -39,7 +39,7 @@ function datasetSearches($element, $attrs) {
   }
 
   var dataTable = $datasetRecords.dataTable(dataTableOpts);
-  new FixedHeader(dataTable);
+  //new FixedHeader(dataTable);
 
   $element.find("th.skew").contents().wrap("<div><span/></div>");
     // redraw table

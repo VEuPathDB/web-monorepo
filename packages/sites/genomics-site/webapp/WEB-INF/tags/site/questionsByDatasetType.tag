@@ -86,11 +86,11 @@
     <script type="text/x-handlebars-template" id="toggle">
       {{#if collapsed}}
       <span class="ui-icon ui-icon-arrowthickstop-1-s"><jsp:text/></span>
-        <label>Show All Experiments</label>
+        <label>Show All Data Sets</label>
       <span class="ui-icon ui-icon-arrowthickstop-1-s"><jsp:text/></span>
       {{else}}
       <span class="ui-icon ui-icon-arrowthickstop-1-n"><jsp:text/></span>
-        <label>Hide Other Experiments</label>
+        <label>Hide Other Data Sets</label>
       <span class="ui-icon ui-icon-arrowthickstop-1-n"><jsp:text/></span>
       {{/if}}
     </script>

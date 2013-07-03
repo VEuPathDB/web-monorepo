@@ -19,6 +19,7 @@ html {
   padding: 0.8em;
   vertical-align: middle;
   background-color: #ffffff;
+  text-align: left;
 }
 .dataTable th {
   color: #a45d35; /* SASS: site-color-primary */
