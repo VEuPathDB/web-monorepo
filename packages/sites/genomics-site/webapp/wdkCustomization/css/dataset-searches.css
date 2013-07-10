@@ -1,25 +1,123 @@
 html {
   overflow-y: scroll;
 }
+
+/* utility classes */
+.btn {
+  padding: 2px;
+  font-size: 10px;
+  line-height: 16px;
+  width: 30px;
+  display: inline-block;
+  text-align: center;
+  color: #ffffff;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  box-shadow: 1px 1px 0 rgb(200,200,200);
+  -moz-box-shadow: 1px 1px 0 rgb(200,200,200);
+  -webkit-box-shadow: 1px 1px 0 rgb(200,200,200);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#CCCCCC')";
+  background-color: rgb(99, 99, 99);
+  background-image: linear-gradient(to bottom, #c2c2c2, #636363);
+  background-image: -moz-linear-gradient(to bottom, #c2c2c2, #636363);
+  background-image: -o-linear-gradient(to bottom, #c2c2c2, #636363);
+  background-image: -webkit-linear-gradient(to bottom, #c2c2c2, #636363);
+  filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#C2C2C2, endColorStr=#636363)";
+  background-repeat: repeat-x;
+}
+.btn-blue {
+  background-color: #306BC4;
+  background-image: linear-gradient(to bottom, #5F99F1, #306BC4);
+  background-image: -moz-linear-gradient(to bottom, #5F99F1, #306BC4);
+  background-image: -o-linear-gradient(to bottom, #5F99F1, #306BC4);
+  background-image: -webkit-linear-gradient(to bottom, #5F99F1, #306BC4);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5F99F1, endColorStr=#306BC4)";
+}
+.btn-brown {
+  background-color: #9E6946;
+  background-image: linear-gradient(to bottom, #C79F6C, #9E6946);
+  background-image: -moz-linear-gradient(to bottom, #C79F6C, #9E6946);
+  background-image: -o-linear-gradient(to bottom, #C79F6C, #9E6946);
+  background-image: -webkit-linear-gradient(to bottom, #C79F6C, #9E6946);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#C79F6C, endColorStr=#9E6946)";
+}
+.btn-green {
+  background-color: #278527;
+  background-image: linear-gradient(to bottom, #49B649, #278527);
+  background-image: -moz-linear-gradient(to bottom, #49B649, #278527);
+  background-image: -o-linear-gradient(to bottom, #49B649, #278527);
+  background-image: -webkit-linear-gradient(to bottom, #49B649, #278527);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#49B649, endColorStr=#278527)";
+}
+.btn-red {
+  background-color: #BD1F1F;
+  background-image: linear-gradient(to bottom, #E96060, #BD1F1F);
+  background-image: -moz-linear-gradient(to bottom, #E96060, #BD1F1F);
+  background-image: -o-linear-gradient(to bottom, #E96060, #BD1F1F);
+  background-image: -webkit-linear-gradient(to bottom, #E96060, #BD1F1F);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#E96060, endColorStr=#BD1F1F)";
+}
+.btn:hover, .btn:focus {
+  background-position: 0 -8px;
+  text-decoration: none;
+  /*
+  transition: background-position 0.1s linear;
+  -moz-transition: background-position 0.1s linear;
+  -o-transition: background-position 0.1s linear;
+  -webkit-transition: background-position 0.1s linear;
+  */
+}
+.btn:active, .btn-active {
+  background-image: none;
+  box-shadow: 1px 1px 0 #eeeeee;
+  -moz-box-shadow: 1px 1px 0 #eeeeee;
+  -webkit-box-shadow: 1px 1px 0 #eeeeee;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#eeeeee')";
+}
+
 [data-controller] {
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   visibility: hidden;
   padding-top: 50px;
+  position: relative;
 }
 .dataTable {
   font-size: 14px;
   width: 100%;
 }
-.dataTables_filter.disabled {
-  color: #ccc;
+.dataTables_filter {
+  position: relative;
+  top: -2em;
+  margin: 0;
+  padding: 0;
+}
+.dataTables_filter input {
+  padding-right: 3em;
+}
+.dataTables_filter input + .filter-clear {
+  display: none;
+  position: relative;
+  left: -3em;
+}
+.dataTables_filter input.content + .filter-clear {
+  display:inline;
 }
 .dataTable th ,
 .dataTable td {
-  padding: 0.8em;
+  padding: 0.8em 0em;
   vertical-align: middle;
   background-color: #ffffff;
   text-align: left;
+}
+.dataTable tr:first-child th:first-child ,
+.dataTable tr td:first-child {
+  padding-left: 0.8em;
+}
+.dataTable tr:first-child th:last-child ,
+.dataTable tr td:last-child {
+  padding-right: 0.8em;
 }
 .dataTable th {
   color: #a45d35; /* SASS: site-color-primary */
@@ -36,6 +134,9 @@ html {
 }
 .dataTable tr.active td {
   background-color: #f0f0f0;
+}
+.search-head {
+  display: none;
 }
 /* The following three rules kanged from http://s-church.net/Blog/Entry/464 */
 .dataTable th.skew {
@@ -76,7 +177,7 @@ html {
   cursor: pointer;
   background-position: left center;
   background-repeat: no-repeat;
-  text-indent: 0.5em;
+  text-indent: 1.5em;
 }
 .dataTable th.sorting {
   background-image: url('../../wdk/images/sort_both.png');
@@ -88,7 +189,10 @@ html {
   background-image: url('../../wdk/images/sort_desc.png');
 }
 .dataTable td.description {
-  padding-left: 2em;
+}
+.dataTable td.description div {
+  position: relative;
+  padding-left: 3em;
   text-indent: -1.2em;
 }
 .dataTable.collapsed tbody tr {
@@ -120,9 +224,28 @@ html {
 .dataTables_scrollBody {
   position: relative;
 }
-.search-mechanism {
-  width: 1em;
+td.search-mechanism {
   text-align: center;
+  padding: 4px;
+  width: 36px;
+}
+td.search-mechanism a {
+  color: #ffffff;
+  /*
+  padding: 2px;
+  font-size: 10px;
+  line-height: 16px;
+  width: 26px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  box-shadow: 1px 1px 0 rgb(200,200,200);
+  -moz-box-shadow: 1px 1px 0 rgb(200,200,200);
+  -webkit-box-shadow: 1px 1px 0 rgb(200,200,200);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#CCCCCC')";
+  */
 }
 .red-dot {
   display: inline-block;
@@ -144,8 +267,11 @@ html {
   height: 12px;
   background: url(../../wdk/images/question.png);
   vertical-align: middle;
+  position: absolute;
+  left: 6px;
+  top: 0px;
 }
-.info .tooltip-content {
+.dataset-tooltip-content {
   display: none;
 }
 #question-wrapper.active {
@@ -158,10 +284,31 @@ html {
 .ui-tabs-panel {
   min-height: 500px;
 }
-#query-search-form {
-  overflow-x: hidden;
-}
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
   font-family: inherit;
   font-size: inherit;
+}
+.legend {
+  position: absolute;
+  right: 0em;
+  top: 1em;
+  padding: 1em 0em;
+  /*background-color: whitesmoke;*/
+  color: #777777;
+  border-bottom: 1px solid #d0d0d0;
+}
+.legend div:first-child {
+  color: black;
+  font-weight: bold;
+}
+.legend div {
+  padding: 0em 0.6em;
+  float: left;
+  line-height: 18px;
+}
+.legend div span:first-child {
+  margin-right: 0.2em;
+}
+.legend .search-mechanism.btn {
+  color: #e6e6e6;
 }
