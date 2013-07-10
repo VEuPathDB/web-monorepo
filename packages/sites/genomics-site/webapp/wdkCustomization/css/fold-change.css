@@ -218,14 +218,14 @@
   padding: 1em 0em;
 }
 
+.fold-change-graphic .title, .fold-change-graphic .subtitle {
+  text-align: center;
+  width: 400px;
+}
 .fold-change-graphic .title {
-  /*position: relative;
-  top: 24px;*/
   padding-top: 1em;
   font-size: 16px;
   font-weight: bold;
-  text-align: center;
-  width: 400px;
 }
 
 .fold-change-graphic .samples {
@@ -371,65 +371,62 @@
 
 .fold-change-label {
   position: relative;
-  top: 22%;
-  height: 79px;
+  top: 75px;
+  /*height: 82px;*/
   font-weight: bold;
   font-family: serif;
   text-align: left;
-  margin-left: 89px;
-  border-left: 171px solid lightgoldenrodyellow;
+  margin-left: 218px;
 }
 .up-or-down-regulated .fold-change-label {
-  top: 15%;
-  height: 56px;
+  top: 17px;
+  height: 54px;
   font-size: 90%;
   margin-left: 0px;
-  border-left: 103px solid lightgoldenrodyellow;
 }
-.fold-change-label .bracket {
-  font-size: 95px;
+.fold-change-label .up-arrow, .fold-change-label .down-arrow {
+  height: 30px;
+  display: block;
+  margin-left: 20px;
+  border-left: 2px solid black;
+}
+.fold-change-label .up-arrow:before, .fold-change-label .down-arrow:before {
   position: relative;
-  top: -14px;
-  left: -14px;
+  display: block;
+  content: " ";
+  height: 0;
+  width: 0;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  left: -6px;
 }
-.up-or-down-regulated .fold-change-label .bracket {
-  font-size: 72px;
-  top: -12px;
+.fold-change-label .up-arrow:before {
+  top: -1px;
+  border-bottom: 8px solid black;
+}
+.fold-change-label .down-arrow:before {
+  top: 25px;
+  border-top: 8px solid black;
 }
 .fold-change-label .label {
-  position: relative;
-  top: -35px;
-  left: -12px;
   font-style: italic;
   white-space: nowrap;
+  line-height: 14px;
+  margin-left: 8px;
+  height: auto;
+}
+.up-or-down-regulated .fold-change-label {
+  margin-left: 36%;
+}
+.up-or-down-regulated .fold-change-label .up-arrow,
+.up-or-down-regulated .fold-change-label .down-arrow {
+  height: 19px;
+}
+.up-or-down-regulated .fold-change-label .down-arrow:before {
+  top: 14px;
 }
 .up-or-down-regulated .fold-change-label .label {
-  top: -27px;
-}
-
-.fold-change-label > div {
-  position: relative;
-  width: 8em;
-  height: 100%;
-  margin-left: 73%;
-}
-.up-or-down-regulated .fold-change-label > div {
-  margin-left: 48%;
-}
-
-.fold-change-label .arrow {
-  height: 40%;
-  padding-left: 2em;
-}
-
-.fold-change-label .ui-icon-arrowthick-1-n {
-  position: absolute;
-  top: 0px;
-}
-
-.fold-change-label .ui-icon-arrowthick-1-s {
-  position: absolute;
-  bottom: 0px;
+  margin-left: 14px;
 }
 
 /*

@@ -144,7 +144,8 @@
     </div> <!-- .fold-change-params -->
 
     <div class="fold-change-graphic">
-      <div class="title">Example Expression for a Gene In Selected Samples</div>
+      <div class="title">Example for one gene meeting search criteria:</div>
+      <div class="subtitle">dots indicate expression values in the samples you selected</div>
       <div class="fold-change-img"><jsp:text/></div>
       <div class="caption">Up to four samples are represented for comparison or reference</div>
       <div class="fold-change-help static-help">
@@ -233,18 +234,18 @@
 
   <script id="foldChange-partial" type="text/x-handlebars-template">
     <div class="fold-change-label">
-      <span class="bracket">}</span> <span class="label">fold change</span>
+      <div class="up-arrow"><jsp:text/></div>
+      <div class="label">{{foldChange}} fold</div>
+      <div class="down-arrow"><jsp:text/></div>
     </div>
   </script>
 
   <script id="one-direction-template" type="text/x-handlers/template">
     <div class="{{direction}}">
       <div class="title">{{title}}</div>
-      <!--
       {{#if foldChange}}
       {{> foldChange}}
       {{/if}}
-      -->
 
       {{#each sampleGroups}}
       {{> samples}}
@@ -256,22 +257,18 @@
     <div class="up-or-down-regulated">
       <div class="title">{{title}}</div>
       <div class="left-samples">
-        <!--
         {{#if foldChange}}
         {{> foldChange}}
         {{/if}}
-        -->
 
         {{#each leftSampleGroups}}
         {{> samples}}
         {{/each}}
       </div>
       <div class="right-samples">
-        <!--
         {{#if foldChange}}
         {{> foldChange}}
         {{/if}}
-        -->
 
         {{#each rightSampleGroups}}
         {{> samples}}
