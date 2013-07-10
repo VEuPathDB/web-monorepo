@@ -144,14 +144,6 @@
 .comparison {
   background-color: rgb(189,117,120);
 }
-.reference div:nth-child(2) .jstree-classic.jstree-focused {
-  /* background-color: rgb(200, 217, 243); */
-  background-color: whitesmoke;
-}
-.comparison div:nth-child(2) .jstree-classic.jstree-focused {
-  /* background-color: rgb(240, 179, 179); */
-  background-color: whitesmoke;
-}
 .reference-label {
   color: rgb(39,136,194);
 }
@@ -237,7 +229,7 @@
 .fold-change-graphic .sample {
   width: 14px;
   height: 14px;
-  maring: 1px;
+  margin: 1px;
   border-radius: 8px;
 }
 
@@ -357,7 +349,7 @@
 .fold-change-graphic .up-or-down-regulated .sample {
   width: 8px;
   height: 8px;
-  maring: 1px;
+  margin: 1px;
   border-radius: 8px;
 }
 

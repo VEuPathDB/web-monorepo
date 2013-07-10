@@ -163,7 +163,7 @@
 
   </div> <!-- .fold-change -->
 
-  <script id="formula-partial" type="texxt/x-handlebars-template">
+  <script id="formula-partial" type="text/x-handlebars-template">
     <div class="formula">
       <div class="left-hand-side">{{{leftHandSide}}}</div>
       <div class="right-hand-side">
@@ -218,7 +218,7 @@
   <script id="samples-partial" type="text/x-handlebars-template">
     <div class="samples {{type}}-samples">
       <div class="operation {{operationLevel}}">
-        <div class="operation-line"></div>
+        <div class="operation-line"><jsp:text/></div>
         {{operationLabel}}
 
         {{#each samples}}
@@ -240,7 +240,7 @@
     </div>
   </script>
 
-  <script id="one-direction-template" type="text/x-handlers/template">
+  <script id="one-direction-template" type="text/x-handlebars/template">
     <div class="{{direction}}">
       <div class="title">{{title}}</div>
       {{#if foldChange}}
@@ -253,7 +253,7 @@
     </div>
   </script>
 
-  <script id="two-direction-template" type="text/x-handlers/template">
+  <script id="two-direction-template" type="text/x-handlebars/template">
     <div class="up-or-down-regulated">
       <div class="title">{{title}}</div>
       <div class="left-samples">

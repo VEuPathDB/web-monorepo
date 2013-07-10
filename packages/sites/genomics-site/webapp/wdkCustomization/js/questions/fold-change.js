@@ -28,7 +28,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
    * Boolean @isHigh - should the samples appear high or low in graph?
    */
   sampleCollection.prototype.setup = function(sampleCount, operation, isHigh) {
-    var sampleStep, stepCount, steps, smallSteps, bigSteps;
+    var stepCount, steps, smallSteps, bigSteps;
 
     smallSteps = [0, 100, 33, 66]; // percentages
     bigSteps = [0, 200, 66, 133]; // percentages
@@ -43,18 +43,15 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     switch (operation) {
       case "minimum":
-        //sampleStep = (isHigh) ? -(56 / stepCount) : -(126 / stepCount);
         steps = (isHigh) ? $.map(smallSteps, function(x) { return -x; }) :
           $.map(bigSteps, function(x) { return -x;});
         break;
 
       case "maximum":
-        //sampleStep = (isHigh) ? 126 / stepCount : 56 / stepCount;
         steps = (isHigh) ? bigSteps : smallSteps;
         break;
 
       case "average":
-        //sampleStep = 126 / stepCount;
         if (stepCount === 2) {
           steps = [-90, 90];
         } else if (stepCount === 3) {
@@ -65,11 +62,9 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
         break;
 
       default:
-        //sampleStep = 126 / stepCount;
         steps = smallSteps;
     }
     for (var i = 0; i < sampleCount; i++) {
-      //this.samples.push({top: i * sampleStep});
       this.samples.push({top: steps[i]});
     }
     return this;
