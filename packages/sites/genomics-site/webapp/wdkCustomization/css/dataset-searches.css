@@ -89,7 +89,7 @@ html {
 }
 .dataTables_filter {
   position: relative;
-  top: -2em;
+  top: -1em;
   margin: 0;
   padding: 0;
 }
@@ -296,13 +296,14 @@ td.search-mechanism a {
   /*background-color: whitesmoke;*/
   color: #777777;
   border-bottom: 1px solid #d0d0d0;
+  max-width: 70%;
 }
 .legend div:first-child {
   color: black;
   font-weight: bold;
 }
 .legend div {
-  padding: 0em 0.6em;
+  padding: 0.2em 0.6em;
   float: left;
   line-height: 18px;
 }
