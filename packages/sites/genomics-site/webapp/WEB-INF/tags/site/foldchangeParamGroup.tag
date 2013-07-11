@@ -278,4 +278,6 @@
     </div>
   </script>
 
+  <script type="text/javascript" src="${pageContext.request.contextPath}/wdkCustomization/js/questions/fold-change.js"><jsp:text/></script>
+
 </jsp:root>
