@@ -28,7 +28,8 @@
 */
 
 .fold-change {
-  width: 980px;
+  width: 100%;
+  max-width: 980px;
   margin: auto;
 }
 
