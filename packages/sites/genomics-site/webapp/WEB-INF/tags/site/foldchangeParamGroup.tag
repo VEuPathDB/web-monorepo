@@ -218,12 +218,12 @@
 
   <script id="samples-partial" type="text/x-handlebars-template">
     <div class="samples {{type}}-samples">
-      <div class="operation {{operationLevel}}">
+      <div class="sample-operation {{operationLevel}}">
         <div class="operation-line"><jsp:text/></div>
         {{operationLabel}}
 
         {{#each samples}}
-        <div class="sample" style="top: {{top}}%"></div>
+        <div class="sample" style="top: {{top}}%"><jsp:text/></div>
         {{/each}}
 
       </div>

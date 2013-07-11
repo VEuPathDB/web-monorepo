@@ -263,7 +263,7 @@
   left: 166px;
 }
 
-.fold-change-graphic .operation {
+.fold-change-graphic .sample-operation {
   position: absolute;
   right: 30px;
   width: 6em;
@@ -277,18 +277,18 @@
   color: rgb(158,19,22);
 }
 
-.fold-change-graphic .down-regulated .operation,
-.fold-change-graphic .up-regulated .operation {
+.fold-change-graphic .down-regulated .sample-operation,
+.fold-change-graphic .up-regulated .sample-operation {
   height: 48px;
 }
 
-.fold-change-graphic .down-regulated .reference-samples .operation,
-.fold-change-graphic .up-regulated .comparison-samples .operation {
+.fold-change-graphic .down-regulated .reference-samples .sample-operation,
+.fold-change-graphic .up-regulated .comparison-samples .sample-operation {
   top: 98px;
 }
 
-.fold-change-graphic .up-regulated .reference-samples .operation,
-.fold-change-graphic .down-regulated .comparison-samples .operation {
+.fold-change-graphic .up-regulated .reference-samples .sample-operation,
+.fold-change-graphic .down-regulated .comparison-samples .sample-operation {
   top: 178px;
 }
 
@@ -317,8 +317,8 @@
   width: 180px;
 }
 
-.fold-change-graphic .left-samples .operation,
-.fold-change-graphic .right-samples .operation {
+.fold-change-graphic .left-samples .sample-operation,
+.fold-change-graphic .right-samples .sample-operation {
   width: 9em;
   right: -30px;
   font-size: 75%;
@@ -330,12 +330,12 @@
   width: 92%;
   top: 0.3em;
 }
-.fold-change-graphic .left-samples .reference-samples .operation,
-.fold-change-graphic .right-samples .comparison-samples .operation {
+.fold-change-graphic .left-samples .reference-samples .sample-operation,
+.fold-change-graphic .right-samples .comparison-samples .sample-operation {
   top: 70px;
 }
-.fold-change-graphic .left-samples .comparison-samples .operation,
-.fold-change-graphic .right-samples .reference-samples .operation {
+.fold-change-graphic .left-samples .comparison-samples .sample-operation,
+.fold-change-graphic .right-samples .reference-samples .sample-operation {
   top: 10px;
 }
 .fold-change-graphic .up-or-down-regulated .samples-label {
