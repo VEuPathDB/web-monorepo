@@ -75,6 +75,7 @@
 
 .fold-change .param {
   display: inline-block;
+  max-width: 94%;
 }
 .fold-change .param-control .param {
   width: 93%; /* force wrap */
@@ -132,7 +133,7 @@
 
 .param-line {
   padding: 0.2em;
-  font-size: larger;
+  /*font-size: larger;*/
   line-height: 1.4;
 }
 .text .prompt,
@@ -434,3 +435,11 @@
     CSS rules for Fold Change Expression graph = END
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+/*
+ * Specific parameter styling
+ */
+#profileset_generic {
+  max-width: 100%;
+}
+}
