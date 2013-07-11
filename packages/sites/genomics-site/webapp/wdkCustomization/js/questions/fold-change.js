@@ -357,6 +357,9 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       $(".fold-change-help.static-help").show();
       $(".fold-change-help.dynamic-help").hide();
     }
+    $(".fold-change .caption")
+      .css("visibility", $scope.refCount > 4 || $scope.compCount > 4 ?
+          "visible" : "hidden");
   };
 
   $(init);

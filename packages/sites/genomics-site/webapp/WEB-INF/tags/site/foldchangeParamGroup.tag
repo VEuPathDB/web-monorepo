@@ -147,7 +147,8 @@
       <div class="title">Example for one gene meeting search criteria:</div>
       <div class="subtitle">dots indicate expression values in the samples you selected</div>
       <div class="fold-change-img"><jsp:text/></div>
-      <div class="caption">Up to four samples are represented for comparison or reference</div>
+      <div class="caption">A maximum of four samples are shown when more than
+          four are selected.</div>
       <div class="fold-change-help static-help">
         <p>This graphic will help you visualize the parameter
         choices you make at the left.

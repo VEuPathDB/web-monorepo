@@ -101,9 +101,12 @@
 }
 
 .fold-change .caption {
-  width: 400px;
+  color: red;
   font-style: italic;
   font-family: serif;
+  font-weight: bold;
+  width: 400px;
+  visibility: hidden;
 }
 .fold-change-help {
   margin-top: 1em;
