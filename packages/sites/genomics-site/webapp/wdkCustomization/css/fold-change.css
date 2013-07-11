@@ -42,6 +42,7 @@
   vertical-align: top;
   width: 48%;
   padding-right: 1em;
+  border-left: 1px inset #aaaaaa;
 }
 
 .fold-change-graphic > div {
@@ -85,7 +86,10 @@
 .fold-change-params {
   display: inline-block;
   width: 49%;
-  border-right: 1px inset #AAA;
+}
+
+.fold-change-params > div {
+  padding-left: 1em;
 }
 
 .fold-change .param-item {
