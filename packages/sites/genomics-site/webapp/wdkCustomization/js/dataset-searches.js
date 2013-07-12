@@ -31,11 +31,14 @@ function datasetSearches($element, $attrs) {
 
   var dataTableOpts = {
     aoColumnDefs: [
-    {bVisible: false, aTargets: [2]},
+      {
+        bVisible: false,
+        aTargets: [2]
+      }
     ],
     bPaginate: false,
     oLanguage: {
-      sSearch: "Filter table:",
+      sSearch: "Filter Data sets:",
       sInfo: ""
     }
   };
@@ -87,7 +90,7 @@ function datasetSearches($element, $attrs) {
       $tableToggle.hide();
       $questionWrapper.find(".tabs").hide();
     }).after(
-      $('<a href="#">clear</a>')
+      $('<span class="ui-icon ui-icon-circle-close"></span>')
         .addClass("filter-clear")
         .on("click", function(e) {
           e.preventDefault();

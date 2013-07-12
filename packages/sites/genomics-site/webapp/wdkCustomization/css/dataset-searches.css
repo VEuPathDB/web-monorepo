@@ -94,15 +94,23 @@ html {
   padding: 0;
 }
 .dataTables_filter input {
-  padding-right: 3em;
+  padding-right: 2em;
 }
 .dataTables_filter input + .filter-clear {
   display: none;
   position: relative;
-  left: -3em;
+  left: -20px;
+  top: 3px;
+  opacity: 0.5;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  cursor: pointer;
 }
 .dataTables_filter input.content + .filter-clear {
-  display:inline;
+  display: inline-block;
+}
+.dataTables_filter input.content + .filter-clear:hover {
+  opacity: 0.7;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
 }
 .dataTable th ,
 .dataTable td {
@@ -277,6 +285,9 @@ td.search-mechanism a {
 #question-wrapper.active {
   margin-top: 0.5em;
   padding-top: 1em;
+}
+#question-wrapper .ui-widget {
+  font-size: 1em;
 }
 .tabs {
   border: none;
