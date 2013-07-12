@@ -89,7 +89,7 @@ html {
 }
 .dataTables_filter {
   position: relative;
-  top: -1em;
+  top: -2em;
   margin: 0;
   padding: 0;
 }
@@ -114,7 +114,7 @@ html {
 }
 .dataTable th ,
 .dataTable td {
-  padding: 0.8em 0em;
+  padding: 0.6em 0em;
   vertical-align: middle;
   background-color: #ffffff;
   text-align: left;
@@ -304,14 +304,11 @@ td.search-mechanism a {
   right: 0em;
   top: 1em;
   padding: 1em 0em;
-  /*background-color: whitesmoke;*/
   color: #777777;
-  border-bottom: 1px solid #d0d0d0;
   max-width: 70%;
 }
 .legend div:first-child {
   color: black;
-  font-weight: bold;
 }
 .legend div {
   padding: 0.2em 0.6em;
