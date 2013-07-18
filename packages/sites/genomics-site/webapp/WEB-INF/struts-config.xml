@@ -145,6 +145,7 @@
         parameter="org.gusdb.wdk.controller.action.user.ProcessPasswordAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
         name="passwordForm">
+      <forward name="input" path="/showPassword.do" redirect="true"/>      
       <forward name="success" path="/wdkCustomization/jsp/Password.jsp"/>
     </action>
     <action path="/showResetPassword"
