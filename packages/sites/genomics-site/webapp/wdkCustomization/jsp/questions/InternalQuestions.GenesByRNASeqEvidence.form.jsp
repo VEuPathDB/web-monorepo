@@ -28,7 +28,7 @@
 <c:set var="microsporidiaQuestions" value="N.p.study:N. parisii Infection Time Series in C. elegans (Cuomo et al.),GeneQuestions.GenesByRNASeqTroemelCeInfectionFC,GeneQuestions.GenesByRNASeqTroemelCeInfectionPercentile"/>
 
 
-<c:set var="amoebaQuestions" value="E.h.study:HM1:IMSS AGO2-2 and Rahman small RNA (Singh),GeneQuestions.GenesByRNASeqehisHM1IMSS_Singh_Small_RNA_rnaSeq_RSRCPercentile,E.h.study:Trophozoites HM1:IMSS AGO2-2 and Rahman strains (Guillen),GeneQuestions.GenesByRNASeqehisHM1IMSS_Guillen_rnaSeq_RSRCPercentile"/>
+<c:set var="amoebaQuestions" value="E.h.study:Small RNA (Singh),GeneQuestions.GenesByRNASeqehisHM1IMSS_Singh_Small_RNA_rnaSeq_RSRCPercentile,E.h.study:Trophozoites (Guillen),GeneQuestions.GenesByRNASeqehisHM1IMSS_Guillen_rnaSeq_RSRCPercentile"/>
 
 
 <%-- END OF QUESTIONS --%>
