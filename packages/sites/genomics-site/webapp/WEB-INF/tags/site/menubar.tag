@@ -144,14 +144,16 @@
         <c:if test="${project == 'CryptoDB'}">
           <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
         </c:if>
-<c:if test="${project != 'FungiDB'}" >
-        <li><a title="Table summarizing all the genomes and their different data types available in EuPathDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Genomes and Data Types</a></li>
+<c:if test="${project != 'FungiDB'}" > 
+        <!-- <li><a title="Table summarizing all the genomes and their different data types available in EuPathDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Genomes and Data Types</a></li> -->
+        <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="<c:url value="/showSummary.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">Genomes and Data Types</a></li> 
 </c:if>   
 <c:if test="${project == 'FungiDB'}" >
         <li><a title="Table summarizing all the genomes and their different data types available in FungiDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">FungiDB Genomes and Data Types</a></li>
 </c:if>  
 <c:if test="${project != 'FungiDB'}" >
-        <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li>
+        <!-- <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li> -->
+        <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showSummary.do?questionFullName=OrganismQuestions.GeneMetrics"/>">Gene Metrics</a></li>
 </c:if>
 <c:if test="${project == 'FungiDB'}" >
         <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">FungiDB Gene Metrics</a></li>
