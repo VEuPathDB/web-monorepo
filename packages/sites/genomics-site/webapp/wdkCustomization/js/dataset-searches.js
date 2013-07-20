@@ -59,18 +59,18 @@ function datasetSearches($element, $attrs) {
     "brown"
   ];
 
-  $datasetRecords.find("tbody tr").each(function() {
-    $(this).find(".search-mechanism").each(function(idx, td) {
-      var $div = $(td).find("a");
-      var color = colors[idx % colors.length];
-      $div.addClass("btn btn-" + color);
-    });
-  });
+  // $datasetRecords.find("tbody tr").each(function() {
+  //   $(this).find(".search-mechanism").each(function(idx, td) {
+  //     var $div = $(td).find("a");
+  //     var color = colors[idx % colors.length];
+  //     $div.addClass("btn btn-" + color);
+  //   });
+  // });
 
-  $element.find(".legend .search-mechanism").each(function(idx, span) {
-    var color = colors[idx % colors.length];
-    $(span).addClass("btn btn-active btn-" + color);
-  });
+  // $element.find(".legend .search-mechanism").each(function(idx, span) {
+  //   var color = colors[idx % colors.length];
+  //   $(span).addClass("btn btn-active btn-" + color);
+  // });
 
   var dataTable = $datasetRecords.dataTable(dataTableOpts);
   //new FixedHeader(dataTable);
@@ -126,7 +126,7 @@ function datasetSearches($element, $attrs) {
 
     $datasetRecords.find(".btn-active").not(this).removeClass("btn-active");
 
-    tabIdx = $delegate.find(".search-mechanism a").index(this);
+    tabIdx = $delegate.find(".search-mechanism .question-link").index(this);
 
     if ($data.datasetId === questionCollection.datasetId) {
       // select appropriate tab
@@ -143,7 +143,7 @@ function datasetSearches($element, $attrs) {
       $delegate.find(".question-link").each(function(idx, anchor) {
         var category = $(this).data("category");
         questionCollection.questions.push({
-          url: this.href + "&partial=true",
+          url: $(this).data("href") + "&partial=true",
           category: category.replace(/((^\w)|_(\w))/g,
               function(s) { return s.replace("_", " ").toUpperCase()})
         });

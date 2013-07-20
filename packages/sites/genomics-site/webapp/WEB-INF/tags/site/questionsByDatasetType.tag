@@ -16,7 +16,7 @@
       <div>Legend:</div>
       <c:forEach items="${display_categories}" var="displayCategory">
         <div>
-          <span class="search-mechanism">
+          <span class="search-mechanism btn btn-active">
             <c:choose>
               <c:when test="${displayCategory eq 'fold_change_with_pvalue'}">FCpV</c:when>
               <c:otherwise>
@@ -88,17 +88,17 @@
             <c:set var="question" value="${internalQuestions[displayCategory]}"/>
             <td class="search-mechanism">
               <c:if test="${question ne null}">
-                <a class="wdk-tooltip question-link"
+                <button class="wdk-tooltip question-link btn"
                   data-category="${displayCategory}"
                   title="Search this data set by ${fn:replace(displayCategory, '_', ' ')}"
-                  href="showQuestion.do?questionFullName=${question.fullName}">
+                  data-href="showQuestion.do?questionFullName=${question.fullName}">
                   <c:choose>
                     <c:when test="${displayCategory eq 'fold_change_with_pvalue'}">FCpV</c:when>
                     <c:otherwise>
                       <c:forEach items="${fn:split(displayCategory, '_')}" var="part">${fn:toUpperCase(fn:substring(part, 0, 1))}</c:forEach>
                     </c:otherwise>
                   </c:choose>
-                </a>
+                </button>
               </c:if>
             </td>
           </c:forEach>
