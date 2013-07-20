@@ -85,9 +85,11 @@
 <c:set var="NewsCount" value="50"/>
 
 <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-<a class="heading"  href="#">News</a>
+<a class="heading"  href="#">News and Tweets</a>
 
 <div class="menu_lefttop_drop" id="News">
+
+
   <c:choose>
 		<c:when test="${newsErr2 != null}">
   		<i>News temporarily unavailable</i>
@@ -170,9 +172,27 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 	    <br>
 	    <a class="small" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News >>></a>
     </c:if>  <%-- project is NOT  EuPathDB --%>
-
+		<br><br>
   </c:otherwise>
   </c:choose>
+
+
+<!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB account settings -->
+ 		 <a class="twitter-timeline" data-chrome="nofooter" height="50"  href="https://twitter.com/eupathdb" data-widget-id="344817818073714691">Tweets by @eupathdb</a>
+		 <script>
+		 !function(d,s,id){
+				var js,fjs=d.getElementsByTagName(s)[0],
+								p=/^http:/.test(d.location)?'http':'https';
+				if(!d.getElementById(id)){
+								js=d.createElement(s);
+								js.id=id;
+								js.src=p+"://platform.twitter.com/widgets.js";
+								fjs.parentNode.insertBefore(js,fjs);
+								}
+				}(document,"script","twitter-wjs");
+		 </script>
+
+
 </div>  <%-- section that opens and closes --%>
 
 

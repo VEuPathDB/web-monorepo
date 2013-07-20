@@ -4,8 +4,9 @@
 
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.8.21.custom.css" />
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js'></script>
+    <!-- use local JS files. Do not make client fetch from  Google because site might be hosted on a virtual machine with no internet acdess -->
+    <script type='text/javascript' src='js/jquery.min.js'></script>
+    <script type='text/javascript' src='js/jquery-ui.min.js'></script>
     <script type='text/javascript' src='js/overlib.js'></script>
     <script type='text/javascript' src='js/main.js'></script>
 
