@@ -144,8 +144,8 @@
     </div> <!-- .fold-change-params -->
 
     <div class="fold-change-graphic">
-      <div class="title">Example for one gene meeting search criteria:</div>
-      <div class="subtitle">dots indicate expression values in the samples you selected</div>
+      <div class="title">Example showing one gene that would meet search criteria</div>
+      <div class="subtitle">(dots indicate expression values in the samples you selected)</div>
       <div class="fold-change-img"><jsp:text/></div>
       <div class="caption">A maximum of four samples are shown when more than
           four are selected.</div>

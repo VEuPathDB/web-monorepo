@@ -41,12 +41,13 @@
   display: inline-block;
   vertical-align: top;
   width: 48%;
+  padding-left: 1em;
   padding-right: 1em;
   border-left: 1px inset #aaaaaa;
 }
 
 .fold-change-graphic > div {
-  float: right;
+  margin: auto;
 }
 
 .fold-change-img {
@@ -221,7 +222,7 @@
 
 .fold-change-graphic .title, .fold-change-graphic .subtitle {
   text-align: center;
-  width: 400px;
+  /*width: 400px;*/
 }
 .fold-change-graphic .title {
   padding-top: 1em;
