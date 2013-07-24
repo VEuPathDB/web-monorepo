@@ -2,6 +2,10 @@
                      color: yellow;
                   }
 .datatitle        { background-color: #BBCCFF; }
+
+/* hide login links */
+.datatitle span   { display: none; }
+
 .databody         { background-color: #E3E9FF; }
 .searchtitle      { background-color: #BBCCFF;
                      font-size: small;
