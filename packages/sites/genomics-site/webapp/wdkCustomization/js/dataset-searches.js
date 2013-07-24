@@ -36,9 +36,10 @@ function datasetSearches($element, $attrs) {
         aTargets: [2]
       }
     ],
+    bJQueryUI: true,
     bPaginate: false,
     oLanguage: {
-      sSearch: "Filter Data sets:",
+      sSearch: "Filter Data Sets:",
       sInfo: ""
     }
   };
@@ -59,18 +60,18 @@ function datasetSearches($element, $attrs) {
     "brown"
   ];
 
-  // $datasetRecords.find("tbody tr").each(function() {
-  //   $(this).find(".search-mechanism").each(function(idx, td) {
-  //     var $div = $(td).find("a");
-  //     var color = colors[idx % colors.length];
-  //     $div.addClass("btn btn-" + color);
-  //   });
-  // });
+  $datasetRecords.find("tbody tr").each(function() {
+    $(this).find(".search-mechanism").each(function(idx, td) {
+      var $button = $(td).find("button");
+      var color = colors[idx % colors.length];
+      $button.addClass("btn btn-" + color);
+    });
+  });
 
-  // $element.find(".legend .search-mechanism").each(function(idx, span) {
-  //   var color = colors[idx % colors.length];
-  //   $(span).addClass("btn btn-active btn-" + color);
-  // });
+  $element.find(".legend .search-mechanism").each(function(idx, span) {
+    var color = colors[idx % colors.length];
+    $(span).addClass("btn btn-active btn-" + color);
+  });
 
   var dataTable = $datasetRecords.dataTable(dataTableOpts);
   //new FixedHeader(dataTable);
@@ -108,7 +109,7 @@ function datasetSearches($element, $attrs) {
       my: "left center",
       at: "right center"
     }
-  });
+  }).attr("placeholder", "Type keyword(s) to filter");
 
   // handle search click
   $datasetRecords.find(".dataset").on("click", ".question-link", function(e) {
