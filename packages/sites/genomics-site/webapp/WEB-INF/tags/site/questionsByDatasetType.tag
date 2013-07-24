@@ -33,7 +33,7 @@
       <thead>
         <tr>
           <th rowspan="2" class="wdk-tooltip" title="Organism data is aligned to">Organism</th>
-          <th rowspan="2">Data set</th>
+          <th rowspan="2">Data Set</th>
           <th rowspan="2">Summary</th>
           <c:forEach items="${display_categories}" var="displayCategory">
             <th class="search-head"><jsp:text/></th>
