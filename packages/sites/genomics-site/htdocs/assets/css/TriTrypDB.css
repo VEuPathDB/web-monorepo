@@ -8,13 +8,14 @@ body {
 }
 
 
-a:link, a:visited {
+a:link, a:visited, div.divlink {
 	color: #015f9a;
 }
 
-a:hover, a:active {
+a:hover, a:active, div.divlink:hover {
 	color: #b45f04;    /* for contrast   93c4e3; */
 }
+
 a[name]:link {
 	color: black;
 }

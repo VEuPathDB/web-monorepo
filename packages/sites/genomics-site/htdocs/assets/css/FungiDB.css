@@ -18,7 +18,7 @@ body {
 
 
 
-a:link, a:visited {
+a:link, a:visited, div.divlink {
 
 	color: #067387;
 
@@ -26,7 +26,7 @@ a:link, a:visited {
 
 
 
-a:hover, a:active {
+a:hover, a:active, div.divlink:hover {
 
 	color: #672a87;   /* #4eb8cb; */
 
