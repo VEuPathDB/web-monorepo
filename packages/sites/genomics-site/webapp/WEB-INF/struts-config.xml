@@ -91,14 +91,14 @@
       <forward name="show_profile" path="showProfile.do" redirect="true"/>
     </action>
     <action path="/processLogin"
-        parameter="org.gusdb.wdk.controller.action.user.ProcessLoginAction"
+        parameter="org.apidb.apicommon.controller.action.CustomProcessLoginAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <!-- In most success cases, action will forward directly to original referring page -->
       <forward name="success" path="/showApplication.do" redirect="true"/>
       <forward name="input" path="/wdkCustomization/jsp/Login.jsp"/>
     </action>
     <action path="/openIdLogin"
-        parameter="org.gusdb.wdk.controller.action.user.ProcessOpenIdAction"
+        parameter="org.apidb.apicommon.controller.action.CustomProcessOpenIdAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <forward name="success" path="/showApplication.do" redirect="true"/>
     </action>
@@ -106,6 +106,10 @@
         parameter="org.gusdb.wdk.controller.action.user.ProcessLogoutAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <forward name="success" path="/home.do" redirect="true"/>
+    </action>
+    <action path="/validateLoginCookie"
+        parameter="org.gusdb.wdk.controller.action.services.LoginCookieValidationService"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
     <action path="/showRegister"
         parameter="org.gusdb.wdk.controller.action.user.ShowRegisterAction"
