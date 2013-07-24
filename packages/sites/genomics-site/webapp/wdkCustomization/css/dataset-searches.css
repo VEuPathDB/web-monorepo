@@ -31,6 +31,7 @@ html {
 }
 .btn-blue {
   color: #ffffff;
+  border: 1px solid #306BC4;
   background-color: #306BC4;
   background-image: linear-gradient(to bottom, #5F99F1, #306BC4);
   background-image: -moz-linear-gradient(to bottom, #5F99F1, #306BC4);
@@ -40,6 +41,7 @@ html {
 }
 .btn-brown {
   color: #ffffff;
+  border: 1px solid #9E6946;
   background-color: #9E6946;
   background-image: linear-gradient(to bottom, #C79F6C, #9E6946);
   background-image: -moz-linear-gradient(to bottom, #C79F6C, #9E6946);
@@ -49,6 +51,7 @@ html {
 }
 .btn-green {
   color: #ffffff;
+  border: 1px solid #278527;
   background-color: #278527;
   background-image: linear-gradient(to bottom, #49B649, #278527);
   background-image: -moz-linear-gradient(to bottom, #49B649, #278527);
@@ -58,6 +61,7 @@ html {
 }
 .btn-red {
   color: #ffffff;
+  border: 1px solid #BD1F1F;
   background-color: #BD1F1F;
   background-image: linear-gradient(to bottom, #E96060, #BD1F1F);
   background-image: -moz-linear-gradient(to bottom, #E96060, #BD1F1F);
@@ -95,14 +99,28 @@ html {
   font-size: 14px;
   width: 100%;
 }
+.dataTable .ui-state-default {
+  border: none;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  background: white;
+}
+table.dataTable thead th div.DataTables_sort_wrapper span {
+  left: 0;
+}
+table.dataTable thead th div.DataTables_sort_wrapper {
+  cursor: pointer;
+  padding-left: 20px;
+}
 .dataTables_filter {
   position: relative;
-  top: -2em;
+  top: -2.5em;
   margin: 0;
   padding: 0;
 }
 .dataTables_filter input {
   padding-right: 2em;
+  width: 12em;
 }
 .dataTables_filter input + .filter-clear {
   display: none;
@@ -124,7 +142,7 @@ html {
 }
 .dataTable th ,
 .dataTable td {
-  padding: 0.6em 0em;
+  padding: 0.4em 0em;
   vertical-align: middle;
   background-color: #ffffff;
   text-align: left;
@@ -139,7 +157,7 @@ html {
 }
 .dataTable th {
   color: #a45d35; /* SASS: site-color-primary */
-  border-top: none;
+  /*border-top: none;*/
   vertical-align: bottom;
 }
 .dataTable td {
@@ -312,8 +330,7 @@ td.search-mechanism a {
 .legend {
   position: absolute;
   right: 0em;
-  top: 1em;
-  padding: 1em 0em;
+  top: 2em;
   color: #777777;
   max-width: 70%;
 }
