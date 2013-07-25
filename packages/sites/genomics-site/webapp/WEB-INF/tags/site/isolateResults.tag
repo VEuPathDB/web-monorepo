@@ -9,6 +9,15 @@
               required="true"
               description="Strategy Id we are looking at"
 %>
+      <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&callback=initialize"><jsp:text/></script>
+      <script type="text/javascript">
+        function initialize() {
+          var script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src = "http://google-maps-utility-library-v3.googlecode.com/svn/trunk/styledmarker/src/StyledMarker.js";
+          document.body.appendChild(script);
+        }
+      </script>
 
 
 <c:set var="wdkStep" value="${requestScope.wdkStep}"/>

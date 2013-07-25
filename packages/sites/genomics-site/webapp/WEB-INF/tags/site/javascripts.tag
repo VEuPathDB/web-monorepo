@@ -46,8 +46,10 @@
       <script type="text/javascript" src="${base}/wdkCustomization/js/span-genome-view.js"><jsp:text/></script>
 
       <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"><jsp:text/></script> -->
+      <!-- moved to isolateResults.tag
       <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"><jsp:text/></script>
       <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/styledmarker/src/StyledMarker.js"><jsp:text/></script>
+      -->
 
       <script type="text/javascript" src="/assets/js/isolateResults.js"><jsp:text/></script>
   </c:if>
