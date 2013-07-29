@@ -58,7 +58,9 @@
 
 <%--#############################################################--%>
 
-
+ <c:if test="${projectId ne 'TrichDB' && attrs['is_annotated'].value == 0}">
+<b>NOTE: The data for this genome is unpublished. You should consult with the Principal Investigators before undertaking large scale analyses of the annotation or underlying sequence.</b>
+</c:if>
 
 
 <c:set var="append" value="" />
@@ -106,10 +108,10 @@
   <%------------------------------------------------------------------%>
   <c:choose>
     <c:when test="${projectId eq 'TriTrypDB' && attrs['length'].value >= 300000}">
-      <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
+      <c:set var="gtracks" value="ProtAlign+ORF600+TandemRepeat+LowComplexity" />
     </c:when>
     <c:when test="${projectId eq 'TriTrypDB' && attrs['length'].value < 300000}">
-      <c:set var="gtracks" value="BLASTX+ORF+TandemRepeat+LowComplexity" />
+      <c:set var="gtracks" value="ProtAlign+ORF+TandemRepeat+LowComplexity" />
     </c:when>
     <c:when test="${(projectId eq 'PlasmoDB' || projectId eq 'FungiDB') && attrs['length'].value >= 100000}">
       <c:set var="gtracks" value="ProtAlign+ORF600+TandemRepeat+LowComplexity" />
@@ -121,10 +123,10 @@
 
        <c:choose>
          <c:when test="${attrs['length'].value >= 100000}">
-           <c:set var="gtracks" value="BLASTX+ORF600+TandemRepeat+LowComplexity" />
+           <c:set var="gtracks" value="ProtAlign+ORF600+TandemRepeat+LowComplexity" />
          </c:when>
          <c:otherwise>
-           <c:set var="gtracks" value="BLASTX+ORF300+TandemRepeat+LowComplexity" />
+           <c:set var="gtracks" value="ProtAlign+ORF300+TandemRepeat+LowComplexity" />
          </c:otherwise>
        </c:choose>
     </c:otherwise>

@@ -61,8 +61,8 @@
     <th><i>C.imm</i> H538.4</th>
     <th><i>C.imm</i> RS</th>
     <th><i>C.pos</i></th>
-    <th><i>H.cap</i> NAm1</th>
-    <th><i>H.cap</i> G186AR</th>
+    <th><i>A.cap</i> NAm1</th>
+    <th><i>A.cap</i> G186AR</th>
     <th><i>N.fis</i></th>
     <th><i>P.mar</i></th>
     <th><i>T.sti</i></th>
@@ -302,13 +302,13 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="hcapNAm1_instances" />
+                          instanceName="acapNAm1_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="hcapG186AR_instances" />
+                          instanceName="acapG186AR_instances" />
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 

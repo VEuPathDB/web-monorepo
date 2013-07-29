@@ -9,6 +9,15 @@
               required="true"
               description="Strategy Id we are looking at"
 %>
+      <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&callback=initialize"><jsp:text/></script>
+      <script type="text/javascript">
+        function initialize() {
+          var script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src = "http://google-maps-utility-library-v3.googlecode.com/svn/trunk/styledmarker/src/StyledMarker.js";
+          document.body.appendChild(script);
+        }
+      </script>
 
 
 <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
@@ -24,12 +33,7 @@
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 
 
-<c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') 
-  && (fn:containsIgnoreCase(modelName, 'CryptoDB') 
-  || fn:containsIgnoreCase(modelName, 'ToxoDB') 
-  || fn:containsIgnoreCase(modelName, 'EuPathDB') 
-  || fn:containsIgnoreCase(modelName, 'GiardiaDB') 
-  || fn:containsIgnoreCase(modelName, 'PlasmoDB'))}
+<c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') }
 </c:set> 
 
 <c:set var="type" value="${wdkStep.recordClass.displayNamePlural}"/>

@@ -6,11 +6,11 @@ body {
 	background-image: url(/assets/images/CryptoDB/background_s.jpg);
 }
 
-a:link, a:visited {
+a:link, a:visited, div.divlink {
 	color: #0b4796;
 }
 
-a:hover, a:active {
+a:hover, a:active, div.divlink:hover {
 	color: #610b0b;    /* for contrast 08438F; */        /*  #83a6d4; */
 }
 a[name]:link {
@@ -74,7 +74,7 @@ a[name]:hover, a[name]:active {
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 #bubbles .info {
-  min-height: 300px;
+  min-height: 351px;
 }
 
 
@@ -307,7 +307,7 @@ div.Workspace {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in help.jsp, classic bullet list
+	 =used in contact.do, classic bullet list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 

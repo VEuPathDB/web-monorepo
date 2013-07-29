@@ -8,13 +8,14 @@ body {
 }
 
 
-a:link, a:visited {
+a:link, a:visited, div.divlink {
 	color: #015f9a;
 }
 
-a:hover, a:active {
+a:hover, a:active, div.divlink:hover {
 	color: #b45f04;    /* for contrast   93c4e3; */
 }
+
 a[name]:link {
 	color: black;
 }
@@ -85,7 +86,7 @@ a[name]:hover, a[name]:active {
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 #bubbles .info {
-  min-height: 275px;
+  min-height: 299px;
 }
 
 
@@ -313,7 +314,7 @@ div.Workspace {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in help.jsp, classic bullet list
+	 =used in contact.do, classic bullet list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 

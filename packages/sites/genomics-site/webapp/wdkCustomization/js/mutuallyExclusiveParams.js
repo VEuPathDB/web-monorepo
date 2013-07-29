@@ -224,7 +224,7 @@
         //element.find("#chromosomeOptional option:nth-child(2)").attr("selected", true);
       }
 
-    }).submit(function() {
+    }).on("submit", function() {
       // If chromosome is disabled, enable it and select the first option,
       // which should be the "blank" option
       var chromosomeOptional = this.chromosomeOptional;
@@ -264,9 +264,7 @@
       if (inlineSubmit instanceof Function) {
         inlineSubmit.call(this);
       }
-    });
-
-    wdk.event.subscribe("questionchange", function() {
+    }).on("change", function() {
       form.mutuallyExclusiveParams("change");
     });
 

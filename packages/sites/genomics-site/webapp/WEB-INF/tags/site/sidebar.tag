@@ -69,12 +69,12 @@
 <div class="menu_lefttop_drop" style="text-align:center;">
   <table width="90%" style="text-align:center;margin-left: auto;margin-right: auto;">
     <tr><td style="padding:0;">
-	    <a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">
+	    <a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="/showSummary.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">
 	    <img style="border: 2px solid #666666;" src="/assets/images/genomeTable.png" width="190" height="100"></a>
     </td><tr>
 
     <tr><td style="text-align:left;">
-	    <a class="small"  href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">
+	    <a class="small"  href="<c:url value="/showSummary.do?questionFullName=OrganismQuestions.GeneMetrics"/>">
 		  Also check our Gene Metrics >>></a>
     </td></tr>
   </table>
@@ -85,9 +85,11 @@
 <c:set var="NewsCount" value="50"/>
 
 <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
-<a class="heading"  href="#">News</a>
+<a class="heading"  href="#">News and Tweets</a>
 
 <div class="menu_lefttop_drop" id="News">
+
+
   <c:choose>
 		<c:when test="${newsErr2 != null}">
   		<i>News temporarily unavailable</i>
@@ -170,9 +172,27 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 	    <br>
 	    <a class="small" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News >>></a>
     </c:if>  <%-- project is NOT  EuPathDB --%>
-
+		<br><br>
   </c:otherwise>
   </c:choose>
+
+
+<!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB account settings -->
+ 		 <a class="twitter-timeline" data-chrome="nofooter" height="50"  href="https://twitter.com/eupathdb" data-widget-id="344817818073714691">Tweets by @eupathdb</a>
+		 <script>
+		 !function(d,s,id){
+				var js,fjs=d.getElementsByTagName(s)[0],
+								p=/^http:/.test(d.location)?'http':'https';
+				if(!d.getElementById(id)){
+								js=d.createElement(s);
+								js.id=id;
+								js.src=p+"://platform.twitter.com/widgets.js";
+								fjs.parentNode.insertBefore(js,fjs);
+								}
+				}(document,"script","twitter-wjs");
+		 </script>
+
+
 </div>  <%-- section that opens and closes --%>
 
 
@@ -243,7 +263,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
   </c:otherwise>
   </c:choose>
   <br><span style="font-size:8pt;font-style:italic">(If you have a link that you think would be useful for the community, 
-    please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">send us a note.)</a></span>
+    please <a href="<c:url value="/contact.do"/>" class="open-window-contact-us">send us a note.)</a></span>
 </div>
 
 <%--------------  TUTORIALS ---------------------------------------------%>
@@ -258,7 +278,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
     </li>
 	  <li id='edu-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a> (video and pdf)</li>
     <li id='edu-2'><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
-    <li id='edu-3-1'><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from our most recent Workshop</a> (English)</li>
+    <li id='edu-3-1'><a href="http://workshop.eupathdb.org/most_recent/index.php?page=schedule">Exercises from our most recent Workshop</a> (English)</li>
     <li id='edu-3-2'><a href="http://workshop.eupathdb.org/2011/index.php?page=schedule">Exercises from 2011 Workshop</a> (English and Spanish)</li>
 	  <li id='edu-4'><a href="http://www.genome.gov/Glossary/">NCBI's Glossary of Terms</a></li>
 	  <li id='edu-5'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Our Glossary</a></li>

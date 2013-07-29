@@ -47,8 +47,15 @@
     },
     goToUrl: function(source) {
       var url = $(source).attr('data-location');
-      window.opener.location.href=url;
-      window.close();
+      if (window.opener) {
+      	// handle case where this imagemap is the content of a pop-up window
+        window.opener.location.href=url;
+        window.close();
+      } else {
+      	// handle case where this imagemap is in an iframe in the record page
+      	var iframeWin = document.defaultView || document.parentWindow;
+        iframeWin.parent.location=url;
+      }
     }
   };
 

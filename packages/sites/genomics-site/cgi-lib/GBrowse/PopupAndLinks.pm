@@ -366,9 +366,21 @@ sub geneTitleGB2 {
   my $projectId = $ENV{PROJECT_ID};
   my $sourceId = $f->name;
   my $chr = $f->seq_id;
-  my $loc = $f->location->to_FTstring;
 
-  $loc =~ s/(\d+\.\.)/<br \/>&nbsp;&nbsp;$1/g;
+
+#  my $loc = $f->location->to_FTstring;
+#  $loc =~ s/(\d+\.\.)/<br \/>&nbsp;&nbsp;$1/g;
+
+
+  my @cdss = $f->sub_SeqFeature("CDS");
+  my $loc = '';
+  foreach (@cdss) {
+    next if $_->type !~ /cds/i;
+    $loc .= $_->location->to_FTstring. "<br />";
+  }
+
+
+
   
   my ($soTerm) = $f->get_tag_values("soTerm");
   my ($isPseudo) = $f->get_tag_values("isPseudo");
@@ -1297,6 +1309,8 @@ sub jcviPasaTitle {
 sub riteshMassSpec {
   my $f = shift;
 
+  my $start = $f->start;
+  my $stop  = $f->stop;
   my ($pep) = $f->get_tag_values('Peptide');
   my ($fdr) = $f->get_tag_values('FDR');
   my ($psm) = $f->get_tag_values('PSM');
@@ -1305,6 +1319,7 @@ sub riteshMassSpec {
   push(@data, ['Peptide:'    => $pep]);
   push(@data, ['FDR Score:'  => $fdr]);
   push(@data, ['PSM Counts:' => $psm]);
+  push(@data, ['Position:'   => "$start..$stop"]);
 
   return hover($f,\@data);
 }

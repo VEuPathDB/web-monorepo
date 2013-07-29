@@ -143,7 +143,7 @@ $(document).ready(function(){
 
       <tr class="medium">
         <td colspan=3> 
-        Please add only scientific phenotype comments to be displayed on the ${phenotypeForm.commentTargetId} page for ${phenotypeForm.stableId}. If you want to report a problem, use the <a href="<c:url value='/help.jsp'/>">support page.</a> Your comments are appreciated. If this comment is about other characters of ${phenotypeForm.commentTargetId} ${phenotypeForm.stableId} rather than phenotype, please <a href="addComment.do?stableId=${phenotypeForm.stableId}&commentTargetId=gene&externaDbName=${phenotypeForm.externalDbName}&externalDbVersion=${phenotypeForm.externalDbVersion}&flag=0">click here</a> to use regular comment form.
+        Please add only scientific phenotype comments to be displayed on the ${phenotypeForm.commentTargetId} page for ${phenotypeForm.stableId}. If you want to report a problem, use the <a class="open-window-contact-us" href="<c:url value='/contact.do'/>">support page.</a> Your comments are appreciated. If this comment is about other characters of ${phenotypeForm.commentTargetId} ${phenotypeForm.stableId} rather than phenotype, please <a href="addComment.do?stableId=${phenotypeForm.stableId}&commentTargetId=gene&externaDbName=${phenotypeForm.externalDbName}&externalDbVersion=${phenotypeForm.externalDbVersion}&flag=0">click here</a> to use regular comment form.
 
         </td>
       </tr> 

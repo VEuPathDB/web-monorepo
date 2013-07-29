@@ -25,7 +25,7 @@
 <div style="font-size:120%;text-align:center">
 <center><table><tr>
 <td width="80%" style="vertical-align:middle">
-  	This "relative locations" form is dense and requires some basic understanding;<br> please <a href="<c:url value="/help.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;"><b>Contact Us</b></a> with any questions or feedback you may have.
+  	This "relative locations" form is dense and requires some basic understanding;<br> please <a href="<c:url value="/contact.us"/>" class="open-window-contact-us"><b>Contact Us</b></a> with any questions or feedback you may have.
 </td>
 <td width="20%">
 	<a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">

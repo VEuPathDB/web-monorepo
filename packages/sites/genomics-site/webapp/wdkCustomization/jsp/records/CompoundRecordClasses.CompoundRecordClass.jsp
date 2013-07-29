@@ -55,7 +55,7 @@
        bgcolor="#FFFFFF">
 <td></td>
 <td>
- <img src="http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&cid=${attrs['compound_id']}&width=100&height=100"/>
+ <img src="http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&${fn:toLowerCase(fn:replace(source_id, ':', '='))}&width=100&height=100"/>
 </td>
 </tr>
 </table>

@@ -7,11 +7,11 @@ body {
 	background-image: url(/assets/images/GiardiaDB/background_s.jpg);
 }
 
-a:link, a:visited {
+a:link, a:visited, div.divlink {
 	color: #227124; //green
 }
 
-a:hover, a:active {
+a:hover, a:active, div.divlink:hover {
 	color: #2c2c7d;  //blue, towards purple
 }
 a[name]:link {
@@ -283,7 +283,7 @@ div.Workspace {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in help.jsp, classic bullet list
+	 =used in contact.do, classic bullet list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 

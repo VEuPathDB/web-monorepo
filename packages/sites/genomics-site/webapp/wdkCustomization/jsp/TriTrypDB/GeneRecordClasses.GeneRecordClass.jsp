@@ -219,13 +219,15 @@ ${organism}<br>
 </c:if>
 
 <!-- snps between strains -->
-<%-- TODO: NEED SNP OVERVIEW HERE --%>
+<c:if test="${attrs['hasHtsSnps'].value eq '1'}">
+
 <c:set var="htsSNPs" value="${attrs['snpoverview']}" />
 <imp:panel attribute="${htsSNPs.name}"
      displayName="${htsSNPs.displayName}"
      content="${htsSNPs.value}${append}" />
 <br> 
 <imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
+</c:if>
 
 <!-- gene alias table -->
 <imp:wdkTable tblName="Alias" isOpen="FALSE" attribution=""/>
@@ -289,9 +291,18 @@ ${organism}<br>
 
 <c:if test="${(attrs['so_term_name'].value eq 'protein_coding')}">
   <c:set var="orthomclLink">
-    <div align="center">
-      <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">Find the group containing ${id} in the OrthoMCL database</a>
+  <c:choose>
+    <c:when test="${fn:contains( orthomcl_name, '|') }">
+    <div>
+    <br>Note: Genes in this table could not be mapped to OrthoMCL, but were grouped to each other based on blast similarity.
     </div>
+    </c:when>
+    <c:otherwise>
+    <div>
+    <br> <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
+    </div>
+    </c:otherwise>
+  </c:choose>
   </c:set>
 
   <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
@@ -384,33 +395,14 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
             </c:otherwise>
         </c:choose>
 
+<c:if test="${attrs['hasProteomics'].value eq '1'}">
+ <imp:wdkTable tblName="MassSpec" isOpen="true"   attribution=""/>
+</c:if>
 
-<c:choose>
-  <c:when test='${organismFull eq "Leishmania infantum"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" 
-          attribution=""/>
-  </c:when>
-
-  <c:when test='${organismFull eq "Leishmania major strain Friedlin"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
-  </c:when>
-
-  <c:when test='${organismFull eq "Leishmania braziliensis"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
-  </c:when>
-
-  <c:when test='${organismFull eq "Trypanosoma brucei TREU927"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" attribution=""/>
-
-     <imp:wdkTable tblName="MassSpecMod" isOpen="true" attribution=""/> 
-  </c:when>
-
-  <c:when test='${binomial eq "Trypanosoma cruzi"}'>
-     <imp:wdkTable tblName="MassSpec" isOpen="true" 
-          attribution=""/>
-  </c:when>
-</c:choose>
-
+<c:if test="${attrs['hasPostTransMod'].value eq '1'}">
+ <imp:wdkTable tblName="MassSpecMod" isOpen="true"   attribution=""/>
+</c:if>
+     
 <imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 <imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
