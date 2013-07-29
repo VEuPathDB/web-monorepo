@@ -62,9 +62,9 @@ function datasetSearches($element, $attrs) {
 
   $datasetRecords.find("tbody tr").each(function() {
     $(this).find(".search-mechanism").each(function(idx, td) {
-      var $button = $(td).find("button");
+      var $btn = $(td).find(".btn");
       var color = colors[idx % colors.length];
-      $button.addClass("btn btn-" + color);
+      $btn.addClass("btn-" + color);
     });
   });
 
@@ -136,7 +136,6 @@ function datasetSearches($element, $attrs) {
       // update active row
       $datasetRecords.find("tbody tr").removeClass("active");
       $delegate.addClass("active");
-      toggleTable.call($tableToggle.get(0), true);
       $questionWrapper.find(".tabs").hide();
 
       questionCollection.datasetId = $data.datasetId;
@@ -144,7 +143,7 @@ function datasetSearches($element, $attrs) {
       $delegate.find(".question-link").each(function(idx, anchor) {
         var category = $(this).data("category");
         questionCollection.questions.push({
-          url: $(this).data("href") + "&partial=true",
+          url: $(this).attr("href") + "&partial=true",
           category: category.replace(/((^\w)|_(\w))/g,
               function(s) { return s.replace("_", " ").toUpperCase()})
         });
@@ -160,6 +159,7 @@ function datasetSearches($element, $attrs) {
           });
       }
     }
+    toggleTable.call($tableToggle.get(0), true);
   });
 
   // bind toggleTable to .table-toggle

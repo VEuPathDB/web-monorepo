@@ -88,17 +88,17 @@
             <c:set var="question" value="${internalQuestions[displayCategory]}"/>
             <td class="search-mechanism">
               <c:if test="${question ne null}">
-                <button class="wdk-tooltip question-link btn"
+                <a class="wdk-tooltip question-link btn"
                   data-category="${displayCategory}"
                   title="Search this data set by ${fn:replace(displayCategory, '_', ' ')}"
-                  data-href="showQuestion.do?questionFullName=${question.fullName}">
+                  href="showQuestion.do?questionFullName=${question.fullName}">
                   <c:choose>
                     <c:when test="${displayCategory eq 'fold_change_with_pvalue'}">FCpV</c:when>
                     <c:otherwise>
                       <c:forEach items="${fn:split(displayCategory, '_')}" var="part">${fn:toUpperCase(fn:substring(part, 0, 1))}</c:forEach>
                     </c:otherwise>
                   </c:choose>
-                </button>
+                </a>
               </c:if>
             </td>
           </c:forEach>
