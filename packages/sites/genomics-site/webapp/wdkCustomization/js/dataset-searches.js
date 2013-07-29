@@ -131,7 +131,7 @@ function datasetSearches($element, $attrs) {
 
     if ($data.datasetId === questionCollection.datasetId) {
       // select appropriate tab
-      $("#question-wrapper").find("#question-set-" + questionCollection.datasetId).tabs("option", "selected", tabIdx);
+      $("#question-wrapper").find("#question-set-" + questionCollection.datasetId).tabs("option", "active", tabIdx);
     } else {
       // update active row
       $datasetRecords.find("tbody tr").removeClass("active");
@@ -149,13 +149,13 @@ function datasetSearches($element, $attrs) {
         });
       });
 
-      if (!$questionWrapper.find("#question-set-" + questionCollection.datasetId).show().tabs("option", "selected", tabIdx).length) {
+      if (!$questionWrapper.find("#question-set-" + questionCollection.datasetId).show().tabs("option", "active", tabIdx).length) {
         $questionWrapper
           .append(datasetTabsTmpl(questionCollection))
           .addClass("active")
           .find(".tabs").tabs({
             cache: true,
-            selected: tabIdx
+            active: tabIdx
           });
       }
     }
