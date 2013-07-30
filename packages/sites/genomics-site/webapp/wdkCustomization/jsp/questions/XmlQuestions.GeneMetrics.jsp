@@ -475,7 +475,7 @@ The Gene Metrics table summarizes the number of genes for the organisms currentl
           <c:set var="Pfa3" value="${record.attributesMap['Plasmodium falciparum 3D7']}"/>
           <c:set var="PfaI" value="${record.attributesMap['Plasmodium falciparum IT']}"/>
           <c:set var="Pko" value="${record.attributesMap['Plasmodium knowlesi strain H']}"/>
-          <c:set var="Pvi" value="${record.attributesMap['Plasmodium vivax SaI-1']}"/>
+          <c:set var="Pvi" value="${record.attributesMap['Plasmodium vivax Sal-1']}"/>
           <c:set var="Pyo1" value="${record.attributesMap['Plasmodium yoelii yoelii 17XNL']}"/>
           <c:set var="PyoY" value="${record.attributesMap['Plasmodium yoelii yoelii YM']}"/>
 
