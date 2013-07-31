@@ -114,7 +114,7 @@
       <div id="question-set-{{datasetId}}" class="tabs">
         <ul>
           {{#each questions}}
-          <li><a href="{{url}}">{{category}}</a></li>
+          <li><a href="{{url}}">{{category}}<span><jsp:text/></span></a></li>
           {{/each}}
         </ul>
       </div>
