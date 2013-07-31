@@ -95,3 +95,10 @@
 }
 .list {visibility:hidden;}
 #balloon, #closeButton { z-index: 505; }
+
+ul.dropdown,
+ul.dropdown li.hover,
+ul.dropdown li:hover,
+ul.dropdown ul {
+	z-index: 98;
+}

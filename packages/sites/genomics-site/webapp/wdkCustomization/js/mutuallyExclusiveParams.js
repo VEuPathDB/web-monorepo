@@ -99,7 +99,7 @@
           $.each(groups, function(idx, group) {
             radioDiv
             .append($("<input id='xor-group-" + idx + "' type='radio' " +
-                "name='xor-group' value='" + idx + "'/>").attr("checked", idx === 0))
+                "name='xor-group' value='" + idx + "'/>").prop("checked", idx === 0))
             .append($("<label for='xor-group-" + idx + "'>" + group.name + "</label>"));
           });
 
