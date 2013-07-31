@@ -158,6 +158,7 @@ function datasetSearches($element, $attrs) {
             beforeLoad: function(event, ui) {
               if (ui.tab.data("loaded")) {
                 event.stopPropagation();
+                return;
               }
 
               ui.tab.find("span").append('<img style="margin-left:4px; position: relative; top:2px;" src="wdk/images/filterLoading.gif"/>');
@@ -166,7 +167,8 @@ function datasetSearches($element, $attrs) {
                 ui.tab.data("loaded", true);
                 ui.tab.find("img").remove();
               });
-            }
+            },
+            load: wdk.load
           });
       }
     }
