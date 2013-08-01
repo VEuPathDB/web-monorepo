@@ -12,12 +12,18 @@
 <!-- display basic filters -->
 <table border="1">
   <tr>
-    <th align="center">All<br>Results</th>
-    <th align="center">Ortholog<br>Groups</th>
-    <th align="center"><i>Babesia bovis</i></th>
-    <th align="center"><i>Babesia microti</i></th>
-    <th align="center"><i>Theileria annulata</i></th>
-    <th align="center"><i>Theileria parva</i></th>
+    <th rowspan=2 align="center">All<br>Results</th>
+    <th rowspan=2 align="center">Ortholog<br>Groups</th>
+    <th colspan=2 align="center"><i>Babesia</i></th>
+    <th colspan=4 align="center"><i>Theileria</i></th>
+  </tr>
+  <tr> 
+    <th align="center"><i>bovis</i></th>
+    <th align="center"><i>microti</i></th>
+    <th align="center"><i>annulata</i></th>
+    <th align="center"><i>equi</i></th>
+    <th align="center"><i>orientalis</i></th>
+    <th align="center"><i>parva</i></th>
   </tr>
   <tr align="center">
     <td>
@@ -49,7 +55,19 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tannu_instances" />  
+    </td> 
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tequ_instances" />  
     </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tori_instances" />  
+    </td> 
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
