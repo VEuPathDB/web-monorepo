@@ -12,6 +12,29 @@
 
 <!-- display basic filters -->
 <table border="1">
+   <tr>
+     <th rowspan=3 align="center">All<br>Results</th>
+     <th rowspan=3 align="center">Ortholog<br>Groups</th>
+     <th colspan=9 align="center"><i>Entamoeba</i></th>
+     <th align="center"><i>Acanthamoeba </i></th>
+   </tr>
+   <tr>
+     <th rowspan=2 align="center"><i>dispar</i></th>
+     <th colspan=5 align="center"><i>histolytica</i></th>
+     <th rowspan=2 align="center"><i>invadens</i></th>
+     <th rowspan=2 align="center"><i>moshkovskii</i></th>
+     <th rowspan=2 align="center"><i>nuttalli</i></th>
+     <th rowspan=2 align="center"><i>castellanii</i></th>
+   </tr>
+   <tr>
+     <th align="center"><i>HM-1:IMSS</i></th>
+     <th align="center"><i>HM-1:IMSS-A</i></th>
+     <th align="center"><i>HM-1:IMSS-B</i></th>
+     <th align="center"><i>HM-3:IMSS</i></th>
+     <th align="center"><i>KU27</i></th>
+   </tr>
+
+<!--
   <tr>
     <th align="center">All Results</th>
     <th align="center">Ortholog<br>Groups</th>
@@ -27,6 +50,7 @@
     <th align="center"><i>Acanthamoeba castellanii</i></th>
 
   </tr>
+-->
   <tr align="center">
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
