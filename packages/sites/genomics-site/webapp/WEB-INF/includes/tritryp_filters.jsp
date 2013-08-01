@@ -16,9 +16,8 @@
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
     <th colspan=6 align="center"><i>Leishmania </i></th>
     <th colspan=4 align="center"><i>Trypanosoma brucei</i></th>
-    <th rowspan=2 align="center"><i>Trypanosoma<br>congolense</i></th>
     <th colspan=6 align="center"><i>Trypanosoma cruzi</i></th>
-    <th rowspan=2 align="center"><i>Trypanosoma<br>vivax</i></th>
+    <th colspan=3 align="center"><i>Trypanosoma</i></th>
   </tr>
   <tr>
     <th><i>braziliensis</i></th>
@@ -37,6 +36,9 @@
     <th>unassigned</th>
     <th>marinkellei</th>
     <th>Sylvio</th>
+    <th><i>congolense</i></th>
+    <th><i>evansi</i></th>
+    <th><i>vivax</i></th>
   </tr>
   <tr align="center">
     <td>
@@ -115,12 +117,6 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="tcongolense_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
                           instanceName="tc_distinct_genes" />  
     </td>
     <td>
@@ -152,6 +148,18 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="tcsyl_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="tcongolense_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="teva_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
