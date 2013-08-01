@@ -16,7 +16,11 @@
     <th align="center">All Results</th>
     <th align="center">Ortholog<br>Groups</th>
     <th align="center"><i>Entamoeba dispar</i></th>
-    <th align="center"><i>Entamoeba histolytica</i></th>
+    <th align="center"><i>Entamoeba histolytica HM-1:IMSS</i></th>
+    <th align="center"><i>Entamoeba histolytica HM-1:IMSS-A</i></th>
+    <th align="center"><i>Entamoeba histolytica HM-1:IMSS-B</i></th>
+    <th align="center"><i>Entamoeba histolytica HM-3:IMSS</i></th>
+    <th align="center"><i>Entamoeba histolytica KU27</i></th>
     <th align="center"><i>Entamoeba invadens</i></th>
     <th align="center"><i>Entamoeba moshkovskii</i></th>
     <th align="center"><i>Entamoeba nuttalli</i></th>
@@ -47,15 +51,37 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="ehis_instances" />  
+    </td> 
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="ehisa_instances" />  
+    </td> 
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="ehisb_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="einv_instances" />  
+                          instanceName="ehis3_instances" />  
     </td>
-
-
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="ehisk_instances" />  
+    </td> 
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="einv_instances" />  
+    </td> 
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
@@ -73,8 +99,7 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="acas_instances" />  
-    </td>
-
+    </td> 
 
   </tr>
 </table>
