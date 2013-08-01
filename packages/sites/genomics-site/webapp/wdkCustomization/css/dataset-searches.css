@@ -92,7 +92,7 @@ html {
   max-width: 1060px;
   margin: 0 auto;
   visibility: hidden;
-  padding-top: 50px;
+  padding-top: 6em;
   position: relative;
 }
 .dataTable {
@@ -114,12 +114,6 @@ table.dataTable thead th div.DataTables_sort_wrapper {
 }
 .dataTables_wrapper .ui-widget-header {
   padding: 0px;
-}
-.dataTables_filter {
-  position: relative;
-  top: -2.5em;
-  margin: 0;
-  padding: 0;
 }
 .dataTables_filter input {
   padding-right: 2em;
@@ -330,10 +324,14 @@ td.search-mechanism a {
   font-family: inherit;
   font-size: inherit;
 }
-.legend {
+.legend, .dataTables_filter {
   position: absolute;
+  top: 1em;
+  margin: 0;
+  padding: 0;
+}
+.legend {
   right: 0em;
-  top: 1.5em;
   color: #777777;
   max-width: 70%;
 }
