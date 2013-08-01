@@ -252,7 +252,13 @@ return true;
           <tr>
             <td>
               <input type="checkbox" name="genomes" value="tannAnkara" checked>T.annulata
+            </td> 
+            <td>
+              <input type="checkbox" name="genomes" value="tequWA" checked>T.equi
             </td>
+            <td>
+              <input type="checkbox" name="genomes" value="toriShintoku" checked>T.orientalis
+            </td> 
             <td>
               <input type="checkbox" name="genomes" value="tparMuguga" checked>T.parva
             </td>
