@@ -13,18 +13,11 @@
 <!-- display basic filters -->
 <table border="1">
    <tr>
-     <th rowspan=3 align="center">All<br>Results</th>
-     <th rowspan=3 align="center">Ortholog<br>Groups</th>
-     <th colspan=9 align="center"><i>Entamoeba</i></th>
+     <th rowspan=2 align="center">All<br>Results</th>
+     <th rowspan=2 align="center">Ortholog<br>Groups</th>
+     <th colspan=5 align="center"><i>Entamoeba histolytica</i></th>
+     <th colspan=4 align="center"><i>Entamoeba</i></th>
      <th align="center"><i>Acanthamoeba </i></th>
-   </tr>
-   <tr>
-     <th rowspan=2 align="center"><i>dispar</i></th>
-     <th colspan=5 align="center"><i>histolytica</i></th>
-     <th rowspan=2 align="center"><i>invadens</i></th>
-     <th rowspan=2 align="center"><i>moshkovskii</i></th>
-     <th rowspan=2 align="center"><i>nuttalli</i></th>
-     <th rowspan=2 align="center"><i>castellanii</i></th>
    </tr>
    <tr>
      <th align="center"><i>HM-1:IMSS</i></th>
@@ -32,6 +25,11 @@
      <th align="center"><i>HM-1:IMSS-B</i></th>
      <th align="center"><i>HM-3:IMSS</i></th>
      <th align="center"><i>KU27</i></th>
+     <th align="center"><i>dispar</i></th>
+     <th align="center"><i>invadens</i></th>
+     <th align="center"><i>moshkovskii</i></th>
+     <th align="center"><i>nuttalli</i></th>
+     <th align="center"><i>castellanii</i></th>
    </tr>
 
 <!--
@@ -68,12 +66,6 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="edis_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
                           instanceName="ehis_instances" />  
     </td> 
     <td>
@@ -100,6 +92,12 @@
                           answerValue="${answerValue}" 
                           instanceName="ehisk_instances" />  
     </td> 
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="edis_instances" />  
+    </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
