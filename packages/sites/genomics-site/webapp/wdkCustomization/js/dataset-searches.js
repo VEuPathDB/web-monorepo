@@ -153,23 +153,7 @@ function datasetSearches($element, $attrs) {
         $questionWrapper
           .append(datasetTabsTmpl(questionCollection))
           .addClass("active")
-          .find(".tabs").tabs({
-            active: tabIdx,
-            beforeLoad: function(event, ui) {
-              if (ui.tab.data("loaded")) {
-                event.stopPropagation();
-                return;
-              }
-
-              ui.tab.find("span").append('<img style="margin-left:4px; position: relative; top:2px;" src="wdk/images/filterLoading.gif"/>');
-
-              ui.jqXHR.success(function() {
-                ui.tab.data("loaded", true);
-                ui.tab.find("img").remove();
-              });
-            },
-            load: wdk.load
-          });
+          .find(".tabs").tabs({ active: tabIdx });
       }
     }
     toggleTable.call($tableToggle.get(0), true);
