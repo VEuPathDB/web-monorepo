@@ -334,8 +334,20 @@ return true;
               <input type="checkbox" name="genomes" value="edisSAW760" checked>E.dispar
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="ehisHM1IMSS" checked>E.histolytica
+              <input type="checkbox" name="genomes" value="ehisHM1IMSS" checked>E.histolytica HM-1:IMSS
+            </td> 
+            <td>
+              <input type="checkbox" name="genomes" value="ehisHM1IMSS-A" checked>E.histolytica HM-1:IMSS-A
             </td>
+            <td>
+              <input type="checkbox" name="genomes" value="ehisHM1IMSS-B" checked>E.histolytica HM-1:IMSS-B
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="ehisHM3IMSS" checked>E.histolytica HM-3:IMSS
+            </td>
+            <td>
+              <input type="checkbox" name="genomes" value="ehisKU27" checked>E.histolytica KU27
+            </td> 
             <td>
               <input type="checkbox" name="genomes" value="einvIP1" checked>E.invadens
             </td>
