@@ -223,6 +223,9 @@ return true;
             <td>
               <input type="checkbox" name="genomes" value="etenHoughton" checked>E.tenella
             </td>
+            <td>
+              <input type="checkbox" name="genomes" value="sneuSN3" checked>S. neurona
+            </td>
            </tr>
          </table>
      </td></tr>
