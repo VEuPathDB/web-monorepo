@@ -297,6 +297,9 @@ return true;
               <input type="checkbox" name="genomes" value="nemaSp1ERTm2" checked>Nematocida Sp1 ERTm2
             </td>
             <td>
+              <input type="checkbox" name="genomes" value="nsp1ERTm6" checked>Nematocida Sp1 ERTm6
+            </td>
+            <td>
               <input type="checkbox" name="genomes" value="nparERTm1" checked>N.parisii ERTm1
             </td>
             <td>
