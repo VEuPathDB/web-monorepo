@@ -12,18 +12,23 @@
 <!-- display basic filters -->
 <table border="1">
   <tr>
-    <th align="center">All<br>Results</th>
-    <th align="center">Ortholog<br>Groups</th>
-    <th align="center">Tg<br>Results</th>
-    <th align="center">Tg<br>Genes</th>
-    <th align="center">Nc<br>Genes</th>
-    <th align="center">Et<br>Genes</th>
-    <th colspan=2 align="center">GT1</th>
-    <th colspan=2 align="center">ME49</th>
-    <th colspan=2 align="center">VEG</th>
-    <th colspan=2 align="center">RH</th>
+    <th rowspan=2 align="center">All Results</th>
+    <th rowspan=2 align="center">Ortholog Groups</th>
+    <th colspan=2 align="center"><i>Toxoplasma gondii</i></th>
+    <th colspan=8 align="center"><i>Toxoplasma gondii</i></th>
+    <th rowspan=2 align="center"><i>Neospora caninum</i></th>
+    <th rowspan=2 align="center"><i>Eimeria tenella</i></th>
+    <th rowspan=2 align="center"><i>Sarcocystis neurona</i></th>
   </tr>
 
+  <tr>
+    <th rowspan=1 align="center">All</th>
+    <th rowspan=1 align="center">Non-redundant</th> 
+    <th colspan=2 align="center"><i>GT1</i></th>
+    <th colspan=2 align="center"><i>ME49</i></th>
+    <th colspan=2 align="center"><i>VEG</i></th>
+    <th colspan=2 align="center">RH</i></th>
+  </tr> 
 
   <tr align="center">
     <td>
@@ -54,18 +59,6 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="neospora_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
-                          instanceName="eimeria_instances" />  
-    </td>
-    <td>
-      <imp:filterInstance strategyId="${strategyId}" 
-                          stepId="${stepId}" 
-                          answerValue="${answerValue}" 
                           instanceName="gt1_genes" />  
     </td>
     <td>
@@ -87,21 +80,16 @@
                           instanceName="me49_instances" />  
     </td>
     <td>
-
-TODO
-
-      <%-- imp:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="veg_genes" / --%>  
+                          instanceName="veg_genes" />  
     </td>
     <td>
-
-TODO
-      <%-- imp:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="veg_instances" / --%>  
+                          instanceName="veg_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
@@ -114,6 +102,24 @@ TODO
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="rh_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="neospora_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="eimeria_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="sarcocystis_instances" />  
     </td>
 
   </tr>
