@@ -14,17 +14,18 @@
   <tr>
     <th rowspan=2 align="center">All<br>Results</th>
     <th rowspan=2 align="center">Ortholog<br>Groups</th>
+    <th align="center"><i>Edhazardia</i></th> 
     <th colspan=5 align="center"><i>Encephalitozoon cuniculi </i></th>
     <th colspan=3 align="center"><i>Encephalitozoon hellem </i></th>
-    <th rowspan=2 align="center"><i>Encephalitozoon intestinalis</i></th>
-    <th rowspan=2 align="center"><i>Encephalitozoon romaleae</i></th>
+    <th colspan=2 align="center"><i>Encephalitozoon</i></th>
     <th rowspan=2 align="center"><i>Enterocytozoon bieneusi</i></th>
-    <th colspan=3 align="center"><i>Nematocida </i></th>
+    <th colspan=4 align="center"><i>Nematocida </i></th>
     <th rowspan=2 align="center"><i>Nosema ceranae</i></th>
     <th rowspan=2 align="center"><i>Vavraia culicis</i></th>
     <th rowspan=2 align="center"><i>Vittaforma corneae</i></th>
   </tr>
   <tr>
+    <th align="center"><i>aedis USNM 41457</i></th> 
     <th><i>Distinct genes</i></th>
     <th><i>EC1</i></th>
     <th><i>EC2</i></th>
@@ -33,9 +34,12 @@
     <th><i>Distinct genes</i></th>
     <th><i>ATCC 50504</i></th>
     <th><i>Swiss</i></th>
+    <th><i>intestinalis</i></th>
+    <th><i>romaleae</i></th>
     <th><i>parisii ERTm1</i></th>
     <th><i>parisii ERTm3</i></th>
     <th><i>sp. 1 ERTm2</i></th>
+    <th><i>sp. 1 ERTm6</i></th>
   </tr>
 
   <tr align="center">
@@ -50,6 +54,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_ortholog_groups" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="eaed_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
@@ -134,6 +144,12 @@
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="npar2_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="nparm6_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
