@@ -153,8 +153,7 @@ table.dataTable thead th div.DataTables_sort_wrapper {
   padding-right: 0.8em;
 }
 .dataTable th {
-  color: #a45d35; /* SASS: site-color-primary */
-  /*border-top: none;*/
+  color: black; /* define link hover color in {project}.css */
   vertical-align: bottom;
 }
 .dataTable td {
