@@ -33,11 +33,16 @@
 
   <c:set var="project" value="${applicationScope.wdkModel.properties['PROJECT_ID']}"/>
 
+  <!--
   <jsp:output doctype-root-element="html"
     doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
   <html xmlns="http://www.w3.org/1999/xhtml">
+  -->
+  <!-- jsp:output tag for doctype no longer supports simple HTML5 declaration -->
+  <jsp:text>&lt;!DOCTYPE html&gt;</jsp:text>
+  <html lang="en">
   
 	  <!-- flag incoming galaxy.psu.edu users -->
 	  <c:if test="${not empty param.GALAXY_URL}">
