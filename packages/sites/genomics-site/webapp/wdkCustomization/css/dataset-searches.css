@@ -89,6 +89,7 @@ html {
 
 [data-controller] {
   width: 90%;
+  min-width: 900px;
   max-width: 1060px;
   margin: 0 auto;
   visibility: hidden;
