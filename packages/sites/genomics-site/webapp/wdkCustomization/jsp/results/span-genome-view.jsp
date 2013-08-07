@@ -66,7 +66,7 @@
               <div class="ruler"> </div>
               <c:forEach items="${region.features}" var="feature">
                 <c:set var="forward" value="${feature.forward ? 'forward' : 'reverse'}" />
-                <div id="${feature.sourceId}" class="feature ${forward}"
+                <div data-id="${feature.sourceId}" class="feature ${forward}"
                      style="left:${feature.percentStart}%; width:${feature.percentLength}%;">
                 </div>
               </c:forEach>
@@ -128,7 +128,7 @@
             <c:when test="${isDetail == 'true'}"><%-- display detail view --%>
               <c:forEach items="${sequence.features}" var="feature">
                 <c:set var="forward" value="${feature.forward ? 'forward' : 'reverse'}" />
-                <div id="${feature.sourceId}" class="feature ${forward}"
+                <div data-id="${feature.sourceId}" class="feature ${forward}"
                      style="left:${feature.percentStart}%; width:${feature.percentLength}%;">
                 </div>
               </c:forEach>
