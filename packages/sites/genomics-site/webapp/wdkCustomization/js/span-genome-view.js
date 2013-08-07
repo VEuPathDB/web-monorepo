@@ -26,8 +26,9 @@ function initializeGenomeView() {
                     content.data("registered", "true");
                     // register tooltips on sequences
                     content.find(".canvas .feature").each(function() {
-                        var featureId = $(this).attr("id");
-                        var feature = sequenceData.find(".features #" + featureId);
+                        var featureId = $(this).data("id");
+                        //var feature = sequenceData.find(".features #" + featureId);
+                        var feature = $(document.getElementById(featureId));
                         tooltip.setUpStickyTooltip(this, feature);
                     });
                 }
@@ -36,8 +37,9 @@ function initializeGenomeView() {
 
             // register events on feature if it's detail view
             canvas.find(".feature").each(function() {
-                var featureId = $(this).attr("id");
-                var feature = sequenceData.find(".features #" + featureId);
+                var featureId = $(this).data("id");
+                //var feature = sequenceData.find(".features #" + featureId);
+                var feature = $(document.getElementById(featureId));
                 tooltip.setUpStickyTooltip(this, feature);
             });
         });
