@@ -251,6 +251,7 @@ ${attrs['organism'].value}<br>
 
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
   <c:set var="orthomclLink">
+  <c:choose>
     <c:when test="${fn:contains( orthomcl_name, '|') }">
     <div>
     <br>Note: Genes in this table could not be mapped to OrthoMCL, but were grouped to each other based on blast similarity.
@@ -261,6 +262,7 @@ ${attrs['organism'].value}<br>
     <br> <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
     </div>
     </c:otherwise>
+  </c:choose>
   </c:set>
 
   <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="" postscript="${orthomclLink}"/>
