@@ -93,7 +93,7 @@ html {
   max-width: 1060px;
   margin: 0 auto;
   visibility: hidden;
-  padding-top: 6em;
+  padding-top: 8em;
   position: relative;
 }
 .dataTable {
@@ -337,11 +337,19 @@ td.search-mechanism a {
 }
 .legend div:first-child {
   color: black;
+  height: 4em;
 }
 .legend div {
   padding: 0.2em 0.6em;
   float: left;
   line-height: 18px;
+}
+.legend ul span:first-child {
+  margin-right: 0.2em;
+}
+.legend li {
+  float: left;
+  padding: 0.2em 0.6em;
 }
 .legend div span:first-child {
   margin-right: 0.2em;

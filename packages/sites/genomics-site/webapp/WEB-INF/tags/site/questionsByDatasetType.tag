@@ -14,19 +14,21 @@
 
     <div class="legend ui-helper-clearfix">
       <div>Legend:</div>
-      <c:forEach items="${display_categories}" var="displayCategory">
-        <div>
-          <span class="search-mechanism btn btn-active">
-            <c:choose>
-              <c:when test="${displayCategory eq 'fold_change_with_pvalue'}">FCpV</c:when>
-              <c:otherwise>
-                <c:forEach items="${fn:split(displayCategory, '_')}" var="part">${fn:toUpperCase(fn:substring(part, 0, 1))}</c:forEach>
-              </c:otherwise>
-            </c:choose>
-          </span>
-          <span>${fn:replace(displayCategory, '_', ' ')}</span>
-        </div>
-      </c:forEach>
+      <ul>
+        <c:forEach items="${display_categories}" var="displayCategory">
+          <li>
+            <span class="search-mechanism btn btn-active">
+              <c:choose>
+                <c:when test="${displayCategory eq 'fold_change_with_pvalue'}">FCpV</c:when>
+                <c:otherwise>
+                  <c:forEach items="${fn:split(displayCategory, '_')}" var="part">${fn:toUpperCase(fn:substring(part, 0, 1))}</c:forEach>
+                </c:otherwise>
+              </c:choose>
+            </span>
+            <span>${fn:replace(displayCategory, '_', ' ')}</span>
+          </li>
+        </c:forEach>
+      </ul>
     </div>
 
     <table id="dataset-records" width="100%">

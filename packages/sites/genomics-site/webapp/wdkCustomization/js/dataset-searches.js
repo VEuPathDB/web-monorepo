@@ -60,6 +60,7 @@ function datasetSearches($element, $attrs) {
     "brown"
   ];
 
+  // using site-based colors now (btn-site)
   $datasetRecords.find("tbody tr").each(function() {
     $(this).find(".search-mechanism").each(function(idx, td) {
       var $btn = $(td).find(".btn");
@@ -163,5 +164,7 @@ function datasetSearches($element, $attrs) {
   $tableToggle.on("click", function() { toggleTable() });
 
   // show the page
-  $element.css("visibility", "visible");
+  setTimeout(function() {
+    $element.css("visibility", "visible");
+  }, 100);
 }
