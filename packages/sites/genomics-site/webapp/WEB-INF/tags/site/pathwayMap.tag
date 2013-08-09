@@ -40,7 +40,7 @@
             fixed: true // Make it fixed so it can be hovered over
           },
           style: {
-            classes: 'ui-tooltip-green ui-tooltip-rounded'
+            classes: 'qtip-green qtip-rounded'
           }
         });
       });
