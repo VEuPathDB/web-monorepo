@@ -42,7 +42,7 @@
           </c:forEach>
         </tr>
         <tr>
-          <th colspan="${fn:length(display_categories)}">Choose a search</th>
+          <th colspan="${fn:length(display_categories)}" class="searches">Choose a search</th>
         </tr>
       </thead>
       <tbody>

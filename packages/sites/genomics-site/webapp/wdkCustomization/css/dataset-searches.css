@@ -168,6 +168,9 @@ table.dataTable thead th div.DataTables_sort_wrapper {
 .dataTable tr.active td {
   background-color: #f0f0f0;
 }
+th.searches {
+  text-align: center;
+}
 .search-head {
   display: none;
 }
