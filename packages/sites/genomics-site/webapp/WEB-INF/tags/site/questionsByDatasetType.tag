@@ -16,7 +16,7 @@
       <div>Legend:</div>
       <ul>
         <c:forEach items="${display_categories}" var="displayCategory">
-          <li>
+          <li class="wdk-tooltip" title="${fn:replace(displayCategory, '_', ' ')}">
             <span class="search-mechanism btn btn-active">
               <c:choose>
                 <c:when test="${displayCategory eq 'fold_change_with_pvalue'}">FCpV</c:when>
