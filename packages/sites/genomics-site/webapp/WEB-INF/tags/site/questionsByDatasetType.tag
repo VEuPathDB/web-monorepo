@@ -17,7 +17,7 @@
       <ul>
         <c:forEach items="${display_categories}" var="displayCategory">
           <li class="wdk-tooltip" title="${fn:replace(displayCategory, '_', ' ')}">
-            <span class="search-mechanism btn btn-active">
+            <span class="search-mechanism btn btn-blue btn-active">
               <c:choose>
                 <c:when test="${displayCategory eq 'fold_change_with_pvalue'}">FCpV</c:when>
                 <c:otherwise>
@@ -90,7 +90,7 @@
             <c:set var="question" value="${internalQuestions[displayCategory]}"/>
             <td class="search-mechanism">
               <c:if test="${question ne null}">
-                <a class="wdk-tooltip question-link btn"
+                <a class="wdk-tooltip question-link btn btn-blue"
                   data-category="${displayCategory}"
                   title="Search this data set by ${fn:replace(displayCategory, '_', ' ')}"
                   href="showQuestion.do?questionFullName=${question.fullName}">
