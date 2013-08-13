@@ -196,7 +196,6 @@
     {{> formula}}
     {{/each}}
     <p>and returns genes when {{{criteria}}}.
-      <!--<b>fold change</b> &gt;= <b>{{foldChange}}</b>.-->
       {{#if narrowest}}
         This calculation creates the <b>narrowest</b> window of expression values in
         which to look for genes that meet your fold change cutoff.
