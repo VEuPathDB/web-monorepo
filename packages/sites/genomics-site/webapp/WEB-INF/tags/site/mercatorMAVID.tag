@@ -178,10 +178,10 @@ return true;
               <input type="checkbox" name="genomes" value="pfalIT" checked>P.falciparum IT
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="pvivSaI1" checked>P.vivax
+              <input type="checkbox" name="genomes" value="pvivSal1" checked>P.vivax
             </td>
             <td>
-              <input type="checkbox" name="genomes" value="pyoe17XNL" checked>P.yoelii 17XNL
+              <input type="checkbox" name="genomes" value="pyoeyoelii17XNL" checked>P.yoelii 17XNL
             </td>
             <td>
               <input type="checkbox" name="genomes" value="pberANKA" checked>P.berghei
