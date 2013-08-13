@@ -57,10 +57,6 @@
               description="source id for the contig or chromosome"
 %>
 
-<%@ attribute name="availableGenomes"
-              description="string list of available genomes"
-%>
-
 <%@ attribute name="start"
               description="nucleotide position"
 %>
@@ -101,10 +97,6 @@ return true;
 
 <c:if test="${revCompOn == 1}">
  <c:set var="initialCheckBox" value="CHECKED"/>
-</c:if>
-
-<c:if test="${availableGenomes == null || availableGenomes == ''}">
- <c:set var="availableGenomes" value="available genomes"/>
 </c:if>
 
 <form action="${cgiUrl}/${cgiScript}" onSubmit="popupform(this, ${cgiScript})">
