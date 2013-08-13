@@ -205,17 +205,11 @@ ${organism}<br>
 <c:if test='${organismFull ne "Trypanosoma cruzi strain CL Brener"}'>
 
 <!-- Mercator / Mavid alignments -->
-<c:set var="mercatorAlign">
-<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
-                    contigId="${sequence_id}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
-                    availableGenomes=""/>
-</c:set>
+<imp:mercatorTable tblName="MercatorTable" isOpen="false" 
+     cgiUrl="/cgi-bin" projectId="${projectId}" 
+     revCompOn="${revCompOn}" contigId="${sequence_id}" 
+    start="${start}" end="${end}" /> 
 
-<imp:toggle isOpen="false"
-  name="mercatorAlignment"
-  displayName="Multiple Sequence Alignment"
-  content="${mercatorAlign}"
-  attribution=""/>
 </c:if>
 
 <!-- snps between strains -->

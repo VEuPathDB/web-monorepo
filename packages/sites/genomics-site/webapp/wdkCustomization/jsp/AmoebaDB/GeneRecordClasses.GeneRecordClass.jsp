@@ -164,18 +164,10 @@ ${attrs['organism'].value}<br>
 
 
 <!-- Mercator / Mavid alignments -->
-<c:set var="mercatorAlign">
-<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
-                    contigId="${contig}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
-                    availableGenomes=""/>
-</c:set>
-
-<imp:toggle isOpen="true"
-  name="mercatorAlignment"
-  displayName="Multiple Sequence Alignment"
-  content="${mercatorAlign}"
-  attribution=""/>
-
+<imp:mercatorTable tblName="MercatorTable" isOpen="false" 
+     cgiUrl="/cgi-bin" projectId="${projectId}" 
+     revCompOn="${revCompOn}" contigId="${sequence_id}" 
+     start="${start}" end="${end}" /> 
 
 <!-- snps between strains -->
 <%-- HTS SNP OVERVIEW ---------------%>

@@ -168,19 +168,10 @@ ${attrs['organism'].value}<br>
    <c:set var="revCompOn" value="1"/>
   </c:if>
 
-<c:set var="mercatorAlign">
-<imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" revCompOn="${revCompOn}"
-                    contigId="${contig}" start="${start}" end="${end}" bkgClass="rowMedium" cellPadding="0"
-                    availableGenomes=""/>
-</c:set>
-
-<imp:toggle isOpen="false"
-  name="mercatorAlignment"
-  displayName="Multiple Sequence Alignment"
-  content="${mercatorAlign}"
-  attribution=""/>
-
-
+<imp:mercatorTable tblName="MercatorTable" isOpen="false" 
+     cgiUrl="/cgi-bin" projectId="${projectId}" 
+     revCompOn="${revCompOn}" contigId="${sequence_id}" 
+     start="${start}" end="${end}" /> 
 
 
 <imp:pageDivider name="Annotation"/>
