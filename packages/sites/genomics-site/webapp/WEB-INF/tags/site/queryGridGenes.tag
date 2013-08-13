@@ -117,10 +117,10 @@
                     <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesByRTPCREvidence" linktext="RT PCR Evidence" existsOn="A C"/>
                 </tr>
  		<tr>
-                    <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A Am G P T Tt"/>
+                    <imp:queryGridMakeUrl qset="InternalGeneDatasetQuestions" qname="GenesByMicroarrayEvidence" linktext="Microarray Evidence" existsOn="A Am G P T Tt"/>
                 </tr>
                 <tr>
-                    <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesByRNASeqEvidence" linktext="RNA Seq Evidence" existsOn="A P T Tt"/>
+                    <imp:queryGridMakeUrl qset="InternalGeneDatasetQuestions" qname="GenesByRNASeqEvidence" linktext="RNA Seq Evidence" existsOn="A P T Tt"/>
                 </tr>
 		   <tr>
                     <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesByChIPchip" linktext="ChIP chip Evidence" existsOn="A P T"/> 
