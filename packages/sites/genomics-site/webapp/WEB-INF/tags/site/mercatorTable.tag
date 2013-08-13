@@ -69,10 +69,6 @@
               description="nucleotide position"
 %>
 
-<%@ attribute name="bkgClass"
-              description="tr class name"
-%>
-
 <%@ attribute name="inputContig"
               description="boolean, use text box to get contig if true"
 %>
