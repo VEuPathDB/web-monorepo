@@ -115,22 +115,22 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     if (refCount <= 1) {
       refOp.attr("disabled", true);
       refOp.find(":selected").text("none");
-      refOp.parent().hide(); //.next().hide();
+      refOp.parent().hide();
     } else {
       refOp.attr("disabled", false);
       refOp.find(":selected").text(refOp.val().slice(0, -1));
-      refOp.parent().css("display", ""); //.next().show();
+      refOp.parent().css("display", "");
     }
 
     // if compCount <= 1, make ops disabled
     if (compCount <=1) {
       compOp.attr("disabled", true);
       compOp.find(":selected").text("none");
-      compOp.parent().hide(); //.next().hide();
+      compOp.parent().hide();
     } else {
       compOp.attr("disabled", false);
       compOp.find(":selected").text(compOp.val().slice(0, -1));
-      compOp.parent().css("display", ""); //.next().show();
+      compOp.parent().css("display", "");
     }
 
     // if "up or down regulated" selected, disable ops
@@ -345,7 +345,10 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
         foldChange: ($scope.refCount && $scope.compCount) ? $scope.foldChange : 0
       });
     }
-    $img.html(html);
+    // use setTimeout to prevent hard assert in IE8 rendering engine...
+    setTimeout(function() {
+      $img.html(html);
+    }, 10);
   };
 
   var setHelp = function() {

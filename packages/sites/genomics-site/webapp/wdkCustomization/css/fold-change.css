@@ -193,7 +193,7 @@
 
 .fold-change .param-multiPick.dependentParam ul,
 .fold-change .checkbox-tree {
-  max-height: 100px;
+  height: 100px;
   background: white;
   overflow-y: scroll;
   border: 1px solid #AAA;
@@ -207,7 +207,7 @@
   margin: 1em auto;
 }
 #min_max_avg_ref, #min_max_avg_comp {
-  font-weight: bold !important;
+  /*font-weight: bold !important;*/
   margin: 0px;
 }
 #fold_change {
