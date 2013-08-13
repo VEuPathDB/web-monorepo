@@ -170,6 +170,7 @@ table.dataTable thead th div.DataTables_sort_wrapper {
 }
 th.searches {
   text-align: center;
+  white-space: nowrap;
 }
 .search-head {
   display: none;
