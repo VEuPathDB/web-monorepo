@@ -227,9 +227,12 @@ ${externalLinks}
   <c:if test="${attrs['has_msa'].value == 1}">
 
   <br />
-<h3>Retrieve Multiple Sequence Alignments by Contig / Genomic Sequence IDs</h3>
-   <imp:mercatorMAVID cgiUrl="/cgi-bin" projectId="${projectId}" contigId="${id}"
-      start="1" end="${attrs['length'].value}" bkgClass="secondary3" cellPadding="0"/>
+
+<imp:mercatorTable tblName="MercatorTable" isOpen="true" 
+     cgiUrl="/cgi-bin" projectId="${projectId}" 
+     revCompOn="${revCompOn}" contigId="${id}" 
+     start="1" end="${attrs['length'].value}" /> 
+
   </c:if>
 </c:if>
 </c:set>
@@ -239,7 +242,7 @@ ${externalLinks}
     name="Sequences"
     attribution=""
     displayName="Sequences"
-    content="${content}" />
+    content="${content}" /> 
 
 <%------------------------------------------------------------------%>
 <%------------------------------------------------------------------%>
