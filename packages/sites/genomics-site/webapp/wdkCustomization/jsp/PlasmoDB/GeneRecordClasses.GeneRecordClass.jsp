@@ -606,45 +606,16 @@ ${id}
             </c:otherwise>
         </c:choose>
 
-  <c:if test="${species eq 'falciparum3D7'}">
-      <imp:wdkTable tblName="MassSpec" isOpen="true"
-                    attribution=""/>
-  </c:if>
 
-  <c:if test="${species eq 'falciparum3D7'}">
-      <imp:wdkTable tblName="MassSpecMod" isOpen="true"
-          attribution=""/>
-  </c:if> 
 
-   <c:if test="${species eq 'vivax'}">
-      <imp:wdkTable tblName="MassSpec" isOpen="true"
-                    attribution=""/>
-  </c:if>
 
-  <c:if test="${species eq 'vivax'}">
-      <imp:wdkTable tblName="MassSpecMod" isOpen="true"
-          attribution=""/>
-  </c:if> 
+<c:if test="${attrs['hasProteomics'].value eq '1'}">
+ <imp:wdkTable tblName="MassSpec" isOpen="true"   attribution=""/>
+</c:if>
 
-   <c:if test="${species eq 'berghei'}">
-      <imp:wdkTable tblName="MassSpec" isOpen="true"
-                    attribution=""/>
-  </c:if>
-
-  <c:if test="${species eq 'berghei'}">
-      <imp:wdkTable tblName="MassSpecMod" isOpen="true"
-          attribution=""/>
-  </c:if> 
-
-   <c:if test="${species eq 'yoelii'}">
-      <imp:wdkTable tblName="MassSpec" isOpen="true"
-                    attribution=""/>
-  </c:if>
-
-  <c:if test="${species eq 'yoelii'}">
-      <imp:wdkTable tblName="MassSpecMod" isOpen="true"
-          attribution=""/>
-  </c:if> 
+<c:if test="${attrs['hasPostTransMod'].value eq '1'}">
+ <imp:wdkTable tblName="MassSpecMod" isOpen="true"   attribution=""/>
+</c:if>
 
   <c:if test="${binomial eq 'Plasmodium berghei'}">
     <imp:wdkTable tblName="ProteinExpression" attribution=""/>

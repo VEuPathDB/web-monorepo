@@ -327,6 +327,13 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/piroplasmadbaa/?nam
             </c:otherwise>
         </c:choose>
 
+
+
+<c:if test="${attrs['hasProteomics'].value eq '1'}">
+ <imp:wdkTable tblName="MassSpec" isOpen="true"   attribution=""/>
+</c:if>
+
+
 <%-- EPITOPES ------------------------------------------------------%>
 <imp:wdkTable tblName="Epitopes" isOpen="true"
                  attribution=""/>
