@@ -170,7 +170,7 @@ ${attrs['organism'].value}<br>
 
 <imp:mercatorTable tblName="MercatorTable" isOpen="false" 
      cgiUrl="/cgi-bin" projectId="${projectId}" 
-     revCompOn="${revCompOn}" contigId="${sequence_id}" 
+     revCompOn="${revCompOn}" contigId="${contig}" 
      start="${start}" end="${end}" /> 
 
 
