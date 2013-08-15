@@ -166,7 +166,7 @@ ${attrs['organism'].value}<br>
 <!-- Mercator / Mavid alignments -->
 <imp:mercatorTable tblName="MercatorTable" isOpen="false" 
      cgiUrl="/cgi-bin" projectId="${projectId}" 
-     revCompOn="${revCompOn}" contigId="${sequence_id}" 
+     revCompOn="${revCompOn}" contigId="${contig}" 
      start="${start}" end="${end}" /> 
 
 <!-- snps between strains -->
