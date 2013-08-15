@@ -93,6 +93,7 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
   </form>
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
+<%--
 <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
 
   <hr>
@@ -103,6 +104,8 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
 
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 </c:if>
+
+--%>
 
 <hr>
 
