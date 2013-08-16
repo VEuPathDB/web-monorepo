@@ -9,7 +9,7 @@
 <%@ attribute name="type"  description="Type"  %>
 
 <%@ attribute name="tableName"
-              description="PhenotypeGraphs or ExpressionGraphs"
+              description="PhenotypeGraphs or ExpressionGraphs or PutativeFunctionGraphs"
 %>
 
 
@@ -153,9 +153,15 @@
                </c:if>
             </c:otherwise>
           </c:choose>
-           
-          
+
         </c:forEach>
+                 <br /> <br />  
+        <c:if test="${row['has_meta_data'].value eq 'TRUE'}">
+              <select name="meta_data_categories">
+                  <c:forEach var="category" items="${fn:split(row['meta_data_categories'].value,',')}">
+                             <option value="${category}">${category}</option>
+                  </c:forEach>
+        </c:if> 
               <br /> <br />
 
               
@@ -251,6 +257,7 @@ function formatResourceUrl(url, myForm) {
   var wl = 0;
   var vp = '&vp=_LEGEND';
   var id = '&id=';
+  var typeArg = '&typeArg=Age';
 
   for (var i=0; i < myForm.length; i++){
     var e = myForm.elements[i];
@@ -266,8 +273,10 @@ function formatResourceUrl(url, myForm) {
     if (e.type == 'radio' && e.checked) {
       id = id + e.value;
     }
+    if (e.prop('type') == 'select-one' ) {
+        typeArg = '&typeArg=' + e.options[e.selectedIndex].text;
   }
-  url = url + id + vp + '&wl=' + wl;
+  url = url + id + vp + '&wl=' + wl + typeArg;
   return url;
 }
 
