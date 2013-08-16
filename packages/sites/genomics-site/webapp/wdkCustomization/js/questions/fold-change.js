@@ -81,7 +81,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     twoDirectionTmpl = Handlebars.compile($("#two-direction-template").html());
 
     $img = $(".fold-change-img");
-    $form = $("form#form_question").last();
+    $form = $(".fold-change").closest("form");
 
     // connect to form change event
     $form.on("change", update).on("submit", function() {
