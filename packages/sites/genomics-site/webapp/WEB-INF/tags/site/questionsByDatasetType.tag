@@ -16,16 +16,10 @@
       <div>Legend:</div>
       <ul>
         <c:forEach items="${display_categories}" var="displayCategory">
-          <li class="wdk-tooltip" title="${fn:replace(displayCategory, '_', ' ')}">
-            <span class="search-mechanism btn btn-blue btn-active">
-              <c:choose>
-                <c:when test="${displayCategory eq 'fold_change_with_pvalue'}">FCpV</c:when>
-                <c:otherwise>
-                  <c:forEach items="${fn:split(displayCategory, '_')}" var="part">${fn:toUpperCase(fn:substring(part, 0, 1))}</c:forEach>
-                </c:otherwise>
-              </c:choose>
+          <li class="wdk-tooltip" title="${displayCategory['description']}">
+            <span class="search-mechanism btn btn-blue btn-active">${displayCategory['shortDisplayName']}
             </span>
-            <span>${fn:replace(displayCategory, '_', ' ')}</span>
+            <span>${displayCategory['displayName']}</span>
           </li>
         </c:forEach>
       </ul>
@@ -87,20 +81,14 @@
           </td>
           <td>${dataset_summary} <br/> ${dataset_description}</td>
           <c:forEach items="${display_categories}" var="displayCategory">
-            <c:set var="question" value="${internalQuestions[displayCategory]}"/>
+            <c:set var="question" value="${internalQuestions[displayCategory['name']]}"/>
             <td class="search-mechanism">
               <c:if test="${question ne null}">
                 <a class="wdk-tooltip question-link btn btn-blue"
-                  data-category="${displayCategory}"
-                  title="Search this data set by ${fn:replace(displayCategory, '_', ' ')}"
+                  data-category="${displayCategory['displayName']}"
+                  title="Search this data set by ${displayCategory['displayName']}"
                   href="showQuestion.do?questionFullName=${question.fullName}">
-                  <c:choose>
-                    <c:when test="${displayCategory eq 'fold_change_with_pvalue'}">FCpV</c:when>
-                    <c:otherwise>
-                      <c:forEach items="${fn:split(displayCategory, '_')}" var="part">${fn:toUpperCase(fn:substring(part, 0, 1))}</c:forEach>
-                    </c:otherwise>
-                  </c:choose>
-                </a>
+                  ${displayCategory['shortDisplayName']}</a>
               </c:if>
             </td>
           </c:forEach>
