@@ -92,7 +92,7 @@
                          
             </c:when>
             <c:otherwise>
-            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}"name="geneOptions" /> &nbsp;
+            <a href="/gene/${graph_id}#Expression">${graph_id}</a> <input type="radio" onclick="updateText('${textId}','${row['source_id']}','${graph_id}',this.form);wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" value="${graph_id}" name="geneOptions" /> &nbsp;
             </c:otherwise>
           </c:choose>
 
@@ -110,6 +110,10 @@
             </c:choose>
 	    </c:if>
 <br /><br />
+
+
+
+
 
         		<b>Choose Graph(s) to Display</b><br />
         <c:set var="VisibleParts" value="${fn:split(row['visible_parts'].value,',')}"/>
@@ -156,13 +160,20 @@
 
         </c:forEach>
                  <br /> <br />  
-        <c:if test="${row['has_meta_data'].value eq 'TRUE'}">
-              <select name="meta_data_categories">
+
+<c:if test="${row['has_meta_data'].value eq 'TRUE'}">
+              <select name="meta_data_categories" onchange="wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" />
+                  <c:set var="isFirstItem" value="1"/>
                   <c:forEach var="category" items="${fn:split(row['meta_data_categories'].value,',')}">
                              <option value="${category}">${category}</option>
+                             <c:if test="${isFirstItem == '1' }">
+                             <c:set var="imgSrc" 		value="${imgSrc}&typeArg=${category}"/>
+                             <c:set var="isFirstItem"           value="0"/>
+                             </c:if>
                   </c:forEach>
         </c:if> 
-              <br /> <br />
+<br /> <br />
+
 
               
         <c:if test="${row['project_id'].value eq 'PlasmoDB' || row['project_id'].value eq 'FungiDB' || row['project_id'].value eq 'MicrosporidiaDB' || row['project_id'].value eq 'PiroplasmaDB' || row['project_id'].value eq 'CryptoDB' || row['project_id'].value eq 'ToxoDB'}">
@@ -173,7 +184,7 @@
           </c:if>
 
         </c:if>
-
+          
       </form>
 
     </c:set>
@@ -257,7 +268,7 @@ function formatResourceUrl(url, myForm) {
   var wl = 0;
   var vp = '&vp=_LEGEND';
   var id = '&id=';
-  var typeArg = '&typeArg=Age';
+  var typeArg = "";
 
   for (var i=0; i < myForm.length; i++){
     var e = myForm.elements[i];
@@ -273,13 +284,13 @@ function formatResourceUrl(url, myForm) {
     if (e.type == 'radio' && e.checked) {
       id = id + e.value;
     }
-    if (e.prop('type') == 'select-one' ) {
+    if (e.name == 'meta_data_categories') {
         typeArg = '&typeArg=' + e.options[e.selectedIndex].text;
-  }
+    }    
   url = url + id + vp + '&wl=' + wl + typeArg;
   return url;
+  }
 }
-
 function updateText(id,sourceId,geneId,myForm) {
    var myText = 'The Data and Graphs you are viewing are for an alternative gene in the gene group.   This may or may NOT accurately represent the gene you are interested in.';
    document.getElementById(id).innerHTML = myText;
