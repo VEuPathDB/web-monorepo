@@ -284,10 +284,10 @@ function formatResourceUrl(url, myForm) {
     if (e.type == 'radio' && e.checked) {
       id = id + e.value;
     }
-    if (e.name == 'meta_data_categories') {
+    if (e.selectedIndex) {
         typeArg = '&typeArg=' + e.options[e.selectedIndex].text;
-    }    
-  }
+    }
+  }    
   url = url + id + vp + '&wl=' + wl + typeArg;
   return url;
 }
