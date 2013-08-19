@@ -652,7 +652,19 @@ ${id}
 </c:if>
 </c:if>
 
+
+<c:if test="${species eq 'falciparum3D7'}">
+
+<imp:pageDivider name="Putative Function"/>
+
+
+   <imp:profileGraphs species="${binomial}" tableName="PutativeFunctionGraphs"/>
+
+</c:if> 
  <%-- ------------------------------------------------------------------ --%>
+
+
+
 
 
 <imp:pageDivider name="Sequence"/>
