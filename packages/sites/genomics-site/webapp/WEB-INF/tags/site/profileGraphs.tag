@@ -162,15 +162,15 @@
                  <br /> <br />  
 
 <c:if test="${row['has_meta_data'].value eq 'TRUE'}">
+              <c:set var="isFirstItem" value="1"/>
+              <c:set var="categories" value="${fn:split(row['meta_data_categories'].value,',')}"/>
+              <c:set var="defaultCategory" value="${categories[0]}"/>
               <select name="meta_data_categories" onchange="wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" />
                   <c:set var="isFirstItem" value="1"/>
-                  <c:forEach var="category" items="${fn:split(row['meta_data_categories'].value,',')}">
+                  <c:forEach var="category" items="${categories}">
                              <option value="${category}">${category}</option>
-                             <c:if test="${isFirstItem == '1' }">
-                             <c:set var="imgSrc" 		value="${imgSrc}&typeArg=${category}"/>
-                             <c:set var="isFirstItem"           value="0"/>
-                             </c:if>
                   </c:forEach>
+                  <c:set var="imgSrc" 		value="${imgSrc}&typeArg=${defaultCategory}"/>
         </c:if> 
 <br /> <br />
 
@@ -284,7 +284,7 @@ function formatResourceUrl(url, myForm) {
     if (e.type == 'radio' && e.checked) {
       id = id + e.value;
     }
-    if (e.selectedIndex) {
+    if (e.selectedIndex > -1) {
         typeArg = '&typeArg=' + e.options[e.selectedIndex].text;
     }
   }    
