@@ -169,10 +169,10 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
     	<c:if test="${newsErr != null}">
 		    <i>News temporarily unavailable<br></i>
 	    </c:if>
-	    <br>
+
 	    <a class="small" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.News"/>">All ${project} News >>></a>
     </c:if>  <%-- project is NOT  EuPathDB --%>
-		<br><br>
+		<br>
   </c:otherwise>
   </c:choose>
 
