@@ -287,9 +287,9 @@ function formatResourceUrl(url, myForm) {
     if (e.name == 'meta_data_categories') {
         typeArg = '&typeArg=' + e.options[e.selectedIndex].text;
     }    
+  }
   url = url + id + vp + '&wl=' + wl + typeArg;
   return url;
-  }
 }
 function updateText(id,sourceId,geneId,myForm) {
    var myText = 'The Data and Graphs you are viewing are for an alternative gene in the gene group.   This may or may NOT accurately represent the gene you are interested in.';
