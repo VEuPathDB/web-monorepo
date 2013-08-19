@@ -263,7 +263,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
   </c:otherwise>
   </c:choose>
   <br><span style="font-size:8pt;font-style:italic">(If you have a link that you think would be useful for the community, 
-    please <a href="<c:url value="/contact.do"/>" class="open-window-contact-us">send us a note.)</a></span>
+    please <a href="<c:url value="/contact.do"/>" class="new-window" data-name="contact_us">send us a note.)</a></span>
 </div>
 
 <%--------------  TUTORIALS ---------------------------------------------%>
@@ -282,7 +282,8 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
     <li id='edu-3-2'><a href="http://workshop.eupathdb.org/2011/index.php?page=schedule">Exercises from 2011 Workshop</a> (English and Spanish)</li>
 	  <li id='edu-4'><a href="http://www.genome.gov/Glossary/">NCBI's Glossary of Terms</a></li>
 	  <li id='edu-5'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Our Glossary</a></li>
-    <li id='edu-6'><a href="${pageContext.request.contextPath}/contact.do" class="open-window-contact-us">Contact Us</a></li>
+    <li id='edu-6'><a href="${pageContext.request.contextPath}/contact.do" class="new-window
+     data-name="contact_us">Contact Us</a></li>
   </ul>
 </div>
 

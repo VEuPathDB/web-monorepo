@@ -48,7 +48,7 @@
 	        <li><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from Workshop</a></li>
 	        <li><a href="http://www.genome.gov/Glossary/">NCBI's Glossary of Terms</a></li>
 	        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Glossary">Our Glossary</a></li>
-          <li class="empty-divider"><a href="${pageContext.request.contextPath}/contact.do" class="open-window-contact-us">Contact Us</a></li>
+          <li class="empty-divider"><a href="${pageContext.request.contextPath}/contact.do" class="new-window" data-name="contact_us">Contact Us</a></li>
 	      </ul>
 	    </li>
 	     
@@ -56,7 +56,7 @@
 	    <imp:login/>
 	  
 	    <!-- CONTACT US -->
-      <li class="empty-divider"><a href="${pageContext.request.contextPath}/contact.do" class="open-window-contact-us">Contact Us</a></li>
+      <li class="empty-divider"><a href="${pageContext.request.contextPath}/contact.do" class="new-window" data-name="contact_us">Contact Us</a></li>
 	  
 	    <!-- TWITTER/FACEBOOK -->
 	    <imp:socialMedia small="true"/>
