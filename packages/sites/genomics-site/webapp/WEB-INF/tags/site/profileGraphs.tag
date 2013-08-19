@@ -18,8 +18,8 @@
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 <c:set var="i" value="0"/>
 
-
 <c:forEach var="row" items="${tbl}">
+
   <c:if test="${(species eq row['species'].value) || (type eq 'compound')}">
 
     <c:set var="secName" 	value="${row['module'].value}"/>
@@ -161,7 +161,8 @@
         </c:forEach>
                  <br /> <br />  
 
-<c:if test="${row['has_meta_data'].value eq 'TRUE'}">
+<c:if test="${fn:toLowerCase(row['has_meta_data'].value) eq 'true'}">
+<b>Color Samples by: </b><br /> 
               <c:set var="isFirstItem" value="1"/>
               <c:set var="categories" value="${fn:split(row['meta_data_categories'].value,',')}"/>
               <c:set var="defaultCategory" value="${categories[0]}"/>
