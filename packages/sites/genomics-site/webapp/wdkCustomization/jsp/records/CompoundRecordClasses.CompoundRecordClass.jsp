@@ -62,6 +62,8 @@
 
 <imp:wdkTable tblName="Properties" isOpen="true" attribution=""/>
 
+<imp:wdkTable tblName="Synonyms" isOpen="false" attribution=""/>
+
 <imp:wdkTable tblName="SubstanceProps" isOpen="true" attribution=""/>
 
 <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
