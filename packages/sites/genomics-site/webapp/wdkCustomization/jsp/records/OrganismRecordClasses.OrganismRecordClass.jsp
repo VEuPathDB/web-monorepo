@@ -18,6 +18,13 @@
 
 <c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 
+<c:set var="organism" value="${attrs['organism'].value}" />
+<c:set var="genecount" value="${attrs['genecount'].value}" />
+<c:set var="codinggenecount" value="${attrs['codinggenecount'].value}" />
+<c:set var="pseudogenecount" value="${attrs['pseudogenecount'].value}" />
+<c:set var="othergenecount" value="${attrs['othergenecount'].value}" />
+
+
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
       and set isValidRecord to false if appropriate. 
@@ -36,11 +43,11 @@
 <imp:recordToolbox />
 
 <div class="h2center" style="font-size:160%">
- 	${projectId} Organism
+ 	Organism
 </div>
 
 <div class="h3center" style="font-size:130%">
-	${primaryKey}<br>
+	${organism}<br>
 	<imp:recordPageBasketIcon />
 </div>
 
@@ -54,11 +61,117 @@
 <br>
 
 
-<imp:wdkTable tblName="Metrics" isOpen="true"/>
+<c:set var="geneStats">
+<br />
+<table>
+ <tr>
+   <th></th>
+   <th>Data Source</th>
+   <th>Gene Count</th>
+ </tr>
+ <tr>
+   <th>All Genes</th>
+   <td></td>
+   <td>${genecount}</td>
+ </tr>
+ <tr>
+   <th>Protein Coding Genes</th>
+   <td></td>
+   <td>${codinggenecount}</td>
+ </tr>
+ <tr>
+   <th>Pseudo Genes</th>
+   <td></td>
+   <td>${pseudogenecount}</td>
+ </tr>
+ <tr>
+   <th>Other Types of Genes</th>
+   <td></td>
+   <td>${othergenecount}</td>
+ </tr>
 
-<%------------------------------------------------------------------%>
+ <tr>
+   <th>EC Numbers</th>
+   <td>TODO</td>
+   <td>${attrs['ecnumbercount'].value}</td>
+ </tr>
+ <tr>
+   <th>Gene Ontology</th>
+   <td>TODO</td>
+   <td>${attrs['gocount'].value}</td>
+ </tr>
+
+ <tr>
+   <th>SAGE Tags Alignments</th>
+   <td><a href="${attrs['hasSageTag'].url}">${attrs['hasSageTag'].displayText}</a></td>
+   <td>${attrs['sagetagcount'].value}</td>
+ </tr>
+
+ <tr>
+   <th>RNASeq Reads</th>
+   <td><a href="${attrs['hasRNASeq'].url}">${attrs['hasRNASeq'].displayText}</a></td>
+   <td>${attrs['rnaseqcount'].value}</td>
+ </tr>
+ <tr>
+   <th>ChIP-Chip Probes</th>
+   <td><a href="${attrs['hasChipChip'].url}">${attrs['hasChipChip'].displayText}</a></td>
+   <td>${attrs['chipchipgenecount'].value}</td>
+ </tr>
+ <tr>
+   <th>RT-PCR Data</th>
+   <td>TODO</td>
+   <td>${attrs['rtpcrcount'].value}</td>
+ </tr>
+ <tr>
+   <th>EST Alignments</th>
+   <td><a href="${attrs['hasEST'].url}">${attrs['hasEST'].displayText}</a></td>
+   <td>${attrs['estcount'].value}</td>
+ </tr>
+ <tr>
+   <th>SNPs</th>
+   <td><a href="${attrs['hasSNP'].url}">${attrs['hasSNP'].displayText}</a></td>
+   <td>${attrs['snpcount'].value}</td>
+ </tr>
+ <tr>
+   <th>Orthologs</th>
+   <td></td>
+   <td>${attrs['orthologcount'].value}</td>
+ </tr>
+ <tr>
+   <th>Expression Array Probes</th>
+   <td>TODO</td>
+   <td>${attrs['arraygenecount'].value}</td>
+ </tr>
+ <tr>
+   <th>Proteomics Data</th>
+   <td><a href="${attrs['hasProteomics'].url}">${attrs['hasProteomics'].displayText}</a></td>
+   <td>${attrs['proteomicscount'].value}</td>
+ </tr>
+ <tr>
+   <th>Trascription Factor Binding Site Data</th>
+   <td>TODO</td>
+   <td>${attrs['tfbscount'].value}</td>
+ </tr>
+ <tr>
+   <th>Community Annotations</th>
+   <td></td>
+   <td>${attrs['communitycount'].value}</td>
+ </tr>
+ <tr>
+   <th>Isolates</th>
+   <td><a href="${attrs['hasIsolate'].url}">${attrs['hasIsolate'].displayText}</a></td>
+   <td>TODO</td>
+ </tr>
+
+</table>
+</c:set>
 
 
+<imp:panel 
+    displayName="Data Sources and Gene Metrics"
+    content="${geneStats}"
+ />
+<br>
 
 
 </imp:pageFrame>
