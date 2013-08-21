@@ -61,6 +61,12 @@
 <br>
 
 
+
+<imp:wdkTable tblName="SequenceCounts" isOpen="true"/>
+
+<imp:wdkTable tblName="GeneCounts" isOpen="true"/>
+
+
 <c:set var="geneStats">
 <br />
 <table>
@@ -70,33 +76,12 @@
    <th>Gene Count</th>
  </tr>
  <tr>
-   <th>All Genes</th>
-   <td></td>
-   <td>${genecount}</td>
- </tr>
- <tr>
-   <th>Protein Coding Genes</th>
-   <td></td>
-   <td>${codinggenecount}</td>
- </tr>
- <tr>
-   <th>Pseudo Genes</th>
-   <td></td>
-   <td>${pseudogenecount}</td>
- </tr>
- <tr>
-   <th>Other Types of Genes</th>
-   <td></td>
-   <td>${othergenecount}</td>
- </tr>
-
- <tr>
    <th>EC Numbers</th>
    <td>TODO</td>
    <td>${attrs['ecnumbercount'].value}</td>
  </tr>
  <tr>
-   <th>Gene Ontology</th>
+   <th>Gene Ontology Assignments</th>
    <td>TODO</td>
    <td>${attrs['gocount'].value}</td>
  </tr>
