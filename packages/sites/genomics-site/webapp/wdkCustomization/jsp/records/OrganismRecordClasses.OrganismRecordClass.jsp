@@ -131,7 +131,7 @@
  </tr>
  <tr class="rowLight">
    <td>Orthologs</td>
-   <td></td>
+   <td align="center"><a href="${attrs['hasOrtholog'].url}">${attrs['hasOrtholog'].displayText}</a></td>
    <td>${attrs['orthologcount'].value}</td>
  </tr>
  <tr class="rowMedium">
