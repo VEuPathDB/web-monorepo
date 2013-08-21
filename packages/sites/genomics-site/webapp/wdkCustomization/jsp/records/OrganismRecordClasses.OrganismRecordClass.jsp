@@ -77,12 +77,12 @@
  </tr>
  <tr>
    <th>EC Numbers</th>
-   <td>TODO</td>
+   <td><a href="${attrs['hasEC'].url}">${attrs['hasEC'].displayText}</a></td>
    <td>${attrs['ecnumbercount'].value}</td>
  </tr>
  <tr>
    <th>Gene Ontology Assignments</th>
-   <td>TODO</td>
+   <td><a href="${attrs['hasGO'].url}">${attrs['hasGO'].displayText}</a></td>
    <td>${attrs['gocount'].value}</td>
  </tr>
 
@@ -104,7 +104,7 @@
  </tr>
  <tr>
    <th>RT-PCR Data</th>
-   <td>TODO</td>
+   <td><a href="${attrs['hasRTPCR'].url}">${attrs['hasRTPCR'].displayText}</a></td>
    <td>${attrs['rtpcrcount'].value}</td>
  </tr>
  <tr>
@@ -124,7 +124,7 @@
  </tr>
  <tr>
    <th>Expression Array Probes</th>
-   <td>TODO</td>
+   <td><a href="${attrs['hasArray'].url}">${attrs['hasArray'].displayText}</a></td>
    <td>${attrs['arraygenecount'].value}</td>
  </tr>
  <tr>
@@ -134,7 +134,7 @@
  </tr>
  <tr>
    <th>Trascription Factor Binding Site Data</th>
-   <td>TODO</td>
+   <td><a href="${attrs['hasTFBS'].url}">${attrs['hasTFBS'].displayText}</a></td>
    <td>${attrs['tfbscount'].value}</td>
  </tr>
  <tr>
