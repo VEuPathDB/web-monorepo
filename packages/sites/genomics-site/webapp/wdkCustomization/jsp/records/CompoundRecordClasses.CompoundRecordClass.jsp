@@ -24,7 +24,7 @@
 </c:catch>
 
 
-<imp:pageFrame  title="${recordName} : ${source_id}"
+<imp:pageFrame  title="${recordName} : ${source_id} - ${attrs['name']}"
              divisionName="PubChem Compound Record"
              refer="recordPage"
              division="queries_tools">
