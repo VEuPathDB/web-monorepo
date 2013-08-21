@@ -128,8 +128,8 @@
 <%-------    DATASET CONTENT ----------------%>
             <div class="detail">
               <table>
-                <c:if test='${not empty organism.value}'>    <tr><td><span class="caption">${organism.displayName} </span></td><td> ${organism.value}</td></tr>  </c:if>
-                <tr><td><span class="caption">${contact.displayName}</span></td>
+                <c:if test='${not empty organism.value}'>    <tr><td><span class="caption"><b>${organism.displayName}</b> </span></td><td> ${organism.value}</td></tr>  </c:if>
+                <tr><td><span class="caption"><b>${contact.displayName}</b></span></td>
                   <td> <c:if test='${not empty contact.value}'>${contact.value}</c:if>
                   <c:if test='${not empty institution.value}'> - ${institution.value}</c:if>
                 </td></tr>
@@ -192,7 +192,7 @@
                <!--   <imp:table table="${externallinks}" sortable="false" showHeader="false" />  -->
                  <ul>
                   <c:forEach items="${externallinks}" var="externallink">
-                        <li><a href="${externallink['hyper_link'].url}">${externallink['hyper_link'].displayText}</a></li>
+                        <li><a title="${externallink['description'].value}" href="${externallink['hyper_link'].url}">${externallink['hyper_link'].displayText}</a></li>
                   </c:forEach>
                 </ul>
               </c:set>
