@@ -52,6 +52,18 @@
 </div>
 
 <%------------------------------------------------------------------%>
+ <c:if test="${projectId ne 'TrichDB' && attrs['is_annotated'].value == 0}">
+  <c:choose>
+    <c:when test="${attrs['release_policy'].value  != null}">
+<b>NOTE: ${attrs['release_policy'].value }</b>
+    </c:when>
+    <c:otherwise>
+<b>NOTE: The data for this genome is unpublished. You should consult with the Principal Investigators before undertaking large scale analyses of the annotation or underlying sequence.</b>
+    </c:otherwise>
+  </c:choose>
+</c:if>
+
+<%------------------------------------------------------------------%>
 
 <c:set var="attr" value="${attrs['overview']}"/>
 <imp:panel 
