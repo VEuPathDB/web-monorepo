@@ -92,6 +92,17 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       update();
     });
 
+    // make samples boxes resizable
+    $(".reference > div, .comparison > div").each(function(idx, div) {
+      var $div = $(div);
+      $div.resizable({
+        alsoResize: $div.find(".param-multiPick.dependentParam ul, .checkbox-tree"),
+        minWidth: $div.width(),
+        maxWidth: $div.width(),
+        minHeight: 120
+      });
+    });
+
     update();
     return;
   };
