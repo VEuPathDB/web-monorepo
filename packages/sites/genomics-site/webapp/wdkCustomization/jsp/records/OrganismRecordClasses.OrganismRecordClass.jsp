@@ -151,7 +151,7 @@
  </tr>
  <tr class="rowLight">
    <td>Community Annotations</td>
-   <td></td>
+   <td align="center"><a href="${attrs['hasCommunity'].url}">${attrs['hasCommunity'].displayText}</a></td>
    <td>${attrs['communitycount'].value}</td>
  </tr>
  <tr class="rowMedium">
