@@ -376,7 +376,10 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
           "visible" : "hidden");
   };
 
-  $(init);
+  //$(init);
+  // ugly hack to compensate for how jquery invokes script tags loaded via ajax.
+  // basically, this allows CSS to get applied before init is called.
+  setTimeout(init, 1000);
 
   ns.init = init;
 });
