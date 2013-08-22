@@ -164,13 +164,17 @@
 </c:set>
 
 
-<br>
 
 
+ <c:if test="${attrs['is_annotated_genome'].value == 1}">
+
+ <br>
  <imp:panel 
     displayName="Data Sources and Gene Metrics"
     content="${geneStats}"
  />
+
+</c:if>
 
 <br />
 <br />
