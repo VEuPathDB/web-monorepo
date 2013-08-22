@@ -224,6 +224,9 @@
                 <tr>
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByFunctionalInteraction" linktext="Predicted Interaction" existsOn="A P"/>
                 </tr>
+								 <tr>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByCromptonAbFoldChange" linktext="Immune Response in Clinical Isolates" existsOn="P"/>
+                </tr>
                 <tr>
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByPhenotype" linktext="Phenotype" existsOn="A Tt"/>
                 </tr>
