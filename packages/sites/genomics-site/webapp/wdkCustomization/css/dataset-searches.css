@@ -106,13 +106,6 @@ html {
   border-bottom: 2px solid;
   background: white;
 }
-table.dataTable thead th div.DataTables_sort_wrapper span {
-  left: 0;
-}
-table.dataTable thead th div.DataTables_sort_wrapper {
-  cursor: pointer;
-  padding-left: 20px;
-}
 .dataTables_wrapper .ui-widget-header {
   padding: 0px;
 }
