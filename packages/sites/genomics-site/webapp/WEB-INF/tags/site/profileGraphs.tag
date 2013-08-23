@@ -20,7 +20,7 @@
 
 <c:forEach var="row" items="${tbl}">
 
-  <c:if test="${(species eq row['species'].value) || (type eq 'compound')}">
+  <c:if test="${(species eq row['species'].value) || (type eq 'compound') || (type eq 'dataset')}">
 
     <c:set var="secName" 	value="${row['module'].value}"/>
 
