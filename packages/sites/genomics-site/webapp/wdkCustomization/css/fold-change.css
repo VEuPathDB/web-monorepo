@@ -132,13 +132,13 @@
   vertical-align: top;
 }
 
-.param-line {
+.fold-change .param-line {
   padding: 0.2em;
   /*font-size: larger;*/
   line-height: 1.4;
 }
-.text .prompt,
-.text.prompt {
+.fold-change .text .prompt,
+.fold-change .text.prompt {
   font-weight: bold;
 }
 .reference, .comparison {
@@ -181,11 +181,11 @@
   padding: 0.4em;
   margin-top: 1em;
 }
-.param-multiPick.dependentParam table {
+.fold-change .param-multiPick.dependentParam table {
   width: 100%;
 }
-#samples_fc_comp_genericaaa,
-#samples_fc_ref_genericaaa {
+.fold-change #samples_fc_comp_genericaaa,
+.fold-change #samples_fc_ref_genericaaa {
   background: white;
   border: 1px solid #AAA;
   border-radius: 4px;
@@ -213,7 +213,7 @@
 #fold_change {
   width: 2em;
 }
-.help-link {
+.fold-change .help-link {
   padding-right: 4px;
 }
 .formula {
@@ -417,17 +417,17 @@
   margin-left: 8px;
   height: auto;
 }
-.up-or-down-regulated .fold-change-label {
+.fold-change .up-or-down-regulated .fold-change-label {
   margin-left: 36%;
 }
-.up-or-down-regulated .fold-change-label .up-arrow,
-.up-or-down-regulated .fold-change-label .down-arrow {
+.fold-change .up-or-down-regulated .fold-change-label .up-arrow,
+.fold-change .up-or-down-regulated .fold-change-label .down-arrow {
   height: 19px;
 }
-.up-or-down-regulated .fold-change-label .down-arrow:before {
+.fold-change .up-or-down-regulated .fold-change-label .down-arrow:before {
   top: 14px;
 }
-.up-or-down-regulated .fold-change-label .label {
+.fold-change .up-or-down-regulated .fold-change-label .label {
   margin-left: 14px;
 }
 
@@ -440,7 +440,7 @@
 /*
  * Specific parameter styling
  */
-#profileset_generic {
+.fold-change #profileset_generic {
   max-width: 100%;
 }
 }

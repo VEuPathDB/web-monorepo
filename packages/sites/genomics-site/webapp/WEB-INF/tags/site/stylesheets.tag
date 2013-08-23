@@ -32,6 +32,7 @@
 
 <c:if test="${refer == 'question' || refer == 'summary'}">
   <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/question.css"/>
+  <link rel="stylesheet" type="text/css" href="${base}/wdkCustomization/css/fold-change.css"/>
 </c:if>
 
 <!-- Data source page -->

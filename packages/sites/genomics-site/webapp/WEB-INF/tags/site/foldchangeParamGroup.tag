@@ -19,7 +19,8 @@
 
   <c:set var="protein_coding_onlyParam" value="${paramGroup['protein_coding_only']}"/>
 
-  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/wdkCustomization/css/fold-change.css"/>
+  <span class="onload-function" data-function="eupathdb.foldChange.init">
+    <jsp:text/></span>
   <div class="fold-change ui-help-clearfix">
 
     <div class="fold-change-params">
@@ -276,7 +277,5 @@
       </div>
     </div>
   </script>
-
-  <script type="text/javascript" src="${pageContext.request.contextPath}/wdkCustomization/js/questions/fold-change.js"><jsp:text/></script>
 
 </jsp:root>

@@ -71,6 +71,7 @@
     <script type="text/javascript" src="${base}/wdkCustomization/js/span-location.js"><jsp:text/></script>
     <script type="text/javascript" src="${base}/wdkCustomization/js/mutuallyExclusiveParams.js"><jsp:text/></script>
     <script type="text/javascript" src="${base}/wdkCustomization/js/dataset-searches.js"><jsp:text/></script>
+    <script type="text/javascript" src="${base}/wdkCustomization/js/questions/fold-change.js"><jsp:text/></script>
   </c:if>
 
   <!-- Quick seach box -->
